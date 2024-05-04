@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.22">
-<meta name="author" content="v{VERSION} - Generated 2024-05-03">
+<meta name="author" content="v{VERSION} - Generated 2024-05-04">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - User Manual</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - User Manual</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2024-05-03</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2024-05-04</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -712,11 +712,6 @@ The value will be transfered over the edit server protocol as a <code>PPC_SET_IN
 <dd>
 <p>Enable debugging of the C and Yacc parsers according to the Yacc manual.</p>
 </dd>
-<dt class="hdlist1">-briefoutput</dt>
-<dd>
-<p>This option inhibits a few messages related to Java runtime, class and source paths.
-Note: Currently used from the <code>refactory</code> mode.</p>
-</dd>
 <dt class="hdlist1">-o &lt;file&gt;</dt>
 <dd>
 <p>Redirect all output to <code>file</code> rather than to standard output.</p>
@@ -764,29 +759,12 @@ Multiple suffixes should be separated by <code>:</code>.</p>
 <h6 id="_editor_adapterserver_configuration">Editor adapter/server configuration</h6>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">-editor=&lt;editor&gt;</dt>
-<dd>
-<p>As there are minor differences between the editor adaptors for <code>emacs</code> and <code>jedit</code> the editor adapter uses this option to select the correct one.
-Default is <code>emacs</code>.</p>
-</dd>
 <dt class="hdlist1">-xrefactory-II</dt>
 <dd>
 <p>Applicable only to <code>server</code> mode.
 Will use a second generation protocol between the edit server and the editor adapter.
 Using the edit server/refactorer without activating <code>-xrefactory-II</code> is deprecated.
 Will be deprecated and removed in the future when legacy protocol is removed.</p>
-</dd>
-<dt class="hdlist1">-urldirect</dt>
-<dd>
-<p>Let editor navigate directly to URLs instead of creating a temporary file which is to be loaded.
-Default is to generate a temporary file.
-NOTE: This option might be removed in the future.</p>
-</dd>
-<dt class="hdlist1">-urlmanualredirect</dt>
-<dd>
-<p>If a temporary HTML file is generated to let the editor navigate to a URL (JavaDoc) then this option will override the default to automatically redirect to that URL.
-Instead the user wil have to press the link manually in the editor.
-NOTE: This option might be removed in the future.</p>
 </dd>
 </dl>
 </div>
@@ -991,26 +969,14 @@ If an editor has an edited, non-saved, buffer holding a relevant <code>file1</co
 <dt class="hdlist1">-rfct-expand</dt>
 <dt class="hdlist1">-rfct-extract-macro</dt>
 <dt class="hdlist1">-rfct-extract-function</dt>
-<dt class="hdlist1">-rfct-move-all-classes-to-new-file</dt>
-<dt class="hdlist1">-rfct-move-class</dt>
-<dt class="hdlist1">-rfct-move-class-to-new-file</dt>
-<dt class="hdlist1">-rfct-move-field</dt>
 <dt class="hdlist1">-rfct-move-param</dt>
-<dt class="hdlist1">-rfct-move-static-field</dt>
-<dt class="hdlist1">-rfct-move-static-method</dt>
 <dt class="hdlist1">-rfct-param1</dt>
 <dt class="hdlist1">-rfct-param2</dt>
-<dt class="hdlist1">-rfct-pull-up-field</dt>
-<dt class="hdlist1">-rfct-pull-up-method</dt>
-<dt class="hdlist1">-rfct-push-down-field</dt>
-<dt class="hdlist1">-rfct-push-down-method</dt>
 <dt class="hdlist1">-rfct-reduce</dt>
 <dt class="hdlist1">-rfct-reduce-long-names-in-the-file</dt>
 <dt class="hdlist1">-rfct-rename</dt>
 <dt class="hdlist1">-rfct-rename-class</dt>
 <dt class="hdlist1">-rfct-rename-package</dt>
-<dt class="hdlist1">-rfct-self-encapsulate-field</dt>
-<dt class="hdlist1">-rfct-static-to-dynamic</dt>
 <dt class="hdlist1">-rlistwithoutsrc</dt>
 <dt class="hdlist1">-searchdef</dt>
 <dt class="hdlist1">-searchdefshortlist</dt>
@@ -1098,7 +1064,7 @@ this tool over many years.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-05-03 13:01:06 UTC
+Last updated 2024-05-04 08:24:11 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
