@@ -29,21 +29,19 @@ and Yacc code.
 Here is a list of features
 
 - Full integration with Emacs
-- Browsing source code in C supporting multiple pre-processing passes
-- Designed to work with large projects (> millions of lines)
-- Update using only modified files
-- First tool to https://www.martinfowler.com/articles/refactoringRubicon.html[Crossing Refactoring's Rubicon] as described by Martin Fowler
-- Safe refactorings to
-  - rename variables, functions etc.
-  - extract function/method
-  - delete, add, move parameters
-  - move field and method
-  - push down/pull up fields and methods
-- Solid code completion, recognizing upto 15 different contexts
-- Search for symbols using wildcards
-- Find unused variables and functions, globally as well as locally
-- Auto-detection of project
-- Full undo in Emacs
+* Browsing source code in C supporting multiple pre-processing passes
+* Designed to work with large projects (> millions of lines)
+* Update using only modified files
+* First tool to https://www.martinfowler.com/articles/refactoringRubicon.html[Crossing Refactoring's Rubicon] as described by Martin Fowler
+* Safe refactorings to
+  ** rename variables, functions etc.
+  ** extract function/method
+  ** delete, add, move parameters
+* Solid code completion, recognizing upto 15 different contexts
+* Search for symbols using wildcards
+* Find unused variables and functions, globally as well as locally
+* Auto-detection of project
+* Full undo in Emacs
 
 === About this document
 
@@ -262,8 +260,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 
 -mf::
 
--movetargetclass::
-
 -movetargetfile::
 
 -no-autoupdatefromsrc::
@@ -294,21 +290,11 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 
 -olcxcgoto::
 
--olcxclasslines::
-
--olcxclasstree::
-
 -olcxcomplet::
 
 -olcxcplsearch::
 
 -olcxctinspectdef::
-
--olcxcurrentclass::
-
--olcxcurrentsuperclass::
-
--olcxdynamictostatic1::
 
 -olcxencapsulate::
 
@@ -321,7 +307,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 -olcxfilter::
 
 -olcxgetcurrentrefn::
-
 
 -olcxgetparamcoord::
 
@@ -359,8 +344,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 
 -olcxmenugo::
 
--olcxmenuinspectclass::
-
 -olcxmenuinspectdef::
 
 -olcxmenunone::
@@ -378,8 +361,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 -olcxnext::
 
 -olcxnotfqt::
-
--olcxnotfqtinclass::
 
 -olcxparnum::
 
@@ -451,10 +432,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 
 -olcxunmodified::
 
--olcxuselesslongnames::
-
--olcxuselesslongnamesinclass::
-
 -olcxwindel::
 
 -olcxwindelfile::
@@ -509,10 +486,6 @@ If an editor has an edited, non-saved, buffer holding a relevant `file1` it is s
 
 -rfct-del-param::
 
--rfct-dynamic-to-static::
-
--rfct-encapsulate-field::
-
 -rfct-expand::
 
 -rfct-extract-macro::
@@ -525,15 +498,7 @@ If an editor has an edited, non-saved, buffer holding a relevant `file1` it is s
 
 -rfct-param2::
 
--rfct-reduce::
-
--rfct-reduce-long-names-in-the-file::
-
 -rfct-rename::
-
--rfct-rename-class::
-
--rfct-rename-package::
 
 -rlistwithoutsrc::
 
