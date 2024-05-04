@@ -569,7 +569,7 @@ faces and highlighting in buffers created by C-xrefactory.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defvar c-xref-exec-directory ""
-  "Optional path to the \'c-xref\' executable")
+  "Optional path to the `c-xref' executable")
 
 ;; C-xref menu definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
