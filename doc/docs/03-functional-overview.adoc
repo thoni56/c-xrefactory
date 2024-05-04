@@ -9,8 +9,8 @@ It was
 - a generator for persistent cross-reference data
 - a reference server for editors, serving cross-reference, navigational and completion data over a protocol
 - a refactoring server (the worlds first to cross the Refactoring Rubicon)
-- ~~an HTML cross-reference generator (probably the root of the project)~~ (REMOVED)
-- ~~a C macro generator for structure fill (and other) functions~~ (REMOVED)
+- [.line-through]#an HTML cross-reference generator (probably the root of the project)# (REMOVED)
+- [.line-through]#a C macro generator for structure fill (and other) functions# (REMOVED)
 
 It is the first three that are unique and constitutes the great value
 of this project. The last two have been removed from the source, the
