@@ -157,7 +157,6 @@ enum {
 /* ************************** refactorings **************************** */
 
 enum memoryClass {
-    MEMORY_CF,                  /* Seems to only be used inSecondJslPass() */
     MEMORY_XX,                  /* Means StackMemory... */
     MEMORY_PPM,
 };
