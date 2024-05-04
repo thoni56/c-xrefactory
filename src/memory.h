@@ -1,8 +1,11 @@
 #ifndef MEMORY_H_INCLUDED
 #define MEMORY_H_INCLUDED
 
-#include "stdinc.h"
+#include <stddef.h>
+#include <stdbool.h>
+#include <setjmp.h>
 #include "constants.h"
+
 
 
 /* ************************ Types ******************************** */
@@ -27,10 +30,6 @@ extern void *ppmRealloc(int count, size_t newSize, size_t oldSize);
 extern void *ppmReallocc(void *pointer, int newCount, size_t size, int oldCount);
 extern void  ppmFreeUntil(void *pointer);
 extern bool ppmIsFreedPointer(void *pointer);
-
-/* java class-file read allocations ( same memory as cpp !!!!!!!! ) */
-#define cfAlloc(type) smAlloc(&ppmMemory, sizeof(type))
-#define cfAllocc(count, type) smAllocc(&ppmMemory, count, sizeof(type))
 
 
 /* ************************************************************************** */
