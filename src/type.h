@@ -81,7 +81,6 @@
         ENUM(TypeMacro)                                                 \
         ENUM(TypeCppIfElse)                                             \
         ENUM(TypeCppCollate)                                            \
-        ENUM(TypePackage)                                               \
         ENUM(TypeYaccSymbol)                                            \
         ENUM(TypeLabel)                                                 \
         ENUM(TypeKeyword)                                               \

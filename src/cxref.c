@@ -146,7 +146,6 @@ static void setAvailableRefactorings(Symbol *symbol) {
             makeRefactoringAvailable(PPC_AVR_MOVE_PARAMETER, "");
         }
         break;
-    case TypePackage:
     case MODIFIERS_START:
     case TmodLong:
     case TmodShort:

@@ -126,10 +126,6 @@ void getSymbolCxrefProperties(Symbol *symbol, ReferenceCategory *categoryP, Refe
     if (symbol->type == TypeYaccSymbol) {
         category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
     }
-    /* JAVA packages */
-    if (symbol->type == TypePackage) {
-        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
-    }
 
     *categoryP = category;
     *scopeP = scope;

@@ -289,7 +289,6 @@ static Int2StringDictionary typeNamesInitTable[] = {
     {TypeMacro,             "macro"},
     {TypeMacroArg,          "macro argument"},
     {TypeUndefMacro,        "Undefined Macro"},
-    {TypePackage,           "package"},
     {TypeYaccSymbol,        "yacc symbol"},
     {TypeCppCollate,        "Cpp##sym"},
     {TypeSpecialComplet,    "(Completion Wizard)"},
