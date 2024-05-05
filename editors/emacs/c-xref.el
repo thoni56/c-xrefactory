@@ -3902,7 +3902,7 @@ will be deleted.
     (newline)
     (setq pfiles (c-xref-remove-pending-slash pfiles))
     (if comment
-	    (insert "  //  directory where tag files are stored\n")
+	    (insert "  //  directory where refrences database (tag files) is stored\n")
       )
     (insert (format "  -refs %s\n" (c-xref-optionify-string refs "\"")))
     (insert "  //  number of tag files\n")
@@ -4135,7 +4135,7 @@ part belonging to this project.
       )
     (setq refs (c-xref-remove-dangerous-fname-chars refs))
     (setq refs (c-xref-read-path-from-minibuffer
-			"Directory to store tag files in:  " refs))
+			"Directory to store references database/tag files in:  " refs))
 
     (setq ifiles "")
     (setq ifmess "Do you use some ")
@@ -4911,9 +4911,9 @@ compilation is successful.  See also `c-xref-ide-compile' and
   "Create tags.
 
 This function executes `c-xref -create'.  The effect of the
-invocation is that the C-xrefactory tag files (used by the source
-browser and refactorer) are created.  The behavior of the
-`c-xref' command is controlled by options read from the
+invocation is that the C-xrefactory references database (used by
+the source browser and refactorer) are created.  The behavior of
+the `c-xref' command is controlled by options read from the
 `.c-xrefrc' file.
 "
   (interactive "")
@@ -4926,8 +4926,8 @@ browser and refactorer) are created.  The behavior of the
   "Fast update of tags.
 
 This function executes `c-xref -fastupdate'.  The effect of the
-invocation is that C-xrefactory tag files (used by the source
-browser and refactorer) are updated.  The behavior of the
+invocation is that C-xrefactory references database (used by the
+source browser and refactorer) is updated.  The behavior of the
 `c-xref' command is controlled by options read from the
 `.c-xrefrc' file.
 "
@@ -4940,7 +4940,7 @@ browser and refactorer) are updated.  The behavior of the
   "Full update of tags.
 
 This function executes `c-xref -update'.  The effect of the
-invocation is that C-xrefactory tag files (used by the source
+invocation is that C-xrefactory references database (used by the source
 browser and refactorer) are updated.  The behavior of the
 `c-xref' command is controlled by options read from the
 `.c-xrefrc' file.
@@ -6477,12 +6477,12 @@ given string(s).
 (defun c-xref-kill-xref-process (coredump)
   "Kill currently running  c-xref process.
 
-If there is an c-xref process creating/updating a tag file it is
-killed.  If there is no such process this function kills the
-c-xref server process.  This function can be used if the c-xref
-task enters an inconsistent state.  The c-xref process is then
-restarted automatically at the next invocation of any of its
-functions.
+If there is an c-xref process creating/updating a reference
+database it is killed.  If there is no such process this function
+kills the c-xref server process.  This function can be used if
+the c-xref task enters an inconsistent state.  The c-xref process
+is then restarted automatically at the next invocation of any of
+its functions.
 "
   (interactive "P")
   (if (and (not (eq c-xref-tags-process nil))
@@ -6652,22 +6652,23 @@ passes over the source with different preprocessor settings. You
 can define them during the creation of the project or modify them
 later. See CUSTOMIZATION below.
 
-TAG FILE:
+REFERENCES DATABASE:
 
-The tag file stores all the necessary information about your
-project sources, in particular informations about all symbols,
-their linking properties, definition place(s) and all usages.
-The maintenance of the tag file is the responsibility of the
-user.  An out of date tag file will cause mistakes in source
-browsing.  However, the `Complete Identifier' function and the
-'Extract Function/Method/Macro' refactorings are independent of
-the tag file as they depend only on file-local information.
+The references database stores all the necessary information
+about your project sources, in particular informations about all
+symbols, their linking properties, definition place(s) and all
+usages.  The maintenance of the database is the responsibility of
+the user.  An out of date database will cause mistakes in source
+browsing.  However, some functions, like the `Complete
+Identifier' function and the 'Extract Function/Method/Macro'
+refactorings, are independent of the database as they depend only
+on file-local information.
 
-Three functions are available for maintenance of tag files,
-trading off time against accuracy.  The `Full Update' function
-should guarantee correct content of the tag file; it is
-recomended to re-create the tag file from time to time in order
-to remove garbage.
+Three functions are available for maintenance of the references
+database, trading time against accuracy.  The `Full Update'
+function should guarantee correct content of the database; it is
+recomended to re-create the database from time to time in order
+to remove garbage. Particularaly when navigation seems to be off.
 
 BROWSING AND REFACTORINGS:
 
@@ -6701,8 +6702,8 @@ C-XREF BACKGROUND TASK:
 
 Emacs C-xref functions cooperate with an external `c-xref' task;
 if you think that the task has entered an inconsistent state, or
-if you wish to interrupt creation or update of the tag file, you
-can invoke the `Kill c-xref task' function.
+if you wish to interrupt creation or update of the references
+database, you can invoke the `Kill c-xref task' function.
 
 CUSTOMIZATION:
 

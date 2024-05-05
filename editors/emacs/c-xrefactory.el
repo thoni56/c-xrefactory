@@ -439,7 +439,7 @@ C-xrefactory's source browsing functions.
 	    :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-auto-update-tags-before-push nil
-	    "If on, C-xrefactory will update the tags file before pushing references on to browser stack. If you are working on a small project and you have a fast computer, then it may be convenient to turn this option on."
+	    "If on, C-xrefactory will update the references database before pushing references on to browser stack. If you are working on a small project and you have a fast computer, then it may be convenient to turn this option on."
 	    :type '(boolean)
 	    :group 'c-xrefactory-source-browser)
 
