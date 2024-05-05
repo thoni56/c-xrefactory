@@ -9,6 +9,7 @@
 #include "log.h"
 #include "misc.h"
 #include "options.h"
+#include "ppc.h"
 #include "protocol.h"
 #include "reftab.h"
 #include "semact.h"

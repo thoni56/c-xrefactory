@@ -15,6 +15,7 @@
 #include "misc.h"
 #include "options.h"
 #include "parsers.h"
+#include "ppc.h"
 #include "session.h"
 #include "yylex.h"
 

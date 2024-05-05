@@ -9,6 +9,7 @@
 #include "characterreader.h"
 #include "completion.h"
 #include "cxref.h"
+#include "editor.h"
 #include "fileio.h"
 #include "filetable.h"
 #include "hash.h"

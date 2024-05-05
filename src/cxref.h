@@ -3,7 +3,6 @@
 
 
 #include "menu.h"
-#include "ppc.h"
 #include "proto.h"
 #include "server.h"
 #include "symbol.h"

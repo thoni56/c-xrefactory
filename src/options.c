@@ -9,6 +9,7 @@
 #include "editor.h"
 #include "fileio.h"
 #include "filetable.h"
+#include "ppc.h"
 #include "protocol.h"
 
 #include "log.h"

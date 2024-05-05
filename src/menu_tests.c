@@ -1,18 +1,16 @@
 #include <cgreen/cgreen.h>
 
-#include "log.h"
-
 #include "menu.h"
 
 #include "classhierarchy.mock"
 #include "commons.mock"
 #include "cxfile.mock"
-#include "cxref.mock"
+#include "filetable.mock"
 #include "globals.mock"
+#include "log.h"
 #include "options.mock"
 #include "ppc.mock"
 #include "reference.mock"
-#include "filetable.mock"
 
 
 Describe(Menu);

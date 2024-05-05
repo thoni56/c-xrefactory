@@ -15,6 +15,7 @@
 #include "menu.h"
 #include "misc.h"
 #include "options.h"
+#include "ppc.h"
 #include "proto.h"
 #include "protocol.h"
 #include "refactorings.h"

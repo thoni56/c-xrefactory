@@ -2,12 +2,12 @@
 
 #include "classhierarchy.h"
 #include "cxfile.h"
-#include "cxref.h"
 #include "globals.h"
-#include "filetable.h"
 #include "list.h"
 #include "log.h"
 #include "options.h"
+#include "ppc.h"
+#include "reference.h"
 
 
 void fillSymbolsMenu(SymbolsMenu *menu, ReferenceItem references, bool selected, bool visible,
