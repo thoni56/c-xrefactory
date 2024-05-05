@@ -12,8 +12,6 @@
 typedef struct completion {
     char                 *name;
     char                 *fullName;
-    char                 *vclass;
-    short int             jindent;
     short int             lineCount;
     char                  category; /* Global/Local TODO: enum!*/
     Type                  csymType; /* symtype of completion */
@@ -46,14 +44,13 @@ typedef struct completions {
     int                   alternativeIndex;
 } Completions;
 
-extern Completion *newCompletion(char *name, char *fullName, char *vclass, short int jindent,
+extern Completion *newCompletion(char *name, char *fullName,
                                  short int lineCount, char category, char csymType,
                                  struct reference ref, struct referenceItem sym);
 extern void olcxFreeCompletion(Completion *completion);
 extern void olcxFreeCompletions(Completion *completions);
 
-extern Completion  *completionListPrepend(Completion *completions, char *name, char *fullText,
-                                          char *vclass, int jindent, Symbol *s, ReferenceItem *ri,
+extern Completion  *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *s, ReferenceItem *ri,
                                           Reference *dfpos, int symType, int vFunClass);
 
 void tagSearchCompactShortResults(void);

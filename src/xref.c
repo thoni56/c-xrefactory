@@ -20,6 +20,7 @@
 #include "protocol.h"
 #include "reftab.h"
 
+
 static void printPrescanningMessage(void) {
     if (options.xref2) {
         char tmpBuff[TMP_BUFF_SIZE];

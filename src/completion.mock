@@ -3,10 +3,10 @@
 #include "completion.h"
 
 
-Completion *newCompletion(char *name, char *fullName, char *vclass, short jindent, short lineCount, char category, char csymType, struct reference ref, struct referenceItem refs) {
+Completion *newCompletion(char *name, char *fullName, short lineCount, char category, char csymType, struct reference ref, struct referenceItem refs) {
     struct reference *refP = &ref;
     struct referenceItem *refsP = &refs;
-    return (Completion *)mock(name, fullName, vclass, jindent, lineCount, category, csymType, refP, refsP);
+    return (Completion *)mock(name, fullName, lineCount, category, csymType, refP, refsP);
 }
 
 void olcxFreeCompletion(Completion *completion) {
@@ -16,10 +16,9 @@ void olcxFreeCompletions(Completion *completions) {
     mock(completions);
 }
 
-Completion *completionListPrepend(Completion *completions, char *name, char *fullText, char *vclass,
-                                    int jindent, Symbol *s, ReferenceItem *ri, Reference *dfpos,
+Completion *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *s, ReferenceItem *ri, Reference *dfpos,
                                     int symType, int vFunClass) {
-    return (Completion *)mock(name, fullText, vclass, jindent, s, ri, dfpos, symType, vFunClass, completions);
+    return (Completion *)mock(name, fullText, s, ri, dfpos, symType, vFunClass, completions);
 }
 
 void tagSearchCompactShortResults(void) {

@@ -14,15 +14,13 @@
 #include "symbol.h"
 
 
-Completion *newCompletion(char *name, char *fullName, char *vclass, short int jindent,
+Completion *newCompletion(char *name, char *fullName,
                           short int lineCount, char category, char csymType,
                           struct reference ref, struct referenceItem sym) {
     Completion *completion = olcxAlloc(sizeof(Completion));
 
     completion->name = name;
     completion->fullName = fullName;
-    completion->vclass = vclass;
-    completion->jindent = jindent;
     completion->lineCount = lineCount;
     completion->category = category;
     completion->csymType = csymType;
@@ -35,11 +33,11 @@ Completion *newCompletion(char *name, char *fullName, char *vclass, short int ji
 
 // if s==NULL, then the pos is taken as default position of this ref !!!
 /* If symbol != NULL && referenceItem != NULL then dfref can be anything... */
-Completion *completionListPrepend(Completion *completions, char *name, char *fullText, char *vclass,
-                                  int jindent, Symbol *symbol, ReferenceItem *referenceItem,
+Completion *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *symbol,
+                                  ReferenceItem *referenceItem,
                                   Reference *reference, int cType, int vFunClass) {
     Completion    *completion;
-    char *ss,*nn, *fullnn, *vclnn;
+    char *ss,*nn, *fullnn;
     ReferenceCategory category;
     ReferenceScope scope;
     Storage storage;
@@ -54,11 +52,6 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         fullnn = olcxAlloc(strlen(fullText)+1);
         strcpy(fullnn, fullText);
     }
-    vclnn = NULL;
-    if (vclass!=NULL) {
-        vclnn = olcxAlloc(strlen(vclass)+1);
-        strcpy(vclnn, vclass);
-    }
     if (referenceItem!=NULL) {
         // probably a 'search in tag' file item
         slen = strlen(referenceItem->linkName);
@@ -68,13 +61,13 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
                            referenceItem->type, referenceItem->storage, referenceItem->scope,
                            referenceItem->access, referenceItem->category);
 
-        completion = newCompletion(nn, fullnn, vclnn, jindent, 1, referenceItem->category, cType, *reference, sri);
+        completion = newCompletion(nn, fullnn, 1, referenceItem->category, cType, *reference, sri);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
         fillReferenceItem(&sri, "", cxFileHashNumber(""), NO_FILE_NUMBER, NO_FILE_NUMBER, TypeUnknown, StorageDefault,
                            ScopeAuto, AccessDefault, CategoryLocal);
-        completion = newCompletion(nn, fullnn, vclnn, jindent, 1, CategoryLocal, cType, r, sri);
+        completion = newCompletion(nn, fullnn, 1, CategoryLocal, cType, r, sri);
     } else {
         Reference r;
         getSymbolCxrefProperties(symbol, &category, &scope, &storage);
@@ -87,7 +80,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         fillReferenceItem(&sri, ss, cxFileHashNumber(ss),
                            vFunClass, vFunClass, symbol->type, storage,
                            scope, symbol->access, category);
-        completion = newCompletion(nn, fullnn, vclnn, jindent, 1, category, cType, r, sri);
+        completion = newCompletion(nn, fullnn, 1, category, cType, r, sri);
     }
     if (fullText!=NULL) {
         for (int i=0; fullText[i]; i++) {
@@ -103,8 +96,6 @@ void olcxFreeCompletion(Completion *r) {
     olcxFree(r->name, strlen(r->name)+1);
     if (r->fullName!=NULL)
         olcxFree(r->fullName, strlen(r->fullName)+1);
-    if (r->vclass!=NULL)
-        olcxFree(r->vclass, strlen(r->vclass)+1);
     if (r->category == CategoryGlobal) {
         assert(r->sym.linkName);
         olcxFree(r->sym.linkName, strlen(r->sym.linkName)+1);

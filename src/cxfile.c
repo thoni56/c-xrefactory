@@ -271,7 +271,7 @@ void searchSymbolCheckReference(ReferenceItem  *referenceItem, Reference *refere
     if (searchStringMatch(sname, slen)) {
         static int count = 0;
         sessionData.retrieverStack.top->completions = completionListPrepend(
-            sessionData.retrieverStack.top->completions, sname, NULL, NULL, 0, NULL, referenceItem,
+            sessionData.retrieverStack.top->completions, sname, NULL, NULL, referenceItem,
             reference, referenceItem->type, referenceItem->vFunClass);
         // this is a hack for memory reduction
         // compact completions from time to time
