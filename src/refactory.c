@@ -58,7 +58,7 @@ static EditorUndo *refactoringStartingPoint;
 
 static bool editServerSubTaskFirstPass = true;
 
-static char *editServInitOptions[] = {
+static char *serverStandardOptions[] = {
     "xref",
     "-xrefactory-II",
     //& "-debug",
@@ -67,7 +67,7 @@ static char *editServInitOptions[] = {
 };
 
 // Refactory will always use xref2 protocol when generating/updating xrefs
-static char *initOptionsForReferencesUpdate[] = {
+static char *xrefUpdateOptions[] = {
     "xref",
     "-xrefactory-II",
     NULL,
@@ -149,7 +149,7 @@ static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], char *project,
 static void ensureReferencesAreUpdated(char *project) {
     int argumentCount;
     char *argumentVector[MAX_NARGV_OPTIONS_COUNT];
-    int refactoryXrefInitOptionsCount;
+    int xrefUpdateOptionsCount;
 
     // following would be too long to be allocated on stack
     static Options savedOptions;
@@ -167,9 +167,9 @@ static void ensureReferencesAreUpdated(char *project) {
 
     setArguments(argumentVector, project, NULL, NULL);
     argumentCount = argument_count(argumentVector);
-    refactoryXrefInitOptionsCount = argument_count(initOptionsForReferencesUpdate);
-    for (int i = 1; i < refactoryXrefInitOptionsCount; i++) {
-        argumentVector[argumentCount++] = initOptionsForReferencesUpdate[i];
+    xrefUpdateOptionsCount = argument_count(xrefUpdateOptions);
+    for (int i = 1; i < xrefUpdateOptionsCount; i++) {
+        argumentVector[argumentCount++] = xrefUpdateOptions[i];
     }
     argumentVector[argumentCount++] = updateOption;
 
@@ -182,7 +182,7 @@ static void ensureReferencesAreUpdated(char *project) {
     ppcEnd(PPC_UPDATE_REPORT);
 
     // return into editSubTaskState
-    mainTaskEntryInitialisations(argument_count(editServInitOptions), editServInitOptions);
+    mainTaskEntryInitialisations(argument_count(serverStandardOptions), serverStandardOptions);
     editServerSubTaskFirstPass = true;
 }
 
@@ -204,7 +204,7 @@ static void parseBufferUsingServer(char *project, EditorMarker *point, EditorMar
         argumentVector[argumentCount++] = pushOption2;
     }
     initServer(argumentCount, argumentVector);
-    callServer(argument_count(editServInitOptions), editServInitOptions, argumentCount, argumentVector,
+    callServer(argument_count(serverStandardOptions), serverStandardOptions, argumentCount, argumentVector,
                &editServerSubTaskFirstPass);
 }
 
@@ -218,7 +218,7 @@ static void beInteractive(void) {
         closeMainOutputFile();
         ppcSynchronize();
         deepCopyOptionsFromTo(&savedOptions, &options);
-        processOptions(argument_count(editServInitOptions), editServInitOptions, DONT_PROCESS_FILE_ARGUMENTS);
+        processOptions(argument_count(serverStandardOptions), serverStandardOptions, DONT_PROCESS_FILE_ARGUMENTS);
         getPipedOptions(&argumentCount, &argumentVectorP);
         openOutputFile(refactoringOptions.outputFileName);
         if (argumentCount <= 1)
@@ -226,7 +226,7 @@ static void beInteractive(void) {
         initServer(argumentCount, argumentVectorP);
         if (options.continueRefactoring != RC_NONE)
             break;
-        callServer(argument_count(editServInitOptions), editServInitOptions, argumentCount, argumentVectorP,
+        callServer(argument_count(serverStandardOptions), serverStandardOptions, argumentCount, argumentVectorP,
                    &editServerSubTaskFirstPass);
         answerEditAction();
     }
@@ -1360,7 +1360,7 @@ void refactory(void) {
     refactoringStartingPoint = editorUndo;
 
     // init subtask
-    mainTaskEntryInitialisations(argument_count(editServInitOptions), editServInitOptions);
+    mainTaskEntryInitialisations(argument_count(serverStandardOptions), serverStandardOptions);
     editServerSubTaskFirstPass = true;
 
     progressFactor = 1;
