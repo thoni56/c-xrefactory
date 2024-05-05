@@ -129,7 +129,7 @@ Ensure(Yylex, can_process_include_directive) {
     currentInput.write = currentInput.begin + strlen(lexem_stream);
 
     expect(extractPathInto, will_set_contents_of_parameter(dest, "some/path", 10));
-    always_expect(normalizeFileName, will_return("some/path/include.h"));
+    always_expect(normalizeFileName_static, will_return("some/path/include.h"));
 
     /* Editor does not have the file open... */
     expect(findEditorBufferForFile, when(name, is_equal_to_string("some/path/include.h")),
@@ -176,7 +176,7 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
            will_set_contents_of_parameter(dest, "path1", sizeof(char *)));
 
     /* First look in directory of file with the #include since it's not an angle bracketed include */
-    expect(normalizeFileName, when(name, is_equal_to_string("include.h")),
+    expect(normalizeFileName_static, when(name, is_equal_to_string("include.h")),
            when(relative_to, is_equal_to_string("path1")), will_return("path1/include.h"));
     /* Editor should not have any file open... */
     always_expect(findEditorBufferForFile, will_return(NULL));
@@ -184,23 +184,23 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
     expect(openFile, when(fileName, is_equal_to_string("path1/include.h")), will_return(NULL));
 
     /* So now we search through include paths (options.includeDirs) which may include wildcards */
-    expect(normalizeFileName, when(name, is_equal_to_string("path1")), will_return("path1/include.h"));
+    expect(normalizeFileName_static, when(name, is_equal_to_string("path1")), will_return("path1/include.h"));
     expect(expandWildcardsInOnePath, when(filename, is_equal_to_string("path1/include.h")),
            will_set_contents_of_parameter(outpaths, "path1", sizeof(char *)));
     /* Not found in this directory... */
     expect(openFile, when(fileName, is_equal_to_string("path1/include.h")), will_return(NULL));
 
-    expect(normalizeFileName, when(name, is_equal_to_string("path2")), will_return("path2/include.h"));
+    expect(normalizeFileName_static, when(name, is_equal_to_string("path2")), will_return("path2/include.h"));
     expect(expandWildcardsInOnePath, when(filename, is_equal_to_string("path2/include.h")),
            will_set_contents_of_parameter(outpaths, "path2", sizeof(char *)));
     /* But in this... */
     expect(openFile, when(fileName, is_equal_to_string("path2/include.h")), will_return(&file));
 
     /* found: */
-    expect(normalizeFileName, when(name, is_equal_to_string("path2/include.h")), will_return("path2/include.h"));
+    expect(normalizeFileName_static, when(name, is_equal_to_string("path2/include.h")), will_return("path2/include.h"));
 
     /* Yet another normalization in addFileTableItem()... */
-    expect(normalizeFileName, when(name, is_equal_to_string("path2/include.h")), will_return("path2/include.h"));
+    expect(normalizeFileName_static, when(name, is_equal_to_string("path2/include.h")), will_return("path2/include.h"));
 
     /* Always  */
     always_expect(checkFileModifiedTime);
@@ -240,13 +240,13 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
            will_set_contents_of_parameter(dest, "path2/", sizeof(char *)));
 
     /* First find which include path the current file was found at... */
-    expect(normalizeFileName, when(name, is_equal_to_string("path1")),
+    expect(normalizeFileName_static, when(name, is_equal_to_string("path1")),
            when(relative_to, is_equal_to_string("cwd")), will_return("path1"));
-    expect(normalizeFileName, when(name, is_equal_to_string("path2")),
+    expect(normalizeFileName_static, when(name, is_equal_to_string("path2")),
            when(relative_to, is_equal_to_string("cwd")), will_return("path2"));
 
     /* So now we search through include paths (options.includeDirs) starting at the one after path2... */
-    expect(normalizeFileName, when(name, is_equal_to_string("path3")),
+    expect(normalizeFileName_static, when(name, is_equal_to_string("path3")),
            when(relative_to, is_equal_to_string("cwd")), will_return("path3/include.h"));
     /* And it might contain wildcards, so ... */
     expect(expandWildcardsInOnePath, when(filename, is_equal_to_string("path3/include.h")),
@@ -257,11 +257,11 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
     expect(openFile, when(fileName, is_equal_to_string("path3/include.h")), will_return(&file));
 
     /* found: */
-    expect(normalizeFileName, when(name, is_equal_to_string("path3/include.h")),
+    expect(normalizeFileName_static, when(name, is_equal_to_string("path3/include.h")),
            when(relative_to, is_equal_to_string("cwd")), will_return("path3/include.h"));
 
     /* Yet another normalization in addFileTableItem()... */
-    expect(normalizeFileName, when(name, is_equal_to_string("path3/include.h")), will_return("path3/include.h"));
+    expect(normalizeFileName_static, when(name, is_equal_to_string("path3/include.h")), will_return("path3/include.h"));
 
     /* Always  */
     always_expect(checkFileModifiedTime);

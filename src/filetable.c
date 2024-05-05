@@ -124,7 +124,7 @@ int addFileNameToFileTable(char *name) {
     struct fileItem *createdFileItem;
 
     /* Create a fileItem on the stack, with a static normalizedFileName, returned by normalizeFileName() */
-    normalizedFileName = normalizeFileName(name, cwd);
+    normalizedFileName = normalizeFileName_static(name, cwd);
 
     /* Does it already exist? */
     if (existsInFileTable(normalizedFileName))

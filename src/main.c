@@ -152,11 +152,11 @@ static void initOptions(void) {
 static void initStandardCxrefFileName(char *inputfile) {
     static char standardCxrefFileName[MAX_FILE_NAME_SIZE];
 
-    extractPathInto(normalizeFileName(inputfile, cwd), standardCxrefFileName);
+    extractPathInto(normalizeFileName_static(inputfile, cwd), standardCxrefFileName);
     strcat(standardCxrefFileName, DEFAULT_CXREF_FILENAME);
     assert(strlen(standardCxrefFileName) < MAX_FILE_NAME_SIZE);
 
-    strcpy(standardCxrefFileName, getRealFileName_static(normalizeFileName(standardCxrefFileName, cwd)));
+    strcpy(standardCxrefFileName, getRealFileName_static(normalizeFileName_static(standardCxrefFileName, cwd)));
     assert(strlen(standardCxrefFileName) < MAX_FILE_NAME_SIZE);
 
     options.cxrefsLocation = standardCxrefFileName;

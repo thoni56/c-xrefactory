@@ -485,7 +485,7 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
         /* #include_next, so find the include path which matches this */
         for (StringList *p = options.includeDirs; p != NULL; p = p->next) {
             char normalizedIncludePath[MAX_FILE_NAME_SIZE];
-            strcpy(normalizedIncludePath, normalizeFileName(p->string, cwd));
+            strcpy(normalizedIncludePath, normalizeFileName_static(p->string, cwd));
             int len = strlen(normalizedIncludePath);
             if (normalizedIncludePath[len-1] != FILE_PATH_SEPARATOR) {
                 normalizedIncludePath[len] = FILE_PATH_SEPARATOR;
@@ -501,7 +501,7 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
 
     /* If not an angle bracketed include, look first in the directory of the current file */
     if (includeType != '<') {
-        strcpy(normalizedName, normalizeFileName(name, path));
+        strcpy(normalizedName, normalizeFileName_static(name, path));
         log_trace("trying to open %s", normalizedName);
         editorBuffer = findEditorBufferForFile(normalizedName);
         if (editorBuffer == NULL)
@@ -511,7 +511,7 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
     /* If not found we need to walk the include paths... */
  search:
     for (includeDirP = start; includeDirP != NULL && editorBuffer == NULL && file == NULL; includeDirP = includeDirP->next) {
-        strcpy(normalizedName, normalizeFileName(includeDirP->string, cwd));
+        strcpy(normalizedName, normalizeFileName_static(includeDirP->string, cwd));
         expandWildcardsInOnePath(normalizedName, wildcardExpandedPaths, MAX_OPTION_LEN);
         MapOverPaths(wildcardExpandedPaths, {
             int length;
@@ -535,7 +535,7 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
         return false;
     }
  found:
-    strcpy(normalizedName, normalizeFileName(normalizedName, cwd));
+    strcpy(normalizedName, normalizeFileName_static(normalizedName, cwd));
     log_debug("opened file '%s'", normalizedName);
     pushInclude(file, editorBuffer, normalizedName, "\n");
     return true;

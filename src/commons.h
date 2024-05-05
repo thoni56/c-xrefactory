@@ -21,7 +21,7 @@ extern void internalCheckFail(char *expr, char *file, int line);
 extern char *create_temporary_filename(void);
 extern void copyFileFromTo(char *src, char *dest);
 extern int extractPathInto(char *source, char *dest); /* Return length of path */
-extern char *normalizeFileName(char *name, char *relativeto);
+extern char *normalizeFileName_static(char *name, char *relativeto);
 
 
 extern void openOutputFile(char *outfile);

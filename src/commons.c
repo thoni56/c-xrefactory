@@ -72,9 +72,9 @@ void initCwd(void) {
             strcpy(cwd,nid);
         }
     }
-    strcpy(cwd, normalizeFileName(cwd, "c:\\"));
+    strcpy(cwd, normalizeFileName_static(cwd, "c:\\"));
 #else
-    strcpy(cwd, normalizeFileName(cwd, "/"));
+    strcpy(cwd, normalizeFileName_static(cwd, "/"));
 #endif
 }
 
@@ -95,7 +95,7 @@ void reInitCwd(char *dffname, char *dffsect) {
 
 /* this is the the number 1 of program hacking */
 /* Returns: a pointer to a static area! */
-char *normalizeFileName(char *name, char *relative_to) {
+char *normalizeFileName_static(char *name, char *relative_to) {
     static char normalizedFileName[MAX_FILE_NAME_SIZE];
     int l1,l2,i,j,s1;
     char *ss;
@@ -191,7 +191,7 @@ char *create_temporary_filename(void) {
         strcpy(temporary_name, temp_dir);
     } else {
         sprintf(temporary_name,"%s\\xrefu%d.tmp", temp_dir, count++);
-        strcpy(temporary_name, normalizeFileName(temporary_name, cwd));
+        strcpy(temporary_name, normalizeFileName_static(temporary_name, cwd));
     }
     assert(strlen(temporary_name)+1 < MAX_FILE_NAME_SIZE);
 #else
@@ -277,7 +277,7 @@ static char *identifierReference_static(void) {
     char        fileNameAndLineNumber[MAX_REF_LEN];
     if (currentFile.fileName != NULL) {
         if (options.xref2 && options.mode != ServerMode) {
-            strcpy(fileName, getRealFileName_static(normalizeFileName(currentFile.fileName, cwd)));
+            strcpy(fileName, getRealFileName_static(normalizeFileName_static(currentFile.fileName, cwd)));
             assert(strlen(fileName) < MAX_FILE_NAME_SIZE);
             sprintf(fileNameAndLineNumber, "%s:%d", simpleFileName(fileName), currentFile.lineNumber);
             assert(strlen(fileNameAndLineNumber) < MAX_REF_LEN);

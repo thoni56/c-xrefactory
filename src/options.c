@@ -472,11 +472,11 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         if (fileNameShouldBePruned(fname))
             return;
         sprintf(dirName, "%s%c%s", dir, FILE_PATH_SEPARATOR, fname);
-        strcpy(dirName, normalizeFileName(dirName, cwd));
+        strcpy(dirName, normalizeFileName_static(dirName, cwd));
         if (fileNameShouldBePruned(dirName))
             return;
     } else {
-        strcpy(dirName, normalizeFileName(fname, cwd));
+        strcpy(dirName, normalizeFileName_static(fname, cwd));
     }
     if (strlen(dirName) >= MAX_FILE_NAME_SIZE) {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -991,7 +991,7 @@ static void getXrefrcFileName(char *fileName) {
     char *home;
 
     if (options.xrefrc!=NULL) {
-        sprintf(fileName, "%s", normalizeFileName(options.xrefrc, cwd));
+        sprintf(fileName, "%s", normalizeFileName_static(options.xrefrc, cwd));
         return;
     }
     home = getEnv("HOME");
@@ -1012,7 +1012,7 @@ static void getXrefrcFileName(char *fileName) {
 /* Experimental: Auto-finding config file in a source tree */
 char *findConfigFile(char *start) {
     char currentDir[strlen(start)+1];
-    char *normalizedFileName = normalizeFileName(".c-xrefrc", start);
+    char *normalizedFileName = normalizeFileName_static(".c-xrefrc", start);
 
     strcpy(currentDir, start);
     /* Remove possible trailing file separator */
@@ -1025,7 +1025,7 @@ char *findConfigFile(char *start) {
             return NULL;
         else {
             *p = 0;
-            normalizedFileName = normalizeFileName(".c-xrefrc", cwd);
+            normalizedFileName = normalizeFileName_static(".c-xrefrc", cwd);
         }
     }
     return normalizedFileName;
@@ -1553,7 +1553,7 @@ static bool processPOption(int *argi, int argc, char **argv) {
         char normalizedFileName[MAX_FILE_NAME_SIZE];
         ensureNextArgumentIsAFileName(&i, argc, argv);
         file = argv[i];
-        strcpy(normalizedFileName, normalizeFileName(file, cwd));
+        strcpy(normalizedFileName, normalizeFileName_static(file, cwd));
         ensureNextArgumentIsAFileName(&i, argc, argv);
         fromFile = argv[i];
         openEditorBufferNoFileLoad(normalizedFileName, fromFile);
@@ -1576,7 +1576,7 @@ static void setXrefsLocation(char *argvi) {
         sprintf(tmpBuff, "'%s' is not an absolute path, correct -refs option", argvi);
         warningMessage(ERR_ST, tmpBuff);
     }
-    options.cxrefsLocation = allocateStringForOption(&options.cxrefsLocation, normalizeFileName(argvi, cwd));
+    options.cxrefsLocation = allocateStringForOption(&options.cxrefsLocation, normalizeFileName_static(argvi, cwd));
 }
 
 static bool processROption(int *argi, int argc, char **argv) {

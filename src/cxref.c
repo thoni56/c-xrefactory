@@ -1636,7 +1636,7 @@ int getFileNumberFromName(char *name) {
     char *normalizedName;
     int fileNumber;
 
-    normalizedName = normalizeFileName(name, cwd);
+    normalizedName = normalizeFileName_static(name, cwd);
     if ((fileNumber = lookupFileTable(normalizedName)) != -1) {
         return fileNumber;
     } else {
