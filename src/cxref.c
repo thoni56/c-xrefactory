@@ -74,7 +74,7 @@ static Reference *getDefinitionRef(Reference *reference) {
     return definitionReference;
 }
 
-static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, UsageKind usage) {
+static void setAvailableRefactorings(Symbol *symbol) {
     switch (symbol->type) {
     case TypeStruct:
         makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
@@ -304,7 +304,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!
             if (strcmp(symbol->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
                 if (options.serverOperation == OLO_GET_AVAILABLE_REFACTORINGS) {
-                    setAvailableRefactoringsInMenu(NULL, symbol, usage.kind);
+                    setAvailableRefactorings(symbol);
                 }
             }
         } else {
@@ -333,7 +333,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                     menu->defUsage = usage.kind;
                 }
                 if (options.serverOperation == OLO_GET_AVAILABLE_REFACTORINGS) {
-                    setAvailableRefactoringsInMenu(menu, symbol, usage.kind);
+                    setAvailableRefactorings(symbol);
                 }
             }
         }
