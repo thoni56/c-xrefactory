@@ -986,10 +986,10 @@ attempt at optimizing. ("The root of all evil is premature optimization" and
 "Make it work, make it right, make it fast".)</p>
 </div>
 <div class="paragraph">
-<p>It seems to all start in <code>initInput()</code> in <code>yylex.c</code> where the only
-call to <code>fillFileDescriptor()</code> is made. But you might wonder why this
-function does some initial reading, this should be pushed down to the
-buffers in the file descriptor.</p>
+<p>It seems that everything start in <code>initInput()</code> in <code>yylex.c</code> where the
+only existing call to <code>fillFileDescriptor()</code> is made. But you might
+wonder why this function does some initial reading, this should be
+pushed down to the buffers in the file descriptor.</p>
 </div>
 <div class="sect3">
 <h4 id="_lexingscanning">8.4.1. Lexing/scanning</h4>
@@ -1173,7 +1173,7 @@ what it needs to do with it ("dispatching:").</p>
 <li>
 <p>Refactoring</p>
 <div class="paragraph">
-<p>Each refactoring operation calls a new instance of <code>c-xref</code>.</p>
+<p>Each refactoring operation calls a new instance of <code>c-xref</code>?</p>
 </div>
 </li>
 <li>
@@ -1197,7 +1197,7 @@ buffers are opened with what file&#8230;&#8203;</p>
 </div>
 <div class="paragraph">
 <p>At this point I suspect that <code>-preload &lt;file1&gt; &lt;file2&gt;</code> means that the
-editor has saved a copy <code>&lt;file1&gt;</code> in <code>&lt;file2&gt;</code> and requests the server
+editor has saved a copy of <code>&lt;file1&gt;</code> in <code>&lt;file2&gt;</code> and requests the server
 to set up a "buffer" describing that file and use it instead of the
 <code>&lt;file1&gt;</code> that recides on disk.</p>
 </div>
@@ -1214,10 +1214,7 @@ server the current content somehow, this is the <code>-preload</code> option.</p
 <p>When serving an editor the c-xrefactory application is divided into
 the server, <em>c-xref</em> and the editor part, at this point only Emacs:en
 are supported so that&#8217;s implemented in the
-<code>editor/Emacs</code>-packages. (The jEdit source is now also resurrected,
-but it is completely untested and probably will be. It is resurrected
-so that it can be inspected when investigating use of various server
-options and features.)</p>
+<code>editor/Emacs</code>-packages.</p>
 </div>
 <div class="sect3">
 <h4 id="_interaction">8.7.1. Interaction</h4>
@@ -2027,7 +2024,7 @@ copy</p>
 <div class="paragraph">
 <p>The code does not always explain the algorithms that it
 implements. This chapter will ultimately be a description of various
-algorithms used by <em>c-xref</em>.</p>
+algorithms used by <em>c-xrefactory</em>.</p>
 </div>
 <div class="sect2">
 <h3 id="_how_is_an_extract_refactoring_performed">11.1. How is an Extract refactoring performed?</h3>
@@ -2051,7 +2048,7 @@ check, and then the server answers with</p>
 </div>
 <div class="paragraph">
 <p>The first string is the code that will replace the extracted code,
-such a call to the extracted function. The second string is the header
+such as a call to the extracted function. The second string is the header
 part that will preceed the extracted code ("preamble"), and the third is then of
 course any code that needs to go after the extracted code ("postamble").</p>
 </div>
@@ -3021,7 +3018,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-05-05 08:43:50 UTC
+Last updated 2024-05-05 20:14:09 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
