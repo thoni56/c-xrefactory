@@ -19,4 +19,4 @@ yacc_parser.tail
 .unittests.done
 options_config.h
 .cache
-
+latex
