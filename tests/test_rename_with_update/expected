@@ -1,0 +1,52 @@
+../../src/c-xref -xrefactory-II -refactory -fullupdate -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=single_int_on_line_1_col_44 -olmark=58 -olcursor=58 CURDIR/test_source/single_int2.c -log=log -o server-buffer
+<sync>
+<update-report>
+</update-report>
+<goto>
+ <position-off off=29 len=<n>>CURDIR/test_source/single_int1.c</position-off>
+</goto>
+<precheck len=<n>> single_int_on_line_1_col_4;</precheck>
+<goto>
+ <position-off off=109 len=<n>>CURDIR/test_source/single_int1.c</position-off>
+</goto>
+<precheck len=<n>> single_int_on_line_1_col_4 </precheck>
+<goto>
+ <position-off off=10 len=<n>>CURDIR/test_source/single_int1.h</position-off>
+</goto>
+<precheck len=<n>> single_int_on_line_1_col_4;</precheck>
+<goto>
+ <position-off off=44 len=<n>>CURDIR/test_source/single_int2.c</position-off>
+</goto>
+<precheck len=<n>> single_int_on_line_1_col_4 </precheck>
+<goto>
+ <position-off off=58 len=<n>>CURDIR/test_source/single_int2.c</position-off>
+</goto>
+<update-report>
+</update-report>
+<goto>
+ <position-off off=30 len=<n>>CURDIR/test_source/single_int1.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>single_int_on_line_1_col_4</str>  <str len=<n>>single_int_on_line_1_col_44</str>
+</replacement>
+<goto>
+ <position-off off=111 len=<n>>CURDIR/test_source/single_int1.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>single_int_on_line_1_col_4</str>  <str len=<n>>single_int_on_line_1_col_44</str>
+</replacement>
+<goto>
+ <position-off off=11 len=<n>>CURDIR/test_source/single_int1.h</position-off>
+</goto>
+<replacement>
+ <str len=<n>>single_int_on_line_1_col_4</str>  <str len=<n>>single_int_on_line_1_col_44</str>
+</replacement>
+<goto>
+ <position-off off=45 len=<n>>CURDIR/test_source/single_int2.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>single_int_on_line_1_col_4</str>  <str len=<n>>single_int_on_line_1_col_44</str>
+</replacement>
+<goto>
+ <position-off off=58 len=<n>>CURDIR/test_source/single_int2.c</position-off>
+</goto>
