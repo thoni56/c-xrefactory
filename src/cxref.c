@@ -1551,46 +1551,6 @@ static void safetyCheckAddDiffRef(Reference *r, OlcxReferences *diffrefs,
     olcxAppendReference(r, diffrefs);
 }
 
-void olcxReferencesDiff(Reference **anr1,
-                        Reference **aor2,
-                        Reference **diff
-                        ) {
-    Reference *r, *nr1, *or2, **dd;
-
-    LIST_MERGE_SORT(Reference, *anr1, olcxReferenceInternalLessFunction);
-    LIST_MERGE_SORT(Reference, *aor2, olcxReferenceInternalLessFunction);
-    nr1 = *anr1; or2 = *aor2; dd = diff;
-    *dd = NULL;
-    while (nr1!=NULL && or2!=NULL) {
-        if (positionsAreEqual(nr1->position, or2->position)) {
-            nr1 = nr1->next; or2=or2->next;
-        } else {
-            if (SORTED_LIST_LESS(nr1, *or2)) {
-                *dd = olcxCopyReference(nr1);
-                dd = &(*dd)->next;
-                nr1=nr1->next;
-            } else {
-                *dd = olcxCopyReference(or2);
-                dd = &(*dd)->next;
-                or2=or2->next;
-            }
-        }
-    }
-    if (nr1!=NULL || or2!=NULL) {
-        if (nr1!=NULL) {
-            r = nr1;
-            /* mode = DIFF_UNEXPECTED_REF; */
-        } else {
-            r = or2;
-            /* mode = DIFF_MISSING_REF; */
-        }
-        for (; r!=NULL; r=r->next) {
-            *dd = olcxCopyReference(r);
-            dd = &(*dd)->next;
-        }
-    }
-}
-
 static void safetyCheckDiff(Reference **anr1,
                             Reference **aor2,
                             OlcxReferences *diffrefs

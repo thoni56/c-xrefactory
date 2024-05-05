@@ -124,17 +124,6 @@ EditorBuffer *findEditorBufferForFile(char *name) {
     return editorBuffer;
 }
 
-EditorBuffer *findEditorBufferForFileOrCreateEmpty(char *name) {
-    EditorBuffer *buffer = findEditorBufferForFile(name);
-    if (buffer == NULL) {
-        buffer = createNewEditorBuffer(name, name, time(NULL), 0);
-        assert(buffer!=NULL);
-        allocNewEditorBufferTextSpace(buffer, 0);
-        buffer->textLoaded = true;
-    }
-    return buffer;
-}
-
 // Only used from Options for preload
 EditorBuffer *openEditorBufferNoFileLoad(char *name, char *fileName) {
     EditorBuffer  *buffer;

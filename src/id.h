@@ -22,8 +22,6 @@ typedef struct idList {
 extern void fillId(Id *id, char *name, Symbol *symbol, Position position);
 
 extern void fillIdList(IdList *idList, Id id, char *fname, Type nameType, IdList *next);
-extern void fillfIdList(IdList *idList, char *name, Symbol *symbol, Position position, char *fname, Type nameType,
-                        IdList *next);
 extern Id *newCopyOfId(Id *id);
 
 #endif

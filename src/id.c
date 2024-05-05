@@ -1,6 +1,6 @@
 #include "id.h"
 
-#include "stdinc.h"
+#include <stdio.h>
 #include "stackmemory.h"
 
 
@@ -16,17 +16,6 @@ void fillIdList(IdList *idList, Id id, char *fqtname, Type nameType, IdList *nex
     idList->fqtname  = fqtname;
     idList->nameType = nameType;
     idList->next     = next;
-}
-
-void fillfIdList(IdList *idList, char *name, Symbol *symbol, Position position, char *fqtname, Type nameType,
-                 IdList *next) {
-    idList->id.name     = name;
-    idList->id.symbol   = symbol;
-    idList->id.position = position;
-    idList->id.next     = NULL;
-    idList->fqtname     = fqtname;
-    idList->nameType    = nameType;
-    idList->next        = next;
 }
 
 Id *newCopyOfId(Id *id) {

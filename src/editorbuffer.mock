@@ -20,10 +20,6 @@ EditorBuffer *findEditorBufferForFile(char *name) {
   return (EditorBuffer *) mock(name);
 }
 
-EditorBuffer *findEditorBufferForFileOrCreateEmpty(char *name) {
-  return (EditorBuffer *) mock(name);
-}
-
 EditorBuffer *openEditorBufferNoFileLoad(char *name, char *fileName) {
   return (EditorBuffer *) mock(name, fileName);
 }

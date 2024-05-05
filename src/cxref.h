@@ -46,8 +46,6 @@ extern void olCreateSelectionMenu(int command);
 extern bool olcxShowSelectionMenu(void);
 extern void pushEmptySession(OlcxReferencesStack *stack);
 extern bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
-extern void olcxReferencesDiff(Reference **anr1, Reference **aor2,
-                               Reference **diff);
 extern void getLineAndColumnCursorPositionFromCommandLineOptions( int *l, int *c );
 extern void olcxPushSpecialCheckMenuSym(char *symname);
 extern bool isPushAllMethodsValidRefItem(ReferenceItem *ri);

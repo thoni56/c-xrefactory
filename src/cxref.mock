@@ -121,10 +121,6 @@ bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
     return (bool) mock(oo1, oo2);
 }
 
-void olcxReferencesDiff(Reference **anr1, Reference **aor2, Reference **diff) {
-    mock(anr1, aor2, diff);
-}
-
 bool olcxShowSelectionMenu(void) {
     return (int) mock();
 }
