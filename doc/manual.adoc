@@ -35,7 +35,7 @@ Here is a list of features
 * First tool to https://www.martinfowler.com/articles/refactoringRubicon.html[Cross Refactoring's Rubicon] as described by Martin Fowler
 * Safe refactorings to
   ** rename variables, functions etc.
-  ** extract function/method
+  ** extract function/macro
   ** delete, add, move parameters
 * Solid code completion
 * Search for symbols using wildcards
@@ -376,8 +376,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 
 -olcxpush::
 
--olcxpushallinmethod::
-
 -olcxpushandcallmacro::
 
 -olcxpushfileunused::
@@ -396,9 +394,7 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 
 -olcxrepush::
 
--olcxsafetycheck1::
-
--olcxsafetycheck2::
+-olcxsafetycheck::
 
 -olcxsafetycheckinit::
 
@@ -407,8 +403,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 -olcxsafetycheckmovedfile::
 
 -olcxsearch::
-
--olcxshowctree::
 
 -olcxsyntaxpass::
 
@@ -423,8 +417,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 -olcxtagselect::
 
 -olcxtarget::
-
--olcxtopapplcl::
 
 -olcxtops::
 
@@ -442,19 +434,13 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 
 -olexmacro::
 
--olfqtcompletionslevel::
-
 -olinelen::
 
 -olmanualresolve::
 
 -olmark::
 
--olnocheckaccess::
-
 -olnodialog::
-
--oocheckbits::
 
 -optinclude::
 
