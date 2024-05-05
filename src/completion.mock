@@ -9,9 +9,6 @@ Completion *newCompletion(char *name, char *fullName, short lineCount, char cate
     return (Completion *)mock(name, fullName, lineCount, category, csymType, refP, refsP);
 }
 
-void olcxFreeCompletion(Completion *completion) {
-    mock(completion);
-}
 void olcxFreeCompletions(Completion *completions) {
     mock(completions);
 }

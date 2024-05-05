@@ -92,7 +92,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     return completion;
 }
 
-void olcxFreeCompletion(Completion *r) {
+static void olcxFreeCompletion(Completion *r) {
     olcxFree(r->name, strlen(r->name)+1);
     if (r->fullName!=NULL)
         olcxFree(r->fullName, strlen(r->fullName)+1);

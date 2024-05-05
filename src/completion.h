@@ -47,7 +47,6 @@ typedef struct completions {
 extern Completion *newCompletion(char *name, char *fullName,
                                  short int lineCount, char category, char csymType,
                                  struct reference ref, struct referenceItem sym);
-extern void olcxFreeCompletion(Completion *completion);
 extern void olcxFreeCompletions(Completion *completions);
 
 extern Completion  *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *s, ReferenceItem *ri,
