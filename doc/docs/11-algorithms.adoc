@@ -2,7 +2,7 @@
 
 The code does not always explain the algorithms that it
 implements. This chapter will ultimately be a description of various
-algorithms used by _c-xref_.
+algorithms used by _c-xrefactory_.
 
 === How is an Extract refactoring performed?
 
@@ -22,7 +22,7 @@ check, and then the server answers with
 ```
 
 The first string is the code that will replace the extracted code,
-such a call to the extracted function. The second string is the header
+such as a call to the extracted function. The second string is the header
 part that will preceed the extracted code ("preamble"), and the third is then of
 course any code that needs to go after the extracted code ("postamble").
 

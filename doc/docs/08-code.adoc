@@ -86,10 +86,10 @@ in the structures, and infested with many macros, probably in an ignorant
 attempt at optimizing. ("The root of all evil is premature optimization" and
 "Make it work, make it right, make it fast".)
 
-It seems to all start in `initInput()` in `yylex.c` where the only
-call to `fillFileDescriptor()` is made. But you might wonder why this
-function does some initial reading, this should be pushed down to the
-buffers in the file descriptor.
+It seems that everything start in `initInput()` in `yylex.c` where the
+only existing call to `fillFileDescriptor()` is made. But you might
+wonder why this function does some initial reading, this should be
+pushed down to the buffers in the file descriptor.
 
 ==== Lexing/scanning
 
@@ -216,7 +216,7 @@ The editor invokes a new `c-xref` process for the following cases:
 
 - Refactoring
 +
-Each refactoring operation calls a new instance of `c-xref`.
+Each refactoring operation calls a new instance of `c-xref`?
 
 - Create Project
 +
@@ -232,7 +232,7 @@ like the editor-side tries to keep the server in sync with which
 buffers are opened with what file...
 
 At this point I suspect that `-preload <file1> <file2>` means that the
-editor has saved a copy `<file1>` in `<file2>` and requests the server
+editor has saved a copy of `<file1>` in `<file2>` and requests the server
 to set up a "buffer" describing that file and use it instead of the
 `<file1>` that recides on disk.
 
@@ -245,10 +245,7 @@ server the current content somehow, this is the `-preload` option.
 When serving an editor the c-xrefactory application is divided into
 the server, _c-xref_ and the editor part, at this point only Emacs:en
 are supported so that's implemented in the
-`editor/Emacs`-packages. (The jEdit source is now also resurrected,
-but it is completely untested and probably will be. It is resurrected
-so that it can be inspected when investigating use of various server
-options and features.)
+`editor/Emacs`-packages.
 
 
 ==== Interaction
