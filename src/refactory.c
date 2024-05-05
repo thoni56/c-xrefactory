@@ -66,11 +66,10 @@ static char *editServInitOptions[] = {
     NULL,
 };
 
-// Refactory will always use xref2 protocol and inhibit a few messages when generating/updating xrefs
+// Refactory will always use xref2 protocol when generating/updating xrefs
 static char *initOptionsForReferencesUpdate[] = {
     "xref",
     "-xrefactory-II",
-    "-briefoutput",
     NULL,
 };
 
