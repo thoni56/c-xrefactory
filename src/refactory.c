@@ -270,7 +270,7 @@ static void pushReferences(EditorMarker *point, char *pushOption, char *resolveM
 static void safetyCheck(char *project, EditorMarker *point) {
     // !!!!update references MUST be followed by a pushing action, to refresh options
     ensureReferencesAreUpdated(refactoringOptions.project);
-    parseBufferUsingServer(project, point, NULL, "-olcxsafetycheck2", NULL);
+    parseBufferUsingServer(project, point, NULL, "-olcxsafetycheck", NULL);
 
     assert(sessionData.browserStack.top != NULL);
     if (sessionData.browserStack.top->hkSelectedSym == NULL) {

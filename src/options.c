@@ -1362,7 +1362,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_RENAME;
     else if (strcmp(argv[i], "-olcxargmanip")==0)
         options.serverOperation = OLO_ARG_MANIP;
-    else if (strcmp(argv[i], "-olcxsafetycheck2")==0)
+    else if (strcmp(argv[i], "-olcxsafetycheck")==0)
         options.serverOperation = OLO_SAFETY_CHECK2;
     else if (strcmp(argv[i], "-olcxgotodef")==0)
         options.serverOperation = OLO_GOTO_DEF;
