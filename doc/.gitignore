@@ -3,6 +3,6 @@
 *.png
 .structurizr
 workspace.json
-structurizr.properties
+.structurizr.properties
 guidebook.adoc
 dist
