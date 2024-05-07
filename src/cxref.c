@@ -823,7 +823,7 @@ static int getCurrentRefPosition(OlcxReferences *refs) {
     int             actn = 0;
     rr = NULL;
     if (refs!=NULL) {
-        rlevel = s_refListFilters[refs->refsFilterLevel];
+        rlevel = refListFilters[refs->refsFilterLevel];
         for (rr=refs->references; rr!=NULL && rr!=refs->actual; rr=rr->next) {
             if (rr->usage.kind < rlevel)
                 actn++;
@@ -877,7 +877,7 @@ static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
         while (rr != NULL) {
             passRefsThroughSourceFile(&rr, &refs->actual->position,
                                       communicationChannel, USAGE_FILTER,
-                                      s_refListFilters[refs->refsFilterLevel]);
+                                      refListFilters[refs->refsFilterLevel]);
         }
     }
     if (options.xref2) {
@@ -938,7 +938,7 @@ static void olcxReferenceGotoRef(int refn) {
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
-    rfilter = s_refListFilters[refs->refsFilterLevel];
+    rfilter = refListFilters[refs->refsFilterLevel];
     for (rr=refs->references,i=1; rr!=NULL && (i<refn||rr->usage.kind>=rfilter); rr=rr->next){
         if (rr->usage.kind < rfilter) i++;
     }
@@ -1044,7 +1044,7 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
 
 static void olcxSetActReferenceToFirstVisible(OlcxReferences *refs, Reference *r) {
     int                 rlevel;
-    rlevel = s_refListFilters[refs->refsFilterLevel];
+    rlevel = refListFilters[refs->refsFilterLevel];
     while (r!=NULL && r->usage.kind>=rlevel) r = r->next;
     if (r != NULL) {
         refs->actual = r;
@@ -1078,7 +1078,7 @@ static void olcxReferenceMinus(void) {
     int                 rlevel;
     if (!sessionHasReferencesValidForOperation(&sessionData,  &refs, CHECK_NULL))
         return;
-    rlevel = s_refListFilters[refs->refsFilterLevel];
+    rlevel = refListFilters[refs->refsFilterLevel];
     if (refs->actual == NULL) refs->actual = refs->references;
     else {
         act = refs->actual;
@@ -1418,11 +1418,11 @@ static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLe
     } else {
         if (olstringServed && olstringUsageKind == UsageMethodInvokedViaSuper) {
             //&oovisible = options.ooChecksBits;
-            oovisible = s_menuFilterOoBits[filterLevel];
+            oovisible = menuFilterOoBits[filterLevel];
             ooselected = METHOD_VIA_SUPER_SELECTION_OO_BITS;
         } else {
             //&oovisible = options.ooChecksBits;
-            oovisible = s_menuFilterOoBits[filterLevel];
+            oovisible = menuFilterOoBits[filterLevel];
             ooselected = DEFAULT_SELECTION_OO_BITS;
         }
     }
@@ -2338,8 +2338,8 @@ void answerEditAction(void) {
         }
         break;
     case OLO_GET_PRIMARY_START:
-        if (olstringServed && s_primaryStartPosition.file != NO_FILE_NUMBER) {
-            gotoOnlineCxref(&s_primaryStartPosition, UsageDefined, "");
+        if (olstringServed && primaryStartPosition.file != NO_FILE_NUMBER) {
+            gotoOnlineCxref(&primaryStartPosition, UsageDefined, "");
             olStackDeleteSymbol(sessionData.browserStack.top);
         } else {
             errorMessage(ERR_ST, "Begin of primary expression not found.");

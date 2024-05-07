@@ -139,8 +139,8 @@ void initAllInputs(void) {
     olstringFound = false;
     olstringServed = false;
     olstringInMacroBody = NULL;
-    s_upLevelFunctionCompletionType = NULL;
-    s_structRecordCompletionType = NULL;
+    upLevelFunctionCompletionType = NULL;
+    structRecordCompletionType = NULL;
 }
 
 
@@ -763,7 +763,7 @@ protected void processDefineDirective(bool hasArguments) {
                 if (lexem == IDENTIFIER ) {
                     argumentName = currentLexemStart;
                 } else if (lexem == ELLIPSIS) {
-                    argumentName = s_cppVarArgsName;
+                    argumentName = cppVarArgsName;
                     position = macroPosition;					// hack !!!
                     ellipsis = true;
                 } else
@@ -2196,7 +2196,6 @@ LexemCode yylex(void) {
 
  finish:
     log_trace("!'%s'(%d)", yytext, cxMemory->index);
-    s_lastReturnedLexem = lexem;
     return lexem;
 
  endOfMacroArgument:

@@ -11,9 +11,7 @@
 
 bool fileAbortEnabled;
 
-int s_lastReturnedLexem;
-
-unsigned s_recFindCl = 1;
+unsigned recFindCl = 1;
 
 
 ParsedInfo parsedInfo;
@@ -29,21 +27,21 @@ Position parameterBeginPosition;
 Position parameterEndPosition;
 
 
-Position s_primaryStartPosition;
-Position s_staticPrefixStartPosition;
+Position primaryStartPosition;
+Position staticPrefixStartPosition;
 
 Id yyIdBuffer[YYIDBUFFER_SIZE];
 int yyIdBufferIndex = 0;
 
-TypeModifier *s_structRecordCompletionType;
-TypeModifier *s_upLevelFunctionCompletionType;
+TypeModifier *structRecordCompletionType;
+TypeModifier *upLevelFunctionCompletionType;
 
 char *inputFileName="";
 Completions collectedCompletions;
 
 /* **************** cached symbols ********************** */
 
-Position s_olcxByPassPos;
+Position olcxByPassPos;
 Position cxRefPosition;         /* Maybe the position that we consider us "on"? */
 
 time_t fileProcessingStartTime;
@@ -52,7 +50,7 @@ Language currentLanguage;
 int currentPass;
 int maxPasses;
 
-unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL] = {
+unsigned menuFilterOoBits[MAX_MENU_FILTER_LEVEL] = {
     (OOC_VIRT_ANY | OOC_PROFILE_ANY),
     //& (OOC_VIRT_RELATED | OOC_PROFILE_ANY),
     (OOC_VIRT_ANY | OOC_PROFILE_APPLICABLE),
@@ -64,14 +62,14 @@ unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL] = {
 
 // !!!! if you modify this, you will need to modify level# for
 //  Emacs, in c-xref.el !!!!!!!!!
-int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL] = {
+int refListFilters[MAX_REF_LIST_FILTER_LEVEL] = {
     UsageMaxOLUsages,
     UsageUsed,
     UsageAddrUsed,
     UsageLvalUsed,
 };
 
-char *s_cppVarArgsName = "__VA_ARGS__";
+char *cppVarArgsName = "__VA_ARGS__";
 char *javaSourcePaths;
 
 
@@ -81,7 +79,7 @@ bool olstringFound = false;
 bool olstringServed = false;
 UsageKind olstringUsageKind = 0;
 char *olstringInMacroBody = NULL;
-int s_olMacro2PassFile;
+int olMacro2PassFile;
 
 /* ******************* yytext for yacc ****************** */
 char *yytext;

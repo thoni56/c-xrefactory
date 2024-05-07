@@ -136,7 +136,7 @@ S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {
     assert(s->type == TypeStruct || s->type == TypeUnion);
     assert(s->u.structSpec);
     assert(rfs);
-    fillRecFindStr(rfs, s, NULL, NULL, s_recFindCl++);
+    fillRecFindStr(rfs, s, NULL, NULL, recFindCl++);
     recFindPush(s, rfs);
     return rfs;
 }
@@ -144,8 +144,8 @@ S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {
 void setDirectStructureCompletionType(TypeModifier *typeModifier) {
     assert(options.mode);
     if (options.mode == ServerMode) {
-        s_structRecordCompletionType = typeModifier;
-        assert(s_structRecordCompletionType);
+        structRecordCompletionType = typeModifier;
+        assert(structRecordCompletionType);
     }
 }
 
@@ -153,9 +153,9 @@ void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
     assert(options.mode);
     if (options.mode == ServerMode) {
         if (typeModifier->type==TypePointer || typeModifier->type==TypeArray) {
-            s_structRecordCompletionType = typeModifier->next;
-            assert(s_structRecordCompletionType);
-        } else s_structRecordCompletionType = &errorModifier;
+            structRecordCompletionType = typeModifier->next;
+            assert(structRecordCompletionType);
+        } else structRecordCompletionType = &errorModifier;
     }
 }
 

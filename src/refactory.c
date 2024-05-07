@@ -652,9 +652,9 @@ static EditorMarker *createNewMarkerForExpressionStart(EditorMarker *marker, int
     parseBufferUsingServer(refactoringOptions.project, marker, NULL, "-olcxprimarystart", NULL);
     olStackDeleteSymbol(sessionData.browserStack.top);
     if (kind == GET_PRIMARY_START) {
-        pos = &s_primaryStartPosition;
+        pos = &primaryStartPosition;
     } else if (kind == GET_STATIC_PREFIX_START) {
-        pos = &s_staticPrefixStartPosition;
+        pos = &staticPrefixStartPosition;
     } else {
         pos = NULL;
         assert(0);

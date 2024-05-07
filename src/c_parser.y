@@ -265,11 +265,11 @@ postfix_expr
 */
     | postfix_expr
             {
-                $<typeModifier>$ = s_upLevelFunctionCompletionType;
-                s_upLevelFunctionCompletionType = $1.data.typeModifier;
+                $<typeModifier>$ = upLevelFunctionCompletionType;
+                upLevelFunctionCompletionType = $1.data.typeModifier;
             }
       '(' argument_expr_list_opt ')'    {
-        s_upLevelFunctionCompletionType = $<typeModifier>2;
+        upLevelFunctionCompletionType = $<typeModifier>2;
         if ($1.data.typeModifier->type==TypeFunction) {
             $$.data.typeModifier=$1.data.typeModifier->next;
             if ($4.data == NULL) {

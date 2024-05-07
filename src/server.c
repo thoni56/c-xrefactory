@@ -71,8 +71,8 @@ static bool symbolCanBeIdentifiedByPosition(int fileNumber) {
     // here read one reference file looking for the refs
     // assume s_opt.olcxlccursor is correctly set;
     getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
-    s_olcxByPassPos = makePosition(fileNumber, line, col);
-    olSetCallerPosition(&s_olcxByPassPos);
+    olcxByPassPos = makePosition(fileNumber, line, col);
+    olSetCallerPosition(&olcxByPassPos);
     scanForBypass(options.browsedSymName);
 
     // if no symbol found, it may be a local symbol, try by parsing
@@ -111,24 +111,24 @@ static int scheduleFileUsingTheMacro(void) {
     assert(sessionData.browserStack.top);
     oldMenu = sessionData.browserStack.top->menuSym;
     sessionData.browserStack.top->menuSym = &menu;
-    s_olMacro2PassFile = NO_FILE_NUMBER;
+    olMacro2PassFile = NO_FILE_NUMBER;
     scanForMacroUsage(olstringInMacroBody);
     sessionData.browserStack.top->menuSym = oldMenu;
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
     }
-    log_trace(":scheduling file '%s'", getFileItem(s_olMacro2PassFile)->name);
-    if (s_olMacro2PassFile == NO_FILE_NUMBER)
+    log_trace(":scheduling file '%s'", getFileItem(olMacro2PassFile)->name);
+    if (olMacro2PassFile == NO_FILE_NUMBER)
         return NO_FILE_NUMBER;
-    return s_olMacro2PassFile;
+    return olMacro2PassFile;
 }
 
 // WTF does "DependingStatics" mean?
 static char *presetEditServerFileDependingStatics(void) {
     fileProcessingStartTime = time(NULL);
 
-    s_primaryStartPosition = noPosition;
-    s_staticPrefixStartPosition = noPosition;
+    primaryStartPosition = noPosition;
+    staticPrefixStartPosition = noPosition;
 
     // This is pretty stupid, there is always only one input file
     // in edit server, otherwise it is an error

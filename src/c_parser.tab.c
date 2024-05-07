@@ -2235,14 +2235,14 @@ break;
 case 15:
 #line 267 "c_parser.y"
 {
-                yyval.typeModifier = s_upLevelFunctionCompletionType;
-                s_upLevelFunctionCompletionType = yyvsp[0].ast_expressionType.data.typeModifier;
+                yyval.typeModifier = upLevelFunctionCompletionType;
+                upLevelFunctionCompletionType = yyvsp[0].ast_expressionType.data.typeModifier;
             }
 break;
 case 16:
 #line 271 "c_parser.y"
 {
-        s_upLevelFunctionCompletionType = yyvsp[-3].typeModifier;
+        upLevelFunctionCompletionType = yyvsp[-3].typeModifier;
         if (yyvsp[-4].ast_expressionType.data.typeModifier->type==TypeFunction) {
             yyval.ast_expressionType.data.typeModifier=yyvsp[-4].ast_expressionType.data.typeModifier->next;
             if (yyvsp[-1].ast_positionList.data == NULL) {

@@ -17,7 +17,7 @@ bool cxResizingBlocked;
 ParsedInfo parsedInfo;
 Position parsedPositions[IPP_MAX];
 
-Position s_staticPrefixStartPosition;
+Position staticPrefixStartPosition;
 
 jmp_buf cxmemOverflow;
 
@@ -45,9 +45,9 @@ TypeModifier errorModifier;
 char *tokenNamesTable[LAST_TOKEN];
 int tokenNameLengthsTable[LAST_TOKEN];
 
-char *s_cppVarArgsName = "__VA_ARGS__";
+char *cppVarArgsName = "__VA_ARGS__";
 
-char s_olstring[MAX_FUN_NAME_SIZE];
+char olstring[MAX_FUN_NAME_SIZE];
 bool olstringFound = false;
 bool olstringServed = false;
 char *olstringInMacroBody = NULL;
@@ -55,20 +55,19 @@ UsageKind olstringUsageKind = 0;
 int olOriginalFileNumber = -1;
 UsageKind olstringUsageKind;
 int olOriginalComFileNumber;
-Position s_olcxByPassPos;
-int s_olMacro2PassFile;
+Position olcxByPassPos;
+int olMacro2PassFile;
 
-Usage s_noUsage;
 Position noPosition = {-1, 0, 0};
 
 Language currentLanguage;
 
-TypeModifier *s_structRecordCompletionType;
+TypeModifier *structRecordCompletionType;
 Completions collectedCompletions;
 
 char *storageNamesTable[MAX_STORAGE_NAMES];
 
-unsigned s_recFindCl = 1;
+unsigned recFindCl = 1;
 
 bool parameterListIsVoid;           /* Is what looks like a parameter actually "void" */
 int parameterCount;
@@ -85,13 +84,11 @@ time_t fileProcessingStartTime;
 char cwd[MAX_FILE_NAME_SIZE];
 
 ParsedInfo parsedInfo;
-TypeModifier *s_upLevelFunctionCompletionType;
-Position s_primaryStartPosition;
-unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
+TypeModifier *upLevelFunctionCompletionType; /* TODO move to Complete */
+Position primaryStartPosition;
+unsigned menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 
-int s_lastReturnedLexem;
-
-int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
+int refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 
 TypeModifier defaultVoidModifier;
 Symbol defaultVoidDefinition;

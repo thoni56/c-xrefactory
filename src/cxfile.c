@@ -1041,7 +1041,7 @@ static void scanFunction_Reference(int size,
                 lastIncomingInfo.values[CXFI_SYMBOL_INDEX]
                 && reference.usage.kind == UsageMacroBaseFileUsage
             ) {
-                s_olMacro2PassFile = reference.position.file;
+                olMacro2PassFile = reference.position.file;
             }
         } else {
             if (options.serverOperation == OLO_TAG_SEARCH) {
@@ -1064,7 +1064,7 @@ static void scanFunction_Reference(int size,
                                                           lastIncomingInfo.onLineRefIsBestMatchFlag);
                         }
                     } else if (operation == CXSF_BY_PASS) {
-                        if (positionsAreEqual(s_olcxByPassPos,reference.position)) {
+                        if (positionsAreEqual(olcxByPassPos,reference.position)) {
                             // got the bypass reference
                             log_trace(":adding bypass selected symbol %s", lastIncomingInfo.symbolTab[sym]->linkName);
                             olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, lastIncomingInfo.symbolTab[sym],

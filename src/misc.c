@@ -210,7 +210,7 @@ void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *name1, char *na
         ii += strlen(buffer + ii);
         for (i = 0; i < argc; i++) {
             if (argv[i] != NULL && !brief) {
-                if (strcmp(argv[i], s_cppVarArgsName) == 0)
+                if (strcmp(argv[i], cppVarArgsName) == 0)
                     sprintf(buffer + ii, "...");
                 else
                     sprintf(buffer + ii, "%s", argv[i]);

@@ -606,14 +606,14 @@ static void completeRecordsNames(
 void completeRecNames(Completions *c) {
     TypeModifier *str;
     Symbol *s;
-    assert(s_structRecordCompletionType);
-    str = s_structRecordCompletionType;
+    assert(structRecordCompletionType);
+    str = structRecordCompletionType;
     if (str->type == TypeStruct || str->type == TypeUnion) {
         s = str->u.t;
         assert(s);
         completeRecordsNames(c, s, TypeDefault, 0);
     }
-    s_structRecordCompletionType = &errorModifier;
+    structRecordCompletionType = &errorModifier;
 }
 
 static void completeFromSymTab(Completions*c, unsigned storage){
@@ -794,8 +794,8 @@ void completeForSpecial2(Completions* c) {
 }
 
 void completeUpFunProfile(Completions *c) {
-    if (s_upLevelFunctionCompletionType != NULL && c->idToProcess[0] == 0 && c->alternativeIndex == 0) {
-        Symbol *dd = newSymbolAsType("    ", "    ", noPosition, s_upLevelFunctionCompletionType);
+    if (upLevelFunctionCompletionType != NULL && c->idToProcess[0] == 0 && c->alternativeIndex == 0) {
+        Symbol *dd = newSymbolAsType("    ", "    ", noPosition, upLevelFunctionCompletionType);
 
         fillCompletionLine(&c->alternatives[0], "    ", dd, TypeDefault, 0, 0, NULL, NULL);
         c->fullMatchFlag = true;

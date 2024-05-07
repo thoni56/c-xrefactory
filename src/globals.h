@@ -20,10 +20,8 @@ extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 
 extern bool fileAbortEnabled;
 
-extern int s_lastReturnedLexem;
-
 extern bool cxResizingBlocked;
-extern unsigned s_recFindCl;
+extern unsigned recFindCl;
 
 extern FILE *errOut;
 
@@ -35,12 +33,12 @@ extern Position parameterPosition;
 extern Position parameterBeginPosition;
 extern Position parameterEndPosition;
 
-extern Position s_primaryStartPosition;
-extern Position s_staticPrefixStartPosition;
+extern Position primaryStartPosition;
+extern Position staticPrefixStartPosition;
 extern Id yyIdBuffer[YYIDBUFFER_SIZE];
 extern int yyIdBufferIndex;
 
-extern char *s_cppVarArgsName;
+extern char *cppVarArgsName;
 extern char *javaSourcePaths;
 
 extern FILE *communicationChannel;
@@ -61,8 +59,8 @@ extern uchar typeShortChange[MAX_TYPE];
 extern uchar typeSignedChange[MAX_TYPE];
 extern uchar typeUnsignedChange[MAX_TYPE];
 
-extern TypeModifier *s_structRecordCompletionType;
-extern TypeModifier *s_upLevelFunctionCompletionType;
+extern TypeModifier *structRecordCompletionType;
+extern TypeModifier *upLevelFunctionCompletionType;
 extern char *tokenNamesTable[];
 extern int tokenNameLengthsTable[];
 
@@ -72,7 +70,7 @@ extern TypeModifier *preCreatedPtr2Ptr2TypeTable[MAX_TYPE];
 
 extern int javaCharCodeBaseTypes[MAX_CHARS];
 
-extern Position s_olcxByPassPos;
+extern Position olcxByPassPos;
 extern Position cxRefPosition;
 
 extern int inputFileNumber;
@@ -95,8 +93,8 @@ extern int currentPass;
 extern int maxPasses;
 
 extern Completions collectedCompletions;
-extern unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
-extern int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
+extern unsigned menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
+extern int refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 
 /* ********* vars for on-line additions after EOF ****** */
 
@@ -104,6 +102,6 @@ extern bool olstringFound;
 extern bool olstringServed;
 extern UsageKind olstringUsageKind;
 extern char *olstringInMacroBody;
-extern int s_olMacro2PassFile;
+extern int olMacro2PassFile;
 
 #endif
