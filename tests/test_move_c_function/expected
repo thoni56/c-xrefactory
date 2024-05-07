@@ -1,46 +1,34 @@
-<update-report>
-</update-report>
-<update-report>
- <information len=<n>>Prescanning classes, please wait.</information>
- <information len=<n>>C-xrefactory project: CURDIR</information>
- <information len=<n>>CURDIR/source/source.c</information>
- <information len=<n>>CURDIR/source/target.c</information>
- <information len=<n>>Generating 'CURDIR/CXrefs'</information>
-</update-report>
-<goto>
- <position-off off=33 len=<n>>CURDIR/source/source.c</position-off>
-</goto>
-<cut-block val=39 len=<n>></cut-block>
-<goto>
- <position-off off=32 len=<n>>CURDIR/source/target.c</position-off>
-</goto>
-<paste-block len=<n>></paste-block>
-<goto>
- <position-off off=36 len=<n>>CURDIR/source/target.c</position-off>
-</goto>
-<replacement>
- <str len=<n>>private </str>  <str len=<n>></str>
-</replacement>
-<goto>
- <position-off off=36 len=<n>>CURDIR/source/target.c</position-off>
-</goto>
-<replacement>
- <str len=<n>></str>  <str len=<n>>public </str>
-</replacement>
-<goto>
- <position-off off=36 len=<n>>CURDIR/source/target.c</position-off>
-</goto>
-<replacement>
- <str len=<n>>public </str>  <str len=<n>></str>
-</replacement>
-<goto>
- <position-off off=36 len=<n>>CURDIR/source/target.c</position-off>
-</goto>
-<replacement>
- <str len=<n>></str>  <str len=<n>>private </str>
-</replacement>
-<goto>
- <position-off off=58 len=<n>>CURDIR/source/target.c</position-off>
-</goto>
-<indent-block val=2 len=<n>></indent-block>
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-server" -o server-buffer
+-olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "CURDIR/source/target.c"
+end-of-options
+
 <sync>
+<set-info len=<n>>CURDIR</set-info>
+-olcxgetrefactorings  "-olcursor=19" "CURDIR/source/target.c" -encoding=european -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "CURDIR"
+end-of-options
+
+<sync>
+<available-refactorings>
+  <int val=290 len=<n>></int>
+  <int val=300 len=<n>></int>
+</available-refactorings>
+-olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "CURDIR/source/source.c"
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-olcxgetrefactorings  "-olcursor=32" "CURDIR/source/source.c" -encoding=european -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "CURDIR"
+end-of-options
+
+<sync>
+<available-refactorings>
+  <int val=10 len=<n>></int>
+  <int val=40 len=<n>></int>
+  <int val=50 len=<n>></int>
+  <int val=60 len=<n>></int>
+  <int val=70 len=<n>></int>
+  <int val=300 len=<n>></int>
+</available-refactorings>
+-exit
+end-of-options
+

@@ -112,7 +112,6 @@ static void setAvailableRefactorings(Symbol *symbol) {
     case TypeVoid:
     case TypePointer:
     case TypeArray:
-    case TypeFunction:
     case TypeAnonymousField:
     case TypeError:
     case TypeElipsis:
@@ -135,6 +134,7 @@ static void setAvailableRefactorings(Symbol *symbol) {
     case TypeNonImportedClass:
     case TypeInducedError:
     case TypeInheritedFullMethod:
+    case TypeFunction:
     case TypeSpecialConstructorCompletion:
     case TypeUnknown:
     case TypeDefault:
@@ -144,6 +144,7 @@ static void setAvailableRefactorings(Symbol *symbol) {
             makeRefactoringAvailable(PPC_AVR_ADD_PARAMETER, "");
             makeRefactoringAvailable(PPC_AVR_DEL_PARAMETER, "");
             makeRefactoringAvailable(PPC_AVR_MOVE_PARAMETER, "");
+            makeRefactoringAvailable(PPC_AVR_MOVE_FUNCTION, "");
         }
         break;
     case MODIFIERS_START:
@@ -1675,11 +1676,7 @@ static void olCompletionSelect(void) {
     if (options.xref2) {
         assert(sessionData.completionsStack.root!=NULL);
         ppcGotoPosition(&sessionData.completionsStack.root->callerPosition);
-        if (rr->csymType==TypeNonImportedClass) {
-            ppcGenRecord(PPC_FQT_COMPLETION, rr->name);
-        } else {
-            ppcGenRecord(PPC_SINGLE_COMPLETION, rr->name);
-        }
+        ppcGenRecord(PPC_SINGLE_COMPLETION, rr->name);
     } else {
         gotoOnlineCxref(&refs->callerPosition, UsageUsed, rr->name);
     }

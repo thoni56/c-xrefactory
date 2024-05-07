@@ -172,6 +172,7 @@
    (list c-xref_PPC_AVR_EXTRACT_FUNCTION "Extract Function" 'c-xref-extract-function nil)
    (list c-xref_PPC_AVR_EXTRACT_MACRO "Extract Macro" 'c-xref-extract-macro nil)
    (list c-xref_PPC_AVR_EXTRACT_VARIABLE "Extract Variable" 'c-xref-extract-variable nil)
+   (list c-xref_PPC_AVR_MOVE_FUNCTION "Move Function" 'c-xref-move-function nil)
    (list c-xref_PPC_AVR_SET_MOVE_TARGET "Set Target for Next Moving Refactoring" 'c-xref-set-moving-target-position nil)
    (list c-xref_PPC_AVR_UNDO "Undo Last Refactoring" 'c-xref-undo-last-refactoring nil)
    ))
@@ -3374,7 +3375,7 @@ Special hotkeys available:
     (setq i (c-xref-server-dispatch-skip-blank ss i len))
     (while (and (< i len))  ;; (eq (elt ss i) ?<))
       (setq i (c-xref-server-parse-xml-tag ss i len))
-      ;;(message "tag == %s" c-xref-server-ctag)
+      (message "tag == %s" c-xref-server-ctag)
       (cond
        (
 	    (equal c-xref-server-ctag c-xref_PPC_SET_INFO)
@@ -3385,9 +3386,6 @@ Special hotkeys available:
        (
 	    (equal c-xref-server-ctag c-xref_PPC_SINGLE_COMPLETION)
 	    (setq i (c-xref-server-dispatch-single-completion ss i len dispatch-data)))
-       (
-	    (equal c-xref-server-ctag c-xref_PPC_FQT_COMPLETION)
-	    (setq i (c-xref-server-dispatch-fqt-completion ss i len dispatch-data)))
        (
 	    (equal c-xref-server-ctag c-xref_PPC_GOTO)
 	    (setq i (c-xref-server-dispatch-goto ss i len dispatch-data)))
@@ -7345,6 +7343,14 @@ refactoring.
       (c-xref-set-moving-target-position nil)
       )
     ))
+
+(defun c-xref-move-function (rd)
+  (let ((name))
+	(setq name (c-xref-get-identifier-on-point))
+	(c-xref-refactoring-init-actions (format "moving %s" name))
+	(c-xref-moving '("-rfct-move-function"))
+	(c-xref-refactoring-finish-actions)
+))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; EXTRACT METHOD ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

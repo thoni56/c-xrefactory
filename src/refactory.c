@@ -1380,6 +1380,9 @@ void refactory(void) {
         parameterManipulation(point, refactoringOptions.theRefactoring, refactoringOptions.olcxGotoVal,
                               refactoringOptions.parnum2);
         break;
+    case AVR_MOVE_FUNCTION:
+        errorMessage(ERR_INTERNAL, "Not implemented yet!");
+        break;
     case AVR_EXTRACT_FUNCTION:
         progressFactor = 1;
         extractFunction(point, mark);

@@ -1,18 +1,28 @@
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref
-ARGUMENTS = -xrefactory-II -refactory -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -rfct-move-static-method -movetargetfile=$(CURDIR)/source/target.c -rfct-param1=3 -olmark=33 -olcursor=33 $(CURDIR)/source/source.c
 
-$(TEST): .c-xrefrc
-	-rm -rf CXrefs
-	../../src/c-xref -p $(CURDIR) -xrefrc .c-xrefrc -sourcepath sources -create source > CXrefs.output
-	$(CXREF) $(ARGUMENTS) > output.tmp
-	$(NORMALIZE) output.tmp > output
-	$(VERIFY)
+$(TEST):
+	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	@$(NORMALIZE) output.tmp > output
+	@diff output expected > /dev/null ; \
+	if [ $$? -ne 0 ] ; then \
+		$(FAIL) ; \
+		echo "diff output expected" ; \
+		diff output expected ; \
+		exit 1 ; \
+	else \
+		$(OK) ; \
+		exit 0 ; \
+	fi
+
+trace: EXTRA = \'-trace\'
+trace: $(TEST)
 
 clean:
-	@-rm -rf .c-xrefrc CXrefs output.tmp output log
+	rm -rf .c-xrefrc CXrefs output.log output.tmp
 
-DEBUGGER = gdb
-gdb debug:
-	$(DEBUGGER) --args $(CXREF) $(ARGUMENTS)
+debug gdb:
+	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
+	sleep 1
+	sudo gdb -pid `pgrep -a c-xref | grep -v emacs | awk '{ print $$1 }'` -ex 'br setAvailableRefactorings' -ex 'continue'

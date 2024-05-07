@@ -13,6 +13,7 @@ end-of-options
   <int val=40 len=<n>></int>
   <int val=50 len=<n>></int>
   <int val=60 len=<n>></int>
+  <int val=70 len=<n>></int>
   <int val=230 len=<n>></int>
   <int val=240 len=<n>></int>
   <int val=250 len=<n>></int>
