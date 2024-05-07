@@ -20,6 +20,8 @@ CurrentlyParsedClassInfo parsedClassInfoInit = {0,};
 
 CurrentlyParsedInfo parsedInfo;
 
+Position parsedPositions[IPP_MAX];
+
 
 /* Variables for capturing parameter positions */
 bool parameterListIsVoid; /* Is what looks like a parameter declaration actually "void" */

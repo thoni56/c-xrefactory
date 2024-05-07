@@ -31,6 +31,12 @@
 #define MAX_NARGV_OPTIONS_COUNT 50
 
 
+typedef enum {
+    APPLY_CHECKS,
+    NO_CHECKS
+} ToCheckOrNot;
+
+
 typedef struct tpCheckMoveClassData {
     PushRange pushRange;
     bool      transPackageMove;
@@ -1239,6 +1245,322 @@ static void parameterManipulation(EditorMarker *point, int manip, int argn1, int
     ppcGotoMarker(point);
 }
 
+//------------------------------------------------------------
+
+// basically move marker to the first non blank and non comment symbol at the same
+// line as the marker is or to the newline character
+static void moveMarkerToTheEndOfDefinitionScope(EditorMarker *mm) {
+    int offset;
+    offset = mm->offset;
+    moveEditorMarkerToNonBlankOrNewline(mm, 1);
+    if (mm->offset >= mm->buffer->allocation.bufferSize) {
+        return;
+    }
+    if (CHAR_ON_MARKER(mm) == '/' && CHAR_AFTER_MARKER(mm) == '/') {
+        if (refactoringOptions.commentMovingMode == CM_NO_COMMENT)
+            return;
+        moveEditorMarkerToNewline(mm, 1);
+        mm->offset++;
+    } else if (CHAR_ON_MARKER(mm) == '/' && CHAR_AFTER_MARKER(mm) == '*') {
+        if (refactoringOptions.commentMovingMode == CM_NO_COMMENT)
+            return;
+        mm->offset++;
+        mm->offset++;
+        while (mm->offset < mm->buffer->allocation.bufferSize &&
+               (CHAR_ON_MARKER(mm) != '*' || CHAR_AFTER_MARKER(mm) != '/')) {
+            mm->offset++;
+        }
+        if (mm->offset < mm->buffer->allocation.bufferSize) {
+            mm->offset++;
+            mm->offset++;
+        }
+        offset = mm->offset;
+        moveEditorMarkerToNonBlankOrNewline(mm, 1);
+        if (CHAR_ON_MARKER(mm) == '\n')
+            mm->offset++;
+        else
+            mm->offset = offset;
+    } else if (CHAR_ON_MARKER(mm) == '\n') {
+        mm->offset++;
+    } else {
+        if (refactoringOptions.commentMovingMode == CM_NO_COMMENT)
+            return;
+        mm->offset = offset;
+    }
+}
+
+static int markerWRTComment(EditorMarker *mm, int *commentBeginOffset) {
+    char *b, *s, *e, *mms;
+    assert(mm->buffer && mm->buffer->allocation.text);
+    s   = mm->buffer->allocation.text;
+    e   = s + mm->buffer->allocation.bufferSize;
+    mms = s + mm->offset;
+    while (s < e && s < mms) {
+        b = s;
+        if (*s == '/' && (s + 1) < e && *(s + 1) == '*') {
+            // /**/ comment
+            s += 2;
+            while ((s + 1) < e && !(*s == '*' && *(s + 1) == '/'))
+                s++;
+            if (s + 1 < e)
+                s += 2;
+            if (s > mms) {
+                *commentBeginOffset = b - mm->buffer->allocation.text;
+                return MARKER_IS_IN_STAR_COMMENT;
+            }
+        } else if (*s == '/' && s + 1 < e && *(s + 1) == '/') {
+            // // comment
+            s += 2;
+            while (s < e && *s != '\n')
+                s++;
+            if (s < e)
+                s += 1;
+            if (s > mms) {
+                *commentBeginOffset = b - mm->buffer->allocation.text;
+                return MARKER_IS_IN_SLASH_COMMENT;
+            }
+        } else if (*s == '"') {
+            // string, pass it removing all inside (also /**/ comments)
+            s++;
+            while (s < e && *s != '"') {
+                s++;
+                if (*s == '\\') {
+                    s++;
+                    s++;
+                }
+            }
+            if (s < e)
+                s++;
+        } else {
+            s++;
+        }
+    }
+    return MARKER_IS_IN_CODE;
+}
+
+static void moveMarkerToTheBeginOfDefinitionScope(EditorMarker *mm) {
+    int theBeginningOffset, comBeginOffset, mp;
+    int slashedCommentsProcessed, staredCommentsProcessed;
+
+    slashedCommentsProcessed = staredCommentsProcessed = 0;
+    for (;;) {
+        theBeginningOffset = mm->offset;
+        mm->offset--;
+        moveEditorMarkerToNonBlankOrNewline(mm, -1);
+        if (CHAR_ON_MARKER(mm) == '\n') {
+            theBeginningOffset = mm->offset + 1;
+            mm->offset--;
+        }
+        if (refactoringOptions.commentMovingMode == CM_NO_COMMENT)
+            goto fini;
+        editorMoveMarkerToNonBlank(mm, -1);
+        mp = markerWRTComment(mm, &comBeginOffset);
+        if (mp == MARKER_IS_IN_CODE)
+            goto fini;
+        else if (mp == MARKER_IS_IN_STAR_COMMENT) {
+            if (refactoringOptions.commentMovingMode == CM_SINGLE_SLASHED)
+                goto fini;
+            if (refactoringOptions.commentMovingMode == CM_ALL_SLASHED)
+                goto fini;
+            if (staredCommentsProcessed > 0 && refactoringOptions.commentMovingMode == CM_SINGLE_STARRED)
+                goto fini;
+            if (staredCommentsProcessed > 0 &&
+                refactoringOptions.commentMovingMode == CM_SINGLE_SLASHED_AND_STARRED)
+                goto fini;
+            staredCommentsProcessed++;
+            mm->offset = comBeginOffset;
+        }
+        // slash comment, skip them all
+        else if (mp == MARKER_IS_IN_SLASH_COMMENT) {
+            if (refactoringOptions.commentMovingMode == CM_SINGLE_STARRED)
+                goto fini;
+            if (refactoringOptions.commentMovingMode == CM_ALL_STARRED)
+                goto fini;
+            if (slashedCommentsProcessed > 0 && refactoringOptions.commentMovingMode == CM_SINGLE_SLASHED)
+                goto fini;
+            if (slashedCommentsProcessed > 0 &&
+                refactoringOptions.commentMovingMode == CM_SINGLE_SLASHED_AND_STARRED)
+                goto fini;
+            slashedCommentsProcessed++;
+            mm->offset = comBeginOffset;
+        } else {
+            warningMessage(ERR_INTERNAL, "A new comment?");
+            goto fini;
+        }
+    }
+fini:
+    mm->offset = theBeginningOffset;
+}
+
+static void getMethodLimitsForMoving(EditorMarker *point, EditorMarker **methodStartP, EditorMarker **methodEndP) {
+    EditorMarker *mstart, *mend;
+
+    // get method limites
+    parseBufferUsingServer(refactoringOptions.project, point, NULL, "", NULL);
+
+    if (parsedPositions[IPP_FUNCTION_BEGIN].file == NO_FILE_NUMBER || parsedPositions[IPP_FUNCTION_END].file == NO_FILE_NUMBER) {
+        FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
+    }
+
+    mstart = newEditorMarkerForPosition(&parsedPositions[IPP_FUNCTION_BEGIN]);
+    mend   = newEditorMarkerForPosition(&parsedPositions[IPP_FUNCTION_BEGIN + 1]);
+
+    moveMarkerToTheBeginOfDefinitionScope(mstart);
+    moveMarkerToTheEndOfDefinitionScope(mend);
+
+    assert(mstart->buffer == mend->buffer);
+    *methodStartP = mstart;
+    *methodEndP   = mend;
+}
+
+static EditorMarker *getTargetFromOptions(void) {
+    EditorMarker *target;
+    EditorBuffer *tb;
+    int           tline;
+
+    tb = findEditorBufferForFile(
+        normalizeFileName_static(refactoringOptions.moveTargetFile, cwd));
+    target = newEditorMarker(tb, 0);
+    sscanf(refactoringOptions.refpar1, "%d", &tline);
+    moveEditorMarkerToLineAndColumn(target, tline, 0);
+    return target;
+}
+
+static bool validTargetPlace(EditorMarker *target, char *checkOpt) {
+    bool valid = true;
+
+    parseBufferUsingServer(refactoringOptions.project, target, NULL, checkOpt, NULL);
+    if (!parsedInfo.moveTargetApproved) {
+        valid = false;
+        errorMessage(ERR_ST, "Invalid target place");
+    }
+    return valid;
+}
+
+static EditorMarker *removeStaticPrefix(EditorMarker *d) {
+    int           ppoffset;
+    EditorMarker *pp;
+
+    pp = createNewMarkerForExpressionStart(d, GET_STATIC_PREFIX_START);
+    if (pp == NULL) {
+        // this is an error, this is just to avoid possible core dump in the future
+        pp = newEditorMarker(d->buffer, d->offset);
+    } else {
+        ppoffset = pp->offset;
+        removeNonCommentCode(pp, d->offset - pp->offset);
+        // return it back to beginning of name(?)
+        pp->offset = ppoffset;
+    }
+    return pp;
+}
+
+// make it public, because you update references after and some references can
+// be lost, later you can restrict accessibility
+static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *point, EditorMarker *mend,
+                                            EditorMarker *target, unsigned *outAccessFlags,
+                                            ToCheckOrNot check, int limitIndex) {
+    char              nameOnPoint[TMP_STRING_SIZE];
+    int               size;
+    //SymbolsMenu      *mm1, *mm2;
+    //ReferenceItem   *theMethod;
+    EditorMarker     *pp, *ppp, *movedEnd;
+    EditorMarkerList *occs;
+    EditorRegionList *regions;
+    int               progress, count;
+
+    movedEnd = duplicateEditorMarker(mend);
+    movedEnd->offset--;
+
+    //&editorDumpMarker(mstart);
+    //&editorDumpMarker(movedEnd);
+
+    size = mend->offset - mstart->offset;
+    if (target->buffer == mstart->buffer && target->offset > mstart->offset &&
+        target->offset < mstart->offset + size) {
+        ppcGenRecord(PPC_INFORMATION, "You can't move something into itself.");
+        return;
+    }
+
+    // O.K. move
+    strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
+    assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
+    occs = getReferences(point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+    assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
+    if (outAccessFlags != NULL) {
+        *outAccessFlags = sessionData.browserStack.top->hkSelectedSym->references.access;
+    }
+    //&parseBufferUsingServer(refactoringOptions.project, point, "-olcxrename");
+
+    LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListBefore);
+    LIST_LEN(count, EditorMarkerList, occs);
+    progress = 0;
+    regions  = NULL;
+    for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
+        if ((!isDefinitionOrDeclarationUsage(ll->usage.kind)) && ll->usage.kind != UsageConstructorDefinition) {
+            pp  = removeStaticPrefix(ll->marker);
+            ppp = newEditorMarker(ll->marker->buffer, ll->marker->offset);
+            moveEditorMarkerBeyondIdentifier(ppp, 1);
+            regions = newEditorRegionList(pp, ppp, regions);
+        }
+        writeRelativeProgress((100*progress++) / count);
+    }
+    writeRelativeProgress(100);
+
+    size = mend->offset - mstart->offset;
+    if (check == NO_CHECKS) {
+        moveBlockInEditorBuffer(target, mstart, size, &editorUndo);
+        //removeModifier(point, limitIndex, "static");
+    } else {
+        assert(sessionData.browserStack.top != NULL && sessionData.browserStack.top->hkSelectedSym != NULL);
+        //theMethod = &sessionData.browserStack.top->hkSelectedSym->references;
+        //pushAllReferencesOfMethod(point, "-olallchecks");
+        //createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
+        moveBlockInEditorBuffer(target, mstart, size, &editorUndo);
+        //changeAccessModifier(point, limitIndex, "public");
+        //pushAllReferencesOfMethod(point, "-olallchecks");
+        //createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
+        assert(sessionData.browserStack.top && sessionData.browserStack.top->previous);
+        //mm1 = sessionData.browserStack.top->previous->menuSym;
+        //mm2 = sessionData.browserStack.top->menuSym;
+        //staticMoveCheckCorrespondance(mm1, mm2, theMethod);
+    }
+
+    //&editorDumpMarker(mstart);
+    //&editorDumpMarker(movedEnd);
+
+    // reduce long names in the method
+    pp      = duplicateEditorMarker(mstart);
+    ppp     = duplicateEditorMarker(movedEnd);
+    regions = newEditorRegionList(pp, ppp, regions);
+
+    //reduceNamesAndAddImports(&regions, INTERACTIVE_NO);
+}
+
+static void moveFunction(EditorMarker *point) {
+    int           lines;
+    unsigned      accFlags;
+    EditorMarker *target, *mstart, *mend;
+
+    target = getTargetFromOptions();
+
+    if (!validTargetPlace(target, "-olcxmmtarget"))
+        return;
+
+    ensureReferencesAreUpdated(refactoringOptions.project);
+    getMethodLimitsForMoving(point, &mstart, &mend);
+    lines = countLinesBetweenEditorMarkers(mstart, mend);
+
+    // O.K. Now STARTING!
+    moveStaticObjectAndMakeItPublic(mstart, point, mend, target, &accFlags, APPLY_CHECKS,
+                                    IPP_FUNCTION_BEGIN);
+    //&sprintf(tmpBuff,"original acc == %d", accFlags); ppcBottomInformation(tmpBuff);
+    //restrictAccessibility(point, limitIndex, accFlags);
+
+    // and generate output
+    applyWholeRefactoringFromUndo();
+    ppcGotoMarker(point);
+    ppcValueRecord(PPC_INDENT, lines, "");
+}
 // ------------------------------------------------------ ExtractMethod
 
 static void extractFunction(EditorMarker *point, EditorMarker *mark) {
@@ -1381,7 +1703,8 @@ void refactory(void) {
                               refactoringOptions.parnum2);
         break;
     case AVR_MOVE_FUNCTION:
-        errorMessage(ERR_INTERNAL, "Not implemented yet!");
+        progressFactor = 4;
+        moveFunction(point);
         break;
     case AVR_EXTRACT_FUNCTION:
         progressFactor = 1;

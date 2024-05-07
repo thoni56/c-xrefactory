@@ -6,6 +6,14 @@
 #include "proto.h"
 #include "usage.h"
 
+typedef enum {
+    IPP_FUNCTION_BEGIN,
+    IPP_FUNCTION_END,
+    IPP_MAX
+} ImportantParsedPositionKind;
+
+extern Position parsedPositions[IPP_MAX];
+
 
 extern char cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];

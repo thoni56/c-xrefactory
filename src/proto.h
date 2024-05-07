@@ -81,6 +81,12 @@ typedef enum {
     SEARCH_DEFINITIONS_SHORT
 } SearchKind;
 
+typedef enum {
+    MARKER_IS_IN_CODE,
+    MARKER_IS_IN_SLASH_COMMENT,
+    MARKER_IS_IN_STAR_COMMENT
+} MarkerLocationKind;
+
 enum miscellaneous { /* misc. constants */
     DEFAULT_VALUE = SEARCH_DEFINITIONS_SHORT + 1,
     SEARCH_SYMBOL,
@@ -98,6 +104,7 @@ enum miscellaneous { /* misc. constants */
     DEPTH_ONE,
     DEPTH_ANY,
 };
+
 
 /* *******************      encodings      *************** */
 
