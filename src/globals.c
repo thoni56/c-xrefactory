@@ -15,10 +15,8 @@ int s_lastReturnedLexem;
 
 unsigned s_recFindCl = 1;
 
-CurrentlyParsedClassInfo parsedClassInfo;
-CurrentlyParsedClassInfo parsedClassInfoInit = {0,};
 
-CurrentlyParsedInfo parsedInfo;
+ParsedInfo parsedInfo;
 
 Position parsedPositions[IPP_MAX];
 

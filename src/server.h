@@ -57,8 +57,7 @@
         ENUM(OLO_ACTIVE_PROJECT)                                        \
         ENUM(OLO_REPUSH)                                                \
         ENUM(OLO_GET_ENV_VALUE)                                         \
-        ENUM(OLO_SET_MOVE_CLASS_TARGET)                                 \
-        ENUM(OLO_SET_MOVE_METHOD_TARGET)                                \
+        ENUM(OLO_SET_MOVE_FUNCTION_TARGET)                              \
         ENUM(OLO_GET_METHOD_COORD)                                      \
         ENUM(OLO_GET_LAST_IMPORT_LINE)                                  \
         ENUM(OLO_TAG_SEARCH_FORWARD)                                    \

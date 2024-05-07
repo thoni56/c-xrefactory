@@ -266,8 +266,8 @@ void labelReference(Id *id, UsageKind usage) {
     char tempString[TMP_STRING_SIZE];
     char *t;
     assert(id);
-    if (parsedClassInfo.function!=NULL) {
-        t = strmcpy(tempString, parsedClassInfo.function->name);
+    if (parsedInfo.function!=NULL) {
+        t = strmcpy(tempString, parsedInfo.function->name);
         *t = '.';
         t = strcpy(t+1,id->name);
     } else {

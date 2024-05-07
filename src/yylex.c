@@ -2037,14 +2037,10 @@ static LexemCode lookupCIdentifier(char *id, Position position) {
 
 
 static void actionOnBlockMarker(void) {
-    if (options.serverOperation == OLO_SET_MOVE_CLASS_TARGET) {
+    if (options.serverOperation == OLO_SET_MOVE_FUNCTION_TARGET) {
         parsedInfo.moveTargetApproved = false;
-    } else if (options.serverOperation == OLO_SET_MOVE_METHOD_TARGET) {
-        parsedInfo.moveTargetApproved = false;
-        if (LANGUAGE(LANG_C)) {
-            if (parsedClassInfo.function == NULL) {
-                parsedInfo.moveTargetApproved = true;
-            }
+        if (parsedInfo.function == NULL) {
+            parsedInfo.moveTargetApproved = true;
         }
     } else if (options.serverOperation == OLO_EXTRACT) {
         extractActionOnBlockMarker();
@@ -2052,7 +2048,6 @@ static void actionOnBlockMarker(void) {
         parsedInfo.currentPackageAnswer[0] = 0;
         parsedInfo.currentClassAnswer[0] = 0;
         parsedInfo.currentSuperClassAnswer[0] = 0;
-        parsedClassInfo.parserPassedMarker = 1;
     }
 }
 

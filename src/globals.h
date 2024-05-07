@@ -45,9 +45,7 @@ extern char *javaSourcePaths;
 
 extern FILE *communicationChannel;
 
-extern CurrentlyParsedClassInfo parsedClassInfo;
-extern CurrentlyParsedClassInfo parsedClassInfoInit;
-extern CurrentlyParsedInfo parsedInfo;
+extern ParsedInfo parsedInfo;
 
 extern TypeModifier defaultIntModifier;
 extern Symbol defaultIntDefinition;

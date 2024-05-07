@@ -3905,7 +3905,7 @@ case 342:
         beginBlock();
         counters.localVar = 0;
         assert(yyvsp[0].ast_symbol.data->u.typeModifier && yyvsp[0].ast_symbol.data->u.typeModifier->type == TypeFunction);
-        parsedClassInfo.function = yyvsp[0].ast_symbol.data;
+        parsedInfo.function = yyvsp[0].ast_symbol.data;
         generateInternalLabelReference(-1, UsageDefined);
         for (symbol=yyvsp[0].ast_symbol.data->u.typeModifier->u.f.args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
             if (symbol->type == TypeElipsis)
@@ -3920,7 +3920,7 @@ case 343:
 #line 1626 "c_parser.y"
 {
         endBlock();
-        parsedClassInfo.function = NULL;
+        parsedInfo.function = NULL;
     }
 break;
 case 344:

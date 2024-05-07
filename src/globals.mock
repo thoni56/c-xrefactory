@@ -14,15 +14,13 @@ Symbol errorSymbol;
 bool olStringSecondProcessing;
 bool cxResizingBlocked;
 
+ParsedInfo parsedInfo;
 Position parsedPositions[IPP_MAX];
 
 Position s_staticPrefixStartPosition;
 
 jmp_buf cxmemOverflow;
 
-CurrentlyParsedClassInfo parsedClassInfo;
-CurrentlyParsedClassInfo parsedClassInfoInit;
-CurrentlyParsedInfo parsedInfo;
 int currentPass;
 int maxPasses;
 
@@ -86,7 +84,7 @@ time_t fileProcessingStartTime;
 
 char cwd[MAX_FILE_NAME_SIZE];
 
-CurrentlyParsedInfo parsedInfo;
+ParsedInfo parsedInfo;
 TypeModifier *s_upLevelFunctionCompletionType;
 Position s_primaryStartPosition;
 unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];

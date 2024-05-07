@@ -30,8 +30,7 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
            || operation==OLO_SEARCH
            || operation==OLO_EXTRACT
            || operation==OLO_TAG_SEARCH
-           || operation==OLO_SET_MOVE_CLASS_TARGET
-           || operation==OLO_SET_MOVE_METHOD_TARGET
+           || operation==OLO_SET_MOVE_FUNCTION_TARGET
            || operation==OLO_GET_METHOD_COORD
            || operation==OLO_GET_ENV_VALUE
            || requiresCreatingRefs(operation)

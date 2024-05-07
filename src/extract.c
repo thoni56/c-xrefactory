@@ -177,7 +177,7 @@ static void extractFunGraphRef(ReferenceItem *rr, void *prog) {
     ProgramGraphNode *p,**ap;
     ap = (ProgramGraphNode **) prog;
     for (r=rr->references; r!=NULL; r=r->next) {
-        if (dm_isBetween(cxMemory,r,parsedClassInfo.cxMemoryIndexAtFunctionBegin,parsedClassInfo.cxMemoryIndexAtFunctionEnd)){
+        if (dm_isBetween(cxMemory,r,parsedInfo.cxMemoryIndexAtFunctionBegin,parsedInfo.cxMemoryIndexAtFunctionEnd)){
             p = newProgramGraphNode(r, rr, NULL, 0, 0, CLASSIFIED_AS_NONE, *ap);
             *ap = p;
         }
@@ -838,9 +838,9 @@ static void generateNewFunctionTail(ProgramGraphNode *program) {
 /* ******************************************************************* */
 
 static bool programStructureMismatch() {
-    return parsedClassInfo.cxMemoryIndexAtFunctionBegin > parsedInfo.cxMemoryIndexAtBlockBegin
+    return parsedInfo.cxMemoryIndexAtFunctionBegin > parsedInfo.cxMemoryIndexAtBlockBegin
         || parsedInfo.cxMemoryIndexAtBlockBegin > parsedInfo.cxMemoryIndexAtBlockEnd
-        || parsedInfo.cxMemoryIndexAtBlockEnd > parsedClassInfo.cxMemoryIndexAtFunctionEnd
+        || parsedInfo.cxMemoryIndexAtBlockEnd > parsedInfo.cxMemoryIndexAtFunctionEnd
         || parsedInfo.workMemoryIndexAtBlockBegin != parsedInfo.workMemoryIndexAtBlockEnd;
 }
 
@@ -868,11 +868,11 @@ static void makeExtraction(void) {
         return;
     }
 
-    log_trace("!cxMemories: funBegin, blockBegin, blockEnd, funEnd: %x, %x, %x, %x", parsedClassInfo.cxMemoryIndexAtFunctionBegin, parsedInfo.cxMemoryIndexAtBlockBegin, parsedInfo.cxMemoryIndexAtBlockEnd, parsedClassInfo.cxMemoryIndexAtFunctionEnd);
-    assert(parsedClassInfo.cxMemoryIndexAtFunctionBegin);
+    log_trace("!cxMemories: funBegin, blockBegin, blockEnd, funEnd: %x, %x, %x, %x", parsedInfo.cxMemoryIndexAtFunctionBegin, parsedInfo.cxMemoryIndexAtBlockBegin, parsedInfo.cxMemoryIndexAtBlockEnd, parsedInfo.cxMemoryIndexAtFunctionEnd);
+    assert(parsedInfo.cxMemoryIndexAtFunctionBegin);
     assert(parsedInfo.cxMemoryIndexAtBlockBegin);
     assert(parsedInfo.cxMemoryIndexAtBlockEnd);
-    assert(parsedClassInfo.cxMemoryIndexAtFunctionEnd);
+    assert(parsedInfo.cxMemoryIndexAtFunctionEnd);
 
     program = makeProgramGraph();
     setInOutBlockFields(program);
@@ -909,7 +909,7 @@ static void makeExtraction(void) {
         generateNewFunctionTail(program);
     }
 
-    ppcValueRecord(PPC_INT_VALUE, parsedClassInfo.functionBeginPosition, "");
+    ppcValueRecord(PPC_INT_VALUE, parsedInfo.functionBeginPosition, "");
     ppcEnd(PPC_EXTRACTION_DIALOG);
 }
 
@@ -918,24 +918,24 @@ void actionsBeforeAfterExternalDefinition(void) {
     if (parsedInfo.cxMemoryIndexAtBlockEnd != 0
         // you have to check for matching class method
         // i.e. for case 'void mmm() { //blockbeg; ...; //blockend; class X { mmm(){}!!}; }'
-        && parsedClassInfo.cxMemoryIndexAtFunctionBegin != 0
-        && parsedClassInfo.cxMemoryIndexAtFunctionBegin <= parsedInfo.cxMemoryIndexAtBlockBegin
+        && parsedInfo.cxMemoryIndexAtFunctionBegin != 0
+        && parsedInfo.cxMemoryIndexAtFunctionBegin <= parsedInfo.cxMemoryIndexAtBlockBegin
         // is it an extraction action ?
         && options.serverOperation == OLO_EXTRACT
         && (! parsedInfo.extractProcessedFlag))
     {
         // O.K. make extraction
-        parsedClassInfo.cxMemoryIndexAtFunctionEnd = cxMemory->index;
+        parsedInfo.cxMemoryIndexAtFunctionEnd = cxMemory->index;
         makeExtraction();
         parsedInfo.extractProcessedFlag = true;
         /* here should be a longjmp to stop file processing !!!! */
         /* No, all this extraction should be after parsing ! */
     }
-    parsedClassInfo.cxMemoryIndexAtFunctionBegin = cxMemory->index;
+    parsedInfo.cxMemoryIndexAtFunctionBegin = cxMemory->index;
     if (includeStack.pointer > 0) {
-        parsedClassInfo.functionBeginPosition = includeStack.stack[0].lineNumber+1;
+        parsedInfo.functionBeginPosition = includeStack.stack[0].lineNumber+1;
     } else {
-        parsedClassInfo.functionBeginPosition = currentFile.lineNumber+1;
+        parsedInfo.functionBeginPosition = currentFile.lineNumber+1;
     }
 }
 

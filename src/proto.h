@@ -282,19 +282,6 @@ typedef struct OlcxReferencesStack {
 } OlcxReferencesStack;
 
 
-typedef struct currentlyParsedClassInfo { // class local, nested for classes
-    struct symbol        *function;
-    struct extRecFindStr *erfsForParameterCompletion; // currently parsed method for param completion
-    unsigned              functionBeginPosition;
-    int                   cxMemoryIndexAtFunctionBegin;
-    int                   cxMemoryIndexAtFunctionEnd;
-    int                   cxMemoryIndexdiAtClassBegin;
-    int                   cxMemoryIndexAtClassEnd;
-    int                   thisMethodMemoriesStored;
-    int                   thisClassMemoriesStored;
-    int                   parserPassedMarker;
-} CurrentlyParsedClassInfo;
-
 typedef struct currentlyParsedInfo {
     bool              extractProcessedFlag;
     bool              marker1Flag;
@@ -308,16 +295,16 @@ typedef struct currentlyParsedInfo {
     int               classCoordEndLine;
     struct codeBlock *workMemoryIndexAtBlockBegin;
     struct codeBlock *workMemoryIndexAtBlockEnd;
+    struct symbol    *function;
+    unsigned          functionBeginPosition;
+    int               cxMemoryIndexAtFunctionBegin;
+    int               cxMemoryIndexAtFunctionEnd;
     int               cxMemoryIndexAtBlockBegin;
     int               cxMemoryIndexAtBlockEnd;
-    int               cxMemoryIndexAtMethodBegin;
-    int               cxMemoryIndexAtMethodEnd;
-    int               cxMemoryIndexAtClassBeginning;
-    int               cxMemoryIndexAtClassEnd;
     int               lastImportLine;
     struct symbol    *lastDeclaratorType;
     struct symbol    *lastAssignmentStruct;
-} CurrentlyParsedInfo;
+} ParsedInfo;
 
 /* *********************************************************** */
 

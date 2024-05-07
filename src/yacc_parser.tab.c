@@ -4588,7 +4588,7 @@ case 484:
         beginBlock();
         counters.localVar = 0;
         assert(yyvsp[0].ast_symbol.data->u.typeModifier && yyvsp[0].ast_symbol.data->u.typeModifier->type == TypeFunction);
-        parsedClassInfo.function = yyvsp[0].ast_symbol.data;
+        parsedInfo.function = yyvsp[0].ast_symbol.data;
         generateInternalLabelReference(-1, UsageDefined);
         for (symbol=yyvsp[0].ast_symbol.data->u.typeModifier->u.f.args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
             if (symbol->type == TypeElipsis)
@@ -4603,7 +4603,7 @@ case 485:
 #line 1835 "yacc_parser.y"
 {
         endBlock();
-        parsedClassInfo.function = NULL;
+        parsedInfo.function = NULL;
     }
 break;
 case 486:
