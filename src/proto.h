@@ -157,7 +157,6 @@ typedef enum result {
 
 
 typedef struct recFindStr {
-    struct symbol     *baseClass;    /* class, application on which is looked*/
     struct symbol     *currentClass; /* current class, NULL for loc vars. */
     struct symbol     *nextRecord;
     unsigned           recsClassCounter;

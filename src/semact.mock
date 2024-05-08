@@ -4,8 +4,6 @@
 
 void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord,
                     unsigned recsClassCounter) {
-    recFindStr->baseClass            = baseClass;
-    recFindStr->currentClass         = currentClass;
     recFindStr->nextRecord           = nextRecord;
     recFindStr->recsClassCounter     = recsClassCounter;
     recFindStr->superClassesCount    = 0;

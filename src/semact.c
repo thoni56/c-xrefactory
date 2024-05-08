@@ -22,8 +22,6 @@
 
 void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord,
                     unsigned recsClassCounter) {
-    recFindStr->baseClass            = baseClass;
-    assert(currentClass == NULL); /* Current class == NULL for C/Yacc */
     recFindStr->currentClass         = currentClass;
     recFindStr->nextRecord           = nextRecord;
     recFindStr->recsClassCounter     = recsClassCounter;
