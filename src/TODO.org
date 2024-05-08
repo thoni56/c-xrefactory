@@ -17,7 +17,13 @@ Some useful commands:
 
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
-Current Mikado:
+
+* TODO FEATURE: New refactoring: move function for C
+** DONE pick-up pieces from Java version and hack them into a preliminary version
+** TODO Fill ParsedInfo begin/end for requested function
+** TODO Fixup the preliminary version of the actual move
+** TODO Move any declaration in source.h file to target.h
+** TODO BONUS Move a mock function to the target mock file if it exists
 * TRY Project local .c-xrefrc with relative file paths so it can be checked in to a repo
    We could start with having same format but how to handle project names?
 ** TODO Change to having reference file in the project tree?
@@ -133,7 +139,6 @@ Current Mikado:
 ** TODO FEATURE: New refactoring: change return type of function
 ** TODO FEATURE: Extract function should extract a boolean function inside an if() correctly
 ** TODO FEATURE: New refactoring: Inline variable ("a=f(); b(a);" => "b(f());")
-** TODO FEATURE: New refactoring: move function for C
 ** TODO FEATURE: Rename "module" in C
    Prompt for new "module name", rename both .c & .h if they exist, and change all includes
 * TODO Push options.xref2 into ppc...() functions or create if necessary?
