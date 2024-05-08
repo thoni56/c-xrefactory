@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.22">
-<meta name="author" content="v{VERSION} - Generated 2024-05-07">
+<meta name="author" content="v{VERSION} - Generated 2024-05-08">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2024-05-07</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2024-05-08</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -461,7 +461,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_quality_attributes">4. Quality Attributes</a></li>
 <li><a href="#_constraints">5. Constraints</a></li>
-<li><a href="#_principles">6. Principles</a></li>
+<li><a href="#_principles">6. Principles</a>
+<ul class="sectlevel2">
+<li><a href="#_reference_database_and_parsing">6.1. Reference Database and Parsing</a></li>
+<li><a href="#_tbd">6.2. TBD.</a></li>
+</ul>
+</li>
 <li><a href="#_software_architecture">7. Software Architecture</a>
 <ul class="sectlevel2">
 <li><a href="#_containers">7.1. Containers</a></li>
@@ -470,16 +475,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_code">8. Code</a>
 <ul class="sectlevel2">
-<li><a href="#_passes">8.1. Passes</a></li>
-<li><a href="#_parsers">8.2. Parsers</a></li>
-<li><a href="#_refactoring_and_the_parsers">8.3. Refactoring and the parsers</a></li>
-<li><a href="#_reading_files">8.4. Reading Files</a></li>
-<li><a href="#_reference_database">8.5. Reference Database</a></li>
-<li><a href="#_editor_interface">8.6. Editor Interface</a></li>
-<li><a href="#_editor_server">8.7. Editor Server</a></li>
-<li><a href="#_refactoring">8.8. Refactoring</a></li>
-<li><a href="#_memory_management">8.9. Memory Management</a></li>
-<li><a href="#_configuration">8.10. Configuration</a></li>
+<li><a href="#_commands">8.1. Commands</a></li>
+<li><a href="#_passes">8.2. Passes</a></li>
+<li><a href="#_parsers">8.3. Parsers</a></li>
+<li><a href="#_refactoring_and_the_parsers">8.4. Refactoring and the parsers</a></li>
+<li><a href="#_reading_files">8.5. Reading Files</a></li>
+<li><a href="#_reference_database">8.6. Reference Database</a></li>
+<li><a href="#_editor_interface">8.7. Editor Interface</a></li>
+<li><a href="#_editor_server">8.8. Editor Server</a></li>
+<li><a href="#_refactoring">8.9. Refactoring</a></li>
+<li><a href="#_memory_management">8.10. Memory Management</a></li>
+<li><a href="#_configuration">8.11. Configuration</a></li>
 </ul>
 </li>
 <li><a href="#_modules">9. Modules</a>
@@ -772,8 +778,21 @@ will be stuck with that in the whole session and for all projects.
 <div class="sect1">
 <h2 id="_principles">6. Principles</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_reference_database_and_parsing">6.1. Reference Database and Parsing</h3>
 <div class="paragraph">
-<p>TBD.</p>
+<p>The reference database is used only to hold externally visible
+identifiers to ensure that references to an identifier can be found
+across all files in the used source.</p>
+</div>
+<div class="paragraph">
+<p>All symbols that are only visible inside a unit is handled by
+reparsing the file of interest.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tbd">6.2. TBD.</h3>
+
 </div>
 </div>
 </div>
@@ -848,7 +867,55 @@ update, modified or checked for a long time.</p>
 <h2 id="_code">8. Code</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_passes">8.1. Passes</h3>
+<h3 id="_commands">8.1. Commands</h3>
+<div class="paragraph">
+<p>The <em>editorExtension</em> calls the server using command line
+options. These are then converted to first a command enum starting in
+<code>OLO</code> ("on-line operation") or <code>AVR</code> ("available refactoring").</p>
+</div>
+<div class="paragraph">
+<p>Some times the server needs to call the crossreferencer which is
+performed in the same manner, command line options, but this call is
+internal so the wanted arguments are stored in a vector which is
+passed to the <code>xref()</code> in the same manner as <code>main()</code> passes the
+actual <code>argc</code>/<code>argv</code>.</p>
+</div>
+<div class="paragraph">
+<p>Many of the commands require extra arguments like positions/markers
+which are passed in as extra arguments. E.g. a rename requires the
+name to rename to which is sent in the <code>renameto=</code> option, which is
+argparsed and stored in the option structure.</p>
+</div>
+<div class="paragraph">
+<p>Some of these extra arguments are fairly random, like <code>-olcxparnum=</code>
+and <code>-olcxparnum2=</code>. This should be cleaned up.</p>
+</div>
+<div class="paragraph">
+<p>A move towards "events" with arguments would be helpful. This would
+mean that we need to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>List all "events" that <code>c-xref</code> need to handle</p>
+</li>
+<li>
+<p>Define the parameters/extra info that each of them need</p>
+</li>
+<li>
+<p>Clean up the command line options to follow this</p>
+</li>
+<li>
+<p>Create event structures to match each event and pass this to <code>server</code>, <code>xref</code> and <code>refactory</code></p>
+</li>
+<li>
+<p>Rebuild the main command loop to parse command line options into event structures</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_passes">8.2. Passes</h3>
 <div class="paragraph">
 <p>There is a variable in <code>main()</code> called <code>firstPassing</code> which is set and passed
 down through <code>mainEditServer()</code> until it is reset in
@@ -864,7 +931,7 @@ setting the maxPass variable to 1 before entering the loop&#8230;&#8203;).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_parsers">8.2. Parsers</h3>
+<h3 id="_parsers">8.3. Parsers</h3>
 <div class="paragraph">
 <p><em>C-xref</em> uses a patched version of Berkley yacc to generate
 parsers. There are a number of parsers</p>
@@ -900,7 +967,7 @@ them as appropriate.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_refactoring_and_the_parsers">8.3. Refactoring and the parsers</h3>
+<h3 id="_refactoring_and_the_parsers">8.4. Refactoring and the parsers</h3>
 <div class="paragraph">
 <p>Some refactorings need more detailed information about the code, maybe all do?</p>
 </div>
@@ -965,7 +1032,7 @@ global variables.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_reading_files">8.4. Reading Files</h3>
+<h3 id="_reading_files">8.5. Reading Files</h3>
 <div class="paragraph">
 <p>Here are some speculations about how the complex file reading is structured.</p>
 </div>
@@ -992,7 +1059,7 @@ wonder why this function does some initial reading, this should be
 pushed down to the buffers in the file descriptor.</p>
 </div>
 <div class="sect3">
-<h4 id="_lexingscanning">8.4.1. Lexing/scanning</h4>
+<h4 id="_lexingscanning">8.5.1. Lexing/scanning</h4>
 <div class="paragraph">
 <p>Lexing/scanning is performed in two layers, one in <code>lexer.c</code> which
 seems to be doing the actual lexing into lexems which are put in a
@@ -1035,7 +1102,7 @@ See the TODO.org for current status of this Mikado sequence.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_semantic_information">8.4.2. Semantic information</h4>
+<h4 id="_semantic_information">8.5.2. Semantic information</h4>
 <div class="paragraph">
 <p>As the refactoring functions need some amount of semantic information,
 in the sense of information gathered during parsing, this information
@@ -1053,7 +1120,7 @@ be tidied up.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_reference_database">8.5. Reference Database</h3>
+<h3 id="_reference_database">8.6. Reference Database</h3>
 <div class="paragraph">
 <p><code>c-xref</code> creates a database of references for all symbols it encounters. There is limited
 support to automatically update these in the edit-compile cycle, you might have to
@@ -1130,7 +1197,7 @@ generated data for expected data. This is now partly ongoing in the
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_interface">8.6. Editor Interface</h3>
+<h3 id="_editor_interface">8.7. Editor Interface</h3>
 <div class="paragraph">
 <p>I&#8217;ve been focusing on the Emacs interface since <code>Jedit</code> is not so
 popular anymore and I&#8217;m an Emacs-guy.</p>
@@ -1164,7 +1231,7 @@ output in the output file it sends a <code>&lt;sync&gt;</code> reply.</p>
 what it needs to do with it ("dispatching:").</p>
 </div>
 <div class="sect3">
-<h4 id="_invocations">8.6.1. Invocations</h4>
+<h4 id="_invocations">8.7.1. Invocations</h4>
 <div class="paragraph">
 <p>The editor invokes a new <code>c-xref</code> process for the following cases:</p>
 </div>
@@ -1188,7 +1255,7 @@ started, which is run by a separate <code>c-xref</code> process.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_buffers">8.6.2. Buffers</h4>
+<h4 id="_buffers">8.7.2. Buffers</h4>
 <div class="paragraph">
 <p>There is some magical editor buffer management happening inside of
 <code>c-xref</code> which is not clear to me at this point. Basically it looks
@@ -1209,7 +1276,7 @@ server the current content somehow, this is the <code>-preload</code> option.</p
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_server">8.7. Editor Server</h3>
+<h3 id="_editor_server">8.8. Editor Server</h3>
 <div class="paragraph">
 <p>When serving an editor the c-xrefactory application is divided into
 the server, <em>c-xref</em> and the editor part, at this point only Emacs:en
@@ -1217,7 +1284,7 @@ are supported so that&#8217;s implemented in the
 <code>editor/Emacs</code>-packages.</p>
 </div>
 <div class="sect3">
-<h4 id="_interaction">8.7.1. Interaction</h4>
+<h4 id="_interaction">8.8.1. Interaction</h4>
 <div class="paragraph">
 <p>The initial invocation of the edit server creates a process with which
 communication is over stdin/stdout using a protocol which from the editor
@@ -1272,7 +1339,7 @@ the options structure used only when refactoring.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_protocol">8.7.2. Protocol</h4>
+<h4 id="_protocol">8.8.2. Protocol</h4>
 <div class="paragraph">
 <p>Communication between the editor and the server is performed using
 text through standard input/output to/from <em>c-xref</em>. The protocol is
@@ -1299,7 +1366,7 @@ impementations are in sync.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_invocation_of_server">8.7.3. Invocation of server</h4>
+<h4 id="_invocation_of_server">8.8.3. Invocation of server</h4>
 <div class="paragraph">
 <p>The editor fires up a server and keeps talking over the established
 channel (elisp function 'c-xref-start-server-process'). This probably
@@ -1342,7 +1409,7 @@ elisp-sources.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_communication_protocol">8.7.4. Communication Protocol</h4>
+<h4 id="_communication_protocol">8.8.4. Communication Protocol</h4>
 <div class="paragraph">
 <p>The editor server is started using the appropriate command line option
 and then it keeps the communication over stdin/stdout open.</p>
@@ -1386,7 +1453,7 @@ options.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_olcx_naming">8.7.5. OLCX Naming</h4>
+<h4 id="_olcx_naming">8.8.5. OLCX Naming</h4>
 <div class="paragraph">
 <p>It seems that all on-line editing server functions have an <code>olcx</code>
 prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
@@ -1394,12 +1461,12 @@ prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_refactoring">8.8. Refactoring</h3>
+<h3 id="_refactoring">8.9. Refactoring</h3>
 <div class="paragraph">
 <p>This is of course, the core in why I want to restore this, to get at its refactoring capabilities. So far, much is not understood, but here are some bits and pieces.</p>
 </div>
 <div class="sect3">
-<h4 id="_editor_interface_2">8.8.1. Editor interface</h4>
+<h4 id="_editor_interface_2">8.9.1. Editor interface</h4>
 <div class="paragraph">
 <p>One thing that really confused me in the beginning was that the editor, primarily Emacs, don&#8217;t use the actual server that it has started for refactoring operations (and perhaps for other things also?). Instead it creates a separate instance with which it talks to about one refactoring.</p>
 </div>
@@ -1422,13 +1489,13 @@ prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_interactions">8.8.2. Interactions</h4>
+<h4 id="_interactions">8.9.2. Interactions</h4>
 <div class="paragraph">
 <p>I haven&#8217;t investigated the internal flow of such a sequence, but it is starting to look like <code>c-xref</code> is internally re-reading the initialization, I&#8217;m not at this point sure what this means, I hope it&#8217;s not internal recursion&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_extraction">8.8.3. Extraction</h4>
+<h4 id="_extraction">8.9.3. Extraction</h4>
 <div class="paragraph">
 <p>Each type of refactoring has it&#8217;s own little "language". E.g. extracting a method/function using <code>-refactory -rfct-extract-function</code> will return something like</p>
 </div>
@@ -1469,7 +1536,7 @@ prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_protocol_2">8.8.4. Protocol</h4>
+<h4 id="_protocol_2">8.9.4. Protocol</h4>
 <div class="paragraph">
 <p>Dechiffrering the interaction between an editor and the edit server in
 <code>c-xrefactory</code> isn&#8217;t easy. The protocol isn&#8217;t very clear or
@@ -1574,7 +1641,7 @@ be renamed (replaced at all occurrences) by NEW_NAME.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_memory_management">8.9. Memory Management</h3>
+<h3 id="_memory_management">8.10. Memory Management</h3>
 <div class="paragraph">
 <p>There are multiple levels of memory management.</p>
 </div>
@@ -1600,7 +1667,7 @@ model)?</p>
 point. Tag data?</p>
 </div>
 <div class="sect3">
-<h4 id="_memory_types">8.9.1. Memory "types"</h4>
+<h4 id="_memory_types">8.10.1. Memory "types"</h4>
 <div class="paragraph">
 <p>Mostly <code>c-xrefactory</code> does its own memory management. It uses a number
 of different strategies, which has/had its own macros.</p>
@@ -1669,7 +1736,7 @@ for example. So <code>olcx_memory_free()</code> also exist and is used.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_option_memory">8.9.2. Option Memory</h4>
+<h4 id="_option_memory">8.10.2. Option Memory</h4>
 <div class="paragraph">
 <p>The memory handling for options deserves special explanation and attention.</p>
 </div>
@@ -1708,9 +1775,9 @@ memory of the Options structure.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration">8.10. Configuration</h3>
+<h3 id="_configuration">8.11. Configuration</h3>
 <div class="sect3">
-<h4 id="_options">8.10.1. Options</h4>
+<h4 id="_options">8.11.1. Options</h4>
 <div class="paragraph">
 <p>There are three possible sources for options.</p>
 </div>
@@ -1735,7 +1802,7 @@ memory of the Options structure.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_logic">8.10.2. Logic</h4>
+<h4 id="_logic">8.11.2. Logic</h4>
 <div class="paragraph">
 <p>When the editor has a file open it needs to "belong" to a project. The
 logic for finding which is very intricate and complicated.</p>
@@ -3018,7 +3085,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-05-07 13:37:03 UTC
+Last updated 2024-05-08 06:55:40 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
