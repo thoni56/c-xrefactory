@@ -1,5 +1,34 @@
 == Code
 
+=== Commands
+
+The _editorExtension_ calls the server using command line
+options. These are then converted to first a command enum starting in
+`OLO` ("on-line operation") or `AVR` ("available refactoring").
+
+Some times the server needs to call the crossreferencer which is
+performed in the same manner, command line options, but this call is
+internal so the wanted arguments are stored in a vector which is
+passed to the `xref()` in the same manner as `main()` passes the
+actual `argc`/`argv`.
+
+Many of the commands require extra arguments like positions/markers
+which are passed in as extra arguments. E.g. a rename requires the
+name to rename to which is sent in the `renameto=` option, which is
+argparsed and stored in the option structure.
+
+Some of these extra arguments are fairly random, like `-olcxparnum=`
+and `-olcxparnum2=`. This should be cleaned up.
+
+A move towards "events" with arguments would be helpful. This would
+mean that we need to:
+
+* List all "events" that `c-xref` need to handle
+* Define the parameters/extra info that each of them need
+* Clean up the command line options to follow this
+* Create event structures to match each event and pass this to `server`, `xref` and `refactory`
+* Rebuild the main command loop to parse command line options into event structures
+
 === Passes
 
 There is a variable in `main()` called `firstPassing` which is set and passed
