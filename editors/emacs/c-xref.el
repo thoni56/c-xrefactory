@@ -3375,7 +3375,7 @@ Special hotkeys available:
     (setq i (c-xref-server-dispatch-skip-blank ss i len))
     (while (and (< i len))  ;; (eq (elt ss i) ?<))
       (setq i (c-xref-server-parse-xml-tag ss i len))
-      (message "tag == %s" c-xref-server-ctag)
+      ;;(message "tag == %s" c-xref-server-ctag)
       (cond
        (
 	    (equal c-xref-server-ctag c-xref_PPC_SET_INFO)
