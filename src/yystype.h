@@ -10,8 +10,6 @@ Symbol                                 *symbol;
 TypeModifier                           *typeModifier;
 FrameAllocation                        *frameAllocation;
 
-S_extRecFindStr                        *erfs;
-
 Ast_int                                ast_integer;
 Ast_unsigned                           ast_unsigned;
 Ast_symbol                             ast_symbol;

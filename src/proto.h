@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <time.h>
 
+
 typedef unsigned char uchar;
 
 /* ***********************************************************************
@@ -166,11 +167,6 @@ typedef struct recFindStr {
     struct symbol     *anonymousUnions[MAX_ANONYMOUS_FIELDS]; /* anonymous unions */
 } S_recFindStr;
 
-typedef struct extRecFindStr {
-    struct recFindStr        s;
-    struct symbol           *memb;
-    struct typeModifierList *params;
-} S_extRecFindStr;
 
 typedef struct nestedSpec {
     struct symbol *cl;
