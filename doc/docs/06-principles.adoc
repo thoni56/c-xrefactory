@@ -1,3 +1,12 @@
 == Principles
 
-TBD.
+=== Reference Database and Parsing
+
+The reference database is used only to hold externally visible
+identifiers to ensure that references to an identifier can be found
+across all files in the used source.
+
+All symbols that are only visible inside a unit is handled by
+reparsing the file of interest.
+
+=== TBD.
