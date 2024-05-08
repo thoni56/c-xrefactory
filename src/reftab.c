@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "head.h"
 
 #define IN_REFTAB_C

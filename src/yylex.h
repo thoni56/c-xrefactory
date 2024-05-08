@@ -1,6 +1,7 @@
 #ifndef YYLEX_H_INCLUDED
 #define YYLEX_H_INCLUDED
 
+#include <stdio.h>
 #include "proto.h"
 #include "editor.h"
 #include "lexem.h"

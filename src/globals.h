@@ -1,6 +1,8 @@
 #ifndef GLOBALS_H_INCLUDED
 #define GLOBALS_H_INCLUDED
 
+#include <stdio.h>
+#include <setjmp.h>
 #include "constants.h"
 #include "completion.h"
 #include "proto.h"

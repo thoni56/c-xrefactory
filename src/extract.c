@@ -382,19 +382,18 @@ static void setInOutBlockFields(ProgramGraphNode *program) {
 }
 
 static bool areThereJumpsInOrOutOfBlock(ProgramGraphNode *program) {
-    ProgramGraphNode *p;
-    for (p=program; p!=NULL; p=p->next) {
-        assert(p->symRef!=NULL)
-            if (p->symRef->type==TypeLabel) {
-                assert(p->ref!=NULL);
-                if (p->ref->usage.kind==UsageUsed || p->ref->usage.kind==UsageFork) {
-                    assert(p->jump != NULL);
-                    if (p->posBits != p->jump->posBits) {
-                        //&fprintf(dumpOut,"jump in/out at %s : %x\n",p->symRef->linkName, p);
-                        return true;
-                    }
+    for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
+        assert(p->symRef!=NULL);
+        if (p->symRef->type==TypeLabel) {
+            assert(p->ref!=NULL);
+            if (p->ref->usage.kind==UsageUsed || p->ref->usage.kind==UsageFork) {
+                assert(p->jump != NULL);
+                if (p->posBits != p->jump->posBits) {
+                    //&fprintf(dumpOut,"jump in/out at %s : %x\n",p->symRef->linkName, p);
+                    return true;
                 }
             }
+        }
     }
     return false;
 }

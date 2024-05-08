@@ -1,5 +1,8 @@
 #include "classhierarchy.h"
 
+#include <string.h>
+
+#include "commons.h"
 #include "menu.h"
 #include "misc.h"
 #include "cxref.h"

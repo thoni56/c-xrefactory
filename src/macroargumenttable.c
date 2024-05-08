@@ -1,5 +1,7 @@
 #include "macroargumenttable.h"
 
+#include <stdlib.h>
+
 /* Define the hashtab: */
 #define HASH_TAB_NAME macroArgumentTable
 #define HASH_TAB_TYPE MacroArgumentTable

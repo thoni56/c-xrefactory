@@ -1,9 +1,12 @@
+#include "stackmemory.h"
+
+#include <string.h>
+
 #include "commons.h"
 #include "constants.h"
 #include "proto.h"
 #include "log.h"
 
-#include "stackmemory.h"
 
 
 CodeBlock *currentBlock;

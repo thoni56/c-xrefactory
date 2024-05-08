@@ -1,5 +1,7 @@
 #include "memory.h"
 
+#include <stdlib.h>
+
 #include "log.h"
 
 #include "constants.h"

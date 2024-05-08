@@ -1,5 +1,8 @@
 #include "ppc.h"
 
+#include <string.h>
+
+#include "commons.h"
 #include "globals.h"
 #include "protocol.h"
 #include "filetable.h"

@@ -1,5 +1,7 @@
 #include "editorbuffer.h"
 
+#include <string.h>
+
 #include "commons.h"
 #include "editorbuffertab.h"
 #include "fileio.h"

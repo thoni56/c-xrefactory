@@ -1,9 +1,9 @@
 #ifndef PROTO_H_INCLUDED
 #define PROTO_H_INCLUDED
 
-#include "stdinc.h"
 #include <stdbool.h>
 #include <unistd.h>
+#include <time.h>
 
 typedef unsigned char uchar;
 
