@@ -33,6 +33,19 @@ typedef enum updateType {
     UPDATE_FULL,
 } UpdateType;
 
+/* *******************      comment moving levels for refactoring      *************** */
+
+typedef enum commentMovingMode {
+    CM_NO_COMMENT,
+    CM_SINGLE_SLASHED,
+    CM_SINGLE_STARRED,
+    CM_SINGLE_SLASHED_AND_STARRED,
+    CM_ALL_SLASHED,
+    CM_ALL_STARRED,
+    CM_ALL_SLASHED_AND_STARRED,
+} CommentMovingMode;
+
+
 
 /* protected data type */
 typedef struct pointerLocationList LocationList;

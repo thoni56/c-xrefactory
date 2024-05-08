@@ -425,7 +425,6 @@ static OlcxReferences *pushOlcxReference(OlcxReferencesStack *stack) {
     *res = (OlcxReferences){.references      = NULL,
                             .actual          = NULL,
                             .command         = options.serverOperation,
-                            .language        = currentLanguage,
                             .accessTime      = fileProcessingStartTime,
                             .callerPosition  = noPosition,
                             .completions     = NULL,

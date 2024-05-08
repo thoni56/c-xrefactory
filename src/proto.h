@@ -18,26 +18,8 @@ typedef unsigned char uchar;
 
 */
 
-typedef enum addYesNo {
-    ADD_DEFAULT = 0,
-    ADD_YES,
-    ADD_NO
-} AddYesNo;
-
-typedef enum accessibilityCheckYesNo {
-    ACCESSIBILITY_CHECK_DEFAULT = ADD_NO + 1,
-    ACCESSIBILITY_CHECK_YES,
-    ACCESSIBILITY_CHECK_NO
-} AccessibilityCheckYesNo;
-
-typedef enum visibilityCheckYesNo {
-    VISIBILITY_CHECK_DEFAULT = ACCESSIBILITY_CHECK_NO + 1,
-    VISIBILITY_CHECK_YES,
-    VISIBILITY_CHECK_NO
-} VisibilityCheckYesNo;
-
 typedef enum longjmpReason {
-    LONGJMP_REASON_NONE = VISIBILITY_CHECK_NO + 1,
+    LONGJMP_REASON_NONE = 0,
     LONGJUMP_REASON_REFERENCE_OVERFLOW,
     LONGJMP_REASON_FILE_ABORT
 } LongjmpReason;
@@ -48,24 +30,14 @@ typedef enum resolveDialog {
     RESOLVE_DIALOG_NEVER,
 } ResolveDialog;
 
-typedef enum dotifyMode {
-    DOTIFY_NAME = RESOLVE_DIALOG_NEVER + 1,
-    KEEP_SLASHES,
-} DotifyMode;
-
-typedef enum includeCxrefs {
-    NO_CX_REFS = KEEP_SLASHES + 1,
-    ADD_CX_REFS
-} IncludeCxrefs;
-
 typedef enum {
-    DONT_ALLOCATE = ADD_CX_REFS + 1,
+    DONT_ALLOCATE = RESOLVE_DIALOG_NEVER + 1,
     ALLOCATE_IN_SM,
     ALLOCATE_IN_PP
 } MemoryKind;
 
 typedef enum {
-    DONT_PROCESS_FILE_ARGUMENTS = ALLOCATE_IN_PP,
+    DONT_PROCESS_FILE_ARGUMENTS = ALLOCATE_IN_PP + 1,
     PROCESS_FILE_ARGUMENTS
 } ProcessFileArguments;
 
@@ -119,20 +91,6 @@ enum fileEncodings {
     MULE_UTF_16LE, // utf-16 little endian
     MULE_UTF_16BE, // utf-16 big endian
 };
-
-/* *******************      comment moving levels for refactoring      *************** */
-
-/* Not used, but was probably used by move class/method/field, let's keep it for now */
-
-typedef enum commentMovingMode {
-    CM_NO_COMMENT,
-    CM_SINGLE_SLASHED,
-    CM_SINGLE_STARRED,
-    CM_SINGLE_SLASHED_AND_STARRED,
-    CM_ALL_SLASHED,
-    CM_ALL_STARRED,
-    CM_ALL_SLASHED_AND_STARRED,
-} CommentMovingMode;
 
 /* *******************      refactoring continuations      *************** */
 
@@ -258,7 +216,6 @@ typedef struct olcxReferences {
     struct reference    *references;     /* list of references */
     struct reference    *actual;         /* actual reference */
     ServerOperation      command;        /* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
-    Language             language;       /* C/JAVA/YACC */
     time_t               accessTime;     /* last access time */
     struct position      callerPosition; /* caller position */
     struct completion *completions;    /* completions list for OLO_COMPLETION */
