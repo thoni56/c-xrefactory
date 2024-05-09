@@ -2,15 +2,16 @@
 #include "semact.h"
 #include <cgreen/mocks.h>
 
-void fillStructMemberFindInfo(StructMemberFindInfo *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord,
-                    unsigned recsClassCounter) {
-    recFindStr->nextRecord           = nextRecord;
-    recFindStr->recsClassCounter     = recsClassCounter;
-    recFindStr->superClassesCount    = 0;
-    recFindStr->anonymousUnionsCount = 0;
+void fillStructMemberFindInfo(StructMemberFindInfo *info, Symbol *currentStructure,
+                              Symbol *nextRecord, unsigned memberFindCount) {
+    info->currentStructure     = currentStructure;
+    info->nextMember           = nextRecord;
+    info->memberFindCount      = memberFindCount;
+    info->superClassesCount    = 0;
+    info->anonymousUnionsCount = 0;
 }
 
-void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records) {
+void initSymStructSpec(StructSpec *symStruct, Symbol *records) {
     mock(symStruct, records);
 }
 
@@ -34,16 +35,12 @@ void addSymbolToFrame(SymbolTable *tab, Symbol *pp) {
     mock(pp, tab);
 }
 
-void recFindPush(Symbol *sym, StructMemberFindInfo *rfs) {
+void memberFindPush(Symbol *sym, StructMemberFindInfo *rfs) {
     mock(sym, rfs);
 }
 
 StructMemberFindInfo *initFind(Symbol *s, StructMemberFindInfo *rfs) {
     return (StructMemberFindInfo *) mock(s, rfs);
-}
-
-bool javaOuterClassAccessible(Symbol *cl) {
-    return (int) mock(cl);
 }
 
 Result findStructureMemberSymbol(Symbol **res, StructMemberFindInfo *ss, char *recname) {

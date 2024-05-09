@@ -158,8 +158,8 @@ typedef enum result {
 
 typedef struct {
     struct symbol     *currentStructure; /* current class, NULL for loc vars. */
-    struct symbol     *nextRecord;
-    unsigned           recsClassCounter;
+    struct symbol     *nextMember;
+    unsigned           memberFindCount;
     int                superClassesCount;
     struct symbolList *superClasses[MAX_INHERITANCE_DEEP]; /* super classes stack */
     int                anonymousUnionsCount;
@@ -176,7 +176,7 @@ typedef struct nestedSpec {
 
 typedef struct symStructSpec {
     struct symbolList  *super;          /* list of super classes & interfaces */
-    struct symbol      *records;        /* str. records, should be a table of   */
+    struct symbol      *members;        /* str. records, should be a table of   */
     short int           nestedCount;    /* # of java nested classes     */
     struct nestedSpec  *nestedClasses;  /* array of nested classes		*/
     struct typeModifier type;           /* this structure type */
@@ -188,7 +188,7 @@ typedef struct symStructSpec {
     unsigned memberSearchCounter;          /* tmp counter when looking for a record
                                               it flags searched classes
                                            */
-} S_symStructSpec;
+} StructSpec;
 
 typedef struct jslSymbolList {
     struct symbol        *d;

@@ -8,15 +8,15 @@
 #include "proto.h"
 
 
-extern void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records);
-extern void fillStructMemberFindInfo(StructMemberFindInfo *recFindStr, Symbol *baseClass, Symbol *currentClass,
-                                     Symbol *nextRecord, unsigned recsClassCounter);
+extern void initSymStructSpec(StructSpec *symStruct, Symbol *records);
+extern void fillStructMemberFindInfo(StructMemberFindInfo *info, Symbol *currentStructure,
+                                     Symbol *nextRecord, unsigned memberFindCount);
 extern void unpackPointers(Symbol *pp);
 extern bool displayingErrorMessages(void);
 extern void noSuchMemberError(char *memberName);
 extern void deleteSymDef(void *p);
 extern void addSymbolToFrame(SymbolTable *tab, Symbol *pp);
-extern void recFindPush(Symbol *sym, StructMemberFindInfo *rfs);
+extern void memberFindPush(Symbol *sym, StructMemberFindInfo *rfs);
 extern StructMemberFindInfo * initFind(Symbol *s, StructMemberFindInfo *rfs);
 extern Result findStructureMemberSymbol(Symbol **res, StructMemberFindInfo *ss, char *recname);
 extern Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbol, Storage storage,

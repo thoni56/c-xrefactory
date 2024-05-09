@@ -20,13 +20,13 @@
 #include "log.h"
 
 
-void fillStructMemberFindInfo(StructMemberFindInfo *recFindStr, Symbol *baseClass, Symbol *currentStructure,
-                              Symbol *nextRecord, unsigned recsClassCounter) {
-    recFindStr->currentStructure     = currentStructure;
-    recFindStr->nextRecord           = nextRecord;
-    recFindStr->recsClassCounter     = recsClassCounter;
-    recFindStr->superClassesCount    = 0;
-    recFindStr->anonymousUnionsCount = 0;
+void fillStructMemberFindInfo(StructMemberFindInfo *info, Symbol *currentStructure,
+                              Symbol *nextRecord, unsigned memberFindCount) {
+    info->currentStructure     = currentStructure;
+    info->nextMember           = nextRecord;
+    info->memberFindCount     = memberFindCount;
+    info->superClassesCount    = 0;
+    info->anonymousUnionsCount = 0;
 }
 
 bool displayingErrorMessages(void) {
@@ -113,20 +113,20 @@ void addSymbolToFrame(SymbolTable *table, Symbol *symbol) {
     addToFrame(deleteSymDef, symbol /* TODO? Should also include reference to table */);
 }
 
-void recFindPush(Symbol *symbol, StructMemberFindInfo *rfs) {
-    S_symStructSpec *ss;
+void memberFindPush(Symbol *symbol, StructMemberFindInfo *info) {
+    StructSpec *spec;
 
     assert(symbol && (symbol->type==TypeStruct || symbol->type==TypeUnion));
-    if (rfs->recsClassCounter==0) {
+    if (info->memberFindCount==0) {
         // this is hack to avoid problem when overloading to zero
-        rfs->recsClassCounter++;
+        info->memberFindCount++;
     }
-    ss = symbol->u.structSpec;
-    rfs->nextRecord = ss->records;
-    rfs->currentStructure                         = symbol;
-    rfs->superClasses[rfs->superClassesCount] = ss->super;
-    assert(rfs->superClassesCount < MAX_INHERITANCE_DEEP);
-    rfs->superClassesCount++;
+    spec = symbol->u.structSpec;
+    info->nextMember = spec->members;
+    info->currentStructure = symbol;
+    info->superClasses[info->superClassesCount] = spec->super;
+    assert(info->superClassesCount < MAX_INHERITANCE_DEEP);
+    info->superClassesCount++;
 }
 
 StructMemberFindInfo *initFind(Symbol *s, StructMemberFindInfo *info) {
@@ -134,8 +134,8 @@ StructMemberFindInfo *initFind(Symbol *s, StructMemberFindInfo *info) {
     assert(s->type == TypeStruct || s->type == TypeUnion);
     assert(s->u.structSpec);
     assert(info);
-    fillStructMemberFindInfo(info, s, NULL, NULL, memberFindCount++);
-    recFindPush(s, info);
+    fillStructMemberFindInfo(info, NULL, NULL, memberFindCount++);
+    memberFindPush(s, info);
     return info;
 }
 
@@ -164,57 +164,64 @@ Result findStructureMemberSymbol(Symbol **resultingSymbolP, StructMemberFindInfo
     for (;;) {
         assert(info);
         structure = info->currentStructure;
-        if (structure != NULL && structure->u.structSpec->memberSearchCounter == info->recsClassCounter) {
+        if (structure != NULL && structure->u.structSpec->memberSearchCounter == info->memberFindCount) {
             // to avoid multiple pass through the same super-class ??
             //&fprintf(dumpOut,":%d==%d --> skipping class
-            //%s\n",structure->u.structSpec->memberSearchCounter,info->recsClassCounter,structure->linkName);
-            goto nextClass;
+            //%s\n",structure->u.structSpec->memberSearchCounter,info->memberFindCount,structure->linkName);
+            goto nextStruct;
         }
         if (structure != NULL)
             log_trace(":looking in class %s(%d)", structure->linkName, info->superClassesCount);
-        for (Symbol *r = info->nextRecord; r != NULL; r = r->next) {
-            // special gcc extension of anonymous struct record
-            if (r->name != NULL && *r->name == 0 && r->type == TypeDefault &&
-                r->u.typeModifier->type == TypeAnonymousField && r->u.typeModifier->next != NULL &&
-                (r->u.typeModifier->next->type == TypeUnion || r->u.typeModifier->next->type == TypeStruct)) {
+        for (Symbol *m = info->nextMember; m != NULL; m = m->next) {
+            // special gcc extension of anonymous struct field/member?
+            // typedef struct {
+            //   struct {
+            //     int x, y;
+            //   }; // Anonymous struct
+            //   double radius;
+            // } Circle;
+            if (m->name != NULL && *m->name == 0 && m->type == TypeDefault &&
+                m->u.typeModifier->type == TypeAnonymousField && m->u.typeModifier->next != NULL &&
+                (m->u.typeModifier->next->type == TypeUnion || m->u.typeModifier->next->type == TypeStruct)
+            ) {
                 // put the anonymous union as 'super class'
                 if (info->anonymousUnionsCount + 1 < MAX_ANONYMOUS_FIELDS) {
-                    info->anonymousUnions[info->anonymousUnionsCount++] = r->u.typeModifier->next->u.t;
+                    info->anonymousUnions[info->anonymousUnionsCount++] = m->u.typeModifier->next->u.t;
                 }
             }
-            //&fprintf(dumpOut,":checking %s\n",r->name); fflush(dumpOut);
-            if (memberName == NULL || strcmp(r->name, memberName) == 0) {
-                *resultingSymbolP = r;
-                info->nextRecord = r->next;
+            //&fprintf(dumpOut,":checking %s\n",m->name); fflush(dumpOut);
+            if (memberName == NULL || strcmp(m->name, memberName) == 0) {
+                *resultingSymbolP = m;
+                info->nextMember = m->next;
                 return RESULT_OK;
             }
         }
-    nextClass:
+    nextStruct:
         if (info->anonymousUnionsCount != 0) {
-            // O.K. try first to pas to anonymous record
+            // O.K. try first to pass down to anonymous record
             symbol = info->anonymousUnions[--info->anonymousUnionsCount];
         } else {
-            // mark the class as processed
+            // mark the struct as processed
             if (structure != NULL) {
-                structure->u.structSpec->memberSearchCounter = info->recsClassCounter;
+                structure->u.structSpec->memberSearchCounter = info->memberFindCount;
             }
 
             while (info->superClassesCount > 0 && info->superClasses[info->superClassesCount - 1] == NULL)
                 info->superClassesCount--;
             if (info->superClassesCount == 0) {
-                info->nextRecord = NULL;
+                info->nextMember = NULL;
                 *resultingSymbolP = &errorSymbol;
                 return RESULT_NOT_FOUND;
             }
-            list                 = info->superClasses[info->superClassesCount - 1];
-            symbol                   = list->element;
+            list = info->superClasses[info->superClassesCount - 1];
+            symbol = list->element;
 
             info->superClasses[info->superClassesCount - 1] = list->next;
             assert(symbol && (symbol->type == TypeStruct || symbol->type == TypeUnion));
             //& fprintf(dumpOut,":pass to super class %s(%d)\n",symbol->linkName,info->superClassesCount);
             //fflush(dumpOut);
         }
-        recFindPush(symbol, info);
+        memberFindPush(symbol, info);
     }
 }
 
@@ -641,9 +648,9 @@ static TypeModifier *createSimpleEnumType(Symbol *enumDefinition) {
     return newEnumTypeModifier(enumDefinition);
 }
 
-void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records) {
+void initSymStructSpec(StructSpec *symStruct, Symbol *records) {
     memset((void*)symStruct, 0, sizeof(*symStruct));
-    symStruct->records = records;
+    symStruct->members = records;
     symStruct->classFileNumber = -1;  /* Should be s_noFile? */
 }
 
@@ -672,7 +679,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
         || (isMemoryFromPreviousBlock(member) && isDefinitionOrDeclarationUsage(usage))) {
         member = stackMemoryAlloc(sizeof(Symbol));
         *member = symbol;
-        member->u.structSpec = stackMemoryAlloc(sizeof(S_symStructSpec));
+        member->u.structSpec = stackMemoryAlloc(sizeof(StructSpec));
 
         initSymStructSpec(member->u.structSpec, NULL);
 
@@ -758,7 +765,7 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
 
     setGlobalFileDepNames("", symbol, MEMORY_XX);
 
-    symbol->u.structSpec = stackMemoryAlloc(sizeof(S_symStructSpec));
+    symbol->u.structSpec = stackMemoryAlloc(sizeof(StructSpec));
 
     /* This is a recurring pattern, create a struct and the pointer type to it*/
     initSymStructSpec(symbol->u.structSpec, /*.records=*/NULL);
@@ -790,11 +797,11 @@ static char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {
 void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
     assert(sd->type == TypeStruct || sd->type == TypeUnion);
     assert(sd->u.structSpec);
-    if (sd->u.structSpec->records!=NULL)
+    if (sd->u.structSpec->members!=NULL)
         return;
 
-    sd->u.structSpec->records = rec;
-    addToFrame(setToNull, &(sd->u.structSpec->records));
+    sd->u.structSpec->members = rec;
+    addToFrame(setToNull, &(sd->u.structSpec->members));
     for (Symbol *symbol=rec; symbol!=NULL; symbol=symbol->next) {
         if (symbol->name != NULL) {
             symbol->linkName = string3ConcatInStackMem(sd->linkName,".",symbol->name);
