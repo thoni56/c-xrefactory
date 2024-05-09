@@ -51,8 +51,9 @@ parsers. There are a number of parsers
 - Yacc
 - C expressions
 
-There are also small traces of calls to the C++ parser that existed
-but was proprietary.
+There might also exist small traces of the Java parser, which was
+previously a part of the free `c-xref`, and the C++ parser that
+existed but was proprietary.
 
 The patch to byacc is mainly to the skeleton and seems to relate
 mostly to handling of errors and adding a recursive parsing feature
@@ -61,8 +62,8 @@ impossible that this patch might not be necessary now that Java parsing
 is not necessary, but this has not been tried.
 
 Some changes are also made to be able to accomodate multiple parsers
-in the same executable. The Makefile generates the parsers and renames
-them as appropriate.
+in the same executable, mostly solved by CPP macros. The Makefile
+generates the parsers and renames them as appropriate.
 
 === Refactoring and the parsers
 
