@@ -1,20 +1,16 @@
 #include "editor.h"
 
-
 #include "commons.h"
 #include "cxref.h"
 #include "editorbuffertab.h"
 #include "fileio.h"
 #include "filetable.h"
-#include "globals.h"
 #include "list.h"
 #include "log.h"
 #include "misc.h"
 #include "options.h"
-#include "protocol.h"
 #include "undo.h"
 #include "usage.h"
-#include "yylex.h"
 
 
 typedef struct editorMemoryBlock {

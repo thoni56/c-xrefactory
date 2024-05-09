@@ -17,7 +17,6 @@
 #include "globals.h"
 #include "options.h"
 #include "caching.h"
-#include "commons.h"
 #include "complete.h"
 #include "cxref.h"
 #include "extract.h"

@@ -15,7 +15,6 @@ void processIncludeNextDirective(Position *includePosition);
 #include "filetable.h"
 #include "log.h"
 #include "macroargumenttable.h"
-#include "symbol.h"
 #include "symboltable.h"
 
 #include "reference.mock"

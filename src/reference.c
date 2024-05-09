@@ -3,12 +3,10 @@
 #include <stdio.h>
 
 #include "filetable.h"
-#include "globals.h"
 #include "list.h"
 #include "log.h"
 #include "misc.h"
 #include "options.h"
-#include "session.h"
 #include "usage.h"
 
 

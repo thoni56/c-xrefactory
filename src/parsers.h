@@ -26,7 +26,7 @@
 
 #include "stackmemory.h"
 
-#include "lexem.h"
+
 typedef union {
 #include "yystype.h"
 } YYSTYPE;

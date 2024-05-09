@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "proto.h"              /* ERR_ST ...  */
+#include "head.h"
 #include "fileio.h"
 
 #include "log.h"

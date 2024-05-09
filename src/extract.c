@@ -1,10 +1,8 @@
 #include "extract.h"
 
-#include "classhierarchy.h"
 #include "commons.h"
 #include "cxref.h"
 #include "filedescriptor.h"
-#include "filetable.h"
 #include "globals.h"
 #include "list.h"
 #include "log.h"

@@ -1,9 +1,9 @@
 #ifndef MISC_H_INCLUDED
 #define MISC_H_INCLUDED
 
-#include "proto.h"
+#include "head.h"
+#include "typemodifier.h"
 #include "constants.h"
-#include "symbol.h"
 #include "server.h"
 #include "menu.h"
 #include "completion.h"

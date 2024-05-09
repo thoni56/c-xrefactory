@@ -1,6 +1,7 @@
 #include <cgreen/cgreen.h>
 
 #include "classhierarchy.h"
+
 #include "log.h"
 
 #include "commons.mock"

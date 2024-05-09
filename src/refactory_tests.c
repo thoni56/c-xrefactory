@@ -3,7 +3,6 @@
 #include "refactory.h"
 
 #include "log.h"
-#include "memory.h"
 
 #include "classhierarchy.mock"
 #include "commons.mock"

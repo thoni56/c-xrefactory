@@ -4,7 +4,6 @@
 
 #include "constants.h"
 
-#include "filetable.h"
 #include "globals.h"
 #include "log.h"
 #include "memory.h"

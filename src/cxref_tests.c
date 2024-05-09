@@ -3,11 +3,8 @@
 #include "cxref.h"
 
 #include "log.h"
-#include "memory.h"
 
 /* Dependencies: */
-#include "session.h"
-
 #include "caching.mock"
 #include "characterreader.mock"
 #include "classhierarchy.mock"

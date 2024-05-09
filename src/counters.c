@@ -1,10 +1,10 @@
 #include "counters.h"
-#include "extract.h"
+
 #include "usage.h"
 
 Counters counters;
 
-/* Currently from extract ... */
+/* Currently from semact.c ... */
 extern void generateInternalLabelReference(int counter, int usage);
 
 int nextGeneratedLocalSymbol(void) {

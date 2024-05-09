@@ -1,8 +1,7 @@
 #ifndef EXTRACT_H_INCLUDED
 #define EXTRACT_H_INCLUDED
 
-#include "proto.h"
-#include "refactorings.h"
+
 #include "symbol.h"
 
 

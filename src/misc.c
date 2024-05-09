@@ -1,24 +1,21 @@
-#include "misc.h"
-#include "proto.h"
-#include "server.h"
-
 #ifdef __WIN32__
 #include <direct.h>
 #else
 #include <dirent.h>
 #endif
 
-#include "globals.h"
-#include "options.h"
 #include "commons.h"
-#include "protocol.h"
 #include "editor.h"
 #include "fileio.h"
 #include "filetable.h"
-#include "stackmemory.h"
-
+#include "globals.h"
 #include "log.h"
+#include "misc.h"
+#include "options.h"
 #include "ppc.h"
+#include "proto.h"
+#include "protocol.h"
+#include "server.h"
 
 
 typedef struct integerList {

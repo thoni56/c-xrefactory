@@ -17,7 +17,6 @@
 
 #include "yacc_parser.h"
 
-#include "commons.h"
 #include "globals.h"
 #include "options.h"
 #include "caching.h"

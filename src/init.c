@@ -4,7 +4,6 @@
 #include "options.h"
 #include "lexem.h"
 
-#include "commons.h"            /* For infoMessage() */
 #include "log.h"
 #include "commons.h"
 #include "storage.h"

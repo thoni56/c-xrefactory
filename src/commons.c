@@ -1,15 +1,12 @@
-/* TODO: Make this independent on other modules */
 #include "commons.h"
 
 #include <errno.h>
 
 #include "globals.h"
 #include "options.h"
-#include "yylex.h"              /* placeIdent() */
 #include "protocol.h"
 #include "semact.h"             /* displayingErrorMessages() */
 
-/* These are ok to be dependent on */
 #include "filedescriptor.h"
 #include "fileio.h"
 #include "log.h"
