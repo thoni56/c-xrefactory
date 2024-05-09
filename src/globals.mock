@@ -62,7 +62,7 @@ Position noPosition = {-1, 0, 0};
 
 Language currentLanguage;
 
-TypeModifier *structRecordCompletionType;
+TypeModifier *structMemberCompletionType;
 Completions collectedCompletions;
 
 char *storageNamesTable[MAX_STORAGE_NAMES];

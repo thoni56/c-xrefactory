@@ -22,7 +22,7 @@ extern void completeForSpecial2(Completions *c);
 extern void completeUpFunProfile(Completions *c);
 extern void completeTypes(Completions *c);
 extern void completeStructs(Completions *c);
-extern void completeRecNames(Completions *c);
+extern void completeStructMemberNames(Completions *c);
 extern void completeEnums(Completions *c);
 extern void completeLabels(Completions *c);
 extern void completeMacros(Completions *c);

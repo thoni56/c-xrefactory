@@ -142,8 +142,8 @@ S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {
 void setDirectStructureCompletionType(TypeModifier *typeModifier) {
     assert(options.mode);
     if (options.mode == ServerMode) {
-        structRecordCompletionType = typeModifier;
-        assert(structRecordCompletionType);
+        structMemberCompletionType = typeModifier;
+        assert(structMemberCompletionType);
     }
 }
 
@@ -151,9 +151,9 @@ void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
     assert(options.mode);
     if (options.mode == ServerMode) {
         if (typeModifier->type==TypePointer || typeModifier->type==TypeArray) {
-            structRecordCompletionType = typeModifier->next;
-            assert(structRecordCompletionType);
-        } else structRecordCompletionType = &errorModifier;
+            structMemberCompletionType = typeModifier->next;
+            assert(structMemberCompletionType);
+        } else structMemberCompletionType = &errorModifier;
     }
 }
 

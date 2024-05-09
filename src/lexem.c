@@ -105,7 +105,7 @@ void initLexemEnumNames(void) {
     lexemEnumNames[329] = "COMPL_THIS_PACKAGE_SPECIAL";
     lexemEnumNames[330] = "COMPL_TYPE_NAME";
     lexemEnumNames[331] = "COMPL_STRUCT_NAME";
-    lexemEnumNames[332] = "COMPL_STRUCT_REC_NAME";
+    lexemEnumNames[332] = "COMPL_STRUCT_MEMBER_NAME";
     lexemEnumNames[333] = "COMPL_UP_FUN_PROFILE";
     lexemEnumNames[334] = "COMPL_ENUM_NAME";
     lexemEnumNames[335] = "COMPL_LABEL_NAME";

@@ -140,7 +140,7 @@ void initAllInputs(void) {
     olstringServed = false;
     olstringInMacroBody = NULL;
     upLevelFunctionCompletionType = NULL;
-    structRecordCompletionType = NULL;
+    structMemberCompletionType = NULL;
 }
 
 

@@ -33,7 +33,7 @@ Position staticPrefixStartPosition;
 Id yyIdBuffer[YYIDBUFFER_SIZE];
 int yyIdBufferIndex = 0;
 
-TypeModifier *structRecordCompletionType;
+TypeModifier *structMemberCompletionType;
 TypeModifier *upLevelFunctionCompletionType;
 
 char *inputFileName="";

@@ -601,17 +601,17 @@ static void completeRecordsNames(
 }
 
 
-void completeRecNames(Completions *c) {
+void completeStructMemberNames(Completions *c) {
     TypeModifier *str;
     Symbol *s;
-    assert(structRecordCompletionType);
-    str = structRecordCompletionType;
+    assert(structMemberCompletionType);
+    str = structMemberCompletionType;
     if (str->type == TypeStruct || str->type == TypeUnion) {
         s = str->u.t;
         assert(s);
         completeRecordsNames(c, s, TypeDefault);
     }
-    structRecordCompletionType = &errorModifier;
+    structMemberCompletionType = &errorModifier;
 }
 
 static void completeFromSymTab(Completions*c, unsigned storage){

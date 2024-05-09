@@ -30,7 +30,7 @@ void completeStructs(Completions *c) {
   mock(c);
 }
 
-void completeRecNames(Completions *c) {
+void completeStructMemberNames(Completions *c) {
   mock(c);
 }
 

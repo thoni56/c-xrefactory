@@ -93,7 +93,7 @@ static int savedWorkMemoryIndex = 0;
 
 /* c-only */
 %token COMPL_TYPE_NAME
-%token COMPL_STRUCT_NAME COMPL_STRUCT_REC_NAME COMPL_UP_FUN_PROFILE
+%token COMPL_STRUCT_NAME COMPL_STRUCT_MEMBER_NAME COMPL_UP_FUN_PROFILE
 %token COMPL_ENUM_NAME COMPL_LABEL_NAME COMPL_OTHER_NAME
 
 /* yacc-special */
@@ -151,7 +151,7 @@ static int savedWorkMemoryIndex = 0;
 
 
 %type <ast_id> IDENTIFIER identifier struct_identifier enum_identifier
-%type <ast_id> str_rec_identifier STRUCT UNION struct_or_union
+%type <ast_id> field_identifier STRUCT UNION struct_or_union
 %type <ast_id> user_defined_type TYPE_NAME
 %type <ast_id> designator, designator_list
 %type <ast_idList> designation_opt, initializer, initializer_list, eq_initializer_opt
@@ -283,14 +283,14 @@ postfix_expr
         $$.data.reference = NULL;
         assert($$.data.typeModifier);
     }
-    | postfix_expr {setDirectStructureCompletionType($1.data.typeModifier);} '.' str_rec_identifier        {
+    | postfix_expr {setDirectStructureCompletionType($1.data.typeModifier);} '.' field_identifier        {
         Symbol *rec=NULL;
         $$.data.reference = findStructureFieldFromType($1.data.typeModifier, $4.data, &rec);
         assert(rec);
         $$.data.typeModifier = rec->u.typeModifier;
         assert($$.data.typeModifier);
     }
-    | postfix_expr {setIndirectStructureCompletionType($1.data.typeModifier);} PTR_OP str_rec_identifier   {
+    | postfix_expr {setIndirectStructureCompletionType($1.data.typeModifier);} PTR_OP field_identifier   {
         Symbol *rec=NULL;
         $$.data.reference = NULL;
         if ($1.data.typeModifier->type==TypePointer || $1.data.typeModifier->type==TypeArray) {
@@ -328,9 +328,9 @@ optional_comma
     | ','
     ;
 
-str_rec_identifier
+field_identifier
     : identifier                /*& { $$.data = $1.data; } &*/
-    | COMPL_STRUCT_REC_NAME     { assert(0); /* token never used */ }
+    | COMPL_STRUCT_MEMBER_NAME     { assert(0); /* token never used */ }
     ;
 
 argument_expr_list_opt
@@ -1296,7 +1296,7 @@ designator
         $$.data = stackMemoryAlloc(sizeof(Id));
         fillId($$.data, "", NULL, noPosition);
     }
-    | '.' str_rec_identifier    {
+    | '.' field_identifier    {
         $$.data = stackMemoryAlloc(sizeof(Id));
         *($$.data) = *($2.data);
     }
@@ -1740,12 +1740,12 @@ static CompletionFunctionsTable spCompletionsTab[]  = {
 };
 
 static CompletionFunctionsTable completionsTab[]  = {
-    {COMPL_TYPE_NAME,       completeTypes},
-    {COMPL_STRUCT_NAME,     completeStructs},
-    {COMPL_STRUCT_REC_NAME, completeRecNames},
-    {COMPL_ENUM_NAME,       completeEnums},
-    {COMPL_LABEL_NAME,      completeLabels},
-    {COMPL_OTHER_NAME,      completeOthers},
+    {COMPL_TYPE_NAME,          completeTypes},
+    {COMPL_STRUCT_NAME,        completeStructs},
+    {COMPL_STRUCT_MEMBER_NAME, completeStructMemberNames},
+    {COMPL_ENUM_NAME,          completeEnums},
+    {COMPL_LABEL_NAME,         completeLabels},
+    {COMPL_OTHER_NAME,         completeOthers},
     {0,NULL}
 };
 

@@ -152,7 +152,7 @@ typedef union {
 #define COMPL_THIS_PACKAGE_SPECIAL 329
 #define COMPL_TYPE_NAME 330
 #define COMPL_STRUCT_NAME 331
-#define COMPL_STRUCT_REC_NAME 332
+#define COMPL_STRUCT_MEMBER_NAME 332
 #define COMPL_UP_FUN_PROFILE 333
 #define COMPL_ENUM_NAME 334
 #define COMPL_LABEL_NAME 335
@@ -1898,7 +1898,7 @@ char *yacc_yyname[] = {
 "_BOOL","_THREADLOCAL","_NORETURN","INLINE","ASM_KEYWORD","ANONYMOUS_MODIFIER",
 "TRUE_LITERAL","FALSE_LITERAL","TOKEN","TYPE","LABEL","COMPL_FOR_SPECIAL1",
 "COMPL_FOR_SPECIAL2","COMPL_THIS_PACKAGE_SPECIAL","COMPL_TYPE_NAME",
-"COMPL_STRUCT_NAME","COMPL_STRUCT_REC_NAME","COMPL_UP_FUN_PROFILE",
+"COMPL_STRUCT_NAME","COMPL_STRUCT_MEMBER_NAME","COMPL_UP_FUN_PROFILE",
 "COMPL_ENUM_NAME","COMPL_LABEL_NAME","COMPL_OTHER_NAME","COMPL_YACC_LEXEM_NAME",
 "CPP_TOKENS_START","CPP_INCLUDE","CPP_INCLUDE_NEXT","CPP_DEFINE","CPP_IFDEF",
 "CPP_IFNDEF","CPP_IF","CPP_ELSE","CPP_ENDIF","CPP_ELIF","CPP_UNDEF",
@@ -2070,17 +2070,17 @@ char *yacc_yyrule[] = {
 "$$7 :",
 "postfix_expr : postfix_expr $$7 '(' argument_expr_list_opt ')'",
 "$$8 :",
-"postfix_expr : postfix_expr $$8 '.' str_rec_identifier",
+"postfix_expr : postfix_expr $$8 '.' field_identifier",
 "$$9 :",
-"postfix_expr : postfix_expr $$9 PTR_OP str_rec_identifier",
+"postfix_expr : postfix_expr $$9 PTR_OP field_identifier",
 "postfix_expr : postfix_expr INC_OP",
 "postfix_expr : postfix_expr DEC_OP",
 "postfix_expr : compound_literal",
 "compound_literal : '(' type_name ')' '{' initializer_list optional_comma '}'",
 "optional_comma :",
 "optional_comma : ','",
-"str_rec_identifier : identifier",
-"str_rec_identifier : COMPL_STRUCT_REC_NAME",
+"field_identifier : identifier",
+"field_identifier : COMPL_STRUCT_MEMBER_NAME",
 "argument_expr_list_opt :",
 "argument_expr_list_opt : argument_expr_list",
 "argument_expr_list : assignment_expr",
@@ -2309,7 +2309,7 @@ char *yacc_yyrule[] = {
 "designator_list : designator",
 "designator_list : designator_list designator",
 "designator : '[' constant_expr ']'",
-"designator : '.' str_rec_identifier",
+"designator : '.' field_identifier",
 "statement : Save_index labeled_statement",
 "statement : Save_index compound_statement",
 "statement : Save_index expression_statement",
@@ -2479,7 +2479,7 @@ static void addRuleLocalVariable(Id *name, int order) {
 static CompletionFunctionsTable completionsTable[]  = {
     {COMPL_TYPE_NAME,       completeTypes},
     {COMPL_STRUCT_NAME,     completeStructs},
-    {COMPL_STRUCT_REC_NAME, completeRecNames},
+    {COMPL_STRUCT_MEMBER_NAME,      completeStructMemberNames},
     {COMPL_ENUM_NAME,       completeEnums},
     {COMPL_LABEL_NAME,      completeLabels},
     {COMPL_OTHER_NAME,      completeOthers},

@@ -61,7 +61,7 @@ extern uchar typeShortChange[MAX_TYPE];
 extern uchar typeSignedChange[MAX_TYPE];
 extern uchar typeUnsignedChange[MAX_TYPE];
 
-extern TypeModifier *structRecordCompletionType;
+extern TypeModifier *structMemberCompletionType;
 extern TypeModifier *upLevelFunctionCompletionType;
 extern char *tokenNamesTable[];
 extern int tokenNameLengthsTable[];
