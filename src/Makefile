@@ -373,7 +373,7 @@ the-actual-coverage-report:
 	@mkdir -p ../coverage
 ifeq ($(HAVE_GCOV_TOOL),yes)
 # Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
-	-$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data"
+	-$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed"
 else
 # The run_test script in ../tests has created a coverage.info in each test directory
 # So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...'
@@ -467,7 +467,7 @@ unittests: parsers $(OBJS) $(UNITTESTS)
 	[ "$(HAVE_LCOV2)" = "yes" ] && lcovignore2="--ignore-errors unused,unused" || true ; \
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount -gt 0 ] ; then \
-		$(LCOV) -q $$lcovignore1  -t unittests -d . -c -o unittests.i 2>&1 | grep -v "did not produce any data" ; \
+		$(LCOV) -q $$lcovignore1  -t unittests -d . -c -o unittests.i 2>&1 | grep -v "did not produce any data"  | grep -v "assuming not executed" ; \
 		$(LCOV) -q $$lcovignore2 --remove unittests.i $(LCOV_IGNORE_COVERAGE_FOR) -o unittests.i ; \
 		mv unittests.i unittests.info ; \
 	fi
