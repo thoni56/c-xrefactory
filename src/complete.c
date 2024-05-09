@@ -539,14 +539,13 @@ static void processSpecialInheritedFullCompletion(Completions *c, int orderFlag,
     processName(fcc, &compLine, orderFlag, c);
 }
 
-static void completeRecordsNames(
-    Completions *completions,
-    Symbol *symbol,
-    int completionType) {
+static void completeMemberNames(Completions *completions, Symbol *symbol,
+                                 int completionType
+) {
     CompletionLine completionLine;
     int vlevel;
     Symbol *r, *vFunCl;
-    S_recFindStr rfs;
+    StructMemberFindInfo rfs;
     char *cname;
 
     if (symbol==NULL)
@@ -555,11 +554,11 @@ static void completeRecordsNames(
     bool orderFlag = completions->idToProcess[0] != 0;
 
     assert(symbol->u.structSpec);
-    iniFind(symbol, &rfs);
+    initFind(symbol, &rfs);
 
     for(;;) {
-        // this is in fact about not cutting all records of the class,
-        Result result = findStrRecordSym(&r, &rfs, NULL);
+        // this is in fact about not cutting all members of the struct,
+        Result result = findStructureMemberSymbol(&r, &rfs, NULL);
         if (result != RESULT_OK)
             break;
 
@@ -571,9 +570,9 @@ static void completeRecordsNames(
             // Hmm. I hope it will not filter out something important
             && (! symbolShouldBeHiddenFromSearchResults(r->linkName))
         ) {
-            assert(rfs.currentClass && rfs.currentClass->u.structSpec);
+            assert(rfs.currentStructure && rfs.currentStructure->u.structSpec);
             assert(r->type == TypeDefault);
-            vFunCl = rfs.currentClass;
+            vFunCl = rfs.currentStructure;
             if (vFunCl->u.structSpec->classFileNumber == -1) {
                 vFunCl = NULL;
             }
@@ -609,7 +608,7 @@ void completeStructMemberNames(Completions *c) {
     if (str->type == TypeStruct || str->type == TypeUnion) {
         s = str->u.t;
         assert(s);
-        completeRecordsNames(c, s, TypeDefault);
+        completeMemberNames(c, s, TypeDefault);
     }
     structMemberCompletionType = &errorModifier;
 }
@@ -708,7 +707,7 @@ static bool isEqualType(TypeModifier *t1, TypeModifier *t2) {
 }
 
 static char *spComplFindNextRecord(ExpressionTokenType *token) {
-    S_recFindStr    rfs;
+    StructMemberFindInfo    rfs;
     Symbol        *r,*s;
     char *res;
     char            *cname;
@@ -718,14 +717,14 @@ static char *spComplFindNextRecord(ExpressionTokenType *token) {
     s = token->typeModifier->next->u.t;
     res = NULL;
     assert(s->u.structSpec);
-    iniFind(s, &rfs);
+    initFind(s, &rfs);
     for(;;) {
-        Result rr = findStrRecordSym(&r, &rfs, NULL);
+        Result rr = findStructureMemberSymbol(&r, &rfs, NULL);
         if (rr != RESULT_OK) break;
         assert(r);
         cname = r->name;
         if (cname!=NULL) {
-            assert(rfs.currentClass && rfs.currentClass->u.structSpec);
+            assert(rfs.currentStructure && rfs.currentStructure->u.structSpec);
             assert(r->type == TypeDefault);
             if (isEqualType(r->u.typeModifier, token->typeModifier)) {
                 // there is a record of the same type

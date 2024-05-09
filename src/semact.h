@@ -9,17 +9,18 @@
 
 
 extern void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records);
-extern void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord, unsigned recsClassCounter);
+extern void fillStructMemberFindInfo(StructMemberFindInfo *recFindStr, Symbol *baseClass, Symbol *currentClass,
+                                     Symbol *nextRecord, unsigned recsClassCounter);
 extern void unpackPointers(Symbol *pp);
 extern bool displayingErrorMessages(void);
-extern void noSuchFieldError(char *rec);
+extern void noSuchMemberError(char *memberName);
 extern void deleteSymDef(void *p);
 extern void addSymbolToFrame(SymbolTable *tab, Symbol *pp);
-extern void recFindPush(Symbol *sym, S_recFindStr *rfs);
-extern S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs);
-extern Result findStrRecordSym(Symbol **res, S_recFindStr *ss,
-                            char *recname);
-extern Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbol, Storage storage, UsageKind usage);
+extern void recFindPush(Symbol *sym, StructMemberFindInfo *rfs);
+extern StructMemberFindInfo * initFind(Symbol *s, StructMemberFindInfo *rfs);
+extern Result findStructureMemberSymbol(Symbol **res, StructMemberFindInfo *ss, char *recname);
+extern Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbol, Storage storage,
+                                      UsageKind usage);
 extern Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declaration, IdList *idList,
                                  unsigned storage);
 extern int styyerror(char *s);
@@ -35,20 +36,11 @@ extern void completeDeclarator(Symbol *t, Symbol *d);
 extern void addFunctionParameterToSymTable(SymbolTable *tab, Symbol *function, Symbol *p, int i);
 extern SymbolList *createDefinitionList(Symbol *symbol);
 extern Symbol *createSimpleDefinition(unsigned storage, unsigned t, Id *id);
-extern int findStrRecord(Symbol	*s,
-                         char   *recname,	/* can be NULL */
-                         Symbol	**res);
-extern Reference *findStrRecordFromSymbol(Symbol *str,
-                                          Id *record,
-                                          Symbol **res,
-                                          Id *super);
-extern Reference *findStructureFieldFromType(TypeModifier *structure,
-                                             Id *field,
-                                             Symbol **resultingSymbol);
+extern int findStructureMember(Symbol *symbol, char *memberName, Symbol	**foundMemberSymbol);
+extern Reference *findStuctureMemberFromSymbol(Symbol *str, Id *member, Symbol **res);
+extern Reference *findStructureFieldFromType(TypeModifier *structure, Id *field, Symbol **resultingSymbol);
 extern Result mergeArguments(Symbol *id, Symbol *ty);
-extern TypeModifier *simpleStrUnionSpecifier(Id *typeName,
-                                             Id *id,
-                                             UsageKind usage);
+extern TypeModifier *simpleStrUnionSpecifier(Id *typeName, Id *id, UsageKind usage);
 extern TypeModifier *createNewAnonymousStructOrUnion(Id *typeName);
 extern void specializeStrUnionDef(Symbol *sd, Symbol *rec);
 extern TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage);

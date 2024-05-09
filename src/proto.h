@@ -156,15 +156,15 @@ typedef enum result {
 #include "constants.h"
 
 
-typedef struct recFindStr {
-    struct symbol     *currentClass; /* current class, NULL for loc vars. */
+typedef struct {
+    struct symbol     *currentStructure; /* current class, NULL for loc vars. */
     struct symbol     *nextRecord;
     unsigned           recsClassCounter;
     int                superClassesCount;
     struct symbolList *superClasses[MAX_INHERITANCE_DEEP]; /* super classes stack */
     int                anonymousUnionsCount;
     struct symbol     *anonymousUnions[MAX_ANONYMOUS_FIELDS]; /* anonymous unions */
-} S_recFindStr;
+} StructMemberFindInfo;
 
 
 typedef struct nestedSpec {
@@ -185,7 +185,7 @@ typedef struct symStructSpec {
                                            == -1 for none, TODO to change
                                            it to s_noneFileIndex !!!
                                         */
-    unsigned recSearchCounter;          /* tmp counter when looking for a record
+    unsigned memberSearchCounter;          /* tmp counter when looking for a record
                                               it flags searched classes
                                            */
 } S_symStructSpec;

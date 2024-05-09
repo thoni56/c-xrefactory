@@ -20,9 +20,9 @@
 #include "log.h"
 
 
-void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord,
-                    unsigned recsClassCounter) {
-    recFindStr->currentClass         = currentClass;
+void fillStructMemberFindInfo(StructMemberFindInfo *recFindStr, Symbol *baseClass, Symbol *currentStructure,
+                              Symbol *nextRecord, unsigned recsClassCounter) {
+    recFindStr->currentStructure     = currentStructure;
     recFindStr->nextRecord           = nextRecord;
     recFindStr->recsClassCounter     = recsClassCounter;
     recFindStr->superClassesCount    = 0;
@@ -54,10 +54,10 @@ int styyerror(char *message) {
     return 0;
 }
 
-void noSuchFieldError(char *rec) {
+void noSuchMemberError(char *memberName) {
     char message[TMP_BUFF_SIZE];
     if (options.debug || options.errors) {
-        sprintf(message, "Field/member '%s' not found", rec);
+        sprintf(message, "Field/member '%s' not found", memberName);
         errorMessage(ERR_ST, message);
     }
 }
@@ -113,7 +113,7 @@ void addSymbolToFrame(SymbolTable *table, Symbol *symbol) {
     addToFrame(deleteSymDef, symbol /* TODO? Should also include reference to table */);
 }
 
-void recFindPush(Symbol *symbol, S_recFindStr *rfs) {
+void recFindPush(Symbol *symbol, StructMemberFindInfo *rfs) {
     S_symStructSpec *ss;
 
     assert(symbol && (symbol->type==TypeStruct || symbol->type==TypeUnion));
@@ -123,20 +123,20 @@ void recFindPush(Symbol *symbol, S_recFindStr *rfs) {
     }
     ss = symbol->u.structSpec;
     rfs->nextRecord = ss->records;
-    rfs->currentClass                         = symbol;
+    rfs->currentStructure                         = symbol;
     rfs->superClasses[rfs->superClassesCount] = ss->super;
     assert(rfs->superClassesCount < MAX_INHERITANCE_DEEP);
     rfs->superClassesCount++;
 }
 
-S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {
+StructMemberFindInfo *initFind(Symbol *s, StructMemberFindInfo *info) {
     assert(s);
     assert(s->type == TypeStruct || s->type == TypeUnion);
     assert(s->u.structSpec);
-    assert(rfs);
-    fillRecFindStr(rfs, s, NULL, NULL, recFindCl++);
-    recFindPush(s, rfs);
-    return rfs;
+    assert(info);
+    fillStructMemberFindInfo(info, s, NULL, NULL, memberFindCount++);
+    recFindPush(s, info);
+    return info;
 }
 
 void setDirectStructureCompletionType(TypeModifier *typeModifier) {
@@ -157,90 +157,83 @@ void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
     }
 }
 
-Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recname) {
-    Symbol     *symbol, *cclass;
+Result findStructureMemberSymbol(Symbol **resultingSymbolP, StructMemberFindInfo *info, char *memberName) {
+    Symbol     *symbol, *structure;
     SymbolList *list;
 
     for (;;) {
-        assert(ss);
-        cclass = ss->currentClass;
-        if (cclass != NULL && cclass->u.structSpec->recSearchCounter == ss->recsClassCounter) {
+        assert(info);
+        structure = info->currentStructure;
+        if (structure != NULL && structure->u.structSpec->memberSearchCounter == info->recsClassCounter) {
             // to avoid multiple pass through the same super-class ??
             //&fprintf(dumpOut,":%d==%d --> skipping class
-            //%s\n",cclass->u.structSpec->recSearchCounter,ss->recsClassCounter,cclass->linkName);
+            //%s\n",structure->u.structSpec->memberSearchCounter,info->recsClassCounter,structure->linkName);
             goto nextClass;
         }
-        if (cclass != NULL)
-            log_trace(":looking in class %s(%d)", cclass->linkName, ss->superClassesCount);
-        for (Symbol *r = ss->nextRecord; r != NULL; r = r->next) {
+        if (structure != NULL)
+            log_trace(":looking in class %s(%d)", structure->linkName, info->superClassesCount);
+        for (Symbol *r = info->nextRecord; r != NULL; r = r->next) {
             // special gcc extension of anonymous struct record
             if (r->name != NULL && *r->name == 0 && r->type == TypeDefault &&
                 r->u.typeModifier->type == TypeAnonymousField && r->u.typeModifier->next != NULL &&
                 (r->u.typeModifier->next->type == TypeUnion || r->u.typeModifier->next->type == TypeStruct)) {
                 // put the anonymous union as 'super class'
-                if (ss->anonymousUnionsCount + 1 < MAX_ANONYMOUS_FIELDS) {
-                    ss->anonymousUnions[ss->anonymousUnionsCount++] = r->u.typeModifier->next->u.t;
+                if (info->anonymousUnionsCount + 1 < MAX_ANONYMOUS_FIELDS) {
+                    info->anonymousUnions[info->anonymousUnionsCount++] = r->u.typeModifier->next->u.t;
                 }
             }
             //&fprintf(dumpOut,":checking %s\n",r->name); fflush(dumpOut);
-            if (recname == NULL || strcmp(r->name, recname) == 0) {
+            if (memberName == NULL || strcmp(r->name, memberName) == 0) {
                 *resultingSymbolP = r;
-                ss->nextRecord = r->next;
+                info->nextRecord = r->next;
                 return RESULT_OK;
             }
         }
     nextClass:
-        if (ss->anonymousUnionsCount != 0) {
+        if (info->anonymousUnionsCount != 0) {
             // O.K. try first to pas to anonymous record
-            symbol = ss->anonymousUnions[--ss->anonymousUnionsCount];
+            symbol = info->anonymousUnions[--info->anonymousUnionsCount];
         } else {
             // mark the class as processed
-            if (cclass != NULL) {
-                cclass->u.structSpec->recSearchCounter = ss->recsClassCounter;
+            if (structure != NULL) {
+                structure->u.structSpec->memberSearchCounter = info->recsClassCounter;
             }
 
-            while (ss->superClassesCount > 0 && ss->superClasses[ss->superClassesCount - 1] == NULL)
-                ss->superClassesCount--;
-            if (ss->superClassesCount == 0) {
-                ss->nextRecord = NULL;
+            while (info->superClassesCount > 0 && info->superClasses[info->superClassesCount - 1] == NULL)
+                info->superClassesCount--;
+            if (info->superClassesCount == 0) {
+                info->nextRecord = NULL;
                 *resultingSymbolP = &errorSymbol;
                 return RESULT_NOT_FOUND;
             }
-            list                 = ss->superClasses[ss->superClassesCount - 1];
+            list                 = info->superClasses[info->superClassesCount - 1];
             symbol                   = list->element;
 
-            ss->superClasses[ss->superClassesCount - 1] = list->next;
+            info->superClasses[info->superClassesCount - 1] = list->next;
             assert(symbol && (symbol->type == TypeStruct || symbol->type == TypeUnion));
-            //& fprintf(dumpOut,":pass to super class %s(%d)\n",symbol->linkName,ss->superClassesCount);
+            //& fprintf(dumpOut,":pass to super class %s(%d)\n",symbol->linkName,info->superClassesCount);
             //fflush(dumpOut);
         }
-        recFindPush(symbol, ss);
+        recFindPush(symbol, info);
     }
 }
 
-int findStrRecord(Symbol *symbol,
-                  char *recname,   /* can be NULL */
-                  Symbol **res) {
-    S_recFindStr rfs;
-    return findStrRecordSym(res, iniFind(symbol, &rfs), recname);
+int findStructureMember(Symbol *symbol, char *memberName, /* can be NULL */
+                        Symbol **foundSymbol
+) {
+    StructMemberFindInfo info;
+    return findStructureMemberSymbol(foundSymbol, initFind(symbol, &info), memberName);
 }
 
-/* and push reference */
-// this should be split into two copies, different for C and Java.
-Reference *findStrRecordFromSymbol(Symbol *sym,
-                                   Id *record,
-                                   Symbol **res,
-                                   Id *super /* covering special case when invoked
-                                                as SUPER.sym, berk */
-) {
-    S_recFindStr rfs;
+Reference *findStuctureMemberFromSymbol(Symbol *symbol, Id *member, Symbol **resultingMemberSymbol) {
+    StructMemberFindInfo info;
     Reference *ref = NULL;
-    Result rr = findStrRecordSym(res, iniFind(sym, &rfs), record->name);
+    Result result = findStructureMemberSymbol(resultingMemberSymbol, initFind(symbol, &info), member->name);
 
-    if (rr == RESULT_OK) {
-        ref = addCxReference(*res, &record->position, UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
+    if (result == RESULT_OK) {
+        ref = addCxReference(*resultingMemberSymbol, &member->position, UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
     } else {
-        noSuchFieldError(record->name);
+        noSuchMemberError(member->name);
     }
     return ref;
 }
@@ -255,7 +248,7 @@ Reference *findStructureFieldFromType(TypeModifier *structure,
         *resultingSymbol = &errorSymbol;
         goto fini;
     }
-    reference = findStrRecordFromSymbol(structure->u.t, field, resultingSymbol, NULL);
+    reference = findStuctureMemberFromSymbol(structure->u.t, field, resultingSymbol);
  fini:
     return reference;
 }

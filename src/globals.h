@@ -23,7 +23,7 @@ extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 extern bool fileAbortEnabled;
 
 extern bool cxResizingBlocked;
-extern unsigned recFindCl;
+extern unsigned memberFindCount;
 
 extern FILE *errOut;
 

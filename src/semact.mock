@@ -2,7 +2,7 @@
 #include "semact.h"
 #include <cgreen/mocks.h>
 
-void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord,
+void fillStructMemberFindInfo(StructMemberFindInfo *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord,
                     unsigned recsClassCounter) {
     recFindStr->nextRecord           = nextRecord;
     recFindStr->recsClassCounter     = recsClassCounter;
@@ -22,8 +22,8 @@ bool displayingErrorMessages(void) {
     return (int) mock();
 }
 
-void noSuchFieldError(char *rec) {
-    mock(rec);
+void noSuchMemberError(char *memberName) {
+    mock(memberName);
 }
 
 void deleteSymDef(void *p) {
@@ -34,19 +34,19 @@ void addSymbolToFrame(SymbolTable *tab, Symbol *pp) {
     mock(pp, tab);
 }
 
-void recFindPush(Symbol *sym, S_recFindStr *rfs) {
+void recFindPush(Symbol *sym, StructMemberFindInfo *rfs) {
     mock(sym, rfs);
 }
 
-S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {
-    return (S_recFindStr *) mock(s, rfs);
+StructMemberFindInfo *initFind(Symbol *s, StructMemberFindInfo *rfs) {
+    return (StructMemberFindInfo *) mock(s, rfs);
 }
 
 bool javaOuterClassAccessible(Symbol *cl) {
     return (int) mock(cl);
 }
 
-Result findStrRecordSym(Symbol **res, S_recFindStr *ss, char *recname) {
+Result findStructureMemberSymbol(Symbol **res, StructMemberFindInfo *ss, char *recname) {
     return (Result) mock(ss, recname, res);
 }
 
@@ -110,12 +110,12 @@ Symbol *createSimpleDefinition(unsigned storage, unsigned t, Id *id) {
     return (Symbol *) mock(storage, t, id);
 }
 
-int findStrRecord(Symbol *symbol, char *recname, Symbol **res) {
+int findStructureMember(Symbol *symbol, char *recname, Symbol **res) {
     return (int) mock(symbol, recname, res);
 }
 
-Reference *findStrRecordFromSymbol(Symbol *str, Id *record, Symbol **res, Id *super) {
-    return (Reference *) mock(str, record, res, super);
+Reference *findStuctureMemberFromSymbol(Symbol *str, Id *record, Symbol **res) {
+    return (Reference *) mock(str, record, res);
 }
 
 Reference *findStructureFieldFromType(TypeModifier *structure, Id *field, Symbol **resultingSymbol) {

@@ -11,7 +11,7 @@
 
 bool fileAbortEnabled;
 
-unsigned recFindCl = 1;
+unsigned memberFindCount = 1;
 
 
 ParsedInfo parsedInfo;

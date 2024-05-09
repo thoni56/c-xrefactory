@@ -244,7 +244,7 @@ before_rules_item
             int rr;
             l_currentType = NULL;
             if (l_yaccUnion!=NULL) {
-                rr = findStrRecord(l_yaccUnion, $4.data->name, &res);
+                rr = findStructureMember(l_yaccUnion, $4.data->name, &res);
                 if (rr == RESULT_OK) {
                     l_currentType = res;
                 }
