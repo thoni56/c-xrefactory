@@ -25,7 +25,6 @@
 #include "filetable.h"
 #include "id.h"
 #include "list.h"
-#include "misc.h"
 #include "semact.h"
 #include "symbol.h"
 #include "yylex.h"
