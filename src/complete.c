@@ -542,9 +542,7 @@ static void processSpecialInheritedFullCompletion(Completions *c, int orderFlag,
 static void completeRecordsNames(
     Completions *completions,
     Symbol *symbol,
-    int completionType,
-    int vlevelOffset
-) {
+    int completionType) {
     CompletionLine completionLine;
     int vlevel;
     Symbol *r, *vFunCl;
@@ -579,7 +577,7 @@ static void completeRecordsNames(
             if (vFunCl->u.structSpec->classFileNumber == -1) {
                 vFunCl = NULL;
             }
-            vlevel = rfs.superClassesCount + vlevelOffset;
+            vlevel = rfs.superClassesCount;
             if (completionType == TypeInheritedFullMethod) {
                 // TODO customizable completion level
                 if (vlevel > 1
@@ -611,7 +609,7 @@ void completeRecNames(Completions *c) {
     if (str->type == TypeStruct || str->type == TypeUnion) {
         s = str->u.t;
         assert(s);
-        completeRecordsNames(c, s, TypeDefault, 0);
+        completeRecordsNames(c, s, TypeDefault);
     }
     structRecordCompletionType = &errorModifier;
 }
