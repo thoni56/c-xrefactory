@@ -96,16 +96,15 @@ static int savedWorkMemoryIndex = 0;
 
 /* ******************** COMPLETION SPECIAL TOKENS ******************** */
 
-%token COMPL_FOR_SPECIAL1 COMPL_FOR_SPECIAL2
-%token COMPL_THIS_PACKAGE_SPECIAL
+%token COMPLETE_FOR_STATEMENT1 COMPLETE_FOR_STATEMENT2
 
 /* c-only */
-%token COMPL_TYPE_NAME
-%token COMPL_STRUCT_NAME COMPL_STRUCT_MEMBER_NAME COMPL_UP_FUN_PROFILE
-%token COMPL_ENUM_NAME COMPL_LABEL_NAME COMPL_OTHER_NAME
+%token COMPLETE_TYPE_NAME
+%token COMPLETE_STRUCT_NAME COMPLETE_STRUCT_MEMBER_NAME COMPLETE_UP_FUN_PROFILE
+%token COMPLETE_ENUM_NAME COMPLETE_LABEL_NAME COMPLETE_OTHER_NAME
 
 /* yacc-special */
-%token COMPL_YACC_LEXEM_NAME
+%token COMPLETE_YACC_LEXEM_NAME
 
 /* ************************** CPP-TOKENS ****************************** */
 /* c-only */
@@ -292,8 +291,8 @@ rules
             addRuleLocalVariable($3.data, 0);
         }
         rule_bodies End_block ';'
-    | COMPL_YACC_LEXEM_NAME             { assert(0); /* token never used */ }
-    | rules COMPL_YACC_LEXEM_NAME       { assert(0); /* token never used */ }
+    | COMPLETE_YACC_LEXEM_NAME             { assert(0); /* token never used */ }
+    | rules COMPLETE_YACC_LEXEM_NAME       { assert(0); /* token never used */ }
     ;
 
 rule_bodies
@@ -345,7 +344,7 @@ lexem
     | CHAR_LITERAL            {
             $$.data = NULL;
         }
-    | COMPL_YACC_LEXEM_NAME   { assert(0); /* token never used */ }
+    | COMPLETE_YACC_LEXEM_NAME   { assert(0); /* token never used */ }
     ;
 
 any_char_not_perc_par
@@ -440,7 +439,7 @@ primary_expr
         $$.data.typeModifier = &errorModifier;
         $$.data.reference = NULL;
     }
-    | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
+    | COMPLETE_OTHER_NAME      { assert(0); /* token never used */ }
     ;
 
 string_literals
@@ -537,7 +536,7 @@ optional_comma
 
 field_identifier
     : identifier                /*& { $$.data = $1.data; } &*/
-    | COMPL_STRUCT_MEMBER_NAME     { assert(0); /* token never used */ }
+    | COMPLETE_STRUCT_MEMBER_NAME     { assert(0); /* token never used */ }
     ;
 
 argument_expr_list_opt
@@ -557,8 +556,8 @@ argument_expr_list
         $$.data = $1.data;
         appendPositionToList(&$$.data, &$2.data);
     }
-    | COMPL_UP_FUN_PROFILE                          {/* never used */}
-    | argument_expr_list ',' COMPL_UP_FUN_PROFILE   {/* never used */}
+    | COMPLETE_UP_FUN_PROFILE                          {/* never used */}
+    | argument_expr_list ',' COMPLETE_UP_FUN_PROFILE   {/* never used */}
     ;
 
 unary_expr
@@ -895,10 +894,10 @@ declaration_specifiers0
     | declaration_specifiers0 function_specifier            {
         $$.data = $1.data;
     }
-    | COMPL_TYPE_NAME                                       {
+    | COMPLETE_TYPE_NAME                                       {
         assert(0);
     }
-    | declaration_modality_specifiers COMPL_TYPE_NAME       {
+    | declaration_modality_specifiers COMPLETE_TYPE_NAME       {
         assert(0); /* token never used */
     }
     ;
@@ -1021,7 +1020,7 @@ struct_or_union_define_specifier
 
 struct_identifier
     : identifier            /*& { $$.data = $1.data; } &*/
-    | COMPL_STRUCT_NAME     { assert(0); /* token never used */ }
+    | COMPLETE_STRUCT_NAME     { assert(0); /* token never used */ }
     ;
 
 struct_or_union
@@ -1115,7 +1114,7 @@ enum_define_specifier
 
 enum_identifier
     : identifier            /*& { $$.data = $1.data; } &*/
-    | COMPL_ENUM_NAME       { assert(0); /* token never used */ }
+    | COMPLETE_ENUM_NAME       { assert(0); /* token never used */ }
     ;
 
 enumerator_list_comma
@@ -1150,7 +1149,7 @@ enumerator
         yyerror(buffer);
 #endif
     }
-    | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
+    | COMPLETE_OTHER_NAME      { assert(0); /* token never used */ }
     ;
 
 declarator
@@ -1205,7 +1204,7 @@ declarator2
         initFunctionTypeModifier(&modifier->u.f , $3.data.symbol);
         handleDeclaratorParamPositions($1.data, &$2.data, $3.data.positionList, &$4.data, true, false);
     }
-    | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
+    | COMPLETE_OTHER_NAME      { assert(0); /* token never used */ }
     ;
 
 pointer
@@ -1294,10 +1293,10 @@ type_specifier_list0
         $$.data = $1.data;
         declTypeSpecifier2($1.data,$2.data);
     }
-    | COMPL_TYPE_NAME                                       {
+    | COMPLETE_TYPE_NAME                                       {
         assert(0);
     }
-    | type_mod_specifier_list COMPL_TYPE_NAME       {
+    | type_mod_specifier_list COMPLETE_TYPE_NAME       {
         assert(0); /* token never used */
     }
     ;
@@ -1331,7 +1330,7 @@ identifier_list
         LIST_APPEND(Symbol, $$.data.symbol, symbol);
         appendPositionToList(&$$.data.positionList, &$2.data);
     }
-    | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
+    | COMPLETE_OTHER_NAME      { assert(0); /* token never used */ }
     ;
 
 parameter_type_list
@@ -1557,14 +1556,14 @@ label_def_name
     : identifier            {
         labelReference($1.data,UsageDefined);
     }
-    | COMPL_LABEL_NAME      { assert(0); /* token never used */ }
+    | COMPLETE_LABEL_NAME      { assert(0); /* token never used */ }
     ;
 
 label_name
     : identifier            {
         labelReference($1.data,UsageUsed);
     }
-    | COMPL_LABEL_NAME      { assert(0); /* token never used */ }
+    | COMPLETE_LABEL_NAME      { assert(0); /* token never used */ }
     ;
 
 compound_statement
@@ -1721,10 +1720,10 @@ iteration_statement
             generateInternalLabelReference($12.data, UsageDefined);
         }
 
-    | FOR '(' for1maybe_expr ';' COMPL_FOR_SPECIAL1
-    | FOR '(' for1maybe_expr ';' _nlabel_  maybe_expr ';' COMPL_FOR_SPECIAL2
-    | FOR '(' init_declarations ';' COMPL_FOR_SPECIAL1
-    | FOR '(' init_declarations ';' _nlabel_  maybe_expr ';' COMPL_FOR_SPECIAL2
+    | FOR '(' for1maybe_expr ';' COMPLETE_FOR_STATEMENT1
+    | FOR '(' for1maybe_expr ';' _nlabel_  maybe_expr ';' COMPLETE_FOR_STATEMENT2
+    | FOR '(' init_declarations ';' COMPLETE_FOR_STATEMENT1
+    | FOR '(' init_declarations ';' _nlabel_  maybe_expr ';' COMPLETE_FOR_STATEMENT2
     ;
 
 jump_statement
@@ -1970,13 +1969,13 @@ static void addRuleLocalVariable(Id *name, int order) {
 }
 
 static CompletionFunctionsTable completionsTable[]  = {
-    {COMPL_TYPE_NAME,       completeTypes},
-    {COMPL_STRUCT_NAME,     completeStructs},
-    {COMPL_STRUCT_MEMBER_NAME,      completeStructMemberNames},
-    {COMPL_ENUM_NAME,       completeEnums},
-    {COMPL_LABEL_NAME,      completeLabels},
-    {COMPL_OTHER_NAME,      completeOthers},
-    {COMPL_YACC_LEXEM_NAME, completeYaccLexem},
+    {COMPLETE_TYPE_NAME,          collectTypesCompletions},
+    {COMPLETE_STRUCT_NAME,        collectStructsCompletions},
+    {COMPLETE_STRUCT_MEMBER_NAME, collectStructMemberCompletions},
+    {COMPLETE_ENUM_NAME,          collectEnumsCompletions},
+    {COMPLETE_LABEL_NAME,         collectLabelsCompletions},
+    {COMPLETE_OTHER_NAME,         collectOthersCompletions},
+    {COMPLETE_YACC_LEXEM_NAME,    collectYaccLexemCompletions},
     {0,NULL}
 };
 

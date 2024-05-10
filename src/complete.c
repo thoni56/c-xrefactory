@@ -516,7 +516,7 @@ static void symbolCompletionFunction(Symbol *symbol, void *c) {
     }
 }
 
-void completeStructs(Completions *c) {
+void collectStructsCompletions(Completions *c) {
     SymbolCompletionInfo ii;
 
     fillCompletionSymInfo(&ii, c, TypeStruct);
@@ -600,7 +600,7 @@ static void completeMemberNames(Completions *completions, Symbol *symbol,
 }
 
 
-void completeStructMemberNames(Completions *c) {
+void collectStructMemberCompletions(Completions *c) {
     TypeModifier *str;
     Symbol *s;
     assert(structMemberCompletionType);
@@ -620,29 +620,32 @@ static void completeFromSymTab(Completions*c, unsigned storage){
     symbolTableMapWithPointer(symbolTable, symbolCompletionFunction, (void*) &info);
 }
 
-void completeEnums(Completions *c) {
-    SymbolCompletionInfo ii;
-    fillCompletionSymInfo(&ii, c, TypeEnum);
-    symbolTableMapWithPointer(symbolTable, completeFun, (void*) &ii);
+void collectEnumsCompletions(Completions *c) {
+    SymbolCompletionInfo info;
+
+    fillCompletionSymInfo(&info, c, TypeEnum);
+    symbolTableMapWithPointer(symbolTable, completeFun, (void*) &info);
 }
 
-void completeLabels(Completions *c) {
-    SymbolCompletionInfo ii;
-    fillCompletionSymInfo(&ii, c, TypeLabel);
-    symbolTableMapWithPointer(symbolTable, completeFun, (void*) &ii);
+void collectLabelsCompletions(Completions *c) {
+    SymbolCompletionInfo info;
+
+    fillCompletionSymInfo(&info, c, TypeLabel);
+    symbolTableMapWithPointer(symbolTable, completeFun, (void*) &info);
 }
 
 void completeMacros(Completions *c) {
-    SymbolCompletionInfo ii;
-    fillCompletionSymInfo(&ii, c, TypeMacro);
-    symbolTableMapWithPointer(symbolTable, completeFun, (void*) &ii);
+    SymbolCompletionInfo info;
+
+    fillCompletionSymInfo(&info, c, TypeMacro);
+    symbolTableMapWithPointer(symbolTable, completeFun, (void*) &info);
 }
 
-void completeTypes(Completions *c) {
+void collectTypesCompletions(Completions *c) {
     completeFromSymTab(c, StorageTypedef);
 }
 
-void completeOthers(Completions *c) {
+void collectOthersCompletions(Completions *c) {
     completeFromSymTab(c, StorageDefault);
     completeMacros(c);      /* handle macros as functions */
 }
@@ -740,7 +743,7 @@ static char *spComplFindNextRecord(ExpressionTokenType *token) {
     return res;
 }
 
-static bool isForCompletionSymbol(
+static bool isForStatementCompletionSymbol(
     Completions *completions,
     ExpressionTokenType *token,
     Symbol **symbolP,
@@ -764,27 +767,29 @@ static bool isForCompletionSymbol(
     return false;
 }
 
-void completeForSpecial1(Completions* c) {
-    static char         ss[TMP_STRING_SIZE];
-    char                *rec;
-    CompletionLine             compLine;
-    Symbol            *sym;
-    if (isForCompletionSymbol(c,&s_forCompletionType,&sym,&rec)) {
-        sprintf(ss,"%s!=NULL; ", sym->name);
-        fillCompletionLine(&compLine,ss,NULL,TypeSpecialComplet,0,0,NULL,NULL);
-        completeName(ss, &compLine, 0, c);
+void collectForStatementCompletions1(Completions* c) {
+    static char         string[TMP_STRING_SIZE];
+    char               *rec;
+    CompletionLine      compLine;
+    Symbol             *sym;
+
+    if (isForStatementCompletionSymbol(c, &s_forCompletionType, &sym, &rec)) {
+        sprintf(string,"%s!=NULL; ", sym->name);
+        fillCompletionLine(&compLine, string, NULL, TypeSpecialComplet, 0, 0, NULL, NULL);
+        completeName(string, &compLine, 0, c);
     }
 }
 
-void completeForSpecial2(Completions* c) {
+void collectForStatementCompletions2(Completions* c) {
     static char         ss[TMP_STRING_SIZE];
-    char                *rec;
-    CompletionLine             compLine;
-    Symbol            *sym;
-    if (isForCompletionSymbol(c, &s_forCompletionType,&sym,&rec)) {
-        if (rec!=NULL) {
+    char               *rec;
+    CompletionLine      compLine;
+    Symbol             *sym;
+
+    if (isForStatementCompletionSymbol(c, &s_forCompletionType, &sym, &rec)) {
+        if (rec != NULL) {
             sprintf(ss,"%s=%s->%s) {", sym->name, sym->name, rec);
-            fillCompletionLine(&compLine,ss,NULL,TypeSpecialComplet,0,0,NULL,NULL);
+            fillCompletionLine(&compLine, ss, NULL, TypeSpecialComplet, 0, 0, NULL, NULL);
             completeName(ss, &compLine, 0, c);
         }
     }
@@ -815,7 +820,7 @@ static void completeFromXrefFun(ReferenceItem *s, void *c) {
     processName(s->linkName, &compLine, 1, cc->completions);
 }
 
-void completeYaccLexem(Completions *c) {
+void collectYaccLexemCompletions(Completions *c) {
     SymbolCompletionInfo info;
     fillCompletionSymInfo(&info, c, TypeYaccSymbol);
     mapOverReferenceTableWithPointer(completeFromXrefFun, (void*) &info);

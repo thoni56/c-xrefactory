@@ -10,11 +10,11 @@ void processName(char *name, CompletionLine *t, bool orderFlag, Completions *c) 
   mock(name, t, orderFlag, c);
 }
 
-void completeForSpecial1(Completions *c) {
+void collectForStatementCompletions1(Completions *c) {
   mock(c);
 }
 
-void completeForSpecial2(Completions *c) {
+void collectForStatementCompletions2(Completions *c) {
   mock(c);
 }
 
@@ -22,23 +22,23 @@ void completeUpFunProfile(Completions *c) {
   mock(c);
 }
 
-void completeTypes(Completions *c) {
+void collectTypesCompletions(Completions *c) {
   mock(c);
 }
 
-void completeStructs(Completions *c) {
+void collectStructsCompletions(Completions *c) {
   mock(c);
 }
 
-void completeStructMemberNames(Completions *c) {
+void collectStructMemberCompletions(Completions *c) {
   mock(c);
 }
 
-void completeEnums(Completions *c) {
+void collectEnumsCompletions(Completions *c) {
   mock(c);
 }
 
-void completeLabels(Completions *c) {
+void collectLabelsCompletions(Completions *c) {
   mock(c);
 }
 
@@ -46,11 +46,11 @@ void completeMacros(Completions *c) {
   mock(c);
 }
 
-void completeOthers(Completions *c) {
+void collectOthersCompletions(Completions *c) {
   mock(c);
 }
 
-void completeYaccLexem(Completions *c) {
+void collectYaccLexemCompletions(Completions *c) {
   mock(c);
 }
 

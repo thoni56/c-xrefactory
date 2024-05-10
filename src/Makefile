@@ -281,7 +281,7 @@ PHONY += check-tokens
 check-tokens: c_parser.tokens yacc_parser.tokens
 	@echo Checking tokens across parsers ...
 	@if ! diff -q c_parser.tokens yacc_parser.tokens ; then \
-		echo "ERROR: Parser token section must be identical:" ; \
+		echo "c_parser.tokens:1:1: ERROR: Parser token section must be identical:" ; \
 		diff -c c_parser.tokens yacc_parser.tokens ; \
 	fi
 
