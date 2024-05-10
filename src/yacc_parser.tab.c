@@ -2468,18 +2468,10 @@ static bool exists_valid_parser_action_on(int token) {
     return valid;
 }
 
-/* These are similar in the three parsers, except that we have macro
-   replacement of YACC variables so that we can have multiple parsers
-   linked together. Therefore it is not straight forward to refactor
-   out commonalities. */
-void makeYaccCompletions(char *string, int len, Position *pos) {
-    int token;
-    CompletionLine completionLine;
 
-    log_trace("completing \"%s\"", string);
-    strncpy(collectedCompletions.idToProcess, string, MAX_FUN_NAME_SIZE);
-    collectedCompletions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
-    initCompletions(&collectedCompletions, len, *pos);
+static bool collectYaccCompletions(void) {
+    int token;
+    bool abort = false;
 
     for (int i=0; (token=completionsTable[i].token) != 0; i++) {
         log_trace("trying token %d", tokenNamesTable[token]);
@@ -2487,9 +2479,30 @@ void makeYaccCompletions(char *string, int len, Position *pos) {
             log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
             (*completionsTable[i].fun)(&collectedCompletions);
             if (collectedCompletions.abortFurtherCompletions)
-                return;
+                abort = true;
         }
     }
+
+    return abort;
+}
+
+
+/* These are similar in the three parsers, except that we have macro
+   replacement of YACC variables so that we can have multiple parsers
+   linked together. Therefore it is not straight forward to refactor
+   out commonalities. */
+void makeYaccCompletions(char *string, int len, Position *pos) {
+    CompletionLine completionLine;
+
+    log_trace("completing \"%s\"", string);
+    strncpy(collectedCompletions.idToProcess, string, MAX_FUN_NAME_SIZE);
+    collectedCompletions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
+    initCompletions(&collectedCompletions, len, *pos);
+
+    bool abort = false;
+    abort = collectYaccCompletions();
+    if (abort)
+        return;
 
     /* basic language tokens */
     for (int token=0; token<LAST_TOKEN; token++) {
@@ -2508,7 +2521,7 @@ void makeYaccCompletions(char *string, int len, Position *pos) {
         }
     }
 }
-#line 2512 "yacc_parser.tab.c"
+#line 2525 "yacc_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4710,7 +4723,7 @@ case 506:
 #line 1931 "yacc_parser.y"
 { endBlock(); }
 break;
-#line 4714 "yacc_parser.tab.c"
+#line 4727 "yacc_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

@@ -166,6 +166,7 @@ This is probably not possible due to the level of integration between
 the editor adaptor and the c-xref proper. Also LSP does not have a
 protocol for many of the refactorings which are core to c-xref.
 * TODO BUGS:
+** TODO Bug; when deleting the last argument of a function it should replace with 'void'
 ** TODO Bug: when extracting C function including declarations that are required
    by code left outside the extraction, that declaration is moved to the
    extracted function. This should probably trigger "structure error".
