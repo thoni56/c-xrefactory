@@ -190,12 +190,6 @@ typedef struct symStructSpec {
                                            */
 } StructSpec;
 
-typedef struct jslSymbolList {
-    struct symbol        *d;
-    struct position       position;
-    bool                  isExplicitlyImported;
-    struct jslSymbolList *next;
-} JslSymbolList;
 
 /* ****************************************************************** */
 /*          symbol definition item in cross-reference table           */

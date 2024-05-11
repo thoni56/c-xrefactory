@@ -6,16 +6,6 @@
 #include "menu.h"
 
 
-/* ************* class hierarchy cross referencing ************** */
-
-typedef struct classHierarchyReference {
-    int					ofile;		/* file of origin */
-    int                 superClass;		/* index of super-class */
-    struct classHierarchyReference	*next;
-} ClassHierarchyReference;
-
-
-
 extern void splitMenuPerSymbolsAndMap(SymbolsMenu *menu,
                                       void (*fun)(SymbolsMenu *, void *),
                                       void *p1);
