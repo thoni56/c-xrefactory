@@ -11,12 +11,6 @@ typedef enum extractModes {
     EXTRACT_VARIABLE
 } ExtractMode;
 
-/* Revealed publicly only to allow unittesting */
-typedef struct referencesItemList {
-    struct referenceItem		*item;
-    struct referencesItemList	*next;
-} ReferenceItemList;
-
 
 extern Symbol *addContinueBreakLabelSymbol(int labn, char *name);
 extern void actionsBeforeAfterExternalDefinition(void);
