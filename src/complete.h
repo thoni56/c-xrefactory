@@ -27,8 +27,6 @@ extern void collectEnumsCompletions(Completions *c);
 extern void collectLabelsCompletions(Completions *c);
 extern void completeMacros(Completions *c);
 extern void collectOthersCompletions(Completions *c);
-extern void javaHintImportFqt(Completions *c);
-extern void javaHintCompleteMethodParameters(Completions *c);
 extern void collectYaccLexemCompletions(Completions *c);
 
 extern void olCompletionListInit(Position *originalPos);
