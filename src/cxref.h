@@ -48,9 +48,7 @@ extern void pushEmptySession(OlcxReferencesStack *stack);
 extern bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
 extern void getLineAndColumnCursorPositionFromCommandLineOptions( int *l, int *c );
 extern void olcxPushSpecialCheckMenuSym(char *symname);
-extern bool isPushAllMethodsValidRefItem(ReferenceItem *ri);
 extern void olcxPrintPushingAction(ServerOperation operation);
-extern void olPushAllReferencesInBetween(int minMemi, int maxMemi);
 
 extern void answerEditAction(void);
 

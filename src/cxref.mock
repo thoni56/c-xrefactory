@@ -137,16 +137,8 @@ void olcxPushSpecial(char *fieldName, int command) {
     mock(fieldName, command);
 }
 
-bool isPushAllMethodsValidRefItem(ReferenceItem *ri) {
-    return (bool) mock(ri);
-}
-
 void olcxPrintPushingAction(ServerOperation operation) {
     mock(operation);
-}
-
-void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
-    mock(minMemi, maxMemi);
 }
 
 void answerEditAction(void) {
