@@ -83,7 +83,6 @@ extern void expandWildcardsInOnePath(char *fn, char *outpaths, int olen);
 extern void expandWildcardsInPaths(char *paths, char *outpaths, int freeolen);
 extern char *getRealFileName_static(char *fn);
 extern bool stringContainsSubstring(char *s, char *subs);
-extern void javaDotifyFileName(char *ss);
 extern int substringIndex(char *string, char *substring);
 extern bool fileNameHasOneOfSuffixes(char *fname, char *suffs);
 extern void mapOverDirectoryFiles(

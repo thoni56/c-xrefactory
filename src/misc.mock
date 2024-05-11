@@ -63,10 +63,6 @@ bool stringContainsSubstring(char *s, char *subs) {
   return (bool) mock(s, subs);
 }
 
-void javaDotifyFileName(char *ss) {
-  mock(ss);
-}
-
 int substringIndex(char *s, char *subs) {
   return (int) mock(s, subs);
 }

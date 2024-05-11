@@ -232,13 +232,6 @@ void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *name1, char *na
 
 /* ******************************************************************* */
 
-void javaDotifyFileName(char *ss) {
-    char *s;
-    for (s=ss; *s; s++) {
-        if (*s == '/' || *s == '\\') *s = '.';
-    }
-}
-
 static void javaSignatureSPrint(char *buff, int *size, char *sig, int longOrShortName) {
     char post[COMPLETION_STRING_SIZE];
     int posti;
