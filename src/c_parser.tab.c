@@ -1923,14 +1923,14 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
 #line 1731 "c_parser.y"
 
-static CompletionFunctionsTable spCompletionsTab[]  = {
+static CompletionFunctionsTable specialCompletionsCollectorsTable[]  = {
     {COMPLETE_FOR_STATEMENT1,    collectForStatementCompletions1},
     {COMPLETE_FOR_STATEMENT2,    collectForStatementCompletions2},
     {COMPLETE_UP_FUN_PROFILE,  completeUpFunProfile},
     {0,NULL}
 };
 
-static CompletionFunctionsTable completionsTab[]  = {
+static CompletionFunctionsTable completionsCollectorsTable[]  = {
     {COMPLETE_TYPE_NAME,          collectTypesCompletions},
     {COMPLETE_STRUCT_NAME,        collectStructsCompletions},
     {COMPLETE_STRUCT_MEMBER_NAME, collectStructMemberCompletions},
@@ -1941,6 +1941,7 @@ static CompletionFunctionsTable completionsTab[]  = {
 };
 
 
+/* This needs to reside inside parser because of macro transformation of yy-variables */
 static bool exists_valid_parser_action_on(int token) {
     int yyn1, yyn2;
     bool shift_action = (yyn1 = yysindex[lastyystate]) && (yyn1 += token) >= 0 &&
@@ -1952,13 +1953,28 @@ static bool exists_valid_parser_action_on(int token) {
     return valid;
 }
 
-/* These are similar in the three parsers, except that we have macro
+
+static bool runCompletionsCollectorsIn(CompletionFunctionsTable *completionsTable) {
+    int token;
+    for (int i=0; (token=completionsTable[i].token) != 0; i++) {
+        log_trace("trying token %d", tokenNamesTable[token]);
+        if (exists_valid_parser_action_on(token)) {
+            log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
+            (*completionsTable[i].fun)(&collectedCompletions);
+            if (collectedCompletions.abortFurtherCompletions)
+                return false;
+        }
+    }
+    return true;
+}
+
+
+/* These are similar in the two parsers, except that we have macro
    replacement of YACC variables so that we can have multiple parsers
    linked together. Therefore it is not straight forward to refactor
    out commonalities. */
 void makeCCompletions(char *string, int len, Position *pos) {
-    int token;
-    CompletionLine compLine;
+    CompletionLine completionLine;
 
     log_trace("completing \"%s\"", string);
     strncpy(collectedCompletions.idToProcess, string, MAX_FUN_NAME_SIZE);
@@ -1966,30 +1982,16 @@ void makeCCompletions(char *string, int len, Position *pos) {
     initCompletions(&collectedCompletions, len, *pos);
 
     /* special wizard completions */
-    for (int i=0; (token=spCompletionsTab[i].token) != 0; i++) {
-        log_trace("trying token %d", tokenNamesTable[token]);
-        if (exists_valid_parser_action_on(token)) {
-            log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
-            (*spCompletionsTab[i].fun)(&collectedCompletions);
-            if (collectedCompletions.abortFurtherCompletions)
-                return;
-        }
-    }
+    if (!runCompletionsCollectorsIn(specialCompletionsCollectorsTable))
+        return;
 
     /* If there is a wizard completion, RETURN now */
     if (collectedCompletions.alternativeIndex != 0 && options.serverOperation != OLO_SEARCH)
         return;
 
     /* basic language tokens */
-    for (int i=0; (token=completionsTab[i].token) != 0; i++) {
-        log_trace("trying token %d", tokenNamesTable[token]);
-        if (exists_valid_parser_action_on(token)) {
-            log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
-            (*completionsTab[i].fun)(&collectedCompletions);
-            if (collectedCompletions.abortFurtherCompletions)
-                return;
-        }
-    }
+    if (!runCompletionsCollectorsIn(completionsCollectorsTable))
+        return;
 
     /* basic language tokens */
     for (int token=0; token<LAST_TOKEN; token++) {
@@ -1998,17 +2000,17 @@ void makeCCompletions(char *string, int len, Position *pos) {
         if (exists_valid_parser_action_on(token)) {
             if (tokenNamesTable[token] != NULL) {
                 if (isalpha(*tokenNamesTable[token]) || *tokenNamesTable[token]=='_') {
-                    fillCompletionLine(&compLine, tokenNamesTable[token], NULL, TypeKeyword, 0, 0, NULL, NULL);
+                    fillCompletionLine(&completionLine, tokenNamesTable[token], NULL, TypeKeyword, 0, 0, NULL, NULL);
                 } else {
-                    fillCompletionLine(&compLine, tokenNamesTable[token], NULL, TypeToken, 0, 0, NULL, NULL);
+                    fillCompletionLine(&completionLine, tokenNamesTable[token], NULL, TypeToken, 0, 0, NULL, NULL);
                 }
                 log_trace("completing %d==%s(%s) in state %d", token, tokenNamesTable[token], tokenNamesTable[token], lastyystate);
-                processName(tokenNamesTable[token], &compLine, false, &collectedCompletions);
+                processName(tokenNamesTable[token], &completionLine, false, &collectedCompletions);
             }
         }
     }
 }
-#line 2012 "c_parser.tab.c"
+#line 2014 "c_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4055,7 +4057,7 @@ case 364:
 #line 1722 "c_parser.y"
 { endBlock(); }
 break;
-#line 4059 "c_parser.tab.c"
+#line 4061 "c_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

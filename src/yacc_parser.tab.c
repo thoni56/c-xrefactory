@@ -2456,7 +2456,7 @@ static CompletionFunctionsTable completionsTable[]  = {
     {0,NULL}
 };
 
-
+/* This needs to reside inside parser because of macro transformation of yy-variables */
 static bool exists_valid_parser_action_on(int token) {
     int yyn1, yyn2;
     bool shift_action = (yyn1 = yysindex[lastyystate]) && (yyn1 += token) >= 0 &&
@@ -2469,21 +2469,18 @@ static bool exists_valid_parser_action_on(int token) {
 }
 
 
-static bool collectYaccCompletions(void) {
+static bool runCompletionsCollectorsIn(CompletionFunctionsTable *completionsTable) {
     int token;
-    bool abort = false;
-
     for (int i=0; (token=completionsTable[i].token) != 0; i++) {
         log_trace("trying token %d", tokenNamesTable[token]);
         if (exists_valid_parser_action_on(token)) {
             log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
             (*completionsTable[i].fun)(&collectedCompletions);
             if (collectedCompletions.abortFurtherCompletions)
-                abort = true;
+                return false;
         }
     }
-
-    return abort;
+    return true;
 }
 
 
@@ -2499,9 +2496,7 @@ void makeYaccCompletions(char *string, int len, Position *pos) {
     collectedCompletions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     initCompletions(&collectedCompletions, len, *pos);
 
-    bool abort = false;
-    abort = collectYaccCompletions();
-    if (abort)
+    if (!runCompletionsCollectorsIn(completionsTable))
         return;
 
     /* basic language tokens */
@@ -2521,7 +2516,7 @@ void makeYaccCompletions(char *string, int len, Position *pos) {
         }
     }
 }
-#line 2525 "yacc_parser.tab.c"
+#line 2520 "yacc_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4723,7 +4718,7 @@ case 506:
 #line 1931 "yacc_parser.y"
 { endBlock(); }
 break;
-#line 4727 "yacc_parser.tab.c"
+#line 4722 "yacc_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
