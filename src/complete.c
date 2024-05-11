@@ -483,34 +483,37 @@ static void completeFunctionOrMethodName(Completions *c, bool orderFlag, int vle
 }
 
 // NOTE: Mapping function
-static void symbolCompletionFunction(Symbol *symbol, void *c) {
-    SymbolCompletionFunctionInfo *cc;
+static void symbolCompletionFunction(Symbol *symbol, void *i) {
     CompletionLine completionLine;
     char    *completionName;
-    cc = (SymbolCompletionFunctionInfo *) c;
+
+    SymbolCompletionFunctionInfo *info = (SymbolCompletionFunctionInfo *) i;
+
     assert(symbol);
-    if (symbol->type != TypeDefault) return;
-    assert(symbol);
-    if (cc->storage==StorageTypedef && symbol->storage!=StorageTypedef)
+    if (symbol->type != TypeDefault)
         return;
+
+    if (info->storage==StorageTypedef && symbol->storage!=StorageTypedef)
+        return;
+
     completionName = symbol->name;
     if (completionName!=NULL) {
         if (symbol->type == TypeDefault && symbol->u.typeModifier!=NULL && symbol->u.typeModifier->type == TypeFunction) {
-            completeFunctionOrMethodName(cc->res, true, 0, symbol, NULL);
+            completeFunctionOrMethodName(info->res, true, 0, symbol, NULL);
         } else {
             fillCompletionLine(&completionLine, completionName, symbol, symbol->type, 0, NULL);
-            processName(completionName, &completionLine, 1, cc->res);
+            processName(completionName, &completionLine, 1, info->res);
         }
     }
 }
 
-void collectStructsCompletions(Completions *c) {
-    SymbolCompletionInfo ii;
+void collectStructsCompletions(Completions *completions) {
+    SymbolCompletionInfo info;
 
-    fillCompletionSymInfo(&ii, c, TypeStruct);
-    symbolTableMapWithPointer(symbolTable, completeFun, (void*) &ii);
-    fillCompletionSymInfo(&ii, c, TypeUnion);
-    symbolTableMapWithPointer(symbolTable, completeFun, (void*) &ii);
+    fillCompletionSymInfo(&info, completions, TypeStruct);
+    symbolTableMapWithPointer(symbolTable, completeFun, (void*) &info);
+    fillCompletionSymInfo(&info, completions, TypeUnion);
+    symbolTableMapWithPointer(symbolTable, completeFun, (void*) &info);
 }
 
 static void completeMemberNames(Completions *completions, Symbol *symbol) {
@@ -552,54 +555,54 @@ static void completeMemberNames(Completions *completions, Symbol *symbol) {
 }
 
 
-void collectStructMemberCompletions(Completions *c) {
-    TypeModifier *str;
-    Symbol *s;
+void collectStructMemberCompletions(Completions *completions) {
+    TypeModifier *structure;
+    Symbol *symbol;
     assert(structMemberCompletionType);
-    str = structMemberCompletionType;
-    if (str->type == TypeStruct || str->type == TypeUnion) {
-        s = str->u.t;
-        assert(s);
-        completeMemberNames(c, s);
+    structure = structMemberCompletionType;
+    if (structure->type == TypeStruct || structure->type == TypeUnion) {
+        symbol = structure->u.t;
+        assert(symbol);
+        completeMemberNames(completions, symbol);
     }
     structMemberCompletionType = &errorModifier;
 }
 
-static void completeFromSymTab(Completions*c, unsigned storage){
+static void completeFromSymTab(Completions *completions, unsigned storage){
     SymbolCompletionFunctionInfo  info;
 
-    fillCompletionSymFunInfo(&info, c, storage);
+    fillCompletionSymFunInfo(&info, completions, storage);
     symbolTableMapWithPointer(symbolTable, symbolCompletionFunction, (void*) &info);
 }
 
-void collectEnumsCompletions(Completions *c) {
+void collectEnumsCompletions(Completions *completions) {
     SymbolCompletionInfo info;
 
-    fillCompletionSymInfo(&info, c, TypeEnum);
+    fillCompletionSymInfo(&info, completions, TypeEnum);
     symbolTableMapWithPointer(symbolTable, completeFun, (void*) &info);
 }
 
-void collectLabelsCompletions(Completions *c) {
+void collectLabelsCompletions(Completions *completions) {
     SymbolCompletionInfo info;
 
-    fillCompletionSymInfo(&info, c, TypeLabel);
+    fillCompletionSymInfo(&info, completions, TypeLabel);
     symbolTableMapWithPointer(symbolTable, completeFun, (void*) &info);
 }
 
-void completeMacros(Completions *c) {
+void completeMacros(Completions *completions) {
     SymbolCompletionInfo info;
 
-    fillCompletionSymInfo(&info, c, TypeMacro);
+    fillCompletionSymInfo(&info, completions, TypeMacro);
     symbolTableMapWithPointer(symbolTable, completeFun, (void*) &info);
 }
 
-void collectTypesCompletions(Completions *c) {
-    completeFromSymTab(c, StorageTypedef);
+void collectTypesCompletions(Completions *completions) {
+    completeFromSymTab(completions, StorageTypedef);
 }
 
-void collectOthersCompletions(Completions *c) {
-    completeFromSymTab(c, StorageDefault);
-    completeMacros(c);      /* handle macros as functions */
+void collectOthersCompletions(Completions *completions) {
+    completeFromSymTab(completions, StorageDefault);
+    completeMacros(completions);      /* handle macros as functions */
 }
 
 /* very costly function in time !!!! */
