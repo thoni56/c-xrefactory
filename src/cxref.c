@@ -130,7 +130,7 @@ static void setAvailableRefactorings(Symbol *symbol) {
     case TypeBlockMarker:
     case TypeExpression:
     case TypePackedType:
-    case TypeSpecialComplet:
+    case TypeSpecialComplete:
     case TypeNonImportedClass:
     case TypeInducedError:
     case TypeInheritedFullMethod:

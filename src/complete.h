@@ -12,9 +12,7 @@ typedef struct {
 
 extern ExpressionTokenType completionTypeForForStatement;
 
-extern void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Type symbolType,
-                               short int virtualLevel, short int margn, char **margs,
-                               Symbol *vFunClass);
+extern void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Type symbolType, short int margn, char **margs);
 extern void initCompletions(Completions *completions, int length, Position position);
 extern void processName(char *name, CompletionLine *t, bool orderFlag, Completions *c);
 extern void collectForStatementCompletions1(Completions *c);

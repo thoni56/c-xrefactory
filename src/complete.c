@@ -46,15 +46,12 @@ void initCompletions(Completions *completions, int length, Position position) {
     completions->alternativeIndex = 0;
 }
 
-void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Type symbolType,
-                        short int virtualLevel, short int margn, char **margs, Symbol *vFunClass) {
+void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Type symbolType, short int margn, char **margs) {
     cline->string = string;
     cline->symbol = symbol;
     cline->symbolType = symbolType;
-    cline->virtLevel = virtualLevel;
     cline->margn = margn;
     cline->margs = margs;
-    cline->vFunClass = vFunClass;                  \
 }
 
 static void fillCompletionSymInfo(SymbolCompletionInfo *info, Completions *completions, Type type) {
@@ -94,7 +91,7 @@ static void formatFullCompletions(char *tt, int indent, int inipos) {
 }
 
 static void sprintFullCompletionInfo(Completions* completions, int index, int indent) {
-    int size, l, vFunCl, cindent, tempLength;
+    int size, l, cindent, tempLength;
     bool typeDefinitionExpressionFlag;
     char tempString[COMPLETION_STRING_SIZE];
     char *ppc;
@@ -117,7 +114,6 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
     sprintf(ppc, "%-*s:", indent+FULL_COMPLETION_INDENT_CHARS, tempString);
     cindent = strlen(ppc);
     ppc += strlen(ppc);
-    vFunCl = NO_FILE_NUMBER;
     size = COMPLETION_STRING_SIZE;
     l = 0;
     if (completions->alternatives[index].symbolType==TypeDefault) {
@@ -135,14 +131,6 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
     } else if (completions->alternatives[index].symbolType==TypeMacro) {
         macroDefinitionSPrintf(tempString, &size, "", completions->alternatives[index].string,
                       completions->alternatives[index].margn, completions->alternatives[index].margs, NULL);
-    } else if (completions->alternatives[index].symbolType == TypeInheritedFullMethod) {
-        if (completions->alternatives[index].vFunClass!=NULL) {
-            sprintf(tempString,"%s \t:%s", completions->alternatives[index].vFunClass->name, typeNamesTable[completions->alternatives[index].symbolType]);
-            vFunCl = completions->alternatives[index].vFunClass->u.structSpec->classFileNumber;
-            if (vFunCl == -1) vFunCl = NO_FILE_NUMBER;
-        } else {
-            sprintf(tempString,"%s", typeNamesTable[completions->alternatives[index].symbolType]);
-        }
     } else {
         assert(completions->alternatives[index].symbolType>=0 && completions->alternatives[index].symbolType<MAX_TYPE);
         sprintf(tempString,"%s", typeNamesTable[completions->alternatives[index].symbolType]);
@@ -458,13 +446,13 @@ static void completeFun(Symbol *symbol, void *c) {
         return;
     log_trace("testing %s", symbol->linkName);
     if (symbol->type != TypeMacro) {
-        fillCompletionLine(&compLine, symbol->name, symbol, symbol->type, 0, 0, NULL, NULL);
+        fillCompletionLine(&compLine, symbol->name, symbol, symbol->type, 0, NULL);
     } else {
         if (symbol->u.mbody == NULL) {
-            fillCompletionLine(&compLine, symbol->name, symbol, TypeUndefMacro, 0, 0, NULL, NULL);
+            fillCompletionLine(&compLine, symbol->name, symbol, TypeUndefMacro, 0, NULL);
         } else {
-            fillCompletionLine(&compLine, symbol->name, symbol, symbol->type, 0, symbol->u.mbody->argCount,
-                               symbol->u.mbody->argumentNames, NULL);
+            fillCompletionLine(&compLine, symbol->name, symbol, symbol->type, symbol->u.mbody->argCount,
+                               symbol->u.mbody->argumentNames);
         }
     }
     processName(symbol->name, &compLine, true, completionInfo->completions);
@@ -490,7 +478,7 @@ static void completeFunctionOrMethodName(Completions *c, bool orderFlag, int vle
         strcpy(cn, cname);
         strcpy(cn+cnamelen, psuff);
     }
-    fillCompletionLine(&compLine, cn, r, TypeDefault, vlevel,0,NULL,vFunCl);
+    fillCompletionLine(&compLine, cn, r, TypeDefault,0,NULL);
     processName(cn, &compLine, orderFlag, c);
 }
 
@@ -510,7 +498,7 @@ static void symbolCompletionFunction(Symbol *symbol, void *c) {
         if (symbol->type == TypeDefault && symbol->u.typeModifier!=NULL && symbol->u.typeModifier->type == TypeFunction) {
             completeFunctionOrMethodName(cc->res, true, 0, symbol, NULL);
         } else {
-            fillCompletionLine(&completionLine, completionName, symbol, symbol->type,0, 0, NULL,NULL);
+            fillCompletionLine(&completionLine, completionName, symbol, symbol->type, 0, NULL);
             processName(completionName, &completionLine, 1, cc->res);
         }
     }
@@ -525,12 +513,11 @@ void collectStructsCompletions(Completions *c) {
     symbolTableMapWithPointer(symbolTable, completeFun, (void*) &ii);
 }
 
-static void completeMemberNames(Completions *completions, Symbol *symbol, int completionType) {
+static void completeMemberNames(Completions *completions, Symbol *symbol) {
     CompletionLine completionLine;
-    int vlevel;
-    Symbol *r, *vFunCl;
-    StructMemberFindInfo rfs;
-    char *cname;
+    Symbol *foundSymbol;
+    StructMemberFindInfo info;
+    char *name;
 
     if (symbol==NULL)
         return;
@@ -538,31 +525,26 @@ static void completeMemberNames(Completions *completions, Symbol *symbol, int co
     bool orderFlag = completions->idToProcess[0] != 0;
 
     assert(symbol->u.structSpec);
-    initFind(symbol, &rfs);
+    initFind(symbol, &info);
 
     for(;;) {
         // this is in fact about not cutting all members of the struct,
-        Result result = findStructureMemberSymbol(&r, &rfs, NULL);
+        Result result = findStructureMemberSymbol(&foundSymbol, &info, NULL);
         if (result != RESULT_OK)
             break;
 
         /* because constructors are not inherited */
-        assert(r);
+        assert(foundSymbol);
 
-        cname = r->name;
-        if (cname!=NULL && *cname != 0 && r->type != TypeError
+        name = foundSymbol->name;
+        if (name!=NULL && *name != 0 && foundSymbol->type != TypeError
             // Hmm. I hope it will not filter out something important
-            && (! symbolShouldBeHiddenFromSearchResults(r->linkName))
+            && !symbolShouldBeHiddenFromSearchResults(foundSymbol->linkName)
         ) {
-            assert(rfs.currentStructure && rfs.currentStructure->u.structSpec);
-            assert(r->type == TypeDefault);
-            vFunCl = rfs.currentStructure;
-            if (vFunCl->u.structSpec->classFileNumber == -1) {
-                vFunCl = NULL;
-            }
-            vlevel = rfs.superClassesCount;
-                fillCompletionLine(&completionLine, cname, r, TypeDefault, vlevel, 0, NULL, vFunCl);
-                processName(cname, &completionLine, orderFlag, completions);
+            assert(info.currentStructure && info.currentStructure->u.structSpec);
+            assert(foundSymbol->type == TypeDefault);
+            fillCompletionLine(&completionLine, name, foundSymbol, TypeDefault, 0, NULL);
+            processName(name, &completionLine, orderFlag, completions);
         }
     }
     if (completions->idToProcess[0] == 0)
@@ -578,7 +560,7 @@ void collectStructMemberCompletions(Completions *c) {
     if (str->type == TypeStruct || str->type == TypeUnion) {
         s = str->u.t;
         assert(s);
-        completeMemberNames(c, s, TypeDefault);
+        completeMemberNames(c, s);
     }
     structMemberCompletionType = &errorModifier;
 }
@@ -745,7 +727,7 @@ void collectForStatementCompletions1(Completions* c) {
 
     if (isForStatementCompletionSymbol(c, &completionTypeForForStatement, &sym, &rec)) {
         sprintf(string,"%s!=NULL; ", sym->name);
-        fillCompletionLine(&compLine, string, NULL, TypeSpecialComplet, 0, 0, NULL, NULL);
+        fillCompletionLine(&compLine, string, NULL, TypeSpecialComplete, 0, NULL);
         completeName(string, &compLine, 0, c);
     }
 }
@@ -759,7 +741,7 @@ void collectForStatementCompletions2(Completions* c) {
     if (isForStatementCompletionSymbol(c, &completionTypeForForStatement, &sym, &rec)) {
         if (rec != NULL) {
             sprintf(ss,"%s=%s->%s) {", sym->name, sym->name, rec);
-            fillCompletionLine(&compLine, ss, NULL, TypeSpecialComplet, 0, 0, NULL, NULL);
+            fillCompletionLine(&compLine, ss, NULL, TypeSpecialComplete, 0, NULL);
             completeName(ss, &compLine, 0, c);
         }
     }
@@ -769,7 +751,7 @@ void completeUpFunProfile(Completions *c) {
     if (upLevelFunctionCompletionType != NULL && c->idToProcess[0] == 0 && c->alternativeIndex == 0) {
         Symbol *dd = newSymbolAsType("    ", "    ", noPosition, upLevelFunctionCompletionType);
 
-        fillCompletionLine(&c->alternatives[0], "    ", dd, TypeDefault, 0, 0, NULL, NULL);
+        fillCompletionLine(&c->alternatives[0], "    ", dd, TypeDefault, 0, NULL);
         c->fullMatchFlag = true;
         c->prefix[0]  = 0;
         c->alternativeIndex++;
@@ -786,7 +768,7 @@ static void completeFromXrefFun(ReferenceItem *s, void *c) {
     if (s->type != cc->type)
         return;
     /*&fprintf(dumpOut,"testing %s\n",s->linkName);fflush(dumpOut);&*/
-    fillCompletionLine(&compLine, s->linkName, NULL, s->type,0, 0, NULL,NULL);
+    fillCompletionLine(&compLine, s->linkName, NULL, s->type, 0, NULL);
     processName(s->linkName, &compLine, 1, cc->completions);
 }
 

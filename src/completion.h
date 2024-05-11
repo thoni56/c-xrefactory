@@ -24,10 +24,8 @@ typedef struct completionLine {
     char          *string;
     struct symbol *symbol;
     Type           symbolType;
-    short int      virtLevel;
     short int      margn;
     char         **margs;
-    struct symbol *vFunClass;
 } CompletionLine;
 
 typedef struct completions {

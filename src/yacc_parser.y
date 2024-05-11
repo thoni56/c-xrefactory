@@ -2029,9 +2029,9 @@ void makeYaccCompletions(char *string, int len, Position *pos) {
         if (exists_valid_parser_action_on(token)) {
                 if (tokenNamesTable[token] != NULL) {
                     if (isalpha(*tokenNamesTable[token]) || *tokenNamesTable[token]=='_') {
-                        fillCompletionLine(&completionLine, tokenNamesTable[token], NULL, TypeKeyword, 0, 0, NULL, NULL);
+                        fillCompletionLine(&completionLine, tokenNamesTable[token], NULL, TypeKeyword, 0, NULL);
                     } else {
-                        fillCompletionLine(&completionLine, tokenNamesTable[token], NULL, TypeToken, 0, 0, NULL, NULL);
+                        fillCompletionLine(&completionLine, tokenNamesTable[token], NULL, TypeToken, 0, NULL);
                     }
                     log_trace("completing %d==%s(%s) in state %d", token, tokenNamesTable[token], tokenNamesTable[token], lastyystate);
                     processName(tokenNamesTable[token], &completionLine, 0, &collectedCompletions);
