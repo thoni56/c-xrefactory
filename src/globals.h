@@ -5,8 +5,10 @@
 #include <setjmp.h>
 #include "constants.h"
 #include "completion.h"
+#include "head.h"
 #include "proto.h"
 #include "usage.h"
+
 
 typedef enum {
     IPP_FUNCTION_BEGIN,

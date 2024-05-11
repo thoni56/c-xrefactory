@@ -136,6 +136,7 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
   with error message "size of #macro_argument exceeded MACRO_UNIT_SIZE"
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
 * TODO NEW FEATURES:
+** TODO FEATURE: Organize includes - first own .h, then system <>, then local, each group alphabetically
 ** TODO FEATURE: New refactoring: change return type of function
 ** TODO FEATURE: Extract function should extract a boolean function inside an if() correctly
 ** TODO FEATURE: New refactoring: Inline variable ("a=f(); b(a);" => "b(f());")

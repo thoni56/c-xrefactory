@@ -2,6 +2,7 @@
 #define OPTIONS_H_INCLUDED
 
 #include "proto.h"
+#include "head.h"
 #include "stdinc.h"
 #include <stdbool.h>
 

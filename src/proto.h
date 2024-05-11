@@ -196,7 +196,6 @@ typedef struct symStructSpec {
 
 #include "reference.h"
 #include "server.h"
-#include "head.h"
 
 
 /* ***************** on - line cross referencing ***************** */
