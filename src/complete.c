@@ -36,8 +36,8 @@ ExpressionTokenType completionTypeForForStatement;
 
 
 void initCompletions(Completions *completions, int length, Position position) {
-    completions->idToProcessLen = length;
-    completions->idToProcessPos = position;
+    completions->idToProcessLength = length;
+    completions->idToProcessPosition = position;
     completions->fullMatchFlag = false;
     completions->isCompleteFlag = false;
     completions->noFocusOnCompletions = false;
@@ -214,7 +214,7 @@ void printCompletions(Completions* c) {
     int indent, max;
 
     // O.K. there will be a menu diplayed, clear the old one
-    olCompletionListInit(&c->idToProcessPos);
+    olCompletionListInit(&c->idToProcessPosition);
     if (c->alternativeIndex == 0) {
         if (options.serverOperation == OLO_SEARCH)
             ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No matches **");
@@ -227,7 +227,7 @@ void printCompletions(Completions* c) {
         ppcGenRecord(PPC_SINGLE_COMPLETION, c->alternatives[0].string);
         goto finishWithoutMenu;
     }
-    if (!c->fullMatchFlag && strlen(c->prefix) > c->idToProcessLen) {
+    if (!c->fullMatchFlag && strlen(c->prefix) > c->idToProcessLength) {
         ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
         ppcGenRecord(PPC_SINGLE_COMPLETION, c->prefix);
         ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions");
@@ -282,9 +282,9 @@ static int completionOrderCmp(CompletionLine *c1, CompletionLine *c2) {
     s2 = strchr(c2->string, '(');
     if (s2 == NULL) l2 = strlen(c2->string);
     else l2 = s2 - c2->string;
-    if (l1 == collectedCompletions.idToProcessLen && l2 != collectedCompletions.idToProcessLen)
+    if (l1 == collectedCompletions.idToProcessLength && l2 != collectedCompletions.idToProcessLength)
         return -1;
-    if (l1 != collectedCompletions.idToProcessLen && l2 == collectedCompletions.idToProcessLen)
+    if (l1 != collectedCompletions.idToProcessLength && l2 == collectedCompletions.idToProcessLength)
         return 1;
     return strcmp(c1->string, c2->string);
 }
@@ -373,7 +373,7 @@ static void completionInsertName(char *name, CompletionLine *completionLine, boo
     int len,l;
     //&completionLine->string  = name;
     name = completionLine->string;
-    len = ci->idToProcessLen;
+    len = ci->idToProcessLength;
     if (ci->alternativeIndex == 0) {
         strcpy(ci->prefix, name);
         ci->alternatives[ci->alternativeIndex] = *completionLine;
@@ -753,7 +753,7 @@ static bool isForStatementCompletionSymbol(
         return false;
     if (token->typeModifier==NULL)
         return false;
-    if (completions->idToProcessLen != 0)
+    if (completions->idToProcessLength != 0)
         return false;
     if (token->typeModifier->type == TypePointer) {
         assert(token->typeModifier->next);

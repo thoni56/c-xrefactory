@@ -32,8 +32,8 @@ typedef struct completionLine {
 
 typedef struct completions {
     char                  idToProcess[MAX_FUNCTION_NAME_LENGTH];
-    int                   idToProcessLen;
-    struct position       idToProcessPos;
+    int                   idToProcessLength;
+    struct position       idToProcessPosition;
     bool                  fullMatchFlag;
     bool                  isCompleteFlag;
     bool                  noFocusOnCompletions;
