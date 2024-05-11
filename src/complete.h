@@ -10,7 +10,7 @@ typedef struct {
     void (*fun)(Completions*);
 } CompletionFunctionsTable;
 
-extern ExpressionTokenType s_forCompletionType;
+extern ExpressionTokenType completionTypeForForStatement;
 
 extern void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Type symbolType,
                                short int virtualLevel, short int margn, char **margs,

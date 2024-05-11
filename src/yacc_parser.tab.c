@@ -4395,7 +4395,7 @@ case 439:
 break;
 case 440:
 #line 1656 "yacc_parser.y"
-{s_forCompletionType=yyvsp[0].ast_expressionType.data;}
+{completionTypeForForStatement=yyvsp[0].ast_expressionType.data;}
 break;
 case 441:
 #line 1661 "yacc_parser.y"

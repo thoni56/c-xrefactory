@@ -3734,7 +3734,7 @@ case 297:
 break;
 case 298:
 #line 1447 "c_parser.y"
-{s_forCompletionType=yyvsp[0].ast_expressionType.data;}
+{completionTypeForForStatement=yyvsp[0].ast_expressionType.data;}
 break;
 case 299:
 #line 1452 "c_parser.y"

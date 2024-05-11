@@ -32,7 +32,7 @@ typedef struct {
     Storage storage;
 } SymbolCompletionFunctionInfo;
 
-ExpressionTokenType s_forCompletionType;
+ExpressionTokenType completionTypeForForStatement;
 
 
 void initCompletions(Completions *completions, int length, Position position) {
@@ -773,7 +773,7 @@ void collectForStatementCompletions1(Completions* c) {
     CompletionLine      compLine;
     Symbol             *sym;
 
-    if (isForStatementCompletionSymbol(c, &s_forCompletionType, &sym, &rec)) {
+    if (isForStatementCompletionSymbol(c, &completionTypeForForStatement, &sym, &rec)) {
         sprintf(string,"%s!=NULL; ", sym->name);
         fillCompletionLine(&compLine, string, NULL, TypeSpecialComplet, 0, 0, NULL, NULL);
         completeName(string, &compLine, 0, c);
@@ -786,7 +786,7 @@ void collectForStatementCompletions2(Completions* c) {
     CompletionLine      compLine;
     Symbol             *sym;
 
-    if (isForStatementCompletionSymbol(c, &s_forCompletionType, &sym, &rec)) {
+    if (isForStatementCompletionSymbol(c, &completionTypeForForStatement, &sym, &rec)) {
         if (rec != NULL) {
             sprintf(ss,"%s=%s->%s) {", sym->name, sym->name, rec);
             fillCompletionLine(&compLine, ss, NULL, TypeSpecialComplet, 0, 0, NULL, NULL);

@@ -1444,7 +1444,7 @@ selection_statement
     ;
 
 for1maybe_expr
-    : maybe_expr            {s_forCompletionType=$1.data;}
+    : maybe_expr            {completionTypeForForStatement=$1.data;}
     ;
 
 iteration_statement
