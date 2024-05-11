@@ -733,45 +733,42 @@ fini:
     return res;
 }
 
-static void simpleModuleRename(EditorMarkerList *occs, char *symname, char *symLinkName) {
+static void simpleModuleRename(EditorMarkerList *markers, char *symname, char *symLinkName) {
     char          rtpack[MAX_FILE_NAME_SIZE];
-    char          rtprefix[MAX_FILE_NAME_SIZE];
+    char          newName[MAX_FILE_NAME_SIZE];
     char         *ss;
-    int           snlen, slnlen;
     bool          mvfile;
     EditorMarker *pp;
 
     /* THIS IS THE OLD JAVA VERSION, NEED TO ADAPT TO MOVE C MODULE!!! */
 
     // get original and new directory, but how?
-    snlen  = strlen(symname);
-    slnlen = strlen(symLinkName);
-    strcpy(rtprefix, refactoringOptions.renameTo);
-    ss = lastOccurenceInString(rtprefix, '.');
+    strcpy(newName, refactoringOptions.renameTo);
+    ss = lastOccurenceInString(newName, '.');
     if (ss == NULL) {
-        strcpy(rtpack, rtprefix);
-        rtprefix[0] = 0;
+        strcpy(rtpack, newName);
+        newName[0] = 0;
     } else {
         strcpy(rtpack, ss + 1);
         *(ss + 1) = 0;
     }
-    for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
-        pp = createNewMarkerForExpressionStart(ll->marker, GET_STATIC_PREFIX_START);
+    for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
+        pp = createNewMarkerForExpressionStart(l->marker, GET_STATIC_PREFIX_START);
         if (pp != NULL) {
-            removeNonCommentCode(pp, ll->marker->offset - pp->offset);
+            removeNonCommentCode(pp, l->marker->offset - pp->offset);
             // make attention here, so that markers still points
             // to the package name, the best would be to replace
             // package name per single names, ...
-            checkedReplaceString(pp, snlen, symname, rtpack);
-            replaceString(pp, 0, rtprefix);
+            checkedReplaceString(pp, strlen(symname), symname, rtpack);
+            replaceString(pp, 0, newName);
         }
         freeEditorMarker(pp);
     }
-    for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
-        if (ll->next == NULL || ll->next->marker->buffer != ll->marker->buffer) {
+    for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
+        if (l->next == NULL || l->next->marker->buffer != l->marker->buffer) {
             // O.K. verify whether I should move the file
             MapOverPaths(javaSourcePaths, {
-                mvfile = renamePackageFileMove(currentPath, ll, symLinkName, slnlen);
+                    mvfile = renamePackageFileMove(currentPath, l, symLinkName, strlen(symLinkName));
                 if (mvfile)
                     goto moved;
             });
