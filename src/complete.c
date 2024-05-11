@@ -525,23 +525,7 @@ void collectStructsCompletions(Completions *c) {
     symbolTableMapWithPointer(symbolTable, completeFun, (void*) &ii);
 }
 
-static void processSpecialInheritedFullCompletion(Completions *c, int orderFlag, int vlevel, Symbol *r, Symbol *vFunCl, char *cname) {
-    int     size, ll;
-    char    *fcc;
-    char    tmp[MAX_CX_SYMBOL_SIZE];
-    CompletionLine compLine;
-
-    tmp[0]=0; ll=0; size=MAX_CX_SYMBOL_SIZE;
-    typeSPrint(tmp+ll, &size, r->u.typeModifier, cname, ' ', true, SHORT_NAME, NULL);
-    fcc = stackMemoryAlloc(strlen(tmp)+1);
-    strcpy(fcc,tmp);
-    fillCompletionLine(&compLine, fcc, r, TypeInheritedFullMethod, vlevel,0,NULL,vFunCl);
-    processName(fcc, &compLine, orderFlag, c);
-}
-
-static void completeMemberNames(Completions *completions, Symbol *symbol,
-                                 int completionType
-) {
+static void completeMemberNames(Completions *completions, Symbol *symbol, int completionType) {
     CompletionLine completionLine;
     int vlevel;
     Symbol *r, *vFunCl;
@@ -577,22 +561,8 @@ static void completeMemberNames(Completions *completions, Symbol *symbol,
                 vFunCl = NULL;
             }
             vlevel = rfs.superClassesCount;
-            if (completionType == TypeInheritedFullMethod) {
-                // TODO customizable completion level
-                if (vlevel > 1
-                    &&  (r->access & AccessPrivate)==0
-                    &&  (r->access & AccessStatic)==0) {
-                    processSpecialInheritedFullCompletion(completions,orderFlag,vlevel,
-                                                          r, vFunCl, cname);
-                }
-                completions->prefix[0] = 0;
-            } else if (completionType == TypeSpecialConstructorCompletion) {
-                fillCompletionLine(&completionLine, completions->idToProcess, r, TypeDefault, vlevel,0,NULL,vFunCl);
-                completionInsertName(completions->idToProcess, &completionLine, orderFlag, (void*) completions);
-            } else {
                 fillCompletionLine(&completionLine, cname, r, TypeDefault, vlevel, 0, NULL, vFunCl);
                 processName(cname, &completionLine, orderFlag, completions);
-            }
         }
     }
     if (completions->idToProcess[0] == 0)
