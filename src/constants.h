@@ -54,7 +54,7 @@
 #define MAX_EXTRACT_FUN_HEAD_SIZE    10000
 
 #define MAX_FILE_NAME_SIZE		1000
-#define MAX_FUN_NAME_SIZE		1000
+#define MAX_FUNCTION_NAME_LENGTH		1000
 #define MAX_REF_LEN             3000
 #define MAX_CX_SYMBOL_SIZE		3000
 #define MAX_INHERITANCE_DEEP     200
@@ -85,7 +85,7 @@
 #define LEXEM_BUFFER_SIZE (1024 + MAX_LEXEM_SIZE) /* must be bigger than MAX_LEXEM_SIZE */
 
 #define MAX_UNGET_CHARS 20		/* reserve for ungetChar in char buffer */
-#define MAX_LEXEM_SIZE MAX_FUN_NAME_SIZE /* max size of 1 lexem
+#define MAX_LEXEM_SIZE MAX_FUNCTION_NAME_LENGTH /* max size of 1 lexem
                                             (string, ident) should be
                                             bigger than
                                             MAX_FUN_NAME_SIZE */

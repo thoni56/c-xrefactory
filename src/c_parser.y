@@ -1783,8 +1783,8 @@ void makeCCompletions(char *string, int len, Position *pos) {
     CompletionLine completionLine;
 
     log_trace("completing \"%s\"", string);
-    strncpy(collectedCompletions.idToProcess, string, MAX_FUN_NAME_SIZE);
-    collectedCompletions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
+    strncpy(collectedCompletions.idToProcess, string, MAX_FUNCTION_NAME_LENGTH);
+    collectedCompletions.idToProcess[MAX_FUNCTION_NAME_LENGTH-1] = 0;
     initCompletions(&collectedCompletions, len, *pos);
 
     /* special wizard completions */

@@ -1684,7 +1684,7 @@ static void olCompletionSelect(void) {
 static void olcxReferenceSelectTagSearchItem(int refn) {
     Completion      *rr;
     OlcxReferences    *refs;
-    char                ttt[MAX_FUN_NAME_SIZE];
+    char                ttt[MAX_FUNCTION_NAME_LENGTH];
     assert(refn > 0);
     assert(sessionData.retrieverStack.top);
     refs = sessionData.retrieverStack.top;
