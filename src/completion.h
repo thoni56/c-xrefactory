@@ -39,7 +39,7 @@ typedef struct completions {
     char                  prefix[TMP_STRING_SIZE];
     int                   maxLen;
     struct completionLine alternatives[MAX_COMPLETIONS];
-    int                   alternativeIndex;
+    int                   alternativeCount;
 } Completions;
 
 extern Completion *newCompletion(char *name, char *fullName,

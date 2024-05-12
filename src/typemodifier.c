@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
+
 #include "commons.h"
 #include "stackmemory.h"
 
@@ -40,9 +41,11 @@ void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *arg
 
 
 /* For typeModifiers we need to cater for two memory allocations (XX &
-   CF) as well as the ancient FILL semantics... */
+   CF) */
 
-/* The most common is to allocate in XX_memory == stackMemAlloc(sizeof()) so this is what we do here */
+/* The most common is to allocate in XX_memory =>
+ * stackMemAlloc(sizeof()) so this is what we do in the new..()
+ * functions */
 TypeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, TypeModifier *next) {
     TypeModifier *typeModifier = stackMemoryAlloc(sizeof(TypeModifier));
 

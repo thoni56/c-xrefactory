@@ -1986,7 +1986,7 @@ void makeCCompletions(char *string, int len, Position *pos) {
         return;
 
     /* If there is a wizard completion, RETURN now */
-    if (collectedCompletions.alternativeIndex != 0 && options.serverOperation != OLO_SEARCH)
+    if (collectedCompletions.alternativeCount != 0 && options.serverOperation != OLO_SEARCH)
         return;
 
     /* basic language tokens */

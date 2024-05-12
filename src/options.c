@@ -1440,7 +1440,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-olcxsearch")==0)
         options.serverOperation = OLO_SEARCH;
     else if (strncmp(argv[i], "-olcxcplsearch=",15)==0) {
-        options.serverOperation=OLO_SEARCH;
+        options.serverOperation = OLO_SEARCH;
         options.olcxSearchString = allocateStringForOption(&options.olcxSearchString, argv[i]+15);
     }
     else if (strncmp(argv[i], "-olcxtagsearch=",15)==0) {

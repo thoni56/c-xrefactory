@@ -43,7 +43,7 @@ void initCompletions(Completions *completions, int length, Position position) {
     completions->noFocusOnCompletions = false;
     completions->abortFurtherCompletions = false;
     completions->maxLen = 0;
-    completions->alternativeIndex = 0;
+    completions->alternativeCount = 0;
 }
 
 void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Type symbolType, short int margn, char **margs) {
@@ -198,50 +198,50 @@ void printCompletionsList(int noFocus) {
     printCompletionsEnding(olc);
 }
 
-void printCompletions(Completions* c) {
+void printCompletions(Completions* completions) {
     int indent, max;
 
     // O.K. there will be a menu diplayed, clear the old one
-    olCompletionListInit(&c->idToProcessPosition);
-    if (c->alternativeIndex == 0) {
+    olCompletionListInit(&completions->idToProcessPosition);
+    if (completions->alternativeCount == 0) {
         if (options.serverOperation == OLO_SEARCH)
             ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No matches **");
         else
             ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **");
         goto finishWithoutMenu;
     }
-    if (!c->fullMatchFlag && c->alternativeIndex==1) {
+    if (!completions->fullMatchFlag && completions->alternativeCount==1) {
         ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
-        ppcGenRecord(PPC_SINGLE_COMPLETION, c->alternatives[0].string);
+        ppcGenRecord(PPC_SINGLE_COMPLETION, completions->alternatives[0].string);
         goto finishWithoutMenu;
     }
-    if (!c->fullMatchFlag && strlen(c->prefix) > c->idToProcessLength) {
+    if (!completions->fullMatchFlag && strlen(completions->prefix) > completions->idToProcessLength) {
         ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
-        ppcGenRecord(PPC_SINGLE_COMPLETION, c->prefix);
+        ppcGenRecord(PPC_SINGLE_COMPLETION, completions->prefix);
         ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions");
         goto finishWithoutMenu;
     }
 
-    indent = c->maxLen;
+    indent = completions->maxLen;
     if (options.olineLen - indent < MIN_COMPLETION_INDENT_REST) {
         indent = options.olineLen - MIN_COMPLETION_INDENT_REST;
         if (indent < MIN_COMPLETION_INDENT) indent = MIN_COMPLETION_INDENT;
     }
     if (indent > MAX_COMPLETION_INDENT)
         indent = MAX_COMPLETION_INDENT;
-    if (c->alternativeIndex > options.maxCompletions)
+    if (completions->alternativeCount > options.maxCompletions)
         max = options.maxCompletions;
     else
-        max = c->alternativeIndex;
+        max = completions->alternativeCount;
     for(int ii=0; ii<max; ii++) {
-        sprintFullCompletionInfo(c, ii, indent);
+        sprintFullCompletionInfo(completions, ii, indent);
         Reference ref;
         sessionData.completionsStack.top->completions = completionListPrepend(
-            sessionData.completionsStack.top->completions, c->alternatives[ii].string, ppcTmpBuff, c->alternatives[ii].symbol, NULL, &ref, c->alternatives[ii].symbolType,
+            sessionData.completionsStack.top->completions, completions->alternatives[ii].string, ppcTmpBuff, completions->alternatives[ii].symbol, NULL, &ref, completions->alternatives[ii].symbolType,
             NO_FILE_NUMBER);
     }
     olCompletionListReverse();
-    printCompletionsList(c->noFocusOnCompletions);
+    printCompletionsList(completions->noFocusOnCompletions);
     fflush(communicationChannel);
     return;
  finishWithoutMenu:
@@ -362,18 +362,18 @@ static void completionInsertName(char *name, CompletionLine *completionLine, boo
     //&completionLine->string  = name;
     name = completionLine->string;
     len = ci->idToProcessLength;
-    if (ci->alternativeIndex == 0) {
+    if (ci->alternativeCount == 0) {
         strcpy(ci->prefix, name);
-        ci->alternatives[ci->alternativeIndex] = *completionLine;
-        ci->alternatives[ci->alternativeIndex].string = name/*+len*/;
-        ci->alternativeIndex++;
+        ci->alternatives[ci->alternativeCount] = *completionLine;
+        ci->alternatives[ci->alternativeCount].string = name/*+len*/;
+        ci->alternativeCount++;
         ci->maxLen = strlen(name/*+len*/);
         ci->fullMatchFlag = ((len==ci->maxLen)
                              || (len==ci->maxLen-1 && name[len]=='(')
                              || (len==ci->maxLen-2 && name[len]=='('));
     } else {
-        assert(ci->alternativeIndex < MAX_COMPLETIONS-1);
-        if (reallyInsert(ci->alternatives, &ci->alternativeIndex, name/*+len*/, completionLine, orderFlag)) {
+        assert(ci->alternativeCount < MAX_COMPLETIONS-1);
+        if (reallyInsert(ci->alternatives, &ci->alternativeCount, name/*+len*/, completionLine, orderFlag)) {
             ci->fullMatchFlag = false;
             l = strlen(name/*+len*/);
             if (l > ci->maxLen) ci->maxLen = l;
@@ -409,16 +409,16 @@ static void searchName(char *name, CompletionLine *compLine, int orderFlag,
     }
     //&compLine->string = name;
     name = compLine->string;
-    if (completions->alternativeIndex == 0) {
+    if (completions->alternativeCount == 0) {
         completions->fullMatchFlag = false;
         completions->prefix[0]=0;
-        completions->alternatives[completions->alternativeIndex] = *compLine;
-        completions->alternatives[completions->alternativeIndex].string = name;
-        completions->alternativeIndex++;
+        completions->alternatives[completions->alternativeCount] = *compLine;
+        completions->alternatives[completions->alternativeCount].string = name;
+        completions->alternativeCount++;
         completions->maxLen = strlen(name);
     } else {
-        assert(completions->alternativeIndex < MAX_COMPLETIONS-1);
-        if (reallyInsert(completions->alternatives, &completions->alternativeIndex, name, compLine, 1)) {
+        assert(completions->alternativeCount < MAX_COMPLETIONS-1);
+        if (reallyInsert(completions->alternatives, &completions->alternativeCount, name, compLine, 1)) {
             completions->fullMatchFlag = false;
             int l = strlen(name);
             if (l > completions->maxLen)
@@ -751,13 +751,13 @@ void collectForStatementCompletions2(Completions* c) {
 }
 
 void completeUpFunProfile(Completions *c) {
-    if (upLevelFunctionCompletionType != NULL && c->idToProcess[0] == 0 && c->alternativeIndex == 0) {
+    if (upLevelFunctionCompletionType != NULL && c->idToProcess[0] == 0 && c->alternativeCount == 0) {
         Symbol *dd = newSymbolAsType("    ", "    ", noPosition, upLevelFunctionCompletionType);
 
         fillCompletionLine(&c->alternatives[0], "    ", dd, TypeDefault, 0, NULL);
         c->fullMatchFlag = true;
         c->prefix[0]  = 0;
-        c->alternativeIndex++;
+        c->alternativeCount++;
     }
 }
 
