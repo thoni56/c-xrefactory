@@ -233,11 +233,7 @@ typedef struct currentlyParsedInfo {
     int               marker2Flag;
     char              setTargetAnswerClass[TMP_STRING_SIZE];
     bool              moveTargetApproved;
-    char              currentPackageAnswer[TMP_STRING_SIZE];
-    char              currentClassAnswer[TMP_STRING_SIZE];
-    char              currentSuperClassAnswer[TMP_STRING_SIZE];
     int               methodCoordEndLine;
-    int               classCoordEndLine;
     struct codeBlock *workMemoryIndexAtBlockBegin;
     struct codeBlock *workMemoryIndexAtBlockEnd;
     struct symbol    *function;

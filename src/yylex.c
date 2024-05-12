@@ -2044,10 +2044,6 @@ static void actionOnBlockMarker(void) {
         }
     } else if (options.serverOperation == OLO_EXTRACT) {
         extractActionOnBlockMarker();
-    } else {
-        parsedInfo.currentPackageAnswer[0] = 0;
-        parsedInfo.currentClassAnswer[0] = 0;
-        parsedInfo.currentSuperClassAnswer[0] = 0;
     }
 }
 
