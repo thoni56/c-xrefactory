@@ -2247,7 +2247,7 @@ void answerEditAction(void) {
         break;
     case OLO_SET_MOVE_FUNCTION_TARGET:
         assert(options.xref2);
-        if (!parsedInfo.moveTargetApproved) {
+        if (!parsedInfo.moveTargetAccepted) {
             ppcGenRecord(PPC_ERROR, "Invalid target place");
         }
         break;

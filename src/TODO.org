@@ -19,7 +19,8 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
 
 * TODO FEATURE: New refactoring: move function for C
-** DONE pick-up pieces from Java version and hack them into a preliminary version
+** DONE Pick-up pieces from Java version and hack them into a preliminary version
+** DONE Accept target position
 ** TODO Fill ParsedInfo begin/end for requested function
 ** TODO Fixup the preliminary version of the actual move
 ** TODO Move any declaration in source.h file to target.h

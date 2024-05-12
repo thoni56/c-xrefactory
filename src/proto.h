@@ -227,12 +227,12 @@ typedef struct OlcxReferencesStack {
 } OlcxReferencesStack;
 
 
-typedef struct currentlyParsedInfo {
+typedef struct parsedInfo {
     bool              extractProcessedFlag;
     bool              marker1Flag;
-    int               marker2Flag;
+    bool              marker2Flag;
     char              setTargetAnswerClass[TMP_STRING_SIZE];
-    bool              moveTargetApproved;
+    bool              moveTargetAccepted;
     int               methodCoordEndLine;
     struct codeBlock *workMemoryIndexAtBlockBegin;
     struct codeBlock *workMemoryIndexAtBlockEnd;

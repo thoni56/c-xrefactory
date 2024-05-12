@@ -1425,7 +1425,7 @@ static bool validTargetPlace(EditorMarker *target, char *checkOpt) {
     bool valid = true;
 
     parseBufferUsingServer(refactoringOptions.project, target, NULL, checkOpt, NULL);
-    if (!parsedInfo.moveTargetApproved) {
+    if (!parsedInfo.moveTargetAccepted) {
         valid = false;
         errorMessage(ERR_ST, "Invalid target place");
     }

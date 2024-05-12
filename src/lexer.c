@@ -5,6 +5,7 @@
 #include "lexembuffer.h"
 #include "options.h"
 #include "commons.h"
+#include "server.h"
 #include "yylex.h"
 #include "filedescriptor.h"
 #include "filetable.h"
@@ -774,15 +775,32 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                         parsedInfo.marker2Flag = true;
                     }
                 } else if (options.serverOperation == OLO_COMPLETION
-                           ||  options.serverOperation == OLO_SEARCH) {
+                           || options.serverOperation == OLO_SEARCH
+                ) {
                     ch = skipBlanks(cb, ch);
                     lexem = peekLexemCodeAt(startOfCurrentLexem);
                     processCompletionOrSearch(cb, lb, position, currentLexemFileOffset,
                                               options.olCursorOffset - currentLexemFileOffset, lexem);
                 } else {
                     if (currentLexemFileOffset <= options.olCursorOffset
-                        && fileOffsetFor(cb) >= options.olCursorOffset) {
+                        && fileOffsetFor(cb) >= options.olCursorOffset
+                    ) {
                         gotOnLineCxRefs(&position);
+                    }
+                    if (options.serverOperation == OLO_SET_MOVE_FUNCTION_TARGET) {
+                        // TODO: Figure out what the problem was with this for C
+
+                        //if (LANGUAGE(LANG_JAVA)) {
+                        // there is a problem with this, when browsing at CPP construction
+                        // that is why I restrict it to Java language! It is usefull
+                        // only for Java refactorings
+                        ch = skipBlanks(cb, ch);
+                        int apos = fileOffsetFor(cb);
+                        if (apos >= options.olCursorOffset && !parsedInfo.marker1Flag) {
+                            putLexemCode(lb, OL_MARKER_TOKEN);
+                            putLexemPosition(lb, position);
+                            parsedInfo.marker1Flag = true;
+                        }
                     }
                 }
             }
