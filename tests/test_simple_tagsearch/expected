@@ -1,0 +1,12 @@
+../../src/c-xref -xrefrc CURDIR/.c-xrefrc source.c -xrefactory-II -server -log=log.log -commandlog=commands.log -o server-buffer
+-olcxtagsearch=int* -olcxlccursor=1:5 -olcursor=5 CURDIR/source.c -olcursor=85 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<symbol-list>
+ <str len=<n>>int_which_is_public :source.c :CURDIR/source.c</str>
+ <str len=<n>>int_which_is_static :source.c :CURDIR/source.c</str>
+</symbol-list>
+-exit
+end-of-options
+
