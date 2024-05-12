@@ -36,30 +36,6 @@ typedef enum {
     NO_CHECKS
 } ToCheckOrNot;
 
-
-typedef struct tpCheckMoveClassData {
-    PushRange pushRange;
-    bool      transPackageMove;
-    char      *sourceClass;
-} TpCheckMoveClassData;
-
-typedef struct tpCheckSpecialReferencesData {
-    PushRange            pushRange;
-    char                 *symbolToTest;
-    int                  classToTest;
-    struct referenceItem *foundSpecialRefItem;
-    struct reference     *foundSpecialR;
-    struct referenceItem *foundRefToTestedClass;
-    struct referenceItem *foundRefNotToTestedClass;
-    struct reference     *foundOuterScopeRef;
-} TpCheckSpecialReferencesData;
-
-typedef struct disabledList {
-    int                  file;
-    int                  clas;
-    struct disabledList *next;
-} DisabledList;
-
 static EditorUndo *refactoringStartingPoint;
 
 static bool editServerSubTaskFirstPass = true;
