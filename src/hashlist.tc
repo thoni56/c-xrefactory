@@ -11,16 +11,16 @@
 */
 
 #include <string.h> // For memset()
-#include "hash.h"
-#include "commons.h"
 
+#include "commons.h"
+#include "hash.h"
 #include "stackmemory.h"
 
 
 #define GLUE(a,b) a ## b
 #define CONCAT(a,b) GLUE(a,b)
 
-/* Here we create TAB_TYPE and FUN_PREFIX from TAB_NAME */
+/* Create a function PREFIX from TAB_NAME */
 #define HASH_FUN_PREFIX HASH_TAB_NAME
 
 

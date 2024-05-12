@@ -2,7 +2,7 @@
 #include "symboltable.h"
 
 
-#define HASH_FUN(elemp) hashFun(elemp->name)
+#define HASH_FUN(element) hashFun(element->name)
 #define HASH_ELEM_EQUAL(e1,e2) (e1->type==e2->type && strcmp(e1->name,e2->name)==0)
 
 SymbolTable *symbolTable;

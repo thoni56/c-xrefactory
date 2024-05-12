@@ -126,12 +126,6 @@ typedef enum language {
     }\
 }
 
-#define IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, dd)                                                               \
-    (dm_isBetween(cxMemory, rr, (dd)->lowestIndex, (dd)->highestIndex) && OL_VIEWABLE_REFS(rr) &&                           \
-     rr->position.file != NO_FILE_NUMBER &&                                                                          \
-     rr->position.file == inputFileNumber /* fixing bug with references coming from jsl */                        \
-    )
-
 #define SYMBOL_MENU_FIRST_LINE 0
 #define MAX_ASCII_CHAR 256
 

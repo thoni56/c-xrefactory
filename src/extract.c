@@ -155,9 +155,7 @@ static ProgramGraphNode *newProgramGraphNode(
     char classifBits,
     ProgramGraphNode *next
 ) {
-    ProgramGraphNode *programGraph;
-
-    programGraph = cxAlloc(sizeof(ProgramGraphNode));
+    ProgramGraphNode *programGraph = cxAlloc(sizeof(ProgramGraphNode));
 
     programGraph->ref = ref;
     programGraph->symRef = symRef;
@@ -170,38 +168,37 @@ static ProgramGraphNode *newProgramGraphNode(
     return programGraph;
 }
 
-static void extractFunGraphRef(ReferenceItem *rr, void *prog) {
-    Reference *r;
-    ProgramGraphNode *p,**ap;
-    ap = (ProgramGraphNode **) prog;
-    for (r=rr->references; r!=NULL; r=r->next) {
+static void extractFunGraphRef(ReferenceItem *referenceItem, void *prog) {
+    ProgramGraphNode **ap = (ProgramGraphNode **) prog;
+    for (Reference *r=referenceItem->references; r!=NULL; r=r->next) {
         if (dm_isBetween(cxMemory,r,parsedInfo.cxMemoryIndexAtFunctionBegin,parsedInfo.cxMemoryIndexAtFunctionEnd)){
-            p = newProgramGraphNode(r, rr, NULL, 0, 0, CLASSIFIED_AS_NONE, *ap);
+            ProgramGraphNode *p = newProgramGraphNode(r, referenceItem, NULL, 0, 0, CLASSIFIED_AS_NONE, *ap);
             *ap = p;
         }
     }
 }
 
-static ProgramGraphNode *getGraphAddress( ProgramGraphNode  *program,
-                                            Reference         *ref
-                                            ) {
-    ProgramGraphNode *p,*res;
-    res = NULL;
-    for (p=program; res==NULL && p!=NULL; p=p->next) {
-        if (p->ref == ref) res = p;
+static ProgramGraphNode *getGraphAddress(ProgramGraphNode *program, Reference *ref) {
+    ProgramGraphNode *result = NULL;
+
+    for (ProgramGraphNode *p=program; result==NULL && p!=NULL; p=p->next) {
+        if (p->ref == ref)
+            result = p;
     }
-    return res;
+    return result;
 }
 
 static Reference *getDefinitionReference(ReferenceItem *lab) {
-    Reference *res;
-    for (res=lab->references; res!=NULL && res->usage.kind!=UsageDefined; res=res->next) ;
-    if (res == NULL) {
+    Reference *result;
+
+    for (result=lab->references; result!=NULL && result->usage.kind!=UsageDefined; result=result->next)
+        ;
+    if (result == NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff,"jump to unknown label '%s'",lab->linkName);
         errorMessage(ERR_ST,tmpBuff);
     }
-    return(res);
+    return result;
 }
 
 static ProgramGraphNode *getLabelGraphAddress(ProgramGraphNode *program,
@@ -212,37 +209,35 @@ static ProgramGraphNode *getLabelGraphAddress(ProgramGraphNode *program,
     assert(lab->type == TypeLabel);
     defref = getDefinitionReference(lab);
     res = getGraphAddress(program, defref);
-    return(res);
+    return res;
 }
 
 static int linearOrder(ProgramGraphNode *n1, ProgramGraphNode *n2) {
-    return(n1->ref < n2->ref);
+    return n1->ref < n2->ref;
 }
 
 static ProgramGraphNode *makeProgramGraph(void) {
-    ProgramGraphNode *program, *p;
-    program = NULL;
+    ProgramGraphNode *program = NULL;
+
     mapOverReferenceTableWithPointer(extractFunGraphRef, ((void *) &program));
     LIST_SORT(ProgramGraphNode, program, linearOrder);
     dumpProgramToLog(program);
-    for (p=program; p!=NULL; p=p->next) {
+    for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
         if (p->symRef->type==TypeLabel && p->ref->usage.kind!=UsageDefined) {
             // resolve the jump
             p->jump = getLabelGraphAddress(program, p->symRef);
         }
     }
-    return(program);
+    return program;
 }
 
 static bool isStructOrUnion(ProgramGraphNode *node) {
     return node->symRef->linkName[0]==LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
 }
 
-static void extSetSetStates(    ProgramGraphNode *p,
-                                ReferenceItem *symRef,
-                                unsigned cstate
-                                ) {
-    unsigned cpos,oldStateBits;
+static void extSetSetStates(ProgramGraphNode *p, ReferenceItem *symRef, unsigned cstate) {
+    unsigned cpos, oldStateBits;
+
     for (; p!=NULL; p=p->next) {
     cont:
         if (p->stateBits == cstate)
