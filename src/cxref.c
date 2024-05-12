@@ -12,6 +12,7 @@
 #include "filetable.h"
 #include "globals.h"
 #include "list.h"
+#include "log.h"
 #include "menu.h"
 #include "misc.h"
 #include "options.h"
@@ -19,7 +20,6 @@
 #include "proto.h"
 #include "protocol.h"
 #include "refactorings.h"
-#include "refactory.h"
 #include "reftab.h"
 #include "scope.h"
 #include "server.h"
@@ -28,8 +28,6 @@
 #include "symbol.h"
 #include "type.h"
 #include "usage.h"
-
-#include "log.h"
 
 
 /* *********************************************************************** */
