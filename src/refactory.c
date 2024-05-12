@@ -734,43 +734,41 @@ fini:
 }
 
 static void simpleModuleRename(EditorMarkerList *markers, char *symname, char *symLinkName) {
-    char          rtpack[MAX_FILE_NAME_SIZE];
     char          newName[MAX_FILE_NAME_SIZE];
-    char         *ss;
-    bool          mvfile;
-    EditorMarker *pp;
+    char          newPackageName[MAX_FILE_NAME_SIZE];
 
     /* THIS IS THE OLD JAVA VERSION, NEED TO ADAPT TO MOVE C MODULE!!! */
 
     // get original and new directory, but how?
     strcpy(newName, refactoringOptions.renameTo);
-    ss = lastOccurenceInString(newName, '.');
-    if (ss == NULL) {
-        strcpy(rtpack, newName);
+    char *lastDot = lastOccurenceInString(newName, '.');
+    if (lastDot == NULL) {
+        strcpy(newPackageName, newName);
         newName[0] = 0;
     } else {
-        strcpy(rtpack, ss + 1);
-        *(ss + 1) = 0;
+        strcpy(newPackageName, lastDot + 1);
+        *(lastDot + 1) = 0;
     }
     for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
-        pp = createNewMarkerForExpressionStart(l->marker, GET_STATIC_PREFIX_START);
-        if (pp != NULL) {
-            removeNonCommentCode(pp, l->marker->offset - pp->offset);
+        EditorMarker *marker = createNewMarkerForExpressionStart(l->marker, GET_STATIC_PREFIX_START);
+        if (marker != NULL) {
+            removeNonCommentCode(marker, l->marker->offset - marker->offset);
             // make attention here, so that markers still points
             // to the package name, the best would be to replace
             // package name per single names, ...
-            checkedReplaceString(pp, strlen(symname), symname, rtpack);
-            replaceString(pp, 0, newName);
+            checkedReplaceString(marker, strlen(symname), symname, newPackageName);
+            replaceString(marker, 0, newName);
         }
-        freeEditorMarker(pp);
+        freeEditorMarker(marker);
     }
     for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
         if (l->next == NULL || l->next->marker->buffer != l->marker->buffer) {
             // O.K. verify whether I should move the file
+            bool fileMoved;
             MapOverPaths(javaSourcePaths, {
-                    mvfile = renamePackageFileMove(currentPath, l, symLinkName, strlen(symLinkName));
-                if (mvfile)
-                    goto moved;
+                    fileMoved = renamePackageFileMove(currentPath, l, symLinkName, strlen(symLinkName));
+                    if (fileMoved)
+                        goto moved;
             });
         moved:;
         }
