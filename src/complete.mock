@@ -58,7 +58,7 @@ void olCompletionListInit(Position *originalPos) {
   mock(originalPos);
 }
 
-void printCompletionsList(int noFocus) {
+void printCompletionsList(bool noFocus) {
   mock(noFocus);
 }
 

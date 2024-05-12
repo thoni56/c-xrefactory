@@ -28,7 +28,7 @@ extern void collectOthersCompletions(Completions *c);
 extern void collectYaccLexemCompletions(Completions *c);
 
 extern void olCompletionListInit(Position *originalPos);
-extern void printCompletionsList(int noFocus);
+extern void printCompletionsList(bool noFocus);
 extern void printCompletions(Completions *c);
 
 #endif

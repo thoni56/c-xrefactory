@@ -1706,7 +1706,7 @@ static void olCompletionBack(void) {
     if (top != NULL && top->previous != NULL) {
         sessionData.completionsStack.top = sessionData.completionsStack.top->previous;
         ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
-        printCompletionsList(0);
+        printCompletionsList(false);
     }
 }
 
@@ -1717,7 +1717,7 @@ static void olCompletionForward(void) {
     if (top != NULL) {
         sessionData.completionsStack.top = top;
         ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
-        printCompletionsList(0);
+        printCompletionsList(false);
     }
 }
 

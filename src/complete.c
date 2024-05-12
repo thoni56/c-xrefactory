@@ -187,18 +187,19 @@ static void printCompletionsEnding(Completion *olc) {
     ppcEnd(PPC_ALL_COMPLETIONS);
 }
 
-void printCompletionsList(int noFocus) {
-    Completion *cc, *olc;
-    olc = sessionData.completionsStack.top->completions;
-    printCompletionsBeginning(olc, noFocus);
-    for(cc=olc; cc!=NULL; cc=cc->next) {
-        printOneCompletion(cc);
-        if (cc->next!=NULL) fprintf(communicationChannel,"\n");
+void printCompletionsList(bool noFocus) {
+    Completion *completions = sessionData.completionsStack.top->completions;
+
+    printCompletionsBeginning(completions, noFocus);
+    for(Completion *c=completions; c!=NULL; c=c->next) {
+        printOneCompletion(c);
+        if (c->next!=NULL)
+            fprintf(communicationChannel,"\n");
     }
-    printCompletionsEnding(olc);
+    printCompletionsEnding(completions);
 }
 
-void printCompletions(Completions* completions) {
+void printCompletions(Completions *completions) {
     int indent, max;
 
     // O.K. there will be a menu diplayed, clear the old one

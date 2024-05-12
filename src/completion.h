@@ -47,8 +47,8 @@ extern Completion *newCompletion(char *name, char *fullName,
                                  struct reference ref, struct referenceItem sym);
 extern void olcxFreeCompletions(Completion *completions);
 
-extern Completion  *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *s, ReferenceItem *ri,
-                                          Reference *dfpos, int symType, int vFunClass);
+extern Completion *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *s,
+                                         ReferenceItem *ri, Reference *dfpos, int symType, int vFunClass);
 
 void tagSearchCompactShortResults(void);
 
