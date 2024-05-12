@@ -25,14 +25,6 @@ void initTypeModifierAsStructUnionOrEnum(TypeModifier *typeModifier, Type type, 
     typeModifier->next = next;
 }
 
-void initTypeModifierAsMethod(TypeModifier *typeModifier, char *signature, SymbolList *exceptions, Symbol *typedefSymbol, TypeModifier *next) {
-    typeModifier->type = TypeFunction;
-    typeModifier->u.m.signature = signature;
-    typeModifier->u.m.exceptions = exceptions;
-    typeModifier->typedefSymbol = typedefSymbol;
-    typeModifier->next = next;
-}
-
 void initTypeModifierAsPointer(TypeModifier *typeModifier, TypeModifier *next) {
     fillTypeModifier(typeModifier, TypePointer, NULL, next);
 }
@@ -44,7 +36,6 @@ void initTypeModifierAsArray(TypeModifier *typeModifier,Symbol *typedefSymbol, T
 
 void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *args) {
     modifier->args = args;
-    modifier->thisFunList = NULL;
 }
 
 
@@ -60,11 +51,10 @@ TypeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, TypeModifier *ne
     return typeModifier;
 }
 
-TypeModifier *newFunctionTypeModifier(Symbol *args, Symbol **overLoadList, Symbol *typedefSymbol, TypeModifier *next) {
+TypeModifier *newFunctionTypeModifier(Symbol *args, Symbol *typedefSymbol, TypeModifier *next) {
     TypeModifier *typeModifier = newTypeModifier(TypeFunction, typedefSymbol, next);
 
     typeModifier->u.f.args = args;
-    typeModifier->u.f.thisFunList = overLoadList;
 
     return typeModifier;
 }
@@ -91,14 +81,6 @@ TypeModifier *newEnumTypeModifier(Symbol *symbol) {
     TypeModifier *typeModifier = newTypeModifier(TypeEnum, NULL, NULL);
     typeModifier->u.t = symbol;
     return typeModifier;
-}
-
-S_typeModifierList *newTypeModifierList(TypeModifier *d) {
-    S_typeModifierList *list;
-    list = stackMemoryAlloc(sizeof(S_typeModifierList));
-    list->d = d;
-    list->next = NULL;
-    return list;
 }
 
 TypeModifier *prependTypeModifierWith(TypeModifier *thisModifier, Type kind) {

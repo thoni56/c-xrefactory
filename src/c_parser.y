@@ -203,7 +203,7 @@ primary_expr
             Symbol *definitionSymbol;
 
             modifier = newTypeModifier(TypeInt, NULL, NULL);
-            $$.data.typeModifier = newFunctionTypeModifier(NULL, NULL, NULL, modifier);
+            $$.data.typeModifier = newFunctionTypeModifier(NULL, NULL, modifier);
 
             newSymbol = newSymbolAsType($1.data->name, $1.data->name, $1.data->position, $$.data.typeModifier);
             newSymbol->storage = StorageExtern;
@@ -1215,10 +1215,10 @@ abstract_declarator2
         appendComposedType(&($$.data), TypeArray);
     }
     | '(' ')'                                       {
-        $$.data = newFunctionTypeModifier(NULL, NULL, NULL, NULL);
+        $$.data = newFunctionTypeModifier(NULL, NULL, NULL);
     }
     | '(' parameter_type_list ')'                   {
-        $$.data = newFunctionTypeModifier($2.data.symbol, NULL, NULL, NULL);
+        $$.data = newFunctionTypeModifier($2.data.symbol, NULL, NULL);
     }
     | abstract_declarator2 '(' ')'                  {
         TypeModifier *modifier;
@@ -1230,9 +1230,6 @@ abstract_declarator2
         TypeModifier *modifier;
         $$.data = $1.data;
         modifier = appendComposedType(&($$.data), TypeFunction);
-        // I think there should be the following, but in abstract
-        // declarator it does not matter
-        /*& initFunctionTypeModifier(&modifier->u.f , $3.data.symbol); &*/
         initFunctionTypeModifier(&modifier->u.f , NULL);
     }
     ;

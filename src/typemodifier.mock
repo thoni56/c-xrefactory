@@ -10,8 +10,8 @@ TypeModifier *newSimpleTypeModifier(Type kind) {
   return (TypeModifier *) mock(kind);
 }
 
-TypeModifier *newFunctionTypeModifier(Symbol *args, Symbol **overLoadList, Symbol *typedefSymbol, TypeModifier *next) {
-  return (TypeModifier *) mock(args, overLoadList, typedefSymbol, next);
+TypeModifier *newFunctionTypeModifier(Symbol *args, Symbol *typedefSymbol, TypeModifier *next) {
+  return (TypeModifier *) mock(args, typedefSymbol, next);
 }
 
 TypeModifier *newPointerTypeModifier(TypeModifier *next) {
@@ -30,20 +30,12 @@ extern TypeModifier *newEnumTypeModifier(Symbol *symbol) {
     return (TypeModifier *)mock(symbol);
 }
 
-S_typeModifierList *newTypeModifierList(TypeModifier *d) {
-  return (S_typeModifierList *) mock(d);
-}
-
 void initTypeModifier(TypeModifier *typeModifier, Type kind) {
   mock(typeModifier, kind);
 }
 
 void initTypeModifierAsStructUnionOrEnum(TypeModifier *typeModifier, Type kind, Symbol *symbol, Symbol *typedefSymbol, TypeModifier *next) {
   mock(typeModifier, kind, symbol, typedefSymbol, next);
-}
-
-void initTypeModifierAsMethod(TypeModifier *typeModifier, char *signature, SymbolList *exceptions, Symbol *typedefSymbol, TypeModifier *next) {
-  mock(typeModifier, signature, exceptions, typedefSymbol, next);
 }
 
 void initTypeModifierAsPointer(TypeModifier *typeModifier, TypeModifier *next) {
