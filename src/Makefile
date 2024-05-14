@@ -107,8 +107,8 @@ ifeq ($(OS),Darwin)
 #		CC=cc
 #	endif
 # But we'd rather go with Apple Clang and generate fat binaries
-CFLAGS += -arch arm64 -arch x86_64
-LDFLAGS += -arch arm64 -arch x86_64
+  CFLAGS += -arch arm64 -arch x86_64
+  LDFLAGS += -arch arm64 -arch x86_64
 endif
 
 # We need to use compatible gcov (for Darwin/Brew with Homebrew gcc-13 we need to use GCC:s gcov)
@@ -163,6 +163,10 @@ devel: check-tokens
 
 devel-proper: unit build
 	$(MAKE) -e test
+
+prof: CFLAGS += -pg
+prof: LDFLAGS += -pg
+prof: c-xref
 
 slow:
 	$(MAKE) -C ../tests slow
