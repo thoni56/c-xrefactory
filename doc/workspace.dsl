@@ -52,7 +52,7 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 
 			settingsStore = container settingsStore "Non-standard format settings file" "Configuration file for project settings" DB
 
-			referencesDb = container referencesDb "Source code information storage" "Stores all information about the source code in the project which is updated by scanning all or parts of the source when required" DB
+			referencesDb = container referencesDb "Source code information storage" "Stores information about all inter-module references in the source code in the project which is updated by scanning all or parts of the source when required" DB
 
 			cxfile -> referencesDb "reads from and writes to" "file I/O"
 

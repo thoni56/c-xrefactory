@@ -1,16 +1,16 @@
 == Software Architecture
 
-=== Containers
+=== Container View
 
 image::embed:ContainerView[]
 
-=== Components
+=== Containers
 
-At this point the internal structure of the components are
+At this point the internal structure of the containers are
 tentative. The actual interfaces are not particularly clean, most code
 files can and do include much every other module.
 
-NOTE: One focus area for the ongoing work is to try to pry out modules
+NOTE: One focus area for the ongoing work is to try to pry out modules/components
 from the code mess by moving functions around, renaming and hiding
 functions, where possible.
 
@@ -18,19 +18,40 @@ functions, where possible.
 
 image::embed:CxrefCore[]
 
-The `CxrefCore` component is the core component. It does all the work
+The `CxrefCore` container is the core container. It does all the work
 when it comes to finding and reporting references to symbols,
 communicating refactoring requests as well as storing reference
 information for longer term storage and caching.
+
+Its responsibilities can largely be divided into
+
+* parsing source files to create, maintain the references database which stores all inter-module references
+* parsing source files to get important information such as positions for a functions begin and end
+* managing editor buffer state
+* performing symbol navigation
+* creating and serving completion suggestions
+* performing refactorings such as renames, extracts and parameter manipulation
+
 
 ==== EditorExtension
 
 image::embed:EditorExtension[]
 
-The `EditorExtension` component is responsible for plugging into an
+The `EditorExtension` container is responsible for plugging into an
 editor of choice and handle the user interface, buffer management and
 executing the refactoring edit operations.
 
 Currently there is only one such extension supported, for `Emacs`,
-although there is code for an extension for `jEdit` which hasn't been
-update, modified or checked for a long time.
+although there existed code, still available in the repo history, for
+an extension for `jEdit` which hasn't been updated, modified or checked
+for a long time and no longer is a part of this project.
+
+==== ReferencesDB
+
+The References database stores crossreferencing information for
+symbols visible outside the module it is defined in. Information about
+local/static symbols are gathered by parsing that particular source
+file on demand.
+
+Currently this information is stored in a cryptic, optimized text
+format.
