@@ -3,12 +3,6 @@
 #include "completion.h"
 
 
-Completion *newCompletion(char *name, char *fullName, short lineCount, char category, char csymType, struct reference ref, struct referenceItem refs) {
-    struct reference *refP = &ref;
-    struct referenceItem *refsP = &refs;
-    return (Completion *)mock(name, fullName, lineCount, category, csymType, refP, refsP);
-}
-
 void olcxFreeCompletions(Completion *completions) {
     mock(completions);
 }

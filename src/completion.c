@@ -13,13 +13,26 @@
 #include "symbol.h"
 
 
-Completion *newCompletion(char *name, char *fullName,
-                          short int lineCount, char category, char csymType,
+// Will create olcxAlloc():ed copies of name and fullName so caller don't have to
+static Completion *newCompletion(char *name, char *fullName,
+                          int lineCount, char category, char csymType,
                           struct reference ref, struct referenceItem sym) {
     Completion *completion = olcxAlloc(sizeof(Completion));
 
-    completion->name = name;
-    completion->fullName = fullName;
+    if (name != NULL) {
+        char *nameCopy = olcxAlloc(strlen(name)+1);
+        strcpy(nameCopy, name);
+        completion->name = nameCopy;
+    } else
+        completion->name = NULL;
+
+    if (fullName != NULL) {
+        char *fullNameCopy = olcxAlloc(strlen(fullName)+1);
+        strcpy(fullNameCopy, fullName);
+        completion->fullName = fullNameCopy;
+    } else
+        completion->fullName = NULL;
+
     completion->lineCount = lineCount;
     completion->category = category;
     completion->csymType = csymType;
@@ -32,41 +45,33 @@ Completion *newCompletion(char *name, char *fullName,
 
 // if s==NULL, then the pos is taken as default position of this ref !!!
 /* If symbol != NULL && referenceItem != NULL then dfref can be anything... */
-Completion *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *symbol,
+Completion *completionListPrepend(Completion *completions, char *name, char *fullName, Symbol *symbol,
                                   ReferenceItem *referenceItem,
                                   Reference *reference, int cType, int vFunClass) {
     Completion    *completion;
-    char *ss,*nn, *fullnn;
+    char *ss;
     ReferenceCategory category;
     ReferenceScope scope;
     Storage storage;
-    int slen, nlen;
+    int slen;
     ReferenceItem sri;
 
-    nlen = strlen(name);
-    nn = olcxAlloc(nlen+1);
-    strcpy(nn, name);
-    fullnn = NULL;
-    if (fullText!=NULL) {
-        fullnn = olcxAlloc(strlen(fullText)+1);
-        strcpy(fullnn, fullText);
-    }
     if (referenceItem!=NULL) {
         // probably a 'search in tag' file item
         slen = strlen(referenceItem->linkName);
         ss = olcxAlloc(slen+1);
         strcpy(ss, referenceItem->linkName);
         fillReferenceItem(&sri, ss, referenceItem->vApplClass, referenceItem->vFunClass,
-                           referenceItem->type, referenceItem->storage, referenceItem->scope,
-                           referenceItem->access, referenceItem->category);
+                          referenceItem->type, referenceItem->storage, referenceItem->scope,
+                          referenceItem->access, referenceItem->category);
 
-        completion = newCompletion(nn, fullnn, 1, referenceItem->category, cType, *reference, sri);
+        completion = newCompletion(name, fullName, 1, referenceItem->category, cType, *reference, sri);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
         fillReferenceItem(&sri, "", NO_FILE_NUMBER, NO_FILE_NUMBER, TypeUnknown, StorageDefault,
-                           ScopeAuto, AccessDefault, CategoryLocal);
-        completion = newCompletion(nn, fullnn, 1, CategoryLocal, cType, r, sri);
+                          ScopeAuto, AccessDefault, CategoryLocal);
+        completion = newCompletion(name, fullName, 1, CategoryLocal, cType, r, sri);
     } else {
         Reference r;
         getSymbolCxrefProperties(symbol, &category, &scope, &storage);
@@ -77,13 +82,13 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         fillUsage(&r.usage, UsageDefined, 0);
         fillReference(&r, r.usage, symbol->pos, NULL);
         fillReferenceItem(&sri, ss,
-                           vFunClass, vFunClass, symbol->type, storage,
-                           scope, symbol->access, category);
-        completion = newCompletion(nn, fullnn, 1, category, cType, r, sri);
+                          vFunClass, vFunClass, symbol->type, storage,
+                          scope, symbol->access, category);
+        completion = newCompletion(name, fullName, 1, category, cType, r, sri);
     }
-    if (fullText!=NULL) {
-        for (int i=0; fullText[i]; i++) {
-            if (fullText[i] == '\n')
+    if (fullName!=NULL) {
+        for (int i=0; fullName[i]; i++) {
+            if (fullName[i] == '\n')
                 completion->lineCount++;
         }
     }
