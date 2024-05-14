@@ -406,7 +406,6 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
     strcpy(lastOutgoingInfo.cachedSymbolName[symbolIndex], referenceItem->linkName);
     fillReferenceItem(&lastOutgoingInfo.cachedReferenceItem[symbolIndex],
                        lastOutgoingInfo.cachedSymbolName[symbolIndex],
-                       referenceItem->fileHash, // useless put 0
                        referenceItem->vApplClass, referenceItem->vFunClass, referenceItem->type,
                        referenceItem->storage, referenceItem->scope, referenceItem->access,
                        referenceItem->category);
@@ -800,17 +799,16 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
 
     ReferenceItem *referenceItem = &lastIncomingInfo.cachedReferenceItem[symbolIndex];
     lastIncomingInfo.symbolTab[symbolIndex] = referenceItem;
-    fillReferenceItem(referenceItem, id, cxFileHashNumber(id), //useless, put 0
-                       vApplClass, vFunClass, symbolType, storage, ScopeGlobal, accessFlags, CategoryGlobal);
+    fillReferenceItem(referenceItem, id, vApplClass, vFunClass, symbolType, storage, ScopeGlobal,
+                      accessFlags, CategoryGlobal);
 
     if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
         // TODO: This is more or less the body of a newReferenceItem()
         char *ss = cxAlloc(len+1);
         strcpy(ss,id);
         memb = cxAlloc(sizeof(ReferenceItem));
-        fillReferenceItem(memb, ss, cxFileHashNumber(ss),
-                           vApplClass, vFunClass, symbolType, storage,
-                           ScopeGlobal, accessFlags, CategoryGlobal);
+        fillReferenceItem(memb, ss, vApplClass, vFunClass, symbolType, storage,
+                          ScopeGlobal, accessFlags, CategoryGlobal);
         addToReferencesTable(memb);
     }
     lastIncomingInfo.symbolTab[symbolIndex] = memb;
@@ -880,10 +878,8 @@ static void scanFunction_SymbolName(int size,
 
     referencesItem = &lastIncomingInfo.cachedReferenceItem[symbolIndex];
     lastIncomingInfo.symbolTab[symbolIndex] = referencesItem;
-    fillReferenceItem(referencesItem, id,
-                       cxFileHashNumber(id), // useless put 0
-                       vApplClass, vFunClass, symbolType, storage, ScopeGlobal, accessFlags,
-                       CategoryGlobal);
+    fillReferenceItem(referencesItem, id, vApplClass, vFunClass, symbolType, storage, ScopeGlobal,
+                      accessFlags, CategoryGlobal);
 
     bool isMember = isMemberInReferenceTable(referencesItem, NULL, &member);
     while (isMember && member->category!=CategoryGlobal)

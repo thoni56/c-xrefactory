@@ -100,7 +100,6 @@ static int scheduleFileUsingTheMacro(void) {
     assert(olstringInMacroBody);
     tmpc = NULL;
     fillReferenceItem(&references, olstringInMacroBody,
-                       cxFileHashNumber(olstringInMacroBody),
                        NO_FILE_NUMBER, NO_FILE_NUMBER, TypeMacro, StorageExtern,
                        ScopeGlobal, AccessDefault, CategoryGlobal);
 

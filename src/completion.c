@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "cxfile.h"             /* for cxFileHashnumber() */
 #include "filetable.h"
 #include "list.h"
 #include "log.h"
@@ -57,7 +56,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         slen = strlen(referenceItem->linkName);
         ss = olcxAlloc(slen+1);
         strcpy(ss, referenceItem->linkName);
-        fillReferenceItem(&sri, ss, cxFileHashNumber(ss), referenceItem->vApplClass, referenceItem->vFunClass,
+        fillReferenceItem(&sri, ss, referenceItem->vApplClass, referenceItem->vFunClass,
                            referenceItem->type, referenceItem->storage, referenceItem->scope,
                            referenceItem->access, referenceItem->category);
 
@@ -65,7 +64,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
-        fillReferenceItem(&sri, "", cxFileHashNumber(""), NO_FILE_NUMBER, NO_FILE_NUMBER, TypeUnknown, StorageDefault,
+        fillReferenceItem(&sri, "", NO_FILE_NUMBER, NO_FILE_NUMBER, TypeUnknown, StorageDefault,
                            ScopeAuto, AccessDefault, CategoryLocal);
         completion = newCompletion(nn, fullnn, 1, CategoryLocal, cType, r, sri);
     } else {
@@ -77,7 +76,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         strcpy(ss, symbol->linkName);
         fillUsage(&r.usage, UsageDefined, 0);
         fillReference(&r, r.usage, symbol->pos, NULL);
-        fillReferenceItem(&sri, ss, cxFileHashNumber(ss),
+        fillReferenceItem(&sri, ss,
                            vFunClass, vFunClass, symbol->type, storage,
                            scope, symbol->access, category);
         completion = newCompletion(nn, fullnn, 1, category, cType, r, sri);

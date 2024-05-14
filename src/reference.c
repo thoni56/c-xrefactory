@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "cxfile.h"
 #include "filetable.h"
 #include "list.h"
 #include "log.h"
@@ -27,11 +28,11 @@ Reference *duplicateReference(Reference *original) {
     return copy;
 }
 
-void fillReferenceItem(ReferenceItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
+void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass,
                         int vFunClass, Type symType, Storage storage, ReferenceScope scope, Access accessFlags,
                         ReferenceCategory category) {
     referencesItem->linkName = name;
-    referencesItem->fileHash = fileHash;
+    referencesItem->fileHash = cxFileHashNumber(name);
     referencesItem->vApplClass = vApplClass;
     referencesItem->vFunClass = vFunClass;
     referencesItem->references = NULL;
