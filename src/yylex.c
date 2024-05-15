@@ -1,37 +1,34 @@
 #include "yylex.h"
 
+#include <ctype.h>
+
+#include "c_parser.h"
 #include "caching.h"
+#include "cexp_parser.h"
 #include "commons.h"
 #include "constants.h"
-#include "cxfile.h"
 #include "cxref.h"
 #include "extract.h"
+#include "filedescriptor.h"
+#include "fileio.h"
+#include "filetable.h"
 #include "globals.h"
+#include "hash.h"
 #include "input.h"
 #include "lexem.h"
 #include "lexembuffer.h"
 #include "lexer.h"
+#include "log.h"
+#include "macroargumenttable.h"
 #include "misc.h"
 #include "options.h"
+#include "parsers.h"
 #include "reftab.h"
 #include "semact.h"
 #include "stackmemory.h"
-
-#include "c_parser.h"
-#include "cexp_parser.h"
 #include "storage.h"
 #include "yacc_parser.h"
 
-#include "parsers.h"
-
-#include "hash.h"
-
-#include "macroargumenttable.h"
-#include "filedescriptor.h"
-#include "fileio.h"
-#include "filetable.h"
-#include "log.h"
-#include <ctype.h>
 
 static bool isProcessingPreprocessorIf; /* Flag for yylex, to not filter '\n' */
 

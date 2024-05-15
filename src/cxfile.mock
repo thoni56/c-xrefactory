@@ -44,14 +44,6 @@ void writeReferenceFile(bool updating, char *filename) {
   mock(updating, filename);
 }
 
-void addSubClassItemToFileTab(int superior, int inferior, int origin) {
-  mock(superior, inferior, origin);
-}
-
-void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
-  mock(ss, origin);
-}
-
 bool smartReadReferences(void) {
   return (bool) mock();
 }

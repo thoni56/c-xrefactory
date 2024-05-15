@@ -2,7 +2,6 @@
 #define CXFILE_H_INCLUDED
 
 #include "reference.h"
-#include "symbol.h"
 
 
 extern void normalScanReferenceFile(char *name);
