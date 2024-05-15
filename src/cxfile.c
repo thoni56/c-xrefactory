@@ -151,7 +151,7 @@ static ScanFileFunctionStep symbolSearchFunctionSequence[];
 static void scanCxFile(ScanFileFunctionStep *scanFunctionTable);
 
 
-static void fPutDecimal(FILE *file, int num) {
+static void fPutDecimal(int num, FILE *file) {
     fprintf(file, "%d", num);
 }
 
@@ -296,7 +296,7 @@ static void writeCompactRecord(char marker, int info, char *blankPrefix) {
     if (*blankPrefix!=0)
         fputs(blankPrefix, cxFile);
     if (info != 0)
-        fPutDecimal(cxFile, info);
+        fPutDecimal(info, cxFile);
     fputc(marker, cxFile);
     lastOutgoingInfo.values[marker] = info;
 }
@@ -310,7 +310,7 @@ static void writeOptionalCompactRecord(char marker, int info, char *blankPrefix)
     if (lastOutgoingInfo.values[marker] != info) {
         /* If the info to write is not 0 then write it, else just write the marker */
         if (info != 0)
-            fPutDecimal(cxFile, info);
+            fPutDecimal(info, cxFile);
         fputc(marker, cxFile);
         lastOutgoingInfo.values[marker] = info;
     }
@@ -322,7 +322,7 @@ static void writeStringRecord(int marker, char *s, char *blankPrefix) {
     rsize = strlen(s)+1;
     if (*blankPrefix!=0)
         fputs(blankPrefix, cxFile);
-    fPutDecimal(cxFile, rsize);
+    fPutDecimal(rsize, cxFile);
     fputc(marker, cxFile);
     fputs(s, cxFile);
 }
@@ -553,7 +553,7 @@ void writeReferenceFile(bool updating, char *filename) {
         char *dirname = filename;
 
         createDirectory(dirname);
-        writePartialReferenceFile(updating,dirname,REFERENCE_FILENAME_FILES,
+        writePartialReferenceFile(updating, dirname, REFERENCE_FILENAME_FILES,
                                  writeFileNumberItem, writeFileSourceIndexItem);
         for (int i=0; i<options.referenceFileCount; i++) {
             sprintf(referenceFileName, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);

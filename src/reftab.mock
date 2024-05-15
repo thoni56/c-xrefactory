@@ -4,8 +4,11 @@
 
 ReferenceTable referenceTable;
 
+// Actual implementation, but malloc() i.s.o. cxAlloc()
 void initReferenceTable(int size) {
-    mock(size);
+    referenceTable.tab = malloc(size*sizeof(ReferenceItem *));
+    referenceTable.size = size;
+    memset(referenceTable.tab, 0, sizeof(ReferenceItem *)*size);
 }
 
 void refTabNoAllocInit(ReferenceTable *table, int size) {
