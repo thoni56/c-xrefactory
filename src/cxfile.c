@@ -41,12 +41,9 @@
 
 #define CXFI_SUBCLASS       'd'     /* dole = down in slovac */
 #define CXFI_SUPERCLASS     'h'     /* hore = up in slovac */
-#define CXFI_CLASS_EXT      'e'     /* using 'fhd' */
 
 #define CXFI_ACCESS_BITS    'a'     /* java access bit */
 #define CXFI_STORAGE        'g'     /* storaGe field */
-
-#define CXFI_MACRO_BASE_FILE 'b'    /* ref to a file invoking macro */
 
 #define CXFI_SYMBOL_NAME    '/'     /* using 'atdhg' -> 's'             */
 #define CXFI_CLASS_NAME     '+'     /*               -> 'h' info    */
@@ -85,9 +82,7 @@ static int generatedFieldMarkersList[] = {
     CXFI_REFERENCE,
     CXFI_SUPERCLASS,
     CXFI_SUBCLASS,
-    CXFI_CLASS_EXT,
     CXFI_INPUT_FROM_COMMAND_LINE,
-    CXFI_MACRO_BASE_FILE,
     CXFI_REFNUM,
     CXFI_ACCESS_BITS,
     CXFI_REQUIRED_ACCESS,
