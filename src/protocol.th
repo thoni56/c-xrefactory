@@ -1,5 +1,3 @@
-PROTOCOL_ITEM(String, C_XREF_FILE_VERSION_NUMBER,       "1.6.0")
-
 PROTOCOL_ITEM(String, PPC_NO_TAG,                       "-- no tag --")
 
 PROTOCOL_ITEM(String, PPC_VERSION_MISMATCH,             "version-mismatch")

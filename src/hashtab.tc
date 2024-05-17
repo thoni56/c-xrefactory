@@ -57,8 +57,8 @@
 
 #include <string.h>             /* For memset() */
 
+#include "head.h"
 #include "log.h"
-#include "misc.h" /* For XX_ALLOCC */
 #include "proto.h"
 #include "stackmemory.h"
 

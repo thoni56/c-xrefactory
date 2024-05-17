@@ -1,28 +1,28 @@
 #include "cxfile.h"
 
-#include "globals.h"
-#include "commons.h"
-#include "options.h"
-#include "protocol.h"           /* C_XREF_FILE_VERSION_NUMBER */
-
-
 #include "characterreader.h"
+#include "commons.h"
 #include "completion.h"
 #include "cxref.h"
 #include "editor.h"
 #include "fileio.h"
 #include "filetable.h"
+#include "globals.h"
 #include "hash.h"
 #include "list.h"
 #include "log.h"
 #include "menu.h"
 #include "misc.h"
+#include "options.h"
 #include "reftab.h"
 #include "session.h"
 #include "usage.h"
 
 
 /* *********************** INPUT/OUTPUT FIELD MARKERS ************************** */
+
+#define C_XREF_FILE_VERSION_NUMBER "1.6.0"
+
 
 #define CXFI_FILE_FUMTIME   'm'     /* last full update kmtime for file item */
 #define CXFI_FILE_UMTIME    'p'     /* last update mtime for file item */
@@ -130,7 +130,7 @@ static unsigned decodeFileNumbers[MAX_FILES];
 
 static FILE *cxFile = NULL;
 
-static FILE *inputFile;
+static FILE *currentReferenceFile;
 
 typedef struct scanFileFunctionStep {
     int		recordCode;
@@ -467,7 +467,7 @@ static void writeCxFileHead(void) {
 
 static char tmpFileName[MAX_FILE_NAME_SIZE];
 
-static void openInOutReferenceFile(int updateFlag, char *filename) {
+static void openInOutReferenceFile(bool updateFlag, char *filename) {
     if (updateFlag) {
         char *tempname = create_temporary_filename();
         strcpy(tmpFileName, tempname);
@@ -480,18 +480,18 @@ static void openInOutReferenceFile(int updateFlag, char *filename) {
         FATAL_ERROR(ERR_CANT_OPEN, filename, XREF_EXIT_ERR);
 
     if (updateFlag) {
-        inputFile = openFile(tmpFileName, "r");
-        if (inputFile==NULL)
+        currentReferenceFile = openFile(tmpFileName, "r");
+        if (currentReferenceFile==NULL)
             warningMessage(ERR_CANT_OPEN_FOR_READ, tmpFileName);
     } else {
-        inputFile = NULL;
+        currentReferenceFile = NULL;
     }
 }
 
 static void closeReferenceFile(char *fname) {
-    if (inputFile != NULL) {
-        closeFile(inputFile);
-        inputFile = NULL;
+    if (currentReferenceFile != NULL) {
+        closeFile(currentReferenceFile);
+        currentReferenceFile = NULL;
         removeFile(tmpFileName);
     }
     closeFile(cxFile);
@@ -499,7 +499,7 @@ static void closeReferenceFile(char *fname) {
 }
 
 /* suffix contains '/' at the beginning */
-static void writePartialReferenceFile(int updateFlag,
+static void writePartialReferenceFile(bool updateFlag,
                                      char *dirname,
                                      char *suffix,
                                      void mapfun(FileItem *, int),
@@ -513,7 +513,7 @@ static void writePartialReferenceFile(int updateFlag,
     mapOverFileTableWithIndex(mapfun);
     if (mapfun2!=NULL)
         mapOverFileTableWithIndex(mapfun2);
-    scanCxFile(fullScanFunctionSequence);
+    //scanCxFile(fullScanFunctionSequence);
     closeReferenceFile(filename);
 }
 
@@ -1099,8 +1099,8 @@ static void scanCxFile(ScanFileFunctionStep *scanFunctionTable) {
     int ch;
 
     ENTER();
-    if (inputFile == NULL) {
-        log_trace("No input file");
+    if (currentReferenceFile == NULL) {
+        log_trace("No reference file opened");
         LEAVE();
         return;
     }
@@ -1120,7 +1120,7 @@ static void scanCxFile(ScanFileFunctionStep *scanFunctionTable) {
         lastIncomingInfo.additional[ch] = scanFunctionTable[i].additionalArg;
     }
 
-    initCharacterBuffer(&cxFileCharacterBuffer, inputFile);
+    initCharacterBuffer(&cxFileCharacterBuffer, currentReferenceFile);
     ch = ' ';
     while (!cxFileCharacterBuffer.isAtEOF) {
         scannedInt = scanInteger(&cxFileCharacterBuffer, &ch);
@@ -1162,13 +1162,13 @@ static bool scanReferenceFile(char *cxrefLocation, char *element1, char *element
     sprintf(fn, "%s%s%s", cxrefLocation, element1, element2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     log_trace(":scanning file %s", fn);
-    inputFile = openFile(fn, "r");
-    if (inputFile==NULL) {
+    currentReferenceFile = openFile(fn, "r");
+    if (currentReferenceFile==NULL) {
         return false;
     } else {
         scanCxFile(scanFunctionTable);
-        closeFile(inputFile);
-        inputFile = NULL;
+        closeFile(currentReferenceFile);
+        currentReferenceFile = NULL;
         return true;
     }
 }
