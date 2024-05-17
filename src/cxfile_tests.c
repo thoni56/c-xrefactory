@@ -102,18 +102,3 @@ Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
 
     normalScanReferenceFile("/XFiles");
 }
-
-xEnsure(CxFile, can_write_single_empty_reference_file) {
-    FILE *xfileFilePointer = fopen("/tmp/cxfile_test.db", "w");
-    FILE *temporaryFilePointer = fopen("/tmp/cxfile_test.tmp", "w");
-
-    expect(recursivelyCreateFileDirIfNotExists);
-    expect(openFile, will_return(xfileFilePointer));
-    expect(create_temporary_filename, will_return("temporary_filename"));
-    expect(openFile, when(fileName, is_equal_to_string("temporary_filename")),
-           will_return(temporaryFilePointer));
-    expect(copyFileFromTo);
-
-    initReferenceTable(10);
-    writeReferenceFile(true, "cxfile_test.db");
-}
