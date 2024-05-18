@@ -243,6 +243,11 @@ c_parser.tab.intermediate : c_parser.y $(YACC)
 	sed -n '/primary_expr/,$$p' c_parser.tmp > c_rules_from_c_parser.txt
 
 # Extract the C rules in yacc format and merge them into yacc_parser.y
+# NOTE: since this is partially a generated file, watching file
+# changes need to ignore yacc_parser.y lest it would generate spurious
+# rebuilds. This makes it necessary to force recompilation manually if
+# any change is done to the parts of yacc_parser.y that are not copied
+# from c_parser.y
 yacc_parser.y: c_parser.y
 	@echo "Yacc grammar needs updating from c_parser.y ..."
 	sed -n '/^%%$$/,/^%%$$/{/^%%$$/!{/^%%$$/!p;};}' c_parser.y > c_rules.txt

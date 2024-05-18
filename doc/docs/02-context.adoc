@@ -1,8 +1,11 @@
 == Context
 
 `c-xrefactory` is designed to be an aid for programmers as they write,
-edit, inspect, read and improve the code they are working on. The
-following is a context-diagram of that situation.
+edit, inspect, read and improve the code they are working on.
+
+The editor is used for usual manual manipulation of the source
+code. `C-xrefactory` interacts with the editor to provide navigation
+and automated edits, refactorings, through the editor.
 
 image::embed:SystemContext[]
 

@@ -62,8 +62,10 @@ impossible that this patch might not be necessary now that Java parsing
 is not necessary, but this has not been tried.
 
 Some changes are also made to be able to accomodate multiple parsers
-in the same executable, mostly solved by CPP macros. The Makefile
-generates the parsers and renames them as appropriate.
+in the same executable, mostly solved by CPP macros renaming the
+parsing datastructures so that they can be accessed using the standard
+names in the parsing skeleton. The Makefile generates the parsers and
+renames the generated files as appropriate.
 
 === Refactoring and the parsers
 
@@ -76,8 +78,8 @@ information is stored in various global variables, like
 `parameterBeginPosition`.
 
 NOTE: At this point I don't understand exactly how this interaction is
-performed, nor if the whole file is parsed or if there is some way to
-just parse appropriate parts.
+performed, there seems to be no way to parse only appropriate parts,
+so the whole file need to be re-parsed.
 
 Findings:
 

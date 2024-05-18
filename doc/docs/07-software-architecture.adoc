@@ -6,7 +6,7 @@ image::embed:ContainerView[]
 
 === Containers
 
-At this point the internal structure of the containers are
+At this point the description of the internal structure of the containers are
 tentative. The actual interfaces are not particularly clean, most code
 files can and do include much every other module.
 
@@ -18,20 +18,28 @@ functions, where possible.
 
 image::embed:CxrefCore[]
 
-The `CxrefCore` container is the core container. It does all the work
-when it comes to finding and reporting references to symbols,
-communicating refactoring requests as well as storing reference
-information for longer term storage and caching.
+`cxrefCore` is the core container. It does all the work when it comes
+to finding and reporting references to symbols, communicating
+refactoring requests as well as storing reference information for
+longer term storage and caching.
 
-Its responsibilities can largely be divided into
+Although `c-xref` can be used as a command line tool, which can be
+handy when debugging or exploring, it is normally used in "server"
+mode. In server mode the communication between the editor extension
+and the cxrefCore container is a back-and-forth communication using a
+non-standard protocol over standard pipes.
+
+The responsibilities of `cxrefCore` can largely be divided into
 
 * parsing source files to create, maintain the references database which stores all inter-module references
 * parsing source files to get important information such as positions for a functions begin and end
-* managing editor buffer state
+* managing editor buffer state (as it might differ from the file on disc)
 * performing symbol navigation
 * creating and serving completion suggestions
 * performing refactorings such as renames, extracts and parameter manipulation
 
+At this point it seems like refactorings are performed as separate
+invocations of `c-xref` rather than through the server interface.
 
 ==== EditorExtension
 
@@ -50,8 +58,14 @@ for a long time and no longer is a part of this project.
 
 The References database stores crossreferencing information for
 symbols visible outside the module it is defined in. Information about
-local/static symbols are gathered by parsing that particular source
-file on demand.
+local/static symbols are not stored but gathered by parsing that
+particular source file on demand.
 
-Currently this information is stored in a cryptic, optimized text
-format.
+Currently this information is stored in a somewhat cryptic, optimized
+text format.
+
+This storage can be divided into multiple files, probably for faster
+access. Symbols are then hashed to know which of the "database" files
+it is stored in. As all crossreferencing information for a symbol is
+stored in the same "record", this allows reading only a single file
+when a symbol is looked up.
