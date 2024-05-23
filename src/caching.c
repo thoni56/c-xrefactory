@@ -80,22 +80,10 @@ static void fileTabDeleteOutOfMemory(FileItem *fileItem) {
 }
 
 static void structCachingFree(Symbol *symbol) {
-    SymbolList **superList;
     assert(symbol->u.structSpec);
     if (isFreedPointer(symbol->u.structSpec->members)
         || ppmIsFreedPointer(symbol->u.structSpec->members)) {
         symbol->u.structSpec->members = NULL;
-    }
-
-    superList = &symbol->u.structSpec->super;
-    while (*superList!=NULL) {
-        if (isFreedPointer(*superList)
-            || ppmIsFreedPointer(*superList)) {
-            *superList = (*superList)->next;
-            goto contlabel;
-        }
-        superList = &(*superList)->next;
-    contlabel:;
     }
 }
 

@@ -124,9 +124,6 @@ void memberFindPush(Symbol *symbol, StructMemberFindInfo *info) {
     spec = symbol->u.structSpec;
     info->nextMember = spec->members;
     info->currentStructure = symbol;
-    info->superClasses[info->superClassesCount] = spec->super;
-    assert(info->superClassesCount < MAX_INHERITANCE_DEEP);
-    info->superClassesCount++;
 }
 
 StructMemberFindInfo *initFind(Symbol *s, StructMemberFindInfo *info) {
