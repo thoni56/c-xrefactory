@@ -167,13 +167,6 @@ typedef struct {
 } StructMemberFindInfo;
 
 
-typedef struct nestedSpec {
-    struct symbol *cl;
-    bool           membFlag; /* flag whether it is nested in class */
-    short unsigned accFlags;
-} S_nestedSpec;
-
-
 typedef struct structSpec {
     struct symbol      *members;        /* str. records, should be a table of   */
     struct typeModifier type;           /* this structure type */
