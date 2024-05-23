@@ -178,10 +178,6 @@ typedef struct structSpec {
     struct symbol      *members;        /* str. records, should be a table of   */
     struct typeModifier type;           /* this structure type */
     struct typeModifier ptrtype;        /* this structure pointer type */
-    int                 classFileNumber; /* in java, my class file index
-                                           == -1 for none, TODO to change
-                                           it to s_noneFileIndex !!!
-                                        */
     unsigned memberSearchCounter; /* tmp counter when looking for a record
                                      it flags searched classes
                                   */

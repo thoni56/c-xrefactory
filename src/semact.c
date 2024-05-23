@@ -648,7 +648,6 @@ static TypeModifier *createSimpleEnumType(Symbol *enumDefinition) {
 void initSymStructSpec(StructSpec *symStruct, Symbol *records) {
     memset((void*)symStruct, 0, sizeof(*symStruct));
     symStruct->members = records;
-    symStruct->classFileNumber = -1;  /* Should be s_noFile? */
 }
 
 TypeModifier *simpleStrUnionSpecifier(Id *typeName,
