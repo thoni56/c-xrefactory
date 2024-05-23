@@ -174,7 +174,7 @@ typedef struct nestedSpec {
 } S_nestedSpec;
 
 
-typedef struct symStructSpec {
+typedef struct structSpec {
     struct symbolList  *super;          /* list of super classes & interfaces */
     struct symbol      *members;        /* str. records, should be a table of   */
     short int           nestedCount;    /* # of java nested classes     */
