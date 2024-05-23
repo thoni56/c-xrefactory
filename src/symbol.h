@@ -25,7 +25,7 @@ typedef struct symbol {
     /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
     union {
         struct typeModifier  *typeModifier; /* if bits.symbolType == TypeDefault */
-        struct symStructSpec *structSpec;   /* if bits.symbolType == Struct/Union */
+        struct structSpec *structSpec;   /* if bits.symbolType == Struct/Union */
         struct symbolList    *enums;        /* if bits.symbolType == Enum */
         struct macroBody     *mbody;        /* if bits.symbolType == Macro, can be NULL! */
         int                   labelIndex;   /* break/continue label index */
