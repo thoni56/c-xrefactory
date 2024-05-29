@@ -265,7 +265,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     fillReferenceItem(&referenceItem, symbol->linkName, vApplCl, vFunCl, symbol->type, storage, scope,
                        symbol->access, category);
     if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH && options.searchKind==SEARCH_FULL) {
-        fillUsage(&reference.usage, usage.kind, AccessDefault);
+        fillUsage(&reference.usage, usage.kind, 0);
         fillReference(&reference, reference.usage, *position, NULL);
         searchSymbolCheckReference(&referenceItem, &reference);
         return NULL;
@@ -353,7 +353,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
 
 Reference *addCxReference(Symbol *symbol, Position *position, UsageKind usageKind, int vFunClass, int vApplClass) {
     Usage usage;
-    fillUsage(&usage, usageKind, MIN_REQUIRED_ACCESS);
+    fillUsage(&usage, usageKind, 0);
     return addNewCxReference(symbol, position, usage, vFunClass, vApplClass);
 }
 

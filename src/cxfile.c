@@ -380,11 +380,7 @@ static void writeFileNumberItem(FileItem *fileItem, int number) {
     writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileItem->lastUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fileItem->lastFullUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_INPUT_FROM_COMMAND_LINE, fileItem->isArgument, "");
-    if (fileItem->isInterface) {
-        writeOptionalCompactRecord(CXFI_ACCESS_BITS, AccessInterface, "");
-    } else {
-        writeOptionalCompactRecord(CXFI_ACCESS_BITS, AccessDefault, "");
-    }
+    writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, "");
     writeStringRecord(CXFI_FILE_NAME, fileItem->name, " ");
 }
 
@@ -684,7 +680,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
     fumtime = (time_t) lastIncomingInfo.values[CXFI_FILE_FUMTIME];
     umtime = (time_t) lastIncomingInfo.values[CXFI_FILE_UMTIME];
     isArgument = lastIncomingInfo.values[CXFI_INPUT_FROM_COMMAND_LINE];
-    isInterface=((lastIncomingInfo.values[CXFI_ACCESS_BITS] & AccessInterface)!=0);
+    isInterface=false;
 
     assert(fileNameLength < MAX_FILE_NAME_SIZE);
     getString(cb, id, fileNameLength-1);
