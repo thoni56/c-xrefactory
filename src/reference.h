@@ -27,8 +27,8 @@ typedef struct reference {
 typedef struct referenceItem {
     char                     *linkName;
     unsigned                  fileHash;
-    int                       vApplClass; /* appl class for java virtuals */
-    int                       vFunClass;  /* fun class for java virtuals */
+    int                       vApplClass; /* appl class for java virtuals, but also something else ... */
+    int                       vFunClass;  /* fun class for java virtuals, but also something else ... */
     Type                      type : SYMTYPES_LN;
     Storage                   storage : STORAGES_LN;
     ReferenceScope            scope : SCOPES_LN;

@@ -10,6 +10,8 @@
 
 include ../Makefile.messages
 
+CXREF = ../../src/c-xref
+
 TEST = $(shell basename '$(CURDIR)')
 
 all: .c-xrefrc $(TEST)

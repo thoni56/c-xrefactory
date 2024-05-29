@@ -24,36 +24,36 @@
 #define C_XREF_FILE_VERSION_NUMBER "1.6.0"
 
 
-#define CXFI_FILE_FUMTIME   'm'     /* last full update kmtime for file item */
-#define CXFI_FILE_UMTIME    'p'     /* last update mtime for file item */
-#define CXFI_SOURCE_INDEX   'o'     /* source index for java classes */
-#define CXFI_INPUT_FROM_COMMAND_LINE  'i'     /* file was introduced from command line */
+#define CXFI_FILE_FUMTIME    'm'     /* last full update mtime for file item */
+#define CXFI_FILE_UMTIME     'p'     /* last update mtime for file item */
+#define CXFI_SOURCE_INDEX    'o'     /* source index for java classes */
+#define CXFI_COMMAND_LINE_ARGUMENT  'i'     /* file was introduced from command line */
 
-#define CXFI_USAGE          'u'
-#define CXFI_REQUIRED_ACCESS     'A'     /* java reference required accessibility index */
-#define CXFI_SYMBOL_INDEX   's'
+#define CXFI_USAGE           'u'
+#define CXFI_REQUIRED_ACCESS 'A'     /* java reference required accessibility index */
 #define CXFI_FILE_NUMBER     'f'
-#define CXFI_LINE_INDEX     'l'
-#define CXFI_COLUMN_INDEX   'c'
-#define CXFI_REFERENCE      'r'     /* using 'fsulc' */
+#define CXFI_SYMBOL_INDEX    's'
+#define CXFI_LINE_INDEX      'l'
+#define CXFI_COLUMN_INDEX    'c'
+#define CXFI_REFERENCE       'r'     /* using 'fsulc' */
 
-#define CXFI_SYMBOL_TYPE    't'
+#define CXFI_ACCESS_BITS     'a'     /* java access bit */
+#define CXFI_SYMBOL_TYPE     't'
 
-#define CXFI_SUBCLASS       'd'     /* dole = down in slovac */
-#define CXFI_SUPERCLASS     'h'     /* hore = up in slovac */
+#define CXFI_SUBCLASS        'd'     /* dole = down in slovac */
+#define CXFI_SUPERCLASS      'h'     /* hore = up in slovac */
 
-#define CXFI_ACCESS_BITS    'a'     /* java access bit */
-#define CXFI_STORAGE        'g'     /* storaGe field */
+#define CXFI_STORAGE         'g'     /* storaGe field */
 
-#define CXFI_SYMBOL_NAME    '/'     /* using 'atdhg' -> 's'             */
-#define CXFI_CLASS_NAME     '+'     /*               -> 'h' info    */
-#define CXFI_FILE_NAME      ':'     /*               -> 'ifm' info  */
+#define CXFI_SYMBOL_NAME     '/'     /* using 'atdhg' -> 's'             */
+#define CXFI_CLASS_NAME      '+'     /*               -> 'h' info    */
+#define CXFI_FILE_NAME       ':'     /*               -> 'ifm' info  */
 
-#define CXFI_CHECK_NUMBER   'k'
-#define CXFI_REFNUM         'n'
-#define CXFI_VERSION        'v'
-#define CXFI_MARKER_LIST    '@'
-#define CXFI_REMARK         '#'
+#define CXFI_CHECK_NUMBER    'k'
+#define CXFI_REFNUM          'n'
+#define CXFI_VERSION         'v'
+#define CXFI_MARKER_LIST     '@'
+#define CXFI_REMARK          '#'
 
 
 typedef enum {
@@ -82,7 +82,7 @@ static int generatedFieldMarkersList[] = {
     CXFI_REFERENCE,
     CXFI_SUPERCLASS,
     CXFI_SUBCLASS,
-    CXFI_INPUT_FROM_COMMAND_LINE,
+    CXFI_COMMAND_LINE_ARGUMENT,
     CXFI_REFNUM,
     CXFI_ACCESS_BITS,
     CXFI_REQUIRED_ACCESS,
@@ -374,7 +374,7 @@ static void writeFileNumberItem(FileItem *fileItem, int number) {
     writeOptionalCompactRecord(CXFI_FILE_NUMBER, number, "\n");
     writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileItem->lastUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fileItem->lastFullUpdateMtime, " ");
-    writeOptionalCompactRecord(CXFI_INPUT_FROM_COMMAND_LINE, fileItem->isArgument, "");
+    writeOptionalCompactRecord(CXFI_COMMAND_LINE_ARGUMENT, fileItem->isArgument, "");
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, ""); /* TODO - not actually used anymore */
     writeStringRecord(CXFI_FILE_NAME, fileItem->name, " ");
 }
@@ -674,7 +674,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
     assert(marker == CXFI_FILE_NAME);
     fumtime = (time_t) lastIncomingInfo.values[CXFI_FILE_FUMTIME];
     umtime = (time_t) lastIncomingInfo.values[CXFI_FILE_UMTIME];
-    isArgument = lastIncomingInfo.values[CXFI_INPUT_FROM_COMMAND_LINE];
+    isArgument = lastIncomingInfo.values[CXFI_COMMAND_LINE_ARGUMENT];
     isInterface=false;
 
     assert(fileNameLength < MAX_FILE_NAME_SIZE);

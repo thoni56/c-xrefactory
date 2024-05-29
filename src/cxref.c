@@ -213,7 +213,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     // TODO: So is this relevant now that HTML is gone?
     if (symbol->linkName == NULL)
         return NULL;
-    if (* symbol->linkName == 0)
+    if (*symbol->linkName == 0)
         return NULL;
     if (symbol == &errorSymbol || symbol->type==TypeError)
         return NULL;
