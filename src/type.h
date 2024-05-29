@@ -91,7 +91,7 @@
         ENUM(TypeBlockMarker)                                           \
         ENUM(TypeExpression)                                            \
         ENUM(TypePackedType)                                            \
-        ENUM(TypeSpecialComplete)                                        \
+        ENUM(TypeSpecialComplete)                                       \
         ENUM(TypeNonImportedClass)                                      \
         ENUM(TypeInducedError)                                          \
         ENUM(TypeInheritedFullMethod)                                   \

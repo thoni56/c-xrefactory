@@ -16,17 +16,16 @@
 typedef struct symbol {
     char    *name;
     char    *linkName; /* fully qualified name for cx */
-    Position pos;      /* definition position for most syms;
-                          import position for imported classes! */
-    unsigned npointers : 4; /* tmp. stored #of dcl. ptrs */
+    Position pos;      /* definition position for most syms */
+    unsigned npointers : 4; /* tmp. stored # of dcl. ptrs */
     Storage  storage : STORAGES_LN;
     Type     type : SYMTYPES_LN;
-    /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
+    /* can be Default/Struct/Union/Enum/Label/Keyword/Macro */
     union {
-        struct typeModifier  *typeModifier; /* if bits.symbolType == TypeDefault */
-        struct structSpec *structSpec;   /* if bits.symbolType == Struct/Union */
-        struct symbolList    *enums;        /* if bits.symbolType == Enum */
-        struct macroBody     *mbody;        /* if bits.symbolType == Macro, can be NULL! */
+        struct typeModifier  *typeModifier; /* if type == TypeDefault */
+        struct structSpec    *structSpec;   /* if type == TypeStruct/TypeUnion */
+        struct symbolList    *enums;        /* if type == TypeEnum */
+        struct macroBody     *mbody;        /* if type == TypeMacro, can be NULL! */
         int                   labelIndex;   /* break/continue label index */
         int                   keyword;      /* if bits.symbolType == Keyword */
     } u;
