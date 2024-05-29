@@ -105,8 +105,6 @@
     ENUM(USAGE_FILTER)
 
 
-#include "access.h"
-
 typedef enum {
     ALL_USAGE_ENUMS(GENERATE_ENUM_VALUE)
 } UsageKind;

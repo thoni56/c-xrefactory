@@ -1,6 +1,5 @@
 #include "cxref.h"
 
-#include "access.h"
 #include "caching.h"
 #include "category.h"
 #include "characterreader.h"

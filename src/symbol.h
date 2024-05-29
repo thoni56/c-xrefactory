@@ -2,7 +2,6 @@
 #define SYMBOL_H_INCLUDED
 
 /* Dependencies: */
-#include "access.h"
 #include "category.h"
 #include "position.h"
 #include "scope.h"

@@ -2,7 +2,6 @@
 
 #include <stddef.h>
 
-#include "access.h"
 #include "category.h"
 #include "stackmemory.h"
 #include "scope.h"
