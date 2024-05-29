@@ -1458,7 +1458,7 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
     occs = getReferences(point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
     if (outAccessFlags != NULL) {
-        *outAccessFlags = sessionData.browserStack.top->hkSelectedSym->references.access;
+        *outAccessFlags = 0;
     }
     //&parseBufferUsingServer(refactoringOptions.project, point, "-olcxrename");
 

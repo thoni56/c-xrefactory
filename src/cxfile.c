@@ -339,7 +339,7 @@ static void writeSymbolItem(int symbolIndex) {
     writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, d->type, "\n"); /* Why newline in the middle of all this? */
     writeOptionalCompactRecord(CXFI_SUBCLASS, d->vApplClass, "");
     writeOptionalCompactRecord(CXFI_SUPERCLASS, d->vFunClass, "");
-    writeOptionalCompactRecord(CXFI_ACCESS_BITS, d->access, "");
+    writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, "");
     writeOptionalCompactRecord(CXFI_STORAGE, d->storage, "");
     lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolIndex] = 0;
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = true;
@@ -403,7 +403,7 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
     fillReferenceItem(&lastOutgoingInfo.cachedReferenceItem[symbolIndex],
                        lastOutgoingInfo.cachedSymbolName[symbolIndex],
                        referenceItem->vApplClass, referenceItem->vFunClass, referenceItem->type,
-                       referenceItem->storage, referenceItem->scope, referenceItem->access,
+                       referenceItem->storage, referenceItem->scope, 0,
                        referenceItem->category);
     lastOutgoingInfo.symbolTab[symbolIndex]       = &lastOutgoingInfo.cachedReferenceItem[symbolIndex];
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = false;
@@ -776,13 +776,12 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
                                                 CxScanFileOperation operation
 ) {
     ReferenceItem *memb;
-    int symbolIndex, len, vApplClass, vFunClass, accessFlags;
+    int symbolIndex, len, vApplClass, vFunClass;
     Type symbolType;
     int storage;
     char *id;
 
     assert(marker == CXFI_SYMBOL_NAME);
-    accessFlags = lastIncomingInfo.values[CXFI_ACCESS_BITS];
     storage = lastIncomingInfo.values[CXFI_STORAGE];
     symbolIndex = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
     assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
@@ -798,15 +797,14 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     ReferenceItem *referenceItem = &lastIncomingInfo.cachedReferenceItem[symbolIndex];
     lastIncomingInfo.symbolTab[symbolIndex] = referenceItem;
     fillReferenceItem(referenceItem, id, vApplClass, vFunClass, symbolType, storage, ScopeGlobal,
-                      accessFlags, CategoryGlobal);
-
+                      0, CategoryGlobal);
     if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
         // TODO: This is more or less the body of a newReferenceItem()
         char *ss = cxAlloc(len+1);
         strcpy(ss,id);
         memb = cxAlloc(sizeof(ReferenceItem));
         fillReferenceItem(memb, ss, vApplClass, vFunClass, symbolType, storage,
-                          ScopeGlobal, accessFlags, CategoryGlobal);
+                          ScopeGlobal, 0, CategoryGlobal);
         addToReferencesTable(memb);
     }
     lastIncomingInfo.symbolTab[symbolIndex] = memb;
@@ -857,7 +855,7 @@ static void scanFunction_SymbolName(int size,
                                     CxScanFileOperation operation
 ) {
     ReferenceItem *referencesItem, *member;
-    int symbolIndex, vApplClass, vFunClass, accessFlags, storage;
+    int symbolIndex, vApplClass, vFunClass, storage;
     Type symbolType;
     char *id;
 
@@ -866,7 +864,6 @@ static void scanFunction_SymbolName(int size,
         // check if previous symbol was dead
         cxfileCheckLastSymbolDeadness();
     }
-    accessFlags = lastIncomingInfo.values[CXFI_ACCESS_BITS];
     storage = lastIncomingInfo.values[CXFI_STORAGE];
     symbolIndex = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
     assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
@@ -877,8 +874,7 @@ static void scanFunction_SymbolName(int size,
     referencesItem = &lastIncomingInfo.cachedReferenceItem[symbolIndex];
     lastIncomingInfo.symbolTab[symbolIndex] = referencesItem;
     fillReferenceItem(referencesItem, id, vApplClass, vFunClass, symbolType, storage, ScopeGlobal,
-                      accessFlags, CategoryGlobal);
-
+                      0, CategoryGlobal);
     bool isMember = isMemberInReferenceTable(referencesItem, NULL, &member);
     while (isMember && member->category!=CategoryGlobal)
         isMember = refTabNextMember(referencesItem, &member);

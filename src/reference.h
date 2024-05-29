@@ -31,7 +31,6 @@ typedef struct referenceItem {
     int                       vFunClass;  /* fun class for java virtuals */
     Type                      type : SYMTYPES_LN;
     Storage                   storage : STORAGES_LN;
-    Access                    access : 12; /* java access bits */
     ReferenceScope            scope : SCOPES_LN;
     ReferenceCategory         category : 2;     /* local/global */
     struct reference         *references;

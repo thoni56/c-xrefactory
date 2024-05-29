@@ -54,7 +54,7 @@ void symbolRefItemDump(ReferenceItem *s) {
               getFileItem(s->vApplClass)->name,
               getFileItem(s->vFunClass)->name,
               s->type, s->storage, s->scope,
-              s->access, s->category);
+              s->category);
 }
 
 /* *********************************************************************** */

@@ -278,14 +278,9 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         strcpy(linkName, symbol->linkName);
         ReferenceItem *r = cxAlloc(sizeof(ReferenceItem));
         fillReferenceItem(r, linkName, vApplCl, vFunCl, symbol->type,
-                           storage, scope, symbol->access, category);
+                           storage, scope, 0, category);
         pushReferenceItem(r, index);
         foundMember = r;
-    } else {
-        // at least reset some maybe new informations
-        // sometimes classes were added from directory listing,
-        // without knowing if it is an interface or not
-        foundMember->access |= symbol->access;
     }
 
     place = addToReferenceList(&foundMember->references, usage, *position);
@@ -1173,7 +1168,7 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
     ReferenceItem     ss;
 
     fillReferenceItem(&ss, fieldName, cfi, cfi, TypeDefault, storage, ScopeGlobal,
-                      AccessDefault, CategoryGlobal);
+                      0, CategoryGlobal);
     res = olCreateNewMenuItem(&ss, ss.vApplClass, ss.vFunClass, &noPosition, UsageNone,
                               1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
                               UsageUsed, 0);
