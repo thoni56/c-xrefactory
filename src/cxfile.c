@@ -371,7 +371,7 @@ static void writeCxReferenceBase(int symbolIndex, UsageKind usage, int requiredA
 }
 
 static void writeCxReference(Reference *reference, int symbolNum) {
-    writeCxReferenceBase(symbolNum, reference->usage.kind, reference->usage.requiredAccess,
+    writeCxReferenceBase(symbolNum, reference->usage.kind, 0,
                          reference->position.file, reference->position.line, reference->position.col);
 }
 
@@ -939,14 +939,12 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
     int      file, line, col, symbolIndex, vApplClass, vFunClass;
     UsageKind usageKind;
     Usage usage;
-    int requiredAccess;
     Type symbolType;
 
     assert(marker == CXFI_REFERENCE);
 
     usageKind = lastIncomingInfo.values[CXFI_USAGE];
-    requiredAccess = lastIncomingInfo.values[CXFI_REQUIRED_ACCESS];
-    fillUsage(&usage, usageKind, requiredAccess);
+    fillUsage(&usage, usageKind);
 
     symbolIndex = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
 
@@ -1006,7 +1004,7 @@ static void scanFunction_Reference(int size,
         if (fileItem->cxLoading && fileItem->cxSaved) {
             /* if we repass refs after overflow */
             pos = makePosition(file, line, col);
-            fillUsage(&usage, usageKind, reqAcc);
+            fillUsage(&usage, usageKind);
             copyrefFl = !isInReferenceList(lastIncomingInfo.symbolTab[sym]->references,
                                      usage, pos);
         } else {
@@ -1016,7 +1014,7 @@ static void scanFunction_Reference(int size,
             writeCxReferenceBase(sym, usageKind, reqAcc, file, line, col);
     } else if (options.mode == ServerMode) {
         pos = makePosition(file, line, col);
-        fillUsage(&usage, usageKind, reqAcc);
+        fillUsage(&usage, usageKind);
         fillReference(&reference, usage, pos, NULL);
         FileItem *referenceFileItem = getFileItem(reference.position.file);
         if (operation == CXSF_DEAD_CODE_DETECTION) {

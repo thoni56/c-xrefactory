@@ -121,7 +121,7 @@ Ensure(Editor, can_convert_empty_list_of_references_to_editor_markers) {
 
 Ensure(Editor, can_convert_single_reference_to_editor_marker) {
     Usage usage;
-    fillUsage(&usage, UsageDefined, 0);
+    fillUsage(&usage, UsageDefined);
     Reference reference;
     int SOME_FILE_NUMBER = 42;
     int SOME_LINE_NUMBER = 43;

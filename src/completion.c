@@ -79,7 +79,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         slen = strlen(symbol->linkName);
         ss = olcxAlloc(slen+1);
         strcpy(ss, symbol->linkName);
-        fillUsage(&r.usage, UsageDefined, 0);
+        fillUsage(&r.usage, UsageDefined);
         fillReference(&r, r.usage, symbol->pos, NULL);
         fillReferenceItem(&sri, ss,
                           vFunClass, vFunClass, symbol->type, storage,

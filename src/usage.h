@@ -5,7 +5,7 @@
 
 
 // !!! if changing this, change also s_noRef!!!
-#define NO_USAGE (Usage){UsageNone, 0}
+#define NO_USAGE (Usage){UsageNone}
 
 
 /* Because of the macro magic we can't comment near the actual values
@@ -114,13 +114,12 @@ typedef enum {
 
 typedef struct usage {
     UsageKind kind;
-    Access requiredAccess;   // required accessibility of the reference
 } Usage;
 
 
 extern const char *usageKindEnumName[];
 
-extern void fillUsage(Usage *usage, UsageKind kind, Access requiredAccess);
+extern void fillUsage(Usage *usage, UsageKind kind);
 extern bool isVisibleUsage(UsageKind usageKind);
 extern bool isDefinitionUsage(UsageKind usageKind);
 extern bool isDefinitionOrDeclarationUsage(UsageKind usage);

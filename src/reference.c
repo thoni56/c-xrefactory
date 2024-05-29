@@ -40,7 +40,6 @@ void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass
     referencesItem->type = symType;
     referencesItem->storage = storage;
     referencesItem->scope = scope;
-    referencesItem->access = accessFlags;
     referencesItem->category = category;
 }
 
