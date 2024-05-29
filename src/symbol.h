@@ -19,7 +19,6 @@ typedef struct symbol {
     Position pos;      /* definition position for most syms;
                           import position for imported classes! */
     unsigned npointers : 4; /* tmp. stored #of dcl. ptrs */
-    Access   access : 12;              /* java access bits */
     Storage  storage : STORAGES_LN;
     Type     type : SYMTYPES_LN;
     /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */

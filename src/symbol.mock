@@ -17,7 +17,6 @@ void fillSymbol(Symbol *symbol, char *name, char *linkName, Position pos) {
     symbol->pos = pos;
     symbol->u.typeModifier = NULL;
     symbol->next = NULL;
-    symbol->access = AccessDefault;
     symbol->type = TypeDefault;
     symbol->storage = StorageDefault;
     symbol->npointers = 0;
