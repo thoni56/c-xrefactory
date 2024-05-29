@@ -339,7 +339,7 @@ static void writeSymbolItem(int symbolIndex) {
     writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, d->type, "\n"); /* Why newline in the middle of all this? */
     writeOptionalCompactRecord(CXFI_SUBCLASS, d->vApplClass, "");
     writeOptionalCompactRecord(CXFI_SUPERCLASS, d->vFunClass, "");
-    writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, "");
+    writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, ""); /* TODO - not used anymore */
     writeOptionalCompactRecord(CXFI_STORAGE, d->storage, "");
     lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolIndex] = 0;
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = true;
@@ -380,7 +380,7 @@ static void writeFileNumberItem(FileItem *fileItem, int number) {
     writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileItem->lastUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fileItem->lastFullUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_INPUT_FROM_COMMAND_LINE, fileItem->isArgument, "");
-    writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, "");
+    writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, ""); /* TODO - not actually used anymore */
     writeStringRecord(CXFI_FILE_NAME, fileItem->name, " ");
 }
 
