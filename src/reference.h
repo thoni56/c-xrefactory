@@ -40,8 +40,7 @@ typedef struct referenceItem {
 
 extern void fillReference(Reference *reference, Usage usage, Position position, Reference *next);
 extern void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass,
-                              int vFunClass, Type symType, Storage storage, ReferenceScope scope,
-                              Access accessFlags, ReferenceCategory category);
+                              int vFunClass, Type symType, Storage storage, ReferenceScope scope, ReferenceCategory category);
 extern Reference *duplicateReference(Reference *r);
 extern void freeReferences(Reference *references);
 extern void resetReferenceUsage(Reference *reference, UsageKind usageKind);

@@ -101,7 +101,7 @@ static int scheduleFileUsingTheMacro(void) {
     tmpc = NULL;
     fillReferenceItem(&references, olstringInMacroBody,
                       NO_FILE_NUMBER, NO_FILE_NUMBER, TypeMacro, StorageExtern,
-                      ScopeGlobal, 0, CategoryGlobal);
+                      ScopeGlobal, CategoryGlobal);
 
     fillSymbolsMenu(&menu, references, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);
     if (sessionData.browserStack.top==NULL) {

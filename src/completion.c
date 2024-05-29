@@ -62,15 +62,14 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         ss = olcxAlloc(slen+1);
         strcpy(ss, referenceItem->linkName);
         fillReferenceItem(&sri, ss, referenceItem->vApplClass, referenceItem->vFunClass,
-                          referenceItem->type, referenceItem->storage, referenceItem->scope,
-                          0, referenceItem->category);
+                          referenceItem->type, referenceItem->storage, referenceItem->scope, referenceItem->category);
 
         completion = newCompletion(name, fullName, 1, referenceItem->category, cType, *reference, sri);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
         fillReferenceItem(&sri, "", NO_FILE_NUMBER, NO_FILE_NUMBER, TypeUnknown, StorageDefault,
-                          ScopeAuto, 0, CategoryLocal);
+                          ScopeAuto, CategoryLocal);
         completion = newCompletion(name, fullName, 1, CategoryLocal, cType, r, sri);
     } else {
         Reference r;
@@ -83,7 +82,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         fillReference(&r, r.usage, symbol->pos, NULL);
         fillReferenceItem(&sri, ss,
                           vFunClass, vFunClass, symbol->type, storage,
-                          scope, 0, category);
+                          scope, category);
         completion = newCompletion(name, fullName, 1, category, cType, r, sri);
     }
     if (fullName!=NULL) {

@@ -262,8 +262,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     ReferenceItem  referenceItem;
     ReferenceItem *foundMember;
 
-    fillReferenceItem(&referenceItem, symbol->linkName, vApplCl, vFunCl, symbol->type, storage, scope,
-                       symbol->access, category);
+    fillReferenceItem(&referenceItem, symbol->linkName, vApplCl, vFunCl, symbol->type, storage, scope, category);
     if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH && options.searchKind==SEARCH_FULL) {
         fillUsage(&reference.usage, usage.kind);
         fillReference(&reference, reference.usage, *position, NULL);
@@ -278,7 +277,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         strcpy(linkName, symbol->linkName);
         ReferenceItem *r = cxAlloc(sizeof(ReferenceItem));
         fillReferenceItem(r, linkName, vApplCl, vFunCl, symbol->type,
-                           storage, scope, 0, category);
+                           storage, scope, category);
         pushReferenceItem(r, index);
         foundMember = r;
     }
@@ -1167,8 +1166,7 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
     SymbolsMenu     *res;
     ReferenceItem     ss;
 
-    fillReferenceItem(&ss, fieldName, cfi, cfi, TypeDefault, storage, ScopeGlobal,
-                      0, CategoryGlobal);
+    fillReferenceItem(&ss, fieldName, cfi, cfi, TypeDefault, storage, ScopeGlobal, CategoryGlobal);
     res = olCreateNewMenuItem(&ss, ss.vApplClass, ss.vFunClass, &noPosition, UsageNone,
                               1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
                               UsageUsed, 0);

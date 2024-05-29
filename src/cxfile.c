@@ -398,7 +398,7 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
     fillReferenceItem(&lastOutgoingInfo.cachedReferenceItem[symbolIndex],
                        lastOutgoingInfo.cachedSymbolName[symbolIndex],
                        referenceItem->vApplClass, referenceItem->vFunClass, referenceItem->type,
-                       referenceItem->storage, referenceItem->scope, 0,
+                       referenceItem->storage, referenceItem->scope,
                        referenceItem->category);
     lastOutgoingInfo.symbolTab[symbolIndex]       = &lastOutgoingInfo.cachedReferenceItem[symbolIndex];
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = false;
@@ -791,15 +791,14 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
 
     ReferenceItem *referenceItem = &lastIncomingInfo.cachedReferenceItem[symbolIndex];
     lastIncomingInfo.symbolTab[symbolIndex] = referenceItem;
-    fillReferenceItem(referenceItem, id, vApplClass, vFunClass, symbolType, storage, ScopeGlobal,
-                      0, CategoryGlobal);
+    fillReferenceItem(referenceItem, id, vApplClass, vFunClass, symbolType, storage, ScopeGlobal, CategoryGlobal);
     if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
         // TODO: This is more or less the body of a newReferenceItem()
         char *ss = cxAlloc(len+1);
         strcpy(ss,id);
         memb = cxAlloc(sizeof(ReferenceItem));
         fillReferenceItem(memb, ss, vApplClass, vFunClass, symbolType, storage,
-                          ScopeGlobal, 0, CategoryGlobal);
+                          ScopeGlobal, CategoryGlobal);
         addToReferencesTable(memb);
     }
     lastIncomingInfo.symbolTab[symbolIndex] = memb;
@@ -868,8 +867,7 @@ static void scanFunction_SymbolName(int size,
 
     referencesItem = &lastIncomingInfo.cachedReferenceItem[symbolIndex];
     lastIncomingInfo.symbolTab[symbolIndex] = referencesItem;
-    fillReferenceItem(referencesItem, id, vApplClass, vFunClass, symbolType, storage, ScopeGlobal,
-                      0, CategoryGlobal);
+    fillReferenceItem(referencesItem, id, vApplClass, vFunClass, symbolType, storage, ScopeGlobal, CategoryGlobal);
     bool isMember = isMemberInReferenceTable(referencesItem, NULL, &member);
     while (isMember && member->category!=CategoryGlobal)
         isMember = refTabNextMember(referencesItem, &member);

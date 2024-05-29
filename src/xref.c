@@ -84,7 +84,7 @@ static FileItem *createListOfInputFileItems(void) {
 static void fillReferenceItemForIncludeFile(ReferenceItem *referencesItem, int fileNumber) {
     fillReferenceItem(referencesItem, LINK_NAME_INCLUDE_REFS,
                       fileNumber, fileNumber, TypeCppInclude, StorageExtern,
-                      ScopeGlobal, 0, CategoryGlobal);
+                      ScopeGlobal, CategoryGlobal);
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
