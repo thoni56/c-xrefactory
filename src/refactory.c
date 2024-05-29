@@ -1428,12 +1428,10 @@ static EditorMarker *removeStaticPrefix(EditorMarker *d) {
 // make it public, because you update references after and some references can
 // be lost, later you can restrict accessibility
 static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *point, EditorMarker *mend,
-                                            EditorMarker *target, unsigned *outAccessFlags,
+                                            EditorMarker *target,
                                             ToCheckOrNot check, int limitIndex) {
     char              nameOnPoint[TMP_STRING_SIZE];
     int               size;
-    //SymbolsMenu      *mm1, *mm2;
-    //ReferenceItem   *theMethod;
     EditorMarker     *pp, *ppp, *movedEnd;
     EditorMarkerList *occs;
     EditorRegionList *regions;
@@ -1457,10 +1455,6 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
     occs = getReferences(point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
-    if (outAccessFlags != NULL) {
-        *outAccessFlags = 0;
-    }
-    //&parseBufferUsingServer(refactoringOptions.project, point, "-olcxrename");
 
     LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListBefore);
     LIST_LEN(count, EditorMarkerList, occs);
@@ -1509,7 +1503,6 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
 
 static void moveFunction(EditorMarker *point) {
     int           lines;
-    unsigned      accFlags;
     EditorMarker *target, *mstart, *mend;
 
     target = getTargetFromOptions();
@@ -1522,17 +1515,14 @@ static void moveFunction(EditorMarker *point) {
     lines = countLinesBetweenEditorMarkers(mstart, mend);
 
     // O.K. Now STARTING!
-    moveStaticObjectAndMakeItPublic(mstart, point, mend, target, &accFlags, APPLY_CHECKS,
-                                    IPP_FUNCTION_BEGIN);
-    //&sprintf(tmpBuff,"original acc == %d", accFlags); ppcBottomInformation(tmpBuff);
-    //restrictAccessibility(point, limitIndex, accFlags);
+    moveStaticObjectAndMakeItPublic(mstart, point, mend, target, APPLY_CHECKS, IPP_FUNCTION_BEGIN);
 
     // and generate output
     applyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
     ppcValueRecord(PPC_INDENT, lines, "");
 }
-// ------------------------------------------------------ ExtractMethod
+// ------------------------------------------------------ Extract
 
 static void extractFunction(EditorMarker *point, EditorMarker *mark) {
     parseBufferUsingServer(refactoringOptions.project, point, mark, "-olcxextract", NULL);
