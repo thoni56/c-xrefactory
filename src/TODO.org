@@ -132,6 +132,7 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
   indicates which file/module it declares an externa interface for. We
   should move that to a <module>.h file instead.
 * TODO BUG: sometimes cxref data gets out of sync with actual code (in Emacs)
+  E.g. when removing a line in a enum list, enums get extra references where they "used to be".
   Unknown if it has to do with buffer management, it is not possible to reproduce yet
 * TODO BUG: an unterminated "assert(" (with the c-xref def of it: MACRO) breaks
   with error message "size of #macro_argument exceeded MACRO_UNIT_SIZE"
@@ -143,7 +144,8 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 ** TODO FEATURE: Extract function should extract a boolean function inside an if() correctly
 ** TODO FEATURE: New refactoring: Inline variable ("a=f(); b(a);" => "b(f());")
 ** TODO FEATURE: Rename "module" in C
-   Prompt for new "module name", rename both .c & .h if they exist, and change all includes
+   Prompt for new "module name", rename both .c & .h if they exist, and change all includes, bonus: rename also _tests.c
+** TODO FEATURE: Replace variable with value ("inline")
 * TODO Push options.xref2 into ppc...() functions or create if necessary?
 * TODO displayingErrorMessages() seems to be duplicated functionality
   Change to preventErrorMessage() and let logger handle actual prevention?
