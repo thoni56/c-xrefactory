@@ -530,6 +530,8 @@ static void generateRefsFromMemory(int fileOrder) {
                 continue;
             if (r->fileHash == fileOrder)
                 writeReferenceItem(r);
+            else
+                log_trace("Skipping reference with hash %d", r->fileHash);
         }
     }
 }

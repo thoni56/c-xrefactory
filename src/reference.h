@@ -35,7 +35,7 @@ typedef struct referenceItem {
     ReferenceScope            scope : SCOPES_LN;
     ReferenceCategory         category : 2;     /* local/global */
     struct reference         *references;
-    struct referenceItem    *next; /* TODO: Link only for hashlist? */
+    struct referenceItem     *next; /* TODO: Link only for hashlist? */
 } ReferenceItem;
 
 
