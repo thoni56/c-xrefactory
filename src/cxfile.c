@@ -630,15 +630,15 @@ static void scanFunction_CheckNumber(int size,
     magicn = lastIncomingInfo.values[CXFI_CHECK_NUMBER];
     DECOMPOSE_CXFI_CHECK_NUM(magicn, filen, exactPositionLinkFlag);
     if (filen != MAX_FILES) {
-        sprintf(tmpBuff,"The Tag file was generated with different MAX_FILES, recreate it");
+        sprintf(tmpBuff,"The reference database was generated with different MAX_FILES, recreate it");
         writeCxFileCompatibilityError(tmpBuff);
     }
     log_trace("checking exactPositionResolve: %d <-> %d", exactPositionLinkFlag, options.exactPositionResolve);
     if (exactPositionLinkFlag != options.exactPositionResolve) {
         if (exactPositionLinkFlag) {
-            sprintf(tmpBuff,"The Tag file was generated with '-exactpositionresolve' flag, recreate it");
+            sprintf(tmpBuff,"The reference database was generated with '-exactpositionresolve' flag, recreate it");
         } else {
-            sprintf(tmpBuff,"The Tag file was generated without '-exactpositionresolve' flag, recreate it");
+            sprintf(tmpBuff,"The reference database was generated without '-exactpositionresolve' flag, recreate it");
         }
         writeCxFileCompatibilityError(tmpBuff);
     }
@@ -1086,7 +1086,7 @@ static void scanFunction_ReferenceFileCountCheck(int fileCountInReferenceFile,
 ) {
     if (!currentReferenceFileCountMatches(fileCountInReferenceFile)) {
         assert(options.mode);
-        FATAL_ERROR(ERR_ST,"Tag file was generated with different '-refnum' options, recreate it!", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST,"The reference database was generated with different '-refnum' options, recreate it!", XREF_EXIT_ERR);
     }
 }
 
