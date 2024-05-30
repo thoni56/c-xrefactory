@@ -20,7 +20,6 @@
     UsageAddrUsed                       - == USAGE_TOP_LEVEL_USED
     UsageMaybeQualifThisInClassOrMethod - where 'this' may be inserted
     UsageLastUseless                    - last part of useless FQT name
-    UsageMethodInvokedViaSuper          - a method invoked by super.method(...)
     UsageConstructorDefinition          - Usage for Java type name, when used in constructor def.
     UsageOtherUseless                   - a useless part of useless FQT name (not last)
     UsageThisUsage                      - 'this' reference
@@ -75,7 +74,6 @@
 /* filter0 */                                   \
     ENUM(UsageUsed)                             \
     ENUM(UsageUndefinedMacro)                   \
-    ENUM(UsageMethodInvokedViaSuper)            \
     ENUM(UsageConstructorDefinition)            \
     ENUM(ureserve8)                             \
     ENUM(UsageOtherUseless)                     \

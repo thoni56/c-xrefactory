@@ -1404,15 +1404,9 @@ static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLe
         oovisible = options.ooChecksBits;
         ooselected = RENAME_SELECTION_OO_BITS;
     } else {
-        if (olstringServed && olstringUsageKind == UsageMethodInvokedViaSuper) {
-            //&oovisible = options.ooChecksBits;
-            oovisible = menuFilterOoBits[filterLevel];
-            ooselected = METHOD_VIA_SUPER_SELECTION_OO_BITS;
-        } else {
-            //&oovisible = options.ooChecksBits;
-            oovisible = menuFilterOoBits[filterLevel];
-            ooselected = DEFAULT_SELECTION_OO_BITS;
-        }
+        //&oovisible = options.ooChecksBits;
+        oovisible = menuFilterOoBits[filterLevel];
+        ooselected = DEFAULT_SELECTION_OO_BITS;
     }
     setDefaultSelectedVisibleItems(menu, oovisible, ooselected);
 sfini:
