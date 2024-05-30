@@ -1166,7 +1166,7 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
     ReferenceItem     ss;
 
     fillReferenceItem(&ss, fieldName, cfi, cfi, TypeDefault, storage, ScopeGlobal, CategoryGlobal);
-    res = olCreateNewMenuItem(&ss, ss.vApplClass, ss.vFunClass, &noPosition, UsageNone,
+    res = olCreateNewMenuItem(&ss, ss.vApplClass, ss.vApplClass, &noPosition, UsageNone,
                               1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
                               UsageUsed, 0);
     return res;
@@ -1777,7 +1777,7 @@ bool olcxShowSelectionMenu(void) {
                 if (first == NULL) {
                     first = ss;
                 } else if ((! isSameCxSymbol(&first->references, &ss->references))
-                           || first->references.vFunClass!=ss->references.vFunClass) {
+                           || first->references.vApplClass!=ss->references.vApplClass) {
                     return true;
                 }
             }
@@ -2325,7 +2325,6 @@ int itIsSymbolToPushOlReferences(ReferenceItem *p,
     for (SymbolsMenu *ss=rstack->menuSym; ss!=NULL; ss=ss->next) {
         if ((ss->selected || checkSelFlag==DO_NOT_CHECK_IF_SELECTED)
             && ss->references.vApplClass == p->vApplClass
-            && ss->references.vFunClass == p->vFunClass
             && isSameCxSymbol(p, &ss->references)) {
             *rss = ss;
             if (IS_BEST_FIT_MATCH(ss)) {
@@ -2365,8 +2364,7 @@ void genOnLineReferences(OlcxReferences *rstack, SymbolsMenu *cms) {
 static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceItem *referenceItem) {
     assert(olcxIsSameCxSymbol(&menu->references, referenceItem));
     unsigned ooBits = 0;
-    int olvFunCl = menu->references.vFunClass;
-    int vFunCl = referenceItem->vFunClass;
+
     if (menu->references.type!=TypeCppCollate) {
         if (menu->references.type != referenceItem->type)
             goto fini;
@@ -2378,7 +2376,7 @@ static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceItem *referenceItem) {
     if (strcmp(menu->references.linkName,referenceItem->linkName)==0) {
         ooBits |= OOC_PROFILE_EQUAL;
     }
-    if (vFunCl == olvFunCl)
+    if (referenceItem->vApplClass == menu->references.vApplClass)
         ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
  fini:
     return ooBits;

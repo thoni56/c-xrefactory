@@ -49,10 +49,9 @@ void typeDump(TypeModifier *t) {
 }
 
 void symbolRefItemDump(ReferenceItem *s) {
-    log_debug("%s\t%s %s %d %d %d %d %d",
+    log_debug("%s\t%s %s %d %d %d %d",
               s->linkName,
               getFileItem(s->vApplClass)->name,
-              getFileItem(s->vFunClass)->name,
               s->type, s->storage, s->scope,
               s->category);
 }

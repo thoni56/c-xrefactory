@@ -112,10 +112,6 @@ static bool referenceItemIsLess(ReferenceItem *s1, ReferenceItem *s2) {
         return true;
     else if (cmp > 0)
         return false;
-    if (s1->vFunClass < s2->vFunClass)
-        return true;
-    else if (s1->vFunClass > s2->vFunClass)
-        return false;
     if (s1->vApplClass < s2->vApplClass)
         return true;
     else if (s1->vApplClass > s2->vApplClass)
@@ -150,7 +146,7 @@ SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *symbol
     new = *place;
     if (*place==NULL || olSymbolMenuIsLess(&dummyMenu, *place)) {
         assert(symbol);
-        new = olCreateNewMenuItem(symbol, symbol->vApplClass, symbol->vFunClass, defpos, defusage,
+        new = olCreateNewMenuItem(symbol, symbol->vApplClass, symbol->vApplClass, defpos, defusage,
                                 selected, visible, ooBits,
                                 olusage, vlevel);
         LIST_CONS(new, *place);

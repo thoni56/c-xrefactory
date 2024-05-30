@@ -20,7 +20,7 @@ static bool equalReferenceItems(ReferenceItem *e1, ReferenceItem *e2) {
 }
 
 
-#define HASH_FUN(element) (hashFun(element->linkName) + (unsigned)element->vFunClass)
+#define HASH_FUN(element) (hashFun(element->linkName) + (unsigned)element->vApplClass)
 #define HASH_ELEM_EQUAL(e1,e2) equalReferenceItems(e1, e2)
 
 #include "hashlist.tc"

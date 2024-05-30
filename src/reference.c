@@ -31,10 +31,10 @@ Reference *duplicateReference(Reference *original) {
 void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass,
                         int vFunClass, Type symType, Storage storage, ReferenceScope scope,
                         ReferenceCategory category) {
+    assert(vApplClass == vFunClass);
     referencesItem->linkName = name;
     referencesItem->fileHash = cxFileHashNumber(name);
     referencesItem->vApplClass = vApplClass;
-    referencesItem->vFunClass = vFunClass;
     referencesItem->references = NULL;
     referencesItem->next = NULL;
     referencesItem->type = symType;

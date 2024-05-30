@@ -16,7 +16,6 @@ void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass
     referencesItem->linkName = name;
     referencesItem->fileHash = 0; // Should really be: cxFileHashNumber(name);
     referencesItem->vApplClass = vApplClass;
-    referencesItem->vFunClass = vFunClass;
     referencesItem->references = NULL;
     referencesItem->next = NULL;
     referencesItem->type = symType;

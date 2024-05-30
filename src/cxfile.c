@@ -267,7 +267,7 @@ void searchSymbolCheckReference(ReferenceItem  *referenceItem, Reference *refere
         static int count = 0;
         sessionData.retrieverStack.top->completions = completionListPrepend(
             sessionData.retrieverStack.top->completions, sname, NULL, NULL, referenceItem,
-            reference, referenceItem->type, referenceItem->vFunClass);
+            reference, referenceItem->type, referenceItem->vApplClass);
         // this is a hack for memory reduction
         // compact completions from time to time
         count ++;
@@ -333,7 +333,7 @@ static void writeSymbolItem(int symbolIndex) {
     d = lastOutgoingData.symbolTab[symbolIndex];
     writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, d->type, "\n"); /* Why newline in the middle of all this? */
     writeOptionalCompactRecord(CXFI_SUBCLASS, d->vApplClass, "");
-    writeOptionalCompactRecord(CXFI_SUPERCLASS, d->vFunClass, "");
+    writeOptionalCompactRecord(CXFI_SUPERCLASS, d->vApplClass, "");
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, ""); /* TODO - not used anymore */
     writeOptionalCompactRecord(CXFI_STORAGE, d->storage, "");
     lastOutgoingData.macroBaseFileGeneratedForSym[symbolIndex] = 0;
@@ -397,7 +397,7 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
     strcpy(lastOutgoingData.cachedSymbolName[symbolIndex], referenceItem->linkName);
     fillReferenceItem(&lastOutgoingData.cachedReferenceItem[symbolIndex],
                        lastOutgoingData.cachedSymbolName[symbolIndex],
-                       referenceItem->vApplClass, referenceItem->vFunClass, referenceItem->type,
+                       referenceItem->vApplClass, referenceItem->vApplClass, referenceItem->type,
                        referenceItem->storage, referenceItem->scope,
                        referenceItem->category);
     lastOutgoingData.symbolTab[symbolIndex]       = &lastOutgoingData.cachedReferenceItem[symbolIndex];

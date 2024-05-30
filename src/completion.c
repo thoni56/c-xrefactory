@@ -61,7 +61,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         slen = strlen(referenceItem->linkName);
         ss = olcxAlloc(slen+1);
         strcpy(ss, referenceItem->linkName);
-        fillReferenceItem(&sri, ss, referenceItem->vApplClass, referenceItem->vFunClass,
+        fillReferenceItem(&sri, ss, referenceItem->vApplClass, referenceItem->vApplClass,
                           referenceItem->type, referenceItem->storage, referenceItem->scope, referenceItem->category);
 
         completion = newCompletion(name, fullName, 1, referenceItem->category, cType, *reference, sri);
