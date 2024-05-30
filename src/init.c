@@ -226,7 +226,7 @@ static TypeCharCodeInit baseTypeCharCodesInitTable[] = {
     {TypeBoolean,   'Z'},
     {TypeVoid,      'V'},
     {TypeError,     'E'},
-    {TypeNull,      JAVA_NULL_CODE},    /* this is just my in(con)vention */
+    {TypeNull,      'N'},
     {-1,            ' '},
 };
 

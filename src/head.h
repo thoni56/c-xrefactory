@@ -138,10 +138,6 @@ typedef enum language {
 #define CHAR_AFTER_MARKER(marker) (*POINTER_AFTER_MARKER(marker))
 
 
-/* *********************************************************************** */
-
-#define JAVA_NULL_CODE 'N'
-
 /* *******************   Object-Oriented Resolutions   ******************* */
 
 /* virtual resolution */
