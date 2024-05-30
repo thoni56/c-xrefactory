@@ -35,7 +35,7 @@ There is a variable in `main()` called `firstPassing` which is set and passed
 down through `mainEditServer()` until it is reset in
 `mainFileProcessingInitialisations()` after `initCaching()`.
 
-This is probably connected to the fact that `c-xref` allows for passing
+This is probably related to the fact that `c-xref` allows for passing
 over the analyzed source multiple passes in case you compile the
 project sources with different C defines. Variables in the `c-xref`
 sources indicate this, e.g the loops in `mainEditServerProcessFile()`
@@ -213,10 +213,18 @@ NOTE: TODO: Build a tool to decipher this so that tests can query the
 generated data for expected data. This is now partly ongoing in the
 'utils' directory.
 
-=== Editor Interface
+=== Editor Plugin
 
-I've been focusing on the Emacs interface since `Jedit` is not so
-popular anymore and I'm an Emacs-guy.
+The editor plugin has three different responsibilities:
+
+- serve as the UI for the user when interacting with certain `c-xref`
+  related functions
+
+- query `c-xref server` for symbol references and support navigating
+  these in the source
+
+- initiate source code operations ("refactorings") and execute the
+  resulting edits
 
 Basically Emacs (and probably other editors) starts `c-xref` in
 "server-mode" using `-server` which connects the editor
