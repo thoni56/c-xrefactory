@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<meta name="author" content="v{VERSION} - Generated 2024-05-29">
+<meta name="author" content="v{VERSION} - Generated 2024-05-31">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2024-05-29</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2024-05-31</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -481,7 +481,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_refactoring_and_the_parsers">8.4. Refactoring and the parsers</a></li>
 <li><a href="#_reading_files">8.5. Reading Files</a></li>
 <li><a href="#_reference_database">8.6. Reference Database</a></li>
-<li><a href="#_editor_interface">8.7. Editor Interface</a></li>
+<li><a href="#_editor_plugin">8.7. Editor Plugin</a></li>
 <li><a href="#_editor_server">8.8. Editor Server</a></li>
 <li><a href="#_refactoring">8.9. Refactoring</a></li>
 <li><a href="#_memory_management">8.10. Memory Management</a></li>
@@ -983,7 +983,7 @@ down through <code>mainEditServer()</code> until it is reset in
 <code>mainFileProcessingInitialisations()</code> after <code>initCaching()</code>.</p>
 </div>
 <div class="paragraph">
-<p>This is probably connected to the fact that <code>c-xref</code> allows for passing
+<p>This is probably related to the fact that <code>c-xref</code> allows for passing
 over the analyzed source multiple passes in case you compile the
 project sources with different C defines. Variables in the <code>c-xref</code>
 sources indicate this, e.g the loops in <code>mainEditServerProcessFile()</code>
@@ -1261,10 +1261,25 @@ generated data for expected data. This is now partly ongoing in the
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_interface">8.7. Editor Interface</h3>
+<h3 id="_editor_plugin">8.7. Editor Plugin</h3>
 <div class="paragraph">
-<p>I&#8217;ve been focusing on the Emacs interface since <code>Jedit</code> is not so
-popular anymore and I&#8217;m an Emacs-guy.</p>
+<p>The editor plugin has three different responsibilities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>serve as the UI for the user when interacting with certain <code>c-xref</code>
+related functions</p>
+</li>
+<li>
+<p>query <code>c-xref server</code> for symbol references and support navigating
+these in the source</p>
+</li>
+<li>
+<p>initiate source code operations ("refactorings") and execute the
+resulting edits</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>Basically Emacs (and probably other editors) starts <code>c-xref</code> in
@@ -1530,7 +1545,7 @@ prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
 <p>This is of course, the core in why I want to restore this, to get at its refactoring capabilities. So far, much is not understood, but here are some bits and pieces.</p>
 </div>
 <div class="sect3">
-<h4 id="_editor_interface_2">8.9.1. Editor interface</h4>
+<h4 id="_editor_interface">8.9.1. Editor interface</h4>
 <div class="paragraph">
 <p>One thing that really confused me in the beginning was that the editor, primarily Emacs, don&#8217;t use the actual server that it has started for refactoring operations (and perhaps for other things also?). Instead it creates a separate instance with which it talks to about one refactoring.</p>
 </div>
@@ -3149,7 +3164,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-05-29 20:10:25 UTC
+Last updated 2024-05-31 06:18:24 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
