@@ -96,7 +96,6 @@ static int generatedFieldMarkersList[] = {
 typedef struct lastCxFileData {
     int                 onLineReferencedSym;
     SymbolsMenu         *onLineRefMenuItem;
-    int                 onLineRefIsBestMatchFlag; // vyhodit ("throw away") ?
     ReferenceItem *symbolTab[MAX_CX_SYMBOL_TAB];
     bool                symbolIsWritten[MAX_CX_SYMBOL_TAB];
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
@@ -905,7 +904,6 @@ static void scanFunction_SymbolName(int size,
             lastIncomingData.onLineRefMenuItem = cms;
             if (ols || (operation==CXSF_BY_PASS && canBypassAcceptableSymbol(referencesItem))) {
                 lastIncomingData.onLineReferencedSym = symbolIndex;
-                lastIncomingData.onLineRefIsBestMatchFlag = (ols == 2);
                 log_trace("symbol %s is O.K. for %s (ols==%d)", referencesItem->linkName, options.browsedSymName, ols);
             } else {
                 if (lastIncomingData.onLineReferencedSym == symbolIndex) {
