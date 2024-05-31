@@ -100,7 +100,7 @@ static int scheduleFileUsingTheMacro(void) {
     assert(olstringInMacroBody);
     tmpc = NULL;
     fillReferenceItem(&references, olstringInMacroBody,
-                      NO_FILE_NUMBER, NO_FILE_NUMBER, TypeMacro, StorageExtern,
+                      NO_FILE_NUMBER, TypeMacro, StorageExtern,
                       ScopeGlobal, CategoryGlobal);
 
     fillSymbolsMenu(&menu, references, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);

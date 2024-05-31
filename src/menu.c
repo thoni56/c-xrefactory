@@ -95,7 +95,7 @@ SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int vApplClass, int vFun
 
     allocatedNameCopy = olcxStringCopy(symbol->linkName);
 
-    fillReferenceItem(&refItem, allocatedNameCopy, vApplClass, vFunCl,
+    fillReferenceItem(&refItem, allocatedNameCopy, vApplClass,
                        symbol->type, symbol->storage, symbol->scope,
                        symbol->category);
 

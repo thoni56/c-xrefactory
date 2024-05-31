@@ -10,8 +10,7 @@ void fillReference(Reference *reference, Usage usage, Position position,
     reference->next = next;
 }
 
-void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass,
-                        int vFunClass, Type symType, Storage storage, ReferenceScope scope,
+void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass, Type symType, Storage storage, ReferenceScope scope,
                         ReferenceCategory category) {
     referencesItem->linkName = name;
     referencesItem->fileHash = 0; // Should really be: cxFileHashNumber(name);

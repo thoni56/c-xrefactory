@@ -47,7 +47,7 @@ static Completion *newCompletion(char *name, char *fullName,
 /* If symbol != NULL && referenceItem != NULL then dfref can be anything... */
 Completion *completionListPrepend(Completion *completions, char *name, char *fullName, Symbol *symbol,
                                   ReferenceItem *referenceItem,
-                                  Reference *reference, int cType, int vFunClass) {
+                                  Reference *reference, int cType, int vApplClass) {
     Completion    *completion;
     char *ss;
     ReferenceCategory category;
@@ -61,14 +61,14 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         slen = strlen(referenceItem->linkName);
         ss = olcxAlloc(slen+1);
         strcpy(ss, referenceItem->linkName);
-        fillReferenceItem(&sri, ss, referenceItem->vApplClass, referenceItem->vApplClass,
+        fillReferenceItem(&sri, ss, referenceItem->vApplClass,
                           referenceItem->type, referenceItem->storage, referenceItem->scope, referenceItem->category);
 
         completion = newCompletion(name, fullName, 1, referenceItem->category, cType, *reference, sri);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
-        fillReferenceItem(&sri, "", NO_FILE_NUMBER, NO_FILE_NUMBER, TypeUnknown, StorageDefault,
+        fillReferenceItem(&sri, "", NO_FILE_NUMBER, TypeUnknown, StorageDefault,
                           ScopeAuto, CategoryLocal);
         completion = newCompletion(name, fullName, 1, CategoryLocal, cType, r, sri);
     } else {
@@ -81,7 +81,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         fillUsage(&r.usage, UsageDefined);
         fillReference(&r, r.usage, symbol->pos, NULL);
         fillReferenceItem(&sri, ss,
-                          vFunClass, vFunClass, symbol->type, storage,
+                          vApplClass, symbol->type, storage,
                           scope, category);
         completion = newCompletion(name, fullName, 1, category, cType, r, sri);
     }

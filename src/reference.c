@@ -29,9 +29,8 @@ Reference *duplicateReference(Reference *original) {
 }
 
 void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass,
-                        int vFunClass, Type symType, Storage storage, ReferenceScope scope,
-                        ReferenceCategory category) {
-    assert(vApplClass == vFunClass);
+                       Type symType, Storage storage, ReferenceScope scope,
+                       ReferenceCategory category) {
     referencesItem->linkName = name;
     referencesItem->fileHash = cxFileHashNumber(name);
     referencesItem->vApplClass = vApplClass;

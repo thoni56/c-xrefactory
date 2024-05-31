@@ -397,7 +397,7 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
     strcpy(lastOutgoingData.cachedSymbolName[symbolIndex], referenceItem->linkName);
     fillReferenceItem(&lastOutgoingData.cachedReferenceItem[symbolIndex],
                        lastOutgoingData.cachedSymbolName[symbolIndex],
-                       referenceItem->vApplClass, referenceItem->vApplClass, referenceItem->type,
+                       referenceItem->vApplClass, referenceItem->type,
                        referenceItem->storage, referenceItem->scope,
                        referenceItem->category);
     lastOutgoingData.symbolTab[symbolIndex]       = &lastOutgoingData.cachedReferenceItem[symbolIndex];
@@ -753,14 +753,11 @@ static int scanSymNameString(CharacterBuffer *cb, char *id, int size) {
 }
 
 
-static void getSymbolTypeAndClasses(Type *symbolType, int *vApplClass, int *vFunClass) {
+static void getSymbolTypeAndClasses(Type *symbolType, int *vApplClass) {
     *symbolType = lastIncomingData.data[CXFI_SYMBOL_TYPE];
 
     *vApplClass = decodeFileNumbers[lastIncomingData.data[CXFI_SUBCLASS]];
     assert(getFileItem(*vApplClass) != NULL);
-
-    *vFunClass = decodeFileNumbers[lastIncomingData.data[CXFI_SUPERCLASS]];
-    assert(getFileItem(*vFunClass) != NULL);
 }
 
 
@@ -771,7 +768,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
                                                          CxScanFileOperation operation
 ) {
     ReferenceItem *memb;
-    int symbolIndex, len, vApplClass, vFunClass;
+    int symbolIndex, len, vApplClass;
     Type symbolType;
     int storage;
     char *id;
@@ -782,7 +779,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
     id = lastIncomingData.cachedSymbolName[symbolIndex];
     len = scanSymNameString(cb, id, size);
-    getSymbolTypeAndClasses(&symbolType, &vApplClass, &vFunClass);
+    getSymbolTypeAndClasses(&symbolType, &vApplClass);
     //&fprintf(dumpOut,":scanning ref of %s %d %d: \n",id,symbolType,vFunClass);fflush(dumpOut);
     if (symbolType!=TypeCppInclude || strcmp(id, LINK_NAME_INCLUDE_REFS)!=0) {
         lastIncomingData.onLineReferencedSym = -1;
@@ -791,13 +788,13 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
 
     ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem[symbolIndex];
     lastIncomingData.symbolTab[symbolIndex] = referenceItem;
-    fillReferenceItem(referenceItem, id, vApplClass, vFunClass, symbolType, storage, ScopeGlobal, CategoryGlobal);
+    fillReferenceItem(referenceItem, id, vApplClass, symbolType, storage, ScopeGlobal, CategoryGlobal);
     if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
         // TODO: This is more or less the body of a newReferenceItem()
         char *ss = cxAlloc(len+1);
         strcpy(ss,id);
         memb = cxAlloc(sizeof(ReferenceItem));
-        fillReferenceItem(memb, ss, vApplClass, vFunClass, symbolType, storage,
+        fillReferenceItem(memb, ss, vApplClass, symbolType, storage,
                           ScopeGlobal, CategoryGlobal);
         addToReferencesTable(memb);
     }
@@ -849,7 +846,7 @@ static void scanFunction_SymbolName(int size,
                                     CxScanFileOperation operation
 ) {
     ReferenceItem *referencesItem, *member;
-    int symbolIndex, vApplClass, vFunClass, storage;
+    int symbolIndex, vApplClass, storage;
     Type symbolType;
     char *id;
 
@@ -863,11 +860,11 @@ static void scanFunction_SymbolName(int size,
     assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
     id = lastIncomingData.cachedSymbolName[symbolIndex];
     scanSymNameString(cb, id, size);
-    getSymbolTypeAndClasses(&symbolType, &vApplClass, &vFunClass);
+    getSymbolTypeAndClasses(&symbolType, &vApplClass);
 
     referencesItem = &lastIncomingData.cachedReferenceItem[symbolIndex];
     lastIncomingData.symbolTab[symbolIndex] = referencesItem;
-    fillReferenceItem(referencesItem, id, vApplClass, vFunClass, symbolType, storage, ScopeGlobal, CategoryGlobal);
+    fillReferenceItem(referencesItem, id, vApplClass, symbolType, storage, ScopeGlobal, CategoryGlobal);
     bool isMember = isMemberInReferenceTable(referencesItem, NULL, &member);
     while (isMember && member->category!=CategoryGlobal)
         isMember = refTabNextMember(referencesItem, &member);
@@ -925,7 +922,7 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
                                                         CxScanFileOperation operation
 ) {
     Position pos;
-    int      file, line, col, symbolIndex, vApplClass, vFunClass;
+    int      file, line, col, symbolIndex, vApplClass;
     UsageKind usageKind;
     Usage usage;
     Type symbolType;
@@ -942,7 +939,7 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
 
     line = lastIncomingData.data[CXFI_LINE_INDEX];
     col = lastIncomingData.data[CXFI_COLUMN_INDEX];
-    getSymbolTypeAndClasses(&symbolType, &vApplClass, &vFunClass);
+    getSymbolTypeAndClasses(&symbolType, &vApplClass);
     log_trace("%d %d->%d %d", usageKind, file, decodeFileNumbers[file], line);
 
     pos = makePosition(file, line, col);

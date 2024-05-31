@@ -83,7 +83,7 @@ static FileItem *createListOfInputFileItems(void) {
 
 static void fillReferenceItemForIncludeFile(ReferenceItem *referencesItem, int fileNumber) {
     fillReferenceItem(referencesItem, LINK_NAME_INCLUDE_REFS,
-                      fileNumber, fileNumber, TypeCppInclude, StorageExtern,
+                      fileNumber, TypeCppInclude, StorageExtern,
                       ScopeGlobal, CategoryGlobal);
 }
 
