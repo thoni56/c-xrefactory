@@ -508,7 +508,7 @@ static void writePartialReferenceFile(bool updateFlag,
     mapOverFileTableWithIndex(mapfun);
     if (mapfun2!=NULL)
         mapOverFileTableWithIndex(mapfun2);
-    //scanCxFile(fullScanFunctionSequence);
+    scanCxFile(fullScanFunctionSequence);
     closeReferenceFile(filename);
 }
 
