@@ -780,7 +780,6 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     id = lastIncomingData.cachedSymbolName[symbolIndex];
     len = scanSymNameString(cb, id, size);
     getSymbolTypeAndClasses(&symbolType, &vApplClass);
-    //&fprintf(dumpOut,":scanning ref of %s %d %d: \n",id,symbolType,vFunClass);fflush(dumpOut);
     if (symbolType!=TypeCppInclude || strcmp(id, LINK_NAME_INCLUDE_REFS)!=0) {
         lastIncomingData.onLineReferencedSym = -1;
         return;

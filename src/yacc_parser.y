@@ -404,7 +404,7 @@ primary_expr
             assert(symbol->storage != StorageTypedef);
             $$.data.typeModifier = symbol->u.typeModifier;
             assert(options.mode);
-            $$.data.reference = addCxReference(symbol, &$1.data->position, UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
+            $$.data.reference = addCxReference(symbol, &$1.data->position, UsageUsed, NO_FILE_NUMBER);
         } else {
             /* implicit function declaration */
             TypeModifier *modifier;
@@ -418,7 +418,7 @@ primary_expr
             newSymbol->storage = StorageExtern;
 
             definitionSymbol = addNewSymbolDefinition(symbolTable, inputFileName, newSymbol, StorageExtern, UsageUsed);
-            $$.data.reference = addCxReference(definitionSymbol, &$1.data->position, UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
+            $$.data.reference = addCxReference(definitionSymbol, &$1.data->position, UsageUsed, NO_FILE_NUMBER);
         }
     }
     | CHAR_LITERAL          { $$.data.typeModifier = newSimpleTypeModifier(TypeInt); $$.data.reference = NULL;}
@@ -845,7 +845,7 @@ user_defined_type
             usage = USAGE_TOP_LEVEL_USED;
         else
             usage = UsageUsed;
-        addCxReference($1.data->symbol,&$1.data->position,usage,NO_FILE_NUMBER,NO_FILE_NUMBER);
+        addCxReference($1.data->symbol,&$1.data->position,usage,NO_FILE_NUMBER);
     }
     ;
 
@@ -1941,7 +1941,7 @@ static void addYaccSymbolReference(Id *name, int usage) {
     fillSymbol(&sss, name->name, name->name, name->position);
     sss.type = TypeYaccSymbol;
     sss.storage = StorageDefault;
-    addCxReference(&sss, &name->position, usage, NO_FILE_NUMBER, NO_FILE_NUMBER);
+    addCxReference(&sss, &name->position, usage, NO_FILE_NUMBER);
 }
 
 static void addRuleLocalVariable(Id *name, int order) {

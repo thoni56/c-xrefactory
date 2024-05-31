@@ -194,11 +194,8 @@ static bool olcxOnlyParseNoPushing(int opt) {
 
 
 /* ********************************************************************* */
-/* ********************************************************************* */
-/* default vappClass == vFunClass == NO_FILE_NUMBER  !!!!!!!             */
-/*                                                                       */
 Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
-                             int vFunCl, int vApplCl) {
+                             int vApplCl) {
     ReferenceCategory category;
     ReferenceScope    scope;
     Storage           storage;
@@ -226,8 +223,9 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
 
     getSymbolCxrefProperties(symbol, &category, &scope, &storage);
 
-    log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", symbol->linkName,
-              vFunCl,vApplCl, position->file, position->line, position->col, category==CategoryGlobal?"Global":"Local",
+    log_trace("adding reference on %s(%d) at %d,%d,%d (%s) (%s) (%s)",
+              symbol->linkName, vApplCl, position->file, position->line,
+              position->col, category==CategoryGlobal?"Global":"Local",
               usageKindEnumName[usage.kind], storageEnumName[symbol->storage]);
 
     assert(options.mode);
@@ -344,17 +342,18 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     return *place;
 }
 
-Reference *addCxReference(Symbol *symbol, Position *position, UsageKind usageKind, int vFunClass, int vApplClass) {
+Reference *addCxReference(Symbol *symbol, Position *position, UsageKind usageKind,
+                          int vApplClass) {
     Usage usage;
     fillUsage(&usage, usageKind);
-    return addNewCxReference(symbol, position, usage, vFunClass, vApplClass);
+    return addNewCxReference(symbol, position, usage, vApplClass);
 }
 
 void addTrivialCxReference(char *name, int symType, int storage, Position position, UsageKind usageKind) {
     Symbol symbol = makeSymbol(name, name, position);
     symbol.type = symType;
     symbol.storage = storage;
-    addCxReference(&symbol, &position, usageKind, NO_FILE_NUMBER, NO_FILE_NUMBER);
+    addCxReference(&symbol, &position, usageKind, NO_FILE_NUMBER);
 }
 
 
@@ -1974,8 +1973,7 @@ void olcxPrintPushingAction(ServerOperation operation) {
 #ifdef DUMP_SELECTION_MENU
 static void olcxDumpSelectionMenu(SymbolsMenu *menu) {
     for (SymbolsMenu *s=menu; s!=NULL; s=s->next) {
-        log_trace">> %d/%d %s %s %s %d", s->defRefn, s->refn, s->references.linkName,
-            simpleFileName(getFileItem(s->references.vFunClass)->name),
+        log_trace">> %d/%d %s %s %d", s->defRefn, s->refn, s->references.linkName,
             simpleFileName(getFileItem(s->references.vApplClass)->name),
             s->outOnLine);
     }
