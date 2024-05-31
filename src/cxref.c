@@ -462,7 +462,7 @@ void olcxAddReferences(Reference *list, Reference **dlist,
     revlist = NULL;
     while (list!=NULL) {
         if (fnum==ANY_FILE || fnum==list->position.file) {
-            olcxAddReference(dlist, list, bestMatchFlag);
+            olcxAddReference(dlist, list);
         }
         tmp = list->next; list->next = revlist;
         revlist = list;   list = tmp;
@@ -472,7 +472,7 @@ void olcxAddReferences(Reference *list, Reference **dlist,
 
 static void olcxAddReferencesToSymbolsMenu(SymbolsMenu *menu, Reference *references, int bestFitFlag) {
     for (Reference *rr = references; rr != NULL; rr = rr->next) {
-        olcxAddReferenceToSymbolsMenu(menu, rr, bestFitFlag);
+        olcxAddReferenceToSymbolsMenu(menu, rr);
     }
 }
 
@@ -2340,7 +2340,7 @@ void putOnLineLoadedReferences(ReferenceItem *p) {
     if (ols > 0) {
         assert(cms);
         for (Reference *rr=p->references; rr!=NULL; rr=rr->next) {
-            olcxAddReferenceToSymbolsMenu(cms, rr, (ols == 2));
+            olcxAddReferenceToSymbolsMenu(cms, rr);
         }
     }
 }

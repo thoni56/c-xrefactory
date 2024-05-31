@@ -42,10 +42,10 @@ bool isReferenceInList(Reference *r, Reference *list) {
     return (bool) mock(r, list);
 }
 
-Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int bestMatchFlag) {
-    return (Reference *) mock(rlist, ref, bestMatchFlag);
+Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref) {
+    return (Reference *) mock(rlist, ref);
 }
 
-Reference *olcxAddReference(Reference **rlist, Reference *ref, int bestMatchFlag) {
-    return (Reference *) mock(rlist, ref, bestMatchFlag);
+Reference *olcxAddReference(Reference **rlist, Reference *ref) {
+    return (Reference *) mock(rlist, ref);
 }

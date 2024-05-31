@@ -44,11 +44,9 @@ extern void freeReferences(Reference *references);
 extern void resetReferenceUsage(Reference *reference, UsageKind usageKind);
 extern Reference **addToReferenceList(Reference **list, Usage usage, Position pos);
 extern Reference *olcxAddReferenceNoUsageCheck(Reference **rlist,
-                                               Reference *ref,
-                                               int bestMatchFlag);
+                                               Reference *ref);
 extern bool isReferenceInList(Reference *r, Reference *list);
 extern Reference *olcxAddReference(Reference **rlist,
-                                   Reference *ref,
-                                   int bestMatchFlag);
+                                   Reference *ref);
 
 #endif

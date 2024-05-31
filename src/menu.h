@@ -26,7 +26,7 @@ extern void fillSymbolsMenu(SymbolsMenu *menu, struct referenceItem s, bool sele
 
 extern SymbolsMenu *freeSymbolsMenu(SymbolsMenu *menu);
 extern void freeSymbolsMenuList(SymbolsMenu *menu);
-extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int bestFitFlag);
+extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference);
 extern void olcxPrintSelectionMenu(SymbolsMenu *menu);
 extern SymbolsMenu *olCreateNewMenuItem(ReferenceItem *sym, int vApplClass, int vFunCl,
                                         Position *defpos, int defusage, int selected, int visible,

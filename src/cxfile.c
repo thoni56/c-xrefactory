@@ -96,7 +96,7 @@ static int generatedFieldMarkersList[] = {
 typedef struct lastCxFileData {
     int                 onLineReferencedSym;
     SymbolsMenu         *onLineRefMenuItem;
-    int                 onLineRefIsBestMatchFlag; // vyhodit ?
+    int                 onLineRefIsBestMatchFlag; // vyhodit ("throw away") ?
     ReferenceItem *symbolTab[MAX_CX_SYMBOL_TAB];
     bool                symbolIsWritten[MAX_CX_SYMBOL_TAB];
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
@@ -805,8 +805,9 @@ static void cxfileCheckLastSymbolDeadness(void) {
     if (lastIncomingData.symbolToCheckForDeadness != -1
         && lastIncomingData.deadSymbolIsDefined
     ) {
-        olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, lastIncomingData.symbolTab[lastIncomingData.symbolToCheckForDeadness],
-                           true, true, 0, UsageDefined, 0, &noPosition, UsageDefined);
+        olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym,
+                                 lastIncomingData.symbolTab[lastIncomingData.symbolToCheckForDeadness],
+                                 true, true, 0, UsageDefined, 0, &noPosition, UsageDefined);
     }
 }
 
@@ -1037,8 +1038,7 @@ static void scanFunction_Reference(int size,
                             options.serverOperation == OLO_GOTO || options.serverOperation == OLO_CGOTO ||
                             options.serverOperation == OLO_PUSH_NAME) {
                             log_trace (":adding reference %s:%d", referenceFileItem->name, reference.position.line);
-                            olcxAddReferenceToSymbolsMenu(lastIncomingData.onLineRefMenuItem, &reference,
-                                                          lastIncomingData.onLineRefIsBestMatchFlag);
+                            olcxAddReferenceToSymbolsMenu(lastIncomingData.onLineRefMenuItem, &reference);
                         }
                     } else if (operation == CXSF_BY_PASS) {
                         if (positionsAreEqual(olcxByPassPos,reference.position)) {
@@ -1048,8 +1048,7 @@ static void scanFunction_Reference(int size,
                                                true, true, 0, usageKind,0,&noPosition, UsageNone);
                         }
                     } else {
-                        olcxAddReference(&sessionData.browserStack.top->references, &reference,
-                                         lastIncomingData.onLineRefIsBestMatchFlag);
+                        olcxAddReference(&sessionData.browserStack.top->references, &reference);
                     }
                 }
             }

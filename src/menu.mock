@@ -29,8 +29,8 @@ void freeSymbolsMenuList(SymbolsMenu *menu) {
     mock(menu);
 }
 
-void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int bestFitFlag) {
-    mock(menu, reference, bestFitFlag);
+void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference) {
+    mock(menu, reference);
 }
 
 void olcxPrintSelectionMenu(SymbolsMenu *menu) {

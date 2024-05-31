@@ -84,7 +84,7 @@ bool isReferenceInList(Reference *reference, Reference *list) {
     return true;
 }
 
-Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int bestMatchFlag) {
+Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref) {
     Reference **place, *rr;
     rr = NULL;
     SORTED_LIST_PLACE2(place, *ref, rlist);
@@ -99,12 +99,12 @@ Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int b
 }
 
 
-Reference *olcxAddReference(Reference **rlist, Reference *ref, int bestMatchFlag) {
+Reference *olcxAddReference(Reference **rlist, Reference *ref) {
     log_trace("checking ref %s %s:%d:%d at %d", usageKindEnumName[ref->usage.kind],
               simpleFileName(getFileItem(ref->position.file)->name), ref->position.line, ref->position.col, ref);
     if (!OL_VIEWABLE_REFS(ref))
         return NULL; // no regular on-line refs
-    return olcxAddReferenceNoUsageCheck(rlist, ref, bestMatchFlag);
+    return olcxAddReferenceNoUsageCheck(rlist, ref);
 }
 
 #if 0
