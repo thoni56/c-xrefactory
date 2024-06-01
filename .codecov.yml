@@ -8,7 +8,7 @@ coverage:
         flags: integration
 
 ignore:
-  - "**/*.mock"
+  - "src/*.mock"
   
 flags:
   # filter the folder(s) you wish to measure by that flag
