@@ -101,8 +101,8 @@ typedef struct lastCxFileData {
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
     char                tags[MAX_CHARS];
     int                 data[MAX_CHARS];
-    void                (*fun[MAX_CHARS])(int size, int marker, CharacterBuffer *cb, CxScanFileOperation operation);
-    int                 additional[MAX_CHARS];
+    void                (*handlerFunction[MAX_CHARS])(int size, int marker, CharacterBuffer *cb, CxScanFileOperation operation);
+    int                 argument[MAX_CHARS];
 
     // dead code detection vars
     int                 symbolToCheckForDeadness;
@@ -128,8 +128,8 @@ static FILE *currentReferenceFile;
 
 typedef struct scanFileFunctionStep {
     int		recordCode;
-    void    (*handleFun)(int size, int ri, CharacterBuffer *cb, CxScanFileOperation operation); /* TODO: Break out a type */
-    int		additionalArg;
+    void    (*handlerFunction)(int size, int ri, CharacterBuffer *cb, CxScanFileOperation operation); /* TODO: Break out a type */
+    int		argument;
 } ScanFileFunctionStep;
 
 
@@ -410,6 +410,7 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
         log_trace("checking ref: loading=%d --< %s:%d", fileItem->cxLoading,
                   fileItem->name, reference->position.line);
         if (options.update==UPDATE_DEFAULT || fileItem->cxLoading) {
+            assert(symbolIndex == 0);
             writeCxReference(reference, symbolIndex);
         } else {
             log_trace("Some kind of update (%d) or loading (%d), so don't writeCxReference()",
@@ -1082,7 +1083,7 @@ static int scanInteger(CharacterBuffer *cb, int *_ch) {
 }
 
 
-static void scanCxFile(ScanFileFunctionStep *scanFunctionTable) {
+static void scanCxFile(ScanFileFunctionStep scanFunctionTable[]) {
     int scannedInt = 0;
     int ch;
 
@@ -1104,8 +1105,8 @@ static void scanCxFile(ScanFileFunctionStep *scanFunctionTable) {
     for (int i=0; scanFunctionTable[i].recordCode>0; i++) {
         assert(scanFunctionTable[i].recordCode < MAX_CHARS);
         ch = scanFunctionTable[i].recordCode;
-        lastIncomingData.fun[ch] = scanFunctionTable[i].handleFun;
-        lastIncomingData.additional[ch] = scanFunctionTable[i].additionalArg;
+        lastIncomingData.handlerFunction[ch] = scanFunctionTable[i].handlerFunction;
+        lastIncomingData.argument[ch] = scanFunctionTable[i].argument;
     }
 
     initCharacterBuffer(&cxFileCharacterBuffer, currentReferenceFile);
@@ -1120,9 +1121,9 @@ static void scanCxFile(ScanFileFunctionStep *scanFunctionTable) {
         if (lastIncomingData.tags[ch]) {
             lastIncomingData.data[ch] = scannedInt;
         }
-        if (lastIncomingData.fun[ch] != NULL) {
-            (*lastIncomingData.fun[ch])(scannedInt, ch, &cxFileCharacterBuffer,
-                                        lastIncomingData.additional[ch]);
+        if (lastIncomingData.handlerFunction[ch] != NULL) {
+            (*lastIncomingData.handlerFunction[ch])(scannedInt, ch, &cxFileCharacterBuffer,
+                                        lastIncomingData.argument[ch]);
         } else if (!lastIncomingData.tags[ch]) {
             assert(scannedInt>0);
             skipCharacters(&cxFileCharacterBuffer, scannedInt-1);
