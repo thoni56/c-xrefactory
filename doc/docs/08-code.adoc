@@ -167,18 +167,30 @@ be tidied up.
 
 === Reference Database
 
-`c-xref` creates a database of references for all symbols it encounters. There is limited
-support to automatically update these in the edit-compile cycle, you might have to
-update manually now and then.
+`c-xref` run in "xref" mode creates, or updates, a database of
+references for all externally visible symbols it encounters.
 
-The project settings (or command line options) indicate where the file(s) are created
-and one option controls the number of files to be used, `-refnum`.
+A good design should have a clean and generic interface to the
+reference database, but this is still a work in progress to chisel
+this out.
+
+==== CXFILE
+
+The current implementation of the reference database is file based,
+with an optimized storage format.
+
+There is limited support to automatically keep these updated during an
+edit-compile cycle, you might have to update manually now and then.
+
+The project settings (or command line options) indicate where the
+file(s) are created and one option controls the number of files to be
+used, `-refnum`.
 
 This file (or files) contains compact, but textual representations of
 the cross-reference information. Format is somewhat complex, but here
 are somethings that I think I have found out:
 
-- the encoding has one character markers which are listed at the top
+- the encoding has single character markers which are listed at the top
   of cxfile.c
 
 - the coding seems to often start with a number and then a character,
@@ -212,6 +224,23 @@ file name itself is 84 characters long.
 NOTE: TODO: Build a tool to decipher this so that tests can query the
 generated data for expected data. This is now partly ongoing in the
 'utils' directory.
+
+==== Reference Database Reading
+
+All information about an externally visible symbol is stored in one,
+and only one reference file, determined by hashing the linkname of the
+symbol. So it will always suffice to read one reference file when
+consulting the reference database (in the form of CXFILE) for a
+symbol.
+
+The reading of the CXFILE format is controlled by
+`scanFunctionTable`s. These consists of a list of entries, one for
+each key/tag/recordCode (see format description above) that the scan
+will process.
+
+As the reference file reading encounters a key/tag/recordCode it will
+consult the table and see if there is an entry pointing to a handler
+function for that key/tag/recordCode. If so, it will be called. 
 
 === Editor Plugin
 
