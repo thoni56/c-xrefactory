@@ -77,7 +77,7 @@ endif
 # Always export following variables to environment of sub-makes (to use you need "-e")
 
 # Build with coverage for all cases except "prod"
-export COVERAGE = --coverage
+export COVERAGE = --ftest-coverage
 export CC = cc
 
 # Other variables
@@ -111,11 +111,11 @@ ifeq ($(OS),Darwin)
   LDFLAGS += -arch arm64 -arch x86_64
 endif
 
-# We need to use compatible gcov (for Darwin/Brew with Homebrew gcc-13 we need to use GCC:s gcov)
-ifeq ("$(CC)", "gcc-13")
-	LCOV = lcov --gcov-tool gcov-13
-	GCOV = gcov-13
-	GCOV_TOOL = gcov-tool-13
+# We need to use compatible gcov (for Darwin/Brew with Homebrew gcc-14 we need to use GCC:s gcov)
+ifeq ("$(CC)", "gcc-14")
+	LCOV = lcov --gcov-tool gcov-14
+	GCOV = gcov-14
+	GCOV_TOOL = gcov-tool-14
 else
 	LCOV = lcov
 	GCOV = gcov
@@ -360,6 +360,7 @@ coverage-report:
 # We create separate coverage files for each test to be able to run them in parallel (see ../tests/Makefile)
 ifeq ($(HAVE_GCOV_TOOL),yes)
 # Then we can merge all .gcda for all tests into the .gcda in OBJDIR using it, which is very fast!
+	echo "Merge all generated .gcda using $(GCOV_TOOL)"
 	-for tc in ../tests/*/.coverage ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
 # And then create .gcov for Emacs cov-mode
 	$(MAKE) gcov
