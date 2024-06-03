@@ -97,10 +97,10 @@ ROOTDIR=..
 # byacc and yacc/bison
 YACC=$(ROOTDIR)/byacc-1.9/yacc
 
-# On Darwin we can use gcc-13 if available
+# On Darwin we can use gcc-14 if available
 ifeq ($(OS),Darwin)
-#	ifneq (, $(shell command -v gcc-13 2> /dev/null))
-#		CC=gcc-13
+#	ifneq (, $(shell command -v gcc-14 2> /dev/null))
+#		CC=gcc-14
 #	endif
 #	ifeq ($(shell arch),arm64)
 #		# And for Homebrew on M1
