@@ -77,7 +77,7 @@ endif
 # Always export following variables to environment of sub-makes (to use you need "-e")
 
 # Build with coverage for all cases except "prod"
-export COVERAGE = --ftest-coverage
+export COVERAGE = --coverage
 export CC = cc
 
 # Other variables
