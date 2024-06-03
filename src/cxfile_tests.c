@@ -21,7 +21,6 @@
 #include "misc.mock"
 #include "options.mock"
 #include "reference.mock"
-#include "reftab.h"
 #include "reftab.mock"
 
 

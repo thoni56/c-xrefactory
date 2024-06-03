@@ -1,7 +1,6 @@
 #include "menu.h"
 
 #include "classhierarchy.h"
-#include "cxfile.h"
 #include "globals.h"
 #include "list.h"
 #include "log.h"
