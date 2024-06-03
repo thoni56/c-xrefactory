@@ -26,20 +26,20 @@
 
 #define CXFI_FILE_FUMTIME    'm'     /* last full update mtime for file item */
 #define CXFI_FILE_UMTIME     'p'     /* last update mtime for file item */
-#define CXFI_SOURCE_INDEX    'o'     /* source index for java classes */
 #define CXFI_COMMAND_LINE_ARGUMENT  'i'     /* file was introduced from command line */
 
 #define CXFI_USAGE           'u'
-#define CXFI_REQUIRED_ACCESS 'A'     /* java reference required accessibility index */
 #define CXFI_FILE_NUMBER     'f'
 #define CXFI_SYMBOL_INDEX    's'
 #define CXFI_LINE_INDEX      'l'
 #define CXFI_COLUMN_INDEX    'c'
 #define CXFI_REFERENCE       'r'     /* using 'fsulc' */
 
-#define CXFI_ACCESS_BITS     'a'     /* java access bit */
 #define CXFI_SYMBOL_TYPE     't'
 
+#define CXFI_SOURCE_INDEX    'o'     /* source index for java classes */
+#define CXFI_ACCESS_BITS     'a'     /* java access bit */
+#define CXFI_REQUIRED_ACCESS 'A'     /* java reference required accessibility index */
 #define CXFI_SUBCLASS        'd'     /* dole = down in slovac */
 #define CXFI_SUPERCLASS      'h'     /* hore = up in slovac */
 
@@ -52,7 +52,7 @@
 #define CXFI_CHECK_NUMBER    'k'
 #define CXFI_REFNUM          'n'
 #define CXFI_VERSION         'v'
-#define CXFI_TAG_LIST     '@'
+#define CXFI_TAG_LIST        '@'
 #define CXFI_REMARK          '#'
 
 
