@@ -61,7 +61,7 @@ typedef enum {
     CXSF_DEFAULT,
     CXSF_JUST_READ,
     CXSF_GENERATE_OUTPUT,
-    CXSF_BY_PASS,
+    CXSF_BYPASS,
     CXSF_FIRST_PASS,
     CXSF_MENU_CREATION,
     CXSF_DEAD_CODE_DETECTION,
@@ -900,12 +900,12 @@ static void scanFunction_SymbolName(int size,
                     else
                         ols = 1;
                 }
-            } else if (operation!=CXSF_BY_PASS) {
+            } else if (operation!=CXSF_BYPASS) {
                 ols=itIsSymbolToPushOlReferences(referencesItem, sessionData.browserStack.top, &cms,
                                                  DEFAULT_VALUE);
             }
             lastIncomingData.onLineRefMenuItem = cms;
-            if (ols || (operation==CXSF_BY_PASS && canBypassAcceptableSymbol(referencesItem))) {
+            if (ols || (operation==CXSF_BYPASS && canBypassAcceptableSymbol(referencesItem))) {
                 lastIncomingData.onLineReferencedSym = symbolIndex;
                 log_trace("symbol %s is O.K. for %s (ols==%d)", referencesItem->linkName, options.browsedSymName, ols);
             } else {
@@ -1041,7 +1041,7 @@ static void scanFunction_Reference(int size,
                             log_trace (":adding reference %s:%d", referenceFileItem->name, reference.position.line);
                             olcxAddReferenceToSymbolsMenu(lastIncomingData.onLineRefMenuItem, &reference);
                         }
-                    } else if (operation == CXSF_BY_PASS) {
+                    } else if (operation == CXSF_BYPASS) {
                         if (positionsAreEqual(olcxByPassPos,reference.position)) {
                             // got the bypass reference
                             log_trace(":adding bypass selected symbol %s", lastIncomingData.symbolTab[sym]->linkName);
@@ -1293,8 +1293,8 @@ static ScanFileFunctionStep byPassFunctionSequence[]={
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
-    {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_BY_PASS},
-    {CXFI_REFERENCE, scanFunction_Reference, CXSF_BY_PASS},
+    {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_BYPASS},
+    {CXFI_REFERENCE, scanFunction_Reference, CXSF_BYPASS},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
