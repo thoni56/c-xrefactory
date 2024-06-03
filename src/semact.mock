@@ -71,8 +71,8 @@ Symbol *typeSpecifier1(unsigned t) {
     return (Symbol *) mock(t);
 }
 
-void declTypeSpecifier1(Symbol *d, unsigned t) {
-    mock(d, t);
+void declTypeSpecifier1(Symbol *d, Type type) {
+    mock(d, type);
 }
 
 Symbol *typeSpecifier2(TypeModifier *t) {
@@ -87,8 +87,8 @@ TypeModifier *addComposedTypeToSymbol(Symbol *symbol, Type type) {
     return (TypeModifier *)mock(symbol, type);
 }
 
-TypeModifier *appendComposedType(TypeModifier **d, unsigned t) {
-    return (TypeModifier *) mock(d, t);
+TypeModifier *appendComposedType(TypeModifier **d, Type type) {
+    return (TypeModifier *) mock(d, type);
 }
 
 void completeDeclarator(Symbol *t, Symbol *d) {
@@ -103,8 +103,8 @@ SymbolList *createDefinitionList(Symbol *symbol) {
     return (SymbolList *) mock(symbol);
 }
 
-Symbol *createSimpleDefinition(unsigned storage, unsigned t, Id *id) {
-    return (Symbol *) mock(storage, t, id);
+Symbol *createSimpleDefinition(Storage storage, Type type, Id *id) {
+    return (Symbol *) mock(storage, type, id);
 }
 
 int findStructureMember(Symbol *symbol, char *recname, Symbol **res) {
