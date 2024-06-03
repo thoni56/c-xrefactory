@@ -26,7 +26,6 @@ typedef struct reference {
 // !!! if you add a pointer to this structure, then update olcxCopyReference!
 typedef struct referenceItem {
     char                     *linkName;
-    unsigned                  fileHash;
     int                       vApplClass; /* appl class for java virtuals, but also something else ... */
     Type                      type : SYMTYPES_LN;
     Storage                   storage : STORAGES_LN;

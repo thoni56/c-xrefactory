@@ -518,10 +518,10 @@ static void writeReferencesFromMemoryIntoRefFileNo(int fileOrder) {
                 continue;
             if (r->references == NULL)
                 continue;
-            if (r->fileHash == fileOrder)
+            if (cxFileHashNumber(r->linkName) == fileOrder)
                 writeReferenceItem(r);
             else
-                log_trace("Skipping reference with hash %d", r->fileHash);
+                log_trace("Skipping reference with linkname \"%d\"", r->linkName);
         }
     }
 }

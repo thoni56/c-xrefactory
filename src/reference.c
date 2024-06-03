@@ -32,7 +32,6 @@ void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass
                        Type symType, Storage storage, ReferenceScope scope,
                        ReferenceCategory category) {
     referencesItem->linkName = name;
-    referencesItem->fileHash = cxFileHashNumber(name);
     referencesItem->vApplClass = vApplClass;
     referencesItem->references = NULL;
     referencesItem->next = NULL;
