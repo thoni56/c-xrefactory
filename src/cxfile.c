@@ -96,7 +96,7 @@ static int generatedFieldKeyList[] = {
 typedef struct lastCxFileData {
     int                 onLineReferencedSym;
     SymbolsMenu        *onLineRefMenuItem;
-    ReferenceItem      *symbolTab[MAX_CX_SYMBOL_TAB];
+    ReferenceItem      *referenceItem;
     bool                symbolIsWritten[MAX_CX_SYMBOL_TAB];
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
     bool                keyUsed[MAX_CHARS];
@@ -321,21 +321,19 @@ static void writeStringRecord(int tag, char *string, char *prefix) {
 }
 
 /* Here we do the actual writing of the symbol */
-static void writeSymbolItem(int symbolIndex) {
-    assert(symbolIndex == 0);
-
+static void writeSymbolItem(void) {
     /* First the symbol info, if not done already */
-    writeOptionalCompactRecord(CXFI_SYMBOL_INDEX, symbolIndex, "");
+    writeOptionalCompactRecord(CXFI_SYMBOL_INDEX, 0, "");
 
     /* Then the reference info */
-    ReferenceItem *r = lastOutgoingData.symbolTab[symbolIndex];
+    ReferenceItem *r = lastOutgoingData.referenceItem;
     writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, r->type, "\n"); /* Why newline in the middle of all this? */
     writeOptionalCompactRecord(CXFI_SUBCLASS, r->vApplClass, "");
     writeOptionalCompactRecord(CXFI_SUPERCLASS, r->vApplClass, "");
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, ""); /* TODO - not used anymore */
     writeOptionalCompactRecord(CXFI_STORAGE, r->storage, "");
-    lastOutgoingData.macroBaseFileGeneratedForSym[symbolIndex] = 0;
-    lastOutgoingData.symbolIsWritten[symbolIndex] = true;
+    lastOutgoingData.macroBaseFileGeneratedForSym[0] = 0;
+    lastOutgoingData.symbolIsWritten[0] = true;
     writeStringRecord(CXFI_SYMBOL_NAME, r->linkName, "\t");
     fputc('\t', cxFile);
 }
@@ -343,24 +341,24 @@ static void writeSymbolItem(int symbolIndex) {
 static void writeSymbolItemIfNotWritten(int symbolIndex) {
     assert(symbolIndex == 0);
 
-    if (! lastOutgoingData.symbolIsWritten[symbolIndex]) {
-        writeSymbolItem(symbolIndex);
+    if (! lastOutgoingData.symbolIsWritten[0]) {
+        writeSymbolItem();
     }
 }
 
 static void writeCxReferenceBase(int symbolIndex, UsageKind usage, int requiredAccess, int file, int line, int col) {
     assert(symbolIndex == 0);
 
-    writeSymbolItemIfNotWritten(symbolIndex);
+    writeSymbolItemIfNotWritten(0);
     if (usage == UsageMacroBaseFileUsage) {
         /* optimize the number of those references to 1 */
         assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
-        if (lastOutgoingData.macroBaseFileGeneratedForSym[symbolIndex]) return;
-        lastOutgoingData.macroBaseFileGeneratedForSym[symbolIndex] = 1;
+        if (lastOutgoingData.macroBaseFileGeneratedForSym[0]) return;
+        lastOutgoingData.macroBaseFileGeneratedForSym[0] = 1;
     }
     writeOptionalCompactRecord(CXFI_USAGE, usage, "");
     writeOptionalCompactRecord(CXFI_REQUIRED_ACCESS, requiredAccess, "");
-    writeOptionalCompactRecord(CXFI_SYMBOL_INDEX, symbolIndex, "");
+    writeOptionalCompactRecord(CXFI_SYMBOL_INDEX, 0, "");
     writeOptionalCompactRecord(CXFI_FILE_NUMBER, file, "");
     writeOptionalCompactRecord(CXFI_LINE_INDEX, line, "");
     writeOptionalCompactRecord(CXFI_COLUMN_INDEX, col, "");
@@ -369,7 +367,7 @@ static void writeCxReferenceBase(int symbolIndex, UsageKind usage, int requiredA
 
 static void writeCxReference(Reference *reference, int symbolIndex) {
     assert(symbolIndex == 0);
-    writeCxReferenceBase(symbolIndex, reference->usage.kind, 0,
+    writeCxReferenceBase(0, reference->usage.kind, 0,
                          reference->position.file, reference->position.line, reference->position.col);
 }
 
@@ -397,14 +395,14 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
     log_trace("generate cxref for symbol '%s'", referenceItem->linkName);
     assert(strlen(referenceItem->linkName)+1 < MAX_CX_SYMBOL_SIZE);
 
-    strcpy(lastOutgoingData.cachedSymbolName[symbolIndex], referenceItem->linkName);
-    fillReferenceItem(&lastOutgoingData.cachedReferenceItem[symbolIndex],
-                       lastOutgoingData.cachedSymbolName[symbolIndex],
+    strcpy(lastOutgoingData.cachedSymbolName[0], referenceItem->linkName);
+    fillReferenceItem(&lastOutgoingData.cachedReferenceItem[0],
+                       lastOutgoingData.cachedSymbolName[0],
                        referenceItem->vApplClass, referenceItem->type,
                        referenceItem->storage, referenceItem->scope,
                        referenceItem->category);
-    lastOutgoingData.symbolTab[symbolIndex]       = &lastOutgoingData.cachedReferenceItem[symbolIndex];
-    lastOutgoingData.symbolIsWritten[symbolIndex] = false;
+    lastOutgoingData.referenceItem       = &lastOutgoingData.cachedReferenceItem[0];
+    lastOutgoingData.symbolIsWritten[0] = false;
 
     if (referenceItem->category == CategoryLocal)
         return;
@@ -415,7 +413,7 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
                   fileItem->name, reference->position.line);
         if (options.update==UPDATE_DEFAULT || fileItem->cxLoading) {
             assert(symbolIndex == 0);
-            writeCxReference(reference, symbolIndex);
+            writeCxReference(reference, 0);
         } else {
             log_trace("Some kind of update (%d) or loading (%d), so don't writeCxReference()",
                       options.update, fileItem->cxLoading);
@@ -748,19 +746,15 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
                                                          CxScanFileOperation operation
 ) {
     ReferenceItem *memb;
-    int symbolIndex, len, vApplClass;
+    int len, vApplClass;
     Type symbolType;
     int storage;
     char *id;
 
     assert(key == CXFI_SYMBOL_NAME);
     storage = lastIncomingData.data[CXFI_STORAGE];
-    symbolIndex = lastIncomingData.data[CXFI_SYMBOL_INDEX];
-    assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
 
-    assert(symbolIndex == 0);
-
-    id = lastIncomingData.cachedSymbolName[symbolIndex];
+    id = lastIncomingData.cachedSymbolName[0];
     len = scanSymbolName(cb, id, size);
     getSymbolTypeAndClasses(&symbolType, &vApplClass);
     if (symbolType!=TypeCppInclude || strcmp(id, LINK_NAME_INCLUDE_REFS)!=0) {
@@ -768,8 +762,8 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
         return;
     }
 
-    ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem[symbolIndex];
-    lastIncomingData.symbolTab[symbolIndex] = referenceItem;
+    ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem[0];
+    lastIncomingData.referenceItem = referenceItem;
     fillReferenceItem(referenceItem, id, vApplClass, symbolType, storage, ScopeGlobal, CategoryGlobal);
     if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
         // TODO: This is more or less the body of a newReferenceItem()
@@ -780,8 +774,8 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
                           ScopeGlobal, CategoryGlobal);
         addToReferencesTable(memb);
     }
-    lastIncomingData.symbolTab[symbolIndex] = memb;
-    lastIncomingData.onLineReferencedSym = symbolIndex;
+    lastIncomingData.referenceItem = memb;
+    lastIncomingData.onLineReferencedSym = 0;
 }
 
 static void cxfileCheckLastSymbolDeadness(void) {
@@ -789,7 +783,7 @@ static void cxfileCheckLastSymbolDeadness(void) {
         && lastIncomingData.deadSymbolIsDefined
     ) {
         olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym,
-                                 lastIncomingData.symbolTab[lastIncomingData.symbolToCheckForDeadness],
+                                 lastIncomingData.referenceItem,
                                  true, true, 0, UsageDefined, 0, &noPosition, UsageDefined);
     }
 }
@@ -834,12 +828,8 @@ static void scanFunction_SymbolName(int size,
         cxfileCheckLastSymbolDeadness();
     }
     Storage storage = lastIncomingData.data[CXFI_STORAGE];
-    int symbolIndex = lastIncomingData.data[CXFI_SYMBOL_INDEX];
-    assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
 
-    assert(symbolIndex == 0);
-
-    char *id = lastIncomingData.cachedSymbolName[symbolIndex];
+    char *id = lastIncomingData.cachedSymbolName[0];
     scanSymbolName(cb, id, size);
 
     Type symbolType;
@@ -847,8 +837,8 @@ static void scanFunction_SymbolName(int size,
     getSymbolTypeAndClasses(&symbolType, &vApplClass);
 
     ReferenceItem *referencesItem;
-    referencesItem = &lastIncomingData.cachedReferenceItem[symbolIndex];
-    lastIncomingData.symbolTab[symbolIndex] = referencesItem;
+    referencesItem = &lastIncomingData.cachedReferenceItem[0];
+    lastIncomingData.referenceItem = referencesItem;
     fillReferenceItem(referencesItem, id, vApplClass, symbolType, storage, ScopeGlobal, CategoryGlobal);
 
     ReferenceItem *member;
@@ -866,8 +856,8 @@ static void scanFunction_SymbolName(int size,
     }
     if (options.mode == ServerMode) {
         if (operation == CXSF_DEAD_CODE_DETECTION) {
-            if (symbolIsReportableAsUnused(lastIncomingData.symbolTab[symbolIndex])) {
-                lastIncomingData.symbolToCheckForDeadness = symbolIndex;
+            if (symbolIsReportableAsUnused(lastIncomingData.referenceItem)) {
+                lastIncomingData.symbolToCheckForDeadness = 0;
                 lastIncomingData.deadSymbolIsDefined = 0;
             } else {
                 lastIncomingData.symbolToCheckForDeadness = -1;
@@ -891,10 +881,10 @@ static void scanFunction_SymbolName(int size,
             }
             lastIncomingData.onLineRefMenuItem = cms;
             if (ols || (operation==CXSF_BYPASS && canBypassAcceptableSymbol(referencesItem))) {
-                lastIncomingData.onLineReferencedSym = symbolIndex;
+                lastIncomingData.onLineReferencedSym = 0;
                 log_trace("symbol %s is O.K. for %s (ols==%d)", referencesItem->linkName, options.browsedSymName, ols);
             } else {
-                if (lastIncomingData.onLineReferencedSym == symbolIndex) {
+                if (lastIncomingData.onLineReferencedSym == 0) {
                     lastIncomingData.onLineReferencedSym = -1;
                 }
             }
@@ -908,7 +898,7 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
                                                         CxScanFileOperation operation
 ) {
     Position pos;
-    int      file, line, col, symbolIndex, vApplClass;
+    int      file, line, col, vApplClass;
     UsageKind usageKind;
     Usage usage;
     Type symbolType;
@@ -917,10 +907,6 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
 
     usageKind = lastIncomingData.data[CXFI_USAGE];
     fillUsage(&usage, usageKind);
-
-    symbolIndex = lastIncomingData.data[CXFI_SYMBOL_INDEX];
-
-    assert(symbolIndex == 0);
 
     file = lastIncomingData.data[CXFI_FILE_NUMBER];
     file = fileNumberMapping[file];
@@ -932,7 +918,7 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
 
     pos = makePosition(file, line, col);
     if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]) {
-        addToReferenceList(&lastIncomingData.symbolTab[symbolIndex]->references, usage, pos);
+        addToReferenceList(&lastIncomingData.referenceItem->references, usage, pos);
     }
 }
 
@@ -956,15 +942,13 @@ static void scanFunction_Reference(int size,
     Position pos;
     Reference reference;
     Usage usage;
-    int       file, line, col, sym, reqAcc;
+    int       file, line, col, reqAcc;
     UsageKind usageKind;
     int copyrefFl;
 
     assert(key == CXFI_REFERENCE);
     usageKind = lastIncomingData.data[CXFI_USAGE];
     reqAcc = lastIncomingData.data[CXFI_REQUIRED_ACCESS];
-
-    sym = lastIncomingData.data[CXFI_SYMBOL_INDEX];
 
     file = lastIncomingData.data[CXFI_FILE_NUMBER];
     file = fileNumberMapping[file];
@@ -979,13 +963,13 @@ static void scanFunction_Reference(int size,
             /* if we repass refs after overflow */
             pos = makePosition(file, line, col);
             fillUsage(&usage, usageKind);
-            copyrefFl = !isInReferenceList(lastIncomingData.symbolTab[sym]->references,
+            copyrefFl = !isInReferenceList(lastIncomingData.referenceItem->references,
                                      usage, pos);
         } else {
             copyrefFl = !fileItem->cxLoading;
         }
         if (copyrefFl)
-            writeCxReferenceBase(sym, usageKind, reqAcc, file, line, col);
+            writeCxReferenceBase(0, usageKind, reqAcc, file, line, col);
     } else if (options.mode == ServerMode) {
         pos = makePosition(file, line, col);
         fillUsage(&usage, usageKind);
@@ -1016,7 +1000,7 @@ static void scanFunction_Reference(int size,
                          || options.searchKind==SEARCH_FULL_SHORT)
                         &&  (reference.usage.kind==UsageDeclared
                              || reference.usage.kind==UsageClassFileDefinition))) {
-                    searchSymbolCheckReference(lastIncomingData.symbolTab[sym],&reference);
+                    searchSymbolCheckReference(lastIncomingData.referenceItem, &reference);
                 }
             } else {
                 if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]) {
@@ -1031,8 +1015,8 @@ static void scanFunction_Reference(int size,
                     } else if (operation == CXSF_BYPASS) {
                         if (positionsAreEqual(olcxByPassPos,reference.position)) {
                             // got the bypass reference
-                            log_trace(":adding bypass selected symbol %s", lastIncomingData.symbolTab[sym]->linkName);
-                            olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, lastIncomingData.symbolTab[sym],
+                            log_trace(":adding bypass selected symbol %s", lastIncomingData.referenceItem->linkName);
+                            olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, lastIncomingData.referenceItem,
                                                true, true, 0, usageKind,0,&noPosition, UsageNone);
                         }
                     } else {
