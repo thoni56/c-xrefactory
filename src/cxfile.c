@@ -52,7 +52,7 @@
 #define CXFI_CHECK_NUMBER    'k'
 #define CXFI_REFNUM          'n'
 #define CXFI_VERSION         'v'
-#define CXFI_TAG_LIST        '@'
+#define CXFI_KEY_LIST        '@'
 #define CXFI_REMARK          '#'
 
 
@@ -99,7 +99,7 @@ typedef struct lastCxFileData {
     ReferenceItem *symbolTab[MAX_CX_SYMBOL_TAB];
     bool                symbolIsWritten[MAX_CX_SYMBOL_TAB];
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
-    char                tags[MAX_CHARS];
+    bool                keyUsed[MAX_CHARS];
     int                 data[MAX_CHARS];
     void                (*handlerFunction[MAX_CHARS])(int size, int marker, CharacterBuffer *cb, CxScanFileOperation operation);
     int                 argument[MAX_CHARS];
@@ -453,7 +453,7 @@ static void writeCxFileHead(void) {
 
     assert(i < MAX_CHARS);
     stringRecord[i]=0;
-    writeStringRecord(CXFI_TAG_LIST, stringRecord, "");
+    writeStringRecord(CXFI_KEY_LIST, stringRecord, "");
     writeCompactRecord(CXFI_REFNUM, options.referenceFileCount, " ");
     writeCompactRecord(CXFI_CHECK_NUMBER, COMPOSE_CXFI_CHECK_NUM(MAX_FILES,
                                                                  options.exactPositionResolve),
@@ -577,28 +577,28 @@ static void writeCxFileCompatibilityError(char *message) {
 
 /* ************************* READ **************************** */
 
-static void scanFunction_ReadRecordTags(int size,
-                                        int tag,
+static void scanFunction_ReadKeys(int size,
+                                        int key,
                                         CharacterBuffer *cb,
                                         CxScanFileOperation operation
 ) {
-    assert(tag == CXFI_TAG_LIST);
+    assert(key == CXFI_KEY_LIST);
     for (int i=0; i<size-1; i++) {
         int ch = getChar(cb);
-        lastIncomingData.tags[ch] = 1;
+        lastIncomingData.keyUsed[ch] = true;
     }
 }
 
 
 static void scanFunction_VersionCheck(int size,
-                                      int tag,
+                                      int key,
                                       CharacterBuffer *cb,
                                       CxScanFileOperation operation
 ) {
     char versionString[TMP_STRING_SIZE];
     char thisVersionString[TMP_STRING_SIZE];
 
-    assert(tag == CXFI_VERSION);
+    assert(key == CXFI_VERSION);
     getString(cb, versionString, size-1);
     get_version_string(thisVersionString);
     if (strcmp(versionString, thisVersionString) != 0) {
@@ -607,14 +607,14 @@ static void scanFunction_VersionCheck(int size,
 }
 
 static void scanFunction_CheckNumber(int size,
-                                     int tag,
+                                     int key,
                                      CharacterBuffer *cb,
                                      CxScanFileOperation operation
 ) {
     int magicn, filen, exactPositionLinkFlag;
     char tmpBuff[TMP_BUFF_SIZE];
 
-    assert(tag == CXFI_CHECK_NUMBER);
+    assert(key == CXFI_CHECK_NUMBER);
     if (options.create)
         return; // no check when creating new file
 
@@ -661,7 +661,7 @@ static int fileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
 }
 
 static void scanFunction_ReadFileName(int fileNameLength,
-                                      int tag,
+                                      int key,
                                       CharacterBuffer *cb,
                                       CxScanFileOperation operation
 ) {
@@ -671,7 +671,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
     bool isArgument, isInterface;
     time_t fumtime, umtime;
 
-    assert(tag == CXFI_FILE_NAME);
+    assert(key == CXFI_FILE_NAME);
     fumtime = (time_t) lastIncomingData.data[CXFI_FILE_FUMTIME];
     umtime = (time_t) lastIncomingData.data[CXFI_FILE_UMTIME];
     isArgument = lastIncomingData.data[CXFI_COMMAND_LINE_ARGUMENT];
@@ -739,7 +739,7 @@ static void getSymbolTypeAndClasses(Type *symbolType, int *vApplClass) {
 
 
 static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
-                                                         int tag,
+                                                         int key,
                                                          CharacterBuffer *cb,
                                                          CxScanFileOperation operation
 ) {
@@ -749,7 +749,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     int storage;
     char *id;
 
-    assert(tag == CXFI_SYMBOL_NAME);
+    assert(key == CXFI_SYMBOL_NAME);
     storage = lastIncomingData.data[CXFI_STORAGE];
     symbolIndex = lastIncomingData.data[CXFI_SYMBOL_INDEX];
     assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
@@ -817,11 +817,11 @@ static bool canBypassAcceptableSymbol(ReferenceItem *symbol) {
 }
 
 static void scanFunction_SymbolName(int size,
-                                    int tag,
+                                    int key,
                                     CharacterBuffer *cb,
                                     CxScanFileOperation operation
 ) {
-    assert(tag == CXFI_SYMBOL_NAME);
+    assert(key == CXFI_SYMBOL_NAME);
     if (options.mode==ServerMode && operation==CXSF_DEAD_CODE_DETECTION) {
         // check if previous symbol was dead
         cxfileCheckLastSymbolDeadness();
@@ -894,7 +894,7 @@ static void scanFunction_SymbolName(int size,
 }
 
 static void scanFunction_ReferenceForFullUpdateSchedule(int size,
-                                                        int tag,
+                                                        int key,
                                                         CharacterBuffer *cb,
                                                         CxScanFileOperation operation
 ) {
@@ -904,7 +904,7 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
     Usage usage;
     Type symbolType;
 
-    assert(tag == CXFI_REFERENCE);
+    assert(key == CXFI_REFERENCE);
 
     usageKind = lastIncomingData.data[CXFI_USAGE];
     fillUsage(&usage, usageKind);
@@ -938,7 +938,7 @@ static bool isInReferenceList(Reference *list, Usage usage, Position position) {
 
 
 static void scanFunction_Reference(int size,
-                                   int tag,
+                                   int key,
                                    CharacterBuffer *cb,
                                    CxScanFileOperation operation
 ) {
@@ -949,7 +949,7 @@ static void scanFunction_Reference(int size,
     UsageKind usageKind;
     int copyrefFl;
 
-    assert(tag == CXFI_REFERENCE);
+    assert(key == CXFI_REFERENCE);
     usageKind = lastIncomingData.data[CXFI_USAGE];
     reqAcc = lastIncomingData.data[CXFI_REQUIRED_ACCESS];
 
@@ -1035,7 +1035,7 @@ static void scanFunction_Reference(int size,
 
 
 static void scanFunction_ReferenceFileCountCheck(int fileCountInReferenceFile,
-                                                 int tag,
+                                                 int key,
                                                  CharacterBuffer *cb,
                                                  CxScanFileOperation operation
 ) {
@@ -1070,20 +1070,23 @@ static void scanCxFile(ScanFileFunctionStep scanFunctionTable[]) {
         return;
     }
 
+    /* Reset lastIncomingData */
     memset(&lastIncomingData, 0, sizeof(lastIncomingData));
     lastIncomingData.onLineReferencedSym = -1;
     lastIncomingData.symbolToCheckForDeadness = -1;
     lastIncomingData.onLineRefMenuItem = NULL;
-    lastIncomingData.tags[CXFI_SUBCLASS] = NO_FILE_NUMBER;
-    lastIncomingData.tags[CXFI_SUPERCLASS] = NO_FILE_NUMBER;
+    lastIncomingData.keyUsed[CXFI_SUBCLASS] = NO_FILE_NUMBER;
+    lastIncomingData.keyUsed[CXFI_SUPERCLASS] = NO_FILE_NUMBER;
     fileNumberMapping[NO_FILE_NUMBER] = NO_FILE_NUMBER;
 
+    /* Set up the keys and handlers from this table */
     for (int i=0; scanFunctionTable[i].recordCode>0; i++) {
         assert(scanFunctionTable[i].recordCode < MAX_CHARS);
         ch = scanFunctionTable[i].recordCode;
         lastIncomingData.handlerFunction[ch] = scanFunctionTable[i].handlerFunction;
         lastIncomingData.argument[ch] = scanFunctionTable[i].argument;
     }
+
 
     initCharacterBuffer(&cxFileCharacterBuffer, currentReferenceFile);
     ch = ' ';
@@ -1094,13 +1097,14 @@ static void scanCxFile(ScanFileFunctionStep scanFunctionTable[]) {
             break;
 
         assert(ch >= 0 && ch<MAX_CHARS);
-        if (lastIncomingData.tags[ch]) {
+        if (lastIncomingData.keyUsed[ch]) {
             lastIncomingData.data[ch] = scannedInt;
         }
         if (lastIncomingData.handlerFunction[ch] != NULL) {
             (*lastIncomingData.handlerFunction[ch])(scannedInt, ch, &cxFileCharacterBuffer,
-                                        lastIncomingData.argument[ch]);
-        } else if (!lastIncomingData.tags[ch]) {
+                                                    lastIncomingData.argument[ch]);
+        } else if (!lastIncomingData.keyUsed[ch]) {
+            /* We are not interested in this value so just skip over */
             assert(scannedInt>0);
             skipCharacters(&cxFileCharacterBuffer, scannedInt-1);
         }
@@ -1244,7 +1248,7 @@ void scanForSearch(char *cxrefLocation) {
 /* ************************************************************ */
 
 static ScanFileFunctionStep normalScanFunctionSequence[]={
-    {CXFI_TAG_LIST, scanFunction_ReadRecordTags, CXSF_NOP},
+    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
@@ -1252,7 +1256,7 @@ static ScanFileFunctionStep normalScanFunctionSequence[]={
 };
 
 static ScanFileFunctionStep fullScanFunctionSequence[]={
-    {CXFI_TAG_LIST, scanFunction_ReadRecordTags, CXSF_NOP},
+    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_GENERATE_OUTPUT},
@@ -1263,7 +1267,7 @@ static ScanFileFunctionStep fullScanFunctionSequence[]={
 };
 
 static ScanFileFunctionStep byPassFunctionSequence[]={
-    {CXFI_TAG_LIST, scanFunction_ReadRecordTags, CXSF_NOP},
+    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_BYPASS},
@@ -1273,7 +1277,7 @@ static ScanFileFunctionStep byPassFunctionSequence[]={
 };
 
 static ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
-    {CXFI_TAG_LIST, scanFunction_ReadRecordTags, CXSF_NOP},
+    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
@@ -1284,7 +1288,7 @@ static ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
 };
 
 static ScanFileFunctionStep fullUpdateFunctionSequence[]={
-    {CXFI_TAG_LIST, scanFunction_ReadRecordTags, CXSF_NOP},
+    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
@@ -1295,7 +1299,7 @@ static ScanFileFunctionStep fullUpdateFunctionSequence[]={
 };
 
 static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
-    {CXFI_TAG_LIST, scanFunction_ReadRecordTags, CXSF_NOP},
+    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_PASS_MACRO_USAGE},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_PASS_MACRO_USAGE},
@@ -1304,7 +1308,7 @@ static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
 };
 
 static ScanFileFunctionStep symbolSearchFunctionSequence[]={
-    {CXFI_TAG_LIST, scanFunction_ReadRecordTags, CXSF_NOP},
+    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, SEARCH_SYMBOL},
@@ -1313,7 +1317,7 @@ static ScanFileFunctionStep symbolSearchFunctionSequence[]={
 };
 
 static ScanFileFunctionStep globalUnusedDetectionFunctionSequence[]={
-    {CXFI_TAG_LIST, scanFunction_ReadRecordTags, CXSF_NOP},
+    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEAD_CODE_DETECTION},
