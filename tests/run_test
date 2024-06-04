@@ -20,10 +20,9 @@ else
     fi
     if ! command -v gcov-tool &> /dev/null ; then
         cd $1
-        # We need the .gcno here
-        rsync -q -acv --filter='+ */' --filter='+ *.gcno' --filter='- *' ../../src/.objects/ .coverage
+        eval export $GCOV_OPTIONS
         # Then we create a coverage.info for this test
-        lcov --version | grep -qv 'version 2' || lcovignore="--ignore-errors gcov,gcov --ignore-errors empty,empty"
-        lcov -q $lcovignore -c -d . -b ../../src -o .coverage/coverage.info 2>&1 | grep -v "did not produce any data" | cat
+        lcov --version | grep -qv 'version 2' || lcovignore="--ignore-errors gcov,gcov --ignore-errors empty,empty --ignore-errors usage,usage"
+        lcov -q $lcovignore -c -d .coverage -b ../../src --build-directory ../../src/.objects -o .coverage/coverage.info 2>&1 > /dev/null
     fi
 fi

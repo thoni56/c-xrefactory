@@ -1,11 +1,18 @@
 # Run all tests
 #
+# To be able to run tests in parallel we generate coverage files in each test directory's .coverage.
+# To aggregate them there are two ways:
+# 1. if there is a gcov-tool available this can merge `.gcda` files directly (fast), otherwise
+# 2. create a separate coverage.info for each test and merge them using lcov (slow)
+#
+# The magic of this is in `run_test` which runs the actual test, reports result on screen and collects coverage
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
-	ifneq (, $(shell which gcc-11))
-		CC=gcc-11
-		LCOV=lcov --gcov-tool=gcov-11
+	ifeq ($(CC), gcc-14)
+		LCOV=lcov --gcov-tool=gcov-14
+	else
+		LCOV=/Applications/Xcode.app//Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-cov
 	endif
 else
 	LCOV=lcov
@@ -61,6 +68,9 @@ list:
 clean:
 	rm -rf *.info */.coverage coverage
 
+coverage:
+	GCOV_PREFIX=$PWD/test_simple_push/.coverage/ GCOV_PREFIX_STRIP=7 lcov -v -c --build-directory ../src/.objects/ -d $PWD/test_simple_push/.coverage/ -b ../src -o test_simple_push.info
+
 # Be silent unless VERBOSE is set to something (VERBOSE=1)
 $(VERBOSE).SILENT:
 
@@ -85,7 +95,7 @@ autodiscovered_tests: $(TESTS)
 define RULE
 .PHONY: $(1)
 $(1):
-	+GCOV_OPTIONS="GCOV_PREFIX=$(CURDIR)/$(1)/.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`" ./run_test $(1)
+	+GCOV_OPTIONS="GCOV_PREFIX=$(CURDIR)/$(1)/.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF+1}'`" ./run_test $(1)
 endef
 
 # Loop over all test_ directories to create a rule for each
