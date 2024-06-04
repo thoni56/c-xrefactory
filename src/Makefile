@@ -315,7 +315,7 @@ lexem.h: c_parser.tab.h character_lexems.txt Makefile
 	echo "#endif" >> lexem.h.tmp
 	# Sanity check for content, otherwise yacc errored out probably
 	if grep " = " lexem.h.tmp > /dev/null ; then \
-		mv lexem.h.tmp lexem.h ; \
+		cmp lexem.h.tmp lexem.h || mv lexem.h.tmp lexem.h && rm lexem.h.tmp ; \
 	else \
 		rm lexem.h.tmp ; \
 	fi
