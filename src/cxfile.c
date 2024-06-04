@@ -69,7 +69,7 @@ typedef enum {
 } CxScanFileOperation;
 
 
-static int generatedFieldMarkersList[] = {
+static int generatedFieldKeyList[] = {
     CXFI_FILE_FUMTIME,
     CXFI_FILE_UMTIME,
     CXFI_FILE_NUMBER,
@@ -95,13 +95,14 @@ static int generatedFieldMarkersList[] = {
 
 typedef struct lastCxFileData {
     int                 onLineReferencedSym;
-    SymbolsMenu         *onLineRefMenuItem;
-    ReferenceItem *symbolTab[MAX_CX_SYMBOL_TAB];
+    SymbolsMenu        *onLineRefMenuItem;
+    ReferenceItem      *symbolTab[MAX_CX_SYMBOL_TAB];
     bool                symbolIsWritten[MAX_CX_SYMBOL_TAB];
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
     bool                keyUsed[MAX_CHARS];
     int                 data[MAX_CHARS];
-    void                (*handlerFunction[MAX_CHARS])(int size, int marker, CharacterBuffer *cb, CxScanFileOperation operation);
+    void                (*handlerFunction[MAX_CHARS])(int size, int key, CharacterBuffer *cb,
+                                                      CxScanFileOperation operation);
     int                 argument[MAX_CHARS];
 
     // dead code detection vars
@@ -311,43 +312,45 @@ static void writeOptionalCompactRecord(char tag, int data, char *blankPrefix) {
 }
 
 
-static void writeStringRecord(int tag, char *string, char *blankPrefix) {
-    int rsize;
-    rsize = strlen(string)+1;
-    if (*blankPrefix!=0)
-        fputs(blankPrefix, cxFile);
-    fPutDecimal(rsize, cxFile);
+static void writeStringRecord(int tag, char *string, char *prefix) {
+    if (*prefix!=0)
+        fputs(prefix, cxFile);
+    fPutDecimal(strlen(string)+1, cxFile);
     fputc(tag, cxFile);
     fputs(string, cxFile);
 }
 
 /* Here we do the actual writing of the symbol */
 static void writeSymbolItem(int symbolIndex) {
-    ReferenceItem *d;
+    assert(symbolIndex == 0);
 
     /* First the symbol info, if not done already */
     writeOptionalCompactRecord(CXFI_SYMBOL_INDEX, symbolIndex, "");
 
     /* Then the reference info */
-    d = lastOutgoingData.symbolTab[symbolIndex];
-    writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, d->type, "\n"); /* Why newline in the middle of all this? */
-    writeOptionalCompactRecord(CXFI_SUBCLASS, d->vApplClass, "");
-    writeOptionalCompactRecord(CXFI_SUPERCLASS, d->vApplClass, "");
+    ReferenceItem *r = lastOutgoingData.symbolTab[symbolIndex];
+    writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, r->type, "\n"); /* Why newline in the middle of all this? */
+    writeOptionalCompactRecord(CXFI_SUBCLASS, r->vApplClass, "");
+    writeOptionalCompactRecord(CXFI_SUPERCLASS, r->vApplClass, "");
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, ""); /* TODO - not used anymore */
-    writeOptionalCompactRecord(CXFI_STORAGE, d->storage, "");
+    writeOptionalCompactRecord(CXFI_STORAGE, r->storage, "");
     lastOutgoingData.macroBaseFileGeneratedForSym[symbolIndex] = 0;
     lastOutgoingData.symbolIsWritten[symbolIndex] = true;
-    writeStringRecord(CXFI_SYMBOL_NAME, d->linkName, "\t");
+    writeStringRecord(CXFI_SYMBOL_NAME, r->linkName, "\t");
     fputc('\t', cxFile);
 }
 
 static void writeSymbolItemIfNotWritten(int symbolIndex) {
+    assert(symbolIndex == 0);
+
     if (! lastOutgoingData.symbolIsWritten[symbolIndex]) {
         writeSymbolItem(symbolIndex);
     }
 }
 
 static void writeCxReferenceBase(int symbolIndex, UsageKind usage, int requiredAccess, int file, int line, int col) {
+    assert(symbolIndex == 0);
+
     writeSymbolItemIfNotWritten(symbolIndex);
     if (usage == UsageMacroBaseFileUsage) {
         /* optimize the number of those references to 1 */
@@ -364,8 +367,9 @@ static void writeCxReferenceBase(int symbolIndex, UsageKind usage, int requiredA
     writeCompactRecord(CXFI_REFERENCE, 0, "");
 }
 
-static void writeCxReference(Reference *reference, int symbolNum) {
-    writeCxReferenceBase(symbolNum, reference->usage.kind, 0,
+static void writeCxReference(Reference *reference, int symbolIndex) {
+    assert(symbolIndex == 0);
+    writeCxReferenceBase(symbolIndex, reference->usage.kind, 0,
                          reference->position.file, reference->position.line, reference->position.col);
 }
 
@@ -447,8 +451,8 @@ static void writeCxFileHead(void) {
     writeStringRecord(CXFI_VERSION, tempString, "\n\n");
     fprintf(cxFile,"\n\n\n");
 
-    for (i=0; i<MAX_CHARS && generatedFieldMarkersList[i] != -1; i++) {
-        stringRecord[i] = generatedFieldMarkersList[i];
+    for (i=0; i<MAX_CHARS && generatedFieldKeyList[i] != -1; i++) {
+        stringRecord[i] = generatedFieldKeyList[i];
     }
 
     assert(i < MAX_CHARS);
@@ -753,6 +757,9 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     storage = lastIncomingData.data[CXFI_STORAGE];
     symbolIndex = lastIncomingData.data[CXFI_SYMBOL_INDEX];
     assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
+
+    assert(symbolIndex == 0);
+
     id = lastIncomingData.cachedSymbolName[symbolIndex];
     len = scanSymbolName(cb, id, size);
     getSymbolTypeAndClasses(&symbolType, &vApplClass);
@@ -829,6 +836,8 @@ static void scanFunction_SymbolName(int size,
     Storage storage = lastIncomingData.data[CXFI_STORAGE];
     int symbolIndex = lastIncomingData.data[CXFI_SYMBOL_INDEX];
     assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
+
+    assert(symbolIndex == 0);
 
     char *id = lastIncomingData.cachedSymbolName[symbolIndex];
     scanSymbolName(cb, id, size);
@@ -910,6 +919,8 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
     fillUsage(&usage, usageKind);
 
     symbolIndex = lastIncomingData.data[CXFI_SYMBOL_INDEX];
+
+    assert(symbolIndex == 0);
 
     file = lastIncomingData.data[CXFI_FILE_NUMBER];
     file = fileNumberMapping[file];
