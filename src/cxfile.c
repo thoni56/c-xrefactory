@@ -98,7 +98,7 @@ typedef struct lastCxFileData {
     SymbolsMenu        *onLineRefMenuItem;
     ReferenceItem      *referenceItem;
     bool                symbolIsWritten;
-    int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
+    bool                macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
     bool                keyUsed[MAX_CHARS];
     int                 data[MAX_CHARS];
     void                (*handlerFunction[MAX_CHARS])(int size, int key, CharacterBuffer *cb,
@@ -332,7 +332,7 @@ static void writeSymbolItem(void) {
     writeOptionalCompactRecord(CXFI_SUPERCLASS, r->vApplClass, "");
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, ""); /* TODO - not used anymore */
     writeOptionalCompactRecord(CXFI_STORAGE, r->storage, "");
-    lastOutgoingData.macroBaseFileGeneratedForSym[0] = 0;
+    lastOutgoingData.macroBaseFileGeneratedForSym[0] = false;
     lastOutgoingData.symbolIsWritten = true;
     writeStringRecord(CXFI_SYMBOL_NAME, r->linkName, "\t");
     fputc('\t', cxFile);
@@ -353,8 +353,9 @@ static void writeCxReferenceBase(int symbolIndex, UsageKind usage, int requiredA
     if (usage == UsageMacroBaseFileUsage) {
         /* optimize the number of those references to 1 */
         assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
-        if (lastOutgoingData.macroBaseFileGeneratedForSym[0]) return;
-        lastOutgoingData.macroBaseFileGeneratedForSym[0] = 1;
+        if (lastOutgoingData.macroBaseFileGeneratedForSym[0])
+            return;
+        lastOutgoingData.macroBaseFileGeneratedForSym[0] = true;
     }
     writeOptionalCompactRecord(CXFI_USAGE, usage, "");
     writeOptionalCompactRecord(CXFI_REQUIRED_ACCESS, requiredAccess, "");
