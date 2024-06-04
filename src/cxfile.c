@@ -415,18 +415,18 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
     }
 }
 
-#define COMPOSE_CXFI_CHECK_NUM(filen, exactPositionLinkFlag) (  \
-        ((filen)*XFILE_HASH_MAX)*2+exactPositionLinkFlag        \
-    )
+static int composeCxfiCheckNum(int fileCount, bool exactPositionLinkFlag) {
+    return fileCount*XFILE_HASH_MAX*2 + exactPositionLinkFlag;
+}
 
-#define DECOMPOSE_CXFI_CHECK_NUM(num, filen, exactPositionLinkFlag){    \
-        unsigned tmp;                                                   \
-        tmp = num;                                                      \
-        exactPositionLinkFlag = tmp % 2;                                \
-        tmp = tmp / 2;                                                  \
-        tmp = tmp / XFILE_HASH_MAX;                                     \
-        filen = tmp;                                                    \
-    }
+static void decomposeCxfiCheckNum(int magicNumber, int *fileCount, bool *exactPositionLinkFlag) {
+    unsigned tmp;
+    tmp = magicNumber;
+    *exactPositionLinkFlag = tmp % 2;
+    tmp = tmp / 2;
+    tmp = tmp / XFILE_HASH_MAX;
+    *fileCount = tmp;
+}
 
 static void writeCxFileHead(void) {
     char stringRecord[MAX_CHARS];
@@ -450,9 +450,7 @@ static void writeCxFileHead(void) {
     stringRecord[i]=0;
     writeStringRecord(CXFI_KEY_LIST, stringRecord, "");
     writeCompactRecord(CXFI_REFNUM, options.referenceFileCount, " ");
-    writeCompactRecord(CXFI_CHECK_NUMBER, COMPOSE_CXFI_CHECK_NUM(MAX_FILES,
-                                                                 options.exactPositionResolve),
-                       " ");
+    writeCompactRecord(CXFI_CHECK_NUMBER, composeCxfiCheckNum(MAX_FILES, options.exactPositionResolve), " ");
 }
 
 static char tmpFileName[MAX_FILE_NAME_SIZE];
@@ -606,16 +604,18 @@ static void scanFunction_CheckNumber(int size,
                                      CharacterBuffer *cb,
                                      CxScanFileOperation operation
 ) {
-    int magicn, filen, exactPositionLinkFlag;
+    int magicNumber, fileCount;
+    bool exactPositionLinkFlag;
     char tmpBuff[TMP_BUFF_SIZE];
 
     assert(key == CXFI_CHECK_NUMBER);
     if (options.create)
         return; // no check when creating new file
 
-    magicn = lastIncomingData.data[CXFI_CHECK_NUMBER];
-    DECOMPOSE_CXFI_CHECK_NUM(magicn, filen, exactPositionLinkFlag);
-    if (filen != MAX_FILES) {
+    magicNumber = lastIncomingData.data[CXFI_CHECK_NUMBER];
+
+    decomposeCxfiCheckNum(magicNumber, &fileCount, &exactPositionLinkFlag);
+    if (fileCount != MAX_FILES) {
         sprintf(tmpBuff,"The reference database was generated with different MAX_FILES, recreate it");
         writeCxFileCompatibilityError(tmpBuff);
     }
