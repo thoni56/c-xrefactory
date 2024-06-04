@@ -721,7 +721,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
     log_trace("%d: '%s' scanned: added as %d", lastIncomingFileNumber, id, fileNumber);
 }
 
-static int scanSymNameString(CharacterBuffer *cb, char *id, int size) {
+static int scanSymbolName(CharacterBuffer *cb, char *id, int size) {
     assert(size < MAX_CX_SYMBOL_SIZE);
     getString(cb, id, size-1);
 
@@ -754,7 +754,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     symbolIndex = lastIncomingData.data[CXFI_SYMBOL_INDEX];
     assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
     id = lastIncomingData.cachedSymbolName[symbolIndex];
-    len = scanSymNameString(cb, id, size);
+    len = scanSymbolName(cb, id, size);
     getSymbolTypeAndClasses(&symbolType, &vApplClass);
     if (symbolType!=TypeCppInclude || strcmp(id, LINK_NAME_INCLUDE_REFS)!=0) {
         lastIncomingData.onLineReferencedSym = -1;
@@ -831,7 +831,7 @@ static void scanFunction_SymbolName(int size,
     assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
 
     char *id = lastIncomingData.cachedSymbolName[symbolIndex];
-    scanSymNameString(cb, id, size);
+    scanSymbolName(cb, id, size);
 
     Type symbolType;
     int vApplClass;
