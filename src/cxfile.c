@@ -721,30 +721,6 @@ static void scanFunction_ReadFileName(int fileNameLength,
     log_trace("%d: '%s' scanned: added as %d", lastIncomingFileNumber, id, fileNumber);
 }
 
-static void scanFunction_SourceIndex(int size,
-                                     int tag,
-                                     CharacterBuffer *cb,
-                                     CxScanFileOperation operation
-) {
-    int file, sfile;
-
-    assert(tag == CXFI_SOURCE_INDEX);
-    file = lastIncomingData.data[CXFI_FILE_NUMBER];
-    file = fileNumberMapping[file];
-    sfile = lastIncomingData.data[CXFI_SOURCE_INDEX];
-    sfile = fileNumberMapping[sfile];
-
-    FileItem *fileItem = getFileItem(file);
-    assert(file>=0 && file<MAX_FILES && fileItem);
-    // hmmm. here be more generous in getting correct source info
-    if (fileItem->sourceFileNumber == NO_FILE_NUMBER) {
-        // first check that it is not set directly from source
-        if (!fileItem->cxLoading) {
-            fileItem->sourceFileNumber = sfile;
-        }
-    }
-}
-
 static int scanSymNameString(CharacterBuffer *cb, char *id, int size) {
     assert(size < MAX_CX_SYMBOL_SIZE);
     getString(cb, id, size-1);
@@ -1271,7 +1247,6 @@ static ScanFileFunctionStep normalScanFunctionSequence[]={
     {CXFI_TAG_LIST, scanFunction_ReadRecordTags, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
-    {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
@@ -1281,7 +1256,6 @@ static ScanFileFunctionStep fullScanFunctionSequence[]={
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_GENERATE_OUTPUT},
-    {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_GENERATE_OUTPUT},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEFAULT},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIRST_PASS},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
@@ -1292,7 +1266,6 @@ static ScanFileFunctionStep byPassFunctionSequence[]={
     {CXFI_TAG_LIST, scanFunction_ReadRecordTags, CXSF_NOP},
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_BYPASS},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_BYPASS},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
@@ -1304,7 +1277,6 @@ static ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_MENU_CREATION},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_MENU_CREATION},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
@@ -1316,7 +1288,6 @@ static ScanFileFunctionStep fullUpdateFunctionSequence[]={
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolNameForFullUpdateSchedule, CXSF_NOP},
     {CXFI_REFERENCE, scanFunction_ReferenceForFullUpdateSchedule, CXSF_NOP},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
@@ -1326,7 +1297,6 @@ static ScanFileFunctionStep fullUpdateFunctionSequence[]={
 static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
     {CXFI_TAG_LIST, scanFunction_ReadRecordTags, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_PASS_MACRO_USAGE},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_PASS_MACRO_USAGE},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
@@ -1337,7 +1307,6 @@ static ScanFileFunctionStep symbolSearchFunctionSequence[]={
     {CXFI_TAG_LIST, scanFunction_ReadRecordTags, CXSF_NOP},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, SEARCH_SYMBOL},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIRST_PASS},
     {-1,NULL, 0},
@@ -1347,7 +1316,6 @@ static ScanFileFunctionStep globalUnusedDetectionFunctionSequence[]={
     {CXFI_TAG_LIST, scanFunction_ReadRecordTags, CXSF_NOP},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEAD_CODE_DETECTION},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_DEAD_CODE_DETECTION},
     {-1,NULL, 0},
