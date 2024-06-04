@@ -91,7 +91,6 @@ static int generatedFieldKeyList[] = {
     -1
 };
 
-#define MAX_CX_SYMBOL_TAB 2
 
 typedef struct lastCxFileData {
     int                 onLineReferencedSym;
