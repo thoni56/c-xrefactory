@@ -359,13 +359,13 @@ gcov:
 coverage-report:
 # We create separate coverage files for each test to be able to run them in parallel (see ../tests/Makefile)
 ifeq ($(HAVE_GCOV_TOOL),yes)
-# Then we can merge all .gcda for all tests into the .gcda in OBJDIR using it, which is very fast!
+	# Then we can merge all .gcda for all tests into the .gcda in OBJDIR using it, which is very fast!
 	echo "Merge all generated .gcda using $(GCOV_TOOL)"
 	-for tc in ../tests/*/.coverage ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
-# And then create .gcov for Emacs cov-mode
+	# And then create .gcov for Emacs cov-mode
 	$(MAKE) gcov
 else
-# We need to collect all coverage before we can generate gcov...
+	# We need to collect all coverage before we can generate gcov...
 endif
 	@echo Doing the actual reporting in the background...
 	$(MAKE) the-actual-coverage-report &
@@ -455,9 +455,10 @@ endif
 
 ifeq ($(OS),Darwin)
 	ifeq ($(shell arch),arm64)
-		# And for Homebrew on M1
+		# And for Homebrew on arm we just build for that
 		CGREEN_LIB = -L/opt/homebrew/lib -lcgreen
 		DYLD_PATH = DYLD_LIBRARY_PATH=/opt/homebrew/lib
+		CFLAGS += -arch arm64
 	else
 		CGREEN_LIB = -L/usr/local/lib -lcgreen
 		DYLD_PATH = DYLD_LIBRARY_PATH=/usr/local/lib
