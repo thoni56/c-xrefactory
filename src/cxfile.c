@@ -346,13 +346,10 @@ static void writeSymbolItemIfNotWritten(void) {
     }
 }
 
-static void writeCxReferenceBase(int symbolIndex, UsageKind usage, int requiredAccess, int file, int line, int col) {
-    assert(symbolIndex == 0);
-
+static void writeCxReferenceBase(UsageKind usage, int requiredAccess, int file, int line, int col) {
     writeSymbolItemIfNotWritten();
     if (usage == UsageMacroBaseFileUsage) {
         /* optimize the number of those references to 1 */
-        assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
         if (lastOutgoingData.macroBaseFileGeneratedForSymbol)
             return;
         lastOutgoingData.macroBaseFileGeneratedForSymbol = true;
@@ -366,9 +363,8 @@ static void writeCxReferenceBase(int symbolIndex, UsageKind usage, int requiredA
     writeCompactRecord(CXFI_REFERENCE, 0, "");
 }
 
-static void writeCxReference(Reference *reference, int symbolIndex) {
-    assert(symbolIndex == 0);
-    writeCxReferenceBase(0, reference->usage.kind, 0,
+static void writeCxReference(Reference *reference) {
+    writeCxReferenceBase(reference->usage.kind, 0,
                          reference->position.file, reference->position.line, reference->position.col);
 }
 
@@ -391,8 +387,6 @@ static void writeFileSourceIndexItem(FileItem *fileItem, int index) {
 /* *************************************************************** */
 
 static void writeReferenceItem(ReferenceItem *referenceItem) {
-    int symbolIndex = 0;
-
     log_trace("generate cxref for symbol '%s'", referenceItem->linkName);
     assert(strlen(referenceItem->linkName)+1 < MAX_CX_SYMBOL_SIZE);
 
@@ -413,8 +407,7 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
         log_trace("checking ref: loading=%d --< %s:%d", fileItem->cxLoading,
                   fileItem->name, reference->position.line);
         if (options.update==UPDATE_DEFAULT || fileItem->cxLoading) {
-            assert(symbolIndex == 0);
-            writeCxReference(reference, 0);
+            writeCxReference(reference);
         } else {
             log_trace("Some kind of update (%d) or loading (%d), so don't writeCxReference()",
                       options.update, fileItem->cxLoading);
@@ -968,7 +961,7 @@ static void scanFunction_Reference(int size,
             copyrefFl = !fileItem->cxLoading;
         }
         if (copyrefFl)
-            writeCxReferenceBase(0, usageKind, reqAcc, file, line, col);
+            writeCxReferenceBase(usageKind, reqAcc, file, line, col);
     } else if (options.mode == ServerMode) {
         pos = makePosition(file, line, col);
         fillUsage(&usage, usageKind);
