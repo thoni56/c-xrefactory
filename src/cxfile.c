@@ -112,7 +112,7 @@ typedef struct lastCxFileData {
     // following item can be used only via symbolTab,
     // it is just to simplify memory handling !!!!!!!!!!!!!!!!
     ReferenceItem      cachedReferenceItem;
-    char               cachedSymbolName[MAX_CX_SYMBOL_TAB][MAX_CX_SYMBOL_SIZE];
+    char               cachedSymbolName[MAX_CX_SYMBOL_SIZE];
 } LastCxFileData;
 
 static LastCxFileData lastIncomingData;
@@ -396,9 +396,9 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
     log_trace("generate cxref for symbol '%s'", referenceItem->linkName);
     assert(strlen(referenceItem->linkName)+1 < MAX_CX_SYMBOL_SIZE);
 
-    strcpy(lastOutgoingData.cachedSymbolName[0], referenceItem->linkName);
+    strcpy(lastOutgoingData.cachedSymbolName, referenceItem->linkName);
     fillReferenceItem(&lastOutgoingData.cachedReferenceItem,
-                       lastOutgoingData.cachedSymbolName[0],
+                       lastOutgoingData.cachedSymbolName,
                        referenceItem->vApplClass, referenceItem->type,
                        referenceItem->storage, referenceItem->scope,
                        referenceItem->category);
@@ -746,17 +746,14 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
                                                          CharacterBuffer *cb,
                                                          CxScanFileOperation operation
 ) {
-    ReferenceItem *memb;
-    int len, vApplClass;
-    Type symbolType;
-    int storage;
-    char *id;
-
     assert(key == CXFI_SYMBOL_NAME);
-    storage = lastIncomingData.data[CXFI_STORAGE];
+    Storage storage = lastIncomingData.data[CXFI_STORAGE];
 
-    id = lastIncomingData.cachedSymbolName[0];
-    len = scanSymbolName(cb, id, size);
+    char *id = lastIncomingData.cachedSymbolName;
+    int len = scanSymbolName(cb, id, size);
+
+    int vApplClass;
+    Type symbolType;
     getSymbolTypeAndClasses(&symbolType, &vApplClass);
     if (symbolType!=TypeCppInclude || strcmp(id, LINK_NAME_INCLUDE_REFS)!=0) {
         lastIncomingData.onLineReferencedSym = -1;
@@ -766,6 +763,8 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem;
     lastIncomingData.referenceItem = referenceItem;
     fillReferenceItem(referenceItem, id, vApplClass, symbolType, storage, ScopeGlobal, CategoryGlobal);
+
+    ReferenceItem *memb;
     if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
         // TODO: This is more or less the body of a newReferenceItem()
         char *ss = cxAlloc(len+1);
@@ -830,7 +829,7 @@ static void scanFunction_SymbolName(int size,
     }
     Storage storage = lastIncomingData.data[CXFI_STORAGE];
 
-    char *id = lastIncomingData.cachedSymbolName[0];
+    char *id = lastIncomingData.cachedSymbolName;
     scanSymbolName(cb, id, size);
 
     Type symbolType;
