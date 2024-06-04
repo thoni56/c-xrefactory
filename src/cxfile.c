@@ -97,7 +97,7 @@ typedef struct lastCxFileData {
     int                 onLineReferencedSym;
     SymbolsMenu        *onLineRefMenuItem;
     ReferenceItem      *referenceItem;
-    bool                symbolIsWritten[MAX_CX_SYMBOL_TAB];
+    bool                symbolIsWritten;
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
     bool                keyUsed[MAX_CHARS];
     int                 data[MAX_CHARS];
@@ -333,23 +333,23 @@ static void writeSymbolItem(void) {
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, ""); /* TODO - not used anymore */
     writeOptionalCompactRecord(CXFI_STORAGE, r->storage, "");
     lastOutgoingData.macroBaseFileGeneratedForSym[0] = 0;
-    lastOutgoingData.symbolIsWritten[0] = true;
+    lastOutgoingData.symbolIsWritten = true;
     writeStringRecord(CXFI_SYMBOL_NAME, r->linkName, "\t");
     fputc('\t', cxFile);
 }
 
-static void writeSymbolItemIfNotWritten(int symbolIndex) {
-    assert(symbolIndex == 0);
-
-    if (! lastOutgoingData.symbolIsWritten[0]) {
+static void writeSymbolItemIfNotWritten(void) {
+    if (! lastOutgoingData.symbolIsWritten) {
         writeSymbolItem();
+    } else {
+        log_trace("Not writing already written symbol");
     }
 }
 
 static void writeCxReferenceBase(int symbolIndex, UsageKind usage, int requiredAccess, int file, int line, int col) {
     assert(symbolIndex == 0);
 
-    writeSymbolItemIfNotWritten(0);
+    writeSymbolItemIfNotWritten();
     if (usage == UsageMacroBaseFileUsage) {
         /* optimize the number of those references to 1 */
         assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
@@ -401,8 +401,8 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
                        referenceItem->vApplClass, referenceItem->type,
                        referenceItem->storage, referenceItem->scope,
                        referenceItem->category);
-    lastOutgoingData.referenceItem       = &lastOutgoingData.cachedReferenceItem[0];
-    lastOutgoingData.symbolIsWritten[0] = false;
+    lastOutgoingData.referenceItem   = &lastOutgoingData.cachedReferenceItem[0];
+    lastOutgoingData.symbolIsWritten = false;
 
     if (referenceItem->category == CategoryLocal)
         return;
