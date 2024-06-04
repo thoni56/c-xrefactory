@@ -844,26 +844,28 @@ static void scanFunction_SymbolName(int size,
                                     CharacterBuffer *cb,
                                     CxScanFileOperation operation
 ) {
-    ReferenceItem *referencesItem, *member;
-    int symbolIndex, vApplClass, storage;
-    Type symbolType;
-    char *id;
-
     assert(tag == CXFI_SYMBOL_NAME);
     if (options.mode==ServerMode && operation==CXSF_DEAD_CODE_DETECTION) {
         // check if previous symbol was dead
         cxfileCheckLastSymbolDeadness();
     }
-    storage = lastIncomingData.data[CXFI_STORAGE];
-    symbolIndex = lastIncomingData.data[CXFI_SYMBOL_INDEX];
+    Storage storage = lastIncomingData.data[CXFI_STORAGE];
+    int symbolIndex = lastIncomingData.data[CXFI_SYMBOL_INDEX];
     assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
-    id = lastIncomingData.cachedSymbolName[symbolIndex];
+
+    char *id = lastIncomingData.cachedSymbolName[symbolIndex];
     scanSymNameString(cb, id, size);
+
+    Type symbolType;
+    int vApplClass;
     getSymbolTypeAndClasses(&symbolType, &vApplClass);
 
+    ReferenceItem *referencesItem;
     referencesItem = &lastIncomingData.cachedReferenceItem[symbolIndex];
     lastIncomingData.symbolTab[symbolIndex] = referencesItem;
     fillReferenceItem(referencesItem, id, vApplClass, symbolType, storage, ScopeGlobal, CategoryGlobal);
+
+    ReferenceItem *member;
     bool isMember = isMemberInReferenceTable(referencesItem, NULL, &member);
     while (isMember && member->category!=CategoryGlobal)
         isMember = refTabNextMember(referencesItem, &member);
