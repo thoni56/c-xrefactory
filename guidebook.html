@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<meta name="author" content="v{VERSION} - Generated 2024-06-03">
+<meta name="author" content="v{VERSION} - Generated 2024-06-04">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2024-06-03</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2024-06-04</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -497,7 +497,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_refactory">9.5. Refactory</a></li>
 <li><a href="#_cxref">9.6. Cxref</a></li>
 <li><a href="#_main">9.7. Main</a></li>
-<li><a href="#_cxfile">9.8. Cxfile</a></li>
+<li><a href="#_cxfile_2">9.8. Cxfile</a></li>
 <li><a href="#_caching">9.9. Caching</a></li>
 <li><a href="#_c_xref_el">9.10. c-xref.el</a></li>
 <li><a href="#_c_xrefactory_el">9.11. c-xrefactory.el</a></li>
@@ -1186,13 +1186,28 @@ be tidied up.</p>
 <div class="sect2">
 <h3 id="_reference_database">8.6. Reference Database</h3>
 <div class="paragraph">
-<p><code>c-xref</code> creates a database of references for all symbols it encounters. There is limited
-support to automatically update these in the edit-compile cycle, you might have to
-update manually now and then.</p>
+<p><code>c-xref</code> run in "xref" mode creates, or updates, a database of
+references for all externally visible symbols it encounters.</p>
 </div>
 <div class="paragraph">
-<p>The project settings (or command line options) indicate where the file(s) are created
-and one option controls the number of files to be used, <code>-refnum</code>.</p>
+<p>A good design should have a clean and generic interface to the
+reference database, but this is still a work in progress to chisel
+this out.</p>
+</div>
+<div class="sect3">
+<h4 id="_cxfile">8.6.1. CXFILE</h4>
+<div class="paragraph">
+<p>The current implementation of the reference database is file based,
+with an optimized storage format.</p>
+</div>
+<div class="paragraph">
+<p>There is limited support to automatically keep these updated during an
+edit-compile cycle, you might have to update manually now and then.</p>
+</div>
+<div class="paragraph">
+<p>The project settings (or command line options) indicate where the
+file(s) are created and one option controls the number of files to be
+used, <code>-refnum</code>.</p>
 </div>
 <div class="paragraph">
 <p>This file (or files) contains compact, but textual representations of
@@ -1202,7 +1217,7 @@ are somethings that I think I have found out:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>the encoding has one character markers which are listed at the top
+<p>the encoding has single character markers which are listed at the top
 of cxfile.c</p>
 </li>
 <li>
@@ -1258,6 +1273,28 @@ generated data for expected data. This is now partly ongoing in the
 </td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reference_database_reading">8.6.2. Reference Database Reading</h4>
+<div class="paragraph">
+<p>All information about an externally visible symbol is stored in one,
+and only one reference file, determined by hashing the linkname of the
+symbol. So it will always suffice to read one reference file when
+consulting the reference database (in the form of CXFILE) for a
+symbol.</p>
+</div>
+<div class="paragraph">
+<p>The reading of the CXFILE format is controlled by
+`scanFunctionTable`s. These consists of a list of entries, one for
+each key/tag/recordCode (see format description above) that the scan
+will process.</p>
+</div>
+<div class="paragraph">
+<p>As the reference file reading encounters a key/tag/recordCode it will
+consult the table and see if there is an entry pointing to a handler
+function for that key/tag/recordCode. If so, it will be called.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -1969,7 +2006,7 @@ defines made as command line options (<code>-D</code>)</p>
 
 </div>
 <div class="sect2">
-<h3 id="_cxfile">9.8. Cxfile</h3>
+<h3 id="_cxfile_2">9.8. Cxfile</h3>
 
 </div>
 <div class="sect2">
@@ -3164,7 +3201,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-06-03 09:00:31 UTC
+Last updated 2024-06-04 06:21:45 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
