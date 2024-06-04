@@ -120,7 +120,7 @@ static LastCxFileData lastOutgoingData;
 
 static CharacterBuffer cxFileCharacterBuffer;
 
-static unsigned decodeFileNumbers[MAX_FILES];
+static unsigned fileNumberMapping[MAX_FILES];
 
 static FILE *cxFile = NULL;
 
@@ -716,7 +716,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
         //&if (umtime>fileItem->lastUpdateMtime) fileItem->lastUpdateMtime=umtime;
     }
     fileItem->isFromCxfile = true;
-    decodeFileNumbers[lastIncomingFileNumber]=fileNumber;
+    fileNumberMapping[lastIncomingFileNumber]=fileNumber;
     log_trace("%d: '%s' scanned: added as %d", lastIncomingFileNumber, id, fileNumber);
 }
 
@@ -729,9 +729,9 @@ static void scanFunction_SourceIndex(int size,
 
     assert(tag == CXFI_SOURCE_INDEX);
     file = lastIncomingData.data[CXFI_FILE_NUMBER];
-    file = decodeFileNumbers[file];
+    file = fileNumberMapping[file];
     sfile = lastIncomingData.data[CXFI_SOURCE_INDEX];
-    sfile = decodeFileNumbers[sfile];
+    sfile = fileNumberMapping[sfile];
 
     FileItem *fileItem = getFileItem(file);
     assert(file>=0 && file<MAX_FILES && fileItem);
@@ -755,7 +755,7 @@ static int scanSymNameString(CharacterBuffer *cb, char *id, int size) {
 static void getSymbolTypeAndClasses(Type *symbolType, int *vApplClass) {
     *symbolType = lastIncomingData.data[CXFI_SYMBOL_TYPE];
 
-    *vApplClass = decodeFileNumbers[lastIncomingData.data[CXFI_SUBCLASS]];
+    *vApplClass = fileNumberMapping[lastIncomingData.data[CXFI_SUBCLASS]];
     assert(getFileItem(*vApplClass) != NULL);
 }
 
@@ -935,12 +935,12 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
     symbolIndex = lastIncomingData.data[CXFI_SYMBOL_INDEX];
 
     file = lastIncomingData.data[CXFI_FILE_NUMBER];
-    file = decodeFileNumbers[file];
+    file = fileNumberMapping[file];
 
     line = lastIncomingData.data[CXFI_LINE_INDEX];
     col = lastIncomingData.data[CXFI_COLUMN_INDEX];
     getSymbolTypeAndClasses(&symbolType, &vApplClass);
-    log_trace("%d %d->%d %d", usageKind, file, decodeFileNumbers[file], line);
+    log_trace("%d %d->%d %d", usageKind, file, fileNumberMapping[file], line);
 
     pos = makePosition(file, line, col);
     if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]) {
@@ -979,7 +979,7 @@ static void scanFunction_Reference(int size,
     sym = lastIncomingData.data[CXFI_SYMBOL_INDEX];
 
     file = lastIncomingData.data[CXFI_FILE_NUMBER];
-    file = decodeFileNumbers[file];
+    file = fileNumberMapping[file];
     FileItem *fileItem = getFileItem(file);
 
     line = lastIncomingData.data[CXFI_LINE_INDEX];
@@ -1099,7 +1099,7 @@ static void scanCxFile(ScanFileFunctionStep *scanFunctionTable) {
     lastIncomingData.onLineRefMenuItem = NULL;
     lastIncomingData.tags[CXFI_SUBCLASS] = NO_FILE_NUMBER;
     lastIncomingData.tags[CXFI_SUPERCLASS] = NO_FILE_NUMBER;
-    decodeFileNumbers[NO_FILE_NUMBER] = NO_FILE_NUMBER;
+    fileNumberMapping[NO_FILE_NUMBER] = NO_FILE_NUMBER;
 
     for (int i=0; scanFunctionTable[i].recordCode>0; i++) {
         assert(scanFunctionTable[i].recordCode < MAX_CHARS);
