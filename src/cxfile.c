@@ -111,7 +111,7 @@ typedef struct lastCxFileData {
 
     // following item can be used only via symbolTab,
     // it is just to simplify memory handling !!!!!!!!!!!!!!!!
-    ReferenceItem      cachedReferenceItem[MAX_CX_SYMBOL_TAB];
+    ReferenceItem      cachedReferenceItem;
     char               cachedSymbolName[MAX_CX_SYMBOL_TAB][MAX_CX_SYMBOL_SIZE];
 } LastCxFileData;
 
@@ -397,12 +397,12 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
     assert(strlen(referenceItem->linkName)+1 < MAX_CX_SYMBOL_SIZE);
 
     strcpy(lastOutgoingData.cachedSymbolName[0], referenceItem->linkName);
-    fillReferenceItem(&lastOutgoingData.cachedReferenceItem[0],
+    fillReferenceItem(&lastOutgoingData.cachedReferenceItem,
                        lastOutgoingData.cachedSymbolName[0],
                        referenceItem->vApplClass, referenceItem->type,
                        referenceItem->storage, referenceItem->scope,
                        referenceItem->category);
-    lastOutgoingData.referenceItem   = &lastOutgoingData.cachedReferenceItem[0];
+    lastOutgoingData.referenceItem   = &lastOutgoingData.cachedReferenceItem;
     lastOutgoingData.symbolIsWritten = false;
 
     if (referenceItem->category == CategoryLocal)
@@ -763,7 +763,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
         return;
     }
 
-    ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem[0];
+    ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem;
     lastIncomingData.referenceItem = referenceItem;
     fillReferenceItem(referenceItem, id, vApplClass, symbolType, storage, ScopeGlobal, CategoryGlobal);
     if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
@@ -837,8 +837,7 @@ static void scanFunction_SymbolName(int size,
     int vApplClass;
     getSymbolTypeAndClasses(&symbolType, &vApplClass);
 
-    ReferenceItem *referencesItem;
-    referencesItem = &lastIncomingData.cachedReferenceItem[0];
+    ReferenceItem *referencesItem = &lastIncomingData.cachedReferenceItem;
     lastIncomingData.referenceItem = referencesItem;
     fillReferenceItem(referencesItem, id, vApplClass, symbolType, storage, ScopeGlobal, CategoryGlobal);
 
