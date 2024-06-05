@@ -14,13 +14,13 @@ all: pure
 EMACS_COMMAND = emacs -l $(PWD)/.emacs.d/init.el --eval '(setq c-xref-exec-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)'
 
 # Run a pure sandboxed Emacs which should use the latest elisp and c-xref
-pure: .emacs.d/c-xrefactory/src .emacs.d/c-xrefactory/editors
-	make -C .emacs.d/c-xrefactory/src
-	cp .emacs.d/c-xrefactory/src/c-xref $(CURDIR)/bin/
-	-rm -r .emacs.d/c-xrefactory/editors/emacs/*.elc
+pure: c-xrefactory
+	make -C c-xrefactory/src c-xref
+	cp c-xrefactory/src/c-xref $(CURDIR)/bin/
+	-rm -r c-xrefactory/editors/emacs/*.elc
 	@$(ENV) $(EMACS_COMMAND)
 
-debug: .emacs.d/c-xrefactory
+debug: c-xrefactory
 	@$(ENV) $(EMACS_COMMAND)
 
 
@@ -42,14 +42,8 @@ pipe-spy: pipe-spy.c Makefile
 	$(CC) -o pipe-spy -g -Wall -DTARGET=\"$(TARGET_PATH)\" pipe-spy.c
 	cp pipe-spy bin/c-xref
 
-.emacs.d/c-xrefactory/editors : .emacs.d/c-xrefactory
-	ln -s $(CURDIR)/../../editors .emacs.d/c-xrefactory/editors
+c-xrefactory :
+	ln -s $(CURDIR)/../.. c-xrefactory
 
-.emacs.d/c-xrefactory/src : .emacs.d/c-xrefactory
-	ln -s $(CURDIR)/../../src .emacs.d/c-xrefactory/src
-
-.emacs.d/c-xrefactory:
-	ln -s $(CURDIR)/../../src .emacs.d/c-xrefactory/src
-
-clean:
-	-rm $(LOGFILE)* /tmp/c-xref*.log
+curdir:
+	echo $(CURDIR)
