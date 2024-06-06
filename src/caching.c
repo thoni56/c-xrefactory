@@ -177,11 +177,6 @@ static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int
     cache->write  = write;
 }
 
-static bool canContinueCachingClasses() {
-    return options.mode == XrefMode
-        && ppmMemory.index < (SIZE_ppmMemory/3)*2;
-}
-
 void deactivateCaching(void) {
     cache.active = false;
 }
@@ -210,10 +205,11 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
 
     log_trace("recovering cache point %d", cachePointIndex);
     cachePoint = &cache.points[cachePointIndex];
-    if (!canContinueCachingClasses()) {
-        log_debug("flushing classes");
-        ppmMemory.index = cachePoint->ppmMemoryIndex;
-    }
+
+    /* TODO What does this do? */
+    log_debug("flushing classes or whatever");
+    ppmMemory.index = cachePoint->ppmMemoryIndex;
+
     setMacroBodyMemoryIndex(cachePoint->macroBodyMemoryIndex);
     currentBlock = cachePoint->topBlock;
     *currentBlock = cachePoint->topBlockContent;
