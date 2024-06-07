@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<meta name="author" content="v{VERSION} - Generated 2024-06-06">
+<meta name="author" content="v{VERSION} - Generated 2024-06-07">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2024-06-06</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2024-06-07</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -2007,7 +2007,50 @@ defines made as command line options (<code>-D</code>)</p>
 </div>
 <div class="sect2">
 <h3 id="_cxfile_2">9.8. Cxfile</h3>
-
+<div class="sect3">
+<h4 id="_responsibilities_2">9.8.1. Responsibilities</h4>
+<div class="paragraph">
+<p>Read and write the CXref database in "plain" text format.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_file_format">9.8.2. File format</h4>
+<div class="paragraph">
+<p>The current file format for the cross-reference data consists of records with the general format</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>&lt;number&gt;&lt;key&gt;[&lt;value&gt;]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There are two important types of lines, a file information line and a
+symbol information line.</p>
+</div>
+<div class="paragraph">
+<p>The actual keys are documented in <code>cxfile.c</code>, but here is an example
+file information line:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>32571f  1715027668m 21:/usr/include/ctype.h</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>First we have two simple value/key pairs. We see "32571f" indicating
+that this is file information for file with file number 32571.</p>
+</div>
+<div class="paragraph">
+<p>Secondly we have "1715027668m". This is the modification time of the
+file which is stored to be able to see if that file has been updated
+since the reference database was last written.</p>
+</div>
+<div class="paragraph">
+<p>And the third part is "21:/usr/include/ctype.h", which is of a record
+type that is a bit more complex. The number is the length of the
+value. The ':' indicates that the record is a filename.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_caching">9.9. Caching</h3>
@@ -3201,7 +3244,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-06-06 20:05:25 UTC
+Last updated 2024-06-07 11:21:23 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
