@@ -6,7 +6,7 @@ ARGUMENTS = -xrefactory-II -create -errors -xrefrc .c-xrefrc -p $(CURDIR) -o out
 $(TEST): c_xrefrc_for_single_cxref_file
 	-rm CXrefs
 	$(COMMAND) $(ARGUMENTS) | grep -v progress > log
-	awk '/vApplClass/ {print $$3}' CXrefs > output
+	 ../../utils/cxref_reader.py CXrefs | grep vApplClass | wc -l > output
 	$(VERIFY)
 
 c_xrefrc_for_single_cxref_file: .c-xrefrc
