@@ -353,6 +353,7 @@ static void writeCxReferenceBase(UsageKind usage, int requiredAccess, int file, 
             return;
         lastOutgoingData.macroBaseFileGeneratedForSymbol = true;
     }
+    // keys = uAsflcr
     writeOptionalCompactRecord(CXFI_USAGE, usage, "");
     writeOptionalCompactRecord(CXFI_REQUIRED_ACCESS, requiredAccess, "");
     writeOptionalCompactRecord(CXFI_SYMBOL_INDEX, 0, "");
@@ -368,6 +369,7 @@ static void writeCxReference(Reference *reference) {
 }
 
 static void writeFileNumberItem(FileItem *fileItem, int number) {
+    // keys = fpmia:
     writeOptionalCompactRecord(CXFI_FILE_NUMBER, number, "\n");
     writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileItem->lastUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fileItem->lastFullUpdateMtime, " ");
@@ -378,6 +380,7 @@ static void writeFileNumberItem(FileItem *fileItem, int number) {
 
 static void writeFileSourceIndexItem(FileItem *fileItem, int index) {
     if (fileItem->sourceFileNumber != NO_FILE_NUMBER) {
+        // keys = fo
         writeOptionalCompactRecord(CXFI_FILE_NUMBER, index, "\n");
         writeCompactRecord(CXFI_SOURCE_INDEX, fileItem->sourceFileNumber, " ");
     }
