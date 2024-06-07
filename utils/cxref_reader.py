@@ -29,13 +29,12 @@ fileid = None
 lineno = None
 colno = None
 
-# Make a dict instead
-marker_value = {}
+# Make a dict for last values where keys are the record keys, all zero'ed out initially
+marker_value = dict.fromkeys('uAsflcrpmiao', 0)
 
 
-def read_header(lines):
+def skip_header(lines):
     return lines[6:]
-
 
 def read_marker(marker, string):
     global marker_value
@@ -109,7 +108,7 @@ FileReference = namedtuple(
     'FileReference', ['fileid', 'update', 'access', 'filename'])
 
 
-def unpack_files(lines):
+def unpack_xfiles(lines):
     filerefs = []
     for line in lines:
         if len(line) > 0:
@@ -129,6 +128,26 @@ def unpack_files(lines):
                     eprint("Unknown line in XFiles: '%s'" % line)
     return filerefs
 
+def unpack_file_lines(lines):
+    filerefs = []
+    for index, line in enumerate(lines):
+        if len(line) > 0:
+            segments = line.split(' ')
+            if len(segments) > 0 and segments[0] != '':
+                if segments[0][-1] == 'f':
+                    if segments[1] != '' and segments[1][-1] == 'o':
+                        # Only two segments, second is Java source index(?)
+                        pass  # for now
+                    else:
+                        # Remove trailing 'f' and turn fileid into an int
+                        filerefs.append(FileReference(int(segments[0][:-1]),
+                                                      segments[1],
+                                                      segments[2],
+                                                      segments[3].split(':', 1)[-1]))
+                else:
+                    return (filerefs, lines[index:])
+    return (filerefs, [])
+
 
 def get_filename_from_id(fileid, file_references):
     # Return FileReference or None if no or multiple matches
@@ -141,7 +160,7 @@ def get_filename_from_id(fileid, file_references):
 Symbol = namedtuple('Symbol', ['symbolname', 'references', 'kind'])
 
 
-def unpack_symbols(lines, cxfilename):
+def unpack_symbols(lines):
     symbols = []
     marker = ""
     for line in lines:
@@ -184,36 +203,42 @@ def verify_directory(directory_name):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
-        description='Read the CXrefs of c-xrefactory and present them in readable format.')
+        description='Read the CXref db of c-xrefactory and present the symbols in readable format.')
     parser.add_argument('-v', '--verbose',
                         help='verbose output', action='store_true')
     parser.add_argument(
-        'directory', help='the directory to scan, default is CXrefs', nargs='?', default='CXrefs')
+        'path', help='the CXref db to read, directory or single file, default is CXrefs', nargs='?', default='CXrefs')
 
     args = parser.parse_args()
 
-    directory_name = args.directory
+    directory_name = args.path
     if args.verbose:
         verbose = True
     else:
         verbose = False
 
-    verify_directory(directory_name)
-
-    # Get all file references
-    vprint("Unpacking", "XFiles")
-    lines = read_lines_from(directory_name, "XFiles")
-    lines = lines[6:]  # Skip header
-    files = unpack_files(lines)
-
     symbols = []
-    # Read all CXref-files and list identifiers
-    for cxfilename in sorted(os.listdir(directory_name)):
-        if cxfilename != "XFiles" :
-            vprint("Unpacking", cxfilename)
-            lines = read_lines_from(directory_name, cxfilename)
-            lines = read_header(lines)
-            symbols += unpack_symbols(lines, cxfilename)
+    if os.path.isdir(args.path):
+        verify_directory(directory_name)
+
+        # Get all file references from the XFiles file
+        vprint("Unpacking", "XFiles")
+        lines = read_lines_from(directory_name, "XFiles")
+        lines = lines[6:]  # Skip header
+        files = unpack_xfiles(lines)
+
+        # Read all CXref-files and list identifiers
+        for cxfilename in sorted(os.listdir(directory_name)):
+            if cxfilename != "XFiles" :
+                vprint("Unpacking", cxfilename)
+                lines = read_lines_from(directory_name, cxfilename)
+                lines = skip_header(lines)
+                symbols += unpack_symbols(lines)
+    else:
+        lines = read_lines_from("", args.path)
+        lines = skip_header(lines)
+        (files, lines) = unpack_file_lines(lines)
+        symbols = unpack_symbols(lines)
 
     symbols.sort(key=lambda s: s.symbolname)
     for symbol in symbols:

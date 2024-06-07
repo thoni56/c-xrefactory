@@ -3,7 +3,7 @@
 from cxref_reader import marker_value
 import unittest
 
-from cxref_reader import unpack_references, SymbolPosition, unpack_files, FileReference, unpack_symbols, Symbol, read_marker
+from cxref_reader import unpack_references, SymbolPosition, unpack_xfiles, FileReference, unpack_symbols, Symbol, read_marker
 
 
 class TestPositionUnpacker(unittest.TestCase):
@@ -68,19 +68,19 @@ class TestPositionUnpacker(unittest.TestCase):
 class TestFileReferenceUnpacker(unittest.TestCase):
 
     def test_returns_empty_list_for_empty_list(self):
-        files = unpack_files([])
+        files = unpack_xfiles([])
         self.assertEqual(files, [])
 
     def test_returns_empty_list_for_only_empty_lines(self):
-        files = unpack_files(["", "", ""])
+        files = unpack_xfiles(["", "", ""])
         self.assertEqual(len(files), 0)
 
     def test_ignores_non_file_lines(self):
-        files = unpack_files(["34v file format: C-xrefactory 1.6.0 "])
+        files = unpack_xfiles(["34v file format: C-xrefactory 1.6.0 "])
         self.assertEqual(len(files), 0)
 
     def test_returns_the_fileid_for_one_line(self):
-        files = unpack_files(
+        files = unpack_xfiles(
             ["3191f 1562271264p m1ia 71:/Users/thomas/Utveckling/c-xrefactory/tests/simple_xrefs/single_int2.c"])
         self.assertEqual(len(files), 1)
         self.assertEqual(files[0].fileid, 3191)
@@ -88,7 +88,7 @@ class TestFileReferenceUnpacker(unittest.TestCase):
             files[0].filename, "/Users/thomas/Utveckling/c-xrefactory/tests/simple_xrefs/single_int2.c")
 
     def test_returns_two_filepositions_for_two_valid_lines(self):
-        files = unpack_files([
+        files = unpack_xfiles([
             "3191f 1562271264p m1ia 71:/Users/thomas/Utveckling/c-xrefactory/tests/simple_xrefs/single_int2.c",
             "9708f 1562271254p  71:/Users/thomas/Utveckling/c-xrefactory/tests/simple_xrefs/single_int1.c"])
         self.assertEqual(len(files), 2)
