@@ -40,6 +40,35 @@ The `yylex` module has the standard interface required by any
 
 === Cxfile
 
+==== Responsibilities
+
+Read and write the CXref database in "plain" text format.
+
+==== File format
+
+The current file format for the cross-reference data consists of records with the general format
+
+    <number><key>[<value>]
+
+There are two important types of lines, a file information line and a
+symbol information line.
+
+The actual keys are documented in `cxfile.c`, but here is an example
+file information line:
+
+    32571f  1715027668m 21:/usr/include/ctype.h
+
+First we have two simple value/key pairs. We see "32571f" indicating
+that this is file information for file with file number 32571.
+
+Secondly we have "1715027668m". This is the modification time of the
+file which is stored to be able to see if that file has been updated
+since the reference database was last written.
+
+And the third part is "21:/usr/include/ctype.h", which is of a record
+type that is a bit more complex. The number is the length of the
+value. The ':' indicates that the record is a filename.
+
 === Caching
 
 === c-xref.el
