@@ -13,9 +13,3 @@ trace: $(TEST)
 
 clean:
 	@-rm -rf CXrefs output.log output.tmp output log .c-xrefrc
-
-gdb:
-	gdb $(CXREF) -ex 'br main' -ex 'run $(ARGUMENTS)'
-
-lldb:
-	lldb -o 'breakpoint set --name main' -o 'process launch -- $(ARGUMENTS)' $(CXREF)

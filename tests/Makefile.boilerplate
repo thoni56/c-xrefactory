@@ -60,3 +60,9 @@ coverage:
 	@echo "Doing coverage in this directory only"
 	$(MAKE) $(TEST)
 	cd ../../src ; make COVERAGE_CASE=$(TEST) the-actual-coverage-report
+
+gdb:
+	gdb $(CXREF) -ex 'br main' -ex 'run $(ARGUMENTS)'
+
+lldb:
+	lldb -o 'breakpoint set --name main' -o 'process launch -- $(ARGUMENTS)' $(CXREF)
