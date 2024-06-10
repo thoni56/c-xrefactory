@@ -217,7 +217,6 @@ typedef struct parsedInfo {
     bool              extractProcessedFlag;
     bool              marker1Flag;
     bool              marker2Flag;
-    char              setTargetAnswerClass[TMP_STRING_SIZE];
     bool              moveTargetAccepted;
     int               methodCoordEndLine;
     struct codeBlock *workMemoryIndexAtBlockBegin;
