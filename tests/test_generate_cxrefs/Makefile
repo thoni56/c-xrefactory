@@ -1,12 +1,12 @@
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref
+CXREF = ../../src/c-xref
 ARGUMENTS = -xrefactory-II -create -errors -xrefrc .c-xrefrc -p $(CURDIR) -o output.tmp src
 
 $(TEST): c_xrefrc_for_single_cxref_file
 	-rm CXrefs
-	$(COMMAND) $(ARGUMENTS) | grep -v progress > log
-	 ../../utils/cxref_reader.py CXrefs | grep vApplClass | wc -l > output
+	$(CXREF) $(ARGUMENTS) | grep -v progress > log
+	 ../../utils/cxref_reader.py CXrefs | grep vApplClass | wc -l | tr -d ' ' > output
 	$(VERIFY)
 
 c_xrefrc_for_single_cxref_file: .c-xrefrc
