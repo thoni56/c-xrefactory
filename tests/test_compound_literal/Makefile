@@ -1,6 +1,6 @@
 include ../Makefile.boilerplate
 
-ARGUMENTS = -p $(CURDIR) -xrefrc .c-xrefrc test_sources/source.c -o output
+ARGUMENTS = test_sources/source.c -o output
 
 $(TEST):
 	@$(COMMAND)

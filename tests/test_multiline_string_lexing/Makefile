@@ -1,6 +1,6 @@
 include ../Makefile.boilerplate
 
-ARGUMENTS = -xrefrc .c-xrefrc source.c
+ARGUMENTS = source.c
 
 # This test will always succeed unless c-xref fails, it used to hang on unterminated macro
 $(TEST): clean

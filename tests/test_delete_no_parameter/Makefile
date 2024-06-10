@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefactory-II -refactory -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -rfct-del-param -olcxparnum=1 -olcursor=36 $(CURDIR)/hello.c
+ARGUMENTS = -xrefactory-II -refactory -rfct-del-param -olcxparnum=1 -olcursor=36 $(CURDIR)/hello.c
 
 $(TEST): .c-xrefrc
 	$(COMMAND) -log=log $(EXTRA) > output.tmp

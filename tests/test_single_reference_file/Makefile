@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefrc -refnum=1 .c-xrefrc single_int*.c -o log
+ARGUMENTS = -refnum=1 single_int*.c -o log
 
 $(TEST):
 	@rm -rf output $@.log CXrefs Xrefs

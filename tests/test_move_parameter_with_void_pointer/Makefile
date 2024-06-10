@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefactory-II -refactory -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -rfct-move-param -olcxparnum=1 -olcxparnum2=2 -olcursor=17 $(CURDIR)/source.c
+ARGUMENTS = -xrefactory-II -refactory -rfct-move-param -olcxparnum=1 -olcxparnum2=2 -olcursor=17 $(CURDIR)/source.c
 
 $(TEST): clean
 	$(COMMAND) -log=log $(EXTRA) > output.tmp

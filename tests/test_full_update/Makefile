@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefrc $(CURDIR)/.c-xrefrc -fullupdate -p $(CURDIR)
+ARGUMENTS = -fullupdate
 
 $(TEST): CXrefs
 	$(COMMAND) > output.tmp

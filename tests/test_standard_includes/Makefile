@@ -5,7 +5,7 @@ include ../Makefile.boilerplate
 
 $(TEST):
 	@rm -rf C-Xrefs $(TEST).log
-	@../../src/c-xref -xrefrc .c-xrefrc -refs $(CURDIR)/C-Xrefs standard_includes.c -o standard_includes.log
+	@$(COMMAND) standard_includes.c -o standard_includes.log
 	@# We are using the fact that it *can* find stdbool.h proof that it looks in standard dirs
 	@grep "can't open file stdbool.h" standard_includes.log > /dev/null ; \
 	if [ $$? -ne 1 ] ; then \

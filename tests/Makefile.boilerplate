@@ -12,7 +12,7 @@ include ../Makefile.messages
 
 # You can override which c-xref to run, but each test need to define ARGUMENTS
 # and can use $(COMMAND)
-CXREF = ../../src/c-xref
+CXREF = ../../src/c-xref -xrefrc .c-xrefrc -p $(CURDIR)
 COMMAND = $(CXREF) $(ARGUMENTS)
 
 # Define the test name as the directory name

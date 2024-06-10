@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefactory-II -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -refactory -rfct-extract-function -olmark=50 -olcursor=80 $(CURDIR)/source.c
+ARGUMENTS = -xrefactory-II -refactory -rfct-extract-function -olmark=50 -olcursor=80 $(CURDIR)/source.c
 
 $(TEST): clean
 	$(COMMAND) -log=log $(EXTRA) > output.tmp

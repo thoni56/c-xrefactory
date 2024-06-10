@@ -18,7 +18,7 @@ include ../Makefile.boilerplate
 # gcc -E source.c
 
 
-ARGUMENTS = -create -xrefrc .c-xrefrc -p $(CURDIR) $(TRACE) uint32.c -errors -log=log
+ARGUMENTS = -create $(TRACE) uint32.c -errors -log=log
 
 $(TEST): .c-xrefrc
 	$(COMMAND) 2> output.tmp > out

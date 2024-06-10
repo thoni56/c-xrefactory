@@ -1,11 +1,11 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefrc $(CURDIR)/.c-xrefrc -update -p $(CURDIR)/cexercise -trace -log=log
+ARGUMENTS = -trace -log=log
 
 $(TEST): CXrefs
 	touch cexercise/*
-	$(COMMAND) > output.tmp
+	$(COMMAND) -update > output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 

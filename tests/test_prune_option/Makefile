@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefactory-II -create -errors -xrefrc .c-xrefrc -p $(CURDIR) $(TRACE) -log=log -o output.tmp -prune pruned
+ARGUMENTS = -xrefactory-II -create -errors $(TRACE) -log=log -o output.tmp -prune pruned
 
 $(TEST): .c-xrefrc
 	$(COMMAND) > out

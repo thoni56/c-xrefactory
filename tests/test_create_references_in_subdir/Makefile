@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefactory-II -create -errors -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -o output
+ARGUMENTS = -xrefactory-II -create -errors -o output
 
 $(TEST): .c-xrefrc
 	@sed -e 's:/CXrefs$$:/CXrefs/subdir:' .c-xrefrc > .c-xrefrc.tmp

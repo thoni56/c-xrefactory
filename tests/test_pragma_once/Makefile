@@ -1,11 +1,8 @@
-# Automated tests for pragma once
-# Verification is just that it can parse "pragma once" and generate CXrefs
-
 include ../Makefile.boilerplate
 
-$(TEST):
+$(TEST): .c-xrefrc
 	@rm -rf $(TEST).log CXrefs /tmp/c-xref*.log
-	@../../src/c-xref include1.h include2.h -xrefrc .c-xrefrc -refs "$(CURDIR)/CXrefs" -o $(TEST).log
+	@$(CXREF) include1.h include2.h -o $(TEST).log
 	@grep include1.h CXrefs/XFiles > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \

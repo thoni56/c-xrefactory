@@ -9,7 +9,7 @@ $(TEST): CXrefs
 trace: EXTRA = \'-trace\'
 trace: $(TEST)
 
-ARGUMENTS = -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -create
+ARGUMENTS = -create
 
 CXrefs: .c-xrefrc
 	@$(COMMAND) -o $(TEST).log

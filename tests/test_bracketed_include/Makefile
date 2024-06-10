@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -create -xrefrc .c-xrefrc -p $(CURDIR) -log=log source.c
+ARGUMENTS = -create -log=log source.c
 
 $(TEST): .c-xrefrc
 	$(COMMAND) > output.tmp

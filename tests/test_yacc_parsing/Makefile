@@ -1,9 +1,9 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefrc .c-xrefrc simple_grammar.y -o $(TEST).log
+ARGUMENTS = simple_grammar.y -o $(TEST).log
 
-$(TEST):
+$(TEST): .c-xrefrc
 	@rm -rf output $@.log CXrefs
 	@$(COMMAND)
 	@echo "Tests in '$(TEST)': $(shell tput setaf 3)No tests, just executing$(shell tput sgr0)"

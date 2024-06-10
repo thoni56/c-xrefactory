@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefrc .c-xrefrc test_source/hello.c
+ARGUMENTS = test_source/hello.c
 
 # This test will always succeed unless c-xref fails
 $(TEST): clean

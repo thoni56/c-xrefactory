@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefactory-II -create -errors -xrefrc .c-xrefrc -p $(CURDIR) $(TRACE) source.c -log=log -o output.tmp
+ARGUMENTS = -xrefactory-II -create -errors $(TRACE) source.c -log=log -o output.tmp
 
 $(TEST): .c-xrefrc
 	$(COMMAND) > out
@@ -18,3 +18,4 @@ trace: $(TEST)
 
 clean:
 	rm -rf .c-xrefrc CXrefs output.log output.tmp
+
