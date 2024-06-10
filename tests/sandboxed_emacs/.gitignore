@@ -7,3 +7,4 @@ latest-invocation
 .cache
 *.log
 pipe-spy
+c-xrefactory
