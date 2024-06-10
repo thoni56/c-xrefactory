@@ -10,9 +10,14 @@
 
 include ../Makefile.messages
 
+# You can override which c-xref to run, but each test need to define ARGUMENTS
+# and can use $(COMMAND)
 CXREF = ../../src/c-xref
+COMMAND = $(CXREF) $(ARGUMENTS)
 
+# Define the test name as the directory name
 TEST = $(shell basename '$(CURDIR)')
+
 
 all: .c-xrefrc $(TEST)
 $(TEST): .c-xrefrc
@@ -61,6 +66,8 @@ coverage:
 	$(MAKE) $(TEST)
 	cd ../../src ; make COVERAGE_CASE=$(TEST) the-actual-coverage-report
 
+# Targets for debugging with gdb or lldb, so far only works for tests
+# that do not use the server driver
 gdb:
 	gdb $(CXREF) -ex 'br main' -ex 'run $(ARGUMENTS)'
 

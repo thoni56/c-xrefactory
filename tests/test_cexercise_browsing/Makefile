@@ -10,8 +10,7 @@ $(TEST): CXrefs
 trace: EXTRA = \'-trace\'
 trace: $(TEST)
 
-CXREF = ../../src/c-xref
-COMMAND = $(CXREF) -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -create
+ARGUMENTS = -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -create
 
 CXrefs: .c-xrefrc
 	@# Sources are not here but in subdir

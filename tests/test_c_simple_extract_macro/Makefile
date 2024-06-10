@@ -1,6 +1,5 @@
 include ../Makefile.boilerplate
 
-CXREF = ../../src/c-xref
 
 $(TEST): clean
 	@# First do the extract

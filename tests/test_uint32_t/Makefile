@@ -18,11 +18,10 @@ include ../Makefile.boilerplate
 # gcc -E source.c
 
 
-CXREF = ../../src/c-xref
 ARGUMENTS = -create -xrefrc .c-xrefrc -p $(CURDIR) $(TRACE) uint32.c -errors -log=log
 
 $(TEST): .c-xrefrc
-	$(CXREF) $(ARGUMENTS) 2> output.tmp > out
+	$(COMMAND) 2> output.tmp > out
 	@$(NORMALIZE) output.tmp > output
 	grep ERROR output | grep intptr_t; \
 	if [ $$? -eq 0 ] ; then \
@@ -37,8 +36,3 @@ trace: $(TEST)
 
 clean:
 	rm -rf .c-xrefrc CXrefs output.log output.tmp
-
-DEBUGGER = gdb
-debug: TRACE = -trace
-debug:
-	$(DEBUGGER) $(CXREF) -ex 'br main' -ex 'run $(ARGUMENTS)'

@@ -20,11 +20,10 @@ include ../Makefile.boilerplate
 # So here we add the subdirectory "next" where there also is a "include.h". In the one in the top
 # directory we want to include that one using "#include_next stdint.h".
 
-CXREF = ../../src/c-xref
-CXREF_COMMAND = $(CXREF) -create -xrefrc .c-xrefrc -p $(CURDIR) -I path1 -I path2 source.c -xrefactory-II -errors -o output.tmp
+ARGUMENTS = -create -xrefrc .c-xrefrc -p $(CURDIR) -I path1 -I path2 source.c -xrefactory-II -errors -o output.tmp
 
 $(TEST): .c-xrefrc
-	$(CXREF_COMMAND) > out
+	$(COMMAND) > out
 	@$(NORMALIZE) output.tmp > output
 	grep "error len" output ; \
 	if [ $$? -eq 0 ] ; then \
@@ -35,7 +34,3 @@ $(TEST): .c-xrefrc
 
 clean:
 	rm -rf .c-xrefrc CXrefs output.log output.tmp
-
-GDB = gdb # May override for cgdb, lldb, ...
-debug:
-	$(GDB) --args $(CXREF_COMMAND)

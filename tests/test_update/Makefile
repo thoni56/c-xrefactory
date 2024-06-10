@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
-CXREF = ../../src/c-xref
-COMMAND = $(CXREF)  -xrefrc $(CURDIR)/.c-xrefrc -update -p $(CURDIR)/cexercise -trace -log=log
+
+ARGUMENTS = -xrefrc $(CURDIR)/.c-xrefrc -update -p $(CURDIR)/cexercise -trace -log=log
 
 $(TEST): CXrefs
 	touch cexercise/*
@@ -20,8 +20,3 @@ CXrefs: .c-xrefrc
 
 clean:
 	rm -rf CXrefs .c-xrefrc
-
-DEBUGGER=gdb
-debug:
-	touch cexercise/*
-	$(DEBUGGER) --args $(COMMAND)

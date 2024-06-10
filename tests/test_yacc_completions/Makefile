@@ -1,9 +1,5 @@
-# Automated tests for C exercise : completions()
-
 include ../Makefile.boilerplate
 
-CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR)
-COMMAND = $(CXREF)
 
 $(TEST): CXrefs
 	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp

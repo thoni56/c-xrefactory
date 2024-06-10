@@ -1,6 +1,5 @@
 include ../Makefile.boilerplate
 
-CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc
 
 $(TEST): CXrefs
 	@sed -e"s+SRCDIR+$(realpath ../../src)+" commands.input > commands.tmp

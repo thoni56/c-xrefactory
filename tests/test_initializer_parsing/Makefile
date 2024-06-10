@@ -1,9 +1,9 @@
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref initializer_parsing.c -xrefrc .c-xrefrc -refs $(CURDIR)/CXrefs -o output
+ARGUMENTS = initializer_parsing.c -xrefrc .c-xrefrc -refs $(CURDIR)/CXrefs -o output
 
 $(TEST):
-	@../../src/c-xref initializer_parsing.c -xrefrc .c-xrefrc -refs $(CURDIR)/CXrefs -o output
+	@$(COMMAND)
 	@# Check in the xrefs for 'E0' - which means?
 	@grep "E0" CXrefs/* | grep 'f2l2cr22u16l7cr18l5cr13cr23l3cr7cr13cr24l3cr25l7cr' > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
@@ -15,7 +15,3 @@ $(TEST):
 
 clean:
 	@rm -rf $@.log CXrefs .c-xrefrc *output
-
-DEBUGGER=gdb
-debug:
-	$(DEBUGGER) --args $(COMMAND)

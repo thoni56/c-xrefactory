@@ -1,6 +1,5 @@
 include ../Makefile.boilerplate
 
-CXREF = ../../src/c-xref
 
 $(TEST): CXrefs
 	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
@@ -10,7 +9,7 @@ $(TEST): CXrefs
 trace: EXTRA = \'-trace\'
 trace: $(TEST)
 
-COMMAND = $(CXREF) -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -create
+ARGUMENTS = -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -create
 
 CXrefs: .c-xrefrc
 	@$(COMMAND) -o $(TEST).log

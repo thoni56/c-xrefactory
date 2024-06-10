@@ -1,6 +1,7 @@
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref -p $(CURDIR) -xrefrc .c-xrefrc test_sources/source.c -o output
+ARGUMENTS = -p $(CURDIR) -xrefrc .c-xrefrc test_sources/source.c -o output
+
 $(TEST):
 	@$(COMMAND)
 	@# Is there a reference to the integer field on line with compound literal?

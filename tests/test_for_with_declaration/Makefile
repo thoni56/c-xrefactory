@@ -1,9 +1,6 @@
 include ../Makefile.boilerplate
 
 
-CXREF = ../../src/c-xref
-COMMAND = $(CXREF) -xrefactory-II -create -errors -xrefrc .c-xrefrc -p $(CURDIR) $(TRACE) source.c -log=log -o output.tmp
-
 $(TEST): .c-xrefrc
 	$(COMMAND) > out
 	@$(NORMALIZE) output.tmp > output

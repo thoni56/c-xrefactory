@@ -1,10 +1,10 @@
 include ../Makefile.boilerplate
 
-CXREF = ../../src/c-xref
+
 ARGUMENTS = -create -xrefrc .c-xrefrc -p $(CURDIR) -log=log source.c
 
 $(TEST): .c-xrefrc
-	$(CXREF) $(ARGUMENTS) > output.tmp
+	$(COMMAND) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	grep "failed to open" log ; \
 	if [ $$? -eq 0 ] ; then \

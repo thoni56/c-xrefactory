@@ -1,6 +1,5 @@
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR)
 
 $(TEST): .c-xrefrc
 	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp

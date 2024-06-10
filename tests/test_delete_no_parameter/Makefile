@@ -1,10 +1,10 @@
 include ../Makefile.boilerplate
 
-CXREF = ../../src/c-xref
+
 ARGUMENTS = -xrefactory-II -refactory -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -rfct-del-param -olcxparnum=1 -olcursor=36 $(CURDIR)/hello.c
 
 $(TEST): .c-xrefrc
-	$(CXREF) $(ARGUMENTS) -log=log $(EXTRA) > output.tmp
+	$(COMMAND) -log=log $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp | grep -v progress > output
 	@$(VERIFY)
 
