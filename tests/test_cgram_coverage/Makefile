@@ -1,5 +1,3 @@
-# Automated tests for checking generated c-xreferences
-
 include ../Makefile.boilerplate
 
 COMMAND = ../../src/c-xref -xrefrc .c-xrefrc cgram_coverage.c -o $(TEST).log
@@ -11,6 +9,3 @@ $(TEST):
 	$(COMMAND)
 	$(NO_TESTS)
 	exit 0
-
-gdb:
-	gdb --args $(COMMAND)

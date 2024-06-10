@@ -19,7 +19,3 @@ trace: $(TEST)
 
 clean:
 	rm -rf CXrefs c-xref.log out .c-xrefrc
-
-DEBUGGER = gdb
-debug:
-	$(DEBUGGER) --args ../../src/c-xref -create -xrefrc .c-xrefrc -p $(CURDIR)

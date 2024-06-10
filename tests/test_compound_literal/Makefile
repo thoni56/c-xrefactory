@@ -10,6 +10,3 @@ $(TEST):
 	else \
 		$(OK) ; \
 	fi
-
-gdb:
-	gdb --args $(COMMAND)

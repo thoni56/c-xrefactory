@@ -1,16 +1,14 @@
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref -xrefrc .c-xrefrc test_source/hello.c
+CXREF = ../../src/c-xref
+ARGUMENTS = -xrefrc .c-xrefrc test_source/hello.c
 
-# This test will always succeed unless it c-xref fails
+# This test will always succeed unless c-xref fails
 $(TEST): clean
-	@$(COMMAND) -o output.tmp
+	@$(CXREF) $(ARGUMENTS) -o output.tmp
 	@$(NORMALIZE) output.tmp >> output
 	@$(OK)
 	@exit 0
 
 clean:
 	@-rm -rf CXrefs output.log output.tmp output
-
-debug:
-	gdb --args $(COMMAND)

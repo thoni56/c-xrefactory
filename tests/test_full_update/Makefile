@@ -1,10 +1,10 @@
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref
-COMMAND = $(CXREF)  -xrefrc $(CURDIR)/.c-xrefrc -fullupdate -p $(CURDIR)
+ARGUMENTS = -xrefrc $(CURDIR)/.c-xrefrc -fullupdate -p $(CURDIR)
 
 $(TEST): CXrefs
-	$(COMMAND) > output.tmp
+	$(CXREF) $(ARGUMENTS) > output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
@@ -15,12 +15,7 @@ CXrefs: .c-xrefrc
 	# Sources in subdir:
 	sed -e s:$(CURDIR)$$:$(CURDIR)/cexercise: .c-xrefrc > .c-xrefrc.tmp
 	mv .c-xrefrc.tmp .c-xrefrc
-	$(COMMAND) -create -o $(TEST).log
+	$(CXREF) $(ARGUMENTS) -create -o $(TEST).log
 
 clean:
 	rm -rf CXrefs .c-xrefrc
-
-DEBUGGER=gdb
-debug:
-	@echo $(COMMAND)
-	$(DEBUGGER) --args $(COMMAND)

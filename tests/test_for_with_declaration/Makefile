@@ -16,8 +16,3 @@ $(TEST): .c-xrefrc
 
 clean:
 	rm -rf .c-xrefrc CXrefs output.log output.tmp
-
-DEBUGGER = gdb
-debug: TRACE = -trace
-debug:
-	$(DEBUGGER) --args $(COMMAND)

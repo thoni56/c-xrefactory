@@ -11,7 +11,7 @@ $(TEST): clean
 clean:
 	@-rm -rf CXrefs output.log output.tmp output
 
-gdb:
+debug:
 	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --buffer buffer --delay 5 > output.tmp &
 	sleep 1
 	sudo gdb -pid `pgrep c-xref | tail -1` -ex 'br refactory' -ex 'continue'

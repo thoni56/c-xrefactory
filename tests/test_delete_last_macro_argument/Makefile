@@ -7,9 +7,6 @@ $(TEST): .c-xrefrc
 	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
 
-gdb:
-	gdb --args $(COMMAND)
-
 clean:
 	rm -rf CXrefs .c-xrefrc
 
