@@ -21,16 +21,6 @@
 #include "reftab.h"
 
 
-static void printPrescanningMessage(void) {
-    if (options.xref2) {
-        char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "Prescanning classes, please wait.");
-        ppcGenRecord(PPC_INFORMATION, tmpBuff);
-    } else {
-        log_info("Prescanning classes, please wait.");
-    }
-}
-
 // this is necessary to put new mtimes for header files
 static void setFullUpdateMtimesInFileItem(FileItem *fi) {
     if (fi->scheduledToUpdate || options.create) {
@@ -319,7 +309,7 @@ void callXref(int argc, char **argv, bool isRefactoring) {
     // These are static because of the longjmp() maybe happening
     static char     *cxFreeBase;
     static bool      firstPass, atLeastOneProcessed;
-    static FileItem *ffc, *pffc;
+    static FileItem *ffc;
     static int       numberOfInputs;
 
     LongjmpReason reason = LONGJMP_REASON_NONE;
@@ -330,7 +320,7 @@ void callXref(int argc, char **argv, bool isRefactoring) {
     if (options.update)
         scheduleModifiedFilesToUpdate(isRefactoring);
     atLeastOneProcessed = false;
-    ffc = pffc = createListOfInputFileItems();
+    ffc = createListOfInputFileItems();
     LIST_LEN(numberOfInputs, FileItem, ffc);
     for (;;) {
         currentPass = ANY_PASS;
@@ -338,29 +328,13 @@ void callXref(int argc, char **argv, bool isRefactoring) {
         if ((reason = setjmp(cxmemOverflow)) != 0) {
             referencesOverflowed(cxFreeBase, reason);
             if (reason == LONGJMP_REASON_FILE_ABORT) {
-                if (pffc != NULL)
-                    pffc = pffc->next;
-                else if (ffc != NULL)
+                if (ffc != NULL)
                     ffc = ffc->next;
             }
         } else {
             int inputCounter = 0;
-            static bool messagePrinted = false;
-
-            for (; pffc != NULL; pffc = pffc->next) {
-                if (!messagePrinted) {
-                    printPrescanningMessage();
-                    messagePrinted = true;
-                }
-                currentLanguage = getLanguageFor(pffc->name);
-                if (options.xref2)
-                    writeRelativeProgress((10*inputCounter) / numberOfInputs);
-                inputCounter++;
-            }
-
             fileAbortEnabled = true;
 
-            inputCounter = 0;
             for (; ffc != NULL; ffc = ffc->next) {
                 oneWholeFileProcessing(argc, argv, ffc, &firstPass, &atLeastOneProcessed, isRefactoring);
                 ffc->isScheduled       = false;
