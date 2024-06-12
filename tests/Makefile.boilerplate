@@ -12,8 +12,9 @@ include ../Makefile.messages
 
 # You can override which c-xref to run, but each test need to define ARGUMENTS
 # and can use $(COMMAND)
-CXREF = ../../src/c-xref -xrefrc .c-xrefrc -p $(CURDIR)
-COMMAND = $(CXREF) $(ARGUMENTS)
+CXREF = ../../src/c-xref
+BASE_ARGUMENTS = -xrefrc .c-xrefrc -p $(CURDIR)
+COMMAND = $(CXREF) $(BASE_ARGUMENTS) $(ARGUMENTS)
 
 # Define the test name as the directory name
 TEST = $(shell basename '$(CURDIR)')
@@ -69,7 +70,7 @@ coverage:
 # Targets for debugging with gdb or lldb, so far only works for tests
 # that do not use the server driver
 gdb:
-	gdb $(CXREF) -ex 'br main' -ex 'run $(ARGUMENTS)'
+	gdb $(CXREF) -ex 'br main' -ex 'run $(BASE_ARGUMENTS) $(ARGUMENTS)'
 
 lldb:
-	lldb -o 'breakpoint set --name main' -o 'process launch -- $(ARGUMENTS)' $(CXREF)
+	lldb -o 'breakpoint set --name main' -o 'process launch -- $(BASE_ARGUMENTS) $(ARGUMENTS)' $(CXREF)
