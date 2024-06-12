@@ -13,7 +13,3 @@ trace: $(TEST)
 
 clean:
 	@-rm -rf CXrefs output.log output.tmp output log
-
-debug: DEBUGGER=gdb
-debug:
-	$(DEBUGGER) $(CXREF) -ex 'br makeExtraction' -ex 'run $(ARGUMENTS)'
