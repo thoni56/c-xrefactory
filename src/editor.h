@@ -39,11 +39,11 @@ typedef struct editorRegionList {
 extern void replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize, char *str,
                                         int strlength, EditorUndo **undo);
 extern void moveBlockInEditorBuffer(EditorMarker *dest, EditorMarker *src, int size, EditorUndo **undo);
-extern void dumpEditorBuffer(EditorBuffer *buff);
+extern void dumpEditorBuffer(EditorBuffer *buffer);
 extern void dumpEditorBuffers(void);
 extern void quasiSaveModifiedEditorBuffers(void);
 extern void loadAllOpenedEditorBuffers(void);
-extern void closeEditorBufferIfClosable(char *name);
+extern void closeEditorBufferIfCloseable(char *name);
 extern void closeAllEditorBuffersIfClosable(void);
 extern void closeAllEditorBuffers(void);
 
@@ -61,7 +61,6 @@ extern time_t editorFileModificationTime(char *path);
 extern int    editorFileStatus(char *path, struct stat *statP);
 
 extern bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2);
-extern bool editorMarkerBeforeOrSame(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2);
 extern bool editorRegionListBefore(EditorRegionList *l1, EditorRegionList *l2);

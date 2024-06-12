@@ -419,10 +419,6 @@ bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2) {
     return false;
 }
 
-bool editorMarkerBeforeOrSame(EditorMarker *m1, EditorMarker *m2) {
-    return !editorMarkerBefore(m2, m1);
-}
-
 bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2) {
     return editorMarkerBefore(m2, m1);
 }
@@ -1331,7 +1327,7 @@ static void closeEditorBuffer(EditorBufferList *member, int index) {
 
 // be very carefull when using this function, because of interpretation
 // of 'Closable', this should be additional field: 'closable' or what
-void closeEditorBufferIfClosable(char *name) {
+void closeEditorBufferIfCloseable(char *name) {
     EditorBuffer dd;
     EditorBufferList ddl, *memb;
     int index;

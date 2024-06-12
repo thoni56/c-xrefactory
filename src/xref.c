@@ -217,7 +217,7 @@ static void oneWholeFileProcessing(int argc, char **argv, FileItem *fileItem, bo
     // so be very careful about this!!!
     // TODO: WTF? All test still passes if we reverse this comparison...
     if (!isRefactoring) {
-        closeEditorBufferIfClosable(inputFileName);
+        closeEditorBufferIfCloseable(inputFileName);
         closeAllEditorBuffersIfClosable();
     }
 }

@@ -38,10 +38,6 @@ bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
 
-bool editorMarkerBeforeOrSame(EditorMarker *m1, EditorMarker *m2) {
-  return (int) mock(m1, m2);
-}
-
 bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
@@ -194,7 +190,7 @@ int editorMapOnNonexistantFiles(char *dirname, void (*fun)(char *file, char *a1,
   return (int) mock(dirname, fun, deep, a1, a2, a3, a4, a5);
 }
 
-void closeEditorBufferIfClosable(char *name) {
+void closeEditorBufferIfCloseable(char *name) {
   mock(name);
 }
 
