@@ -1,26 +1,26 @@
-../../src/c-xref -xrefactory-II -task_regime_server -o server-buffer
--olcxpush -urldirect  "-olcursor=641" "CURDIR/index.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
+../../src/c-xref -xrefactory-II -server -o server-buffer
+-olcxpush -olcursor=641 CURDIR/index.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=21 col=5 len=<n>>CURDIR/index.c</position-lc>
 </goto>
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/browsing.c"
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/browsing.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/source.c"
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "SRCDIR/main.c"
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/main.c
 end-of-options
 
 <sync>
-<set-info len=<n>>SRCDIR</set-info>
+<set-info len=<n>>CURDIR</set-info>
 -exit
 end-of-options
 

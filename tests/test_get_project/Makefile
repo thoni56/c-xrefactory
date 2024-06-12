@@ -2,9 +2,8 @@ include ../Makefile.boilerplate
 
 
 $(TEST): CXrefs
-	@sed -e"s+SRCDIR+$(realpath ../../src)+" commands.input > commands.tmp
-	$(EDIT_SERVER_DRIVER) commands.tmp $(EXTRA) > output.tmp
-	$(NORMALIZE) output.tmp | sed -e"s+$(realpath ../../src)+SRCDIR+" > output
+	$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
 trace debug: EXTRA+=--extra="-trace -log=log"
