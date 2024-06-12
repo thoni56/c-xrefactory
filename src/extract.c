@@ -860,7 +860,10 @@ static void makeExtraction(void) {
         return;
     }
 
-    log_trace("!cxMemories: funBegin, blockBegin, blockEnd, funEnd: %x, %x, %x, %x", parsedInfo.cxMemoryIndexAtFunctionBegin, parsedInfo.cxMemoryIndexAtBlockBegin, parsedInfo.cxMemoryIndexAtBlockEnd, parsedInfo.cxMemoryIndexAtFunctionEnd);
+    log_trace("!cxMemories: funBegin, blockBegin, blockEnd, funEnd: %x, %x, %x, %x",
+              parsedInfo.cxMemoryIndexAtFunctionBegin,
+              parsedInfo.cxMemoryIndexAtBlockBegin,
+              parsedInfo.cxMemoryIndexAtBlockEnd, parsedInfo.cxMemoryIndexAtFunctionEnd);
     assert(parsedInfo.cxMemoryIndexAtFunctionBegin);
     assert(parsedInfo.cxMemoryIndexAtBlockBegin);
     assert(parsedInfo.cxMemoryIndexAtBlockEnd);
