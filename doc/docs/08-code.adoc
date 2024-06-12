@@ -77,6 +77,9 @@ collects information in the corresponding semantic actions.  This
 information is stored in various global variables, like
 `parameterBeginPosition`.
 
+The parser is filling out a ParsedInfo structure which conveys
+information that can be used e.g. when extracting functions etc.
+
 NOTE: At this point I don't understand exactly how this interaction is
 performed, there seems to be no way to parse only appropriate parts,
 so the whole file need to be re-parsed.
@@ -90,10 +93,10 @@ acting on
 - the semantic rules in the parser(s) contains code that matches these
   global variables and then inserts special lexems in the lexem stream
 
-One example is how a Java 'move static method' is performed. It
+One example is how a Java 'move static method' was performed. It
 requires a target position. That position is transferred from command
-line options to global variables. When the Java parser is parsing a
-class or similar it (or rather the lexer) looks at that "target
+line options to global variables. When the Java parser was parsing a
+class or similar it (or rather the lexer) looks at that "ddtarget
 position information" and inserts a `OL_MARKER_TOKEN` in the stream.
 
 NOTE: TODO: What extra "operation" the parsing should perform and return
@@ -144,12 +147,14 @@ when done.
 
 It would be much better to call the "putLexem()"-functions with a
 lexemBuffer but there seems to be a few cases where the destination
-(often `dd`) is not a lexem stream inside a lexemBuffer.
+(often `dd`) is not a lexem stream inside a lexemBuffer. These might
+be related to macro handling or caching.
 
-NOTE: This is a work-in-progress.
-Currently most of the "normal" usages are prepared to use the LexemBuffer's pointers.
-But the handling of macros and defines are cases where the lexems are not put in a LexemBuffer.
-See the TODO.org for current status of this Mikado sequence.
+NOTE: This is a work-in-progress.  Currently most of the "normal"
+usages are prepared to use the LexemBuffer's pointers.  But the
+handling of macros and defines are cases where the lexems are not put
+in a LexemBuffer.  See the TODO.org for current status of this Mikado
+sequence.
 
 ==== Semantic information
 
@@ -161,9 +166,8 @@ the parsing required.
 Two structures hold information about various things, among which are
 the memory index at certain points of the parsing. Thus it is possible
 to verify e.g. that a editor region does not cover a break in block or
-function structure. These structures are, at the point of writing,
-called `parsedInfo` and `parsedClassInfo`, and they definitely need to
-be tidied up.
+function structure. This structure is, at the point of writing, called
+`parsedInfo` and definitely need to be tidied up.
 
 === Reference Database
 
