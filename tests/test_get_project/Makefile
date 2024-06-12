@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-$(TEST): CXrefs
+$(TEST): .c-xrefrc
 	$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
@@ -9,8 +9,6 @@ $(TEST): CXrefs
 trace debug: EXTRA+=--extra="-trace -log=log"
 trace: $(TEST)
 
-CXrefs:
-	@sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" -e"s+SRCDIR+$(realpath ../../src)+" c-xref.project >> .c-xrefrc
 
 debug:
 	$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &

@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefactory-II -olcxgetprojectname $(CURDIR)/index.c
+ARGUMENTS = -xrefactory-II -olcxgetprojectname index.c
 
 $(TEST): CXrefs
 	$(COMMAND) 2>1 > output.tmp
