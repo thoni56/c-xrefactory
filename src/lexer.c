@@ -387,6 +387,15 @@ static int handleNewline(CharacterBuffer *cb, LexemBuffer *lb, int lexemStarting
     return ch;
 }
 
+static void putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(LexemBuffer *lb, int parChar,
+                                                                      Position position) {
+    /* TODO Why do we put this contrived sequence of lexems? */
+    putLexemCodeWithPosition(lb, parChar, position);
+    putLexemCodeWithPosition(lb, ';', position);
+    putLexemCodeWithPosition(lb, OL_MARKER_TOKEN, position);
+    putLexemCodeWithPosition(lb, parChar, position);
+}
+
 bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
     LexemCode lexem;
     int lexemStartingColumn;
@@ -738,40 +747,14 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                             parChar='}';
                         else
                             parChar = '{';
-                        putLexemCode(lb, parChar);
-                        putLexemPosition(lb, position);
-                        putLexemCode(lb, parChar);
-                        putLexemPosition(lb, position);
-                        putLexemCode(lb, ';');
-                        putLexemPosition(lb, position);
-                        putLexemCode(lb, ';');
-                        putLexemPosition(lb, position);
-                        putLexemCode(lb, OL_MARKER_TOKEN);
-                        putLexemPosition(lb, position);
-                        putLexemCode(lb, parChar);
-                        putLexemPosition(lb, position);
-                        putLexemCode(lb, parChar);
-                        putLexemPosition(lb, position);
+                        putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(lb, parChar, position);
                         parsedInfo.marker1Flag = true;
                     } else if (apos >= options.olMarkOffset && !parsedInfo.marker2Flag){
                         if (parsedInfo.marker1Flag)
                             parChar='}';
                         else
                             parChar = '{';
-                        putLexemCode(lb, parChar);
-                        putLexemPosition(lb, position);
-                        putLexemCode(lb, parChar);
-                        putLexemPosition(lb, position);
-                        putLexemCode(lb, ';');
-                        putLexemPosition(lb, position);
-                        putLexemCode(lb, ';');
-                        putLexemPosition(lb, position);
-                        putLexemCode(lb, OL_MARKER_TOKEN);
-                        putLexemPosition(lb, position);
-                        putLexemCode(lb, parChar);
-                        putLexemPosition(lb, position);
-                        putLexemCode(lb, parChar);
-                        putLexemPosition(lb, position);
+                        putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(lb, parChar, position);
                         parsedInfo.marker2Flag = true;
                     }
                 } else if (options.serverOperation == OLO_COMPLETION
@@ -788,7 +771,12 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                         gotOnLineCxRefs(&position);
                     }
                     if (options.serverOperation == OLO_SET_MOVE_FUNCTION_TARGET) {
-                        // TODO: Figure out what the problem was with this for C
+                        // TODO: Figure out what the problem with this
+                        // is for C. Marian's comment below indicate
+                        // CPP problem, but if we will try to
+                        // implement "Move Function" for C, we need to
+                        // be able to do this. There is no test for
+                        // MOVE_FUNCTION yet...
 
                         //if (LANGUAGE(LANG_JAVA)) {
                         // there is a problem with this, when browsing at CPP construction
@@ -797,8 +785,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                         ch = skipBlanks(cb, ch);
                         int apos = fileOffsetFor(cb);
                         if (apos >= options.olCursorOffset && !parsedInfo.marker1Flag) {
-                            putLexemCode(lb, OL_MARKER_TOKEN);
-                            putLexemPosition(lb, position);
+                            putLexemCodeWithPosition(lb, OL_MARKER_TOKEN, position);
                             parsedInfo.marker1Flag = true;
                         }
                     }

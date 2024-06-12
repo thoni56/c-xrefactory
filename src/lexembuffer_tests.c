@@ -1,6 +1,7 @@
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
 
+#include "head.h"
 #include "lexem.h"
 #include "lexembuffer.h"
 #include "log.h"
@@ -19,6 +20,9 @@ BeforeEach(LexemBuffer) {
     initLexemBuffer(&lb);
 }
 AfterEach(LexemBuffer) {}
+
+
+protected extern void putLexemCode(LexemBuffer *lb, LexemCode lexem);
 
 
 Ensure(LexemBuffer, can_shift_remaining_lexems) {

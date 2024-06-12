@@ -39,13 +39,11 @@ extern void moveLexemStreamWriteToBackpatchPositonWithOffset(LexemBuffer *lb, in
 
 extern int strlenOfBackpatchedIdentifier(LexemBuffer *lb);
 
-/* Put elementary values */
-extern void putLexemCode(LexemBuffer *lb, LexemCode lexem);
-
 /* Put semantically meaningful complete lexems including position, string, value, ... */
 extern void putLexemLines(LexemBuffer *lb, int lines);
 extern int putIdentifierLexem(LexemBuffer *lexemBuffer, CharacterBuffer *characterBuffer, int ch);
 extern void putLexemPosition(LexemBuffer *lb, Position position);
+extern void putLexemCodeWithPosition(LexemBuffer *lb, LexemCode lexem, Position position);
 extern void putLexemPositionFields(LexemBuffer *lb, int file, int line, int col);
 extern void putLexemWithColumn(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb, int column);
 extern int  putIncludeString(LexemBuffer *lb, CharacterBuffer *cb, int ch);

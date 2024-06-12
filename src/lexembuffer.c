@@ -171,7 +171,7 @@ int strlenOfBackpatchedIdentifier(LexemBuffer *lb) {
 // Put complete lexems (including position, string, ...)
 //
 
-void putLexemCode(LexemBuffer *lb, LexemCode lexem) {
+protected void putLexemCode(LexemBuffer *lb, LexemCode lexem) {
     putLexShortAt(lexem, &(lb->write));
 }
 
@@ -192,6 +192,11 @@ void putLexemPosition(LexemBuffer *lb, Position position) {
     putLexCompactedAt(position.file, &(lb->write));
     putLexCompactedAt(position.line, &(lb->write));
     putLexCompactedAt(position.col, &(lb->write));
+}
+
+void putLexemCodeWithPosition(LexemBuffer *lb, LexemCode lexem, Position position) {
+    putLexemCode(lb, lexem);
+    putLexemPosition(lb, position);
 }
 
 /* Scans an identifier from CharacterBuffer and stores it in
