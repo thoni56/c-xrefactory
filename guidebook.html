@@ -1042,6 +1042,10 @@ collects information in the corresponding semantic actions.  This
 information is stored in various global variables, like
 <code>parameterBeginPosition</code>.</p>
 </div>
+<div class="paragraph">
+<p>The parser is filling out a ParsedInfo structure which conveys
+information that can be used e.g. when extracting functions etc.</p>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1073,10 +1077,10 @@ global variables and then inserts special lexems in the lexem stream</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>One example is how a Java 'move static method' is performed. It
+<p>One example is how a Java 'move static method' was performed. It
 requires a target position. That position is transferred from command
-line options to global variables. When the Java parser is parsing a
-class or similar it (or rather the lexer) looks at that "target
+line options to global variables. When the Java parser was parsing a
+class or similar it (or rather the lexer) looks at that "ddtarget
 position information" and inserts a <code>OL_MARKER_TOKEN</code> in the stream.</p>
 </div>
 <div class="admonitionblock note">
@@ -1147,7 +1151,8 @@ when done.</p>
 <div class="paragraph">
 <p>It would be much better to call the "putLexem()"-functions with a
 lexemBuffer but there seems to be a few cases where the destination
-(often <code>dd</code>) is not a lexem stream inside a lexemBuffer.</p>
+(often <code>dd</code>) is not a lexem stream inside a lexemBuffer. These might
+be related to macro handling or caching.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1156,10 +1161,11 @@ lexemBuffer but there seems to be a few cases where the destination
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-This is a work-in-progress.
-Currently most of the "normal" usages are prepared to use the LexemBuffer&#8217;s pointers.
-But the handling of macros and defines are cases where the lexems are not put in a LexemBuffer.
-See the TODO.org for current status of this Mikado sequence.
+This is a work-in-progress.  Currently most of the "normal"
+usages are prepared to use the LexemBuffer&#8217;s pointers.  But the
+handling of macros and defines are cases where the lexems are not put
+in a LexemBuffer.  See the TODO.org for current status of this Mikado
+sequence.
 </td>
 </tr>
 </table>
@@ -1177,9 +1183,8 @@ the parsing required.</p>
 <p>Two structures hold information about various things, among which are
 the memory index at certain points of the parsing. Thus it is possible
 to verify e.g. that a editor region does not cover a break in block or
-function structure. These structures are, at the point of writing,
-called <code>parsedInfo</code> and <code>parsedClassInfo</code>, and they definitely need to
-be tidied up.</p>
+function structure. This structure is, at the point of writing, called
+<code>parsedInfo</code> and definitely need to be tidied up.</p>
 </div>
 </div>
 </div>
@@ -3244,7 +3249,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-06-12 07:12:24 UTC
+Last updated 2024-06-12 13:23:47 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
