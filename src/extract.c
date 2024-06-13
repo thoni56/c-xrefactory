@@ -557,9 +557,10 @@ static void reclassifyInOutVariables(ProgramGraphNode *program) {
     }
 }
 
-/* ************************** macro ******************************* */
-/* Preparing for extract function or macro inside expression */
-/* But how do we know this... */
+/* ************************** macro ********************************* */
+/* Preparing for extract function or macro inside expression, e.g.    */
+/*     if (some expression) ... and we want extract "some expression" */
+/* But how do we know this...                                         */
 bool isInExpression = false;
 
 static int strcatf(char *resultingString, char *format, ...) {
