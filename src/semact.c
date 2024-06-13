@@ -809,7 +809,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
 TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage) {
     Symbol symbol, *symbolP;
 
-    fillSymbol(&symbol, id->name, id->name, id->position);
+    symbol = makeSymbol(id->name, id->name, id->position);
     symbol.type = TypeEnum;
     symbol.storage = StorageDefault;
 

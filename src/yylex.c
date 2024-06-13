@@ -407,7 +407,7 @@ endOfFile:
 /* ********************************* #INCLUDE ********************** */
 
 static void fillIncludeSymbolItem(Symbol *symbol, Position *pos){
-    fillSymbol(symbol, LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, *pos);
+    *symbol = makeSymbol(LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, *pos);
     symbol->type = TypeCppInclude;
 }
 
@@ -545,7 +545,7 @@ static void processInclude2(Position *includePosition, char includeType, char *i
 
     sprintf(tmpBuff, "PragmaOnce-%s", includedName);
 
-    fillSymbol(&symbol, tmpBuff, tmpBuff, noPosition);
+    symbol = makeSymbol(tmpBuff, tmpBuff, noPosition);
     symbol.type = TypeMacro;
     symbol.storage = StorageDefault;
 
@@ -723,7 +723,7 @@ protected void processDefineDirective(bool hasArguments) {
         return;
 
     symbol = ppmAlloc(sizeof(Symbol));
-    fillSymbol(symbol, NULL, NULL, macroPosition);
+    *symbol = makeSymbol(NULL, NULL, macroPosition);
     symbol->type = TypeMacro;
     symbol->storage = StorageDefault;
 
@@ -926,22 +926,23 @@ void addMacroDefinedByOption(char *opt) {
 
 static void processUndefineDirective(void) {
     LexemCode lexem;
-    char *cc;
+    char *ch;
     Position position;
 
     lexem = getLexem();
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-    cc = currentInput.read;
+    ch = currentInput.read;
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-    testCxrefCompletionId(&lexem, cc, &position);
+    testCxrefCompletionId(&lexem, ch, &position);
+
     if (isIdentifierLexem(lexem)) {
         Symbol symbol;
         Symbol *member;
 
-        log_debug(": undef macro %s", cc);
+        log_debug(": undef macro %s", ch);
 
-        fillSymbol(&symbol, cc, cc, position);
+        symbol = makeSymbol(ch, ch, position);
         symbol.type = TypeMacro;
         symbol.storage = StorageDefault;
 
@@ -953,7 +954,7 @@ static void processUndefineDirective(void) {
             addCxReference(member, &position, UsageUndefinedMacro, NO_FILE_NUMBER);
 
             pp = ppmAlloc(sizeof(Symbol));
-            fillSymbol(pp, member->name, member->linkName, position);
+            *pp = makeSymbol(member->name, member->linkName, position);
             pp->type = TypeMacro;
             pp->storage = StorageDefault;
 
@@ -1060,7 +1061,7 @@ static void execCppIf(bool deleteSource) {
 
 static void processIfdefDirective(bool isIfdef) {
     LexemCode lexem;
-    char *cp;
+    char *ch;
     Position position;
     bool deleteSrc;
 
@@ -1068,15 +1069,14 @@ static void processIfdefDirective(bool isIfdef) {
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     /* Then we are probably looking at the id... */
-    cp = currentInput.read;
+    ch = currentInput.read;
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-    testCxrefCompletionId(&lexem, cp, &position);
+    testCxrefCompletionId(&lexem, ch, &position);
 
     if (!isIdentifierLexem(lexem))
         return;
 
-    Symbol symbol;
-    fillSymbol(&symbol, cp, cp, noPosition);
+    Symbol symbol = makeSymbol(ch, ch, noPosition);
     symbol.type = TypeMacro;
     symbol.storage = StorageDefault;
 
@@ -1115,8 +1115,8 @@ endOfFile:
 LexemCode cexp_yylex(void) {
     int res, mm;
     LexemCode lexem;
-    char *cc;
-    Symbol symbol, *foundMember;
+    char *ch;
+    Symbol *foundMember;
     Position position;
     bool haveParenthesis;
 
@@ -1128,7 +1128,7 @@ LexemCode cexp_yylex(void) {
         lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-        cc = currentInput.read;
+        ch = currentInput.read;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
         if (lexem == '(') {
             haveParenthesis = true;
@@ -1136,7 +1136,7 @@ LexemCode cexp_yylex(void) {
             lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-            cc = currentInput.read;
+            ch = currentInput.read;
             getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
         } else {
             haveParenthesis = false;
@@ -1145,7 +1145,7 @@ LexemCode cexp_yylex(void) {
         if (!isIdentifierLexem(lexem))
             return 0;
 
-        fillSymbol(&symbol, cc, cc, noPosition);
+        Symbol symbol = makeSymbol(ch, ch, noPosition);
         symbol.type = TypeMacro;
         symbol.storage = StorageDefault;
 
@@ -1196,7 +1196,6 @@ static void processPragmaDirective(void) {
     LexemCode lexem;
     char *mname, *fname;
     Position position;
-    Symbol *pp;
 
     lexem = getLexem();
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
@@ -1209,12 +1208,12 @@ static void processPragmaDirective(void) {
         mname = ppmAllocc(strlen(tmpBuff)+1, sizeof(char));
         strcpy(mname, tmpBuff);
 
-        pp = ppmAlloc(sizeof(Symbol));
-        fillSymbol(pp, mname, mname, position);
-        pp->type = TypeMacro;
-        pp->storage = StorageDefault;
+        Symbol *symbol = ppmAlloc(sizeof(Symbol));
+        *symbol = makeSymbol(mname, mname, position);
+        symbol->type = TypeMacro;
+        symbol->storage = StorageDefault;
 
-        symbolTableAdd(symbolTable, pp);
+        symbolTableAdd(symbolTable, symbol);
     }
     while (lexem != '\n') {
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
@@ -1404,8 +1403,7 @@ static void expandMacroArgument(LexInput *argumentInput) {
         bool failedMacroExpansion = false;
         Symbol *foundSymbol;
         if (lexem == IDENTIFIER) {
-            Symbol symbol;
-            fillSymbol(&symbol, nextLexemP, nextLexemP, noPosition);
+            Symbol symbol = makeSymbol(nextLexemP, nextLexemP, noPosition);
             symbol.type = TypeMacro;
             symbol.storage = StorageDefault;
             if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
@@ -2081,7 +2079,7 @@ LexemCode yylex(void) {
     if (lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND) {
         char *id;
         Position position;
-        Symbol symbol, *memberP;
+        Symbol *memberP;
 
         id = yytext = currentInput.read;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
@@ -2092,7 +2090,7 @@ LexemCode yylex(void) {
             testCxrefCompletionId(&lexem,yytext,&position);
         }
         log_trace("id '%s' position %d, %d, %d", yytext, position.file, position.line, position.col);
-        fillSymbol(&symbol, yytext, yytext, noPosition);
+        Symbol symbol = makeSymbol(yytext, yytext, noPosition);
         symbol.type = TypeMacro;
         symbol.storage = StorageDefault;
 

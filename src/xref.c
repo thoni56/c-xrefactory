@@ -309,7 +309,7 @@ void callXref(int argc, char **argv, bool isRefactoring) {
     // These are static because of the longjmp() maybe happening
     static char     *cxFreeBase;
     static bool      firstPass, atLeastOneProcessed;
-    static FileItem *ffc;
+    static FileItem *fileItem;
     static int       numberOfInputs;
 
     LongjmpReason reason = LONGJMP_REASON_NONE;
@@ -320,25 +320,25 @@ void callXref(int argc, char **argv, bool isRefactoring) {
     if (options.update)
         scheduleModifiedFilesToUpdate(isRefactoring);
     atLeastOneProcessed = false;
-    ffc = createListOfInputFileItems();
-    LIST_LEN(numberOfInputs, FileItem, ffc);
+    fileItem = createListOfInputFileItems();
+    LIST_LEN(numberOfInputs, FileItem, fileItem);
     for (;;) {
         currentPass = ANY_PASS;
         firstPass   = true;
         if ((reason = setjmp(cxmemOverflow)) != 0) {
             referencesOverflowed(cxFreeBase, reason);
             if (reason == LONGJMP_REASON_FILE_ABORT) {
-                if (ffc != NULL)
-                    ffc = ffc->next;
+                if (fileItem != NULL)
+                    fileItem = fileItem->next;
             }
         } else {
             int inputCounter = 0;
             fileAbortEnabled = true;
 
-            for (; ffc != NULL; ffc = ffc->next) {
-                oneWholeFileProcessing(argc, argv, ffc, &firstPass, &atLeastOneProcessed, isRefactoring);
-                ffc->isScheduled       = false;
-                ffc->scheduledToUpdate = false;
+            for (; fileItem != NULL; fileItem = fileItem->next) {
+                oneWholeFileProcessing(argc, argv, fileItem, &firstPass, &atLeastOneProcessed, isRefactoring);
+                fileItem->isScheduled       = false;
+                fileItem->scheduledToUpdate = false;
                 if (options.xref2)
                     writeRelativeProgress(10 + (90 * inputCounter) / numberOfInputs);
                 inputCounter++;

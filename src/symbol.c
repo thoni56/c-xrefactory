@@ -9,15 +9,15 @@
 #include "type.h"
 
 
-void fillSymbol(Symbol *s, char *name, char *linkName, Position pos) {
-    s->name = name;
-    s->linkName = linkName;
-    s->pos = pos;
-    s->u.typeModifier = NULL;
-    s->next = NULL;
-    s->type = TypeDefault;
-    s->storage = StorageDefault;
-    s->npointers = 0;
+static void fillSymbol(Symbol *symbol, char *name, char *linkName, Position pos) {
+    symbol->name = name;
+    symbol->linkName = linkName;
+    symbol->pos = pos;
+    symbol->u.typeModifier = NULL;
+    symbol->next = NULL;
+    symbol->type = TypeDefault;
+    symbol->storage = StorageDefault;
+    symbol->npointers = 0;
 }
 
 Symbol makeSymbol(char *name, char *linkName, Position pos) {
@@ -37,6 +37,7 @@ void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, Position po
     symbol->u.labelIndex = labelIndex;
 }
 
+/* Allocate and init a new Symbol in StackMemory */
 Symbol *newSymbol(char *name, char *linkName, Position pos) {
     Symbol *s;
     s = stackMemoryAlloc(sizeof(Symbol));

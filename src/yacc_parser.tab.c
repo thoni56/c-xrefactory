@@ -2416,12 +2416,10 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #line 1937 "yacc_parser.y"
 
 static void addYaccSymbolReference(Id *name, int usage) {
-    Symbol sss;
-
-    fillSymbol(&sss, name->name, name->name, name->position);
-    sss.type = TypeYaccSymbol;
-    sss.storage = StorageDefault;
-    addCxReference(&sss, &name->position, usage, NO_FILE_NUMBER);
+    Symbol symbol = makeSymbol(name->name, name->name, name->position);
+    symbol.type = TypeYaccSymbol;
+    symbol.storage = StorageDefault;
+    addCxReference(&symbol, &name->position, usage, NO_FILE_NUMBER);
 }
 
 static void addRuleLocalVariable(Id *name, int order) {
@@ -2516,7 +2514,7 @@ void makeYaccCompletions(char *string, int len, Position *pos) {
         }
     }
 }
-#line 2520 "yacc_parser.tab.c"
+#line 2518 "yacc_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4715,7 +4713,7 @@ case 506:
 #line 1928 "yacc_parser.y"
 { endBlock(); }
 break;
-#line 4719 "yacc_parser.tab.c"
+#line 4717 "yacc_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

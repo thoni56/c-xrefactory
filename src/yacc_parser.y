@@ -1936,12 +1936,10 @@ identifier
 %%
 
 static void addYaccSymbolReference(Id *name, int usage) {
-    Symbol sss;
-
-    fillSymbol(&sss, name->name, name->name, name->position);
-    sss.type = TypeYaccSymbol;
-    sss.storage = StorageDefault;
-    addCxReference(&sss, &name->position, usage, NO_FILE_NUMBER);
+    Symbol symbol = makeSymbol(name->name, name->name, name->position);
+    symbol.type = TypeYaccSymbol;
+    symbol.storage = StorageDefault;
+    addCxReference(&symbol, &name->position, usage, NO_FILE_NUMBER);
 }
 
 static void addRuleLocalVariable(Id *name, int order) {

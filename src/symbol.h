@@ -39,7 +39,8 @@ typedef struct symbolList {
 /* Functions: */
 
 /* NOTE These will not fill bit-fields, has to be done after allocation */
-/* They all allocate in SM memory... */
+/* They all allocate in StackMemory... */
+
 extern Symbol *newSymbol(char *name, char *linkName, Position pos);
 extern Symbol *newSymbolAsCopyOf(Symbol *original);
 extern Symbol *newSymbolAsKeyword(char *name, char *linkName, Position pos,
@@ -51,7 +52,6 @@ extern Symbol *newSymbolAsEnum(char *name, char *linkName, Position pos,
 extern Symbol *newSymbolAsLabel(char *name, char *linkName, Position pos,
                                 int labelIndex);
 
-extern void fillSymbol(Symbol *symbol, char *name, char *linkName, Position pos);
 extern void fillSymbolWithTypeModifier(Symbol *symbol, char *name, char *linkName,
                                Position pos, struct typeModifier *typeModifier);
 extern void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName,
@@ -60,6 +60,7 @@ extern void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName,
 /* Create and return a symbol structure... */
 extern Symbol makeSymbol(char *name, char *linkName, Position pos);
 
-extern void getSymbolCxrefProperties(Symbol *symbol, ReferenceCategory *categoryP, ReferenceScope *scopeP, Storage *storageP);
+extern void getSymbolCxrefProperties(Symbol *symbol, ReferenceCategory *categoryP, ReferenceScope *scopeP,
+                                     Storage *storageP);
 
 #endif
