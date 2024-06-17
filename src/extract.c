@@ -936,7 +936,6 @@ void actionsBeforeAfterExternalDefinition(void) {
 
 
 void extractActionOnBlockMarker(void) {
-    Position pos;
     if (parsedInfo.cxMemoryIndexAtBlockBegin == 0) {
         parsedInfo.cxMemoryIndexAtBlockBegin = cxMemory->index;
         parsedInfo.workMemoryIndexAtBlockBegin = currentBlock->outerBlock;
@@ -945,7 +944,7 @@ void extractActionOnBlockMarker(void) {
         parsedInfo.cxMemoryIndexAtBlockEnd = cxMemory->index;
         parsedInfo.workMemoryIndexAtBlockEnd = currentBlock->outerBlock;
     }
-    pos = makePosition(currentFile.characterBuffer.fileNumber, 0, 0);
+    Position pos = makePosition(currentFile.characterBuffer.fileNumber, 0, 0);
     addTrivialCxReference("Block", TypeBlockMarker, StorageDefault, pos, UsageUsed);
 }
 
