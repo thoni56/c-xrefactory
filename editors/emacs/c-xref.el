@@ -6532,7 +6532,7 @@ its functions.
 
 (defvar c-xref-elisp-directory
   (file-name-directory (or load-file-name (buffer-file-name)))
-  "The directory where the e-listp files of c-xref are installed")
+  "The directory where the e-lisp files of c-xref are installed")
 
 (defvar c-xref-install-directory
   (directory-file-name
@@ -6573,9 +6573,11 @@ the reset was performed, nil if the reset was cancelled."
 	    t))))  ; Indicate no changes
 
 (defun c-xref-load-directory (dir)
-  "Load all Emacs Lisp files in DIR."
-  (dolist (file (directory-files dir t "\\.elc?$"))
-    (load file nil t)))
+  "Load all compiled Emacs Lisp files in DIR."
+  (dolist (file (directory-files dir t "\\.elc$"))
+    (message (format "file = %s" file))
+    (load file nil t))
+  )
 
 (defun c-xref-upgrade ()
   "Upgrade the installed c-xref, if available."
@@ -6583,19 +6585,20 @@ the reset was performed, nil if the reset was cancelled."
   (if (yes-or-no-p (format "Really upgrade c-xref installation in %s ? "
 				       c-xref-install-directory))
       (progn
-	    (cd c-xref-install-directory)
-	    (if (c-xref-ok-to-upgrade)
-		(progn
-		  (shell-command "git pull")
-		  (shell-command "git checkout stable")
-		  (message "Pulled latest stable")
-		  (c-xref-kill-xref-process nil)
-		  (shell-command "make")
-		  (message "Built 'c-xref' in %s" c-xref-install-directory)
-		  (c-xref-load-directory c-xref-elisp-directory)
-		  )
-	      )
-	    )
+	    (let ((default-directory c-xref-install-directory))
+	      (if (c-xref-ok-to-upgrade)
+		      (progn
+		        (shell-command "git pull")
+		        (shell-command "git checkout stable")
+		        (message "Pulled latest stable")
+		        (c-xref-kill-xref-process nil)
+		        (shell-command "make")
+		        (message "Built 'c-xref' in %s" c-xref-install-directory)
+		        (c-xref-load-directory c-xref-elisp-directory)
+                (message "Loaded compiled e-lisp files")
+		        )
+	        )
+	      ))
     )
   )
 

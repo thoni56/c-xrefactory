@@ -12,6 +12,7 @@ endif
 
 all:
 	$(MAKE) -C src prod
+	$(MAKE) -C editors/emacs compile
 
 test: all
 	$(MAKE) -C tests all
