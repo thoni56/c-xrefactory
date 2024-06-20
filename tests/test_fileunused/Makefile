@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-$(TEST): clean
+$(TEST):
 	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	@diff output expected > /dev/null ; \
@@ -17,9 +17,6 @@ $(TEST): clean
 
 trace: EXTRA = --extra "-trace -log=log"
 trace: $(TEST)
-
-clean:
-	@-rm -rf CXrefs output.log output.tmp output
 
 DEBUGGER = gdb
 debug:

@@ -5,6 +5,3 @@ $(TEST): .c-xrefrc
 	cat server-buffer >> output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
-
-clean:
-	rm -r .c-xrefrc output* CXrefs

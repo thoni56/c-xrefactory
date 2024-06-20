@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-$(TEST): clean
+$(TEST):
 	@# First do the extract
 	@-$(EDIT_SERVER_DRIVER) commands1.input $(EXTRA) > output1.tmp
 	@$(NORMALIZE) output1.tmp > output
@@ -21,9 +21,6 @@ $(TEST): clean
 
 trace: EXTRA = \'-trace\'
 trace: $(TEST)
-
-clean:
-	@-rm -rf CXrefs output.log output.tmp output
 
 debug:
 	@$(EDIT_SERVER_DRIVER) commands1.input $(EXTRA) --buffer buffer1 --delay 5 > output.tmp &

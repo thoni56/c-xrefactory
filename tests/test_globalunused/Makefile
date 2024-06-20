@@ -14,12 +14,7 @@ ARGUMENTS = -create
 CXrefs: .c-xrefrc
 	@$(CXREF) -create -o $(TEST).log
 
-clean:
-	@-rm -rf CXrefs output.log output.tmp output
-
-
-DEBUGGER = gdb
 debug:
 	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
 	sleep 1
-	sudo $(DEBUGGER) -pid `pgrep -a c-xref | grep -v emacs | awk '{ print $$1 }'` -ex 'br scanForGlobalUnused' -ex 'br setSelectedVisibleItems' -ex 'continue'
+	sudo gdb -pid `pgrep -a c-xref | grep -v emacs | awk '{ print $$1 }'` -ex 'br scanForGlobalUnused' -ex 'br setSelectedVisibleItems' -ex 'continue'

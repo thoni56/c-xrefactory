@@ -14,9 +14,6 @@ CXrefs: .c-xrefrc
 	@sed -e s:$(CURDIR)$$:$(CURDIR)/cexercise: .c-xrefrc > .c-xrefrc.tmp
 	@mv .c-xrefrc.tmp .c-xrefrc
 
-clean:
-	rm -rf CXrefs .c-xrefrc
-
 debug:
 	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
 	sleep 1

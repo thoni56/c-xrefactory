@@ -2,7 +2,7 @@ include ../Makefile.boilerplate
 
 
 $(TEST): .c-xrefrc
-	$(COMMAND) > out
+	$(COMMAND) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	grep "error len" output ; \
 	if [ $$? -eq 0 ] ; then \
@@ -10,6 +10,3 @@ $(TEST): .c-xrefrc
 	else \
 		$(OK) ; \
 	fi
-
-clean:
-	rm -rf .c-xrefrc CXrefs output.log output.tmp

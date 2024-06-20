@@ -9,9 +9,6 @@ $(TEST):
 trace: EXTRA=--extra "-trace"
 trace: $(TEST)
 
-clean:
-	rm -rf .c-xrefrc CXrefs output.log output.tmp
-
 debug:
 	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 15 > output.tmp &
 	sleep 1

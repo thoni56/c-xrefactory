@@ -31,6 +31,3 @@ $(TEST): .c-xrefrc
 	else \
 		$(OK) ; \
 	fi
-
-clean:
-	rm -rf .c-xrefrc CXrefs output.log output.tmp

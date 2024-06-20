@@ -1,16 +1,13 @@
 include ../Makefile.boilerplate
 
 
-$(TEST): clean
+$(TEST):
 	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
 trace: EXTRA = \'-trace\'
 trace: $(TEST)
-
-clean:
-	@-rm -rf CXrefs output.log output.tmp output
 
 debug:
 	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &

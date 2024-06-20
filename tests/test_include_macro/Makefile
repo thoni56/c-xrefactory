@@ -10,6 +10,3 @@ $(TEST): .c-xrefrc
 
 trace: TRACE = -trace
 trace: $(TEST)
-
-clean:
-	rm -rf .c-xrefrc CXrefs output.log output.tmp

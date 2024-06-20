@@ -12,6 +12,3 @@ $(TEST): .c-xrefrc
 	else \
 		$(FAIL) ; \
 	fi
-
-clean:
-	rm -rf .c-xrefrc CXrefs

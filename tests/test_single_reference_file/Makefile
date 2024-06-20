@@ -8,6 +8,3 @@ $(TEST):
 	@$(COMMAND)
 	@$(NO_TESTS)
 	@exit 0
-
-clean:
-	rm -rf CXrefs .c-xrefrc

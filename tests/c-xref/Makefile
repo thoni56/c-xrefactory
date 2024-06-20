@@ -16,6 +16,3 @@ $(TEST): .c-xrefrc
 
 trace: TRACE=-trace
 trace: $(TEST)
-
-clean:
-	rm -rf CXrefs c-xref.log out .c-xrefrc

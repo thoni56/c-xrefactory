@@ -12,9 +12,6 @@ trace: $(TEST)
 CXrefs:
 	@$(CXREF) -create test_source -o $(TEST).log
 
-clean:
-	rm -rf CXrefs .c-xrefrc
-
 debug:
 	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
 	sleep 1

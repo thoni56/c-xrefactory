@@ -6,9 +6,6 @@ $(TEST): .c-xrefrc
 	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
 
-clean:
-	rm -rf CXrefs .c-xrefrc
-
 debug:
 	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
 	sleep 1

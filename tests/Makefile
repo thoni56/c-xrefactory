@@ -66,7 +66,9 @@ list:
 
 .PHONY: clean
 clean:
-	rm -rf *.info */.coverage coverage
+	$(foreach dir,$(TESTS),\
+        $(MAKE) -C $(dir) clean ; \
+    )
 
 coverage:
 	GCOV_PREFIX=$PWD/test_simple_push/.coverage/ GCOV_PREFIX_STRIP=7 lcov -v -c --build-directory ../src/.objects/ -d $PWD/test_simple_push/.coverage/ -b ../src -o test_simple_push.info

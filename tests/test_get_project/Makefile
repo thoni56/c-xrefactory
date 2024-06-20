@@ -13,9 +13,6 @@ trace: $(TEST)
 CXrefs:
 	@sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" -e"s+SRCDIR+$(realpath ../../src)+" c-xref.project >> .c-xrefrc
 
-clean:
-	rm -rf .c-xrefrc CXrefs output*
-
 debug:
 	$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
 	sleep 1

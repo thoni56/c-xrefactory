@@ -35,6 +35,3 @@ systemd:
 
 .c-xrefrc: c-xrefrc.tpl
 	@sed -e "s+PWD+$$PWD+g" c-xrefrc.tpl > .c-xrefrc
-
-clean:
-	rm -rf CXrefs .c-xrefrc systemd systemd.log
