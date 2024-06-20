@@ -35,4 +35,4 @@ trace: TRACE=-trace
 trace: $(TEST)
 
 clean:
-	rm -rf .c-xrefrc CXrefs output.log output.tmp
+	rm -rf .c-xrefrc CXrefs out output output.log output.tmp

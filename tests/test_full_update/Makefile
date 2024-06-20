@@ -8,14 +8,14 @@ $(TEST): CXrefs
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: CXREF+=-trace
+trace: ARGUMENTS+=-trace
 trace: $(TEST)
 
 CXrefs: .c-xrefrc
 	# Sources in subdir:
 	sed -e s:$(CURDIR)$$:$(CURDIR)/cexercise: .c-xrefrc > .c-xrefrc.tmp
 	mv .c-xrefrc.tmp .c-xrefrc
-	$(COMMAND) -create -o $(TEST).log
+	$(CXREF) -create -o $(TEST).log
 
 clean:
 	rm -rf CXrefs .c-xrefrc

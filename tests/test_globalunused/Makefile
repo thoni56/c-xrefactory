@@ -12,7 +12,7 @@ trace: $(TEST)
 ARGUMENTS = -create
 
 CXrefs: .c-xrefrc
-	@$(COMMAND) -o $(TEST).log
+	@$(CXREF) -create -o $(TEST).log
 
 clean:
 	@-rm -rf CXrefs output.log output.tmp output

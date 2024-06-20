@@ -4,7 +4,7 @@ include ../Makefile.boilerplate
 ARGUMENTS = -xrefactory-II -create -errors $(TRACE) source.c -log=log -o output.tmp
 
 $(TEST): .c-xrefrc
-	$(COMMAND) > out
+	$(COMMAND) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	grep "error len" output ; \
 	if [ $$? -eq 0 ] ; then \

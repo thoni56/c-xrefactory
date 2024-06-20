@@ -12,7 +12,6 @@ trace debug: EXTRA+=--extra="-trace -log=log"
 trace: $(TEST)
 
 CXrefs: .c-xrefrc
-	echo CXREF
 	$(CXREF) -create
 
 clean:

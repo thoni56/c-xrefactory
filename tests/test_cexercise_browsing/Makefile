@@ -1,5 +1,3 @@
-# Automated tests for C exercise : browsing
-
 include ../Makefile.boilerplate
 
 $(TEST): CXrefs
@@ -16,7 +14,7 @@ CXrefs: .c-xrefrc
 	@# Sources are not here but in subdir
 	@sed -e s:$(CURDIR)$$:$(CURDIR)/cexercise: .c-xrefrc > .c-xrefrc.tmp
 	@mv .c-xrefrc.tmp .c-xrefrc
-	@$(COMMAND) -o $(TEST).log
+	@$(CXREF) -create -o $(TEST).log
 
 debug:
 	@$(EDIT_SERVER_DRIVER) commands.input --delay 5 > output.tmp &

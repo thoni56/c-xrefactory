@@ -11,7 +11,7 @@ $(TEST): CXrefs
 trace: EXTRA = \'-trace\'
 trace: $(TEST)
 
-CXrefs:
+CXrefs: .c-xrefrc
 	@$(CXREF) test_source -create -o $(TEST).log
 
 clean:

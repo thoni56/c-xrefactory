@@ -9,8 +9,8 @@ $(TEST): CXrefs
 trace: EXTRA = \'-trace\'
 trace: $(TEST)
 
-CXrefs:
-	@$(CXREF) test_source -o cxrefs.log
+CXrefs: .c-xrefrc
+	@$(CXREF) -create test_source -o cxrefs.log
 
 clean:
 	rm -rf .c-xrefrc CXrefs output*
