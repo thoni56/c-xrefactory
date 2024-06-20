@@ -71,7 +71,7 @@ coverage:
 # Targets for debugging with gdb or lldb, so far only works for tests
 # that do not use the server driver
 gdb:
-	gdb $(CXREF) -ex 'br main' -ex 'run $(BASE_ARGUMENTS) $(ARGUMENTS)'
+	gdb $(CXREF_PROGRAM) -ex 'br main' -ex 'run $(BASE_ARGUMENTS) $(ARGUMENTS)'
 
 lldb:
-	lldb -o 'breakpoint set --name main' -o 'process launch -- $(BASE_ARGUMENTS) $(ARGUMENTS)' $(CXREF)
+	lldb -o 'breakpoint set --name main' -o 'process launch -- $(BASE_ARGUMENTS) $(ARGUMENTS)' $(CXREF_PROGRAM)
