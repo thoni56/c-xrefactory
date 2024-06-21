@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cd `dirname $(readlink -f $0)`/../src
+
+# Hitta alla mappar som börjar med "test_"
+for dir in test_*; do
+    # Kontrollera om det finns några git-kontrollerade filer, Makefile eller .suspended
+    # för då är de antingen äkta test-mappar eller en som inte ännu inte fungerar
+    # annars kan vi ta bort den
+    if [ -z "$(git ls-files "$dir")" ] && [ ! -f "$dir/Makefile" ] && [ ! -f "$dir/.suspended" ]; then
+        rm -rf $dir
+        echo "Removed $dir"
+    fi
+done
