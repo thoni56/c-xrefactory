@@ -7,4 +7,4 @@ wget https://github.com/cgreen-devs/cgreen/releases/download/1.6.1/cgreen-1.6.1-
 sudo dpkg -i ./cgreen-1.6.1-x86_64-linux-gnu.deb
 cgreen-runner --version
 gem install coveralls-lcov
-pip install --user cpp-coveralls
+curl -L https://coveralls.io/coveralls-linux.tar.gz | sudo tar -xz -C /usr/local/bin
