@@ -350,7 +350,6 @@ clean-coverage:
 	-if command -v $(LCOV) > /dev/null 2>&1 ; then \
 		$(LCOV) -q -z -d .. ; \
 	fi
-	$(MAKE) gcov
 
 # Create .gcov files from .gcda in $(OBJDIR)
 gcov:
