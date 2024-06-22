@@ -178,7 +178,8 @@ ci:
 	$(MAKE) -e -C ../tests/systemd init
 	$(MAKE) -e -C ../tests/ffmpeg init
 	$(MAKE) -e -j -C ../tests all
-	for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
+	$(MAKE) -e merge-gcda-from-tests
+	$(MAKE) -e gcov
 
 
 yydebug: CFLAGS += -DYYDEBUG
@@ -354,15 +355,15 @@ clean-coverage:
 
 # Create .gcov files from .gcda in $(OBJDIR)
 gcov:
-	-$(GCOV) $(OBJDIR)/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed" && true
+	-$(GCOV) $(OBJDIR)/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed" || true
+
+merge-gcda-from-tests:
+	@-for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
 
 coverage-report:
 # We create separate coverage files for each test to be able to run them in parallel (see ../tests/Makefile)
 ifeq ($(HAVE_GCOV_TOOL),yes)
-	@# Then we can merge all .gcda for all tests into the .gcda in OBJDIR using it, which is very fast!
-	@echo "Merge all generated .gcda using $(GCOV_TOOL)"
-	@-for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
-	@# And then create .gcov for Emacs cov-mode
+	$(MAKE) -e merge-gcda-from-tests
 	$(MAKE) gcov
 else
 	# We need to collect all coverage before we can generate gcov...
@@ -383,7 +384,7 @@ the-actual-coverage-report:
 	@mkdir -p ../coverage
 ifeq ($(HAVE_GCOV_TOOL),yes)
 # Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
-	-$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed"
+	-$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed" || true
 else
 # The run_test script in ../tests has created a coverage.info in each test directory
 # So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...'
