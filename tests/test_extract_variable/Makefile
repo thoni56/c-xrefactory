@@ -9,6 +9,3 @@ $(TEST): .c-xrefrc
 
 trace: EXTRA = \'-trace\'
 trace: $(TEST)
-
-clean:
-	rm -rf .c-xrefrc CXrefs output.log output.tmp
