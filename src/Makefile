@@ -180,6 +180,7 @@ ci:
 	$(MAKE) -e -j -C ../tests all
 	$(MAKE) -e merge-gcda-from-tests
 	$(MAKE) -e gcov
+	rm *.mock.gcov *.tab.*.gcov
 
 
 yydebug: CFLAGS += -DYYDEBUG
