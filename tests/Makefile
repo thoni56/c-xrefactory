@@ -37,8 +37,8 @@ TESTS = $(patsubst %/.,%,$(wildcard test_*/.))
 .PHONY: verbose
 verbose:
 	$(foreach dir,$(TESTS),\
-        /bin/echo -n "$(dir): "; \
-        ./run_test $(dir); \
+	/bin/echo -n "$(dir): "; \
+	./run_test $(dir); \
 		/bin/echo; \
     )
 
@@ -67,11 +67,8 @@ list:
 .PHONY: clean
 clean:
 	$(foreach dir,$(TESTS),\
-        $(MAKE) -C $(dir) clean ; \
+	$(MAKE) -C $(dir) clean ; \
     )
-
-coverage:
-	GCOV_PREFIX=$PWD/test_simple_push/.coverage/ GCOV_PREFIX_STRIP=7 lcov -v -c --build-directory ../src/.objects/ -d $PWD/test_simple_push/.coverage/ -b ../src -o test_simple_push.info
 
 # Be silent unless VERBOSE is set to something (VERBOSE=1)
 $(VERBOSE).SILENT:
@@ -97,7 +94,7 @@ autodiscovered_tests: $(TESTS)
 define RULE
 .PHONY: $(1)
 $(1):
-	+GCOV_OPTIONS="GCOV_PREFIX=$(CURDIR)/$(1)/.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF+1}'`" ./run_test $(1)
+	+GCOV_OPTIONS="GCOV_PREFIX=$(CURDIR)/$(1)/.cov GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF+1}'`" ./run_test $(1)
 endef
 
 # Loop over all test_ directories to create a rule for each

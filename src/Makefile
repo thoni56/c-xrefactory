@@ -178,7 +178,7 @@ ci:
 	$(MAKE) -e -C ../tests/systemd init
 	$(MAKE) -e -C ../tests/ffmpeg init
 	$(MAKE) -e -j -C ../tests all
-	for tc in ../tests/*/.coverage ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
+	for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
 
 
 yydebug: CFLAGS += -DYYDEBUG
@@ -361,7 +361,7 @@ coverage-report:
 ifeq ($(HAVE_GCOV_TOOL),yes)
 	@# Then we can merge all .gcda for all tests into the .gcda in OBJDIR using it, which is very fast!
 	@echo "Merge all generated .gcda using $(GCOV_TOOL)"
-	@-for tc in ../tests/*/.coverage ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
+	@-for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
 	@# And then create .gcov for Emacs cov-mode
 	$(MAKE) gcov
 else
@@ -372,11 +372,11 @@ endif
 
 LCOV_IGNORE_COVERAGE_FOR = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*' '/Applications/*'
 
-LCOV_TEST_DIRS = `ls -d ../tests/*/.coverage | xargs printf -- '-d %s\n'`
+LCOV_TEST_DIRS = `ls -d ../tests/*/.cov | xargs printf -- '-d %s\n'`
 ifeq ($(OS),Darwin)
 SYSTEM_TEST_COVERAGE_FILES = `find ../tests -name coverage.info | xargs stat -f "%N %z" | grep -v " 0" | awk '{print $$1}' | xargs printf -- '-a %s\n'`
 else
-SYSTEM_TEST_COVERAGE_FILES = `ls ../tests/*/.coverage/coverage.info | xargs printf -- '-a %s\n'`
+SYSTEM_TEST_COVERAGE_FILES = `ls ../tests/*/.cov/coverage.info | xargs printf -- '-a %s\n'`
 endif
 
 the-actual-coverage-report:

@@ -12,17 +12,17 @@
 if [ -f $1/.suspended ] ; then
     echo "Tests in '$1': `tput setaf 6`SUSPENDED`tput sgr0`"
 else
-    mkdir -p $1/.coverage
+    mkdir -p $1/.cov
     make --no-print-directory $GCOV_OPTIONS -C $1
     rc=$?
     if [ $rc -ne 0 ] ; then
 	    exit $rc
     fi
     if ! command -v gcov-tool &> /dev/null ; then
-        cd $1
-        eval export $GCOV_OPTIONS
-        # Then we create a coverage.info for this test
-        lcov --version | grep -qv 'version 2' || lcovignore="--ignore-errors gcov,gcov --ignore-errors empty,empty --ignore-errors usage,usage"
-        lcov -q $lcovignore -c -d .coverage -b ../../src --build-directory ../../src/.objects -o .coverage/coverage.info 2>&1 > /dev/null
+	cd $1
+	eval export $GCOV_OPTIONS
+	# Then we create a coverage.info for this test
+	lcov --version | grep -qv 'version 2' || lcovignore="--ignore-errors gcov,gcov --ignore-errors empty,empty --ignore-errors usage,usage"
+	lcov -q $lcovignore -c -d .cov -b ../../src --build-directory ../../src/.objects -o .cov/coverage.info 2>&1 > /dev/null
     fi
 fi

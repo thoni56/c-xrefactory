@@ -4,5 +4,5 @@ log
 output
 out
 *.tmp
-*.coverage
+*.cov*
 server-buffer
