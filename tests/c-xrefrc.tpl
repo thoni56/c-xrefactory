@@ -5,4 +5,3 @@
   -refs CURDIR/CXrefs
   //  number of tag files
   -refnum=10
-  -set env ENV

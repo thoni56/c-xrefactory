@@ -9,8 +9,12 @@ $(TEST): CXrefs
 trace: EXTRA = \'-trace\'
 trace: $(TEST)
 
-CXrefs: .c-xrefrc
+CXrefs: tweaked-c-xrefrc
 	@$(CXREF) -create test_source -o cxrefs.log
+
+tweaked-c-xrefrc: .c-xrefrc
+	echo "  -set env ENV" >> .c-xrefrc
+
 
 debug:
 	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
