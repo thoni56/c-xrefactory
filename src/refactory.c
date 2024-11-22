@@ -930,8 +930,8 @@ static Result getParameterPosition(EditorMarker *point, char *functionOrMacroNam
 }
 
 // !!!!!!!!! point and endMarker can be the same marker !!!!!!
-static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMark, char *fileName, int argn,
-                                char *parameterDeclaration) {
+static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMark, char *fileName,
+                                int argumentNumber, char *parameterDeclaration) {
     char         *text;
     char          insertionText[REFACTORING_TMP_STRING_SIZE];
     char         *separator1, *separator2;
@@ -939,12 +939,12 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
     EditorMarker *beginMarker;
 
     insertionOffset = -1;
-    Result rr = getParameterPosition(point, fileName, argn);
+    Result rr = getParameterPosition(point, fileName, argumentNumber);
     if (rr != RESULT_OK) {
         errorMessage(ERR_INTERNAL, "Problem while adding parameter");
         return insertionOffset;
     }
-    if (argn > parameterCount + 1) {
+    if (argumentNumber > parameterCount + 1) {
         errorMessage(ERR_ST, "Parameter number out of limits");
         return insertionOffset;
     }
@@ -1060,22 +1060,22 @@ static void checkThatParameterIsUnused(EditorMarker *marker, char *functionName,
     freeEditorMarker(positionMarker);
 }
 
-static void addParameter(EditorMarker *pos, char *fname, int argCount, int usage) {
+static void addParameter(EditorMarker *pos, char *fname, int argumentNumber, UsageKind usage) {
     if (isDefinitionOrDeclarationUsage(usage)) {
-        if (addStringAsParameter(pos, NULL, fname, argCount, refactoringOptions.refpar1) != -1)
+        if (addStringAsParameter(pos, NULL, fname, argumentNumber, refactoringOptions.refpar1) != -1)
             // now check that there is no conflict
             if (isDefinitionUsage(usage))
-                checkThatParameterIsUnused(pos, fname, argCount, CHECK_FOR_ADD_PARAM);
+                checkThatParameterIsUnused(pos, fname, argumentNumber, CHECK_FOR_ADD_PARAM);
     } else {
-        addStringAsParameter(pos, NULL, fname, argCount, refactoringOptions.refpar2);
+        addStringAsParameter(pos, NULL, fname, argumentNumber, refactoringOptions.refpar2);
     }
 }
 
-static void deleteParameter(EditorMarker *pos, char *fname, int argn, int usage) {
+static void deleteParameter(EditorMarker *pos, char *fname, int argumentNumber, UsageKind usage) {
     char         *text;
     EditorMarker *m1, *m2;
 
-    Result res = getParameterPosition(pos, fname, argn);
+    Result res = getParameterPosition(pos, fname, argumentNumber);
     if (res != RESULT_OK)
         return;
 
@@ -1108,7 +1108,7 @@ static void deleteParameter(EditorMarker *pos, char *fname, int argn, int usage)
         if (isDefinitionUsage(usage)) {
             // this must be at the end, because it discards values
             // of s_paramBeginPosition and s_paramEndPosition
-            checkThatParameterIsUnused(pos, fname, argn, CHECK_FOR_DEL_PARAM);
+            checkThatParameterIsUnused(pos, fname, argumentNumber, CHECK_FOR_DEL_PARAM);
         }
 
         assert(m1->offset <= m2->offset);
