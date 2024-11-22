@@ -1060,14 +1060,14 @@ static void checkThatParameterIsUnused(EditorMarker *marker, char *functionName,
     freeEditorMarker(positionMarker);
 }
 
-static void addParameter(EditorMarker *pos, char *fname, int argn, int usage) {
+static void addParameter(EditorMarker *pos, char *fname, int argCount, int usage) {
     if (isDefinitionOrDeclarationUsage(usage)) {
-        if (addStringAsParameter(pos, NULL, fname, argn, refactoringOptions.refpar1) != -1)
+        if (addStringAsParameter(pos, NULL, fname, argCount, refactoringOptions.refpar1) != -1)
             // now check that there is no conflict
             if (isDefinitionUsage(usage))
-                checkThatParameterIsUnused(pos, fname, argn, CHECK_FOR_ADD_PARAM);
+                checkThatParameterIsUnused(pos, fname, argCount, CHECK_FOR_ADD_PARAM);
     } else {
-        addStringAsParameter(pos, NULL, fname, argn, refactoringOptions.refpar2);
+        addStringAsParameter(pos, NULL, fname, argCount, refactoringOptions.refpar2);
     }
 }
 
