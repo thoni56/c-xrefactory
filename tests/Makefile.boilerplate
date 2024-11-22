@@ -76,5 +76,8 @@ coverage:
 gdb:
 	gdb $(CXREF_PROGRAM) -ex 'br main' -ex 'run $(BASE_ARGUMENTS) $(ARGUMENTS)'
 
+cgdb:
+	cgdb $(CXREF_PROGRAM) -ex 'br main' -ex 'run $(BASE_ARGUMENTS) $(ARGUMENTS)'
+
 lldb:
 	lldb -o 'breakpoint set --name main' -o 'process launch -- $(BASE_ARGUMENTS) $(ARGUMENTS)' $(CXREF_PROGRAM)
