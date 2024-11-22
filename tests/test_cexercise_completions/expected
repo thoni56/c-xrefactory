@@ -26,9 +26,10 @@ end-of-options
 end-of-options
 
 <sync>
-<all-completions nofocus=0 len=<n>>assert  :#define assert(expr)
-auto    :keyword
-asm     :keyword</all-completions>
+<all-completions nofocus=0 len=<n>>asprintf  :int asprintf(__ERROR__, __ERROR__, ...)
+assert    :#define assert(expr)
+auto      :keyword
+asm       :keyword</all-completions>
 -xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=1689 CURDIR/cexercise/completions.c
 end-of-options
 
