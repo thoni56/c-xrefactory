@@ -1,0 +1,82 @@
+Loading /etc/emacs/site-start.d/00debian.el (source)...done
+Loading /etc/emacs/site-start.d/50autoconf.el (source)...done
+Loading /etc/emacs/site-start.d/50dictionaries-common.el (source)...
+Loading debian-ispell (native compiled elisp)...
+Loading /var/cache/dictionaries-common/emacsen-ispell-default.el (source)...done
+Loading debian-ispell (native compiled elisp)...done
+Loading /var/cache/dictionaries-common/emacsen-ispell-dicts.el (source)...done
+Loading /etc/emacs/site-start.d/50dictionaries-common.el (source)...done
+Loading /etc/emacs/site-start.d/50figlet.el (source)...done
+Loading /etc/emacs/site-start.d/50latexmk.el (source)...done
+Loading /etc/emacs/site-start.d/50tup.el (source)...done
+Loading /etc/emacs/site-start.d/50xcscope-el.el (source)...done
+Loading /home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.emacs.d/c-xrefactory/editors/emacs/c-xrefactory.el (source)...
+Loading /home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.emacs.d/c-xrefactory/editors/emacs/c-xrefprotocol.el (source)...done
+Loading /home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.emacs.d/c-xrefactory/editors/emacs/c-xrefactory.el (source)...done
+For information about GNU Emacs and the GNU system, type C-h C-a.
+Loading /home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.emacs.d/c-xrefactory/editors/emacs/c-xrefactory.el (source)...
+Loading /home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.emacs.d/c-xrefactory/editors/emacs/c-xrefprotocol.el (source)...done
+Loading /home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.emacs.d/c-xrefactory/editors/emacs/c-xrefactory.el (source)...done
+Making completion list...
+File local-variables error: (void-function cov-mode)
+[c-xref] there are some old temporary files, can I delete them (y or n) y
+calling: ("-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-o" "/tmp/c-xrefthoni-48047-491.tmp" "-server")
+sending: -olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function/source/target.c"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-48047-494.tmp
+dispatching: <set-info len=62>/home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function</set-info>
+
+tag == set-info
+Project: /home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function
+sending: -olcxgetrefactorings  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function/source/target.c" "/tmp/c-xrefthoni-48047-497.tmp" "-olcursor=19" "/home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function/source/target.c" -encoding=european -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-48047-500.tmp
+keeping tmp file /tmp/c-xrefthoni-48047-497.tmp
+dispatching: <available-refactorings>
+  <int val=290 len=0></int>
+  <int val=300 len=0></int>
+</available-refactorings>
+
+tag == available-refactorings
+? - help
+Next moving refactoring will move to target.c:3
+File local-variables error: (void-function cov-mode)
+sending: -olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function/source/source.c"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-48047-503.tmp
+dispatching: <set-info len=62>/home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function</set-info>
+
+tag == set-info
+Project: /home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function
+sending: -olcxgetrefactorings  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function/source/source.c" "/tmp/c-xrefthoni-48047-506.tmp" "-olcursor=32" "/home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function/source/source.c" -encoding=european -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-48047-509.tmp
+keeping tmp file /tmp/c-xrefthoni-48047-506.tmp
+dispatching: <available-refactorings>
+  <int val=10 len=0></int>
+  <int val=40 len=0></int>
+  <int val=50 len=0></int>
+  <int val=60 len=0></int>
+  <int val=70 len=0></int>
+  <int val=300 len=0></int>
+</available-refactorings>
+
+tag == available-refactorings
+? - help [5 times]
+calling: ("-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-o" "/tmp/c-xrefthoni-48047-491.tmp" "-encoding=european" "-refactory" "-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "-p" "/home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function" "-rfct-move-function" "-commentmovinglevel=0" "-movetargetfile=/home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function/source/target.c" "-rfct-param1=3" "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function/source/source.c" "/tmp/c-xrefthoni-48047-512.tmp" "-olcursor=32" "/home/thoni/Utveckling/c-xrefactory/tests/test_move_c_function/source/source.c")
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-48047-515.tmp
+keeping tmp file /tmp/c-xrefthoni-48047-512.tmp
+dispatching: <error len=21>Invalid target place
+</error>
+<debug-information len=40>progressOffset (1) != progressFactor (4)</debug-information>
+
+tag == error
+let: exiting
+Making completion list...
+File ‘~/../test_move_c_function/commands.raw’ exists; overwrite? (y or n) y
