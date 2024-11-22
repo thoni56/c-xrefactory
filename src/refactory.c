@@ -1363,10 +1363,13 @@ fini:
     mm->offset = theBeginningOffset;
 }
 
-static void getMethodLimitsForMoving(EditorMarker *point, EditorMarker **methodStartP, EditorMarker **methodEndP) {
+static void getFunctionBoundariesForMoving(EditorMarker *point, EditorMarker **methodStartP,
+                                           EditorMarker **methodEndP) {
     EditorMarker *mstart, *mend;
 
-    // get method limites
+    parsedPositions[IPP_FUNCTION_BEGIN].file = parsedPositions[IPP_FUNCTION_END].file = NO_FILE_NUMBER;
+
+    // get function boundaries
     parseBufferUsingServer(refactoringOptions.project, point, NULL, "", NULL);
 
     if (parsedPositions[IPP_FUNCTION_BEGIN].file == NO_FILE_NUMBER || parsedPositions[IPP_FUNCTION_END].file == NO_FILE_NUMBER) {
@@ -1511,7 +1514,7 @@ static void moveFunction(EditorMarker *point) {
         return;
 
     ensureReferencesAreUpdated(refactoringOptions.project);
-    getMethodLimitsForMoving(point, &mstart, &mend);
+    getFunctionBoundariesForMoving(point, &mstart, &mend);
     lines = countLinesBetweenEditorMarkers(mstart, mend);
 
     // O.K. Now STARTING!
