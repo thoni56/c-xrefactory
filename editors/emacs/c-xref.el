@@ -154,8 +154,8 @@
 
 (defvar c-xref-font-lock-compl-keywords
   (cons (cons (c-xref-keywords-regexp) '(c-xref-keyword-face))
-	'(("^\\([a-zA-Z0-9_ ]*\\):" c-xref-list-pilot-face))
-	)
+        '(("^\\([a-zA-Z0-9_ ]*\\):" c-xref-list-pilot-face))
+        )
   "Default expressions to highlight in C-Xref completion list modes.")
 
 
@@ -201,7 +201,7 @@
 
 (defun c-xref-set-this-frame-dispatch-data (dispatch-data)
   (modify-frame-parameters (selected-frame)
-			   `((c-xref-this-frame-dispatch-data . ,dispatch-data)))
+                           `((c-xref-this-frame-dispatch-data . ,dispatch-data)))
   )
 
 
@@ -239,9 +239,9 @@
 (defun c-xref-bind-default-button (map fun)
     (define-key map [mouse-2] fun)
     (if c-xref-bind-left-mouse-button
-	    (progn
-	      (define-key map [mouse-1] fun)
-	      )))
+            (progn
+              (define-key map [mouse-1] fun)
+              )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                         Completion local keymap
@@ -250,8 +250,8 @@
   "Keymap for c-xref buffer containing completions."
   )
 (c-xref-add-bindings-for-chars c-xref-completion-mode-map
-					   " `[];',./-=\\~!@#%^&*()+|{}:\"<>?"
-					   'c-xref-completion-auto-switch)
+                                           " `[];',./-=\\~!@#%^&*()+|{}:\"<>?"
+                                           'c-xref-completion-auto-switch)
 (define-key c-xref-completion-mode-map " " 'c-xref-interactive-completion-goto)
 (define-key c-xref-completion-mode-map [(backspace)] 'c-xref-completion-auto-search-back)
 (define-key c-xref-completion-mode-map "\b" 'c-xref-completion-auto-search-back)
@@ -338,7 +338,7 @@
   (define-key map [kp-up] 'c-xref-modal-dialog-previous-line)
   (define-key map [kp-down] 'c-xref-modal-dialog-next-line)
   (define-key map c-xref-escape-key-sequence 'c-xref-modal-dialog-exit)
-					;  (define-key map "\C-g" 'c-xref-modal-dialog-exit)
+                                        ;  (define-key map "\C-g" 'c-xref-modal-dialog-exit)
   (define-key map "q" 'c-xref-modal-dialog-exit)
   (define-key map [f7] 'c-xref-modal-dialog-exit)
   (define-key map [newline] 'c-xref-modal-dialog-continue)
@@ -416,7 +416,7 @@
 (c-xref-bind-default-button c-xref-browser-dialog-key-map 'c-xref-modal-dialog-mouse-button1)
 
 (if c-xref-bind-left-mouse-button
-	(define-key c-xref-browser-dialog-key-map [(control mouse-1)] 'c-xref-modal-dialog-mouse-button2)
+        (define-key c-xref-browser-dialog-key-map [(control mouse-1)] 'c-xref-modal-dialog-mouse-button2)
   )
 (define-key c-xref-browser-dialog-key-map [(control mouse-2)] 'c-xref-modal-dialog-mouse-button2)
 (define-key c-xref-browser-dialog-key-map [mouse-3] 'c-xref-browser-menu-3bmenu)
@@ -466,33 +466,33 @@ interrupted by C-g. If there are such files, delete them.
   (let ((fl) (flist) (ff) (ffl) (modif) (ctime) (ctimecar) (loop) (modifcar))
     (setq ctimecar (car (current-time)))
     (setq flist (directory-files
-			 c-xref-tmp-dir t
-			 (format "c-xref%s.*\\.tmp" c-xref-user-identification)
-			 t))
+                         c-xref-tmp-dir t
+                         (format "c-xref%s.*\\.tmp" c-xref-user-identification)
+                         t))
     (setq loop t)
     (setq fl flist)
     (while (and fl loop)
       (setq ff (car fl))
       (setq modifcar (car (nth 5 (file-attributes ff))))
       (if (> (- ctimecar modifcar) 2)
-	      (setq loop nil)
-	    )
+              (setq loop nil)
+            )
       (setq fl (cdr fl))
       )
     (if (not loop)
-	    (progn
-	      (if (y-or-n-p "[c-xref] there are some old temporary files, can I delete them ")
-		  (progn
-			(setq fl flist)
-			(while fl
-			  (setq ff (car fl))
-			  (setq modifcar (car (nth 5 (file-attributes ff))))
-			  (if (> (- ctimecar modifcar) 1)
-			      (delete-file ff)
-			    )
-			  (setq fl (cdr fl))
-			  )
-			))))
+            (progn
+              (if (y-or-n-p "[c-xref] there are some old temporary files, can I delete them ")
+                  (progn
+                        (setq fl flist)
+                        (while fl
+                          (setq ff (car fl))
+                          (setq modifcar (car (nth 5 (file-attributes ff))))
+                          (if (> (- ctimecar modifcar) 1)
+                              (delete-file ff)
+                            )
+                          (setq fl (cdr fl))
+                          )
+                        ))))
     (message "")
     ))
 
@@ -529,8 +529,8 @@ interrupted by C-g. If there are such files, delete them.
       (c-xref-appropriate-window-height t nil)
       (c-xref-appropriate-window-width t nil)
       (if search
-	      (search-forward search nil t)
-	    )
+              (search-forward search nil t)
+            )
       (c-xref-modal-dialog-loop c-xref-help-map "")
       (kill-buffer c-xref-context-help-buffer)
       (set-window-buffer (selected-window) (current-buffer))
@@ -580,14 +580,14 @@ A-Za-z0-9.\t-- incremental search, insert character
   (let ((buff))
     (setq buff (get-file-buffer file))
     (if buff
-	    (switch-to-buffer buff)         ;; be conformant with find-file
+            (switch-to-buffer buff)         ;; be conformant with find-file
       (if c-xref-run-find-file-hooks
-	      (find-file file)                  ;; full standard find-file
-	    (setq buff (create-file-buffer file))
-	    (switch-to-buffer buff)
-	    (insert-file-contents file t nil nil t)
-	    (after-find-file nil t t nil t)
-	    ))
+              (find-file file)                  ;; full standard find-file
+            (setq buff (create-file-buffer file))
+            (switch-to-buffer buff)
+            (insert-file-contents file t nil nil t)
+            (after-find-file nil t t nil t)
+            ))
     ))
 
 (defun c-xref-make-buffer-writable ()
@@ -602,7 +602,7 @@ A-Za-z0-9.\t-- incremental search, insert character
   (let ((dir))
     (setq dir (file-name-directory file))
     (if (not (file-exists-p dir))
-	    (make-directory dir t)
+            (make-directory dir t)
       )
     (write-file file)
     ))
@@ -616,15 +616,15 @@ A-Za-z0-9.\t-- incremental search, insert character
   ;; used only for Java rename package - but could be used for future move/rename C "module"
   (if (eq c-xref-platform 'windows)
       (progn
-	    ;; MS-Windows
-	    (shell-command (format "xcopy \"%s\" \"%s\" /E /Y /I /C /Q" old-name new-name))
-	    (if (yes-or-no-p "Files copied, delete original folder? ")
-		(progn
-		  (if (string-match "-nt" system-configuration)
-			  (shell-command (format "rd /S /Q \"%s\"" old-name))
-			(shell-command (format "deltree /Y \"%s\"" old-name))
-			)
-		  )))
+            ;; MS-Windows
+            (shell-command (format "xcopy \"%s\" \"%s\" /E /Y /I /C /Q" old-name new-name))
+            (if (yes-or-no-p "Files copied, delete original folder? ")
+                (progn
+                  (if (string-match "-nt" system-configuration)
+                          (shell-command (format "rd /S /Q \"%s\"" old-name))
+                        (shell-command (format "deltree /Y \"%s\"" old-name))
+                        )
+                  )))
     ;; unix
     (shell-command (format "mv \"%s\" \"%s\"" old-name new-name))
     )
@@ -650,10 +650,10 @@ A-Za-z0-9.\t-- incremental search, insert character
     (setq ww (- (frame-width) space))
     (setq ll (length qq))
     (if (> (+ ll 2) ww)
-	    (setq res (concat
-			   (substring qq 0 offset)
-			   "..."
-			   (substring qq (+ (- ll ww ) offset 2))))
+            (setq res (concat
+                           (substring qq 0 offset)
+                           "..."
+                           (substring qq (+ (- ll ww ) offset 2))))
       )
     res
     ))
@@ -662,10 +662,10 @@ A-Za-z0-9.\t-- incremental search, insert character
   (let ((res))
     (setq res name)
     (if (equal (length res) 1)
-	    (setq res (downcase res))
+            (setq res (downcase res))
       (if (> (length res) 1)
-	      (setq res (concat (upcase (substring res 0 1)) (substring res 1)))
-	    ))
+              (setq res (concat (upcase (substring res 0 1)) (substring res 1)))
+            ))
     res
     ))
 
@@ -673,10 +673,10 @@ A-Za-z0-9.\t-- incremental search, insert character
   (let ((res))
     (setq res name)
     (if (equal (length res) 1)
-	    (setq res (downcase res))
+            (setq res (downcase res))
       (if (> (length res) 1)
-	      (setq res (concat (downcase (substring res 0 1)) (substring res 1)))
-	    ))
+              (setq res (concat (downcase (substring res 0 1)) (substring res 1)))
+            ))
     res
     ))
 
@@ -693,7 +693,7 @@ A-Za-z0-9.\t-- incremental search, insert character
 (defun c-xref-get-single-yes-no-event (cursor-in-echo prompt)
   (let ((key) (res nil) (ce))
     (if (y-or-n-p prompt)
-	    (setq res 'answer-yes)
+            (setq res 'answer-yes)
       (setq res 'answer-no)
       )
     ;;  (setq ce cursor-in-echo-area)
@@ -729,25 +729,25 @@ A-Za-z0-9.\t-- incremental search, insert character
   (let ((res))
     (setq res nil)
     (if (or
-	     (equal name c-xref-log-view-buffer)
-	     (equal name c-xref-server-answer-buffer)
-	     (equal name c-xref-completions-buffer)
-	     (equal name c-xref-tag-results-buffer)
-	     (equal name c-xref-browser-info-buffer)
-	     (equal name c-xref-project-list-buffer)
-	     (equal name c-xref-info-buffer)
-	     (equal name c-xref-run-buffer)
-	     (equal name c-xref-compilation-buffer)
-	     (equal name c-xref-info-modal-buffer)
-	     (equal name c-xref-error-modal-buffer)
-	     (equal name c-xref-confirmation-modal-buffer)
-	     (equal name c-xref-selection-modal-buffer)
-	     (c-xref-string-has-prefix name c-xref-symbol-resolution-buffer nil)
-	     (c-xref-string-has-prefix name c-xref-references-buffer nil)
-	     ;; delete also help buffers
-	     (c-xref-string-has-prefix name "*Help" nil)
-	     )
-	    (setq res t)
+             (equal name c-xref-log-view-buffer)
+             (equal name c-xref-server-answer-buffer)
+             (equal name c-xref-completions-buffer)
+             (equal name c-xref-tag-results-buffer)
+             (equal name c-xref-browser-info-buffer)
+             (equal name c-xref-project-list-buffer)
+             (equal name c-xref-info-buffer)
+             (equal name c-xref-run-buffer)
+             (equal name c-xref-compilation-buffer)
+             (equal name c-xref-info-modal-buffer)
+             (equal name c-xref-error-modal-buffer)
+             (equal name c-xref-confirmation-modal-buffer)
+             (equal name c-xref-selection-modal-buffer)
+             (c-xref-string-has-prefix name c-xref-symbol-resolution-buffer nil)
+             (c-xref-string-has-prefix name c-xref-references-buffer nil)
+             ;; delete also help buffers
+             (c-xref-string-has-prefix name "*Help" nil)
+             )
+            (setq res t)
       )
     ;;(message "checking %S --> %S" name res)
     res
@@ -769,41 +769,41 @@ tries to delete C-xrefactory windows first.
     ;; dangerous loop, securize it
     (while loop
       (if (c-xref-is-this-buffer-created-by-xrefactory (buffer-name))
-	      (progn
-		(if (equal sw (selected-window))
-			(progn
-			  (bury-buffer)
-			  (delete-window)
-			  (other-window -1)
-			  )
-		  (bury-buffer)
-		  (delete-window)
-		  (select-window sw)
-		  )
-		(setq loop nil) ; (not (equal sw (selected-window))))
-		(setq deleted t)
-		)
-	    (other-window 1)
-	    (setq loop (not (equal sw (selected-window))))
-	    )
+              (progn
+                (if (equal sw (selected-window))
+                        (progn
+                          (bury-buffer)
+                          (delete-window)
+                          (other-window -1)
+                          )
+                  (bury-buffer)
+                  (delete-window)
+                  (select-window sw)
+                  )
+                (setq loop nil) ; (not (equal sw (selected-window))))
+                (setq deleted t)
+                )
+            (other-window 1)
+            (setq loop (not (equal sw (selected-window))))
+            )
       (setq i (+ i 1))
       (if (and loop (> i 50))
-	      (progn
-		(setq loop nil)
-		(message "[PROBLEM] A WINDOW DELETING LOOP?")
-		))
+              (progn
+                (setq loop nil)
+                (message "[PROBLEM] A WINDOW DELETING LOOP?")
+                ))
       )
     (if (and (not deleted) (not (one-window-p)))
-	    (progn
-	      (other-window -1)
-	      (delete-window)
-	      ))
+            (progn
+              (other-window -1)
+              (delete-window)
+              ))
     ))
 
 (defun c-xref-exact-string-match (regexp str)
   (let ((res) (si) (ei) (rr))
     (setq rr (string-match (concat ">>>>>" regexp "<<<<<")
-				       (concat ">>>>>" str    "<<<<<")))
+                                       (concat ">>>>>" str    "<<<<<")))
     (setq res (eq rr 0))
     res
     ))
@@ -826,8 +826,8 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-is-letter (cc)
   (let ((res))
     (setq res (or (and (>= cc ?a) (<= cc ?z))
-			  (and (>= cc ?A) (<= cc ?Z))
-			  (eq cc ?_) (eq cc ?\$)))
+                          (and (>= cc ?A) (<= cc ?Z))
+                          (eq cc ?_) (eq cc ?\$)))
     res
     ))
 
@@ -855,22 +855,22 @@ tries to delete C-xrefactory windows first.
   (let ((p (point)))
     (search-forward-regexp c-xref-forward-pass-identifier-regexp)
     (if (not (eq (point) (+ (buffer-size) 1)))
-	    (progn
-	      (backward-char)
-	  ;; finally this does not seem very natural
-					;         (if (and c-xref-completion-inserts-parenthesis (eq (char-after (point)) ?\())
-					;             (progn
-					;                               (forward-char 1)
-					;                               (if (eq (char-after (point)) ?\))
-					;                                       (forward-char 1)
-					;                 )))
-	      ))
+            (progn
+              (backward-char)
+          ;; finally this does not seem very natural
+                                        ;         (if (and c-xref-completion-inserts-parenthesis (eq (char-after (point)) ?\())
+                                        ;             (progn
+                                        ;                               (forward-char 1)
+                                        ;                               (if (eq (char-after (point)) ?\))
+                                        ;                                       (forward-char 1)
+                                        ;                 )))
+              ))
     (if (eq p (point))
-	    ()
+            ()
       (delete-char (- p (point)) t)
       (if c-xref-completion-delete-pending-identifier
-	      (message "** Pending identifier killed (C-y restores it) **")
-	    ))
+              (message "** Pending identifier killed (C-y restores it) **")
+            ))
     ))
 
 (defun c-xref-buffer-has-one-of-suffixes (bname suffixes)
@@ -881,7 +881,7 @@ tries to delete C-xrefactory windows first.
       (setq sl (cdr sl))
       )
     (if (not sl)
-	    (setq res nil)
+            (setq res nil)
       (setq res t)
       )
     res
@@ -892,13 +892,13 @@ tries to delete C-xrefactory windows first.
     (setq res nil)
     (setq len (length prefix))
     (if (>= (length str) len)
-	    (progn
-	      (setq pf (substring str 0 len))
-	      (if (or (equal pf prefix)
-			  (and case-unsens  (equal (downcase pf)
-							       (downcase prefix))))
-		  (setq res t)
-	    )))
+            (progn
+              (setq pf (substring str 0 len))
+              (if (or (equal pf prefix)
+                          (and case-unsens  (equal (downcase pf)
+                                                               (downcase prefix))))
+                  (setq res t)
+            )))
     res
     ))
 
@@ -907,22 +907,22 @@ tries to delete C-xrefactory windows first.
     (setq res nil)
     (setq len (length fname))
     (if (eq len 0)
-	    (setq res nil)
+            (setq res nil)
       (setq spos (- len 1))
       (while (and (> spos 0)
-			  (not (eq (elt fname spos) ?/))
-			  (not (eq (elt fname spos) ?\\)))
-	    (setq spos (- spos 1))
-	    )
+                          (not (eq (elt fname spos) ?/))
+                          (not (eq (elt fname spos) ?\\)))
+            (setq spos (- spos 1))
+            )
       (if (> spos 0)
-	      (setq res (substring fname 0 spos))
-	    (setq res nil)
-	    )
+              (setq res (substring fname 0 spos))
+            (setq res nil)
+            )
       (if (and (eq c-xref-platform 'windows)
-		   (eq spos 3)
-		   (eq (elt fname (- spos 1)) ?\:))
-	      (setq res nil)
-	    ))
+                   (eq spos 3)
+                   (eq (elt fname (- spos 1)) ?\:))
+              (setq res nil)
+            ))
     res
     ))
 
@@ -931,16 +931,16 @@ tries to delete C-xrefactory windows first.
     (setq res nil)
     (setq len (length fname))
     (if (eq len 0)
-	    (setq res nil)
+            (setq res nil)
       (setq spos (- len 1))
       (while (and (> spos 0)
-			  (not (eq (elt fname spos) ?.)))
-	    (setq spos (- spos 1))
-	    )
+                          (not (eq (elt fname spos) ?.)))
+            (setq spos (- spos 1))
+            )
       (if (> spos 0)
-	      (setq res (substring fname (+ spos 1) len))
-	    (setq res fname)
-	    ))
+              (setq res (substring fname (+ spos 1) len))
+            (setq res fname)
+            ))
     res
     ))
 
@@ -949,17 +949,17 @@ tries to delete C-xrefactory windows first.
     (setq res nil)
     (setq len (length fname))
     (if (eq len 0)
-	    (setq res nil)
+            (setq res nil)
       (setq spos (- len 1))
       (while (and (> spos 0)
-			  (not (eq (elt fname spos) ?/))
-			  (not (eq (elt fname spos) ?\\)))
-	    (setq spos (- spos 1))
-	    )
+                          (not (eq (elt fname spos) ?/))
+                          (not (eq (elt fname spos) ?\\)))
+            (setq spos (- spos 1))
+            )
       (if (> spos 0)
-	      (setq res (substring fname (+ spos 1) len))
-	    (setq res fname)
-	    ))
+              (setq res (substring fname (+ spos 1) len))
+            (setq res fname)
+            ))
     res
     ))
 
@@ -968,16 +968,16 @@ tries to delete C-xrefactory windows first.
     (setq res nil)
     (setq len (length fname))
     (if (eq len 0)
-	    (setq res nil)
+            (setq res nil)
       (setq spos (- len 1))
       (while (and (> spos 0)
-			  (not (eq (elt fname spos) ?.)))
-	    (setq spos (- spos 1))
-	    )
+                          (not (eq (elt fname spos) ?.)))
+            (setq spos (- spos 1))
+            )
       (if (> spos 0)
-	      (setq res (substring fname 0 spos))
-	    (setq res fname)
-	    ))
+              (setq res (substring fname 0 spos))
+            (setq res fname)
+            ))
     res
     ))
 (defun c-xref-backslashify-name (fname)
@@ -989,7 +989,7 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-optionify-string (ss qt)
   (let ((res))
     (if (string-match " " ss)
-	    (setq res (format "%s%s%s" qt ss qt))
+            (setq res (format "%s%s%s" qt ss qt))
       (setq res ss)
       )
     res
@@ -1000,11 +1000,11 @@ tries to delete C-xrefactory windows first.
     (setq res ss)
     (setq len (length prefix))
     (if (>= (length ss) len)
-	    (if (or (equal (substring ss 0 len) prefix)
-			(and case-unsens (equal (downcase (substring ss 0 len))
-							    (downcase prefix))))
-		(setq res (substring ss len))
-	      )
+            (if (or (equal (substring ss 0 len) prefix)
+                        (and case-unsens (equal (downcase (substring ss 0 len))
+                                                            (downcase prefix))))
+                (setq res (substring ss len))
+              )
       )
     res
     ))
@@ -1016,11 +1016,11 @@ tries to delete C-xrefactory windows first.
     (setq len (length suffix))
     (setq sslen (length ss))
     (if (>= sslen len)
-	    (if (or (equal (substring ss (- sslen len)) suffix)
-			(and case-unsens (equal (downcase (substring ss (- sslen len)))
-							    (downcase suffix))))
-		(setq res (substring ss 0 (- sslen len)))
-	      )
+            (if (or (equal (substring ss (- sslen len)) suffix)
+                        (and case-unsens (equal (downcase (substring ss (- sslen len)))
+                                                            (downcase suffix))))
+                (setq res (substring ss 0 (- sslen len)))
+              )
       )
     res
     ))
@@ -1045,11 +1045,11 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-delete-window-in-any-frame (buffername setwidth)
   (let ((displayed (get-buffer-window buffername t)))
     (if displayed
-	    (progn
-	      (if setwidth (set setwidth (window-width displayed)))
-	      (delete-window displayed)
-	      (kill-buffer buffername)
-	      )
+            (progn
+              (if setwidth (set setwidth (window-width displayed)))
+              (delete-window displayed)
+              (kill-buffer buffername)
+              )
       )
     )
   )
@@ -1060,16 +1060,16 @@ tries to delete C-xrefactory windows first.
   (let ((bname) (suf))
     (setq bname (buffer-file-name nil))
     (if bname
-	    (setq suf (c-xref-file-name-extension bname))
+            (setq suf (c-xref-file-name-extension bname))
       (setq suf "")
       )
     (if (or (equal suf "c") (equal suf "y"))
-	    (progn
-	      (error "[c-xref] internal error: Attempt to erase '%s'!" bname)
-	      (if (yes-or-no-p (format "![warning] Attempt to erase '%s'! Really erase? " (c-xref-file-last-name bname)))
-		  (erase-buffer)
-		)
-	      )
+            (progn
+              (error "[c-xref] internal error: Attempt to erase '%s'!" bname)
+              (if (yes-or-no-p (format "![warning] Attempt to erase '%s'! Really erase? " (c-xref-file-last-name bname)))
+                  (erase-buffer)
+                )
+              )
       (erase-buffer)
       )
     ))
@@ -1085,7 +1085,7 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-char-search (pos step char-code)
   (let ((res pos))
     (while (and (>= res 1) (< res (point-max))
-			(not (eq (char-after res) char-code)))
+                        (not (eq (char-after res) char-code)))
       (setq res (+ res step))
       )
     res
@@ -1098,8 +1098,8 @@ tries to delete C-xrefactory windows first.
     (setq len (length str))
     (while (< i len)
       (if (eq (elt str i) char)
-	      (setq res (1+ res))
-	    )
+              (setq res (1+ res))
+            )
       (setq i (1+ i))
       )
     res
@@ -1108,11 +1108,11 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-references-counts (drefn refn)
   (let ((res) (dr) (r))
     (if (equal drefn 0)
-	    (setq dr "  -")
+            (setq dr "  -")
       (setq dr (format "%3d" drefn))
       )
     (if (equal refn 0)
-	    (setq r "-  ")
+            (setq r "-  ")
       (setq r (format "%-3d" refn))
       )
     (setq res (format "%s/%s" dr r))
@@ -1129,11 +1129,11 @@ tries to delete C-xrefactory windows first.
   (let ((sw))
     (setq sw (selected-window))
     (if (not (c-xref-soft-select-dispach-data-caller-window c-xref-this-buffer-dispatch-data))
-	    (other-window -1)
+            (other-window -1)
       )
     (find-file file)
     (if (not (equal line 0))
-	    (c-xref-goto-line line)
+            (c-xref-goto-line line)
       )
     (sit-for 1)
     (select-window sw)
@@ -1146,38 +1146,38 @@ tries to delete C-xrefactory windows first.
     (forward-char 1)
     (setq b (point))
     (if (and (eq c-xref-platform 'windows) (>= (point) 3))
-	    (if (c-xref-exact-string-match "[^A-Za-z][A-Za-z]:" (buffer-substring (- (point) 3) (point)))
-		;; add windows drive letter to file
-		(setq b (- (point) 2))
-	      ))
+            (if (c-xref-exact-string-match "[^A-Za-z][A-Za-z]:" (buffer-substring (- (point) 3) (point)))
+                ;; add windows drive letter to file
+                (setq b (- (point) 2))
+              ))
     (search-forward-regexp c-xref-find-file-on-mouse-delimit (point-max) 0)
     (setq e (point))
     (if (<= (- e 1) b)
-	    (error "No file name on mouse")
+            (error "No file name on mouse")
       )
     (setq file (buffer-substring b (- e 1)))
     (if (or (eq (char-after (- e 1)) ?:)
-		(eq (char-after (- e 1)) ?#)
-		)
-	    (progn
-	      ;; probably a line number
-	      (forward-char 1)
-	      (search-forward-regexp "[^0-9]" (point-max) 0)
-	      (setq ne (point))
-	      (setq line (string-to-number (buffer-substring e (- ne 1))))
-	      )
+                (eq (char-after (- e 1)) ?#)
+                )
+            (progn
+              ;; probably a line number
+              (forward-char 1)
+              (search-forward-regexp "[^0-9]" (point-max) 0)
+              (setq ne (point))
+              (setq line (string-to-number (buffer-substring e (- ne 1))))
+              )
       )
     (goto-char p)
     (if (not (file-attributes file))
-	(error "Can't open %s" file)
+        (error "Can't open %s" file)
       )
     (if (not (or (equal (substring file 0 1) "/")
-			 (and (> (length file) 3) (equal (substring file 1 3) ":\\"))
-			 (equal (substring file 0 1) "\\")))
-	    (progn
-	      ;; a relative path, concatenate with working dir
-	      (setq file (concat default-directory file))
-	      ))
+                         (and (> (length file) 3) (equal (substring file 1 3) ":\\"))
+                         (equal (substring file 0 1) "\\")))
+            (progn
+              ;; a relative path, concatenate with working dir
+              (setq file (concat default-directory file))
+              ))
     (c-xref-show-file-line-in-caller-window file line)
     )
   t
@@ -1212,28 +1212,28 @@ tries to delete C-xrefactory windows first.
     (setq res t)
     (setq enlarge (- width (window-width)))
     (if (>= width window-min-width)
-	    (progn
-	      (setq rightmost-win nil)
-		  (setq rightmost-win (>= (elt (window-edges (selected-window)) 2) (frame-width)))
-	      (if rightmost-win
-		  (progn
-			(if (> enlarge 0)
-			    (progn
-			      ;; (set-frame-width (selected-frame) (+ (frame-width) enlarge))
-			      (setq res nil)
-			      ))
-			)
-		(setq abort nil)
-		(if (and (> enlarge 0) (c-xref-select-righter-window))
-			(progn
-			  (if (< (- (window-width) enlarge) window-min-width)
-			      (setq abort (not (c-xref-set-window-width (+ window-min-width enlarge))))
-			    )))
-		(if abort
-			(setq res nil)
-		  (select-window sw)
-		  (enlarge-window-horizontally (- width (window-width)))
-		  ))))
+            (progn
+              (setq rightmost-win nil)
+                  (setq rightmost-win (>= (elt (window-edges (selected-window)) 2) (frame-width)))
+              (if rightmost-win
+                  (progn
+                        (if (> enlarge 0)
+                            (progn
+                              ;; (set-frame-width (selected-frame) (+ (frame-width) enlarge))
+                              (setq res nil)
+                              ))
+                        )
+                (setq abort nil)
+                (if (and (> enlarge 0) (c-xref-select-righter-window))
+                        (progn
+                          (if (< (- (window-width) enlarge) window-min-width)
+                              (setq abort (not (c-xref-set-window-width (+ window-min-width enlarge))))
+                            )))
+                (if abort
+                        (setq res nil)
+                  (select-window sw)
+                  (enlarge-window-horizontally (- width (window-width)))
+                  ))))
     res
     ))
 
@@ -1244,13 +1244,13 @@ tries to delete C-xrefactory windows first.
     (setq sw (selected-window))
     (setq diff (- height (window-height)))
     (if (c-xref-select-upper-window)
-	    (progn
-	      (setq nh (- (window-height) diff))
-	      (if (<= nh window-min-height)
-		  (c-xref-set-window-height (+ window-min-height diff))
-		)
-	      (enlarge-window (- 0 diff))
-	      )
+            (progn
+              (setq nh (- (window-height) diff))
+              (if (<= nh window-min-height)
+                  (c-xref-set-window-height (+ window-min-height diff))
+                )
+              (enlarge-window (- 0 diff))
+              )
       (enlarge-window diff)
       )
     (select-window sw)
@@ -1260,24 +1260,24 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-resize-window-width (val)
   (let ((rightmost-win))
     (setq rightmost-win nil)
-	(setq rightmost-win (>= (elt (window-edges (selected-window)) 2) (frame-width)))
+        (setq rightmost-win (>= (elt (window-edges (selected-window)) 2) (frame-width)))
     (if rightmost-win
-	    (progn
+            (progn
 ;;;                             (set-frame-width (selected-frame) (+ (frame-width) val))
-	      (if (>= (- (window-width) val) window-min-width)
-		  (enlarge-window-horizontally (- 0 val))
-		))
+              (if (>= (- (window-width) val) window-min-width)
+                  (enlarge-window-horizontally (- 0 val))
+                ))
       (if (>= (+ (window-width) val) window-min-width)
-	      (enlarge-window-horizontally val)
-	    ))
+              (enlarge-window-horizontally val)
+            ))
     ))
 
 ;; take care to not delete window on the right, do not resize in this case
 (defun c-xref-resize-window-height (val)
   (if (< val 0)
       (if (> (window-height) window-min-height)
-	      (enlarge-window val)
-	    )
+              (enlarge-window val)
+            )
     ;; todo check the bottom window size!
     (enlarge-window val)
     )
@@ -1306,7 +1306,7 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-window-edges ()
   (let ((res))
     (if (eq c-xref-running-under 'emacs)
-	    (setq res (window-edges (selected-window)))
+            (setq res (window-edges (selected-window)))
       (setq res (window-pixel-edges (selected-window)))
       )
     res
@@ -1322,17 +1322,17 @@ tries to delete C-xrefactory windows first.
       (setq cwe (c-xref-window-edges))
       ;;(message "testing %S %S" cwe owe)
       (if (or
-	       (and (> (elt cwe 2) (elt owe 2))
-			(not
-			 (or (< (elt cwe 3) (elt owe 1))
-			     (> (elt cwe 1) (elt owe 3))
-			     )))
-	       (equal (selected-window) sw))
-	      (setq loop nil)
-	    )
+               (and (> (elt cwe 2) (elt owe 2))
+                        (not
+                         (or (< (elt cwe 3) (elt owe 1))
+                             (> (elt cwe 1) (elt owe 3))
+                             )))
+               (equal (selected-window) sw))
+              (setq loop nil)
+            )
       )
     (if (equal (selected-window) sw)
-	    (setq res nil)
+            (setq res nil)
       (setq res t)
       )
     res
@@ -1347,17 +1347,17 @@ tries to delete C-xrefactory windows first.
       (other-window -1)
       (setq cwe (c-xref-window-edges))
       (if (or
-	       (and (< (elt cwe 1) (elt owe 1))
-			(not
-			 (or (< (elt cwe 2) (elt owe 0))
-			     (> (elt cwe 0) (elt owe 2))
-			     )))
-	       (equal (selected-window) sw))
-	      (setq loop nil)
-	    )
+               (and (< (elt cwe 1) (elt owe 1))
+                        (not
+                         (or (< (elt cwe 2) (elt owe 0))
+                             (> (elt cwe 0) (elt owe 2))
+                             )))
+               (equal (selected-window) sw))
+              (setq loop nil)
+            )
       )
     (if (equal (selected-window) sw)
-	    (setq res nil)
+            (setq res nil)
       (setq res t)
       )
     res
@@ -1370,18 +1370,18 @@ tries to delete C-xrefactory windows first.
     (setq lnnum (count-lines 1 (point-max)))
     (setq wsize (window-height (selected-window)))
     (if (< lnnum c-xref-window-minimal-size)
-	    (setq lnnum c-xref-window-minimal-size)
+            (setq lnnum c-xref-window-minimal-size)
       )
     (if (> lnnum (- (frame-height) window-min-height))
-	    (setq lnnum (- (frame-height) window-min-height))
+            (setq lnnum (- (frame-height) window-min-height))
       )
     (if (or
-	     (and aplus (> lnnum wsize))
-	     (and aminus (< lnnum wsize)))
-	    (progn
-	      ;; the constant contains scrollbar and information line
-	      (c-xref-set-window-height (+ lnnum 3))
-	      ))
+             (and aplus (> lnnum wsize))
+             (and aminus (< lnnum wsize)))
+            (progn
+              ;; the constant contains scrollbar and information line
+              (c-xref-set-window-height (+ lnnum 3))
+              ))
     (goto-char pp)
     ))
 
@@ -1402,9 +1402,9 @@ tries to delete C-xrefactory windows first.
       )
     (setq wwidth (window-width))
     (if (or
-	     (and aplus (> width wwidth))
-	     (and aminus (< width wwidth)))
-	    (c-xref-set-window-width (+ width 2))
+             (and aplus (> width wwidth))
+             (and aminus (< width wwidth)))
+            (c-xref-set-window-width (+ width 2))
       )
     (goto-char pp)
     ))
@@ -1412,15 +1412,15 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-appropriate-browser-windows-sizes (oldwins)
   (if (not oldwins)
       (progn
-	    (if c-xref-browser-windows-auto-resizing
-		(progn
-		  (c-xref-appropriate-window-height nil t)
-		  (c-xref-appropriate-window-width t t)
-		  )
-	      (c-xref-set-window-height c-xref-symbol-selection-window-height)
-	      (c-xref-set-window-width c-xref-symbol-selection-window-width)
-	      )
-	    ))
+            (if c-xref-browser-windows-auto-resizing
+                (progn
+                  (c-xref-appropriate-window-height nil t)
+                  (c-xref-appropriate-window-width t t)
+                  )
+              (c-xref-set-window-height c-xref-symbol-selection-window-height)
+              (c-xref-set-window-width c-xref-symbol-selection-window-width)
+              )
+            ))
   )
 
 
@@ -1431,13 +1431,13 @@ tries to delete C-xrefactory windows first.
 
 (defun c-xref-font-lock-list-keywords (sym)
   (cons (cons (c-xref-keywords-regexp) '(c-xref-keyword-face))
-	    (cons (cons "^.\\([^:]*:[0-9]*\\):" '(c-xref-list-pilot-face))
-		      (if (eq sym nil)
-			  nil
-			(cons (cons (concat "\\b" sym "\\b") '(c-xref-list-symbol-face))
-				  nil
-				  ))
-		      ))
+            (cons (cons "^.\\([^:]*:[0-9]*\\):" '(c-xref-list-pilot-face))
+                      (if (eq sym nil)
+                          nil
+                        (cons (cons (concat "\\b" sym "\\b") '(c-xref-list-symbol-face))
+                                  nil
+                                  ))
+                      ))
   )
 
 
@@ -1449,11 +1449,11 @@ tries to delete C-xrefactory windows first.
     (while (< ind maxi)
       (setq cc (substring sstr ind (+ ind 1)))
       (if (string-match "[A-Za-z]" cc)
-	      (setq ress (concat ress "[" (downcase cc) (upcase cc) "]" ))
-	    (if (string-match "[][.*+?^$ \\]" cc)
-		(setq ress (concat ress "\\" cc))
-	      (setq ress (concat ress cc))
-	      ))
+              (setq ress (concat ress "[" (downcase cc) (upcase cc) "]" ))
+            (if (string-match "[][.*+?^$ \\]" cc)
+                (setq ress (concat ress "\\" cc))
+              (setq ress (concat ress cc))
+              ))
       (setq ind (+ ind 1))
       )
     ress
@@ -1467,23 +1467,23 @@ tries to delete C-xrefactory windows first.
     (while loop
       (setq ind0 (string-match "[^ \n\t]" sstr ind))
       (if (not ind0)
-	      (setq loop nil)
-	    (setq ind (string-match "[ \t\n]" sstr ind0))
-	    (if (not ind)
-		(setq loop nil)
-	      (setq ress (concat ress prefix (c-xref-create-escaped-cased-string (substring sstr ind0 ind))))
-	      (setq prefix "\\|")
-	      ))
+              (setq loop nil)
+            (setq ind (string-match "[ \t\n]" sstr ind0))
+            (if (not ind)
+                (setq loop nil)
+              (setq ress (concat ress prefix (c-xref-create-escaped-cased-string (substring sstr ind0 ind))))
+              (setq prefix "\\|")
+              ))
       )
     (if ind0
-	    (setq ress (concat ress prefix (c-xref-create-escaped-cased-string (substring sstr ind0))))
+            (setq ress (concat ress prefix (c-xref-create-escaped-cased-string (substring sstr ind0))))
       )
     (setq ress (concat ress "\\)"))
     (setq res
-	      (cons (cons ress '(c-xref-list-symbol-face))
-		    (cons (cons ":.*$" '(c-xref-list-default-face))
-			      nil))
-	      )
+              (cons (cons ress '(c-xref-list-symbol-face))
+                    (cons (cons ":.*$" '(c-xref-list-default-face))
+                              nil))
+              )
     ;;(message "fontif == %S" res)
     res
     ))
@@ -1493,55 +1493,55 @@ tries to delete C-xrefactory windows first.
     (setq line (buffer-substring begpos endpos))
     (setq spos (string-match "[ \t\n]" line 0))
     (if (and spos (> spos 0))
-	    (progn
-	      (setq sym (c-xref-create-escaped-cased-string (substring line 0 spos)))
-	      (setq mbeg (string-match (concat "\\b[a-zA-Z0-9_\\.]*" sym "(") line spos))
-	      (if mbeg
-		  (progn
-			(setq mend (match-end 0))
-			(put-text-property (+ mbeg begpos)
-						   (- (+ mend begpos) 1)
-						   'face 'c-xref-list-symbol-face)
-			)
-		(setq mbeg (string-match (concat "\\b[a-zA-Z0-9_\\.]*" sym "\\[") line spos))
-		(if mbeg
-			(progn
-			  (setq mend (match-end 0))
-			  (put-text-property (+ mbeg begpos)
-						     (- (+ mend begpos) 1)
-						     'face 'c-xref-list-symbol-face)
-			  )
-		  (setq mbeg (string-match (concat "\\b[a-zA-Z0-9_\\.]*" sym "$") line spos))
-		  (if mbeg
-			  (progn
-			    (setq mend (match-end 0))
-			    (put-text-property (+ mbeg begpos)
-						       (+ mend begpos)
-						       'face 'c-xref-list-symbol-face)
-			    ))))))
+            (progn
+              (setq sym (c-xref-create-escaped-cased-string (substring line 0 spos)))
+              (setq mbeg (string-match (concat "\\b[a-zA-Z0-9_\\.]*" sym "(") line spos))
+              (if mbeg
+                  (progn
+                        (setq mend (match-end 0))
+                        (put-text-property (+ mbeg begpos)
+                                                   (- (+ mend begpos) 1)
+                                                   'face 'c-xref-list-symbol-face)
+                        )
+                (setq mbeg (string-match (concat "\\b[a-zA-Z0-9_\\.]*" sym "\\[") line spos))
+                (if mbeg
+                        (progn
+                          (setq mend (match-end 0))
+                          (put-text-property (+ mbeg begpos)
+                                                     (- (+ mend begpos) 1)
+                                                     'face 'c-xref-list-symbol-face)
+                          )
+                  (setq mbeg (string-match (concat "\\b[a-zA-Z0-9_\\.]*" sym "$") line spos))
+                  (if mbeg
+                          (progn
+                            (setq mend (match-end 0))
+                            (put-text-property (+ mbeg begpos)
+                                                       (+ mend begpos)
+                                                       'face 'c-xref-list-symbol-face)
+                            ))))))
     ))
 
 (defun c-xref-highlight-keywords (begpos endpos keywords-regexp keyword-face)
   (let ((buff) (bpos) (loop-flag) (mbeg) (mend)
-	    (ocfs))
+            (ocfs))
     ;;(message "highlighting keywords %d %d" begpos endpos)
     (if (< begpos endpos)
-	    (progn
-	      (setq buff (buffer-substring begpos endpos))
-	      (setq bpos 0)
-	      (setq loop-flag t)
-	      (setq ocfs case-fold-search)
-	      (setq case-fold-search nil)
-	      (while loop-flag
-		(setq mbeg (string-match keywords-regexp buff bpos))
-		(if (eq mbeg nil)
-			(setq loop-flag nil)
-		  (setq mend (match-end 0))
-		  (put-text-property (+ mbeg begpos) (+ mend begpos) 'face keyword-face)
-		  (setq bpos mend)
-		  ))
-	      (setq case-fold-search ocfs)
-	      ))
+            (progn
+              (setq buff (buffer-substring begpos endpos))
+              (setq bpos 0)
+              (setq loop-flag t)
+              (setq ocfs case-fold-search)
+              (setq case-fold-search nil)
+              (while loop-flag
+                (setq mbeg (string-match keywords-regexp buff bpos))
+                (if (eq mbeg nil)
+                        (setq loop-flag nil)
+                  (setq mend (match-end 0))
+                  (put-text-property (+ mbeg begpos) (+ mend begpos) 'face keyword-face)
+                  (setq bpos mend)
+                  ))
+              (setq case-fold-search ocfs)
+              ))
     ))
 
 (defun c-xref-fontify-region (begpos endpos kw-font-list)
@@ -1556,39 +1556,39 @@ tries to delete C-xrefactory windows first.
     ))
 
 (defun c-xref-line-hightlight (begpos endpos multiple-lines-flag hbeg-offset
-						      fontification completion-highlighting)
+                                                      fontification completion-highlighting)
   (let ((bp) (loop-flag) (cpos) (prev-line) (dp-pos)
-	    )
+            )
     ;;(message "c-xref-line-hightlight [ %d-%d ]" begpos endpos)
     (setq cpos (c-xref-char-search begpos -1 ?\n))
     (if (< cpos 0) (setq cpos 0))
     (if (and c-xref-coloring (< (+ cpos 1) endpos))
-	    (c-xref-fontify-region (+ cpos 1) endpos fontification)
+            (c-xref-fontify-region (+ cpos 1) endpos fontification)
       )
     (if (or c-xref-mouse-highlight c-xref-coloring)
-	    (progn
-	      (while (< (+ cpos 1) endpos)
-		(setq bp cpos)
-		(setq loop-flag t)
-		(while (and loop-flag
-				    multiple-lines-flag
-				    (eq (char-after (+ bp 1)) ?\ )
-				    (eq (char-after (+ bp 2)) ?\ )
-				    )
-		  (setq prev-line (c-xref-char-search (- bp 1) -1 ?\n))
-		  (if (< prev-line 1)
-			  (setq loop-flag nil)
-			(setq bp prev-line)
-			)
-		  )
-		(setq cpos (c-xref-char-search (+ cpos 1) 1 ?\n))
-		(if (and c-xref-mouse-highlight (< (+ bp hbeg-offset) cpos))
-			(put-text-property (+ bp hbeg-offset) cpos 'mouse-face 'highlight)
-		  )
-		(if (and c-xref-coloring completion-highlighting (< (+ bp 1) cpos))
-			(c-xref-completion-symbol-highlight (+ bp 1) cpos)
-		  )
-		)))
+            (progn
+              (while (< (+ cpos 1) endpos)
+                (setq bp cpos)
+                (setq loop-flag t)
+                (while (and loop-flag
+                                    multiple-lines-flag
+                                    (eq (char-after (+ bp 1)) ?\ )
+                                    (eq (char-after (+ bp 2)) ?\ )
+                                    )
+                  (setq prev-line (c-xref-char-search (- bp 1) -1 ?\n))
+                  (if (< prev-line 1)
+                          (setq loop-flag nil)
+                        (setq bp prev-line)
+                        )
+                  )
+                (setq cpos (c-xref-char-search (+ cpos 1) 1 ?\n))
+                (if (and c-xref-mouse-highlight (< (+ bp hbeg-offset) cpos))
+                        (put-text-property (+ bp hbeg-offset) cpos 'mouse-face 'highlight)
+                  )
+                (if (and c-xref-coloring completion-highlighting (< (+ bp 1) cpos))
+                        (c-xref-completion-symbol-highlight (+ bp 1) cpos)
+                  )
+                )))
     ))
 
 
@@ -1630,26 +1630,26 @@ tries to delete C-xrefactory windows first.
     (setq oldpct process-connection-type)
     (setq process-connection-type nil)
     (setq opts (append (list
-				    "-xrefactory-II"
-				    ;;"-xrefrc" c-xref-options-file
-				    ;;"-urldirect"
-				    ;; do not comment following options without testing
-				    ;; on all platform - files combinations!
-				    "-crlfconversion"
-				    "-crconversion"
-				    (if c-xref-allow-multibyte "-encoding=default" "-encoding=european")
-				    "-o" ofile
-				    )
-			       initopts))
+                                    "-xrefactory-II"
+                                    ;;"-xrefrc" c-xref-options-file
+                                    ;;"-urldirect"
+                                    ;; do not comment following options without testing
+                                    ;; on all platform - files combinations!
+                                    "-crlfconversion"
+                                    "-crconversion"
+                                    (if c-xref-allow-multibyte "-encoding=default" "-encoding=european")
+                                    "-o" ofile
+                                    )
+                               initopts))
     (if c-xref-debug-mode (message "calling: %S" opts))
     (set proc (cons
-		   (apply 'start-process
-			      (concat c-xref-exec-directory "c-xref")
-			      nil
-			      (concat c-xref-exec-directory "c-xref")
-			      opts
-			      )
-		   (cons "" nil)))
+                   (apply 'start-process
+                              (concat c-xref-exec-directory "c-xref")
+                              nil
+                              (concat c-xref-exec-directory "c-xref")
+                              opts
+                              )
+                   (cons "" nil)))
     (set-process-filter (car (eval proc)) filter)
     (setq process-connection-type oldpct)
     (set-process-query-on-exit-flag (car (eval proc)) nil)
@@ -1662,30 +1662,30 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-interrupt-current-process (process tmp-files)
   (let ((sel))
     (setq sel (c-xref-modal-dialog c-xref-selection-modal-buffer
-				   "Interrupt current process?
+                                   "Interrupt current process?
 ----
  1.) Yes
  2.) No, just interrupt Emacs macro
  3.) No
 ----
 "
-					   3 0 t c-xref-interrupt-dialog-map nil))
+                                           3 0 t c-xref-interrupt-dialog-map nil))
     (if (eq sel 3)
-	    (progn
-	      ;; execution interrupted by C-g, kill process, clean tmp files
-	      (delete-process (car process))
-	      (c-xref-server-remove-tmp-files tmp-files)
-	      (if (file-exists-p c-xref-server-tasks-ofile) (delete-file c-xref-server-tasks-ofile))
-	      (setq inhibit-quit nil)
-	      (error "Process killed")
-	      )
+            (progn
+              ;; execution interrupted by C-g, kill process, clean tmp files
+              (delete-process (car process))
+              (c-xref-server-remove-tmp-files tmp-files)
+              (if (file-exists-p c-xref-server-tasks-ofile) (delete-file c-xref-server-tasks-ofile))
+              (setq inhibit-quit nil)
+              (error "Process killed")
+              )
       (if (eq sel 4)
-	      (progn
-		(setq inhibit-quit nil)
-		(error "Quit")
-		)
-	    (setq quit-flag nil)
-	    ))
+              (progn
+                (setq inhibit-quit nil)
+                (error "Quit")
+                )
+            (setq quit-flag nil)
+            ))
     (sit-for .1)
     ))
 
@@ -1695,8 +1695,8 @@ tries to delete C-xrefactory windows first.
     (setq inhibit-quit t)
     (setq process (eval proc))
     (while (and
-		(not (cdr (cdr process)))
-		(eq (process-status (car process)) 'run))
+                (not (cdr (cdr process)))
+                (eq (process-status (car process)) 'run))
       (accept-process-output (car process) 0 100)
       (if quit-flag (c-xref-interrupt-current-process process tmp-files))
       )
@@ -1707,18 +1707,18 @@ tries to delete C-xrefactory windows first.
   (let ((res))
     (setq res "")
     (if (or (eq c-xref-files-encoding 'ascii)
-		(eq c-xref-files-encoding 'generic)
-		(eq c-xref-files-encoding 'european))
-	    (setq res "-encoding=european")
+                (eq c-xref-files-encoding 'generic)
+                (eq c-xref-files-encoding 'european))
+            (setq res "-encoding=european")
       (if (eq c-xref-files-encoding 'euc)
-	      (setq res "-encoding=euc")
-	    (if (eq c-xref-files-encoding 'sjis)
-		(setq res "-encoding=sjis")
-	      (if (eq c-xref-files-encoding 'utf)
-		  (setq res "-encoding=utf")
-		(if (eq c-xref-files-encoding 'project)
-			(setq res "")
-		  )))))
+              (setq res "-encoding=euc")
+            (if (eq c-xref-files-encoding 'sjis)
+                (setq res "-encoding=sjis")
+              (if (eq c-xref-files-encoding 'utf)
+                  (setq res "-encoding=utf")
+                (if (eq c-xref-files-encoding 'project)
+                        (setq res "")
+                  )))))
     res
     ))
 
@@ -1726,12 +1726,12 @@ tries to delete C-xrefactory windows first.
   (let ((cbuffer))
     (setq cbuffer (current-buffer))
     (if (eq (eval proc) nil)
-	    (c-xref-start-server-process '("-server") c-xref-server-tasks-ofile proc 'c-xref-server-filter)
+            (c-xref-start-server-process '("-server") c-xref-server-tasks-ofile proc 'c-xref-server-filter)
       (if (not (eq (process-status (car (eval proc))) 'run))
-	      (progn
-		(delete-process (car (eval proc)))
-		(c-xref-start-server-process '("-server") c-xref-server-tasks-ofile proc 'c-xref-server-filter)
-		)))
+              (progn
+                (delete-process (car (eval proc)))
+                (c-xref-start-server-process '("-server") c-xref-server-tasks-ofile proc 'c-xref-server-filter)
+                )))
     (if c-xref-debug-mode (message "sending: %s" data))
     (get-buffer-create " *c-xref-server-options*")
     (set-buffer " *c-xref-server-options*")
@@ -1756,30 +1756,30 @@ tries to delete C-xrefactory windows first.
     (setq i 0)
     (setq i (c-xref-server-dispatch-skip-blank ss i len))
     (while (and (< (+ i c-xref-ppc-progress-len) len)
-			(equal (substring ss i (+ i c-xref-ppc-progress-len)) c-xref-ppc-progress)
-			)
+                        (equal (substring ss i (+ i c-xref-ppc-progress-len)) c-xref-ppc-progress)
+                        )
       (progn
-	    (setq i (+ i c-xref-ppc-progress-len))
-	    (setq j i)
-	    (while (and (< i len)
-			    (>= (elt ss i) ?0)
-			    (<= (elt ss i) ?9)
-			    )
-	      (setq i (+ i 1))
-	      )
-	    (setq pn (string-to-number (substring ss j i)))
-	    (message "progress %s%%" pn)
-	    (setq i (c-xref-server-dispatch-skip-blank ss i len))
-	    ))
+            (setq i (+ i c-xref-ppc-progress-len))
+            (setq j i)
+            (while (and (< i len)
+                            (>= (elt ss i) ?0)
+                            (<= (elt ss i) ?9)
+                            )
+              (setq i (+ i 1))
+              )
+            (setq pn (string-to-number (substring ss j i)))
+            (message "progress %s%%" pn)
+            (setq i (c-xref-server-dispatch-skip-blank ss i len))
+            ))
     (if (< (+ i c-xref-ppc-synchro-record-len) len)
-	    (progn
-	      (if (equal (substring ss i (+ i c-xref-ppc-synchro-record-len)) c-xref-ppc-synchro-record)
-		  (progn
-			(setq i (+ i c-xref-ppc-synchro-record-len))
-			(setcdr (cdr (eval proc)) t)
-			)
-		(error "SYNCHRO PROBLEM: %s" ss)
-		)))
+            (progn
+              (if (equal (substring ss i (+ i c-xref-ppc-synchro-record-len)) c-xref-ppc-synchro-record)
+                  (progn
+                        (setq i (+ i c-xref-ppc-synchro-record-len))
+                        (setcdr (cdr (eval proc)) t)
+                        )
+                (error "SYNCHRO PROBLEM: %s" ss)
+                )))
     (setcar (cdr (eval proc)) (substring ss i))
     ))
 
@@ -1811,9 +1811,9 @@ tries to delete C-xrefactory windows first.
       (setq tt (car (cdr bbt)))
       (set-buffer bb)
       (if (boundp 'buffer-file-coding-system)
-	      (setq coding buffer-file-coding-system)
-	    (setq coding nil)
-	    )
+              (setq coding buffer-file-coding-system)
+            (setq coding nil)
+            )
       (c-xref-write-tmp-buff tt 1 (+ (buffer-size) 1) coding)
       (setq res (append (list "-preload" (buffer-file-name bb) tt) res))
       (setq lst (cdr lst))
@@ -1829,9 +1829,9 @@ tries to delete C-xrefactory windows first.
       (setq bb (car bbt))
       (setq tt (car (cdr bbt)))
       (if (and c-xref-debug-mode c-xref-debug-preserve-tmp-files)
-	      (message "keeping tmp file %s" tt)
-	    (delete-file tt)
-	    )
+              (message "keeping tmp file %s" tt)
+            (delete-file tt)
+            )
       (setq lst (cdr lst))
       )
     ))
@@ -1844,13 +1844,13 @@ tries to delete C-xrefactory windows first.
     (while bl
       (setq bb (car bl))
       (if (and (buffer-file-name bb)
-		   (buffer-modified-p bb)
-		   )
-	      (progn
-		(if (or can-add-current-buffer
-			    (not (equal bb cb)))
-			(setq res (c-xref-server-add-buffer-to-tmp-files-list bb res))
-		  )))
+                   (buffer-modified-p bb)
+                   )
+              (progn
+                (if (or can-add-current-buffer
+                            (not (equal bb cb)))
+                        (setq res (c-xref-server-add-buffer-to-tmp-files-list bb res))
+                  )))
       (setq bl (cdr bl))
       )
     (set-buffer cb)
@@ -1860,31 +1860,31 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-server-get-point-and-mark-options-via-tmp-file ()
   (let ((olcursor) (olmark) (res) (tmpFile) (coding) (eolc))
     (if (boundp 'buffer-file-coding-system)
-	    (setq coding buffer-file-coding-system)
+            (setq coding buffer-file-coding-system)
       (setq coding nil)
       )
     ;; try to inhibit crlf conversion
     (if (boundp 'inhibit-eol-conversion)
-	    (progn
-	      (setq eolc inhibit-eol-conversion)
-	      (setq inhibit-eol-conversion t)
-	      ))
+            (progn
+              (setq eolc inhibit-eol-conversion)
+              (setq inhibit-eol-conversion t)
+              ))
     (setq tmpFile (format "%s/c-xref%s.tmp" c-xref-tmp-dir c-xref-user-identification))
     (setq res nil)
     (if (>= (point) 1)
-	    (progn
-	      (c-xref-write-tmp-buff tmpFile 1 (point) coding)
-	      (setq olcursor (nth 7 (file-attributes tmpFile)))
-	      (setq res (cons (format "-olcursor=%d" olcursor) res))
-	      ))
+            (progn
+              (c-xref-write-tmp-buff tmpFile 1 (point) coding)
+              (setq olcursor (nth 7 (file-attributes tmpFile)))
+              (setq res (cons (format "-olcursor=%d" olcursor) res))
+              ))
     (if (region-active-p)
-	    (progn
-	      (c-xref-write-tmp-buff tmpFile 1 (mark t) coding)
-	      (setq olmark (nth 7 (file-attributes tmpFile)))
-	      (setq res (cons (format "-olmark=%d" olmark) res))
-	      ))
+            (progn
+              (c-xref-write-tmp-buff tmpFile 1 (mark t) coding)
+              (setq olmark (nth 7 (file-attributes tmpFile)))
+              (setq res (cons (format "-olmark=%d" olmark) res))
+              ))
     (if (boundp 'inhibit-eol-conversion)
-	    (setq inhibit-eol-conversion eolc)
+            (setq inhibit-eol-conversion eolc)
       )
     (if res (delete-file tmpFile))
     res
@@ -1893,14 +1893,14 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-server-get-point-and-mark-options ()
   (let ((res))
     (if (eq c-xref-files-encoding 'generic)
-	    (setq res (c-xref-server-get-point-and-mark-options-via-tmp-file))
+            (setq res (c-xref-server-get-point-and-mark-options-via-tmp-file))
       (setq res nil)
       (if (>= (point) 1)
-	      (setq res (cons (format "-olcursor=%d" (- (point) 1)) res))
-	    )
+              (setq res (cons (format "-olcursor=%d" (- (point) 1)) res))
+            )
       (if (region-active-p)
-	      (setq res (cons (format "-olmark=%d" (- (mark t) 1)) res))
-	    )
+              (setq res (cons (format "-olmark=%d" (- (mark t) 1)) res))
+            )
       )
     res
     ))
@@ -1922,19 +1922,19 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-char-list-substring (list from to)
   (let ((res) (i) (ll) (len) (max))
     (if (stringp list)
-	    (setq res (substring list from to))
+            (setq res (substring list from to))
       (setq ll (nthcdr from list))
       (if to
-	      (setq len (- to from))
-	    (setq len (length ll))
-	    )
+              (setq len (- to from))
+            (setq len (length ll))
+            )
       (setq res (make-string len ?\n))
       (setq i 0)
       (while (< i len)
-	    (aset res i (car ll))
-	    (setq ll (cdr ll))
-	    (setq i (1+ i))
-	    )
+            (aset res i (car ll))
+            (setq ll (cdr ll))
+            (setq i (1+ i))
+            )
       )
     ;;(message "returning substring(%S %S %S) --> %S" list from to res)
     res
@@ -1948,12 +1948,12 @@ tries to delete C-xrefactory windows first.
     ;;(c-xref-erase-buffer)
     (insert-file-contents c-xref-server-tasks-ofile nil nil nil t)
     (if (fboundp 'buffer-substring-no-properties)
-	    (setq res (buffer-substring-no-properties 1 (point-max)))
-	  (setq res (buffer-substring 1 (point-max)))
-	  )
+            (setq res (buffer-substring-no-properties 1 (point-max)))
+          (setq res (buffer-substring 1 (point-max)))
+          )
     (setq i 0)
     (if c-xref-debug-mode
-	    (write-region (point-min) (point-max) (c-xref-server-get-new-tmp-file-name))
+            (write-region (point-min) (point-max) (c-xref-server-get-new-tmp-file-name))
       (kill-buffer c-xref-server-answer-buffer)
       (delete-file c-xref-server-tasks-ofile))
     (c-xref-server-remove-tmp-files tmp-files)
@@ -1967,12 +1967,12 @@ tries to delete C-xrefactory windows first.
     (setq proc (cdr (assoc 'process dispatch-data)))
     (setq frame-id (cdr (assoc 'frame-id dispatch-data)))
     (setq opts (format "%s %s%s -xrefrc \"%s\" -p \"%s\""
-			       commands
-			       (if c-xref-browser-lists-source-lines "" "-rlistwithoutsrc ")
-			       (c-xref-encoding-option)
-			       c-xref-options-file
-			       c-xref-active-project
-			       ))
+                               commands
+                               (if c-xref-browser-lists-source-lines "" "-rlistwithoutsrc ")
+                               (c-xref-encoding-option)
+                               c-xref-options-file
+                               c-xref-active-project
+                               ))
 
     (c-xref-send-data-to-running-process opts proc)
     (c-xref-wait-until-task-sync proc tmp-files)
@@ -1982,7 +1982,7 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-server-call-on-current-buffer (options dispatch-data obl)
   (let ((res) (bl) (data) (topt) (blo))
     (setq bl (c-xref-server-add-buffer-to-tmp-files-list
-		  (current-buffer) obl))
+                  (current-buffer) obl))
     (setq blo (c-xref-server-save-buffers-to-tmp-files bl))
     (setq blo (append blo (c-xref-server-get-point-and-mark-options )))
     (setq topt "")
@@ -2014,34 +2014,34 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-server-call-refactoring-task (opts)
   (let ((bl) (frame-id) (enc))
     (if (and (not (eq c-xref-refactorer-process nil))
-		 (eq (process-status (car c-xref-refactorer-process)) 'run))
-	    ;;(if (c-xref-yes-or-no-window "A refactoring process is running, can I kill it? " t nil)
-	    (progn
-	      (c-xref-kill-refactorer-process-if-any)
-	      )
-	  ;;  (error "Cannot run two refactoring processes")
-	  ;;  )
+                 (eq (process-status (car c-xref-refactorer-process)) 'run))
+            ;;(if (c-xref-yes-or-no-window "A refactoring process is running, can I kill it? " t nil)
+            (progn
+              (c-xref-kill-refactorer-process-if-any)
+              )
+          ;;  (error "Cannot run two refactoring processes")
+          ;;  )
       )
     (setq c-xref-refactorer-process nil)
     (setq c-xref-refactorer-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-refactorer-process))
     (setq bl (c-xref-server-get-list-of-buffers-to-save-to-tmp-files nil))
     (setq bl (c-xref-server-add-buffer-to-tmp-files-list
-		  (current-buffer) bl))
+                  (current-buffer) bl))
     (setq frame-id (cdr (assoc 'frame-id c-xref-refactorer-dispatch-data)))
     (setq opts (append opts (c-xref-server-save-buffers-to-tmp-files bl)))
     (setq opts (append opts (c-xref-server-get-point-and-mark-options )))
     (setq opts (append (list "-refactory"
-					 "-xrefrc" c-xref-options-file
-					 "-p" c-xref-active-project
-					 )
-			       opts))
+                                         "-xrefrc" c-xref-options-file
+                                         "-p" c-xref-active-project
+                                         )
+                               opts))
     (setq enc (c-xref-encoding-option))
     (if (not (equal enc ""))
-	    (setq opts (append (list enc) opts))
+            (setq opts (append (list enc) opts))
       )
     (setq opts (append opts (cons
-			     (format "%s" (buffer-file-name))
-			     nil)))
+                             (format "%s" (buffer-file-name))
+                             nil)))
 
     (c-xref-start-server-process opts c-xref-server-tasks-ofile 'c-xref-refactorer-process 'c-xref-refactorer-filter)
     (c-xref-wait-until-task-sync 'c-xref-refactorer-process bl)
@@ -2052,22 +2052,22 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-server-tags-process (opts)
   (let ((bl) (enc))
     (if (and (not (eq c-xref-tags-process nil))
-		 (eq (process-status (car c-xref-tags-process)) 'run))
-	    (if (c-xref-yes-or-no-window "tags maintenance process is running, can I kill it? " t nil)
-		(progn
-		  (delete-process (car c-xref-tags-process))
-		  (setq c-xref-tags-process nil)
-		  )
-	      (error "Cannot run two tag maintenance processes.")
-	      ))
+                 (eq (process-status (car c-xref-tags-process)) 'run))
+            (if (c-xref-yes-or-no-window "tags maintenance process is running, can I kill it? " t nil)
+                (progn
+                  (delete-process (car c-xref-tags-process))
+                  (setq c-xref-tags-process nil)
+                  )
+              (error "Cannot run two tag maintenance processes.")
+              ))
     (setq bl (c-xref-server-get-list-of-buffers-to-save-to-tmp-files t))
     (setq opts (append opts (list "-errors"
-						  "-xrefrc" c-xref-options-file
-						  "-p" c-xref-active-project
-						  )))
+                                                  "-xrefrc" c-xref-options-file
+                                                  "-p" c-xref-active-project
+                                                  )))
     (setq enc (c-xref-encoding-option))
     (if (not (equal enc ""))
-	    (setq opts (append (list enc) opts))
+            (setq opts (append (list enc) opts))
       )
     (setq opts (append opts (c-xref-server-save-buffers-to-tmp-files bl)))
     ;;  (setq c-xref-tags-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-tags-process))
@@ -2082,25 +2082,25 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-get-basic-server-dispatch-data (proc)
   (let ((res))
     (setq res (cons (cons 'dummy-parameter-to-make-cdr-in-memory nil)
-			    (cons (cons 'caller-window (selected-window))
-				      (cons (cons 'process proc)
-						(cons (cons 'frame-id (c-xref-get-this-frame-id))
-						      nil)))))
+                            (cons (cons 'caller-window (selected-window))
+                                      (cons (cons 'process proc)
+                                                (cons (cons 'frame-id (c-xref-get-this-frame-id))
+                                                      nil)))))
     res
     ))
 
 (defun c-xref-call-process-with-basic-file-data-no-saves (option)
   (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data
-						     'c-xref-server-process))
+                                                     'c-xref-server-process))
   (c-xref-server-call-on-current-buffer-no-saves option
-								     c-xref-global-dispatch-data)
+                                                                     c-xref-global-dispatch-data)
   )
 
 (defun c-xref-call-process-with-basic-file-data-all-saves (option)
   (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data
-						     'c-xref-server-process))
+                                                     'c-xref-server-process))
   (c-xref-server-call-on-current-buffer-all-saves option
-								      c-xref-global-dispatch-data)
+                                                                      c-xref-global-dispatch-data)
   )
 
 (defun c-xref-compute-simple-information (option)
@@ -2113,10 +2113,10 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-compute-active-project ()
   (let ((res) (proc))
     (if c-xref-current-project
-	    (setq c-xref-active-project c-xref-current-project)
+            (setq c-xref-active-project c-xref-current-project)
       (setq proc 'c-xref-server-process)
       (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data
-							 proc))
+                                                         proc))
       (c-xref-send-data-to-running-process
        (format "-olcxgetprojectname -xrefrc \"%s\" \"%s\"" c-xref-options-file (buffer-file-name))
        proc)
@@ -2150,7 +2150,7 @@ on active project selection).
   (let ((res))
     (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-server-process))
     (c-xref-server-call-on-current-buffer-no-saves (format "-get \"%s\"" name)
-									   c-xref-global-dispatch-data)
+                                                                           c-xref-global-dispatch-data)
     (setq res (cdr (assoc 'info c-xref-global-dispatch-data)))
     res
     ))
@@ -2160,7 +2160,7 @@ on active project selection).
   (let ((res) (dd))
     (setq dd (c-xref-get-this-frame-dispatch-data))
     (if dd
-	    (setq res (cdr (assoc 'frame-id dd)))
+            (setq res (cdr (assoc 'frame-id dd)))
       (setq c-xref-frame-id-counter (+ c-xref-frame-id-counter 1))
       (c-xref-set-this-frame-dispatch-data (cons (cons 'frame-id c-xref-frame-id-counter) nil))
       (setq res c-xref-frame-id-counter)
@@ -2180,9 +2180,9 @@ on active project selection).
 
 (defun c-xref-server-dispatch-skip-blank (ss i len)
   (while (and (< i len)
-		  (or (eq (elt ss i) ?\ )
-			  (eq (elt ss i) ?\t)
-			  (eq (elt ss i) ?\n)))
+                  (or (eq (elt ss i) ?\ )
+                          (eq (elt ss i) ?\t)
+                          (eq (elt ss i) ?\n)))
     (setq i (1+ i))
     )
   i
@@ -2193,61 +2193,61 @@ on active project selection).
     (setq c-xref-server-ctag c-xref_PPC_NO_TAG)
     (setq i (c-xref-server-dispatch-skip-blank ss i len))
     (if (< i len)
-	    (progn
-	      (if (not (eq (elt ss i) ?<))
-		  (error "tag starts by %c instead of '<'" (elt ss i))
-		)
-	      (setq i (1+ i))
-	      (setq b i)
-	      (while (and (< i len)
-			      (not (eq (elt ss i) ? ))
-			      (not (eq (elt ss i) ?>)))
-		(setq i (1+ i))
-		)
-	      (setq c-xref-server-ctag (c-xref-char-list-substring ss b i))
-	  ;;(message "c-xref-server-ctag == %s" c-xref-server-ctag)
-	      (setq i (c-xref-server-dispatch-skip-blank ss i len))
-	      (setq c-xref-server-ctag-attributes nil)
-	      (while (and (< i len) (not (eq (elt ss i) ?>)))
-		(setq b i)
-		(while (and (< i len)
-				    (not (eq (elt ss i) ? ))
-				    (not (eq (elt ss i) ?=))
-				    (not (eq (elt ss i) ?>)))
-		  (setq i (1+ i))
-		  )
-		(setq att (c-xref-char-list-substring ss b i))
-	    ;;(message "att %s" att)
-		(if (eq (elt ss i) ?=)
-			(progn
-			  (setq i (1+ i))
-			  (if (eq (elt ss i) ?\")
-			      (progn
-				    (setq i (1+ i))
-				    (setq b i)
-				    (while (and (< i len) (not (eq (elt ss i) ?\")))
-				      (setq i (1+ i))
-				      )
-				    (setq attval (c-xref-char-list-substring ss b i))
-				    (setq i (1+ i))
-				    )
-			    (setq b i)
-			    (while (and (< i len)
-						(not (eq (elt ss i) ? ))
-						(not (eq (elt ss i) ?>)))
-			      (setq i (1+ i))
-			      )
-			    (setq attval (c-xref-char-list-substring ss b i))
-			    )
-		  ;;(message "attval %s == %s" att attval)
-			  (setq c-xref-server-ctag-attributes
-				    (cons (cons att attval)
-					  c-xref-server-ctag-attributes))
-			  ))
-		(setq i (c-xref-server-dispatch-skip-blank ss i len))
-		)
-	      (if (< i len) (setq i (1+ i)))
-	      ))
+            (progn
+              (if (not (eq (elt ss i) ?<))
+                  (error "tag starts by %c instead of '<'" (elt ss i))
+                )
+              (setq i (1+ i))
+              (setq b i)
+              (while (and (< i len)
+                              (not (eq (elt ss i) ? ))
+                              (not (eq (elt ss i) ?>)))
+                (setq i (1+ i))
+                )
+              (setq c-xref-server-ctag (c-xref-char-list-substring ss b i))
+          ;;(message "c-xref-server-ctag == %s" c-xref-server-ctag)
+              (setq i (c-xref-server-dispatch-skip-blank ss i len))
+              (setq c-xref-server-ctag-attributes nil)
+              (while (and (< i len) (not (eq (elt ss i) ?>)))
+                (setq b i)
+                (while (and (< i len)
+                                    (not (eq (elt ss i) ? ))
+                                    (not (eq (elt ss i) ?=))
+                                    (not (eq (elt ss i) ?>)))
+                  (setq i (1+ i))
+                  )
+                (setq att (c-xref-char-list-substring ss b i))
+            ;;(message "att %s" att)
+                (if (eq (elt ss i) ?=)
+                        (progn
+                          (setq i (1+ i))
+                          (if (eq (elt ss i) ?\")
+                              (progn
+                                    (setq i (1+ i))
+                                    (setq b i)
+                                    (while (and (< i len) (not (eq (elt ss i) ?\")))
+                                      (setq i (1+ i))
+                                      )
+                                    (setq attval (c-xref-char-list-substring ss b i))
+                                    (setq i (1+ i))
+                                    )
+                            (setq b i)
+                            (while (and (< i len)
+                                                (not (eq (elt ss i) ? ))
+                                                (not (eq (elt ss i) ?>)))
+                              (setq i (1+ i))
+                              )
+                            (setq attval (c-xref-char-list-substring ss b i))
+                            )
+                  ;;(message "attval %s == %s" att attval)
+                          (setq c-xref-server-ctag-attributes
+                                    (cons (cons att attval)
+                                          c-xref-server-ctag-attributes))
+                          ))
+                (setq i (c-xref-server-dispatch-skip-blank ss i len))
+                )
+              (if (< i len) (setq i (1+ i)))
+              ))
     i
     ))
 
@@ -2256,7 +2256,7 @@ on active project selection).
     (setq res 0)
     (setq as (assoc attr c-xref-server-ctag-attributes))
     (if as
-	    (setq res (string-to-number (cdr as)))
+            (setq res (string-to-number (cdr as)))
       )
     res
     ))
@@ -2277,17 +2277,17 @@ on active project selection).
   (let ((winassoc) (win) (res))
     (setq res nil)
     (if dispatch-data
-	    (progn
-	      (setq winassoc (assoc 'caller-window dispatch-data))
-	      (if winassoc
-		  (progn
-			(setq win (cdr winassoc))
-			(if (and win (windowp win) (window-live-p win))
-			    (progn
-			      (select-window  win)
-			      (set-buffer (window-buffer win))
-			      (setq res t)
-			      ))))))
+            (progn
+              (setq winassoc (assoc 'caller-window dispatch-data))
+              (if winassoc
+                  (progn
+                        (setq win (cdr winassoc))
+                        (if (and win (windowp win) (window-live-p win))
+                            (progn
+                              (select-window  win)
+                              (set-buffer (window-buffer win))
+                              (setq res t)
+                              ))))))
     res
     ))
 
@@ -2295,12 +2295,12 @@ on active project selection).
   (let ((ww))
     (setq ww (cdr (assoc 'caller-window dispatch-data)))
     (if ww
-	    (progn
-	      (if (not (window-live-p ww))
-		  (error "The associated window no longer exists.")
-		(select-window ww)
-		(set-buffer (window-buffer (selected-window)))
-		)))
+            (progn
+              (if (not (window-live-p ww))
+                  (error "The associated window no longer exists.")
+                (select-window ww)
+                (set-buffer (window-buffer (selected-window)))
+                )))
     ))
 
 (defun c-xref-select-dispach-data-refs-window (dispatch-data)
@@ -2316,15 +2316,15 @@ on active project selection).
 (defun c-xref-display-and-set-new-dialog-window (buff horizontal in-new-win)
   (let ((res))
     (if horizontal
-	    (progn
-	      (if (< (window-width) (* 2 window-min-width))
-		  (c-xref-set-window-width (* 2 window-min-width))
-		)
-	      (split-window-horizontally)
-	      )
+            (progn
+              (if (< (window-width) (* 2 window-min-width))
+                  (c-xref-set-window-width (* 2 window-min-width))
+                )
+              (split-window-horizontally)
+              )
       (if (< (window-height) (* 2 window-min-height))
-	      (c-xref-set-window-height (* 2 window-min-height))
-	    )
+              (c-xref-set-window-height (* 2 window-min-height))
+            )
       (split-window-vertically)
       )
     (other-window 1)
@@ -2343,7 +2343,7 @@ on active project selection).
   (let ((ww))
     (setq ww (get-buffer-window buff))
     (if ww
-	    (select-window ww)
+            (select-window ww)
       (c-xref-display-and-set-new-dialog-window buff  horizontal in-new-win)
       )
     ))
@@ -2380,8 +2380,8 @@ on active project selection).
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-end-ctag tag)
     (if (and (equal tag c-xref_PPC_DEBUG_INFORMATION)
-		 (eq c-xref-debug-mode nil))
-	    () ;; do nothing if debug information and mode is off
+                 (eq c-xref-debug-mode nil))
+            () ;; do nothing if debug information and mode is off
       (c-xref-select-dispach-data-caller-window dispatch-data)
       (setq dw (c-xref-display-and-set-new-dialog-window c-xref-info-modal-buffer nil t))
       ;;(insert "[info] : ")
@@ -2414,15 +2414,15 @@ on active project selection).
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-end-ctag c-xref_PPC_KILL_BUFFER_REMOVE_FILE)
     (if (c-xref-yes-or-no-window cc t dispatch-data)
-	    (progn
-	      ;; do not kill buffer really, this would make undo impossible
-	      ;; rather clear it
-	      (erase-buffer)
-	      (set-buffer-modified-p nil)
-	      ;; and really delete the file
-	      (c-xref-delete-file (buffer-file-name))
-	      (bury-buffer)
-	      ))
+            (progn
+              ;; do not kill buffer really, this would make undo impossible
+              ;; rather clear it
+              (erase-buffer)
+              (set-buffer-modified-p nil)
+              ;; and really delete the file
+              (c-xref-delete-file (buffer-file-name))
+              (bury-buffer)
+              ))
     i
     ))
 
@@ -2434,13 +2434,13 @@ on active project selection).
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-end-ctag c-xref_PPC_NO_PROJECT)
     (if (c-xref-yes-or-no-window
-	     (format "No project covers %s,\ncreate new project?" cc)
-	     t dispatch-data)
-	    (progn
-	      (c-xref-project-new)
-	      ;; a non local exit
-	      (error "Done.")
-	      )
+             (format "No project covers %s,\ncreate new project?" cc)
+             t dispatch-data)
+            (progn
+              (c-xref-project-new)
+              ;; a non local exit
+              (error "Done.")
+              )
       (error "Exiting")
       )
     i
@@ -2477,18 +2477,18 @@ on active project selection).
     (c-xref-select-dispach-data-caller-window dispatch-data)
     (setq yes-line (+ (c-xref-char-count ?\n message) 4))
     (if default
-	    (setq default-line yes-line)
+            (setq default-line yes-line)
       (setq default-line (1+  yes-line))
       )
     (setq sel (c-xref-modal-dialog c-xref-confirmation-modal-buffer (format
-								     "%s
+                                                                     "%s
 
 ---
 Yes.
 No.
 ---
 " message)
-				   default-line 0 nil c-xref-confirmation-dialog-map dispatch-data))
+                                   default-line 0 nil c-xref-confirmation-dialog-map dispatch-data))
     (select-window sw)
     (setq res (eq sel yes-line))
     res
@@ -2503,10 +2503,10 @@ No.
     (c-xref-server-dispatch-require-end-ctag tag)
     (setq conf (c-xref-yes-or-no-window cc t dispatch-data))
     (if (not conf)
-	    (progn
-	      (if c-xref-debug-mode (message "exiting: %s" tag))
-	      (error "exiting")
-	      )
+            (progn
+              (if c-xref-debug-mode (message "exiting: %s" tag))
+              (error "exiting")
+              )
       )
     i
     ))
@@ -2547,17 +2547,17 @@ No.
 (defun c-xref-hard-prepend-to-dispatch-data (dispatch-data new-data)
   (let ((p) (dd))
     (if (not dispatch-data)
-	    (error "[c-xref] appending to empty dispatch-data, internal error")
+            (error "[c-xref] appending to empty dispatch-data, internal error")
       )
     ;;(message "hard append: %S to %S" new-data dispatch-data)
     (setq dd (cdr dispatch-data))
     (if new-data
-	    (progn
-	      (setcdr dispatch-data new-data)
-	      (setq p dispatch-data)
-	      (while (cdr p) (setq p (cdr p)))
-	      (setcdr p dd)
-	      ))
+            (progn
+              (setcdr dispatch-data new-data)
+              (setq p dispatch-data)
+              (while (cdr p) (setq p (cdr p)))
+              (setcdr p dd)
+              ))
     ))
 
 (defun c-xref-server-dispatch-set-info (ss i len dispatch-data)
@@ -2574,30 +2574,30 @@ No.
 (defun c-xref-server-dispatch-fqt-complete (import cc dispatch-data)
   (let ((iline-val) (iline))
     (if import
-	    (progn
-	      (c-xref-select-dispach-data-caller-window dispatch-data)
-	      (c-xref-server-call-on-current-buffer-no-saves
-	       "-olcxgetlastimportline"
-	       dispatch-data)
-	      (setq iline (cdr (assoc 'info dispatch-data)))
-	      (setq iline-val (string-to-number iline))
-	      (save-excursion
-		(c-xref-goto-line (+ iline-val 1))
-		(beginning-of-line)
-		;; check if after package, insert on blank line
-		(if (not (bobp))
-			(progn
-			  (forward-line -1)
-			  (if (equal (c-xref-get-identifier-on-point) "package")
-			      (progn
-				    (forward-line 1)
-				    (newline)
-				    )
-			    (forward-line 1)
-			    )))
-		(insert (format "import %s;\n" import))
-		(sit-for 1)
-		)))
+            (progn
+              (c-xref-select-dispach-data-caller-window dispatch-data)
+              (c-xref-server-call-on-current-buffer-no-saves
+               "-olcxgetlastimportline"
+               dispatch-data)
+              (setq iline (cdr (assoc 'info dispatch-data)))
+              (setq iline-val (string-to-number iline))
+              (save-excursion
+                (c-xref-goto-line (+ iline-val 1))
+                (beginning-of-line)
+                ;; check if after package, insert on blank line
+                (if (not (bobp))
+                        (progn
+                          (forward-line -1)
+                          (if (equal (c-xref-get-identifier-on-point) "package")
+                              (progn
+                                    (forward-line 1)
+                                    (newline)
+                                    )
+                            (forward-line 1)
+                            )))
+                (insert (format "import %s;\n" import))
+                (sit-for 1)
+                )))
     (c-xref-server-dispatch-insert-completion cc)
     ))
 
@@ -2614,14 +2614,14 @@ No.
     (setq cl (c-xref-file-name-extension cc))
     (setq pack (c-xref-file-name-without-suffix cc))
     (setq sel (c-xref-modal-dialog c-xref-selection-modal-buffer (format
-								  "Fully qualified type completion will:
+                                                                  "Fully qualified type completion will:
 ----
  1.) Import %s.* and complete %s
  2.) Import %s.%s and complete %s
  3.) Complete %s.%s
 ----
 " pack cl pack cl cl pack cl)
-					   3 0 nil c-xref-fqt-completion-dialog-map dispatch-data))
+                                           3 0 nil c-xref-fqt-completion-dialog-map dispatch-data))
     (cond
      (
       (eq sel 3)
@@ -2676,13 +2676,13 @@ No.
     (while rr
       (setq r (car rr))
       (if (equal (car (cdr r)) crf)
-	      (progn
-		(setq doc r)
-		))
+              (progn
+                (setq doc r)
+                ))
       (setq rr (cdr rr))
       )
     (c-xref-interactive-help (format
-			      "Select a refactoring to perform.
+                              "Select a refactoring to perform.
 Special hotkeys available:
 
 \\[c-xref-modal-dialog-continue] \t-- select
@@ -2690,20 +2690,20 @@ Special hotkeys available:
 \\[c-xref-refactorings-dialog-help] \t-- this help
 \n\n\n%s
 " (c-xref-refactoring-documentation))
-					 (format "%s:" crf)
-					 (list
-					  (list "^\\*[a-zA-Z0-9 ]*:" 'bold)
-					  (list "^[a-zA-Z0-9 ]*:" 'bold-italic)
-					  (list "--*-" 'c-xref-list-symbol-face)
-					  ;;(list (c-xref-keywords-regexp) 'c-xref-keyword-face)
-					  )
-					 )
+                                         (format "%s:" crf)
+                                         (list
+                                          (list "^\\*[a-zA-Z0-9 ]*:" 'bold)
+                                          (list "^[a-zA-Z0-9 ]*:" 'bold-italic)
+                                          (list "--*-" 'c-xref-list-symbol-face)
+                                          ;;(list (c-xref-keywords-regexp) 'c-xref-keyword-face)
+                                          )
+                                         )
     ))
 
 
 (defun c-xref-server-dispatch-available-refactorings (ss i len dispatch-data)
   (let ((code) (selectedref) (srefn) (selectedline) (refs) (menu)
-	    (tlen) (cc) (rfirst-line 3) (dd2))
+            (tlen) (cc) (rfirst-line 3) (dd2))
     (setq refs nil)
     ;; unique completion window in all frames
     (setq menu "Select action to perform:\n---")
@@ -2756,7 +2756,7 @@ Special hotkeys available:
   (let ((win))
     (setq win (get-buffer-window c-xref-completions-buffer))
     (if (and win (windowp win) (window-live-p win))
-	    (setq c-xref-completions-windows-counter (1+ c-xref-completions-windows-counter))
+            (setq c-xref-completions-windows-counter (1+ c-xref-completions-windows-counter))
       (setq c-xref-completions-windows-counter 0)
       )
     ))
@@ -2788,14 +2788,14 @@ Special hotkeys available:
     (setq path (c-xref-char-list-substring ss i (+ i tlen)))
     (setq i (+ i tlen))
     (if (equal c-xref-server-ctag c-xref_PPC_OFFSET_POSITION)
-	    (progn
-	      (setq offset (c-xref-server-dispatch-get-int-attr c-xref_PPCA_OFFSET))
-	      (c-xref-select-dispach-data-caller-window dispatch-data)
-	      (c-xref-find-file path)
-	      (goto-char (+ offset 1))
-	      (setq i (c-xref-server-parse-xml-tag ss i len))
-	      (c-xref-server-dispatch-require-end-ctag c-xref_PPC_OFFSET_POSITION)
-	      )
+            (progn
+              (setq offset (c-xref-server-dispatch-get-int-attr c-xref_PPCA_OFFSET))
+              (c-xref-select-dispach-data-caller-window dispatch-data)
+              (c-xref-find-file path)
+              (goto-char (+ offset 1))
+              (setq i (c-xref-server-parse-xml-tag ss i len))
+              (c-xref-server-dispatch-require-end-ctag c-xref_PPC_OFFSET_POSITION)
+              )
       (c-xref-server-dispatch-require-ctag c-xref_PPC_LC_POSITION)
       (setq line (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LINE))
       (setq col (c-xref-server-dispatch-get-int-attr c-xref_PPCA_COL))
@@ -2806,8 +2806,8 @@ Special hotkeys available:
       (setq rpos (+ (point) col))
       (end-of-line)
       (if (> rpos (point))
-	      (setq rpos (point))
-	    )
+              (setq rpos (point))
+            )
       (goto-char rpos)
       (setq i (c-xref-server-parse-xml-tag ss i len))
       (c-xref-server-dispatch-require-end-ctag c-xref_PPC_LC_POSITION)
@@ -2823,8 +2823,8 @@ Special hotkeys available:
     (while (and (< i len) (not (equal c-xref-server-ctag (format "/%s" c-xref_PPC_UPDATE_REPORT))))
       (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
       (if (equal c-xref-server-ctag c-xref_PPC_FATAL_ERROR)
-	      (c-xref-server-dispatch-error ss i len dispatch-data c-xref_PPC_FATAL_ERROR)
-	    )
+              (c-xref-server-dispatch-error ss i len dispatch-data c-xref_PPC_FATAL_ERROR)
+            )
       (setq i (+ i tlen))
       (setq i (c-xref-server-parse-xml-tag ss i len))
       )
@@ -2856,7 +2856,7 @@ Special hotkeys available:
     (c-xref-select-dispach-data-caller-window dispatch-data)
     (setq rcc (buffer-substring (point) (+ (point) slen)))
     (if (not (equal str rcc))
-	    (error "[internal error] '%s' expected here" str)
+            (error "[internal error] '%s' expected here" str)
       )
     (c-xref-make-buffer-writable)
     (delete-char slen)
@@ -2885,12 +2885,12 @@ Special hotkeys available:
   (let ((blen) (ii) (bb))
     (setq blen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_VALUE))
     (if (fboundp 'indent-region)
-	    (progn
-	      (save-excursion
-		(setq bb (point))
-		(forward-line blen)
-		(indent-region bb (point) nil)
-		)))
+            (progn
+              (save-excursion
+                (setq bb (point))
+                (forward-line blen)
+                (indent-region bb (point) nil)
+                )))
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-end-ctag c-xref_PPC_INDENT)
     i
@@ -2905,7 +2905,7 @@ Special hotkeys available:
     (setq rcc (buffer-substring (point) (+ (point) tlen)))
     ;; (message "prechecking '%s' <-> '%s'" cc rcc)
     (if (not (equal cc rcc))
-	    (error "[error] '%s' expected here" cc)
+            (error "[error] '%s' expected here" cc)
       )
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-end-ctag c-xref_PPC_REFACTORING_PRECHECK)
@@ -2915,15 +2915,15 @@ Special hotkeys available:
 (defun c-xref-create-browser-main-window (buff split-horizontal docking-top-left dispatch-data)
   (let ((sw) (nw) (res))
     (if docking-top-left
-	    (progn
-	      (setq sw (selected-window))
-	      (setq nw (c-xref-display-and-set-new-dialog-window buff split-horizontal nil))
-	      ;; exchange caller window in dispatch-data
-	      (c-xref-reset-cdr 'caller-window sw nw dispatch-data)
-	      (c-xref-reset-all-windows-caller-window sw nw)
-	      (c-xref-set-window-width c-xref-window-width)
-	      (setq res sw)
-	      )
+            (progn
+              (setq sw (selected-window))
+              (setq nw (c-xref-display-and-set-new-dialog-window buff split-horizontal nil))
+              ;; exchange caller window in dispatch-data
+              (c-xref-reset-cdr 'caller-window sw nw dispatch-data)
+              (c-xref-reset-all-windows-caller-window sw nw)
+              (c-xref-set-window-width c-xref-window-width)
+              (setq res sw)
+              )
       (setq nw (c-xref-display-and-set-new-dialog-window buff split-horizontal t))
       (setq res nw)
       )
@@ -2933,13 +2933,13 @@ Special hotkeys available:
 (defun c-xref-cr-new-symbol-resolution-window (force-bottom-position dispatch-data)
   (let ((res))
     (if force-bottom-position
-	    (setq res (c-xref-create-browser-main-window (c-xref-new-symbol-resolution-buffer)
-									     nil nil
-									     dispatch-data))
+            (setq res (c-xref-create-browser-main-window (c-xref-new-symbol-resolution-buffer)
+                                                                             nil nil
+                                                                             dispatch-data))
       (setq res (c-xref-create-browser-main-window (c-xref-new-symbol-resolution-buffer)
-									   c-xref-browser-splits-window-horizontally
-									   c-xref-browser-position-left-or-top
-									   dispatch-data))
+                                                                           c-xref-browser-splits-window-horizontally
+                                                                           c-xref-browser-position-left-or-top
+                                                                           dispatch-data))
       )
     res
     ))
@@ -2947,19 +2947,19 @@ Special hotkeys available:
 (defun c-xref-cr-new-references-window (force-bottom-position)
   (let ((res) (sw))
     (if force-bottom-position
-	    (setq res (c-xref-display-and-set-new-dialog-window (c-xref-new-references-buffer)
-											t t))
+            (setq res (c-xref-display-and-set-new-dialog-window (c-xref-new-references-buffer)
+                                                                                        t t))
       (setq res (c-xref-display-and-set-new-dialog-window (c-xref-new-references-buffer)
-										      (not c-xref-browser-splits-window-horizontally)
-										      t))
+                                                                                      (not c-xref-browser-splits-window-horizontally)
+                                                                                      t))
       )
     ;; scrolling in Emacs is mysterious. Set up some values
-					; (setq sw (selected-window))
-					; (select-window res)
-					; (setq scroll-margin 2)
-					; (setq scroll-conservatively 1)
-					; (setq scroll-step 1)
-					; (select-window sw)
+                                        ; (setq sw (selected-window))
+                                        ; (select-window res)
+                                        ; (setq scroll-margin 2)
+                                        ; (setq scroll-conservatively 1)
+                                        ; (setq scroll-step 1)
+                                        ; (select-window sw)
     ;;
     res
     ))
@@ -2968,11 +2968,11 @@ Special hotkeys available:
   (let ((res))
     (setq res nil)
     (if (and win (windowp win) (window-live-p win))
-	(progn
-	      (if (c-xref-string-has-prefix (buffer-name (window-buffer win))
-							bnameprefix nil)
-		  (setq res t)
-		)))
+        (progn
+              (if (c-xref-string-has-prefix (buffer-name (window-buffer win))
+                                                        bnameprefix nil)
+                  (setq res t)
+                )))
     res
     ))
 
@@ -2984,12 +2984,12 @@ Special hotkeys available:
       (setq bb (car bl))
       (setq bn (buffer-name bb))
       (if (or (c-xref-string-has-prefix bn c-xref-symbol-resolution-buffer nil)
-		  (c-xref-string-has-prefix bn c-xref-references-buffer nil))
-	      (progn
-		(setq win (get-buffer-window bb t))
-		(if (or (not win) (not (windowp win)) (not (window-live-p win)))
-			(kill-buffer bb)
-		  )))
+                  (c-xref-string-has-prefix bn c-xref-references-buffer nil))
+              (progn
+                (setq win (get-buffer-window bb t))
+                (if (or (not win) (not (windowp win)) (not (window-live-p win)))
+                        (kill-buffer bb)
+                  )))
 
       (setq bl (cdr bl))
       )
@@ -2998,34 +2998,34 @@ Special hotkeys available:
 (defun c-xref-create-browser-windows (refactoring-resolution-flag dispatch-data)
   (let ((resolvewin) (listwin) (oldwins) (frame-id) (new-dispatch-data) (frw))
     (if (c-xref-get-this-frame-dispatch-data)
-	    (progn
-	      (setq resolvewin (cdr (assoc 'linked-resolution-window (c-xref-get-this-frame-dispatch-data))))
-	      (setq listwin (cdr (assoc 'linked-refs-window (c-xref-get-this-frame-dispatch-data))))
-	      (cond
-	       (
-		(and (c-xref-valid-window resolvewin c-xref-symbol-resolution-buffer)
-			 (c-xref-valid-window listwin c-xref-references-buffer))
-		;; do nothing as both windows exists
-		nil
-		)
-	       (
-		(c-xref-valid-window resolvewin c-xref-symbol-resolution-buffer)
-		;; only symbol window exists
-		(select-window resolvewin)
-		(setq listwin (c-xref-cr-new-references-window refactoring-resolution-flag))
-		)
-	       (
-		(c-xref-valid-window listwin c-xref-references-buffer)
-		;; only reference window exists, hmmm.
-		(setq resolvewin listwin)
-		(select-window resolvewin)
-		(rename-buffer (c-xref-new-symbol-resolution-buffer))
-		(setq listwin (c-xref-cr-new-references-window refactoring-resolution-flag))
-		)
-	       (t
-		(setq resolvewin (c-xref-cr-new-symbol-resolution-window refactoring-resolution-flag dispatch-data))
-		(setq listwin (c-xref-cr-new-references-window refactoring-resolution-flag))
-		)))
+            (progn
+              (setq resolvewin (cdr (assoc 'linked-resolution-window (c-xref-get-this-frame-dispatch-data))))
+              (setq listwin (cdr (assoc 'linked-refs-window (c-xref-get-this-frame-dispatch-data))))
+              (cond
+               (
+                (and (c-xref-valid-window resolvewin c-xref-symbol-resolution-buffer)
+                         (c-xref-valid-window listwin c-xref-references-buffer))
+                ;; do nothing as both windows exists
+                nil
+                )
+               (
+                (c-xref-valid-window resolvewin c-xref-symbol-resolution-buffer)
+                ;; only symbol window exists
+                (select-window resolvewin)
+                (setq listwin (c-xref-cr-new-references-window refactoring-resolution-flag))
+                )
+               (
+                (c-xref-valid-window listwin c-xref-references-buffer)
+                ;; only reference window exists, hmmm.
+                (setq resolvewin listwin)
+                (select-window resolvewin)
+                (rename-buffer (c-xref-new-symbol-resolution-buffer))
+                (setq listwin (c-xref-cr-new-references-window refactoring-resolution-flag))
+                )
+               (t
+                (setq resolvewin (c-xref-cr-new-symbol-resolution-window refactoring-resolution-flag dispatch-data))
+                (setq listwin (c-xref-cr-new-references-window refactoring-resolution-flag))
+                )))
       (setq resolvewin (c-xref-cr-new-symbol-resolution-window refactoring-resolution-flag dispatch-data))
       (setq listwin (c-xref-cr-new-references-window refactoring-resolution-flag))
       )
@@ -3044,27 +3044,27 @@ Special hotkeys available:
     ;; windows, the problem is probably somewhere here!
     (setq frame-id (c-xref-get-this-frame-id))
     (if refactoring-resolution-flag
-	    (progn
-	      (c-xref-set-this-frame-dispatch-data
-	       (cons (cons 'linked-refactoring-window listwin)
-			 (c-xref-get-this-frame-dispatch-data)))
-	      ))
+            (progn
+              (c-xref-set-this-frame-dispatch-data
+               (cons (cons 'linked-refactoring-window listwin)
+                         (c-xref-get-this-frame-dispatch-data)))
+              ))
     (c-xref-hard-prepend-to-dispatch-data
      dispatch-data
      (cons (cons 'linked-refs-window listwin)
-	       (cons (cons 'linked-resolution-window resolvewin)
-			 (cons (cons 'frame-id frame-id)
-			       nil))))
+               (cons (cons 'linked-resolution-window resolvewin)
+                         (cons (cons 'frame-id frame-id)
+                               nil))))
     (if (not refactoring-resolution-flag)
-	    (progn
-	      (setq frw (c-xref-is-failed-refactoring-window-displayed))
-	      (if frw
-		  (c-xref-hard-prepend-to-dispatch-data
-		   dispatch-data
-		   (cons (cons 'linked-refactoring-window frw) nil)
-		   ))
-	      (c-xref-set-this-frame-dispatch-data dispatch-data)
-	  ))
+            (progn
+              (setq frw (c-xref-is-failed-refactoring-window-displayed))
+              (if frw
+                  (c-xref-hard-prepend-to-dispatch-data
+                   dispatch-data
+                   (cons (cons 'linked-refactoring-window frw) nil)
+                   ))
+              (c-xref-set-this-frame-dispatch-data dispatch-data)
+          ))
     oldwins
     ))
 
@@ -3124,7 +3124,7 @@ Special hotkeys available:
 
 (defun c-xref-server-dispatch-classh-lines (ss i len dispatch-data ct-flag)
   (let ((tlen) (clas) (deps) (selected) (rd) (ru) (prefix) (sch)
-	    (defc) (interfc) (bb) (fc) (upp))
+            (defc) (interfc) (bb) (fc) (upp))
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (while (equal c-xref-server-ctag c-xref_PPC_CLASS)
       (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
@@ -3140,9 +3140,9 @@ Special hotkeys available:
       (if (eq selected 1)
           (setq sch "+") (setq sch " "))
       (if ct-flag
-	      (setq prefix "")
-	    (setq prefix (format "%s  %s  " sch (c-xref-references-counts rd ru)))
-	    )
+              (setq prefix "")
+            (setq prefix (format "%s  %s  " sch (c-xref-references-counts rd ru)))
+            )
       (insert (format "\n%s%s" prefix deps))
       (if (eq upp 1)
           (insert "("))
@@ -3150,13 +3150,13 @@ Special hotkeys available:
       (insert clas)
       (setq fc nil)
       (if (eq defc 1)
-	      (if (eq interfc 1)
-		      (setq fc 'bold-italic)
-		(setq fc 'bold)
-		)
-	    (if (eq interfc 1)
-		(setq fc 'italic)
-	      ))
+              (if (eq interfc 1)
+                      (setq fc 'bold-italic)
+                (setq fc 'bold)
+                )
+            (if (eq interfc 1)
+                (setq fc 'italic)
+              ))
       (if fc
           (put-text-property bb (point) 'face fc))
       (if (eq upp 1)
@@ -3170,7 +3170,7 @@ Special hotkeys available:
 
 (defun c-xref-server-dispatch-symbol-resolution (ss i len dispatch-data)
   (let ((tlen) (symbol) (clas) (indent) (deps) (ru) (rd)
-	    (selected) (sch) (divnewline) (firstline))
+            (selected) (sch) (divnewline) (firstline))
     (setq divnewline "")
     (setq firstline 0)
     (c-xref-select-dispach-data-resolution-window dispatch-data)
@@ -3181,18 +3181,18 @@ Special hotkeys available:
       (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
       (setq symbol (c-xref-char-list-substring ss i (+ i tlen)))
       (setq i (+ i tlen))
-	  (setq divnewline "\n")
-	  (setq selected (c-xref-server-dispatch-get-int-attr c-xref_PPCA_SELECTED))
-	  (setq rd (c-xref-server-dispatch-get-int-attr c-xref_PPCA_DEF_REFN))
-	  (setq ru (c-xref-server-dispatch-get-int-attr c-xref_PPCA_REFN))
-	  (if (equal selected 1) (setq sch "+")
+          (setq divnewline "\n")
+          (setq selected (c-xref-server-dispatch-get-int-attr c-xref_PPCA_SELECTED))
+          (setq rd (c-xref-server-dispatch-get-int-attr c-xref_PPCA_DEF_REFN))
+          (setq ru (c-xref-server-dispatch-get-int-attr c-xref_PPCA_REFN))
+          (if (equal selected 1) (setq sch "+")
         (setq sch " "))
-	  (insert (format "%s%s  %s  %s" divnewline sch (c-xref-references-counts rd ru) symbol))
-	  (if (<= firstline 0)
+          (insert (format "%s%s  %s  %s" divnewline sch (c-xref-references-counts rd ru) symbol))
+          (if (<= firstline 0)
           (setq firstline (count-lines 1 (point))))
-	  (setq i (c-xref-server-parse-xml-tag ss i len))
-	  (c-xref-server-dispatch-require-end-ctag c-xref_PPC_SYMBOL)
-	  (setq i (c-xref-server-parse-xml-tag ss i len))
+          (setq i (c-xref-server-parse-xml-tag ss i len))
+          (c-xref-server-dispatch-require-end-ctag c-xref_PPC_SYMBOL)
+          (setq i (c-xref-server-parse-xml-tag ss i len))
       (setq divnewline "\n")
       )
     (c-xref-server-dispatch-require-end-ctag c-xref_PPC_SYMBOL_RESOLUTION)
@@ -3208,7 +3208,7 @@ Special hotkeys available:
   (let ((ss))
     (setq ss (assoc attr dispatch-data))
     (if (and ss (equal (cdr ss) oldval))
-	    (setcdr ss newval)
+            (setcdr ss newval)
       )
     ))
 
@@ -3218,31 +3218,31 @@ Special hotkeys available:
     (setq loop t)
     (while loop
       (if c-xref-this-buffer-dispatch-data
-	      (c-xref-reset-cdr 'caller-window
-					old-caller-window
-					new-caller-window
-					c-xref-this-buffer-dispatch-data)
-	    )
+              (c-xref-reset-cdr 'caller-window
+                                        old-caller-window
+                                        new-caller-window
+                                        c-xref-this-buffer-dispatch-data)
+            )
       (other-window 1)
       (setq loop (not (equal sw (selected-window))))
       )
     (if (c-xref-get-this-frame-dispatch-data)
-	    (c-xref-reset-cdr 'caller-window
-				      old-caller-window
-				      new-caller-window
-				      (c-xref-get-this-frame-dispatch-data))
+            (c-xref-reset-cdr 'caller-window
+                                      old-caller-window
+                                      new-caller-window
+                                      (c-xref-get-this-frame-dispatch-data))
       )
     ))
 
 (defun c-xref-server-dispatch-reference-list (ss i len dispatch-data)
   (let ((tlen) (srcline) (n) (divnewline) (aline) (line) (j) (pointer)
-	    (listed-symbol))
+            (listed-symbol))
     (setq j 0)
     (setq divnewline "")
     (setq aline (c-xref-server-dispatch-get-int-attr c-xref_PPCA_VALUE))
     (setq listed-symbol (cdr (assoc c-xref_PPCA_SYMBOL c-xref-server-ctag-attributes)))
     (if (equal listed-symbol "")
-	    (setq listed-symbol nil)
+            (setq listed-symbol nil)
       )
     (setq line 0)
     (c-xref-select-dispach-data-refs-window dispatch-data)
@@ -3255,16 +3255,16 @@ Special hotkeys available:
       (setq i (+ i tlen))
       (setq n (c-xref-server-dispatch-get-int-attr c-xref_PPCA_REFN))
       (while (> n 0)
-	    (progn
-	      (if (eq line aline)
-		  (setq pointer ">")
-		(setq pointer " ")
-		)
-	      (insert (format "%s%s%s" divnewline pointer srcline))
-	      (setq divnewline "\n")
-	      (setq line (+ line 1))
-	      (setq n (- n 1))
-	      ))
+            (progn
+              (if (eq line aline)
+                  (setq pointer ">")
+                (setq pointer " ")
+                )
+              (insert (format "%s%s%s" divnewline pointer srcline))
+              (setq divnewline "\n")
+              (setq line (+ line 1))
+              (setq n (- n 1))
+              ))
       (setq i (c-xref-server-parse-xml-tag ss i len))
       (c-xref-server-dispatch-require-end-ctag c-xref_PPC_SRC_LINE)
       (setq i (c-xref-server-parse-xml-tag ss i len))
@@ -3375,96 +3375,96 @@ Special hotkeys available:
       ;;(message "tag == %s" c-xref-server-ctag)
       (cond
        (
-	    (equal c-xref-server-ctag c-xref_PPC_SET_INFO)
-	    (setq i (c-xref-server-dispatch-set-info ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_SET_INFO)
+            (setq i (c-xref-server-dispatch-set-info ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_ALL_COMPLETIONS)
-	    (setq i (c-xref-server-dispatch-all-completions ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_ALL_COMPLETIONS)
+            (setq i (c-xref-server-dispatch-all-completions ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_SINGLE_COMPLETION)
-	    (setq i (c-xref-server-dispatch-single-completion ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_SINGLE_COMPLETION)
+            (setq i (c-xref-server-dispatch-single-completion ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_GOTO)
-	    (setq i (c-xref-server-dispatch-goto ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_GOTO)
+            (setq i (c-xref-server-dispatch-goto ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_AVAILABLE_REFACTORINGS)
-	    (setq i (c-xref-server-dispatch-available-refactorings ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_AVAILABLE_REFACTORINGS)
+            (setq i (c-xref-server-dispatch-available-refactorings ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_UPDATE_REPORT)
-	    (setq i (c-xref-server-dispatch-update-report ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_UPDATE_REPORT)
+            (setq i (c-xref-server-dispatch-update-report ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_REFACTORING_PRECHECK)
-	    (setq i (c-xref-server-dispatch-precheck ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_REFACTORING_PRECHECK)
+            (setq i (c-xref-server-dispatch-precheck ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_REFACTORING_REPLACEMENT)
-	    (setq i (c-xref-server-dispatch-replacement ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_REFACTORING_REPLACEMENT)
+            (setq i (c-xref-server-dispatch-replacement ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_REFACTORING_CUT_BLOCK)
-	    (setq i (c-xref-server-dispatch-refactoring-cut-block ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_REFACTORING_CUT_BLOCK)
+            (setq i (c-xref-server-dispatch-refactoring-cut-block ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_REFACTORING_PASTE_BLOCK)
-	    (setq i (c-xref-server-dispatch-refactoring-paste-block ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_REFACTORING_PASTE_BLOCK)
+            (setq i (c-xref-server-dispatch-refactoring-paste-block ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_INDENT)
-	    (setq i (c-xref-server-dispatch-indent ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_INDENT)
+            (setq i (c-xref-server-dispatch-indent ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_DISPLAY_RESOLUTION)
-	    (setq i (c-xref-server-dispatch-display-resolution ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_DISPLAY_RESOLUTION)
+            (setq i (c-xref-server-dispatch-display-resolution ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_SYMBOL_RESOLUTION)
-	    (setq i (c-xref-server-dispatch-symbol-resolution ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_SYMBOL_RESOLUTION)
+            (setq i (c-xref-server-dispatch-symbol-resolution ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_DISPLAY_OR_UPDATE_BROWSER)
-	    (setq i (c-xref-server-dispatch-display-or-update-browser ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_DISPLAY_OR_UPDATE_BROWSER)
+            (setq i (c-xref-server-dispatch-display-or-update-browser ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_REFERENCE_LIST)
-	    (setq i (c-xref-server-dispatch-reference-list ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_REFERENCE_LIST)
+            (setq i (c-xref-server-dispatch-reference-list ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_SYMBOL_LIST)
-	    (setq i (c-xref-server-dispatch-symbol-list ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_SYMBOL_LIST)
+            (setq i (c-xref-server-dispatch-symbol-list ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_MOVE_FILE_AS)
-	    (setq i (c-xref-server-dispatch-move-file-as ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_MOVE_FILE_AS)
+            (setq i (c-xref-server-dispatch-move-file-as ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_EXTRACTION_DIALOG)
-	    (setq i (c-xref-server-dispatch-extraction-dialog ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_EXTRACTION_DIALOG)
+            (setq i (c-xref-server-dispatch-extraction-dialog ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_CALL_MACRO)
-	    (setq i (c-xref-server-dispatch-call-macro ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_CALL_MACRO)
+            (setq i (c-xref-server-dispatch-call-macro ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_KILL_BUFFER_REMOVE_FILE)
-	    (setq i (c-xref-server-dispatch-kill-buffer-remove-file ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_KILL_BUFFER_REMOVE_FILE)
+            (setq i (c-xref-server-dispatch-kill-buffer-remove-file ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_NO_PROJECT)
-	    (setq i (c-xref-server-dispatch-no-project ss i len dispatch-data)))
+            (equal c-xref-server-ctag c-xref_PPC_NO_PROJECT)
+            (setq i (c-xref-server-dispatch-no-project ss i len dispatch-data)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_ASK_CONFIRMATION)
-	    (setq i (c-xref-server-dispatch-ask-confirmation ss i len dispatch-data c-xref-server-ctag)))
+            (equal c-xref-server-ctag c-xref_PPC_ASK_CONFIRMATION)
+            (setq i (c-xref-server-dispatch-ask-confirmation ss i len dispatch-data c-xref-server-ctag)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_INFORMATION)
-	    (setq i (c-xref-server-dispatch-information ss i len dispatch-data c-xref-server-ctag)))
+            (equal c-xref-server-ctag c-xref_PPC_INFORMATION)
+            (setq i (c-xref-server-dispatch-information ss i len dispatch-data c-xref-server-ctag)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_BOTTOM_INFORMATION)
-	    (setq i (c-xref-server-dispatch-bottom-information ss i len dispatch-data c-xref-server-ctag)))
+            (equal c-xref-server-ctag c-xref_PPC_BOTTOM_INFORMATION)
+            (setq i (c-xref-server-dispatch-bottom-information ss i len dispatch-data c-xref-server-ctag)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_WARNING)
-	    (setq i (c-xref-server-dispatch-information ss i len dispatch-data c-xref-server-ctag)))
+            (equal c-xref-server-ctag c-xref_PPC_WARNING)
+            (setq i (c-xref-server-dispatch-information ss i len dispatch-data c-xref-server-ctag)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_BOTTOM_WARNING)
-	    (setq i (c-xref-server-dispatch-bottom-information ss i len dispatch-data c-xref-server-ctag)))
+            (equal c-xref-server-ctag c-xref_PPC_BOTTOM_WARNING)
+            (setq i (c-xref-server-dispatch-bottom-information ss i len dispatch-data c-xref-server-ctag)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_ERROR)
-	    (setq i (c-xref-server-dispatch-error ss i len dispatch-data c-xref-server-ctag)))
+            (equal c-xref-server-ctag c-xref_PPC_ERROR)
+            (setq i (c-xref-server-dispatch-error ss i len dispatch-data c-xref-server-ctag)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_FATAL_ERROR)
-	    (setq i (c-xref-server-dispatch-error ss i len dispatch-data c-xref-server-ctag)))
+            (equal c-xref-server-ctag c-xref_PPC_FATAL_ERROR)
+            (setq i (c-xref-server-dispatch-error ss i len dispatch-data c-xref-server-ctag)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_DEBUG_INFORMATION)
-	    (setq i (c-xref-server-dispatch-information ss i len dispatch-data c-xref-server-ctag)))
+            (equal c-xref-server-ctag c-xref_PPC_DEBUG_INFORMATION)
+            (setq i (c-xref-server-dispatch-information ss i len dispatch-data c-xref-server-ctag)))
        (
-	    t
-	    (error "unknown tag: %s" c-xref-server-ctag))
-	   ;;(message "unknown tag: %s" c-xref-server-ctag))
+            t
+            (error "unknown tag: %s" c-xref-server-ctag))
+           ;;(message "unknown tag: %s" c-xref-server-ctag))
        )
       (setq i (c-xref-server-dispatch-skip-blank ss i len))
       )
@@ -3481,9 +3481,9 @@ Special hotkeys available:
     (setq pp (point))
     (setq res nil)
     (if (and (eq (char-after pp) ?-)
-		 (eq (char-after (+ pp 1)) ?-)
-		 (eq (char-after (+ pp 2)) ?-))
-	    (setq res t)
+                 (eq (char-after (+ pp 1)) ?-)
+                 (eq (char-after (+ pp 2)) ?-))
+            (setq res t)
       )
     res
     ))
@@ -3552,18 +3552,18 @@ Special hotkeys available:
     (message mess)
     (while (not (eq key 'c-xref-modal-dialog-continue))
       (if key
-	      (apply key event nil)
-	    (message "Invalid key")
-	    )
+              (apply key event nil)
+            (message "Invalid key")
+            )
       (condition-case nil
-	      (progn
-		(setq ev (c-xref-read-key-sequence mess))
-		(setq event (elt ev 00))
-		(setq key (lookup-key keymap ev))
-		(message mess)
-		)
-	    (error nil)
-	    )
+              (progn
+                (setq ev (c-xref-read-key-sequence mess))
+                (setq event (elt ev 00))
+                (setq key (lookup-key keymap ev))
+                (message mess)
+                )
+            (error nil)
+            )
       )
     ))
 
@@ -3578,11 +3578,11 @@ Special hotkeys available:
     (goto-char (+ (point) col))
     (setq c-xref-this-buffer-dispatch-data dispatch-data)
     (if blick
-	    (progn
-	      (other-window -1)
-	      (sit-for 1)
-	      (other-window 1)
-	      ))
+            (progn
+              (other-window -1)
+              (sit-for 1)
+              (other-window 1)
+              ))
     (c-xref-modal-dialog-loop keymap "? - help")
     (setq res (count-lines 1 (+ (point) 1)))
     (delete-window win)
@@ -3602,12 +3602,12 @@ Special hotkeys available:
     (while (> i 0)
       (setq i (- i 1))
       (if (eq (elt pname i) c-xref-path-separator)
-	      (progn
-		(setq path (substring pname (+ i 1)))
-		(if cut-slash (setq path (c-xref-remove-pending-slash path)))
-		(setq lplist (append lplist (cons path nil)))
-		(setq pname (substring pname 0 i))
-		)))
+              (progn
+                (setq path (substring pname (+ i 1)))
+                (if cut-slash (setq path (c-xref-remove-pending-slash path)))
+                (setq lplist (append lplist (cons path nil)))
+                (setq pname (substring pname 0 i))
+                )))
     (setq lplist (append lplist (cons pname nil)))
     lplist
     ))
@@ -3616,23 +3616,23 @@ Special hotkeys available:
 (defun c-xref-get-project-list ()
   (let ((new-name) (loop) (mbeg) (mend) (pname "") (project-list) (i) (len) (lplist))
     (with-current-buffer
-	    (get-buffer-create " c-xref-project-list")
+            (get-buffer-create " c-xref-project-list")
       ;;(c-xref-erase-buffer)
       (insert-file-contents c-xref-options-file  nil nil nil t)
       (goto-char (point-min))
       (setq project-list nil)
       (setq loop t)
       (while loop
-	    (setq loop (search-forward-regexp "\\[\\([^\]]*\\)\\]"
-							      (buffer-size) 1))
-	    (if loop
-		(progn
-		  (setq mbeg (match-beginning  1))
-		  (setq mend (match-end  1))
-		  (setq pname (buffer-substring mbeg mend))
-		  (setq lplist (c-xref-split-path-on-path-list pname nil))
-		  (setq project-list (append lplist project-list))
-		  )))
+            (setq loop (search-forward-regexp "\\[\\([^\]]*\\)\\]"
+                                                              (buffer-size) 1))
+            (if loop
+                (progn
+                  (setq mbeg (match-beginning  1))
+                  (setq mend (match-end  1))
+                  (setq pname (buffer-substring mbeg mend))
+                  (setq lplist (c-xref-split-path-on-path-list pname nil))
+                  (setq project-list (append lplist project-list))
+                  )))
       (kill-buffer nil)
       )
     project-list
@@ -3656,11 +3656,11 @@ Special hotkeys available:
   (let ((bl) (el) (prj))
     (setq prj (c-xref-prj-list-get-prj-on-line))
     (if (string-equal prj c-xref-directory-dep-prj-name)
-	    (progn
-	      (setq c-xref-current-project nil)
-	      ;; and reseting of softly selected project
-	      (c-xref-softly-preset-project "")
-	      )
+            (progn
+              (setq c-xref-current-project nil)
+              ;; and reseting of softly selected project
+              (c-xref-softly-preset-project "")
+              )
       (setq c-xref-current-project prj)
       )
     (c-xref-delete-window-in-any-frame  c-xref-project-list-buffer nil)
@@ -3722,9 +3722,9 @@ Special hotkeys available:
     (while c-xref-project-list
       (goto-char (point-min))
       (if (string-equal c-xref-current-project (car c-xref-project-list))
-	      (insert "> ")
-	    (insert "  ")
-	    )
+              (insert "> ")
+            (insert "  ")
+            )
       (insert (car c-xref-project-list))
       (put-text-property 3 (point) 'mouse-face 'highlight)
       (newline)
@@ -3746,7 +3746,7 @@ proceed according to options corresponding to this project name.
   (interactive "")
   (c-xref-entry-point-make-initialisations-no-project-required)
   (c-xref-display-project-list c-xref-directory-dep-prj-name
-					   c-xref-project-list-mode-map)
+                                           c-xref-project-list-mode-map)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3756,10 +3756,10 @@ proceed according to options corresponding to this project name.
   (let ((prj) (eprj) (ppp) (eppp))
     (setq prj (c-xref-prj-list-get-prj-on-line))
     (if (string-equal prj c-xref-abandon-deletion)
-	    (progn
-	      (c-xref-delete-window-in-any-frame  c-xref-project-list-buffer nil)
-	      (message "Deletion canceled.")
-	      )
+            (progn
+              (c-xref-delete-window-in-any-frame  c-xref-project-list-buffer nil)
+              (message "Deletion canceled.")
+              )
       (forward-line)
       (setq eprj (c-xref-prj-list-get-prj-on-line))
       (c-xref-delete-window-in-any-frame  c-xref-project-list-buffer nil)
@@ -3767,32 +3767,32 @@ proceed according to options corresponding to this project name.
       (goto-char (point-min))
       (setq ppp (search-forward (format "[%s]" prj) nil t))
       (if (not ppp)
-	      (error "Project section not found, it's probably sharing options, delete it manually.")
-	    (setq ppp (- ppp (length (format "[%s]" prj))))
-	    )
+              (error "Project section not found, it's probably sharing options, delete it manually.")
+            (setq ppp (- ppp (length (format "[%s]" prj))))
+            )
       (if (equal eprj c-xref-abandon-deletion)
-	      (setq eppp (point-max))
-	    (setq eppp (search-forward (format "[%s]" eprj) nil t))
-	    (if (not eppp)
-		(setq eppp (search-forward (format "[%s:" eprj) nil t))
-	      )
-	    (if (not eppp)
-		(error "Can't find end of project section, internal error, sorry.")
-	      (setq eppp (- eppp (length (format "[%s]" eprj))))
-	      ))
+              (setq eppp (point-max))
+            (setq eppp (search-forward (format "[%s]" eprj) nil t))
+            (if (not eppp)
+                (setq eppp (search-forward (format "[%s:" eprj) nil t))
+              )
+            (if (not eppp)
+                (error "Can't find end of project section, internal error, sorry.")
+              (setq eppp (- eppp (length (format "[%s]" eprj))))
+              ))
       (if (> ppp eppp)
-	      (error "[ppp>eppp] internal check failed, sorry")
-	    (goto-char ppp)
-	    (if (yes-or-no-p (format "Really delete %s? " prj))
-		(progn
-		  (delete-char (- eppp ppp))
-		  (save-buffer)
-		  (kill-buffer (current-buffer))
-		  (message "Project %s has been deleted." prj)
-		  )
-	      (message "No deletion.")
-	      )
-	    ))
+              (error "[ppp>eppp] internal check failed, sorry")
+            (goto-char ppp)
+            (if (yes-or-no-p (format "Really delete %s? " prj))
+                (progn
+                  (delete-char (- eppp ppp))
+                  (save-buffer)
+                  (kill-buffer (current-buffer))
+                  (message "Project %s has been deleted." prj)
+                  )
+              (message "No deletion.")
+              )
+            ))
     t
     ))
 
@@ -3840,7 +3840,7 @@ will be deleted.
   (interactive "")
   (c-xref-entry-point-make-initialisations-no-project-required)
   (c-xref-display-project-list c-xref-abandon-deletion
-					   c-xref-project-delete-mode-map)
+                                           c-xref-project-delete-mode-map)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3849,10 +3849,10 @@ will be deleted.
   (let ((dlen))
     (setq dlen (- (length pfiles) 1))
     (if (> dlen 0)
-	    (progn
-	      (if (or (eq (elt pfiles dlen) ?/) (eq (elt pfiles dlen) ?\\))
-		  (setq pfiles (substring pfiles 0 dlen))
-		)))
+            (progn
+              (if (or (eq (elt pfiles dlen) ?/) (eq (elt pfiles dlen) ?\\))
+                  (setq pfiles (substring pfiles 0 dlen))
+                )))
     pfiles
     ))
 
@@ -3867,16 +3867,16 @@ will be deleted.
       (setq j 0)
       (setq loop t)
       (while (and (< j slen) loop)
-	    (setq sc (elt schars j))
-	    (if (eq cc sc)
-		(setq loop nil)
-	      )
-	    (setq j (+ j 1))
-	    )
+            (setq sc (elt schars j))
+            (if (eq cc sc)
+                (setq loop nil)
+              )
+            (setq j (+ j 1))
+            )
       (if loop
-	      (setq res (format "%s%c" res cc))
-	    (setq res (format "%s%c" res dchar))
-	    )
+              (setq res (format "%s%c" res cc))
+            (setq res (format "%s%c" res dchar))
+            )
       (setq i (1+ i))
       )
     res
@@ -3884,46 +3884,46 @@ will be deleted.
 
 
 (defun c-xref-append-new-project-section (pname pcomments
-							    pfiles apfiles ifiles
-							    rest refs exactp)
+                                                            pfiles apfiles ifiles
+                                                            rest refs exactp)
   (let ((comment) (dlen) (cldopt) (tdq))
     (setq comment (or (equal pcomments "y") (equal pcomments "Y")))
     (goto-char (point-max))
     (insert (concat "\n\n[" pname "]\n"))
     (if comment
-	    (insert "  //  input files and directories (processed recursively)\n")
+            (insert "  //  input files and directories (processed recursively)\n")
       )
     (insert (concat "  " apfiles))
     (newline)
     (setq pfiles (c-xref-remove-pending-slash pfiles))
     (if comment
-	    (insert "  //  directory where refrences database (tag files) is stored\n")
+            (insert "  //  directory where refrences database (tag files) is stored\n")
       )
     (insert (format "  -refs %s\n" (c-xref-optionify-string refs "\"")))
     (insert "  //  number of tag files\n")
     (if (or (equal exactp "y") (equal exactp "Y"))
-	    (insert "  -refnum=100\n")
+            (insert "  -refnum=100\n")
       (insert "  -refnum=10\n")
       )
-	(if (not (equal ifiles ""))
-	    (insert (format "%s\n" ifiles))
-	  )
-	(if (or (equal exactp "y") (equal exactp "Y"))
-	    (insert "  // resolve symbols using definition place\n  -exactpositionresolve\n")
-	  )
-	(if comment (insert "  //  setting for Emacs compile and run\n"))
-	(insert "  -set compilefile \"cc %s\"\n")
-	(insert "  -set compiledir \"cc *.c\"\n")
-	(insert (format "  -set compileproject \"\n\tcd %s\n\tmake\n\t\"\n" pname))
-	(if (eq c-xref-platform 'windows)
-	    (insert "  -set run1 \"a.exe\"\n")
-	  (insert "  -set run1 \"a.out\"\n")
-	  )
-	(insert "  -set run5 \"\"  // an empty run; C-F8 will only compile\n")
-	(insert "  //  set default to run1\n")
-	(insert "  -set run ${run1}\n")
+        (if (not (equal ifiles ""))
+            (insert (format "%s\n" ifiles))
+          )
+        (if (or (equal exactp "y") (equal exactp "Y"))
+            (insert "  // resolve symbols using definition place\n  -exactpositionresolve\n")
+          )
+        (if comment (insert "  //  setting for Emacs compile and run\n"))
+        (insert "  -set compilefile \"cc %s\"\n")
+        (insert "  -set compiledir \"cc *.c\"\n")
+        (insert (format "  -set compileproject \"\n\tcd %s\n\tmake\n\t\"\n" pname))
+        (if (eq c-xref-platform 'windows)
+            (insert "  -set run1 \"a.exe\"\n")
+          (insert "  -set run1 \"a.out\"\n")
+          )
+        (insert "  -set run5 \"\"  // an empty run; C-F8 will only compile\n")
+        (insert "  //  set default to run1\n")
+        (insert "  -set run ${run1}\n")
     (if (not (equal rest ""))
-	    (insert (format "%s\n" rest))
+            (insert (format "%s\n" rest))
       )
     ))
 
@@ -3935,22 +3935,22 @@ will be deleted.
     (setq prefix "")
     (while sep
       (progn
-	    (setq prefix (concat prefix (substring str  0 (+ sep 1))))
-	    (setq str (substring str (+ sep 1) nil))
-	    (setq sep (string-match (format "\\%c" c-xref-path-separator) str))
-	))
+            (setq prefix (concat prefix (substring str  0 (+ sep 1))))
+            (setq str (substring str (+ sep 1) nil))
+            (setq sep (string-match (format "\\%c" c-xref-path-separator) str))
+        ))
     ;;  (setq dir (concat (c-xref-file-directory-name str) "/"))
     (setq dir (file-name-directory str))
     (setq fname (file-name-nondirectory str))
     (if (eq type t)
-	    (setq res (file-name-all-completions fname dir))
+            (setq res (file-name-all-completions fname dir))
       (setq res (file-name-completion fname dir))
       (if (eq c-xref-platform 'windows)
-	      (setq res (c-xref-backslashify-name res))
-	    )
+              (setq res (c-xref-backslashify-name res))
+            )
       )
     (if (stringp res)
-	    (setq res (concat cstr (substring res (length fname))))
+            (setq res (concat cstr (substring res (length fname))))
       )
     res
     ))
@@ -3968,15 +3968,15 @@ will be deleted.
     (setq ifloop t)
     (while ifloop
       (if (eq c-xref-foo-macros-counter 1)
-	      (setq deflt "FOO")
-	    (setq deflt (format "FOO%d" c-xref-foo-macros-counter))
-	    )
+              (setq deflt "FOO")
+            (setq deflt (format "FOO%d" c-xref-foo-macros-counter))
+            )
       (setq c-xref-foo-macros-counter
-		(+ c-xref-foo-macros-counter 1))
+                (+ c-xref-foo-macros-counter 1))
       (setq rrr (read-from-minibuffer mess1 deflt))
       (setq rest (format "%s\n  %s-D%s" rest prefix rrr))
       (setq aaa (read-from-minibuffer
-			 (format "%s [yn]? " mess2) "n"))
+                         (format "%s [yn]? " mess2) "n"))
       (if (not (or (equal aaa "y") (equal aaa "Y"))) (setq ifloop nil))
       )
     rest
@@ -3986,18 +3986,18 @@ will be deleted.
   (let ((res) (i) (len))
     (setq res ss)
     (if (eq c-xref-platform 'windows)
-	    (progn
-	      (setq i 0)
-	      (setq len (length ss))
-	      (setq res "")
-	      (while (< i len)
-		(if (and (> i 2) (eq (elt ss i) ?\:))
-			(setq res res)
-		  (setq res (concat res (char-to-string (elt ss i))))
-		  )
-		(setq i (1+ i))
-		)
-	      )
+            (progn
+              (setq i 0)
+              (setq len (length ss))
+              (setq res "")
+              (while (< i len)
+                (if (and (> i 2) (eq (elt ss i) ?\:))
+                        (setq res res)
+                  (setq res (concat res (char-to-string (elt ss i))))
+                  )
+                (setq i (1+ i))
+                )
+              )
       )
     res
     ))
@@ -4009,9 +4009,9 @@ will be deleted.
     (setq i 0)
     (while (< i len)
       (if (eq (elt package i) ?.)
-	      (setq res (format "%s/" res))
-	    (setq res (format "%s%c" res (elt package i)))
-	    )
+              (setq res (format "%s/" res))
+            (setq res (format "%s%c" res (elt package i)))
+            )
       (setq i (+ i 1))
       )
     res
@@ -4024,9 +4024,9 @@ will be deleted.
       (goto-char (point-min))
       (setq ff (search-forward-regexp "package[ \t]+\\([a-zA-Z0-9$.]*\\)" nil t))
       (if ff
-	      (setq package (buffer-substring (match-beginning 1) (match-end 1)))
-	    (setq package "")
-	    )
+              (setq package (buffer-substring (match-beginning 1) (match-end 1)))
+            (setq package "")
+            )
       )
     package
     ))
@@ -4049,15 +4049,15 @@ part belonging to this project.
 "
   (interactive "")
   (let ((pname) (checked) (tname) (breakcheck) (pcomments)
-	    (pact) (pedit) (sfiles) (pfiles) (system-class-path) (refs)
-	    (inidir) (mif) (miff) (mifloop) (apfiles) (crtag) (stat)
-	    (ptdef) (if) (ifiles "") (ifloop) (iff) (ifmess) (rest "")
-	    (aaa) (rrr) (pasi) (pasn) (hom) (exactp))
+            (pact) (pedit) (sfiles) (pfiles) (system-class-path) (refs)
+            (inidir) (mif) (miff) (mifloop) (apfiles) (crtag) (stat)
+            (ptdef) (if) (ifiles "") (ifloop) (iff) (ifmess) (rest "")
+            (aaa) (rrr) (pasi) (pasn) (hom) (exactp))
     (c-xref-soft-select-dispach-data-caller-window c-xref-this-buffer-dispatch-data)
     ;; no entry point initialisations, it calls get-active-project
     (c-xref-entry-point-make-initialisations-no-project-required)
     (if (eq c-xref-platform 'windows)
-	    (setq inidir "c:\\")
+            (setq inidir "c:\\")
       (setq inidir "/")
       )
     (setq hom (getenv "HOME"))
@@ -4074,147 +4074,147 @@ part belonging to this project.
       (setq pname (c-xref-remove-pending-slash pname))
       (goto-char (point-min))
       (if (search-forward (concat "[" pname "]") nil t)
-	      (setq pname (c-xref-read-path-from-minibuffer
-			       "** Name already used, new name: " pname))
-	    (goto-char (point-min))
-	    (if (or (search-forward (concat "[" pname "/") nil t)
-			(search-forward (concat "[" pname "\\") nil t))
-		(setq pname (c-xref-read-path-from-minibuffer
-				     "** Name overlaps an existing project, enter new name: " pname))
-	      (setq tname pname)
-	      (setq breakcheck nil)
-	      (while (and tname (not breakcheck))
-		(setq tname (c-xref-file-directory-name tname))
-		(goto-char (point-min))
-		(if (and tname
-			     (search-forward (concat "[" tname "]") nil t))
-			(progn
-			  (setq pname (c-xref-read-path-from-minibuffer
-					   "** This name is covered, enter new name: " pname))
-			  (setq breakcheck t)
-			  )))
-	      (if (not breakcheck)
-		  (setq checked t)
-		)
-	      )))
+              (setq pname (c-xref-read-path-from-minibuffer
+                               "** Name already used, new name: " pname))
+            (goto-char (point-min))
+            (if (or (search-forward (concat "[" pname "/") nil t)
+                        (search-forward (concat "[" pname "\\") nil t))
+                (setq pname (c-xref-read-path-from-minibuffer
+                                     "** Name overlaps an existing project, enter new name: " pname))
+              (setq tname pname)
+              (setq breakcheck nil)
+              (while (and tname (not breakcheck))
+                (setq tname (c-xref-file-directory-name tname))
+                (goto-char (point-min))
+                (if (and tname
+                             (search-forward (concat "[" tname "]") nil t))
+                        (progn
+                          (setq pname (c-xref-read-path-from-minibuffer
+                                           "** This name is covered, enter new name: " pname))
+                          (setq breakcheck t)
+                          )))
+              (if (not breakcheck)
+                  (setq checked t)
+                )
+              )))
     ;; The name is checked
     (save-buffer)
     (kill-buffer nil)
     (setq pfiles (c-xref-read-path-from-minibuffer
-			  "Directory containing project sources: " sfiles))
+                          "Directory containing project sources: " sfiles))
     (setq mifloop t)
     (setq apfiles (c-xref-optionify-string pfiles "\""))
     (while mifloop
       (progn
-	    (setq mif (read-from-minibuffer
-			   "Add another source directory [yn]? " "n"))
-	    (if (or (equal mif "y") (equal mif "Y"))
-		(progn
-		  (setq miff (c-xref-read-path-from-minibuffer
-				      "Additional source:  " sfiles))
-		  (setq apfiles (format "%s\n  %s" apfiles (c-xref-optionify-string miff "\"")))
-		  )
-	      (setq mifloop nil)
-	      )))
+            (setq mif (read-from-minibuffer
+                           "Add another source directory [yn]? " "n"))
+            (if (or (equal mif "y") (equal mif "Y"))
+                (progn
+                  (setq miff (c-xref-read-path-from-minibuffer
+                                      "Additional source:  " sfiles))
+                  (setq apfiles (format "%s\n  %s" apfiles (c-xref-optionify-string miff "\"")))
+                  )
+              (setq mifloop nil)
+              )))
     (if hom
-	    (progn
-	      (setq refs (format "%s%cCXrefs%c%s" hom c-xref-slash c-xref-slash
-					 (c-xref-cut-string-prefix
-					  (c-xref-cut-string-prefix (c-xref-backslashify-name pname)
-										(format "%s%c" hom c-xref-slash)
-										(eq c-xref-platform 'windows))
-					  (format "%c" c-xref-slash)
-					  nil)))
-	      )
+            (progn
+              (setq refs (format "%s%cCXrefs%c%s" hom c-xref-slash c-xref-slash
+                                         (c-xref-cut-string-prefix
+                                          (c-xref-cut-string-prefix (c-xref-backslashify-name pname)
+                                                                                (format "%s%c" hom c-xref-slash)
+                                                                                (eq c-xref-platform 'windows))
+                                          (format "%c" c-xref-slash)
+                                          nil)))
+              )
       (setq refs (format "%s%cCXrefs" pfiles c-xref-slash))
       )
     (setq refs (c-xref-remove-dangerous-fname-chars refs))
     (setq refs (c-xref-read-path-from-minibuffer
-			"Directory to store references database/tag files in:  " refs))
+                        "Directory to store references database/tag files in:  " refs))
 
     (setq ifiles "")
     (setq ifmess "Do you use some ")
     (if (eq c-xref-platform 'windows)
-	    (progn
-	      (setq iff (c-xref-read-path-from-minibuffer "Directory containing standard headers (stdio.h, stdlib.h, ...): " inidir))
-	      (setq ifiles (format "%s\n  -I %s" ifiles
-					       (c-xref-optionify-string (c-xref-remove-pending-slash iff) "\"")))
-	      (setq ifmess "Add any ")
-	      ))
+            (progn
+              (setq iff (c-xref-read-path-from-minibuffer "Directory containing standard headers (stdio.h, stdlib.h, ...): " inidir))
+              (setq ifiles (format "%s\n  -I %s" ifiles
+                                               (c-xref-optionify-string (c-xref-remove-pending-slash iff) "\"")))
+              (setq ifmess "Add any ")
+              ))
     (setq ifloop t)
     (while ifloop
-	  (progn
-	    (setq if (read-from-minibuffer
-			  (concat ifmess "nonstandard include directory (-I option) [yn]? ") "n"))
-	    (if (or (equal if "y") (equal if "Y"))
-		(progn
-		      (setq iff (c-xref-read-path-from-minibuffer
-				     "Additional include directory:  " inidir))
-		      (setq ifiles (format "%s\n  -I %s" ifiles
-						   (c-xref-optionify-string (c-xref-remove-pending-slash iff) "\"")))
-		      )
-	      (setq ifloop nil)
-	      )
-	    (setq ifmess "Add another ")
-	    ))
+          (progn
+            (setq if (read-from-minibuffer
+                          (concat ifmess "nonstandard include directory (-I option) [yn]? ") "n"))
+            (if (or (equal if "y") (equal if "Y"))
+                (progn
+                      (setq iff (c-xref-read-path-from-minibuffer
+                                     "Additional include directory:  " inidir))
+                      (setq ifiles (format "%s\n  -I %s" ifiles
+                                                   (c-xref-optionify-string (c-xref-remove-pending-slash iff) "\"")))
+                      )
+              (setq ifloop nil)
+              )
+            (setq ifmess "Add another ")
+            ))
     (if (not (equal ifiles ""))
-	    (setq ifiles (concat "  //  include directories" ifiles))
-	  )
+            (setq ifiles (concat "  //  include directories" ifiles))
+          )
     ;;
     (setq exactp (read-from-minibuffer
-			  "Is this a huge project with numerous name conflicts [yn]? " "n"))
+                          "Is this a huge project with numerous name conflicts [yn]? " "n"))
     ;;
     (setq rest "")
     (setq c-xref-foo-macros-counter 1)
     (setq aaa (read-from-minibuffer
-		       "Do you compile sources with command line macro definitions (-D option) [yn]? " "n"))
+                       "Do you compile sources with command line macro definitions (-D option) [yn]? " "n"))
     (if (or (equal aaa "y") (equal aaa "Y"))
-	    (progn
-	      (setq aaa (read-from-minibuffer
-			     "Do you compile sources several times with different macro settings [yn]? " "n"))
-	      (if (or (equal aaa "y") (equal aaa "Y"))
-		      (progn
-			(setq pasn (string-to-number
-					(read-from-minibuffer
-					 "How many compilations with different initial macro settings: " "2")))
-			(setq aaa (read-from-minibuffer
-				       "Are there macros common to all compilations [yn]? " "n"))
-			(if (or (equal aaa "y") (equal aaa "Y"))
-			    (progn
-				  (setq rest (concat rest
-							     (c-xref-collect-macros-for-new-project ""
-												    "A common macro to be defined in all compilations: "
-												    "Add another common macro definition")))
-				  ))
-			(setq pasi 1)
-			(while (<= pasi pasn)
-			  (progn
-			    (setq rest (format "%s\n  -pass%d" rest pasi))
-			    (setq rest (concat rest
-							   (c-xref-collect-macros-for-new-project "  "
-												  (format "A macro specific to compilation #%d: " pasi)
-												  (format "Add another macro definition for compilation #%d"pasi))))
-			    (setq pasi (+ pasi 1))
-			    ))
-			)
-		;; a single pass macros
-		(setq rest (concat rest
-					       (c-xref-collect-macros-for-new-project ""
-										      "A macro defined during compilation: "
-										      "Add another macro definition")))
-		)
-	      )
+            (progn
+              (setq aaa (read-from-minibuffer
+                             "Do you compile sources several times with different macro settings [yn]? " "n"))
+              (if (or (equal aaa "y") (equal aaa "Y"))
+                      (progn
+                        (setq pasn (string-to-number
+                                        (read-from-minibuffer
+                                         "How many compilations with different initial macro settings: " "2")))
+                        (setq aaa (read-from-minibuffer
+                                       "Are there macros common to all compilations [yn]? " "n"))
+                        (if (or (equal aaa "y") (equal aaa "Y"))
+                            (progn
+                                  (setq rest (concat rest
+                                                             (c-xref-collect-macros-for-new-project ""
+                                                                                                    "A common macro to be defined in all compilations: "
+                                                                                                    "Add another common macro definition")))
+                                  ))
+                        (setq pasi 1)
+                        (while (<= pasi pasn)
+                          (progn
+                            (setq rest (format "%s\n  -pass%d" rest pasi))
+                            (setq rest (concat rest
+                                                           (c-xref-collect-macros-for-new-project "  "
+                                                                                                  (format "A macro specific to compilation #%d: " pasi)
+                                                                                                  (format "Add another macro definition for compilation #%d"pasi))))
+                            (setq pasi (+ pasi 1))
+                            ))
+                        )
+                ;; a single pass macros
+                (setq rest (concat rest
+                                               (c-xref-collect-macros-for-new-project ""
+                                                                                      "A macro defined during compilation: "
+                                                                                      "Add another macro definition")))
+                )
+              )
       (if (not (equal rest ""))
-	      (setq rest (concat "  //  pre-processor macros and passes specification"
-					 rest))
-	    )
+              (setq rest (concat "  //  pre-processor macros and passes specification"
+                                         rest))
+            )
       )
 
     ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; all questions done
     (find-file c-xref-options-file)
     (c-xref-append-new-project-section pname "y" ;; pcomments
-						       pfiles apfiles ifiles
-						       rest refs exactp)
+                                                       pfiles apfiles ifiles
+                                                       rest refs exactp)
     ;;
     (save-buffer)
     (search-backward (concat "[" pname "]"))
@@ -4224,31 +4224,31 @@ part belonging to this project.
     (setq c-xref-current-project nil)
     (c-xref-softly-preset-project pname)
     (setq pact (read-from-minibuffer
-			"Make the new project active [yn]? " "n"))
+                        "Make the new project active [yn]? " "n"))
 
     (setq pedit "n")
     ;;  (setq pedit (read-from-minibuffer
     ;;               "Do you wish to adjust options manually [yn]? " "n"))
     (if (or (equal pedit "n") (equal pedit "N"))
-	    (progn
-	      (kill-buffer nil)
-	      (setq crtag "y")
-	      (setq crtag (read-from-minibuffer
-			       "Can I create tags for this project [yn]? " "y"))
-	      (if (or (equal crtag "y") (equal crtag "Y"))
-		  (progn
-			(setq c-xref-current-project pname)
-			(c-xref-create-refs)
-			(setq c-xref-current-project nil)
-		;;                              (c-xref-project-exit-message-on-nonzero stat)
+            (progn
+              (kill-buffer nil)
+              (setq crtag "y")
+              (setq crtag (read-from-minibuffer
+                               "Can I create tags for this project [yn]? " "y"))
+              (if (or (equal crtag "y") (equal crtag "Y"))
+                  (progn
+                        (setq c-xref-current-project pname)
+                        (c-xref-create-refs)
+                        (setq c-xref-current-project nil)
+                ;;                              (c-xref-project-exit-message-on-nonzero stat)
 
-		))))
+                ))))
 
     (if (or (equal pact "y") (equal pact "Y"))
-	    (progn
-	      (setq c-xref-current-project pname)
-	      (message "All done. Project '%s' is now active." pname)
-	      )
+            (progn
+              (setq c-xref-current-project pname)
+              (message "All done. Project '%s' is now active." pname)
+              )
       (setq c-xref-current-project nil)
       (message "All done. Setting project auto-detection.")
       )
@@ -4288,15 +4288,15 @@ read the `c-xref' manual page.
   (goto-char (point-min))
   (if c-xref-active-project
       (progn
-	    (if (not (search-forward (concat "[" c-xref-active-project "]") nil t))
-		(if (not (search-forward (concat "[" c-xref-active-project ":") nil t))
-			(if (not (search-forward (concat ":" c-xref-active-project "]") nil t))
-			    (if (not (search-forward (concat ":" c-xref-active-project ":") nil t))
-				    (message "Options for %s found" c-xref-active-project)
-			      ))))
-	    (beginning-of-line)
-	    (forward-line)
-	    ))
+            (if (not (search-forward (concat "[" c-xref-active-project "]") nil t))
+                (if (not (search-forward (concat "[" c-xref-active-project ":") nil t))
+                        (if (not (search-forward (concat ":" c-xref-active-project "]") nil t))
+                            (if (not (search-forward (concat ":" c-xref-active-project ":") nil t))
+                                    (message "Options for %s found" c-xref-active-project)
+                              ))))
+            (beginning-of-line)
+            (forward-line)
+            ))
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -4307,7 +4307,7 @@ read the `c-xref' manual page.
   (let ((as) (res))
     (setq as (assoc project (eval commands)))
     (if as
-	    (setq res (cdr as))
+            (setq res (cdr as))
       (setq res default)
       )
     res
@@ -4317,7 +4317,7 @@ read the `c-xref' manual page.
   (let ((as))
     (setq as (assoc project (eval commands)))
     (if as
-	    (setcdr as command)
+            (setcdr as command)
       (set commands (cons (cons project command) (eval commands)))
       )
     ))
@@ -4331,46 +4331,46 @@ read the `c-xref' manual page.
     (c-xref-entry-point-make-initialisations)
     (setq dispatch-data (c-xref-get-basic-server-dispatch-data nil))
     (if (not (featurep 'compile))
-	    (error "Packaeg 'compile.el' not found; please install it first.")
+            (error "Packaeg 'compile.el' not found; please install it first.")
       )
     (if (eq action 'compilefile)
-	    (progn
-	      (setq name "compilefile")
-	      (setq arg (c-xref-file-last-name (buffer-file-name)))
-	      )
+            (progn
+              (setq name "compilefile")
+              (setq arg (c-xref-file-last-name (buffer-file-name)))
+              )
       (if (eq action 'compiledir)
-	      (progn
-		(setq name "compiledir")
-		(setq arg (c-xref-backslashify-name (c-xref-file-directory-name (buffer-file-name))))
-		)
-	    (if (eq action 'compileproject)
-		(progn
-		  (setq name "compileproject")
-		  (setq arg c-xref-active-project)
-		  ))))
+              (progn
+                (setq name "compiledir")
+                (setq arg (c-xref-backslashify-name (c-xref-file-directory-name (buffer-file-name))))
+                )
+            (if (eq action 'compileproject)
+                (progn
+                  (setq name "compileproject")
+                  (setq arg c-xref-active-project)
+                  ))))
     (setq sdir default-directory)
     (setq comm (format (c-xref-get-env name) (c-xref-optionify-string arg "\"")))
     (if (and (not c-xref-always-batch-file) (not (string-match "\n" comm)))
-	    (setq shcomm comm)
+            (setq shcomm comm)
       (setq bfile (c-xref-create-batch-file default-directory comm))
       (if (eq c-xref-platform 'windows)
-	      (setq shcomm (format "\"%s\"" bfile))
-	    (setq shcomm (format "%s %s" c-xref-shell bfile))
-	    ))
+              (setq shcomm (format "\"%s\"" bfile))
+            (setq shcomm (format "%s %s" c-xref-shell bfile))
+            ))
     (c-xref-ide-set-last-command c-xref-active-project action 'c-xref-ide-last-compile-commands)
     (c-xref-display-and-set-maybe-existing-window c-xref-compilation-buffer nil t)
     (compile shcomm)
     (sleep-for 0.5)
     (setq cwin (get-buffer-window c-xref-compilation-buffer))
     (if cwin
-	    (progn
-	      (select-window cwin)
-	      (goto-char (point-max))
-	      (setq default-directory sdir)
-	      (setq c-xref-this-buffer-dispatch-data dispatch-data)
-	      (setq tab-width 8)    ;; as usual on terminals
-	      (bury-buffer (current-buffer))
-	      ))
+            (progn
+              (select-window cwin)
+              (goto-char (point-max))
+              (setq default-directory sdir)
+              (setq c-xref-this-buffer-dispatch-data dispatch-data)
+              (setq tab-width 8)    ;; as usual on terminals
+              (bury-buffer (current-buffer))
+              ))
     ))
 
 (defun c-xref-ide-compile ()
@@ -4382,8 +4382,8 @@ This  is  whichever  of  \"Compile file\",  \"Compile  Directory\"  or
   (interactive "")
   (c-xref-entry-point-make-initialisations)
   (c-xref-compile-function (c-xref-ide-get-last-command c-xref-active-project
-										'c-xref-ide-last-compile-commands
-										c-xref-ide-last-compile-command))
+                                                                                'c-xref-ide-last-compile-commands
+                                                                                c-xref-ide-last-compile-command))
   )
 
 (defun c-xref-ide-compile-file ()
@@ -4457,18 +4457,18 @@ This  function actually calls `next-error' with argument 1. See also
       (setq pp (car pl))
       (setq pl (cdr pl))
       (if (equal (process-buffer pp) (current-buffer))
-	      (progn
-		(kill-process pp)
-		(sleep-for 0.1)
-		(discard-input)
-		(while (eq (process-status pp) 'run)
-		  (message "Waiting until process dies.")
-		  (sleep-for 0.1)
-		  (discard-input)
-		  )
-		(message "Done.")
-		(setq pl nil)
-		)))
+              (progn
+                (kill-process pp)
+                (sleep-for 0.1)
+                (discard-input)
+                (while (eq (process-status pp) 'run)
+                  (message "Waiting until process dies.")
+                  (sleep-for 0.1)
+                  (discard-input)
+                  )
+                (message "Done.")
+                (setq pl nil)
+                )))
     ))
 
 (defun c-xref-escape-dq (ss)
@@ -4492,9 +4492,9 @@ This  function actually calls `next-error' with argument 1. See also
       (setq line (substring command lmp mp))
       ;; do not echo exit and empty lines so as not to damage the return value
       (if (or (equal line "exit") (c-xref-exact-string-match "[ \t]*" line))
-	      (setq res (format "%s\n%s" res line))
-	    (setq res (format "%s\necho \">%s\"\n%s" res (c-xref-escape-dq line) line))
-	    )
+              (setq res (format "%s\n%s" res line))
+            (setq res (format "%s\necho \">%s\"\n%s" res (c-xref-escape-dq line) line))
+            )
       (setq lmp (+ mp 1))
       (setq mp (string-match "\n" command lmp))
       )
@@ -4510,13 +4510,13 @@ This  function actually calls `next-error' with argument 1. See also
   (let ((res) (cc))
     (setq cc "")
     (if (and (eq c-xref-platform 'windows)
-		 (> (length bdir) 1)
-		 (equal (elt bdir 1) ?:))
-	    (setq cc (format "%s%s:\n" cc (substring bdir 0 1)))
+                 (> (length bdir) 1)
+                 (equal (elt bdir 1) ?:))
+            (setq cc (format "%s%s:\n" cc (substring bdir 0 1)))
       )
     (setq cc (format "%scd %s\n%s\n" cc (c-xref-backslashify-name bdir) command))
     (if (not (eq c-xref-platform 'windows))
-	    (setq cc (c-xref-cr-echos-commands cc))
+            (setq cc (c-xref-cr-echos-commands cc))
       )
     (get-buffer-create " *c-xref-run-command*")
     (set-buffer " *c-xref-run-command*")
@@ -4533,41 +4533,41 @@ This  function actually calls `next-error' with argument 1. See also
 ;; command; the value of 'name' argument has to be set in .c-xrefrc file.
 (defun c-xref-run-function (name skip-one-win)
   (let ((bb) (rc) (args) (ww) (bdir) (cc)
-	    (bfile) (command) (dispatch-data) (owin) (cwin))
+            (bfile) (command) (dispatch-data) (owin) (cwin))
     (setq dispatch-data (c-xref-get-basic-server-dispatch-data nil))
     (setq bdir default-directory)
     (require 'comint)
     (if (not (featurep 'comint))
-	    (error "Package 'comint.el' not found; please install it first")
+            (error "Package 'comint.el' not found; please install it first")
       )
     (setq rc (c-xref-get-env name))
     (if rc
-	    (progn
-	      (if (or (equal name c-xref-run-this-option) (equal name c-xref-run-option))
-		  (setq command (format rc (c-xref-compute-simple-information
-							    "-olcxcurrentclass -no-errors")))
-		(setq command rc)
-		)
-	      (setq bfile (c-xref-create-batch-file bdir command))
-	      (if (eq c-xref-platform 'windows)
-		  (setq args (cons bfile nil))
-		(setq args (cons c-xref-shell (cons bfile nil)))
-		)
-	      (setq owin (get-buffer-window c-xref-run-buffer))
-	      (if owin
-		  (select-window owin)
-		(setq cwin (get-buffer-window c-xref-compilation-buffer))
-		(if cwin (select-window cwin))
-		(c-xref-display-and-set-new-dialog-window c-xref-run-buffer nil t)
-		(bury-buffer (current-buffer))
-		)
-	      (c-xref-kill-this-buffers-process)
-	      (c-xref-erase-buffer)
-	      (c-xref-ide-set-last-command c-xref-active-project name 'c-xref-ide-last-run-commands)
-	      (apply 'make-comint c-xref-run-buffer-no-stars (car args) nil (cdr args))
-	      (setq default-directory bdir)
-	      (setq c-xref-this-buffer-dispatch-data dispatch-data)
-	      )
+            (progn
+              (if (or (equal name c-xref-run-this-option) (equal name c-xref-run-option))
+                  (setq command (format rc (c-xref-compute-simple-information
+                                                            "-olcxcurrentclass -no-errors")))
+                (setq command rc)
+                )
+              (setq bfile (c-xref-create-batch-file bdir command))
+              (if (eq c-xref-platform 'windows)
+                  (setq args (cons bfile nil))
+                (setq args (cons c-xref-shell (cons bfile nil)))
+                )
+              (setq owin (get-buffer-window c-xref-run-buffer))
+              (if owin
+                  (select-window owin)
+                (setq cwin (get-buffer-window c-xref-compilation-buffer))
+                (if cwin (select-window cwin))
+                (c-xref-display-and-set-new-dialog-window c-xref-run-buffer nil t)
+                (bury-buffer (current-buffer))
+                )
+              (c-xref-kill-this-buffers-process)
+              (c-xref-erase-buffer)
+              (c-xref-ide-set-last-command c-xref-active-project name 'c-xref-ide-last-run-commands)
+              (apply 'make-comint c-xref-run-buffer-no-stars (car args) nil (cdr args))
+              (setq default-directory bdir)
+              (setq c-xref-this-buffer-dispatch-data dispatch-data)
+              )
       )
     ))
 
@@ -4583,8 +4583,8 @@ string taken  from .c-xrefrc configuration  file.  You need to  have the
   (interactive "")
   (c-xref-entry-point-make-initialisations)
   (c-xref-run-function (c-xref-ide-get-last-command
-				c-xref-active-project
-				'c-xref-ide-last-run-commands "run") nil)
+                                c-xref-active-project
+                                'c-xref-ide-last-run-commands "run") nil)
   )
 
 (defun c-xref-ide-run-this ()
@@ -4684,20 +4684,20 @@ compilation is successful.  See also `c-xref-ide-compile' and
     (c-xref-ide-compile)
     (setq cproc (get-buffer-process c-xref-compilation-buffer))
     (if cproc
-	    (set-process-sentinel cproc (list 'lambda '(cc message)
-					      (list 'c-xref-ide-compile-run-sentinel 'cc 'message owin opc)))
+            (set-process-sentinel cproc (list 'lambda '(cc message)
+                                              (list 'c-xref-ide-compile-run-sentinel 'cc 'message owin opc)))
       )
     (sit-for .5)
     (setq cwin (get-buffer-window c-xref-compilation-buffer))
     (if cwin
-	    (progn
-	      (select-window (get-buffer-window c-xref-compilation-buffer))
-	      (goto-char (point-max))
-	      (setq default-directory sdir)
-	      (setq c-xref-this-buffer-dispatch-data dispatch-data)
-	      (setq tab-width 8)    ;; as usual on terminals
-	      (bury-buffer (current-buffer))
-	      ))
+            (progn
+              (select-window (get-buffer-window c-xref-compilation-buffer))
+              (goto-char (point-max))
+              (setq default-directory sdir)
+              (setq c-xref-this-buffer-dispatch-data dispatch-data)
+              (setq tab-width 8)    ;; as usual on terminals
+              (bury-buffer (current-buffer))
+              ))
     (setq process-connection-type opc)
     ))
 
@@ -4706,19 +4706,19 @@ compilation is successful.  See also `c-xref-ide-compile' and
     (select-window owin)
     ;;(setq process-connection-type opc)
     (if (and (>= (length message) 8)
-		 (equal (substring message 0 8) "finished"))
-	    (progn
-	      (setq rc (c-xref-get-env (c-xref-ide-get-last-command
-						    c-xref-active-project
-						    'c-xref-ide-last-run-commands
-						    "run")))
-	      (if (and rc (not (equal rc "")))
-		  (progn
-			(c-xref-run-function (c-xref-ide-get-last-command
-						      c-xref-active-project
-						      'c-xref-ide-last-run-commands
-						      "run") t)
-		    ))))
+                 (equal (substring message 0 8) "finished"))
+            (progn
+              (setq rc (c-xref-get-env (c-xref-ide-get-last-command
+                                                    c-xref-active-project
+                                                    'c-xref-ide-last-run-commands
+                                                    "run")))
+              (if (and rc (not (equal rc "")))
+                  (progn
+                        (c-xref-run-function (c-xref-ide-get-last-command
+                                                      c-xref-active-project
+                                                      'c-xref-ide-last-run-commands
+                                                      "run") t)
+                    ))))
     ))
 
 
@@ -4737,26 +4737,26 @@ compilation is successful.  See also `c-xref-ide-compile' and
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-end-ctag tag)
     (if (equal (substring cc 0 16) "<A HREF=\"file://")
-	    (progn
-	      ;; hypertext link
-	      (setq cclen (length cc))
-	      (setq j (c-xref-server-parse-xml-tag cc 0 cclen))
-	      (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-	      (setq tlink (cdr (assoc "HREF" c-xref-server-ctag-attributes)))
-	      ;; tag
-	      (setq bp (point))
-	      (insert "HREF=\"" tlink "\"")
-	      ;;(insert (substring tlink 7) " ")
-	      (put-text-property bp
-					 (point)
-					 'invisible t)
-	      (setq bp (point))
-	      (insert (substring cc j (+ j tlen)))
-	      (put-text-property bp (point) 'face 'c-xref-error-face)
-	      ;; after tag text
-	      (insert (substring cc (+ j tlen 4)))
-	      (put-text-property bp (point) 'mouse-face 'highlight)
-	      )
+            (progn
+              ;; hypertext link
+              (setq cclen (length cc))
+              (setq j (c-xref-server-parse-xml-tag cc 0 cclen))
+              (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
+              (setq tlink (cdr (assoc "HREF" c-xref-server-ctag-attributes)))
+              ;; tag
+              (setq bp (point))
+              (insert "HREF=\"" tlink "\"")
+              ;;(insert (substring tlink 7) " ")
+              (put-text-property bp
+                                         (point)
+                                         'invisible t)
+              (setq bp (point))
+              (insert (substring cc j (+ j tlen)))
+              (put-text-property bp (point) 'face 'c-xref-error-face)
+              ;; after tag text
+              (insert (substring cc (+ j tlen 4)))
+              (put-text-property bp (point) 'mouse-face 'highlight)
+              )
       (insert cc)
       )
     i
@@ -4784,21 +4784,21 @@ compilation is successful.  See also `c-xref-ide-compile' and
       (setq i (c-xref-server-parse-xml-tag ss i len))
       (cond
        (
-	    (equal c-xref-server-ctag c-xref_PPC_INFORMATION)
-	    (setq i (c-xref-tags-dispatch-information ss i len c-xref-server-ctag)))
+            (equal c-xref-server-ctag c-xref_PPC_INFORMATION)
+            (setq i (c-xref-tags-dispatch-information ss i len c-xref-server-ctag)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_WARNING)
-	    (setq i (c-xref-tags-dispatch-error ss i len c-xref-server-ctag)))
+            (equal c-xref-server-ctag c-xref_PPC_WARNING)
+            (setq i (c-xref-tags-dispatch-error ss i len c-xref-server-ctag)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_ERROR)
-	    (setq i (c-xref-tags-dispatch-error ss i len c-xref-server-ctag)))
+            (equal c-xref-server-ctag c-xref_PPC_ERROR)
+            (setq i (c-xref-tags-dispatch-error ss i len c-xref-server-ctag)))
        (
-	    (equal c-xref-server-ctag c-xref_PPC_FATAL_ERROR)
-	    (setq i (c-xref-tags-dispatch-error ss i len c-xref-server-ctag)))
+            (equal c-xref-server-ctag c-xref_PPC_FATAL_ERROR)
+            (setq i (c-xref-tags-dispatch-error ss i len c-xref-server-ctag)))
        (
-	    t
-	    ;;    (error "unexpected tag in log file: %s" c-xref-server-ctag))
-	    (message "unexpected tag in log file: %s" c-xref-server-ctag))
+            t
+            ;;    (error "unexpected tag in log file: %s" c-xref-server-ctag))
+            (message "unexpected tag in log file: %s" c-xref-server-ctag))
        )
       (setq i (c-xref-server-dispatch-skip-blank ss i len))
       )
@@ -4819,29 +4819,29 @@ compilation is successful.  See also `c-xref-ide-compile' and
     (setq line (buffer-substring (point) el))
     ;;(message "checking %s" (substring line 0 6))
     (if (equal (substring line 0 6) "HREF=\"")
-	    (progn
-	      (setq b 6)
-	      (if (equal (substring line b (+ b 5)) "file:")
-		  (progn
-			(setq b (+ b 5))
-			(if (and (eq (elt line b) ?/)
-				     (eq (elt line (+ b 1)) ?/))
-			    (setq b (+ b 2))
-			  )))
-	      (setq i b)
-	      (setq di 0)
-	      (setq len (length line))
-	      (while (and (< i len)
-			      (not (eq (elt line i) ?\"))
-			      )
-		(if (eq (elt line i) ?#) (setq di i))
-		(setq i (1+ i))
-		)
-	      (if (eq di 0) (setq di i))
-	      (setq file (substring line b di))
-	      (setq ln (string-to-number (substring line (+ di 1) i)))
-	      (c-xref-show-file-line-in-caller-window file ln)
-	      )
+            (progn
+              (setq b 6)
+              (if (equal (substring line b (+ b 5)) "file:")
+                  (progn
+                        (setq b (+ b 5))
+                        (if (and (eq (elt line b) ?/)
+                                     (eq (elt line (+ b 1)) ?/))
+                            (setq b (+ b 2))
+                          )))
+              (setq i b)
+              (setq di 0)
+              (setq len (length line))
+              (while (and (< i len)
+                              (not (eq (elt line i) ?\"))
+                              )
+                (if (eq (elt line i) ?#) (setq di i))
+                (setq i (1+ i))
+                )
+              (if (eq di 0) (setq di i))
+              (setq file (substring line b di))
+              (setq ln (string-to-number (substring line (+ di 1) i)))
+              (c-xref-show-file-line-in-caller-window file ln)
+              )
       (c-xref-find-file-on-point)
       )
     ))
@@ -4873,19 +4873,19 @@ compilation is successful.  See also `c-xref-ide-compile' and
     (setq len (length ss))
     (kill-buffer c-xref-server-answer-buffer)
     (if (> len 0)
-	    (progn
-	      (setq conf (read-from-minibuffer
-			      "View log file [yn]? " "n"))
-	      (if (or (equal conf "y") (equal conf "Y"))
-		  (progn
-			(c-xref-delete-window-in-any-frame c-xref-log-view-buffer nil)
-			(c-xref-display-and-set-new-dialog-window c-xref-log-view-buffer nil t)
-			(setq c-xref-this-buffer-dispatch-data dispatch-data)
-			(c-xref-tags-dispatch ss 0 len)
-			(setq buffer-read-only t)
-			(c-xref-use-local-map c-xref-tags-log-key-map)
-			))
-	      ))
+            (progn
+              (setq conf (read-from-minibuffer
+                              "View log file [yn]? " "n"))
+              (if (or (equal conf "y") (equal conf "Y"))
+                  (progn
+                        (c-xref-delete-window-in-any-frame c-xref-log-view-buffer nil)
+                        (c-xref-display-and-set-new-dialog-window c-xref-log-view-buffer nil t)
+                        (setq c-xref-this-buffer-dispatch-data dispatch-data)
+                        (c-xref-tags-dispatch ss 0 len)
+                        (setq buffer-read-only t)
+                        (c-xref-use-local-map c-xref-tags-log-key-map)
+                        ))
+              ))
     ))
 
 (defun c-xref-update-tags (option log)
@@ -4896,10 +4896,10 @@ compilation is successful.  See also `c-xref-ide-compile' and
 (defun c-xref-before-push-optional-update ()
   (if c-xref-auto-update-tags-before-push
       (progn
-	    (c-xref-update-tags "-fastupdate" nil)
-	    ;; clear the 100% message
-	    (message "")
-	    ))
+            (c-xref-update-tags "-fastupdate" nil)
+            ;; clear the 100% message
+            (message "")
+            ))
   )
 
 (defun c-xref-create-refs ()
@@ -4960,13 +4960,13 @@ browser and refactorer) are updated.  The behavior of the
   (interactive "P")
   (let ((lineno 1) (replace-flag) (cw) (offset))
     (if (eq (point) (point-max))
-	    (setq replace-flag nil)
+            (setq replace-flag nil)
       (setq replace-flag t)
       (setq lineno (count-lines 1 (+ (point) 1)))
       )
     (c-xref-send-data-to-process-and-dispatch (format "-olcomplselect%d" lineno) c-xref-completions-dispatch-data nil)
     (if (equal c-xref-completions-windows-counter  0)
-	    (c-xref-delete-completion-window)
+            (c-xref-delete-completion-window)
       (setq c-xref-completions-windows-counter (1- c-xref-completions-windows-counter))
       ;; display previous completion, but keeps cursor position and focus
       (setq cw (selected-window))
@@ -5088,14 +5088,14 @@ browser and refactorer) are updated.  The behavior of the
   (let ((sss) (ns))
     (setq sss (format "\\(^\\|^[^ ]*\\.\\)\\(%s\\)" str))
     (if (search-forward-regexp sss (point-max) t)
-	    (setq ns (buffer-substring (match-beginning 2) (match-end 2)))
+            (setq ns (buffer-substring (match-beginning 2) (match-end 2)))
       (setq ns str)
       )
     (set-text-properties 0 (length ns) nil ns)
     (setq c-xref-completion-auto-search-list
-	      (cons
-	       ns
-	       (cons (point) c-xref-completion-auto-search-list)))
+              (cons
+               ns
+               (cons (point) c-xref-completion-auto-search-list)))
     ))
 
 (defun c-xref-insert-completion-and-delete-pending-id (cc)
@@ -5125,7 +5125,7 @@ browser and refactorer) are updated.  The behavior of the
   (let ((sb))
     (setq sb (get-buffer-window (marker-buffer c-xref-completion-marker)))
     (if sb
-	    (select-window sb)
+            (select-window sb)
       (other-window -1)
       (c-xref-switch-to-marker c-xref-completion-marker)
       )
@@ -5172,15 +5172,15 @@ browser and refactorer) are updated.  The behavior of the
   (interactive "")
   (let ((op) (cstr) (pstr))
     (if (not (c-xref-completion-auto-search-list-empty))
-	(progn
-	      (setq pstr (car c-xref-completion-auto-search-list))
-	      (setq c-xref-completion-auto-search-list
-		    (cdr (cdr c-xref-completion-auto-search-list )))
-	      (setq cstr (car c-xref-completion-auto-search-list))
-	      (setq op (car (cdr c-xref-completion-auto-search-list)))
-	      (goto-char op)
-	      (c-xref-completion-source-mod)
-	      ))
+        (progn
+              (setq pstr (car c-xref-completion-auto-search-list))
+              (setq c-xref-completion-auto-search-list
+                    (cdr (cdr c-xref-completion-auto-search-list )))
+              (setq cstr (car c-xref-completion-auto-search-list))
+              (setq op (car (cdr c-xref-completion-auto-search-list)))
+              (goto-char op)
+              (c-xref-completion-source-mod)
+              ))
     ))
 
 (defun c-xref-completion-auto-search ()
@@ -5215,13 +5215,13 @@ separate window.
     (c-xref-entry-point-make-initialisations)
     (setq opt (format "-olcxcomplet -maxcompls=%d" c-xref-max-completions))
     (if c-xref-completion-case-sensitive
-	    (setq opt (format "%s -completioncasesensitive" opt))
+            (setq opt (format "%s -completioncasesensitive" opt))
       )
     (if c-xref-completion-inserts-parenthesis
-	    (setq opt (format "%s -completeparenthesis" opt))
+            (setq opt (format "%s -completeparenthesis" opt))
       )
     (if c-xref-completion-truncate-lines
-	    (setq opt (format "%s -olinelen=50000" opt))
+            (setq opt (format "%s -olinelen=50000" opt))
       (setq opt (format "%s -olinelen=%d" opt (window-width)))
       )
     (setq c-xref-completion-id-after-point (c-xref-get-identifier-after (point)))
@@ -5253,11 +5253,11 @@ separate window.
   (let ((res) (resolvewin))
     (setq res nil)
     (if (c-xref-get-this-frame-dispatch-data)
-	    (progn
-	      (setq resolvewin (cdr (assoc 'linked-resolution-window (c-xref-get-this-frame-dispatch-data))))
-	      (if (and (windowp resolvewin) (window-live-p resolvewin))
-		  (setq res resolvewin)
-		)))
+            (progn
+              (setq resolvewin (cdr (assoc 'linked-resolution-window (c-xref-get-this-frame-dispatch-data))))
+              (if (and (windowp resolvewin) (window-live-p resolvewin))
+                  (setq res resolvewin)
+                )))
     res
     ))
 
@@ -5265,11 +5265,11 @@ separate window.
   (let ((res) (listwin))
     (setq res nil)
     (if (c-xref-get-this-frame-dispatch-data)
-	    (progn
-	      (setq listwin (cdr (assoc winid (c-xref-get-this-frame-dispatch-data))))
-	      (if (and (windowp listwin) (window-live-p listwin))
-		  (setq res listwin)
-		)))
+            (progn
+              (setq listwin (cdr (assoc winid (c-xref-get-this-frame-dispatch-data))))
+              (if (and (windowp listwin) (window-live-p listwin))
+                  (setq res listwin)
+                )))
     res
     ))
 
@@ -5291,13 +5291,13 @@ separate window.
     (setq sw (selected-window))
     (setq rw (c-xref-is-failed-refactoring-window-displayed))
     (if rw
-	    (progn
-	      (select-window rw)
-	      (if (c-xref-is-this-refactorer-process-dispatch-data c-xref-this-buffer-dispatch-data)
-		  (setq res rw)
-		)
-	      (select-window sw)
-	      ))
+            (progn
+              (select-window rw)
+              (if (c-xref-is-this-refactorer-process-dispatch-data c-xref-this-buffer-dispatch-data)
+                  (setq res rw)
+                )
+              (select-window sw)
+              ))
     res
     ))
 
@@ -5306,42 +5306,42 @@ separate window.
     (setq sw (selected-window))
     (setq bw (c-xref-is-browser-window-displayed))
     (if bw
-	(progn
-	      (select-window bw)
-	      (setq dispatch-data c-xref-this-buffer-dispatch-data)
-	      (select-window sw)
-	      (c-xref-create-browser-windows nil dispatch-data)
-	      (c-xref-browser-dialog-set-new-filter dispatch-data)
-	      (c-xref-appropriate-browser-windows-sizes oldwins)
-	      (select-window sw)
-	      )
+        (progn
+              (select-window bw)
+              (setq dispatch-data c-xref-this-buffer-dispatch-data)
+              (select-window sw)
+              (c-xref-create-browser-windows nil dispatch-data)
+              (c-xref-browser-dialog-set-new-filter dispatch-data)
+              (c-xref-appropriate-browser-windows-sizes oldwins)
+              (select-window sw)
+              )
       (setq rw (c-xref-is-reflist-window-displayed))
       (if rw
-	      (progn
-		(select-window rw)
-		(setq dispatch-data c-xref-this-buffer-dispatch-data)
-		(select-window sw)
-		(c-xref-references-set-filter 0 dispatch-data)
-		(select-window sw)
-		))
+              (progn
+                (select-window rw)
+                (setq dispatch-data c-xref-this-buffer-dispatch-data)
+                (select-window sw)
+                (c-xref-references-set-filter 0 dispatch-data)
+                (select-window sw)
+                ))
       )
     ))
 
 (defun c-xref-set-current-reference-list-pointer ()
   (let ((poin (point)) (lastref) (frame) (frame-assoc)
-	    (lineno (count-lines 1 (+ (point) 1))))
+            (lineno (count-lines 1 (+ (point) 1))))
     (setq lastref nil)
     (if (not (eq c-xref-this-buffer-type 'reference-list))
-	    (error "Not a reference list buffer")
+            (error "Not a reference list buffer")
       )
     (goto-char (point-min))
     (setq lastref (search-forward-regexp "^>" (point-max) t))
     (setq buffer-read-only nil)
     (if lastref
-	    (progn
-	      (delete-char -1)
-	      (insert " ")
-	      )
+            (progn
+              (delete-char -1)
+              (insert " ")
+              )
       )
     (c-xref-goto-line lineno)
     (beginning-of-line)
@@ -5354,34 +5354,34 @@ separate window.
 (defun c-xref-move-current-reference-list-pointer (direction)
   (let ((cline) (nlines) (lastref) (poin))
     (if (not (eq c-xref-this-buffer-type 'reference-list))
-	    (error "Not a reference list buffer")
+            (error "Not a reference list buffer")
       )
     (setq poin (point))
     (goto-char (point-min))
     (setq lastref (search-forward-regexp "^>" (point-max) t))
     (if (not lastref)
-	    (goto-char poin)
+            (goto-char poin)
       )
     (beginning-of-line)
     (setq cline (count-lines (point-min) (point)))
     (setq nlines (count-lines (point-min) (point-max)))
     (if (< direction 0)
-	    (progn
-	      (setq cline (- cline 1))
-	      (if (>= cline 0)
-		  (forward-line -1)
-		(goto-char (point-max))
-		(beginning-of-line)
-		;; (message "Moving to the last reference") (beep t)
-		)
-	      (c-xref-set-current-reference-list-pointer)
-	      )
+            (progn
+              (setq cline (- cline 1))
+              (if (>= cline 0)
+                  (forward-line -1)
+                (goto-char (point-max))
+                (beginning-of-line)
+                ;; (message "Moving to the last reference") (beep t)
+                )
+              (c-xref-set-current-reference-list-pointer)
+              )
       (setq cline (+ cline 1))
       (if (< cline nlines)
-	      (forward-line)
-	    (goto-char (point-min))
-	    ;; (message "Moving to the first reference") (beep t)
-	    )
+              (forward-line)
+            (goto-char (point-min))
+            ;; (message "Moving to the first reference") (beep t)
+            )
       (c-xref-set-current-reference-list-pointer)
       )
     ))
@@ -5391,13 +5391,13 @@ separate window.
     (setq sw (selected-window))
     (setq rw (c-xref-is-reflist-window-displayed))
     (if rw
-	    (progn
-	      (select-window rw)
-	      (if (c-xref-is-this-regular-process-dispatch-data c-xref-this-buffer-dispatch-data)
-		  (c-xref-move-current-reference-list-pointer direction)
-		)
-	      (select-window sw)
-	      ))
+            (progn
+              (select-window rw)
+              (if (c-xref-is-this-regular-process-dispatch-data c-xref-this-buffer-dispatch-data)
+                  (c-xref-move-current-reference-list-pointer direction)
+                )
+              (select-window sw)
+              ))
     ))
 
 (defun c-xref-push-references ()
@@ -5439,7 +5439,7 @@ definition.
     (c-xref-before-push-optional-update)
     (setq sw (selected-window))
     (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data
-						       'c-xref-server-process))
+                                                       'c-xref-server-process))
     (setq oldwins (c-xref-create-browser-windows nil c-xref-global-dispatch-data))
     ;; (select-window sw)
     ;; reselect it like this, as caller may be moved (left-horizontal split)
@@ -5507,7 +5507,7 @@ other browsing functions.
     (setq col (c-xref-current-column))
     (setq sym (c-xref-get-identifier-on-point))
     (setq sstr (completing-read "Symbol to browse: "
-						'c-xref-symbols-completionfun nil nil sym))
+                                                'c-xref-symbols-completionfun nil nil sym))
     (c-xref-before-push-optional-update)
     (c-xref-call-process-with-basic-file-data-all-saves
      (format "\"-olcxpushname=%s\" -olcxlccursor=%d:%d" sstr line col))
@@ -5598,18 +5598,18 @@ previous reference in this browser instead.
   (let ((sw) (rw))
     (setq rw (c-xref-browser-of-failed-refactoring-is-displayed))
     (if rw
-	    (progn
-	      (setq sw (selected-window))
-	      (select-window rw)
-	      (c-xref-move-current-reference-list-pointer -1)
-	      (c-xref-browser-dialog-select-one nil)
-	      (select-window sw)
-	      )
+            (progn
+              (setq sw (selected-window))
+              (select-window rw)
+              (c-xref-move-current-reference-list-pointer -1)
+              (c-xref-browser-dialog-select-one nil)
+              (select-window sw)
+              )
       (if (and c-xref-inspect-errors-if-compilation-window
-		   (get-buffer-window c-xref-compilation-buffer))
-	      (c-xref-ide-previous-error)
-	    (c-xref-local-motion "-olcxprevious")
-	    ))
+                   (get-buffer-window c-xref-compilation-buffer))
+              (c-xref-ide-previous-error)
+            (c-xref-local-motion "-olcxprevious")
+            ))
     ))
 
 (defun c-xref-alternative-next-reference ()
@@ -5625,18 +5625,18 @@ this browser instead.
   (let ((sw) (rw))
     (setq rw (c-xref-browser-of-failed-refactoring-is-displayed))
     (if rw
-	    (progn
-	      (setq sw (selected-window))
-	      (select-window rw)
-	      (c-xref-move-current-reference-list-pointer 1)
-	      (c-xref-browser-dialog-select-one nil)
-	      (select-window sw)
-	      )
+            (progn
+              (setq sw (selected-window))
+              (select-window rw)
+              (c-xref-move-current-reference-list-pointer 1)
+              (c-xref-browser-dialog-select-one nil)
+              (select-window sw)
+              )
       (if (and c-xref-inspect-errors-if-compilation-window
-		   (get-buffer-window c-xref-compilation-buffer))
-	      (c-xref-ide-next-error)
-	    (c-xref-local-motion "-olcxnext")
-	    ))
+                   (get-buffer-window c-xref-compilation-buffer))
+              (c-xref-ide-next-error)
+            (c-xref-local-motion "-olcxnext")
+            ))
     ))
 
 (defun c-xref-pop-and-return ()
@@ -5649,15 +5649,15 @@ references were pushed.
   (let ((oldwins))
     ;; first check special contexts
     (if (eq c-xref-this-buffer-type 'completion)
-	    (c-xref-interactive-completion-previous nil)
+            (c-xref-interactive-completion-previous nil)
       (if (eq c-xref-this-buffer-type 'tag-search-results)
-	      (c-xref-interactive-tag-search-previous nil)
-	    ;; O.K. here we are
-	    (c-xref-entry-point-make-initialisations-no-project-required)
-	    (setq oldwins (c-xref-is-browser-window-displayed))
-	    (c-xref-call-process-with-basic-file-data-no-saves "-olcxpop")
-	    (c-xref-update-browser-if-displayed oldwins)
-	    ))
+              (c-xref-interactive-tag-search-previous nil)
+            ;; O.K. here we are
+            (c-xref-entry-point-make-initialisations-no-project-required)
+            (setq oldwins (c-xref-is-browser-window-displayed))
+            (c-xref-call-process-with-basic-file-data-no-saves "-olcxpop")
+            (c-xref-update-browser-if-displayed oldwins)
+            ))
     ))
 
 (defun c-xref-pop-only ()
@@ -5681,15 +5681,15 @@ This function also moves to the current reference.
   (let ((oldwins))
     ;; first check special contexts
     (if (eq c-xref-this-buffer-type 'completion)
-	    (c-xref-interactive-completion-next nil)
+            (c-xref-interactive-completion-next nil)
       (if (eq c-xref-this-buffer-type 'tag-search-results)
-	      (c-xref-interactive-tag-search-next nil)
-	    ;; O.K. here we are
-	    (c-xref-entry-point-make-initialisations-no-project-required)
-	    (setq oldwins (c-xref-is-browser-window-displayed))
-	    (c-xref-call-process-with-basic-file-data-no-saves "-olcxrepush")
-	    (c-xref-update-browser-if-displayed oldwins)
-	    ))
+              (c-xref-interactive-tag-search-next nil)
+            ;; O.K. here we are
+            (c-xref-entry-point-make-initialisations-no-project-required)
+            (setq oldwins (c-xref-is-browser-window-displayed))
+            (c-xref-call-process-with-basic-file-data-no-saves "-olcxrepush")
+            (c-xref-update-browser-if-displayed oldwins)
+            ))
     ))
 
 
@@ -5749,9 +5749,9 @@ This function also moves to the current reference.
     (setq res nil)
     (while ppp
       (progn
-	    (setq res (cons (cons (car ppp) nil) res))
-	    (setq ppp (cdr ppp))
-	    ))
+            (setq res (cons (cons (car ppp) nil) res))
+            (setq ppp (cdr ppp))
+            ))
     res
     ))
 
@@ -5759,32 +5759,32 @@ This function also moves to the current reference.
   (let ((res) (rres))
     (setq res nil)
     (if lst
-	    (progn
-	      (setq res (cons (cons (car lst) nil) nil))
-	      (setq rres res)
-	      (setq lst (cdr lst))
-	      (while lst
-		(setcdr rres (cons (cons (car lst) nil) nil))
-		(setq rres (cdr rres))
-		(setq lst (cdr lst))
-		)))
+            (progn
+              (setq res (cons (cons (car lst) nil) nil))
+              (setq rres res)
+              (setq lst (cdr lst))
+              (while lst
+                (setcdr rres (cons (cons (car lst) nil) nil))
+                (setq rres (cdr rres))
+                (setq lst (cdr lst))
+                )))
     res
     ))
 
 (defun c-xref-symbols-completionfun (str filter type)
   (let ((res) (lst))
     (if (or (eq type t)
-		(eq type nil))
-	    (progn
-	      ;; list of completions
-	      (setq lst (c-xref-list-to-alist
-			     (c-xref-get-tags
-			      (format "%s*" str)
-			      (format "-searchshortlist -p \"%s\"" c-xref-active-project))))
-	      (if (eq type t)
-		  (setq res (all-completions str lst))
-		(setq res (try-completion str lst))
-		))
+                (eq type nil))
+            (progn
+              ;; list of completions
+              (setq lst (c-xref-list-to-alist
+                             (c-xref-get-tags
+                              (format "%s*" str)
+                              (format "-searchshortlist -p \"%s\"" c-xref-active-project))))
+              (if (eq type t)
+                  (setq res (all-completions str lst))
+                (setq res (try-completion str lst))
+                ))
       (setq res nil)
       )
     res
@@ -5794,10 +5794,10 @@ This function also moves to the current reference.
   (let ((sstr) (sym) (poin) (table))
     (setq sym (c-xref-get-identifier-on-point))
     (setq sstr (completing-read "Expression to search (-help for help): "
-						'c-xref-symbols-completionfun nil nil sym))
+                                                'c-xref-symbols-completionfun nil nil sym))
     (while (equal sstr "-help")
       (progn
-	    (c-xref-interactive-help  "
+            (c-xref-interactive-help  "
 
 
 C-xrefactory search expressions are similar to standard shell
@@ -5825,9 +5825,9 @@ containing the entered string. For example, entering get as the
 expression is equivalent to entering *get*.
 
 " nil nil)
-	    (setq sstr (completing-read "Expression to search (-help for help): "
-						    'c-xref-symbols-completionfun nil nil sym))
-	    ))
+            (setq sstr (completing-read "Expression to search (-help for help): "
+                                                    'c-xref-symbols-completionfun nil nil sym))
+            ))
     sstr
     ))
 
@@ -5854,10 +5854,10 @@ expression is equivalent to entering *get*.
     (c-xref-call-process-with-basic-file-data-no-saves option)
     (setq asc (assoc 'symbol-list c-xref-global-dispatch-data))
     (if asc
-	    (progn
-	      (setq syms (cdr asc))
-	      (c-xref-display-tag-search-results syms c-xref-global-dispatch-data nil)
-	      )
+            (progn
+              (setq syms (cdr asc))
+              (c-xref-display-tag-search-results syms c-xref-global-dispatch-data nil)
+              )
       (select-window sw)
       )
     ))
@@ -5991,22 +5991,22 @@ given string(s).
   (let ((winassoc) (win))
     (setq winassoc (assoc 'linked-resolution-window dispatch-data))
     (if winassoc
-	    (progn
-	      (setq win (cdr winassoc))
-	      (if (and win (windowp win) (window-live-p win))
-		  (progn
-			(setq c-xref-symbol-selection-window-width (window-width (cdr winassoc)))
-			(setq c-xref-symbol-selection-window-height (window-height (cdr winassoc)))
-			(delete-window (cdr winassoc))
-			))
-	  ))
+            (progn
+              (setq win (cdr winassoc))
+              (if (and win (windowp win) (window-live-p win))
+                  (progn
+                        (setq c-xref-symbol-selection-window-width (window-width (cdr winassoc)))
+                        (setq c-xref-symbol-selection-window-height (window-height (cdr winassoc)))
+                        (delete-window (cdr winassoc))
+                        ))
+          ))
     (setq winassoc (assoc 'linked-refs-window dispatch-data))
     (if winassoc
-	    (progn
-	      (setq win (cdr winassoc))
-	      (if (and win (windowp win) (window-live-p win))
-		  (delete-window (cdr winassoc))
-		)))
+            (progn
+              (setq win (cdr winassoc))
+              (if (and win (windowp win) (window-live-p win))
+                  (delete-window (cdr winassoc))
+                )))
     (c-xref-soft-delete-window c-xref-browser-info-buffer)
 
     (setq winassoc (assoc 'caller-window dispatch-data))
@@ -6026,11 +6026,11 @@ given string(s).
 
     ;; kill refactorer process if refactoring
     (if (eq (cdr (assoc 'process dispatch-data)) 'c-xref-refactorer-process)
-	    (progn
-	      (delete-process (car c-xref-refactorer-process))
-	      (setq c-xref-refactorer-process nil)
-	      (error "Canceled")
-	      ))
+            (progn
+              (delete-process (car c-xref-refactorer-process))
+              (setq c-xref-refactorer-process nil)
+              (error "Canceled")
+              ))
     ))
 
 (defun c-xref-browser-dialog-break (event)
@@ -6048,7 +6048,7 @@ given string(s).
   (let ((dispatch-data))
     (setq dispatch-data c-xref-this-buffer-dispatch-data)
     (if (eq c-xref-this-buffer-type 'reference-list)
-	    (c-xref-select-dispach-data-resolution-window dispatch-data)
+            (c-xref-select-dispach-data-resolution-window dispatch-data)
       (c-xref-select-dispach-data-refs-window dispatch-data)
       )
     ))
@@ -6079,14 +6079,14 @@ given string(s).
     (save-excursion
       (goto-char (point-min))
       (while (not (equal (point) (point-max)))
-	(beginning-of-line)
-	(setq str (buffer-substring (point) (+ (point) 1)))
-	(if (or (string-equal str " ") (string-equal str "+"))
-		(progn
-		  (c-xref-browser-dialog-set-selection-sign sign)
-		  ))
-	(forward-line 1)
-	))
+        (beginning-of-line)
+        (setq str (buffer-substring (point) (+ (point) 1)))
+        (if (or (string-equal str " ") (string-equal str "+"))
+                (progn
+                  (c-xref-browser-dialog-set-selection-sign sign)
+                  ))
+        (forward-line 1)
+        ))
     ))
 
 (defvar c-xref-menu-selection-line-offset 0)
@@ -6097,10 +6097,10 @@ given string(s).
     (setq dispatch-data c-xref-this-buffer-dispatch-data)
     (setq sw (selected-window))
     (if (eq c-xref-this-buffer-type 'symbol-list)
-	    (progn
-	      (c-xref-browser-dialog-set-selection-sign-on-all 1)
-	      (c-xref-send-data-to-process-and-dispatch "-olcxmenuall" dispatch-data nil)
-	      ))
+            (progn
+              (c-xref-browser-dialog-set-selection-sign-on-all 1)
+              (c-xref-send-data-to-process-and-dispatch "-olcxmenuall" dispatch-data nil)
+              ))
     (select-window sw)
     ))
 
@@ -6110,10 +6110,10 @@ given string(s).
     (setq dispatch-data c-xref-this-buffer-dispatch-data)
     (setq sw (selected-window))
     (if (eq c-xref-this-buffer-type 'symbol-list)
-	    (progn
-	      (c-xref-browser-dialog-set-selection-sign-on-all 0)
-	      (c-xref-send-data-to-process-and-dispatch "-olcxmenunone" dispatch-data nil)
-	      ))
+            (progn
+              (c-xref-browser-dialog-set-selection-sign-on-all 0)
+              (c-xref-send-data-to-process-and-dispatch "-olcxmenunone" dispatch-data nil)
+              ))
     (select-window sw)
     ))
 
@@ -6123,26 +6123,26 @@ given string(s).
     (setq dispatch-data c-xref-this-buffer-dispatch-data)
     (setq sw (selected-window))
     (if (eq c-xref-this-buffer-type 'symbol-list)
-	    (progn
-	      (beginning-of-line)
-	      (setq str (buffer-substring (point) (+ (point) 1)))
-	      (if (or (string-equal str " ") (string-equal str "+"))
-		  (progn
-			(c-xref-browser-dialog-set-selection-sign-on-all 0)
-			(c-xref-browser-dialog-set-selection-sign 1)
-			(c-xref-call-task-on-line "-olcxmenusingleselect" c-xref-menu-selection-line-offset)
-			(c-xref-select-dispach-data-caller-window dispatch-data)
-			(sit-for .5)
-			(select-window sw)
-			)))
+            (progn
+              (beginning-of-line)
+              (setq str (buffer-substring (point) (+ (point) 1)))
+              (if (or (string-equal str " ") (string-equal str "+"))
+                  (progn
+                        (c-xref-browser-dialog-set-selection-sign-on-all 0)
+                        (c-xref-browser-dialog-set-selection-sign 1)
+                        (c-xref-call-task-on-line "-olcxmenusingleselect" c-xref-menu-selection-line-offset)
+                        (c-xref-select-dispach-data-caller-window dispatch-data)
+                        (sit-for .5)
+                        (select-window sw)
+                        )))
       (if (eq c-xref-this-buffer-type 'reference-list)
-	      (progn
-		(c-xref-call-task-on-line "-olcxgoto" 0)
-		(c-xref-set-current-reference-list-pointer)
-		(c-xref-select-dispach-data-caller-window dispatch-data)
-		(sit-for .5)
-		(select-window sw)
-		)))
+              (progn
+                (c-xref-call-task-on-line "-olcxgoto" 0)
+                (c-xref-set-current-reference-list-pointer)
+                (c-xref-select-dispach-data-caller-window dispatch-data)
+                (sit-for .5)
+                (select-window sw)
+                )))
     ))
 
 (defun c-xref-browser-dialog-toggle (event)
@@ -6150,21 +6150,21 @@ given string(s).
   (let ((res) (str) (ns) (sw) (dispatch-data))
     (setq dispatch-data c-xref-this-buffer-dispatch-data)
     (if (eq c-xref-this-buffer-type 'symbol-list)
-	    (progn
-	      (setq sw (selected-window))
-	      (beginning-of-line)
-	      (setq str (buffer-substring (point) (+ (point) 1)))
-	      (if (or (string-equal str " ") (string-equal str "+"))
-		  (progn
-			(if (string-equal str " ") (setq ns 1) (setq ns 0))
-			(c-xref-browser-dialog-set-selection-sign ns)
-			(c-xref-call-task-on-line "-olcxmenuselect" c-xref-menu-selection-line-offset)
-			(c-xref-select-dispach-data-caller-window dispatch-data)
-			(sit-for .5)
-			(select-window sw)
-			))
-	      (c-xref-modal-dialog-next-line event)
-	      ))
+            (progn
+              (setq sw (selected-window))
+              (beginning-of-line)
+              (setq str (buffer-substring (point) (+ (point) 1)))
+              (if (or (string-equal str " ") (string-equal str "+"))
+                  (progn
+                        (if (string-equal str " ") (setq ns 1) (setq ns 0))
+                        (c-xref-browser-dialog-set-selection-sign ns)
+                        (c-xref-call-task-on-line "-olcxmenuselect" c-xref-menu-selection-line-offset)
+                        (c-xref-select-dispach-data-caller-window dispatch-data)
+                        (sit-for .5)
+                        (select-window sw)
+                        ))
+              (c-xref-modal-dialog-next-line event)
+              ))
     ))
 
 (defun c-xref-browser-dialog-next-reference (event)
@@ -6172,10 +6172,10 @@ given string(s).
   (let ((other-win))
     (setq other-win nil)
     (if (eq c-xref-this-buffer-type 'symbol-list)
-	    (progn
-	      (setq other-win t)
-	      (c-xref-browser-dialog-other-window event)
-	      ))
+            (progn
+              (setq other-win t)
+              (c-xref-browser-dialog-other-window event)
+              ))
     (c-xref-browser-dialog-next-line event)
     (c-xref-browser-dialog-select-one event)
     (if other-win (c-xref-browser-dialog-other-window event))
@@ -6186,10 +6186,10 @@ given string(s).
   (let ((other-win))
     (setq other-win nil)
     (if (eq c-xref-this-buffer-type 'symbol-list)
-	    (progn
-	      (setq other-win t)
-	      (c-xref-browser-dialog-other-window event)
-	      ))
+            (progn
+              (setq other-win t)
+              (c-xref-browser-dialog-other-window event)
+              ))
     (c-xref-browser-dialog-previous-line event)
     (c-xref-browser-dialog-select-one event)
     (if other-win (c-xref-browser-dialog-other-window event))
@@ -6211,16 +6211,16 @@ given string(s).
     (setq sw (selected-window))
     (setq ew (posn-window (event-end event)))
     (if (windowp ew)
-	    (progn
-	      (select-window ew)
-	      (if (or (eq c-xref-this-buffer-type 'symbol-list)
-			  (eq c-xref-this-buffer-type 'reference-list))
-		  (progn
-			(mouse-set-point event)
-			(setq res t)
-			)
-		(select-window sw)
-		)))
+            (progn
+              (select-window ew)
+              (if (or (eq c-xref-this-buffer-type 'symbol-list)
+                          (eq c-xref-this-buffer-type 'reference-list))
+                  (progn
+                        (mouse-set-point event)
+                        (setq res t)
+                        )
+                (select-window sw)
+                )))
     res
     ))
 
@@ -6228,7 +6228,7 @@ given string(s).
   (let ((cw))
     (setq cw (cdr (assoc 'caller-window c-xref-this-buffer-dispatch-data)))
     (if (equal cw sw)
-	    (select-window sw)
+            (select-window sw)
       )
     ))
 
@@ -6241,21 +6241,21 @@ given string(s).
     (setq dir nil)
     (save-excursion
       (if (eq (forward-line -1) 0)
-	      (if (< (point) (window-start))
-		  (setq dir 'down)
-		)
-	    ))
+              (if (< (point) (window-start))
+                  (setq dir 'down)
+                )
+            ))
     (save-excursion
       (if (eq (forward-line 1) 0)
-	      (if (and (>= (point) (window-end)) (not (eq (point) (point-max))))
-		  (setq dir 'up)
-		)
-	    ))
+              (if (and (>= (point) (window-end)) (not (eq (point) (point-max))))
+                  (setq dir 'up)
+                )
+            ))
     (if (eq dir 'up)
-	    (scroll-up 1)
+            (scroll-up 1)
       (if (eq dir 'down)
-	      (scroll-down 1)
-	    ))
+              (scroll-down 1)
+            ))
     ))
 
 (defun c-xref-modal-dialog-mouse-button1 (event)
@@ -6267,7 +6267,7 @@ given string(s).
     ;; scrolling in Emacs is mysterious:
     ;; sometimes it goes automatically, sometimes not
     (if (eq c-xref-this-buffer-type 'reference-list)
-	    (c-xref-scroll-if-on-first-or-last-line)
+            (c-xref-scroll-if-on-first-or-last-line)
       )
     (c-xref-browser-dialog-select-one event)
     (c-xref-modal-dialog-maybe-return-to-caller-window sw)
@@ -6284,7 +6284,7 @@ given string(s).
   (interactive "i")
   ;; first try to execute some default action
   (if (or (eq c-xref-this-buffer-type 'reference-list)
-	      (eq c-xref-this-buffer-type 'symbol-list))
+              (eq c-xref-this-buffer-type 'symbol-list))
       (c-xref-browser-dialog-select-one event)
     (error "Not a modal dialog, probably an aborted action, no continuation defined.")
     )
@@ -6313,7 +6313,7 @@ given string(s).
     (c-xref-select-dispach-data-resolution-window dispatch-data)
     (setq level c-xref-default-symbols-filter)
     (if c-xref-keep-last-symbols-filter
-	    (setq level c-xref-this-buffer-filter-level)
+            (setq level c-xref-this-buffer-filter-level)
       )
     (c-xref-browser-dialog-set-filter level dispatch-data)
     ))
@@ -6322,17 +6322,17 @@ given string(s).
   (let ((dispatch-data))
     (setq dispatch-data c-xref-this-buffer-dispatch-data)
     (if (eq c-xref-this-buffer-type 'symbol-list)
-	    (progn
-	      (if (and (>= level 0) (<= level 2))
-		  (c-xref-browser-dialog-set-filter level dispatch-data)
-		(error "filter level out of range <0,2>")
-		))
+            (progn
+              (if (and (>= level 0) (<= level 2))
+                  (c-xref-browser-dialog-set-filter level dispatch-data)
+                (error "filter level out of range <0,2>")
+                ))
       (if (eq c-xref-this-buffer-type 'reference-list)
-	      (progn
-		(if (and (>= level 0) (<= level 3))
-			(c-xref-references-set-filter level dispatch-data)
-		  (error "filter level out of range <0,3>")
-		  ))))
+              (progn
+                (if (and (>= level 0) (<= level 3))
+                        (c-xref-references-set-filter level dispatch-data)
+                  (error "filter level out of range <0,3>")
+                  ))))
     ))
 
 (defun c-xref-interactive-browser-dialog-set-filter (event)
@@ -6481,23 +6481,23 @@ its functions.
 "
   (interactive "P")
   (if (and (not (eq c-xref-tags-process nil))
-	       (eq (process-status (car c-xref-tags-process)) 'run))
+               (eq (process-status (car c-xref-tags-process)) 'run))
       (progn
-	    (delete-process (car c-xref-tags-process))
-	    (setq c-xref-tags-process nil)
-	    (message "Extern c-xref process killed.")
-	    )
+            (delete-process (car c-xref-tags-process))
+            (setq c-xref-tags-process nil)
+            (message "Extern c-xref process killed.")
+            )
     (setq c-xref-tags-process nil)
     (if (not (eq c-xref-server-process nil))
-	    (progn
-	      (if current-prefix-arg
-		  (progn
-			(shell-command (format "kill -3 %d && echo Core dumped into this buffer directory." (process-id (car c-xref-server-process))))
-			)
-		(delete-process (car c-xref-server-process))
-		(setq c-xref-server-process nil)
-		(message "Emacs c-xref server process killed.")
-		))
+            (progn
+              (if current-prefix-arg
+                  (progn
+                        (shell-command (format "kill -3 %d && echo Core dumped into this buffer directory." (process-id (car c-xref-server-process))))
+                        )
+                (delete-process (car c-xref-server-process))
+                (setq c-xref-server-process nil)
+                (message "Emacs c-xref server process killed.")
+                ))
       (message "** No process to kill. **")
       ))
   )
@@ -6541,13 +6541,13 @@ its functions.
      (file-name-directory
       (directory-file-name
        (file-name-directory
-	(or load-file-name (buffer-file-name))))))))
+        (or load-file-name (buffer-file-name))))))))
   "The directory where c-xref is installed, which is two levels above this file.")
 
 (defun c-xref-load-elisp-directory (dir)
   (let ((load-it (lambda (f)
-		   (load-file (concat (file-name-as-directory dir) f)))
-		 ))
+                   (load-file (concat (file-name-as-directory dir) f)))
+                 ))
     (mapc load-it (directory-files dir nil "\\.el$"))))
 
 (defun c-xref-get-modified-files ()
@@ -6562,15 +6562,15 @@ there are modified files. Returns t if there were no changes or
 the reset was performed, nil if the reset was cancelled."
   (let ((modified-files (c-xref-get-modified-files)))
     (if (and modified-files
-		 (not (null modified-files))
-		 (yes-or-no-p "There are modified files. Do you want to overwrite?"))
-	    (progn
-	      (call-process "git" nil nil nil "reset" "--hard")
-	      t)  ; Indicate reset performed
+                 (not (null modified-files))
+                 (yes-or-no-p "There are modified files. Do you want to overwrite?"))
+            (progn
+              (call-process "git" nil nil nil "reset" "--hard")
+              t)  ; Indicate reset performed
       (if modified-files
-	      (progn
-		nil)  ; Indicate cancellation
-	    t))))  ; Indicate no changes
+              (progn
+                nil)  ; Indicate cancellation
+            t))))  ; Indicate no changes
 
 (defun c-xref-load-directory (dir)
   "Load all compiled Emacs Lisp files in DIR."
@@ -6583,22 +6583,22 @@ the reset was performed, nil if the reset was cancelled."
   "Upgrade the installed c-xref, if available."
   (interactive)
   (if (yes-or-no-p (format "Really upgrade c-xref installation in %s ? "
-				       c-xref-install-directory))
+                                       c-xref-install-directory))
       (progn
-	    (let ((default-directory c-xref-install-directory))
-	      (if (c-xref-ok-to-upgrade)
-		      (progn
-		        (shell-command "git pull")
-		        (shell-command "git checkout stable")
-		        (message "Pulled latest stable")
-		        (c-xref-kill-xref-process nil)
-		        (shell-command "make")
-		        (message "Built 'c-xref' in %s" c-xref-install-directory)
-		        (c-xref-load-directory c-xref-elisp-directory)
+            (let ((default-directory c-xref-install-directory))
+              (if (c-xref-ok-to-upgrade)
+                      (progn
+                        (shell-command "git pull")
+                        (shell-command "git checkout stable")
+                        (message "Pulled latest stable")
+                        (c-xref-kill-xref-process nil)
+                        (shell-command "make")
+                        (message "Built 'c-xref' in %s" c-xref-install-directory)
+                        (c-xref-load-directory c-xref-elisp-directory)
                 (message "Loaded compiled e-lisp files")
-		        )
-	        )
-	      ))
+                        )
+                )
+              ))
     )
   )
 
@@ -6740,14 +6740,14 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
 (defun c-xref-is-buffer-undoable (bname)
   (let ((bnamestart) (res))
     (if (not bname)
-	    (setq res nil)
+            (setq res nil)
       (setq bnamestart (substring bname 0 1))
       (if (or (equal bnamestart " ") (equal bnamestart "*"))
-	      (setq res nil)
-	    (if (c-xref-buffer-has-one-of-suffixes bname c-xref-undo-allowed-suffixes)
-		(setq res t)
-	      (setq res nil)
-	      )))
+              (setq res nil)
+            (if (c-xref-buffer-has-one-of-suffixes bname c-xref-undo-allowed-suffixes)
+                (setq res t)
+              (setq res nil)
+              )))
     res
     ))
 
@@ -6768,13 +6768,13 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
       (setq cb (car bb))
       (setq fn (c-xref-backslashify-name (buffer-file-name cb)))
       (if (c-xref-string-has-prefix fn olddir (eq c-xref-platform 'windows))
-	      (progn
-		(set-buffer cb)
-		(setq nfn (concat newdir
-					  (c-xref-cut-string-prefix fn olddir (eq c-xref-platform 'windows))))
-		(set-visited-file-name nil)
-		(c-xref-write-file nfn)
-		))
+              (progn
+                (set-buffer cb)
+                (setq nfn (concat newdir
+                                          (c-xref-cut-string-prefix fn olddir (eq c-xref-platform 'windows))))
+                (set-visited-file-name nil)
+                (c-xref-write-file nfn)
+                ))
       (setq bb (cdr bb))
       )
     res
@@ -6801,14 +6801,14 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
       (setq buffs (buffer-list))
       ;;    (setq buffs (append buffs (cons (current-buffer) nil)))
       (while buffs
-	    (setq buf (car buffs))
-	    (setq buffs (cdr buffs))
-	    (if (c-xref-is-buffer-undoable (buffer-file-name buf))
-		(progn
-		  (set-buffer buf)
-		  (setq bst (c-xref-this-buffer-undo-state))
-		  (setq state (cons (cons buf bst) state))
-		  ))))
+            (setq buf (car buffs))
+            (setq buffs (cdr buffs))
+            (if (c-xref-is-buffer-undoable (buffer-file-name buf))
+                (progn
+                  (set-buffer buf)
+                  (setq bst (c-xref-this-buffer-undo-state))
+                  (setq state (cons (cons buf bst) state))
+                  ))))
     state
     ))
 
@@ -6820,11 +6820,11 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
     (while (and ul (not found))
       (setq found (eq (car (car ul)) buf))
       (if (not found)
-	      (setq ul (cdr ul))
-	    )
+              (setq ul (cdr ul))
+            )
       )
     (if found
-	    (setq res (cdr (car ul)))
+            (setq res (cdr (car ul)))
       )
     res
     ))
@@ -6832,18 +6832,18 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
 (defun c-xref-save-modified-files-with-question-and-error (flag message)
   (if (c-xref-yes-or-no-window (concat message "Save modified buffers? ") t nil)
       (progn
-	    (c-xref-save-some-buffers flag)
-	    (error "Changes saved.")
-	    )
+            (c-xref-save-some-buffers flag)
+            (error "Changes saved.")
+            )
     (error "Not saved.")
     ))
 
 (defun c-xref-save-modified-files-with-question (flag message)
   (if (c-xref-yes-or-no-window (concat message "Save modified buffers? ") t nil)
       (progn
-	    (c-xref-save-some-buffers flag)
-	    (message "Changes saved.")
-	    )
+            (c-xref-save-some-buffers flag)
+            (message "Changes saved.")
+            )
     (message "Not saved.")
     ))
 
@@ -6855,22 +6855,22 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
       (c-xref-make-buffer-writable)
       (undo-more 1)
       (if iinteract
-	      (progn
-		(setq aa (c-xref-get-single-yes-no-event nil "Continue undoing "))
-		)
-	    (setq aa 'answer-yes)
-	    )
+              (progn
+                (setq aa (c-xref-get-single-yes-no-event nil "Continue undoing "))
+                )
+            (setq aa 'answer-yes)
+            )
       (if (eq aa 'answer-no)
-	      (c-xref-save-modified-files-with-question-and-error nil "** Undoing breaked. ")
-	    )
+              (c-xref-save-modified-files-with-question-and-error nil "** Undoing breaked. ")
+            )
       (if (eq aa 'answer-all)
-	      (setq iinteract nil)
-	    )
+              (setq iinteract nil)
+            )
       (message "")
       (undo-boundary)
       )
     (if (not (eq pending-undo-list bundo))
-	    (error "Not enough undo information available (check 'undo-limit' and 'undo-strong-limit' variables)!")
+            (error "Not enough undo information available (check 'undo-limit' and 'undo-strong-limit' variables)!")
       )
     iinteract
     ))
@@ -6879,24 +6879,24 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
   (let ((bnamestart) (bufundo) (iinteract))
     (setq iinteract interact-flag)
     (if (not (buffer-name buf))
-	    (progn
-	      (if (not (yes-or-no-p (format "A killed buffer can't be undone, continue? ")))
-		  (c-xref-save-modified-files-with-question-and-error nil "Aborted. ")
-		)
-	      )
+            (progn
+              (if (not (yes-or-no-p (format "A killed buffer can't be undone, continue? ")))
+                  (c-xref-save-modified-files-with-question-and-error nil "Aborted. ")
+                )
+              )
       (if (c-xref-is-buffer-undoable (buffer-file-name buf))
-	      (progn
-		(switch-to-buffer buf)
-		(setq bufundo (get-corresponding-undo ustate buf))
-		(if cont-ustate
-			(setq pending-undo-list (get-corresponding-undo
-							     cont-ustate buf))
-		  (c-xref-make-buffer-writable)
-		  (undo-start)
-		  (if bufundo (undo-more 1))
-		  )
-		(setq iinteract (undo-changes-until bufundo iinteract))
-		))
+              (progn
+                (switch-to-buffer buf)
+                (setq bufundo (get-corresponding-undo ustate buf))
+                (if cont-ustate
+                        (setq pending-undo-list (get-corresponding-undo
+                                                             cont-ustate buf))
+                  (c-xref-make-buffer-writable)
+                  (undo-start)
+                  (if bufundo (undo-more 1))
+                  )
+                (setq iinteract (undo-changes-until bufundo iinteract))
+                ))
       )
     iinteract
     ))
@@ -6911,8 +6911,8 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
       (setq buffs (cdr buffs))
       (setq bufundo (get-corresponding-undo ustate buf))
       (if (not bufundo)
-	      (setq iinteract (c-xref-undo-single-buffer buf ustate cont-ustate iinteract))
-	    )
+              (setq iinteract (c-xref-undo-single-buffer buf ustate cont-ustate iinteract))
+            )
       )
     ;; than those from list
     (setq buffs2 ustate)
@@ -6921,24 +6921,24 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
       (setq buffs2 (cdr buffs2))
       (setq bufundo (get-corresponding-undo ustate buf))
       (if bufundo
-	      (setq iinteract (c-xref-undo-single-buffer buf ustate cont-ustate iinteract))
-	    )
+              (setq iinteract (c-xref-undo-single-buffer buf ustate cont-ustate iinteract))
+            )
       )
     ))
 
 (defun cut-long-refactoring-undo-list ()
   (let ((ul) (deep))
     (if (> (length c-xref-multifile-undo-state) c-xref-multifile-undo-deep)
-	    (progn
-	      (setq ul c-xref-multifile-undo-state)
-	      (setq deep c-xref-multifile-undo-deep)
-	      (while (and ul (> deep 0))
-		(setq deep (- deep 1))
-		(setq ul (cdr ul))
-		)
-	      (if ul
-		  (setcdr ul nil)
-		))
+            (progn
+              (setq ul c-xref-multifile-undo-state)
+              (setq deep c-xref-multifile-undo-deep)
+              (while (and ul (> deep 0))
+                (setq deep (- deep 1))
+                (setq ul (cdr ul))
+                )
+              (if ul
+                  (setcdr ul nil)
+                ))
       )
     ))
 
@@ -6965,49 +6965,49 @@ between, undo will not work correctly.
 "
   (interactive "i")
   (let ((undolist) (cloop) (cont-undo-state) (aa) (cbuff) (interact)
-	    (u-type) (next-ask))
+            (u-type) (next-ask))
     (setq interact c-xref-detailed-refactoring-confirmations)
     (setq cbuff (current-buffer))
     (if (eq c-xref-multifile-undo-state nil)
-	    (error "** Refactorings undo stack is empty **")
+            (error "** Refactorings undo stack is empty **")
       )
     (set-marker c-xref-undo-marker (point))
     (setq cont-undo-state nil)
     (setq cloop t)
     (setq undolist c-xref-multifile-undo-state)
     (setq cloop (c-xref-yes-or-no-window
-			 (format "Really undo %s? " (car (car undolist)))
-			 t nil
-			 ))
+                         (format "Really undo %s? " (car (car undolist)))
+                         t nil
+                         ))
     (while cloop
       (c-xref-multifile-undo-set-buffer-switch-point (format "an undone refactoring (redoing %s)" (car (car undolist))))
       (setq next-ask t)
       (setq u-type (car (cdr (car undolist))))
       (if (equal u-type "move-buffer")
-	      (progn
-		(setq interact (c-xref-undo-file-moving (cdr (cdr (car undolist))) interact))
-		(setq next-ask nil)
-		)
-	    (if (equal u-type "move-dir")
-		(progn
-		  (setq interact (c-xref-undo-dir-moving (cdr (cdr (car undolist))) interact))
-		  (setq next-ask nil)
-		  )
-	      (setq interact (c-xref-undo-until-undo-state (cdr (cdr (car undolist))) cont-undo-state interact))
-	      (setq cont-undo-state (cdr (cdr (car undolist))))
-	      ))
+              (progn
+                (setq interact (c-xref-undo-file-moving (cdr (cdr (car undolist))) interact))
+                (setq next-ask nil)
+                )
+            (if (equal u-type "move-dir")
+                (progn
+                  (setq interact (c-xref-undo-dir-moving (cdr (cdr (car undolist))) interact))
+                  (setq next-ask nil)
+                  )
+              (setq interact (c-xref-undo-until-undo-state (cdr (cdr (car undolist))) cont-undo-state interact))
+              (setq cont-undo-state (cdr (cdr (car undolist))))
+              ))
       (setq undolist (cdr undolist))
       (if (eq undolist nil)
-	      (setq cloop nil)
-	    (if (not next-ask)
-		(setq cloop t)
-	      (sit-for 0.01)   ;; refresh screen
-	      (setq cloop (c-xref-yes-or-no-window
-			       (format
-				    "The refactoring is undone, continue by undoing\n%s? "
-				    (car (car undolist)))
-			       t nil
-			       ))))
+              (setq cloop nil)
+            (if (not next-ask)
+                (setq cloop t)
+              (sit-for 0.01)   ;; refresh screen
+              (setq cloop (c-xref-yes-or-no-window
+                               (format
+                                    "The refactoring is undone, continue by undoing\n%s? "
+                                    (car (car undolist)))
+                               t nil
+                               ))))
       )
     (switch-to-buffer cbuff)
     (sit-for 0)
@@ -7022,16 +7022,16 @@ between, undo will not work correctly.
     (setq buf (car (cdr data)))
     (set-buffer buf)
     (if interact
-	    (progn
-	      (switch-to-buffer buf)
-	      (setq confirmed (c-xref-yes-or-no-window (format "Move to file %s ? " fname) t nil))
-	      )
+            (progn
+              (switch-to-buffer buf)
+              (setq confirmed (c-xref-yes-or-no-window (format "Move to file %s ? " fname) t nil))
+              )
       (setq confirmed t)
       )
     (if confirmed
-	    (progn
-	      (c-xref-undoable-move-file fname)
-	      ))
+            (progn
+              (c-xref-undoable-move-file fname)
+              ))
     )
   interact
   )
@@ -7039,19 +7039,19 @@ between, undo will not work correctly.
 (defun c-xref-multifile-undo-add-buffer-write ()
   (let ((comment))
     (if c-xref-multifile-undo-state
-	    (setq comment (car (car c-xref-multifile-undo-state)))
+            (setq comment (car (car c-xref-multifile-undo-state)))
       (setq comment (format "moving file %s" (c-xref-file-last-name (buffer-file-name nil))))
       )
     (setq c-xref-multifile-undo-state
-	      (cons
-	       (list
-		comment
-		"move-buffer"
-		(buffer-file-name nil)
-		(current-buffer)
-		)
-	       c-xref-multifile-undo-state
-	       ))
+              (cons
+               (list
+                comment
+                "move-buffer"
+                (buffer-file-name nil)
+                (current-buffer)
+                )
+               c-xref-multifile-undo-state
+               ))
     (cut-long-refactoring-undo-list)
     ;;(insert (format "multifile-undo-state : %S\n\n" c-xref-multifile-undo-state))
     ))
@@ -7062,18 +7062,18 @@ between, undo will not work correctly.
     (setq olddir (car data))
     (setq newdir (car (cdr data)))
     (if interact
-	    (progn
-	      (setq confirmed (yes-or-no-p (format "Move directory %s to %s ? "
-								   (c-xref-file-last-name newdir)
-								   (c-xref-file-last-name olddir))
-						       ))
-	      )
+            (progn
+              (setq confirmed (yes-or-no-p (format "Move directory %s to %s ? "
+                                                                   (c-xref-file-last-name newdir)
+                                                                   (c-xref-file-last-name olddir))
+                                                       ))
+              )
       (setq confirmed t)
       )
     (if confirmed
-	    (progn
-	      (c-xref-undoable-move-directory newdir olddir)
-	      ))
+            (progn
+              (c-xref-undoable-move-directory newdir olddir)
+              ))
     )
   interact
   )
@@ -7083,19 +7083,19 @@ between, undo will not work correctly.
     ;;  (if c-xref-multifile-undo-state
     ;;          (setq comment (car (car c-xref-multifile-undo-state)))
     (setq comment (format "moving directory %s to %s"
-				      (c-xref-file-last-name olddir)
-				      (c-xref-file-last-name newdir)))
+                                      (c-xref-file-last-name olddir)
+                                      (c-xref-file-last-name newdir)))
     ;;    )
     (setq c-xref-multifile-undo-state
-	      (cons
-	       (list
-		comment
-		"move-dir"
-		olddir
-		newdir
-		)
-	       c-xref-multifile-undo-state
-	       ))
+              (cons
+               (list
+                comment
+                "move-dir"
+                olddir
+                newdir
+                )
+               c-xref-multifile-undo-state
+               ))
     (cut-long-refactoring-undo-list)
     ;;(insert (format "multifile-undo-state : %S\n\n" c-xref-multifile-undo-state))
     ))
@@ -7111,15 +7111,15 @@ indicating before which action the state is memorized.
 "
   ;;  (interactive "")
   (setq c-xref-multifile-undo-state
-	    (cons
-	     (cons
-	      comment
-	      (cons
-	       "standard"
-	       (c-xref-editor-undo-state)
-	       ))
-	     c-xref-multifile-undo-state
-	     ))
+            (cons
+             (cons
+              comment
+              (cons
+               "standard"
+               (c-xref-editor-undo-state)
+               ))
+             c-xref-multifile-undo-state
+             ))
   (cut-long-refactoring-undo-list)
   ;;(insert (format "multifile-undo-state : %S\n\n" c-xref-multifile-undo-state))
   )
@@ -7164,24 +7164,24 @@ refactoring.
   (c-xref-multifile-undo-set-buffer-switch-point description)
   (if c-xref-save-files-and-update-tags-before-refactoring
       (progn
-	    (c-xref-save-some-buffers nil)
-	    (c-xref-update-tags "-update" nil)
-	    ))
+            (c-xref-save-some-buffers nil)
+            (c-xref-update-tags "-update" nil)
+            ))
   )
 
 (defun c-xref-refactoring-finish-actions ()
   (if c-xref-save-files-and-update-tags-after-refactoring
       (progn
-	    (c-xref-save-some-buffers t)
-	    (c-xref-update-tags "-update" nil)
-	    ))
+            (c-xref-save-some-buffers t)
+            (c-xref-update-tags "-update" nil)
+            ))
   (if c-xref-move-point-back-after-refactoring
       (progn
-	    (c-xref-switch-to-marker c-xref-refactoring-beginning-marker)
-	    (if (and (eq (point) (point-min))
-			 (not (eq c-xref-refactoring-beginning-offset (point-min))))
-		(goto-char c-xref-refactoring-beginning-offset)
-	      )))
+            (c-xref-switch-to-marker c-xref-refactoring-beginning-marker)
+            (if (and (eq (point) (point-min))
+                         (not (eq c-xref-refactoring-beginning-offset (point-min))))
+                (goto-char c-xref-refactoring-beginning-offset)
+              )))
   (message "Done.")
   )
 
@@ -7197,11 +7197,11 @@ refactoring.
 (defun c-xref-renaming (opt default)
   (let ((tcount) (prompt) (new-name) (old-name))
     (if default
-	    (setq old-name default)
+            (setq old-name default)
       (setq old-name (c-xref-get-identifier-on-point))
       )
     (setq new-name (read-from-minibuffer
-			    (format "Rename '%s' to : " old-name) old-name))
+                            (format "Rename '%s' to : " old-name) old-name))
     (c-xref-non-interactive-renaming opt old-name new-name)
     ))
 
@@ -7216,9 +7216,9 @@ refactoring.
    (format "insertion of %s's parameter" name))
   (c-xref-server-call-refactoring-task
    (list "-rfct-add-param"
-	     (format "-olcxparnum=%s" arg)
-	     (format "-rfct-param1=%s" textdef);
-	     (format "-rfct-param2=%s" textval)))
+             (format "-olcxparnum=%s" arg)
+             (format "-rfct-parameter-name=%s" textdef);
+             (format "-rfct-parameter-value=%s" textval)))
   (c-xref-refactoring-finish-actions)
   )
 
@@ -7226,23 +7226,23 @@ refactoring.
   (let ((name) (argns) (arg) (textdef) (textval) (default))
     (setq name (c-xref-get-identifier-on-point))
     (setq argns (read-from-minibuffer
-			 (format
-			  "Insert parameter at position [ 1 - arity('%s') ] : " name)
-			 "1"
-			 ))
+                         (format
+                          "Insert parameter at position [ 1 - arity('%s') ] : " name)
+                         "1"
+                         ))
     (setq arg (string-to-number argns))
     (if (and rd (equal (car (cdr rd)) "macro"))
-	    (setq default "ARG")
+            (setq default "ARG")
       (setq default "int arg")
       )
     (setq textdef (read-from-minibuffer
-			   "Declaration of the new parameter: "
-			   default
-			   ))
+                           "Declaration of the new parameter: "
+                           default
+                           ))
     (setq textval (read-from-minibuffer
-			   "Actual value of the new parameter: "
-			   "0"
-		       ))
+                           "Actual value of the new parameter: "
+                           "0"
+                       ))
     (c-xref-non-interactive-add-parameter name arg textdef textval)
     ))
 
@@ -7258,10 +7258,10 @@ refactoring.
   (let ((name) (argns) (arg) (textdef) (textval))
     (setq name (c-xref-get-identifier-on-point))
     (setq argns (read-from-minibuffer
-			 (format
-			  "Delete parameter from position [ 1 - arity('%s') ] : " name)
-			 "1"
-			 ))
+                         (format
+                          "Delete parameter from position [ 1 - arity('%s') ] : " name)
+                         "1"
+                         ))
     (setq arg (string-to-number argns))
     (c-xref-non-interactive-del-parameter name arg)
     ))
@@ -7272,8 +7272,8 @@ refactoring.
    (format "move of %s's parameter" name))
   (c-xref-server-call-refactoring-task
    (list "-rfct-move-param"
-	     (format "-olcxparnum=%s" arg1)
-	     (format "-olcxparnum2=%s" arg2)))
+             (format "-olcxparnum=%s" arg1)
+             (format "-olcxparnum2=%s" arg2)))
   (c-xref-refactoring-finish-actions)
   )
 
@@ -7281,16 +7281,16 @@ refactoring.
   (let ((name) (argns) (arg) (textdef) (textval) (arg1) (arg2))
     (setq name (c-xref-get-identifier-on-point))
     (setq argns (read-from-minibuffer
-			 (format
-			  "Position of parameter to move [ 1 - arity('%s') ] : " name)
-			 "1"
-			 ))
+                         (format
+                          "Position of parameter to move [ 1 - arity('%s') ] : " name)
+                         "1"
+                         ))
     (setq arg1 (string-to-number argns))
     (setq argns (read-from-minibuffer
-			 (format
-			  "Move to position [ 1 - arity('%s') ] : " name)
-			 "2"
-			 ))
+                         (format
+                          "Move to position [ 1 - arity('%s') ] : " name)
+                         "2"
+                         ))
     (setq arg2 (string-to-number argns))
     (c-xref-non-interactive-move-parameter name arg1 arg2)
     ))
@@ -7305,16 +7305,16 @@ refactoring.
   (if (bolp) (setq c-xref-moving-refactoring-line (1+ c-xref-moving-refactoring-line)))
   (if rd
       (progn
-	    (message "Next moving refactoring will move to %s:%d"
-			 (c-xref-file-last-name (buffer-file-name))
-			 c-xref-moving-refactoring-line)
-	    ))
+            (message "Next moving refactoring will move to %s:%d"
+                         (c-xref-file-last-name (buffer-file-name))
+                         c-xref-moving-refactoring-line)
+            ))
   )
 
 (defun c-xref-moving (moveopt)
   (let ((name) (tf))
     (if (eq c-xref-moving-refactoring-line 0)
-	    (error "No target position. Use 'Set target position' first.")
+            (error "No target position. Use 'Set target position' first.")
       )
     (setq name (c-xref-get-identifier-on-point))
 
@@ -7323,19 +7323,19 @@ refactoring.
       (c-xref-set-to-marker c-xref-moving-refactoring-marker)
       (if (bobp) (forward-line (- c-xref-moving-refactoring-line 1)))
       (if (not (bolp))
-	      (progn
-		(message "moving target marker at the beginning of line")
-		(beginning-of-line)
-		))
+              (progn
+                (message "moving target marker at the beginning of line")
+                (beginning-of-line)
+                ))
       (setq tf (buffer-file-name))
       )
 
     ;; move
     (c-xref-server-call-refactoring-task
      (append moveopt (list
-			      (format "-commentmovinglevel=%d" c-xref-comments-moving-level)
-			      (format "-movetargetfile=%s" tf)
-			      (format "-rfct-param1=%s" c-xref-moving-refactoring-line))))
+                              (format "-commentmovinglevel=%d" c-xref-comments-moving-level)
+                              (format "-movetargetfile=%s" tf)
+                              (format "-rfct-target-line=%s" c-xref-moving-refactoring-line))))
 
     ;; all done
     (save-excursion
@@ -7346,10 +7346,10 @@ refactoring.
 
 (defun c-xref-move-function (rd)
   (let ((name))
-	(setq name (c-xref-get-identifier-on-point))
-	(c-xref-refactoring-init-actions (format "moving %s" name))
-	(c-xref-moving '("-rfct-move-function"))
-	(c-xref-refactoring-finish-actions)
+        (setq name (c-xref-get-identifier-on-point))
+        (c-xref-refactoring-init-actions (format "moving %s" name))
+        (c-xref-moving '("-rfct-move-function"))
+        (c-xref-refactoring-finish-actions)
 ))
 
 
@@ -7370,7 +7370,7 @@ refactoring.
 (defun c-xref-extraction-dialog (minvocation mhead mtail mline dname)
   ;; dname - name of the extracted entity, need to contain one of the strings
   (let ((mbody) (name) (saved-case-fold-search-mode) (mbuff) (kind) (sw)
-	    (mm) (pp) (bb) (ee) (ilen) (sr))
+            (mm) (pp) (bb) (ee) (ilen) (sr))
     (setq sw (selected-window))
     (setq mbuff (current-buffer))
     (setq mm (min (mark) (point)))
@@ -7383,15 +7383,15 @@ refactoring.
 
     (setq case-fold-search saved-case-fold-search-mode)
     (if (string-match "method" dname)
-	    (setq kind "method")
+            (setq kind "method")
       (if (string-match "class" dname)
-	      (setq kind "class")
-	    (if (string-match "macro" dname)
-		(setq kind "macro")
-	      (if (string-match "variable" dname)
-		  (setq kind "variable")
-		(setq kind "function")
-		))))
+              (setq kind "class")
+            (if (string-match "macro" dname)
+                (setq kind "macro")
+              (if (string-match "variable" dname)
+                  (setq kind "variable")
+                (setq kind "function")
+                ))))
 
     (c-xref-display-and-set-new-dialog-window c-xref-extraction-buffer nil t)
     (set-buffer c-xref-extraction-buffer)
@@ -7401,100 +7401,100 @@ refactoring.
     (insert (format "---------------   C-xrefactory suggests following new %s:\n\n" kind))
     (insert mhead)
     (if (not (string= kind "variable"))
-	    ;; If extracting a variable we just want to show the declaration
-	    (insert "\t// Original code start\n"))
+            ;; If extracting a variable we just want to show the declaration
+            (insert "\t// Original code start\n"))
     (setq bb (point))
     (insert mbody)
 
     ;; Ensure next output start on a new line unless we're extracting a variable
     (if (and (not (bolp)) (not (string= kind "variable")))
-	    (progn
-	      (newline)
-	      (setq mbody (buffer-substring bb (point)))
-	      ))
+            (progn
+              (newline)
+              (setq mbody (buffer-substring bb (point)))
+              ))
 
     (if (equal kind "macro")
-	    ;; For macros we want to add the newline escapes
-	    (progn
-	      (c-xref-add-macro-line-continuations bb (- (point) 1))
-	      (goto-char (point-max))
-	      (setq mbody (buffer-substring bb (point)))
-	      ))
+            ;; For macros we want to add the newline escapes
+            (progn
+              (c-xref-add-macro-line-continuations bb (- (point) 1))
+              (goto-char (point-max))
+              (setq mbody (buffer-substring bb (point)))
+              ))
     (if (not (string= kind "variable"))
-	    (insert "\t// Original code end\n"))
+            (insert "\t// Original code end\n"))
     (insert mtail)
 
     (if (not (string= kind "variable"))
-	    (progn
-	      (insert "---------------   which will be invoked by the command:\n\n")
-	      (insert minvocation)))
+            (progn
+              (insert "---------------   which will be invoked by the command:\n\n")
+              (insert minvocation)))
 
     (goto-char (point-min))
     (display-buffer c-xref-extraction-buffer)
     (if c-xref-renaming-default-name
-	    (setq name c-xref-renaming-default-name)
+            (setq name c-xref-renaming-default-name)
       (setq name (read-from-minibuffer (format "Enter name for the new %s (empty string cancels the extraction): " kind)))
       )
     (if (equal kind "class")
-	    (progn
-	      (while (not (or (and (> (elt name 0) ?A) (< (elt name 0) ?Z))
-				      (and (> (elt name 0) ?a) (< (elt name 0) ?z))))
-		(setq name (read-from-minibuffer "Name has to start with a letter, enter new name: " name))
-		)
-	      (setq name (c-xref-downcase-first-letter name))
-	      ))
+            (progn
+              (while (not (or (and (> (elt name 0) ?A) (< (elt name 0) ?Z))
+                                      (and (> (elt name 0) ?a) (< (elt name 0) ?z))))
+                (setq name (read-from-minibuffer "Name has to start with a letter, enter new name: " name))
+                )
+              (setq name (c-xref-downcase-first-letter name))
+              ))
     (c-xref-delete-window-in-any-frame c-xref-extraction-buffer nil)
     (select-window sw)
     (if (not (equal name ""))
-	    (progn
-	      (set-buffer mbuff)
-	      (c-xref-goto-line mline)
-	      (set-marker c-xref-extraction-marker (point))
-	      (goto-char mm)
-	      (set-marker c-xref-extraction-marker2 (point))
-	      (kill-region mm pp)
-	      (insert minvocation)
-	      (if (fboundp 'indent-region)
-		  (indent-region (- (point) (length minvocation)) (point) nil)
-		)
-	      (setq ilen (- (point) mm))
-	      (c-xref-set-to-marker c-xref-extraction-marker)
-	      (newline 2)
-	      (setq bb (point))
-	      (insert mhead)
-	      (insert mbody)
-	      (insert mtail)
-	      (setq ee (point))
-	      (if (fboundp 'indent-region)
-		  (indent-region bb (point) nil)
-		)
-	      (c-xref-set-to-marker c-xref-extraction-marker2)
-	      (setq case-fold-search nil)
-	      (setq sr (search-forward dname (+ (point) ilen) t))
-	      (setq case-fold-search saved-case-fold-search-mode)
-	      (if (not sr)
-		  (error "[c-xref] internal error, can't find method")
-		)
-	      (backward-char 2)
-	      (c-xref-server-call-refactoring-task
-	       (list "-rfct-rename" (format "-renameto=%s" name)))
+            (progn
+              (set-buffer mbuff)
+              (c-xref-goto-line mline)
+              (set-marker c-xref-extraction-marker (point))
+              (goto-char mm)
+              (set-marker c-xref-extraction-marker2 (point))
+              (kill-region mm pp)
+              (insert minvocation)
+              (if (fboundp 'indent-region)
+                  (indent-region (- (point) (length minvocation)) (point) nil)
+                )
+              (setq ilen (- (point) mm))
+              (c-xref-set-to-marker c-xref-extraction-marker)
+              (newline 2)
+              (setq bb (point))
+              (insert mhead)
+              (insert mbody)
+              (insert mtail)
+              (setq ee (point))
+              (if (fboundp 'indent-region)
+                  (indent-region bb (point) nil)
+                )
+              (c-xref-set-to-marker c-xref-extraction-marker2)
+              (setq case-fold-search nil)
+              (setq sr (search-forward dname (+ (point) ilen) t))
+              (setq case-fold-search saved-case-fold-search-mode)
+              (if (not sr)
+                  (error "[c-xref] internal error, can't find method")
+                )
+              (backward-char 2)
+              (c-xref-server-call-refactoring-task
+               (list "-rfct-rename" (format "-renameto=%s" name)))
 
-	      (if (equal kind "class")
-		  (progn
-			(c-xref-set-to-marker c-xref-extraction-marker)
-			(setq case-fold-search nil)
-			(setq sr (search-forward (c-xref-upcase-first-letter dname)
-							     (+ (point) (length mhead)) t))
-			(setq case-fold-search saved-case-fold-search-mode)
-			(if (not sr)
-			    (error "[c-xref] internal error, can't find the class")
-			  )
-			(backward-char 2)
-			(c-xref-server-call-refactoring-task
-			 (list "-rfct-rename-class"
-			       (format "-renameto=%s" (c-xref-upcase-first-letter name))))
-		    ))
-	      ))
+              (if (equal kind "class")
+                  (progn
+                        (c-xref-set-to-marker c-xref-extraction-marker)
+                        (setq case-fold-search nil)
+                        (setq sr (search-forward (c-xref-upcase-first-letter dname)
+                                                             (+ (point) (length mhead)) t))
+                        (setq case-fold-search saved-case-fold-search-mode)
+                        (if (not sr)
+                            (error "[c-xref] internal error, can't find the class")
+                          )
+                        (backward-char 2)
+                        (c-xref-server-call-refactoring-task
+                         (list "-rfct-rename-class"
+                               (format "-renameto=%s" (c-xref-upcase-first-letter name))))
+                    ))
+              ))
     ))
 
 (defun c-xref-extract-function (rd)
