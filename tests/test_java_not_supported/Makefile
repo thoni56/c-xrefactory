@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefactory-II -refactory -rfct-add-param -olcxparnum=2 -rfct-param1=int\ arg -rfct-param2=42 -olcursor=17 $(CURDIR)/file.java
+ARGUMENTS = -xrefactory-II $(CURDIR)/file.java
 
 $(TEST):
 	-$(COMMAND) -log=log $(EXTRA) > output.tmp

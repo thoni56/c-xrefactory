@@ -1062,12 +1062,12 @@ static void checkThatParameterIsUnused(EditorMarker *marker, char *functionName,
 
 static void addParameter(EditorMarker *pos, char *fname, int argumentNumber, UsageKind usage) {
     if (isDefinitionOrDeclarationUsage(usage)) {
-        if (addStringAsParameter(pos, NULL, fname, argumentNumber, refactoringOptions.refpar1) != -1)
+        if (addStringAsParameter(pos, NULL, fname, argumentNumber, refactoringOptions.refactor_parameter_name) != -1)
             // now check that there is no conflict
             if (isDefinitionUsage(usage))
                 checkThatParameterIsUnused(pos, fname, argumentNumber, CHECK_FOR_ADD_PARAM);
     } else {
-        addStringAsParameter(pos, NULL, fname, argumentNumber, refactoringOptions.refpar2);
+        addStringAsParameter(pos, NULL, fname, argumentNumber, refactoringOptions.refactor_parameter_value);
     }
 }
 
@@ -1394,8 +1394,10 @@ static EditorMarker *getTargetFromOptions(void) {
 
     tb = findEditorBufferForFile(
         normalizeFileName_static(refactoringOptions.moveTargetFile, cwd));
+    if (tb == NULL)
+        FATAL_ERROR(ERR_ST, "Could not find a buffer for target position", XREF_EXIT_ERR);
     target = newEditorMarker(tb, 0);
-    sscanf(refactoringOptions.refpar1, "%d", &tline);
+    sscanf(refactoringOptions.refactor_target_line, "%d", &tline);
     moveEditorMarkerToLineAndColumn(target, tline, 0);
     return target;
 }

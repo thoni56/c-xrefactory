@@ -506,3 +506,21 @@ Ensure(Options, can_deep_copy_options_with_two_stringlist_option_with_two_string
     /* ... in the copy's memory */
     assert_that(smIsBetween(&copy.memory, copy.pruneNames->next->string, 0, copy.memory.index));
 }
+
+Ensure(Options, can_parse_parameter_name_option) {
+    char* arguments[] = {"", "-rfct-parameter-name=int arg"};
+    processOptions(2, arguments, false);
+    assert_that(options.refactor_parameter_name, is_equal_to_string("int arg"));
+}
+
+Ensure(Options, can_parse_parameter_value_option) {
+    char* arguments[] = {"", "-rfct-parameter-value=42"};
+    processOptions(2, arguments, false);
+    assert_that(options.refactor_parameter_value, is_equal_to_string("42"));
+}
+
+Ensure(Options, can_parse_target_line_option) {
+    char* arguments[] = {"", "-rfct-target-line=99"};
+    processOptions(2, arguments, false);
+    assert_that(options.refactor_target_line, is_equal_to_string("99"));
+}

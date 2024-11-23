@@ -74,8 +74,9 @@ typedef struct options {
     char *checkVersion;
     char *pushName;
     int parnum2;
-    char *refpar1;
-    char *refpar2;
+    char *refactor_parameter_name;
+    char *refactor_parameter_value;
+    char *refactor_target_line;
     Refactoring theRefactoring;
     char *renameTo;
     Mode refactoringMode;

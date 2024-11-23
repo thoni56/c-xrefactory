@@ -38,8 +38,9 @@ Options presetOptions = {
     NULL,                        // checkVersion
     NULL,                        // pushName
     0,                           // parnum2
-    "",                          // refactoring parameter 1
-    "",                          // refactoring parameter 2
+    "",                          // refactoring parameter name
+    "",                          // refactoring parameter value
+    "",                          // refactoring target line
     AVR_NO_REFACTORING,          // refactoring
     NULL,                        // renameTo
     UndefinedMode,               // refactoringMode
@@ -1627,11 +1628,14 @@ static bool processROption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-rfct-extract-variable")==0)  {
         options.theRefactoring = AVR_EXTRACT_VARIABLE;
     }
-    else if (strncmp(argv[i], "-rfct-param1=", 13)==0)  {
-        options.refpar1 = allocateStringForOption(&options.refpar1, argv[i]+13);
+    else if (strncmp(argv[i], "-rfct-parameter-name=", 21)==0)  {
+        options.refactor_parameter_name = allocateStringForOption(&options.refactor_parameter_name, argv[i]+21);
     }
-    else if (strncmp(argv[i], "-rfct-param2=", 13)==0)  {
-        options.refpar2 = allocateStringForOption(&options.refpar2, argv[i]+13);
+    else if (strncmp(argv[i], "-rfct-parameter-value=", 22)==0)  {
+        options.refactor_parameter_value = allocateStringForOption(&options.refactor_parameter_value, argv[i]+22);
+    }
+    else if (strncmp(argv[i], "-rfct-target-line=", 18)==0)  {
+        options.refactor_target_line = allocateStringForOption(&options.refactor_target_line, argv[i]+18);
     }
     else return false;
     *argi = i;
