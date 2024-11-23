@@ -1644,7 +1644,6 @@ static bool processROption(int *argi, int argc, char **argv) {
 
 static bool processSOption(int *argi, int argc, char **argv) {
     int i = *argi;
-    char *name, *val;
 
     if (0) {}
     else if (strcmp(argv[i], "-strict")==0)
@@ -1654,12 +1653,6 @@ static bool processSOption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-set")==0) {
         i = handleSetOption(argc, argv, i);
-    }
-    else if (strncmp(argv[i], "-set",4)==0) {
-        name = argv[i]+4;
-        ensureThereIsAnotherArgument(&i, argc, argv);
-        val = argv[i];
-        setOptionVariable(name, val);
     }
     else if (strcmp(argv[i], "-searchdef")==0) {
         options.searchKind = SEARCH_DEFINITIONS;
