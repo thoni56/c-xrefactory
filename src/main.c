@@ -776,9 +776,6 @@ int main(int argc, char *argv[]) {
     initLogging(argc, argv);
     ENTER();
 
-    /* TODO: Ensure there are no sections in that file */
-    /* TODO: Move this to get_project? */
-
     if (setjmp(memoryResizeJumpTarget) != 0) {
         /* CX_ALLOCC always makes one longjmp back to here before we can
            start processing for real ... Allocating initial CX memory */
