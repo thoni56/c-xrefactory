@@ -63,7 +63,7 @@ VERIFY = cmp output expected ; \
 	@sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" ../c-xrefrc.tpl > .c-xrefrc
 
 clean:
-	@-rm -rf CXrefs .c-xrefrc out* log *.log
+	@-rm -rf CXrefs .c-xrefrc out* log *.log .cov/*
 
 coverage:
 	cd ../../src ; make clean-coverage
