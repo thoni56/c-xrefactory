@@ -33,14 +33,14 @@
 #       make
 #	make clean-coverage
 #	<run test>
-#	make coverage-report
+#	make coverage
 #
 # 6: run another test and produce aggregated gcov files:
 #
 #	<run another test>
-#	make coverage-report
+#	make coverage
 #
-# 7: produce coverage report for current collected coverage:
+# 7: produce coverage HTML report for current collected coverage:
 #
 #	make coverage-report
 #
@@ -159,7 +159,8 @@ devel: check-tokens
 	$(MAKE) -C ../editors/emacs
 	$(MAKE) -e clean-coverage
 	$(MAKE) -e devel-proper
-	$(MAKE) coverage-report
+	$(MAKE) coverage
+	$(MAKE) cloc
 
 devel-proper: unit build
 	$(MAKE) -e test
@@ -358,10 +359,7 @@ clean-coverage:
 gcov:
 	-$(GCOV) $(OBJDIR)/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed" || true
 
-merge-gcda-from-tests:
-	@-for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
-
-coverage-report:
+coverage:
 # We create separate coverage files for each test to be able to run them in parallel (see ../tests/Makefile)
 ifeq ($(HAVE_GCOV_TOOL),yes)
 	$(MAKE) -e merge-gcda-from-tests
@@ -369,8 +367,11 @@ ifeq ($(HAVE_GCOV_TOOL),yes)
 else
 	# We need to collect all coverage before we can generate gcov...
 endif
-	@echo Doing the actual reporting in the background...
-	$(MAKE) the-actual-coverage-report &
+
+
+merge-gcda-from-tests:
+	@-for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
+
 
 LCOV_IGNORE_COVERAGE_FOR = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*' '/Applications/*'
 
@@ -381,7 +382,7 @@ else
 SYSTEM_TEST_COVERAGE_FILES = `ls ../tests/*/.cov/coverage.info | xargs printf -- '-a %s\n'`
 endif
 
-the-actual-coverage-report:
+coverage-report:
 	@mkdir -p ../coverage
 ifeq ($(HAVE_GCOV_TOOL),yes)
 # Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
@@ -406,6 +407,8 @@ endif
 endif
 	genhtml -q -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
 	@echo Coverage done: `grep -m 1 coverPer ../coverage/index.html | tr -dc '0-9.'`
+
+cloc:
 ifneq ($(shell command -v cloc 2> /dev/null),)
 	@cloc --quiet *.[chy] *.t? | grep SUM: | awk '{print "Lines:", $$5}'
 endif
@@ -423,7 +426,7 @@ watch-for-systemtests:
 system-tests:
 	$(MAKE) -e build
 	$(MAKE) -e test
-	$(MAKE) coverage-report
+	$(MAKE) coverage
 
 #########################################################################
 #
@@ -476,14 +479,6 @@ unittests: parsers $(OBJS) $(UNITTESTS)
 	$(MAKE) -e clean-coverage
 	$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $(UNITTESTS)
 	$(MAKE) gcov
-	[ "$(HAVE_LCOV2)" = "yes" ] && lcovignore1="--ignore-errors gcov,gcov" || true ; \
-	[ "$(HAVE_LCOV2)" = "yes" ] && lcovignore2="--ignore-errors unused,unused" || true ; \
-	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
-	if [ $$filecount -gt 0 ] ; then \
-		$(LCOV) -q $$lcovignore1  -t unittests -d . -c -o unittests.i 2>&1 | grep -v "did not produce any data"  | grep -v "assuming not executed" ; \
-		$(LCOV) -q $$lcovignore2 --remove unittests.i $(LCOV_IGNORE_COVERAGE_FOR) -o unittests.i ; \
-		mv unittests.i unittests.info ; \
-	fi
 	touch .unittests.done
 endif
 
