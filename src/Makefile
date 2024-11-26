@@ -18,29 +18,29 @@
 #
 #	make
 #
-# 4: build and run unittests with coverage and produce gcov files for
-#    cov-mode in Emacs:
+# 4: build and run unittests with coverage and produce fresh coverage
+# in .gcov files for Emacs cov-mode:
 #
 #	make unit
 #
 # 5: build c-xref with coverage, run all "quick" tests and produce
-# gcov:
+# coverage info in .gcov files for Emacs cov-mode:
 #
 #	make devel
 #
-# 6: build c-xref with coverage, run one test and produce gcov files:
+# 6: build c-xref with coverage, run one test and produce cov-mode coverage:
 #
 #       make
 #	make clean-coverage
 #	<run test>
 #	make coverage
 #
-# 6: run another test and produce aggregated gcov files:
+# 6: run another test and produce aggregated cov-mode coverage:
 #
 #	<run another test>
 #	make coverage
 #
-# 7: produce coverage HTML report for current collected coverage:
+# 7: produce coverage HTML report for currently collected coverage:
 #
 #	make coverage-report
 #
@@ -52,7 +52,7 @@
 #
 #	make watch-for-unittests
 #
-# 10: watch unitests completion and run all systemtests (use in a separate
+# 10: watch for unittests completion and run all systemtests (use in a separate
 #     terminal):
 #
 #	make watch-for-systemtests
@@ -159,19 +159,11 @@ devel: check-tokens
 	$(MAKE) -C ../editors/emacs
 	$(MAKE) -e clean-coverage
 	$(MAKE) -e devel-proper
-	$(MAKE) coverage
+	$(MAKE) -e system-tests
 	$(MAKE) cloc
 
 devel-proper: unit build
 	$(MAKE) -e test
-
-prof: CFLAGS += -pg
-prof: LDFLAGS += -pg
-prof: c-xref
-
-slow:
-	$(MAKE) -C ../tests slow
-	$(MAKE) gcov
 
 ci:
 	$(MAKE) -e -j unit
@@ -349,7 +341,6 @@ clean:
 
 PHONY += clean-coverage
 clean-coverage:
-	-rm ../coverage/total.info
 	-if command -v $(LCOV) > /dev/null 2>&1 ; then \
 		$(LCOV) -q -z -d .. ; \
 	fi
@@ -375,7 +366,7 @@ merge-gcda-from-tests:
 
 LCOV_IGNORE_COVERAGE_FOR = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*' '/Applications/*'
 
-LCOV_TEST_DIRS = `ls -d ../tests/*/.cov | xargs printf -- '-d %s\n'`
+# We do we have different logic for Darwin here? Proly have to look in ../tests/run_test...
 ifeq ($(OS),Darwin)
 SYSTEM_TEST_COVERAGE_FILES = `find ../tests -name coverage.info | xargs stat -f "%N %z" | grep -v " 0" | awk '{print $$1}' | xargs printf -- '-a %s\n'`
 else
@@ -423,10 +414,10 @@ watch-for-unittests:
 watch-for-systemtests:
 	watchexec --no-vcs-ignore -e done -- execnotify -t Systemtests make -j$(JOBS) system-tests
 
-system-tests:
-	$(MAKE) -e build
+system-tests: c-xref
 	$(MAKE) -e test
-	$(MAKE) coverage
+	$(MAKE) -e merge-gcda-from-tests
+	$(MAKE) -e gcov
 
 #########################################################################
 #
@@ -540,3 +531,12 @@ $(eval $(call UNITTEST,xref,memory log protocol))
 $(eval $(call UNITTEST,yylex,memory stackmemory protocol log position filedescriptor id filetable hash symboltable macroargumenttable symbol lexembuffer stringlist))
 
 .PHONY : $(PHONY)
+
+variables:
+	@echo LCOV = $(LCOV)
+	@echo HAVE_LCOV2 = $(HAVE_LCOV2)
+	@echo GCOV = $(GCOV)
+	@echo HAVE_GCOV_TOOL = $(HAVE_GCOV_TOOL)
+	@echo GCOV_TOOL = $(GCOV_TOOL)
+	@echo HAVE_INFO2GCOV = $(HAVE_INFO2GCOV)
+	@echo SYSTEM_TEST_COVERAGE_FILES = $(SYSTEM_TEST_COVERAGE_FILES)
