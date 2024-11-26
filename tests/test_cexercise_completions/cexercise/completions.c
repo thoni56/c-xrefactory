@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <assert.h>
+#define xxxx(a) a*a
 
 /*
   Check completion on following demonstration lines!  Each
@@ -33,7 +33,7 @@ void completions() {
     ;
 
     // completion list
-    a
+    x
     ;
     /* In the proposals list:
          <return>            - select the completion.
@@ -62,7 +62,7 @@ void completions() {
     ;
 
     // macro names completions
-    ass
+    xxx
     ;
 
 

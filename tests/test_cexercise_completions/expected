@@ -26,10 +26,10 @@ end-of-options
 end-of-options
 
 <sync>
-<all-completions nofocus=0 len=<n>>asprintf  :int asprintf(__ERROR__, __ERROR__, ...)
-assert    :#define assert(expr)
-auto      :keyword
-asm       :keyword</all-completions>
+<goto>
+ <position-lc line=36 col=4 len=<n>>CURDIR/cexercise/completions.c</position-lc>
+</goto>
+<single-completion len=<n>>xxxx</single-completion>
 -xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=1689 CURDIR/cexercise/completions.c
 end-of-options
 
@@ -72,7 +72,7 @@ end-of-options
 <goto>
 <position-lc line=65 col=4 len=<n>>CURDIR/cexercise/completions.c</position-lc>
 </goto>
-<single-completion len=<n>>assert</single-completion>
+<single-completion len=<n>>xxxx</single-completion>
 -xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=1936 CURDIR/cexercise/completions.c
 end-of-options
 
