@@ -26,7 +26,6 @@
 Describe(Editor);
 BeforeEach(Editor) {
     log_set_level(LOG_ERROR);
-    olcxMemoryInit();
 }
 AfterEach(Editor) {}
 

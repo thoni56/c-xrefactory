@@ -10,9 +10,6 @@
 
 jmp_buf memoryResizeJumpTarget;
 
-int olcxMemoryAllocatedBytes;
-
-
 
 /* Dynamic memory */
 Memory *cxMemory=NULL;
@@ -153,35 +150,12 @@ bool isFreedCxMemory(void *pointer) {
 }
 
 /* OLCX */
-void olcxMemoryInit(void) {
-    olcxMemoryAllocatedBytes = 0;
-}
-
-protected void *olcxSoftAllocc(int count, size_t elementSize) {
-    int size = count*elementSize;
-    if (size+olcxMemoryAllocatedBytes > SIZE_olcxMemory) {
-        return NULL;
-    } else {
-        olcxMemoryAllocatedBytes += size;
-        return malloc(size);
-    }
-}
-
-static void *olcxAllocc(int count, size_t elementSize) {
-    void *pointer = olcxSoftAllocc(count, elementSize);
-    if (pointer==NULL) {
-        fatalMemoryError(ERR_ST, "olcxMemory memory overflow, please try again.", XREF_EXIT_ERR, __FILE__, __LINE__);
-    }
-    return pointer;
-}
-
 void *olcxAlloc(size_t size) {
-    return olcxAllocc(1, size);
+    return malloc(size);
 }
 
 
 void olcxFree(void *pointer, size_t size) {
-    olcxMemoryAllocatedBytes -= size;
     free(pointer);
 }
 

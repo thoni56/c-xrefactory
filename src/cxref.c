@@ -396,7 +396,6 @@ void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
 }
 
 void olcxInit(void) {
-    olcxMemoryInit();
 }
 
 
@@ -2307,7 +2306,6 @@ void answerEditAction(void) {
 
     fflush(communicationChannel);
     inputFileName = NULL;
-    //&RLM_FREE_COUNT(olcxMemory);
     LEAVE();
 }
 

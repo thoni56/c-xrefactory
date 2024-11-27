@@ -2,6 +2,7 @@
 #include <cgreen/constraint_syntax_helpers.h>
 
 #include "commons.h"
+#include "constants.h"
 #include "log.h"
 #include "memory.h"
 
@@ -87,25 +88,6 @@ Ensure(Memory, has_functions_that_can_replace_DM_macros) {
     assert_that(memory.index, is_equal_to(sizeof(*variablep)));
 }
 
-protected void *olcxSoftAllocc(int count, size_t size);
-
-Ensure(Memory, can_handle_olcx_memory) {
-    char *pointer;
-    olcxMemoryAllocatedBytes = 42;
-
-    olcxMemoryInit();
-    assert_that(olcxMemoryAllocatedBytes, is_equal_to(0));
-
-    pointer = NULL;
-    pointer = olcxSoftAllocc(1, sizeof(char));
-    assert_that(pointer, is_not_null);
-
-    olcxFree(pointer, sizeof(*pointer));
-
-    pointer = NULL;
-    pointer = olcxAlloc(sizeof(char));
-    assert_that(pointer, is_not_null);
-}
 
 #define SIZE_testMemory 12
 
