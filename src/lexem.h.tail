@@ -1,0 +1,7 @@
+} LexemCode;
+
+extern char *lexemEnumNames[];
+
+extern void initLexemEnumNames(void);
+
+#endif

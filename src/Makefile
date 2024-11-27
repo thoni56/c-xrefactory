@@ -289,29 +289,20 @@ check-tokens: c_parser.tokens yacc_parser.tokens
 
 # Create an enum of the %token define's in c_parser.tab.h so that
 # we don't need to use c_parser.tab.h to define tokens
-lexem.h: c_parser.tab.h character_lexems.txt Makefile
-	echo "#ifndef LEXEM_H_INCLUDED" > lexem.h.tmp
-	echo "#define LEXEM_H_INCLUDED" >> lexem.h.tmp
-	echo >> lexem.h.tmp
-	echo "/**** DO NOT EDIT - generated from c_parser.tab.h & character_lexems.txt by Makefile ****/" >> lexem.h.tmp
-	echo >> lexem.h.tmp
-	echo "typedef enum LexemCode {" >> lexem.h.tmp
-	cat character_lexems.txt >> lexem.h.tmp
+lexem.h: lexem.h.head lexem.h.tail c_parser.tab.h character_lexems.txt Makefile
+	# Convert the non-character tokens to defines
 	# Standard BYACC (which does not work yet) defines YYSTYPE_IS_DECLARED in .tab.h which we don't want
-	grep define c_parser.tab.h | sed -e "s/#define \(.*\) \([0-9]*\)/\1 = \2,/" | grep -v YYSTYPE_IS_DECLARED >> lexem.h.tmp
-	echo "} LexemCode;" >> lexem.h.tmp
-	echo >> lexem.h.tmp
-	echo "extern char *lexemEnumNames[];" >> lexem.h.tmp
-	echo >> lexem.h.tmp
-	echo "extern void initLexemEnumNames(void);" >> lexem.h.tmp
-	echo >> lexem.h.tmp
-	echo "#endif" >> lexem.h.tmp
-	# Sanity check for content, otherwise yacc errored out probably
-	if grep " = " lexem.h.tmp > /dev/null ; then \
-		cmp lexem.h.tmp lexem.h || mv lexem.h.tmp lexem.h && rm lexem.h.tmp ; \
-	else \
-		rm lexem.h.tmp ; \
-	fi
+	grep define c_parser.tab.h | sed -e "s/#define \(.*\) \([0-9]*\)/\1 = \2,/" | grep -v YYSTYPE_IS_DECLARED > lexem.h.tab
+	# Combine the parts into a temporary file
+	cat lexem.h.head character_lexems.txt lexem.h.tab lexem.h.tail > lexem.h.tmp
+	# Temporary fix
+	mv lexem.h.tmp lexem.h
+	# Sanity check for content, in case yacc errored out
+	#if grep " = " lexem.h.tmp > /dev/null ; then \
+	#	cmp lexem.h.tmp lexem.h || mv lexem.h.tmp lexem.h && rm lexem.h.tmp ; \
+	#else \
+	#	rm lexem.h.tmp ; \
+	#fi
 
 # Generate an init function for lexem names from lexem.h
 lexem.c: lexem.h Makefile
