@@ -106,9 +106,7 @@ ifeq ($(OS),Darwin)
 #		# And for Homebrew on M1
 #		CC=cc
 #	endif
-# But we'd rather go with Apple Clang and generate fat binaries
-  CFLAGS += -arch arm64 -arch x86_64
-  LDFLAGS += -arch arm64 -arch x86_64
+# But we'd rather go with Apple Clang
 endif
 
 # We need to use compatible gcov (for Darwin/Brew with Homebrew gcc-14 we need to use GCC:s gcov)
