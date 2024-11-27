@@ -37,11 +37,12 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
 
 static void renameCollationSymbols(SymbolsMenu *menu) {
     int                 len,len1;
-    char                *nn, *cs;
+    char                *cs;
     assert(menu);
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
         cs = strchr(m->references.linkName, LINK_NAME_COLLATE_SYMBOL);
         if (cs!=NULL && m->references.type==TypeCppCollate) {
+            char *nn;
             len = strlen(m->references.linkName);
             assert(len>=2);
             nn = olcxAlloc(len-1);

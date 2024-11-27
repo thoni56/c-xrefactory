@@ -17,7 +17,7 @@ Some useful commands:
 
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
-
+* DOING Refactor to remove olcx-memory allocation from memory.c
 * TODO FEATURE: New refactoring: move function for C
 ** DONE Pick-up pieces from Java version and hack them into a preliminary version
 ** DONE Accept target position
