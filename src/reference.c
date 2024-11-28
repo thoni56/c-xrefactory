@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 
-#include "cxfile.h"
 #include "filetable.h"
 #include "list.h"
 #include "log.h"
