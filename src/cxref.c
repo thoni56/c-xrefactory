@@ -36,22 +36,20 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
 }
 
 static void renameCollationSymbols(SymbolsMenu *menu) {
-    int                 len,len1;
-    char                *cs;
     assert(menu);
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
-        cs = strchr(m->references.linkName, LINK_NAME_COLLATE_SYMBOL);
+        char *cs = strchr(m->references.linkName, LINK_NAME_COLLATE_SYMBOL);
         if (cs!=NULL && m->references.type==TypeCppCollate) {
-            char *nn;
-            len = strlen(m->references.linkName);
+            char *newName;
+            int len = strlen(m->references.linkName);
             assert(len>=2);
-            nn = olcxAlloc(len-1);
-            len1 = cs-m->references.linkName;
-            strncpy(nn, m->references.linkName, len1);
-            strcpy(nn+len1, cs+2);
-            log_debug("renaming %s to %s", m->references.linkName, nn);
+            newName = olcxAlloc(len-1);
+            int len1 = cs-m->references.linkName;
+            strncpy(newName, m->references.linkName, len1);
+            strcpy(newName+len1, cs+2);
+            log_debug("renaming %s to %s", m->references.linkName, newName);
             olcxFree(m->references.linkName, len+1);
-            m->references.linkName = nn;
+            m->references.linkName = newName;
         }
     }
 }
