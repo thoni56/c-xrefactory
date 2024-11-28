@@ -96,15 +96,15 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     return completion;
 }
 
-static void olcxFreeCompletion(Completion *r) {
-    olcxFree(r->name, strlen(r->name)+1);
-    if (r->fullName!=NULL)
-        olcxFree(r->fullName, strlen(r->fullName)+1);
-    if (r->category == CategoryGlobal) {
-        assert(r->sym.linkName);
-        olcxFree(r->sym.linkName, strlen(r->sym.linkName)+1);
+protected void olcxFreeCompletion(Completion *completion) {
+    olcxFree(completion->name, strlen(completion->name)+1);
+    if (completion->fullName!=NULL)
+        olcxFree(completion->fullName, strlen(completion->fullName)+1);
+    if (completion->category == CategoryGlobal) {
+        assert(completion->sym.linkName);
+        olcxFree(completion->sym.linkName, strlen(completion->sym.linkName)+1);
     }
-    olcxFree(r, sizeof(Completion));
+    olcxFree(completion, sizeof(Completion));
 }
 
 
