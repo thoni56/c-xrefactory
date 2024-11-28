@@ -758,7 +758,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
 
     ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem;
     lastIncomingData.referenceItem = referenceItem;
-    fillReferenceItem(referenceItem, id, vApplClass, symbolType, storage, ScopeGlobal, GlobalVisibility);
+    fillReferenceItem(referenceItem, id, vApplClass, symbolType, storage, GlobalScope, GlobalVisibility);
 
     ReferenceItem *memb;
     if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
@@ -767,7 +767,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
         strcpy(ss,id);
         memb = cxAlloc(sizeof(ReferenceItem));
         fillReferenceItem(memb, ss, vApplClass, symbolType, storage,
-                          ScopeGlobal, GlobalVisibility);
+                          GlobalScope, GlobalVisibility);
         addToReferencesTable(memb);
     }
     lastIncomingData.referenceItem = memb;
@@ -834,7 +834,7 @@ static void scanFunction_SymbolName(int size,
 
     ReferenceItem *referencesItem = &lastIncomingData.cachedReferenceItem;
     lastIncomingData.referenceItem = referencesItem;
-    fillReferenceItem(referencesItem, id, vApplClass, symbolType, storage, ScopeGlobal, GlobalVisibility);
+    fillReferenceItem(referencesItem, id, vApplClass, symbolType, storage, GlobalScope, GlobalVisibility);
 
     ReferenceItem *member;
     bool isMember = isMemberInReferenceTable(referencesItem, NULL, &member);

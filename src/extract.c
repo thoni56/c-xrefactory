@@ -394,7 +394,7 @@ static bool areThereJumpsInOrOutOfBlock(ProgramGraphNode *program) {
 static bool isLocalVariable(ProgramGraphNode *node) {
     return node->ref->usage.kind==UsageDefined
         &&  node->symRef->type==TypeDefault
-        &&  node->symRef->scope==ScopeAuto;
+        &&  node->symRef->scope==AutoScope;
 }
 
 static void classifyLocalVariables(ProgramGraphNode *program) {

@@ -1162,7 +1162,7 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
     SymbolsMenu     *res;
     ReferenceItem     ss;
 
-    fillReferenceItem(&ss, fieldName, cfi, TypeDefault, storage, ScopeGlobal, GlobalVisibility);
+    fillReferenceItem(&ss, fieldName, cfi, TypeDefault, storage, GlobalScope, GlobalVisibility);
     res = olCreateNewMenuItem(&ss, ss.vApplClass, ss.vApplClass, &noPosition, UsageNone,
                               1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
                               UsageUsed, 0);

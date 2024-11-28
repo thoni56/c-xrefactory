@@ -1828,7 +1828,7 @@ static void addMacroBaseUsageRef(Symbol *macroSymbol) {
 
     basePos = makePosition(inputFileNumber, 0, 0);
     fillReferenceItem(&ppp, macroSymbol->linkName,
-                      NO_FILE_NUMBER, TypeMacro, StorageDefault, ScopeGlobal, GlobalVisibility);
+                      NO_FILE_NUMBER, TypeMacro, StorageDefault, GlobalScope, GlobalVisibility);
     isMember = isMemberInReferenceTable(&ppp, NULL, &memb);
     r = NULL;
     if (isMember) {

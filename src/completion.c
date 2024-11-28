@@ -70,7 +70,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         Reference r = *reference;
         r.next = NULL;
         fillReferenceItem(&sri, "", NO_FILE_NUMBER, TypeUnknown, StorageDefault,
-                          ScopeAuto, LocalVisibility);
+                          AutoScope, LocalVisibility);
         completion = newCompletion(name, fullName, 1, LocalVisibility, cType, r, sri);
     } else {
         Reference r;

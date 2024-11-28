@@ -3,10 +3,10 @@
 
 
 typedef enum referenceScope {
-    ScopeDefault,
-    ScopeGlobal,
-    ScopeFile,
-    ScopeAuto,
+    DefaultScope,
+    GlobalScope,
+    FileScope,
+    AutoScope,
     MAX_SCOPES
 } ReferenceScope;
 
