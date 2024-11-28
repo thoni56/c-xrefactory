@@ -21,14 +21,14 @@ protected Completion *newCompletion(char *name, char *fullName,
     Completion *completion = olcxAlloc(sizeof(Completion));
 
     if (name != NULL) {
-        char *nameCopy = olcxAlloc(strlen(name)+1);
+        char *nameCopy = strdup(name);
         strcpy(nameCopy, name);
         completion->name = nameCopy;
     } else
         completion->name = NULL;
 
     if (fullName != NULL) {
-        char *fullNameCopy = olcxAlloc(strlen(fullName)+1);
+        char *fullNameCopy = strdup(fullName);
         strcpy(fullNameCopy, fullName);
         completion->fullName = fullNameCopy;
     } else
