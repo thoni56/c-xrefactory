@@ -398,11 +398,11 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
                        lastOutgoingData.cachedSymbolName,
                        referenceItem->vApplClass, referenceItem->type,
                        referenceItem->storage, referenceItem->scope,
-                       referenceItem->category);
+                       referenceItem->visibility);
     lastOutgoingData.referenceItem   = &lastOutgoingData.cachedReferenceItem;
     lastOutgoingData.symbolIsWritten = false;
 
-    if (referenceItem->category == CategoryLocal)
+    if (referenceItem->visibility == LocalVisibility)
         return;
 
     for (Reference *reference = referenceItem->references; reference != NULL; reference = reference->next) {
@@ -512,7 +512,7 @@ static void writePartialReferenceFile(bool updateFlag,
 static void writeReferencesFromMemoryIntoRefFileNo(int fileOrder) {
     for (int i=getNextExistingReferenceItem(0); i != -1; i = getNextExistingReferenceItem(i+1)) {
         for (ReferenceItem *r=getReferenceItem(i); r!=NULL; r=r->next) {
-            if (r->category == CategoryLocal)
+            if (r->visibility == LocalVisibility)
                 continue;
             if (r->references == NULL)
                 continue;
@@ -758,7 +758,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
 
     ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem;
     lastIncomingData.referenceItem = referenceItem;
-    fillReferenceItem(referenceItem, id, vApplClass, symbolType, storage, ScopeGlobal, CategoryGlobal);
+    fillReferenceItem(referenceItem, id, vApplClass, symbolType, storage, ScopeGlobal, GlobalVisibility);
 
     ReferenceItem *memb;
     if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
@@ -767,7 +767,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
         strcpy(ss,id);
         memb = cxAlloc(sizeof(ReferenceItem));
         fillReferenceItem(memb, ss, vApplClass, symbolType, storage,
-                          ScopeGlobal, CategoryGlobal);
+                          ScopeGlobal, GlobalVisibility);
         addToReferencesTable(memb);
     }
     lastIncomingData.referenceItem = memb;
@@ -834,11 +834,11 @@ static void scanFunction_SymbolName(int size,
 
     ReferenceItem *referencesItem = &lastIncomingData.cachedReferenceItem;
     lastIncomingData.referenceItem = referencesItem;
-    fillReferenceItem(referencesItem, id, vApplClass, symbolType, storage, ScopeGlobal, CategoryGlobal);
+    fillReferenceItem(referencesItem, id, vApplClass, symbolType, storage, ScopeGlobal, GlobalVisibility);
 
     ReferenceItem *member;
     bool isMember = isMemberInReferenceTable(referencesItem, NULL, &member);
-    while (isMember && member->category!=CategoryGlobal)
+    while (isMember && member->visibility!=GlobalVisibility)
         isMember = refTabNextMember(referencesItem, &member);
 
     assert(options.mode);

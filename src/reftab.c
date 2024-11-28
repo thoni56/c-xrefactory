@@ -14,7 +14,7 @@ static ReferenceTable referenceTable;
 static bool equalReferenceItems(ReferenceItem *e1, ReferenceItem *e2) {
     return e1->type==e2->type
         && e1->storage==e2->storage
-        && e1->category==e2->category
+        && e1->visibility==e2->visibility
         && e1->vApplClass==e2->vApplClass
         && strcmp(e1->linkName, e2->linkName)==0;
 }

@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 
-#include "category.h"
+#include "visibility.h"
 #include "stackmemory.h"
 #include "scope.h"
 #include "storage.h"
@@ -76,10 +76,11 @@ Symbol *newSymbolAsLabel(char *name, char *linkName, Position pos, int labelInde
     return s;
 }
 
-void getSymbolCxrefProperties(Symbol *symbol, ReferenceCategory *categoryP, ReferenceScope *scopeP, Storage *storageP) {
-    int category, scope, storage;
+void getSymbolCxrefProperties(Symbol *symbol, ReferenceVisibility *visibilityP, ReferenceScope *scopeP,
+                              Storage *storageP) {
+    int visibility, scope, storage;
 
-    category = CategoryLocal; scope = ScopeAuto; storage=StorageAuto;
+    visibility = LocalVisibility; scope = AutoScope; storage=StorageAuto;
     /* default */
     if (symbol->type==TypeDefault) {
         storage = symbol->storage;
@@ -91,42 +92,42 @@ void getSymbolCxrefProperties(Symbol *symbol, ReferenceCategory *categoryP, Refe
         ) {
             if (symbol->linkName[0]==' ' && symbol->linkName[1]==' ') {
                 // a special symbol local linkname
-                category = CategoryLocal;
+                visibility = LocalVisibility;
             } else {
-                category = CategoryGlobal;
+                visibility = GlobalVisibility;
             }
-            scope = ScopeGlobal;
+            scope = GlobalScope;
         }
     }
     /* enumeration constants */
     if (symbol->type==TypeDefault && symbol->storage==StorageConstant) {
-        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
+        visibility = GlobalVisibility;  scope = GlobalScope; storage=StorageExtern;
     }
     /* struct, union, enum */
     if ((symbol->type==TypeStruct||symbol->type==TypeUnion||symbol->type==TypeEnum)){
-        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
+        visibility = GlobalVisibility;  scope = GlobalScope; storage=StorageExtern;
     }
     /* macros */
     if (symbol->type == TypeMacro) {
-        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
+        visibility = GlobalVisibility;  scope = GlobalScope; storage=StorageExtern;
     }
     if (symbol->type == TypeLabel) {
-        category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
+        visibility = LocalVisibility; scope = FileScope; storage=StorageStatic;
     }
     if (symbol->type == TypeCppIfElse) {
-        category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
+        visibility = LocalVisibility; scope = FileScope; storage=StorageStatic;
     }
     if (symbol->type == TypeCppInclude) {
-        category = CategoryGlobal; scope = ScopeGlobal; storage=StorageExtern;
+        visibility = GlobalVisibility; scope = GlobalScope; storage=StorageExtern;
     }
     if (symbol->type == TypeCppCollate) {
-        category = CategoryGlobal; scope = ScopeGlobal; storage=StorageExtern;
+        visibility = GlobalVisibility; scope = GlobalScope; storage=StorageExtern;
     }
     if (symbol->type == TypeYaccSymbol) {
-        category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
+        visibility = LocalVisibility; scope = FileScope; storage=StorageStatic;
     }
 
-    *categoryP = category;
+    *visibilityP = visibility;
     *scopeP = scope;
     *storageP = storage;
 }

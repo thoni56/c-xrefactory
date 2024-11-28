@@ -1,7 +1,7 @@
 #ifndef COMPLETION_H_INCLUDED
 #define COMPLETION_H_INCLUDED
 
-#include "category.h"
+#include "visibility.h"
 #include "reference.h"
 #include "symbol.h"
 #include "type.h"
@@ -14,11 +14,11 @@ typedef struct completion {
     char                 *name;
     char                 *fullName;
     short int             lineCount;
-    ReferenceCategory     category; /* Global/Local TODO: enum!*/
+    ReferenceVisibility   visibility; /* Global/Local */
     Type                  csymType; /* symtype of completion */
     struct reference      ref;
-    struct referenceItem sym;
-    struct completion  *next;
+    struct referenceItem  sym;
+    struct completion    *next;
 } Completion;
 
 typedef struct completionLine {

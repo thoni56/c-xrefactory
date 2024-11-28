@@ -53,7 +53,7 @@ void symbolRefItemDump(ReferenceItem *s) {
               s->linkName,
               getFileItem(s->vApplClass)->name,
               s->type, s->storage, s->scope,
-              s->category);
+              s->visibility);
 }
 
 /* *********************************************************************** */

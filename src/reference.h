@@ -1,7 +1,7 @@
 #ifndef REFERENCE_H_INCLUDED
 #define REFERENCE_H_INCLUDED
 
-#include "category.h"
+#include "visibility.h"
 #include "position.h"
 #include "scope.h"
 #include "storage.h"
@@ -30,14 +30,15 @@ typedef struct referenceItem {
     Type                      type : SYMTYPES_LN;
     Storage                   storage : STORAGES_LN;
     ReferenceScope            scope : SCOPES_LN;
-    ReferenceCategory         category : 2;     /* local/global */
+    ReferenceVisibility       visibility : 2;     /* local/global */
     struct reference         *references;
     struct referenceItem     *next; /* TODO: Link only for hashlist? */
 } ReferenceItem;
 
 
 extern void fillReference(Reference *reference, Usage usage, Position position, Reference *next);
-extern void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass, Type symType, Storage storage, ReferenceScope scope, ReferenceCategory category);
+extern void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass, Type symType,
+                              Storage storage, ReferenceScope scope, ReferenceVisibility visibility);
 extern Reference *duplicateReference(Reference *r);
 extern void freeReferences(Reference *references);
 extern void resetReferenceUsage(Reference *reference, UsageKind usageKind);

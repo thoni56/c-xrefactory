@@ -1553,7 +1553,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     EditorMarkerList *markerList = getReferences(point, NULL, PPCV_BROWSER_TYPE_WARNING);
     SymbolsMenu *menu = sessionData.browserStack.top->hkSelectedSym;
     ReferenceScope scope = menu->references.scope;
-    ReferenceCategory cat = menu->references.category;
+    ReferenceVisibility cat = menu->references.visibility;
 
     if (markerList == NULL) {
         fileNumber = NO_FILE_NUMBER;
@@ -1572,7 +1572,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
         }
     }
 
-    if (cat == CategoryLocal) {
+    if (cat == LocalVisibility) {
         // useless to update when there is nothing about the symbol in Tags
         selectedUpdateOption = "";
     } else if (hasHeaderReferences) {

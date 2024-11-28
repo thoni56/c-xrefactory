@@ -15,7 +15,7 @@ Describe(Completion);
 BeforeEach(Completion) {}
 AfterEach(Completion) {}
 
-protected Completion *newCompletion(char *name, char *fullName, int lineCount, ReferenceCategory category,
+protected Completion *newCompletion(char *name, char *fullName, int lineCount, ReferenceVisibility visibility,
                                     Type csymType, struct reference ref, struct referenceItem sym);
 
 protected void olcxFreeCompletion(Completion *completion);
@@ -23,7 +23,7 @@ protected void olcxFreeCompletion(Completion *completion);
 Ensure(Completion, can_allocate_and_free_a_completion) {
     Reference ref;
     ReferenceItem item;
-    Completion *c = newCompletion("", "", 0, CategoryLocal, TypeInt, ref, item);
+    Completion *c = newCompletion("", "", 0, LocalVisibility, TypeInt, ref, item);
     olcxFreeCompletion(c);
 }
 

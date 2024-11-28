@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "category.h"
+#include "visibility.h"
 #include "filetable.h"
 #include "list.h"
 #include "log.h"
@@ -16,7 +16,7 @@
 
 // Will create olcxAlloc():ed copies of name and fullName so caller don't have to
 protected Completion *newCompletion(char *name, char *fullName,
-                          int lineCount, ReferenceCategory category, Type csymType,
+                          int lineCount, ReferenceVisibility visibility, Type csymType,
                           struct reference ref, struct referenceItem sym) {
     Completion *completion = olcxAlloc(sizeof(Completion));
 
@@ -35,7 +35,7 @@ protected Completion *newCompletion(char *name, char *fullName,
         completion->fullName = NULL;
 
     completion->lineCount = lineCount;
-    completion->category = category;
+    completion->visibility = visibility;
     completion->csymType = csymType;
     completion->ref = ref;
     completion->sym = sym;
@@ -51,7 +51,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
                                   Reference *reference, int cType, int vApplClass) {
     Completion    *completion;
     char *ss;
-    ReferenceCategory category;
+    ReferenceVisibility visibility;
     ReferenceScope scope;
     Storage storage;
     int slen;
@@ -63,19 +63,19 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         ss = olcxAlloc(slen+1);
         strcpy(ss, referenceItem->linkName);
         fillReferenceItem(&sri, ss, referenceItem->vApplClass,
-                          referenceItem->type, referenceItem->storage, referenceItem->scope, referenceItem->category);
+                          referenceItem->type, referenceItem->storage, referenceItem->scope, referenceItem->visibility);
 
-        completion = newCompletion(name, fullName, 1, referenceItem->category, cType, *reference, sri);
+        completion = newCompletion(name, fullName, 1, referenceItem->visibility, cType, *reference, sri);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
         fillReferenceItem(&sri, "", NO_FILE_NUMBER, TypeUnknown, StorageDefault,
-                          ScopeAuto, CategoryLocal);
-        completion = newCompletion(name, fullName, 1, CategoryLocal, cType, r, sri);
+                          ScopeAuto, LocalVisibility);
+        completion = newCompletion(name, fullName, 1, LocalVisibility, cType, r, sri);
     } else {
         Reference r;
-        getSymbolCxrefProperties(symbol, &category, &scope, &storage);
-        log_trace(":adding sym '%s' %d", symbol->linkName, category);
+        getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
+        log_trace(":adding sym '%s' %d", symbol->linkName, visibility);
         slen = strlen(symbol->linkName);
         ss = olcxAlloc(slen+1);
         strcpy(ss, symbol->linkName);
@@ -83,8 +83,8 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         fillReference(&r, r.usage, symbol->pos, NULL);
         fillReferenceItem(&sri, ss,
                           vApplClass, symbol->type, storage,
-                          scope, category);
-        completion = newCompletion(name, fullName, 1, category, cType, r, sri);
+                          scope, visibility);
+        completion = newCompletion(name, fullName, 1, visibility, cType, r, sri);
     }
     if (fullName!=NULL) {
         for (int i=0; fullName[i]; i++) {
@@ -100,7 +100,7 @@ protected void olcxFreeCompletion(Completion *completion) {
     olcxFree(completion->name, strlen(completion->name)+1);
     if (completion->fullName!=NULL)
         olcxFree(completion->fullName, strlen(completion->fullName)+1);
-    if (completion->category == CategoryGlobal) {
+    if (completion->visibility == GlobalVisibility) {
         assert(completion->sym.linkName);
         olcxFree(completion->sym.linkName, strlen(completion->sym.linkName)+1);
     }

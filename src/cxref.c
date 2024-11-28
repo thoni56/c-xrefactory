@@ -1,7 +1,7 @@
 #include "cxref.h"
 
 #include "caching.h"
-#include "category.h"
+#include "visibility.h"
 #include "characterreader.h"
 #include "classhierarchy.h"
 #include "commons.h"
@@ -195,7 +195,7 @@ static bool olcxOnlyParseNoPushing(int opt) {
 /* ********************************************************************* */
 Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                              int vApplCl) {
-    ReferenceCategory category;
+    ReferenceVisibility visibility;
     ReferenceScope    scope;
     Storage           storage;
     UsageKind         defaultUsage;
@@ -220,11 +220,11 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
 
     FileItem *fileItem = getFileItem(position->file);
 
-    getSymbolCxrefProperties(symbol, &category, &scope, &storage);
+    getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
 
     log_trace("adding reference on %s(%d) at %d,%d,%d (%s) (%s) (%s)",
               symbol->linkName, vApplCl, position->file, position->line,
-              position->col, category==CategoryGlobal?"Global":"Local",
+              position->col, visibility==GlobalVisibility?"Global":"Local",
               usageKindEnumName[usage.kind], storageEnumName[symbol->storage]);
 
     assert(options.mode);
@@ -234,7 +234,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
             if (inputFileNumber != currentFile.characterBuffer.fileNumber)
                 return NULL;
         } else {
-            if (category==CategoryGlobal && symbol->type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
+            if (visibility==GlobalVisibility && symbol->type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
                 if (olOriginalFileNumber != position->file && options.noIncludeRefs)
                     return NULL;
@@ -245,7 +245,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         }
         break;
     case XrefMode:
-        if (category == CategoryLocal)
+        if (visibility == LocalVisibility)
             return NULL; /* dont cxref local symbols */
         if (!fileItem->cxLoading)
             return NULL;
@@ -258,7 +258,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     ReferenceItem  referenceItem;
     ReferenceItem *foundMember;
 
-    fillReferenceItem(&referenceItem, symbol->linkName, vApplCl, symbol->type, storage, scope, category);
+    fillReferenceItem(&referenceItem, symbol->linkName, vApplCl, symbol->type, storage, scope, visibility);
     if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH && options.searchKind==SEARCH_FULL) {
         fillUsage(&reference.usage, usage.kind);
         fillReference(&reference, reference.usage, *position, NULL);
@@ -273,7 +273,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         strcpy(linkName, symbol->linkName);
         ReferenceItem *r = cxAlloc(sizeof(ReferenceItem));
         fillReferenceItem(r, linkName, vApplCl, symbol->type,
-                           storage, scope, category);
+                           storage, scope, visibility);
         pushReferenceItem(r, index);
         foundMember = r;
     }
@@ -994,7 +994,7 @@ static void olcxReferenceGotoCompletion(int refn) {
         return;
     completion = olCompletionNthLineRef(refs->completions, refn);
     if (completion != NULL) {
-        if (completion->category == CategoryLocal /*& || refs->command == OLO_TAG_SEARCH &*/) {
+        if (completion->visibility == LocalVisibility /*& || refs->command == OLO_TAG_SEARCH &*/) {
             if (completion->ref.usage.kind != UsageClassFileDefinition
                 && completion->ref.usage.kind != UsageClassTreeDefinition
                 && positionsAreNotEqual(completion->ref.position, noPosition)) {
@@ -1162,7 +1162,7 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
     SymbolsMenu     *res;
     ReferenceItem     ss;
 
-    fillReferenceItem(&ss, fieldName, cfi, TypeDefault, storage, ScopeGlobal, CategoryGlobal);
+    fillReferenceItem(&ss, fieldName, cfi, TypeDefault, storage, ScopeGlobal, GlobalVisibility);
     res = olCreateNewMenuItem(&ss, ss.vApplClass, ss.vApplClass, &noPosition, UsageNone,
                               1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
                               UsageUsed, 0);
@@ -1172,7 +1172,7 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
 bool isSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2) {
     if (p1 == p2)
         return true;
-    if (p1->category != p2->category)
+    if (p1->visibility != p2->visibility)
         return false;
     if (p1->type!=TypeCppCollate && p2->type!=TypeCppCollate && p1->type!=p2->type)
         return false;
@@ -1792,8 +1792,8 @@ static bool olMenuHashFileNumLess(SymbolsMenu *s1, SymbolsMenu *s2) {
     fi2 = cxFileHashNumber(s2->references.linkName);
     if (fi1 < fi2) return true;
     if (fi1 > fi2) return false;
-    if (s1->references.category == CategoryLocal) return true;
-    if (s1->references.category == CategoryLocal) return false;
+    if (s1->references.visibility == LocalVisibility) return true;
+    if (s1->references.visibility == LocalVisibility) return false;
     // both files and categories equals ?
     return false;
 }
@@ -2007,7 +2007,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceItem *ss) {
     bool used = false;
     Reference *definitionReference = NULL;
 
-    if (ss->category != CategoryLocal)
+    if (ss->visibility != LocalVisibility)
         return;
     for (Reference *r = ss->references; r!=NULL; r=r->next) {
         if (isDefinitionOrDeclarationUsage(r->usage.kind)) {
@@ -2359,7 +2359,7 @@ static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceItem *referenceItem) {
             goto fini;
         if (menu->references.storage != referenceItem->storage)
             goto fini;
-        if (menu->references.category != referenceItem->category)
+        if (menu->references.visibility != referenceItem->visibility)
             goto fini;
     }
     if (strcmp(menu->references.linkName,referenceItem->linkName)==0) {

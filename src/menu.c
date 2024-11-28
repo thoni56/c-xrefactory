@@ -96,7 +96,7 @@ SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int vApplClass, int vFun
 
     fillReferenceItem(&refItem, allocatedNameCopy, vApplClass,
                        symbol->type, symbol->storage, symbol->scope,
-                       symbol->category);
+                       symbol->visibility);
 
     symbolsMenu = olcxAlloc(sizeof(SymbolsMenu));
     fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage, vlevel, defusage, *defpos);
@@ -123,9 +123,9 @@ static bool referenceItemIsLess(ReferenceItem *s1, ReferenceItem *s2) {
         return true;
     else if (s1->storage > s2->storage)
         return false;
-    if (s1->category < s2->category)
+    if (s1->visibility < s2->visibility)
         return true;
-    else if (s1->category > s2->category)
+    else if (s1->visibility > s2->visibility)
         return false;
     return false;
 }
