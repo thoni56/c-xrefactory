@@ -1,6 +1,7 @@
 #ifndef COMPLETION_H_INCLUDED
 #define COMPLETION_H_INCLUDED
 
+#include "category.h"
 #include "reference.h"
 #include "symbol.h"
 #include "type.h"
@@ -13,7 +14,7 @@ typedef struct completion {
     char                 *name;
     char                 *fullName;
     short int             lineCount;
-    char                  category; /* Global/Local TODO: enum!*/
+    ReferenceCategory     category; /* Global/Local TODO: enum!*/
     Type                  csymType; /* symtype of completion */
     struct reference      ref;
     struct referenceItem sym;

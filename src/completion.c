@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "category.h"
 #include "filetable.h"
 #include "list.h"
 #include "log.h"
@@ -14,8 +15,8 @@
 
 
 // Will create olcxAlloc():ed copies of name and fullName so caller don't have to
-static Completion *newCompletion(char *name, char *fullName,
-                          int lineCount, char category, char csymType,
+protected Completion *newCompletion(char *name, char *fullName,
+                          int lineCount, ReferenceCategory category, Type csymType,
                           struct reference ref, struct referenceItem sym) {
     Completion *completion = olcxAlloc(sizeof(Completion));
 
