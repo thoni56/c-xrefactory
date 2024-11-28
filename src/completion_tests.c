@@ -8,6 +8,7 @@
 #include "options.mock"
 #include "reference.mock"
 #include "symbol.mock"
+#include "type.h"
 
 
 Describe(Completion);
@@ -19,9 +20,17 @@ protected Completion *newCompletion(char *name, char *fullName, int lineCount, R
 
 protected void olcxFreeCompletion(Completion *completion);
 
-Ensure(Completion, can_allocate_and_free_completions) {
+Ensure(Completion, can_allocate_and_free_a_completion) {
     Reference ref;
     ReferenceItem item;
     Completion *c = newCompletion("", "", 0, CategoryLocal, TypeInt, ref, item);
     olcxFreeCompletion(c);
+}
+
+Ensure(Completion, can_allocate_and_free_completions) {
+    Reference ref;
+    Completion *l = completionListPrepend(NULL, "", "", NULL, NULL, &ref, TypeInt, 0);
+    l = completionListPrepend(l, "", "", NULL, NULL, &ref, TypeInt, 0);
+
+    olcxFreeCompletions(l);
 }
