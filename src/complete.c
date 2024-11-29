@@ -238,7 +238,8 @@ void printCompletions(Completions *completions) {
         sprintFullCompletionInfo(completions, ii, indent);
         Reference ref;
         sessionData.completionsStack.top->completions = completionListPrepend(
-            sessionData.completionsStack.top->completions, completions->alternatives[ii].string, ppcTmpBuff, completions->alternatives[ii].symbol, NULL, &ref, completions->alternatives[ii].symbolType,
+            sessionData.completionsStack.top->completions, completions->alternatives[ii].string, ppcTmpBuff,
+            completions->alternatives[ii].symbol, NULL, &ref, completions->alternatives[ii].symbolType,
             NO_FILE_NUMBER);
     }
     olCompletionListReverse();
