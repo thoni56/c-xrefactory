@@ -30,7 +30,7 @@ typedef struct referenceItem {
     Type                      type : SYMTYPES_LN;
     Storage                   storage : STORAGES_LN;
     ReferenceScope            scope : SCOPES_LN;
-    ReferenceVisibility       visibility : 2;     /* local/global */
+    Visibility                visibility : 2;     /* local/global */
     struct reference         *references;
     struct referenceItem     *next; /* TODO: Link only for hashlist? */
 } ReferenceItem;
@@ -38,7 +38,7 @@ typedef struct referenceItem {
 
 extern void fillReference(Reference *reference, Usage usage, Position position, Reference *next);
 extern void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass, Type symType,
-                              Storage storage, ReferenceScope scope, ReferenceVisibility visibility);
+                              Storage storage, ReferenceScope scope, Visibility visibility);
 extern Reference *duplicateReference(Reference *r);
 extern void freeReferences(Reference *references);
 extern void resetReferenceUsage(Reference *reference, UsageKind usageKind);

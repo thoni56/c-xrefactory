@@ -14,7 +14,7 @@ typedef struct completion {
     char                 *name;
     char                 *fullName;
     short int             lineCount;
-    ReferenceVisibility   visibility; /* Global/Local */
+    Visibility            visibility; /* Global/Local */
     Type                  csymType; /* symtype of completion */
     struct reference      ref;
     struct referenceItem  sym;

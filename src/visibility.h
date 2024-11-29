@@ -1,12 +1,12 @@
-#ifndef CATEGERORY_H_INCLUDED
-#define CATEGERORY_H_INCLUDED
+#ifndef VISIBILITY_H_INCLUDED
+#define VISIBILITY_H_INCLUDED
 
 
-typedef enum referenceVisibility {
+typedef enum visibility {
     GlobalVisibility,
     LocalVisibility,
     MAX_VISIBILITY
-} ReferenceVisibility;
+} Visibility;
 
 
 #endif

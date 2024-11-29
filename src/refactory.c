@@ -1553,7 +1553,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     EditorMarkerList *markerList = getReferences(point, NULL, PPCV_BROWSER_TYPE_WARNING);
     SymbolsMenu *menu = sessionData.browserStack.top->hkSelectedSym;
     ReferenceScope scope = menu->references.scope;
-    ReferenceVisibility cat = menu->references.visibility;
+    Visibility cat = menu->references.visibility;
 
     if (markerList == NULL) {
         fileNumber = NO_FILE_NUMBER;

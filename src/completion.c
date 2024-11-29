@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "visibility.h"
 #include "filetable.h"
 #include "list.h"
 #include "log.h"
@@ -15,8 +14,8 @@
 
 // Will create olcxAlloc():ed copies of name and fullName so caller don't have to
 protected Completion *newCompletion(char *name, char *fullName,
-                          int lineCount, ReferenceVisibility visibility, Type csymType,
-                          struct reference ref, struct referenceItem sym) {
+                                    int lineCount, Visibility visibility, Type csymType,
+                                    struct reference ref, struct referenceItem sym) {
     Completion *completion = malloc(sizeof(Completion));
 
     if (name != NULL) {
@@ -46,7 +45,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
                                   Reference *reference, Type cType, int vApplClass) {
     Completion *completion;
     char *linkName;
-    ReferenceVisibility visibility;
+    Visibility visibility;
     ReferenceScope scope;
     Storage storage;
     ReferenceItem sri;

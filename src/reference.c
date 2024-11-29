@@ -29,7 +29,7 @@ Reference *duplicateReference(Reference *original) {
 
 void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass,
                        Type symType, Storage storage, ReferenceScope scope,
-                       ReferenceVisibility visibility) {
+                       Visibility visibility) {
     referencesItem->linkName = name;
     referencesItem->vApplClass = vApplClass;
     referencesItem->references = NULL;

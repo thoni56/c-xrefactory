@@ -17,7 +17,7 @@ Describe(Completion);
 BeforeEach(Completion) {}
 AfterEach(Completion) {}
 
-protected Completion *newCompletion(char *name, char *fullName, int lineCount, ReferenceVisibility visibility,
+protected Completion *newCompletion(char *name, char *fullName, int lineCount, Visibility visibility,
                                     Type csymType, struct reference ref, struct referenceItem sym);
 
 protected void freeCompletion(Completion *completion);

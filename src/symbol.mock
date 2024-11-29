@@ -56,6 +56,6 @@ extern Symbol makeSymbol(char *name, char *linkName, Position pos) {
     return symbol;
 }
 
-void getSymbolCxrefProperties(Symbol *symbol, ReferenceVisibility *categoryP, ReferenceScope *scopeP, Storage *storageP) {
+void getSymbolCxrefProperties(Symbol *symbol, Visibility *categoryP, ReferenceScope *scopeP, Storage *storageP) {
     mock(symbol, categoryP, scopeP, storageP);
 }
