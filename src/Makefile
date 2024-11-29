@@ -407,6 +407,7 @@ system-tests: c-xref
 	$(MAKE) -e test
 	$(MAKE) -e merge-gcda-from-tests
 	$(MAKE) -e gcov
+	@$(MAKE) -e cloc
 
 #########################################################################
 #
