@@ -11,7 +11,7 @@ void fillReference(Reference *reference, Usage usage, Position position,
 }
 
 void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass, Type symType, Storage storage,
-                       ReferenceScope scope, Visibility visibility) {
+                       Scope scope, Visibility visibility) {
     referencesItem->linkName = name;
     referencesItem->vApplClass = vApplClass;
     referencesItem->references = NULL;

@@ -46,7 +46,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     Completion *completion;
     char *linkName;
     Visibility visibility;
-    ReferenceScope scope;
+    Scope scope;
     Storage storage;
     ReferenceItem sri;
 

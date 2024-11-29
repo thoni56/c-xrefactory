@@ -76,7 +76,7 @@ Symbol *newSymbolAsLabel(char *name, char *linkName, Position pos, int labelInde
     return s;
 }
 
-void getSymbolCxrefProperties(Symbol *symbol, Visibility *visibilityP, ReferenceScope *scopeP,
+void getSymbolCxrefProperties(Symbol *symbol, Visibility *visibilityP, Scope *scopeP,
                               Storage *storageP) {
     int visibility, scope, storage;
 

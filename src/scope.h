@@ -2,12 +2,12 @@
 #define SCOPE_H_INCLUDED
 
 
-typedef enum referenceScope {
+typedef enum scope {
     DefaultScope,
     GlobalScope,
     FileScope,
     AutoScope,
     MAX_SCOPES
-} ReferenceScope;
+} Scope;
 
 #endif

@@ -1552,7 +1552,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     bool isMultiFileReferences = false;
     EditorMarkerList *markerList = getReferences(point, NULL, PPCV_BROWSER_TYPE_WARNING);
     SymbolsMenu *menu = sessionData.browserStack.top->hkSelectedSym;
-    ReferenceScope scope = menu->references.scope;
+    Scope scope = menu->references.scope;
     Visibility cat = menu->references.visibility;
 
     if (markerList == NULL) {

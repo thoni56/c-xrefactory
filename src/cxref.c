@@ -196,7 +196,7 @@ static bool olcxOnlyParseNoPushing(int opt) {
 Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                              int vApplCl) {
     Visibility        visibility;
-    ReferenceScope    scope;
+    Scope             scope;
     Storage           storage;
     UsageKind         defaultUsage;
     Reference         reference;
