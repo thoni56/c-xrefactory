@@ -3,12 +3,14 @@
 
 #include "completion.h"
 
-#include "filetable.mock"
-#include "cxfile.mock"
-#include "options.mock"
+#include "head.h"               /* For 'protected' */
+#include "type.h"
+
 #include "reference.mock"
 #include "symbol.mock"
-#include "type.h"
+
+#include "filetable.mock"       /* For NO_FILE_NUMBER */
+#include "options.mock"         /* For 'options' */
 
 
 Describe(Completion);
