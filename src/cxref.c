@@ -397,7 +397,7 @@ void olcxInit(void) {
 }
 
 
-static void freePopedBrowserStackItems(OlcxReferencesStack *stack) {
+static void freePoppedBrowserStackItems(OlcxReferencesStack *stack) {
     assert(stack);
     // delete all after top
     while (stack->root != stack->top) {
@@ -425,7 +425,7 @@ static OlcxReferences *pushOlcxReference(OlcxReferencesStack *stack) {
 
 void pushEmptySession(OlcxReferencesStack *stack) {
     OlcxReferences *res;
-    freePopedBrowserStackItems(stack);
+    freePoppedBrowserStackItems(stack);
     res = pushOlcxReference(stack);
     stack->top = stack->root = res;
 }
@@ -950,7 +950,7 @@ static void popSession(void) {
 
 static void popAndFreeSession(void) {
     popSession();
-    freePopedBrowserStackItems(&sessionData.browserStack);
+    freePoppedBrowserStackItems(&sessionData.browserStack);
 }
 
 static OlcxReferences *pushSession(void) {
