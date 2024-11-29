@@ -54,15 +54,12 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     ReferenceVisibility visibility;
     ReferenceScope scope;
     Storage storage;
-    int slen;
     ReferenceItem sri;
 
     if (referenceItem!=NULL) {
         // probably a 'search in tag' file item
-        slen = strlen(referenceItem->linkName);
-        ss = olcxAlloc(slen+1);
-        strcpy(ss, referenceItem->linkName);
-        fillReferenceItem(&sri, ss, referenceItem->vApplClass,
+        linkName = strdup(referenceItem->linkName);
+        fillReferenceItem(&sri, linkName, referenceItem->vApplClass,
                           referenceItem->type, referenceItem->storage, referenceItem->scope, referenceItem->visibility);
 
         completion = newCompletion(name, fullName, 1, referenceItem->visibility, cType, *reference, sri);
@@ -76,12 +73,10 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         Reference r;
         getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
         log_trace(":adding sym '%s' %d", symbol->linkName, visibility);
-        slen = strlen(symbol->linkName);
-        ss = olcxAlloc(slen+1);
-        strcpy(ss, symbol->linkName);
+        linkName = strdup(symbol->linkName);
         fillUsage(&r.usage, UsageDefined);
         fillReference(&r, r.usage, symbol->pos, NULL);
-        fillReferenceItem(&sri, ss,
+        fillReferenceItem(&sri, linkName,
                           vApplClass, symbol->type, storage,
                           scope, visibility);
         completion = newCompletion(name, fullName, 1, visibility, cType, r, sri);
