@@ -18,19 +18,15 @@
 protected Completion *newCompletion(char *name, char *fullName,
                           int lineCount, ReferenceVisibility visibility, Type csymType,
                           struct reference ref, struct referenceItem sym) {
-    Completion *completion = olcxAlloc(sizeof(Completion));
+    Completion *completion = malloc(sizeof(Completion));
 
     if (name != NULL) {
-        char *nameCopy = strdup(name);
-        strcpy(nameCopy, name);
-        completion->name = nameCopy;
+        completion->name = strdup(name);
     } else
         completion->name = NULL;
 
     if (fullName != NULL) {
-        char *fullNameCopy = strdup(fullName);
-        strcpy(fullNameCopy, fullName);
-        completion->fullName = fullNameCopy;
+        completion->fullName = strdup(fullName);
     } else
         completion->fullName = NULL;
 
