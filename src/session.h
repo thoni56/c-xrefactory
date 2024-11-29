@@ -7,7 +7,6 @@ typedef struct SessionData {
     OlcxReferencesStack	browserStack;
     OlcxReferencesStack	completionsStack;
     OlcxReferencesStack	retrieverStack;
-    ClassTreeData		classTree;
 } SessionData;
 
 

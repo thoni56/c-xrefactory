@@ -202,11 +202,6 @@ typedef struct olcxReferences {
     struct olcxReferences *previous;
 } OlcxReferences;
 
-typedef struct classTreeData {
-    int                 baseClassFileNumber;
-    struct SymbolsMenu *treeMenu;
-} ClassTreeData;
-
 typedef struct OlcxReferencesStack {
     OlcxReferences *top;
     OlcxReferences *root;
