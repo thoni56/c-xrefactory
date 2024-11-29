@@ -20,13 +20,13 @@ AfterEach(Completion) {}
 protected Completion *newCompletion(char *name, char *fullName, int lineCount, ReferenceVisibility visibility,
                                     Type csymType, struct reference ref, struct referenceItem sym);
 
-protected void olcxFreeCompletion(Completion *completion);
+protected void freeCompletion(Completion *completion);
 
 Ensure(Completion, can_allocate_and_free_a_completion) {
     Reference ref;
     ReferenceItem item;
     Completion *c = newCompletion("", "", 0, LocalVisibility, TypeInt, ref, item);
-    olcxFreeCompletion(c);
+    freeCompletion(c);
 }
 
 Ensure(Completion, can_allocate_and_free_completions) {
@@ -34,5 +34,5 @@ Ensure(Completion, can_allocate_and_free_completions) {
     Completion *l = completionListPrepend(NULL, "", "", NULL, NULL, &ref, TypeInt, 0);
     l = completionListPrepend(l, "", "", NULL, NULL, &ref, TypeInt, 0);
 
-    olcxFreeCompletions(l);
+    freeCompletions(l);
 }

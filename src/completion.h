@@ -43,7 +43,7 @@ typedef struct completions {
     int                   alternativeCount;
 } Completions;
 
-extern void olcxFreeCompletions(Completion *completions);
+extern void freeCompletions(Completion *completions);
 
 extern Completion *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *s,
                                          ReferenceItem *ri, Reference *dfpos, Type symType, int vApplClass);

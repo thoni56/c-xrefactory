@@ -362,7 +362,7 @@ static void deleteOlcxRefs(OlcxReferences **refsP, OlcxReferencesStack *stack) {
     OlcxReferences    *refs = *refsP;
 
     freeReferences(refs->references);
-    olcxFreeCompletions(refs->completions);
+    freeCompletions(refs->completions);
     freeSymbolsMenuList(refs->hkSelectedSym);
     freeSymbolsMenuList(refs->menuSym);
 

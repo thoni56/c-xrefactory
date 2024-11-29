@@ -87,7 +87,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     return completion;
 }
 
-protected void olcxFreeCompletion(Completion *completion) {
+protected void freeCompletion(Completion *completion) {
     free(completion->name);
     free(completion->fullName);
     if (completion->visibility == GlobalVisibility) {
@@ -98,12 +98,12 @@ protected void olcxFreeCompletion(Completion *completion) {
 }
 
 
-void olcxFreeCompletions(Completion *r) {
+void freeCompletions(Completion *r) {
     Completion *tmp;
 
     while (r!=NULL) {
         tmp = r->next;
-        olcxFreeCompletion(r);
+        freeCompletion(r);
         r = tmp;
     }
 }
@@ -119,7 +119,7 @@ static void tagSearchShortRemoveMultipleLines(Completion *list) {
             // O.K. remove redundant one
             Completion *tmp = l->next;
             l->next = l->next->next;
-            olcxFreeCompletion(tmp);
+            freeCompletion(tmp);
             goto again;          /* Again, but don't advance */
         }
     }

@@ -3,7 +3,7 @@
 #include "completion.h"
 
 
-void olcxFreeCompletions(Completion *completions) {
+void freeCompletions(Completion *completions) {
     mock(completions);
 }
 
