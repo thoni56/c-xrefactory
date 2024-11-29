@@ -88,14 +88,13 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
 }
 
 protected void olcxFreeCompletion(Completion *completion) {
-    olcxFree(completion->name, strlen(completion->name)+1);
-    if (completion->fullName!=NULL)
-        olcxFree(completion->fullName, strlen(completion->fullName)+1);
+    free(completion->name);
+    free(completion->fullName);
     if (completion->visibility == GlobalVisibility) {
         assert(completion->sym.linkName);
-        olcxFree(completion->sym.linkName, strlen(completion->sym.linkName)+1);
+        free(completion->sym.linkName);
     }
-    olcxFree(completion, sizeof(Completion));
+    free(completion);
 }
 
 
