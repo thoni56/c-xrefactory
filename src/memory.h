@@ -59,8 +59,6 @@ extern jmp_buf memoryResizeJumpTarget;
 
 extern Memory *cxMemory;
 
-extern int olcxMemoryAllocatedBytes;
-
 
 /* SM (Static memory) areas */
 extern Memory2 ppmMemory;

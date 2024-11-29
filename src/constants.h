@@ -13,8 +13,6 @@
 
 /* ***********************   memory sizes ******************************  */
 
-#define SIZE_TMP_MEM               5000	/* temporary strings, not error messages */
-
 #define MacroArgumentsMemorySize  20000	/* macro args name in define */
 #define MacroBodyMemorySize     2000000	/* macro expansions */
 #define SIZE_optMemory           150000	/* memory used to store options strings */
@@ -23,9 +21,7 @@
 #define FileTableMemorySize     8000000	/* memory for file (and class) table */
 
 #define SIZE_ppmMemory         15000000	/* macro definitions */
-#define SIZE_olcxMemory        50000000	/* memory for browsing symbol stack */
 #define CX_MEMORY_CHUNK_SIZE	2000000
-
                                         /* memory for cross references, can be
                                           increased also by -mf command line
                                           option.
@@ -41,7 +37,6 @@
 #define MAX_CXREF_ENTRIES      65536	/* just hash table size, not limit */
 
 #define MAX_SYMBOLS             5000	/* just hash list table size */
-#define OLCX_TAB_SIZE            1000	/* total num of frames */
 
 
 /* ***************** several (mainly string size) bornes *************** */
