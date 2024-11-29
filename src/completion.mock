@@ -8,7 +8,7 @@ void olcxFreeCompletions(Completion *completions) {
 }
 
 Completion *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *s, ReferenceItem *ri, Reference *dfpos,
-                                    int symType, int vFunClass) {
+                                  Type symType, int vFunClass) {
     return (Completion *)mock(name, fullText, s, ri, dfpos, symType, vFunClass, completions);
 }
 

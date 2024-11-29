@@ -46,7 +46,7 @@ typedef struct completions {
 extern void olcxFreeCompletions(Completion *completions);
 
 extern Completion *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *s,
-                                         ReferenceItem *ri, Reference *dfpos, int symType, int vApplClass);
+                                         ReferenceItem *ri, Reference *dfpos, Type symType, int vApplClass);
 
 void tagSearchCompactShortResults(void);
 

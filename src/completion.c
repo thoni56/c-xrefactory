@@ -48,9 +48,9 @@ protected Completion *newCompletion(char *name, char *fullName,
 /* If symbol != NULL && referenceItem != NULL then dfref can be anything... */
 Completion *completionListPrepend(Completion *completions, char *name, char *fullName, Symbol *symbol,
                                   ReferenceItem *referenceItem,
-                                  Reference *reference, int cType, int vApplClass) {
-    Completion    *completion;
-    char *ss;
+                                  Reference *reference, Type cType, int vApplClass) {
+    Completion *completion;
+    char *linkName;
     ReferenceVisibility visibility;
     ReferenceScope scope;
     Storage storage;
