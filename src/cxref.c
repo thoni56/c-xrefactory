@@ -406,7 +406,7 @@ static void freePoppedBrowserStackItems(OlcxReferencesStack *stack) {
     }
 }
 
-static OlcxReferences *pushOlcxReference(OlcxReferencesStack *stack) {
+static OlcxReferences *pushEmptyReference(OlcxReferencesStack *stack) {
     OlcxReferences *res;
 
     res  = olcxAlloc(sizeof(OlcxReferences));
@@ -426,7 +426,7 @@ static OlcxReferences *pushOlcxReference(OlcxReferencesStack *stack) {
 void pushEmptySession(OlcxReferencesStack *stack) {
     OlcxReferences *res;
     freePoppedBrowserStackItems(stack);
-    res = pushOlcxReference(stack);
+    res = pushEmptyReference(stack);
     stack->top = stack->root = res;
 }
 
