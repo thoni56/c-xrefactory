@@ -524,25 +524,24 @@ static int shellMatchParseBracketPattern(char *pattern, int pi, bool caseSensiti
     if (pattern[i] != ']') {
         errorMessage(ERR_ST, "wrong [] pattern in regexp");
     }
-    return(i);
+    return i;
 }
 
-bool shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive) {
-    int             si, pi, slen, plen;
+bool shellMatch(char *string, int stringLength, char *pattern, bool caseSensitive) {
+    int             pi;
     IntegerList    *states, **p;
     char            asciiMap[MAX_ASCII_CHAR];
 
-    si = 0;
-    //&slen = strlen(string);
-    slen = stringLen;
-    plen = strlen(pattern);
+    int i = 0;
+    int patternLength = strlen(pattern);
+
     states = shellMatchNewState(0, NULL);
-    while (si<slen) {
+    while (i<stringLength) {
         if (states == NULL) goto fini;
         p= &states;
         while(*p!=NULL) {
             pi = (*p)->integer;
-            //&fprintf(dumpOut,"checking char %d(%c) and state %d(%c)\n", si, string[si], pi, pattern[pi]);
+            //&fprintf(dumpOut,"checking char %d(%c) and state %d(%c)\n", i, string[i], pi, pattern[pi]);
             if (pattern[pi] == 0) {shellMatchDeleteState(p); continue;}
             if (pattern[pi] == '*') {
                 (*p)->next = shellMatchNewState(pi+1, (*p)->next);
@@ -550,30 +549,30 @@ bool shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive) 
                 (*p)->integer = pi + 1;
             } else if (pattern[pi] == '[') {
                 pi = shellMatchParseBracketPattern(pattern, pi, 1, asciiMap);
-                if (! asciiMap[string[si]]) {shellMatchDeleteState(p); continue;}
+                if (! asciiMap[string[i]]) {shellMatchDeleteState(p); continue;}
                 if (pattern[pi]==']') (*p)->integer = pi+1;
             } else if (isalpha(pattern[pi]) && ! caseSensitive) {
                 // simple case unsensitive letter
-                if (tolower(pattern[pi]) != tolower(string[si])) {
+                if (tolower(pattern[pi]) != tolower(string[i])) {
                     shellMatchDeleteState(p); continue;
                 }
                 (*p)->integer = pi + 1;
             } else {
                 // simple character
-                if (pattern[pi] != string[si]) {
+                if (pattern[pi] != string[i]) {
                     shellMatchDeleteState(p); continue;
                 }
                 (*p)->integer = pi + 1;
             }
             p= &(*p)->next;
         }
-        si ++;
+        i ++;
     }
  fini: ;
     bool res = false;
     for (IntegerList *f=states; f!=NULL; f=f->next) {
-        if (f->integer == plen || (f->integer < plen
-                                   && strncmp(pattern+f->integer,"**************",plen-f->integer)==0)
+        if (f->integer == patternLength || (f->integer < patternLength
+                                   && strncmp(pattern+f->integer,"**************",patternLength-f->integer)==0)
         ) {
             res = true;
             break;
