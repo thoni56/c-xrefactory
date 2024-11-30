@@ -10,6 +10,7 @@
 #include "cxref.mock"   /* For freeOldestOlcx() */
 #include "globals.mock"
 
+
 static bool fatalErrorAllowed = false;
 static bool fatalErrorCalled  = false;
 static void myFatalError(int errCode, char *mess, int exitStatus, char *file, int line) {
@@ -25,6 +26,7 @@ static void myInternalCheckFailed(char *expr, char *file, int line) {
         internalCheckFail(expr, file, line);
     internalCheckFailCalled = true;
 }
+
 
 Describe(Memory);
 BeforeEach(Memory) {

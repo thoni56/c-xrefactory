@@ -43,12 +43,12 @@ static void renameCollationSymbols(SymbolsMenu *menu) {
             char *newName;
             int len = strlen(m->references.linkName);
             assert(len>=2);
-            newName = olcxAlloc(len-1);
+            newName = malloc(len-1);
             int len1 = cs-m->references.linkName;
             strncpy(newName, m->references.linkName, len1);
             strcpy(newName+len1, cs+2);
             log_debug("renaming %s to %s", m->references.linkName, newName);
-            olcxFree(m->references.linkName, len+1);
+            free(m->references.linkName);
             m->references.linkName = newName;
         }
     }
@@ -375,7 +375,7 @@ static void deleteOlcxRefs(OlcxReferences **refsP, OlcxReferencesStack *stack) {
         stack->root = refs->previous;
     }
     *refsP = refs->previous;
-    olcxFree(refs, sizeof(OlcxReferences));
+    free(refs);
 }
 
 
@@ -409,7 +409,7 @@ static void freePoppedBrowserStackItems(OlcxReferencesStack *stack) {
 static OlcxReferences *pushEmptyReference(OlcxReferencesStack *stack) {
     OlcxReferences *res;
 
-    res  = olcxAlloc(sizeof(OlcxReferences));
+    res  = malloc(sizeof(OlcxReferences));
     *res = (OlcxReferences){.references      = NULL,
                             .actual          = NULL,
                             .command         = options.serverOperation,
@@ -432,7 +432,7 @@ void pushEmptySession(OlcxReferencesStack *stack) {
 
 static Reference *olcxCopyReference(Reference *reference) {
     Reference *r;
-    r = olcxAlloc(sizeof(Reference));
+    r = malloc(sizeof(Reference));
     *r = *reference;
     r->next = NULL;
     return r;
@@ -1583,11 +1583,10 @@ int getFileNumberFromName(char *name) {
     }
 }
 
-static Reference *olcxCreateFileShiftedRefListForCheck(Reference *rr) {
+static Reference *olcxCreateFileShiftedRefListForCheck(Reference *reference) {
     Reference *res, **resa;
     int ofn, nfn, fmline, lmline;
 
-    //&fprintf(dumpOut,"!shifting enter\n");
     if (options.checkFileMovedFrom==NULL) return NULL;
     if (options.checkFileMovedTo==NULL) return NULL;
     //&fprintf(dumpOut,"!shifting %s --> %s\n", options.checkFileMovedFrom, options.checkFileMovedTo);
@@ -1599,8 +1598,8 @@ static Reference *olcxCreateFileShiftedRefListForCheck(Reference *rr) {
     fmline = options.checkFirstMovedLine;
     lmline = options.checkFirstMovedLine + options.checkLinesMoved;
     res = NULL; resa = &res;
-    for (Reference *r=rr; r!=NULL; r=r->next) {
-        Reference *tt = olcxAlloc(sizeof(Reference));
+    for (Reference *r=reference; r!=NULL; r=r->next) {
+        Reference *tt = malloc(sizeof(Reference));
         *tt = *r;
         if (tt->position.file==ofn && tt->position.line>=fmline && tt->position.line<lmline) {
             tt->position.file = nfn;

@@ -12,7 +12,7 @@
 #include "symbol.h"
 
 
-// Will create olcxAlloc():ed copies of name and fullName so caller don't have to
+// Will create malloc():ed copies of name and fullName so caller don't have to
 protected Completion *newCompletion(char *name, char *fullName,
                                     int lineCount, Visibility visibility, Type csymType,
                                     struct reference ref, struct referenceItem sym) {

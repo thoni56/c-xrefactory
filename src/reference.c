@@ -43,7 +43,7 @@ void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass
 void freeReferences(Reference *references) {
     while (references != NULL) {
         Reference *next = references->next;
-        olcxFree(references, sizeof(Reference));
+        free(references);
         references = next;
     }
 }
@@ -87,7 +87,7 @@ Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref) {
     rr = NULL;
     SORTED_LIST_PLACE2(place, *ref, rlist);
     if (*place==NULL || SORTED_LIST_NEQ(*place,*ref)) {
-        rr = olcxAlloc(sizeof(Reference));
+        rr = malloc(sizeof(Reference));
         *rr = *ref;
         LIST_CONS(rr,(*place));
         log_trace("olcx adding %s %s:%d:%d", usageKindEnumName[ref->usage.kind],

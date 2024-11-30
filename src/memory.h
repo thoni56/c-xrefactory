@@ -86,11 +86,6 @@ extern void cxFreeUntil(void *until);
 extern bool isFreedCxMemory(void *pointer);
 
 
-/* on-line dialogs allocation */
-extern void *olcxAlloc(size_t size);
-extern void olcxFree(void *pointer, size_t size);
-
-
 /* editor allocations, for now, store it in olcxmemory */
 extern void *editorAlloc(size_t size);
 extern void  editorFree(void *pointer, size_t size);

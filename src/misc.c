@@ -470,7 +470,7 @@ int compareFileNames(char *name1, char *name2) {
 // ------------------------------------------- SHELL (SUB)EXPRESSIONS ---
 
 static IntegerList *shellMatchNewState(int s, IntegerList *next) {
-    IntegerList *res = olcxAlloc(sizeof(IntegerList));
+    IntegerList *res = malloc(sizeof(IntegerList));
     res->integer = s;
     res->next = next;
     return res;
@@ -480,7 +480,7 @@ static void shellMatchDeleteState(IntegerList **s) {
     IntegerList *p;
     p = *s;
     *s = (*s)->next;
-    olcxFree(p, sizeof(IntegerList));
+    free(p);
 }
 
 static int shellMatchParseBracketPattern(char *pattern, int pi, bool caseSensitive, char *asciiMap) {

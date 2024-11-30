@@ -149,23 +149,13 @@ bool isFreedCxMemory(void *pointer) {
     return dm_isFreedPointer(cxMemory, pointer);
 }
 
-/* OLCX */
-void *olcxAlloc(size_t size) {
+/* EDITOR */
+void *editorAlloc(size_t size) {
     return malloc(size);
 }
 
-
-void olcxFree(void *pointer, size_t size) {
-    free(pointer);
-}
-
-/* EDITOR */
-void *editorAlloc(size_t size) {
-    return olcxAlloc(size);
-}
-
 void editorFree(void *pointer, size_t size) {
-    olcxFree(pointer, size);
+    free(pointer);
 }
 
 static bool isInMemory(Memory2 *memory, void *pointer) {

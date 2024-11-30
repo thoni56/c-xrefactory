@@ -29,10 +29,10 @@ void fillSymbolsMenu(SymbolsMenu *menu, ReferenceItem references, bool selected,
 }
 
 SymbolsMenu *freeSymbolsMenu(SymbolsMenu *menu) {
-    olcxFree(menu->references.linkName, strlen(menu->references.linkName)+1);
+    free(menu->references.linkName);
     freeReferences(menu->references.references);
     SymbolsMenu *next = menu->next;
-    olcxFree(menu, sizeof(*menu));
+    free(menu);
     return next;
 }
 
@@ -77,11 +77,7 @@ void olcxPrintSelectionMenu(SymbolsMenu *menu) {
 }
 
 static char *olcxStringCopy(char *string) {
-    int length;
-    char *copy;
-    length = strlen(string);
-    copy = olcxAlloc(length+1);
-    strcpy(copy, string);
+    char *copy = strdup(string);
     return copy;
 }
 
@@ -98,7 +94,7 @@ SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int vApplClass, int vFun
                        symbol->type, symbol->storage, symbol->scope,
                        symbol->visibility);
 
-    symbolsMenu = olcxAlloc(sizeof(SymbolsMenu));
+    symbolsMenu = malloc(sizeof(SymbolsMenu));
     fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage, vlevel, defusage, *defpos);
     return symbolsMenu;
 }
