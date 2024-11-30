@@ -48,32 +48,34 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     Visibility visibility;
     Scope scope;
     Storage storage;
-    ReferenceItem sri;
+    ReferenceItem item;
 
     if (referenceItem!=NULL) {
         // probably a 'search in tag' file item
         linkName = strdup(referenceItem->linkName);
-        fillReferenceItem(&sri, linkName, referenceItem->vApplClass,
-                          referenceItem->type, referenceItem->storage, referenceItem->scope, referenceItem->visibility);
 
-        completion = newCompletion(name, fullName, 1, referenceItem->visibility, cType, *reference, sri);
+        item = makeReferenceItem(linkName, referenceItem->vApplClass, referenceItem->type, referenceItem->storage, referenceItem->scope, referenceItem->visibility);
+
+        completion = newCompletion(name, fullName, 1, referenceItem->visibility, cType, *reference, item);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
-        fillReferenceItem(&sri, "", NO_FILE_NUMBER, TypeUnknown, StorageDefault,
-                          AutoScope, LocalVisibility);
-        completion = newCompletion(name, fullName, 1, LocalVisibility, cType, r, sri);
+
+        item = makeReferenceItem("", NO_FILE_NUMBER, TypeUnknown, StorageDefault,
+                                 AutoScope, LocalVisibility);
+
+        completion = newCompletion(name, fullName, 1, LocalVisibility, cType, r, item);
     } else {
         Reference r;
         getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
-        log_trace(":adding sym '%s' %d", symbol->linkName, visibility);
         linkName = strdup(symbol->linkName);
+
         fillUsage(&r.usage, UsageDefined);
         fillReference(&r, r.usage, symbol->pos, NULL);
-        fillReferenceItem(&sri, linkName,
-                          vApplClass, symbol->type, storage,
-                          scope, visibility);
-        completion = newCompletion(name, fullName, 1, visibility, cType, r, sri);
+
+        item = makeReferenceItem(linkName, vApplClass, symbol->type, storage,
+                                 scope, visibility);
+        completion = newCompletion(name, fullName, 1, visibility, cType, r, item);
     }
     if (fullName!=NULL) {
         for (int i=0; fullName[i]; i++) {

@@ -11,6 +11,23 @@
 
 
 
+ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,
+                                Visibility visibility) {
+    ReferenceItem item;
+    item.linkName = name;
+    item.vApplClass = vApplClass;
+    item.type = type;
+    item.storage = storage;
+    item.scope = scope;
+    item.visibility = visibility;
+    item.next = NULL;
+    item.references = NULL;
+
+    return item;
+}
+
+
+
 void fillReference(Reference *reference, Usage usage, Position position, Reference *next) {
     reference->usage = usage;
     reference->position = position;
