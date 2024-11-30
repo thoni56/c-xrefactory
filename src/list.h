@@ -51,17 +51,17 @@
         result=tmp;                                                     \
     }
 
-/* SORTED_LIST_FIND2(o result, type, i key value, i list) */
+/* SORTED_LIST_FIND3(o result, type, i key value, i list, i lessfunction) */
 #define SORTED_LIST_FIND3(result, type, key, list, lessfunction) {  \
-        type *tmp; tmp = list;                                      \
+        type *tmp = list;                                           \
         while (tmp!=NULL && lessfunction(tmp,(key)))                \
             tmp=tmp->next;                                          \
         result=tmp;                                                 \
     }
 
 /*
-  SORTED_LIST_PLACE2(o struct sort **position, sort, i key value,
-                          i &list)
+  SORTED_LIST_PLACE2(o struct sort **position, i key value,
+                     i &theList)
 */
 #define SORTED_LIST_PLACE2(position, key, theList) {        \
         Reference *tmp, **lStMp;                            \
@@ -76,24 +76,24 @@
 
 /*
   SORTED_LIST_PLACE3(o struct sort **position, sort, i key value,
-                     i &list)
+                     i &list, i lessfunction)
 */
-#define SORTED_LIST_PLACE3(position,sort,key,listA,lessfunction) {  \
-        register sort *tmp,**lStMp;                                 \
-        tmp = *(listA); lStMp = listA;                              \
-        while (tmp!=NULL && lessfunction(tmp, (key))) {             \
-            lStMp = &(tmp->next); tmp = *lStMp;                     \
-        }                                                           \
-        position = lStMp;                                           \
+#define SORTED_LIST_PLACE3(position, sort, key, theList, lessfunction) {  \
+        register sort *tmp,**lStMp;                                     \
+        tmp = *(theList); lStMp = theList;                              \
+        while (tmp!=NULL && lessfunction(tmp, (key))) {                 \
+            lStMp = &(tmp->next); tmp = *lStMp;                         \
+        }                                                               \
+        position = lStMp;                                               \
     }
 
 /*
-  SORTED_LIST_INSERT3(sort,i/o elem, i/o ioList, lessfunction)
+  SORTED_LIST_INSERT3(sort, i/o elem, i/o ioList, lessfunction)
 */
-#define SORTED_LIST_INSERT3(sort,elem,ioListAddress,lessfunction) {     \
-        sort **ptmp;                                                    \
+#define SORTED_LIST_INSERT3(sort, elem, ioListAddress, lessfunction) {   \
+        sort **ptmp;                                                     \
         SORTED_LIST_PLACE3(ptmp,sort,(elem),ioListAddress,lessfunction); \
-        LIST_CONS(elem,(*ptmp));                                        \
+        LIST_CONS(elem,(*ptmp));                                         \
     }
 
 #define SORTED_LIST_LESS(tmp,key) (positionIsLessThan((tmp)->position, (key).position))
