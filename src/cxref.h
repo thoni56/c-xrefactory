@@ -10,7 +10,6 @@
 
 
 
-extern void olcxInit(void);
 extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
 extern void printTagSearchResults(void);
 extern bool isSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2);

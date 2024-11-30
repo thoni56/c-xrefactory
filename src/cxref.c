@@ -393,9 +393,6 @@ void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
     deleteOlcxRefs(references, stack);
 }
 
-void olcxInit(void) {
-}
-
 
 static void freePoppedBrowserStackItems(OlcxReferencesStack *stack) {
     assert(stack);

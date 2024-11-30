@@ -23,7 +23,7 @@ typedef struct reference {
     struct reference *next;
 } Reference;
 
-// !!! if you add a pointer to this structure, then update olcxCopyReference!
+
 typedef struct referenceItem {
     char                     *linkName;
     int                       vApplClass; /* appl class for java virtuals, but also something else ... */
