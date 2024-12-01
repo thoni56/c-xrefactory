@@ -1834,7 +1834,7 @@ static void addMacroBaseUsageRef(Symbol *macroSymbol) {
     if (isMember) {
         // this is optimization to avoid multiple base references
         for (r=memb->references; r!=NULL; r=r->next) {
-            if (r->usage.kind == UsageMacroBaseFileUsage)
+            if (r->usage == UsageMacroBaseFileUsage)
                 break;
         }
     }

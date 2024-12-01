@@ -47,7 +47,7 @@ Result findStructureMemberSymbol(Symbol **res, StructMemberFindInfo *ss, char *r
     return (Result) mock(ss, recname, res);
 }
 
-Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbol, Storage storage, UsageKind usage) {
+Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbol, Storage storage, Usage usage) {
     return (Symbol *) mock(symbol, fileName, storage, table, usage);
 }
 
@@ -123,7 +123,7 @@ Result mergeArguments(Symbol *id, Symbol *ty) {
     return (Result) mock(id, ty);
 }
 
-TypeModifier *simpleStrUnionSpecifier(Id *typeName, Id *id, UsageKind usage) {
+TypeModifier *simpleStrUnionSpecifier(Id *typeName, Id *id, Usage usage) {
     return (TypeModifier *) mock(typeName, id, usage);
 }
 
@@ -135,7 +135,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
     mock(sd, rec);
 }
 
-TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage) {
+TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
     return (TypeModifier *) mock(id, usage);
 }
 
@@ -180,7 +180,7 @@ void setLocalVariableLinkName(struct symbol *p) {
     mock(p);
 }
 
-void labelReference(Id *id, UsageKind usage) {
+void labelReference(Id *id, Usage usage) {
     mock(id, usage);
 }
 

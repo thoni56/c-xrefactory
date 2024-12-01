@@ -4,10 +4,6 @@
 #include <stdbool.h>
 
 
-// !!! if changing this, change also s_noRef!!!
-#define NO_USAGE (Usage){UsageNone}
-
-
 /* Because of the macro magic we can't comment near the actual values
    so here are some descriptions of some of the Usage values
    (duplication so remember to change in here too):
@@ -105,19 +101,13 @@
 
 typedef enum {
     ALL_USAGE_ENUMS(GENERATE_ENUM_VALUE)
-} UsageKind;
-
-
-typedef struct usage {
-    UsageKind kind;
 } Usage;
 
 
 extern const char *usageKindEnumName[];
 
-extern void fillUsage(Usage *usage, UsageKind kind);
-extern bool isVisibleUsage(UsageKind usageKind);
-extern bool isDefinitionUsage(UsageKind usageKind);
-extern bool isDefinitionOrDeclarationUsage(UsageKind usage);
+extern bool isVisibleUsage(Usage usage);
+extern bool isDefinitionUsage(Usage usage);
+extern bool isDefinitionOrDeclarationUsage(Usage usage);
 
 #endif

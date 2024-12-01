@@ -49,14 +49,14 @@ void freeSymbolsMenuList(SymbolsMenu *menuList) {
 void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference) {
     Reference *added;
     added = olcxAddReference(&menu->references.references, reference);
-    if (reference->usage.kind == UsageClassTreeDefinition) menu->defpos = reference->position;
+    if (reference->usage == UsageClassTreeDefinition) menu->defpos = reference->position;
     if (added!=NULL) {
-        if (isDefinitionOrDeclarationUsage(reference->usage.kind)) {
-            if (reference->usage.kind==UsageDefined && positionsAreEqual(reference->position, menu->defpos)) {
-                added->usage.kind = UsageOLBestFitDefined;
+        if (isDefinitionOrDeclarationUsage(reference->usage)) {
+            if (reference->usage==UsageDefined && positionsAreEqual(reference->position, menu->defpos)) {
+                added->usage = UsageOLBestFitDefined;
             }
-            if (reference->usage.kind < menu->defUsage) {
-                menu->defUsage = reference->usage.kind;
+            if (reference->usage < menu->defUsage) {
+                menu->defUsage = reference->usage;
                 menu->defpos = reference->position;
             }
             menu->defRefn ++;

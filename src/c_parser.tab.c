@@ -2563,7 +2563,7 @@ case 82:
         if (yyvsp[-2].ast_expressionType.data.reference != NULL && options.serverOperation == OLO_EXTRACT) {
             Reference *rr;
             rr = duplicateReference(yyvsp[-2].ast_expressionType.data.reference);
-            yyvsp[-2].ast_expressionType.data.reference->usage = NO_USAGE;
+            yyvsp[-2].ast_expressionType.data.reference->usage = UsageNone;
             if (yyvsp[-1].ast_integer.data == '=') {
                 resetReferenceUsage(rr, UsageLvalUsed);
             } else {
@@ -3032,12 +3032,12 @@ break;
 case 177:
 #line 879 "c_parser.y"
 {
-        UsageKind usageKind;
+        Usage usage;
         if (nestingLevel() == 0)
-            usageKind = USAGE_TOP_LEVEL_USED;
+            usage = USAGE_TOP_LEVEL_USED;
         else
-            usageKind = UsageUsed;
-        yyval.ast_typeModifiers.data = simpleEnumSpecifier(yyvsp[0].ast_id.data, usageKind);
+            usage = UsageUsed;
+        yyval.ast_typeModifiers.data = simpleEnumSpecifier(yyvsp[0].ast_id.data, usage);
     }
 break;
 case 178:

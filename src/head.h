@@ -102,7 +102,7 @@ typedef enum language {
 
 /* ******************************************************************** */
 
-#define OL_VIEWABLE_REFS(rrr) ((rrr)->usage.kind < UsageMaxOLUsages)
+#define OL_VIEWABLE_REFS(rrr) ((rrr)->usage < UsageMaxOLUsages)
 
 #define IS_BEST_FIT_MATCH(ss) (\
     (ss->ooBits&OOC_VIRTUAL_MASK)==OOC_VIRT_SAME_APPL_FUN_CLASS\

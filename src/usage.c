@@ -6,19 +6,14 @@ const char *usageKindEnumName[] = {
 };
 
 
-void fillUsage(Usage *usage, UsageKind kind) {
-    usage->kind = kind;
+bool isVisibleUsage(Usage usage) {
+    return usage < UsageMaxOLUsages;
 }
 
-
-bool isVisibleUsage(UsageKind usageKind) {
-    return usageKind < UsageMaxOLUsages;
+bool isDefinitionUsage(Usage usage) {
+    return usage == UsageDefined || usage == UsageOLBestFitDefined;
 }
 
-bool isDefinitionUsage(UsageKind usageKind) {
-    return usageKind == UsageDefined || usageKind == UsageOLBestFitDefined;
-}
-
-bool isDefinitionOrDeclarationUsage(UsageKind usageKind) {
-    return isDefinitionUsage(usageKind) || usageKind == UsageDeclared;
+bool isDefinitionOrDeclarationUsage(Usage usage) {
+    return isDefinitionUsage(usage) || usage == UsageDeclared;
 }

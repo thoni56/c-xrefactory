@@ -257,7 +257,7 @@ Reference *findStructureFieldFromType(TypeModifier *structure,
     return reference;
 }
 
-void labelReference(Id *id, UsageKind usage) {
+void labelReference(Id *id,  Usage usage) {
     char tempString[TMP_STRING_SIZE];
     char *t;
     assert(id);
@@ -346,7 +346,7 @@ static void setStaticFunctionLinkName(Symbol *p, char *fileName, int usage) {
 }
 
 
-Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbol, Storage theDefaultStorage, UsageKind usage) {
+Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbol, Storage theDefaultStorage,  Usage usage) {
     if (symbol == &errorSymbol || symbol->type == TypeError)
         return symbol;
     if (symbol->type == TypeError)
@@ -398,7 +398,7 @@ static void addInitializerRefs(Symbol *declaration, IdList *idList) {
 
 Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declaration, IdList *idList,
                           Storage storage) {
-    UsageKind usageKind = UsageDefined;
+     Usage usage = UsageDefined;
 
     if (declaration == &errorSymbol || baseType == &errorSymbol || declaration->type == TypeError ||
         baseType->type == TypeError) {
@@ -408,10 +408,10 @@ Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declarat
     completeDeclarator(baseType, declaration);
 
     if (declaration->u.typeModifier->type == TypeFunction)
-        usageKind = UsageDeclared;
+        usage = UsageDeclared;
     else if (declaration->storage == StorageExtern)
-        usageKind = UsageDeclared;
-    addNewSymbolDefinition(table, inputFileName, declaration, storage, usageKind);
+        usage = UsageDeclared;
+    addNewSymbolDefinition(table, inputFileName, declaration, storage, usage);
     addInitializerRefs(declaration, idList);
     return declaration;
 }
@@ -652,7 +652,7 @@ void initSymStructSpec(StructSpec *symStruct, Symbol *records) {
 
 TypeModifier *simpleStrUnionSpecifier(Id *typeName,
                                       Id *id,
-                                      UsageKind usage
+                                      Usage usage
 ) {
     Symbol *member;
 
@@ -806,7 +806,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
     }
 }
 
-TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage) {
+TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
     Symbol symbol, *symbolP;
 
     symbol = makeSymbol(id->name, id->name, id->position);

@@ -20,7 +20,7 @@ extern void memberFindPush(Symbol *sym, StructMemberFindInfo *rfs);
 extern StructMemberFindInfo * initFind(Symbol *s, StructMemberFindInfo *rfs);
 extern Result findStructureMemberSymbol(Symbol **res, StructMemberFindInfo *ss, char *recname);
 extern Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbol, Storage storage,
-                                      UsageKind usage);
+                                      Usage usage);
 extern Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declaration, IdList *idList,
                                  Storage storage);
 extern int styyerror(char *s);
@@ -40,10 +40,10 @@ extern int findStructureMember(Symbol *symbol, char *memberName, Symbol	**foundM
 extern Reference *findStuctureMemberFromSymbol(Symbol *str, Id *member, Symbol **res);
 extern Reference *findStructureFieldFromType(TypeModifier *structure, Id *field, Symbol **resultingSymbol);
 extern Result mergeArguments(Symbol *id, Symbol *ty);
-extern TypeModifier *simpleStrUnionSpecifier(Id *typeName, Id *id, UsageKind usage);
+extern TypeModifier *simpleStrUnionSpecifier(Id *typeName, Id *id, Usage usage);
 extern TypeModifier *createNewAnonymousStructOrUnion(Id *typeName);
 extern void specializeStrUnionDef(Symbol *sd, Symbol *rec);
-extern TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage);
+extern TypeModifier *simpleEnumSpecifier(Id *id, Usage usage);
 extern void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory);
 extern TypeModifier *createNewAnonymousEnum(SymbolList *enums);
 extern void appendPositionToList(PositionList **list, Position *pos);
@@ -58,7 +58,7 @@ extern void handleInvocationParamPositions(Reference *ref, Position *lpar,
                                            PositionList *commas, Position *rpar,
                                            bool hasParam);
 extern void setLocalVariableLinkName(struct symbol *p);
-extern void labelReference(Id *id, UsageKind usage);
+extern void labelReference(Id *id, Usage usage);
 extern void generateInternalLabelReference(int counter, int usage);
 extern void setDirectStructureCompletionType(TypeModifier *xxx);
 extern void setIndirectStructureCompletionType(TypeModifier *xxx);

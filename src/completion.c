@@ -70,7 +70,6 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
         linkName = strdup(symbol->linkName);
 
-        fillUsage(&r.usage, UsageDefined);
         fillReference(&r, r.usage, symbol->pos, NULL);
 
         item = makeReferenceItem(linkName, vApplClass, symbol->type, storage,

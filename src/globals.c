@@ -74,7 +74,7 @@ char *javaSourcePaths;
 
 bool olstringFound = false;
 bool olstringServed = false;
-UsageKind olstringUsageKind = 0;
+Usage olstringUsage = 0;
 char *olstringInMacroBody = NULL;
 int olMacro2PassFile;
 

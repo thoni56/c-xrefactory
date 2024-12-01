@@ -49,8 +49,8 @@ int getFileNumberFromName(char *name) {
     return (int) mock(name);
 }
 
-void gotoOnlineCxref(Position *pos, UsageKind usageKind, char *suffix) {
-    mock(pos, usageKind, suffix);
+void gotoOnlineCxref(Position *pos, Usage usage, char *suffix) {
+    mock(pos, usage, suffix);
 }
 
 Reference *addNewCxReference(Symbol *symbol, Position *pos, Usage usage_arg, int vApplClass) {
@@ -58,14 +58,14 @@ Reference *addNewCxReference(Symbol *symbol, Position *pos, Usage usage_arg, int
     return (Reference *) mock(symbol, pos, usage, vApplClass);
 }
 
-Reference *addCxReference(Symbol *symbol, Position *pos, UsageKind usage, int vApplClass) {
+Reference *addCxReference(Symbol *symbol, Position *pos, Usage usage, int vApplClass) {
     char *symbol_name = symbol->name; /* "meta" parameter to be able to access field */
     return (Reference *) mock(symbol, symbol_name, pos, usage, vApplClass);
 }
 
-void addTrivialCxReference(char *name, int symType, int storage, Position pos, UsageKind usageKind) {
+void addTrivialCxReference(char *name, int symType, int storage, Position pos, Usage usage) {
     Position *position = &pos;
-    mock(name, symType, storage, position, usageKind);
+    mock(name, symType, storage, position, usage);
 }
 
 void olcxAddReferences(Reference *list, Reference **dlist, int fnum, int bestMatchFlag) {

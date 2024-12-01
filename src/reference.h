@@ -18,7 +18,7 @@
 #define SCOPES_LN 3
 
 typedef struct reference {
-    struct usage      usage;
+    Usage             usage;
     struct position   position;
     struct reference *next;
 } Reference;
@@ -43,7 +43,7 @@ extern void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vAp
                               Storage storage, Scope scope, Visibility visibility);
 extern Reference *duplicateReference(Reference *r);
 extern void freeReferences(Reference *references);
-extern void resetReferenceUsage(Reference *reference, UsageKind usageKind);
+extern void resetReferenceUsage(Reference *reference, Usage usage);
 extern Reference **addToReferenceList(Reference **list, Usage usage, Position pos);
 extern Reference *olcxAddReferenceNoUsageCheck(Reference **rlist,
                                                Reference *ref);

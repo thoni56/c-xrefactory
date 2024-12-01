@@ -840,7 +840,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
     markerList = NULL;
     reference   = references;
     while (reference != NULL) {
-        while (reference != NULL && !isVisibleUsage(reference->usage.kind))
+        while (reference != NULL && !isVisibleUsage(reference->usage))
             reference = reference->next;
         if (reference != NULL) {
             int           file     = reference->position.file;
@@ -867,7 +867,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
                         *rrr = (EditorMarkerList){.marker = m, .usage = reference->usage, .next = markerList};
                         markerList  = rrr;
                         reference    = reference->next;
-                        while (reference != NULL && !isVisibleUsage(reference->usage.kind))
+                        while (reference != NULL && !isVisibleUsage(reference->usage))
                             reference = reference->next;
                         if (reference == NULL || file != reference->position.file)
                             break;
@@ -886,7 +886,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
                     *rrr = (EditorMarkerList){.marker = m, .usage = reference->usage, .next = markerList};
                     markerList  = rrr;
                     reference    = reference->next;
-                    while (reference != NULL && !isVisibleUsage(reference->usage.kind))
+                    while (reference != NULL && !isVisibleUsage(reference->usage))
                         reference = reference->next;
                 }
             }

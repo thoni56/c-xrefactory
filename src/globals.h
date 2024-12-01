@@ -104,7 +104,7 @@ extern int refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 
 extern bool olstringFound;
 extern bool olstringServed;
-extern UsageKind olstringUsageKind;
+extern Usage olstringUsage;
 extern char *olstringInMacroBody;
 extern int olMacro2PassFile;
 

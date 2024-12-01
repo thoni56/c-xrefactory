@@ -1060,7 +1060,7 @@ static void checkThatParameterIsUnused(EditorMarker *marker, char *functionName,
     freeEditorMarker(positionMarker);
 }
 
-static void addParameter(EditorMarker *pos, char *fname, int argumentNumber, UsageKind usage) {
+static void addParameter(EditorMarker *pos, char *fname, int argumentNumber, Usage usage) {
     if (isDefinitionOrDeclarationUsage(usage)) {
         if (addStringAsParameter(pos, NULL, fname, argumentNumber, refactoringOptions.refactor_parameter_name) != -1)
             // now check that there is no conflict
@@ -1071,7 +1071,7 @@ static void addParameter(EditorMarker *pos, char *fname, int argumentNumber, Usa
     }
 }
 
-static void deleteParameter(EditorMarker *pos, char *fname, int argumentNumber, UsageKind usage) {
+static void deleteParameter(EditorMarker *pos, char *fname, int argumentNumber, Usage usage) {
     char         *text;
     EditorMarker *m1, *m2;
 
@@ -1172,12 +1172,12 @@ static void applyParameterManipulationToFunction(char *functionName, EditorMarke
     LIST_LEN(count, EditorMarkerList, occurrences);
     progress = 0;
     for (EditorMarkerList *l = occurrences; l != NULL; l = l->next) {
-        if (l->usage.kind != UsageUndefinedMacro) {
+        if (l->usage != UsageUndefinedMacro) {
             /* TODO: Should we not abort if any of the occurrences fail? */
             if (manipulation == PPC_AVR_ADD_PARAMETER) {
-                addParameter(l->marker, functionName, argn1, l->usage.kind);
+                addParameter(l->marker, functionName, argn1, l->usage);
             } else if (manipulation == PPC_AVR_DEL_PARAMETER) {
-                deleteParameter(l->marker, functionName, argn1, l->usage.kind);
+                deleteParameter(l->marker, functionName, argn1, l->usage);
             } else if (manipulation == PPC_AVR_MOVE_PARAMETER) {
                 moveParameter(l->marker, functionName, argn1, argn2);
             } else {
@@ -1466,7 +1466,7 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
     progress = 0;
     regions  = NULL;
     for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
-        if ((!isDefinitionOrDeclarationUsage(ll->usage.kind)) && ll->usage.kind != UsageConstructorDefinition) {
+        if ((!isDefinitionOrDeclarationUsage(ll->usage)) && ll->usage != UsageConstructorDefinition) {
             pp  = removeStaticPrefix(ll->marker);
             ppp = newEditorMarker(ll->marker->buffer, ll->marker->offset);
             moveEditorMarkerBeyondIdentifier(ppp, 1);

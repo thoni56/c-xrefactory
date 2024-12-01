@@ -21,12 +21,12 @@ extern void olProcessSelectedReferences(OlcxReferences *rstack,
 extern void olcxPopOnly(void);
 extern void olStackDeleteSymbol(OlcxReferences *refs);
 extern int getFileNumberFromName(char *name);
-extern void gotoOnlineCxref(Position *p, UsageKind usageKind, char *suffix);
+extern void gotoOnlineCxref(Position *p, Usage usage, char *suffix);
 extern Reference *addNewCxReference(Symbol *symbol, Position *pos,
                                     Usage usage, int vApplClass);
-extern Reference *addCxReference(Symbol *symbol, Position *pos, UsageKind usage,int vApplClass);
+extern Reference *addCxReference(Symbol *symbol, Position *pos, Usage usage, int vApplClass);
 extern void addTrivialCxReference (char *name, int symType, int storage,
-                                   Position position, UsageKind usageKind);
+                                   Position position, Usage usage);
 extern void olcxAddReferences(Reference *list, Reference **dlist, int fnum,
                               int bestMatchFlag);
 extern void olSetCallerPosition(Position *pos);

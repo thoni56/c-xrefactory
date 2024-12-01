@@ -37,7 +37,7 @@ void fillReference(Reference *reference, Usage usage, Position position, Referen
 Reference *duplicateReference(Reference *original) {
     // this is used in extract x=x+2; to re-arrange order of references
     // i.e. usage must be first, lValue second.
-    original->usage = NO_USAGE;
+    original->usage = UsageNone;
     Reference *copy = cxAlloc(sizeof(Reference));
     *copy = *original;
     original->next = copy;
@@ -65,9 +65,9 @@ void freeReferences(Reference *references) {
     }
 }
 
-void resetReferenceUsage(Reference *reference, UsageKind usageKind) {
-    if (reference != NULL && reference->usage.kind > usageKind) {
-        reference->usage.kind = usageKind;
+void resetReferenceUsage(Reference *reference,  Usage usage) {
+    if (reference != NULL && reference->usage > usage) {
+        reference->usage = usage;
     }
 }
 
@@ -107,7 +107,7 @@ Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref) {
         rr = malloc(sizeof(Reference));
         *rr = *ref;
         LIST_CONS(rr,(*place));
-        log_trace("olcx adding %s %s:%d:%d", usageKindEnumName[ref->usage.kind],
+        log_trace("olcx adding %s %s:%d:%d", usageKindEnumName[ref->usage],
                   getFileItem(ref->position.file)->name, ref->position.line,ref->position.col);
     }
     return rr;
@@ -115,7 +115,7 @@ Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref) {
 
 
 Reference *olcxAddReference(Reference **rlist, Reference *ref) {
-    log_trace("checking ref %s %s:%d:%d at %d", usageKindEnumName[ref->usage.kind],
+    log_trace("checking ref %s %s:%d:%d at %d", usageKindEnumName[ref->usage],
               simpleFileName(getFileItem(ref->position.file)->name), ref->position.line, ref->position.col, ref);
     if (!OL_VIEWABLE_REFS(ref))
         return NULL; // no regular on-line refs

@@ -346,7 +346,7 @@ static void writeSymbolItemIfNotWritten(void) {
     }
 }
 
-static void writeCxReferenceBase(UsageKind usage, int requiredAccess, int file, int line, int col) {
+static void writeCxReferenceBase(Usage usage, int requiredAccess, int file, int line, int col) {
     writeSymbolItemIfNotWritten();
     if (usage == UsageMacroBaseFileUsage) {
         /* optimize the number of those references to 1 */
@@ -365,7 +365,7 @@ static void writeCxReferenceBase(UsageKind usage, int requiredAccess, int file, 
 }
 
 static void writeCxReference(Reference *reference) {
-    writeCxReferenceBase(reference->usage.kind, 0,
+    writeCxReferenceBase(reference->usage, 0,
                          reference->position.file, reference->position.line, reference->position.col);
 }
 
@@ -894,14 +894,12 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
 ) {
     Position pos;
     int      file, line, col, vApplClass;
-    UsageKind usageKind;
-    Usage usage;
-    Type symbolType;
+    Usage    usage;
+    Type     symbolType;
 
     assert(key == CXFI_REFERENCE);
 
-    usageKind = lastIncomingData.data[CXFI_USAGE];
-    fillUsage(&usage, usageKind);
+    usage = lastIncomingData.data[CXFI_USAGE];
 
     file = lastIncomingData.data[CXFI_FILE_NUMBER];
     file = fileNumberMapping[file];
@@ -909,7 +907,7 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
     line = lastIncomingData.data[CXFI_LINE_INDEX];
     col = lastIncomingData.data[CXFI_COLUMN_INDEX];
     getSymbolTypeAndClasses(&symbolType, &vApplClass);
-    log_trace("%d %d->%d %d", usageKind, file, fileNumberMapping[file], line);
+    log_trace("%d %d->%d %d", usage, file, fileNumberMapping[file], line);
 
     pos = makePosition(file, line, col);
     if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]) {
@@ -936,13 +934,12 @@ static void scanFunction_Reference(int size,
 ) {
     Position pos;
     Reference reference;
-    Usage usage;
     int       file, line, col, reqAcc;
-    UsageKind usageKind;
+    Usage usage;
     int copyrefFl;
 
     assert(key == CXFI_REFERENCE);
-    usageKind = lastIncomingData.data[CXFI_USAGE];
+    usage = lastIncomingData.data[CXFI_USAGE];
     reqAcc = lastIncomingData.data[CXFI_REQUIRED_ACCESS];
 
     file = lastIncomingData.data[CXFI_FILE_NUMBER];
@@ -957,44 +954,42 @@ static void scanFunction_Reference(int size,
         if (fileItem->cxLoading && fileItem->cxSaved) {
             /* if we repass refs after overflow */
             pos = makePosition(file, line, col);
-            fillUsage(&usage, usageKind);
             copyrefFl = !isInReferenceList(lastIncomingData.referenceItem->references,
                                      usage, pos);
         } else {
             copyrefFl = !fileItem->cxLoading;
         }
         if (copyrefFl)
-            writeCxReferenceBase(usageKind, reqAcc, file, line, col);
+            writeCxReferenceBase(usage, reqAcc, file, line, col);
     } else if (options.mode == ServerMode) {
         pos = makePosition(file, line, col);
-        fillUsage(&usage, usageKind);
         fillReference(&reference, usage, pos, NULL);
         FileItem *referenceFileItem = getFileItem(reference.position.file);
         if (operation == CXSF_DEAD_CODE_DETECTION) {
             if (OL_VIEWABLE_REFS(&reference)) {
                 // restrict reported symbols to those defined in project input file
-                if (isDefinitionUsage(reference.usage.kind)
+                if (isDefinitionUsage(reference.usage)
                     && referenceFileItem->isArgument
                 ) {
                     lastIncomingData.deadSymbolIsDefined = 1;
-                } else if (! isDefinitionOrDeclarationUsage(reference.usage.kind)) {
+                } else if (! isDefinitionOrDeclarationUsage(reference.usage)) {
                     lastIncomingData.symbolToCheckForDeadness = -1;
                 }
             }
         } else if (operation == CXSF_PASS_MACRO_USAGE) {
             if (lastIncomingData.onLineReferencedSym ==
                 lastIncomingData.data[CXFI_SYMBOL_INDEX]
-                && reference.usage.kind == UsageMacroBaseFileUsage
+                && reference.usage == UsageMacroBaseFileUsage
             ) {
                 olMacro2PassFile = reference.position.file;
             }
         } else {
             if (options.serverOperation == OLO_TAG_SEARCH) {
-                if (reference.usage.kind==UsageDefined
+                if (reference.usage==UsageDefined
                     || ((options.searchKind==SEARCH_FULL
                          || options.searchKind==SEARCH_FULL_SHORT)
-                        &&  (reference.usage.kind==UsageDeclared
-                             || reference.usage.kind==UsageClassFileDefinition))) {
+                        &&  (reference.usage==UsageDeclared
+                             || reference.usage==UsageClassFileDefinition))) {
                     searchSymbolCheckReference(lastIncomingData.referenceItem, &reference);
                 }
             } else {
@@ -1012,7 +1007,7 @@ static void scanFunction_Reference(int size,
                             // got the bypass reference
                             log_trace(":adding bypass selected symbol %s", lastIncomingData.referenceItem->linkName);
                             olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, lastIncomingData.referenceItem,
-                                               true, true, 0, usageKind,0,&noPosition, UsageNone);
+                                               true, true, 0, usage,0,&noPosition, UsageNone);
                         }
                     } else {
                         olcxAddReference(&sessionData.browserStack.top->references, &reference);

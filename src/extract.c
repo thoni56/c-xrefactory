@@ -58,8 +58,8 @@ static void dumpProgramToLog(ProgramGraphNode *program) {
         log_trace("%p: %2d %2d %s %s", p,
                 p->posBits, p->stateBits,
                 p->symRef->linkName,
-                usageKindEnumName[p->ref->usage.kind]+5);
-        if (p->symRef->type==TypeLabel && p->ref->usage.kind!=UsageDefined) {
+                usageKindEnumName[p->ref->usage]+5);
+        if (p->symRef->type==TypeLabel && p->ref->usage!=UsageDefined) {
             log_trace("    Jump: %p", p->jump);
         }
     }
@@ -73,8 +73,8 @@ void dumpProgram(ProgramGraphNode *program) {
         printf("%p: %2d %2d %s %s\n", p,
                 p->posBits, p->stateBits,
                 p->symRef->linkName,
-                usageKindEnumName[p->ref->usage.kind]+5);
-        if (p->symRef->type==TypeLabel && p->ref->usage.kind!=UsageDefined) {
+                usageKindEnumName[p->ref->usage]+5);
+        if (p->symRef->type==TypeLabel && p->ref->usage!=UsageDefined) {
             printf("    Jump: %p\n", p->jump);
         }
     }
@@ -191,7 +191,7 @@ static ProgramGraphNode *getGraphAddress(ProgramGraphNode *program, Reference *r
 static Reference *getDefinitionReference(ReferenceItem *lab) {
     Reference *result;
 
-    for (result=lab->references; result!=NULL && result->usage.kind!=UsageDefined; result=result->next)
+    for (result=lab->references; result!=NULL && result->usage!=UsageDefined; result=result->next)
         ;
     if (result == NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -223,7 +223,7 @@ static ProgramGraphNode *makeProgramGraph(void) {
     LIST_SORT(ProgramGraphNode, program, linearOrder);
     dumpProgramToLog(program);
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
-        if (p->symRef->type==TypeLabel && p->ref->usage.kind!=UsageDefined) {
+        if (p->symRef->type==TypeLabel && p->ref->usage!=UsageDefined) {
             // resolve the jump
             p->jump = getLabelGraphAddress(program, p->symRef);
         }
@@ -246,11 +246,11 @@ static void extSetSetStates(ProgramGraphNode *p, ReferenceItem *symRef, unsigned
         cstate = p->stateBits = (cstate | oldStateBits | INSPECTION_VISITED);
         cpos = p->posBits | INSPECTION_VISITED;
         if (p->symRef == symRef) {          // the examined variable
-            if (p->ref->usage.kind == UsageAddrUsed) {
+            if (p->ref->usage == UsageAddrUsed) {
                 cstate = cpos;
                 // change only state, so usage is kept
-            } else if (p->ref->usage.kind == UsageLvalUsed
-                       || (p->ref->usage.kind == UsageDefined
+            } else if (p->ref->usage == UsageLvalUsed
+                       || (p->ref->usage == UsageDefined
                            && ! isStructOrUnion(p))
                        ) {
                 // change also current value, because there is no usage
@@ -269,10 +269,10 @@ static void extSetSetStates(ProgramGraphNode *p, ReferenceItem *symRef, unsigned
                 cstate |= INSPECTION_INSIDE_PASSING;
             }
         } else if (p->symRef->type==TypeLabel) {
-            if (p->ref->usage.kind==UsageUsed) {  // goto
+            if (p->ref->usage==UsageUsed) {  // goto
                 p = p->jump;
                 goto cont;
-            } else if (p->ref->usage.kind==UsageFork) {   // branching
+            } else if (p->ref->usage==UsageFork) {   // branching
                 extSetSetStates(p->jump, symRef, cstate);
             }
         }
@@ -295,7 +295,7 @@ static ExtractClassification classifyLocalVariableExtraction0(
     //&dumpProgramToLog(program);
     inUsages = outUsages = outUsageBothExists = 0;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->symRef == varRef->symRef && p->ref->usage.kind != UsageNone) {
+        if (p->symRef == varRef->symRef && p->ref->usage != UsageNone) {
             if (p->posBits==INSPECTION_INSIDE_BLOCK) {
                 inUsages |= p->stateBits;
             } else if (p->posBits==INSPECTION_OUTSIDE_BLOCK) {
@@ -379,7 +379,7 @@ static bool areThereJumpsInOrOutOfBlock(ProgramGraphNode *program) {
         assert(p->symRef!=NULL);
         if (p->symRef->type==TypeLabel) {
             assert(p->ref!=NULL);
-            if (p->ref->usage.kind==UsageUsed || p->ref->usage.kind==UsageFork) {
+            if (p->ref->usage==UsageUsed || p->ref->usage==UsageFork) {
                 assert(p->jump != NULL);
                 if (p->posBits != p->jump->posBits) {
                     //&fprintf(dumpOut,"jump in/out at %s : %x\n",p->symRef->linkName, p);
@@ -392,7 +392,7 @@ static bool areThereJumpsInOrOutOfBlock(ProgramGraphNode *program) {
 }
 
 static bool isLocalVariable(ProgramGraphNode *node) {
-    return node->ref->usage.kind==UsageDefined
+    return node->ref->usage==UsageDefined
         &&  node->symRef->type==TypeDefault
         &&  node->symRef->scope==AutoScope;
 }
@@ -773,7 +773,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
             || p->classification == CLASSIFIED_AS_OUT_ARGUMENT
             || p->classification == CLASSIFIED_AS_RESULT_VALUE
             || (p->symRef->storage == StorageExtern
-                && p->ref->usage.kind == UsageDeclared)
+                && p->ref->usage == UsageDeclared)
         ) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             getLocalVarStringFromLinkName(p->symRef->linkName, name, declarator, declaration, "", true);

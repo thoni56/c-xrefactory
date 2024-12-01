@@ -538,7 +538,7 @@ assignment_expr
         if ($1.data.reference != NULL && options.serverOperation == OLO_EXTRACT) {
             Reference *rr;
             rr = duplicateReference($1.data.reference);
-            $1.data.reference->usage = NO_USAGE;
+            $1.data.reference->usage = UsageNone;
             if ($2.data == '=') {
                 resetReferenceUsage(rr, UsageLvalUsed);
             } else {
@@ -877,12 +877,12 @@ struct_declarator
 
 enum_specifier
     : ENUM enum_identifier                                  {
-        UsageKind usageKind;
+        Usage usage;
         if (nestingLevel() == 0)
-            usageKind = USAGE_TOP_LEVEL_USED;
+            usage = USAGE_TOP_LEVEL_USED;
         else
-            usageKind = UsageUsed;
-        $$.data = simpleEnumSpecifier($2.data, usageKind);
+            usage = UsageUsed;
+        $$.data = simpleEnumSpecifier($2.data, usage);
     }
     | enum_define_specifier '{' enumerator_list_comma '}'       {
         assert($1.data && $1.data->type == TypeEnum && $1.data->u.t);
