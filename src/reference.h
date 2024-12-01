@@ -9,12 +9,6 @@
 #include "usage.h"
 
 
-
-// !!! if you add a pointer to this structure, then update olcxCopyRefList
-// A *reference* is a position with a particular usage
-#define NO_REFERENCE (Reference) {NO_USAGE, no_Position, NULL)
-
-
 #define SCOPES_LN 3
 
 typedef struct reference {
