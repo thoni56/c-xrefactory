@@ -10,6 +10,13 @@
 #include "usage.h"
 
 
+Reference makeReference(Usage usage, Position position, Reference *next) {
+    Reference reference;
+    reference.usage = usage;
+    reference.position = position;
+    reference.next = next;
+    return reference;
+}
 
 ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,
                                 Visibility visibility) {

@@ -23,8 +23,8 @@ protected Completion *newCompletion(char *name, char *fullName, int lineCount, V
 protected void freeCompletion(Completion *completion);
 
 Ensure(Completion, can_allocate_and_free_a_completion) {
-    Reference ref;
-    ReferenceItem item;
+    Reference ref = makeReference(UsageNone, makePosition(0,0,0), NULL);
+    ReferenceItem item = makeReferenceItem("", 0, TypeInt, StorageDefault, AutoScope, LocalVisibility);
     Completion *c = newCompletion("", "", 0, LocalVisibility, TypeInt, ref, item);
     freeCompletion(c);
 }

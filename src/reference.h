@@ -30,6 +30,7 @@ typedef struct referenceItem {
 } ReferenceItem;
 
 
+extern Reference makeReference(Usage usage, Position position, Reference *next);
 extern ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,
                                        Visibility visibility);
 extern void fillReference(Reference *reference, Usage usage, Position position, Reference *next);
