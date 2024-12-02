@@ -917,9 +917,8 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
 
 static bool isInReferenceList(Reference *list, Usage usage, Position position) {
     Reference *foundReference;
-    Reference reference;
+    Reference reference = makeReference(usage, position, NULL);
 
-    fillReference(&reference, usage, position, NULL);
     SORTED_LIST_FIND2(foundReference, Reference, reference, list);
     if (foundReference==NULL || SORTED_LIST_NEQ(foundReference,reference))
         return false;
@@ -932,11 +931,9 @@ static void scanFunction_Reference(int size,
                                    CharacterBuffer *cb,
                                    CxScanFileOperation operation
 ) {
-    Position pos;
-    Reference reference;
-    int       file, line, col, reqAcc;
     Usage usage;
-    int copyrefFl;
+    int reqAcc;
+    int file, line, col;
 
     assert(key == CXFI_REFERENCE);
     usage = lastIncomingData.data[CXFI_USAGE];
@@ -951,19 +948,19 @@ static void scanFunction_Reference(int size,
 
     assert(options.mode);
     if (options.mode == XrefMode) {
+        int copyrefFl;
         if (fileItem->cxLoading && fileItem->cxSaved) {
             /* if we repass refs after overflow */
-            pos = makePosition(file, line, col);
             copyrefFl = !isInReferenceList(lastIncomingData.referenceItem->references,
-                                     usage, pos);
+                                     usage, makePosition(file, line, col));
         } else {
             copyrefFl = !fileItem->cxLoading;
         }
         if (copyrefFl)
             writeCxReferenceBase(usage, reqAcc, file, line, col);
     } else if (options.mode == ServerMode) {
-        pos = makePosition(file, line, col);
-        fillReference(&reference, usage, pos, NULL);
+        Reference reference;
+        fillReference(&reference, usage, makePosition(file, line, col), NULL);
         FileItem *referenceFileItem = getFileItem(reference.position.file);
         if (operation == CXSF_DEAD_CODE_DETECTION) {
             if (OL_VIEWABLE_REFS(&reference)) {

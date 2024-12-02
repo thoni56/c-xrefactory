@@ -34,7 +34,6 @@ ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage s
 }
 
 
-
 void fillReference(Reference *reference, Usage usage, Position position, Reference *next) {
     reference->usage = usage;
     reference->position = position;

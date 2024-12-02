@@ -65,11 +65,9 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
 
         completion = newCompletion(name, fullName, 1, LocalVisibility, cType, r, item);
     } else {
-        Reference r;
+        Reference r = makeReference(UsageNone, (Position){0,0,0}, NULL);
         getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
         linkName = strdup(symbol->linkName);
-
-        fillReference(&r, r.usage, symbol->pos, NULL);
 
         item = makeReferenceItem(linkName, vApplClass, symbol->type, storage,
                                  scope, visibility);
