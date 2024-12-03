@@ -132,10 +132,12 @@ else
 endif
 
 
+.PHONY:all
 all: unit build
 
 #########################################################################
 # For production - no smartness just compile, ensure clean production build
+.PHONY:prod
 prod: COVERAGE =
 prod:
 	$(MAKE) clean
@@ -143,6 +145,7 @@ prod:
 
 #########################################################################
 # For development - various ways to build
+.PHONY:devel
 devel: CFLAGS += -DYYDEBUG
 devel: check-tokens
 	$(MAKE) -C ../editors/emacs
@@ -151,23 +154,27 @@ devel: check-tokens
 	$(MAKE) -e system-tests
 	$(MAKE) cloc
 
+.PHONY:devel-proper
 devel-proper: unit build
 	$(MAKE) -e test
 
+.PHONY:ci
 ci:
 	$(MAKE) -e -j unit
 	$(MAKE) -e -j build
 	$(MAKE) -e -C ../tests/systemd init
 	$(MAKE) -e -C ../tests/ffmpeg init
 	$(MAKE) -e -j -C ../tests all
-	$(MAKE) -e merge-gcda-from-tests
+	$(MAKE) -e merge-coverage-from-tests
 	$(MAKE) -e gcov
 	rm *.mock.gcov *.tab.*.gcov
 
 
+.PHONY:yydebug
 yydebug: CFLAGS += -DYYDEBUG
 yydebug: devel
 
+.PHONY:chcheck
 chcheck:
 	for m in `echo $(MODULES) | sed -e 's/[a-z]*_parser\.tab//g'` ; do \
 		chcheck $$m ; \
@@ -181,13 +188,13 @@ options_config.h: options_config.h.in generate_options_config.sh
 	./generate_options_config.sh
 options.c: options_config.h
 
-PHONY += build
+.PHONY:build
 build: build-proper
 
+.PHONY:build-proper
 build-proper: c-xref
 	$(MAKE) -C ../editors/emacs
 
-PHONY += c-xref
 c-xref: check-tokens $(OBJS) editor-defs
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 
@@ -209,7 +216,7 @@ unit: check-tokens unittests
 #########################################################################
 # We generate parsers for C, Yacc and C expressions
 
-PHONY += parsers
+.PHONY:parsers
 parsers: c_parser.tab.[ch] yacc_parser.tab.[ch] cexp_parser.tab.[ch]
 
 # Note the file prefix (-b) and symbol prefix (-p)
@@ -270,7 +277,7 @@ $(OBJDIR)/c_parser.tab.o : c_parser.tokens
 $(OBJDIR)/yacc_parser.tab.o : yacc_parser.tokens
 
 # And compare the three token sections to ensure that they are exactly the same
-PHONY += check-tokens
+.PHONY:check-tokens
 check-tokens: c_parser.tokens yacc_parser.tokens
 	@echo Checking tokens across parsers ...
 	@if ! diff -q c_parser.tokens yacc_parser.tokens ; then \
@@ -312,39 +319,45 @@ lexem.c: lexem.h Makefile
 
 
 #########################################################################
-
+.PHONY:clean
 clean:
 	-$(MAKE) -C ../tests clean
 	-rm -rf $(OBJDIR) c-xref *.gcov
 
 ########################################################################
 
-PHONY += clean-coverage
+.PHONY:clean-coverage
 clean-coverage:
 	-if command -v $(LCOV) > /dev/null 2>&1 ; then \
 		$(LCOV) -q -z -d .. ; \
 	fi
 	$(MAKE) gcov
 
+.PHONY:gcov
 # Create .gcov files from .gcda in $(OBJDIR)
 gcov:
 	-$(GCOV) $(OBJDIR)/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed" || true
 
+.PHONY:coverage
 coverage:
 # We create separate coverage files for each test to be able to run them in parallel (see ../tests/Makefile)
 ifeq ($(HAVE_GCOV_TOOL),yes)
-	$(MAKE) -e merge-gcda-from-tests
+	$(MAKE) -e merge-coverage-from-tests
 	$(MAKE) gcov
 else
-	# We need to collect all coverage before we can generate gcov...
+# We need to collect all coverage before we can generate gcov...
+	$(MAKE) -e total-coverage
 endif
 
 
-merge-gcda-from-tests:
+.PHONY:merge-coverage-from-tests
 ifeq ($(HAVE_GCOV_TOOL),yes)
+merge-coverage-from-tests:
+# Merge all gcda from all tests
 	@-for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
 else
-	$(MAKE) -e coverage-report
+merge-coverage-from-tests: total-coverage
+	$(MAKE) -e info2gcov
 endif
 
 
@@ -352,14 +365,20 @@ LCOV_IGNORE_COVERAGE_FOR = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*' '/Ap
 
 SYSTEM_TEST_COVERAGE_FILES = `ls ../tests/*/.cov/coverage.info | xargs printf -- '-a %s\n'`
 
-coverage-report:
+.PHONY:total-coverage
+total-coverage:
 	@mkdir -p ../coverage
 ifeq ($(HAVE_GCOV_TOOL),yes)
   # Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
+  ifeq ($(HAVE_LCOV2),yes)
+	-$(LCOV) --ignore-errors gcov,gcov -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed" || true
+  else
 	-$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed" || true
+  endif
 else
   # The run_test script in ../tests has created a coverage.info in each test directory
   # So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...'
+  # with lcov
   ifeq ($(HAVE_LCOV2),yes)
 	$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q --ignore-errors inconsistent,inconsistent -o ../coverage/total.info 2>&1
   else
@@ -367,12 +386,16 @@ else
   endif
 endif
 	@echo "LCOV-ing done..."
+# Then we can remove coverage for the ignored files
 ifeq ($(HAVE_LCOV2),yes)
 	$(LCOV) -q --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
 else
 	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
 endif
 	@echo "LCOV --remove done..."
+
+.PHONY:info2gcov
+info2gcov:
 ifeq ($(HAVE_GCOV_TOOL),no)
   # Then we have to wait until now to generate the gcov's for Emacs cov-mode...
   # And we need the info2gcov command (https://github.com/thoni56/info2gcov)
@@ -382,15 +405,20 @@ ifeq ($(HAVE_GCOV_TOOL),no)
     # We have to do without the .gcov files, no Emacs coverage display sadly...
   endif
 endif
+
+.PHONY:coverage-report
+coverage-report: total-coverage
 	genhtml -q --ignore-errors inconsistent,inconsistent -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
 	@echo Coverage done: `grep -m 1 coverPer ../coverage/index.html | tr -dc '0-9.'`
 
+.PHONY:cloc
 cloc:
 ifneq ($(shell command -v cloc 2> /dev/null),)
 	@cloc --quiet *.[chy] *.t? | grep SUM: | awk '{print "Lines:", $$5}'
 endif
 
 #########################################################################
+.PHONY:watch
 watch:
 	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Development make -j$(JOBS) devel
 
@@ -402,7 +430,7 @@ watch-for-systemtests:
 
 system-tests: c-xref
 	$(MAKE) -e test
-	$(MAKE) -e merge-gcda-from-tests
+	$(MAKE) -e merge-coverage-from-tests
 	$(MAKE) -e gcov
 	@$(MAKE) -e cloc
 
@@ -448,7 +476,7 @@ ifeq ($(OS),Darwin)
 	endif
 endif
 
-PHONY += unittests
+.PHONY:unittests
 ifeq ($(shell command -v cgreen-runner 2> /dev/null),)
 unittests: parsers
 	@echo Cgreen not available, cannot run unittests
@@ -516,8 +544,6 @@ $(eval $(call UNITTEST,symboltable,hash log memory stackmemory))
 $(eval $(call UNITTEST,undo,memory log))
 $(eval $(call UNITTEST,xref,memory log protocol))
 $(eval $(call UNITTEST,yylex,memory stackmemory protocol log position filedescriptor id filetable hash symboltable macroargumenttable symbol lexembuffer stringlist))
-
-.PHONY : $(PHONY)
 
 variables:
 	@echo LCOV = $(LCOV)
