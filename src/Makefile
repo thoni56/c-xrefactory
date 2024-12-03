@@ -98,16 +98,7 @@ ROOTDIR=..
 YACC=$(ROOTDIR)/byacc-1.9/yacc
 
 # On Darwin we can use gcc-14 if available
-ifeq ($(OS),Darwin)
-#	ifneq (, $(shell command -v gcc-14 2> /dev/null))
-#		CC=gcc-14
-#	endif
-#	ifeq ($(shell arch),arm64)
-#		# And for Homebrew on M1
-#		CC=cc
-#	endif
-# But we'd rather go with Apple Clang
-endif
+# CC=gcc-14
 
 # We need to use compatible gcov (for Darwin/Brew with Homebrew gcc-14 we need to use GCC:s gcov)
 ifeq ("$(CC)", "gcc-14")
@@ -350,42 +341,48 @@ endif
 
 
 merge-gcda-from-tests:
+ifeq ($(HAVE_GCOV_TOOL),yes)
 	@-for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
+else
+	$(MAKE) -e coverage-report
+endif
 
 
 LCOV_IGNORE_COVERAGE_FOR = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*' '/Applications/*'
 
-# We do we have different logic for Darwin here? Proly have to look in ../tests/run_test...
-ifeq ($(OS),Darwin)
-SYSTEM_TEST_COVERAGE_FILES = `find ../tests -name coverage.info | xargs stat -f "%N %z" | grep -v " 0" | awk '{print $$1}' | xargs printf -- '-a %s\n'`
-else
 SYSTEM_TEST_COVERAGE_FILES = `ls ../tests/*/.cov/coverage.info | xargs printf -- '-a %s\n'`
-endif
 
 coverage-report:
 	@mkdir -p ../coverage
 ifeq ($(HAVE_GCOV_TOOL),yes)
-# Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
+  # Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
 	-$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed" || true
 else
-# The run_test script in ../tests has created a coverage.info in each test directory
-# So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...'
+  # The run_test script in ../tests has created a coverage.info in each test directory
+  # So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...'
+  ifeq ($(HAVE_LCOV2),yes)
+	$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q --ignore-errors inconsistent,inconsistent -o ../coverage/total.info 2>&1
+  else
 	$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q -o ../coverage/total.info 2>&1
+  endif
 endif
 	@echo "LCOV-ing done..."
-	[ "$(HAVE_LCOV2)" = "yes" ] && lcovignore="--ignore-errors unused,unused" || true ; \
-	$(LCOV) -q $$lcovignore --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
+ifeq ($(HAVE_LCOV2),yes)
+	$(LCOV) -q --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
+else
+	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
+endif
 	@echo "LCOV --remove done..."
 ifeq ($(HAVE_GCOV_TOOL),no)
-# Then we have to wait until now to generate the gcov's for Emacs cov-mode...
-# And we need the info2gcov command (https://github.com/thoni56/info2gcov)
-ifeq ($(HAVE_INFO2GCOV),yes)
+  # Then we have to wait until now to generate the gcov's for Emacs cov-mode...
+  # And we need the info2gcov command (https://github.com/thoni56/info2gcov)
+  ifeq ($(HAVE_INFO2GCOV),yes)
 	info2gcov -q ../coverage/total.info
-else
-# We have to do without the .gcov files, no Emacs coverage display sadly...
+  else
+    # We have to do without the .gcov files, no Emacs coverage display sadly...
+  endif
 endif
-endif
-	genhtml -q -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
+	genhtml -q --ignore-errors inconsistent,inconsistent -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
 	@echo Coverage done: `grep -m 1 coverPer ../coverage/index.html | tr -dc '0-9.'`
 
 cloc:
