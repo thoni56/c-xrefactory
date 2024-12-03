@@ -10,7 +10,7 @@
 #include "usage.h"
 
 
-Reference makeReference(Usage usage, Position position, Reference *next) {
+Reference makeReference(Position position, Usage usage, Reference *next) {
     Reference reference;
     reference.usage = usage;
     reference.position = position;
@@ -18,23 +18,7 @@ Reference makeReference(Usage usage, Position position, Reference *next) {
     return reference;
 }
 
-ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,
-                                Visibility visibility) {
-    ReferenceItem item;
-    item.linkName = name;
-    item.vApplClass = vApplClass;
-    item.type = type;
-    item.storage = storage;
-    item.scope = scope;
-    item.visibility = visibility;
-    item.next = NULL;
-    item.references = NULL;
-
-    return item;
-}
-
-
-void fillReference(Reference *reference, Usage usage, Position position, Reference *next) {
+void fillReference(Reference *reference, Position position, Usage usage, Reference *next) {
     reference->usage = usage;
     reference->position = position;
     reference->next = next;
@@ -48,19 +32,6 @@ Reference *duplicateReference(Reference *original) {
     *copy = *original;
     original->next = copy;
     return copy;
-}
-
-void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass,
-                       Type symType, Storage storage, Scope scope,
-                       Visibility visibility) {
-    referencesItem->linkName = name;
-    referencesItem->vApplClass = vApplClass;
-    referencesItem->references = NULL;
-    referencesItem->next = NULL;
-    referencesItem->type = symType;
-    referencesItem->storage = storage;
-    referencesItem->scope = scope;
-    referencesItem->visibility = visibility;
 }
 
 void freeReferences(Reference *references) {
@@ -78,16 +49,15 @@ void resetReferenceUsage(Reference *reference,  Usage usage) {
 }
 
 Reference **addToReferenceList(Reference **list,
-                               Usage usage,
-                               Position pos) {
+                               Position pos, Usage usage) {
     Reference **place;
-    Reference reference = makeReference(usage, pos, NULL);
+    Reference reference = makeReference(pos, usage, NULL);
 
     SORTED_LIST_PLACE2(place, reference, list);
     if (*place==NULL || SORTED_LIST_NEQ((*place),reference)
         || options.serverOperation==OLO_EXTRACT) {
         Reference *r = cxAlloc(sizeof(Reference));
-        fillReference(r, usage, pos, NULL);
+        fillReference(r, pos, usage, NULL);
         LIST_CONS(r, (*place));
     } else {
         assert(*place);
@@ -125,4 +95,33 @@ Reference *olcxAddReference(Reference **rlist, Reference *ref) {
     if (!OL_VIEWABLE_REFS(ref))
         return NULL; // no regular on-line refs
     return olcxAddReferenceNoUsageCheck(rlist, ref);
+}
+
+ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,
+                                Visibility visibility) {
+    ReferenceItem item;
+    item.linkName = name;
+    item.vApplClass = vApplClass;
+    item.type = type;
+    item.storage = storage;
+    item.scope = scope;
+    item.visibility = visibility;
+    item.next = NULL;
+    item.references = NULL;
+
+    return item;
+}
+
+
+void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass,
+                       Type symType, Storage storage, Scope scope,
+                       Visibility visibility) {
+    referencesItem->linkName = name;
+    referencesItem->vApplClass = vApplClass;
+    referencesItem->references = NULL;
+    referencesItem->next = NULL;
+    referencesItem->type = symType;
+    referencesItem->storage = storage;
+    referencesItem->scope = scope;
+    referencesItem->visibility = visibility;
 }

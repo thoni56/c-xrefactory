@@ -123,8 +123,8 @@ Ensure(Editor, can_convert_single_reference_to_editor_marker) {
     int SOME_FILE_NUMBER = 42;
     int SOME_LINE_NUMBER = 43;
     int SOME_COLUMN_NUMBER = 44;
-    fillReference(&reference, usage, (Position){.file = SOME_FILE_NUMBER, .line = SOME_LINE_NUMBER,
-            .col = SOME_COLUMN_NUMBER}, NULL);
+    fillReference(&reference, (Position){.file = SOME_FILE_NUMBER, .line = SOME_LINE_NUMBER,
+            .col = SOME_COLUMN_NUMBER}, usage, NULL);
     FileItem fileItem = (FileItem){.name = "name"};
 
     expect(getFileItem, when(fileNumber, is_equal_to(SOME_FILE_NUMBER)),

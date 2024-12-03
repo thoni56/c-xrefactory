@@ -259,7 +259,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
 
     fillReferenceItem(&referenceItem, symbol->linkName, vApplCl, symbol->type, storage, scope, visibility);
     if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH && options.searchKind==SEARCH_FULL) {
-        Reference reference = makeReference(UsageNone, *position, NULL);
+        Reference reference = makeReference(*position, UsageNone, NULL);
         searchSymbolCheckReference(&referenceItem, &reference);
         return NULL;
     }
@@ -276,7 +276,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         foundMember = r;
     }
 
-    place = addToReferenceList(&foundMember->references, usage, *position);
+    place = addToReferenceList(&foundMember->references, *position, usage);
     log_trace("checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s",
               getFileItem(cxRefPosition.file)->name, cxRefPosition.file, cxRefPosition.line, cxRefPosition.col,
               fileItem->name, position->file, position->line, position->col,

@@ -911,13 +911,13 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
 
     pos = makePosition(file, line, col);
     if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]) {
-        addToReferenceList(&lastIncomingData.referenceItem->references, usage, pos);
+        addToReferenceList(&lastIncomingData.referenceItem->references, pos, usage);
     }
 }
 
 static bool isInReferenceList(Reference *list, Usage usage, Position position) {
     Reference *foundReference;
-    Reference reference = makeReference(usage, position, NULL);
+    Reference reference = makeReference(position, usage, NULL);
 
     SORTED_LIST_FIND2(foundReference, Reference, reference, list);
     if (foundReference==NULL || SORTED_LIST_NEQ(foundReference,reference))
@@ -959,7 +959,7 @@ static void scanFunction_Reference(int size,
         if (copyrefFl)
             writeCxReferenceBase(usage, reqAcc, file, line, col);
     } else if (options.mode == ServerMode) {
-        Reference reference = makeReference(usage, makePosition(file, line, col), NULL);
+        Reference reference = makeReference(makePosition(file, line, col), usage, NULL);
         FileItem *referenceFileItem = getFileItem(reference.position.file);
         if (operation == CXSF_DEAD_CODE_DETECTION) {
             if (OL_VIEWABLE_REFS(&reference)) {

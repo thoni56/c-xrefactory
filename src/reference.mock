@@ -3,7 +3,7 @@
 #include "reference.h"
 
 
-Reference makeReference(Usage usage, Position position, Reference *next) {
+Reference makeReference(Position position, Usage usage, Reference *next) {
     Reference reference;
     reference.usage = usage;
     reference.position = position;
@@ -26,7 +26,7 @@ ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage s
     return item;
 }
 
-void fillReference(Reference *reference, Usage usage, Position position,
+void fillReference(Reference *reference, Position position, Usage usage,
                     Reference *next) {
     reference->usage = usage;
     reference->position = position;
@@ -54,7 +54,7 @@ void freeReferences(Reference *references) {
     mock(references);
 }
 
-Reference **addToReferenceList(Reference **list, Usage usage_arg, Position pos_arg) {
+Reference **addToReferenceList(Reference **list, Position pos_arg, Usage usage_arg) {
     Position *pos = &pos_arg;
     Usage *usage = &usage_arg;
     return (Reference **) mock(list, usage, pos);
