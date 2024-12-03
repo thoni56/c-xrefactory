@@ -1,7 +1,7 @@
 #ifndef REFTAB_H_INCLUDED
 #define REFTAB_H_INCLUDED
 
-#include "proto.h"
+#include "reference.h"
 
 #define HASH_TAB_NAME refTab
 #define HASH_TAB_TYPE ReferenceTable
