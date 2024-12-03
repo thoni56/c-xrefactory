@@ -7,7 +7,7 @@ const char *usageKindEnumName[] = {
 
 
 bool isVisibleUsage(Usage usage) {
-    return usage < UsageMaxOLUsages;
+    return usage < UsageMaxOnLineVisibleUsages;
 }
 
 bool isDefinitionUsage(Usage usage) {

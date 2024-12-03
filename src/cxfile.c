@@ -962,7 +962,7 @@ static void scanFunction_Reference(int size,
         Reference reference = makeReference(makePosition(file, line, col), usage, NULL);
         FileItem *referenceFileItem = getFileItem(reference.position.file);
         if (operation == CXSF_DEAD_CODE_DETECTION) {
-            if (OL_VIEWABLE_REFS(&reference)) {
+            if (isVisibleUsage(reference.usage)) {
                 // restrict reported symbols to those defined in project input file
                 if (isDefinitionUsage(reference.usage)
                     && referenceFileItem->isArgument

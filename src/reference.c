@@ -26,7 +26,7 @@ Reference makeReference(Position position, Usage usage, Reference *next) {
     return reference;
 }
 
-Reference *duplicateReference(Reference *original) {
+Reference *duplicateReferenceInCxMemory(Reference *original) {
     // this is used in extract x=x+2; to re-arrange order of references
     // i.e. usage must be first, lValue second.
     original->usage = UsageNone;
@@ -77,25 +77,25 @@ bool isReferenceInList(Reference *reference, Reference *list) {
 }
 
 static Reference *addReferenceWithoutUsageCheck(Reference **listP, Reference *ref) {
-    Reference **place;
-    Reference *rr = NULL;
+    Reference **placeInList;
+    Reference *r = NULL;
 
-    SORTED_LIST_PLACE2(place, *ref, listP);
-    if (*place==NULL || SORTED_LIST_NEQ(*place,*ref)) {
-        rr = malloc(sizeof(Reference));
-        *rr = *ref;
-        LIST_CONS(rr,(*place));
+    SORTED_LIST_PLACE2(placeInList, *ref, listP);
+    if (*placeInList==NULL || SORTED_LIST_NEQ(*placeInList, *ref)) {
+        r = malloc(sizeof(Reference));
+        *r = *ref;
+        LIST_CONS(r, *placeInList);
         log_trace("olcx adding %s %s:%d:%d", usageKindEnumName[ref->usage],
                   getFileItem(ref->position.file)->name, ref->position.line,ref->position.col);
     }
-    return rr;
+    return r;
 }
 
 
 Reference *addReferenceToList(Reference **listP, Reference *ref) {
     log_trace("checking ref %s %s:%d:%d at %d", usageKindEnumName[ref->usage],
               simpleFileName(getFileItem(ref->position.file)->name), ref->position.line, ref->position.col, ref);
-    if (!OL_VIEWABLE_REFS(ref))
+    if (!isVisibleUsage(ref->usage))
         return NULL; // no regular on-line refs
     return addReferenceWithoutUsageCheck(listP, ref);
 }

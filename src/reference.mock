@@ -47,7 +47,7 @@ void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass
 }
 
 
-Reference *duplicateReference(Reference *r) {
+Reference *duplicateReferenceInCxMemory(Reference *r) {
     return (Reference *) mock(r);
 }
 

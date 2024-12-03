@@ -1,7 +1,7 @@
 /* Generic (macro) handling of lists */
 
 /* LIST_CONS(i/o element, i/o list) */
-#define LIST_CONS(elem,list) {(elem)->next = (list); list = elem;}
+#define LIST_CONS(elem, list) {(elem)->next = (list); (list) = (elem);}
 
 /* LIST_APPEND(type, in/out list1, in list2) */
 #define LIST_APPEND(type, list1, list2)                                                                           \

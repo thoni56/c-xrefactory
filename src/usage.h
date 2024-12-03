@@ -79,7 +79,7 @@
     ENUM(ureserve10)                            \
     ENUM(ureserve11)                            \
 /* INVISIBLE USAGES */                          \
-    ENUM(UsageMaxOLUsages)                      \
+    ENUM(UsageMaxOnLineVisibleUsages)           \
     ENUM(UsageNone)                             \
     ENUM(UsageMacroBaseFileUsage)               \
     ENUM(UsageClassFileDefinition)              \

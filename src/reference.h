@@ -33,7 +33,7 @@ typedef struct referenceItem {
 extern Reference *newReference(Position position, Usage usage, Reference *next);
 extern Reference makeReference(Position position, Usage usage, Reference *next);
 extern void fillReference(Reference *reference, Position position, Usage usage, Reference *next);
-extern Reference *duplicateReference(Reference *r);
+extern Reference *duplicateReferenceInCxMemory(Reference *r);
 extern void freeReferences(Reference *references);
 extern void resetReferenceUsage(Reference *reference, Usage usage);
 extern Reference **addToReferenceList(Reference **list, Position pos, Usage usage);

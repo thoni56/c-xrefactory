@@ -60,7 +60,7 @@ unsigned menuFilterOoBits[MAX_MENU_FILTER_LEVEL] = {
 // !!!! if you modify this, you will need to modify level# for
 //  Emacs, in c-xref.el !!!!!!!!!
 int refListFilters[MAX_REF_LIST_FILTER_LEVEL] = {
-    UsageMaxOLUsages,
+    UsageMaxOnLineVisibleUsages,
     UsageUsed,
     UsageAddrUsed,
     UsageLvalUsed,

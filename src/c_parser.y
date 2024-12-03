@@ -525,7 +525,7 @@ conditional_expr
         $$.data.typeModifier = $3.data.typeModifier;
         $$.data.reference = NULL;
     }
-    /* another GCC "improvement", grrr */
+    /* GNU Conditional operator (a?:b meaning if a then a else b) */
     | logical_or_expr '?' ':' conditional_expr  {
         $$.data.typeModifier = $4.data.typeModifier;
         $$.data.reference = NULL;
@@ -536,13 +536,12 @@ assignment_expr
     : conditional_expr                                  /*& { $$.data = $1.data; } &*/
     | unary_expr assignment_operator assignment_expr    {
         if ($1.data.reference != NULL && options.serverOperation == OLO_EXTRACT) {
-            Reference *rr;
-            rr = duplicateReference($1.data.reference);
+            Reference *r = duplicateReferenceInCxMemory($1.data.reference);
             $1.data.reference->usage = UsageNone;
             if ($2.data == '=') {
-                resetReferenceUsage(rr, UsageLvalUsed);
+                resetReferenceUsage(r, UsageLvalUsed);
             } else {
-                resetReferenceUsage(rr, UsageAddrUsed);
+                resetReferenceUsage(r, UsageAddrUsed);
             }
         } else {
             if ($2.data == '=') {

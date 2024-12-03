@@ -285,7 +285,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
 
     if (options.mode == ServerMode
         && positionsAreEqual(cxRefPosition, *position)
-        && usage<UsageMaxOLUsages
+        && usage<UsageMaxOnLineVisibleUsages
     ) {
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!
             if (strcmp(symbol->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
@@ -695,7 +695,7 @@ static void linePosProcess(FILE *outFile,
         }
         rr=rr->next;
     } while (rr!=NULL && ((rr->position.file == positionP->file && rr->position.line == positionP->line)
-                          || (rr->usage>UsageMaxOLUsages)));
+                          || (rr->usage>UsageMaxOnLineVisibleUsages)));
     if (r!=NULL) {
         if (! cxfBuf->isAtEOF) {
             while (ch!='\n' && (! cxfBuf->isAtEOF)) {
