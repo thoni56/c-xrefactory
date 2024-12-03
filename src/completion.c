@@ -5,7 +5,6 @@
 
 #include "filetable.h"
 #include "list.h"
-#include "log.h"
 #include "options.h"
 #include "reference.h"
 #include "session.h"
