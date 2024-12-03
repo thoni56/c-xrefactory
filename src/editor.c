@@ -916,10 +916,7 @@ Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP
         line = 1; col = 0;
         for (; text<textMax; text++, col++) {
             if (text == offset) {
-                Reference *r = malloc(sizeof(Reference));
-                r->position = makePosition(buf->fileNumber, line, col);
-                fillReference(r, r->position, markers->usage, reference);
-                reference = r;
+                reference = newReference((Position){buf->fileNumber, line, col}, markers->usage, reference);
                 markers = markers->next;
                 if (markers==NULL || markers->marker->buffer != buf)
                     break;
@@ -931,10 +928,7 @@ Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP
             }
         }
         while (markers!=NULL && markers->marker->buffer==buf) {
-            Reference *r = malloc(sizeof(Reference));
-            r->position = makePosition(buf->fileNumber, line, 0);
-            fillReference(r, r->position, markers->usage, reference);
-            reference = r;
+            reference = newReference((Position){buf->fileNumber, line, 0}, markers->usage, reference);
             markers = markers->next;
         }
     }

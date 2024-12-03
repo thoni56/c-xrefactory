@@ -3,7 +3,6 @@
 
 #include "editor.h"
 
-#include "memory.h"
 #include "usage.h"
 
 #include "commons.mock"
@@ -17,7 +16,6 @@
 #include "misc.mock"
 #include "options.mock"
 #include "ppc.mock"
-#include "reference.h"
 #include "reference.mock"
 #include "undo.mock"
 #include "yylex.mock"
@@ -118,13 +116,17 @@ Ensure(Editor, can_convert_empty_list_of_references_to_editor_markers) {
 }
 
 Ensure(Editor, can_convert_single_reference_to_editor_marker) {
-    Usage usage = UsageDefined;
-    Reference reference;
     int SOME_FILE_NUMBER = 42;
     int SOME_LINE_NUMBER = 43;
     int SOME_COLUMN_NUMBER = 44;
-    fillReference(&reference, (Position){.file = SOME_FILE_NUMBER, .line = SOME_LINE_NUMBER,
-            .col = SOME_COLUMN_NUMBER}, usage, NULL);
+
+    Reference reference = makeReference(
+        (Position){
+            .file = SOME_FILE_NUMBER,
+            .line = SOME_LINE_NUMBER,
+            .col = SOME_COLUMN_NUMBER},
+        UsageDefined, NULL);
+
     FileItem fileItem = (FileItem){.name = "name"};
 
     expect(getFileItem, when(fileNumber, is_equal_to(SOME_FILE_NUMBER)),

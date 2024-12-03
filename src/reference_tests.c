@@ -14,5 +14,7 @@ BeforeEach(Reference) {}
 AfterEach(Reference) {}
 
 
-Ensure(Reference, can_run_an_empty_test) {
+Ensure(Reference, can_allocate_and_free_a_reference) {
+    Reference *reference = newReference((Position){0,0,0}, UsageNone, NULL);
+    free(reference);
 }

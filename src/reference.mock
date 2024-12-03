@@ -3,6 +3,14 @@
 #include "reference.h"
 
 
+Reference *newReference(Position position, Usage usage, Reference *next) {
+    Reference *reference = malloc(sizeof(Reference));
+    reference->usage = usage;
+    reference->position = position;
+    reference->next = next;
+    return reference;
+}
+
 Reference makeReference(Position position, Usage usage, Reference *next) {
     Reference reference;
     reference.usage = usage;
@@ -24,13 +32,6 @@ ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage s
     item.references = NULL;
 
     return item;
-}
-
-void fillReference(Reference *reference, Position position, Usage usage,
-                    Reference *next) {
-    reference->usage = usage;
-    reference->position = position;
-    reference->next = next;
 }
 
 void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass, Type symType, Storage storage,

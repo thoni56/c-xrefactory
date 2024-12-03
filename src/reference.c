@@ -10,18 +10,20 @@
 #include "usage.h"
 
 
+Reference *newReference(Position position, Usage usage, Reference *next) {
+    Reference *reference = malloc(sizeof(Reference));
+    reference->usage = usage;
+    reference->position = position;
+    reference->next = next;
+    return reference;
+}
+
 Reference makeReference(Position position, Usage usage, Reference *next) {
     Reference reference;
     reference.usage = usage;
     reference.position = position;
     reference.next = next;
     return reference;
-}
-
-void fillReference(Reference *reference, Position position, Usage usage, Reference *next) {
-    reference->usage = usage;
-    reference->position = position;
-    reference->next = next;
 }
 
 Reference *duplicateReference(Reference *original) {
@@ -57,7 +59,7 @@ Reference **addToReferenceList(Reference **list,
     if (*place==NULL || SORTED_LIST_NEQ((*place),reference)
         || options.serverOperation==OLO_EXTRACT) {
         Reference *r = cxAlloc(sizeof(Reference));
-        fillReference(r, pos, usage, NULL);
+        *r = makeReference(pos, usage, NULL);
         LIST_CONS(r, (*place));
     } else {
         assert(*place);

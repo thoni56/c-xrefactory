@@ -30,12 +30,9 @@ typedef struct referenceItem {
 } ReferenceItem;
 
 
+extern Reference *newReference(Position position, Usage usage, Reference *next);
 extern Reference makeReference(Position position, Usage usage, Reference *next);
-extern ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,
-                                       Visibility visibility);
 extern void fillReference(Reference *reference, Position position, Usage usage, Reference *next);
-extern void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass, Type symType,
-                              Storage storage, Scope scope, Visibility visibility);
 extern Reference *duplicateReference(Reference *r);
 extern void freeReferences(Reference *references);
 extern void resetReferenceUsage(Reference *reference, Usage usage);
@@ -45,5 +42,9 @@ extern Reference *olcxAddReferenceNoUsageCheck(Reference **rlist,
 extern bool isReferenceInList(Reference *r, Reference *list);
 extern Reference *olcxAddReference(Reference **rlist,
                                    Reference *ref);
+extern ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,
+                                       Visibility visibility);
+extern void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass, Type symType,
+                              Storage storage, Scope scope, Visibility visibility);
 
 #endif
