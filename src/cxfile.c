@@ -1006,7 +1006,7 @@ static void scanFunction_Reference(int size,
                                                true, true, 0, usage,0,&noPosition, UsageNone);
                         }
                     } else {
-                        olcxAddReference(&sessionData.browserStack.top->references, &reference);
+                        addReferenceToList(&sessionData.browserStack.top->references, &reference);
                     }
                 }
             }

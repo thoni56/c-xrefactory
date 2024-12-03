@@ -76,10 +76,11 @@ bool isReferenceInList(Reference *reference, Reference *list) {
     return true;
 }
 
-Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref) {
-    Reference **place, *rr;
-    rr = NULL;
-    SORTED_LIST_PLACE2(place, *ref, rlist);
+static Reference *addReferenceWithoutUsageCheck(Reference **listP, Reference *ref) {
+    Reference **place;
+    Reference *rr = NULL;
+
+    SORTED_LIST_PLACE2(place, *ref, listP);
     if (*place==NULL || SORTED_LIST_NEQ(*place,*ref)) {
         rr = malloc(sizeof(Reference));
         *rr = *ref;
@@ -91,12 +92,12 @@ Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref) {
 }
 
 
-Reference *olcxAddReference(Reference **rlist, Reference *ref) {
+Reference *addReferenceToList(Reference **listP, Reference *ref) {
     log_trace("checking ref %s %s:%d:%d at %d", usageKindEnumName[ref->usage],
               simpleFileName(getFileItem(ref->position.file)->name), ref->position.line, ref->position.col, ref);
     if (!OL_VIEWABLE_REFS(ref))
         return NULL; // no regular on-line refs
-    return olcxAddReferenceNoUsageCheck(rlist, ref);
+    return addReferenceWithoutUsageCheck(listP, ref);
 }
 
 ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,

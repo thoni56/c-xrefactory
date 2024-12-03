@@ -37,10 +37,8 @@ extern Reference *duplicateReference(Reference *r);
 extern void freeReferences(Reference *references);
 extern void resetReferenceUsage(Reference *reference, Usage usage);
 extern Reference **addToReferenceList(Reference **list, Position pos, Usage usage);
-extern Reference *olcxAddReferenceNoUsageCheck(Reference **rlist,
-                                               Reference *ref);
 extern bool isReferenceInList(Reference *r, Reference *list);
-extern Reference *olcxAddReference(Reference **rlist,
+extern Reference *addReferenceToList(Reference **rlist,
                                    Reference *ref);
 extern ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,
                                        Visibility visibility);

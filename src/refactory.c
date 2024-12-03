@@ -510,7 +510,7 @@ static void pushMarkersAsReferences(EditorMarkerList **markers, OlcxReferences *
     for (SymbolsMenu *mm = refs->menuSym; mm != NULL; mm = mm->next) {
         if (strcmp(mm->references.linkName, name) == 0) {
             for (Reference *r = rr; r != NULL; r = r->next) {
-                olcxAddReference(&mm->references.references, r);
+                addReferenceToList(&mm->references.references, r);
             }
         }
     }

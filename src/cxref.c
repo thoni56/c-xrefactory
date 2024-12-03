@@ -453,7 +453,7 @@ void olcxAddReferences(Reference *list, Reference **dlist,
     revlist = NULL;
     while (list!=NULL) {
         if (fnum==ANY_FILE || fnum==list->position.file) {
-            olcxAddReference(dlist, list);
+            addReferenceToList(dlist, list);
         }
         tmp = list->next; list->next = revlist;
         revlist = list;   list = tmp;
