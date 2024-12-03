@@ -126,23 +126,3 @@ Reference *olcxAddReference(Reference **rlist, Reference *ref) {
         return NULL; // no regular on-line refs
     return olcxAddReferenceNoUsageCheck(rlist, ref);
 }
-
-#if 0
-// I don't know why this is out-pre-processed...
-void olcxCheck1CxFileReference(ReferenceItem *referenceItem, Reference *reference) {
-    ReferenceItem     *sss;
-    OlcxReferences    *rstack;
-    SymbolsMenu     *cms;
-    int pushedKind;
-
-    assert(sessionData.browserStack.top);
-    rstack = sessionData.browserStack.top->previous;
-    assert(rstack && rstack->menuSym);
-    sss = &rstack->menuSym->references;
-    pushedKind = itIsSymbolToPushOlReferences(referenceItem, rstack, &cms, DEFAULT_VALUE);
-    // this is very slow to check the symbol name for each reference
-    if (pushedKind == 0 && olcxIsSameCxSymbol(referenceItem, sss)) {
-        olcxSingleReferenceCheck1(referenceItem, rstack, reference);
-    }
-}
-#endif
