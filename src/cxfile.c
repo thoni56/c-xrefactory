@@ -959,8 +959,7 @@ static void scanFunction_Reference(int size,
         if (copyrefFl)
             writeCxReferenceBase(usage, reqAcc, file, line, col);
     } else if (options.mode == ServerMode) {
-        Reference reference;
-        fillReference(&reference, usage, makePosition(file, line, col), NULL);
+        Reference reference = makeReference(usage, makePosition(file, line, col), NULL);
         FileItem *referenceFileItem = getFileItem(reference.position.file);
         if (operation == CXSF_DEAD_CODE_DETECTION) {
             if (OL_VIEWABLE_REFS(&reference)) {

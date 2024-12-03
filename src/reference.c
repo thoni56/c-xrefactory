@@ -78,13 +78,12 @@ void resetReferenceUsage(Reference *reference,  Usage usage) {
 }
 
 Reference **addToReferenceList(Reference **list,
-                         Usage usage,
-                         Position pos) {
+                               Usage usage,
+                               Position pos) {
     Reference **place;
-    Reference reference;
+    Reference reference = makeReference(usage, pos, NULL);
 
-    fillReference(&reference, usage, pos, NULL);
-    SORTED_LIST_PLACE2(place,reference,list);
+    SORTED_LIST_PLACE2(place, reference, list);
     if (*place==NULL || SORTED_LIST_NEQ((*place),reference)
         || options.serverOperation==OLO_EXTRACT) {
         Reference *r = cxAlloc(sizeof(Reference));
