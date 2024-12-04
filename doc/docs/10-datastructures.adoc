@@ -3,9 +3,20 @@
 There are a lot of different data structures used in `c-xrefactory`.
 This is a first step towards visualising some of them.
 
+=== ReferenceItems and References
+
+This is a fundamental pair. A `ReferenceItem` is the symbol that
+occurs at the locations that `References` indicate.
+
+Each `ReferenceItem` has a linked list of `Reference`s, each denoting
+one occurence of that "symbol".
+
 === Symbols and References
 
-So, why is there no connection between the symbols and the references?!?
+There is also a structure called `Symbol`. But, why is there no
+connection between the symbols and the references?!?
+
+So what are these actually?
 
 [plantuml, structures, png]
 ....
