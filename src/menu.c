@@ -81,7 +81,7 @@ static char *olcxStringCopy(char *string) {
     return copy;
 }
 
-SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int vApplClass, int vFunCl, Position *defpos,
+SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int vApplClass, Position *defpos,
                                  int defusage, int selected, int visible, unsigned ooBits, int olusage,
                                  int vlevel) {
     SymbolsMenu   *symbolsMenu;
@@ -141,7 +141,7 @@ SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *symbol
     new = *place;
     if (*place==NULL || olSymbolMenuIsLess(&dummyMenu, *place)) {
         assert(symbol);
-        new = olCreateNewMenuItem(symbol, symbol->vApplClass, symbol->vApplClass, defpos, defusage,
+        new = olCreateNewMenuItem(symbol, symbol->vApplClass, defpos, defusage,
                                 selected, visible, ooBits,
                                 olusage, vlevel);
         LIST_CONS(new, *place);
