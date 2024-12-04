@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<meta name="author" content="v{VERSION} - Generated 2024-12-03">
+<meta name="author" content="v{VERSION} - Generated 2024-12-04">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2024-12-03</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2024-12-04</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -505,10 +505,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_data_structures">10. Data Structures</a>
 <ul class="sectlevel2">
-<li><a href="#_symbols_and_references">10.1. Symbols and References</a></li>
-<li><a href="#_files_and_buffers">10.2. Files and Buffers</a></li>
-<li><a href="#_modes">10.3. Modes</a></li>
-<li><a href="#_options_2">10.4. Options</a></li>
+<li><a href="#_referenceitems_and_references">10.1. ReferenceItems and References</a></li>
+<li><a href="#_symbols_and_references">10.2. Symbols and References</a></li>
+<li><a href="#_files_and_buffers">10.3. Files and Buffers</a></li>
+<li><a href="#_modes">10.4. Modes</a></li>
+<li><a href="#_options_2">10.5. Options</a></li>
 </ul>
 </li>
 <li><a href="#_algorithms">11. Algorithms</a>
@@ -2079,9 +2080,24 @@ value. The ':' indicates that the record is a filename.</p>
 This is a first step towards visualising some of them.</p>
 </div>
 <div class="sect2">
-<h3 id="_symbols_and_references">10.1. Symbols and References</h3>
+<h3 id="_referenceitems_and_references">10.1. ReferenceItems and References</h3>
 <div class="paragraph">
-<p>So, why is there no connection between the symbols and the references?!?</p>
+<p>This is a fundamental pair. A <code>ReferenceItem</code> is the symbol that
+occurs at the locations that <code>References</code> indicate.</p>
+</div>
+<div class="paragraph">
+<p>Each <code>ReferenceItem</code> has a linked list of `Reference`s, each denoting
+one occurence of that "symbol".</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_symbols_and_references">10.2. Symbols and References</h3>
+<div class="paragraph">
+<p>There is also a structure called <code>Symbol</code>. But, why is there no
+connection between the symbols and the references?!?</p>
+</div>
+<div class="paragraph">
+<p>So what are these actually?</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -2090,7 +2106,7 @@ This is a first step towards visualising some of them.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_files_and_buffers">10.2. Files and Buffers</h3>
+<h3 id="_files_and_buffers">10.3. Files and Buffers</h3>
 <div class="paragraph">
 <p>Many strange things are going on with reading files so that is not completely understood yet.</p>
 </div>
@@ -2136,7 +2152,7 @@ that has a LexemBuffer as a component (if they use it).
 </div>
 </div>
 <div class="sect2">
-<h3 id="_modes">10.3. Modes</h3>
+<h3 id="_modes">10.4. Modes</h3>
 <div class="paragraph">
 <p><code>c-xrefactory</code> operates in different modes ("regimes" in original
 <code>c-xref</code> parlance):</p>
@@ -2176,7 +2192,7 @@ and handle options differently.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_options_2">10.4. Options</h3>
+<h3 id="_options_2">10.5. Options</h3>
 <div class="paragraph">
 <p>The <code>Options</code> datastructure is used to collect options from the
 command line as well as from options/configuration files and piped
@@ -2200,7 +2216,7 @@ communication.</p>
 </ul>
 </div>
 <div class="sect3">
-<h4 id="_allocation_copying">10.4.1. Allocation &amp; Copying</h4>
+<h4 id="_allocation_copying">10.5.1. Allocation &amp; Copying</h4>
 <div class="paragraph">
 <p>Options has its own allocation using <code>optAlloc</code> which allocates in a
 separate area, currently part of the options structure and utilizing
@@ -3249,7 +3265,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-12-03 18:20:54 UTC
+Last updated 2024-12-04 08:50:01 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
