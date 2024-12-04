@@ -340,14 +340,7 @@ gcov:
 
 .PHONY:coverage
 coverage:
-# We create separate coverage files for each test to be able to run them in parallel (see ../tests/Makefile)
-ifeq ($(HAVE_GCOV_TOOL),yes)
 	$(MAKE) -e merge-coverage-from-tests
-	$(MAKE) gcov
-else
-# We need to collect all coverage before we can generate gcov...
-	$(MAKE) -e total-coverage
-endif
 
 
 .PHONY:merge-coverage-from-tests
@@ -357,6 +350,7 @@ merge-coverage-from-tests:
 	@-for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
 else
 merge-coverage-from-tests: total-coverage
+# Merge all .info to total.info then extract .gcovs from it
 	$(MAKE) -e info2gcov
 endif
 
@@ -423,7 +417,7 @@ watch:
 	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Development make -j$(JOBS) devel
 
 watch-for-unittests:
-	watchexec -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Unittests make -j$(JOBS) unit
+	watchexec --no-vcs-ignore -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Unittests make -j$(JOBS) unit
 
 watch-for-systemtests:
 	watchexec --no-vcs-ignore -e done -- execnotify -t Systemtests make -j$(JOBS) system-tests
@@ -431,7 +425,6 @@ watch-for-systemtests:
 system-tests: c-xref
 	$(MAKE) -e test
 	$(MAKE) -e merge-coverage-from-tests
-	$(MAKE) -e gcov
 	@$(MAKE) -e cloc
 
 #########################################################################
