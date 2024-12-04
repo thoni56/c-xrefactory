@@ -12,8 +12,8 @@
 #define SCOPES_LN 3
 
 typedef struct reference {
-    Usage             usage;
     struct position   position;
+    Usage             usage;
     struct reference *next;
 } Reference;
 

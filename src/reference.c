@@ -100,31 +100,22 @@ Reference *addReferenceToList(Reference **listP, Reference *ref) {
     return addReferenceWithoutUsageCheck(listP, ref);
 }
 
-ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,
-                                Visibility visibility) {
-    ReferenceItem item;
-    item.linkName = name;
-    item.vApplClass = vApplClass;
-    item.type = type;
-    item.storage = storage;
-    item.scope = scope;
-    item.visibility = visibility;
-    item.next = NULL;
-    item.references = NULL;
-
-    return item;
-}
-
-
 void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass,
                        Type symType, Storage storage, Scope scope,
                        Visibility visibility) {
     referencesItem->linkName = name;
     referencesItem->vApplClass = vApplClass;
-    referencesItem->references = NULL;
-    referencesItem->next = NULL;
     referencesItem->type = symType;
     referencesItem->storage = storage;
     referencesItem->scope = scope;
     referencesItem->visibility = visibility;
+    referencesItem->references = NULL;
+    referencesItem->next = NULL;
+}
+
+ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,
+                                Visibility visibility) {
+    ReferenceItem item;
+    fillReferenceItem(&item, name, vApplClass, type, storage, scope, visibility);
+    return item;
 }

@@ -14,6 +14,7 @@
 #include "menu.h"
 #include "misc.h"
 #include "options.h"
+#include "reference.h"
 #include "reftab.h"
 #include "session.h"
 #include "usage.h"
@@ -394,11 +395,12 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
     assert(strlen(referenceItem->linkName)+1 < MAX_CX_SYMBOL_SIZE);
 
     strcpy(lastOutgoingData.cachedSymbolName, referenceItem->linkName);
-    fillReferenceItem(&lastOutgoingData.cachedReferenceItem,
+    lastOutgoingData.cachedReferenceItem = makeReferenceItem(
                        lastOutgoingData.cachedSymbolName,
                        referenceItem->vApplClass, referenceItem->type,
                        referenceItem->storage, referenceItem->scope,
                        referenceItem->visibility);
+    lastOutgoingData.referenceItem   = &lastOutgoingData.cachedReferenceItem;
     lastOutgoingData.referenceItem   = &lastOutgoingData.cachedReferenceItem;
     lastOutgoingData.symbolIsWritten = false;
 
@@ -758,7 +760,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
 
     ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem;
     lastIncomingData.referenceItem = referenceItem;
-    fillReferenceItem(referenceItem, id, vApplClass, symbolType, storage, GlobalScope, GlobalVisibility);
+    *referenceItem = makeReferenceItem(id, vApplClass, symbolType, storage, GlobalScope, GlobalVisibility);
 
     ReferenceItem *memb;
     if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
@@ -766,8 +768,8 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
         char *ss = cxAlloc(len+1);
         strcpy(ss,id);
         memb = cxAlloc(sizeof(ReferenceItem));
-        fillReferenceItem(memb, ss, vApplClass, symbolType, storage,
-                          GlobalScope, GlobalVisibility);
+        *memb = makeReferenceItem(ss, vApplClass, symbolType, storage,
+                                  GlobalScope, GlobalVisibility);
         addToReferencesTable(memb);
     }
     lastIncomingData.referenceItem = memb;
