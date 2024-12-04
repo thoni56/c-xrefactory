@@ -166,7 +166,6 @@ ci:
 	$(MAKE) -e -C ../tests/ffmpeg init
 	$(MAKE) -e -j -C ../tests all
 	$(MAKE) -e merge-coverage-from-tests
-	$(MAKE) -e gcov
 	rm *.mock.gcov *.tab.*.gcov
 
 
@@ -346,11 +345,12 @@ coverage:
 .PHONY:merge-coverage-from-tests
 ifeq ($(HAVE_GCOV_TOOL),yes)
 merge-coverage-from-tests:
-# Merge all gcda from all tests
-	@-for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
+	# Merge all gcda from all tests then make gcovs from those
+	-for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
+	$(MAKE) -e gcov
 else
 merge-coverage-from-tests: total-coverage
-# Merge all .info to total.info then extract .gcovs from it
+	# Merge all .info to total.info then extract .gcovs from it
 	$(MAKE) -e info2gcov
 endif
 
