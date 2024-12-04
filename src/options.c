@@ -43,7 +43,6 @@ Options presetOptions = {
     "",                          // refactoring target line
     AVR_NO_REFACTORING,          // refactoring
     NULL,                        // renameTo
-    UndefinedMode,               // refactoringMode
     false,                       // xrefactory-II
     NULL,                        // moveTargetFile
 #if defined (__WIN32__)
@@ -1602,7 +1601,6 @@ static bool processROption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-refactory")==0)   {
         options.mode = RefactoryMode;
-        options.refactoringMode = RefactoryMode;
     }
     else if (strcmp(argv[i], "-rfct-rename")==0) {
         options.theRefactoring = AVR_RENAME_SYMBOL;

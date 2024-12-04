@@ -45,12 +45,6 @@ static int previousPass;
 static void writeOptionsFileMessage(char *file, char *outFName, char *outSect) {
     char tmpBuff[TMP_BUFF_SIZE];
 
-    // Asserts to explore if options.refactoringMode is actually needed...
-    if (options.refactoringMode == RefactoryMode)
-        assert(options.mode == RefactoryMode);
-    if (options.refactoringMode==RefactoryMode)
-        return;
-
     if (outFName[0]==0) {
         if (options.project!=NULL) {
             sprintf(tmpBuff, "'%s' project options not found",
@@ -635,18 +629,17 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     processOptions(argc, argv, PROCESS_FILE_ARGUMENTS);
     processFileArguments();
 
-    /* Ensure CX-memory has room enough for things by invocing memory resize if not */
+    /* Ensure CX-memory has room enough for things by invoking memory resize if not */
     /* TODO Is this because CX-memory is just discarded and
      * reallocated empty when resizing is necessary? And the various
      * modes need some initial amount of memory? */
-    // Asserts to explore if options.refactoringMode is actually needed...
-    if (options.refactoringMode == RefactoryMode)
-        assert(options.mode == RefactoryMode);
-    if (options.refactoringMode == RefactoryMode) {
+    if (options.mode == RefactoryMode) {
         // some more memory for refactoring task
         assert(options.cxMemoryFactor>=1);
         tempAllocated = (char *)cxAlloc(6*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
         cxFreeUntil(tempAllocated);
+    } else {
+        log_trace("");
     }
     if (options.mode==XrefMode) {
         // get some memory if cross referencing
@@ -684,10 +677,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
     if (standardOptionsFileName[0]!=0) {
         readOptionsFromFile(standardOptionsFileName, &dfargc, &dfargv, standardOptionsSection, standardOptionsSection);
-        // Asserts to explore if options.refactoringMode is actually needed...
-        if (options.refactoringMode == RefactoryMode)
-            assert(options.mode == RefactoryMode);
-        if (options.refactoringMode == RefactoryMode) {
+        if (options.mode == RefactoryMode) {
             inmode = DONT_PROCESS_FILE_ARGUMENTS;
         } else if (options.mode==ServerMode) {
             inmode = DONT_PROCESS_FILE_ARGUMENTS;

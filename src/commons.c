@@ -398,11 +398,7 @@ void internalCheckFail(char *expr, char *file, int line) {
     log_with_explicit_file_and_line(LOG_FATAL, file, line, "'%s' is not true",  expr);
     writeErrorMessage(ERR_INTERNAL_CHECK,msg);
 
-    // Asserts to explore if options.refactoringMode is actually needed...
-    if (options.refactoringMode == RefactoryMode)
-        assert(options.mode == RefactoryMode);
-
-    if (options.mode == ServerMode || options.refactoringMode == RefactoryMode) {
+    if (options.mode == ServerMode || options.mode == RefactoryMode) {
         if (options.xref2) {
             ppcGenRecord(PPC_INFORMATION,"Exiting");
             closeMainOutputFile();
@@ -413,7 +409,7 @@ void internalCheckFail(char *expr, char *file, int line) {
         }
     }
     if (options.mode == ServerMode
-        || options.refactoringMode == RefactoryMode
+        || options.mode == RefactoryMode
         || !fileAbortEnabled
     ) {
         emergencyExit(XREF_EXIT_ERR);

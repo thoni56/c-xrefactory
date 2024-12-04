@@ -79,7 +79,6 @@ typedef struct options {
     char *refactor_target_line;
     Refactoring theRefactoring;
     char *renameTo;
-    Mode refactoringMode;
     bool xref2;
     char *moveTargetFile;
     char *cFilesSuffixes;
