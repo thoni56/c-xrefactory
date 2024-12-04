@@ -1955,7 +1955,7 @@ void olcxPrintPushingAction(ServerOperation operation) {
 }
 
 #ifdef DUMP_SELECTION_MENU
-static void olcxDumpSelectionMenu(SymbolsMenu *menu) {
+static void dumpSelectionMenu(SymbolsMenu *menu) {
     for (SymbolsMenu *s=menu; s!=NULL; s=s->next) {
         log_trace">> %d/%d %s %s %d", s->defRefn, s->refn, s->references.linkName,
             simpleFileName(getFileItem(s->references.vApplClass)->name),
@@ -1972,7 +1972,7 @@ static void mainAnswerReferencePushingAction(ServerOperation operation) {
     //&olcxPrintSelectionMenu(sessionData->browserStack.top->hkSelectedSym);
 
 #ifdef DUMP_SELECTION_MENU
-    olcxDumpSelectionMenu(sessionData->browserStack.top->menuSym);
+    dumpSelectionMenu(sessionData->browserStack.top->menuSym);
 #endif
     if (options.manualResolve == RESOLVE_DIALOG_ALWAYS
         || (olcxShowSelectionMenu()
