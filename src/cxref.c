@@ -193,8 +193,7 @@ static bool olcxOnlyParseNoPushing(int opt) {
 
 
 /* ********************************************************************* */
-Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
-                             int vApplCl) {
+Reference *addCxReference(Symbol *symbol, Position *position, Usage usage, int vApplCl) {
     Visibility        visibility;
     Scope             scope;
     Storage           storage;
@@ -254,10 +253,10 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         break;
     }
 
-    ReferenceItem  referenceItem;
+    ReferenceItem  referenceItem = makeReferenceItem(symbol->linkName, vApplCl, symbol->type,
+                                                     storage, scope, visibility);
     ReferenceItem *foundMember;
 
-    fillReferenceItem(&referenceItem, symbol->linkName, vApplCl, symbol->type, storage, scope, visibility);
     if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH && options.searchKind==SEARCH_FULL) {
         Reference reference = makeReference(*position, UsageNone, NULL);
         searchSymbolCheckReference(&referenceItem, &reference);
@@ -337,11 +336,6 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     log_trace("returning %x == %s %s:%d", *place, usageKindEnumName[(*place)->usage],
               getFileItem((*place)->position.file)->name, (*place)->position.line);
     return *place;
-}
-
-Reference *addCxReference(Symbol *symbol, Position *position, Usage usage,
-                          int vApplClass) {
-    return addNewCxReference(symbol, position, usage, vApplClass);
 }
 
 void addTrivialCxReference(char *name, int symType, int storage, Position position, Usage usage) {
