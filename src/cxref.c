@@ -187,8 +187,8 @@ static void olGetAvailableRefactorings(void) {
 }
 
 
-static bool olcxOnlyParseNoPushing(int opt) {
-    return opt==OLO_GLOBAL_UNUSED || opt==OLO_LOCAL_UNUSED;
+static bool operationRequiresOnlyParsingNoPushing(int operation) {
+    return operation==OLO_GLOBAL_UNUSED || operation==OLO_LOCAL_UNUSED;
 }
 
 
@@ -308,7 +308,7 @@ Reference *addCxReference(Symbol *symbol, Position *position, Usage usage, int v
             }
             if (defaultPosition->file!=NO_FILE_NUMBER)
                 log_trace("getting definition position of %s at line %d", symbol->name, defaultPosition->line);
-            if (! olcxOnlyParseNoPushing(options.serverOperation)) {
+            if (! operationRequiresOnlyParsingNoPushing(options.serverOperation)) {
                 menu = olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, foundMember,
                                                 true, true, 0, usage, 0, defaultPosition, defaultUsage);
                 // hack added for EncapsulateField
