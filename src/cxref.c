@@ -570,18 +570,18 @@ static void indicateNoReference(void) {
 
 // references has to be ordered according internal file numbers order !!!!
 static void olcxSetCurrentRefsOnCaller(OlcxReferences *refs) {
-    Reference *rr;
-    for (rr=refs->references; rr!=NULL; rr=rr->next){
-        log_trace("checking %d:%d:%d to %d:%d:%d", rr->position.file, rr->position.line,rr->position.col,
+    Reference *r;
+    for (r=refs->references; r!=NULL; r=r->next){
+        log_trace("checking %d:%d:%d to %d:%d:%d", r->position.file, r->position.line,r->position.col,
                   refs->callerPosition.file,  refs->callerPosition.line,  refs->callerPosition.col);
-        if (!positionIsLessThan(rr->position, refs->callerPosition))
+        if (!positionIsLessThan(r->position, refs->callerPosition))
             break;
     }
     // it should never be NULL, but one never knows - DUH! We have coverage to show that you are wrong
-    if (rr == NULL) {
+    if (r == NULL) {
         refs->actual = refs->references;
     } else {
-        refs->actual = rr;
+        refs->actual = r;
     }
 }
 
@@ -791,28 +791,29 @@ bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
 }
 
 static int getCurrentRefPosition(OlcxReferences *refs) {
-    Reference     *rr;
-    int             rlevel;
-    int             actn = 0;
-    rr = NULL;
+    int actn = 0;
+
+    Reference *r = NULL;
     if (refs!=NULL) {
-        rlevel = refListFilters[refs->refsFilterLevel];
-        for (rr=refs->references; rr!=NULL && rr!=refs->actual; rr=rr->next) {
-            if (rr->usage < rlevel)
+        int rlevel = refListFilters[refs->refsFilterLevel];
+        for (r=refs->references; r!=NULL && r!=refs->actual; r=r->next) {
+            if (r->usage < rlevel)
                 actn++;
         }
     }
-    if (rr==NULL)
+    if (r==NULL)
         actn = 0;
     return actn;
 }
 
-static void symbolHighlighNameSprint(char *output, SymbolsMenu *ss) {
+static void symbolHighlighNameSprint(char *output, SymbolsMenu *menu) {
     char *bb, *cc;
     int len, llen;
-    sprintfSymbolLinkName(ss, output);
+
+    sprintfSymbolLinkName(menu, output);
     cc = strchr(output, '(');
-    if (cc != NULL) *cc = 0;
+    if (cc != NULL)
+        *cc = 0;
     len = strlen(output);
     output[len]=0;
     bb = lastOccurenceInString(output,'.');
