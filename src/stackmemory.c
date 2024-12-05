@@ -18,7 +18,7 @@ static bool memoryTrace = false;
 
 /* Inject the function to call for error() */
 static void (*error)(int code, char *message);
-void setErrorHandlerForMemory(void (*function)(int code, char *message)) {
+void setErrorHandlerForStackMemory(void (*function)(int code, char *message)) {
     error = function;
 }
 

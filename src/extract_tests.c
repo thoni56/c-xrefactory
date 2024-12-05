@@ -3,6 +3,7 @@
 #include "extract.h"
 
 #include "log.h"
+#include "stackmemory.h"
 
 /* Dependencies: */
 #include "caching.mock"
@@ -25,6 +26,7 @@
 #include "symbol.mock"
 #include "symboltable.mock"
 
+
 void myFatalError(int errCode, char *mess, int exitStatus, char *file, int line) {
     fail_test("Fatal Error");
 }
@@ -40,7 +42,7 @@ void myError(int errCode, char *mess) {
 Describe(Extract);
 BeforeEach(Extract) {
     log_set_level(LOG_ERROR);
-    setErrorHandlerForMemory(myError);
+    setErrorHandlerForStackMemory(myError);
     setInternalCheckFailHandlerForMemory(myInternalCheckFail);
     setFatalErrorHandlerForMemory(myFatalError);
     options.cxMemoryFactor = 2;

@@ -26,7 +26,6 @@ typedef struct memory {
 /* pre-processor macro definitions simple memory allocations in separate PPM-memory */
 extern void *ppmAlloc(size_t size);
 extern void *ppmAllocc(int count, size_t size);
-extern void *ppmRealloc(int count, size_t newSize, size_t oldSize);
 extern void *ppmReallocc(void *pointer, int newCount, size_t size, int oldCount);
 extern void  ppmFreeUntil(void *pointer);
 extern bool ppmIsFreedPointer(void *pointer);
@@ -67,7 +66,6 @@ extern Memory2 ppmMemory;
 extern void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *mess, int exitStatus,
                                char *file, int line));
 extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *file, int line));
-extern void setErrorHandlerForMemory(void (*function)(int code, char *message));
 
 
 /* DM - Dynamic Memory - multiple uses, see below */

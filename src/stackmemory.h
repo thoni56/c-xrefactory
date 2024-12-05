@@ -28,6 +28,8 @@ extern char stackMemory[];
 extern CodeBlock *currentBlock;
 
 
+extern void setErrorHandlerForStackMemory(void (*function)(int code, char *message));
+
 extern void *stackMemoryAlloc(int size);
 extern char *stackMemoryPushString(char *s);
 
