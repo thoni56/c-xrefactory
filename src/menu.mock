@@ -49,3 +49,7 @@ SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *refere
                                       Position *defpos, int defusage) {
     return (SymbolsMenu *)mock(menuP, reference, selected, visible, ooBits, olusage, vlevel, defpos, defusage);
 }
+
+void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *, void *), void *p1) {
+  mock(menu, fun, p1);
+}

@@ -3,7 +3,6 @@
 #include "caching.h"
 #include "visibility.h"
 #include "characterreader.h"
-#include "classhierarchy.h"
 #include "commons.h"
 #include "complete.h"
 #include "cxfile.h"

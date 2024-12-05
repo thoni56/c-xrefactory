@@ -2,12 +2,14 @@
 
 #include "menu.h"
 
-#include "classhierarchy.mock"
+#include "log.h"
+
 #include "commons.mock"
 #include "cxfile.mock"
+#include "cxref.mock"
 #include "filetable.mock"
 #include "globals.mock"
-#include "log.h"
+#include "misc.mock"
 #include "options.mock"
 #include "ppc.mock"
 #include "reference.mock"

@@ -7,7 +7,6 @@
 /* Dependencies: */
 #include "caching.mock"
 #include "characterreader.mock"
-#include "classhierarchy.mock"
 #include "commons.mock"
 #include "complete.mock"
 #include "completion.mock"

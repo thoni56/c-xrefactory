@@ -9,7 +9,6 @@
 
 #include "caching.mock"
 #include "characterreader.mock"
-#include "classhierarchy.mock"
 #include "commons.mock"
 #include "completion.mock"
 #include "cxref.mock"

@@ -8,7 +8,6 @@
 #include "caching.mock"
 #include "counters.mock"
 #include "characterreader.mock"
-#include "classhierarchy.mock"
 #include "commons.mock"
 #include "complete.mock"
 #include "cxfile.mock"

@@ -3,6 +3,7 @@
 
 #include "reference.h"
 
+
 typedef struct SymbolsMenu {
     struct referenceItem    references;
     bool                     selected;
@@ -32,8 +33,10 @@ extern SymbolsMenu *olCreateNewMenuItem(ReferenceItem *sym, int vApplClass,
                                         Position *defpos, int defusage, int selected, int visible,
                                         unsigned ooBits, int olusage, int vlevel);
 extern SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *reference,
-                                             bool selected, bool visible, unsigned ooBits,
-                                             int olusage, int vlevel,
-                                             Position *defpos, int defusage);
+                                             bool selected, bool visible, unsigned ooBits, int olusage,
+                                             int vlevel, Position *defpos, int defusage);
+extern void splitMenuPerSymbolsAndMap(SymbolsMenu *menu,
+                                      void (*fun)(SymbolsMenu *, void *),
+                                      void *p1);
 
 #endif

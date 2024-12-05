@@ -4,7 +4,6 @@
 
 #include "log.h"
 
-#include "classhierarchy.mock"
 #include "commons.mock"
 #include "complete.mock"
 #include "cxfile.mock"
