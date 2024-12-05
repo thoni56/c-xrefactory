@@ -642,7 +642,7 @@ static void expandEnvironmentVariables(char *original, int availableSize, int *l
 /* Return EOF if at EOF, but can still return option text, return
    something else if not.  TODO: hide this fact from caller, return
    either text or EOF (probably as a bool return value instead) */
-int getOptionFromFile(FILE *file, char *text, int *chars_read) {
+protected int getOptionFromFile(FILE *file, char *text, int *chars_read) {
     int count, ch;
     int lastCharacter;
     bool inComment;
@@ -1912,10 +1912,9 @@ void processFileArguments(void) {
 }
 
 
-/* Non-static for unittesting */
 /* Return a project name if found, else NULL */
 /* Only handles cases where the file path is included in the project name/section */
-bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFile, /* out */ char *projectName) {
+protected bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFile, /* out */ char *projectName) {
     int ch = ' ';              /* Something to get started */
 
     while (ch != EOF) {

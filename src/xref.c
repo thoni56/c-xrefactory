@@ -222,7 +222,7 @@ void checkExactPositionUpdate(bool printMessage) {
     }
 }
 
-void scheduleModifiedFilesToUpdate(bool isRefactoring) {
+static void scheduleModifiedFilesToUpdate(bool isRefactoring) {
     char        *fileListFileName;
     char        *suffix;
 

@@ -181,9 +181,9 @@ void initServer(int nargc, char **nargv) {
     initCompletions(&collectedCompletions, 0, noPosition);
 }
 
-void singlePass(int argc, char **argv,
-                int nargc, char **nargv,
-                bool *firstPassP
+static void singlePass(int argc, char **argv,
+                       int nargc, char **nargv,
+                       bool *firstPassP
 ) {
     bool inputOpened = false;
 

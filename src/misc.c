@@ -799,7 +799,7 @@ void mapOverDirectoryFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), int al
 }
 
 /* Non-static just for unittesting */
-char *concatDirectoryWithFileName(char *output, char *directoryName, char *fileName) {
+protected char *concatDirectoryWithFileName(char *output, char *directoryName, char *fileName) {
     char *charP;
 
     charP = strmcpy(output, directoryName);
