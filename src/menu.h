@@ -21,11 +21,10 @@ typedef struct SymbolsMenu {
 } SymbolsMenu;
 
 
-extern void fillSymbolsMenu(SymbolsMenu *menu, struct referenceItem s, bool selected, bool visible,
-                            unsigned ooBits, char olUsage, short int vlevel,
-                            char defUsage, struct position defpos);
+extern SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool visible,
+                                   unsigned ooBits, char olUsage, short int vlevel,
+                                   char defUsage, struct position defpos);
 
-extern SymbolsMenu *freeSymbolsMenu(SymbolsMenu *menu);
 extern void freeSymbolsMenuList(SymbolsMenu *menu);
 extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference);
 extern void olcxPrintSelectionMenu(SymbolsMenu *menu);

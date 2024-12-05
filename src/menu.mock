@@ -2,27 +2,25 @@
 #include "menu.h"
 #include <cgreen/mocks.h>
 
-void fillSymbolsMenu(SymbolsMenu *menu, ReferenceItem s, bool selected, bool visible,
-                     unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
-    menu->references = s;
-    menu->selected = selected;
-    menu->visible = visible;
-    menu->ooBits = ooBits;
-    menu->olUsage = olUsage;
-    menu->vlevel = vlevel;
-    menu->defUsage = defUsage;
-    menu->defpos = defpos;
+SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool visible,
+                            unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
+    SymbolsMenu menu;
+    menu.references = references;
+    menu.selected = selected;
+    menu.visible = visible;
+    menu.ooBits = ooBits;
+    menu.olUsage = olUsage;
+    menu.vlevel = vlevel;
+    menu.defUsage = defUsage;
+    menu.defpos = defpos;
 
     /* Default values */
-    menu->refn = 0;
-    menu->defRefn = 0;
-    menu->outOnLine = 0;
-    menu->markers = NULL;
-    menu->next = NULL;
-}
-
-SymbolsMenu *freeSymbolsMenu(SymbolsMenu *menu) {
-    return (SymbolsMenu *) mock(menu);
+    menu.refn = 0;
+    menu.defRefn = 0;
+    menu.outOnLine = 0;
+    menu.markers = NULL;
+    menu.next = NULL;
+    return menu;
 }
 
 void freeSymbolsMenuList(SymbolsMenu *menu) {
@@ -38,8 +36,8 @@ void olcxPrintSelectionMenu(SymbolsMenu *menu) {
 }
 
 SymbolsMenu *olCreateNewMenuItem(ReferenceItem *sym, int vApplClass, Position *defpos,
-                                     int defusage, int selected, int visible, unsigned ooBits, int olusage,
-                                     int vlevel) {
+                                 int defusage, int selected, int visible, unsigned ooBits, int olusage,
+                                 int vlevel) {
     return (SymbolsMenu *) mock(sym, vApplClass, defpos, defusage, selected, visible, ooBits, olusage, vlevel);
 }
 

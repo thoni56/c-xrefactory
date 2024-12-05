@@ -10,7 +10,7 @@
 #include "reference.h"
 
 
-void fillSymbolsMenu(SymbolsMenu *menu, ReferenceItem references, bool selected, bool visible,
+static void fillSymbolsMenu(SymbolsMenu *menu, ReferenceItem references, bool selected, bool visible,
                      unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
     menu->references = references;
     menu->selected   = selected;
@@ -29,7 +29,14 @@ void fillSymbolsMenu(SymbolsMenu *menu, ReferenceItem references, bool selected,
     menu->next      = NULL;
 }
 
-SymbolsMenu *freeSymbolsMenu(SymbolsMenu *menu) {
+SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool visible,
+                            unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
+    SymbolsMenu menu;
+    fillSymbolsMenu(&menu, references, selected, visible, ooBits, olUsage, vlevel, defUsage, defpos);
+    return menu;
+}
+
+static SymbolsMenu *freeSymbolsMenu(SymbolsMenu *menu) {
     free(menu->references.linkName);
     freeReferences(menu->references.references);
     SymbolsMenu *next = menu->next;

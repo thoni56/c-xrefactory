@@ -93,23 +93,22 @@ static bool symbolCanBeIdentifiedByPosition(int fileNumber) {
 }
 
 static int scheduleFileUsingTheMacro(void) {
-    ReferenceItem  references;
-    SymbolsMenu     menu, *oldMenu;
     OlcxReferences *tmpc;
 
     assert(olstringInMacroBody);
     tmpc = NULL;
-    fillReferenceItem(&references, olstringInMacroBody,
-                      NO_FILE_NUMBER, TypeMacro, StorageExtern,
-                      GlobalScope, GlobalVisibility);
+    ReferenceItem references = makeReferenceItem(olstringInMacroBody,
+                                                 NO_FILE_NUMBER, TypeMacro, StorageExtern,
+                                                 GlobalScope, GlobalVisibility);
 
-    fillSymbolsMenu(&menu, references, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);
+    SymbolsMenu menu = makeSymbolsMenu(references, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);
     if (sessionData.browserStack.top==NULL) {
         pushEmptySession(&sessionData.browserStack);
         tmpc = sessionData.browserStack.top;
     }
+
     assert(sessionData.browserStack.top);
-    oldMenu = sessionData.browserStack.top->menuSym;
+    SymbolsMenu *oldMenu = sessionData.browserStack.top->menuSym;
     sessionData.browserStack.top->menuSym = &menu;
     olMacro2PassFile = NO_FILE_NUMBER;
     scanForMacroUsage(olstringInMacroBody);
