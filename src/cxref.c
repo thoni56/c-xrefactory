@@ -460,35 +460,14 @@ static void olcxAddReferencesToSymbolsMenu(SymbolsMenu *menu, Reference *referen
     }
 }
 
-static int characterCodeForUsage(Usage usage) {
-    switch (usage) {
-    case UsageOLBestFitDefined: return '!';
-    case UsageDefined:  return '*';
-    case UsageDeclared: return '+';
-    case UsageLvalUsed: return ',';
-    case UsageAddrUsed: return '.';
-        /* some specials for refactorings now */
-    case UsageNotFQFieldInClassOrMethod: return '.';
-        // Usage Constructor definition is for move class to not expand
-        // and move constructor definition references
-    case UsageConstructorDefinition: return '-';
-    default: return ' ';
-    }
-    assert(0);
-}
-
 void gotoOnlineCxref(Position *pos, Usage usage, char *suffix)
 {
-    if (options.xref2) {
-        ppcGotoPosition(pos);
-    } else {
-        fprintf(communicationChannel,"%s%s#*+*#%d %d :%c%s ;;\n", COLCX_GOTO_REFERENCE,
-                getRealFileName_static(getFileItem(pos->file)->name),
-                pos->line, pos->col, characterCodeForUsage(usage), suffix);
-    }
+    assert(options.xref2);
+    ppcGotoPosition(pos);
 }
 
-static bool sessionHasReferencesValidForOperation(SessionData *session, OlcxReferences **refs, CheckNull checkNull) {
+static bool sessionHasReferencesValidForOperation(SessionData *session, OlcxReferences **refs,
+                                                  CheckNull checkNull) {
     assert(session);
     if (options.serverOperation==OLO_COMPLETION || options.serverOperation==OLO_CSELECT
         ||  options.serverOperation==OLO_CGOTO || options.serverOperation==OLO_TAG_SEARCH) {
@@ -497,11 +476,8 @@ static bool sessionHasReferencesValidForOperation(SessionData *session, OlcxRefe
         *refs = session->browserStack.top;
     }
     if (checkNull==CHECK_NULL && *refs == NULL) {
-        if (options.xref2) {
-            ppcBottomWarning("Empty stack");
-        } else {
-            fprintf(communicationChannel, "=");
-        }
+        assert(options.xref2);
+        ppcBottomWarning("Empty stack");
         return false;
     }
     return true;
@@ -561,11 +537,8 @@ static void olcxNaturalReorder(OlcxReferences *refs) {
 }
 
 static void indicateNoReference(void) {
-    if (options.xref2) {
-        ppcBottomInformation("No reference");
-    } else {
-        fprintf(communicationChannel, "_");
-    }
+    assert(options.xref2);
+    ppcBottomInformation("No reference");
 }
 
 // references has to be ordered according internal file numbers order !!!!
@@ -594,11 +567,8 @@ static void orderRefsAndGotoDefinition(OlcxReferences *refs) {
         refs->actual = refs->references;
         gotoOnlineCxref(&refs->actual->position, refs->actual->usage, "");
     } else {
-        if (options.xref2) {
-            ppcWarning("Definition not found");
-        } else {
-            fprintf(communicationChannel,"*** Definition not found **");
-        }
+        assert(options.xref2);
+        ppcWarning("Definition not found");
     }
 }
 
@@ -624,13 +594,10 @@ static char listLine[MAX_REF_LIST_LINE_LEN+5];
 static int listLineIndex = 0;
 
 static void passSourcePutChar(int c, FILE *file) {
-    if (options.xref2) {
-        if (listLineIndex < MAX_REF_LIST_LINE_LEN) {
-            listLine[listLineIndex++] = c;
-            listLine[listLineIndex] = 0;
-        } else {
-            strcpy(listLine + listLineIndex, "...");
-        }
+    assert(options.xref2);
+    if (listLineIndex < MAX_REF_LIST_LINE_LEN) {
+        listLine[listLineIndex++] = c;
+        listLine[listLineIndex] = 0;
     } else {
         fputc(c,file);
     }
@@ -654,71 +621,61 @@ static void linePosProcess(FILE *outFile,
 ) {
     int        ch, linerefn;
     bool       pendingRefFlag;
-    Reference *rr, *r;
+    Reference *r1, *r2;
     char      *fn;
 
-    rr = *reference;
+    r1 = *reference;
+    r2 = NULL;
+
     ch = *chP;
     fn = simpleFileName(getRealFileName_static(fname));
-    r = NULL;
     pendingRefFlag = false;
     linerefn = 0;
     listLineIndex = 0;
     listLine[listLineIndex] = 0;
+
+    assert(options.xref2);
     do {
-        if (listableUsage(rr, usages, usageFilter)) {
-            if (r==NULL || r->usage > rr->usage)
-                r = rr;
-            if (pendingRefFlag) {
-                if (! options.xref2) fprintf(outFile,"\n");
-            }
-            if (options.xref2) {
-                if (! pendingRefFlag) {
-                    sprintf(listLine+listLineIndex, "%s:%d:", fn, rr->position.line);
-                    listLineIndex += strlen(listLine+listLineIndex);
-                }
-            } else {
-                if (positionsAreNotEqual(*callerPosition, rr->position)) fprintf(outFile, " ");
-                else fprintf(outFile, ">");
-                fprintf(outFile,"%c%s:%d:", characterCodeForUsage(rr->usage),fn,
-                        rr->position.line);
+        if (listableUsage(r1, usages, usageFilter)) {
+            if (r2==NULL || r2->usage > r1->usage)
+                r2 = r1;
+            if (! pendingRefFlag) {
+                sprintf(listLine+listLineIndex, "%s:%d:", fn, r1->position.line);
+                listLineIndex += strlen(listLine+listLineIndex);
             }
             linerefn++;
             pendingRefFlag = true;
         }
-        rr=rr->next;
-    } while (rr!=NULL && ((rr->position.file == positionP->file && rr->position.line == positionP->line)
-                          || (rr->usage>UsageMaxOnLineVisibleUsages)));
-    if (r!=NULL) {
+        r1=r1->next;
+    } while (r1!=NULL && ((r1->position.file == positionP->file && r1->position.line == positionP->line)
+                          || (r1->usage>UsageMaxOnLineVisibleUsages)));
+    if (r2!=NULL) {
         if (! cxfBuf->isAtEOF) {
             while (ch!='\n' && (! cxfBuf->isAtEOF)) {
                 passSourcePutChar(ch,outFile);
                 getFileChar(&ch, positionP, cxfBuf);
             }
         }
-        if (! options.xref2) passSourcePutChar('\n',outFile);
     }
-    if (options.xref2 && listLineIndex!=0) {
+    if (listLineIndex!=0) {
         ppcIndent();
         fprintf(outFile, "<%s %s=%d %s=%ld>%s</%s>\n",
                 PPC_SRC_LINE, PPCA_REFN, linerefn,
                 PPCA_LEN, (unsigned long)strlen(listLine),
                 listLine, PPC_SRC_LINE);
     }
-    *reference = rr;
+    *reference = r1;
     *chP = ch;
 }
 
 static Reference *passNonPrintableRefsForFile(Reference *references,
                                               int wantedFileNumber,
                                               int usages, int usageFilter) {
-    Reference *r;
-
-    for (r=references; r!=NULL && r->position.file == wantedFileNumber; r=r->next) {
+    for (Reference *r=references; r!=NULL && r->position.file == wantedFileNumber; r=r->next) {
         if (listableUsage(r, usages, usageFilter))
             return r;
     }
-    return NULL;                   /* TODO: Why return the last one? */
+    return NULL;
 }
 
 static void passRefsThroughSourceFile(Reference **inOutReferences, Position *callerPosition,
@@ -828,23 +785,20 @@ static void symbolHighlighNameSprint(char *output, SymbolsMenu *menu) {
 static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
     Reference *rr;
     int         actn, len;
-    char        ttt[MAX_CX_SYMBOL_SIZE];
 
-    if (options.xref2) {
-        actn = getCurrentRefPosition(refs);
-        if (refs!=NULL && refs->symbolsMenu != NULL) {
-            ttt[0]='\"';
-            symbolHighlighNameSprint(ttt+1, refs->symbolsMenu);
-            len = strlen(ttt);
-            ttt[len]='\"';
-            ttt[len+1]=0;
-            ppcBeginWithNumericValueAndAttribute(PPC_REFERENCE_LIST, actn,
-                                                 PPCA_SYMBOL, ttt);
-        } else {
-            ppcBeginWithNumericValue(PPC_REFERENCE_LIST, actn);
-        }
+    assert(options.xref2);
+    actn = getCurrentRefPosition(refs);
+    if (refs!=NULL && refs->symbolsMenu != NULL) {
+        char tmp[MAX_CX_SYMBOL_SIZE];
+        tmp[0]='\"';
+        symbolHighlighNameSprint(tmp+1, refs->symbolsMenu);
+        len = strlen(tmp);
+        tmp[len]='\"';
+        tmp[len+1]=0;
+        ppcBeginWithNumericValueAndAttribute(PPC_REFERENCE_LIST, actn,
+                                             PPCA_SYMBOL, tmp);
     } else {
-        fprintf(communicationChannel,"%s",commandString);/* communication char */
+        ppcBeginWithNumericValue(PPC_REFERENCE_LIST, actn);
     }
     if (refs!=NULL) {
         rr=refs->references;
@@ -854,10 +808,7 @@ static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
                                       refListFilters[refs->refsFilterLevel]);
         }
     }
-    if (options.xref2) {
-        ppcEnd(PPC_REFERENCE_LIST);
-        //& if (refs!=NULL && refs->actual!=NULL) ppcGotoPosition(&refs->actual->position);
-    }
+    ppcEnd(PPC_REFERENCE_LIST);
     fflush(communicationChannel);
 }
 
@@ -1016,17 +967,19 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
 }
 
 static void olcxSetActReferenceToFirstVisible(OlcxReferences *refs, Reference *r) {
-    int                 rlevel;
-    rlevel = refListFilters[refs->refsFilterLevel];
-    while (r!=NULL && r->usage>=rlevel) r = r->next;
+    int rlevel = refListFilters[refs->refsFilterLevel];
+
+    while (r!=NULL && r->usage>=rlevel)
+        r = r->next;
+
     if (r != NULL) {
         refs->actual = r;
     } else {
-        if (options.xref2) {
-            ppcBottomInformation("Moving to the first reference");
-        }
+        assert(options.xref2);
+        ppcBottomInformation("Moving to the first reference");
         r = refs->references;
-        while (r!=NULL && r->usage>=rlevel) r = r->next;
+        while (r!=NULL && r->usage>=rlevel)
+            r = r->next;
         refs->actual = r;
     }
 }
@@ -1061,9 +1014,8 @@ static void olcxReferenceMinus(void) {
                 l = r;
         }
         if (l==NULL) {
-            if (options.xref2) {
-                ppcBottomInformation("Moving to the last reference");
-            }
+            assert(options.xref2);
+            ppcBottomInformation("Moving to the last reference");
             for (; r!=NULL; r=r->next) {
                 if (r->usage < rlevel)
                     l = r;
@@ -1120,25 +1072,18 @@ static void olcxReferenceGotoCaller(void) {
 
 static void olcxPrintSymbolName(OlcxReferences *refs) {
     char ttt[MAX_CX_SYMBOL_SIZE+MAX_SYMBOL_MESSAGE_LEN];
-    SymbolsMenu *ss;
+    SymbolsMenu *menu;
+
+    assert(options.xref2);
     if (refs==NULL) {
-        if (options.xref2) {
-            ppcBottomInformation("stack is now empty");
-        } else {
-            fprintf(communicationChannel, "*stack is now empty");
-        }
-        //&     fprintf(communicationChannel, "*");
+        ppcBottomInformation("stack is now empty");
     } else if (refs->hkSelectedSym==NULL) {
-        if (options.xref2) {
-            ppcBottomInformation("Current top symbol: <empty>");
-        } else {
-            fprintf(communicationChannel, "*Current top symbol: <empty>");
-        }
+        ppcBottomInformation("Current top symbol: <empty>");
     } else {
-        ss = refs->hkSelectedSym;
+        menu = refs->hkSelectedSym;
         sprintf(ttt, "Current top symbol: ");
         assert(strlen(ttt) < MAX_SYMBOL_MESSAGE_LEN);
-        sprintfSymbolLinkName(ss, ttt+strlen(ttt));
+        sprintfSymbolLinkName(menu, ttt+strlen(ttt));
         ppcBottomInformation(ttt);
     }
 }
@@ -1324,23 +1269,19 @@ static void selectUnusedSymbols(SymbolsMenu *menu, void *p1) {
 static void olcxMenuSelectAll(bool selected) {
     OlcxReferences *refs;
 
+    assert(options.xref2);
+
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
     if (refs->operation == OLO_GLOBAL_UNUSED) {
-        if (options.xref2) {
-            ppcGenRecord(PPC_WARNING, "The browser does not display project unused symbols anymore");
-        }
+        ppcGenRecord(PPC_WARNING, "The browser does not display project unused symbols anymore");
     }
     for (SymbolsMenu *menu=refs->symbolsMenu; menu!=NULL; menu=menu->next) {
         if (menu->visible)
             menu->selected = selected;
     }
     olcxRecomputeSelRefs(refs);
-    if (options.xref2) {
-        olcxPrintRefList(";", refs);
-    } else {
-        fprintf(communicationChannel, "*Done");
-    }
+    olcxPrintRefList(";", refs);
 }
 
 static void setDefaultSelectedVisibleItems(SymbolsMenu *menu,
@@ -1397,6 +1338,7 @@ sfini:
 static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
     OlcxReferences    *refs;
 
+    assert(options.xref2);
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, DONT_CHECK_NULL))
         return;
     if (refs!=NULL && flevel < MAX_MENU_FILTER_LEVEL && flevel >= 0) {
@@ -1409,31 +1351,24 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
     if (refs!=NULL) {
         olcxPrintSelectionMenu(refs->symbolsMenu);
     } else {
-        if (options.xref2) {
-            olcxPrintSelectionMenu(NULL);
-            olcxPrintRefList(";", NULL);
-        } else {
-            fprintf(communicationChannel, "=");
-        }
+        olcxPrintSelectionMenu(NULL);
+        olcxPrintRefList(";", NULL);
     }
 }
 
 static void olcxReferenceFilterSet(int filterLevel) {
     OlcxReferences *refs;
 
+    assert(options.xref2);
     if (!sessionHasReferencesValidForOperation(&sessionData,  &refs, DONT_CHECK_NULL))
         return;
     if (refs!=NULL && filterLevel < MAX_REF_LIST_FILTER_LEVEL && filterLevel >= 0) {
         refs->refsFilterLevel = filterLevel;
     }
-    if (options.xref2) {
-        // move to the visible reference
-        if (refs!=NULL)
-            olcxSetActReferenceToFirstVisible(refs, refs->actual);
-        olcxPrintRefList(";", refs);
-    } else {
-        fprintf(communicationChannel, "*");
-    }
+    // move to the visible reference
+    if (refs!=NULL)
+        olcxSetActReferenceToFirstVisible(refs, refs->actual);
+    olcxPrintRefList(";", refs);
 }
 
 static OlcxReferences *getNextTopStackItem(OlcxReferencesStack *stack) {
@@ -1451,6 +1386,7 @@ static OlcxReferences *getNextTopStackItem(OlcxReferencesStack *stack) {
 static void olcxReferenceRePush(void) {
     OlcxReferences *refs, *nextrr;
 
+    assert(options.xref2);
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, DONT_CHECK_NULL))
         return;
     nextrr = getNextTopStackItem(&sessionData.browserStack);
@@ -1461,11 +1397,7 @@ static void olcxReferenceRePush(void) {
         //& ppcGotoPosition(&sessionData->browserStack.top->callerPosition);
         olcxPrintSymbolName(sessionData.browserStack.top);
     } else {
-        if (options.xref2) {
-            ppcBottomWarning("You are on the top of browser stack.");
-        } else {
-            fprintf(communicationChannel, "*** Complete stack, no pop-ed references");
-        }
+        ppcBottomWarning("You are on the top of browser stack.");
     }
 }
 
@@ -1488,9 +1420,6 @@ void olcxPopOnly(void) {
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
-    if (!options.xref2)
-        fprintf(communicationChannel, "*");
-    //& olStackDeleteSymbol(refs);
     sessionData.browserStack.top = refs->previous;
 }
 
@@ -1628,6 +1557,8 @@ static void olcxSafetyCheck2(void) {
 static void olCompletionSelect(void) {
     OlcxReferences    *refs;
     Completion      *rr;
+
+    assert(options.xref2);
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
     rr = olCompletionNthLineRef(refs->completions, options.olcxGotoVal);
@@ -1635,13 +1566,9 @@ static void olCompletionSelect(void) {
         errorMessage(ERR_ST, "selection out of range.");
         return;
     }
-    if (options.xref2) {
-        assert(sessionData.completionsStack.root!=NULL);
-        ppcGotoPosition(&sessionData.completionsStack.root->callerPosition);
-        ppcGenRecord(PPC_SINGLE_COMPLETION, rr->name);
-    } else {
-        gotoOnlineCxref(&refs->callerPosition, UsageUsed, rr->name);
-    }
+    assert(sessionData.completionsStack.root!=NULL);
+    ppcGotoPosition(&sessionData.completionsStack.root->callerPosition);
+    ppcGenRecord(PPC_SINGLE_COMPLETION, rr->name);
 }
 
 static void olcxReferenceSelectTagSearchItem(int refn) {
@@ -1963,22 +1890,16 @@ static void dumpSelectionMenu(SymbolsMenu *menu) {
 
 static void mainAnswerReferencePushingAction(ServerOperation operation) {
     assert(requiresCreatingRefs(operation));
-    //&olcxPrintSelectionMenu(sessionData->browserStack.top->hkSelectedSym);
-    //&olcxPrintSelectionMenu(sessionData->browserStack.top->hkSelectedSym);
     olCreateSelectionMenu(operation);
-    //&olcxPrintSelectionMenu(sessionData->browserStack.top->hkSelectedSym);
 
+    assert(options.xref2);
 #ifdef DUMP_SELECTION_MENU
     dumpSelectionMenu(sessionData->browserStack.top->menuSym);
 #endif
     if (options.manualResolve == RESOLVE_DIALOG_ALWAYS
         || (olcxShowSelectionMenu()
             && options.manualResolve != RESOLVE_DIALOG_NEVER)) {
-        if (options.xref2) {
-            ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
-        } else {
-            olcxPrintSelectionMenu(sessionData.browserStack.top->symbolsMenu);
-        }
+        ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
     } else {
         assert(sessionData.browserStack.top);
         //&olProcessSelectedReferences(sessionData->browserStack.top, genOnLineReferences);
@@ -2270,15 +2191,13 @@ void answerEditAction(void) {
     case OLO_PUSH_ONLY:
         mainAnswerReferencePushingAction(options.serverOperation);
         break;
-    case OLO_GET_LAST_IMPORT_LINE:
-        if (options.xref2) {
-            char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff, "%d", parsedInfo.lastImportLine);
-            ppcGenRecord(PPC_SET_INFO, tmpBuff);
-        } else {
-            fprintf(communicationChannel,"*%d", parsedInfo.lastImportLine);
-        }
+    case OLO_GET_LAST_IMPORT_LINE: {
+        assert(options.xref2);
+        char tmpBuff[TMP_BUFF_SIZE];
+        sprintf(tmpBuff, "%d", parsedInfo.lastImportLine);
+        ppcGenRecord(PPC_SET_INFO, tmpBuff);
         break;
+    }
     case OLO_NOOP:
         break;
     default:
