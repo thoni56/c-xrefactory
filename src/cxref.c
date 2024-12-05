@@ -398,7 +398,7 @@ static OlcxReferences *pushEmptyReference(OlcxReferencesStack *stack) {
     res  = malloc(sizeof(OlcxReferences));
     *res = (OlcxReferences){.references      = NULL,
                             .actual          = NULL,
-                            .command         = options.serverOperation,
+                            .operation       = options.serverOperation,
                             .accessTime      = fileProcessingStartTime,
                             .callerPosition  = noPosition,
                             .completions     = NULL,
@@ -980,7 +980,7 @@ static void olcxReferenceGotoCompletion(int refn) {
         return;
     completion = olCompletionNthLineRef(refs->completions, refn);
     if (completion != NULL) {
-        if (completion->visibility == LocalVisibility /*& || refs->command == OLO_TAG_SEARCH &*/) {
+        if (completion->visibility == LocalVisibility /*& || refs->operation == OLO_TAG_SEARCH &*/) {
             if (completion->ref.usage != UsageClassFileDefinition
                 && completion->ref.usage != UsageClassTreeDefinition
                 && positionsAreNotEqual(completion->ref.position, noPosition)) {
@@ -1326,7 +1326,7 @@ static void olcxMenuSelectAll(bool selected) {
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
-    if (refs->command == OLO_GLOBAL_UNUSED) {
+    if (refs->operation == OLO_GLOBAL_UNUSED) {
         if (options.xref2) {
             ppcGenRecord(PPC_WARNING, "The browser does not display project unused symbols anymore");
         }
@@ -1402,7 +1402,7 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
     if (refs!=NULL && flevel < MAX_MENU_FILTER_LEVEL && flevel >= 0) {
         if (refs->menuFilterLevel != flevel) {
             refs->menuFilterLevel = flevel;
-            setSelectedVisibleItems(refs->symbolsMenu, refs->command, refs->menuFilterLevel);
+            setSelectedVisibleItems(refs->symbolsMenu, refs->operation, refs->menuFilterLevel);
             olcxRecomputeSelRefs(refs);
         }
     }
