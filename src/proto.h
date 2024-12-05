@@ -196,7 +196,7 @@ typedef struct olcxReferences {
     // following two lists should be probably split into hashed tables of lists
     // because of bad performances for class tree and global unused symbols
     struct SymbolsMenu    *hkSelectedSym; /* resolved symbols under the cursor */
-    struct SymbolsMenu    *menuSym;       /* hkSelectedSyms plus same name */
+    struct SymbolsMenu    *symbolsMenu;       /* hkSelectedSyms plus same name */
     int                    menuFilterLevel;
     int                    refsFilterLevel;
     struct olcxReferences *previous;
