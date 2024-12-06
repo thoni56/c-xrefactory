@@ -139,7 +139,7 @@ typedef struct options {
     LocationList *allUsedStringListOptions;
 
     // Memory for allocated option strings and lists
-    Memory2 memory;
+    Memory memory;
 } Options;
 
 

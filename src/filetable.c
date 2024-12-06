@@ -22,7 +22,7 @@
 
 
 /* Filetable allocations */
-static Memory2 fileTableMemory;
+static Memory fileTableMemory;
 
 static void ftInit(void) {
     smInit(&fileTableMemory, "filetable", FileTableMemorySize);

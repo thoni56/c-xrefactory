@@ -93,76 +93,76 @@ Ensure(Memory, has_functions_that_can_replace_DM_macros) {
 
 #define SIZE_testMemory 12
 
-Memory2 testMemory2;
+Memory testMemory;
 
 Ensure(Memory, can_allocate_with_new_sm_memory) {
-    smInit(&testMemory2, "", SIZE_testMemory);
+    smInit(&testMemory, "", SIZE_testMemory);
 
-    char *pointer = smAllocc(&testMemory2, 1, sizeof(char));
+    char *pointer = smAllocc(&testMemory, 1, sizeof(char));
     assert_that(pointer, is_not_null);
-    assert_that(pointer, is_equal_to(testMemory2.area)); /* First allocated item in testMemory */
+    assert_that(pointer, is_equal_to(testMemory.area)); /* First allocated item in testMemory */
 
     /* Allocate more that size renders fatalError() */
     fatalErrorAllowed = true;
-    pointer = smAllocc(&testMemory2, SIZE_testMemory + 1, sizeof(char));
+    pointer = smAllocc(&testMemory, SIZE_testMemory + 1, sizeof(char));
     assert_that(fatalErrorCalled);
 }
 
 Ensure(Memory, will_fatal_on_overflow_in_new_sm_memory) {
-    smInit(&testMemory2, "", SIZE_testMemory);
+    smInit(&testMemory, "", SIZE_testMemory);
 
     /* Allocate more that size renders fatalError() */
     fatalErrorAllowed = true;
-    smAllocc(&testMemory2, SIZE_testMemory + 1, sizeof(char));
+    smAllocc(&testMemory, SIZE_testMemory + 1, sizeof(char));
     assert_that(fatalErrorCalled);
 }
 
 Ensure(Memory, can_free_until_in_new_sm_memory) {
-    smInit(&testMemory2, "", SIZE_testMemory);
+    smInit(&testMemory, "", SIZE_testMemory);
 
     /* Allocate some memory */
-    void *pointer1 = smAlloc(&testMemory2, 2);
-    assert_that(testMemory2.index, is_not_equal_to(0));
+    void *pointer1 = smAlloc(&testMemory, 2);
+    assert_that(testMemory.index, is_not_equal_to(0));
 
-    smAlloc(&testMemory2, 4);
+    smAlloc(&testMemory, 4);
 
-    smFreeUntil(&testMemory2, pointer1);
-    assert_that(testMemory2.index, is_equal_to(0));
+    smFreeUntil(&testMemory, pointer1);
+    assert_that(testMemory.index, is_equal_to(0));
 }
 
 Ensure(Memory, can_realloc_in_new_sm_memory) {
     int initialSize = 2;
     int newSize = 4;
 
-    smInit(&testMemory2, "", SIZE_testMemory);
+    smInit(&testMemory, "", SIZE_testMemory);
 
     /* Allocate some memory */
-    void *pointer1 = smAlloc(&testMemory2, initialSize);
-    assert_that(testMemory2.index, is_equal_to(initialSize));
+    void *pointer1 = smAlloc(&testMemory, initialSize);
+    assert_that(testMemory.index, is_equal_to(initialSize));
 
-    void *pointer2 = smRealloc(&testMemory2, pointer1, initialSize, newSize);
+    void *pointer2 = smRealloc(&testMemory, pointer1, initialSize, newSize);
     assert_that(pointer2, is_equal_to(pointer1));
-    assert_that(testMemory2.index, is_equal_to(newSize));
+    assert_that(testMemory.index, is_equal_to(newSize));
 }
 
 Ensure(Memory, will_fatal_if_freeing_not_in_memory) {
-    smInit(&testMemory2, "", SIZE_testMemory);
+    smInit(&testMemory, "", SIZE_testMemory);
 
-    void *pointer = &testMemory2.area+1;
+    void *pointer = &testMemory.area+1;
 
     internalCheckFailAllowed = true;
-    smFreeUntil(&testMemory2, pointer);
+    smFreeUntil(&testMemory, pointer);
 
     assert_that(internalCheckFailCalled);
 }
 
 Ensure(Memory, will_fatal_if_reallocing_not_last_allocated) {
-    smInit(&testMemory2, "", SIZE_testMemory);
+    smInit(&testMemory, "", SIZE_testMemory);
 
-    void *pointer = smAlloc(&testMemory2, 5);
+    void *pointer = smAlloc(&testMemory, 5);
 
     internalCheckFailAllowed = true;
-    smRealloc(&testMemory2, pointer+1, 5, 6);
+    smRealloc(&testMemory, pointer+1, 5, 6);
 
     assert_that(internalCheckFailCalled);
 }

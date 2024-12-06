@@ -74,7 +74,7 @@ static void setYylvalsForInteger(int val, Position position, int length) {
 int macroStackIndex=0;
 static LexInput macroInputStack[MACRO_INPUT_STACK_SIZE];
 
-static Memory2 macroArgumentsMemory;
+static Memory macroArgumentsMemory;
 
 static void initMacroArgumentsMemory(void) {
     smInit(&macroArgumentsMemory, "macro arguments", MacroArgumentsMemorySize);
@@ -87,7 +87,7 @@ static void *mamAlloc(size_t size) {
 
 /* Macro body memory - MBM */
 
-static Memory2 macroBodyMemory;
+static Memory macroBodyMemory;
 
 static void mbmInit(void) {
     smInit(&macroBodyMemory, "macro body", MacroBodyMemorySize);

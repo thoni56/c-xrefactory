@@ -15,7 +15,7 @@ typedef struct memory {
     bool  (*overflowHandler)(int n); /* Should return true if more memory was possible to acquire */
     int     index;
     size_t  size;
-    char   *block;
+    char   *area;
 } Memory;
 
 
@@ -30,23 +30,14 @@ extern void  ppmFreeUntil(void *pointer);
 extern bool ppmIsFreedPointer(void *pointer);
 
 
-/* ************************************************************************** */
-/* New type of static memory */
-typedef struct {
-    char *name;
-    size_t size;
-    int index;
-    char *area;
-} Memory2;
-
-extern void smInit(Memory2 *memory, char *name, size_t size);
-extern void *smAllocc(Memory2 *memory, int count, size_t size);
-extern void *smAlloc(Memory2 *memory, size_t size);
-extern void *smRealloc(Memory2 *memory, void *pointer, size_t oldSize, size_t newSize);
-extern void *smReallocc(Memory2 *memory, void *pointer, int newCount, size_t size, int oldCount);
-extern bool smIsBetween(Memory2 *memory, void *pointer, int low, int high);
-extern void smFreeUntil(Memory2 *memory, void *pointer);
-extern bool smIsFreedPointer(Memory2 *memory, void *pointer);
+extern void smInit(Memory *memory, char *name, size_t size);
+extern void *smAllocc(Memory *memory, int count, size_t size);
+extern void *smAlloc(Memory *memory, size_t size);
+extern void *smRealloc(Memory *memory, void *pointer, size_t oldSize, size_t newSize);
+extern void *smReallocc(Memory *memory, void *pointer, int newCount, size_t size, int oldCount);
+extern bool smIsBetween(Memory *memory, void *pointer, int low, int high);
+extern void smFreeUntil(Memory *memory, void *pointer);
+extern bool smIsFreedPointer(Memory *memory, void *pointer);
 
 
 /***********************************************************************/
@@ -57,9 +48,8 @@ extern jmp_buf memoryResizeJumpTarget;
 
 extern Memory *cxMemory;
 
+extern Memory ppmMemory;
 
-/* SM (Static memory) areas */
-extern Memory2 ppmMemory;
 
 /* Inject some error functions to remove linkage dependency */
 extern void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *mess, int exitStatus,

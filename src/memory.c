@@ -15,7 +15,7 @@ jmp_buf memoryResizeJumpTarget;
 Memory *cxMemory=NULL;
 
 /* Static memory areas */
-Memory2 ppmMemory;
+Memory ppmMemory;
 
 
 /* This is used unless the fatalError function is set */
@@ -54,7 +54,7 @@ void initMemory(Memory *memory, char *name, bool (*overflowHandler)(int n), int 
     memory->overflowHandler = overflowHandler;
     memory->index = 0;
     memory->size = size;
-    memory->block = malloc(size);
+    memory->area = malloc(size);
     LEAVE();
 }
 
@@ -113,7 +113,7 @@ void *dm_allocc(Memory *memory, int count, size_t size) {
     }
     previous_index = memory->index;
     memory->index += (count)*size;
-    return (void *) (((char*)&memory->block) + previous_index);
+    return (void *) (((char*)&memory->area) + previous_index);
 }
 
 void *dm_alloc(Memory *memory, size_t size) {
@@ -124,7 +124,7 @@ bool dm_enoughSpaceFor(Memory *memory, size_t bytes) {
 }
 
 bool dm_isBetween(Memory *memory, void *pointer, int low, int high) {
-    return pointer >= (void *)&memory->block + low && pointer < (void *)&memory->block + high;
+    return pointer >= (void *)&memory->area + low && pointer < (void *)&memory->area + high;
 }
 
 bool dm_isFreedPointer(Memory *memory, void *pointer) {
@@ -132,8 +132,8 @@ bool dm_isFreedPointer(Memory *memory, void *pointer) {
 }
 
 void dm_freeUntil(Memory *memory, void *pointer) {
-    assert(pointer >= (void *)&memory->block && pointer <= (void *)&memory->block+memory->index);
-    memory->index = (void *)pointer - (void *)&memory->block;
+    assert(pointer >= (void *)&memory->area && pointer <= (void *)&memory->area+memory->index);
+    memory->index = (void *)pointer - (void *)&memory->area;
 }
 
 /* CX */
@@ -149,11 +149,11 @@ bool isFreedCxMemory(void *pointer) {
     return dm_isFreedPointer(cxMemory, pointer);
 }
 
-static bool isInMemory(Memory2 *memory, void *pointer) {
+static bool isInMemory(Memory *memory, void *pointer) {
     return pointer >= (void *)memory->area && pointer <= (void *)&memory->area[memory->size];
 }
 
-void smInit(Memory2 *memory, char *name, size_t size) {
+void smInit(Memory *memory, char *name, size_t size) {
     if (size != memory->size) {
         free(memory->area);
         memory->area = NULL;
@@ -167,7 +167,7 @@ void smInit(Memory2 *memory, char *name, size_t size) {
     memory->name = name;
 }
 
-void *smAllocc(Memory2 *memory, int count, size_t size) {
+void *smAllocc(Memory *memory, int count, size_t size) {
     void *pointer = &memory->area[memory->index];
     assert(size > 0);
     assert(count >= 0);
@@ -180,32 +180,32 @@ void *smAllocc(Memory2 *memory, int count, size_t size) {
     return pointer;
 }
 
-void *smAlloc(Memory2 *memory, size_t size) {
+void *smAlloc(Memory *memory, size_t size) {
     return smAllocc(memory, 1, size);
 }
 
 /* Reallocates the most recently allocated area in 'memory' to be different size */
-void *smRealloc(Memory2 *memory, void *pointer, size_t oldSize, size_t newSize) {
+void *smRealloc(Memory *memory, void *pointer, size_t oldSize, size_t newSize) {
     assert(pointer == &memory->area[memory->index-oldSize]);
     memory->index += newSize - oldSize;
     return pointer;
 }
 
-void *smReallocc(Memory2 *memory, void *pointer, int newCount, size_t size, int oldCount) {
+void *smReallocc(Memory *memory, void *pointer, int newCount, size_t size, int oldCount) {
     return smRealloc(memory, pointer, oldCount*size, newCount*size);
 }
 
 
-void smFreeUntil(Memory2 *memory, void *pointer) {
+void smFreeUntil(Memory *memory, void *pointer) {
     assert(isInMemory(memory, pointer));
     memory->index = (char *)pointer - memory->area;
 }
 
-bool smIsBetween(Memory2 *memory, void *pointer, int low, int high) {
+bool smIsBetween(Memory *memory, void *pointer, int low, int high) {
     return pointer >= (void *)&memory->area[low] && pointer < (void *)&memory->area[high];
 }
 
-bool smIsFreedPointer(Memory2 *memory, void *pointer) {
+bool smIsFreedPointer(Memory *memory, void *pointer) {
     return smIsBetween(memory, pointer, memory->index, memory->size);
 }
 

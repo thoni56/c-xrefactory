@@ -111,7 +111,7 @@ Options presetOptions = {
 
 
 /* memory where on-line given options are stored */
-static Memory2 optMemory;
+static Memory optMemory;
 
 static char base[MAX_FILE_NAME_SIZE];
 
