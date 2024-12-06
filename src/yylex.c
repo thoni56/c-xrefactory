@@ -693,8 +693,6 @@ static MacroArgumentTableElement *newMacroArgumentTableElement(char *argLinkName
 
 /* Public only for unittesting */
 protected void processDefineDirective(bool hasArguments) {
-    LexemCode lexem;
-    Position macroPosition, ppb1, ppb2, *parpos1, *parpos2;
     char *currentLexemStart, *argumentName;
     char **argumentNames, *argLinkName;
 
@@ -706,16 +704,17 @@ protected void processDefineDirective(bool hasArguments) {
 
     initMacroArgumentsMemory();
 
-    ppb1 = noPosition;
-    ppb2 = noPosition;
-    parpos1 = &ppb1;
-    parpos2 = &ppb2;
+    Position ppb1 = noPosition;
+    Position ppb2 = noPosition;
+    Position *parpos1 = &ppb1;
+    Position *parpos2 = &ppb2;
 
-    lexem = getLexem();
+    LexemCode lexem = getLexem();
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     currentLexemStart = currentInput.read;
 
+    Position macroPosition;
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &macroPosition, NULL, true);
 
     testCxrefCompletionId(&lexem, currentLexemStart, &macroPosition);    /* for cross-referencing */
