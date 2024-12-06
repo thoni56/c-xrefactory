@@ -84,11 +84,6 @@ extern void cxFreeUntil(void *until);
 extern bool isFreedCxMemory(void *pointer);
 
 
-/* editor allocations, for now, store it in olcxmemory */
-extern void *editorAlloc(size_t size);
-extern void  editorFree(void *pointer, size_t size);
-
-
 extern void initMemory(Memory *memory, char *name, bool (*overflowHandler)(int n), int size);
 extern void memoryResized(void);
 extern bool cxMemoryOverflowHandler(int n);

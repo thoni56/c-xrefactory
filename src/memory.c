@@ -149,15 +149,6 @@ bool isFreedCxMemory(void *pointer) {
     return dm_isFreedPointer(cxMemory, pointer);
 }
 
-/* EDITOR */
-void *editorAlloc(size_t size) {
-    return malloc(size);
-}
-
-void editorFree(void *pointer, size_t size) {
-    free(pointer);
-}
-
 static bool isInMemory(Memory2 *memory, void *pointer) {
     return pointer >= (void *)memory->area && pointer <= (void *)&memory->area[memory->size];
 }

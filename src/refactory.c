@@ -317,10 +317,10 @@ static void editorFreeSingleUndo(EditorUndo *uu) {
     if (uu->u.replace.str != NULL && uu->u.replace.strlen != 0) {
         switch (uu->operation) {
         case UNDO_REPLACE_STRING:
-            editorFree(uu->u.replace.str, uu->u.replace.strlen + 1);
+            free(uu->u.replace.str);
             break;
         case UNDO_RENAME_BUFFER:
-            editorFree(uu->u.rename.name, strlen(uu->u.rename.name) + 1);
+            free(uu->u.rename.name);
             break;
         case UNDO_MOVE_BLOCK:
             break;
@@ -328,7 +328,7 @@ static void editorFreeSingleUndo(EditorUndo *uu) {
             errorMessage(ERR_INTERNAL, "Unknown operation to undo");
         }
     }
-    editorFree(uu, sizeof(EditorUndo));
+    free(uu);
 }
 
 static void editorApplyUndos(EditorUndo *undos, EditorUndo *until, EditorUndo **undoundo, int gen) {

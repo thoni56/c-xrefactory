@@ -1,6 +1,7 @@
 #include "editorbuffer.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 #include "commons.h"
 #include "editorbuffertab.h"
@@ -32,12 +33,12 @@ void freeEditorBuffer(EditorBufferList *list) {
         return;
     log_trace("freeing buffer %s==%s", list->buffer->name, list->buffer->fileName);
     if (list->buffer->fileName != list->buffer->name) {
-        editorFree(list->buffer->fileName, strlen(list->buffer->fileName)+1);
+        free(list->buffer->fileName);
     }
-    editorFree(list->buffer->name, strlen(list->buffer->name)+1);
+    free(list->buffer->name);
     for (EditorMarker *marker=list->buffer->markers; marker!=NULL;) {
         EditorMarker *next = marker->next;
-        editorFree(marker, sizeof(EditorMarker));
+        free(marker);
         marker = next;
     }
     if (list->buffer->textLoaded) {
@@ -47,8 +48,8 @@ void freeEditorBuffer(EditorBufferList *list) {
         freeTextSpace(list->buffer->allocation.allocatedBlock,
                       list->buffer->allocation.allocatedIndex);
     }
-    editorFree(list->buffer, sizeof(EditorBuffer));
-    editorFree(list, sizeof(EditorBufferList));
+    free(list->buffer);
+    free(list);
 }
 
 EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t modificationTime,
@@ -58,21 +59,21 @@ EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t modificat
     EditorBufferList *bufferList;
 
     normalizedName = normalizeFileName_static(name, cwd);
-    allocatedName = editorAlloc(strlen(normalizedName)+1);
+    allocatedName = malloc(strlen(normalizedName)+1);
     strcpy(allocatedName, normalizedName);
     normalizedFileName = normalizeFileName_static(fileName, cwd);
     if (strcmp(normalizedFileName, allocatedName)==0) {
         afname = allocatedName;
     } else {
-        afname = editorAlloc(strlen(normalizedFileName)+1);
+        afname = malloc(strlen(normalizedFileName)+1);
         strcpy(afname, normalizedFileName);
     }
-    buffer = editorAlloc(sizeof(EditorBuffer));
+    buffer = malloc(sizeof(EditorBuffer));
     fillEmptyEditorBuffer(buffer, allocatedName, 0, afname);
     buffer->modificationTime = modificationTime;
     buffer->size = size;
 
-    bufferList = editorAlloc(sizeof(EditorBufferList));
+    bufferList = malloc(sizeof(EditorBufferList));
     *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
     log_trace("creating buffer '%s' for '%s'", buffer->name, buffer->fileName);
 
@@ -165,7 +166,7 @@ void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     deleted = deleteEditorBuffer(memb);
     assert(deleted);
     oldName = buffer->name;
-    buffer->name = editorAlloc(strlen(newName)+1);
+    buffer->name = malloc(strlen(newName)+1);
     strcpy(buffer->name, newName);
 
     // Also update fileNumber

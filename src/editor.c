@@ -320,7 +320,7 @@ static void attachMarkerToBuffer(EditorMarker *marker, EditorBuffer *buffer) {
 EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset) {
     EditorMarker *marker;
 
-    marker = editorAlloc(sizeof(EditorMarker));
+    marker = malloc(sizeof(EditorMarker));
     marker->buffer = buffer;
     marker->offset = offset;
     marker->previous = NULL;
@@ -347,7 +347,7 @@ EditorMarker *newEditorMarkerForPosition(Position *position) {
 EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next) {
     EditorRegionList *regionList;
 
-    regionList = editorAlloc(sizeof(EditorRegionList));
+    regionList = malloc(sizeof(EditorRegionList));
     regionList->region.begin = begin;
     regionList->region.end = end;
     regionList->next = next;
@@ -460,7 +460,7 @@ void freeEditorMarker(EditorMarker *marker) {
     if (marker == NULL)
         return;
     removeEditorMarkerFromBufferWithoutFreeing(marker);
-    editorFree(marker, sizeof(EditorMarker));
+    free(marker);
 }
 
 void freeTextSpace(char *space, int index) {
@@ -573,7 +573,7 @@ void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int delsize
         // note undo information
         undosize = strlength;
         assert(delsize >= 0);
-        undotext = editorAlloc(delsize+1);
+        undotext = malloc(delsize+1);
         memcpy(undotext, buffer->allocation.text+position, delsize);
         undotext[delsize]=0;
         uu = newUndoReplace(buffer, position, undosize, delsize, undotext, *undo);
@@ -863,7 +863,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
                 for (; text < smax; text++, c++) {
                     if (l == line && c == col) {
                         EditorMarker *m    = newEditorMarker(buff, text - buff->allocation.text);
-                        EditorMarkerList *rrr  = editorAlloc(sizeof(EditorMarkerList));
+                        EditorMarkerList *rrr  = malloc(sizeof(EditorMarkerList));
                         *rrr = (EditorMarkerList){.marker = m, .usage = reference->usage, .next = markerList};
                         markerList  = rrr;
                         reference    = reference->next;
@@ -882,7 +882,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
                 // references beyond end of buffer
                 while (reference != NULL && file == reference->position.file) {
                     EditorMarker *m    = newEditorMarker(buff, maxoffset);
-                    EditorMarkerList *rrr  = editorAlloc(sizeof(EditorMarkerList));
+                    EditorMarkerList *rrr  = malloc(sizeof(EditorMarkerList));
                     *rrr = (EditorMarkerList){.marker = m, .usage = reference->usage, .next = markerList};
                     markerList  = rrr;
                     reference    = reference->next;
@@ -941,7 +941,7 @@ void freeEditorMarkersAndRegionList(EditorRegionList *occs) {
         EditorRegionList *next = o->next; /* Save next as we are freeing 'o' */
         freeEditorMarker(o->region.begin);
         freeEditorMarker(o->region.end);
-        editorFree(o, sizeof(EditorRegionList));
+        free(o);
         o = next;
     }
 }
@@ -949,7 +949,7 @@ void freeEditorMarkersAndRegionList(EditorRegionList *occs) {
 void freeEditorMarkerListButNotMarkers(EditorMarkerList *occs) {
     for (EditorMarkerList *o = occs; o != NULL;) {
         EditorMarkerList *next = o->next; /* Save next as we are freeing 'o' */
-        editorFree(o, sizeof(EditorMarkerList));
+        free(o);
         o = next;
     }
 }
@@ -958,7 +958,7 @@ void freeEditorMarkersAndMarkerList(EditorMarkerList *occs) {
     for (EditorMarkerList *o = occs; o != NULL;) {
         EditorMarkerList *next = o->next; /* Save next as we are freeing 'o' */
         freeEditorMarker(o->marker);
-        editorFree(o, sizeof(EditorMarkerList));
+        free(o);
         o = next;
     }
 }
@@ -1047,7 +1047,7 @@ static EditorMarkerList *combineEditorMarkerLists(EditorMarkerList **diff, Edito
     EditorMarker     *marker = newEditorMarker(list->marker->buffer, list->marker->offset);
     EditorMarkerList *l;
 
-    l = editorAlloc(sizeof(EditorMarkerList));
+    l = malloc(sizeof(EditorMarkerList));
     *l    = (EditorMarkerList){.marker = marker, .usage = list->usage, .next = *diff};
     *diff = l;
     list  = list->next;
@@ -1066,7 +1066,7 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
         if (editorMarkerListBefore(l1, l2)) {
             EditorMarker *marker = newEditorMarker(l1->marker->buffer, l1->marker->offset);
             EditorMarkerList *l;
-            l = editorAlloc(sizeof(EditorMarkerList)); /* TODO1 */
+            l = malloc(sizeof(EditorMarkerList)); /* TODO1 */
             *l = (EditorMarkerList){.marker = marker, .usage = l1->usage, .next = *diff1};
             *diff1 = l;
             l1 = l1->next;
@@ -1083,7 +1083,7 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
     while (l2 != NULL) {
         EditorMarker *marker = newEditorMarker(l2->marker->buffer, l2->marker->offset);
         EditorMarkerList *l;
-        l = editorAlloc(sizeof(EditorMarkerList));
+        l = malloc(sizeof(EditorMarkerList));
         *l = (EditorMarkerList){.marker = marker, .usage = l2->usage, .next = *diff2};
         *diff2 = l;
         l2 = l2->next;
@@ -1115,7 +1115,7 @@ void sortEditorRegionsAndRemoveOverlaps(EditorRegionList **regions) {
             if (newEnd != NULL) {
                 region->region.end = newEnd;
                 region->next       = next->next;
-                editorFree(next, sizeof(EditorRegionList));
+                free(next);
                 next = NULL;
                 continue;
             }
@@ -1191,7 +1191,7 @@ EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer) {
     bufferBegin     = createEditorMarkerForBufferBegin(buffer);
     bufferEnd       = createEditorMarkerForBufferEnd(buffer);
     theBufferRegion = (EditorRegion){.begin = bufferBegin, .end = bufferEnd};
-    theBufferRegionList = editorAlloc(sizeof(EditorRegionList));
+    theBufferRegionList = malloc(sizeof(EditorRegionList));
     *theBufferRegionList = (EditorRegionList){.region = theBufferRegion, .next = NULL};
 
     return theBufferRegionList;
@@ -1204,7 +1204,7 @@ static EditorBufferList *computeListOfAllEditorBuffers(void) {
     for (int i=0; i != -1 ; i = getNextExistingEditorBufferIndex(i+1)) {
         for (EditorBufferList *l = getEditorBuffer(i); l != NULL; l = l->next) {
             EditorBufferList *element;
-            element = editorAlloc(sizeof(EditorBufferList));
+            element = malloc(sizeof(EditorBufferList));
             *element = (EditorBufferList){.buffer = l->buffer, .next = list};
             list     = element;
         }
@@ -1218,7 +1218,7 @@ static void freeEditorBufferListButNotBuffers(EditorBufferList *list) {
     l=list;
     while (l!=NULL) {
         n = l->next;
-        editorFree(l, sizeof(EditorBufferList));
+        free(l);
         l = n;
     }
 }
