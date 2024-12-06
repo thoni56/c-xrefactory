@@ -78,13 +78,10 @@ static void fillReferenceItemForIncludeFile(ReferenceItem *referencesItem, int f
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
-    char *cxFreeBase;
-    bool  fileAddedFlag;
-
-    cxFreeBase = cxAlloc(0);
+    char *cxFreeBase = cxAlloc(0);
     fullScanFor(LINK_NAME_INCLUDE_REFS);
     // iterate over scheduled files
-    fileAddedFlag = true;
+    bool fileAddedFlag = true;
     while (fileAddedFlag) {
         fileAddedFlag = false;
         for (int i=getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i+1)) {
