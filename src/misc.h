@@ -38,7 +38,7 @@ typedef unsigned bitArray;
 #define NULLBIT(bitarr,s) {bitarr[BIT_ARR_DIVNBITS(s)] &= ~(BIT_ARR_N_TH_BIT(s));}
 
 
-#define MapOverPaths(/* const char * */ thePathsToMapOver, /* block of code */ COMMAND) \
+#define MAP_OVER_PATHS(/* const char * */ thePathsToMapOver, /* block of code */ COMMAND) \
     {                                                                   \
         char *currentPath; /* "public" to COMMAND */                    \
         char *mop_pathPointer, *mop_endOfPaths;                         \

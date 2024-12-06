@@ -511,7 +511,7 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
     for (includeDirP = start; includeDirP != NULL && editorBuffer == NULL && file == NULL; includeDirP = includeDirP->next) {
         strcpy(normalizedName, normalizeFileName_static(includeDirP->string, cwd));
         expandWildcardsInOnePath(normalizedName, wildcardExpandedPaths, MAX_OPTION_LEN);
-        MapOverPaths(wildcardExpandedPaths, {
+        MAP_OVER_PATHS(wildcardExpandedPaths, {
             int length;
             strcpy(normalizedName, currentPath);
             length = strlen(normalizedName);

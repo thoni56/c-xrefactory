@@ -741,7 +741,7 @@ static void simpleModuleRename(EditorMarkerList *markers, char *symname, char *s
         if (l->next == NULL || l->next->marker->buffer != l->marker->buffer) {
             // O.K. verify whether I should move the file
             bool fileMoved;
-            MapOverPaths(javaSourcePaths, {
+            MAP_OVER_PATHS(javaSourcePaths, {
                     fileMoved = renamePackageFileMove(currentPath, l, symLinkName, strlen(symLinkName));
                     if (fileMoved)
                         goto moved;

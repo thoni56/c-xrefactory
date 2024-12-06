@@ -98,7 +98,7 @@ Ensure(Misc, will_map_over_paths_for_each_entry_setting_currentPath) {
     int count = 0;
     char mappedPaths[3][2];
 
-    MapOverPaths(paths, {
+    MAP_OVER_PATHS(paths, {
             strcpy(mappedPaths[count++], currentPath);
         });
 

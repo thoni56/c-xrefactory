@@ -682,7 +682,7 @@ void expandWildcardsInPaths(char *paths, char *outpaths, int availableSpace) {
     int     olen;
     assert(availableSpace == MAX_OPTION_LEN);
     oop = opaths = outpaths; olen = availableSpace;
-    MapOverPaths(paths, { expandWildcardsInOnePathRecursiveMaybe(currentPath, &opaths, &olen); });
+    MAP_OVER_PATHS(paths, { expandWildcardsInOnePathRecursiveMaybe(currentPath, &opaths, &olen); });
     *opaths = 0;
     if (opaths != oop) *(opaths-1) = 0;
 }
@@ -816,7 +816,7 @@ protected char *concatDirectoryWithFileName(char *output, char *directoryName, c
 }
 
 static bool pathsStringContainsPath(char *paths, char *path) {
-    MapOverPaths(paths, {
+    MAP_OVER_PATHS(paths, {
         //&fprintf(dumpOut,"[sp]checking %s<->%s\n", currentPath, path);
         if (compareFileNames(currentPath, path) == 0) {
             //&fprintf(dumpOut,"[sp] saving of mapping %s\n", path);

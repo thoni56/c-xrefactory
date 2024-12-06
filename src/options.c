@@ -446,7 +446,7 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
 
 static bool fileNameShouldBePruned(char *fn) {
     for (StringList *s=options.pruneNames; s!=NULL; s=s->next) {
-        MapOverPaths(s->string, {
+        MAP_OVER_PATHS(s->string, {
             if (compareFileNames(currentPath, fn) == 0)
                 return true;
         });
@@ -512,7 +512,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     } else if (containsWildcard(dirName)) {
         char wildcardPath[MAX_OPTION_LEN];
         expandWildcardsInOnePath(dirName, wildcardPath, MAX_OPTION_LEN);
-        MapOverPaths(wildcardPath, { dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &isTopDirectory); });
+        MAP_OVER_PATHS(wildcardPath, { dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &isTopDirectory); });
     } else if (isTopDirectory) {
         if (options.mode!=ServerMode) {
             errorMessage(ERR_CANT_OPEN, dirName);
@@ -1874,7 +1874,7 @@ static void scheduleFileArgumentToFileTable(char *infile) {
 
     topCallFlag = 1;
     recurseFlag = &topCallFlag;
-    MapOverPaths(infile, { dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &topCallFlag); });
+    MAP_OVER_PATHS(infile, { dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &topCallFlag); });
 }
 
 static void processFileArgument(char *fileArgument) {
