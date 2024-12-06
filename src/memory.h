@@ -4,19 +4,18 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <setjmp.h>
-#include "constants.h"
 
 
 
 /* ************************ Types ******************************** */
 
-/* Only use: cxMemory */
+/* Only use: cxMemory - possibility to just nuke down to an address */
 typedef struct memory {
-    char    *name;              /* String representing the name of the memory */
-    bool	(*overflowHandler)(int n); /* Should return true if more memory was possible to acquire */
+    char   *name;              /* String representing the name of the memory */
+    bool  (*overflowHandler)(int n); /* Should return true if more memory was possible to acquire */
     int     index;
-    int		size;
-    double  block[SIZE_optMemory];	//  double in order to get it properly aligned
+    size_t  size;
+    char   *block;
 } Memory;
 
 

@@ -54,7 +54,7 @@ void initMemory(Memory *memory, char *name, bool (*overflowHandler)(int n), int 
     memory->overflowHandler = overflowHandler;
     memory->index = 0;
     memory->size = size;
-    memory->block[0] = 0;
+    memory->block = malloc(size);
     LEAVE();
 }
 
