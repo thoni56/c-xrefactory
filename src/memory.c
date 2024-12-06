@@ -96,7 +96,7 @@ void dm_init(Memory *memory, char *name) {
     ENTER();
     memory->name = name;
     memory->index = 0;
-    //memory->overflowHandler = NULL;
+    memory->overflowHandler = NULL;
     LEAVE();
 }
 
