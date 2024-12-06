@@ -141,11 +141,12 @@ void initAllInputs(void) {
 }
 
 
-static void fillMacroArgumentTableElement(MacroArgumentTableElement *element, char *name, char *linkName,
-                                int order) {
-    element->name = name;
-    element->linkName = linkName;
-    element->order = order;
+static MacroArgumentTableElement makeMacroArgumentTableElement(char *name, char *linkName, int order) {
+    MacroArgumentTableElement element;
+    element.name = name;
+    element.linkName = linkName;
+    element.order = order;
+    return element;
 }
 
 static void setCacheConsistency(Cache *cache, LexInput *input) {
@@ -686,9 +687,9 @@ static LexemCode getNonBlankLexemAndData(Position *position, int *lineNumber, in
 }
 
 static MacroArgumentTableElement *newMacroArgumentTableElement(char *argLinkName, int argumentCount, char *name) {
-    MacroArgumentTableElement *macroArgumentTableElement = mamAlloc(sizeof(MacroArgumentTableElement));
-    fillMacroArgumentTableElement(macroArgumentTableElement, name, argLinkName, argumentCount);
-    return macroArgumentTableElement;
+    MacroArgumentTableElement *element = mamAlloc(sizeof(MacroArgumentTableElement));
+    *element = makeMacroArgumentTableElement(name, argLinkName, argumentCount);
+    return element;
 }
 
 /* Public only for unittesting */
@@ -830,8 +831,8 @@ protected void processDefineDirective(bool hasArguments) {
         while(macroSize<allocatedSize && lexem != '\n') {
             char *lexemDestination = body+macroSize; /* TODO WTF Are we storing the lexems after the body?!?! */
             /* Create a MATE to be able to run ..IsMember() */
-            MacroArgumentTableElement macroArgumentTableElement;
-            fillMacroArgumentTableElement(&macroArgumentTableElement, currentLexemStart, NULL, 0);
+            MacroArgumentTableElement macroArgumentTableElement = makeMacroArgumentTableElement(currentLexemStart,
+                                                                                                NULL, 0);
 
             int foundIndex;
             if (lexem==IDENTIFIER && isMemberInMacroArguments(&macroArgumentTableElement, &foundIndex)){
