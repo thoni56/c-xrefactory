@@ -701,7 +701,6 @@ protected void processDefineDirective(bool hasArguments) {
     char *macroName = NULL;
     int allocatedSize = 0;
     Symbol *symbol = NULL;
-    char *body = NULL;
 
     initMacroArgumentsMemory();
 
@@ -816,7 +815,7 @@ protected void processDefineDirective(bool hasArguments) {
     /* process macro body */
     allocatedSize = MACRO_BODY_BUFFER_SIZE;
     int macroSize = 0;
-    body = ppmAllocc(allocatedSize+MAX_LEXEM_SIZE, sizeof(char));
+    char *body = ppmAllocc(allocatedSize+MAX_LEXEM_SIZE, sizeof(char));
 
     isReadingBody = true;
 
