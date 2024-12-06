@@ -78,13 +78,13 @@ Memory testMemory;
 Ensure(Memory, can_allocate_with_new_sm_memory) {
     smInit(&testMemory, "", SIZE_testMemory);
 
-    char *pointer = smAllocc(&testMemory, 1, sizeof(char));
+    char *pointer = memoryAllocc(&testMemory, 1, sizeof(char));
     assert_that(pointer, is_not_null);
     assert_that(pointer, is_equal_to(testMemory.area)); /* First allocated item in testMemory */
 
     /* Allocate more that size renders fatalError() */
     fatalErrorAllowed = true;
-    pointer = smAllocc(&testMemory, SIZE_testMemory + 1, sizeof(char));
+    pointer = memoryAllocc(&testMemory, SIZE_testMemory + 1, sizeof(char));
     assert_that(fatalErrorCalled);
 }
 
@@ -93,7 +93,7 @@ Ensure(Memory, will_fatal_on_overflow_in_new_sm_memory) {
 
     /* Allocate more that size renders fatalError() */
     fatalErrorAllowed = true;
-    smAllocc(&testMemory, SIZE_testMemory + 1, sizeof(char));
+    memoryAllocc(&testMemory, SIZE_testMemory + 1, sizeof(char));
     assert_that(fatalErrorCalled);
 }
 
@@ -101,10 +101,10 @@ Ensure(Memory, can_free_until_in_new_sm_memory) {
     smInit(&testMemory, "", SIZE_testMemory);
 
     /* Allocate some memory */
-    void *pointer1 = smAlloc(&testMemory, 2);
+    void *pointer1 = memoryAlloc(&testMemory, 2);
     assert_that(testMemory.index, is_not_equal_to(0));
 
-    smAlloc(&testMemory, 4);
+    memoryAlloc(&testMemory, 4);
 
     smFreeUntil(&testMemory, pointer1);
     assert_that(testMemory.index, is_equal_to(0));
@@ -117,7 +117,7 @@ Ensure(Memory, can_realloc_in_new_sm_memory) {
     smInit(&testMemory, "", SIZE_testMemory);
 
     /* Allocate some memory */
-    void *pointer1 = smAlloc(&testMemory, initialSize);
+    void *pointer1 = memoryAlloc(&testMemory, initialSize);
     assert_that(testMemory.index, is_equal_to(initialSize));
 
     void *pointer2 = smRealloc(&testMemory, pointer1, initialSize, newSize);
@@ -139,7 +139,7 @@ Ensure(Memory, will_fatal_if_freeing_not_in_memory) {
 Ensure(Memory, will_fatal_if_reallocing_not_last_allocated) {
     smInit(&testMemory, "", SIZE_testMemory);
 
-    void *pointer = smAlloc(&testMemory, 5);
+    void *pointer = memoryAlloc(&testMemory, 5);
 
     internalCheckFailAllowed = true;
     smRealloc(&testMemory, pointer+1, 5, 6);

@@ -81,7 +81,7 @@ static void initMacroArgumentsMemory(void) {
 }
 
 static void *mamAlloc(size_t size) {
-    return smAlloc(&macroArgumentsMemory, size);
+    return memoryAlloc(&macroArgumentsMemory, size);
 }
 
 
@@ -94,7 +94,7 @@ static void mbmInit(void) {
 }
 
 static void *mbmAlloc(size_t size) {
-    return smAlloc(&macroBodyMemory, size);
+    return memoryAlloc(&macroBodyMemory, size);
 }
 
 static void *mbmExpand(void *pointer, size_t oldSize, size_t newSize) {

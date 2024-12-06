@@ -31,8 +31,8 @@ extern bool ppmIsFreedPointer(void *pointer);
 
 
 extern void smInit(Memory *memory, char *name, size_t size);
-extern void *smAllocc(Memory *memory, int count, size_t size);
-extern void *smAlloc(Memory *memory, size_t size);
+extern void *memoryAllocc(Memory *memory, int count, size_t size);
+extern void *memoryAlloc(Memory *memory, size_t size);
 extern void *smRealloc(Memory *memory, void *pointer, size_t oldSize, size_t newSize);
 extern void *smReallocc(Memory *memory, void *pointer, int newCount, size_t size, int oldCount);
 extern bool smIsBetween(Memory *memory, void *pointer, int low, int high);

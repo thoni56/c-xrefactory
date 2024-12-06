@@ -209,7 +209,7 @@ static void usage() {
 
 
 static void *optAlloc(size_t size) {
-    return smAlloc(&options.memory, size);
+    return memoryAlloc(&options.memory, size);
 }
 
 /* Protected type */
@@ -792,7 +792,7 @@ static void processProjectMarker(char *markerText, int markerLength, char *curre
 
 static void *allocateSpaceForOption(MemoryKind memoryKind, int count, size_t size) {
     if (memoryKind==ALLOCATE_IN_SM) {
-        return smAllocc(&optMemory, count, size);
+        return memoryAllocc(&optMemory, count, size);
     } else if (memoryKind==ALLOCATE_IN_PP) {
         return ppmAllocc(count, size);
     } else {

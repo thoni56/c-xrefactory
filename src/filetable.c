@@ -29,7 +29,7 @@ static void ftInit(void) {
 }
 
 static void *ftAlloc(size_t size) {
-    return smAlloc(&fileTableMemory, size);
+    return memoryAlloc(&fileTableMemory, size);
 }
 
 

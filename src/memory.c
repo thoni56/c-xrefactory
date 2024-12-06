@@ -83,7 +83,7 @@ bool cxMemoryOverflowHandler(int n) {
         free(oldcxMemory);
     cxMemory = malloc(newsize + sizeof(Memory));
     if (cxMemory!=NULL) {
-        initMemory(cxMemory, "", cxMemoryOverflowHandler, newsize);
+        initMemory(cxMemory, "cxMemory", cxMemoryOverflowHandler, newsize);
     }
     log_debug("Reallocating cxMemory: %d -> %d", oldsize, newsize);
 
@@ -158,7 +158,7 @@ void smInit(Memory *memory, char *name, size_t size) {
     memory->index = 0;
 }
 
-void *smAllocc(Memory *memory, int count, size_t size) {
+void *memoryAllocc(Memory *memory, int count, size_t size) {
     void *pointer = &memory->area[memory->index];
     assert(size > 0);
     assert(count >= 0);
@@ -171,8 +171,8 @@ void *smAllocc(Memory *memory, int count, size_t size) {
     return pointer;
 }
 
-void *smAlloc(Memory *memory, size_t size) {
-    return smAllocc(memory, 1, size);
+void *memoryAlloc(Memory *memory, size_t size) {
+    return memoryAllocc(memory, 1, size);
 }
 
 /* Reallocates the most recently allocated area in 'memory' to be different size */
@@ -202,11 +202,11 @@ bool smIsFreedPointer(Memory *memory, void *pointer) {
 
 /* Preprocessor Macro Memory */
 void *ppmAlloc(size_t size) {
-    return smAlloc(&ppmMemory, size);
+    return memoryAlloc(&ppmMemory, size);
 }
 
 void *ppmAllocc(int count, size_t size) {
-    return smAllocc(&ppmMemory, count, size);
+    return memoryAllocc(&ppmMemory, count, size);
 }
 
 void *ppmReallocc(void *pointer, int newCount, size_t size, int oldCount) {
