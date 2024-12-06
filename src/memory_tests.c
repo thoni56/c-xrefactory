@@ -70,26 +70,6 @@ Ensure(Memory, will_extend_direct_memory_when_next_allocation_will_fill_up) {
     assert_that(overflowRequest, is_greater_than(0));
 }
 
-Ensure(Memory, has_functions_that_can_replace_DM_macros) {
-    Memory  memory;
-    Memory *variablep = NULL;
-
-    memory.index = 42;
-    dm_init(&memory, "Memory");
-    assert_that(memory.index, is_equal_to(0));
-    assert_that(memory.name, is_equal_to_string("Memory"));
-
-    /* Setting this in dm_init() does not work for some reason... */
-    memory.overflowHandler = NULL;
-
-    /* This will probably trigger overflow handling so... */
-    fatalErrorAllowed = true;
-    variablep         = dm_allocc(&memory, 1, sizeof(*variablep));
-    assert_that(variablep, is_not_null);
-    /* TODO This assumes that alignment is initially correct */
-    assert_that(memory.index, is_equal_to(sizeof(*variablep)));
-}
-
 
 #define SIZE_testMemory 12
 

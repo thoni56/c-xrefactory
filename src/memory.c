@@ -92,15 +92,6 @@ bool cxMemoryOverflowHandler(int n) {
 
 /* ***************************************************************** */
 
-void dm_init(Memory *memory, char *name) {
-    ENTER();
-    memory->name = name;
-    memory->index = 0;
-    memory->overflowHandler = NULL;
-    LEAVE();
-}
-
-
 void *dm_allocc(Memory *memory, int count, size_t size) {
     int previous_index;
 
@@ -154,6 +145,7 @@ static bool isInMemory(Memory *memory, void *pointer) {
 }
 
 void smInit(Memory *memory, char *name, size_t size) {
+    memory->name = name;
     if (size != memory->size) {
         free(memory->area);
         memory->area = NULL;
@@ -164,7 +156,6 @@ void smInit(Memory *memory, char *name, size_t size) {
         memory->size = size;
     }
     memory->index = 0;
-    memory->name = name;
 }
 
 void *smAllocc(Memory *memory, int count, size_t size) {
