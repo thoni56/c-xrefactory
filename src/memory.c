@@ -48,6 +48,20 @@ void memoryResized(void) {
     longjmp(memoryResizeJumpTarget,1);
 }
 
+void smInit(Memory *memory, char *name, size_t size) {
+    memory->name = name;
+    if (size != memory->size) {
+        free(memory->area);
+        memory->area = NULL;
+        memory->size = 0;
+    }
+    if (memory->area == NULL) {
+        memory->area = malloc(size);
+        memory->size = size;
+    }
+    memory->index = 0;
+}
+
 void memoryInit(Memory *memory, char *name, bool (*overflowHandler)(int n), int size) {
     ENTER();
     memory->name = name;
@@ -142,20 +156,6 @@ bool isFreedCxMemory(void *pointer) {
 
 static bool isInMemory(Memory *memory, void *pointer) {
     return pointer >= (void *)memory->area && pointer <= (void *)&memory->area[memory->size];
-}
-
-void smInit(Memory *memory, char *name, size_t size) {
-    memory->name = name;
-    if (size != memory->size) {
-        free(memory->area);
-        memory->area = NULL;
-        memory->size = 0;
-    }
-    if (memory->area == NULL) {
-        memory->area = malloc(size);
-        memory->size = size;
-    }
-    memory->index = 0;
 }
 
 void *memoryAllocc(Memory *memory, int count, size_t size) {

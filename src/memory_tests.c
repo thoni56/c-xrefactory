@@ -44,7 +44,7 @@ static bool overflowHandler(int n) {
 
 Ensure(Memory, can_allocate_dynamic_memory_with_overflow_handler) {
     char  *character = NULL;
-    Memory memory;
+    Memory memory = {};
 
     memoryInit(&memory, "memory", overflowHandler, SIZE_optMemory);
     character = dm_alloc(&memory, sizeof(char));
@@ -53,7 +53,7 @@ Ensure(Memory, can_allocate_dynamic_memory_with_overflow_handler) {
 
 Ensure(Memory, will_extend_direct_memory_when_next_allocation_will_fill_up) {
     char  *character = NULL;
-    Memory memory;
+    Memory memory = {};
 
     /* NOTE: This test seems to indicate that overflow happens when there is one byte left */
     if (!setjmp(memoryResizeJumpTarget)) {
