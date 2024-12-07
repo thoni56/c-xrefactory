@@ -865,7 +865,7 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
     foundProjectName[0]=0;
 
     if (memoryKind == ALLOCATE_IN_SM)
-        smInit(&optMemory, "argument options", SIZE_optMemory);
+        memoryInit(&optMemory, "argument options", NULL, SIZE_optMemory);
 
     ch = 'a';                    /* Something not EOF */
     while (ch!=EOF) {

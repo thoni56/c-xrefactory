@@ -540,7 +540,7 @@ static void totalTaskEntryInitialisations() {
     int mm = cxMemoryOverflowHandler(1);
     assert(mm);
 
-    smInit(&presetOptions.memory, "options memory", SIZE_optMemory);
+    memoryInit(&presetOptions.memory, "options memory", NULL, SIZE_optMemory);
 
     // Inject error handling functions
     setFatalErrorHandlerForMemory(fatalError);
@@ -605,7 +605,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
     initReferenceTable(MAX_CXREF_ENTRIES);
 
-    smInit(&ppmMemory, "pre-processor macros", SIZE_ppmMemory);
+    memoryInit(&ppmMemory, "pre-processor macros", NULL, SIZE_ppmMemory);
     allocateMacroArgumentTable(MAX_MACRO_ARGS);
     initOuterCodeBlock();
 
