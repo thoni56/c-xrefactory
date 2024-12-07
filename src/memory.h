@@ -73,7 +73,7 @@ extern void cxFreeUntil(void *until);
 extern bool isFreedCxMemory(void *pointer);
 
 
-extern void initMemory(Memory *memory, char *name, bool (*overflowHandler)(int n), int size);
+extern void memoryInit(Memory *memory, char *name, bool (*overflowHandler)(int n), int size);
 extern void memoryResized(void);
 extern bool cxMemoryOverflowHandler(int n);
 
