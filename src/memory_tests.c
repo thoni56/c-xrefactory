@@ -105,7 +105,7 @@ Ensure(Memory, can_free_until_in_new_sm_memory) {
 
     memoryAlloc(&testMemory, 4);
 
-    smFreeUntil(&testMemory, pointer1);
+    memoryFreeUntil(&testMemory, pointer1);
     assert_that(testMemory.index, is_equal_to(0));
 }
 
@@ -130,7 +130,7 @@ Ensure(Memory, will_fatal_if_freeing_not_in_memory) {
     void *pointer = &testMemory.area+1;
 
     internalCheckFailAllowed = true;
-    smFreeUntil(&testMemory, pointer);
+    memoryFreeUntil(&testMemory, pointer);
 
     assert_that(internalCheckFailCalled);
 }

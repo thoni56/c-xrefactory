@@ -163,6 +163,11 @@ void *memoryAlloc(Memory *memory, size_t size) {
     return memoryAllocc(memory, 1, size);
 }
 
+void memoryFreeUntil(Memory *memory, void *pointer) {
+    assert(isInMemory(memory, pointer));
+    memory->index = (char *)pointer - memory->area;
+}
+
 /* Reallocates the most recently allocated area in 'memory' to be different size */
 void *smRealloc(Memory *memory, void *pointer, size_t oldSize, size_t newSize) {
     assert(pointer == &memory->area[memory->index-oldSize]);
@@ -174,11 +179,6 @@ void *smReallocc(Memory *memory, void *pointer, int newCount, size_t size, int o
     return smRealloc(memory, pointer, oldCount*size, newCount*size);
 }
 
-
-void smFreeUntil(Memory *memory, void *pointer) {
-    assert(isInMemory(memory, pointer));
-    memory->index = (char *)pointer - memory->area;
-}
 
 bool smIsBetween(Memory *memory, void *pointer, int low, int high) {
     return pointer >= (void *)&memory->area[low] && pointer < (void *)&memory->area[high];
@@ -202,7 +202,7 @@ void *ppmReallocc(void *pointer, int newCount, size_t size, int oldCount) {
 }
 
 void ppmFreeUntil(void *pointer) {
-    smFreeUntil(&ppmMemory, pointer);
+    memoryFreeUntil(&ppmMemory, pointer);
 }
 
 bool ppmIsFreedPointer(void *pointer) {

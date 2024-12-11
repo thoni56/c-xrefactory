@@ -102,7 +102,7 @@ static void *mbmExpand(void *pointer, size_t oldSize, size_t newSize) {
 }
 
 static void mbmFreeUntil(void *pointer) {
-    smFreeUntil(&macroBodyMemory, pointer);
+    memoryFreeUntil(&macroBodyMemory, pointer);
 }
 
 int getMacroBodyMemoryIndex(void) {
