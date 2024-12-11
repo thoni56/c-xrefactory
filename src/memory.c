@@ -50,12 +50,8 @@ void memoryResized(void) {
 
 void smInit(Memory *memory, char *name, size_t size) {
     memory->name = name;
-    if (size != memory->size) {
+    if (size > memory->size) {
         free(memory->area);
-        memory->area = NULL;
-        memory->size = 0;
-    }
-    if (memory->area == NULL) {
         memory->area = malloc(size);
         memory->size = size;
     }
