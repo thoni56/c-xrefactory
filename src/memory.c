@@ -148,12 +148,14 @@ void *memoryAllocc(Memory *memory, int count, size_t size) {
     void *pointer = &memory->area[memory->index];
     assert(size > 0);
     assert(count >= 0);
-    memory->index += count*size;
-    if (memory->index > memory->size) {
-        char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "%s memory overflow", memory->name);
-        fatalMemoryError(ERR_ST, tmpBuff, XREF_EXIT_ERR, __FILE__, __LINE__);
+
+    if (memory->index+count*size > memory->size) {
+        if (memory->overflowHandler != NULL && memory->overflowHandler(count))
+            memoryResized();
+        else
+            fatalMemoryError(ERR_NO_MEMORY, memory->name, XREF_EXIT_ERR, __FILE__, __LINE__);
     }
+    memory->index += count*size;
     return pointer;
 }
 
