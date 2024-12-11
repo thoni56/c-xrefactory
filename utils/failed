@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Loop through directories matching the pattern
+for dir in ../tests/test_*/; do
+    # Check if both "output" and "expected" files exist in the directory
+    if [[ -f "$dir/output" && -f "$dir/expected" ]]; then
+        # Compare the files and check if they differ
+        if ! cmp -s "$dir/output" "$dir/expected"; then
+            echo "Failed: $dir"
+        fi
+    fi
+done
