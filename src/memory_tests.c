@@ -76,7 +76,7 @@ Ensure(Memory, will_extend_direct_memory_when_next_allocation_will_fill_up) {
 Memory testMemory;
 
 Ensure(Memory, can_allocate_with_new_sm_memory) {
-    smInit(&testMemory, "", SIZE_testMemory);
+    memoryInit(&testMemory, "", NULL, SIZE_testMemory);
 
     char *pointer = memoryAllocc(&testMemory, 1, sizeof(char));
     assert_that(pointer, is_not_null);
@@ -89,7 +89,7 @@ Ensure(Memory, can_allocate_with_new_sm_memory) {
 }
 
 Ensure(Memory, will_fatal_on_overflow_in_new_sm_memory) {
-    smInit(&testMemory, "", SIZE_testMemory);
+    memoryInit(&testMemory, "", NULL, SIZE_testMemory);
 
     /* Allocate more that size renders fatalError() */
     fatalErrorAllowed = true;
@@ -98,7 +98,7 @@ Ensure(Memory, will_fatal_on_overflow_in_new_sm_memory) {
 }
 
 Ensure(Memory, can_free_until_in_new_sm_memory) {
-    smInit(&testMemory, "", SIZE_testMemory);
+    memoryInit(&testMemory, "", NULL, SIZE_testMemory);
 
     /* Allocate some memory */
     void *pointer1 = memoryAlloc(&testMemory, 2);
@@ -114,7 +114,7 @@ Ensure(Memory, can_realloc_in_new_sm_memory) {
     int initialSize = 2;
     int newSize = 4;
 
-    smInit(&testMemory, "", SIZE_testMemory);
+    memoryInit(&testMemory, "", NULL, SIZE_testMemory);
 
     /* Allocate some memory */
     void *pointer1 = memoryAlloc(&testMemory, initialSize);
@@ -126,7 +126,7 @@ Ensure(Memory, can_realloc_in_new_sm_memory) {
 }
 
 Ensure(Memory, will_fatal_if_freeing_not_in_memory) {
-    smInit(&testMemory, "", SIZE_testMemory);
+    memoryInit(&testMemory, "", NULL, SIZE_testMemory);
 
     void *pointer = &testMemory.area+1;
 
@@ -137,7 +137,7 @@ Ensure(Memory, will_fatal_if_freeing_not_in_memory) {
 }
 
 Ensure(Memory, will_fatal_if_reallocing_not_last_allocated) {
-    smInit(&testMemory, "", SIZE_testMemory);
+    memoryInit(&testMemory, "", NULL, SIZE_testMemory);
 
     void *pointer = memoryAlloc(&testMemory, 5);
 

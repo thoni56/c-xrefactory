@@ -48,16 +48,6 @@ void memoryResized(void) {
     longjmp(memoryResizeJumpTarget,1);
 }
 
-void smInit(Memory *memory, char *name, size_t size) {
-    memory->name = name;
-    if (size > memory->size) {
-        free(memory->area);
-        memory->area = malloc(size);
-        memory->size = size;
-    }
-    memory->index = 0;
-}
-
 void memoryInit(Memory *memory, char *name, bool (*overflowHandler)(int n), int size) {
     ENTER();
     memory->name = name;
