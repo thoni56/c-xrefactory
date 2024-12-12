@@ -52,9 +52,12 @@ void memoryInit(Memory *memory, char *name, bool (*overflowHandler)(int n), int 
     ENTER();
     memory->name = name;
     memory->overflowHandler = overflowHandler;
+    memory->name = name;
+    if (size > memory->size) {
+        memory->area = realloc(memory->area, size);
+        memory->size = size;
+    }
     memory->index = 0;
-    memory->size = size;
-    memory->area = malloc(size);
     LEAVE();
 }
 
