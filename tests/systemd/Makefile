@@ -30,7 +30,7 @@ clean:
 	rm -rf systemd
 
 systemd:
-	tar zxvf systemd.tgz
+	tar zxf systemd.tgz
 
 .c-xrefrc: c-xrefrc.tpl
 	@sed -e "s+PWD+$$PWD+g" c-xrefrc.tpl > .c-xrefrc
