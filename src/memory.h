@@ -44,11 +44,8 @@ extern bool smIsFreedPointer(Memory *memory, void *pointer);
 
 /***********************************************************************/
 
-/* DM (Dynamic Memory) areas, can possibly expand using overflow handler */
-
 extern jmp_buf memoryResizeJumpTarget;
 
-extern Memory *cxMemory;
 
 extern Memory ppmMemory;
 
@@ -58,21 +55,15 @@ extern void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *me
                                char *file, int line));
 extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *file, int line));
 
+extern Memory *cxMemory;
 
-/* DM - Dynamic Memory - multiple uses, see below */
-extern bool cxMemoryHasEnoughSpaceFor(Memory *memory, size_t bytes);
-extern bool dm_isBetween(Memory *memory, void *pointer, int low, int high);
-extern bool dm_isFreedPointer(Memory *memory, void *pointer);
-extern void dm_freeUntil(Memory *memory, void *pointer);
-
-
-/* cross-references global symbols allocations */
+/* CX memory functions - old direct type of memory, still... */
+extern bool cxMemoryHasEnoughSpaceFor(size_t bytes);
+extern bool cxMemoryPointerIsBetween(void *pointer, int low, int high);
 extern void *cxAlloc(size_t size);
 extern void cxFreeUntil(void *until);
 extern bool isFreedCxMemory(void *pointer);
-
-
-extern void memoryResized(void);
+extern void cxMemoryResized(void);
 extern bool cxMemoryOverflowHandler(int n);
 
 #endif

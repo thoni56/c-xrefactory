@@ -171,7 +171,7 @@ static ProgramGraphNode *newProgramGraphNode(
 static void extractFunGraphRef(ReferenceItem *referenceItem, void *prog) {
     ProgramGraphNode **ap = (ProgramGraphNode **) prog;
     for (Reference *r=referenceItem->references; r!=NULL; r=r->next) {
-        if (dm_isBetween(cxMemory,r,parsedInfo.cxMemoryIndexAtFunctionBegin,parsedInfo.cxMemoryIndexAtFunctionEnd)){
+        if (cxMemoryPointerIsBetween(r,parsedInfo.cxMemoryIndexAtFunctionBegin,parsedInfo.cxMemoryIndexAtFunctionEnd)){
             ProgramGraphNode *p = newProgramGraphNode(r, referenceItem, NULL, 0, 0, CLASSIFIED_AS_NONE, *ap);
             *ap = p;
         }

@@ -44,7 +44,7 @@ void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *fil
 }
 
 /* With this as a separate function it is possible to catch memory resize longjmps */
-void memoryResized(void) {
+void cxMemoryResized(void) {
     longjmp(memoryResizeJumpTarget,1);
 }
 
@@ -76,7 +76,7 @@ void *memoryAllocc(Memory *memory, int count, size_t size) {
 
     if (memory->index+count*size > memory->size) {
         if (memory->overflowHandler != NULL && memory->overflowHandler(count))
-            memoryResized();
+            cxMemoryResized();
         else
             fatalMemoryError(ERR_NO_MEMORY, memory->name, XREF_EXIT_ERR, __FILE__, __LINE__);
     }
@@ -128,6 +128,7 @@ bool cxMemoryOverflowHandler(int n) {
     oldcxMemory = cxMemory;
     if (oldcxMemory!=NULL)
         free(oldcxMemory);
+    // WTF: watchout, allocating newsize extra space for the implicitly contiguous area
     cxMemory = malloc(newsize + sizeof(Memory));
     if (cxMemory!=NULL) {
         memoryInit(cxMemory, "cxMemory", cxMemoryOverflowHandler, newsize);
@@ -146,53 +147,48 @@ bool cxMemoryOverflowHandler(int n) {
         This was not expected!!!
 
         We need to transform this to the form where Memory is a variable
+        and the area is pointed to, not implicitly contiguous.
 
  */
 
-static void *dm_allocc(Memory *memory, int count, size_t size) {
+/* CX */
+static void *cxAllocc(int count, size_t size) {
     int previous_index;
 
     assert(count >= 0);
-    if (memory->index+count*size >= memory->size) {
-        if (memory->overflowHandler != NULL && memory->overflowHandler(count))
-            memoryResized();
+    if (cxMemory->index+count*size >= cxMemory->size) {
+        if (cxMemory->overflowHandler != NULL && cxMemory->overflowHandler(count))
+            cxMemoryResized();
         else
-            fatalMemoryError(ERR_NO_MEMORY, memory->name, XREF_EXIT_ERR, __FILE__, __LINE__);
+            fatalMemoryError(ERR_NO_MEMORY, cxMemory->name, XREF_EXIT_ERR, __FILE__, __LINE__);
     }
-    previous_index = memory->index;
-    memory->index += (count)*size;
-    return (void *) (((char*)&memory->area) + previous_index);
+    previous_index = cxMemory->index;
+    cxMemory->index += (count)*size;
+    // WTF: returns pointer in area and beyond, NOT in the allocated area it points to...
+    return (void *) (((char*)&cxMemory->area) + previous_index);
 }
 
-bool cxMemoryHasEnoughSpaceFor(Memory *memory, size_t bytes) {
+void *cxAlloc(size_t size) {
+    return cxAllocc(size, 1);
+}
+
+bool cxMemoryHasEnoughSpaceFor(size_t bytes) {
     return cxMemory->index + bytes < cxMemory->size;
 }
 
-bool dm_isBetween(Memory *memory, void *pointer, int low, int high) {
-    return pointer >= (void *)&memory->area + low && pointer < (void *)&memory->area + high;
-}
-
-bool dm_isFreedPointer(Memory *memory, void *pointer) {
-    return dm_isBetween(memory, pointer, memory->index, memory->size);
-}
-
-void dm_freeUntil(Memory *memory, void *pointer) {
-    assert(pointer >= (void *)&memory->area && pointer <= (void *)&memory->area+memory->index);
-    memory->index = (void *)pointer - (void *)&memory->area;
-}
-
-/* CX */
-void *cxAlloc(size_t size) {
-    return dm_allocc(cxMemory, size, 1);
-}
-
-void cxFreeUntil(void *until) {
-    dm_freeUntil(cxMemory, until);
+bool cxMemoryPointerIsBetween(void *pointer, int low, int high) {
+    return pointer >= (void *)&cxMemory->area + low && pointer < (void *)&cxMemory->area + high;
 }
 
 bool isFreedCxMemory(void *pointer) {
-    return dm_isFreedPointer(cxMemory, pointer);
+    return cxMemoryPointerIsBetween(pointer, cxMemory->index, cxMemory->size);
 }
+
+void cxFreeUntil(void *pointer) {
+    assert(pointer >= (void *)&cxMemory->area && pointer <= (void *)&cxMemory->area+cxMemory->index);
+    cxMemory->index = (void *)pointer - (void *)&cxMemory->area;
+}
+
 
 /* Reallocates the most recently allocated area in 'memory' to be different size */
 void *smRealloc(Memory *memory, void *pointer, size_t oldSize, size_t newSize) {
