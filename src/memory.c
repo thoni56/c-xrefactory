@@ -48,6 +48,14 @@ void memoryResized(void) {
     longjmp(memoryResizeJumpTarget,1);
 }
 
+
+/* *****************************************************************
+
+   Memory - this new memory type has a dynamic area allocated
+            separately from the Memory struct
+
+ */
+
 void memoryInit(Memory *memory, char *name, bool (*overflowHandler)(int n), int size) {
     ENTER();
     memory->name = name;
@@ -59,6 +67,42 @@ void memoryInit(Memory *memory, char *name, bool (*overflowHandler)(int n), int 
     }
     memory->index = 0;
     LEAVE();
+}
+
+void *memoryAllocc(Memory *memory, int count, size_t size) {
+    void *pointer = &memory->area[memory->index];
+    assert(size > 0);
+    assert(count >= 0);
+
+    if (memory->index+count*size > memory->size) {
+        if (memory->overflowHandler != NULL && memory->overflowHandler(count))
+            memoryResized();
+        else
+            fatalMemoryError(ERR_NO_MEMORY, memory->name, XREF_EXIT_ERR, __FILE__, __LINE__);
+    }
+    memory->index += count*size;
+    return pointer;
+}
+
+void *memoryAlloc(Memory *memory, size_t size) {
+    return memoryAllocc(memory, 1, size);
+}
+
+static bool pointerIsBetween(Memory *memory, void *pointer, size_t low, size_t high) {
+    return pointer >= (void *)&memory->area[low] && pointer <= (void *)&memory->area[high];
+}
+
+static bool isInMemory(Memory *memory, void *pointer) {
+    return pointerIsBetween(memory, pointer, 0, memory->index);
+}
+
+void memoryFreeUntil(Memory *memory, void *pointer) {
+    assert(isInMemory(memory, pointer));
+    memory->index = (char *)pointer - (char *)memory->area;
+}
+
+bool memoryPointerIsFreed(Memory *memory, void *pointer) {
+    return pointerIsBetween(memory, pointer, memory->index, memory->size);
 }
 
 /* ************************** Overflow Handlers ************************* */
@@ -93,7 +137,17 @@ bool cxMemoryOverflowHandler(int n) {
     return cxMemory != NULL;
 }
 
-/* ***************************************************************** */
+/* *****************************************************************
+
+   DM - direct memory allocates a Memory including the area in one go,
+        see line "cxMemory = malloc(NEWSIZE + sizeof(Memory))" in
+        cxMemoryOverflowhandler()
+
+        This was not expected!!!
+
+        We need to transform this to the form where Memory is a variable
+
+ */
 
 void *dm_allocc(Memory *memory, int count, size_t size) {
     int previous_index;
@@ -141,34 +195,6 @@ void cxFreeUntil(void *until) {
 
 bool isFreedCxMemory(void *pointer) {
     return dm_isFreedPointer(cxMemory, pointer);
-}
-
-static bool isInMemory(Memory *memory, void *pointer) {
-    return pointer >= (void *)memory->area && pointer <= (void *)&memory->area[memory->size];
-}
-
-void *memoryAllocc(Memory *memory, int count, size_t size) {
-    void *pointer = &memory->area[memory->index];
-    assert(size > 0);
-    assert(count >= 0);
-
-    if (memory->index+count*size > memory->size) {
-        if (memory->overflowHandler != NULL && memory->overflowHandler(count))
-            memoryResized();
-        else
-            fatalMemoryError(ERR_NO_MEMORY, memory->name, XREF_EXIT_ERR, __FILE__, __LINE__);
-    }
-    memory->index += count*size;
-    return pointer;
-}
-
-void *memoryAlloc(Memory *memory, size_t size) {
-    return memoryAllocc(memory, 1, size);
-}
-
-void memoryFreeUntil(Memory *memory, void *pointer) {
-    assert(isInMemory(memory, pointer));
-    memory->index = (char *)pointer - memory->area;
 }
 
 /* Reallocates the most recently allocated area in 'memory' to be different size */
