@@ -149,7 +149,7 @@ bool cxMemoryOverflowHandler(int n) {
 
  */
 
-void *dm_allocc(Memory *memory, int count, size_t size) {
+static void *dm_allocc(Memory *memory, int count, size_t size) {
     int previous_index;
 
     assert(count >= 0);
@@ -164,9 +164,6 @@ void *dm_allocc(Memory *memory, int count, size_t size) {
     return (void *) (((char*)&memory->area) + previous_index);
 }
 
-void *dm_alloc(Memory *memory, size_t size) {
-    return dm_allocc(memory, 1, size);
-}
 bool dm_enoughSpaceFor(Memory *memory, size_t bytes) {
     return memory->index + bytes < memory->size;
 }
@@ -186,7 +183,7 @@ void dm_freeUntil(Memory *memory, void *pointer) {
 
 /* CX */
 void *cxAlloc(size_t size) {
-    return dm_alloc(cxMemory, size);
+    return dm_allocc(cxMemory, size, 1);
 }
 
 void cxFreeUntil(void *until) {

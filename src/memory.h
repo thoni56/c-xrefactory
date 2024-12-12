@@ -60,8 +60,6 @@ extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, ch
 
 
 /* DM - Dynamic Memory - multiple uses, see below */
-extern void *dm_alloc(Memory *memory, size_t size);
-extern void *dm_allocc(Memory *memory, int count, size_t size);
 extern bool dm_enoughSpaceFor(Memory *memory, size_t bytes);
 extern bool dm_isBetween(Memory *memory, void *pointer, int low, int high);
 extern bool dm_isFreedPointer(Memory *memory, void *pointer);
