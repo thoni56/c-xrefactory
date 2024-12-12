@@ -521,7 +521,7 @@ static void writeReferencesFromMemoryIntoRefFileNo(int fileOrder) {
             if (cxFileHashNumber(r->linkName) == fileOrder)
                 writeReferenceItem(r);
             else
-                log_trace("Skipping reference with linkname \"%d\"", r->linkName);
+                log_trace("Skipping reference with linkname \"%s\"", r->linkName);
         }
     }
 }
