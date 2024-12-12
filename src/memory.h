@@ -60,7 +60,7 @@ extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, ch
 
 
 /* DM - Dynamic Memory - multiple uses, see below */
-extern bool dm_enoughSpaceFor(Memory *memory, size_t bytes);
+extern bool cxMemoryHasEnoughSpaceFor(Memory *memory, size_t bytes);
 extern bool dm_isBetween(Memory *memory, void *pointer, int low, int high);
 extern bool dm_isFreedPointer(Memory *memory, void *pointer);
 extern void dm_freeUntil(Memory *memory, void *pointer);

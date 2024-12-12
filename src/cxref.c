@@ -326,7 +326,7 @@ Reference *addCxReference(Symbol *symbol, Position *position, Usage usage, int v
     /* Test for available space */
     assert(options.mode);
     if (options.mode==XrefMode) {
-        if (!dm_enoughSpaceFor(cxMemory, CX_SPACE_RESERVE)) {
+        if (!cxMemoryHasEnoughSpaceFor(cxMemory, CX_SPACE_RESERVE)) {
             longjmp(cxmemOverflow, LONGJUMP_REASON_REFERENCE_OVERFLOW);
         }
     }

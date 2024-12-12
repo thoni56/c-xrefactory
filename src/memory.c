@@ -164,8 +164,8 @@ static void *dm_allocc(Memory *memory, int count, size_t size) {
     return (void *) (((char*)&memory->area) + previous_index);
 }
 
-bool dm_enoughSpaceFor(Memory *memory, size_t bytes) {
-    return memory->index + bytes < memory->size;
+bool cxMemoryHasEnoughSpaceFor(Memory *memory, size_t bytes) {
+    return cxMemory->index + bytes < cxMemory->size;
 }
 
 bool dm_isBetween(Memory *memory, void *pointer, int low, int high) {
