@@ -98,7 +98,7 @@ static void *mbmAlloc(size_t size) {
 }
 
 static void *mbmExpand(void *pointer, size_t oldSize, size_t newSize) {
-    return smRealloc(&macroBodyMemory, pointer, oldSize, newSize);
+    return memoryRealloc(&macroBodyMemory, pointer, oldSize, newSize);
 }
 
 static void mbmFreeUntil(void *pointer) {

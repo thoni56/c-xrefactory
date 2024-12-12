@@ -105,6 +105,19 @@ bool memoryPointerIsFreed(Memory *memory, void *pointer) {
     return pointerIsBetween(memory, pointer, memory->index, memory->size);
 }
 
+/* Reallocates the most recently allocated area in 'memory' to be different size */
+void *memoryRealloc(Memory *memory, void *pointer, size_t oldSize, size_t newSize) {
+    assert(pointer == &memory->area[memory->index-oldSize]);
+    memory->index += newSize - oldSize;
+    return pointer;
+}
+
+// Used by ppmReallocc()
+static void *memoryReallocc(Memory *memory, void *pointer, int newCount, size_t size, int oldCount) {
+    return memoryRealloc(memory, pointer, oldCount*size, newCount*size);
+}
+
+
 /* ************************** Overflow Handlers ************************* */
 
 bool cxMemoryOverflowHandler(int n) {
@@ -190,23 +203,11 @@ void cxFreeUntil(void *pointer) {
 }
 
 
-/* Reallocates the most recently allocated area in 'memory' to be different size */
-void *smRealloc(Memory *memory, void *pointer, size_t oldSize, size_t newSize) {
-    assert(pointer == &memory->area[memory->index-oldSize]);
-    memory->index += newSize - oldSize;
-    return pointer;
-}
-
-void *smReallocc(Memory *memory, void *pointer, int newCount, size_t size, int oldCount) {
-    return smRealloc(memory, pointer, oldCount*size, newCount*size);
-}
-
-
 bool smIsBetween(Memory *memory, void *pointer, int low, int high) {
     return pointer >= (void *)&memory->area[low] && pointer < (void *)&memory->area[high];
 }
 
-bool smIsFreedPointer(Memory *memory, void *pointer) {
+static bool smIsFreedPointer(Memory *memory, void *pointer) {
     return smIsBetween(memory, pointer, memory->index, memory->size);
 }
 
@@ -220,7 +221,7 @@ void *ppmAllocc(int count, size_t size) {
 }
 
 void *ppmReallocc(void *pointer, int newCount, size_t size, int oldCount) {
-    return smReallocc(&ppmMemory, pointer, newCount, size, oldCount);
+    return memoryReallocc(&ppmMemory, pointer, newCount, size, oldCount);
 }
 
 void ppmFreeUntil(void *pointer) {

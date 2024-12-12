@@ -790,6 +790,7 @@ static void processProjectMarker(char *markerText, int markerLength, char *curre
 }
 
 
+// TODO - should take a Memory * instead of using a kind...
 static void *allocateSpaceForOption(MemoryKind memoryKind, int count, size_t size) {
     if (memoryKind==ALLOCATE_IN_SM) {
         return memoryAllocc(&optMemory, count, size);

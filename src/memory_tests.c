@@ -135,7 +135,7 @@ Ensure(Memory, can_realloc_in_new_sm_memory) {
     void *pointer1 = memoryAlloc(&testMemory, initialSize);
     assert_that(testMemory.index, is_equal_to(initialSize));
 
-    void *pointer2 = smRealloc(&testMemory, pointer1, initialSize, newSize);
+    void *pointer2 = memoryRealloc(&testMemory, pointer1, initialSize, newSize);
     assert_that(pointer2, is_equal_to(pointer1));
     assert_that(testMemory.index, is_equal_to(newSize));
 }
@@ -157,7 +157,7 @@ Ensure(Memory, will_fatal_if_reallocing_not_last_allocated) {
     void *pointer = memoryAlloc(&testMemory, 5);
 
     internalCheckFailAllowed = true;
-    smRealloc(&testMemory, pointer+1, 5, 6);
+    memoryRealloc(&testMemory, pointer+1, 5, 6);
 
     assert_that(internalCheckFailCalled);
 }
