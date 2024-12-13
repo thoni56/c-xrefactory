@@ -309,7 +309,7 @@ static void assertLocationIsInOptionsStructure(void *location, Options *options)
 }
 
 static void assertLocationIsInMemory(void *l, Options *options) {
-    assert(l == NULL || smIsBetween(&options->memory, l, 0, options->memory.index));
+    assert(l == NULL || memoryIsBetween(&options->memory, l, 0, options->memory.index));
 }
 
 static void shiftLocationList(LocationList *list, Options *src, Options *dst) {

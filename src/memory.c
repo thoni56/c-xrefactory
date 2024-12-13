@@ -88,12 +88,16 @@ void *memoryAlloc(Memory *memory, size_t size) {
     return memoryAllocc(memory, 1, size);
 }
 
-static bool pointerIsBetween(Memory *memory, void *pointer, size_t low, size_t high) {
+static bool memoryHasEnoughSpaceFor(Memory *memory, size_t bytes) {
+    return memory->index + bytes < memory->size;
+}
+
+bool memoryIsBetween(Memory *memory, void *pointer, int low, int high) {
     return pointer >= (void *)&memory->area[low] && pointer <= (void *)&memory->area[high];
 }
 
 static bool isInMemory(Memory *memory, void *pointer) {
-    return pointerIsBetween(memory, pointer, 0, memory->index);
+    return memoryIsBetween(memory, pointer, 0, memory->index);
 }
 
 void memoryFreeUntil(Memory *memory, void *pointer) {
@@ -102,7 +106,7 @@ void memoryFreeUntil(Memory *memory, void *pointer) {
 }
 
 bool memoryPointerIsFreed(Memory *memory, void *pointer) {
-    return pointerIsBetween(memory, pointer, memory->index, memory->size);
+    return memoryIsBetween(memory, pointer, memory->index, memory->size);
 }
 
 /* Reallocates the most recently allocated area in 'memory' to be different size */
@@ -181,7 +185,7 @@ void *cxAlloc(size_t size) {
 }
 
 bool cxMemoryHasEnoughSpaceFor(size_t bytes) {
-    return cxMemory->index + bytes < cxMemory->size;
+    return memoryHasEnoughSpaceFor(cxMemory, bytes);
 }
 
 bool cxMemoryPointerIsBetween(void *pointer, int low, int high) {
@@ -198,12 +202,8 @@ void cxFreeUntil(void *pointer) {
 }
 
 
-bool smIsBetween(Memory *memory, void *pointer, int low, int high) {
-    return pointer >= (void *)&memory->area[low] && pointer < (void *)&memory->area[high];
-}
-
 static bool smIsFreedPointer(Memory *memory, void *pointer) {
-    return smIsBetween(memory, pointer, memory->index, memory->size);
+    return memoryIsBetween(memory, pointer, memory->index, memory->size);
 }
 
 /* Preprocessor Macro Memory */
