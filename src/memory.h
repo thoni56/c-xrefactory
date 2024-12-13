@@ -9,7 +9,6 @@
 
 /* ************************ Types ******************************** */
 
-/* Only use: cxMemory - possibility to just nuke down to an address */
 typedef struct memory {
     char   *name;              /* String representing the name of the memory */
     bool  (*overflowHandler)(int n); /* Should return true if more memory was possible to acquire */
@@ -17,9 +16,6 @@ typedef struct memory {
     size_t  size;
     char   *area;
 } Memory;
-
-
-/* ******************** a simple memory handler ************************ */
 
 
 /* pre-processor macro definitions simple memory allocations in separate PPM-memory */

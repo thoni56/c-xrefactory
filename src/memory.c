@@ -121,91 +121,6 @@ static void *memoryReallocc(Memory *memory, void *pointer, int newCount, size_t 
     return memoryRealloc(memory, pointer, oldCount*size, newCount*size);
 }
 
-
-/* ************************** Overflow Handlers ************************* */
-
-bool cxMemoryOverflowHandler(int n) {
-    int oldfactor, factor, oldsize, newsize;
-    Memory *oldcxMemory;
-
-    log_trace("Handling CX memory overflow with n=%d", n);
-    if (cxMemory!=NULL) {
-        oldsize = cxMemory->size;
-    } else {
-        oldsize = 0;
-    }
-
-    oldfactor = oldsize / CX_MEMORY_CHUNK_SIZE;
-    factor = ((n>1)?(n-1):0)/CX_MEMORY_CHUNK_SIZE + 1; // 1 no patience to wait // TODO: WTF?
-    //& if (options.cxMemoryFactor>=1) factor *= options.cxMemoryFactor;
-    factor += oldfactor;
-    if (oldfactor*2 > factor)
-        factor = oldfactor*2;
-    newsize = factor * CX_MEMORY_CHUNK_SIZE;
-    oldcxMemory = cxMemory;
-    if (oldcxMemory!=NULL)
-        free(oldcxMemory);
-    // WTF: watchout, allocating newsize extra space for the implicitly contiguous area
-    cxMemory = malloc(newsize + sizeof(Memory));
-    if (cxMemory!=NULL) {
-        memoryInit(cxMemory, "cxMemory", cxMemoryOverflowHandler, newsize);
-    }
-    log_debug("Reallocating cxMemory: %d -> %d", oldsize, newsize);
-
-    return cxMemory != NULL;
-}
-
-/* *****************************************************************
-
-   DM - direct memory allocates a Memory including the area in one go,
-        see line "cxMemory = malloc(NEWSIZE + sizeof(Memory))" in
-        cxMemoryOverflowhandler()
-
-        This was not expected!!!
-
-        We need to transform this to the form where Memory is a variable
-        and the area is pointed to, not implicitly contiguous.
-
- */
-
-/* CX */
-void *cxAlloc(size_t size) {
-    int previous_index;
-
-    if (cxMemory->index+size >= cxMemory->size) {
-        if (cxMemory->overflowHandler != NULL && cxMemory->overflowHandler(size))
-            cxMemoryResized();
-        else
-            fatalMemoryError(ERR_NO_MEMORY, cxMemory->name, XREF_EXIT_ERR, __FILE__, __LINE__);
-    }
-    previous_index = cxMemory->index;
-    cxMemory->index += size;
-    // WTF: returns pointer in area and beyond, NOT in the allocated area it points to...
-    return (void *) (((char*)&cxMemory->area) + previous_index);
-}
-
-bool cxMemoryHasEnoughSpaceFor(size_t bytes) {
-    return memoryHasEnoughSpaceFor(cxMemory, bytes);
-}
-
-bool cxMemoryPointerIsBetween(void *pointer, int low, int high) {
-    return pointer >= (void *)&cxMemory->area + low && pointer < (void *)&cxMemory->area + high;
-}
-
-bool isFreedCxMemory(void *pointer) {
-    return cxMemoryPointerIsBetween(pointer, cxMemory->index, cxMemory->size);
-}
-
-void cxFreeUntil(void *pointer) {
-    assert(pointer >= (void *)&cxMemory->area && pointer <= (void *)&cxMemory->area+cxMemory->index);
-    cxMemory->index = (void *)pointer - (void *)&cxMemory->area;
-}
-
-
-static bool smIsFreedPointer(Memory *memory, void *pointer) {
-    return memoryIsBetween(memory, pointer, memory->index, memory->size);
-}
-
 /* Preprocessor Macro Memory */
 void *ppmAlloc(size_t size) {
     return memoryAlloc(&ppmMemory, size);
@@ -224,5 +139,83 @@ void ppmFreeUntil(void *pointer) {
 }
 
 bool ppmIsFreedPointer(void *pointer) {
-    return smIsFreedPointer(&ppmMemory, pointer);
+    return memoryPointerIsFreed(&ppmMemory, pointer);
+}
+
+
+
+/* CX */
+
+static int calculateNewSize(int n, int oldsize) {
+    int oldfactor, factor, newsize;
+    oldfactor = oldsize / CX_MEMORY_CHUNK_SIZE;
+    factor = ((n > 1) ? (n - 1) : 0) / CX_MEMORY_CHUNK_SIZE + 1; // 1 no patience to wait // TODO: WTF?
+    //& if (options.cxMemoryFactor>=1) factor *= options.cxMemoryFactor;
+    factor += oldfactor;
+    if (oldfactor * 2 > factor)
+        factor = oldfactor * 2;
+    newsize = factor * CX_MEMORY_CHUNK_SIZE;
+
+    return newsize;
+}
+
+/* These CX functions are compatible with new Memory handling */
+bool cxMemoryHasEnoughSpaceFor(size_t bytes) {
+    return memoryHasEnoughSpaceFor(cxMemory, bytes);
+}
+
+/* These CX memory functions assume memory->area *is* the area, not a pointer to it */
+bool cxMemoryOverflowHandler(int n) {
+    int oldsize, newsize;
+    Memory *oldcxMemory;
+
+    log_trace("Handling CX memory overflow with n=%d", n);
+    if (cxMemory!=NULL) {
+        oldsize = cxMemory->size;
+    } else {
+        oldsize = 0;
+    }
+
+    newsize = calculateNewSize(n, oldsize);
+
+    oldcxMemory = cxMemory;
+    if (oldcxMemory!=NULL)
+        free(oldcxMemory);
+
+    // WTF: watchout, allocating newsize extra space for the implicitly contiguous area
+    cxMemory = malloc(newsize + sizeof(Memory));
+    if (cxMemory!=NULL) {
+        memoryInit(cxMemory, "cxMemory", cxMemoryOverflowHandler, newsize);
+    }
+    log_debug("Reallocating cxMemory: %d -> %d", oldsize, newsize);
+
+    return cxMemory != NULL;
+}
+
+void *cxAlloc(size_t size) {
+    int previous_index;
+
+    if (cxMemory->index+size >= cxMemory->size) {
+        if (cxMemory->overflowHandler != NULL && cxMemory->overflowHandler(size))
+            cxMemoryResized();
+        else
+            fatalMemoryError(ERR_NO_MEMORY, cxMemory->name, XREF_EXIT_ERR, __FILE__, __LINE__);
+    }
+    previous_index = cxMemory->index;
+    cxMemory->index += size;
+    // WTF: returns pointer in area and beyond, NOT in the allocated area it points to...
+    return (void *) (((char*)&cxMemory->area) + previous_index);
+}
+
+bool cxMemoryPointerIsBetween(void *pointer, int low, int high) {
+    return pointer >= (void *)&cxMemory->area + low && pointer < (void *)&cxMemory->area + high;
+}
+
+bool isFreedCxMemory(void *pointer) {
+    return cxMemoryPointerIsBetween(pointer, cxMemory->index, cxMemory->size);
+}
+
+void cxFreeUntil(void *pointer) {
+    assert(pointer >= (void *)&cxMemory->area && pointer <= (void *)&cxMemory->area+cxMemory->index);
+    cxMemory->index = (void *)pointer - (void *)&cxMemory->area;
 }
