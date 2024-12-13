@@ -165,24 +165,19 @@ bool cxMemoryOverflowHandler(int n) {
  */
 
 /* CX */
-static void *cxAllocc(int count, size_t size) {
+void *cxAlloc(size_t size) {
     int previous_index;
 
-    assert(count >= 0);
-    if (cxMemory->index+count*size >= cxMemory->size) {
-        if (cxMemory->overflowHandler != NULL && cxMemory->overflowHandler(count))
+    if (cxMemory->index+size >= cxMemory->size) {
+        if (cxMemory->overflowHandler != NULL && cxMemory->overflowHandler(size))
             cxMemoryResized();
         else
             fatalMemoryError(ERR_NO_MEMORY, cxMemory->name, XREF_EXIT_ERR, __FILE__, __LINE__);
     }
     previous_index = cxMemory->index;
-    cxMemory->index += (count)*size;
+    cxMemory->index += size;
     // WTF: returns pointer in area and beyond, NOT in the allocated area it points to...
     return (void *) (((char*)&cxMemory->area) + previous_index);
-}
-
-void *cxAlloc(size_t size) {
-    return cxAllocc(size, 1);
 }
 
 bool cxMemoryHasEnoughSpaceFor(size_t bytes) {
