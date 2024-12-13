@@ -44,7 +44,7 @@ bool checkFileModifiedTime(int fileNumber) {
 
 static void deleteReferencesOutOfMemory(Reference **referenceP) {
     while (*referenceP!=NULL) {
-        if (isFreedCxMemory(*referenceP)) {
+        if (cxMemoryIsFreed(*referenceP)) {
             log_trace("deleting reference on %s:%d", getFileItem((*referenceP)->position.file)->name,
                       (*referenceP)->position.line);
             *referenceP = (*referenceP)->next;
@@ -62,7 +62,7 @@ static void refTabDeleteOutOfMemory(int index) {
     itemP = &item;
 
     while (*itemP!=NULL) {
-        if (isFreedCxMemory(*itemP)) {
+        if (cxMemoryIsFreed(*itemP)) {
             /* out of memory, delete it */
             log_trace("deleting all references on %s", (*itemP)->linkName);
             *itemP = (*itemP)->next;  /* Unlink it and look at next */
@@ -219,7 +219,7 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
     if (options.mode==ServerMode && currentPass==1) {
         /* remove old references, only on first pass of edit server */
         log_trace("removing references");
-        cxMemory->index = cachePoint->cxMemoryIndex;
+        cxMemory.index = cachePoint->cxMemoryIndex;
         mapOverReferenceTableWithIndex(refTabDeleteOutOfMemory);
         mapOverFileTable(fileTabDeleteOutOfMemory);
     }
@@ -353,7 +353,7 @@ void placeCachePoint(bool inputCaching) {
         return;
     cachePoint = &cache.points[cache.index];
     log_debug("placing cache point %d", cache.index);
-    fillCachePoint(cachePoint, currentBlock, ppmMemory.index, cxMemory->index, getMacroBodyMemoryIndex(), cache.free,
+    fillCachePoint(cachePoint, currentBlock, ppmMemory.index, cxMemory.index, getMacroBodyMemoryIndex(), cache.free,
                    cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack, counters);
     cache.index++;
 }

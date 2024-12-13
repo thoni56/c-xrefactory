@@ -49,14 +49,14 @@ extern void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *me
                                char *file, int line));
 extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *file, int line));
 
-extern Memory *cxMemory;
+extern Memory cxMemory;
 
 /* CX memory functions - old direct type of memory, still... */
 extern bool cxMemoryHasEnoughSpaceFor(size_t bytes);
 extern bool cxMemoryPointerIsBetween(void *pointer, int low, int high);
 extern void *cxAlloc(size_t size);
 extern void cxFreeUntil(void *until);
-extern bool isFreedCxMemory(void *pointer);
+extern bool cxMemoryIsFreed(void *pointer);
 extern void cxMemoryResized(void);
 extern bool cxMemoryOverflowHandler(int n);
 

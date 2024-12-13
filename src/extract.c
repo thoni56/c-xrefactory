@@ -921,13 +921,13 @@ void actionsBeforeAfterExternalDefinition(void) {
         && (! parsedInfo.extractProcessedFlag))
     {
         // O.K. make extraction
-        parsedInfo.cxMemoryIndexAtFunctionEnd = cxMemory->index;
+        parsedInfo.cxMemoryIndexAtFunctionEnd = cxMemory.index;
         makeExtraction();
         parsedInfo.extractProcessedFlag = true;
         /* here should be a longjmp to stop file processing !!!! */
         /* No, all this extraction should be after parsing ! */
     }
-    parsedInfo.cxMemoryIndexAtFunctionBegin = cxMemory->index;
+    parsedInfo.cxMemoryIndexAtFunctionBegin = cxMemory.index;
     if (includeStack.pointer > 0) {
         parsedInfo.functionBeginPosition = includeStack.stack[0].lineNumber+1;
     } else {
@@ -938,11 +938,11 @@ void actionsBeforeAfterExternalDefinition(void) {
 
 void extractActionOnBlockMarker(void) {
     if (parsedInfo.cxMemoryIndexAtBlockBegin == 0) {
-        parsedInfo.cxMemoryIndexAtBlockBegin = cxMemory->index;
+        parsedInfo.cxMemoryIndexAtBlockBegin = cxMemory.index;
         parsedInfo.workMemoryIndexAtBlockBegin = currentBlock->outerBlock;
     } else {
         assert(parsedInfo.cxMemoryIndexAtBlockEnd == 0);
-        parsedInfo.cxMemoryIndexAtBlockEnd = cxMemory->index;
+        parsedInfo.cxMemoryIndexAtBlockEnd = cxMemory.index;
         parsedInfo.workMemoryIndexAtBlockEnd = currentBlock->outerBlock;
     }
     Position pos = makePosition(currentFile.characterBuffer.fileNumber, 0, 0);

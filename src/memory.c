@@ -12,7 +12,7 @@ jmp_buf memoryResizeJumpTarget;
 
 
 /* Dynamic memory */
-Memory *cxMemory=NULL;
+Memory cxMemory={};
 
 /* Static memory areas */
 Memory ppmMemory;
@@ -159,63 +159,46 @@ static int calculateNewSize(int n, int oldsize) {
     return newsize;
 }
 
-/* These CX functions are compatible with new Memory handling */
 bool cxMemoryHasEnoughSpaceFor(size_t bytes) {
-    return memoryHasEnoughSpaceFor(cxMemory, bytes);
+    return memoryHasEnoughSpaceFor(&cxMemory, bytes);
 }
 
-/* These CX memory functions assume memory->area *is* the area, not a pointer to it */
 bool cxMemoryOverflowHandler(int n) {
     int oldsize, newsize;
-    Memory *oldcxMemory;
 
     log_trace("Handling CX memory overflow with n=%d", n);
-    if (cxMemory!=NULL) {
-        oldsize = cxMemory->size;
-    } else {
-        oldsize = 0;
-    }
+    oldsize = cxMemory.size;
 
     newsize = calculateNewSize(n, oldsize);
 
-    oldcxMemory = cxMemory;
-    if (oldcxMemory!=NULL)
-        free(oldcxMemory);
-
-    // WTF: watchout, allocating newsize extra space for the implicitly contiguous area
-    cxMemory = malloc(newsize + sizeof(Memory));
-    if (cxMemory!=NULL) {
-        memoryInit(cxMemory, "cxMemory", cxMemoryOverflowHandler, newsize);
-    }
+    memoryInit(&cxMemory, "cxMemory", cxMemoryOverflowHandler, newsize);
     log_debug("Reallocating cxMemory: %d -> %d", oldsize, newsize);
 
-    return cxMemory != NULL;
+    return cxMemory.area != NULL;
 }
 
 void *cxAlloc(size_t size) {
-    int previous_index;
 
-    if (cxMemory->index+size >= cxMemory->size) {
-        if (cxMemory->overflowHandler != NULL && cxMemory->overflowHandler(size))
+    if (cxMemory.index+size >= cxMemory.size) {
+        if (cxMemory.overflowHandler != NULL && cxMemory.overflowHandler(size))
             cxMemoryResized();
         else
-            fatalMemoryError(ERR_NO_MEMORY, cxMemory->name, XREF_EXIT_ERR, __FILE__, __LINE__);
+            fatalMemoryError(ERR_NO_MEMORY, cxMemory.name, XREF_EXIT_ERR, __FILE__, __LINE__);
     }
-    previous_index = cxMemory->index;
-    cxMemory->index += size;
-    // WTF: returns pointer in area and beyond, NOT in the allocated area it points to...
-    return (void *) (((char*)&cxMemory->area) + previous_index);
+    int previous_index = cxMemory.index;
+    cxMemory.index += size;
+
+    return (void *) &cxMemory.area[previous_index];
 }
 
 bool cxMemoryPointerIsBetween(void *pointer, int low, int high) {
-    return pointer >= (void *)&cxMemory->area + low && pointer < (void *)&cxMemory->area + high;
+    return memoryIsBetween(&cxMemory, pointer, low, high);
 }
 
-bool isFreedCxMemory(void *pointer) {
-    return cxMemoryPointerIsBetween(pointer, cxMemory->index, cxMemory->size);
+bool cxMemoryIsFreed(void *pointer) {
+    return memoryIsBetween(&cxMemory, pointer, cxMemory.index, cxMemory.size);
 }
 
 void cxFreeUntil(void *pointer) {
-    assert(pointer >= (void *)&cxMemory->area && pointer <= (void *)&cxMemory->area+cxMemory->index);
-    cxMemory->index = (void *)pointer - (void *)&cxMemory->area;
+    memoryFreeUntil(&cxMemory, pointer);
 }

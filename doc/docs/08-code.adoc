@@ -565,57 +565,24 @@ Requests that the editor replaces the string under the cursor, which should be '
 <position-off off={int} len={int}>{absolute path to file}</position-off>;;
 Indicates a position in the given file. 'off' is the character position in the file.
 
-=== Memory Management
+==== Memory handling
 
-There are multiple levels of memory management.
+Memory may be allocated using `malloc()` in which case it must
+be managed in the same manner as all `malloced` memory should to avoid
+memory leaks or pointer problems. This is used mostly for local and
+temporary areas.
 
-- Why is this required (possibly because of the long running server
-model)?
-- Exactly how is this memory allocated?
-- Why handle this allocation in disparate spaces?
-- Why does not standard malloc()/free() suffice?
+But memory can also be locally managed using the structure `Memory`
+and related functions.
 
-There is obviously some caching going on. Don't know of what at this
-point. Tag data?
+===== Structure
 
-==== Memory "types"
+There are a number of memory areas that are allocated and managed
+separately depending it its use. E.g. the primary memory is `cxMemory`
+where all collected references are stored including tables and other
+management areas. This type of memory can easily be discarded,
+e.g. when a file is completely analyzed or a refactoring is complete.
 
-Mostly `c-xrefactory` does its own memory management. It uses a number
-of different strategies, which has/had its own macros.
-
-===== "Static" memory
-
-For the memory usages where the size of the total area is static all
-memory handling macros have been refactored int functions using the
-`Memory2` struct for administration.
-
-For `ft` (file table), `ppm` (pre-processor macro) and `cf` (class
-file) memory usages all uses the new `Memory2` for their memory
-administration. Functions with the mentioned prefixes are just
-convenience functions that works on the corresponding memory
-administraion structure.
-
-===== Dynamic memory allocation
-
-The `Memory` structure is used for one of the two dynamic memory
-allocation schemes, where overflow handling can be triggered. The
-structure contains a function pointer that can be invoked when
-overflow occurs.
-
-`dm_alloc()`, previously a macro, returns pointers into that area.
-
-There are two instances of this type of memory:
-
-- `cxMemory` - the crossreference data, which can actually expand using
-  the `cxMemoryOverflowHandler()`
-  
-- `optMemory` - which is part of the options structure that is saved,
-  copied and what not, cannot expand as the overflow handler calls
-  `fatalError()`.
- 
-`cxMemoryOverflowHandler()` on the other hand, just throws all
-cxMemory away and allocates a new, larger, area containing a fresh
-Memory structure as the head and an empty area to allocate from.
 
 
 ===== Using malloc()

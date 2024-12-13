@@ -2179,7 +2179,7 @@ LexemCode yylex(void) {
     goto endOfFile;
 
  finish:
-    log_trace("!'%s'(%d)", yytext, cxMemory->index);
+    log_trace("!'%s'(%d)", yytext, cxMemory.index);
     return lexem;
 
  endOfMacroArgument:

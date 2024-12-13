@@ -7,9 +7,12 @@ for those wanting to do backtracking to original sources.
 
 === Memory strategies ===
 
-There where a multitude of specialized memory allocation functions. In
-principle there where to types, static and dynamic. The dynamic could
+There were a multitude of specialized memory allocation functions. In
+principle there where two types, static and dynamic. The dynamic could
 be exteded using a overflow handler.
+
+Also one type had a struct where the actual area was extended beyond
+the actual struct. This was very confusing...
 
 ==== Static memory allocation
 
