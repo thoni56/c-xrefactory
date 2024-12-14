@@ -2571,71 +2571,6 @@ No.
     i
     ))
 
-(defun c-xref-server-dispatch-fqt-complete (import cc dispatch-data)
-  (let ((iline-val) (iline))
-    (if import
-            (progn
-              (c-xref-select-dispach-data-caller-window dispatch-data)
-              (c-xref-server-call-on-current-buffer-no-saves
-               "-olcxgetlastimportline"
-               dispatch-data)
-              (setq iline (cdr (assoc 'info dispatch-data)))
-              (setq iline-val (string-to-number iline))
-              (save-excursion
-                (c-xref-goto-line (+ iline-val 1))
-                (beginning-of-line)
-                ;; check if after package, insert on blank line
-                (if (not (bobp))
-                        (progn
-                          (forward-line -1)
-                          (if (equal (c-xref-get-identifier-on-point) "package")
-                              (progn
-                                    (forward-line 1)
-                                    (newline)
-                                    )
-                            (forward-line 1)
-                            )))
-                (insert (format "import %s;\n" import))
-                (sit-for 1)
-                )))
-    (c-xref-server-dispatch-insert-completion cc)
-    ))
-
-(defvar c-xref-fqt-completion-dialog-map (make-sparse-keymap "C-xref fqt completion"))
-(c-xref-add-basic-modal-keybindings c-xref-fqt-completion-dialog-map)
-
-(defun c-xref-server-dispatch-fqt-completion (ss i len dispatch-data)
-  (let ((tlen) (cc) (pack) (cl) (sel))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_FQT_COMPLETION)
-    (setq cl (c-xref-file-name-extension cc))
-    (setq pack (c-xref-file-name-without-suffix cc))
-    (setq sel (c-xref-modal-dialog c-xref-selection-modal-buffer (format
-                                                                  "Fully qualified type completion will:
-----
- 1.) Import %s.* and complete %s
- 2.) Import %s.%s and complete %s
- 3.) Complete %s.%s
-----
-" pack cl pack cl cl pack cl)
-                                           3 0 nil c-xref-fqt-completion-dialog-map dispatch-data))
-    (cond
-     (
-      (eq sel 3)
-      (c-xref-server-dispatch-fqt-complete (format "%s.*" pack) cl dispatch-data))
-     (
-      (eq sel 4)
-      (c-xref-server-dispatch-fqt-complete (format "%s.%s" pack cl) cl dispatch-data))
-     (
-      (eq sel 5)
-      (c-xref-server-dispatch-fqt-complete nil (format "%s.%s" pack cl) dispatch-data))
-     )
-    i
-    ))
-
 (defvar c-xref-refactorings-dialog-map (make-sparse-keymap "C-xref refactorings"))
 (define-key c-xref-refactorings-dialog-map [up] 'c-xref-modal-dialog-previous-line)
 (define-key c-xref-refactorings-dialog-map [down] 'c-xref-modal-dialog-next-line)
@@ -5021,7 +4956,6 @@ browser and refactorer) are updated.  The behavior of the
   (c-xref-delete-completion-window)
   (c-xref-select-dispach-data-caller-window c-xref-completions-dispatch-data)
   ;; following is to reconstitute original text
-  ;; TODO what about fqt completions?
   (c-xref-switch-to-marker c-xref-completion-marker)
   (c-xref-insert-completion-and-delete-pending-id
    (format "%s%s" c-xref-completion-id-before-point c-xref-completion-id-after-point))
