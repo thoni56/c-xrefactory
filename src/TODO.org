@@ -13,11 +13,15 @@ Some useful commands:
   <M-S-Left>    promote subtree
   <M-Right>     demote heading
   <M-S-Right>   demote subtree
-
+  org-move-subtree-up/down
 
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
-* DOING Refactor to remove olcx-memory allocation from memory.c
+* DOING Extract variable
+** TRY Place the variable declaration in the closest block (need to figure out how ProgramGraphs work...)
+** TRY Figure out variable type (hard, none of the other extracts seems to do this...)
+   or ask...
+** DONE Basic extract variable
 * TODO FEATURE: New refactoring: move function for C
 ** DONE Pick-up pieces from Java version and hack them into a preliminary version
 ** DONE Accept target position
@@ -39,11 +43,6 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 ** TODO A "-p" should first look at the path of the "project name" to see if there is a .c-xrefrc there
 ** TODO Do we even need the db? Probably, for very large projects it's too slow to always generate
 ** DONE Function to lookup the closest .c-xrefrc and potentially use its directory path as project name
-* DOING Extract variable
-** TRY Place the variable declaration in the closest block (need to figure out how ProgramGraphs work...)
-** TRY Figure out variable type (hard, none of the other extracts seems to do this...)
-   or ask...
-** DONE Basic extract variable
 * TRY to make LexemBuffer interface just take LexemBuffer
 ** DOING Unify LexInput with LexemBuffer so we can get rid of put/get LexemAt() functions
 ** DONE to use LexemBuffer as argument to all putLexXXX() functions except in yylex.c
@@ -225,6 +224,7 @@ protocol for many of the refactorings which are core to c-xref.
 * TODO Macros. There are many things that might need the magic of macros, but we
   should watch out for "macro for optimisation" and remove that.
 
+* DONE Refactor to remove olcx-memory allocation from memory.c
 * DONE Remove explicit support for Xemacs in elisp
 * DONE Remove all version control cruft from editor adapter
 * DONE Menu option to upgrade 'c-xrefactory' - it should, in principle, just be "git pull, kill c-xref, make prod, reload c-xref.el, c-xrefactory.el"
