@@ -1581,7 +1581,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     } else if (scope == AutoScope || scope == FileScope) {
         // for example a local var or a static function not used in any header
         if (isMultiFileReferences) {
-            errorMessage(ERR_INTERNAL, "something goes wrong, a local symbol is used in several files");
+            errorMessage(ERR_INTERNAL, "something went wrong, a local symbol is used in several files");
             selectedUpdateOption = "-update";
         } else {
             selectedUpdateOption = "";
