@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<meta name="author" content="v{VERSION} - Generated 2024-12-13">
+<meta name="author" content="v{VERSION} - Generated 2024-12-14">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2024-12-13</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2024-12-14</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -484,8 +484,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_editor_plugin">8.7. Editor Plugin</a></li>
 <li><a href="#_editor_server">8.8. Editor Server</a></li>
 <li><a href="#_refactoring">8.9. Refactoring</a></li>
-<li><a href="#_memory_management">8.10. Memory Management</a></li>
-<li><a href="#_configuration">8.11. Configuration</a></li>
+<li><a href="#_configuration">8.10. Configuration</a></li>
 </ul>
 </li>
 <li><a href="#_modules">9. Modules</a>
@@ -1761,104 +1760,45 @@ be renamed (replaced at all occurrences) by NEW_NAME.</p>
 </div>
 </div>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_memory_management">8.10. Memory Management</h3>
-<div class="paragraph">
-<p>There are multiple levels of memory management.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Why is this required (possibly because of the long running server
-model)?</p>
-</li>
-<li>
-<p>Exactly how is this memory allocated?</p>
-</li>
-<li>
-<p>Why handle this allocation in disparate spaces?</p>
-</li>
-<li>
-<p>Why does not standard malloc()/free() suffice?</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>There is obviously some caching going on. Don&#8217;t know of what at this
-point. Tag data?</p>
-</div>
 <div class="sect3">
-<h4 id="_memory_types">8.10.1. Memory "types"</h4>
+<h4 id="_memory_handling">8.9.5. Memory handling</h4>
 <div class="paragraph">
-<p>Mostly <code>c-xrefactory</code> does its own memory management. It uses a number
-of different strategies, which has/had its own macros.</p>
+<p>Memory may be dynamically allocated using <code>malloc()</code> in which case it
+must be managed in the same manner as all <code>malloced</code> memory should to
+avoid memory leaks or pointer problems. This is used mostly for local
+and temporary areas.</p>
+</div>
+<div class="paragraph">
+<p>But memory can also be locally managed using the structure <code>Memory</code>
+and related functions.</p>
 </div>
 <div class="sect4">
-<h5 id="_static_memory">"Static" memory</h5>
+<h5 id="_the_memory_type">The Memory type</h5>
 <div class="paragraph">
-<p>For the memory usages where the size of the total area is static all
-memory handling macros have been refactored int functions using the
-<code>Memory2</code> struct for administration.</p>
-</div>
-<div class="paragraph">
-<p>For <code>ft</code> (file table), <code>ppm</code> (pre-processor macro) and <code>cf</code> (class
-file) memory usages all uses the new <code>Memory2</code> for their memory
-administration. Functions with the mentioned prefixes are just
-convenience functions that works on the corresponding memory
-administraion structure.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_dynamic_memory_allocation">Dynamic memory allocation</h5>
-<div class="paragraph">
-<p>The <code>Memory</code> structure is used for one of the two dynamic memory
-allocation schemes, where overflow handling can be triggered. The
-structure contains a function pointer that can be invoked when
-overflow occurs.</p>
+<p>Memory allocation using the <code>Memory</code> type allows managing memory
+locally and separately depending it its use. E.g. the primary memory
+is <code>cxMemory</code> where all collected references are stored including
+reference tables and other management areas. This type of memory can
+easily be discarded, e.g. when a file is completely analyzed or a
+refactoring is complete.</p>
 </div>
 <div class="paragraph">
-<p><code>dm_alloc()</code>, previously a macro, returns pointers into that area.</p>
+<p>Separate memory areas are managed through <code>ppmMemory</code>,
+<code>fileTableMemory</code>, macroArgumentsMemory` and <code>macroBodyMemory</code> and
+possibly others. This list indicate that this type of memory is used
+because the amount of source to be analysed may be so large that it
+does not fit at the same time and need to be cached/discarded and
+restored as needed.</p>
 </div>
 <div class="paragraph">
-<p>There are two instances of this type of memory:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>cxMemory</code> - the crossreference data, which can actually expand using
-the <code>cxMemoryOverflowHandler()</code></p>
-</li>
-<li>
-<p><code>optMemory</code> - which is part of the options structure that is saved,
-copied and what not, cannot expand as the overflow handler calls
-<code>fatalError()</code>.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><code>cxMemoryOverflowHandler()</code> on the other hand, just throws all
-cxMemory away and allocates a new, larger, area containing a fresh
-Memory structure as the head and an empty area to allocate from.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_using_malloc">Using malloc()</h5>
-<div class="paragraph">
-<p>There is a second type of dynamic memory, of which there is only one,
-the <code>olcxMemory</code>. In fact, this is not actually an area, more like a
-normal dynamic allocation. Each area is just <code>malloc()</code>-ed, but the
-size is tallied and when the maximum is reached <code>olcx_memory_alloc()</code>
-will do a fatal exit.</p>
-</div>
-<div class="paragraph">
-<p>This memory allocation is used for temporary areas during refactorings
-for example. So <code>olcx_memory_free()</code> also exist and is used.</p>
+<p>The <code>Memory</code> type allows both re-initializing with a different size
+and the optional choice to be notified when overflow happens using an
+<code>overflowHandler</code> function.</p>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_option_memory">8.10.2. Option Memory</h4>
+<h4 id="_option_memory">8.9.6. Option Memory</h4>
 <div class="paragraph">
 <p>The memory handling for options deserves special explanation and attention.</p>
 </div>
@@ -1897,9 +1837,9 @@ memory of the Options structure.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration">8.11. Configuration</h3>
+<h3 id="_configuration">8.10. Configuration</h3>
 <div class="sect3">
-<h4 id="_options">8.11.1. Options</h4>
+<h4 id="_options">8.10.1. Options</h4>
 <div class="paragraph">
 <p>There are three possible sources for options.</p>
 </div>
@@ -1924,7 +1864,7 @@ memory of the Options structure.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_logic">8.11.2. Logic</h4>
+<h4 id="_logic">8.10.2. Logic</h4>
 <div class="paragraph">
 <p>When the editor has a file open it needs to "belong" to a project. The
 logic for finding which is very intricate and complicated.</p>
@@ -2837,9 +2777,13 @@ for those wanting to do backtracking to original sources.</p>
 <div class="sect2">
 <h3 id="_memory_strategies">15.1. Memory strategies</h3>
 <div class="paragraph">
-<p>There where a multitude of specialized memory allocation functions. In
-principle there where to types, static and dynamic. The dynamic could
+<p>There were a multitude of specialized memory allocation functions. In
+principle there where two types, static and dynamic. The dynamic could
 be exteded using a overflow handler.</p>
+</div>
+<div class="paragraph">
+<p>Also one type had a struct where the actual area was extended beyond
+the actual struct. This was very confusing&#8230;&#8203;</p>
 </div>
 <div class="sect3">
 <h4 id="_static_memory_allocation">15.1.1. Static memory allocation</h4>
@@ -3265,7 +3209,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-12-13 08:06:16 UTC
+Last updated 2024-12-14 11:33:03 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
