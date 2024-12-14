@@ -567,34 +567,33 @@ Indicates a position in the given file. 'off' is the character position in the f
 
 ==== Memory handling
 
-Memory may be allocated using `malloc()` in which case it must
-be managed in the same manner as all `malloced` memory should to avoid
-memory leaks or pointer problems. This is used mostly for local and
-temporary areas.
+Memory may be dynamically allocated using `malloc()` in which case it
+must be managed in the same manner as all `malloced` memory should to
+avoid memory leaks or pointer problems. This is used mostly for local
+and temporary areas.
 
 But memory can also be locally managed using the structure `Memory`
 and related functions.
 
-===== Structure
+===== The Memory type
 
-There are a number of memory areas that are allocated and managed
-separately depending it its use. E.g. the primary memory is `cxMemory`
-where all collected references are stored including tables and other
-management areas. This type of memory can easily be discarded,
-e.g. when a file is completely analyzed or a refactoring is complete.
+Memory allocation using the `Memory` type allows managing memory
+locally and separately depending it its use. E.g. the primary memory
+is `cxMemory` where all collected references are stored including
+reference tables and other management areas. This type of memory can
+easily be discarded, e.g. when a file is completely analyzed or a
+refactoring is complete.
 
+Separate memory areas are managed through `ppmMemory`,
+`fileTableMemory`, macroArgumentsMemory` and `macroBodyMemory` and
+possibly others. This list indicate that this type of memory is used
+because the amount of source to be analysed may be so large that it
+does not fit at the same time and need to be cached/discarded and
+restored as needed.
 
-
-===== Using malloc()
-
-There is a second type of dynamic memory, of which there is only one,
-the `olcxMemory`. In fact, this is not actually an area, more like a
-normal dynamic allocation. Each area is just `malloc()`-ed, but the
-size is tallied and when the maximum is reached `olcx_memory_alloc()`
-will do a fatal exit.
-
-This memory allocation is used for temporary areas during refactorings
-for example. So `olcx_memory_free()` also exist and is used.
+The `Memory` type allows both re-initializing with a different size
+and the optional choice to be notified when overflow happens using an
+`overflowHandler` function.
 
 ==== Option Memory
 
