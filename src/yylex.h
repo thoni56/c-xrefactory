@@ -37,7 +37,6 @@ extern void setMacroBodyMemoryIndex(int index);
 
 extern void initAllInputs(void);
 extern void initInput(FILE *file, EditorBuffer *buffer, char *prepend, char *fileName);
-extern void addIncludeReference(int filenum, Position *pos);
 extern void addFileAsIncludeReference(int filenum);
 extern void pushInclude(FILE *file, EditorBuffer *buff, char *name, char *prepend);
 extern void popInclude(void);

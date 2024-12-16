@@ -20,10 +20,6 @@ void setMacroBodyMemoryIndex(int index) {
     mock(index);
 }
 
-void addIncludeReference(int filenum, Position *pos) {
-    mock(filenum, pos);
-}
-
 void addFileAsIncludeReference(int filenum) {
     mock(filenum);
 }

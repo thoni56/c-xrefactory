@@ -407,31 +407,27 @@ endOfFile:
 
 /* ********************************* #INCLUDE ********************** */
 
-static void fillIncludeSymbolItem(Symbol *symbol, Position *pos){
-    *symbol = makeSymbol(LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, *pos);
-    symbol->type = TypeCppInclude;
+static Symbol makeIncludeSymbolItem(Position pos) {
+    Symbol symbol = makeSymbol(LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, pos);
+    symbol.type = TypeCppInclude;
+    return symbol;
 }
 
 
 void addFileAsIncludeReference(int fileNumber) {
-    Position position;
-    Symbol symbol;
-
-    position = makePosition(fileNumber, 1, 0);
-    fillIncludeSymbolItem(&symbol, &position);
+    Position position = makePosition(fileNumber, 1, 0);
+    Symbol symbol = makeIncludeSymbolItem(position);
     log_trace("adding reference on file %d==%s", fileNumber, getFileItem(fileNumber)->name);
     addCxReference(&symbol, &position, UsageDefined, fileNumber);
 }
 
-void addIncludeReference(int fileNumber, Position *position) {
-    Symbol symbol;
-
+static void addIncludeReference(int fileNumber, Position position) {
     log_trace("adding reference on file %d==%s", fileNumber, getFileItem(fileNumber)->name);
-    fillIncludeSymbolItem(&symbol, position);
-    addCxReference(&symbol, position, UsageUsed, fileNumber);
+    Symbol symbol = makeIncludeSymbolItem(position);
+    addCxReference(&symbol, &position, UsageUsed, fileNumber);
 }
 
-static void addIncludeReferences(int fileNumber, Position *position) {
+static void addIncludeReferences(int fileNumber, Position position) {
     addIncludeReference(fileNumber, position);
     addFileAsIncludeReference(fileNumber);
 }
@@ -559,7 +555,7 @@ static void processInclude2(Position *includePosition, char includeType, char *i
         else
             log_error("Can't open file '%s'", includedName);
     } else {
-        addIncludeReferences(currentFile.characterBuffer.fileNumber, includePosition);
+        addIncludeReferences(currentFile.characterBuffer.fileNumber, *includePosition);
     }
 }
 
