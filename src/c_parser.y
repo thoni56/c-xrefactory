@@ -787,7 +787,7 @@ struct_or_union_specifier
             usage = USAGE_TOP_LEVEL_USED;
         else
             usage = UsageUsed;
-        $$.data = simpleStrUnionSpecifier($1.data, $2.data, usage);
+        $$.data = simpleStructOrUnionSpecifier($1.data, $2.data, usage);
     }
     | struct_or_union_define_specifier '{' struct_declaration_list '}'{
         assert($1.data && $1.data->u.t);
@@ -801,7 +801,7 @@ struct_or_union_specifier
 
 struct_or_union_define_specifier
     : struct_or_union struct_identifier                             {
-        $$.data = simpleStrUnionSpecifier($1.data, $2.data, UsageDefined);
+        $$.data = simpleStructOrUnionSpecifier($1.data, $2.data, UsageDefined);
     }
     | struct_or_union                                               {
         $$.data = createNewAnonymousStructOrUnion($1.data);

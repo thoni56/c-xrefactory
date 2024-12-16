@@ -3584,7 +3584,7 @@ case 300:
             usage = USAGE_TOP_LEVEL_USED;
         else
             usage = UsageUsed;
-        yyval.ast_typeModifiers.data = simpleStrUnionSpecifier(yyvsp[-1].ast_id.data, yyvsp[0].ast_id.data, usage);
+        yyval.ast_typeModifiers.data = simpleStructOrUnionSpecifier(yyvsp[-1].ast_id.data, yyvsp[0].ast_id.data, usage);
     }
 break;
 case 301:
@@ -3604,7 +3604,7 @@ break;
 case 303:
 #line 1012 "yacc_parser.y"
 {
-        yyval.ast_typeModifiers.data = simpleStrUnionSpecifier(yyvsp[-1].ast_id.data, yyvsp[0].ast_id.data, UsageDefined);
+        yyval.ast_typeModifiers.data = simpleStructOrUnionSpecifier(yyvsp[-1].ast_id.data, yyvsp[0].ast_id.data, UsageDefined);
     }
 break;
 case 304:

@@ -838,18 +838,18 @@ static void scanFunction_SymbolName(int size,
     lastIncomingData.referenceItem = referenceItem;
     *referenceItem = makeReferenceItem(id, vApplClass, symbolType, storage, GlobalScope, GlobalVisibility);
 
-    ReferenceItem *member;
-    bool isMember = isMemberInReferenceTable(referenceItem, NULL, &member);
-    while (isMember && member->visibility!=GlobalVisibility)
-        isMember = refTabNextMember(referenceItem, &member);
+    ReferenceItem *foundMemberP;
+    bool isMember = isMemberInReferenceTable(referenceItem, NULL, &foundMemberP);
+    while (isMember && foundMemberP->visibility!=GlobalVisibility)
+        isMember = refTabNextMember(referenceItem, &foundMemberP);
 
     assert(options.mode);
     if (options.mode == XrefMode) {
-        if (member==NULL)
-            member=referenceItem;
-        writeReferenceItem(member);
-        referenceItem->references = member->references; // note references to not generate multiple
-        member->references = NULL;      // HACK, remove them, to not be regenerated
+        if (foundMemberP==NULL)
+            foundMemberP=referenceItem;
+        writeReferenceItem(foundMemberP);
+        referenceItem->references = foundMemberP->references; // note references to not generate multiple
+        foundMemberP->references = NULL;      // HACK, remove them, to not be regenerated
     }
     if (options.mode == ServerMode) {
         if (operation == CXSF_DEAD_CODE_DETECTION) {

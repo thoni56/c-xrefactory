@@ -2925,7 +2925,7 @@ case 158:
             usage = USAGE_TOP_LEVEL_USED;
         else
             usage = UsageUsed;
-        yyval.ast_typeModifiers.data = simpleStrUnionSpecifier(yyvsp[-1].ast_id.data, yyvsp[0].ast_id.data, usage);
+        yyval.ast_typeModifiers.data = simpleStructOrUnionSpecifier(yyvsp[-1].ast_id.data, yyvsp[0].ast_id.data, usage);
     }
 break;
 case 159:
@@ -2945,7 +2945,7 @@ break;
 case 161:
 #line 803 "c_parser.y"
 {
-        yyval.ast_typeModifiers.data = simpleStrUnionSpecifier(yyvsp[-1].ast_id.data, yyvsp[0].ast_id.data, UsageDefined);
+        yyval.ast_typeModifiers.data = simpleStructOrUnionSpecifier(yyvsp[-1].ast_id.data, yyvsp[0].ast_id.data, UsageDefined);
     }
 break;
 case 162:

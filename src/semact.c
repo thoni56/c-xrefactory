@@ -8,6 +8,7 @@
 #include "misc.h"
 #include "proto.h"
 #include "storage.h"
+#include "type.h"
 #include "usage.h"
 #include "yylex.h"
 #include "cxref.h"
@@ -646,51 +647,43 @@ static TypeModifier *createSimpleEnumType(Symbol *enumDefinition) {
 }
 
 void initSymStructSpec(StructSpec *symStruct, Symbol *records) {
-    memset((void*)symStruct, 0, sizeof(*symStruct));
+    *symStruct = (StructSpec){};
     symStruct->members = records;
 }
 
-TypeModifier *simpleStrUnionSpecifier(Id *typeName,
-                                      Id *id,
-                                      Usage usage
-) {
-    Symbol *member;
-
+TypeModifier *simpleStructOrUnionSpecifier(Id *typeName, Id *id, Usage usage) {
     log_trace("new struct %s", id->name);
     assert(typeName && typeName->symbol && typeName->symbol->type == TypeKeyword);
     assert(typeName->symbol->u.keyword == STRUCT
            ||  typeName->symbol->u.keyword == UNION);
 
-    Type type;
-    if (typeName->symbol->u.keyword != UNION)
-        type = TypeStruct;
-    else
-        type = TypeUnion;
-
+    Type type = typeName->symbol->u.keyword == UNION? TypeUnion : TypeStruct;
     Symbol symbol = makeSymbol(id->name, id->name, id->position);
     symbol.type = type;
     symbol.storage = StorageDefault;
 
-    if (!symbolTableIsMember(symbolTable, &symbol, NULL, &member)
-        || (isMemoryFromPreviousBlock(member) && isDefinitionOrDeclarationUsage(usage))) {
-        member = stackMemoryAlloc(sizeof(Symbol));
-        *member = symbol;
-        member->u.structSpec = stackMemoryAlloc(sizeof(StructSpec));
+    Symbol *foundMemberP;
+    if (!symbolTableIsMember(symbolTable, &symbol, NULL, &foundMemberP)
+        || (isMemoryFromPreviousBlock(foundMemberP) && isDefinitionOrDeclarationUsage(usage)))
+    {
+        foundMemberP = stackMemoryAlloc(sizeof(Symbol));
+        *foundMemberP = symbol;
+        foundMemberP->u.structSpec = stackMemoryAlloc(sizeof(StructSpec));
 
-        initSymStructSpec(member->u.structSpec, NULL);
+        initSymStructSpec(foundMemberP->u.structSpec, NULL);
 
-        TypeModifier *typeModifier = &member->u.structSpec->type;
+        TypeModifier *typeModifier = &foundMemberP->u.structSpec->type;
         /* Assumed to be Struct/Union/Enum? */
-        initTypeModifierAsStructUnionOrEnum(typeModifier, type, member, NULL, NULL);
+        initTypeModifierAsStructUnionOrEnum(typeModifier, type, foundMemberP, NULL, NULL);
 
-        TypeModifier *ptrtypeModifier = &member->u.structSpec->ptrtype;
-        initTypeModifierAsPointer(ptrtypeModifier, &member->u.structSpec->type);
+        TypeModifier *ptrtypeModifier = &foundMemberP->u.structSpec->ptrtype;
+        initTypeModifierAsPointer(ptrtypeModifier, &foundMemberP->u.structSpec->type);
 
-        setGlobalFileDepNames(id->name, member, MEMORY_XX);
-        addSymbolToFrame(symbolTable, member);
+        setGlobalFileDepNames(id->name, foundMemberP, MEMORY_XX);
+        addSymbolToFrame(symbolTable, foundMemberP);
     }
-    addCxReference(member, &id->position, usage, NO_FILE_NUMBER);
-    return &member->u.structSpec->type;
+    addCxReference(foundMemberP, &id->position, usage, NO_FILE_NUMBER);
+    return &foundMemberP->u.structSpec->type;
 }
 
 void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {

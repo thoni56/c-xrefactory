@@ -40,7 +40,7 @@ extern int findStructureMember(Symbol *symbol, char *memberName, Symbol	**foundM
 extern Reference *findStuctureMemberFromSymbol(Symbol *str, Id *member, Symbol **res);
 extern Reference *findStructureFieldFromType(TypeModifier *structure, Id *field, Symbol **resultingSymbol);
 extern Result mergeArguments(Symbol *id, Symbol *ty);
-extern TypeModifier *simpleStrUnionSpecifier(Id *typeName, Id *id, Usage usage);
+extern TypeModifier *simpleStructOrUnionSpecifier(Id *typeName, Id *id, Usage usage);
 extern TypeModifier *createNewAnonymousStructOrUnion(Id *typeName);
 extern void specializeStrUnionDef(Symbol *sd, Symbol *rec);
 extern TypeModifier *simpleEnumSpecifier(Id *id, Usage usage);

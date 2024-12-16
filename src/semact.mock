@@ -123,7 +123,7 @@ Result mergeArguments(Symbol *id, Symbol *ty) {
     return (Result) mock(id, ty);
 }
 
-TypeModifier *simpleStrUnionSpecifier(Id *typeName, Id *id, Usage usage) {
+TypeModifier *simpleStructOrUnionSpecifier(Id *typeName, Id *id, Usage usage) {
     return (TypeModifier *) mock(typeName, id, usage);
 }
 
