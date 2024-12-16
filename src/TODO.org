@@ -17,6 +17,7 @@ Some useful commands:
 
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
+* DOING Rename vApplClass - but to what? what is it?
 * DOING Extract variable
 ** TRY Place the variable declaration in the closest block (need to figure out how ProgramGraphs work...)
 ** TRY Figure out variable type (hard, none of the other extracts seems to do this...)
