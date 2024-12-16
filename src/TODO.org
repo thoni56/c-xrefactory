@@ -146,6 +146,7 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 ** TODO FEATURE: Rename "module" in C
    Prompt for new "module name", rename both .c & .h if they exist, and change all includes, bonus: rename also _tests.c
 ** TODO FEATURE: Replace variable with value ("inline")
+** TODO FEATURE: Remove indirection in parameter ("remove *") and vice versa
 * TODO Push options.xref2 into ppc...() functions or create if necessary?
 * TODO displayingErrorMessages() seems to be duplicated functionality
   Change to preventErrorMessage() and let logger handle actual prevention?
