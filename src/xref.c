@@ -71,10 +71,10 @@ static FileItem *createListOfInputFileItems(void) {
     return fileItems;
 }
 
-static void fillReferenceItemForIncludeFile(ReferenceItem *referencesItem, int fileNumber) {
-    fillReferenceItem(referencesItem, LINK_NAME_INCLUDE_REFS,
-                      fileNumber, TypeCppInclude, StorageExtern,
-                      GlobalScope, GlobalVisibility);
+static ReferenceItem makeReferenceItemForIncludeFile(int fileNumber) {
+    return makeReferenceItem(LINK_NAME_INCLUDE_REFS,
+                             fileNumber, TypeCppInclude, StorageExtern,
+                             GlobalScope, GlobalVisibility);
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
@@ -89,13 +89,13 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
             if (fileItem->scheduledToUpdate)
                 if (!fileItem->fullUpdateIncludesProcessed) {
                     fileItem->fullUpdateIncludesProcessed = true;
-                    ReferenceItem referenceItem, *member;
-                    fillReferenceItemForIncludeFile(&referenceItem, i);
-                    if (isMemberInReferenceTable(&referenceItem, NULL, &member)) {
-                        for (Reference *r=member->references; r!=NULL; r=r->next) {
-                            FileItem *includer = getFileItem(r->position.file);
-                            if (!includer->scheduledToUpdate) {
-                                includer->scheduledToUpdate = true;
+                    ReferenceItem referenceItem = makeReferenceItemForIncludeFile(i);
+                    ReferenceItem *foundMemberP;
+                    if (isMemberInReferenceTable(&referenceItem, NULL, &foundMemberP)) {
+                        for (Reference *r=foundMemberP->references; r!=NULL; r=r->next) {
+                            FileItem *includerFile = getFileItem(r->position.file);
+                            if (!includerFile->scheduledToUpdate) {
+                                includerFile->scheduledToUpdate = true;
                                 fileAddedFlag = true;
                             }
                         }

@@ -836,7 +836,7 @@ static void scanFunction_SymbolName(int size,
 
     ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem;
     lastIncomingData.referenceItem = referenceItem;
-    fillReferenceItem(referenceItem, id, vApplClass, symbolType, storage, GlobalScope, GlobalVisibility);
+    *referenceItem = makeReferenceItem(id, vApplClass, symbolType, storage, GlobalScope, GlobalVisibility);
 
     ReferenceItem *member;
     bool isMember = isMemberInReferenceTable(referenceItem, NULL, &member);

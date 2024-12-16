@@ -95,14 +95,13 @@ SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int vApplClass, Position
                                  int defusage, int selected, int visible, unsigned ooBits, int olusage,
                                  int vlevel) {
     SymbolsMenu   *symbolsMenu;
-    ReferenceItem refItem;
     char          *allocatedNameCopy;
 
     allocatedNameCopy = olcxStringCopy(symbol->linkName);
 
-    fillReferenceItem(&refItem, allocatedNameCopy, vApplClass,
-                       symbol->type, symbol->storage, symbol->scope,
-                       symbol->visibility);
+    ReferenceItem refItem = makeReferenceItem(allocatedNameCopy, vApplClass,
+                                              symbol->type, symbol->storage, symbol->scope,
+                                              symbol->visibility);
 
     symbolsMenu = malloc(sizeof(SymbolsMenu));
     fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage, vlevel, defusage, *defpos);

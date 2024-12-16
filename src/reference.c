@@ -100,7 +100,7 @@ Reference *addReferenceToList(Reference **listP, Reference *ref) {
     return addReferenceWithoutUsageCheck(listP, ref);
 }
 
-void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass,
+static void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass,
                        Type symType, Storage storage, Scope scope,
                        Visibility visibility) {
     referencesItem->linkName = name;

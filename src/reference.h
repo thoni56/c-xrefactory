@@ -41,7 +41,4 @@ extern Reference *addReferenceToList(Reference **rlist,
                                    Reference *ref);
 extern ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,
                                        Visibility visibility);
-extern void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass, Type symType,
-                              Storage storage, Scope scope, Visibility visibility);
-
 #endif

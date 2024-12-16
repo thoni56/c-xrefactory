@@ -1820,16 +1820,12 @@ endOfFile:
 /* **************************************************************** */
 
 static void addMacroBaseUsageRef(Symbol *macroSymbol) {
-    bool isMember;
-    ReferenceItem ppp, *memb;
-    Reference *r;
-    Position basePos;
-
-    basePos = makePosition(inputFileNumber, 0, 0);
-    fillReferenceItem(&ppp, macroSymbol->linkName,
-                      NO_FILE_NUMBER, TypeMacro, StorageDefault, GlobalScope, GlobalVisibility);
-    isMember = isMemberInReferenceTable(&ppp, NULL, &memb);
-    r = NULL;
+    Position basePos = makePosition(inputFileNumber, 0, 0);
+    ReferenceItem ppp = makeReferenceItem(macroSymbol->linkName, NO_FILE_NUMBER, TypeMacro, StorageDefault,
+                                          GlobalScope, GlobalVisibility);
+    ReferenceItem *memb;
+    bool isMember = isMemberInReferenceTable(&ppp, NULL, &memb);
+    Reference *r = NULL;
     if (isMember) {
         // this is optimization to avoid multiple base references
         for (r=memb->references; r!=NULL; r=r->next) {

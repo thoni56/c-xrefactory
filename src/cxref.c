@@ -268,8 +268,8 @@ Reference *addCxReference(Symbol *symbol, Position *position, Usage usage, int v
         char *linkName = cxAlloc(strlen(symbol->linkName)+1);
         strcpy(linkName, symbol->linkName);
         ReferenceItem *r = cxAlloc(sizeof(ReferenceItem));
-        fillReferenceItem(r, linkName, vApplCl, symbol->type,
-                           storage, scope, visibility);
+        *r = makeReferenceItem(linkName, vApplCl, symbol->type,
+                               storage, scope, visibility);
         pushReferenceItem(r, index);
         foundMember = r;
     }
