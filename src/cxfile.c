@@ -834,21 +834,21 @@ static void scanFunction_SymbolName(int size,
     int vApplClass;
     getSymbolTypeAndClasses(&symbolType, &vApplClass);
 
-    ReferenceItem *referencesItem = &lastIncomingData.cachedReferenceItem;
-    lastIncomingData.referenceItem = referencesItem;
-    fillReferenceItem(referencesItem, id, vApplClass, symbolType, storage, GlobalScope, GlobalVisibility);
+    ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem;
+    lastIncomingData.referenceItem = referenceItem;
+    fillReferenceItem(referenceItem, id, vApplClass, symbolType, storage, GlobalScope, GlobalVisibility);
 
     ReferenceItem *member;
-    bool isMember = isMemberInReferenceTable(referencesItem, NULL, &member);
+    bool isMember = isMemberInReferenceTable(referenceItem, NULL, &member);
     while (isMember && member->visibility!=GlobalVisibility)
-        isMember = refTabNextMember(referencesItem, &member);
+        isMember = refTabNextMember(referenceItem, &member);
 
     assert(options.mode);
     if (options.mode == XrefMode) {
         if (member==NULL)
-            member=referencesItem;
+            member=referenceItem;
         writeReferenceItem(member);
-        referencesItem->references = member->references; // note references to not generate multiple
+        referenceItem->references = member->references; // note references to not generate multiple
         member->references = NULL;      // HACK, remove them, to not be regenerated
     }
     if (options.mode == ServerMode) {
@@ -863,7 +863,7 @@ static void scanFunction_SymbolName(int size,
             int ols = 0;
             SymbolsMenu *cms = NULL;
             if (operation == CXSF_MENU_CREATION) {
-                cms = createSelectionMenu(referencesItem);
+                cms = createSelectionMenu(referenceItem);
                 if (cms == NULL) {
                     ols = 0;
                 } else {
@@ -873,13 +873,13 @@ static void scanFunction_SymbolName(int size,
                         ols = 1;
                 }
             } else if (operation!=CXSF_BYPASS) {
-                ols=itIsSymbolToPushOlReferences(referencesItem, sessionData.browserStack.top, &cms,
+                ols=itIsSymbolToPushOlReferences(referenceItem, sessionData.browserStack.top, &cms,
                                                  DEFAULT_VALUE);
             }
             lastIncomingData.onLineRefMenuItem = cms;
-            if (ols || (operation==CXSF_BYPASS && canBypassAcceptableSymbol(referencesItem))) {
+            if (ols || (operation==CXSF_BYPASS && canBypassAcceptableSymbol(referenceItem))) {
                 lastIncomingData.onLineReferencedSym = 0;
-                log_trace("symbol %s is O.K. for %s (ols==%d)", referencesItem->linkName, options.browsedSymName, ols);
+                log_trace("symbol %s is O.K. for %s (ols==%d)", referenceItem->linkName, options.browsedSymName, ols);
             } else {
                 if (lastIncomingData.onLineReferencedSym == 0) {
                     lastIncomingData.onLineReferencedSym = -1;
