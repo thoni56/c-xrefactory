@@ -7,5 +7,5 @@ $(TEST): .c-xrefrc
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: EXTRA = \'-trace\'
+trace: EXTRA = -trace -log=log
 trace: $(TEST)
