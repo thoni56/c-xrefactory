@@ -2677,7 +2677,7 @@ break;
 case 8:
 #line 233 "yacc_parser.y"
 {
-            specializeStrUnionDef(yyvsp[-3].typeModifier->u.t, yyvsp[-1].ast_symbol.data);
+            specializeStructOrUnionDef(yyvsp[-3].typeModifier->u.t, yyvsp[-1].ast_symbol.data);
             l_yaccUnion = yyvsp[-3].typeModifier->u.t;
         }
 break;
@@ -3592,7 +3592,7 @@ case 301:
 {
         assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->u.t);
         yyval.ast_typeModifiers.data = yyvsp[-3].ast_typeModifiers.data;
-        specializeStrUnionDef(yyval.ast_typeModifiers.data->u.t, yyvsp[-1].ast_symbol.data);
+        specializeStructOrUnionDef(yyval.ast_typeModifiers.data->u.t, yyvsp[-1].ast_symbol.data);
     }
 break;
 case 302:

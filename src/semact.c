@@ -783,7 +783,7 @@ static char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {
     return s;
 }
 
-void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
+void specializeStructOrUnionDef(Symbol *sd, Symbol *rec) {
     assert(sd->type == TypeStruct || sd->type == TypeUnion);
     assert(sd->u.structSpec);
     if (sd->u.structSpec->members!=NULL)

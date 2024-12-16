@@ -42,7 +42,7 @@ extern Reference *findStructureFieldFromType(TypeModifier *structure, Id *field,
 extern Result mergeArguments(Symbol *id, Symbol *ty);
 extern TypeModifier *simpleStructOrUnionSpecifier(Id *typeName, Id *id, Usage usage);
 extern TypeModifier *createNewAnonymousStructOrUnion(Id *typeName);
-extern void specializeStrUnionDef(Symbol *sd, Symbol *rec);
+extern void specializeStructOrUnionDef(Symbol *sd, Symbol *rec);
 extern TypeModifier *simpleEnumSpecifier(Id *id, Usage usage);
 extern void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory);
 extern TypeModifier *createNewAnonymousEnum(SymbolList *enums);

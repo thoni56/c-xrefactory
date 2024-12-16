@@ -131,7 +131,7 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
     return (TypeModifier *) mock(typeName);
 }
 
-void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
+void specializeStructOrUnionDef(Symbol *sd, Symbol *rec) {
     mock(sd, rec);
 }
 

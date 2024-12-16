@@ -231,7 +231,7 @@ before_rules_item
             $<typeModifier>$ = createNewAnonymousStructOrUnion($2.data);
         }
         '{' struct_declaration_list '}' {
-            specializeStrUnionDef($<typeModifier>3->u.t, $5.data);
+            specializeStructOrUnionDef($<typeModifier>3->u.t, $5.data);
             l_yaccUnion = $<typeModifier>3->u.t;
         }
     |   '%' IDENTIFIER token_seq_opt    {
@@ -1001,7 +1001,7 @@ struct_or_union_specifier
     | struct_or_union_define_specifier '{' struct_declaration_list '}'{
         assert($1.data && $1.data->u.t);
         $$.data = $1.data;
-        specializeStrUnionDef($$.data->u.t, $3.data);
+        specializeStructOrUnionDef($$.data->u.t, $3.data);
     }
     | struct_or_union_define_specifier '{' '}'                      {
         $$.data = $1.data;

@@ -2933,7 +2933,7 @@ case 159:
 {
         assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->u.t);
         yyval.ast_typeModifiers.data = yyvsp[-3].ast_typeModifiers.data;
-        specializeStrUnionDef(yyval.ast_typeModifiers.data->u.t, yyvsp[-1].ast_symbol.data);
+        specializeStructOrUnionDef(yyval.ast_typeModifiers.data->u.t, yyvsp[-1].ast_symbol.data);
     }
 break;
 case 160:
