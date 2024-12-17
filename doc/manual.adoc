@@ -260,8 +260,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 
 -mf::
 
--movetargetfile::
-
 -no-autoupdatefromsrc::
 
 -no-includerefresh::
@@ -273,8 +271,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 -olcheckaccess::
 
 -olchecklinkage::
-
--olcheckversion::
 
 -olcomplback::
 
