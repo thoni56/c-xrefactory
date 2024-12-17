@@ -330,7 +330,7 @@ static void writeSymbolItem(void) {
     ReferenceItem *r = lastOutgoingData.referenceItem;
     writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, r->type, "\n"); /* Why newline in the middle of all this? */
     writeOptionalCompactRecord(CXFI_SUBCLASS, r->vApplClass, "");
-    writeOptionalCompactRecord(CXFI_SUPERCLASS, r->vApplClass, "");
+    writeOptionalCompactRecord(CXFI_SUPERCLASS, r->vApplClass, ""); /* TODO - not used anymore */
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, ""); /* TODO - not used anymore */
     writeOptionalCompactRecord(CXFI_STORAGE, r->storage, "");
     lastOutgoingData.macroBaseFileGeneratedForSymbol = false;

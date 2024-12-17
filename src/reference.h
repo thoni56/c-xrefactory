@@ -20,7 +20,11 @@ typedef struct reference {
 
 typedef struct referenceItem {
     char                     *linkName;
-    int                       vApplClass; /* appl class for java virtuals, but also something else ... */
+    int                       vApplClass; /* This probably was application class
+                                           * for java virtuals, but for C it
+                                           * seems to be the fileNumber for the
+                                           * included file if this is an
+                                           * '#include' Reference item */
     Type                      type : SYMTYPES_LN;
     Storage                   storage : STORAGES_LN;
     Scope                     scope : SCOPES_LN;
