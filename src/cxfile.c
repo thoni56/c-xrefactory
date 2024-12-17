@@ -24,39 +24,39 @@
 
 #define C_XREF_FILE_VERSION_NUMBER "1.6.0"
 
+typedef enum {
+    CXFI_FILE_FUMTIME          = 'm',     /* last full update mtime for file item */
+    CXFI_FILE_UMTIME           = 'p',     /* last update mtime for file item */
+    CXFI_COMMAND_LINE_ARGUMENT = 'i',     /* file was introduced from command line */
 
-#define CXFI_FILE_FUMTIME    'm'     /* last full update mtime for file item */
-#define CXFI_FILE_UMTIME     'p'     /* last update mtime for file item */
-#define CXFI_COMMAND_LINE_ARGUMENT  'i'     /* file was introduced from command line */
+    CXFI_FILE_NUMBER           = 'f',
+    CXFI_SYMBOL_INDEX          = 's',
+    CXFI_USAGE                 = 'u',
+    CXFI_LINE_INDEX            = 'l',
+    CXFI_COLUMN_INDEX          = 'c',
+    CXFI_REFERENCE             = 'r',     /* using 'fsulc', records */
 
-#define CXFI_FILE_NUMBER     'f'
-#define CXFI_SYMBOL_INDEX    's'
-#define CXFI_USAGE           'u'
-#define CXFI_LINE_INDEX      'l'
-#define CXFI_COLUMN_INDEX    'c'
-#define CXFI_REFERENCE       'r'     /* using 'fsulc' records */
+    CXFI_SYMBOL_TYPE           = 't',
 
-#define CXFI_SYMBOL_TYPE     't'
+    CXFI_STORAGE               = 'g',     /* storaGe field */
 
-#define CXFI_STORAGE         'g'     /* storaGe field */
+    CXFI_SYMBOL_NAME           = '/',     /* using 'atdhg' -> 's',             */
+    CXFI_FILE_NAME             = ':',     /*               -> 'ifm' info  */
 
-#define CXFI_SYMBOL_NAME     '/'     /* using 'atdhg' -> 's'             */
-#define CXFI_FILE_NAME       ':'     /*               -> 'ifm' info  */
-
-#define CXFI_CHECK_NUMBER    'k'
-#define CXFI_REFNUM          'n'
-#define CXFI_VERSION         'v'
-#define CXFI_KEY_LIST        '@'
-#define CXFI_REMARK          '#'
+    CXFI_CHECK_NUMBER          = 'k',
+    CXFI_REFNUM                = 'n',
+    CXFI_VERSION               = 'v',
+    CXFI_KEY_LIST              = '@',
+    CXFI_REMARK                = '#',
 
 // Now unused values that could be removed from the format
-#define CXFI_SOURCE_INDEX    'o'     /* source index for java classes */
-#define CXFI_ACCESS_BITS     'a'     /* java access bit */
-#define CXFI_REQUIRED_ACCESS 'A'     /* java reference required accessibility index */
-#define CXFI_SUBCLASS        'd'     /* dole = down in slovac */
-#define CXFI_SUPERCLASS      'h'     /* hore = up in slovac */
-#define CXFI_CLASS_NAME      '+'     /*               -> 'h' info    */
-
+    CXFI_SOURCE_INDEX          = 'o',     /* source index for java classes */
+    CXFI_ACCESS_BITS           = 'a',     /* java access bit */
+    CXFI_REQUIRED_ACCESS       = 'A',     /* java reference required accessibility index */
+    CXFI_SUBCLASS              = 'd',     /* dole = down in slovac */
+    CXFI_SUPERCLASS            = 'h',     /* hore = up in slovac */
+    CXFI_CLASS_NAME            = '+',     /*               -> 'h' info    */
+} CxFieldTag;
 
 typedef enum {
     CXSF_NOP,
