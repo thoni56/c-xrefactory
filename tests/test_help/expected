@@ -7,7 +7,6 @@ options:
 	-p <project>              - read options from <project> section
 	-I <dir>                  - search for includes in <dir>
 	-D<macro>[=<body>]        - define macro <macro> with body <body>
-	-packages                 - allow packages as input files
 	-filescasesensitive       - file names are case sensitive
 	-filescaseunsensitive     - file names are case unsensitive
 	-csuffixes=<suffixes>     - list of C files suffixes separated by ':' (or ';')
@@ -25,7 +24,6 @@ options:
 	-debug                    - also log debug messages in log
 	-trace                    - also log trace & debug messages in log
 	-commandlog               - write all commands to /tmp/c-xref-command-log (experimental)
-	-no-classfiles            - Don't collect references from class files
 	-compiler=<path>          - path to compiler to use for autodiscovered includes and defines
 	-update                   - update existing references database
 	-fastupdate               - fast update (modified files only)

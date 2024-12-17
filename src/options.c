@@ -169,7 +169,6 @@ static void usage() {
     fprintf(stdout, "\t-p <project>              - read options from <project> section\n");
     fprintf(stdout, "\t-I <dir>                  - search for includes in <dir>\n");
     fprintf(stdout, "\t-D<macro>[=<body>]        - define macro <macro> with body <body>\n");
-    fprintf(stdout, "\t-packages                 - allow packages as input files\n");
     fprintf(stdout, "\t-filescasesensitive       - file names are case sensitive\n");
     fprintf(stdout, "\t-filescaseunsensitive     - file names are case unsensitive\n");
     fprintf(stdout, "\t-csuffixes=<suffixes>     - list of C files suffixes separated by ':' (or ';')\n");
@@ -199,7 +198,6 @@ static void usage() {
     fprintf(stdout, "\t-debug                    - also log debug messages in log\n");
     fprintf(stdout, "\t-trace                    - also log trace & debug messages in log\n");
     fprintf(stdout, "\t-commandlog               - write all commands to /tmp/c-xref-command-log (experimental)\n");
-    fprintf(stdout, "\t-no-classfiles            - Don't collect references from class files\n");
     fprintf(stdout, "\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
     fprintf(stdout, "\t-update                   - update existing references database\n");
     fprintf(stdout, "\t-fastupdate               - fast update (modified files only)\n");
