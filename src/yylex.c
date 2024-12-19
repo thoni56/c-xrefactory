@@ -220,16 +220,25 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
      * NULL, and we don't know which... */
     prefixLength = strlen(prefix);
     if (editorBuffer != NULL) {
-        // Reading from buffer, prepare prefix
+        assert(file == NULL);
+        // Reading from buffer, prepare prefix, does it fit?
         assert(prefixLength < editorBuffer->allocation.allocatedFreePrefixSize);
+        // Use the editor
+        // buffer and placing the prefix infront of the existing text,
+        // so we cannot copy the \0 from the end of the prefix
         strncpy(editorBuffer->allocation.text-prefixLength, prefix, prefixLength);
+        // Point to the start of the prefix in the reserved prefix area
         bufferStart = editorBuffer->allocation.text-prefixLength;
+        // and the size is the bufferSize + length of the prefix
         bufferSize = editorBuffer->allocation.bufferSize+prefixLength;
         offset = editorBuffer->allocation.bufferSize;
         assert(bufferStart > editorBuffer->allocation.allocatedBlock);
     } else {
-        // Reading from file or just a prefix
+        assert(editorBuffer == NULL);
+        // Reading from file or just a prefix, does it fit?
         assert(prefixLength < CHARACTER_BUFFER_SIZE);
+        // Ok, then just copy the prefix into the character buffer,
+        // file reading will commence later
         strcpy(currentFile.characterBuffer.chars, prefix);
         bufferStart = currentFile.characterBuffer.chars;
         bufferSize = prefixLength;
