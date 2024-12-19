@@ -2157,7 +2157,7 @@ case 1:
             assert(symbol->storage != StorageTypedef);
             yyval.ast_expressionType.data.typeModifier = symbol->u.typeModifier;
             assert(options.mode);
-            yyval.ast_expressionType.data.reference = addCxReference(symbol, &yyvsp[0].ast_id.data->position, UsageUsed, NO_FILE_NUMBER);
+            yyval.ast_expressionType.data.reference = addCxReference(symbol, yyvsp[0].ast_id.data->position, UsageUsed, NO_FILE_NUMBER);
         } else {
             /* implicit function declaration */
             TypeModifier *modifier;
@@ -2171,7 +2171,7 @@ case 1:
             newSymbol->storage = StorageExtern;
 
             definitionSymbol = addNewSymbolDefinition(symbolTable, inputFileName, newSymbol, StorageExtern, UsageUsed);
-            yyval.ast_expressionType.data.reference = addCxReference(definitionSymbol, &yyvsp[0].ast_id.data->position, UsageUsed, NO_FILE_NUMBER);
+            yyval.ast_expressionType.data.reference = addCxReference(definitionSymbol, yyvsp[0].ast_id.data->position, UsageUsed, NO_FILE_NUMBER);
         }
     }
 break;
@@ -2691,7 +2691,7 @@ case 106:
             usage = USAGE_TOP_LEVEL_USED;
         else
             usage = UsageUsed;
-        addCxReference(yyvsp[0].ast_id.data->symbol,&yyvsp[0].ast_id.data->position,usage,NO_FILE_NUMBER);
+        addCxReference(yyvsp[0].ast_id.data->symbol, yyvsp[0].ast_id.data->position,usage,NO_FILE_NUMBER);
     }
 break;
 case 107:

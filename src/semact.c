@@ -236,7 +236,7 @@ Reference *findStuctureMemberFromSymbol(Symbol *symbol, Id *member, Symbol **res
     Result result = findStructureMemberSymbol(resultingMemberSymbol, initFind(symbol, &info), member->name);
 
     if (result == RESULT_OK) {
-        ref = addCxReference(*resultingMemberSymbol, &member->position, UsageUsed, NO_FILE_NUMBER);
+        ref = addCxReference(*resultingMemberSymbol, member->position, UsageUsed, NO_FILE_NUMBER);
     } else {
         noSuchMemberError(member->name);
     }
@@ -373,7 +373,7 @@ Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbo
         setStaticFunctionLinkName(symbol, fileName, usage);
     }
     addSymbolToFrame(table, symbol);
-    addCxReference(symbol, &symbol->pos, usage, NO_FILE_NUMBER);
+    addCxReference(symbol, symbol->pos, usage, NO_FILE_NUMBER);
     return symbol;
 }
 
@@ -433,13 +433,13 @@ void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol
         if (pp != NULL && pp != parameter) {
             Symbol *foundMember;
             if (symbolTableIsMember(table, parameterCopy, NULL, &foundMember)) {
-                addCxReference(foundMember, &parameter->pos, UsageUsed, NO_FILE_NUMBER);
+                addCxReference(foundMember, parameter->pos, UsageUsed, NO_FILE_NUMBER);
             }
         } else {
             addNewSymbolDefinition(table, inputFileName, parameterCopy, StorageAuto, UsageDefined);
         }
         if (options.serverOperation == OLO_EXTRACT) {
-            addCxReference(parameterCopy, &parameterCopy->pos, UsageLvalUsed, NO_FILE_NUMBER);
+            addCxReference(parameterCopy, parameterCopy->pos, UsageLvalUsed, NO_FILE_NUMBER);
         }
     }
     if (options.serverOperation == OLO_GOTO_PARAM_NAME
@@ -682,7 +682,7 @@ TypeModifier *simpleStructOrUnionSpecifier(Id *typeName, Id *id, Usage usage) {
         setGlobalFileDepNames(id->name, foundMemberP, MEMORY_XX);
         addSymbolToFrame(symbolTable, foundMemberP);
     }
-    addCxReference(foundMemberP, &id->position, usage, NO_FILE_NUMBER);
+    addCxReference(foundMemberP, id->position, usage, NO_FILE_NUMBER);
     return &foundMemberP->u.structSpec->type;
 }
 
@@ -794,7 +794,7 @@ void specializeStructOrUnionDef(Symbol *sd, Symbol *rec) {
     for (Symbol *symbol=rec; symbol!=NULL; symbol=symbol->next) {
         if (symbol->name != NULL) {
             symbol->linkName = string3ConcatInStackMem(sd->linkName,".",symbol->name);
-            addCxReference(symbol,&symbol->pos,UsageDefined, NO_FILE_NUMBER);
+            addCxReference(symbol,symbol->pos,UsageDefined, NO_FILE_NUMBER);
         }
     }
 }
@@ -813,7 +813,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
         setGlobalFileDepNames(id->name, symbolP, MEMORY_XX);
         addSymbolToFrame(symbolTable, symbolP);
     }
-    addCxReference(symbolP, &id->position, usage, NO_FILE_NUMBER);
+    addCxReference(symbolP, id->position, usage, NO_FILE_NUMBER);
     return createSimpleEnumType(symbolP);
 }
 

@@ -192,7 +192,7 @@ static bool operationRequiresOnlyParsingNoPushing(int operation) {
 
 
 /* ********************************************************************* */
-Reference *addCxReference(Symbol *symbol, Position *position, Usage usage, int vApplCl) {
+Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int vApplCl) {
     Visibility        visibility;
     Scope             scope;
     Storage           storage;
@@ -210,18 +210,18 @@ Reference *addCxReference(Symbol *symbol, Position *position, Usage usage, int v
         return NULL;
     if (symbol == &errorSymbol || symbol->type==TypeError)
         return NULL;
-    if (position->file == NO_FILE_NUMBER)
+    if (position.file == NO_FILE_NUMBER)
         return NULL;
 
-    assert(position->file<MAX_FILES);
+    assert(position.file<MAX_FILES);
 
-    FileItem *fileItem = getFileItem(position->file);
+    FileItem *fileItem = getFileItem(position.file);
 
     getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
 
     log_trace("adding reference on %s(%d) at %d,%d,%d (%s) (%s) (%s)",
-              symbol->linkName, vApplCl, position->file, position->line,
-              position->col, visibility==GlobalVisibility?"Global":"Local",
+              symbol->linkName, vApplCl, position.file, position.line,
+              position.col, visibility==GlobalVisibility?"Global":"Local",
               usageKindEnumName[usage], storageEnumName[symbol->storage]);
 
     assert(options.mode);
@@ -233,7 +233,7 @@ Reference *addCxReference(Symbol *symbol, Position *position, Usage usage, int v
         } else {
             if (visibility==GlobalVisibility && symbol->type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
-                if (olOriginalFileNumber != position->file && options.noIncludeRefs)
+                if (olOriginalFileNumber != position.file && options.noIncludeRefs)
                     return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
@@ -257,7 +257,7 @@ Reference *addCxReference(Symbol *symbol, Position *position, Usage usage, int v
     ReferenceItem *foundMember;
 
     if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH && options.searchKind==SEARCH_FULL) {
-        Reference reference = makeReference(*position, UsageNone, NULL);
+        Reference reference = makeReference(position, UsageNone, NULL);
         searchSymbolCheckReference(&referenceItem, &reference);
         return NULL;
     }
@@ -274,15 +274,15 @@ Reference *addCxReference(Symbol *symbol, Position *position, Usage usage, int v
         foundMember = r;
     }
 
-    place = addToReferenceList(&foundMember->references, *position, usage);
+    place = addToReferenceList(&foundMember->references, position, usage);
     log_trace("checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s",
               getFileItem(cxRefPosition.file)->name, cxRefPosition.file, cxRefPosition.line, cxRefPosition.col,
-              fileItem->name, position->file, position->line, position->col,
-              memcmp(&cxRefPosition, position, sizeof(Position)), positionsAreEqual(cxRefPosition, *position),
+              fileItem->name, position.file, position.line, position.col,
+              memcmp(&cxRefPosition, &position, sizeof(Position)), positionsAreEqual(cxRefPosition, position),
               usage, symbol->linkName);
 
     if (options.mode == ServerMode
-        && positionsAreEqual(cxRefPosition, *position)
+        && positionsAreEqual(cxRefPosition, position)
         && usage<UsageMaxOnLineVisibleUsages
     ) {
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!
@@ -297,7 +297,7 @@ Reference *addCxReference(Symbol *symbol, Position *position, Usage usage, int v
             olstringServed = true;       /* olstring will be served */
             olstringUsage = usage;
             assert(sessionData.browserStack.top);
-            olSetCallerPosition(position);
+            olSetCallerPosition(&position);
             defaultPosition = &noPosition;
             defaultUsage = UsageNone;
             if (symbol->type==TypeMacro && ! options.exactPositionResolve) {
@@ -313,7 +313,7 @@ Reference *addCxReference(Symbol *symbol, Position *position, Usage usage, int v
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
                 if (isDefinitionUsage(usage)) {
-                    menu->defpos = *position;
+                    menu->defpos = position;
                     menu->defUsage = usage;
                 }
                 if (options.serverOperation == OLO_GET_AVAILABLE_REFACTORINGS) {
@@ -341,7 +341,7 @@ void addTrivialCxReference(char *name, int symType, int storage, Position positi
     Symbol symbol = makeSymbol(name, name, position);
     symbol.type = symType;
     symbol.storage = storage;
-    addCxReference(&symbol, &position, usage, NO_FILE_NUMBER);
+    addCxReference(&symbol, position, usage, NO_FILE_NUMBER);
 }
 
 
