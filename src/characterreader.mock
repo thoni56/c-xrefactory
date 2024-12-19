@@ -24,7 +24,7 @@ void fillCharacterBuffer(CharacterBuffer *characterBuffer,
     characterBuffer->isAtEOF = false;
 }
 
-void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file) {
+void initCharacterBufferFromFile(CharacterBuffer *characterBuffer, FILE *file) {
     fillCharacterBuffer(characterBuffer, characterBuffer->chars, characterBuffer->chars,
                         file, 0, -1, characterBuffer->chars);
 }

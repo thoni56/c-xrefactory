@@ -1071,7 +1071,7 @@ static void scanCxFile(ScanFileFunctionStep scanFunctionTable[]) {
     }
 
 
-    initCharacterBuffer(&cxFileCharacterBuffer, currentReferenceFile);
+    initCharacterBufferFromFile(&cxFileCharacterBuffer, currentReferenceFile);
     ch = ' ';
     while (!cxFileCharacterBuffer.isAtEOF) {
         scannedInt = scanInteger(&cxFileCharacterBuffer, &ch);

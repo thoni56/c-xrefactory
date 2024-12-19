@@ -19,7 +19,7 @@ typedef struct {
     bool        isAtEOF;
 } CharacterBuffer;
 
-extern void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file);
+extern void initCharacterBufferFromFile(CharacterBuffer *characterBuffer, FILE *file);
 extern void initCharacterBufferFromString(CharacterBuffer *characterbuffer, char *string);
 extern void fillCharacterBuffer(CharacterBuffer *characterBuffer,
                                 char *nextUnread,

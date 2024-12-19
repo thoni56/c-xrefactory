@@ -30,7 +30,7 @@ BeforeEach(Lexer) {
 AfterEach(Lexer) {}
 
 Ensure(Lexer, will_signal_false_for_empty_lexbuffer) {
-    initCharacterBuffer(&characterBuffer, NULL);
+    initCharacterBufferFromFile(&characterBuffer, NULL);
 
     assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_false);
 }

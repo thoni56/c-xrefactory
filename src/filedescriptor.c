@@ -16,7 +16,7 @@ void fillFileDescriptor(FileDescriptor *fileDescriptor, char *fileName, char *bu
     fileDescriptor->ifDepth = 0;
     fileDescriptor->ifStack = NULL;
     initLexemBuffer(&fileDescriptor->lexemBuffer);
-    initCharacterBuffer(&fileDescriptor->characterBuffer, file);
+    initCharacterBufferFromFile(&fileDescriptor->characterBuffer, file);
     fillCharacterBuffer(&fileDescriptor->characterBuffer, bufferStart, bufferStart + bufferSize, file,
                         offset, NO_FILE_NUMBER, bufferStart);
 }
