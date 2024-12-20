@@ -624,18 +624,17 @@ static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *o
 }
 
 static EditorMarker *createNewMarkerForExpressionStart(EditorMarker *marker, int kind) {
-    Position *pos;
+    Position position;
     parseBufferUsingServer(refactoringOptions.project, marker, NULL, "-olcxprimarystart", NULL);
     olStackDeleteSymbol(sessionData.browserStack.top);
     if (kind == GET_PRIMARY_START) {
-        pos = &primaryStartPosition;
+        position = primaryStartPosition;
     } else if (kind == GET_STATIC_PREFIX_START) {
-        pos = &staticPrefixStartPosition;
+        position = staticPrefixStartPosition;
     } else {
-        pos = NULL;
         assert(0);
     }
-    if (pos->file == NO_FILE_NUMBER) {
+    if (position.file == NO_FILE_NUMBER) {
         if (kind == GET_STATIC_PREFIX_START) {
             fatalErrorOnPosition(marker, ERR_ST,
                                  "Can't determine static prefix. Maybe non-static reference to a static object? "
@@ -645,9 +644,9 @@ static EditorMarker *createNewMarkerForExpressionStart(EditorMarker *marker, int
         }
         return NULL;
     } else {
-        EditorBuffer *buffer    = getOpenedAndLoadedEditorBuffer(getFileItem(pos->file)->name);
+        EditorBuffer *buffer    = getOpenedAndLoadedEditorBuffer(getFileItem(position.file)->name);
         EditorMarker *newMarker = newEditorMarker(buffer, 0);
-        moveEditorMarkerToLineAndColumn(newMarker, pos->line, pos->col);
+        moveEditorMarkerToLineAndColumn(newMarker, position.line, position.col);
         assert(newMarker->buffer == marker->buffer);
         assert(newMarker->offset <= marker->offset);
         return newMarker;
