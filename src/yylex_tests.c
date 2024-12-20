@@ -77,6 +77,7 @@ static void setup_lexBuffer_for_reading_identifier(void *data) {
 
 Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
 #define DEFINE "__x86_64__"
+    FILE *some_file = (FILE *)0x46246546;
     char *definition = (char *)malloc(strlen(DEFINE) + 1);
     strcpy(definition, DEFINE);
 
@@ -92,7 +93,7 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
     expect(addCxReference, when(symbol_name, is_equal_to_string(DEFINE)));
 
     /* If the define does not have a body, add the value of "1" */
-    initInput(NULL, NULL, "__x86_64__ 1", NULL);
+    initInput(some_file, NULL, "__x86_64__ 1", NULL);
     currentFile.lineNumber = 1;
     processDefineDirective(false);
 }

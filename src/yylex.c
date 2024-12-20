@@ -207,42 +207,53 @@ static void setCurrentFileInfoFor(char *fileName) {
     currentFile.fileName = name;
 }
 
+static void initInputFromEditorBuffer(EditorBuffer *editorBuffer, char *prefixString, char **bufferStartOut,
+                                      int *bufferSizeOut, int *offsetOut) {
+    int prefixLength = strlen(prefixString);
+    // Reading from buffer, prepare prefix, does it fit?
+    assert(prefixLength < editorBuffer->allocation.allocatedFreePrefixSize);
+    // Use the editor
+    // buffer and placing the prefix infront of the existing text,
+    // so we cannot copy the \0 from the end of the prefix
+    strncpy(editorBuffer->allocation.text - prefixLength, prefixString, prefixLength);
+    // Point to the start of the prefix in the reserved prefix area
+    *bufferStartOut = editorBuffer->allocation.text - prefixLength;
+    // and the size is the bufferSize + length of the prefix
+    *bufferSizeOut = editorBuffer->allocation.bufferSize + prefixLength;
+    *offsetOut     = editorBuffer->allocation.bufferSize;
+    assert(*bufferStartOut > editorBuffer->allocation.allocatedBlock);
+}
+
+static void initInputFromFile(char *prefix, char **bufferStartOut, int *bufferSizeOut,
+                              int *offsetOut) {
+    int prefixLength = strlen(prefix);
+    // Reading from file or just a prefix, does it fit?
+    assert(prefixLength < CHARACTER_BUFFER_SIZE);
+    // Ok, then just copy the prefix into the character buffer,
+    // file reading will commence later
+    strcpy(currentFile.characterBuffer.chars, prefix);
+    *bufferStartOut   = currentFile.characterBuffer.chars;
+    *bufferSizeOut    = prefixLength;
+    *offsetOut        = 0;
+}
+
 /* ***************************************************************** */
 /*                             Init Reading                          */
 /* ***************************************************************** */
 
 /* Init input from file, editor buffer and/or prefix */
-void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileName) {
-    int     prefixLength, bufferSize, offset;
-    char	*bufferStart;
+void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefixString, char *fileName) {
+    char   *bufferStart;
+    int     bufferSize, offset;
 
     /* This can be called from various context where one or both are
      * NULL, and we don't know which... */
-    prefixLength = strlen(prefix);
     if (editorBuffer != NULL) {
         assert(file == NULL);
-        // Reading from buffer, prepare prefix, does it fit?
-        assert(prefixLength < editorBuffer->allocation.allocatedFreePrefixSize);
-        // Use the editor
-        // buffer and placing the prefix infront of the existing text,
-        // so we cannot copy the \0 from the end of the prefix
-        strncpy(editorBuffer->allocation.text-prefixLength, prefix, prefixLength);
-        // Point to the start of the prefix in the reserved prefix area
-        bufferStart = editorBuffer->allocation.text-prefixLength;
-        // and the size is the bufferSize + length of the prefix
-        bufferSize = editorBuffer->allocation.bufferSize+prefixLength;
-        offset = editorBuffer->allocation.bufferSize;
-        assert(bufferStart > editorBuffer->allocation.allocatedBlock);
+        initInputFromEditorBuffer(editorBuffer, prefixString, &bufferStart, &bufferSize, &offset);
     } else {
         assert(editorBuffer == NULL);
-        // Reading from file or just a prefix, does it fit?
-        assert(prefixLength < CHARACTER_BUFFER_SIZE);
-        // Ok, then just copy the prefix into the character buffer,
-        // file reading will commence later
-        strcpy(currentFile.characterBuffer.chars, prefix);
-        bufferStart = currentFile.characterBuffer.chars;
-        bufferSize = prefixLength;
-        offset = 0;
+        initInputFromFile(prefixString, &bufferStart, &bufferSize, &offset);
     }
 
     fillFileDescriptor(&currentFile, fileName, bufferStart, bufferSize, file, offset);
