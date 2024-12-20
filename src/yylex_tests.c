@@ -9,7 +9,6 @@
 void processDefineDirective(bool hasArguments);
 void processLineDirective(void);
 void processIncludeDirective(Position includePosition, bool include_next);
-void processIncludeNextDirective(Position *includePosition);
 
 #include "filedescriptor.h"
 #include "filetable.h"

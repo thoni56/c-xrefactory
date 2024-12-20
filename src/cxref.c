@@ -581,7 +581,8 @@ static void olcxOrderRefsAndGotoDefinition(void) {
     orderRefsAndGotoDefinition(refs);
 }
 
-static int getCharacterAndUpdatePosition(CharacterBuffer *characterBuffer, int currentCharacter, Position *positionP) {
+static int getCharacterAndUpdatePosition(CharacterBuffer *characterBuffer, int currentCharacter,
+                                         Position *positionP) {
     if (currentCharacter == '\n') {
         positionP->line++;
         positionP->col=0;

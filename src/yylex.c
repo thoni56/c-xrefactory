@@ -691,12 +691,12 @@ static MacroBody *newMacroBody(int macroSize, int argCount, char *name, char *bo
 }
 
 
-static LexemCode getNonBlankLexemAndData(Position *position, int *lineNumber, int *value, int *length) {
+static LexemCode getNonBlankLexemAndData(Position *positionP, int *lineNumber, int *value, int *length) {
     LexemCode lexem;
 
     lexem = getLexem();
     while (lexem == LINE_TOKEN) {
-        getExtraLexemInformationFor(lexem, &currentInput.read, lineNumber, value, position, length, true);
+        getExtraLexemInformationFor(lexem, &currentInput.read, lineNumber, value, positionP, length, true);
         lexem = getLexem();
     }
     return lexem;
@@ -1002,20 +1002,20 @@ enum deleteUntilReturn {
     UNTIL_ELSE,
 };
 
-static void genCppIfElseReference(int level, Position *pos, int usage) {
+static void genCppIfElseReference(int level, Position position, int usage) {
     char                ttt[TMP_STRING_SIZE];
     Position			dp;
     CppIfStack       *ss;
     if (level > 0) {
         ss = ppmAlloc(sizeof(CppIfStack));
-        ss->position = *pos;
+        ss->position = position;
         ss->next = currentFile.ifStack;
         currentFile.ifStack = ss;
     }
     if (currentFile.ifStack!=NULL) {
         dp = currentFile.ifStack->position;
         sprintf(ttt,"CppIf%x-%x-%d", dp.file, dp.col, dp.line);
-        addTrivialCxReference(ttt, TypeCppIfElse, StorageDefault, *pos, usage);
+        addTrivialCxReference(ttt, TypeCppIfElse, StorageDefault, position, usage);
         if (level < 0) currentFile.ifStack = currentFile.ifStack->next;
     }
 }
@@ -1032,19 +1032,19 @@ static int cppDeleteUntilEndElse(bool untilEnd) {
 
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
         if (lexem==CPP_IF || lexem==CPP_IFDEF || lexem==CPP_IFNDEF) {
-            genCppIfElseReference(1, &position, UsageDefined);
+            genCppIfElseReference(1, position, UsageDefined);
             depth++;
         } else if (lexem == CPP_ENDIF) {
             depth--;
-            genCppIfElseReference(-1, &position, UsageUsed);
+            genCppIfElseReference(-1, position, UsageUsed);
         } else if (lexem == CPP_ELIF) {
-            genCppIfElseReference(0, &position, UsageUsed);
+            genCppIfElseReference(0, position, UsageUsed);
             if (depth == 1 && !untilEnd) {
                 log_debug("#elif ");
                 return UNTIL_ELIF;
             }
         } else if (lexem == CPP_ELSE) {
-            genCppIfElseReference(0, &position, UsageUsed);
+            genCppIfElseReference(0, position, UsageUsed);
             if (depth == 1 && !untilEnd) {
                 log_debug("#else");
                 return UNTIL_ELSE;
@@ -1273,21 +1273,21 @@ static bool processPreprocessorConstruct(LexemCode lexem) {
         processUndefineDirective();
         break;
     case CPP_IFDEF:
-        genCppIfElseReference(1, &position, UsageDefined);
+        genCppIfElseReference(1, position, UsageDefined);
         processIfdefDirective(true);
         break;
     case CPP_IFNDEF:
-        genCppIfElseReference(1, &position, UsageDefined);
+        genCppIfElseReference(1, position, UsageDefined);
         processIfdefDirective(false);
         break;
     case CPP_IF:
-        genCppIfElseReference(1, &position, UsageDefined);
+        genCppIfElseReference(1, position, UsageDefined);
         processIfDirective();
         break;
     case CPP_ELIF:
         log_debug("#elif");
         if (currentFile.ifDepth) {
-            genCppIfElseReference(0, &position, UsageUsed);
+            genCppIfElseReference(0, position, UsageUsed);
             currentFile.ifDepth --;
             cppDeleteUntilEndElse(true);
         } else if (options.mode!=ServerMode) {
@@ -1297,7 +1297,7 @@ static bool processPreprocessorConstruct(LexemCode lexem) {
     case CPP_ELSE:
         log_debug("#else");
         if (currentFile.ifDepth) {
-            genCppIfElseReference(0, &position, UsageUsed);
+            genCppIfElseReference(0, position, UsageUsed);
             currentFile.ifDepth --;
             cppDeleteUntilEndElse(true);
         } else if (options.mode!=ServerMode) {
@@ -1308,7 +1308,7 @@ static bool processPreprocessorConstruct(LexemCode lexem) {
         log_debug("#endif");
         if (currentFile.ifDepth) {
             currentFile.ifDepth --;
-            genCppIfElseReference(-1, &position, UsageUsed);
+            genCppIfElseReference(-1, position, UsageUsed);
         } else if (options.mode!=ServerMode) {
             warningMessage(ERR_ST,"unmatched #endif");
         }
@@ -1452,13 +1452,13 @@ endOfFile:
     assert(0);
 }
 
-static void cxAddCollateReference(char *sym, char *cs, Position *position) {
+static void cxAddCollateReference(char *sym, char *cs, Position position) {
     char tempString[TMP_STRING_SIZE];
     strcpy(tempString,sym);
     assert(cs>=sym && cs-sym<TMP_STRING_SIZE);
     sprintf(tempString+(cs-sym), "%c%c%s", LINK_NAME_COLLATE_SYMBOL,
             LINK_NAME_COLLATE_SYMBOL, cs);
-    addTrivialCxReference(tempString, TypeCppCollate,StorageDefault, *position, UsageDefined);
+    addTrivialCxReference(tempString, TypeCppCollate,StorageDefault, position, UsageDefined);
 }
 
 
@@ -1531,12 +1531,12 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
                 // the following is a hack as # is part of ## symbols
                 position.col--;
                 assert(position.col >= 0);
-                cxAddCollateReference(lastBufferP + LEXEMCODE_SIZE, currentBufferP, &position);
+                cxAddCollateReference(lastBufferP + LEXEMCODE_SIZE, currentBufferP, position);
                 position.col++;
             } else /* isConstantLexem() */ {
                 position = peekLexemPositionAt(currentBufferP + 1); /* new identifier position */
                 sprintf(currentBufferP, "%d", value);
-                cxAddCollateReference(lastBufferP + LEXEMCODE_SIZE, currentBufferP, &position);
+                cxAddCollateReference(lastBufferP + LEXEMCODE_SIZE, currentBufferP, position);
             }
             currentBufferP += strlen(currentBufferP);
             assert(*currentBufferP == 0);
@@ -1713,7 +1713,7 @@ static LexemCode getLexSkippingLines(char **saveLexemP, int *lineNumberP,
 static void getActualMacroArgument(
     char *previousLexemP,
     LexemCode *inOutLexem,
-    Position *macroPosition,
+    Position macroPosition,
     Position **beginPosition,
     Position **endPosition,
     LexInput *actualArgumentsInput,
@@ -1763,7 +1763,7 @@ static void getActualMacroArgument(
                                     *endPosition, NULL, macroStackIndex == 0);
         if ((lexem == ',' || lexem == ')') && depth == 0) {
             offset++;
-            handleMacroUsageParameterPositions(actualArgumentIndex + offset, *macroPosition,
+            handleMacroUsageParameterPositions(actualArgumentIndex + offset, macroPosition,
                                                **beginPosition,
                                                **endPosition, 0);
             **beginPosition = **endPosition;
@@ -1786,7 +1786,7 @@ end:
     return;
 }
 
-static LexInput *getActualMacroArguments(MacroBody *macroBody, Position *macroPosition,
+static LexInput *getActualMacroArguments(MacroBody *macroBody, Position macroPosition,
                                          Position lparPosition) {
     char *previousLexem;
     LexemCode lexem;
@@ -1806,7 +1806,7 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position *macroPo
                                 macroStackIndex == 0);
     if (lexem == ')') {
         *endPosition = position;
-        handleMacroUsageParameterPositions(0, *macroPosition, *beginPosition, *endPosition, true);
+        handleMacroUsageParameterPositions(0, macroPosition, *beginPosition, *endPosition, true);
     } else {
         for(;;) {
             getActualMacroArgument(previousLexem, &lexem, macroPosition, &beginPosition, &endPosition,
@@ -1890,7 +1890,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
         }
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &lparPosition, NULL,
                                     macroStackIndex == 0);
-        actualArgumentsInput = getActualMacroArguments(macroBody, &macroPosition, lparPosition);
+        actualArgumentsInput = getActualMacroArguments(macroBody, macroPosition, lparPosition);
     } else {
         actualArgumentsInput = NULL;
     }
