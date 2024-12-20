@@ -1790,20 +1790,20 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position macroPos
                                          Position lparPosition) {
     char *previousLexem;
     LexemCode lexem;
-    Position position, ppb1, ppb2, *beginPosition, *endPosition;
-    int argumentIndex = 0;
-    LexInput *actualArgs;
 
-    ppb1 = lparPosition;
-    ppb2 = lparPosition;
-    beginPosition = &ppb1;
-    endPosition = &ppb2;
-    actualArgs = ppmAllocc(macroBody->argCount, sizeof(LexInput));
+    Position ppb1 = lparPosition;
+    Position ppb2 = lparPosition;
+    Position *beginPosition = &ppb1;
+    Position *endPosition = &ppb2;
+    Position position;
+
+    LexInput *actualArgs = ppmAllocc(macroBody->argCount, sizeof(LexInput));
     lexem = getLexSkippingLines(&previousLexem, NULL, NULL, &position, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                 macroStackIndex == 0);
+    int argumentIndex = 0;
     if (lexem == ')') {
         *endPosition = position;
         handleMacroUsageParameterPositions(0, macroPosition, *beginPosition, *endPosition, true);
