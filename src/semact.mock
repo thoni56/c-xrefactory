@@ -167,9 +167,10 @@ Symbol *createEmptyField(void) {
     return (Symbol *) mock();
 }
 
-void handleDeclaratorParamPositions(Symbol *decl, Position leftParenthesis, PositionList *commas, Position *rpar,
-                                    bool hasParam, bool isVoid) {
+void handleDeclaratorParamPositions(Symbol *decl, Position leftParenthesis, PositionList *commas,
+                                    Position rightParenthesis, bool hasParam, bool isVoid) {
     Position *lpar = &leftParenthesis;
+    Position *rpar = &rightParenthesis;
     mock(decl, lpar, commas, rpar, hasParam, isVoid);
 }
 

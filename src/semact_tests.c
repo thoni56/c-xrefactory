@@ -50,7 +50,7 @@ Ensure(Semact, can_capture_positions_for_empty_parameter_list) {
     cxRefPosition = symbol.pos;
 
     /* No position list (commas) for no parameters */
-    handleDeclaratorParamPositions(&symbol, lpar, NULL, &rpar, false, false);
+    handleDeclaratorParamPositions(&symbol, lpar, NULL, rpar, false, false);
 
     assert_that(positionsAreEqual(parameterBeginPosition, lpar));
     assert_that(positionsAreEqual(parameterEndPosition, lpar));
@@ -69,7 +69,7 @@ Ensure(Semact, can_capture_positions_for_one_parameter) {
     options.olcxGotoVal = 1;
     cxRefPosition = symbol.pos;
 
-    handleDeclaratorParamPositions(&symbol, lpar, NULL, &rpar, true, false);
+    handleDeclaratorParamPositions(&symbol, lpar, NULL, rpar, true, false);
 
     assert_that(positionsAreEqual(parameterBeginPosition, lpar));
     assert_that(positionsAreEqual(parameterEndPosition, rpar));
@@ -90,7 +90,7 @@ Ensure(Semact, can_capture_positions_for_two_parameters) {
     options.olcxGotoVal = 1;
     cxRefPosition = symbol.pos;
 
-    handleDeclaratorParamPositions(&symbol, lpar, &commas, &rpar, true, false);
+    handleDeclaratorParamPositions(&symbol, lpar, &commas, rpar, true, false);
 
     assert_that(positionsAreEqual(parameterBeginPosition, lpar));
     assert_that(positionsAreEqual(parameterEndPosition, comma));
@@ -109,7 +109,7 @@ Ensure(Semact, can_capture_positions_for_void_parameter_list) {
     options.olcxGotoVal = 1;
     cxRefPosition = symbol.pos;
 
-    handleDeclaratorParamPositions(&symbol, lpar, NULL, &rpar, true, true);
+    handleDeclaratorParamPositions(&symbol, lpar, NULL, rpar, true, true);
 
     assert_that(positionsAreEqual(parameterBeginPosition, lpar));
     assert_that(positionsAreEqual(parameterEndPosition, rpar));

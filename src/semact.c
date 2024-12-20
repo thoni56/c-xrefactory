@@ -911,7 +911,7 @@ Symbol *createEmptyField(void) {
 }
 
 void handleDeclaratorParamPositions(Symbol *decl, Position lpar,
-                                    PositionList *commas, Position *rpar,
+                                    PositionList *commas, Position rpar,
                                     bool hasParam, bool isVoid
                                     ) {
     if (options.mode != ServerMode)
@@ -920,7 +920,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position lpar,
         return;
     if (positionsAreNotEqual(decl->pos, cxRefPosition))
         return;
-    handleParameterPositions(lpar, commas, *rpar, hasParam, isVoid);
+    handleParameterPositions(lpar, commas, rpar, hasParam, isVoid);
 }
 
 void handleInvocationParamPositions(Reference *ref, Position *lpar,

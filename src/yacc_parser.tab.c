@@ -3812,7 +3812,7 @@ case 339:
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
         modifier = addComposedTypeToSymbol(yyval.ast_symbol.data, TypeFunction);
         initFunctionTypeModifier(&modifier->u.f , NULL);
-        handleDeclaratorParamPositions(yyvsp[-2].ast_symbol.data, yyvsp[-1].ast_position.data, NULL, &yyvsp[0].ast_position.data, false, false);
+        handleDeclaratorParamPositions(yyvsp[-2].ast_symbol.data, yyvsp[-1].ast_position.data, NULL, yyvsp[0].ast_position.data, false, false);
     }
 break;
 case 340:
@@ -3824,7 +3824,7 @@ case 340:
         modifier = addComposedTypeToSymbol(yyval.ast_symbol.data, TypeFunction);
         initFunctionTypeModifier(&modifier->u.f , yyvsp[-1].ast_symbolPositionListPair.data.symbol);
         bool isVoid = yyvsp[-1].ast_symbolPositionListPair.data.symbol->u.typeModifier->type == TypeVoid;
-        handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.data, yyvsp[-2].ast_position.data, yyvsp[-1].ast_symbolPositionListPair.data.positionList, &yyvsp[0].ast_position.data, true, isVoid);
+        handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.data, yyvsp[-2].ast_position.data, yyvsp[-1].ast_symbolPositionListPair.data.positionList, yyvsp[0].ast_position.data, true, isVoid);
     }
 break;
 case 341:
@@ -3835,7 +3835,7 @@ case 341:
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
         modifier = addComposedTypeToSymbol(yyval.ast_symbol.data, TypeFunction);
         initFunctionTypeModifier(&modifier->u.f , yyvsp[-1].ast_symbolPositionListPair.data.symbol);
-        handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.data, yyvsp[-2].ast_position.data, yyvsp[-1].ast_symbolPositionListPair.data.positionList, &yyvsp[0].ast_position.data, true, false);
+        handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.data, yyvsp[-2].ast_position.data, yyvsp[-1].ast_symbolPositionListPair.data.positionList, yyvsp[0].ast_position.data, true, false);
     }
 break;
 case 342:
