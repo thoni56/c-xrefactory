@@ -581,13 +581,13 @@ static void olcxOrderRefsAndGotoDefinition(void) {
     orderRefsAndGotoDefinition(refs);
 }
 
-static void getFileChar(int *chP, Position *positionP, CharacterBuffer *characterBuffer) {
-    if (*chP=='\n') {
+static int getCharacterAndUpdatePosition(int currentCharacter, Position *positionP, CharacterBuffer *characterBuffer) {
+    if (currentCharacter == '\n') {
         positionP->line++;
         positionP->col=0;
     } else
         positionP->col++;
-    *chP = getChar(characterBuffer);
+    return getChar(characterBuffer);
 }
 
 
@@ -653,7 +653,7 @@ static void linePosProcess(FILE *outFile,
         if (! cxfBuf->isAtEOF) {
             while (ch!='\n' && (! cxfBuf->isAtEOF)) {
                 passSourcePutChar(ch,outFile);
-                getFileChar(&ch, &position, cxfBuf);
+                ch = getCharacterAndUpdatePosition(ch, &position, cxfBuf);
             }
         }
     }
@@ -680,19 +680,14 @@ static Reference *passNonPrintableRefsForFile(Reference *references,
 
 static void passRefsThroughSourceFile(Reference **inOutReferences,
                                       FILE *outputFile, int usages, int usageFilter) {
-    Reference *references;
-    int ch, fileNumber;
     EditorBuffer *ebuf;
-    char *cofileName;
-    Position position;
-    CharacterBuffer cxfBuf;
 
-    references = *inOutReferences;
+    Reference *references = *inOutReferences;
     if (references==NULL)
         goto fin;
-    fileNumber = references->position.file;
+    int fileNumber = references->position.file;
 
-    cofileName = getFileItem(fileNumber)->name;
+    char *cofileName = getFileItem(fileNumber)->name;
     references = passNonPrintableRefsForFile(references, fileNumber, usages, usageFilter);
     if (references==NULL || references->position.file != fileNumber)
         goto fin;
@@ -710,27 +705,30 @@ static void passRefsThroughSourceFile(Reference **inOutReferences,
             }
         }
     }
-    ch = ' ';
+
+    CharacterBuffer cxfBuf;
+    int ch = ' ';
+    Position position = makePosition(references->position.file, 1, 0);
+
     if (ebuf==NULL) {
         cxfBuf.isAtEOF = true;
     } else {
-        fillCharacterBuffer(&cxfBuf, ebuf->allocation.text, ebuf->allocation.text+ebuf->allocation.bufferSize, NULL, ebuf->allocation.bufferSize, NO_FILE_NUMBER, ebuf->allocation.text);
-        getFileChar(&ch, &position, &cxfBuf);
+        fillCharacterBuffer(&cxfBuf, ebuf->allocation.text, ebuf->allocation.text+ebuf->allocation.bufferSize,
+                            NULL, ebuf->allocation.bufferSize, NO_FILE_NUMBER, ebuf->allocation.text);
+        ch = getChar(&cxfBuf);
     }
-    position = makePosition(references->position.file, 1, 0);
-    Reference *oldrr=NULL;
+    Reference *previousReferences=NULL;
     while (references!=NULL && references->position.file==position.file && references->position.line>=position.line) {
-        assert(oldrr!=references);
-        oldrr=references;    // because it is a dangerous loop
-        while ((! cxfBuf.isAtEOF) && position.line<references->position.line) {
+        assert(previousReferences!=references);
+        previousReferences=references;    // because it is a dangerous loop
+        while (!cxfBuf.isAtEOF && position.line<references->position.line) {
             while (ch!='\n' && ch!=EOF)
                 ch = getChar(&cxfBuf);
-            getFileChar(&ch, &position, &cxfBuf);
+            ch = getCharacterAndUpdatePosition(ch, &position, &cxfBuf);
         }
-        linePosProcess(outputFile, usages, usageFilter, cofileName,
-                       &references, position, &ch, &cxfBuf);
+        linePosProcess(outputFile, usages, usageFilter, cofileName, &references, position, &ch, &cxfBuf);
     }
-    //&if (cofile != NULL) closeFile(cofile);
+
  fin:
     *inOutReferences = references;
 }
