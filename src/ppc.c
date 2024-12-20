@@ -24,14 +24,13 @@ static void ppcGenMarker(EditorMarker *m) {
     ppcGenOffsetPosition(m->buffer->name, m->offset);
 }
 
-static void ppcGenPosition(Position *p) {
+static void ppcGenPosition(Position position) {
     char *fn;
-    assert(p!=NULL);
-    fn = getFileItem(p->file)->name;
+    fn = getFileItem(position.file)->name;
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%d %s=%d %s=%ld>%s</%s>\n",
             PPC_LC_POSITION,
-            PPCA_LINE, p->line, PPCA_COL, p->col,
+            PPCA_LINE, position.line, PPCA_COL, position.col,
             PPCA_LEN, (unsigned long)strlen(fn), fn,
             PPC_LC_POSITION);
 }
@@ -46,9 +45,9 @@ void ppcIndent(void) {
         fputc(' ', communicationChannel);
 }
 
-void ppcGotoPosition(Position *p) {
+void ppcGotoPosition(Position position) {
     ppcBegin(PPC_GOTO);
-    ppcGenPosition(p);
+    ppcGenPosition(position);
     ppcEnd(PPC_GOTO);
 }
 
@@ -154,7 +153,7 @@ void ppcPreCheck(EditorMarker *pos, int oldLen) {
 }
 
 void ppcReferencePreCheck(Reference *r, char *text) {
-    ppcGotoPosition(&r->position);
+    ppcGotoPosition(r->position);
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%ld>", PPC_REFACTORING_PRECHECK, PPCA_LEN,
             (unsigned long)strlen(text));

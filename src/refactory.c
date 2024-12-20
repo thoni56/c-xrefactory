@@ -783,7 +783,7 @@ static EditorMarkerList *pushGetAndPreCheckReferences(EditorMarker *point, char 
 
 static void multipleReferencesInSamePlaceMessage(Reference *r) {
     char tmpBuff[TMP_BUFF_SIZE];
-    ppcGotoPosition(&r->position);
+    ppcGotoPosition(r->position);
     sprintf(tmpBuff, "The reference at this place refers to multiple symbols. The refactoring will probably "
                      "damage your program. Do you really want to continue?");
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);

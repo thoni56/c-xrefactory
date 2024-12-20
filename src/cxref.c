@@ -464,7 +464,7 @@ static void olcxAddReferencesToSymbolsMenu(SymbolsMenu *menu, Reference *referen
 void gotoOnlineCxref(Position position, Usage usage, char *suffix)
 {
     assert(options.xref2);
-    ppcGotoPosition(&position);
+    ppcGotoPosition(position);
 }
 
 static bool sessionHasReferencesValidForOperation(SessionData *session, OlcxReferences **refs,
@@ -1227,7 +1227,7 @@ static void olcxMenuSelectOnly(void) {
     if (definition != NULL) {
         refs->actual = definition;
         olcxPrintRefList(";", refs);
-        ppcGotoPosition(&refs->actual->position);
+        ppcGotoPosition(refs->actual->position);
     } else
         ppcBottomWarning("Definition not found");
 }
@@ -1567,7 +1567,7 @@ static void olCompletionSelect(void) {
         return;
     }
     assert(sessionData.completionsStack.root!=NULL);
-    ppcGotoPosition(&sessionData.completionsStack.root->callerPosition);
+    ppcGotoPosition(sessionData.completionsStack.root->callerPosition);
     ppcGenRecord(PPC_SINGLE_COMPLETION, rr->name);
 }
 
@@ -1584,7 +1584,7 @@ static void olcxReferenceSelectTagSearchItem(int refn) {
         return;
     }
     assert(sessionData.retrieverStack.root!=NULL);
-    ppcGotoPosition(&sessionData.retrieverStack.root->callerPosition);
+    ppcGotoPosition(sessionData.retrieverStack.root->callerPosition);
     sprintf(ttt, " %s", rr->name);
     ppcGenRecord(PPC_SINGLE_COMPLETION, ttt);
 }
@@ -1595,7 +1595,7 @@ static void olCompletionBack(void) {
     top = sessionData.completionsStack.top;
     if (top != NULL && top->previous != NULL) {
         sessionData.completionsStack.top = sessionData.completionsStack.top->previous;
-        ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
+        ppcGotoPosition(sessionData.completionsStack.top->callerPosition);
         printCompletionsList(false);
     }
 }
@@ -1606,7 +1606,7 @@ static void olCompletionForward(void) {
     top = getNextTopStackItem(&sessionData.completionsStack);
     if (top != NULL) {
         sessionData.completionsStack.top = top;
-        ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
+        ppcGotoPosition(sessionData.completionsStack.top->callerPosition);
         printCompletionsList(false);
     }
 }
@@ -2019,7 +2019,7 @@ void answerEditAction(void) {
         if (sessionData.retrieverStack.top!=NULL &&
             sessionData.retrieverStack.top->previous!=NULL) {
             sessionData.retrieverStack.top = sessionData.retrieverStack.top->previous;
-            ppcGotoPosition(&sessionData.retrieverStack.top->callerPosition);
+            ppcGotoPosition(sessionData.retrieverStack.top->callerPosition);
             printTagSearchResults();
         }
         break;
@@ -2027,7 +2027,7 @@ void answerEditAction(void) {
         nextrr = getNextTopStackItem(&sessionData.retrieverStack);
         if (nextrr != NULL) {
             sessionData.retrieverStack.top = nextrr;
-            ppcGotoPosition(&sessionData.retrieverStack.top->callerPosition);
+            ppcGotoPosition(sessionData.retrieverStack.top->callerPosition);
             printTagSearchResults();
         }
         break;

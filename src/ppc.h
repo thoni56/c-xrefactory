@@ -8,7 +8,7 @@
 
 extern void ppcSynchronize(void);
 extern void ppcIndent(void);
-extern void ppcGotoPosition(Position *p);
+extern void ppcGotoPosition(Position position);
 extern void ppcGotoOffsetPosition(char *fname, int offset);
 extern void ppcDisplaySelection(char *message, int messageType);
 extern void ppcGotoMarker(EditorMarker *pos);

@@ -212,12 +212,12 @@ void printCompletions(Completions *completions) {
         goto finishWithoutMenu;
     }
     if (!completions->fullMatchFlag && completions->alternativeCount==1) {
-        ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
+        ppcGotoPosition(sessionData.completionsStack.top->callerPosition);
         ppcGenRecord(PPC_SINGLE_COMPLETION, completions->alternatives[0].string);
         goto finishWithoutMenu;
     }
     if (!completions->fullMatchFlag && strlen(completions->prefix) > completions->idToProcessLength) {
-        ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
+        ppcGotoPosition(sessionData.completionsStack.top->callerPosition);
         ppcGenRecord(PPC_SINGLE_COMPLETION, completions->prefix);
         ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions");
         goto finishWithoutMenu;
