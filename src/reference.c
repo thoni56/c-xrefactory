@@ -119,3 +119,7 @@ ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage s
     fillReferenceItem(&item, name, vApplClass, type, storage, scope, visibility);
     return item;
 }
+
+int fileNumberOfReference(Reference reference) {
+    return reference.position.file;
+}

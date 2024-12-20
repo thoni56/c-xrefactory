@@ -1,6 +1,7 @@
 #include "cxref.h"
 
 #include "caching.h"
+#include "reference.h"
 #include "visibility.h"
 #include "characterreader.h"
 #include "commons.h"
@@ -2388,7 +2389,7 @@ void printTagSearchResults(void) {
     // the first loop is counting the length of fields
     assert(sessionData.retrieverStack.top);
     for (Completion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
-        ls = createTagSearchLine_static(cc->name, cc->ref.position.file,
+        ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->ref),
                                    &len1, &len2, &len3);
     }
     if (options.olineLen >= 50000) {
@@ -2407,7 +2408,7 @@ void printTagSearchResults(void) {
         ppcBegin(PPC_SYMBOL_LIST);
     assert(sessionData.retrieverStack.top);
     for (Completion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
-        ls = createTagSearchLine_static(cc->name, cc->ref.position.file,
+        ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->ref),
                                    &len1, &len2, &len3);
         if (options.xref2) {
             ppcGenRecord(PPC_STRING_VALUE, ls);

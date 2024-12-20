@@ -59,3 +59,8 @@ bool isReferenceInList(Reference *r, Reference *list) {
 Reference *addReferenceToList(Reference **rlist, Reference *ref) {
     return (Reference *) mock(rlist, ref);
 }
+
+int fileNumberOfReference(Reference ref) {
+    Reference *reference = &ref;
+    return mock(reference);
+}

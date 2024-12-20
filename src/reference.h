@@ -43,6 +43,8 @@ extern Reference **addToReferenceList(Reference **list, Position pos, Usage usag
 extern bool isReferenceInList(Reference *r, Reference *list);
 extern Reference *addReferenceToList(Reference **rlist,
                                    Reference *ref);
-extern ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,
-                                       Visibility visibility);
+extern ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage,
+                                       Scope scope, Visibility visibility);
+extern int fileNumberOfReference(Reference reference);
+
 #endif
