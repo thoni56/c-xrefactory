@@ -54,10 +54,6 @@ void collectYaccLexemCompletions(Completions *c) {
   mock(c);
 }
 
-void olCompletionListInit(Position *originalPos) {
-  mock(originalPos);
-}
-
 void printCompletionsList(bool noFocus) {
   mock(noFocus);
 }

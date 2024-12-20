@@ -147,10 +147,10 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
     }
 }
 
-void olCompletionListInit(Position *originalPos) {
+static void olCompletionListInit(Position originalPos) {
     olcxFreeOldCompletionItems(&sessionData.completionsStack);
     pushEmptySession(&sessionData.completionsStack);
-    sessionData.completionsStack.top->callerPosition = *originalPos;
+    sessionData.completionsStack.top->callerPosition = originalPos;
 }
 
 
@@ -203,7 +203,7 @@ void printCompletions(Completions *completions) {
     int indent, max;
 
     // O.K. there will be a menu diplayed, clear the old one
-    olCompletionListInit(&completions->idToProcessPosition);
+    olCompletionListInit(completions->idToProcessPosition);
     if (completions->alternativeCount == 0) {
         if (options.serverOperation == OLO_SEARCH)
             ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No matches **");

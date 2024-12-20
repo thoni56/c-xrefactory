@@ -49,8 +49,9 @@ int getFileNumberFromName(char *name) {
     return (int) mock(name);
 }
 
-void gotoOnlineCxref(Position *pos, Usage usage, char *suffix) {
-    mock(pos, usage, suffix);
+void gotoOnlineCxref(Position pos, Usage usage, char *suffix) {
+    Position *position = &pos;
+    mock(position, usage, suffix);
 }
 
 Reference *addNewCxReference(Symbol *symbol, Position *pos, Usage usage_arg, int vApplClass) {

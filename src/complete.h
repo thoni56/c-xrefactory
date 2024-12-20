@@ -27,7 +27,6 @@ extern void completeMacros(Completions *c);
 extern void collectOthersCompletions(Completions *c);
 extern void collectYaccLexemCompletions(Completions *c);
 
-extern void olCompletionListInit(Position *originalPos);
 extern void printCompletionsList(bool noFocus);
 extern void printCompletions(Completions *c);
 

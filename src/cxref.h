@@ -21,7 +21,7 @@ extern void olProcessSelectedReferences(OlcxReferences *rstack,
 extern void olcxPopOnly(void);
 extern void olStackDeleteSymbol(OlcxReferences *refs);
 extern int getFileNumberFromName(char *name);
-extern void gotoOnlineCxref(Position *p, Usage usage, char *suffix);
+extern void gotoOnlineCxref(Position position, Usage usage, char *suffix);
 extern Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int vApplClass);
 extern void addTrivialCxReference (char *name, int symType, int storage,
                                    Position position, Usage usage);

@@ -460,10 +460,10 @@ static void olcxAddReferencesToSymbolsMenu(SymbolsMenu *menu, Reference *referen
     }
 }
 
-void gotoOnlineCxref(Position *pos, Usage usage, char *suffix)
+void gotoOnlineCxref(Position position, Usage usage, char *suffix)
 {
     assert(options.xref2);
-    ppcGotoPosition(pos);
+    ppcGotoPosition(&position);
 }
 
 static bool sessionHasReferencesValidForOperation(SessionData *session, OlcxReferences **refs,
@@ -490,7 +490,7 @@ static void olcxRenameInit(void) {
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
     refs->actual = refs->references;
-    gotoOnlineCxref(&refs->actual->position, refs->actual->usage, "");
+    gotoOnlineCxref(refs->actual->position, refs->actual->usage, "");
 }
 
 
@@ -565,7 +565,7 @@ static void orderRefsAndGotoDefinition(OlcxReferences *refs) {
         indicateNoReference();
     } else if (refs->references->usage <= UsageDeclared) {
         refs->actual = refs->references;
-        gotoOnlineCxref(&refs->actual->position, refs->actual->usage, "");
+        gotoOnlineCxref(refs->actual->position, refs->actual->usage, "");
     } else {
         assert(options.xref2);
         ppcWarning("Definition not found");
@@ -821,7 +821,7 @@ static void olcxReferenceList(char *commandString) {
 
 static void olcxGenGotoActReference(OlcxReferences *refs) {
     if (refs->actual != NULL) {
-        gotoOnlineCxref(&refs->actual->position, refs->actual->usage, "");
+        gotoOnlineCxref(refs->actual->position, refs->actual->usage, "");
     } else {
         indicateNoReference();
     }
@@ -935,7 +935,7 @@ static void olcxReferenceGotoCompletion(int refn) {
             if (completion->ref.usage != UsageClassFileDefinition
                 && completion->ref.usage != UsageClassTreeDefinition
                 && positionsAreNotEqual(completion->ref.position, noPosition)) {
-                gotoOnlineCxref(&completion->ref.position, UsageDefined, "");
+                gotoOnlineCxref(completion->ref.position, UsageDefined, "");
             } else {
                 indicateNoReference();
             }
@@ -957,7 +957,7 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
         if (rr->ref.usage != UsageClassFileDefinition
             && rr->ref.usage != UsageClassTreeDefinition
             && positionsAreNotEqual(rr->ref.position, noPosition)) {
-            gotoOnlineCxref(&rr->ref.position, UsageDefined, "");
+            gotoOnlineCxref(rr->ref.position, UsageDefined, "");
         } else {
             indicateNoReference();
         }
@@ -1061,7 +1061,7 @@ static void olcxReferenceGotoCaller(void) {
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
         return;
     if (refs->callerPosition.file != NO_FILE_NUMBER) {
-        gotoOnlineCxref(&refs->callerPosition, UsageUsed, "");
+        gotoOnlineCxref(refs->callerPosition, UsageUsed, "");
 
     } else {
         indicateNoReference();
@@ -1148,7 +1148,7 @@ static void olcxMenuInspectDef(SymbolsMenu *menu) {
         indicateNoReference();
     } else {
         if (ss->defpos.file>=0 && ss->defpos.file!=NO_FILE_NUMBER) {
-            gotoOnlineCxref(&ss->defpos, UsageDefined, "");
+            gotoOnlineCxref(ss->defpos, UsageDefined, "");
         } else {
             indicateNoReference();
         }
@@ -1406,7 +1406,7 @@ static void olcxReferencePop(void) {
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
     if (refs->callerPosition.file != NO_FILE_NUMBER) {
-        gotoOnlineCxref(&refs->callerPosition, UsageUsed, "");
+        gotoOnlineCxref(refs->callerPosition, UsageUsed, "");
     } else {
         indicateNoReference();
     }
@@ -2008,7 +2008,6 @@ void answerEditAction(void) {
     case OLO_TAG_SEARCH: {
         Position givenPosition;
         getCallerPositionFromCommandLineOption(&givenPosition);
-        //&olCompletionListInit(&givenPosition);
         if (!options.xref2)
             fprintf(communicationChannel,";");
         pushEmptySession(&sessionData.retrieverStack);
@@ -2146,7 +2145,7 @@ void answerEditAction(void) {
         // it is used from refactory, but that probably only executes
         // the parsers and server and not cxref...
         if (olstringServed && parameterPosition.file != NO_FILE_NUMBER) {
-            gotoOnlineCxref(&parameterPosition, UsageDefined, "");
+            gotoOnlineCxref(parameterPosition, UsageDefined, "");
             olStackDeleteSymbol(sessionData.browserStack.top);
         } else {
             char tmpBuff[TMP_BUFF_SIZE];
@@ -2156,7 +2155,7 @@ void answerEditAction(void) {
         break;
     case OLO_GET_PRIMARY_START:
         if (olstringServed && primaryStartPosition.file != NO_FILE_NUMBER) {
-            gotoOnlineCxref(&primaryStartPosition, UsageDefined, "");
+            gotoOnlineCxref(primaryStartPosition, UsageDefined, "");
             olStackDeleteSymbol(sessionData.browserStack.top);
         } else {
             errorMessage(ERR_ST, "Begin of primary expression not found.");
