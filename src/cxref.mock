@@ -74,8 +74,9 @@ void olcxAddReferences(Reference *list, Reference **dlist, int fnum, int bestMat
     mock(list, dlist, fnum, bestMatchFlag);
 }
 
-void olSetCallerPosition(Position *pos) {
-    mock(pos);
+void olSetCallerPosition(Position pos) {
+    Position *position = &pos;
+    mock(position);
 }
 
 void olCompletionListReverse(void) {

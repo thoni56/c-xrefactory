@@ -297,7 +297,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int vA
             olstringServed = true;       /* olstring will be served */
             olstringUsage = usage;
             assert(sessionData.browserStack.top);
-            olSetCallerPosition(&position);
+            olSetCallerPosition(position);
             defaultPosition = &noPosition;
             defaultUsage = UsageNone;
             if (symbol->type==TypeMacro && ! options.exactPositionResolve) {
@@ -580,12 +580,12 @@ static void olcxOrderRefsAndGotoDefinition(void) {
     orderRefsAndGotoDefinition(refs);
 }
 
-static void getFileChar(int *chP, Position *position, CharacterBuffer *characterBuffer) {
+static void getFileChar(int *chP, Position *positionP, CharacterBuffer *characterBuffer) {
     if (*chP=='\n') {
-        position->line++;
-        position->col=0;
+        positionP->line++;
+        positionP->col=0;
     } else
-        position->col++;
+        positionP->col++;
     *chP = getChar(characterBuffer);
 }
 
@@ -614,8 +614,7 @@ static void linePosProcess(FILE *outFile,
                            int usageFilter, // only if usages==USAGE_FILTER
                            char *fname,
                            Reference **reference,
-                           Position *callerPosition,
-                           Position *positionP,
+                           Position position,
                            int *chP,
                            CharacterBuffer *cxfBuf
 ) {
@@ -647,13 +646,13 @@ static void linePosProcess(FILE *outFile,
             pendingRefFlag = true;
         }
         r1=r1->next;
-    } while (r1!=NULL && ((r1->position.file == positionP->file && r1->position.line == positionP->line)
+    } while (r1!=NULL && ((r1->position.file == position.file && r1->position.line == position.line)
                           || (r1->usage>UsageMaxOnLineVisibleUsages)));
     if (r2!=NULL) {
         if (! cxfBuf->isAtEOF) {
             while (ch!='\n' && (! cxfBuf->isAtEOF)) {
                 passSourcePutChar(ch,outFile);
-                getFileChar(&ch, positionP, cxfBuf);
+                getFileChar(&ch, &position, cxfBuf);
             }
         }
     }
@@ -678,7 +677,7 @@ static Reference *passNonPrintableRefsForFile(Reference *references,
     return NULL;
 }
 
-static void passRefsThroughSourceFile(Reference **inOutReferences, Position *callerPosition,
+static void passRefsThroughSourceFile(Reference **inOutReferences,
                                       FILE *outputFile, int usages, int usageFilter) {
     Reference *references;
     int ch, fileNumber;
@@ -728,7 +727,7 @@ static void passRefsThroughSourceFile(Reference **inOutReferences, Position *cal
             getFileChar(&ch, &position, &cxfBuf);
         }
         linePosProcess(outputFile, usages, usageFilter, cofileName,
-                       &references, callerPosition, &position, &ch, &cxfBuf);
+                       &references, position, &ch, &cxfBuf);
     }
     //&if (cofile != NULL) closeFile(cofile);
  fin:
@@ -803,7 +802,7 @@ static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
     if (refs!=NULL) {
         rr=refs->references;
         while (rr != NULL) {
-            passRefsThroughSourceFile(&rr, &refs->actual->position,
+            passRefsThroughSourceFile(&rr,
                                       communicationChannel, USAGE_FILTER,
                                       refListFilters[refs->refsFilterLevel]);
         }
@@ -1966,13 +1965,12 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
 }
 
-static void getCallerPositionFromCommandLineOption(Position *opos) {
+static Position getCallerPositionFromCommandLineOption(void) {
     int file, line, col;
 
-    assert(opos != NULL);
     file = olOriginalFileNumber;
     getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
-    *opos = makePosition(file, line, col);
+    return makePosition(file, line, col);
 }
 
 static void pushSymbolByName(char *name) {
@@ -1985,7 +1983,7 @@ static void pushSymbolByName(char *name) {
     }
     rstack = sessionData.browserStack.top;
     rstack->hkSelectedSym = olCreateSpecialMenuItem(name, NO_FILE_NUMBER, StorageDefault);
-    getCallerPositionFromCommandLineOption(&rstack->callerPosition);
+    rstack->callerPosition = getCallerPositionFromCommandLineOption();
 }
 
 void answerEditAction(void) {
@@ -2006,8 +2004,7 @@ void answerEditAction(void) {
         }
         break;
     case OLO_TAG_SEARCH: {
-        Position givenPosition;
-        getCallerPositionFromCommandLineOption(&givenPosition);
+        Position givenPosition = getCallerPositionFromCommandLineOption();
         if (!options.xref2)
             fprintf(communicationChannel,";");
         pushEmptySession(&sessionData.retrieverStack);
@@ -2289,40 +2286,39 @@ static unsigned ooBitsMax(unsigned oo1, unsigned oo2) {
 }
 
 SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
-    OlcxReferences *rstack;
-    Position *defpos;
-    unsigned ooBits, oo;
     bool found = false;
-    int vlev, vlevel, defusage;
 
     SymbolsMenu *result = NULL;
 
-    rstack = sessionData.browserStack.top;
-    ooBits = 0; vlevel = 0;
-    defpos = &noPosition; defusage = UsageNone;
+    OlcxReferences *rstack = sessionData.browserStack.top;
+    unsigned ooBits = 0;
+    int vlevel = 0;
+    Position *defpos = &noPosition;
+    Usage defusage = UsageNone;
 
     log_trace("ooBits for '%s'", getFileItem(references->vApplClass)->name);
 
     for (SymbolsMenu *menu=rstack->hkSelectedSym; menu!=NULL; menu=menu->next) {
         if (olcxIsSameCxSymbol(references, &menu->references)) {
             found = true;
-            oo = olcxOoBits(menu, references);
+            unsigned oo = olcxOoBits(menu, references);
             ooBits = ooBitsMax(oo, ooBits);
             if (defpos->file == NO_FILE_NUMBER) {
                 defpos = &menu->defpos;
                 defusage = menu->defUsage;
                 log_trace(": propagating defpos (line %d) to menusym", defpos->line);
             }
-            vlev = 0;
+            int vlev = 0;
             if (vlevel==0 || ABS(vlevel)>ABS(vlev))
                 vlevel = vlev;
-            log_trace("ooBits for %s <-> %s %o %o", getFileItem(menu->references.vApplClass)->name, references->linkName, oo, ooBits);
+            log_trace("ooBits for %s <-> %s %o %o", getFileItem(menu->references.vApplClass)->name,
+                      references->linkName, oo, ooBits);
         }
     }
     if (found) {
         int select = 0, visible = 0;  // for debug would be better 1 !
-        result = olAddBrowsedSymbolToMenu(&rstack->symbolsMenu, references, select, visible, ooBits, USAGE_ANY, vlevel, defpos,
-                                          defusage);
+        result = olAddBrowsedSymbolToMenu(&rstack->symbolsMenu, references, select, visible, ooBits, USAGE_ANY,
+                                          vlevel, defpos, defusage);
     }
     return result;
 }
@@ -2334,9 +2330,9 @@ void mapCreateSelectionMenu(ReferenceItem *p) {
 
 /* ********************************************************************** */
 
-void olSetCallerPosition(Position *pos) {
+void olSetCallerPosition(Position position) {
     assert(sessionData.browserStack.top);
-    sessionData.browserStack.top->callerPosition = *pos;
+    sessionData.browserStack.top->callerPosition = position;
 }
 
 
@@ -2347,7 +2343,7 @@ void olCompletionListReverse(void) {
 
 #define maxOf(a, b) (((a) > (b)) ? (a) : (b))
 
-static char *createTagSearchLine_static(char *name, Position *position,
+static char *createTagSearchLine_static(char *name, int fileNumber,
                                         int *len1, int *len2, int *len3) {
     static char line[2*COMPLETION_STRING_SIZE];
     char file[TMP_STRING_SIZE];
@@ -2358,7 +2354,7 @@ static char *createTagSearchLine_static(char *name, Position *position,
     l1 = l2 = l3 = 0;
     l1 = strlen(name);
 
-    FileItem *fileItem = getFileItem(position->file);
+    FileItem *fileItem = getFileItem(fileNumber);
     ffname = fileItem->name;
     assert(ffname);
     ffname = getRealFileName_static(ffname);
@@ -2392,7 +2388,7 @@ void printTagSearchResults(void) {
     // the first loop is counting the length of fields
     assert(sessionData.retrieverStack.top);
     for (Completion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
-        ls = createTagSearchLine_static(cc->name, &cc->ref.position,
+        ls = createTagSearchLine_static(cc->name, cc->ref.position.file,
                                    &len1, &len2, &len3);
     }
     if (options.olineLen >= 50000) {
@@ -2411,7 +2407,7 @@ void printTagSearchResults(void) {
         ppcBegin(PPC_SYMBOL_LIST);
     assert(sessionData.retrieverStack.top);
     for (Completion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
-        ls = createTagSearchLine_static(cc->name, &cc->ref.position,
+        ls = createTagSearchLine_static(cc->name, cc->ref.position.file,
                                    &len1, &len2, &len3);
         if (options.xref2) {
             ppcGenRecord(PPC_STRING_VALUE, ls);

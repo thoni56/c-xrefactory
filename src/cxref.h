@@ -27,7 +27,7 @@ extern void addTrivialCxReference (char *name, int symType, int storage,
                                    Position position, Usage usage);
 extern void olcxAddReferences(Reference *list, Reference **dlist, int fnum,
                               int bestMatchFlag);
-extern void olSetCallerPosition(Position *pos);
+extern void olSetCallerPosition(Position position);
 extern SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage);
 extern void olCompletionListReverse(void);
 extern int itIsSymbolToPushOlReferences(ReferenceItem *p, OlcxReferences *rstack,

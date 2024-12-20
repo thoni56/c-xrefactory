@@ -73,7 +73,7 @@ static bool symbolCanBeIdentifiedByPosition(int fileNumber) {
     // assume s_opt.olcxlccursor is correctly set;
     getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
     olcxByPassPos = makePosition(fileNumber, line, col);
-    olSetCallerPosition(&olcxByPassPos);
+    olSetCallerPosition(olcxByPassPos);
     scanForBypass(options.browsedSymName);
 
     // if no symbol found, it may be a local symbol, try by parsing
