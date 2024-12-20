@@ -8,7 +8,7 @@
 /* Declare semi-private functions */
 void processDefineDirective(bool hasArguments);
 void processLineDirective(void);
-void processIncludeDirective(Position *includePosition, bool include_next);
+void processIncludeDirective(Position includePosition, bool include_next);
 void processIncludeNextDirective(Position *includePosition);
 
 #include "filedescriptor.h"
@@ -145,7 +145,7 @@ Ensure(Yylex, can_process_include_directive) {
     expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
            times(2)); /* Don't know why two times... */
 
-    processIncludeDirective(&position, false);
+    processIncludeDirective(position, false);
 }
 
 Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) {
@@ -210,7 +210,7 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
     expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
            times(2)); /* Don't know why two times... */
 
-    processIncludeDirective(&position, false);
+    processIncludeDirective(position, false);
 }
 
 Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
@@ -271,5 +271,5 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
     expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
            times(2)); /* Don't know why two times... */
 
-    processIncludeDirective(&position, true);
+    processIncludeDirective(position, true);
 }

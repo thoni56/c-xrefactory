@@ -555,7 +555,7 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
     return true;
 }
 
-static void processInclude2(Position *includePosition, char includeType, char *includedName, bool is_include_next) {
+static void processInclude2(Position includePosition, char includeType, char *includedName, bool is_include_next) {
     char *actualFileName;
     Symbol symbol;
     char tmpBuff[TMP_BUFF_SIZE];
@@ -575,12 +575,12 @@ static void processInclude2(Position *includePosition, char includeType, char *i
         else
             log_error("Can't open file '%s'", includedName);
     } else {
-        addIncludeReferences(currentFile.characterBuffer.fileNumber, *includePosition);
+        addIncludeReferences(currentFile.characterBuffer.fileNumber, includePosition);
     }
 }
 
 /* Non-static only for unittests */
-protected void processIncludeDirective(Position *includePosition, bool is_include_next) {
+protected void processIncludeDirective(Position includePosition, bool is_include_next) {
     char *beginningOfLexem, *previousLexemP;
     LexemCode lexem;
 
@@ -1255,10 +1255,10 @@ static bool processPreprocessorConstruct(LexemCode lexem) {
     log_debug("processing cpp-construct '%s' ", tokenNamesTable[lexem]);
     switch (lexem) {
     case CPP_INCLUDE:
-        processIncludeDirective(&position, false);
+        processIncludeDirective(position, false);
         break;
     case CPP_INCLUDE_NEXT:
-        processIncludeDirective(&position, true);
+        processIncludeDirective(position, true);
         break;
     case CPP_DEFINE0:
         processDefineDirective(false);
