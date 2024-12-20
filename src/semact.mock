@@ -153,7 +153,8 @@ void appendPositionToList(PositionList **list, Position pos) {
     mock(list, position);
 }
 
-void setParamPositionForFunctionWithoutParams(Position *lpar) {
+void setParamPositionForFunctionWithoutParams(Position leftParenthesis) {
+    Position *lpar = &leftParenthesis;
     mock(lpar);
 }
 

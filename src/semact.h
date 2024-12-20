@@ -47,7 +47,7 @@ extern TypeModifier *simpleEnumSpecifier(Id *id, Usage usage);
 extern void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory);
 extern TypeModifier *createNewAnonymousEnum(SymbolList *enums);
 extern void appendPositionToList(PositionList **list, Position position);
-extern void setParamPositionForFunctionWithoutParams(Position *lpar);
+extern void setParamPositionForFunctionWithoutParams(Position lpar);
 extern void setParamPositionForParameter0(Position *lpar);
 extern void setParamPositionForParameterBeyondRange(Position *rpar);
 extern Symbol *createEmptyField(void);

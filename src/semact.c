@@ -835,9 +835,9 @@ void appendPositionToList(PositionList **list, Position position) {
     LIST_APPEND(PositionList, (*list), ppl);
 }
 
-void setParamPositionForFunctionWithoutParams(Position *lpar) {
-    parameterBeginPosition = *lpar;
-    parameterEndPosition = *lpar;
+void setParamPositionForFunctionWithoutParams(Position lpar) {
+    parameterBeginPosition = lpar;
+    parameterEndPosition = lpar;
 }
 
 void setParamPositionForParameter0(Position *lpar) {
@@ -868,7 +868,7 @@ static void handleParameterPositions(Position *lpar, PositionList *commas, Posit
     argn = options.olcxGotoVal;
 
     if (!hasParam) {
-        setParamPositionForFunctionWithoutParams(lpar);
+        setParamPositionForFunctionWithoutParams(*lpar);
         return;
     }
 

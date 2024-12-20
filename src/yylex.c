@@ -637,7 +637,7 @@ static void setMacroArgumentName(MacroArgumentTableElement *arg, void *at) {
 }
 
 static void handleMacroDefinitionParameterPositions(int argi, Position *macpos,
-                                                    Position *beginPosition,
+                                                    Position beginPosition,
                                                     Position *pos, Position *endPosition,
                                                     bool final) {
     if ((options.serverOperation == OLO_GOTO_PARAM_NAME || options.serverOperation == OLO_GET_PARAM_COORDINATES)
@@ -650,7 +650,7 @@ static void handleMacroDefinitionParameterPositions(int argi, Position *macpos,
             }
         } else if (argi == options.olcxGotoVal) {
             parameterPosition = *pos;
-            parameterBeginPosition = *beginPosition;
+            parameterBeginPosition = beginPosition;
             parameterEndPosition = *endPosition;
         }
     }
@@ -665,7 +665,7 @@ static void handleMacroUsageParameterPositions(int argi, Position *macroPosition
         log_trace("checking param %d at %d,%d, final==%d", argi, beginPosition->col, endPosition->col, final);
         if (final) {
             if (argi==0) {
-                setParamPositionForFunctionWithoutParams(beginPosition);
+                setParamPositionForFunctionWithoutParams(*beginPosition);
             } else if (argi < options.olcxGotoVal) {
                 setParamPositionForParameterBeyondRange(endPosition);
             }
@@ -806,7 +806,7 @@ protected void processDefineDirective(bool hasArguments) {
                 if (!ellipsis) {
                     addTrivialCxReference(getMacroArgument(argumentIndex)->linkName, TypeMacroArg,StorageDefault,
                                           position, UsageDefined);
-                    handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &position, parpos2, false);
+                    handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, *parpos1, &position, parpos2, false);
                 }
                 if (lexem == ELLIPSIS) {
                     lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
@@ -821,10 +821,10 @@ protected void processDefineDirective(bool hasArguments) {
                 lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
             }
-            handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &noPosition, parpos2, true);
+            handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, *parpos1, &noPosition, parpos2, true);
         } else {
             getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, parpos2, NULL, true);
-            handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &noPosition, parpos2, true);
+            handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, *parpos1, &noPosition, parpos2, true);
         }
     }
 
