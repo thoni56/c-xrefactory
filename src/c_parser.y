@@ -270,9 +270,9 @@ postfix_expr
         if ($1.data.typeModifier->type==TypeFunction) {
             $$.data.typeModifier=$1.data.typeModifier->next;
             if ($4.data == NULL) {
-                handleInvocationParamPositions($1.data.reference, &$3.data, NULL, &$5.data, 0);
+                handleInvocationParamPositions($1.data.reference, $3.data, NULL, $5.data, 0);
             } else {
-                handleInvocationParamPositions($1.data.reference, &$3.data, $4.data->next, &$5.data, 1);
+                handleInvocationParamPositions($1.data.reference, $3.data, $4.data->next, $5.data, 1);
             }
         } else {
             $$.data.typeModifier = &errorModifier;

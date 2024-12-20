@@ -923,8 +923,8 @@ void handleDeclaratorParamPositions(Symbol *decl, Position lpar,
     handleParameterPositions(lpar, commas, rpar, hasParam, isVoid);
 }
 
-void handleInvocationParamPositions(Reference *ref, Position *lpar,
-                                    PositionList *commas, Position *rpar,
+void handleInvocationParamPositions(Reference *ref, Position lpar,
+                                    PositionList *commas, Position rpar,
                                     bool hasParam
                                     ) {
     if (options.mode != ServerMode)
@@ -933,5 +933,5 @@ void handleInvocationParamPositions(Reference *ref, Position *lpar,
         return;
     if (ref==NULL || positionsAreNotEqual(ref->position, cxRefPosition))
         return;
-    handleParameterPositions(*lpar, commas, *rpar, hasParam, false);
+    handleParameterPositions(lpar, commas, rpar, hasParam, false);
 }

@@ -174,7 +174,10 @@ void handleDeclaratorParamPositions(Symbol *decl, Position leftParenthesis, Posi
     mock(decl, lpar, commas, rpar, hasParam, isVoid);
 }
 
-void handleInvocationParamPositions(Reference *ref, Position *lpar, PositionList *commas, Position *rpar, bool hasParam) {
+void handleInvocationParamPositions(Reference *ref, Position leftParenthesis, PositionList *commas,
+                                    Position rightParenthesis, bool hasParam) {
+    Position *lpar = &leftParenthesis;
+    Position *rpar = &rightParenthesis;
     mock(ref, lpar, commas, rpar, hasParam);
 }
 
