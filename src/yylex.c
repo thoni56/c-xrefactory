@@ -646,7 +646,7 @@ static void handleMacroDefinitionParameterPositions(int argi, Position *macpos,
             if (argi==0) {
                 setParamPositionForFunctionWithoutParams(beginPosition);
             } else if (argi < options.olcxGotoVal) {
-                setParamPositionForParameterBeyondRange(endPosition);
+                setParamPositionForParameterBeyondRange(*endPosition);
             }
         } else if (argi == options.olcxGotoVal) {
             parameterPosition = *pos;
@@ -667,7 +667,7 @@ static void handleMacroUsageParameterPositions(int argi, Position *macroPosition
             if (argi==0) {
                 setParamPositionForFunctionWithoutParams(*beginPosition);
             } else if (argi < options.olcxGotoVal) {
-                setParamPositionForParameterBeyondRange(endPosition);
+                setParamPositionForParameterBeyondRange(*endPosition);
             }
         } else if (argi == options.olcxGotoVal) {
             parameterBeginPosition = *beginPosition;

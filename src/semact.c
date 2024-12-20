@@ -840,19 +840,19 @@ void setParamPositionForFunctionWithoutParams(Position lpar) {
     parameterEndPosition = lpar;
 }
 
-void setParamPositionForParameter0(Position *lpar) {
-    parameterBeginPosition = *lpar;
-    parameterEndPosition = *lpar;
+static void setParamPositionForParameter0(Position lpar) {
+    parameterBeginPosition = lpar;
+    parameterEndPosition = lpar;
 }
 
-void setParamPositionForParameterBeyondRange(Position *rpar) {
-    parameterBeginPosition = *rpar;
-    parameterEndPosition = *rpar;
+void setParamPositionForParameterBeyondRange(Position rpar) {
+    parameterBeginPosition = rpar;
+    parameterEndPosition = rpar;
 }
 
-static void handleParameterPositions(Position *lpar, PositionList *commas, Position *rpar, bool hasParam, bool isVoid) {
-    int           i, argn;
-    Position     *p1, *p2;
+static void handleParameterPositions(Position lpar, PositionList *commas, Position *rpar, bool hasParam,
+                                     bool isVoid) {
+    Position     position1, *p2;
     PositionList *list;
 
     /* Sets the following global variables as "answer":
@@ -865,10 +865,8 @@ static void handleParameterPositions(Position *lpar, PositionList *commas, Posit
     parameterListIsVoid = isVoid;
     parameterCount = 0;
 
-    argn = options.olcxGotoVal;
-
     if (!hasParam) {
-        setParamPositionForFunctionWithoutParams(*lpar);
+        setParamPositionForFunctionWithoutParams(lpar);
         return;
     }
 
@@ -877,27 +875,29 @@ static void handleParameterPositions(Position *lpar, PositionList *commas, Posit
         parameterCount++;
     }
 
+    int argn = options.olcxGotoVal;
     assert(argn > 0);           /* TODO: WTF is Parameter0 and when is it used? */
     if (argn == 0) {
         setParamPositionForParameter0(lpar);
     } else {
         list = commas;
-        p1 = lpar;
+        position1 = lpar;
         if (list != NULL)
             p2 = &list->position;
         else
             p2 = rpar;
+        int i;
         for (i=2; list != NULL && i <= argn; list = list->next, i++) {
-            p1 = &list->position;
+            position1 = list->position;
             if (list->next != NULL)
                 p2 = &list->next->position;
             else
                 p2 = rpar;
         }
         if (list == NULL && i <= argn) {
-            setParamPositionForParameterBeyondRange(rpar);
+            setParamPositionForParameterBeyondRange(*rpar);
         } else {
-            parameterBeginPosition = *p1;
+            parameterBeginPosition = position1;
             parameterEndPosition   = *p2;
         }
     }
@@ -920,7 +920,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
         return;
     if (positionsAreNotEqual(decl->pos, cxRefPosition))
         return;
-    handleParameterPositions(lpar, commas, rpar, hasParam, isVoid);
+    handleParameterPositions(*lpar, commas, rpar, hasParam, isVoid);
 }
 
 void handleInvocationParamPositions(Reference *ref, Position *lpar,
@@ -933,5 +933,5 @@ void handleInvocationParamPositions(Reference *ref, Position *lpar,
         return;
     if (ref==NULL || positionsAreNotEqual(ref->position, cxRefPosition))
         return;
-    handleParameterPositions(lpar, commas, rpar, hasParam, false);
+    handleParameterPositions(*lpar, commas, rpar, hasParam, false);
 }

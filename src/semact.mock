@@ -158,11 +158,8 @@ void setParamPositionForFunctionWithoutParams(Position leftParenthesis) {
     mock(lpar);
 }
 
-void setParamPositionForParameter0(Position *lpar) {
-    mock(lpar);
-}
-
-void setParamPositionForParameterBeyondRange(Position *rpar) {
+void setParamPositionForParameterBeyondRange(Position rightParenthesis) {
+    Position *rpar = &rightParenthesis;
     mock(rpar);
 }
 
