@@ -850,9 +850,9 @@ void setParamPositionForParameterBeyondRange(Position rpar) {
     parameterEndPosition = rpar;
 }
 
-static void handleParameterPositions(Position lpar, PositionList *commas, Position *rpar, bool hasParam,
+static void handleParameterPositions(Position lpar, PositionList *commas, Position rpar, bool hasParam,
                                      bool isVoid) {
-    Position     position1, *p2;
+    Position     position1, position2;
     PositionList *list;
 
     /* Sets the following global variables as "answer":
@@ -883,22 +883,22 @@ static void handleParameterPositions(Position lpar, PositionList *commas, Positi
         list = commas;
         position1 = lpar;
         if (list != NULL)
-            p2 = &list->position;
+            position2 = list->position;
         else
-            p2 = rpar;
+            position2 = rpar;
         int i;
         for (i=2; list != NULL && i <= argn; list = list->next, i++) {
             position1 = list->position;
             if (list->next != NULL)
-                p2 = &list->next->position;
+                position2 = list->next->position;
             else
-                p2 = rpar;
+                position2 = rpar;
         }
         if (list == NULL && i <= argn) {
-            setParamPositionForParameterBeyondRange(*rpar);
+            setParamPositionForParameterBeyondRange(rpar);
         } else {
             parameterBeginPosition = position1;
-            parameterEndPosition   = *p2;
+            parameterEndPosition   = position2;
         }
     }
 }
@@ -910,7 +910,7 @@ Symbol *createEmptyField(void) {
     return newSymbolAsType("", "", noPosition, p);
 }
 
-void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
+void handleDeclaratorParamPositions(Symbol *decl, Position lpar,
                                     PositionList *commas, Position *rpar,
                                     bool hasParam, bool isVoid
                                     ) {
@@ -920,7 +920,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
         return;
     if (positionsAreNotEqual(decl->pos, cxRefPosition))
         return;
-    handleParameterPositions(*lpar, commas, rpar, hasParam, isVoid);
+    handleParameterPositions(lpar, commas, *rpar, hasParam, isVoid);
 }
 
 void handleInvocationParamPositions(Reference *ref, Position *lpar,
@@ -933,5 +933,5 @@ void handleInvocationParamPositions(Reference *ref, Position *lpar,
         return;
     if (ref==NULL || positionsAreNotEqual(ref->position, cxRefPosition))
         return;
-    handleParameterPositions(*lpar, commas, rpar, hasParam, false);
+    handleParameterPositions(*lpar, commas, *rpar, hasParam, false);
 }

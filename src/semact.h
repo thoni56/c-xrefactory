@@ -50,7 +50,7 @@ extern void appendPositionToList(PositionList **list, Position position);
 extern void setParamPositionForFunctionWithoutParams(Position lpar);
 extern void setParamPositionForParameterBeyondRange(Position rpar);
 extern Symbol *createEmptyField(void);
-extern void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
+extern void handleDeclaratorParamPositions(Symbol *decl, Position lpar,
                                            PositionList *commas, Position *rpar,
                                            bool hasParam, bool isVoid);
 extern void handleInvocationParamPositions(Reference *ref, Position *lpar,
