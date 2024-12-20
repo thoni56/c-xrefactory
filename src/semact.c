@@ -829,9 +829,9 @@ TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
     return createSimpleEnumType(symbol);
 }
 
-void appendPositionToList(PositionList **list, Position *pos) {
+void appendPositionToList(PositionList **list, Position position) {
     PositionList *ppl;
-    ppl = newPositionList(*pos, NULL);
+    ppl = newPositionList(position, NULL);
     LIST_APPEND(PositionList, (*list), ppl);
 }
 

@@ -1973,13 +1973,13 @@ static bool runCompletionsCollectorsIn(CompletionFunctionsTable *completionsTabl
    replacement of YACC variables so that we can have multiple parsers
    linked together. Therefore it is not straight forward to refactor
    out commonalities. */
-void makeCCompletions(char *string, int len, Position pos) {
+void makeCCompletions(char *string, int len, Position position) {
     CompletionLine completionLine;
 
     log_trace("completing \"%s\"", string);
     strncpy(collectedCompletions.idToProcess, string, MAX_FUNCTION_NAME_LENGTH);
     collectedCompletions.idToProcess[MAX_FUNCTION_NAME_LENGTH-1] = 0;
-    initCompletions(&collectedCompletions, len, pos);
+    initCompletions(&collectedCompletions, len, position);
 
     /* special wizard completions */
     if (!runCompletionsCollectorsIn(specialCompletionsCollectorsTable))
@@ -2339,7 +2339,7 @@ case 32:
 #line 346 "c_parser.y"
 {
         yyval.ast_positionList.data = yyvsp[-2].ast_positionList.data;
-        appendPositionToList(&yyval.ast_positionList.data, &yyvsp[-1].ast_position.data);
+        appendPositionToList(&yyval.ast_positionList.data, yyvsp[-1].ast_position.data);
     }
 break;
 case 33:
@@ -3308,7 +3308,7 @@ case 221:
         yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
 
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.data.symbol, symbol);
-        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, &yyvsp[-1].ast_position.data);
+        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, yyvsp[-1].ast_position.data);
     }
 break;
 case 222:
@@ -3327,7 +3327,7 @@ case 223:
         symbol = newSymbol(yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->position);
         yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.data.symbol, symbol);
-        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, &yyvsp[-1].ast_position.data);
+        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, yyvsp[-1].ast_position.data);
     }
 break;
 case 224:
@@ -3345,7 +3345,7 @@ case 226:
         yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
 
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.data.symbol, symbol);
-        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, &yyvsp[-1].ast_position.data);
+        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, yyvsp[-1].ast_position.data);
     }
 break;
 case 227:
@@ -3360,7 +3360,7 @@ case 228:
 {
         yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
         LIST_APPEND(Symbol, yyvsp[-2].ast_symbolPositionListPair.data.symbol, yyvsp[0].ast_symbol.data);
-        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, &yyvsp[-1].ast_position.data);
+        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, yyvsp[-1].ast_position.data);
     }
 break;
 case 229:

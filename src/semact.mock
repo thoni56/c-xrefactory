@@ -148,8 +148,9 @@ TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
     return (TypeModifier *) mock(enums);
 }
 
-void appendPositionToList(PositionList **list, Position *pos) {
-    mock(list, pos);
+void appendPositionToList(PositionList **list, Position pos) {
+    Position *position = &pos;
+    mock(list, position);
 }
 
 void setParamPositionForFunctionWithoutParams(Position *lpar) {

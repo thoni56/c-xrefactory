@@ -345,7 +345,7 @@ argument_expr_list
     }
     | argument_expr_list ',' assignment_expr    {
         $$.data = $1.data;
-        appendPositionToList(&$$.data, &$2.data);
+        appendPositionToList(&$$.data, $2.data);
     }
     | COMPLETE_UP_FUN_PROFILE                          {/* never used */}
     | argument_expr_list ',' COMPLETE_UP_FUN_PROFILE   {/* never used */}
@@ -1102,7 +1102,7 @@ parameter_identifier_list
         $$.data = $1.data;
 
         LIST_APPEND(Symbol, $$.data.symbol, symbol);
-        appendPositionToList(&$$.data.positionList, &$2.data);
+        appendPositionToList(&$$.data.positionList, $2.data);
     }
     ;
 
@@ -1118,7 +1118,7 @@ identifier_list
         symbol = newSymbol($3.data->name, $3.data->name, $3.data->position);
         $$.data = $1.data;
         LIST_APPEND(Symbol, $$.data.symbol, symbol);
-        appendPositionToList(&$$.data.positionList, &$2.data);
+        appendPositionToList(&$$.data.positionList, $2.data);
     }
     | COMPLETE_OTHER_NAME      { assert(0); /* token never used */ }
     ;
@@ -1134,7 +1134,7 @@ parameter_type_list
         $$.data = $1.data;
 
         LIST_APPEND(Symbol, $$.data.symbol, symbol);
-        appendPositionToList(&$$.data.positionList, &$2.data);
+        appendPositionToList(&$$.data.positionList, $2.data);
     }
     ;
 
@@ -1146,7 +1146,7 @@ parameter_list
     | parameter_list ',' parameter_declaration      {
         $$.data = $1.data;
         LIST_APPEND(Symbol, $1.data.symbol, $3.data);
-        appendPositionToList(&$$.data.positionList, &$2.data);
+        appendPositionToList(&$$.data.positionList, $2.data);
     }
     ;
 
@@ -1775,13 +1775,13 @@ static bool runCompletionsCollectorsIn(CompletionFunctionsTable *completionsTabl
    replacement of YACC variables so that we can have multiple parsers
    linked together. Therefore it is not straight forward to refactor
    out commonalities. */
-void makeCCompletions(char *string, int len, Position *pos) {
+void makeCCompletions(char *string, int len, Position position) {
     CompletionLine completionLine;
 
     log_trace("completing \"%s\"", string);
     strncpy(collectedCompletions.idToProcess, string, MAX_FUNCTION_NAME_LENGTH);
     collectedCompletions.idToProcess[MAX_FUNCTION_NAME_LENGTH-1] = 0;
-    initCompletions(&collectedCompletions, len, *pos);
+    initCompletions(&collectedCompletions, len, position);
 
     /* special wizard completions */
     if (!runCompletionsCollectorsIn(specialCompletionsCollectorsTable))

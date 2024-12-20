@@ -2998,7 +2998,7 @@ case 174:
 #line 555 "yacc_parser.y"
 {
         yyval.ast_positionList.data = yyvsp[-2].ast_positionList.data;
-        appendPositionToList(&yyval.ast_positionList.data, &yyvsp[-1].ast_position.data);
+        appendPositionToList(&yyval.ast_positionList.data, yyvsp[-1].ast_position.data);
     }
 break;
 case 175:
@@ -3967,7 +3967,7 @@ case 363:
         yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
 
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.data.symbol, symbol);
-        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, &yyvsp[-1].ast_position.data);
+        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, yyvsp[-1].ast_position.data);
     }
 break;
 case 364:
@@ -3986,7 +3986,7 @@ case 365:
         symbol = newSymbol(yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->position);
         yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.data.symbol, symbol);
-        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, &yyvsp[-1].ast_position.data);
+        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, yyvsp[-1].ast_position.data);
     }
 break;
 case 366:
@@ -4004,7 +4004,7 @@ case 368:
         yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
 
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.data.symbol, symbol);
-        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, &yyvsp[-1].ast_position.data);
+        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, yyvsp[-1].ast_position.data);
     }
 break;
 case 369:
@@ -4019,7 +4019,7 @@ case 370:
 {
         yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
         LIST_APPEND(Symbol, yyvsp[-2].ast_symbolPositionListPair.data.symbol, yyvsp[0].ast_symbol.data);
-        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, &yyvsp[-1].ast_position.data);
+        appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, yyvsp[-1].ast_position.data);
     }
 break;
 case 371:
