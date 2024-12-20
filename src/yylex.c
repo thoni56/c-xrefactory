@@ -263,23 +263,23 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefixString, char 
     isProcessingPreprocessorIf = false;
 }
 
-static void getAndSetOutPositionIfRequired(char **readPointerP, Position *outPosition) {
-    if (outPosition != NULL)
-        *outPosition = getLexemPositionAt(readPointerP);
+static void getAndSetOutPositionIfRequested(char **readPointerP, Position *outPositionP) {
+    if (outPositionP != NULL)
+        *outPositionP = getLexemPositionAt(readPointerP);
     else
         getLexemPositionAt(readPointerP);
 }
 
-static void getAndSetOutLengthIfRequired(char **readPointerP, int *outLength) {
-    if (outLength != NULL)
-        *outLength = getLexemIntAt(readPointerP);
+static void getAndSetOutLengthIfRequested(char **readPointerP, int *outLengthP) {
+    if (outLengthP != NULL)
+        *outLengthP = getLexemIntAt(readPointerP);
     else
         getLexemIntAt(readPointerP);
 }
 
-static void getAndSetOutValueIfRequired(char **readPointerP, int *outValue) {
-    if (outValue != NULL)
-        *outValue = getLexemIntAt(readPointerP);
+static void getAndSetOutValueIfRequested(char **readPointerP, int *outValueP) {
+    if (outValueP != NULL)
+        *outValueP = getLexemIntAt(readPointerP);
     else
         getLexemIntAt(readPointerP);
 }
@@ -300,7 +300,7 @@ static void getExtraLexemInformationFor(LexemCode lexem, char **readPointerP, in
             /* Both are followed by a string and a position */
             log_trace("LEXEM '%s'", *readPointerP);
             *readPointerP = strchr(*readPointerP, '\0') + 1;
-            getAndSetOutPositionIfRequired(readPointerP, outPosition);
+            getAndSetOutPositionIfRequested(readPointerP, outPosition);
         } else if (lexem == LINE_TOKEN) {
             int noOfLines = getLexemIntAt(readPointerP);
             if (countLines) {
@@ -310,28 +310,28 @@ static void getExtraLexemInformationFor(LexemCode lexem, char **readPointerP, in
             if (outLineNumber != NULL)
                 *outLineNumber = noOfLines;
         } else if (lexem == CONSTANT || lexem == LONG_CONSTANT) {
-            getAndSetOutValueIfRequired(readPointerP, outValue);
-            getAndSetOutPositionIfRequired(readPointerP, outPosition);
-            getAndSetOutLengthIfRequired(readPointerP, outLength);
+            getAndSetOutValueIfRequested(readPointerP, outValue);
+            getAndSetOutPositionIfRequested(readPointerP, outPosition);
+            getAndSetOutLengthIfRequested(readPointerP, outLength);
         } else if (lexem == DOUBLE_CONSTANT || lexem == FLOAT_CONSTANT) {
-            getAndSetOutPositionIfRequired(readPointerP, outPosition);
-            getAndSetOutLengthIfRequired(readPointerP, outLength);
+            getAndSetOutPositionIfRequested(readPointerP, outPosition);
+            getAndSetOutLengthIfRequested(readPointerP, outLength);
         } else if (lexem == CPP_MACRO_ARGUMENT) {
-            getAndSetOutValueIfRequired(readPointerP, outValue);
-            getAndSetOutPositionIfRequired(readPointerP, outPosition);
+            getAndSetOutValueIfRequested(readPointerP, outValue);
+            getAndSetOutPositionIfRequested(readPointerP, outPosition);
         } else if (lexem == CHAR_LITERAL) {
-            getAndSetOutValueIfRequired(readPointerP, outValue);
-            getAndSetOutPositionIfRequired(readPointerP, outPosition);
-            getAndSetOutLengthIfRequired(readPointerP, outLength);
+            getAndSetOutValueIfRequested(readPointerP, outValue);
+            getAndSetOutPositionIfRequested(readPointerP, outPosition);
+            getAndSetOutLengthIfRequested(readPointerP, outLength);
         }
     } else if (isPreprocessorToken(lexem)) {
-        getAndSetOutPositionIfRequired(readPointerP, outPosition);
+        getAndSetOutPositionIfRequested(readPointerP, outPosition);
     } else if (lexem == '\n' && countLines) {
-        getAndSetOutPositionIfRequired(readPointerP, outPosition);
+        getAndSetOutPositionIfRequested(readPointerP, outPosition);
         traceNewline(1);
         currentFile.lineNumber++;
     } else {
-        getAndSetOutPositionIfRequired(readPointerP, outPosition);
+        getAndSetOutPositionIfRequested(readPointerP, outPosition);
     }
 }
 
