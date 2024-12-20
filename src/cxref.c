@@ -581,7 +581,7 @@ static void olcxOrderRefsAndGotoDefinition(void) {
     orderRefsAndGotoDefinition(refs);
 }
 
-static int getCharacterAndUpdatePosition(int currentCharacter, Position *positionP, CharacterBuffer *characterBuffer) {
+static int getCharacterAndUpdatePosition(CharacterBuffer *characterBuffer, int currentCharacter, Position *positionP) {
     if (currentCharacter == '\n') {
         positionP->line++;
         positionP->col=0;
@@ -653,7 +653,7 @@ static void linePosProcess(FILE *outFile,
         if (! cxfBuf->isAtEOF) {
             while (ch!='\n' && (! cxfBuf->isAtEOF)) {
                 passSourcePutChar(ch,outFile);
-                ch = getCharacterAndUpdatePosition(ch, &position, cxfBuf);
+                ch = getCharacterAndUpdatePosition(cxfBuf, ch, &position);
             }
         }
     }
@@ -724,7 +724,7 @@ static void passRefsThroughSourceFile(Reference **inOutReferences,
         while (!cxfBuf.isAtEOF && position.line<references->position.line) {
             while (ch!='\n' && ch!=EOF)
                 ch = getChar(&cxfBuf);
-            ch = getCharacterAndUpdatePosition(ch, &position, &cxfBuf);
+            ch = getCharacterAndUpdatePosition(&cxfBuf, ch, &position);
         }
         linePosProcess(outputFile, usages, usageFilter, cofileName, &references, position, &ch, &cxfBuf);
     }
