@@ -122,7 +122,7 @@ static bool isConstantLexem(LexemCode lexem) {
     return lexem == CONSTANT || lexem == LONG_CONSTANT || lexem == FLOAT_CONSTANT || lexem == DOUBLE_CONSTANT;
 }
 
-static bool expandMacroCall(Symbol *mdef, Position *mpos);
+static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition);
 
 
 /* ************************************************************ */
@@ -636,22 +636,22 @@ static void setMacroArgumentName(MacroArgumentTableElement *arg, void *at) {
     argTab[arg->order] = arg->name;
 }
 
-static void handleMacroDefinitionParameterPositions(int argi, Position *macpos,
+static void handleMacroDefinitionParameterPositions(int argi, Position macroPosition,
                                                     Position beginPosition,
-                                                    Position *pos, Position *endPosition,
+                                                    Position position, Position endPosition,
                                                     bool final) {
     if ((options.serverOperation == OLO_GOTO_PARAM_NAME || options.serverOperation == OLO_GET_PARAM_COORDINATES)
-        && positionsAreEqual(*macpos, cxRefPosition)) {
+        && positionsAreEqual(macroPosition, cxRefPosition)) {
         if (final) {
             if (argi==0) {
                 setParamPositionForFunctionWithoutParams(beginPosition);
             } else if (argi < options.olcxGotoVal) {
-                setParamPositionForParameterBeyondRange(*endPosition);
+                setParamPositionForParameterBeyondRange(endPosition);
             }
         } else if (argi == options.olcxGotoVal) {
-            parameterPosition = *pos;
+            parameterPosition = position;
             parameterBeginPosition = beginPosition;
-            parameterEndPosition = *endPosition;
+            parameterEndPosition = endPosition;
         }
     }
 }
@@ -806,7 +806,8 @@ protected void processDefineDirective(bool hasArguments) {
                 if (!ellipsis) {
                     addTrivialCxReference(getMacroArgument(argumentIndex)->linkName, TypeMacroArg,StorageDefault,
                                           position, UsageDefined);
-                    handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, *parpos1, &position, parpos2, false);
+                    handleMacroDefinitionParameterPositions(argumentCount, macroPosition, *parpos1, position,
+                                                            *parpos2, false);
                 }
                 if (lexem == ELLIPSIS) {
                     lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
@@ -821,10 +822,12 @@ protected void processDefineDirective(bool hasArguments) {
                 lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
             }
-            handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, *parpos1, &noPosition, parpos2, true);
+            handleMacroDefinitionParameterPositions(argumentCount, macroPosition, *parpos1, noPosition, *parpos2,
+                                                    true);
         } else {
             getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, parpos2, NULL, true);
-            handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, *parpos1, &noPosition, parpos2, true);
+            handleMacroDefinitionParameterPositions(argumentCount, macroPosition, *parpos1, noPosition, *parpos2,
+                                                    true);
         }
     }
 
@@ -1423,7 +1426,7 @@ static void expandMacroArgument(LexInput *argumentInput) {
             symbol.storage = StorageDefault;
             if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
                 /* it is a macro, provide macro expansion */
-                if (expandMacroCall(foundSymbol, &position))
+                if (expandMacroCall(foundSymbol, position))
                     continue; // with next lexem
                 else
                     failedMacroExpansion = true;
@@ -1855,7 +1858,7 @@ static void addMacroBaseUsageRef(Symbol *macroSymbol) {
 }
 
 
-static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
+static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
     LexemCode lexem;
     Position lparPosition;
     LexInput *actualArgumentsInput, macroBodyInput;
@@ -1887,12 +1890,12 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
         }
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &lparPosition, NULL,
                                     macroStackIndex == 0);
-        actualArgumentsInput = getActualMacroArguments(macroBody, macroPosition, lparPosition);
+        actualArgumentsInput = getActualMacroArguments(macroBody, &macroPosition, lparPosition);
     } else {
         actualArgumentsInput = NULL;
     }
     assert(options.mode);
-    addCxReference(macroSymbol, *macroPosition, UsageUsed, NO_FILE_NUMBER);
+    addCxReference(macroSymbol, macroPosition, UsageUsed, NO_FILE_NUMBER);
     if (options.mode == XrefMode)
         addMacroBaseUsageRef(macroSymbol);
     log_trace("create macro body '%s'", macroBody->name);
@@ -2110,7 +2113,7 @@ LexemCode yylex(void) {
             // so id would be destroyed
             //&assert(strcmp(id,memberP->name)==0);
             id = memberP->name;
-            if (expandMacroCall(memberP,&position))
+            if (expandMacroCall(memberP, position))
                 goto nextYylex;
         }
 
