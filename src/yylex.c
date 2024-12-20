@@ -656,23 +656,23 @@ static void handleMacroDefinitionParameterPositions(int argi, Position macroPosi
     }
 }
 
-static void handleMacroUsageParameterPositions(int argi, Position *macroPosition,
-                                               Position *beginPosition, Position *endPosition,
+static void handleMacroUsageParameterPositions(int argumentIndex, Position macroPosition,
+                                               Position beginPosition, Position endPosition,
                                                bool final
-    ) {
+) {
     if (options.serverOperation == OLO_GET_PARAM_COORDINATES
-        && positionsAreEqual(*macroPosition, cxRefPosition)) {
-        log_trace("checking param %d at %d,%d, final==%d", argi, beginPosition->col, endPosition->col, final);
+        && positionsAreEqual(macroPosition, cxRefPosition)) {
+        log_trace("checking param %d at %d,%d, final==%d", argumentIndex, beginPosition.col, endPosition.col,
+                  final);
         if (final) {
-            if (argi==0) {
-                setParamPositionForFunctionWithoutParams(*beginPosition);
-            } else if (argi < options.olcxGotoVal) {
-                setParamPositionForParameterBeyondRange(*endPosition);
+            if (argumentIndex==0) {
+                setParamPositionForFunctionWithoutParams(beginPosition);
+            } else if (argumentIndex < options.olcxGotoVal) {
+                setParamPositionForParameterBeyondRange(endPosition);
             }
-        } else if (argi == options.olcxGotoVal) {
-            parameterBeginPosition = *beginPosition;
-            parameterEndPosition = *endPosition;
-//&fprintf(dumpOut,"regular setting to %d - %d\n", beginPosition->col, endPosition->col);
+        } else if (argumentIndex == options.olcxGotoVal) {
+            parameterBeginPosition = beginPosition;
+            parameterEndPosition = endPosition;
         }
     }
 }
@@ -1763,9 +1763,9 @@ static void getActualMacroArgument(
                                     *endPosition, NULL, macroStackIndex == 0);
         if ((lexem == ',' || lexem == ')') && depth == 0) {
             offset++;
-            handleMacroUsageParameterPositions(actualArgumentIndex + offset, macroPosition,
-                                               *beginPosition,
-                                               *endPosition, 0);
+            handleMacroUsageParameterPositions(actualArgumentIndex + offset, *macroPosition,
+                                               **beginPosition,
+                                               **endPosition, 0);
             **beginPosition = **endPosition;
         }
     }
@@ -1806,7 +1806,7 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position *macroPo
                                 macroStackIndex == 0);
     if (lexem == ')') {
         *endPosition = position;
-        handleMacroUsageParameterPositions(0, macroPosition, beginPosition, endPosition, true);
+        handleMacroUsageParameterPositions(0, *macroPosition, *beginPosition, *endPosition, true);
     } else {
         for(;;) {
             getActualMacroArgument(previousLexem, &lexem, macroPosition, &beginPosition, &endPosition,
