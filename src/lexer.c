@@ -16,10 +16,10 @@
 #include "misc.h"              /* requiresCreatingRefs() */
 
 
-void gotOnLineCxRefs(Position *position) {
+void gotOnLineCxRefs(Position position) {
     if (requiresCreatingRefs(options.serverOperation)) {
         deactivateCaching();
-        cxRefPosition = *position;
+        cxRefPosition = position;
     }
 }
 
@@ -768,7 +768,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     if (currentLexemFileOffset <= options.olCursorOffset
                         && fileOffsetFor(cb) >= options.olCursorOffset
                     ) {
-                        gotOnLineCxRefs(&position);
+                        gotOnLineCxRefs(position);
                     }
                     if (options.serverOperation == OLO_SET_MOVE_FUNCTION_TARGET) {
                         // TODO: Figure out what the problem with this

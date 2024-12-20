@@ -8,6 +8,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *buffer) {
   return (bool) mock(buffer);
 }
 
-void gotOnLineCxRefs(Position *position) {
-  mock(position);
+void gotOnLineCxRefs(Position pos) {
+    Position *position = &pos;
+    mock(position);
 }

@@ -204,7 +204,7 @@ static void singlePass(int argc, char **argv,
         // special case, push the file as include reference
         if (requiresCreatingRefs(options.serverOperation)) {
             Position position = makePosition(inputFileNumber, 1, 0);
-            gotOnLineCxRefs(&position);
+            gotOnLineCxRefs(position);
         }
         addFileAsIncludeReference(inputFileNumber);
     }
