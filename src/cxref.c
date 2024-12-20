@@ -199,7 +199,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int vA
     Storage           storage;
     Usage             defaultUsage;
     Reference       **place;
-    Position         *defaultPosition;
+    Position         defaultPosition;
     SymbolsMenu      *menu;
 
     // do not record references during prescanning
@@ -299,15 +299,15 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int vA
             olstringUsage = usage;
             assert(sessionData.browserStack.top);
             olSetCallerPosition(position);
-            defaultPosition = &noPosition;
+            defaultPosition = noPosition;
             defaultUsage = UsageNone;
             if (symbol->type==TypeMacro && ! options.exactPositionResolve) {
                 // a hack for macros
-                defaultPosition = &symbol->pos;
+                defaultPosition = symbol->pos;
                 defaultUsage = UsageDefined;
             }
-            if (defaultPosition->file!=NO_FILE_NUMBER)
-                log_trace("getting definition position of %s at line %d", symbol->name, defaultPosition->line);
+            if (defaultPosition.file!=NO_FILE_NUMBER)
+                log_trace("getting definition position of %s at line %d", symbol->name, defaultPosition.line);
             if (! operationRequiresOnlyParsingNoPushing(options.serverOperation)) {
                 menu = olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, foundMember,
                                                 true, true, 0, usage, 0, defaultPosition, defaultUsage);
@@ -1092,7 +1092,7 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
 SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
     SymbolsMenu     *res;
     ReferenceItem     ss = makeReferenceItem(fieldName, cfi, TypeDefault, storage, GlobalScope, GlobalVisibility);
-    res = olCreateNewMenuItem(&ss, ss.vApplClass, &noPosition, UsageNone,
+    res = olCreateNewMenuItem(&ss, ss.vApplClass, noPosition, UsageNone,
                               1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
                               UsageUsed, 0);
     return res;
@@ -1929,7 +1929,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceItem *ss) {
     }
     if (!used && definitionReference!=NULL) {
         olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, ss,
-                                 true, true, 0, UsageDefined, 0, &definitionReference->position,
+                                 true, true, 0, UsageDefined, 0, definitionReference->position,
                                  definitionReference->usage);
     }
 }
@@ -2294,7 +2294,7 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
     OlcxReferences *rstack = sessionData.browserStack.top;
     unsigned ooBits = 0;
     int vlevel = 0;
-    Position *defpos = &noPosition;
+    Position defpos = noPosition;
     Usage defusage = UsageNone;
 
     log_trace("ooBits for '%s'", getFileItem(references->vApplClass)->name);
@@ -2304,10 +2304,10 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
             found = true;
             unsigned oo = olcxOoBits(menu, references);
             ooBits = ooBitsMax(oo, ooBits);
-            if (defpos->file == NO_FILE_NUMBER) {
-                defpos = &menu->defpos;
+            if (defpos.file == NO_FILE_NUMBER) {
+                defpos = menu->defpos;
                 defusage = menu->defUsage;
-                log_trace(": propagating defpos (line %d) to menusym", defpos->line);
+                log_trace(": propagating defpos (line %d) to menusym", defpos.line);
             }
             int vlev = 0;
             if (vlevel==0 || ABS(vlevel)>ABS(vlev))

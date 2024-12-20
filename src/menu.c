@@ -91,7 +91,7 @@ static char *olcxStringCopy(char *string) {
     return copy;
 }
 
-SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int vApplClass, Position *defpos,
+SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int vApplClass, Position defpos,
                                  int defusage, int selected, int visible, unsigned ooBits, int olusage,
                                  int vlevel) {
     SymbolsMenu   *symbolsMenu;
@@ -104,7 +104,7 @@ SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int vApplClass, Position
                                               symbol->visibility);
 
     symbolsMenu = malloc(sizeof(SymbolsMenu));
-    fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage, vlevel, defusage, *defpos);
+    fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage, vlevel, defusage, defpos);
     return symbolsMenu;
 }
 
@@ -142,7 +142,7 @@ static bool olSymbolMenuIsLess(SymbolsMenu *s1, SymbolsMenu *s2) {
 SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *symbol,
                                       bool selected, bool visible, unsigned ooBits,
                                       int olusage, int vlevel,
-                                      Position *defpos, int defusage) {
+                                      Position defpos, int defusage) {
     SymbolsMenu *new, **place, dummyMenu;
 
     fillSymbolsMenu(&dummyMenu, *symbol, 0, false, 0, olusage, vlevel, UsageNone, noPosition);
