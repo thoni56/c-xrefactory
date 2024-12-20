@@ -12,6 +12,7 @@ int yacc_yyparse() {
   return (int)mock();
 }
 
-void makeYaccCompletions(char *s, int len, Position *pos) {
-    (void)mock(s, len, pos);
+void makeYaccCompletions(char *s, int len, Position pos) {
+    Position *position = &pos;
+    (void)mock(s, len, position);
 }

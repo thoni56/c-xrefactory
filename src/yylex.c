@@ -380,7 +380,7 @@ static LexemCode getLexem(void) {
 /*                                                                   */
 /* ***************************************************************** */
 
-static void testCxrefCompletionId(LexemCode *out_lexem, char *id, Position *pos) {
+static void testCxrefCompletionId(LexemCode *out_lexem, char *id, Position position) {
     LexemCode lexem;
 
     lexem = *out_lexem;
@@ -390,9 +390,9 @@ static void testCxrefCompletionId(LexemCode *out_lexem, char *id, Position *pos)
             deactivateCaching();
             olstringServed = true;
             if (currentLanguage == LANG_YACC) {
-                makeYaccCompletions(id, strlen(id), pos);
+                makeYaccCompletions(id, strlen(id), position);
             } else {
-                makeCCompletions(id, strlen(id), pos);
+                makeCCompletions(id, strlen(id), position);
             }
             /* here should be a longjmp to stop file processing !!!! */
             lexem = IDENTIFIER;
@@ -733,7 +733,7 @@ protected void processDefineDirective(bool hasArguments) {
     Position macroPosition;
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &macroPosition, NULL, true);
 
-    testCxrefCompletionId(&lexem, currentLexemStart, &macroPosition);    /* for cross-referencing */
+    testCxrefCompletionId(&lexem, currentLexemStart, macroPosition);    /* for cross-referencing */
     if (lexem != IDENTIFIER)
         return;
 
@@ -949,7 +949,7 @@ static void processUndefineDirective(void) {
 
     ch = currentInput.read;
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-    testCxrefCompletionId(&lexem, ch, &position);
+    testCxrefCompletionId(&lexem, ch, position);
 
     if (isIdentifierLexem(lexem)) {
         Symbol symbol;
@@ -1086,7 +1086,7 @@ static void processIfdefDirective(bool isIfdef) {
     /* Then we are probably looking at the id... */
     ch = currentInput.read;
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-    testCxrefCompletionId(&lexem, ch, &position);
+    testCxrefCompletionId(&lexem, ch, position);
 
     if (!isIdentifierLexem(lexem))
         return;
@@ -2098,7 +2098,7 @@ LexemCode yylex(void) {
         assert(options.mode);
         if (options.mode == ServerMode) {
             // TODO: ???????????? isn't this useless
-            testCxrefCompletionId(&lexem,yytext,&position);
+            testCxrefCompletionId(&lexem, yytext, position);
         }
         log_trace("id '%s' position %d, %d, %d", yytext, position.file, position.line, position.col);
         Symbol symbol = makeSymbol(yytext, yytext, noPosition);
@@ -2180,7 +2180,7 @@ LexemCode yylex(void) {
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                     macroStackIndex == 0);
         if (lexem == IDENT_TO_COMPLETE) {
-            testCxrefCompletionId(&lexem,yytext,&position);
+            testCxrefCompletionId(&lexem, yytext, position);
             while (includeStack.pointer != 0)
                 popInclude();
             /* while (getLexBuf(&cFile.lb)) cFile.lb.cc = cFile.lb.fin;*/

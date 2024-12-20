@@ -12,6 +12,7 @@ int c_yyparse() {
   return (int) mock();
 }
 
-void makeCCompletions(char *s, int len, Position *pos) {
-     (void)mock(s, len, pos);
+void makeCCompletions(char *s, int len, Position pos) {
+    Position *position = &pos;
+    (void)mock(s, len, position);
 }

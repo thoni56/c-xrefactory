@@ -1973,13 +1973,13 @@ static bool runCompletionsCollectorsIn(CompletionFunctionsTable *completionsTabl
    replacement of YACC variables so that we can have multiple parsers
    linked together. Therefore it is not straight forward to refactor
    out commonalities. */
-void makeCCompletions(char *string, int len, Position *pos) {
+void makeCCompletions(char *string, int len, Position pos) {
     CompletionLine completionLine;
 
     log_trace("completing \"%s\"", string);
     strncpy(collectedCompletions.idToProcess, string, MAX_FUNCTION_NAME_LENGTH);
     collectedCompletions.idToProcess[MAX_FUNCTION_NAME_LENGTH-1] = 0;
-    initCompletions(&collectedCompletions, len, *pos);
+    initCompletions(&collectedCompletions, len, pos);
 
     /* special wizard completions */
     if (!runCompletionsCollectorsIn(specialCompletionsCollectorsTable))
