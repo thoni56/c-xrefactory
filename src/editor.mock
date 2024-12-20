@@ -50,8 +50,9 @@ bool editorRegionListBefore(EditorRegionList *l1, EditorRegionList *l2) {
   return (int) mock(l1, l2);
 }
 
-EditorMarker *newEditorMarkerForPosition(Position *pos) {
-  return (EditorMarker *) mock(pos);
+EditorMarker *newEditorMarkerForPosition(Position pos) {
+    Position *position = &pos;
+    return (EditorMarker *) mock(position);
 }
 
 EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs) {

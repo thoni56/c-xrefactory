@@ -331,16 +331,16 @@ EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset) {
     return marker;
 }
 
-EditorMarker *newEditorMarkerForPosition(Position *position) {
+EditorMarker *newEditorMarkerForPosition(Position position) {
     EditorBuffer *buffer;
     EditorMarker *marker;
 
-    if (position->file==NO_FILE_NUMBER || position->file<0) {
+    if (position.file==NO_FILE_NUMBER || position.file<0) {
         errorMessage(ERR_INTERNAL, "[editor] creating marker for non-existent position");
     }
-    buffer = findEditorBufferForFile(getFileItem(position->file)->name);
+    buffer = findEditorBufferForFile(getFileItem(position.file)->name);
     marker = newEditorMarker(buffer, 0);
-    moveEditorMarkerToLineAndColumn(marker, position->line, position->col);
+    moveEditorMarkerToLineAndColumn(marker, position.line, position.col);
     return marker;
 }
 

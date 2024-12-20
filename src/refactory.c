@@ -953,7 +953,7 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
     text = point->buffer->allocation.text;
 
     if (endMarkerOrMark == NULL) {
-        beginMarker = newEditorMarkerForPosition(&parameterBeginPosition);
+        beginMarker = newEditorMarkerForPosition(parameterBeginPosition);
     } else {
         beginMarker = endMarkerOrMark;
         assert(beginMarker->buffer->fileNumber == parameterBeginPosition.file);
@@ -1042,7 +1042,7 @@ static void checkThatParameterIsUnused(EditorMarker *marker, char *functionName,
         return;
     }
 
-    EditorMarker *positionMarker = newEditorMarkerForPosition(&parameterPosition);
+    EditorMarker *positionMarker = newEditorMarkerForPosition(parameterPosition);
     strncpy(parameterName, getIdentifierOnMarker_static(positionMarker), TMP_STRING_SIZE);
     parameterName[TMP_STRING_SIZE - 1] = 0;
     if (isParameterUsedExceptRecursiveCalls(positionMarker, marker)) {
@@ -1079,8 +1079,8 @@ static void deleteParameter(EditorMarker *pos, char *fname, int argumentNumber, 
     if (res != RESULT_OK)
         return;
 
-    m1 = newEditorMarkerForPosition(&parameterBeginPosition);
-    m2 = newEditorMarkerForPosition(&parameterEndPosition);
+    m1 = newEditorMarkerForPosition(parameterBeginPosition);
+    m2 = newEditorMarkerForPosition(parameterEndPosition);
 
     text = pos->buffer->allocation.text;
 
@@ -1128,8 +1128,8 @@ static void moveParameter(EditorMarker *pos, char *fname, int argFrom, int argTo
     if (res != RESULT_OK)
         return;
 
-    m1 = newEditorMarkerForPosition(&parameterBeginPosition);
-    m2 = newEditorMarkerForPosition(&parameterEndPosition);
+    m1 = newEditorMarkerForPosition(parameterBeginPosition);
+    m2 = newEditorMarkerForPosition(parameterEndPosition);
 
     text      = pos->buffer->allocation.text;
     plen      = 0;
@@ -1376,8 +1376,8 @@ static void getFunctionBoundariesForMoving(EditorMarker *point, EditorMarker **m
         FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
     }
 
-    mstart = newEditorMarkerForPosition(&parsedPositions[IPP_FUNCTION_BEGIN]);
-    mend   = newEditorMarkerForPosition(&parsedPositions[IPP_FUNCTION_BEGIN + 1]);
+    mstart = newEditorMarkerForPosition(parsedPositions[IPP_FUNCTION_BEGIN]);
+    mend   = newEditorMarkerForPosition(parsedPositions[IPP_FUNCTION_BEGIN + 1]);
 
     moveMarkerToTheBeginOfDefinitionScope(mstart);
     moveMarkerToTheEndOfDefinitionScope(mend);

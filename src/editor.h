@@ -66,7 +66,7 @@ extern bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2);
 extern bool editorRegionListBefore(EditorRegionList *l1, EditorRegionList *l2);
 
 extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset);
-extern EditorMarker     *newEditorMarkerForPosition(Position *pos);
+extern EditorMarker     *newEditorMarkerForPosition(Position position);
 extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next);
 
 
