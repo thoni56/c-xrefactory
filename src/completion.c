@@ -37,41 +37,41 @@ protected Completion *newCompletion(char *name, char *fullName,
     return completion;
 }
 
-// if s==NULL, then the pos is taken as default position of this ref !!!
-/* If symbol != NULL && referenceItem != NULL then dfref can be anything... */
+// If symbol == NULL, then the pos is taken as default position of this ref !!!
+// If symbol != NULL && referenceItem != NULL then reference can be anything...
 Completion *completionListPrepend(Completion *completions, char *name, char *fullName, Symbol *symbol,
-                                  ReferenceItem *referenceItem,
-                                  Reference *reference, Type cType, int vApplClass) {
+                                  ReferenceItem *referenceItem, Reference *reference, Type type,
+                                  int vApplClass) {
     Completion *completion;
-    char *linkName;
-    Visibility visibility;
-    Scope scope;
-    Storage storage;
-    ReferenceItem item;
 
-    if (referenceItem!=NULL) {
+    if (referenceItem != NULL) {
         // probably a 'search in tag' file item
-        linkName = strdup(referenceItem->linkName);
+        char *linkName = strdup(referenceItem->linkName);
 
-        item = makeReferenceItem(linkName, referenceItem->vApplClass, referenceItem->type, referenceItem->storage, referenceItem->scope, referenceItem->visibility);
+        ReferenceItem item = makeReferenceItem(linkName, referenceItem->vApplClass, referenceItem->type,
+                                               referenceItem->storage, referenceItem->scope,
+                                               referenceItem->visibility);
 
-        completion = newCompletion(name, fullName, 1, referenceItem->visibility, cType, *reference, item);
+        completion = newCompletion(name, fullName, 1, referenceItem->visibility, type, *reference, item);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
 
-        item = makeReferenceItem("", NO_FILE_NUMBER, TypeUnknown, StorageDefault,
-                                 AutoScope, LocalVisibility);
+        ReferenceItem item = makeReferenceItem("", NO_FILE_NUMBER, TypeUnknown, StorageDefault,
+                                               AutoScope, LocalVisibility);
 
-        completion = newCompletion(name, fullName, 1, LocalVisibility, cType, r, item);
+        completion = newCompletion(name, fullName, 1, LocalVisibility, type, r, item);
     } else {
         Reference r = makeReference((Position){0,0,0}, UsageNone, NULL);
+        Visibility visibility;
+        Scope scope;
+        Storage storage;
         getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
-        linkName = strdup(symbol->linkName);
+        char *linkName = strdup(symbol->linkName);
 
-        item = makeReferenceItem(linkName, vApplClass, symbol->type, storage,
-                                 scope, visibility);
-        completion = newCompletion(name, fullName, 1, visibility, cType, r, item);
+        ReferenceItem item = makeReferenceItem(linkName, vApplClass, symbol->type, storage,
+                                               scope, visibility);
+        completion = newCompletion(name, fullName, 1, visibility, type, r, item);
     }
     if (fullName!=NULL) {
         for (int i=0; fullName[i]; i++) {

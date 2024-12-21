@@ -7,9 +7,10 @@ void freeCompletions(Completion *completions) {
     mock(completions);
 }
 
-Completion *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *s, ReferenceItem *ri, Reference *dfpos,
-                                  Type symType, int vFunClass) {
-    return (Completion *)mock(name, fullText, s, ri, dfpos, symType, vFunClass, completions);
+Completion *completionListPrepend(Completion *completions, char *name, char *fullName, Symbol *symbol,
+                                  ReferenceItem *referenceItem, Reference *reference,
+                                  Type type, int vApplClass) {
+    return (Completion *)mock(name, fullName, symbol, referenceItem, reference, type, vApplClass, completions);
 }
 
 void tagSearchCompactShortResults(void) {
