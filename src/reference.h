@@ -11,13 +11,14 @@
 
 #define SCOPES_LN 3
 
+// An occurence of a referenceItem
 typedef struct reference {
     struct position   position;
     Usage             usage;
     struct reference *next;
 } Reference;
 
-
+// A variable, type, included file, ...
 typedef struct referenceItem {
     char                     *linkName;
     int                       vApplClass; /* This probably was application class

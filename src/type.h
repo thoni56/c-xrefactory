@@ -77,8 +77,8 @@
         ENUM(TypeBoolean)                                               \
         ENUM(TypeNull)                                                  \
         ENUM(MAX_CTYPE)                                                 \
-        ENUM(TypeCppInclude)                                            \
         ENUM(TypeMacro)                                                 \
+        ENUM(TypeCppInclude)                                            \
         ENUM(TypeCppIfElse)                                             \
         ENUM(TypeCppCollate)                                            \
         ENUM(TypeYaccSymbol)                                            \
