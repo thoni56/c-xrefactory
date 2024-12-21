@@ -60,7 +60,7 @@ static void setYylvalsForInteger(int val, Position position, int length) {
 /* !!!!!!!!!!!!!!!!!!! to caching !!!!!!!!!!!!!!! */
 
 
-/* Exceptions: */
+/* Exceptions when reading lexems: */
 #define END_OF_MACRO_ARGUMENT_EXCEPTION -1
 #define END_OF_FILE_EXCEPTION -2
 #define ON_LEXEM_EXCEPTION_GOTO(lexem, eof_label, eom_label)    \
@@ -496,7 +496,7 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
     StringList *start = options.includeDirs;
 
     if (is_include_next) {
-        /* #include_next, so find the include path which matches this */
+        /* #include_next, (read this from the same directory) so find the include path which matches this */
         for (StringList *p = options.includeDirs; p != NULL; p = p->next) {
             char normalizedIncludePath[MAX_FILE_NAME_SIZE];
             strcpy(normalizedIncludePath, normalizeFileName_static(p->string, cwd));
