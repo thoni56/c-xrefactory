@@ -1720,22 +1720,18 @@ static void getActualMacroArgument(
     MacroBody *macroBody,
     int actualArgumentIndex
 ) {
-    int   offset;
-    int   depth;
-    LexemCode lexem;
     char *bufferP;
     char *buffer;
-    int   bufferSize;
 
-    lexem      = *inOutLexem;
+    LexemCode lexem = *inOutLexem;
 
-    bufferSize = MACRO_ARGUMENTS_BUFFER_SIZE;
-    depth      = 0;
+    int bufferSize = MACRO_ARGUMENTS_BUFFER_SIZE;
     buffer = ppmAllocc(bufferSize + MAX_LEXEM_SIZE, sizeof(char));
     bufferP = buffer;
 
     /* if lastArgument, collect everything there */
-    offset = 0;
+    int depth = 0;
+    int offset = 0;
     while (((lexem != ',' || actualArgumentIndex + 1 == macroBody->argCount) && lexem != ')')
            || depth > 0) {
         // The following should be equivalent to the loop condition:
@@ -1789,7 +1785,6 @@ end:
 static LexInput *getActualMacroArguments(MacroBody *macroBody, Position macroPosition,
                                          Position lparPosition) {
     char *previousLexem;
-    LexemCode lexem;
 
     Position ppb1 = lparPosition;
     Position ppb2 = lparPosition;
@@ -1798,7 +1793,7 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position macroPos
     Position position;
 
     LexInput *actualArgs = ppmAllocc(macroBody->argCount, sizeof(LexInput));
-    lexem = getLexSkippingLines(&previousLexem, NULL, NULL, &position, NULL);
+    LexemCode lexem = getLexSkippingLines(&previousLexem, NULL, NULL, &position, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
