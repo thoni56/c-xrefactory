@@ -482,7 +482,7 @@ static void openInOutReferenceFile(bool updateFlag, char *filename) {
     }
 }
 
-static void closeReferenceFile(char *fname) {
+static void closeCurrentReferenceFile(void) {
     if (currentReferenceFile != NULL) {
         closeFile(currentReferenceFile);
         currentReferenceFile = NULL;
@@ -508,7 +508,7 @@ static void writePartialReferenceFile(bool updateFlag,
     if (mapfun2!=NULL)
         mapOverFileTableWithIndex(mapfun2);
     scanCxFile(fullScanFunctionSequence);
-    closeReferenceFile(filename);
+    closeCurrentReferenceFile();
 }
 
 static void writeReferencesFromMemoryIntoRefFileNo(int fileOrder) {
@@ -540,7 +540,7 @@ void writeReferenceFile(bool updating, char *filename) {
         mapOverFileTableWithIndex(writeFileSourceIndexItem);
         scanCxFile(fullScanFunctionSequence);
         mapOverReferenceTable(writeReferenceItem);
-        closeReferenceFile(filename);
+        closeCurrentReferenceFile();
     } else {
         /* several reference files */
         char referenceFileName[MAX_FILE_NAME_SIZE];
@@ -556,7 +556,7 @@ void writeReferenceFile(bool updating, char *filename) {
             writeCxFileHead();
             scanCxFile(fullScanFunctionSequence);
             writeReferencesFromMemoryIntoRefFileNo(i);
-            closeReferenceFile(referenceFileName);
+            closeCurrentReferenceFile();
         }
     }
 }
@@ -577,9 +577,9 @@ static void writeCxFileCompatibilityError(char *message) {
 /* ************************* READ **************************** */
 
 static void scanFunction_ReadKeys(int size,
-                                        int key,
-                                        CharacterBuffer *cb,
-                                        CxScanFileOperation operation
+                                  int key,
+                                  CharacterBuffer *cb,
+                                  CxScanFileOperation operation
 ) {
     assert(key == CXFI_KEY_LIST);
     for (int i=0; i<size-1; i++) {

@@ -76,6 +76,7 @@ static void refTabDeleteOutOfMemory(int index) {
     setReferenceItem(index, item);
 }
 
+// Deliberate NO-OP
 static void fileTabDeleteOutOfMemory(FileItem *fileItem) {
 }
 

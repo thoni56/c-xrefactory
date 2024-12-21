@@ -1429,6 +1429,7 @@ static EditorMarker *removeStaticPrefix(EditorMarker *d) {
     return pp;
 }
 
+// Old Java version for now:
 // make it public, because you update references after and some references can
 // be lost, later you can restrict accessibility
 static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *point, EditorMarker *mend,

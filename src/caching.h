@@ -1,11 +1,11 @@
 #ifndef CACHING_H_INCLUDED
 #define CACHING_H_INCLUDED
 
-#include "stdinc.h"
-#include "counters.h"
-#include "stackmemory.h"
-#include "input.h"
 #include "constants.h"
+#include "counters.h"
+#include "input.h"
+#include "stackmemory.h"
+
 
 typedef struct {
     struct codeBlock  *topBlock;

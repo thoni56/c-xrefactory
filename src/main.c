@@ -8,7 +8,6 @@
 #include "commons.h"
 #include "constants.h"
 #include "cxfile.h"
-#include "cxref.h"
 #include "editor.h"
 #include "filedescriptor.h"
 #include "fileio.h"
