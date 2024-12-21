@@ -483,7 +483,7 @@ void popInclude(void) {
     }
 }
 
-static bool openInclude(char includeType, char *name, char **fileName, bool is_include_next) {
+static bool openInclude(char includeType, char *name, bool is_include_next) {
     EditorBuffer *editorBuffer = NULL;
     FILE *file = NULL;
     StringList *includeDirP;
@@ -556,7 +556,6 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
 }
 
 static void processInclude2(Position includePosition, char includeType, char *includedName, bool is_include_next) {
-    char *actualFileName;
     Symbol symbol;
     char tmpBuff[TMP_BUFF_SIZE];
 
@@ -568,7 +567,7 @@ static void processInclude2(Position includePosition, char includeType, char *in
 
     if (symbolTableIsMember(symbolTable, &symbol, NULL, NULL))
         return;
-    if (!openInclude(includeType, includedName, &actualFileName, is_include_next)) {
+    if (!openInclude(includeType, includedName, is_include_next)) {
         assert(options.mode);
         if (options.mode!=ServerMode)
             warningMessage(ERR_CANT_OPEN, includedName);
