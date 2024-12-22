@@ -8,7 +8,7 @@ MODULES = main globals misc semact commons complete cxref cxfile	\
 		typemodifier position id parsers fileio stringlist	\
 		ppc server reference xref refactorings progress input	\
 		commandlogger completion menu lexem editorbuffer undo	\
-		counters stackmemory lsp lsp_manager
+		counters stackmemory lsp lsp_manager lsp_reader
 
 modules:
 	@echo MODULES=$(MODULES)

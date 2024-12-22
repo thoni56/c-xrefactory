@@ -519,6 +519,7 @@ $(eval $(call UNITTEST,lexer,log lexembuffer characterreader position memory sta
 $(eval $(call UNITTEST,list,log))
 $(eval $(call UNITTEST,lsp,log))
 $(eval $(call UNITTEST,lsp_manager,log))
+$(eval $(call UNITTEST,lsp_reader,log))
 $(eval $(call UNITTEST,macroargumenttable,memory log hash))
 $(eval $(call UNITTEST,main,memory log protocol position memory stackmemory session))
 $(eval $(call UNITTEST,memory,log))
