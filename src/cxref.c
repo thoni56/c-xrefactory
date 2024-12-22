@@ -1730,9 +1730,8 @@ static bool refItemsOrderLess(SymbolsMenu *menu1, SymbolsMenu *menu2) {
 }
 
 void olCreateSelectionMenu(int command) {
-    OlcxReferences    *rstack;
-    SymbolsMenu     *ss;
-    int                 fnum;
+    OlcxReferences  *rstack;
+    SymbolsMenu     *menu;
 
     // I think this ordering is useless
 
@@ -1745,19 +1744,19 @@ void olCreateSelectionMenu(int command) {
 
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
-    ss = rstack->hkSelectedSym;
-    if (ss == NULL)
+    menu = rstack->hkSelectedSym;
+    if (menu == NULL)
         return;
 
-    renameCollationSymbols(ss);
+    renameCollationSymbols(menu);
     LIST_SORT(SymbolsMenu, rstack->hkSelectedSym, olMenuHashFileNumLess);
 
-    ss = rstack->hkSelectedSym;
-    while (ss!=NULL) {
-        scanReferencesToCreateMenu(ss->references.linkName);
-        fnum = cxFileHashNumber(ss->references.linkName);
-        while (ss!=NULL && fnum==cxFileHashNumber(ss->references.linkName))
-            ss = ss->next;
+    menu = rstack->hkSelectedSym;
+    while (menu!=NULL) {
+        scanReferencesToCreateMenu(menu->references.linkName);
+        int fnum = cxFileHashNumberForSymbol(menu->references.linkName);
+        while (menu!=NULL && fnum==cxFileHashNumberForSymbol(menu->references.linkName))
+            menu = menu->next;
     }
 
     mapOverReferenceTable(mapCreateSelectionMenu);
