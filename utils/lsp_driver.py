@@ -3,6 +3,8 @@
 import sys
 import time
 import json
+import argparse
+import ijson
 
 def calculate_content_length(payload):
     """Calculate the Content-Length of the JSON payload."""
@@ -17,33 +19,30 @@ def send_requests(file_name, delay):
     """Read JSON requests from a file and send them as LSP frames."""
     try:
         with open(file_name, 'r') as file:
-            # Read and split requests, assuming each JSON payload is separated by newlines
-            requests = file.read().strip().split("\n")
-
-        for request in requests:
-            try:
-                # Ensure request is valid JSON
-                json_payload = json.dumps(json.loads(request.strip()))
-                lsp_frame = package_lsp_frame(json_payload)
-                print(f"{lsp_frame}")
-                # Here you would send `lsp_frame` to your LSP server (e.g., via socket)
-                # For now, we simulate the delay
-                time.sleep(delay)
-            except json.JSONDecodeError:
-                print(f"LSP Driver: Invalid JSON payload: {request.strip()}", file=sys.stderr)
+            # Parse JSON objects one at a time
+            for obj in ijson.items(file, 'item'):
+                try:
+                    # Serialize object to JSON string
+                    json_payload = json.dumps(obj, indent=2)
+                    lsp_frame = package_lsp_frame(json_payload)
+                    print(f"{lsp_frame}")
+                    time.sleep(delay)
+                except Exception as e:
+                    print(f"Error processing JSON object: {e}", file=sys.stderr)
 
     except FileNotFoundError:
         print(f"File {file_name} not found.", file=sys.stderr)
     except Exception as e:
         print(f"An error occurred: {e}", file=sys.stderr)
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python lsp_driver.py <file_name>", file=sys.stderr)
-        sys.exit(1)
+def main():
+    parser = argparse.ArgumentParser(description="Send JSON requests from a file as LSP frames.")
+    parser.add_argument("file", help="File containing JSON requests (array of JSON objects).")
+    parser.add_argument("-d", "--delay", type=float, default=1.0, help="Delay between sending requests (in seconds).")
 
-    file_name = sys.argv[1]
-    try:
-        send_requests(file_name, 1)
-    except ValueError:
-        print("Invalid delay value. Must be a number.", file=sys.stderr)
+    args = parser.parse_args()
+
+    send_requests(args.file, args.delay)
+
+if __name__ == "__main__":
+    main()
