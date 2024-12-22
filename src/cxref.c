@@ -1696,11 +1696,10 @@ bool olcxShowSelectionMenu(void) {
 }
 
 static bool olMenuHashFileNumLess(SymbolsMenu *s1, SymbolsMenu *s2) {
-    int fi1, fi2;
-    fi1 = cxFileHashNumber(s1->references.linkName);
-    fi2 = cxFileHashNumber(s2->references.linkName);
-    if (fi1 < fi2) return true;
-    if (fi1 > fi2) return false;
+    int h1 = cxFileHashNumberForSymbol(s1->references.linkName);
+    int h2 = cxFileHashNumberForSymbol(s2->references.linkName);
+    if (h1 < h2) return true;
+    if (h1 > h2) return false;
     if (s1->references.visibility == LocalVisibility) return true;
     if (s1->references.visibility == LocalVisibility) return false;
     // both files and categories equals ?
