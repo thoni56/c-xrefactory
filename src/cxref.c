@@ -1732,15 +1732,6 @@ void olCreateSelectionMenu(int command) {
     OlcxReferences  *rstack;
     SymbolsMenu     *menu;
 
-    // I think this ordering is useless
-
-    // The above comment was in the original code, by Marian perhaps?
-    // At least the tests pass if this sorting is removed but I'm
-    // unsure we have all tests required to be sure
-    LIST_MERGE_SORT(SymbolsMenu,
-                    sessionData.browserStack.top->hkSelectedSym,
-                    refItemsOrderLess);
-
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
     menu = rstack->hkSelectedSym;
