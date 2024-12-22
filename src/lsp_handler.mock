@@ -1,0 +1,8 @@
+#include <cgreen/mocks.h>
+
+#include "lsp_handler.h"
+
+
+int handle_initialize(cJSON *request) {
+    return mock(request);
+}

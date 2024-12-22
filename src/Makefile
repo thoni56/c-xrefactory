@@ -59,6 +59,9 @@
 #
 #########################################################################
 
+# Extra libraries to link
+LIBS = -lz -lcjson
+
 OS := $(shell uname)
 
 # Figure out reasonable number of parallel jobs
@@ -493,7 +496,7 @@ $(1)_DEPENDENCIES = $(2)
 $(1)_DEPS = $$(patsubst %,$(OBJDIR)/%.o,$$($(1)_DEPENDENCIES))
 $(OBJDIR)/$(1)_tests.o: CFLAGS += $(CGREEN_INCLUDE)
 $(1)_tests.$(EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS)
-	$(CC) $(LDFLAGS) -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN_LIB) -lz
+	$(CC) $(LDFLAGS) -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN_LIB) $(LIBS)
 endef
 
 
@@ -518,6 +521,7 @@ $(eval $(call UNITTEST,lexembuffer,characterreader position memory stackmemory l
 $(eval $(call UNITTEST,lexer,log lexembuffer characterreader position memory stackmemory))
 $(eval $(call UNITTEST,list,log))
 $(eval $(call UNITTEST,lsp,log))
+$(eval $(call UNITTEST,lsp_dispatcher,log))
 $(eval $(call UNITTEST,lsp_manager,log))
 $(eval $(call UNITTEST,lsp_reader,log))
 $(eval $(call UNITTEST,macroargumenttable,memory log hash))

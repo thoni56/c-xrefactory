@@ -1,0 +1,9 @@
+#include <cgreen/mocks.h>
+
+#include "lsp_reader.h"
+
+
+LspReadResult read_lsp_message(const char *input) {
+    LspReadResult result = *(LspReadResult*)mock(input);
+    return result;
+}
