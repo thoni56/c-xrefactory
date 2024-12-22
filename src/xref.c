@@ -233,7 +233,7 @@ static void scheduleModifiedFilesToUpdate(bool isRefactoring) {
     // ... but schedulingToUpdate() does not use the stat data !?!?!?
     // TODO: ... so WTF??!?!?!?
     // We should look at original sources (main.c) and try to figure out the mistake in logic
-    normalScanReferenceFile(suffix);
+    //normalScanReferenceFile(suffix);
 
     /* As schedulingToUpdate() is a mapped function we cannot send it
      * as argument, so we save it in a global variable */
