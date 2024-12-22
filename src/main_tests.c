@@ -22,6 +22,7 @@
 #include "init.mock"
 #include "lexem.mock"
 #include "lexer.mock"
+#include "lsp.mock"
 #include "macroargumenttable.mock"
 #include "misc.mock"
 #include "options.mock"

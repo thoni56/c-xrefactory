@@ -1,0 +1,12 @@
+#include "lsp.h"
+
+#include <string.h>
+
+
+bool want_lsp_server(int argc, char **argv) {
+    return (bool)mock(argc, argv);
+}
+
+int lsp_server() {
+    return mock();
+}

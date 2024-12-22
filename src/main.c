@@ -17,6 +17,7 @@
 #include "lexem.h"
 #include "list.h"
 #include "log.h"
+#include "lsp.h"
 #include "macroargumenttable.h"
 #include "memory.h"
 #include "misc.h"
@@ -764,6 +765,11 @@ int main(int argc, char *argv[]) {
     initLogging(argc, argv);
     ENTER();
 
+    /* And if we want to run the experimental LSP server, ignore anything else */
+    if (want_lsp_server(argc, argv))
+        return lsp_server();
+
+    /* else continue with legacy implementation */
     if (setjmp(memoryResizeJumpTarget) != 0) {
         /* CX_ALLOCC always makes one longjmp back to here before we can
            start processing for real ... Allocating initial CX memory */
