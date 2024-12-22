@@ -526,6 +526,33 @@ static void writeReferencesFromMemoryIntoRefFileNo(int fileOrder) {
     }
 }
 
+static void writeSingleReferenceFile(int updating, char *filename) {
+    openInOutReferenceFile(updating, filename);
+    writeCxFileHead();
+    mapOverFileTableWithIndex(writeFileNumberItem);
+    mapOverFileTableWithIndex(writeFileSourceIndexItem);
+    scanCxFile(fullScanFunctionSequence);
+    mapOverReferenceTable(writeReferenceItem);
+    closeCurrentReferenceFile();
+}
+
+static void writeMultipeReferenceFiles(int updating, char *dirname) {
+    char  referenceFileName[MAX_FILE_NAME_SIZE];
+
+    createDirectory(dirname);
+    writePartialReferenceFile(updating, dirname, REFERENCE_FILENAME_FILES, writeFileNumberItem,
+                              writeFileSourceIndexItem);
+    for (int i = 0; i < options.referenceFileCount; i++) {
+        sprintf(referenceFileName, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);
+        assert(strlen(referenceFileName) < MAX_FILE_NAME_SIZE - 1);
+        openInOutReferenceFile(updating, referenceFileName);
+        writeCxFileHead();
+        scanCxFile(fullScanFunctionSequence);
+        writeReferencesFromMemoryIntoRefFileNo(i);
+        closeCurrentReferenceFile();
+    }
+}
+
 void writeReferenceFile(bool updating, char *filename) {
     if (!updating)
         removeFile(filename);
@@ -533,31 +560,9 @@ void writeReferenceFile(bool updating, char *filename) {
     recursivelyCreateFileDirIfNotExists(filename);
 
     if (options.referenceFileCount <= 1) {
-        /* single reference file */
-        openInOutReferenceFile(updating, filename);
-        writeCxFileHead();
-        mapOverFileTableWithIndex(writeFileNumberItem);
-        mapOverFileTableWithIndex(writeFileSourceIndexItem);
-        scanCxFile(fullScanFunctionSequence);
-        mapOverReferenceTable(writeReferenceItem);
-        closeCurrentReferenceFile();
+        writeSingleReferenceFile(updating, filename);
     } else {
-        /* several reference files */
-        char referenceFileName[MAX_FILE_NAME_SIZE];
-        char *dirname = filename;
-
-        createDirectory(dirname);
-        writePartialReferenceFile(updating, dirname, REFERENCE_FILENAME_FILES,
-                                 writeFileNumberItem, writeFileSourceIndexItem);
-        for (int i=0; i<options.referenceFileCount; i++) {
-            sprintf(referenceFileName, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);
-            assert(strlen(referenceFileName) < MAX_FILE_NAME_SIZE-1);
-            openInOutReferenceFile(updating, referenceFileName);
-            writeCxFileHead();
-            scanCxFile(fullScanFunctionSequence);
-            writeReferencesFromMemoryIntoRefFileNo(i);
-            closeCurrentReferenceFile();
-        }
+        writeMultipeReferenceFiles(updating, filename);
     }
 }
 
