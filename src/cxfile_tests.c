@@ -33,7 +33,7 @@ AfterEach(CxFile) {}
 
 Ensure(CxFile, can_run_empty_test) {
     options.referenceFileCount = 1;
-    assert_that(cxFileHashNumber(NULL), is_equal_to(0));
+    assert_that(cxFileHashNumberForSymbol(NULL), is_equal_to(0));
 }
 
 static bool trueValue  = true;

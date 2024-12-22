@@ -154,22 +154,23 @@ static void fPutDecimal(int num, FILE *file) {
 
 /* *********************** INPUT/OUTPUT ************************** */
 
-int cxFileHashNumber(char *sym) {
+int cxFileHashNumberForSymbol(char *symbolName) {
     unsigned   hash;
-    char       *ss;
+    char       *ch;
     int        c;
 
     if (options.referenceFileCount <= 1)
         return 0;
 
     hash = 0;
-    ss = sym;
-    while ((c = *ss)) {
-        if (c == '(') break;
+    ch = symbolName;
+    while ((c = *ch) != '\0') {
+        if (c == '(')
+            break;
         SYMTAB_HASH_FUN_INC(hash, c);
         if (LINK_NAME_MAYBE_START(c))
             hash = 0;
-        ss++;
+        ch++;
     }
     SYMTAB_HASH_FUN_FINAL(hash);
     hash %= options.referenceFileCount;
@@ -518,7 +519,7 @@ static void writeReferencesFromMemoryIntoRefFileNo(int fileOrder) {
                 continue;
             if (r->references == NULL)
                 continue;
-            if (cxFileHashNumber(r->linkName) == fileOrder)
+            if (cxFileHashNumberForSymbol(r->linkName) == fileOrder)
                 writeReferenceItem(r);
             else
                 log_trace("Skipping reference with linkname \"%s\"", r->linkName);
@@ -767,17 +768,17 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     lastIncomingData.referenceItem = referenceItem;
     *referenceItem = makeReferenceItem(id, vApplClass, symbolType, storage, GlobalScope, GlobalVisibility);
 
-    ReferenceItem *memb;
-    if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
+    ReferenceItem *foundReferenceItem;
+    if (!isMemberInReferenceTable(referenceItem, NULL, &foundReferenceItem)) {
         // TODO: This is more or less the body of a newReferenceItem()
         char *ss = cxAlloc(len+1);
         strcpy(ss,id);
-        memb = cxAlloc(sizeof(ReferenceItem));
-        *memb = makeReferenceItem(ss, vApplClass, symbolType, storage,
-                                  GlobalScope, GlobalVisibility);
-        addToReferencesTable(memb);
+        foundReferenceItem = cxAlloc(sizeof(ReferenceItem));
+        *foundReferenceItem = makeReferenceItem(ss, vApplClass, symbolType, storage,
+                                                GlobalScope, GlobalVisibility);
+        addToReferencesTable(foundReferenceItem);
     }
-    lastIncomingData.referenceItem = memb;
+    lastIncomingData.referenceItem = foundReferenceItem;
     lastIncomingData.onLineReferencedSym = 0;
 }
 
@@ -1194,7 +1195,7 @@ static void readOneAppropiateReferenceFile(char *symbolName,
 
         /* following must be after reading XFiles*/
         char fns[MAX_FILE_NAME_SIZE];
-        int i = cxFileHashNumber(symbolName);
+        int i = cxFileHashNumberForSymbol(symbolName);
 
         sprintf(fns, "%04d", i);
         assert(strlen(fns) < MAX_FILE_NAME_SIZE-1);

@@ -36,7 +36,7 @@ void searchSymbolCheckReference(ReferenceItem *symbolReferences, Reference *refe
   mock(symbolReferences, reference);
 }
 
-int cxFileHashNumber(char *sym) {
+int cxFileHashNumberForSymbol(char *sym) {
   return (int) mock(sym);
 }
 
