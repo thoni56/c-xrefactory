@@ -2,6 +2,10 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
+
+#include "lsp_reader.h"
+#include "log.h"
 
 
 bool want_lsp_server(int argc, char **argv) {
@@ -11,10 +15,26 @@ bool want_lsp_server(int argc, char **argv) {
     return false;
 }
 
-int lsp_server() {
+int lsp_server(FILE *input_stream) {
     char buffer[8192];  // Adjust buffer size as necessary
-    if (fgets(buffer, sizeof(buffer), stdin)) {
-        return 0;  // Success
+
+    size_t bytes_read = fread(buffer, 1, sizeof(buffer)-1, input_stream);
+
+    if (bytes_read == 0) {
+        fprintf(stderr, "No input received\n");
+        return -1;
     }
-    return -1;  // Fail if no input is read
+    buffer[bytes_read] = '\0';  // Ensure null termination for safety
+
+    // Use lsp_reader to parse the input
+    LspReadResult result = read_lsp_message(buffer);
+    if (result.error_code != LSP_READER_SUCCESS) {
+        fprintf(stderr, "Error parsing LSP message: %d\n", result.error_code);
+        return -1;
+    }
+
+    log_trace("LSP: Received payload: %s\n", result.payload);
+
+    free(result.payload);
+    return 0;
 }

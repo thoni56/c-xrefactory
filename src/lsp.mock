@@ -7,6 +7,6 @@ bool want_lsp_server(int argc, char **argv) {
     return (bool)mock(argc, argv);
 }
 
-int lsp_server() {
-    return mock();
+int lsp_server(FILE *input_stream) {
+    return mock(input_stream);
 }

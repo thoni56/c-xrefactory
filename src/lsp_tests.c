@@ -1,10 +1,17 @@
 #include <cgreen/cgreen.h>
+#include <cgreen/constraint_syntax_helpers.h>
 
 #include "lsp.h"
 
+#include "log.h"
+
+#include "lsp_reader.mock"
+
 
 Describe(Lsp);
-BeforeEach(Lsp) {}
+BeforeEach(Lsp) {
+    log_set_level(LOG_ERROR);
+}
 AfterEach(Lsp) {}
 
 Ensure(Lsp, returns_true_when_lsp_option_is_in_argv) {
@@ -22,24 +29,28 @@ Ensure(Lsp, returns_false_when_lsp_option_is_not_in_argv) {
 
 Ensure(Lsp, server_reads_from_stdin) {
     const char *input =
-        "Content-Length: 55\r\n\r\n"
+        "Content-Length: 58\r\n\r\n"
         "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{}}";
 
-    // Redirect stdin
-    FILE *temp_stdin = fmemopen((void *)input, strlen(input), "r");
-    assert_that(temp_stdin, is_not_null);  // Ensure temp_stdin was created successfully
+    // Create a mock input stream
+    FILE *mock_input = fmemopen((void *)input, strlen(input), "r");
+    assert_that(mock_input, is_not_null);  // Ensure the stream was created successfully
 
-    FILE *stdin_backup = stdin;  // Backup original stdin
-    stdin = temp_stdin;
+    // Mock lsp_reader behavior
+    LspReadResult reader_result = {
+        .error_code = LSP_READER_SUCCESS,
+        .payload = strdup("{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{}}")
+    };
+    expect(read_lsp_message, will_return(&reader_result));
 
-    // Call the function under test
-    int result = lsp_server();
+    // Call the function under test with the mock input stream
+    int result = lsp_server(mock_input);
 
     // Validate behavior
-    assert_that(result, is_equal_to(0));  // For now, we expect success
-    // Additional checks can go here
+    assert_that(result, is_equal_to(0));  // Expect success
+    assert_that(reader_result.payload, is_not_null);
+    assert_that(reader_result.payload, is_equal_to_string("{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{}}"));
 
-    // Restore stdin and clean up
-    fclose(temp_stdin);
-    stdin = stdin_backup;
+    // Clean up
+    fclose(mock_input);
 }

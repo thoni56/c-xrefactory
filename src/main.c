@@ -767,7 +767,7 @@ int main(int argc, char *argv[]) {
 
     /* And if we want to run the experimental LSP server, ignore anything else */
     if (want_lsp_server(argc, argv))
-        return lsp_server();
+        return lsp_server(stdin);
 
     /* else continue with legacy implementation */
     if (setjmp(memoryResizeJumpTarget) != 0) {
