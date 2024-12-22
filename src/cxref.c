@@ -2203,37 +2203,38 @@ void answerEditAction(void) {
     LEAVE();
 }
 
-int itIsSymbolToPushOlReferences(ReferenceItem *p,
-                               OlcxReferences *rstack,
-                               SymbolsMenu **rss,
-                               int checkSelFlag) {
-    for (SymbolsMenu *ss=rstack->symbolsMenu; ss!=NULL; ss=ss->next) {
-        if ((ss->selected || checkSelFlag==DO_NOT_CHECK_IF_SELECTED)
-            && ss->references.vApplClass == p->vApplClass
-            && isSameCxSymbol(p, &ss->references)) {
-            *rss = ss;
-            if (IS_BEST_FIT_MATCH(ss)) {
+int itIsSymbolToPushOlReferences(ReferenceItem *referenceItem,
+                                 OlcxReferences *rstack,
+                                 SymbolsMenu **menu,
+                                 int checkSelectedFlag) {
+    for (SymbolsMenu *m=rstack->symbolsMenu; m!=NULL; m=m->next) {
+        if ((m->selected || checkSelectedFlag==DO_NOT_CHECK_IF_SELECTED)
+            && m->references.vApplClass == referenceItem->vApplClass
+            && isSameCxSymbol(referenceItem, &m->references))
+        {
+            *menu = m;
+            if (IS_BEST_FIT_MATCH(m)) {
                 return 2;
             } else {
                 return 1;
             }
         }
     }
-    *rss = NULL;
+    *menu = NULL;
     return 0;
 }
 
 
-void putOnLineLoadedReferences(ReferenceItem *p) {
+void putOnLineLoadedReferences(ReferenceItem *referenceItem) {
     int ols;
     SymbolsMenu *cms;
 
-    ols = itIsSymbolToPushOlReferences(p,sessionData.browserStack.top,
+    ols = itIsSymbolToPushOlReferences(referenceItem, sessionData.browserStack.top,
                                        &cms, DO_NOT_CHECK_IF_SELECTED);
     if (ols > 0) {
         assert(cms);
-        for (Reference *rr=p->references; rr!=NULL; rr=rr->next) {
-            olcxAddReferenceToSymbolsMenu(cms, rr);
+        for (Reference *r=referenceItem->references; r!=NULL; r=r->next) {
+            olcxAddReferenceToSymbolsMenu(cms, r);
         }
     }
 }
