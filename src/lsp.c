@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "lsp_dispatcher.h"
 #include "lsp_reader.h"
 #include "log.h"
 
@@ -33,7 +34,8 @@ int lsp_server(FILE *input_stream) {
         return -1;
     }
 
-    log_trace("LSP: Received payload: %s\n", result.payload);
+    log_trace("LSP: Received request: %s", result.payload);
+    dispatch_lsp_message(result.payload);
 
     free(result.payload);
     return 0;

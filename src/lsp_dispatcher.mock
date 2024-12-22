@@ -1,0 +1,6 @@
+#include <cgreen/cgreen.h>
+#include <cgreen/mocks.h>
+
+int dispatch_lsp_message(const char *message) {
+    return mock(message);
+}

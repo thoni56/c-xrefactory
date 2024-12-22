@@ -4,6 +4,6 @@
 #include <cjson/cJSON.h>
 
 
-extern int handle_initialize(cJSON *request);
+extern void handle_initialize(cJSON *request);
 
 #endif

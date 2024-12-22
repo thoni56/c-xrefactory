@@ -1,0 +1,7 @@
+#include <cgreen/cgreen.h>
+#include <cgreen/mocks.h>
+
+
+int send_response(const char *response) {
+    return mock(response);
+}

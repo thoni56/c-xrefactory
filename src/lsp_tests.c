@@ -6,6 +6,7 @@
 #include "log.h"
 
 #include "lsp_reader.mock"
+#include "lsp_dispatcher.mock"
 
 
 Describe(Lsp);
@@ -42,6 +43,8 @@ Ensure(Lsp, server_reads_from_stdin) {
         .payload = strdup("{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{}}")
     };
     expect(read_lsp_message, will_return(&reader_result));
+
+    expect(dispatch_lsp_message);
 
     // Call the function under test with the mock input stream
     int result = lsp_server(mock_input);
