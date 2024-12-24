@@ -12,3 +12,4 @@ src/tmp-*.g
 coverage
 *.info
 .tup
+log

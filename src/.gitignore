@@ -20,3 +20,4 @@ yacc_parser.tail
 options_config.h
 .cache
 latex
+.cgreen-debug-commands
