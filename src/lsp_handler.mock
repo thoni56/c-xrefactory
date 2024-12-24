@@ -6,3 +6,7 @@
 void handle_initialize(cJSON *request) {
     mock(request);
 }
+
+void handle_exit(cJSON *request) {
+    mock(request);
+}

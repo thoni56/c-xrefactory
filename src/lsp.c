@@ -6,17 +6,12 @@
 
 #include <cjson/cJSON.h>
 #include "lsp_dispatcher.h"
+#include "lsp_errors.h"
 #include "log.h"
+
 
 #define MAX_HEADER_FIELD_LEN 100
 
-enum {
-    ERROR_OK,
-    ERROR_HEADER_INCOMPLETE,
-    ERROR_OUT_OF_MEMORY,
-    ERROR_IO_ERROR,
-    ERROR_PARSE_ERROR
-};
 
 bool want_lsp_server(int argc, char **argv) {
     for (int i=0; i<argc; i++)
@@ -33,7 +28,7 @@ static unsigned long lsp_parse_header(FILE *input_stream) {
         fgets(buffer, MAX_HEADER_FIELD_LEN, input_stream);
         if(strcmp(buffer, "\r\n") == 0) { // End of header
             if(content_length == 0)
-                exit(ERROR_HEADER_INCOMPLETE);
+                exit(LSP_RETURN_ERROR_HEADER_INCOMPLETE);
             return content_length;
         }
 
@@ -48,11 +43,11 @@ static unsigned long lsp_parse_header(FILE *input_stream) {
 static cJSON* lsp_parse_content(FILE *input_stream, unsigned long content_length) {
     char *buffer = malloc(content_length + 1);
     if(buffer == NULL)
-        exit(ERROR_OUT_OF_MEMORY);
+        exit(LSP_RETURN_ERROR_OUT_OF_MEMORY);
     size_t read_elements = fread(buffer, 1, content_length, input_stream);
     if(read_elements != content_length) {
         free(buffer);
-        exit(ERROR_IO_ERROR);
+        exit(LSP_RETURN_ERROR_IO_ERROR);
     }
     buffer[content_length] = '\0';
 
@@ -60,19 +55,22 @@ static cJSON* lsp_parse_content(FILE *input_stream, unsigned long content_length
 
     free(buffer);
     if(request == NULL)
-        exit(ERROR_PARSE_ERROR);
+        exit(LSP_RETURN_ERROR_PARSE_ERROR);
     return request;
 }
 
 int lsp_server(FILE *input_stream) {
     log_trace("LSP: Server started");
 
-    int result = ERROR_OK;
-    while (result == ERROR_OK) {
+    int result = LSP_RETURN_OK;
+    while (result == LSP_RETURN_OK) {
         unsigned long content_length = lsp_parse_header(input_stream);
         cJSON *request = lsp_parse_content(input_stream, content_length);
         result = dispatch_lsp_request(request);
         cJSON_Delete(request);
     }
-    return result;
+    if (result == LSP_RETURN_EXIT)
+        return LSP_RETURN_OK;
+    else
+        return result;
 }

@@ -6,9 +6,17 @@
 /**
  * @brief Handle an 'initialize' request
  *
- * @param request - the request in JSON format, will *not* be deleted
+ * @param[in] request - the request in JSON format, will *not* be deleted
  *
  */
 extern void handle_initialize(cJSON *request);
+
+/**
+ * @brief Handle an 'exit' request
+ *
+ * @param[in] request - the request in JSON format, will *not* be deleted
+ *
+ */
+extern void handle_exit(cJSON *request);
 
 #endif

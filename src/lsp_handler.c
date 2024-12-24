@@ -24,3 +24,6 @@ void handle_initialize(cJSON *request) {
 
     free(response_string);
 }
+
+void handle_exit(cJSON *request) {
+}
