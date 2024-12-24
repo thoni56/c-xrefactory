@@ -1,3 +1,6 @@
 Content-Length: 53
 
 {"jsonrpc":"2.0","id":1,"result":{"capabilities":{}}}
+Content-Length: 38
+
+{"jsonrpc":"2.0","id":2,"result":null}

@@ -12,6 +12,14 @@
 extern void handle_initialize(cJSON *request);
 
 /**
+ * @brief Handle a 'shutdown' request
+ *
+ * @param[in] request - the request in JSON format, will *not* be deleted
+ *
+ */
+extern void handle_shutdown(cJSON *request);
+
+/**
  * @brief Handle an 'exit' request
  *
  * @param[in] request - the request in JSON format, will *not* be deleted

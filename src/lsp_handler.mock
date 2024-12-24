@@ -14,3 +14,7 @@ void handle_exit(cJSON *request) {
 void handle_method_not_found(cJSON *request) {
     mock(request);
 }
+
+void handle_shutdown(cJSON *request) {
+    mock(request);
+}

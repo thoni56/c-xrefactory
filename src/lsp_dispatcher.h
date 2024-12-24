@@ -10,6 +10,6 @@
  *
  * @param[in] request - The incoming request in JSON format, will *not* be deleted
  */
-extern LspReturnCode dispatch_lsp_request(cJSON *request);
+extern LspReturnCode dispatch_lsp_message(cJSON *request);
 
 #endif

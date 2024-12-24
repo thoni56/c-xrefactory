@@ -6,6 +6,7 @@
 #include "log.h"
 
 #include "lsp_dispatcher.mock"
+#include "lsp_errors.h"
 
 
 Describe(Lsp);
@@ -35,12 +36,12 @@ Ensure(Lsp, will_return_when_dispatcher_returns_error) {
     // Create a mock input stream
     FILE *mock_stdin = fmemopen((void *)input, strlen(input), "r");
 
-    expect(dispatch_lsp_request, will_return(-1));
+    expect(dispatch_lsp_message, will_return(LSP_RETURN_EXIT));
 
     int result = lsp_server(mock_stdin);
 
     // Returns the result code from the dispatcher
-    assert_that(result, is_equal_to(-1));
+    assert_that(result, is_equal_to(LSP_RETURN_OK));
 
     // Clean up
     fclose(mock_stdin);

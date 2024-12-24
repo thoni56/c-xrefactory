@@ -10,7 +10,6 @@
 void handle_initialize(cJSON *request) {
     log_trace("LSP: Handling 'initialize'");
 
-    // Create the response object
     cJSON *response = cJSON_CreateObject();
     cJSON_AddStringToObject(response, "jsonrpc", "2.0");
     cJSON_AddNumberToObject(response, "id", cJSON_GetObjectItem(request, "id")->valuedouble);
@@ -21,6 +20,20 @@ void handle_initialize(cJSON *request) {
     char *response_string = cJSON_PrintUnformatted(response);
 
     log_trace("LSP: Sent response: '%s'", response_string);
+    send_response(response_string);
+
+    free(response_string);
+}
+
+void handle_shutdown(cJSON *request) {
+    log_trace("LSP: Handling 'shutdown'");
+
+    cJSON *response = cJSON_CreateObject();
+    cJSON_AddStringToObject(response, "jsonrpc", "2.0");
+    cJSON_AddItemToObject(response, "id", cJSON_GetObjectItem(request, "id"));
+    cJSON_AddNullToObject(response, "result");
+
+    char *response_string = cJSON_PrintUnformatted(response);
     send_response(response_string);
 
     free(response_string);
