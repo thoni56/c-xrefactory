@@ -5,7 +5,6 @@
 
 #include "log.h"
 
-#include "lsp_reader.mock"
 #include "lsp_dispatcher.mock"
 
 
@@ -28,32 +27,21 @@ Ensure(Lsp, returns_false_when_lsp_option_is_not_in_argv) {
     assert_that(!want_lsp_server(1, args));
 }
 
-Ensure(Lsp, server_reads_from_stdin) {
+Ensure(Lsp, will_return_when_dispatcher_returns_error) {
     const char *input =
         "Content-Length: 58\r\n\r\n"
         "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{}}";
 
     // Create a mock input stream
-    FILE *mock_input = fmemopen((void *)input, strlen(input), "r");
-    assert_that(mock_input, is_not_null);  // Ensure the stream was created successfully
+    FILE *mock_stdin = fmemopen((void *)input, strlen(input), "r");
 
-    // Mock lsp_reader behavior
-    LspReadResult reader_result = {
-        .error_code = LSP_READER_SUCCESS,
-        .payload = strdup("{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{}}")
-    };
-    expect(read_lsp_message, will_return(&reader_result));
+    expect(dispatch_lsp_request, will_return(-1));
 
-    expect(dispatch_lsp_message);
+    int result = lsp_server(mock_stdin);
 
-    // Call the function under test with the mock input stream
-    int result = lsp_server(mock_input);
-
-    // Validate behavior
-    assert_that(result, is_equal_to(0));  // Expect success
-    assert_that(reader_result.payload, is_not_null);
-    assert_that(reader_result.payload, is_equal_to_string("{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{}}"));
+    // Returns the result code from the dispatcher
+    assert_that(result, is_equal_to(-1));
 
     // Clean up
-    fclose(mock_input);
+    fclose(mock_stdin);
 }
