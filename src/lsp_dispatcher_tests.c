@@ -35,3 +35,25 @@ Ensure(LspDispatcher, dispatches_exit_request) {
 
     assert_that(result, is_equal_to(LSP_RETURN_EXIT));
 }
+
+Ensure(LspDispatcher, dispatches_responds_with_not_found_for_unsupported_request) {
+    const char *message = "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"not-known\"}";
+    cJSON *request = cJSON_Parse(message);
+
+    expect(handle_method_not_found);
+
+    LspReturnCode result = dispatch_lsp_request(request);
+
+    assert_that(result, is_equal_to(LSP_RETURN_ERROR_METHOD_NOT_FOUND));
+}
+
+Ensure(LspDispatcher, dispatches_does_not_respond_to_unsupported_notification) {
+    const char *message = "{\"jsonrpc\":\"2.0\",\"method\":\"not-known\"}";
+    cJSON *request = cJSON_Parse(message);
+
+    never_expect(handle_method_not_found);
+
+    LspReturnCode result = dispatch_lsp_request(request);
+
+    assert_that(result, is_equal_to(LSP_RETURN_ERROR_METHOD_NOT_FOUND));
+}

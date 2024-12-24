@@ -8,6 +8,14 @@
             "capabilities": {}
         }
     },
-    {"jsonrpc":"2.0","method":"initialized"},
+    {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "method": "not found",
+        "params": {
+            "rootUri": null,
+            "capabilities": {}
+        }
+    },
     {"jsonrpc":"2.0","method":"exit"}
 ]

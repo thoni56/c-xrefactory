@@ -19,4 +19,12 @@ extern void handle_initialize(cJSON *request);
  */
 extern void handle_exit(cJSON *request);
 
+/**
+ * @brief Handle an unknown or unimplemented request
+ *
+ * @param[in] request - the request in JSON format, will *not* be deleted
+ *
+ */
+extern void handle_method_not_found(cJSON *request);
+
 #endif

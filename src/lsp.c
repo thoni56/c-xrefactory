@@ -55,7 +55,7 @@ static cJSON* lsp_parse_content(FILE *input_stream, unsigned long content_length
 
     free(buffer);
     if(request == NULL)
-        exit(LSP_RETURN_ERROR_PARSE_ERROR);
+        exit(LSP_RETURN_ERROR_JSON_PARSE_ERROR);
     return request;
 }
 
@@ -68,6 +68,8 @@ int lsp_server(FILE *input_stream) {
         cJSON *request = lsp_parse_content(input_stream, content_length);
         result = dispatch_lsp_request(request);
         cJSON_Delete(request);
+        if (result == LSP_RETURN_ERROR_METHOD_NOT_FOUND)
+            result = LSP_RETURN_OK;
     }
     if (result == LSP_RETURN_EXIT)
         return LSP_RETURN_OK;

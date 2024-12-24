@@ -21,7 +21,15 @@ LspReturnCode dispatch_lsp_request(cJSON *request) {
             log_trace("LSP: Dispatched 'initialize'");
             handle_exit(request);
             return LSP_RETURN_EXIT;
+        } else {
+            if (cJSON_GetObjectItem(request, "id") != NULL) {
+                log_trace("LSP: Received unsupported request '%s'", method->valuestring);
+                handle_method_not_found(request);
+            } else
+                log_trace("LSP: Received unsupported notification '%s'", method->valuestring);
+            return LSP_RETURN_ERROR_METHOD_NOT_FOUND;
         }
+
     }
-    return LSP_RETURN_ERROR_UNSUPPORTED_METHOD;  // Method not found or unsupported
+    return LSP_RETURN_ERROR_JSON_PARSE_ERROR;
 }
