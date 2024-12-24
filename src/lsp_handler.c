@@ -6,13 +6,21 @@
 #include "log.h"
 #include "lsp_sender.h"
 
+static cJSON *create_response(double id) {
+    cJSON *response = cJSON_CreateObject();
+    cJSON_AddStringToObject(response, "jsonrpc", "2.0");
+    cJSON_AddNumberToObject(response, "id", id);
+    return response;
+}
+
+static double id_of(cJSON *request) {
+    return cJSON_GetObjectItem(request, "id")->valuedouble;
+}
 
 void handle_initialize(cJSON *request) {
     log_trace("LSP: Handling 'initialize'");
 
-    cJSON *response = cJSON_CreateObject();
-    cJSON_AddStringToObject(response, "jsonrpc", "2.0");
-    cJSON_AddNumberToObject(response, "id", cJSON_GetObjectItem(request, "id")->valuedouble);
+    cJSON *response = create_response(id_of(request));
 
     cJSON *result = cJSON_AddObjectToObject(response, "result");
     cJSON_AddObjectToObject(result, "capabilities");
@@ -28,9 +36,7 @@ void handle_initialize(cJSON *request) {
 void handle_shutdown(cJSON *request) {
     log_trace("LSP: Handling 'shutdown'");
 
-    cJSON *response = cJSON_CreateObject();
-    cJSON_AddStringToObject(response, "jsonrpc", "2.0");
-    cJSON_AddItemToObject(response, "id", cJSON_GetObjectItem(request, "id"));
+    cJSON *response = create_response(id_of(request));
     cJSON_AddNullToObject(response, "result");
 
     char *response_string = cJSON_PrintUnformatted(response);
@@ -45,17 +51,16 @@ void handle_exit(cJSON *request) {
 
 void handle_method_not_found(cJSON *request) {
     log_trace("LSP: Handling method not found");
-    cJSON *error_response = cJSON_CreateObject();
-    cJSON_AddStringToObject(error_response, "jsonrpc", "2.0");
-    cJSON_AddNumberToObject(error_response, "id", cJSON_GetObjectItem(request, "id")->valuedouble);
+
+    cJSON *response = create_response(id_of(request));
 
     cJSON *error = cJSON_CreateObject();
     cJSON_AddNumberToObject(error, "code", -32601);
     cJSON_AddStringToObject(error, "message", "Method not found");
-    cJSON_AddItemToObject(error_response, "error", error);
+    cJSON_AddItemToObject(response, "error", error);
 
-    char *response = cJSON_PrintUnformatted(error_response);
-    send_response(response);
+    char *response_string = cJSON_PrintUnformatted(response);
+    send_response(response_string);
 
     free(response);
 }
