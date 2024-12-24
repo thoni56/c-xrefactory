@@ -419,12 +419,24 @@ endif
 watch:
 	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Development make -j$(JOBS) devel
 
+.PHONY: watch-for-unittests
 watch-for-unittests:
 	watchexec --no-vcs-ignore -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Unittests make -j$(JOBS) unit
 
+
+.PHONY: watch-for-unittests-silent
+watch-for-unittests-silent:
+	watchexec --no-vcs-ignore -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- make -j$(JOBS) unit
+
+.PHONY: watch-for-systemtests
 watch-for-systemtests:
 	watchexec --no-vcs-ignore -e done -- execnotify -t Systemtests make -j$(JOBS) system-tests
 
+.PHONY: watch-for-systemtests-silent
+watch-for-systemtests-silent:
+	watchexec --no-vcs-ignore -e done -- make -j$(JOBS) system-tests
+
+.PHONY: system-tests
 system-tests: c-xref
 	$(MAKE) -e test
 	$(MAKE) -e merge-coverage-from-tests
