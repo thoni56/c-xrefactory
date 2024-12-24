@@ -14,11 +14,7 @@ int dispatch_lsp_request(cJSON *request) {
     if (method && cJSON_IsString(method) && strcmp(method->valuestring, "initialize") == 0) {
         log_trace("LSP: Dispatched 'initialize'");
         handle_initialize(request);
-
-        cJSON_Delete(request);
         return 0;  // Success
     }
-
-    cJSON_Delete(request);
     return -1;  // Method not found or unsupported
 }

@@ -17,14 +17,10 @@ void handle_initialize(cJSON *request) {
     cJSON *result = cJSON_AddObjectToObject(response, "result");
     cJSON_AddObjectToObject(result, "capabilities");
 
-    // Convert response to string
     char *response_string = cJSON_PrintUnformatted(response);
 
-    // Send the response
     log_trace("LSP: Sent response: '%s'", response_string);
     send_response(response_string);
 
-    // Clean up
-    cJSON_Delete(response);
     free(response_string);
 }
