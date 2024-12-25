@@ -5,6 +5,7 @@
 #include <cjson/cJSON.h>
 
 #include "log.h"
+#include "lsp_errors.h"
 
 
 int send_response(cJSON *response) {
@@ -16,5 +17,5 @@ int send_response(cJSON *response) {
 
     free(response_string);
 
-    return 0;
+    return LSP_RETURN_OK;
 }

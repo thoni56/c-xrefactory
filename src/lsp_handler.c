@@ -5,22 +5,13 @@
 
 #include "log.h"
 #include "lsp_sender.h"
+#include "cjson_utils.h"
 
-static cJSON *create_response(double id) {
-    cJSON *response = cJSON_CreateObject();
-    cJSON_AddStringToObject(response, "jsonrpc", "2.0");
-    cJSON_AddNumberToObject(response, "id", id);
-    return response;
-}
-
-static double id_of(cJSON *request) {
-    return cJSON_GetObjectItem(request, "id")->valuedouble;
-}
 
 void handle_initialize(cJSON *request) {
     log_trace("LSP: Handling 'initialize'");
 
-    cJSON *response = create_response(id_of(request));
+    cJSON *response = create_response(id_of_request(request));
 
     cJSON *result = cJSON_AddObjectToObject(response, "result");
     cJSON_AddObjectToObject(result, "capabilities");
@@ -32,7 +23,7 @@ void handle_initialize(cJSON *request) {
 void handle_shutdown(cJSON *request) {
     log_trace("LSP: Handling 'shutdown'");
 
-    cJSON *response = create_response(id_of(request));
+    cJSON *response = create_response(id_of_request(request));
     cJSON_AddNullToObject(response, "result");
 
     send_response(response);
@@ -46,7 +37,7 @@ void handle_exit(cJSON *request) {
 void handle_method_not_found(cJSON *request) {
     log_trace("LSP: Handling method not found");
 
-    cJSON *response = create_response(id_of(request));
+    cJSON *response = create_response(id_of_request(request));
 
     cJSON *error = cJSON_CreateObject();
     cJSON_AddNumberToObject(error, "code", -32601);

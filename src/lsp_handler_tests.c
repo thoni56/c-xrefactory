@@ -20,9 +20,7 @@ BeforeEach(LspHandler) {
 AfterEach(LspHandler) {}
 
 static cJSON *create_initialize_request() {
-    cJSON *request = cJSON_CreateObject();
-    cJSON_AddStringToObject(request, "jsonrpc", "2.0");
-    cJSON_AddNumberToObject(request, "id", 1);
+    cJSON *request = create_response(1);
     cJSON_AddStringToObject(request, "method", "initialize");
     return request;
 }
@@ -40,6 +38,8 @@ Ensure(LspHandler, sends_correct_initialize_response) {
     handle_initialize(mock_request);
 
     char *captured_response_text = cJSON_PrintUnformatted(captured_response);
+
+    // We will use both text and cJSON comparisons here for now
     assert_that(expected_response_text, is_equal_to_string(captured_response_text));
     assert_that(cjson_equals(expected_response, captured_response));
 

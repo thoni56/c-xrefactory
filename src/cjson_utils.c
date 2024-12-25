@@ -52,3 +52,16 @@ bool cjson_equals(const cJSON *a, const cJSON *b) {
             return false;  // Unsupported type
     }
 }
+
+
+cJSON *create_response(double id) {
+    cJSON *response = cJSON_CreateObject();
+    cJSON_AddStringToObject(response, "jsonrpc", "2.0");
+    cJSON_AddNumberToObject(response, "id", id);
+    return response;
+}
+
+
+double id_of_request(cJSON *request) {
+    return cJSON_GetObjectItem(request, "id")->valuedouble;
+}
