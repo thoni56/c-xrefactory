@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 $(TEST):
-	emacs --batch --no-init-file -l lsp-initialize.el 2>&1 | grep -v "Loading .*..." | cat
+	emacs --batch --no-init-file --no-splash -l lsp-initialize.el 2>&1 | grep -v "Loading .*..." | cat
 
 interactive:
-	emacs --no-init-file -l lsp-initialize.el tmpfile 2>&1 | grep -v "Loading .*..."
+	emacs --no-init-file --no-splash -l lsp-initialize.el cexercise/browsing.c 2>&1 | grep -v "Loading .*..."
