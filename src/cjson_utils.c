@@ -1,0 +1,54 @@
+#include "cjson_utils.h"
+
+#include <string.h>
+#include <cjson/cJSON.h>
+
+
+bool cjson_equals(const cJSON *a, const cJSON *b) {
+    // Check for nulls or type mismatch
+    if (a == NULL || b == NULL || a->type != b->type) {
+        return false;
+    }
+
+    switch (a->type) {
+        case cJSON_False:
+        case cJSON_True:
+            return true;  // Booleans are equal if they have the same type
+
+        case cJSON_NULL:
+            return true;  // NULLs are always equal
+
+        case cJSON_Number:
+            return a->valuedouble == b->valuedouble;
+
+        case cJSON_String:
+            return strcmp(a->valuestring, b->valuestring) == 0;
+
+        case cJSON_Array: {
+            const cJSON *a_item = a->child;
+            const cJSON *b_item = b->child;
+            while (a_item && b_item) {
+                if (!cjson_equals(a_item, b_item)) {
+                    return false;
+                }
+                a_item = a_item->next;
+                b_item = b_item->next;
+            }
+            return a_item == NULL && b_item == NULL;  // Ensure arrays have the same length
+        }
+
+        case cJSON_Object: {
+            const cJSON *a_item = NULL;
+            cJSON_ArrayForEach(a_item, a) {
+                const cJSON *b_item = cJSON_GetObjectItemCaseSensitive(b, a_item->string);
+                if (!b_item || !cjson_equals(a_item, b_item)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        default:
+            return false;  // Unsupported type
+    }
+}

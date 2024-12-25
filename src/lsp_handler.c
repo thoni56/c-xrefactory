@@ -25,12 +25,8 @@ void handle_initialize(cJSON *request) {
     cJSON *result = cJSON_AddObjectToObject(response, "result");
     cJSON_AddObjectToObject(result, "capabilities");
 
-    char *response_string = cJSON_PrintUnformatted(response);
-
-    log_trace("LSP: Sent response: '%s'", response_string);
-    send_response(response_string);
-
-    free(response_string);
+    send_response(response);
+    cJSON_Delete(response);
 }
 
 void handle_shutdown(cJSON *request) {
@@ -39,10 +35,8 @@ void handle_shutdown(cJSON *request) {
     cJSON *response = create_response(id_of(request));
     cJSON_AddNullToObject(response, "result");
 
-    char *response_string = cJSON_PrintUnformatted(response);
-    send_response(response_string);
-
-    free(response_string);
+    send_response(response);
+    cJSON_Delete(response);
 }
 
 void handle_exit(cJSON *request) {
@@ -59,8 +53,6 @@ void handle_method_not_found(cJSON *request) {
     cJSON_AddStringToObject(error, "message", "Method not found");
     cJSON_AddItemToObject(response, "error", error);
 
-    char *response_string = cJSON_PrintUnformatted(response);
-    send_response(response_string);
-
-    free(response);
+    send_response(response);
+    cJSON_Delete(response);
 }
