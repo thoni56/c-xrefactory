@@ -8,7 +8,7 @@
 #include "lsp_errors.h"
 
 
-int send_response(cJSON *response) {
+int send_response_and_delete(cJSON *response) {
     char *response_string = cJSON_PrintUnformatted(response);
     log_trace("LSP: Sent response: '%s'", response_string);
 
@@ -16,6 +16,7 @@ int send_response(cJSON *response) {
     fflush(stdout);
 
     free(response_string);
+    cJSON_Delete(response);
 
     return LSP_RETURN_OK;
 }

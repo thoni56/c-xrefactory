@@ -18,8 +18,7 @@ void handle_initialize(cJSON *request) {
     cJSON *capabilities = cJSON_AddObjectToObject(result, "capabilities");
     cJSON_AddBoolToObject(capabilities, "codeActionProvider", true);
 
-    send_response(response);
-    cJSON_Delete(response);
+    send_response_and_delete(response);
 }
 
 void handle_code_action(cJSON *request) {
@@ -74,8 +73,7 @@ void handle_code_action(cJSON *request) {
 
     cJSON_AddStringToObject(change, "newText", "Dummy Text");
 
-    send_response(response);
-    cJSON_Delete(response);
+    send_response_and_delete(response);
 }
 
 void handle_execute_command(cJSON *request) {
@@ -91,7 +89,7 @@ void handle_execute_command(cJSON *request) {
     }
 
     cJSON *response = cJSON_CreateNull();
-    send_response(response);
+    send_response_and_delete(response);
     cJSON_Delete(response);
 }
 
@@ -101,8 +99,7 @@ void handle_shutdown(cJSON *request) {
     cJSON *response = create_lsp_message_with_id(id_of_request(request));
     cJSON_AddNullToObject(response, "result");
 
-    send_response(response);
-    cJSON_Delete(response);
+    send_response_and_delete(response);
 }
 
 void handle_exit(cJSON *request) {
@@ -119,6 +116,5 @@ void handle_method_not_found(cJSON *request) {
     cJSON_AddStringToObject(error, "message", "Method not found");
     cJSON_AddItemToObject(response, "error", error);
 
-    send_response(response);
-    cJSON_Delete(response);
+    send_response_and_delete(response);
 }

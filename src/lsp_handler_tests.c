@@ -66,9 +66,9 @@ Ensure(LspHandler, sends_correct_initialize_response) {
     const char *expected_response_text =
         "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{\"capabilities\":{}}}";
     cJSON *expected_response = cJSON_Parse(expected_response_text);
-    cJSON *captured_response; // A copy created by the mock function for send_response()
+    cJSON *captured_response; // A copy created by the mock function for send_response_and_delete()
 
-    expect(send_response, will_capture_parameter(response, captured_response));
+    expect(send_response_and_delete, will_capture_parameter(response, captured_response));
 
     cJSON *mock_request = create_initialize_request();
 
@@ -113,8 +113,8 @@ Ensure(LspHandler, creates_code_action) {
         "}";
     cJSON *expected_code_action_response = cJSON_Parse(editable_expected_code_action_response);
 
-    cJSON *captured_response; // A copy created by the mock function for send_response()
-    expect(send_response, will_capture_parameter(response, captured_response));
+    cJSON *captured_response; // A copy created by the mock function for send_response_and_delete()
+    expect(send_response_and_delete, will_capture_parameter(response, captured_response));
 
     cJSON *mock_request = create_code_action_request(2, "file:///path/to/file.c", 1, 0);
 

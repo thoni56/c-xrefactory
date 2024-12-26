@@ -4,6 +4,6 @@
 #include <cjson/cJSON.h>
 
 
-extern int send_response(cJSON *response);
+extern int send_response_and_delete(cJSON *response);
 
 #endif
