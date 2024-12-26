@@ -27,8 +27,7 @@ void handle_code_action(cJSON *request) {
     cJSON *response = create_lsp_message_with_id(id_of_request(request));
 
     // Create the result array (list of code actions)
-    cJSON *actions = cJSON_CreateArray();
-    cJSON_AddItemToObject(response, "result", actions);
+    cJSON *actions = add_array_as(response, "result");
 
     cJSON *noop_action = cJSON_CreateObject();
     cJSON_AddItemToArray(actions, noop_action);

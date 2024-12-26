@@ -4,6 +4,36 @@
 #include <cjson/cJSON.h>
 
 
+/* ============================================================== */
+
+double id_of_request(cJSON *request) {
+    return cJSON_GetObjectItem(request, "id")->valuedouble;
+}
+
+const char *get_uri_string_from_request(cJSON *request) {
+    cJSON *response_uri_item = cJSON_GetObjectItem(
+        cJSON_GetObjectItem(cJSON_GetObjectItem(request, "params"), "textDocument"), "uri");
+    return response_uri_item->valuestring;
+}
+
+
+/* ============================================================== */
+
+cJSON *create_lsp_message_with_id(double id) {
+    cJSON *response = cJSON_CreateObject();
+    cJSON_AddStringToObject(response, "jsonrpc", "2.0");
+    cJSON_AddNumberToObject(response, "id", id);
+    return response;
+}
+
+cJSON *add_array_as(cJSON *target, const char *name) {
+    cJSON *array = cJSON_CreateArray();
+    cJSON_AddItemToObject(target, name, array);
+    return array;
+}
+
+/* ============================================================== */
+
 bool cjson_equals(const cJSON *a, const cJSON *b) {
     // Check for nulls or type mismatch
     if (a == NULL || b == NULL || a->type != b->type) {
@@ -51,23 +81,4 @@ bool cjson_equals(const cJSON *a, const cJSON *b) {
         default:
             return false;  // Unsupported type
     }
-}
-
-
-cJSON *create_lsp_message_with_id(double id) {
-    cJSON *response = cJSON_CreateObject();
-    cJSON_AddStringToObject(response, "jsonrpc", "2.0");
-    cJSON_AddNumberToObject(response, "id", id);
-    return response;
-}
-
-
-double id_of_request(cJSON *request) {
-    return cJSON_GetObjectItem(request, "id")->valuedouble;
-}
-
-const char *get_uri_string_from_request(cJSON *request) {
-    cJSON *response_uri_item = cJSON_GetObjectItem(
-        cJSON_GetObjectItem(cJSON_GetObjectItem(request, "params"), "textDocument"), "uri");
-    return response_uri_item->valuestring;
 }
