@@ -54,7 +54,7 @@ bool cjson_equals(const cJSON *a, const cJSON *b) {
 }
 
 
-cJSON *create_lsp_message(double id) {
+cJSON *create_lsp_message_with_id(double id) {
     cJSON *response = cJSON_CreateObject();
     cJSON_AddStringToObject(response, "jsonrpc", "2.0");
     cJSON_AddNumberToObject(response, "id", id);

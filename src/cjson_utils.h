@@ -5,7 +5,7 @@
 #include <cjson/cJSON.h>
 
 
-extern cJSON *create_lsp_message(double id);
+extern cJSON *create_lsp_message_with_id(double id);
 
 extern double id_of_request(cJSON *request);
 

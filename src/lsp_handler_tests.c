@@ -20,7 +20,7 @@ BeforeEach(LspHandler) {
 AfterEach(LspHandler) {}
 
 static cJSON *create_initialize_request() {
-    cJSON *request = create_lsp_message(1);
+    cJSON *request = create_lsp_message_with_id(1);
     cJSON_AddStringToObject(request, "method", "initialize");
     return request;
 }
