@@ -32,6 +32,12 @@ cJSON *add_array_as(cJSON *target, const char *name) {
     return array;
 }
 
+cJSON *add_object_to_array(cJSON *target) {
+    cJSON *object = cJSON_CreateObject();
+    cJSON_AddItemToArray(target, object);
+    return object;
+}
+
 cJSON *add_action(cJSON *target, const char *title, const char *kind) {
     cJSON *action = cJSON_CreateObject();
     cJSON_AddItemToArray(target, action);
@@ -45,14 +51,6 @@ cJSON *add_item(cJSON *target, const char *name) {
     cJSON_AddItemToObject(target, name, item);
     return item;
 }
-
-cJSON *add_object_to_array(cJSON *target) {
-    cJSON *object = cJSON_CreateObject();
-    cJSON_AddItemToArray(target, object);
-    return object;
-}
-
-#include <stdio.h>
 
 cJSON *add_range(cJSON *target, int start_line, int start_character,
                  int end_line, int end_character) {
@@ -71,6 +69,10 @@ cJSON *add_range(cJSON *target, int start_line, int start_character,
 
 cJSON *add_new_text(cJSON *target, const char *new_text) {
     return cJSON_AddStringToObject(target, "newText", new_text);
+}
+
+cJSON *add_string(cJSON *target, const char *name, const char *value) {
+    return cJSON_AddStringToObject(target, name, value);
 }
 
 cJSON *add_bool(cJSON *target, const char *name, bool value) {

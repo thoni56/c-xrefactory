@@ -27,36 +27,19 @@ static cJSON *create_initialize_request() {
 
 static cJSON *create_code_action_request(double id, const char *uri, int line, int character) {
     // Create the root request object
-    cJSON *request = cJSON_CreateObject();
-    cJSON_AddStringToObject(request, "jsonrpc", "2.0");
-    cJSON_AddNumberToObject(request, "id", id);
-    cJSON_AddStringToObject(request, "method", "textDocument/codeAction");
+    cJSON *request = create_lsp_message_with_id(id);
+    add_string(request, "method", "textDocument/codeAction");
 
-    // Create the params object
     cJSON *params = cJSON_CreateObject();
-    cJSON *textDocument = cJSON_CreateObject();
-    cJSON_AddStringToObject(textDocument, "uri", uri);
-    cJSON_AddItemToObject(params, "textDocument", textDocument);
+    cJSON_AddItemToObject(request, "params", params);
 
-    // Add range object
-    cJSON *range = cJSON_CreateObject();
-    cJSON *start = cJSON_CreateObject();
-    cJSON_AddNumberToObject(start, "line", line);
-    cJSON_AddNumberToObject(start, "character", character);
-    cJSON_AddItemToObject(range, "start", start);
+    cJSON *textDocument = add_item(params, "textDocument");
+    add_string(textDocument, "uri", uri);
 
-    cJSON *end = cJSON_CreateObject();
-    cJSON_AddNumberToObject(end, "line", line);
-    cJSON_AddNumberToObject(end, "character", character);
-    cJSON_AddItemToObject(range, "end", end);
-
-    cJSON_AddItemToObject(params, "range", range);
+    add_range(params, line, character, line, character);
 
     // Add context (empty for simplicity)
-    cJSON *context = cJSON_CreateObject();
-    cJSON_AddItemToObject(params, "context", context);
-
-    cJSON_AddItemToObject(request, "params", params);
+    add_item(params, "context");
 
     return request;
 }

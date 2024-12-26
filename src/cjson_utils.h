@@ -16,6 +16,7 @@ extern cJSON *add_object_to_array(cJSON *target);
 extern cJSON *add_range(cJSON *target, int start_line, int start_character, int end_line, int end_character);
 extern cJSON *add_new_text(cJSON *target, const char *new_text);
 extern cJSON *add_bool(cJSON *target, const char *name, bool value);
+extern cJSON *add_string(cJSON *target, const char *name, const char *value);
 
 extern bool cjson_equals(const cJSON *a, const cJSON *b);
 
