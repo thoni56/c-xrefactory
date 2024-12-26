@@ -21,6 +21,10 @@ LspReturnCode dispatch_lsp_message(cJSON *message) {
             log_trace("LSP: Dispatched 'shutdown'");
             handle_shutdown(message);
             return LSP_RETURN_OK;
+        } else if (strcmp(method->valuestring, "textDocument/codeAction") == 0) {
+            log_trace("LSP: Dispatched 'textDocument/codeAction'");
+            handle_code_action(message);
+            return LSP_RETURN_OK;
        } else if (strcmp(method->valuestring, "exit") == 0) {
             log_trace("LSP: Dispatched 'initialize'");
             handle_exit(message);

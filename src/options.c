@@ -1938,7 +1938,8 @@ protected bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFil
     return false;
 }
 
-void searchStandardOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename, char *foundProjectName) {
+void searchStandardOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename,
+                                                char *foundProjectName) {
     int    fileno;
     bool   found = false;
     FILE  *optionsFile;

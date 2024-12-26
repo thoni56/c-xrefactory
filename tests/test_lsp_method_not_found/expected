@@ -1,6 +1,6 @@
-Content-Length: 53
+Content-Length: 78
 
-{"jsonrpc":"2.0","id":1,"result":{"capabilities":{}}}
+{"jsonrpc":"2.0","id":1,"result":{"capabilities":{"codeActionProvider":true}}}
 Content-Length: 77
 
 {"jsonrpc":"2.0","id":2,"error":{"code":-32601,"message":"Method not found"}}
