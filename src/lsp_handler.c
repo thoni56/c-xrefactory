@@ -14,57 +14,34 @@ void handle_initialize(cJSON *request) {
 
     cJSON *response = create_lsp_message_with_id(id_of_request(request));
 
-    cJSON *result = cJSON_AddObjectToObject(response, "result");
-    cJSON *capabilities = cJSON_AddObjectToObject(result, "capabilities");
-    cJSON_AddBoolToObject(capabilities, "codeActionProvider", true);
+    cJSON *result = add_item(response, "result");
+    cJSON *capabilities = add_item(result, "capabilities");
+    add_bool(capabilities, "codeActionProvider", true);
 
     send_response_and_delete(response);
 }
 
+/* What code actions are available at this location? */
 void handle_code_action(cJSON *request) {
     log_trace("LSP: Handling 'textDocument/codeAction'");
 
     cJSON *response = create_lsp_message_with_id(id_of_request(request));
 
-    // Create the result array (list of code actions)
     cJSON *actions = add_array_as(response, "result");
 
-    cJSON *noop_action = cJSON_CreateObject();
-    cJSON_AddItemToArray(actions, noop_action);
-    cJSON_AddStringToObject(noop_action, "title", "Noop Action");
-    cJSON_AddStringToObject(noop_action, "kind", "quickfix");
+    add_action(actions, "Noop Action", "quickfix");
 
-    cJSON *insert_dummy_text_action = cJSON_CreateObject();
-    cJSON_AddItemToArray(actions, insert_dummy_text_action);
-    cJSON_AddStringToObject(insert_dummy_text_action, "title", "Insert Dummy Text");
-    cJSON_AddStringToObject(insert_dummy_text_action, "kind", "quickfix");
+    cJSON *insert_dummy_text_action = add_action(actions, "Insert Dummy Text", "quickfix");
 
-    cJSON *edit = cJSON_CreateObject();
-    cJSON_AddItemToObject(insert_dummy_text_action, "edit", edit);
+    cJSON *edit = add_item(insert_dummy_text_action, "edit");
+    cJSON *changes = add_item(edit, "changes");
 
-    cJSON *changes = cJSON_CreateObject();
-    cJSON_AddItemToObject(edit, "changes", changes);
+    cJSON *uri = add_array_as(changes, get_uri_string_from_request(request));
+    cJSON *change = add_object_to_array(uri);
 
-    cJSON *uri = cJSON_CreateArray();
-    const char *uri_string = get_uri_string_from_request(request);
-    cJSON_AddItemToObject(changes, uri_string, uri);
-    cJSON *change = cJSON_CreateObject();
-    cJSON_AddItemToArray(uri, change);
+    add_range(change, 0, 0, 0, 0);
 
-    cJSON *range = cJSON_CreateObject();
-    cJSON_AddItemToObject(change, "range", range);
-
-    cJSON *start = cJSON_CreateObject();
-    cJSON_AddItemToObject(range, "start", start);
-    cJSON_AddNumberToObject(start, "line", 0);
-    cJSON_AddNumberToObject(start, "character", 0);
-
-    cJSON *end = cJSON_CreateObject();
-    cJSON_AddItemToObject(range, "end", end);
-    cJSON_AddNumberToObject(end, "line", 0);
-    cJSON_AddNumberToObject(end, "character", 0);
-
-    cJSON_AddStringToObject(change, "newText", "Dummy Text");
+    add_new_text(change, "Dummy Text");
 
     send_response_and_delete(response);
 }
