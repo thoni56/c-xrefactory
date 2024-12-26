@@ -1,0 +1,5 @@
+(global-set-key (kbd "<f2>") 'lsp-rename)
+(global-set-key (kbd "<f3>") 'lsp-ui-find-previous-reference)
+(global-set-key (kbd "<f6>") 'lsp-find-definition)
+(global-set-key (kbd "<f4>") 'lsp-ui-find-next-reference)
+(global-set-key (kbd "<f11>") 'lsp-execute-code-action)
