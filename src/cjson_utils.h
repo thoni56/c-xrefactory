@@ -11,4 +11,6 @@ extern double id_of_request(cJSON *request);
 
 extern bool cjson_equals(const cJSON *a, const cJSON *b);
 
+extern const char *get_uri_string_from_request(cJSON *request);
+
 #endif

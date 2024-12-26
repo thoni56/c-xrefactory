@@ -47,14 +47,8 @@ void handle_code_action(cJSON *request) {
     cJSON_AddItemToObject(edit, "changes", changes);
 
     cJSON *uri = cJSON_CreateArray();
-    cJSON *response_uri_item = cJSON_GetObjectItem(
-        cJSON_GetObjectItem(
-            cJSON_GetObjectItem(request, "params"),
-            "textDocument"
-        ),
-        "uri"
-    );
-    cJSON_AddItemToObject(changes, response_uri_item->valuestring, uri);
+    const char *uri_string = get_uri_string_from_request(request);
+    cJSON_AddItemToObject(changes, uri_string, uri);
     cJSON *change = cJSON_CreateObject();
     cJSON_AddItemToArray(uri, change);
 

@@ -65,3 +65,9 @@ cJSON *create_lsp_message_with_id(double id) {
 double id_of_request(cJSON *request) {
     return cJSON_GetObjectItem(request, "id")->valuedouble;
 }
+
+const char *get_uri_string_from_request(cJSON *request) {
+    cJSON *response_uri_item = cJSON_GetObjectItem(
+        cJSON_GetObjectItem(cJSON_GetObjectItem(request, "params"), "textDocument"), "uri");
+    return response_uri_item->valuestring;
+}
