@@ -116,13 +116,13 @@ Ensure(LspHandler, creates_code_action) {
     cJSON *captured_response; // A copy created by the mock function for send_response()
     expect(send_response, will_capture_parameter(response, captured_response));
 
-    cJSON *mock_request = create_code_action_request(2, "/path/to/file.c", 1, 0);
+    cJSON *mock_request = create_code_action_request(2, "file:///path/to/file.c", 1, 0);
 
     handle_code_action(mock_request);
 
     const char *expected_code_action_response_as_string = cJSON_PrintUnformatted(expected_code_action_response);
     const char *captured_code_action_response_as_string = cJSON_PrintUnformatted(captured_response);
-    assert_that(expected_code_action_response_as_string, is_equal_to_string(captured_code_action_response_as_string));
+    assert_that(captured_code_action_response_as_string, is_equal_to_string(expected_code_action_response_as_string));
 
     cJSON_Delete(mock_request);
 
