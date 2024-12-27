@@ -8,7 +8,7 @@
 #include "lsp_handler.h"
 
 #include "log.h"
-#include "cjson_utils.h"
+#include "json_utils.h"
 
 #include "lsp_sender.mock"
 

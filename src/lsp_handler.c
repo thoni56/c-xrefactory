@@ -6,7 +6,7 @@
 
 #include "log.h"
 #include "lsp_sender.h"
-#include "cjson_utils.h"
+#include "json_utils.h"
 
 
 void handle_initialize(cJSON *request) {
