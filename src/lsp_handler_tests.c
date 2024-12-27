@@ -28,18 +28,18 @@ static cJSON *create_initialize_request() {
 static cJSON *create_code_action_request(double id, const char *uri, int line, int character) {
     // Create the root request object
     cJSON *request = create_lsp_message_with_id(id);
-    add_string(request, "method", "textDocument/codeAction");
+    add_json_string(request, "method", "textDocument/codeAction");
 
     cJSON *params = cJSON_CreateObject();
     cJSON_AddItemToObject(request, "params", params);
 
-    cJSON *textDocument = add_item(params, "textDocument");
-    add_string(textDocument, "uri", uri);
+    cJSON *textDocument = add_json_item(params, "textDocument");
+    add_json_string(textDocument, "uri", uri);
 
-    add_range(params, line, character, line, character);
+    add_lsp_range(params, line, character, line, character);
 
     // Add context (empty for simplicity)
-    add_item(params, "context");
+    add_json_item(params, "context");
 
     return request;
 }
@@ -60,7 +60,7 @@ Ensure(LspHandler, sends_correct_initialize_response) {
     // Remove capabilities from the actual response since they will change over time
     cJSON_ReplaceItemInObject(captured_response, "capabilities", cJSON_CreateObject());
 
-    assert_that(cjson_equals(expected_response, captured_response));
+    assert_that(json_equals(expected_response, captured_response));
 
     cJSON_Delete(mock_request);
 }

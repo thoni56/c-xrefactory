@@ -26,19 +26,19 @@ cJSON *create_lsp_message_with_id(double id) {
     return response;
 }
 
-cJSON *add_array_as(cJSON *target, const char *name) {
+cJSON *add_json_array_as(cJSON *target, const char *name) {
     cJSON *array = cJSON_CreateArray();
     cJSON_AddItemToObject(target, name, array);
     return array;
 }
 
-cJSON *add_object_to_array(cJSON *target) {
+cJSON *add_json_object_to_array(cJSON *target) {
     cJSON *object = cJSON_CreateObject();
     cJSON_AddItemToArray(target, object);
     return object;
 }
 
-cJSON *add_action(cJSON *target, const char *title, const char *kind) {
+cJSON *add_lsp_action(cJSON *target, const char *title, const char *kind) {
     cJSON *action = cJSON_CreateObject();
     cJSON_AddItemToArray(target, action);
     cJSON_AddStringToObject(action, "title", title);
@@ -46,13 +46,13 @@ cJSON *add_action(cJSON *target, const char *title, const char *kind) {
     return action;
 }
 
-cJSON *add_item(cJSON *target, const char *name) {
+cJSON *add_json_item(cJSON *target, const char *name) {
     cJSON *item = cJSON_CreateObject();
     cJSON_AddItemToObject(target, name, item);
     return item;
 }
 
-cJSON *add_range(cJSON *target, int start_line, int start_character,
+cJSON *add_lsp_range(cJSON *target, int start_line, int start_character,
                  int end_line, int end_character) {
     cJSON *range = cJSON_CreateObject();
     cJSON *start = cJSON_CreateObject();
@@ -67,15 +67,15 @@ cJSON *add_range(cJSON *target, int start_line, int start_character,
     return range;
 }
 
-cJSON *add_new_text(cJSON *target, const char *new_text) {
+cJSON *add_lsp_new_text(cJSON *target, const char *new_text) {
     return cJSON_AddStringToObject(target, "newText", new_text);
 }
 
-cJSON *add_string(cJSON *target, const char *name, const char *value) {
+cJSON *add_json_string(cJSON *target, const char *name, const char *value) {
     return cJSON_AddStringToObject(target, name, value);
 }
 
-cJSON *add_bool(cJSON *target, const char *name, bool value) {
+cJSON *add_json_bool(cJSON *target, const char *name, bool value) {
     return cJSON_AddBoolToObject(target, name, value);
 }
 
@@ -83,7 +83,7 @@ cJSON *add_bool(cJSON *target, const char *name, bool value) {
 /* ============================================================== */
 
 
-bool cjson_equals(const cJSON *a, const cJSON *b) {
+bool json_equals(const cJSON *a, const cJSON *b) {
     // Check for nulls or type mismatch
     if (a == NULL || b == NULL || a->type != b->type) {
         return false;
@@ -107,7 +107,7 @@ bool cjson_equals(const cJSON *a, const cJSON *b) {
             const cJSON *a_item = a->child;
             const cJSON *b_item = b->child;
             while (a_item && b_item) {
-                if (!cjson_equals(a_item, b_item)) {
+                if (!json_equals(a_item, b_item)) {
                     return false;
                 }
                 a_item = a_item->next;
@@ -120,7 +120,7 @@ bool cjson_equals(const cJSON *a, const cJSON *b) {
             const cJSON *a_item = NULL;
             cJSON_ArrayForEach(a_item, a) {
                 const cJSON *b_item = cJSON_GetObjectItemCaseSensitive(b, a_item->string);
-                if (!b_item || !cjson_equals(a_item, b_item)) {
+                if (!b_item || !json_equals(a_item, b_item)) {
                     return false;
                 }
             }

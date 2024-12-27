@@ -14,9 +14,9 @@ void handle_initialize(cJSON *request) {
 
     cJSON *response = create_lsp_message_with_id(id_of_request(request));
 
-    cJSON *result = add_item(response, "result");
-    cJSON *capabilities = add_item(result, "capabilities");
-    add_bool(capabilities, "codeActionProvider", true);
+    cJSON *result = add_json_item(response, "result");
+    cJSON *capabilities = add_json_item(result, "capabilities");
+    add_json_bool(capabilities, "codeActionProvider", true);
 
     send_response_and_delete(response);
 }
@@ -27,21 +27,21 @@ void handle_code_action(cJSON *request) {
 
     cJSON *response = create_lsp_message_with_id(id_of_request(request));
 
-    cJSON *actions = add_array_as(response, "result");
+    cJSON *actions = add_json_array_as(response, "result");
 
-    add_action(actions, "Noop Action", "quickfix");
+    add_lsp_action(actions, "Noop Action", "quickfix");
 
-    cJSON *insert_dummy_text_action = add_action(actions, "Insert Dummy Text", "quickfix");
+    cJSON *insert_dummy_text_action = add_lsp_action(actions, "Insert Dummy Text", "quickfix");
 
-    cJSON *edit = add_item(insert_dummy_text_action, "edit");
-    cJSON *changes = add_item(edit, "changes");
+    cJSON *edit = add_json_item(insert_dummy_text_action, "edit");
+    cJSON *changes = add_json_item(edit, "changes");
 
-    cJSON *uri = add_array_as(changes, get_uri_string_from_request(request));
-    cJSON *change = add_object_to_array(uri);
+    cJSON *uri = add_json_array_as(changes, get_uri_string_from_request(request));
+    cJSON *change = add_json_object_to_array(uri);
 
-    add_range(change, 0, 0, 0, 0);
+    add_lsp_range(change, 0, 0, 0, 0);
 
-    add_new_text(change, "Dummy Text");
+    add_lsp_new_text(change, "Dummy Text");
 
     send_response_and_delete(response);
 }
