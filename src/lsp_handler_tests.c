@@ -19,20 +19,21 @@ BeforeEach(LspHandler) {
 }
 AfterEach(LspHandler) {}
 
-static cJSON *create_initialize_request() {
-    cJSON *request = create_lsp_message_with_id(1);
-    cJSON_AddStringToObject(request, "method", "initialize");
+static cJSON *create_request(double id, const char *method) {
+    cJSON *request = create_lsp_message_with_id(id);
+    cJSON_AddStringToObject(request, "method", method);
     return request;
+}
+
+static cJSON *create_initialize_request(void) {
+    return create_request(1, "initialize");
 }
 
 static cJSON *create_code_action_request(double id, const char *uri, int line, int character) {
     // Create the root request object
-    cJSON *request = create_lsp_message_with_id(id);
-    add_json_string(request, "method", "textDocument/codeAction");
+    cJSON *request = create_request(id, "textDocument/codeAction");
 
-    cJSON *params = cJSON_CreateObject();
-    cJSON_AddItemToObject(request, "params", params);
-
+    cJSON *params = add_json_item(request, "params");
     cJSON *textDocument = add_json_item(params, "textDocument");
     add_json_string(textDocument, "uri", uri);
 
