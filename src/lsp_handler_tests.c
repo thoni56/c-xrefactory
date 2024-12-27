@@ -29,7 +29,8 @@ static cJSON *create_initialize_request(void) {
     return create_request(1, "initialize");
 }
 
-static cJSON *create_code_action_request(double id, const char *uri, int line, int character) {
+static cJSON *create_code_action_request(double id, const char *uri, int start_line, int start_character,
+                                         int end_line, int end_character) {
     // Create the root request object
     cJSON *request = create_request(id, "textDocument/codeAction");
 
@@ -37,7 +38,7 @@ static cJSON *create_code_action_request(double id, const char *uri, int line, i
     cJSON *textDocument = add_json_item(params, "textDocument");
     add_json_string(textDocument, "uri", uri);
 
-    add_lsp_range(params, line, character, line, character);
+    add_lsp_range(params, start_line, start_character, end_line, end_character);
 
     // Add context (empty for simplicity)
     add_json_item(params, "context");
@@ -100,7 +101,7 @@ Ensure(LspHandler, creates_code_action) {
     cJSON *captured_response; // A copy created by the mock function for send_response_and_delete()
     expect(send_response_and_delete, will_capture_parameter(response, captured_response));
 
-    cJSON *mock_request = create_code_action_request(2, "file:///path/to/file.c", 1, 0);
+    cJSON *mock_request = create_code_action_request(2, "file:///path/to/file.c", 0, 0, 0, 0);
 
     handle_code_action(mock_request);
 
