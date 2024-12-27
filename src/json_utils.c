@@ -138,3 +138,7 @@ JSON *parse_json(const char *string) {
 char *print_json(JSON *tree) {
     return cJSON_PrintUnformatted(tree);
 }
+
+void delete_json(JSON *tree) {
+    cJSON_Delete(tree);
+}

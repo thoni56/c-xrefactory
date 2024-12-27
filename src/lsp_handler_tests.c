@@ -49,12 +49,12 @@ static cJSON *create_code_action_request(double id, const char *uri, int line, i
 Ensure(LspHandler, sends_correct_initialize_response) {
     const char *expected_response_text =
         "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{\"capabilities\":{}}}";
-    cJSON *expected_response = cJSON_Parse(expected_response_text);
-    cJSON *captured_response; // A copy created by the mock function for send_response_and_delete()
+    JSON *expected_response = parse_json(expected_response_text);
+    JSON *captured_response; // A copy created by the mock function for send_response_and_delete()
 
     expect(send_response_and_delete, will_capture_parameter(response, captured_response));
 
-    cJSON *mock_request = create_initialize_request();
+    JSON *mock_request = create_initialize_request();
 
     handle_initialize(mock_request);
 
@@ -63,7 +63,7 @@ Ensure(LspHandler, sends_correct_initialize_response) {
 
     assert_that(json_equals(expected_response, captured_response));
 
-    cJSON_Delete(mock_request);
+    delete_json(mock_request);
 }
 
 Ensure(LspHandler, creates_code_action) {
@@ -109,6 +109,5 @@ Ensure(LspHandler, creates_code_action) {
     assert_that(captured_code_action_response_as_string, is_equal_to_string(expected_code_action_response_as_string));
     free(expected_code_action_response_as_string);
     free(captured_code_action_response_as_string);
-    cJSON_Delete(mock_request);
-
+    delete_json(mock_request);
 }

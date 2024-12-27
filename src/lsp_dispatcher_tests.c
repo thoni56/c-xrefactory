@@ -16,7 +16,7 @@ AfterEach(LspDispatcher) {}
 
 Ensure(LspDispatcher, dispatches_trivial_initialize_request) {
     const char *message = "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{}}";
-    cJSON *request = cJSON_Parse(message);
+    JSON *request = parse_json(message);
 
     expect(handle_initialize);
 
@@ -27,7 +27,7 @@ Ensure(LspDispatcher, dispatches_trivial_initialize_request) {
 
 Ensure(LspDispatcher, dispatches_exit_request) {
     const char *message = "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"exit\"}";
-    cJSON *request = cJSON_Parse(message);
+    JSON *request = parse_json(message);
 
     expect(handle_exit);
 
@@ -38,7 +38,7 @@ Ensure(LspDispatcher, dispatches_exit_request) {
 
 Ensure(LspDispatcher, dispatches_responds_with_not_found_for_unsupported_request) {
     const char *message = "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"not-known\"}";
-    cJSON *request = cJSON_Parse(message);
+    JSON *request = parse_json(message);
 
     expect(handle_method_not_found);
 
@@ -49,7 +49,7 @@ Ensure(LspDispatcher, dispatches_responds_with_not_found_for_unsupported_request
 
 Ensure(LspDispatcher, dispatches_does_not_respond_to_unsupported_notification) {
     const char *message = "{\"jsonrpc\":\"2.0\",\"method\":\"not-known\"}";
-    cJSON *request = cJSON_Parse(message);
+    JSON *request = parse_json(message);
 
     never_expect(handle_method_not_found);
 
@@ -60,7 +60,7 @@ Ensure(LspDispatcher, dispatches_does_not_respond_to_unsupported_notification) {
 
 Ensure(LspDispatcher, dispatches_shutdown) {
     const char *message = "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"shutdown\"}";
-    cJSON *request = cJSON_Parse(message);
+    JSON *request = parse_json(message);
 
     expect(handle_shutdown);
 

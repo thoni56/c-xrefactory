@@ -23,6 +23,6 @@ extern JSON *add_json_string(JSON *target, const char *name, const char *value);
 extern bool json_equals(const JSON *a, const JSON *b);
 extern JSON *parse_json(const char *string);
 extern char *print_json(JSON *tree);
-
+extern void delete_json(JSON *tree);
 
 #endif
