@@ -6,11 +6,11 @@
 
 /* ============================================================== */
 
-double id_of_request(cJSON *request) {
+double id_of_request(JSON *request) {
     return cJSON_GetObjectItem(request, "id")->valuedouble;
 }
 
-const char *get_uri_string_from_request(cJSON *request) {
+const char *get_uri_string_from_request(JSON *request) {
     cJSON *response_uri_item = cJSON_GetObjectItem(
         cJSON_GetObjectItem(cJSON_GetObjectItem(request, "params"), "textDocument"), "uri");
     return response_uri_item->valuestring;
@@ -19,26 +19,26 @@ const char *get_uri_string_from_request(cJSON *request) {
 
 /* ============================================================== */
 
-cJSON *create_lsp_message_with_id(double id) {
+JSON *create_lsp_message_with_id(double id) {
     cJSON *response = cJSON_CreateObject();
     cJSON_AddStringToObject(response, "jsonrpc", "2.0");
     cJSON_AddNumberToObject(response, "id", id);
     return response;
 }
 
-cJSON *add_json_array_as(cJSON *target, const char *name) {
+JSON *add_json_array_as(JSON *target, const char *name) {
     cJSON *array = cJSON_CreateArray();
     cJSON_AddItemToObject(target, name, array);
     return array;
 }
 
-cJSON *add_json_object_to_array(cJSON *target) {
+JSON *add_json_object_to_array(JSON *target) {
     cJSON *object = cJSON_CreateObject();
     cJSON_AddItemToArray(target, object);
     return object;
 }
 
-cJSON *add_lsp_action(cJSON *target, const char *title, const char *kind) {
+JSON *add_lsp_action(JSON *target, const char *title, const char *kind) {
     cJSON *action = cJSON_CreateObject();
     cJSON_AddItemToArray(target, action);
     cJSON_AddStringToObject(action, "title", title);
@@ -46,13 +46,13 @@ cJSON *add_lsp_action(cJSON *target, const char *title, const char *kind) {
     return action;
 }
 
-cJSON *add_json_item(cJSON *target, const char *name) {
+JSON *add_json_item(JSON *target, const char *name) {
     cJSON *item = cJSON_CreateObject();
     cJSON_AddItemToObject(target, name, item);
     return item;
 }
 
-cJSON *add_lsp_range(cJSON *target, int start_line, int start_character,
+JSON *add_lsp_range(JSON *target, int start_line, int start_character,
                  int end_line, int end_character) {
     cJSON *range = cJSON_CreateObject();
     cJSON *start = cJSON_CreateObject();
@@ -67,23 +67,22 @@ cJSON *add_lsp_range(cJSON *target, int start_line, int start_character,
     return range;
 }
 
-cJSON *add_lsp_new_text(cJSON *target, const char *new_text) {
+JSON *add_lsp_new_text(JSON *target, const char *new_text) {
     return cJSON_AddStringToObject(target, "newText", new_text);
 }
 
-cJSON *add_json_string(cJSON *target, const char *name, const char *value) {
+JSON *add_json_string(JSON *target, const char *name, const char *value) {
     return cJSON_AddStringToObject(target, name, value);
 }
 
-cJSON *add_json_bool(cJSON *target, const char *name, bool value) {
+JSON *add_json_bool(JSON *target, const char *name, bool value) {
     return cJSON_AddBoolToObject(target, name, value);
 }
 
 
 /* ============================================================== */
 
-
-bool json_equals(const cJSON *a, const cJSON *b) {
+bool json_equals(const JSON *a, const JSON *b) {
     // Check for nulls or type mismatch
     if (a == NULL || b == NULL || a->type != b->type) {
         return false;
@@ -130,4 +129,12 @@ bool json_equals(const cJSON *a, const cJSON *b) {
         default:
             return false;  // Unsupported type
     }
+}
+
+JSON *parse_json(const char *string) {
+    return cJSON_Parse(string);
+}
+
+char *print_json(JSON *tree) {
+    return cJSON_PrintUnformatted(tree);
 }

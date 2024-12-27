@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <cjson/cJSON.h>
+#include "json_utils.h"
 #include "lsp_dispatcher.h"
 #include "lsp_errors.h"
 #include "log.h"
@@ -40,7 +40,7 @@ static unsigned long lsp_parse_header(FILE *input_stream) {
     }
 }
 
-static cJSON* lsp_parse_content(FILE *input_stream, unsigned long content_length) {
+static JSON* lsp_parse_content(FILE *input_stream, unsigned long content_length) {
     char *buffer = malloc(content_length + 1);
     if(buffer == NULL)
         exit(LSP_RETURN_ERROR_OUT_OF_MEMORY);
@@ -51,7 +51,7 @@ static cJSON* lsp_parse_content(FILE *input_stream, unsigned long content_length
     }
     buffer[content_length] = '\0';
 
-    cJSON *request = cJSON_Parse(buffer);
+    JSON *request = parse_json(buffer);
 
     free(buffer);
     if(request == NULL)
@@ -65,7 +65,7 @@ int lsp_server(FILE *input_stream) {
     int result = LSP_RETURN_OK;
     while (result == LSP_RETURN_OK) {
         unsigned long content_length = lsp_parse_header(input_stream);
-        cJSON *request = lsp_parse_content(input_stream, content_length);
+        JSON *request = lsp_parse_content(input_stream, content_length);
         result = dispatch_lsp_message(request);
         cJSON_Delete(request);
         if (result == LSP_RETURN_ERROR_METHOD_NOT_FOUND)

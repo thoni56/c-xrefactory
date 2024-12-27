@@ -1,9 +1,9 @@
 #ifndef LSP_SENDER_H
 #define LSP_SENDER_H
 
-#include <cjson/cJSON.h>
+#include "json_utils.h"
 
 
-extern int send_response_and_delete(cJSON *response);
+extern int send_response_and_delete(JSON *response);
 
 #endif

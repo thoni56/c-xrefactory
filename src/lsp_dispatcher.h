@@ -2,7 +2,7 @@
 #define LSP_DISPATCHER_H
 
 #include "lsp_errors.h"
-#include <cjson/cJSON.h>
+#include "json_utils.h"
 
 
 /**
@@ -10,6 +10,6 @@
  *
  * @param[in] request - The incoming request in JSON format, will *not* be deleted
  */
-extern LspReturnCode dispatch_lsp_message(cJSON *request);
+extern LspReturnCode dispatch_lsp_message(JSON *request);
 
 #endif

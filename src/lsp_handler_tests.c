@@ -104,10 +104,11 @@ Ensure(LspHandler, creates_code_action) {
 
     handle_code_action(mock_request);
 
-    const char *expected_code_action_response_as_string = cJSON_PrintUnformatted(expected_code_action_response);
-    const char *captured_code_action_response_as_string = cJSON_PrintUnformatted(captured_response);
+    char *expected_code_action_response_as_string = print_json(expected_code_action_response);
+    char *captured_code_action_response_as_string = print_json(captured_response);
     assert_that(captured_code_action_response_as_string, is_equal_to_string(expected_code_action_response_as_string));
-
+    free(expected_code_action_response_as_string);
+    free(captured_code_action_response_as_string);
     cJSON_Delete(mock_request);
 
 }
