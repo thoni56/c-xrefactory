@@ -21,7 +21,7 @@ static void ppcGenOffsetPosition(char *fn, int offset) {
 }
 
 static void ppcGenMarker(EditorMarker *m) {
-    ppcGenOffsetPosition(m->buffer->name, m->offset);
+    ppcGenOffsetPosition(m->buffer->fileName, m->offset);
 }
 
 static void ppcGenPosition(Position position) {

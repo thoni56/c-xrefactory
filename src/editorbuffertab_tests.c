@@ -20,7 +20,7 @@ Ensure(EditorBufferTab, returns_minus_one_for_no_more_existing) {
 }
 
 Ensure(EditorBufferTab, can_return_next_existing_file_index) {
-    EditorBuffer     buffer     = {.name = "item.c"};
+    EditorBuffer     buffer     = {.fileName = "item.c"};
     EditorBufferList bufferList = {.buffer = &buffer, .next = NULL};
     int              index      = addEditorBuffer(&bufferList);
 

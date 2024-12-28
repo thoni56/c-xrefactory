@@ -8,7 +8,7 @@ typedef struct editorUndo EditorUndo; /* Mutual dependency... */
 
 typedef struct {
     int   bufferSize;
-    char *text;                 /* Where is the actual buffer? */
+    char *text;                    /* Where is the actual buffer? */
     int   allocatedFreePrefixSize; /* How much space have we allocated *before* text? */
     char *allocatedBlock;
     int   allocatedIndex;
@@ -16,9 +16,11 @@ typedef struct {
 } EditorBufferAllocationData;
 
 typedef struct editorBuffer {
-    char                      *name;
+    char                      *fileName;    /* In case the content was preloaded else
+                                               needs to point to the same string as
+                                               'realFileName' */
     int                        fileNumber;
-    char                      *fileName;
+    char                      *realFileName;
     time_t                     modificationTime;
     bool                       textLoaded : 1;
     bool                       modified : 1;

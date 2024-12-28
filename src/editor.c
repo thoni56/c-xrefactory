@@ -475,10 +475,10 @@ void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, siz
     FILE *file;
     int   n, size, bufferSize;
 
-    fname = buffer->fileName;
+    fname = buffer->realFileName;
     text       = buffer->allocation.text;
     bufferSize = buffer->allocation.bufferSize;
-    log_trace(":loading file %s==%s size %d", fname, buffer->name, bufferSize);
+    log_trace(":loading file %s==%s size %d", fname, buffer->fileName, bufferSize);
 
 #if defined (__WIN32__)
     file = openFile(fname, "r");         // was rb, but did not work
@@ -554,15 +554,16 @@ void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int delsize
         // delete only until end of buffer
         delsize = oldsize - position;
     }
-    log_trace("replacing string in buffer %d (%s)", buffer, buffer->name);
+    log_trace("replacing string in buffer %d (%s)", buffer, buffer->fileName);
     nsize = oldsize + strlength - delsize;
     // prepare operation
     if (nsize >= buffer->allocation.allocatedSize - buffer->allocation.allocatedFreePrefixSize) {
         // resize buffer
-        log_trace("resizing %s from %d(%d) to %d", buffer->name, buffer->allocation.bufferSize,
+        log_trace("resizing %s from %d(%d) to %d", buffer->fileName, buffer->allocation.bufferSize,
                   buffer->allocation.allocatedSize, nsize);
         text = buffer->allocation.text;
-        space = buffer->allocation.allocatedBlock; index = buffer->allocation.allocatedIndex;
+        space = buffer->allocation.allocatedBlock;
+        index = buffer->allocation.allocatedIndex;
         allocNewEditorBufferTextSpace(buffer, nsize);
         memcpy(buffer->allocation.text, text, oldsize);
         buffer->allocation.bufferSize = oldsize;
@@ -584,7 +585,7 @@ void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int delsize
             buffer->allocation.bufferSize - position - delsize);
     memcpy(buffer->allocation.text+position, str, strlength);
     buffer->allocation.bufferSize = buffer->allocation.bufferSize - delsize + strlength;
-    //&sprintf(tmpBuffer,"setting buffersize of  %s to %d\n", buffer->name, buffer->allocation.bufferSize);ppcGenRecord(PPC_INFORMATION, tmpBuffer);fflush(communicationChannel);
+    //&sprintf(tmpBuffer,"setting buffersize of  %s to %d\n", buffer->fileName, buffer->allocation.bufferSize);ppcGenRecord(PPC_INFORMATION, tmpBuffer);fflush(communicationChannel);
     // update markers
     if (delsize > strlength) {
         if (strlength > 0) pattractor = position + strlength - 1;
@@ -707,12 +708,12 @@ void loadAllOpenedEditorBuffers(void) {
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBuffer(i); l != NULL; l = l->next) {
             if (!l->buffer->textLoaded) {
-                if (fileExists(l->buffer->fileName)) {
-                    int size = fileSize(l->buffer->fileName);
+                if (fileExists(l->buffer->realFileName)) {
+                    int size = fileSize(l->buffer->realFileName);
                     allocNewEditorBufferTextSpace(l->buffer, size);
                     loadFileIntoEditorBuffer(l->buffer,
-                                             fileModificationTime(l->buffer->fileName), size);
-                    log_trace("preloading %s into %s", l->buffer->fileName, l->buffer->name);
+                                             fileModificationTime(l->buffer->realFileName), size);
+                    log_trace("preloading %s into %s", l->buffer->realFileName, l->buffer->fileName);
                 }
             }
         }
@@ -1224,7 +1225,7 @@ static void freeEditorBufferListButNotBuffers(EditorBufferList *list) {
 }
 
 static int editorBufferNameLess(EditorBufferList*l1,EditorBufferList*l2) {
-    return strcmp(l1->buffer->name, l2->buffer->name);
+    return strcmp(l1->buffer->fileName, l2->buffer->fileName);
 }
 
 // TODO, do all this stuff better!
@@ -1254,37 +1255,37 @@ int editorMapOnNonexistantFiles(char *dirname,
     ll = bl;
     //&sprintf(tmpBuffer, "ENTER!!!"); ppcGenRecord(PPC_IGNORE,tmpBuffer);
     while(ll!=NULL) {
-        if (filenameCompare(ll->buffer->name, dirname, dlen)==0
-            && (ll->buffer->name[dlen]=='/' || ll->buffer->name[dlen]=='\\')) {
+        if (filenameCompare(ll->buffer->fileName, dirname, dlen)==0
+            && (ll->buffer->fileName[dlen]=='/' || ll->buffer->fileName[dlen]=='\\')) {
             if (depth == DEPTH_ONE) {
-                ss = strchr(ll->buffer->name+dlen+1, '/');
-                if (ss==NULL) ss = strchr(ll->buffer->name+dlen+1, '\\');
+                ss = strchr(ll->buffer->fileName+dlen+1, '/');
+                if (ss==NULL) ss = strchr(ll->buffer->fileName+dlen+1, '\\');
                 if (ss==NULL) {
-                    strcpy(fname, ll->buffer->name+dlen+1);
+                    strcpy(fname, ll->buffer->fileName+dlen+1);
                     fnlen = strlen(fname);
                 } else {
-                    fnlen = ss-(ll->buffer->name+dlen+1);
-                    strncpy(fname, ll->buffer->name+dlen+1, fnlen);
+                    fnlen = ss-(ll->buffer->fileName+dlen+1);
+                    strncpy(fname, ll->buffer->fileName+dlen+1, fnlen);
                     fname[fnlen]=0;
                 }
             } else {
-                strcpy(fname, ll->buffer->name+dlen+1);
+                strcpy(fname, ll->buffer->fileName+dlen+1);
                 fnlen = strlen(fname);
             }
             // Only map on nonexistant files
-            if (!fileExists(ll->buffer->name)) {
+            if (!fileExists(ll->buffer->fileName)) {
                 // get file name
-                //&sprintf(tmpBuffer, "MAPPING %s as %s in %s", ll->buffer->name, fname, dirname); ppcGenRecord(PPC_IGNORE,tmpBuffer);
+                //&sprintf(tmpBuffer, "MAPPING %s as %s in %s", ll->buffer->fileName, fname, dirname); ppcGenRecord(PPC_IGNORE,tmpBuffer);
                 (*fun)(fname, a1, a2, a3, a4, a5);
                 res = 1;
                 // skip all files in the same directory
-                lastMapped = ll->buffer->name;
+                lastMapped = ll->buffer->fileName;
                 lastMappedLen = dlen+1+fnlen;
                 ll = ll->next;
                 while (ll!=NULL
-                       && filenameCompare(ll->buffer->name, lastMapped, lastMappedLen)==0
-                       && (ll->buffer->name[lastMappedLen]=='/' || ll->buffer->name[lastMappedLen]=='\\')) {
-                    //&sprintf(tmpBuffer, "SKIPPING %s", ll->buffer->name); ppcGenRecord(PPC_IGNORE,tmpBuffer);
+                       && filenameCompare(ll->buffer->fileName, lastMapped, lastMappedLen)==0
+                       && (ll->buffer->fileName[lastMappedLen]=='/' || ll->buffer->fileName[lastMappedLen]=='\\')) {
+                    //&sprintf(tmpBuffer, "SKIPPING %s", ll->buffer->fileName); ppcGenRecord(PPC_IGNORE,tmpBuffer);
                     ll = ll->next;
                 }
             } else {
@@ -1300,7 +1301,7 @@ int editorMapOnNonexistantFiles(char *dirname,
 }
 
 static void closeEditorBuffer(EditorBufferList *member, int index) {
-    log_trace("closing buffer %s:%s", member->buffer->name, member->buffer->fileName);
+    log_trace("closing buffer %s:%s", member->buffer->fileName, member->buffer->realFileName);
 
     EditorBufferList *l;
     for (l = getEditorBuffer(index); l != NULL; l = l->next)
@@ -1315,7 +1316,7 @@ static void closeEditorBuffer(EditorBufferList *member, int index) {
 
 #define BUFFER_IS_CLOSABLE(buffer) (buffer->textLoaded             \
                                     && buffer->markers==NULL            \
-                                    && buffer->name==buffer->fileName  /* not -preloaded */ \
+                                    && buffer->fileName==buffer->realFileName  /* not -preloaded */ \
                                     && ! buffer->modified          \
     )
 
@@ -1339,8 +1340,8 @@ void closeAllEditorBuffersIfClosable(void) {
     for (int i=0; i != -1; i = getNextExistingEditorBufferIndex(i+1)) {
         for (EditorBufferList *list=getEditorBuffer(i); list!=NULL;) {
             EditorBufferList *next = list->next;
-            log_trace("closable %d for %s(%d) %s(%d)", BUFFER_IS_CLOSABLE(list->buffer), list->buffer->name,
-                      list->buffer->name, list->buffer->fileName, list->buffer->fileName);
+            log_trace("closable %d for %s(%d) %s(%d)", BUFFER_IS_CLOSABLE(list->buffer), list->buffer->fileName,
+                      list->buffer->fileName, list->buffer->realFileName, list->buffer->realFileName);
             if (BUFFER_IS_CLOSABLE(list->buffer))
                 closeEditorBuffer(list, i);
             list = next;

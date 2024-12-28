@@ -16,7 +16,7 @@ int addEditorBuffer(EditorBufferList *bufferList) {
 }
 
 bool editorBufferIsMember(EditorBufferList *editorBuffer, int *positionP, EditorBufferList **foundMemberP) {
-    char *editorBuffer_name = editorBuffer->buffer->name;
+    char *editorBuffer_name = editorBuffer->buffer->fileName;
     return (bool)mock(editorBuffer, editorBuffer_name, positionP, foundMemberP);
 }
 

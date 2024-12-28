@@ -440,6 +440,7 @@ watch-for-systemtests-silent:
 system-tests: c-xref
 	$(MAKE) -e test
 	$(MAKE) -e merge-coverage-from-tests
+	@$(MAKE) -e coverage-report &
 	@$(MAKE) -e cloc
 
 #########################################################################

@@ -111,7 +111,7 @@ static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], char *project,
     assert(i < MAX_NARGV_OPTIONS_COUNT);
 
     if (point) {
-        argv[i] = point->buffer->name;
+        argv[i] = point->buffer->fileName;
         i++;
     }
     assert(i < MAX_NARGV_OPTIONS_COUNT);
@@ -339,7 +339,7 @@ static void editorApplyUndos(EditorUndo *undos, EditorUndo *until, EditorUndo **
         switch (uu->operation) {
         case UNDO_REPLACE_STRING:
             if (gen == GEN_FULL_OUTPUT) {
-                ppcReplace(uu->buffer->name, uu->u.replace.offset,
+                ppcReplace(uu->buffer->fileName, uu->u.replace.offset,
                            uu->buffer->allocation.text + uu->u.replace.offset, uu->u.replace.size,
                            uu->u.replace.str);
             }
@@ -349,7 +349,7 @@ static void editorApplyUndos(EditorUndo *undos, EditorUndo *until, EditorUndo **
             break;
         case UNDO_RENAME_BUFFER:
             if (gen == GEN_FULL_OUTPUT) {
-                ppcGotoOffsetPosition(uu->buffer->name, 0);
+                ppcGotoOffsetPosition(uu->buffer->fileName, 0);
                 ppcGenRecord(PPC_MOVE_FILE_AS, uu->u.rename.name);
             }
             renameEditorBuffer(uu->buffer, uu->u.rename.name, undoundo);
@@ -606,7 +606,7 @@ static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *o
         if (strcmp(cid, oldName) != 0) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "something goes wrong: expecting %s instead of %s at %s, offset:%d", oldName, cid,
-                    simpleFileName(getRealFileName_static(pos->buffer->name)), pos->offset);
+                    simpleFileName(getRealFileName_static(pos->buffer->fileName)), pos->offset);
             errorMessage(ERR_INTERNAL, tmpBuff);
             return;
         }
@@ -657,7 +657,7 @@ static void checkedRenameBuffer(EditorBuffer *buff, char *newName, EditorUndo **
     struct stat stat;
     if (editorFileStatus(newName, &stat) == 0) {
         char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "Renaming buffer %s to an existing file.\nCan I do this?", buff->name);
+        sprintf(tmpBuff, "Renaming buffer %s to an existing file.\nCan I do this?", buff->fileName);
         ppcAskConfirmation(tmpBuff);
     }
     renameEditorBuffer(buff, newName, undo);
@@ -686,7 +686,7 @@ static void moveFileAndDirForPackageRename(char *currentPath, EditorMarker *lld,
     sprintf(packdir, "%s%c%s", path, FILE_PATH_SEPARATOR, symLinkName);
     sprintf(newpackdir, "%s%c%s", path, FILE_PATH_SEPARATOR, refactoringOptions.renameTo);
     javaSlashifyDotName(newpackdir + strlen(path));
-    sprintf(newfile, "%s%s", newpackdir, lld->buffer->name + strlen(packdir));
+    sprintf(newfile, "%s%s", newpackdir, lld->buffer->fileName + strlen(packdir));
     checkedRenameBuffer(lld->buffer, newfile, &editorUndo);
 }
 
@@ -695,11 +695,11 @@ static bool renamePackageFileMove(char *currentPath, EditorMarkerList *ll, char 
     bool res = false;
 
     pathLength = strlen(currentPath);
-    log_trace("checking %s<->%s, %s<->%s", ll->marker->buffer->name, currentPath,
-              ll->marker->buffer->name + pathLength + 1, symLinkName);
-    if (filenameCompare(ll->marker->buffer->name, currentPath, pathLength) == 0 &&
-        ll->marker->buffer->name[pathLength] == FILE_PATH_SEPARATOR &&
-        filenameCompare(ll->marker->buffer->name + pathLength + 1, symLinkName, slnlen) == 0) {
+    log_trace("checking %s<->%s, %s<->%s", ll->marker->buffer->fileName, currentPath,
+              ll->marker->buffer->fileName + pathLength + 1, symLinkName);
+    if (filenameCompare(ll->marker->buffer->fileName, currentPath, pathLength) == 0 &&
+        ll->marker->buffer->fileName[pathLength] == FILE_PATH_SEPARATOR &&
+        filenameCompare(ll->marker->buffer->fileName + pathLength + 1, symLinkName, slnlen) == 0) {
         moveFileAndDirForPackageRename(currentPath, ll->marker, symLinkName);
         res = true;
         goto fini;
@@ -1546,7 +1546,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     char             *selectedUpdateOption;
 
     assert(point != NULL && point->buffer != NULL);
-    currentLanguage = getLanguageFor(point->buffer->name);
+    currentLanguage = getLanguageFor(point->buffer->fileName);
 
     bool hasHeaderReferences = false;
     bool isMultiFileReferences = false;

@@ -2,8 +2,8 @@
 #include "editorbuffertab.h"
 
 
-#define HASH_FUN(element) hashFun(element->buffer->name)
-#define HASH_ELEM_EQUAL(e1,e2) (strcmp(e1->buffer->name,e2->buffer->name)==0)
+#define HASH_FUN(element) hashFun(element->buffer->fileName)
+#define HASH_ELEM_EQUAL(e1,e2) (strcmp(e1->buffer->fileName,e2->buffer->fileName)==0)
 
 #include "hashlist.tc"
 

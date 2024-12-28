@@ -133,7 +133,8 @@ Ensure(Editor, can_convert_single_reference_to_editor_marker) {
            will_return(&fileItem));
 
     // Expect that findEditoBufferForFile() finds one
-    EditorBuffer editorBuffer = {.name = "name", .fileName = "name"};
+    char *name = "name";  /* Closable depends on them being the same pointer */
+    EditorBuffer editorBuffer = {.fileName = name, .realFileName = name};
     expect(findEditorBufferForFile, when(name, is_equal_to_string("name")),
            will_return(&editorBuffer));
 

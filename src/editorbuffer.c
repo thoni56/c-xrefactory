@@ -17,7 +17,7 @@ void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, cha
     buffer->allocation = (EditorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
                                                       .allocatedBlock = NULL, .allocatedIndex = 0,
                                                       .allocatedSize = 0};
-    *buffer = (EditorBuffer){.name = name, .fileNumber = fileNumber, .fileName = fileName, .markers = NULL,
+    *buffer = (EditorBuffer){.fileName = name, .fileNumber = fileNumber, .realFileName = fileName, .markers = NULL,
                              .allocation = buffer->allocation};
     buffer->modificationTime = 0;
     buffer->size = 0;
@@ -31,11 +31,12 @@ static void checkForMagicMarker(EditorBufferAllocationData *allocation) {
 void freeEditorBuffer(EditorBufferList *list) {
     if (list == NULL)
         return;
-    log_trace("freeing buffer %s==%s", list->buffer->name, list->buffer->fileName);
-    if (list->buffer->fileName != list->buffer->name) {
-        free(list->buffer->fileName);
+    log_trace("freeing buffer %s==%s", list->buffer->fileName, list->buffer->realFileName);
+    if (list->buffer->realFileName != list->buffer->fileName) {
+        /* If the two are not pointing to the same string... */
+        free(list->buffer->realFileName);
     }
-    free(list->buffer->name);
+    free(list->buffer->fileName);
     for (EditorMarker *marker=list->buffer->markers; marker!=NULL;) {
         EditorMarker *next = marker->next;
         free(marker);
@@ -75,7 +76,7 @@ EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t modificat
 
     bufferList = malloc(sizeof(EditorBufferList));
     *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
-    log_trace("creating buffer '%s' for '%s'", buffer->name, buffer->fileName);
+    log_trace("creating buffer '%s' for '%s'", buffer->fileName, buffer->realFileName);
 
     addEditorBuffer(bufferList);
 
@@ -117,7 +118,7 @@ EditorBuffer *findEditorBufferForFile(char *name) {
                                                      fileSize(name));
             }
         }
-        if (editorBuffer != NULL && !isDirectory(editorBuffer->fileName)) {
+        if (editorBuffer != NULL && !isDirectory(editorBuffer->realFileName)) {
             allocNewEditorBufferTextSpace(editorBuffer, fileSize(name));
             loadFileIntoEditorBuffer(editorBuffer, fileModificationTime(name), fileSize(name));
         } else {
@@ -153,21 +154,21 @@ void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     char *oldName;
 
     strcpy(newName, normalizeFileName_static(nName, cwd));
-    log_trace("Renaming %s (at %d) to %s (at %d)", buffer->name, buffer->name, newName, newName);
-    fillEmptyEditorBuffer(&dd, buffer->name, 0, buffer->name);
+    log_trace("Renaming %s (at %d) to %s (at %d)", buffer->fileName, buffer->fileName, newName, newName);
+    fillEmptyEditorBuffer(&dd, buffer->fileName, 0, buffer->fileName);
     ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
     if (!editorBufferIsMember(&ddl, NULL, &memb)) {
         char tmpBuffer[TMP_BUFF_SIZE];
-        sprintf(tmpBuffer, "Trying to rename non existing buffer %s", buffer->name);
+        sprintf(tmpBuffer, "Trying to rename non existing buffer %s", buffer->fileName);
         errorMessage(ERR_INTERNAL, tmpBuffer);
         return;
     }
     assert(memb->buffer == buffer);
     deleted = deleteEditorBuffer(memb);
     assert(deleted);
-    oldName = buffer->name;
-    buffer->name = malloc(strlen(newName)+1);
-    strcpy(buffer->name, newName);
+    oldName = buffer->fileName;
+    buffer->fileName = malloc(strlen(newName)+1);
+    strcpy(buffer->fileName, newName);
 
     // Also update fileNumber
     fileNumber = addFileNameToFileTable(newName);
