@@ -69,7 +69,7 @@ coverage:
 	cd ../../src ; make clean-coverage
 	@echo "Doing coverage in this directory only"
 	$(MAKE) $(TEST)
-	cd ../../src ; make COVERAGE_CASE=$(TEST) the-actual-coverage-report
+	cd ../../src ; make COVERAGE_CASE=$(TEST) coverage-report
 
 # Targets for debugging with gdb or lldb, so far only works for tests
 # that do not use the server driver
