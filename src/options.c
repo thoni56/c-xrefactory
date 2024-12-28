@@ -1553,7 +1553,7 @@ static bool processPOption(int *argi, int argc, char **argv) {
         strcpy(normalizedFileName, normalizeFileName_static(file, cwd));
         ensureNextArgumentIsAFileName(&i, argc, argv);
         fromFile = argv[i];
-        openEditorBufferNoFileLoad(normalizedFileName, fromFile);
+        openEditorBufferFromPreload(normalizedFileName, fromFile);
     }
     else if (strcmp(argv[i], "-prune")==0) {
         ensureThereIsAnotherArgument(&i, argc, argv);

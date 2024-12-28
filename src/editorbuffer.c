@@ -129,7 +129,7 @@ EditorBuffer *findEditorBufferForFile(char *name) {
 }
 
 // Only used from Options for preload
-EditorBuffer *openEditorBufferNoFileLoad(char *name, char *fileName) {
+EditorBuffer *openEditorBufferFromPreload(char *name, char *fileName) {
     EditorBuffer  *buffer;
 
     buffer = getOpenedEditorBuffer(name);
