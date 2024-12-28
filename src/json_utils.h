@@ -8,6 +8,9 @@ typedef cJSON JSON;
 
 extern double id_of_request(JSON *request);
 extern const char *get_uri_string_from_request(JSON *request);
+/* Get start and end line/character from the "range" item in the JSON object */
+extern void        get_lsp_range_positions(JSON *json, int *start_line, int *start_character, int *end_line,
+                                 int *end_character);
 
 extern JSON *create_lsp_message_with_id(double id);
 extern JSON *add_lsp_action(JSON *target, const char *name, const char *kind);

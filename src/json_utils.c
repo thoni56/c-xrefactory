@@ -71,6 +71,20 @@ JSON *add_lsp_new_text(JSON *target, const char *new_text) {
     return cJSON_AddStringToObject(target, "newText", new_text);
 }
 
+void get_lsp_range_positions(JSON *json, int *start_line, int *start_character, int *end_line, int *end_character) {
+    JSON *range = cJSON_GetObjectItem(json, "range");
+    JSON *start = cJSON_GetObjectItem(range, "start");
+    JSON *end   = cJSON_GetObjectItem(range, "end");
+
+    *start_line = cJSON_GetObjectItem(start, "line")->valueint;
+    *start_character = cJSON_GetObjectItem(start, "character")->valueint;
+    *end_line   = cJSON_GetObjectItem(end, "line")->valueint;
+    *end_character   = cJSON_GetObjectItem(end, "character")->valueint;
+}
+
+
+/* ============================================================== */
+
 JSON *add_json_string(JSON *target, const char *name, const char *value) {
     return cJSON_AddStringToObject(target, name, value);
 }
@@ -78,9 +92,6 @@ JSON *add_json_string(JSON *target, const char *name, const char *value) {
 JSON *add_json_bool(JSON *target, const char *name, bool value) {
     return cJSON_AddBoolToObject(target, name, value);
 }
-
-
-/* ============================================================== */
 
 bool json_equals(const JSON *a, const JSON *b) {
     // Check for nulls or type mismatch

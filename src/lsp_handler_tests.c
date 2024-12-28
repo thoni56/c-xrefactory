@@ -85,8 +85,8 @@ Ensure(LspHandler, creates_code_action) {
         "                \"file:///path/to/file.c\":["
         "                    {"
         "                        \"range\":{"
-        "                            \"start\":{\"line\":0,\"character\":0},"
-        "                            \"end\":{\"line\":0,\"character\":0}"
+        "                            \"start\":{\"line\":0,\"character\":1},"
+        "                            \"end\":{\"line\":2,\"character\":3}"
         "                        },"
         "                        \"newText\":\"Dummy Text\""
         "                    }"
@@ -101,7 +101,7 @@ Ensure(LspHandler, creates_code_action) {
     cJSON *captured_response; // A copy created by the mock function for send_response_and_delete()
     expect(send_response_and_delete, will_capture_parameter(response, captured_response));
 
-    cJSON *mock_request = create_code_action_request(2, "file:///path/to/file.c", 0, 0, 0, 0);
+    cJSON *mock_request = create_code_action_request(2, "file:///path/to/file.c", 0, 1, 2, 3);
 
     handle_code_action(mock_request);
 

@@ -38,7 +38,12 @@ void handle_code_action(JSON *request) {
     JSON *uri = add_json_array_as(changes, get_uri_string_from_request(request));
     JSON *change = add_json_object_to_array(uri);
 
-    add_lsp_range(change, 0, 0, 0, 0);
+    JSON *params = cJSON_GetObjectItem(request, "params");
+
+    int start_line, start_character, end_line, end_character;
+    get_lsp_range_positions(params, &start_line, &start_character, &end_line, &end_character);
+
+    add_lsp_range(change, start_line, start_character, end_line, end_character);
 
     add_lsp_new_text(change, "Dummy Text");
 
