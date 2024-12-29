@@ -1,5 +1,6 @@
 #include "lsp_handler.h"
 
+#include <cjson/cJSON.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -65,6 +66,23 @@ void handle_execute_command(JSON *request) {
     JSON *response = cJSON_CreateNull();
     send_response_and_delete(response);
     delete_json(response);
+}
+
+void handle_did_open(JSON *notification) {
+    log_trace("LSP: Handling 'textDocument/didOpen'");
+
+    JSON *params = cJSON_GetObjectItem(notification, "params");
+
+    JSON *textDocument = cJSON_GetObjectItem(params, "textDocument");
+    const char *uri = cJSON_GetStringValue(cJSON_GetObjectItem(textDocument, "uri"));
+    const char *languageId = cJSON_GetStringValue(cJSON_GetObjectItem(textDocument, "languageId"));
+    const char *text = cJSON_GetStringValue(cJSON_GetObjectItem(textDocument, "text"));
+
+    log_trace("LSP: Opened file '%s', language '%s', text = '%s'", uri, languageId, text);
+
+    // TODO Ensure file is in the fileTable and put the text into an EditorBuffer
+
+    delete_json(notification);
 }
 
 void handle_shutdown(JSON *request) {

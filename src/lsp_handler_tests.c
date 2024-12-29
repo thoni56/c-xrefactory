@@ -11,6 +11,7 @@
 #include "json_utils.h"
 
 #include "lsp_sender.mock"
+#include "editorbuffer.mock"
 
 
 Describe(LspHandler);
@@ -111,4 +112,31 @@ Ensure(LspHandler, creates_code_action) {
     free(expected_code_action_response_as_string);
     free(captured_code_action_response_as_string);
     delete_json(mock_request);
+}
+
+Ensure(LspHandler, handles_did_open) {
+    // Define the expected request
+    const char *did_open_request_json =
+        "{"
+        "    \"jsonrpc\": \"2.0\","
+        "    \"method\": \"textDocument/didOpen\","
+        "    \"params\": {"
+        "        \"textDocument\": {"
+        "            \"uri\": \"file:///path/to/file.c\","
+        "            \"languageId\": \"c\","
+        "            \"text\": \"int main() { return 0; }\""
+        "        }"
+        "    }"
+        "}";
+    JSON *did_open_request = parse_json(did_open_request_json);
+
+    // Set up the mock for create_editor_buffer()
+    //EditorBuffer *captured_buffer;
+    //expect(create_editor_buffer, will_capture_parameter(buffer, captured_buffer));
+
+    // Action
+    handle_did_open(did_open_request);
+
+    // TODO: Validate what happened
+
 }
