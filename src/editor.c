@@ -538,71 +538,73 @@ void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
                                            .allocatedSize = allocSize};
 }
 
-void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int delsize, char *str,
-                                 int strlength, EditorUndo **undo) {
-    int nsize, oldsize, index, undosize, pattractor;
-    char *text, *space, *undotext;
-    EditorMarker *m;
-    EditorUndo *uu;
-
+void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int deleteSize, char *string,
+                                 int length, EditorUndo **undo) {
     assert(position >=0 && position <= buffer->allocation.bufferSize);
-    assert(delsize >= 0);
-    assert(strlength >= 0);
-    oldsize = buffer->allocation.bufferSize;
-    if (delsize+position > oldsize) {
+    assert(deleteSize >= 0);
+    assert(length >= 0);
+
+    int oldSize = buffer->allocation.bufferSize;
+    if (deleteSize+position > oldSize) {
         // deleting over end of buffer,
         // delete only until end of buffer
-        delsize = oldsize - position;
+        deleteSize = oldSize - position;
     }
     log_trace("replacing string in buffer %d (%s)", buffer, buffer->fileName);
-    nsize = oldsize + strlength - delsize;
+
+    int newSize = oldSize + length - deleteSize;
     // prepare operation
-    if (nsize >= buffer->allocation.allocatedSize - buffer->allocation.allocatedFreePrefixSize) {
+    if (newSize >= buffer->allocation.allocatedSize - buffer->allocation.allocatedFreePrefixSize) {
         // resize buffer
         log_trace("resizing %s from %d(%d) to %d", buffer->fileName, buffer->allocation.bufferSize,
-                  buffer->allocation.allocatedSize, nsize);
-        text = buffer->allocation.text;
-        space = buffer->allocation.allocatedBlock;
-        index = buffer->allocation.allocatedIndex;
-        allocNewEditorBufferTextSpace(buffer, nsize);
-        memcpy(buffer->allocation.text, text, oldsize);
-        buffer->allocation.bufferSize = oldsize;
+                  buffer->allocation.allocatedSize, newSize);
+        char *text = buffer->allocation.text;
+        char *space = buffer->allocation.allocatedBlock;
+        int index = buffer->allocation.allocatedIndex;
+        allocNewEditorBufferTextSpace(buffer, newSize);
+        memcpy(buffer->allocation.text, text, oldSize);
+        buffer->allocation.bufferSize = oldSize;
         freeTextSpace(space, index);
     }
-    assert(nsize < buffer->allocation.allocatedSize - buffer->allocation.allocatedFreePrefixSize);
+
+    assert(newSize < buffer->allocation.allocatedSize - buffer->allocation.allocatedFreePrefixSize);
     if (undo!=NULL) {
         // note undo information
-        undosize = strlength;
-        assert(delsize >= 0);
-        undotext = malloc(delsize+1);
-        memcpy(undotext, buffer->allocation.text+position, delsize);
-        undotext[delsize]=0;
-        uu = newUndoReplace(buffer, position, undosize, delsize, undotext, *undo);
-        *undo = uu;
+        int undoSize = length;
+        assert(deleteSize >= 0);
+        char *undoText = malloc(deleteSize+1);
+        memcpy(undoText, buffer->allocation.text+position, deleteSize);
+        undoText[deleteSize]=0;
+        EditorUndo *u = newUndoReplace(buffer, position, undoSize, deleteSize, undoText, *undo);
+        *undo = u;
     }
+
     // edit text
-    memmove(buffer->allocation.text+position+strlength, buffer->allocation.text+position+delsize,
-            buffer->allocation.bufferSize - position - delsize);
-    memcpy(buffer->allocation.text+position, str, strlength);
-    buffer->allocation.bufferSize = buffer->allocation.bufferSize - delsize + strlength;
-    //&sprintf(tmpBuffer,"setting buffersize of  %s to %d\n", buffer->fileName, buffer->allocation.bufferSize);ppcGenRecord(PPC_INFORMATION, tmpBuffer);fflush(communicationChannel);
+    memmove(buffer->allocation.text+position+length, buffer->allocation.text+position+deleteSize,
+            buffer->allocation.bufferSize - position - deleteSize);
+    memcpy(buffer->allocation.text+position, string, length);
+    buffer->allocation.bufferSize = buffer->allocation.bufferSize - deleteSize + length;
+
     // update markers
-    if (delsize > strlength) {
-        if (strlength > 0) pattractor = position + strlength - 1;
-        else pattractor = position + strlength;
-        for(m=buffer->markers; m!=NULL; m=m->next) {
-            if (m->offset >= position + strlength) {
-                if (m->offset < position+delsize) {
+    if (deleteSize > length) {
+        int pattractor;
+        if (length > 0)
+            pattractor = position + length - 1;
+        else
+            pattractor = position + length;
+        for (EditorMarker *m=buffer->markers; m!=NULL; m=m->next) {
+            if (m->offset >= position + length) {
+                if (m->offset < position+deleteSize) {
                     m->offset = pattractor;
                 } else {
-                    m->offset = m->offset - delsize + strlength;
+                    m->offset = m->offset - deleteSize + length;
                 }
             }
         }
     } else {
-        for(m=buffer->markers; m!=NULL; m=m->next) {
-            if (m->offset >= position + delsize) {
-                m->offset = m->offset - delsize + strlength;
+        for (EditorMarker *m=buffer->markers; m!=NULL; m=m->next) {
+            if (m->offset >= position + deleteSize) {
+                m->offset = m->offset - deleteSize + length;
             }
         }
     }

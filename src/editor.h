@@ -13,7 +13,7 @@
 
 typedef struct editorMarker {
     EditorBuffer        *buffer;
-    unsigned             offset;
+    unsigned             offset;   /* Offset in the buffer */
     struct editorMarker *previous; // previous marker in this buffer
     struct editorMarker *next;     // next marker in this buffer
 } EditorMarker;
