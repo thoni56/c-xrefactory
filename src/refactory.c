@@ -654,8 +654,7 @@ static EditorMarker *createNewMarkerForExpressionStart(EditorMarker *marker, int
 }
 
 static void checkedRenameBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo) {
-    struct stat stat;
-    if (editorFileStatus(newName, &stat) == 0) {
+    if (editorFileStatus(newName) == 0) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Renaming buffer %s to an existing file.\nCan I do this?", buff->fileName);
         ppcAskConfirmation(tmpBuff);

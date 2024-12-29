@@ -623,8 +623,6 @@ static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
 // Dont use this function!!!! what you need is: expandWildcardsInOnePath
 /* TODO: WTF, why? we *are* using it... */
 static void expandWildcardsInOnePathRecursiveMaybe(char *fileName, char **outpaths, int *availableSpace) {
-    struct stat stat;
-
     log_trace("expand wildcards(%s)", fileName);
     if (containsWildcard(fileName)) {
         int si = 0;
@@ -649,7 +647,7 @@ static void expandWildcardsInOnePathRecursiveMaybe(char *fileName, char **outpat
                 if (fileName[si]) { di++; si++; }
             }
         }
-    } else if (editorFileStatus(fileName, &stat) == 0) {
+    } else if (editorFileStatus(fileName) == 0) {
         int len = strlen(fileName);
         strcpy(*outpaths, fileName);
         log_trace("adding expanded path==%s", fileName);

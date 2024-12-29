@@ -361,18 +361,14 @@ void editorInit(void) {
     initEditorBufferTable();
 }
 
-int editorFileStatus(char *path, struct stat *statP) {
+int editorFileStatus(char *path) {
     EditorBuffer *buffer;
 
     buffer = getOpenedEditorBuffer(path);
     if (buffer != NULL) {
-        if (statP != NULL) {
-            //*statP = buffer->stat; // We don't have this anymore
-            log_trace("returning stat of %s modified at %s", path, ctime(&buffer->modificationTime));
-        }
         return 0;
     }
-    return fileStatus(path, statP);
+    return fileStatus(path, NULL);
 }
 
 time_t editorFileModificationTime(char *path) {
