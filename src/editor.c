@@ -507,6 +507,7 @@ void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, siz
     buffer->textLoaded = true;
 }
 
+// Should really be in editorbuffer but is dependent on many editor things...
 void allocateNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
     int minSize = size + EDITOR_ALLOCATION_RESERVE + EDITOR_FREE_PREFIX_SIZE;
     int allocIndex = 11;
