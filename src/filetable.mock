@@ -18,7 +18,7 @@ int addFileNameToFileTable(char *name) {
   return (int) mock(name);
 }
 
-int addToFileTable(FileItem *fileItem) {
+int addFileItemToFileTable(FileItem *fileItem) {
     return (int)mock(fileItem);
 }
 
@@ -26,7 +26,7 @@ bool existsInFileTable(char *fileName) {
     return mock(fileName);
 }
 
-FileItem *getFileItem(int fileNumber) {
+FileItem *getFileItemWithFileNumber(int fileNumber) {
     return (FileItem *)mock(fileNumber);
 }
 

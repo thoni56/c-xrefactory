@@ -51,7 +51,7 @@ void typeDump(TypeModifier *t) {
 void symbolRefItemDump(ReferenceItem *s) {
     log_debug("%s\t%s %s %d %d %d %d",
               s->linkName,
-              getFileItem(s->vApplClass)->name,
+              getFileItemWithFileNumber(s->vApplClass)->name,
               s->type, s->storage, s->scope,
               s->visibility);
 }
@@ -326,13 +326,13 @@ void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,
 }
 
 char *simpleFileNameFromFileNum(int fnum) {
-    return(simpleFileName(getRealFileName_static(getFileItem(fnum)->name)));
+    return(simpleFileName(getRealFileName_static(getFileItemWithFileNumber(fnum)->name)));
 }
 
 void sprintfSymbolLinkName(SymbolsMenu *menu, char *name) {
     if (menu->references.type == TypeCppInclude) {
         sprintf(name, "%s",
-                simpleFileName(getRealFileName_static(getFileItem(menu->references.vApplClass)->name)));
+                simpleFileName(getRealFileName_static(getFileItemWithFileNumber(menu->references.vApplClass)->name)));
     } else {
         linkNamePrettyPrint(name, menu->references.linkName, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
     }

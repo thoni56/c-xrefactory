@@ -644,7 +644,7 @@ static EditorMarker *createNewMarkerForExpressionStart(EditorMarker *marker, int
         }
         return NULL;
     } else {
-        EditorBuffer *buffer    = getOpenedAndLoadedEditorBuffer(getFileItem(position.file)->name);
+        EditorBuffer *buffer    = getOpenedAndLoadedEditorBuffer(getFileItemWithFileNumber(position.file)->name);
         EditorMarker *newMarker = newEditorMarker(buffer, 0);
         moveEditorMarkerToLineAndColumn(newMarker, position.line, position.col);
         assert(newMarker->buffer == marker->buffer);
@@ -1563,7 +1563,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     }
     for (EditorMarkerList *l = markerList; l != NULL; l = l->next) {
         assert(l->marker != NULL && l->marker->buffer != NULL);
-        FileItem *fileItem = getFileItem(l->marker->buffer->fileNumber);
+        FileItem *fileItem = getFileItemWithFileNumber(l->marker->buffer->fileNumber);
         if (fileNumber != l->marker->buffer->fileNumber) {
             isMultiFileReferences = true;
         }

@@ -20,7 +20,7 @@ Cache cache;
 
 bool checkFileModifiedTime(int fileNumber) {
     time_t now = time(NULL);
-    FileItem *fileItem = getFileItem(fileNumber);
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
 
     if (fileItem->lastInspected >= fileProcessingStartTime
         && fileItem->lastInspected <= now) {
@@ -45,7 +45,7 @@ bool checkFileModifiedTime(int fileNumber) {
 static void deleteReferencesOutOfMemory(Reference **referenceP) {
     while (*referenceP!=NULL) {
         if (cxMemoryIsFreed(*referenceP)) {
-            log_trace("deleting reference on %s:%d", getFileItem((*referenceP)->position.file)->name,
+            log_trace("deleting reference on %s:%d", getFileItemWithFileNumber((*referenceP)->position.file)->name,
                       (*referenceP)->position.line);
             *referenceP = (*referenceP)->next;
             continue;
@@ -153,7 +153,7 @@ static bool cachedIncludedFilePass(int index) {
     includeTop = cache.points[index].includeStackTop;
     for (int i = cache.points[index - 1].includeStackTop; i < includeTop; i++) {
         bool fileIsCurrent = checkFileModifiedTime(cache.includeStack[i]);
-        log_debug("mtime of %s eval to %s", getFileItem(cache.includeStack[i])->name,
+        log_debug("mtime of %s eval to %s", getFileItemWithFileNumber(cache.includeStack[i])->name,
                   fileIsCurrent ? "true" : "false");
         if (!fileIsCurrent)
             return false;
@@ -313,7 +313,7 @@ void cacheInclude(int fileNum) {
     if (!cachingIsActive())
         return;
     log_debug("caching include of file %d: %s",
-              cache.includeStackTop, getFileItem(fileNum)->name);
+              cache.includeStackTop, getFileItemWithFileNumber(fileNum)->name);
     checkFileModifiedTime(fileNum);
     assert(cache.includeStackTop < INCLUDE_STACK_CACHE_SIZE);
     cache.includeStack[cache.includeStackTop] = fileNum;

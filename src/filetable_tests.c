@@ -25,9 +25,9 @@ Ensure(FileTable, can_check_multiple_filenames_exists) {
     FileItem exists2 = {"exists2.c"};
     FileItem exists3 = {"exists3.c"};
 
-    addToFileTable(&exists1);
-    addToFileTable(&exists2);
-    addToFileTable(&exists3);
+    addFileItemToFileTable(&exists1);
+    addFileItemToFileTable(&exists2);
+    addFileItemToFileTable(&exists3);
 
     assert_that(!existsInFileTable("anything"));
     assert_that(!existsInFileTable("donot_exist.c"));
@@ -44,24 +44,24 @@ Ensure(FileTable, can_lookup_filename) {
 
     assert_that(getFileNumberFromFileName("donot_exist.c"), is_equal_to(-1));
 
-    index = addToFileTable(&exists1);
+    index = addFileItemToFileTable(&exists1);
     assert_that(getFileNumberFromFileName("donot_exist.c"), is_equal_to(-1));
     assert_that(getFileNumberFromFileName("exists1.c"), is_equal_to(index));
 
-    index = addToFileTable(&exists2);
+    index = addFileItemToFileTable(&exists2);
     assert_that(getFileNumberFromFileName("donot_exist.c"), is_equal_to(-1));
     assert_that(getFileNumberFromFileName("exists2.c"), is_equal_to(index));
 
-    index = addToFileTable(&exists3);
+    index = addFileItemToFileTable(&exists3);
     assert_that(getFileNumberFromFileName("donot_exist.c"), is_equal_to(-1));
     assert_that(getFileNumberFromFileName("exists3.c"), is_equal_to(index));
 }
 
 Ensure(FileTable, can_get_fileitem) {
     FileItem item  = {"item.c"};
-    int      index = addToFileTable(&item);
+    int      index = addFileItemToFileTable(&item);
 
-    FileItem *gotten = getFileItem(index);
+    FileItem *gotten = getFileItemWithFileNumber(index);
 
     /* Has the same name */
     assert_that(gotten->name, is_equal_to_string(item.name));
@@ -72,7 +72,7 @@ Ensure(FileTable, can_get_fileitem) {
 
 Ensure(FileTable, can_return_next_existing_file_index) {
     FileItem item  = {"item.c"};
-    int      index = addToFileTable(&item);
+    int      index = addFileItemToFileTable(&item);
 
     assert_that(getNextExistingFileNumber(0), is_equal_to(index));
 }
@@ -89,8 +89,8 @@ static void mapFunction(FileItem *fileItem) {
 Ensure(FileTable, can_map) {
     FileItem item1 = {"item1.c"};
     FileItem item2 = {"item2.c"};
-    addToFileTable(&item1);
-    addToFileTable(&item2);
+    addFileItemToFileTable(&item1);
+    addFileItemToFileTable(&item2);
 
     mapFunctionCalled = 0;
 
@@ -106,7 +106,7 @@ static void mapFunctionWithIndex(FileItem *fileItem, int index) {
 
 Ensure(FileTable, can_map_with_index) {
     FileItem item = {"item.c"};
-    addToFileTable(&item);
+    addFileItemToFileTable(&item);
 
     mapFunctionWithIndexCalled = 0;
 
@@ -127,9 +127,9 @@ Ensure(FileTable, can_map_with_pointer) {
     FileItem item1 = {"item1.c"};
     FileItem item2 = {"item2.c"};
     FileItem item3 = {"item3.c"};
-    addToFileTable(&item1);
-    addToFileTable(&item2);
-    addToFileTable(&item3);
+    addFileItemToFileTable(&item1);
+    addFileItemToFileTable(&item2);
+    addFileItemToFileTable(&item3);
 
     mapFunctionCalled = 0;
 

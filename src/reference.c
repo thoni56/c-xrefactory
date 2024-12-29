@@ -86,7 +86,7 @@ static Reference *addReferenceWithoutUsageCheck(Reference **listP, Reference *re
         *r = *ref;
         LIST_CONS(r, *placeInList);
         log_trace("olcx adding %s %s:%d:%d", usageKindEnumName[ref->usage],
-                  getFileItem(ref->position.file)->name, ref->position.line,ref->position.col);
+                  getFileItemWithFileNumber(ref->position.file)->name, ref->position.line,ref->position.col);
     }
     return r;
 }
@@ -94,7 +94,7 @@ static Reference *addReferenceWithoutUsageCheck(Reference **listP, Reference *re
 
 Reference *addReferenceToList(Reference **listP, Reference *ref) {
     log_trace("checking ref %s %s:%d:%d at %d", usageKindEnumName[ref->usage],
-              simpleFileName(getFileItem(ref->position.file)->name), ref->position.line, ref->position.col, ref);
+              simpleFileName(getFileItemWithFileNumber(ref->position.file)->name), ref->position.line, ref->position.col, ref);
     if (!isVisibleUsage(ref->usage))
         return NULL; // no regular on-line refs
     return addReferenceWithoutUsageCheck(listP, ref);

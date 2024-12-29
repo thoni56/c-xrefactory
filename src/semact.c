@@ -331,7 +331,7 @@ static void setStaticFunctionLinkName(Symbol *p, char *fileName, int usage) {
     // With exactPositionResolve interpret them as distinct symbols for
     // each compilation unit.
     if (usage==UsageDefined && ! options.exactPositionResolve) {
-        basefname=getFileItem(p->pos.file)->name;
+        basefname=getFileItemWithFileNumber(p->pos.file)->name;
     } else {
         basefname=fileName;
     }
@@ -695,7 +695,7 @@ void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
         iname="";
     assert(symbol);
     if (options.exactPositionResolve) {
-        FileItem *fileItem = getFileItem(symbol->pos.file);
+        FileItem *fileItem = getFileItemWithFileNumber(symbol->pos.file);
         fname = simpleFileName(fileItem->name);
         sprintf(tmp, "%x-%s-%x-%x%c", hashFun(fileItem->name), fname, symbol->pos.line, symbol->pos.col,
                 LINK_NAME_SEPARATOR);
@@ -712,7 +712,7 @@ void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
                 order++;
             isMember = symbolTableNextMember(symbol, &member);
         }
-        fname = simpleFileName(getFileItem(fileNumber)->name);
+        fname = simpleFileName(getFileItemWithFileNumber(fileNumber)->name);
         sprintf(tmp, "%s%c%d%c", fname, FILE_PATH_SEPARATOR, order, LINK_NAME_SEPARATOR);
         /*&     // macros will be identified by name only?
           } else if (symbol->type == TypeMacro) {

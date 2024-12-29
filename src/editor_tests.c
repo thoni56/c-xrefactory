@@ -129,7 +129,7 @@ Ensure(Editor, can_convert_single_reference_to_editor_marker) {
 
     FileItem fileItem = (FileItem){.name = "name"};
 
-    expect(getFileItem, when(fileNumber, is_equal_to(SOME_FILE_NUMBER)),
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(SOME_FILE_NUMBER)),
            will_return(&fileItem));
 
     // Expect that findEditoBufferForFile() finds one

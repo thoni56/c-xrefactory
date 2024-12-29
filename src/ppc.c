@@ -26,7 +26,7 @@ static void ppcGenMarker(EditorMarker *m) {
 
 static void ppcGenPosition(Position position) {
     char *fn;
-    fn = getFileItem(position.file)->name;
+    fn = getFileItemWithFileNumber(position.file)->name;
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%d %s=%d %s=%ld>%s</%s>\n",
             PPC_LC_POSITION,

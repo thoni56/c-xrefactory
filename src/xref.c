@@ -63,7 +63,7 @@ static FileItem *createListOfInputFileItems(void) {
     fileNumber = 0;
     for (char *fileName = getNextScheduledFile(&fileNumber); fileName != NULL;
          fileNumber++, fileName = getNextScheduledFile(&fileNumber)) {
-        FileItem *current = getFileItem(fileNumber);
+        FileItem *current = getFileItemWithFileNumber(fileNumber);
         current->next     = fileItems;
         fileItems          = current;
     }
@@ -85,7 +85,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
     while (fileAddedFlag) {
         fileAddedFlag = false;
         for (int i=getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i+1)) {
-            FileItem *fileItem = getFileItem(i);
+            FileItem *fileItem = getFileItemWithFileNumber(i);
             if (fileItem->scheduledToUpdate)
                 if (!fileItem->fullUpdateIncludesProcessed) {
                     fileItem->fullUpdateIncludesProcessed = true;
@@ -93,7 +93,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
                     ReferenceItem *foundMemberP;
                     if (isMemberInReferenceTable(&referenceItem, NULL, &foundMemberP)) {
                         for (Reference *r=foundMemberP->references; r!=NULL; r=r->next) {
-                            FileItem *includerFile = getFileItem(r->position.file);
+                            FileItem *includerFile = getFileItemWithFileNumber(r->position.file);
                             if (!includerFile->scheduledToUpdate) {
                                 includerFile->scheduledToUpdate = true;
                                 fileAddedFlag = true;
@@ -118,7 +118,7 @@ static bool calledDuringRefactoring;
 
 /* NOTE: Map-function */
 static void schedulingToUpdate(FileItem *fileItem) {
-    if (fileItem == getFileItem(NO_FILE_NUMBER))
+    if (fileItem == getFileItemWithFileNumber(NO_FILE_NUMBER))
         return;
 
     if (!editorFileExists(fileItem->name)) {
@@ -267,7 +267,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
                   includeStack.stack[i].characterBuffer.fileNumber);
         if (includeStack.stack[i].characterBuffer.file != stdin) {
             int fileNumber = includeStack.stack[i].characterBuffer.fileNumber;
-            getFileItem(fileNumber)->cxLoading = false;
+            getFileItemWithFileNumber(fileNumber)->cxLoading = false;
             if (includeStack.stack[i].characterBuffer.file != NULL)
                 closeCharacterBuffer(&includeStack.stack[i].characterBuffer);
         }
@@ -275,7 +275,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
     if (currentFile.characterBuffer.file != stdin) {
         log_trace("inspecting current file, fileNumber: %d", currentFile.characterBuffer.fileNumber);
         int fileNumber                     = currentFile.characterBuffer.fileNumber;
-        getFileItem(fileNumber)->cxLoading = false;
+        getFileItemWithFileNumber(fileNumber)->cxLoading = false;
         if (currentFile.characterBuffer.file != NULL)
             closeCharacterBuffer(&currentFile.characterBuffer);
     }
@@ -286,7 +286,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
     /* ************ start with CXREFS and memories clean ************ */
     bool savingFlag = false;
     for (int i=getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i+1)) {
-        FileItem *fileItem = getFileItem(i);
+        FileItem *fileItem = getFileItemWithFileNumber(i);
         if (fileItem->cxLoading) {
             fileItem->cxLoading = false;
             fileItem->cxSaved = true;

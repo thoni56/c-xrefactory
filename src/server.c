@@ -58,7 +58,7 @@ static bool symbolCanBeIdentifiedByPosition(int fileNumber) {
     // and because references from currently procesed file would
     // be not loaded from the TAG file (it expects they are loaded
     // by parsing).
-    FileItem *fileItem = getFileItem(fileNumber);
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     log_trace("commandLineEntered %s == %d", fileItem->name, fileItem->isArgument);
     if (fileItem->isArgument)
         return false;
@@ -116,7 +116,7 @@ static int scheduleFileUsingTheMacro(void) {
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
     }
-    log_trace(":scheduling file '%s'", getFileItem(olMacro2PassFile)->name);
+    log_trace(":scheduling file '%s'", getFileItemWithFileNumber(olMacro2PassFile)->name);
     if (olMacro2PassFile == NO_FILE_NUMBER)
         return NO_FILE_NUMBER;
     return olMacro2PassFile;
@@ -141,9 +141,9 @@ static char *presetEditServerFileDependingStatics(void) {
 
     /* TODO: This seems strange, we only assert that the first file is scheduled to process.
        Then reset all other files, why? */
-    assert(getFileItem(fileNumber)->isScheduled);
+    assert(getFileItemWithFileNumber(fileNumber)->isScheduled);
     for (int i=getNextExistingFileNumber(fileNumber+1); i != -1; i = getNextExistingFileNumber(i+1)) {
-        getFileItem(i)->isScheduled = false;
+        getFileItemWithFileNumber(i)->isScheduled = false;
     }
 
     olOriginalComFileNumber = fileNumber;
@@ -212,7 +212,7 @@ static void singlePass(int argc, char **argv,
         // on-line action with cursor in an un-used macro body ???
         int ol2procfile = scheduleFileUsingTheMacro();
         if (ol2procfile!=NO_FILE_NUMBER) {
-            inputFileName = getFileItem(ol2procfile)->name;
+            inputFileName = getFileItemWithFileNumber(ol2procfile)->name;
             inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
             if (inputOpened) {
                 parseInputFile();
@@ -226,7 +226,7 @@ static void processFile(int argc, char **argv,
                         int nargc, char **nargv,
                         bool *firstPassP
 ) {
-    FileItem *fileItem = getFileItem(olOriginalComFileNumber);
+    FileItem *fileItem = getFileItemWithFileNumber(olOriginalComFileNumber);
 
     assert(fileItem->isScheduled);
     maxPasses = 1;
@@ -256,7 +256,7 @@ void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass)
         }
     } else {
         if (presetEditServerFileDependingStatics() != NULL) {
-            getFileItem(olOriginalComFileNumber)->isScheduled = false;
+            getFileItemWithFileNumber(olOriginalComFileNumber)->isScheduled = false;
             // added [26.12.2002] because of loading options without input file
             inputFileName = NULL;
         }

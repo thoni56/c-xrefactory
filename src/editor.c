@@ -338,7 +338,7 @@ EditorMarker *newEditorMarkerForPosition(Position position) {
     if (position.file==NO_FILE_NUMBER || position.file<0) {
         errorMessage(ERR_INTERNAL, "[editor] creating marker for non-existent position");
     }
-    buffer = findEditorBufferForFile(getFileItem(position.file)->name);
+    buffer = findEditorBufferForFile(getFileItemWithFileNumber(position.file)->name);
     marker = newEditorMarker(buffer, 0);
     moveEditorMarkerToLineAndColumn(marker, position.line, position.col);
     return marker;
@@ -666,7 +666,7 @@ void moveBlockInEditorBuffer(EditorMarker *dest, EditorMarker *src, int size,
 static void quasiSaveEditorBuffer(EditorBuffer *buffer) {
     buffer->modifiedSinceLastQuasiSave = false;
     buffer->modificationTime = time(NULL);
-    FileItem *fileItem = getFileItem(buffer->fileNumber);
+    FileItem *fileItem = getFileItemWithFileNumber(buffer->fileNumber);
     fileItem->lastModified = buffer->modificationTime;
 }
 
@@ -847,7 +847,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
             int           file     = reference->position.file;
             int           line     = reference->position.line;
             int           col      = reference->position.col;
-            FileItem     *fileItem = getFileItem(file);
+            FileItem     *fileItem = getFileItemWithFileNumber(file);
             EditorBuffer *buff     = findEditorBufferForFile(fileItem->name);
             if (buff == NULL) {
                 errorMessage(ERR_CANT_OPEN, fileItem->name);

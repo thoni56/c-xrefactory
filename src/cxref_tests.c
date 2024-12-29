@@ -54,7 +54,7 @@ Ensure(CxRef, will_return_no_active_project_if_no_optionfile_found) {
     communicationChannel = stdout;
     options.serverOperation = OLO_ACTIVE_PROJECT;
 
-    expect(getFileItem, when(fileNumber, is_equal_to(0)),
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(0)),
            will_return(&fileItem));
     expect(searchStandardOptionsFileAndProjectForFile, when(sourceFilename, is_equal_to_string("file.c")),
            will_set_contents_of_parameter(foundOptionsFilename, "", 1),

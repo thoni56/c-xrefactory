@@ -57,13 +57,13 @@ extern int NO_FILE_NUMBER;
 extern void initFileTable(int size);
 extern void initNoFileNumber(void);
 
-extern int addToFileTable(FileItem *fileItem);
+extern int addFileItemToFileTable(FileItem *fileItem);
 extern int addFileNameToFileTable(char *name);
 
 extern int  getFileNumberFromFileName(char *fileName);
 extern bool existsInFileTable(char *fileName);
 
-extern FileItem *getFileItem(int fileNumber);
+extern FileItem *getFileItemWithFileNumber(int fileNumber);
 extern int getNextExistingFileNumber(int index);
 
 extern void mapOverFileTable(void (*fun)(FileItem *));

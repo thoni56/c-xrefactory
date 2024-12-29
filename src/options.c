@@ -430,7 +430,7 @@ char *getOptionVariable(char *name) {
 static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     ENTER();
     int fileNumber = addFileNameToFileTable(fn);
-    FileItem *fileItem = getFileItem(fileNumber);
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     if (options.mode!=ServerMode) {
         // yes in edit server you process also headers, etc.
         fileItem->isArgument = true;
@@ -1979,7 +1979,7 @@ void searchStandardOptionsFileAndProjectForFile(char *sourceFilename, char *foun
         // it may happen that after deletion of the project, the request for active
         // project will return non-existent project. And then return "not found"?
         fileno = getFileNumberFromName(sourceFilename);
-        if (fileno != NO_FILE_NUMBER && getFileItem(fileno)->isFromCxfile) {
+        if (fileno != NO_FILE_NUMBER && getFileItemWithFileNumber(fileno)->isFromCxfile) {
             strcpy(foundOptionsFilename, previousStandardOptionsFile);
             strcpy(foundProjectName, previousStandardOptionsProject);
             return;

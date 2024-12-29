@@ -176,11 +176,11 @@ static void setCurrentFileInfoFor(char *fileName) {
 
     if (fileName==NULL) {
         number = NO_FILE_NUMBER;
-        name = getFileItem(number)->name;
+        name = getFileItemWithFileNumber(number)->name;
     } else {
         bool existed = existsInFileTable(fileName);
         number = addFileNameToFileTable(fileName);
-        FileItem *fileItem = getFileItem(number);
+        FileItem *fileItem = getFileItemWithFileNumber(number);
         name = fileItem->name;
         checkFileModifiedTime(number);
         bool cxloading = fileItem->cxLoading;
@@ -437,12 +437,12 @@ static Symbol makeIncludeSymbolItem(Position pos) {
 void addFileAsIncludeReference(int fileNumber) {
     Position position = makePosition(fileNumber, 1, 0);
     Symbol symbol = makeIncludeSymbolItem(position);
-    log_trace("adding reference on file %d==%s", fileNumber, getFileItem(fileNumber)->name);
+    log_trace("adding reference on file %d==%s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
     addCxReference(&symbol, position, UsageDefined, fileNumber);
 }
 
 static void addIncludeReference(int fileNumber, Position position) {
-    log_trace("adding reference on file %d==%s", fileNumber, getFileItem(fileNumber)->name);
+    log_trace("adding reference on file %d==%s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
     Symbol symbol = makeIncludeSymbolItem(position);
     addCxReference(&symbol, position, UsageUsed, fileNumber);
 }
@@ -467,7 +467,7 @@ void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
 }
 
 void popInclude(void) {
-    FileItem *fileItem = getFileItem(currentFile.characterBuffer.fileNumber);
+    FileItem *fileItem = getFileItemWithFileNumber(currentFile.characterBuffer.fileNumber);
     if (fileItem->cxLoading) {
         fileItem->cxLoaded = true;
     }
@@ -1220,7 +1220,7 @@ static void processPragmaDirective(void) {
     if (lexem == IDENTIFIER && strcmp(currentInput.read, "once")==0) {
         char tmpBuff[TMP_BUFF_SIZE];
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-        fname = simpleFileName(getFileItem(position.file)->name);
+        fname = simpleFileName(getFileItemWithFileNumber(position.file)->name);
         sprintf(tmpBuff, "PragmaOnce-%s", fname);
         mname = ppmAllocc(strlen(tmpBuff)+1, sizeof(char));
         strcpy(mname, tmpBuff);
@@ -1630,7 +1630,7 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
             if (len >= MACRO_BODY_BUFFER_SIZE - 15) {
                 char tmpBuffer[TMP_BUFF_SIZE];
                 sprintf(tmpBuffer, "size of #macro_argument exceeded MACRO_BODY_BUFFER_SIZE @%s:%d:%d",
-                        getFileItem(position.file)->name, position.line, position.col);
+                        getFileItemWithFileNumber(position.file)->name, position.line, position.col);
                 errorMessage(ERR_INTERNAL, tmpBuffer);
             }
         } else {

@@ -216,7 +216,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int vA
 
     assert(position.file<MAX_FILES);
 
-    FileItem *fileItem = getFileItem(position.file);
+    FileItem *fileItem = getFileItemWithFileNumber(position.file);
 
     getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
 
@@ -277,7 +277,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int vA
 
     place = addToReferenceList(&foundMember->references, position, usage);
     log_trace("checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s",
-              getFileItem(cxRefPosition.file)->name, cxRefPosition.file, cxRefPosition.line, cxRefPosition.col,
+              getFileItemWithFileNumber(cxRefPosition.file)->name, cxRefPosition.file, cxRefPosition.line, cxRefPosition.col,
               fileItem->name, position.file, position.line, position.col,
               memcmp(&cxRefPosition, &position, sizeof(Position)), positionsAreEqual(cxRefPosition, position),
               usage, symbol->linkName);
@@ -334,7 +334,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int vA
 
     assert(place);
     log_trace("returning %x == %s %s:%d", *place, usageKindEnumName[(*place)->usage],
-              getFileItem((*place)->position.file)->name, (*place)->position.line);
+              getFileItemWithFileNumber((*place)->position.file)->name, (*place)->position.line);
     return *place;
 }
 
@@ -430,7 +430,7 @@ static void olcxAppendReference(Reference *ref, OlcxReferences *refs) {
     rr = olcxCopyReference(ref);
     LIST_APPEND(Reference, refs->references, rr);
     log_trace("olcx appending %s %s:%d:%d", usageKindEnumName[ref->usage],
-              getFileItem(ref->position.file)->name, ref->position.line, ref->position.col);
+              getFileItemWithFileNumber(ref->position.file)->name, ref->position.line, ref->position.col);
 }
 
 /* fnum is file number of which references are added, can be ANY_FILE */
@@ -498,8 +498,8 @@ static void olcxRenameInit(void) {
 static bool referenceIsLessThan(Reference *r1, Reference *r2) {
     int fc;
     char *s1,*s2;
-    s1 = simpleFileName(getFileItem(r1->position.file)->name);
-    s2 = simpleFileName(getFileItem(r2->position.file)->name);
+    s1 = simpleFileName(getFileItemWithFileNumber(r1->position.file)->name);
+    s2 = simpleFileName(getFileItemWithFileNumber(r2->position.file)->name);
     fc=strcmp(s1, s2);
     if (fc<0) return true;
     if (fc>0) return false;
@@ -688,7 +688,7 @@ static void passRefsThroughSourceFile(Reference **inOutReferences,
         goto fin;
     int fileNumber = references->position.file;
 
-    char *cofileName = getFileItem(fileNumber)->name;
+    char *cofileName = getFileItemWithFileNumber(fileNumber)->name;
     references = passNonPrintableRefsForFile(references, fileNumber, usages, usageFilter);
     if (references==NULL || references->position.file != fileNumber)
         goto fin;
@@ -1870,7 +1870,7 @@ void olcxPrintPushingAction(ServerOperation operation) {
 static void dumpSelectionMenu(SymbolsMenu *menu) {
     for (SymbolsMenu *s=menu; s!=NULL; s=s->next) {
         log_trace">> %d/%d %s %s %d", s->defRefn, s->refn, s->references.linkName,
-            simpleFileName(getFileItem(s->references.vApplClass)->name),
+            simpleFileName(getFileItemWithFileNumber(s->references.vApplClass)->name),
             s->outOnLine);
     }
 }
@@ -2028,7 +2028,7 @@ void answerEditAction(void) {
             } else {
                 char standardOptionsFileName[MAX_FILE_NAME_SIZE];
                 char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
-                char *inputFileName = getFileItem(olOriginalComFileNumber)->name;
+                char *inputFileName = getFileItemWithFileNumber(olOriginalComFileNumber)->name;
                 log_trace("inputFileName = %s", inputFileName);
                 searchStandardOptionsFileAndProjectForFile(inputFileName, standardOptionsFileName, standardOptionsSectionName);
                 if (standardOptionsFileName[0]==0 || standardOptionsSectionName[0]==0) {
@@ -2286,7 +2286,7 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
     Position defpos = noPosition;
     Usage defusage = UsageNone;
 
-    log_trace("ooBits for '%s'", getFileItem(references->vApplClass)->name);
+    log_trace("ooBits for '%s'", getFileItemWithFileNumber(references->vApplClass)->name);
 
     for (SymbolsMenu *menu=rstack->hkSelectedSym; menu!=NULL; menu=menu->next) {
         if (olcxIsSameCxSymbol(references, &menu->references)) {
@@ -2301,7 +2301,7 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
             int vlev = 0;
             if (vlevel==0 || ABS(vlevel)>ABS(vlev))
                 vlevel = vlev;
-            log_trace("ooBits for %s <-> %s %o %o", getFileItem(menu->references.vApplClass)->name,
+            log_trace("ooBits for %s <-> %s %o %o", getFileItemWithFileNumber(menu->references.vApplClass)->name,
                       references->linkName, oo, ooBits);
         }
     }
@@ -2344,7 +2344,7 @@ static char *createTagSearchLine_static(char *name, int fileNumber,
     l1 = l2 = l3 = 0;
     l1 = strlen(name);
 
-    FileItem *fileItem = getFileItem(fileNumber);
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     ffname = fileItem->name;
     assert(ffname);
     ffname = getRealFileName_static(ffname);

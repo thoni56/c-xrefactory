@@ -62,11 +62,11 @@ static struct fileItem *newFileItem(char *normalizedFileName) {
     return createdFileItem;
 }
 
-int addToFileTable(FileItem *fileItem) {
+int addFileItemToFileTable(FileItem *fileItem) {
     return fileTableAdd(&fileTable, fileItem);
 }
 
-FileItem *getFileItem(int fileNumber) {
+FileItem *getFileItemWithFileNumber(int fileNumber) {
     assert(fileNumber != -1);
     assert(fileTable.tab != NULL);
     assert(fileTable.tab[fileNumber] != NULL);
@@ -95,8 +95,12 @@ void initNoFileNumber(void) {
 }
 
 
-/* This is searching for filenames as strings, not fileItems, which
-   fileTabIsMember() does. It can't be made into a hashtab macro since
+/* Search for filenames as strings, not fileItems, which
+   fileTabIsMember() does.
+
+   @returns index into FileTable
+
+   It can't be made into a hashtab macro since
    it knows about how filenames are stored and compared. So there is
    some duplication here, since this is also looking up things. */
 static int fileTableLookup(FileTable *table, char *fileName) {
@@ -161,7 +165,7 @@ static char *getNextInputFileFromFileTable(int *indexP, FileSource wantedFileSou
     FileItem  *fileItem;
 
     for (i = getNextExistingFileNumber(*indexP); i != -1; i = getNextExistingFileNumber(i+1)) {
-        fileItem = getFileItem(i);
+        fileItem = getFileItemWithFileNumber(i);
         assert(fileItem!=NULL);
         if (wantedFileSource==FILE_IS_SCHEDULED && fileItem->isScheduled)
             break;

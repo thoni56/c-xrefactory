@@ -409,7 +409,7 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
         return;
 
     for (Reference *reference = referenceItem->references; reference != NULL; reference = reference->next) {
-        FileItem *fileItem = getFileItem(reference->position.file);
+        FileItem *fileItem = getFileItemWithFileNumber(reference->position.file);
         log_trace("checking ref: loading=%d --< %s:%d", fileItem->cxLoading,
                   fileItem->name, reference->position.line);
         if (options.update==UPDATE_DEFAULT || fileItem->cxLoading) {
@@ -691,7 +691,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
 
     if (!existsInFileTable(fileName)) {
         fileNumber = addFileNameToFileTable(fileName);
-        fileItem = getFileItem(fileNumber);
+        fileItem = getFileItemWithFileNumber(fileNumber);
         fileItem->isArgument = isArgument;
         if (fileItem->lastFullUpdateMtime == 0)
             fileItem->lastFullUpdateMtime=fumtime;
@@ -705,7 +705,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
         }
     } else {
         fileNumber = getFileNumberFromFileName(fileName);
-        fileItem = getFileItem(fileNumber);
+        fileItem = getFileItemWithFileNumber(fileNumber);
         if (fileItemShouldBeUpdatedFromCxFile(fileItem)) {
             // Set it to none, it will be updated by source item
             fileItem->sourceFileNumber = NO_FILE_NUMBER;
@@ -737,7 +737,7 @@ static void getSymbolTypeAndClasses(Type *symbolType, int *vApplClass) {
     *symbolType = lastIncomingData.data[CXFI_SYMBOL_TYPE];
 
     *vApplClass = fileNumberMapping[lastIncomingData.data[CXFI_SUBCLASS]];
-    assert(getFileItem(*vApplClass) != NULL);
+    assert(getFileItemWithFileNumber(*vApplClass) != NULL);
 }
 
 
@@ -946,7 +946,7 @@ static void scanFunction_Reference(int size,
 
     file = lastIncomingData.data[CXFI_FILE_NUMBER];
     file = fileNumberMapping[file];
-    FileItem *fileItem = getFileItem(file);
+    FileItem *fileItem = getFileItemWithFileNumber(file);
 
     line = lastIncomingData.data[CXFI_LINE_INDEX];
     col = lastIncomingData.data[CXFI_COLUMN_INDEX];
@@ -965,7 +965,7 @@ static void scanFunction_Reference(int size,
             writeCxReferenceBase(usage, reqAcc, file, line, col);
     } else if (options.mode == ServerMode) {
         Reference reference = makeReference(makePosition(file, line, col), usage, NULL);
-        FileItem *referenceFileItem = getFileItem(reference.position.file);
+        FileItem *referenceFileItem = getFileItemWithFileNumber(reference.position.file);
         if (operation == CXSF_DEAD_CODE_DETECTION) {
             if (isVisibleUsage(reference.usage)) {
                 // restrict reported symbols to those defined in project input file

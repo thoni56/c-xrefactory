@@ -179,7 +179,7 @@ void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
 
     // Also update fileNumber
     fileNumber = addFileNameToFileTable(newName);
-    getFileItem(fileNumber)->isArgument = getFileItem(buffer->fileNumber)->isArgument;
+    getFileItemWithFileNumber(fileNumber)->isArgument = getFileItemWithFileNumber(buffer->fileNumber)->isArgument;
     buffer->fileNumber = fileNumber;
 
     *memb = (EditorBufferList){.buffer = buffer, .next = NULL};
