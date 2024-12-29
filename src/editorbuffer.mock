@@ -5,15 +5,30 @@
 
 
 void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, char *fileName) {
-    mock(buffer, name, fileNumber, fileName);
+    buffer->allocation = (EditorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
+                                                      .allocatedBlock = NULL, .allocatedIndex = 0,
+                                                      .allocatedSize = 0};
+    *buffer = (EditorBuffer){.fileName = name, .fileNumber = fileNumber, .realFileName = fileName, .markers = NULL,
+                             .allocation = buffer->allocation};
+    buffer->modificationTime = 0;
+    buffer->size = 0;
+}
+
+extern EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *realFileName,
+                                     time_t modificationTime, size_t size) {
+    EditorBuffer *editorBuffer = malloc(sizeof(EditorBuffer));
+    fillEmptyEditorBuffer(editorBuffer, fileName, fileNumber, realFileName);
+    editorBuffer->modificationTime = modificationTime;
+    editorBuffer->size = size;
+    return editorBuffer;
+}
+
+EditorBuffer *createNewEditorBuffer(char *fileName, char *realFileName, time_t modificationTime, size_t size) {
+    return (EditorBuffer *)mock(fileName, realFileName, modificationTime, size);
 }
 
 void freeEditorBuffers(EditorBufferList *list) {
     mock(list);
-}
-
-EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t modificationTime, size_t size) {
-    return (EditorBuffer *)mock(name, fileName, modificationTime, size);
 }
 
 EditorBuffer *findEditorBufferForFile(char *name) {

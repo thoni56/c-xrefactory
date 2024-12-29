@@ -514,15 +514,17 @@ void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, siz
 }
 
 void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
-    int minSize, allocIndex, allocSize;
-    char *space;
-    minSize = size + EDITOR_ALLOCATION_RESERVE + EDITOR_FREE_PREFIX_SIZE;
-    allocIndex = 11; allocSize = 2048;
+    int minSize = size + EDITOR_ALLOCATION_RESERVE + EDITOR_FREE_PREFIX_SIZE;
+    int allocIndex = 11;
+    int allocSize = 2048;
+
+    // Ensure size to allocate is at least 
     for(; allocSize<minSize; ) {
         allocIndex++;
         allocSize = allocSize << 1;
     }
-    space = (char *)editorMemory[allocIndex];
+    
+    char *space = (char *)editorMemory[allocIndex];
     if (space == NULL) {
         space = malloc(allocSize+1);
         if (space == NULL)
@@ -538,17 +540,17 @@ void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
                                            .allocatedSize = allocSize};
 }
 
-void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int deleteSize, char *string,
-                                 int length, EditorUndo **undo) {
-    assert(position >=0 && position <= buffer->allocation.bufferSize);
+void replaceStringInEditorBuffer(EditorBuffer *buffer, int offset, int deleteSize, char *string,
+                                 int length, EditorUndo **undoP) {
+    assert(offset >=0 && offset <= buffer->allocation.bufferSize);
     assert(deleteSize >= 0);
     assert(length >= 0);
 
     int oldSize = buffer->allocation.bufferSize;
-    if (deleteSize+position > oldSize) {
+    if (deleteSize+offset > oldSize) {
         // deleting over end of buffer,
         // delete only until end of buffer
-        deleteSize = oldSize - position;
+        deleteSize = oldSize - offset;
     }
     log_trace("replacing string in buffer %d (%s)", buffer, buffer->fileName);
 
@@ -568,33 +570,33 @@ void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int deleteS
     }
 
     assert(newSize < buffer->allocation.allocatedSize - buffer->allocation.allocatedFreePrefixSize);
-    if (undo!=NULL) {
+    if (undoP!=NULL) {
         // note undo information
         int undoSize = length;
         assert(deleteSize >= 0);
         char *undoText = malloc(deleteSize+1);
-        memcpy(undoText, buffer->allocation.text+position, deleteSize);
+        memcpy(undoText, buffer->allocation.text+offset, deleteSize);
         undoText[deleteSize]=0;
-        EditorUndo *u = newUndoReplace(buffer, position, undoSize, deleteSize, undoText, *undo);
-        *undo = u;
+        EditorUndo *u = newUndoReplace(buffer, offset, undoSize, deleteSize, undoText, *undoP);
+        *undoP = u;
     }
 
     // edit text
-    memmove(buffer->allocation.text+position+length, buffer->allocation.text+position+deleteSize,
-            buffer->allocation.bufferSize - position - deleteSize);
-    memcpy(buffer->allocation.text+position, string, length);
+    memmove(buffer->allocation.text+offset+length, buffer->allocation.text+offset+deleteSize,
+            buffer->allocation.bufferSize - offset - deleteSize);
+    memcpy(buffer->allocation.text+offset, string, length);
     buffer->allocation.bufferSize = buffer->allocation.bufferSize - deleteSize + length;
 
     // update markers
     if (deleteSize > length) {
         int pattractor;
         if (length > 0)
-            pattractor = position + length - 1;
+            pattractor = offset + length - 1;
         else
-            pattractor = position + length;
+            pattractor = offset + length;
         for (EditorMarker *m=buffer->markers; m!=NULL; m=m->next) {
-            if (m->offset >= position + length) {
-                if (m->offset < position+deleteSize) {
+            if (m->offset >= offset + length) {
+                if (m->offset < offset+deleteSize) {
                     m->offset = pattractor;
                 } else {
                     m->offset = m->offset - deleteSize + length;
@@ -603,7 +605,7 @@ void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int deleteS
         }
     } else {
         for (EditorMarker *m=buffer->markers; m!=NULL; m=m->next) {
-            if (m->offset >= position + deleteSize) {
+            if (m->offset >= offset + deleteSize) {
                 m->offset = m->offset - deleteSize + length;
             }
         }
@@ -611,57 +613,61 @@ void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int deleteS
     setEditorBufferModified(buffer);
 }
 
-void moveBlockInEditorBuffer(EditorMarker *dest, EditorMarker *src, int size,
+void moveBlockInEditorBuffer(EditorMarker *destinationMarker, EditorMarker *sourceMarker, int size,
                              EditorUndo **undo) {
-    EditorMarker *tmp, *mm;
-    EditorBuffer *sb, *db;
-    int off1, off2, offd, undodoffset;
-
     assert(size>=0);
-    if (dest->buffer == src->buffer
-        && dest->offset > src->offset
-        && dest->offset < src->offset+size) {
+    if (destinationMarker->buffer == sourceMarker->buffer
+        && destinationMarker->offset > sourceMarker->offset
+        && destinationMarker->offset < sourceMarker->offset+size) {
         errorMessage(ERR_INTERNAL, "[editor] moving block to its original place");
         return;
     }
-    sb = src->buffer;
-    db = dest->buffer;
+    EditorBuffer *sourceBuffer = sourceMarker->buffer;
+    EditorBuffer *destinationBuffer = destinationMarker->buffer;
+
     // insert the block to target position
-    offd = dest->offset;
-    off1 = src->offset;
-    off2 = off1+size;
-    assert(off1 <= off2);
+    int destinationOffset = destinationMarker->offset;
+    int offset1 = sourceMarker->offset;
+    int offset2 = offset1+size;
+    assert(offset1 <= offset2);
+
     // do it at two steps for the case if source buffer equals target buffer
     // first just allocate space
-    replaceStringInEditorBuffer(db, offd, 0, sb->allocation.text + off1, off2 - off1, NULL);
+    replaceStringInEditorBuffer(destinationBuffer, destinationOffset, 0, sourceBuffer->allocation.text + offset1,
+                                offset2 - offset1, NULL);
+
     // now copy text
-    off1 = src->offset;
-    off2 = off1+size;
-    replaceStringInEditorBuffer(db, offd, off2 - off1, sb->allocation.text + off1, off2 - off1,
-                                NULL);
+    offset1 = sourceMarker->offset;
+    offset2 = offset1+size;
+    replaceStringInEditorBuffer(destinationBuffer, destinationOffset, offset2 - offset1,
+                                sourceBuffer->allocation.text + offset1, offset2 - offset1, NULL);
     // save target for undo;
-    undodoffset = src->offset;
+    int undoOffset = sourceMarker->offset;
+
     // move all markers from moved block
-    assert(off1 == src->offset);
-    assert(off2 == off1+size);
-    mm = sb->markers;
+    assert(offset1 == sourceMarker->offset);
+    assert(offset2 == offset1+size);
+    EditorMarker *mm = sourceBuffer->markers;
     while (mm!=NULL) {
-        tmp = mm->next;
-        if (mm->offset>=off1 && mm->offset<off2) {
+        EditorMarker *tmp = mm->next;
+        if (mm->offset>=offset1 && mm->offset<offset2) {
             removeEditorMarkerFromBufferWithoutFreeing(mm);
-            mm->offset = offd + (mm->offset-off1);
-            attachMarkerToBuffer(mm, db);
+            mm->offset = destinationOffset + (mm->offset-offset1);
+            attachMarkerToBuffer(mm, destinationBuffer);
         }
         mm = tmp;
     }
     // remove the source block
-    replaceStringInEditorBuffer(sb, off1, off2 - off1, sb->allocation.text + off1, 0, NULL);
+    replaceStringInEditorBuffer(sourceBuffer, offset1, offset2 - offset1, sourceBuffer->allocation.text + offset1,
+                                0, NULL);
     //
-    setEditorBufferModified(sb);
-    setEditorBufferModified(db);
+    setEditorBufferModified(sourceBuffer);
+    setEditorBufferModified(destinationBuffer);
+
     // add the whole operation into undo
     if (undo!=NULL) {
-        *undo = newUndoMove(db, src->offset, off2-off1, sb, undodoffset, *undo);
+        *undo = newUndoMove(destinationBuffer, sourceMarker->offset, offset2-offset1, sourceBuffer, undoOffset,
+                            *undo);
     }
 }
 

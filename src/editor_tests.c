@@ -3,6 +3,7 @@
 
 #include "editor.h"
 
+#include "editorbuffer.h"
 #include "usage.h"
 
 #include "commons.mock"
@@ -132,8 +133,8 @@ Ensure(Editor, can_convert_single_reference_to_editor_marker) {
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(SOME_FILE_NUMBER)),
            will_return(&fileItem));
 
-    // Expect that findEditoBufferForFile() finds one
-    char *name = "name";  /* Closable depends on them being the same pointer */
+    // Expect that findEditorBufferForFile() finds one
+    char *name = "name";  /* Closable() depends on them being the same pointer */
     EditorBuffer editorBuffer = {.fileName = name, .realFileName = name};
     expect(findEditorBufferForFile, when(name, is_equal_to_string("name")),
            will_return(&editorBuffer));
@@ -142,4 +143,19 @@ Ensure(Editor, can_convert_single_reference_to_editor_marker) {
 
     assert_that(markers, is_not_null);
     assert_that(markers->next, is_null);
+}
+
+xEnsure(Editor, can_move_block_in_editor_buffer) {
+    char *text = strdup("this is some text");
+    EditorBuffer *buffer = newEditorBuffer("file", 12, "file", 0, strlen(text)+1);
+
+
+    EditorMarker *sourceMarker = newEditorMarker(buffer, 13); /* Start of 'text' */
+    EditorMarker *destinationMarker = newEditorMarker(buffer, 8); /* Start of 'some' */
+
+    EditorUndo *undo = NULL;
+
+    moveBlockInEditorBuffer(destinationMarker, sourceMarker, 4, &undo);
+
+    assert_that(buffer->allocation.text, is_equal_to_string("this is text some"));
 }

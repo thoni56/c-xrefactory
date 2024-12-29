@@ -99,8 +99,8 @@ void loadAllOpenedEditorBuffers(void) {
   mock();
 }
 
-EditorMarker *createNewEditorMarker(EditorBuffer *buff, int offset) {
-  return (EditorMarker *) mock(buff, offset);
+EditorMarker *createNewEditorMarker(EditorBuffer *buffer, int offset) {
+  return (EditorMarker *) mock(buffer, offset);
 }
 
 EditorMarker *duplicateEditorMarker(EditorMarker *mm) {

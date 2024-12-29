@@ -13,20 +13,23 @@
 #include "undo.h"
 
 
-void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, char *fileName) {
-    buffer->allocation = (EditorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
-                                                      .allocatedBlock = NULL, .allocatedIndex = 0,
-                                                      .allocatedSize = 0};
-    *buffer = (EditorBuffer){.fileName = name, .fileNumber = fileNumber, .realFileName = fileName, .markers = NULL,
-                             .allocation = buffer->allocation};
+void fillEmptyEditorBuffer(EditorBuffer *buffer, char *fileName, int fileNumber, char *realFileName) {
+    buffer->allocation = (EditorBufferAllocationData){
+        .bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
+        .allocatedBlock = NULL, .allocatedIndex = 0,
+        .allocatedSize = 0};
+    *buffer = (EditorBuffer){
+        .fileName = fileName, .fileNumber = fileNumber, .realFileName = realFileName,
+        .markers = NULL, .allocation = buffer->allocation};
     buffer->modificationTime = 0;
     buffer->size = 0;
+    buffer->textLoaded = false;
 }
 
-static EditorBuffer *newEditorBuffer(char *name, int fileNumber, char *fileName, time_t modificationTime,
-                                     size_t size) {
+EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *realFileName, time_t modificationTime,
+                              size_t size) {
     EditorBuffer *editorBuffer = malloc(sizeof(EditorBuffer));
-    fillEmptyEditorBuffer(editorBuffer, name, fileNumber, fileName);
+    fillEmptyEditorBuffer(editorBuffer, fileName, fileNumber, realFileName);
     editorBuffer->modificationTime = modificationTime;
     editorBuffer->size = size;
     return editorBuffer;

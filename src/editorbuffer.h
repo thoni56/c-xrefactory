@@ -37,9 +37,11 @@ typedef struct editorBufferList {
 } EditorBufferList;
 
 
-extern void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, char *fileName);
+extern void fillEmptyEditorBuffer(EditorBuffer *buffer, char *fileName, int fileNumber, char *realFileName);
 extern void freeEditorBuffers(EditorBufferList *list);
-extern EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t modificationTime,
+extern EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *realFileName, time_t modificationTime,
+                                     size_t size);
+extern EditorBuffer *createNewEditorBuffer(char *fileName, char *realfileName, time_t modificationTime,
                                            size_t size);
 extern EditorBuffer *findEditorBufferForFile(char *name);
 extern EditorBuffer *openEditorBufferFromPreload(char *name, char *fileName);
