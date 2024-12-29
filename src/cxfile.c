@@ -672,7 +672,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
                                       CharacterBuffer *cb,
                                       CxScanFileOperation operation
 ) {
-    char id[MAX_FILE_NAME_SIZE];
+    char fileName[MAX_FILE_NAME_SIZE];
     FileItem *fileItem;
     int fileNumber;
     bool isArgument;
@@ -684,13 +684,13 @@ static void scanFunction_ReadFileName(int fileNameLength,
     isArgument = lastIncomingData.data[CXFI_COMMAND_LINE_ARGUMENT];
 
     assert(fileNameLength < MAX_FILE_NAME_SIZE);
-    getString(cb, id, fileNameLength-1);
+    getString(cb, fileName, fileNameLength-1);
 
     int lastIncomingFileNumber = lastIncomingData.data[CXFI_FILE_NUMBER];
     assert(lastIncomingFileNumber>=0 && lastIncomingFileNumber<MAX_FILES);
 
-    if (!existsInFileTable(id)) {
-        fileNumber = addFileNameToFileTable(id);
+    if (!existsInFileTable(fileName)) {
+        fileNumber = addFileNameToFileTable(fileName);
         fileItem = getFileItem(fileNumber);
         fileItem->isArgument = isArgument;
         if (fileItem->lastFullUpdateMtime == 0)
@@ -704,7 +704,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
             }
         }
     } else {
-        fileNumber = lookupFileTable(id);
+        fileNumber = lookupFileTable(fileName);
         fileItem = getFileItem(fileNumber);
         if (fileItemShouldBeUpdatedFromCxFile(fileItem)) {
             // Set it to none, it will be updated by source item
@@ -722,7 +722,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
     }
     fileItem->isFromCxfile = true;
     fileNumberMapping[lastIncomingFileNumber]=fileNumber;
-    log_trace("%d: '%s' scanned: added as %d", lastIncomingFileNumber, id, fileNumber);
+    log_trace("%d: '%s' scanned: added as %d", lastIncomingFileNumber, fileName, fileNumber);
 }
 
 static int scanSymbolName(CharacterBuffer *cb, char *id, int size) {
