@@ -60,7 +60,7 @@ extern void initNoFileNumber(void);
 extern int addToFileTable(FileItem *fileItem);
 extern int addFileNameToFileTable(char *name);
 
-extern int  lookupFileTable(char *fileName);
+extern int  getFileNumberFromFileName(char *fileName);
 extern bool existsInFileTable(char *fileName);
 
 extern FileItem *getFileItem(int fileNumber);

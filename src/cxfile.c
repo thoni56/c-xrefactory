@@ -704,7 +704,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
             }
         }
     } else {
-        fileNumber = lookupFileTable(fileName);
+        fileNumber = getFileNumberFromFileName(fileName);
         fileItem = getFileItem(fileNumber);
         if (fileItemShouldBeUpdatedFromCxFile(fileItem)) {
             // Set it to none, it will be updated by source item

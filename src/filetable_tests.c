@@ -42,19 +42,19 @@ Ensure(FileTable, can_lookup_filename) {
     FileItem exists3 = {"exists3.c"};
     int      index   = -1;
 
-    assert_that(lookupFileTable("donot_exist.c"), is_equal_to(-1));
+    assert_that(getFileNumberFromFileName("donot_exist.c"), is_equal_to(-1));
 
     index = addToFileTable(&exists1);
-    assert_that(lookupFileTable("donot_exist.c"), is_equal_to(-1));
-    assert_that(lookupFileTable("exists1.c"), is_equal_to(index));
+    assert_that(getFileNumberFromFileName("donot_exist.c"), is_equal_to(-1));
+    assert_that(getFileNumberFromFileName("exists1.c"), is_equal_to(index));
 
     index = addToFileTable(&exists2);
-    assert_that(lookupFileTable("donot_exist.c"), is_equal_to(-1));
-    assert_that(lookupFileTable("exists2.c"), is_equal_to(index));
+    assert_that(getFileNumberFromFileName("donot_exist.c"), is_equal_to(-1));
+    assert_that(getFileNumberFromFileName("exists2.c"), is_equal_to(index));
 
     index = addToFileTable(&exists3);
-    assert_that(lookupFileTable("donot_exist.c"), is_equal_to(-1));
-    assert_that(lookupFileTable("exists3.c"), is_equal_to(index));
+    assert_that(getFileNumberFromFileName("donot_exist.c"), is_equal_to(-1));
+    assert_that(getFileNumberFromFileName("exists3.c"), is_equal_to(index));
 }
 
 Ensure(FileTable, can_get_fileitem) {

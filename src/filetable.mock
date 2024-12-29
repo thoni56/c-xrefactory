@@ -54,6 +54,6 @@ void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *pointer)
     mock(fun, pointer);
 }
 
-int lookupFileTable(char *fileName) {
+int getFileNumberFromFileName(char *fileName) {
     return (int)mock(fileName);
 }
