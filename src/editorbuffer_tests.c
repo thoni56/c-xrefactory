@@ -21,5 +21,5 @@ BeforeEach(EditorBuffer) {
 AfterEach(EditorBuffer) {}
 
 Ensure(EditorBuffer, can_free_empty_list_of_editor_buffers) {
-    freeEditorBuffer(NULL);
+    freeEditorBuffers(NULL);
 }

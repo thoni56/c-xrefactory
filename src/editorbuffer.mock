@@ -8,7 +8,7 @@ void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, cha
     mock(buffer, name, fileNumber, fileName);
 }
 
-void freeEditorBuffer(EditorBufferList *list) {
+void freeEditorBuffers(EditorBufferList *list) {
     mock(list);
 }
 

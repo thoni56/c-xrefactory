@@ -37,7 +37,7 @@ static void checkForMagicMarker(EditorBufferAllocationData *allocation) {
 }
 
 
-void freeEditorBuffer(EditorBufferList *list) {
+void freeEditorBuffers(EditorBufferList *list) {
     if (list == NULL)
         return;
     log_trace("freeing buffer %s==%s", list->buffer->fileName, list->buffer->realFileName);
@@ -185,7 +185,7 @@ void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     *memb = (EditorBufferList){.buffer = buffer, .next = NULL};
     if (editorBufferIsMember(memb, NULL, &memb2)) {
         deleteEditorBuffer(memb2);
-        freeEditorBuffer(memb2);
+        freeEditorBuffers(memb2);
     }
     addEditorBuffer(memb);
 
