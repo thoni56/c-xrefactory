@@ -64,25 +64,22 @@ void freeEditorBuffer(EditorBufferList *list) {
 
 EditorBuffer *createNewEditorBuffer(char *fileName, char *realFileName, time_t modificationTime,
                                     size_t size) {
-    char *normalizedFileName, *afname, *normalizedRealFileName;
+    char *normalizedFileName, *normalizedRealFileName;
     EditorBuffer *buffer;
     EditorBufferList *bufferList;
 
     normalizedFileName = strdup(normalizeFileName_static(fileName, cwd));
 
-    /* This is really a check if the file was preloaded from the editor and not read from the original file */
+    /* This is really a check if the file was preloaded from the
+     * editor and not read from the original file */
     normalizedRealFileName = normalizeFileName_static(realFileName, cwd);
     if (strcmp(normalizedRealFileName, normalizedFileName)==0) {
-        afname = normalizedFileName;
+        normalizedRealFileName = normalizedFileName;
     } else {
-        afname = strdup(normalizedRealFileName);
+        normalizedRealFileName = strdup(normalizedRealFileName);
     }
 
-    buffer = malloc(sizeof(EditorBuffer));
-    fillEmptyEditorBuffer(buffer, normalizedFileName, 0, afname);
-    buffer->modificationTime = modificationTime;
-    buffer->size = size;
-    buffer = newEditorBuffer(normalizedFileName, 0, afname, modificationTime, size);
+    buffer = newEditorBuffer(normalizedFileName, 0, normalizedRealFileName, modificationTime, size);
 
     bufferList = malloc(sizeof(EditorBufferList));
     *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
