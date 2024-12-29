@@ -159,38 +159,36 @@ void setEditorBufferModified(EditorBuffer *buffer) {
 void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     char newName[MAX_FILE_NAME_SIZE];
     int fileNumber, deleted;
-    EditorBuffer dd, *removed;
-    EditorBufferList ddl, *memb, *memb2;
-    char *oldName;
+    EditorBuffer newBuffer, *removed;
+    EditorBufferList newBufferListElement, *foundMember, *memb2;
 
     strcpy(newName, normalizeFileName_static(nName, cwd));
-    log_trace("Renaming %s (at %d) to %s (at %d)", buffer->fileName, buffer->fileName, newName, newName);
-    fillEmptyEditorBuffer(&dd, buffer->fileName, 0, buffer->fileName);
-    ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
-    if (!editorBufferIsMember(&ddl, NULL, &memb)) {
+    fillEmptyEditorBuffer(&newBuffer, buffer->fileName, 0, buffer->fileName);
+    newBufferListElement = (EditorBufferList){.buffer = &newBuffer, .next = NULL};
+    if (!editorBufferIsMember(&newBufferListElement, NULL, &foundMember)) {
         char tmpBuffer[TMP_BUFF_SIZE];
         sprintf(tmpBuffer, "Trying to rename non existing buffer %s", buffer->fileName);
         errorMessage(ERR_INTERNAL, tmpBuffer);
         return;
     }
-    assert(memb->buffer == buffer);
-    deleted = deleteEditorBuffer(memb);
+    assert(foundMember->buffer == buffer);
+    deleted = deleteEditorBuffer(foundMember);
     assert(deleted);
-    oldName = buffer->fileName;
-    buffer->fileName = malloc(strlen(newName)+1);
-    strcpy(buffer->fileName, newName);
+
+    char *oldName = buffer->fileName;
+    buffer->fileName = strdup(newName);
 
     // Also update fileNumber
     fileNumber = addFileNameToFileTable(newName);
     getFileItemWithFileNumber(fileNumber)->isArgument = getFileItemWithFileNumber(buffer->fileNumber)->isArgument;
     buffer->fileNumber = fileNumber;
 
-    *memb = (EditorBufferList){.buffer = buffer, .next = NULL};
-    if (editorBufferIsMember(memb, NULL, &memb2)) {
+    *foundMember = (EditorBufferList){.buffer = buffer, .next = NULL};
+    if (editorBufferIsMember(foundMember, NULL, &memb2)) {
         deleteEditorBuffer(memb2);
         freeEditorBuffers(memb2);
     }
-    addEditorBuffer(memb);
+    addEditorBuffer(foundMember);
 
     // note undo operation
     if (undo!=NULL) {
