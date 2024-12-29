@@ -145,10 +145,17 @@ Ensure(Editor, can_convert_single_reference_to_editor_marker) {
     assert_that(markers->next, is_null);
 }
 
+Ensure(Editor, can_allocate_text_space_in_buffer) {
+    EditorBuffer *buffer = newEditorBuffer("file", 12, "file", 0, 0);
+
+    allocateNewEditorBufferTextSpace(buffer, 10);
+
+    assert_that(buffer->allocation.bufferSize, is_equal_to(10));
+}
+
 xEnsure(Editor, can_move_block_in_editor_buffer) {
     char *text = strdup("this is some text");
     EditorBuffer *buffer = newEditorBuffer("file", 12, "file", 0, strlen(text)+1);
-
 
     EditorMarker *sourceMarker = newEditorMarker(buffer, 13); /* Start of 'text' */
     EditorMarker *destinationMarker = newEditorMarker(buffer, 8); /* Start of 'some' */
