@@ -382,14 +382,14 @@ else
 	$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q -o ../coverage/total.info 2>&1
   endif
 endif
-	@echo "LCOV-ing done..."
+#	@echo "LCOV-ing done..."
 # Then we can remove coverage for the ignored files
 ifeq ($(HAVE_LCOV2),yes)
 	$(LCOV) -q --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
 else
 	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
 endif
-	@echo "LCOV --remove done..."
+#	@echo "LCOV --remove done..."
 
 .PHONY:info2gcov
 info2gcov:
@@ -405,7 +405,7 @@ endif
 
 .PHONY:coverage-report
 coverage-report: total-coverage
-	genhtml -q --ignore-errors inconsistent,inconsistent -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
+	@genhtml -q --ignore-errors inconsistent,inconsistent -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
 	@echo Coverage done: `grep -m 1 coverPer ../coverage/index.html | tr -dc '0-9.'`
 
 .PHONY:cloc
@@ -440,7 +440,7 @@ watch-for-systemtests-silent:
 system-tests: c-xref
 	$(MAKE) -e test
 	$(MAKE) -e merge-coverage-from-tests
-	@$(MAKE) -e coverage-report &
+	@$(MAKE) -e coverage-report
 	@$(MAKE) -e cloc
 
 #########################################################################
