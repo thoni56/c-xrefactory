@@ -50,7 +50,7 @@ extern void closeAllEditorBuffers(void);
 // Hopefully temporary for extraction of EditorBuffer
 extern void freeTextSpace(char *space, int index);
 extern void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize);
-extern void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size);
+extern void allocateNewEditorBufferTextSpace(EditorBuffer *buffer, int size);
 
 
 extern void editorInit(void);

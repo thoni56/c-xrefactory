@@ -212,6 +212,6 @@ void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, siz
     mock(buffer, modificationTime, fileSize);
 }
 
-void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
+void allocateNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
     mock(buffer, size);
 }

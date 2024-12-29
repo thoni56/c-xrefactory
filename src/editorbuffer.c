@@ -90,7 +90,7 @@ EditorBuffer *createNewEditorBuffer(char *fileName, char *realFileName, time_t m
 
     addEditorBuffer(bufferList);
 
-    // set ftnum at the end, because, addfiletabitem calls back the statb
+    // set fileNumber last, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!
     buffer->fileNumber = addFileNameToFileTable(normalizedFileName);
 
@@ -129,7 +129,7 @@ EditorBuffer *findEditorBufferForFile(char *name) {
             }
         }
         if (editorBuffer != NULL && !isDirectory(editorBuffer->realFileName)) {
-            allocNewEditorBufferTextSpace(editorBuffer, fileSize(name));
+            allocateNewEditorBufferTextSpace(editorBuffer, fileSize(name));
             loadFileIntoEditorBuffer(editorBuffer, fileModificationTime(name), fileSize(name));
         } else {
             return NULL;
@@ -203,7 +203,7 @@ void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     // so old references will be removed on update (fixing problem of
     // of moving a package into an existing package).
     removed = createNewEditorBuffer(oldName, oldName, buffer->modificationTime, buffer->size);
-    allocNewEditorBufferTextSpace(removed, 0);
+    allocateNewEditorBufferTextSpace(removed, 0);
     removed->textLoaded = true;
     setEditorBufferModified(removed);
 }

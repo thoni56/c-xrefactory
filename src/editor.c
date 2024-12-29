@@ -471,25 +471,19 @@ void freeTextSpace(char *space, int index) {
 }
 
 void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize) {
-    char *text, *fname;
-    FILE *file;
-    int   n, size, bufferSize;
-
-    fname = buffer->realFileName;
-    text       = buffer->allocation.text;
-    bufferSize = buffer->allocation.bufferSize;
-    log_trace(":loading file %s==%s size %d", fname, buffer->fileName, bufferSize);
-
-#if defined (__WIN32__)
-    file = openFile(fname, "r");         // was rb, but did not work
-#else
-    file = openFile(fname, "r");
-#endif
-    if (file == NULL) {
-        FATAL_ERROR(ERR_CANT_OPEN, fname, XREF_EXIT_ERR);
-    }
-    size = bufferSize;
+    char *text = buffer->allocation.text;
     assert(text != NULL);
+
+    int bufferSize = buffer->allocation.bufferSize;
+    log_trace(":loading file %s==%s size %d", buffer->realFileName, buffer->fileName, bufferSize);
+
+    FILE *file = openFile(buffer->realFileName, "r");
+    if (file == NULL) {
+        FATAL_ERROR(ERR_CANT_OPEN, buffer->realFileName, XREF_EXIT_ERR);
+    }
+
+    int size = bufferSize;
+    int n;
     do {
         n    = readFile(file, text, 1, size);
         text = text + n;
@@ -502,7 +496,7 @@ void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, siz
         buffer->allocation.bufferSize -= size;
         if (size < 0) {
             char tmpBuffer[TMP_BUFF_SIZE];
-            sprintf(tmpBuffer, "File %s: read %d chars of %d", fname, bufferSize - size,
+            sprintf(tmpBuffer, "File %s: read %d chars of %d", buffer->realFileName, bufferSize - size,
                     bufferSize);
             editorError(ERR_INTERNAL, tmpBuffer);
         }
@@ -513,17 +507,17 @@ void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, siz
     buffer->textLoaded = true;
 }
 
-void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
+void allocateNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
     int minSize = size + EDITOR_ALLOCATION_RESERVE + EDITOR_FREE_PREFIX_SIZE;
     int allocIndex = 11;
     int allocSize = 2048;
 
-    // Ensure size to allocate is at least 
+    // Ensure size to allocate is at least
     for(; allocSize<minSize; ) {
         allocIndex++;
         allocSize = allocSize << 1;
     }
-    
+
     char *space = (char *)editorMemory[allocIndex];
     if (space == NULL) {
         space = malloc(allocSize+1);
@@ -563,7 +557,7 @@ void replaceStringInEditorBuffer(EditorBuffer *buffer, int offset, int deleteSiz
         char *text = buffer->allocation.text;
         char *space = buffer->allocation.allocatedBlock;
         int index = buffer->allocation.allocatedIndex;
-        allocNewEditorBufferTextSpace(buffer, newSize);
+        allocateNewEditorBufferTextSpace(buffer, newSize);
         memcpy(buffer->allocation.text, text, oldSize);
         buffer->allocation.bufferSize = oldSize;
         freeTextSpace(space, index);
@@ -718,7 +712,7 @@ void loadAllOpenedEditorBuffers(void) {
             if (!l->buffer->textLoaded) {
                 if (fileExists(l->buffer->realFileName)) {
                     int size = fileSize(l->buffer->realFileName);
-                    allocNewEditorBufferTextSpace(l->buffer, size);
+                    allocateNewEditorBufferTextSpace(l->buffer, size);
                     loadFileIntoEditorBuffer(l->buffer,
                                              fileModificationTime(l->buffer->realFileName), size);
                     log_trace("preloading %s into %s", l->buffer->realFileName, l->buffer->fileName);
