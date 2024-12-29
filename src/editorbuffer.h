@@ -16,7 +16,8 @@ typedef struct {
 } EditorBufferAllocationData;
 
 typedef struct editorBuffer {
-    char                      *fileName;    /* In case the content was preloaded else
+    char                      *fileName;    /* In case the content was preloaded this
+                                               is the name on disc for the content else
                                                needs to point to the same string as
                                                'realFileName' */
     int                        fileNumber;

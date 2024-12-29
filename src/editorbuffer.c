@@ -23,6 +23,15 @@ void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, cha
     buffer->size = 0;
 }
 
+static EditorBuffer *newEditorBuffer(char *name, int fileNumber, char *fileName, time_t modificationTime,
+                                     size_t size) {
+    EditorBuffer *editorBuffer = malloc(sizeof(EditorBuffer));
+    fillEmptyEditorBuffer(editorBuffer, name, fileNumber, fileName);
+    editorBuffer->modificationTime = modificationTime;
+    editorBuffer->size = size;
+    return editorBuffer;
+}
+
 static void checkForMagicMarker(EditorBufferAllocationData *allocation) {
     assert(allocation->allocatedBlock[allocation->allocatedSize] == 0x3b);
 }
@@ -53,26 +62,27 @@ void freeEditorBuffer(EditorBufferList *list) {
     free(list);
 }
 
-EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t modificationTime,
+EditorBuffer *createNewEditorBuffer(char *fileName, char *realFileName, time_t modificationTime,
                                     size_t size) {
-    char *allocatedName, *normalizedName, *afname, *normalizedFileName;
+    char *normalizedFileName, *afname, *normalizedRealFileName;
     EditorBuffer *buffer;
     EditorBufferList *bufferList;
 
-    normalizedName = normalizeFileName_static(name, cwd);
-    allocatedName = malloc(strlen(normalizedName)+1);
-    strcpy(allocatedName, normalizedName);
-    normalizedFileName = normalizeFileName_static(fileName, cwd);
-    if (strcmp(normalizedFileName, allocatedName)==0) {
-        afname = allocatedName;
+    normalizedFileName = strdup(normalizeFileName_static(fileName, cwd));
+
+    /* This is really a check if the file was preloaded from the editor and not read from the original file */
+    normalizedRealFileName = normalizeFileName_static(realFileName, cwd);
+    if (strcmp(normalizedRealFileName, normalizedFileName)==0) {
+        afname = normalizedFileName;
     } else {
-        afname = malloc(strlen(normalizedFileName)+1);
-        strcpy(afname, normalizedFileName);
+        afname = strdup(normalizedRealFileName);
     }
+
     buffer = malloc(sizeof(EditorBuffer));
-    fillEmptyEditorBuffer(buffer, allocatedName, 0, afname);
+    fillEmptyEditorBuffer(buffer, normalizedFileName, 0, afname);
     buffer->modificationTime = modificationTime;
     buffer->size = size;
+    buffer = newEditorBuffer(normalizedFileName, 0, afname, modificationTime, size);
 
     bufferList = malloc(sizeof(EditorBufferList));
     *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
@@ -82,7 +92,7 @@ EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t modificat
 
     // set ftnum at the end, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!
-    buffer->fileNumber = addFileNameToFileTable(allocatedName);
+    buffer->fileNumber = addFileNameToFileTable(normalizedFileName);
 
     return buffer;
 }
