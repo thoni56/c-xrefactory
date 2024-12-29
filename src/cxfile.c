@@ -675,14 +675,13 @@ static void scanFunction_ReadFileName(int fileNameLength,
     char id[MAX_FILE_NAME_SIZE];
     FileItem *fileItem;
     int fileNumber;
-    bool isArgument, isInterface;
+    bool isArgument;
     time_t fumtime, umtime;
 
     assert(key == CXFI_FILE_NAME);
     fumtime = (time_t) lastIncomingData.data[CXFI_FILE_FUMTIME];
     umtime = (time_t) lastIncomingData.data[CXFI_FILE_UMTIME];
     isArgument = lastIncomingData.data[CXFI_COMMAND_LINE_ARGUMENT];
-    isInterface=false;
 
     assert(fileNameLength < MAX_FILE_NAME_SIZE);
     getString(cb, id, fileNameLength-1);
@@ -694,7 +693,6 @@ static void scanFunction_ReadFileName(int fileNameLength,
         fileNumber = addFileNameToFileTable(id);
         fileItem = getFileItem(fileNumber);
         fileItem->isArgument = isArgument;
-        fileItem->isInterface = isInterface;
         if (fileItem->lastFullUpdateMtime == 0)
             fileItem->lastFullUpdateMtime=fumtime;
         if (fileItem->lastUpdateMtime == 0)
@@ -709,7 +707,6 @@ static void scanFunction_ReadFileName(int fileNameLength,
         fileNumber = lookupFileTable(id);
         fileItem = getFileItem(fileNumber);
         if (fileItemShouldBeUpdatedFromCxFile(fileItem)) {
-            fileItem->isInterface = isInterface;
             // Set it to none, it will be updated by source item
             fileItem->sourceFileNumber = NO_FILE_NUMBER;
         }
