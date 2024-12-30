@@ -162,13 +162,14 @@ void setEditorBufferModified(EditorBuffer *buffer) {
 
 void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     char newName[MAX_FILE_NAME_SIZE];
-    int fileNumber, deleted;
-    EditorBuffer newBuffer, *removed;
-    EditorBufferList newBufferListElement, *foundMember, *memb2;
+    EditorBuffer newBuffer;
 
     strcpy(newName, normalizeFileName_static(nName, cwd));
     fillEmptyEditorBuffer(&newBuffer, buffer->fileName, 0, buffer->fileName);
-    newBufferListElement = (EditorBufferList){.buffer = &newBuffer, .next = NULL};
+
+    EditorBufferList newBufferListElement = (EditorBufferList){.buffer = &newBuffer, .next = NULL};
+
+    EditorBufferList *foundMember;
     if (!editorBufferIsMember(&newBufferListElement, NULL, &foundMember)) {
         char tmpBuffer[TMP_BUFF_SIZE];
         sprintf(tmpBuffer, "Trying to rename non existing buffer %s", buffer->fileName);
@@ -176,18 +177,19 @@ void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
         return;
     }
     assert(foundMember->buffer == buffer);
-    deleted = deleteEditorBuffer(foundMember);
+    bool deleted = deleteEditorBuffer(foundMember);
     assert(deleted);
 
     char *oldName = buffer->fileName;
     buffer->fileName = strdup(newName);
 
     // Also update fileNumber
-    fileNumber = addFileNameToFileTable(newName);
-    getFileItemWithFileNumber(fileNumber)->isArgument = getFileItemWithFileNumber(buffer->fileNumber)->isArgument;
-    buffer->fileNumber = fileNumber;
+    int newFileNumber = addFileNameToFileTable(newName);
+    getFileItemWithFileNumber(newFileNumber)->isArgument = getFileItemWithFileNumber(buffer->fileNumber)->isArgument;
+    buffer->fileNumber = newFileNumber;
 
     *foundMember = (EditorBufferList){.buffer = buffer, .next = NULL};
+    EditorBufferList *memb2;
     if (editorBufferIsMember(foundMember, NULL, &memb2)) {
         deleteEditorBuffer(memb2);
         freeEditorBuffer(memb2->buffer);
@@ -205,7 +207,7 @@ void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     // to keep information that the file is no longer existing
     // so old references will be removed on update (fixing problem of
     // of moving a package into an existing package).
-    removed = createNewEditorBuffer(oldName, oldName, buffer->modificationTime, buffer->size);
+    EditorBuffer *removed = createNewEditorBuffer(oldName, oldName, buffer->modificationTime, buffer->size);
     allocateNewEditorBufferTextSpace(removed, 0);
     removed->textLoaded = true;
     setEditorBufferModified(removed);
