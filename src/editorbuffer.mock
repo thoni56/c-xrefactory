@@ -27,8 +27,8 @@ EditorBuffer *createNewEditorBuffer(char *fileName, char *realFileName, time_t m
     return (EditorBuffer *)mock(fileName, realFileName, modificationTime, size);
 }
 
-void freeEditorBuffers(EditorBufferList *list) {
-    mock(list);
+void freeEditorBuffer(EditorBufferList *element) {
+    mock(element);
 }
 
 EditorBuffer *findEditorBufferForFile(char *name) {

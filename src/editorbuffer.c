@@ -39,30 +39,35 @@ static void checkForMagicMarker(EditorBufferAllocationData *allocation) {
     assert(allocation->allocatedBlock[allocation->allocatedSize] == 0x3b);
 }
 
-
-void freeEditorBuffers(EditorBufferList *list) {
-    if (list == NULL)
-        return;
-    log_trace("freeing buffer %s==%s", list->buffer->fileName, list->buffer->realFileName);
-    if (list->buffer->realFileName != list->buffer->fileName) {
-        /* If the two are not pointing to the same string... */
-        free(list->buffer->realFileName);
-    }
-    free(list->buffer->fileName);
-    for (EditorMarker *marker=list->buffer->markers; marker!=NULL;) {
+static void freeMarkersInEditorBuffer(EditorBufferList *list) {
+    for (EditorMarker *marker = list->buffer->markers; marker != NULL;) {
         EditorMarker *next = marker->next;
         free(marker);
         marker = next;
     }
-    if (list->buffer->textLoaded) {
-        log_trace("freeing %d of size %d", list->buffer->allocation.allocatedBlock,
-                  list->buffer->allocation.allocatedSize);
-        checkForMagicMarker(&list->buffer->allocation);
-        freeTextSpace(list->buffer->allocation.allocatedBlock,
-                      list->buffer->allocation.allocatedIndex);
+}
+
+void freeEditorBuffer(EditorBufferList *element) {
+    if (element == NULL)
+        return;
+    log_trace("freeing buffer %s==%s", element->buffer->fileName, element->buffer->realFileName);
+    if (element->buffer->realFileName != element->buffer->fileName) {
+        /* If the two are not pointing to the same string... */
+        free(element->buffer->realFileName);
     }
-    free(list->buffer);
-    free(list);
+    free(element->buffer->fileName);
+
+    freeMarkersInEditorBuffer(element);
+
+    if (element->buffer->textLoaded) {
+        log_trace("freeing %d of size %d", element->buffer->allocation.allocatedBlock,
+                  element->buffer->allocation.allocatedSize);
+        checkForMagicMarker(&element->buffer->allocation);
+        freeTextSpace(element->buffer->allocation.allocatedBlock,
+                      element->buffer->allocation.allocatedIndex);
+    }
+    free(element->buffer);
+    free(element);
 }
 
 EditorBuffer *createNewEditorBuffer(char *fileName, char *realFileName, time_t modificationTime,
@@ -186,7 +191,7 @@ void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     *foundMember = (EditorBufferList){.buffer = buffer, .next = NULL};
     if (editorBufferIsMember(foundMember, NULL, &memb2)) {
         deleteEditorBuffer(memb2);
-        freeEditorBuffers(memb2);
+        freeEditorBuffer(memb2);
     }
     addEditorBuffer(foundMember);
 

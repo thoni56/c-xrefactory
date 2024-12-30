@@ -21,7 +21,7 @@ BeforeEach(EditorBuffer) {
 AfterEach(EditorBuffer) {}
 
 Ensure(EditorBuffer, can_free_empty_list_of_editor_buffers) {
-    freeEditorBuffers(NULL);
+    freeEditorBuffer(NULL);
 }
 
 Ensure(EditorBuffer, will_return_null_for_non_existing_file) {
