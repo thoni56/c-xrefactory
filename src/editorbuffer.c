@@ -99,21 +99,21 @@ EditorBuffer *createNewEditorBuffer(char *fileName, char *realFileName, time_t m
 
 EditorBuffer *getOpenedEditorBuffer(char *name) {
     EditorBuffer editorBuffer;
-    EditorBufferList editorBufferList, *element;
+    EditorBufferList editorBufferList, *foundElement;
 
     fillEmptyEditorBuffer(&editorBuffer, name, 0, name);
     editorBufferList = (EditorBufferList){.buffer = &editorBuffer, .next = NULL};
-    if (editorBufferIsMember(&editorBufferList, NULL, &element)) {
-        return element->buffer;
+    if (editorBufferIsMember(&editorBufferList, NULL, &foundElement)) {
+        return foundElement->buffer;
     }
     return NULL;
 }
 
 EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
-    EditorBuffer *res;
-    res = getOpenedEditorBuffer(name);
-    if (res!=NULL && res->textLoaded)
-        return res;
+    EditorBuffer *buffer;
+    buffer = getOpenedEditorBuffer(name);
+    if (buffer!=NULL && buffer->textLoaded)
+        return buffer;
     return NULL;
 }
 
