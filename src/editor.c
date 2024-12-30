@@ -1030,7 +1030,7 @@ int editorMapOnNonExistantFiles(char *dirname,
     return result;
 }
 
-static void closeEditorBuffer(EditorBufferList *member, int index) {
+static void closeEditorBufferForListMember(EditorBufferList *member, int index) {
     log_trace("closing buffer %s:%s", member->buffer->fileName, member->buffer->realFileName);
 
     EditorBufferList *l;
@@ -1062,7 +1062,7 @@ void closeEditorBufferIfCloseable(char *name) {
     EditorBufferList *foundMemberP;
     if (editorBufferIsMember(&bufferList, &index, &foundMemberP)) {
         if (bufferIsCloseable(foundMemberP->buffer)) {
-            closeEditorBuffer(foundMemberP, index);
+            closeEditorBufferForListMember(foundMemberP, index);
         }
     }
 }
@@ -1074,7 +1074,7 @@ void closeAllEditorBuffersIfClosable(void) {
             log_trace("closable %d for %s(%d) %s(%d)", bufferIsCloseable(list->buffer), list->buffer->fileName,
                       list->buffer->fileName, list->buffer->realFileName, list->buffer->realFileName);
             if (bufferIsCloseable(list->buffer))
-                closeEditorBuffer(list, i);
+                closeEditorBufferForListMember(list, i);
             list = next;
         }
     }
