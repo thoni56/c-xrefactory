@@ -20,7 +20,7 @@ BeforeEach(EditorBuffer) {
 }
 AfterEach(EditorBuffer) {}
 
-Ensure(EditorBuffer, can_free_empty_list_of_editor_buffers) {
+Ensure(EditorBuffer, can_free_null_editor_buffer) {
     freeEditorBuffer(NULL);
 }
 

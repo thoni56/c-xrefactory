@@ -102,7 +102,7 @@ EditorBuffer *createNewEditorBuffer(char *fileName, char *realFileName, time_t m
     return buffer;
 }
 
-EditorBuffer *getOpenedEditorBuffer(char *name) {
+EditorBuffer *getEditorBufferFor(char *name) {
     EditorBuffer editorBuffer;
     EditorBufferList editorBufferList, *foundElement;
 
@@ -116,7 +116,7 @@ EditorBuffer *getOpenedEditorBuffer(char *name) {
 
 EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
     EditorBuffer *buffer;
-    buffer = getOpenedEditorBuffer(name);
+    buffer = getEditorBufferFor(name);
     if (buffer!=NULL && buffer->textLoaded)
         return buffer;
     return NULL;
@@ -126,7 +126,7 @@ EditorBuffer *findEditorBufferForFile(char *name) {
     EditorBuffer *editorBuffer = getOpenedAndLoadedEditorBuffer(name);
 
     if (editorBuffer==NULL) {
-        editorBuffer = getOpenedEditorBuffer(name);
+        editorBuffer = getEditorBufferFor(name);
         if (editorBuffer == NULL) {
             if (fileExists(name) && !isDirectory(name)) {
                 editorBuffer = createNewEditorBuffer(name, name, fileModificationTime(name),
@@ -147,7 +147,7 @@ EditorBuffer *findEditorBufferForFile(char *name) {
 EditorBuffer *openEditorBufferFromPreload(char *name, char *fileName) {
     EditorBuffer  *buffer;
 
-    buffer = getOpenedEditorBuffer(name);
+    buffer = getEditorBufferFor(name);
     if (buffer != NULL) {
         return buffer;
     }
