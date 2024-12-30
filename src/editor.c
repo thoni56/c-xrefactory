@@ -1316,11 +1316,11 @@ static void closeEditorBuffer(EditorBufferList *member, int index) {
     }
 }
 
-#define BUFFER_IS_CLOSABLE(buffer) (buffer->textLoaded             \
-                                    && buffer->markers==NULL            \
-                                    && buffer->fileName==buffer->realFileName  /* not -preloaded */ \
-                                    && ! buffer->modified          \
-    )
+static bool bufferIsCloseable(EditorBuffer *buffer) {
+    return buffer->textLoaded && buffer->markers==NULL
+        && buffer->fileName==buffer->realFileName  /* not -preloaded */
+        && ! buffer->modified;
+}
 
 // be very carefull when using this function, because of interpretation
 // of 'Closable', this should be additional field: 'closable' or what
@@ -1332,7 +1332,7 @@ void closeEditorBufferIfCloseable(char *name) {
     fillEmptyEditorBuffer(&dd, name, 0, name);
     ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
     if (editorBufferIsMember(&ddl, &index, &memb)) {
-        if (BUFFER_IS_CLOSABLE(memb->buffer)) {
+        if (bufferIsCloseable(memb->buffer)) {
             closeEditorBuffer(memb, index);
         }
     }
@@ -1342,9 +1342,9 @@ void closeAllEditorBuffersIfClosable(void) {
     for (int i=0; i != -1; i = getNextExistingEditorBufferIndex(i+1)) {
         for (EditorBufferList *list=getEditorBuffer(i); list!=NULL;) {
             EditorBufferList *next = list->next;
-            log_trace("closable %d for %s(%d) %s(%d)", BUFFER_IS_CLOSABLE(list->buffer), list->buffer->fileName,
+            log_trace("closable %d for %s(%d) %s(%d)", bufferIsCloseable(list->buffer), list->buffer->fileName,
                       list->buffer->fileName, list->buffer->realFileName, list->buffer->realFileName);
-            if (BUFFER_IS_CLOSABLE(list->buffer))
+            if (bufferIsCloseable(list->buffer))
                 closeEditorBuffer(list, i);
             list = next;
         }
