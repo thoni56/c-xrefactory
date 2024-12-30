@@ -18,14 +18,17 @@ typedef struct editorMemoryBlock {
 } EditorMemoryBlock;
 
 
-#define MIN_EDITOR_MEMORY_BLOCK 11
-#define MAX_EDITOR_MEMORY_BLOCK 32
+#define MIN_EDITOR_MEMORY_BLOCK_SIZE_BITS 11 /* 11 bits will be 2^11 bytes in size */
+#define MAX_EDITOR_MEMORY_BLOCK_SIZE_BITS 32 /* 32 bits will be 2^32 bytes in size */
 
 // this has to cover at least alignment allocations
 #define EDITOR_ALLOCATION_RESERVE 1024
 #define EDITOR_FREE_PREFIX_SIZE 16
 
-static EditorMemoryBlock *editorMemory[MAX_EDITOR_MEMORY_BLOCK];
+/* 32 entries, only 11-32 is used, pointers to allocated areas.
+   I have no idea why this is so complicated, why not just use
+   allocated memory, why keep it in this array? */
+static EditorMemoryBlock *editorMemory[MAX_EDITOR_MEMORY_BLOCK_SIZE_BITS];
 
 #include "editorbuffertab.h"
 
@@ -507,28 +510,28 @@ void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, siz
 void allocateNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
     int minSize = size + EDITOR_ALLOCATION_RESERVE + EDITOR_FREE_PREFIX_SIZE;
     int allocIndex = 11;
-    int allocSize = 2048;
+    int allocatedSize = 2048;
 
     // Ensure size to allocate is at least
-    for(; allocSize<minSize; ) {
+    for(; allocatedSize<minSize; ) {
         allocIndex++;
-        allocSize = allocSize << 1;
+        allocatedSize = allocatedSize << 1;
     }
 
     char *space = (char *)editorMemory[allocIndex];
     if (space == NULL) {
-        space = malloc(allocSize+1);
+        space = malloc(allocatedSize+1);
         if (space == NULL)
             FATAL_ERROR(ERR_NO_MEMORY, "global malloc", XREF_EXIT_ERR);
         // put magic
-        space[allocSize] = 0x3b;
+        space[allocatedSize] = 0x3b;
     } else {
         editorMemory[allocIndex] = editorMemory[allocIndex]->next;
     }
     buffer->allocation = (EditorBufferAllocationData){.bufferSize = size, .text = space+EDITOR_FREE_PREFIX_SIZE,
                                            .allocatedFreePrefixSize = EDITOR_FREE_PREFIX_SIZE,
                                            .allocatedBlock = space, .allocatedIndex = allocIndex,
-                                           .allocatedSize = allocSize};
+                                           .allocatedSize = allocatedSize};
 }
 
 void replaceStringInEditorBuffer(EditorBuffer *buffer, int offset, int deleteSize, char *string,
