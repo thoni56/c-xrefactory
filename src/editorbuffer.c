@@ -47,27 +47,26 @@ static void freeMarkersInEditorBuffer(EditorBuffer *buffer) {
     }
 }
 
-void freeEditorBuffer(EditorBufferList *element) {
-    if (element == NULL)
+void freeEditorBuffer(EditorBuffer *buffer) {
+    if (buffer == NULL)
         return;
-    log_trace("freeing buffer %s==%s", element->buffer->fileName, element->buffer->realFileName);
-    if (element->buffer->realFileName != element->buffer->fileName) {
+    log_trace("freeing buffer %s==%s", buffer->fileName, buffer->realFileName);
+    if (buffer->realFileName != buffer->fileName) {
         /* If the two are not pointing to the same string... */
-        free(element->buffer->realFileName);
+        free(buffer->realFileName);
     }
-    free(element->buffer->fileName);
+    free(buffer->fileName);
 
-    freeMarkersInEditorBuffer(element->buffer);
+    freeMarkersInEditorBuffer(buffer);
 
-    if (element->buffer->textLoaded) {
-        log_trace("freeing %d of size %d", element->buffer->allocation.allocatedBlock,
-                  element->buffer->allocation.allocatedSize);
-        checkForMagicMarker(&element->buffer->allocation);
-        freeTextSpace(element->buffer->allocation.allocatedBlock,
-                      element->buffer->allocation.allocatedIndex);
+    if (buffer->textLoaded) {
+        log_trace("freeing %d of size %d", buffer->allocation.allocatedBlock,
+                  buffer->allocation.allocatedSize);
+        checkForMagicMarker(&buffer->allocation);
+        freeTextSpace(buffer->allocation.allocatedBlock,
+                      buffer->allocation.allocatedIndex);
     }
-    free(element->buffer);
-    free(element);
+    free(buffer);
 }
 
 EditorBuffer *createNewEditorBuffer(char *fileName, char *realFileName, time_t modificationTime,
@@ -191,7 +190,8 @@ void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     *foundMember = (EditorBufferList){.buffer = buffer, .next = NULL};
     if (editorBufferIsMember(foundMember, NULL, &memb2)) {
         deleteEditorBuffer(memb2);
-        freeEditorBuffer(memb2);
+        freeEditorBuffer(memb2->buffer);
+        free(memb2);
     }
     addEditorBuffer(foundMember);
 

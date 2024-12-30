@@ -1312,7 +1312,8 @@ static void closeEditorBuffer(EditorBufferList *member, int index) {
     if (l == member) {
         // O.K. now, free the buffer
         setEditorBuffer(index, l->next);
-        freeEditorBuffer(member);
+        freeEditorBuffer(member->buffer);
+        free(member);
     }
 }
 
@@ -1355,7 +1356,8 @@ void closeAllEditorBuffers(void) {
     for (int i=0; i != -1; i = getNextExistingEditorBufferIndex(i+1)) {
         for (EditorBufferList *ll=getEditorBuffer(i); ll!=NULL;) {
             EditorBufferList *next = ll->next;
-            freeEditorBuffer(ll);
+            freeEditorBuffer(ll->buffer);
+            free(ll);
             ll = next;
         }
         clearEditorBuffer(i);
