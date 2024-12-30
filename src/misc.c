@@ -792,7 +792,7 @@ void mapOverDirectoryFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), int al
     // as special case, during refactorings you have to examine
     // also files stored in renamed buffers
     if (allowEditorFilesFlag == ALLOW_EDITOR_FILES) {
-        editorMapOnNonexistantFiles(dirname, fun, DEPTH_ONE, a1, a2, a3, a4, a5);
+        editorMapOnNonExistantFiles(dirname, fun, DEPTH_ONE, a1, a2, a3, a4, a5);
     }
 }
 

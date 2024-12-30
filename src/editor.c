@@ -1227,14 +1227,14 @@ static void freeEditorBufferListButNotBuffers(EditorBufferList *list) {
     }
 }
 
-static int editorBufferNameLess(EditorBufferList*l1,EditorBufferList*l2) {
+static int editorBufferNameLess(EditorBufferList*l1, EditorBufferList*l2) {
     return strcmp(l1->buffer->fileName, l2->buffer->fileName);
 }
 
 // TODO, do all this stuff better!
 // This is still quadratic on number of opened buffers
 // for recursive search
-int editorMapOnNonexistantFiles(char *dirname,
+int editorMapOnNonExistantFiles(char *dirname,
                                 void (*fun)(MAP_FUN_SIGNATURE),
                                 SearchDepth depth,
                                 char *a1,
@@ -1243,64 +1243,60 @@ int editorMapOnNonexistantFiles(char *dirname,
                                 void *a4,
                                 int *a5
 ) {
-    int dlen, fnlen, res, lastMappedLen;
-    EditorBufferList *ll, *bl;
-    char *ss, *lastMapped;
-    char fname[MAX_FILE_NAME_SIZE];
-
     // In order to avoid mapping of the same directory several
     // times, first just create list of all files, sort it, and then
     // map them
-    res = 0;
-    dlen = strlen(dirname);
-    bl   = computeListOfAllEditorBuffers();
-    LIST_MERGE_SORT(EditorBufferList, bl, editorBufferNameLess);
-    ll = bl;
-    //&sprintf(tmpBuffer, "ENTER!!!"); ppcGenRecord(PPC_IGNORE,tmpBuffer);
-    while(ll!=NULL) {
-        if (filenameCompare(ll->buffer->fileName, dirname, dlen)==0
-            && (ll->buffer->fileName[dlen]=='/' || ll->buffer->fileName[dlen]=='\\')) {
+    int result = 0;
+    int dirNameLength = strlen(dirname);
+    EditorBufferList *listOfAllBuffers   = computeListOfAllEditorBuffers();
+    LIST_MERGE_SORT(EditorBufferList, listOfAllBuffers, editorBufferNameLess);
+
+    EditorBufferList *list = listOfAllBuffers;
+
+    while(list!=NULL) {
+        if (filenameCompare(list->buffer->fileName, dirname, dirNameLength)==0
+            && (list->buffer->fileName[dirNameLength]=='/' || list->buffer->fileName[dirNameLength]=='\\')) {
+            char fname[MAX_FILE_NAME_SIZE];
+            int fileNameLength;
             if (depth == DEPTH_ONE) {
-                ss = strchr(ll->buffer->fileName+dlen+1, '/');
-                if (ss==NULL) ss = strchr(ll->buffer->fileName+dlen+1, '\\');
-                if (ss==NULL) {
-                    strcpy(fname, ll->buffer->fileName+dlen+1);
-                    fnlen = strlen(fname);
+                char *s = strchr(list->buffer->fileName+dirNameLength+1, '/');
+                if (s==NULL) s = strchr(list->buffer->fileName+dirNameLength+1, '\\');
+                if (s==NULL) {
+                    strcpy(fname, list->buffer->fileName+dirNameLength+1);
+                    fileNameLength = strlen(fname);
                 } else {
-                    fnlen = ss-(ll->buffer->fileName+dlen+1);
-                    strncpy(fname, ll->buffer->fileName+dlen+1, fnlen);
-                    fname[fnlen]=0;
+                    fileNameLength = s-(list->buffer->fileName+dirNameLength+1);
+                    strncpy(fname, list->buffer->fileName+dirNameLength+1, fileNameLength);
+                    fname[fileNameLength]=0;
                 }
             } else {
-                strcpy(fname, ll->buffer->fileName+dlen+1);
-                fnlen = strlen(fname);
+                strcpy(fname, list->buffer->fileName+dirNameLength+1);
+                fileNameLength = strlen(fname);
             }
             // Only map on nonexistant files
-            if (!fileExists(ll->buffer->fileName)) {
+            if (!fileExists(list->buffer->fileName)) {
                 // get file name
-                //&sprintf(tmpBuffer, "MAPPING %s as %s in %s", ll->buffer->fileName, fname, dirname); ppcGenRecord(PPC_IGNORE,tmpBuffer);
                 (*fun)(fname, a1, a2, a3, a4, a5);
-                res = 1;
+                result = 1;
                 // skip all files in the same directory
-                lastMapped = ll->buffer->fileName;
-                lastMappedLen = dlen+1+fnlen;
-                ll = ll->next;
-                while (ll!=NULL
-                       && filenameCompare(ll->buffer->fileName, lastMapped, lastMappedLen)==0
-                       && (ll->buffer->fileName[lastMappedLen]=='/' || ll->buffer->fileName[lastMappedLen]=='\\')) {
-                    //&sprintf(tmpBuffer, "SKIPPING %s", ll->buffer->fileName); ppcGenRecord(PPC_IGNORE,tmpBuffer);
-                    ll = ll->next;
+                char *lastMapped = list->buffer->fileName;
+                int lastMappedLength = dirNameLength+1+fileNameLength;
+                list = list->next;
+                while (list!=NULL
+                       && filenameCompare(list->buffer->fileName, lastMapped, lastMappedLength)==0
+                       && (list->buffer->fileName[lastMappedLength]=='/' || list->buffer->fileName[lastMappedLength]=='\\')) {
+                    list = list->next;
                 }
             } else {
-                ll = ll->next;
+                list = list->next;
             }
         } else {
-            ll = ll->next;
+            list = list->next;
         }
     }
-    freeEditorBufferListButNotBuffers(bl);
-    //&sprintf(tmpBuffer, "QUIT!!!"); ppcGenRecord(PPC_IGNORE,tmpBuffer);
-    return res;
+    freeEditorBufferListButNotBuffers(listOfAllBuffers);
+
+    return result;
 }
 
 static void closeEditorBuffer(EditorBufferList *member, int index) {

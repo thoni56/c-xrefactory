@@ -489,7 +489,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
             nrecurseFlag = &isTopDirectory;
             mapOverDirectoryFiles(dirName, dirInputFile, DO_NOT_ALLOW_EDITOR_FILES,
                               dirName, NULL, NULL, nrecurseFlag, &isTopDirectory);
-            editorMapOnNonexistantFiles(dirName, dirInputFile, DEPTH_ANY,
+            editorMapOnNonExistantFiles(dirName, dirInputFile, DEPTH_ANY,
                                         dirName, NULL, NULL, nrecurseFlag, &isTopDirectory);
         } else {
             // no error, let it be

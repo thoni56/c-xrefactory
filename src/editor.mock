@@ -187,7 +187,7 @@ void freeEditorMarkersAndMarkerList(EditorMarkerList *occs) {
   mock(occs);
 }
 
-int editorMapOnNonexistantFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), SearchDepth depth,
+int editorMapOnNonExistantFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), SearchDepth depth,
                                 char *a1, char *a2, Completions *a3, void *a4, int *a5) {
   return (int) mock(dirname, fun, depth, a1, a2, a3, a4, a5);
 }
