@@ -43,5 +43,9 @@ Ensure(EditorBuffer, will_create_buffer_and_load_existing_file) {
     expect(allocateNewEditorBufferTextSpace);
     expect(loadFileIntoEditorBuffer);
 
-    assert_that(findEditorBufferForFile("existing"), is_not_null);
+    EditorBuffer *editorBuffer = findEditorBufferForFile("existing");
+
+    assert_that(editorBuffer, is_not_null);
+    assert_that(editorBuffer->fileName, is_equal_to_string("existing"));
+    assert_that(editorBuffer->size, is_equal_to(42));
 }
