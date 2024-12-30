@@ -15,8 +15,6 @@
 #undef HASH_ELEM_TYPE
 #endif
 
-#define EDITOR_BUFF_TAB_SIZE 100
-
 
 extern void initEditorBufferTable(void);
 extern int  addEditorBuffer(EditorBufferList *bufferList);

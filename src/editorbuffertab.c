@@ -7,13 +7,15 @@
 
 #include "hashlist.tc"
 
+#define EDITOR_BUFFER_TABLE_SIZE 100
 
-static EditorBufferList *editorBufferTablesInit[EDITOR_BUFF_TAB_SIZE];
+
+static EditorBufferList *editorBufferTablesInit[EDITOR_BUFFER_TABLE_SIZE];
 static EditorBufferTab editorBufferTable;
 
 void initEditorBufferTable() {
     editorBufferTable.tab = editorBufferTablesInit;
-    editorBufferTabNoAllocInit(&editorBufferTable, EDITOR_BUFF_TAB_SIZE);
+    editorBufferTabNoAllocInit(&editorBufferTable, EDITOR_BUFFER_TABLE_SIZE);
 }
 
 int addEditorBuffer(EditorBufferList *bufferList) {
