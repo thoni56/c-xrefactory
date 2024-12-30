@@ -1231,6 +1231,12 @@ static int editorBufferNameLess(EditorBufferList*l1, EditorBufferList*l2) {
     return strcmp(l1->buffer->fileName, l2->buffer->fileName);
 }
 
+static bool directoryPrefixMatches(char *fileName, char *dirname, int dirNameLength) {
+    return filenameCompare(fileName, dirname, dirNameLength) == 0
+        && (fileName[dirNameLength] == '/'
+            || fileName[dirNameLength] == '\\');
+}
+
 // TODO, do all this stuff better!
 // This is still quadratic on number of opened buffers
 // for recursive search
@@ -1254,8 +1260,7 @@ int editorMapOnNonExistantFiles(char *dirname,
     EditorBufferList *list = listOfAllBuffers;
 
     while(list!=NULL) {
-        if (filenameCompare(list->buffer->fileName, dirname, dirNameLength)==0
-            && (list->buffer->fileName[dirNameLength]=='/' || list->buffer->fileName[dirNameLength]=='\\')) {
+        if (directoryPrefixMatches(list->buffer->fileName, dirname, dirNameLength)) {
             char fname[MAX_FILE_NAME_SIZE];
             int fileNameLength;
             if (depth == DEPTH_ONE) {
