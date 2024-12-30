@@ -49,6 +49,12 @@ extern EditorBuffer *getEditorBufferFor(char *name);
 extern EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name);
 extern void renameEditorBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo);
 
+/* Register and deregister will hide the lists that the hashlist have
+ * to have while the EditorBuffer still belongs to the caller to
+ * create and delete */
+extern int registerEditorBuffer(EditorBuffer *buffer);
+extern void deregisterEditorBuffer(EditorBuffer *buffer);
+
 // Hopefully temporary
 void setEditorBufferModified(EditorBuffer *buffer);
 

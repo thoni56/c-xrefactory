@@ -18,8 +18,8 @@ void initEditorBufferTable() {
     editorBufferTabNoAllocInit(&editorBufferTable, EDITOR_BUFFER_TABLE_SIZE);
 }
 
-int addEditorBuffer(EditorBufferList *bufferList) {
-    return editorBufferTabAdd(&editorBufferTable, bufferList);
+int addEditorBuffer(EditorBufferList *bufferListElement) {
+    return editorBufferTabAdd(&editorBufferTable, bufferListElement);
 }
 
 bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, EditorBufferList **foundMemberP) {
