@@ -10,6 +10,7 @@
 #include "cxref.mock"
 #include "editorbuffer.mock"
 #include "editorbuffertab.mock"
+#include "encoding.mock"
 #include "fileio.mock"
 #include "filetable.mock"
 #include "globals.mock"

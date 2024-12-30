@@ -36,6 +36,10 @@ void setEditorBuffer(int index, EditorBufferList *elementP) {
     mock(index, elementP);
 }
 
+void editorBufferTableEntryPop(int index) {
+    mock(index);
+}
+
 void clearEditorBuffer(int index) {
     mock(index);
 }

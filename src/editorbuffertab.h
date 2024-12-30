@@ -22,7 +22,8 @@ extern bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, Edi
 extern bool deleteEditorBuffer(EditorBufferList *element);
 extern int  getNextExistingEditorBufferIndex(int index);
 extern EditorBufferList *getEditorBuffer(int index);
-extern void setEditorBuffer(int index, EditorBufferList *buffer);
+extern void              setEditorBuffer(int index, EditorBufferList *buffer);
+extern void editorBufferTableEntryPop(int index);
 extern void clearEditorBuffer(int index);
 
 #endif

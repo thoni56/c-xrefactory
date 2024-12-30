@@ -48,3 +48,7 @@ void setEditorBuffer(int index, EditorBufferList *elementP) {
 void clearEditorBuffer(int index) {
     editorBufferTable.tab[index] = NULL;
 }
+
+void editorBufferTableEntryPop(int index) {
+    setEditorBuffer(index, editorBufferTable.tab[index]->next);
+}
