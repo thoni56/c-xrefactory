@@ -39,8 +39,8 @@ static void checkForMagicMarker(EditorBufferAllocationData *allocation) {
     assert(allocation->allocatedBlock[allocation->allocatedSize] == 0x3b);
 }
 
-static void freeMarkersInEditorBuffer(EditorBufferList *list) {
-    for (EditorMarker *marker = list->buffer->markers; marker != NULL;) {
+static void freeMarkersInEditorBuffer(EditorBuffer *buffer) {
+    for (EditorMarker *marker = buffer->markers; marker != NULL;) {
         EditorMarker *next = marker->next;
         free(marker);
         marker = next;
@@ -57,7 +57,7 @@ void freeEditorBuffer(EditorBufferList *element) {
     }
     free(element->buffer->fileName);
 
-    freeMarkersInEditorBuffer(element);
+    freeMarkersInEditorBuffer(element->buffer);
 
     if (element->buffer->textLoaded) {
         log_trace("freeing %d of size %d", element->buffer->allocation.allocatedBlock,
