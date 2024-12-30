@@ -9,7 +9,7 @@
 #include "usage.h"
 
 
-#define SCOPES_LN 3
+#define SCOPES_BITS 3
 
 // An occurence of a referenceItem
 typedef struct reference {
@@ -26,9 +26,9 @@ typedef struct referenceItem {
                                            * seems to be the fileNumber for the
                                            * included file if this is an
                                            * '#include' Reference item */
-    Type                      type : SYMTYPES_LN;
-    Storage                   storage : STORAGES_LN;
-    Scope                     scope : SCOPES_LN;
+    Type                      type : SYMTYPES_BITS;
+    Storage                   storage : STORAGES_BITS;
+    Scope                     scope : SCOPES_BITS;
     Visibility                visibility : 2;     /* local/global */
     struct reference         *references;
     struct referenceItem     *next; /* TODO: Link only for hashlist? */

@@ -527,9 +527,9 @@ static void totalTaskEntryInitialisations() {
     fileAbortEnabled = false;
 
     // Limits
-    assert(MAX_TYPE < power(2,SYMTYPES_LN));
-    assert(MAX_STORAGE_NAMES < power(2,STORAGES_LN));
-    assert(MAX_SCOPES < power(2,SCOPES_LN));
+    assert(MAX_TYPE < power(2,SYMTYPES_BITS));
+    assert(MAX_STORAGE_NAMES < power(2,STORAGES_BITS));
+    assert(MAX_SCOPES < power(2,SCOPES_BITS));
 
     // Memory
 

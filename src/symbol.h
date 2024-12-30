@@ -17,8 +17,8 @@ typedef struct symbol {
     char    *linkName; /* fully qualified name for cx */
     Position pos;      /* definition position for most syms */
     unsigned npointers : 4; /* tmp. stored # of dcl. ptrs */
-    Storage  storage : STORAGES_LN;
-    Type     type : SYMTYPES_LN;
+    Storage  storage : STORAGES_BITS;
+    Type     type : SYMTYPES_BITS;
     /* can be Default/Struct/Union/Enum/Label/Keyword/Macro */
     union {
         struct typeModifier  *typeModifier; /* if type == TypeDefault */

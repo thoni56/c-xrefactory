@@ -14,9 +14,9 @@
     ENUM(StorageTypedef)                    \
     ENUM(StorageRegister)                   \
     ENUM(MAX_STORAGE_NAMES)
-    /* If this becomes more than 32 increase STORAGES_LN !!!!!!!! */
+    /* If this becomes more than 32 increase STORAGES_BITS !!!!!!!! */
 
-#define STORAGES_LN 5		/* logarithm of MAX_STORAGE */
+#define STORAGES_BITS 5		/* logarithm of MAX_STORAGE */
 
 
 typedef enum storage {

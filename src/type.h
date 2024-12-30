@@ -98,9 +98,9 @@
         ENUM(TypeSpecialConstructorCompletion)                          \
         ENUM(TypeUnknown)                                               \
         ENUM(MAX_TYPE)                                                  \
-/* If these becomes more than 256, increase SYMTYPES_LN */
+/* If these becomes more than 256, increase SYMTYPES_BITS */
 
-#define SYMTYPES_LN 7
+#define SYMTYPES_BITS 7
 
 
 typedef enum type {
