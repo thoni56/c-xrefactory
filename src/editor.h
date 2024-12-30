@@ -6,6 +6,7 @@
 #include "head.h"
 #include "completion.h"
 #include "editorbuffer.h"
+#include "proto.h"
 #include "reference.h"
 #include "undo.h"
 #include "usage.h"
@@ -101,7 +102,7 @@ extern EditorMarker     *createEditorMarkerForBufferBegin(EditorBuffer *buffer);
 extern EditorMarker     *createEditorMarkerForBufferEnd(EditorBuffer *buffer);
 extern EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer);
 extern void              freeEditorMarkersAndMarkerList(EditorMarkerList *occs);
-extern int  editorMapOnNonexistantFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), int depth, char *a1,
+extern int  editorMapOnNonexistantFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), SearchDepth depth, char *a1,
                                         char *a2, Completions *a3, void *a4, int *a5);
 
 #endif

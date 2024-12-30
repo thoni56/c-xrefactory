@@ -9,6 +9,7 @@
 #include "log.h"
 #include "misc.h"
 #include "options.h"
+#include "proto.h"
 #include "undo.h"
 #include "usage.h"
 
@@ -1235,7 +1236,7 @@ static int editorBufferNameLess(EditorBufferList*l1,EditorBufferList*l2) {
 // for recursive search
 int editorMapOnNonexistantFiles(char *dirname,
                                 void (*fun)(MAP_FUN_SIGNATURE),
-                                int depth,
+                                SearchDepth depth,
                                 char *a1,
                                 char *a2,
                                 Completions *a3,

@@ -74,9 +74,12 @@ enum miscellaneous { /* misc. constants */
     GET_STATIC_PREFIX_START,
     ALLOW_EDITOR_FILES,
     DO_NOT_ALLOW_EDITOR_FILES,
-    DEPTH_ONE,
-    DEPTH_ANY,
 };
+
+typedef enum {
+    DEPTH_ONE,
+    DEPTH_ANY
+} SearchDepth;
 
 
 /* *******************      encodings      *************** */
