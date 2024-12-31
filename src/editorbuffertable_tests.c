@@ -86,3 +86,12 @@ Ensure(EditorBufferTable, can_add_editorbuffer_for_filename_with_same_hash) {
     assert_that(editorBufferTable.tab[index1], is_equal_to(bufferList2));
     assert_that(editorBufferTable.tab[index1]->next, is_equal_to(bufferList1));
 }
+
+Ensure(EditorBufferTable, can_register_and_deregister_a_buffer) {
+    EditorBuffer *registered_buffer = malloc(sizeof(EditorBuffer));
+    *registered_buffer = (EditorBuffer){.fileName = strdup("file.c")};
+
+    int registered_index = registerEditorBuffer(registered_buffer);
+
+    assert_that(editorBufferTable.tab[registered_index]->buffer, is_equal_to(registered_buffer));
+}

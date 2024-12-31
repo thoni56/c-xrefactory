@@ -27,21 +27,6 @@ void fillEmptyEditorBuffer(EditorBuffer *buffer, char *fileName, int fileNumber,
     buffer->textLoaded = false;
 }
 
-/**
- * @brief Registers an EditorBuffer in the editor buffer table
- *
- * This function allocates the necessary EditorBufferList element so
- * that the caller does not have to bother with that.
- *
- * @param buffer - buffer owned by the caller to register.
- * @return the index in the editor buffer table.
- */
-int registerEditorBuffer(EditorBuffer *buffer) {
-    EditorBufferList *list = malloc(sizeof(EditorBufferList));
-    *list = (EditorBufferList){.buffer = buffer, .next = NULL};
-    return addEditorBuffer(list);
-}
-
 EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *realFileName, time_t modificationTime,
                               size_t size) {
     EditorBuffer *editorBuffer = malloc(sizeof(EditorBuffer));

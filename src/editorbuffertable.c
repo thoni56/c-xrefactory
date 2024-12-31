@@ -1,6 +1,8 @@
 #define IN_EDITORBUFFERTABLE_C
 #include "editorbuffertable.h"
 
+#include <stdlib.h>
+
 #include "head.h"
 
 
@@ -68,4 +70,19 @@ void clearEditorBuffer(int index) {
 
 void editorBufferTableEntryPop(int index) {
     setEditorBuffer(index, editorBufferTable.tab[index]->next);
+}
+
+/**
+ * @brief Registers an EditorBuffer in the editor buffer table
+ *
+ * This function allocates the necessary EditorBufferList element so
+ * that the caller does not have to bother with that.
+ *
+ * @param buffer - buffer owned by the caller to register.
+ * @return the index in the editor buffer table.
+ */
+int registerEditorBuffer(EditorBuffer *buffer) {
+    EditorBufferList *list = malloc(sizeof(EditorBufferList));
+    *list = (EditorBufferList){.buffer = buffer, .next = NULL};
+    return addEditorBuffer(list);
 }

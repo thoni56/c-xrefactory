@@ -49,16 +49,3 @@ Ensure(EditorBuffer, will_create_buffer_and_load_existing_file) {
     assert_that(editorBuffer->fileName, is_equal_to_string("existing"));
     assert_that(editorBuffer->size, is_equal_to(42));
 }
-
-Ensure(EditorBuffer, can_register_and_deregister_a_buffer) {
-    EditorBuffer *registered_buffer = newEditorBuffer("some file", 112, "somefile", 0, 42);
-    int some_index = 13;
-
-    EditorBufferList *captured_list_element;
-    expect(addEditorBuffer, will_return(some_index), will_capture_parameter(bufferList, captured_list_element));
-
-    int registered_index = registerEditorBuffer(registered_buffer);
-
-    assert_that(registered_index, is_equal_to(some_index));
-    assert_that(captured_list_element->buffer, is_equal_to(registered_buffer));
-}
