@@ -154,23 +154,15 @@ static void fPutDecimal(int num, FILE *file) {
 
 /* *********************** INPUT/OUTPUT ************************** */
 
-/* Old macros kept until functions are tested */
-#define SYMTAB_HASH_FUN_INC(oldval, charcode) {\
-    oldval+=charcode; oldval+=(oldval<<10); oldval^=(oldval>>6);\
-}
 static unsigned symtab_hash_fun_inc(unsigned oldval, int charcode) {
     oldval+=charcode; oldval+=(oldval<<10); oldval^=(oldval>>6);
     return oldval;
-}
-#define SYMTAB_HASH_FUN_FINAL(oldval) {\
-    oldval+=(oldval<<3); oldval^=(oldval>>11); oldval+=(oldval<<15);\
 }
 
 static unsigned symtab_hash_fun_final(unsigned oldval) {
     oldval+=(oldval<<3); oldval^=(oldval>>11); oldval+=(oldval<<15);
     return oldval;
 }
-
 
 int cxFileHashNumberForSymbol(char *symbolName) {
     unsigned   hash;
@@ -185,20 +177,12 @@ int cxFileHashNumberForSymbol(char *symbolName) {
     while ((c = *ch) != '\0') {
         if (c == '(')
             break;
-        unsigned previous_hash = hash;
-        SYMTAB_HASH_FUN_INC(hash, c);
-        unsigned hash_calculated_with_macro = hash;
-        hash = symtab_hash_fun_inc(previous_hash, c);
-        assert(hash == hash_calculated_with_macro);
+        hash = symtab_hash_fun_inc(hash, c);
         if (LINK_NAME_MAYBE_START(c))
             hash = 0;
         ch++;
     }
-    unsigned previous_hash = hash;
-    SYMTAB_HASH_FUN_FINAL(hash);
-    unsigned hash_calculated_with_macro = hash;
-    hash = symtab_hash_fun_final(previous_hash);
-    assert(hash == hash_calculated_with_macro);
+    hash = symtab_hash_fun_final(hash);
     hash %= options.referenceFileCount;
     return hash;
 }
