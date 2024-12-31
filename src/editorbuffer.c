@@ -4,7 +4,8 @@
 #include <stdlib.h>
 
 #include "commons.h"
-#include "editorbuffertab.h"
+#include "editor.h"             /* For EditorMarker */
+#include "editorbuffertable.h"
 #include "fileio.h"
 #include "filetable.h"
 #include "globals.h"

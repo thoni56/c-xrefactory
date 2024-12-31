@@ -1,5 +1,7 @@
-#define IN_EDITORBUFFERTAB_C
-#include "editorbuffertab.h"
+#define IN_EDITORBUFFERTABLE_C
+#include "editorbuffertable.h"
+
+#include "head.h"
 
 
 static unsigned editorBufferHashFun(char *fileName);
@@ -25,24 +27,24 @@ void injectHashFun(unsigned (fun)(char *fileName)) {
 }
 
 static EditorBufferList *editorBufferTablesInit[EDITOR_BUFFER_TABLE_SIZE];
-protected EditorBufferTab editorBufferTable;
+protected EditorBufferTable editorBufferTable;
 
 
 void initEditorBufferTable() {
     editorBufferTable.tab = editorBufferTablesInit;
-    editorBufferTabNoAllocInit(&editorBufferTable, EDITOR_BUFFER_TABLE_SIZE);
+    editorBufferTableNoAllocInit(&editorBufferTable, EDITOR_BUFFER_TABLE_SIZE);
 }
 
 int addEditorBuffer(EditorBufferList *bufferListElement) {
-    return editorBufferTabAdd(&editorBufferTable, bufferListElement);
+    return editorBufferTableAdd(&editorBufferTable, bufferListElement);
 }
 
 bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, EditorBufferList **foundMemberP) {
-    return editorBufferTabIsMember(&editorBufferTable, elementP, positionP, foundMemberP);
+    return editorBufferTableIsMember(&editorBufferTable, elementP, positionP, foundMemberP);
 }
 
 bool deleteEditorBuffer(EditorBufferList *elementP) {
-    return editorBufferTabDeleteExact(&editorBufferTable, elementP);
+    return editorBufferTableDeleteExact(&editorBufferTable, elementP);
 }
 
 EditorBufferList *getEditorBuffer(int index) {

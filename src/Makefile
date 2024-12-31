@@ -524,7 +524,7 @@ $(eval $(call UNITTEST,cxfile,log memory usage protocol position hash session st
 $(eval $(call UNITTEST,cxref,server protocol log hash position type storage usage session memory stackmemory))
 $(eval $(call UNITTEST,editor,position usage log memory stackmemory hash))
 $(eval $(call UNITTEST,editorbuffer,position log memory stackmemory))
-$(eval $(call UNITTEST,editorbuffertab,position log memory hash))
+$(eval $(call UNITTEST,editorbuffertable,position log memory hash))
 $(eval $(call UNITTEST,extract,position log memory stackmemory storage type id usage protocol))
 $(eval $(call UNITTEST,fileio,log))
 $(eval $(call UNITTEST,filetable,log memory stackmemory hash))

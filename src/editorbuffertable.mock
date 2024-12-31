@@ -1,8 +1,8 @@
 /* -*- c -*-*/
 #include <cgreen/mocks.h>
-#include "editorbuffertab.h"
+#include "editorbuffertable.h"
 
-EditorBufferTab editorBufferTable;
+EditorBufferTable editorBufferTable;
 
 
 /* Non-hashlist functions for abstraction */

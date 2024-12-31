@@ -7,7 +7,7 @@
 
 #include "commons.mock"
 #include "editor.mock" /* For freeTextSpace */
-#include "editorbuffertab.mock"
+#include "editorbuffertable.mock"
 #include "fileio.mock"
 #include "filetable.mock"
 #include "globals.mock"

@@ -3,21 +3,22 @@
 #include "editorbuffer.h"
 #include "log.h"
 
-#include "editorbuffertab.h"
+#include "editorbuffertable.h"
 #include "hash.h"
 
 #include "commons.mock"
 #include "stackmemory.mock"
 
-extern EditorBufferTab editorBufferTable;
+
+extern EditorBufferTable editorBufferTable;
 
 
-Describe(EditorBufferTab);
-BeforeEach(EditorBufferTab) {
+Describe(EditorBufferTable);
+BeforeEach(EditorBufferTable) {
     log_set_level(LOG_ERROR);
     initEditorBufferTable();
 }
-AfterEach(EditorBufferTab) {}
+AfterEach(EditorBufferTable) {}
 
 static EditorBufferList *createEditorBufferListElementFor(char *fileName) {
     /* All parts need to be malloc'd so that they can be freed */
@@ -28,11 +29,11 @@ static EditorBufferList *createEditorBufferListElementFor(char *fileName) {
     return bufferList;
 }
 
-Ensure(EditorBufferTab, returns_minus_one_for_no_more_existing) {
+Ensure(EditorBufferTable, returns_minus_one_for_no_more_existing) {
     assert_that(getNextExistingEditorBufferIndex(0), is_equal_to(-1));
 }
 
-Ensure(EditorBufferTab, can_return_next_existing_file_index) {
+Ensure(EditorBufferTable, can_return_next_existing_file_index) {
     char *fileName = "item.c";
     EditorBufferList *bufferList = createEditorBufferListElementFor(fileName);
     int index = addEditorBuffer(bufferList);
@@ -42,7 +43,7 @@ Ensure(EditorBufferTab, can_return_next_existing_file_index) {
     assert_that(getNextExistingEditorBufferIndex(index + 1), is_equal_to(-1));
 }
 
-Ensure(EditorBufferTab, can_add_one) {
+Ensure(EditorBufferTable, can_add_one) {
     char *fileName = "item.c";
     EditorBufferList *bufferList = createEditorBufferListElementFor(fileName);
     int index = addEditorBuffer(bufferList);
@@ -50,7 +51,7 @@ Ensure(EditorBufferTab, can_add_one) {
     assert_that(editorBufferTable.tab[index], is_equal_to(bufferList));
 }
 
-Ensure(EditorBufferTab, will_not_add_editorbuffer_for_the_same_filename_twice) {
+Ensure(EditorBufferTable, will_not_add_editorbuffer_for_the_same_filename_twice) {
     char *fileName = "item.c";
     EditorBufferList *bufferList1 = createEditorBufferListElementFor(fileName);
     int index1 = addEditorBuffer(bufferList1);
@@ -68,7 +69,7 @@ unsigned injectedHashFun(char *fileName) {
     return (unsigned)mock(fileName);
 }
 
-Ensure(EditorBufferTab, can_add_editorbuffer_for_filename_with_same_hash) {
+Ensure(EditorBufferTable, can_add_editorbuffer_for_filename_with_same_hash) {
     char *fileName = "item.c";
     EditorBufferList *bufferList1 = createEditorBufferListElementFor(fileName);
     int index1 = addEditorBuffer(bufferList1);
