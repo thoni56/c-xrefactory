@@ -3,7 +3,7 @@
    .h template for hashed table of lists
 
    A hashlist allows multiple items with the same hash. They are
-   linked and will have to be linearly searched.
+   linked using list elements and will have to be linearly searched.
 
    For an explanation of how these hashed tables are generated, see
    hashtab.tc

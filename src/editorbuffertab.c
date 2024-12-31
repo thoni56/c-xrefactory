@@ -2,16 +2,31 @@
 #include "editorbuffertab.h"
 
 
-#define HASH_FUN(element) hashFun(element->buffer->fileName)
+static unsigned editorBufferHashFun(char *fileName);
+
+#define HASH_FUN(element) editorBufferHashFun(element->buffer->fileName)
 #define HASH_ELEM_EQUAL(e1,e2) (strcmp(e1->buffer->fileName,e2->buffer->fileName)==0)
 
 #include "hashlist.tc"
 
 #define EDITOR_BUFFER_TABLE_SIZE 100
 
+/* Make it possible to inject a mocked hashFun() */
+static unsigned (*mockedHashFun)(char *fileName) = NULL;
+static unsigned editorBufferHashFun(char *fileName) {
+    if (mockedHashFun == NULL)
+        return hashFun(fileName);
+    else
+        return mockedHashFun(fileName);
+}
+
+void injectHashFun(unsigned (fun)(char *fileName)) {
+    mockedHashFun = fun;
+}
 
 static EditorBufferList *editorBufferTablesInit[EDITOR_BUFFER_TABLE_SIZE];
-static EditorBufferTab editorBufferTable;
+protected EditorBufferTab editorBufferTable;
+
 
 void initEditorBufferTable() {
     editorBufferTable.tab = editorBufferTablesInit;

@@ -15,6 +15,8 @@
 #undef HASH_ELEM_TYPE
 #endif
 
+/* For testing */
+extern void injectHashFun(unsigned(fun)(char *fileName));
 
 extern void initEditorBufferTable(void);
 extern int  addEditorBuffer(EditorBufferList *bufferList);
