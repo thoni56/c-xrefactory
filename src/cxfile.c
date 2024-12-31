@@ -154,14 +154,18 @@ static void fPutDecimal(int num, FILE *file) {
 
 /* *********************** INPUT/OUTPUT ************************** */
 
-static unsigned symtab_hash_fun_inc(unsigned oldval, int charcode) {
-    oldval+=charcode; oldval+=(oldval<<10); oldval^=(oldval>>6);
-    return oldval;
+static unsigned increment_symbol_hash(unsigned old_hash, int charcode) {
+    unsigned new_hash = old_hash;
+    new_hash+=charcode;
+    new_hash+=(new_hash<<10);
+    new_hash^=(new_hash>>6);
+    return new_hash;
 }
 
-static unsigned symtab_hash_fun_final(unsigned oldval) {
-    oldval+=(oldval<<3); oldval^=(oldval>>11); oldval+=(oldval<<15);
-    return oldval;
+static unsigned finalize_symbol_hash(unsigned old_hash) {
+    unsigned new_hash = old_hash;
+    new_hash+=(new_hash<<3); new_hash^=(new_hash>>11); new_hash+=(new_hash<<15);
+    return new_hash;
 }
 
 int cxFileHashNumberForSymbol(char *symbolName) {
@@ -177,12 +181,12 @@ int cxFileHashNumberForSymbol(char *symbolName) {
     while ((c = *ch) != '\0') {
         if (c == '(')
             break;
-        hash = symtab_hash_fun_inc(hash, c);
+        hash = increment_symbol_hash(hash, c);
         if (LINK_NAME_MAYBE_START(c))
             hash = 0;
         ch++;
     }
-    hash = symtab_hash_fun_final(hash);
+    hash = finalize_symbol_hash(hash);
     hash %= options.referenceFileCount;
     return hash;
 }
