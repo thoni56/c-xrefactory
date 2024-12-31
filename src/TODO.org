@@ -17,6 +17,11 @@ Some useful commands:
 
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
+* DOING LSP-mode support
+** DOING 'didOpen'
+** TODO Handle protocol errors etc. using longjump
+** DONE LSP communication structure
+** DONE LSP 'initialize', 'exit', 'not found'
 * DOING Rename vApplClass - but to what? what is it?
 * DOING Extract variable
 ** TRY Place the variable declaration in the closest block (need to figure out how ProgramGraphs work...)
@@ -168,10 +173,6 @@ There are both "-opt=value" and "-opt value" format options
 ** TODO Test case for extract variable
 ** TODO Test case for filtering menues
 * TODO: FUTURE
-** Implement LSP (Language Server Protocol)
-This is probably not possible due to the level of integration between
-the editor adaptor and the c-xref proper. Also LSP does not have a
-protocol for many of the refactorings which are core to c-xref.
 * TODO BUGS:
 ** TODO Bug; when deleting the last argument of a function it should replace with 'void'
 ** TODO Bug: when extracting C function including declarations that are required
