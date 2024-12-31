@@ -1,3 +1,4 @@
+#include "editorbuffer.h"
 #define IN_EDITORBUFFERTABLE_C
 #include "editorbuffertable.h"
 
@@ -79,10 +80,34 @@ void editorBufferTableEntryPop(int index) {
  * that the caller does not have to bother with that.
  *
  * @param buffer - buffer owned by the caller to register.
- * @return the index in the editor buffer table.
+ * @return the index in the editor buffer table. NB. There might be more at the same index.
  */
 int registerEditorBuffer(EditorBuffer *buffer) {
     EditorBufferList *list = malloc(sizeof(EditorBufferList));
     *list = (EditorBufferList){.buffer = buffer, .next = NULL};
-    return addEditorBuffer(list);
+    return addEditorBuffer(list); /* TODO Handles existing, and hash collisions? */
+}
+
+/**
+ * @brief Deregisters a buffer from the editor buffer table
+ *
+ * @param fileName - the name of the file it was loaded from
+ * @returns the EditorBuffer that was deregistered or NULL
+ */
+EditorBuffer *deregisterEditorBuffer(char *fileName) {
+    EditorBuffer *buffer = malloc(sizeof(EditorBuffer));
+    *buffer = (EditorBuffer){.fileName = fileName};
+    EditorBufferList *list = malloc(sizeof(EditorBufferList));
+    *list = (EditorBufferList){.buffer = buffer, .next = NULL};
+
+    int foundIndex;
+    if (!editorBufferIsMember(list, &foundIndex, NULL))
+        return NULL;
+
+    /* For now assume only item at index */
+    assert(editorBufferTable.tab[foundIndex]->next == NULL);
+    EditorBuffer *found_buffer = editorBufferTable.tab[foundIndex]->buffer;
+    free(editorBufferTable.tab[foundIndex]);
+    editorBufferTable.tab[foundIndex] = NULL;
+    return found_buffer;
 }

@@ -87,11 +87,17 @@ Ensure(EditorBufferTable, can_add_editorbuffer_for_filename_with_same_hash) {
     assert_that(editorBufferTable.tab[index1]->next, is_equal_to(bufferList1));
 }
 
-Ensure(EditorBufferTable, can_register_and_deregister_a_buffer) {
+Ensure(EditorBufferTable, can_register_and_deregister_a_single_buffer) {
+    char *fileName = "file.c";
     EditorBuffer *registered_buffer = malloc(sizeof(EditorBuffer));
-    *registered_buffer = (EditorBuffer){.fileName = strdup("file.c")};
+    *registered_buffer = (EditorBuffer){.fileName = strdup(fileName)};
 
     int registered_index = registerEditorBuffer(registered_buffer);
 
     assert_that(editorBufferTable.tab[registered_index]->buffer, is_equal_to(registered_buffer));
+
+    EditorBuffer *deregistered_buffer = deregisterEditorBuffer(fileName);
+
+    assert_that(deregistered_buffer->fileName, is_equal_to_string(fileName));
+    assert_that(editorBufferTable.tab[registered_index], is_null);
 }

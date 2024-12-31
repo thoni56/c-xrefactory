@@ -30,7 +30,7 @@ extern void clearEditorBuffer(int index);
 
 /* Register and deregister will hide the lists that the hashlist uses */
 extern int registerEditorBuffer(EditorBuffer *buffer);
-extern void deregisterEditorBuffer(EditorBuffer *buffer);
+extern EditorBuffer *deregisterEditorBuffer(char *fileName);
 
 
 #endif
