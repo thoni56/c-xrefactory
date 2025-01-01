@@ -1,5 +1,6 @@
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
+#include <cgreen/internal/mocks_internal.h>
 
 #include "editor.h"
 
@@ -172,4 +173,20 @@ Ensure(Editor, can_move_block_in_editor_buffer) {
     moveBlockInEditorBuffer(sourceMarker, destinationMarker, 5, &undo);
 
     assert_that(buffer->allocation.text, is_equal_to_string("this is text some"));
+}
+
+Ensure(Editor, can_replace_string_in_editor_buffer) {
+    char *text = strdup("this is some text");
+    int size = strlen(text)+1;
+    EditorBuffer *buffer = newEditorBuffer("file", 12, "file", 0, size);
+    allocateNewEditorBufferTextSpace(buffer, size);
+    strcpy(buffer->allocation.text, text);
+
+    EditorUndo *undo = NULL;
+    expect(newUndoReplace);
+    always_expect(setEditorBufferModified);
+
+    replaceStringInEditorBuffer(buffer, 8, 4, "interesting", 11, &undo);
+
+    assert_that(buffer->allocation.text, is_equal_to_string("this is interesting text"));
 }
