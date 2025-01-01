@@ -47,8 +47,8 @@ EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
   return (EditorBuffer *) mock(name);
 }
 
-void renameEditorBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo) {
-  mock(buff, newName, undo);
+void renameEditorBuffer(EditorBuffer *buffer, char *newName, EditorUndo **undo) {
+  mock(buffer, newName, undo);
 }
 
 // Hopefully temporary

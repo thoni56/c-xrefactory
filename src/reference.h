@@ -21,17 +21,15 @@ typedef struct reference {
 // A variable, type, included file, ...
 typedef struct referenceItem {
     char                     *linkName;
-    int                       includedFileNumber; /* This probably was application class
-                                           * for java virtuals, but for C it
-                                           * seems to be the fileNumber for the
-                                           * included file if this is an
-                                           * '#include' Reference item */
     Type                      type : SYMTYPES_BITS;
+    int                       includedFileNumber; /* FileNumber for the included file if
+                                           * this is an '#include' Reference item:
+                                           * type = TypeCppInclude */
     Storage                   storage : STORAGES_BITS;
     Scope                     scope : SCOPES_BITS;
     Visibility                visibility : 2;     /* local/global */
     struct reference         *references;
-    struct referenceItem     *next; /* TODO: Link only for hashlist? */
+    struct referenceItem     *next; /* TODO: Link only for hashtab */
 } ReferenceItem;
 
 
@@ -43,7 +41,7 @@ extern void resetReferenceUsage(Reference *reference, Usage usage);
 extern Reference **addToReferenceList(Reference **list, Position pos, Usage usage);
 extern bool isReferenceInList(Reference *r, Reference *list);
 extern Reference *addReferenceToList(Reference **rlist,
-                                   Reference *ref);
+                                     Reference *ref);
 extern ReferenceItem makeReferenceItem(char *name, Type type, Storage storage, Scope scope,
                                        Visibility visibility, int includedFileNumber);
 extern int fileNumberOfReference(Reference reference);

@@ -144,42 +144,37 @@ void setEditorBufferModified(EditorBuffer *buffer) {
     buffer->modifiedSinceLastQuasiSave = true;
 }
 
-void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
-    char newName[MAX_FILE_NAME_SIZE];
-    EditorBuffer newBuffer;
+void renameEditorBuffer(EditorBuffer *buffer, char *newName, EditorUndo **undo) {
+    char newFileName[MAX_FILE_NAME_SIZE];
 
-    strcpy(newName, normalizeFileName_static(nName, cwd));
-    fillEmptyEditorBuffer(&newBuffer, buffer->fileName, 0, buffer->fileName);
+    strcpy(newFileName, normalizeFileName_static(newName, cwd));
 
-    EditorBufferList newBufferListElement = (EditorBufferList){.buffer = &newBuffer, .next = NULL};
-
-    EditorBufferList *foundMember;
-    if (!editorBufferIsMember(&newBufferListElement, NULL, &foundMember)) {
+    EditorBuffer *existing_buffer = getEditorBufferForFile(buffer->fileName);
+    if (existing_buffer == NULL) {
         char tmpBuffer[TMP_BUFF_SIZE];
         sprintf(tmpBuffer, "Trying to rename non existing buffer %s", buffer->fileName);
         errorMessage(ERR_INTERNAL, tmpBuffer);
         return;
     }
-    assert(foundMember->buffer == buffer);
-    bool deleted = deleteEditorBuffer(foundMember);
-    assert(deleted);
+    assert(existing_buffer == buffer);
+
+    EditorBuffer *deregistered_original = deregisterEditorBuffer(buffer->fileName);
+    assert(deregistered_original == buffer);
 
     char *oldName = buffer->fileName;
-    buffer->fileName = strdup(newName);
+    buffer->fileName = strdup(newFileName);
 
-    // Also update fileNumber
-    int newFileNumber = addFileNameToFileTable(newName);
+    // Update fileNumber
+    int newFileNumber = addFileNameToFileTable(newFileName);
     getFileItemWithFileNumber(newFileNumber)->isArgument = getFileItemWithFileNumber(buffer->fileNumber)->isArgument;
     buffer->fileNumber = newFileNumber;
 
-    *foundMember = (EditorBufferList){.buffer = buffer, .next = NULL};
-    EditorBufferList *memb2;
-    if (editorBufferIsMember(foundMember, NULL, &memb2)) {
-        deleteEditorBuffer(memb2);
-        freeEditorBuffer(memb2->buffer);
-        free(memb2);
+    EditorBuffer *existing_buffer_with_the_new_name = getEditorBufferForFile(newFileName);
+    if (existing_buffer_with_the_new_name != NULL) {
+        EditorBuffer *deleted = deregisterEditorBuffer(newFileName);
+        freeEditorBuffer(deleted);
     }
-    addEditorBuffer(foundMember);
+    registerEditorBuffer(buffer);
 
     // note undo operation
     if (undo!=NULL) {
