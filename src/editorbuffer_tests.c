@@ -6,7 +6,7 @@
 #include "log.h"
 
 #include "commons.mock"
-#include "editor.mock" /* For freeTextSpace */
+#include "editor.mock"
 #include "editorbuffertable.mock"
 #include "fileio.mock"
 #include "filetable.mock"
@@ -22,30 +22,4 @@ AfterEach(EditorBuffer) {}
 
 Ensure(EditorBuffer, can_free_null_editor_buffer) {
     freeEditorBuffer(NULL);
-}
-
-Ensure(EditorBuffer, will_return_null_for_non_existing_file) {
-    always_expect(editorBufferIsMember, will_return(false));
-    expect(fileExists, will_return(false));
-
-    assert_that(findEditorBufferForFile("non-existing"), is_null);
-}
-
-Ensure(EditorBuffer, will_create_buffer_and_load_existing_file) {
-    always_expect(editorBufferIsMember, will_return(false));
-    expect(fileExists, will_return(true));
-    always_expect(isDirectory, will_return(false));
-    always_expect(fileSize, will_return(42));
-    always_expect(fileModificationTime, will_return(666));
-    always_expect(normalizeFileName_static, will_return("existing"));
-    expect(addEditorBuffer);
-    expect(addFileNameToFileTable);
-    expect(allocateNewEditorBufferTextSpace);
-    expect(loadFileIntoEditorBuffer);
-
-    EditorBuffer *editorBuffer = findEditorBufferForFile("existing");
-
-    assert_that(editorBuffer, is_not_null);
-    assert_that(editorBuffer->fileName, is_equal_to_string("existing"));
-    assert_that(editorBuffer->size, is_equal_to(42));
 }

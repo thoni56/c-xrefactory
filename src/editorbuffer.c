@@ -61,7 +61,7 @@ void freeEditorBuffer(EditorBuffer *buffer) {
     freeMarkersInEditorBuffer(buffer);
 
     if (buffer->textLoaded) {
-        log_trace("freeing %d of size %d", buffer->allocation.allocatedBlock,
+        log_trace("freeing allocated block %d of size %d", buffer->allocation.allocatedBlock,
                   buffer->allocation.allocatedSize);
         checkForMagicMarker(&buffer->allocation);
         freeTextSpace(buffer->allocation.allocatedBlock,
@@ -74,7 +74,6 @@ EditorBuffer *createNewEditorBuffer(char *realFileName, char *loadedFromFile, ti
                                     size_t size) {
     char *normalizedRealFileName, *normalizedLoadedFromFile;
     EditorBuffer *buffer;
-    EditorBufferList *bufferList;
 
     normalizedRealFileName = strdup(normalizeFileName_static(realFileName, cwd));
 
@@ -88,12 +87,9 @@ EditorBuffer *createNewEditorBuffer(char *realFileName, char *loadedFromFile, ti
     }
 
     buffer = newEditorBuffer(normalizedRealFileName, 0, normalizedLoadedFromFile, modificationTime, size);
+    log_trace("created buffer '%s' for '%s'", buffer->fileName, buffer->loadedFromFile);
 
-    bufferList = malloc(sizeof(EditorBufferList));
-    *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
-    log_trace("creating buffer '%s' for '%s'", buffer->fileName, buffer->loadedFromFile);
-
-    addEditorBuffer(bufferList);
+    registerEditorBuffer(buffer);
 
     // set fileNumber last, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!
@@ -102,16 +98,8 @@ EditorBuffer *createNewEditorBuffer(char *realFileName, char *loadedFromFile, ti
     return buffer;
 }
 
-EditorBuffer *getEditorBufferFor(char *name) {
-    EditorBuffer editorBuffer;
-    EditorBufferList editorBufferList, *foundElement;
-
-    fillEmptyEditorBuffer(&editorBuffer, name, 0, name);
-    editorBufferList = (EditorBufferList){.buffer = &editorBuffer, .next = NULL};
-    if (editorBufferIsMember(&editorBufferList, NULL, &foundElement)) {
-        return foundElement->buffer;
-    }
-    return NULL;
+EditorBuffer *getEditorBufferFor(char *fileName) {
+    return getEditorBufferForFile(fileName);
 }
 
 EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
