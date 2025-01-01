@@ -98,13 +98,9 @@ EditorBuffer *createNewEditorBuffer(char *realFileName, char *loadedFromFile, ti
     return buffer;
 }
 
-EditorBuffer *getEditorBufferFor(char *fileName) {
-    return getEditorBufferForFile(fileName);
-}
-
 EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
     EditorBuffer *buffer;
-    buffer = getEditorBufferFor(name);
+    buffer = getEditorBufferForFile(name);
     if (buffer!=NULL && buffer->textLoaded)
         return buffer;
     return NULL;
@@ -114,7 +110,7 @@ EditorBuffer *findEditorBufferForFile(char *name) {
     EditorBuffer *editorBuffer = getOpenedAndLoadedEditorBuffer(name);
 
     if (editorBuffer==NULL) {
-        editorBuffer = getEditorBufferFor(name);
+        editorBuffer = getEditorBufferForFile(name);
         if (editorBuffer == NULL) {
             if (fileExists(name) && !isDirectory(name)) {
                 editorBuffer = createNewEditorBuffer(name, name, fileModificationTime(name),
@@ -132,14 +128,14 @@ EditorBuffer *findEditorBufferForFile(char *name) {
 }
 
 // Only used from Options for preload
-EditorBuffer *openEditorBufferFromPreload(char *realFileName, char *loadedFromFile) {
+EditorBuffer *openEditorBufferFromPreload(char *fileName, char *loadedFromFile) {
     EditorBuffer  *buffer;
 
-    buffer = getEditorBufferFor(realFileName);
+    buffer = getEditorBufferForFile(fileName);
     if (buffer != NULL) {
         return buffer;
     }
-    buffer = createNewEditorBuffer(realFileName, loadedFromFile, fileModificationTime(loadedFromFile),
+    buffer = createNewEditorBuffer(fileName, loadedFromFile, fileModificationTime(loadedFromFile),
                                    fileSize(loadedFromFile));
     return buffer;
 }

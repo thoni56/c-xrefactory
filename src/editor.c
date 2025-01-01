@@ -94,7 +94,7 @@ void editorInit(void) {
 int editorFileStatus(char *path) {
     EditorBuffer *buffer;
 
-    buffer = getEditorBufferFor(path);
+    buffer = getEditorBufferForFile(path);
     if (buffer != NULL) {
         return 0;
     }
@@ -104,7 +104,7 @@ int editorFileStatus(char *path) {
 time_t editorFileModificationTime(char *path) {
     EditorBuffer *buffer;
 
-    buffer = getEditorBufferFor(path);
+    buffer = getEditorBufferForFile(path);
     if (buffer != NULL)
         return buffer->modificationTime;
     return fileModificationTime(path);
@@ -113,7 +113,7 @@ time_t editorFileModificationTime(char *path) {
 size_t editorFileSize(char *path) {
     EditorBuffer *buffer;
 
-    buffer = getEditorBufferFor(path);
+    buffer = getEditorBufferForFile(path);
     if (buffer != NULL)
         return buffer->size;
     return fileSize(path);
@@ -122,7 +122,7 @@ size_t editorFileSize(char *path) {
 bool editorFileExists(char *path) {
     EditorBuffer *buffer;
 
-    buffer = getEditorBufferFor(path);
+    buffer = getEditorBufferForFile(path);
     if (buffer != NULL)
         return true;
     return fileExists(path);
