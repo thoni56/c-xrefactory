@@ -98,32 +98,31 @@ EditorBuffer *createNewEditorBuffer(char *realFileName, char *loadedFromFile, ti
     return buffer;
 }
 
-EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
-    EditorBuffer *buffer;
-    buffer = getEditorBufferForFile(name);
+EditorBuffer *getOpenedAndLoadedEditorBuffer(char *fileName) {
+    EditorBuffer *buffer = getEditorBufferForFile(fileName);
     if (buffer!=NULL && buffer->textLoaded)
         return buffer;
     return NULL;
 }
 
-EditorBuffer *findEditorBufferForFile(char *name) {
-    EditorBuffer *editorBuffer = getOpenedAndLoadedEditorBuffer(name);
+EditorBuffer *findEditorBufferForFile(char *fileName) {
+    EditorBuffer *editorBuffer = getEditorBufferForFile(fileName);
 
-    if (editorBuffer==NULL) {
-        editorBuffer = getEditorBufferForFile(name);
-        if (editorBuffer == NULL) {
-            if (fileExists(name) && !isDirectory(name)) {
-                editorBuffer = createNewEditorBuffer(name, name, fileModificationTime(name),
-                                                     fileSize(name));
-            }
-        }
-        if (editorBuffer != NULL && !isDirectory(editorBuffer->loadedFromFile)) {
-            allocateNewEditorBufferTextSpace(editorBuffer, fileSize(name));
-            loadFileIntoEditorBuffer(editorBuffer, fileModificationTime(name), fileSize(name));
-        } else {
+    if (editorBuffer != NULL && editorBuffer->textLoaded)
+        /* Found one with text loaded, return it */
+        return editorBuffer;
+
+    if (editorBuffer == NULL) {
+        /* No buffer found, create one unless it is a directory */
+        if (fileExists(fileName) && !isDirectory(fileName)) {
+            editorBuffer = createNewEditorBuffer(fileName, fileName, fileModificationTime(fileName),
+                                                 fileSize(fileName));
+            allocateNewEditorBufferTextSpace(editorBuffer, fileSize(fileName));
+            loadFileIntoEditorBuffer(editorBuffer, fileModificationTime(fileName), fileSize(fileName));
+        } else
             return NULL;
-        }
     }
+
     return editorBuffer;
 }
 

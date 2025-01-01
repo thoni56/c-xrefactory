@@ -709,20 +709,15 @@ fini:
 
 static void simpleModuleRename(EditorMarkerList *markers, char *symname, char *symLinkName) {
     char          newName[MAX_FILE_NAME_SIZE];
-    char          newPackageName[MAX_FILE_NAME_SIZE];
+    char          newModuleName[MAX_FILE_NAME_SIZE];
 
     /* THIS IS THE OLD JAVA VERSION, NEED TO ADAPT TO MOVE C MODULE!!! */
 
     // get original and new directory, but how?
     strcpy(newName, refactoringOptions.renameTo);
-    char *lastDot = lastOccurenceInString(newName, '.');
-    if (lastDot == NULL) {
-        strcpy(newPackageName, newName);
-        newName[0] = 0;
-    } else {
-        strcpy(newPackageName, lastDot + 1);
-        *(lastDot + 1) = 0;
-    }
+    strcpy(newModuleName, newName);
+    newName[0] = 0;
+
     for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
         EditorMarker *marker = createNewMarkerForExpressionStart(l->marker, GET_STATIC_PREFIX_START);
         if (marker != NULL) {
@@ -730,7 +725,7 @@ static void simpleModuleRename(EditorMarkerList *markers, char *symname, char *s
             // make attention here, so that markers still points
             // to the package name, the best would be to replace
             // package name per single names, ...
-            checkedReplaceString(marker, strlen(symname), symname, newPackageName);
+            checkedReplaceString(marker, strlen(symname), symname, newModuleName);
             replaceString(marker, 0, newName);
         }
         freeEditorMarker(marker);
