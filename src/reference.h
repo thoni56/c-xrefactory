@@ -21,7 +21,7 @@ typedef struct reference {
 // A variable, type, included file, ...
 typedef struct referenceItem {
     char                     *linkName;
-    int                       vApplClass; /* This probably was application class
+    int                       includedFileNumber; /* This probably was application class
                                            * for java virtuals, but for C it
                                            * seems to be the fileNumber for the
                                            * included file if this is an
@@ -44,8 +44,8 @@ extern Reference **addToReferenceList(Reference **list, Position pos, Usage usag
 extern bool isReferenceInList(Reference *r, Reference *list);
 extern Reference *addReferenceToList(Reference **rlist,
                                    Reference *ref);
-extern ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage,
-                                       Scope scope, Visibility visibility);
+extern ReferenceItem makeReferenceItem(char *name, Type type, Storage storage, Scope scope,
+                                       Visibility visibility, int includedFileNumber);
 extern int fileNumberOfReference(Reference reference);
 
 #endif

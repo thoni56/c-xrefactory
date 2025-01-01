@@ -41,24 +41,23 @@ protected Completion *newCompletion(char *name, char *fullName,
 // If symbol != NULL && referenceItem != NULL then reference can be anything...
 Completion *completionListPrepend(Completion *completions, char *name, char *fullName, Symbol *symbol,
                                   ReferenceItem *referenceItem, Reference *reference, Type type,
-                                  int vApplClass) {
+                                  int includedFileNumber) {
     Completion *completion;
 
     if (referenceItem != NULL) {
         // probably a 'search in tag' file item
         char *linkName = strdup(referenceItem->linkName);
 
-        ReferenceItem item = makeReferenceItem(linkName, referenceItem->vApplClass, referenceItem->type,
-                                               referenceItem->storage, referenceItem->scope,
-                                               referenceItem->visibility);
+        ReferenceItem item = makeReferenceItem(linkName, referenceItem->type,
+                                               referenceItem->storage, referenceItem->scope, referenceItem->visibility, referenceItem->includedFileNumber);
 
         completion = newCompletion(name, fullName, 1, referenceItem->visibility, type, *reference, item);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
 
-        ReferenceItem item = makeReferenceItem("", NO_FILE_NUMBER, TypeUnknown, StorageDefault,
-                                               AutoScope, LocalVisibility);
+        ReferenceItem item = makeReferenceItem("", TypeUnknown, StorageDefault,
+                                               AutoScope, LocalVisibility, NO_FILE_NUMBER);
 
         completion = newCompletion(name, fullName, 1, LocalVisibility, type, r, item);
     } else {
@@ -69,8 +68,8 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
         char *linkName = strdup(symbol->linkName);
 
-        ReferenceItem item = makeReferenceItem(linkName, vApplClass, symbol->type, storage,
-                                               scope, visibility);
+        ReferenceItem item = makeReferenceItem(linkName, symbol->type, storage,
+                                               scope, visibility, includedFileNumber);
         completion = newCompletion(name, fullName, 1, visibility, type, r, item);
     }
     if (fullName!=NULL) {

@@ -193,7 +193,7 @@ static bool operationRequiresOnlyParsingNoPushing(int operation) {
 
 
 /* ********************************************************************* */
-Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int vApplCl) {
+Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int includedFileNumber) {
     Visibility        visibility;
     Scope             scope;
     Storage           storage;
@@ -221,7 +221,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int vA
     getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
 
     log_trace("adding reference on %s(%d) at %d,%d,%d (%s) (%s) (%s)",
-              symbol->linkName, vApplCl, position.file, position.line,
+              symbol->linkName, includedFileNumber, position.file, position.line,
               position.col, visibility==GlobalVisibility?"Global":"Local",
               usageKindEnumName[usage], storageEnumName[symbol->storage]);
 
@@ -253,8 +253,8 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int vA
         break;
     }
 
-    ReferenceItem  referenceItem = makeReferenceItem(symbol->linkName, vApplCl, symbol->type,
-                                                     storage, scope, visibility);
+    ReferenceItem  referenceItem = makeReferenceItem(symbol->linkName, symbol->type,
+                                                     storage, scope, visibility, includedFileNumber);
     ReferenceItem *foundMember;
 
     if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH && options.searchKind==SEARCH_FULL) {
@@ -269,8 +269,8 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int vA
         char *linkName = cxAlloc(strlen(symbol->linkName)+1);
         strcpy(linkName, symbol->linkName);
         ReferenceItem *r = cxAlloc(sizeof(ReferenceItem));
-        *r = makeReferenceItem(linkName, vApplCl, symbol->type,
-                               storage, scope, visibility);
+        *r = makeReferenceItem(linkName, symbol->type,
+                               storage, scope, visibility, includedFileNumber);
         pushReferenceItem(r, index);
         foundMember = r;
     }
@@ -1090,8 +1090,8 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
 
 SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
     SymbolsMenu     *res;
-    ReferenceItem     ss = makeReferenceItem(fieldName, cfi, TypeDefault, storage, GlobalScope, GlobalVisibility);
-    res = olCreateNewMenuItem(&ss, ss.vApplClass, noPosition, UsageNone,
+    ReferenceItem     ss = makeReferenceItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility, cfi);
+    res = olCreateNewMenuItem(&ss, ss.includedFileNumber, noPosition, UsageNone,
                               1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
                               UsageUsed, 0);
     return res;
@@ -1677,7 +1677,7 @@ bool olcxShowSelectionMenu(void) {
                 if (first == NULL) {
                     first = ss;
                 } else if ((! isSameCxSymbol(&first->references, &ss->references))
-                           || first->references.vApplClass!=ss->references.vApplClass) {
+                           || first->references.includedFileNumber!=ss->references.includedFileNumber) {
                     return true;
                 }
             }
@@ -1870,7 +1870,7 @@ void olcxPrintPushingAction(ServerOperation operation) {
 static void dumpSelectionMenu(SymbolsMenu *menu) {
     for (SymbolsMenu *s=menu; s!=NULL; s=s->next) {
         log_trace">> %d/%d %s %s %d", s->defRefn, s->refn, s->references.linkName,
-            simpleFileName(getFileItemWithFileNumber(s->references.vApplClass)->name),
+            simpleFileName(getFileItemWithFileNumber(s->references.includedFileNumber)->name),
             s->outOnLine);
     }
 }
@@ -2200,7 +2200,7 @@ int itIsSymbolToPushOlReferences(ReferenceItem *referenceItem,
                                  int checkSelectedFlag) {
     for (SymbolsMenu *m=rstack->symbolsMenu; m!=NULL; m=m->next) {
         if ((m->selected || checkSelectedFlag==DO_NOT_CHECK_IF_SELECTED)
-            && m->references.vApplClass == referenceItem->vApplClass
+            && m->references.includedFileNumber == referenceItem->includedFileNumber
             && isSameCxSymbol(referenceItem, &m->references))
         {
             *menu = m;
@@ -2253,7 +2253,7 @@ static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceItem *referenceItem) {
     if (strcmp(menu->references.linkName,referenceItem->linkName)==0) {
         ooBits |= OOC_PROFILE_EQUAL;
     }
-    if (referenceItem->vApplClass == menu->references.vApplClass)
+    if (referenceItem->includedFileNumber == menu->references.includedFileNumber)
         ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
  fini:
     return ooBits;
@@ -2286,7 +2286,7 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
     Position defpos = noPosition;
     Usage defusage = UsageNone;
 
-    log_trace("ooBits for '%s'", getFileItemWithFileNumber(references->vApplClass)->name);
+    log_trace("ooBits for '%s'", getFileItemWithFileNumber(references->includedFileNumber)->name);
 
     for (SymbolsMenu *menu=rstack->hkSelectedSym; menu!=NULL; menu=menu->next) {
         if (olcxIsSameCxSymbol(references, &menu->references)) {
@@ -2301,7 +2301,7 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
             int vlev = 0;
             if (vlevel==0 || ABS(vlevel)>ABS(vlev))
                 vlevel = vlev;
-            log_trace("ooBits for %s <-> %s %o %o", getFileItemWithFileNumber(menu->references.vApplClass)->name,
+            log_trace("ooBits for %s <-> %s %o %o", getFileItemWithFileNumber(menu->references.includedFileNumber)->name,
                       references->linkName, oo, ooBits);
         }
     }

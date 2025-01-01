@@ -22,7 +22,6 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 ** TODO Handle protocol errors etc. using longjump
 ** DONE LSP communication structure
 ** DONE LSP 'initialize', 'exit', 'not found'
-* DOING Rename vApplClass - but to what? what is it?
 * DOING Extract variable
 ** TRY Place the variable declaration in the closest block (need to figure out how ProgramGraphs work...)
 ** TRY Figure out variable type (hard, none of the other extracts seems to do this...)
@@ -99,6 +98,8 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 **** REQUIRES macroArgumentsToString() to work with LexemBuffer instead of LexInput's pointers
 *** TRY to use LexemBuffer in getLexPosition()
 ** TRY to replace putLexXXXWithPointer() in yylex.c
+* DONE Rename vApplClass - but to what? what is it?
+  It's the fileNumber for the include file, if the symbol type is CppInclude
 * DONE Always pass Position by-value
 * DONE An option that creates a list of commands given to c-xref so that they can be replayed exactly later
 * DONE Turn lexembuffer functions into methods on the buffer

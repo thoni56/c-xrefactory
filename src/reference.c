@@ -7,6 +7,7 @@
 #include "log.h"
 #include "misc.h"
 #include "options.h"
+#include "type.h"
 #include "usage.h"
 
 
@@ -100,23 +101,26 @@ Reference *addReferenceToList(Reference **listP, Reference *ref) {
     return addReferenceWithoutUsageCheck(listP, ref);
 }
 
-static void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass,
-                       Type symType, Storage storage, Scope scope,
-                       Visibility visibility) {
+static void fillReferenceItem(ReferenceItem *referencesItem, char *name,
+                              Type symType, Storage storage, Scope scope,
+                              Visibility visibility, int includedFileNumber) {
     referencesItem->linkName = name;
-    referencesItem->vApplClass = vApplClass;
     referencesItem->type = symType;
     referencesItem->storage = storage;
     referencesItem->scope = scope;
     referencesItem->visibility = visibility;
+    if (includedFileNumber != NO_FILE_NUMBER)
+        assert(symType == TypeCppInclude);
+    referencesItem->includedFileNumber = includedFileNumber;
+
     referencesItem->references = NULL;
     referencesItem->next = NULL;
 }
 
-ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,
-                                Visibility visibility) {
+ReferenceItem makeReferenceItem(char *name, Type type, Storage storage, Scope scope,
+                                Visibility visibility, int includedFileNumber) {
     ReferenceItem item;
-    fillReferenceItem(&item, name, vApplClass, type, storage, scope, visibility);
+    fillReferenceItem(&item, name, type, storage, scope, visibility, includedFileNumber);
     return item;
 }
 

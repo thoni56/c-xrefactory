@@ -91,7 +91,7 @@ static char *olcxStringCopy(char *string) {
     return copy;
 }
 
-SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int vApplClass, Position defpos,
+SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int includedFileNumber, Position defpos,
                                  int defusage, int selected, int visible, unsigned ooBits, int olusage,
                                  int vlevel) {
     SymbolsMenu   *symbolsMenu;
@@ -99,9 +99,8 @@ SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int vApplClass, Position
 
     allocatedNameCopy = olcxStringCopy(symbol->linkName);
 
-    ReferenceItem refItem = makeReferenceItem(allocatedNameCopy, vApplClass,
-                                              symbol->type, symbol->storage, symbol->scope,
-                                              symbol->visibility);
+    ReferenceItem refItem = makeReferenceItem(allocatedNameCopy, symbol->type, symbol->storage, symbol->scope,
+                                              symbol->visibility, includedFileNumber);
 
     symbolsMenu = malloc(sizeof(SymbolsMenu));
     fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage, vlevel, defusage, defpos);
@@ -116,9 +115,9 @@ static bool referenceItemIsLess(ReferenceItem *s1, ReferenceItem *s2) {
         return true;
     else if (cmp > 0)
         return false;
-    if (s1->vApplClass < s2->vApplClass)
+    if (s1->includedFileNumber < s2->includedFileNumber)
         return true;
-    else if (s1->vApplClass > s2->vApplClass)
+    else if (s1->includedFileNumber > s2->includedFileNumber)
         return false;
     if (s1->type < s2->type)
         return true;
@@ -150,7 +149,7 @@ SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *symbol
     new = *place;
     if (*place==NULL || olSymbolMenuIsLess(&dummyMenu, *place)) {
         assert(symbol);
-        new = olCreateNewMenuItem(symbol, symbol->vApplClass, defpos, defusage,
+        new = olCreateNewMenuItem(symbol, symbol->includedFileNumber, defpos, defusage,
                                 selected, visible, ooBits,
                                 olusage, vlevel);
         LIST_CONS(new, *place);

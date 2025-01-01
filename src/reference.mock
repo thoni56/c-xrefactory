@@ -19,10 +19,10 @@ Reference makeReference(Position position, Usage usage, Reference *next) {
     return reference;
 }
 
-void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass, Type symType, Storage storage,
-                       Scope scope, Visibility visibility) {
+void fillReferenceItem(ReferenceItem *referencesItem, char *name, int includedFileNumber, Type symType,
+                       Storage storage, Scope scope, Visibility visibility) {
     referencesItem->linkName = name;
-    referencesItem->vApplClass = vApplClass;
+    referencesItem->includedFileNumber = includedFileNumber;
     referencesItem->references = NULL;
     referencesItem->next = NULL;
     referencesItem->type = symType;
@@ -31,10 +31,10 @@ void fillReferenceItem(ReferenceItem *referencesItem, char *name, int vApplClass
     referencesItem->visibility = visibility;
 }
 
-ReferenceItem makeReferenceItem(char *name, int vApplClass, Type type, Storage storage, Scope scope,
-                                Visibility visibility) {
+ReferenceItem makeReferenceItem(char *name, Type type, Storage storage, Scope scope, Visibility visibility,
+                                int includedFileNumber) {
     ReferenceItem item;
-    fillReferenceItem(&item, name, vApplClass, type, storage, scope, visibility);
+    fillReferenceItem(&item, name, includedFileNumber, type, storage, scope, visibility);
     return item;
 }
 

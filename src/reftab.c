@@ -15,12 +15,12 @@ static bool equalReferenceItems(ReferenceItem *e1, ReferenceItem *e2) {
     return e1->type==e2->type
         && e1->storage==e2->storage
         && e1->visibility==e2->visibility
-        && e1->vApplClass==e2->vApplClass
+        && e1->includedFileNumber==e2->includedFileNumber
         && strcmp(e1->linkName, e2->linkName)==0;
 }
 
 
-#define HASH_FUN(element) (hashFun(element->linkName) + (unsigned)element->vApplClass)
+#define HASH_FUN(element) (hashFun(element->linkName) + (unsigned)element->includedFileNumber)
 #define HASH_ELEM_EQUAL(e1,e2) equalReferenceItems(e1, e2)
 
 #include "hashlist.tc"

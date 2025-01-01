@@ -97,9 +97,8 @@ static int scheduleFileUsingTheMacro(void) {
 
     assert(olstringInMacroBody);
     tmpc = NULL;
-    ReferenceItem references = makeReferenceItem(olstringInMacroBody,
-                                                 NO_FILE_NUMBER, TypeMacro, StorageExtern,
-                                                 GlobalScope, GlobalVisibility);
+    ReferenceItem references = makeReferenceItem(olstringInMacroBody, TypeMacro, StorageExtern,
+                                                 GlobalScope, GlobalVisibility, NO_FILE_NUMBER);
 
     SymbolsMenu menu = makeSymbolsMenu(references, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);
     if (sessionData.browserStack.top==NULL) {

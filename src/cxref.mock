@@ -54,15 +54,15 @@ void gotoOnlineCxref(Position pos, Usage usage, char *suffix) {
     mock(position, usage, suffix);
 }
 
-Reference *addNewCxReference(Symbol *symbol, Position *pos, Usage usage_arg, int vApplClass) {
+Reference *addNewCxReference(Symbol *symbol, Position *pos, Usage usage_arg, int includedFileNumber) {
     Usage *usage = &usage_arg;
-    return (Reference *) mock(symbol, pos, usage, vApplClass);
+    return (Reference *) mock(symbol, pos, usage, includedFileNumber);
 }
 
-Reference *addCxReference(Symbol *symbol, Position pos, Usage usage, int vApplClass) {
+Reference *addCxReference(Symbol *symbol, Position pos, Usage usage, int includedFileNumber) {
     char *symbol_name = symbol->name; /* "meta" parameter to be able to access field */
     Position *position = &pos;
-    return (Reference *) mock(symbol, symbol_name, position, usage, vApplClass);
+    return (Reference *) mock(symbol, symbol_name, position, usage, includedFileNumber);
 }
 
 void addTrivialCxReference(char *name, int symType, int storage, Position pos, Usage usage) {

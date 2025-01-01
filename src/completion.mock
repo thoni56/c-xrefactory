@@ -9,8 +9,9 @@ void freeCompletions(Completion *completions) {
 
 Completion *completionListPrepend(Completion *completions, char *name, char *fullName, Symbol *symbol,
                                   ReferenceItem *referenceItem, Reference *reference,
-                                  Type type, int vApplClass) {
-    return (Completion *)mock(name, fullName, symbol, referenceItem, reference, type, vApplClass, completions);
+                                  Type type, int includedFileNumber) {
+    return (Completion *)mock(name, fullName, symbol, referenceItem, reference, type, includedFileNumber,
+                              completions);
 }
 
 void tagSearchCompactShortResults(void) {
