@@ -107,18 +107,35 @@ EditorBuffer *deregisterEditorBuffer(char *fileName) {
     if (!editorBufferIsMember(list, &foundIndex, NULL))
         return NULL;
 
-    EditorBuffer *found_buffer = editorBufferTable.tab[foundIndex]->buffer;
-    if (strcmp(found_buffer->fileName, fileName) == 0) {
-        EditorBufferList *list_element = editorBufferTable.tab[foundIndex];
-        editorBufferTable.tab[foundIndex] = list_element->next;
-        free(list_element);
+    EditorBufferList **elementP = &editorBufferTable.tab[foundIndex];
+    while(*elementP != NULL && strcmp((*elementP)->buffer->fileName, fileName) != 0) {
+        elementP = &(*elementP)->next;
+    }
+
+    if (*elementP != NULL) {
+        EditorBuffer *found_buffer = (*elementP)->buffer;
+        EditorBufferList *element = *elementP;
+        *elementP = element->next;
+        free(element);
         return found_buffer;
     } else {
-        /* Assume it is the second in the list */
-        EditorBuffer *found_buffer = editorBufferTable.tab[foundIndex]->next->buffer;
-        EditorBufferList *list_element = editorBufferTable.tab[foundIndex]->next;
-        editorBufferTable.tab[foundIndex]->next = list_element->next;
-        free(list_element);
-        return found_buffer;
+        return NULL;
     }
+}
+
+/**
+ * @brief Retrievs an editor buffer in the table and returns it, or NULL
+ *
+ * @params fileName - the filename in the buffer to find
+ *
+ */
+EditorBuffer *getEditorBufferForFile(char *fileName) {
+    EditorBuffer buffer = {.fileName = fileName};
+    EditorBufferList element = {.buffer = &buffer, .next = NULL};
+    EditorBufferList *foundElement;
+
+    if (editorBufferIsMember(&element, NULL, &foundElement)) {
+        return foundElement->buffer;
+    }
+    return NULL;
 }

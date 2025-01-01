@@ -106,10 +106,10 @@ Ensure(EditorBufferTable, can_register_and_deregister_a_single_buffer) {
     assert_that(editorBufferTable.tab[registered_index], is_null);
 }
 
-static int createTwoClashingEditorBuffers(char *first_filename, char *second_filename) {
+static void givenThreeClashingEditorBuffers(char *first_filename, char *second_filename, char *third_filename) {
     /* Inject a hashFun that we can control */
     injectHashFun(injectedHashFun);
-    /* ... and let it return the same hash as for the first file name */
+    /* ... and let it return the same hash for all file names */
     always_expect(injectedHashFun, will_return(hashFun(first_filename)));
 
     EditorBuffer *buffer1 = createEditorBufferFor(first_filename);
@@ -118,33 +118,65 @@ static int createTwoClashingEditorBuffers(char *first_filename, char *second_fil
     EditorBuffer *buffer2 = createEditorBufferFor(second_filename);
     int index2 = registerEditorBuffer(buffer2);
 
-    /* Now we have two buffers at the same index, deregister the first one */
+    EditorBuffer *buffer3 = createEditorBufferFor(third_filename);
+    int index3 = registerEditorBuffer(buffer3);
+
     assert_that(index2, is_equal_to(index1));
-    return index1;
+    assert_that(index3, is_equal_to(index2));
 }
 
 Ensure(EditorBufferTable, can_deregister_first_buffer_with_hash_clash) {
     char *first_filename = "first_file.c";
     char *second_filename = "second_file.c";
+    char *third_filename = "third_file.c";
 
-    int index = createTwoClashingEditorBuffers(first_filename, second_filename);
+    givenThreeClashingEditorBuffers(first_filename, second_filename, third_filename);
 
     EditorBuffer *deregistered_buffer = deregisterEditorBuffer(first_filename);
 
     assert_that(deregistered_buffer->fileName, is_equal_to_string(first_filename));
-    assert_that(editorBufferTable.tab[index]->buffer->fileName, is_equal_to_string(second_filename));
-    assert_that(editorBufferTable.tab[index]->next, is_null);
+    assert_that(getEditorBufferForFile(first_filename), is_null);
+
+    EditorBuffer *buffer2 = getEditorBufferForFile(second_filename);
+    assert_that(buffer2, is_not_null);
+    assert_that(buffer2->fileName, is_equal_to_string(second_filename));
+
+    EditorBuffer *buffer3 = getEditorBufferForFile(third_filename);
+    assert_that(buffer3, is_not_null);
+    assert_that(buffer3->fileName, is_equal_to_string(third_filename));
 }
 
 Ensure(EditorBufferTable, can_deregister_second_buffer_with_hash_clash) {
     char *first_filename = "first_file.c";
     char *second_filename = "second_file.c";
+    char *third_filename = "third_file.c";
 
-    int index = createTwoClashingEditorBuffers(first_filename, second_filename);
+    givenThreeClashingEditorBuffers(first_filename, second_filename, third_filename);
 
     EditorBuffer *deregistered_buffer = deregisterEditorBuffer(second_filename);
-
     assert_that(deregistered_buffer->fileName, is_equal_to_string(second_filename));
-    assert_that(editorBufferTable.tab[index]->buffer->fileName, is_equal_to_string(first_filename));
-    assert_that(editorBufferTable.tab[index]->next, is_null);
+
+    EditorBuffer *buffer1 = getEditorBufferForFile(first_filename);
+    assert_that(buffer1, is_not_null);
+    assert_that(buffer1->fileName, is_equal_to_string(first_filename));
+
+    assert_that(getEditorBufferForFile(second_filename), is_null);
+
+    EditorBuffer *buffer3 = getEditorBufferForFile(third_filename);
+    assert_that(buffer3, is_not_null);
+    assert_that(buffer3->fileName, is_equal_to_string(third_filename));
+}
+
+Ensure(EditorBufferTable, can_deregister_third_buffer_with_hash_clash) {
+    char *first_filename = "first_file.c";
+    char *second_filename = "second_file.c";
+    char *third_filename = "third_file.c";
+
+    givenThreeClashingEditorBuffers(first_filename, second_filename, third_filename);
+
+    EditorBuffer *deregistered_buffer = deregisterEditorBuffer(third_filename);
+
+    assert_that(deregistered_buffer->fileName, is_equal_to_string(third_filename));
+    assert_that(getEditorBufferForFile(first_filename), is_not_null);
+    assert_that(getEditorBufferForFile(second_filename), is_not_null);
 }
