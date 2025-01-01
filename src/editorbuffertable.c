@@ -91,8 +91,11 @@ int registerEditorBuffer(EditorBuffer *buffer) {
 /**
  * @brief Deregisters a buffer from the editor buffer table
  *
- * @param fileName - the name of the file it was loaded from
- * @returns the EditorBuffer that was deregistered or NULL
+ * Frees the necessary list element but returns the item itself to the
+ * caller to free.
+ *
+ * @param fileName - the name of the file it was loaded from.
+ * @returns the EditorBuffer that was deregistered or NULL if not found.
  */
 EditorBuffer *deregisterEditorBuffer(char *fileName) {
     EditorBuffer *buffer = malloc(sizeof(EditorBuffer));
@@ -104,10 +107,18 @@ EditorBuffer *deregisterEditorBuffer(char *fileName) {
     if (!editorBufferIsMember(list, &foundIndex, NULL))
         return NULL;
 
-    /* For now assume only item at index */
-    assert(editorBufferTable.tab[foundIndex]->next == NULL);
     EditorBuffer *found_buffer = editorBufferTable.tab[foundIndex]->buffer;
-    free(editorBufferTable.tab[foundIndex]);
-    editorBufferTable.tab[foundIndex] = NULL;
-    return found_buffer;
+    if (strcmp(found_buffer->fileName, fileName) == 0) {
+        EditorBufferList *list_element = editorBufferTable.tab[foundIndex];
+        editorBufferTable.tab[foundIndex] = list_element->next;
+        free(list_element);
+        return found_buffer;
+    } else {
+        /* Assume it is the second in the list */
+        EditorBuffer *found_buffer = editorBufferTable.tab[foundIndex]->next->buffer;
+        EditorBufferList *list_element = editorBufferTable.tab[foundIndex]->next;
+        editorBufferTable.tab[foundIndex]->next = list_element->next;
+        free(list_element);
+        return found_buffer;
+    }
 }
