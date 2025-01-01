@@ -16,12 +16,13 @@ typedef struct {
 } EditorBufferAllocationData;
 
 typedef struct editorBuffer {
-    char                      *fileName;    /* In case the content was preloaded this
-                                               is the name on disc for the content else
-                                               needs to point to the same string as
-                                               'realFileName' */
+    char                      *fileName;
     int                        fileNumber;
-    char                      *realFileName;
+    char                      *loadedFromFile;   /* In case the content was preloaded
+                                               this is the name on disc for the content
+                                               else needs to point to the same string as
+                                               'realFileName'. TODO should be NULL in
+                                               that case. */
     time_t                     modificationTime;
     bool                       textLoaded : 1;
     bool                       modified : 1;

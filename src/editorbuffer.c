@@ -14,23 +14,23 @@
 #include "undo.h"
 
 
-void fillEmptyEditorBuffer(EditorBuffer *buffer, char *fileName, int fileNumber, char *realFileName) {
+void fillEmptyEditorBuffer(EditorBuffer *buffer, char *realFileName, int fileNumber, char *loadedFromFile) {
     buffer->allocation = (EditorBufferAllocationData){
         .bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
         .allocatedBlock = NULL, .allocatedIndex = 0,
         .allocatedSize = 0};
     *buffer = (EditorBuffer){
-        .fileName = fileName, .fileNumber = fileNumber, .realFileName = realFileName,
+        .fileName = realFileName, .fileNumber = fileNumber, .loadedFromFile = loadedFromFile,
         .markers = NULL, .allocation = buffer->allocation};
     buffer->modificationTime = 0;
     buffer->size = 0;
     buffer->textLoaded = false;
 }
 
-EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *realFileName, time_t modificationTime,
+EditorBuffer *newEditorBuffer(char *realFileName, int fileNumber, char *loadedFromFile, time_t modificationTime,
                               size_t size) {
     EditorBuffer *editorBuffer = malloc(sizeof(EditorBuffer));
-    fillEmptyEditorBuffer(editorBuffer, fileName, fileNumber, realFileName);
+    fillEmptyEditorBuffer(editorBuffer, realFileName, fileNumber, loadedFromFile);
     editorBuffer->modificationTime = modificationTime;
     editorBuffer->size = size;
     return editorBuffer;
@@ -51,10 +51,10 @@ static void freeMarkersInEditorBuffer(EditorBuffer *buffer) {
 void freeEditorBuffer(EditorBuffer *buffer) {
     if (buffer == NULL)
         return;
-    log_trace("freeing buffer %s==%s", buffer->fileName, buffer->realFileName);
-    if (buffer->realFileName != buffer->fileName) {
+    log_trace("freeing buffer %s==%s", buffer->fileName, buffer->loadedFromFile);
+    if (buffer->loadedFromFile != buffer->fileName) {
         /* If the two are not pointing to the same string... */
-        free(buffer->realFileName);
+        free(buffer->loadedFromFile);
     }
     free(buffer->fileName);
 
@@ -70,34 +70,34 @@ void freeEditorBuffer(EditorBuffer *buffer) {
     free(buffer);
 }
 
-EditorBuffer *createNewEditorBuffer(char *fileName, char *realFileName, time_t modificationTime,
+EditorBuffer *createNewEditorBuffer(char *realFileName, char *loadedFromFile, time_t modificationTime,
                                     size_t size) {
-    char *normalizedFileName, *normalizedRealFileName;
+    char *normalizedRealFileName, *normalizedLoadedFromFile;
     EditorBuffer *buffer;
     EditorBufferList *bufferList;
 
-    normalizedFileName = strdup(normalizeFileName_static(fileName, cwd));
+    normalizedRealFileName = strdup(normalizeFileName_static(realFileName, cwd));
 
     /* This is really a check if the file was preloaded from the
      * editor and not read from the original file */
-    normalizedRealFileName = normalizeFileName_static(realFileName, cwd);
-    if (strcmp(normalizedRealFileName, normalizedFileName)==0) {
-        normalizedRealFileName = normalizedFileName;
+    normalizedLoadedFromFile = normalizeFileName_static(loadedFromFile, cwd);
+    if (strcmp(normalizedLoadedFromFile, normalizedRealFileName)==0) {
+        normalizedLoadedFromFile = normalizedRealFileName;
     } else {
-        normalizedRealFileName = strdup(normalizedRealFileName);
+        normalizedLoadedFromFile = strdup(normalizedLoadedFromFile);
     }
 
-    buffer = newEditorBuffer(normalizedFileName, 0, normalizedRealFileName, modificationTime, size);
+    buffer = newEditorBuffer(normalizedRealFileName, 0, normalizedLoadedFromFile, modificationTime, size);
 
     bufferList = malloc(sizeof(EditorBufferList));
     *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
-    log_trace("creating buffer '%s' for '%s'", buffer->fileName, buffer->realFileName);
+    log_trace("creating buffer '%s' for '%s'", buffer->fileName, buffer->loadedFromFile);
 
     addEditorBuffer(bufferList);
 
     // set fileNumber last, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!
-    buffer->fileNumber = addFileNameToFileTable(normalizedFileName);
+    buffer->fileNumber = addFileNameToFileTable(normalizedRealFileName);
 
     return buffer;
 }
@@ -133,7 +133,7 @@ EditorBuffer *findEditorBufferForFile(char *name) {
                                                      fileSize(name));
             }
         }
-        if (editorBuffer != NULL && !isDirectory(editorBuffer->realFileName)) {
+        if (editorBuffer != NULL && !isDirectory(editorBuffer->loadedFromFile)) {
             allocateNewEditorBufferTextSpace(editorBuffer, fileSize(name));
             loadFileIntoEditorBuffer(editorBuffer, fileModificationTime(name), fileSize(name));
         } else {
@@ -144,15 +144,15 @@ EditorBuffer *findEditorBufferForFile(char *name) {
 }
 
 // Only used from Options for preload
-EditorBuffer *openEditorBufferFromPreload(char *name, char *fileName) {
+EditorBuffer *openEditorBufferFromPreload(char *realFileName, char *loadedFromFile) {
     EditorBuffer  *buffer;
 
-    buffer = getEditorBufferFor(name);
+    buffer = getEditorBufferFor(realFileName);
     if (buffer != NULL) {
         return buffer;
     }
-    buffer = createNewEditorBuffer(name, fileName, fileModificationTime(fileName),
-                                   fileSize(fileName));
+    buffer = createNewEditorBuffer(realFileName, loadedFromFile, fileModificationTime(loadedFromFile),
+                                   fileSize(loadedFromFile));
     return buffer;
 }
 

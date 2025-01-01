@@ -69,10 +69,6 @@ void clearEditorBuffer(int index) {
     editorBufferTable.tab[index] = NULL;
 }
 
-void editorBufferTableEntryPop(int index) {
-    setEditorBuffer(index, editorBufferTable.tab[index]->next);
-}
-
 /**
  * @brief Registers an EditorBuffer in the editor buffer table
  *
@@ -125,6 +121,9 @@ EditorBuffer *deregisterEditorBuffer(char *fileName) {
 
 /**
  * @brief Retrievs an editor buffer in the table and returns it, or NULL
+ *
+ * The editor buffer will remain in the table and may not be deleted by
+ * the caller.
  *
  * @params fileName - the filename in the buffer to find
  *

@@ -201,11 +201,11 @@ void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, siz
     assert(text != NULL);
 
     int bufferSize = buffer->allocation.bufferSize;
-    log_trace(":loading file %s==%s size %d", buffer->realFileName, buffer->fileName, bufferSize);
+    log_trace(":loading file %s==%s size %d", buffer->loadedFromFile, buffer->fileName, bufferSize);
 
-    FILE *file = openFile(buffer->realFileName, "r");
+    FILE *file = openFile(buffer->loadedFromFile, "r");
     if (file == NULL) {
-        FATAL_ERROR(ERR_CANT_OPEN, buffer->realFileName, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_CANT_OPEN, buffer->loadedFromFile, XREF_EXIT_ERR);
     }
 
     int size = bufferSize;
@@ -222,7 +222,7 @@ void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, siz
         buffer->allocation.bufferSize -= size;
         if (size < 0) {
             char tmpBuffer[TMP_BUFF_SIZE];
-            sprintf(tmpBuffer, "File %s: read %d chars of %d", buffer->realFileName, bufferSize - size,
+            sprintf(tmpBuffer, "File %s: read %d chars of %d", buffer->loadedFromFile, bufferSize - size,
                     bufferSize);
             editorError(ERR_INTERNAL, tmpBuffer);
         }
@@ -437,12 +437,12 @@ void loadAllOpenedEditorBuffers(void) {
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBuffer(i); l != NULL; l = l->next) {
             if (!l->buffer->textLoaded) {
-                if (fileExists(l->buffer->realFileName)) {
-                    int size = fileSize(l->buffer->realFileName);
+                if (fileExists(l->buffer->loadedFromFile)) {
+                    int size = fileSize(l->buffer->loadedFromFile);
                     allocateNewEditorBufferTextSpace(l->buffer, size);
                     loadFileIntoEditorBuffer(l->buffer,
-                                             fileModificationTime(l->buffer->realFileName), size);
-                    log_trace("preloading %s into %s", l->buffer->realFileName, l->buffer->fileName);
+                                             fileModificationTime(l->buffer->loadedFromFile), size);
+                    log_trace("preloading %s into %s", l->buffer->loadedFromFile, l->buffer->fileName);
                 }
             }
         }
@@ -1031,7 +1031,7 @@ int editorMapOnNonExistantFiles(char *dirname,
 }
 
 static void closeEditorBufferForListMember(EditorBufferList *member, int index) {
-    log_trace("closing buffer %s:%s", member->buffer->fileName, member->buffer->realFileName);
+    log_trace("closing buffer %s:%s", member->buffer->fileName, member->buffer->loadedFromFile);
 
     EditorBufferList *l;
     for (l = getEditorBuffer(index); l != NULL; l = l->next)
@@ -1047,7 +1047,7 @@ static void closeEditorBufferForListMember(EditorBufferList *member, int index) 
 
 static bool bufferIsCloseable(EditorBuffer *buffer) {
     return buffer->textLoaded && buffer->markers==NULL
-        && buffer->fileName==buffer->realFileName  /* not -preloaded */
+        && buffer->fileName==buffer->loadedFromFile  /* not -preloaded */
         && ! buffer->modified;
 }
 
@@ -1072,7 +1072,7 @@ void closeAllEditorBuffersIfClosable(void) {
         for (EditorBufferList *list=getEditorBuffer(i); list!=NULL;) {
             EditorBufferList *next = list->next;
             log_trace("closable %d for %s(%d) %s(%d)", bufferIsCloseable(list->buffer), list->buffer->fileName,
-                      list->buffer->fileName, list->buffer->realFileName, list->buffer->realFileName);
+                      list->buffer->fileName, list->buffer->loadedFromFile, list->buffer->loadedFromFile);
             if (bufferIsCloseable(list->buffer))
                 closeEditorBufferForListMember(list, i);
             list = next;
