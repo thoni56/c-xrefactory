@@ -43,3 +43,15 @@ void editorBufferTableEntryPop(int index) {
 void clearEditorBuffer(int index) {
     mock(index);
 }
+
+int registerEditorBuffer(EditorBuffer *buffer) {
+    return mock(buffer);
+}
+
+EditorBuffer *deregisterEditorBuffer(char *fileName) {
+    return (EditorBuffer*)mock(fileName);
+}
+
+EditorBuffer *getEditorBufferForFile(char *fileName) {
+    return (EditorBuffer*)mock(fileName);
+}
