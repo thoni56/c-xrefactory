@@ -334,7 +334,7 @@ void replaceStringInEditorBuffer(EditorBuffer *buffer, int offset, int deleteSiz
     setEditorBufferModified(buffer);
 }
 
-void moveBlockInEditorBuffer(EditorMarker *destinationMarker, EditorMarker *sourceMarker, int size,
+void moveBlockInEditorBuffer(EditorMarker *sourceMarker, EditorMarker *destinationMarker, int size,
                              EditorUndo **undo) {
     assert(size>=0);
     if (destinationMarker->buffer == sourceMarker->buffer

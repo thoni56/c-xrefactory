@@ -361,7 +361,7 @@ static void editorApplyUndos(EditorUndo *undos, EditorUndo *until, EditorUndo **
                 ppcGotoMarker(m1);
                 ppcValueRecord(PPC_REFACTORING_CUT_BLOCK, uu->u.moveBlock.size, "");
             }
-            moveBlockInEditorBuffer(m2, m1, uu->u.moveBlock.size, undoundo);
+            moveBlockInEditorBuffer(m1, m2, uu->u.moveBlock.size, undoundo);
             if (gen == GEN_FULL_OUTPUT) {
                 ppcGotoMarker(m1);
                 ppcGenRecord(PPC_REFACTORING_PASTE_BLOCK, "");
@@ -1472,14 +1472,14 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
 
     size = mend->offset - mstart->offset;
     if (check == NO_CHECKS) {
-        moveBlockInEditorBuffer(target, mstart, size, &editorUndo);
+        moveBlockInEditorBuffer(mstart, target, size, &editorUndo);
         //removeModifier(point, limitIndex, "static");
     } else {
         assert(sessionData.browserStack.top != NULL && sessionData.browserStack.top->hkSelectedSym != NULL);
         //theMethod = &sessionData.browserStack.top->hkSelectedSym->references;
         //pushAllReferencesOfMethod(point, "-olallchecks");
         //createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
-        moveBlockInEditorBuffer(target, mstart, size, &editorUndo);
+        moveBlockInEditorBuffer(mstart, target, size, &editorUndo);
         //changeAccessModifier(point, limitIndex, "public");
         //pushAllReferencesOfMethod(point, "-olallchecks");
         //createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);

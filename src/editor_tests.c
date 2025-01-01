@@ -154,16 +154,22 @@ Ensure(Editor, can_allocate_text_space_in_buffer) {
     assert_that(buffer->allocation.bufferSize, is_equal_to(10));
 }
 
-xEnsure(Editor, can_move_block_in_editor_buffer) {
+Ensure(Editor, can_move_block_in_editor_buffer) {
     char *text = strdup("this is some text");
-    EditorBuffer *buffer = newEditorBuffer("file", 12, "file", 0, strlen(text)+1);
+    int size = strlen(text)+1;
+    EditorBuffer *buffer = newEditorBuffer("file", 12, "file", 0, size);
+    allocateNewEditorBufferTextSpace(buffer, size);
+    strcpy(buffer->allocation.text, text);
 
-    EditorMarker *sourceMarker = newEditorMarker(buffer, 13); /* Start of 'text' */
-    EditorMarker *destinationMarker = newEditorMarker(buffer, 8); /* Start of 'some' */
+    EditorMarker *sourceMarker = newEditorMarker(buffer, 12); /* Space before 'text' */
+    EditorMarker *destinationMarker = newEditorMarker(buffer, 7); /* Space before 'some' */
 
     EditorUndo *undo = NULL;
 
-    moveBlockInEditorBuffer(destinationMarker, sourceMarker, 4, &undo);
+    always_expect(setEditorBufferModified);
+    expect(newUndoMove);
+
+    moveBlockInEditorBuffer(sourceMarker, destinationMarker, 5, &undo);
 
     assert_that(buffer->allocation.text, is_equal_to_string("this is text some"));
 }

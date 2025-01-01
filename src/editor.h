@@ -39,7 +39,7 @@ typedef struct editorRegionList {
 // EditorBuffer functions...
 extern void replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize, char *str,
                                         int strlength, EditorUndo **undo);
-extern void moveBlockInEditorBuffer(EditorMarker *dest, EditorMarker *src, int size, EditorUndo **undo);
+extern void moveBlockInEditorBuffer(EditorMarker *src, EditorMarker *dest, int size, EditorUndo **undo);
 extern void dumpEditorBuffer(EditorBuffer *buffer);
 extern void dumpEditorBuffers(void);
 extern void quasiSaveModifiedEditorBuffers(void);

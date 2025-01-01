@@ -67,7 +67,7 @@ void replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize, 
   mock(buff, position, delsize, str, strlength, undo);
 }
 
-void moveBlockInEditorBuffer(EditorMarker *dest, EditorMarker *src, int size, EditorUndo **undo) {
+void moveBlockInEditorBuffer(EditorMarker *src, EditorMarker *dest, int size, EditorUndo **undo) {
   mock(dest, src, size, undo);
 }
 
