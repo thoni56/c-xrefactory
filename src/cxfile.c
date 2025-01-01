@@ -48,12 +48,12 @@ typedef enum {
     CXFI_VERSION               = 'v',
     CXFI_KEY_LIST              = '@',
     CXFI_REMARK                = '#',
+    CXFI_INCLUDEFILENUMBER     = 'd',     /* was dole = down in slovac, for subclass, now include file number */
 
 // Now unused values that could be removed from the format
     CXFI_SOURCE_INDEX          = 'o',     /* source index for java classes */
     CXFI_ACCESS_BITS           = 'a',     /* java access bit */
     CXFI_REQUIRED_ACCESS       = 'A',     /* java reference required accessibility index */
-    CXFI_SUBCLASS              = 'd',     /* dole = down in slovac */
     CXFI_SUPERCLASS            = 'h',     /* hore = up in slovac */
     CXFI_CLASS_NAME            = '+',     /*               -> 'h' info    */
 } CxFieldTag;
@@ -83,7 +83,7 @@ static int generatedFieldKeyList[] = {
     CXFI_SYMBOL_INDEX,
     CXFI_REFERENCE,
     CXFI_SUPERCLASS,
-    CXFI_SUBCLASS,
+    CXFI_INCLUDEFILENUMBER,
     CXFI_COMMAND_LINE_ARGUMENT,
     CXFI_REFNUM,
     CXFI_ACCESS_BITS,
@@ -344,7 +344,7 @@ static void writeSymbolItem(void) {
     /* Then the reference info */
     ReferenceItem *r = lastOutgoingData.referenceItem;
     writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, r->type, "\n"); /* Why newline in the middle of all this? */
-    writeOptionalCompactRecord(CXFI_SUBCLASS, r->includedFileNumber, ""); /* TODO - not used, but are actually include file refence */
+    writeOptionalCompactRecord(CXFI_INCLUDEFILENUMBER, r->includedFileNumber, ""); /* TODO - not used, but are actually include file refence */
     writeOptionalCompactRecord(CXFI_SUPERCLASS, r->includedFileNumber, ""); /* TODO - not used anymore */
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, ""); /* TODO - not used anymore */
     writeOptionalCompactRecord(CXFI_STORAGE, r->storage, "");
@@ -745,13 +745,15 @@ static int scanSymbolName(CharacterBuffer *cb, char *id, int size) {
 }
 
 
-static void getSymbolTypeAndClasses(Type *symbolType, int *includedFileNumber) {
+static void getSymbolTypeAndClasses(Type *symbolType) {
     *symbolType = lastIncomingData.data[CXFI_SYMBOL_TYPE];
-
-    *includedFileNumber = fileNumberMapping[lastIncomingData.data[CXFI_SUBCLASS]];
-    assert(getFileItemWithFileNumber(*includedFileNumber) != NULL);
 }
 
+
+static void getIncludedFileNumber(int *includedFileNumber) {
+    *includedFileNumber = fileNumberMapping[lastIncomingData.data[CXFI_INCLUDEFILENUMBER]];
+    assert(getFileItemWithFileNumber(*includedFileNumber) != NULL);
+}
 
 
 static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
@@ -765,9 +767,8 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     char *id = lastIncomingData.cachedSymbolName;
     int len = scanSymbolName(cb, id, size);
 
-    int includedFileNumber;
     Type symbolType;
-    getSymbolTypeAndClasses(&symbolType, &includedFileNumber);
+    getSymbolTypeAndClasses(&symbolType);
     if (symbolType!=TypeCppInclude || strcmp(id, LINK_NAME_INCLUDE_REFS)!=0) {
         lastIncomingData.onLineReferencedSym = -1;
         return;
@@ -775,6 +776,9 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
 
     ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem;
     lastIncomingData.referenceItem = referenceItem;
+
+    int includedFileNumber;
+    getIncludedFileNumber(&includedFileNumber);
     *referenceItem = makeReferenceItem(id, symbolType, storage, GlobalScope, GlobalVisibility, includedFileNumber);
 
     ReferenceItem *foundReferenceItem;
@@ -846,11 +850,13 @@ static void scanFunction_SymbolName(int size,
     scanSymbolName(cb, id, size);
 
     Type symbolType;
-    int includedFileNumber;
-    getSymbolTypeAndClasses(&symbolType, &includedFileNumber);
+    getSymbolTypeAndClasses(&symbolType);
 
     ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem;
     lastIncomingData.referenceItem = referenceItem;
+
+    int includedFileNumber;
+    getIncludedFileNumber(&includedFileNumber);
     *referenceItem = makeReferenceItem(id, symbolType, storage, GlobalScope, GlobalVisibility, includedFileNumber);
 
     ReferenceItem *foundMemberP;
@@ -921,8 +927,8 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
     int col = lastIncomingData.data[CXFI_COLUMN_INDEX];
 
     Type symbolType;
-    int includedFileNumber;
-    getSymbolTypeAndClasses(&symbolType, &includedFileNumber);
+    getSymbolTypeAndClasses(&symbolType);
+
     log_trace("%d %d->%d %d", usage, file, fileNumberMapping[file], line);
 
     Position pos = makePosition(file, line, col);
@@ -1072,7 +1078,7 @@ static void scanCxFile(ScanFileFunctionStep scanFunctionTable[]) {
     lastIncomingData.onLineReferencedSym = -1;
     lastIncomingData.symbolToCheckForDeadness = -1;
     lastIncomingData.onLineRefMenuItem = NULL;
-    lastIncomingData.keyUsed[CXFI_SUBCLASS] = NO_FILE_NUMBER;
+    lastIncomingData.keyUsed[CXFI_INCLUDEFILENUMBER] = NO_FILE_NUMBER;
     lastIncomingData.keyUsed[CXFI_SUPERCLASS] = NO_FILE_NUMBER;
     fileNumberMapping[NO_FILE_NUMBER] = NO_FILE_NUMBER;
 
