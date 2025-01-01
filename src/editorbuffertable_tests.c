@@ -20,10 +20,15 @@ BeforeEach(EditorBufferTable) {
 }
 AfterEach(EditorBufferTable) {}
 
-static EditorBufferList *createEditorBufferListElementFor(char *fileName) {
+static EditorBuffer *createEditorBufferFor(char *fileName) {
     /* All parts need to be malloc'd so that they can be freed */
-    EditorBuffer     *buffer     = malloc(sizeof(EditorBuffer));
+    EditorBuffer *buffer = malloc(sizeof(EditorBuffer));
     *buffer = (EditorBuffer){.fileName = strdup(fileName)};
+    return buffer;
+}
+
+static EditorBufferList *createEditorBufferListElementFor(char *fileName) {
+    EditorBuffer *buffer = createEditorBufferFor(fileName);
     EditorBufferList *bufferList = malloc(sizeof(EditorBufferList));
     *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
     return bufferList;
@@ -89,8 +94,7 @@ Ensure(EditorBufferTable, can_add_editorbuffer_for_filename_with_same_hash) {
 
 Ensure(EditorBufferTable, can_register_and_deregister_a_single_buffer) {
     char *fileName = "file.c";
-    EditorBuffer *registered_buffer = malloc(sizeof(EditorBuffer));
-    *registered_buffer = (EditorBuffer){.fileName = strdup(fileName)};
+    EditorBuffer *registered_buffer = createEditorBufferFor(fileName);
 
     int registered_index = registerEditorBuffer(registered_buffer);
 
@@ -108,11 +112,11 @@ static int createTwoClashingEditorBuffers(char *first_filename, char *second_fil
     /* ... and let it return the same hash as for the first file name */
     always_expect(injectedHashFun, will_return(hashFun(first_filename)));
 
-    EditorBufferList *bufferList1 = createEditorBufferListElementFor(first_filename);
-    int               index1      = addEditorBuffer(bufferList1);
+    EditorBuffer *buffer1 = createEditorBufferFor(first_filename);
+    int index1 = registerEditorBuffer(buffer1);
 
-    EditorBufferList *bufferList2     = createEditorBufferListElementFor(second_filename);
-    int               index2          = addEditorBuffer(bufferList2);
+    EditorBuffer *buffer2 = createEditorBufferFor(second_filename);
+    int index2 = registerEditorBuffer(buffer2);
 
     /* Now we have two buffers at the same index, deregister the first one */
     assert_that(index2, is_equal_to(index1));
