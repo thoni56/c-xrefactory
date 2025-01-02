@@ -67,7 +67,9 @@ list:
 .PHONY: clean
 clean:
 	$(foreach dir,$(TESTS),\
-	$(MAKE) -C $(dir) clean ; \
+	if [ ! -f $(dir)/.suspended ]; then \
+		$(MAKE) -C $(dir) clean ; \
+	fi; \
     )
 
 # Be silent unless VERBOSE is set to something (VERBOSE=1)
