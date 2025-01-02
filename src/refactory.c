@@ -808,7 +808,7 @@ static void checkForMultipleReferencesInSamePlace(OlcxReferences *rstack, Symbol
     }
 }
 
-static void multipleOccurencesSafetyCheck(void) {
+static void multipleOccurrenciesSafetyCheck(void) {
     OlcxReferences *rstack;
 
     rstack = sessionData.browserStack.top;
@@ -818,47 +818,39 @@ static void multipleOccurencesSafetyCheck(void) {
 // -------------------------------------------- Rename
 
 static void renameAtPoint(EditorMarker *point) {
-    char              nameOnPoint[TMP_STRING_SIZE];
-    char             *symLinkName, *message;
-    EditorMarkerList *occs;
-    EditorUndo       *undoStartPoint, *redoTrack;
-    SymbolsMenu      *csym;
-
     if (refactoringOptions.renameTo == NULL) {
         errorMessage(ERR_ST, "this refactoring requires -renameto=<new name> option");
     }
 
     ensureReferencesAreUpdated(refactoringOptions.project);
 
-    message = STANDARD_C_SELECT_SYMBOLS_MESSAGE;
+    char *message = STANDARD_C_SELECT_SYMBOLS_MESSAGE;
 
-    // rename
+    char nameOnPoint[TMP_STRING_SIZE];
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
-    occs           = pushGetAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
-    csym           = sessionData.browserStack.top->hkSelectedSym;
-    symLinkName    = csym->references.linkName;
-    undoStartPoint = editorUndo;
 
-    multipleOccurencesSafetyCheck();
+    EditorMarkerList *occurrencies = pushGetAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
+    SymbolsMenu *symbolsMenu = sessionData.browserStack.top->hkSelectedSym;
+    char *symLinkName = symbolsMenu->references.linkName;
 
-    simpleRename(occs, point, nameOnPoint, symLinkName);
+    EditorUndo *undoStartPoint = editorUndo;
+
+    multipleOccurrenciesSafetyCheck();
+
+    simpleRename(occurrencies, point, nameOnPoint, symLinkName);
     //&dumpEditorBuffers();
-    redoTrack = NULL;
-    if (!makeSafetyCheckAndUndo(point, &occs, undoStartPoint, &redoTrack)) {
+    EditorUndo *redoTrack = NULL;
+    if (!makeSafetyCheckAndUndo(point, &occurrencies, undoStartPoint, &redoTrack)) {
         askForReallyContinueConfirmation();
     }
 
     editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
 
-    // finish where you have started
+    // finish where you started
     ppcGotoMarker(point);
 
-    freeEditorMarkersAndMarkerList(occs); // O(n^2)!
-
-    if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
-        ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class files of former package");
-    }
+    freeEditorMarkersAndMarkerList(occurrencies); // O(n^2)!
 }
 
 static void clearParamPositions(void) {
