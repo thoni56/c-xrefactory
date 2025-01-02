@@ -1,5 +1,8 @@
 #include "lexembuffer.h"
 
+#include <string.h>
+#include <ctype.h>
+
 #include "characterreader.h"
 #include "head.h"
 #include "commons.h"

@@ -1,10 +1,10 @@
 #include "commandlogger.h"
 
+#include <string.h>
+#include <stdlib.h>
+
 #include "constants.h"
 #include "fileio.h"
-
-#include <string.h>
-
 #include "options.h"
 
 

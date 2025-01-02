@@ -1,6 +1,9 @@
 #include "commons.h"
 
 #include <errno.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
 
 #include "globals.h"
 #include "options.h"

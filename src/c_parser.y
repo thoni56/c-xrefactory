@@ -14,24 +14,26 @@
 
 #include "c_parser.h"
 
-#include "globals.h"
-#include "options.h"
+#include <string.h>
+#include <ctype.h>
+
+#include "ast.h"
 #include "caching.h"
+#include "commons.h"
 #include "complete.h"
 #include "cxref.h"
 #include "extract.h"
 #include "filedescriptor.h"
 #include "filetable.h"
+#include "globals.h"
 #include "id.h"
 #include "list.h"
+#include "log.h"
+#include "options.h"
 #include "semact.h"
+#include "stackmemory.h"
 #include "symbol.h"
 #include "yylex.h"
-#include "stackmemory.h"
-
-#include "ast.h"
-
-#include "log.h"
 
 #ifndef YYDEBUG
 #define YYDEBUG 0

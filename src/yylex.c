@@ -1,6 +1,7 @@
 #include "yylex.h"
 
 #include <ctype.h>
+#include <string.h>
 
 #include "c_parser.h"
 #include "caching.h"

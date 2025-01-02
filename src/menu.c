@@ -1,5 +1,9 @@
 #include "menu.h"
 
+#include <stdlib.h>
+#include <string.h>
+
+#include "commons.h"
 #include "cxref.h"
 #include "globals.h"
 #include "list.h"

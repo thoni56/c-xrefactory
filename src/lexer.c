@@ -1,5 +1,8 @@
 #include "lexer.h"
 
+#include <ctype.h>
+#include <string.h>
+
 #include "globals.h"
 #include "lexem.h"
 #include "lexembuffer.h"

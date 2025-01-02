@@ -3,6 +3,9 @@
 #else
 #include <dirent.h>
 #endif
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
 
 #include "commons.h"
 #include "editor.h"

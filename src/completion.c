@@ -2,7 +2,9 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
+#include "commons.h"
 #include "filetable.h"
 #include "list.h"
 #include "options.h"

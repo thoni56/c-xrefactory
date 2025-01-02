@@ -1,5 +1,7 @@
 #include "extract.h"
 
+#include <string.h>
+
 #include "commons.h"
 #include "cxref.h"
 #include "filedescriptor.h"

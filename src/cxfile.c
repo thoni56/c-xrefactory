@@ -1,5 +1,8 @@
 #include "cxfile.h"
 
+#include <ctype.h>
+#include <string.h>
+
 #include "characterreader.h"
 #include "commons.h"
 #include "completion.h"

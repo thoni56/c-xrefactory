@@ -1,5 +1,8 @@
 #include "init.h"
 
+#include <string.h>
+#include <ctype.h>
+
 #include "globals.h"
 #include "options.h"
 #include "lexem.h"

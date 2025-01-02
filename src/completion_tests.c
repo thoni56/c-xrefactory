@@ -8,9 +8,9 @@
 
 #include "reference.mock"
 #include "symbol.mock"
-
 #include "filetable.mock"       /* For NO_FILE_NUMBER */
 #include "options.mock"         /* For 'options' */
+#include "commons.mock"
 
 
 Describe(Completion);

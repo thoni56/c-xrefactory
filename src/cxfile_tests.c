@@ -4,6 +4,8 @@
 #include <cgreen/constraint_syntax_helpers.h>
 #include <cgreen/mocks.h>
 
+#include <ctype.h>
+
 #include "cxfile.h"
 #include "log.h"
 

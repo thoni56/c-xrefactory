@@ -1,5 +1,8 @@
 #include "caching.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "commons.h"
 #include "globals.h"
 #include "memory.h"

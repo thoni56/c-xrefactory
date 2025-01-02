@@ -1,5 +1,9 @@
 #include "complete.h"
 
+#include <string.h>
+#include <ctype.h>
+
+#include "commons.h"
 #include "completion.h"
 #include "cxfile.h"
 #include "cxref.h"

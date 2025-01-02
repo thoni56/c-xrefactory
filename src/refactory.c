@@ -1,5 +1,9 @@
 #include "refactory.h"
 
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
 /* Main is currently needed for:
    mainTaskEntryInitialisations
    mainOpenOutputFile

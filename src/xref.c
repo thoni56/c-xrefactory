@@ -1,5 +1,8 @@
 #include "xref.h"
 
+#include <string.h>
+#include <stdlib.h>
+
 #include "caching.h"
 #include "commons.h"
 #include "cxfile.h"

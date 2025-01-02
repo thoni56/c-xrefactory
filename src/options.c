@@ -1,5 +1,9 @@
 #include "options.h"
 
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
 #include "commandlogger.h"
 #include "commons.h"
 #include "globals.h"

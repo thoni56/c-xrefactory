@@ -1,5 +1,7 @@
 #include "semact.h"
 
+#include <string.h>
+
 #include "commons.h"
 #include "counters.h"
 #include "globals.h"

@@ -1,5 +1,8 @@
 #include "cxref.h"
 
+#include <string.h>
+#include <stdlib.h>
+
 #include "caching.h"
 #include "reference.h"
 #include "visibility.h"

@@ -3,16 +3,16 @@
 
 #include "proto.h"
 #include "head.h"
-#include "stdinc.h"
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "constants.h"
 #include "completion.h"
+#include "extract.h"
 #include "memory.h"
-#include "stringlist.h"
 #include "refactorings.h"
 #include "server.h"
-#include "extract.h"
+#include "stringlist.h"
 
 
 /* Working mode in which the task is invoked */

@@ -1,7 +1,9 @@
 #include "reference.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
+#include "commons.h"
 #include "filetable.h"
 #include "list.h"
 #include "log.h"
