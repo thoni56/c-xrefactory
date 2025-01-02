@@ -143,7 +143,7 @@ static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
 static ScanFileFunctionStep globalUnusedDetectionFunctionSequence[];
 static ScanFileFunctionStep symbolSearchFunctionSequence[];
 
-static void scanCxFile(ScanFileFunctionStep *scanFunctionTable);
+static void scanCxFileUsing(ScanFileFunctionStep *scanFunctionTable);
 
 
 static void fPutDecimal(int num, FILE *file) {
@@ -519,7 +519,7 @@ static void writePartialReferenceFile(bool updateFlag,
     mapOverFileTableWithIndex(mapfun);
     if (mapfun2!=NULL)
         mapOverFileTableWithIndex(mapfun2);
-    scanCxFile(fullScanFunctionSequence);
+    scanCxFileUsing(fullScanFunctionSequence);
     closeCurrentReferenceFile();
 }
 
@@ -538,17 +538,17 @@ static void writeReferencesFromMemoryIntoRefFileNo(int fileOrder) {
     }
 }
 
-static void writeSingleReferenceFile(int updating, char *filename) {
+static void writeSingleReferenceFile(bool updating, char *filename) {
     openInOutReferenceFile(updating, filename);
     writeCxFileHead();
     mapOverFileTableWithIndex(writeFileNumberItem);
     mapOverFileTableWithIndex(writeFileSourceIndexItem);
-    scanCxFile(fullScanFunctionSequence);
+    scanCxFileUsing(fullScanFunctionSequence);
     mapOverReferenceTable(writeReferenceItem);
     closeCurrentReferenceFile();
 }
 
-static void writeMultipeReferenceFiles(int updating, char *dirname) {
+static void writeMultipeReferenceFiles(bool updating, char *dirname) {
     char  referenceFileName[MAX_FILE_NAME_SIZE];
 
     createDirectory(dirname);
@@ -559,7 +559,7 @@ static void writeMultipeReferenceFiles(int updating, char *dirname) {
         assert(strlen(referenceFileName) < MAX_FILE_NAME_SIZE - 1);
         openInOutReferenceFile(updating, referenceFileName);
         writeCxFileHead();
-        scanCxFile(fullScanFunctionSequence);
+        scanCxFileUsing(fullScanFunctionSequence);
         writeReferencesFromMemoryIntoRefFileNo(i);
         closeCurrentReferenceFile();
     }
@@ -744,8 +744,8 @@ static int scanSymbolName(CharacterBuffer *cb, char *id, int size) {
 }
 
 
-static void getSymbolTypeAndClasses(Type *symbolType) {
-    *symbolType = lastIncomingData.data[CXFI_SYMBOL_TYPE];
+static Type getSymbolType(void) {
+    return lastIncomingData.data[CXFI_SYMBOL_TYPE];
 }
 
 
@@ -766,8 +766,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     char *id = lastIncomingData.cachedSymbolName;
     int len = scanSymbolName(cb, id, size);
 
-    Type symbolType;
-    getSymbolTypeAndClasses(&symbolType);
+    Type symbolType = getSymbolType();
     if (symbolType!=TypeCppInclude || strcmp(id, LINK_NAME_INCLUDE_REFS)!=0) {
         lastIncomingData.onLineReferencedSym = -1;
         return;
@@ -848,8 +847,7 @@ static void scanFunction_SymbolName(int size,
     char *id = lastIncomingData.cachedSymbolName;
     scanSymbolName(cb, id, size);
 
-    Type symbolType;
-    getSymbolTypeAndClasses(&symbolType);
+    Type symbolType = getSymbolType();
 
     ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem;
     lastIncomingData.referenceItem = referenceItem;
@@ -919,16 +917,14 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
 
     Usage usage = lastIncomingData.data[CXFI_USAGE];
 
-    int file = lastIncomingData.data[CXFI_FILE_NUMBER];
-    file = fileNumberMapping[file];
+    int unmapped_file = lastIncomingData.data[CXFI_FILE_NUMBER];
+    int file = fileNumberMapping[unmapped_file];
 
     int line = lastIncomingData.data[CXFI_LINE_INDEX];
     int col = lastIncomingData.data[CXFI_COLUMN_INDEX];
 
-    Type symbolType;
-    getSymbolTypeAndClasses(&symbolType);
-
-    log_trace("%d %d->%d %d", usage, file, fileNumberMapping[file], line);
+    log_trace("Read reference with %s in file %d->%d at %d,%d", usageKindEnumName[usage],
+              unmapped_file, file, line, col);
 
     Position pos = makePosition(file, line, col);
     if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]) {
@@ -1060,11 +1056,27 @@ static int scanInteger(CharacterBuffer *cb, int *_ch) {
     return scannedInt;
 }
 
+static void resetIncomingData() {
+    memset(&lastIncomingData, 0, sizeof(lastIncomingData));
+    lastIncomingData.onLineReferencedSym             = -1;
+    lastIncomingData.symbolToCheckForDeadness        = -1;
+    lastIncomingData.onLineRefMenuItem               = NULL;
+    lastIncomingData.keyUsed[CXFI_INCLUDEFILENUMBER] = NO_FILE_NUMBER;
+    lastIncomingData.keyUsed[CXFI_SUPERCLASS]        = NO_FILE_NUMBER;
+    fileNumberMapping[NO_FILE_NUMBER]                = NO_FILE_NUMBER;
+}
 
-static void scanCxFile(ScanFileFunctionStep scanFunctionTable[]) {
-    int scannedInt = 0;
-    int ch;
+static void setupRecordKeyHandlersFromTable(ScanFileFunctionStep scanFunctionTable[]) {
+    /* Set up the keys and handlers from the provided table */
+    for (int i = 0; scanFunctionTable[i].recordCode > 0; i++) {
+        assert(scanFunctionTable[i].recordCode < MAX_CHARS);
+        int ch = scanFunctionTable[i].recordCode;
+        lastIncomingData.handlerFunction[ch] = scanFunctionTable[i].handlerFunction;
+        lastIncomingData.argument[ch] = scanFunctionTable[i].argument;
+    }
+}
 
+static void scanCxFileUsing(ScanFileFunctionStep scanFunctionTable[]) {
     ENTER();
     if (currentReferenceFile == NULL) {
         log_trace("No reference file opened");
@@ -1072,28 +1084,14 @@ static void scanCxFile(ScanFileFunctionStep scanFunctionTable[]) {
         return;
     }
 
-    /* Reset lastIncomingData */
-    memset(&lastIncomingData, 0, sizeof(lastIncomingData));
-    lastIncomingData.onLineReferencedSym = -1;
-    lastIncomingData.symbolToCheckForDeadness = -1;
-    lastIncomingData.onLineRefMenuItem = NULL;
-    lastIncomingData.keyUsed[CXFI_INCLUDEFILENUMBER] = NO_FILE_NUMBER;
-    lastIncomingData.keyUsed[CXFI_SUPERCLASS] = NO_FILE_NUMBER;
-    fileNumberMapping[NO_FILE_NUMBER] = NO_FILE_NUMBER;
+    resetIncomingData();
 
-    /* Set up the keys and handlers from this table */
-    for (int i=0; scanFunctionTable[i].recordCode>0; i++) {
-        assert(scanFunctionTable[i].recordCode < MAX_CHARS);
-        ch = scanFunctionTable[i].recordCode;
-        lastIncomingData.handlerFunction[ch] = scanFunctionTable[i].handlerFunction;
-        lastIncomingData.argument[ch] = scanFunctionTable[i].argument;
-    }
-
+    setupRecordKeyHandlersFromTable(scanFunctionTable);
 
     initCharacterBufferFromFile(&cxFileCharacterBuffer, currentReferenceFile);
-    ch = ' ';
+    int ch = ' ';
     while (!cxFileCharacterBuffer.isAtEOF) {
-        scannedInt = scanInteger(&cxFileCharacterBuffer, &ch);
+        int scannedInt = scanInteger(&cxFileCharacterBuffer, &ch);
 
         if (cxFileCharacterBuffer.isAtEOF)
             break;
@@ -1137,7 +1135,7 @@ static bool scanReferenceFile(char *cxrefLocation, char *element1, char *element
     if (currentReferenceFile==NULL) {
         return false;
     } else {
-        scanCxFile(scanFunctionTable);
+        scanCxFileUsing(scanFunctionTable);
         closeFile(currentReferenceFile);
         currentReferenceFile = NULL;
         return true;
