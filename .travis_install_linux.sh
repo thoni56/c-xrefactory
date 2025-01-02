@@ -8,4 +8,4 @@ sudo dpkg -i ./cgreen-1.6.1-x86_64-linux-gnu.deb
 cgreen-runner --version
 gem install coveralls-lcov
 curl -L https://coveralls.io/coveralls-linux.tar.gz | sudo tar -xz -C /usr/local/bin
-python install -r utils/requirements.txt
+pip install -r utils/requirements.txt

@@ -21,7 +21,7 @@
 
 /* *********************** INPUT/OUTPUT FIELD MARKERS ************************** */
 
-#define C_XREF_FILE_VERSION_NUMBER "1.6.0"
+#define C_XREF_FILE_VERSION_NUMBER "1.7.0"
 
 typedef enum {
     CXFI_FILE_FUMTIME          = 'm',     /* last full update mtime for file item */
@@ -48,13 +48,6 @@ typedef enum {
     CXFI_KEY_LIST              = '@',
     CXFI_REMARK                = '#',
     CXFI_INCLUDEFILENUMBER     = 'd',     /* was dole = down in slovac, for subclass, now include file number */
-
-// Now unused values that could be removed from the format
-    CXFI_SOURCE_INDEX          = 'o',     /* source index for java classes */
-    CXFI_ACCESS_BITS           = 'a',     /* java access bit */
-    CXFI_REQUIRED_ACCESS       = 'A',     /* java reference required accessibility index */
-    CXFI_SUPERCLASS            = 'h',     /* hore = up in slovac */
-    CXFI_CLASS_NAME            = '+',     /*               -> 'h' info    */
 } CxFieldTag;
 
 typedef enum {
@@ -74,19 +67,15 @@ static int generatedFieldKeyList[] = {
     CXFI_FILE_FUMTIME,
     CXFI_FILE_UMTIME,
     CXFI_FILE_NUMBER,
-    CXFI_SOURCE_INDEX,
     CXFI_SYMBOL_TYPE,
     CXFI_USAGE,
     CXFI_LINE_INDEX,
     CXFI_COLUMN_INDEX,
     CXFI_SYMBOL_INDEX,
     CXFI_REFERENCE,
-    CXFI_SUPERCLASS,
     CXFI_INCLUDEFILENUMBER,
     CXFI_COMMAND_LINE_ARGUMENT,
     CXFI_REFNUM,
-    CXFI_ACCESS_BITS,
-    CXFI_REQUIRED_ACCESS,
     CXFI_STORAGE,
     CXFI_CHECK_NUMBER,
     -1
@@ -344,8 +333,6 @@ static void writeSymbolItem(void) {
     ReferenceItem *r = lastOutgoingData.referenceItem;
     writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, r->type, "\n"); /* Why newline in the middle of all this? */
     writeOptionalCompactRecord(CXFI_INCLUDEFILENUMBER, r->includedFileNumber, ""); /* TODO - not used, but are actually include file refence */
-    writeOptionalCompactRecord(CXFI_SUPERCLASS, r->includedFileNumber, ""); /* TODO - not used anymore */
-    writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, ""); /* TODO - not used anymore */
     writeOptionalCompactRecord(CXFI_STORAGE, r->storage, "");
     lastOutgoingData.macroBaseFileGeneratedForSymbol = false;
     lastOutgoingData.symbolIsWritten = true;
@@ -361,7 +348,7 @@ static void writeSymbolItemIfNotWritten(void) {
     }
 }
 
-static void writeCxReferenceBase(Usage usage, int requiredAccess, int file, int line, int col) {
+static void writeCxReferenceBase(Usage usage, int file, int line, int col) {
     writeSymbolItemIfNotWritten();
     if (usage == UsageMacroBaseFileUsage) {
         /* optimize the number of those references to 1 */
@@ -369,9 +356,7 @@ static void writeCxReferenceBase(Usage usage, int requiredAccess, int file, int 
             return;
         lastOutgoingData.macroBaseFileGeneratedForSymbol = true;
     }
-    // keys = uAsflcr
     writeOptionalCompactRecord(CXFI_USAGE, usage, "");
-    writeOptionalCompactRecord(CXFI_REQUIRED_ACCESS, requiredAccess, "");
     writeOptionalCompactRecord(CXFI_SYMBOL_INDEX, 0, "");
     writeOptionalCompactRecord(CXFI_FILE_NUMBER, file, "");
     writeOptionalCompactRecord(CXFI_LINE_INDEX, line, "");
@@ -380,7 +365,7 @@ static void writeCxReferenceBase(Usage usage, int requiredAccess, int file, int 
 }
 
 static void writeCxReference(Reference *reference) {
-    writeCxReferenceBase(reference->usage, 0,
+    writeCxReferenceBase(reference->usage,
                          reference->position.file, reference->position.line, reference->position.col);
 }
 
@@ -390,7 +375,6 @@ static void writeFileNumberItem(FileItem *fileItem, int number) {
     writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileItem->lastUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fileItem->lastFullUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_COMMAND_LINE_ARGUMENT, fileItem->isArgument, "");
-    writeOptionalCompactRecord(CXFI_ACCESS_BITS, 0, ""); /* TODO - not actually used anymore */
     writeStringRecord(CXFI_FILE_NAME, fileItem->name, " ");
 }
 
@@ -398,7 +382,6 @@ static void writeFileSourceIndexItem(FileItem *fileItem, int index) {
     if (fileItem->sourceFileNumber != NO_FILE_NUMBER) {
         // keys = fo
         writeOptionalCompactRecord(CXFI_FILE_NUMBER, index, "\n");
-        writeCompactRecord(CXFI_SOURCE_INDEX, fileItem->sourceFileNumber, " ");
     }
 }
 
@@ -948,20 +931,15 @@ static void scanFunction_Reference(int size,
                                    CharacterBuffer *cb,
                                    CxScanFileOperation operation
 ) {
-    Usage usage;
-    int reqAcc;
-    int file, line, col;
-
     assert(key == CXFI_REFERENCE);
-    usage = lastIncomingData.data[CXFI_USAGE];
-    reqAcc = lastIncomingData.data[CXFI_REQUIRED_ACCESS];
+    Usage usage = lastIncomingData.data[CXFI_USAGE];
 
-    file = lastIncomingData.data[CXFI_FILE_NUMBER];
+    int file = lastIncomingData.data[CXFI_FILE_NUMBER];
     file = fileNumberMapping[file];
     FileItem *fileItem = getFileItemWithFileNumber(file);
 
-    line = lastIncomingData.data[CXFI_LINE_INDEX];
-    col = lastIncomingData.data[CXFI_COLUMN_INDEX];
+    int line = lastIncomingData.data[CXFI_LINE_INDEX];
+    int col = lastIncomingData.data[CXFI_COLUMN_INDEX];
 
     assert(options.mode);
     if (options.mode == XrefMode) {
@@ -974,7 +952,7 @@ static void scanFunction_Reference(int size,
             copyrefFl = !fileItem->cxLoading;
         }
         if (copyrefFl)
-            writeCxReferenceBase(usage, reqAcc, file, line, col);
+            writeCxReferenceBase(usage, file, line, col);
     } else if (options.mode == ServerMode) {
         Reference reference = makeReference(makePosition(file, line, col), usage, NULL);
         FileItem *referenceFileItem = getFileItemWithFileNumber(reference.position.file);
@@ -1062,7 +1040,6 @@ static void resetIncomingData() {
     lastIncomingData.symbolToCheckForDeadness        = -1;
     lastIncomingData.onLineRefMenuItem               = NULL;
     lastIncomingData.keyUsed[CXFI_INCLUDEFILENUMBER] = NO_FILE_NUMBER;
-    lastIncomingData.keyUsed[CXFI_SUPERCLASS]        = NO_FILE_NUMBER;
     fileNumberMapping[NO_FILE_NUMBER]                = NO_FILE_NUMBER;
 }
 

@@ -186,7 +186,7 @@ chcheck:
 include sources.mk
 
 # Automatically generate a config header with GIT hash/tag info
-options_config.h: options_config.h.in generate_options_config.sh
+options_config.h: options_config.h.in generate_options_config.sh *.[chy]
 	./generate_options_config.sh
 options.c: options_config.h
 

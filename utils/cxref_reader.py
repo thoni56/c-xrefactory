@@ -169,8 +169,6 @@ def unpack_symbols(lines):
             classification = segments[0]
             (t, classification) = read_marker('t', classification)
             (d, classification) = read_marker('d', classification)
-            (h, classification) = read_marker('h', classification)
-            (a, classification) = read_marker('a', classification)
             (g, classification) = read_marker('g', classification)
             symbolname = segments[1].split('/', 1)[-1]
             symbols.append(
