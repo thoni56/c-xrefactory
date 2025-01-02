@@ -36,10 +36,10 @@ void handle_code_action(JSON *request) {
     JSON *edit = add_json_item(insert_dummy_text_action, "edit");
     JSON *changes = add_json_item(edit, "changes");
 
-    JSON *uri = add_json_array_as(changes, get_uri_string_from_request(request));
+    JSON *uri = add_json_array_as(changes, get_lsp_uri_string_from_request(request));
     JSON *change = add_json_object_to_array(uri);
 
-    JSON *params = cJSON_GetObjectItem(request, "params");
+    JSON *params = get_json_item(request, "params");
 
     int start_line, start_character, end_line, end_character;
     get_lsp_range_positions(params, &start_line, &start_character, &end_line, &end_character);
@@ -54,8 +54,8 @@ void handle_code_action(JSON *request) {
 void handle_execute_command(JSON *request) {
     log_trace("LSP: Handling 'workspace/executeCommand'");
 
-    JSON *params = cJSON_GetObjectItem(request, "params");
-    const JSON *command = cJSON_GetObjectItem(params, "command");
+    JSON *params = get_json_item(request, "params");
+    const JSON *command = get_json_item(params, "command");
     const char *cmd = command->valuestring;
 
     if (command && strcmp(cmd, "dummyCommand") == 0) {
@@ -71,12 +71,12 @@ void handle_execute_command(JSON *request) {
 void handle_did_open(JSON *notification) {
     log_trace("LSP: Handling 'textDocument/didOpen'");
 
-    JSON *params = cJSON_GetObjectItem(notification, "params");
+    JSON *params = get_json_item(notification, "params");
 
-    JSON *textDocument = cJSON_GetObjectItem(params, "textDocument");
-    const char *uri = cJSON_GetStringValue(cJSON_GetObjectItem(textDocument, "uri"));
-    const char *languageId = cJSON_GetStringValue(cJSON_GetObjectItem(textDocument, "languageId"));
-    const char *text = cJSON_GetStringValue(cJSON_GetObjectItem(textDocument, "text"));
+    JSON *textDocument = get_json_item(params, "textDocument");
+    const char *uri = cJSON_GetStringValue(get_json_item(textDocument, "uri"));
+    const char *languageId = cJSON_GetStringValue(get_json_item(textDocument, "languageId"));
+    const char *text = cJSON_GetStringValue(get_json_item(textDocument, "text"));
 
     log_trace("LSP: Opened file '%s', language '%s', text = '%s'", uri, languageId, text);
 

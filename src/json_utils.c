@@ -4,20 +4,17 @@
 #include <cjson/cJSON.h>
 
 
-/* ============================================================== */
+/* ====================== LSP =================================== */
 
 double id_of_request(JSON *request) {
     return cJSON_GetObjectItem(request, "id")->valuedouble;
 }
 
-const char *get_uri_string_from_request(JSON *request) {
+const char *get_lsp_uri_string_from_request(JSON *request) {
     cJSON *response_uri_item = cJSON_GetObjectItem(
         cJSON_GetObjectItem(cJSON_GetObjectItem(request, "params"), "textDocument"), "uri");
     return response_uri_item->valuestring;
 }
-
-
-/* ============================================================== */
 
 JSON *create_lsp_message_with_id(double id) {
     cJSON *response = cJSON_CreateObject();
@@ -26,30 +23,12 @@ JSON *create_lsp_message_with_id(double id) {
     return response;
 }
 
-JSON *add_json_array_as(JSON *target, const char *name) {
-    cJSON *array = cJSON_CreateArray();
-    cJSON_AddItemToObject(target, name, array);
-    return array;
-}
-
-JSON *add_json_object_to_array(JSON *target) {
-    cJSON *object = cJSON_CreateObject();
-    cJSON_AddItemToArray(target, object);
-    return object;
-}
-
 JSON *add_lsp_action(JSON *target, const char *title, const char *kind) {
     cJSON *action = cJSON_CreateObject();
     cJSON_AddItemToArray(target, action);
     cJSON_AddStringToObject(action, "title", title);
     cJSON_AddStringToObject(action, "kind", kind);
     return action;
-}
-
-JSON *add_json_item(JSON *target, const char *name) {
-    cJSON *item = cJSON_CreateObject();
-    cJSON_AddItemToObject(target, name, item);
-    return item;
 }
 
 JSON *add_lsp_range(JSON *target, int start_line, int start_character,
@@ -83,7 +62,25 @@ void get_lsp_range_positions(JSON *json, int *start_line, int *start_character, 
 }
 
 
-/* ============================================================== */
+/* ======================= JSON ================================== */
+
+JSON *add_json_array_as(JSON *target, const char *name) {
+    cJSON *array = cJSON_CreateArray();
+    cJSON_AddItemToObject(target, name, array);
+    return array;
+}
+
+JSON *add_json_object_to_array(JSON *target) {
+    cJSON *object = cJSON_CreateObject();
+    cJSON_AddItemToArray(target, object);
+    return object;
+}
+
+JSON *add_json_item(JSON *target, const char *name) {
+    cJSON *item = cJSON_CreateObject();
+    cJSON_AddItemToObject(target, name, item);
+    return item;
+}
 
 JSON *add_json_string(JSON *target, const char *name, const char *value) {
     return cJSON_AddStringToObject(target, name, value);
@@ -92,6 +89,12 @@ JSON *add_json_string(JSON *target, const char *name, const char *value) {
 JSON *add_json_bool(JSON *target, const char *name, bool value) {
     return cJSON_AddBoolToObject(target, name, value);
 }
+
+JSON *get_json_item(JSON *tree, const char *name) {
+    return cJSON_GetObjectItem(tree, name);
+}
+
+/* =======================  UTILS  ============================== */
 
 bool json_equals(const JSON *a, const JSON *b) {
     // Check for nulls or type mismatch
