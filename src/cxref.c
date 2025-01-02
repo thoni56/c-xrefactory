@@ -312,7 +312,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
             if (defaultPosition.file!=NO_FILE_NUMBER)
                 log_trace("getting definition position of %s at line %d", symbol->name, defaultPosition.line);
             if (! operationRequiresOnlyParsingNoPushing(options.serverOperation)) {
-                menu = olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, foundMember,
+                menu = addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, foundMember,
                                                 true, true, 0, usage, 0, defaultPosition, defaultUsage);
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
@@ -1094,7 +1094,7 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
 SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
     SymbolsMenu     *res;
     ReferenceItem     ss = makeReferenceItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility, cfi);
-    res = olCreateNewMenuItem(&ss, ss.includedFileNumber, noPosition, UsageNone,
+    res = createNewMenuItem(&ss, ss.includedFileNumber, noPosition, UsageNone,
                               1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
                               UsageUsed, 0);
     return res;
@@ -1919,7 +1919,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceItem *ss) {
         }
     }
     if (!used && definitionReference!=NULL) {
-        olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, ss,
+        addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, ss,
                                  true, true, 0, UsageDefined, 0, definitionReference->position,
                                  definitionReference->usage);
     }
@@ -2310,7 +2310,7 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
     }
     if (found) {
         int select = 0, visible = 0;  // for debug would be better 1 !
-        result = olAddBrowsedSymbolToMenu(&rstack->symbolsMenu, references, select, visible, ooBits, USAGE_ANY,
+        result = addBrowsedSymbolToMenu(&rstack->symbolsMenu, references, select, visible, ooBits, USAGE_ANY,
                                           vlevel, defpos, defusage);
     }
     return result;

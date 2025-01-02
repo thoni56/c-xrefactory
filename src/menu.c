@@ -95,9 +95,9 @@ static char *olcxStringCopy(char *string) {
     return copy;
 }
 
-SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int includedFileNumber, Position defpos,
-                                 int defusage, int selected, int visible, unsigned ooBits, int olusage,
-                                 int vlevel) {
+SymbolsMenu *createNewMenuItem(ReferenceItem *symbol, int includedFileNumber, Position defpos,
+                               int defusage, int selected, int visible, unsigned ooBits, int olusage,
+                               int vlevel) {
     SymbolsMenu   *symbolsMenu;
     char          *allocatedNameCopy;
 
@@ -142,10 +142,10 @@ static bool olSymbolMenuIsLess(SymbolsMenu *s1, SymbolsMenu *s2) {
     return referenceItemIsLess(&s1->references, &s2->references);
 }
 
-SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *symbol,
-                                      bool selected, bool visible, unsigned ooBits,
-                                      int olusage, int vlevel,
-                                      Position defpos, int defusage) {
+SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *symbol,
+                                    bool selected, bool visible, unsigned ooBits,
+                                    int olusage, int vlevel,
+                                    Position defpos, int defusage) {
     SymbolsMenu *new, **place, dummyMenu;
 
     fillSymbolsMenu(&dummyMenu, *symbol, 0, false, 0, olusage, vlevel, UsageNone, noPosition);
@@ -153,7 +153,7 @@ SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *symbol
     new = *place;
     if (*place==NULL || olSymbolMenuIsLess(&dummyMenu, *place)) {
         assert(symbol);
-        new = olCreateNewMenuItem(symbol, symbol->includedFileNumber, defpos, defusage,
+        new = createNewMenuItem(symbol, symbol->includedFileNumber, defpos, defusage,
                                 selected, visible, ooBits,
                                 olusage, vlevel);
         LIST_CONS(new, *place);

@@ -712,8 +712,8 @@ fini:
 }
 
 static void simpleModuleRename(EditorMarkerList *markers, char *symname, char *symLinkName) {
-    char          newName[MAX_FILE_NAME_SIZE];
-    char          newModuleName[MAX_FILE_NAME_SIZE];
+    char newName[MAX_FILE_NAME_SIZE];
+    char newModuleName[MAX_FILE_NAME_SIZE];
 
     /* THIS IS THE OLD JAVA VERSION, NEED TO ADAPT TO MOVE C MODULE!!! */
 
@@ -974,7 +974,7 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
             char tmpBuff[TMP_BUFF_SIZE];
             ppcGotoMarker(point);
             sprintf(tmpBuff,
-                    "Something goes wrong, probably different parameter coordinates at different cpp passes.");
+                    "Something went wrong here, probably different parameter coordinates at different cpp passes.");
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             FATAL_ERROR(ERR_INTERNAL, tmpBuff, XREF_EXIT_ERR);
             assert(0);

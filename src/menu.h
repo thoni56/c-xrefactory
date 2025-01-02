@@ -28,10 +28,10 @@ extern SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool
 extern void freeSymbolsMenuList(SymbolsMenu *menu);
 extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference);
 extern void olcxPrintSelectionMenu(SymbolsMenu *menu);
-extern SymbolsMenu *olCreateNewMenuItem(ReferenceItem *sym, int includedFileNumber,
+extern SymbolsMenu *createNewMenuItem(ReferenceItem *sym, int includedFileNumber,
                                         Position defpos, int defusage, int selected, int visible,
                                         unsigned ooBits, int olusage, int vlevel);
-extern SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *reference,
+extern SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *reference,
                                              bool selected, bool visible, unsigned ooBits, int olusage,
                                              int vlevel, Position defpos, int defusage);
 extern void splitMenuPerSymbolsAndMap(SymbolsMenu *menu,
