@@ -1878,11 +1878,12 @@ tries to delete C-xrefactory windows first.
               (setq res (cons (format "-olcursor=%d" olcursor) res))
               ))
     (if (region-active-p)
-            (progn
-              (c-xref-write-tmp-buff tmpFile 1 (mark t) coding)
-              (setq olmark (nth 7 (file-attributes tmpFile)))
-              (setq res (cons (format "-olmark=%d" olmark) res))
-              ))
+        (progn
+             (delete-file tmpFile)
+             (c-xref-write-tmp-buff tmpFile 1 (mark t) coding)
+             (setq olmark (nth 7 (file-attributes tmpFile)))
+             (setq res (cons (format "-olmark=%d" olmark) res))
+             ))
     (if (boundp 'inhibit-eol-conversion)
             (setq inhibit-eol-conversion eolc)
       )
