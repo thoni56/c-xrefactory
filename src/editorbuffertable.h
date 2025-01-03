@@ -23,7 +23,7 @@ extern int  addEditorBuffer(EditorBufferList *bufferList);
 extern bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, EditorBufferList **originP);
 extern bool deleteEditorBuffer(EditorBufferList *element);
 extern int  getNextExistingEditorBufferIndex(int index);
-extern EditorBufferList *getEditorBuffer(int index);
+extern EditorBufferList *getEditorBufferListElementAt(int index);
 extern void              setEditorBuffer(int index, EditorBufferList *buffer);
 extern void clearEditorBuffer(int index);
 

@@ -405,7 +405,7 @@ void quasiSaveModifiedEditorBuffers(void) {
     static time_t lastQuasiSaveTime = 0;
 
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
-        for (EditorBufferList *ll = getEditorBuffer(i); ll != NULL; ll = ll->next) {
+        for (EditorBufferList *ll = getEditorBufferListElementAt(i); ll != NULL; ll = ll->next) {
             if (ll->buffer->modifiedSinceLastQuasiSave) {
                 saving = true;
                 goto cont;
@@ -425,7 +425,7 @@ cont:
         }
     }
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
-        for (EditorBufferList *ll = getEditorBuffer(i); ll != NULL; ll = ll->next) {
+        for (EditorBufferList *ll = getEditorBufferListElementAt(i); ll != NULL; ll = ll->next) {
             if (ll->buffer->modifiedSinceLastQuasiSave) {
                 quasiSaveEditorBuffer(ll->buffer);
             }
@@ -436,7 +436,7 @@ cont:
 
 void loadAllOpenedEditorBuffers(void) {
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
-        for (EditorBufferList *l = getEditorBuffer(i); l != NULL; l = l->next) {
+        for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             if (!l->buffer->textLoaded) {
                 if (fileExists(l->buffer->loadedFromFile)) {
                     int size = fileSize(l->buffer->loadedFromFile);
@@ -933,7 +933,7 @@ static EditorBufferList *computeListOfAllEditorBuffers(void) {
 
     list = NULL;
     for (int i=0; i != -1 ; i = getNextExistingEditorBufferIndex(i+1)) {
-        for (EditorBufferList *l = getEditorBuffer(i); l != NULL; l = l->next) {
+        for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             EditorBufferList *element;
             element = malloc(sizeof(EditorBufferList));
             *element = (EditorBufferList){.buffer = l->buffer, .next = list};

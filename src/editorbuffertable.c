@@ -50,7 +50,7 @@ bool deleteEditorBuffer(EditorBufferList *elementP) {
     return editorBufferTableDeleteExact(&editorBufferTable, elementP);
 }
 
-EditorBufferList *getEditorBuffer(int index) {
+EditorBufferList *getEditorBufferListElementAt(int index) {
     return editorBufferTable.tab[index];
 }
 

@@ -24,7 +24,7 @@ bool deleteEditorBuffer(EditorBufferList *elementP) {
     return (bool)mock(elementP);
 }
 
-EditorBufferList *getEditorBuffer(int index) {
+EditorBufferList *getEditorBufferListElementAt(int index) {
     return (EditorBufferList *)mock(index);
 }
 
