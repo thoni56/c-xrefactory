@@ -39,10 +39,6 @@ EditorBuffer *openEditorBufferFromPreload(char *name, char *fileName) {
   return (EditorBuffer *) mock(name, fileName);
 }
 
-EditorBuffer *getEditorBufferFor(char *name) {
-  return (EditorBuffer *) mock(name);
-}
-
 EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
   return (EditorBuffer *) mock(name);
 }

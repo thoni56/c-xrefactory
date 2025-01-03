@@ -6,6 +6,7 @@
 
 #include "commons.h"
 #include "cxref.h"
+#include "editorbuffer.h"
 #include "editorbuffertable.h"
 #include "encoding.h"
 #include "fileio.h"
@@ -979,13 +980,13 @@ int editorMapOnNonExistantFiles(char *dirname,
     // times, first just create list of all files, sort it, and then
     // map them
     int result = 0;
-    int dirNameLength = strlen(dirname);
     EditorBufferList *listOfAllBuffers   = computeListOfAllEditorBuffers();
     LIST_MERGE_SORT(EditorBufferList, listOfAllBuffers, editorBufferNameLess);
 
     EditorBufferList *list = listOfAllBuffers;
 
     while(list!=NULL) {
+        int dirNameLength = strlen(dirname);
         if (directoryPrefixMatches(list->buffer->fileName, dirname, dirNameLength)) {
             char fname[MAX_FILE_NAME_SIZE];
             int fileNameLength;
@@ -1030,64 +1031,37 @@ int editorMapOnNonExistantFiles(char *dirname,
     return result;
 }
 
-static void closeEditorBufferForListMember(EditorBufferList *member, int index) {
-    log_trace("closing buffer %s:%s", member->buffer->fileName, member->buffer->loadedFromFile);
-
-    EditorBufferList *l;
-    for (l = getEditorBuffer(index); l != NULL; l = l->next)
-        if (l == member)
-            break;
-    if (l == member) {
-        // O.K. now, free the buffer
-        setEditorBuffer(index, l->next);
-        freeEditorBuffer(member->buffer);
-        free(member);
-    }
-}
-
 static bool bufferIsCloseable(EditorBuffer *buffer) {
-    return buffer->textLoaded && buffer->markers==NULL
+    return buffer != NULL && buffer->textLoaded && buffer->markers==NULL
         && buffer->fileName==buffer->loadedFromFile  /* not -preloaded */
         && ! buffer->modified;
 }
 
-// be very carefull when using this function, because of interpretation
-// of 'Closable', this should be additional field: 'closable' or what
 void closeEditorBufferIfCloseable(char *name) {
-    EditorBuffer buffer;
-    int index;
-
-    fillEmptyEditorBuffer(&buffer, name, 0, name);
-    EditorBufferList bufferList = (EditorBufferList){.buffer = &buffer, .next = NULL};
-    EditorBufferList *foundMemberP;
-    if (editorBufferIsMember(&bufferList, &index, &foundMemberP)) {
-        if (bufferIsCloseable(foundMemberP->buffer)) {
-            closeEditorBufferForListMember(foundMemberP, index);
-        }
-    }
+    EditorBuffer *buffer = getEditorBufferForFile(name);
+    if (bufferIsCloseable(buffer))
+        deregisterEditorBuffer(name);
+    freeEditorBuffer(buffer);
 }
 
 void closeAllEditorBuffersIfClosable(void) {
-    for (int i=0; i != -1; i = getNextExistingEditorBufferIndex(i+1)) {
-        for (EditorBufferList *list=getEditorBuffer(i); list!=NULL;) {
-            EditorBufferList *next = list->next;
-            log_trace("closable %d for %s(%d) %s(%d)", bufferIsCloseable(list->buffer), list->buffer->fileName,
-                      list->buffer->fileName, list->buffer->loadedFromFile, list->buffer->loadedFromFile);
-            if (bufferIsCloseable(list->buffer))
-                closeEditorBufferForListMember(list, i);
-            list = next;
+    EditorBufferList *allEditorBuffers = computeListOfAllEditorBuffers();
+    for (EditorBufferList *l = allEditorBuffers; l!=NULL; l=l->next) {
+        if (bufferIsCloseable(l->buffer)) {
+            log_trace("closable %d for %s(%d) %s(%d)", bufferIsCloseable(l->buffer), l->buffer->fileName,
+                      l->buffer->fileName, l->buffer->loadedFromFile, l->buffer->loadedFromFile);
+            EditorBuffer *buffer = deregisterEditorBuffer(l->buffer->fileName);
+            freeEditorBuffer(buffer);
         }
     }
+    freeEditorBufferListButNotBuffers(allEditorBuffers);
 }
 
 void closeAllEditorBuffers(void) {
-    for (int i=0; i != -1; i = getNextExistingEditorBufferIndex(i+1)) {
-        for (EditorBufferList *ll=getEditorBuffer(i); ll!=NULL;) {
-            EditorBufferList *next = ll->next;
-            freeEditorBuffer(ll->buffer);
-            free(ll);
-            ll = next;
-        }
-        clearEditorBuffer(i);
+    EditorBufferList *allEditorBuffers = computeListOfAllEditorBuffers();
+    for (EditorBufferList *l = allEditorBuffers; l!=NULL; l=l->next) {
+        EditorBuffer *buffer = deregisterEditorBuffer(l->buffer->fileName);
+        freeEditorBuffer(buffer);
     }
+    freeEditorBufferListButNotBuffers(allEditorBuffers);
 }
