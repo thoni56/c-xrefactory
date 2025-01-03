@@ -7,7 +7,6 @@
 
 
 extern bool exists(char *path);
-extern int fileStatus(char *path, struct stat *statbuf);
 extern time_t fileModificationTime(char *path);
 extern size_t fileSize(char *path);
 extern FILE *openFile(char *fileName, char *modes);

@@ -9,10 +9,6 @@ BeforeEach(Fileio) {
 }
 AfterEach(Fileio) {}
 
-Ensure(Fileio, can_get_status_without_stat_reference) {
-    fileStatus("fileio_tests.c", NULL);
-}
-
 Ensure(Fileio, can_see_if_exists) {
     assert_that(exists("."));
     assert_that(exists("some file that do not exist"), is_false);

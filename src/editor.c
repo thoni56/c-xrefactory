@@ -99,7 +99,7 @@ int editorFileStatus(char *path) {
     if (buffer != NULL) {
         return 0;
     }
-    return fileStatus(path, NULL);
+    return fileExists(path);
 }
 
 time_t editorFileModificationTime(char *path) {
