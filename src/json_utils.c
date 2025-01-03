@@ -94,6 +94,11 @@ JSON *get_json_item(JSON *tree, const char *name) {
     return cJSON_GetObjectItem(tree, name);
 }
 
+char *get_json_string_item(JSON *textDocument, const char *name) {
+    return cJSON_GetStringValue(get_json_item(textDocument, name));
+}
+
+
 /* =======================  UTILS  ============================== */
 
 bool json_equals(const JSON *a, const JSON *b) {

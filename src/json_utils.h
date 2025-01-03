@@ -25,6 +25,7 @@ extern JSON *add_json_bool(JSON *target, const char *name, bool value);
 extern JSON *add_json_string(JSON *target, const char *name, const char *value);
 
 extern JSON *get_json_item(JSON *tree, const char *name);
+extern char *get_json_string_item(JSON *textDocument, const char *name);
 
 extern bool json_equals(const JSON *a, const JSON *b);
 extern JSON *parse_json(const char *string);

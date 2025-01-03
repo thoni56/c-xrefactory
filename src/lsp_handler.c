@@ -65,7 +65,6 @@ void handle_execute_command(JSON *request) {
 
     JSON *response = cJSON_CreateNull();
     send_response_and_delete(response);
-    delete_json(response);
 }
 
 void handle_did_open(JSON *notification) {
@@ -74,15 +73,13 @@ void handle_did_open(JSON *notification) {
     JSON *params = get_json_item(notification, "params");
 
     JSON *textDocument = get_json_item(params, "textDocument");
-    const char *uri = cJSON_GetStringValue(get_json_item(textDocument, "uri"));
-    const char *languageId = cJSON_GetStringValue(get_json_item(textDocument, "languageId"));
-    const char *text = cJSON_GetStringValue(get_json_item(textDocument, "text"));
+    const char *uri = get_json_string_item(textDocument, "uri");
+    const char *languageId = get_json_string_item(textDocument, "languageId");
+    const char *text = get_json_string_item(textDocument, "text");
 
     log_trace("LSP: Opened file '%s', language '%s', text = '%s'", uri, languageId, text);
 
     // TODO Ensure file is in the fileTable and put the text into an EditorBuffer
-
-    delete_json(notification);
 }
 
 void handle_shutdown(JSON *request) {
