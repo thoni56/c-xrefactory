@@ -1,5 +1,5 @@
-#ifndef LSP_SENDER_H
-#define LSP_SENDER_H
+#ifndef LSP_SENDER_H_INCLUDED
+#define LSP_SENDER_H_INCLUDED
 
 #include "json_utils.h"
 

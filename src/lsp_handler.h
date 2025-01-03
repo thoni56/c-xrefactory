@@ -1,5 +1,5 @@
-#ifndef LSP_HANDLER_H
-#define LSP_HANDLER_H
+#ifndef LSP_HANDLER_H_INCLUDED
+#define LSP_HANDLER_H_INCLUDED
 
 #include "json_utils.h"
 

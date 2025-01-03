@@ -1,5 +1,5 @@
-#ifndef LSP_DISPATCHER_H
-#define LSP_DISPATCHER_H
+#ifndef LSP_DISPATCHER_H_INCLUDED
+#define LSP_DISPATCHER_H_INCLUDED
 
 #include "lsp_errors.h"
 #include "json_utils.h"
