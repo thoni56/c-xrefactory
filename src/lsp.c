@@ -26,14 +26,14 @@ static unsigned long wait_for_and_parse_lsp_header(FILE *input_stream) {
 
     for(;;) {
         fgets(buffer, MAX_HEADER_FIELD_LEN, input_stream);
-        if(strcmp(buffer, "\r\n") == 0) { // End of header
-            if(content_length == 0)
+        if (strcmp(buffer, "\r\n") == 0) { // End of header
+            if (content_length == 0)
                 exit(LSP_RETURN_ERROR_HEADER_INCOMPLETE);
             return content_length;
         }
 
         char *buffer_part = strtok(buffer, " ");
-        if(strcmp(buffer_part, "Content-Length:") == 0) {
+        if (strcmp(buffer_part, "Content-Length:") == 0) {
             buffer_part = strtok(NULL, "\n");
             content_length = atoi(buffer_part);
         }
@@ -42,10 +42,10 @@ static unsigned long wait_for_and_parse_lsp_header(FILE *input_stream) {
 
 static JSON* lsp_parse_content(FILE *input_stream, unsigned long content_length) {
     char *buffer = malloc(content_length + 1);
-    if(buffer == NULL)
+    if (buffer == NULL)
         exit(LSP_RETURN_ERROR_OUT_OF_MEMORY);
     size_t read_elements = fread(buffer, 1, content_length, input_stream);
-    if(read_elements != content_length) {
+    if (read_elements != content_length) {
         free(buffer);
         exit(LSP_RETURN_ERROR_IO_ERROR);
     }
@@ -54,7 +54,7 @@ static JSON* lsp_parse_content(FILE *input_stream, unsigned long content_length)
     JSON *request = parse_json(buffer);
 
     free(buffer);
-    if(request == NULL)
+    if (request == NULL)
         exit(LSP_RETURN_ERROR_JSON_PARSE_ERROR);
     return request;
 }

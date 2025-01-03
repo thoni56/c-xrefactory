@@ -515,7 +515,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch == '>') {
                     ch = getChar(cb);
-                    if(ch=='=') {
+                    if (ch=='=') {
                         putLexemWithColumn(lb, RIGHT_ASSIGN, cb, lexemStartingColumn);
                         ch = getChar(cb);
                         goto nextLexem;
@@ -536,7 +536,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch == '<') {
                     ch = getChar(cb);
-                    if(ch=='=') {
+                    if (ch=='=') {
                         putLexemWithColumn(lb, LEFT_ASSIGN, cb, lexemStartingColumn);
                         ch = getChar(cb);
                         goto nextLexem;
