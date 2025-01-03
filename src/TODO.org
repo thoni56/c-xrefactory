@@ -17,6 +17,10 @@ Some useful commands:
 
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
+* TODO Rename C module
+** TODO Rename .c file
+** TODO Rename corresponding .h file if exists
+** TODO Update all #includes
 * DOING LSP-mode support
 ** DOING 'didOpen'
 ** TODO Handle protocol errors etc. using longjump

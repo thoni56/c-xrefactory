@@ -751,6 +751,7 @@ static void simpleModuleRename(EditorMarkerList *markers, char *symname, char *s
 static void simpleRename(EditorMarkerList *markerList, EditorMarker *marker, char *symbolName,
                          char *symbolLinkName
 ) {
+    // assert(options.theRefactoring == refactoringOptions.theRefactoring);
     if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
         simpleModuleRename(markerList, symbolName, symbolLinkName);
     } else {
