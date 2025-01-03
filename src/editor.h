@@ -102,7 +102,7 @@ extern EditorMarker     *createEditorMarkerForBufferBegin(EditorBuffer *buffer);
 extern EditorMarker     *createEditorMarkerForBufferEnd(EditorBuffer *buffer);
 extern EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer);
 extern void              freeEditorMarkersAndMarkerList(EditorMarkerList *occs);
-extern int  editorMapOnNonExistantFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), SearchDepth depth, char *a1,
+extern bool editorMapOnNonExistantFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), SearchDepth depth, char *a1,
                                         char *a2, Completions *a3, void *a4, int *a5);
 
 #endif

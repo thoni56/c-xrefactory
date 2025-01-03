@@ -455,8 +455,8 @@ int pathncmp(char *path1, char *path2, int length, bool caseSensitive) {
     return cmp;
 }
 
-int filenameCompare(char *ss1, char *ss2, int n) {
-    return pathncmp(ss1, ss2, n, options.fileNamesCaseSensitive);
+int filenameCompare(char *fileName1, char *fileName2, int length) {
+    return pathncmp(fileName1, fileName2, length, options.fileNamesCaseSensitive);
 }
 
 /* Compare mixed case file names -  */
