@@ -20,7 +20,7 @@ bool want_lsp_server(int argc, char **argv) {
     return false;
 }
 
-static unsigned long lsp_parse_header(FILE *input_stream) {
+static unsigned long wait_for_and_parse_lsp_header(FILE *input_stream) {
     char buffer[MAX_HEADER_FIELD_LEN];
     unsigned long content_length = 0;
 
@@ -64,7 +64,7 @@ int lsp_server(FILE *input_stream) {
 
     int result = LSP_RETURN_OK;
     while (result == LSP_RETURN_OK) {
-        unsigned long content_length = lsp_parse_header(input_stream);
+        unsigned long content_length = wait_for_and_parse_lsp_header(input_stream);
         JSON *request = lsp_parse_content(input_stream, content_length);
 
         result = dispatch_lsp_message(request);
