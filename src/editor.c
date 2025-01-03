@@ -69,7 +69,7 @@ EditorMarker *newEditorMarkerForPosition(Position position) {
     if (position.file==NO_FILE_NUMBER || position.file<0) {
         errorMessage(ERR_INTERNAL, "[editor] creating marker for non-existent position");
     }
-    buffer = findEditorBufferForFile(getFileItemWithFileNumber(position.file)->name);
+    buffer = findOrCreateAndLoadEditorBufferForFile(getFileItemWithFileNumber(position.file)->name);
     marker = newEditorMarker(buffer, 0);
     moveEditorMarkerToLineAndColumn(marker, position.line, position.col);
     return marker;
@@ -578,7 +578,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
             int           line     = reference->position.line;
             int           col      = reference->position.col;
             FileItem     *fileItem = getFileItemWithFileNumber(file);
-            EditorBuffer *buff     = findEditorBufferForFile(fileItem->name);
+            EditorBuffer *buff     = findOrCreateAndLoadEditorBufferForFile(fileItem->name);
             if (buff == NULL) {
                 errorMessage(ERR_CANT_OPEN, fileItem->name);
                 while (reference != NULL && file == reference->position.file)
@@ -929,9 +929,7 @@ EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer) {
 }
 
 static EditorBufferList *computeListOfAllEditorBuffers(void) {
-    EditorBufferList *list;
-
-    list = NULL;
+    EditorBufferList *list = NULL;
     for (int i=0; i != -1 ; i = getNextExistingEditorBufferIndex(i+1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             EditorBufferList *element;
@@ -958,7 +956,8 @@ static int editorBufferNameLess(EditorBufferList*l1, EditorBufferList*l2) {
     return strcmp(l1->buffer->fileName, l2->buffer->fileName);
 }
 
-static bool directoryPrefixMatches(char *fileName, char *dirname, int dirNameLength) {
+static bool directoryPrefixMatches(char *fileName, char *dirname) {
+    int dirNameLength = strlen(dirname);
     return filenameCompare(fileName, dirname, dirNameLength) == 0
         && (fileName[dirNameLength] == '/'
             || fileName[dirNameLength] == '\\');
@@ -967,7 +966,7 @@ static bool directoryPrefixMatches(char *fileName, char *dirname, int dirNameLen
 // TODO, do all this stuff better!
 // This is still quadratic on number of opened buffers
 // for recursive search
-int editorMapOnNonExistantFiles(char *dirname,
+bool editorMapOnNonExistantFiles(char *dirname,
                                 void (*fun)(MAP_FUN_SIGNATURE),
                                 SearchDepth depth,
                                 char *a1,
@@ -979,25 +978,26 @@ int editorMapOnNonExistantFiles(char *dirname,
     // In order to avoid mapping of the same directory several
     // times, first just create list of all files, sort it, and then
     // map them
-    int result = 0;
     EditorBufferList *listOfAllBuffers   = computeListOfAllEditorBuffers();
     LIST_MERGE_SORT(EditorBufferList, listOfAllBuffers, editorBufferNameLess);
 
     EditorBufferList *list = listOfAllBuffers;
 
+    bool found = false;
     while(list!=NULL) {
-        int dirNameLength = strlen(dirname);
-        if (directoryPrefixMatches(list->buffer->fileName, dirname, dirNameLength)) {
+        if (directoryPrefixMatches(list->buffer->fileName, dirname)) {
+            int dirNameLength = strlen(dirname);
             char fname[MAX_FILE_NAME_SIZE];
             int fileNameLength;
             if (depth == DEPTH_ONE) {
-                char *s = strchr(list->buffer->fileName+dirNameLength+1, '/');
-                if (s==NULL) s = strchr(list->buffer->fileName+dirNameLength+1, '\\');
-                if (s==NULL) {
+                char *pathDelimiter = strchr(list->buffer->fileName+dirNameLength+1, '/');
+                if (pathDelimiter==NULL)
+                    pathDelimiter = strchr(list->buffer->fileName+dirNameLength+1, '\\');
+                if (pathDelimiter==NULL) {
                     strcpy(fname, list->buffer->fileName+dirNameLength+1);
                     fileNameLength = strlen(fname);
                 } else {
-                    fileNameLength = s-(list->buffer->fileName+dirNameLength+1);
+                    fileNameLength = pathDelimiter-(list->buffer->fileName+dirNameLength+1);
                     strncpy(fname, list->buffer->fileName+dirNameLength+1, fileNameLength);
                     fname[fileNameLength]=0;
                 }
@@ -1009,7 +1009,7 @@ int editorMapOnNonExistantFiles(char *dirname,
             if (!fileExists(list->buffer->fileName)) {
                 // get file name
                 (*fun)(fname, a1, a2, a3, a4, a5);
-                result = 1;
+                found = true;
                 // skip all files in the same directory
                 char *lastMapped = list->buffer->fileName;
                 int lastMappedLength = dirNameLength+1+fileNameLength;
@@ -1028,7 +1028,7 @@ int editorMapOnNonExistantFiles(char *dirname,
     }
     freeEditorBufferListButNotBuffers(listOfAllBuffers);
 
-    return result;
+    return found;
 }
 
 static bool bufferIsCloseable(EditorBuffer *buffer) {
@@ -1038,7 +1038,7 @@ static bool bufferIsCloseable(EditorBuffer *buffer) {
 }
 
 void closeEditorBufferIfCloseable(char *name) {
-    EditorBuffer *buffer = getEditorBufferForFile(name);
+    EditorBuffer *buffer = findOrCreateAndLoadEditorBufferForFile(name);
     if (bufferIsCloseable(buffer))
         deregisterEditorBuffer(name);
     freeEditorBuffer(buffer);

@@ -1381,7 +1381,7 @@ static EditorMarker *getTargetFromOptions(void) {
     EditorBuffer *tb;
     int           tline;
 
-    tb = findEditorBufferForFile(
+    tb = findOrCreateAndLoadEditorBufferForFile(
         normalizeFileName_static(refactoringOptions.moveTargetFile, cwd));
     if (tb == NULL)
         FATAL_ERROR(ERR_ST, "Could not find a buffer for target position", XREF_EXIT_ERR);
@@ -1630,7 +1630,7 @@ void refactory(void) {
     char inputFileName[MAX_FILE_NAME_SIZE];
     strcpy(inputFileName, argumentFile);
     char *file = inputFileName;
-    EditorBuffer *buf = findEditorBufferForFile(file);
+    EditorBuffer *buf = findOrCreateAndLoadEditorBufferForFile(file);
 
     EditorMarker *point = getPointFromOptions(buf);
     EditorMarker *mark  = getMarkFromOptions(buf);

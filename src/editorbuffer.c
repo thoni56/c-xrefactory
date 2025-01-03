@@ -105,7 +105,7 @@ EditorBuffer *getOpenedAndLoadedEditorBuffer(char *fileName) {
     return NULL;
 }
 
-EditorBuffer *findEditorBufferForFile(char *fileName) {
+EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName) {
     EditorBuffer *editorBuffer = getEditorBufferForFile(fileName);
 
     if (editorBuffer != NULL && editorBuffer->textLoaded)

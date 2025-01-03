@@ -131,7 +131,7 @@ Ensure(Yylex, can_process_include_directive) {
     always_expect(normalizeFileName_static, will_return("some/path/include.h"));
 
     /* Editor does not have the file open... */
-    expect(findEditorBufferForFile, when(name, is_equal_to_string("some/path/include.h")),
+    expect(findOrCreateAndLoadEditorBufferForFile, when(name, is_equal_to_string("some/path/include.h")),
            will_return(NULL));
     /* ... so open it directly */
     expect(openFile, when(fileName, is_equal_to_string("some/path/include.h")), will_return(&file));
@@ -178,7 +178,7 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
     expect(normalizeFileName_static, when(name, is_equal_to_string("include.h")),
            when(relative_to, is_equal_to_string("path1")), will_return("path1/include.h"));
     /* Editor should not have any file open... */
-    always_expect(findEditorBufferForFile, will_return(NULL));
+    always_expect(findOrCreateAndLoadEditorBufferForFile, will_return(NULL));
     /* ... and it should not exist in cwd either... */
     expect(openFile, when(fileName, is_equal_to_string("path1/include.h")), will_return(NULL));
 
@@ -251,7 +251,7 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
     expect(expandWildcardsInOnePath, when(filename, is_equal_to_string("path3/include.h")),
            will_set_contents_of_parameter(outpaths, "path3", sizeof(char *)));
     /* Editor should not have any file open... */
-    always_expect(findEditorBufferForFile, will_return(NULL));
+    always_expect(findOrCreateAndLoadEditorBufferForFile, will_return(NULL));
     /* ... but opening it works */
     expect(openFile, when(fileName, is_equal_to_string("path3/include.h")), will_return(&file));
 

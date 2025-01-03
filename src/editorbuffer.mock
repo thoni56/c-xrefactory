@@ -31,7 +31,7 @@ void freeEditorBuffer(EditorBuffer *buffer) {
     mock(buffer);
 }
 
-EditorBuffer *findEditorBufferForFile(char *name) {
+EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *name) {
   return (EditorBuffer *) mock(name);
 }
 

@@ -120,7 +120,7 @@ static bool computeAndOpenInputFile(void) {
     inputBuffer = NULL;
 
     inputFile = NULL;
-    inputBuffer = findEditorBufferForFile(inputFileName);
+    inputBuffer = findOrCreateAndLoadEditorBufferForFile(inputFileName);
     if (inputBuffer == NULL) {
 #if defined (__WIN32__)
         inputFile = openFile(inputFileName, "rb");

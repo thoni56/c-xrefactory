@@ -698,7 +698,7 @@ static void passRefsThroughSourceFile(Reference **inOutReferences,
     if (options.referenceListWithoutSource) {
         ebuf = NULL;
     } else {
-        ebuf = findEditorBufferForFile(cofileName);
+        ebuf = findOrCreateAndLoadEditorBufferForFile(cofileName);
         if (ebuf==NULL) {
             if (options.xref2) {
                 char tmpBuff[TMP_BUFF_SIZE];
