@@ -19,6 +19,8 @@
 extern void injectHashFun(unsigned(fun)(char *fileName));
 
 extern void initEditorBufferTable(void);
+
+/* Old style using a EditorBufferList element */
 extern int  addEditorBuffer(EditorBufferList *bufferList);
 extern bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, EditorBufferList **originP);
 extern bool deleteEditorBuffer(EditorBufferList *element);

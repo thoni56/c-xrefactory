@@ -131,7 +131,7 @@ Ensure(Yylex, can_process_include_directive) {
     always_expect(normalizeFileName_static, will_return("some/path/include.h"));
 
     /* Editor does not have the file open... */
-    expect(findOrCreateAndLoadEditorBufferForFile, when(name, is_equal_to_string("some/path/include.h")),
+    expect(findOrCreateAndLoadEditorBufferForFile, when(fileName, is_equal_to_string("some/path/include.h")),
            will_return(NULL));
     /* ... so open it directly */
     expect(openFile, when(fileName, is_equal_to_string("some/path/include.h")), will_return(&file));

@@ -38,16 +38,16 @@ typedef struct editorBufferList {
 } EditorBufferList;
 
 
-extern void fillEmptyEditorBuffer(EditorBuffer *buffer, char *fileName, int fileNumber, char *realFileName);
+extern void fillEmptyEditorBuffer(EditorBuffer *buffer, char *fileName, int fileNumber, char *loadedFromFile);
 extern void freeEditorBuffer(EditorBuffer *buffer);
-extern EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *realFileName, time_t modificationTime,
+extern EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *loadedFromFile, time_t modificationTime,
                                      size_t size);
-extern EditorBuffer *createNewEditorBuffer(char *fileName, char *realfileName, time_t modificationTime,
+extern EditorBuffer *createNewEditorBuffer(char *fileName, char *loadedFromFile, time_t modificationTime,
                                            size_t size);
-extern EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *name);
-extern EditorBuffer *openEditorBufferFromPreload(char *name, char *fileName);
+extern EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName);
+extern EditorBuffer *openEditorBufferFromPreload(char *fileName, char *loadedFromFile);
 extern EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name);
-extern void renameEditorBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo);
+extern void renameEditorBuffer(EditorBuffer *buffer, char *newName, EditorUndo **undo);
 
 // Hopefully temporary
 void setEditorBufferModified(EditorBuffer *buffer);

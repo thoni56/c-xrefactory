@@ -138,7 +138,7 @@ Ensure(Editor, can_convert_single_reference_to_editor_marker) {
     // Expect that findEditorBufferForFile() finds one
     char *name = "name";  /* Closable() depends on them being the same pointer */
     EditorBuffer editorBuffer = {.fileName = name, .loadedFromFile = name};
-    expect(findOrCreateAndLoadEditorBufferForFile, when(name, is_equal_to_string("name")),
+    expect(findOrCreateAndLoadEditorBufferForFile, when(fileName, is_equal_to_string("name")),
            will_return(&editorBuffer));
 
     EditorMarkerList *markers = convertReferencesToEditorMarkers(&reference);

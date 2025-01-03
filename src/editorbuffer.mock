@@ -4,39 +4,39 @@
 #include "editorbuffer.h"
 
 
-void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, char *fileName) {
+void fillEmptyEditorBuffer(EditorBuffer *buffer, char *fileName, int fileNumber, char *loadedFromFile) {
     buffer->allocation = (EditorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
                                                       .allocatedBlock = NULL, .allocatedIndex = 0,
                                                       .allocatedSize = 0};
-    *buffer = (EditorBuffer){.fileName = name, .fileNumber = fileNumber, .loadedFromFile = fileName, .markers = NULL,
+    *buffer = (EditorBuffer){.fileName = fileName, .fileNumber = fileNumber, .loadedFromFile = loadedFromFile, .markers = NULL,
                              .allocation = buffer->allocation};
     buffer->modificationTime = 0;
     buffer->size = 0;
 }
 
-extern EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *realFileName,
+extern EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *loadedFromFile,
                                      time_t modificationTime, size_t size) {
     EditorBuffer *editorBuffer = malloc(sizeof(EditorBuffer));
-    fillEmptyEditorBuffer(editorBuffer, fileName, fileNumber, realFileName);
+    fillEmptyEditorBuffer(editorBuffer, fileName, fileNumber, loadedFromFile);
     editorBuffer->modificationTime = modificationTime;
     editorBuffer->size = size;
     return editorBuffer;
 }
 
-EditorBuffer *createNewEditorBuffer(char *fileName, char *realFileName, time_t modificationTime, size_t size) {
-    return (EditorBuffer *)mock(fileName, realFileName, modificationTime, size);
+EditorBuffer *createNewEditorBuffer(char *fileName, char *loadedFromFile, time_t modificationTime, size_t size) {
+    return (EditorBuffer *)mock(fileName, loadedFromFile, modificationTime, size);
 }
 
 void freeEditorBuffer(EditorBuffer *buffer) {
     mock(buffer);
 }
 
-EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *name) {
-  return (EditorBuffer *) mock(name);
+EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName) {
+  return (EditorBuffer *) mock(fileName);
 }
 
-EditorBuffer *openEditorBufferFromPreload(char *name, char *fileName) {
-  return (EditorBuffer *) mock(name, fileName);
+EditorBuffer *openEditorBufferFromPreload(char *fileName, char *loadedFromFile) {
+  return (EditorBuffer *) mock(fileName, loadedFromFile);
 }
 
 EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
