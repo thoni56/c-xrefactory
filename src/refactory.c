@@ -627,7 +627,7 @@ static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *o
     }
 }
 
-static EditorMarker *createNewMarkerForExpressionStart(EditorMarker *marker, int kind) {
+static EditorMarker *createNewMarkerForExpressionStart(EditorMarker *marker, ExpressionStartKind kind) {
     Position position;
     parseBufferUsingServer(refactoringOptions.project, marker, NULL, "-olcxprimarystart", NULL);
     olStackDeleteSymbol(sessionData.browserStack.top);
@@ -723,7 +723,7 @@ static void simpleModuleRename(EditorMarkerList *markers, char *symname, char *s
     newName[0] = 0;
 
     for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
-        EditorMarker *marker = createNewMarkerForExpressionStart(l->marker, GET_STATIC_PREFIX_START);
+        EditorMarker *marker = createNewMarkerForExpressionStart(l->marker, GET_PRIMARY_START);
         if (marker != NULL) {
             removeNonCommentCode(marker, l->marker->offset - marker->offset);
             // make attention here, so that markers still points
@@ -831,7 +831,12 @@ static void renameAtPoint(EditorMarker *point) {
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
 
-    EditorMarkerList *occurrencies = pushGetAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
+    EditorMarkerList *occurrencies;
+    if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE)
+        occurrencies = getReferences(point, message, PPCV_BROWSER_TYPE_INFO);
+    else
+        occurrencies = pushGetAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
+
     SymbolsMenu *symbolsMenu = sessionData.browserStack.top->hkSelectedSym;
     char *symLinkName = symbolsMenu->references.linkName;
 
@@ -1646,6 +1651,7 @@ void refactory(void) {
 
     switch (refactoringOptions.theRefactoring) {
     case AVR_RENAME_SYMBOL:
+    case AVR_RENAME_MODULE:
         progressFactor = 3;
         updateOption   = computeUpdateOptionForSymbol(point);
         renameAtPoint(point);

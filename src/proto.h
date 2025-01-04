@@ -60,6 +60,11 @@ typedef enum {
     MARKER_IS_IN_STAR_COMMENT
 } MarkerLocationKind;
 
+typedef enum {
+    GET_PRIMARY_START,
+    GET_STATIC_PREFIX_START
+} ExpressionStartKind;
+
 enum miscellaneous { /* misc. constants */
     DEFAULT_VALUE = SEARCH_DEFINITIONS_SHORT + 1,
     SEARCH_SYMBOL,
@@ -70,8 +75,6 @@ enum miscellaneous { /* misc. constants */
     DIFF_UNEXPECTED_REF,
     GEN_FULL_OUTPUT,
     GEN_NO_OUTPUT,
-    GET_PRIMARY_START,
-    GET_STATIC_PREFIX_START,
     ALLOW_EDITOR_FILES,
     DO_NOT_ALLOW_EDITOR_FILES,
 };

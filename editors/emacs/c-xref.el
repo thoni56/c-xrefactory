@@ -166,6 +166,7 @@
   (list
    (list c-xref_PPC_AVR_NO_REFACTORING "No refactoring" 'c-xref-no-refactoring nil)
    (list c-xref_PPC_AVR_RENAME_SYMBOL "Rename Symbol" 'c-xref-rename-symbol nil)
+   (list c-xref_PPC_AVR_RENAME_MODULE "Rename Module" 'c-xref-rename-module nil)
    (list c-xref_PPC_AVR_ADD_PARAMETER "Add Parameter" 'c-xref-add-parameter nil)
    (list c-xref_PPC_AVR_DEL_PARAMETER "Delete Parameter" 'c-xref-del-parameter nil)
    (list c-xref_PPC_AVR_MOVE_PARAMETER "Move Parameter" 'c-xref-move-parameter nil)
@@ -7096,6 +7097,10 @@ refactoring.
 
 (defun c-xref-rename-symbol (rd)
   (c-xref-renaming "-rfct-rename" nil)
+  )
+
+(defun c-xref-rename-module (rd)
+  (c-xref-renaming "-rfct-rename-module" nil)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; PARAMETER MANIPULATIONS  ;;;;;;;;;;;;;;;;;;;;
