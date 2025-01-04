@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Find the root of the project (c-xrefactory)
+PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo "")
+if [[ -z "$PROJECT_ROOT" || "$(basename "$PROJECT_ROOT")" != "c-xrefactory" ]]; then
+  echo "Error: Script must be run from within the c-xrefactory project tree." >&2
+  exit 1
+fi
+
+# Look for test directories
+for dir in "$PROJECT_ROOT/tests/test_"*; do
+  if [[ -d "$dir" && ! -f "$dir/.suspended" ]]; then
+    # Check if 'output' and 'expected' files exist and compare them
+    if [[ -f "$dir/output" && -f "$dir/expected" ]]; then
+      if ! diff -q "$dir/output" "$dir/expected" >/dev/null; then
+        # Convert the absolute path to a relative path
+        relative_path=$(realpath --relative-to="$PWD" "$dir")
+        echo "$relative_path"
+      fi
+    fi
+  fi
+done
