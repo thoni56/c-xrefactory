@@ -130,12 +130,12 @@
 
 #ifdef __WIN32__
 #define FILE_PATH_SEPARATOR '\\'
-#define CLASS_PATH_SEPARATOR ';'
+#define PATH_SEPARATOR ';'
 #define FILE_BEGIN_DOT '_'
 /*typedef int pid_t;*/
 #else
 #define FILE_PATH_SEPARATOR '/'
-#define CLASS_PATH_SEPARATOR ':'
+#define PATH_SEPARATOR ':'
 #define FILE_BEGIN_DOT '.'
 #endif
 

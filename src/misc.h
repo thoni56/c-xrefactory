@@ -22,7 +22,7 @@
         mop_endOfPaths = currentPath+strlen(currentPath);               \
         while (currentPath<mop_endOfPaths) {                            \
             for (mop_index=0;                                           \
-                currentPath[mop_index]!=0 && currentPath[mop_index]!=CLASS_PATH_SEPARATOR; \
+                currentPath[mop_index]!=0 && currentPath[mop_index]!=PATH_SEPARATOR; \
                  mop_index++) ;                                         \
             currentPath[mop_index] = 0;                                 \
             if (mop_index>0 && currentPath[mop_index-1]==FILE_PATH_SEPARATOR) \
