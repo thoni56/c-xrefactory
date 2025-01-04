@@ -92,16 +92,6 @@ void editorInit(void) {
     initEditorBufferTable();
 }
 
-int editorFileStatus(char *path) {
-    EditorBuffer *buffer;
-
-    buffer = getEditorBufferForFile(path);
-    if (buffer != NULL) {
-        return 0;
-    }
-    return fileExists(path);
-}
-
 time_t editorFileModificationTime(char *path) {
     EditorBuffer *buffer;
 

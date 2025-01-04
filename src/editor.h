@@ -59,7 +59,6 @@ extern void editorInit(void);
 extern bool   editorFileExists(char *path);
 extern size_t editorFileSize(char *path);
 extern time_t editorFileModificationTime(char *path);
-extern int    editorFileStatus(char *path);
 
 extern bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2);

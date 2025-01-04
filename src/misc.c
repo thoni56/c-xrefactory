@@ -650,26 +650,20 @@ static void expandWildcardsInOnePathRecursiveMaybe(char *fileName, char **outpat
                 if (fileName[si]) { di++; si++; }
             }
         }
-    } else {
-        if (editorFileExists(fileName) != (editorFileStatus(fileName) == 0))
-            log_trace("editorFileExists != editorFileStatus");
-        else
-            log_trace("editorFileExists == editorFileStatus");
-        if (editorFileStatus(fileName) == 0) {
-            int len = strlen(fileName);
-            strcpy(*outpaths, fileName);
-            log_trace("adding expanded path==%s", fileName);
-            *outpaths += len;
-            *availableSpace -= len;
-            *((*outpaths)++) = PATH_SEPARATOR;
-            *(*outpaths) = 0;
-            *availableSpace -= 1;
-            if (*availableSpace <= 0) {
-                char tmpBuff[TMP_BUFF_SIZE];
-                sprintf(tmpBuff, "expanded option %s overflows over MAX_OPTION_LEN",
-                        *outpaths-(MAX_OPTION_LEN-*availableSpace));
-                FATAL_ERROR(ERR_ST, tmpBuff, XREF_EXIT_ERR);
-            }
+    } else if (directoryExists(fileName)) {
+        int len = strlen(fileName);
+        strcpy(*outpaths, fileName);
+        log_trace("adding expanded path==%s", fileName);
+        *outpaths += len;
+        *availableSpace -= len;
+        *((*outpaths)++) = PATH_SEPARATOR;
+        *(*outpaths) = 0;
+        *availableSpace -= 1;
+        if (*availableSpace <= 0) {
+            char tmpBuff[TMP_BUFF_SIZE];
+            sprintf(tmpBuff, "expanded option %s overflows over MAX_OPTION_LEN",
+                    *outpaths-(MAX_OPTION_LEN-*availableSpace));
+            FATAL_ERROR(ERR_ST, tmpBuff, XREF_EXIT_ERR);
         }
     }
 }

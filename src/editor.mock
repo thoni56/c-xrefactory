@@ -30,10 +30,6 @@ size_t editorFileSize(char *path) {
     return (time_t)mock(path);
 }
 
-int editorFileStatus(char *path) {
-  return (int) mock(path);
-}
-
 bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }

@@ -16,6 +16,7 @@ extern void recursivelyCreateFileDirIfNotExists(char *fpath);
 extern void removeFile(char *dirname);
 extern bool isDirectory(char *fullPath);
 extern bool directoryExists(char *fullPath);
+extern int fileStatus(char *path, struct stat *statP);
 extern bool fileExists(char *fullPath);
 extern size_t readFile(FILE *file, void *buffer, size_t size, size_t count);
 extern size_t writeFile(FILE *file, void *buffer, size_t size, size_t count);

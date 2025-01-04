@@ -73,7 +73,7 @@ void removeFile(char *fileName) {
     unlink(fileName);
 }
 
-static int fileStatus(char *path, struct stat *statP) {
+int fileStatus(char *path, struct stat *statP) {
     struct stat st;
     int return_value;
 
