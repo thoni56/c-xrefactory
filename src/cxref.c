@@ -2407,11 +2407,6 @@ void olSetCallerPosition(Position position) {
 }
 
 
-void olCompletionListReverse(void) {
-    LIST_REVERSE(Completion, sessionData.completionsStack.top->completions);
-}
-
-
 void generateReferences(void) {
     static bool updateFlag = false;  /* TODO: WTF - why do we need a
                                         static updateFlag? Maybe we

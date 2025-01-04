@@ -4,7 +4,6 @@
 
 #include "menu.h"
 #include "proto.h"
-#include "server.h"
 #include "symbol.h"
 #include "usage.h"
 
@@ -24,7 +23,6 @@ extern Reference *addCxReference(Symbol *symbol, Position position, Usage usage,
 extern void addTrivialCxReference (char *name, int symType, int storage,
                                    Position position, Usage usage);
 extern void olSetCallerPosition(Position position);
-extern void olCompletionListReverse(void);
 extern int itIsSymbolToPushOlReferences(ReferenceItem *p, OlcxReferences *rstack,
                                         SymbolsMenu **rss, int checkSelFlag);
 extern void putOnLineLoadedReferences(ReferenceItem *p);

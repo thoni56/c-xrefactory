@@ -203,6 +203,10 @@ void printCompletionsList(bool noFocus) {
     printCompletionsEnding(completions);
 }
 
+static void olCompletionListReverse(void) {
+    LIST_REVERSE(Completion, sessionData.completionsStack.top->completions);
+}
+
 void printCompletions(Completions *completions) {
     int indent, max;
 
