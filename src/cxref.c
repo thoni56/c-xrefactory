@@ -437,8 +437,8 @@ static void olcxAppendReference(Reference *ref, OlcxReferences *refs) {
 }
 
 /* fnum is file number of which references are added, can be ANY_FILE */
-void olcxAddReferences(Reference *list, Reference **dlist,
-                       int fnum, int bestMatchFlag) {
+static void olcxAddReferences(Reference *list, Reference **dlist,
+                              int fnum, int bestMatchFlag) {
     Reference *revlist,*tmp;
     /* from now, you should add it to macros as REVERSE_LIST_MAP() */
     revlist = NULL;
@@ -464,7 +464,7 @@ static void olcxAddReferencesToSymbolsMenu(SymbolsMenu *menu, Reference *referen
     }
 }
 
-void gotoOnlineCxref(Position position, Usage usage, char *suffix)
+static void gotoOnlineCxref(Position position, Usage usage, char *suffix)
 {
     assert(options.xref2);
     ppcGotoPosition(position);
@@ -1090,14 +1090,13 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
     }
 }
 
-
-SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
-    SymbolsMenu     *res;
-    ReferenceItem     ss = makeReferenceItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility, cfi);
-    res = createNewMenuItem(&ss, ss.includedFileNumber, noPosition, UsageNone,
-                              1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
-                              UsageUsed, 0);
-    return res;
+static SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage) {
+    SymbolsMenu *menu;
+    ReferenceItem r = makeReferenceItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility, cfi);
+    menu = createNewMenuItem(&r, r.includedFileNumber, noPosition, UsageNone,
+                             1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
+                             UsageUsed, 0);
+    return menu;
 }
 
 bool isSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2) {
@@ -1175,6 +1174,14 @@ void olProcessSelectedReferences(OlcxReferences *rstack,
     }
     olcxSetCurrentRefsOnCaller(rstack);
     LIST_MERGE_SORT(Reference, rstack->references, referenceIsLessThan);
+}
+
+static void genOnLineReferences(OlcxReferences *rstack, SymbolsMenu *cms) {
+    if (cms->selected) {
+        assert(cms);
+        olcxAddReferences(cms->references.references, &rstack->references, ANY_FILE,
+                          IS_BEST_FIT_MATCH(cms));
+    }
 }
 
 void olcxRecomputeSelRefs(OlcxReferences *refs) {
@@ -1731,6 +1738,10 @@ static bool refItemsOrderLess(SymbolsMenu *menu1, SymbolsMenu *menu2) {
     return cmp<0;
 }
 
+static void mapCreateSelectionMenu(ReferenceItem *p) {
+    createSelectionMenu(p);
+}
+
 void olCreateSelectionMenu(int command) {
     OlcxReferences  *rstack;
     SymbolsMenu     *menu;
@@ -1795,7 +1806,7 @@ static void olcxProcessGetRequest(void) {
     }
 }
 
-void olcxPrintPushingAction(ServerOperation operation) {
+static void olcxPrintPushingAction(ServerOperation operation) {
     switch (operation) {
     case OLO_PUSH:
         if (olcxCheckSymbolExists()) {
@@ -1976,6 +1987,85 @@ static void pushSymbolByName(char *name) {
     rstack = sessionData.browserStack.top;
     rstack->hkSelectedSym = olCreateSpecialMenuItem(name, NO_FILE_NUMBER, StorageDefault);
     rstack->callerPosition = getCallerPositionFromCommandLineOption();
+}
+
+#define maxOf(a, b) (((a) > (b)) ? (a) : (b))
+
+static char *createTagSearchLine_static(char *name, int fileNumber,
+                                        int *len1, int *len2, int *len3) {
+    static char line[2*COMPLETION_STRING_SIZE];
+    char file[TMP_STRING_SIZE];
+    char dir[TMP_STRING_SIZE];
+    char *ffname;
+    int l1,l2,l3,fl, dl;
+
+    l1 = l2 = l3 = 0;
+    l1 = strlen(name);
+
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+    ffname = fileItem->name;
+    assert(ffname);
+    ffname = getRealFileName_static(ffname);
+    fl = strlen(ffname);
+    l3 = strmcpy(file,simpleFileName(ffname)) - file;
+
+    dl = fl /*& - l3 &*/ ;
+    strncpy(dir, ffname, dl);
+    dir[dl]=0;
+
+    *len1 = maxOf(*len1, l1);
+    *len2 = maxOf(*len2, l2);
+    *len3 = maxOf(*len3, l3);
+
+    if (options.searchKind == SEARCH_DEFINITIONS_SHORT
+        || options.searchKind==SEARCH_FULL_SHORT) {
+        sprintf(line, "%s", name);
+    } else {
+        sprintf(line, "%-*s :%-*s :%s", *len1, name, *len3, file, dir);
+    }
+    return line;                /* static! */
+}
+
+static void printTagSearchResults(void) {
+    int len1, len2, len3, len;
+    char *ls;
+
+    len1 = len2 = len3 = 0;
+    tagSearchCompactShortResults();
+
+    // the first loop is counting the length of fields
+    assert(sessionData.retrieverStack.top);
+    for (Completion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
+        ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->ref),
+                                   &len1, &len2, &len3);
+    }
+    if (options.olineLen >= 50000) {
+        /* TODO: WTF? 50k??!?! */
+        if (len1 > MAX_TAG_SEARCH_INDENT)
+            len1 = MAX_TAG_SEARCH_INDENT;
+    } else {
+        if (len1 > (options.olineLen*MAX_TAG_SEARCH_INDENT_RATIO)/100) {
+            len1 = (options.olineLen*MAX_TAG_SEARCH_INDENT_RATIO)/100;
+        }
+    }
+    len = len1;
+
+    // the second is writing
+    if (options.xref2)
+        ppcBegin(PPC_SYMBOL_LIST);
+    assert(sessionData.retrieverStack.top);
+    for (Completion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
+        ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->ref),
+                                   &len1, &len2, &len3);
+        if (options.xref2) {
+            ppcGenRecord(PPC_STRING_VALUE, ls);
+        } else {
+            fprintf(communicationChannel,"%s\n", ls);
+        }
+        len1 = len;
+    }
+    if (options.xref2)
+        ppcEnd(PPC_SYMBOL_LIST);
 }
 
 void answerEditAction(void) {
@@ -2233,14 +2323,6 @@ void putOnLineLoadedReferences(ReferenceItem *referenceItem) {
     }
 }
 
-void genOnLineReferences(OlcxReferences *rstack, SymbolsMenu *cms) {
-    if (cms->selected) {
-        assert(cms);
-        olcxAddReferences(cms->references.references, &rstack->references, ANY_FILE,
-                          IS_BEST_FIT_MATCH(cms));
-    }
-}
-
 static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceItem *referenceItem) {
     assert(olcxIsSameCxSymbol(&menu->references, referenceItem));
     unsigned ooBits = 0;
@@ -2316,10 +2398,6 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
     return result;
 }
 
-void mapCreateSelectionMenu(ReferenceItem *p) {
-    createSelectionMenu(p);
-}
-
 
 /* ********************************************************************** */
 
@@ -2333,85 +2411,6 @@ void olCompletionListReverse(void) {
     LIST_REVERSE(Completion, sessionData.completionsStack.top->completions);
 }
 
-
-#define maxOf(a, b) (((a) > (b)) ? (a) : (b))
-
-static char *createTagSearchLine_static(char *name, int fileNumber,
-                                        int *len1, int *len2, int *len3) {
-    static char line[2*COMPLETION_STRING_SIZE];
-    char file[TMP_STRING_SIZE];
-    char dir[TMP_STRING_SIZE];
-    char *ffname;
-    int l1,l2,l3,fl, dl;
-
-    l1 = l2 = l3 = 0;
-    l1 = strlen(name);
-
-    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-    ffname = fileItem->name;
-    assert(ffname);
-    ffname = getRealFileName_static(ffname);
-    fl = strlen(ffname);
-    l3 = strmcpy(file,simpleFileName(ffname)) - file;
-
-    dl = fl /*& - l3 &*/ ;
-    strncpy(dir, ffname, dl);
-    dir[dl]=0;
-
-    *len1 = maxOf(*len1, l1);
-    *len2 = maxOf(*len2, l2);
-    *len3 = maxOf(*len3, l3);
-
-    if (options.searchKind == SEARCH_DEFINITIONS_SHORT
-        || options.searchKind==SEARCH_FULL_SHORT) {
-        sprintf(line, "%s", name);
-    } else {
-        sprintf(line, "%-*s :%-*s :%s", *len1, name, *len3, file, dir);
-    }
-    return line;                /* static! */
-}
-
-void printTagSearchResults(void) {
-    int len1, len2, len3, len;
-    char *ls;
-
-    len1 = len2 = len3 = 0;
-    tagSearchCompactShortResults();
-
-    // the first loop is counting the length of fields
-    assert(sessionData.retrieverStack.top);
-    for (Completion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
-        ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->ref),
-                                   &len1, &len2, &len3);
-    }
-    if (options.olineLen >= 50000) {
-        /* TODO: WTF? 50k??!?! */
-        if (len1 > MAX_TAG_SEARCH_INDENT)
-            len1 = MAX_TAG_SEARCH_INDENT;
-    } else {
-        if (len1 > (options.olineLen*MAX_TAG_SEARCH_INDENT_RATIO)/100) {
-            len1 = (options.olineLen*MAX_TAG_SEARCH_INDENT_RATIO)/100;
-        }
-    }
-    len = len1;
-
-    // the second is writing
-    if (options.xref2)
-        ppcBegin(PPC_SYMBOL_LIST);
-    assert(sessionData.retrieverStack.top);
-    for (Completion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
-        ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->ref),
-                                   &len1, &len2, &len3);
-        if (options.xref2) {
-            ppcGenRecord(PPC_STRING_VALUE, ls);
-        } else {
-            fprintf(communicationChannel,"%s\n", ls);
-        }
-        len1 = len;
-    }
-    if (options.xref2)
-        ppcEnd(PPC_SYMBOL_LIST);
-}
 
 void generateReferences(void) {
     static bool updateFlag = false;  /* TODO: WTF - why do we need a

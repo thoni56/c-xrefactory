@@ -8,10 +8,6 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return (int) mock(r1, r2);
 }
 
-void printTagSearchResults(void) {
-    mock();
-}
-
 SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage) {
     return (SymbolsMenu *) mock(fieldName, cfi, storage);
 }
@@ -49,11 +45,6 @@ int getFileNumberFromName(char *name) {
     return (int) mock(name);
 }
 
-void gotoOnlineCxref(Position pos, Usage usage, char *suffix) {
-    Position *position = &pos;
-    mock(position, usage, suffix);
-}
-
 Reference *addNewCxReference(Symbol *symbol, Position *pos, Usage usage_arg, int includedFileNumber) {
     Usage *usage = &usage_arg;
     return (Reference *) mock(symbol, pos, usage, includedFileNumber);
@@ -68,10 +59,6 @@ Reference *addCxReference(Symbol *symbol, Position pos, Usage usage, int include
 void addTrivialCxReference(char *name, int symType, int storage, Position pos, Usage usage) {
     Position *position = &pos;
     mock(name, symType, storage, position, usage);
-}
-
-void olcxAddReferences(Reference *list, Reference **dlist, int fnum, int bestMatchFlag) {
-    mock(list, dlist, fnum, bestMatchFlag);
 }
 
 void olSetCallerPosition(Position pos) {
@@ -92,16 +79,8 @@ void putOnLineLoadedReferences(ReferenceItem *p) {
     mock(p);
 }
 
-void genOnLineReferences(OlcxReferences *rstack, SymbolsMenu *cms) {
-    mock(rstack, cms);
-}
-
 SymbolsMenu *createSelectionMenu(ReferenceItem *dd) {
     return (SymbolsMenu *) mock(dd);
-}
-
-void mapCreateSelectionMenu(ReferenceItem *dd) {
-    mock(dd);
 }
 
 void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
@@ -134,10 +113,6 @@ void olcxPushSpecialCheckMenuSym(char *symname) {
 
 void olcxPushSpecial(char *fieldName, int command) {
     mock(fieldName, command);
-}
-
-void olcxPrintPushingAction(ServerOperation operation) {
-    mock(operation);
 }
 
 void answerEditAction(void) {
