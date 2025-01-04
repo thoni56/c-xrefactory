@@ -2,10 +2,9 @@
 #
 # Simple Emacs startup using latest development version
 #
-set -x
-PWD="$(dirname "$(realpath "$0")")"
+UTILS="$(dirname "$(realpath "$0")")"
 
-FILES=$(find "$PWD/../editors/emacs" -type f -name "*.el" ! -name "compileCxrefactory.el")
+FILES=$(find "$UTILS/../editors/emacs" -type f -name "*.el" ! -name "compileCxrefactory.el")
 LOAD_FILES=$(printf " -l %q" $FILES)
 
 # Check if .c-xrefrc exists in the current directory
@@ -19,13 +18,13 @@ fi
 if [[ -n "$OPTIONS_FILE" ]]; then
   emacs $LOAD_FILES \
     --eval "(setq c-xref-options-file $OPTIONS_FILE)" \
-    --eval "(setq c-xref-exec-directory \"$PWD/../src/\")" \
+    --eval "(setq c-xref-exec-directory \"$UTILS/../src/\")" \
     --eval "(setq c-xref-debug-mode t)" \
     --eval "(setq c-xref-debug-preserve-tmp-files t)" \
     "$@"
 else
   emacs $LOAD_FILES \
-    --eval "(setq c-xref-exec-directory \"$PWD/../src/\")" \
+    --eval "(setq c-xref-exec-directory \"$UTILS/../src/\")" \
     --eval "(setq c-xref-debug-mode t)" \
     --eval "(setq c-xref-debug-preserve-tmp-files t)" \
     "$@"
