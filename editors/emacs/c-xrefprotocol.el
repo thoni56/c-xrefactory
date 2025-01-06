@@ -109,6 +109,7 @@
 (defconst c-xref_PPC_AVR_DEL_PARAMETER 50)
 (defconst c-xref_PPC_AVR_MOVE_PARAMETER 60)
 (defconst c-xref_PPC_AVR_MOVE_FUNCTION 70)
+(defconst c-xref_PPC_AVR_RENAME_INCLUDED_FILE 80)
 (defconst c-xref_PPC_AVR_EXTRACT_FUNCTION 230)
 (defconst c-xref_PPC_AVR_EXTRACT_MACRO 240)
 (defconst c-xref_PPC_AVR_EXTRACT_VARIABLE 250)

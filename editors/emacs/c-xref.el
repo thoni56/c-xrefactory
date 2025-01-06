@@ -167,6 +167,7 @@
    (list c-xref_PPC_AVR_NO_REFACTORING "No refactoring" 'c-xref-no-refactoring nil)
    (list c-xref_PPC_AVR_RENAME_SYMBOL "Rename Symbol" 'c-xref-rename-symbol nil)
    (list c-xref_PPC_AVR_RENAME_MODULE "Rename Module" 'c-xref-rename-module nil)
+   (list c-xref_PPC_AVR_RENAME_INCLUDED_FILE "Rename Included File" 'c-xref-rename-included-file nil)
    (list c-xref_PPC_AVR_ADD_PARAMETER "Add Parameter" 'c-xref-add-parameter nil)
    (list c-xref_PPC_AVR_DEL_PARAMETER "Delete Parameter" 'c-xref-del-parameter nil)
    (list c-xref_PPC_AVR_MOVE_PARAMETER "Move Parameter" 'c-xref-move-parameter nil)
@@ -7102,6 +7103,19 @@ refactoring.
 (defun c-xref-rename-module (rd)
   (c-xref-renaming "-rfct-rename-module" nil)
   )
+
+(defun c-xref-rename-included-file (rd)
+  "Find the filename in a C #include statement and pass it to c-xref-renaming."
+  (save-excursion
+    (let (filename)
+      ;; Ensure we're on an #include line
+      (beginning-of-line)
+      (when (looking-at "#\\s-*include\\s-*\\(.*\\)")
+        (progn
+          (setq filename (match-string 1))
+          (setq filename (substring filename 1 -1))
+          (c-xref-renaming "-rfct-rename-included-file" filename))
+        (message "No valid #include statement found at point")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; PARAMETER MANIPULATIONS  ;;;;;;;;;;;;;;;;;;;;
 

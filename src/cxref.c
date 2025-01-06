@@ -91,6 +91,8 @@ static void setAvailableRefactorings(Symbol *symbol) {
         makeRefactoringAvailable(PPC_AVR_MOVE_PARAMETER, "macro");
         break;
     case TypeCppInclude:
+        makeRefactoringAvailable(PPC_AVR_RENAME_INCLUDED_FILE, "");
+        makeRefactoringAvailable(PPC_AVR_RENAME_MODULE, "");
         break;
     case TypeChar:
     case TypeUnsignedChar:

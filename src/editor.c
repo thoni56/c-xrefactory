@@ -675,7 +675,7 @@ void freeEditorMarkerListButNotMarkers(EditorMarkerList *occs) {
     }
 }
 
-void freeEditorMarkersAndMarkerList(EditorMarkerList *occs) {
+void freeEditorMarkerListAndMarkers(EditorMarkerList *occs) {
     for (EditorMarkerList *o = occs; o != NULL;) {
         EditorMarkerList *next = o->next; /* Save next as we are freeing 'o' */
         freeEditorMarker(o->marker);
@@ -893,7 +893,7 @@ void restrictEditorMarkersToRegions(EditorMarkerList **mm, EditorRegionList **re
     EditorMarkerList *ins, *outs;
     splitEditorMarkersWithRespectToRegions(mm, regions, &ins, &outs);
     *mm = ins;
-    freeEditorMarkersAndMarkerList(outs);
+    freeEditorMarkerListAndMarkers(outs);
 }
 
 EditorMarker *createEditorMarkerForBufferBegin(EditorBuffer *buffer) {

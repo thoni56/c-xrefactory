@@ -1611,6 +1611,9 @@ static bool processROption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-rfct-rename-module")==0) {
         options.theRefactoring = AVR_RENAME_MODULE;
     }
+    else if (strcmp(argv[i], "-rfct-rename-included-file")==0) {
+        options.theRefactoring = AVR_RENAME_INCLUDED_FILE;
+    }
     else if (strcmp(argv[i], "-rfct-add-param")==0)  {
         options.theRefactoring = AVR_ADD_PARAMETER;
     }

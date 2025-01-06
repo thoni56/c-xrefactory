@@ -179,7 +179,7 @@ EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer) {
   return (EditorRegionList *) mock(buffer);
 }
 
-void freeEditorMarkersAndMarkerList(EditorMarkerList *occs) {
+void freeEditorMarkerListAndMarkers(EditorMarkerList *occs) {
   mock(occs);
 }
 

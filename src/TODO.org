@@ -18,7 +18,11 @@ Some useful commands:
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
 * TODO Rename C module
-** TODO Rename .c file
+** TODO Rename included file
+*** TODO New refactoring: Rename Included File
+*** TODO Rename the file
+*** TODO Update all #includes
+*** TODO Prohibit rename of files included with '<>'
 ** TODO Rename corresponding .h file if exists
 ** TODO Update all #includes
 * DOING LSP-mode support

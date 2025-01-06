@@ -291,23 +291,49 @@ static char *getIdentifierOnMarker_static(EditorMarker *marker) {
     return identifier;
 }
 
+static char *getFileNameInInclude_static(EditorMarker *marker) {
+    EditorBuffer *buffer;
+    char         *start, *end, *textMax, *textMin;
+    static char   identifier[TMP_STRING_SIZE];
+
+    buffer = marker->buffer;
+    assert(buffer && buffer->allocation.text && marker->offset <= buffer->allocation.bufferSize);
+    start   = buffer->allocation.text + marker->offset;
+    textMin = buffer->allocation.text;
+    textMax = buffer->allocation.text + buffer->allocation.bufferSize;
+    // move to the beginning of #include
+    for (; start >= textMin && *start != '#'; start--)
+        ;
+    // TODO ensure we are on an '#include'?
+    // move to first quote
+    for (start++; start < textMax && *start != '"'; start++)
+        ;
+    start++;
+    // now get it
+    for (end = start+1; end < textMax && *end != '"'; end++)
+        ;
+    int length = end - start;
+    assert(length < TMP_STRING_SIZE - 1);
+    strncpy(identifier, start, length);
+    identifier[length] = 0;
+
+    return identifier;
+}
+
 static void replaceString(EditorMarker *marker, int len, char *newString) {
     replaceStringInEditorBuffer(marker->buffer, marker->offset, len, newString,
                                 strlen(newString), &editorUndo);
 }
 
-static void checkedReplaceString(EditorMarker *pos, int len, char *oldVal, char *newVal) {
-    char *bVal;
-    int   check, d;
-
-    bVal  = pos->buffer->allocation.text + pos->offset;
-    check = (strlen(oldVal) == len && strncmp(oldVal, bVal, len) == 0);
+static void checkedReplaceString(EditorMarker *marker, int len, char *oldString, char *newString) {
+    char *bVal  = marker->buffer->allocation.text + marker->offset;
+    bool check = (strlen(oldString) == len && strncmp(oldString, bVal, len) == 0);
     if (check) {
-        replaceString(pos, len, newVal);
+        replaceString(marker, len, newString);
     } else {
         char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "checked replacement of %s to %s failed on ", oldVal, newVal);
-        d = strlen(tmpBuff);
+        sprintf(tmpBuff, "checked replacement of %s to %s failed on ", oldString, newString);
+        int d = strlen(tmpBuff);
         for (int i = 0; i < len; i++)
             tmpBuff[d++] = bVal[i];
         tmpBuff[d++] = 0;
@@ -587,7 +613,7 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
 
     editorMarkersDifferences(occs, &chks, &diff1, &diff2);
 
-    freeEditorMarkersAndMarkerList(chks);
+    freeEditorMarkerListAndMarkers(chks);
 
     editorUndoUntil(startPoint, redoTrack);
 
@@ -666,15 +692,7 @@ static void checkedRenameBuffer(EditorBuffer *buff, char *newName, EditorUndo **
     renameEditorBuffer(buff, newName, undo);
 }
 
-static void javaSlashifyDotName(char *ss) {
-    char *s;
-    for (s = ss; *s; s++) {
-        if (*s == '.')
-            *s = FILE_PATH_SEPARATOR;
-    }
-}
-
-static void moveFileAndDirForPackageRename(char *currentPath, EditorMarker *lld, char *symLinkName) {
+static void moveFile(char *currentPath, EditorMarker *lld, char *symLinkName) {
     char newfile[2 * MAX_FILE_NAME_SIZE];
     char packdir[2 * MAX_FILE_NAME_SIZE];
     char newpackdir[2 * MAX_FILE_NAME_SIZE];
@@ -688,27 +706,23 @@ static void moveFileAndDirForPackageRename(char *currentPath, EditorMarker *lld,
     }
     sprintf(packdir, "%s%c%s", path, FILE_PATH_SEPARATOR, symLinkName);
     sprintf(newpackdir, "%s%c%s", path, FILE_PATH_SEPARATOR, refactoringOptions.renameTo);
-    javaSlashifyDotName(newpackdir + strlen(path));
     sprintf(newfile, "%s%s", newpackdir, lld->buffer->fileName + strlen(packdir));
     checkedRenameBuffer(lld->buffer, newfile, &editorUndo);
 }
 
-static bool renamePackageFileMove(char *currentPath, EditorMarkerList *ll, char *symLinkName, int slnlen) {
-    int  pathLength;
-    bool res = false;
+static bool tryMovingFile(char *currentPath, EditorMarkerList *l, char *newName) {
+    bool moved = false;
 
-    pathLength = strlen(currentPath);
-    log_trace("checking %s<->%s, %s<->%s", ll->marker->buffer->fileName, currentPath,
-              ll->marker->buffer->fileName + pathLength + 1, symLinkName);
-    if (filenameCompare(ll->marker->buffer->fileName, currentPath, pathLength) == 0 &&
-        ll->marker->buffer->fileName[pathLength] == FILE_PATH_SEPARATOR &&
-        filenameCompare(ll->marker->buffer->fileName + pathLength + 1, symLinkName, slnlen) == 0) {
-        moveFileAndDirForPackageRename(currentPath, ll->marker, symLinkName);
-        res = true;
-        goto fini;
+    int pathLength = strlen(currentPath);
+    log_trace("checking %s<->%s", l->marker->buffer->fileName, currentPath);
+    if (filenameCompare(l->marker->buffer->fileName, currentPath, pathLength) == 0 &&
+        l->marker->buffer->fileName[pathLength] == FILE_PATH_SEPARATOR &&
+        filenameCompare(l->marker->buffer->fileName + pathLength + 1, newName, strlen(newName)) == 0)
+    {
+        moveFile(currentPath, l->marker, newName);
+        moved = true;
     }
-fini:
-    return res;
+    return moved;
 }
 
 static void simpleModuleRename(EditorMarkerList *markers, char *symname, char *symLinkName) {
@@ -736,10 +750,89 @@ static void simpleModuleRename(EditorMarkerList *markers, char *symname, char *s
     }
     for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
         if (l->next == NULL || l->next->marker->buffer != l->marker->buffer) {
+            // TODO should use options.includeDirs instead
+            MAP_OVER_PATHS(javaSourcePaths, {
+                    if (tryMovingFile(currentPath, l, symLinkName))
+                        goto moved;
+            });
+        moved:;
+        }
+    }
+}
+
+static void simpleFileRename(EditorMarkerList *markers, char *symname, char *symLinkName) {
+    char newName[MAX_FILE_NAME_SIZE];
+    char newModuleName[MAX_FILE_NAME_SIZE];
+
+    // get original and new directory, but how?
+    strcpy(newName, refactoringOptions.renameTo);
+    strcpy(newModuleName, newName);
+    newName[0] = 0;
+
+    for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
+        EditorMarker *marker = createNewMarkerForExpressionStart(l->marker, GET_PRIMARY_START);
+        if (marker != NULL) {
+            removeNonCommentCode(marker, l->marker->offset - marker->offset);
+            // make attention here, so that markers still points
+            // to the package name, the best would be to replace
+            // package name per single names, ...
+            checkedReplaceString(marker, strlen(symname), symname, newModuleName);
+            replaceString(marker, 0, newName);
+        }
+        freeEditorMarker(marker);
+    }
+    for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
+        if (l->next == NULL || l->next->marker->buffer != l->marker->buffer) {
             // O.K. verify whether I should move the file
             bool fileMoved;
             MAP_OVER_PATHS(javaSourcePaths, {
-                    fileMoved = renamePackageFileMove(currentPath, l, symLinkName, strlen(symLinkName));
+                    fileMoved = tryMovingFile(currentPath, l, symLinkName);
+                    if (fileMoved)
+                        goto moved;
+            });
+        moved:;
+        }
+    }
+}
+
+static EditorMarker *adjustMarkerForInclude(EditorMarker *marker) {
+    EditorBuffer *buffer    = getOpenedAndLoadedEditorBuffer(marker->buffer->fileName);
+    EditorMarker *newMarker = newEditorMarker(buffer, marker->offset);
+    // TODO assert we're at an include and find the filename, for now fake it
+    newMarker->offset += 10;
+    return newMarker;
+}
+
+
+static void renameIncludes(EditorMarkerList *markers, char *currentIncludeFileName) {
+    char newName[MAX_FILE_NAME_SIZE];
+    char newFileName[MAX_FILE_NAME_SIZE];
+
+    // get original and new directory, but how?
+    strcpy(newName, refactoringOptions.renameTo);
+    strcpy(newFileName, newName);
+    newName[0] = 0;
+
+    for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
+        // References for #include always points to the '#' but there is also one that
+        // points to the first position in the include file. We need to adjust the
+        // markers so they point to the filename, and ignore the marker that points to
+        // the include file.
+        if (strcmp(l->marker->buffer->fileName, normalizeFileName_static(currentIncludeFileName, cwd)) != 0) {
+            EditorMarker *marker = adjustMarkerForInclude(l->marker);
+            if (marker != NULL) {
+                checkedReplaceString(marker, strlen(currentIncludeFileName), currentIncludeFileName, newFileName);
+                replaceString(marker, 0, newName);
+            }
+            freeEditorMarker(marker);
+        }
+    }
+    for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
+        if (l->next == NULL || l->next->marker->buffer != l->marker->buffer) {
+            // O.K. verify whether I should move the file
+            bool fileMoved;
+            MAP_OVER_PATHS(javaSourcePaths, {
+                    fileMoved = tryMovingFile(currentPath, l, newName);
                     if (fileMoved)
                         goto moved;
             });
@@ -754,6 +847,8 @@ static void simpleRename(EditorMarkerList *markerList, EditorMarker *marker, cha
     // assert(options.theRefactoring == refactoringOptions.theRefactoring);
     if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
         simpleModuleRename(markerList, symbolName, symbolLinkName);
+    } else if (refactoringOptions.theRefactoring == AVR_RENAME_INCLUDED_FILE) {
+        simpleFileRename(markerList, symbolName, symbolLinkName);
     } else {
         for (EditorMarkerList *l = markerList; l != NULL; l = l->next) {
             renameFromTo(l->marker, symbolName, refactoringOptions.renameTo);
@@ -819,6 +914,7 @@ static void multipleOccurrenciesSafetyCheck(void) {
 // -------------------------------------------- Rename
 
 static void renameAtPoint(EditorMarker *point) {
+    assert(refactoringOptions.theRefactoring == AVR_RENAME_SYMBOL);
     if (refactoringOptions.renameTo == NULL) {
         errorMessage(ERR_ST, "this refactoring requires -renameto=<new name> option");
     }
@@ -828,14 +924,10 @@ static void renameAtPoint(EditorMarker *point) {
     char *message = STANDARD_C_SELECT_SYMBOLS_MESSAGE;
 
     char nameOnPoint[TMP_STRING_SIZE];
+    EditorMarkerList *occurrences;
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
-
-    EditorMarkerList *occurrencies;
-    if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE)
-        occurrencies = getReferences(point, message, PPCV_BROWSER_TYPE_INFO);
-    else
-        occurrencies = pushGetAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
+    occurrences = pushGetAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
 
     SymbolsMenu *symbolsMenu = sessionData.browserStack.top->hkSelectedSym;
     char *symLinkName = symbolsMenu->references.linkName;
@@ -844,19 +936,55 @@ static void renameAtPoint(EditorMarker *point) {
 
     multipleOccurrenciesSafetyCheck();
 
-    simpleRename(occurrencies, point, nameOnPoint, symLinkName);
+    simpleRename(occurrences, point, nameOnPoint, symLinkName);
     //&dumpEditorBuffers();
     EditorUndo *redoTrack = NULL;
-    if (!makeSafetyCheckAndUndo(point, &occurrencies, undoStartPoint, &redoTrack)) {
+    if (!makeSafetyCheckAndUndo(point, &occurrences, undoStartPoint, &redoTrack)) {
         askForReallyContinueConfirmation();
     }
 
     editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
 
-    // finish where you started
     ppcGotoMarker(point);
 
-    freeEditorMarkersAndMarkerList(occurrencies); // O(n^2)!
+    freeEditorMarkerListAndMarkers(occurrences); // O(n^2)!
+}
+
+static void renameAtInclude(EditorMarker *point) {
+    assert(refactoringOptions.theRefactoring == AVR_RENAME_INCLUDED_FILE
+           || refactoringOptions.theRefactoring == AVR_RENAME_MODULE);
+
+    if (refactoringOptions.renameTo == NULL) {
+        errorMessage(ERR_ST, "this refactoring requires -renameto=<new name> option");
+    }
+
+    ensureReferencesAreUpdated(refactoringOptions.project);
+
+    char *message = STANDARD_C_SELECT_SYMBOLS_MESSAGE;
+
+    char nameOnPoint[TMP_STRING_SIZE];
+    EditorMarkerList *occurrences;
+    occurrences = getReferences(point, message, PPCV_BROWSER_TYPE_INFO);
+    strcpy(nameOnPoint, getFileNameInInclude_static(point));
+    //preCheckIncludeReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
+
+    EditorUndo *undoStartPoint = editorUndo;
+
+    multipleOccurrenciesSafetyCheck();
+
+    renameIncludes(occurrences, nameOnPoint);
+
+    //&dumpEditorBuffers();
+    EditorUndo *redoTrack = NULL;
+    if (!makeSafetyCheckAndUndo(point, &occurrences, undoStartPoint, &redoTrack)) {
+        askForReallyContinueConfirmation();
+    }
+
+    editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
+
+    ppcGotoMarker(point);
+
+    freeEditorMarkerListAndMarkers(occurrences); // O(n^2)!
 }
 
 static void clearParamPositions(void) {
@@ -1201,7 +1329,7 @@ static void applyParameterManipulation(EditorMarker *point, int manipulation, in
     ppcGotoMarker(point);
 
     applyParameterManipulationToFunction(nameOnPoint, occurrences, manipulation, argn1, argn2);
-    freeEditorMarkersAndMarkerList(occurrences); // O(n^2)!
+    freeEditorMarkerListAndMarkers(occurrences); // O(n^2)!
 }
 
 static void parameterManipulation(EditorMarker *point, int manip, int argn1, int argn2) {
@@ -1593,7 +1721,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
         selectedUpdateOption = "-fastupdate";
     }
 
-    freeEditorMarkersAndMarkerList(markerList);
+    freeEditorMarkerListAndMarkers(markerList);
     markerList = NULL;
     olcxPopOnly();
 
@@ -1651,10 +1779,15 @@ void refactory(void) {
 
     switch (refactoringOptions.theRefactoring) {
     case AVR_RENAME_SYMBOL:
-    case AVR_RENAME_MODULE:
         progressFactor = 3;
         updateOption   = computeUpdateOptionForSymbol(point);
         renameAtPoint(point);
+        break;
+    case AVR_RENAME_MODULE:
+    case AVR_RENAME_INCLUDED_FILE:
+        progressFactor = 3;
+        updateOption   = computeUpdateOptionForSymbol(point);
+        renameAtInclude(point);
         break;
     case AVR_ADD_PARAMETER:
     case AVR_DEL_PARAMETER:
