@@ -1,0 +1,22 @@
+<update-report>
+</update-report>
+<goto>
+ <position-off off=10 len=<n>>CURDIR/include.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>include.h</str>  <str len=<n>>include2.h</str>
+</replacement>
+<goto>
+ <position-off off=29 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>include.h</str>  <str len=<n>>include2.h</str>
+</replacement>
+<goto>
+ <position-off off=0 len=<n>>CURDIR/include.h</position-off>
+</goto>
+<file-move-as len=<n>>CURDIR/include2.h</file-move-as>
+<goto>
+ <position-off off=6 len=<n>>CURDIR/include.c</position-off>
+</goto>
+<sync>
