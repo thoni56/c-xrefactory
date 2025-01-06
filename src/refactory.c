@@ -1435,46 +1435,37 @@ static EditorMarker *removeStaticPrefix(EditorMarker *d) {
     return pp;
 }
 
-// Old Java version for now:
-// make it public, because you update references after and some references can
-// be lost, later you can restrict accessibility
-static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *point, EditorMarker *mend,
-                                            EditorMarker *target,
-                                            ToCheckOrNot check, int limitIndex) {
-    char              nameOnPoint[TMP_STRING_SIZE];
-    int               size;
-    EditorMarker     *pp, *ppp, *movedEnd;
-    EditorMarkerList *occs;
-    EditorRegionList *regions;
-    int               progress, count;
-
-    movedEnd = duplicateEditorMarker(mend);
+static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorMarker *point,
+                                              EditorMarker *endMarker, EditorMarker *target,
+                                              ToCheckOrNot check, int limitIndex) {
+    EditorMarker *movedEnd = duplicateEditorMarker(endMarker);
     movedEnd->offset--;
 
-    //&editorDumpMarker(mstart);
-    //&editorDumpMarker(movedEnd);
-
-    size = mend->offset - mstart->offset;
-    if (target->buffer == mstart->buffer && target->offset > mstart->offset &&
-        target->offset < mstart->offset + size) {
+    int size = endMarker->offset - startMarker->offset;
+    if (target->buffer == startMarker->buffer && target->offset > startMarker->offset &&
+        target->offset < startMarker->offset + size) {
         ppcGenRecord(PPC_INFORMATION, "You can't move something into itself.");
         return;
     }
 
     // O.K. move
+    char nameOnPoint[TMP_STRING_SIZE];
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
-    occs = getReferences(point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+
+    EditorMarkerList *occs = getReferences(point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
 
+    int count;
     LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListBefore);
     LIST_LEN(count, EditorMarkerList, occs);
-    progress = 0;
-    regions  = NULL;
+    int progress = 0;
+
+    EditorRegionList *regions  = NULL;
     for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
         if ((!isDefinitionOrDeclarationUsage(ll->usage)) && ll->usage != UsageConstructorDefinition) {
-            pp  = removeStaticPrefix(ll->marker);
-            ppp = newEditorMarker(ll->marker->buffer, ll->marker->offset);
+            EditorMarker *pp  = removeStaticPrefix(ll->marker);
+            EditorMarker *ppp = newEditorMarker(ll->marker->buffer, ll->marker->offset);
             moveEditorMarkerBeyondIdentifier(ppp, 1);
             regions = newEditorRegionList(pp, ppp, regions);
         }
@@ -1482,16 +1473,16 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
     }
     writeRelativeProgress(100);
 
-    size = mend->offset - mstart->offset;
+    size = endMarker->offset - startMarker->offset;
     if (check == NO_CHECKS) {
-        moveBlockInEditorBuffer(mstart, target, size, &editorUndo);
+        moveBlockInEditorBuffer(startMarker, target, size, &editorUndo);
         //removeModifier(point, limitIndex, "static");
     } else {
         assert(sessionData.browserStack.top != NULL && sessionData.browserStack.top->hkSelectedSym != NULL);
         //theMethod = &sessionData.browserStack.top->hkSelectedSym->references;
         //pushAllReferencesOfMethod(point, "-olallchecks");
         //createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
-        moveBlockInEditorBuffer(mstart, target, size, &editorUndo);
+        moveBlockInEditorBuffer(startMarker, target, size, &editorUndo);
         //changeAccessModifier(point, limitIndex, "public");
         //pushAllReferencesOfMethod(point, "-olallchecks");
         //createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
@@ -1501,32 +1492,25 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
         //staticMoveCheckCorrespondance(mm1, mm2, theMethod);
     }
 
-    //&editorDumpMarker(mstart);
-    //&editorDumpMarker(movedEnd);
-
-    // reduce long names in the method
-    pp      = duplicateEditorMarker(mstart);
-    ppp     = duplicateEditorMarker(movedEnd);
+    EditorMarker *pp = duplicateEditorMarker(startMarker);
+    EditorMarker *ppp = duplicateEditorMarker(movedEnd);
     regions = newEditorRegionList(pp, ppp, regions);
-
-    //reduceNamesAndAddImports(&regions, INTERACTIVE_NO);
 }
 
 static void moveFunction(EditorMarker *point) {
-    int           lines;
-    EditorMarker *target, *mstart, *mend;
-
-    target = getTargetFromOptions();
+    EditorMarker *target = getTargetFromOptions();
 
     if (!validTargetPlace(target, "-olcxmmtarget"))
         return;
 
     ensureReferencesAreUpdated(refactoringOptions.project);
-    getFunctionBoundariesForMoving(point, &mstart, &mend);
-    lines = countLinesBetweenEditorMarkers(mstart, mend);
+
+    EditorMarker *functionStart, *functionEnd;
+    getFunctionBoundariesForMoving(point, &functionStart, &functionEnd);
+    int lines = countLinesBetweenEditorMarkers(functionStart, functionEnd);
 
     // O.K. Now STARTING!
-    moveStaticObjectAndMakeItPublic(mstart, point, mend, target, APPLY_CHECKS, IPP_FUNCTION_BEGIN);
+    moveStaticFunctionAndMakeItExtern(functionStart, point, functionEnd, target, APPLY_CHECKS, IPP_FUNCTION_BEGIN);
 
     // and generate output
     applyWholeRefactoringFromUndo();
