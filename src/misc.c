@@ -455,6 +455,7 @@ int pathncmp(char *path1, char *path2, int length, bool caseSensitive) {
     return cmp;
 }
 
+/* Compare the strings allowing '/' or '\' as path separator */
 int filenameCompare(char *fileName1, char *fileName2, int length) {
     return pathncmp(fileName1, fileName2, length, options.fileNamesCaseSensitive);
 }
