@@ -683,16 +683,16 @@ static EditorMarker *createNewMarkerForExpressionStart(EditorMarker *marker, Exp
     }
 }
 
-static void checkedRenameBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo) {
+static void checkedRenameBuffer(EditorBuffer *buffer, char *newName, EditorUndo **undo) {
     if (editorFileExists(newName)) {
         char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "Renaming buffer %s to an existing file.\nCan I do this?", buff->fileName);
+        sprintf(tmpBuff, "Renaming buffer %s to an existing file.\nCan I do this?", buffer->fileName);
         ppcAskConfirmation(tmpBuff);
     }
-    renameEditorBuffer(buff, newName, undo);
+    renameEditorBuffer(buffer, newName, undo);
 }
 
-static void moveFile(char *currentPath, EditorMarker *lld, char *symLinkName) {
+static void moveFile(char *currentPath, EditorMarker *lld, char *newName) {
     char newfile[2 * MAX_FILE_NAME_SIZE];
     char packdir[2 * MAX_FILE_NAME_SIZE];
     char newpackdir[2 * MAX_FILE_NAME_SIZE];
@@ -704,22 +704,22 @@ static void moveFile(char *currentPath, EditorMarker *lld, char *symLinkName) {
         plen--;
         path[plen] = 0;
     }
-    sprintf(packdir, "%s%c%s", path, FILE_PATH_SEPARATOR, symLinkName);
+    sprintf(packdir, "%s%c%s", path, FILE_PATH_SEPARATOR, newName);
     sprintf(newpackdir, "%s%c%s", path, FILE_PATH_SEPARATOR, refactoringOptions.renameTo);
     sprintf(newfile, "%s%s", newpackdir, lld->buffer->fileName + strlen(packdir));
     checkedRenameBuffer(lld->buffer, newfile, &editorUndo);
 }
 
-static bool tryMovingFile(char *currentPath, EditorMarkerList *l, char *newName) {
+static bool tryMovingFile(char *path, EditorMarker *marker, char *newName) {
     bool moved = false;
 
-    int pathLength = strlen(currentPath);
-    log_trace("checking %s<->%s", l->marker->buffer->fileName, currentPath);
-    if (filenameCompare(l->marker->buffer->fileName, currentPath, pathLength) == 0 &&
-        l->marker->buffer->fileName[pathLength] == FILE_PATH_SEPARATOR &&
-        filenameCompare(l->marker->buffer->fileName + pathLength + 1, newName, strlen(newName)) == 0)
+    int pathLength = strlen(path);
+    log_trace("checking %s<->%s", marker->buffer->fileName, path);
+    if (filenameCompare(marker->buffer->fileName, path, pathLength) == 0 &&
+        marker->buffer->fileName[pathLength] == FILE_PATH_SEPARATOR &&
+        filenameCompare(marker->buffer->fileName + pathLength + 1, newName, strlen(newName)) == 0)
     {
-        moveFile(currentPath, l->marker, newName);
+        moveFile(path, marker, newName);
         moved = true;
     }
     return moved;
@@ -752,7 +752,7 @@ static void simpleModuleRename(EditorMarkerList *markers, char *symname, char *s
         if (l->next == NULL || l->next->marker->buffer != l->marker->buffer) {
             // TODO should use options.includeDirs instead
             MAP_OVER_PATHS(javaSourcePaths, {
-                    if (tryMovingFile(currentPath, l, symLinkName))
+                    if (tryMovingFile(currentPath, l->marker, symLinkName))
                         goto moved;
             });
         moved:;
@@ -760,7 +760,7 @@ static void simpleModuleRename(EditorMarkerList *markers, char *symname, char *s
     }
 }
 
-static void simpleFileRename(EditorMarkerList *markers, char *symname, char *symLinkName) {
+static void renameIncludedFileNOT_USED(EditorMarkerList *markers, char *symname, char *symLinkName) {
     char newName[MAX_FILE_NAME_SIZE];
     char newModuleName[MAX_FILE_NAME_SIZE];
 
@@ -786,7 +786,7 @@ static void simpleFileRename(EditorMarkerList *markers, char *symname, char *sym
             // O.K. verify whether I should move the file
             bool fileMoved;
             MAP_OVER_PATHS(javaSourcePaths, {
-                    fileMoved = tryMovingFile(currentPath, l, symLinkName);
+                    fileMoved = tryMovingFile(currentPath, l->marker, symLinkName);
                     if (fileMoved)
                         goto moved;
             });
@@ -803,52 +803,47 @@ static EditorMarker *adjustMarkerForInclude(EditorMarker *marker) {
     return newMarker;
 }
 
+static void renameFile(EditorMarker *marker, char *newName) {
+    checkedRenameBuffer(marker->buffer, newName, &editorUndo);
+}
 
 static void renameIncludes(EditorMarkerList *markers, char *currentIncludeFileName) {
     char newName[MAX_FILE_NAME_SIZE];
-    char newFileName[MAX_FILE_NAME_SIZE];
+    char newPath[MAX_FILE_NAME_SIZE];
+    char currentIncludeFilePath[MAX_FILE_NAME_SIZE];
 
-    // get original and new directory, but how?
     strcpy(newName, refactoringOptions.renameTo);
-    strcpy(newFileName, newName);
-    newName[0] = 0;
+    strcpy(newPath, normalizeFileName_static(newName, cwd));
+    strcpy(currentIncludeFilePath, normalizeFileName_static(currentIncludeFileName, cwd));
 
+    EditorMarker *markerForTheFile = NULL;
     for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
         // References for #include always points to the '#' but there is also one that
         // points to the first position in the include file. We need to adjust the
         // markers so they point to the filename, and ignore the marker that points to
         // the include file.
-        if (strcmp(l->marker->buffer->fileName, normalizeFileName_static(currentIncludeFileName, cwd)) != 0) {
+        if (strcmp(l->marker->buffer->fileName, currentIncludeFilePath) == 0) {
+            markerForTheFile = l->marker;
+        } else {
             EditorMarker *marker = adjustMarkerForInclude(l->marker);
             if (marker != NULL) {
-                checkedReplaceString(marker, strlen(currentIncludeFileName), currentIncludeFileName, newFileName);
-                replaceString(marker, 0, newName);
+                checkedReplaceString(marker, strlen(currentIncludeFileName), currentIncludeFileName, newName);
             }
             freeEditorMarker(marker);
         }
     }
-    for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
-        if (l->next == NULL || l->next->marker->buffer != l->marker->buffer) {
-            // O.K. verify whether I should move the file
-            bool fileMoved;
-            MAP_OVER_PATHS(javaSourcePaths, {
-                    fileMoved = tryMovingFile(currentPath, l, newName);
-                    if (fileMoved)
-                        goto moved;
-            });
-        moved:;
-        }
-    }
+    renameFile(markerForTheFile, newName);
 }
 
 static void simpleRename(EditorMarkerList *markerList, EditorMarker *marker, char *symbolName,
                          char *symbolLinkName
 ) {
     // assert(options.theRefactoring == refactoringOptions.theRefactoring);
+    assert(refactoringOptions.theRefactoring != AVR_RENAME_INCLUDED_FILE);
     if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
         simpleModuleRename(markerList, symbolName, symbolLinkName);
     } else if (refactoringOptions.theRefactoring == AVR_RENAME_INCLUDED_FILE) {
-        simpleFileRename(markerList, symbolName, symbolLinkName);
+        renameIncludedFileNOT_USED(markerList, symbolName, symbolLinkName);
     } else {
         for (EditorMarkerList *l = markerList; l != NULL; l = l->next) {
             renameFromTo(l->marker, symbolName, refactoringOptions.renameTo);
@@ -974,12 +969,8 @@ static void renameAtInclude(EditorMarker *point) {
 
     renameIncludes(occurrences, nameOnPoint);
 
-    //&dumpEditorBuffers();
     EditorUndo *redoTrack = NULL;
-    if (!makeSafetyCheckAndUndo(point, &occurrences, undoStartPoint, &redoTrack)) {
-        askForReallyContinueConfirmation();
-    }
-
+    editorUndoUntil(undoStartPoint, &redoTrack);
     editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
 
     ppcGotoMarker(point);
@@ -1785,7 +1776,7 @@ void refactory(void) {
         break;
     case AVR_RENAME_MODULE:
     case AVR_RENAME_INCLUDED_FILE:
-        progressFactor = 3;
+        progressFactor = 2;
         updateOption   = computeUpdateOptionForSymbol(point);
         renameAtInclude(point);
         break;
