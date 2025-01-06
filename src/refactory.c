@@ -692,109 +692,6 @@ static void checkedRenameBuffer(EditorBuffer *buffer, char *newName, EditorUndo 
     renameEditorBuffer(buffer, newName, undo);
 }
 
-static void moveFile(char *currentPath, EditorMarker *lld, char *newName) {
-    char newfile[2 * MAX_FILE_NAME_SIZE];
-    char packdir[2 * MAX_FILE_NAME_SIZE];
-    char newpackdir[2 * MAX_FILE_NAME_SIZE];
-    char path[MAX_FILE_NAME_SIZE];
-    int  plen;
-    strcpy(path, currentPath);
-    plen = strlen(path);
-    if (plen > 0 && (path[plen - 1] == '/' || path[plen - 1] == '\\')) {
-        plen--;
-        path[plen] = 0;
-    }
-    sprintf(packdir, "%s%c%s", path, FILE_PATH_SEPARATOR, newName);
-    sprintf(newpackdir, "%s%c%s", path, FILE_PATH_SEPARATOR, refactoringOptions.renameTo);
-    sprintf(newfile, "%s%s", newpackdir, lld->buffer->fileName + strlen(packdir));
-    checkedRenameBuffer(lld->buffer, newfile, &editorUndo);
-}
-
-static bool tryMovingFile(char *path, EditorMarker *marker, char *newName) {
-    bool moved = false;
-
-    int pathLength = strlen(path);
-    log_trace("checking %s<->%s", marker->buffer->fileName, path);
-    if (filenameCompare(marker->buffer->fileName, path, pathLength) == 0 &&
-        marker->buffer->fileName[pathLength] == FILE_PATH_SEPARATOR &&
-        filenameCompare(marker->buffer->fileName + pathLength + 1, newName, strlen(newName)) == 0)
-    {
-        moveFile(path, marker, newName);
-        moved = true;
-    }
-    return moved;
-}
-
-static void simpleModuleRename(EditorMarkerList *markers, char *symname, char *symLinkName) {
-    char newName[MAX_FILE_NAME_SIZE];
-    char newModuleName[MAX_FILE_NAME_SIZE];
-
-    /* THIS IS THE OLD JAVA VERSION, NEED TO ADAPT TO MOVE C MODULE!!! */
-
-    // get original and new directory, but how?
-    strcpy(newName, refactoringOptions.renameTo);
-    strcpy(newModuleName, newName);
-    newName[0] = 0;
-
-    for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
-        EditorMarker *marker = createNewMarkerForExpressionStart(l->marker, GET_PRIMARY_START);
-        if (marker != NULL) {
-            removeNonCommentCode(marker, l->marker->offset - marker->offset);
-            // make attention here, so that markers still points
-            // to the package name, the best would be to replace
-            // package name per single names, ...
-            checkedReplaceString(marker, strlen(symname), symname, newModuleName);
-            replaceString(marker, 0, newName);
-        }
-        freeEditorMarker(marker);
-    }
-    for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
-        if (l->next == NULL || l->next->marker->buffer != l->marker->buffer) {
-            // TODO should use options.includeDirs instead
-            MAP_OVER_PATHS(javaSourcePaths, {
-                    if (tryMovingFile(currentPath, l->marker, symLinkName))
-                        goto moved;
-            });
-        moved:;
-        }
-    }
-}
-
-static void renameIncludedFileNOT_USED(EditorMarkerList *markers, char *symname, char *symLinkName) {
-    char newName[MAX_FILE_NAME_SIZE];
-    char newModuleName[MAX_FILE_NAME_SIZE];
-
-    // get original and new directory, but how?
-    strcpy(newName, refactoringOptions.renameTo);
-    strcpy(newModuleName, newName);
-    newName[0] = 0;
-
-    for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
-        EditorMarker *marker = createNewMarkerForExpressionStart(l->marker, GET_PRIMARY_START);
-        if (marker != NULL) {
-            removeNonCommentCode(marker, l->marker->offset - marker->offset);
-            // make attention here, so that markers still points
-            // to the package name, the best would be to replace
-            // package name per single names, ...
-            checkedReplaceString(marker, strlen(symname), symname, newModuleName);
-            replaceString(marker, 0, newName);
-        }
-        freeEditorMarker(marker);
-    }
-    for (EditorMarkerList *l = markers; l != NULL; l = l->next) {
-        if (l->next == NULL || l->next->marker->buffer != l->marker->buffer) {
-            // O.K. verify whether I should move the file
-            bool fileMoved;
-            MAP_OVER_PATHS(javaSourcePaths, {
-                    fileMoved = tryMovingFile(currentPath, l->marker, symLinkName);
-                    if (fileMoved)
-                        goto moved;
-            });
-        moved:;
-        }
-    }
-}
-
 static EditorMarker *adjustMarkerForInclude(EditorMarker *marker) {
     EditorBuffer *buffer    = getOpenedAndLoadedEditorBuffer(marker->buffer->fileName);
     EditorMarker *newMarker = newEditorMarker(buffer, marker->offset);
@@ -840,16 +737,10 @@ static void simpleRename(EditorMarkerList *markerList, EditorMarker *marker, cha
 ) {
     // assert(options.theRefactoring == refactoringOptions.theRefactoring);
     assert(refactoringOptions.theRefactoring != AVR_RENAME_INCLUDED_FILE);
-    if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
-        simpleModuleRename(markerList, symbolName, symbolLinkName);
-    } else if (refactoringOptions.theRefactoring == AVR_RENAME_INCLUDED_FILE) {
-        renameIncludedFileNOT_USED(markerList, symbolName, symbolLinkName);
-    } else {
-        for (EditorMarkerList *l = markerList; l != NULL; l = l->next) {
-            renameFromTo(l->marker, symbolName, refactoringOptions.renameTo);
-        }
-        ppcGotoMarker(marker);
+    for (EditorMarkerList *l = markerList; l != NULL; l = l->next) {
+        renameFromTo(l->marker, symbolName, refactoringOptions.renameTo);
     }
+    ppcGotoMarker(marker);
 }
 
 static EditorMarkerList *getReferences(EditorMarker *point, char *resolveMessage,
