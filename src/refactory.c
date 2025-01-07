@@ -857,6 +857,7 @@ static void renameAtInclude(EditorMarker *point) {
 
     if (refactoringOptions.renameTo == NULL) {
         errorMessage(ERR_ST, "this refactoring requires -renameto=<new name> option");
+        return;
     }
 
     ensureReferencesAreUpdated(refactoringOptions.project);
@@ -872,8 +873,10 @@ static void renameAtInclude(EditorMarker *point) {
 
     multipleOccurrenciesSafetyCheck();
 
-    if (stringInInclude[0] != '"')
-        errorMessage(ERR_ST, "You cannot rename included files not in your project");
+    if (stringInInclude[0] != '"') {
+        errorMessage(ERR_ST, "You cannot rename files from the standard library");
+        return;
+    }
 
     char *includedFileName = &stringInInclude[1];
     stringInInclude[strlen(stringInInclude)-1] = '\0';
