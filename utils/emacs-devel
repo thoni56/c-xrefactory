@@ -21,11 +21,13 @@ if [[ -n "$OPTIONS_FILE" ]]; then
     --eval "(setq c-xref-exec-directory \"$UTILS/../src/\")" \
     --eval "(setq c-xref-debug-mode t)" \
     --eval "(setq c-xref-debug-preserve-tmp-files t)" \
+    --eval "(setq lsp-auto-activate nil)" \
     "$@"
 else
   emacs $LOAD_FILES \
     --eval "(setq c-xref-exec-directory \"$UTILS/../src/\")" \
     --eval "(setq c-xref-debug-mode t)" \
     --eval "(setq c-xref-debug-preserve-tmp-files t)" \
+    --eval "(setq lsp-auto-activate nil)" \
     "$@"
 fi
