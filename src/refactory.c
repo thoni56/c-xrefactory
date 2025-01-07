@@ -291,33 +291,35 @@ static char *getIdentifierOnMarker_static(EditorMarker *marker) {
     return identifier;
 }
 
-static char *getFileNameInInclude_static(EditorMarker *marker) {
+static char *getStringInInclude_static(EditorMarker *marker) {
     EditorBuffer *buffer;
     char         *start, *end, *textMax, *textMin;
-    static char   identifier[TMP_STRING_SIZE];
+    static char   string[TMP_STRING_SIZE];
 
     buffer = marker->buffer;
     assert(buffer && buffer->allocation.text && marker->offset <= buffer->allocation.bufferSize);
     start   = buffer->allocation.text + marker->offset;
     textMin = buffer->allocation.text;
     textMax = buffer->allocation.text + buffer->allocation.bufferSize;
-    // move to the beginning of #include
+
+    // Move to the beginning of #include
     for (; start >= textMin && *start != '#'; start--)
         ;
     // TODO ensure we are on an '#include'?
-    // move to first quote
-    for (start++; start < textMax && *start != '"'; start++)
+    // Move to first quote or angle bracket
+    for (start++; start < textMax && *start != '"' && *start != '<'; start++)
         ;
-    start++;
     // now get it
-    for (end = start+1; end < textMax && *end != '"'; end++)
+    for (end = start+1; end < textMax && *end != '"' && *end != '>'; end++)
         ;
+    end++;                      /* Include the terminating character */
+
     int length = end - start;
     assert(length < TMP_STRING_SIZE - 1);
-    strncpy(identifier, start, length);
-    identifier[length] = 0;
+    strncpy(string, start, length);
+    string[length] = 0;
 
-    return identifier;
+    return string;
 }
 
 static void replaceString(EditorMarker *marker, int len, char *newString) {
@@ -332,10 +334,11 @@ static void checkedReplaceString(EditorMarker *marker, int len, char *oldString,
         replaceString(marker, len, newString);
     } else {
         char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "checked replacement of %s to %s failed on ", oldString, newString);
+        sprintf(tmpBuff, "checked replacement of '%s' to '%s' failed on '", oldString, newString);
         int d = strlen(tmpBuff);
         for (int i = 0; i < len; i++)
             tmpBuff[d++] = bVal[i];
+        tmpBuff[d++] = '\'';
         tmpBuff[d++] = 0;
         errorMessage(ERR_INTERNAL, tmpBuff);
     }
@@ -692,11 +695,22 @@ static void checkedRenameBuffer(EditorBuffer *buffer, char *newName, EditorUndo 
     renameEditorBuffer(buffer, newName, undo);
 }
 
+static void moveMarkerOverSpaces(EditorBuffer *buffer, EditorMarker *marker) {
+    do {
+        marker->offset++;
+    } while (isspace(buffer->allocation.text[marker->offset]));
+}
+
 static EditorMarker *adjustMarkerForInclude(EditorMarker *marker) {
     EditorBuffer *buffer    = getOpenedAndLoadedEditorBuffer(marker->buffer->fileName);
     EditorMarker *newMarker = newEditorMarker(buffer, marker->offset);
-    // TODO assert we're at an include and find the filename, for now fake it
-    newMarker->offset += 10;
+
+    assert(buffer->allocation.text[newMarker->offset] == '#');
+    moveMarkerOverSpaces(buffer, newMarker);
+    assert(strncmp("include", &buffer->allocation.text[newMarker->offset], strlen("include")) == 0);
+    newMarker->offset += strlen("include");
+    moveMarkerOverSpaces(buffer, newMarker);
+    newMarker->offset++;
     return newMarker;
 }
 
@@ -722,11 +736,12 @@ static void renameIncludes(EditorMarkerList *markers, char *currentIncludeFileNa
         if (strcmp(l->marker->buffer->fileName, currentIncludeFilePath) == 0) {
             markerForTheFile = l->marker;
         } else {
-            EditorMarker *marker = adjustMarkerForInclude(l->marker);
-            if (marker != NULL) {
-                checkedReplaceString(marker, strlen(currentIncludeFileName), currentIncludeFileName, newName);
+            EditorMarker *adjustedMarker = adjustMarkerForInclude(l->marker);
+            if (adjustedMarker != NULL) {
+                checkedReplaceString(adjustedMarker, strlen(currentIncludeFileName), currentIncludeFileName,
+                                     newName);
             }
-            freeEditorMarker(marker);
+            freeEditorMarker(adjustedMarker);
         }
     }
     renameFile(markerForTheFile, newName);
@@ -848,17 +863,22 @@ static void renameAtInclude(EditorMarker *point) {
 
     char *message = STANDARD_C_SELECT_SYMBOLS_MESSAGE;
 
-    char nameOnPoint[TMP_STRING_SIZE];
+    char stringInInclude[TMP_STRING_SIZE];
     EditorMarkerList *occurrences;
     occurrences = getReferences(point, message, PPCV_BROWSER_TYPE_INFO);
-    strcpy(nameOnPoint, getFileNameInInclude_static(point));
-    //preCheckIncludeReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
+    strcpy(stringInInclude, getStringInInclude_static(point));
 
     EditorUndo *undoStartPoint = editorUndo;
 
     multipleOccurrenciesSafetyCheck();
 
-    renameIncludes(occurrences, nameOnPoint);
+    if (stringInInclude[0] != '"')
+        errorMessage(ERR_ST, "You cannot rename included files not in your project");
+
+    char *includedFileName = &stringInInclude[1];
+    stringInInclude[strlen(stringInInclude)-1] = '\0';
+
+    renameIncludes(occurrences, includedFileName);
 
     EditorUndo *redoTrack = NULL;
     editorUndoUntil(undoStartPoint, &redoTrack);
@@ -1543,7 +1563,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     EditorMarkerList *markerList = getReferences(point, NULL, PPCV_BROWSER_TYPE_WARNING);
     SymbolsMenu *menu = sessionData.browserStack.top->hkSelectedSym;
     Scope scope = menu->references.scope;
-    Visibility cat = menu->references.visibility;
+    Visibility visibility = menu->references.visibility;
 
     if (markerList == NULL) {
         fileNumber = NO_FILE_NUMBER;
@@ -1562,7 +1582,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
         }
     }
 
-    if (cat == LocalVisibility) {
+    if (visibility == LocalVisibility) {
         // useless to update when there is nothing about the symbol in Tags
         selectedUpdateOption = "";
     } else if (hasHeaderReferences) {

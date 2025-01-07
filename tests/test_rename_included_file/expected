@@ -7,7 +7,7 @@
  <str len=<n>>include.h</str>  <str len=<n>>include2.h</str>
 </replacement>
 <goto>
- <position-off off=29 len=<n>>CURDIR/main.c</position-off>
+ <position-off off=33 len=<n>>CURDIR/main.c</position-off>
 </goto>
 <replacement>
  <str len=<n>>include.h</str>  <str len=<n>>include2.h</str>
