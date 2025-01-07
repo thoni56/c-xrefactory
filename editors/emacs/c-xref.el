@@ -162,23 +162,24 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; refactorings codes, names and functions
 
-(defvar c-xref-refactorings-assoc-list
-  (list
-   (list c-xref_PPC_AVR_NO_REFACTORING "No refactoring" 'c-xref-no-refactoring nil)
-   (list c-xref_PPC_AVR_RENAME_SYMBOL "Rename Symbol" 'c-xref-rename-symbol nil)
-   (list c-xref_PPC_AVR_RENAME_MODULE "Rename Module" 'c-xref-rename-module nil)
-   (list c-xref_PPC_AVR_RENAME_INCLUDED_FILE "Rename Included File" 'c-xref-rename-included-file nil)
-   (list c-xref_PPC_AVR_ADD_PARAMETER "Add Parameter" 'c-xref-add-parameter nil)
-   (list c-xref_PPC_AVR_DEL_PARAMETER "Delete Parameter" 'c-xref-del-parameter nil)
-   (list c-xref_PPC_AVR_MOVE_PARAMETER "Move Parameter" 'c-xref-move-parameter nil)
-   (list c-xref_PPC_AVR_EXTRACT_FUNCTION "Extract Function" 'c-xref-extract-function nil)
-   (list c-xref_PPC_AVR_EXTRACT_MACRO "Extract Macro" 'c-xref-extract-macro nil)
-   (list c-xref_PPC_AVR_EXTRACT_VARIABLE "Extract Variable" 'c-xref-extract-variable nil)
-   (list c-xref_PPC_AVR_MOVE_FUNCTION "Move Function" 'c-xref-move-function nil)
-   (list c-xref_PPC_AVR_SET_MOVE_TARGET "Set Target for Next Moving Refactoring" 'c-xref-set-moving-target-position nil)
-   (list c-xref_PPC_AVR_UNDO "Undo Last Refactoring" 'c-xref-undo-last-refactoring nil)
-   ))
-
+(eval-and-compile ;; To make it update on re-load, e.g. upgrade
+  (defvar c-xref-refactorings-assoc-list
+    (list
+     (list c-xref_PPC_AVR_NO_REFACTORING "No refactoring" 'c-xref-no-refactoring nil)
+     (list c-xref_PPC_AVR_RENAME_SYMBOL "Rename Symbol" 'c-xref-rename-symbol nil)
+     (list c-xref_PPC_AVR_RENAME_MODULE "Rename Module" 'c-xref-rename-module nil)
+     (list c-xref_PPC_AVR_RENAME_INCLUDED_FILE "Rename Included File" 'c-xref-rename-included-file nil)
+     (list c-xref_PPC_AVR_ADD_PARAMETER "Add Parameter" 'c-xref-add-parameter nil)
+     (list c-xref_PPC_AVR_DEL_PARAMETER "Delete Parameter" 'c-xref-del-parameter nil)
+     (list c-xref_PPC_AVR_MOVE_PARAMETER "Move Parameter" 'c-xref-move-parameter nil)
+     (list c-xref_PPC_AVR_EXTRACT_FUNCTION "Extract Function" 'c-xref-extract-function nil)
+     (list c-xref_PPC_AVR_EXTRACT_MACRO "Extract Macro" 'c-xref-extract-macro nil)
+     (list c-xref_PPC_AVR_EXTRACT_VARIABLE "Extract Variable" 'c-xref-extract-variable nil)
+     (list c-xref_PPC_AVR_MOVE_FUNCTION "Move Function" 'c-xref-move-function nil)
+     (list c-xref_PPC_AVR_SET_MOVE_TARGET "Set Target for Next Moving Refactoring" 'c-xref-set-moving-target-position nil)
+     (list c-xref_PPC_AVR_UNDO "Undo Last Refactoring" 'c-xref-undo-last-refactoring nil)
+     ))
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer locals
@@ -6394,7 +6395,7 @@ its functions.
   )
 
 (defvar c-xref-tutorial-directory (format "%s/../../doc/cexercise" (file-name-directory load-file-name))
-  "*Directory for tutorial file belonging to package \`c-xrefactory'.")
+  "*Directory for tutorial files belonging to package \`c-xrefactory'.")
 
 (require 'dired-aux)
 
@@ -6474,22 +6475,22 @@ the reset was performed, nil if the reset was cancelled."
   "Upgrade the installed c-xref, if available."
   (interactive)
   (if (yes-or-no-p (format "Really upgrade c-xref installation in %s ? "
-                                       c-xref-install-directory))
+                           c-xref-install-directory))
       (progn
-            (let ((default-directory c-xref-install-directory))
-              (if (c-xref-ok-to-upgrade)
-                      (progn
-                        (shell-command "git pull")
-                        (shell-command "git checkout stable")
-                        (message "Pulled latest stable")
-                        (c-xref-kill-xref-process nil)
-                        (shell-command "make")
-                        (message "Built 'c-xref' in %s" c-xref-install-directory)
-                        (c-xref-load-directory c-xref-elisp-directory)
-                (message "Loaded compiled e-lisp files")
-                        )
+        (let ((default-directory c-xref-install-directory))
+          (if (c-xref-ok-to-upgrade)
+              (progn
+                (shell-command "git pull")
+                (shell-command "git checkout stable")
+                (message "Pulled latest stable")
+                (c-xref-kill-xref-process nil)
+                (shell-command "make")
+                (message "Built 'c-xref' in %s" c-xref-install-directory)
+                (c-xref-load-directory c-xref-elisp-directory)
+                (message "Loaded compiled elisp files")
                 )
-              ))
+            )
+          ))
     )
   )
 
