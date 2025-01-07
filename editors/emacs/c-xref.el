@@ -6484,6 +6484,7 @@ the reset was performed, nil if the reset was cancelled."
                 (shell-command "git checkout stable")
                 (message "Pulled latest stable")
                 (c-xref-kill-xref-process nil)
+                (delete-file "src/options_config.h") ;; Trigger regeneration of version info
                 (shell-command "make")
                 (message "Built 'c-xref' in %s" c-xref-install-directory)
                 (c-xref-load-directory c-xref-elisp-directory)
