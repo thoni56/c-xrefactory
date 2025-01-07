@@ -32,12 +32,14 @@ The easiest, and currently only supported, way to install is using
 Place cursor on an identifier and `go to definition` (<kbd>F6</kbd>),
 navigate between occurrences (<kbd>F3</kbd>, <kbd>F4</kbd>), refactor
 (<kbd>F11</kbd>) with `rename`, mark some code and `extract function`.
+
 Your C programming and code will never be the same. Some highlights:
 
 - navigate through all usages of any type of symbol
-- rename any type of symbol, variable, macro, parameter,
+- rename any type of symbol - variable, macro, parameter,
   or Yacc grammar rule
-- add or delete function parameter
+- add, delete or re-order function parameter
+- rename included file
 - extract function or macro
 - detect unused symbols locally or in the complete project
 
@@ -99,11 +101,16 @@ As noted in one issue, a natural development would be to support LSP
 A lot of refactoring needs to be done to clean up the current modules
 and protocol to get closer to that point.
 
+Experimental work has been started and it is possible to hook up
+the `c-xrefactory` server to an LSP client. The basic communication
+works but no features are yet accessible.
+
 ### Java notes
 
 > [!IMPORTANT]
 > Java support has now been removed since there are far
-> better options now.
+> better options now. The text below does not apply and is kept
+> only for historical/nostalgic reasons. It will be removed soon.
 
 The current Java grammar has not been updated from Java 1.4, but since
 `c-xrefactory` recovers gracefully that is not a major problem except
@@ -132,8 +139,9 @@ tests at all for that matter.
 I'm on a long-time quest to resurrect this code to understandable,
 maintainable and developable standard. This is hard work, difficult
 and time consuming, as it is almost impossible to understand what
-anything does. At this point we have reached almost 75% test coverage
-which makes me confident in refactoring many things.
+anything does. At this point we have reached almost 80% test coverage
+which makes me confident in refactoring many things. And also able to
+add new features.
 
 If you think you can help, I'll be happy to take it, even if it is
 only adding one line of understanding in the wiki...
