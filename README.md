@@ -225,7 +225,7 @@ with others who might be interested.
 
 <!-- badges -->
 
-[travis badge]: https://travis-ci.com/thoni56/c-xrefactory.svg?branch=main "Travis CI build status"
+[travis badge]: https://app.travis-ci.com/thoni56/c-xrefactory.svg?token=3qJ2cLpEpe6KaXZ5PipE&branch=main "Travis CI build status"
 [travis link]: https://app.travis-ci.com/thoni56/c-xrefactory
 [coveralls badge]: https://coveralls.io/repos/github/thoni56/c-xrefactory/badge.svg?branch=main "Coveralls code coverage status"
 [coveralls link]: https://coveralls.io/github/thoni56/c-xrefactory?branch=main
