@@ -7112,7 +7112,7 @@ refactoring.
     (let (filename)
       ;; Ensure we're on an #include line
       (beginning-of-line)
-      (when (looking-at "#\\s-*include\\s-*\\(.*\\)")
+      (if (looking-at "#\\s-*include\\s-*\\(.*\\)")
         (progn
           (setq filename (match-string 1))
           (setq filename (substring filename 1 -1))
