@@ -21,6 +21,5 @@ typedef struct idList {
 
 extern Id makeId(char *name, Symbol *symbol, Position position);
 extern IdList makeIdList(Id id, char *fname, Type nameType, IdList *next);
-extern Id *newCopyOfId(Id *id);
 
 #endif

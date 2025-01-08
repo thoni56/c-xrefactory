@@ -15,19 +15,5 @@ BeforeEach(Id) {
 }
 AfterEach(Id) {}
 
-Ensure(Id, can_copy_id) {
-    Id  id;
-    Id *id1 = &id;
-    Id *id2;
-
-    id1->name          = "idName";
-    id1->position.file = 1;
-    id1->position.line = 2;
-    id1->position.col  = 3;
-    id1->symbol        = NULL;
-    id1->next          = &id;
-
-    id2 = newCopyOfId(id1);
-
-    assert_that(memcmp(id1, id2, sizeof(Id)), is_equal_to(0));
+Ensure(Id, can_run_empty_test) {
 }

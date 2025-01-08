@@ -29,9 +29,3 @@ IdList makeIdList(Id id, char *fname, Type nameType, IdList *next) {
     fillIdList(&l, id, fname, nameType, next);
     return l;
 }
-
-Id *newCopyOfId(Id *id) {
-    Id *copy = stackMemoryAlloc(sizeof(Id));
-    *(copy)  = *(id);
-    return copy;
-}
