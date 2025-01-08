@@ -13,7 +13,7 @@
     ENUM(OLO_SEARCH)                            \
     ENUM(OLO_TAG_SEARCH)                        \
     ENUM(OLO_RENAME)                            \
-    ENUM(OLO_ARG_MANIP)                         \
+    ENUM(OLO_ARGUMENT_MANIPULATION)             \
     ENUM(OLO_GET_AVAILABLE_REFACTORINGS)        \
     ENUM(OLO_PUSH)                              \
     ENUM(OLO_PUSH_NAME)                         \

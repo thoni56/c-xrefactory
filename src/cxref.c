@@ -1315,7 +1315,7 @@ static void setDefaultSelectedVisibleItems(SymbolsMenu *menu,
 
 static bool isRenameMenuSelection(int command) {
     return command == OLO_RENAME
-        || command == OLO_ARG_MANIP
+        || command == OLO_ARGUMENT_MANIPULATION
         || command == OLO_PUSH_FOR_LOCALM
         || command == OLO_SAFETY_CHECK2
         || options.manualResolve == RESOLVE_DIALOG_NEVER
@@ -1680,7 +1680,7 @@ bool olcxShowSelectionMenu(void) {
         || options.serverOperation==OLO_PUSH_ONLY
         || options.serverOperation==OLO_PUSH_AND_CALL_MACRO
         || options.serverOperation==OLO_RENAME
-        || options.serverOperation==OLO_ARG_MANIP
+        || options.serverOperation==OLO_ARGUMENT_MANIPULATION
     ) {
         // manually only if different
         for (SymbolsMenu *ss=sessionData.browserStack.top->symbolsMenu; ss!=NULL; ss=ss->next) {
@@ -1863,7 +1863,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
             olcxNoSymbolFoundErrorMessage();
         break;
     case OLO_RENAME:
-    case OLO_ARG_MANIP:
+    case OLO_ARGUMENT_MANIPULATION:
         if (olcxCheckSymbolExists())
             olcxRenameInit();
         else
@@ -2254,7 +2254,7 @@ void answerEditAction(void) {
     case OLO_LOCAL_UNUSED:
         answerPushLocalUnusedSymbolsAction();
         break;
-    case OLO_ARG_MANIP:
+    case OLO_ARGUMENT_MANIPULATION:
         rstack = sessionData.browserStack.top;
         assert(rstack!=NULL);
         if (rstack->hkSelectedSym == NULL) {
