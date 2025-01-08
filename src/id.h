@@ -19,9 +19,8 @@ typedef struct idList {
     struct idList *next;
 } IdList;
 
-extern void fillId(Id *id, char *name, Symbol *symbol, Position position);
-
-extern void fillIdList(IdList *idList, Id id, char *fname, Type nameType, IdList *next);
+extern Id makeId(char *name, Symbol *symbol, Position position);
+extern IdList makeIdList(Id id, char *fname, Type nameType, IdList *next);
 extern Id *newCopyOfId(Id *id);
 
 #endif

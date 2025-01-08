@@ -1482,7 +1482,7 @@ designation_opt
     }
     | designator_list '='       {
         $$.data = stackMemoryAlloc(sizeof(IdList));
-        fillIdList($$.data, *$1.data, $1.data->name, TypeDefault, NULL);
+        *($$.data) = makeIdList(*$1.data, $1.data->name, TypeDefault, NULL);
     }
     ;
 
@@ -1498,7 +1498,7 @@ designator_list
 designator
     : '[' constant_expr ']'     {
         $$.data = stackMemoryAlloc(sizeof(Id));
-        fillId($$.data, "", NULL, noPosition);
+        *($$.data) = makeId("", NULL, noPosition);
     }
     | '.' field_identifier    {
         $$.data = stackMemoryAlloc(sizeof(Id));

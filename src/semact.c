@@ -286,7 +286,7 @@ void generateInternalLabelReference(int counter, int usage) {
     snprintf(labelName, TMP_STRING_SIZE, "%%L%d", counter);
 
     position = (Position){.file = currentFile.characterBuffer.fileNumber, .line = 0, .col = 0};
-    fillId(&labelId, labelName, NULL, position);
+    labelId = makeId(labelName, NULL, position);
 
     if (usage != UsageDefined)
         labelId.position.line++;
