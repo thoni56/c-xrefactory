@@ -1244,12 +1244,13 @@ static void olcxMenuSelectOnly(void) {
 }
 
 
-// Map function
-static void selectUnusedSymbols(SymbolsMenu *menu, void *p1) {
-    int filter, *flp;
+/* Mapped though 'splitMenuPerSymbolsAndMap()' */
+static void selectUnusedSymbols(SymbolsMenu *menu, void *mapParameter1) {
+    int filter;
+    int *filterPointer;
 
-    flp = (int *)p1;
-    filter = *flp;
+    filterPointer = (int *)mapParameter1;
+    filter = *filterPointer;
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
         m->visible = true; m->selected = false;
     }
@@ -1261,7 +1262,7 @@ static void selectUnusedSymbols(SymbolsMenu *menu, void *p1) {
         if (m->selected)
             goto fini2;
     }
-    //nothing selected, make the symbol unvisible
+    // Nothing selected, make the symbol unvisible
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
         m->visible = false;
     }
