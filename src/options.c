@@ -95,7 +95,7 @@ Options presetOptions = {
     XrefMode,                   /* operating mode */
     false,                      /* debug */
     false,                      /* trace */
-    0,                          /* serverOperation */
+    OLO_NOOP,                   /* serverOperation */
     0,                          /* olcxGotoVal */
 
     /* CXREF options  */
@@ -1410,7 +1410,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-olcxpushandcallmacro")==0)
         options.serverOperation = OLO_PUSH_AND_CALL_MACRO;
     else if (strcmp(argv[i], "-olcxpushforlm")==0) {
-        options.serverOperation = OLO_PUSH_FOR_LOCALM;
+        options.serverOperation = OLO_PUSH_FOR_LOCAL_MOTION;
         options.manualResolve = RESOLVE_DIALOG_NEVER;
     }
     else if (strcmp(argv[i], "-olcxpushglobalunused")==0)
@@ -1461,7 +1461,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.pushName = allocateStringForOption(&options.pushName, argv[i]+14);
     }
     else if (strncmp(argv[i], "-olcomplselect",14)==0) {
-        options.serverOperation=OLO_CSELECT;
+        options.serverOperation=OLO_COMPLETION_SELECT;
         options.olcxGotoVal = 0;
         sscanf(argv[i]+14, "%d",&options.olcxGotoVal);
     }
@@ -1472,7 +1472,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation=OLO_COMPLETION_FORWARD;
     }
     else if (strncmp(argv[i], "-olcxcgoto",10)==0) {
-        options.serverOperation = OLO_CGOTO;
+        options.serverOperation = OLO_COMPLETION_GOTO;
         options.olcxGotoVal = 0;
         sscanf(argv[i]+10, "%d",&options.olcxGotoVal);
     }

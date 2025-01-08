@@ -991,7 +991,7 @@ static void scanFunction_Reference(int size,
                     if (operation == CXSF_MENU_CREATION) {
                         assert(lastIncomingData.onLineRefMenuItem);
                         if (file != olOriginalFileNumber || !fileItem->isArgument ||
-                            options.serverOperation == OLO_GOTO || options.serverOperation == OLO_CGOTO ||
+                            options.serverOperation == OLO_GOTO || options.serverOperation == OLO_COMPLETION_GOTO ||
                             options.serverOperation == OLO_PUSH_NAME) {
                             log_trace (":adding reference %s:%d", referenceFileItem->name, reference.position.line);
                             olcxAddReferenceToSymbolsMenu(lastIncomingData.onLineRefMenuItem, &reference);

@@ -873,7 +873,7 @@ bool requiresCreatingRefs(ServerOperation operation) {
         ||  operation==OLO_GET_PARAM_COORDINATES
         ||  operation==OLO_GET_AVAILABLE_REFACTORINGS
         ||  operation==OLO_PUSH_NAME
-        ||  operation==OLO_PUSH_FOR_LOCALM
+        ||  operation==OLO_PUSH_FOR_LOCAL_MOTION
         ||  operation==OLO_GET_LAST_IMPORT_LINE
         ||  operation==OLO_GLOBAL_UNUSED
         ||  operation==OLO_LOCAL_UNUSED

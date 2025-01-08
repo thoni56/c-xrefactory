@@ -7,63 +7,63 @@
 
 
 /* ************** on-line (browsing) operations for c-xref server  ********** */
+// NOOP *must* be 0!
 #define ALL_OPERATION_ENUMS(ENUM)               \
-    ENUM(OLO_NOOP)                              \
-    ENUM(OLO_COMPLETION)                        \
-    ENUM(OLO_SEARCH)                            \
-    ENUM(OLO_TAG_SEARCH)                        \
-    ENUM(OLO_RENAME)                            \
+    ENUM(OLO_ABOUT)                             \
+    ENUM(OLO_ACTIVE_PROJECT)                    \
     ENUM(OLO_ARGUMENT_MANIPULATION)             \
-    ENUM(OLO_GET_AVAILABLE_REFACTORINGS)        \
-    ENUM(OLO_PUSH)                              \
-    ENUM(OLO_PUSH_NAME)                         \
-    ENUM(OLO_POP)                               \
-    ENUM(OLO_POP_ONLY)                          \
-    ENUM(OLO_NEXT)                              \
-    ENUM(OLO_PREVIOUS)                          \
-    ENUM(OLO_GOTO_CURRENT)                      \
-    ENUM(OLO_GET_CURRENT_REFNUM)                \
-    ENUM(OLO_GOTO_PARAM_NAME)                   \
-    ENUM(OLO_GLOBAL_UNUSED)                     \
-    ENUM(OLO_LOCAL_UNUSED)                      \
-    ENUM(OLO_LIST)                              \
-    ENUM(OLO_PUSH_ONLY)                         \
-    ENUM(OLO_PUSH_AND_CALL_MACRO)               \
-    ENUM(OLO_PUSH_FOR_LOCALM)                   \
-    ENUM(OLO_GOTO)                              \
-    ENUM(OLO_CGOTO)                             \
-    ENUM(OLO_TAGGOTO)                           \
-    ENUM(OLO_TAGSELECT)                         \
-    ENUM(OLO_REF_FILTER_SET)                    \
-    ENUM(OLO_REF_FILTER_PLUS)                   \
-    ENUM(OLO_REF_FILTER_MINUS)                  \
-    ENUM(OLO_CSELECT)                           \
+    ENUM(OLO_COMPLETION)                        \
     ENUM(OLO_COMPLETION_BACK)                   \
     ENUM(OLO_COMPLETION_FORWARD)                \
+    ENUM(OLO_COMPLETION_GOTO)                   \
+    ENUM(OLO_COMPLETION_SELECT)                 \
     ENUM(OLO_EXTRACT)                           \
-    ENUM(OLO_CT_INSPECT_DEF)                    \
+    ENUM(OLO_GET_AVAILABLE_REFACTORINGS)        \
+    ENUM(OLO_GET_CURRENT_REFNUM)                \
+    ENUM(OLO_GET_ENV_VALUE)                     \
+    ENUM(OLO_GET_LAST_IMPORT_LINE)              \
+    ENUM(OLO_GET_METHOD_COORD)                  \
+    ENUM(OLO_GET_PARAM_COORDINATES)             \
+    ENUM(OLO_GET_PRIMARY_START)                 \
+    ENUM(OLO_GLOBAL_UNUSED)                     \
+    ENUM(OLO_GOTO)                              \
+    ENUM(OLO_GOTO_CALLER)                       \
+    ENUM(OLO_GOTO_CURRENT)                      \
+    ENUM(OLO_GOTO_DEF)                          \
+    ENUM(OLO_GOTO_PARAM_NAME)                   \
+    ENUM(OLO_LIST)                              \
+    ENUM(OLO_LOCAL_UNUSED)                      \
+    ENUM(OLO_MENU_FILTER_MINUS)                 \
+    ENUM(OLO_MENU_FILTER_PLUS)                  \
+    ENUM(OLO_MENU_FILTER_SET)                   \
     ENUM(OLO_MENU_INSPECT_DEF)                  \
     ENUM(OLO_MENU_SELECT)                       \
-    ENUM(OLO_MENU_SELECT_ONLY)                  \
     ENUM(OLO_MENU_SELECT_ALL)                   \
     ENUM(OLO_MENU_SELECT_NONE)                  \
-    ENUM(OLO_MENU_FILTER_SET)                   \
-    ENUM(OLO_MENU_FILTER_PLUS)                  \
-    ENUM(OLO_MENU_FILTER_MINUS)                 \
-    ENUM(OLO_SAFETY_CHECK2)                     \
-    ENUM(OLO_GOTO_DEF)                          \
-    ENUM(OLO_GOTO_CALLER)                       \
-    ENUM(OLO_ACTIVE_PROJECT)                    \
+    ENUM(OLO_MENU_SELECT_ONLY)                  \
+    ENUM(OLO_NEXT)                              \
+    ENUM(OLO_NOOP)                              \
+    ENUM(OLO_POP)                               \
+    ENUM(OLO_POP_ONLY)                          \
+    ENUM(OLO_PREVIOUS)                          \
+    ENUM(OLO_PUSH)                              \
+    ENUM(OLO_PUSH_AND_CALL_MACRO)               \
+    ENUM(OLO_PUSH_FOR_LOCAL_MOTION)             \
+    ENUM(OLO_PUSH_NAME)                         \
+    ENUM(OLO_PUSH_ONLY)                         \
+    ENUM(OLO_REF_FILTER_MINUS)                  \
+    ENUM(OLO_REF_FILTER_PLUS)                   \
+    ENUM(OLO_REF_FILTER_SET)                    \
+    ENUM(OLO_RENAME)                            \
     ENUM(OLO_REPUSH)                            \
-    ENUM(OLO_GET_ENV_VALUE)                     \
+    ENUM(OLO_SAFETY_CHECK2)                     \
+    ENUM(OLO_SEARCH)                            \
     ENUM(OLO_SET_MOVE_FUNCTION_TARGET)          \
-    ENUM(OLO_GET_METHOD_COORD)                  \
-    ENUM(OLO_GET_LAST_IMPORT_LINE)              \
-    ENUM(OLO_TAG_SEARCH_FORWARD)                \
+    ENUM(OLO_TAGGOTO)                           \
+    ENUM(OLO_TAGSELECT)                         \
+    ENUM(OLO_TAG_SEARCH)                        \
     ENUM(OLO_TAG_SEARCH_BACK)                   \
-    ENUM(OLO_GET_PRIMARY_START)                 \
-    ENUM(OLO_GET_PARAM_COORDINATES)             \
-    ENUM(OLO_ABOUT)                             \
+    ENUM(OLO_TAG_SEARCH_FORWARD)                \
 
 
 #if 0
@@ -74,11 +74,8 @@
        OLO_CGOTO,               - goto completion item definition
        OLO_TAGGOTO,             - goto tag search result
        OLO_TAGSELECT,           - select tag search result
-       OLO_CSELECT,             - select completion
        OLO_EXTRACT,             - extract block into separate function
-       OLO_CT_INSPECT_DEF,		- inspect definition from class tree
        OLO_MENU_INSPECT_DEF,	- inspect definition from symbol menu
-       OLO_MENU_INSPECT_CLASS,	- inspect class from symbol menu
        OLO_MENU_SELECT,         - select the line from symbol menu
        OLO_MENU_SELECT_ONLY,	- select only the line from symbol menu
        OLO_MENU_SELECT_ALL,     - select all from symbol menu
@@ -88,7 +85,6 @@
        OLO_MENU_FILTER_MINUS,	- smaller filtering
        OLO_MENU_GO,             - push references from selected menu items
        OLO_CHECK_VERSION,       - check version correspondance
-       OLO_INTERSECTION,        - just provide intersection of top references
        OLO_REMOVE_WIN,          - just remove window of top references
        OLO_GOTO_DEF,            - goto definition reference
        OLO_GOTO_CALLER,         - goto caller reference

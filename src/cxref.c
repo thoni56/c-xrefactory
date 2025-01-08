@@ -475,8 +475,8 @@ static void gotoOnlineCxref(Position position, Usage usage, char *suffix)
 static bool sessionHasReferencesValidForOperation(SessionData *session, OlcxReferences **refs,
                                                   CheckNull checkNull) {
     assert(session);
-    if (options.serverOperation==OLO_COMPLETION || options.serverOperation==OLO_CSELECT
-        ||  options.serverOperation==OLO_CGOTO || options.serverOperation==OLO_TAG_SEARCH) {
+    if (options.serverOperation==OLO_COMPLETION || options.serverOperation==OLO_COMPLETION_SELECT
+        ||  options.serverOperation==OLO_COMPLETION_GOTO || options.serverOperation==OLO_TAG_SEARCH) {
         *refs = session->completionsStack.top;
     } else {
         *refs = session->browserStack.top;
@@ -1316,7 +1316,7 @@ static void setDefaultSelectedVisibleItems(SymbolsMenu *menu,
 static bool isRenameMenuSelection(int command) {
     return command == OLO_RENAME
         || command == OLO_ARGUMENT_MANIPULATION
-        || command == OLO_PUSH_FOR_LOCALM
+        || command == OLO_PUSH_FOR_LOCAL_MOTION
         || command == OLO_SAFETY_CHECK2
         || options.manualResolve == RESOLVE_DIALOG_NEVER
         ;
@@ -1656,7 +1656,7 @@ bool olcxShowSelectionMenu(void) {
 
     // decide whether to show manual resolution menu
     assert(sessionData.browserStack.top);
-    if (options.serverOperation == OLO_PUSH_FOR_LOCALM) {
+    if (options.serverOperation == OLO_PUSH_FOR_LOCAL_MOTION) {
         // never ask for resolution for local motion symbols
         return false;
     }
@@ -1856,7 +1856,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
             olStackDeleteSymbol(sessionData.browserStack.top);
         }
         break;
-    case OLO_PUSH_FOR_LOCALM:
+    case OLO_PUSH_FOR_LOCAL_MOTION:
         if (olcxCheckSymbolExists())
             olcxPushOnly();
         else
@@ -2155,7 +2155,7 @@ void answerEditAction(void) {
     case OLO_GET_CURRENT_REFNUM:
         olcxReferenceGetCurrentRefn();
         break;
-    case OLO_CSELECT:
+    case OLO_COMPLETION_SELECT:
         olCompletionSelect();
         break;
     case OLO_COMPLETION_BACK:
@@ -2167,7 +2167,7 @@ void answerEditAction(void) {
     case OLO_GOTO:
         olcxReferenceGotoRef(options.olcxGotoVal);
         break;
-    case OLO_CGOTO:
+    case OLO_COMPLETION_GOTO:
         olcxReferenceGotoCompletion(options.olcxGotoVal);
         break;
     case OLO_TAGGOTO:
