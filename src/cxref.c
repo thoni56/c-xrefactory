@@ -1315,7 +1315,6 @@ static void setDefaultSelectedVisibleItems(SymbolsMenu *menu,
 
 static bool isRenameMenuSelection(int command) {
     return command == OLO_RENAME
-        || command == OLO_ENCAPSULATE
         || command == OLO_ARG_MANIP
         || command == OLO_PUSH_FOR_LOCALM
         || command == OLO_SAFETY_CHECK2
@@ -1865,7 +1864,6 @@ static void olcxPrintPushingAction(ServerOperation operation) {
         break;
     case OLO_RENAME:
     case OLO_ARG_MANIP:
-    case OLO_ENCAPSULATE:
         if (olcxCheckSymbolExists())
             olcxRenameInit();
         else

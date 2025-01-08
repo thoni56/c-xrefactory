@@ -154,7 +154,7 @@ typedef enum language {
 #define OOC_PROFILE_ANY				00000 /* no matter the profile */
 #define OOC_PROFILE_ARITY			01000 /* same number of arguments */
 #define OOC_PROFILE_APPLICABLE		02000 /* + applicable profile */
-#define OOC_PROFILE_EQUAL			03000 /* + no conversion meeded */
+#define OOC_PROFILE_EQUAL			03000 /* + no con meeded */
 
 /* when symbol is selected */
 
