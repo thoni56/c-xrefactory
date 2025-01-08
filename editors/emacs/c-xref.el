@@ -5690,31 +5690,29 @@ This function also moves to the current reference.
     (while (equal sstr "-help")
       (progn
             (c-xref-interactive-help  "
-
-
 C-xrefactory search expressions are similar to standard shell
 expressions.  They are composed from a sequence of characters
-possibly containing wild characters.  Following wild cards can be
-used: '*' expands to any (possibly empty) string, '?'  expands to
-any single character and '[...]'  expands to one of enclosed
-characters.  Ranges of characters can be included between [ and
-], so for example [a-zA-Z] matches any letter, [0-9] matches any
-digit, as in shell expressions. If the first character following
-the [ is a ^ then the sense of expansion is inverted, for example
-[^0-9] expands to any non-digit character.  A symbol is reported
-only if its name completely matches the searched string.  Letters
-are matched case insensitively except when enclosed between [ and
-].
+possibly containing wildcard characters.  The following wildcards
+can be used: '*' expands to any (possibly empty) string, '?'
+expands to any single character and '[...]'  expands to one of
+the enclosed characters.  Ranges of characters can be included
+between '[' and ']', so for example [a-zA-Z] matches any letter,
+[0-9] matches any digit, as in shell expressions. If the first
+character following the '[' is a '^' then the result of expansion
+is inverted, for example '[^0-9]' expands to any non-digit
+character.  A symbol is reported only if its name completely
+matches the searched string.  Letters are matched case
+insensitively except when enclosed between [ and ].
 
 For example the expression '*get*' will report all symbols
 containing the string 'get'.  Expression 'get*' will report all
-symbols starting with the string 'get'.  Expression [A-Z]* will
-report all symbols starting with an upper case letter.
+symbols starting with the string 'get'.  The expression '[A-Z]*'
+will report all symbols starting with an upper case letter.
 
-If you enter an expression which does not contain any of the wild
-card characters *, ? or [ then C-xrefactory reports all symbols
-containing the entered string. For example, entering get as the
-expression is equivalent to entering *get*.
+If you enter an expression which does not contain any of the
+wildcard characters '*', '?' or '[' then C-xrefactory reports all
+symbols containing the entered string. For example, entering
+'get' as the expression is equivalent to entering '*get*'.
 
 " nil nil)
             (setq sstr (completing-read "Expression to search (-help for help): "
