@@ -36,7 +36,7 @@ void olcxPrintSelectionMenu(SymbolsMenu *menu) {
 }
 
 SymbolsMenu *createNewMenuItem(ReferenceItem *sym, int includedFileNumber, Position defpos,
-                                 int defusage, int selected, int visible, unsigned ooBits, int olusage,
+                                 int defusage, int selected, int visible, unsigned ooBits, Usage olusage,
                                  int vlevel) {
     Position *defaultPosition = &defpos;
     return (SymbolsMenu *) mock(sym, includedFileNumber, defaultPosition, defusage, selected, visible, ooBits, olusage, vlevel);

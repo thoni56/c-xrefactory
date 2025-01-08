@@ -96,7 +96,7 @@ static char *olcxStringCopy(char *string) {
 }
 
 SymbolsMenu *createNewMenuItem(ReferenceItem *symbol, int includedFileNumber, Position defpos,
-                               int defusage, int selected, int visible, unsigned ooBits, int olusage,
+                               int defusage, int selected, int visible, unsigned ooBits, Usage olusage,
                                int vlevel) {
     SymbolsMenu   *symbolsMenu;
     char          *allocatedNameCopy;
@@ -209,6 +209,7 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
     fprintf(file," %s=%ld>%s</%s>\n", PPCA_LEN, (unsigned long)strlen(tempString), tempString, PPC_SYMBOL);
 }
 
+/* Mapped through 'splitMenuPerSymbolsAndMap()' */
 static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, void *p1) {
     FILE *file = (FILE *)p1;
     SymbolsMenu    *m;

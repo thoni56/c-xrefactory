@@ -30,7 +30,7 @@ extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *referenc
 extern void olcxPrintSelectionMenu(SymbolsMenu *menu);
 extern SymbolsMenu *createNewMenuItem(ReferenceItem *sym, int includedFileNumber,
                                         Position defpos, int defusage, int selected, int visible,
-                                        unsigned ooBits, int olusage, int vlevel);
+                                        unsigned ooBits, Usage olusage, int vlevel);
 extern SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *reference,
                                              bool selected, bool visible, unsigned ooBits, int olusage,
                                              int vlevel, Position defpos, int defusage);
