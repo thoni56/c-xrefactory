@@ -103,7 +103,7 @@ int filenameCompare(char *ss1, char *ss2, int n) {
   return (int) mock(ss1, ss2, n);
 }
 
-void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen, int argsStyle) {
+void prettyPrintLinkName(char *ff, char *javaLinkName, int maxlen, int argsStyle) {
   mock(ff, javaLinkName, maxlen, argsStyle);
 }
 

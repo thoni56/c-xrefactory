@@ -235,7 +235,7 @@ void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *name1, char *na
 
 /* ******************************************************************* */
 
-void linkNamePrettyPrint(char *string, char *linkName, int maxlen, int argsStyle) {
+void prettyPrintLinkName(char *string, char *linkName, int maxlen, int argsStyle) {
     /* Skip any file reference in the linkName */
     char *chP = strchr(linkName, LINK_NAME_SEPARATOR);
     if (chP==NULL)
@@ -263,7 +263,7 @@ void sprintfSymbolLinkName(SymbolsMenu *menu, char *name) {
         sprintf(name, "%s",
                 simpleFileName(getRealFileName_static(getFileItemWithFileNumber(menu->references.includedFileNumber)->name)));
     } else {
-        linkNamePrettyPrint(name, menu->references.linkName, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+        prettyPrintLinkName(name, menu->references.linkName, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
     }
 }
 

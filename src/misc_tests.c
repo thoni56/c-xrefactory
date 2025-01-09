@@ -40,7 +40,7 @@ Ensure(Misc, can_concat_filename_with_directory) {
 
 Ensure(Misc, can_see_if_string_contains_wildcard) {
     assert_that(!containsWildcard(""));
-    assert_that(!containsWildcard("sldlsadkj 234 %¤!#¤!¤"));
+    assert_that(!containsWildcard("sldlsadkj 234 %%!#%!%"));
     assert_that(containsWildcard("?"));
     assert_that(containsWildcard("*"));
     assert_that(containsWildcard("[abc]"));
@@ -118,14 +118,14 @@ Ensure(Misc, will_map_over_paths_for_each_entry_setting_currentPath) {
 
 Ensure(Misc, can_prettyprint_simple_linkname) {
     char pretty_printed[100];
-    linkNamePrettyPrint(pretty_printed, "a_name", sizeof(pretty_printed), LONG_NAME);
+    prettyPrintLinkName(pretty_printed, "a_name", sizeof(pretty_printed), LONG_NAME);
 
     assert_that(pretty_printed, is_equal_to_string("a_name"));
 }
 
 Ensure(Misc, can_prettyprint_linkname_with_file_reference) {
     char pretty_printed[100];
-    linkNamePrettyPrint(pretty_printed, "some_file!a_name", sizeof(pretty_printed), LONG_NAME);
+    prettyPrintLinkName(pretty_printed, "some_file!a_name", sizeof(pretty_printed), LONG_NAME);
 
     assert_that(pretty_printed, is_equal_to_string("a_name"));
 }
