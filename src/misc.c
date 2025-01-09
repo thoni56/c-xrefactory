@@ -63,7 +63,7 @@ void symbolRefItemDump(ReferenceItem *s) {
 
 /* *********************************************************************** */
 
-void typeSPrint(char *buffer, int *bufferSize, TypeModifier *typeModifier, char *name, int separator,
+void prettyPrintType(char *buffer, int *bufferSize, TypeModifier *typeModifier, char *name, int separator,
                 bool typedefexp) {
     char    preString[COMPLETION_STRING_SIZE];
     char    postString[COMPLETION_STRING_SIZE];
@@ -128,7 +128,7 @@ void typeSPrint(char *buffer, int *bufferSize, TypeModifier *typeModifier, char 
                 if (symbol->type == TypeDefault && symbol->u.typeModifier != NULL) {
                     /* TODO ALL, for string overflow */
                     int jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
-                    typeSPrint(postString + j, &jj, symbol->u.typeModifier, ttm, ' ', true);
+                    prettyPrintType(postString + j, &jj, symbol->u.typeModifier, ttm, ' ', true);
                     j += jj;
                 } else {
                     sprintf(postString + j, "%s", ttm);

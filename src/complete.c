@@ -136,7 +136,7 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
             typeDefinitionExpressionFlag = false;
         }
         char *pname = completions->alternatives[index].symbol->name;
-        typeSPrint(tempString+l, &size, completions->alternatives[index].symbol->u.typeModifier, pname, ' ',
+        prettyPrintType(tempString+l, &size, completions->alternatives[index].symbol->u.typeModifier, pname, ' ',
                    typeDefinitionExpressionFlag);
     } else if (completions->alternatives[index].symbolType==TypeMacro) {
         prettyPrintMacroDefinition(tempString, &size, completions->alternatives[index].string,

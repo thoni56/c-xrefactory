@@ -10,8 +10,9 @@ void symbolRefItemDump(ReferenceItem *ss) {
   mock(ss);
 }
 
-void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepChar, bool typedefexp) {
-  mock(buff, size, t, name, dclSepChar, typedefexp);
+void prettyPrintType(char *buffer, int *size, TypeModifier *typeModifier, char *name, int separator,
+                     bool typedefexp) {
+  mock(buffer, size, typeModifier, name, separator, typedefexp);
 }
 
 void prettyPrintMacroDefinition(char *buffer, int *bufferSize, char *macroName, int argc, char **argv) {
