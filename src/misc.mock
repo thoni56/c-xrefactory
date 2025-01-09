@@ -2,10 +2,6 @@
 #include "misc.h"
 #include <cgreen/mocks.h>
 
-void scanJarFilesForTagSearch(void) {
-  mock();
-}
-
 void dumpArguments(int nargc, char **nargv) {
   mock(nargc, nargv);
 }
