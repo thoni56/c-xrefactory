@@ -59,10 +59,20 @@
 #
 #########################################################################
 
+OS := $(shell uname)
+
 # Extra libraries to link
 LIBS = -lz -lcjson
 
-OS := $(shell uname)
+ifeq ($(OS),Darwin)
+	ifeq ($(shell arch),arm64)
+		LIBS += -L/opt/homebrew/lib
+		INCLUDES += -I/opt/homebrew/include
+	else
+		LIBS += -L/usr/local/lib
+		INCLUDES += -I/opt/local/include
+	endif
+endif
 
 # Figure out reasonable number of parallel jobs
 # Set number of jobs based on operating system
