@@ -247,7 +247,7 @@ void prettyPrintLinkName(char *string, char *linkName, int maxlen) {
 }
 
 char *simpleFileNameFromFileNum(int fnum) {
-    return(simpleFileName(getRealFileName_static(getFileItemWithFileNumber(fnum)->name)));
+    return simpleFileName(getRealFileName_static(getFileItemWithFileNumber(fnum)->name));
 }
 
 void prettyPrintLinkNameForSymbolInMenu(char *buffer, SymbolsMenu *menu) {
@@ -277,10 +277,12 @@ char *lastOccurenceInString(char *string, int ch) {
 
 char *getFileSuffix(char *fn) {
     char *cc;
-    if (fn == NULL) return("");
+    if (fn == NULL)
+        return "";
     cc = fn + strlen(fn);
-    while (*cc != '.' && *cc != FILE_PATH_SEPARATOR && cc > fn) cc--;
-    return(cc);
+    while (*cc != '.' && *cc != FILE_PATH_SEPARATOR && cc > fn)
+        cc--;
+    return cc;
 }
 
 char *simpleFileName(char *fullFileName) {
@@ -288,7 +290,7 @@ char *simpleFileName(char *fullFileName) {
     for(fn=pp=fullFileName; *pp!=0; pp++) {
         if (*pp == '/' || *pp == FILE_PATH_SEPARATOR) fn = pp+1;
     }
-    return(fn);
+    return fn;
 }
 
 char *simpleFileNameWithoutSuffix_static(char *fullFileName) {
@@ -675,7 +677,7 @@ static int mapPatternFiles(char *pattern ,
         } while (FindNextFile(handle,&fdata));
         FindClose(handle);
     }
-    return(res);
+    return res;
 }
 #endif
 
@@ -776,9 +778,10 @@ int substringIndex(char *s, char *subs) {
     sbl = strlen(subs);
     im = sl-sbl;
     for(i=0; i<=im; i++) {
-        if (strncmp(s+i, subs, sbl)==0) return(i);
+        if (strncmp(s+i, subs, sbl)==0)
+            return i;
     }
-    return(-1);
+    return -1;
 }
 
 /* ************************************************************* */

@@ -95,7 +95,7 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
 
 
     addSymbolToTable(symbolTable, symbol);
-    return(symbol);
+    return symbol;
 }
 
 

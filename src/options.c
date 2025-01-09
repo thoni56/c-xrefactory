@@ -568,7 +568,7 @@ char *expandPredefinedSpecialVariables_static(char *variable, char *inputFilenam
         assert(j<MAX_OPTION_LEN);
     }
     expanded[j]=0;
-    return(expanded);
+    return expanded;
 }
 
 static void expandEnvironmentVariables(char *original, int availableSize, int *len,
