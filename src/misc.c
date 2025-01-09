@@ -63,11 +63,11 @@ void symbolRefItemDump(ReferenceItem *s) {
 /* *********************************************************************** */
 
 void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSepChar, bool typedefexp,
-                int longOrShortName, int *oNamePos) {
+                int *oNamePos) {
     char    preString[COMPLETION_STRING_SIZE];
     char    postString[COMPLETION_STRING_SIZE];
     char    typeString[COMPLETION_STRING_SIZE];
-    int     r;
+    int     l;
     bool    par;
 
     typeString[0] = 0;
@@ -127,8 +127,7 @@ void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSep
                 if (symbol->type == TypeDefault && symbol->u.typeModifier != NULL) {
                     /* TODO ALL, for string overflow */
                     int jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
-                    typeSPrint(postString + j, &jj, symbol->u.typeModifier, ttm, ' ', true,
-                               longOrShortName, NULL);
+                    typeSPrint(postString + j, &jj, symbol->u.typeModifier, ttm, ' ', true, NULL);
                     j += jj;
                 } else {
                     sprintf(postString + j, "%s", ttm);
@@ -146,11 +145,11 @@ void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSep
                 sprintf(typeString, "struct ");
             else
                 sprintf(typeString, "union ");
-            r = strlen(typeString);
+            l = strlen(typeString);
 
             if (t->u.t->name != NULL) {
-                sprintf(typeString + r, "%s ", t->u.t->name);
-                r += strlen(typeString + r);
+                sprintf(typeString + l, "%s ", t->u.t->name);
+                l += strlen(typeString + l);
             }
             break;
         case TypeEnum:
@@ -158,13 +157,13 @@ void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSep
                 sprintf(typeString, "enum ");
             else
                 sprintf(typeString, "enum %s", t->u.t->linkName);
-            r = strlen(typeString);
+            l = strlen(typeString);
             break;
         default:
             assert(t->type >= 0 && t->type < MAX_TYPE);
             assert(strlen(typeNamesTable[t->type]) < COMPLETION_STRING_SIZE);
             strcpy(typeString, typeNamesTable[t->type]);
-            r = strlen(typeString);
+            l = strlen(typeString);
             break;
         }
         assert(i > 2 && j < COMPLETION_STRING_SIZE - 3);
@@ -235,7 +234,7 @@ void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *name1, char *na
 
 /* ******************************************************************* */
 
-void prettyPrintLinkName(char *string, char *linkName, int maxlen, int argsStyle) {
+void prettyPrintLinkName(char *string, char *linkName, int maxlen) {
     /* Skip any file reference in the linkName */
     char *chP = strchr(linkName, LINK_NAME_SEPARATOR);
     if (chP==NULL)
@@ -263,7 +262,7 @@ void sprintfSymbolLinkName(SymbolsMenu *menu, char *name) {
         sprintf(name, "%s",
                 simpleFileName(getRealFileName_static(getFileItemWithFileNumber(menu->references.includedFileNumber)->name)));
     } else {
-        prettyPrintLinkName(name, menu->references.linkName, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+        prettyPrintLinkName(name, menu->references.linkName, MAX_CX_SYMBOL_SIZE);
     }
 }
 

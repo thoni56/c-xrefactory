@@ -14,9 +14,8 @@ void symbolRefItemDump(ReferenceItem *ss) {
   mock(ss);
 }
 
-void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepChar, bool typedefexp,
-                int longOrShortName, int *oNamePos) {
-  mock(buff, size, t, name, dclSepChar, typedefexp, longOrShortName, oNamePos);
+void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepChar, bool typedefexp, int *oNamePos) {
+  mock(buff, size, t, name, dclSepChar, typedefexp, oNamePos);
 }
 
 void macroDefinitionSPrintf(char *buff, int *size, char *name1, char *name2, int argc, char **argv, int *oNamePos) {
@@ -103,8 +102,8 @@ int filenameCompare(char *ss1, char *ss2, int n) {
   return (int) mock(ss1, ss2, n);
 }
 
-void prettyPrintLinkName(char *ff, char *javaLinkName, int maxlen, int argsStyle) {
-  mock(ff, javaLinkName, maxlen, argsStyle);
+void prettyPrintLinkName(char *string, char *linkName, int maxlen) {
+  mock(string, linkName, maxlen);
 }
 
 char *simpleFileNameFromFileNum(int fnum) {

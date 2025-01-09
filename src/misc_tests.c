@@ -118,14 +118,14 @@ Ensure(Misc, will_map_over_paths_for_each_entry_setting_currentPath) {
 
 Ensure(Misc, can_prettyprint_simple_linkname) {
     char pretty_printed[100];
-    prettyPrintLinkName(pretty_printed, "a_name", sizeof(pretty_printed), LONG_NAME);
+    prettyPrintLinkName(pretty_printed, "a_name", sizeof(pretty_printed));
 
     assert_that(pretty_printed, is_equal_to_string("a_name"));
 }
 
 Ensure(Misc, can_prettyprint_linkname_with_file_reference) {
     char pretty_printed[100];
-    prettyPrintLinkName(pretty_printed, "some_file!a_name", sizeof(pretty_printed), LONG_NAME);
+    prettyPrintLinkName(pretty_printed, "some_file!a_name", sizeof(pretty_printed));
 
     assert_that(pretty_printed, is_equal_to_string("a_name"));
 }

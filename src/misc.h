@@ -39,8 +39,7 @@ extern void dumpArguments(int nargc, char **nargv);
 extern void typeDump(TypeModifier *typeModifiers);
 extern void symbolRefItemDump(ReferenceItem *ss);
 extern void typeSPrint(char *buff,int *size,TypeModifier *t,char*name,
-                       int dclSepChar, bool typedefexp,
-                       int longOrShortName, int *oNamePos);
+                       int dclSepChar, bool typedefexp, int *oNamePos);
 extern void macroDefinitionSPrintf(char *buff, int *size, char *name1, char *name2, int argc, char **argv,
                                    int *oNamePos);
 
@@ -71,7 +70,7 @@ extern char *getFileSuffix(char *fn);
 extern int pathncmp(char *ss1, char *ss2, int n, bool caseSensitive);
 extern int compareFileNames(char *ss1, char *ss2);
 extern int filenameCompare(char *ss1, char *ss2, int n);
-extern void prettyPrintLinkName(char *ff, char *javaLinkName, int maxlen,int argsStyle);
+extern void prettyPrintLinkName(char *ff, char *javaLinkName, int maxlen);
 extern char *simpleFileNameFromFileNum(int fnum);
 extern void sprintfSymbolLinkName(SymbolsMenu *ss, char *ttt);
 

@@ -254,7 +254,7 @@ void searchSymbolCheckReference(ReferenceItem  *referenceItem, Reference *refere
     if (symbolShouldBeHiddenFromSearchResults(referenceItem->linkName))
         return;
 
-    prettyPrintLinkName(ssname, referenceItem->linkName, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+    prettyPrintLinkName(ssname, referenceItem->linkName, MAX_CX_SYMBOL_SIZE);
     sname = ssname;
     slen = strlen(sname);
     // if completing without profile, cut profile

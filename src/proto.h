@@ -68,8 +68,6 @@ typedef enum {
 enum miscellaneous { /* misc. constants */
     DEFAULT_VALUE = SEARCH_DEFINITIONS_SHORT + 1,
     SEARCH_SYMBOL,
-    SHORT_NAME,
-    LONG_NAME,
     DO_NOT_CHECK_IF_SELECTED,
     DIFF_MISSING_REF,
     DIFF_UNEXPECTED_REF,
