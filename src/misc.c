@@ -191,8 +191,6 @@ typebreak:
 
 void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *macroName, int argc,
                             char **argv) {
-    int brief = 0;
-
     assert(*bufferSize > TYPE_STR_RESERVE);
     strcpy(buffer, "#define ");
     strcat(buffer, macroName);
@@ -202,7 +200,7 @@ void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *macroName, int 
         strcat(buffer, "(");
         for (int i = 0; i < argc; i++) {
             bool overflow = false;
-            if (argv[i] != NULL && !brief) {
+            if (argv[i] != NULL) {
                 if (strcmp(argv[i], cppVarArgsName) == 0)
                     strcat(buffer, "...");
                 else {
