@@ -771,7 +771,7 @@ static void symbolHighlighNameSprint(char *output, SymbolsMenu *menu) {
     char *bb, *cc;
     int len, llen;
 
-    sprintfSymbolLinkName(menu, output);
+    prettyPrintLinkNameForSymbolInMenu(output, menu);
     cc = strchr(output, '(');
     if (cc != NULL)
         *cc = 0;
@@ -1087,7 +1087,7 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
         menu = refs->hkSelectedSym;
         sprintf(ttt, "Current top symbol: ");
         assert(strlen(ttt) < MAX_SYMBOL_MESSAGE_LEN);
-        sprintfSymbolLinkName(menu, ttt+strlen(ttt));
+        prettyPrintLinkNameForSymbolInMenu(ttt+strlen(ttt), menu);
         ppcBottomInformation(ttt);
     }
 }

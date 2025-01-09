@@ -250,12 +250,12 @@ char *simpleFileNameFromFileNum(int fnum) {
     return(simpleFileName(getRealFileName_static(getFileItemWithFileNumber(fnum)->name)));
 }
 
-void sprintfSymbolLinkName(SymbolsMenu *menu, char *name) {
+void prettyPrintLinkNameForSymbolInMenu(char *buffer, SymbolsMenu *menu) {
     if (menu->references.type == TypeCppInclude) {
-        sprintf(name, "%s",
+        sprintf(buffer, "%s",
                 simpleFileName(getRealFileName_static(getFileItemWithFileNumber(menu->references.includedFileNumber)->name)));
     } else {
-        prettyPrintLinkName(name, menu->references.linkName, MAX_CX_SYMBOL_SIZE);
+        prettyPrintLinkName(buffer, menu->references.linkName, MAX_CX_SYMBOL_SIZE);
     }
 }
 

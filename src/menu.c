@@ -205,7 +205,7 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
     olcxPrintMenuItemPrefix(file, menu, true);
 
     char tempString[MAX_CX_SYMBOL_SIZE];
-    sprintfSymbolLinkName(menu, tempString);
+    prettyPrintLinkNameForSymbolInMenu(tempString, menu);
     fprintf(file," %s=%ld>%s</%s>\n", PPCA_LEN, (unsigned long)strlen(tempString), tempString, PPC_SYMBOL);
 }
 

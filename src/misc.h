@@ -71,7 +71,7 @@ extern int compareFileNames(char *ss1, char *ss2);
 extern int filenameCompare(char *ss1, char *ss2, int n);
 extern void prettyPrintLinkName(char *ff, char *javaLinkName, int maxlen);
 extern char *simpleFileNameFromFileNum(int fnum);
-extern void sprintfSymbolLinkName(SymbolsMenu *ss, char *ttt);
+extern void prettyPrintLinkNameForSymbolInMenu(char *ttt, SymbolsMenu *ss);
 
 #define UNUSED (void)
 
