@@ -32,6 +32,7 @@ def fixup_calling(line):
 def fixup_sending(line):
     _, line = line.split("sending: ")
     line = remove_preload(line)
+    line = replace_curdir(line)
     print(line[:-1])
     print("<sync>")
 
