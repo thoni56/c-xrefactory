@@ -63,7 +63,7 @@ void symbolRefItemDump(ReferenceItem *s) {
 /* *********************************************************************** */
 
 void typeSPrint(char *buffer, int *bufferSize, TypeModifier *typeModifier, char *name, int separator,
-                bool typedefexp, int *oNamePos) {
+                bool typedefexp) {
     char    preString[COMPLETION_STRING_SIZE];
     char    postString[COMPLETION_STRING_SIZE];
     char    typeString[COMPLETION_STRING_SIZE];
@@ -127,7 +127,7 @@ void typeSPrint(char *buffer, int *bufferSize, TypeModifier *typeModifier, char 
                 if (symbol->type == TypeDefault && symbol->u.typeModifier != NULL) {
                     /* TODO ALL, for string overflow */
                     int jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
-                    typeSPrint(postString + j, &jj, symbol->u.typeModifier, ttm, ' ', true, NULL);
+                    typeSPrint(postString + j, &jj, symbol->u.typeModifier, ttm, ' ', true);
                     j += jj;
                 } else {
                     sprintf(postString + j, "%s", ttm);
@@ -178,16 +178,12 @@ typebreak:
             sprintf(buffer, "%s%c %s", typeString, separator, preString + i);
         }
         *bufferSize = strlen(buffer);
-        if (oNamePos != NULL)
-            *oNamePos = *bufferSize;
         sprintf(buffer + *bufferSize, "%s", name);
         *bufferSize += strlen(buffer + *bufferSize);
         sprintf(buffer + *bufferSize, "%s", postString);
         *bufferSize += strlen(buffer + *bufferSize);
     } else {
         *bufferSize = 0;
-        if (oNamePos != NULL)
-            *oNamePos = *bufferSize;
         buffer[0] = 0;
     }
 }

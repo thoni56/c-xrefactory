@@ -14,8 +14,8 @@ void symbolRefItemDump(ReferenceItem *ss) {
   mock(ss);
 }
 
-void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepChar, bool typedefexp, int *oNamePos) {
-  mock(buff, size, t, name, dclSepChar, typedefexp, oNamePos);
+void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepChar, bool typedefexp) {
+  mock(buff, size, t, name, dclSepChar, typedefexp);
 }
 
 void macroDefinitionSPrintf(char *buff, int *size, char *name1, char *name2, int argc, char **argv, int *oNamePos) {

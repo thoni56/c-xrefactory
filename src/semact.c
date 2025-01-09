@@ -305,7 +305,7 @@ void setLocalVariableLinkName(struct symbol *p) {
         sprintf(ttt+1,"%s", storageNamesTable[p->storage]);
         tti = strlen(ttt);
         len = TMP_STRING_SIZE - tti;
-        typeSPrint(ttt+tti, &len, p->u.typeModifier, nnn, LINK_NAME_SEPARATOR, true, NULL);
+        typeSPrint(ttt+tti, &len, p->u.typeModifier, nnn, LINK_NAME_SEPARATOR, true);
         sprintf(ttt+tti+len,"%c%x-%x-%x-%x", LINK_NAME_SEPARATOR,
                 p->pos.file,p->pos.line,p->pos.col, counters.localVar++);
     } else {
