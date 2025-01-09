@@ -1730,7 +1730,7 @@ identifier
 static CompletionFunctionsTable specialCompletionsCollectorsTable[]  = {
     {COMPLETE_FOR_STATEMENT1,    collectForStatementCompletions1},
     {COMPLETE_FOR_STATEMENT2,    collectForStatementCompletions2},
-    {COMPLETE_UP_FUN_PROFILE,  completeUpFunProfile},
+    {COMPLETE_UP_FUN_PROFILE,    completeUpFunProfile},
     {0,NULL}
 };
 
@@ -1804,9 +1804,9 @@ void makeCCompletions(char *string, int len, Position position) {
         if (exists_valid_parser_action_on(token)) {
             if (tokenNamesTable[token] != NULL) {
                 if (isalpha(*tokenNamesTable[token]) || *tokenNamesTable[token]=='_') {
-                    fillCompletionLine(&completionLine, tokenNamesTable[token], NULL, TypeKeyword, 0, NULL);
+                    completionLine = makeCompletionLine(tokenNamesTable[token], NULL, TypeKeyword, 0, NULL);
                 } else {
-                    fillCompletionLine(&completionLine, tokenNamesTable[token], NULL, TypeToken, 0, NULL);
+                    completionLine = makeCompletionLine(tokenNamesTable[token], NULL, TypeToken, 0, NULL);
                 }
                 log_trace("completing %d==%s(%s) in state %d", token, tokenNamesTable[token], tokenNamesTable[token], lastyystate);
                 processName(tokenNamesTable[token], &completionLine, false, &collectedCompletions);

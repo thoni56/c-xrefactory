@@ -50,23 +50,29 @@ void initCompletions(Completions *completions, int length, Position position) {
     completions->alternativeCount = 0;
 }
 
-void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Type symbolType, short int margn, char **margs) {
-    cline->string = string;
-    cline->symbol = symbol;
-    cline->symbolType = symbolType;
-    cline->margn = margn;
-    cline->margs = margs;
+CompletionLine makeCompletionLine(char *string, Symbol *symbol, Type symbolType, short int margn,
+                                  char **margs) {
+    CompletionLine line;
+    line.string = string;
+    line.symbol = symbol;
+    line.symbolType = symbolType;
+    line.margn = margn;
+    line.margs = margs;
+    return line;
 }
 
-static void fillCompletionSymInfo(SymbolCompletionInfo *info, Completions *completions, Type type) {
-    info->completions = completions;
-    info->type        = type;
+static SymbolCompletionInfo makeCompletionSymInfo(Completions *completions, Type type) {
+    SymbolCompletionInfo info;
+    info.completions = completions;
+    info.type        = type;
+    return info;
 }
 
-static void fillCompletionSymFunInfo(SymbolCompletionFunctionInfo *completionSymFunInfo, Completions *completions,
-                                     enum storage storage) {
-    completionSymFunInfo->res = completions;
-    completionSymFunInfo->storage = storage;
+static SymbolCompletionFunctionInfo makeCompletionSymFunInfo(Completions *completions, Storage storage) {
+    SymbolCompletionFunctionInfo info;
+    info.res = completions;
+    info.storage = storage;
+    return info;
 }
 
 static void formatFullCompletions(char *tt, int indent, int inipos) {
@@ -456,12 +462,12 @@ static void completeFun(Symbol *symbol, void *c) {
         return;
     log_trace("testing %s", symbol->linkName);
     if (symbol->type != TypeMacro) {
-        fillCompletionLine(&compLine, symbol->name, symbol, symbol->type, 0, NULL);
+        compLine = makeCompletionLine(symbol->name, symbol, symbol->type, 0, NULL);
     } else {
         if (symbol->u.mbody == NULL) {
-            fillCompletionLine(&compLine, symbol->name, symbol, TypeUndefMacro, 0, NULL);
+            compLine = makeCompletionLine(symbol->name, symbol, TypeUndefMacro, 0, NULL);
         } else {
-            fillCompletionLine(&compLine, symbol->name, symbol, symbol->type, symbol->u.mbody->argCount,
+            compLine = makeCompletionLine(symbol->name, symbol, symbol->type, symbol->u.mbody->argCount,
                                symbol->u.mbody->argumentNames);
         }
     }
@@ -488,7 +494,7 @@ static void completeFunctionOrMethodName(Completions *c, bool orderFlag, int vle
         strcpy(cn, cname);
         strcpy(cn+cnamelen, psuff);
     }
-    fillCompletionLine(&compLine, cn, r, TypeDefault,0,NULL);
+    compLine = makeCompletionLine(cn, r, TypeDefault,0,NULL);
     processName(cn, &compLine, orderFlag, c);
 }
 
@@ -511,7 +517,7 @@ static void symbolCompletionFunction(Symbol *symbol, void *i) {
         if (symbol->type == TypeDefault && symbol->u.typeModifier!=NULL && symbol->u.typeModifier->type == TypeFunction) {
             completeFunctionOrMethodName(info->res, true, 0, symbol, NULL);
         } else {
-            fillCompletionLine(&completionLine, completionName, symbol, symbol->type, 0, NULL);
+            completionLine = makeCompletionLine(completionName, symbol, symbol->type, 0, NULL);
             processName(completionName, &completionLine, 1, info->res);
         }
     }
@@ -520,9 +526,9 @@ static void symbolCompletionFunction(Symbol *symbol, void *i) {
 void collectStructsCompletions(Completions *completions) {
     SymbolCompletionInfo info;
 
-    fillCompletionSymInfo(&info, completions, TypeStruct);
+    info = makeCompletionSymInfo(completions, TypeStruct);
     symbolTableMapWithPointer(symbolTable, completeFun, (void*) &info);
-    fillCompletionSymInfo(&info, completions, TypeUnion);
+    info = makeCompletionSymInfo(completions, TypeUnion);
     symbolTableMapWithPointer(symbolTable, completeFun, (void*) &info);
 }
 
@@ -556,7 +562,7 @@ static void completeMemberNames(Completions *completions, Symbol *symbol) {
         ) {
             assert(info.currentStructure && info.currentStructure->u.structSpec);
             assert(foundSymbol->type == TypeDefault);
-            fillCompletionLine(&completionLine, name, foundSymbol, TypeDefault, 0, NULL);
+            completionLine = makeCompletionLine(name, foundSymbol, TypeDefault, 0, NULL);
             processName(name, &completionLine, orderFlag, completions);
         }
     }
@@ -581,28 +587,28 @@ void collectStructMemberCompletions(Completions *completions) {
 static void completeFromSymTab(Completions *completions, unsigned storage){
     SymbolCompletionFunctionInfo  info;
 
-    fillCompletionSymFunInfo(&info, completions, storage);
+    info = makeCompletionSymFunInfo(completions, storage);
     symbolTableMapWithPointer(symbolTable, symbolCompletionFunction, (void*) &info);
 }
 
 void collectEnumsCompletions(Completions *completions) {
     SymbolCompletionInfo info;
 
-    fillCompletionSymInfo(&info, completions, TypeEnum);
+    info = makeCompletionSymInfo(completions, TypeEnum);
     symbolTableMapWithPointer(symbolTable, completeFun, (void*) &info);
 }
 
 void collectLabelsCompletions(Completions *completions) {
     SymbolCompletionInfo info;
 
-    fillCompletionSymInfo(&info, completions, TypeLabel);
+    info = makeCompletionSymInfo(completions, TypeLabel);
     symbolTableMapWithPointer(symbolTable, completeFun, (void*) &info);
 }
 
 void completeMacros(Completions *completions) {
     SymbolCompletionInfo info;
 
-    fillCompletionSymInfo(&info, completions, TypeMacro);
+    info = makeCompletionSymInfo(completions, TypeMacro);
     symbolTableMapWithPointer(symbolTable, completeFun, (void*) &info);
 }
 
@@ -740,7 +746,7 @@ void collectForStatementCompletions1(Completions* c) {
 
     if (isForStatementCompletionSymbol(c, &completionTypeForForStatement, &sym, &rec)) {
         sprintf(string,"%s!=NULL; ", sym->name);
-        fillCompletionLine(&compLine, string, NULL, TypeSpecialComplete, 0, NULL);
+        compLine = makeCompletionLine(string, NULL, TypeSpecialComplete, 0, NULL);
         completeName(string, &compLine, 0, c);
     }
 }
@@ -754,7 +760,7 @@ void collectForStatementCompletions2(Completions* c) {
     if (isForStatementCompletionSymbol(c, &completionTypeForForStatement, &sym, &rec)) {
         if (rec != NULL) {
             sprintf(ss,"%s=%s->%s) {", sym->name, sym->name, rec);
-            fillCompletionLine(&compLine, ss, NULL, TypeSpecialComplete, 0, NULL);
+            compLine = makeCompletionLine(ss, NULL, TypeSpecialComplete, 0, NULL);
             completeName(ss, &compLine, 0, c);
         }
     }
@@ -764,7 +770,7 @@ void completeUpFunProfile(Completions *c) {
     if (upLevelFunctionCompletionType != NULL && c->idToProcess[0] == 0 && c->alternativeCount == 0) {
         Symbol *dd = newSymbolAsType("    ", "    ", noPosition, upLevelFunctionCompletionType);
 
-        fillCompletionLine(&c->alternatives[0], "    ", dd, TypeDefault, 0, NULL);
+        c->alternatives[0] = makeCompletionLine("    ", dd, TypeDefault, 0, NULL);
         c->fullMatchFlag = true;
         c->prefix[0]  = 0;
         c->alternativeCount++;
@@ -780,13 +786,12 @@ static void completeFromXrefFun(ReferenceItem *s, void *c) {
     assert(s && cc);
     if (s->type != cc->type)
         return;
-    /*&fprintf(dumpOut,"testing %s\n",s->linkName);fflush(dumpOut);&*/
-    fillCompletionLine(&compLine, s->linkName, NULL, s->type, 0, NULL);
+    compLine = makeCompletionLine(s->linkName, NULL, s->type, 0, NULL);
     processName(s->linkName, &compLine, 1, cc->completions);
 }
 
 void collectYaccLexemCompletions(Completions *c) {
     SymbolCompletionInfo info;
-    fillCompletionSymInfo(&info, c, TypeYaccSymbol);
+    info = makeCompletionSymInfo(c, TypeYaccSymbol);
     mapOverReferenceTableWithPointer(completeFromXrefFun, (void*) &info);
 }
