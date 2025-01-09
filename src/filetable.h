@@ -37,7 +37,6 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     bool fullUpdateIncludesProcessed : 1;
     bool isFromCxfile : 1;      // is this file indexed in XFiles
     unsigned sourceFileNumber : 20; // file number containing the class definition
-    int directEnclosingInstance;  /* for Java Only  */
     struct fileItem *next;
 } FileItem;
 

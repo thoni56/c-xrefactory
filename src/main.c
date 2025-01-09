@@ -568,7 +568,6 @@ static void totalTaskEntryInitialisations() {
 }
 
 static void clearFileItem(FileItem *fileItem) {
-    fileItem->directEnclosingInstance = NO_FILE_NUMBER;
     fileItem->isScheduled = false;
     fileItem->scheduledToUpdate = false;
     fileItem->fullUpdateIncludesProcessed = false;

@@ -42,18 +42,15 @@ static void fillFileItem(FileItem *item, char *name) {
     memset(item, 0, sizeof(FileItem));
     item->name = name;
     item->isArgument = false;
-    item->directEnclosingInstance = NO_FILE_NUMBER;
     item->sourceFileNumber = NO_FILE_NUMBER;
 }
 
 
-static struct fileItem *newFileItem(char *normalizedFileName) {
-    int              len;
-    char            *fname;
+static FileItem *newFileItem(char *normalizedFileName) {
+    char *fname;
     FileItem *createdFileItem;
 
-    len = strlen(normalizedFileName);
-    fname = ftAlloc(len + 1);
+    fname = ftAlloc(strlen(normalizedFileName) + 1);
     strcpy(fname, normalizedFileName);
 
     createdFileItem = ftAlloc(sizeof(FileItem));
