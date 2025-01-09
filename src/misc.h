@@ -40,7 +40,7 @@ extern void typeDump(TypeModifier *typeModifiers);
 extern void symbolRefItemDump(ReferenceItem *ss);
 extern void typeSPrint(char *buff,int *size,TypeModifier *t,char*name,
                        int dclSepChar, bool typedefexp);
-extern void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *macroName, int argc, char **argv);
+extern void prettyPrintMacroDefinition(char *buffer, int *bufferSize, char *macroName, int argc, char **argv);
 
 extern char *strmcpy(char *dest, char *src);
 extern char *simpleFileName(char *fullFileName);

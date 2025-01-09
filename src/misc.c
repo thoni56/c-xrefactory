@@ -189,8 +189,22 @@ typebreak:
     }
 }
 
-void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *macroName, int argc,
-                            char **argv) {
+static void prettyPrintMacroArgument(char *buffer, char *arg, bool last) {
+    if (arg != NULL) {
+        if (strcmp(arg, cppVarArgsName) == 0)
+            strcat(buffer, "...");
+        else {
+            char tmp[TMP_STRING_SIZE];
+            sprintf(tmp, "%s", arg);
+            strcat(buffer, tmp);
+        }
+    }
+    if (!last) {
+        strcat(buffer, ", ");
+    }
+}
+
+void prettyPrintMacroDefinition(char *buffer, int *bufferSize, char *macroName, int argc, char **argv) {
     assert(*bufferSize > TYPE_STR_RESERVE);
     strcpy(buffer, "#define ");
     strcat(buffer, macroName);
@@ -199,25 +213,12 @@ void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *macroName, int 
     if (argc != -1) {
         strcat(buffer, "(");
         for (int i = 0; i < argc; i++) {
-            bool overflow = false;
-            if (argv[i] != NULL) {
-                if (strcmp(argv[i], cppVarArgsName) == 0)
-                    strcat(buffer, "...");
-                else {
-                    char tmp[TMP_STRING_SIZE];
-                    sprintf(tmp, "%s", argv[i]);
-                    strcat(buffer, tmp);
-                }
-            }
-            if (i + 1 < argc) {
-                strcat(buffer, ", ");
-            }
+            bool last = (i == argc-1);
+            prettyPrintMacroArgument(buffer, argv[i], last);
             if (strlen(buffer) + TYPE_STR_RESERVE >= *bufferSize) {
                 strcat(buffer, "...");
-                overflow = true;
-            }
-            if (overflow)
                 break;
+            }
         }
         strcat(buffer, ")");
     }

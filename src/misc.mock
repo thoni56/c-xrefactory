@@ -18,7 +18,7 @@ void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepCh
   mock(buff, size, t, name, dclSepChar, typedefexp);
 }
 
-void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *macroName, int argc, char **argv) {
+void prettyPrintMacroDefinition(char *buffer, int *bufferSize, char *macroName, int argc, char **argv) {
   mock(buffer, bufferSize, macroName, argc, argv);
 }
 
