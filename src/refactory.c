@@ -436,69 +436,67 @@ static void fatalErrorOnPosition(EditorMarker *p, int errType, char *message) {
 
 // -------------------------- end of Undos
 
-static void removeNonCommentCode(EditorMarker *m, int len) {
-    int           c, nn, n;
-    char         *s;
-    EditorMarker *mm;
-    assert(m->buffer && m->buffer->allocation.text);
-    s  = m->buffer->allocation.text + m->offset;
-    nn = len;
-    mm = newEditorMarker(m->buffer, m->offset);
-    if (m->offset + nn > m->buffer->allocation.bufferSize) {
-        nn = m->buffer->allocation.bufferSize - m->offset;
+static void removeNonCommentCode(EditorMarker *marker, int length) {
+    assert(marker->buffer && marker->buffer->allocation.text);
+    char *s  = marker->buffer->allocation.text + marker->offset;
+    int l = length;
+    EditorMarker *mm = newEditorMarker(marker->buffer, marker->offset);
+    if (marker->offset + l > marker->buffer->allocation.bufferSize) {
+        l = marker->buffer->allocation.bufferSize - marker->offset;
     }
-    n = 0;
-    while (nn > 0) {
-        c = *s;
-        if (c == '/' && nn > 1 && *(s + 1) == '*' && (nn <= 2 || *(s + 2) != '&')) {
+
+    int n = 0;
+    while (l > 0) {
+        int c = *s;
+        if (c == '/' && l > 1 && *(s + 1) == '*' && (l <= 2 || *(s + 2) != '&')) {
             // /**/ comment
             replaceString(mm, n, "");
             s = mm->buffer->allocation.text + mm->offset;
             s += 2;
-            nn -= 2;
+            l -= 2;
             while (!(*s == '*' && *(s + 1) == '/')) {
                 s++;
-                nn--;
+                l--;
             }
             s += 2;
-            nn -= 2;
+            l -= 2;
             mm->offset = s - mm->buffer->allocation.text;
             n          = 0;
-        } else if (c == '/' && nn > 1 && *(s + 1) == '/' && (nn <= 2 || *(s + 2) != '&')) {
+        } else if (c == '/' && l > 1 && *(s + 1) == '/' && (l <= 2 || *(s + 2) != '&')) {
             // // comment
             replaceString(mm, n, "");
             s = mm->buffer->allocation.text + mm->offset;
             s += 2;
-            nn -= 2;
+            l -= 2;
             while (*s != '\n') {
                 s++;
-                nn--;
+                l--;
             }
             s += 1;
-            nn -= 1;
+            l -= 1;
             mm->offset = s - mm->buffer->allocation.text;
             n          = 0;
         } else if (c == '"') {
             // string, pass it removing all inside (also /**/ comments)
             s++;
-            nn--;
+            l--;
             n++;
-            while (*s != '"' && nn > 0) {
+            while (*s != '"' && l > 0) {
                 s++;
-                nn--;
+                l--;
                 n++;
                 if (*s == '\\') {
                     s++;
-                    nn--;
+                    l--;
                     n++;
                     s++;
-                    nn--;
+                    l--;
                     n++;
                 }
             }
         } else {
             s++;
-            nn--;
+            l--;
             n++;
         }
     }
@@ -656,7 +654,7 @@ static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *o
     }
 }
 
-static EditorMarker *createNewMarkerForExpressionStart(EditorMarker *marker, ExpressionStartKind kind) {
+static EditorMarker *createMarkerForExpressionStart(EditorMarker *marker, ExpressionStartKind kind) {
     Position position;
     parseBufferUsingServer(refactoringOptions.project, marker, NULL, "-olcxprimarystart", NULL);
     olStackDeleteSymbol(sessionData.browserStack.top);
@@ -1441,21 +1439,20 @@ static bool validTargetPlace(EditorMarker *target, char *checkOpt) {
     return valid;
 }
 
-static EditorMarker *removeStaticPrefix(EditorMarker *d) {
-    int           ppoffset;
-    EditorMarker *pp;
+static EditorMarker *removeStaticPrefix(EditorMarker *marker) {
+    EditorMarker *startMarker;
 
-    pp = createNewMarkerForExpressionStart(d, GET_STATIC_PREFIX_START);
-    if (pp == NULL) {
+    startMarker = createMarkerForExpressionStart(marker, GET_STATIC_PREFIX_START);
+    if (startMarker == NULL) {
         // this is an error, this is just to avoid possible core dump in the future
-        pp = newEditorMarker(d->buffer, d->offset);
+        startMarker = newEditorMarker(marker->buffer, marker->offset);
     } else {
-        ppoffset = pp->offset;
-        removeNonCommentCode(pp, d->offset - pp->offset);
+        int savedOffset = startMarker->offset;
+        removeNonCommentCode(startMarker, marker->offset - startMarker->offset);
         // return it back to beginning of name(?)
-        pp->offset = ppoffset;
+        startMarker->offset = savedOffset;
     }
-    return pp;
+    return startMarker;
 }
 
 static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorMarker *point,
