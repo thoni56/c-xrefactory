@@ -139,8 +139,8 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
         typeSPrint(tempString+l, &size, completions->alternatives[index].symbol->u.typeModifier, pname, ' ',
                    typeDefinitionExpressionFlag);
     } else if (completions->alternatives[index].symbolType==TypeMacro) {
-        macroDefinitionSPrintf(tempString, &size, "", completions->alternatives[index].string,
-                      completions->alternatives[index].margn, completions->alternatives[index].margs, NULL);
+        macroDefinitionSPrintf(tempString, &size, completions->alternatives[index].string,
+                      completions->alternatives[index].margn, completions->alternatives[index].margs);
     } else {
         assert(completions->alternatives[index].symbolType>=0 && completions->alternatives[index].symbolType<MAX_TYPE);
         sprintf(tempString,"%s", typeNamesTable[completions->alternatives[index].symbolType]);

@@ -18,8 +18,8 @@ void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepCh
   mock(buff, size, t, name, dclSepChar, typedefexp);
 }
 
-void macroDefinitionSPrintf(char *buff, int *size, char *name1, char *name2, int argc, char **argv, int *oNamePos) {
-  mock(buff, size, name1, name2, argc, argv, oNamePos);
+void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *macroName, int argc, char **argv) {
+  mock(buffer, bufferSize, macroName, argc, argv);
 }
 
 char *strmcpy(char *dest, char *src) {

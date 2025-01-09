@@ -1,3 +1,4 @@
+#include "constants.h"
 #ifdef __WIN32__
 #include <direct.h>
 #else
@@ -188,44 +189,41 @@ typebreak:
     }
 }
 
-void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *name1, char *name2, int argc,
-                            char **argv, int *oNamePos) {
-    int ll, i, brief = 0;
+void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *macroName, int argc,
+                            char **argv) {
+    int brief = 0;
 
-    int ii = 0;
-    sprintf(buffer, "#define ");
-    ll = strlen(buffer);
-    if (oNamePos != NULL)
-        *oNamePos = ll;
-    sprintf(buffer + ll, "%s%s", name1, name2);
-    ii = strlen(buffer);
-    assert(ii < *bufferSize);
+    assert(*bufferSize > TYPE_STR_RESERVE);
+    strcpy(buffer, "#define ");
+    strcat(buffer, macroName);
+
+    assert(strlen(buffer) < *bufferSize);
     if (argc != -1) {
-        sprintf(buffer + ii, "(");
-        ii += strlen(buffer + ii);
-        for (i = 0; i < argc; i++) {
+        strcat(buffer, "(");
+        for (int i = 0; i < argc; i++) {
+            bool overflow = false;
             if (argv[i] != NULL && !brief) {
                 if (strcmp(argv[i], cppVarArgsName) == 0)
-                    sprintf(buffer + ii, "...");
-                else
-                    sprintf(buffer + ii, "%s", argv[i]);
-                ii += strlen(buffer + ii);
+                    strcat(buffer, "...");
+                else {
+                    char tmp[TMP_STRING_SIZE];
+                    sprintf(tmp, "%s", argv[i]);
+                    strcat(buffer, tmp);
+                }
             }
             if (i + 1 < argc) {
-                sprintf(buffer + ii, ", ");
-                ii += strlen(buffer + ii);
+                strcat(buffer, ", ");
             }
-            if (ii + TYPE_STR_RESERVE >= *bufferSize) {
-                sprintf(buffer + ii, "...");
-                ii += strlen(buffer + ii);
-                goto pbreak;
+            if (strlen(buffer) + TYPE_STR_RESERVE >= *bufferSize) {
+                strcat(buffer, "...");
+                overflow = true;
             }
+            if (overflow)
+                break;
         }
-    pbreak:
-        sprintf(buffer + ii, ")");
-        ii += strlen(buffer + ii);
+        strcat(buffer, ")");
     }
-    *bufferSize = ii;
+    *bufferSize = strlen(buffer);
 }
 
 /* ******************************************************************* */
