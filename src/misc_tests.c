@@ -129,3 +129,35 @@ Ensure(Misc, can_prettyprint_linkname_with_file_reference) {
 
     assert_that(pretty_printed, is_equal_to_string("a_name"));
 }
+
+Ensure(Misc, can_prettyprint_macro_without_arguments) {
+    char buffer[200];
+    int bufferSize = sizeof(buffer);
+
+    macroDefinitionSPrintf(buffer, &bufferSize, "name1", 0, NULL);
+
+    assert_that(buffer, is_equal_to_string("#define name1()"));
+    assert_that(bufferSize, is_equal_to(strlen(buffer)));
+}
+
+Ensure(Misc, can_prettyprint_macro_with_varargs) {
+    char buffer[200];
+    int bufferSize = sizeof(buffer);
+    char *argv[] = {"__VA_ARGS__"};
+
+    macroDefinitionSPrintf(buffer, &bufferSize, "MACRO1", 1, argv);
+
+    assert_that(buffer, is_equal_to_string("#define MACRO1(...)"));
+    assert_that(bufferSize, is_equal_to(strlen(buffer)));
+}
+
+Ensure(Misc, can_prettyprint_macro_with_args) {
+    char buffer[200];
+    int bufferSize = sizeof(buffer);
+    char *argv[] = {"a", "b"};
+
+    macroDefinitionSPrintf(buffer, &bufferSize, "MACRO1", 2, argv);
+
+    assert_that(buffer, is_equal_to_string("#define MACRO1(a, b)"));
+    assert_that(bufferSize, is_equal_to(strlen(buffer)));
+}
