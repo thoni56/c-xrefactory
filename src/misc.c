@@ -3,6 +3,7 @@
 #else
 #include <dirent.h>
 #endif
+
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -234,98 +235,23 @@ void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *name1, char *na
 
 /* ******************************************************************* */
 
-static void javaSignatureSPrint(char *buff, int *size, char *sig, int longOrShortName) {
-    char post[COMPLETION_STRING_SIZE];
-    int posti;
-    char *ssig;
-    int j,bj,typ;
-
-    if (sig == NULL)
-        return;
-    j = 0;
-    /* fprintf(dumpOut,":processing '%s'\n",sig); fflush(dumpOut); */
-    assert(*sig == '(');
-    ssig = sig; posti=0; post[0]=0;
-    for(ssig++; *ssig && *ssig!=')'; ssig++) {
-        assert(j+1 < *size);
-        if (j+TYPE_STR_RESERVE > *size)
-            goto fini;
-    switchLabel:
-        switch (*ssig) {
-        case '[':
-            sprintf(post+posti,"[]");
-            posti += strlen(post+posti);
-            for(ssig++; *ssig && isdigit(*ssig); ssig++) ;
-            goto switchLabel;
-        case 'L':
-            bj = j;
-            for(ssig++; *ssig && *ssig!=';'; ssig++) {
-                if (*ssig != '/' && *ssig != '$')
-                    buff[j++] = *ssig;
-                else if (longOrShortName==LONG_NAME)
-                    buff[j++] = '.';
-                else
-                    j=bj;
-            }
-            break;
-        default:
-            typ = javaCharCodeBaseTypes[*ssig];
-            assert(typ > 0 && typ < MAX_TYPE);
-            sprintf(buff+j, "%s", typeNamesTable[typ]);
-            j += strlen(buff+j);
-        }
-        sprintf(buff+j, "%s",post);
-        j += strlen(buff+j);
-        posti = 0; post[0] = 0;
-        if (*(ssig+1)!=')') {
-            sprintf(buff+j, ", ");
-            j += strlen(buff+j);
-        }
-    }
- fini:
-    assert(j+1 < *size);
-    if (j+TYPE_STR_RESERVE > *size) {
-        j = *size - TYPE_STR_RESERVE - 3;
-        sprintf(buff+j, "...");
-        j += strlen(buff+j);
-    }
-    buff[j] = 0;
-    *size = j;
-}
-
-void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,
-                         int argsStyle) {
-    int tlen;
-    char *l;
-
-    l = strchr(javaLinkName, LINK_NAME_SEPARATOR);
-    if (l==NULL)
-        l = javaLinkName;
+void linkNamePrettyPrint(char *string, char *linkName, int maxlen, int argsStyle) {
+    /* Skip any file reference in the linkName */
+    char *chP = strchr(linkName, LINK_NAME_SEPARATOR);
+    if (chP==NULL)
+        chP = linkName;
     else
-        l ++;
+        chP++;
 
-    for(; *l && *l!='('; l++) {
-        if (*l == '/' || *l=='\\' || *l=='$')
-            *ff++ = '.';
-        else
-            *ff++ = *l;
+    /* Copy the name */
+    char *targetP = string;
+    for (; *chP && *chP!='('; chP++) {
+        *targetP++ = *chP;
         maxlen--;
         if (maxlen <=0)
-            goto fini;
+            break;
     }
-
-    if (*l == '(') {
-        /* TODO: This looks like it is related to Java, why? */
-        tlen = maxlen + TYPE_STR_RESERVE;
-        if (tlen <= TYPE_STR_RESERVE)
-            goto fini;
-        *ff++ = '('; tlen--;
-        javaSignatureSPrint(ff, &tlen, l, argsStyle);
-        ff += tlen;
-        *ff++ = ')';
-    }
- fini:
-    *ff = 0;
+    *targetP = 0;
 }
 
 char *simpleFileNameFromFileNum(int fnum) {

@@ -1,3 +1,4 @@
+#include <cgreen/assertions.h>
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
 #include <cgreen/mocks.h>
@@ -15,6 +16,7 @@
 #include "globals.mock"
 #include "options.mock"
 #include "ppc.mock"
+#include "proto.h"
 #include "yylex.mock"
 
 Describe(Misc);
@@ -112,4 +114,18 @@ Ensure(Misc, will_map_over_paths_for_each_entry_setting_currentPath) {
     assert_that(mappedPaths[0], is_equal_to_string("a"));
     assert_that(mappedPaths[1], is_equal_to_string("b"));
     assert_that(mappedPaths[2], is_equal_to_string("c"));
+}
+
+Ensure(Misc, can_prettyprint_simple_linkname) {
+    char pretty_printed[100];
+    linkNamePrettyPrint(pretty_printed, "a_name", sizeof(pretty_printed), LONG_NAME);
+
+    assert_that(pretty_printed, is_equal_to_string("a_name"));
+}
+
+Ensure(Misc, can_prettyprint_linkname_with_file_reference) {
+    char pretty_printed[100];
+    linkNamePrettyPrint(pretty_printed, "some_file!a_name", sizeof(pretty_printed), LONG_NAME);
+
+    assert_that(pretty_printed, is_equal_to_string("a_name"));
 }
