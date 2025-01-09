@@ -1,0 +1,39 @@
+Loading c-xrefprotocol...done
+Loading /etc/emacs/site-start.d/00debian.el (source)...done
+Loading /etc/emacs/site-start.d/50autoconf.el (source)...done
+Loading /etc/emacs/site-start.d/50dictionaries-common.el (source)...
+Loading debian-ispell (native compiled elisp)...
+Loading /var/cache/dictionaries-common/emacsen-ispell-default.el (source)...done
+Loading debian-ispell (native compiled elisp)...done
+Loading /var/cache/dictionaries-common/emacsen-ispell-dicts.el (source)...done
+Loading /etc/emacs/site-start.d/50dictionaries-common.el (source)...done
+Loading /etc/emacs/site-start.d/50figlet.el (source)...done
+Loading /etc/emacs/site-start.d/50latexmk.el (source)...done
+Loading /etc/emacs/site-start.d/50tup.el (source)...done
+Loading /etc/emacs/site-start.d/50xcscope-el.el (source)...done
+[yas] Prepared just-in-time loading of snippets (but no snippets found).
+For information about GNU Emacs and the GNU system, type C-h C-a.
+Loading /home/thoni/Utveckling/c-xrefactory/editors/emacs/c-xrefprotocol.el (source)...done
+LSP :: Connected to [clangd:3899194/starting /home/thoni/Utveckling/c-xrefactory]. [2 times]
+No coverage data found for /home/thoni/Utveckling/c-xrefactory/tests/test_complete_macro/completions.c. [2 times]
+Package cl is deprecated
+Package autoload is deprecated
+LSP :: clangd:3899194 initialized successfully in folders: (/home/thoni/Utveckling/c-xrefactory)
+calling: ("-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-o" "/tmp/c-xrefthoni-3899184-363.tmp" "-server")
+sending: -olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_complete_macro/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/test_complete_macro/completions.c"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-3899184-365.tmp
+dispatching: <set-info len=61>/home/thoni/Utveckling/c-xrefactory/tests/test_complete_macro</set-info>
+
+Project: /home/thoni/Utveckling/c-xrefactory/tests/test_complete_macro
+sending: -olcxcomplet -maxcompls=500 -olinelen=120  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_complete_macro/completions.c" "/tmp/c-xrefthoni-3899184-367.tmp" "-olcursor=53" "/home/thoni/Utveckling/c-xrefactory/tests/test_complete_macro/completions.c" -encoding=european -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_complete_macro/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_complete_macro"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-3899184-369.tmp
+keeping tmp file /tmp/c-xrefthoni-3899184-367.tmp
+dispatching: <all-completions nofocus=0 len=55>MACRO1  :#define MACRO1(xx)
+MACRO2  :#define MACRO2(xx)</all-completions>
+
+Type ? for help.
+File ‘~/Utveckling/c-xrefactory/tests/test_complete_macro/commands.txt’ exists; overwrite? (y or n) y

@@ -1,0 +1,10 @@
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -server -o server-buffer
+-olcxcomplet -maxcompls=500 -olinelen=120  -olcursor=53 CURDIR/completions.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<all-completions nofocus=0 len=<n>>MACRO1  :#define MACRO1(xx)
+MACRO2  :#define MACRO2(xx)</all-completions>
+-exit
+end-of-options
+
