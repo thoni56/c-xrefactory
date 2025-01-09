@@ -4198,7 +4198,7 @@ case 395:
 #line 1483 "yacc_parser.y"
 {
         yyval.ast_idList.data = stackMemoryAlloc(sizeof(IdList));
-        *(yyval.ast_idList.data) = makeIdList(*yyvsp[-1].ast_id.data, yyvsp[-1].ast_id.data->name, TypeDefault, NULL);
+        *(yyval.ast_idList.data) = makeIdList(*yyvsp[-1].ast_id.data, NULL);
     }
 break;
 case 396:

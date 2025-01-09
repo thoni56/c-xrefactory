@@ -1273,7 +1273,7 @@ designation_opt
     }
     | designator_list '='       {
         $$.data = stackMemoryAlloc(sizeof(IdList));
-        *($$.data) = makeIdList(*$1.data, $1.data->name, TypeDefault, NULL);
+        *($$.data) = makeIdList(*$1.data, NULL);
     }
     ;
 
