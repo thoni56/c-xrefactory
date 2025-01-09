@@ -443,12 +443,11 @@ static void searchName(char *name, CompletionLine *compLine, int orderFlag,
     }
 }
 
-void processName(char *name, CompletionLine *line, bool orderFlag, Completions *c) {
-    Completions *ci = (Completions *) c;
+void processName(char *name, CompletionLine *line, bool orderFlag, Completions *completions) {
     if (options.serverOperation == OLO_SEARCH) {
-        searchName(name, line, orderFlag, ci);
+        searchName(name, line, orderFlag, completions);
     } else {
-        completeName(name, line, orderFlag, ci);
+        completeName(name, line, orderFlag, completions);
     }
 }
 

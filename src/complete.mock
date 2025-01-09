@@ -6,8 +6,8 @@ void initCompletions(Completions *completions, int length, Position position) {
     mock(completions, length, (intptr_t)&position);
 }
 
-void processName(char *name, CompletionLine *t, bool orderFlag, Completions *c) {
-  mock(name, t, orderFlag, c);
+void processName(char *name, CompletionLine *line, bool orderFlag, Completions *completions) {
+  mock(name, line, orderFlag, completions);
 }
 
 void collectForStatementCompletions1(Completions *c) {

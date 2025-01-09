@@ -27,7 +27,7 @@ extern void collectYaccLexemCompletions(Completions *c);
 
 extern CompletionLine makeCompletionLine(char *string, Symbol *symbol, Type symbolType, short int margn,
                                          char **margs);
-extern void processName(char *name, CompletionLine *t, bool orderFlag, Completions *c);
+extern void processName(char *name, CompletionLine *line, bool orderFlag, Completions *completions);
 
 extern void printCompletionsList(bool noFocus);
 extern void printCompletions(Completions *c);
