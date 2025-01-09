@@ -214,8 +214,8 @@ typedef struct OlcxReferencesStack {
 
 typedef struct parsedInfo {
     bool              extractProcessedFlag;
-    bool              marker1Flag;
-    bool              marker2Flag;
+    bool              blockMarker1Set;
+    bool              blockMarker2Set;
     bool              moveTargetAccepted;
     int               methodCoordEndLine;
     struct codeBlock *workMemoryIndexAtBlockBegin;

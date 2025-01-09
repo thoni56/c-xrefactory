@@ -745,20 +745,20 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     int apos = fileOffsetFor(cb);
                     log_trace(":pos1==%d, olCursorOffset==%d, olMarkOffset==%d",apos,options.olCursorOffset,options.olMarkOffset);
                     // all this is very, very HACK!!!
-                    if (apos >= options.olCursorOffset && !parsedInfo.marker1Flag) {
-                        if (parsedInfo.marker2Flag)
+                    if (apos >= options.olCursorOffset && !parsedInfo.blockMarker1Set) {
+                        if (parsedInfo.blockMarker2Set)
                             parChar='}';
                         else
                             parChar = '{';
                         putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(lb, parChar, position);
-                        parsedInfo.marker1Flag = true;
-                    } else if (apos >= options.olMarkOffset && !parsedInfo.marker2Flag){
-                        if (parsedInfo.marker1Flag)
+                        parsedInfo.blockMarker1Set = true;
+                    } else if (apos >= options.olMarkOffset && !parsedInfo.blockMarker2Set){
+                        if (parsedInfo.blockMarker1Set)
                             parChar='}';
                         else
                             parChar = '{';
                         putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(lb, parChar, position);
-                        parsedInfo.marker2Flag = true;
+                        parsedInfo.blockMarker2Set = true;
                     }
                 } else if (options.serverOperation == OLO_COMPLETION
                            || options.serverOperation == OLO_SEARCH
@@ -787,9 +787,9 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                         // only for Java refactorings
                         ch = skipBlanks(cb, ch);
                         int apos = fileOffsetFor(cb);
-                        if (apos >= options.olCursorOffset && !parsedInfo.marker1Flag) {
+                        if (apos >= options.olCursorOffset && !parsedInfo.blockMarker1Set) {
                             putLexemCodeWithPosition(lb, OL_MARKER_TOKEN, position);
-                            parsedInfo.marker1Flag = true;
+                            parsedInfo.blockMarker1Set = true;
                         }
                     }
                 }
