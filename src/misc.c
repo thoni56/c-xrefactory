@@ -62,8 +62,8 @@ void symbolRefItemDump(ReferenceItem *s) {
 
 /* *********************************************************************** */
 
-void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSepChar, bool typedefexp,
-                int *oNamePos) {
+void typeSPrint(char *buffer, int *bufferSize, TypeModifier *typeModifier, char *name, int separator,
+                bool typedefexp, int *oNamePos) {
     char    preString[COMPLETION_STRING_SIZE];
     char    postString[COMPLETION_STRING_SIZE];
     char    typeString[COMPLETION_STRING_SIZE];
@@ -76,12 +76,12 @@ void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSep
     preString[i] = 0;
 
     int j = 0;
-    for (; t != NULL; t = t->next) {
+    for (; typeModifier != NULL; typeModifier = typeModifier->next) {
         par = false;
-        for (; t != NULL && t->type == TypePointer; t = t->next) {
-            if (t->typedefSymbol != NULL && typedefexp) {
-                assert(t->typedefSymbol->name);
-                strcpy(typeString, t->typedefSymbol->name);
+        for (; typeModifier != NULL && typeModifier->type == TypePointer; typeModifier = typeModifier->next) {
+            if (typeModifier->typedefSymbol != NULL && typedefexp) {
+                assert(typeModifier->typedefSymbol->name);
+                strcpy(typeString, typeModifier->typedefSymbol->name);
                 goto typebreak;
             }
             typedefexp = true;
@@ -90,17 +90,17 @@ void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSep
             par       = true;
         }
         assert(i > 2);
-        if (t == NULL)
+        if (typeModifier == NULL)
             goto typebreak;
 
-        if (t->typedefSymbol != NULL && typedefexp) {
-            assert(t->typedefSymbol->name);
-            strcpy(typeString, t->typedefSymbol->name);
+        if (typeModifier->typedefSymbol != NULL && typedefexp) {
+            assert(typeModifier->typedefSymbol->name);
+            strcpy(typeString, typeModifier->typedefSymbol->name);
             goto typebreak;
         }
         typedefexp = true;
 
-        switch (t->type) {
+        switch (typeModifier->type) {
         case TypeArray:
             if (par) {
                 preString[--i] = '(';
@@ -116,7 +116,7 @@ void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSep
             }
             sprintf(postString + j, "(");
             j += strlen(postString + j);
-            for (Symbol *symbol = t->u.f.args; symbol != NULL; symbol = symbol->next) {
+            for (Symbol *symbol = typeModifier->u.f.args; symbol != NULL; symbol = symbol->next) {
                 char *ttm;
                 if (symbol->type == TypeElipsis)
                     ttm = "...";
@@ -141,28 +141,28 @@ void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSep
             break;
         case TypeStruct:
         case TypeUnion:
-            if (t->type == TypeStruct)
+            if (typeModifier->type == TypeStruct)
                 sprintf(typeString, "struct ");
             else
                 sprintf(typeString, "union ");
             l = strlen(typeString);
 
-            if (t->u.t->name != NULL) {
-                sprintf(typeString + l, "%s ", t->u.t->name);
+            if (typeModifier->u.t->name != NULL) {
+                sprintf(typeString + l, "%s ", typeModifier->u.t->name);
                 l += strlen(typeString + l);
             }
             break;
         case TypeEnum:
-            if (t->u.t->name == NULL)
+            if (typeModifier->u.t->name == NULL)
                 sprintf(typeString, "enum ");
             else
-                sprintf(typeString, "enum %s", t->u.t->linkName);
+                sprintf(typeString, "enum %s", typeModifier->u.t->linkName);
             l = strlen(typeString);
             break;
         default:
-            assert(t->type >= 0 && t->type < MAX_TYPE);
-            assert(strlen(typeNamesTable[t->type]) < COMPLETION_STRING_SIZE);
-            strcpy(typeString, typeNamesTable[t->type]);
+            assert(typeModifier->type >= 0 && typeModifier->type < MAX_TYPE);
+            assert(strlen(typeNamesTable[typeModifier->type]) < COMPLETION_STRING_SIZE);
+            strcpy(typeString, typeNamesTable[typeModifier->type]);
             l = strlen(typeString);
             break;
         }
@@ -171,23 +171,23 @@ void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSep
 typebreak:
     postString[j]  = 0;
     int realsize = strlen(typeString) + strlen(preString + i) + strlen(name) + strlen(postString) + 2;
-    if (realsize < *size) {
-        if (dclSepChar == ' ') {
+    if (realsize < *bufferSize) {
+        if (separator == ' ') {
             sprintf(buffer, "%s %s", typeString, preString + i);
         } else {
-            sprintf(buffer, "%s%c %s", typeString, dclSepChar, preString + i);
+            sprintf(buffer, "%s%c %s", typeString, separator, preString + i);
         }
-        *size = strlen(buffer);
+        *bufferSize = strlen(buffer);
         if (oNamePos != NULL)
-            *oNamePos = *size;
-        sprintf(buffer + *size, "%s", name);
-        *size += strlen(buffer + *size);
-        sprintf(buffer + *size, "%s", postString);
-        *size += strlen(buffer + *size);
+            *oNamePos = *bufferSize;
+        sprintf(buffer + *bufferSize, "%s", name);
+        *bufferSize += strlen(buffer + *bufferSize);
+        sprintf(buffer + *bufferSize, "%s", postString);
+        *bufferSize += strlen(buffer + *bufferSize);
     } else {
-        *size = 0;
+        *bufferSize = 0;
         if (oNamePos != NULL)
-            *oNamePos = *size;
+            *oNamePos = *bufferSize;
         buffer[0] = 0;
     }
 }
