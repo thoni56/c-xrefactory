@@ -108,7 +108,7 @@ Ensure(Options, will_not_expand_special_file_variable_when_no_value) {
            will_return("/some/path/to/options.c"));
     expect(directoryName_static, when(fullFileName, is_equal_to_string("/some/path/to/options.c")),
            will_return("/some/path/to"));
-    expect(simpleFileNameWithoutSuffix_st, when(fullFileName, is_equal_to_string("/some/path/to/options.c")),
+    expect(simpleFileNameWithoutSuffix_static, when(fullFileName, is_equal_to_string("/some/path/to/options.c")),
            will_return("options"));
     expect(lastOccurenceInString, when(string, is_equal_to_string("/some/path/to/options.c")), will_return(".c"));
 
@@ -121,7 +121,7 @@ Ensure(Options, can_expand_special_variable_file) {
            will_return("/some/path/to/options.c"));
     expect(directoryName_static, when(fullFileName, is_equal_to_string("/some/path/to/options.c")),
            will_return("/some/path/to"));
-    expect(simpleFileNameWithoutSuffix_st, when(fullFileName, is_equal_to_string("/some/path/to/options.c")),
+    expect(simpleFileNameWithoutSuffix_static, when(fullFileName, is_equal_to_string("/some/path/to/options.c")),
            will_return("options"));
     expect(lastOccurenceInString, when(string, is_equal_to_string("/some/path/to/options.c")), will_return(".c"));
 

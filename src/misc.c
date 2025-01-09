@@ -294,7 +294,7 @@ char *simpleFileName(char *fullFileName) {
     return(fn);
 }
 
-char *simpleFileNameWithoutSuffix_st(char *fullFileName) {
+char *simpleFileNameWithoutSuffix_static(char *fullFileName) {
     static char res[MAX_FILE_NAME_SIZE];
     char *pp,*fn;
     int i;

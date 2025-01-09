@@ -39,14 +39,14 @@ extern void dumpArguments(int nargc, char **nargv);
 extern void typeDump(TypeModifier *typeModifiers);
 extern void symbolRefItemDump(ReferenceItem *ss);
 extern void typeSPrint(char *buff,int *size,TypeModifier *t,char*name,
-                       int dclSepChar, bool typedefexp, int *oNamePos);
+                       int dclSepChar, bool typedefexp);
 extern void macroDefinitionSPrintf(char *buff, int *size, char *name1, char *name2, int argc, char **argv,
                                    int *oNamePos);
 
 extern char *strmcpy(char *dest, char *src);
 extern char *simpleFileName(char *fullFileName);
 extern char *directoryName_static(char *fullFileName);
-extern char *simpleFileNameWithoutSuffix_st(char *fullFileName);
+extern char *simpleFileNameWithoutSuffix_static(char *fullFileName);
 extern bool containsWildcard(char *ss);
 extern bool shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive);
 extern void expandWildcardsInOnePath(char *fn, char *outpaths, int olen);

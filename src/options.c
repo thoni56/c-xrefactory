@@ -536,7 +536,7 @@ char *expandPredefinedSpecialVariables_static(char *variable, char *inputFilenam
     strcpy(filename, getRealFileName_static(inputFilename));
     assert(strlen(filename) < MAX_FILE_NAME_SIZE - 1);
     strcpy(path, directoryName_static(filename));
-    strcpy(name, simpleFileNameWithoutSuffix_st(filename));
+    strcpy(name, simpleFileNameWithoutSuffix_static(filename));
     suffix = lastOccurenceInString(filename, '.');
     if (suffix == NULL)
         suffix = "";

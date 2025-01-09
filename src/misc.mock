@@ -34,7 +34,7 @@ char *directoryName_static(char *fullFileName) {
   return (char *) mock(fullFileName);
 }
 
-char *simpleFileNameWithoutSuffix_st(char *fullFileName) {
+char *simpleFileNameWithoutSuffix_static(char *fullFileName) {
   return (char *) mock(fullFileName);
 }
 
