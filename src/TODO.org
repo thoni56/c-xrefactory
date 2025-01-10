@@ -25,16 +25,11 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 *** DONE Prohibit rename of files included with '<>'
 ** TODO Rename corresponding .h file if exists
 ** TODO Update all #includes
-* DOING LSP-mode support
+* DOING FEATURE: Basic LSP-mode support
 ** DOING 'didOpen'
 ** TODO Handle protocol errors etc. using longjump
 ** DONE LSP communication structure
 ** DONE LSP 'initialize', 'exit', 'not found'
-* DOING Extract variable
-** TRY Place the variable declaration on the preceeding line
-** TRY Figure out variable type (hard, none of the other extracts seems to do this...)
-   or ask...
-** DONE Basic extract variable
 * TODO FEATURE: New refactoring: move function for C
 ** DONE Pick-up pieces from Java version and hack them into a preliminary version
 ** DONE Accept target position
@@ -42,6 +37,11 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 ** TODO Fixup the preliminary version of the actual move
 ** TODO Move any declaration in source.h file to target.h
 ** TODO BONUS Move a mock function to the target mock file if it exists
+* DOING Extract variable
+** TRY Figure out variable type (hard, none of the other extracts seems to do this...)
+   or ask...
+** DONE Place the variable declaration on the preceeding line
+** DONE Basic extract variable
 * TRY Project local .c-xrefrc with relative file paths so it can be checked in to a repo
    We could start with having same format but how to handle project names?
 ** TODO Change to having reference file in the project tree?
