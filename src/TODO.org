@@ -17,12 +17,12 @@ Some useful commands:
 
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
-* TODO Rename C module
-** TODO Rename included file
-*** TODO New refactoring: Rename Included File
-*** TODO Rename the file
-*** TODO Update all #includes
-*** TODO Prohibit rename of files included with '<>'
+* TODO FEATURE: Rename C Module
+** DONE Rename included file
+*** DONE New refactoring: Rename Included File
+*** DONE Rename the file
+*** DONE Update all #includes
+*** DONE Prohibit rename of files included with '<>'
 ** TODO Rename corresponding .h file if exists
 ** TODO Update all #includes
 * DOING LSP-mode support
@@ -31,7 +31,7 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 ** DONE LSP communication structure
 ** DONE LSP 'initialize', 'exit', 'not found'
 * DOING Extract variable
-** TRY Place the variable declaration in the closest block (need to figure out how ProgramGraphs work...)
+** TRY Place the variable declaration on the preceeding line
 ** TRY Figure out variable type (hard, none of the other extracts seems to do this...)
    or ask...
 ** DONE Basic extract variable
@@ -106,18 +106,6 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 **** REQUIRES macroArgumentsToString() to work with LexemBuffer instead of LexInput's pointers
 *** TRY to use LexemBuffer in getLexPosition()
 ** TRY to replace putLexXXXWithPointer() in yylex.c
-* DONE Rename vApplClass - but to what? what is it?
-  It's the fileNumber for the include file, if the symbol type is CppInclude
-* DONE Always pass Position by-value
-* DONE An option that creates a list of commands given to c-xref so that they can be replayed exactly later
-* DONE Turn lexembuffer functions into methods on the buffer
-  get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
-  When do we point to something not a lexembuffer?
-* DONE Figure out, and if possible, clean up, how 'refactory' calls 'server'
-  Currently it is done using the argv vector, would probably be cleaner using a specific option struct
-* DONE BUG: Selecting automatic project selection after having set a specific does not seem to work
-* DONE Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
-  https://en.cppreference.com/w/c/types/integer
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 ** DONE clang definition table
 ** TRY Use compiler identification to set extra needed definitions for clang
@@ -158,8 +146,6 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 ** TODO FEATURE: New refactoring: change return type of function
 ** TODO FEATURE: Extract function should extract a boolean function inside an if() correctly
 ** TODO FEATURE: New refactoring: Inline variable ("a=f(); b(a);" => "b(f());")
-** TODO FEATURE: Rename "module" in C
-   Prompt for new "module name", rename both .c & .h if they exist, and change all includes, bonus: rename also _tests.c
 ** TODO FEATURE: Replace variable with value ("inline")
 ** TODO FEATURE: Remove indirection in parameter ("remove *") and vice versa
 * TODO Push options.xref2 into ppc...() functions or create if necessary?
@@ -167,7 +153,7 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
   Change to preventErrorMessage() and let logger handle actual prevention?
 * TODO Don't do any default operation (currently 'complete') if none given on command line
 * TODO How is -olcxcplsearch and -olcxsearch supposed to work? (test_search...)
-* TODO REFACTOR: Extract storage module interface and implementation
+* TODO REFACTOR: Extract storage/db module interface and implementation
 * TODO Why is -olcxbrowse concating the option number without '='? Any more options that do?
 * TODO Better, and unified, options handling
 There are both "-opt=value" and "-opt value" format options
@@ -177,11 +163,10 @@ There are both "-opt=value" and "-opt value" format options
   'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
 * TODO Make S_caching an abstract data type to hide CachePoint and Caching
 * TODO MISSING TEST CASES:
-** TODO Test case for Move Parameter
-** TODO Test case for dead symbol detection
-** TODO Test case for extract variable
+** DONE Test case for Move Parameter
+** DONE Test case for dead symbol detection
+** DONE Test case for extract variable
 ** TODO Test case for filtering menues
-* TODO: FUTURE
 * TODO BUGS:
 ** TODO Bug; when deleting the last argument of a function it should replace with 'void'
 ** TODO Bug: when extracting C function including declarations that are required
@@ -217,8 +202,6 @@ There are both "-opt=value" and "-opt value" format options
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Why does -refactory read the users default .c-xrefrc? And why does -no-stdoptions
   prevent reading explicit -xrefrc options?
-* TODO Cannot mock structs as arguments like in symbol.mock
-  We need to change pos to *pos if that's gonna work
 * TODO Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
   recognized (list e.g. at
   http://www.c-programming-simple-steps.com/c-keywords.html)
@@ -237,6 +220,20 @@ There are both "-opt=value" and "-opt value" format options
 * TODO Macros. There are many things that might need the magic of macros, but we
   should watch out for "macro for optimisation" and remove that.
 
+* DONE Cannot mock structs as arguments like in symbol.mock
+Yes we can! By converting it to a pointer in the mock function
+* DONE Rename vApplClass - but to what? what is it?
+  It's the fileNumber for the include file, if the symbol type is CppInclude
+* DONE Always pass Position by-value
+* DONE An option that creates a list of commands given to c-xref so that they can be replayed exactly later
+* DONE Turn lexembuffer functions into methods on the buffer
+  get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
+  When do we point to something not a lexembuffer?
+* DONE Figure out, and if possible, clean up, how 'refactory' calls 'server'
+  Currently it is done using the argv vector, would probably be cleaner using a specific option struct
+* DONE BUG: Selecting automatic project selection after having set a specific does not seem to work
+* DONE Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
+  https://en.cppreference.com/w/c/types/integer
 * DONE Refactor to remove olcx-memory allocation from memory.c
 * DONE Remove explicit support for Xemacs in elisp
 * DONE Remove all version control cruft from editor adapter
