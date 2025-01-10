@@ -6549,7 +6549,7 @@ symbols, their linking properties, definition place(s) and all
 usages.  The maintenance of the database is the responsibility of
 the user.  An out of date database will cause mistakes in source
 browsing.  However, some functions, like the `Complete
-Identifier' function and the 'Extract Function/Method/Macro'
+Identifier' function and the 'Extract Function/Macro/Variable'
 refactorings, are independent of the database as they depend only
 on file-local information.
 
@@ -6577,9 +6577,9 @@ point on the browsed (refactored) symbol. For a rename you place
 the cursor on a symbol, press F11 and select `Rename'.
 
 For parameter manipulations (adding or deleting a parameter) you
-need to position the point on the name of the function/method,
+need to position the point on the name of the function/macro,
 not on the parameter itself.  Before invoking any of the `Extract
-Method/Function/Macro' functions you need to select a
+Function/Macro/Variable' functions you need to select a
 region (with your mouse or by specifying begin of the region by
 C-<space> and the end by the point).
 
@@ -7261,7 +7261,7 @@ refactoring.
 ))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; EXTRACT METHOD ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; EXTRACT ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun c-xref-add-macro-line-continuations (reg-beg-pos reg-end-pos)
   (let ( (unmoved) (loopfl))
@@ -7290,16 +7290,12 @@ refactoring.
     (setq case-fold-search nil) ;; Ensure case-insensitive search
 
     (setq case-fold-search saved-case-fold-search-mode)
-    (if (string-match "method" dname)
-            (setq kind "method")
-      (if (string-match "class" dname)
-              (setq kind "class")
-            (if (string-match "macro" dname)
-                (setq kind "macro")
-              (if (string-match "variable" dname)
-                  (setq kind "variable")
-                (setq kind "function")
-                ))))
+    (if (string-match "macro" dname)
+        (setq kind "macro")
+      (if (string-match "variable" dname)
+          (setq kind "variable")
+        (setq kind "function")
+        ))
 
     (c-xref-display-and-set-new-dialog-window c-xref-extraction-buffer nil t)
     (set-buffer c-xref-extraction-buffer)
@@ -7343,14 +7339,7 @@ refactoring.
             (setq name c-xref-renaming-default-name)
       (setq name (read-from-minibuffer (format "Enter name for the new %s (empty string cancels the extraction): " kind)))
       )
-    (if (equal kind "class")
-            (progn
-              (while (not (or (and (> (elt name 0) ?A) (< (elt name 0) ?Z))
-                                      (and (> (elt name 0) ?a) (< (elt name 0) ?z))))
-                (setq name (read-from-minibuffer "Name has to start with a letter, enter new name: " name))
-                )
-              (setq name (c-xref-downcase-first-letter name))
-              ))
+
     (c-xref-delete-window-in-any-frame c-xref-extraction-buffer nil)
     (select-window sw)
     (if (not (equal name ""))
@@ -7367,11 +7356,14 @@ refactoring.
                 )
               (setq ilen (- (point) mm))
               (c-xref-set-to-marker c-xref-extraction-marker)
-              (newline 2)
+              (if (not (string= kind "variable"))
+                  (newline 2))
               (setq bb (point))
               (insert mhead)
               (insert mbody)
               (insert mtail)
+              (if (string= kind "variable")
+                  (newline))
               (setq ee (point))
               (if (fboundp 'indent-region)
                   (indent-region bb (point) nil)
@@ -7386,22 +7378,6 @@ refactoring.
               (backward-char 2)
               (c-xref-server-call-refactoring-task
                (list "-rfct-rename" (format "-renameto=%s" name)))
-
-              (if (equal kind "class")
-                  (progn
-                        (c-xref-set-to-marker c-xref-extraction-marker)
-                        (setq case-fold-search nil)
-                        (setq sr (search-forward (c-xref-upcase-first-letter dname)
-                                                             (+ (point) (length mhead)) t))
-                        (setq case-fold-search saved-case-fold-search-mode)
-                        (if (not sr)
-                            (error "[c-xref] internal error, can't find the class")
-                          )
-                        (backward-char 2)
-                        (c-xref-server-call-refactoring-task
-                         (list "-rfct-rename-class"
-                               (format "-renameto=%s" (c-xref-upcase-first-letter name))))
-                    ))
               ))
     ))
 

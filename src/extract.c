@@ -4,6 +4,7 @@
 
 #include "commons.h"
 #include "cxref.h"
+#include "editor.h"
 #include "filedescriptor.h"
 #include "globals.h"
 #include "list.h"
@@ -611,7 +612,7 @@ static void generateNewMacroHead(ProgramGraphNode *program, char *extractionName
     bool isFirstArgument = true;
     char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
 
-    strcatf(resultingString, "#define %s",extractionName);
+    strcatf(resultingString, "#define %s", extractionName);
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
         if (p->classification == CLASSIFIED_AS_VALUE_ARGUMENT
             ||  p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
@@ -854,6 +855,9 @@ static void generateNewVariableTail(void) {
     ppcGenRecord(PPC_STRING_VALUE, ";");
 }
 
+static void generateLineNumber(int lineNumber) {
+    ppcValueRecord(PPC_INT_VALUE, lineNumber, "");
+}
 
 static void makeExtraction(void) {
     ProgramGraphNode *program;
@@ -897,17 +901,19 @@ static void makeExtraction(void) {
         generateNewMacroCall(program, extractionName);
         generateNewMacroHead(program, extractionName);
         generateNewMacroTail();
+        generateLineNumber(parsedInfo.functionBeginPosition);
     } else if (options.extractMode == EXTRACT_VARIABLE) {
         generateNewVariableAccess(program, extractionName);
         generateNewVariableDeclaration(program, extractionName);
         generateNewVariableTail();
+        generateLineNumber(currentFile.lineNumber);
     } else {
         generateNewFunctionCall(program, extractionName);
         generateNewFunctionHead(program, extractionName);
         generateNewFunctionTail(program);
+        generateLineNumber(parsedInfo.functionBeginPosition);
     }
 
-    ppcValueRecord(PPC_INT_VALUE, parsedInfo.functionBeginPosition, "");
     ppcEnd(PPC_EXTRACTION_DIALOG);
 }
 

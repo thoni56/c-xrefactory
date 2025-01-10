@@ -1,6 +1,6 @@
 <extraction-dialog type=newVariable_> <str len=<n>>newVariable_</str>
  <str len=<n>>int newVariable_ = </str>
  <str len=<n>>;</str>
-  <int val=1 len=<n>></int>
+  <int val=3 len=<n>></int>
 </extraction-dialog>
 <sync>
