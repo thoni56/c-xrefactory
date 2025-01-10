@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefactory-II -refactory -rfct-move-function -commentmovinglevel=0 -movetargetfile=source.c -rfct-param1=3 -olcursor=32 source.c
+ARGUMENTS = -xrefactory-II -refactory -rfct-move-function -commentmovinglevel=0 -movetargetfile=source.c -rfct-target-line=4 -olcursor=94 source.c
 
 $(TEST): .c-xrefrc
 	@$(COMMAND) > output.tmp
