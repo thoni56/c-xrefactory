@@ -7,12 +7,17 @@ UTILS="$(dirname "$(realpath "$0")")"
 FILES=$(find "$UTILS/../editors/emacs" -type f -name "*.el" ! -name "compileCxrefactory.el")
 LOAD_FILES=$(printf " -l %q" $FILES)
 
+# Ensure we don't load compiled stuff
+rm -f $UTILS/../editors/emacs/*.elc
+
 # Check if .c-xrefrc exists in the current directory
 if [[ -f .c-xrefrc ]]; then
   OPTIONS_FILE="\"$PWD/.c-xrefrc\""
 else
   OPTIONS_FILE=""
 fi
+
+echo "$@"
 
 # Construct Emacs command with proper quoting
 if [[ -n "$OPTIONS_FILE" ]]; then
