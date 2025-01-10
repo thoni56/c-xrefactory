@@ -9,11 +9,20 @@
 `c-xrefactory` is a free Emacs refactoring tool and code browser for
 _C_ & _Yacc_.
 
-> [!CAUTION]
-> As `c-xrefactory` is undergoing radical refactorings and
-> changes, and doesn't have tests for all features, occasional hiccups
-> are possible. I use it almost everyday and the stable version, which
-> you get if you install as per below, has passed all tests. But YMMV.
+> [!CAUTION] `c-xrefactory` is still under radical refactorings and restructuring, and
+> might be missing some tests, so occasional hiccups are possible. I use it almost
+> everyday and the stable version, which you get if you install as per below, has passed
+> all tests. But YMMV.
+
+## Features
+
+- navigate to definition and through all usages of any type of symbol
+- rename any type of symbol - variable, field, type, macro, parameter, or Yacc grammar
+  rule
+- add, delete or re-order function and macro parameter
+- rename included file
+- extract function, macro or variable
+- detect unused symbols locally or in the complete project
 
 ## Install
 
@@ -27,6 +36,7 @@ The easiest, and currently only supported, way to install is using
 > a snippet from [`el-get`'s GitHub repo][el-get repo], but don't forget
 > to add the `el-get` pieces to your emacs init.
 
+
 ## Example Use
 
 Place cursor on an identifier and `go to definition` (<kbd>F6</kbd>),
@@ -34,14 +44,6 @@ navigate between occurrences (<kbd>F3</kbd>, <kbd>F4</kbd>), refactor
 (<kbd>F11</kbd>) with `rename`, mark some code and `extract function`.
 
 Your C programming and code will never be the same. Some highlights:
-
-- navigate through all usages of any type of symbol
-- rename any type of symbol - variable, macro, parameter,
-  or Yacc grammar rule
-- add, delete or re-order function parameter
-- rename included file
-- extract function or macro
-- detect unused symbols locally or in the complete project
 
 When installed correctly there will be an Emacs menu called `C-xref`
 for easy access to most functions.
@@ -139,8 +141,8 @@ tests at all for that matter.
 I'm on a long-time quest to resurrect this code to understandable,
 maintainable and developable standard. This is hard work, difficult
 and time consuming, as it is almost impossible to understand what
-anything does. At this point we have reached almost 80% test coverage
-which makes me confident in refactoring many things. And also able to
+anything does. At this point we have reached around 80% test coverage
+which makes me confident in refactoring many things, and able to
 add new features.
 
 If you think you can help, I'll be happy to take it, even if it is
