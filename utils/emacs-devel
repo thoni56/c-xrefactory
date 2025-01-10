@@ -26,13 +26,13 @@ if [[ -n "$OPTIONS_FILE" ]]; then
     --eval "(setq c-xref-exec-directory \"$UTILS/../src/\")" \
     --eval "(setq c-xref-debug-mode t)" \
     --eval "(setq c-xref-debug-preserve-tmp-files t)" \
-    --eval "(setq lsp-auto-activate nil)" \
+    --eval "(advice-add 'lsp :override (lambda (&rest args) (message \"LSP disabled for this session\")))" \
     "$@"
 else
   emacs $LOAD_FILES \
     --eval "(setq c-xref-exec-directory \"$UTILS/../src/\")" \
     --eval "(setq c-xref-debug-mode t)" \
     --eval "(setq c-xref-debug-preserve-tmp-files t)" \
-    --eval "(setq lsp-auto-activate nil)" \
+    --eval "(advice-add 'lsp :override (lambda (&rest args) (message \"LSP disabled for this session\")))" \
     "$@"
 fi
