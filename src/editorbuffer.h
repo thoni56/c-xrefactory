@@ -38,7 +38,6 @@ typedef struct editorBufferList {
 } EditorBufferList;
 
 
-extern void fillEmptyEditorBuffer(EditorBuffer *buffer, char *fileName, int fileNumber, char *loadedFromFile);
 extern void freeEditorBuffer(EditorBuffer *buffer);
 extern EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *loadedFromFile, time_t modificationTime,
                                      size_t size);

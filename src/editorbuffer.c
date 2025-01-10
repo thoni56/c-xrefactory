@@ -14,7 +14,7 @@
 #include "undo.h"
 
 
-void fillEmptyEditorBuffer(EditorBuffer *buffer, char *realFileName, int fileNumber, char *loadedFromFile) {
+static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *realFileName, int fileNumber, char *loadedFromFile) {
     buffer->allocation = (EditorBufferAllocationData){
         .bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
         .allocatedBlock = NULL, .allocatedIndex = 0,
