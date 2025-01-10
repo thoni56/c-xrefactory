@@ -2617,7 +2617,7 @@ Special hotkeys available:
 \\[c-xref-modal-dialog-continue] \t-- select
 \\[c-xref-modal-dialog-exit] \t-- cancel
 \\[c-xref-refactorings-dialog-help] \t-- this help
-\n\n\n%s
+%s
 " (c-xref-refactoring-documentation))
                                          (format "%s:" crf)
                                          (list
