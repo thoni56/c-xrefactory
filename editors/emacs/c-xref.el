@@ -683,16 +683,6 @@ A-Za-z0-9.\t-- incremental search, insert character
     res
     ))
 
-(defun c-xref-param-from-class-name (class)
-  (let ((res) (p) (i))
-    (setq i (- (length class) 1))
-    (setq p 0)
-    (while (and (>= i 0) (not (eq (elt class i) ?\.)))
-      (setq i (- i 1))
-      )
-    (setq res (c-xref-downcase-first-letter (substring class (+ i 1))))
-    ))
-
 (defun c-xref-get-single-yes-no-event (cursor-in-echo prompt)
   (let ((key) (res nil) (ce))
     (if (y-or-n-p prompt)
@@ -3942,7 +3932,7 @@ part belonging to this project.
 "
   (interactive "")
   (let ((pname) (checked) (tname) (breakcheck) (pcomments)
-            (pact) (pedit) (sfiles) (pfiles) (system-class-path) (refs)
+            (pact) (pedit) (sfiles) (pfiles) (refs)
             (inidir) (mif) (miff) (mifloop) (apfiles) (crtag) (stat)
             (ptdef) (if) (ifiles "") (ifloop) (iff) (ifmess) (rest "")
             (aaa) (rrr) (pasi) (pasn) (hom) (exactp))
@@ -7373,7 +7363,7 @@ refactoring.
               (setq sr (search-forward dname (+ (point) ilen) t))
               (setq case-fold-search saved-case-fold-search-mode)
               (if (not sr)
-                  (error "[c-xref] internal error, can't find method")
+                  (error "[c-xref] internal error, can't find identifier")
                 )
               (backward-char 2)
               (c-xref-server-call-refactoring-task

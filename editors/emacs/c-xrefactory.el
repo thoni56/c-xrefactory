@@ -81,7 +81,7 @@
 ;; current platform identification (will be used in default settings)
 (defvar c-xref-platform 'unix)
 (if (or (string-match "-nt" system-configuration)
-	    (string-match "-win" system-configuration))
+            (string-match "-win" system-configuration))
     (setq c-xref-platform 'windows)
   )
 
@@ -118,7 +118,7 @@
     (setq undo-limit c-xref-preferable-undo-limit)
   )
 (if (and (boundp 'undo-strong-limit)
-	     (> c-xref-preferable-undo-strong-limit undo-strong-limit))
+             (> c-xref-preferable-undo-strong-limit undo-strong-limit))
     (setq undo-strong-limit c-xref-preferable-undo-strong-limit)
   )
 
@@ -147,21 +147,21 @@
 
   (if (eq c-xref-key-binding 'local)
       (progn
-	    (if (load "cc-mode" t)
-		(progn
-		  (if (boundp 'c-mode-map)
-			  (c-xref-add-key-bindings-to-local-keymap c-mode-map)
-			(message "[C-xrefactory] c-mode-map not found, skipping keymap setting")
-			)
-		  )
-	      (message "[C-xrefactory] cc-mode file not found, cannot setup local key binding, making it global.")
-	      (c-xref-add-bindings-to-keymap global-map)
-	      )
+            (if (load "cc-mode" t)
+                (progn
+                  (if (boundp 'c-mode-map)
+                          (c-xref-add-key-bindings-to-local-keymap c-mode-map)
+                        (message "[C-xrefactory] c-mode-map not found, skipping keymap setting")
+                        )
+                  )
+              (message "[C-xrefactory] cc-mode file not found, cannot setup local key binding, making it global.")
+              (c-xref-add-bindings-to-keymap global-map)
+              )
 
-	    ;; following is always set in the GLOBAL keymap !!
-	    ;; if you are using some binding for S-mouse-2, put it in comment
-	    (global-set-key [(shift mouse-2)] 'c-xref-find-file-on-mouse)
-	    ))
+            ;; following is always set in the GLOBAL keymap !!
+            ;; if you are using some binding for S-mouse-2, put it in comment
+            (global-set-key [(shift mouse-2)] 'c-xref-find-file-on-mouse)
+            ))
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -283,10 +283,10 @@
 (defvar c-xref-options-file (concat (getenv "HOME") "/.c-xrefrc"))
 (if (not (boundp 'c-xref-options-file))
     (if (eq c-xref-platform 'windows)
-	    (if (getenv "HOME")
-		(setq c-xref-options-file (concat (getenv "HOME") "/_c-xrefrc"))
-	      (setq c-xref-options-file "c:/_c-xrefrc")
-	      )
+            (if (getenv "HOME")
+                (setq c-xref-options-file (concat (getenv "HOME") "/_c-xrefrc"))
+              (setq c-xref-options-file "c:/_c-xrefrc")
+              )
       )
   )
 
@@ -296,197 +296,197 @@
 (if (commandp 'customize)
     (progn
       (defgroup c-xrefactory nil
-	"
+        "
 
 Here you can set variables controlling the behaviors of C-xrefactory
 that are not project-dependent, and its general appearance.
 
 "
-	    :group 'programming
-	)
+            :group 'programming
+        )
 
 
 ;;;;;;;;;;;;;;;; c-xrefactory-general ;;;;;;;;;
 
       (defgroup c-xrefactory-general nil
-	    "
+            "
 
 Here you can set variables controlling the general behavior of
 C-xrefactory functions.
 
 "
-	    :group 'c-xrefactory
-	)
+            :group 'c-xrefactory
+        )
 
       (defcustom c-xref-options-file c-xref-options-file
-	    "This option determines where the file describing C-xrefactory project-specific options (projects and their setting) is stored. You will need to kill (and restart) the c-xref process if changing this option."
-	    :type '(string)
-	    ;; :type '(file) ;; this puts there ~, etc making problems
-	    :group 'c-xrefactory-general)
+            "This option determines where the file describing C-xrefactory project-specific options (projects and their setting) is stored. You will need to kill (and restart) the c-xref process if changing this option."
+            :type '(string)
+            ;; :type '(file) ;; this puts there ~, etc making problems
+            :group 'c-xrefactory-general)
 
       (defcustom c-xref-bind-left-mouse-button t
-	    "If on, C-xrefactory will bind the left mouse button in its dialog windows. The button will be bound to the same function as the middle button. If you change this value, you will need to restart Emacs in order for that new value take effect."
-	    :type '(boolean)
-	    :group 'c-xrefactory-general)
+            "If on, C-xrefactory will bind the left mouse button in its dialog windows. The button will be bound to the same function as the middle button. If you change this value, you will need to restart Emacs in order for that new value take effect."
+            :type '(boolean)
+            :group 'c-xrefactory-general)
 
       (defcustom c-xref-files-encoding 'generic
-	    "This variable specifies C-xrefactory multi language file encoding.  Available values are 'generic', 'ascii', 'european', 'euc', 'sjis', 'utf' and 'project'. If you use only 7-bit ascii charset, set this option to 'ascii. If you use 8-bit europeen encoding, set this value to 'european. If you use a kind of EUC encoding (multiple 8-bits Japanese, Korean, ...), set it to 'euc. If you use Japanese SJIS encoding, set it to 'sjis. If you use one of unicode encodings (utf-8 or utf-16) set it to 'utf'. Otherwise, use 'generic settings, which should work fine at least for completions and browsing. The value 'project' allows to specify encoding for each project separately. It is highly recommended to set this option to 'project' and to specify encodings for each of your projects within project options."
-	    :type '(symbol)
-	    :group 'c-xrefactory-general)
+            "This variable specifies C-xrefactory multi language file encoding.  Available values are 'generic', 'ascii', 'european', 'euc', 'sjis', 'utf' and 'project'. If you use only 7-bit ascii charset, set this option to 'ascii. If you use 8-bit europeen encoding, set this value to 'european. If you use a kind of EUC encoding (multiple 8-bits Japanese, Korean, ...), set it to 'euc. If you use Japanese SJIS encoding, set it to 'sjis. If you use one of unicode encodings (utf-8 or utf-16) set it to 'utf'. Otherwise, use 'generic settings, which should work fine at least for completions and browsing. The value 'project' allows to specify encoding for each project separately. It is highly recommended to set this option to 'project' and to specify encodings for each of your projects within project options."
+            :type '(symbol)
+            :group 'c-xrefactory-general)
 
       (defcustom c-xref-window-minimal-size 5
-	    "Minimal size of window displaying completions and references. If a positive value is given the window's size will be proportional to number of completions, but at least c-xref-window-minimal-size lines."
-	    :type '(integer)
-	    :group 'c-xrefactory-general)
+            "Minimal size of window displaying completions and references. If a positive value is given the window's size will be proportional to number of completions, but at least c-xref-window-minimal-size lines."
+            :type '(integer)
+            :group 'c-xrefactory-general)
 
       (defcustom c-xref-display-active-project-in-minibuffer t
-	    "If on, C-xrefactory will display the active project in minibuffer after each invocation of its functions (except completions)."
-	    :type '(boolean)
-	    :group 'c-xrefactory-general)
+            "If on, C-xrefactory will display the active project in minibuffer after each invocation of its functions (except completions)."
+            :type '(boolean)
+            :group 'c-xrefactory-general)
 
 
 
 ;;;;;;;;;;;;;;;; IDE ;;;;;;;;;
 
       (defgroup c-xrefactory-compile-run nil
-	    "
+            "
 
 Here you can set variables controlling the Emacs IDE interface.
 
 "
-	    :group 'c-xrefactory
-	)
+            :group 'c-xrefactory
+        )
 
       (defcustom c-xref-ide-last-compile-command 'compiledir
-	    "Can be either 'compilefile, 'compiledir or 'compileproject. This variable indicates which compilations will be invoked by 'Emacs IDE -> Last Compile' command. You can preset it to your preferred default value."
-	    :type '(symbol)
-	    :group 'c-xrefactory-compile-run)
+            "Can be either 'compilefile, 'compiledir or 'compileproject. This variable indicates which compilations will be invoked by 'Emacs IDE -> Last Compile' command. You can preset it to your preferred default value."
+            :type '(symbol)
+            :group 'c-xrefactory-compile-run)
 
       (defcustom c-xref-always-batch-file t
-	    "If on, C-xrefactory will generate and then execute a batch file when executing an Emacs IDE compile function. If off, C-xrefactory will generate a batch file only when the compile command exceeds one line."
-	    :type '(boolean)
-	    :group 'c-xrefactory-compile-run)
+            "If on, C-xrefactory will generate and then execute a batch file when executing an Emacs IDE compile function. If off, C-xrefactory will generate a batch file only when the compile command exceeds one line."
+            :type '(boolean)
+            :group 'c-xrefactory-compile-run)
 
       (defcustom c-xref-shell "sh"
-	    "This option determines which shell is used for interpreting batch files generated for Emacs IDE compile and run commands. This variable applies only on Unix like platforms."
-	    :type '(string)
-	    :group 'c-xrefactory-compile-run)
+            "This option determines which shell is used for interpreting batch files generated for Emacs IDE compile and run commands. This variable applies only on Unix like platforms."
+            :type '(string)
+            :group 'c-xrefactory-compile-run)
 
 
 ;;;;;;;;;;;;;;;; c-xrefactory-completion ;;;;;;;;;
 
       (defgroup c-xrefactory-completion nil
-	    "
+            "
 
 Here  you  can  set  variables controlling  behavior  of  C-xrefactory's
 completions.
 
 "
-	    :group 'c-xrefactory
-	)
+            :group 'c-xrefactory
+        )
 
       (defcustom c-xref-completion-case-sensitive nil
-	    "If on, then completion is case-sensitive and does not suggest completions differing in cases from the prefix. Keeping this option off is a good idea for lazy users who don't type case correctly."
-	    :type '(boolean)
-	    :group 'c-xrefactory-completion)
+            "If on, then completion is case-sensitive and does not suggest completions differing in cases from the prefix. Keeping this option off is a good idea for lazy users who don't type case correctly."
+            :type '(boolean)
+            :group 'c-xrefactory-completion)
 
       (defcustom c-xref-completion-delete-pending-identifier t
-	    "If on, after inserting a completion C-xrefactory deletes the rest of the old identifier after the point."
-	    :type '(boolean)
-	    :group 'c-xrefactory-completion)
+            "If on, after inserting a completion C-xrefactory deletes the rest of the old identifier after the point."
+            :type '(boolean)
+            :group 'c-xrefactory-completion)
 
       (defcustom c-xref-completion-inserts-parenthesis nil
-	    "If on, C-xrefactory will insert an open parenthesis after a method name."
-	    :type '(boolean)
-	    :group 'c-xrefactory-completion)
+            "If on, C-xrefactory will insert an open parenthesis after a function or macro name."
+            :type '(boolean)
+            :group 'c-xrefactory-completion)
 
       (defcustom c-xref-completion-quit-on-q t
-	    "If on, the 'q' key in the completions window will close the window (if there is no interactive search in progress). Users may find this more useful than searching for completions starting with 'q'."
-	    :type '(boolean)
-	    :group 'c-xrefactory-completion)
+            "If on, the 'q' key in the completions window will close the window (if there is no interactive search in progress). Users may find this more useful than searching for completions starting with 'q'."
+            :type '(boolean)
+            :group 'c-xrefactory-completion)
 
       (defcustom c-xref-completion-truncate-lines nil
-	    "If on, C-xrefactory will truncate lines in buffers containing completions. Also default formatting of completions will be turned off, so exactly one completion will appear per line. Truncated parts of lines can be viewed by scrolling left and right (Shift-Left and Shift-Right)."
-	    :type '(boolean)
-	    :group 'c-xrefactory-completion)
+            "If on, C-xrefactory will truncate lines in buffers containing completions. Also default formatting of completions will be turned off, so exactly one completion will appear per line. Truncated parts of lines can be viewed by scrolling left and right (Shift-Left and Shift-Right)."
+            :type '(boolean)
+            :group 'c-xrefactory-completion)
 
       (defcustom c-xref-completion-auto-focus t
-	    "If on, window with multiple completions get the focus automatically after being displayed. Otherwise the window with source code keeps the focus."
-	    :type '(boolean)
-	    :group 'c-xrefactory-completion)
+            "If on, window with multiple completions get the focus automatically after being displayed. Otherwise the window with source code keeps the focus."
+            :type '(boolean)
+            :group 'c-xrefactory-completion)
 
       (defcustom c-xref-max-completions 500
-	    "Maximum number of suggested completions. If there are more available, an ellipsis (...) is shown."
-	    :type '(integer)
-	    :group 'c-xrefactory-completion)
+            "Maximum number of suggested completions. If there are more available, an ellipsis (...) is shown."
+            :type '(integer)
+            :group 'c-xrefactory-completion)
 
 
 ;;;;;;;;;;;;;;;; xrefactory-browsing-configuration ;;;;;;;;;
 
       (defgroup c-xrefactory-source-browser nil
-	    "
+            "
 
 Here you can set variables controlling the behavior of
 C-xrefactory's source browsing functions.
 
 "
-	    :group 'c-xrefactory
-	)
+            :group 'c-xrefactory
+        )
 
       (defcustom c-xref-browser-lists-source-lines t
-	    "If on, the C-xrefactory browser will display one line of source code for each reference in the browser window. This may slow down the display when there are large numbers of references."
-	    :type '(boolean)
-	    :group 'c-xrefactory-source-browser)
+            "If on, the C-xrefactory browser will display one line of source code for each reference in the browser window. This may slow down the display when there are large numbers of references."
+            :type '(boolean)
+            :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-auto-update-tags-before-push nil
-	    "If on, C-xrefactory will update the references database before pushing references on to browser stack. If you are working on a small project and you have a fast computer, then it may be convenient to turn this option on."
-	    :type '(boolean)
-	    :group 'c-xrefactory-source-browser)
+            "If on, C-xrefactory will update the references database before pushing references on to browser stack. If you are working on a small project and you have a fast computer, then it may be convenient to turn this option on."
+            :type '(boolean)
+            :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-browser-splits-window-horizontally nil
-	    "If on, C-xrefactory splits windows horizontally if needed. Otherwise it splits the window vertically."
-	    :type '(boolean)
-	    :group 'c-xrefactory-source-browser)
+            "If on, C-xrefactory splits windows horizontally if needed. Otherwise it splits the window vertically."
+            :type '(boolean)
+            :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-browser-position-left-or-top nil
-	    "If on, the browser is displayed at the left or top of the frame (depending on whether the window was split vertically or not). Otherwise, the browser is displayed at the right or bottom."
-	    :type '(boolean)
-	    :group 'c-xrefactory-source-browser)
+            "If on, the browser is displayed at the left or top of the frame (depending on whether the window was split vertically or not). Otherwise, the browser is displayed at the right or bottom."
+            :type '(boolean)
+            :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-default-symbols-filter 2
-	    "Controls which symbols are shown when displaying a new browser window. '2': only symbols with the same name and profile as the browsed symbol, in a class related (via inheritance) to that of the browsed symbol; '1': all symbols with the same profile; '0': all symbols of the same name."
-	    :type '(integer)
-	    :group 'c-xrefactory-source-browser)
+            "Controls which symbols are shown when displaying a new browser window. '2': only symbols with the same name and profile as the browsed symbol, in a class related (via inheritance) to that of the browsed symbol; '1': all symbols with the same profile; '0': all symbols of the same name."
+            :type '(integer)
+            :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-default-references-filter 0
-	    "Controls which references are shown. References to a variable work differently from references to other symbols. For variables: '3': only definition and declarations; '2': also l-value usages; '1': also usages where the address of the variable is taken; '0': all references. For other symbols: '3': only definitions and declarations; '2': not used; '1': also usages in the top level scope (global variable and function definitions; this can be used to see all the functions of a particular type); '0': all references."
-	    :type '(integer)
-	    :group 'c-xrefactory-source-browser)
+            "Controls which references are shown. References to a variable work differently from references to other symbols. For variables: '3': only definition and declarations; '2': also l-value usages; '1': also usages where the address of the variable is taken; '0': all references. For other symbols: '3': only definitions and declarations; '2': not used; '1': also usages in the top level scope (global variable and function definitions; this can be used to see all the functions of a particular type); '0': all references."
+            :type '(integer)
+            :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-keep-last-symbols-filter t
-	    "If on, then C-xrefactory remembers the last filter level when pushing and popping in symbols window. Otherwise the default filter level is used."
-	    :type '(boolean)
-	    :group 'c-xrefactory-source-browser)
+            "If on, then C-xrefactory remembers the last filter level when pushing and popping in symbols window. Otherwise the default filter level is used."
+            :type '(boolean)
+            :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-browser-windows-auto-resizing t
-	    "If on, C-xrefactory will resize newly created browser windows appropriately."
-	    :type '(boolean)
-	    :group 'c-xrefactory-source-browser)
+            "If on, C-xrefactory will resize newly created browser windows appropriately."
+            :type '(boolean)
+            :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-symbol-selection-window-height 10
-	    "Browser window's default height. This value applies only to the first appearance of the browser window and only if c-xref-browser-windows-auto-resizing is off."
-	    :type '(integer)
-	    :group 'c-xrefactory-source-browser)
+            "Browser window's default height. This value applies only to the first appearance of the browser window and only if c-xref-browser-windows-auto-resizing is off."
+            :type '(integer)
+            :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-symbol-selection-window-width 30
-	    "Browser window's default width. This value applies only to the first appearance of the browser window and only if c-xref-browser-windows-auto-resizing is off."
-	    :type '(integer)
-	    :group 'c-xrefactory-source-browser)
+            "Browser window's default width. This value applies only to the first appearance of the browser window and only if c-xref-browser-windows-auto-resizing is off."
+            :type '(integer)
+            :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-inspect-errors-if-compilation-window t
-	    "If on, and if a compilation buffer is displayed in the current frame, then c-xref-alternative-previous-reference and c-xref-alternative-next-reference will inspect the previous/next error rather than the previous/next reference. In this way shortcuts (usually C-F3, C-F4) can be used to browse errors after an unsuccessful compilation."
-	    :type '(boolean)
-	    :group 'c-xrefactory-source-browser)
+            "If on, and if a compilation buffer is displayed in the current frame, then c-xref-alternative-previous-reference and c-xref-alternative-next-reference will inspect the previous/next error rather than the previous/next reference. In this way shortcuts (usually C-F3, C-F4) can be used to browse errors after an unsuccessful compilation."
+            :type '(boolean)
+            :group 'c-xrefactory-source-browser)
 
       )
 
@@ -494,74 +494,74 @@ C-xrefactory's source browsing functions.
 ;;;;;;;;;;;;;;;; c-xrefactory-refactoring ;;;;;;;;;
 
   (defgroup c-xrefactory-refactoring nil
-	"
+        "
 
 Here you can set customizable variables controlling behavior of
 C-xrefactory refactoring functions.
 
 "
-	:group 'c-xrefactory
+        :group 'c-xrefactory
     )
 
 
   (defcustom c-xref-save-files-and-update-tags-before-refactoring nil
-	"If on, C-xrefactory saves all modified files and updates tags before each refactoring. This can speed up refactorings."
-	:type '(boolean)
-	:group 'c-xrefactory-refactoring)
+        "If on, C-xrefactory saves all modified files and updates tags before each refactoring. This can speed up refactorings."
+        :type '(boolean)
+        :group 'c-xrefactory-refactoring)
 
   (defcustom c-xref-save-files-and-update-tags-after-refactoring nil
-	"If on, C-xrefactory saves all modified files and updates tags after each refactoring."
-	:type '(boolean)
-	:group 'c-xrefactory-refactoring)
+        "If on, C-xrefactory saves all modified files and updates tags after each refactoring."
+        :type '(boolean)
+        :group 'c-xrefactory-refactoring)
 
   (defcustom c-xref-prefer-import-on-demand t
-	"If on, C-xrefactory will prefer to generate import on demand statements (import com.pack.*;) instead of single type imports (import com.pack.Type;). This applies whenever C-xrefactory needs to add an import statement, which may be during moving refactorings or when reducing long type names."
-	:type '(boolean)
-	:group 'c-xrefactory-refactoring)
+        "If on, C-xrefactory will prefer to generate import on demand statements (import com.pack.*;) instead of single type imports (import com.pack.Type;). This applies whenever C-xrefactory needs to add an import statement, which may be during moving refactorings or when reducing long type names."
+        :type '(boolean)
+        :group 'c-xrefactory-refactoring)
 
   (defcustom c-xref-comments-moving-level 0
-	"The value of this variable determines how much commenting preceding a function, variable or field is moved together with it when a moving refactoring is applied. '0' moves no comments at all. '1' moves one doubleslashed comments (// ...). '2' moves one standard comment (/* ... */). '3' moves one doubleslashed and one standard comment. '4' moves all doubleslashed comments. '5' moves all standard comments. Finally, '6' moves all doubleslashed and all standard comments."
-	:type '(integer)
-	:group 'c-xrefactory-refactoring)
+        "The value of this variable determines how much commenting preceding a function, variable or field is moved together with it when a moving refactoring is applied. '0' moves no comments at all. '1' moves one doubleslashed comments (// ...). '2' moves one standard comment (/* ... */). '3' moves one doubleslashed and one standard comment. '4' moves all doubleslashed comments. '5' moves all standard comments. Finally, '6' moves all doubleslashed and all standard comments."
+        :type '(integer)
+        :group 'c-xrefactory-refactoring)
 
   (defcustom c-xref-move-point-back-after-refactoring nil
-	"If on, then after finishing a refactoring the point will be moved back to the position where the refactoring started. This is convenient for moving a suite of fields/methods into another file. In such cases it is best that the point is not moved to target position, because you wish to select the next field/method to be moved. Note that the target position is kept after a refactoring, so it can be reused without needing to set it again."
-	:type '(boolean)
-	:group 'c-xrefactory-refactoring)
+        "If on, then after finishing a refactoring the point will be moved back to the position where the refactoring started. This is convenient for moving a suite of functions into another file. In such cases it is best that the point is not moved to target position, because you wish to select the next function to be moved. Note that the target position is kept after a refactoring, so it can be reused without needing to set it again."
+        :type '(boolean)
+        :group 'c-xrefactory-refactoring)
 
   (defcustom c-xref-run-find-file-hooks t
-	"If on, C-xrefactory will use the standard function 'find-file' when loading new files. Otherwise it will load buffers with its own function avoiding running of find-file-hooks. This means that new buffers will not be highlighted, etc. This option can be used to speed up big refactorings on larges projects where running file-local hooks can take a long time. However, not running hooks may cause unwanted side effects."
-	:type '(boolean)
-	:group 'c-xrefactory-refactoring)
+        "If on, C-xrefactory will use the standard function 'find-file' when loading new files. Otherwise it will load buffers with its own function avoiding running of find-file-hooks. This means that new buffers will not be highlighted, etc. This option can be used to speed up big refactorings on larges projects where running file-local hooks can take a long time. However, not running hooks may cause unwanted side effects."
+        :type '(boolean)
+        :group 'c-xrefactory-refactoring)
 
   (defcustom c-xref-multifile-undo-deep 50
-	"This variable determines how many refactorings are kept in the undo list, i.e. how many refactorings can be undone. C-xrefactory's undo mechanism is built on standard Emacs undo; to be able to undo large number of refactorings, you have to set 'undo-limit' and 'undo-strong-limit' to sufficiently large values."
-	:type '(integer)
-	:group 'c-xrefactory-refactoring)
+        "This variable determines how many refactorings are kept in the undo list, i.e. how many refactorings can be undone. C-xrefactory's undo mechanism is built on standard Emacs undo; to be able to undo large number of refactorings, you have to set 'undo-limit' and 'undo-strong-limit' to sufficiently large values."
+        :type '(integer)
+        :group 'c-xrefactory-refactoring)
 
 
 
 ;;;;;;;;;;;;;;;; highlighting colors faces ;;;;;;;;;
 
   (defgroup c-xrefactory-highlighting-coloring nil
-	"
+        "
 
 Here you  can set variables controlling  everything concerning colors,
 faces and highlighting in buffers created by C-xrefactory.
 
 "
-	:group 'c-xrefactory
+        :group 'c-xrefactory
     )
 
   (defcustom c-xref-coloring c-xref-coloring
-	"If on, C-xrefactory will color symbols in completion and reference list buffers. This may be slow for large projects."
-	:type '(boolean)
-	:group 'c-xrefactory-highlighting-coloring)
+        "If on, C-xrefactory will color symbols in completion and reference list buffers. This may be slow for large projects."
+        :type '(boolean)
+        :group 'c-xrefactory-highlighting-coloring)
 
   (defcustom c-xref-mouse-highlight t
-	"If on, C-xrefactory will highlight symbols under the mouse in its buffers."
-	:type '(boolean)
-	:group 'c-xrefactory-highlighting-coloring)
+        "If on, C-xrefactory will highlight symbols under the mouse in its buffers."
+        :type '(boolean)
+        :group 'c-xrefactory-highlighting-coloring)
 
   )
 
@@ -624,15 +624,15 @@ faces and highlighting in buffers created by C-xrefactory.
 (defvar c-xref-project-menu (make-sparse-keymap "Project"))
 (fset 'c-xref-project-menu (symbol-value 'c-xref-project-menu))
 (define-key c-xref-project-menu [c-xref-prj-edit] '("Edit Options" .
-											    c-xref-project-edit-options))
+                                                                                            c-xref-project-edit-options))
 (define-key c-xref-project-menu [c-xref-prj-show-active] '("Show Active" .
-													   c-xref-project-active))
+                                                                                                           c-xref-project-active))
 (define-key c-xref-project-menu [c-xref-prj-set-active] '("Set Active" .
-													  c-xref-project-set-active))
+                                                                                                          c-xref-project-set-active))
 (define-key c-xref-project-menu [c-xref-prj-del] '("Delete" .
-											   c-xref-project-delete))
+                                                                                           c-xref-project-delete))
 (define-key c-xref-project-menu [c-xref-prj-new] '("New" .
-											   c-xref-project-new))
+                                                                                           c-xref-project-new))
 
 (defvar c-xref-unused-menu (make-sparse-keymap "Unused Symbols Detection"))
 (fset 'c-xref-unused-menu (symbol-value 'c-xref-unused-menu))
@@ -650,7 +650,7 @@ faces and highlighting in buffers created by C-xrefactory.
 
 (defvar c-xref-menu (make-sparse-keymap "C-xref"))
 (if (commandp 'customize)
-	(define-key c-xref-menu [c-xref-global-options] '("Options" . c-xref-global-options))
+        (define-key c-xref-menu [c-xref-global-options] '("Options" . c-xref-global-options))
   )
 (define-key c-xref-menu [c-xref-misc-menu] '("C-xref Misc" . c-xref-misc-menu))
 (define-key c-xref-menu [separator-buffers2] '("--"))
@@ -696,8 +696,8 @@ faces and highlighting in buffers created by C-xrefactory.
 
   ;; now put new menu item for this function
   (define-key menu
-	      (vector (make-symbol (format "c-xref-custom-menu-sym-%d" c-xref-custom-menu-symbol-count)))
-	      (cons text (intern (format "c-xref-custom-menu-fun-%d" c-xref-custom-menu-symbol-count))))
+              (vector (make-symbol (format "c-xref-custom-menu-sym-%d" c-xref-custom-menu-symbol-count)))
+              (cons text (intern (format "c-xref-custom-menu-fun-%d" c-xref-custom-menu-symbol-count))))
 
   ;; increment counter
   (setq c-xref-custom-menu-symbol-count (1+ c-xref-custom-menu-symbol-count))
@@ -720,11 +720,11 @@ your .c-xrefrc file.
 
   (unless c-xref-custom-menu
     (setq c-xref-custom-menu (make-sparse-keymap "C-xref Custom Menu"))
-	(fset 'c-xref-custom-menu (symbol-value 'c-xref-custom-menu))
-	(define-key-after c-xref-menu [c-xref-custom-menu]
-	  (cons "Custom" c-xref-custom-menu)
-	  (car (nth 3 c-xref-menu)))
-	)
+        (fset 'c-xref-custom-menu (symbol-value 'c-xref-custom-menu))
+        (define-key-after c-xref-menu [c-xref-custom-menu]
+          (cons "Custom" c-xref-custom-menu)
+          (car (nth 3 c-xref-menu)))
+        )
   (c-xref-emacs-add-menu-item c-xref-custom-menu text expression)
   )
 
