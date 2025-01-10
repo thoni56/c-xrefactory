@@ -58,38 +58,36 @@ Mechanics: Rename all occurrences of the symbol in the scope of
 * Add Parameter:
 ----------------------------------------------------------
 
-Description: Add parameter to a method, function or macro.
+Description: Add parameter to a function or macro.
 
 Example:
 
         Before refactoring:
 
-            public int method(int x) {
+            int func(int x) {
                 if (x<=1)
                    return 1;
-                return method(x-1)+method(x-2);
+                return func(x-1)+func(x-2);
             }
 
         After refactoring:
 
-            public int method(int x, int y) {
+            int func(int x, int y) {
                 if (x<=1)
                    return 1;
-                return method(x-1, 0)+method(x-2, 0);
+                return func(x-1, 0)+func(x-2, 0);
             }
 
 
-Refactoring Context: Cursor has to be on the method's
-      (function's or macro's) name.
+Refactoring Context: Cursor has to be on the functions's or
+      macro's name.
 
 Input Parameters: Position of the new parameter, its declaration
       and default value.  (for example: '2', 'int y' and '0').
 
-Mechanics: Inspect all referenqces to the method (function or
-      macro) and  add a declaration of the  new parameter to
-      each definition and default value to each invocation.
-
-
+Mechanics: Inspect all referenqces to the function or macro and
+      add a declaration of the new parameter to each definition
+      and default value to each invocation.
 
 
 ----------------------------------------------------------
@@ -102,18 +100,18 @@ Example:
 
         Before refactoring:
 
-            public int method(int x, int y) {
+            public int func(int x, int y) {
                 if (x<=1)
                     return 1;
-                return method(x-1, 0)+method(x-2, 0);
+                return func(x-1, 0)+func(x-2, 0);
             }
 
         After refactoring:
 
-            public int method(int x) {
+            public int func(int x) {
                if (x<=1)
                    return 1;
-               return method(x-1)+method(x-2);
+               return func(x-1)+func(x-2);
             }
 
 
@@ -125,6 +123,42 @@ Input Parameters: Position of the parameter to delete (for
 
 Mechanics: Inspect all references to the function or macro and
       remove the parameter.
+
+
+----------------------------------------------------------
+* Move Parameter:
+----------------------------------------------------------
+
+Description: Reorder parameters of a function or macro.
+
+Example:
+
+        Before refactoring:
+
+            int func(int x, int y) {
+                if (x<=1)
+                    return 1;
+                return func(x-1, 0)+func(x-2, 0);
+            }
+
+        After refactoring:
+
+            int func(int y, int x) {
+               if (x<=1)
+                   return 1;
+               return func(0, x-1)+func(0, x-2);
+            }
+
+
+Refactoring Context: Cursor has to be on the name of the function
+      or macro.
+
+Input Parameters: Old and new positions of the parameter
+      (for example: '1' and '2').
+
+Mechanics: Inspect all references to the function and move the
+      parameter from its original position to its new position.
+
 
 
 ----------------------------------------------------------
@@ -153,42 +187,6 @@ Mechanics: Rename the file and update all '#include' statements
 
 
 ----------------------------------------------------------
-* Move Parameter:
-----------------------------------------------------------
-
-Description: Reorder parameter of a function or macro.
-
-Example:
-
-        Before refactoring:
-
-            public int method(int x, int y) {
-                if (x<=1)
-                    return 1;
-                return method(x-1, 0)+method(x-2, 0);
-            }
-
-        After refactoring:
-
-            public int method(int y, int x) {
-               if (x<=1)
-                   return 1;
-               return method(0, x-1)+method(0, x-2);
-            }
-
-
-Refactoring Context: Cursor has to be on the name of the function
-      or macro.
-
-Input Parameters: Old and new positions of the parameter
-      (for example: '1' and '2').
-
-Mechanics: Inspect all references to the method and move the
-      parameter from its original position to its new position.
-
-
-
-----------------------------------------------------------
 * Extract Function:
 * Extract Macro:
 ----------------------------------------------------------
@@ -214,10 +212,10 @@ Example:
             static int fib(int n) {
                    int i, x, y, t;
                    x=0; y=1;
-                   for(i=0; i<n; i++) {
+                   for (i=0; i<n; i++) {
                             t=x+y; x=y; y=t;
                    }
-                   return(x);
+                   return x;
             }
 
 
@@ -232,13 +230,50 @@ Example:
 Refactoring Context: The code for extraction has to be selected
       in the editor.
 
+Input Parameters: Name of the new function or macro.
 
-Input Parameters: Name of the new method (function or macro).
-
-Mechanics: Move the region out of the method (function), generate
+Mechanics: Move the region out of the function, generate
       wrapper code based on static analysis of the original
-      context and generate a call to the new method from the
+      context and generate a call to the new function from the
       code's original position.
+
+
+----------------------------------------------------------
+* Extract Variable:
+----------------------------------------------------------
+
+Description: Extract a region as an initialization of a new variable.
+
+Example:
+
+        Before refactoring:
+
+            int func(int i, int j, char *string) {
+                char c = string[i+j];
+            }
+
+        After refactoring:
+
+            int func(int i, int j, char *string) {
+                char c = string[i+j];
+            }
+
+            public static void main(String[] args) {
+                   int i,n,x,y,t;
+                   n = Integer.parseInt(args[0]);
+                   x = fib(n);
+                   System.out.println(\"\" + n + \"-th fib == \" + x);
+            }
+
+
+Refactoring Context: The code for the expression needs to be selected.
+
+Input Parameters: Name of the new variable.
+
+Mechanics: Move the region into an initialization of a new
+      variable declaration which is placed on the previous line.
+      NOTE: the type will always be 'int', in the future this
+      could be a parameter.
 
 
 ----------------------------------------------------------
