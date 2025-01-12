@@ -11,6 +11,7 @@
 #include "commons.h"
 #include "cxref.h"
 #include "editor.h"
+#include "editormarker.h"
 #include "filetable.h"
 #include "globals.h"
 #include "head.h"

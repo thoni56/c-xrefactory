@@ -161,25 +161,6 @@ EditorMarker *duplicateEditorMarker(EditorMarker *marker) {
     return newEditorMarker(marker->buffer, marker->offset);
 }
 
-static void removeEditorMarkerFromBufferWithoutFreeing(EditorMarker *marker) {
-    if (marker == NULL)
-        return;
-    if (marker->next != NULL)
-        marker->next->previous = marker->previous;
-    if (marker->previous == NULL) {
-        marker->buffer->markers = marker->next;
-    } else {
-        marker->previous->next = marker->next;
-    }
-}
-
-void freeEditorMarker(EditorMarker *marker) {
-    if (marker == NULL)
-        return;
-    removeEditorMarkerFromBufferWithoutFreeing(marker);
-    free(marker);
-}
-
 void freeTextSpace(char *space, int index) {
     EditorMemoryBlock *sp;
     sp = (EditorMemoryBlock *) space;

@@ -6,24 +6,11 @@
 #include "head.h"
 #include "completion.h"
 #include "editorbuffer.h"
+#include "editormarker.h"
 #include "proto.h"
 #include "reference.h"
 #include "undo.h"
-#include "usage.h"
 
-
-typedef struct editorMarker {
-    EditorBuffer        *buffer;
-    unsigned             offset;   /* Offset in the buffer */
-    struct editorMarker *previous; // previous marker in this buffer
-    struct editorMarker *next;     // next marker in this buffer
-} EditorMarker;
-
-typedef struct editorMarkerList {
-    EditorMarker     *marker;
-    Usage             usage;
-    struct editorMarkerList *next;
-} EditorMarkerList;
 
 typedef struct editorRegion {
     EditorMarker *begin;
@@ -88,7 +75,6 @@ extern void          editorDumpUndoList(EditorUndo *uu);
 extern void          moveEditorMarkerToLineAndColumn(EditorMarker *m, int line, int col);
 extern void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2, EditorMarkerList **diff1,
                                      EditorMarkerList **diff2);
-extern void freeEditorMarker(EditorMarker *marker);
 extern void freeEditorMarkerListButNotMarkers(EditorMarkerList *occs);
 extern void freeEditorMarkersAndRegionList(EditorRegionList *occs);
 extern void sortEditorRegionsAndRemoveOverlaps(EditorRegionList **regions);

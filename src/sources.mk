@@ -1,7 +1,7 @@
 MODULES = main globals misc semact commons complete cxref cxfile	\
 		lexer lexembuffer yylex options caching init editor	\
 		refactory protocol log type usage storage extract	\
-		filetable macroargumenttable session			\
+		filetable macroargumenttable session editormarker	\
 		editorbuffertable symboltable reftab memory		\
 		characterreader hash symbol c_parser.tab		\
 		cexp_parser.tab yacc_parser.tab filedescriptor		\
