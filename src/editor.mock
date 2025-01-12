@@ -10,14 +10,6 @@ void editorInit(void) {
   mock();
 }
 
-EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset) {
-    return (EditorMarker *)mock(buffer, offset);
-}
-
-EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next) {
-    return (EditorRegionList *)mock(begin, end, next);
-}
-
 bool editorFileExists(char *path) {
     return (bool)mock(path);
 }
@@ -28,27 +20,6 @@ time_t editorFileModificationTime(char *path) {
 
 size_t editorFileSize(char *path) {
     return (time_t)mock(path);
-}
-
-bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2) {
-  return (int) mock(m1, m2);
-}
-
-bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2) {
-  return (int) mock(m1, m2);
-}
-
-bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2) {
-  return (int) mock(l1, l2);
-}
-
-bool editorRegionListBefore(EditorRegionList *l1, EditorRegionList *l2) {
-  return (int) mock(l1, l2);
-}
-
-EditorMarker *newEditorMarkerForPosition(Position pos) {
-    Position *position = &pos;
-    return (EditorMarker *) mock(position);
 }
 
 EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs) {
@@ -67,64 +38,12 @@ void moveBlockInEditorBuffer(EditorMarker *src, EditorMarker *dest, int size, Ed
   mock(dest, src, size, undo);
 }
 
-void dumpEditorBuffer(EditorBuffer *buff) {
-  mock(buff);
-}
-
-void dumpEditorBuffers(void) {
-  mock();
-}
-
-void editorDumpMarker(EditorMarker *mm) {
-  mock(mm);
-}
-
-void editorDumpMarkerList(EditorMarkerList *mml) {
-  mock(mml);
-}
-
-void editorDumpRegionList(EditorRegionList *mml) {
-  mock(mml);
-}
-
 void quasiSaveModifiedEditorBuffers(void) {
   mock();
 }
 
 void loadAllOpenedEditorBuffers(void) {
   mock();
-}
-
-EditorMarker *createNewEditorMarker(EditorBuffer *buffer, int offset) {
-  return (EditorMarker *) mock(buffer, offset);
-}
-
-EditorMarker *duplicateEditorMarker(EditorMarker *mm) {
-  return (EditorMarker *) mock(mm);
-}
-
-int countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2) {
-  return (int) mock(m1, m2);
-}
-
-bool runWithEditorMarkerUntil(EditorMarker *m, int (*until)(int), int step) {
-  return (bool) mock(m, until, step);
-}
-
-int moveEditorMarkerToNewline(EditorMarker *m, int direction) {
-  return (int) mock(m, direction);
-}
-
-int moveEditorMarkerToNonBlank(EditorMarker *m, int direction) {
-  return (int) mock(m, direction);
-}
-
-int moveEditorMarkerBeyondIdentifier(EditorMarker *m, int direction) {
-  return (int) mock(m, direction);
-}
-
-int moveEditorMarkerToNonBlankOrNewline(EditorMarker *m, int direction) {
-  return (int) mock(m, direction);
 }
 
 void removeBlanksAtEditorMarker(EditorMarker *mm, int direction, EditorUndo **undo) {
