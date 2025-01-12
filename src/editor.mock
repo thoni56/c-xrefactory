@@ -115,7 +115,7 @@ int moveEditorMarkerToNewline(EditorMarker *m, int direction) {
   return (int) mock(m, direction);
 }
 
-int editorMoveMarkerToNonBlank(EditorMarker *m, int direction) {
+int moveEditorMarkerToNonBlank(EditorMarker *m, int direction) {
   return (int) mock(m, direction);
 }
 

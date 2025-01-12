@@ -406,7 +406,7 @@ int        moveEditorMarkerToNewline(EditorMarker *m, int direction) {
 }
 
 static int isNonBlank(int c) {return ! isspace(c);}
-int editorMoveMarkerToNonBlank(EditorMarker *m, int direction) {
+int moveEditorMarkerToNonBlank(EditorMarker *m, int direction) {
     return runWithEditorMarkerUntil(m, isNonBlank, direction);
 }
 
@@ -426,19 +426,19 @@ void removeBlanksAtEditorMarker(EditorMarker *mm, int direction, EditorUndo **un
     moffset = mm->offset;
     if (direction < 0) {
         mm->offset --;
-        editorMoveMarkerToNonBlank(mm, -1);
+        moveEditorMarkerToNonBlank(mm, -1);
         mm->offset++;
         replaceStringInEditorBuffer(mm->buffer, mm->offset, moffset - mm->offset, "", 0, undo);
     } else if (direction > 0) {
-        editorMoveMarkerToNonBlank(mm, 1);
+        moveEditorMarkerToNonBlank(mm, 1);
         replaceStringInEditorBuffer(mm->buffer, moffset, mm->offset - moffset, "", 0, undo);
     } else {
         // both directions
         mm->offset --;
-        editorMoveMarkerToNonBlank(mm, -1);
+        moveEditorMarkerToNonBlank(mm, -1);
         mm->offset++;
         moffset = mm->offset;
-        editorMoveMarkerToNonBlank(mm, 1);
+        moveEditorMarkerToNonBlank(mm, 1);
         replaceStringInEditorBuffer(mm->buffer, moffset, mm->offset - moffset, "", 0, undo);
     }
 }

@@ -1130,7 +1130,7 @@ static void deleteParameter(EditorMarker *pos, char *fname, int argumentNumber, 
                 m2->offset++;
                 // here pass also blank symbols
             }
-            editorMoveMarkerToNonBlank(m2, 1);
+            moveEditorMarkerToNonBlank(m2, 1);
         }
         if (isDefinitionUsage(usage)) {
             // this must be at the end, because it discards values
@@ -1176,9 +1176,9 @@ static void moveParameter(EditorMarker *pos, char *fname, int argFrom, int argTo
         errorMessage(ERR_ST, "Parameter out of limit");
     } else {
         m1->offset++;
-        editorMoveMarkerToNonBlank(m1, 1);
+        moveEditorMarkerToNonBlank(m1, 1);
         m2->offset--;
-        editorMoveMarkerToNonBlank(m2, -1);
+        moveEditorMarkerToNonBlank(m2, -1);
         m2->offset++;
         assert(m1->offset <= m2->offset);
         plen = m2->offset - m1->offset;
@@ -1351,7 +1351,7 @@ static void moveMarkerToTheBeginOfDefinitionScope(EditorMarker *mm) {
         }
         if (refactoringOptions.commentMovingMode == CM_NO_COMMENT)
             goto fini;
-        editorMoveMarkerToNonBlank(mm, -1);
+        moveEditorMarkerToNonBlank(mm, -1);
         mp = markerWRTComment(mm, &comBeginOffset);
         if (mp == MARKER_IS_IN_CODE)
             goto fini;
