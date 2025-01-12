@@ -2,6 +2,7 @@
 #define EDITORMARKER_H_INCLUDED
 
 #include "editorbuffer.h"
+#include "position.h"
 #include "usage.h"
 
 typedef struct editorMarker {
@@ -18,8 +19,20 @@ typedef struct editorMarkerList {
 } EditorMarkerList;
 
 
+extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset);
+extern EditorMarker *newEditorMarkerForPosition(Position position);
+
+extern void attachMarkerToBuffer(EditorMarker *marker, EditorBuffer *buffer);
+extern void moveEditorMarkerToLineAndColumn(EditorMarker *marker, int line, int col);
+
+extern bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2);
+extern bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2);
+extern bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2);
 
 extern void removeEditorMarkerFromBufferWithoutFreeing(EditorMarker *marker);
 extern void freeEditorMarker(EditorMarker *marker);
+
+extern void editorDumpMarker(EditorMarker *marker);
+extern void editorDumpMarkerList(EditorMarkerList *markerList);
 
 #endif

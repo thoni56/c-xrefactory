@@ -47,21 +47,12 @@ extern bool   editorFileExists(char *path);
 extern size_t editorFileSize(char *path);
 extern time_t editorFileModificationTime(char *path);
 
-extern bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2);
-extern bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2);
-extern bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2);
-extern bool editorRegionListBefore(EditorRegionList *l1, EditorRegionList *l2);
-
-extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset);
-extern EditorMarker     *newEditorMarkerForPosition(Position position);
 extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next);
 
 
 extern EditorMarkerList *convertReferencesToEditorMarkers(Reference *references);
 extern Reference        *convertEditorMarkersToReferences(EditorMarkerList **markerList);
 
-extern void          editorDumpMarker(EditorMarker *mm);
-extern void          editorDumpMarkerList(EditorMarkerList *mml);
 extern void          editorDumpRegionList(EditorRegionList *mml);
 extern EditorMarker *duplicateEditorMarker(EditorMarker *mm);
 extern int           countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2);
