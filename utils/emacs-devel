@@ -17,8 +17,6 @@ else
   OPTIONS_FILE=""
 fi
 
-echo "$@"
-
 # Construct Emacs command with proper quoting
 if [[ -n "$OPTIONS_FILE" ]]; then
   emacs $LOAD_FILES \
