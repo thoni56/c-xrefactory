@@ -34,6 +34,7 @@ extern EditorMarker *newEditorMarkerForPosition(Position position);
 
 extern EditorMarker *createEditorMarkerForBufferBegin(EditorBuffer *buffer);
 extern EditorMarker *createEditorMarkerForBufferEnd(EditorBuffer *buffer);
+extern EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer);
 
 extern EditorMarker *duplicateEditorMarker(EditorMarker *marker);
 
@@ -52,15 +53,16 @@ extern int moveEditorMarkerBeyondIdentifier(EditorMarker *m, int direction);
 extern int moveEditorMarkerToNonBlankOrNewline(EditorMarker *m, int direction);
 extern int countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2);
 
-extern void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
-                                                   EditorRegionList **inRegions,
-                                                   EditorMarkerList **outInsiders,
-                                                   EditorMarkerList **outOutsiders);
+extern void restrictEditorMarkersToRegions(EditorMarkerList **mm, EditorRegionList **regions);
+extern void sortEditorRegionsAndRemoveOverlaps(EditorRegionList **regions);
+extern void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2, EditorMarkerList **diff1,
+                                     EditorMarkerList **diff2);
 
 extern void removeEditorMarkerFromBufferWithoutFreeing(EditorMarker *marker);
 extern void freeEditorMarker(EditorMarker *marker);
 extern void freeEditorMarkerListButNotMarkers(EditorMarkerList *list);
 extern void freeEditorMarkerListAndMarkers(EditorMarkerList *list);
+extern void freeEditorMarkersAndRegionList(EditorRegionList *occs);
 
 extern void editorDumpMarker(EditorMarker *marker);
 extern void editorDumpMarkerList(EditorMarkerList *markerList);

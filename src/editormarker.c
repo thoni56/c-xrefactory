@@ -57,6 +57,20 @@ EditorMarker *createEditorMarkerForBufferEnd(EditorBuffer *buffer) {
     return newEditorMarker(buffer, buffer->allocation.bufferSize);
 }
 
+EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer) {
+    EditorMarker *bufferBegin, *bufferEnd;
+    EditorRegion theBufferRegion;
+    EditorRegionList *theBufferRegionList;
+
+    bufferBegin     = createEditorMarkerForBufferBegin(buffer);
+    bufferEnd       = createEditorMarkerForBufferEnd(buffer);
+    theBufferRegion = (EditorRegion){.begin = bufferBegin, .end = bufferEnd};
+    theBufferRegionList = malloc(sizeof(EditorRegionList));
+    *theBufferRegionList = (EditorRegionList){.region = theBufferRegion, .next = NULL};
+
+    return theBufferRegionList;
+}
+
 EditorMarker *duplicateEditorMarker(EditorMarker *marker) {
     return newEditorMarker(marker->buffer, marker->offset);
 }
@@ -228,10 +242,10 @@ void sortEditorRegionsAndRemoveOverlaps(EditorRegionList **regions) {
     }
 }
 
-void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
-                                            EditorRegionList **inRegions,
-                                            EditorMarkerList **outInsiders,
-                                            EditorMarkerList **outOutsiders) {
+static void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
+                                                   EditorRegionList **inRegions,
+                                                   EditorMarkerList **outInsiders,
+                                                   EditorMarkerList **outOutsiders) {
     EditorMarkerList *markers1, *markers2;
     EditorRegionList *regions;
 
@@ -271,6 +285,60 @@ void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
     LIST_REVERSE(EditorMarkerList, *outOutsiders);
     //&editorDumpMarkerList(*outInsiders);
     //&editorDumpMarkerList(*outOutsiders);
+}
+
+void restrictEditorMarkersToRegions(EditorMarkerList **mm, EditorRegionList **regions) {
+    EditorMarkerList *ins, *outs;
+    splitEditorMarkersWithRespectToRegions(mm, regions, &ins, &outs);
+    *mm = ins;
+    freeEditorMarkerListAndMarkers(outs);
+}
+
+static EditorMarkerList *combineEditorMarkerLists(EditorMarkerList **diff, EditorMarkerList *list) {
+    EditorMarker     *marker = newEditorMarker(list->marker->buffer, list->marker->offset);
+    EditorMarkerList *l;
+
+    l = malloc(sizeof(EditorMarkerList));
+    *l    = (EditorMarkerList){.marker = marker, .usage = list->usage, .next = *diff};
+    *diff = l;
+    list  = list->next;
+
+    return list;
+}
+
+void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2,
+                              EditorMarkerList **diff1, EditorMarkerList **diff2) {
+    EditorMarkerList *l1, *l2;
+
+    LIST_MERGE_SORT(EditorMarkerList, *list1, editorMarkerListBefore);
+    LIST_MERGE_SORT(EditorMarkerList, *list2, editorMarkerListBefore);
+    *diff1 = *diff2 = NULL;
+    for(l1 = *list1, l2 = *list2; l1!=NULL && l2!=NULL; ) {
+        if (editorMarkerListBefore(l1, l2)) {
+            EditorMarker *marker = newEditorMarker(l1->marker->buffer, l1->marker->offset);
+            EditorMarkerList *l;
+            l = malloc(sizeof(EditorMarkerList)); /* TODO1 */
+            *l = (EditorMarkerList){.marker = marker, .usage = l1->usage, .next = *diff1};
+            *diff1 = l;
+            l1 = l1->next;
+        } else if (editorMarkerListBefore(l2, l1)) {
+            l2 = combineEditorMarkerLists(diff2, l2);
+        } else {
+            l1 = l1->next;
+            l2 = l2->next;
+        }
+    }
+    while (l1 != NULL) {
+        l1 = combineEditorMarkerLists(diff1, l1);
+    }
+    while (l2 != NULL) {
+        EditorMarker *marker = newEditorMarker(l2->marker->buffer, l2->marker->offset);
+        EditorMarkerList *l;
+        l = malloc(sizeof(EditorMarkerList));
+        *l = (EditorMarkerList){.marker = marker, .usage = l2->usage, .next = *diff2};
+        *diff2 = l;
+        l2 = l2->next;
+    }
 }
 
 void removeEditorMarkerFromBufferWithoutFreeing(EditorMarker *marker) {

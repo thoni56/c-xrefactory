@@ -135,54 +135,6 @@ void editorDumpUndoList(EditorUndo *uu) {
   mock(uu);
 }
 
-void moveEditorMarkerToLineAndColumn(EditorMarker *m, int line, int col) {
-  mock(m, line, col);
-}
-
-void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2, EditorMarkerList **diff1, EditorMarkerList **diff2) {
-  mock(list1, list2, diff1, diff2);
-}
-
-void freeEditorMarker(EditorMarker *marker) {
-  mock(marker);
-}
-
-void freeEditorMarkerListButNotMarkers(EditorMarkerList *occs) {
-  mock(occs);
-}
-
-void freeEditorMarkersAndRegionList(EditorRegionList *occs) {
-  mock(occs);
-}
-
-void sortEditorRegionsAndRemoveOverlaps(EditorRegionList **regions) {
-  mock(regions);
-}
-
-void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers, EditorRegionList **inRegions, EditorMarkerList **outInsiders, EditorMarkerList **outOutsiders) {
-  mock(inMarkers, inRegions, outInsiders, outOutsiders);
-}
-
-void restrictEditorMarkersToRegions(EditorMarkerList **mm, EditorRegionList **regions) {
-  mock(mm, regions);
-}
-
-EditorMarker *createEditorMarkerForBufferBegin(EditorBuffer *buffer) {
-  return (EditorMarker *) mock(buffer);
-}
-
-EditorMarker *createEditorMarkerForBufferEnd(EditorBuffer *buffer) {
-  return (EditorMarker *) mock(buffer);
-}
-
-EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer) {
-  return (EditorRegionList *) mock(buffer);
-}
-
-void freeEditorMarkerListAndMarkers(EditorMarkerList *occs) {
-  mock(occs);
-}
-
 bool editorMapOnNonExistantFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), SearchDepth depth,
                                 char *a1, char *a2, Completions *a3, void *a4, int *a5) {
   return (int) mock(dirname, fun, depth, a1, a2, a3, a4, a5);

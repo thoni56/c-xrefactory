@@ -44,13 +44,6 @@ extern void          editorDumpRegionList(EditorRegionList *mml);
 
 extern void removeBlanksAtEditorMarker(EditorMarker *mm, int direction, EditorUndo **undo);
 extern void          editorDumpUndoList(EditorUndo *uu);
-extern void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2, EditorMarkerList **diff1,
-                                     EditorMarkerList **diff2);
-extern void freeEditorMarkersAndRegionList(EditorRegionList *occs);
-extern void sortEditorRegionsAndRemoveOverlaps(EditorRegionList **regions);
-
-extern void restrictEditorMarkersToRegions(EditorMarkerList **mm, EditorRegionList **regions);
-extern EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer);
 
 extern bool editorMapOnNonExistantFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), SearchDepth depth, char *a1,
                                         char *a2, Completions *a3, void *a4, int *a5);

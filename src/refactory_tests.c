@@ -9,6 +9,7 @@
 #include "cxfile.mock"
 #include "cxref.mock"
 #include "editor.mock"
+#include "editormarker.mock"
 #include "editorbuffer.mock"
 #include "filetable.mock"
 #include "globals.mock"
