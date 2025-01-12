@@ -359,22 +359,6 @@ void loadAllOpenedEditorBuffers(void) {
     }
 }
 
-int countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2) {
-    // this can happen after an error in moving, just pass in this case
-    if (m1 == NULL || m2 == NULL)
-        return 0;
-    assert(m1->buffer == m2->buffer);
-    assert(m1->offset <= m2->offset);
-    char *text  = m1->buffer->allocation.text;
-    int   max   = m2->offset;
-    int   count = 0;
-    for (int i = m1->offset; i < max; i++) {
-        if (text[i] == '\n')
-            count++;
-    }
-    return count;
-}
-
 void removeBlanksAtEditorMarker(EditorMarker *mm, int direction, EditorUndo **undo) {
     int moffset;
 
@@ -701,14 +685,6 @@ void restrictEditorMarkersToRegions(EditorMarkerList **mm, EditorRegionList **re
     splitEditorMarkersWithRespectToRegions(mm, regions, &ins, &outs);
     *mm = ins;
     freeEditorMarkerListAndMarkers(outs);
-}
-
-EditorMarker *createEditorMarkerForBufferBegin(EditorBuffer *buffer) {
-    return newEditorMarker(buffer, 0);
-}
-
-EditorMarker *createEditorMarkerForBufferEnd(EditorBuffer *buffer) {
-    return newEditorMarker(buffer, buffer->allocation.bufferSize);
 }
 
 EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer) {

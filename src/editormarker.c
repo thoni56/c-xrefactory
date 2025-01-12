@@ -48,6 +48,14 @@ EditorMarker *newEditorMarkerForPosition(Position position) {
     return marker;
 }
 
+EditorMarker *createEditorMarkerForBufferBegin(EditorBuffer *buffer) {
+    return newEditorMarker(buffer, 0);
+}
+
+EditorMarker *createEditorMarkerForBufferEnd(EditorBuffer *buffer) {
+    return newEditorMarker(buffer, buffer->allocation.bufferSize);
+}
+
 EditorMarker *duplicateEditorMarker(EditorMarker *marker) {
     return newEditorMarker(marker->buffer, marker->offset);
 }
@@ -144,6 +152,22 @@ int        moveEditorMarkerToNonBlankOrNewline(EditorMarker *m, int direction) {
 static int isNotIdentPart(int c) {return !isalnum(c) && c!='_' && c!='$';}
 int        moveEditorMarkerBeyondIdentifier(EditorMarker *m, int direction) {
     return runWithEditorMarkerUntil(m, isNotIdentPart, direction);
+}
+
+int countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2) {
+    // this can happen after an error in moving, just pass in this case
+    if (m1 == NULL || m2 == NULL)
+        return 0;
+    assert(m1->buffer == m2->buffer);
+    assert(m1->offset <= m2->offset);
+    char *text  = m1->buffer->allocation.text;
+    int   max   = m2->offset;
+    int   count = 0;
+    for (int i = m1->offset; i < max; i++) {
+        if (text[i] == '\n')
+            count++;
+    }
+    return count;
 }
 
 void removeEditorMarkerFromBufferWithoutFreeing(EditorMarker *marker) {
