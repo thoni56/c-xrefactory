@@ -54,7 +54,6 @@ extern Reference        *convertEditorMarkersToReferences(EditorMarkerList **mar
 
 extern void          editorDumpRegionList(EditorRegionList *mml);
 extern int           countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2);
-extern bool          runWithEditorMarkerUntil(EditorMarker *m, int (*until)(int), int step);
 extern int           moveEditorMarkerToNewline(EditorMarker *m, int direction);
 extern int           editorMoveMarkerToNonBlank(EditorMarker *m, int direction);
 extern int           moveEditorMarkerBeyondIdentifier(EditorMarker *m, int direction);

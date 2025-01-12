@@ -360,7 +360,7 @@ void loadAllOpenedEditorBuffers(void) {
     }
 }
 
-bool runWithEditorMarkerUntil(EditorMarker *marker, int (*until)(int), int step) {
+static bool runWithEditorMarkerUntil(EditorMarker *marker, int (*until)(int), int step) {
     int   offset, max;
     char *text;
 
