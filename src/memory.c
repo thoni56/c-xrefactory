@@ -105,7 +105,7 @@ void memoryFreeUntil(Memory *memory, void *pointer) {
     memory->index = (char *)pointer - (char *)memory->area;
 }
 
-bool memoryPointerIsFreed(Memory *memory, void *pointer) {
+static bool memoryPointerIsFreed(Memory *memory, void *pointer) {
     return memoryIsBetween(memory, pointer, memory->index, memory->size);
 }
 
