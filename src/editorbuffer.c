@@ -36,6 +36,34 @@ EditorBuffer *newEditorBuffer(char *realFileName, int fileNumber, char *loadedFr
     return editorBuffer;
 }
 
+EditorBuffer *createNewEditorBuffer(char *realFileName, char *loadedFromFile, time_t modificationTime,
+                                    size_t size) {
+    char *normalizedRealFileName, *normalizedLoadedFromFile;
+    EditorBuffer *buffer;
+
+    normalizedRealFileName = strdup(normalizeFileName_static(realFileName, cwd));
+
+    /* This is really a check if the file was preloaded from the
+     * editor and not read from the original file */
+    normalizedLoadedFromFile = normalizeFileName_static(loadedFromFile, cwd);
+    if (strcmp(normalizedLoadedFromFile, normalizedRealFileName)==0) {
+        normalizedLoadedFromFile = normalizedRealFileName;
+    } else {
+        normalizedLoadedFromFile = strdup(normalizedLoadedFromFile);
+    }
+
+    buffer = newEditorBuffer(normalizedRealFileName, 0, normalizedLoadedFromFile, modificationTime, size);
+    log_trace("created buffer '%s' for '%s'", buffer->fileName, buffer->loadedFromFile);
+
+    registerEditorBuffer(buffer);
+
+    // set fileNumber last, because, addfiletabitem calls back the statb
+    // from editor, so be tip-top at this moment!
+    buffer->fileNumber = addFileNameToFileTable(normalizedRealFileName);
+
+    return buffer;
+}
+
 static void checkForMagicMarker(EditorBufferAllocationData *allocation) {
     assert(allocation->allocatedBlock[allocation->allocatedSize] == 0x3b);
 }
@@ -68,34 +96,6 @@ void freeEditorBuffer(EditorBuffer *buffer) {
                       buffer->allocation.allocatedIndex);
     }
     free(buffer);
-}
-
-EditorBuffer *createNewEditorBuffer(char *realFileName, char *loadedFromFile, time_t modificationTime,
-                                    size_t size) {
-    char *normalizedRealFileName, *normalizedLoadedFromFile;
-    EditorBuffer *buffer;
-
-    normalizedRealFileName = strdup(normalizeFileName_static(realFileName, cwd));
-
-    /* This is really a check if the file was preloaded from the
-     * editor and not read from the original file */
-    normalizedLoadedFromFile = normalizeFileName_static(loadedFromFile, cwd);
-    if (strcmp(normalizedLoadedFromFile, normalizedRealFileName)==0) {
-        normalizedLoadedFromFile = normalizedRealFileName;
-    } else {
-        normalizedLoadedFromFile = strdup(normalizedLoadedFromFile);
-    }
-
-    buffer = newEditorBuffer(normalizedRealFileName, 0, normalizedLoadedFromFile, modificationTime, size);
-    log_trace("created buffer '%s' for '%s'", buffer->fileName, buffer->loadedFromFile);
-
-    registerEditorBuffer(buffer);
-
-    // set fileNumber last, because, addfiletabitem calls back the statb
-    // from editor, so be tip-top at this moment!
-    buffer->fileNumber = addFileNameToFileTable(normalizedRealFileName);
-
-    return buffer;
 }
 
 EditorBuffer *getOpenedAndLoadedEditorBuffer(char *fileName) {
