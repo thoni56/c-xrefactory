@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 
 #include "commons.h"
 #include "filetable.h"
@@ -101,6 +102,48 @@ bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2) {
 
 bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2) {
     return editorMarkerBefore(l1->marker, l2->marker);
+}
+
+static bool runWithEditorMarkerUntil(EditorMarker *marker, int (*until)(int), int step) {
+    int   offset, max;
+    char *text;
+
+    assert(step == -1 || step == 1);
+    offset = marker->offset;
+    max    = marker->buffer->allocation.bufferSize;
+    text   = marker->buffer->allocation.text;
+    while (offset >= 0 && offset < max && (*until)(text[offset]) == 0)
+        offset += step;
+    marker->offset = offset;
+    if (offset < 0) {
+        marker->offset = 0;
+        return false;
+    }
+    if (offset >= max) {
+        marker->offset = max - 1;
+        return false;
+    }
+    return true;
+}
+
+static int isNewLine(int c) { return c == '\n'; }
+int moveEditorMarkerToNewline(EditorMarker *m, int direction) {
+    return runWithEditorMarkerUntil(m, isNewLine, direction);
+}
+
+static int isNonBlank(int c) {return ! isspace(c);}
+int moveEditorMarkerToNonBlank(EditorMarker *m, int direction) {
+    return runWithEditorMarkerUntil(m, isNonBlank, direction);
+}
+
+static int isNonBlankOrNewline(int c) {return c=='\n' || ! isspace(c);}
+int        moveEditorMarkerToNonBlankOrNewline(EditorMarker *m, int direction) {
+    return runWithEditorMarkerUntil(m, isNonBlankOrNewline, direction);
+}
+
+static int isNotIdentPart(int c) {return !isalnum(c) && c!='_' && c!='$';}
+int        moveEditorMarkerBeyondIdentifier(EditorMarker *m, int direction) {
+    return runWithEditorMarkerUntil(m, isNotIdentPart, direction);
 }
 
 void removeEditorMarkerFromBufferWithoutFreeing(EditorMarker *marker) {

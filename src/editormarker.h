@@ -31,6 +31,11 @@ extern bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2);
 
+extern int moveEditorMarkerToNewline(EditorMarker *m, int direction);
+extern int moveEditorMarkerToNonBlank(EditorMarker *m, int direction);
+extern int moveEditorMarkerBeyondIdentifier(EditorMarker *m, int direction);
+extern int moveEditorMarkerToNonBlankOrNewline(EditorMarker *m, int direction);
+
 extern void removeEditorMarkerFromBufferWithoutFreeing(EditorMarker *marker);
 extern void freeEditorMarker(EditorMarker *marker);
 extern void freeEditorMarkerListButNotMarkers(EditorMarkerList *list);
