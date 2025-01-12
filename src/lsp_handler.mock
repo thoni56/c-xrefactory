@@ -3,22 +3,26 @@
 #include "lsp_handler.h"
 
 
-void handle_initialize(cJSON *request) {
+void handle_initialize(JSON *request) {
     mock(request);
 }
 
-void handle_code_action(cJSON *request) {
+void handle_code_action(JSON *request) {
     mock(request);
 }
 
-void handle_exit(cJSON *request) {
+void handle_did_open(JSON *request) {
     mock(request);
 }
 
-void handle_method_not_found(cJSON *request) {
+void handle_exit(JSON *request) {
     mock(request);
 }
 
-void handle_shutdown(cJSON *request) {
+void handle_method_not_found(JSON *request) {
+    mock(request);
+}
+
+void handle_shutdown(JSON *request) {
     mock(request);
 }
