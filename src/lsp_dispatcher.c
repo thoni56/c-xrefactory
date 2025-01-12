@@ -17,6 +17,7 @@ typedef struct dispatchEntry {
 
 DispatchEntry dispatch[] = {
     {"initialize", handle_initialize},
+    {"initialized", handle_initialized},
     {"shutdown", handle_shutdown},
     {"exit", handle_exit},
 

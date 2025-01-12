@@ -6,6 +6,7 @@
 
 /* Requests will *not* be deleted since they are allocated by caller */
 extern void handle_initialize(JSON *request);
+extern void handle_initialized(JSON *notification);
 extern void handle_code_action(JSON *request);
 extern void handle_did_open(JSON *notification);
 extern void handle_shutdown(JSON *request);

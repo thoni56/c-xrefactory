@@ -7,22 +7,26 @@ void handle_initialize(JSON *request) {
     mock(request);
 }
 
+void handle_initialized(JSON *notification) {
+    mock(notification);
+}
+
 void handle_code_action(JSON *request) {
     mock(request);
 }
 
-void handle_did_open(JSON *request) {
-    mock(request);
+void handle_did_open(JSON *notification) {
+    mock(notification);
 }
 
 void handle_exit(JSON *request) {
     mock(request);
 }
 
-void handle_method_not_found(JSON *request) {
+void handle_shutdown(JSON *request) {
     mock(request);
 }
 
-void handle_shutdown(JSON *request) {
+void handle_method_not_found(JSON *request) {
     mock(request);
 }

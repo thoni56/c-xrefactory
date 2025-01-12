@@ -21,6 +21,10 @@ void handle_initialize(JSON *request) {
     send_response_and_delete(response);
 }
 
+void handle_initialized(JSON *notification) {
+    /* Just ignore it for now... */
+}
+
 /* What code actions are available at this location? */
 void handle_code_action(JSON *request) {
     log_trace("LSP: Handling 'textDocument/codeAction'");
@@ -96,7 +100,7 @@ void handle_exit(JSON *request) {
 }
 
 void handle_method_not_found(JSON *request) {
-    log_trace("LSP: Handling method not found");
+    log_trace("LSP: Handling 'method not found'");
 
     JSON *response = create_lsp_message_with_id(id_of_request(request));
 
