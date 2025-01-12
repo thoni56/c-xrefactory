@@ -47,11 +47,15 @@ EditorMarker *newEditorMarkerForPosition(Position position) {
     return marker;
 }
 
+EditorMarker *duplicateEditorMarker(EditorMarker *marker) {
+    return newEditorMarker(marker->buffer, marker->offset);
+}
+
 void moveEditorMarkerToLineAndColumn(EditorMarker *marker, int line, int col) {
-    char           *text, *textMax;
-    int    ln;
-    EditorBuffer   *buffer;
-    int             c;
+    char *text, *textMax;
+    int ln;
+    EditorBuffer *buffer;
+    int c;
 
     assert(marker);
     buffer = marker->buffer;
@@ -118,6 +122,23 @@ void freeEditorMarker(EditorMarker *marker) {
     free(marker);
 }
 
+
+void freeEditorMarkerListButNotMarkers(EditorMarkerList *occs) {
+    for (EditorMarkerList *o = occs; o != NULL;) {
+        EditorMarkerList *next = o->next; /* Save next as we are freeing 'o' */
+        free(o);
+        o = next;
+    }
+}
+
+void freeEditorMarkerListAndMarkers(EditorMarkerList *occs) {
+    for (EditorMarkerList *o = occs; o != NULL;) {
+        EditorMarkerList *next = o->next; /* Save next as we are freeing 'o' */
+        freeEditorMarker(o->marker);
+        free(o);
+        o = next;
+    }
+}
 
 void editorDumpMarker(EditorMarker *mm) {
     char tmpBuff[TMP_BUFF_SIZE];

@@ -49,12 +49,10 @@ extern time_t editorFileModificationTime(char *path);
 
 extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next);
 
-
 extern EditorMarkerList *convertReferencesToEditorMarkers(Reference *references);
 extern Reference        *convertEditorMarkersToReferences(EditorMarkerList **markerList);
 
 extern void          editorDumpRegionList(EditorRegionList *mml);
-extern EditorMarker *duplicateEditorMarker(EditorMarker *mm);
 extern int           countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2);
 extern bool          runWithEditorMarkerUntil(EditorMarker *m, int (*until)(int), int step);
 extern int           moveEditorMarkerToNewline(EditorMarker *m, int direction);
@@ -63,10 +61,8 @@ extern int           moveEditorMarkerBeyondIdentifier(EditorMarker *m, int direc
 extern int           moveEditorMarkerToNonBlankOrNewline(EditorMarker *m, int direction);
 extern void removeBlanksAtEditorMarker(EditorMarker *mm, int direction, EditorUndo **undo);
 extern void          editorDumpUndoList(EditorUndo *uu);
-extern void          moveEditorMarkerToLineAndColumn(EditorMarker *m, int line, int col);
 extern void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2, EditorMarkerList **diff1,
                                      EditorMarkerList **diff2);
-extern void freeEditorMarkerListButNotMarkers(EditorMarkerList *occs);
 extern void freeEditorMarkersAndRegionList(EditorRegionList *occs);
 extern void sortEditorRegionsAndRemoveOverlaps(EditorRegionList **regions);
 extern void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
@@ -77,7 +73,6 @@ extern void restrictEditorMarkersToRegions(EditorMarkerList **mm, EditorRegionLi
 extern EditorMarker     *createEditorMarkerForBufferBegin(EditorBuffer *buffer);
 extern EditorMarker     *createEditorMarkerForBufferEnd(EditorBuffer *buffer);
 extern EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer);
-extern void              freeEditorMarkerListAndMarkers(EditorMarkerList *occs);
 extern bool editorMapOnNonExistantFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), SearchDepth depth, char *a1,
                                         char *a2, Completions *a3, void *a4, int *a5);
 

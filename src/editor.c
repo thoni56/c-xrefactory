@@ -100,10 +100,6 @@ static bool editorRegionListBefore(EditorRegionList *l1, EditorRegionList *l2) {
     return false;
 }
 
-EditorMarker *duplicateEditorMarker(EditorMarker *marker) {
-    return newEditorMarker(marker->buffer, marker->offset);
-}
-
 void freeTextSpace(char *space, int index) {
     EditorMemoryBlock *sp;
     sp = (EditorMemoryBlock *) space;
@@ -555,23 +551,6 @@ void freeEditorMarkersAndRegionList(EditorRegionList *occs) {
         EditorRegionList *next = o->next; /* Save next as we are freeing 'o' */
         freeEditorMarker(o->region.begin);
         freeEditorMarker(o->region.end);
-        free(o);
-        o = next;
-    }
-}
-
-void freeEditorMarkerListButNotMarkers(EditorMarkerList *occs) {
-    for (EditorMarkerList *o = occs; o != NULL;) {
-        EditorMarkerList *next = o->next; /* Save next as we are freeing 'o' */
-        free(o);
-        o = next;
-    }
-}
-
-void freeEditorMarkerListAndMarkers(EditorMarkerList *occs) {
-    for (EditorMarkerList *o = occs; o != NULL;) {
-        EditorMarkerList *next = o->next; /* Save next as we are freeing 'o' */
-        freeEditorMarker(o->marker);
         free(o);
         o = next;
     }

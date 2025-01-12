@@ -22,6 +22,8 @@ typedef struct editorMarkerList {
 extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset);
 extern EditorMarker *newEditorMarkerForPosition(Position position);
 
+extern EditorMarker *duplicateEditorMarker(EditorMarker *marker);
+
 extern void attachMarkerToBuffer(EditorMarker *marker, EditorBuffer *buffer);
 extern void moveEditorMarkerToLineAndColumn(EditorMarker *marker, int line, int col);
 
@@ -31,6 +33,8 @@ extern bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2);
 
 extern void removeEditorMarkerFromBufferWithoutFreeing(EditorMarker *marker);
 extern void freeEditorMarker(EditorMarker *marker);
+extern void freeEditorMarkerListButNotMarkers(EditorMarkerList *list);
+extern void freeEditorMarkerListAndMarkers(EditorMarkerList *list);
 
 extern void editorDumpMarker(EditorMarker *marker);
 extern void editorDumpMarkerList(EditorMarkerList *markerList);
