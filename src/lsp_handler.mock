@@ -15,6 +15,10 @@ void handle_code_action(JSON *request) {
     mock(request);
 }
 
+void handle_execute_command(JSON *request) {
+    mock(request);
+}
+
 void handle_did_open(JSON *notification) {
     mock(notification);
 }

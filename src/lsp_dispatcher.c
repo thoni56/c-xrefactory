@@ -21,8 +21,9 @@ DispatchEntry dispatch[] = {
     {"shutdown", handle_shutdown},
     {"exit", handle_exit},
 
+    {"textDocument/didOpen", handle_did_open},
     {"textDocument/codeAction", handle_code_action},
-    {"textDocument/didOpen", handle_did_open}
+    {"workspace/executeCommand", handle_execute_command}
 };
 
 LspReturnCode dispatch_lsp_message(JSON *message) {
