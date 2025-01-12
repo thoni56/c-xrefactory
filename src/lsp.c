@@ -65,11 +65,11 @@ int lsp_server(FILE *input_stream) {
     int result = LSP_RETURN_OK;
     while (result == LSP_RETURN_OK) {
         unsigned long content_length = wait_for_and_parse_lsp_header(input_stream);
-        JSON *request = lsp_parse_content(input_stream, content_length);
+        JSON *message = lsp_parse_content(input_stream, content_length);
 
-        result = dispatch_lsp_message(request);
+        result = dispatch_lsp_message(message);
 
-        delete_json(request);
+        delete_json(message);
         if (result == LSP_RETURN_ERROR_METHOD_NOT_FOUND)
             result = LSP_RETURN_OK;
     }
