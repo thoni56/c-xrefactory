@@ -757,11 +757,22 @@ static void initLogging(int argc, char *argv[]) {
         logCommands(argc, argv);
 }
 
+static void checkForStartupDelay(int argc, char *argv[]) {
+    for (int i=0; i<argc; i++) {
+        if (strncmp(argv[i], "-delay=", 7)==0) {
+            sleep(atoi(&argv[i][7]));
+            return;
+        }
+    }
+}
+
 /* *********************************************************************** */
 /* **************************       MAIN      **************************** */
 /* *********************************************************************** */
 
 int main(int argc, char *argv[]) {
+    checkForStartupDelay(argc, argv);
+
     /* Options are read very late down below, so we need to setup logging before then */
     initLogging(argc, argv);
     ENTER();
