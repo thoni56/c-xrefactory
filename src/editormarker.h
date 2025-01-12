@@ -18,14 +18,26 @@ typedef struct editorMarkerList {
     struct editorMarkerList *next;
 } EditorMarkerList;
 
+typedef struct editorRegion {
+    EditorMarker *begin;
+    EditorMarker *end;
+} EditorRegion;
+
+typedef struct editorRegionList {
+    EditorRegion      region;
+    struct editorRegionList *next;
+} EditorRegionList;
+
 
 extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset);
 extern EditorMarker *newEditorMarkerForPosition(Position position);
 
-extern EditorMarker     *createEditorMarkerForBufferBegin(EditorBuffer *buffer);
-extern EditorMarker     *createEditorMarkerForBufferEnd(EditorBuffer *buffer);
+extern EditorMarker *createEditorMarkerForBufferBegin(EditorBuffer *buffer);
+extern EditorMarker *createEditorMarkerForBufferEnd(EditorBuffer *buffer);
 
 extern EditorMarker *duplicateEditorMarker(EditorMarker *marker);
+
+extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next);
 
 extern void attachMarkerToBuffer(EditorMarker *marker, EditorBuffer *buffer);
 extern void moveEditorMarkerToLineAndColumn(EditorMarker *marker, int line, int col);
@@ -39,6 +51,11 @@ extern int moveEditorMarkerToNonBlank(EditorMarker *m, int direction);
 extern int moveEditorMarkerBeyondIdentifier(EditorMarker *m, int direction);
 extern int moveEditorMarkerToNonBlankOrNewline(EditorMarker *m, int direction);
 extern int countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2);
+
+extern void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
+                                                   EditorRegionList **inRegions,
+                                                   EditorMarkerList **outInsiders,
+                                                   EditorMarkerList **outOutsiders);
 
 extern void removeEditorMarkerFromBufferWithoutFreeing(EditorMarker *marker);
 extern void freeEditorMarker(EditorMarker *marker);

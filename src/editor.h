@@ -12,16 +12,6 @@
 #include "undo.h"
 
 
-typedef struct editorRegion {
-    EditorMarker *begin;
-    EditorMarker *end;
-} EditorRegion;
-
-typedef struct editorRegionList {
-    EditorRegion      region;
-    struct editorRegionList *next;
-} EditorRegionList;
-
 
 // EditorBuffer functions...
 extern void replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize, char *str,
@@ -47,8 +37,6 @@ extern bool   editorFileExists(char *path);
 extern size_t editorFileSize(char *path);
 extern time_t editorFileModificationTime(char *path);
 
-extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next);
-
 extern EditorMarkerList *convertReferencesToEditorMarkers(Reference *references);
 extern Reference        *convertEditorMarkersToReferences(EditorMarkerList **markerList);
 
@@ -60,11 +48,6 @@ extern void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList 
                                      EditorMarkerList **diff2);
 extern void freeEditorMarkersAndRegionList(EditorRegionList *occs);
 extern void sortEditorRegionsAndRemoveOverlaps(EditorRegionList **regions);
-
-extern void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
-                                                   EditorRegionList **inRegions,
-                                                   EditorMarkerList **outInsiders,
-                                                   EditorMarkerList **outOutsiders);
 
 extern void restrictEditorMarkersToRegions(EditorMarkerList **mm, EditorRegionList **regions);
 extern EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer);

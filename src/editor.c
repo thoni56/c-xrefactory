@@ -38,19 +38,6 @@ static EditorMemoryBlock *editorMemory[MAX_EDITOR_MEMORY_BLOCK_SIZE_BITS];
 #include "editorbuffertable.h"
 
 
-EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next) {
-    EditorRegionList *regionList;
-
-    regionList = malloc(sizeof(EditorRegionList));
-    regionList->region.begin = begin;
-    regionList->region.end = end;
-    regionList->next = next;
-
-    return regionList;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////
 void editorInit(void) {
     initEditorBufferTable();
 }
@@ -84,19 +71,6 @@ bool editorFileExists(char *path) {
 
 static void editorError(int errCode, char *message) {
     errorMessage(errCode, message);
-}
-
-static bool editorRegionListBefore(EditorRegionList *l1, EditorRegionList *l2) {
-    if (editorMarkerBefore(l1->region.begin, l2->region.begin))
-        return true;
-    if (editorMarkerBefore(l2->region.begin, l1->region.begin))
-        return false;
-    // region beginnings are equal, check end
-    if (editorMarkerBefore(l1->region.end, l2->region.end))
-        return true;
-    if (editorMarkerBefore(l2->region.end, l1->region.end))
-        return false;
-    return false;
 }
 
 void freeTextSpace(char *space, int index) {
@@ -485,16 +459,6 @@ Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP
     return reference;
 }
 
-void freeEditorMarkersAndRegionList(EditorRegionList *occs) {
-    for (EditorRegionList *o = occs; o != NULL;) {
-        EditorRegionList *next = o->next; /* Save next as we are freeing 'o' */
-        freeEditorMarker(o->region.begin);
-        freeEditorMarker(o->region.end);
-        free(o);
-        o = next;
-    }
-}
-
 #if 0
 void editorDumpBuffer(EditorBuffer *buff) {
     /* TODO: Should really put this in log() */
@@ -600,84 +564,6 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
         *diff2 = l;
         l2 = l2->next;
     }
-}
-
-void sortEditorRegionsAndRemoveOverlaps(EditorRegionList **regions) {
-    LIST_MERGE_SORT(EditorRegionList, *regions, editorRegionListBefore);
-    for (EditorRegionList *region = *regions; region != NULL; region = region->next) {
-        EditorRegionList *next = region->next;
-        if (next != NULL && region->region.begin->buffer == next->region.begin->buffer) {
-            assert(region->region.begin->buffer
-                   == region->region.end->buffer); // region consistency check
-            assert(next->region.begin->buffer
-                   == next->region.end->buffer); // region consistency check
-            assert(region->region.begin->offset <= next->region.begin->offset);
-            EditorMarker *newEnd = NULL;
-            if (next->region.end->offset <= region->region.end->offset) {
-                // second inside first
-                newEnd = region->region.end;
-                freeEditorMarker(next->region.begin);
-                freeEditorMarker(next->region.end);
-            } else if (next->region.begin->offset <= region->region.end->offset) {
-                // they have common part
-                newEnd = next->region.end;
-                freeEditorMarker(next->region.begin);
-                freeEditorMarker(region->region.end);
-            }
-            if (newEnd != NULL) {
-                region->region.end = newEnd;
-                region->next       = next->next;
-                free(next);
-                next = NULL;
-                continue;
-            }
-        }
-    }
-}
-
-void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
-                                            EditorRegionList **inRegions,
-                                            EditorMarkerList **outInsiders,
-                                            EditorMarkerList **outOutsiders) {
-    EditorMarkerList *markers1, *markers2;
-    EditorRegionList *regions;
-
-    *outInsiders = NULL;
-    *outOutsiders = NULL;
-
-    LIST_MERGE_SORT(EditorMarkerList, *inMarkers, editorMarkerListBefore);
-    sortEditorRegionsAndRemoveOverlaps(inRegions);
-
-    LIST_REVERSE(EditorRegionList, *inRegions);
-    LIST_REVERSE(EditorMarkerList, *inMarkers);
-
-    //&editorDumpRegionList(*inRegions);
-    //&editorDumpMarkerList(*inMarkers);
-
-    regions = *inRegions;
-    markers1= *inMarkers;
-    while (markers1!=NULL) {
-        markers2 = markers1->next;
-        while (regions!=NULL && editorMarkerAfter(regions->region.begin, markers1->marker))
-            regions = regions->next;
-        if (regions!=NULL && editorMarkerAfter(regions->region.end, markers1->marker)) {
-            // is inside
-            markers1->next = *outInsiders;
-            *outInsiders = markers1;
-        } else {
-            // is outside
-            markers1->next = *outOutsiders;
-            *outOutsiders = markers1;
-        }
-        markers1 = markers2;
-    }
-
-    *inMarkers = NULL;
-    LIST_REVERSE(EditorRegionList, *inRegions);
-    LIST_REVERSE(EditorMarkerList, *outInsiders);
-    LIST_REVERSE(EditorMarkerList, *outOutsiders);
-    //&editorDumpMarkerList(*outInsiders);
-    //&editorDumpMarkerList(*outOutsiders);
 }
 
 void restrictEditorMarkersToRegions(EditorMarkerList **mm, EditorRegionList **regions) {
