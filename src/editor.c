@@ -467,31 +467,6 @@ void editorDumpBuffer(EditorBuffer *buff) {
     }
 }
 
-void editorDumpBuffers(void) {
-    log_trace("[editorDumpBuffers] start");
-    for (int i=0; i != -1 ; i = getNextExistingEditorBufferIndex(i+1)) {
-        for (EditorBufferList *ll = getEditorBuffer(i); ll != NULL; ll = ll->next) {
-            log_trace("%d : %s==%s, %d", i, ll->buffer->name, ll->buffer->fileName,
-                      ll->buffer->textLoaded);
-        }
-    }
-    log_trace("[editorDumpBuffers] end");
-}
-
-void editorDumpRegionList(EditorRegionList *mml) {
-    log_trace("[dumping editor regions]");
-    for (EditorRegionList *mm=mml; mm!=NULL; mm=mm->next) {
-        if (mm->region.begin == NULL || mm->region.end == NULL) {
-            log_trace("%ld: [null]", (unsigned long)mm);
-        } else {
-            log_trace("%ld: [%s: %d - %d] --> %c - %c", (unsigned long)mm,
-                      simpleFileName(mm->region.begin->buffer->name), mm->region.begin->offset,
-                      mm->region.end->offset, CHAR_ON_MARKER(mm->region.begin), CHAR_ON_MARKER(mm->region.end));
-        }
-    }
-    log_trace("[dumpend] of editor regions]");
-}
-
 void editorDumpUndoList(EditorUndo *undo) {
     log_trace("[dumping editor undo list]");
     while (undo != NULL) {

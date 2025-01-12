@@ -242,6 +242,22 @@ void sortEditorRegionsAndRemoveOverlaps(EditorRegionList **regions) {
     }
 }
 
+#if 0
+static void editorDumpRegionList(EditorRegionList *mml) {
+    log_trace("[dumping editor regions]");
+    for (EditorRegionList *mm=mml; mm!=NULL; mm=mm->next) {
+        if (mm->region.begin == NULL || mm->region.end == NULL) {
+            log_trace("%ld: [null]", (unsigned long)mm);
+        } else {
+            log_trace("%ld: [%s: %d - %d] --> %c - %c", (unsigned long)mm,
+                      simpleFileName(mm->region.begin->buffer->fileName), mm->region.begin->offset,
+                      mm->region.end->offset, CHAR_ON_MARKER(mm->region.begin), CHAR_ON_MARKER(mm->region.end));
+        }
+    }
+    log_trace("[dumpend] of editor regions]");
+}
+#endif
+
 static void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
                                                    EditorRegionList **inRegions,
                                                    EditorMarkerList **outInsiders,
@@ -258,8 +274,8 @@ static void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
     LIST_REVERSE(EditorRegionList, *inRegions);
     LIST_REVERSE(EditorMarkerList, *inMarkers);
 
-    //&editorDumpRegionList(*inRegions);
-    //&editorDumpMarkerList(*inMarkers);
+    //& editorDumpRegionList(*inRegions);
+    //& editorDumpMarkerList(*inMarkers);
 
     regions = *inRegions;
     markers1= *inMarkers;
