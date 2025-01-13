@@ -46,7 +46,6 @@ extern EditorBuffer *openEditorBufferFromPreload(char *fileName, char *loadedFro
 extern EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name);
 extern void renameEditorBuffer(EditorBuffer *buffer, char *newName, EditorUndo **undo);
 
-// Hopefully temporary
-void setEditorBufferModified(EditorBuffer *buffer);
+extern void setEditorBufferModified(EditorBuffer *buffer);
 
 #endif
