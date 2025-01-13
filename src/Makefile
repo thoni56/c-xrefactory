@@ -149,11 +149,10 @@ endif
 all: unit build
 
 #########################################################################
-# For production - no smartness just compile, ensure clean production build
+# For production - no smartness just compile
 .PHONY:prod
-prod: COVERAGE =
+prod: COVERAGE = -o3
 prod:
-	$(MAKE) clean
 	$(MAKE) c-xref
 
 #########################################################################
