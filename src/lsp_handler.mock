@@ -23,6 +23,10 @@ void handle_did_open(JSON *notification) {
     mock(notification);
 }
 
+void handle_cancel(JSON *notification) {
+    mock(notification);
+}
+
 void handle_exit(JSON *request) {
     mock(request);
 }

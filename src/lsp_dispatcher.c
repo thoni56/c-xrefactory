@@ -23,7 +23,9 @@ DispatchEntry dispatch[] = {
 
     {"textDocument/didOpen", handle_did_open},
     {"textDocument/codeAction", handle_code_action},
-    {"workspace/executeCommand", handle_execute_command}
+    {"workspace/executeCommand", handle_execute_command},
+
+    {"$/cancelRequest", handle_cancel}
 };
 
 LspReturnCode dispatch_lsp_message(JSON *message) {

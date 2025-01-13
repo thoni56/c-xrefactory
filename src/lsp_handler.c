@@ -103,6 +103,10 @@ void handle_did_open(JSON *notification) {
     loadTextIntoEditorBuffer(buffer, time(NULL), text);
 }
 
+void handle_cancel(JSON *notification) {
+    // For now there is nothing that can be cancelled
+}
+
 void handle_shutdown(JSON *request) {
     log_trace("LSP: Handling 'shutdown'");
 
