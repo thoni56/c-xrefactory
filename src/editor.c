@@ -333,35 +333,31 @@ void loadAllOpenedEditorBuffers(void) {
     }
 }
 
-void removeBlanksAtEditorMarker(EditorMarker *mm, int direction, EditorUndo **undo) {
-    int moffset;
-
-    moffset = mm->offset;
+void removeBlanksAtEditorMarker(EditorMarker *marker, int direction, EditorUndo **undo) {
+    int offset = marker->offset;
     if (direction < 0) {
-        mm->offset --;
-        moveEditorMarkerToNonBlank(mm, -1);
-        mm->offset++;
-        replaceStringInEditorBuffer(mm->buffer, mm->offset, moffset - mm->offset, "", 0, undo);
+        marker->offset--;
+        moveEditorMarkerToNonBlank(marker, -1);
+        marker->offset++;
+        replaceStringInEditorBuffer(marker->buffer, marker->offset, offset - marker->offset, "", 0, undo);
     } else if (direction > 0) {
-        moveEditorMarkerToNonBlank(mm, 1);
-        replaceStringInEditorBuffer(mm->buffer, moffset, mm->offset - moffset, "", 0, undo);
+        moveEditorMarkerToNonBlank(marker, 1);
+        replaceStringInEditorBuffer(marker->buffer, offset, marker->offset - offset, "", 0, undo);
     } else {
         // both directions
-        mm->offset --;
-        moveEditorMarkerToNonBlank(mm, -1);
-        mm->offset++;
-        moffset = mm->offset;
-        moveEditorMarkerToNonBlank(mm, 1);
-        replaceStringInEditorBuffer(mm->buffer, moffset, mm->offset - moffset, "", 0, undo);
+        marker->offset --;
+        moveEditorMarkerToNonBlank(marker, -1);
+        marker->offset++;
+        offset = marker->offset;
+        moveEditorMarkerToNonBlank(marker, 1);
+        replaceStringInEditorBuffer(marker->buffer, offset, marker->offset - offset, "", 0, undo);
     }
 }
 
 EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
-    Reference        *reference;
-    EditorMarkerList *markerList;
+    EditorMarkerList *markerList = NULL;
+    Reference        *reference = references;
 
-    markerList = NULL;
-    reference   = references;
     while (reference != NULL) {
         while (reference != NULL && !isVisibleUsage(reference->usage))
             reference = reference->next;
