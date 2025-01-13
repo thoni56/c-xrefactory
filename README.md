@@ -26,8 +26,17 @@ _C_ & _Yacc_.
 
 ## Install
 
-The easiest, and currently only supported, way to install is using
-`el-get`:
+### From repo:
+
+```
+git clone https://github.com/thoni56/c-xrefactory
+emacs -l c-xrefactory/load.el
+```
+
+>[!NOTE]
+>You can clone the repo anywhere and use a full path to `load.el`.
+
+### Using `el-get`:
 
     M-x el-get-install<ENTER>c-xrefactory<ENTER>
 
