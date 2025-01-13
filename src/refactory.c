@@ -136,7 +136,6 @@ static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], char *project,
 static void ensureReferencesAreUpdated(char *project) {
     int argumentCount;
     char *argumentVector[MAX_NARGV_OPTIONS_COUNT];
-    int xrefUpdateOptionsCount;
 
     // following would be too long to be allocated on stack
     static Options savedOptions;
@@ -154,7 +153,7 @@ static void ensureReferencesAreUpdated(char *project) {
 
     setArguments(argumentVector, project, NULL, NULL);
     argumentCount = argument_count(argumentVector);
-    xrefUpdateOptionsCount = argument_count(xrefUpdateOptions);
+    int xrefUpdateOptionsCount = argument_count(xrefUpdateOptions);
     for (int i = 1; i < xrefUpdateOptionsCount; i++) {
         argumentVector[argumentCount++] = xrefUpdateOptions[i];
     }
