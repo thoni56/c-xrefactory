@@ -185,15 +185,15 @@ There are both "-opt=value" and "-opt value" format options
   The S_options structure is used to save or possibly create new sets, when
   refactoring. Then it should only contain what's needed for that.
 * TODO Make all modules independent on main
-** DONE Document why main.h is needed
-** DONE Make commons.c independent of main
-** DONE Make options.c independent of main
-** DONE Make cxref.c independent of main
 ** TODO Make refactory.c independent of main
    This probably requires a lot more understanding of refactory.c and why
    it is structured the way it is, it seems to be calling on itself and
    main processing. Also refactory task is always performed in a separate
    process, what happens if we specify -refactory as a PPC command?
+** DONE Document why main.h is needed
+** DONE Make commons.c independent of main
+** DONE Make options.c independent of main
+** DONE Make cxref.c independent of main
 * TODO Remove all -olcx commands that are not used by the editor interfaces?
 * TODO Ensure each header file is not dependent on the fact that some other
   header file is included before it. (Could this be done by taking each
@@ -221,12 +221,11 @@ There are both "-opt=value" and "-opt value" format options
 
 * TODO Naming. Generally it is heavy on short, write-only naming, we should
   move towards full names as much as possible
-
-** TODO Remove S_, s_ and other naming conventions
 ** TODO Use actual typedef names where ever possible
+** DONE Remove S_, s_ and other naming conventions
+
 * TODO Macros. There are many things that might need the magic of macros, but we
   should watch out for "macro for optimisation" and remove that.
-
 * DONE Cannot mock structs as arguments like in symbol.mock
 Yes we can! By converting it to a pointer in the mock function
 * DONE Rename vApplClass - but to what? what is it?
@@ -293,10 +292,8 @@ We are only using the following attributes of the struct stat:
 * DONE Update to rxi/log.c of 2020 - requires reimplementing `log_with_line()`
 * DONE Re-generate `c-xrefprotocol.el` on builds on src rather than on prod builds to avoid package update problems
 * DONE Add menu for running the tutorial (in C or Java)
-** TODO Elisp function to copy cexercise to /tmp and visit it
-** TODO Elisp function to copy jexercise to /tmp and visit it
-** TODO Menu for the two exercises
-*** TODO Add end of old INSTALL to README.md
+** DONE Elisp function to copy cexercise to /tmp and visit it
+** DONE Menu for the two exercises
 * DONE Investigate why test_uint32_t fails on some systems
 Maybe they don't define the required standard types using header files, or we need some
 flag for C99 compatibility? Should we revert to pre-defining the standard symbols?
