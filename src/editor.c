@@ -80,6 +80,11 @@ void freeTextSpace(char *space, int index) {
     editorMemory[index] = sp;
 }
 
+void loadTextIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, const char *text) {
+    allocateNewEditorBufferTextSpace(buffer, strlen(text));
+    strcpy(buffer->allocation.text, text);
+}
+
 void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize) {
     allocateNewEditorBufferTextSpace(buffer, fileSize);
 

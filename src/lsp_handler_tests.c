@@ -10,6 +10,7 @@
 #include "log.h"
 #include "json_utils.h"
 
+#include "editor.mock"
 #include "editorbuffer.mock"
 #include "editorbuffertable.mock"
 #include "filetable.mock"
@@ -121,6 +122,7 @@ Ensure(LspHandler, creates_code_action) {
 
 Ensure(LspHandler, handles_did_open) {
     // Define the expected request
+    const char *text = "int main() { return 0; }";
     const char *did_open_request_json =
         "{"
         "    \"jsonrpc\": \"2.0\","
@@ -135,7 +137,10 @@ Ensure(LspHandler, handles_did_open) {
         "}";
     JSON *did_open_request = parse_json(did_open_request_json);
 
-    expect(createNewEditorBuffer, when(fileName, is_equal_to_string("/path/to/file.c")));
+    EditorBuffer buffer;
+    expect(createNewEditorBuffer, when(fileName, is_equal_to_string("/path/to/file.c")),
+        will_return(&buffer));
+    expect(loadTextIntoEditorBuffer, when(buffer, is_equal_to(&buffer)), when(text, is_equal_to_string(text)));
 
     // Action
     handle_did_open(did_open_request);

@@ -76,6 +76,10 @@ void freeTextSpace(char *space, int index) {
     mock(space, index);
 }
 
+void loadTextIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, const char *text) {
+    mock(buffer, modificationTime, text);
+}
+
 void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize) {
     mock(buffer, modificationTime, fileSize);
 }

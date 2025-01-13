@@ -18,7 +18,6 @@ extern bool   editorFileExists(char *path);
 extern size_t editorFileSize(char *path);
 extern time_t editorFileModificationTime(char *path);
 
-// EditorBuffer functions...
 extern void replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize, char *str,
                                         int strlength, EditorUndo **undo);
 extern void moveBlockInEditorBuffer(EditorMarker *src, EditorMarker *dest, int size, EditorUndo **undo);
@@ -28,9 +27,9 @@ extern void closeEditorBufferIfCloseable(char *name);
 extern void closeAllEditorBuffersIfClosable(void);
 extern void closeAllEditorBuffers(void);
 
-// Hopefully temporary for extraction of EditorBuffer
 extern void freeTextSpace(char *space, int index);
 extern void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize);
+extern void loadTextIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, const char *text);
 extern void allocateNewEditorBufferTextSpace(EditorBuffer *buffer, int size);
 
 extern EditorMarkerList *convertReferencesToEditorMarkers(Reference *references);

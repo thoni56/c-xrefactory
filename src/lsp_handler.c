@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "editor.h"
 #include "editorbuffer.h"
 #include "editorbuffertable.h"
 #include "filetable.h"
@@ -98,7 +99,8 @@ void handle_did_open(JSON *notification) {
     log_trace("LSP: Opened file '%s', language '%s', text = '%s'", uri, languageId, text);
 
     char *fileName = filename_from_uri(uri);
-    createNewEditorBuffer(fileName, NULL, time(NULL), strlen(text));
+    EditorBuffer *buffer = createNewEditorBuffer(fileName, NULL, time(NULL), strlen(text));
+    loadTextIntoEditorBuffer(buffer, time(NULL), text);
 }
 
 void handle_shutdown(JSON *request) {
