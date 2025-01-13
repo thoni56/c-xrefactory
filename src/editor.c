@@ -81,6 +81,8 @@ void freeTextSpace(char *space, int index) {
 }
 
 void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize) {
+    allocateNewEditorBufferTextSpace(buffer, fileSize);
+
     char *text = buffer->allocation.text;
     assert(text != NULL);
 
@@ -326,10 +328,7 @@ void loadAllOpenedEditorBuffers(void) {
                 assert(l->buffer->loadedFromFile == NULL || l->buffer->loadedFromFile != l->buffer->fileName);
                 char *fileName = l->buffer->loadedFromFile? l->buffer->loadedFromFile: l->buffer->fileName;
                 if (fileExists(fileName)) {
-                    int size = fileSize(fileName);
-                    allocateNewEditorBufferTextSpace(l->buffer, size);
-                    loadFileIntoEditorBuffer(l->buffer,
-                                             fileModificationTime(fileName), size);
+                    loadFileIntoEditorBuffer(l->buffer, fileModificationTime(fileName), fileSize(fileName));
                     log_trace("loading '%s' into '%s'", fileName, l->buffer->fileName);
                 }
             }

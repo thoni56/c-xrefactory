@@ -112,7 +112,6 @@ EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName) {
         if (fileExists(fileName) && !isDirectory(fileName)) {
             editorBuffer = createNewEditorBuffer(fileName, NULL, fileModificationTime(fileName),
                                                  fileSize(fileName));
-            allocateNewEditorBufferTextSpace(editorBuffer, fileSize(fileName));
             loadFileIntoEditorBuffer(editorBuffer, fileModificationTime(fileName), fileSize(fileName));
         } else
             return NULL;
