@@ -1,6 +1,6 @@
-Content-Length: 78
+Content-Length: 104
 
-{"jsonrpc":"2.0","id":1,"result":{"capabilities":{"codeActionProvider":true}}}
+{"jsonrpc":"2.0","id":1,"result":{"capabilities":{"codeActionProvider":true,"definitionProvider":true}}}
 Content-Length: 38
 
 {"jsonrpc":"2.0","id":2,"result":null}
