@@ -94,7 +94,7 @@ Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
 
     expect(existsInFileTable, when(fileName, is_equal_to_string(sourceFileName1)), will_return(false));
 
-    expect(addFileNameToFileTable, when(name, is_equal_to_string(sourceFileName1)), will_return(sourceFileNumber1));
+    expect(addFileNameToFileTable, when(fileName, is_equal_to_string(sourceFileName1)), will_return(sourceFileNumber1));
 
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(sourceFileNumber1)), will_return(&fileItem1));
 

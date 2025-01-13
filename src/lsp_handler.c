@@ -4,10 +4,19 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "filetable.h"
 #include "log.h"
 #include "lsp_sender.h"
 #include "json_utils.h"
 
+
+static char *filename_from_uri(const char *uri) {
+    char *uri_prefix = "file://";
+    if (strncmp(uri, uri_prefix, strlen(uri_prefix)) == 0)
+        return (char *)&uri[strlen(uri_prefix)];
+    else
+        return NULL;
+}
 
 void handle_initialize(JSON *request) {
     log_trace("LSP: Handling 'initialize'");
@@ -17,6 +26,8 @@ void handle_initialize(JSON *request) {
     JSON *result = add_json_item(response, "result");
     JSON *capabilities = add_json_item(result, "capabilities");
     add_json_bool(capabilities, "codeActionProvider", true);
+
+    initFileTable(100);
 
     send_response_and_delete(response);
 }
@@ -77,13 +88,16 @@ void handle_did_open(JSON *notification) {
     JSON *params = get_json_item(notification, "params");
 
     JSON *textDocument = get_json_item(params, "textDocument");
-    const char *uri = get_json_string_item(textDocument, "uri");
+    char *uri = get_json_string_item(textDocument, "uri");
     const char *languageId = get_json_string_item(textDocument, "languageId");
     const char *text = get_json_string_item(textDocument, "text");
 
     log_trace("LSP: Opened file '%s', language '%s', text = '%s'", uri, languageId, text);
 
+    addFileNameToFileTable(filename_from_uri(uri));
+
     // TODO Ensure file is in the fileTable and put the text into an EditorBuffer
+
 }
 
 void handle_shutdown(JSON *request) {

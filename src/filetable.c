@@ -119,13 +119,13 @@ bool existsInFileTable(char *fileName) {
     return fileTableLookup(&fileTable, fileName) != -1;
 }
 
-int addFileNameToFileTable(char *name) {
+int addFileNameToFileTable(char *fileName) {
     int fileNumber;
     char *normalizedFileName;
     struct fileItem *createdFileItem;
 
     /* Create a fileItem on the stack, with a static normalizedFileName, returned by normalizeFileName() */
-    normalizedFileName = normalizeFileName_static(name, cwd);
+    normalizedFileName = normalizeFileName_static(fileName, cwd);
 
     /* Does it already exist? */
     if (existsInFileTable(normalizedFileName))

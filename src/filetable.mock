@@ -14,8 +14,8 @@ void initNoFileNumber(void) {
     mock();
 }
 
-int addFileNameToFileTable(char *name) {
-  return (int) mock(name);
+int addFileNameToFileTable(char *fileName) {
+  return (int) mock(fileName);
 }
 
 int addFileItemToFileTable(FileItem *fileItem) {

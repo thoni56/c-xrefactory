@@ -10,8 +10,9 @@
 #include "log.h"
 #include "json_utils.h"
 
-#include "lsp_sender.mock"
 #include "editorbuffer.mock"
+#include "filetable.mock"
+#include "lsp_sender.mock"
 
 
 Describe(LspHandler);
@@ -53,6 +54,8 @@ Ensure(LspHandler, sends_correct_initialize_response) {
         "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{\"capabilities\":{}}}";
     JSON *expected_response = parse_json(expected_response_text);
     JSON *captured_response; // A copy created by the mock function for send_response_and_delete()
+
+    expect(initFileTable);
 
     expect(send_response_and_delete, will_capture_parameter(response, captured_response));
 
@@ -129,6 +132,8 @@ Ensure(LspHandler, handles_did_open) {
         "    }"
         "}";
     JSON *did_open_request = parse_json(did_open_request_json);
+
+    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/path/to/file.c")));
 
     // Set up the mock for create_editor_buffer()
     //EditorBuffer *captured_buffer;
