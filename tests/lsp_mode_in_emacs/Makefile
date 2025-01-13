@@ -8,5 +8,10 @@ interactive:
 
 debug:
 	emacs --no-init-file --no-splash -l lsp-initialize.el -l ../../utils/rebind-for-lsp.el browsing.c 2>&1 | grep -v "Loading .*..." &
-	@read pid; \
+	@read -p "Ange PID för processen du vill debugga: " pid; \
+	if [ -z "$$pid" ]; then \
+		echo "Ingen PID angiven. Avbryter."; \
+		exit 1; \
+	fi; \
+	echo "Startar gdb mot PID $$pid..."; \
 	gdb -q -p $$pid

@@ -11,6 +11,7 @@
 #include "json_utils.h"
 
 #include "editorbuffer.mock"
+#include "editorbuffertable.mock"
 #include "filetable.mock"
 #include "lsp_sender.mock"
 
@@ -56,6 +57,7 @@ Ensure(LspHandler, sends_correct_initialize_response) {
     JSON *captured_response; // A copy created by the mock function for send_response_and_delete()
 
     expect(initFileTable);
+    expect(initEditorBufferTable);
 
     expect(send_response_and_delete, will_capture_parameter(response, captured_response));
 
@@ -133,15 +135,8 @@ Ensure(LspHandler, handles_did_open) {
         "}";
     JSON *did_open_request = parse_json(did_open_request_json);
 
-    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/path/to/file.c")));
-
-    // Set up the mock for create_editor_buffer()
-    //EditorBuffer *captured_buffer;
-    //expect(create_editor_buffer, will_capture_parameter(buffer, captured_buffer));
+    expect(createNewEditorBuffer, when(fileName, is_equal_to_string("/path/to/file.c")));
 
     // Action
     handle_did_open(did_open_request);
-
-    // TODO: Validate what happened
-
 }
