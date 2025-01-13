@@ -6468,8 +6468,9 @@ the reset was performed, nil if the reset was cancelled."
         (let ((default-directory c-xref-install-directory))
           (if (c-xref-ok-to-upgrade)
               (progn
-                (shell-command "git pull")
-                (shell-command "git checkout stable")
+                (shell-command "git fetch origin") ;; Ensure remote is updated
+                (shell-command "git checkout stable") ;; Switch to branch `stable`
+                (shell-command "git reset --hard origin/stable") ;; Sync with remote
                 (message "Pulled latest stable")
                 (c-xref-kill-xref-process nil)
                 (delete-file "src/options_config.h") ;; Trigger regeneration of version info
