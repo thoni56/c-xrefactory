@@ -1,0 +1,77 @@
+/* -*- c -*-*/
+#include <cgreen/mocks.h>
+
+#include "editormarker.h"
+
+
+EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset) {
+  return (EditorMarker *) mock(buffer, offset);
+}
+
+EditorMarker *newEditorMarkerForPosition(Position position) {
+    Position *positionP = &position;
+    return (EditorMarker*)mock(positionP);
+}
+
+EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next) {
+    return (EditorRegionList *)mock(begin, end, next);
+}
+
+void removeEditorMarkerFromBufferWithoutFreeing(EditorMarker *marker) {
+    mock(marker);
+}
+
+void freeEditorMarker(EditorMarker *marker) {
+    mock(marker);
+}
+
+void freeEditorMarkerListAndMarkers(EditorMarkerList *list) {
+    mock(list);
+}
+
+void freeEditorMarkerListButNotMarkers(EditorMarkerList *list) {
+    mock(list);
+}
+
+void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2,
+                              EditorMarkerList **diff1, EditorMarkerList **diff2) {
+    mock(list1, list2, diff1, diff2);
+}
+
+void moveEditorMarkerToLineAndColumn(EditorMarker *marker, int line, int col) {
+    mock(marker, line, col);
+}
+
+EditorMarker *duplicateEditorMarker(EditorMarker *mm) {
+  return (EditorMarker *) mock(mm);
+}
+
+int countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2) {
+  return (int) mock(m1, m2);
+}
+
+bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2) {
+    return (bool)mock(m1, m2);
+}
+bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2) {
+    return (bool)mock(m1, m2);
+}
+bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2) {
+    return (bool)mock(l1, l2);
+}
+
+int moveEditorMarkerToNewline(EditorMarker *m, int direction) {
+  return (int) mock(m, direction);
+}
+
+int moveEditorMarkerToNonBlank(EditorMarker *m, int direction) {
+  return (int) mock(m, direction);
+}
+
+int moveEditorMarkerBeyondIdentifier(EditorMarker *m, int direction) {
+  return (int) mock(m, direction);
+}
+
+int moveEditorMarkerToNonBlankOrNewline(EditorMarker *m, int direction) {
+  return (int) mock(m, direction);
+}
