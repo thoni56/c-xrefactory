@@ -39,6 +39,7 @@ void initEditorBufferTable() {
 }
 
 int addEditorBuffer(EditorBufferList *bufferListElement) {
+    assert(strcmp(bufferListElement->buffer->fileName, "") != 0); /* Check that it is accessible */
     return editorBufferTableAdd(&editorBufferTable, bufferListElement);
 }
 

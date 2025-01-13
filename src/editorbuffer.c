@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #include "commons.h"
-#include "editor.h"             /* For EditorMarker */
+#include "editor.h"
 #include "editorbuffertable.h"
 #include "fileio.h"
 #include "filetable.h"
@@ -25,6 +25,7 @@ static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *realFileName, int 
     buffer->modificationTime = 0;
     buffer->size = 0;
     buffer->textLoaded = false;
+    assert(buffer->loadedFromFile == NULL || buffer->loadedFromFile != buffer->fileName);
 }
 
 EditorBuffer *newEditorBuffer(char *realFileName, int fileNumber, char *loadedFromFile, time_t modificationTime,
@@ -38,22 +39,17 @@ EditorBuffer *newEditorBuffer(char *realFileName, int fileNumber, char *loadedFr
 
 EditorBuffer *createNewEditorBuffer(char *realFileName, char *loadedFromFile, time_t modificationTime,
                                     size_t size) {
-    char *normalizedRealFileName, *normalizedLoadedFromFile;
-    EditorBuffer *buffer;
+    char *normalizedRealFileName = strdup(normalizeFileName_static(realFileName, cwd));
 
-    normalizedRealFileName = strdup(normalizeFileName_static(realFileName, cwd));
-
-    /* This is really a check if the file was preloaded from the
-     * editor and not read from the original file */
-    normalizedLoadedFromFile = normalizeFileName_static(loadedFromFile, cwd);
-    if (strcmp(normalizedLoadedFromFile, normalizedRealFileName)==0) {
-        normalizedLoadedFromFile = normalizedRealFileName;
-    } else {
+    assert(loadedFromFile == NULL || strcmp(realFileName, loadedFromFile) != 0);
+    char *normalizedLoadedFromFile = NULL;
+    if (loadedFromFile != NULL) {
+        normalizedLoadedFromFile = normalizeFileName_static(loadedFromFile, cwd);
         normalizedLoadedFromFile = strdup(normalizedLoadedFromFile);
     }
 
-    buffer = newEditorBuffer(normalizedRealFileName, 0, normalizedLoadedFromFile, modificationTime, size);
-    log_trace("created buffer '%s' for '%s'", buffer->fileName, buffer->loadedFromFile);
+    EditorBuffer *buffer = newEditorBuffer(normalizedRealFileName, 0, normalizedLoadedFromFile, modificationTime, size);
+    log_trace("created buffer '%s'('%s')", buffer->fileName, buffer->loadedFromFile?buffer->loadedFromFile:"(null)");
 
     registerEditorBuffer(buffer);
 
@@ -79,9 +75,8 @@ static void freeMarkersInEditorBuffer(EditorBuffer *buffer) {
 void freeEditorBuffer(EditorBuffer *buffer) {
     if (buffer == NULL)
         return;
-    log_trace("freeing buffer %s==%s", buffer->fileName, buffer->loadedFromFile);
-    if (buffer->loadedFromFile != buffer->fileName) {
-        /* If the two are not pointing to the same string... */
+    log_trace("freeing buffer %s==%s", buffer->fileName, buffer->loadedFromFile?buffer->loadedFromFile:"(null)");
+    if (buffer->loadedFromFile != NULL) {
         free(buffer->loadedFromFile);
     }
     free(buffer->fileName);
@@ -115,7 +110,7 @@ EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName) {
     if (editorBuffer == NULL) {
         /* No buffer found, create one unless it is a directory */
         if (fileExists(fileName) && !isDirectory(fileName)) {
-            editorBuffer = createNewEditorBuffer(fileName, fileName, fileModificationTime(fileName),
+            editorBuffer = createNewEditorBuffer(fileName, NULL, fileModificationTime(fileName),
                                                  fileSize(fileName));
             allocateNewEditorBufferTextSpace(editorBuffer, fileSize(fileName));
             loadFileIntoEditorBuffer(editorBuffer, fileModificationTime(fileName), fileSize(fileName));
@@ -186,7 +181,7 @@ void renameEditorBuffer(EditorBuffer *buffer, char *newName, EditorUndo **undo) 
     // to keep information that the file is no longer existing
     // so old references will be removed on update (fixing problem of
     // of moving a package into an existing package).
-    EditorBuffer *removed = createNewEditorBuffer(oldName, oldName, buffer->modificationTime, buffer->size);
+    EditorBuffer *removed = createNewEditorBuffer(oldName, NULL, buffer->modificationTime, buffer->size);
     allocateNewEditorBufferTextSpace(removed, 0);
     removed->textLoaded = true;
     setEditorBufferModified(removed);

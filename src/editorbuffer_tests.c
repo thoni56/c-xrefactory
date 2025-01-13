@@ -57,8 +57,6 @@ Ensure(EditorBuffer, can_rename_a_buffer_to_non_existing_buffer) {
     /* In the last createNewEditorBuffer there are two of these, one for real, one for loaded from */
     expect(normalizeFileName_static, when(name, is_equal_to_string(original_filename)),
            will_return(original_filename));
-    expect(normalizeFileName_static, when(name, is_equal_to_string(original_filename)),
-           will_return(original_filename));
     expect(registerEditorBuffer);
     expect(addFileNameToFileTable, will_return(45));
     expect(allocateNewEditorBufferTextSpace);
