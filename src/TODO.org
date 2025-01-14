@@ -147,6 +147,9 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 ** TODO FEATURE: Organize includes - first own .h, then system <>, then local, each group alphabetically
 ** TODO FEATURE: New refactoring: change return type of function
 ** TODO FEATURE: Extract function should extract a boolean function inside an if() correctly
+** TODO FEATURE: Extract function should extract a boolean function in an expression correctly
+   Currently "for (int i=0; i < sizeof(dispatch)/sizeof(dispatch[0]); i++) {" cannot
+   extract the sizeof expression.
 ** TODO FEATURE: New refactoring: Inline variable ("a=f(); b(a);" => "b(f());")
 ** TODO FEATURE: Replace variable with value ("inline")
 ** TODO FEATURE: Remove indirection in parameter ("remove *") and vice versa
