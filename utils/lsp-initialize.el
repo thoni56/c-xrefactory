@@ -21,7 +21,7 @@
   ;; Register the LSP server
   (lsp-register-client
    (make-lsp-client
-    :new-connection (lsp-stdio-connection (list (expand-file-name "../../src/c-xref" (file-name-directory load-file-name)) "-lsp" "-log=log" "-trace"))
+    :new-connection (lsp-stdio-connection (list (expand-file-name "../src/c-xref" (file-name-directory load-file-name)) "-lsp" "-log=log" "-trace"))
     :major-modes '(c-mode)
     :server-id 'c-xrefactory-lsp
     :priority 0))
