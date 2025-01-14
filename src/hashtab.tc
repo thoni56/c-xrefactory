@@ -152,6 +152,16 @@ void CONCAT(HASH_FUN_PREFIX,MapWithIndex)(
     }
 }
 
+void CONCAT(HASH_FUN_PREFIX,MapWithBool)(
+    HASH_TAB_TYPE *table,
+    void (*fun)(HASH_ELEM_TYPE *elem, bool boolean),
+    bool boolean
+) {
+    for (int i=0; i<table->size; i++) {
+        if (table->tab[i]!=NULL) (*fun)(table->tab[i], boolean);
+    }
+}
+
 void CONCAT(HASH_FUN_PREFIX,MapWithPointer)(
     HASH_TAB_TYPE *table,
     void (*fun)(HASH_ELEM_TYPE *, void *),

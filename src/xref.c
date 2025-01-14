@@ -115,11 +115,8 @@ static void schedulingUpdateToProcess(FileItem *fileItem) {
     }
 }
 
-/* Saved by scheduleModifiedFilesToUpdate() since we cannot send it as an argument to a Map function */
-static bool calledDuringRefactoring;
-
 /* NOTE: Map-function */
-static void schedulingToUpdate(FileItem *fileItem) {
+static void schedulingToUpdate(FileItem *fileItem, bool calledDuringRefactoring) {
     if (fileItem == getFileItemWithFileNumber(NO_FILE_NUMBER))
         return;
 
@@ -237,10 +234,7 @@ static void scheduleModifiedFilesToUpdate(bool isRefactoring) {
     // We should look at original sources (main.c) and try to figure out the mistake in logic
     //normalScanReferenceFile(suffix);
 
-    /* As schedulingToUpdate() is a mapped function we cannot send it
-     * as argument, so we save it in a global variable */
-    calledDuringRefactoring = isRefactoring;
-    mapOverFileTable(schedulingToUpdate);
+    mapOverFileTableWithBool(schedulingToUpdate, isRefactoring);
 
     if (options.update==UPDATE_FULL) {
         makeIncludeClosureOfFilesToUpdate();

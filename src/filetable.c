@@ -149,6 +149,10 @@ void mapOverFileTableWithIndex(void (*fun)(FileItem *, int)) {
     fileTableMapWithIndex(&fileTable, fun);
 }
 
+void mapOverFileTableWithBool(void (*fun)(FileItem *, bool), bool boolean) {
+    fileTableMapWithBool(&fileTable, fun, boolean);
+}
+
 void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *pointer) {
     fileTableMapWithPointer(&fileTable, fun, pointer);
 }

@@ -56,6 +56,12 @@ extern void CONCAT(HASH_FUN_PREFIX, MapWithIndex) (
     void (*fun) (HASH_ELEM_TYPE *, int)
 );
 
+extern void CONCAT(HASH_FUN_PREFIX, MapWithBool) (
+    HASH_TAB_TYPE *table,
+    void (*fun) (HASH_ELEM_TYPE *, bool),
+    bool boolean
+);
+
 extern void CONCAT(HASH_FUN_PREFIX, MapWithPointer) (
     HASH_TAB_TYPE *table,
     void (*fun) (HASH_ELEM_TYPE *, void *),
