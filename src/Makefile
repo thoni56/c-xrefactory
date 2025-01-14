@@ -377,7 +377,7 @@ total-coverage:
 ifeq ($(HAVE_GCOV_TOOL),yes)
   # Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
   ifeq ($(HAVE_LCOV2),yes)
-	-$(LCOV) --ignore-errors gcov,gcov -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed" || true
+	-$(LCOV) --ignore-errors gcov,gcov --ignore-errors unused,unused -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed" || true
   else
 	-$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed" || true
   endif
@@ -386,7 +386,7 @@ else
   # So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...'
   # with lcov
   ifeq ($(HAVE_LCOV2),yes)
-	$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q --ignore-errors inconsistent,inconsistent -o ../coverage/total.info 2>&1
+	$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused -o ../coverage/total.info 2>&1
   else
 	$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q -o ../coverage/total.info 2>&1
   endif
@@ -414,7 +414,7 @@ endif
 
 .PHONY:coverage-report
 coverage-report: total-coverage
-	@genhtml -q --ignore-errors inconsistent,inconsistent -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
+	@genhtml -q --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
 	@echo Coverage done: `grep -m 1 coverPer ../coverage/index.html | tr -dc '0-9.'`
 
 .PHONY:cloc
