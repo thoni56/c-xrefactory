@@ -21,9 +21,10 @@
   ;; Register the LSP server
   (lsp-register-client
    (make-lsp-client
-    :new-connection (lsp-stdio-connection '("/home/thoni/Utveckling/c-xrefactory/src/c-xref" "-lsp" "-log=log" "-trace"))
+    :new-connection (lsp-stdio-connection (list (expand-file-name "../../src/c-xref" (file-name-directory load-file-name)) "-lsp" "-log=log" "-trace"))
     :major-modes '(c-mode)
-    :server-id 'c-xrefactory-lsp))
+    :server-id 'c-xrefactory-lsp
+    :priority 0))
 
   ;; Automatically enable lsp-mode for c-mode buffers
   (add-hook 'c-mode-hook #'lsp))
@@ -31,3 +32,5 @@
 
 (setup-lsp-server)
 (setq lsp-log-io t)
+(message (file-name-directory load-file-name))
+(message (expand-file-name "../../src/c-xref" (file-name-directory load-file-name)))
