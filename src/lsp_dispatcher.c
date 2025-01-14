@@ -28,10 +28,12 @@ DispatchEntry dispatch[] = {
     {"$/cancelRequest", handle_cancel}
 };
 
+#define ARRAY_SIZE(table) sizeof(table) / sizeof(table[0])
+
 LspReturnCode dispatch_lsp_message(JSON *message) {
 
     const char *method = get_json_string_item(message, "method");
-    for (int i=0; i < sizeof(dispatch)/sizeof(dispatch[0]); i++) {
+    for (int i=0; i < ARRAY_SIZE(dispatch); i++) {
         if (strcmp(method, dispatch[i].method) == 0) {
             log_trace("LSP: Dispatched '%s'", method);
             dispatch[i].handler(message);
