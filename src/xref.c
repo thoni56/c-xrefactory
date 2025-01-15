@@ -59,11 +59,9 @@ static void sortFileItemList(FileItem **fileItemsP,
 }
 
 static FileItem *createListOfInputFileItems(void) {
-    FileItem *fileItems;
-    int       fileNumber;
+    FileItem *fileItems  = NULL;
+    int fileNumber = 0;
 
-    fileItems  = NULL;
-    fileNumber = 0;
     for (char *fileName = getNextScheduledFile(&fileNumber); fileName != NULL;
          fileNumber++, fileName = getNextScheduledFile(&fileNumber)) {
         FileItem *current = getFileItemWithFileNumber(fileNumber);
@@ -225,14 +223,6 @@ static void scheduleModifiedFilesToUpdate(bool isRefactoring) {
     checkExactPositionUpdate(true);
 
     getCxrefFilesListName(&fileListFileName, &suffix);
-    // TODO: This is probably to get modification time for the fileslist file
-    // and then consider that when schedule files to update, but it never did...
-    // if (editorFileStatus(fileListFileName, &stat))
-    //     stat.st_mtime = 0;
-    // ... but schedulingToUpdate() does not use the stat data !?!?!?
-    // TODO: ... so WTF??!?!?!?
-    // We should look at original sources (main.c) and try to figure out the mistake in logic
-    //normalScanReferenceFile(suffix);
 
     mapOverFileTableWithBool(schedulingToUpdate, isRefactoring);
 
