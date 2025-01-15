@@ -1,0 +1,7 @@
+#! /bin/env bash
+#
+# Simple Emacs startup for lsp-mode using c-xrefactory-lsp development version
+#
+UTILS="$(dirname "$(realpath "$0")")"
+
+emacs -l $UTILS/lsp-initialize.el $@

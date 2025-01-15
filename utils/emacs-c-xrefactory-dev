@@ -1,6 +1,0 @@
-#!/bin/sh
-#
-# Use sandboxed_emacs to run an Emacs with development version of c-xref
-
-cd `echo $PWD | sed -e s:c-xrefactory/.*:c-xrefactory/:`tests/sandboxed_emacs
-make pure
