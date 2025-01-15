@@ -29,8 +29,7 @@ typedef struct integerList {
 } IntegerList;
 
 
-/* ***********************************************************
- */
+/* *********************************************************** */
 
 void dumpArguments(int nargc, char **nargv) {
     char tmpBuff[TMP_BUFF_SIZE] = "";
@@ -42,8 +41,7 @@ void dumpArguments(int nargc, char **nargv) {
     ppcGenRecord(PPC_INFORMATION,tmpBuff);
 }
 
-/* *************************************************************************
- */
+/* *********************************************************** */
 
 void typeDump(TypeModifier *t) {
     log_debug("dumpStart");
@@ -595,16 +593,6 @@ void expandWildcardsInOnePath(char *filename, char *outpaths, int availableSpace
     assert(availableSpace == MAX_OPTION_LEN);
     oop = opaths = outpaths; olen = availableSpace;
     expandWildcardsInOnePathRecursiveMaybe(filename, &opaths, &olen);
-    *opaths = 0;
-    if (opaths != oop) *(opaths-1) = 0;
-}
-
-void expandWildcardsInPaths(char *paths, char *outpaths, int availableSpace) {
-    char    *oop, *opaths;
-    int     olen;
-    assert(availableSpace == MAX_OPTION_LEN);
-    oop = opaths = outpaths; olen = availableSpace;
-    MAP_OVER_PATHS(paths, { expandWildcardsInOnePathRecursiveMaybe(currentPath, &opaths, &olen); });
     *opaths = 0;
     if (opaths != oop) *(opaths-1) = 0;
 }

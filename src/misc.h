@@ -49,7 +49,6 @@ extern char *simpleFileNameWithoutSuffix_static(char *fullFileName);
 extern bool containsWildcard(char *ss);
 extern bool shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive);
 extern void expandWildcardsInOnePath(char *fn, char *outpaths, int olen);
-extern void expandWildcardsInPaths(char *paths, char *outpaths, int freeolen);
 extern char *getRealFileName_static(char *fn);
 extern bool fileNameHasOneOfSuffixes(char *fname, char *suffs);
 extern void mapOverDirectoryFiles(

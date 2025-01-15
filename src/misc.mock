@@ -47,10 +47,6 @@ void expandWildcardsInOnePath(char *filename, char *outpaths, int availableSpace
   mock(filename, outpaths, availableSpace);
 }
 
-void expandWildcardsInPaths(char *paths, char *outpaths, int availableSpace) {
-  mock(paths, outpaths, availableSpace);
-}
-
 char *getRealFileName_static(char *fn) {
   return (char *) mock(fn);
 }
