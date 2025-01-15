@@ -14,6 +14,7 @@ extern void get_lsp_range_positions(JSON *json, int *start_line, int *start_char
                                     int *end_character);
 
 extern JSON *create_lsp_message_with_id(double id);
+extern JSON *create_lsp_response(double id, JSON *response);
 extern JSON *add_lsp_action(JSON *target, const char *name, const char *kind);
 extern JSON *add_lsp_range(JSON *target, int start_line, int start_character, int end_line, int end_character);
 extern JSON *add_lsp_new_text(JSON *target, const char *new_text);

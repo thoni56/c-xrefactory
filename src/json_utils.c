@@ -23,6 +23,12 @@ JSON *create_lsp_message_with_id(double id) {
     return response;
 }
 
+JSON *create_lsp_response(double id, JSON *result) {
+    cJSON *response = create_lsp_message_with_id(id);
+    cJSON_AddItemToObject(response, "result", result);
+    return response;
+}
+
 JSON *add_lsp_action(JSON *target, const char *title, const char *kind) {
     cJSON *action = cJSON_CreateObject();
     cJSON_AddItemToArray(target, action);
@@ -32,7 +38,7 @@ JSON *add_lsp_action(JSON *target, const char *title, const char *kind) {
 }
 
 JSON *add_lsp_range(JSON *target, int start_line, int start_character,
-                 int end_line, int end_character) {
+                    int end_line, int end_character) {
     cJSON *range = cJSON_CreateObject();
     cJSON *start = cJSON_CreateObject();
     cJSON_AddNumberToObject(start, "line", start_line);
