@@ -771,19 +771,6 @@ bool stringContainsSubstring(char *s, char *subs) {
     return false;
 }
 
-int substringIndex(char *s, char *subs) {
-    int i, im;
-    int sl, sbl;
-    sl = strlen(s);
-    sbl = strlen(subs);
-    im = sl-sbl;
-    for(i=0; i<=im; i++) {
-        if (strncmp(s+i, subs, sbl)==0)
-            return i;
-    }
-    return -1;
-}
-
 /* ************************************************************* */
 
 bool requiresCreatingRefs(ServerOperation operation) {

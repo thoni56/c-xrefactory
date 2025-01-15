@@ -59,10 +59,6 @@ bool stringContainsSubstring(char *s, char *subs) {
   return (bool) mock(s, subs);
 }
 
-int substringIndex(char *s, char *subs) {
-  return (int) mock(s, subs);
-}
-
 bool fileNameHasOneOfSuffixes(char *fname, char *suffs) {
   return (bool) mock(fname, suffs);
 }
