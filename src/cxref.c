@@ -2409,17 +2409,14 @@ void olSetCallerPosition(Position position) {
 
 
 void generateReferences(void) {
-    static bool updateFlag = false;  /* TODO: WTF - why do we need a
-                                        static updateFlag? Maybe we
-                                        need to know that we have
-                                        generated from scratch so now
-                                        we can just update? */
+    static bool everUpdated = false;
 
     if (options.cxrefsLocation == NULL)
         return;
-    if (!updateFlag && options.update == UPDATE_DEFAULT) {
+    if (!everUpdated && options.update == UPDATE_DEFAULT) {
+        /* Then we don't update, but generate from scratch */
         writeReferenceFile(false, options.cxrefsLocation);
-        updateFlag = true;
+        everUpdated = true;
     } else {
         writeReferenceFile(true, options.cxrefsLocation);
     }

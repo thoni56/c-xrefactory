@@ -459,8 +459,8 @@ static void writeCxFileHead(void) {
 
 static char tmpFileName[MAX_FILE_NAME_SIZE];
 
-static void openInOutReferenceFile(bool updateFlag, char *filename) {
-    if (updateFlag) {
+static void openInOutReferenceFile(bool updating, char *filename) {
+    if (updating) {
         char *tempname = create_temporary_filename();
         strcpy(tmpFileName, tempname);
         copyFileFromTo(filename, tmpFileName);
@@ -471,7 +471,7 @@ static void openInOutReferenceFile(bool updateFlag, char *filename) {
     if (cxFile == NULL)
         FATAL_ERROR(ERR_CANT_OPEN, filename, XREF_EXIT_ERR);
 
-    if (updateFlag) {
+    if (updating) {
         currentReferenceFile = openFile(tmpFileName, "r");
         if (currentReferenceFile==NULL)
             warningMessage(ERR_CANT_OPEN_FOR_READ, tmpFileName);
