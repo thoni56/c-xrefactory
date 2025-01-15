@@ -55,10 +55,6 @@ char *getRealFileName_static(char *fn) {
   return (char *) mock(fn);
 }
 
-bool stringContainsSubstring(char *s, char *subs) {
-  return (bool) mock(s, subs);
-}
-
 bool fileNameHasOneOfSuffixes(char *fname, char *suffs) {
   return (bool) mock(fname, suffs);
 }

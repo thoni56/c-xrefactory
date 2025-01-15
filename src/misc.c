@@ -758,19 +758,6 @@ bool fileNameHasOneOfSuffixes(char *fname, char *suffs) {
     return pathsStringContainsPath(suffs, suff);
 }
 
-bool stringContainsSubstring(char *s, char *subs) {
-    int im;
-    int sl, sbl;
-    sl = strlen(s);
-    sbl = strlen(subs);
-    im = sl-sbl;
-    for (int i=0; i<=im; i++) {
-        if (strncmp(s+i, subs, sbl)==0)
-            return true;
-    }
-    return false;
-}
-
 /* ************************************************************* */
 
 bool requiresCreatingRefs(ServerOperation operation) {
