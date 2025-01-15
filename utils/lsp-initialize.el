@@ -11,8 +11,9 @@
   (package-refresh-contents)
   (package-install 'lsp-mode))
 
-(require 'lsp-mode)
+(setq c-xref-exec (expand-file-name "../src/c-xref" (file-name-directory load-file-name)))
 
+(require 'lsp-mode)
 
 (defun setup-lsp-server ()
   ;; Associate the major mode with the LSP language ID
@@ -21,7 +22,7 @@
   ;; Register the LSP server
   (lsp-register-client
    (make-lsp-client
-    :new-connection (lsp-stdio-connection (list (expand-file-name "../src/c-xref" (file-name-directory load-file-name)) "-lsp" "-log=log" "-trace"))
+    :new-connection (lsp-stdio-connection (list c-xref-exec "-lsp" "-log=log" "-trace"))
     :major-modes '(c-mode)
     :server-id 'c-xrefactory-lsp
     :priority 0))
@@ -32,5 +33,14 @@
 
 (setup-lsp-server)
 (setq lsp-log-io t)
-(message (file-name-directory load-file-name))
-(message (expand-file-name "../../src/c-xref" (file-name-directory load-file-name)))
+
+(defun my-lsp-mode-keybindings ()
+  "Custom key bindings for LSP mode."
+  (local-set-key (kbd "<f2>") 'lsp-rename)
+  (local-set-key (kbd "<f3>") 'lsp-ui-find-previous-reference)
+  (local-set-key (kbd "<f4>") 'lsp-ui-find-next-reference)
+  (local-set-key (kbd "<f6>") 'lsp-find-definition)
+  (local-set-key (kbd "<f8>") 'lsp-completion-at-point)
+  (local-set-key (kbd "<f11>") 'lsp-execute-code-action))
+
+(add-hook 'lsp-mode-hook 'my-lsp-mode-keybindings)
