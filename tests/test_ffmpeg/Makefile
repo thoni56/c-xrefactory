@@ -1,15 +1,12 @@
-# Makefile for ffmpeg example/acceptance test for c-xrefactory
+include ../Makefile.boilerplate
 
-TEST = $(shell basename '$(CURDIR)')
-OK = echo "Tests in '$(TEST)': $(shell tput setaf 2)Ok$(shell tput sgr0)"
-FAIL = echo "Tests in '$(TEST)': $(shell tput setaf 1)Failed$(shell tput sgr0)"
-
+ARGUMENTS = -create -o ffmpeg.log
 
 all: .c-xrefrc
-	@if [ ! -d ffmpeg ] ; then \
+	if [ ! -d ffmpeg ] ; then \
 		echo "Tests in 'ffmpeg': not activated, run 'make init', 'make clean' to deactivate" ; \
 	else \
-		../run-c-xref -p ffmpeg -create -o ffmpeg.log ; \
+		../run-with-progress $(COMMAND) ; \
 		if ! grep Generating ffmpeg.log > /dev/null ; then \
 			$(FAIL) "(ffmpeg.log)" ; \
 			exit 1 ; \
@@ -27,6 +24,3 @@ init: ffmpeg .c-xrefrc
 
 ffmpeg:
 	tar zxf ffmpeg.tgz
-
-.c-xrefrc: c-xrefrc.tpl
-	@sed -e "s+PWD+$(CURDIR)+g" c-xrefrc.tpl > .c-xrefrc

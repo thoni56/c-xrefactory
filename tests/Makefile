@@ -31,42 +31,35 @@ void:
 # It will assume that if there is a directory starting with "test_"
 # it is a directory where you can run tests using "make"
 
-# Discover all test directories and a target rule to run all we found
-TESTS = $(patsubst %/.,%,$(wildcard test_*/.))
+QUICK_TESTS = $(shell find . -maxdepth 1 -name 'test_*' -type d ! -exec test -e {}/.slow \; -print)
+SLOW_TESTS = $(shell find . -maxdepth 1 -name 'test_*' -type d -exec test -e {}/.slow \; -print)
+ALL_TESTS = $(QUICK_TESTS) $(SLOW_TESTS)
+
 
 .PHONY: verbose
 verbose:
 	$(foreach dir,$(TESTS),\
-	/bin/echo -n "$(dir): "; \
-	./run_test $(dir); \
+		/bin/echo -n "$(dir): "; \
+		./run_test $(dir); \
 		/bin/echo; \
     )
 
-.PHONY: all
-all: quick slow
-
-.PHONY:quick
-quick: autodiscovered_tests #c-xref-test
+.PHONY: quick
+quick: $(QUICK_TESTS)
 
 .PHONY: slow
-slow: ffmpeg-test systemd-test
+slow: $(SLOW_TESTS)
 
-c-xref-test:
-	$(MAKE) -C c-xref
-
-ffmpeg-test:
-	$(MAKE) -C ffmpeg
-
-systemd-test:
-	$(MAKE) -C systemd
+.PHONY: all
+all: $(ALL_TESTS)
 
 .PHONY: list
 list:
-	echo $(TESTS)
+	echo $(ALL_TESTS) | tr ' ' '\n' | sed 's%./test%test%' | sort
 
 .PHONY: clean
 clean:
-	$(foreach dir,$(TESTS),\
+	$(foreach dir,$(ALL_TESTS),\
 	if [ ! -f $(dir)/.suspended ]; then \
 		$(MAKE) -C $(dir) clean ; \
 	fi; \
@@ -79,10 +72,6 @@ ifndef VERBOSE
 MAKEFLAGS+=--no-print-directory
 endif
 
-
-.PHONY: autodiscovered_tests
-autodiscovered_tests: $(TESTS)
-	echo
 
 # To make it possible to run tests in parallel we use GCOV settings so
 # that all coverage is directed to a separate directory for each
@@ -100,4 +89,4 @@ $(1):
 endef
 
 # Loop over all test_ directories to create a rule for each
-$(foreach _t,$(TESTS),$(eval $(call RULE,$(_t))))
+$(foreach _t,$(ALL_TESTS),$(eval $(call RULE,$(_t))))
