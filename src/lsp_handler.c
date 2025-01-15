@@ -11,6 +11,7 @@
 #include "log.h"
 #include "lsp_sender.h"
 #include "json_utils.h"
+#include "lsp_adapter.h"
 
 
 static char *filename_from_uri(const char *uri) {
@@ -102,6 +103,25 @@ void handle_did_open(JSON *notification) {
     char *fileName = filename_from_uri(uri);
     EditorBuffer *buffer = createNewEditorBuffer(fileName, NULL, time(NULL), strlen(text));
     loadTextIntoEditorBuffer(buffer, time(NULL), text);
+}
+
+
+void handle_definition_request(JSON *request) {
+    log_trace("LSP: Handling 'textDocument/definition'");
+
+    JSON *params = get_json_item(request, "params");
+    JSON *textDocument = get_json_item(params, "textDocument");
+    char *uri = get_json_string_item(textDocument, "uri");
+    JSON *position = get_json_item(params, "position");
+
+    (void)uri;
+    (void)position;
+
+    JSON *definition = findDefinition(uri, position);
+
+    JSON *response = create_lsp_response(id_of_request(request), definition);
+
+    send_response_and_delete(response);
 }
 
 void handle_cancel(JSON *notification) {

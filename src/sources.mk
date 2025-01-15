@@ -8,7 +8,7 @@ MODULES = main globals misc semact commons complete cxref cxfile	\
 		typemodifier position id parsers fileio stringlist	\
 		ppc server reference xref refactorings progress input	\
 		commandlogger completion menu lexem editorbuffer undo	\
-		counters stackmemory encoding json_utils                \
+		counters stackmemory encoding json_utils lsp_adapter    \
 		lsp lsp_dispatcher lsp_handler lsp_sender
 
 modules:

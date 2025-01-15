@@ -23,6 +23,7 @@ DispatchEntry dispatch[] = {
 
     {"textDocument/didOpen", handle_did_open},
     {"textDocument/codeAction", handle_code_action},
+    {"textDocument/definition", handle_definition_request},
     {"workspace/executeCommand", handle_execute_command},
 
     {"$/cancelRequest", handle_cancel}

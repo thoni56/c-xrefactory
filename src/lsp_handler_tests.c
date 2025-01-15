@@ -15,6 +15,7 @@
 #include "editorbuffertable.mock"
 #include "filetable.mock"
 #include "lsp_sender.mock"
+#include "lsp_adapter.mock"
 
 
 Describe(LspHandler);
@@ -144,4 +145,64 @@ Ensure(LspHandler, handles_did_open) {
 
     // Action
     handle_did_open(did_open_request);
+}
+
+Ensure(LspHandler, handles_definition) {
+    // Define the expected request
+    const char *definition_request_text =
+        "{"
+        "    \"jsonrpc\": \"2.0\","
+        "    \"id\": 1,"
+        "    \"method\": \"textDocument/definition\","
+        "    \"params\": {"
+        "        \"textDocument\": {"
+        "            \"uri\": \"file:///path/to/file.c\""
+        "        },"
+        "        \"position\": {"
+        "            \"line\": 10,"
+        "            \"character\": 5"
+        "        }"
+        "    }"
+        "}";
+    JSON *definition_request_json = parse_json(definition_request_text);
+
+    // Define the expected response
+    const char *expected_response_text =
+        "{"
+        "    \"jsonrpc\": \"2.0\","
+        "    \"id\": 1,"
+        "    \"result\":"
+        "        {"
+        "            \"uri\": \"file:///path/to/definition.c\","
+        "            \"range\": {"
+        "                \"start\": { \"line\": 4, \"character\": 2 },"
+        "                \"end\": { \"line\": 4, \"character\": 10 }"
+        "            }"
+        "        }"
+        "}";
+    JSON *expected_response_json = parse_json(expected_response_text);
+
+    // Mock expected behavior in the editor
+    const char *definition_location_text =
+        "{"
+        "    \"uri\": \"file:///path/to/definition.c\","
+        "    \"range\": {"
+        "        \"start\": { \"line\": 4, \"character\": 2 },"
+        "        \"end\": { \"line\": 4, \"character\": 10 }"
+        "    }"
+        "}";
+    JSON *definition_location_json = parse_json(definition_location_text);
+    expect(findDefinition,
+        when(uri, is_equal_to_string("file:///path/to/file.c")),
+        will_return(definition_location_json));
+
+    // Mock response handling
+    JSON *captured_response;
+    expect(send_response_and_delete, will_capture_parameter(response, captured_response));
+
+    // Action
+    handle_definition_request(definition_request_json);
+
+    char *normalized_expected_response_text = print_json(expected_response_json);
+    assert_that(print_json(captured_response), is_equal_to_string(normalized_expected_response_text));
 }
