@@ -24,15 +24,20 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 				xref = Component xref "Cross-referencer" C
 				server = Component server "Editor Server" C
 				refactory = Component refactory "Refactory" C
+                lsp = Component lsp "LSP" C
 
 				main -> xref "dispatches to" call
 				main -> server "dispatches to" call
 				main -> refactory "dispatches to" call
+				main -> lsp "dispatches to" call
 				refactory -> server "uses" call
 
 				cxref = Component cxref "Reference handler" C
 				cxfile = Component cxfile "Reference Storage using text files" C
 				cxref -> cxfile "stores references using" call
+
+                lsp -> refactory "uses" call
+                lsp -> cxref "uses" call
 
 				xref -> cxref "handles references using" call
 				server -> cxref "handles references using" call

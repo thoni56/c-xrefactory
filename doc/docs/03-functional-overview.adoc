@@ -48,3 +48,18 @@ NOTE: When running the edit server there seems to be no way to
 indicate a different options files for different
 projects/files. Although you can start the server with `-xrefrc` you
 will be stuck with that in the whole session and for all projects.
+
+=== LSP
+
+The LSP protocol is a common protocol for language servers such as
+`clangd` and `c-xrefactory`. It allows an editor (client) to interface
+to a server to request information, such as reference positions, and
+operations, such as refactorings, without knowing exactly which server
+it talks to.
+
+Recent versions of `c-xrefactory` have an initial implementation of a
+very small portion of the LSP protocol. The plan is to fully integrate
+the functionality of `c-xrefactory` into the LSP protocol. This will
+allow use of `c-xrefactory` from not only Emacs but also Visual Studio
+Code or any other editor that supports the LSP protocol.
+
