@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -server
+CXREF -xrefactory-II -crlfconversion -crconversion -encoding=default -server
 -olcxcomplet -maxcompls=500 -olinelen=236  "-olmark=496" "-olcursor=411" "CURDIR/simple_grammar.y" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 <sync>
 -olcxcomplet -maxcompls=500 -olinelen=236  "-olmark=496" "-olcursor=423" "CURDIR/simple_grammar.y" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"

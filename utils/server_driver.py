@@ -104,13 +104,14 @@ if __name__ == "__main__":
     parser.add_argument('--delay', type=int, dest='delay', help="How many seconds to sleep before starting the c-xref server process", default=0)
     parser.add_argument('--buffer', dest='server_buffer_filename', help="Name of file to use as communication buffer, default 'server-buffer'", default="server-buffer")
     parser.add_argument('--extra', dest='extra_options', help="Extra options to the c-xref startup command", default="")
+    parser.add_argument('--cxref', dest='cxref_program', help="Which c-xref program to use, default is to use the one in PATH. Only applies if the command file starts with 'CXREF'", default="c-xref")
     args = parser.parse_args()
 
     with open(args.server_buffer_filename, "w"):
         pass
 
     with open(args.command_file, 'rb') as file:
-        invocation = read_command(file).replace("CURDIR", args.CURDIR)
+        invocation = read_command(file).replace("CURDIR", args.CURDIR).replace("CXREF", args.cxref_program)
         invocation += " -o "+args.server_buffer_filename
         print(invocation)
 
