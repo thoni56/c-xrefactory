@@ -1,6 +1,6 @@
 CXREF -xrefactory-II -server
--olcxcomplet -maxcompls=500 -olinelen=120 -olcursor=1355 completions.c -encoding=european -xrefrc .c-xrefrc -p /home/thoni/Utveckling/c-xrefactory/tests/test_olcxmenuselect
+-olcxcomplet -maxcompls=500 -olinelen=120 -olcursor=1355 completions.c -encoding=european -xrefrc .c-xrefrc -p CURDIR
 <sync>
--olcxcgoto5 -xrefrc .c-xrefrc -p /home/thoni/Utveckling/c-xrefactory/tests/test_olcxmenuselect
+-olcxcgoto5 -xrefrc .c-xrefrc -p CURDIR
 <sync>
 <exit>
