@@ -3,7 +3,7 @@ include ../Makefile.boilerplate
 CXREF = ../../src/c-xref
 
 $(TEST):
-	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	@$(EDIT_SERVER_DRIVER) commands.input --cxref ../../src/c-xref $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 

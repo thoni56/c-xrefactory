@@ -1,4 +1,4 @@
-c-xref -xrefactory-II -server -o server-buffer
+../../src/c-xref -xrefactory-II -server -o server-buffer
 -olcxcomplet -maxcompls=500 -olinelen=120 -olcursor=1355 completions.c -encoding=european -xrefrc .c-xrefrc -p CURDIR
 end-of-options
 
