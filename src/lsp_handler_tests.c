@@ -17,6 +17,8 @@
 #include "lsp_sender.mock"
 #include "lsp_adapter.mock"
 
+#include "cgreen_equal_to_json.c"
+
 
 Describe(LspHandler);
 BeforeEach(LspHandler) {
@@ -70,7 +72,7 @@ Ensure(LspHandler, sends_correct_initialize_response) {
     // Remove capabilities from the actual response since they will change over time
     cJSON_ReplaceItemInObject(captured_response, "capabilities", cJSON_CreateObject());
 
-    assert_that(json_equals(expected_response, captured_response));
+    assert_that(expected_response, is_equal_to_json(captured_response));
 
     delete_json(mock_request);
 }
@@ -104,7 +106,7 @@ Ensure(LspHandler, creates_code_action) {
         "    }"
         "]"
         "}";
-    cJSON *expected_code_action_response = cJSON_Parse(editable_expected_code_action_response);
+    JSON *expected_code_action_response = parse_json(editable_expected_code_action_response);
 
     cJSON *captured_response; // A copy created by the mock function for send_response_and_delete()
     expect(send_response_and_delete, will_capture_parameter(response, captured_response));
@@ -113,11 +115,10 @@ Ensure(LspHandler, creates_code_action) {
 
     handle_code_action(mock_request);
 
-    char *expected_code_action_response_as_string = print_json(expected_code_action_response);
-    char *captured_code_action_response_as_string = print_json(captured_response);
-    assert_that(captured_code_action_response_as_string, is_equal_to_string(expected_code_action_response_as_string));
-    free(expected_code_action_response_as_string);
-    free(captured_code_action_response_as_string);
+    assert_that(captured_response, is_equal_to_json(expected_code_action_response));
+
+    delete_json(expected_code_action_response);
+    delete_json(captured_response);
     delete_json(mock_request);
 }
 
@@ -145,6 +146,8 @@ Ensure(LspHandler, handles_did_open) {
 
     // Action
     handle_did_open(did_open_request);
+
+    delete_json(did_open_request);
 }
 
 Ensure(LspHandler, handles_definition) {
@@ -164,7 +167,7 @@ Ensure(LspHandler, handles_definition) {
         "        }"
         "    }"
         "}";
-    JSON *definition_request_json = parse_json(definition_request_text);
+    JSON *definition_request = parse_json(definition_request_text);
 
     // Define the expected response
     const char *expected_response_text =
@@ -191,18 +194,20 @@ Ensure(LspHandler, handles_definition) {
         "        \"end\": { \"line\": 4, \"character\": 10 }"
         "    }"
         "}";
-    JSON *definition_location_json = parse_json(definition_location_text);
+    JSON *definition_location = parse_json(definition_location_text);
     expect(findDefinition,
         when(uri, is_equal_to_string("file:///path/to/file.c")),
-        will_return(definition_location_json));
+        will_return(definition_location));
 
     // Mock response handling
     JSON *captured_response;
     expect(send_response_and_delete, will_capture_parameter(response, captured_response));
 
     // Action
-    handle_definition_request(definition_request_json);
+    handle_definition_request(definition_request);
 
-    char *normalized_expected_response_text = print_json(expected_response_json);
-    assert_that(print_json(captured_response), is_equal_to_string(normalized_expected_response_text));
+    assert_that(captured_response, is_equal_to_json(expected_response_json));
+
+    delete_json(expected_response_json);
+    delete_json(captured_response);
 }
