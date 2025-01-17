@@ -63,7 +63,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
 
         completion = newCompletion(name, fullName, 1, LocalVisibility, type, r, item);
     } else {
-        Reference r = makeReference((Position){0,0,0}, UsageNone, NULL);
+        Reference r = makeReference(symbol->pos, UsageNone, NULL);
         Visibility visibility;
         Scope scope;
         Storage storage;

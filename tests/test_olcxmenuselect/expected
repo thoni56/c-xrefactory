@@ -1,0 +1,24 @@
+c-xref -xrefactory-II -server -o server-buffer
+-olcxcomplet -maxcompls=500 -olinelen=120 -olcursor=1355 completions.c -encoding=european -xrefrc .c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<all-completions nofocus=0 len=<n>>l            :struct mylist  *l
+L_ctermid    :#define L_ctermid
+L_tmpnam     :#define L_tmpnam
+linux        :#define linux
+ll           :struct mylist  *ll
+locale_t     :typedef struct __locale_struct  *locale_t
+localtime    :struct tm  *localtime(time_t *__timer)
+localtime_r  :struct tm  *localtime_r(__ERROR__, __ERROR__)
+long         :keyword</all-completions>
+-olcxcgoto5 -xrefrc .c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=14 col=52 len=<n>>CURDIR/completions.c</position-lc>
+</goto>
+-exit
+end-of-options
+
