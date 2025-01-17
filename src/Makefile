@@ -174,8 +174,8 @@ devel-proper: unit build
 ci:
 	$(MAKE) -e -j unit
 	$(MAKE) -e -j build
-	$(MAKE) -e -C ../tests/systemd init
-	$(MAKE) -e -C ../tests/ffmpeg init
+	$(MAKE) -e -C ../tests/test_systemd init
+	$(MAKE) -e -C ../tests/test_ffmpeg init
 	$(MAKE) -e -j -C ../tests all
 	$(MAKE) -e merge-coverage-from-tests
 	rm *.mock.gcov *.tab.*.gcov
