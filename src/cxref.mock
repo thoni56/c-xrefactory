@@ -87,7 +87,7 @@ void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
     mock(stack);
 }
 
-void olCreateSelectionMenu(int command) {
+void olCreateSelectionMenu(ServerOperation command) {
     mock(command);
 }
 

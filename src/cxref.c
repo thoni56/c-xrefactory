@@ -1744,7 +1744,7 @@ static void mapCreateSelectionMenu(ReferenceItem *p) {
     createSelectionMenu(p);
 }
 
-void olCreateSelectionMenu(int command) {
+void olCreateSelectionMenu(ServerOperation command) {
     OlcxReferences  *rstack;
     SymbolsMenu     *menu;
 

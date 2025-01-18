@@ -4,6 +4,7 @@
 
 #include "menu.h"
 #include "proto.h"
+#include "server.h"
 #include "symbol.h"
 #include "usage.h"
 
@@ -29,7 +30,7 @@ extern void putOnLineLoadedReferences(ReferenceItem *p);
 extern SymbolsMenu *createSelectionMenu(ReferenceItem *dd);
 extern void olcxFreeOldCompletionItems(OlcxReferencesStack *stack);
 
-extern void olCreateSelectionMenu(int command);
+extern void olCreateSelectionMenu(ServerOperation command);
 extern bool olcxShowSelectionMenu(void);
 extern void pushEmptySession(OlcxReferencesStack *stack);
 extern bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
