@@ -281,7 +281,7 @@ void server(int argc, char **argv) {
         //&dumpArguments(nargc, nargv);
         log_trace("Server: Getting request");
         initServer(nargc, nargv);
-        if (communicationChannel==stdout && options.outputFileName!=NULL) {
+        if (outputFile==stdout && options.outputFileName!=NULL) {
             openOutputFile(options.outputFileName);
         }
         callServer(argc, argv, nargc, nargv, &firstPass);

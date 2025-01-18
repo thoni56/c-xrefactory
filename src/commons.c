@@ -24,27 +24,27 @@ void openOutputFile(char *outfile) {
         log_trace("Opening output file '%s'", options.outputFileName);
 #if defined (__WIN32__)
         // open it as binary file, so that record lengths will be correct
-        communicationChannel = openFile(outfile, "wb");
+        outputFile = openFile(outfile, "wb");
 #else
-        communicationChannel = openFile(outfile, "w");
+        outputFile = openFile(outfile, "w");
 #endif
     } else {
-        communicationChannel = stdout;
+        outputFile = stdout;
     }
-    if (communicationChannel == NULL) {
+    if (outputFile == NULL) {
         errorMessage(ERR_CANT_OPEN, outfile);
-        communicationChannel = stdout;
+        outputFile = stdout;
     }
-    errOut = communicationChannel;
+    errOut = outputFile;
 }
 
 void closeMainOutputFile(void) {
-    if (communicationChannel!=stdout) {
+    if (outputFile!=stdout) {
         //&fprintf(dumpOut,"CLOSING OUTPUT FILE\n");
-        closeFile(communicationChannel);
-        communicationChannel = stdout;
+        closeFile(outputFile);
+        outputFile = stdout;
     }
-    errOut = communicationChannel;
+    errOut = outputFile;
 }
 
 void initCwd(void) {

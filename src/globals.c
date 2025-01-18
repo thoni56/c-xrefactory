@@ -87,7 +87,7 @@ char *yytext;
 /* *********** once, the file starts to be parsed ************** */
 /* ************************************************************* */
 
-FILE *communicationChannel=NULL;
+FILE *outputFile=NULL;
 FILE *errOut=NULL;
 
 bool cxResizingBlocked = false;

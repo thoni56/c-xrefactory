@@ -51,7 +51,7 @@ Ensure(CxRef, will_return_no_active_project_if_no_optionfile_found) {
     FileItem fileItem = {.name = "file.c"};
 
     options.xref2 = true;
-    communicationChannel = stdout;
+    outputFile = stdout;
     options.serverOperation = OLO_ACTIVE_PROJECT;
 
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(0)),

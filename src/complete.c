@@ -187,12 +187,12 @@ static void printCompletionsBeginning(Completion *olc, int noFocus) {
 }
 
 static void printOneCompletion(Completion *olc) {
-    fprintf(communicationChannel, "%s", olc->fullName);
+    fprintf(outputFile, "%s", olc->fullName);
 }
 
 static void printCompletionsEnding(Completion *olc) {
     if (completionsWillPrintEllipsis(olc)) {
-        fprintf(communicationChannel,"\n...");
+        fprintf(outputFile,"\n...");
     }
     ppcEnd(PPC_ALL_COMPLETIONS);
 }
@@ -204,7 +204,7 @@ void printCompletionsList(bool noFocus) {
     for(Completion *c=completions; c!=NULL; c=c->next) {
         printOneCompletion(c);
         if (c->next!=NULL)
-            fprintf(communicationChannel,"\n");
+            fprintf(outputFile,"\n");
     }
     printCompletionsEnding(completions);
 }
@@ -258,11 +258,11 @@ void printCompletions(Completions *completions) {
     }
     olCompletionListReverse();
     printCompletionsList(completions->noFocusOnCompletions);
-    fflush(communicationChannel);
+    fflush(outputFile);
     return;
  finishWithoutMenu:
     sessionData.completionsStack.top = sessionData.completionsStack.top->previous;
-    fflush(communicationChannel);
+    fflush(outputFile);
 }
 
 /* *********************************************************************** */

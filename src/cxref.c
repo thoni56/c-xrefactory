@@ -808,12 +808,12 @@ static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
         rr=refs->references;
         while (rr != NULL) {
             passRefsThroughSourceFile(&rr,
-                                      communicationChannel, USAGE_FILTER,
+                                      outputFile, USAGE_FILTER,
                                       refListFilters[refs->refsFilterLevel]);
         }
     }
     ppcEnd(PPC_REFERENCE_LIST);
-    fflush(communicationChannel);
+    fflush(outputFile);
 }
 
 static void olcxReferenceList(char *commandString) {
@@ -1439,14 +1439,14 @@ static void safetyCheckAddDiffRef(Reference *r, OlcxReferences *diffrefs,
     int prefixchar;
     prefixchar = ' ';
     if (diffrefs->references == NULL) {
-        fprintf(communicationChannel, "%s", COLCX_LIST);
+        fprintf(outputFile, "%s", COLCX_LIST);
         prefixchar = '>';
     }
     if (mode == DIFF_MISSING_REF) {
-        fprintf(communicationChannel, "%c %s:%d missing reference\n", prefixchar,
+        fprintf(outputFile, "%c %s:%d missing reference\n", prefixchar,
                 simpleFileNameFromFileNum(r->position.file), r->position.line);
     } else if (mode == DIFF_UNEXPECTED_REF) {
-        fprintf(communicationChannel, "%c %s:%d unexpected new reference\n", prefixchar,
+        fprintf(outputFile, "%c %s:%d unexpected new reference\n", prefixchar,
                 simpleFileNameFromFileNum(r->position.file), r->position.line);
     } else {
         assert(0);
@@ -1556,13 +1556,13 @@ static void olcxSafetyCheck2(void) {
         sessionData.browserStack.top = sessionData.browserStack.top->previous;
         sessionData.browserStack.top = sessionData.browserStack.top->previous;
         sessionData.browserStack.top = sessionData.browserStack.top->previous;
-        fprintf(communicationChannel, "*Done. No conflicts detected.");
+        fprintf(outputFile, "*Done. No conflicts detected.");
     } else {
         assert(diffrefs->symbolsMenu);
         sessionData.browserStack.top = sessionData.browserStack.top->previous;
-        fprintf(communicationChannel, " ** Some misinterpreted references detected. Please, undo last refactoring.");
+        fprintf(outputFile, " ** Some misinterpreted references detected. Please, undo last refactoring.");
     }
-    fflush(communicationChannel);
+    fflush(outputFile);
 }
 
 static void olCompletionSelect(void) {
@@ -1639,16 +1639,16 @@ static bool olcxCheckSymbolExists(void) {
     return true;
 }
 
-static SymbolsMenu *firstVisibleSymbol(SymbolsMenu *first) {
-    SymbolsMenu *fvisible = NULL;
+static SymbolsMenu *firstVisibleSymbol(SymbolsMenu *menu) {
+    SymbolsMenu *firstVisible = NULL;
 
-    for (SymbolsMenu *ss=first; ss!=NULL; ss=ss->next) {
-        if (ss->visible) {
-            fvisible = ss;
+    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+        if (m->visible) {
+            firstVisible = m;
             break;
         }
     }
-    return fvisible;
+    return firstVisible;
 }
 
 
@@ -2061,7 +2061,7 @@ static void printTagSearchResults(void) {
         if (options.xref2) {
             ppcGenRecord(PPC_STRING_VALUE, ls);
         } else {
-            fprintf(communicationChannel,"%s\n", ls);
+            fprintf(outputFile,"%s\n", ls);
         }
         len1 = len;
     }
@@ -2073,7 +2073,7 @@ void answerEditAction(void) {
     OlcxReferences *rstack, *nextrr;
 
     ENTER();
-    assert(communicationChannel);
+    assert(outputFile);
 
     log_trace("Server operation = %s(%d)", operationNamesTable[options.serverOperation], options.serverOperation);
     switch (options.serverOperation) {
@@ -2083,13 +2083,13 @@ void answerEditAction(void) {
         break;
     case OLO_EXTRACT:
         if (! parsedInfo.extractProcessedFlag) {
-            fprintf(communicationChannel,"*** No function/method enclosing selected block found **");
+            fprintf(outputFile,"*** No function/method enclosing selected block found **");
         }
         break;
     case OLO_TAG_SEARCH: {
         Position givenPosition = getCallerPositionFromCommandLineOption();
         if (!options.xref2)
-            fprintf(communicationChannel,";");
+            fprintf(outputFile,";");
         pushEmptySession(&sessionData.retrieverStack);
         sessionData.retrieverStack.top->callerPosition = givenPosition;
 
@@ -2215,7 +2215,7 @@ void answerEditAction(void) {
         break;
     case OLO_GET_METHOD_COORD:
         if (parsedInfo.methodCoordEndLine!=0) {
-            fprintf(communicationChannel,"*%d", parsedInfo.methodCoordEndLine);
+            fprintf(outputFile,"*%d", parsedInfo.methodCoordEndLine);
         } else {
             errorMessage(ERR_ST, "No method found.");
         }
@@ -2283,7 +2283,7 @@ void answerEditAction(void) {
         log_fatal("unexpected default case for server operation %s", operationNamesTable[options.serverOperation]);
     } // switch
 
-    fflush(communicationChannel);
+    fflush(outputFile);
     inputFileName = NULL;
     LEAVE();
 }

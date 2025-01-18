@@ -45,7 +45,7 @@ extern int yyIdBufferIndex;
 extern char *cppVarArgsName;
 extern char *javaSourcePaths;
 
-extern FILE *communicationChannel;
+extern FILE *outputFile;
 
 extern ParsedInfo parsedInfo;
 

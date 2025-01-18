@@ -24,7 +24,7 @@ jmp_buf cxmemOverflow;
 int currentPass;
 int maxPasses;
 
-FILE *communicationChannel;
+FILE *outputFile;
 FILE *errOut=NULL;
 
 TypeModifier *preCreatedTypesTable[MAX_TYPE];

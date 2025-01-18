@@ -524,7 +524,7 @@ static void totalTaskEntryInitialisations() {
     // Outputs
     errOut = stderr;
 
-    communicationChannel = stdout;
+    outputFile = stdout;
 
     fileAbortEnabled = false;
 
