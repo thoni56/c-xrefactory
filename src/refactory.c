@@ -201,7 +201,7 @@ static void beInteractive(void) {
     ENTER();
     deepCopyOptionsFromTo(&options, &savedOptions);
     for (;;) {
-        closeMainOutputFile();
+        closeOutputFile();
         ppcSynchronize();
         deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(argument_count(serverStandardOptions), serverStandardOptions, DONT_PROCESS_FILE_ARGUMENTS);
@@ -1718,7 +1718,7 @@ void refactory(void) {
     // synchronisation, wait so files won't be saved with the same time
     quasiSaveModifiedEditorBuffers();
 
-    closeMainOutputFile();
+    closeOutputFile();
     ppcSynchronize();
 
     // exiting, put undefined, so that main will finish

@@ -18,28 +18,28 @@
 #include "ppc.h"
 
 
-void openOutputFile(char *outfile) {
-    closeMainOutputFile();
-    if (outfile!=NULL) {
+void openOutputFile(char *outputFileName) {
+    closeOutputFile();
+    if (outputFileName!=NULL) {
         log_trace("Opening output file '%s'", options.outputFileName);
 #if defined (__WIN32__)
         // open it as binary file, so that record lengths will be correct
-        outputFile = openFile(outfile, "wb");
+        outputFile = openFile(outputFileName, "wb");
 #else
-        outputFile = openFile(outfile, "w");
+        outputFile = openFile(outputFileName, "w");
 #endif
     } else {
         outputFile = stdout;
     }
     if (outputFile == NULL) {
-        errorMessage(ERR_CANT_OPEN, outfile);
+        errorMessage(ERR_CANT_OPEN, outputFileName);
         outputFile = stdout;
     }
     errOut = outputFile;
 }
 
-void closeMainOutputFile(void) {
-    if (outputFile!=stdout) {
+void closeOutputFile(void) {
+    if (outputFile != NULL && outputFile != stdout) {
         //&fprintf(dumpOut,"CLOSING OUTPUT FILE\n");
         closeFile(outputFile);
         outputFile = stdout;
@@ -372,7 +372,7 @@ void errorMessage(int errCode, char *mess) {
 }
 
 static void emergencyExit(int exitStatus) {
-    closeMainOutputFile();
+    closeOutputFile();
     if (options.xref2) {
         ppcSynchronize();
     }
@@ -404,7 +404,7 @@ void internalCheckFail(char *expr, char *file, int line) {
     if (options.mode == ServerMode || options.mode == RefactoryMode) {
         if (options.xref2) {
             ppcGenRecord(PPC_INFORMATION,"Exiting");
-            closeMainOutputFile();
+            closeOutputFile();
             ppcSynchronize();
         } else {
             fprintf(errOut, "\t exiting!\n");

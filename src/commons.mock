@@ -8,7 +8,7 @@ void openOutputFile(char *outfile) {
   mock(outfile);
 }
 
-void closeMainOutputFile(void) {
+void closeOutputFile(void) {
     mock();
 }
 

@@ -364,7 +364,7 @@ void xref(int argc, char **argv) {
     loadAllOpenedEditorBuffers();
 
     callXref(argc, argv, false);
-    closeMainOutputFile();
+    closeOutputFile();
     if (options.xref2) {
         ppcSynchronize();
     }

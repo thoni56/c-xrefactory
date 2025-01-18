@@ -293,7 +293,7 @@ void server(int argc, char **argv) {
         //& options.outputFileName = NULL;  // why this was here ???
         //editorCloseBufferIfNotUsedElsewhere(s_input_file_name);
         closeAllEditorBuffers();
-        closeMainOutputFile();
+        closeOutputFile();
         if (options.serverOperation == OLO_EXTRACT)
             cache.index = 2; // !!!! no cache
         if (options.xref2)

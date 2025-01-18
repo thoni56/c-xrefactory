@@ -25,6 +25,6 @@ extern char *normalizeFileName_static(char *name, char *relativeto);
 
 
 extern void openOutputFile(char *outfile);
-extern void closeMainOutputFile(void);
+extern void closeOutputFile(void);
 
 #endif
