@@ -4,4 +4,11 @@
 #
 UTILS="$(dirname "$(realpath "$0")")"
 
-emacs -l $UTILS/lsp-initialize.el $@
+emacs -l $UTILS/lsp-initialize.el $@ &
+read -p "Ange PID för processen du vill debugga: " pid
+if [ -z "$pid" ]; then
+    echo "Ingen PID angiven. Avbryter."
+    exit 1
+fi
+echo "Startar gdb mot PID $pid..."
+gdb -q -p $pid
