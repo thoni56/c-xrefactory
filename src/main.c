@@ -577,17 +577,6 @@ static void clearFileItem(FileItem *fileItem) {
 }
 
 void mainTaskEntryInitialisations(int argc, char **argv) {
-    char fileName[MAX_FILE_NAME_SIZE];
-    char standardOptionsFileName[MAX_FILE_NAME_SIZE];
-    char standardOptionsSection[MAX_FILE_NAME_SIZE];
-    char *ss;
-    int dfargc;
-    char **dfargv;
-    int argcount;
-    char *cmdlnInputFile;
-    int inmode;
-    bool previousNoErrorsOption;
-
     ENTER();
 
     initLexemEnumNames();
@@ -659,10 +648,11 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initCaching();
 
     // enclosed in cache point, because of persistent #define in XrefEdit. WTF?
-    argcount = 0;
-    inputFileName = cmdlnInputFile = getNextArgumentFile(&argcount);
+    int argcount = 0;
+    inputFileName = getNextArgumentFile(&argcount);
+    char fileName[MAX_FILE_NAME_SIZE];
     if (inputFileName==NULL) {
-        ss = strmcpy(fileName, cwd);
+        char *ss = strmcpy(fileName, cwd);
         if (ss!=fileName && ss[-1] == FILE_PATH_SEPARATOR)
             ss[-1]=0;
         assert(strlen(fileName)+1<MAX_FILE_NAME_SIZE);
@@ -671,12 +661,18 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         strcpy(fileName, inputFileName);
     }
 
+    char standardOptionsFileName[MAX_FILE_NAME_SIZE];
+    char standardOptionsSection[MAX_FILE_NAME_SIZE];
     searchStandardOptionsFileAndProjectForFile(fileName, standardOptionsFileName, standardOptionsSection);
     handlePathologicProjectCases(fileName, standardOptionsFileName, standardOptionsSection, false);
 
     reInitCwd(standardOptionsFileName, standardOptionsSection);
 
     if (standardOptionsFileName[0]!=0) {
+        int dfargc;
+        char **dfargv;
+        ProcessFileArguments inmode;
+
         readOptionsFromFile(standardOptionsFileName, &dfargc, &dfargv, standardOptionsSection, standardOptionsSection);
         if (options.mode == RefactoryMode) {
             inmode = DONT_PROCESS_FILE_ARGUMENTS;
@@ -688,7 +684,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
             inmode = DONT_PROCESS_FILE_ARGUMENTS;
         }
         // disable error reporting on xref task on this pre-reading of .c-xrefrc
-        previousNoErrorsOption = options.noErrors;
+        bool previousNoErrorsOption = options.noErrors;
         if (options.mode==ServerMode) {
             options.noErrors = true;
         }
