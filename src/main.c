@@ -518,7 +518,7 @@ static int power(int x, int y) {
     return res;
 }
 
-static void totalTaskEntryInitialisations() {
+void totalTaskEntryInitialisations(void) {
     ENTER();
 
     // Outputs

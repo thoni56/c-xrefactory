@@ -17,6 +17,10 @@ Some useful commands:
 
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
+* DOING FEATURE: LSP Find Definition
+** DOING Initiate server so it can handle OLO_PUSH
+** TODO Create an answer from gathered information
+** DONE Initial Communication
 * TODO FEATURE: Rename C Module
 ** DONE Rename included file
 *** DONE New refactoring: Rename Included File
