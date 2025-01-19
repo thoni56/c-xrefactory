@@ -2,26 +2,22 @@ include ../Makefile.boilerplate
 
 ARGUMENTS = -create -o systemd.log
 
-all: .c-xrefrc
+all:
 	@if [ ! -d systemd ] ; then \
 		echo "Tests in \"systemd\": not activated, run 'make init', 'make clean' to deactivate" ; \
 	else \
-		rm -f output systemd.log ; \
+		rm -rf CXrefs output systemd.log ; \
+		sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" c-xrefrc.tpl > .c-xrefrc ; \
 		../run-with-progress $(COMMAND) ; \
-		if ! grep Generating systemd.log > /dev/null ; then \
-			$(FAIL) "(systemd.log)" ; \
-			exit 1 ; \
+		cxref_reader > CXrefs.dump ; \
+		if diff -q CXrefs.dump expected.dump > /dev/null ; then \
+			$(OK) ; \
 		else \
-			if grep -i "<error " output > /dev/null ; then \
-				$(FAIL) "(output)" ; \
-				exit 1 ; \
-			else \
-				$(OK) ; \
-			fi ; \
+			$(FAIL) ; \
 		fi ; \
 	fi
 
-init: systemd .c-xrefrc
+init: systemd
 
 systemd:
 	tar zxf systemd.tgz
