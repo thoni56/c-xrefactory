@@ -105,7 +105,8 @@
 #endif
 
 typedef enum {
-    ALL_OPERATION_ENUMS(GENERATE_ENUM_VALUE)
+       OLO_NONE = 0,
+       ALL_OPERATION_ENUMS(GENERATE_ENUM_VALUE)
 } ServerOperation;
 
 extern const char* operationNamesTable[];

@@ -21,6 +21,7 @@
 
 
 const char *operationNamesTable[] = {
+    "OLO_NONE",
     ALL_OPERATION_ENUMS(GENERATE_ENUM_STRING)
 };
 

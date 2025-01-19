@@ -1,4 +1,5 @@
 #include <cgreen/cgreen.h>
+#include <cgreen/constraint_syntax_helpers.h>
 
 #include "server.h"
 
@@ -41,4 +42,7 @@ BeforeEach(Server) {
 }
 AfterEach(Server) {}
 
-Ensure(Server, can_run_empty_test) {}
+Ensure(Server, has_a_none_operation) {
+    assert_that(OLO_NONE, is_equal_to(0));
+    assert_that(operationNamesTable[OLO_NONE], is_equal_to_string("OLO_NONE"));
+}
