@@ -164,12 +164,9 @@ bool cxMemoryHasEnoughSpaceFor(size_t bytes) {
 }
 
 bool cxMemoryOverflowHandler(int n) {
-    int oldsize, newsize;
-
     log_trace("Handling CX memory overflow with n=%d", n);
-    oldsize = cxMemory.size;
-
-    newsize = calculateNewSize(n, oldsize);
+    int oldsize = cxMemory.size;
+    int newsize = calculateNewSize(n, oldsize);
 
     memoryInit(&cxMemory, "cxMemory", cxMemoryOverflowHandler, newsize);
     log_debug("Reallocating cxMemory: %d -> %d", oldsize, newsize);
