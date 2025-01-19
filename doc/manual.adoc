@@ -449,8 +449,10 @@ Useful when attaching a debugger to an edit server process.
 
 -preload <file1> <file2>::
 
-Indicates that the current content of the editor copy of `file1` is available in `file2`.
-If an editor has an edited, non-saved, buffer holding a relevant `file1` it is supposed that the editor adaptor saves the content into a file and indicates this to the edit server using this option.
+Indicates that the current content of the editor copy of `file2` is available in
+`file1`.  If an editor has an edited, non-saved, buffer holding a relevant `file2` it is
+supposed that the editor adaptor saves the content into a file and indicates this to the
+edit server using this option.
 
 -prune::
 
