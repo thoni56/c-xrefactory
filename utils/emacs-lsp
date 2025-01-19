@@ -5,6 +5,7 @@
 UTILS="$(dirname "$(realpath "$0")")"
 
 emacs --no-splash -l $UTILS/lsp-initialize.el $@ &
+emacs_pid=$!
 read -p "Ange PID för processen du vill debugga: " pid
 if [ -z "$pid" ]; then
     echo "Ingen PID angiven. Avbryter."
@@ -12,3 +13,4 @@ if [ -z "$pid" ]; then
 fi
 echo "Startar gdb mot PID $pid..."
 gdb -q -p $pid -ex 'br internalCheckFail'
+kill $emacs_pid
