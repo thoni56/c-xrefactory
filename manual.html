@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<meta name="author" content="v{VERSION} - Generated 2025-01-17">
+<meta name="author" content="v{VERSION} - Generated 2025-01-19">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - User Manual</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - User Manual</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-01-17</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-01-19</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -925,15 +925,17 @@ If <code>-exactpositionresolve</code> is used then the actual function and its m
 <dt class="hdlist1">-olnodialog</dt>
 <dt class="hdlist1">-optinclude</dt>
 <dt class="hdlist1">-pass</dt>
-<dt class="hdlist1">-pause &lt;n&gt;</dt>
+<dt class="hdlist1">-delay=&lt;n&gt;</dt>
 <dd>
-<p>Will sleep <code>n</code> seconds before proceeding with next argument or processing.
-Useful when attaching a debugger to an edit server process.</p>
+<p>Will sleep <code>n</code> seconds before starting <code>c-xref</code>.  Useful when attaching a debugger to an
+edit server process.  Will only work on initial invocation in server mode.</p>
 </dd>
 <dt class="hdlist1">-preload &lt;file1&gt; &lt;file2&gt;</dt>
 <dd>
-<p>Indicates that the current content of the editor copy of <code>file1</code> is available in <code>file2</code>.
-If an editor has an edited, non-saved, buffer holding a relevant <code>file1</code> it is supposed that the editor adaptor saves the content into a file and indicates this to the edit server using this option.</p>
+<p>Indicates that the current content of the editor copy of <code>file2</code> is available in
+<code>file1</code>.  If an editor has an edited, non-saved, buffer holding a relevant <code>file2</code> it is
+supposed that the editor adaptor saves the content into a file and indicates this to the
+edit server using this option.</p>
 </dd>
 <dt class="hdlist1">-prune</dt>
 <dt class="hdlist1">-refnum</dt>
@@ -1037,7 +1039,7 @@ this tool over many years.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-01-17 18:30:15 UTC
+Last updated 2025-01-19 14:54:48 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
