@@ -442,10 +442,10 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 
 -pass::
 
--pause <n>::
+-delay=<n>::
 
-Will sleep `n` seconds before proceeding with next argument or processing.
-Useful when attaching a debugger to an edit server process.
+Will sleep `n` seconds before starting `c-xref`.  Useful when attaching a debugger to an
+edit server process.  Will only work on initial invocation in server mode.
 
 -preload <file1> <file2>::
 

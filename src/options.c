@@ -1127,6 +1127,8 @@ static bool processDOption(int *argi, int argc, char **argv) {
     int i = *argi;
 
     if (0) {}                   /* For copy/paste/re-order convenience, all tests can start with "else if.." */
+    else if (strncmp(argv[i], "-delay=", 8)==0)
+        /* Startup delay already handled in main() */ ;
     else if (strcmp(argv[i], "-debug")==0)
         options.debug = true;
     // TODO, do this macro allocation differently!!!!!!!!!!!!!
@@ -1536,11 +1538,6 @@ static bool processPOption(int *argi, int argc, char **argv) {
     int     i = *argi;
 
     if (0) {}
-    else if (strncmp(argv[i], "-pause",5)==0) {
-        /* Pause to be able to attach with debugger... */
-        ensureThereIsAnotherArgument(&i, argc, argv);
-        sleep(atoi(argv[i]));
-    }
     else if (strncmp(argv[i], "-pass",5)==0) {
         errorMessage(ERR_ST, "'-pass' option can't be entered from command line");
     }
