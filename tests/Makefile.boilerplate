@@ -81,3 +81,12 @@ cgdb:
 
 lldb:
 	lldb -o 'breakpoint set --name main' -o 'process launch -- $(BASE_ARGUMENTS) $(ARGUMENTS)' $(CXREF_PROGRAM)
+
+debug:
+	@{ \
+		$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp & \
+		pid=$$! ; \
+		sleep 1 ; \
+		cxref_pid=$$(pgrep -P $$pid c-xref) ; \
+		sudo gdb -pid $$cxref_pid -ex 'br internalCheckFail' $(GDB_COMMANDS) ; \
+	}

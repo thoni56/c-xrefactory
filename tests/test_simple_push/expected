@@ -1,10 +1,10 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -server -o server-buffer
--olcxgetprojectname -xrefrc ".c-xrefrc" "test_source/single_int1.c"
+ ../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -server -o server-buffer
+-olcxgetprojectname -xrefrc .c-xrefrc test_source/single_int1.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxpush "-olmark=0" "-olcursor=6" "test_source/single_int1.c" -xrefrc ".c-xrefrc" -p "CURDIR" -encoding=european
+-olcxpush -olmark=0 -olcursor=6 test_source/single_int1.c -xrefrc .c-xrefrc -p CURDIR -encoding=european
 end-of-options
 
 <sync>

@@ -7,7 +7,4 @@ $(TEST):
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-debug:
-	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --buffer buffer --delay 5 > output.tmp &
-	sleep 1
-	sudo gdb -pid `pgrep c-xref | tail -1` -ex 'br refactory' -ex 'continue'
+GDB_COMMANDS = -ex 'br refactory' -ex 'continue'

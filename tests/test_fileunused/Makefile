@@ -18,8 +18,4 @@ $(TEST):
 trace: EXTRA = --extra "-trace -log=log"
 trace: $(TEST)
 
-DEBUGGER = gdb
-debug:
-	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
-	sleep 1
-	sudo $(DEBUGGER) -pid `pgrep -a c-xref | grep -v emacs | awk '{ print $$1 }'` -ex 'br processOptions' -ex 'br pushLocalUnusedSymbolsAction' -ex 'continue'
+GDB_COMMANDS = -ex 'br processOptions' -ex 'br pushLocalUnusedSymbolsAction' -ex 'continue'

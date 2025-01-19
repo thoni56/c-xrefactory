@@ -8,7 +8,4 @@ $(TEST):
 trace: EXTRA = \'-trace\'
 trace: $(TEST)
 
-debug:
-	@$(EDIT_SERVER_DRIVER) commands.input --delay 5 > output.tmp &
-	sleep 1
-	sudo gdb -pid `pgrep -a c-xref | grep -v .emacs | awk '{ print $$1 }'` -ex 'br main'
+GDB_COMMANDS = -ex 'br initLogging'

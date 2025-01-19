@@ -759,8 +759,8 @@ static void initLogging(int argc, char *argv[]) {
 
 static void checkForStartupDelay(int argc, char *argv[]) {
     for (int i=0; i<argc; i++) {
-        if (strncmp(argv[i], "-delay=", 8)==0) {
-            sleep(atoi(&argv[i][8]));
+        if (strncmp(argv[i], "-delay=", 7)==0) {
+            sleep(atoi(&argv[i][7]));
             return;
         }
     }

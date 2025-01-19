@@ -8,7 +8,7 @@ $(TEST): CXrefs
 	$(NORMALIZE) output.tmp | grep -v -w progress > output
 	$(VERIFY)
 
-trace debug: EXTRA+=--extra="-trace -log=log"
+trace: EXTRA+=--extra="-trace -log=log"
 trace: $(TEST)
 
 CXrefs: .c-xrefrc
