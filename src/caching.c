@@ -80,7 +80,7 @@ static void refTabDeleteOutOfMemory(int index) {
 }
 
 // Deliberate NO-OP
-static void fileTabDeleteOutOfMemory(FileItem *fileItem) {
+static void fileTableDeleteOutOfMemory(FileItem *fileItem) {
 }
 
 static void structCachingFree(Symbol *symbol) {
@@ -166,7 +166,7 @@ static bool cachedIncludedFilePass(int index) {
 
 static void recoverCxMemory(char *cxMemFreeBase) {
     cxFreeUntil(cxMemFreeBase);
-    mapOverFileTable(fileTabDeleteOutOfMemory);
+    mapOverFileTable(fileTableDeleteOutOfMemory);
     mapOverReferenceTableWithIndex(refTabDeleteOutOfMemory);
 }
 
@@ -225,7 +225,7 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
         log_trace("removing references");
         cxMemory.index = cachePoint->cxMemoryIndex;
         mapOverReferenceTableWithIndex(refTabDeleteOutOfMemory);
-        mapOverFileTable(fileTabDeleteOutOfMemory);
+        mapOverFileTable(fileTableDeleteOutOfMemory);
     }
     log_trace("recovering symbolTable");
     symbolTableMapWithIndex(symbolTable, symbolTableDeleteOutOfMemory);
