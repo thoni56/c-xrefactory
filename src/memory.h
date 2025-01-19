@@ -70,7 +70,7 @@ extern bool cxMemoryPointerIsBetween(void *pointer, int low, int high);
 extern void *cxAlloc(size_t size);
 extern void cxFreeUntil(void *until);
 extern bool cxMemoryIsFreed(void *pointer);
-extern void cxMemoryResized(void);
+extern void memoryResized(void);
 extern bool cxMemoryOverflowHandler(int n);
 
 #endif
