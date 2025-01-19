@@ -1,12 +1,16 @@
 include ../Makefile.boilerplate
 
+# There should be 27 references to vApplClass
+# so one line with the reference item gives 28
+# in total
 
 ARGUMENTS = -xrefactory-II -create -errors -o output.tmp src
 
 $(TEST): c_xrefrc_for_single_cxref_file
 	-rm CXrefs
 	$(COMMAND) | grep -v progress > log
-	 ../../utils/cxref_reader.py CXrefs | grep vApplClass | wc -l | tr -d ' ' > output
+	../../utils/cxref_reader.py CXrefs > tmp
+	./extract_vApplClass.sh tmp | wc -l | tr -d ' ' > output
 	$(VERIFY)
 
 c_xrefrc_for_single_cxref_file: .c-xrefrc

@@ -171,6 +171,8 @@ def unpack_symbols(lines):
             (d, classification) = read_marker('d', classification)
             (g, classification) = read_marker('g', classification)
             symbolname = segments[1].split('/', 1)[-1]
+            if symbolname == '%%%i': # An include reference
+                symbolname = symbolname+str(d) # Concat filenumber
             symbols.append(
                 Symbol(symbolname, unpack_references(segments[2]), marker))
     return symbols
@@ -241,9 +243,12 @@ if __name__ == "__main__":
     symbols.sort(key=lambda s: s.symbolname)
     for symbol in symbols:
         print(symbol.symbolname)
+        symbol.references.sort(key=lambda r: (os.path.basename(get_filename_from_id(r.fileid, files)),
+                                               r.lineno if r.lineno else 0,
+                                               r.colno if r.colno else 0))
         for p in symbol.references:
             # Save fileid, lineno and colno in case any of them are skipped in next symbol in this file
             filename = get_filename_from_id(p.fileid, files)
             filename = os.path.basename(filename)
-            print("    %s@%s:%d:%d" %
-                  (symbol.symbolname, filename, p.lineno if p.lineno else 0, p.colno if p.colno else 0))
+            print("    @%s:%d:%d" %
+                  (filename, p.lineno if p.lineno else 0, p.colno if p.colno else 0))

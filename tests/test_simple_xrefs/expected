@@ -1,10 +1,10 @@
 single_int_on_line_1_col_4
-    single_int_on_line_1_col_4@single_int2.c:1:4
-    single_int_on_line_1_col_4@single_int2.c:4:0
-    single_int_on_line_1_col_4@single_int1.c:1:4
-    single_int_on_line_1_col_4@single_int1.c:4:0
+    @single_int1.c:1:4
+    @single_int1.c:4:0
+    @single_int2.c:1:4
+    @single_int2.c:4:0
 single_int_on_line_2_col_5
-    single_int_on_line_2_col_5@single_int2.c:2:5
-    single_int_on_line_2_col_5@single_int2.c:5:1
-    single_int_on_line_2_col_5@single_int1.c:2:5
-    single_int_on_line_2_col_5@single_int1.c:5:1
+    @single_int1.c:2:5
+    @single_int1.c:5:1
+    @single_int2.c:2:5
+    @single_int2.c:5:1
