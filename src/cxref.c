@@ -1075,20 +1075,18 @@ static void olcxReferenceGotoCaller(void) {
 #define MAX_SYMBOL_MESSAGE_LEN 50
 
 static void olcxPrintSymbolName(OlcxReferences *refs) {
-    char ttt[MAX_CX_SYMBOL_SIZE+MAX_SYMBOL_MESSAGE_LEN];
-    SymbolsMenu *menu;
-
     assert(options.xref2);
     if (refs==NULL) {
         ppcBottomInformation("stack is now empty");
     } else if (refs->hkSelectedSym==NULL) {
         ppcBottomInformation("Current top symbol: <empty>");
     } else {
-        menu = refs->hkSelectedSym;
-        sprintf(ttt, "Current top symbol: ");
-        assert(strlen(ttt) < MAX_SYMBOL_MESSAGE_LEN);
-        prettyPrintLinkNameForSymbolInMenu(ttt+strlen(ttt), menu);
-        ppcBottomInformation(ttt);
+        SymbolsMenu *menu = refs->hkSelectedSym;
+        char tempString[MAX_CX_SYMBOL_SIZE+MAX_SYMBOL_MESSAGE_LEN];
+        sprintf(tempString, "Current top symbol: ");
+        assert(strlen(tempString) < MAX_SYMBOL_MESSAGE_LEN);
+        prettyPrintLinkNameForSymbolInMenu(tempString+strlen(tempString), menu);
+        ppcBottomInformation(tempString);
     }
 }
 
