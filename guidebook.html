@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<meta name="author" content="v{VERSION} - Generated 2025-01-19">
+<meta name="author" content="v{VERSION} - Generated 2025-01-20">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-01-19</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-01-20</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -457,6 +457,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_functional_overview">3. Functional Overview</a>
 <ul class="sectlevel2">
 <li><a href="#_options_option_files_and_configuration">3.1. Options, option files and configuration</a></li>
+<li><a href="#_lsp">3.2. LSP</a></li>
 </ul>
 </li>
 <li><a href="#_quality_attributes">4. Quality Attributes</a></li>
@@ -748,6 +749,23 @@ will be stuck with that in the whole session and for all projects.
 </table>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_lsp">3.2. LSP</h3>
+<div class="paragraph">
+<p>The LSP protocol is a common protocol for language servers such as
+<code>clangd</code> and <code>c-xrefactory</code>. It allows an editor (client) to interface
+to a server to request information, such as reference positions, and
+operations, such as refactorings, without knowing exactly which server
+it talks to.</p>
+</div>
+<div class="paragraph">
+<p>Recent versions of <code>c-xrefactory</code> have an initial implementation of a
+very small portion of the LSP protocol. The plan is to fully integrate
+the functionality of <code>c-xrefactory</code> into the LSP protocol. This will
+allow use of <code>c-xrefactory</code> from not only Emacs but also Visual Studio
+Code or any other editor that supports the LSP protocol.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -836,7 +854,7 @@ functions, where possible.
 <h4 id="_cxrefcore">7.2.1. CxrefCore</h4>
 <div class="imageblock">
 <div class="content">
-<img src="CxrefCore.png" alt="CxrefCore" width="1637" height="447">
+<img src="CxrefCore.png" alt="CxrefCore" width="1865" height="473">
 </div>
 </div>
 <div class="paragraph">
@@ -3209,7 +3227,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-01-19 14:55:31 UTC
+Last updated 2025-01-20 12:49:08 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
