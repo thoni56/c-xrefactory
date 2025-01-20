@@ -11,7 +11,7 @@
 
 
 void completions() {
-    struct mylist {int i; struct mylist *next;} *l,*ll;
+    struct mylist {int i; struct mylist *next;} *lll,*lllll;
     struct tm *ptm;
 
     // simple function name completion
@@ -52,7 +52,7 @@ void completions() {
     ;
 
     // macro names completions
-    l
+    lll
     ;
 
 
