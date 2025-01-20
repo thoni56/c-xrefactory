@@ -25,5 +25,6 @@
   -ICURDIR/systemd/src/libsystemd-terminal
   //  directory where tag files are stored
   -refs CURDIR/CXrefs
+  -exactpositionresolve
   //  number of tag files
   -refnum=10
