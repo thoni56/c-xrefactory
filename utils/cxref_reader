@@ -16,7 +16,7 @@ def eprint(*args, **kwargs):
 
 def vprint(*args, **kwargs):
     if verbose:
-        print(*args, **kwargs)
+        print(*args, file=sys.stderr, **kwargs)
 
 
 # Create the Position structure
@@ -32,8 +32,19 @@ colno = None
 # Make a dict for last values where keys are the record keys, all zero'ed out initially
 marker_value = dict.fromkeys('uAsflcrpmiao', 0)
 
+legacy_format = None
 
 def skip_header(lines):
+    global legacy_format
+    version_line = lines[2].strip()
+    if not version_line.startswith("34v file format: C-xrefactory"):
+        raise ValueError(f"Error in file version line: {version_line}")
+
+    try:
+        version = version_line.split()[-1]
+        legacy_format = version == "1.6.0"
+    except IndexError:
+        raise ValueError("Could not extract version marking from header.")
     return lines[6:]
 
 def read_marker(marker, string):
@@ -155,10 +166,38 @@ def get_filename_from_id(fileid, file_references):
         fileref for fileref in file_references if fileref.fileid == fileid]
     return filerefs[0].filename if len(filerefs) == 1 else None
 
+def get_relative_filename_from_id(fileid, file_references):
+    return get_filename_from_id(fileid, file_references).replace(os.getcwd(), "", 1).lstrip(os.sep)
+
+def is_valid_hex(s):
+    try:
+        int(s, 16)
+        return True
+    except ValueError:
+        return False
+
+def convert_local_identifier(identifier):
+    source, name = identifier.split('!')
+
+    parts = source.split('-')
+    if len(parts) != 3:
+        return identifier
+
+    file_hex, line_hex, col_hex = parts
+
+    if not all(is_valid_hex(part) for part in [file_hex, line_hex, col_hex]):
+        return identifier
+
+    file_id = int(file_hex, 16)
+    line = int(line_hex, 16)
+    col = int(col_hex, 16)
+
+    relative_filename = get_relative_filename_from_id(file_id, files)
+
+    return f"{relative_filename}-{line}-{col}!{name}"
 
 # Create Symbol structure
 Symbol = namedtuple('Symbol', ['symbolname', 'references', 'kind'])
-
 
 def unpack_symbols(lines):
     symbols = []
@@ -169,10 +208,16 @@ def unpack_symbols(lines):
             classification = segments[0]
             (t, classification) = read_marker('t', classification)
             (d, classification) = read_marker('d', classification)
+            if legacy_format :
+                (h, classification) = read_marker('h', classification)
+                (a, classification) = read_marker('a', classification)
             (g, classification) = read_marker('g', classification)
             symbolname = segments[1].split('/', 1)[-1]
             if symbolname == '%%%i': # An include reference
-                symbolname = symbolname+':'+get_filename_from_id(d, files)
+                filename = get_relative_filename_from_id(d, files)
+                symbolname = symbolname+':'+filename
+            elif '!' in symbolname:
+                symbolname = convert_local_identifier(symbolname)
             symbols.append(
                 Symbol(symbolname, unpack_references(segments[2]), marker))
     return symbols
@@ -224,7 +269,7 @@ if __name__ == "__main__":
         # Get all file references from the XFiles file
         vprint("Unpacking", "XFiles")
         lines = read_lines_from(directory_name, "XFiles")
-        lines = lines[6:]  # Skip header
+        lines = skip_header(lines)
         files = unpack_xfiles(lines)
 
         # Read all CXref-files and list identifiers
