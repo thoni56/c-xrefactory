@@ -1,7 +1,8 @@
-#! /bin/env bash
+#!/usr/bin/env bash
 #
 # Simple Emacs startup using latest development version
 #
+set -x
 UTILS="$(dirname "$(realpath "$0")")"
 
 FILES=$(find "$UTILS/../editors/emacs" -type f -name "*.el" ! -name "compileCxrefactory.el")

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 set -e
 adr_bin_dir=/usr/libexec/adr-tools
 adr_template_dir=/usr/share/adr-tools
