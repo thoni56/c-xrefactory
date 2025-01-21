@@ -212,7 +212,13 @@ void initFlushableMemory(FlushableMemory *memory) {
 void *allocateFlushableMemory(FlushableMemory *memory, size_t size) {
     if (memory->blocks == NULL) {
         memory->blocks = malloc(100*sizeof(void *));
+        memory->size = 100;
     }
+    if (memory->top == memory->size) {
+        memory->blocks = realloc(memory->blocks, memory->size*2);
+        memory->size *= 2;
+    }
+
     memory->blocks[memory->top] = malloc(size);
     memory->top++;
     return memory->blocks[memory->top-1];

@@ -170,14 +170,18 @@ Ensure(Memory, can_allocate_single_block_in_flushable_memory) {
     assert_that(block, is_not_null);
 }
 
+
 Ensure(Memory, can_reallocate_block_array_for_overflow) {
     FlushableMemory memory;
 
     initFlushableMemory(&memory);
 
-    for (int i=0; i < 10000; i++) {
+    int previous_size = memory.size;
+    for (int i=0; i < previous_size+1; i++) {
         allocateFlushableMemory(&memory, 4);
     }
     void *block = allocateFlushableMemory(&memory, 4);
+
     assert_that(block, is_not_null);
+    assert_that(memory.size, is_not_equal_to(previous_size));
 }
