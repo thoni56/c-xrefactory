@@ -492,6 +492,8 @@ static bool openInclude(char includeType, char *name, bool is_include_next) {
     char normalizedName[MAX_FILE_NAME_SIZE];
     char path[MAX_FILE_NAME_SIZE];
 
+    log_trace("openInclude(%s)%s", name, is_include_next?" as include_next":"");
+
     extractPathInto(currentFile.fileName, path);
 
     StringList *start = options.includeDirs;
