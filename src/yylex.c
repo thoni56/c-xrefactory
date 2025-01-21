@@ -1946,36 +1946,33 @@ void dumpLexemBuffer(LexemBuffer *lb) {
 /* ************************************************************** */
 /*                   caching of input                             */
 /* ************************************************************** */
-int cachedInputPass(int cpoint, char **cfrom) {
-    LexemCode lexem;
-    int lineNumber;
-    Position position;
-    unsigned lexemLength;
-    char *previousLexem, *cto;
-    char *cp;
-    int res;
+bool cachedInputPass(int cpoint, char **cFrom) {
+    bool res = true;
 
     assert(cpoint > 0);
-    cto = cache.points[cpoint].nextLexemP;
-    cp = *cfrom;
-    res = 1;
+    char *cTo = cache.points[cpoint].nextLexemP;
+    char *cp = *cFrom;
 
-    while (cp < cto) {
-        lexem = getLexemAndSavePointerToPrevious(&previousLexem);
+    while (cp < cTo) {
+        char *previousLexemP;
+        LexemCode lexem = getLexemAndSavePointerToPrevious(&previousLexemP);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
+        Position position;
+        int lineNumber;
         getExtraLexemInformationFor(lexem, &currentInput.read, &lineNumber, NULL, &position, NULL, true);
-        lexemLength = currentInput.read-previousLexem;
+
+        unsigned lexemLength = currentInput.read-previousLexemP;
         assert(lexemLength >= 0);
-        if (memcmp(previousLexem, cp, lexemLength)) {
-            currentInput.read = previousLexem;			/* unget last lexem */
-            res = 0;
+        if (memcmp(previousLexemP, cp, lexemLength)) {
+            currentInput.read = previousLexemP;			/* unget last lexem */
+            res = false;
             break;
         }
         if (isIdentifierLexem(lexem) || isPreprocessorToken(lexem)) {
             if (onSameLine(position, cxRefPosition)) {
-                currentInput.read = previousLexem;			/* unget last lexem */
-                res = 0;
+                currentInput.read = previousLexemP;			/* unget last lexem */
+                res = false;
                 break;
             }
         }
@@ -1983,11 +1980,11 @@ int cachedInputPass(int cpoint, char **cfrom) {
     }
 endOfFile:
     setCurrentFileConsistency(&currentFile, &currentInput);
-    *cfrom = cp;
+    *cFrom = cp;
     return res;
 endOfMacroArgument:
     assert(0);
-    return -1;
+    return false;
 }
 
 /* ***************************************************************** */

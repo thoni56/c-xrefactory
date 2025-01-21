@@ -41,7 +41,7 @@ extern void addFileAsIncludeReference(int filenum);
 extern void pushInclude(FILE *file, EditorBuffer *buff, char *name, char *prepend);
 extern void popInclude(void);
 extern void addMacroDefinedByOption(char *option);
-extern int cachedInputPass(int cpoint, char **cfromto);
+extern bool cachedInputPass(int cpoint, char **cfromto);
 extern LexemCode cexp_yylex(void);
 extern LexemCode yylex(void);
 
