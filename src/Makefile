@@ -99,7 +99,9 @@ MAKEFLAGS += --no-print-directory
 
 WARNINGS = -Wall -Wno-char-subscripts -Werror -Wimplicit-fallthrough
 
-CFLAGS = -g -O0 $(INCLUDES) -fPIC -MMD -funsigned-char $(WARNINGS) $(COVERAGE) $(EXTRA_CFLAGS)
+OPTIMIZATION = -O0
+
+CFLAGS = -g $(OPTIMIZATION) $(INCLUDES) -fPIC -MMD -funsigned-char $(WARNINGS) $(COVERAGE) $(EXTRA_CFLAGS)
 
 LDFLAGS = $(COVERAGE)
 
@@ -151,9 +153,8 @@ all: unit build
 #########################################################################
 # For production - no smartness just compile
 .PHONY:prod
-prod: COVERAGE = -o3
 prod:
-	$(MAKE) c-xref
+	$(MAKE) COVERAGE= OPTIMIZATION=-O3 c-xref
 
 #########################################################################
 # For development - various ways to build
