@@ -102,7 +102,7 @@ Ensure(Memory, can_allocate_with_new_sm_memory) {
     assert_that(fatalErrorCalled);
 }
 
-Ensure(Memory, will_fatal_on_overflow_in_new_sm_memory) {
+Ensure(Memory, will_fatal_on_overflow_in_memory) {
     memoryInit(&testMemory, "", NULL, SIZE_testMemory);
 
     /* Allocate more that size renders fatalError() */
@@ -111,7 +111,7 @@ Ensure(Memory, will_fatal_on_overflow_in_new_sm_memory) {
     assert_that(fatalErrorCalled);
 }
 
-Ensure(Memory, can_free_until_in_new_sm_memory) {
+Ensure(Memory, can_free_until_in_memory) {
     memoryInit(&testMemory, "", NULL, SIZE_testMemory);
 
     /* Allocate some memory */
@@ -124,7 +124,7 @@ Ensure(Memory, can_free_until_in_new_sm_memory) {
     assert_that(testMemory.index, is_equal_to(0));
 }
 
-Ensure(Memory, can_realloc_in_new_sm_memory) {
+Ensure(Memory, can_realloc_in_memory) {
     int initialSize = 2;
     int newSize = 4;
 
