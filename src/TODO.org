@@ -17,6 +17,11 @@ Some useful commands:
 
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
+* DOING Ensure systemd as a test
+  It needs to generate the same information on every run so that we
+  can repeatedly match the content.
+* TODO __has_include_next() support
+** TODO Cover openInclude() with test
 * DOING FEATURE: LSP Find Definition
 ** DOING Initiate server so it can handle OLO_PUSH
 ** TODO Create an answer from gathered information
@@ -34,6 +39,11 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 ** TODO Handle protocol errors etc. using longjump
 ** DONE LSP communication structure
 ** DONE LSP 'initialize', 'exit', 'not found'
+* TODO New flushable memory type
+  This should replace current local managed areas with a structure that
+  collects pointers to all allocated areas so that they can freeUntil().
+  The returned pointer for an allocated area can still be used as a marker
+  as the array can be traversed from top down until that pointer is found.
 * TODO FEATURE: New refactoring: move function for C
 ** DONE Pick-up pieces from Java version and hack them into a preliminary version
 ** DONE Accept target position
