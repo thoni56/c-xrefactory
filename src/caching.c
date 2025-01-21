@@ -254,7 +254,7 @@ void recoverFromCache(void) {
 
     assert(cache.index >= 1);
     deactivateCaching();
-    log_debug("reading from cache");
+    log_trace("reading from cache");
     readUntil = cache.points[0].nextLexemP;
     for (i = 1; i < cache.index; i++) {
         log_trace("trying to recover cache point %d", i);
@@ -265,7 +265,7 @@ void recoverFromCache(void) {
     }
     assert(i > 1);
     /* now, recover state from the cache point 'i-1' */
-    log_debug("recovering cache point %d", i-1);
+    log_trace("recovering cache point %d", i-1);
     recoverCachePoint(i-1, readUntil, true);
 }
 
