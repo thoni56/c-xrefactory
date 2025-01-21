@@ -164,7 +164,6 @@ static void closeInputFile(void) {
 static void parseInputFile(void) {
     if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
         log_trace("parse start");
-        recoverFromCache();
         parseCurrentInputFile(currentLanguage);
         log_trace("parse end");
     } else

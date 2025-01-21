@@ -154,10 +154,10 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
         if (!*firstPassP)
             deepCopyOptionsFromTo(&savedOptions, &options);
         inputOpened             = initializeFileProcessing(firstPassP, argc, argv, 0, NULL, &currentLanguage);
-        olOriginalFileNumber     = inputFileNumber;
+        olOriginalFileNumber    = inputFileNumber;
         olOriginalComFileNumber = olOriginalFileNumber;
         if (inputOpened) {
-            recoverFromCache();
+            recoverFromCache();  /* TODO Why do we need this here? */
             deactivateCaching(); /* no caching in cxref */
             parseCurrentInputFile(currentLanguage);
             closeCharacterBuffer(&currentFile.characterBuffer);
