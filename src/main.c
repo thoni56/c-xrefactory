@@ -718,8 +718,8 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 /* initLogging() is called as the first thing in main() so we look for log command line options here */
 static void initLogging(int argc, char *argv[]) {
     char fileName[MAX_FILE_NAME_SIZE+1] = "";
-    int log_level = LOG_ERROR;
-    int console_level = LOG_FATAL;
+    LogLevel log_level = LOG_ERROR;
+    LogLevel console_level = LOG_FATAL;
 
     for (int i=0; i<argc; i++) {
         /* Levels in the log file, if enabled */

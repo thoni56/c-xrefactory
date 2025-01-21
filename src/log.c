@@ -33,7 +33,7 @@ typedef struct {
 static struct {
   void *udata;
   log_LockFn lock;
-  int level;
+  LogLevel level;
   bool quiet;
   Callback callbacks[MAX_CALLBACKS];
 } L;
@@ -152,7 +152,7 @@ static void init_event(log_Event *ev, void *udata) {
 }
 
 
-void log_log(int level, const char *file, int line, const char *fmt, ...) {
+void log_log(LogLevel level, const char *file, int line, const char *fmt, ...) {
   log_Event ev = {
     .fmt   = fmt,
     .file  = file,
