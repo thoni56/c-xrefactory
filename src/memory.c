@@ -199,3 +199,21 @@ bool cxMemoryIsFreed(void *pointer) {
 void cxFreeUntil(void *pointer) {
     memoryFreeUntil(&cxMemory, pointer);
 }
+
+/***********************************************************************/
+/* New FlushableMemory */
+
+void initFlushableMemory(FlushableMemory *memory) {
+    memory->size = 0;
+    memory->top = 0;
+    memory->blocks = NULL;
+}
+
+void *allocateFlushableMemory(FlushableMemory *memory, size_t size) {
+    if (memory->blocks == NULL) {
+        memory->blocks = malloc(100*sizeof(void *));
+    }
+    memory->blocks[memory->top] = malloc(size);
+    memory->top++;
+    return memory->blocks[memory->top-1];
+}

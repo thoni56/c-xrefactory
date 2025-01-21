@@ -37,6 +37,19 @@ extern void memoryFreeUntil(Memory *memory, void *pointer);
 
 
 /***********************************************************************/
+/* New, so far, unused new Memory handling */
+
+typedef struct {
+    int size;
+    int top;
+    void **blocks;
+} FlushableMemory;
+
+extern void initFlushableMemory(FlushableMemory *memory);
+extern void *allocateFlushableMemory(FlushableMemory *memory, size_t size);
+
+
+/***********************************************************************/
 
 extern jmp_buf memoryResizeJumpTarget;
 
