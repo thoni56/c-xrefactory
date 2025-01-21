@@ -1,10 +1,10 @@
 #!/bin/sh
 #
-# Shell script to run c-xref in the background with dotted visible feedback.
+# Shell script to run a program in the background with dotted visible feedback.
 # The output will be collected in "output".
 #
 # Any arguments to this script will be used as c-xref options
 #
-../../src/c-xref -xrefrc .c-xrefrc -xrefactory-II -crlfconversion -crconversion -encoding=default -exactpositionresolve "$@" > output &
+$@ > output &
 PROCID=$!
 while kill -0 $PROCID > /dev/null 2>&1 ; do sleep 1 ; printf "." ; done
