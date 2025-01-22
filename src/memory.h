@@ -47,7 +47,7 @@ typedef struct {
 
 extern void initFlushableMemory(FlushableMemory *memory);
 extern void *allocateFlushableMemory(FlushableMemory *memory, size_t size);
-
+extern void freeFlushableMemoryUntil(FlushableMemory *memory, void *pointer);
 
 /***********************************************************************/
 

@@ -223,3 +223,11 @@ void *allocateFlushableMemory(FlushableMemory *memory, size_t size) {
     memory->top++;
     return memory->blocks[memory->top-1];
 }
+
+void freeFlushableMemoryUntil(FlushableMemory *memory, void *pointer) {
+    assert(memory->size > 0);
+    while (memory->top >= 0 && memory->blocks[memory->top] != pointer) {
+        free(memory->blocks[memory->top--]);
+    }
+    assert(memory->top >= 0);
+}

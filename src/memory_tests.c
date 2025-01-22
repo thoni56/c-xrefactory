@@ -1,5 +1,8 @@
+#include <cgreen/assertions.h>
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
+
+#include <setjmp.h>
 
 #include "commons.h"
 #include "constants.h"
@@ -19,12 +22,15 @@ static void myFatalError(int errCode, char *mess, int exitStatus, char *file, in
     fatalErrorCalled = true;
 }
 
+
+static jmp_buf internalCheckJmpbuf;
 static bool internalCheckFailAllowed = false;
 static bool internalCheckFailCalled  = false;
 static void myInternalCheckFailed(char *expr, char *file, int line) {
     if (!internalCheckFailAllowed)
         internalCheckFail(expr, file, line);
     internalCheckFailCalled = true;
+    longjmp(internalCheckJmpbuf, 1);
 }
 
 
@@ -139,24 +145,26 @@ Ensure(Memory, can_realloc_in_memory) {
     assert_that(testMemory.index, is_equal_to(newSize));
 }
 
-Ensure(Memory, will_fatal_if_freeing_not_in_memory) {
+Ensure(Memory, should_fatal_if_freeing_not_in_memory) {
     memoryInit(&testMemory, "", NULL, SIZE_testMemory);
 
     void *pointer = &testMemory.area+1;
 
     internalCheckFailAllowed = true;
-    memoryFreeUntil(&testMemory, pointer);
+    if (setjmp(internalCheckJmpbuf) == 0)
+        memoryFreeUntil(&testMemory, pointer);
 
     assert_that(internalCheckFailCalled);
 }
 
-Ensure(Memory, will_fatal_if_reallocing_not_last_allocated) {
+Ensure(Memory, should_fatal_if_reallocing_not_last_allocated) {
     memoryInit(&testMemory, "", NULL, SIZE_testMemory);
 
     void *pointer = memoryAlloc(&testMemory, 5);
 
     internalCheckFailAllowed = true;
-    memoryRealloc(&testMemory, pointer+1, 5, 6);
+    if (setjmp(internalCheckJmpbuf) == 0)
+        memoryRealloc(&testMemory, pointer+1, 5, 6);
 
     assert_that(internalCheckFailCalled);
 }
@@ -184,4 +192,33 @@ Ensure(Memory, can_reallocate_block_array_for_overflow) {
 
     assert_that(block, is_not_null);
     assert_that(memory.size, is_not_equal_to(previous_size));
+}
+
+Ensure(Memory, should_fail_for_free_until_on_empty_memory) {
+    FlushableMemory memory;
+
+    initFlushableMemory(&memory);
+
+    void *someRandomPointer = &memory;
+
+    internalCheckFailAllowed = true;
+    if (setjmp(internalCheckJmpbuf) == 0)
+        freeFlushableMemoryUntil(&memory, someRandomPointer);
+
+    assert_that(internalCheckFailCalled);
+}
+
+Ensure(Memory, should_fail_for_free_until_with_random_pointer) {
+    FlushableMemory memory;
+
+    initFlushableMemory(&memory);
+    allocateFlushableMemory(&memory, 4); /* To allocate some memory */
+
+    void *someRandomPointer = &memory;
+
+    internalCheckFailAllowed = true;
+    if (setjmp(internalCheckJmpbuf) == 0)
+        freeFlushableMemoryUntil(&memory, someRandomPointer);
+
+    assert_that(internalCheckFailCalled);
 }
