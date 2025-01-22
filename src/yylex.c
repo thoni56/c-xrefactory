@@ -2188,7 +2188,11 @@ LexemCode yylex(void) {
     goto endOfFile;
 
  finish:
+#ifdef USE_NEW_CXMEMORY
+    log_trace("!'%s'(%d)", yytext, cxMemory.top);
+#else
     log_trace("!'%s'(%d)", yytext, cxMemory.index);
+#endif
     return lexem;
 
  endOfMacroArgument:

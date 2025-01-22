@@ -12,7 +12,11 @@ jmp_buf memoryResizeJumpTarget;
 
 
 /* Dynamic memory */
+#ifdef USE_NEW_CXMEMORY
+FlushableMemory cxMemory;
+#else
 Memory cxMemory={};
+#endif
 
 /* Static memory areas */
 Memory ppmMemory;
@@ -88,9 +92,11 @@ void *memoryAlloc(Memory *memory, size_t size) {
     return memoryAllocc(memory, 1, size);
 }
 
+#ifndef USE_NEW_CXMEMORY
 static bool memoryHasEnoughSpaceFor(Memory *memory, size_t bytes) {
     return memory->index + bytes < memory->size;
 }
+#endif
 
 bool memoryIsBetween(Memory *memory, void *pointer, int low, int high) {
     return pointer >= (void *)&memory->area[low] && pointer <= (void *)&memory->area[high];
@@ -143,9 +149,43 @@ bool ppmIsFreedPointer(void *pointer) {
 }
 
 
-
 /* CX */
+#ifdef USE_NEW_CXMEMORY
 
+void initCxMemory(void) {
+    initFlushableMemory(&cxMemory);
+}
+
+bool cxMemoryHasEnoughSpaceFor(size_t bytes) {
+    return true;
+}
+
+bool cxMemoryOverflowHandler(int n) {
+    return true;
+}
+
+void *cxAlloc(size_t size) {
+    return allocateFlushableMemory(&cxMemory, size);
+}
+
+bool cxMemoryPointerIsBetween(void *pointer, int low, int high) {
+    for (int i=low; i<high; i++) {
+        if (cxMemory.blocks[i] == pointer)
+            return true;
+    }
+    return false;
+}
+
+bool cxMemoryIsFreed(void *pointer) {
+    assert(0);                  /* Only used when out of memory */
+    return true;
+}
+
+void cxFreeUntil(void *pointer) {
+    freeFlushableMemoryUntil(&cxMemory, pointer);
+}
+
+#else
 static int calculateNewSize(int n, int oldsize) {
     int oldfactor, factor, newsize;
     oldfactor = oldsize / CX_MEMORY_CHUNK_SIZE;
@@ -203,6 +243,7 @@ bool cxMemoryIsFreed(void *pointer) {
 void cxFreeUntil(void *pointer) {
     memoryFreeUntil(&cxMemory, pointer);
 }
+#endif
 
 /***********************************************************************/
 /* New FlushableMemory */
@@ -215,11 +256,11 @@ void initFlushableMemory(FlushableMemory *memory) {
 
 void *allocateFlushableMemory(FlushableMemory *memory, size_t size) {
     if (memory->blocks == NULL) {
-        memory->blocks = malloc(100*sizeof(void *));
+        memory->blocks = calloc(100, sizeof(void *));
         memory->size = 100;
     }
     if (memory->top == memory->size) {
-        memory->blocks = realloc(memory->blocks, memory->size*2);
+        memory->blocks = realloc(memory->blocks, memory->size*2*sizeof(memory->blocks[0]));
         memory->size *= 2;
     }
 

@@ -223,7 +223,11 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
     if (options.mode==ServerMode && currentPass==1) {
         /* remove old references, only on first pass of edit server */
         log_trace("removing references");
+#ifdef USE_NEW_CXMEMORY
+        assert(0);
+#else
         cxMemory.index = cachePoint->cxMemoryIndex;
+#endif
         mapOverReferenceTableWithIndex(refTabDeleteOutOfMemory);
         mapOverFileTable(fileTableDeleteOutOfMemory);
     }
@@ -357,7 +361,12 @@ void placeCachePoint(bool inputCaching) {
         return;
     cachePoint = &cache.points[cache.index];
     log_debug("placing cache point %d", cache.index);
+#ifdef USE_NEW_CXMEMORY
+    fillCachePoint(cachePoint, currentBlock, ppmMemory.index, cxMemory.top, getMacroBodyMemoryIndex(), cache.free,
+                   cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack, counters);
+#else
     fillCachePoint(cachePoint, currentBlock, ppmMemory.index, cxMemory.index, getMacroBodyMemoryIndex(), cache.free,
                    cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack, counters);
+#endif
     cache.index++;
 }

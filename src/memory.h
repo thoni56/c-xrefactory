@@ -39,6 +39,8 @@ extern void memoryFreeUntil(Memory *memory, void *pointer);
 /***********************************************************************/
 /* New, so far, unused new Memory handling */
 
+#define DONT_USE_NEW_CXMEMORY
+
 typedef struct {
     int size;
     int top;
@@ -62,7 +64,11 @@ extern void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *me
                                char *file, int line));
 extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *file, int line));
 
+#ifdef USE_NEW_CXMEMORY
+extern FlushableMemory cxMemory;
+#else
 extern Memory cxMemory;
+#endif
 
 /* CX memory functions - old direct type of memory, still... */
 extern void initCxMemory(void);
