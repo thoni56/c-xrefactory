@@ -49,7 +49,7 @@ static bool overflowHandler(int n) {
 }
 
 Ensure(Memory, can_resize_cxmemory_using_overflowhandler) {
-    cxMemoryOverflowHandler(1);
+    initCxMemory();
     assert_that(cxMemory.area, is_not_null);
     assert_that(cxMemory.index, is_equal_to(0));
     assert_that(cxMemory.size, is_equal_to(CX_MEMORY_CHUNK_SIZE));
@@ -58,7 +58,7 @@ Ensure(Memory, can_resize_cxmemory_using_overflowhandler) {
 Ensure(Memory, can_replicate_main_initialisation_sequence) {
     if (setjmp(memoryResizeJumpTarget) != 0) {
     }
-    cxMemoryOverflowHandler(1);
+    initCxMemory();
     char *tempAllocated = cxAlloc(CX_MEMORY_CHUNK_SIZE);
     cxFreeUntil(tempAllocated);
 }

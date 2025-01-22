@@ -534,13 +534,7 @@ void totalTaskEntryInitialisations(void) {
     assert(MAX_SCOPES < power(2,SCOPES_BITS));
 
     // Memory
-
-    // TODO: this initialize cxMemory by simulating overflow for one
-    // byte(?)
-    // NOTE: this is called multiple times at start up since
-    // we get more overflows later which cases longjmp's
-    int mm = cxMemoryOverflowHandler(1);
-    assert(mm);
+    initCxMemory();
 
     memoryInit(&presetOptions.memory, "options memory", NULL, SIZE_optMemory);
 

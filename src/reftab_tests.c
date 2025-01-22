@@ -14,7 +14,7 @@
 Describe(ReferenceTable);
 BeforeEach(ReferenceTable) {
     log_set_level(LOG_ERROR);
-    cxMemoryOverflowHandler(0); /* Implicitly allocate and init cxMemory */
+    initCxMemory();
     initReferenceTable(100);
 }
 AfterEach(ReferenceTable) {}

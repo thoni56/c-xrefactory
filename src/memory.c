@@ -174,6 +174,10 @@ bool cxMemoryOverflowHandler(int n) {
     return cxMemory.area != NULL;
 }
 
+void initCxMemory(void) {
+    memoryInit(&cxMemory, "cxMemory", cxMemoryOverflowHandler, CX_MEMORY_CHUNK_SIZE);
+}
+
 void *cxAlloc(size_t size) {
 
     if (cxMemory.index+size >= cxMemory.size) {

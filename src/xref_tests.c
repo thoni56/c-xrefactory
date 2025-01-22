@@ -1,5 +1,6 @@
 #include <cgreen/cgreen.h>
 
+#include "memory.h"
 #include "xref.h"
 
 #include "log.h"
@@ -34,7 +35,7 @@ Ensure(Xref, mainCallXref_without_input_files_gives_error_message) {
     expect(getNextScheduledFile, will_return(NULL));
     expect(errorMessage);
 
-    cxMemoryOverflowHandler(0); /* Implicitly allocate and init cxMemory */
+    initCxMemory();
 
     callXref(0, NULL, true);
 }

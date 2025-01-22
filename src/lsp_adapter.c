@@ -3,7 +3,6 @@
 #include <cjson/cJSON.h>
 
 #include "commons.h"
-#include "constants.h"
 #include "cxref.h"
 #include "json_utils.h"
 #include "main.h"
@@ -20,7 +19,8 @@ JSON *findDefinition(const char *uri, JSON *position) {
     options.cFilesSuffixes = "c";
 
     totalTaskEntryInitialisations();
-    memoryInit(&cxMemory, "cxMemory", cxMemoryOverflowHandler, 8000000);
+
+    initCxMemory();
 
     int argc = 0;
     char **argv = NULL;

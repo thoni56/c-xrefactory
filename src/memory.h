@@ -65,10 +65,11 @@ extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, ch
 extern Memory cxMemory;
 
 /* CX memory functions - old direct type of memory, still... */
-extern bool cxMemoryHasEnoughSpaceFor(size_t bytes);
-extern bool cxMemoryPointerIsBetween(void *pointer, int low, int high);
+extern void initCxMemory(void);
 extern void *cxAlloc(size_t size);
 extern void cxFreeUntil(void *until);
+extern bool cxMemoryHasEnoughSpaceFor(size_t bytes);
+extern bool cxMemoryPointerIsBetween(void *pointer, int low, int high);
 extern bool cxMemoryIsFreed(void *pointer);
 extern void memoryResized(void);
 extern bool cxMemoryOverflowHandler(int n);
