@@ -278,6 +278,7 @@ static StringList *concatStringList(StringList *list, char *string) {
     /* Order is important so concat at the end */
     if (l == NULL) {
         l = optAlloc(sizeof(StringList));
+        l->next = NULL;
     } else {
         while (l->next != NULL)
             l = l->next;
@@ -285,6 +286,7 @@ static StringList *concatStringList(StringList *list, char *string) {
         l = l->next;
     }
     l->string = optAlloc(strlen(string)+1);
+    l->next = NULL;
 
     strcpy(l->string, string);
     return l;
