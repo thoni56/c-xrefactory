@@ -90,3 +90,14 @@ debug:
 		cxref_pid=$$(pgrep -P $$pid c-xref) ; \
 		sudo gdb -pid $$cxref_pid -ex 'br internalCheckFail' $(GDB_COMMANDS) ; \
 	}
+
+valgrind:
+	valgrind $(COMMAND)
+
+valgrind-gdb:
+	{ \
+		valgrind --vgdb=yes --vgdb-error=0 $(COMMAND) & \
+		pid=$$! ; \
+		gdb $(CXREF_PROGRAM) -ex 'set non-stop off' -ex 'target remote | vgdb' ; \
+		kill -9 $$pid ; \
+	}
