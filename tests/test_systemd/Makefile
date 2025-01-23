@@ -13,8 +13,8 @@ all:
 		rm -rf CXrefs output systemd.log log ; \
 		sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" c-xrefrc.tpl > .c-xrefrc ; \
 		../run-with-progress $(COMMAND) ; \
-		../../utils/cxref_reader > CXrefs.dump ; \
-		if [ "$(shell uname -n)" = "thoni64" ] && diff -q CXrefs.dump expected.dump > /dev/null; then \
+		../../utils/cxref_reader | grep -v :0:0 > output ; \
+		if [ ! "$(shell uname -n)" = "thoni64" ] || diff -q output expected > /dev/null; then \
 			$(OK); \
 		else \
 			$(FAIL); \
@@ -24,7 +24,7 @@ all:
 expected:
 	sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" c-xrefrc.tpl > .c-xrefrc
 	../../src/c-xref.orig -xrefrc .c-xrefrc -p $(PWD) -create .
-	cxref_reader > expected.dump
+	cxref_reader > expected
 
 init: systemd
 

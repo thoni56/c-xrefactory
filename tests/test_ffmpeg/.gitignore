@@ -3,4 +3,4 @@ ffmpeg.log
 CXrefs
 c-xref
 .c-xrefrc
-out
+out*
