@@ -12,6 +12,7 @@ from collections import namedtuple
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
+    exit(-1)
 
 
 def vprint(*args, **kwargs):
@@ -121,22 +122,25 @@ FileReference = namedtuple(
 
 def unpack_xfiles(lines):
     filerefs = []
-    for line in lines:
+    for linenumber, line in enumerate(lines):
         if len(line) > 0:
             segments = line.split(' ')
             if len(segments) > 0 and segments[0] != '':
                 if segments[0][-1] == 'f':
-                    if segments[1] != '' and segments[1][-1] == 'o':
-                        # Only two segments, second is Java source index(?)
-                        pass  # for now
-                    else:
-                        # Remove trailing 'f' and turn fileid into an int
-                        filerefs.append(FileReference(int(segments[0][:-1]),
-                                                      segments[1],
-                                                      segments[2],
-                                                      segments[3].split(':', 1)[-1]))
+                    try:
+                        if segments[1] != '' and segments[1][-1] == 'o':
+                            # Only two segments, second is Java source index(?)
+                            pass  # for now
+                        else:
+                            # Remove trailing 'f' and turn fileid into an int
+                            filerefs.append(FileReference(int(segments[0][:-1]),
+                                                          segments[1],
+                                                          segments[2],
+                                                          segments[3].split(':', 1)[-1]))
+                    except IndexError:
+                        eprint("Error in XFiles line %d: '%s'" % (linenumber+6, line))
                 else:
-                    eprint("Unknown line in XFiles: '%s'" % line)
+                    eprint("Unknown line in XFiles line %d: '%s'" % (linenumber+6, line))
     return filerefs
 
 def unpack_file_lines(lines):
