@@ -7,7 +7,7 @@ include ../Makefile.boilerplate
 ARGUMENTS = -xrefactory-II -create -errors -o output.tmp src
 
 $(TEST): c_xrefrc_for_single_cxref_file
-	-rm CXrefs
+	rm -rf CXrefs
 	$(COMMAND) | grep -v progress > log
 	../../utils/cxref_reader CXrefs > tmp
 	./extract_vApplClass.sh tmp | wc -l | tr -d ' ' > output
