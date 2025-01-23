@@ -381,13 +381,6 @@ static void writeFileNumberItem(FileItem *fileItem, int number) {
     writeStringRecord(CXFI_FILE_NAME, fileItem->name, " ");
 }
 
-static void writeFileSourceIndexItem(FileItem *fileItem, int index) {
-    if (fileItem->sourceFileNumber != NO_FILE_NUMBER) {
-        // keys = fo
-        writeOptionalCompactRecord(CXFI_FILE_NUMBER, index, "\n");
-    }
-}
-
 /* *************************************************************** */
 
 static void writeReferenceItem(ReferenceItem *referenceItem) {
@@ -528,7 +521,6 @@ static void writeSingleReferenceFile(bool updating, char *filename) {
     openInOutReferenceFile(updating, filename);
     writeCxFileHead();
     mapOverFileTableWithIndex(writeFileNumberItem);
-    mapOverFileTableWithIndex(writeFileSourceIndexItem);
     scanCxFileUsing(fullScanFunctionSequence);
     mapOverReferenceTable(writeReferenceItem);
     closeCurrentReferenceFile();
@@ -538,8 +530,7 @@ static void writeMultipeReferenceFiles(bool updating, char *dirname) {
     char  referenceFileName[MAX_FILE_NAME_SIZE];
 
     createDirectory(dirname);
-    writePartialReferenceFile(updating, dirname, REFERENCE_FILENAME_FILES, writeFileNumberItem,
-                              writeFileSourceIndexItem);
+    writePartialReferenceFile(updating, dirname, REFERENCE_FILENAME_FILES, writeFileNumberItem, NULL);
     for (int i = 0; i < options.referenceFileCount; i++) {
         sprintf(referenceFileName, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);
         assert(strlen(referenceFileName) < MAX_FILE_NAME_SIZE - 1);
