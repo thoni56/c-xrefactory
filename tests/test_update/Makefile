@@ -1,11 +1,11 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -trace -log=log
+ARGUMENTS = -trace -log=log -update
 
 $(TEST): CXrefs
 	touch cexercise/*
-	$(COMMAND) -update > output.tmp
+	$(COMMAND) > output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
