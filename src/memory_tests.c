@@ -224,3 +224,25 @@ Ensure(Memory, should_fail_for_free_until_with_random_pointer) {
 
     assert_that(internalCheckFailCalled);
 }
+
+Ensure(Memory, can_see_if_flushable_memory_is_freed) {
+    FlushableMemory memory;
+
+    initFlushableMemory(&memory);
+
+    void *a = allocateFlushableMemory(&memory, 4);
+    void *b = allocateFlushableMemory(&memory, 4);
+    void *c = allocateFlushableMemory(&memory, 4);
+    void *d = allocateFlushableMemory(&memory, 4);
+
+    assert_that(!flushableMemoryIsFreed(&memory, a));
+    assert_that(!flushableMemoryIsFreed(&memory, b));
+    assert_that(!flushableMemoryIsFreed(&memory, c));
+    assert_that(!flushableMemoryIsFreed(&memory, d));
+
+    freeFlushableMemoryUntil(&memory, b);
+    assert_that(!flushableMemoryIsFreed(&memory, a));
+    assert_that(flushableMemoryIsFreed(&memory, b));
+    assert_that(flushableMemoryIsFreed(&memory, c));
+    assert_that(flushableMemoryIsFreed(&memory, d));
+}

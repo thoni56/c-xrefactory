@@ -276,3 +276,10 @@ void freeFlushableMemoryUntil(FlushableMemory *memory, void *pointer) {
     }
     assert(memory->top >= 0);
 }
+
+bool flushableMemoryIsFreed(FlushableMemory *memory, void *pointer) {
+    for (int i = memory->top; i < memory->size; i++)
+        if (memory->blocks[i] == pointer)
+            return true;
+    return false;
+}
