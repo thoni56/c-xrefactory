@@ -1,6 +1,5 @@
 #!/bin/bash
-awk '
-    /^\S/ {
+awk '/^[^[:space:]]/ {
         if (section ~ /vApplClass/) {
             printf "%s", section
             exit
