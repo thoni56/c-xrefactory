@@ -347,10 +347,9 @@ static void setStaticFunctionLinkName(Symbol *p, char *fileName, int usage) {
 }
 
 
-Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbol, Storage theDefaultStorage,  Usage usage) {
+Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbol, Storage theDefaultStorage,
+                               Usage usage) {
     if (symbol == &errorSymbol || symbol->type == TypeError)
-        return symbol;
-    if (symbol->type == TypeError)
         return symbol;
     assert(symbol && symbol->type == TypeDefault && symbol->u.typeModifier);
     if (symbol->u.typeModifier->type == TypeFunction && symbol->storage == StorageDefault) {
