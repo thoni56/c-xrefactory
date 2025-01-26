@@ -294,31 +294,29 @@ void generateInternalLabelReference(int counter, int usage) {
     labelReference(&labelId, usage);
 }
 
-void setLocalVariableLinkName(struct symbol *p) {
-    char ttt[TMP_STRING_SIZE];
-    char nnn[TMP_STRING_SIZE];
-    int len,tti;
+void setLocalVariableLinkName(Symbol *p) {
+    char name[TMP_STRING_SIZE];
     if (options.serverOperation == OLO_EXTRACT) {
+        char nnn[TMP_STRING_SIZE];
         // extract variable, must pass all needed informations in linkname
         sprintf(nnn, "%c%s%c", LINK_NAME_SEPARATOR, p->name, LINK_NAME_SEPARATOR);
-        ttt[0] = LINK_NAME_EXTRACT_DEFAULT_FLAG;
-        sprintf(ttt+1,"%s", storageNamesTable[p->storage]);
-        tti = strlen(ttt);
-        len = TMP_STRING_SIZE - tti;
-        prettyPrintType(ttt+tti, &len, p->u.typeModifier, nnn, LINK_NAME_SEPARATOR, true);
-        sprintf(ttt+tti+len,"%c%x-%x-%x-%x", LINK_NAME_SEPARATOR,
+        name[0] = LINK_NAME_EXTRACT_DEFAULT_FLAG;
+        sprintf(name+1,"%s", storageNamesTable[p->storage]);
+        int tti = strlen(name);
+        int len = TMP_STRING_SIZE - tti;
+        prettyPrintType(name+tti, &len, p->u.typeModifier, nnn, LINK_NAME_SEPARATOR, true);
+        sprintf(name+tti+len,"%c%x-%x-%x-%x", LINK_NAME_SEPARATOR,
                 p->pos.file,p->pos.line,p->pos.col, counters.localVar++);
     } else {
         if (p->storage==StorageExtern && ! options.exactPositionResolve) {
-            sprintf(ttt,"%s", p->name);
+            sprintf(name,"%s", p->name);
         } else {
-            sprintf(ttt,"%x-%x-%x%c%s",p->pos.file,p->pos.line,p->pos.col,
+            sprintf(name,"%x-%x-%x%c%s",p->pos.file,p->pos.line,p->pos.col,
                     LINK_NAME_SEPARATOR, p->name);
         }
     }
-    len = strlen(ttt);
-    p->linkName = stackMemoryAlloc(len+1);
-    strcpy(p->linkName,ttt);
+    p->linkName = stackMemoryAlloc(strlen(name)+1);
+    strcpy(p->linkName,name);
 }
 
 static void setStaticFunctionLinkName(Symbol *p, char *fileName, int usage) {
