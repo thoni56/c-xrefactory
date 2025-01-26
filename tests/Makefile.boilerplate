@@ -15,7 +15,7 @@ include ../Makefile.messages
 CXREF_PROGRAM = ../../src/c-xref
 BASE_ARGUMENTS = -xrefrc .c-xrefrc -p $(CURDIR) $(EXTRA)
 CXREF = $(CXREF_PROGRAM) $(BASE_ARGUMENTS)
-COMMAND = $(CXREF) $(BASE_ARGUMENTS) $(ARGUMENTS)
+COMMAND = $(CXREF) $(ARGUMENTS)
 
 # Define the test name as the directory name
 TEST = $(shell basename '$(CURDIR)')
