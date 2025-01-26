@@ -7,11 +7,11 @@ ARGUMENTS = -create -o ffmpeg.log
 
 all: .c-xrefrc
 	if [ ! -d ffmpeg ] ; then \
-		echo "Tests in 'ffmpeg': not activated, run 'make init', 'make clean' to deactivate" ; \
+		echo "Tests in '$(TEST)': not activated, run 'make init', 'make clean' to deactivate" ; \
 	else \
 		rm -rf CXrefs ; \
 		../run-with-progress $(COMMAND) ; \
-		grep $(PWD) CXrefs/XFiles | grep \\.c | wc -l > output ; \
+		grep $(PWD) CXrefs/XFiles | grep \\.c | wc -l | tr -ds ' ' '' > output ; \
 		$(VERIFY) ; \
 	fi
 
