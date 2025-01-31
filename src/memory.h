@@ -34,7 +34,7 @@ extern void *memoryAlloc(Memory *memory, size_t size);
 extern void *memoryRealloc(Memory *memory, void *pointer, size_t oldSize, size_t newSize);
 extern bool memoryIsBetween(Memory *memory, void *pointer, int low, int high);
 extern void memoryFreeUntil(Memory *memory, void *pointer);
-extern void memoryResized(void);
+extern void memoryResized(Memory *memory);
 
 /***********************************************************************/
 

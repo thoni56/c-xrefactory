@@ -48,7 +48,8 @@ void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *fil
 }
 
 /* With this as a separate function it is possible to catch memory resize longjmps */
-void memoryResized(void) {
+void memoryResized(Memory *memory) {
+    log_trace("Memory '%s' has been resized", memory->name);
     longjmp(memoryResizeJumpTarget,1);
 }
 
@@ -80,7 +81,7 @@ void *memoryAllocc(Memory *memory, int count, size_t size) {
 
     if (memory->index+count*size > memory->size) {
         if (memory->overflowHandler != NULL && memory->overflowHandler(count))
-            memoryResized();
+            memoryResized(memory);
         else
             fatalMemoryError(ERR_NO_MEMORY, memory->name, XREF_EXIT_ERR, __FILE__, __LINE__);
     }
@@ -221,7 +222,7 @@ void *cxAlloc(size_t size) {
 
     if (cxMemory.index+size >= cxMemory.size) {
         if (cxMemory.overflowHandler != NULL && cxMemory.overflowHandler(size))
-            memoryResized();
+            memoryResized(&cxMemory);
         else
             fatalMemoryError(ERR_NO_MEMORY, cxMemory.name, XREF_EXIT_ERR, __FILE__, __LINE__);
     }
