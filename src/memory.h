@@ -34,23 +34,7 @@ extern void *memoryAlloc(Memory *memory, size_t size);
 extern void *memoryRealloc(Memory *memory, void *pointer, size_t oldSize, size_t newSize);
 extern bool memoryIsBetween(Memory *memory, void *pointer, int low, int high);
 extern void memoryFreeUntil(Memory *memory, void *pointer);
-
-
-/***********************************************************************/
-/* New, so far, unused new Memory handling */
-
-#define DONT_USE_NEW_CXMEMORY
-
-typedef struct {
-    int size;
-    int top;
-    void **blocks;
-} FlushableMemory;
-
-extern void initFlushableMemory(FlushableMemory *memory);
-extern void *allocateFlushableMemory(FlushableMemory *memory, size_t size);
-extern void freeFlushableMemoryUntil(FlushableMemory *memory, void *pointer);
-extern bool flushableMemoryIsFreed(FlushableMemory *memory, void *pointer);
+extern void memoryResized(void);
 
 /***********************************************************************/
 
@@ -78,7 +62,22 @@ extern void cxFreeUntil(void *until);
 extern bool cxMemoryHasEnoughSpaceFor(size_t bytes);
 extern bool cxMemoryPointerIsBetween(void *pointer, int low, int high);
 extern bool cxMemoryIsFreed(void *pointer);
-extern void memoryResized(void);
 extern bool cxMemoryOverflowHandler(int n);
+
+/***********************************************************************/
+/* New, so far, unused new Memory handling */
+
+#define DONT_USE_NEW_CXMEMORY
+
+typedef struct {
+    int size;
+    int top;
+    void **blocks;
+} FlushableMemory;
+
+extern void initFlushableMemory(FlushableMemory *memory);
+extern void *allocateFlushableMemory(FlushableMemory *memory, size_t size);
+extern void freeFlushableMemoryUntil(FlushableMemory *memory, void *pointer);
+extern bool flushableMemoryIsFreed(FlushableMemory *memory, void *pointer);
 
 #endif
