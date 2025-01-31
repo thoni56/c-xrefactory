@@ -61,6 +61,10 @@ static void refTabDeleteOutOfMemory(int index) {
     ReferenceItem *item;
     ReferenceItem **itemP;
 
+    /* Since we always push older Reference items down the list on this index we can pop
+       off them until we get to one that will not be flushed. If any left we can just
+       hook them in at the index.
+    */
     item = getReferenceItem(index);
     itemP = &item;
 

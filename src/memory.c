@@ -177,8 +177,7 @@ bool cxMemoryPointerIsBetween(void *pointer, int low, int high) {
 }
 
 bool cxMemoryIsFreed(void *pointer) {
-    assert(0);                  /* Only used when out of memory */
-    return true;
+    return flushableMemoryIsFreed(&cxMemory, pointer);
 }
 
 void cxFreeUntil(void *pointer) {

@@ -437,7 +437,9 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
             initCaching();
             *firstPass = false;
         } else {
+#ifndef USE_NEW_CXMEMORY
             recoverCachePointZero();
+#endif
         }
 
         initPreCreatedTypes();
