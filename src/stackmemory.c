@@ -134,7 +134,7 @@ bool isMemoryFromPreviousBlock(void *address) {
         (char*)address < stackMemory + currentBlock->outerBlock->firstFreeIndex;
 }
 
-bool isFreedPointer(void *ptr) {
+bool isFreedStackMemory(void *ptr) {
     return ((char*)ptr >= stackMemory + currentBlock->firstFreeIndex &&
             (char*)ptr < stackMemory + SIZE_stackMemory);
 }

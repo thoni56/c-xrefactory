@@ -38,7 +38,7 @@ extern void endBlock(void);
 extern int nestingLevel(void);
 
 extern bool isMemoryFromPreviousBlock(void *ppp);
-extern bool isFreedPointer(void *ptr);
+extern bool isFreedStackMemory(void *ptr);
 
 
 extern void addToFrame(void (*action)(void*), void *argument);

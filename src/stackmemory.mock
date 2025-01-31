@@ -26,7 +26,7 @@ bool isMemoryFromPreviousBlock(void *ppp) {
   return *(bool *) mock(ppp);
 }
 
-bool isFreedPointer(void *ptr) {
+bool isFreedStackMemory(void *ptr) {
   return *(bool *) mock(ptr);
 }
 

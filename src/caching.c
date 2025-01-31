@@ -89,7 +89,7 @@ static void fileTableDeleteOutOfMemory(FileItem *fileItem) {
 
 static void structCachingFree(Symbol *symbol) {
     assert(symbol->u.structSpec);
-    if (isFreedPointer(symbol->u.structSpec->members)
+    if (isFreedStackMemory(symbol->u.structSpec->members)
         || ppmIsFreedPointer(symbol->u.structSpec->members)) {
         symbol->u.structSpec->members = NULL;
     }
@@ -108,7 +108,7 @@ static void symbolTableDeleteOutOfMemory(int i) {
             break;
         case TypeStruct:
         case TypeUnion:
-            if (isFreedPointer(*pp) || ppmIsFreedPointer(*pp)) {
+            if (isFreedStackMemory(*pp) || ppmIsFreedPointer(*pp)) {
                 *pp = (*pp)->next;
                 continue;
             } else {
@@ -116,15 +116,15 @@ static void symbolTableDeleteOutOfMemory(int i) {
             }
             break;
         case TypeEnum:
-            if (isFreedPointer(*pp)) {
+            if (isFreedStackMemory(*pp)) {
                 *pp = (*pp)->next;
                 continue;
-            } else if (isFreedPointer((*pp)->u.enums)) {
+            } else if (isFreedStackMemory((*pp)->u.enums)) {
                 (*pp)->u.enums = NULL;
             }
             break;
         default:
-            if (isFreedPointer(*pp)) {
+            if (isFreedStackMemory(*pp)) {
                 *pp = (*pp)->next;
                 continue;
             }
@@ -137,7 +137,7 @@ static void symbolTableDeleteOutOfMemory(int i) {
 static void deleteFrameAllocationsWhenOutOfMemory(void) {
     FrameAllocation **pp;
     pp = &currentBlock->frameAllocations;
-    while (isFreedPointer(*pp)) {
+    while (isFreedStackMemory(*pp)) {
         *pp = (*pp)->next;
     }
 }
