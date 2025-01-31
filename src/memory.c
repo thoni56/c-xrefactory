@@ -252,6 +252,7 @@ void initFlushableMemory(FlushableMemory *memory) {
     memory->size = 0;
     memory->top = 0;
     memory->blocks = NULL;
+    memory->pendingFlushIndex = -1;
 }
 
 void *allocateFlushableMemory(FlushableMemory *memory, size_t size) {
@@ -282,4 +283,31 @@ bool flushableMemoryIsFreed(FlushableMemory *memory, void *pointer) {
         if (memory->blocks[i] == pointer)
             return true;
     return false;
+}
+
+void markAsFlushable(FlushableMemory *memory, void *pointer) {
+    for (int i=memory->top; i >= 0; i--) {
+        if (memory->blocks[i] == pointer) {
+            memory->pendingFlushIndex = i;
+            return;
+        }
+    }
+    assert(0);
+}
+
+bool memoryWouldBeFlushed(FlushableMemory *memory, void *pointer) {
+    if (memory->pendingFlushIndex == -1)
+        return false;           /* No flush pending */
+
+    for (int i=0; i < memory->pendingFlushIndex && i <= memory->top; i++)
+        if (memory->blocks[i] == pointer)
+            return false;
+    return true;
+}
+
+void flushPendingMemory(FlushableMemory *memory) {
+    for (int i=memory->pendingFlushIndex; i <= memory->top; i++) {
+        free(memory->blocks[i]);
+        memory->blocks[i] = NULL;
+    }
 }

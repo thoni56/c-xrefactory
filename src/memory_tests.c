@@ -246,3 +246,32 @@ Ensure(Memory, can_see_if_flushable_memory_is_freed) {
     assert_that(flushableMemoryIsFreed(&memory, c));
     assert_that(flushableMemoryIsFreed(&memory, d));
 }
+
+Ensure(Memory, can_mark_flushable_memory_for_flushing) {
+    FlushableMemory memory;
+
+    initFlushableMemory(&memory);
+
+    void *a = allocateFlushableMemory(&memory, 4);
+    void *b = allocateFlushableMemory(&memory, 4);
+    void *c = allocateFlushableMemory(&memory, 4);
+    void *d = allocateFlushableMemory(&memory, 4);
+
+    assert_that(!memoryWouldBeFlushed(&memory, a));
+    assert_that(!memoryWouldBeFlushed(&memory, b));
+    assert_that(!memoryWouldBeFlushed(&memory, c));
+    assert_that(!memoryWouldBeFlushed(&memory, d));
+
+    markAsFlushable(&memory, b);
+    assert_that(!memoryWouldBeFlushed(&memory, a));
+    assert_that(memoryWouldBeFlushed(&memory, b));
+    assert_that(memoryWouldBeFlushed(&memory, c));
+    assert_that(memoryWouldBeFlushed(&memory, d));
+
+    flushPendingMemory(&memory);
+    assert_that(memory.blocks[0], is_not_null);
+    assert_that(memory.blocks[1], is_null);
+    assert_that(memory.blocks[2], is_null);
+    assert_that(memory.blocks[3], is_null);
+
+}

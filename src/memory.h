@@ -65,7 +65,7 @@ extern bool cxMemoryIsFreed(void *pointer);
 extern bool cxMemoryOverflowHandler(int n);
 
 /***********************************************************************/
-/* New, so far, unused new Memory handling */
+/* New, so far unused, new Memory handling */
 
 #define DONT_USE_NEW_CXMEMORY
 
@@ -73,11 +73,15 @@ typedef struct {
     int size;
     int top;
     void **blocks;
+    int pendingFlushIndex;
 } FlushableMemory;
 
 extern void initFlushableMemory(FlushableMemory *memory);
 extern void *allocateFlushableMemory(FlushableMemory *memory, size_t size);
 extern void freeFlushableMemoryUntil(FlushableMemory *memory, void *pointer);
 extern bool flushableMemoryIsFreed(FlushableMemory *memory, void *pointer);
+extern bool memoryWouldBeFlushed(FlushableMemory *memory, void *pointer);
+extern void markAsFlushable(FlushableMemory *memory, void *pointer);
+extern void flushPendingMemory(FlushableMemory *memory);
 
 #endif
