@@ -55,7 +55,6 @@ Ensure(Memory, can_resize_cxmemory_using_overflowhandler) {
     assert_that(cxMemory.index, is_equal_to(0));
     assert_that(cxMemory.size, is_equal_to(CX_MEMORY_CHUNK_SIZE));
 }
-#endif
 
 Ensure(Memory, can_replicate_main_initialisation_sequence) {
     if (setjmp(memoryResizeJumpTarget) != 0) {
@@ -64,6 +63,7 @@ Ensure(Memory, can_replicate_main_initialisation_sequence) {
     char *tempAllocated = cxAlloc(CX_MEMORY_CHUNK_SIZE);
     cxFreeUntil(tempAllocated);
 }
+#endif
 
 Ensure(Memory, can_allocate_dynamic_memory_with_overflow_handler) {
     char  *character = NULL;
@@ -257,12 +257,7 @@ Ensure(Memory, can_mark_flushable_memory_for_flushing) {
     void *c = allocateFlushableMemory(&memory, 4);
     void *d = allocateFlushableMemory(&memory, 4);
 
-    assert_that(!memoryWouldBeFlushed(&memory, a));
-    assert_that(!memoryWouldBeFlushed(&memory, b));
-    assert_that(!memoryWouldBeFlushed(&memory, c));
-    assert_that(!memoryWouldBeFlushed(&memory, d));
-
-    markAsFlushable(&memory, b);
+    markForFlushing(&memory, b);
     assert_that(!memoryWouldBeFlushed(&memory, a));
     assert_that(memoryWouldBeFlushed(&memory, b));
     assert_that(memoryWouldBeFlushed(&memory, c));

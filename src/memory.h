@@ -49,21 +49,6 @@ extern void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *me
                                char *file, int line));
 extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *file, int line));
 
-#ifdef USE_NEW_CXMEMORY
-extern FlushableMemory cxMemory;
-#else
-extern Memory cxMemory;
-#endif
-
-/* CX memory functions - old direct type of memory, still... */
-extern void initCxMemory(void);
-extern void *cxAlloc(size_t size);
-extern void cxFreeUntil(void *until);
-extern bool cxMemoryHasEnoughSpaceFor(size_t bytes);
-extern bool cxMemoryPointerIsBetween(void *pointer, int low, int high);
-extern bool cxMemoryIsFreed(void *pointer);
-extern bool cxMemoryOverflowHandler(int n);
-
 /***********************************************************************/
 /* New, so far unused, new Memory handling */
 
@@ -81,7 +66,28 @@ extern void *allocateFlushableMemory(FlushableMemory *memory, size_t size);
 extern void freeFlushableMemoryUntil(FlushableMemory *memory, void *pointer);
 extern bool flushableMemoryIsFreed(FlushableMemory *memory, void *pointer);
 extern bool memoryWouldBeFlushed(FlushableMemory *memory, void *pointer);
-extern void markAsFlushable(FlushableMemory *memory, void *pointer);
+extern void markForFlushing(FlushableMemory *memory, void *pointer);
 extern void flushPendingMemory(FlushableMemory *memory);
+
+/* CX memory functions */
+#ifdef USE_NEW_CXMEMORY
+extern FlushableMemory cxMemory;
+
+extern void markCxMemoryForFlushing(void *pointer);
+extern void flushPendingCxMemory(void);
+
+#else
+extern Memory cxMemory;
+
+extern bool cxMemoryOverflowHandler(int n);
+extern bool cxMemoryHasEnoughSpaceFor(size_t bytes);
+extern void cxFreeUntil(void *until);
+#endif
+
+extern void initCxMemory(void);
+extern void *cxAlloc(size_t size);
+extern bool cxMemoryPointerIsBetween(void *pointer, int low, int high);
+extern bool cxMemoryIsFreed(void *pointer);
+
 
 #endif

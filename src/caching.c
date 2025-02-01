@@ -61,21 +61,23 @@ static void refTabDeleteOutOfMemory(int index) {
     ReferenceItem *item;
     ReferenceItem **itemP;
 
-    /* Since we always push older Reference items down the list on this index we can pop
-       off them until we get to one that will not be flushed. If any left we can just
-       hook them in at the index.
+    /* Since we always push older Reference items down the list on the same index we can
+       pop them off until we get to one that will not be flushed. If any left we
+       can just hook them in at the index.
     */
     item = getReferenceItem(index);
     itemP = &item;
 
     while (*itemP!=NULL) {
         if (cxMemoryIsFreed(*itemP)) {
-            /* out of memory, delete it */
+            /* Out of memory, or would be flushed, un-hook it */
             log_trace("deleting all references on %s", (*itemP)->linkName);
             *itemP = (*itemP)->next;  /* Unlink it and look at next */
+            /* And since all references related to the referenceItem are allocated after
+             * the item itself they will automatically be flushed too */
             continue;
         } else {
-            /* in memory, examine all refs */
+            /* The referenceItem is still in memory, examine all references */
             deleteReferencesOutOfMemory(&((*itemP)->references));
         }
         itemP = &((*itemP)->next);
@@ -168,10 +170,17 @@ static bool cachedIncludedFilePass(int index) {
     return true;
 }
 
-static void recoverCxMemory(char *cxMemFreeBase) {
-    cxFreeUntil(cxMemFreeBase);
+static void recoverCxMemory(void *cxMemoryFlushPoint) {
+#ifdef USE_NEW_CXMEMORY
+    markCxMemoryForFlushing(cxMemoryFlushPoint);
+#else
+    cxFreeUntil(cxMemoryFlushPoint);
+#endif
     mapOverFileTable(fileTableDeleteOutOfMemory);
     mapOverReferenceTableWithIndex(refTabDeleteOutOfMemory);
+#ifdef USE_NEW_CXMEMORY
+    flushPendingCxMemory();
+#endif
 }
 
 static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int includeStackTop, char *free,

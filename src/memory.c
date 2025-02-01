@@ -13,7 +13,7 @@ jmp_buf memoryResizeJumpTarget;
 
 /* Dynamic memory */
 #ifdef USE_NEW_CXMEMORY
-FlushableMemory cxMemory;
+FlushableMemory cxMemory = {};
 #else
 Memory cxMemory={};
 #endif
@@ -157,14 +157,6 @@ void initCxMemory(void) {
     initFlushableMemory(&cxMemory);
 }
 
-bool cxMemoryHasEnoughSpaceFor(size_t bytes) {
-    return true;
-}
-
-bool cxMemoryOverflowHandler(int n) {
-    return true;
-}
-
 void *cxAlloc(size_t size) {
     return allocateFlushableMemory(&cxMemory, size);
 }
@@ -178,11 +170,15 @@ bool cxMemoryPointerIsBetween(void *pointer, int low, int high) {
 }
 
 bool cxMemoryIsFreed(void *pointer) {
-    return flushableMemoryIsFreed(&cxMemory, pointer);
+    return memoryWouldBeFlushed(&cxMemory, pointer);
 }
 
-void cxFreeUntil(void *pointer) {
-    freeFlushableMemoryUntil(&cxMemory, pointer);
+void markCxMemoryForFlushing(void *pointer) {
+    markForFlushing(&cxMemory, pointer);
+}
+
+void flushPendingCxMemory() {
+    flushPendingMemory(&cxMemory);
 }
 
 #else
@@ -285,13 +281,12 @@ bool flushableMemoryIsFreed(FlushableMemory *memory, void *pointer) {
     return false;
 }
 
-void markAsFlushable(FlushableMemory *memory, void *pointer) {
-    for (int i=memory->top; i >= 0; i--) {
+void markForFlushing(FlushableMemory *memory, void *pointer) {
+    for (int i = memory->top; i >= 0; i--)
         if (memory->blocks[i] == pointer) {
             memory->pendingFlushIndex = i;
             return;
         }
-    }
     assert(0);
 }
 

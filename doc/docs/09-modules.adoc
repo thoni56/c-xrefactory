@@ -38,6 +38,43 @@ The `yylex` module has the standard interface required by any
 
 === Main
 
+=== Memory
+
+==== Background
+
+Although the memory "module" is not shown in the component diagram, it is very
+important. And it has also been a source for grievances and confusion as it is, and
+probably still are, contrieved and not so easy to understand.
+
+The main "design" restricition for the design of the memory handling is the fact that in
+the early days, actual memory was scarce. To be able to cross-reference anything except
+the smallest systems, the fact that the amount of memory available was insufficient had
+to be handled.
+
+Most of the memory types uses a statically allocated area inside which allocation can be
+done, this applies to memory for pre-processor information for example. These sizes
+could be extended only by re-compilation with a larger size for that type of memory.
+
+However, for the most important memory type, the `cxMemory`, it could be handled
+dynamically by detecting the out-of-memory situation and then discard, flush and re-use
+the memory.
+
+The size of the `cxMemory` could also be extended up to the defined maximum size.
+
+This in turn, forced the implementation of a caching strategy, since this overflow may
+happen during the reading of a file. This incurred much complexity.
+
+==== Future direction
+
+As virtual memory for a process in a modern OS is much larger than in the 1990's it
+would not be impossible to remove this strategy of caching, overflow detection and
+recovery.
+
+A possibility to in an orderly fashion flush and reuse memory would still be needed.
+
+A new type of memory, `FlushableMemory`, has been implemented but as yet, not officially
+replaced the current memory handling.
+
 === Cxfile
 
 ==== Responsibilities

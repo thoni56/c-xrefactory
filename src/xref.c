@@ -14,6 +14,7 @@
 #include "list.h"
 #include "log.h"
 #include "main.h"
+#include "memory.h"
 #include "misc.h"
 #include "options.h"
 #include "parsers.h"
@@ -78,9 +79,8 @@ static ReferenceItem makeReferenceItemForIncludeFile(int fileNumber) {
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
-#ifndef USE_NEW_CXMEMORY
-    char *cxFreeBase = cxAlloc(0);
-#endif
+    void *cxFlushPoint = cxAlloc(0);
+
     fullScanFor(LINK_NAME_INCLUDE_REFS);
     // iterate over scheduled files
     bool fileAddedFlag = true;
@@ -106,9 +106,13 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
 
         }
     }
-#ifndef USE_NEW_CXMEMORY
+#ifdef USE_NEW_CXMEMORY
+    markCxMemoryForFlushing(cxFlushPoint);
+#endif
     // Does this indicate that we are allocating a lot of memory that we should flush?
-    recoverMemoriesAfterOverflow(cxFreeBase);
+    recoverMemoriesAfterOverflow(cxFlushPoint);
+#ifdef USE_NEW_CXMEMORY
+    flushPendingCxMemory();
 #endif
 }
 
