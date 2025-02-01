@@ -155,6 +155,7 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
   only merges new references, and don't correctly remove/move the old ones.
 * TODO BUG: an unterminated "assert(" (with the c-xref def of it: MACRO) breaks
   with error message "size of #macro_argument exceeded MACRO_UNIT_SIZE"
+* TODO BUG: a completion inside a non-terminated #if.. seems to hang
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
 * TODO NEW FEATURES:
 ** TODO FEATURE: Completion of filenames in #include, currently suggests all symbols, not files
