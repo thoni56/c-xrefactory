@@ -154,7 +154,7 @@ bool ppmIsFreedPointer(void *pointer) {
 #ifdef USE_NEW_CXMEMORY
 
 void initCxMemory(void) {
-    initFlushableMemory(&cxMemory);
+    initFlushableMemory(&cxMemory, "cxMemory");
 }
 
 void *cxAlloc(size_t size) {
@@ -244,7 +244,8 @@ void cxFreeUntil(void *pointer) {
 /***********************************************************************/
 /* New FlushableMemory */
 
-void initFlushableMemory(FlushableMemory *memory) {
+void initFlushableMemory(FlushableMemory *memory, const char *name) {
+    memory->name = name;
     memory->size = 0;
     memory->top = 0;
     memory->blocks = NULL;
@@ -253,15 +254,19 @@ void initFlushableMemory(FlushableMemory *memory) {
 
 void *allocateFlushableMemory(FlushableMemory *memory, size_t size) {
     if (memory->blocks == NULL) {
-        memory->blocks = calloc(100, sizeof(void *));
         memory->size = 100;
+        memory->blocks = calloc(memory->size, sizeof(void *));
+        memory->sizes = calloc(memory->size, sizeof(void *));
     }
     if (memory->top == memory->size) {
-        memory->blocks = realloc(memory->blocks, memory->size*2*sizeof(memory->blocks[0]));
         memory->size *= 2;
+        memory->blocks = realloc(memory->blocks, memory->size*sizeof(memory->blocks[0]));
+        memory->sizes = realloc(memory->sizes, memory->size*sizeof(memory->sizes[0]));
     }
 
     memory->blocks[memory->top] = malloc(size);
+    memory->sizes[memory->top] = size;
+    memory->allocated += size;
     memory->top++;
     return memory->blocks[memory->top-1];
 }
@@ -269,6 +274,8 @@ void *allocateFlushableMemory(FlushableMemory *memory, size_t size) {
 void freeFlushableMemoryUntil(FlushableMemory *memory, void *pointer) {
     assert(memory->size > 0);
     while (memory->top >= 0 && memory->blocks[memory->top] != pointer) {
+        memory->flushed += memory->sizes[memory->top];
+        memory->sizes[memory->top] = 0;
         free(memory->blocks[memory->top--]);
     }
     assert(memory->top >= 0);
@@ -301,8 +308,19 @@ bool memoryWouldBeFlushed(FlushableMemory *memory, void *pointer) {
 }
 
 void flushPendingMemory(FlushableMemory *memory) {
+    if (memory->pendingFlushIndex == -1)
+        return;
     for (int i=memory->pendingFlushIndex; i <= memory->top; i++) {
+        memory->flushed += memory->sizes[i];
+        memory->sizes[i] = 0;
         free(memory->blocks[i]);
         memory->blocks[i] = NULL;
     }
+    memory->pendingFlushIndex = -1;
+}
+
+void printMemoryStatistics(FlushableMemory *memory) {
+#ifdef USE_NEW_CXMEMORY
+    printf("Total %s use : %ld (%ld flushed)\n", memory->name, memory->allocated, memory->flushed);
+#endif
 }

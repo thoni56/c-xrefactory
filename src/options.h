@@ -140,6 +140,7 @@ typedef struct options {
 
     // Memory for allocated option strings and lists
     Memory memory;
+    bool statistics;
 } Options;
 
 

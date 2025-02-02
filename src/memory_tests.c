@@ -174,7 +174,7 @@ Ensure(Memory, should_fatal_if_reallocing_not_last_allocated) {
 Ensure(Memory, can_allocate_single_block_in_flushable_memory) {
     FlushableMemory memory;
 
-    initFlushableMemory(&memory);
+    initFlushableMemory(&memory, "unittestMemory");
 
     void *block = allocateFlushableMemory(&memory, 4);
     assert_that(block, is_not_null);
@@ -184,7 +184,7 @@ Ensure(Memory, can_allocate_single_block_in_flushable_memory) {
 Ensure(Memory, can_reallocate_block_array_for_overflow) {
     FlushableMemory memory;
 
-    initFlushableMemory(&memory);
+    initFlushableMemory(&memory, "unittestMemory");
 
     int previous_size = memory.size;
     for (int i=0; i < previous_size+1; i++) {
@@ -199,7 +199,7 @@ Ensure(Memory, can_reallocate_block_array_for_overflow) {
 Ensure(Memory, should_fail_for_free_until_on_empty_memory) {
     FlushableMemory memory;
 
-    initFlushableMemory(&memory);
+    initFlushableMemory(&memory, "unittestMemory");
 
     void *someRandomPointer = &memory;
 
@@ -213,7 +213,7 @@ Ensure(Memory, should_fail_for_free_until_on_empty_memory) {
 Ensure(Memory, should_fail_for_free_until_with_random_pointer) {
     FlushableMemory memory;
 
-    initFlushableMemory(&memory);
+    initFlushableMemory(&memory, "unittestMemory");
     allocateFlushableMemory(&memory, 4); /* To allocate some memory */
 
     void *someRandomPointer = &memory;
@@ -228,7 +228,7 @@ Ensure(Memory, should_fail_for_free_until_with_random_pointer) {
 Ensure(Memory, can_see_if_flushable_memory_is_freed) {
     FlushableMemory memory;
 
-    initFlushableMemory(&memory);
+    initFlushableMemory(&memory, "unittestMemory");
 
     void *a = allocateFlushableMemory(&memory, 4);
     void *b = allocateFlushableMemory(&memory, 4);
@@ -250,7 +250,7 @@ Ensure(Memory, can_see_if_flushable_memory_is_freed) {
 Ensure(Memory, can_mark_flushable_memory_for_flushing) {
     FlushableMemory memory;
 
-    initFlushableMemory(&memory);
+    initFlushableMemory(&memory, "unittestMemory");
 
     void *a = allocateFlushableMemory(&memory, 4);
     void *b = allocateFlushableMemory(&memory, 4);

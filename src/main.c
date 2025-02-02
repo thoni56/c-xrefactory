@@ -798,6 +798,9 @@ int main(int argc, char *argv[]) {
     if (options.mode == ServerMode)
         server(argc, argv);
 
+    if (options.statistics)
+        printMemoryStatistics(&cxMemory);
+
     LEAVE();
     return 0;
 }

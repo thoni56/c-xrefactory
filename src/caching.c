@@ -77,7 +77,7 @@ static void refTabDeleteOutOfMemory(int index) {
              * the item itself they will automatically be flushed too */
             continue;
         } else {
-            /* The referenceItem is still in memory, examine all references */
+            /* The referenceItem is still in memory, but references might be flushed */
             deleteReferencesOutOfMemory(&((*itemP)->references));
         }
         itemP = &((*itemP)->next);

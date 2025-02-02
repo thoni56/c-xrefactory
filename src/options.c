@@ -111,6 +111,7 @@ Options presetOptions = {
     NULL,                       /* allUsedStringListOptions */
 
     {.area = NULL, .size = 0},  /* memory - options string storage */
+    false,                      /* memory statistics print out on exit */
 };
 
 
@@ -137,7 +138,7 @@ void aboutMessage(void) {
     sprintf(output+strlen(output), "Compiled at %s on %s\n",  __TIME__, __DATE__);
     sprintf(output+strlen(output), "from git revision %s.\n", GIT_HASH);
     strcat(output,                 "(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");
-    strcat(output,                 "Released into GPL 2009 by Marian Vittek (SourceForge)\n");
+    strcat(output,                 "Released into GPL 2009 by Marián Vittek (SourceForge)\n");
     strcat(output,                 "Work resurrected and continued by Thomas Nilefalk 2015-\n");
     strcat(output,                 "(https://github.com/thoni56/c-xrefactory)\n");
     if (options.exit) {
@@ -1672,6 +1673,8 @@ static bool processSOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-server")==0) {
         options.mode = ServerMode;
         options.xref2 = true;
+    } else if (strcmp(argv[i], "-statistics")==0) {
+        options.statistics = true;
     }
     else return false;
     *argi = i;

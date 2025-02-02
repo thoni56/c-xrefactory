@@ -52,16 +52,20 @@ extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, ch
 /***********************************************************************/
 /* New, so far unused, new Memory handling */
 
-#define DONT_USE_NEW_CXMEMORY
+#define USE_NEW_CXMEMORY
 
 typedef struct {
+    const char *name;
     int size;
     int top;
     void **blocks;
     int pendingFlushIndex;
+    size_t *sizes;
+    size_t allocated;
+    size_t flushed;
 } FlushableMemory;
 
-extern void initFlushableMemory(FlushableMemory *memory);
+extern void initFlushableMemory(FlushableMemory *memory, const char *name);
 extern void *allocateFlushableMemory(FlushableMemory *memory, size_t size);
 extern void freeFlushableMemoryUntil(FlushableMemory *memory, void *pointer);
 extern bool flushableMemoryIsFreed(FlushableMemory *memory, void *pointer);
@@ -89,5 +93,6 @@ extern void *cxAlloc(size_t size);
 extern bool cxMemoryPointerIsBetween(void *pointer, int low, int high);
 extern bool cxMemoryIsFreed(void *pointer);
 
+extern void printMemoryStatistics(FlushableMemory *memory);
 
 #endif
