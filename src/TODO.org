@@ -27,13 +27,14 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 ** TODO Create an answer from gathered information
 ** DONE Initial Communication
 * TODO FEATURE: Rename C Module
+** TODO Rename .c file
+** TODO Rename corresponding .h file if exists
+** TODO Update all #includes
 ** DONE Rename included file
 *** DONE New refactoring: Rename Included File
 *** DONE Rename the file
 *** DONE Update all #includes
 *** DONE Prohibit rename of files included with '<>'
-** TODO Rename corresponding .h file if exists
-** TODO Update all #includes
 * DOING FEATURE: Basic LSP-mode support
 ** DOING 'didOpen'
 ** TODO Handle protocol errors etc. using longjump
@@ -45,12 +46,12 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
   The returned pointer for an allocated area can still be used as a marker
   as the array can be traversed from top down until that pointer is found.
 * TODO FEATURE: New refactoring: move function for C
-** DONE Pick-up pieces from Java version and hack them into a preliminary version
-** DONE Accept target position
 ** TODO Fill ParsedInfo begin/end for requested function
 ** TODO Fixup the preliminary version of the actual move
 ** TODO Move any declaration in source.h file to target.h
 ** TODO BONUS Move a mock function to the target mock file if it exists
+** DONE Pick-up pieces from Java version and hack them into a preliminary version
+** DONE Accept target position
 * DOING Extract variable
 ** TRY Figure out variable type (hard, none of the other extracts seems to do this...)
    or ask...
