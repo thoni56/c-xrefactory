@@ -18,7 +18,7 @@ typedef struct {
 typedef struct editorBuffer {
     char                      *fileName;
     int                        fileNumber;
-    char                      *loadedFromFile;   /* If the content was preloaded this is
+    char                      *preLoadedFromFile;   /* If the content was preloaded this is
                                                the name on disc for the content else
                                                NULL. */
     time_t                     modificationTime;
@@ -37,12 +37,12 @@ typedef struct editorBufferList {
 
 
 extern void freeEditorBuffer(EditorBuffer *buffer);
-extern EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *loadedFromFile, time_t modificationTime,
-                                     size_t size);
-extern EditorBuffer *createNewEditorBuffer(char *fileName, char *loadedFromFile, time_t modificationTime,
+extern EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *preLoadedFromFile,
+                                     time_t modificationTime, size_t size);
+extern EditorBuffer *createNewEditorBuffer(char *fileName, char *preLoadedFromFile, time_t modificationTime,
                                            size_t size);
 extern EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName);
-extern EditorBuffer *openEditorBufferFromPreload(char *fileName, char *loadedFromFile);
+extern EditorBuffer *openEditorBufferFromPreload(char *fileName, char *preLoadedFromFile);
 extern EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name);
 extern void renameEditorBuffer(EditorBuffer *buffer, char *newName, EditorUndo **undo);
 

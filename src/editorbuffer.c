@@ -14,42 +14,42 @@
 #include "undo.h"
 
 
-static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *realFileName, int fileNumber, char *loadedFromFile) {
+static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *realFileName, int fileNumber, char *preLoadedFromFile) {
     buffer->allocation = (EditorBufferAllocationData){
         .bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
         .allocatedBlock = NULL, .allocatedIndex = 0,
         .allocatedSize = 0};
     *buffer = (EditorBuffer){
-        .fileName = realFileName, .fileNumber = fileNumber, .loadedFromFile = loadedFromFile,
+        .fileName = realFileName, .fileNumber = fileNumber, .preLoadedFromFile = preLoadedFromFile,
         .markers = NULL, .allocation = buffer->allocation};
     buffer->modificationTime = 0;
     buffer->size = 0;
     buffer->textLoaded = false;
-    assert(buffer->loadedFromFile == NULL || buffer->loadedFromFile != buffer->fileName);
+    assert(buffer->preLoadedFromFile == NULL || buffer->preLoadedFromFile != buffer->fileName);
 }
 
-EditorBuffer *newEditorBuffer(char *realFileName, int fileNumber, char *loadedFromFile, time_t modificationTime,
+EditorBuffer *newEditorBuffer(char *realFileName, int fileNumber, char *preLoadedFromFile, time_t modificationTime,
                               size_t size) {
     EditorBuffer *editorBuffer = malloc(sizeof(EditorBuffer));
-    fillEmptyEditorBuffer(editorBuffer, realFileName, fileNumber, loadedFromFile);
+    fillEmptyEditorBuffer(editorBuffer, realFileName, fileNumber, preLoadedFromFile);
     editorBuffer->modificationTime = modificationTime;
     editorBuffer->size = size;
     return editorBuffer;
 }
 
-EditorBuffer *createNewEditorBuffer(char *realFileName, char *loadedFromFile, time_t modificationTime,
+EditorBuffer *createNewEditorBuffer(char *realFileName, char *preLoadedFromFile, time_t modificationTime,
                                     size_t size) {
     char *normalizedRealFileName = strdup(normalizeFileName_static(realFileName, cwd));
 
-    assert(loadedFromFile == NULL || strcmp(realFileName, loadedFromFile) != 0);
+    assert(preLoadedFromFile == NULL || strcmp(realFileName, preLoadedFromFile) != 0);
     char *normalizedLoadedFromFile = NULL;
-    if (loadedFromFile != NULL) {
-        normalizedLoadedFromFile = normalizeFileName_static(loadedFromFile, cwd);
+    if (preLoadedFromFile != NULL) {
+        normalizedLoadedFromFile = normalizeFileName_static(preLoadedFromFile, cwd);
         normalizedLoadedFromFile = strdup(normalizedLoadedFromFile);
     }
 
     EditorBuffer *buffer = newEditorBuffer(normalizedRealFileName, 0, normalizedLoadedFromFile, modificationTime, size);
-    log_trace("created buffer '%s'('%s')", buffer->fileName, buffer->loadedFromFile?buffer->loadedFromFile:"(null)");
+    log_trace("created buffer '%s'('%s')", buffer->fileName, buffer->preLoadedFromFile?buffer->preLoadedFromFile:"(null)");
 
     registerEditorBuffer(buffer);
 
@@ -75,9 +75,9 @@ static void freeMarkersInEditorBuffer(EditorBuffer *buffer) {
 void freeEditorBuffer(EditorBuffer *buffer) {
     if (buffer == NULL)
         return;
-    log_trace("freeing buffer %s==%s", buffer->fileName, buffer->loadedFromFile?buffer->loadedFromFile:"(null)");
-    if (buffer->loadedFromFile != NULL) {
-        free(buffer->loadedFromFile);
+    log_trace("freeing buffer %s==%s", buffer->fileName, buffer->preLoadedFromFile?buffer->preLoadedFromFile:"(null)");
+    if (buffer->preLoadedFromFile != NULL) {
+        free(buffer->preLoadedFromFile);
     }
     free(buffer->fileName);
 
@@ -121,15 +121,15 @@ EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName) {
 }
 
 // Only used from Options for preload
-EditorBuffer *openEditorBufferFromPreload(char *fileName, char *loadedFromFile) {
+EditorBuffer *openEditorBufferFromPreload(char *fileName, char *preLoadedFromFile) {
     EditorBuffer  *buffer;
 
     buffer = getEditorBufferForFile(fileName);
     if (buffer != NULL) {
         return buffer;
     }
-    buffer = createNewEditorBuffer(fileName, loadedFromFile, fileModificationTime(loadedFromFile),
-                                   fileSize(loadedFromFile));
+    buffer = createNewEditorBuffer(fileName, preLoadedFromFile, fileModificationTime(preLoadedFromFile),
+                                   fileSize(preLoadedFromFile));
     return buffer;
 }
 

@@ -91,9 +91,9 @@ void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, siz
     char *text = buffer->allocation.text;
     assert(text != NULL);
 
-    assert(buffer->loadedFromFile == NULL || buffer->loadedFromFile != buffer->fileName);
+    assert(buffer->preLoadedFromFile == NULL || buffer->preLoadedFromFile != buffer->fileName);
     int bufferSize = buffer->allocation.bufferSize;
-    char *fileName = buffer->loadedFromFile? buffer->loadedFromFile: buffer->fileName;
+    char *fileName = buffer->preLoadedFromFile? buffer->preLoadedFromFile: buffer->fileName;
 
     log_trace(":loading file %s==%s size %d", fileName, buffer->fileName, bufferSize);
 
@@ -330,8 +330,8 @@ void loadAllOpenedEditorBuffers(void) {
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             if (!l->buffer->textLoaded) {
-                assert(l->buffer->loadedFromFile == NULL || l->buffer->loadedFromFile != l->buffer->fileName);
-                char *fileName = l->buffer->loadedFromFile? l->buffer->loadedFromFile: l->buffer->fileName;
+                assert(l->buffer->preLoadedFromFile == NULL || l->buffer->preLoadedFromFile != l->buffer->fileName);
+                char *fileName = l->buffer->preLoadedFromFile? l->buffer->preLoadedFromFile: l->buffer->fileName;
                 if (fileExists(fileName)) {
                     loadFileIntoEditorBuffer(l->buffer, fileModificationTime(fileName), fileSize(fileName));
                     log_trace("loading '%s' into '%s'", fileName, l->buffer->fileName);
@@ -603,7 +603,7 @@ bool editorMapOnNonExistantFiles(char *dirname,
 
 static bool bufferIsCloseable(EditorBuffer *buffer) {
     return buffer != NULL && buffer->textLoaded && buffer->markers==NULL
-        && buffer->loadedFromFile == NULL  /* not -preloaded */
+        && buffer->preLoadedFromFile == NULL  /* not -preloaded */
         && ! buffer->modified;
 }
 
@@ -619,7 +619,7 @@ void closeAllEditorBuffersIfClosable(void) {
     for (EditorBufferList *l = allEditorBuffers; l!=NULL; l=l->next) {
         if (bufferIsCloseable(l->buffer)) {
             log_trace("closable %d for '%s'='%s'", bufferIsCloseable(l->buffer),
-                      l->buffer->loadedFromFile?l->buffer->loadedFromFile:"(null)", l->buffer->fileName);
+                      l->buffer->preLoadedFromFile?l->buffer->preLoadedFromFile:"(null)", l->buffer->fileName);
             EditorBuffer *buffer = deregisterEditorBuffer(l->buffer->fileName);
             freeEditorBuffer(buffer);
         }
