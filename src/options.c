@@ -1550,14 +1550,15 @@ static bool processPOption(int *argi, int argc, char **argv) {
         options.project = allocateStringForOption(&options.project, argv[i]);
     }
     else if (strcmp(argv[i], "-preload")==0) {
-        char *file, *fromFile;
+        ensureNextArgumentIsAFileName(&i, argc, argv);
+
         char normalizedFileName[MAX_FILE_NAME_SIZE];
-        ensureNextArgumentIsAFileName(&i, argc, argv);
-        file = argv[i];
+        char *file = argv[i];
         strcpy(normalizedFileName, normalizeFileName_static(file, cwd));
+
         ensureNextArgumentIsAFileName(&i, argc, argv);
-        fromFile = argv[i];
-        openEditorBufferFromPreload(normalizedFileName, fromFile);
+        char *preloadFile = argv[i];
+        openEditorBufferFromPreload(normalizedFileName, preloadFile);
     }
     else if (strcmp(argv[i], "-prune")==0) {
         ensureThereIsAnotherArgument(&i, argc, argv);
