@@ -32,20 +32,33 @@ void freeEditorBuffer(EditorBuffer *buffer) {
 }
 
 EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName) {
-  return (EditorBuffer *) mock(fileName);
+    return (EditorBuffer *) mock(fileName);
 }
 
 EditorBuffer *openEditorBufferFromPreload(char *fileName, char *preLoadedFromFile) {
-  return (EditorBuffer *) mock(fileName, preLoadedFromFile);
+    return (EditorBuffer *) mock(fileName, preLoadedFromFile);
 }
 
 EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
-  return (EditorBuffer *) mock(name);
+    return (EditorBuffer *) mock(name);
 }
 
 void renameEditorBuffer(EditorBuffer *buffer, char *newName, EditorUndo **undo) {
-  mock(buffer, newName, undo);
+    mock(buffer, newName, undo);
 }
+
+char *getTextInEditorBuffer(EditorBuffer *buffer) {
+    return (char *)mock(buffer);
+}
+
+size_t getSizeOfEditorBuffer(EditorBuffer *buffer) {
+    return (size_t)mock(buffer);
+}
+
+void setSizeOfEditorBuffer(EditorBuffer *buffer, size_t size) {
+    mock(buffer, size);
+}
+
 
 // Hopefully temporary
 void setEditorBufferModified(EditorBuffer *buffer) {
