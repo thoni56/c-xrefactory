@@ -1538,7 +1538,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
 }
 
 static bool processPOption(int *argi, int argc, char **argv) {
-    int     i = *argi;
+    int i = *argi;
 
     if (0) {}
     else if (strncmp(argv[i], "-pass",5)==0) {
