@@ -403,7 +403,8 @@ void internalCheckFail(char *expr, char *file, int line) {
 
     if (options.mode == ServerMode || options.mode == RefactoryMode) {
         if (options.xref2) {
-            ppcGenRecord(PPC_INFORMATION,"Exiting");
+            ppcGenRecord(PPC_FATAL_ERROR, msg);
+            ppcGenRecord(PPC_INFORMATION, "Exiting");
             closeOutputFile();
             ppcSynchronize();
         } else {
