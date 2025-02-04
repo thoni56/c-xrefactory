@@ -1,15 +1,11 @@
-MODULES = main globals misc semact commons complete cxref cxfile	\
-		lexer lexembuffer yylex options caching init editor	\
-		refactory protocol log type usage storage extract	\
-		filetable macroargumenttable session editormarker	\
-		editorbuffertable symboltable reftab memory		\
-		characterreader hash symbol c_parser.tab		\
-		cexp_parser.tab yacc_parser.tab filedescriptor		\
-		typemodifier position id parsers fileio stringlist	\
-		ppc server reference xref refactorings progress input	\
-		commandlogger completion menu lexem editorbuffer undo	\
-		counters stackmemory encoding json_utils lsp_adapter    \
-		lsp lsp_dispatcher lsp_handler lsp_sender
+MODULES = c_parser.tab caching cexp_parser.tab characterreader commandlogger commons	\
+complete completion counters cxfile cxref editor editorbuffer editorbuffertable		\
+editormarker encoding extract filedescriptor fileio filetable globals hash id init	\
+input json_utils lexem lexembuffer lexer log lsp lsp_adapter lsp_dispatcher lsp_handler	\
+lsp_sender macroargumenttable main memory menu misc options parsers position ppc	\
+progress protocol refactorings refactory reference reftab semact server session		\
+stackmemory storage stringlist symbol symboltable type typemodifier undo usage xref	\
+yacc_parser.tab yylex
 
 modules:
 	@echo MODULES=$(MODULES)

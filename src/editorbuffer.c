@@ -133,6 +133,18 @@ EditorBuffer *openEditorBufferFromPreload(char *fileName, char *preLoadedFromFil
     return buffer;
 }
 
+char *getTextInEditorBuffer(EditorBuffer *buffer) {
+    return buffer->allocation.text;
+}
+
+size_t getSizeOfEditorBuffer(EditorBuffer *buffer) {
+    return buffer->allocation.bufferSize;
+}
+
+void setSizeOfEditorBuffer(EditorBuffer *buffer, size_t size) {
+    buffer->allocation.bufferSize = size;
+}
+
 void setEditorBufferModified(EditorBuffer *buffer) {
     buffer->modified = true;
     buffer->modifiedSinceLastQuasiSave = true;
