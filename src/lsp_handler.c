@@ -31,6 +31,7 @@ void handle_initialize(JSON *request) {
     JSON *capabilities = add_json_item(result, "capabilities");
     add_json_bool(capabilities, "codeActionProvider", true);
     add_json_bool(capabilities, "definitionProvider", true);
+    add_json_string(response, "positionEncoding", "utf-8");
 
     initFileTable(100);
     initEditorBufferTable();
