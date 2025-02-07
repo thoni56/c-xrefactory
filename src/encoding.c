@@ -3,20 +3,19 @@
 #include "options.h"
 
 
-#define EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, command) {    \
-        unsigned char *s, *d, *maxs;                            \
-        unsigned char *space;                                   \
-        space = (unsigned char *)getTextInEditorBuffer(buffer);         \
-        maxs = space + getSizeOfEditorBuffer(buffer);             \
-        for(s=d=space; s<maxs; s++) {                           \
-            command                                             \
-                }                                               \
-        setSizeOfEditorBuffer(buffer, d - space);               \
+#define EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, command) {          \
+        unsigned char *s, *d, *max;                                     \
+        unsigned char *text = (unsigned char *)getTextInEditorBuffer(buffer); \
+        max = text + getSizeOfEditorBuffer(buffer);                     \
+        for (s=d=text; s<max; s++) {                                    \
+            command;                                                    \
+        }                                                               \
+        setSizeOfEditorBuffer(buffer, d - text);                        \
     }
 
 #define EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)    \
     if (*s == '\r') {                               \
-        if (s+1<maxs && *(s+1)=='\n') {             \
+        if (s+1<max && *(s+1)=='\n') {             \
             s++;                                    \
             *d++ = *s;                              \
         } else {                                    \
@@ -24,7 +23,7 @@
         }                                           \
     }
 #define EDITOR_ENCODING_CR_LF_CONVERSION(s,d)       \
-    if (*s == '\r' && s+1<maxs && *(s+1)=='\n') {   \
+    if (*s == '\r' && s+1<max && *(s+1)=='\n') {   \
         s++;                                        \
         *d++ = *s;                                  \
     }
@@ -32,16 +31,48 @@
     if (*s == '\r') {                           \
         *d++ = '\n';                            \
     }
-#define EDITOR_ENCODING_UTF8_CONVERSION(s,d)    \
-    if (*(s) & 0x80) {                          \
-        unsigned z;                             \
-        z = *s;                                 \
-        if (z <= 223) {s+=1; *d++ = ' ';}       \
-        else if (z <= 239) {s+=2; *d++ = ' ';}  \
-        else if (z <= 247) {s+=3; *d++ = ' ';}  \
-        else if (z <= 251) {s+=4; *d++ = ' ';}  \
-        else {s+=5; *d++ = ' ';}                \
+#define EDITOR_ENCODING_UTF8_CONVERSION(s, d)                                                           \
+    if (*(s)&0x80) {                                                                                    \
+        unsigned z;                                                                                     \
+        z = *s;                                                                                         \
+        if (z <= 223) {                                                                                 \
+            s += 1;                                                                                     \
+            *d++ = ' ';                                                                                 \
+        } else if (z <= 239) {                                                                          \
+            s += 2;                                                                                     \
+            *d++ = ' ';                                                                                 \
+        } else if (z <= 247) {                                                                          \
+            s += 3;                                                                                     \
+            *d++ = ' ';                                                                                 \
+        } else if (z <= 251) {                                                                          \
+            s += 4;                                                                                     \
+            *d++ = ' ';                                                                                 \
+        } else {                                                                                        \
+            s += 5;                                                                                     \
+            *d++ = ' ';                                                                                 \
+        }                                                                                               \
     }
+
+static bool convertUtf8(unsigned char **srcP, unsigned char **dstP) {
+    if (**(srcP)&0x80) {
+        unsigned z = **srcP;
+        if (z >= 0xC2 && z <= 0xDF) {
+            *srcP += 1;  // 2-byte sequence (U+0080 - U+07FF)
+        } else if (z >= 0xE0 && z <= 0xEF) {
+            *srcP += 2;  // 3-byte sequence (U+0800 - U+FFFF)
+        } else if (z >= 0xF0 && z <= 0xF4) {
+            *srcP += 3;  // 4-byte sequence (U+10000 - U+10FFFF)
+        } else {
+            // Illegal UTF-8, just skip one byte for minimal damage
+            *srcP += 1;
+        }
+
+        **(dstP++) = ' '; // Replace the sequence with a space
+        return true;
+    }
+    return false;
+}
+
 #define EDITOR_ENCODING_EUC_CONVERSION(s,d)     \
     if (*(s) & 0x80) {                          \
         unsigned z;                             \
@@ -84,7 +115,7 @@ static void applyCrConversion(EditorBuffer *buffer) {
 
 static void applyUtf8CrLfCrConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_UTF8_CONVERSION(s,d)
+            if (convertUtf8(&s, &d)) ;
             else EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
                 else
                     *d++ = *s;
@@ -111,10 +142,10 @@ static void applyUtf8CrConversion(EditorBuffer *buffer) {
 
 static void applyUtf8Conversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_UTF8_CONVERSION(s,d)
+            if (convertUtf8(&s, &d)) ;
             else
                 *d++ = *s;
-        });
+                });
 }
 
 static void applyEucCrLfCrConversion(EditorBuffer *buffer) {
