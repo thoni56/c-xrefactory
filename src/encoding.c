@@ -9,6 +9,7 @@
         max = text + getSizeOfEditorBuffer(buffer);                     \
         for (s=d=text; s<max; s++) {                                    \
             command;                                                    \
+            d++;                                                        \
         }                                                               \
         setSizeOfEditorBuffer(buffer, d - text);                        \
     }
@@ -17,19 +18,19 @@
     if (*s == '\r') {                               \
         if (s+1<max && *(s+1)=='\n') {             \
             s++;                                    \
-            *d++ = *s;                              \
+            *d = *s;                              \
         } else {                                    \
-            *d++ = '\n';                            \
+            *d = '\n';                            \
         }                                           \
     }
 #define EDITOR_ENCODING_CR_LF_CONVERSION(s,d)       \
     if (*s == '\r' && s+1<max && *(s+1)=='\n') {   \
         s++;                                        \
-        *d++ = *s;                                  \
+        *d = *s;                                  \
     }
 #define EDITOR_ENCODING_CR_CONVERSION(s,d)      \
     if (*s == '\r') {                           \
-        *d++ = '\n';                            \
+        *d = '\n';                            \
     }
 #define EDITOR_ENCODING_UTF8_CONVERSION(s, d)                                                           \
     if (*(s)&0x80) {                                                                                    \
@@ -37,19 +38,19 @@
         z = *s;                                                                                         \
         if (z <= 223) {                                                                                 \
             s += 1;                                                                                     \
-            *d++ = ' ';                                                                                 \
+            *d = ' ';                                                                                 \
         } else if (z <= 239) {                                                                          \
             s += 2;                                                                                     \
-            *d++ = ' ';                                                                                 \
+            *d = ' ';                                                                                 \
         } else if (z <= 247) {                                                                          \
             s += 3;                                                                                     \
-            *d++ = ' ';                                                                                 \
+            *d = ' ';                                                                                 \
         } else if (z <= 251) {                                                                          \
             s += 4;                                                                                     \
-            *d++ = ' ';                                                                                 \
+            *d = ' ';                                                                                 \
         } else {                                                                                        \
             s += 5;                                                                                     \
-            *d++ = ' ';                                                                                 \
+            *d = ' ';                                                                                 \
         }                                                                                               \
     }
 
@@ -67,7 +68,7 @@ static bool convertUtf8(unsigned char **srcP, unsigned char **dstP) {
             *srcP += 1;
         }
 
-        **(dstP++) = ' '; // Replace the sequence with a space
+        **dstP = ' '; // Replace the sequence with a space
         return true;
     }
     return false;
@@ -77,23 +78,23 @@ static bool convertUtf8(unsigned char **srcP, unsigned char **dstP) {
     if (*(s) & 0x80) {                          \
         unsigned z;                             \
         z = *s;                                 \
-        if (z == 0x8e) {s+=2; *d++ = ' ';}      \
-        else if (z == 0x8f) {s+=3; *d++ = ' ';} \
-        else {s+=1; *d++ = ' ';}                \
+        if (z == 0x8e) {s+=2; *d = ' ';}      \
+        else if (z == 0x8f) {s+=3; *d = ' ';} \
+        else {s+=1; *d = ' ';}                \
     }
 #define EDITOR_ENCODING_SJIS_CONVERSION(s,d)        \
     if (*(s) & 0x80) {                              \
         unsigned z;                                 \
         z = *s;                                     \
-        if (z >= 0xa1 && z <= 0xdf) {*d++ = ' ';}   \
-        else {s+=1; *d++ = ' ';}                    \
+        if (z >= 0xa1 && z <= 0xdf) {*d = ' ';}   \
+        else {s+=1; *d = ' ';}                    \
     }
 
 static void applyCrLfCrConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
             else
-                *d++ = *s;
+                *d = *s;
         });
 }
 
@@ -101,7 +102,7 @@ static void applyCrLfConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
             else
-                *d++ = *s;
+                *d = *s;
         });
 }
 
@@ -109,7 +110,7 @@ static void applyCrConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_CR_CONVERSION(s,d)
             else
-                *d++ = *s;
+                *d = *s;
         });
 }
 
@@ -118,7 +119,7 @@ static void applyUtf8CrLfCrConversion(EditorBuffer *buffer) {
             if (convertUtf8(&s, &d)) ;
             else EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
                 else
-                    *d++ = *s;
+                    *d = *s;
         });
 }
 
@@ -127,7 +128,7 @@ static void applyUtf8CrLfConversion(EditorBuffer *buffer) {
             EDITOR_ENCODING_UTF8_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
                 else
-                    *d++ = *s;
+                    *d = *s;
         });
 }
 
@@ -136,7 +137,7 @@ static void applyUtf8CrConversion(EditorBuffer *buffer) {
             EDITOR_ENCODING_UTF8_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_CONVERSION(s,d)
                 else
-                    *d++ = *s;
+                    *d = *s;
         });
 }
 
@@ -144,7 +145,7 @@ static void applyUtf8Conversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             if (convertUtf8(&s, &d)) ;
             else
-                *d++ = *s;
+                *d = *s;
                 });
 }
 
@@ -153,7 +154,7 @@ static void applyEucCrLfCrConversion(EditorBuffer *buffer) {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
                 else
-                    *d++ = *s;
+                    *d = *s;
         });
 }
 
@@ -162,7 +163,7 @@ static void applyEucCrLfConversion(EditorBuffer *buffer) {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
                 else
-                    *d++ = *s;
+                    *d = *s;
         });
 }
 
@@ -171,7 +172,7 @@ static void applyEucCrConversion(EditorBuffer *buffer) {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_CONVERSION(s,d)
                 else
-                    *d++ = *s;
+                    *d = *s;
         });
 }
 
@@ -179,7 +180,7 @@ static void applyEucConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
             else
-                *d++ = *s;
+                *d = *s;
         });
 }
 
@@ -188,7 +189,7 @@ static void applySjisCrLfCrConversion(EditorBuffer *buffer) {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
                 else
-                    *d++ = *s;
+                    *d = *s;
         });
 }
 
@@ -197,7 +198,7 @@ static void applySjisCrLfConversion(EditorBuffer *buffer) {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
                 else
-                    *d++ = *s;
+                    *d = *s;
         });
 }
 
@@ -206,7 +207,7 @@ static void applySjisCrConversion(EditorBuffer *buffer) {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_CONVERSION(s,d)
                 else
-                    *d++ = *s;
+                    *d = *s;
         });
 }
 
@@ -214,7 +215,7 @@ static void applySjisConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
             else
-                *d++ = *s;
+                *d = *s;
         });
 }
 
@@ -254,9 +255,9 @@ static void applyUtf16Conversion(EditorBuffer *buffer) {
                 cb = 0x10000 + ((cb & 0x3ff) << 10) + (cb2 & 0x3ff);
             }
             if (cb < 0x80) {
-                *d++ = (char)(cb & 0xff);
+                *d = (char)(cb & 0xff);
             } else {
-                *d++ = ' ';
+                *d = ' ';
             }
         }
     }
