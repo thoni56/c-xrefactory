@@ -201,15 +201,6 @@
 
 ;; ----------------------------------------------------------------
 
-;; By default multibyte buffer representation is allowed in order NOT
-;; USED ANYMORE, it is here for backward compatibility only, use
-;; 'c-xref-files-encoding now.
-(if (not (boundp 'c-xref-allow-multibyte))
-    (defvar c-xref-allow-multibyte t)
-  )
-
-;;--------------------------------------------------
-
 (defvar c-xref-coloring (fboundp 'make-face))
 
 (defvar c-xref-files-encoding 'generic)

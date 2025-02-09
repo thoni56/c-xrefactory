@@ -1624,13 +1624,8 @@ tries to delete C-xrefactory windows first.
     (setq process-connection-type nil)
     (setq opts (append (list
                                     "-xrefactory-II"
-                                    ;;"-xrefrc" c-xref-options-file
-                                    ;;"-urldirect"
-                                    ;; do not comment following options without testing
-                                    ;; on all platform - files combinations!
                                     "-crlfconversion"
                                     "-crconversion"
-                                    (if c-xref-allow-multibyte "-encoding=default" "-encoding=european")
                                     "-o" ofile
                                     )
                                initopts))
