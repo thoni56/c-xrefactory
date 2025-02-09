@@ -14,44 +14,23 @@
         setSizeOfEditorBuffer(buffer, d - text);                        \
     }
 
-#define EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)    \
-    if (*s == '\r') {                               \
-        if (s+1<max && *(s+1)=='\n') {             \
-            s++;                                    \
-            *d = *s;                              \
-        } else {                                    \
-            *d = '\n';                            \
-        }                                           \
+#define EDITOR_ENCODING_CR_LF_OR_CR_TO_LF_CONVERSION(s,d)   \
+    if (*s == '\r') {                                       \
+        if (s+1<max && *(s+1)=='\n') {                      \
+            s++;                                            \
+            *d = *s;                                        \
+        } else {                                            \
+            *d = '\n';                                      \
+        }                                                   \
     }
-#define EDITOR_ENCODING_CR_LF_CONVERSION(s,d)       \
-    if (*s == '\r' && s+1<max && *(s+1)=='\n') {   \
+#define EDITOR_ENCODING_CR_LF_TO_LF_CONVERSION(s,d) \
+    if (*s == '\r' && s+1<max && *(s+1)=='\n') {    \
         s++;                                        \
-        *d = *s;                                  \
+        *d = *s;                                    \
     }
-#define EDITOR_ENCODING_CR_CONVERSION(s,d)      \
-    if (*s == '\r') {                           \
-        *d = '\n';                            \
-    }
-#define EDITOR_ENCODING_UTF8_CONVERSION(s, d)                                                           \
-    if (*(s)&0x80) {                                                                                    \
-        unsigned z;                                                                                     \
-        z = *s;                                                                                         \
-        if (z <= 223) {                                                                                 \
-            s += 1;                                                                                     \
-            *d = ' ';                                                                                 \
-        } else if (z <= 239) {                                                                          \
-            s += 2;                                                                                     \
-            *d = ' ';                                                                                 \
-        } else if (z <= 247) {                                                                          \
-            s += 3;                                                                                     \
-            *d = ' ';                                                                                 \
-        } else if (z <= 251) {                                                                          \
-            s += 4;                                                                                     \
-            *d = ' ';                                                                                 \
-        } else {                                                                                        \
-            s += 5;                                                                                     \
-            *d = ' ';                                                                                 \
-        }                                                                                               \
+#define EDITOR_ENCODING_CR_TO_LF_CONVERSION(s,d)      \
+    if (*s == '\r') {                                 \
+        *d = '\n';                                    \
     }
 
 static bool convertUtf8(unsigned char **srcP, unsigned char **dstP) {
@@ -92,7 +71,7 @@ static bool convertUtf8(unsigned char **srcP, unsigned char **dstP) {
 
 static void applyCrLfCrConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
+            EDITOR_ENCODING_CR_LF_OR_CR_TO_LF_CONVERSION(s,d)
             else
                 *d = *s;
         });
@@ -100,7 +79,7 @@ static void applyCrLfCrConversion(EditorBuffer *buffer) {
 
 static void applyCrLfConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
+            EDITOR_ENCODING_CR_LF_TO_LF_CONVERSION(s,d)
             else
                 *d = *s;
         });
@@ -108,7 +87,7 @@ static void applyCrLfConversion(EditorBuffer *buffer) {
 
 static void applyCrConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_CR_CONVERSION(s,d)
+            EDITOR_ENCODING_CR_TO_LF_CONVERSION(s,d)
             else
                 *d = *s;
         });
@@ -117,7 +96,7 @@ static void applyCrConversion(EditorBuffer *buffer) {
 static void applyUtf8CrLfCrConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             if (convertUtf8(&s, &d)) ;
-            else EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
+            else EDITOR_ENCODING_CR_LF_OR_CR_TO_LF_CONVERSION(s,d)
                 else
                     *d = *s;
         });
@@ -125,8 +104,8 @@ static void applyUtf8CrLfCrConversion(EditorBuffer *buffer) {
 
 static void applyUtf8CrLfConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_UTF8_CONVERSION(s,d)
-            else EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
+            if (convertUtf8(&s, &d)) ;
+            else EDITOR_ENCODING_CR_LF_TO_LF_CONVERSION(s,d)
                 else
                     *d = *s;
         });
@@ -134,8 +113,8 @@ static void applyUtf8CrLfConversion(EditorBuffer *buffer) {
 
 static void applyUtf8CrConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_UTF8_CONVERSION(s,d)
-            else EDITOR_ENCODING_CR_CONVERSION(s,d)
+            if (convertUtf8(&s, &d)) ;
+            else EDITOR_ENCODING_CR_TO_LF_CONVERSION(s,d)
                 else
                     *d = *s;
         });
@@ -152,7 +131,7 @@ static void applyUtf8Conversion(EditorBuffer *buffer) {
 static void applyEucCrLfCrConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
-            else EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
+            else EDITOR_ENCODING_CR_LF_OR_CR_TO_LF_CONVERSION(s,d)
                 else
                     *d = *s;
         });
@@ -161,7 +140,7 @@ static void applyEucCrLfCrConversion(EditorBuffer *buffer) {
 static void applyEucCrLfConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
-            else EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
+            else EDITOR_ENCODING_CR_LF_TO_LF_CONVERSION(s,d)
                 else
                     *d = *s;
         });
@@ -170,7 +149,7 @@ static void applyEucCrLfConversion(EditorBuffer *buffer) {
 static void applyEucCrConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
-            else EDITOR_ENCODING_CR_CONVERSION(s,d)
+            else EDITOR_ENCODING_CR_TO_LF_CONVERSION(s,d)
                 else
                     *d = *s;
         });
@@ -187,7 +166,7 @@ static void applyEucConversion(EditorBuffer *buffer) {
 static void applySjisCrLfCrConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
-            else EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
+            else EDITOR_ENCODING_CR_LF_OR_CR_TO_LF_CONVERSION(s,d)
                 else
                     *d = *s;
         });
@@ -196,7 +175,7 @@ static void applySjisCrLfCrConversion(EditorBuffer *buffer) {
 static void applySjisCrLfConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
-            else EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
+            else EDITOR_ENCODING_CR_LF_TO_LF_CONVERSION(s,d)
                 else
                     *d = *s;
         });
@@ -205,7 +184,7 @@ static void applySjisCrLfConversion(EditorBuffer *buffer) {
 static void applySjisCrConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
-            else EDITOR_ENCODING_CR_CONVERSION(s,d)
+            else EDITOR_ENCODING_CR_TO_LF_CONVERSION(s,d)
                 else
                     *d = *s;
         });
