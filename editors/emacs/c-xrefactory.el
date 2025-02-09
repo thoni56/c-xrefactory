@@ -203,8 +203,6 @@
 
 (defvar c-xref-coloring (fboundp 'make-face))
 
-(defvar c-xref-files-encoding 'utf)
-
 ;; by default truncation is disallowed in order to see profiles
 (defvar c-xref-completion-truncate-lines nil)
 
@@ -318,11 +316,6 @@ C-xrefactory functions.
       (defcustom c-xref-bind-left-mouse-button t
             "If on, C-xrefactory will bind the left mouse button in its dialog windows. The button will be bound to the same function as the middle button. If you change this value, you will need to restart Emacs in order for that new value take effect."
             :type '(boolean)
-            :group 'c-xrefactory-general)
-
-      (defcustom c-xref-files-encoding 'generic
-            "This variable specifies C-xrefactory multi language file encoding.  Available values are 'generic', 'ascii', 'european', 'euc', 'sjis', 'utf' and 'project'. If you use only 7-bit ascii charset, set this option to 'ascii. If you use 8-bit europeen encoding, set this value to 'european. If you use a kind of EUC encoding (multiple 8-bits Japanese, Korean, ...), set it to 'euc. If you use Japanese SJIS encoding, set it to 'sjis. If you use one of unicode encodings (utf-8 or utf-16) set it to 'utf'. Otherwise, use 'generic settings, which should work fine at least for completions and browsing. The value 'project' allows to specify encoding for each project separately. It is highly recommended to set this option to 'project' and to specify encodings for each of your projects within project options."
-            :type '(symbol)
             :group 'c-xrefactory-general)
 
       (defcustom c-xref-window-minimal-size 5

@@ -143,9 +143,6 @@ The value will be transfered over the edit server protocol as a `PPC_SET_INFO` r
 -crlfconversion::
   Convert various line-ending conventions to LF.
 
--encoding=<encoding>::
-Consider source files to use the indicated text encoding (`default`, `european`, `euc`, `sjis`, `utf`, `utf-8`, `utf-16`, `utf-16le`, `utf-16be`).
-
 
 ====== Error reporting and output
 

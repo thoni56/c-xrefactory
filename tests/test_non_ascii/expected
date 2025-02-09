@@ -1,0 +1,27 @@
+<goto>
+ <position-off off=45 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<precheck len=<n>>*f2;</precheck>
+<goto>
+ <position-off off=130 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<precheck len=<n>>(f2)</precheck>
+<goto>
+ <position-off off=132 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<goto>
+ <position-off off=46 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>f2</str>  <str len=<n>>f22</str>
+</replacement>
+<goto>
+ <position-off off=132 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>f2</str>  <str len=<n>>f22</str>
+</replacement>
+<goto>
+ <position-off off=132 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<sync>

@@ -47,7 +47,7 @@ static bool convertUtf8(unsigned char **srcP, unsigned char **dstP) {
             *srcP += 1;
         }
 
-        **dstP = ' '; // Replace the sequence with a space
+        **dstP = ' '; // Replace the sequence with a single space
         return true;
     }
     return false;

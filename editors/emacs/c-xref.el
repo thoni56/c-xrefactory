@@ -1692,23 +1692,8 @@ tries to delete C-xrefactory windows first.
     ))
 
 (defun c-xref-encoding-option ()
-  (let ((res))
-    (setq res "")
-    (if (or (eq c-xref-files-encoding 'ascii)
-                (eq c-xref-files-encoding 'generic)
-                (eq c-xref-files-encoding 'european))
-            (setq res "-encoding=european")
-      (if (eq c-xref-files-encoding 'euc)
-              (setq res "-encoding=euc")
-            (if (eq c-xref-files-encoding 'sjis)
-                (setq res "-encoding=sjis")
-              (if (eq c-xref-files-encoding 'utf)
-                  (setq res "-encoding=utf")
-                (if (eq c-xref-files-encoding 'project)
-                        (setq res "")
-                  )))))
-    res
-    ))
+  "-encoding=utf"
+  )
 
 (defun c-xref-send-data-to-running-process (data proc)
   (let ((cbuffer))
@@ -1845,48 +1830,11 @@ tries to delete C-xrefactory windows first.
     res
     ))
 
-(defun c-xref-server-get-point-and-mark-options-via-tmp-file ()
-  (let ((olcursor) (olmark) (res) (tmpFile) (coding) (eolc))
-    (if (boundp 'buffer-file-coding-system)
-            (setq coding buffer-file-coding-system)
-      (setq coding nil)
-      )
-    ;; try to inhibit crlf conversion
-    (if (boundp 'inhibit-eol-conversion)
-            (progn
-              (setq eolc inhibit-eol-conversion)
-              (setq inhibit-eol-conversion t)
-              ))
-    (setq tmpFile (format "%s/c-xref%s.tmp" c-xref-tmp-dir c-xref-user-identification))
-    (setq res nil)
-    (if (>= (point) 1)
-            (progn
-              (c-xref-write-tmp-buff tmpFile 1 (point) coding)
-              (setq olcursor (nth 7 (file-attributes tmpFile)))
-              (setq res (cons (format "-olcursor=%d" olcursor) res))
-              ))
-    (if (region-active-p)
-        (progn
-             (delete-file tmpFile)
-             (c-xref-write-tmp-buff tmpFile 1 (mark t) coding)
-             (setq olmark (nth 7 (file-attributes tmpFile)))
-             (setq res (cons (format "-olmark=%d" olmark) res))
-             ))
-    (if (boundp 'inhibit-eol-conversion)
-            (setq inhibit-eol-conversion eolc)
-      )
-    (if res (delete-file tmpFile))
-    res
-    ))
-
 (defun c-xref-server-get-point-and-mark-options ()
   (let ((res))
-    (if (eq c-xref-files-encoding 'generic)
-            (setq res (c-xref-server-get-point-and-mark-options-via-tmp-file))
-      (setq res (cons (format "-olcursor=%d" (- (point) 1)) res))
-      (if (region-active-p)
-              (setq res (cons (format "-olmark=%d" (- (mark t) 1)) res))
-            )
+    (setq res (cons (format "-olcursor=%d" (- (point) 1)) res))
+    (if (region-active-p)
+        (setq res (cons (format "-olmark=%d" (- (mark t) 1)) res))
       )
     res
     ))
