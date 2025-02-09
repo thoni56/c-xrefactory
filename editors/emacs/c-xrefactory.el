@@ -203,7 +203,7 @@
 
 (defvar c-xref-coloring (fboundp 'make-face))
 
-(defvar c-xref-files-encoding 'generic)
+(defvar c-xref-files-encoding 'utf)
 
 ;; by default truncation is disallowed in order to see profiles
 (defvar c-xref-completion-truncate-lines nil)
