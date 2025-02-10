@@ -1,0 +1,5 @@
+../../src/c-xref -xrefactory-II -server
+<sync>
+-olcxtagsearch=ilist -searchdef -olinelen=159 -olcxlccursor=1:0 -olcursor=0 CURDIR/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+<exit>
