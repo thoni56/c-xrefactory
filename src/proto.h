@@ -83,20 +83,6 @@ typedef enum {
 } SearchDepth;
 
 
-/* *******************      encodings      *************** */
-
-enum fileEncodings {
-    MULE_DEFAULT,  // in fact utf-8 or utf-16
-    MULE_EUROPEAN, // byte per char
-    MULE_EUC,      // euc
-    MULE_SJIS,     // Shift-JIS
-    MULE_UTF,      // utf-8 or utf-16
-    MULE_UTF_8,    // utf-8
-    MULE_UTF_16,   // utf-16
-    MULE_UTF_16LE, // utf-16 little endian
-    MULE_UTF_16BE, // utf-16 big endian
-};
-
 /* *******************      refactoring continuations      *************** */
 
 typedef enum {

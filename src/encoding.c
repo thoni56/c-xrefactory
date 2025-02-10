@@ -54,30 +54,6 @@ static bool convertUtf8(unsigned char **srcP, unsigned char **dstP) {
 }
 
 
-static void applyCrLfCrConversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_CR_LF_OR_CR_TO_LF_CONVERSION(s,d)
-            else
-                *d = *s;
-        });
-}
-
-static void applyCrLfConversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_CR_LF_TO_LF_CONVERSION(s,d)
-            else
-                *d = *s;
-        });
-}
-
-static void applyCrConversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_CR_TO_LF_CONVERSION(s,d)
-            else
-                *d = *s;
-        });
-}
-
 static void applyUtf8CrLfCrConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             if (convertUtf8(&s, &d)) ;
@@ -114,91 +90,16 @@ static void applyUtf8Conversion(EditorBuffer *buffer) {
 }
 
 
-static void applyUtf16Conversion(EditorBuffer *buffer) {
-    unsigned char  *s, *d, *maxs;
-    unsigned int cb, cb2;
-    int little_endian;
-    unsigned char *space;
-
-    space = (unsigned char *)getTextInEditorBuffer(buffer);
-    maxs = space + getSizeOfEditorBuffer(buffer);
-    s = space;
-    // determine endian first
-    cb = (*s << 8) + *(s+1);
-    if (cb == 0xfeff) {
-        little_endian = 0;
-        s += 2;
-    } else if (cb == 0xfffe) {
-        little_endian = 1;
-        s += 2;
-    } else if (options.fileEncoding == MULE_UTF_16LE) {
-        little_endian = 1;
-    } else if (options.fileEncoding == MULE_UTF_16BE) {
-        little_endian = 0;
-    } else {
-        little_endian = 1;
-    }
-    for(s++,d=space; s<maxs; s+=2) {
-        if (little_endian) cb = (*(s) << 8) + *(s-1);
-        else cb = (*(s-1) << 8) + *(s);
-        if (cb != 0xfeff) {
-            if (cb >= 0xd800 && cb <= 0xdfff) {
-                // 32 bit character
-                s += 2;
-                if (little_endian) cb2 = (*(s) << 8) + *(s-1);
-                else cb2 = (*(s-1) << 8) + *(s);
-                cb = 0x10000 + ((cb & 0x3ff) << 10) + (cb2 & 0x3ff);
-            }
-            if (cb < 0x80) {
-                *d = (char)(cb & 0xff);
-            } else {
-                *d = ' ';
-            }
-        }
-    }
-    setSizeOfEditorBuffer(buffer, d - space);
-}
-
-static bool bufferStartsWithUtf16Bom(EditorBuffer *buffer) {
-    unsigned char *s;
-
-    s = (unsigned char *)getTextInEditorBuffer(buffer);
-    if (getSizeOfEditorBuffer(buffer) >= 2) {
-        unsigned cb = (*s << 8) + *(s+1);
-        if (cb == 0xfeff || cb == 0xfffe)
-            return true;
-    }
-    return false;
-}
-
-static void performSimpleLineFeedConversion(EditorBuffer *buffer) {
+void performEncodingAdjustments(EditorBuffer *buffer) {
+    // utf-8
     if ((options.eolConversion&CR_LF_EOL_CONVERSION)
         && (options.eolConversion & CR_EOL_CONVERSION)) {
-        applyCrLfCrConversion(buffer);
+        applyUtf8CrLfCrConversion(buffer);
     } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
-        applyCrLfConversion(buffer);
+        applyUtf8CrLfConversion(buffer);
     } else if (options.eolConversion & CR_EOL_CONVERSION) {
-        applyCrConversion(buffer);
-    }
-}
-
-void performEncodingAdjustments(EditorBuffer *buffer) {
-    if ((options.fileEncoding != MULE_UTF_8 && bufferStartsWithUtf16Bom(buffer))
-        || options.fileEncoding == MULE_UTF_16 || options.fileEncoding == MULE_UTF_16LE
-        || options.fileEncoding == MULE_UTF_16BE) {
-        applyUtf16Conversion(buffer);
-        performSimpleLineFeedConversion(buffer);
+        applyUtf8CrConversion(buffer);
     } else {
-        // utf-8
-        if ((options.eolConversion&CR_LF_EOL_CONVERSION)
-            && (options.eolConversion & CR_EOL_CONVERSION)) {
-            applyUtf8CrLfCrConversion(buffer);
-        } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
-            applyUtf8CrLfConversion(buffer);
-        } else if (options.eolConversion & CR_EOL_CONVERSION) {
-            applyUtf8CrConversion(buffer);
-        } else {
-            applyUtf8Conversion(buffer);
-        }
+        applyUtf8Conversion(buffer);
     }
 }

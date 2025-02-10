@@ -29,7 +29,6 @@ Options presetOptions = {
     false,                       // command log to /tmp file
     false,                       // exit
     "gcc",                       // path to compiler to use for auto-discovering compiler and defines
-    MULE_DEFAULT,                // encoding
     false,                       // completeParenthesis
     false,                       // referenceListWithoutSource
     0,                           // comment moving level
@@ -1169,32 +1168,10 @@ static bool processEOption(int *argi, int argc, char **argv) {
         options.exactPositionResolve = true;
     }
     else if (strncmp(argv[i], "-encoding=", 10)==0) {
-        if (options.fileEncoding == MULE_DEFAULT) {
-            if (strcmp(argv[i], "-encoding=default")==0) {
-                options.fileEncoding = MULE_DEFAULT;
-            } else if (strcmp(argv[i], "-encoding=european")==0) {
-                options.fileEncoding = MULE_EUROPEAN;
-            } else if (strcmp(argv[i], "-encoding=euc")==0) {
-                options.fileEncoding = MULE_EUC;
-            } else if (strcmp(argv[i], "-encoding=sjis")==0) {
-                options.fileEncoding = MULE_SJIS;
-            } else if (strcmp(argv[i], "-encoding=utf")==0) {
-                options.fileEncoding = MULE_UTF;
-            } else if (strcmp(argv[i], "-encoding=utf-8")==0) {
-                options.fileEncoding = MULE_UTF_8;
-            } else if (strcmp(argv[i], "-encoding=utf-16")==0) {
-                options.fileEncoding = MULE_UTF_16;
-            } else if (strcmp(argv[i], "-encoding=utf-16le")==0) {
-                options.fileEncoding = MULE_UTF_16LE;
-            } else if (strcmp(argv[i], "-encoding=utf-16be")==0) {
-                options.fileEncoding = MULE_UTF_16BE;
-            } else {
-                char tmpString[TMP_BUFF_SIZE];
-                sprintf(tmpString, "unsupported encoding, the only supported is 'utf'.");
-                formatOutputLine(tmpString, ERROR_MESSAGE_STARTING_OFFSET);
-                errorMessage(ERR_ST, tmpString);
-            }
-        }
+        char tmpString[TMP_BUFF_SIZE];
+        sprintf(tmpString, "'-encoding' is not supported anymore, files are expected to be 'utf-8'.");
+        formatOutputLine(tmpString, ERROR_MESSAGE_STARTING_OFFSET);
+        warningMessage(ERR_ST, tmpString);
     }
     else
         return false;
