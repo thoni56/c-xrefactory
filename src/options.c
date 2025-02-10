@@ -1190,7 +1190,7 @@ static bool processEOption(int *argi, int argc, char **argv) {
                 options.fileEncoding = MULE_UTF_16BE;
             } else {
                 char tmpString[TMP_BUFF_SIZE];
-                sprintf(tmpString, "unsupported encoding, available values are 'default', 'european', 'euc', 'sjis', 'utf', 'utf-8', 'utf-16', 'utf-16le' and 'utf-16be'.");
+                sprintf(tmpString, "unsupported encoding, the only supported is 'utf'.");
                 formatOutputLine(tmpString, ERROR_MESSAGE_STARTING_OFFSET);
                 errorMessage(ERR_ST, tmpString);
             }

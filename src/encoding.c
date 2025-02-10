@@ -53,21 +53,6 @@ static bool convertUtf8(unsigned char **srcP, unsigned char **dstP) {
     return false;
 }
 
-#define EDITOR_ENCODING_EUC_CONVERSION(s,d)     \
-    if (*(s) & 0x80) {                          \
-        unsigned z;                             \
-        z = *s;                                 \
-        if (z == 0x8e) {s+=2; *d = ' ';}      \
-        else if (z == 0x8f) {s+=3; *d = ' ';} \
-        else {s+=1; *d = ' ';}                \
-    }
-#define EDITOR_ENCODING_SJIS_CONVERSION(s,d)        \
-    if (*(s) & 0x80) {                              \
-        unsigned z;                                 \
-        z = *s;                                     \
-        if (z >= 0xa1 && z <= 0xdf) {*d = ' ';}   \
-        else {s+=1; *d = ' ';}                    \
-    }
 
 static void applyCrLfCrConversion(EditorBuffer *buffer) {
     EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
@@ -128,75 +113,6 @@ static void applyUtf8Conversion(EditorBuffer *buffer) {
                 });
 }
 
-static void applyEucCrLfCrConversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_EUC_CONVERSION(s,d)
-            else EDITOR_ENCODING_CR_LF_OR_CR_TO_LF_CONVERSION(s,d)
-                else
-                    *d = *s;
-        });
-}
-
-static void applyEucCrLfConversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_EUC_CONVERSION(s,d)
-            else EDITOR_ENCODING_CR_LF_TO_LF_CONVERSION(s,d)
-                else
-                    *d = *s;
-        });
-}
-
-static void applyEucCrConversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_EUC_CONVERSION(s,d)
-            else EDITOR_ENCODING_CR_TO_LF_CONVERSION(s,d)
-                else
-                    *d = *s;
-        });
-}
-
-static void applyEucConversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_EUC_CONVERSION(s,d)
-            else
-                *d = *s;
-        });
-}
-
-static void applySjisCrLfCrConversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_SJIS_CONVERSION(s,d)
-            else EDITOR_ENCODING_CR_LF_OR_CR_TO_LF_CONVERSION(s,d)
-                else
-                    *d = *s;
-        });
-}
-
-static void applySjisCrLfConversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_SJIS_CONVERSION(s,d)
-            else EDITOR_ENCODING_CR_LF_TO_LF_CONVERSION(s,d)
-                else
-                    *d = *s;
-        });
-}
-
-static void applySjisCrConversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_SJIS_CONVERSION(s,d)
-            else EDITOR_ENCODING_CR_TO_LF_CONVERSION(s,d)
-                else
-                    *d = *s;
-        });
-}
-
-static void applySjisConversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            EDITOR_ENCODING_SJIS_CONVERSION(s,d)
-            else
-                *d = *s;
-        });
-}
 
 static void applyUtf16Conversion(EditorBuffer *buffer) {
     unsigned char  *s, *d, *maxs;
@@ -267,50 +183,22 @@ static void performSimpleLineFeedConversion(EditorBuffer *buffer) {
 }
 
 void performEncodingAdjustments(EditorBuffer *buffer) {
-    // do different loops for efficiency reasons
-    if (options.fileEncoding == MULE_EUROPEAN) {
+    if ((options.fileEncoding != MULE_UTF_8 && bufferStartsWithUtf16Bom(buffer))
+        || options.fileEncoding == MULE_UTF_16 || options.fileEncoding == MULE_UTF_16LE
+        || options.fileEncoding == MULE_UTF_16BE) {
+        applyUtf16Conversion(buffer);
         performSimpleLineFeedConversion(buffer);
-    } else if (options.fileEncoding == MULE_EUC) {
-        if ((options.eolConversion&CR_LF_EOL_CONVERSION)
-            && (options.eolConversion & CR_EOL_CONVERSION)) {
-            applyEucCrLfCrConversion(buffer);
-        } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
-            applyEucCrLfConversion(buffer);
-        } else if (options.eolConversion & CR_EOL_CONVERSION) {
-            applyEucCrConversion(buffer);
-        } else {
-            applyEucConversion(buffer);
-        }
-    } else if (options.fileEncoding == MULE_SJIS) {
-        if ((options.eolConversion&CR_LF_EOL_CONVERSION)
-            && (options.eolConversion & CR_EOL_CONVERSION)) {
-            applySjisCrLfCrConversion(buffer);
-        } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
-            applySjisCrLfConversion(buffer);
-        } else if (options.eolConversion & CR_EOL_CONVERSION) {
-            applySjisCrConversion(buffer);
-        } else {
-            applySjisConversion(buffer);
-        }
     } else {
-        // default == utf
-        if ((options.fileEncoding != MULE_UTF_8 && bufferStartsWithUtf16Bom(buffer))
-            || options.fileEncoding == MULE_UTF_16 || options.fileEncoding == MULE_UTF_16LE
-            || options.fileEncoding == MULE_UTF_16BE) {
-            applyUtf16Conversion(buffer);
-            performSimpleLineFeedConversion(buffer);
+        // utf-8
+        if ((options.eolConversion&CR_LF_EOL_CONVERSION)
+            && (options.eolConversion & CR_EOL_CONVERSION)) {
+            applyUtf8CrLfCrConversion(buffer);
+        } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
+            applyUtf8CrLfConversion(buffer);
+        } else if (options.eolConversion & CR_EOL_CONVERSION) {
+            applyUtf8CrConversion(buffer);
         } else {
-            // utf-8
-            if ((options.eolConversion&CR_LF_EOL_CONVERSION)
-                && (options.eolConversion & CR_EOL_CONVERSION)) {
-                applyUtf8CrLfCrConversion(buffer);
-            } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
-                applyUtf8CrLfConversion(buffer);
-            } else if (options.eolConversion & CR_EOL_CONVERSION) {
-                applyUtf8CrConversion(buffer);
-            } else {
-                applyUtf8Conversion(buffer);
-            }
+            applyUtf8Conversion(buffer);
         }
     }
 }
