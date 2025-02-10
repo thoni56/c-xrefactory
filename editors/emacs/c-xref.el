@@ -1691,10 +1691,6 @@ tries to delete C-xrefactory windows first.
     (setq inhibit-quit nil)
     ))
 
-(defun c-xref-encoding-option ()
-  "-encoding=utf"
-  )
-
 (defun c-xref-send-data-to-running-process (data proc)
   (let ((cbuffer))
     (setq cbuffer (current-buffer))
@@ -1900,10 +1896,9 @@ tries to delete C-xrefactory windows first.
   (let ((proc) (frame-id) (opts))
     (setq proc (cdr (assoc 'process dispatch-data)))
     (setq frame-id (cdr (assoc 'frame-id dispatch-data)))
-    (setq opts (format "%s %s%s -xrefrc \"%s\" -p \"%s\""
+    (setq opts (format "%s %s -xrefrc \"%s\" -p \"%s\""
                                commands
                                (if c-xref-browser-lists-source-lines "" "-rlistwithoutsrc ")
-                               (c-xref-encoding-option)
                                c-xref-options-file
                                c-xref-active-project
                                ))
@@ -1946,7 +1941,7 @@ tries to delete C-xrefactory windows first.
   )
 
 (defun c-xref-server-call-refactoring-task (opts)
-  (let ((bl) (frame-id) (enc))
+  (let ((bl) (frame-id))
     (if (and (not (eq c-xref-refactorer-process nil))
                  (eq (process-status (car c-xref-refactorer-process)) 'run))
             ;;(if (c-xref-yes-or-no-window "A refactoring process is running, can I kill it? " t nil)
@@ -1969,10 +1964,6 @@ tries to delete C-xrefactory windows first.
                                          "-p" c-xref-active-project
                                          )
                                opts))
-    (setq enc (c-xref-encoding-option))
-    (if (not (equal enc ""))
-            (setq opts (append (list enc) opts))
-      )
     (setq opts (append opts (cons
                              (format "%s" (buffer-file-name))
                              nil)))
@@ -1984,7 +1975,7 @@ tries to delete C-xrefactory windows first.
     ))
 
 (defun c-xref-server-tags-process (opts)
-  (let ((bl) (enc))
+  (let ((bl))
     (if (and (not (eq c-xref-tags-process nil))
                  (eq (process-status (car c-xref-tags-process)) 'run))
             (if (c-xref-yes-or-no-window "tags maintenance process is running, can I kill it? " t nil)
@@ -1999,10 +1990,6 @@ tries to delete C-xrefactory windows first.
                                                   "-xrefrc" c-xref-options-file
                                                   "-p" c-xref-active-project
                                                   )))
-    (setq enc (c-xref-encoding-option))
-    (if (not (equal enc ""))
-            (setq opts (append (list enc) opts))
-      )
     (setq opts (append opts (c-xref-server-save-buffers-to-tmp-files bl)))
     ;;  (setq c-xref-tags-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-tags-process))
     (c-xref-start-server-process opts c-xref-tags-tasks-ofile 'c-xref-tags-process 'c-xref-tags-filter)
