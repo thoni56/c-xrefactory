@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -encoding=european -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=renameMi -olcursor=703 CURDIR/cexercise/refactorings/rename.c -o server-buffer
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=renameMi -olcursor=703 CURDIR/cexercise/refactorings/rename.c -o server-buffer
 <sync>
 <goto>
  <position-off off=698 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>

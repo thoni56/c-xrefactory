@@ -1,10 +1,10 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR -server -completeparenthesis -o server-buffer
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -xrefrc CURDIR/.c-xrefrc -p CURDIR -server -completeparenthesis -o server-buffer
 -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/completions.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxcomplet -maxcompls=500 -olinelen=209  -olmark=0 -olcursor=430 CURDIR/cexercise/completions.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxcomplet -maxcompls=500 -olinelen=209  -olmark=0 -olcursor=430 CURDIR/cexercise/completions.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
@@ -17,13 +17,13 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxcomplet -maxcompls=500 -olinelen=209  -olmark=430 -olcursor=467 CURDIR/cexercise/completions.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxcomplet -maxcompls=500 -olinelen=209  -olmark=430 -olcursor=467 CURDIR/cexercise/completions.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
 <all-completions nofocus=0 len=<n>>ZPILE    :typedef int ZPILE
 zprint   :int zprint(ZPILE *, char *, ...)</all-completions>
--olcomplforward -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcomplforward -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
@@ -40,13 +40,13 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxcomplet -maxcompls=500 -olinelen=209  -olmark=518 -olcursor=1105 CURDIR/cexercise/completions.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxcomplet -maxcompls=500 -olinelen=209  -olmark=518 -olcursor=1105 CURDIR/cexercise/completions.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
 <all-completions nofocus=0 len=<n>>i     :int i
 next  :struct mylist  *next</all-completions>
--olcomplselect2 -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcomplselect2 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
@@ -59,7 +59,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxcomplet -maxcompls=500 -olinelen=209  -olmark=523 -olcursor=1144 CURDIR/cexercise/completions.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxcomplet -maxcompls=500 -olinelen=209  -olmark=523 -olcursor=1144 CURDIR/cexercise/completions.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
@@ -68,7 +68,7 @@ end-of-options
 </goto>
 <single-completion len=<n>>xp</single-completion>
 <bottom-information beep=1 len=<n>>Multiple completions</bottom-information>
--olcomplselect2 -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcomplselect2 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
@@ -81,7 +81,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxcomplet -maxcompls=500 -olinelen=209  -olmark=1232 -olcursor=1232 CURDIR/cexercise/completions.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxcomplet -maxcompls=500 -olinelen=209  -olmark=1232 -olcursor=1232 CURDIR/cexercise/completions.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>

@@ -1,1 +1,1 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -create -errors -xrefrc CURDIR/.c-xrefrc -p CURDIR
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -create -errors -xrefrc CURDIR/.c-xrefrc -p CURDIR

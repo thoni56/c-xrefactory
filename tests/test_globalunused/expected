@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <display-or-update-browser len=<n>></display-or-update-browser>
--olcxmenufilter=2 -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenufilter=2 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>

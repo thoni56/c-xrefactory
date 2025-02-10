@@ -1,6 +1,6 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -encoding=default -server
--olcxcomplet -maxcompls=500 -olinelen=236  -olmark=496 -olcursor=411 CURDIR/simple_grammar.y -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+CXREF -xrefactory-II -crlfconversion -crconversion -server
+-olcxcomplet -maxcompls=500 -olinelen=236  -olmark=496 -olcursor=411 CURDIR/simple_grammar.y -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
--olcxcomplet -maxcompls=500 -olinelen=236  -olmark=496 -olcursor=423 CURDIR/simple_grammar.y -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxcomplet -maxcompls=500 -olinelen=236  -olmark=496 -olcursor=423 CURDIR/simple_grammar.y -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 <exit>

@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -encoding=european -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-del-param -olcxparnum=3 -olmark=10 -olcursor=10 CURDIR/macroArgs.c -o server-buffer
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-del-param -olcxparnum=3 -olmark=10 -olcursor=10 CURDIR/macroArgs.c -o server-buffer
 <sync>
 <goto>
  <position-off off=10 len=<n>>CURDIR/macroArgs.c</position-off>

@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -server .
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -server .
 -get env -xrefrc .c-xrefrc -p CURDIR
 <sync>
 <exit>

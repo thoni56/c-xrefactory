@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -server
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -server
 -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/test_source/index.c
 <sync>
 <exit>

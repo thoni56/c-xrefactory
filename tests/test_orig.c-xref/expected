@@ -1,5 +1,5 @@
 ../../src/c-xref -server -xrefactory-II -xrefrc CURDIR/.c-xrefrc -p CURDIR -o server-buffer
--olcxpush -olmark=67072 -olcursor=104883 CURDIR/src/main.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxpush -olmark=67072 -olcursor=104883 CURDIR/src/main.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>

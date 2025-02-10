@@ -1,1 +1,1 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -encoding=european -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=extracted -olcursor=179 -preload CURDIR/test_source/hello.c CURDIR/test_source/hello-extracted.c CURDIR/test_source/hello.c -log=log2
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=extracted -olcursor=179 -preload CURDIR/test_source/hello.c CURDIR/test_source/hello-extracted.c CURDIR/test_source/hello.c -log=log2

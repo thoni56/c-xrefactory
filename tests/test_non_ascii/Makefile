@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefactory-II -refactory -rfct-rename -renameto=f22 -olcursor=131 -encoding=utf source.c
+ARGUMENTS = -xrefactory-II -refactory -rfct-rename -renameto=f22 -olcursor=131 source.c
 
 $(TEST):
 	$(COMMAND) > output.tmp

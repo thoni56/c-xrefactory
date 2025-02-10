@@ -1,14 +1,14 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -server
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -server
 -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/parameter.c
 <sync>
--olcxgetrefactorings -olcursor=217 CURDIR/parameter.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=217 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
--olcxgetrefactorings -olcursor=294 CURDIR/parameter.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=294 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
--olcxgetrefactorings -olcursor=382 CURDIR/parameter.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=382 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
--olcxgetrefactorings -olcursor=612 CURDIR/parameter.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=612 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
--olcxgetrefactorings -olcursor=665 CURDIR/parameter.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=665 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 <exit>

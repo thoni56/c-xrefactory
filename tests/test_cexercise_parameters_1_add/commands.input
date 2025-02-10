@@ -1,1 +1,1 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -encoding=european -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-add-param -olcxparnum=1 -rfct-parameter-name="int arg" -rfct-parameter-value=0 -olmark=0 -olcursor=289 CURDIR/cexercise/refactorings/parameter.c
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-add-param -olcxparnum=1 -rfct-parameter-name="int arg" -rfct-parameter-value=0 -olmark=0 -olcursor=289 CURDIR/cexercise/refactorings/parameter.c

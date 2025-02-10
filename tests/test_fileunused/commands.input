@@ -1,10 +1,10 @@
 ../../src/c-xref -xrefactory-II -xrefrc CURDIR/.c-xrefrc -p CURDIR -server
 -olcxpushfileunused  CURDIR/source1.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
--olcxmenufilter=2 -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenufilter=2 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -olcxpushfileunused  CURDIR/source2.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
--olcxmenufilter=2 -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenufilter=2 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 <exit>

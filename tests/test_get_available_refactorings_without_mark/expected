@@ -1,10 +1,10 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -server -o server-buffer
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
 -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/parameter.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxgetrefactorings -olcursor=217 CURDIR/parameter.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=217 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
@@ -12,7 +12,7 @@ end-of-options
   <int val=290 len=<n>></int>
   <int val=300 len=<n>></int>
 </available-refactorings>
--olcxgetrefactorings -olcursor=294 CURDIR/parameter.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=294 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
@@ -24,7 +24,7 @@ end-of-options
   <int val=70 len=<n>></int>
   <int val=300 len=<n>></int>
 </available-refactorings>
--olcxgetrefactorings -olcursor=382 CURDIR/parameter.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=382 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
@@ -36,7 +36,7 @@ end-of-options
   <int val=70 len=<n>></int>
   <int val=300 len=<n>></int>
 </available-refactorings>
--olcxgetrefactorings -olcursor=612 CURDIR/parameter.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=612 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
@@ -48,7 +48,7 @@ end-of-options
   <int val=70 len=<n>></int>
   <int val=300 len=<n>></int>
 </available-refactorings>
--olcxgetrefactorings -olcursor=665 CURDIR/parameter.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=665 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
