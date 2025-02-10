@@ -57,7 +57,7 @@ static void deleteReferencesOutOfMemory(Reference **referenceP) {
     }
 }
 
-static void refTabDeleteOutOfMemory(int index) {
+static void recoverMemoryFromReferenceTableEntry(int index) {
     ReferenceItem *item;
     ReferenceItem **itemP;
 
@@ -86,10 +86,10 @@ static void refTabDeleteOutOfMemory(int index) {
 }
 
 // Deliberate NO-OP
-static void fileTableDeleteOutOfMemory(FileItem *fileItem) {
+static void recoverMemoryFromFileTableEntry(FileItem *fileItem) {
 }
 
-static void structCachingFree(Symbol *symbol) {
+static void recoverMemoryFromTypeStructOrUnion(Symbol *symbol) {
     assert(symbol->u.structSpec);
     if (isFreedStackMemory(symbol->u.structSpec->members)
         || ppmIsFreedPointer(symbol->u.structSpec->members)) {
@@ -97,7 +97,7 @@ static void structCachingFree(Symbol *symbol) {
     }
 }
 
-static void symbolTableDeleteOutOfMemory(int i) {
+static void recoverMemoryFromSymbolTableEntry(int i) {
     Symbol **pp;
     pp = &symbolTable->tab[i];
     while (*pp!=NULL) {
@@ -114,7 +114,7 @@ static void symbolTableDeleteOutOfMemory(int i) {
                 *pp = (*pp)->next;
                 continue;
             } else {
-                structCachingFree(*pp);
+                recoverMemoryFromTypeStructOrUnion(*pp);
             }
             break;
         case TypeEnum:
@@ -136,7 +136,7 @@ static void symbolTableDeleteOutOfMemory(int i) {
     }
 }
 
-static void deleteFrameAllocationsWhenOutOfMemory(void) {
+static void recoverMemoryFromFrameAllocations(void) {
     FrameAllocation **pp;
     pp = &currentBlock->frameAllocations;
     while (isFreedStackMemory(*pp)) {
@@ -144,7 +144,7 @@ static void deleteFrameAllocationsWhenOutOfMemory(void) {
     }
 }
 
-static void includeListDeleteOutOfMemory(void) {
+static void recoverMemoryFromIncludeList(void) {
     StringList **pp;
     pp = & options.includeDirs;
     while (*pp!=NULL) {
@@ -176,8 +176,8 @@ static void recoverCxMemory(void *cxMemoryFlushPoint) {
 #else
     cxFreeUntil(cxMemoryFlushPoint);
 #endif
-    mapOverFileTable(fileTableDeleteOutOfMemory);
-    mapOverReferenceTableWithIndex(refTabDeleteOutOfMemory);
+    mapOverFileTable(recoverMemoryFromFileTableEntry);
+    mapOverReferenceTableWithIndex(recoverMemoryFromReferenceTableEntry);
 #ifdef USE_NEW_CXMEMORY
     flushPendingCxMemory();
 #endif
@@ -231,7 +231,7 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
     currentBlock = cachePoint->topBlock;
     *currentBlock = cachePoint->topBlockContent;
     counters = cachePoint->counters;
-    deleteFrameAllocationsWhenOutOfMemory();
+    recoverMemoryFromFrameAllocations();
     assert(options.mode);
     if (options.mode==ServerMode && currentPass==1) {
         /* remove old references, only on first pass of edit server */
@@ -241,16 +241,16 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
 #else
         cxMemory.index = cachePoint->cxMemoryIndex;
 #endif
-        mapOverReferenceTableWithIndex(refTabDeleteOutOfMemory);
-        mapOverFileTable(fileTableDeleteOutOfMemory);
+        mapOverReferenceTableWithIndex(recoverMemoryFromReferenceTableEntry);
+        mapOverFileTable(recoverMemoryFromFileTableEntry);
     }
     log_trace("recovering symbolTable");
-    symbolTableMapWithIndex(symbolTable, symbolTableDeleteOutOfMemory);
+    symbolTableMapWithIndex(symbolTable, recoverMemoryFromSymbolTableEntry);
 
     log_trace("recovering finished");
 
     // do not forget that includes are listed in PP_MEMORY too.
-    includeListDeleteOutOfMemory();
+    recoverMemoryFromIncludeList();
 
     currentFile.lineNumber = cachePoint->lineNumber;
     currentFile.ifDepth = cachePoint->ifDepth;
