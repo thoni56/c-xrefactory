@@ -1,5 +1,5 @@
 ../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -server -o server-buffer
--olcxcomplet -maxcompls=500 -olinelen=236  "-olmark=496" "-olcursor=411" "CURDIR/simple_grammar.y" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
+-olcxcomplet -maxcompls=500 -olinelen=236  -olmark=496 -olcursor=411 CURDIR/simple_grammar.y -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
@@ -7,7 +7,7 @@ end-of-options
  <position-lc line=24 col=6 len=<n>>CURDIR/simple_grammar.y</position-lc>
 </goto>
 <single-completion len=<n>>error</single-completion>
--olcxcomplet -maxcompls=500 -olinelen=236  "-olmark=496" "-olcursor=423" "CURDIR/simple_grammar.y" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
+-olcxcomplet -maxcompls=500 -olinelen=236  -olmark=496 -olcursor=423 CURDIR/simple_grammar.y -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>

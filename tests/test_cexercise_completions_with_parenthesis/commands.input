@@ -9,13 +9,13 @@
 <sync>
 -olcomplforward -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
--olcomplselect2 -xrefrc CURDIR/.c-xrefrc" -p CURDIR
+-olcomplselect2 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/completions.c
 <sync>
 -olcxcomplet -maxcompls=500 -olinelen=209  -olmark=518 -olcursor=1105 CURDIR/cexercise/completions.c -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
--olcomplselect2 -encoding=european -xrefrc CURDIR/.c-xrefrc" -p CURDIR
+-olcomplselect2 -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/completions.c
 <sync>

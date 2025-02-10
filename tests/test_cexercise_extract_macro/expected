@@ -1,4 +1,4 @@
-../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-rfct-extract-macro" "-olmark=315" "-olcursor=423" "CURDIR/cexercise/refactorings/extract.c" -o server-buffer
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -encoding=european -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract-macro -olmark=315 -olcursor=423 CURDIR/cexercise/refactorings/extract.c -o server-buffer
 <sync>
 <extraction-dialog type=NEW_MACRO_> <str len=<n>>	NEW_MACRO_(i, n, x, y, t);
 </str>

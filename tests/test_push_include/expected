@@ -1,10 +1,10 @@
 ../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -server -o server-buffer
--olcxgetprojectname -xrefrc ".c-xrefrc" "include.c"
+-olcxgetprojectname -xrefrc .c-xrefrc include.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxpush "-olcursor=6" "include.c" -xrefrc ".c-xrefrc" -p "CURDIR"
+-olcxpush -olcursor=6 include.c -xrefrc .c-xrefrc -p CURDIR
 end-of-options
 
 <sync>

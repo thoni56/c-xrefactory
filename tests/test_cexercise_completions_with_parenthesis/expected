@@ -27,7 +27,7 @@ zprint   :int zprint(ZPILE *, char *, ...)</all-completions>
 end-of-options
 
 <sync>
--olcomplselect2 -xrefrc CURDIR/.c-xrefrc" -p CURDIR
+-olcomplselect2 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
@@ -46,7 +46,7 @@ end-of-options
 <sync>
 <all-completions nofocus=0 len=<n>>i     :int i
 next  :struct mylist  *next</all-completions>
--olcomplselect2 -encoding=european -xrefrc CURDIR/.c-xrefrc" -p CURDIR
+-olcomplselect2 -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>

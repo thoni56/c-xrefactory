@@ -1,7 +1,7 @@
-../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-rfct-rename" "-renameto=x" "-olcursor=792" "CURDIR/cexercise/refactorings/rename.c"
--olcxmenufilter=2 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -encoding=european -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=x -olcursor=792 CURDIR/cexercise/refactorings/rename.c
+-olcxmenufilter=2 -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
--olcxfilter=0  "-olmark=0" "-olcursor=1" "nil" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
+-olcxfilter=0  -olmark=0 -olcursor=1 nil -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
--continuerefactoring -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
+-continuerefactoring -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <exit>

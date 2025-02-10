@@ -1,4 +1,4 @@
-../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-server" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR"
-"-olcursor=696" "CURDIR/cexercise/refactorings/rename.c" -olcxgetrefactorings
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -encoding=european -server -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcursor=696 CURDIR/cexercise/refactorings/rename.c -olcxgetrefactorings
 <sync>
 <exit>
