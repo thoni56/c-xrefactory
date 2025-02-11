@@ -218,21 +218,6 @@ static int preCreatedTypesInitTable[] = {
     -1,
 };
 
-static TypeCharCodeInit baseTypeCharCodesInitTable[] = {
-    {TypeByte,      'B'},
-    {TypeChar,      'C'},
-    {TypeDouble,    'D'},
-    {TypeFloat,     'F'},
-    {TypeInt,       'I'},
-    {TypeLong,      'J'},
-    {TypeShort,     'S'},
-    {TypeBoolean,   'Z'},
-    {TypeVoid,      'V'},
-    {TypeError,     'E'},
-    {TypeNull,      'N'},
-    {-1,            ' '},
-};
-
 typedef struct int2StringTable {
     int     i;
     char    *string;
@@ -350,17 +335,6 @@ void initTokenNamesTables(void) {
     symbolP->type = TypeDefinedOp;
     symbolP->storage = StorageDefault;
     symbolTableAdd(symbolTable, symbolP);
-}
-
-void initTypeCharCodeTab(void) {
-    TypeCharCodeInit *s;
-
-    for (int i=0; baseTypeCharCodesInitTable[i].symType != -1; i++) {
-        s = &baseTypeCharCodesInitTable[i];
-        assert(s->symType >= 0 && s->symType < MAX_TYPE);
-        assert(s->code >= 0 && s->code < MAX_CHARS);
-        javaCharCodeBaseTypes[s->code] = s->symType;
-    }
 }
 
 void initTypeNames(void) {

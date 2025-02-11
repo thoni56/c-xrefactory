@@ -121,8 +121,6 @@ uchar typeLongChange[MAX_TYPE];
 uchar typeSignedChange[MAX_TYPE];
 uchar typeUnsignedChange[MAX_TYPE];
 
-int javaCharCodeBaseTypes[MAX_CHARS];
-
 
 /* These should go together in a struct. Also the lengths are not just
  * the lengths of the names, some slots do not have names, so they are

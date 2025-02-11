@@ -72,8 +72,6 @@ extern TypeModifier *preCreatedTypesTable[MAX_TYPE];
 extern TypeModifier *preCreatedPtr2TypeTable[MAX_TYPE];
 extern TypeModifier *preCreatedPtr2Ptr2TypeTable[MAX_TYPE];
 
-extern int javaCharCodeBaseTypes[MAX_CHARS];
-
 extern Position olcxByPassPos;
 extern Position cxRefPosition;
 

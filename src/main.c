@@ -598,18 +598,18 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
     // init options as soon as possible! for exampl initCwd needs them
     initOptions();
+
     initPreCreatedTypes();
+    initArchaicTypes();
 
     initSymbolTable(MAX_SYMBOLS);
 
     initAllInputs();
     initCwd();
 
-    initTypeCharCodeTab();
     initTypeNames();
     initStorageNames();
 
-    initArchaicTypes();
     previousStandardOptionsFile[0] = 0;
     previousStandardOptionsSection[0] = 0;
 
