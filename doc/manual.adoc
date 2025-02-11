@@ -321,19 +321,11 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 
 -olcxlccursor::
 
--olcxlist::
-
--olcxlisttop::
-
--olcxmaybethis::
-
 -olcxmctarget::
 
 -olcxmenuall::
 
 -olcxmenufilter::
-
--olcxmenugo::
 
 -olcxmenuinspectdef::
 

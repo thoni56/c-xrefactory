@@ -182,7 +182,6 @@ static void usage() {
     fprintf(stdout, "\t-olcxsearch               - search info about identifier\n");
     fprintf(stdout, "\t-olcxpush                 - generate and push on-line cxrefs\n");
     fprintf(stdout, "\t-olcxrename               - generate and push xrfs for rename\n");
-    fprintf(stdout, "\t-olcxlist                 - generate, push and list on-line cxrefs\n");
     fprintf(stdout, "\t-olcxpop                  - pop on-line cxrefs\n");
     fprintf(stdout, "\t-olcxnext                 - next on-line reference\n");
     fprintf(stdout, "\t-olcxprevious             - previous on-line reference\n");
@@ -1389,8 +1388,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_GLOBAL_UNUSED;
     else if (strcmp(argv[i], "-olcxpushfileunused")==0)
         options.serverOperation = OLO_LOCAL_UNUSED;
-    else if (strcmp(argv[i], "-olcxlist")==0)
-        options.serverOperation = OLO_LIST;
     else if (strcmp(argv[i], "-olcxpop")==0)
         options.serverOperation = OLO_POP;
     else if (strcmp(argv[i], "-olcxpoponly")==0)
@@ -1476,11 +1473,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_MENU_SELECT;
         options.olcxMenuSelectLineNum = 0;
         sscanf(argv[i]+15, "%d",&options.olcxMenuSelectLineNum);
-    }
-    else if (strncmp(argv[i], "-olcxmenuinspectdef",19)==0) {
-        options.serverOperation = OLO_MENU_INSPECT_DEF;
-        options.olcxMenuSelectLineNum = 0;
-        sscanf(argv[i]+19, "%d",&options.olcxMenuSelectLineNum);
     }
     else if (strcmp(argv[i], "-olcxmenuall")==0) {
         options.serverOperation = OLO_MENU_SELECT_ALL;
