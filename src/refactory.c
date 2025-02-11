@@ -918,7 +918,7 @@ static Result getParameterPosition(EditorMarker *point, char *functionOrMacroNam
     char *nameOnPoint;
 
     nameOnPoint = getIdentifierOnMarker_static(point);
-    if (!(strcmp(nameOnPoint, functionOrMacroName) == 0 || strcmp(nameOnPoint, "this") == 0 || strcmp(nameOnPoint, "super") == 0)) {
+    if (strcmp(nameOnPoint, functionOrMacroName) != 0) {
         char tmpBuff[TMP_BUFF_SIZE];
         ppcGotoMarker(point);
         sprintf(tmpBuff, "This reference is not pointing to the function/method name. Maybe a composed symbol. "
