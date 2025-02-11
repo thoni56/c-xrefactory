@@ -442,7 +442,6 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
 #endif
         }
 
-        initPreCreatedTypes();
         initCwd();
         initOptions();
         initStandardCxrefFileName(fileName);
@@ -599,6 +598,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
     // init options as soon as possible! for exampl initCwd needs them
     initOptions();
+    initPreCreatedTypes();
 
     initSymbolTable(MAX_SYMBOLS);
 
