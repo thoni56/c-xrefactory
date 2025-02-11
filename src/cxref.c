@@ -2268,6 +2268,7 @@ void answerEditAction(void) {
         break;
     case OLO_PUSH:
     case OLO_PUSH_ONLY:
+    case OLO_PUSH_AND_CALL_MACRO:
         mainAnswerReferencePushingAction(options.serverOperation);
         break;
     case OLO_GET_LAST_IMPORT_LINE: {
