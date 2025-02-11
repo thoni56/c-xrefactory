@@ -99,7 +99,7 @@
 
 #define MAX_PPC_RECORD_SIZE    100000	/* max length of xref-2 communication record */
 
-#define COMPACT_TAG_SEARCH_AFTER 10000	/* compact tag search results after n items*/
+#define COMPACT_TAGS_AFTER_SEARCH_COUNT 10000	/* compact tag search results after n items*/
 
 #define DEFAULT_MENU_FILTER_LEVEL FilterSameProfileRelatedClass
 #define DEFAULT_REFS_FILTER_LEVEL RFilterAll

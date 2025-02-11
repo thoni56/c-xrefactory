@@ -275,10 +275,9 @@ void searchSymbolCheckReference(ReferenceItem  *referenceItem, Reference *refere
         sessionData.retrieverStack.top->completions = completionListPrepend(
             sessionData.retrieverStack.top->completions, sname, NULL, NULL, referenceItem,
             reference, referenceItem->type, referenceItem->includedFileNumber);
-        // this is a hack for memory reduction
         // compact completions from time to time
         count ++;
-        if (count > COMPACT_TAG_SEARCH_AFTER) {
+        if (count > COMPACT_TAGS_AFTER_SEARCH_COUNT) {
             tagSearchCompactShortResults();
             count = 0;
         }
