@@ -218,13 +218,10 @@ void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
 }
 
 void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive) {
-    CachePoint *cachePoint;
+    log_trace("Recovering cache point %d", cachePointIndex);
+    CachePoint *cachePoint = &cache.points[cachePointIndex];
 
-    log_trace("recovering cache point %d", cachePointIndex);
-    cachePoint = &cache.points[cachePointIndex];
-
-    /* TODO What does this do? */
-    log_debug("flushing classes or whatever");
+    log_debug("Flushing memories");
     ppmMemory.index = cachePoint->ppmMemoryIndex;
 
     setMacroBodyMemoryIndex(cachePoint->macroBodyMemoryIndex);
