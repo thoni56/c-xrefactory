@@ -73,11 +73,12 @@ coverage:
 
 # Targets for debugging with gdb or lldb, so far only works for tests
 # that do not use the server driver
+# You can set EXTRA_DEBUG to add extra breakpoints for gdb
 gdb:
-	gdb $(CXREF_PROGRAM) -ex 'br main' -ex 'br internalCheckFail' -ex 'run $(BASE_ARGUMENTS) $(ARGUMENTS)'
+	gdb $(CXREF_PROGRAM) -ex 'br main' -ex 'br internalCheckFail' $(EXTRA_DEBUG) -ex 'run $(BASE_ARGUMENTS) $(ARGUMENTS)'
 
 cgdb:
-	cgdb $(CXREF_PROGRAM) -ex 'br main' -ex 'br internalCheckFail' -ex 'run $(BASE_ARGUMENTS) $(ARGUMENTS)'
+	cgdb $(CXREF_PROGRAM) -ex 'br main' -ex 'br internalCheckFail' $(EXTRA_DEBUG) -ex 'run $(BASE_ARGUMENTS) $(ARGUMENTS)'
 
 lldb:
 	lldb -o 'breakpoint set --name main' -o 'breakpoint set -name internalCheckFail' -o 'process launch -- $(BASE_ARGUMENTS) $(ARGUMENTS)' $(CXREF_PROGRAM)

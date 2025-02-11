@@ -8,3 +8,4 @@ $(TEST):
 trace: EXTRA = \'-trace\'
 trace: $(TEST)
 
+GDB_COMMANDS =

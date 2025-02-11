@@ -10,3 +10,5 @@ $(TEST):
 
 trace: ARGUMENTS += -trace
 trace: $(TEST)
+
+EXTRA_DEBUG =

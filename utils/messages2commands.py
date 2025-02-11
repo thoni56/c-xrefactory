@@ -27,7 +27,7 @@ def fixup_calling(line):
     line = re.sub(" \"-o\" \"[^\"]*\"", '', line)
     line = remove_preload(line)
     line = replace_curdir(line)
-    print("../../src/c-xref", line)
+    print("CXREF", line)
 
 def fixup_sending(line):
     _, line = line.split("sending: ")
