@@ -67,7 +67,6 @@ int refListFilters[MAX_REF_LIST_FILTER_LEVEL] = {
 };
 
 char *cppVarArgsName = "__VA_ARGS__";
-char *javaSourcePaths;
 
 
 /* ********* vars for on-line additions after EOF ****** */

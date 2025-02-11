@@ -96,6 +96,4 @@ TypeModifier defaultIntModifier;
 Symbol defaultIntDefinition;
 TypeModifier defaultPackedTypeModifier;
 
-char *javaSourcePaths;
-
 char ppcTmpBuff[MAX_PPC_RECORD_SIZE];

@@ -43,7 +43,6 @@ extern Id yyIdBuffer[YYIDBUFFER_SIZE];
 extern int yyIdBufferIndex;
 
 extern char *cppVarArgsName;
-extern char *javaSourcePaths;
 
 extern FILE *outputFile;
 
