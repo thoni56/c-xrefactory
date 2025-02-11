@@ -1,0 +1,26 @@
+c-xref -xrefactory-II -crlfconversion -crconversion -errors -server -o server-buffer
+-olcxpushandcallmacro  -olcursor=97 CURDIR/source.c -xrefrc .c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=5 col=4 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+<precheck len=<n>>int_which_is_public</precheck>
+<goto>
+ <position-lc line=1 col=5 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+<precheck len=<n>>int_which_is_public</precheck>
+<goto>
+ <position-lc line=5 col=4 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+<precheck len=<n>>int_which_is_public</precheck>
+<macro len=<n>></macro>
+<goto>
+ <position-lc line=1 col=5 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+<precheck len=<n>>int_which_is_public</precheck>
+<macro len=<n>></macro>
+-exit
+end-of-options
+
