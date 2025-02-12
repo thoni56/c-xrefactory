@@ -4,25 +4,6 @@
 #include <stdbool.h>
 
 
-/* Because of the macro magic we can't comment near the actual values
-   so here are some descriptions of some of the Usage values
-   (duplication so remember to change in here too):
-
-    UsageLvalUsed                       - == USAGE_EXTEND_USAGE
-    UsageAddrUsed                       - == USAGE_TOP_LEVEL_USED
-    UsageFork                           - only in program graph for branching on label
-    UsageNone                           - also forgotten rval usage of lval usage ex. l=3;
-    UsageMacroBaseFileUsage             - reference to input file expanding the macro
-
- */
-
-
-// !!!!!!!!!!!!! All this stuff is to be removed, new way of defining usages
-// !!!!!!!!!!!!! is to set various bits in usg structure
-/* TODO: well, they are still used, so there must be more to this... */
-/* And they need to be monotonically ordered since
- * reset_reference_usage() compares them... */
-
 #include "enums.h"
 #define ALL_USAGE_ENUMS(ENUM)                   \
 /* filter3  == all filters */                   \
