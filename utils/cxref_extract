@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# This script takes a `cxref_dump` or `cxref_reader` output and finds a symbol ($1) and
+# extract all references to that symbol, one per line
+
+awk -v search="$1" '/^[^[:space:]]/ {
+        if (found) next
+        if (section ~ search) {
+            printf "%s", section
+            found = 1
+        }
+        section = ""  # Börja en ny sektion
+    }
+    {
+        section = section $0 "\n"
+    }
+'
