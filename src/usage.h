@@ -45,7 +45,6 @@
 /* filter3  == all filters */                   \
     ENUM(ureserve0)                             \
     ENUM(UsageOLBestFitDefined)                 \
-    ENUM(UsageJavaNativeDeclared)               \
     ENUM(ureserve1)                             \
     ENUM(UsageDefined)                          \
     ENUM(ureserve2)                             \
@@ -53,27 +52,18 @@
     ENUM(ureserve3)                             \
 /* filter2 */                                   \
     ENUM(UsageLvalUsed)                         \
-    ENUM(UsageLastUselessInClassOrMethod)       \
     ENUM(ureserve4)                             \
 /* filter1 */                                   \
     ENUM(UsageAddrUsed)                         \
     ENUM(ureserve5)                             \
-    ENUM(UsageConstructorUsed)                  \
     ENUM(ureserve6)                             \
-    ENUM(UsageMaybeThisInClassOrMethod)         \
-    ENUM(UsageMaybeQualifThisInClassOrMethod)   \
-    ENUM(UsageNotFQTypeInClassOrMethod)         \
-    ENUM(UsageNotFQFieldInClassOrMethod)        \
-    ENUM(UsageNonExpandableNotFQTNameInClassOrMethod)   \
     ENUM(UsageLastUseless)                      \
     ENUM(ureserve7)                             \
 /* filter0 */                                   \
     ENUM(UsageUsed)                             \
     ENUM(UsageUndefinedMacro)                   \
-    ENUM(UsageConstructorDefinition)            \
     ENUM(ureserve8)                             \
     ENUM(UsageOtherUseless)                     \
-    ENUM(UsageThisUsage)                        \
     ENUM(ureserve9)                             \
     ENUM(UsageFork)                             \
     ENUM(ureserve10)                            \
@@ -82,22 +72,9 @@
     ENUM(UsageMaxOnLineVisibleUsages)           \
     ENUM(UsageNone)                             \
     ENUM(UsageMacroBaseFileUsage)               \
-    ENUM(UsageClassFileDefinition)              \
-    ENUM(UsageClassTreeDefinition)              \
-    ENUM(UsageMaybeThis)                        \
-    ENUM(UsageMaybeQualifiedThis)               \
-    ENUM(UsageThrown)                           \
-    ENUM(UsageCatched)                          \
-    ENUM(UsageTryCatchBegin)                    \
-    ENUM(UsageTryCatchEnd)                      \
-    ENUM(UsageSuperMethod)                      \
-    ENUM(UsageNotFQType)                        \
-    ENUM(UsageNotFQField)                       \
-    ENUM(UsageNonExpandableNotFQTName)          \
     ENUM(MAX_USAGES)                            \
     ENUM(USAGE_ANY)                             \
     ENUM(USAGE_FILTER)
-
 
 typedef enum {
     ALL_USAGE_ENUMS(GENERATE_ENUM_VALUE)

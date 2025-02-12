@@ -467,7 +467,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
             inputOpened = false;
             goto fini;
         }
-        deepCopyOptionsFromTo(&options, &savedOptions);  // before getJavaClassPath, it modifies ???
+        deepCopyOptionsFromTo(&options, &savedOptions);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
         inputOpened = computeAndOpenInputFile();
         strcpy(previousStandardOptionsFile,standardOptionsFileName);
@@ -476,8 +476,6 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         previousLanguage = *outLanguage;
         previousPass = currentPass;
 
-        // this was before 'getAndProcessXrefrcOptions(df...' I hope it will not cause
-        // troubles to move it here, because of autodetection of -javaVersion from jdkcp
         initTokenNamesTables();
 
         activateCaching();

@@ -938,9 +938,7 @@ static void olcxReferenceGotoCompletion(int refn) {
     completion = olCompletionNthLineRef(refs->completions, refn);
     if (completion != NULL) {
         if (completion->visibility == LocalVisibility /*& || refs->operation == OLO_TAG_SEARCH &*/) {
-            if (completion->ref.usage != UsageClassFileDefinition
-                && completion->ref.usage != UsageClassTreeDefinition
-                && positionsAreNotEqual(completion->ref.position, noPosition)) {
+            if (positionsAreNotEqual(completion->ref.position, noPosition)) {
                 gotoOnlineCxref(completion->ref.position, UsageDefined, "");
             } else {
                 indicateNoReference();
@@ -960,9 +958,7 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
     assert(sessionData.retrieverStack.top);
     rr = olCompletionNthLineRef(sessionData.retrieverStack.top->completions, refn);
     if (rr != NULL) {
-        if (rr->ref.usage != UsageClassFileDefinition
-            && rr->ref.usage != UsageClassTreeDefinition
-            && positionsAreNotEqual(rr->ref.position, noPosition)) {
+        if (positionsAreNotEqual(rr->ref.position, noPosition)) {
             gotoOnlineCxref(rr->ref.position, UsageDefined, "");
         } else {
             indicateNoReference();

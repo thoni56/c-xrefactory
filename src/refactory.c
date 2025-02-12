@@ -1483,7 +1483,7 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
 
     EditorRegionList *regions  = NULL;
     for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
-        if ((!isDefinitionOrDeclarationUsage(ll->usage)) && ll->usage != UsageConstructorDefinition) {
+        if (!isDefinitionOrDeclarationUsage(ll->usage)) {
             EditorMarker *pp  = removeStaticPrefix(ll->marker);
             EditorMarker *ppp = newEditorMarker(ll->marker->buffer, ll->marker->offset);
             moveEditorMarkerBeyondIdentifier(ppp, 1);

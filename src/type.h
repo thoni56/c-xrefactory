@@ -12,7 +12,6 @@
   TypeMacro - a macro in the symbol table
   TypeCppIfElse - the Cpp #if #else #fi references
   TypeCppCollate - the Cpp ## joined string reference
-  TypePackage - a package in java
   TypeYaccSymbol - for yacc grammar references
   TypeLabel - a label in the symbol tabl
   TypeKeyword - a keyword in the symbol table

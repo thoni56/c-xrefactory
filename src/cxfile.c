@@ -972,8 +972,8 @@ static void scanFunction_Reference(int size,
                 if (reference.usage==UsageDefined
                     || ((options.searchKind==SEARCH_FULL
                          || options.searchKind==SEARCH_FULL_SHORT)
-                        &&  (reference.usage==UsageDeclared
-                             || reference.usage==UsageClassFileDefinition))) {
+                        && reference.usage==UsageDeclared)
+                    ) {
                     searchSymbolCheckReference(lastIncomingData.referenceItem, &reference);
                 }
             } else {

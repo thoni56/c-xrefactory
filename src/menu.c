@@ -59,9 +59,7 @@ void freeSymbolsMenuList(SymbolsMenu *menuList) {
 }
 
 void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference) {
-    Reference *added;
-    added = addReferenceToList(&menu->references.references, reference);
-    if (reference->usage == UsageClassTreeDefinition) menu->defpos = reference->position;
+    Reference *added = addReferenceToList(&menu->references.references, reference);
     if (added!=NULL) {
         if (isDefinitionOrDeclarationUsage(reference->usage)) {
             if (reference->usage==UsageDefined && positionsAreEqual(reference->position, menu->defpos)) {
