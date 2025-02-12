@@ -24,7 +24,7 @@
 
 /* *********************** INPUT/OUTPUT FIELD MARKERS ************************** */
 
-#define C_XREF_FILE_VERSION_NUMBER "1.7.0"
+#define C_XREF_FILE_FORMAT_VERSION "1.8.0"
 
 typedef enum {
     CXFI_FILE_FUMTIME          = 'm',     /* last full update mtime for file item */
@@ -287,7 +287,7 @@ void searchSymbolCheckReference(ReferenceItem  *referenceItem, Reference *refere
 /* ************************* WRITE **************************** */
 
 static void get_version_string(char *string) {
-    sprintf(string," file format: C-xrefactory %s ", C_XREF_FILE_VERSION_NUMBER);
+    sprintf(string," file format: C-xrefactory %s ", C_XREF_FILE_FORMAT_VERSION);
 }
 
 

@@ -9,27 +9,10 @@
    (duplication so remember to change in here too):
 
     UsageLvalUsed                       - == USAGE_EXTEND_USAGE
-    UsageLastUselessInClassOrMethod     - last useless part of useless FQT name in
-                                          current method (only in server mode)
-    UsageConstructorUsed                - can be put anywhere before 'Used'
-    UsageMaybeThisInClassOrMethod       - reference inside current method
     UsageAddrUsed                       - == USAGE_TOP_LEVEL_USED
-    UsageMaybeQualifThisInClassOrMethod - where 'this' may be inserted
-    UsageLastUseless                    - last part of useless FQT name
-    UsageConstructorDefinition          - Usage for Java type name, when used in constructor def.
-    UsageOtherUseless                   - a useless part of useless FQT name (not last)
-    UsageThisUsage                      - 'this' reference
     UsageFork                           - only in program graph for branching on label
     UsageNone                           - also forgotten rval usage of lval usage ex. l=3;
-                                          also new Nested() resolved to error because of
-                                          enclosing instance
     UsageMacroBaseFileUsage             - reference to input file expanding the macro
-    UsageClassFileDefinition            - reference got from class file (not shown in searches)
-    UsageClassTreeDefinition            - reference for class tree symbol
-    UsageMaybeThis                      - reference where 'this' maybe inserted
-    UsageMaybeQualifiedThis             - reference where qualified 'this' may be inserted
-    UsageThrown                         - extract method exception information
-    UsageCatched                        - extract method exception information
 
  */
 
@@ -43,31 +26,17 @@
 #include "enums.h"
 #define ALL_USAGE_ENUMS(ENUM)                   \
 /* filter3  == all filters */                   \
-    ENUM(ureserve0)                             \
     ENUM(UsageOLBestFitDefined)                 \
-    ENUM(ureserve1)                             \
     ENUM(UsageDefined)                          \
-    ENUM(ureserve2)                             \
     ENUM(UsageDeclared)                         \
-    ENUM(ureserve3)                             \
 /* filter2 */                                   \
     ENUM(UsageLvalUsed)                         \
-    ENUM(ureserve4)                             \
 /* filter1 */                                   \
     ENUM(UsageAddrUsed)                         \
-    ENUM(ureserve5)                             \
-    ENUM(ureserve6)                             \
-    ENUM(UsageLastUseless)                      \
-    ENUM(ureserve7)                             \
 /* filter0 */                                   \
     ENUM(UsageUsed)                             \
     ENUM(UsageUndefinedMacro)                   \
-    ENUM(ureserve8)                             \
-    ENUM(UsageOtherUseless)                     \
-    ENUM(ureserve9)                             \
     ENUM(UsageFork)                             \
-    ENUM(ureserve10)                            \
-    ENUM(ureserve11)                            \
 /* INVISIBLE USAGES */                          \
     ENUM(UsageMaxOnLineVisibleUsages)           \
     ENUM(UsageNone)                             \
