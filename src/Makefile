@@ -196,9 +196,19 @@ chcheck:
 include sources.mk
 
 # Automatically generate a config header with GIT hash/tag info
-options_config.h: options_config.h.in generate_options_config.sh
+options_config.h: options_config.h.in generate_options_config.sh $(TAG_STAMP)
 	./generate_options_config.sh
 options.c: options_config.h
+
+TAG_FILE := .last_git_tag
+TAG_STAMP := .tag-stamp
+$(TAG_STAMP): FORCE
+	@LATEST_TAG=$$(git describe --abbrev=0 --tags); \
+	if [ ! -f $(TAG_FILE) ] || [ "$$LATEST_TAG" != "$$(cat $(TAG_FILE))" ]; then \
+	    echo "$$LATEST_TAG" > $(TAG_FILE); \
+	    touch $(TAG_STAMP); \
+	fi
+FORCE:
 
 .PHONY:build
 build: build-proper
