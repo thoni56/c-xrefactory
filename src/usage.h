@@ -3,6 +3,10 @@
 
 #include <stdbool.h>
 
+/* These must be in this order for filtering to work since isListableUsage() compares
+ * with LessThan. Also these are stored as the 'u' field in the cxfile "database" as
+ * their corresponding numeric vales, so if you change this, you should bump
+ * CXREF_FILE_FORMAT_VERSION */
 
 #include "enums.h"
 #define ALL_USAGE_ENUMS(ENUM)                   \
