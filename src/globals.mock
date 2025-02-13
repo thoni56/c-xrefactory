@@ -48,9 +48,9 @@ int tokenNameLengthsTable[LAST_TOKEN];
 char *cppVarArgsName = "__VA_ARGS__";
 
 char olstring[MAX_FUNCTION_NAME_LENGTH];
-bool olstringFound = false;
-bool olstringServed = false;
-char *olstringInMacroBody = NULL;
+bool completionPositionFound = false;
+bool completionStringServed = false;
+char *completionStringInMacroBody = NULL;
 Usage olstringUsage = 0;
 int olOriginalFileNumber = -1;
 Usage olstringUsage;

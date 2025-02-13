@@ -308,8 +308,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
             }
         } else {
             /* an on - line cxref action ?*/
-            //&fprintf(dumpOut,"!got it %s !!!!!!!\n", foundMember->linkName);
-            olstringServed = true;       /* olstring will be served */
+            completionStringServed = true;
             olstringUsage = usage;
             assert(sessionData.browserStack.top);
             olSetCallerPosition(position);
@@ -2221,7 +2220,7 @@ void answerEditAction(void) {
         // I hope this is not used anymore, put there assert(0); Well,
         // it is used from refactory, but that probably only executes
         // the parsers and server and not cxref...
-        if (olstringServed && parameterPosition.file != NO_FILE_NUMBER) {
+        if (completionStringServed && parameterPosition.file != NO_FILE_NUMBER) {
             gotoOnlineCxref(parameterPosition, UsageDefined, "");
             olStackDeleteSymbol(sessionData.browserStack.top);
         } else {
@@ -2231,7 +2230,7 @@ void answerEditAction(void) {
         }
         break;
     case OLO_GET_PRIMARY_START:
-        if (olstringServed && primaryStartPosition.file != NO_FILE_NUMBER) {
+        if (completionStringServed && primaryStartPosition.file != NO_FILE_NUMBER) {
             gotoOnlineCxref(primaryStartPosition, UsageDefined, "");
             olStackDeleteSymbol(sessionData.browserStack.top);
         } else {

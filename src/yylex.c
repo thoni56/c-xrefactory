@@ -134,9 +134,9 @@ void initAllInputs(void) {
     macroStackIndex=0;
     isProcessingPreprocessorIf = false;
     resetMacroArgumentTable();
-    olstringFound = false;
-    olstringServed = false;
-    olstringInMacroBody = NULL;
+    completionPositionFound = false;
+    completionStringServed = false;
+    completionStringInMacroBody = NULL;
     upLevelFunctionCompletionType = NULL;
     structMemberCompletionType = NULL;
 }
@@ -389,7 +389,7 @@ static void testCxrefCompletionId(LexemCode *out_lexem, char *id, Position posit
     if (options.mode == ServerMode) {
         if (lexem==IDENT_TO_COMPLETE) {
             deactivateCaching();
-            olstringServed = true;
+            completionStringServed = true;
             if (currentLanguage == LANG_YACC) {
                 makeYaccCompletions(id, strlen(id), position);
             } else {
@@ -866,8 +866,8 @@ protected void processDefineDirective(bool hasArguments) {
                 if (lexem==IDENT_TO_COMPLETE
                     || (lexem == IDENTIFIER && positionsAreEqual(position, cxRefPosition))) {
                     deactivateCaching();
-                    olstringFound = true;
-                    olstringInMacroBody = symbol->linkName;
+                    completionPositionFound = true;
+                    completionStringInMacroBody = symbol->linkName;
                 }
                 putLexemCodeAt(lexem, &lexemDestination);
                 /* Copy from input to destination (which is in the body buffer...) */

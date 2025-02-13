@@ -96,9 +96,9 @@ static bool symbolCanBeIdentifiedByPosition(int fileNumber) {
 static int scheduleFileUsingTheMacro(void) {
     OlcxReferences *tmpc;
 
-    assert(olstringInMacroBody);
+    assert(completionStringInMacroBody);
     tmpc = NULL;
-    ReferenceItem references = makeReferenceItem(olstringInMacroBody, TypeMacro, StorageExtern,
+    ReferenceItem references = makeReferenceItem(completionStringInMacroBody, TypeMacro, StorageExtern,
                                                  GlobalScope, GlobalVisibility, NO_FILE_NUMBER);
 
     SymbolsMenu menu = makeSymbolsMenu(references, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);
@@ -111,14 +111,12 @@ static int scheduleFileUsingTheMacro(void) {
     SymbolsMenu *oldMenu = sessionData.browserStack.top->symbolsMenu;
     sessionData.browserStack.top->symbolsMenu = &menu;
     olMacro2PassFile = NO_FILE_NUMBER;
-    scanForMacroUsage(olstringInMacroBody);
+    scanForMacroUsage(completionStringInMacroBody);
     sessionData.browserStack.top->symbolsMenu = oldMenu;
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
     }
     log_trace(":scheduling file '%s'", getFileItemWithFileNumber(olMacro2PassFile)->name);
-    if (olMacro2PassFile == NO_FILE_NUMBER)
-        return NO_FILE_NUMBER;
     return olMacro2PassFile;
 }
 
@@ -207,7 +205,7 @@ static void singlePass(int argc, char **argv,
         }
         addFileAsIncludeReference(inputFileNumber);
     }
-    if (olstringFound && !olstringServed) {
+    if (completionPositionFound && !completionStringServed) {
         // on-line action with cursor in an un-used macro body ???
         int ol2procfile = scheduleFileUsingTheMacro();
         if (ol2procfile!=NO_FILE_NUMBER) {
@@ -233,7 +231,7 @@ static void processFile(int argc, char **argv,
         inputFileName = fileItem->name;
         assert(inputFileName!=NULL);
         singlePass(argc, argv, nargc, nargv, firstPassP);
-        if (options.serverOperation==OLO_EXTRACT || (olstringServed && !requiresCreatingRefs(options.serverOperation)))
+        if (options.serverOperation==OLO_EXTRACT || (completionStringServed && !requiresCreatingRefs(options.serverOperation)))
             break;
     }
     fileItem->isScheduled = false;

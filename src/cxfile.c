@@ -962,8 +962,7 @@ static void scanFunction_Reference(int size,
                 }
             }
         } else if (operation == CXSF_PASS_MACRO_USAGE) {
-            if (lastIncomingData.onLineReferencedSym ==
-                lastIncomingData.data[CXFI_SYMBOL_INDEX]
+            if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]
                 && reference.usage == UsageMacroBaseFileUsage
             ) {
                 olMacro2PassFile = reference.position.file;

@@ -100,10 +100,10 @@ extern unsigned menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 
 /* ********* vars for on-line additions after EOF ****** */
 
-extern bool olstringFound;
-extern bool olstringServed;
+extern bool completionPositionFound;
+extern bool completionStringServed;
 extern Usage olstringUsage;
-extern char *olstringInMacroBody;
+extern char *completionStringInMacroBody;
 extern int olMacro2PassFile;
 
 #endif

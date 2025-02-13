@@ -161,9 +161,9 @@ static void initStandardCxrefFileName(char *inputfile) {
 static void initializationsPerInvocation(void) {
     parsedInfo = (ParsedInfo){0,};
     cxRefPosition = noPosition;
-    olstringFound = false;
-    olstringServed = false;
-    olstringInMacroBody = NULL;
+    completionPositionFound = false;
+    completionStringServed = false;
+    completionStringInMacroBody = NULL;
 }
 
 

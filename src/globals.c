@@ -62,10 +62,10 @@ char *cppVarArgsName = "__VA_ARGS__";
 
 /* ********* vars for on-line additions after EOF ****** */
 
-bool olstringFound = false;
-bool olstringServed = false;
+bool completionPositionFound = false;
+bool completionStringServed = false;
 Usage olstringUsage = 0;
-char *olstringInMacroBody = NULL;
+char *completionStringInMacroBody = NULL;
 int olMacro2PassFile;
 
 /* ******************* yytext for yacc ****************** */
