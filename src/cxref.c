@@ -32,6 +32,15 @@
 #include "usage.h"
 
 
+/* These levels are also used in the Emacs UI */
+static int usageFilterLevels[] = {
+    UsageMaxOnLineVisibleUsages,
+    UsageUsed,
+    UsageAddrUsed,
+    UsageLvalUsed,
+};
+
+
 /* *********************************************************************** */
 
 int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
@@ -613,42 +622,37 @@ static void passSourcePutChar(int c, FILE *file) {
 }
 
 
-static bool listableUsage(Reference *ref, int usages, int usageFilter) {
-    return usages==USAGE_ANY || usages==ref->usage || (usages==USAGE_FILTER && ref->usage<usageFilter);
+static bool isUnfilteredUsage(Reference *ref, int usageFilter) {
+    return ref->usage < usageFilter;
 }
 
 
 static void linePosProcess(FILE *outFile,
-                           int usages,
-                           int usageFilter, // only if usages==USAGE_FILTER
+                           int usageFilter,
                            char *fname,
                            Reference **reference,
                            Position position,
                            int *chP,
                            CharacterBuffer *cxfBuf
 ) {
-    int        ch, linerefn;
-    bool       pendingRefFlag;
-    Reference *r1, *r2;
-    char      *fn;
+    Reference *r1 = *reference;
+    Reference *r2 = NULL;
 
-    r1 = *reference;
-    r2 = NULL;
+    int ch = *chP;
+    char *fileName = simpleFileName(getRealFileName_static(fname));
+    bool pendingRefFlag = false;
+    int linerefn = 0;
 
-    ch = *chP;
-    fn = simpleFileName(getRealFileName_static(fname));
-    pendingRefFlag = false;
-    linerefn = 0;
     listLineIndex = 0;
     listLine[listLineIndex] = 0;
 
     assert(options.xref2);
     do {
-        if (listableUsage(r1, usages, usageFilter)) {
+        if (isUnfilteredUsage(r1, usageFilter)) {
             if (r2==NULL || r2->usage > r1->usage)
                 r2 = r1;
             if (! pendingRefFlag) {
-                sprintf(listLine+listLineIndex, "%s:%d:", fn, r1->position.line);
+                sprintf(listLine+listLineIndex, "%s:%d:", fileName, r1->position.line);
                 listLineIndex += strlen(listLine+listLineIndex);
             }
             linerefn++;
@@ -656,7 +660,7 @@ static void linePosProcess(FILE *outFile,
         }
         r1=r1->next;
     } while (r1!=NULL && ((r1->position.file == position.file && r1->position.line == position.line)
-                          || (r1->usage>UsageMaxOnLineVisibleUsages)));
+                          || (r1->usage > UsageMaxOnLineVisibleUsages)));
     if (r2!=NULL) {
         if (! cxfBuf->isAtEOF) {
             while (ch!='\n' && (! cxfBuf->isAtEOF)) {
@@ -677,17 +681,16 @@ static void linePosProcess(FILE *outFile,
 }
 
 static Reference *passNonPrintableRefsForFile(Reference *references,
-                                              int wantedFileNumber,
-                                              int usages, int usageFilter) {
+                                              int wantedFileNumber, int usageFilter) {
     for (Reference *r=references; r!=NULL && r->position.file == wantedFileNumber; r=r->next) {
-        if (listableUsage(r, usages, usageFilter))
+        if (isUnfilteredUsage(r, usageFilter))
             return r;
     }
     return NULL;
 }
 
 static void passRefsThroughSourceFile(Reference **inOutReferences,
-                                      FILE *outputFile, int usages, int usageFilter) {
+                                      FILE *outputFile, int usageFilter) {
     EditorBuffer *ebuf;
 
     Reference *references = *inOutReferences;
@@ -696,7 +699,7 @@ static void passRefsThroughSourceFile(Reference **inOutReferences,
     int fileNumber = references->position.file;
 
     char *cofileName = getFileItemWithFileNumber(fileNumber)->name;
-    references = passNonPrintableRefsForFile(references, fileNumber, usages, usageFilter);
+    references = passNonPrintableRefsForFile(references, fileNumber, usageFilter);
     if (references==NULL || references->position.file != fileNumber)
         goto fin;
     if (options.referenceListWithoutSource) {
@@ -734,7 +737,7 @@ static void passRefsThroughSourceFile(Reference **inOutReferences,
                 ch = getChar(&cxfBuf);
             ch = getCharacterAndUpdatePosition(&cxfBuf, ch, &position);
         }
-        linePosProcess(outputFile, usages, usageFilter, cofileName, &references, position, &ch, &cxfBuf);
+        linePosProcess(outputFile, usageFilter, cofileName, &references, position, &ch, &cxfBuf);
     }
 
  fin:
@@ -758,7 +761,7 @@ static int getCurrentRefPosition(OlcxReferences *refs) {
 
     Reference *r = NULL;
     if (refs!=NULL) {
-        int rlevel = refListFilters[refs->refsFilterLevel];
+        int rlevel = usageFilterLevels[refs->refsFilterLevel];
         for (r=refs->references; r!=NULL && r!=refs->actual; r=r->next) {
             if (r->usage < rlevel)
                 actn++;
@@ -809,9 +812,7 @@ static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
     if (refs!=NULL) {
         rr=refs->references;
         while (rr != NULL) {
-            passRefsThroughSourceFile(&rr,
-                                      outputFile, USAGE_FILTER,
-                                      refListFilters[refs->refsFilterLevel]);
+            passRefsThroughSourceFile(&rr, outputFile, usageFilterLevels[refs->refsFilterLevel]);
         }
     }
     ppcEnd(PPC_REFERENCE_LIST);
@@ -869,7 +870,7 @@ static void olcxReferenceGotoRef(int refn) {
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
-    rfilter = refListFilters[refs->refsFilterLevel];
+    rfilter = usageFilterLevels[refs->refsFilterLevel];
     for (rr=refs->references,i=1; rr!=NULL && (i<refn||rr->usage>=rfilter); rr=rr->next){
         if (rr->usage < rfilter) i++;
     }
@@ -969,7 +970,7 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
 }
 
 static void olcxSetActReferenceToFirstVisible(OlcxReferences *refs, Reference *r) {
-    int rlevel = refListFilters[refs->refsFilterLevel];
+    int rlevel = usageFilterLevels[refs->refsFilterLevel];
 
     while (r!=NULL && r->usage>=rlevel)
         r = r->next;
@@ -1006,7 +1007,7 @@ static void olcxReferenceMinus(void) {
     int                 rlevel;
     if (!sessionHasReferencesValidForOperation(&sessionData,  &refs, CHECK_NULL))
         return;
-    rlevel = refListFilters[refs->refsFilterLevel];
+    rlevel = usageFilterLevels[refs->refsFilterLevel];
     if (refs->actual == NULL) refs->actual = refs->references;
     else {
         act = refs->actual;

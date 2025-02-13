@@ -88,8 +88,6 @@ TypeModifier *upLevelFunctionCompletionType; /* TODO move to Complete */
 Position primaryStartPosition;
 unsigned menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 
-int refListFilters[MAX_REF_LIST_FILTER_LEVEL];
-
 TypeModifier defaultVoidModifier;
 Symbol defaultVoidDefinition;
 TypeModifier defaultIntModifier;

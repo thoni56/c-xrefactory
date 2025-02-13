@@ -50,7 +50,8 @@ typedef enum {
     CXFI_VERSION               = 'v',
     CXFI_KEY_LIST              = '@',
     CXFI_REMARK                = '#',
-    CXFI_INCLUDEFILENUMBER     = 'd',     /* was dole = down in slovac, for subclass, now include file number */
+    CXFI_INCLUDEFILENUMBER     = 'd',     /* was dole = down in slovac, for subclass,
+                                           * now file number for included file */
 } CxFieldTag;
 
 typedef enum {

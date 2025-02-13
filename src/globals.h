@@ -95,7 +95,6 @@ extern int maxPasses;
 
 extern Completions collectedCompletions;
 extern unsigned menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
-extern int refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 
 /* ********* vars for on-line additions after EOF ****** */
 

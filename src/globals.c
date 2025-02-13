@@ -57,15 +57,6 @@ unsigned menuFilterOoBits[MAX_MENU_FILTER_LEVEL] = {
     //& (OOC_VIRT_SAME_APPL_FUN_CLASS | OOC_PROFILE_APPLICABLE),
 };
 
-// !!!! if you modify this, you will need to modify level# for
-//  Emacs, in c-xref.el !!!!!!!!!
-int refListFilters[MAX_REF_LIST_FILTER_LEVEL] = {
-    UsageMaxOnLineVisibleUsages,
-    UsageUsed,
-    UsageAddrUsed,
-    UsageLvalUsed,
-};
-
 char *cppVarArgsName = "__VA_ARGS__";
 
 
