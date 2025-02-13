@@ -5,7 +5,9 @@
 #include <setjmp.h>
 #include "constants.h"
 #include "completion.h"
+
 #include "head.h"
+#include "id.h"
 #include "proto.h"
 #include "usage.h"
 

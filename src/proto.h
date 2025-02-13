@@ -136,12 +136,6 @@ typedef enum result {
 /*                               STRUCTURES                             */
 /* ******************************************************************** */
 
-#include "position.h"
-
-/* return value for IDENTIFIER token from yylex */
-
-#include "id.h"
-
 #include "typemodifier.h"
 #include "constants.h"
 
@@ -161,20 +155,15 @@ typedef struct structSpec {
     struct symbol      *members;        /* str. records, should be a table of   */
     struct typeModifier type;           /* this structure type */
     struct typeModifier ptrtype;        /* this structure pointer type */
-    unsigned memberSearchCounter; /* tmp counter when looking for a record
-                                     it flags searched classes
-                                  */
+    unsigned memberSearchCounter;       /* tmp counter when looking for a record it
+                                           flags searched classes */
 } StructSpec;
 
 
-/* ****************************************************************** */
-/*          symbol definition item in cross-reference table           */
+/* ***************** on - line cross referencing ***************** */
 
 #include "reference.h"
 #include "server.h"
-
-
-/* ***************** on - line cross referencing ***************** */
 
 typedef struct olcxReferences {
     struct reference    *references;      /* list of references */

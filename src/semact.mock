@@ -1,6 +1,8 @@
 /* -*- c -*-*/
-#include "semact.h"
 #include <cgreen/mocks.h>
+
+#include "semact.h"
+
 
 void fillStructMemberFindInfo(StructMemberFindInfo *info, Symbol *currentStructure,
                               Symbol *nextRecord, unsigned memberFindCount) {

@@ -5,6 +5,7 @@
 #include "symboltable.h"
 #include "usage.h"
 
+#include "id.h"
 #include "proto.h"
 
 
