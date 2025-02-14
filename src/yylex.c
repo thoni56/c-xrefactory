@@ -865,7 +865,6 @@ protected void processDefineDirective(bool hasArguments) {
             } else {
                 if (lexem==IDENT_TO_COMPLETE
                     || (lexem == IDENTIFIER && positionsAreEqual(position, cxRefPosition))) {
-                    deactivateCaching();
                     completionPositionFound = true;
                     completionStringInMacroBody = symbol->linkName;
                 }
