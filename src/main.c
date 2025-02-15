@@ -427,11 +427,13 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
     else
         modifiedTime = previousStandardOptionsFileModificationTime;               // !!! just for now
 
-    if (*firstPass || previousPass != currentPass
-        || strcmp(previousStandardOptionsFile, standardOptionsFileName) != 0       /* is not equal */
-        || strcmp(previousStandardOptionsSection, standardOptionsSectionName) != 0 /* is not equal */
-        || previousStandardOptionsFileModificationTime != modifiedTime || previousLanguage != *outLanguage
-        || cache.index == 1                                        /* some kind of reset was made */
+    if (*firstPass
+        || previousPass != currentPass                                       /* We are in a different pass */
+        || strcmp(previousStandardOptionsFile, standardOptionsFileName) != 0 /* or we are using a different options file */
+        || strcmp(previousStandardOptionsSection, standardOptionsSectionName) != 0 /* or a different project */
+        || previousStandardOptionsFileModificationTime != modifiedTime       /* or the options file has changed */
+        || previousLanguage != *outLanguage                                  /* or a different language? */
+        || cache.index == 1                                                  /* or the cache was reset */
     ) {
         if (*firstPass) {
             initCaching();
