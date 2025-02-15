@@ -133,7 +133,7 @@ static char *presetEditServerFileDependingStatics(void) {
     inputFileName = getNextScheduledFile(&fileNumber);
     if (inputFileName == NULL) { /* No more input files... */
         // conservative message, probably macro invoked on nonsaved file, TODO: WTF?
-        olOriginalComFileNumber = NO_FILE_NUMBER;
+        originalCommandLineFileNumber = NO_FILE_NUMBER;
         return NULL;
     }
 
@@ -144,7 +144,7 @@ static char *presetEditServerFileDependingStatics(void) {
         getFileItemWithFileNumber(i)->isScheduled = false;
     }
 
-    olOriginalComFileNumber = fileNumber;
+    originalCommandLineFileNumber = fileNumber;
 
     char *fileName = inputFileName;
     currentLanguage = getLanguageFor(fileName);
@@ -187,7 +187,7 @@ static void singlePass(int argc, char **argv,
     inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
 
     smartReadReferences();
-    olOriginalFileNumber = inputFileNumber;
+    originalFileNumber = inputFileNumber;
     if (symbolCanBeIdentifiedByPosition(inputFileNumber)) {
         if (inputOpened)
             closeInputFile();
@@ -223,7 +223,7 @@ static void processFile(int argc, char **argv,
                         int nargc, char **nargv,
                         bool *firstPassP
 ) {
-    FileItem *fileItem = getFileItemWithFileNumber(olOriginalComFileNumber);
+    FileItem *fileItem = getFileItemWithFileNumber(originalCommandLineFileNumber);
 
     assert(fileItem->isScheduled);
     maxPasses = 1;
@@ -253,7 +253,7 @@ void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass)
         }
     } else {
         if (presetEditServerFileDependingStatics() != NULL) {
-            getFileItemWithFileNumber(olOriginalComFileNumber)->isScheduled = false;
+            getFileItemWithFileNumber(originalCommandLineFileNumber)->isScheduled = false;
             // added [26.12.2002] because of loading options without input file
             inputFileName = NULL;
         }

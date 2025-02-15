@@ -83,8 +83,8 @@ FILE *errOut=NULL;
 bool cxResizingBlocked = false;
 
 int inputFileNumber          = -1;
-int olOriginalFileNumber     = -1;
-int olOriginalComFileNumber  = -1;
+int originalFileNumber     = -1;
+int originalCommandLineFileNumber  = -1;
 
 TypeModifier defaultIntModifier;
 Symbol defaultIntDefinition;

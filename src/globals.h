@@ -77,8 +77,8 @@ extern Position olcxByPassPos;
 extern Position cxRefPosition;
 
 extern int inputFileNumber;
-extern int olOriginalFileNumber;     /* number of original file */
-extern int olOriginalComFileNumber;  /* number of original communication file */
+extern int originalFileNumber;     /* number of original file */
+extern int originalCommandLineFileNumber;  /* number of original command line input file? */
 
 extern char *storageNamesTable[MAX_STORAGE_NAMES];
 

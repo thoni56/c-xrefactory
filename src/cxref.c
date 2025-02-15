@@ -248,7 +248,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
         } else {
             if (visibility==GlobalVisibility && symbol->type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
-                if (olOriginalFileNumber != position.file && options.noIncludeRefs)
+                if (originalFileNumber != position.file && options.noIncludeRefs)
                     return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
@@ -1968,7 +1968,7 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
 static Position getCallerPositionFromCommandLineOption(void) {
     int file, line, col;
 
-    file = olOriginalFileNumber;
+    file = originalFileNumber;
     getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
     return makePosition(file, line, col);
 }
@@ -2113,12 +2113,12 @@ void answerEditAction(void) {
         if (options.project != NULL) {
             ppcGenRecord(PPC_SET_INFO, options.project);
         } else {
-            if (olOriginalComFileNumber == NO_FILE_NUMBER) {
+            if (originalCommandLineFileNumber == NO_FILE_NUMBER) {
                 ppcGenRecord(PPC_ERROR, "No source file to identify project");
             } else {
                 char standardOptionsFileName[MAX_FILE_NAME_SIZE];
                 char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
-                char *inputFileName = getFileItemWithFileNumber(olOriginalComFileNumber)->name;
+                char *inputFileName = getFileItemWithFileNumber(originalCommandLineFileNumber)->name;
                 log_trace("inputFileName = %s", inputFileName);
                 searchStandardOptionsFileAndProjectForFile(inputFileName, standardOptionsFileName, standardOptionsSectionName);
                 if (standardOptionsFileName[0]==0 || standardOptionsSectionName[0]==0) {

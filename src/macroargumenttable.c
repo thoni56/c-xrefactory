@@ -10,7 +10,7 @@
 #include "hashtab.th"
 
 /* Define hashtab functions: */
-#include "hash.h"
+#include "hash.h"               /* Required because HASH_FUN has hashFun() */
 #include "commons.h"
 
 #define HASH_FUN(element) hashFun(element->name)

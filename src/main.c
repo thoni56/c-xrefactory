@@ -457,16 +457,16 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
 
         tmpIncludeDirs = options.includeDirs;
         options.includeDirs = NULL;
-
         getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName, standardOptionsSectionName);
         discoverStandardDefines();
         discoverBuiltinIncludePaths();
-
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
+
         if (options.mode != ServerMode && inputFileName == NULL) {
             inputOpened = false;
             goto fini;
         }
+
         deepCopyOptionsFromTo(&options, &savedOptions);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
         inputOpened = computeAndOpenInputFile();
@@ -500,12 +500,12 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
             log_info("Processing '%s'", getRealFileName_static(inputFileName));
         }
     }
+
  fini:
     initializationsPerInvocation();
 
     checkExactPositionUpdate(false);
 
-    // so s_input_file_number is not set if the file is not really opened!!!
     LEAVE();
     return inputOpened;
  }

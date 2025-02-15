@@ -738,7 +738,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             int currentLexemFileOffset = lb->fileOffset;
             position = lb->position;
 
-            if (fileNumberFrom(cb) == olOriginalFileNumber && fileNumberFrom(cb) != NO_FILE_NUMBER
+            if (fileNumberFrom(cb) == originalFileNumber && fileNumberFrom(cb) != NO_FILE_NUMBER
                 && fileNumberFrom(cb) != -1) {
                 if (options.serverOperation == OLO_EXTRACT) {
                     ch = skipBlanks(cb, ch);

@@ -162,17 +162,17 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
     for (currentPass = 1; currentPass <= maxPasses; currentPass++) {
         if (!*firstPassP)
             deepCopyOptionsFromTo(&savedOptions, &options);
-        inputOpened             = initializeFileProcessing(firstPassP, argc, argv, 0, NULL, &currentLanguage);
-        olOriginalFileNumber    = inputFileNumber;
-        olOriginalComFileNumber = olOriginalFileNumber;
+        inputOpened = initializeFileProcessing(firstPassP, argc, argv, 0, NULL, &currentLanguage);
+        originalFileNumber = inputFileNumber;
+        originalCommandLineFileNumber = originalFileNumber;
         if (inputOpened) {
             recoverFromCache();  /* TODO Why do we need this here? */
             deactivateCaching(); /* no caching in cxref */
             parseCurrentInputFile(currentLanguage);
             closeCharacterBuffer(&currentFile.characterBuffer);
-            inputOpened                       = false;
+            inputOpened = false;
             currentFile.characterBuffer.file = stdin;
-            *atLeastOneProcessedP             = true;
+            *atLeastOneProcessedP = true;
         } else {
             errorMessage(ERR_CANT_OPEN, inputFileName);
             fprintf(errOut, "\tmaybe forgotten -p option?\n");
