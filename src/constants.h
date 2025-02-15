@@ -21,6 +21,7 @@
 #define FileTableMemorySize     8000000	/* memory for file (and class) table */
 
 #define SIZE_ppmMemory         15000000	/* macro definitions */
+#define CX_MEMORY_INITIAL_SIZE 80000000
 #define CX_MEMORY_CHUNK_SIZE	2000000
                                         /* memory for cross references, can be
                                           increased also by -mf command line

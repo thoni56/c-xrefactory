@@ -357,8 +357,6 @@ void initStorageNames(void) {
 
 
 void initArchaicTypes(void) {
-    /* ******* some defaults and built-ins initialisations ********* */
-
     initTypeModifier(&defaultIntModifier, TypeInt);
     fillSymbolWithTypeModifier(&defaultIntDefinition, NULL, NULL, noPosition, &defaultIntModifier);
 

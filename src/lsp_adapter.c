@@ -6,7 +6,6 @@
 #include "cxref.h"
 #include "json_utils.h"
 #include "main.h"
-#include "memory.h"
 #include "options.h"
 #include "server.h"
 
@@ -19,8 +18,6 @@ JSON *findDefinition(const char *uri, JSON *position) {
     options.cFilesSuffixes = "c";
 
     totalTaskEntryInitialisations();
-
-    initCxMemory();
 
     int argc = 0;
     char **argv = NULL;

@@ -319,8 +319,8 @@ void flushPendingMemory(FlushableMemory *memory) {
     memory->pendingFlushIndex = -1;
 }
 
-void printMemoryStatistics(FlushableMemory *memory) {
 #ifdef USE_NEW_CXMEMORY
+void printMemoryStatistics(FlushableMemory *memory) {
     printf("Total %s use : %ld (%ld flushed)\n", memory->name, memory->allocated, memory->flushed);
-#endif
 }
+#endif

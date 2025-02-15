@@ -52,7 +52,7 @@ extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, ch
 /***********************************************************************/
 /* New, so far unused, new Memory handling */
 
-#define USE_NEW_CXMEMORY
+#define DONT_USE_NEW_CXMEMORY
 
 typedef struct {
     const char *name;
@@ -79,6 +79,7 @@ extern FlushableMemory cxMemory;
 
 extern void markCxMemoryForFlushing(void *pointer);
 extern void flushPendingCxMemory(void);
+extern void printMemoryStatistics(FlushableMemory *memory);
 
 #else
 extern Memory cxMemory;
@@ -93,6 +94,5 @@ extern void *cxAlloc(size_t size);
 extern bool cxMemoryPointerIsBetween(void *pointer, int low, int high);
 extern bool cxMemoryIsFreed(void *pointer);
 
-extern void printMemoryStatistics(FlushableMemory *memory);
 
 #endif
