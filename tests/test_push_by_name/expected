@@ -1,0 +1,33 @@
+c-xref -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-olcxpushname=browsing -olcxlccursor=2:0  -olcursor=19 CURDIR/browsing.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=9 col=5 len=<n>>CURDIR/browsing.c</position-lc>
+</goto>
+-olcxpushname=i -olcxlccursor=9:5  -olcursor=111 CURDIR/browsing.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=10 col=22 len=<n>>CURDIR/browsing.c</position-lc>
+</goto>
+-olcxnext  -olcursor=146 CURDIR/browsing.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=31 col=9 len=<n>>CURDIR/browsing.c</position-lc>
+</goto>
+-olcxnext  -olcursor=761 CURDIR/browsing.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<bottom-information len=<n>>Moving to the first reference</bottom-information>
+<goto>
+ <position-lc line=10 col=22 len=<n>>CURDIR/browsing.c</position-lc>
+</goto>
+-exit
+end-of-options
+
