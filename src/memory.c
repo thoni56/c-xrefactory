@@ -49,7 +49,7 @@ void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *fil
 
 /* With this as a separate function it is possible to catch memory resize longjmps */
 void memoryResized(Memory *memory) {
-    log_trace("Memory '%s' has been resized", memory->name);
+    log_info("Memory '%s' has been resized too %d", memory->name, memory->size);
     longjmp(memoryResizeJumpTarget,1);
 }
 
