@@ -1719,6 +1719,14 @@ void getLineAndColumnCursorPositionFromCommandLineOptions(int *l, int *c) {
     sscanf(options.olcxlccursor,"%d:%d", l, c);
 }
 
+static Position getCallerPositionFromCommandLineOption(void) {
+    int file, line, col;
+
+    file = originalFileNumber;
+    getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
+    return makePosition(file, line, col);
+}
+
 static bool refItemsOrderLess(SymbolsMenu *menu1, SymbolsMenu *menu2) {
     ReferenceItem *r1, *r2;
     char *name1, *name2;
@@ -1963,14 +1971,6 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
     olCreateSelectionMenu(options.serverOperation);
     assert(options.xref2);
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
-}
-
-static Position getCallerPositionFromCommandLineOption(void) {
-    int file, line, col;
-
-    file = originalFileNumber;
-    getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
-    return makePosition(file, line, col);
 }
 
 static void pushSymbolByName(char *name) {
