@@ -87,9 +87,12 @@ static bool symbolCanBeIdentifiedByPosition(int fileNumber) {
     // update the cxref file, so do it only if switching file?
     // but how to ensure that next pass will start parsing?
     // By recovering of point 0 handled as such a special case.
-    recoverCachePointZero();
-    log_trace("yes, it can be identified by position");
 
+    /* This is probably resetting to initial file parsing state, it has nothing to do
+     * with caching, except that cacing also needs to reset those variables */
+    recoverCachePointZero();
+
+    log_trace("yes, it can be identified by position");
     return true;
 }
 
