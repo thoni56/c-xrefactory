@@ -798,10 +798,8 @@ int main(int argc, char *argv[]) {
     if (options.mode == ServerMode)
         server(argc, argv);
 
-#ifdef USE_NEW_CXMEMORY
     if (options.statistics)
         printMemoryStatistics(&cxMemory);
-#endif
 
     LEAVE();
     return 0;

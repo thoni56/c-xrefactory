@@ -87,6 +87,8 @@ extern Memory cxMemory;
 extern bool cxMemoryOverflowHandler(int n);
 extern bool cxMemoryHasEnoughSpaceFor(size_t bytes);
 extern void cxFreeUntil(void *until);
+
+extern void printMemoryStatistics(Memory *memory);
 #endif
 
 extern void initCxMemory(void);
