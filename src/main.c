@@ -534,6 +534,9 @@ void totalTaskEntryInitialisations(void) {
     assert(MAX_STORAGE_NAMES < power(2,STORAGES_BITS));
     assert(MAX_SCOPES < power(2,SCOPES_BITS));
 
+    // Strings
+    initLexemEnumNames();
+
     // Memory
     initCxMemory();
 
@@ -573,8 +576,6 @@ static void clearFileItem(FileItem *fileItem) {
 
 void mainTaskEntryInitialisations(int argc, char **argv) {
     ENTER();
-
-    initLexemEnumNames();
 
     fileAbortEnabled = false;
 
