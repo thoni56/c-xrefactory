@@ -1974,14 +1974,7 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
 }
 
 static void pushSymbolByName(char *name) {
-    OlcxReferences *rstack;
-    if (cache.index > 0) {
-        int spass;
-        spass = currentPass; currentPass=1;
-        recoverCachePointZero();
-        currentPass = spass;
-    }
-    rstack = sessionData.browserStack.top;
+    OlcxReferences *rstack = sessionData.browserStack.top;
     rstack->hkSelectedSym = olCreateSpecialMenuItem(name, NO_FILE_NUMBER, StorageDefault);
     rstack->callerPosition = getCallerPositionFromCommandLineOption();
 }
