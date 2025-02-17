@@ -14,7 +14,7 @@
 Describe(ReferenceTable);
 BeforeEach(ReferenceTable) {
     log_set_level(LOG_ERROR);
-    initCxMemory();
+    initCxMemory(1000);
     initReferenceTable(100);
 }
 AfterEach(ReferenceTable) {}

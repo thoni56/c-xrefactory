@@ -524,7 +524,6 @@ void totalTaskEntryInitialisations(void) {
 
     // Outputs
     errOut = stderr;
-
     outputFile = stdout;
 
     fileAbortEnabled = false;
@@ -538,7 +537,7 @@ void totalTaskEntryInitialisations(void) {
     initLexemEnumNames();
 
     // Memory
-    initCxMemory();
+    initCxMemory(CX_MEMORY_INITIAL_SIZE);
 
     memoryInit(&presetOptions.memory, "options memory", NULL, SIZE_optMemory);
 

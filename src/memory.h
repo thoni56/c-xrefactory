@@ -91,7 +91,7 @@ extern void cxFreeUntil(void *until);
 extern void printMemoryStatistics(Memory *memory);
 #endif
 
-extern void initCxMemory(void);
+extern void initCxMemory(size_t size);
 extern void *cxAlloc(size_t size);
 extern bool cxMemoryPointerIsBetween(void *pointer, int low, int high);
 extern bool cxMemoryIsFreed(void *pointer);

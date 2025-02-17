@@ -13,7 +13,7 @@
 Describe(MacroArgumentTable);
 BeforeEach(MacroArgumentTable) {
     log_set_level(LOG_ERROR);
-    initCxMemory();
+    initCxMemory(10000);
     allocateMacroArgumentTable(100);
 }
 AfterEach(MacroArgumentTable) {}

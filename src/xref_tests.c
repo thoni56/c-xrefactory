@@ -35,7 +35,7 @@ Ensure(Xref, mainCallXref_without_input_files_gives_error_message) {
     expect(getNextScheduledFile, will_return(NULL));
     expect(errorMessage);
 
-    initCxMemory();
+    initCxMemory(10000);
 
     callXref(0, NULL, true);
 }

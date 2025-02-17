@@ -56,8 +56,8 @@ void memoryResized(Memory *memory) {
 
 /* *****************************************************************
 
-   Memory - this new memory type has a dynamic area allocated
-            separately from the Memory struct
+   Memory - this memory type has a dynamic area allocated separately from the Memory
+            struct in which allocation takes place by moving the index.
 
  */
 
@@ -153,7 +153,7 @@ bool ppmIsFreedPointer(void *pointer) {
 /* CX */
 #ifdef USE_NEW_CXMEMORY
 
-void initCxMemory(void) {
+void initCxMemory(size_t size) {
     initFlushableMemory(&cxMemory, "cxMemory");
 }
 
@@ -210,8 +210,8 @@ bool cxMemoryOverflowHandler(int n) {
     return cxMemory.area != NULL;
 }
 
-void initCxMemory(void) {
-    memoryInit(&cxMemory, "cxMemory", cxMemoryOverflowHandler, CX_MEMORY_CHUNK_SIZE);
+void initCxMemory(size_t size) {
+    memoryInit(&cxMemory, "cxMemory", cxMemoryOverflowHandler, size);
 }
 
 void *cxAlloc(size_t size) {
