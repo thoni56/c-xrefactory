@@ -2206,3 +2206,8 @@ LexemCode yylex(void) {
     /* add the test whether in COMPLETION, communication string found */
     return 0;
 }	/* end of yylex() */
+
+void yylexMemoryStatistics(void) {
+    printMemoryStatisticsFor(&macroArgumentsMemory);
+    printMemoryStatisticsFor(&macroBodyMemory);
+}

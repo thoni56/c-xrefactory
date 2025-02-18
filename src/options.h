@@ -180,4 +180,6 @@ extern void searchStandardOptionsFileAndProjectForFile(char *filename, char *opt
 /* Experimental */
 extern char *findConfigFile(char *cwd);
 
+extern void printOptionsMemoryStatistics(void);
+
 #endif

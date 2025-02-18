@@ -45,4 +45,6 @@ extern void addToFrame(void (*action)(void*), void *argument);
 extern void removeFromFrameUntil(FrameAllocation *untilP);
 extern void initOuterCodeBlock(void);
 
+extern void stackMemoryStatistics(void);
+
 #endif

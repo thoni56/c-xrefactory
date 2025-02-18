@@ -7,6 +7,7 @@
 #include "commandlogger.h"
 #include "commons.h"
 #include "globals.h"
+#include "memory.h"
 #include "misc.h"
 #include "cxref.h"
 #include "yylex.h"
@@ -1958,4 +1959,9 @@ void searchStandardOptionsFileAndProjectForFile(char *sourceFilename, char *foun
         }
     }
     foundOptionsFilename[0] = 0;
+}
+
+void printOptionsMemoryStatistics(void) {
+    printMemoryStatisticsFor(&optMemory);
+    printMemoryStatisticsFor(&options.memory);
 }

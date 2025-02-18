@@ -61,3 +61,7 @@ extern void mapOverFileTableWithBool(void (*fun)(FileItem *, bool), bool boolean
 int getFileNumberFromFileName(char *fileName) {
     return (int)mock(fileName);
 }
+
+void fileTableMemoryStatistics(void) {
+    mock();
+}

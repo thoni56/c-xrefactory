@@ -541,7 +541,7 @@ void totalTaskEntryInitialisations(void) {
     // Memory
     initCxMemory(CX_MEMORY_INITIAL_SIZE);
 
-    memoryInit(&presetOptions.memory, "options memory", NULL, SIZE_optMemory);
+    memoryInit(&presetOptions.memory, "preset options memory", NULL, SIZE_optMemory);
 
     // Inject error handling functions
     setFatalErrorHandlerForMemory(fatalError);
@@ -803,8 +803,13 @@ int main(int argc, char *argv[]) {
     if (options.mode == ServerMode)
         server(argc, argv);
 
-    if (options.statistics)
-        printMemoryStatistics(&cxMemory);
+    if (options.statistics) {
+        printMemoryStatistics();
+        printOptionsMemoryStatistics();
+        yylexMemoryStatistics();
+        fileTableMemoryStatistics();
+        stackMemoryStatistics();
+    }
 
     LEAVE();
     return 0;

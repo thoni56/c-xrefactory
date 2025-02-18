@@ -86,6 +86,9 @@ void *memoryAllocc(Memory *memory, int count, size_t size) {
             fatalMemoryError(ERR_NO_MEMORY, memory->name, XREF_EXIT_ERR, __FILE__, __LINE__);
     }
     memory->index += count*size;
+    if (memory->index > memory->max)
+        memory->max = memory->index;
+
     return pointer;
 }
 
@@ -215,17 +218,7 @@ void initCxMemory(size_t size) {
 }
 
 void *cxAlloc(size_t size) {
-
-    if (cxMemory.index+size >= cxMemory.size) {
-        if (cxMemory.overflowHandler != NULL && cxMemory.overflowHandler(size))
-            memoryResized(&cxMemory);
-        else
-            fatalMemoryError(ERR_NO_MEMORY, cxMemory.name, XREF_EXIT_ERR, __FILE__, __LINE__);
-    }
-    int previous_index = cxMemory.index;
-    cxMemory.index += size;
-
-    return (void *) &cxMemory.area[previous_index];
+    return memoryAllocc(&cxMemory, size, 1);
 }
 
 bool cxMemoryPointerIsBetween(void *pointer, int low, int high) {
@@ -320,10 +313,15 @@ void flushPendingMemory(FlushableMemory *memory) {
 }
 
 #ifdef USE_NEW_CXMEMORY
-void printMemoryStatistics(FlushableMemory *memory) {
+void printMemoryStatisticsFor(FlushableMemory *memory) {
     printf("Total %s use : %ld (%ld flushed)\n", memory->name, memory->allocated, memory->flushed);
 #else
-void printMemoryStatistics(Memory *memory) {
-    printf("Total %s use : %d\n", memory->name, memory->index);
+void printMemoryStatisticsFor(Memory *memory) {
+    printf("Max memory use for %s : %d\n", memory->name, memory->max);
 #endif
+}
+
+void printMemoryStatistics(void) {
+    printMemoryStatisticsFor(&cxMemory);
+    printMemoryStatisticsFor(&ppmMemory);
 }

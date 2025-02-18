@@ -47,3 +47,7 @@ LexemCode cexp_yylex(void) {
 LexemCode yylex(void) {
     return (int)mock();
 }
+
+void yylexMemoryStatistics(void) {
+    mock();
+}

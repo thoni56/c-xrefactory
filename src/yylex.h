@@ -45,4 +45,6 @@ extern bool cachedInputPass(int cpoint, char **cfromto);
 extern LexemCode cexp_yylex(void);
 extern LexemCode yylex(void);
 
+extern void yylexMemoryStatistics(void);
+
 #endif

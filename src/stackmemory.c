@@ -6,6 +6,7 @@
 #include "constants.h"
 #include "head.h"
 #include "log.h"
+#include "memory.h"
 #include "proto.h"
 
 
@@ -72,6 +73,8 @@ void initOuterCodeBlock(void) {
     fillCodeBlock(currentBlock, sizeof(CodeBlock), NULL, NULL);
 }
 
+static int stackMemoryMax = 0;
+
 void *stackMemoryAlloc(int size) {
     int i;
 
@@ -80,6 +83,8 @@ void *stackMemoryAlloc(int size) {
     i = currentBlock->firstFreeIndex;
     if (i+size < SIZE_stackMemory) {
         currentBlock->firstFreeIndex = i+size;
+        if (currentBlock->firstFreeIndex > stackMemoryMax)
+            stackMemoryMax = currentBlock->firstFreeIndex;
         return &stackMemory[i];
     } else {
         fatalError(ERR_ST,"i+size > SIZE_stackMemory,\n\tstack memory overflowed,\n\tread TROUBLES section of README file\n", XREF_EXIT_ERR, __FILE__, __LINE__);
@@ -137,4 +142,8 @@ bool isMemoryFromPreviousBlock(void *address) {
 bool isFreedStackMemory(void *ptr) {
     return ((char*)ptr >= stackMemory + currentBlock->firstFreeIndex &&
             (char*)ptr < stackMemory + SIZE_stackMemory);
+}
+
+void stackMemoryStatistics(void) {
+    printf("Max memory use for stack: %d\n", stackMemoryMax);
 }

@@ -13,6 +13,7 @@ typedef struct memory {
     char   *name;              /* String representing the name of the memory */
     bool  (*overflowHandler)(int n); /* Should return true if more memory was possible to acquire */
     int     index;
+    int     max;
     size_t  size;
     char   *area;
 } Memory;
@@ -79,7 +80,7 @@ extern FlushableMemory cxMemory;
 
 extern void markCxMemoryForFlushing(void *pointer);
 extern void flushPendingCxMemory(void);
-extern void printMemoryStatistics(FlushableMemory *memory);
+extern void printMemoryStatisticsFor(FlushableMemory *memory);
 
 #else
 extern Memory cxMemory;
@@ -88,7 +89,7 @@ extern bool cxMemoryOverflowHandler(int n);
 extern bool cxMemoryHasEnoughSpaceFor(size_t bytes);
 extern void cxFreeUntil(void *until);
 
-extern void printMemoryStatistics(Memory *memory);
+extern void printMemoryStatisticsFor(Memory *memory);
 #endif
 
 extern void initCxMemory(size_t size);
@@ -96,5 +97,6 @@ extern void *cxAlloc(size_t size);
 extern bool cxMemoryPointerIsBetween(void *pointer, int low, int high);
 extern bool cxMemoryIsFreed(void *pointer);
 
+extern void printMemoryStatistics(void);
 
 #endif
