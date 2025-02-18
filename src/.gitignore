@@ -21,3 +21,5 @@ options_config.h
 .cache
 latex
 .cgreen-debug-commands
+.last_git_tag
+.tag-stamp
