@@ -3,6 +3,8 @@ include ../Makefile.boilerplate
 # This test ensures that c-xref have generated an entry in CXrefs/XFiles for each
 # .c file in the directory - 2616 files
 
+# It requires 47350577 (~47M) bytes of cxMemory
+
 ARGUMENTS = -create -o ffmpeg.log
 
 all: .c-xrefrc

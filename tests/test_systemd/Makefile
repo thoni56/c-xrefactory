@@ -4,6 +4,8 @@ include ../Makefile.boilerplate
 # Will dump it but only compare if we run on "thoni64"
 # since cross-references includes system files
 
+# It requires 23854076 (~23M) bytes of cxMemory
+
 ARGUMENTS = -create -o systemd.log
 
 all:
