@@ -621,13 +621,26 @@ memory of the Options structure.
 
 === Configuration
 
+The legacy `c-xref` normally, in "production", uses a common configuration file in the
+users home directory, `.c-xrefrc`. When a new project is defined its options will be
+stored in this file as a new section.
+
+It is possible to point to a specific configuration file using the command line option
+`-xrefrc` which is used extensively in the tests to isolate them from the users
+configuration.
+
+Each "project" or "section" requires a name of the "project", which is the argument to
+the `-p` command line option. And it may contain most other command line options on one
+line each. These are always read, unless `-no-stdop` is used, before anything else. This
+allows for different "default" options for each project.
+
 ==== Options
 
 There are three possible sources for options.
 
 - Configuration files (~/.c-xrefrc)
-- Piped options sent to edit server
-- Command line options
+- Command line options at invocation, including server
+- Piped options sent to the server in commands
 
 Not all options are relevant in all cases.
 
