@@ -6379,7 +6379,7 @@ the reset was performed, nil if the reset was cancelled."
                 nil)  ; Indicate cancellation
             t))))  ; Indicate no changes
 
-(defun c-xref-load-directory (dir)
+(defun c-xref-reload-directory (dir)
   "Load all compiled Emacs Lisp files in DIR."
   (dolist (file (directory-files dir t "\\.elc$"))
     (message (format "file = %s" file))
@@ -6403,8 +6403,8 @@ the reset was performed, nil if the reset was cancelled."
                 (delete-file "src/options_config.h") ;; Trigger regeneration of version info
                 (shell-command "make")
                 (message "Built 'c-xref' in %s" c-xref-install-directory)
-                (c-xref-load-directory c-xref-elisp-directory)
-                (message "Loaded compiled elisp files")
+                (c-xref-reload-directory c-xref-elisp-directory)
+                (message "Reloaded compiled elisp files")
                 )
             )
           ))

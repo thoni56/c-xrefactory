@@ -101,7 +101,7 @@ WARNINGS = -Wall -Wno-char-subscripts -Werror -Wimplicit-fallthrough
 
 OPTIMIZATION = -O0
 
-CFLAGS = -g $(OPTIMIZATION) $(INCLUDES) -fPIC -MMD -funsigned-char -D_FORTIFY_SOURCE $(WARNINGS) $(COVERAGE) $(EXTRA_CFLAGS)
+CFLAGS = -g $(OPTIMIZATION) $(INCLUDES) -fPIC -MMD -funsigned-char $(WARNINGS) $(COVERAGE) $(EXTRA_CFLAGS)
 
 LDFLAGS = $(COVERAGE)
 
