@@ -43,7 +43,7 @@ import subprocess
 import io
 import time
 import shlex
-from shutil import copy
+import shutil
 import argparse
 
 def eprint(*args, **kwargs):
@@ -110,11 +110,13 @@ if __name__ == "__main__":
     with open(args.server_buffer_filename, "w"):
         pass
 
+    cxref_program = args.cxref_program if shutil.which(args.cxref_program) else '../../src/c-xref'
     with open(args.command_file, 'rb') as file:
-        invocation = read_command(file).replace("CURDIR", args.CURDIR).replace("CXREF", args.cxref_program)
+        invocation = read_command(file)
         invocation += " -o "+args.server_buffer_filename
         print(invocation)
 
+        invocation = invocation.replace("CURDIR", args.CURDIR).replace("CXREF", cxref_program)
         arguments = shlex.split(invocation+" "+args.extra_options)
         if args.delay > 0:
             arguments = [arguments[0]] + [f"-delay={args.delay}"] + arguments[1:]
