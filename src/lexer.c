@@ -760,9 +760,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                         putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(lb, parChar, position);
                         parsedInfo.blockMarker2Set = true;
                     }
-                } else if (options.serverOperation == OLO_COMPLETION
-                           || options.serverOperation == OLO_SEARCH
-                ) {
+                } else if (options.serverOperation == OLO_COMPLETION) {
                     ch = skipBlanks(cb, ch);
                     lexem = peekLexemCodeAt(startOfCurrentLexem);
                     processCompletionOrSearch(cb, lb, position, currentLexemFileOffset,

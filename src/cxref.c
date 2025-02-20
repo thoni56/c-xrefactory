@@ -2067,7 +2067,6 @@ void answerEditAction(void) {
     log_trace("Server operation = %s(%d)", operationNamesTable[options.serverOperation], options.serverOperation);
     switch (options.serverOperation) {
     case OLO_COMPLETION:
-    case OLO_SEARCH:
         printCompletions(&collectedCompletions);
         break;
     case OLO_EXTRACT:

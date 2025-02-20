@@ -219,10 +219,7 @@ void printCompletions(Completions *completions) {
     // O.K. there will be a menu diplayed, clear the old one
     olCompletionListInit(completions->idToProcessPosition);
     if (completions->alternativeCount == 0) {
-        if (options.serverOperation == OLO_SEARCH)
-            ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No matches **");
-        else
-            ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **");
+        ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **");
         goto finishWithoutMenu;
     }
     if (!completions->fullMatchFlag && completions->alternativeCount==1) {
@@ -362,16 +359,6 @@ static bool completionTestPrefix(Completions *ci, char *s) {
     return true;
 }
 
-static bool stringContainsCaseInsensitive(char *s1, char *s2) {
-    char *p,*a,*b;
-    for (p=s1; *p; p++) {
-        for(a=p,b=s2; tolower(*a)==tolower(*b); a++,b++) ;
-        if (*b==0)
-            return true;
-    }
-    return false;
-}
-
 static void completionInsertName(char *name, CompletionLine *completionLine, bool orderFlag,
                                  Completions *ci) {
     int len,l;
@@ -407,48 +394,8 @@ static void completeName(char *name, CompletionLine *compLine, bool orderFlag,
     completionInsertName(name, compLine, orderFlag, ci);
 }
 
-static void searchName(char *name, CompletionLine *compLine, int orderFlag,
-                       Completions *completions) {
-    if (name == NULL)
-        return;
-
-    if (options.olcxSearchString==NULL || *options.olcxSearchString==0) {
-        // old fashioned search
-        if (!stringContainsCaseInsensitive(name, completions->idToProcess))
-            return;
-    } else {
-        // the new one
-        // since 1.6.0 this may not work, because switching to
-        // regular expressions
-        if (!searchStringMatch(name, strlen(name)))
-            return;
-    }
-    //&compLine->string = name;
-    name = compLine->string;
-    if (completions->alternativeCount == 0) {
-        completions->fullMatchFlag = false;
-        completions->prefix[0]=0;
-        completions->alternatives[completions->alternativeCount] = *compLine;
-        completions->alternatives[completions->alternativeCount].string = name;
-        completions->alternativeCount++;
-        completions->maxLen = strlen(name);
-    } else {
-        assert(completions->alternativeCount < MAX_COMPLETIONS-1);
-        if (reallyInsert(completions->alternatives, &completions->alternativeCount, name, compLine, 1)) {
-            completions->fullMatchFlag = false;
-            int l = strlen(name);
-            if (l > completions->maxLen)
-                completions->maxLen = l;
-        }
-    }
-}
-
 void processName(char *name, CompletionLine *line, bool orderFlag, Completions *completions) {
-    if (options.serverOperation == OLO_SEARCH) {
-        searchName(name, line, orderFlag, completions);
-    } else {
-        completeName(name, line, orderFlag, completions);
-    }
+    completeName(name, line, orderFlag, completions);
 }
 
 // NOTE: Mapping function

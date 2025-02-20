@@ -264,7 +264,7 @@ void searchSymbolCheckReference(ReferenceItem  *referenceItem, Reference *refere
         s = strchr(sname, '(');
         if (s!=NULL) *s = 0;
     }
-    // cut package name for checking
+    // cut package name(?) for checking
     do {
         s = strchr(sname, '.');
         if (s!=NULL)

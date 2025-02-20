@@ -1971,9 +1971,9 @@ static bool runCompletionsCollectorsIn(CompletionFunctionsTable *completionsTabl
 }
 
 
-/* These are similar in the two parsers, except that we have macro
-   replacement of YACC variables so that we can have multiple parsers
-   linked together. Therefore it is not straight forward to refactor
+/* These are similar in the two parsers, except that we have made macro renaming of the
+   YACC variables (so they are actually called something different) so that we can have
+   multiple parsers linked together. Therefore it is not straight forward to refactor
    out commonalities. */
 void makeCCompletions(char *string, int len, Position position) {
     CompletionLine completionLine;
@@ -1988,7 +1988,7 @@ void makeCCompletions(char *string, int len, Position position) {
         return;
 
     /* If there is a wizard completion, RETURN now */
-    if (collectedCompletions.alternativeCount != 0 && options.serverOperation != OLO_SEARCH)
+    if (collectedCompletions.alternativeCount != 0)
         return;
 
     /* basic language tokens */
