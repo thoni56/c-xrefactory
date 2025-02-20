@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<meta name="author" content="v{VERSION} - Generated 2025-02-12">
+<meta name="author" content="v{VERSION} - Generated 2025-02-20">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-02-12</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-02-20</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -1857,6 +1857,22 @@ memory of the Options structure.
 </div>
 <div class="sect2">
 <h3 id="_configuration">8.10. Configuration</h3>
+<div class="paragraph">
+<p>The legacy <code>c-xref</code> normally, in "production", uses a common configuration file in the
+users home directory, <code>.c-xrefrc</code>. When a new project is defined its options will be
+stored in this file as a new section.</p>
+</div>
+<div class="paragraph">
+<p>It is possible to point to a specific configuration file using the command line option
+<code>-xrefrc</code> which is used extensively in the tests to isolate them from the users
+configuration.</p>
+</div>
+<div class="paragraph">
+<p>Each "project" or "section" requires a name of the "project", which is the argument to
+the <code>-p</code> command line option. And it may contain most other command line options on one
+line each. These are always read, unless <code>-no-stdop</code> is used, before anything else. This
+allows for different "default" options for each project.</p>
+</div>
 <div class="sect3">
 <h4 id="_options">8.10.1. Options</h4>
 <div class="paragraph">
@@ -1868,10 +1884,10 @@ memory of the Options structure.
 <p>Configuration files (~/.c-xrefrc)</p>
 </li>
 <li>
-<p>Piped options sent to edit server</p>
+<p>Command line options at invocation, including server</p>
 </li>
 <li>
-<p>Command line options</p>
+<p>Piped options sent to the server in commands</p>
 </li>
 </ul>
 </div>
@@ -3277,7 +3293,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-12 23:32:04 UTC
+Last updated 2025-02-20 14:20:49 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
