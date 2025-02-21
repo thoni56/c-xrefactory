@@ -10,7 +10,7 @@
 #include "log.h"
 
 
-#define MAX_HEADER_FIELD_LEN 100
+#define MAX_HEADER_FIELD_LEN 1000
 
 
 bool want_lsp_server(int argc, char **argv) {
@@ -25,7 +25,9 @@ static unsigned long wait_for_and_parse_lsp_header(FILE *input_stream) {
     unsigned long content_length = 0;
 
     for(;;) {
-        fgets(buffer, MAX_HEADER_FIELD_LEN, input_stream);
+        char *s = fgets(buffer, MAX_HEADER_FIELD_LEN, input_stream);
+        if (s == NULL)
+            return 0;
         if (strcmp(buffer, "\r\n") == 0) { // End of header
             if (content_length == 0)
                 exit(LSP_RETURN_ERROR_HEADER_INCOMPLETE);
