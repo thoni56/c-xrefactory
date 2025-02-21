@@ -30,6 +30,7 @@ Options presetOptions = {
     false,                       // command log to /tmp file
     false,                       // exit
     "gcc",                       // path to compiler to use for auto-discovering compiler and defines
+    NULL,                        // strings for commandline entered definitions (-D)
     false,                       // completeParenthesis
     false,                       // referenceListWithoutSource
     0,                           // comment moving level
@@ -1133,11 +1134,13 @@ static bool processDOption(int *argi, int argc, char **argv) {
         /* Startup delay already handled in main() */ ;
     else if (strcmp(argv[i], "-debug")==0)
         options.debug = true;
-    // TODO, do this macro allocation differently!!!!!!!!!!!!!
-    // just store macros in options and later add them into pp_memory
-    else if (strncmp(argv[i], "-D",2)==0)
+    else if (strncmp(argv[i], "-D",2)==0) {
+        // Save this definition so that it can be turned into a pre-processor definition
+        // at file processing start, which we will implement later
+        options.definitionStrings = allocateStringForOption(&options.definitionStrings, &argv[i][2]);
+        // For now do it the old way by directly turning it into a macro definition
         addMacroDefinedByOption(argv[i]+2);
-    else return false;
+    } else return false;
 
     *argi = i;
     return true;

@@ -61,6 +61,7 @@ typedef struct options {
     bool exit;
     char *commandlog;
     char *compiler;
+    char *definitionStrings;
     bool completeParenthesis;
     bool referenceListWithoutSource;
     CommentMovingMode commentMovingMode;

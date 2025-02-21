@@ -450,6 +450,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         initOptions();
         initStandardCxrefFileName(fileName);
 
+        /* A lot of options handling... */
         processOptions(argc, argv, DONT_PROCESS_FILE_ARGUMENTS);   /* command line opts */
         /* piped options (no include or define options)
            must be before .xrefrc file options, but, the s_cachedOptions
