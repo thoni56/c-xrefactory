@@ -745,16 +745,16 @@ protected int getOptionFromFile(FILE *file, char *text, int *chars_read) {
 
 static void processSingleProjectMarker(char *path, char *fileName,
                                        bool *projectUpdated, char *foundProjectName) {
-    int length;
 #if defined (__WIN32__)
     bool caseSensitivity = false;
 #else
     bool caseSensitivity = true;
 #endif
 
-    length = strlen(path);
+    int length = strlen(path);
     if (pathncmp(path, fileName, length, caseSensitivity)==0
-        && (fileName[length]=='/' || fileName[length]=='\\' || fileName[length]==0)) {
+        && (fileName[length]=='/' || fileName[length]=='\\' || fileName[length]==0))
+    {
         strcpy(foundProjectName,path);
         assert(strlen(foundProjectName)+1 < MAX_FILE_NAME_SIZE);
         *projectUpdated = true;
@@ -763,13 +763,12 @@ static void processSingleProjectMarker(char *path, char *fileName,
     }
 }
 
-static void processProjectMarker(char *markerText, int markerLength, char *currentProject, char *fileName,
+static void processProjectMarker(char *markerText, char *currentProject, char *fileName,
                                  bool *projectUpdated, char *foundProjectName) {
-    char *projectMarker;
+    /* First remove surrounding brackets */
+    char *projectMarker = &markerText[1];
+    markerText[strlen(markerText) - 1] = 0;
 
-    /* Remove surrounding brackets */
-    markerText[markerLength - 1] = 0;
-    projectMarker                = &markerText[1];
     log_debug("processing %s for file %s project==%s", projectMarker, fileName, currentProject);
 
     *projectUpdated = false;
@@ -887,7 +886,7 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
             log_trace("checking '%s'", optionText);
             expandEnvironmentVariables(optionText+1, MAX_OPTION_LEN, &len, true);
             log_trace("expanded '%s'", optionText);
-            processProjectMarker(optionText, len+1, project, fileName, &projectUpdated, foundProjectName);
+            processProjectMarker(optionText, project, fileName, &projectUpdated, foundProjectName);
         } else if (projectUpdated && strncmp(optionText, "-pass", 5) == 0) {
             sscanf(optionText+5, "%d", &passNumber);
             isActivePass = passNumber==currentPass || currentPass==ANY_PASS;
