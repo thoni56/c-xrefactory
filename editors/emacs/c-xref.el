@@ -6401,7 +6401,8 @@ the reset was performed, nil if the reset was cancelled."
                 (message "Pulled latest stable")
                 (c-xref-kill-xref-process nil)
                 (delete-file "src/options_config.h") ;; Trigger regeneration of version info
-                (shell-command "make")
+                (unless (zerop (shell-command "make"))
+                  (error "Build failed"))
                 (message "Built 'c-xref' in %s" c-xref-install-directory)
                 (c-xref-reload-directory c-xref-elisp-directory)
                 (message "Reloaded compiled elisp files")
