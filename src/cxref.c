@@ -1982,52 +1982,45 @@ static void pushSymbolByName(char *name) {
 #define maxOf(a, b) (((a) > (b)) ? (a) : (b))
 
 static char *createTagSearchLine_static(char *name, int fileNumber,
-                                        int *len1, int *len2, int *len3) {
+                                        int *len1, int *len2) {
     static char line[2*COMPLETION_STRING_SIZE];
     char file[TMP_STRING_SIZE];
     char dir[TMP_STRING_SIZE];
-    char *ffname;
-    int l1,l2,l3,fl, dl;
-
-    l1 = l2 = l3 = 0;
-    l1 = strlen(name);
+    int l1 = strlen(name);
 
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-    ffname = fileItem->name;
-    assert(ffname);
-    ffname = getRealFileName_static(ffname);
-    fl = strlen(ffname);
-    l3 = strmcpy(file,simpleFileName(ffname)) - file;
+    assert(fileItem->name);
+    char *realFilename = getRealFileName_static(fileItem->name);
+    int filenameLength = strlen(realFilename);
+    int l2 = strmcpy(file, simpleFileName(realFilename)) - file;
 
-    dl = fl /*& - l3 &*/ ;
-    strncpy(dir, ffname, dl);
-    dir[dl]=0;
+    int directoryNameLength = filenameLength;
+    strncpy(dir, realFilename, directoryNameLength+1);
 
     *len1 = maxOf(*len1, l1);
     *len2 = maxOf(*len2, l2);
-    *len3 = maxOf(*len3, l3);
 
     if (options.searchKind == SEARCH_DEFINITIONS_SHORT
         || options.searchKind==SEARCH_FULL_SHORT) {
         sprintf(line, "%s", name);
     } else {
-        sprintf(line, "%-*s :%-*s :%s", *len1, name, *len3, file, dir);
+        sprintf(line, "%-*s :%-*s :%s", *len1, name, *len2, file, dir);
     }
     return line;                /* static! */
 }
 
 static void printTagSearchResults(void) {
-    int len1, len2, len3, len;
+    int len1, len2, len;
     char *ls;
 
-    len1 = len2 = len3 = 0;
+    len1 = len2 = 0;
     tagSearchCompactShortResults();
 
     // the first loop is counting the length of fields
     assert(sessionData.retrieverStack.top);
     for (Completion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
         ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->ref),
-                                   &len1, &len2, &len3);
+                                   &len1, &len2);
     }
     if (options.olineLen >= 50000) {
         /* TODO: WTF? 50k??!?! */
@@ -2046,7 +2039,7 @@ static void printTagSearchResults(void) {
     assert(sessionData.retrieverStack.top);
     for (Completion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
         ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->ref),
-                                   &len1, &len2, &len3);
+                                   &len1, &len2);
         if (options.xref2) {
             ppcGenRecord(PPC_STRING_VALUE, ls);
         } else {
