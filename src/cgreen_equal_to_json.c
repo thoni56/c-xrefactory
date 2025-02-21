@@ -48,7 +48,7 @@ char *failure_message_for_json(Constraint *constraint, const char *actual_string
     /* Expected [name] to [equal to json] [name] */
     snprintf(message, message_length, constraint_as_string_format, actual_string, constraint->name, constraint->expected_value_name);
     snprintf(message+strlen(message), message_length-strlen(message), constraint->actual_value_message, actual_value_as_string);
-    snprintf(message+strlen(message), message_length, constraint->expected_value_message, expected_value_as_string);
+    snprintf(message+strlen(message), message_length-strlen(message), constraint->expected_value_message, expected_value_as_string);
 
     return message;
 }
