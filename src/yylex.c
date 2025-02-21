@@ -215,7 +215,7 @@ static void initInputFromEditorBuffer(EditorBuffer *editorBuffer, char *prefixSt
     assert(prefixLength < editorBuffer->allocation.allocatedFreePrefixSize);
     // Use the editor buffer and placing the prefix infront of the existing text, so we
     // cannot copy the \0 from the end of the prefix
-    strncpy(editorBuffer->allocation.text - prefixLength, prefixString, prefixLength);
+    memcpy(editorBuffer->allocation.text - prefixLength, prefixString, prefixLength);
     // Point to the start of the prefix in the reserved prefix area
     *bufferStartOut = editorBuffer->allocation.text - prefixLength;
     // and the size is the bufferSize + length of the prefix
