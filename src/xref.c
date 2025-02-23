@@ -106,14 +106,8 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
 
         }
     }
-#ifdef USE_NEW_CXMEMORY
-    markCxMemoryForFlushing(cxFlushPoint);
-#endif
     // Does this indicate that we are allocating a lot of memory that we should flush?
     recoverMemoriesAfterOverflow(cxFlushPoint);
-#ifdef USE_NEW_CXMEMORY
-    flushPendingCxMemory();
-#endif
 }
 
 static void schedulingUpdateToProcess(FileItem *fileItem) {

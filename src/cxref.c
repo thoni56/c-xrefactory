@@ -337,7 +337,6 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
         }
     }
 
-#ifndef USE_NEW_CXMEMORY
     /* Test for available space */
     assert(options.mode);
     if (options.mode==XrefMode) {
@@ -345,7 +344,6 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
             longjmp(cxmemOverflow, LONGJUMP_REASON_REFERENCE_OVERFLOW);
         }
     }
-#endif
 
     assert(place);
     log_trace("returning %x == %s %s:%d", *place, usageKindEnumName[(*place)->usage],

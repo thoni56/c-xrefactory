@@ -51,38 +51,6 @@ extern void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *me
 extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *file, int line));
 
 /***********************************************************************/
-/* New, so far unused, new Memory handling */
-
-#define DONT_USE_NEW_CXMEMORY
-
-typedef struct {
-    const char *name;
-    int size;
-    int top;
-    void **blocks;
-    int pendingFlushIndex;
-    size_t *sizes;
-    size_t allocated;
-    size_t flushed;
-} FlushableMemory;
-
-extern void initFlushableMemory(FlushableMemory *memory, const char *name);
-extern void *allocateFlushableMemory(FlushableMemory *memory, size_t size);
-extern void freeFlushableMemoryUntil(FlushableMemory *memory, void *pointer);
-extern bool flushableMemoryIsFreed(FlushableMemory *memory, void *pointer);
-extern bool memoryWouldBeFlushed(FlushableMemory *memory, void *pointer);
-extern void markForFlushing(FlushableMemory *memory, void *pointer);
-extern void flushPendingMemory(FlushableMemory *memory);
-
-/* CX memory functions */
-#ifdef USE_NEW_CXMEMORY
-extern FlushableMemory cxMemory;
-
-extern void markCxMemoryForFlushing(void *pointer);
-extern void flushPendingCxMemory(void);
-extern void printMemoryStatisticsFor(FlushableMemory *memory);
-
-#else
 extern Memory cxMemory;
 
 extern bool cxMemoryOverflowHandler(int n);
@@ -90,7 +58,6 @@ extern bool cxMemoryHasEnoughSpaceFor(size_t bytes);
 extern void cxFreeUntil(void *until);
 
 extern void printMemoryStatisticsFor(Memory *memory);
-#endif
 
 extern void initCxMemory(size_t size);
 extern void *cxAlloc(size_t size);

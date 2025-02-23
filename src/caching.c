@@ -171,16 +171,9 @@ static bool cachedIncludedFilePass(int index) {
 }
 
 static void recoverCxMemory(void *cxMemoryFlushPoint) {
-#ifdef USE_NEW_CXMEMORY
-    markCxMemoryForFlushing(cxMemoryFlushPoint);
-#else
     cxFreeUntil(cxMemoryFlushPoint);
-#endif
     mapOverFileTable(recoverMemoryFromFileTableEntry);
     mapOverReferenceTableWithIndex(recoverMemoryFromReferenceTableEntry);
-#ifdef USE_NEW_CXMEMORY
-    flushPendingCxMemory();
-#endif
 }
 
 static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int includeStackTop, char *free,
@@ -238,11 +231,7 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
     if (options.mode==ServerMode && currentPass==1) {
         /* remove old references, only on first pass of edit server */
         log_trace("removing references");
-#ifdef USE_NEW_CXMEMORY
-        assert(0);
-#else
         cxMemory.index = cachePoint->cxMemoryIndex;
-#endif
         mapOverReferenceTableWithIndex(recoverMemoryFromReferenceTableEntry);
         mapOverFileTable(recoverMemoryFromFileTableEntry);
     }
@@ -376,12 +365,7 @@ void placeCachePoint(bool inputCaching) {
         return;
     cachePoint = &cache.points[cache.index];
     log_debug("placing cache point %d", cache.index);
-#ifdef USE_NEW_CXMEMORY
-    fillCachePoint(cachePoint, currentBlock, ppmMemory.index, cxMemory.top, getMacroBodyMemoryIndex(), cache.free,
-                   cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack, counters);
-#else
     fillCachePoint(cachePoint, currentBlock, ppmMemory.index, cxMemory.index, getMacroBodyMemoryIndex(), cache.free,
                    cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack, counters);
-#endif
     cache.index++;
 }

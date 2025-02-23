@@ -439,11 +439,9 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
             initCaching();
             *firstPass = false;
         } else {
-#ifndef USE_NEW_CXMEMORY
             /* We are reading this file again in another pass, i.e. with different -D,
              * so reset all parsing info to initial values */
             recoverCachePointZero();
-#endif
         }
 
         initCwd();
@@ -584,14 +582,12 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // supposing that file table is still here, but reinit it
     mapOverFileTable(clearFileItem);
 
-#ifndef USE_NEW_CXMEMORY
     // TODO: the following causes long jump, berk.
     // And it can't be removed because of multiple tests
     // failing with "cx_memory resizing required, see file TROUBLES"
     // This just shows how impenetrable the memory management is...
     char *tempAllocated = cxAlloc(CX_MEMORY_CHUNK_SIZE);
     cxFreeUntil(tempAllocated);
-#endif
 
     initReferenceTable(MAX_CXREF_ENTRIES);
 
@@ -620,7 +616,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     processOptions(argc, argv, PROCESS_FILE_ARGUMENTS);
     processFileArguments();
 
-#ifndef USE_NEW_CXMEMORY
     /* Ensure CX-memory has room enough for things by invoking memory resize if not */
     /* TODO Is this because CX-memory is just discarded and
      * reallocated empty when resizing is necessary? And the various
@@ -645,7 +640,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         tempAllocated = (char *)cxAlloc(options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
         cxFreeUntil(tempAllocated);
     }
-#endif
 
     // must be after processing command line options
     initCaching();
