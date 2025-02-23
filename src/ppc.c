@@ -10,6 +10,14 @@
 
 static int ppcIndentOffset = 0;
 
+static size_t utf8CharacterLength(char *string) {
+    size_t len = 0;
+    while (*string) {
+        len += (*string & 0xC0) != 0x80;  // Count only UTF-8 leading bytes
+        string++;
+    }
+    return len;
+}
 
 static void ppcGenOffsetPosition(char *fn, int offset) {
     ppcIndent();
@@ -116,7 +124,7 @@ void ppcValueRecord(char *kind, int val,char *message) {
 void ppcGenRecord(char *kind, char *message) {
     assert(strlen(message) < MAX_PPC_RECORD_SIZE-1);
     ppcIndent();
-    fprintf(outputFile, "<%s %s=%ld>%s</%s>\n", kind, PPCA_LEN, (unsigned long)strlen(message),
+    fprintf(outputFile, "<%s %s=%ld>%s</%s>\n", kind, PPCA_LEN, utf8CharacterLength(message),
             message, kind);
 }
 

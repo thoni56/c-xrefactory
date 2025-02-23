@@ -373,6 +373,9 @@ includes _protocol.tc_ to wrap the PROTOCOL_ITEMs into
 There is also some Makefile trickery that ensures that the C and elisp
 impementations are in sync.
 
+One noteable detail of the protocol is that it carries strings in their native format,
+utf-8. This means that lengths need to indicate _characters_ not bytes.
+
 
 ==== Invocation of server
 

@@ -1871,7 +1871,7 @@ tries to delete C-xrefactory windows first.
     ))
 
 (defun c-xref-server-read-answer-file-and-dispatch (dispatch-data tmp-files)
-  (let ((res) (cb) (i) (coding-system-for-read 'raw-text))
+  (let ((res) (cb) (i) (coding-system-for-read 'utf-8))
     (setq cb (current-buffer))
     (get-buffer-create c-xref-server-answer-buffer)
     (set-buffer c-xref-server-answer-buffer)
