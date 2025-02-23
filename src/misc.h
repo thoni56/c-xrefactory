@@ -9,6 +9,7 @@
 #include "completion.h"
 
 
+/* Mapping */
 #define MAP_OVER_PATHS(/* const char * */ thePathsToMapOver, /* block of code */ COMMAND) \
     {                                                                   \
         char *currentPath; /* "public" to COMMAND */                    \
@@ -33,7 +34,11 @@
         }                                                               \
     }
 
+extern void mapOverDirectoryFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE),
+                                  int allowEditorFilesFlag, char *a1, char *a2, Completions *a3,
+                                  void *a4, int *a5);
 
+/* Dumping and prettyprinting */
 extern void dumpArguments(int nargc, char **nargv);
 
 extern void typeDump(TypeModifier *typeModifiers);
@@ -42,7 +47,7 @@ extern void prettyPrintType(char *buff,int *size,TypeModifier *t,char*name,
                        int dclSepChar, bool typedefexp);
 extern void prettyPrintMacroDefinition(char *buffer, int *bufferSize, char *macroName, int argc, char **argv);
 
-extern char *strmcpy(char *dest, char *src);
+/* Files and paths */
 extern char *simpleFileName(char *fullFileName);
 extern char *directoryName_static(char *fullFileName);
 extern char *simpleFileNameWithoutSuffix_static(char *fullFileName);
@@ -51,17 +56,6 @@ extern bool shellMatch(char *string, int stringLen, char *pattern, bool caseSens
 extern void expandWildcardsInOnePath(char *fn, char *outpaths, int olen);
 extern char *getRealFileName_static(char *fn);
 extern bool fileNameHasOneOfSuffixes(char *fname, char *suffs);
-extern void mapOverDirectoryFiles(
-        char *dirname,
-        void (*fun) (MAP_FUN_SIGNATURE),
-        int allowEditorFilesFlag,
-        char *a1,
-        char *a2,
-        Completions *a3,
-        void *a4,
-        int *a5
-    );
-extern char *lastOccurenceInString(char *ss, int ch);
 extern char *getFileSuffix(char *fn);
 extern int pathncmp(char *ss1, char *ss2, int n, bool caseSensitive);
 extern int compareFileNames(char *ss1, char *ss2);
@@ -69,6 +63,10 @@ extern int filenameCompare(char *ss1, char *ss2, int n);
 extern void prettyPrintLinkName(char *string, char *linkName, int maxlen);
 extern char *simpleFileNameFromFileNum(int fnum);
 extern void prettyPrintLinkNameForSymbolInMenu(char *ttt, SymbolsMenu *ss);
+
+/* Strings */
+extern char *strmcpy(char *dest, char *src);
+extern char *lastOccurenceInString(char *ss, int ch);
 
 #define UNUSED (void)
 
