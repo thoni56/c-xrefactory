@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<meta name="author" content="v{VERSION} - Generated 2025-02-21">
+<meta name="author" content="v{VERSION} - Generated 2025-02-23">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-02-21</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-02-23</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -1503,6 +1503,10 @@ includes <em>protocol.tc</em> to wrap the PROTOCOL_ITEMs into
 <div class="paragraph">
 <p>There is also some Makefile trickery that ensures that the C and elisp
 impementations are in sync.</p>
+</div>
+<div class="paragraph">
+<p>One noteable detail of the protocol is that it carries strings in their native format,
+utf-8. This means that lengths need to indicate <em>characters</em> not bytes.</p>
 </div>
 </div>
 <div class="sect3">
@@ -3293,7 +3297,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-21 21:28:55 UTC
+Last updated 2025-02-23 20:07:41 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
