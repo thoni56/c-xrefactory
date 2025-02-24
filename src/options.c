@@ -41,6 +41,7 @@ Options presetOptions = {
     NULL,                        // xrefrc
     NO_EOL_CONVERSION,           // crlfConversion
     NULL,                        // pushName
+    0,                           // parnum
     0,                           // parnum2
     "",                          // refactoring parameter name
     "",                          // refactoring parameter value
@@ -1359,8 +1360,8 @@ static bool processOOption(int *argi, int argc, char **argv) {
         sscanf(argv[i]+18, "%d", &options.olcxGotoVal);
     }
     else if (strncmp(argv[i], "-olcxparnum=",12)==0) {
-        options.olcxGotoVal = 0;
-        sscanf(argv[i]+12, "%d", &options.olcxGotoVal);
+        options.parnum = 0;
+        sscanf(argv[i]+12, "%d", &options.parnum);
     }
     else if (strncmp(argv[i], "-olcxparnum2=",13)==0) {
         options.parnum2 = 0;

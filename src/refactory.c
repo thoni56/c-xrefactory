@@ -1681,7 +1681,7 @@ void refactory(void) {
         progressFactor = 3;
         updateOption   = computeUpdateOptionForSymbol(point);
         currentLanguage = getLanguageFor(file);
-        parameterManipulation(point, refactoringOptions.theRefactoring, refactoringOptions.olcxGotoVal,
+        parameterManipulation(point, refactoringOptions.theRefactoring, refactoringOptions.parnum,
                               refactoringOptions.parnum2);
         break;
     case AVR_MOVE_FUNCTION:

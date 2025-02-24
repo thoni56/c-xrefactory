@@ -72,6 +72,7 @@ typedef struct options {
     char *xrefrc;
     int eolConversion;
     char *pushName;
+    int parnum;
     int parnum2;
     char *refactor_parameter_name;
     char *refactor_parameter_value;
