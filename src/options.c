@@ -129,8 +129,6 @@ static char previousStandardOptionsProject[MAX_FILE_NAME_SIZE];
 #define ENV_DEFAULT_VAR_PATH            "${__path}"
 #define ENV_DEFAULT_VAR_NAME            "${__name}"
 #define ENV_DEFAULT_VAR_SUFFIX          "${__suff}"
-#define ENV_DEFAULT_VAR_THIS_CLASS      "${__this}"
-#define ENV_DEFAULT_VAR_SUPER_CLASS     "${__super}"
 
 
 void aboutMessage(void) {
@@ -1137,7 +1135,7 @@ static bool processDOption(int *argi, int argc, char **argv) {
         // Save this definition so that it can be turned into a pre-processor definition
         // at file processing start, which we will implement later
         options.definitionStrings = allocateStringForOption(&options.definitionStrings, &argv[i][2]);
-        // For now do it the old way by directly turning it into a macro definition
+        // For now do it also the old way by directly turning it into a macro definition
         addMacroDefinedByOption(argv[i]+2);
     } else return false;
 
