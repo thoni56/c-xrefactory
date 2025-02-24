@@ -40,7 +40,6 @@ Options presetOptions = {
     0,                           // completion case sensitive
     NULL,                        // xrefrc
     NO_EOL_CONVERSION,           // crlfConversion
-    NULL,                        // checkVersion
     NULL,                        // pushName
     0,                           // parnum2
     "",                          // refactoring parameter name

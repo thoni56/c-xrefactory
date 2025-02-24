@@ -304,7 +304,7 @@ static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
         token = tokenNamesInitTable[i].token;
         languages = tokenNamesInitTable[i].languages;
         tokenNamesTable[token] = name;
-        /* NOTE only tokens that are actually are initialized have a
+        /* NOTE only tokens that are actually initialized have a
          * length, the rest have zero, so we can't replace this
          * strlen() with strlen()s of the tokenNamesTable entry */
         tokenNameLengthsTable[token] = strlen(name);

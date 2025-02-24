@@ -71,7 +71,6 @@ typedef struct options {
     bool completionCaseSensitive;
     char *xrefrc;
     int eolConversion;
-    char *checkVersion;
     char *pushName;
     int parnum2;
     char *refactor_parameter_name;
