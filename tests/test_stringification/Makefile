@@ -4,7 +4,8 @@ include ../Makefile.boilerplate
 ARGUMENTS = source.c -errors
 
 $(TEST):
-	$(COMMAND) | grep -v "active project" > output || :
+	$(COMMAND) 2>&1 > output.tmp
+	$(NORMALIZE) output.tmp > output
 	../../utils/cxref_reader >> output
 	$(VERIFY)
 

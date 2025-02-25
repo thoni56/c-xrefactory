@@ -4,7 +4,7 @@ include ../Makefile.boilerplate
 ARGUMENTS =
 
 $(TEST):
-	$(COMMAND) > output.tmp
+	$(COMMAND) 2>&1 > output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
