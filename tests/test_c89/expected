@@ -1,0 +1,6 @@
+bar
+    @source.c:5:4
+baz
+    @source.c:12:4
+foo
+    @source.c:2:0
