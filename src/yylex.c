@@ -1864,7 +1864,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
     macroBody = macroSymbol->u.mbody;
     if (macroBody == NULL)
         return false;	/* !!!!!         tricky,  undefined macro */
-    if (macroStackIndex == 0) { /* call from source, init mem */
+    if (macroStackIndex == 0) { /* call from top level, init mem */
         mbmInit();
     }
     log_trace("trying to expand macro '%s'", macroBody->name);
@@ -2205,4 +2205,12 @@ LexemCode yylex(void) {
 void yylexMemoryStatistics(void) {
     printMemoryStatisticsFor(&macroArgumentsMemory);
     printMemoryStatisticsFor(&macroBodyMemory);
+}
+
+void decodeLexems(char *lexems, int count) {
+    char *lexemP = lexems;
+    for (int i=0; i<count; i++) {
+        LexemCode lexem = getLexemCodeAt(&lexemP);
+        printf("%s\n", lexemEnumNames[lexem]);
+    }
 }
