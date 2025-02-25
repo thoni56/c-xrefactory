@@ -2,3 +2,7 @@ x
     @source.c:1:12
 y
     @source.c:2:21
+foo
+    @source.c:4:5
+bar
+    @source.c:5:5
