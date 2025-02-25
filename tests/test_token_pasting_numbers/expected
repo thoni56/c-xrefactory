@@ -1,0 +1,34 @@
+EXP
+    @source.c:0:0
+    @source.c:12:8
+    @source.c:13:11
+FLOAT
+    @source.c:0:0
+    @source.c:9:8
+    @source.c:10:11
+HEX
+    @source.c:0:0
+    @source.c:1:8
+    @source.c:2:8
+NUM
+    @source.c:0:0
+    @source.c:5:8
+    @source.c:7:13
+TXT
+    @source.c:0:0
+    @source.c:6:8
+    @source.c:7:4
+b##z
+    @source.c:7:7
+bz
+    @source.c:7:8
+d
+    @source.c:10:7
+e
+    @source.c:13:7
+e##10
+    @source.c:12:21
+h
+    @source.c:2:4
+i
+    @source.c:3:4
