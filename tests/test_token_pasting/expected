@@ -1,0 +1,25 @@
+[C-xref] active project: '/home/thoni/Utveckling/c-xrefactory/tests/test_token_pasting'
+CONCAT
+    @source.c:0:0
+    @source.c:1:8
+    @source.c:2:4
+JOIN
+    @source.c:0:0
+    @source.c:7:8
+    @source.c:8:0
+TXT
+    @source.c:0:0
+    @source.c:4:8
+    @source.c:5:4
+b##z
+    @source.c:5:7
+bz
+    @source.c:5:8
+my##Var
+    @source.c:2:14
+myVar
+    @source.c:2:15
+source.c!j
+    @source.c:8:19
+sta##tic
+    @source.c:8:9
