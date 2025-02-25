@@ -1,8 +1,22 @@
+auto_int
+    @source.c:4:5
+auto_float
+    @source.c:5:5
+S
+    @source.c:7:7
+    @source.c:8:17
+S.f
+    @source.c:7:15
+    @source.c:8:22
+S.g
+    @source.c:7:18
+    @source.c:8:30
+s
+    @source.c:8:5
+utf8
+    @source.c:10:6
 x
     @source.c:1:12
 y
     @source.c:2:21
-foo
-    @source.c:4:5
-bar
-    @source.c:5:5
+
