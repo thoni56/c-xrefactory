@@ -1,0 +1,10 @@
+extern_tls
+    @source.c:6:25
+static_tls
+    @source.c:5:25
+tls_var
+    @source.c:4:18
+x
+    @source.c:1:12
+y
+    @source.c:2:12
