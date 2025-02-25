@@ -35,6 +35,36 @@ Ensure(Lexer, will_signal_false_for_empty_lexbuffer) {
     assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_false);
 }
 
+Ensure(Lexer, can_scan_simple_id) {
+    char *lexemPointer = lexemBuffer.lexemStream;
+    char *inputString  = "id";
+
+    initCharacterBufferFromString(&characterBuffer, inputString);
+
+    assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
+    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(IDENTIFIER));
+}
+
+Ensure(Lexer, can_scan_an_integer) {
+    char *lexemPointer = lexemBuffer.lexemStream;
+    char *inputString  = "43";
+
+    initCharacterBufferFromString(&characterBuffer, inputString);
+
+    assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
+    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(CONSTANT));
+}
+
+Ensure(Lexer, can_scan_a_long_integer) {
+    char *lexemPointer = lexemBuffer.lexemStream;
+    char *inputString  = "43L";
+
+    initCharacterBufferFromString(&characterBuffer, inputString);
+
+    assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
+    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(LONG_CONSTANT));
+}
+
 Ensure(Lexer, can_scan_a_floating_point_number) {
     char *lexemPointer = lexemBuffer.lexemStream;
     char *inputString  = "4.3f";
@@ -57,4 +87,34 @@ Ensure(Lexer, can_scan_include_next) {
     assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(CPP_INCLUDE_NEXT));
     getLexemPositionAt(&lexemPointer);
     assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(STRING_LITERAL));
+}
+
+Ensure(Lexer, can_scan_prefixed_string) {
+    char *lexemPointer = lexemBuffer.lexemStream;
+    char *inputString  = "L\"Hello Marián!\""; /* C11 Wide-character string */
+
+    initCharacterBufferFromString(&characterBuffer, inputString);
+
+    assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
+    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(STRING_LITERAL));
+}
+
+Ensure(Lexer, can_scan_u8_string) {
+    char *lexemPointer = lexemBuffer.lexemStream;
+    char *inputString  = "u8\"Hello Marián!\""; /* C23 UTF-8 string */
+
+    initCharacterBufferFromString(&characterBuffer, inputString);
+
+    assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
+    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(STRING_LITERAL));
+}
+
+Ensure(Lexer, will_not_misinterpret_identifier_starting_with_u8) {
+    char *lexemPointer = lexemBuffer.lexemStream;
+    char *inputString  = "u8888"; /* NOT a C23 UTF-8 string but an identifier */
+
+    initCharacterBufferFromString(&characterBuffer, inputString);
+
+    assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
+    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(IDENTIFIER));
 }

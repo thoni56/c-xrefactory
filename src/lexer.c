@@ -58,7 +58,7 @@ static void scanComment(CharacterBuffer *cb) {
 
 static LexemCode scanConstantType(CharacterBuffer *cb, int *ch) {
     LexemCode lexem = CONSTANT;
-    for(; *ch=='l'||*ch=='L'||*ch=='u'||*ch=='U'; ){
+    for (; *ch=='l'||*ch=='L'||*ch=='u'||*ch=='U'; ) {
         if (*ch=='l' || *ch=='L')
             lexem = LONG_CONSTANT;
         *ch = getChar(cb);
@@ -399,6 +399,25 @@ static void putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(LexemBuffe
     putLexemCodeWithPosition(lb, parChar, position);
 }
 
+static int skipPossibleStringPrefix(CharacterBuffer *cb, int ch) {
+    if (ch == 'L' || ch == 'u' || ch == 'U') {
+        int secondCharacter = getChar(cb);
+        if (secondCharacter == '"') {
+            return secondCharacter;
+        } else {
+            if (secondCharacter == '8') {
+                int thirdCharacter = getChar(cb);
+                if (thirdCharacter == '"')
+                    return thirdCharacter;
+                else
+                    ungetChar(cb, thirdCharacter);
+            }
+            ungetChar(cb, secondCharacter);
+        }
+    }
+    return ch;
+}
+
 bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
     LexemCode lexem;
     int lexemStartingColumn;
@@ -428,6 +447,8 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
         saveBackpatchPosition(lb);
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexemStartingColumn = %d", lexemStartingColumn);
+
+        ch = skipPossibleStringPrefix(cb, ch);
 
         if (ch == '_' || isalpha(ch) || (ch=='$' && LANGUAGE(LANG_YACC))) {
             ch = putIdentifierLexem(lb, cb, ch);
