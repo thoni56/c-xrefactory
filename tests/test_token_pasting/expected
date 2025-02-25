@@ -1,4 +1,3 @@
-[C-xref] active project: '/home/thoni/Utveckling/c-xrefactory/tests/test_token_pasting'
 CONCAT
     @source.c:0:0
     @source.c:1:8
