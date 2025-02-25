@@ -3,10 +3,10 @@ include ../Makefile.boilerplate
 # This test token pasting which mostly works. It does not include token pasting into
 # numbers, which doesn't. There is another, suspended, test for that.
 
-ARGUMENTS = source.c -errors -o output
+ARGUMENTS = source.c -errors
 
 $(TEST):
-	$(COMMAND) > output.tmp 2> output
+	$(COMMAND) | grep -v "active project" > output || :
 	../../utils/cxref_reader >> output
 	$(VERIFY)
 
