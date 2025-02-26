@@ -55,3 +55,9 @@ void test_gnu_extensions(int x) {
 }
 
 struct Empty {}; /* Empty struct */
+
+/* Compound Statement Expression */
+#define SQUARE(x) ({ int _tmp = (x); _tmp * _tmp; })
+static void squarer(void) {
+    int y = SQUARE(5);  // Expands to: ({ int _tmp = 5; _tmp * _tmp; })
+}

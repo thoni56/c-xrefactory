@@ -4,6 +4,10 @@
 <sync>
 Empty
     @source.c:57:7
+SQUARE
+    @source.c:0:0
+    @source.c:60:8
+    @source.c:62:12
 __alignof__
     @source.c:0:0
     @source.c:5:16
@@ -57,6 +61,8 @@ int_like
     @source.c:8:15
 p
     @source.c:14:19
+source.c!squarer
+    @source.c:61:12
 test_gnu_extensions
     @source.c:26:5
 tls_var
