@@ -1,0 +1,25 @@
+[C-xref] active project: 'CURDIR'
+Container
+    @source.c:3:7
+    @source.c:6:7
+Container.point
+    @source.c:4:17
+    @source.c:6:24
+Point
+    @source.c:1:7
+    @source.c:2:7
+    @source.c:4:11
+Point.x
+    @source.c:1:19
+    @source.c:2:28
+Point.y
+    @source.c:1:22
+    @source.c:2:20
+ascii_table
+    @source.c:7:5
+c
+    @source.c:6:17
+i
+    @source.c:8:4
+p
+    @source.c:2:13
