@@ -928,10 +928,6 @@ void addMacroDefinedByOption(char *opt) {
     while (isalpha(*cc) || isdigit(*cc) || *cc == '_') cc++;
     if (*cc == '=') {
         *cc = ' ';
-    } else if (*cc==0) {
-        *cc++ = ' ';
-        *cc++ = '1';
-        *cc = 0;
     } else if (*cc=='(') {
         args = true;
     }

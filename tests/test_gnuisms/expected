@@ -1,0 +1,63 @@
+<information len=<n>>C-xrefactory project: CURDIR</information>
+<information len=<n>>CURDIR/source.c</information>
+<information len=<n>>Generating 'CURDIR/CXrefs'</information>
+<sync>
+Empty
+    @source.c:57:7
+__alignof__
+    @source.c:0:0
+    @source.c:5:16
+__attribute__
+    @source.c:0:0
+    @source.c:2:0
+__builtin_assume
+    @source.c:47:4
+__builtin_expect
+    @source.c:28:8
+__builtin_memcpy
+    @source.c:43:4
+__builtin_memset
+    @source.c:44:4
+__builtin_offsetof
+    @source.c:0:0
+    @source.c:34:18
+__builtin_types_compatible_p
+    @source.c:0:0
+    @source.c:31:23
+__builtin_unreachable
+    @source.c:38:8
+__builtin_va_list
+    @source.c:0:0
+    @source.c:11:0
+__extension__
+    @source.c:0:0
+    @source.c:20:0
+__leaf__
+    @source.c:0:0
+    @source.c:17:0
+__restrict__
+    @source.c:0:0
+    @source.c:14:6
+__sync_fetch_and_add
+    @source.c:51:21
+__typeof__
+    @source.c:0:0
+    @source.c:8:0
+alignment
+    @source.c:5:4
+args
+    @source.c:11:18
+extended_type
+    @source.c:20:24
+fatal
+    @source.c:2:31
+inline_func
+    @source.c:17:13
+int_like
+    @source.c:8:15
+p
+    @source.c:14:19
+test_gnu_extensions
+    @source.c:26:5
+tls_var
+    @source.c:23:13

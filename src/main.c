@@ -322,8 +322,6 @@ static CompilerDependentDefines compiler_dependent_defines[] = {{"clang", clang_
 
 
 static char *extra_defines[] = {
-    /* Standard types */
-    "_Bool int",
     /* GNUisms: */
     "__attribute__(xxx)",
     "__alignof__(xxx) 8",
@@ -331,7 +329,9 @@ static char *extra_defines[] = {
     "__builtin_va_list void",
     "__leaf__",
     "__restrict__",
-    "__extension__"
+    "__extension__",
+    "__builtin_types_compatible_p(x, y) 0",
+    "__builtin_offsetof(x, y) 0"
 };
 
 static void discoverStandardDefines(void) {
