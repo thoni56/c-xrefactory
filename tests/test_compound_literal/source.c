@@ -8,6 +8,11 @@ S *sp;
 
 int *p = (int[]){1, 2, 3}; /* Array compound literal */
 
+struct Flex {                   /* Empty struct */
+    int length;
+    char data[];  // No fixed size
+};
+
 int main() {
     sp->integer = 1;
     sp->string = "Hello,";

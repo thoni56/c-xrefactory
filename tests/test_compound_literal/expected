@@ -1,31 +1,37 @@
 [C-xref] active project: 'CURDIR'
+Flex
+    @source.c:11:7
+Flex.data
+    @source.c:13:9
+Flex.length
+    @source.c:12:8
 S
     @source.c:4:2
     @source.c:6:0
     @source.c:7:0
-    @source.c:18:9
+    @source.c:23:9
 main
-    @source.c:11:4
+    @source.c:16:4
 p
     @source.c:9:5
 s
     @source.c:6:2
-    @source.c:15:4
-    @source.c:16:4
-    @source.c:18:4
+    @source.c:20:4
+    @source.c:21:4
+    @source.c:23:4
 s
     @source.c:1:15
 s.integer
     @source.c:2:8
-    @source.c:12:8
-    @source.c:15:6
-    @source.c:18:13
+    @source.c:17:8
+    @source.c:20:6
+    @source.c:23:13
 s.string
     @source.c:3:10
-    @source.c:13:8
-    @source.c:16:6
-    @source.c:18:27
+    @source.c:18:8
+    @source.c:21:6
+    @source.c:23:27
 sp
     @source.c:7:3
-    @source.c:12:4
-    @source.c:13:4
+    @source.c:17:4
+    @source.c:18:4
