@@ -1,13 +1,9 @@
 include ../Makefile.boilerplate
 
-ARGUMENTS = test_sources/source.c -o output
+ARGUMENTS = source.c -errors
 
 $(TEST):
-	@$(COMMAND)
-	@# Is there a reference to the integer field on line with compound literal?
-	@grep integer CXrefs/* | grep -q 16l ; \
-	if [ $$? -ne 0 ] ; then \
-		$(FAIL) ; \
-	else \
-		$(OK) ; \
-	fi
+	$(COMMAND) 2>&1 > output.tmp
+	$(NORMALIZE) output.tmp > output
+	../../utils/cxref_reader >> output
+	$(VERIFY)
