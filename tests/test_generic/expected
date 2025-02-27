@@ -1,0 +1,11 @@
+[C-xref] active project: 'CURDIR'
+TYPEOF
+    @source.c:0:0
+    @source.c:1:8
+    @source.c:9:18
+    @source.c:10:20
+    @source.c:11:21
+_Generic
+    @source.c:1:21
+test_generic
+    @source.c:8:5
