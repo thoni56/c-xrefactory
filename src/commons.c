@@ -387,7 +387,7 @@ void fatalError(int errorCode, char *message, int exitStatus, char *file, int li
     if (options.xref2) {
         ppcGenRecord(PPC_FATAL_ERROR, buffer);
     } else {
-        log_with_explicit_file_and_line(LOG_ERROR, file, line, buffer);
+        log_with_explicit_file_and_line(LOG_FATAL, file, line, buffer);
     }
     emergencyExit(exitStatus);
 }
