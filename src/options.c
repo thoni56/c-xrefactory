@@ -14,6 +14,9 @@
 #include "editor.h"
 #include "fileio.h"
 #include "filetable.h"
+#ifdef YYDEBUG
+#include "parsers.h"
+#endif
 #include "ppc.h"
 #include "protocol.h"
 

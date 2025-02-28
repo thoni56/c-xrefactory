@@ -1,5 +1,6 @@
 %{
 
+#include <stdlib.h>
 
 #include "cexp_parser.h"
 
