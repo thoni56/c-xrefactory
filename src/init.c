@@ -72,6 +72,7 @@ static TokenNamesInitTable tokenNameInitTable1[] = {
     {"_Bool",       _BOOL,			LANG_C},
     {"_Noreturn",   _NORETURN,		LANG_C},
     {"_Thread_local", _THREADLOCAL,	LANG_C},
+    {"_Static_assert", _STATIC_ASSERT, LANG_C},
 
     /*
       {"token",       TOKEN,		LANG_YACC},

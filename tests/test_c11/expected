@@ -1,3 +1,4 @@
+[C-xref] active project: 'CURDIR'
 extern_tls
     @source.c:6:25
 static_tls

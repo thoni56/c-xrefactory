@@ -74,7 +74,7 @@ static int savedWorkMemoryIndex = 0;
 
 /* c-special */
 %token TYPEDEF EXTERN AUTO REGISTER SIGNED UNSIGNED STRUCT UNION ENUM
-%token SIZEOF RESTRICT _ATOMIC _BOOL _THREADLOCAL _NORETURN
+%token SIZEOF RESTRICT _ATOMIC _BOOL _THREADLOCAL _NORETURN _STATIC_ASSERT
 %token INLINE ASM_KEYWORD
 /* hmm */
 %token ANONYMOUS_MODIFIER
@@ -600,6 +600,10 @@ declaration
             yyerror(buffer);
 #endif
         }
+    ;
+
+static_assert_declaration:
+      _STATIC_ASSERT '(' constant_expr ',' STRING_LITERAL ')'
     ;
 
 init_declarations
@@ -1623,6 +1627,7 @@ external_definition
         endBlock();
         parsedInfo.function = NULL;
     }
+    | Save_index static_assert_declaration ';'
     | Save_index EXTERN STRING_LITERAL  external_definition {
         savedWorkMemoryIndex = $1.data;
     }

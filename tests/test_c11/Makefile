@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = source.c -errors
+ARGUMENTS = -create -errors source.c
 
 $(TEST):
 	$(COMMAND) > output.tmp 2>&1
