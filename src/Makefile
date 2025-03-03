@@ -183,8 +183,9 @@ ci:
 
 
 .PHONY:yydebug
-yydebug: CFLAGS += -DYYDEBUG
-yydebug: devel
+yydebug:
+	touch parsers.h *.y
+	$(MAKE) EXTRA_CFLAGS=-DYYDEBUG c-xref
 
 .PHONY:chcheck
 chcheck:
