@@ -9,3 +9,17 @@ auto s = (struct S){ .f = 1, .g = 2 };  // C23: Deduce 's' as 'struct S'
 
 char *utf8 = u8"Hello Marián!";  // UTF-8 string
 int c = 'abcd';                  // Multi-character constant
+
+int *p = nullptr;  // p is now a null pointer
+void pfunc(int *ptr);
+pfunc(nullptr);  // Safe, no integer confusion
+
+typeof(p) another_p;
+
+#define MAX(a, b) ({    \
+    typeof(a) _a = (a); \
+    typeof(b) _b = (b); \
+    _a > _b ? _a : _b; \
+})
+
+int max_value = MAX(10, 20.5);  // Expands with correct type deduction - which we don't care about

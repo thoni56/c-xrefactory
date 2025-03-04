@@ -322,8 +322,12 @@ static CompilerDependentDefines compiler_dependent_defines[] = {{"clang", clang_
 
 
 static char *extra_defines[] = {
+    /* C11 */
     "_Alignas(x)",
     "_Alignof(x) 8",
+    /* C23 */
+    "typeof(xxx) int",
+    "_BitInt(x) int",
     /* GNUisms: */
     "__attribute__(xxx)",
     "__alignof__(xxx) 8",

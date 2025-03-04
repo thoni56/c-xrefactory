@@ -1,8 +1,8 @@
 [C-xref] active project: 'CURDIR'
-auto_int
-    @source.c:4:5
-auto_float
-    @source.c:5:5
+MAX
+    @source.c:0:0
+    @source.c:19:8
+    @source.c:25:16
 S
     @source.c:7:7
     @source.c:8:17
@@ -12,12 +12,31 @@ S.f
 S.g
     @source.c:7:18
     @source.c:8:30
-s
-    @source.c:8:5
+_BitInt
+    @source.c:0:0
+    @source.c:1:0
+    @source.c:2:9
+another_p
+    @source.c:17:10
+c
+    @source.c:11:4
+max_value
+    @source.c:25:4
+nullptr
+    @source.c:13:9
+p
+    @source.c:13:5
+pfunc
+    @source.c:14:5
+    @source.c:15:0
+typeof
+    @source.c:0:0
+    @source.c:17:0
+    @source.c:20:4
+    @source.c:21:4
 utf8
     @source.c:10:6
 x
     @source.c:1:12
 y
     @source.c:2:21
-
