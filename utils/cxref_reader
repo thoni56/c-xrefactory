@@ -171,7 +171,15 @@ def get_filename_from_id(fileid, file_references):
     return filerefs[0].filename if len(filerefs) == 1 else None
 
 def get_relative_filename_from_id(fileid, file_references):
-    return get_filename_from_id(fileid, file_references).replace(os.getcwd(), "", 1).lstrip(os.sep)
+    filename = get_filename_from_id(fileid, file_references)
+    cwd = os.getcwd()
+
+    if filename.startswith(cwd + os.sep):
+        # Inside project, return relative path
+        return filename.replace(cwd + os.sep, "", 1)
+    else:
+        # System file, return normalized `/.../<filename>`
+        return f"/.../{os.path.basename(filename)}"
 
 def is_valid_hex(s):
     try:
