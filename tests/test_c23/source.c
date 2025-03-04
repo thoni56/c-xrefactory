@@ -23,3 +23,5 @@ typeof(p) another_p;
 })
 
 int max_value = MAX(10, 20.5);  // Expands with correct type deduction - which we don't care about
+
+static_assert(c == 4); /* New in C23, replaces _Static_assert, message optional */

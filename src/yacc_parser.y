@@ -811,8 +811,9 @@ declaration
         }
     ;
 
-static_assert_declaration:
-      _STATIC_ASSERT '(' constant_expr ',' STRING_LITERAL ')'
+static_assert_declaration
+    : _STATIC_ASSERT '(' constant_expr ',' STRING_LITERAL ')'
+    | _STATIC_ASSERT '(' constant_expr ')'
     ;
 
 init_declarations
