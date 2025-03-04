@@ -17,3 +17,6 @@ int alignment = _Alignof(double);  // ✅ Typically 8 or 16 bytes
 long size = alignof(int);        // ✅ Alternative from <stdalign.h>
 
 _Noreturn void no_return(void) {}
+
+#include <stdnoreturn.h>
+noreturn void terminate(void) {}

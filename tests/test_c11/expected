@@ -2,6 +2,9 @@
 %%%i:/.../stdalign.h
     @source.c:11:0
     @stdalign.h:1:0
+%%%i:/.../stdnoreturn.h
+    @source.c:21:0
+    @stdnoreturn.h:1:0
 _Alignas
     @source.c:0:0
     @source.c:13:0
@@ -12,6 +15,8 @@ _Alignof
     @stdalign.h:33:16
 _STDALIGN_H
     @stdalign.h:27:8
+_STDNORETURN_H
+    @stdnoreturn.h:27:8
 __STDC_VERSION__
     @source.c:0:0
     @stdalign.h:30:18
@@ -40,10 +45,16 @@ gnu_tls
     @source.c:7:26
 no_return
     @source.c:19:15
+noreturn
+    @source.c:0:0
+    @source.c:22:0
+    @stdnoreturn.h:31:8
 size
     @source.c:17:5
 static_tls
     @source.c:5:25
+terminate
+    @source.c:22:14
 tls_var
     @source.c:4:18
 x
