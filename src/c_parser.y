@@ -1451,6 +1451,11 @@ for1maybe_expr
     : maybe_expr            {completionTypeForForStatement=$1.data;}
     ;
 
+optional_semicolon
+    : ';'
+    |
+    ;
+
 iteration_statement
     : WHILE _nlabel_ '(' expr ')' /*6*/ _nfork_
     {/*7*/
@@ -1472,7 +1477,7 @@ iteration_statement
         deleteContinueBreakSymbol($<symbol>6);
         deleteContinueBreakSymbol($<symbol>5);
         generateInternalLabelReference($3.data, UsageDefined);
-    } '(' expr ')' ';'          {
+    } '(' expr ')' optional_semicolon          {
         generateInternalLabelReference($2.data, UsageFork);
         generateInternalLabelReference($4.data, UsageDefined);
     }

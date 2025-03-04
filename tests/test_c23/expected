@@ -21,6 +21,8 @@ another_p
 c
     @source.c:11:4
     @source.c:27:14
+    @source.c:35:13
+    @source.c:37:12
 foo
     @source.c:29:5
     @source.c:30:0
@@ -33,6 +35,8 @@ p
 pfunc
     @source.c:14:5
     @source.c:15:0
+source.c!do_while
+    @source.c:33:12
 typeof
     @source.c:0:0
     @source.c:17:0

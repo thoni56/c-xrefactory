@@ -29,3 +29,10 @@ static_assert(c == 4); /* New in C23, replaces _Static_assert, message optional 
 void foo(void);
 foo( ); /* Call to foo with whitespace in parentheses wasn't allowed in the standard
         * before */
+
+static void do_while(void) {
+    if (1)
+        do { c++; } while (0)  // Now valid in C23 without `;`
+        else
+            c--;
+}
