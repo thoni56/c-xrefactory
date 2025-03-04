@@ -37,6 +37,12 @@ pfunc
     @source.c:15:0
 source.c!do_while
     @source.c:33:12
+square
+    @source.c:40:14
+    @source.c:44:18
+    @source.c:47:12
+squareing
+    @source.c:46:4
 typeof
     @source.c:0:0
     @source.c:17:0
@@ -48,3 +54,4 @@ x
     @source.c:1:12
 y
     @source.c:2:21
+    @source.c:44:14

@@ -36,3 +36,13 @@ static void do_while(void) {
         else
             c--;
 }
+
+constexpr int square(int x) {
+    return x * x;
+}
+
+constexpr int y = square(4);  // Expected: `y` should be `16` at compile-time
+
+int squareing() {
+    int z = square(5);  // Expected: Normal function call
+}
