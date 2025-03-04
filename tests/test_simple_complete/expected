@@ -51,7 +51,7 @@ union          :keyword
 enum           :keyword
 restrict       :keyword
 _Atomic        :keyword
-_Bool          :keyword
+bool           :keyword
 _Thread_local  :keyword
 _Noreturn      :keyword
 inline         :keyword

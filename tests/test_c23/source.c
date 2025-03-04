@@ -46,3 +46,7 @@ constexpr int y = square(4);  // Expected: `y` should be `16` at compile-time
 int squareing() {
     int z = square(5);  // Expected: Normal function call
 }
+
+/* C23 adds bool, true and false as keywords that can be used without <stdbool.h> */
+bool flag1 = true;
+bool flag2 = false;

@@ -23,6 +23,10 @@ c
     @source.c:27:14
     @source.c:35:13
     @source.c:37:12
+flag1
+    @source.c:51:5
+flag2
+    @source.c:52:5
 foo
     @source.c:29:5
     @source.c:30:0

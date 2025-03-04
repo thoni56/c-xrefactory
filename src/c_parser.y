@@ -216,6 +216,8 @@ primary_expr
         }
     }
     | CHAR_LITERAL          { $$.data.typeModifier = newSimpleTypeModifier(TypeInt); $$.data.reference = NULL;}
+    | TRUE_LITERAL          { $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean); $$.data.reference = NULL;}
+    | FALSE_LITERAL         { $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean); $$.data.reference = NULL;}
     | CONSTANT              { $$.data.typeModifier = newSimpleTypeModifier(TypeInt); $$.data.reference = NULL;}
     | LONG_CONSTANT         { $$.data.typeModifier = newSimpleTypeModifier(TypeLong); $$.data.reference = NULL;}
     | FLOAT_CONSTANT        { $$.data.typeModifier = newSimpleTypeModifier(TypeFloat); $$.data.reference = NULL;}

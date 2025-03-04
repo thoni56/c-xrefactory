@@ -70,6 +70,7 @@ static TokenNamesInitTable tokenNameInitTable1[] = {
     {"restrict",    RESTRICT,		LANG_C},
     {"_Atomic",     _ATOMIC,		LANG_C},
     {"_Bool",       _BOOL,			LANG_C},
+    {"bool",        _BOOL,			LANG_C},
     {"_Noreturn",   _NORETURN,		LANG_C},
     {"_Thread_local", _THREADLOCAL,	LANG_C},
     {"_Static_assert", _STATIC_ASSERT, LANG_C},
