@@ -21,6 +21,9 @@ another_p
 c
     @source.c:11:4
     @source.c:27:14
+foo
+    @source.c:29:5
+    @source.c:30:0
 max_value
     @source.c:25:4
 nullptr
