@@ -50,3 +50,5 @@ int squareing() {
 /* C23 adds bool, true and false as keywords that can be used without <stdbool.h> */
 bool flag1 = true;
 bool flag2 = false;
+
+#embed "file"
