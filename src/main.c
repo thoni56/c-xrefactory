@@ -334,7 +334,6 @@ static char *extra_defines[] = {
     "__typeof__(xxx) int",
     "__builtin_va_list void",
     "__leaf__",
-    "__restrict__",
     "__extension__",
     "__builtin_types_compatible_p(x, y) 0",
     "__builtin_offsetof(x, y) 0"

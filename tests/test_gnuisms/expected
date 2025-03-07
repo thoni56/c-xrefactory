@@ -39,9 +39,6 @@ __extension__
 __leaf__
     @source.c:0:0
     @source.c:17:0
-__restrict__
-    @source.c:0:0
-    @source.c:14:6
 __sync_fetch_and_add
     @source.c:51:21
 __typeof__

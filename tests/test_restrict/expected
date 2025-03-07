@@ -2,9 +2,6 @@
 <information len=<n>>CURDIR/source.c</information>
 <information len=<n>>Generating 'CURDIR/CXrefs'</information>
 <sync>
-__restrict__
-    @source.c:0:0
-    @source.c:2:6
 p
     @source.c:1:15
 q

@@ -1614,7 +1614,7 @@ external_definition
         assert($2.data);
         // I think that due to the following line sometimes
         // storage was not extern, see 'addNewSymbolDef'
-        /*& if ($2.data->storage == StorageDefault) $2.data->storage = StorageExtern; &*/
+        // if ($2.data->storage == StorageDefault) $2.data->storage = StorageExtern;
         // TODO!!!, here you should check if there is previous declaration of
         // the function, if yes and is declared static, make it static!
         addNewSymbolDefinition(symbolTable, inputFileName, $2.data, StorageExtern, UsageDefined);

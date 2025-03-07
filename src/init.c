@@ -67,7 +67,11 @@ static TokenNamesInitTable tokenNameInitTable1[] = {
     {"volatile",    VOLATILE,		LANG_C | LANG_YACC},
     {"while",       WHILE,			LANG_C | LANG_YACC},
 
+    /* Order of synonyms is important for completion - the last one will be picked as suggestion */
+    {"__restrict",  RESTRICT,       LANG_C},
+    {"__restrict__",RESTRICT,       LANG_C},
     {"restrict",    RESTRICT,		LANG_C},
+
     {"_Atomic",     _ATOMIC,		LANG_C},
     {"_Bool",       _BOOL,			LANG_C},
     {"bool",        _BOOL,			LANG_C},
