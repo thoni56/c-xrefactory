@@ -2,13 +2,13 @@
 #include <cgreen/constraint_syntax_helpers.h>
 
 #include "head.h"
-#include "lexem.h"
 #include "lexembuffer.h"
 #include "log.h"
 
-#include "globals.mock"
 #include "commons.mock"
 #include "fileio.mock"
+#include "globals.mock"
+#include "lexem.mock"
 #include "options.mock"
 
 

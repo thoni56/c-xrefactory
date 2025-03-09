@@ -1886,7 +1886,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
 #ifdef DUMP_SELECTION_MENU
 static void dumpSelectionMenu(SymbolsMenu *menu) {
     for (SymbolsMenu *s=menu; s!=NULL; s=s->next) {
-        log_trace">> %d/%d %s %s %d", s->defRefn, s->refn, s->references.linkName,
+        log_trace(">> %d/%d %s %s %d", s->defRefn, s->refn, s->references.linkName,
             simpleFileName(getFileItemWithFileNumber(s->references.includedFileNumber)->name),
             s->outOnLine);
     }

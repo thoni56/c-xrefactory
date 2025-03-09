@@ -99,6 +99,7 @@ Options presetOptions = {
     XrefMode,                   /* operating mode */
     false,                      /* debug */
     false,                      /* trace */
+    false,                      /* lexemTrace */
     OLO_NOOP,                   /* serverOperation */
     0,                          /* olcxGotoVal */
 
@@ -1263,6 +1264,9 @@ static bool processKOption(int *argi, int argc, char **argv) {
 static bool processLOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
+    else if (strcmp(argv[i], "-lexemtrace")==0) {
+        options.lexemTrace = true;
+    }
     else if (strncmp(argv[i], "-log=", 5)==0) {
         ;                       /* Already handled in initLogging() */
     }

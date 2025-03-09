@@ -122,6 +122,7 @@ typedef struct options {
     Mode mode;
     bool debug;
     bool trace;
+    bool lexemTrace;
     ServerOperation serverOperation;
     int olcxGotoVal;
 

@@ -1,1 +1,3 @@
 #include "lexem.c"
+
+char *lexemEnumNames[LAST_TOKEN];

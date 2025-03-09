@@ -12,6 +12,7 @@
 #include "filetable.mock"
 #include "globals.mock"
 #include "input.mock"
+#include "lexem.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "yylex.mock"
