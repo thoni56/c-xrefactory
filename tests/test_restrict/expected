@@ -2,7 +2,11 @@
 <information len=<n>>CURDIR/source.c</information>
 <information len=<n>>Generating 'CURDIR/CXrefs'</information>
 <sync>
-p
+p1
     @source.c:1:15
-q
-    @source.c:2:19
+p2
+    @source.c:2:17
+p3
+    @source.c:3:19
+testfunc
+    @source.c:4:13
