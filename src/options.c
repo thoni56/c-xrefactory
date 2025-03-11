@@ -100,6 +100,7 @@ Options presetOptions = {
     false,                      /* debug */
     false,                      /* trace */
     false,                      /* lexemTrace */
+    false,                      /* fileTrace */
     OLO_NOOP,                   /* serverOperation */
     0,                          /* olcxGotoVal */
 
@@ -1176,6 +1177,9 @@ static bool processEOption(int *argi, int argc, char **argv) {
 static bool processFOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
+    else if (strcmp(argv[i], "-filetrace")==0) {
+        options.fileTrace = true;
+    }
     else if (strcmp(argv[i], "-filescasesensitive")==0) {
         options.fileNamesCaseSensitive = true;
     }

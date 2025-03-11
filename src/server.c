@@ -162,6 +162,8 @@ static void closeInputFile(void) {
 }
 
 static void parseInputFile(void) {
+    if (options.fileTrace)
+        fprintf(stderr, "parseInputFile: '%s\n", currentFile.fileName);
     if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
         log_trace("parse start");
         parseCurrentInputFile(currentLanguage);
