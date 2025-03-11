@@ -711,10 +711,36 @@ static MacroArgumentTableElement *newMacroArgumentTableElement(char *argLinkName
     return element;
 }
 
+static char *allocateArgumentName(char *argumentName) {
+    char *name;
+    name = ppmAllocc(strlen(argumentName) + 1, sizeof(char));
+    strcpy(name, argumentName);
+
+    return name;
+}
+
+static char *allocateLinkName(char *argumentName, Position position) {
+    char *argLinkName;
+    char tmpBuff[TMP_BUFF_SIZE];
+    sprintf(tmpBuff, "%x-%x%c%s", position.file, position.line, LINK_NAME_SEPARATOR, argumentName);
+    argLinkName = ppmAllocc(strlen(tmpBuff) + 1, sizeof(char));
+    strcpy(argLinkName, tmpBuff);
+
+    return argLinkName;
+}
+
+static void swapPositions(Position **_parpos1, Position **_parpos2) {
+    Position *parpos1 = *_parpos1, *parpos2 = *_parpos2;
+    Position *tmppos = parpos1;
+    parpos1 = parpos2;
+    parpos2 = tmppos;
+    *_parpos1 = parpos1;
+    *_parpos2 = parpos2;
+}
+
 /* Public only for unittesting */
 protected void processDefineDirective(bool hasArguments) {
-    char *currentLexemStart, *argumentName;
-    char **argumentNames, *argLinkName;
+    char **argumentNames;
 
     bool isReadingBody = false;
     char *macroName = NULL;
@@ -731,7 +757,7 @@ protected void processDefineDirective(bool hasArguments) {
     LexemCode lexem = getLexem();
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-    currentLexemStart = currentInput.read;
+    char *currentLexemStart = currentInput.read;
 
     Position macroPosition;
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &macroPosition, NULL, true);
@@ -772,7 +798,7 @@ protected void processDefineDirective(bool hasArguments) {
         if (lexem != ')') {
             for(;;) {
                 Position position;
-                currentLexemStart = argumentName = currentInput.read;
+                char *argumentName = currentLexemStart = currentInput.read;
                 getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
                 bool ellipsis = false;
                 if (lexem == IDENTIFIER ) {
@@ -784,14 +810,8 @@ protected void processDefineDirective(bool hasArguments) {
                 } else
                     goto errorlabel;
 
-                char *name = ppmAllocc(strlen(argumentName)+1, sizeof(char));
-                strcpy(name, argumentName);
-
-                char tmpBuff[TMP_BUFF_SIZE];
-                sprintf(tmpBuff, "%x-%x%c%s", position.file, position.line,
-                        LINK_NAME_SEPARATOR, argumentName);
-                argLinkName = ppmAllocc(strlen(tmpBuff)+1, sizeof(char));
-                strcpy(argLinkName, tmpBuff);
+                char *name = allocateArgumentName(argumentName);
+                char *argLinkName = allocateLinkName(argumentName, position);
 
                 MacroArgumentTableElement *macroArgumentTableElement = newMacroArgumentTableElement(argLinkName, argumentCount, name);
                 int argumentIndex = addMacroArgument(macroArgumentTableElement);
@@ -800,10 +820,7 @@ protected void processDefineDirective(bool hasArguments) {
                 lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-                /* Swap position pointers */
-                Position *tmppos = parpos1;
-                parpos1=parpos2;
-                parpos2=tmppos;
+                swapPositions(&parpos1, &parpos2);
 
                 getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, parpos2, NULL, true);
                 if (!ellipsis) {
@@ -849,7 +866,7 @@ protected void processDefineDirective(bool hasArguments) {
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
 
     while (lexem != '\n') {
-        while(macroSize<allocatedSize && lexem != '\n') {
+        while (macroSize<allocatedSize && lexem != '\n') {
             char *lexemDestination = body+macroSize; /* TODO WTF Are we storing the lexems after the body?!?! */
             /* Create a MATE to be able to run ..IsMember() */
             MacroArgumentTableElement macroArgumentTableElement = makeMacroArgumentTableElement(currentLexemStart,
