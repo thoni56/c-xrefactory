@@ -365,6 +365,10 @@ void placeCachePoint(bool inputCaching) {
         return;
     cachePoint = &cache.points[cache.index];
     log_debug("placing cache point %d", cache.index);
+    log_trace("currentBlock=%d, ppmMemory.index=%d, cxMemory.index=%d, macroBodyMemoryIndex=%d, cache.free =%d, \
+cache.includeStackTop=%d, currentFile.lineNumber=%d, currentFile.ifDepth=%d, currentFile.ifStack=%d",
+              currentBlock, ppmMemory.index, cxMemory.index, getMacroBodyMemoryIndex(), cache.free,
+              cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack);
     fillCachePoint(cachePoint, currentBlock, ppmMemory.index, cxMemory.index, getMacroBodyMemoryIndex(), cache.free,
                    cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack, counters);
     cache.index++;

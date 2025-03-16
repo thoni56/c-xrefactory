@@ -59,6 +59,7 @@ void memoryResized(Memory *memory) {
 
 void memoryInit(Memory *memory, char *name, bool (*overflowHandler)(int n), int size) {
     ENTER();
+    log_trace("Init %s with new name '%s' and size %d", memory->name, name, size);
     memory->name = name;
     memory->overflowHandler = overflowHandler;
     memory->name = name;

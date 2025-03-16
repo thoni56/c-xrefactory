@@ -159,7 +159,6 @@ prod:
 #########################################################################
 # For development - various ways to build
 .PHONY:devel
-devel: CFLAGS += -DYYDEBUG
 devel: check-tokens
 	$(MAKE) -C ../editors/emacs
 	$(MAKE) -e clean-coverage
@@ -184,8 +183,8 @@ ci:
 
 .PHONY:yydebug
 yydebug:
-	touch parsers.h *.y
-	$(MAKE) EXTRA_CFLAGS=-DYYDEBUG c-xref
+	touch parsers.h *.tab.c options.c
+	$(MAKE) EXTRA_CFLAGS=-DYYDEBUG build
 
 .PHONY:chcheck
 chcheck:

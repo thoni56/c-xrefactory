@@ -529,7 +529,7 @@ static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
     outpath = (char **) a4;
     freeolen = a5;
 
-    log_trace("checking match %s <-> %s %s", file, pattern, dir2);
+    log_trace("checking match '%s' <-> '%s %s'", file, pattern, dir2);
     if (dir2[0] == FILE_PATH_SEPARATOR) {
         // small optimisation, restrict search to directories
         sprintf(path, "%s%s", dir1, file);
@@ -545,7 +545,7 @@ static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
 // Dont use this function!!!! what you need is: expandWildcardsInOnePath
 /* TODO: WTF, why? we *are* using it... */
 static void expandWildcardsInOnePathRecursiveMaybe(char *fileName, char **outpaths, int *availableSpace) {
-    log_trace("expand wildcards(%s)", fileName);
+    log_trace("expand wildcards('%s')", fileName);
     if (containsWildcard(fileName)) {
         int si = 0;
         int di = 0;
@@ -572,7 +572,7 @@ static void expandWildcardsInOnePathRecursiveMaybe(char *fileName, char **outpat
     } else if (directoryExists(fileName)) {
         int len = strlen(fileName);
         strcpy(*outpaths, fileName);
-        log_trace("adding expanded path==%s", fileName);
+        log_trace("adding expanded path=='%s'", fileName);
         *outpaths += len;
         *availableSpace -= len;
         *((*outpaths)++) = PATH_SEPARATOR;
@@ -694,7 +694,7 @@ void mapOverDirectoryFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), int al
         while ((dirbuf = readdir(fd)) != NULL) {
             if (dirbuf->d_ino != 0 && strcmp(dirbuf->d_name, ".") != 0
                 && strcmp(dirbuf->d_name, "..") != 0) {
-                log_trace("mapping file %s", dirbuf->d_name);
+                log_trace("mapping file '%s'", dirbuf->d_name);
                 (*fun)(dirbuf->d_name, a1, a2, a3, a4, a5);
             }
         }

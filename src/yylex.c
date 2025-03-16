@@ -15,6 +15,7 @@
 #include "filetable.h"
 #include "globals.h"
 #include "hash.h"
+#include "head.h"
 #include "input.h"
 #include "lexem.h"
 #include "lexembuffer.h"
@@ -288,7 +289,7 @@ static void getAndSetOutValueIfRequested(char **readPointerP, int *outValueP) {
 /*                                                                   */
 /* ***************************************************************** */
 
-/* Depending on the passed Lexem will get/pass over subsequent lexems
+/* Depending on the passed Lexem will get or pass over subsequent lexems
  * like position, and advance the readPointerP. Allows any of the out
  * parameters to be NULL to ignore it. Might be too complex/general,
  * long argument list, when lex is known could be broken into parts
@@ -1380,7 +1381,7 @@ static void expandMacroBodyBufferIfOverflow(char *pointer, int len, char *buffer
 
 static bool cyclicCall(MacroBody *macroBody) {
     char *name = macroBody->name;
-    log_debug("Testing for cyclic call, '%s' against curr '%s'", name, currentInput.macroName);
+    log_debug("Testing for cyclic call, '%s' against current '%s'", name, currentInput.macroName);
     if (currentInput.macroName != NULL && strcmp(name,currentInput.macroName)==0)
         return true;
     for (int i=0; i<macroStackIndex; i++) {
@@ -1799,7 +1800,7 @@ end:
 
 static LexInput *getActualMacroArguments(MacroBody *macroBody, Position macroPosition,
                                          Position lparPosition) {
-    char *previousLexem;
+    char *previousLexemP;
 
     Position ppb1 = lparPosition;
     Position ppb2 = lparPosition;
@@ -1807,24 +1808,28 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position macroPos
     Position *endPosition = &ppb2;
     Position position;
 
+    ENTER();
+
     LexInput *actualArgs = ppmAllocc(macroBody->argCount, sizeof(LexInput));
-    LexemCode lexem = getLexSkippingLines(&previousLexem, NULL, NULL, &position, NULL);
+    LexemCode lexem = getLexSkippingLines(&previousLexemP, NULL, NULL, &position, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                 macroStackIndex == 0);
+    log_trace("getActualMacroArguments for %s: %s", macroBody->name, lexemEnumNames[lexem]);
     int argumentIndex = 0;
     if (lexem == ')') {
         *endPosition = position;
         handleMacroUsageParameterPositions(0, macroPosition, *beginPosition, *endPosition, true);
     } else {
         for(;;) {
-            getActualMacroArgument(previousLexem, &lexem, macroPosition, &beginPosition, &endPosition,
+            getActualMacroArgument(previousLexemP, &lexem, macroPosition, &beginPosition, &endPosition,
                                    &actualArgs[argumentIndex], macroBody, argumentIndex);
+            log_trace("getActualMacroArgument: %s", lexemEnumNames[lexem]);
             argumentIndex ++ ;
             if (lexem != ',' || argumentIndex >= macroBody->argCount)
                 break;
-            lexem = getLexSkippingLines(&previousLexem, NULL, NULL, &position, NULL);
+            lexem = getLexSkippingLines(&previousLexemP, NULL, NULL, &position, NULL);
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
             getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                         macroStackIndex == 0);
@@ -1834,6 +1839,7 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position macroPos
     for(;argumentIndex < macroBody->argCount; argumentIndex++) {
         fillLexInput(&actualArgs[argumentIndex], NULL, NULL, NULL, NULL,INPUT_NORMAL);
     }
+    LEAVE();
     return actualArgs;
 
 endOfMacroArgument:
@@ -1843,6 +1849,7 @@ endOfFile:
     if (options.mode!=ServerMode) {
         warningMessage(ERR_ST,"[getActualMacroArguments] unterminated macro call");
     }
+    LEAVE();
     return NULL;
 }
 
@@ -2201,7 +2208,7 @@ LexemCode yylex(void) {
     goto endOfFile;
 
  finish:
-    log_trace("!'%s'(%d)", yytext, cxMemory.index);
+    log_trace("yytext='%s'(@ index %d)", yytext, cxMemory.index);
     return lexem;
 
  endOfMacroArgument:
