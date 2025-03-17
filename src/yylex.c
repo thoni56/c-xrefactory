@@ -1436,27 +1436,23 @@ static void expandMacroArgument(LexInput *argumentInput) {
         // only if not an expanding macro, this is because
         // 'macroCallExpand' can read new lexbuffer and destroy
         // cInput, so copy it now.
-        bool failedMacroExpansion = false;
-        Symbol *foundSymbol;
         if (lexem == IDENTIFIER) {
             Symbol symbol = makeSymbol(nextLexemP, nextLexemP, noPosition);
             symbol.type = TypeMacro;
             symbol.storage = StorageDefault;
+            Symbol *foundSymbol;
             if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
-                    /* it is a macro, provide macro expansion */
-                    log_trace("Macro found: '%s' (argument) -> Should be expanded", nextLexemP);
+                /* it is a macro, provide macro expansion */
+                log_trace("Macro found: '%s' (argument) -> Should be expanded", nextLexemP);
                 if (expandMacroCall(foundSymbol, position))
                     continue; // with next lexem
-                else
-                    failedMacroExpansion = true;
-            }
-        }
-        if (failedMacroExpansion) {
-            char *tmp = currentBufferP;
-            assert(foundSymbol!=NULL);
-            if (foundSymbol->u.mbody!=NULL && cyclicCall(foundSymbol->u.mbody)) {
-                assert(tmp == currentBufferP); /* Is tmp ever different from currentBufferP? */
-                putLexemCodeAt(IDENT_NO_CPP_EXPAND, &tmp);
+                else {
+                    /* Failed expansion... */
+                    assert(foundSymbol!=NULL);
+                    if (foundSymbol->u.mbody!=NULL && cyclicCall(foundSymbol->u.mbody)) {
+                        putLexemCodeAt(IDENT_NO_CPP_EXPAND, &currentBufferP);
+                    }
+                }
             }
         }
         currentBufferP += length;
