@@ -1408,6 +1408,8 @@ static void expandMacroArgument(LexInput *argumentInput) {
     char *currentBufferP;
     int bufferSize;
 
+    ENTER();
+
     bufferSize = MACRO_BODY_BUFFER_SIZE;
 
     prependMacroInput(argumentInput);
@@ -1441,7 +1443,8 @@ static void expandMacroArgument(LexInput *argumentInput) {
             symbol.type = TypeMacro;
             symbol.storage = StorageDefault;
             if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
-                /* it is a macro, provide macro expansion */
+                    /* it is a macro, provide macro expansion */
+                    log_trace("Macro found: '%s' (argument) -> Should be expanded", nextLexemP);
                 if (expandMacroCall(foundSymbol, position))
                     continue; // with next lexem
                 else
@@ -1463,6 +1466,7 @@ endOfMacroArgument:
     currentInput = macroInputStack[--macroStackIndex];
     buffer = ppmReallocc(buffer, currentBufferP-buffer, sizeof(char), bufferSize+MAX_LEXEM_SIZE);
     fillLexInput(argumentInput, buffer, buffer, currentBufferP, NULL, INPUT_NORMAL);
+    LEAVE();
     return;
 endOfFile:
     assert(0);
@@ -1949,7 +1953,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
     addCxReference(macroSymbol, macroPosition, UsageUsed, NO_FILE_NUMBER);
     if (options.mode == XrefMode)
         addMacroBaseUsageRef(macroSymbol);
-    log_trace("create macro body '%s'", macroBody->name);
+    log_trace("create macro body '%s' as new input", macroBody->name);
     createMacroBodyAsNewInput(&macroBodyInput,macroBody,actualArgumentsInput,macroBody->argCount);
     prependMacroInput(&macroBodyInput);
     log_trace("expanded macro '%s'", macroBody->name);
