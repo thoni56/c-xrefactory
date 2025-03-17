@@ -2057,7 +2057,7 @@ static bool isIdAKeyword(Symbol *symbol, Position position) {
 }
 
 /* TODO: probably move to symboltable.c... */
-static LexemCode lookupCIdentifier(char *id, Position position) {
+static LexemCode lookupIdentifier(char *id, Position position) {
     Symbol *symbol = NULL;
     unsigned hash = hashFun(id) % symbolTable->size;
 
@@ -2096,10 +2096,6 @@ static void actionOnBlockMarker(void) {
     } else if (options.serverOperation == OLO_EXTRACT) {
         extractActionOnBlockMarker();
     }
-}
-
-static LexemCode lookupIdentifier(char *id, Position position) {
-    return lookupCIdentifier(id, position);
 }
 
 LexemCode yylex(void) {
