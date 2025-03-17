@@ -1530,6 +1530,23 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
 
     /* now collate *lbcc and *cc */
     // berk, do not pre-compute, lbcc can be NULL!!!!
+    log_trace("Before token pasting: lastBufferP='%s', currentInputLexemP='%s'",
+              lastBufferP ? lastBufferP + LEXEMCODE_SIZE : "(NULL)",
+              currentInputLexemP ? currentInputLexemP : "(NULL)");
+    if (lastBufferP != NULL && isIdentifierLexem(peekLexemCodeAt(lastBufferP))) {
+        Symbol *foundSymbol;
+        Symbol symbol = makeSymbol(lastBufferP + LEXEMCODE_SIZE, lastBufferP + LEXEMCODE_SIZE, noPosition);
+        symbol.type = TypeMacro;
+        symbol.storage = StorageDefault;
+
+        if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
+            log_trace("Macro found: '%s' (left-hand) -> Should be expanded", lastBufferP + LEXEMCODE_SIZE);
+        } else {
+            log_trace("Identifier '%s' (left-hand) is NOT a macro", lastBufferP + LEXEMCODE_SIZE);
+        }
+    }
+
+
     if (lastBufferP != NULL && currentInputLexemP < endOfInputLexems && isIdentifierLexem(peekLexemCodeAt(lastBufferP))) {
         LexemCode nextLexem = peekLexemCodeAt(currentInputLexemP);
         if (isIdentifierLexem(nextLexem) || isConstantLexem(nextLexem)) {
@@ -1546,6 +1563,17 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
             currentBufferP = lastBufferP + LEXEMCODE_SIZE + len;
             assert(*currentBufferP == 0);
             if (isIdentifierLexem(lexem)) {
+                Symbol *foundSymbol;
+                Symbol symbol = makeSymbol(previousInputLexemP, previousInputLexemP, noPosition);
+                symbol.type = TypeMacro;
+                symbol.storage = StorageDefault;
+
+                if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
+                    log_trace("Macro found: '%s' (right-hand) -> Should be expanded", previousInputLexemP);
+                } else {
+                    log_trace("Identifier '%s' (right-hand) is NOT a macro", previousInputLexemP);
+                }
+                //expandMacroCall(); /* TODO: Here we should find out if the identifier is a macro and if so expand it */
                 /* TODO: WTF Here was a out-commented call to
                  * NextLexPosition(), maybe the following "hack"
                  * replaced that macro */
