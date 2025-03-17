@@ -299,7 +299,7 @@ static void getExtraLexemInformationFor(LexemCode lexem, char **readPointerP, in
     if (lexem > MULTI_TOKENS_START) {
         if (isIdentifierLexem(lexem) || lexem == STRING_LITERAL) {
             /* Both are followed by a string and a position */
-            log_trace("LEXEM '%s'", *readPointerP);
+            log_trace("Getting extra lexem information for LEXEM '%s'", *readPointerP);
             *readPointerP = strchr(*readPointerP, '\0') + 1;
             getAndSetOutPositionIfRequested(readPointerP, outPosition);
         } else if (lexem == LINE_TOKEN) {
@@ -1502,6 +1502,7 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
         while (currentInputLexemP < endOfInputLexems) {
             char *lexemStart = currentInputLexemP;
             LexemCode lexem = getLexemCodeAt(&currentInputLexemP);
+            log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
             getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, NULL, NULL, NULL, false);
             lastBufferP = currentBufferP;
             assert(currentInputLexemP>=lexemStart);
@@ -1514,6 +1515,7 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
 
     if (peekLexemCodeAt(currentBodyLexemP) == CPP_MACRO_ARGUMENT) {
         LexemCode lexem = getLexemCodeAt(&currentBodyLexemP);
+        log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
         int value;
         getExtraLexemInformationFor(lexem, &currentBodyLexemP, NULL, &value, NULL, NULL, false);
         currentInputLexemP = actualArgumentsInput[value].begin;
@@ -1521,6 +1523,7 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
     } else {
         currentInputLexemP = currentBodyLexemP;
         LexemCode lexem = getLexemCodeAt(&currentBodyLexemP);
+        log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
         getExtraLexemInformationFor(lexem, &currentBodyLexemP, NULL, NULL, NULL, NULL, false);
         endOfInputLexems = currentBodyLexemP;
     }
@@ -1533,10 +1536,13 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
             Position position;
             /* TODO collation of all lexem pairs */
             int len  = strlen(lastBufferP + LEXEMCODE_SIZE);
+
             LexemCode lexem = getLexemCodeAt(&currentInputLexemP);
             int value;
             char *previousInputLexemP = currentInputLexemP;
             getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, &value, &position, NULL, false);
+            log_trace("Lexem after getExtraLexemInformationFor: lexem='%s', value=%d",
+                      previousInputLexemP, value);
             currentBufferP = lastBufferP + LEXEMCODE_SIZE + len;
             assert(*currentBufferP == 0);
             if (isIdentifierLexem(lexem)) {
