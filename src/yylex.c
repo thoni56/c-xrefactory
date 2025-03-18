@@ -1509,8 +1509,17 @@ static void collate(
 ) {
     char *endOfInputLexems;
 
+    if (*previousLexemP == NULL) {
+        log_warn("Token pasting skipped: Left operand is NULL at collate() entry.");
+        return;
+    }
+
     if (peekLexemCodeAt(*previousLexemP) == CPP_MACRO_ARGUMENT) {
         resolveLeftOperand(buffer, bufferSize, bufferWriteP, previousLexemP, actualArgumentsInput);
+    }
+    if (*previousLexemP == NULL) {
+        log_warn("Token pasting skipped: Left operand is NULL after expansion.");
+        return;
     }
 
     char *currentInputLexemP;
@@ -1526,7 +1535,8 @@ static void collate(
               *previousLexemP ? *previousLexemP + LEXEMCODE_SIZE : "(NULL)",
               currentInputLexemP ? currentInputLexemP : "(NULL)");
 
-    if (*previousLexemP != NULL && isIdentifierLexem(peekLexemCodeAt(*previousLexemP))) {
+    assert(*previousLexemP != NULL);
+    if (isIdentifierLexem(peekLexemCodeAt(*previousLexemP))) {
         Symbol *macroSymbol = findMacroSymbol(*previousLexemP + LEXEMCODE_SIZE);
         bool macroSymbolFound = macroSymbol != NULL;
         if (macroSymbolFound) {
@@ -1537,11 +1547,10 @@ static void collate(
     }
 
 
-    if (*previousLexemP != NULL && currentInputLexemP < endOfInputLexems
-        && isIdentifierLexem(peekLexemCodeAt(*previousLexemP))) {
+    if (currentInputLexemP < endOfInputLexems && isIdentifierLexem(peekLexemCodeAt(*previousLexemP))) {
         LexemCode nextLexem = peekLexemCodeAt(currentInputLexemP);
         if (isIdentifierLexem(nextLexem) || isConstantLexem(nextLexem)) {
-            /* TODO collation of all lexem pairs */
+            /* TODO collation of all types of lexem pairs, not just id/const */
             int len = strlen(*previousLexemP + LEXEMCODE_SIZE);
 
             LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
