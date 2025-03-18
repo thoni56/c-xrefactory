@@ -2507,9 +2507,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #line 1952 "yacc_parser.y"
 
 static void addYaccSymbolReference(Id *id, int usage) {
-    Symbol symbol = makeSymbol(id->name, id->position);
-    symbol.type = TypeYaccSymbol;
-    symbol.storage = StorageDefault;
+    Symbol symbol = makeSymbol(id->name, TypeYaccSymbol, id->position);
     addCxReference(&symbol, id->position, usage, NO_FILE_NUMBER);
 }
 
@@ -2605,7 +2603,7 @@ void makeYaccCompletions(char *string, int len, Position position) {
         }
     }
 }
-#line 2609 "yacc_parser.tab.c"
+#line 2607 "yacc_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4811,7 +4809,7 @@ case 513:
 #line 1943 "yacc_parser.y"
 { endBlock(); }
 break;
-#line 4815 "yacc_parser.tab.c"
+#line 4813 "yacc_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

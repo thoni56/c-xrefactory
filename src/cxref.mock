@@ -56,9 +56,9 @@ Reference *addCxReference(Symbol *symbol, Position pos, Usage usage, int include
     return (Reference *) mock(symbol, symbol_name, position, usage, includedFileNumber);
 }
 
-void addTrivialCxReference(char *name, int symType, int storage, Position pos, Usage usage) {
+void addTrivialCxReference(char *name, Type type, Storage storage, Position pos, Usage usage) {
     Position *position = &pos;
-    mock(name, symType, storage, position, usage);
+    mock(name, type, storage, position, usage);
 }
 
 void olSetCallerPosition(Position pos) {

@@ -21,7 +21,7 @@ extern void olcxPopOnly(void);
 extern void olStackDeleteSymbol(OlcxReferences *refs);
 extern int getFileNumberFromName(char *name);
 extern Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int includedFileNumber);
-extern void addTrivialCxReference (char *name, int symType, int storage,
+extern void addTrivialCxReference (char *name, Type type, Storage storage,
                                    Position position, Usage usage);
 extern void olSetCallerPosition(Position position);
 extern int itIsSymbolToPushOlReferences(ReferenceItem *p, OlcxReferences *rstack,

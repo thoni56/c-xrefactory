@@ -431,8 +431,7 @@ endOfFile:
 /* ********************************* #INCLUDE ********************** */
 
 static Symbol makeIncludeSymbolItem(Position pos) {
-    Symbol symbol = makeSymbol(LINK_NAME_INCLUDE_REFS, pos);
-    symbol.type = TypeCppInclude;
+    Symbol symbol = makeSymbol(LINK_NAME_INCLUDE_REFS, TypeCppInclude, pos);
     return symbol;
 }
 
@@ -821,7 +820,7 @@ protected void processDefineDirective(bool hasArguments) {
 
                 getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, parpos2, NULL, true);
                 if (!ellipsis) {
-                    addTrivialCxReference(getMacroArgument(argumentIndex)->linkName, TypeMacroArg,StorageDefault,
+                    addTrivialCxReference(getMacroArgument(argumentIndex)->linkName, TypeMacroArg, StorageDefault,
                                           position, UsageDefined);
                     handleMacroDefinitionParameterPositions(argumentCount, macroPosition, *parpos1, position,
                                                             *parpos2, false);
@@ -1451,7 +1450,7 @@ static void cxAddCollateReference(char *sym, char *cs, Position position) {
     assert(cs>=sym && cs-sym<TMP_STRING_SIZE);
     sprintf(tempString+(cs-sym), "%c%c%s", LINK_NAME_COLLATE_SYMBOL,
             LINK_NAME_COLLATE_SYMBOL, cs);
-    addTrivialCxReference(tempString, TypeCppCollate,StorageDefault, position, UsageDefined);
+    addTrivialCxReference(tempString, TypeCppCollate, StorageDefault, position, UsageDefined);
 }
 
 

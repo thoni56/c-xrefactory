@@ -1951,9 +1951,7 @@ identifier
 %%
 
 static void addYaccSymbolReference(Id *id, int usage) {
-    Symbol symbol = makeSymbol(id->name, id->position);
-    symbol.type = TypeYaccSymbol;
-    symbol.storage = StorageDefault;
+    Symbol symbol = makeSymbol(id->name, TypeYaccSymbol, id->position);
     addCxReference(&symbol, id->position, usage, NO_FILE_NUMBER);
 }
 

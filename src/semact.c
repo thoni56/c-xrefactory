@@ -272,7 +272,7 @@ void labelReference(Id *id,  Usage usage) {
         strcpy(tempString, id->name);
     }
     assert(strlen(tempString)<TMP_STRING_SIZE-1);
-    addTrivialCxReference(tempString, TypeLabel,StorageDefault, id->position, usage);
+    addTrivialCxReference(tempString, TypeLabel, StorageDefault, id->position, usage);
 }
 
 void generateInternalLabelReference(int counter, int usage) {
@@ -657,7 +657,7 @@ TypeModifier *simpleStructOrUnionSpecifier(Id *typeName, Id *id, Usage usage) {
            ||  typeName->symbol->u.keyword == UNION);
 
     Type type = typeName->symbol->u.keyword == UNION? TypeUnion : TypeStruct;
-    Symbol symbol = makeSymbol(id->name, id->position);
+    Symbol symbol = makeSymbol(id->name, type, id->position);
     symbol.type = type;
     symbol.storage = StorageDefault;
 
@@ -801,11 +801,8 @@ void specializeStructOrUnionDef(Symbol *sd, Symbol *rec) {
 TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
     Symbol symbol, *symbolP;
 
-    symbol = makeSymbol(id->name, id->position);
-    symbol.type = TypeEnum;
-    symbol.storage = StorageDefault;
-
-    if (! symbolTableIsMember(symbolTable, &symbol, NULL, &symbolP)
+    symbol = makeSymbol(id->name, TypeEnum, id->position);
+    if (!symbolTableIsMember(symbolTable, &symbol, NULL, &symbolP)
         || (isMemoryFromPreviousBlock(symbolP) && isDefinitionOrDeclarationUsage(usage))) {
         symbolP = stackMemoryAlloc(sizeof(Symbol));
         *symbolP = symbol;
