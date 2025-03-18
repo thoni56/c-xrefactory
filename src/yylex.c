@@ -566,9 +566,7 @@ static void processInclude2(Position includePosition, char includeType, char *in
 
     sprintf(tmpBuff, "PragmaOnce-%s", includedName);
 
-    symbol = makeSymbol(tmpBuff, tmpBuff, noPosition);
-    symbol.type = TypeMacro;
-    symbol.storage = StorageDefault;
+    symbol = makeMacroSymbol(tmpBuff, noPosition);
 
     if (symbolTableIsMember(symbolTable, &symbol, NULL, NULL))
         return;
@@ -768,9 +766,7 @@ protected void processDefineDirective(bool hasArguments) {
         return;
 
     symbol = ppmAlloc(sizeof(Symbol));
-    *symbol = makeSymbol(NULL, NULL, macroPosition);
-    symbol->type = TypeMacro;
-    symbol->storage = StorageDefault;
+    *symbol = makeMacroSymbol(NULL, macroPosition);
 
     /* TODO: this is the only call to setGlobalFileDepNames() that
        doesn't do it in XX memory, why?  PPM == PreProcessor, but it's
@@ -971,27 +967,19 @@ static void processUndefineDirective(void) {
     testCxrefCompletionId(&lexem, ch, position);
 
     if (isIdentifierLexem(lexem)) {
-        Symbol symbol;
-        Symbol *member;
 
         log_debug(": undef macro %s", ch);
-
-        symbol = makeSymbol(ch, ch, position);
-        symbol.type = TypeMacro;
-        symbol.storage = StorageDefault;
 
         assert(options.mode);
         /* !!!!!!!!!!!!!! tricky, add macro with mbody == NULL !!!!!!!!!! */
         /* this is because of monotonicity for caching, just adding symbol */
+        Symbol *member;
+        Symbol symbol = makeMacroSymbol(ch, position);
         if (symbolTableIsMember(symbolTable, &symbol, NULL, &member)) {
-            Symbol *pp;
             addCxReference(member, position, UsageUndefinedMacro, NO_FILE_NUMBER);
 
-            pp = ppmAlloc(sizeof(Symbol));
-            *pp = makeSymbol(member->name, member->linkName, position);
-            pp->type = TypeMacro;
-            pp->storage = StorageDefault;
-
+            Symbol *pp = ppmAlloc(sizeof(Symbol));
+            *pp = makeMacroSymbol(member->linkName, position);
             addMacroToTabs(pp, member->name);
         }
     }
@@ -1110,10 +1098,7 @@ static void processIfdefDirective(bool isIfdef) {
     if (!isIdentifierLexem(lexem))
         return;
 
-    Symbol symbol = makeSymbol(ch, ch, noPosition);
-    symbol.type = TypeMacro;
-    symbol.storage = StorageDefault;
-
+    Symbol symbol = makeMacroSymbol(ch, noPosition);
     Symbol *member;
     bool isMember = symbolTableIsMember(symbolTable, &symbol, NULL, &member);
     if (isMember && member->u.mbody==NULL)
@@ -1147,7 +1132,7 @@ endOfFile:
 /* ********************************* #IF ************************** */
 
 LexemCode cexp_yylex(void) {
-    int res, mm;
+    int res;
     LexemCode lexem;
     char *ch;
     Symbol *foundMember;
@@ -1179,21 +1164,19 @@ LexemCode cexp_yylex(void) {
         if (!isIdentifierLexem(lexem))
             return 0;
 
-        Symbol symbol = makeSymbol(ch, ch, noPosition);
-        symbol.type = TypeMacro;
-        symbol.storage = StorageDefault;
+        Symbol symbol = makeMacroSymbol(ch, noPosition);
 
         log_debug("(%s)", symbol.name);
 
-        mm = symbolTableIsMember(symbolTable, &symbol, NULL, &foundMember);
-        if (mm && foundMember->u.mbody == NULL)
-            mm = 0;   // undefined macro
+        bool macroSymbolFound = symbolTableIsMember(symbolTable, &symbol, NULL, &foundMember);
+        if (macroSymbolFound && foundMember->u.mbody == NULL)
+            macroSymbolFound = 0;   // undefined macro
         assert(options.mode);
-        if (mm)
+        if (macroSymbolFound)
             addCxReference(&symbol, position, UsageUsed, NO_FILE_NUMBER);
 
         /* following call sets uniyylval */
-        res = cexpTranslateToken(CONSTANT, mm);
+        res = cexpTranslateToken(CONSTANT, macroSymbolFound);
         if (haveParenthesis) {
             lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
@@ -1227,26 +1210,22 @@ static void processIfDirective(void) {
 }
 
 static void processPragmaDirective(void) {
-    LexemCode lexem;
-    char *mname, *fname;
-    Position position;
 
-    lexem = getLexem();
+    LexemCode lexem = getLexem();
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
+    Position position;
     if (lexem == IDENTIFIER && strcmp(currentInput.read, "once")==0) {
-        char tmpBuff[TMP_BUFF_SIZE];
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-        fname = simpleFileName(getFileItemWithFileNumber(position.file)->name);
-        sprintf(tmpBuff, "PragmaOnce-%s", fname);
-        mname = ppmAllocc(strlen(tmpBuff)+1, sizeof(char));
+        char *fileName = simpleFileName(getFileItemWithFileNumber(position.file)->name);
+
+        char tmpBuff[TMP_BUFF_SIZE];
+        sprintf(tmpBuff, "PragmaOnce-%s", fileName);
+        char *mname = ppmAllocc(strlen(tmpBuff)+1, sizeof(char));
         strcpy(mname, tmpBuff);
 
         Symbol *symbol = ppmAlloc(sizeof(Symbol));
-        *symbol = makeSymbol(mname, mname, position);
-        symbol->type = TypeMacro;
-        symbol->storage = StorageDefault;
-
+        *symbol = makeMacroSymbol(mname, position);
         symbolTableAdd(symbolTable, symbol);
     }
     while (lexem != '\n') {
@@ -1437,9 +1416,7 @@ static void expandMacroArgument(LexInput *argumentInput) {
         // 'macroCallExpand' can read new lexbuffer and destroy
         // cInput, so copy it now.
         if (lexem == IDENTIFIER) {
-            Symbol symbol = makeSymbol(nextLexemP, nextLexemP, noPosition);
-            symbol.type = TypeMacro;
-            symbol.storage = StorageDefault;
+            Symbol symbol = makeMacroSymbol(nextLexemP, noPosition);
             Symbol *foundSymbol;
             if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
                 /* it is a macro, provide macro expansion */
@@ -1544,9 +1521,7 @@ static void collate(
               previousLexemP ? previousLexemP + LEXEMCODE_SIZE : "(NULL)",
               currentInputLexemP ? currentInputLexemP : "(NULL)");
     if (previousLexemP != NULL && isIdentifierLexem(peekLexemCodeAt(previousLexemP))) {
-        Symbol symbol = makeSymbol(previousLexemP + LEXEMCODE_SIZE, previousLexemP + LEXEMCODE_SIZE, noPosition);
-        symbol.type = TypeMacro;
-        symbol.storage = StorageDefault;
+        Symbol symbol = makeMacroSymbol(previousLexemP + LEXEMCODE_SIZE, noPosition);
 
         Symbol *foundSymbol;
         if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
@@ -1576,9 +1551,7 @@ static void collate(
             assert(*currentBufferP == 0);
             if (isIdentifierLexem(lexem)) {
                 Symbol *foundSymbol;
-                Symbol symbol = makeSymbol(lexemString, lexemString, noPosition);
-                symbol.type = TypeMacro;
-                symbol.storage = StorageDefault;
+                Symbol symbol = makeMacroSymbol(lexemString, noPosition);
 
                 if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
                     log_trace("Macro found: '%s' (right-hand) -> Should be expanded", lexemString);
@@ -2113,10 +2086,7 @@ static void actionOnBlockMarker(void) {
 }
 
 static Symbol *findMacroSymbol(char *name) {
-    Symbol symbol = makeSymbol(name, name, noPosition);
-    symbol.type = TypeMacro;
-    symbol.storage = StorageDefault;
-
+    Symbol symbol = makeMacroSymbol(name, noPosition);
     Symbol *memberP;
     if (symbolTableIsMember(symbolTable, &symbol, NULL, &memberP))
         return memberP;

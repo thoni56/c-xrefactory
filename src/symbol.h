@@ -59,6 +59,7 @@ extern void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName,
 
 /* Create and return a symbol structure... */
 extern Symbol makeSymbol(char *name, char *linkName, Position pos);
+extern Symbol makeMacroSymbol(char *name, Position pos);
 
 extern void getSymbolCxrefProperties(Symbol *symbol, Visibility *categoryP, Scope *scopeP,
                                      Storage *storageP);

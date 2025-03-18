@@ -23,6 +23,9 @@ static void fillSymbol(Symbol *symbol, char *name, char *linkName, Position pos)
 Symbol makeSymbol(char *name, char *linkName, Position pos) {
     Symbol symbol;
     fillSymbol(&symbol, name, linkName, pos);
+
+Symbol makeMacroSymbol(char *name, Position pos) {
+    Symbol symbol = {.name = name, .linkName = name, .pos = pos, .type = TypeMacro, .storage = StorageDefault};
     return symbol;
 }
 
