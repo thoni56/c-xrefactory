@@ -1459,7 +1459,6 @@ static void collate(
     char **currentBodyLexemP,      // The current lexem being processed (token after ##)
     LexInput *actualArgumentsInput // The argument values for this macro expansion
 ) {
-    char *currentInputLexemP;
     char *endOfInputLexems;
 
     if (peekLexemCodeAt(*previousLexemP) == CPP_MACRO_ARGUMENT) {
@@ -1470,7 +1469,8 @@ static void collate(
 
         int argumentIndex;
         getExtraLexemInformationFor(lexem, previousLexemP, NULL, &argumentIndex, NULL, NULL, false);
-        currentInputLexemP = actualArgumentsInput[argumentIndex].begin;
+
+        char *currentInputLexemP = actualArgumentsInput[argumentIndex].begin;
         endOfInputLexems = actualArgumentsInput[argumentIndex].write;
 
         *previousLexemP = NULL;
@@ -1490,6 +1490,7 @@ static void collate(
         }
     }
 
+    char *currentInputLexemP;
     if (peekLexemCodeAt(*currentBodyLexemP) == CPP_MACRO_ARGUMENT) {
         LexemCode lexem = getLexemCodeAndAdvance(currentBodyLexemP);
         log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
