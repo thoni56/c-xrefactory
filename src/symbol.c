@@ -20,9 +20,11 @@ static void fillSymbol(Symbol *symbol, char *name, char *linkName, Position pos)
     symbol->npointers = 0;
 }
 
-Symbol makeSymbol(char *name, char *linkName, Position pos) {
+Symbol makeSymbol(char *name, Position pos) {
     Symbol symbol;
-    fillSymbol(&symbol, name, linkName, pos);
+    fillSymbol(&symbol, name, name, pos);
+    return symbol;
+}
 
 Symbol makeMacroSymbol(char *name, Position pos) {
     Symbol symbol = {.name = name, .linkName = name, .pos = pos, .type = TypeMacro, .storage = StorageDefault};
@@ -44,7 +46,7 @@ void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, Position po
 Symbol *newSymbol(char *name, char *linkName, Position pos) {
     Symbol *s;
     s = stackMemoryAlloc(sizeof(Symbol));
-    *s = makeSymbol(name, linkName, pos);
+    *s = makeSymbol(name, pos);
     return s;
 }
 

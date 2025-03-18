@@ -49,8 +49,8 @@ Symbol *newSymbolAsLabel(char *name, char *linkName, Position pos, int labelInde
     return (Symbol *)mock(name, linkName, labelIndex);
 }
 
-extern Symbol makeSymbol(char *name, char *linkName, Position pos) {
-    Symbol *symbolP = (Symbol *)mock(name, linkName, &pos);
+extern Symbol makeSymbol(char *name, Position pos) {
+    Symbol *symbolP = (Symbol *)mock(name, &pos);
     Symbol symbol = *symbolP;
     free(symbolP);
     return symbol;

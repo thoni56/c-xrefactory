@@ -352,7 +352,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
 }
 
 void addTrivialCxReference(char *name, int symType, int storage, Position position, Usage usage) {
-    Symbol symbol = makeSymbol(name, name, position);
+    Symbol symbol = makeSymbol(name, position);
     symbol.type = symType;
     symbol.storage = storage;
     addCxReference(&symbol, position, usage, NO_FILE_NUMBER);

@@ -657,7 +657,7 @@ TypeModifier *simpleStructOrUnionSpecifier(Id *typeName, Id *id, Usage usage) {
            ||  typeName->symbol->u.keyword == UNION);
 
     Type type = typeName->symbol->u.keyword == UNION? TypeUnion : TypeStruct;
-    Symbol symbol = makeSymbol(id->name, id->name, id->position);
+    Symbol symbol = makeSymbol(id->name, id->position);
     symbol.type = type;
     symbol.storage = StorageDefault;
 
@@ -801,7 +801,7 @@ void specializeStructOrUnionDef(Symbol *sd, Symbol *rec) {
 TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
     Symbol symbol, *symbolP;
 
-    symbol = makeSymbol(id->name, id->name, id->position);
+    symbol = makeSymbol(id->name, id->position);
     symbol.type = TypeEnum;
     symbol.storage = StorageDefault;
 

@@ -431,7 +431,7 @@ endOfFile:
 /* ********************************* #INCLUDE ********************** */
 
 static Symbol makeIncludeSymbolItem(Position pos) {
-    Symbol symbol = makeSymbol(LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, pos);
+    Symbol symbol = makeSymbol(LINK_NAME_INCLUDE_REFS, pos);
     symbol.type = TypeCppInclude;
     return symbol;
 }
