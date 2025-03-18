@@ -1448,6 +1448,54 @@ static void cxAddCollateReference(char *sym, char *cs, Position position) {
     addTrivialCxReference(tempString, TypeCppCollate, StorageDefault, position, UsageDefined);
 }
 
+static void resolveLeftOperand(char *buffer, int *bufferSize, char **currentBufferP, char **previousLexemP,
+                               LexInput *actualArgumentsInput) {
+    char *endOfInputLexems;
+    *currentBufferP = *previousLexemP;
+
+    LexemCode lexem = getLexemCodeAndAdvance(previousLexemP);
+
+    int argumentIndex;
+    getExtraLexemInformationFor(lexem, previousLexemP, NULL, &argumentIndex, NULL, NULL, false);
+
+    char *currentInputLexemP = actualArgumentsInput[argumentIndex].begin;
+    endOfInputLexems = actualArgumentsInput[argumentIndex].write;
+
+    *previousLexemP = NULL;
+    while (currentInputLexemP < endOfInputLexems) {
+        char *lexemStart = currentInputLexemP;
+        LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
+        log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
+        getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, NULL, NULL, NULL, false);
+
+        *previousLexemP = *currentBufferP;
+        assert(currentInputLexemP >= lexemStart);
+
+        int lexemLength = currentInputLexemP - lexemStart;
+        memcpy(*currentBufferP, lexemStart, lexemLength);
+        *currentBufferP += lexemLength;
+        *bufferSize = expandPreprocessorBufferIfOverflow(*currentBufferP, buffer, *bufferSize);
+    }
+}
+
+static void resolveMacroArgumentAsRightOperand(char **currentBodyLexemP, LexInput *actualArgumentsInput,
+                                               char **endOfInputLexems, char **currentInputLexemP) {
+    LexemCode lexem = getLexemCodeAndAdvance(currentBodyLexemP);
+    log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
+    int argumentIndex;
+    getExtraLexemInformationFor(lexem, currentBodyLexemP, NULL, &argumentIndex, NULL, NULL, false);
+    *currentInputLexemP = actualArgumentsInput[argumentIndex].begin;
+    *endOfInputLexems = actualArgumentsInput[argumentIndex].write;
+}
+
+static void resolveRegularRightOperand(char **currentBodyLexemP, char **endOfInputLexems,
+                                       char **currentInputLexemP) {
+    *currentInputLexemP = *currentBodyLexemP;
+    LexemCode lexem = getLexemCodeAndAdvance(currentBodyLexemP);
+    log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
+    getExtraLexemInformationFor(lexem, currentBodyLexemP, NULL, NULL, NULL, NULL, false);
+    *endOfInputLexems = *currentBodyLexemP;
+}
 
 /* **************************************************************** */
 
@@ -1455,55 +1503,22 @@ static void collate(
     char *buffer,                  // The allocated buffer for storing macro expansions
     int *bufferSize,               // Size of the buffer, which may need expanding
     char **previousLexemP,         // Previous lexem in the buffer (token before ##)
-    char **currentBufferP,         // Current buffer write position (where we are writing)
+    char **bufferWriteP,           // Current buffer write position (where we are writing)
     char **currentBodyLexemP,      // The current lexem being processed (token after ##)
     LexInput *actualArgumentsInput // The argument values for this macro expansion
 ) {
     char *endOfInputLexems;
 
     if (peekLexemCodeAt(*previousLexemP) == CPP_MACRO_ARGUMENT) {
-        *currentBufferP = *previousLexemP;
-
-        LexemCode lexem = getLexemCodeAndAdvance(previousLexemP);
-        assert(lexem==CPP_MACRO_ARGUMENT);
-
-        int argumentIndex;
-        getExtraLexemInformationFor(lexem, previousLexemP, NULL, &argumentIndex, NULL, NULL, false);
-
-        char *currentInputLexemP = actualArgumentsInput[argumentIndex].begin;
-        endOfInputLexems = actualArgumentsInput[argumentIndex].write;
-
-        *previousLexemP = NULL;
-        while (currentInputLexemP < endOfInputLexems) {
-            char *lexemStart = currentInputLexemP;
-            LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
-            log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
-            getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, NULL, NULL, NULL, false);
-
-            *previousLexemP = *currentBufferP;
-            assert(currentInputLexemP>=lexemStart);
-
-            int lexemLength = currentInputLexemP-lexemStart;
-            memcpy(*currentBufferP, lexemStart, lexemLength);
-            *currentBufferP += lexemLength;
-            *bufferSize = expandPreprocessorBufferIfOverflow(*currentBufferP, buffer, *bufferSize);
-        }
+        resolveLeftOperand(buffer, bufferSize, bufferWriteP, previousLexemP, actualArgumentsInput);
     }
 
     char *currentInputLexemP;
     if (peekLexemCodeAt(*currentBodyLexemP) == CPP_MACRO_ARGUMENT) {
-        LexemCode lexem = getLexemCodeAndAdvance(currentBodyLexemP);
-        log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
-        int argumentIndex;
-        getExtraLexemInformationFor(lexem, currentBodyLexemP, NULL, &argumentIndex, NULL, NULL, false);
-        currentInputLexemP = actualArgumentsInput[argumentIndex].begin;
-        endOfInputLexems = actualArgumentsInput[argumentIndex].write;
+        resolveMacroArgumentAsRightOperand(currentBodyLexemP, actualArgumentsInput, &endOfInputLexems,
+                                           &currentInputLexemP);
     } else {
-        currentInputLexemP = *currentBodyLexemP;
-        LexemCode lexem = getLexemCodeAndAdvance(currentBodyLexemP);
-        log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
-        getExtraLexemInformationFor(lexem, currentBodyLexemP, NULL, NULL, NULL, NULL, false);
-        endOfInputLexems = *currentBodyLexemP;
+        resolveRegularRightOperand(currentBodyLexemP, &endOfInputLexems, &currentInputLexemP);
     }
 
     /* Now collate left and right hand tokens */
@@ -1538,8 +1553,8 @@ static void collate(
             log_trace("Lexem after getExtraLexemInformationFor: lexem='%s', value=%d",
                       lexemString, value);
 
-            *currentBufferP = *previousLexemP + LEXEMCODE_SIZE + len;
-            assert(**currentBufferP == 0);
+            *bufferWriteP = *previousLexemP + LEXEMCODE_SIZE + len;
+            assert(**bufferWriteP == 0);
 
             if (isIdentifierLexem(lexem)) {
                 Symbol *macroSymbol = findMacroSymbol(lexemString);
@@ -1547,42 +1562,42 @@ static void collate(
 
                 if (macroSymbolFound) {
                     log_trace("Macro found: '%s' (right-hand) -> Should be expanded", lexemString);
+                    //expandMacroCall(); /* TODO: Here we should expand the macro */
                 } else {
                     log_trace("Identifier '%s' (right-hand) is NOT a macro", lexemString);
                 }
-                //expandMacroCall(); /* TODO: Here we should expand the macro */
 
-                strcpy(*currentBufferP, lexemString);
+                strcpy(*bufferWriteP, lexemString);
 
                 position.col--;
                 assert(position.col >= 0);
-                cxAddCollateReference(*previousLexemP + LEXEMCODE_SIZE, *currentBufferP, position);
+                cxAddCollateReference(*previousLexemP + LEXEMCODE_SIZE, *bufferWriteP, position);
                 position.col++;
             } else /* isConstantLexem() */ {
-                position = peekLexemPositionAt(*currentBufferP + 1); /* new identifier position */
-                sprintf(*currentBufferP, "%d", value);
-                cxAddCollateReference(*previousLexemP + LEXEMCODE_SIZE, *currentBufferP, position);
+                position = peekLexemPositionAt(*bufferWriteP + 1); /* new identifier position */
+                sprintf(*bufferWriteP, "%d", value);
+                cxAddCollateReference(*previousLexemP + LEXEMCODE_SIZE, *bufferWriteP, position);
             }
-            *currentBufferP += strlen(*currentBufferP);
-            assert(**currentBufferP == 0);
-            (*currentBufferP)++;
-            putLexemPositionAt(position, currentBufferP);
+            *bufferWriteP += strlen(*bufferWriteP);
+            assert(**bufferWriteP == 0);
+            (*bufferWriteP)++;
+            putLexemPositionAt(position, bufferWriteP);
         }
     }
-    *bufferSize = expandPreprocessorBufferIfOverflow(*currentBufferP, buffer, *bufferSize);
+    *bufferSize = expandPreprocessorBufferIfOverflow(*bufferWriteP, buffer, *bufferSize);
 
     while (currentInputLexemP < endOfInputLexems) {
         char *lexemStart   = currentInputLexemP;
         LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
         getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, NULL, NULL, NULL, false);
 
-        *previousLexemP = *currentBufferP;
+        *previousLexemP = *bufferWriteP;
         assert(currentInputLexemP >= lexemStart); /* Overflow? */
 
         int lexemLength = currentInputLexemP - lexemStart;
-        memcpy(*currentBufferP, lexemStart, lexemLength);
-        *currentBufferP += lexemLength;
-        *bufferSize = expandPreprocessorBufferIfOverflow(*currentBufferP, buffer, *bufferSize);
+        memcpy(*bufferWriteP, lexemStart, lexemLength);
+        *bufferWriteP += lexemLength;
+        *bufferSize = expandPreprocessorBufferIfOverflow(*bufferWriteP, buffer, *bufferSize);
     }
 }
 
