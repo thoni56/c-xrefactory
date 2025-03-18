@@ -2506,11 +2506,11 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
 #line 1952 "yacc_parser.y"
 
-static void addYaccSymbolReference(Id *name, int usage) {
-    Symbol symbol = makeSymbol(name->name, name->name, name->position);
+static void addYaccSymbolReference(Id *id, int usage) {
+    Symbol symbol = makeSymbol(id->name, id->name, id->position);
     symbol.type = TypeYaccSymbol;
     symbol.storage = StorageDefault;
-    addCxReference(&symbol, name->position, usage, NO_FILE_NUMBER);
+    addCxReference(&symbol, id->position, usage, NO_FILE_NUMBER);
 }
 
 static void addRuleLocalVariable(Id *name, int order) {
