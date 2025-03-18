@@ -2112,6 +2112,18 @@ static void actionOnBlockMarker(void) {
     }
 }
 
+static Symbol *findMacroSymbol(char *name) {
+    Symbol symbol = makeSymbol(name, name, noPosition);
+    symbol.type = TypeMacro;
+    symbol.storage = StorageDefault;
+
+    Symbol *memberP;
+    if (symbolTableIsMember(symbolTable, &symbol, NULL, &memberP))
+        return memberP;
+    else
+        return NULL;
+}
+
 LexemCode yylex(void) {
     LexemCode lexem;
     char *previousLexem;
@@ -2149,11 +2161,9 @@ LexemCode yylex(void) {
         goto finish;
     }
     if (lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND) {
-        char *id;
-        Position position;
-        Symbol *memberP;
 
-        id = yytext = currentInput.read;
+        char *id = yytext = currentInput.read;
+        Position position;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                     macroStackIndex == 0);
         assert(options.mode);
@@ -2162,16 +2172,11 @@ LexemCode yylex(void) {
             testCxrefCompletionId(&lexem, yytext, position);
         }
         log_trace("id '%s' position %d, %d, %d", yytext, position.file, position.line, position.col);
-        Symbol symbol = makeSymbol(yytext, yytext, noPosition);
-        symbol.type = TypeMacro;
-        symbol.storage = StorageDefault;
 
-        if (lexem!=IDENT_NO_CPP_EXPAND && symbolTableIsMember(symbolTable, &symbol, NULL, &memberP)) {
-            // following is because the macro check can read new lexBuf,
-            // so id would be destroyed
-            //&assert(strcmp(id,memberP->name)==0);
-            id = memberP->name;
-            if (expandMacroCall(memberP, position))
+        Symbol *foundMacroSymbol = findMacroSymbol(yytext);
+        if (lexem != IDENT_NO_CPP_EXPAND && foundMacroSymbol != NULL) {
+            id = foundMacroSymbol->name;
+            if (expandMacroCall(foundMacroSymbol, position))
                 goto nextYylex;
         }
 
