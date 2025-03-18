@@ -72,7 +72,7 @@ extern Position getLexemPosition(LexemBuffer *lb);
 /* TODO: These should be replaced by functions only taking a LexemBuffer... */
 
 /* Reads where a readPointer points and advances it */
-extern LexemCode getLexemCodeAt(char **readPointerP);
+extern LexemCode getLexemCodeAndAdvance(char **readPointerP);
 extern int getLexemIntAt(char **readPointerP);
 extern Position getLexemPositionAt(char **readPointerP);
 

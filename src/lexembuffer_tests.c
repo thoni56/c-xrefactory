@@ -111,7 +111,7 @@ Ensure(LexemBuffer, can_put_and_get_lines) {
     putLexemLines(&lb, 13); // A LexemCode and a LexemInt
     pointer_after_put = lb.write;
 
-    assert_that(getLexemCodeAt(&lb.read), is_equal_to(LINE_TOKEN));
+    assert_that(getLexemCodeAndAdvance(&lb.read), is_equal_to(LINE_TOKEN));
     assert_that(getLexemIntAt(&lb.read), is_equal_to(13));
     assert_that(lb.read, is_equal_to(pointer_after_put));
 }

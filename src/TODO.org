@@ -71,6 +71,10 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 ** TODO A "-p" should first look at the path of the "project name" to see if there is a .c-xrefrc there
 ** TODO Do we even need the db? Probably, for very large projects it's too slow to always generate
 ** DONE Function to lookup the closest .c-xrefrc and potentially use its directory path as project name
+* TODO Still problems with UTF-8 positioning
+  Example: try to rename something in lexer_tests below the multi-byte strings.
+  We should probably use character positions as the interface and adjusting indices into the
+  buffer as needed, converting between the two in the communication.
 * TRY to make LexemBuffer interface just take LexemBuffer
 ** DOING Unify LexInput with LexemBuffer so we can get rid of put/get LexemAt() functions
 ** DONE to use LexemBuffer as argument to all putLexXXX() functions except in yylex.c
@@ -251,10 +255,6 @@ There are both "-opt=value" and "-opt value" format options
   "encoding-adjustments" by replacing multi-byte characters with a space, presumably to
   handle the extra offset since Emacs has *character* based positions and since Emacs 23
   defaults to UTF-8 as buffer coding.
-
-  We should remove the current handling and replace it with support for only UTF-8,
-  probably by using character positions as the interface and adjusting indices into the
-  buffer as needed, converting between the two in the communication.
 * DONE Cannot mock structs as arguments like in symbol.mock
 Yes we can! By converting it to a pointer in the mock function
 * DONE Rename vApplClass - but to what? what is it?

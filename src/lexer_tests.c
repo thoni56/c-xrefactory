@@ -43,7 +43,7 @@ Ensure(Lexer, can_scan_simple_id) {
     initCharacterBufferFromString(&characterBuffer, inputString);
 
     assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
-    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(IDENTIFIER));
+    assert_that(getLexemCodeAndAdvance(&lexemPointer), is_equal_to(IDENTIFIER));
 }
 
 Ensure(Lexer, can_scan_an_integer) {
@@ -53,7 +53,7 @@ Ensure(Lexer, can_scan_an_integer) {
     initCharacterBufferFromString(&characterBuffer, inputString);
 
     assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
-    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(CONSTANT));
+    assert_that(getLexemCodeAndAdvance(&lexemPointer), is_equal_to(CONSTANT));
 }
 
 Ensure(Lexer, can_scan_a_long_integer) {
@@ -63,7 +63,7 @@ Ensure(Lexer, can_scan_a_long_integer) {
     initCharacterBufferFromString(&characterBuffer, inputString);
 
     assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
-    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(LONG_CONSTANT));
+    assert_that(getLexemCodeAndAdvance(&lexemPointer), is_equal_to(LONG_CONSTANT));
 }
 
 Ensure(Lexer, can_scan_a_floating_point_number) {
@@ -73,7 +73,7 @@ Ensure(Lexer, can_scan_a_floating_point_number) {
     initCharacterBufferFromString(&characterBuffer, inputString);
 
     assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
-    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(DOUBLE_CONSTANT));
+    assert_that(getLexemCodeAndAdvance(&lexemPointer), is_equal_to(DOUBLE_CONSTANT));
 }
 
 Ensure(Lexer, can_scan_include_next) {
@@ -83,11 +83,11 @@ Ensure(Lexer, can_scan_include_next) {
     initCharacterBufferFromString(&characterBuffer, inputString);
 
     assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
-    getLexemCodeAt(&lexemPointer);
+    getLexemCodeAndAdvance(&lexemPointer);
     getLexemPositionAt(&lexemPointer);
-    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(CPP_INCLUDE_NEXT));
+    assert_that(getLexemCodeAndAdvance(&lexemPointer), is_equal_to(CPP_INCLUDE_NEXT));
     getLexemPositionAt(&lexemPointer);
-    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(STRING_LITERAL));
+    assert_that(getLexemCodeAndAdvance(&lexemPointer), is_equal_to(STRING_LITERAL));
 }
 
 Ensure(Lexer, can_scan_prefixed_string) {
@@ -97,7 +97,7 @@ Ensure(Lexer, can_scan_prefixed_string) {
     initCharacterBufferFromString(&characterBuffer, inputString);
 
     assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
-    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(STRING_LITERAL));
+    assert_that(getLexemCodeAndAdvance(&lexemPointer), is_equal_to(STRING_LITERAL));
 }
 
 Ensure(Lexer, can_scan_u8_string) {
@@ -107,7 +107,7 @@ Ensure(Lexer, can_scan_u8_string) {
     initCharacterBufferFromString(&characterBuffer, inputString);
 
     assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
-    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(STRING_LITERAL));
+    assert_that(getLexemCodeAndAdvance(&lexemPointer), is_equal_to(STRING_LITERAL));
 }
 
 Ensure(Lexer, will_not_misinterpret_identifier_starting_with_u8) {
@@ -117,5 +117,5 @@ Ensure(Lexer, will_not_misinterpret_identifier_starting_with_u8) {
     initCharacterBufferFromString(&characterBuffer, inputString);
 
     assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
-    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(IDENTIFIER));
+    assert_that(getLexemCodeAndAdvance(&lexemPointer), is_equal_to(IDENTIFIER));
 }

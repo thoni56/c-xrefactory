@@ -367,7 +367,7 @@ static LexemCode getLexemAndSavePointerToPrevious(char **previousLexemP) {
     }
     if (previousLexemP != NULL)
         *previousLexemP = currentInput.read;
-    lexem = getLexemCodeAt(&currentInput.read);
+    lexem = getLexemCodeAndAdvance(&currentInput.read);
     if (options.lexemTrace)
         printf("LEXEM read: %s\n", lexemEnumNames[lexem]);
     log_trace("LEXEM read: %s", lexemEnumNames[lexem]);
@@ -1498,7 +1498,7 @@ static void collate(
 
     if (peekLexemCodeAt(lastBufferP) == CPP_MACRO_ARGUMENT) {
         currentBufferP = lastBufferP;
-        LexemCode lexem = getLexemCodeAt(&lastBufferP);
+        LexemCode lexem = getLexemCodeAndAdvance(&lastBufferP);
         int argumentIndex;
         assert(lexem==CPP_MACRO_ARGUMENT);
         getExtraLexemInformationFor(lexem, &lastBufferP, NULL, &argumentIndex, NULL, NULL, false);
@@ -1507,7 +1507,7 @@ static void collate(
         lastBufferP = NULL;
         while (currentInputLexemP < endOfInputLexems) {
             char *lexemStart = currentInputLexemP;
-            LexemCode lexem = getLexemCodeAt(&currentInputLexemP);
+            LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
             log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
             getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, NULL, NULL, NULL, false);
             lastBufferP = currentBufferP;
@@ -1520,7 +1520,7 @@ static void collate(
     }
 
     if (peekLexemCodeAt(currentBodyLexemP) == CPP_MACRO_ARGUMENT) {
-        LexemCode lexem = getLexemCodeAt(&currentBodyLexemP);
+        LexemCode lexem = getLexemCodeAndAdvance(&currentBodyLexemP);
         log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
         int value;
         getExtraLexemInformationFor(lexem, &currentBodyLexemP, NULL, &value, NULL, NULL, false);
@@ -1528,7 +1528,7 @@ static void collate(
         endOfInputLexems = actualArgumentsInput[value].write;
     } else {
         currentInputLexemP = currentBodyLexemP;
-        LexemCode lexem = getLexemCodeAt(&currentBodyLexemP);
+        LexemCode lexem = getLexemCodeAndAdvance(&currentBodyLexemP);
         log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
         getExtraLexemInformationFor(lexem, &currentBodyLexemP, NULL, NULL, NULL, NULL, false);
         endOfInputLexems = currentBodyLexemP;
@@ -1560,7 +1560,7 @@ static void collate(
             /* TODO collation of all lexem pairs */
             int len  = strlen(lastBufferP + LEXEMCODE_SIZE);
 
-            LexemCode lexem = getLexemCodeAt(&currentInputLexemP);
+            LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
             int value;
             char *previousInputLexemP = currentInputLexemP;
             getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, &value, &position, NULL, false);
@@ -1603,7 +1603,7 @@ static void collate(
     bufferSize = expandPreprocessorBufferIfOverflow(currentBufferP, buffer, bufferSize);
     while (currentInputLexemP < endOfInputLexems) {
         char *lexemStart   = currentInputLexemP;
-        LexemCode lexem = getLexemCodeAt(&currentInputLexemP);
+        LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
         getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, NULL, NULL, NULL, false);
         lastBufferP = currentBufferP;
         assert(currentInputLexemP >= lexemStart);
@@ -1627,7 +1627,7 @@ static void macroArgumentsToString(char *res, LexInput *lexInput) {
     *bcc = 0;
     cc = lexInput->begin;
     while (cc < lexInput->write) {
-        LexemCode lexem = getLexemCodeAt(&cc);
+        LexemCode lexem = getLexemCodeAndAdvance(&cc);
         lcc = cc;
         getExtraLexemInformationFor(lexem, &cc, NULL, &value, NULL, NULL, false);
         if (isIdentifierLexem(lexem)) {
@@ -1662,7 +1662,7 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
         LexemCode    lexem;
 
         currentLexemStart = currentLexemP;
-        lexem = getLexemCodeAt(&currentLexemP);
+        lexem = getLexemCodeAndAdvance(&currentLexemP);
         getExtraLexemInformationFor(lexem, &currentLexemP, NULL, &value, &position, NULL, false);
         if (lexem == CPP_MACRO_ARGUMENT) {
             int len = actualArgumentsInput[value].write - actualArgumentsInput[value].begin;
@@ -1671,7 +1671,7 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
             writePointer += len;
         } else if (lexem == '#' && currentLexemP < endOfLexems
                    && peekLexemCodeAt(currentLexemP) == CPP_MACRO_ARGUMENT) {
-            lexem = getLexemCodeAt(&currentLexemP);
+            lexem = getLexemCodeAndAdvance(&currentLexemP);
             assert(lexem == CPP_MACRO_ARGUMENT);
             getExtraLexemInformationFor(lexem, &currentLexemP, NULL, &value, NULL, NULL, false);
             putLexemCodeAt(STRING_LITERAL, &writePointer);
@@ -1723,7 +1723,7 @@ static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBo
     while (currentBodyLexemP < endOfBodyLexems) {
         char *lexemStart   = currentBodyLexemP;
 
-        LexemCode lexem = getLexemCodeAt(&currentBodyLexemP);
+        LexemCode lexem = getLexemCodeAndAdvance(&currentBodyLexemP);
         getExtraLexemInformationFor(lexem, &currentBodyLexemP, NULL, NULL, NULL, NULL, false);
 
         /* first make ## collations, if any */
@@ -1987,7 +1987,7 @@ void dumpLexemBuffer(LexemBuffer *lb) {
     log_debug("lexbufdump [start] ");
     cc = lb->read;
     while (cc < (char *)getLexemStreamWrite(lb)) {
-        lexem = getLexemCodeAt(&cc);
+        lexem = getLexemCodeAndAdvance(&cc);
         if (lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND) {
             log_debug("%s ",cc);
         } else if (lexem==IDENT_TO_COMPLETE) {
@@ -2269,7 +2269,7 @@ void yylexMemoryStatistics(void) {
 void decodeLexems(char *lexems, int count) {
     char *lexemP = lexems;
     for (int i=0; i<count; i++) {
-        LexemCode lexem = getLexemCodeAt(&lexemP);
+        LexemCode lexem = getLexemCodeAndAdvance(&lexemP);
         printf("%s\n", lexemEnumNames[lexem]);
     }
 }

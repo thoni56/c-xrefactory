@@ -55,7 +55,7 @@ static int peekLexShort(char **readPointerP) {
     return first + 256*second;
 }
 
-LexemCode getLexemCodeAt(char **readPointerP) {
+LexemCode getLexemCodeAndAdvance(char **readPointerP) {
     return (LexemCode)getLexShortAndAdvance(readPointerP);
 }
 
