@@ -1481,37 +1481,41 @@ static void cxAddCollateReference(char *sym, char *cs, Position position) {
 /* **************************************************************** */
 
 static void collate(
-    char **_lastBufferP,           // [1] Previous lexem in the buffer (token before ##)
-    char **_currentBufferP,        // [2] Current buffer write position (where we are writing)
-    char *buffer,                  // [3] The allocated buffer for storing macro expansions
-    int *_bufferSize,              // [4] Size of the buffer, which may need expanding
-    char **_currentBodyLexemP,     // [5] The current lexem being processed (token after ##)
-    LexInput *actualArgumentsInput // [6] The argument values for this macro expansion
+    char *buffer,                  // The allocated buffer for storing macro expansions
+    int *_bufferSize,              // Size of the buffer, which may need expanding
+    char **_previousLexemP,        // Previous lexem in the buffer (token before ##)
+    char **_currentBufferP,        // Current buffer write position (where we are writing)
+    char **_currentBodyLexemP,     // The current lexem being processed (token after ##)
+    LexInput *actualArgumentsInput // The argument values for this macro expansion
 ) {
-    char *lastBufferP,*currentBufferP,*currentInputLexemP,*endOfInputLexems,*currentBodyLexemP;
-    int bufferSize;
+    char *currentBodyLexemP = *_currentBodyLexemP;
+    char *previousLexemP = *_previousLexemP;
+    char *currentBufferP = *_currentBufferP;
+    int bufferSize = *_bufferSize;
 
-    currentBodyLexemP = *_currentBodyLexemP;
-    lastBufferP = *_lastBufferP;
-    currentBufferP = *_currentBufferP;
-    bufferSize = *_bufferSize;
+    char *currentInputLexemP, *endOfInputLexems;
 
-    if (peekLexemCodeAt(lastBufferP) == CPP_MACRO_ARGUMENT) {
-        currentBufferP = lastBufferP;
-        LexemCode lexem = getLexemCodeAndAdvance(&lastBufferP);
-        int argumentIndex;
+    if (peekLexemCodeAt(previousLexemP) == CPP_MACRO_ARGUMENT) {
+        currentBufferP = previousLexemP;
+
+        LexemCode lexem = getLexemCodeAndAdvance(&previousLexemP);
         assert(lexem==CPP_MACRO_ARGUMENT);
-        getExtraLexemInformationFor(lexem, &lastBufferP, NULL, &argumentIndex, NULL, NULL, false);
+
+        int argumentIndex;
+        getExtraLexemInformationFor(lexem, &previousLexemP, NULL, &argumentIndex, NULL, NULL, false);
         currentInputLexemP = actualArgumentsInput[argumentIndex].begin;
         endOfInputLexems = actualArgumentsInput[argumentIndex].write;
-        lastBufferP = NULL;
+
+        previousLexemP = NULL;
         while (currentInputLexemP < endOfInputLexems) {
             char *lexemStart = currentInputLexemP;
             LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
             log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
             getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, NULL, NULL, NULL, false);
-            lastBufferP = currentBufferP;
+
+            previousLexemP = currentBufferP;
             assert(currentInputLexemP>=lexemStart);
+
             int lexemLength = currentInputLexemP-lexemStart;
             memcpy(currentBufferP, lexemStart, lexemLength);
             currentBufferP += lexemLength;
@@ -1537,62 +1541,62 @@ static void collate(
     /* now collate *lbcc and *cc */
     // berk, do not pre-compute, lbcc can be NULL!!!!
     log_trace("Before token pasting: lastBufferP='%s', currentInputLexemP='%s'",
-              lastBufferP ? lastBufferP + LEXEMCODE_SIZE : "(NULL)",
+              previousLexemP ? previousLexemP + LEXEMCODE_SIZE : "(NULL)",
               currentInputLexemP ? currentInputLexemP : "(NULL)");
-    if (lastBufferP != NULL && isIdentifierLexem(peekLexemCodeAt(lastBufferP))) {
-        Symbol *foundSymbol;
-        Symbol symbol = makeSymbol(lastBufferP + LEXEMCODE_SIZE, lastBufferP + LEXEMCODE_SIZE, noPosition);
+    if (previousLexemP != NULL && isIdentifierLexem(peekLexemCodeAt(previousLexemP))) {
+        Symbol symbol = makeSymbol(previousLexemP + LEXEMCODE_SIZE, previousLexemP + LEXEMCODE_SIZE, noPosition);
         symbol.type = TypeMacro;
         symbol.storage = StorageDefault;
 
+        Symbol *foundSymbol;
         if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
-            log_trace("Macro found: '%s' (left-hand) -> Should be expanded", lastBufferP + LEXEMCODE_SIZE);
+            log_trace("Macro found: '%s' (left-hand) -> Should be expanded", previousLexemP + LEXEMCODE_SIZE);
         } else {
-            log_trace("Identifier '%s' (left-hand) is NOT a macro", lastBufferP + LEXEMCODE_SIZE);
+            log_trace("Identifier '%s' (left-hand) is NOT a macro", previousLexemP + LEXEMCODE_SIZE);
         }
     }
 
 
-    if (lastBufferP != NULL && currentInputLexemP < endOfInputLexems && isIdentifierLexem(peekLexemCodeAt(lastBufferP))) {
+    if (previousLexemP != NULL && currentInputLexemP < endOfInputLexems && isIdentifierLexem(peekLexemCodeAt(previousLexemP))) {
         LexemCode nextLexem = peekLexemCodeAt(currentInputLexemP);
         if (isIdentifierLexem(nextLexem) || isConstantLexem(nextLexem)) {
             Position position;
             /* TODO collation of all lexem pairs */
-            int len  = strlen(lastBufferP + LEXEMCODE_SIZE);
+            int len = strlen(previousLexemP + LEXEMCODE_SIZE);
 
             LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
+            char *lexemString = currentInputLexemP;
+
             int value;
-            char *previousInputLexemP = currentInputLexemP;
             getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, &value, &position, NULL, false);
             log_trace("Lexem after getExtraLexemInformationFor: lexem='%s', value=%d",
-                      previousInputLexemP, value);
-            currentBufferP = lastBufferP + LEXEMCODE_SIZE + len;
+                      lexemString, value);
+
+            currentBufferP = previousLexemP + LEXEMCODE_SIZE + len;
             assert(*currentBufferP == 0);
             if (isIdentifierLexem(lexem)) {
                 Symbol *foundSymbol;
-                Symbol symbol = makeSymbol(previousInputLexemP, previousInputLexemP, noPosition);
+                Symbol symbol = makeSymbol(lexemString, lexemString, noPosition);
                 symbol.type = TypeMacro;
                 symbol.storage = StorageDefault;
 
                 if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
-                    log_trace("Macro found: '%s' (right-hand) -> Should be expanded", previousInputLexemP);
+                    log_trace("Macro found: '%s' (right-hand) -> Should be expanded", lexemString);
                 } else {
-                    log_trace("Identifier '%s' (right-hand) is NOT a macro", previousInputLexemP);
+                    log_trace("Identifier '%s' (right-hand) is NOT a macro", lexemString);
                 }
-                //expandMacroCall(); /* TODO: Here we should find out if the identifier is a macro and if so expand it */
-                /* TODO: WTF Here was a out-commented call to
-                 * NextLexPosition(), maybe the following "hack"
-                 * replaced that macro */
-                strcpy(currentBufferP, previousInputLexemP);
-                // the following is a hack as # is part of ## symbols
+                //expandMacroCall(); /* TODO: Here we should expand the macro */
+
+                strcpy(currentBufferP, lexemString);
+
                 position.col--;
                 assert(position.col >= 0);
-                cxAddCollateReference(lastBufferP + LEXEMCODE_SIZE, currentBufferP, position);
+                cxAddCollateReference(previousLexemP + LEXEMCODE_SIZE, currentBufferP, position);
                 position.col++;
             } else /* isConstantLexem() */ {
                 position = peekLexemPositionAt(currentBufferP + 1); /* new identifier position */
                 sprintf(currentBufferP, "%d", value);
-                cxAddCollateReference(lastBufferP + LEXEMCODE_SIZE, currentBufferP, position);
+                cxAddCollateReference(previousLexemP + LEXEMCODE_SIZE, currentBufferP, position);
             }
             currentBufferP += strlen(currentBufferP);
             assert(*currentBufferP == 0);
@@ -1605,15 +1609,17 @@ static void collate(
         char *lexemStart   = currentInputLexemP;
         LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
         getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, NULL, NULL, NULL, false);
-        lastBufferP = currentBufferP;
-        assert(currentInputLexemP >= lexemStart);
+
+        previousLexemP = currentBufferP;
+        assert(currentInputLexemP >= lexemStart); /* Overflow? */
+
         int lexemLength = currentInputLexemP - lexemStart;
         memcpy(currentBufferP, lexemStart, lexemLength);
         currentBufferP += lexemLength;
         bufferSize = expandPreprocessorBufferIfOverflow(currentBufferP, buffer, bufferSize);
     }
 
-    *_lastBufferP  = lastBufferP;
+    *_previousLexemP  = previousLexemP;
     *_currentBufferP   = currentBufferP;
     *_currentBodyLexemP   = currentBodyLexemP;
     *_bufferSize = bufferSize;
@@ -1728,7 +1734,7 @@ static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBo
 
         /* first make ## collations, if any */
         if (lexem == CPP_COLLATION && lastBufferP != NULL && currentBodyLexemP < endOfBodyLexems) {
-            collate(&lastBufferP, &currentBufferP, buffer, &bufferSize, &currentBodyLexemP, actualArgumentsInput);
+            collate(buffer, &bufferSize, &lastBufferP, &currentBufferP, &currentBodyLexemP, actualArgumentsInput);
         } else {
             lastBufferP = currentBufferP;
             assert(currentBodyLexemP >= lexemStart);
