@@ -1480,8 +1480,14 @@ static void cxAddCollateReference(char *sym, char *cs, Position position) {
 
 /* **************************************************************** */
 
-static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, int *_bufferSize,
-                    char **_currentBodyLexemP, LexInput *actualArgumentsInput) {
+static void collate(
+    char **_lastBufferP,           // [1] Previous lexem in the buffer (token before ##)
+    char **_currentBufferP,        // [2] Current buffer write position (where we are writing)
+    char *buffer,                  // [3] The allocated buffer for storing macro expansions
+    int *_bufferSize,              // [4] Size of the buffer, which may need expanding
+    char **_currentBodyLexemP,     // [5] The current lexem being processed (token after ##)
+    LexInput *actualArgumentsInput // [6] The argument values for this macro expansion
+) {
     char *lastBufferP,*currentBufferP,*currentInputLexemP,*endOfInputLexems,*currentBodyLexemP;
     int bufferSize;
 
@@ -1707,15 +1713,16 @@ static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBo
 
     char *currentBodyLexemP = macroBody->body;
     char *endOfBodyLexems   = macroBody->body + macroBody->size;
-    int   bufferSize    = MACRO_BODY_BUFFER_SIZE;
-    char *buffer;
-    char *currentBufferP, *lastBufferP;
 
-    buffer = ppmAllocc(bufferSize + MAX_LEXEM_SIZE, sizeof(char));
-    currentBufferP  = buffer;
-    lastBufferP = NULL;
+    int   bufferSize        = MACRO_BODY_BUFFER_SIZE;
+
+    char *buffer = ppmAllocc(bufferSize + MAX_LEXEM_SIZE, sizeof(char));
+    char *currentBufferP  = buffer;
+    char *lastBufferP = NULL;
+
     while (currentBodyLexemP < endOfBodyLexems) {
         char *lexemStart   = currentBodyLexemP;
+
         LexemCode lexem = getLexemCodeAt(&currentBodyLexemP);
         getExtraLexemInformationFor(lexem, &currentBodyLexemP, NULL, NULL, NULL, NULL, false);
 
