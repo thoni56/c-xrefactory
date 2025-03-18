@@ -963,7 +963,7 @@ declarator
 
 declarator2
     : identifier                                        {
-        $$.data = newSymbol($1.data->name, $1.data->name, $1.data->position);
+        $$.data = newSymbol($1.data->name, $1.data->position);
     }
     | '(' declarator ')'                                {
         $$.data = $2.data;
@@ -1107,7 +1107,7 @@ parameter_identifier_list
         Symbol *symbol;
         Position pos = makePosition(-1, 0, 0);
 
-        symbol = newSymbol("", "", pos);
+        symbol = newSymbol("", pos);
         symbol->type = TypeElipsis;
         $$.data = $1.data;
 
@@ -1119,13 +1119,13 @@ parameter_identifier_list
 identifier_list
     : IDENTIFIER                                {
         Symbol *symbol;
-        symbol = newSymbol($1.data->name, $1.data->name, $1.data->position);
+        symbol = newSymbol($1.data->name, $1.data->position);
         $$.data.symbol = symbol;
         $$.data.positionList = NULL;
     }
     | identifier_list ',' identifier            {
         Symbol *symbol;
-        symbol = newSymbol($3.data->name, $3.data->name, $3.data->position);
+        symbol = newSymbol($3.data->name, $3.data->position);
         $$.data = $1.data;
         LIST_APPEND(Symbol, $$.data.symbol, symbol);
         appendPositionToList(&$$.data.positionList, $2.data);
@@ -1139,7 +1139,7 @@ parameter_type_list
         Symbol *symbol;
         Position position = makePosition(-1, 0, 0);
 
-        symbol = newSymbol("", "", position);
+        symbol = newSymbol("", position);
         symbol->type = TypeElipsis;
         $$.data = $1.data;
 

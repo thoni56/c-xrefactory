@@ -747,7 +747,7 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
     if (typeName->symbol->u.keyword == STRUCT) type = TypeStruct;
     else type = TypeUnion;
 
-    symbol = newSymbol("", "", typeName->position);
+    symbol = newSymbol("", typeName->position);
     symbol->type = type;
     symbol->storage = StorageDefault;
 

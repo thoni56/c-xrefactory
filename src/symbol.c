@@ -43,7 +43,7 @@ void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, Position po
 }
 
 /* Allocate and init a new Symbol in StackMemory */
-Symbol *newSymbol(char *name, char *linkName, Position pos) {
+Symbol *newSymbol(char *name, Position pos) {
     Symbol *s;
     s = stackMemoryAlloc(sizeof(Symbol));
     *s = makeSymbol(name, pos);
@@ -58,25 +58,25 @@ Symbol *newSymbolAsCopyOf(Symbol *original) {
 }
 
 Symbol *newSymbolAsKeyword(char *name, char *linkName, Position pos, int keyWordVal) {
-    Symbol *s = newSymbol(name, linkName, pos);
+    Symbol *s = newSymbol(name, pos);
     s->u.keyword = keyWordVal;
     return s;
 }
 
 Symbol *newSymbolAsType(char *name, char *linkName, Position pos, struct typeModifier *type) {
-    Symbol *s = newSymbol(name, linkName, pos);
+    Symbol *s = newSymbol(name, pos);
     s->u.typeModifier = type;
     return s;
 }
 
 Symbol *newSymbolAsEnum(char *name, char *linkName, Position pos, struct symbolList *enums) {
-    Symbol *s = newSymbol(name, linkName, pos);
+    Symbol *s = newSymbol(name, pos);
     s->u.enums = enums;
     return s;
 }
 
 Symbol *newSymbolAsLabel(char *name, char *linkName, Position pos, int labelIndex) {
-    Symbol *s = newSymbol(name, linkName, pos);
+    Symbol *s = newSymbol(name, pos);
     s->u.labelIndex = labelIndex;
     return s;
 }

@@ -41,7 +41,7 @@ typedef struct symbolList {
 /* NOTE These will not fill bit-fields, has to be done after allocation */
 /* They all allocate in StackMemory... */
 
-extern Symbol *newSymbol(char *name, char *linkName, Position pos);
+extern Symbol *newSymbol(char *name, Position pos);
 extern Symbol *newSymbolAsCopyOf(Symbol *original);
 extern Symbol *newSymbolAsKeyword(char *name, char *linkName, Position pos,
                                   int keyWordVal);

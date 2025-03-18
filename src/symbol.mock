@@ -3,8 +3,8 @@
 #include <cgreen/mocks.h>
 
 
-Symbol *newSymbol(char *name, char *linkName, Position pos) {
-    return (Symbol*)mock(name, linkName);
+Symbol *newSymbol(char *name, Position pos) {
+    return (Symbol*)mock(name);
 }
 
 Symbol *newSymbolAsCopyOf(Symbol *original) {

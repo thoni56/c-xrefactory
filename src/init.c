@@ -338,7 +338,7 @@ void initTokenNamesTables(void) {
     initTokensFromTable(tokenNameInitTable1);
 
     /* and add the 'defined' keyword for #if */
-    symbolP = newSymbol("defined", "defined", noPosition);
+    symbolP = newSymbol("defined", noPosition);
     symbolP->type = TypeDefinedOp;
     symbolP->storage = StorageDefault;
     symbolTableAdd(symbolTable, symbolP);

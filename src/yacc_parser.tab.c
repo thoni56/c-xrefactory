@@ -2525,7 +2525,7 @@ static void addRuleLocalVariable(Id *name, int order) {
             sprintf(nn,"$%d",order);
             if (order == 0) nn[1] = '$';
 
-            ss = newSymbol(nn, nn, name->position);
+            ss = newSymbol(nn, name->position);
             ss->storage = StorageAuto;
 
             ss->pos.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
@@ -2796,7 +2796,7 @@ case 15:
 {
             Symbol *ss;
 
-            ss = newSymbol(yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->position);
+            ss = newSymbol(yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->position);
             ss->storage = StorageAuto;
 
             addYaccSymbolReference(yyvsp[0].ast_id.data,UsageDeclared);
@@ -3877,7 +3877,7 @@ break;
 case 339:
 #line 1174 "yacc_parser.y"
 {
-        yyval.ast_symbol.data = newSymbol(yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->position);
+        yyval.ast_symbol.data = newSymbol(yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->position);
     }
 break;
 case 340:
@@ -4061,7 +4061,7 @@ case 367:
         Symbol *symbol;
         Position pos = makePosition(-1, 0, 0);
 
-        symbol = newSymbol("", "", pos);
+        symbol = newSymbol("", pos);
         symbol->type = TypeElipsis;
         yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
 
@@ -4073,7 +4073,7 @@ case 368:
 #line 1329 "yacc_parser.y"
 {
         Symbol *symbol;
-        symbol = newSymbol(yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->position);
+        symbol = newSymbol(yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->position);
         yyval.ast_symbolPositionListPair.data.symbol = symbol;
         yyval.ast_symbolPositionListPair.data.positionList = NULL;
     }
@@ -4082,7 +4082,7 @@ case 369:
 #line 1335 "yacc_parser.y"
 {
         Symbol *symbol;
-        symbol = newSymbol(yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->position);
+        symbol = newSymbol(yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->position);
         yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.data.symbol, symbol);
         appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, yyvsp[-1].ast_position.data);
@@ -4098,7 +4098,7 @@ case 372:
         Symbol *symbol;
         Position position = makePosition(-1, 0, 0);
 
-        symbol = newSymbol("", "", position);
+        symbol = newSymbol("", position);
         symbol->type = TypeElipsis;
         yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
 
