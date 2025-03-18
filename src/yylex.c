@@ -99,7 +99,7 @@ static void *mbmAlloc(size_t size) {
     return memoryAlloc(&macroBodyMemory, size);
 }
 
-static void *mbmExpand(void *pointer, size_t oldSize, size_t newSize) {
+static void *mbmRealloc(void *pointer, size_t oldSize, size_t newSize) {
     return memoryRealloc(&macroBodyMemory, pointer, oldSize, newSize);
 }
 
@@ -1373,7 +1373,7 @@ static int expandPreprocessorBufferIfOverflow(char *pointer, char *buffer, int s
 static void expandMacroBodyBufferIfOverflow(char *pointer, int len, char *buffer, int *size) {
     while (pointer + len >= buffer + *size) {
         *size += MACRO_BODY_BUFFER_SIZE;
-        mbmExpand(buffer, *size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE, *size+MAX_LEXEM_SIZE);
+        mbmRealloc(buffer, *size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE, *size+MAX_LEXEM_SIZE);
     }
 }
 
@@ -1705,7 +1705,7 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
         }
         expandMacroBodyBufferIfOverflow(writePointer, 0, writeBuffer, &bufferSize);
     }
-    mbmExpand(writeBuffer, bufferSize + MAX_LEXEM_SIZE, writePointer - writeBuffer);
+    mbmRealloc(writeBuffer, bufferSize + MAX_LEXEM_SIZE, writePointer - writeBuffer);
     *_writePointerP = writePointer;
 
     return writeBuffer;

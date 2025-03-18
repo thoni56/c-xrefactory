@@ -116,7 +116,7 @@ static bool memoryPointerIsFreed(Memory *memory, void *pointer) {
 
 /* Reallocates the most recently allocated area in 'memory' to be different size */
 void *memoryRealloc(Memory *memory, void *pointer, size_t oldSize, size_t newSize) {
-    assert(pointer == &memory->area[memory->index-oldSize]);
+    assert(pointer == &memory->area[memory->index-oldSize]); /* Can only realloc last alloc'd block */
     memory->index += newSize - oldSize;
     return pointer;
 }
