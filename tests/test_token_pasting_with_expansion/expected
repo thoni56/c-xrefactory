@@ -1,0 +1,13 @@
+[C-xref] active project: 'CURDIR'
+EXPAND
+    @source.c:0:0
+    @source.c:2:8
+    @source.c:4:0
+NUM
+    @source.c:0:0
+    @source.c:1:8
+    @source.c:4:15
+NUM##NUM
+    @source.c:2:31
+TwoTwo
+    @source.c:2:32
