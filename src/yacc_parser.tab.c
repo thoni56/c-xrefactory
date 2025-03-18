@@ -2544,7 +2544,7 @@ static CompletionFunctionsTable completionsTable[]  = {
 };
 
 /* This needs to reside inside parser because of macro transformation of yy-variables */
-static bool exists_valid_parser_action_on(int token) {
+static bool validParserActionExistFor(int token) {
     int yyn1, yyn2;
     bool shift_action = (yyn1 = yysindex[lastyystate]) && (yyn1 += token) >= 0 &&
         yyn1 <= YYTABLESIZE && yycheck[yyn1] == token;
@@ -2560,7 +2560,7 @@ static bool runCompletionsCollectorsIn(CompletionFunctionsTable *completionsTabl
     int token;
     for (int i=0; (token=completionsTable[i].token) != 0; i++) {
         log_trace("trying token %d", tokenNamesTable[token]);
-        if (exists_valid_parser_action_on(token)) {
+        if (validParserActionExistFor(token)) {
             log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
             (*completionsTable[i].fun)(&collectedCompletions);
             if (collectedCompletions.abortFurtherCompletions)
@@ -2590,7 +2590,7 @@ void makeYaccCompletions(char *string, int len, Position position) {
     for (int token=0; token<LAST_TOKEN; token++) {
         if (token == IDENTIFIER)
             continue;
-        if (exists_valid_parser_action_on(token)) {
+        if (validParserActionExistFor(token)) {
                 if (tokenNamesTable[token] != NULL) {
                     if (isalpha(*tokenNamesTable[token]) || *tokenNamesTable[token]=='_') {
                         completionLine = makeCompletionLine(tokenNamesTable[token], NULL, TypeKeyword, 0, NULL);
