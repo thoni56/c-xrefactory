@@ -1502,6 +1502,23 @@ static bool nextLexemIsIdentifierOrConstant(char *nextInputLexemP) {
     return isIdentifierLexem(nextLexem) || isConstantLexem(nextLexem);
 }
 
+static void copyRemainingLexems(char *buffer, int *bufferSize, char **previousLexemP, char **bufferWriteP,
+                                char *nextInputLexemP, char *endOfInputLexems) {
+    while (nextInputLexemP < endOfInputLexems) {
+        char *lexemStart = nextInputLexemP;
+        LexemCode lexem = getLexemCodeAndAdvance(&nextInputLexemP);
+        getExtraLexemInformationFor(lexem, &nextInputLexemP, NULL, NULL, NULL, NULL, false);
+
+        *previousLexemP = *bufferWriteP;
+        assert(nextInputLexemP >= lexemStart); /* Overflow? */
+
+        int lexemLength = nextInputLexemP - lexemStart;
+        memcpy(*bufferWriteP, lexemStart, lexemLength);
+        *bufferWriteP += lexemLength;
+        *bufferSize = expandPreprocessorBufferIfOverflow(*bufferWriteP, buffer, *bufferSize);
+    }
+}
+
 /* **************************************************************** */
 
 static void collate(
@@ -1595,19 +1612,7 @@ static void collate(
     }
     *bufferSize = expandPreprocessorBufferIfOverflow(*bufferWriteP, buffer, *bufferSize);
 
-    while (currentInputLexemP < endOfInputLexems) {
-        char *lexemStart   = currentInputLexemP;
-        LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
-        getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, NULL, NULL, NULL, false);
-
-        *previousLexemP = *bufferWriteP;
-        assert(currentInputLexemP >= lexemStart); /* Overflow? */
-
-        int lexemLength = currentInputLexemP - lexemStart;
-        memcpy(*bufferWriteP, lexemStart, lexemLength);
-        *bufferWriteP += lexemLength;
-        *bufferSize = expandPreprocessorBufferIfOverflow(*bufferWriteP, buffer, *bufferSize);
-    }
+    copyRemainingLexems(buffer, bufferSize, previousLexemP, bufferWriteP, nextInputLexemP, endOfInputLexems);
 }
 
 static void macroArgumentsToString(char *res, LexInput *lexInput) {
