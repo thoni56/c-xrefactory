@@ -1509,7 +1509,7 @@ static void collate(
     int *bufferSize,               // Size of the buffer, which may need expanding
     char **previousLexemP,         // Previous lexem in the buffer (token before ##)
     char **bufferWriteP,           // Current buffer write position (where we are writing)
-    char **currentBodyLexemP,      // The current lexem being processed (token after ##)
+    char **nextBodyLexemP,         // The next lexem to be processed (token after ##)
     LexInput *actualArgumentsInput // The argument values for this macro expansion
 ) {
     char *endOfInputLexems;
@@ -1527,19 +1527,19 @@ static void collate(
         return;
     }
 
-    char *currentInputLexemP;
-    if (peekLexemCodeAt(*currentBodyLexemP) == CPP_MACRO_ARGUMENT) {
-        resolveMacroArgumentAsRightOperand(currentBodyLexemP, actualArgumentsInput, &endOfInputLexems,
-                                           &currentInputLexemP);
+    char *nextInputLexemP;
+    if (peekLexemCodeAt(*nextBodyLexemP) == CPP_MACRO_ARGUMENT) {
+        resolveMacroArgumentAsRightOperand(nextBodyLexemP, actualArgumentsInput, &endOfInputLexems,
+                                           &nextInputLexemP);
     } else {
-        resolveRegularRightOperand(currentBodyLexemP, &endOfInputLexems, &currentInputLexemP);
+        resolveRegularRightOperand(nextBodyLexemP, &endOfInputLexems, &nextInputLexemP);
     }
 
     /* Now collate left and right hand tokens */
     char *previousLexemString = *previousLexemP + LEXEMCODE_SIZE;
-    log_trace("Before token pasting: lastBufferP='%s', currentInputLexemP='%s'",
+    log_trace("Before token pasting: previous='%s', next='%s'",
               *previousLexemP ? previousLexemString : "(NULL)",
-              currentInputLexemP ? currentInputLexemP : "(NULL)");
+              nextInputLexemP ? nextInputLexemP : "(NULL)");
 
     assert(*previousLexemP != NULL);
     if (isIdentifierLexem(peekLexemCodeAt(*previousLexemP))) {
@@ -1551,17 +1551,17 @@ static void collate(
         }
     }
 
-    if (currentInputLexemP < endOfInputLexems && isIdentifierLexem(peekLexemCodeAt(*previousLexemP))) {
-        if (nextLexemIsIdentifierOrConstant(currentInputLexemP)) {
+    if (nextInputLexemP < endOfInputLexems && isIdentifierLexem(peekLexemCodeAt(*previousLexemP))) {
+        if (nextLexemIsIdentifierOrConstant(nextInputLexemP)) {
             /* TODO collation of all types of lexem pairs, not just id/const */
             int len = strlen(previousLexemString);
 
-            LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
-            char *lexemString = currentInputLexemP;
+            LexemCode lexem = getLexemCodeAndAdvance(&nextInputLexemP);
+            char *lexemString = nextInputLexemP;
 
             int value;
             Position position;
-            getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, &value, &position, NULL, false);
+            getExtraLexemInformationFor(lexem, &nextInputLexemP, NULL, &value, &position, NULL, false);
             log_trace("Lexem after getExtraLexemInformationFor: lexem='%s', value=%d",
                       lexemString, value);
 
