@@ -1537,15 +1537,12 @@ static void collate(
 
     assert(*previousLexemP != NULL);
     if (isIdentifierLexem(peekLexemCodeAt(*previousLexemP))) {
-        Symbol *macroSymbol = findMacroSymbol(*previousLexemP + LEXEMCODE_SIZE);
-        bool macroSymbolFound = macroSymbol != NULL;
-        if (macroSymbolFound) {
+        if (findMacroSymbol(*previousLexemP + LEXEMCODE_SIZE) != NULL) {
             log_trace("Macro found: '%s' (left-hand) -> Should be expanded", *previousLexemP + LEXEMCODE_SIZE);
         } else {
             log_trace("Identifier '%s' (left-hand) is NOT a macro", *previousLexemP + LEXEMCODE_SIZE);
         }
     }
-
 
     if (currentInputLexemP < endOfInputLexems && isIdentifierLexem(peekLexemCodeAt(*previousLexemP))) {
         LexemCode nextLexem = peekLexemCodeAt(currentInputLexemP);
@@ -1566,10 +1563,7 @@ static void collate(
             assert(**bufferWriteP == 0);
 
             if (isIdentifierLexem(lexem)) {
-                Symbol *macroSymbol = findMacroSymbol(lexemString);
-                bool macroSymbolFound = macroSymbol != NULL;
-
-                if (macroSymbolFound) {
+                if (findMacroSymbol(lexemString) != NULL) {
                     log_trace("Macro found: '%s' (right-hand) -> Should be expanded", lexemString);
                     //expandMacroCall(); /* TODO: Here we should expand the macro */
                 } else {
