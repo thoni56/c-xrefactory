@@ -1497,6 +1497,11 @@ static void resolveRegularRightOperand(char **currentBodyLexemP, char **endOfInp
     *endOfInputLexems = *currentBodyLexemP;
 }
 
+static bool nextLexemIsIdentifierOrConstant(char *nextInputLexemP) {
+    LexemCode nextLexem = peekLexemCodeAt(nextInputLexemP);
+    return isIdentifierLexem(nextLexem) || isConstantLexem(nextLexem);
+}
+
 /* **************************************************************** */
 
 static void collate(
@@ -1547,8 +1552,7 @@ static void collate(
     }
 
     if (currentInputLexemP < endOfInputLexems && isIdentifierLexem(peekLexemCodeAt(*previousLexemP))) {
-        LexemCode nextLexem = peekLexemCodeAt(currentInputLexemP);
-        if (isIdentifierLexem(nextLexem) || isConstantLexem(nextLexem)) {
+        if (nextLexemIsIdentifierOrConstant(currentInputLexemP)) {
             /* TODO collation of all types of lexem pairs, not just id/const */
             int len = strlen(previousLexemString);
 
