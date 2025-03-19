@@ -1531,16 +1531,18 @@ static void collate(
     }
 
     /* Now collate left and right hand tokens */
+    char *previousLexemString = *previousLexemP + LEXEMCODE_SIZE;
     log_trace("Before token pasting: lastBufferP='%s', currentInputLexemP='%s'",
-              *previousLexemP ? *previousLexemP + LEXEMCODE_SIZE : "(NULL)",
+              *previousLexemP ? previousLexemString : "(NULL)",
               currentInputLexemP ? currentInputLexemP : "(NULL)");
 
     assert(*previousLexemP != NULL);
     if (isIdentifierLexem(peekLexemCodeAt(*previousLexemP))) {
-        if (findMacroSymbol(*previousLexemP + LEXEMCODE_SIZE) != NULL) {
-            log_trace("Macro found: '%s' (left-hand) -> Should be expanded", *previousLexemP + LEXEMCODE_SIZE);
+        if (findMacroSymbol(previousLexemString) != NULL) {
+            log_trace("Macro found: '%s' (left-hand) -> Should be expanded", previousLexemString);
+            //expandMacro();
         } else {
-            log_trace("Identifier '%s' (left-hand) is NOT a macro", *previousLexemP + LEXEMCODE_SIZE);
+            log_trace("Identifier '%s' (left-hand) is NOT a macro", previousLexemString);
         }
     }
 
@@ -1548,7 +1550,7 @@ static void collate(
         LexemCode nextLexem = peekLexemCodeAt(currentInputLexemP);
         if (isIdentifierLexem(nextLexem) || isConstantLexem(nextLexem)) {
             /* TODO collation of all types of lexem pairs, not just id/const */
-            int len = strlen(*previousLexemP + LEXEMCODE_SIZE);
+            int len = strlen(previousLexemString);
 
             LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
             char *lexemString = currentInputLexemP;
@@ -1559,7 +1561,7 @@ static void collate(
             log_trace("Lexem after getExtraLexemInformationFor: lexem='%s', value=%d",
                       lexemString, value);
 
-            *bufferWriteP = *previousLexemP + LEXEMCODE_SIZE + len;
+            *bufferWriteP = previousLexemString + len;
             assert(**bufferWriteP == 0);
 
             if (isIdentifierLexem(lexem)) {
@@ -1574,12 +1576,12 @@ static void collate(
 
                 position.col--;
                 assert(position.col >= 0);
-                cxAddCollateReference(*previousLexemP + LEXEMCODE_SIZE, *bufferWriteP, position);
+                cxAddCollateReference(previousLexemString, *bufferWriteP, position);
                 position.col++;
             } else /* isConstantLexem() */ {
                 position = peekLexemPositionAt(*bufferWriteP + 1); /* new identifier position */
                 sprintf(*bufferWriteP, "%d", value);
-                cxAddCollateReference(*previousLexemP + LEXEMCODE_SIZE, *bufferWriteP, position);
+                cxAddCollateReference(previousLexemString, *bufferWriteP, position);
             }
             *bufferWriteP += strlen(*bufferWriteP);
             assert(**bufferWriteP == 0);
