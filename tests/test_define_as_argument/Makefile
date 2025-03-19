@@ -8,7 +8,7 @@ ARGUMENTS = -DA=a -DB=b source.c
 
 $(TEST):
 	$(COMMAND) > output.tmp
-	grep 2/[AB] CXrefs/* | wc -l > output
+	grep 2/[AB] CXrefs/* | wc -l | tr -d ' ' > output
 	$(VERIFY)
 
 trace: ARGUMENTS += -trace
