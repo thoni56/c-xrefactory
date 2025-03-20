@@ -1465,6 +1465,21 @@ static void resolveRegularOperand(char **nextLexemP, char **endOfInputLexems) {
     *endOfInputLexems = *nextLexemP;
 }
 
+static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWriteP,
+                                char *nextLexemP, char *endOfInputLexems) {
+    while (nextLexemP < endOfInputLexems) {
+        char *lexemStart = nextLexemP;
+        LexemCode lexem = getLexemCodeAndAdvance(&nextLexemP);
+        log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
+        getExtraLexemInformationFor(lexem, &nextLexemP, NULL, NULL, NULL, NULL, false);
+
+        int lexemLength = nextLexemP - lexemStart;
+        memcpy(*bufferWriteP, lexemStart, lexemLength);
+        *bufferWriteP += lexemLength;
+        *bufferSize = expandPreprocessorBufferIfOverflow(buffer, *bufferSize, *bufferWriteP);
+    }
+}
+
 static void resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, char **bufferWriteP,
                                               char **nextLexemP, LexInput *actualArgumentsInput) {
     char *endOfInputLexems;
@@ -1498,21 +1513,6 @@ static void resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, cha
 static bool nextLexemIsIdentifierOrConstant(char *nextInputLexemP) {
     LexemCode nextLexem = peekLexemCodeAt(nextInputLexemP);
     return isIdentifierLexem(nextLexem) || isConstantLexem(nextLexem);
-}
-
-static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWriteP,
-                                char *nextLexemP, char *endOfInputLexems) {
-    while (nextLexemP < endOfInputLexems) {
-        char *lexemStart = nextLexemP;
-        LexemCode lexem = getLexemCodeAndAdvance(&nextLexemP);
-        log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
-        getExtraLexemInformationFor(lexem, &nextLexemP, NULL, NULL, NULL, NULL, false);
-
-        int lexemLength = nextLexemP - lexemStart;
-        memcpy(*bufferWriteP, lexemStart, lexemLength);
-        *bufferWriteP += lexemLength;
-        *bufferSize = expandPreprocessorBufferIfOverflow(buffer, *bufferSize, *bufferWriteP);
-    }
 }
 
 /* **************************************************************** */
