@@ -1488,13 +1488,11 @@ static void resolveMacroArgumentAsRightOperand(char **currentBodyLexemP, LexInpu
     *endOfInputLexems = actualArgumentsInput[argumentIndex].write;
 }
 
-static void resolveRegularRightOperand(char **currentBodyLexemP, char **endOfInputLexems,
-                                       char **currentInputLexemP) {
-    *currentInputLexemP = *currentBodyLexemP;
-    LexemCode lexem = getLexemCodeAndAdvance(currentBodyLexemP);
+static void resolveRegularRightOperand(char **rightHandLexemP, char **endOfInputLexems) {
+    LexemCode lexem = getLexemCodeAndAdvance(rightHandLexemP);
     log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
-    getExtraLexemInformationFor(lexem, currentBodyLexemP, NULL, NULL, NULL, NULL, false);
-    *endOfInputLexems = *currentBodyLexemP;
+    getExtraLexemInformationFor(lexem, rightHandLexemP, NULL, NULL, NULL, NULL, false);
+    *endOfInputLexems = *rightHandLexemP;
 }
 
 static bool nextLexemIsIdentifierOrConstant(char *nextInputLexemP) {
@@ -1544,13 +1542,13 @@ static void collate(
         }
     }
 
-    char *nextInputLexemP;
     if (peekLexemCodeAt(*rightHandLexemP) == CPP_MACRO_ARGUMENT) {
         resolveMacroArgumentAsRightOperand(rightHandLexemP, actualArgumentsInput, &endOfInputLexems,
                                            rightHandLexemP);
     } else {
-        resolveRegularRightOperand(rightHandLexemP, &endOfInputLexems, &nextInputLexemP);
+        resolveRegularRightOperand(rightHandLexemP, &endOfInputLexems);
     }
+    char *nextInputLexemP = *rightHandLexemP;
 
     /* Now collate left and right hand tokens */
     char *leftHandLexemString = *leftHandLexemP + LEXEMCODE_SIZE;
