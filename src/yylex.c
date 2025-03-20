@@ -1448,6 +1448,23 @@ static void cxAddCollateReference(char *sym, char *cs, Position position) {
     addTrivialCxReference(tempString, TypeCppCollate, StorageDefault, position, UsageDefined);
 }
 
+static void resolveMacroArgument(char **nextLexemP, LexInput *actualArgumentsInput,
+                                 char **endOfInputLexems) {
+    LexemCode lexem = getLexemCodeAndAdvance(nextLexemP);
+    log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
+    int argumentIndex;
+    getExtraLexemInformationFor(lexem, nextLexemP, NULL, &argumentIndex, NULL, NULL, false);
+    *nextLexemP = actualArgumentsInput[argumentIndex].begin;
+    *endOfInputLexems = actualArgumentsInput[argumentIndex].write;
+}
+
+static void resolveRegularRightOperand(char **nextLexemP, char **endOfInputLexems) {
+    LexemCode lexem = getLexemCodeAndAdvance(nextLexemP);
+    log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
+    getExtraLexemInformationFor(lexem, nextLexemP, NULL, NULL, NULL, NULL, false);
+    *endOfInputLexems = *nextLexemP;
+}
+
 static void resolveLeftOperand(char *buffer, int *bufferSize, char **currentBufferP, char **leftHandLexemP,
                                LexInput *actualArgumentsInput) {
     char *endOfInputLexems;
@@ -1476,23 +1493,6 @@ static void resolveLeftOperand(char *buffer, int *bufferSize, char **currentBuff
         *currentBufferP += lexemLength;
         *bufferSize = expandPreprocessorBufferIfOverflow(*currentBufferP, buffer, *bufferSize);
     }
-}
-
-static void resolveMacroArgumentAsRightOperand(char **nextLexemP, LexInput *actualArgumentsInput,
-                                               char **endOfInputLexems) {
-    LexemCode lexem = getLexemCodeAndAdvance(nextLexemP);
-    log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
-    int argumentIndex;
-    getExtraLexemInformationFor(lexem, nextLexemP, NULL, &argumentIndex, NULL, NULL, false);
-    *nextLexemP = actualArgumentsInput[argumentIndex].begin;
-    *endOfInputLexems = actualArgumentsInput[argumentIndex].write;
-}
-
-static void resolveRegularRightOperand(char **nextLexemP, char **endOfInputLexems) {
-    LexemCode lexem = getLexemCodeAndAdvance(nextLexemP);
-    log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
-    getExtraLexemInformationFor(lexem, nextLexemP, NULL, NULL, NULL, NULL, false);
-    *endOfInputLexems = *nextLexemP;
 }
 
 static bool nextLexemIsIdentifierOrConstant(char *nextInputLexemP) {
@@ -1543,7 +1543,7 @@ static void collate(
     }
 
     if (peekLexemCodeAt(*rightHandLexemP) == CPP_MACRO_ARGUMENT) {
-        resolveMacroArgumentAsRightOperand(rightHandLexemP, actualArgumentsInput, &endOfInputLexems);
+        resolveMacroArgument(rightHandLexemP, actualArgumentsInput, &endOfInputLexems);
     } else {
         resolveRegularRightOperand(rightHandLexemP, &endOfInputLexems);
     }
