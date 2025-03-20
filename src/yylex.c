@@ -1500,17 +1500,15 @@ static bool nextLexemIsIdentifierOrConstant(char *nextInputLexemP) {
     return isIdentifierLexem(nextLexem) || isConstantLexem(nextLexem);
 }
 
-static void copyRemainingLexems(char *buffer, int *bufferSize, char **previousLexemP, char **bufferWriteP,
-                                char *nextInputLexemP, char *endOfInputLexems) {
-    while (nextInputLexemP < endOfInputLexems) {
-        char *lexemStart = nextInputLexemP;
-        LexemCode lexem = getLexemCodeAndAdvance(&nextInputLexemP);
-        getExtraLexemInformationFor(lexem, &nextInputLexemP, NULL, NULL, NULL, NULL, false);
+static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWriteP,
+                                char *nextLexemP, char *endOfInputLexems) {
+    while (nextLexemP < endOfInputLexems) {
+        char *lexemStart = nextLexemP;
+        LexemCode lexem = getLexemCodeAndAdvance(&nextLexemP);
+        log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
+        getExtraLexemInformationFor(lexem, &nextLexemP, NULL, NULL, NULL, NULL, false);
 
-        *previousLexemP = *bufferWriteP;
-        assert(nextInputLexemP >= lexemStart); /* Overflow? */
-
-        int lexemLength = nextInputLexemP - lexemStart;
+        int lexemLength = nextLexemP - lexemStart;
         memcpy(*bufferWriteP, lexemStart, lexemLength);
         *bufferWriteP += lexemLength;
         *bufferSize = expandPreprocessorBufferIfOverflow(*bufferWriteP, buffer, *bufferSize);
