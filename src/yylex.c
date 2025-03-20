@@ -1478,21 +1478,21 @@ static void resolveLeftOperand(char *buffer, int *bufferSize, char **currentBuff
     }
 }
 
-static void resolveMacroArgumentAsRightOperand(char **rightHandLexemP, LexInput *actualArgumentsInput,
+static void resolveMacroArgumentAsRightOperand(char **nextLexemP, LexInput *actualArgumentsInput,
                                                char **endOfInputLexems) {
-    LexemCode lexem = getLexemCodeAndAdvance(rightHandLexemP);
+    LexemCode lexem = getLexemCodeAndAdvance(nextLexemP);
     log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
     int argumentIndex;
-    getExtraLexemInformationFor(lexem, rightHandLexemP, NULL, &argumentIndex, NULL, NULL, false);
-    *rightHandLexemP = actualArgumentsInput[argumentIndex].begin;
+    getExtraLexemInformationFor(lexem, nextLexemP, NULL, &argumentIndex, NULL, NULL, false);
+    *nextLexemP = actualArgumentsInput[argumentIndex].begin;
     *endOfInputLexems = actualArgumentsInput[argumentIndex].write;
 }
 
-static void resolveRegularRightOperand(char **rightHandLexemP, char **endOfInputLexems) {
-    LexemCode lexem = getLexemCodeAndAdvance(rightHandLexemP);
+static void resolveRegularRightOperand(char **nextLexemP, char **endOfInputLexems) {
+    LexemCode lexem = getLexemCodeAndAdvance(nextLexemP);
     log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
-    getExtraLexemInformationFor(lexem, rightHandLexemP, NULL, NULL, NULL, NULL, false);
-    *endOfInputLexems = *rightHandLexemP;
+    getExtraLexemInformationFor(lexem, nextLexemP, NULL, NULL, NULL, NULL, false);
+    *endOfInputLexems = *nextLexemP;
 }
 
 static bool nextLexemIsIdentifierOrConstant(char *nextInputLexemP) {
