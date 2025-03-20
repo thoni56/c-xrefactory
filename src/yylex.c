@@ -1538,10 +1538,10 @@ static void collate(
 
     if (peekLexemCodeAt(*previousLexemP) == CPP_MACRO_ARGUMENT) {
         resolveLeftOperand(buffer, bufferSize, bufferWriteP, previousLexemP, actualArgumentsInput);
-    }
-    if (*previousLexemP == NULL) {
-        log_warn("Token pasting skipped: Left operand is NULL after expansion.");
-        return;
+        if (*previousLexemP == NULL) {
+            log_warn("Token pasting skipped: Left operand is NULL after expansion.");
+            return;
+        }
     }
 
     char *nextInputLexemP;
@@ -1583,7 +1583,7 @@ static void collate(
                       lexemString, value);
 
             *bufferWriteP = previousLexemString + len;
-            assert(**bufferWriteP == 0);
+            assert(**bufferWriteP == 0); /* Ensure end of string */
 
             if (isIdentifierLexem(lexem)) {
                 if (findMacroSymbol(lexemString) != NULL) {
