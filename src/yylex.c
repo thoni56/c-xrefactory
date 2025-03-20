@@ -1335,7 +1335,7 @@ endOfFile:
 /* *********************   MACRO CALL EXPANSION *********************** */
 /* ******************************************************************** */
 
-static int expandPreprocessorBufferIfOverflow(char *pointer, char *buffer, int size) {
+static int expandPreprocessorBufferIfOverflow(char *buffer, int size, char *pointer) {
     if (pointer >= buffer+size) {
         size += MACRO_BODY_BUFFER_SIZE;
         buffer = ppmReallocc(buffer, size+MAX_LEXEM_SIZE, sizeof(char),
@@ -1427,7 +1427,7 @@ static void expandMacroArgument(LexInput *argumentInput) {
             }
         }
         currentBufferP += length;
-        bufferSize = expandPreprocessorBufferIfOverflow(currentBufferP, buffer, bufferSize);
+        bufferSize = expandPreprocessorBufferIfOverflow(buffer, bufferSize, currentBufferP);
     }
 endOfMacroArgument:
     currentInput = macroInputStack[--macroStackIndex];
@@ -1491,7 +1491,7 @@ static void resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, cha
         int lexemLength = nextInputLexemP - lexemStart;
         memcpy(*bufferWriteP, lexemStart, lexemLength);
         *bufferWriteP += lexemLength;
-        *bufferSize = expandPreprocessorBufferIfOverflow(*bufferWriteP, buffer, *bufferSize);
+        *bufferSize = expandPreprocessorBufferIfOverflow(buffer, *bufferSize, *bufferWriteP);
     }
 }
 
@@ -1511,7 +1511,7 @@ static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWrit
         int lexemLength = nextLexemP - lexemStart;
         memcpy(*bufferWriteP, lexemStart, lexemLength);
         *bufferWriteP += lexemLength;
-        *bufferSize = expandPreprocessorBufferIfOverflow(*bufferWriteP, buffer, *bufferSize);
+        *bufferSize = expandPreprocessorBufferIfOverflow(buffer, *bufferSize, *bufferWriteP);
     }
 }
 
@@ -1596,7 +1596,7 @@ static void collate(char *buffer,        // The allocated buffer for storing mac
             putLexemPositionAt(position, bufferWriteP);
         }
     }
-    *bufferSize = expandPreprocessorBufferIfOverflow(*bufferWriteP, buffer, *bufferSize);
+    *bufferSize = expandPreprocessorBufferIfOverflow(buffer, *bufferSize, *bufferWriteP);
 
     copyRemainingLexems(buffer, bufferSize, bufferWriteP, nextInputLexemP, endOfInputLexems);
 }
@@ -1720,7 +1720,7 @@ static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBo
             memcpy(currentBufferP, lexemStart, lexemLength);
             currentBufferP += lexemLength;
         }
-        bufferSize = expandPreprocessorBufferIfOverflow(currentBufferP, buffer, bufferSize);
+        bufferSize = expandPreprocessorBufferIfOverflow(buffer, bufferSize, currentBufferP);
     }
     buffer = ppmReallocc(buffer, currentBufferP - buffer, sizeof(char), bufferSize + MAX_LEXEM_SIZE);
 
