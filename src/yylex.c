@@ -1458,14 +1458,14 @@ static void resolveMacroArgument(char **nextLexemP, LexInput *actualArgumentsInp
     *endOfInputLexems = actualArgumentsInput[argumentIndex].write;
 }
 
-static void resolveRegularRightOperand(char **nextLexemP, char **endOfInputLexems) {
+static void resolveRegularOperand(char **nextLexemP, char **endOfInputLexems) {
     LexemCode lexem = getLexemCodeAndAdvance(nextLexemP);
     log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
     getExtraLexemInformationFor(lexem, nextLexemP, NULL, NULL, NULL, NULL, false);
     *endOfInputLexems = *nextLexemP;
 }
 
-static void resolveLeftOperand(char *buffer, int *bufferSize, char **currentBufferP, char **leftHandLexemP,
+static void resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, char **currentBufferP, char **leftHandLexemP,
                                LexInput *actualArgumentsInput) {
     char *endOfInputLexems;
     *currentBufferP = *leftHandLexemP;
@@ -1535,7 +1535,7 @@ static void collate(
     }
 
     if (peekLexemCodeAt(*leftHandLexemP) == CPP_MACRO_ARGUMENT) {
-        resolveLeftOperand(buffer, bufferSize, bufferWriteP, leftHandLexemP, actualArgumentsInput);
+        resolveMacroArgumentAsLeftOperand(buffer, bufferSize, bufferWriteP, leftHandLexemP, actualArgumentsInput);
         if (*leftHandLexemP == NULL) {
             log_warn("Token pasting skipped: Left operand is NULL after expansion.");
             return;
@@ -1545,7 +1545,7 @@ static void collate(
     if (peekLexemCodeAt(*rightHandLexemP) == CPP_MACRO_ARGUMENT) {
         resolveMacroArgument(rightHandLexemP, actualArgumentsInput, &endOfInputLexems);
     } else {
-        resolveRegularRightOperand(rightHandLexemP, &endOfInputLexems);
+        resolveRegularOperand(rightHandLexemP, &endOfInputLexems);
     }
     char *nextInputLexemP = *rightHandLexemP;
 
