@@ -1465,33 +1465,33 @@ static void resolveRegularOperand(char **nextLexemP, char **endOfInputLexems) {
     *endOfInputLexems = *nextLexemP;
 }
 
-static void resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, char **currentBufferP, char **leftHandLexemP,
-                               LexInput *actualArgumentsInput) {
+static void resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, char **bufferWriteP,
+                                              char **nextLexemP, LexInput *actualArgumentsInput) {
     char *endOfInputLexems;
-    *currentBufferP = *leftHandLexemP;
+    *bufferWriteP = *nextLexemP;
 
-    LexemCode lexem = getLexemCodeAndAdvance(leftHandLexemP);
+    LexemCode lexem = getLexemCodeAndAdvance(nextLexemP);
 
     int argumentIndex;
-    getExtraLexemInformationFor(lexem, leftHandLexemP, NULL, &argumentIndex, NULL, NULL, false);
+    getExtraLexemInformationFor(lexem, nextLexemP, NULL, &argumentIndex, NULL, NULL, false);
 
-    char *currentInputLexemP = actualArgumentsInput[argumentIndex].begin;
+    char *nextInputLexemP = actualArgumentsInput[argumentIndex].begin;
     endOfInputLexems = actualArgumentsInput[argumentIndex].write;
 
-    *leftHandLexemP = NULL;
-    while (currentInputLexemP < endOfInputLexems) {
-        char *lexemStart = currentInputLexemP;
-        LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
+    *nextLexemP = NULL;
+    while (nextInputLexemP < endOfInputLexems) {
+        char *lexemStart = nextInputLexemP;
+        LexemCode lexem = getLexemCodeAndAdvance(&nextInputLexemP);
         log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
-        getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, NULL, NULL, NULL, false);
+        getExtraLexemInformationFor(lexem, &nextInputLexemP, NULL, NULL, NULL, NULL, false);
 
-        *leftHandLexemP = *currentBufferP;
-        assert(currentInputLexemP >= lexemStart);
+        *nextLexemP = *bufferWriteP;
+        assert(nextInputLexemP >= lexemStart);
 
-        int lexemLength = currentInputLexemP - lexemStart;
-        memcpy(*currentBufferP, lexemStart, lexemLength);
-        *currentBufferP += lexemLength;
-        *bufferSize = expandPreprocessorBufferIfOverflow(*currentBufferP, buffer, *bufferSize);
+        int lexemLength = nextInputLexemP - lexemStart;
+        memcpy(*bufferWriteP, lexemStart, lexemLength);
+        *bufferWriteP += lexemLength;
+        *bufferSize = expandPreprocessorBufferIfOverflow(*bufferWriteP, buffer, *bufferSize);
     }
 }
 
