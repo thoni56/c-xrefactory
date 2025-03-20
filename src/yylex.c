@@ -1526,11 +1526,6 @@ static void collate(char *buffer,        // The allocated buffer for storing mac
 ) {
     char *endOfInputLexems;
 
-    if (*leftHandLexemP == NULL) {
-        log_warn("Token pasting skipped: Left operand is NULL at collate() entry.");
-        return;
-    }
-
     if (peekLexemCodeAt(*leftHandLexemP) == CPP_MACRO_ARGUMENT) {
         resolveMacroArgumentAsLeftOperand(buffer, bufferSize, bufferWriteP, leftHandLexemP, actualArgumentsInput);
         if (*leftHandLexemP == NULL) {
@@ -1548,8 +1543,7 @@ static void collate(char *buffer,        // The allocated buffer for storing mac
 
     /* Now collate left and right hand tokens */
     char *leftHandLexemString = *leftHandLexemP + LEXEMCODE_SIZE;
-    log_trace("Before token pasting: previous='%s', next='%s'",
-              *leftHandLexemP ? leftHandLexemString : "(NULL)",
+    log_trace("Before token pasting: previous='%s', next='%s'", *leftHandLexemP ? leftHandLexemString : "(NULL)",
               nextInputLexemP ? nextInputLexemP : "(NULL)");
 
     assert(*leftHandLexemP != NULL);
