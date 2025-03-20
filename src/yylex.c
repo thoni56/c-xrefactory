@@ -1448,27 +1448,27 @@ static void cxAddCollateReference(char *sym, char *cs, Position position) {
     addTrivialCxReference(tempString, TypeCppCollate, StorageDefault, position, UsageDefined);
 }
 
-static void resolveLeftOperand(char *buffer, int *bufferSize, char **currentBufferP, char **previousLexemP,
+static void resolveLeftOperand(char *buffer, int *bufferSize, char **currentBufferP, char **leftHandLexemP,
                                LexInput *actualArgumentsInput) {
     char *endOfInputLexems;
-    *currentBufferP = *previousLexemP;
+    *currentBufferP = *leftHandLexemP;
 
-    LexemCode lexem = getLexemCodeAndAdvance(previousLexemP);
+    LexemCode lexem = getLexemCodeAndAdvance(leftHandLexemP);
 
     int argumentIndex;
-    getExtraLexemInformationFor(lexem, previousLexemP, NULL, &argumentIndex, NULL, NULL, false);
+    getExtraLexemInformationFor(lexem, leftHandLexemP, NULL, &argumentIndex, NULL, NULL, false);
 
     char *currentInputLexemP = actualArgumentsInput[argumentIndex].begin;
     endOfInputLexems = actualArgumentsInput[argumentIndex].write;
 
-    *previousLexemP = NULL;
+    *leftHandLexemP = NULL;
     while (currentInputLexemP < endOfInputLexems) {
         char *lexemStart = currentInputLexemP;
         LexemCode lexem = getLexemCodeAndAdvance(&currentInputLexemP);
         log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
         getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, NULL, NULL, NULL, false);
 
-        *previousLexemP = *currentBufferP;
+        *leftHandLexemP = *currentBufferP;
         assert(currentInputLexemP >= lexemStart);
 
         int lexemLength = currentInputLexemP - lexemStart;
