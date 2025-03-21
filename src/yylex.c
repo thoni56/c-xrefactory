@@ -1695,7 +1695,7 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
 static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBody, LexInput *actualArgumentsInput,
                                       int actualArgumentCount) {
 
-    char *currentBodyLexemP = macroBody->body;
+    char *nextBodyLexemP = macroBody->body;
     char *endOfBodyLexems   = macroBody->body + macroBody->size;
 
     int   bufferSize        = MACRO_BODY_BUFFER_SIZE;
@@ -1704,20 +1704,20 @@ static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBo
     char *currentBufferP  = buffer;
     char *lastBufferP = NULL;
 
-    while (currentBodyLexemP < endOfBodyLexems) {
-        char *lexemStart   = currentBodyLexemP;
+    while (nextBodyLexemP < endOfBodyLexems) {
+        char *lexemStart   = nextBodyLexemP;
 
-        LexemCode lexem = getLexemCodeAndAdvance(&currentBodyLexemP);
-        getExtraLexemInformationFor(lexem, &currentBodyLexemP, NULL, NULL, NULL, NULL, false);
+        LexemCode lexem = getLexemCodeAndAdvance(&nextBodyLexemP);
+        getExtraLexemInformationFor(lexem, &nextBodyLexemP, NULL, NULL, NULL, NULL, false);
 
         /* first make ## collations, if any */
-        if (lexem == CPP_COLLATION && lastBufferP != NULL && currentBodyLexemP < endOfBodyLexems) {
-            collate(buffer, &bufferSize, &currentBufferP, &lastBufferP, &currentBodyLexemP, actualArgumentsInput);
+        if (lexem == CPP_COLLATION && lastBufferP != NULL && nextBodyLexemP < endOfBodyLexems) {
+            collate(buffer, &bufferSize, &currentBufferP, &lastBufferP, &nextBodyLexemP, actualArgumentsInput);
         } else {
             lastBufferP = currentBufferP;
-            assert(currentBodyLexemP >= lexemStart);
+            assert(nextBodyLexemP >= lexemStart);
             /* Copy this lexem over from body to buffer */
-            int lexemLength = currentBodyLexemP - lexemStart;
+            int lexemLength = nextBodyLexemP - lexemStart;
             memcpy(currentBufferP, lexemStart, lexemLength);
             currentBufferP += lexemLength;
         }
