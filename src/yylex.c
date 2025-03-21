@@ -1480,9 +1480,8 @@ static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWrit
     }
 }
 
-static void resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, char **bufferWriteP,
+static char *resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, char **bufferWriteP,
                                               char **nextLexemP, LexInput *actualArgumentsInput) {
-    char *endOfInputLexems;
     *bufferWriteP = *nextLexemP;
 
     LexemCode lexem = getLexemCodeAndAdvance(nextLexemP);
@@ -1491,16 +1490,16 @@ static void resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, cha
     getExtraLexemInformationFor(lexem, nextLexemP, NULL, &argumentIndex, NULL, NULL, false);
 
     char *nextInputLexemP = actualArgumentsInput[argumentIndex].begin;
-    endOfInputLexems = actualArgumentsInput[argumentIndex].write;
+    char *endOfInputLexems = actualArgumentsInput[argumentIndex].write;
 
-    *nextLexemP = NULL;
+    char *lastLexemP = NULL;
     while (nextInputLexemP < endOfInputLexems) {
         char *lexemStart = nextInputLexemP;
         LexemCode lexem = getLexemCodeAndAdvance(&nextInputLexemP);
         log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
         getExtraLexemInformationFor(lexem, &nextInputLexemP, NULL, NULL, NULL, NULL, false);
 
-        *nextLexemP = *bufferWriteP;
+        lastLexemP = *bufferWriteP;
         assert(nextInputLexemP >= lexemStart);
 
         int lexemLength = nextInputLexemP - lexemStart;
@@ -1508,6 +1507,7 @@ static void resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, cha
         *bufferWriteP += lexemLength;
         *bufferSize = expandPreprocessorBufferIfOverflow(buffer, *bufferSize, *bufferWriteP);
     }
+    return lastLexemP;
 }
 
 static bool nextLexemIsIdentifierOrConstant(char *nextInputLexemP) {
@@ -1527,7 +1527,8 @@ static void collate(char *buffer,        // The allocated buffer for storing mac
     char *endOfInputLexems;
 
     if (peekLexemCodeAt(*leftHandLexemP) == CPP_MACRO_ARGUMENT) {
-        resolveMacroArgumentAsLeftOperand(buffer, bufferSize, bufferWriteP, leftHandLexemP, actualArgumentsInput);
+        *leftHandLexemP = resolveMacroArgumentAsLeftOperand(buffer, bufferSize, bufferWriteP,
+                                                            leftHandLexemP, actualArgumentsInput);
         if (*leftHandLexemP == NULL) {
             log_warn("Token pasting skipped: Left operand is NULL after expansion.");
             return;
