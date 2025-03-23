@@ -1571,18 +1571,17 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
     if (rightHandLexem < endOfInputLexems) {
         /* TODO collation of all types of lexem pairs, not just id/const */
         if (nextLexemIsIdentifierOrConstant(rightHandLexem)) {
+            char *leftHandLexemString = *leftHandLexemP + LEXEMCODE_SIZE;
+            *bufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
+            assert(**bufferWriteP == 0); /* Ensure at end of string */
+
             LexemCode lexem = getLexemCodeAndAdvance(&rightHandLexem);
             char *lexemString = rightHandLexem; /* For an ID the string follows, then the position */
-
             int value;
             Position position;
             getExtraLexemInformationFor(lexem, &rightHandLexem, NULL, &value, &position, NULL, false);
             log_trace("Lexem after getExtraLexemInformationFor: lexem='%s', value=%d",
                       lexemString, value);
-
-            char *leftHandLexemString = *leftHandLexemP + LEXEMCODE_SIZE;
-            *bufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
-            assert(**bufferWriteP == 0); /* Ensure at end of string */
 
             if (isIdentifierLexem(lexem)) {
                 strcpy(*bufferWriteP, lexemString);
