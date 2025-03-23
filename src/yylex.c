@@ -1528,6 +1528,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
                      char *rightHandLexem, // Right-hand lexem to be processed (token after ##)
                      LexInput *actualArgumentsInput // The argument values for this macro expansion
 ) {
+    /* Macro argument resolution first for left and right operands */
     if (peekLexemCodeAt(*leftHandLexemP) == CPP_MACRO_ARGUMENT) {
         *leftHandLexemP = resolveMacroArgumentAsLeftOperand(buffer, bufferSizeP, bufferWriteP,
                                                             leftHandLexemP, actualArgumentsInput);
@@ -1543,46 +1544,47 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
     } else {
         resolveRegularOperand(&rightHandLexem, &endOfInputLexems);
     }
-    char *nextLexem = rightHandLexem;
 
-    /* Now collate left and right hand tokens */
-    char *leftHandLexemString = *leftHandLexemP + LEXEMCODE_SIZE;
-    log_trace("Before token pasting: previous='%s', next='%s'", *leftHandLexemP ? leftHandLexemString : "(NULL)",
-              nextLexem ? nextLexem : "(NULL)");
-
+    /* Macro invocations next */
     assert(*leftHandLexemP != NULL);
     if (isIdentifierLexem(peekLexemCodeAt(*leftHandLexemP))) {
-        if (findMacroSymbol(leftHandLexemString) != NULL) {
-            log_trace("Macro found: '%s' (left-hand) -> Should be expanded", leftHandLexemString);
+        char *lexemString = *leftHandLexemP + LEXEMCODE_SIZE;
+        if (findMacroSymbol(lexemString) != NULL) {
+            log_trace("Macro found: '%s' (left-hand) -> Should be expanded", lexemString);
             //expandMacro();
         } else {
-            log_trace("Identifier '%s' (left-hand) is NOT a macro", leftHandLexemString);
+            log_trace("Identifier '%s' (left-hand) is NOT a macro", lexemString);
         }
     }
 
-    if (nextLexem < endOfInputLexems) {
+    if (isIdentifierLexem(peekLexemCodeAt(rightHandLexem))) {
+        char *lexemString = rightHandLexem + LEXEMCODE_SIZE;
+        if (findMacroSymbol(lexemString) != NULL) {
+            log_trace("Macro found: '%s' (right-hand) -> Should be expanded", lexemString);
+            //expandMacroCall(); /* TODO: Here we should expand the macro */
+        } else {
+            log_trace("Identifier '%s' (right-hand) is NOT a macro", lexemString);
+        }
+    }
+
+    /* Now collate left and right hand tokens */
+    if (rightHandLexem < endOfInputLexems) {
         /* TODO collation of all types of lexem pairs, not just id/const */
-        if (nextLexemIsIdentifierOrConstant(nextLexem)) {
-            LexemCode lexem = getLexemCodeAndAdvance(&nextLexem);
-            char *lexemString = nextLexem; /* If this is an ID then this is the string */
+        if (nextLexemIsIdentifierOrConstant(rightHandLexem)) {
+            LexemCode lexem = getLexemCodeAndAdvance(&rightHandLexem);
+            char *lexemString = rightHandLexem; /* For an ID the string follows, then the position */
 
             int value;
             Position position;
-            getExtraLexemInformationFor(lexem, &nextLexem, NULL, &value, &position, NULL, false);
+            getExtraLexemInformationFor(lexem, &rightHandLexem, NULL, &value, &position, NULL, false);
             log_trace("Lexem after getExtraLexemInformationFor: lexem='%s', value=%d",
                       lexemString, value);
 
+            char *leftHandLexemString = *leftHandLexemP + LEXEMCODE_SIZE;
             *bufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
             assert(**bufferWriteP == 0); /* Ensure at end of string */
 
             if (isIdentifierLexem(lexem)) {
-                if (findMacroSymbol(lexemString) != NULL) {
-                    log_trace("Macro found: '%s' (right-hand) -> Should be expanded", lexemString);
-                    //expandMacroCall(); /* TODO: Here we should expand the macro */
-                } else {
-                    log_trace("Identifier '%s' (right-hand) is NOT a macro", lexemString);
-                }
-
                 strcpy(*bufferWriteP, lexemString);
 
                 position.col--;
@@ -1602,9 +1604,9 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
     }
     *bufferSizeP = expandPreprocessorBufferIfOverflow(buffer, *bufferSizeP, *bufferWriteP);
 
-    log_trace("Next lexem after collation is: '%s'", lexemEnumNames[peekLexemCodeAt(nextLexem)]);
-    copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, nextLexem, endOfInputLexems);
-    return nextLexem;
+    log_trace("Next lexem after collation is: '%s'", lexemEnumNames[peekLexemCodeAt(rightHandLexem)]);
+    copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, rightHandLexem, endOfInputLexems);
+    return rightHandLexem;
 }
 
 static void macroArgumentsToString(char *res, LexInput *lexInput) {
