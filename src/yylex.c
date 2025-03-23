@@ -1575,16 +1575,16 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
             *bufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
             assert(**bufferWriteP == 0); /* Ensure at end of string */
 
-            LexemCode lexem = getLexemCodeAndAdvance(rightHandLexemP);
-            char *lexemString = *rightHandLexemP; /* For an ID the string follows, then the position */
+            LexemCode rightHandLexem = getLexemCodeAndAdvance(rightHandLexemP);
+            char *rightHandLexemString = *rightHandLexemP; /* For an ID the string follows, then the position */
             int value;
             Position position;
-            getExtraLexemInformationFor(lexem, rightHandLexemP, NULL, &value, &position, NULL, false);
+            getExtraLexemInformationFor(rightHandLexem, rightHandLexemP, NULL, &value, &position, NULL, false);
             log_trace("Lexem after getExtraLexemInformationFor: lexem='%s', value=%d",
-                      lexemString, value);
+                      rightHandLexemString, value);
 
-            if (isIdentifierLexem(lexem)) {
-                strcpy(*bufferWriteP, lexemString);
+            if (isIdentifierLexem(rightHandLexem)) {
+                strcpy(*bufferWriteP, rightHandLexemString);
 
                 position.col--;
                 assert(position.col >= 0);
