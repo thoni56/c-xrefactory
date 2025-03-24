@@ -1616,6 +1616,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
         } else if (leftHandLexem == CONSTANT && rightHandLexem == IDENTIFIER) {
             /* Retrieve value and position from the LHS CONSTANT */
             char *leftHandLexemStart = *leftHandLexemP;
+
             int value;
             Position position;
             getLexemCodeAndAdvance(leftHandLexemP);
@@ -1625,8 +1626,9 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
             putLexemCodeAt(IDENTIFIER, &leftHandLexemStart);
             *bufferWriteP = leftHandLexemStart; /* We want to write the id next */
 
-            getLexemCodeAndAdvance(rightHandLexemP);
+            int lexem = getLexemCodeAndAdvance(rightHandLexemP);
             char *rightHandLexemString = *rightHandLexemP; /* For an ID the string follows, then the position */
+            skipExtraLexemInformationFor(lexem, rightHandLexemP, false);
 
             sprintf(*bufferWriteP, "%d%s", value, rightHandLexemString);
 
@@ -1674,8 +1676,9 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
     }
     *bufferSizeP = expandPreprocessorBufferIfOverflow(buffer, *bufferSizeP, *bufferWriteP);
 
-    log_trace("Next lexem after collation is: '%s'", lexemEnumNames[peekLexemCodeAt(*rightHandLexemP)]);
+    /* rightHandLexemP should now have consumed all tokens used in the collation and point to any trailing ones */
     copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, *rightHandLexemP, endOfInputLexems);
+
     return *rightHandLexemP;
 }
 

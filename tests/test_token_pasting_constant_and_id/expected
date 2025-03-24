@@ -1,0 +1,9 @@
+[C-xref] active project: 'CURDIR'
+42answer
+    @source.c:1:19
+EXPAND
+    @source.c:0:0
+    @source.c:1:8
+    @source.c:2:4
+answer
+    @source.c:1:18
