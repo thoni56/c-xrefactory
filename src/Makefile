@@ -101,7 +101,9 @@ WARNINGS = -Wall -Wno-char-subscripts -Werror -Wimplicit-fallthrough
 
 OPTIMIZATION = -O0
 
-CFLAGS = -g $(OPTIMIZATION) $(INCLUDES) -fPIC -MMD -funsigned-char $(WARNINGS) $(COVERAGE) $(EXTRA_CFLAGS)
+YYDEBUG = -DYYDEBUG
+
+CFLAGS = -g $(OPTIMIZATION) $(INCLUDES) -fPIC -MMD -funsigned-char $(WARNINGS) $(COVERAGE) $(YYDEBUG) $(EXTRA_CFLAGS)
 
 LDFLAGS = $(COVERAGE)
 
@@ -154,7 +156,7 @@ all: unit build
 # For production - no smartness just compile
 .PHONY:prod
 prod:
-	$(MAKE) COVERAGE= OPTIMIZATION=-O3 c-xref
+	$(MAKE) COVERAGE= YYDEBUG= OPTIMIZATION=-O3 c-xref
 
 #########################################################################
 # For development - various ways to build
