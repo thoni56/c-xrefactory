@@ -1568,37 +1568,108 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
     }
 
     /* Now collate left and right hand tokens */
+    LexemCode leftHandLexem = peekLexemCodeAt(*leftHandLexemP);
+    LexemCode rightHandLexem = peekLexemCodeAt(*rightHandLexemP);
+
     if (*rightHandLexemP < endOfInputLexems) {
         /* TODO collation of all types of lexem pairs, not just id/const */
-        if (nextLexemIsIdentifierOrConstant(*rightHandLexemP)) {
+        if (leftHandLexem == IDENTIFIER && rightHandLexem == IDENTIFIER) {
             char *leftHandLexemString = *leftHandLexemP + LEXEMCODE_SIZE;
             *bufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
             assert(**bufferWriteP == 0); /* Ensure at end of string */
 
             LexemCode rightHandLexem = getLexemCodeAndAdvance(rightHandLexemP);
-            char *rightHandLexemString = *rightHandLexemP; /* For an ID the string follows, then the position */
-            int value;
+            char *rightHandLexemString = *rightHandLexemP; /* For an ID the string follows, then extra info */
             Position position;
-            getExtraLexemInformationFor(rightHandLexem, rightHandLexemP, NULL, &value, &position, NULL, false);
-            log_trace("Lexem after getExtraLexemInformationFor: lexem='%s', value=%d",
-                      rightHandLexemString, value);
+            getExtraLexemInformationFor(rightHandLexem, rightHandLexemP, NULL, NULL, &position, NULL, false);
 
-            if (isIdentifierLexem(rightHandLexem)) {
-                strcpy(*bufferWriteP, rightHandLexemString);
+            strcpy(*bufferWriteP, rightHandLexemString);
 
-                position.col--;
-                assert(position.col >= 0);
-                cxAddCollateReference(leftHandLexemString, *bufferWriteP, position);
-                position.col++;
-            } else /* isConstantLexem() */ {
-                position = peekLexemPositionAt(*bufferWriteP + 1); /* Position from lefthand id */
-                sprintf(*bufferWriteP, "%d", value);
-                cxAddCollateReference(leftHandLexemString, *bufferWriteP, position);
-            }
+            position.col--;
+            assert(position.col >= 0);
+            cxAddCollateReference(leftHandLexemString, *bufferWriteP, position);
+            position.col++;
+
             *bufferWriteP += strlen(*bufferWriteP);
             assert(**bufferWriteP == 0);
             (*bufferWriteP)++;
             putLexemPositionAt(position, bufferWriteP);
+        } else if (leftHandLexem == IDENTIFIER && rightHandLexem == CONSTANT) {
+            char *leftHandLexemString = *leftHandLexemP + LEXEMCODE_SIZE;
+            *bufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
+            assert(**bufferWriteP == 0); /* Ensure at end of string */
+
+            LexemCode rightHandLexem = getLexemCodeAndAdvance(rightHandLexemP);
+            int value;
+            getExtraLexemInformationFor(rightHandLexem, rightHandLexemP, NULL, &value, NULL, NULL, false);
+
+            /* Get position from lefthand id, immediately after its string */
+            Position position = peekLexemPositionAt(*bufferWriteP + 1);
+
+            sprintf(*bufferWriteP, "%d", value); /* Concat the value to the end of the LHS ID */
+            cxAddCollateReference(leftHandLexemString, *bufferWriteP, position);
+
+            *bufferWriteP += strlen(*bufferWriteP);
+            assert(**bufferWriteP == 0);
+            (*bufferWriteP)++;
+            putLexemPositionAt(position, bufferWriteP);
+        } else if (leftHandLexem == CONSTANT && rightHandLexem == IDENTIFIER) {
+            /* Retrieve value and position from the LHS CONSTANT */
+            char *leftHandLexemStart = *leftHandLexemP;
+            int value;
+            Position position;
+            getLexemCodeAndAdvance(leftHandLexemP);
+            getExtraLexemInformationFor(leftHandLexem, leftHandLexemP, NULL, &value, &position, NULL, false);
+
+            /* Re-write to an IDENTIFIER */
+            putLexemCodeAt(IDENTIFIER, &leftHandLexemStart);
+            *bufferWriteP = leftHandLexemStart; /* We want to write the id next */
+
+            getLexemCodeAndAdvance(rightHandLexemP);
+            char *rightHandLexemString = *rightHandLexemP; /* For an ID the string follows, then the position */
+
+            sprintf(*bufferWriteP, "%d%s", value, rightHandLexemString);
+
+            assert(position.col >= 0);
+            cxAddCollateReference(rightHandLexemString, *bufferWriteP, position);
+            position.col++;
+
+            *bufferWriteP += strlen(*bufferWriteP);
+            assert(**bufferWriteP == 0);
+            (*bufferWriteP)++;
+
+            putLexemPositionAt(position, bufferWriteP);
+        } else {
+            if (nextLexemIsIdentifierOrConstant(*rightHandLexemP)) {
+                char *leftHandLexemString = *leftHandLexemP + LEXEMCODE_SIZE;
+                *bufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
+                assert(**bufferWriteP == 0); /* Ensure at end of string */
+
+                LexemCode rightHandLexem = getLexemCodeAndAdvance(rightHandLexemP);
+                char *rightHandLexemString = *rightHandLexemP; /* For an ID the string follows, then the position */
+                int value;
+                Position position;
+                getExtraLexemInformationFor(rightHandLexem, rightHandLexemP, NULL, &value, &position, NULL, false);
+                log_trace("Lexem after getExtraLexemInformationFor: lexem='%s', value=%d",
+                          rightHandLexemString, value);
+
+                if (isIdentifierLexem(rightHandLexem)) {
+                    strcpy(*bufferWriteP, rightHandLexemString);
+
+                    position.col--;
+                    assert(position.col >= 0);
+                    cxAddCollateReference(leftHandLexemString, *bufferWriteP, position);
+                    position.col++;
+                } else /* isConstantLexem() */ {
+                    position = peekLexemPositionAt(*bufferWriteP + 1); /* Position from lefthand id */
+                    sprintf(*bufferWriteP, "%d", value);
+                    cxAddCollateReference(leftHandLexemString, *bufferWriteP, position);
+                }
+                *bufferWriteP += strlen(*bufferWriteP);
+                assert(**bufferWriteP == 0);
+                (*bufferWriteP)++;
+                putLexemPositionAt(position, bufferWriteP);
+            }
         }
     }
     *bufferSizeP = expandPreprocessorBufferIfOverflow(buffer, *bufferSizeP, *bufferWriteP);
