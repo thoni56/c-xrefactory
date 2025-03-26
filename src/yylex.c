@@ -1529,7 +1529,7 @@ static MacroBody *getMacroBody(Symbol *macroSymbol) {
 }
 
 static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBody,
-                                      LexInput *actualArgumentsInput, int actualArgumentCount);
+                                      LexInput *actualArgumentsInput);
 
 /* **************************************************************** */
 // Returns updated position to continue reading from
@@ -1582,7 +1582,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
 
             MacroBody *macroBody = getMacroBody(macroSymbol);
             LexInput macroExpansion;
-            createMacroBodyAsNewInput(&macroExpansion, macroBody, actualArgumentsInput, macroBody->argCount);
+            createMacroBodyAsNewInput(&macroExpansion, macroBody, actualArgumentsInput);
 
             rhs = *bufferWriteP;
             copyRemainingLexems(buffer, bufferSizeP, bufferWriteP,
@@ -1800,8 +1800,7 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
 /* ********************* macro body replacement ***************** */
 /* ************************************************************** */
 
-static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBody, LexInput *actualArgumentsInput,
-                                      int actualArgumentCount) {
+static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBody, LexInput *actualArgumentsInput) {
 
     char *nextBodyLexemToRead = macroBody->body;
     char *endOfBodyLexems = macroBody->body + macroBody->size;
@@ -1836,7 +1835,7 @@ static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBo
     buffer = ppmReallocc(buffer, bufferWrite - buffer, sizeof(char), bufferSize + MAX_LEXEM_SIZE);
 
     /* expand arguments */
-    for (int i = 0; i < actualArgumentCount; i++) {
+    for (int i = 0; i < macroBody->argCount; i++) {
         expandMacroArgument(&actualArgumentsInput[i]);
     }
 
@@ -2049,7 +2048,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
     log_trace("create macro body '%s' as new input", macroBody->name);
 
     LexInput macroBodyInput;
-    createMacroBodyAsNewInput(&macroBodyInput, macroBody, actualArgumentsInput, macroBody->argCount);
+    createMacroBodyAsNewInput(&macroBodyInput, macroBody, actualArgumentsInput);
     prependMacroInput(&macroBodyInput);
     log_trace("expanded macro '%s'", macroBody->name);
 
