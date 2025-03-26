@@ -1541,7 +1541,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
                      LexInput *actualArgumentsInput // The argument values for this macro expansion
 ) {
     ENTER();
-    char *freeBase = ppmAllocc(0, sizeof(char));
+    char *ppmMarker = ppmAllocc(0, sizeof(char));
 
     /* Macro argument resolution first for left and right operands */
     if (peekLexemCodeAt(*leftHandLexemP) == CPP_MACRO_ARGUMENT) {
@@ -1705,7 +1705,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
     /* rhsLexem have moved over all tokens used in the collation and now points to any trailing ones */
     copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, rhs, endOfInputLexems);
 
-    ppmFreeUntil(freeBase); // Free any allocations done
+    ppmFreeUntil(ppmMarker); // Free any allocations done
     LEAVE();
     return rhs;
 }
@@ -1851,7 +1851,7 @@ static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBo
 /* *************************************************************** */
 
 static LexemCode getLexSkippingLines(char **saveLexemP, int *lineNumberP,
-                                int *valueP, Position *positionP, int *lengthP) {
+                                     int *valueP, Position *positionP, int *lengthP) {
     LexemCode lexem = getLexemAndSavePointerToPrevious(saveLexemP);
     while (lexem == LINE_TOKEN || lexem == '\n') {
         getExtraLexemInformationFor(lexem, &currentInput.read, lineNumberP, valueP, positionP, lengthP,
@@ -2011,14 +2011,8 @@ static void addMacroBaseUsageRef(Symbol *macroSymbol) {
 
 
 static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
-    LexemCode lexem;
-    Position lparPosition;
-    LexInput *actualArgumentsInput, macroBodyInput;
-    MacroBody *macroBody;
-    char *previousLexemP;
-    char *freeBase;
 
-    macroBody = macroSymbol->u.mbody;
+    MacroBody *macroBody = macroSymbol->u.mbody;
     if (macroBody == NULL)
         return false;	/* !!!!!         tricky,  undefined macro */
     if (macroStackIndex == 0) { /* call from top level, init mem */
@@ -2029,17 +2023,19 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
         return false;
 
     /* Make sure these are initialized */
-    previousLexemP = currentInput.read;
-    freeBase = ppmAllocc(0, sizeof(char));
+    char *previousLexemP = currentInput.read;
+    char *ppmMarker = ppmAllocc(0, sizeof(char));
 
+    LexInput *actualArgumentsInput;
     if (macroBody->argCount >= 0) {
-        lexem = getLexSkippingLines(&previousLexemP, NULL, NULL, NULL, NULL);
+        LexemCode lexem = getLexSkippingLines(&previousLexemP, NULL, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         if (lexem != '(') {
             currentInput.read = previousLexemP;		/* unget lexem */
             return false;
         }
+        Position lparPosition;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &lparPosition, NULL,
                                     macroStackIndex == 0);
         actualArgumentsInput = getActualMacroArguments(macroBody, macroPosition, lparPosition);
@@ -2051,17 +2047,20 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
     if (options.mode == XrefMode)
         addMacroBaseUsageRef(macroSymbol);
     log_trace("create macro body '%s' as new input", macroBody->name);
-    createMacroBodyAsNewInput(&macroBodyInput,macroBody,actualArgumentsInput,macroBody->argCount);
+
+    LexInput macroBodyInput;
+    createMacroBodyAsNewInput(&macroBodyInput, macroBody, actualArgumentsInput, macroBody->argCount);
     prependMacroInput(&macroBodyInput);
     log_trace("expanded macro '%s'", macroBody->name);
-    ppmFreeUntil(freeBase);
+
+    ppmFreeUntil(ppmMarker);
     return true;
 
 endOfMacroArgument:
     /* unterminated macro call in argument */
     /* TODO unread the argument that was read */
     currentInput.read = previousLexemP;
-    ppmFreeUntil(freeBase);
+    ppmFreeUntil(ppmMarker);
     return false;
 
  endOfFile:
@@ -2070,7 +2069,7 @@ endOfMacroArgument:
         warningMessage(ERR_ST,"[macroCallExpand] unterminated macro call");
     }
     currentInput.read = previousLexemP;
-    ppmFreeUntil(freeBase);
+    ppmFreeUntil(ppmMarker);
     return false;
 }
 
