@@ -2,10 +2,10 @@
 
 LexInput currentInput;
 
-LexInput makeLexInput(char *read, char *begin, char *write, char *macroName, InputType inputType) {
+LexInput makeLexInput(char *begin, char *read, char *write, char *macroName, InputType inputType) {
     LexInput input;
-    input.read      = read;
     input.begin     = begin;
+    input.read      = read;
     input.write     = write;
     input.macroName = macroName;
     input.inputType = inputType;

@@ -246,7 +246,7 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
     currentFile.lineNumber = cachePoint->lineNumber;
     currentFile.ifDepth = cachePoint->ifDepth;
     currentFile.ifStack = cachePoint->ifStack;
-    currentInput = makeLexInput(cachePoint->nextLexemP, cache.lexemStream, readUntil, NULL, INPUT_CACHE);
+    currentInput = makeLexInput(cache.lexemStream, cachePoint->nextLexemP, readUntil, NULL, INPUT_CACHE);
     fillCache(&cache, cachingActive, cachePointIndex + 1, cachePoint->includeStackTop, cachePoint->nextLexemP,
               currentInput.read, currentInput.read, currentInput.write);
     log_trace("finished recovering");

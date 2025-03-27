@@ -160,7 +160,7 @@ static void setCurrentFileConsistency(FileDescriptor *file, LexInput *input) {
     file->lexemBuffer.read = input->read;
 }
 static void setCurrentInputConsistency(LexInput *input, FileDescriptor *file) {
-    *input = makeLexInput(file->lexemBuffer.read, file->lexemBuffer.lexemStream, file->lexemBuffer.write,
+    *input = makeLexInput(file->lexemBuffer.lexemStream, file->lexemBuffer.read, file->lexemBuffer.write,
                           NULL, INPUT_NORMAL);
 }
 
@@ -483,7 +483,7 @@ void popInclude(void) {
     if (includeStack.pointer != 0) {
         currentFile = includeStack.stack[--includeStack.pointer];	/* buffers are copied !!!!!!, burk */
         if (includeStack.pointer == 0 && cache.read != NULL) {
-            currentInput = makeLexInput(cache.read, cache.lexemStream, cache.write, NULL,
+            currentInput = makeLexInput(cache.lexemStream, cache.read, cache.write, NULL,
                                         INPUT_CACHE);
         } else {
             setCurrentInputConsistency(&currentInput, &currentFile);

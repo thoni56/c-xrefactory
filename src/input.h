@@ -20,6 +20,6 @@ typedef struct {
 
 extern LexInput currentInput;
 
-extern LexInput makeLexInput(char *read, char *begin, char *write, char *macroName, InputType inputType);
+extern LexInput makeLexInput(char *begin, char *read, char *write, char *macroName, InputType inputType);
 
 #endif
