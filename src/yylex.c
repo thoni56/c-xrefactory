@@ -1608,7 +1608,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
             Position position;
             getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, NULL, &position, NULL, false);
 
-            strcpy(*bufferWriteP, rightHandLexemString);
+            memmove(*bufferWriteP, rightHandLexemString, strlen(rightHandLexemString) + 1);
 
             position.col--;
             assert(position.col >= 0);
