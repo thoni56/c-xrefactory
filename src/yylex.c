@@ -160,8 +160,8 @@ static void setCurrentFileConsistency(FileDescriptor *file, LexInput *input) {
     file->lexemBuffer.read = input->read;
 }
 static void setCurrentInputConsistency(LexInput *input, FileDescriptor *file) {
-    fillLexInput(input, file->lexemBuffer.read, file->lexemBuffer.lexemStream, file->lexemBuffer.write,
-                 NULL, INPUT_NORMAL);
+    *input = makeLexInput(file->lexemBuffer.read, file->lexemBuffer.lexemStream, file->lexemBuffer.write,
+                          NULL, INPUT_NORMAL);
 }
 
 static bool isPreprocessorToken(LexemCode lexem) {
@@ -483,8 +483,8 @@ void popInclude(void) {
     if (includeStack.pointer != 0) {
         currentFile = includeStack.stack[--includeStack.pointer];	/* buffers are copied !!!!!!, burk */
         if (includeStack.pointer == 0 && cache.read != NULL) {
-            fillLexInput(&currentInput, cache.read, cache.lexemStream, cache.write, NULL,
-                         INPUT_CACHE);
+            currentInput = makeLexInput(cache.read, cache.lexemStream, cache.write, NULL,
+                                        INPUT_CACHE);
         } else {
             setCurrentInputConsistency(&currentInput, &currentFile);
         }
@@ -1440,7 +1440,7 @@ static void expandMacroArgument(LexInput *argumentInput) {
 endOfMacroArgument:
     currentInput = macroInputStack[--macroStackIndex];
     buffer = ppmReallocc(buffer, currentBufferP-buffer, sizeof(char), bufferSize+MAX_LEXEM_SIZE);
-    fillLexInput(argumentInput, buffer, buffer, currentBufferP, NULL, INPUT_NORMAL);
+    *argumentInput = makeLexInput(buffer, buffer, currentBufferP, NULL, INPUT_NORMAL);
     LEAVE();
     return;
 endOfFile:
@@ -1585,8 +1585,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
             createMacroBodyAsNewInput(&macroExpansion, macroBody, actualArgumentsInput);
 
             rhs = *bufferWriteP;
-            copyRemainingLexems(buffer, bufferSizeP, bufferWriteP,
-                                macroExpansion.begin, macroExpansion.write);
+            copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, macroExpansion.begin, macroExpansion.write);
             endOfInputLexems = *bufferWriteP;
         } else {
             log_trace("Identifier '%s' (right-hand) is NOT a macro", lexemString);
@@ -1842,7 +1841,7 @@ static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBo
     /* replace arguments into a different buffer to be used as the input */
     char *buf2 = replaceMacroArguments(actualArgumentsInput, buffer, &bufferWrite);
 
-    fillLexInput(inputToSetup, buf2, buf2, bufferWrite, macroBody->name, INPUT_MACRO);
+    *inputToSetup = makeLexInput(buf2, buf2, bufferWrite, macroBody->name, INPUT_MACRO);
 }
 
 /* *************************************************************** */
@@ -1926,8 +1925,8 @@ endOfMacroArgument:;
 
 end:
     buffer = ppmReallocc(buffer, bufferP - buffer, sizeof(char), bufferSize + MAX_LEXEM_SIZE);
-    fillLexInput(actualArgumentsInput, buffer, buffer, bufferP, currentInput.macroName,
-                 INPUT_NORMAL);
+    *actualArgumentsInput = makeLexInput(buffer, buffer, bufferP, currentInput.macroName,
+                                         INPUT_NORMAL);
     *inOutLexem = lexem;
     return;
 }
@@ -1971,7 +1970,7 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position macroPos
     }
     /* fill missing arguments */
     for(;argumentIndex < macroBody->argCount; argumentIndex++) {
-        fillLexInput(&actualArgs[argumentIndex], NULL, NULL, NULL, NULL,INPUT_NORMAL);
+        actualArgs[argumentIndex] = makeLexInput(NULL, NULL, NULL, NULL,INPUT_NORMAL);
     }
     LEAVE();
     return actualArgs;
@@ -2003,7 +2002,7 @@ static void addMacroBaseUsageRef(Symbol *macroSymbol) {
                 break;
         }
     }
-    if (isMember==0 || r==NULL) {
+    if (!isMember || r==NULL) {
         addCxReference(macroSymbol, basePos, UsageMacroBaseFileUsage, NO_FILE_NUMBER);
     }
 }
