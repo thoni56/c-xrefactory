@@ -1528,8 +1528,7 @@ static MacroBody *getMacroBody(Symbol *macroSymbol) {
     return macroSymbol->u.mbody;
 }
 
-static LexInput createMacroBodyAsNewInput(MacroBody *macroBody,
-                                          LexInput *actualArgumentsInput);
+static LexInput createMacroBodyAsNewInput(MacroBody *macroBody, LexInput *actualArgumentsInput);
 
 /* **************************************************************** */
 // Returns updated position to continue reading from
@@ -1863,9 +1862,9 @@ static LexemCode getLexSkippingLines(char **saveLexemP, int *lineNumberP,
     return lexem;
 }
 
-static void getActualMacroArgument(
+static LexemCode getActualMacroArgument(
     char *previousLexemP,
-    LexemCode *inOutLexem,
+    LexemCode lexem,
     Position macroPosition,
     Position **beginPosition,
     Position **endPosition,
@@ -1875,8 +1874,6 @@ static void getActualMacroArgument(
 ) {
     char *bufferP;
     char *buffer;
-
-    LexemCode lexem = *inOutLexem;
 
     int bufferSize = MACRO_ARGUMENTS_BUFFER_SIZE;
     buffer = ppmAllocc(bufferSize + MAX_LEXEM_SIZE, sizeof(char));
@@ -1931,23 +1928,23 @@ end:
     buffer = ppmReallocc(buffer, bufferP - buffer, sizeof(char), bufferSize + MAX_LEXEM_SIZE);
     *actualArgumentsInput = makeLexInput(buffer, buffer, bufferP, currentInput.macroName,
                                          INPUT_NORMAL);
-    *inOutLexem = lexem;
-    return;
+    return lexem;
 }
 
 static LexInput *getActualMacroArguments(MacroBody *macroBody, Position macroPosition,
                                          Position lparPosition) {
-    char *previousLexemP;
 
     Position ppb1 = lparPosition;
     Position ppb2 = lparPosition;
     Position *beginPosition = &ppb1;
     Position *endPosition = &ppb2;
-    Position position;
 
     ENTER();
 
     LexInput *actualArgs = ppmAllocc(macroBody->argCount, sizeof(LexInput));
+
+    char *previousLexemP;
+    Position position;
     LexemCode lexem = getLexSkippingLines(&previousLexemP, NULL, NULL, &position, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
@@ -1960,7 +1957,7 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position macroPos
         handleMacroUsageParameterPositions(0, macroPosition, *beginPosition, *endPosition, true);
     } else {
         for(;;) {
-            getActualMacroArgument(previousLexemP, &lexem, macroPosition, &beginPosition, &endPosition,
+            lexem = getActualMacroArgument(previousLexemP, lexem, macroPosition, &beginPosition, &endPosition,
                                    &actualArgs[argumentIndex], macroBody, argumentIndex);
             log_trace("getActualMacroArgument: %s", lexemEnumNames[lexem]);
             argumentIndex ++ ;
