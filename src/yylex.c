@@ -1862,15 +1862,10 @@ static LexemCode getLexSkippingLines(char **saveLexemP, int *lineNumberP,
     return lexem;
 }
 
-static LexemCode getActualMacroArgument(
-    char *previousLexemP,
-    LexemCode lexem,
-    Position macroPosition,
-    Position **beginPosition,
-    Position **endPosition,
-    LexInput *actualArgumentsInput,
-    MacroBody *macroBody,
-    int actualArgumentIndex
+static LexemCode getActualMacroArgument(char *previousLexemP, LexemCode lexem, Position macroPosition,
+                                        Position *beginPositionP, Position *endPositionP,
+                                        LexInput *actualArgumentsInput, int argumentCount,
+                                        int actualArgumentIndex
 ) {
     char *bufferP;
     char *buffer;
@@ -1882,8 +1877,7 @@ static LexemCode getActualMacroArgument(
     /* if lastArgument, collect everything there */
     int depth = 0;
     int offset = 0;
-    while (((lexem != ',' || actualArgumentIndex + 1 == macroBody->argCount) && lexem != ')')
-           || depth > 0) {
+    while (((lexem != ',' || actualArgumentIndex + 1 == argumentCount) && lexem != ')') || depth > 0) {
         // The following should be equivalent to the loop condition:
         //& if (lexem == ')' && depth <= 0) break;
         //& if (lexem == ',' && depth <= 0 && ! lastArgument) break;
@@ -1906,13 +1900,13 @@ static LexemCode getActualMacroArgument(
                                 endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL,
-                                    *endPosition, NULL, macroStackIndex == 0);
+                                    endPositionP, NULL, macroStackIndex == 0);
         if ((lexem == ',' || lexem == ')') && depth == 0) {
             offset++;
             handleMacroUsageParameterPositions(actualArgumentIndex + offset, macroPosition,
-                                               **beginPosition,
-                                               **endPosition, 0);
-            **beginPosition = **endPosition;
+                                               *beginPositionP,
+                                               *endPositionP, 0);
+            *beginPositionP = *endPositionP;
         }
     }
     goto end;
@@ -1933,46 +1927,45 @@ end:
 
 static LexInput *getActualMacroArguments(MacroBody *macroBody, Position macroPosition,
                                          Position lparPosition) {
-
-    Position ppb1 = lparPosition;
-    Position ppb2 = lparPosition;
-    Position *beginPosition = &ppb1;
-    Position *endPosition = &ppb2;
-
     ENTER();
 
     LexInput *actualArgs = ppmAllocc(macroBody->argCount, sizeof(LexInput));
 
     char *previousLexemP;
-    Position position;
-    LexemCode lexem = getLexSkippingLines(&previousLexemP, NULL, NULL, &position, NULL);
+    Position beginPosition = lparPosition;
+    Position endPosition = lparPosition;
+
+    LexemCode lexem = getLexSkippingLines(&previousLexemP, NULL, NULL, &endPosition, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
+    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &endPosition, NULL,
                                 macroStackIndex == 0);
+
     log_trace("getActualMacroArguments for %s: %s", macroBody->name, lexemEnumNames[lexem]);
+
     int argumentIndex = 0;
+
     if (lexem == ')') {
-        *endPosition = position;
-        handleMacroUsageParameterPositions(0, macroPosition, *beginPosition, *endPosition, true);
+        handleMacroUsageParameterPositions(0, macroPosition, beginPosition, endPosition, true);
     } else {
-        for(;;) {
+        for (;;) {
             lexem = getActualMacroArgument(previousLexemP, lexem, macroPosition, &beginPosition, &endPosition,
-                                   &actualArgs[argumentIndex], macroBody, argumentIndex);
+                                           &actualArgs[argumentIndex], macroBody->argCount, argumentIndex);
             log_trace("getActualMacroArgument: %s", lexemEnumNames[lexem]);
-            argumentIndex ++ ;
+            argumentIndex++;
             if (lexem != ',' || argumentIndex >= macroBody->argCount)
                 break;
-            lexem = getLexSkippingLines(&previousLexemP, NULL, NULL, &position, NULL);
+            lexem = getLexSkippingLines(&previousLexemP, NULL, NULL, NULL, NULL);
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
-            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, NULL, NULL,
                                         macroStackIndex == 0);
         }
     }
     /* fill missing arguments */
     for (;argumentIndex < macroBody->argCount; argumentIndex++) {
-        actualArgs[argumentIndex] = makeLexInput(NULL, NULL, NULL, NULL,INPUT_NORMAL);
+        actualArgs[argumentIndex] = makeLexInput(NULL, NULL, NULL, NULL, INPUT_NORMAL);
     }
+
     LEAVE();
     return actualArgs;
 
