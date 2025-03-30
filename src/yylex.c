@@ -1528,8 +1528,8 @@ static MacroBody *getMacroBody(Symbol *macroSymbol) {
     return macroSymbol->u.mbody;
 }
 
-static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBody,
-                                      LexInput *actualArgumentsInput);
+static LexInput createMacroBodyAsNewInput(MacroBody *macroBody,
+                                          LexInput *actualArgumentsInput);
 
 /* **************************************************************** */
 // Returns updated position to continue reading from
@@ -1570,8 +1570,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
             log_trace("Macro found: '%s' (left-hand) -> expanding it", lexemString);
 
             MacroBody *macroBody = getMacroBody(macroSymbol);
-            LexInput macroExpansion;
-            createMacroBodyAsNewInput(&macroExpansion, macroBody, actualArgumentsInput);
+            LexInput macroExpansion = createMacroBodyAsNewInput(macroBody, actualArgumentsInput);
 
             *bufferWriteP = *leftHandLexemP;
             copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, macroExpansion.begin, macroExpansion.write);
@@ -1588,8 +1587,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
             log_trace("Macro found: '%s' (right-hand) -> expanding it", lexemString);
 
             MacroBody *macroBody = getMacroBody(macroSymbol);
-            LexInput macroExpansion;
-            createMacroBodyAsNewInput(&macroExpansion, macroBody, actualArgumentsInput);
+            LexInput macroExpansion = createMacroBodyAsNewInput(macroBody, actualArgumentsInput);
 
             rhs = *bufferWriteP;
             copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, macroExpansion.begin, macroExpansion.write);
@@ -1806,7 +1804,7 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
 /* ********************* macro body replacement ***************** */
 /* ************************************************************** */
 
-static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBody, LexInput *actualArgumentsInput) {
+static LexInput createMacroBodyAsNewInput(MacroBody *macroBody, LexInput *actualArgumentsInput) {
     // Allocate space for an extra lexem so that users can overwrite and *then* expand
     int   bufferSize = MACRO_BODY_BUFFER_SIZE;
     char *buffer = ppmAllocc(bufferSize + MAX_LEXEM_SIZE, sizeof(char));
@@ -1847,7 +1845,7 @@ static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBo
     /* replace arguments into a different buffer to be used as the input */
     char *buf2 = replaceMacroArguments(actualArgumentsInput, buffer, &bufferWrite);
 
-    *inputToSetup = makeLexInput(buf2, buf2, bufferWrite, macroBody->name, INPUT_MACRO);
+    return makeLexInput(buf2, buf2, bufferWrite, macroBody->name, INPUT_MACRO);
 }
 
 /* *************************************************************** */
@@ -2052,8 +2050,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
         addMacroBaseUsageRef(macroSymbol);
     log_trace("create macro body '%s' as new input", macroBody->name);
 
-    LexInput macroBodyInput;
-    createMacroBodyAsNewInput(&macroBodyInput, macroBody, actualArgumentsInput);
+    LexInput macroBodyInput = createMacroBodyAsNewInput(macroBody, actualArgumentsInput);
     prependMacroInput(&macroBodyInput);
     log_trace("expanded macro '%s'", macroBody->name);
 
