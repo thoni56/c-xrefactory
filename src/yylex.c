@@ -1554,20 +1554,27 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
         }
     }
 
-    char *endOfInputLexems;
+    char *endOfLexems = NULL;
     if (peekLexemCodeAt(*rightHandLexemP) == CPP_MACRO_ARGUMENT) {
-        resolveMacroArgument(rightHandLexemP, actualArgumentsInput, &endOfInputLexems);
+        resolveMacroArgument(rightHandLexemP, actualArgumentsInput, &endOfLexems);
     } else {
-        resolveRegularOperand(rightHandLexemP, &endOfInputLexems);
+        resolveRegularOperand(rightHandLexemP, &endOfLexems);
     }
 
     /* Macro invocations next */
     assert(*leftHandLexemP != NULL);
     if (isIdentifierLexem(peekLexemCodeAt(*leftHandLexemP))) {
         char *lexemString = *leftHandLexemP + LEXEMCODE_SIZE;
-        if (findMacroSymbol(lexemString) != NULL) {
-            log_trace("Macro found: '%s' (left-hand) -> Should be expanded", lexemString);
-            //expandMacro();
+        Symbol *macroSymbol = findMacroSymbol(lexemString);
+        if (macroSymbol != NULL) {
+            log_trace("Macro found: '%s' (left-hand) -> expanding it", lexemString);
+
+            MacroBody *macroBody = getMacroBody(macroSymbol);
+            LexInput macroExpansion;
+            createMacroBodyAsNewInput(&macroExpansion, macroBody, actualArgumentsInput);
+
+            *bufferWriteP = *leftHandLexemP;
+            copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, macroExpansion.begin, macroExpansion.write);
         } else {
             log_trace("Identifier '%s' (left-hand) is NOT a macro", lexemString);
         }
@@ -1586,7 +1593,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
 
             rhs = *bufferWriteP;
             copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, macroExpansion.begin, macroExpansion.write);
-            endOfInputLexems = *bufferWriteP;
+            endOfLexems = *bufferWriteP;
         } else {
             log_trace("Identifier '%s' (right-hand) is NOT a macro", lexemString);
         }
@@ -1596,7 +1603,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
     LexemCode leftHandLexem = peekLexemCodeAt(*leftHandLexemP);
     LexemCode rightHandLexem = peekLexemCodeAt(rhs);
 
-    if (rhs < endOfInputLexems) {
+    if (rhs < endOfLexems) {
         /* TODO collation of all types of lexem pairs, not just id/const */
         if (leftHandLexem == IDENTIFIER && rightHandLexem == IDENTIFIER) {
             char *leftHandLexemString = *leftHandLexemP + LEXEMCODE_SIZE;
@@ -1702,7 +1709,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
     *bufferSizeP = expandPreprocessorBufferIfOverflow(buffer, *bufferSizeP, *bufferWriteP);
 
     /* rhsLexem have moved over all tokens used in the collation and now points to any trailing ones */
-    copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, rhs, endOfInputLexems);
+    copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, rhs, endOfLexems);
 
     ppmFreeUntil(ppmMarker); // Free any allocations done
     LEAVE();
