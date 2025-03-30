@@ -1807,16 +1807,15 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
 /* ************************************************************** */
 
 static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBody, LexInput *actualArgumentsInput) {
+    // Allocate space for an extra lexem so that users can overwrite and *then* expand
+    int   bufferSize = MACRO_BODY_BUFFER_SIZE;
+    char *buffer = ppmAllocc(bufferSize + MAX_LEXEM_SIZE, sizeof(char));
+
+    char *bufferWrite  = buffer;
+    char *lastWrittenLexem = NULL;
 
     char *nextBodyLexemToRead = macroBody->body;
     char *endOfBodyLexems = macroBody->body + macroBody->size;
-
-    int   bufferSize        = MACRO_BODY_BUFFER_SIZE;
-
-    // Allocate space for an extra lexem so that users can overwrite and *then* expand
-    char *buffer = ppmAllocc(bufferSize + MAX_LEXEM_SIZE, sizeof(char));
-    char *bufferWrite  = buffer;
-    char *lastWrittenLexem = NULL;
 
     while (nextBodyLexemToRead < endOfBodyLexems) {
         char *lexemStart   = nextBodyLexemToRead;
@@ -1852,7 +1851,7 @@ static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBo
 }
 
 /* *************************************************************** */
-/* ******************* MACRO CALL PROCESS ************************ */
+/* ******************* MACRO CALL PROCESSING ********************* */
 /* *************************************************************** */
 
 static LexemCode getLexSkippingLines(char **saveLexemP, int *lineNumberP,
@@ -1976,7 +1975,7 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position macroPos
         }
     }
     /* fill missing arguments */
-    for(;argumentIndex < macroBody->argCount; argumentIndex++) {
+    for (;argumentIndex < macroBody->argCount; argumentIndex++) {
         actualArgs[argumentIndex] = makeLexInput(NULL, NULL, NULL, NULL,INPUT_NORMAL);
     }
     LEAVE();
