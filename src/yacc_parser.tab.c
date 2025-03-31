@@ -2903,7 +2903,7 @@ case 143:
         Symbol *symbol = yyvsp[0].ast_id.data->symbol;
         if (symbol != NULL && symbol->type == TypeDefault) {
             assert(symbol->storage != StorageTypedef);
-            yyval.ast_expressionType.data.typeModifier = symbol->u.typeModifier;
+            yyval.ast_expressionType.data.typeModifier = symbol->typeModifier;
             assert(options.mode);
             yyval.ast_expressionType.data.reference = addCxReference(symbol, yyvsp[0].ast_id.data->position, UsageUsed, NO_FILE_NUMBER);
         } else {
@@ -3022,7 +3022,7 @@ case 162:
         Symbol *rec=NULL;
         yyval.ast_expressionType.data.reference = findStructureFieldFromType(yyvsp[-3].ast_expressionType.data.typeModifier, yyvsp[0].ast_id.data, &rec);
         assert(rec);
-        yyval.ast_expressionType.data.typeModifier = rec->u.typeModifier;
+        yyval.ast_expressionType.data.typeModifier = rec->typeModifier;
         assert(yyval.ast_expressionType.data.typeModifier);
     }
 break;
@@ -3038,7 +3038,7 @@ case 164:
         if (yyvsp[-3].ast_expressionType.data.typeModifier->type==TypePointer || yyvsp[-3].ast_expressionType.data.typeModifier->type==TypeArray) {
             yyval.ast_expressionType.data.reference = findStructureFieldFromType(yyvsp[-3].ast_expressionType.data.typeModifier->next, yyvsp[0].ast_id.data, &rec);
             assert(rec);
-            yyval.ast_expressionType.data.typeModifier = rec->u.typeModifier;
+            yyval.ast_expressionType.data.typeModifier = rec->typeModifier;
         } else yyval.ast_expressionType.data.typeModifier = &errorModifier;
         assert(yyval.ast_expressionType.data.typeModifier);
     }
@@ -3455,7 +3455,7 @@ case 253:
 {
         assert(yyvsp[0].ast_id.data);
         assert(yyvsp[0].ast_id.data->symbol);
-        yyval.ast_symbol.data = typeSpecifier2(yyvsp[0].ast_id.data->symbol->u.typeModifier);
+        yyval.ast_symbol.data = typeSpecifier2(yyvsp[0].ast_id.data->symbol->typeModifier);
     }
 break;
 case 254:
@@ -3476,7 +3476,7 @@ case 256:
         assert(yyvsp[0].ast_id.data);
         assert(yyvsp[0].ast_id.data->symbol);
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
-        declTypeSpecifier2(yyvsp[-1].ast_symbol.data,yyvsp[0].ast_id.data->symbol->u.typeModifier);
+        declTypeSpecifier2(yyvsp[-1].ast_symbol.data,yyvsp[0].ast_id.data->symbol->typeModifier);
     }
 break;
 case 257:
@@ -3800,9 +3800,9 @@ case 324:
 {
         assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->type == TypeEnum && yyvsp[-3].ast_typeModifiers.data->u.t);
         yyval.ast_typeModifiers.data = yyvsp[-3].ast_typeModifiers.data;
-        if (yyval.ast_typeModifiers.data->u.t->u.enums==NULL) {
-            yyval.ast_typeModifiers.data->u.t->u.enums = yyvsp[-1].ast_symbolList.data;
-            addToFrame(setToNull, &(yyval.ast_typeModifiers.data->u.t->u.enums));
+        if (yyval.ast_typeModifiers.data->u.t->enums==NULL) {
+            yyval.ast_typeModifiers.data->u.t->enums = yyvsp[-1].ast_symbolList.data;
+            addToFrame(setToNull, &(yyval.ast_typeModifiers.data->u.t->enums));
         }
     }
 break;
@@ -3920,7 +3920,7 @@ case 344:
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
         modifier = addComposedTypeToSymbol(yyval.ast_symbol.data, TypeFunction);
         initFunctionTypeModifier(&modifier->u.f , yyvsp[-1].ast_symbolPositionListPair.data.symbol);
-        bool isVoid = yyvsp[-1].ast_symbolPositionListPair.data.symbol->u.typeModifier->type == TypeVoid;
+        bool isVoid = yyvsp[-1].ast_symbolPositionListPair.data.symbol->typeModifier->type == TypeVoid;
         handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.data, yyvsp[-2].ast_position.data, yyvsp[-1].ast_symbolPositionListPair.data.positionList, yyvsp[0].ast_position.data, true, isVoid);
     }
 break;
@@ -3981,7 +3981,7 @@ case 355:
         assert(yyvsp[0].ast_id.data);
         assert(yyvsp[0].ast_id.data->symbol);
         assert(yyvsp[0].ast_id.data->symbol);
-        yyval.ast_symbol.data = typeSpecifier2(yyvsp[0].ast_id.data->symbol->u.typeModifier);
+        yyval.ast_symbol.data = typeSpecifier2(yyvsp[0].ast_id.data->symbol->typeModifier);
     }
 break;
 case 356:
@@ -4003,7 +4003,7 @@ case 358:
         assert(yyvsp[0].ast_id.data->symbol);
         assert(yyvsp[0].ast_id.data->symbol);
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
-        declTypeSpecifier2(yyvsp[-1].ast_symbol.data,yyvsp[0].ast_id.data->symbol->u.typeModifier);
+        declTypeSpecifier2(yyvsp[-1].ast_symbol.data,yyvsp[0].ast_id.data->symbol->typeModifier);
     }
 break;
 case 359:
@@ -4146,14 +4146,14 @@ break;
 case 378:
 #line 1392 "yacc_parser.y"
 {
-        yyval.ast_typeModifiers.data = yyvsp[0].ast_symbol.data->u.typeModifier;
+        yyval.ast_typeModifiers.data = yyvsp[0].ast_symbol.data->typeModifier;
     }
 break;
 case 379:
 #line 1395 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = yyvsp[0].ast_typeModifiers.data;
-        LIST_APPEND(TypeModifier, yyval.ast_typeModifiers.data, yyvsp[-1].ast_symbol.data->u.typeModifier);
+        LIST_APPEND(TypeModifier, yyval.ast_typeModifiers.data, yyvsp[-1].ast_symbol.data->typeModifier);
     }
 break;
 case 380:
@@ -4655,14 +4655,14 @@ case 490:
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
         beginBlock();
         counters.localVar = 0;
-        assert(yyvsp[0].ast_symbol.data->u.typeModifier && yyvsp[0].ast_symbol.data->u.typeModifier->type == TypeFunction);
+        assert(yyvsp[0].ast_symbol.data->typeModifier && yyvsp[0].ast_symbol.data->typeModifier->type == TypeFunction);
         parsedInfo.function = yyvsp[0].ast_symbol.data;
         generateInternalLabelReference(-1, UsageDefined);
-        for (symbol=yyvsp[0].ast_symbol.data->u.typeModifier->u.f.args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
+        for (symbol=yyvsp[0].ast_symbol.data->typeModifier->u.f.args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
             if (symbol->type == TypeElipsis)
                 continue;
-            if (symbol->u.typeModifier == NULL)
-                symbol->u.typeModifier = &defaultIntModifier;
+            if (symbol->typeModifier == NULL)
+                symbol->typeModifier = &defaultIntModifier;
             addFunctionParameterToSymTable(symbolTable, yyvsp[0].ast_symbol.data, symbol, i);
         }
     }
@@ -4741,8 +4741,8 @@ break;
 case 504:
 #line 1889 "yacc_parser.y"
 {
-        assert(yyvsp[-1].ast_symbol.data->u.typeModifier && yyvsp[-1].ast_symbol.data->u.typeModifier->type == TypeFunction);
-        Result r = mergeArguments(yyvsp[-1].ast_symbol.data->u.typeModifier->u.f.args, yyvsp[0].ast_symbol.data);
+        assert(yyvsp[-1].ast_symbol.data->typeModifier && yyvsp[-1].ast_symbol.data->typeModifier->type == TypeFunction);
+        Result r = mergeArguments(yyvsp[-1].ast_symbol.data->typeModifier->u.f.args, yyvsp[0].ast_symbol.data);
         if (r == RESULT_ERR) YYERROR;
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
     }
@@ -4787,8 +4787,8 @@ case 510:
 #line 1925 "yacc_parser.y"
 {
         completeDeclarator(&defaultIntDefinition, yyvsp[0].ast_symbol.data);
-        assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->u.typeModifier);
-        if (yyvsp[0].ast_symbol.data->u.typeModifier->type != TypeFunction) YYERROR;
+        assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->typeModifier);
+        if (yyvsp[0].ast_symbol.data->typeModifier->type != TypeFunction) YYERROR;
         yyval.ast_symbol.data = yyvsp[0].ast_symbol.data;
     }
 break;
@@ -4796,8 +4796,8 @@ case 511:
 #line 1931 "yacc_parser.y"
 {
         completeDeclarator(yyvsp[-1].ast_symbol.data, yyvsp[0].ast_symbol.data);
-        assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->u.typeModifier);
-        if (yyvsp[0].ast_symbol.data->u.typeModifier->type != TypeFunction) YYERROR;
+        assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->typeModifier);
+        if (yyvsp[0].ast_symbol.data->typeModifier->type != TypeFunction) YYERROR;
         yyval.ast_symbol.data = yyvsp[0].ast_symbol.data;
     }
 break;

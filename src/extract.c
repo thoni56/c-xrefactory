@@ -128,7 +128,7 @@ void generateContinueBreakReference(char *name) {
     symbol.storage = StorageAuto;
 
     if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
-        generateInternalLabelReference(foundSymbol->u.labelIndex, UsageUsed);
+        generateInternalLabelReference(foundSymbol->labelIndex, UsageUsed);
     }
 }
 
@@ -143,10 +143,10 @@ void generateSwitchCaseFork(bool isLast) {
     symbol.storage = StorageAuto;
 
     if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
-        generateInternalLabelReference(foundSymbol->u.labelIndex, UsageDefined);
+        generateInternalLabelReference(foundSymbol->labelIndex, UsageDefined);
         if (!isLast) {
-            foundSymbol->u.labelIndex++;
-            generateInternalLabelReference(foundSymbol->u.labelIndex, UsageFork);
+            foundSymbol->labelIndex++;
+            generateInternalLabelReference(foundSymbol->labelIndex, UsageFork);
         }
     }
 }

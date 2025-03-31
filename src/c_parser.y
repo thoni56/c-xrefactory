@@ -196,7 +196,7 @@ primary_expr
         Symbol *symbol = $1.data->symbol;
         if (symbol != NULL && symbol->type == TypeDefault) {
             assert(symbol->storage != StorageTypedef);
-            $$.data.typeModifier = symbol->u.typeModifier;
+            $$.data.typeModifier = symbol->typeModifier;
             assert(options.mode);
             $$.data.reference = addCxReference(symbol, $1.data->position, UsageUsed, NO_FILE_NUMBER);
         } else {
@@ -289,7 +289,7 @@ postfix_expr
         Symbol *rec=NULL;
         $$.data.reference = findStructureFieldFromType($1.data.typeModifier, $4.data, &rec);
         assert(rec);
-        $$.data.typeModifier = rec->u.typeModifier;
+        $$.data.typeModifier = rec->typeModifier;
         assert($$.data.typeModifier);
     }
     | postfix_expr {setIndirectStructureCompletionType($1.data.typeModifier);} PTR_OP field_identifier   {
@@ -298,7 +298,7 @@ postfix_expr
         if ($1.data.typeModifier->type==TypePointer || $1.data.typeModifier->type==TypeArray) {
             $$.data.reference = findStructureFieldFromType($1.data.typeModifier->next, $4.data, &rec);
             assert(rec);
-            $$.data.typeModifier = rec->u.typeModifier;
+            $$.data.typeModifier = rec->typeModifier;
         } else $$.data.typeModifier = &errorModifier;
         assert($$.data.typeModifier);
     }
@@ -653,7 +653,7 @@ declaration_specifiers0
     : user_defined_type                                     {
         assert($1.data);
         assert($1.data->symbol);
-        $$.data = typeSpecifier2($1.data->symbol->u.typeModifier);
+        $$.data = typeSpecifier2($1.data->symbol->typeModifier);
     }
     | type_specifier1                                       {
         $$.data  = typeSpecifier1($1.data);
@@ -665,7 +665,7 @@ declaration_specifiers0
         assert($2.data);
         assert($2.data->symbol);
         $$.data = $1.data;
-        declTypeSpecifier2($1.data,$2.data->symbol->u.typeModifier);
+        declTypeSpecifier2($1.data,$2.data->symbol->typeModifier);
     }
     | declaration_modality_specifiers type_specifier1       {
         $$.data = $1.data;
@@ -896,9 +896,9 @@ enum_specifier
     | enum_define_specifier '{' enumerator_list_comma '}'       {
         assert($1.data && $1.data->type == TypeEnum && $1.data->u.t);
         $$.data = $1.data;
-        if ($$.data->u.t->u.enums==NULL) {
-            $$.data->u.t->u.enums = $3.data;
-            addToFrame(setToNull, &($$.data->u.t->u.enums));
+        if ($$.data->u.t->enums==NULL) {
+            $$.data->u.t->enums = $3.data;
+            addToFrame(setToNull, &($$.data->u.t->enums));
         }
     }
     | ENUM '{' enumerator_list_comma '}'                        {
@@ -993,7 +993,7 @@ declarator2
         $$.data = $1.data;
         modifier = addComposedTypeToSymbol($$.data, TypeFunction);
         initFunctionTypeModifier(&modifier->u.f , $3.data.symbol);
-        bool isVoid = $3.data.symbol->u.typeModifier->type == TypeVoid;
+        bool isVoid = $3.data.symbol->typeModifier->type == TypeVoid;
         handleDeclaratorParamPositions($1.data, $2.data, $3.data.positionList, $4.data, true, isVoid);
     }
     | declarator2 '(' parameter_identifier_list ')'     {
@@ -1058,7 +1058,7 @@ type_specifier_list0
         assert($1.data);
         assert($1.data->symbol);
         assert($1.data->symbol);
-        $$.data = typeSpecifier2($1.data->symbol->u.typeModifier);
+        $$.data = typeSpecifier2($1.data->symbol->typeModifier);
     }
     | type_specifier1                                       {
         $$.data  = typeSpecifier1($1.data);
@@ -1071,7 +1071,7 @@ type_specifier_list0
         assert($2.data->symbol);
         assert($2.data->symbol);
         $$.data = $1.data;
-        declTypeSpecifier2($1.data,$2.data->symbol->u.typeModifier);
+        declTypeSpecifier2($1.data,$2.data->symbol->typeModifier);
     }
     | type_mod_specifier_list type_specifier1       {
         $$.data = $1.data;
@@ -1181,11 +1181,11 @@ parameter_declaration
 
 type_name
     : declaration_specifiers                        {
-        $$.data = $1.data->u.typeModifier;
+        $$.data = $1.data->typeModifier;
     }
     | declaration_specifiers abstract_declarator    {
         $$.data = $2.data;
-        LIST_APPEND(TypeModifier, $$.data, $1.data->u.typeModifier);
+        LIST_APPEND(TypeModifier, $$.data, $1.data->typeModifier);
     }
     ;
 
@@ -1621,14 +1621,14 @@ external_definition
         savedWorkMemoryIndex = $1.data;
         beginBlock();
         counters.localVar = 0;
-        assert($2.data->u.typeModifier && $2.data->u.typeModifier->type == TypeFunction);
+        assert($2.data->typeModifier && $2.data->typeModifier->type == TypeFunction);
         parsedInfo.function = $2.data;
         generateInternalLabelReference(-1, UsageDefined);
-        for (symbol=$2.data->u.typeModifier->u.f.args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
+        for (symbol=$2.data->typeModifier->u.f.args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
             if (symbol->type == TypeElipsis)
                 continue;
-            if (symbol->u.typeModifier == NULL)
-                symbol->u.typeModifier = &defaultIntModifier;
+            if (symbol->typeModifier == NULL)
+                symbol->typeModifier = &defaultIntModifier;
             addFunctionParameterToSymTable(symbolTable, $2.data, symbol, i);
         }
     } compound_statement {
@@ -1678,8 +1678,8 @@ top_init_declarations
 function_definition_head
     : function_head_declaration                         /*& { $$.data = $1.data; } &*/
     | function_definition_head fun_arg_declaration      {
-        assert($1.data->u.typeModifier && $1.data->u.typeModifier->type == TypeFunction);
-        Result r = mergeArguments($1.data->u.typeModifier->u.f.args, $2.data);
+        assert($1.data->typeModifier && $1.data->typeModifier->type == TypeFunction);
+        Result r = mergeArguments($1.data->typeModifier->u.f.args, $2.data);
         if (r == RESULT_ERR) YYERROR;
         $$.data = $1.data;
     }
@@ -1715,14 +1715,14 @@ fun_arg_init_declarations
 function_head_declaration
     : declarator                            {
         completeDeclarator(&defaultIntDefinition, $1.data);
-        assert($1.data && $1.data->u.typeModifier);
-        if ($1.data->u.typeModifier->type != TypeFunction) YYERROR;
+        assert($1.data && $1.data->typeModifier);
+        if ($1.data->typeModifier->type != TypeFunction) YYERROR;
         $$.data = $1.data;
     }
     | declaration_specifiers declarator     {
         completeDeclarator($1.data, $2.data);
-        assert($2.data && $2.data->u.typeModifier);
-        if ($2.data->u.typeModifier->type != TypeFunction) YYERROR;
+        assert($2.data && $2.data->typeModifier);
+        if ($2.data->typeModifier->type != TypeFunction) YYERROR;
         $$.data = $2.data;
     }
     ;

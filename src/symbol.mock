@@ -15,7 +15,7 @@ void fillSymbol(Symbol *symbol, char *name, char *linkName, Position pos) {
     symbol->name = name;
     symbol->linkName = linkName;
     symbol->pos = pos;
-    symbol->u.typeModifier = NULL;
+    symbol->typeModifier = NULL;
     symbol->next = NULL;
     symbol->type = TypeDefault;
     symbol->storage = StorageDefault;
@@ -25,12 +25,12 @@ void fillSymbol(Symbol *symbol, char *name, char *linkName, Position pos) {
 void fillSymbolWithTypeModifier(Symbol *symbol, char *name, char *linkName, Position pos,
                                 struct typeModifier *typeModifier) {
     fillSymbol(symbol, name, linkName, pos);
-    symbol->u.typeModifier = typeModifier;
+    symbol->typeModifier = typeModifier;
 }
 
 void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, Position pos, int labelIndex) {
     fillSymbol(symbol, name, linkName, pos);
-    symbol->u.labelIndex = labelIndex;
+    symbol->labelIndex = labelIndex;
 }
 
 Symbol *newSymbolAsKeyword(char *name, char *linkName, Position pos, int keyWordVal) {

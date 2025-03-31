@@ -97,7 +97,7 @@ void deleteSymDef(void *p) {
 
 void unpackPointers(Symbol *symbol) {
     for (int i=0; i<symbol->npointers; i++) {
-        appendComposedType(&symbol->u.typeModifier, TypePointer);
+        appendComposedType(&symbol->typeModifier, TypePointer);
     }
     symbol->npointers=0;
 }
@@ -124,7 +124,7 @@ void memberFindPush(Symbol *symbol, StructMemberFindInfo *info) {
         // this is hack to avoid problem when overloading to zero
         info->memberFindCount++;
     }
-    spec = symbol->u.structSpec;
+    spec = symbol->structSpec;
     info->nextMember = spec->members;
     info->currentStructure = symbol;
 }
@@ -132,7 +132,7 @@ void memberFindPush(Symbol *symbol, StructMemberFindInfo *info) {
 StructMemberFindInfo *initFind(Symbol *s, StructMemberFindInfo *info) {
     assert(s);
     assert(s->type == TypeStruct || s->type == TypeUnion);
-    assert(s->u.structSpec);
+    assert(s->structSpec);
     assert(info);
     fillStructMemberFindInfo(info, NULL, NULL, memberFindCount++);
     memberFindPush(s, info);
@@ -164,7 +164,7 @@ Result findStructureMemberSymbol(Symbol **resultingSymbolP, StructMemberFindInfo
     for (;;) {
         assert(info);
         structure = info->currentStructure;
-        if (structure != NULL && structure->u.structSpec->memberSearchCounter == info->memberFindCount) {
+        if (structure != NULL && structure->structSpec->memberSearchCounter == info->memberFindCount) {
             // to avoid multiple pass through the same super-class ??
             //&fprintf(dumpOut,":%d==%d --> skipping class
             //%s\n",structure->u.structSpec->memberSearchCounter,info->memberFindCount,structure->linkName);
@@ -181,12 +181,12 @@ Result findStructureMemberSymbol(Symbol **resultingSymbolP, StructMemberFindInfo
             //   double radius;
             // } Circle;
             if (m->name != NULL && *m->name == 0 && m->type == TypeDefault &&
-                m->u.typeModifier->type == TypeAnonymousField && m->u.typeModifier->next != NULL &&
-                (m->u.typeModifier->next->type == TypeUnion || m->u.typeModifier->next->type == TypeStruct)
+                m->typeModifier->type == TypeAnonymousField && m->typeModifier->next != NULL &&
+                (m->typeModifier->next->type == TypeUnion || m->typeModifier->next->type == TypeStruct)
             ) {
                 // put the anonymous union as 'super class'
                 if (info->anonymousUnionsCount + 1 < MAX_ANONYMOUS_FIELDS) {
-                    info->anonymousUnions[info->anonymousUnionsCount++] = m->u.typeModifier->next->u.t;
+                    info->anonymousUnions[info->anonymousUnionsCount++] = m->typeModifier->next->u.t;
                 }
             }
             //&fprintf(dumpOut,":checking %s\n",m->name); fflush(dumpOut);
@@ -203,7 +203,7 @@ Result findStructureMemberSymbol(Symbol **resultingSymbolP, StructMemberFindInfo
         } else {
             // mark the struct as processed
             if (structure != NULL) {
-                structure->u.structSpec->memberSearchCounter = info->memberFindCount;
+                structure->structSpec->memberSearchCounter = info->memberFindCount;
             }
 
             while (info->superClassesCount > 0 && info->superClasses[info->superClassesCount - 1] == NULL)
@@ -304,7 +304,7 @@ void setLocalVariableLinkName(Symbol *p) {
         sprintf(name+1,"%s", storageNamesTable[p->storage]);
         int tti = strlen(name);
         int len = TMP_STRING_SIZE - tti;
-        prettyPrintType(name+tti, &len, p->u.typeModifier, nnn, LINK_NAME_SEPARATOR, true);
+        prettyPrintType(name+tti, &len, p->typeModifier, nnn, LINK_NAME_SEPARATOR, true);
         sprintf(name+tti+len,"%c%x-%x-%x-%x", LINK_NAME_SEPARATOR,
                 p->pos.file,p->pos.line,p->pos.col, counters.localVar++);
     } else {
@@ -351,8 +351,8 @@ Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbo
                                Usage usage) {
     if (symbol == &errorSymbol || symbol->type == TypeError)
         return symbol;
-    assert(symbol && symbol->type == TypeDefault && symbol->u.typeModifier);
-    if (symbol->u.typeModifier->type == TypeFunction && symbol->storage == StorageDefault) {
+    assert(symbol && symbol->type == TypeDefault && symbol->typeModifier);
+    if (symbol->typeModifier->type == TypeFunction && symbol->storage == StorageDefault) {
         symbol->storage = StorageExtern;
     }
     if (symbol->storage == StorageDefault) {
@@ -361,8 +361,8 @@ Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbo
     if (symbol->type == TypeDefault && symbol->storage == StorageTypedef) {
         // typedef HACK !!!
         TypeModifier *tt       = stackMemoryAlloc(sizeof(TypeModifier));
-        *tt                    = *symbol->u.typeModifier;
-        symbol->u.typeModifier = tt;
+        *tt                    = *symbol->typeModifier;
+        symbol->typeModifier = tt;
         tt->typedefSymbol      = symbol;
     }
     if (nestingLevel() != 0) {
@@ -378,7 +378,7 @@ Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbo
 
 static void addInitializerRefs(Symbol *declaration, IdList *idList) {
     for (IdList *l = idList; l != NULL; l = l->next) {
-        TypeModifier *typeModifierP = declaration->u.typeModifier;
+        TypeModifier *typeModifierP = declaration->typeModifier;
         for (Id *id = &l->id; id != NULL; id = id->next) {
             if (typeModifierP->type == TypeArray) {
                 typeModifierP = typeModifierP->next;
@@ -391,7 +391,7 @@ static void addInitializerRefs(Symbol *declaration, IdList *idList) {
             if (ref == NULL)
                 return;
             assert(rec);
-            typeModifierP = rec->u.typeModifier;
+            typeModifierP = rec->typeModifier;
         }
     }
 }
@@ -407,7 +407,7 @@ Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declarat
     assert(declaration->type == TypeDefault);
     completeDeclarator(baseType, declaration);
 
-    if (declaration->u.typeModifier->type == TypeFunction)
+    if (declaration->typeModifier->type == TypeFunction)
         usage = UsageDeclared;
     else if (declaration->storage == StorageExtern)
         usage = UsageDeclared;
@@ -423,7 +423,7 @@ void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol
 
         // here checks a special case, double argument definition do not
         // redefine him, so refactorings will detect problem
-        for (pp = function->u.typeModifier->u.f.args; pp != NULL && pp != parameter; pp = pp->next) {
+        for (pp = function->typeModifier->u.f.args; pp != NULL && pp != parameter; pp = pp->next) {
             if (pp->name != NULL && pp->type != TypeError) {
                 if (parameter != pp && strcmp(pp->name, parameter->name) == 0)
                     break;
@@ -540,17 +540,17 @@ Symbol *typeSpecifier1(unsigned t) {
 }
 
 void declTypeSpecifier1(Symbol *d, Type type) {
-    assert(d && d->u.typeModifier);
-    d->u.typeModifier = mergeBaseModTypes(d->u.typeModifier,createSimpleTypeModifier(type));
+    assert(d && d->typeModifier);
+    d->typeModifier = mergeBaseModTypes(d->typeModifier,createSimpleTypeModifier(type));
 }
 
 void declTypeSpecifier2(Symbol *d, TypeModifier *t) {
-    assert(d && d->u.typeModifier);
-    d->u.typeModifier = mergeBaseModTypes(d->u.typeModifier, t);
+    assert(d && d->typeModifier);
+    d->typeModifier = mergeBaseModTypes(d->typeModifier, t);
 }
 
 TypeModifier *addComposedTypeToSymbol(Symbol *symbol, Type type) {
-    return appendComposedType(&symbol->u.typeModifier, type);
+    return appendComposedType(&symbol->typeModifier, type);
 }
 
 TypeModifier *appendComposedType(TypeModifier **d, Type type) {
@@ -569,14 +569,14 @@ void completeDeclarator(Symbol *type, Symbol *declarator) {
         return;
     declarator->storage = type->storage;
     assert(type->type == TypeDefault);
-    declaratorModifier = &(declarator->u.typeModifier);
-    typeModifier = type->u.typeModifier;
+    declaratorModifier = &(declarator->typeModifier);
+    typeModifier = type->typeModifier;
     if (declarator->npointers) {
         if (declarator->npointers >= 1 && (typeModifier->type == TypeStruct || typeModifier->type == TypeUnion)
             && typeModifier->typedefSymbol == NULL) {
             declarator->npointers--;
-            assert(typeModifier->u.t && typeModifier->u.t->type == typeModifier->type && typeModifier->u.t->u.structSpec);
-            typeModifier = &typeModifier->u.t->u.structSpec->ptrtype;
+            assert(typeModifier->u.t && typeModifier->u.t->type == typeModifier->type && typeModifier->u.t->structSpec);
+            typeModifier = &typeModifier->u.t->structSpec->ptrtype;
         } else if (declarator->npointers >= 2 && preCreatedPtr2Ptr2TypeTable[typeModifier->type] != NULL
                    && typeModifier->typedefSymbol == NULL) {
             assert(typeModifier->next == NULL); /* not a user defined type */
@@ -633,8 +633,8 @@ Result mergeArguments(Symbol *id, Symbol *ty) {
             if (symbol == NULL)
                 res = RESULT_ERR;
             else {
-                if (symbol->u.typeModifier == NULL)
-                    symbol->u.typeModifier = ty->u.typeModifier;
+                if (symbol->typeModifier == NULL)
+                    symbol->typeModifier = ty->typeModifier;
             }
         }
     }
@@ -653,10 +653,10 @@ void initSymStructSpec(StructSpec *symStruct, Symbol *records) {
 TypeModifier *simpleStructOrUnionSpecifier(Id *typeName, Id *id, Usage usage) {
     log_trace("new struct %s", id->name);
     assert(typeName && typeName->symbol && typeName->symbol->type == TypeKeyword);
-    assert(typeName->symbol->u.keyword == STRUCT
-           ||  typeName->symbol->u.keyword == UNION);
+    assert(typeName->symbol->keyword == STRUCT
+           ||  typeName->symbol->keyword == UNION);
 
-    Type type = typeName->symbol->u.keyword == UNION? TypeUnion : TypeStruct;
+    Type type = typeName->symbol->keyword == UNION? TypeUnion : TypeStruct;
     Symbol symbol = makeSymbol(id->name, type, id->position);
     symbol.type = type;
     symbol.storage = StorageDefault;
@@ -667,22 +667,22 @@ TypeModifier *simpleStructOrUnionSpecifier(Id *typeName, Id *id, Usage usage) {
     {
         foundMemberP = stackMemoryAlloc(sizeof(Symbol));
         *foundMemberP = symbol;
-        foundMemberP->u.structSpec = stackMemoryAlloc(sizeof(StructSpec));
+        foundMemberP->structSpec = stackMemoryAlloc(sizeof(StructSpec));
 
-        initSymStructSpec(foundMemberP->u.structSpec, NULL);
+        initSymStructSpec(foundMemberP->structSpec, NULL);
 
-        TypeModifier *typeModifier = &foundMemberP->u.structSpec->type;
+        TypeModifier *typeModifier = &foundMemberP->structSpec->type;
         /* Assumed to be Struct/Union/Enum? */
         initTypeModifierAsStructUnionOrEnum(typeModifier, type, foundMemberP, NULL, NULL);
 
-        TypeModifier *ptrtypeModifier = &foundMemberP->u.structSpec->ptrtype;
-        initTypeModifierAsPointer(ptrtypeModifier, &foundMemberP->u.structSpec->type);
+        TypeModifier *ptrtypeModifier = &foundMemberP->structSpec->ptrtype;
+        initTypeModifierAsPointer(ptrtypeModifier, &foundMemberP->structSpec->type);
 
         setGlobalFileDepNames(id->name, foundMemberP, MEMORY_XX);
         addSymbolToFrame(symbolTable, foundMemberP);
     }
     addCxReference(foundMemberP, id->position, usage, NO_FILE_NUMBER);
-    return &foundMemberP->u.structSpec->type;
+    return &foundMemberP->structSpec->type;
 }
 
 void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
@@ -741,10 +741,10 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
     assert(typeName);
     assert(typeName->symbol);
     assert(typeName->symbol->type == TypeKeyword);
-    assert(typeName->symbol->u.keyword == STRUCT
-           ||  typeName->symbol->u.keyword == UNION
+    assert(typeName->symbol->keyword == STRUCT
+           ||  typeName->symbol->keyword == UNION
            );
-    if (typeName->symbol->u.keyword == STRUCT) type = TypeStruct;
+    if (typeName->symbol->keyword == STRUCT) type = TypeStruct;
     else type = TypeUnion;
 
     symbol = newSymbol("", typeName->position);
@@ -753,20 +753,20 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
 
     setGlobalFileDepNames("", symbol, MEMORY_XX);
 
-    symbol->u.structSpec = stackMemoryAlloc(sizeof(StructSpec));
+    symbol->structSpec = stackMemoryAlloc(sizeof(StructSpec));
 
     /* This is a recurring pattern, create a struct and the pointer type to it*/
-    initSymStructSpec(symbol->u.structSpec, /*.records=*/NULL);
-    TypeModifier *stype = &symbol->u.structSpec->type;
+    initSymStructSpec(symbol->structSpec, /*.records=*/NULL);
+    TypeModifier *stype = &symbol->structSpec->type;
     /* Assumed to be Struct/Union/Enum? */
     initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/type, /*.u.t=*/symbol,
                                         /*.typedefSymbol=*/NULL, /*.next=*/NULL);
-    TypeModifier *sptrtype = &symbol->u.structSpec->ptrtype;
-    initTypeModifierAsPointer(sptrtype, &symbol->u.structSpec->type);
+    TypeModifier *sptrtype = &symbol->structSpec->ptrtype;
+    initTypeModifierAsPointer(sptrtype, &symbol->structSpec->type);
 
     addSymbolToFrame(symbolTable, symbol);
 
-    return &symbol->u.structSpec->type;
+    return &symbol->structSpec->type;
 }
 
 static char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {
@@ -784,12 +784,12 @@ static char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {
 
 void specializeStructOrUnionDef(Symbol *sd, Symbol *rec) {
     assert(sd->type == TypeStruct || sd->type == TypeUnion);
-    assert(sd->u.structSpec);
-    if (sd->u.structSpec->members!=NULL)
+    assert(sd->structSpec);
+    if (sd->structSpec->members!=NULL)
         return;
 
-    sd->u.structSpec->members = rec;
-    addToFrame(setToNull, &(sd->u.structSpec->members));
+    sd->structSpec->members = rec;
+    addToFrame(setToNull, &(sd->structSpec->members));
     for (Symbol *symbol=rec; symbol!=NULL; symbol=symbol->next) {
         if (symbol->name != NULL) {
             symbol->linkName = string3ConcatInStackMem(sd->linkName,".",symbol->name);
@@ -821,7 +821,7 @@ TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
     symbol->storage = StorageDefault;
 
     setGlobalFileDepNames("", symbol, MEMORY_XX);
-    symbol->u.enums = enums;
+    symbol->enums = enums;
     return createSimpleEnumType(symbol);
 }
 

@@ -127,7 +127,7 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
     size = COMPLETION_STRING_SIZE;
     l = 0;
     if (completions->alternatives[index].symbolType==TypeDefault) {
-        assert(completions->alternatives[index].symbol && completions->alternatives[index].symbol->u.typeModifier);
+        assert(completions->alternatives[index].symbol && completions->alternatives[index].symbol->typeModifier);
         typeDefinitionExpressionFlag = true;
         if (completions->alternatives[index].symbol->storage == StorageTypedef) {
             sprintf(tempString, "typedef ");
@@ -136,7 +136,7 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
             typeDefinitionExpressionFlag = false;
         }
         char *pname = completions->alternatives[index].symbol->name;
-        prettyPrintType(tempString+l, &size, completions->alternatives[index].symbol->u.typeModifier, pname, ' ',
+        prettyPrintType(tempString+l, &size, completions->alternatives[index].symbol->typeModifier, pname, ' ',
                    typeDefinitionExpressionFlag);
     } else if (completions->alternatives[index].symbolType==TypeMacro) {
         prettyPrintMacroDefinition(tempString, &size, completions->alternatives[index].string,
@@ -410,11 +410,11 @@ static void completeFun(Symbol *symbol, void *c) {
     if (symbol->type != TypeMacro) {
         compLine = makeCompletionLine(symbol->name, symbol, symbol->type, 0, NULL);
     } else {
-        if (symbol->u.mbody == NULL) {
+        if (symbol->mbody == NULL) {
             compLine = makeCompletionLine(symbol->name, symbol, TypeUndefMacro, 0, NULL);
         } else {
-            compLine = makeCompletionLine(symbol->name, symbol, symbol->type, symbol->u.mbody->argCount,
-                               symbol->u.mbody->argumentNames);
+            compLine = makeCompletionLine(symbol->name, symbol, symbol->type, symbol->mbody->argCount,
+                               symbol->mbody->argumentNames);
         }
     }
     processName(symbol->name, &compLine, true, completionInfo->completions);
@@ -430,8 +430,8 @@ static void completeFunctionOrMethodName(Completions *c, bool orderFlag, int vle
     if (!options.completeParenthesis) {
         cn = cname;
     } else {
-        assert(r->u.typeModifier!=NULL);
-        if (r->u.typeModifier!=NULL && r->u.typeModifier->u.f.args == NULL) {
+        assert(r->typeModifier!=NULL);
+        if (r->typeModifier!=NULL && r->typeModifier->u.f.args == NULL) {
             psuff = "()";
         } else {
             psuff = "(";
@@ -460,7 +460,7 @@ static void symbolCompletionFunction(Symbol *symbol, void *i) {
 
     completionName = symbol->name;
     if (completionName!=NULL) {
-        if (symbol->type == TypeDefault && symbol->u.typeModifier!=NULL && symbol->u.typeModifier->type == TypeFunction) {
+        if (symbol->type == TypeDefault && symbol->typeModifier!=NULL && symbol->typeModifier->type == TypeFunction) {
             completeFunctionOrMethodName(info->res, true, 0, symbol, NULL);
         } else {
             completionLine = makeCompletionLine(completionName, symbol, symbol->type, 0, NULL);
@@ -489,7 +489,7 @@ static void completeMemberNames(Completions *completions, Symbol *symbol) {
 
     bool orderFlag = completions->idToProcess[0] != 0;
 
-    assert(symbol->u.structSpec);
+    assert(symbol->structSpec);
     initFind(symbol, &info);
 
     for(;;) {
@@ -506,7 +506,7 @@ static void completeMemberNames(Completions *completions, Symbol *symbol) {
             // Hmm. I hope it will not filter out something important
             && !symbolShouldBeHiddenFromSearchResults(foundSymbol->linkName)
         ) {
-            assert(info.currentStructure && info.currentStructure->u.structSpec);
+            assert(info.currentStructure && info.currentStructure->structSpec);
             assert(foundSymbol->type == TypeDefault);
             completionLine = makeCompletionLine(name, foundSymbol, TypeDefault, 0, NULL);
             processName(name, &completionLine, orderFlag, completions);
@@ -617,7 +617,7 @@ static bool isEqualType(TypeModifier *t1, TypeModifier *t2) {
         for (ss1=s1->u.f.args, ss2=s2->u.f.args;
              ss1!=NULL && ss2!=NULL;
              ss1=ss1->next, ss2=ss2->next) {
-            if (!isEqualType(ss1->u.typeModifier, ss2->u.typeModifier))
+            if (!isEqualType(ss1->typeModifier, ss2->typeModifier))
                 return false;
         }
         if (ss1!=NULL||ss2!=NULL)
@@ -636,7 +636,7 @@ static char *spComplFindNextRecord(ExpressionTokenType *token) {
 
     s = token->typeModifier->next->u.t;
     res = NULL;
-    assert(s->u.structSpec);
+    assert(s->structSpec);
     initFind(s, &rfs);
     for(;;) {
         Result rr = findStructureMemberSymbol(&r, &rfs, NULL);
@@ -644,9 +644,9 @@ static char *spComplFindNextRecord(ExpressionTokenType *token) {
         assert(r);
         cname = r->name;
         if (cname!=NULL) {
-            assert(rfs.currentStructure && rfs.currentStructure->u.structSpec);
+            assert(rfs.currentStructure && rfs.currentStructure->structSpec);
             assert(r->type == TypeDefault);
-            if (isEqualType(r->u.typeModifier, token->typeModifier)) {
+            if (isEqualType(r->typeModifier, token->typeModifier)) {
                 // there is a record of the same type
                 if (res == NULL)
                     res = cname;

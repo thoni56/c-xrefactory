@@ -27,7 +27,7 @@ typedef struct symbol {
         struct macroBody     *mbody;        /* if type == TypeMacro, can be NULL! */
         int                   labelIndex;   /* break/continue label index */
         int                   keyword;      /* if bits.symbolType == Keyword */
-    } u;
+    };
     struct symbol *next; /* next table item with the same hash */
 } Symbol;
 

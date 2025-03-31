@@ -924,7 +924,7 @@ endOfBody:
     } else
         argumentNames = NULL;
     MacroBody *macroBody = newMacroBody(allocatedSize, argumentCount, macroName, body, argumentNames);
-    symbol->u.mbody = macroBody;
+    symbol->mbody = macroBody;
 
     addMacroToTabs(symbol, macroName);
     assert(options.mode);
@@ -1107,7 +1107,7 @@ static void processIfdefDirective(bool isIfdef) {
     Symbol *macroSymbol = findMacroSymbol(ch);
     bool macroDefined = macroSymbol != NULL;
 
-    if (macroSymbol != NULL && macroSymbol->u.mbody==NULL)
+    if (macroSymbol != NULL && macroSymbol->mbody==NULL)
         macroDefined = false;	// undefined macro
 
     if (macroDefined) {
@@ -1170,7 +1170,7 @@ LexemCode cexp_yylex(void) {
 
         Symbol *macroSymbol = findMacroSymbol(ch);
         bool macroSymbolFound = macroSymbol != NULL;
-        if (macroSymbol != NULL && macroSymbol->u.mbody == NULL)
+        if (macroSymbol != NULL && macroSymbol->mbody == NULL)
             macroSymbolFound = false;   // undefined macro
 
         if (macroSymbolFound)
@@ -1428,7 +1428,7 @@ static void expandMacroArgument(LexInput *argumentInput) {
                 else {
                     /* Failed expansion... */
                     assert(macroSymbol!=NULL);
-                    if (macroSymbol->u.mbody!=NULL && cyclicCall(macroSymbol->u.mbody)) {
+                    if (macroSymbol->mbody!=NULL && cyclicCall(macroSymbol->mbody)) {
                         putLexemCodeAt(IDENT_NO_CPP_EXPAND, &currentBufferP);
                     }
                 }
@@ -1525,7 +1525,7 @@ static bool nextLexemIsIdentifierOrConstant(char *nextInputLexemP) {
 
 static MacroBody *getMacroBody(Symbol *macroSymbol) {
     assert(macroSymbol->type == TypeMacro);
-    return macroSymbol->u.mbody;
+    return macroSymbol->mbody;
 }
 
 static LexInput createMacroBodyAsNewInput(MacroBody *macroBody, LexInput *actualArgumentsInput);
@@ -2006,7 +2006,7 @@ static void addMacroBaseUsageRef(Symbol *macroSymbol) {
 
 static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
 
-    MacroBody *macroBody = macroSymbol->u.mbody;
+    MacroBody *macroBody = macroSymbol->mbody;
     if (macroBody == NULL)
         return false;	/* !!!!!         tricky,  undefined macro */
     if (macroStackIndex == 0) { /* call from top level, init mem */
@@ -2161,7 +2161,7 @@ static LexemCode lookupIdentifier(char *id, Position position) {
             if (symbol == NULL)
                 symbol = s;
             if (isIdAKeyword(s, position))
-                return s->u.keyword;
+                return s->keyword;
             if (s->type == TypeDefinedOp && isProcessingPreprocessorIf) {
                 return CPP_DEFINED_OP;
             }

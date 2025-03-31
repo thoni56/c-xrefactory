@@ -123,10 +123,10 @@ void prettyPrintType(char *buffer, int *bufferSize, TypeModifier *typeModifier, 
                     ttm = "";
                 else
                     ttm = symbol->name;
-                if (symbol->type == TypeDefault && symbol->u.typeModifier != NULL) {
+                if (symbol->type == TypeDefault && symbol->typeModifier != NULL) {
                     /* TODO ALL, for string overflow */
                     int jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
-                    prettyPrintType(postString + j, &jj, symbol->u.typeModifier, ttm, ' ', true);
+                    prettyPrintType(postString + j, &jj, symbol->typeModifier, ttm, ' ', true);
                     j += jj;
                 } else {
                     sprintf(postString + j, "%s", ttm);

@@ -90,10 +90,10 @@ static void recoverMemoryFromFileTableEntry(FileItem *fileItem) {
 }
 
 static void recoverMemoryFromTypeStructOrUnion(Symbol *symbol) {
-    assert(symbol->u.structSpec);
-    if (isFreedStackMemory(symbol->u.structSpec->members)
-        || ppmIsFreedPointer(symbol->u.structSpec->members)) {
-        symbol->u.structSpec->members = NULL;
+    assert(symbol->structSpec);
+    if (isFreedStackMemory(symbol->structSpec->members)
+        || ppmIsFreedPointer(symbol->structSpec->members)) {
+        symbol->structSpec->members = NULL;
     }
 }
 
@@ -121,8 +121,8 @@ static void recoverMemoryFromSymbolTableEntry(int i) {
             if (isFreedStackMemory(*pp)) {
                 *pp = (*pp)->next;
                 continue;
-            } else if (isFreedStackMemory((*pp)->u.enums)) {
-                (*pp)->u.enums = NULL;
+            } else if (isFreedStackMemory((*pp)->enums)) {
+                (*pp)->enums = NULL;
             }
             break;
         default:

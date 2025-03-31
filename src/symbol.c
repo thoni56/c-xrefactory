@@ -13,7 +13,7 @@ static void fillSymbol(Symbol *symbol, char *name, char *linkName, Position pos)
     symbol->name = name;
     symbol->linkName = linkName;
     symbol->pos = pos;
-    symbol->u.typeModifier = NULL;
+    symbol->typeModifier = NULL;
     symbol->next = NULL;
     symbol->type = TypeDefault;
     symbol->storage = StorageDefault;
@@ -36,12 +36,12 @@ Symbol makeMacroSymbol(char *name, Position pos) {
 void fillSymbolWithTypeModifier(Symbol *symbol, char *name, char *linkName, Position pos,
                                 struct typeModifier *typeModifier) {
     fillSymbol(symbol, name, linkName, pos);
-    symbol->u.typeModifier = typeModifier;
+    symbol->typeModifier = typeModifier;
 }
 
 void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, Position pos, int labelIndex) {
     fillSymbol(symbol, name, linkName, pos);
-    symbol->u.labelIndex = labelIndex;
+    symbol->labelIndex = labelIndex;
 }
 
 /* Allocate and init a new Symbol in StackMemory */
@@ -61,25 +61,25 @@ Symbol *newSymbolAsCopyOf(Symbol *original) {
 
 Symbol *newSymbolAsKeyword(char *name, char *linkName, Position pos, int keyWordVal) {
     Symbol *s = newSymbol(name, pos);
-    s->u.keyword = keyWordVal;
+    s->keyword = keyWordVal;
     return s;
 }
 
 Symbol *newSymbolAsType(char *name, char *linkName, Position pos, struct typeModifier *type) {
     Symbol *s = newSymbol(name, pos);
-    s->u.typeModifier = type;
+    s->typeModifier = type;
     return s;
 }
 
 Symbol *newSymbolAsEnum(char *name, char *linkName, Position pos, struct symbolList *enums) {
     Symbol *s = newSymbol(name, pos);
-    s->u.enums = enums;
+    s->enums = enums;
     return s;
 }
 
 Symbol *newSymbolAsLabel(char *name, char *linkName, Position pos, int labelIndex) {
     Symbol *s = newSymbol(name, pos);
-    s->u.labelIndex = labelIndex;
+    s->labelIndex = labelIndex;
     return s;
 }
 
