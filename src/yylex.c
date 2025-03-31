@@ -1530,6 +1530,12 @@ static MacroBody *getMacroBody(Symbol *macroSymbol) {
 
 static LexInput createMacroBodyAsNewInput(MacroBody *macroBody, LexInput *actualArgumentsInput);
 
+static void expandMacroInCollation(char *buffer, int *bufferSizeP, char **bufferWriteP, Symbol *macroSymbol, LexInput *actualArgumentsInput) {
+    MacroBody *macroBody = getMacroBody(macroSymbol);
+    LexInput macroExpansion = createMacroBodyAsNewInput(macroBody, actualArgumentsInput);
+    copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, macroExpansion.begin, macroExpansion.write);
+}
+
 /* **************************************************************** */
 // Returns updated position to continue reading from
 static char *collate(char *buffer,        // The allocated buffer for storing macro expansions
@@ -1569,12 +1575,8 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
         Symbol *macroSymbol = findMacroSymbol(lexemString);
         if (macroSymbol != NULL) {
             log_trace("Macro found: '%s' (left-hand) -> expanding it", lexemString);
-
-            MacroBody *macroBody = getMacroBody(macroSymbol);
-            LexInput macroExpansion = createMacroBodyAsNewInput(macroBody, actualArgumentsInput);
-
-            *bufferWriteP = lhs;
-            copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, macroExpansion.begin, macroExpansion.write);
+            *bufferWriteP = lhs; /* We should write where current LHS, the macro, starts */
+            expandMacroInCollation(buffer, bufferSizeP, bufferWriteP, macroSymbol, actualArgumentsInput);
         } else {
             log_trace("Identifier '%s' (left-hand) is NOT a macro", lexemString);
         }
@@ -1586,13 +1588,9 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
         Symbol *macroSymbol = findMacroSymbol(lexemString);
         if (findMacroSymbol(lexemString) != NULL) {
             log_trace("Macro found: '%s' (right-hand) -> expanding it", lexemString);
-
-            MacroBody *macroBody = getMacroBody(macroSymbol);
-            LexInput macroExpansion = createMacroBodyAsNewInput(macroBody, actualArgumentsInput);
-
-            rhs = *bufferWriteP;
-            copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, macroExpansion.begin, macroExpansion.write);
-            endOfLexems = *bufferWriteP;
+            rhs = *bufferWriteP; /* RHS now starts where we will write now */
+            expandMacroInCollation(buffer, bufferSizeP, bufferWriteP, macroSymbol, actualArgumentsInput);
+            endOfLexems = *bufferWriteP; /* End is now where we have just finished writing */
         } else {
             log_trace("Identifier '%s' (right-hand) is NOT a macro", lexemString);
         }
@@ -2045,6 +2043,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
     log_trace("create macro body '%s' as new input", macroBody->name);
 
     LexInput macroBodyInput = createMacroBodyAsNewInput(macroBody, actualArgumentsInput);
+
     prependMacroInput(&macroBodyInput);
     log_trace("expanded macro '%s'", macroBody->name);
 
