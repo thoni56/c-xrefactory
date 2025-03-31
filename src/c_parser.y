@@ -800,9 +800,9 @@ struct_or_union_specifier
         $$.data = simpleStructOrUnionSpecifier($1.data, $2.data, usage);
     }
     | struct_or_union_define_specifier '{' struct_declaration_list '}'{
-        assert($1.data && $1.data->u.t);
+        assert($1.data && $1.data->t);
         $$.data = $1.data;
-        specializeStructOrUnionDef($$.data->u.t, $3.data);
+        specializeStructOrUnionDef($$.data->t, $3.data);
     }
     | struct_or_union_define_specifier '{' '}'                      {
         $$.data = $1.data;
@@ -894,11 +894,11 @@ enum_specifier
         $$.data = simpleEnumSpecifier($2.data, usage);
     }
     | enum_define_specifier '{' enumerator_list_comma '}'       {
-        assert($1.data && $1.data->type == TypeEnum && $1.data->u.t);
+        assert($1.data && $1.data->type == TypeEnum && $1.data->t);
         $$.data = $1.data;
-        if ($$.data->u.t->enums==NULL) {
-            $$.data->u.t->enums = $3.data;
-            addToFrame(setToNull, &($$.data->u.t->enums));
+        if ($$.data->t->enums==NULL) {
+            $$.data->t->enums = $3.data;
+            addToFrame(setToNull, &($$.data->t->enums));
         }
     }
     | ENUM '{' enumerator_list_comma '}'                        {
@@ -984,7 +984,7 @@ declarator2
         assert($1.data);
         $$.data = $1.data;
         modifier = addComposedTypeToSymbol($$.data, TypeFunction);
-        initFunctionTypeModifier(&modifier->u.f , NULL);
+        initFunctionTypeModifier(modifier, NULL);
         handleDeclaratorParamPositions($1.data, $2.data, NULL, $3.data, false, false);
     }
     | declarator2 '(' parameter_type_list ')'           {
@@ -992,7 +992,7 @@ declarator2
         assert($1.data);
         $$.data = $1.data;
         modifier = addComposedTypeToSymbol($$.data, TypeFunction);
-        initFunctionTypeModifier(&modifier->u.f , $3.data.symbol);
+        initFunctionTypeModifier(modifier, $3.data.symbol);
         bool isVoid = $3.data.symbol->typeModifier->type == TypeVoid;
         handleDeclaratorParamPositions($1.data, $2.data, $3.data.positionList, $4.data, true, isVoid);
     }
@@ -1001,7 +1001,7 @@ declarator2
         assert($1.data);
         $$.data = $1.data;
         modifier = addComposedTypeToSymbol($$.data, TypeFunction);
-        initFunctionTypeModifier(&modifier->u.f , $3.data.symbol);
+        initFunctionTypeModifier(modifier, $3.data.symbol);
         handleDeclaratorParamPositions($1.data, $2.data, $3.data.positionList, $4.data, true, false);
     }
     | COMPLETE_OTHER_NAME      { assert(0); /* token never used */ }
@@ -1233,13 +1233,13 @@ abstract_declarator2
         TypeModifier *modifier;
         $$.data = $1.data;
         modifier = appendComposedType(&($$.data), TypeFunction);
-        initFunctionTypeModifier(&modifier->u.f , NULL);
+        initFunctionTypeModifier(modifier, NULL);
     }
     | abstract_declarator2 '(' parameter_type_list ')'          {
         TypeModifier *modifier;
         $$.data = $1.data;
         modifier = appendComposedType(&($$.data), TypeFunction);
-        initFunctionTypeModifier(&modifier->u.f , NULL);
+        initFunctionTypeModifier(modifier, NULL);
     }
     ;
 
@@ -1624,7 +1624,7 @@ external_definition
         assert($2.data->typeModifier && $2.data->typeModifier->type == TypeFunction);
         parsedInfo.function = $2.data;
         generateInternalLabelReference(-1, UsageDefined);
-        for (symbol=$2.data->typeModifier->u.f.args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
+        for (symbol=$2.data->typeModifier->args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
             if (symbol->type == TypeElipsis)
                 continue;
             if (symbol->typeModifier == NULL)
@@ -1679,7 +1679,7 @@ function_definition_head
     : function_head_declaration                         /*& { $$.data = $1.data; } &*/
     | function_definition_head fun_arg_declaration      {
         assert($1.data->typeModifier && $1.data->typeModifier->type == TypeFunction);
-        Result r = mergeArguments($1.data->typeModifier->u.f.args, $2.data);
+        Result r = mergeArguments($1.data->typeModifier->args, $2.data);
         if (r == RESULT_ERR) YYERROR;
         $$.data = $1.data;
     }

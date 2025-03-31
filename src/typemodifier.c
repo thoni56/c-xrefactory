@@ -21,7 +21,7 @@ void initTypeModifier(TypeModifier *typeModifier, Type type) {
 void initTypeModifierAsStructUnionOrEnum(TypeModifier *typeModifier, Type type, Symbol *symbol, Symbol *typedefSymbol, TypeModifier *next) {
     assert(type == TypeStruct || type == TypeUnion || type == TypeEnum);
     typeModifier->type = type;
-    typeModifier->u.t = symbol;
+    typeModifier->t = symbol;
     typeModifier->typedefSymbol = typedefSymbol;
     typeModifier->next = next;
 }
@@ -30,12 +30,12 @@ void initTypeModifierAsPointer(TypeModifier *typeModifier, TypeModifier *next) {
     fillTypeModifier(typeModifier, TypePointer, NULL, next);
 }
 
-void initTypeModifierAsArray(TypeModifier *typeModifier,Symbol *typedefSymbol, TypeModifier *next) {
+void initTypeModifierAsArray(TypeModifier *typeModifier, Symbol *typedefSymbol, TypeModifier *next) {
     fillTypeModifier(typeModifier, TypeArray, typedefSymbol, next);
 }
 
 
-void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *args) {
+void initFunctionTypeModifier(TypeModifier *modifier, Symbol *args) {
     modifier->args = args;
 }
 
@@ -57,7 +57,7 @@ TypeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, TypeModifier *ne
 TypeModifier *newFunctionTypeModifier(Symbol *args, Symbol *typedefSymbol, TypeModifier *next) {
     TypeModifier *typeModifier = newTypeModifier(TypeFunction, typedefSymbol, next);
 
-    typeModifier->u.f.args = args;
+    typeModifier->args = args;
 
     return typeModifier;
 }
@@ -76,13 +76,13 @@ TypeModifier *newArrayTypeModifier(void) {
 
 TypeModifier *newStructTypeModifier(Symbol *symbol) {
     TypeModifier *typeModifier = newTypeModifier(TypeStruct, NULL, NULL);
-    typeModifier->u.t = symbol;
+    typeModifier->t = symbol;
     return typeModifier;
 }
 
 TypeModifier *newEnumTypeModifier(Symbol *symbol) {
     TypeModifier *typeModifier = newTypeModifier(TypeEnum, NULL, NULL);
-    typeModifier->u.t = symbol;
+    typeModifier->t = symbol;
     return typeModifier;
 }
 

@@ -6,12 +6,10 @@
 
 typedef struct typeModifier {
     enum type                type;
-    union typeModifierUnion {
-        struct functionTypeModifier {          /* Function */
-            struct symbol    *args;
-        } f;
-        struct symbol        *t;               /* Struct/Union/Enum */
-    } u;
+    union {
+        struct symbol *args; /* Function - list of symbols*/
+        struct symbol *t;    /* Struct/Union/Enum */
+    };
     struct symbol            *typedefSymbol;   /* the typedef symbol (if any) */
     struct typeModifier      *next;
 } TypeModifier;
@@ -33,7 +31,7 @@ extern void initTypeModifierAsStructUnionOrEnum(TypeModifier *typeModifier, Type
 extern void initTypeModifierAsPointer(TypeModifier *typeModifier, TypeModifier *next);
 extern void initTypeModifierAsArray(TypeModifier *typeModifier,Symbol *typedefSymbol, TypeModifier *next);
 
-extern void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *args);
+extern void initFunctionTypeModifier(TypeModifier *modifier, Symbol *args);
 
 extern TypeModifier *prependTypeModifierWith(TypeModifier *thisModifier, Type kind);
 

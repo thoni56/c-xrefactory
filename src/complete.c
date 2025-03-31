@@ -431,7 +431,7 @@ static void completeFunctionOrMethodName(Completions *c, bool orderFlag, int vle
         cn = cname;
     } else {
         assert(r->typeModifier!=NULL);
-        if (r->typeModifier!=NULL && r->typeModifier->u.f.args == NULL) {
+        if (r->typeModifier!=NULL && r->typeModifier->args == NULL) {
             psuff = "()";
         } else {
             psuff = "(";
@@ -523,7 +523,7 @@ void collectStructMemberCompletions(Completions *completions) {
     assert(structMemberCompletionType);
     structure = structMemberCompletionType;
     if (structure->type == TypeStruct || structure->type == TypeUnion) {
-        symbol = structure->u.t;
+        symbol = structure->t;
         assert(symbol);
         completeMemberNames(completions, symbol);
     }
@@ -610,11 +610,11 @@ static bool isEqualType(TypeModifier *t1, TypeModifier *t2) {
     if (s1->type != s2->type)
         return false;
     if (s1->type==TypeStruct || s1->type==TypeUnion || s1->type==TypeEnum) {
-        if (s1->u.t != s2->u.t)
+        if (s1->t != s2->t)
             return false;
     } else if (s1->type==TypeFunction) {
         Symbol *ss1, *ss2;
-        for (ss1=s1->u.f.args, ss2=s2->u.f.args;
+        for (ss1=s1->args, ss2=s2->args;
              ss1!=NULL && ss2!=NULL;
              ss1=ss1->next, ss2=ss2->next) {
             if (!isEqualType(ss1->typeModifier, ss2->typeModifier))
@@ -634,7 +634,7 @@ static char *spComplFindNextRecord(ExpressionTokenType *token) {
     static char     *cnext="next";
     static char     *cprevious="previous";
 
-    s = token->typeModifier->next->u.t;
+    s = token->typeModifier->next->t;
     res = NULL;
     assert(s->structSpec);
     initFind(s, &rfs);

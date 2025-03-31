@@ -2766,8 +2766,8 @@ break;
 case 8:
 #line 236 "yacc_parser.y"
 {
-            specializeStructOrUnionDef(yyvsp[-3].typeModifier->u.t, yyvsp[-1].ast_symbol.data);
-            l_yaccUnion = yyvsp[-3].typeModifier->u.t;
+            specializeStructOrUnionDef(yyvsp[-3].typeModifier->t, yyvsp[-1].ast_symbol.data);
+            l_yaccUnion = yyvsp[-3].typeModifier->t;
         }
 break;
 case 9:
@@ -3687,9 +3687,9 @@ break;
 case 305:
 #line 1011 "yacc_parser.y"
 {
-        assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->u.t);
+        assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->t);
         yyval.ast_typeModifiers.data = yyvsp[-3].ast_typeModifiers.data;
-        specializeStructOrUnionDef(yyval.ast_typeModifiers.data->u.t, yyvsp[-1].ast_symbol.data);
+        specializeStructOrUnionDef(yyval.ast_typeModifiers.data->t, yyvsp[-1].ast_symbol.data);
     }
 break;
 case 306:
@@ -3798,11 +3798,11 @@ break;
 case 324:
 #line 1105 "yacc_parser.y"
 {
-        assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->type == TypeEnum && yyvsp[-3].ast_typeModifiers.data->u.t);
+        assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->type == TypeEnum && yyvsp[-3].ast_typeModifiers.data->t);
         yyval.ast_typeModifiers.data = yyvsp[-3].ast_typeModifiers.data;
-        if (yyval.ast_typeModifiers.data->u.t->enums==NULL) {
-            yyval.ast_typeModifiers.data->u.t->enums = yyvsp[-1].ast_symbolList.data;
-            addToFrame(setToNull, &(yyval.ast_typeModifiers.data->u.t->enums));
+        if (yyval.ast_typeModifiers.data->t->enums==NULL) {
+            yyval.ast_typeModifiers.data->t->enums = yyvsp[-1].ast_symbolList.data;
+            addToFrame(setToNull, &(yyval.ast_typeModifiers.data->t->enums));
         }
     }
 break;
@@ -3908,7 +3908,7 @@ case 343:
         assert(yyvsp[-2].ast_symbol.data);
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
         modifier = addComposedTypeToSymbol(yyval.ast_symbol.data, TypeFunction);
-        initFunctionTypeModifier(&modifier->u.f , NULL);
+        initFunctionTypeModifier(modifier, NULL);
         handleDeclaratorParamPositions(yyvsp[-2].ast_symbol.data, yyvsp[-1].ast_position.data, NULL, yyvsp[0].ast_position.data, false, false);
     }
 break;
@@ -3919,7 +3919,7 @@ case 344:
         assert(yyvsp[-3].ast_symbol.data);
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
         modifier = addComposedTypeToSymbol(yyval.ast_symbol.data, TypeFunction);
-        initFunctionTypeModifier(&modifier->u.f , yyvsp[-1].ast_symbolPositionListPair.data.symbol);
+        initFunctionTypeModifier(modifier, yyvsp[-1].ast_symbolPositionListPair.data.symbol);
         bool isVoid = yyvsp[-1].ast_symbolPositionListPair.data.symbol->typeModifier->type == TypeVoid;
         handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.data, yyvsp[-2].ast_position.data, yyvsp[-1].ast_symbolPositionListPair.data.positionList, yyvsp[0].ast_position.data, true, isVoid);
     }
@@ -3931,7 +3931,7 @@ case 345:
         assert(yyvsp[-3].ast_symbol.data);
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
         modifier = addComposedTypeToSymbol(yyval.ast_symbol.data, TypeFunction);
-        initFunctionTypeModifier(&modifier->u.f , yyvsp[-1].ast_symbolPositionListPair.data.symbol);
+        initFunctionTypeModifier(modifier, yyvsp[-1].ast_symbolPositionListPair.data.symbol);
         handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.data, yyvsp[-2].ast_position.data, yyvsp[-1].ast_symbolPositionListPair.data.positionList, yyvsp[0].ast_position.data, true, false);
     }
 break;
@@ -4228,7 +4228,7 @@ case 390:
         TypeModifier *modifier;
         yyval.ast_typeModifiers.data = yyvsp[-2].ast_typeModifiers.data;
         modifier = appendComposedType(&(yyval.ast_typeModifiers.data), TypeFunction);
-        initFunctionTypeModifier(&modifier->u.f , NULL);
+        initFunctionTypeModifier(modifier, NULL);
     }
 break;
 case 391:
@@ -4237,7 +4237,7 @@ case 391:
         TypeModifier *modifier;
         yyval.ast_typeModifiers.data = yyvsp[-3].ast_typeModifiers.data;
         modifier = appendComposedType(&(yyval.ast_typeModifiers.data), TypeFunction);
-        initFunctionTypeModifier(&modifier->u.f , NULL);
+        initFunctionTypeModifier(modifier, NULL);
     }
 break;
 case 392:
@@ -4658,7 +4658,7 @@ case 490:
         assert(yyvsp[0].ast_symbol.data->typeModifier && yyvsp[0].ast_symbol.data->typeModifier->type == TypeFunction);
         parsedInfo.function = yyvsp[0].ast_symbol.data;
         generateInternalLabelReference(-1, UsageDefined);
-        for (symbol=yyvsp[0].ast_symbol.data->typeModifier->u.f.args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
+        for (symbol=yyvsp[0].ast_symbol.data->typeModifier->args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
             if (symbol->type == TypeElipsis)
                 continue;
             if (symbol->typeModifier == NULL)
@@ -4742,7 +4742,7 @@ case 504:
 #line 1889 "yacc_parser.y"
 {
         assert(yyvsp[-1].ast_symbol.data->typeModifier && yyvsp[-1].ast_symbol.data->typeModifier->type == TypeFunction);
-        Result r = mergeArguments(yyvsp[-1].ast_symbol.data->typeModifier->u.f.args, yyvsp[0].ast_symbol.data);
+        Result r = mergeArguments(yyvsp[-1].ast_symbol.data->typeModifier->args, yyvsp[0].ast_symbol.data);
         if (r == RESULT_ERR) YYERROR;
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
     }

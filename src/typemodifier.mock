@@ -46,7 +46,7 @@ void initTypeModifierAsArray(TypeModifier *typeModifier, Symbol *typedefSymbol, 
   mock(typeModifier, typedefSymbol, next);
 }
 
-void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *args) {
+void initFunctionTypeModifier(TypeModifier *modifier, Symbol *args) {
   mock(modifier, args);
 }
 

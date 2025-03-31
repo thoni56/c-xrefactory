@@ -115,7 +115,7 @@ void prettyPrintType(char *buffer, int *bufferSize, TypeModifier *typeModifier, 
             }
             sprintf(postString + j, "(");
             j += strlen(postString + j);
-            for (Symbol *symbol = typeModifier->u.f.args; symbol != NULL; symbol = symbol->next) {
+            for (Symbol *symbol = typeModifier->args; symbol != NULL; symbol = symbol->next) {
                 char *ttm;
                 if (symbol->type == TypeElipsis)
                     ttm = "...";
@@ -146,16 +146,16 @@ void prettyPrintType(char *buffer, int *bufferSize, TypeModifier *typeModifier, 
                 sprintf(typeString, "union ");
             l = strlen(typeString);
 
-            if (typeModifier->u.t->name != NULL) {
-                sprintf(typeString + l, "%s ", typeModifier->u.t->name);
+            if (typeModifier->t->name != NULL) {
+                sprintf(typeString + l, "%s ", typeModifier->t->name);
                 l += strlen(typeString + l);
             }
             break;
         case TypeEnum:
-            if (typeModifier->u.t->name == NULL)
+            if (typeModifier->t->name == NULL)
                 sprintf(typeString, "enum ");
             else
-                sprintf(typeString, "enum %s", typeModifier->u.t->linkName);
+                sprintf(typeString, "enum %s", typeModifier->t->linkName);
             l = strlen(typeString);
             break;
         default:

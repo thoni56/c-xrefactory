@@ -186,7 +186,7 @@ Result findStructureMemberSymbol(Symbol **resultingSymbolP, StructMemberFindInfo
             ) {
                 // put the anonymous union as 'super class'
                 if (info->anonymousUnionsCount + 1 < MAX_ANONYMOUS_FIELDS) {
-                    info->anonymousUnions[info->anonymousUnionsCount++] = m->typeModifier->next->u.t;
+                    info->anonymousUnions[info->anonymousUnionsCount++] = m->typeModifier->next->t;
                 }
             }
             //&fprintf(dumpOut,":checking %s\n",m->name); fflush(dumpOut);
@@ -255,7 +255,7 @@ Reference *findStructureFieldFromType(TypeModifier *structure,
         *resultingSymbol = &errorSymbol;
         goto fini;
     }
-    reference = findStuctureMemberFromSymbol(structure->u.t, field, resultingSymbol);
+    reference = findStuctureMemberFromSymbol(structure->t, field, resultingSymbol);
  fini:
     return reference;
 }
@@ -423,7 +423,7 @@ void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol
 
         // here checks a special case, double argument definition do not
         // redefine him, so refactorings will detect problem
-        for (pp = function->typeModifier->u.f.args; pp != NULL && pp != parameter; pp = pp->next) {
+        for (pp = function->typeModifier->args; pp != NULL && pp != parameter; pp = pp->next) {
             if (pp->name != NULL && pp->type != TypeError) {
                 if (parameter != pp && strcmp(pp->name, parameter->name) == 0)
                     break;
@@ -575,8 +575,8 @@ void completeDeclarator(Symbol *type, Symbol *declarator) {
         if (declarator->npointers >= 1 && (typeModifier->type == TypeStruct || typeModifier->type == TypeUnion)
             && typeModifier->typedefSymbol == NULL) {
             declarator->npointers--;
-            assert(typeModifier->u.t && typeModifier->u.t->type == typeModifier->type && typeModifier->u.t->structSpec);
-            typeModifier = &typeModifier->u.t->structSpec->ptrtype;
+            assert(typeModifier->t && typeModifier->t->type == typeModifier->type && typeModifier->t->structSpec);
+            typeModifier = &typeModifier->t->structSpec->ptrtype;
         } else if (declarator->npointers >= 2 && preCreatedPtr2Ptr2TypeTable[typeModifier->type] != NULL
                    && typeModifier->typedefSymbol == NULL) {
             assert(typeModifier->next == NULL); /* not a user defined type */
