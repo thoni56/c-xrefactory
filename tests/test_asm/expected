@@ -1,0 +1,7 @@
+[C-xref] active project: 'CURDIR'
+foo
+    @source.c:1:11
+fscanf
+    @source.c:3:11
+func
+    @source.c:2:11
