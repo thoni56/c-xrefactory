@@ -782,18 +782,18 @@ static char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {
     return s;
 }
 
-void specializeStructOrUnionDef(Symbol *sd, Symbol *rec) {
-    assert(sd->type == TypeStruct || sd->type == TypeUnion);
-    assert(sd->structSpec);
-    if (sd->structSpec->members!=NULL)
+void specializeStructOrUnionDef(Symbol *symbol, Symbol *recordSymbol) {
+    assert(symbol->type == TypeStruct || symbol->type == TypeUnion);
+    assert(symbol->structSpec);
+    if (symbol->structSpec->members!=NULL)
         return;
 
-    sd->structSpec->members = rec;
-    addToFrame(setToNull, &(sd->structSpec->members));
-    for (Symbol *symbol=rec; symbol!=NULL; symbol=symbol->next) {
-        if (symbol->name != NULL) {
-            symbol->linkName = string3ConcatInStackMem(sd->linkName,".",symbol->name);
-            addCxReference(symbol,symbol->pos,UsageDefined, NO_FILE_NUMBER);
+    symbol->structSpec->members = recordSymbol;
+    addToFrame(setToNull, &(symbol->structSpec->members));
+    for (Symbol *r=recordSymbol; r!=NULL; r=r->next) {
+        if (r->name != NULL) {
+            r->linkName = string3ConcatInStackMem(symbol->linkName, ".", r->name);
+            addCxReference(r, r->pos,UsageDefined, NO_FILE_NUMBER);
         }
     }
 }
