@@ -1542,7 +1542,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
     ENTER();
     char *ppmMarker = ppmAllocc(0, sizeof(char));
 
-    /* Macro argument resolution first for left and right operands */
+    /* Macro argument resolution first for left ... */
     if (peekLexemCodeAt(*leftHandLexemP) == CPP_MACRO_ARGUMENT) {
         *leftHandLexemP = resolveMacroArgumentAsLeftOperand(buffer, bufferSizeP, bufferWriteP,
                                                             leftHandLexemP, actualArgumentsInput);
@@ -1552,7 +1552,9 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
             return *rightHandLexemP;
         }
     }
+    assert(*leftHandLexemP != NULL);
 
+    /* ... and right operands */
     char *endOfLexems = NULL;
     if (peekLexemCodeAt(*rightHandLexemP) == CPP_MACRO_ARGUMENT) {
         resolveMacroArgument(rightHandLexemP, actualArgumentsInput, &endOfLexems);
@@ -1561,9 +1563,9 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
     }
 
     /* Macro invocations next */
-    assert(*leftHandLexemP != NULL);
-    if (isIdentifierLexem(peekLexemCodeAt(*leftHandLexemP))) {
-        char *lexemString = *leftHandLexemP + LEXEMCODE_SIZE;
+    char *lhs = *leftHandLexemP;
+    if (isIdentifierLexem(peekLexemCodeAt(lhs))) {
+        char *lexemString = lhs + LEXEMCODE_SIZE;
         Symbol *macroSymbol = findMacroSymbol(lexemString);
         if (macroSymbol != NULL) {
             log_trace("Macro found: '%s' (left-hand) -> expanding it", lexemString);
@@ -1571,7 +1573,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
             MacroBody *macroBody = getMacroBody(macroSymbol);
             LexInput macroExpansion = createMacroBodyAsNewInput(macroBody, actualArgumentsInput);
 
-            *bufferWriteP = *leftHandLexemP;
+            *bufferWriteP = lhs;
             copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, macroExpansion.begin, macroExpansion.write);
         } else {
             log_trace("Identifier '%s' (left-hand) is NOT a macro", lexemString);
@@ -1597,13 +1599,13 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
     }
 
     /* Now collate left and right hand tokens */
-    LexemCode leftHandLexem = peekLexemCodeAt(*leftHandLexemP);
+    LexemCode leftHandLexem = peekLexemCodeAt(lhs);
     LexemCode rightHandLexem = peekLexemCodeAt(rhs);
 
     if (rhs < endOfLexems) {
         /* TODO collation of all types of lexem pairs, not just id/const */
         if (leftHandLexem == IDENTIFIER && rightHandLexem == IDENTIFIER) {
-            char *leftHandLexemString = *leftHandLexemP + LEXEMCODE_SIZE;
+            char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
             *bufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
             assert(**bufferWriteP == 0); /* Ensure at end of string */
 
@@ -1624,7 +1626,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
             (*bufferWriteP)++;
             putLexemPositionAt(position, bufferWriteP);
         } else if (leftHandLexem == IDENTIFIER && rightHandLexem == CONSTANT) {
-            char *leftHandLexemString = *leftHandLexemP + LEXEMCODE_SIZE;
+            char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
             *bufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
             assert(**bufferWriteP == 0); /* Ensure at end of string */
 
@@ -1644,12 +1646,12 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
             putLexemPositionAt(position, bufferWriteP);
         } else if (leftHandLexem == CONSTANT && rightHandLexem == IDENTIFIER) {
             /* Retrieve value and position from the LHS CONSTANT */
-            char *leftHandLexemStart = *leftHandLexemP;
+            char *leftHandLexemStart = lhs;
 
             int value;
             Position position;
-            getLexemCodeAndAdvance(leftHandLexemP);
-            getExtraLexemInformationFor(leftHandLexem, leftHandLexemP, NULL, &value, &position, NULL, false);
+            getLexemCodeAndAdvance(&lhs);
+            getExtraLexemInformationFor(leftHandLexem, &lhs, NULL, &value, &position, NULL, false);
 
             /* Re-write to an IDENTIFIER */
             putLexemCodeAt(IDENTIFIER, &leftHandLexemStart);
@@ -1672,7 +1674,7 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
             putLexemPositionAt(position, bufferWriteP);
         } else {
             if (nextLexemIsIdentifierOrConstant(rhs)) {
-                char *leftHandLexemString = *leftHandLexemP + LEXEMCODE_SIZE;
+                char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
                 *bufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
                 assert(**bufferWriteP == 0); /* Ensure at end of string */
 
@@ -1807,8 +1809,8 @@ static LexInput createMacroBodyAsNewInput(MacroBody *macroBody, LexInput *actual
     // Allocate space for an extra lexem so that users can overwrite and *then* expand
     int   bufferSize = MACRO_BODY_BUFFER_SIZE;
     char *buffer = ppmAllocc(bufferSize + MAX_LEXEM_SIZE, sizeof(char));
-
     char *bufferWrite  = buffer;
+
     char *lastWrittenLexem = NULL;
 
     char *nextBodyLexemToRead = macroBody->body;
