@@ -1875,18 +1875,20 @@ static LexemCode getActualMacroArgument(char *previousLexemP, LexemCode lexem, P
     bufferP = buffer;
 
     /* if lastArgument, collect everything there */
+    bool isLastArgument = actualArgumentIndex + 1 == argumentCount;
+
     int depth = 0;
     int offset = 0;
-    while (((lexem != ',' || actualArgumentIndex + 1 == argumentCount) && lexem != ')') || depth > 0) {
-        // The following should be equivalent to the loop condition:
-        //& if (lexem == ')' && depth <= 0) break;
-        //& if (lexem == ',' && depth <= 0 && ! lastArgument) break;
+    while (true) {
         if (lexem == '(')
             depth++;
-        if (lexem == ')')
+        else if (lexem == ')') {
+            if (depth == 0) break;
             depth--;
+        } else if (lexem == ',' && depth == 0 && !isLastArgument)
+            break;
 
-        /* Copy from source to the new buffer? */
+        /* Copy from source to buffer */
         for (; previousLexemP < currentInput.read; previousLexemP++, bufferP++)
             *bufferP = *previousLexemP;
 
