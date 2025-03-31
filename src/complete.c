@@ -519,11 +519,10 @@ static void completeMemberNames(Completions *completions, Symbol *symbol) {
 
 void collectStructMemberCompletions(Completions *completions) {
     TypeModifier *structure;
-    Symbol *symbol;
     assert(structMemberCompletionType);
     structure = structMemberCompletionType;
     if (structure->type == TypeStruct || structure->type == TypeUnion) {
-        symbol = structure->t;
+        Symbol *symbol = structure->typeSymbol;
         assert(symbol);
         completeMemberNames(completions, symbol);
     }
@@ -610,7 +609,7 @@ static bool isEqualType(TypeModifier *t1, TypeModifier *t2) {
     if (s1->type != s2->type)
         return false;
     if (s1->type==TypeStruct || s1->type==TypeUnion || s1->type==TypeEnum) {
-        if (s1->t != s2->t)
+        if (s1->typeSymbol != s2->typeSymbol)
             return false;
     } else if (s1->type==TypeFunction) {
         Symbol *ss1, *ss2;
@@ -634,7 +633,7 @@ static char *spComplFindNextRecord(ExpressionTokenType *token) {
     static char     *cnext="next";
     static char     *cprevious="previous";
 
-    s = token->typeModifier->next->t;
+    s = token->typeModifier->next->typeSymbol;
     res = NULL;
     assert(s->structSpec);
     initFind(s, &rfs);

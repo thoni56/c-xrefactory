@@ -2766,8 +2766,8 @@ break;
 case 8:
 #line 236 "yacc_parser.y"
 {
-            specializeStructOrUnionDef(yyvsp[-3].typeModifier->t, yyvsp[-1].ast_symbol.data);
-            l_yaccUnion = yyvsp[-3].typeModifier->t;
+            specializeStructOrUnionDef(yyvsp[-3].typeModifier->typeSymbol, yyvsp[-1].ast_symbol.data);
+            l_yaccUnion = yyvsp[-3].typeModifier->typeSymbol;
         }
 break;
 case 9:
@@ -3687,9 +3687,9 @@ break;
 case 305:
 #line 1011 "yacc_parser.y"
 {
-        assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->t);
+        assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->typeSymbol);
         yyval.ast_typeModifiers.data = yyvsp[-3].ast_typeModifiers.data;
-        specializeStructOrUnionDef(yyval.ast_typeModifiers.data->t, yyvsp[-1].ast_symbol.data);
+        specializeStructOrUnionDef(yyval.ast_typeModifiers.data->typeSymbol, yyvsp[-1].ast_symbol.data);
     }
 break;
 case 306:
@@ -3798,11 +3798,11 @@ break;
 case 324:
 #line 1105 "yacc_parser.y"
 {
-        assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->type == TypeEnum && yyvsp[-3].ast_typeModifiers.data->t);
+        assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->type == TypeEnum && yyvsp[-3].ast_typeModifiers.data->typeSymbol);
         yyval.ast_typeModifiers.data = yyvsp[-3].ast_typeModifiers.data;
-        if (yyval.ast_typeModifiers.data->t->enums==NULL) {
-            yyval.ast_typeModifiers.data->t->enums = yyvsp[-1].ast_symbolList.data;
-            addToFrame(setToNull, &(yyval.ast_typeModifiers.data->t->enums));
+        if (yyval.ast_typeModifiers.data->typeSymbol->enums==NULL) {
+            yyval.ast_typeModifiers.data->typeSymbol->enums = yyvsp[-1].ast_symbolList.data;
+            addToFrame(setToNull, &(yyval.ast_typeModifiers.data->typeSymbol->enums));
         }
     }
 break;

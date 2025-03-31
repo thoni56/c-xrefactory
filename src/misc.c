@@ -146,16 +146,16 @@ void prettyPrintType(char *buffer, int *bufferSize, TypeModifier *typeModifier, 
                 sprintf(typeString, "union ");
             l = strlen(typeString);
 
-            if (typeModifier->t->name != NULL) {
-                sprintf(typeString + l, "%s ", typeModifier->t->name);
+            if (typeModifier->typeSymbol->name != NULL) {
+                sprintf(typeString + l, "%s ", typeModifier->typeSymbol->name);
                 l += strlen(typeString + l);
             }
             break;
         case TypeEnum:
-            if (typeModifier->t->name == NULL)
+            if (typeModifier->typeSymbol->name == NULL)
                 sprintf(typeString, "enum ");
             else
-                sprintf(typeString, "enum %s", typeModifier->t->linkName);
+                sprintf(typeString, "enum %s", typeModifier->typeSymbol->linkName);
             l = strlen(typeString);
             break;
         default:

@@ -186,7 +186,7 @@ Result findStructureMemberSymbol(Symbol **resultingSymbolP, StructMemberFindInfo
             ) {
                 // put the anonymous union as 'super class'
                 if (info->anonymousUnionsCount + 1 < MAX_ANONYMOUS_FIELDS) {
-                    info->anonymousUnions[info->anonymousUnionsCount++] = m->typeModifier->next->t;
+                    info->anonymousUnions[info->anonymousUnionsCount++] = m->typeModifier->next->typeSymbol;
                 }
             }
             //&fprintf(dumpOut,":checking %s\n",m->name); fflush(dumpOut);
@@ -255,7 +255,7 @@ Reference *findStructureFieldFromType(TypeModifier *structure,
         *resultingSymbol = &errorSymbol;
         goto fini;
     }
-    reference = findStuctureMemberFromSymbol(structure->t, field, resultingSymbol);
+    reference = findStuctureMemberFromSymbol(structure->typeSymbol, field, resultingSymbol);
  fini:
     return reference;
 }
@@ -575,8 +575,8 @@ void completeDeclarator(Symbol *type, Symbol *declarator) {
         if (declarator->npointers >= 1 && (typeModifier->type == TypeStruct || typeModifier->type == TypeUnion)
             && typeModifier->typedefSymbol == NULL) {
             declarator->npointers--;
-            assert(typeModifier->t && typeModifier->t->type == typeModifier->type && typeModifier->t->structSpec);
-            typeModifier = &typeModifier->t->structSpec->ptrtype;
+            assert(typeModifier->typeSymbol && typeModifier->typeSymbol->type == typeModifier->type && typeModifier->typeSymbol->structSpec);
+            typeModifier = &typeModifier->typeSymbol->structSpec->ptrtype;
         } else if (declarator->npointers >= 2 && preCreatedPtr2Ptr2TypeTable[typeModifier->type] != NULL
                    && typeModifier->typedefSymbol == NULL) {
             assert(typeModifier->next == NULL); /* not a user defined type */

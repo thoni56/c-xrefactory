@@ -800,9 +800,9 @@ struct_or_union_specifier
         $$.data = simpleStructOrUnionSpecifier($1.data, $2.data, usage);
     }
     | struct_or_union_define_specifier '{' struct_declaration_list '}'{
-        assert($1.data && $1.data->t);
+        assert($1.data && $1.data->typeSymbol);
         $$.data = $1.data;
-        specializeStructOrUnionDef($$.data->t, $3.data);
+        specializeStructOrUnionDef($$.data->typeSymbol, $3.data);
     }
     | struct_or_union_define_specifier '{' '}'                      {
         $$.data = $1.data;
@@ -894,11 +894,11 @@ enum_specifier
         $$.data = simpleEnumSpecifier($2.data, usage);
     }
     | enum_define_specifier '{' enumerator_list_comma '}'       {
-        assert($1.data && $1.data->type == TypeEnum && $1.data->t);
+        assert($1.data && $1.data->type == TypeEnum && $1.data->typeSymbol);
         $$.data = $1.data;
-        if ($$.data->t->enums==NULL) {
-            $$.data->t->enums = $3.data;
-            addToFrame(setToNull, &($$.data->t->enums));
+        if ($$.data->typeSymbol->enums==NULL) {
+            $$.data->typeSymbol->enums = $3.data;
+            addToFrame(setToNull, &($$.data->typeSymbol->enums));
         }
     }
     | ENUM '{' enumerator_list_comma '}'                        {

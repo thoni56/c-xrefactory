@@ -8,7 +8,7 @@ typedef struct typeModifier {
     enum type                type;
     union {
         struct symbol *args; /* Function - list of symbols*/
-        struct symbol *t;    /* Struct/Union/Enum */
+        struct symbol *typeSymbol;    /* Struct/Union/Enum */
     };
     struct symbol            *typedefSymbol;   /* the typedef symbol (if any) */
     struct typeModifier      *next;
