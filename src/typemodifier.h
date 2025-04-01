@@ -21,7 +21,6 @@ extern TypeModifier *newSimpleTypeModifier(Type kind);
 extern TypeModifier *newFunctionTypeModifier(Symbol *args, Symbol *typedefSymbol, TypeModifier *next);
 extern TypeModifier *newPointerTypeModifier(TypeModifier *next);
 extern TypeModifier *newArrayTypeModifier(void);
-extern TypeModifier *newStructTypeModifier(Symbol *symbol);
 extern TypeModifier *newEnumTypeModifier(Symbol *symbol);
 
 /* And here are some fill/init functions if you need them, e.g. if you allocate elsewhere */
@@ -32,7 +31,5 @@ extern void initTypeModifierAsPointer(TypeModifier *typeModifier, TypeModifier *
 extern void initTypeModifierAsArray(TypeModifier *typeModifier,Symbol *typedefSymbol, TypeModifier *next);
 
 extern void initFunctionTypeModifier(TypeModifier *modifier, Symbol *args);
-
-extern TypeModifier *prependTypeModifierWith(TypeModifier *thisModifier, Type kind);
 
 #endif

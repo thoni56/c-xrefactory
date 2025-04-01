@@ -22,11 +22,7 @@ TypeModifier *newArrayTypeModifier(void) {
   return (TypeModifier *) mock();
 }
 
-TypeModifier *newStructTypeModifier(Symbol *symbol) {
-  return (TypeModifier *) mock(symbol);
-}
-
-extern TypeModifier *newEnumTypeModifier(Symbol *symbol) {
+TypeModifier *newEnumTypeModifier(Symbol *symbol) {
     return (TypeModifier *)mock(symbol);
 }
 
@@ -48,8 +44,4 @@ void initTypeModifierAsArray(TypeModifier *typeModifier, Symbol *typedefSymbol, 
 
 void initFunctionTypeModifier(TypeModifier *modifier, Symbol *args) {
   mock(modifier, args);
-}
-
-TypeModifier *prependTypeModifierWith(TypeModifier *this, Type kind) {
-  return (TypeModifier *) mock(this, kind);
 }

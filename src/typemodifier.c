@@ -74,18 +74,8 @@ TypeModifier *newArrayTypeModifier(void) {
     return newTypeModifier(TypeArray, NULL, NULL);
 }
 
-TypeModifier *newStructTypeModifier(Symbol *symbol) {
-    TypeModifier *typeModifier = newTypeModifier(TypeStruct, NULL, NULL);
-    typeModifier->typeSymbol = symbol;
-    return typeModifier;
-}
-
 TypeModifier *newEnumTypeModifier(Symbol *symbol) {
     TypeModifier *typeModifier = newTypeModifier(TypeEnum, NULL, NULL);
     typeModifier->typeSymbol = symbol;
     return typeModifier;
-}
-
-TypeModifier *prependTypeModifierWith(TypeModifier *thisModifier, Type kind) {
-    return newTypeModifier(kind, NULL, thisModifier);
 }
