@@ -89,7 +89,7 @@ static int savedWorkMemoryIndex = 0;
 /* hmm */
 %token ANONYMOUS_MODIFIER
 
-%token TRUE_LITERAL FALSE_LITERAL
+%token TRUE_LITERAL FALSE_LITERAL NULL_LITERAL
 
 /* yacc-special */
 %token TOKEN TYPE
@@ -427,6 +427,7 @@ primary_expr
     | CHAR_LITERAL          { $$.data.typeModifier = newSimpleTypeModifier(TypeInt); $$.data.reference = NULL;}
     | TRUE_LITERAL          { $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean); $$.data.reference = NULL;}
     | FALSE_LITERAL         { $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean); $$.data.reference = NULL;}
+    | NULL_LITERAL          { $$.data.typeModifier = newSimpleTypeModifier(TypeNull); $$.data.reference = NULL;}
     | CONSTANT              { $$.data.typeModifier = newSimpleTypeModifier(TypeInt); $$.data.reference = NULL;}
     | LONG_CONSTANT         { $$.data.typeModifier = newSimpleTypeModifier(TypeLong); $$.data.reference = NULL;}
     | FLOAT_CONSTANT        { $$.data.typeModifier = newSimpleTypeModifier(TypeFloat); $$.data.reference = NULL;}
