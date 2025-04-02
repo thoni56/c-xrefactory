@@ -59,10 +59,10 @@ Ensure(Editor, can_sort_single_region) {
 }
 
 static EditorRegionList *createEditorRegionList(EditorBuffer *buffer, int begin, int end, EditorRegionList *next) {
-    EditorMarker *b = (EditorMarker *)malloc(sizeof(EditorMarker));
-    EditorMarker *e = (EditorMarker *)malloc(sizeof(EditorMarker));
-    *b = (EditorMarker){ .offset = begin, .previous = NULL, .next = NULL, .buffer = buffer };
-    *e = (EditorMarker){ .offset = end, .previous = NULL, .next = NULL, .buffer = buffer };
+    EditorMarker *b = newEditorMarker(buffer, begin);
+    EditorMarker *e = newEditorMarker(buffer, end);
+    *b = (EditorMarker){ .buffer = buffer, .offset = begin, .previous = NULL, .next = NULL };
+    *e = (EditorMarker){ .buffer = buffer, .offset = end, .previous = NULL, .next = NULL };
 
     EditorRegionList *r = (EditorRegionList *)malloc(sizeof(EditorRegionList));
     *r = (EditorRegionList){ .region = { .begin = b, .end = e}, .next = next};
@@ -70,7 +70,7 @@ static EditorRegionList *createEditorRegionList(EditorBuffer *buffer, int begin,
 }
 
 Ensure(Editor, can_sort_two_regions) {
-    EditorBuffer *buffer = (EditorBuffer *)malloc(sizeof(EditorBuffer));
+    EditorBuffer *buffer = newEditorBuffer("", 1, "", 0, 0);
     EditorRegionList *regionList1 = createEditorRegionList(buffer, 1, 2, NULL);
     EditorRegionList *regionList2 = createEditorRegionList(buffer, 3, 4, regionList1);
     EditorRegionList *list = regionList2;
@@ -81,7 +81,7 @@ Ensure(Editor, can_sort_two_regions) {
 }
 
 Ensure(Editor, can_sort_three_regions) {
-    EditorBuffer *buffer = (EditorBuffer *)malloc(sizeof(EditorBuffer));
+    EditorBuffer *buffer = newEditorBuffer("", 1, "", 0, 0);
     EditorRegionList *regionList1 = createEditorRegionList(buffer, 1, 2, NULL);
     EditorRegionList *regionList2 = createEditorRegionList(buffer, 3, 4, regionList1);
     EditorRegionList *regionList3 = createEditorRegionList(buffer, 5, 6, regionList2);
@@ -93,7 +93,7 @@ Ensure(Editor, can_sort_three_regions) {
 }
 
 Ensure(Editor, can_sort_enclosing_regions) {
-    EditorBuffer *buffer = (EditorBuffer *)malloc(sizeof(EditorBuffer));
+    EditorBuffer *buffer = newEditorBuffer("", 1, "", 0, 0);
     EditorRegionList *regionList1 = createEditorRegionList(buffer, 1, 4, NULL);
     EditorRegionList *regionList2 = createEditorRegionList(buffer, 2, 3, regionList1);
     EditorRegionList *list = regionList2;
@@ -104,7 +104,7 @@ Ensure(Editor, can_sort_enclosing_regions) {
 }
 
 Ensure(Editor, can_sort_overlapping_regions) {
-    EditorBuffer *buffer = (EditorBuffer *)malloc(sizeof(EditorBuffer));
+    EditorBuffer *buffer = newEditorBuffer("", 1, "", 0, 0);
     EditorRegionList *regionList1 = createEditorRegionList(buffer, 1, 3, NULL);
     EditorRegionList *regionList2 = createEditorRegionList(buffer, 2, 4, regionList1);
     EditorRegionList *list = regionList2;
