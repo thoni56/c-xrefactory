@@ -1311,7 +1311,7 @@ static bool isRenameMenuSelection(int command) {
     return command == OLO_RENAME
         || command == OLO_ARGUMENT_MANIPULATION
         || command == OLO_PUSH_FOR_LOCAL_MOTION
-        || command == OLO_SAFETY_CHECK2
+        || command == OLO_SAFETY_CHECK
         || options.manualResolve == RESOLVE_DIALOG_NEVER
         ;
 }
@@ -1529,12 +1529,12 @@ static Reference *olcxCreateFileShiftedRefListForCheck(Reference *reference) {
     return res;
 }
 
-static void olcxSafetyCheck2(void) {
+static void olcxSafetyCheck(void) {
     OlcxReferences *refs, *origrefs, *newrefs, *diffrefs;
     Reference *shifted;
     int pbflag=0;
     origrefs = newrefs = diffrefs = NULL;
-    SAFETY_CHECK2_GET_SYM_LISTS(refs,origrefs,newrefs,diffrefs, pbflag);
+    SAFETY_CHECK_GET_SYM_LISTS(refs,origrefs,newrefs,diffrefs, pbflag);
     assert(origrefs && newrefs && diffrefs);
     if (pbflag) return;
     shifted = olcxCreateFileShiftedRefListForCheck(origrefs->references);
@@ -1654,7 +1654,7 @@ bool olcxShowSelectionMenu(void) {
         // never ask for resolution for local motion symbols
         return false;
     }
-    if (options.serverOperation == OLO_SAFETY_CHECK2) {
+    if (options.serverOperation == OLO_SAFETY_CHECK) {
         // safety check showing of menu is resolved by safetyCheck2ShouldWarn
         return false;
     }
@@ -1871,9 +1871,9 @@ static void olcxPrintPushingAction(ServerOperation operation) {
         else
             olcxNoSymbolFoundErrorMessage();
         break;
-    case OLO_SAFETY_CHECK2:
+    case OLO_SAFETY_CHECK:
         if (olcxCheckSymbolExists())
-            olcxSafetyCheck2();
+            olcxSafetyCheck();
         else
             olcxNoSymbolFoundErrorMessage();
         break;

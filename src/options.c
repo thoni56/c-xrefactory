@@ -1349,7 +1349,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-olcxargmanip")==0)
         options.serverOperation = OLO_ARGUMENT_MANIPULATION;
     else if (strcmp(argv[i], "-olcxsafetycheck")==0)
-        options.serverOperation = OLO_SAFETY_CHECK2;
+        options.serverOperation = OLO_SAFETY_CHECK;
     else if (strcmp(argv[i], "-olcxgotodef")==0)
         options.serverOperation = OLO_GOTO_DEF;
     else if (strcmp(argv[i], "-olcxgotocaller")==0)

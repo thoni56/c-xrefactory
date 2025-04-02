@@ -112,7 +112,7 @@ typedef enum language {
         || ch=='$'                                      \
     )
 
-#define SAFETY_CHECK2_GET_SYM_LISTS(refs,origrefs,newrefs,diffrefs,pbflag) {\
+#define SAFETY_CHECK_GET_SYM_LISTS(refs,origrefs,newrefs,diffrefs,pbflag) {\
     refs = sessionData.browserStack.top;\
     if (refs==NULL || refs->previous==NULL || refs->previous->previous==NULL){\
         errorMessage(ERR_INTERNAL, "something goes wrong at safety check");\

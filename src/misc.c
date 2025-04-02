@@ -763,7 +763,7 @@ bool requiresCreatingRefs(ServerOperation operation) {
         ||  operation==OLO_LIST
         ||  operation==OLO_RENAME
         ||  operation==OLO_ARGUMENT_MANIPULATION
-        ||  operation==OLO_SAFETY_CHECK2
+        ||  operation==OLO_SAFETY_CHECK
         ||  operation==OLO_GET_PRIMARY_START
         ;
 }

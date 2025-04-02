@@ -619,7 +619,7 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
     editorUndoUntil(startPoint, redoTrack);
 
     origrefs = newrefs = diffrefs = NULL;
-    SAFETY_CHECK2_GET_SYM_LISTS(refs, origrefs, newrefs, diffrefs, pbflag);
+    SAFETY_CHECK_GET_SYM_LISTS(refs, origrefs, newrefs, diffrefs, pbflag);
     assert(origrefs != NULL && newrefs != NULL && diffrefs != NULL);
     result = handleSafetyCheckDifferenceLists(diff1, diff2, diffrefs);
     return result;

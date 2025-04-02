@@ -56,7 +56,7 @@
     ENUM(OLO_REF_FILTER_SET)                    \
     ENUM(OLO_RENAME)                            \
     ENUM(OLO_REPUSH)                            \
-    ENUM(OLO_SAFETY_CHECK2)                     \
+    ENUM(OLO_SAFETY_CHECK)                     \
     ENUM(OLO_SET_MOVE_FUNCTION_TARGET)          \
     ENUM(OLO_TAGGOTO)                           \
     ENUM(OLO_TAGSELECT)                         \
