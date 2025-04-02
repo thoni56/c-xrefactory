@@ -261,11 +261,11 @@ Reference *findStructureFieldFromType(TypeModifier *structure,
 }
 
 void labelReference(Id *id,  Usage usage) {
-    char tempString[TMP_STRING_SIZE];
-    char *t;
     assert(id);
+
+    char tempString[TMP_STRING_SIZE];
     if (parsedInfo.function!=NULL) {
-        t = strmcpy(tempString, parsedInfo.function->name);
+        char *t = strmcpy(tempString, parsedInfo.function->name);
         *t = '.';
         t = strcpy(t+1,id->name);
     } else {
@@ -276,17 +276,14 @@ void labelReference(Id *id,  Usage usage) {
 }
 
 void generateInternalLabelReference(int counter, int usage) {
-    char labelName[TMP_STRING_SIZE];
-    Id labelId;
-    Position position;
-
     if (options.serverOperation != OLO_EXTRACT)
         return;
 
+    char labelName[TMP_STRING_SIZE];
     snprintf(labelName, TMP_STRING_SIZE, "%%L%d", counter);
 
-    position = (Position){.file = currentFile.characterBuffer.fileNumber, .line = 0, .col = 0};
-    labelId = makeId(labelName, NULL, position);
+    Position position = (Position){.file = currentFile.characterBuffer.fileNumber, .line = 0, .col = 0};
+    Id labelId = makeId(labelName, NULL, position);
 
     if (usage != UsageDefined)
         labelId.position.line++;

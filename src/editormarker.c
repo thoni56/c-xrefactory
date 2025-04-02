@@ -324,16 +324,17 @@ static EditorMarkerList *combineEditorMarkerLists(EditorMarkerList **diff, Edito
 
 void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2,
                               EditorMarkerList **diff1, EditorMarkerList **diff2) {
-    EditorMarkerList *l1, *l2;
 
     LIST_MERGE_SORT(EditorMarkerList, *list1, editorMarkerListBefore);
     LIST_MERGE_SORT(EditorMarkerList, *list2, editorMarkerListBefore);
     *diff1 = *diff2 = NULL;
-    for(l1 = *list1, l2 = *list2; l1!=NULL && l2!=NULL; ) {
+
+    EditorMarkerList *l1, *l2;
+    for (l1 = *list1, l2 = *list2; l1!=NULL && l2!=NULL; ) {
         if (editorMarkerListBefore(l1, l2)) {
             EditorMarker *marker = newEditorMarker(l1->marker->buffer, l1->marker->offset);
             EditorMarkerList *l;
-            l = malloc(sizeof(EditorMarkerList)); /* TODO1 */
+            l = malloc(sizeof(EditorMarkerList));
             *l = (EditorMarkerList){.marker = marker, .usage = l1->usage, .next = *diff1};
             *diff1 = l;
             l1 = l1->next;
