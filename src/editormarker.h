@@ -29,6 +29,7 @@ typedef struct editorRegionList {
 } EditorRegionList;
 
 
+extern EditorMarkerList *newEditorMarkerList(EditorMarker *marker, Usage usage, EditorMarkerList *next);
 extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset);
 extern EditorMarker *newEditorMarkerForPosition(Position position);
 

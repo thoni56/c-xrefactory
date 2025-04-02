@@ -390,8 +390,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
                 for (; text < smax; text++, c++) {
                     if (l == line && c == col) {
                         EditorMarker *m    = newEditorMarker(buff, text - buff->allocation.text);
-                        EditorMarkerList *rrr  = malloc(sizeof(EditorMarkerList));
-                        *rrr = (EditorMarkerList){.marker = m, .usage = reference->usage, .next = markerList};
+                        EditorMarkerList *rrr  = newEditorMarkerList(m, reference->usage, markerList);
                         markerList  = rrr;
                         reference    = reference->next;
                         while (reference != NULL && !isVisibleUsage(reference->usage))
@@ -409,8 +408,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
                 // references beyond end of buffer
                 while (reference != NULL && file == reference->position.file) {
                     EditorMarker *m    = newEditorMarker(buff, maxoffset);
-                    EditorMarkerList *rrr  = malloc(sizeof(EditorMarkerList));
-                    *rrr = (EditorMarkerList){.marker = m, .usage = reference->usage, .next = markerList};
+                    EditorMarkerList *rrr  = newEditorMarkerList(m, reference->usage, markerList);
                     markerList  = rrr;
                     reference    = reference->next;
                     while (reference != NULL && !isVisibleUsage(reference->usage))

@@ -12,6 +12,14 @@
 #include "ppc.h"
 
 
+EditorMarkerList *newEditorMarkerList(EditorMarker *marker, Usage usage, EditorMarkerList *next) {
+    EditorMarkerList *l = malloc(sizeof(EditorMarkerList));
+    l->marker = marker;
+    l->usage = usage;
+    l->next = next;
+    return l;
+}
+
 
 void attachMarkerToBuffer(EditorMarker *marker, EditorBuffer *buffer) {
     marker->buffer = buffer;
@@ -312,10 +320,8 @@ void restrictEditorMarkersToRegions(EditorMarkerList **mm, EditorRegionList **re
 
 static EditorMarkerList *combineEditorMarkerLists(EditorMarkerList **diff, EditorMarkerList *list) {
     EditorMarker     *marker = newEditorMarker(list->marker->buffer, list->marker->offset);
-    EditorMarkerList *l;
+    EditorMarkerList *l = newEditorMarkerList(marker, list->usage, *diff);
 
-    l = malloc(sizeof(EditorMarkerList));
-    *l    = (EditorMarkerList){.marker = marker, .usage = list->usage, .next = *diff};
     *diff = l;
     list  = list->next;
 
@@ -333,9 +339,7 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
     for (l1 = *list1, l2 = *list2; l1!=NULL && l2!=NULL; ) {
         if (editorMarkerListBefore(l1, l2)) {
             EditorMarker *marker = newEditorMarker(l1->marker->buffer, l1->marker->offset);
-            EditorMarkerList *l;
-            l = malloc(sizeof(EditorMarkerList));
-            *l = (EditorMarkerList){.marker = marker, .usage = l1->usage, .next = *diff1};
+            EditorMarkerList *l = newEditorMarkerList(marker, l1->usage, *diff1);
             *diff1 = l;
             l1 = l1->next;
         } else if (editorMarkerListBefore(l2, l1)) {
@@ -350,9 +354,7 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
     }
     while (l2 != NULL) {
         EditorMarker *marker = newEditorMarker(l2->marker->buffer, l2->marker->offset);
-        EditorMarkerList *l;
-        l = malloc(sizeof(EditorMarkerList));
-        *l = (EditorMarkerList){.marker = marker, .usage = l2->usage, .next = *diff2};
+        EditorMarkerList *l = newEditorMarkerList(marker, l2->usage, *diff2);
         *diff2 = l;
         l2 = l2->next;
     }
