@@ -167,7 +167,7 @@ typedef struct structSpec {
 
 typedef struct olcxReferences {
     struct reference    *references;      /* list of references */
-    struct reference    *actual;          /* actual reference */
+    struct reference    *current;         /* current reference */
     ServerOperation      operation;       /* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
     time_t               accessTime;      /* last access time */
     struct position      callerPosition;  /* caller position */

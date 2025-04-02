@@ -410,7 +410,7 @@ static OlcxReferences *pushEmptyReference(OlcxReferencesStack *stack) {
 
     res  = malloc(sizeof(OlcxReferences));
     *res = (OlcxReferences){.references      = NULL,
-                            .actual          = NULL,
+                            .current          = NULL,
                             .operation       = options.serverOperation,
                             .accessTime      = fileProcessingStartTime,
                             .callerPosition  = noPosition,
@@ -502,8 +502,8 @@ static void olcxRenameInit(void) {
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
-    refs->actual = refs->references;
-    gotoOnlineCxref(refs->actual->position, refs->actual->usage, "");
+    refs->current = refs->references;
+    gotoOnlineCxref(refs->current->position, refs->current->usage, "");
 }
 
 
@@ -565,20 +565,20 @@ static void olcxSetCurrentRefsOnCaller(OlcxReferences *refs) {
     }
     // it should never be NULL, but one never knows - DUH! We have coverage to show that you are wrong
     if (r == NULL) {
-        refs->actual = refs->references;
+        refs->current = refs->references;
     } else {
-        refs->actual = r;
+        refs->current = r;
     }
 }
 
 static void orderRefsAndGotoDefinition(OlcxReferences *refs) {
     olcxNaturalReorder(refs);
     if (refs->references == NULL) {
-        refs->actual = refs->references;
+        refs->current = refs->references;
         indicateNoReference();
     } else if (refs->references->usage <= UsageDeclared) {
-        refs->actual = refs->references;
-        gotoOnlineCxref(refs->actual->position, refs->actual->usage, "");
+        refs->current = refs->references;
+        gotoOnlineCxref(refs->current->position, refs->current->usage, "");
     } else {
         assert(options.xref2);
         ppcWarning("Definition not found");
@@ -758,7 +758,7 @@ static int getCurrentRefPosition(OlcxReferences *refs) {
     Reference *r = NULL;
     if (refs!=NULL) {
         int rlevel = usageFilterLevels[refs->refsFilterLevel];
-        for (r=refs->references; r!=NULL && r!=refs->actual; r=r->next) {
+        for (r=refs->references; r!=NULL && r!=refs->current; r=r->next) {
             if (r->usage < rlevel)
                 actn++;
         }
@@ -823,8 +823,8 @@ static void olcxReferenceList(char *commandString) {
 }
 
 static void olcxGenGotoActReference(OlcxReferences *refs) {
-    if (refs->actual != NULL) {
-        gotoOnlineCxref(refs->actual->position, refs->actual->usage, "");
+    if (refs->current != NULL) {
+        gotoOnlineCxref(refs->current->position, refs->current->usage, "");
     } else {
         indicateNoReference();
     }
@@ -870,7 +870,7 @@ static void olcxReferenceGotoRef(int refn) {
     for (rr=refs->references,i=1; rr!=NULL && (i<refn||rr->usage>=rfilter); rr=rr->next){
         if (rr->usage < rfilter) i++;
     }
-    refs->actual = rr;
+    refs->current = rr;
     olcxGenGotoActReference(refs);
 }
 
@@ -972,14 +972,14 @@ static void olcxSetActReferenceToFirstVisible(OlcxReferences *refs, Reference *r
         r = r->next;
 
     if (r != NULL) {
-        refs->actual = r;
+        refs->current = r;
     } else {
         assert(options.xref2);
         ppcBottomInformation("Moving to the first reference");
         r = refs->references;
         while (r!=NULL && r->usage>=rlevel)
             r = r->next;
-        refs->actual = r;
+        refs->current = r;
     }
 }
 
@@ -988,10 +988,10 @@ static void olcxReferencePlus(void) {
     Reference         *r;
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
-    if (refs->actual == NULL)
-        refs->actual = refs->references;
+    if (refs->current == NULL)
+        refs->current = refs->references;
     else {
-        r = refs->actual->next;
+        r = refs->current->next;
         olcxSetActReferenceToFirstVisible(refs, r);
     }
     olcxGenGotoActReference(refs);
@@ -1004,9 +1004,9 @@ static void olcxReferenceMinus(void) {
     if (!sessionHasReferencesValidForOperation(&sessionData,  &refs, CHECK_NULL))
         return;
     rlevel = usageFilterLevels[refs->refsFilterLevel];
-    if (refs->actual == NULL) refs->actual = refs->references;
+    if (refs->current == NULL) refs->current = refs->references;
     else {
-        act = refs->actual;
+        act = refs->current;
         l = NULL;
         for (r=refs->references; r!=act && r!=NULL; r=r->next) {
             if (r->usage < rlevel)
@@ -1020,7 +1020,7 @@ static void olcxReferenceMinus(void) {
                     l = r;
             }
         }
-        refs->actual = l;
+        refs->current = l;
     }
     olcxGenGotoActReference(refs);
 }
@@ -1032,9 +1032,9 @@ static void olcxReferenceGotoDef(void) {
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
         return;
     dr = getDefinitionRef(refs->references);
-    if (dr != NULL) refs->actual = dr;
-    else refs->actual = refs->references;
-    //&fprintf(dumpOut,"goto ref %d %d\n", refs->actual->position.line, refs->actual->position.col);
+    if (dr != NULL) refs->current = dr;
+    else refs->current = refs->references;
+    //&fprintf(dumpOut,"goto ref %d %d\n", refs->current->position.line, refs->current->position.col);
     olcxGenGotoActReference(refs);
 }
 
@@ -1229,9 +1229,9 @@ static void olcxMenuSelectOnly(void) {
 
     Reference *definition = getDefinitionRef(refs->references);
     if (definition != NULL) {
-        refs->actual = definition;
+        refs->current = definition;
         olcxPrintRefList(";", refs);
-        ppcGotoPosition(refs->actual->position);
+        ppcGotoPosition(refs->current->position);
     } else
         ppcBottomWarning("Definition not found");
 }
@@ -1371,7 +1371,7 @@ static void olcxReferenceFilterSet(int filterLevel) {
     }
     // move to the visible reference
     if (refs!=NULL)
-        olcxSetActReferenceToFirstVisible(refs, refs->actual);
+        olcxSetActReferenceToFirstVisible(refs, refs->current);
     olcxPrintRefList(";", refs);
 }
 
@@ -1481,7 +1481,7 @@ static void safetyCheckDiff(Reference **anr1,
             safetyCheckAddDiffRef(r, diffrefs, mode);
         }
     }
-    diffrefs->actual = diffrefs->references;
+    diffrefs->current = diffrefs->references;
     if (diffrefs->references!=NULL) {
         assert(diffrefs->symbolsMenu);
         olcxAddReferencesToSymbolsMenu(diffrefs->symbolsMenu, diffrefs->references, 0);
