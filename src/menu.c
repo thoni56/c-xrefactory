@@ -172,7 +172,7 @@ static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, bool selectab
         fprintf(file, " %s=0", PPCA_SELECTED);
     }
 
-    if (menu != NULL && menu->vlevel==1 && ooBitsGreaterOrEqual(menu->ooBits, OOC_PROFILE_APPLICABLE)) {
+    if (menu != NULL && menu->vlevel==1 && ooBitsGreaterOrEqual(menu->ooBits, OOC_OVERLOADING_APPLICABLE)) {
         fprintf(file, " %s=1", PPCA_BASE);
     } else {
         fprintf(file, " %s=0", PPCA_BASE);

@@ -148,18 +148,18 @@ typedef enum language {
 #define OOC_VIRT_APPLICABLE				00400 /* + virtually applicable */
 #define OOC_VIRT_SAME_APPL_FUN_CLASS	00500 /* + having the same class */
 
-/* profile resolution */
+/* overloading resolution */
 
-#define OOC_PROFILE_MASK			07000 /* mask for profile resolution */
-#define OOC_PROFILE_ANY				00000 /* no matter the profile */
-#define OOC_PROFILE_ARITY			01000 /* same number of arguments */
-#define OOC_PROFILE_APPLICABLE		02000 /* + applicable profile */
-#define OOC_PROFILE_EQUAL			03000 /* + no con meeded */
+#define OOC_OVERLOADING_MASK			07000 /* mask for overloading resolution */
+#define OOC_OVERLOADING_ANY				00000 /* no matter the signature */
+#define OOC_OVERLOADING_ARITY			01000 /* same number of arguments */
+#define OOC_OVERLOADING_APPLICABLE		02000 /* + applicable signature */
+#define OOC_OVERLOADING_EQUAL			03000 /* + no con needed */
 
 /* when symbol is selected */
 
-#define DEFAULT_SELECTION_OO_BITS (OOC_VIRT_SAME_FUN_CLASS | OOC_PROFILE_APPLICABLE)
-#define RENAME_SELECTION_OO_BITS (OOC_VIRT_SUBCLASS_OF_RELATED | OOC_PROFILE_APPLICABLE)
+#define DEFAULT_SELECTION_OO_BITS (OOC_VIRT_SAME_FUN_CLASS | OOC_OVERLOADING_APPLICABLE)
+#define RENAME_SELECTION_OO_BITS (OOC_VIRT_SUBCLASS_OF_RELATED | OOC_OVERLOADING_APPLICABLE)
 
 /* *********************************************************************** */
 

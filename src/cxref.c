@@ -743,7 +743,7 @@ static void passRefsThroughSourceFile(Reference **inOutReferences,
 /* ******************************************************************** */
 
 bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
-    if ((oo1&OOC_PROFILE_MASK) < (oo2&OOC_PROFILE_MASK)) {
+    if ((oo1&OOC_OVERLOADING_MASK) < (oo2&OOC_OVERLOADING_MASK)) {
         return false;
     }
     if ((oo1&OOC_VIRTUAL_MASK) < (oo2&OOC_VIRTUAL_MASK)) {
@@ -2309,40 +2309,36 @@ static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceItem *referenceItem) {
 
     if (menu->references.type!=TypeCppCollate) {
         if (menu->references.type != referenceItem->type)
-            goto fini;
+            return ooBits;
         if (menu->references.storage != referenceItem->storage)
-            goto fini;
+            return ooBits;
         if (menu->references.visibility != referenceItem->visibility)
-            goto fini;
+            return ooBits;
     }
-    if (strcmp(menu->references.linkName,referenceItem->linkName)==0) {
-        ooBits |= OOC_PROFILE_EQUAL;
+    if (strcmp(menu->references.linkName, referenceItem->linkName) == 0) {
+        ooBits |= OOC_OVERLOADING_EQUAL;
     }
     if (referenceItem->includedFileNumber == menu->references.includedFileNumber)
         ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
- fini:
     return ooBits;
 }
 
 static unsigned ooBitsMax(unsigned oo1, unsigned oo2) {
-    unsigned res;
-    res = 0;
-    if ((oo1&OOC_PROFILE_MASK) > (oo2&OOC_PROFILE_MASK)) {
-        res |= (oo1&OOC_PROFILE_MASK);
+    unsigned ooBits = 0;
+    if ((oo1&OOC_OVERLOADING_MASK) > (oo2&OOC_OVERLOADING_MASK)) {
+        ooBits |= (oo1&OOC_OVERLOADING_MASK);
     } else {
-        res |= (oo2&OOC_PROFILE_MASK);
+        ooBits |= (oo2&OOC_OVERLOADING_MASK);
     }
     if ((oo1&OOC_VIRTUAL_MASK) > (oo2&OOC_VIRTUAL_MASK)) {
-        res |= (oo1&OOC_VIRTUAL_MASK);
+        ooBits |= (oo1&OOC_VIRTUAL_MASK);
     } else {
-        res |= (oo2&OOC_VIRTUAL_MASK);
+        ooBits |= (oo2&OOC_VIRTUAL_MASK);
     }
-    return res;
+    return ooBits;
 }
 
 SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
-    bool found = false;
-
     SymbolsMenu *result = NULL;
 
     OlcxReferences *rstack = sessionData.browserStack.top;
@@ -2353,6 +2349,7 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
 
     log_trace("ooBits for '%s'", getFileItemWithFileNumber(references->includedFileNumber)->name);
 
+    bool found = false;
     for (SymbolsMenu *menu=rstack->hkSelectedSym; menu!=NULL; menu=menu->next) {
         if (olcxIsSameCxSymbol(references, &menu->references)) {
             found = true;

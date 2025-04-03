@@ -424,36 +424,33 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
 }
 
 Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP) {
-    EditorMarkerList *markers;
-    EditorBuffer     *buf;
-    char             *text, *textMax, *offset;
-    int               line, col;
-    Reference        *reference;
 
     LIST_MERGE_SORT(EditorMarkerList, *editorMarkerListP, editorMarkerListBefore);
-    reference = NULL;
-    markers = *editorMarkerListP;
+
+    Reference *reference = NULL;
+    EditorMarkerList *markers = *editorMarkerListP;
     while (markers!=NULL) {
-        buf = markers->marker->buffer;
-        text = buf->allocation.text;
-        textMax = text + buf->allocation.bufferSize;
-        offset = buf->allocation.text + markers->marker->offset;
-        line = 1; col = 0;
+        EditorBuffer *buffer = markers->marker->buffer;
+        char *text = buffer->allocation.text;
+        char *textMax = text + buffer->allocation.bufferSize;
+        char *offset = buffer->allocation.text + markers->marker->offset;
+        int line = 1;
+        int col = 0;
         for (; text<textMax; text++, col++) {
             if (text == offset) {
-                reference = newReference((Position){buf->fileNumber, line, col}, markers->usage, reference);
+                reference = newReference((Position){buffer->fileNumber, line, col}, markers->usage, reference);
                 markers = markers->next;
-                if (markers==NULL || markers->marker->buffer != buf)
+                if (markers==NULL || markers->marker->buffer != buffer)
                     break;
-                offset = buf->allocation.text + markers->marker->offset;
+                offset = buffer->allocation.text + markers->marker->offset;
             }
             if (*text=='\n') {
                 line++;
                 col = -1;
             }
         }
-        while (markers!=NULL && markers->marker->buffer==buf) {
-            reference = newReference((Position){buf->fileNumber, line, 0}, markers->usage, reference);
+        while (markers!=NULL && markers->marker->buffer==buffer) {
+            reference = newReference((Position){buffer->fileNumber, line, 0}, markers->usage, reference);
             markers = markers->next;
         }
     }
@@ -510,11 +507,9 @@ static EditorBufferList *computeListOfAllEditorBuffers(void) {
 }
 
 static void freeEditorBufferListButNotBuffers(EditorBufferList *list) {
-    EditorBufferList *l, *n;
-
-    l=list;
+    EditorBufferList *l = list;
     while (l!=NULL) {
-        n = l->next;
+        EditorBufferList *n = l->next;
         free(l);
         l = n;
     }
