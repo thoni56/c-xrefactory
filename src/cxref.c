@@ -50,6 +50,9 @@ static unsigned menuFilterOoBits[MAX_MENU_FILTER_LEVEL] = {
     //& (OOC_VIRT_SAME_APPL_FUN_CLASS | OOC_OVERLOADING_APPLICABLE),
 };
 
+#define OO_RENAME_FILTER_LEVEL (OOC_VIRT_SUBCLASS_OF_RELATED | OOC_OVERLOADING_APPLICABLE)
+
+
 
 /* *********************************************************************** */
 
@@ -1337,7 +1340,7 @@ static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLe
         oovisible = 0;
         ooselected = 0;
     } else if (isRenameMenuSelection(command)) {
-        oovisible = options.ooChecksBits;
+        oovisible = OO_RENAME_FILTER_LEVEL;
         ooselected = RENAME_SELECTION_OO_BITS;
     } else {
         //&oovisible = options.ooChecksBits;
