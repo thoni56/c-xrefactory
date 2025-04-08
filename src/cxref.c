@@ -40,6 +40,16 @@ static int usageFilterLevels[] = {
     UsageLvalUsed,
 };
 
+static unsigned menuFilterOoBits[MAX_MENU_FILTER_LEVEL] = {
+    (OOC_VIRT_ANY | OOC_OVERLOADING_ANY),
+    //& (OOC_VIRT_RELATED | OOC_OVERLOADING_ANY),
+    (OOC_VIRT_ANY | OOC_OVERLOADING_APPLICABLE),
+    (OOC_VIRT_SUBCLASS_OF_RELATED | OOC_OVERLOADING_APPLICABLE),
+    //& (OOC_VIRT_APPLICABLE | OOC_OVERLOADING_APPLICABLE),
+    //& (OOC_VIRT_SAME_FUN_CLASS | OOC_OVERLOADING_APPLICABLE),
+    //& (OOC_VIRT_SAME_APPL_FUN_CLASS | OOC_OVERLOADING_APPLICABLE),
+};
+
 
 /* *********************************************************************** */
 

@@ -86,7 +86,6 @@ char cwd[MAX_FILE_NAME_SIZE];
 ParsedInfo parsedInfo;
 TypeModifier *upLevelFunctionCompletionType; /* TODO move to Complete */
 Position primaryStartPosition;
-unsigned menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 
 TypeModifier defaultVoidModifier;
 Symbol defaultVoidDefinition;
