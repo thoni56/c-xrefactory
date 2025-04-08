@@ -82,7 +82,6 @@ Options presetOptions = {
     RESOLVE_DIALOG_DEFAULT,     // manual symbol resolution TODO: This is different from any of the RESOLVE values above, why?
     NULL,                       // browsed symbol name
     0,
-    (OOC_VIRT_SUBCLASS_OF_RELATED | OOC_OVERLOADING_APPLICABLE), // ooChecksBits
     1,                          // cxMemoryFactor
     0,                          /* strict ansi */
     NULL,                       /* project */

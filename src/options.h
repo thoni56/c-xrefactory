@@ -105,7 +105,6 @@ typedef struct options {
     ResolveDialog manualResolve;
     char *browsedSymName;
     int olcxMenuSelectLineNum;
-    int ooChecksBits;
     int cxMemoryFactor;
     bool strictAnsi;
     char *project;
