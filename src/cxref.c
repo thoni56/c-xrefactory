@@ -930,7 +930,7 @@ static void findAndGotoDefinition(ReferenceItem *sym) {
     // preserve popped items from browser first
     oldtop = pushSession();
     refs = sessionData.browserStack.top;
-    SymbolsMenu menu = makeSymbolsMenu(*sym, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);
+    SymbolsMenu menu = makeSymbolsMenu(*sym, true, true, 0, UsageUsed, 0, UsageNone, noPosition);
     refs->symbolsMenu = &menu;
     fullScanFor(sym->linkName);
     orderRefsAndGotoDefinition(refs);
@@ -1103,7 +1103,7 @@ static SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage st
     SymbolsMenu *menu;
     ReferenceItem r = makeReferenceItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility, cfi);
     menu = createNewMenuItem(&r, r.includedFileNumber, noPosition, UsageNone,
-                             1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
+                             true, true, OOC_VIRT_SAME_APPL_FUN_CLASS,
                              UsageUsed, 0);
     return menu;
 }
@@ -1113,9 +1113,9 @@ bool isSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2) {
         return true;
     if (p1->visibility != p2->visibility)
         return false;
-    if (p1->type!=TypeCppCollate && p2->type!=TypeCppCollate && p1->type!=p2->type)
+    if (p1->type != TypeCppCollate && p2->type != TypeCppCollate && p1->type != p2->type)
         return false;
-    if (p1->storage!=p2->storage)
+    if (p1->storage != p2->storage)
         return false;
 
     if (strcmp(p1->linkName, p2->linkName) != 0)

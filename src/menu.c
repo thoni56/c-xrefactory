@@ -96,7 +96,7 @@ static char *olcxStringCopy(char *string) {
 }
 
 SymbolsMenu *createNewMenuItem(ReferenceItem *symbol, int includedFileNumber, Position defpos,
-                               int defusage, int selected, int visible, unsigned ooBits, Usage olusage,
+                               Usage defusage, bool selected, bool visible, unsigned ooBits, Usage olusage,
                                int vlevel) {
     SymbolsMenu   *symbolsMenu;
     char          *allocatedNameCopy;
