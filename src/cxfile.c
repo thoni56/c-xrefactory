@@ -774,9 +774,8 @@ static void cxfileCheckLastSymbolDeadness(void) {
     if (lastIncomingData.symbolToCheckForDeadness != -1
         && lastIncomingData.deadSymbolIsDefined
     ) {
-        addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym,
-                               lastIncomingData.referenceItem,
-                               true, true, 0, UsageDefined, 0, noPosition, UsageDefined);
+        addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, lastIncomingData.referenceItem,
+                               true, true, 0, (SymbolRelation){0}, UsageDefined, 0, noPosition, UsageDefined);
     }
 }
 
@@ -990,8 +989,9 @@ static void scanFunction_Reference(int size,
                         if (positionsAreEqual(olcxByPassPos,reference.position)) {
                             // got the bypass reference
                             log_trace(":adding bypass selected symbol %s", lastIncomingData.referenceItem->linkName);
-                            addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, lastIncomingData.referenceItem,
-                                               true, true, 0, usage,0, noPosition, UsageNone);
+                            addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym,
+                                                   lastIncomingData.referenceItem, true, true,
+                                                   0, (SymbolRelation){0}, usage, 0, noPosition, UsageNone);
                         }
                     } else {
                         addReferenceToList(&sessionData.browserStack.top->references, &reference);

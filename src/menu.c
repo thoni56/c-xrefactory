@@ -28,6 +28,7 @@ SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool visibl
     menu.defpos     = defpos;
 
     /* Default values */
+    menu.relation  = (SymbolRelation){0};
     menu.refn      = 0;
     menu.defRefn   = 0;
     menu.outOnLine = 0;
@@ -138,7 +139,7 @@ static bool olSymbolMenuIsLess(SymbolsMenu *s1, SymbolsMenu *s2) {
 }
 
 SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *symbol,
-                                    bool selected, bool visible, unsigned ooBits,
+                                    bool selected, bool visible, unsigned ooBits, SymbolRelation relation,
                                     int olusage, int vlevel,
                                     Position defpos, int defusage) {
     SymbolsMenu **place;

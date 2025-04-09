@@ -336,7 +336,8 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
                 log_trace("getting definition position of %s at line %d", symbol->name, defaultPosition.line);
             if (! operationRequiresOnlyParsingNoPushing(options.serverOperation)) {
                 menu = addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, foundMember,
-                                                true, true, 0, usage, 0, defaultPosition, defaultUsage);
+                                              true, true, 0, (SymbolRelation){0}, usage, 0, defaultPosition,
+                                              defaultUsage);
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
                 if (isDefinitionUsage(usage)) {
@@ -1945,9 +1946,9 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceItem *referenceItem) 
         }
     }
     if (!used && definitionReference!=NULL) {
-        addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, referenceItem,
-                                 true, true, 0, UsageDefined, 0, definitionReference->position,
-                                 definitionReference->usage);
+        addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, referenceItem, true, true,
+                               0, (SymbolRelation){0}, UsageDefined, 0, definitionReference->position,
+                               definitionReference->usage);
     }
 }
 
@@ -2417,7 +2418,8 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
     }
     if (found) {
         (void) relation;
-        result = addBrowsedSymbolToMenu(&rstack->symbolsMenu, references, false, false, ooBits, USAGE_ANY,
+        result = addBrowsedSymbolToMenu(&rstack->symbolsMenu, references, false, false,
+                                        ooBits, (SymbolRelation){0}, USAGE_ANY,
                                         vlevel, defpos, defusage);
     }
     return result;

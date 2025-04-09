@@ -36,8 +36,8 @@ extern SymbolsMenu *createNewMenuItem(ReferenceItem *sym, int includedFileNumber
                                         Position defpos, int defusage, int selected, int visible,
                                         unsigned ooBits, Usage olusage, int vlevel);
 extern SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *reference,
-                                             bool selected, bool visible, unsigned ooBits, int olusage,
-                                             int vlevel, Position defpos, int defusage);
+                                           bool selected, bool visible, unsigned ooBits, SymbolRelation relation,
+                                           int olusage, int vlevel, Position defpos, int defusage);
 extern void splitMenuPerSymbolsAndMap(SymbolsMenu *menu,
                                       void (*fun)(SymbolsMenu *, void *),
                                       void *p1);
