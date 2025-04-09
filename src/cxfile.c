@@ -775,8 +775,8 @@ static void cxfileCheckLastSymbolDeadness(void) {
         && lastIncomingData.deadSymbolIsDefined
     ) {
         addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym,
-                                 lastIncomingData.referenceItem,
-                                 true, true, 0, UsageDefined, 0, noPosition, UsageDefined);
+                               lastIncomingData.referenceItem,
+                               true, true, 0, UsageDefined, 0, noPosition, UsageDefined);
     }
 }
 

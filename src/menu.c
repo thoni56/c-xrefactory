@@ -15,7 +15,7 @@
 
 
 static void fillSymbolsMenu(SymbolsMenu *menu, ReferenceItem references, bool selected, bool visible,
-                     unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
+                            unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
     menu->references = references;
     menu->selected   = selected;
     menu->visible    = visible;

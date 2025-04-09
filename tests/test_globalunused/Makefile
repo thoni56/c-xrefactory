@@ -6,7 +6,7 @@ $(TEST): CXrefs
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: EXTRA = \'-trace\'
+trace: EXTRA=--extra "-trace"
 trace: $(TEST)
 
 ARGUMENTS = -create

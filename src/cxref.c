@@ -1924,13 +1924,13 @@ static void mainAnswerReferencePushingAction(ServerOperation operation) {
     }
 }
 
-static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceItem *ss) {
+static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceItem *referenceItem) {
     bool used = false;
     Reference *definitionReference = NULL;
 
-    if (ss->visibility != LocalVisibility)
+    if (referenceItem->visibility != LocalVisibility)
         return;
-    for (Reference *r = ss->references; r!=NULL; r=r->next) {
+    for (Reference *r = referenceItem->references; r!=NULL; r=r->next) {
         if (isDefinitionOrDeclarationUsage(r->usage)) {
             if (r->position.file == inputFileNumber) {
                 if (isDefinitionUsage(r->usage)) {
@@ -1945,7 +1945,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceItem *ss) {
         }
     }
     if (!used && definitionReference!=NULL) {
-        addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, ss,
+        addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, referenceItem,
                                  true, true, 0, UsageDefined, 0, definitionReference->position,
                                  definitionReference->usage);
     }
@@ -2366,6 +2366,7 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
     for (SymbolsMenu *menu=rstack->hkSelectedSym; menu!=NULL; menu=menu->next) {
         if (olcxIsSameCxSymbol(references, &menu->references)) {
             found = true;
+
             unsigned oo = olcxOoBits(menu, references);
             ooBits = ooBitsMax(oo, ooBits);
             if (defpos.file == NO_FILE_NUMBER) {
@@ -2381,9 +2382,8 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
         }
     }
     if (found) {
-        int select = 0, visible = 0;  // for debug would be better 1 !
-        result = addBrowsedSymbolToMenu(&rstack->symbolsMenu, references, select, visible, ooBits, USAGE_ANY,
-                                          vlevel, defpos, defusage);
+        result = addBrowsedSymbolToMenu(&rstack->symbolsMenu, references, false, false, ooBits, USAGE_ANY,
+                                        vlevel, defpos, defusage);
     }
     return result;
 }
