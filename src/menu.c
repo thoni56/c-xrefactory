@@ -28,7 +28,7 @@ SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool visibl
     menu.defpos     = defpos;
 
     /* Default values */
-    menu.relation  = (SymbolRelation){0};
+    menu.relation  = (SymbolRelation){.sameFile = false};
     menu.refn      = 0;
     menu.defRefn   = 0;
     menu.outOnLine = 0;

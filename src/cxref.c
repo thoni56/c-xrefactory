@@ -336,8 +336,8 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
                 log_trace("getting definition position of %s at line %d", symbol->name, defaultPosition.line);
             if (! operationRequiresOnlyParsingNoPushing(options.serverOperation)) {
                 menu = addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, foundMember,
-                                              true, true, 0, (SymbolRelation){0}, usage, 0, defaultPosition,
-                                              defaultUsage);
+                                              true, true, 0, (SymbolRelation){.sameFile = false}, usage, 0,
+                                              defaultPosition, defaultUsage);
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
                 if (isDefinitionUsage(usage)) {
@@ -1947,8 +1947,8 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceItem *referenceItem) 
     }
     if (!used && definitionReference!=NULL) {
         addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, referenceItem, true, true,
-                               0, (SymbolRelation){0}, UsageDefined, 0, definitionReference->position,
-                               definitionReference->usage);
+                               0, (SymbolRelation){.sameFile = false}, UsageDefined, 0,
+                               definitionReference->position, definitionReference->usage);
     }
 }
 
@@ -2352,7 +2352,7 @@ static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceItem *referenceItem) {
 
 static SymbolRelation computeSymbolRelation(SymbolsMenu *menu, ReferenceItem *referenceItem) {
     assert(olcxIsSameCxSymbol(&menu->references, referenceItem));
-    SymbolRelation relation = {0};
+    SymbolRelation relation = {.sameFile = false};
 
     if (menu->references.type!=TypeCppCollate) {
         if (menu->references.type != referenceItem->type ||
@@ -2388,7 +2388,7 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
 
     OlcxReferences *rstack = sessionData.browserStack.top;
     unsigned ooBits = 0;
-    SymbolRelation relation = {0};
+    SymbolRelation relation = {.sameFile = false};
     int vlevel = 0;
     Position defpos = noPosition;
     Usage defusage = UsageNone;
