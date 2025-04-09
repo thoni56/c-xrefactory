@@ -2328,11 +2328,24 @@ static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceItem *referenceItem) {
         if (menu->references.visibility != referenceItem->visibility)
             return ooBits;
     }
+
+    log_trace("olcxOoBits: linkName='%s' type=%d storage=%d visibility=%d",
+              referenceItem->linkName,
+              referenceItem->type,
+              referenceItem->storage,
+              referenceItem->visibility
+        );
+
     if (strcmp(menu->references.linkName, referenceItem->linkName) == 0) {
+        log_trace("olcxOoBits: +sameName (OOC_OVERLOADING_EQUAL)");
         ooBits |= OOC_OVERLOADING_EQUAL;
     }
-    if (referenceItem->includedFileNumber == menu->references.includedFileNumber)
+    if (referenceItem->includedFileNumber == menu->references.includedFileNumber) {
+        log_trace("olcxOoBits: +sameFile (OOC_VIRT_SAME_APPL_FUN_CLASS)");
         ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
+    }
+
+    log_trace("olcxOoBits: +ooBits = %o", ooBits);
     return ooBits;
 }
 
