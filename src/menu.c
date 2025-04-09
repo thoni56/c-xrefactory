@@ -14,29 +14,26 @@
 #include "reference.h"
 
 
-static void fillSymbolsMenu(SymbolsMenu *menu, ReferenceItem references, bool selected, bool visible,
-                            unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
-    menu->references = references;
-    menu->selected   = selected;
-    menu->visible    = visible;
-    menu->ooBits     = ooBits;
-    menu->olUsage    = olUsage;
-    menu->vlevel     = vlevel;
-    menu->defUsage   = defUsage;
-    menu->defpos     = defpos;
-
-    /* Default values */
-    menu->refn      = 0;
-    menu->defRefn   = 0;
-    menu->outOnLine = 0;
-    menu->markers   = NULL;
-    menu->next      = NULL;
-}
-
 SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool visible,
                             unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
     SymbolsMenu menu;
-    fillSymbolsMenu(&menu, references, selected, visible, ooBits, olUsage, vlevel, defUsage, defpos);
+
+    menu.references = references;
+    menu.selected   = selected;
+    menu.visible    = visible;
+    menu.ooBits     = ooBits;
+    menu.olUsage    = olUsage;
+    menu.vlevel     = vlevel;
+    menu.defUsage   = defUsage;
+    menu.defpos     = defpos;
+
+    /* Default values */
+    menu.refn      = 0;
+    menu.defRefn   = 0;
+    menu.outOnLine = 0;
+    menu.markers   = NULL;
+    menu.next      = NULL;
+
     return menu;
 }
 
@@ -105,7 +102,7 @@ SymbolsMenu *createNewMenuItem(ReferenceItem *symbol, int includedFileNumber, Po
                                               symbol->visibility, includedFileNumber);
 
     symbolsMenu = malloc(sizeof(SymbolsMenu));
-    fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage, vlevel, defusage, defpos);
+    *symbolsMenu = makeSymbolsMenu(refItem, selected, visible, ooBits, olusage, vlevel, defusage, defpos);
     return symbolsMenu;
 }
 
@@ -144,11 +141,12 @@ SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *symbol,
                                     bool selected, bool visible, unsigned ooBits,
                                     int olusage, int vlevel,
                                     Position defpos, int defusage) {
-    SymbolsMenu *new, **place, dummyMenu;
+    SymbolsMenu **place;
 
-    fillSymbolsMenu(&dummyMenu, *symbol, 0, false, 0, olusage, vlevel, UsageNone, noPosition);
+    SymbolsMenu dummyMenu = makeSymbolsMenu(*symbol, 0, false, 0, olusage, vlevel, UsageNone, noPosition);
     SORTED_LIST_PLACE3(place, SymbolsMenu, &dummyMenu, menuP, olSymbolMenuIsLess);
-    new = *place;
+
+    SymbolsMenu *new = *place;
     if (*place==NULL || olSymbolMenuIsLess(&dummyMenu, *place)) {
         assert(symbol);
         new = createNewMenuItem(symbol, symbol->includedFileNumber, defpos, defusage,
