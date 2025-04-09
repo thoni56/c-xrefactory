@@ -1103,7 +1103,7 @@ static SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage st
     SymbolsMenu *menu;
     ReferenceItem r = makeReferenceItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility, cfi);
     menu = createNewMenuItem(&r, r.includedFileNumber, noPosition, UsageNone,
-                             true, true, OOC_VIRT_SAME_APPL_FUN_CLASS,
+                             true, true, OOC_VIRT_SAME_APPL_FUN_CLASS, (SymbolRelation){.sameFile = true},
                              UsageUsed, 0);
     return menu;
 }
@@ -2419,8 +2419,7 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
     if (found) {
         (void) relation;
         result = addBrowsedSymbolToMenu(&rstack->symbolsMenu, references, false, false,
-                                        ooBits, (SymbolRelation){0}, USAGE_ANY,
-                                        vlevel, defpos, defusage);
+                                        ooBits, relation, USAGE_ANY, vlevel, defpos, defusage);
     }
     return result;
 }

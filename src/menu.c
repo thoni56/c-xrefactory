@@ -96,8 +96,8 @@ static char *olcxStringCopy(char *string) {
 }
 
 SymbolsMenu *createNewMenuItem(ReferenceItem *symbol, int includedFileNumber, Position defpos,
-                               Usage defusage, bool selected, bool visible, unsigned ooBits, Usage olusage,
-                               int vlevel) {
+                               Usage defusage, bool selected, bool visible, unsigned ooBits,
+                               SymbolRelation relation, Usage olusage, int vlevel) {
     SymbolsMenu   *symbolsMenu;
     char          *allocatedNameCopy;
 
@@ -155,8 +155,7 @@ SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *symbol,
     if (*place==NULL || olSymbolMenuIsLess(&dummyMenu, *place)) {
         assert(symbol);
         new = createNewMenuItem(symbol, symbol->includedFileNumber, defpos, defusage,
-                                selected, visible, ooBits,
-                                olusage, vlevel);
+                                selected, visible, ooBits, relation, olusage, vlevel);
         LIST_CONS(new, *place);
         log_trace(":adding browsed symbol '%s'", symbol->linkName);
     }
