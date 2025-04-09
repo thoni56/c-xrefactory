@@ -2414,6 +2414,9 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
                       references->linkName, oo, ooBits);
 
             relation = computeSymbolRelation(menu, references);
+            bool expectedSameFile = (oo & OOC_VIRTUAL_MASK) == OOC_VIRT_SAME_APPL_FUN_CLASS;
+
+            assert(expectedSameFile == relation.sameFile);
         }
     }
     if (found) {
