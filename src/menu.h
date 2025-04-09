@@ -3,12 +3,16 @@
 
 #include "reference.h"
 
+typedef struct {
+    bool sameFile;
+} SymbolRelation;
 
 typedef struct SymbolsMenu {
     struct referenceItem    references;
     bool                     selected;
     bool                     visible;
     unsigned                 ooBits;
+    SymbolRelation           relation;
     char                     olUsage; /* usage of symbol under cursor */
     short int                vlevel;  /* virt. level of applClass <-> olsymbol*/
     short int                refn;

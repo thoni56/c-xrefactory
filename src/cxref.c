@@ -2349,6 +2349,24 @@ static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceItem *referenceItem) {
     return ooBits;
 }
 
+static SymbolRelation computeSymbolRelation(SymbolsMenu *menu, ReferenceItem *referenceItem) {
+    assert(olcxIsSameCxSymbol(&menu->references, referenceItem));
+    SymbolRelation relation = {0};
+
+    if (menu->references.type!=TypeCppCollate) {
+        if (menu->references.type != referenceItem->type ||
+            menu->references.storage != referenceItem->storage ||
+            menu->references.visibility != referenceItem->visibility)
+            return relation;
+    }
+
+    if (referenceItem->includedFileNumber == menu->references.includedFileNumber) {
+        relation.sameFile = true;
+    }
+
+    return relation;
+}
+
 static unsigned ooBitsMax(unsigned oo1, unsigned oo2) {
     unsigned ooBits = 0;
     if ((oo1&OOC_OVERLOADING_MASK) > (oo2&OOC_OVERLOADING_MASK)) {
@@ -2369,6 +2387,7 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
 
     OlcxReferences *rstack = sessionData.browserStack.top;
     unsigned ooBits = 0;
+    SymbolRelation relation = {0};
     int vlevel = 0;
     Position defpos = noPosition;
     Usage defusage = UsageNone;
@@ -2392,9 +2411,12 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
                 vlevel = vlev;
             log_trace("ooBits for %s <-> %s %o %o", getFileItemWithFileNumber(menu->references.includedFileNumber)->name,
                       references->linkName, oo, ooBits);
+
+            relation = computeSymbolRelation(menu, references);
         }
     }
     if (found) {
+        (void) relation;
         result = addBrowsedSymbolToMenu(&rstack->symbolsMenu, references, false, false, ooBits, USAGE_ANY,
                                         vlevel, defpos, defusage);
     }
