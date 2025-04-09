@@ -56,6 +56,10 @@ void freeSymbolsMenuList(SymbolsMenu *menuList) {
     }
 }
 
+bool isBestFitMatch(SymbolsMenu *menu) {
+    return menu->relation.sameFile;
+}
+
 void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference) {
     Reference *added = addReferenceToList(&menu->references.references, reference);
     if (added!=NULL) {

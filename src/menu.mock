@@ -27,6 +27,10 @@ void freeSymbolsMenuList(SymbolsMenu *menu) {
     mock(menu);
 }
 
+bool isBestFitMatch(SymbolsMenu *menu) {
+    return (bool)mock(menu);
+}
+
 void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference) {
     mock(menu, reference);
 }

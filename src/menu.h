@@ -30,6 +30,8 @@ extern SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool
                                    char defUsage, struct position defpos);
 
 extern void freeSymbolsMenuList(SymbolsMenu *menu);
+
+extern bool isBestFitMatch(SymbolsMenu *menu);
 extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference);
 extern void olcxPrintSelectionMenu(SymbolsMenu *menu);
 extern SymbolsMenu *createNewMenuItem(ReferenceItem *sym, int includedFileNumber,
