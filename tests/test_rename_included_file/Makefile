@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -refactory -rfct-rename-included-file -renameto=include2.h -olcursor=6 include.c
+ARGUMENTS = -refactory -rfct-rename-included-file -renameto=include2.h -olcursor=6 include.c $(EXTRA)
 
 $(TEST): include.h
 	$(CXREF) -create > output.tmp
@@ -13,5 +13,5 @@ include.h:
 	-rm include2.h*
 	touch include.h
 
-trace: EXTRA = \'-trace\'
+trace: EXTRA = -trace -log=trace
 trace: $(TEST)
