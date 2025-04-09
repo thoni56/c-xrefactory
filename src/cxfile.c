@@ -862,7 +862,7 @@ static void scanFunction_SymbolName(int size,
                 if (cms == NULL) {
                     ols = 0;
                 } else {
-                    if (IS_BEST_FIT_MATCH(cms))
+                    if (isBestFitMatch(cms))
                         ols = 2;
                     else
                         ols = 1;

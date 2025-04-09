@@ -108,6 +108,7 @@ SymbolsMenu *createNewMenuItem(ReferenceItem *symbol, int includedFileNumber, Po
 
     symbolsMenu = malloc(sizeof(SymbolsMenu));
     *symbolsMenu = makeSymbolsMenu(refItem, selected, visible, ooBits, olusage, vlevel, defusage, defpos);
+    symbolsMenu->relation = relation;
     return symbolsMenu;
 }
 

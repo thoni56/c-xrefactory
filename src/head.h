@@ -102,10 +102,6 @@ typedef enum language {
 
 /* ******************************************************************** */
 
-#define IS_BEST_FIT_MATCH(ss) (\
-    (ss->ooBits&OOC_VIRTUAL_MASK)==OOC_VIRT_SAME_APPL_FUN_CLASS\
-)
-
 #define LINK_NAME_MAYBE_START(ch) (                     \
         ch=='.' || ch=='/' || ch==LINK_NAME_SEPARATOR   \
         || ch==LINK_NAME_COLLATE_SYMBOL                 \

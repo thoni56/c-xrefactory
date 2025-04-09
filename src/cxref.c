@@ -1189,7 +1189,7 @@ static void genOnLineReferences(OlcxReferences *rstack, SymbolsMenu *cms) {
     if (cms->selected) {
         assert(cms);
         olcxAddReferences(cms->references.references, &rstack->references, ANY_FILE,
-                          IS_BEST_FIT_MATCH(cms));
+                          isBestFitMatch(cms));
     }
 }
 
@@ -2291,7 +2291,7 @@ int itIsSymbolToPushOlReferences(ReferenceItem *referenceItem,
             && isSameCxSymbol(referenceItem, &m->references))
         {
             *menu = m;
-            if (IS_BEST_FIT_MATCH(m)) {
+            if (isBestFitMatch(m)) {
                 return 2;
             } else {
                 return 1;
@@ -2354,7 +2354,7 @@ static SymbolRelation computeSymbolRelation(SymbolsMenu *menu, ReferenceItem *re
     assert(olcxIsSameCxSymbol(&menu->references, referenceItem));
     SymbolRelation relation = {.sameFile = false};
 
-    if (menu->references.type!=TypeCppCollate) {
+    if (menu->references.type != TypeCppCollate) {
         if (menu->references.type != referenceItem->type ||
             menu->references.storage != referenceItem->storage ||
             menu->references.visibility != referenceItem->visibility)
@@ -2383,46 +2383,50 @@ static unsigned ooBitsMax(unsigned oo1, unsigned oo2) {
     return ooBits;
 }
 
-SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
+static SymbolRelation accumulateSymbolRelation(SymbolRelation a, SymbolRelation b) {
+    SymbolRelation result;
+    result.sameFile = a.sameFile || b.sameFile;
+    // future fields go here
+    return result;
+}
+
+SymbolsMenu *createSelectionMenu(ReferenceItem *reference) {
     SymbolsMenu *result = NULL;
 
     OlcxReferences *rstack = sessionData.browserStack.top;
     unsigned ooBits = 0;
     SymbolRelation relation = {.sameFile = false};
     int vlevel = 0;
-    Position defpos = noPosition;
-    Usage defusage = UsageNone;
-
-    log_trace("ooBits for '%s'", getFileItemWithFileNumber(references->includedFileNumber)->name);
+    Position defaultPosition = noPosition;
+    Usage defaultUsage = UsageNone;
 
     bool found = false;
     for (SymbolsMenu *menu=rstack->hkSelectedSym; menu!=NULL; menu=menu->next) {
-        if (olcxIsSameCxSymbol(references, &menu->references)) {
+        if (olcxIsSameCxSymbol(reference, &menu->references)) {
             found = true;
 
-            unsigned oo = olcxOoBits(menu, references);
+            unsigned oo = olcxOoBits(menu, reference);
             ooBits = ooBitsMax(oo, ooBits);
-            if (defpos.file == NO_FILE_NUMBER) {
-                defpos = menu->defpos;
-                defusage = menu->defUsage;
-                log_trace(": propagating defpos (line %d) to menusym", defpos.line);
+
+            if (defaultPosition.file == NO_FILE_NUMBER) {
+                defaultPosition = menu->defpos;
+                defaultUsage = menu->defUsage;
+                log_trace(": propagating defpos (line %d) to menusym", defaultPosition.line);
             }
-            int vlev = 0;
-            if (vlevel==0 || ABS(vlevel)>ABS(vlev))
-                vlevel = vlev;
+
+            int v = 0;
+            if (vlevel==0 || ABS(vlevel)>ABS(v))
+                vlevel = v;
             log_trace("ooBits for %s <-> %s %o %o", getFileItemWithFileNumber(menu->references.includedFileNumber)->name,
-                      references->linkName, oo, ooBits);
+                      reference->linkName, oo, ooBits);
 
-            relation = computeSymbolRelation(menu, references);
-            bool expectedSameFile = (oo & OOC_VIRTUAL_MASK) == OOC_VIRT_SAME_APPL_FUN_CLASS;
-
-            assert(expectedSameFile == relation.sameFile);
+            SymbolRelation r = computeSymbolRelation(menu, reference);
+            relation = accumulateSymbolRelation(relation, r);
         }
     }
     if (found) {
-        (void) relation;
-        result = addBrowsedSymbolToMenu(&rstack->symbolsMenu, references, false, false,
-                                        ooBits, relation, USAGE_ANY, vlevel, defpos, defusage);
+        result = addBrowsedSymbolToMenu(&rstack->symbolsMenu, reference, false, false,
+                                        ooBits, relation, USAGE_ANY, vlevel, defaultPosition, defaultUsage);
     }
     return result;
 }
