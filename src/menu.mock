@@ -2,8 +2,8 @@
 #include "menu.h"
 #include <cgreen/mocks.h>
 
-SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool visible,
-                            unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
+SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool visible, unsigned ooBits,
+                            char olUsage, short int vlevel, char defautlUsage, Position defaultPosition) {
     SymbolsMenu menu;
     menu.references = references;
     menu.selected = selected;
@@ -11,12 +11,12 @@ SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool visibl
     menu.ooBits = ooBits;
     menu.olUsage = olUsage;
     menu.vlevel = vlevel;
-    menu.defUsage = defUsage;
-    menu.defpos = defpos;
+    menu.defaultUsage = defautlUsage;
+    menu.defaultPosition = defaultPosition;
 
     /* Default values */
     menu.refn = 0;
-    menu.defRefn = 0;
+    menu.defaultRefn = 0;
     menu.outOnLine = 0;
     menu.markers = NULL;
     menu.next = NULL;

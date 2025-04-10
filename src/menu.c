@@ -14,8 +14,8 @@
 #include "reference.h"
 
 
-SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool visible,
-                            unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
+SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool visible, unsigned ooBits,
+                            char olUsage, short int vlevel, char defaultUsage, Position defaultPosition) {
     SymbolsMenu menu;
 
     menu.references = references;
@@ -24,13 +24,13 @@ SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool visibl
     menu.ooBits     = ooBits;
     menu.olUsage    = olUsage;
     menu.vlevel     = vlevel;
-    menu.defUsage   = defUsage;
-    menu.defpos     = defpos;
+    menu.defaultUsage    = defaultUsage;
+    menu.defaultPosition = defaultPosition;
 
     /* Default values */
     menu.relation  = (SymbolRelation){.sameFile = false};
     menu.refn      = 0;
-    menu.defRefn   = 0;
+    menu.defaultRefn   = 0;
     menu.outOnLine = 0;
     menu.markers   = NULL;
     menu.next      = NULL;
@@ -64,14 +64,14 @@ void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference) {
     Reference *added = addReferenceToList(&menu->references.references, reference);
     if (added!=NULL) {
         if (isDefinitionOrDeclarationUsage(reference->usage)) {
-            if (reference->usage==UsageDefined && positionsAreEqual(reference->position, menu->defpos)) {
+            if (reference->usage==UsageDefined && positionsAreEqual(reference->position, menu->defaultPosition)) {
                 added->usage = UsageOLBestFitDefined;
             }
-            if (reference->usage < menu->defUsage) {
-                menu->defUsage = reference->usage;
-                menu->defpos = reference->position;
+            if (reference->usage < menu->defaultUsage) {
+                menu->defaultUsage = reference->usage;
+                menu->defaultPosition = reference->position;
             }
-            menu->defRefn ++;
+            menu->defaultRefn ++;
         } else {
             menu->refn ++;
         }
@@ -181,14 +181,14 @@ static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, bool selectab
         fprintf(file, " %s=0", PPCA_BASE);
     }
 
-    if (menu==NULL || (menu->defRefn==0 && menu->refn==0) || !selectable) {
+    if (menu==NULL || (menu->defaultRefn==0 && menu->refn==0) || !selectable) {
         fprintf(file, " %s=0 %s=0", PPCA_DEF_REFN, PPCA_REFN);
-    } else if (menu->defRefn==0) {
+    } else if (menu->defaultRefn==0) {
         fprintf(file, " %s=0 %s=%d", PPCA_DEF_REFN, PPCA_REFN, menu->refn);
     } else if (menu->refn==0) {
-        fprintf(file, " %s=%d %s=0", PPCA_DEF_REFN, menu->defRefn, PPCA_REFN);
+        fprintf(file, " %s=%d %s=0", PPCA_DEF_REFN, menu->defaultRefn, PPCA_REFN);
     } else {
-        fprintf(file, " %s=%d %s=%d", PPCA_DEF_REFN, menu->defRefn, PPCA_REFN, menu->refn);
+        fprintf(file, " %s=%d %s=%d", PPCA_DEF_REFN, menu->defaultRefn, PPCA_REFN, menu->refn);
     }
 }
 

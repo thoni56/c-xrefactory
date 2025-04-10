@@ -16,9 +16,9 @@ typedef struct SymbolsMenu {
     char                     olUsage; /* usage of symbol under cursor */
     short int                vlevel;  /* virt. level of applClass <-> olsymbol*/
     short int                refn;
-    short int                defRefn;
-    char                     defUsage; /* usage of definition reference */
-    struct position          defpos;
+    short int                defaultRefn;
+    char                     defaultUsage; /* usage of definition reference */
+    struct position          defaultPosition;
     int                      outOnLine;
     struct editorMarkerList *markers; /* for refactory only */
     struct SymbolsMenu      *next;

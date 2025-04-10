@@ -341,8 +341,8 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
                 if (isDefinitionUsage(usage)) {
-                    menu->defpos = position;
-                    menu->defUsage = usage;
+                    menu->defaultPosition = position;
+                    menu->defaultUsage = usage;
                 }
                 if (options.serverOperation == OLO_GET_AVAILABLE_REFACTORINGS) {
                     setAvailableRefactorings(symbol);
@@ -1157,8 +1157,8 @@ static void olcxMenuInspectDef(SymbolsMenu *menu) {
     if (ss == NULL) {
         indicateNoReference();
     } else {
-        if (ss->defpos.file>=0 && ss->defpos.file!=NO_FILE_NUMBER) {
-            gotoOnlineCxref(ss->defpos, UsageDefined, "");
+        if (ss->defaultPosition.file>=0 && ss->defaultPosition.file!=NO_FILE_NUMBER) {
+            gotoOnlineCxref(ss->defaultPosition, UsageDefined, "");
         } else {
             indicateNoReference();
         }
@@ -1262,7 +1262,7 @@ static void selectUnusedSymbols(SymbolsMenu *menu, void *mapParameter1) {
         m->visible = true; m->selected = false;
     }
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
-        if (m->defRefn!=0 && m->refn==0)
+        if (m->defaultRefn!=0 && m->refn==0)
             m->selected = true;
     }
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
@@ -1897,7 +1897,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
 #ifdef DUMP_SELECTION_MENU
 static void dumpSelectionMenu(SymbolsMenu *menu) {
     for (SymbolsMenu *s=menu; s!=NULL; s=s->next) {
-        log_trace(">> %d/%d %s %s %d", s->defRefn, s->refn, s->references.linkName,
+        log_trace(">> %d/%d %s %s %d", s->defaultRefn, s->refn, s->references.linkName,
             simpleFileName(getFileItemWithFileNumber(s->references.includedFileNumber)->name),
             s->outOnLine);
     }
@@ -2407,8 +2407,8 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *reference) {
             ooBits = ooBitsMax(oo, ooBits);
 
             if (defaultPosition.file == NO_FILE_NUMBER) {
-                defaultPosition = menu->defpos;
-                defaultUsage = menu->defUsage;
+                defaultPosition = menu->defaultPosition;
+                defaultUsage = menu->defaultUsage;
                 log_trace(": propagating defpos (line %d) to menusym", defaultPosition.line);
             }
 
