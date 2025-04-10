@@ -1334,7 +1334,7 @@ static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLe
     unsigned ooselected, oovisible;
     if (command == OLO_GLOBAL_UNUSED) {
         splitMenuPerSymbolsAndMap(menu, selectUnusedSymbols, &filterLevel);
-        goto sfini;
+        return;
     }
 
     if (command == OLO_PUSH_NAME) {
@@ -1349,8 +1349,6 @@ static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLe
         ooselected = DEFAULT_SELECTION_OO_BITS;
     }
     setDefaultSelectedVisibleItems(menu, oovisible, ooselected);
-sfini:
-    return;
 }
 
 static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
