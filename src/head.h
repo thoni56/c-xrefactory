@@ -148,7 +148,6 @@ typedef enum language {
 
 #define OOC_OVERLOADING_MASK			07000 /* mask for overloading resolution */
 #define OOC_OVERLOADING_ANY				00000 /* no matter the signature */
-#define OOC_OVERLOADING_ARITY			01000 /* same number of arguments */
 #define OOC_OVERLOADING_APPLICABLE		02000 /* + applicable signature */
 #define OOC_OVERLOADING_EQUAL			03000 /* + no con needed */
 
