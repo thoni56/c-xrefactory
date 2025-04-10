@@ -31,6 +31,31 @@ end-of-options
 <src-line refn=1 len=<n>>rename.c:33:        int x; x = k; printf("x==%d\n", x);</src-line>
 </reference-list>
 -continuerefactoring -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<ask-confirmation len=<n>>The refactoring may change program behaviour, really continue?</ask-confirmation>
+<goto>
+<position-off off=329 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<replacement>
+<str len=<n>>k</str> <str len=<n>>x</str>
+</replacement>
+<goto>
+<position-off off=792 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<replacement>
+<str len=<n>>k</str> <str len=<n>>x</str>
+</replacement>
+<goto>
+<position-off off=824 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<replacement>
+<str len=<n>>k</str> <str len=<n>>x</str>
+</replacement>
+<goto>
+<position-off off=792 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
 -exit
 end-of-options
 

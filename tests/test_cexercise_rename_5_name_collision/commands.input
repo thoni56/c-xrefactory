@@ -4,4 +4,5 @@
 -olcxfilter=0  -olmark=0 -olcursor=1 nil -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -continuerefactoring -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
 <exit>
