@@ -1330,7 +1330,7 @@ static bool isRenameMenuSelection(int command) {
         ;
 }
 
-static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLevel) {
+static void setSelectedVisibleItems(SymbolsMenu *menu, ServerOperation command, int filterLevel) {
     unsigned ooselected, oovisible;
     if (command == OLO_GLOBAL_UNUSED) {
         splitMenuPerSymbolsAndMap(menu, selectUnusedSymbols, &filterLevel);
