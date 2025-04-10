@@ -1,5 +1,6 @@
 # -*- org-todo-keyword-faces: (("DOING" . "orange") ("REQUIRES" . "dark orange")) -*-
 #+TODO: TODO(t) TRY(y) REQUIRES(r) DOING(i) | DONE(d)
+#+STARTUP: overview
 
 (This file is structured for Emacs org-mode...)
 
@@ -14,18 +15,33 @@ Some useful commands:
   <M-Right>     demote heading
   <M-S-Right>   demote subtree
   org-move-subtree-up/down
+  outline-show-all
+  outline-hide-subtree
 
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
 * DOING Ensure systemd as a test
   It needs to generate the same information on every run so that we
   can repeatedly match the content.
-* TODO __has_include_next() support
-** TODO Cover openInclude() with test
 * DOING FEATURE: LSP Find Definition
 ** DOING Initiate server so it can handle OLO_PUSH
 ** TODO Create an answer from gathered information
 ** DONE Initial Communication
+* DOING FEATURE: Basic LSP-mode support
+** DOING 'didOpen'
+** TODO Handle protocol errors etc. using longjump
+** DONE LSP communication structure
+** DONE LSP 'initialize', 'exit', 'not found'
+* DOING Extract variable
+** TRY Figure out variable type (hard, none of the other extracts seems to do this...)
+   or ask...
+** DONE Place the variable declaration on the preceeding line
+** DONE Basic extract variable
+* DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
+** DONE clang definition table
+** TRY Use compiler identification to set extra needed definitions for clang
+* TODO __has_include_next() support
+** TODO Cover openInclude() with test
 * TODO FEATURE: Rename C Module
 ** TODO Rename .c file
 ** TODO Rename corresponding .h file if exists
@@ -35,16 +51,6 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 *** DONE Rename the file
 *** DONE Update all #includes
 *** DONE Prohibit rename of files included with '<>'
-* DOING FEATURE: Basic LSP-mode support
-** DOING 'didOpen'
-** TODO Handle protocol errors etc. using longjump
-** DONE LSP communication structure
-** DONE LSP 'initialize', 'exit', 'not found'
-* TODO New flushable memory type
-  This should replace current local managed areas with a structure that
-  collects pointers to all allocated areas so that they can freeUntil().
-  The returned pointer for an allocated area can still be used as a marker
-  as the array can be traversed from top down until that pointer is found.
 * TODO FEATURE: New refactoring: move function for C
 ** TODO Fill ParsedInfo begin/end for requested function
 ** TODO Fixup the preliminary version of the actual move
@@ -52,11 +58,6 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 ** TODO BONUS Move a mock function to the target mock file if it exists
 ** DONE Pick-up pieces from Java version and hack them into a preliminary version
 ** DONE Accept target position
-* DOING Extract variable
-** TRY Figure out variable type (hard, none of the other extracts seems to do this...)
-   or ask...
-** DONE Place the variable declaration on the preceeding line
-** DONE Basic extract variable
 * TRY Project local .c-xrefrc with relative file paths so it can be checked in to a repo
    We could start with having same format but how to handle project names?
 ** TODO Change to having reference file in the project tree?
@@ -77,6 +78,18 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
   buffer as needed, converting between the two in the communication.
 * TRY to make LexemBuffer interface just take LexemBuffer
 ** DOING Unify LexInput with LexemBuffer so we can get rid of put/get LexemAt() functions
+** TRY to use LexemBuffer as argument to all getLexXXX() functions
+*** TRY to use LexemBuffer in getLexInt()
+**** REQUIRES getExtraLexemInformationFor() to send LexemBuffer instead of pointer
+***** REQUIRES currentInput to contain LexemBuffer instead of currentLexemP
+*** TRY to use LexemBuffer in getLexToken()
+**** REQUIRES getExtraLexemInformationFor() to send LexemBuffer instead of pointer
+**** REQUIRES getLexem() and getLexemSavePrevious() to use LexemBuffer instead of pointer
+**** REQUIRES collate() to work with LexemBuffer instead of pointers
+**** REQUIRES macroArgumentsToString() to work with LexemBuffer instead of LexInput's pointers
+*** TRY to use LexemBuffer in getLexPosition()
+** TRY to replace putLexXXXWithPointer() in yylex.c
+** DONE Move put...() for complete Lexems (including position, string, ...) to lexembuffer.c
 ** DONE to use LexemBuffer as argument to all putLexXXX() functions except in yylex.c
 *** DONE to add a LexemBuffer as argument to putLexToken()
 **** DONE LexemBuffer as argument to putLexLines()
@@ -113,28 +126,13 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 *** DONE Use LexemBuffer as argument to putLexInt()
 **** DONE lb->end instead of local variable destination in processDefineDirective()
 ***** DONE Use putLexXXXWithPointer() for now
-** DONE Move put...() for complete Lexems (including position, string, ...) to lexembuffer.c
-** TRY to use LexemBuffer as argument to all getLexXXX() functions
-*** TRY to use LexemBuffer in getLexInt()
-**** REQUIRES getExtraLexemInformationFor() to send LexemBuffer instead of pointer
-***** REQUIRES currentInput to contain LexemBuffer instead of currentLexemP
-*** TRY to use LexemBuffer in getLexToken()
-**** REQUIRES getExtraLexemInformationFor() to send LexemBuffer instead of pointer
-**** REQUIRES getLexem() and getLexemSavePrevious() to use LexemBuffer instead of pointer
-**** REQUIRES collate() to work with LexemBuffer instead of pointers
-**** REQUIRES macroArgumentsToString() to work with LexemBuffer instead of LexInput's pointers
-*** TRY to use LexemBuffer in getLexPosition()
-** TRY to replace putLexXXXWithPointer() in yylex.c
-* DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
-** DONE clang definition table
-** TRY Use compiler identification to set extra needed definitions for clang
-* TRY Add yacc parser construct for field in yystype ('$<field>$' and '$<field>3')
+* TODO Add yacc parser construct for field in yystype ('$<field>$' and '$<field>3')
   This means access "field" in the YYSTYPE (semantic type) union for
   lh non-terminal (ends with '$' as in '$$') or a numbered rh
   non-terminal (as with '$3'). That field is defined in the YYSTYPE
   but not used in any '%type' declaration meaning all non-terminals
   have it.
-* TRY Bug: test_c_extract_function_with_out_variables should actually find the declaration and handle it
+* TODO Bug: test_c_extract_function_with_out_variables should actually find the declaration and handle it
 * TODO Available refactorings should not show Delete Parameter if there are none
 * TODO Available refactorings should not show Move Parameter if there are less than two
 * TODO Set xref2 to true as default and then convert all test cases that fail, remove the option
@@ -164,6 +162,7 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
 * TODO NEW FEATURES:
 ** TODO FEATURE: Completion of filenames in #include, currently suggests all symbols, not files
+** TODO FEATURE: Rename parameter - rename a parameter in all instances of the function (decl/def/mock)
 ** TODO FEATURE: Organize includes - first own .h, then system <>, then local, each group alphabetically
 ** TODO FEATURE: New refactoring: change return type of function
 ** TODO FEATURE: Extract function should extract a boolean function inside an if() correctly
