@@ -103,26 +103,22 @@ Reference *addReferenceToList(Reference **listP, Reference *ref) {
     return addReferenceWithoutUsageCheck(listP, ref);
 }
 
-static void fillReferenceItem(ReferenceItem *referencesItem, char *name,
-                              Type symType, Storage storage, Scope scope,
-                              Visibility visibility, int includedFileNumber) {
-    referencesItem->linkName = name;
-    referencesItem->type = symType;
-    referencesItem->storage = storage;
-    referencesItem->scope = scope;
-    referencesItem->visibility = visibility;
-    if (includedFileNumber != NO_FILE_NUMBER)
-        assert(symType == TypeCppInclude);
-    referencesItem->includedFileNumber = includedFileNumber;
-
-    referencesItem->references = NULL;
-    referencesItem->next = NULL;
-}
-
 ReferenceItem makeReferenceItem(char *name, Type type, Storage storage, Scope scope,
                                 Visibility visibility, int includedFileNumber) {
     ReferenceItem item;
-    fillReferenceItem(&item, name, type, storage, scope, visibility, includedFileNumber);
+
+    item.linkName = name;
+    item.type = type;
+    item.storage = storage;
+    item.scope = scope;
+    item.visibility = visibility;
+    if (includedFileNumber != NO_FILE_NUMBER)
+        assert(type == TypeCppInclude);
+    item.includedFileNumber = includedFileNumber;
+
+    item.references = NULL;
+    item.next = NULL;
+
     return item;
 }
 
