@@ -782,7 +782,7 @@ static int getCurrentRefPosition(OlcxReferences *refs) {
     return actn;
 }
 
-static void symbolHighlighNameSprint(char *output, SymbolsMenu *menu) {
+static void symbolHighlightNameSprint(char *output, SymbolsMenu *menu) {
     char *bb, *cc;
     int len, llen;
 
@@ -810,7 +810,7 @@ static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
     if (refs!=NULL && refs->symbolsMenu != NULL) {
         char tmp[MAX_CX_SYMBOL_SIZE];
         tmp[0]='\"';
-        symbolHighlighNameSprint(tmp+1, refs->symbolsMenu);
+        symbolHighlightNameSprint(tmp+1, refs->symbolsMenu);
         len = strlen(tmp);
         tmp[len]='\"';
         tmp[len+1]=0;
@@ -861,7 +861,7 @@ static void olcxPushAndCallMacro(void) {
     LIST_MERGE_SORT(Reference, refs->references, referenceIsLessThan);
     LIST_REVERSE(Reference, refs->references);
     assert(options.xref2);
-    symbolHighlighNameSprint(symbol, refs->hkSelectedSym);
+    symbolHighlightNameSprint(symbol, refs->hkSelectedSym);
     // precheck first
     for (Reference *rr=refs->references; rr!=NULL; rr=rr->next) {
         ppcReferencePreCheck(rr, symbol);
