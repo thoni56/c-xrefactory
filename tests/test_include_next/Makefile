@@ -20,14 +20,9 @@ include ../Makefile.boilerplate
 # So here we add the subdirectory "next" where there also is a "include.h". In the one in the top
 # directory we want to include that one using "#include_next stdint.h".
 
-ARGUMENTS = -create -I path1 -I path2 source.c -xrefactory-II -errors -o output.tmp
+ARGUMENTS = -create -I path1 -I path2 source.c -xrefactory-II -errors
 
 $(TEST): .c-xrefrc
 	$(COMMAND) > output.tmp
-	@$(NORMALIZE) output.tmp > output
-	grep "error len" output ; \
-	if [ $$? -eq 0 ] ; then \
-		$(FAIL) ; \
-	else \
-		$(OK) ; \
-	fi
+	$(NORMALIZE) output.tmp > output
+	$(VERIFY)

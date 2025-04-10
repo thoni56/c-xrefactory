@@ -20,15 +20,11 @@ include ../Makefile.boilerplate
 
 ARGUMENTS = -create $(TRACE) uint32.c -errors -log=log
 
-$(TEST): .c-xrefrc
-	$(COMMAND) 2> output.tmp > out
-	@$(NORMALIZE) output.tmp > output
-	grep ERROR output | grep intptr_t; \
-	if [ $$? -eq 0 ] ; then \
-		$(FAIL) ; \
-	else \
-		$(OK) ; \
-	fi
+$(TEST):
+	$(COMMAND) > output.tmp 2>&1
+	$(NORMALIZE) output.tmp > output
+	../../utils/cxref_reader | grep uint32_t >> output
+	$(VERIFY)
 
 .PHONY: trace
 trace: TRACE=-trace
