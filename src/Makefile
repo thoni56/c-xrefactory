@@ -66,9 +66,7 @@
 
 OS := $(shell uname)
 
-# Extra libraries to link
-LIBS = -lz -lcjson
-
+# Where might libraries be?
 ifeq ($(OS),Darwin)
 	ifeq ($(shell arch),arm64)
 		LIBS += -L/opt/homebrew/lib
@@ -78,6 +76,27 @@ ifeq ($(OS),Darwin)
 		INCLUDES += -I/opt/local/include
 	endif
 endif
+
+ifeq ($(findstring CYGWIN,$(OS)),CYGWIN)
+	LIBS += -L/usr/local/lib
+endif
+
+# What are they called?
+OS := $(shell uname)
+ifeq ($(OS),Darwin)
+	EXT=dylib
+else
+	EXT=so
+endif
+
+ifeq ($(findstring CYGWIN,$(OS)),CYGWIN)
+	EXT=dll
+endif
+
+
+# Extra libraries to link
+LIBS += -lz -lcjson
+
 
 # Figure out reasonable number of parallel jobs
 # Set number of jobs based on operating system
@@ -615,6 +634,11 @@ ifeq ($(OS),Darwin)
 		DYLD_PATH = DYLD_LIBRARY_PATH=/usr/local/lib
 	endif
 endif
+
+ifeq ($(findstring CYGWIN,$(OS)),CYGWIN)
+	CGREEN_LIB = -L/usr/local/lib -lcgreen
+endif
+
 
 .PHONY:unittests
 ifeq ($(shell command -v cgreen-runner 2> /dev/null),)
