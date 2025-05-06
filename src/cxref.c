@@ -481,9 +481,9 @@ static void olcxAddReferences(Reference *list, Reference **dlist,
     list = revlist;
 }
 
-static void olcxAddReferencesToSymbolsMenu(SymbolsMenu *menu, Reference *references, int bestFitFlag) {
-    for (Reference *rr = references; rr != NULL; rr = rr->next) {
-        olcxAddReferenceToSymbolsMenu(menu, rr);
+static void olcxAddReferencesToSymbolsMenuItem(SymbolsMenu *menuItem, Reference *references) {
+    for (Reference *r = references; r != NULL; r = r->next) {
+        olcxAddReferenceToSymbolsMenu(menuItem, r);
     }
 }
 
@@ -1496,7 +1496,7 @@ static void safetyCheckDiff(Reference **anr1,
     diffrefs->current = diffrefs->references;
     if (diffrefs->references!=NULL) {
         assert(diffrefs->symbolsMenu);
-        olcxAddReferencesToSymbolsMenu(diffrefs->symbolsMenu, diffrefs->references, 0);
+        olcxAddReferencesToSymbolsMenuItem(diffrefs->symbolsMenu, diffrefs->references);
     }
 }
 
