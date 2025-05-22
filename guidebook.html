@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<meta name="author" content="v{VERSION} - Generated 2025-04-07">
+<meta name="author" content="v{VERSION} - Generated 2025-05-22">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-04-07</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-05-22</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -658,9 +658,65 @@ edit, inspect, read and improve the code they are working on.</p>
 code. <code>C-xrefactory</code> interacts with the editor to provide navigation
 and automated edits, refactorings, through the editor.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="SystemContext.png" alt="SystemContext" width="1267" height="353">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+set separator none
+title C-xrefactory - System Context
+
+left to right direction
+
+skinparam {
+  arrowFontSize 10
+  defaultTextAlignment center
+  wrapWidth 200
+  maxMessageSize 100
+}
+
+hide stereotype
+
+skinparam rectangle&lt;&lt;Cxrefactory&gt;&gt; {
+  BackgroundColor #1168bd
+  FontColor #ffffff
+  BorderColor #0b4884
+  roundCorner 20
+  shadowing false
+}
+skinparam person&lt;&lt;Developer&gt;&gt; {
+  BackgroundColor #686868
+  FontColor #ffffff
+  BorderColor #484848
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Editor&gt;&gt; {
+  BackgroundColor #686868
+  FontColor #ffffff
+  BorderColor #484848
+  roundCorner 20
+  shadowing false
+}
+skinparam database&lt;&lt;3&gt;&gt; {
+  BackgroundColor #dddddd
+  FontColor #000000
+  BorderColor #9a9a9a
+  shadowing false
+}
+
+person "==Developer\n&lt;size:10&gt;[Person]&lt;/size&gt;\n\nEdits source code using an editor" &lt;&lt;Developer&gt;&gt; as Developer
+rectangle "==Editor\n&lt;size:10&gt;[Software System]&lt;/size&gt;\n\nAllows Developer to modify source code and perform refactoring operations" &lt;&lt;Editor&gt;&gt; as Editor
+database "==Source Code\n&lt;size:10&gt;[a set of files stored on disk]&lt;/size&gt;" &lt;&lt;3&gt;&gt; as 3
+rectangle "==C-xrefactory\n&lt;size:10&gt;[Software System]&lt;/size&gt;\n\nAnalyses source code, receives and processes requests for navigation and refactoring" &lt;&lt;Cxrefactory&gt;&gt; as Cxrefactory
+
+Editor .[#707070,thickness=2].&gt; Cxrefactory : "&lt;color:#707070&gt;extends functionality using\n&lt;color:#707070&gt;&lt;size:8&gt;[plugin]&lt;/size&gt;"
+Cxrefactory .[#707070,thickness=2].&gt; 3 : "&lt;color:#707070&gt;reads source code from\n&lt;color:#707070&gt;&lt;size:8&gt;[file I/O]&lt;/size&gt;"
+Developer .[#707070,thickness=2].&gt; Editor : "&lt;color:#707070&gt;usual editor/IDE operations"
+Developer .[#707070,thickness=2].&gt; Cxrefactory : "&lt;color:#707070&gt;configuration and command line invocations"
+Editor .[#707070,thickness=2].&gt; 3 : "&lt;color:#707070&gt;normal editing operations"
+Editor .[#707070,thickness=2].&gt; Cxrefactory : "&lt;color:#707070&gt;navigation and refactoring requests"
+Cxrefactory .[#707070,thickness=2].&gt; Editor : "&lt;color:#707070&gt;positioning and editing responses"
+Cxrefactory .[#707070,thickness=2].&gt; 3 : "&lt;color:#707070&gt;read/analyze"
+@enduml</pre>
 </div>
 </div>
 </div>
@@ -824,9 +880,100 @@ reparsing the file of interest.</p>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_container_view">7.1. Container View</h3>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="ContainerView.png" alt="ContainerView" width="1665" height="554">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+set separator none
+title C-xrefactory - Containers
+
+left to right direction
+
+skinparam {
+  arrowFontSize 10
+  defaultTextAlignment center
+  wrapWidth 200
+  maxMessageSize 100
+}
+
+hide stereotype
+
+skinparam person&lt;&lt;Developer&gt;&gt; {
+  BackgroundColor #686868
+  FontColor #ffffff
+  BorderColor #484848
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Editor&gt;&gt; {
+  BackgroundColor #686868
+  FontColor #ffffff
+  BorderColor #484848
+  roundCorner 20
+  shadowing false
+}
+skinparam database&lt;&lt;3&gt;&gt; {
+  BackgroundColor #dddddd
+  FontColor #000000
+  BorderColor #9a9a9a
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore&gt;&gt; {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.editorExtension&gt;&gt; {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  roundCorner 20
+  shadowing false
+}
+skinparam database&lt;&lt;Cxrefactory.referencesDb&gt;&gt; {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  shadowing false
+}
+skinparam database&lt;&lt;Cxrefactory.settingsStore&gt;&gt; {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory&gt;&gt; {
+  BorderColor #0b4884
+  FontColor #0b4884
+  shadowing false
+}
+
+person "==Developer\n&lt;size:10&gt;[Person]&lt;/size&gt;\n\nEdits source code using an editor" &lt;&lt;Developer&gt;&gt; as Developer
+rectangle "==Editor\n&lt;size:10&gt;[Software System]&lt;/size&gt;\n\nAllows Developer to modify source code and perform refactoring operations" &lt;&lt;Editor&gt;&gt; as Editor
+database "==Source Code\n&lt;size:10&gt;[a set of files stored on disk]&lt;/size&gt;" &lt;&lt;3&gt;&gt; as 3
+
+rectangle "C-xrefactory\n&lt;size:10&gt;[Software System]&lt;/size&gt;" &lt;&lt;Cxrefactory&gt;&gt; {
+  rectangle "==cxrefCore\n&lt;size:10&gt;[Container: Refactoring Browser core]&lt;/size&gt;\n\nC Language program" &lt;&lt;Cxrefactory.cxrefCore&gt;&gt; as Cxrefactory.cxrefCore
+  database "==settingsStore\n&lt;size:10&gt;[Container: Configuration file for project settings]&lt;/size&gt;\n\nNon-standard format settings file" &lt;&lt;Cxrefactory.settingsStore&gt;&gt; as Cxrefactory.settingsStore
+  database "==referencesDb\n&lt;size:10&gt;[Container: Stores information about all inter-module references in the source code in the project which is updated by scanning all or parts of the source when required]&lt;/size&gt;\n\nSource code information storage" &lt;&lt;Cxrefactory.referencesDb&gt;&gt; as Cxrefactory.referencesDb
+  rectangle "==editorExtension\n&lt;size:10&gt;[Container: Plugin]&lt;/size&gt;\n\nExtends the Editor with c-xref operations and interfaces to the c-xrefactory API" &lt;&lt;Cxrefactory.editorExtension&gt;&gt; as Cxrefactory.editorExtension
+}
+
+Editor .[#707070,thickness=2].&gt; Cxrefactory.editorExtension : "&lt;color:#707070&gt;extends functionality using\n&lt;color:#707070&gt;&lt;size:8&gt;[plugin]&lt;/size&gt;"
+Cxrefactory.cxrefCore .[#707070,thickness=2].&gt; 3 : "&lt;color:#707070&gt;reads source code from\n&lt;color:#707070&gt;&lt;size:8&gt;[file I/O]&lt;/size&gt;"
+Cxrefactory.cxrefCore .[#707070,thickness=2].&gt; Cxrefactory.referencesDb : "&lt;color:#707070&gt;reads from and writes to\n&lt;color:#707070&gt;&lt;size:8&gt;[file I/O]&lt;/size&gt;"
+Cxrefactory.editorExtension .[#707070,thickness=2].&gt; Cxrefactory.settingsStore : "&lt;color:#707070&gt;writes\n&lt;color:#707070&gt;&lt;size:8&gt;[new project wizard]&lt;/size&gt;"
+Cxrefactory.cxrefCore .[#707070,thickness=2].&gt; Cxrefactory.settingsStore : "&lt;color:#707070&gt;read"
+Cxrefactory.editorExtension .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore : "&lt;color:#707070&gt;API\n&lt;color:#707070&gt;&lt;size:8&gt;[requests information and gets commands to modify source code]&lt;/size&gt;"
+Cxrefactory.cxrefCore .[#707070,thickness=2].&gt; Cxrefactory.referencesDb : "&lt;color:#707070&gt;read/write"
+Cxrefactory.cxrefCore .[#707070,thickness=2].&gt; 3 : "&lt;color:#707070&gt;read/analyze"
+Developer .[#707070,thickness=2].&gt; Editor : "&lt;color:#707070&gt;usual editor/IDE operations"
+Editor .[#707070,thickness=2].&gt; 3 : "&lt;color:#707070&gt;normal editing operations"
+Editor .[#707070,thickness=2].&gt; Cxrefactory.editorExtension : "&lt;color:#707070&gt;extends\n&lt;color:#707070&gt;&lt;size:8&gt;[Editor extension protocol]&lt;/size&gt;"
+Developer .[#707070,thickness=2].&gt; Cxrefactory.settingsStore : "&lt;color:#707070&gt;edit"
+Cxrefactory.editorExtension .[#707070,thickness=2].&gt; 3 : "&lt;color:#707070&gt;extended c-xrefactory operations"
+@enduml</pre>
 </div>
 </div>
 </div>
@@ -853,9 +1000,146 @@ functions, where possible.
 </div>
 <div class="sect3">
 <h4 id="_cxrefcore">7.2.1. CxrefCore</h4>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="CxrefCore.png" alt="CxrefCore" width="1865" height="473">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+set separator none
+title C-xrefactory - cxrefCore - Components
+
+left to right direction
+
+skinparam {
+  arrowFontSize 10
+  defaultTextAlignment center
+  wrapWidth 200
+  maxMessageSize 100
+}
+
+hide stereotype
+
+skinparam database&lt;&lt;3&gt;&gt; {
+  BackgroundColor #dddddd
+  FontColor #000000
+  BorderColor #9a9a9a
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.caching&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.cxfile&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.cxref&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.lsp&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.main&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.parser&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.refactory&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
+skinparam database&lt;&lt;Cxrefactory.referencesDb&gt;&gt; {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.server&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.xref&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.yylex&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore&gt;&gt; {
+  BorderColor #2e6295
+  FontColor #2e6295
+  shadowing false
+}
+
+database "==Source Code\n&lt;size:10&gt;[a set of files stored on disk]&lt;/size&gt;" &lt;&lt;3&gt;&gt; as 3
+database "==referencesDb\n&lt;size:10&gt;[Container: Stores information about all inter-module references in the source code in the project which is updated by scanning all or parts of the source when required]&lt;/size&gt;\n\nSource code information storage" &lt;&lt;Cxrefactory.referencesDb&gt;&gt; as Cxrefactory.referencesDb
+
+rectangle "cxrefCore\n&lt;size:10&gt;[Container: Refactoring Browser core]&lt;/size&gt;" &lt;&lt;Cxrefactory.cxrefCore&gt;&gt; {
+  rectangle "==main\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nMain program" &lt;&lt;Cxrefactory.cxrefCore.main&gt;&gt; as Cxrefactory.cxrefCore.main
+  rectangle "==xref\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nCross-referencer" &lt;&lt;Cxrefactory.cxrefCore.xref&gt;&gt; as Cxrefactory.cxrefCore.xref
+  rectangle "==server\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nEditor Server" &lt;&lt;Cxrefactory.cxrefCore.server&gt;&gt; as Cxrefactory.cxrefCore.server
+  rectangle "==refactory\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nRefactory" &lt;&lt;Cxrefactory.cxrefCore.refactory&gt;&gt; as Cxrefactory.cxrefCore.refactory
+  rectangle "==lsp\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nLSP" &lt;&lt;Cxrefactory.cxrefCore.lsp&gt;&gt; as Cxrefactory.cxrefCore.lsp
+  rectangle "==cxref\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nReference handler" &lt;&lt;Cxrefactory.cxrefCore.cxref&gt;&gt; as Cxrefactory.cxrefCore.cxref
+  rectangle "==cxfile\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nReference Storage using text files" &lt;&lt;Cxrefactory.cxrefCore.cxfile&gt;&gt; as Cxrefactory.cxrefCore.cxfile
+  rectangle "==caching\n&lt;size:10&gt;[Component]&lt;/size&gt;\n\nCaching File Reading" &lt;&lt;Cxrefactory.cxrefCore.caching&gt;&gt; as Cxrefactory.cxrefCore.caching
+  rectangle "==yylex\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nLexical Analyser" &lt;&lt;Cxrefactory.cxrefCore.yylex&gt;&gt; as Cxrefactory.cxrefCore.yylex
+  rectangle "==parser\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nParser" &lt;&lt;Cxrefactory.cxrefCore.parser&gt;&gt; as Cxrefactory.cxrefCore.parser
+}
+
+Cxrefactory.cxrefCore.main .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.xref : "&lt;color:#707070&gt;dispatches to\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.main .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.server : "&lt;color:#707070&gt;dispatches to\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.main .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.refactory : "&lt;color:#707070&gt;dispatches to\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.main .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.lsp : "&lt;color:#707070&gt;dispatches to\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.refactory .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.server : "&lt;color:#707070&gt;uses\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.cxref .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxfile : "&lt;color:#707070&gt;stores references using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.lsp .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.refactory : "&lt;color:#707070&gt;uses\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.lsp .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxref : "&lt;color:#707070&gt;uses\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.xref .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxref : "&lt;color:#707070&gt;handles references using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.server .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxref : "&lt;color:#707070&gt;handles references using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.refactory .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxref : "&lt;color:#707070&gt;handles references using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.parser .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.yylex : "&lt;color:#707070&gt;reads tokenized source using\n&lt;color:#707070&gt;&lt;size:8&gt;[buffering]&lt;/size&gt;"
+Cxrefactory.cxrefCore.parser .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.caching : "&lt;color:#707070&gt;bookmarks cachepoints using"
+Cxrefactory.cxrefCore.xref .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.parser : "&lt;color:#707070&gt;parses source code using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.server .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.parser : "&lt;color:#707070&gt;parses source code using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.yylex .[#707070,thickness=2].&gt; 3 : "&lt;color:#707070&gt;reads source code from\n&lt;color:#707070&gt;&lt;size:8&gt;[file I/O]&lt;/size&gt;"
+Cxrefactory.cxrefCore.cxfile .[#707070,thickness=2].&gt; Cxrefactory.referencesDb : "&lt;color:#707070&gt;reads from and writes to\n&lt;color:#707070&gt;&lt;size:8&gt;[file I/O]&lt;/size&gt;"
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -903,9 +1187,68 @@ invocations of <code>c-xref</code> rather than through the server interface.</p>
 </div>
 <div class="sect3">
 <h4 id="_editorextension">7.2.2. EditorExtension</h4>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="EditorExtension.png" alt="EditorExtension" width="559" height="331">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+set separator none
+title C-xrefactory - editorExtension - Components
+
+left to right direction
+
+skinparam {
+  arrowFontSize 10
+  defaultTextAlignment center
+  wrapWidth 200
+  maxMessageSize 100
+}
+
+hide stereotype
+
+skinparam rectangle&lt;&lt;Editor&gt;&gt; {
+  BackgroundColor #686868
+  FontColor #ffffff
+  BorderColor #484848
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.editorExtension.cxrefel&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.editorExtension.cxrefactoryel&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.editorExtension.cxrefprotocolel&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.editorExtension&gt;&gt; {
+  BorderColor #2e6295
+  FontColor #2e6295
+  shadowing false
+}
+
+rectangle "==Editor\n&lt;size:10&gt;[Software System]&lt;/size&gt;\n\nAllows Developer to modify source code and perform refactoring operations" &lt;&lt;Editor&gt;&gt; as Editor
+
+rectangle "editorExtension\n&lt;size:10&gt;[Container: Plugin]&lt;/size&gt;" &lt;&lt;Cxrefactory.editorExtension&gt;&gt; {
+  rectangle "==cxref.el\n&lt;size:10&gt;[Component: elisp]&lt;/size&gt;" &lt;&lt;Cxrefactory.editorExtension.cxrefel&gt;&gt; as Cxrefactory.editorExtension.cxrefel
+  rectangle "==cxrefactory.el\n&lt;size:10&gt;[Component: elisp]&lt;/size&gt;" &lt;&lt;Cxrefactory.editorExtension.cxrefactoryel&gt;&gt; as Cxrefactory.editorExtension.cxrefactoryel
+  rectangle "==cxrefprotocol.el\n&lt;size:10&gt;[Component: elisp]&lt;/size&gt;" &lt;&lt;Cxrefactory.editorExtension.cxrefprotocolel&gt;&gt; as Cxrefactory.editorExtension.cxrefprotocolel
+}
+
+Editor .[#707070,thickness=2].&gt; Cxrefactory.editorExtension.cxrefactoryel : "&lt;color:#707070&gt;extends functionality using\n&lt;color:#707070&gt;&lt;size:8&gt;[plugin]&lt;/size&gt;"
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2127,9 +2470,33 @@ connection between the symbols and the references?!?</p>
 <div class="paragraph">
 <p>So what are these actually?</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="structures.png" alt="structures" width="448" height="267">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+class Symbol {
+char *name
+Position position
+SymbolBits bits
+}
+Symbol o-- Symbol : next
+
+class SymbolList {
+}
+SymbolList o-- Symbol : symbol
+SymbolList o-- SymbolList : next
+
+class ReferencesItem {
+char *name
+ReferencesBits bits
+}
+ReferencesItem o-- Reference : references
+ReferencesItem o-- ReferencesItem : next
+
+class Reference {
+Usage usage
+Position position
+}
+Reference o-- Reference : next</pre>
 </div>
 </div>
 </div>
@@ -2144,9 +2511,27 @@ connection between the symbols and the references?!?</p>
 <div class="paragraph">
 <p>Here is an initial attempt at illustrating how some of the file and text/lexem buffers are related.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="buffer.png" alt="buffer" width="676" height="376">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+class FileDescriptor {
+}
+FileDescriptor o-- LexemBuffer : lexemBuffer
+
+class LexemBuffer {
+  Lexem[] lexemStream
+}
+LexemBuffer o-- CharacterBuffer : buffer
+
+class CharacterBuffer {
+  char[] : chars
+}
+
+class LexInput {
+  char* : macroName
+  InputType : inputType
+}
+LexInput --&gt; LexemBuffer : beginningOfBuffer, endOfBuffer, currentLexemP (into .lexemStream)</pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -2845,9 +3230,21 @@ fields, <code>begin</code>, <code>end</code> and the data.  The data are sometim
 like in this case, but can also be a single value, like an <code>int</code> or a
 pointer to a <code>Symbol</code>.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="ast.png" alt="ast" width="205" height="251">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+
+class ast_symbolPositionPair {
+Position begin
+Position end
+}
+
+ast_symbolPositionPair *-- SymbolPositionPair : data
+
+class SymbolPositionPair {
+Symbol *symbol
+Position position
+}</pre>
 </div>
 </div>
 </div>
@@ -3297,7 +3694,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-04-07 06:49:43 UTC
+Last updated 2025-05-22 05:37:11 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
