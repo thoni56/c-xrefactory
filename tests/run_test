@@ -22,7 +22,7 @@ else
 	cd $1
 	eval export $GCOV_OPTIONS
 	# Then we create a coverage.info for this test
-	lcov --version | grep -qv 'version 2' || lcovignore="--ignore-errors gcov,gcov --ignore-errors empty,empty --ignore-errors usage,usage --ignore-errors unused,unused"
-	lcov -q $lcovignore -c -d .cov -b ../../src --build-directory ../../src/.objects -o .cov/coverage.info 2>&1 > /dev/null
+	# Use inherited LCOV variable which already contains version-specific flags
+	eval "$LCOV -q -c -d .cov -b ../../src --build-directory ../../src/.objects -o .cov/coverage.info" 2>&1 > /dev/null
     fi
 fi

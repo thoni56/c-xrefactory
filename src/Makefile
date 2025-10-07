@@ -118,12 +118,16 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 # CC=gcc-14
 
 # We need to use compatible gcov (for Darwin/Brew with Homebrew gcc-14 we need to use GCC:s gcov)
-ifeq ("$(CC)", "gcc-14")
-	LCOV = lcov --gcov-tool gcov-14
+ifeq ("$(CC)", "gcc-15")
+	LCOV_BASE = lcov --gcov-tool gcov-15
+	GCOV = gcov-15
+	GCOV_TOOL = gcov-tool-15
+else ifeq ("$(CC)", "gcc-14")
+	LCOV_BASE = lcov --gcov-tool gcov-14
 	GCOV = gcov-14
 	GCOV_TOOL = gcov-tool-14
 else
-	LCOV = lcov
+	LCOV_BASE = lcov
 	GCOV = gcov
 	GCOV_TOOL = gcov-tool
 endif
@@ -135,11 +139,24 @@ else
     HAVE_GCOV_TOOL=no
 endif
 
+# Centralize lcov version handling and error flags
 ifneq (, $(shell lcov --version | grep 'version 2'))
 	HAVE_LCOV2=yes
+	LCOV_IGNORE_FLAGS = --ignore-errors unsupported,unsupported --ignore-errors gcov,gcov --ignore-errors unused,unused --ignore-errors inconsistent,inconsistent
+	GENHTML_IGNORE_FLAGS = --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused
 else
 	HAVE_LCOV2=no
+	LCOV_IGNORE_FLAGS =
+	GENHTML_IGNORE_FLAGS =
 endif
+
+# Final LCOV command with all flags
+LCOV = $(LCOV_BASE) $(LCOV_IGNORE_FLAGS)
+GENHTML = genhtml $(GENHTML_IGNORE_FLAGS)
+
+# Export the lcov tools for sub-makes
+export LCOV
+export GENHTML
 
 # If we don't then we can generate .gcov from the .info but we need:
 ifneq (, $(shell command -v info2gcov 2> /dev/null))
@@ -385,28 +402,16 @@ total-coverage:
 	@mkdir -p ../coverage
 ifeq ($(HAVE_GCOV_TOOL),yes)
   # Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
-  ifeq ($(HAVE_LCOV2),yes)
-	-$(LCOV) --ignore-errors gcov,gcov --ignore-errors unused,unused -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed" || true
-  else
 	-$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed" || true
-  endif
 else
   # The run_test script in ../tests has created a coverage.info in each test directory
   # So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...'
   # with lcov
-  ifeq ($(HAVE_LCOV2),yes)
-	$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused -o ../coverage/total.info 2>&1
-  else
 	$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q -o ../coverage/total.info 2>&1
-  endif
 endif
 #	@echo "LCOV-ing done..."
 # Then we can remove coverage for the ignored files
-ifeq ($(HAVE_LCOV2),yes)
-	$(LCOV) -q --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
-else
 	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
-endif
 #	@echo "LCOV --remove done..."
 
 .PHONY:info2gcov
@@ -423,7 +428,7 @@ endif
 
 .PHONY:coverage-report
 coverage-report: total-coverage
-	@genhtml -q --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
+	@$(GENHTML) -q -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
 	@echo Coverage done: `grep -m 1 coverPer ../coverage/index.html | tr -dc '0-9.'`
 
 .PHONY:cloc
@@ -496,7 +501,7 @@ ifeq ($(OS),Darwin)
 		# And for Homebrew on arm we just build for that
 		CGREEN_LIB = -L/opt/homebrew/lib -lcgreen
 		DYLD_PATH = DYLD_LIBRARY_PATH=/opt/homebrew/lib
-		CFLAGS += -arch arm64
+		#CFLAGS += -arch arm64
 	else
 		CGREEN_LIB = -L/usr/local/lib -lcgreen
 		DYLD_PATH = DYLD_LIBRARY_PATH=/usr/local/lib
@@ -579,8 +584,8 @@ $(eval $(call UNITTEST,xref,memory log protocol))
 $(eval $(call UNITTEST,yylex,memory stackmemory protocol log position filedescriptor id filetable hash symboltable macroargumenttable symbol lexembuffer stringlist))
 
 variables:
-	@echo LCOV = $(LCOV)
 	@echo HAVE_LCOV2 = $(HAVE_LCOV2)
+	@echo LCOV = $(LCOV)
 	@echo GCOV = $(GCOV)
 	@echo HAVE_GCOV_TOOL = $(HAVE_GCOV_TOOL)
 	@echo GCOV_TOOL = $(GCOV_TOOL)

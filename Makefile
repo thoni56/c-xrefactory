@@ -15,10 +15,10 @@ all:
 	$(MAKE) -C editors/emacs compile
 
 test: all
-	$(MAKE) -C tests all
+	$(MAKE) -e -C tests all
 
 quick: all
-	$(MAKE) -C tests quick
+	$(MAKE) -e -C tests quick
 
 .PHONY: doc
 doc:

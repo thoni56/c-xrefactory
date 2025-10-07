@@ -7,16 +7,8 @@
 #
 # The magic of this is in `run_test` which runs the actual test, reports result on screen and collects coverage
 
-OS := $(shell uname)
-ifeq ($(OS),Darwin)
-	ifeq ($(CC), gcc-14)
-		LCOV=lcov --gcov-tool=gcov-14
-	else
-		LCOV=/Applications/Xcode.app//Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-cov
-	endif
-else
-	LCOV=lcov
-endif
+# LCOV is exported from ../src/Makefile with all necessary flags
+# Including version-specific ignore-errors flags and gcov-tool settings
 
 .PHONY: void
 void:
