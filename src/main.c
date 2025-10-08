@@ -207,9 +207,6 @@ static void discoverBuiltinIncludePaths(void) {
 
     static bool messageWritten = false;
 
-    if (!LANGUAGE(LANG_C) && !LANGUAGE(LANG_YACC)) {
-        return;
-    }
     ENTER();
 
     tempfile_name = create_temporary_filename();
@@ -352,11 +349,6 @@ static void discoverStandardDefines(void) {
     /* This function discovers the compiler builtin defines by making
      * a call to it and then sets those up as if they where defined on
      * the command line */
-
-    if (!(LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC))) {
-        LEAVE();
-        return;
-    }
     tempfile_name = create_temporary_filename();
     assert(strlen(tempfile_name)+1 < MAX_FILE_NAME_SIZE);
 
