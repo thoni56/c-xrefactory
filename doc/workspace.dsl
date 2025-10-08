@@ -24,7 +24,8 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 				xref = Component xref "Cross-referencer" C
 				server = Component server "Editor Server" C
 				refactory = Component refactory "Refactory" C
-                lsp = Component lsp "LSP" C
+                lsp = Component lsp "LSP Server" "Language Server Protocol implementation for IDE integration - currently limited by symbol database architecture" C
+                lspAdapter = Component lspAdapter "LSP Adapter" "Converts LSP requests to c-xrefactory operations - needs symbol database abstraction" C
 
 				main -> xref "dispatches to" call
 				main -> server "dispatches to" call
@@ -32,12 +33,24 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 				main -> lsp "dispatches to" call
 				refactory -> server "uses" call
 
+				// Symbol Database and Resolution Components
 				cxref = Component cxref "Reference handler" C
-				cxfile = Component cxfile "Reference Storage using text files" C
-				cxref -> cxfile "stores references using" call
+				cxfile = Component cxfile "Reference Storage (.cx files)" "Manages persistent cross-reference database with symbol indexing and file-based storage" C
+				browserStack = Component browserStack "Browser Stack" "Runtime symbol context stack for navigation, containing current references and symbol menus" C
+				symbolResolver = Component symbolResolver "Symbol Resolution Pipeline" "Converts cursor positions to symbols, loads references, and finds definitions" C
+				referenceTable = Component referenceTable "In-Memory Reference Table" "Runtime symbol cache loaded from .cx files for active session" C
+				
+				// Symbol resolution flow
+				cxref -> symbolResolver "delegates symbol lookup to" call
+				symbolResolver -> cxfile "loads symbol data via" call
+				symbolResolver -> referenceTable "populates and queries" call
+				symbolResolver -> browserStack "builds navigation context in" call
+				cxfile -> referenceTable "loads symbols into" "batch loading"
 
-                lsp -> refactory "uses" call
-                lsp -> cxref "uses" call
+                lsp -> lspAdapter "delegates to" call
+                lspAdapter -> refactory "uses for refactoring" call
+                lspAdapter -> cxref "uses for navigation" call
+                lspAdapter -> symbolResolver "attempts symbol lookup via" call
 
 				xref -> cxref "handles references using" call
 				server -> cxref "handles references using" call
@@ -57,9 +70,16 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 
 			settingsStore = container settingsStore "Non-standard format settings file" "Configuration file for project settings" DB
 
-			referencesDb = container referencesDb "Source code information storage" "Stores information about all inter-module references in the source code in the project which is updated by scanning all or parts of the source when required" DB
+			referencesDb = container referencesDb "Cross-Reference Database (.cx files)" "Persistent symbol database storing references, definitions, and metadata for all project symbols. Created via -create/-update operations, indexed by symbol hash for fast lookup" DB {
+				symbolIndex = Component symbolIndex "Symbol Hash Index" "Hash-based lookup table mapping symbol names to file locations for O(1) symbol resolution" C
+				referenceRecords = Component referenceRecords "Reference Records" "Individual symbol references with position, usage type (defined/declared/used), and metadata" C
+				fileMetadata = Component fileMetadata "File Metadata" "File modification times, paths, and inclusion relationships for incremental updates" C
+			}
 
-			cxfile -> referencesDb "reads from and writes to" "file I/O"
+			// Cross-reference database interactions
+			cxfile -> symbolIndex "builds and queries" "hash-based lookup"
+			cxfile -> referenceRecords "stores and retrieves" "symbol references"
+			cxfile -> fileMetadata "tracks file changes for" "incremental updates"
 
 			editorExtension -> settingsStore "writes" "new project wizard"
 			cxrefCore -> settingsStore "read"
@@ -98,6 +118,13 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 		component cxrefCore CxrefCore {
 	    include *
 	    autolayout lr
+		}
+		
+		component referencesDb SymbolDatabase {
+	    include *
+	    autolayout lr
+	    title "Symbol Database Architecture"
+	    description "Cross-reference database components and symbol resolution pipeline"
 		}
 
 		theme default
