@@ -13,12 +13,24 @@ if [ -f $1/.suspended ] ; then
     echo "Tests in '$1': `tput setaf 6`SUSPENDED`tput sgr0`"
 else
     mkdir -p $1/.cov
+    
+    # Darwin: Set environment variable for profraw output location
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        export LLVM_PROFILE_FILE=$1/.cov/test_%p.profraw
+    fi
+    
     make --no-print-directory $GCOV_OPTIONS -C $1
     rc=$?
     if [ $rc -ne 0 ] ; then
 	    exit $rc
     fi
-    if ! command -v gcov-tool &> /dev/null ; then
+    
+    # Handle coverage collection based on platform
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # Darwin: profraw files are already in .cov directory
+        # No additional processing needed - merging happens in main Makefile
+        :
+    elif ! command -v gcov-tool &> /dev/null ; then
 	cd $1
 	eval export $GCOV_OPTIONS
 	# Then we create a coverage.info for this test

@@ -90,7 +90,15 @@ endif
 # Always export following variables to environment of sub-makes (to use you need "-e")
 
 # Build with coverage for all cases except "prod"
-export COVERAGE = --coverage
+ifeq ($(OS),Darwin)
+	# Use Apple's native coverage instrumentation on Darwin
+	export COVERAGE = -fprofile-instr-generate -fcoverage-mapping
+	export LLVM_PROFDATA = xcrun llvm-profdata
+	export LLVM_COV = xcrun llvm-cov
+else
+	# Use traditional gcov on other platforms
+	export COVERAGE = --coverage
+endif
 export CC = cc
 
 # Other variables
@@ -117,42 +125,59 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 # On Darwin we can use gcc-14 if available
 # CC=gcc-14
 
-# We need to use compatible gcov (for Darwin/Brew with Homebrew gcc-14 we need to use GCC:s gcov)
-ifeq ("$(CC)", "gcc-15")
-	LCOV_BASE = lcov --gcov-tool gcov-15
-	GCOV = gcov-15
-	GCOV_TOOL = gcov-tool-15
-else ifeq ("$(CC)", "gcc-14")
-	LCOV_BASE = lcov --gcov-tool gcov-14
-	GCOV = gcov-14
-	GCOV_TOOL = gcov-tool-14
+ifeq ($(OS),Darwin)
+	# Darwin: Use Apple's native coverage tools - much simpler!
+	LLVM_PROFDATA = xcrun llvm-profdata
+	LLVM_COV = xcrun llvm-cov
+	# We still need genhtml for HTML reports - detect lcov version like non-Darwin
+	ifneq (, $(shell lcov --version | grep 'version 2'))
+		GENHTML = genhtml --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused
+	else
+		GENHTML = genhtml
+	endif
+	# For compatibility with existing targets
+	HAVE_APPLE_COV=yes
+	HAVE_GCOV_TOOL=no  # Don't use gcov-tool on Darwin
 else
-	LCOV_BASE = lcov
-	GCOV = gcov
-	GCOV_TOOL = gcov-tool
-endif
+	# Non-Darwin: Use traditional gcov/lcov toolchain
+	# We need to use compatible gcov (for Darwin/Brew with Homebrew gcc-14 we need to use GCC:s gcov)
+	ifeq ("$(CC)", "gcc-15")
+		LCOV_BASE = lcov --gcov-tool gcov-15
+		GCOV = gcov-15
+		GCOV_TOOL = gcov-tool-15
+	else ifeq ("$(CC)", "gcc-14")
+		LCOV_BASE = lcov --gcov-tool gcov-14
+		GCOV = gcov-14
+		GCOV_TOOL = gcov-tool-14
+	else
+		LCOV_BASE = lcov
+		GCOV = gcov
+		GCOV_TOOL = gcov-tool
+	endif
 
-# We might not have gcov-tool available
-ifneq (, $(shell command -v $(GCOV_TOOL) 2> /dev/null))
-    HAVE_GCOV_TOOL=yes
-else
-    HAVE_GCOV_TOOL=no
-endif
+	# We might not have gcov-tool available
+	ifneq (, $(shell command -v $(GCOV_TOOL) 2> /dev/null))
+	    HAVE_GCOV_TOOL=yes
+	else
+	    HAVE_GCOV_TOOL=no
+	endif
 
-# Centralize lcov version handling and error flags
-ifneq (, $(shell lcov --version | grep 'version 2'))
-	HAVE_LCOV2=yes
-	LCOV_IGNORE_FLAGS = --ignore-errors unsupported,unsupported --ignore-errors gcov,gcov --ignore-errors unused,unused --ignore-errors inconsistent,inconsistent
-	GENHTML_IGNORE_FLAGS = --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused
-else
-	HAVE_LCOV2=no
-	LCOV_IGNORE_FLAGS =
-	GENHTML_IGNORE_FLAGS =
-endif
+	# Centralize lcov version handling and error flags
+	ifneq (, $(shell lcov --version | grep 'version 2'))
+		HAVE_LCOV2=yes
+		LCOV_IGNORE_FLAGS = --ignore-errors unsupported,unsupported --ignore-errors gcov,gcov --ignore-errors unused,unused --ignore-errors inconsistent,inconsistent
+		GENHTML_IGNORE_FLAGS = --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused
+	else
+		HAVE_LCOV2=no
+		LCOV_IGNORE_FLAGS =
+		GENHTML_IGNORE_FLAGS =
+	endif
 
-# Final LCOV command with all flags
-LCOV = $(LCOV_BASE) $(LCOV_IGNORE_FLAGS)
-GENHTML = genhtml $(GENHTML_IGNORE_FLAGS)
+	# Final LCOV command with all flags
+	LCOV = $(LCOV_BASE) $(LCOV_IGNORE_FLAGS)
+	GENHTML = genhtml $(GENHTML_IGNORE_FLAGS)
+	HAVE_APPLE_COV=no
+endif
 
 # Export the lcov tools for sub-makes
 export LCOV
@@ -365,15 +390,29 @@ clean:
 
 .PHONY:clean-coverage
 clean-coverage:
+ifeq ($(HAVE_APPLE_COV),yes)
+	# Darwin: Remove .profraw and .profdata files
+	-find .. -name "*.profraw" -delete
+	-find .. -name "*.profdata" -delete
+else
+	# Non-Darwin: Use lcov to zero counters
 	-if command -v $(LCOV) > /dev/null 2>&1 ; then \
 		$(LCOV) -q -z -d .. ; \
 	fi
+endif
 	$(MAKE) gcov
 
 .PHONY:gcov
-# Create .gcov files from .gcda in $(OBJDIR)
+# Create .gcov files for Emacs cov-mode
 gcov:
+ifeq ($(HAVE_APPLE_COV),yes)
+	# Darwin: Apple's profdata doesn't directly support .gcov file generation
+	# TODO: Investigate alternatives for Emacs cov-mode support
+	@echo "Darwin: .gcov files not generated with Apple coverage - use 'make coverage-report' for HTML"
+else
+	# Non-Darwin: Create .gcov files from .gcda in $(OBJDIR)
 	-$(GCOV) $(OBJDIR)/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed" || true
+endif
 
 .PHONY:coverage
 coverage:
@@ -381,15 +420,24 @@ coverage:
 
 
 .PHONY:merge-coverage-from-tests
-ifeq ($(HAVE_GCOV_TOOL),yes)
+ifeq ($(HAVE_APPLE_COV),yes)
 merge-coverage-from-tests:
+	# Darwin: Merge all .profraw files from tests using llvm-profdata
+	@mkdir -p ../coverage
+	-if find .. -name "*.profraw" | head -1 >/dev/null 2>&1; then \
+		$(LLVM_PROFDATA) merge -sparse `find .. -name "*.profraw"` -o ../coverage/merged.profdata ; \
+	fi
+	$(MAKE) -e gcov
+else
+	ifeq ($(HAVE_GCOV_TOOL),yes)
 	# Merge all gcda from all tests then make gcovs from those
 	-for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
 	$(MAKE) -e gcov
-else
-merge-coverage-from-tests: total-coverage
+	else
 	# Merge all .info to total.info then extract .gcovs from it
+	$(MAKE) -e total-coverage
 	$(MAKE) -e info2gcov
+	endif
 endif
 
 
@@ -400,19 +448,32 @@ SYSTEM_TEST_COVERAGE_FILES = `ls ../tests/*/.cov/coverage.info | xargs printf --
 .PHONY:total-coverage
 total-coverage:
 	@mkdir -p ../coverage
-ifeq ($(HAVE_GCOV_TOOL),yes)
-  # Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
-	-$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed" || true
+ifeq ($(HAVE_APPLE_COV),yes)
+	# Darwin: Export merged profdata to LCOV format for genhtml compatibility
+	if [ -f ../coverage/merged.profdata ]; then \
+		$(LLVM_COV) export --format=lcov --instr-profile=../coverage/merged.profdata c-xref --sources . > ../coverage/total.info ; \
+	else \
+		if ls ../tests/*/.cov/*.profraw >/dev/null 2>&1; then \
+			$(LLVM_PROFDATA) merge -sparse ../tests/*/.cov/*.profraw -o ../coverage/merged.profdata ; \
+			$(LLVM_COV) export --format=lcov --instr-profile=../coverage/merged.profdata c-xref --sources . > ../coverage/total.info ; \
+		fi ; \
+	fi
 else
-  # The run_test script in ../tests has created a coverage.info in each test directory
-  # So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...'
-  # with lcov
-	$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q -o ../coverage/total.info 2>&1
-endif
-#	@echo "LCOV-ing done..."
-# Then we can remove coverage for the ignored files
+	# Non-Darwin: Use traditional lcov approach
+	ifeq ($(HAVE_GCOV_TOOL),yes)
+		# Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
+		-$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed" || true
+	else
+		# The run_test script in ../tests has created a coverage.info in each test directory
+		# So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...'
+		# with lcov
+		$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q -o ../coverage/total.info 2>&1
+	endif
+	#	@echo "LCOV-ing done..."
+	# Then we can remove coverage for the ignored files
 	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
-#	@echo "LCOV --remove done..."
+	#	@echo "LCOV --remove done..."
+endif
 
 .PHONY:info2gcov
 info2gcov:
@@ -584,6 +645,14 @@ $(eval $(call UNITTEST,xref,memory log protocol))
 $(eval $(call UNITTEST,yylex,memory stackmemory protocol log position filedescriptor id filetable hash symboltable macroargumenttable symbol lexembuffer stringlist))
 
 variables:
+ifeq ($(HAVE_APPLE_COV),yes)
+	@echo "=== Darwin Coverage Variables ==="
+	@echo HAVE_APPLE_COV = $(HAVE_APPLE_COV)
+	@echo LLVM_PROFDATA = $(LLVM_PROFDATA)
+	@echo LLVM_COV = $(LLVM_COV)
+	@echo COVERAGE = $(COVERAGE)
+else
+	@echo "=== Traditional Coverage Variables ==="
 	@echo HAVE_LCOV2 = $(HAVE_LCOV2)
 	@echo LCOV = $(LCOV)
 	@echo GCOV = $(GCOV)
@@ -591,3 +660,4 @@ variables:
 	@echo GCOV_TOOL = $(GCOV_TOOL)
 	@echo HAVE_INFO2GCOV = $(HAVE_INFO2GCOV)
 	@echo SYSTEM_TEST_COVERAGE_FILES = $(SYSTEM_TEST_COVERAGE_FILES)
+endif
