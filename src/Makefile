@@ -125,16 +125,21 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 # On Darwin we can use gcc-14 if available
 # CC=gcc-14
 
+# Centralize lcov version handling and error flags for both Darwin and non-Darwin
+ifneq (, $(shell lcov --version | grep 'version 2'))
+	HAVE_LCOV2=yes
+	LCOV_IGNORE_FLAGS = --ignore-errors unsupported,unsupported --ignore-errors gcov,gcov --ignore-errors unused,unused --ignore-errors inconsistent,inconsistent
+	GENHTML_IGNORE_FLAGS = --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused
+else
+	HAVE_LCOV2=no
+	LCOV_IGNORE_FLAGS =
+	GENHTML_IGNORE_FLAGS =
+endif
+
 ifeq ($(OS),Darwin)
 	# Darwin: Use Apple's native coverage tools - much simpler!
 	LLVM_PROFDATA = xcrun llvm-profdata
 	LLVM_COV = xcrun llvm-cov
-	# We still need genhtml for HTML reports - detect lcov version like non-Darwin
-	ifneq (, $(shell lcov --version | grep 'version 2'))
-		GENHTML = genhtml --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused
-	else
-		GENHTML = genhtml
-	endif
 	# For compatibility with existing targets
 	HAVE_APPLE_COV=yes
 	HAVE_GCOV_TOOL=no  # Don't use gcov-tool on Darwin
@@ -162,22 +167,13 @@ else
 	    HAVE_GCOV_TOOL=no
 	endif
 
-	# Centralize lcov version handling and error flags
-	ifneq (, $(shell lcov --version | grep 'version 2'))
-		HAVE_LCOV2=yes
-		LCOV_IGNORE_FLAGS = --ignore-errors unsupported,unsupported --ignore-errors gcov,gcov --ignore-errors unused,unused --ignore-errors inconsistent,inconsistent
-		GENHTML_IGNORE_FLAGS = --ignore-errors inconsistent,inconsistent --ignore-errors unused,unused
-	else
-		HAVE_LCOV2=no
-		LCOV_IGNORE_FLAGS =
-		GENHTML_IGNORE_FLAGS =
-	endif
-
 	# Final LCOV command with all flags
 	LCOV = $(LCOV_BASE) $(LCOV_IGNORE_FLAGS)
-	GENHTML = genhtml $(GENHTML_IGNORE_FLAGS)
 	HAVE_APPLE_COV=no
 endif
+
+# Final GENHTML command with all flags (shared by both Darwin and non-Darwin)
+GENHTML = genhtml $(GENHTML_IGNORE_FLAGS)
 
 # Export the lcov tools for sub-makes
 export LCOV
