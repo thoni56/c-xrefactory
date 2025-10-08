@@ -402,9 +402,17 @@ endif
 # Create .gcov files for Emacs cov-mode
 gcov:
 ifeq ($(HAVE_APPLE_COV),yes)
-	# Darwin: Apple's profdata doesn't directly support .gcov file generation
-	# TODO: Investigate alternatives for Emacs cov-mode support
-	@echo "Darwin: .gcov files not generated with Apple coverage - use 'make coverage-report' for HTML"
+	# Darwin: Convert llvm-cov output to traditional .gcov format for Emacs cov-mode
+	if [ -f ../coverage/merged.profdata ]; then \
+		for src_file in $(SRCS); do \
+			if [ -f "$$src_file" ]; then \
+				./llvm2gcov.sh "$$src_file" > "$$src_file.gcov" 2>/dev/null || true ; \
+			fi ; \
+		done ; \
+		echo "Darwin: Generated .gcov files for Emacs cov-mode using llvm-cov conversion" ; \
+	else \
+		echo "Darwin: No coverage data found - run 'make coverage' first" ; \
+	fi
 else
 	# Non-Darwin: Create .gcov files from .gcda in $(OBJDIR)
 	-$(GCOV) $(OBJDIR)/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed" || true
