@@ -3,8 +3,7 @@
 
 #include "json_utils.h"
 
-
+/* LSP adapter functions */
 extern JSON *findDefinition(const char *uri, JSON *position);
-
 
 #endif /* LSP_ADAPTER_H_INCLUDED */

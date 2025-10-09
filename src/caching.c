@@ -1,9 +1,9 @@
 #include "caching.h"
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "commons.h"
 #include "globals.h"
 #include "memory.h"
 #include "stackmemory.h"
