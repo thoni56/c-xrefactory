@@ -345,123 +345,194 @@ All definition requests return same default position
 |Workspace-scoped
 |===
 
-==== Proposed Symbol Database Abstraction
+==== Proposed Unified Symbol Database
 
-===== Interface Design
+===== Core Insight: Unified On-Demand Architecture
+
+Both Emacs and LSP clients want the same thing: **up-to-date symbol and reference information**. The distinction between "file-based" and "on-demand" modes is artificial complexity. Instead, c-xrefactory should provide a unified interface that:
+
+1. **Always ensures information is current** using existing dependency tracking
+2. **Scans incrementally** only what's needed, when needed  
+3. **Uses `.cx` files as persistent cache** for optimization
+4. **Eliminates cold start problems** by avoiding upfront full-project scanning
+
+===== Simplified Interface Design
 
 [source,c]
 ----
 typedef struct SymbolDatabase SymbolDatabase;
 
-typedef enum {
-    SDB_FILE_BASED,    // Traditional .cx files (current system)
-    SDB_ON_DEMAND,     // LSP-friendly on-demand parsing  
-    SDB_HYBRID         // Combine both approaches
-} SymbolDatabaseMode;
-
-typedef struct SymbolDatabaseOperations {
-    // Core operations
-    ReferenceItem* (*findSymbolAtPosition)(SymbolDatabase* db, 
-                                          const char* filePath, int line, int column);
-    Reference* (*getReferencesForSymbol)(SymbolDatabase* db, ReferenceItem* symbol);
-    Reference* (*getDefinitionForSymbol)(SymbolDatabase* db, ReferenceItem* symbol);
+typedef struct {
+    // Unified operations for any client (Emacs or LSP)
+    Symbol* (*lookupSymbol)(SymbolDatabase* db, const char* name, Position pos);
+    ReferenceList* (*getReferences)(SymbolDatabase* db, const char* name, Position pos);
+    ReferenceList* (*getOccurrences)(SymbolDatabase* db, const char* name, Position pos);
     
-    // File management
-    void (*addFile)(SymbolDatabase* db, const char* filePath);
-    void (*updateFile)(SymbolDatabase* db, const char* filePath);
-    bool (*isFileUpToDate)(SymbolDatabase* db, const char* filePath);
-    
-    // Performance optimization
-    void (*invalidateCache)(SymbolDatabase* db, const char* filePath);
-    void (*flushCache)(SymbolDatabase* db);
+    // All complexity hidden in implementation:
+    // - File modification checking (existing: checkFileModifiedTime)
+    // - Include dependency tracking (existing: cachedIncludedFilePass) 
+    // - Incremental scanning (existing: makeIncludeClosureOfFilesToUpdate)
+    // - Persistent caching (existing: .cx file system)
 } SymbolDatabaseOperations;
 ----
 
-===== Implementation Strategies
+===== Implementation Strategy: Smart On-Demand
 
-**File-Based Implementation (Current System)**
-
-[source,c]
-----
-// Wraps existing functionality for backward compatibility
-SymbolDatabase* createFileBasedSymbolDatabase(const char* cxrefsLocation);
-----
-
-* Uses existing `.cx` file infrastructure
-* Maintains full backward compatibility
-* Optimal for traditional batch workflows
-
-**On-Demand Implementation (LSP-Friendly)**
+The implementation leverages **existing sophisticated logic**:
 
 [source,c]
 ----
-// New implementation for responsive LSP integration
-SymbolDatabase* createOnDemandSymbolDatabase(const char* workspaceRoot);
+Symbol* lookupSymbol(const char* name, Position pos) {
+    // 1. Check if cached information is up-to-date
+    if (symbolInfoIsCurrent(name, pos)) {
+        return getCachedSymbolInfo(name, pos);  // Use .cx files when valid
+    }
+    
+    // 2. Use existing dependency tracking to scan minimal set
+    FileList* filesToScan = calculateDependencyClosure(pos.file);
+    for (FileItem* file : filesToScan) {
+        if (!checkFileModifiedTime(file->fileNumber)) {
+            scanFileAndUpdateCache(file);  // Incremental scan
+        }
+    }
+    
+    // 3. Update persistent cache for next time
+    updateSymbolCache(name, pos);
+    
+    return getSymbolInfo(name, pos);
+}
 ----
 
-* Parses files on-demand when symbols are requested
-* Maintains in-memory cache of parsed symbols
-* No persistent `.cx` files required
-* Uses existing parsing infrastructure
+**Key Benefits:**
 
-**Hybrid Implementation (Best of Both)**
+* **No artificial modes** - same code path for all clients
+* **No cold start** - first lookup triggers minimal necessary scanning
+* **Incremental by design** - only scans files that need updating
+* **Persistent optimization** - results cached in `.cx` files for next session
+* **Existing logic reuse** - leverages proven dependency tracking system
+
+===== Legacy Architecture Recognition
+
+c-xrefactory evolved from a **batch cross-referencer** (like `ctags`) and was enhanced for real-time use:
+
+[source,bash]
+----
+# Legacy batch workflow:
+c-xref -create project.c     # Full scan, build .cx database
+c-xref -update modified.c    # Incremental update
+c-xref -olcxpush symbol      # Query pre-built database
+
+# Unified approach:
+c-xref -server               # Start server, scan on-demand as needed
+c-xref -lsp                  # Same logic, different protocol
+----
+
+The `.cx` files are essentially a **persistent cache** of analysis results, not a fundamental requirement.
+
+===== Implementation Plan
+
+**Phase 1: Interface Unification**
+
+* Create unified `SymbolDatabase` interface
+* Wrap existing logic in smart on-demand implementation
+* Replace explicit `-create`/`-update` commands with automatic dependency checking
+* Both Emacs and LSP use same code path
+
+**Phase 2: Optimization**
+
+* Enhance existing dependency tracking for finer-grained invalidation
+* Optimize in-memory caching strategies
+* Background `.cx` file maintenance for long-running sessions
+* Performance tuning for large codebases
+
+===== Benefits of Unified Approach
+
+**Architectural Simplification:**
+
+* **Single code path** for both Emacs and LSP clients - eliminates maintenance overhead
+* **No mode distinctions** - same smart logic serves all use cases optimally
+* **Leverages existing logic** - reuses proven dependency tracking and caching systems
+* **Reduced complexity** - eliminates artificial FILE_BASED/ON_DEMAND/HYBRID modes
+
+**User Experience Improvements:**
+
+* **Zero configuration** - works immediately on any C project without setup
+* **No cold start delay** - first symbol lookup triggers minimal necessary scanning
+* **Transparent caching** - `.cx` files automatically maintained as performance optimization
+* **Consistent behavior** - same results whether using Emacs or modern IDE with LSP
+
+**Performance Characteristics:**
+
+* **Minimal initial cost** - avoids expensive upfront full-project scanning
+* **Smart incremental updates** - only rescans files that have actually changed
+* **Automatic dependency tracking** - includes files affected by changes get updated
+* **Persistent optimization** - analysis results cached across sessions
+
+**Development Benefits:**
+
+* **Backward compatibility** - existing Emacs workflows continue unchanged
+* **Forward compatibility** - natural path to modern LSP integration
+* **Reduced maintenance** - single implementation instead of multiple modes
+* **Enhanced testability** - unified logic easier to test comprehensively
+
+===== Existing Infrastructure: Sophisticated Dependency Tracking
+
+The unified approach leverages c-xrefactory's **existing sophisticated dependency management** that handles include file relationships automatically:
+
+**File Modification Tracking** (`filetable.h`, `caching.c`):
 
 [source,c]
 ----
-// Combines advantages of both approaches
-SymbolDatabase* createHybridSymbolDatabase(const char* workspaceRoot, 
-                                          const char* cxrefsLocation);
+typedef struct fileItem {
+    char *name;
+    time_t lastModified;        // Last known modification time
+    time_t lastInspected;       // Last time we checked
+    time_t lastUpdateMtime;     // Last update cycle time  
+    time_t lastFullUpdateMtime; // Last full update time
+    // ... scheduling and state flags
+} FileItem;
+
+bool checkFileModifiedTime(int fileNumber);
 ----
 
-* Uses `.cx` files when available (fast)
-* Falls back to on-demand parsing for new/modified files
-* Gradually builds `.cx` database in background
-* Optimal performance with LSP responsiveness
+**Include Dependency Tracking** (`yylex.c:474`, `caching.c:323-334`):
 
-===== Migration Strategy
+[source,c]
+----
+void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
+    // ... setup include stack
+    includeStack.stack[includeStack.pointer++] = currentFile;
+    cacheInclude(currentFile.characterBuffer.fileNumber);  // Record dependency
+}
 
-**Phase 1: Abstraction Layer**
+// Cascading validation: if ANY included file changed, parent needs rescan
+static bool cachedIncludedFilePass(int index) {
+    for (int i = cache.points[index - 1].includeStackTop; i < includeTop; i++) {
+        if (!checkFileModifiedTime(cache.includeStack[i]))
+            return false;  // ANY included file changed = need rescan
+    }
+    return true;
+}
+----
 
-* Create `SymbolDatabaseOperations` interface
-* Implement `SDB_FILE_BASED` mode as wrapper around existing code
-* Update LSP code to use abstraction instead of direct calls
-* Maintain full backward compatibility
+**Automatic Include Closure** (`xref.c:81-111`):
 
-**Phase 2: On-Demand Implementation**
+[source,c]
+----
+static void makeIncludeClosureOfFilesToUpdate(void) {
+    // If file A includes file B, and B is modified, A gets scheduled for update
+    bool fileAddedFlag = true;
+    while (fileAddedFlag) {
+        // Iterative closure: keeps adding dependent files until stable
+        for (all scheduled files) {
+            find_all_files_that_include_this_file();
+            schedule_them_for_update();
+        }
+    }
+}
+----
 
-* Implement `SDB_ON_DEMAND` mode with in-memory parsing
-* Add file change detection and cache invalidation
-* Enable LSP functionality without `.cx` files
-* Performance optimization and memory management
-
-**Phase 3: Hybrid Mode**
-
-* Implement `SDB_HYBRID` mode combining both approaches  
-* Add background `.cx` file generation for LSP workspaces
-* Smart caching strategies for optimal performance
-* Production-ready LSP integration
-
-===== Benefits
-
-**For Traditional c-xrefactory Users:**
-
-* Full backward compatibility - no changes to existing workflows
-* Performance preservation - same `.cx` file performance characteristics
-* Feature completeness - all existing functionality preserved
-
-**For LSP Integration:**
-
-* No cold start problem - works immediately without pre-built databases
-* Responsive queries - on-demand parsing for immediate results
-* IDE integration - proper LSP protocol compliance
-* Workspace-aware - multiple projects without database conflicts
-
-**For Development:**
-
-* Incremental migration - phase-by-phase implementation and testing
-* Risk mitigation - fallback to existing implementation always available
-* Future extensibility - easy to add new symbol database backends
-* Clean architecture - separation of concerns between database and operations
+**Key Insight:** This dependency tracking infrastructure is **already production-ready** and handles the complex cases (transitive dependencies, modification time checking, include stack management). The unified symbol database can leverage this existing logic instead of reimplementing dependency management.
 
 ==== CXFILE
 
