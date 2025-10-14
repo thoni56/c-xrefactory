@@ -8,3 +8,6 @@
 $@ > output.run &
 PROCID=$!
 while kill -0 $PROCID > /dev/null 2>&1 ; do sleep 1 ; printf "." ; done
+
+wait "$PROCID"            # reap the child
+exit $?                   # return child's exit code
