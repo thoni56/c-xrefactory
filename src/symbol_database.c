@@ -26,9 +26,18 @@ void destroySymbolDatabase(SymbolDatabase *db) {
 }
 
 SymbolLookupResult lookupSymbol(SymbolDatabase *db, const char *fileName, Position pos) {
-    // TODO: Automatically check if fileName or its dependencies have changed
-    // TODO: Parse/reparse only the files that need updating
-    // TODO: Then perform the actual symbol lookup
+    // Stub implementation for now
+    // TODO: This is where we would:
+    // 1. Check if fileName needs to be rescanned (file modification time, etc.)
+    // 2. Call parseCurrentInputFile() or similar to populate symbol tables
+    // 3. Search the populated symbol tables for symbol at position
+    // 4. Return the found symbol wrapped in SymbolLookupResult
+    
+    (void)db;        // Suppress unused parameter warnings
+    (void)fileName;
+    (void)pos;
+    
+    // For now, always return "not found" to match our test expectation
     return makeSymbolLookupFailure();
 }
 
