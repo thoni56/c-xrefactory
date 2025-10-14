@@ -529,7 +529,9 @@ system-tests: c-xref
 	$(MAKE) -e test
 	$(MAKE) -e merge-coverage-from-tests
 	@$(MAKE) -e coverage-report
+ifneq (($OS),Darwin)
 	@$(MAKE) -e cloc
+endif
 
 #########################################################################
 #
