@@ -59,7 +59,6 @@ typedef enum {
     CXSF_DEFAULT,
     CXSF_JUST_READ,
     CXSF_GENERATE_OUTPUT,
-    CXSF_BYPASS,
     CXSF_FIRST_PASS,
     CXSF_MENU_CREATION,
     CXSF_DEAD_CODE_DETECTION,
@@ -130,7 +129,6 @@ typedef struct scanFileFunctionStep {
 static ScanFileFunctionStep normalScanFunctionSequence[];
 static ScanFileFunctionStep fullScanFunctionSequence[];
 static ScanFileFunctionStep fullUpdateFunctionSequence[];
-static ScanFileFunctionStep byPassFunctionSequence[];
 static ScanFileFunctionStep symbolMenuCreationFunctionSequence[];
 static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
 static ScanFileFunctionStep globalUnusedDetectionFunctionSequence[];
@@ -796,19 +794,6 @@ static bool symbolIsReportableAsUnused(ReferenceItem *referenceItem) {
     return true;
 }
 
-static bool canBypassAcceptableSymbol(ReferenceItem *symbol) {
-    int nlen,len;
-    char *nn, *nnn;
-
-    getBareName(symbol->linkName, &nn, &len);
-    getBareName(options.browsedSymName, &nnn, &nlen);
-    if (len != nlen)
-        return false;
-    if (strncmp(nn, nnn, len))
-        return false;
-    return true;
-}
-
 static void scanFunction_SymbolName(int size,
                                     int key,
                                     CharacterBuffer *cb,
@@ -867,12 +852,9 @@ static void scanFunction_SymbolName(int size,
                     else
                         ols = 1;
                 }
-            } else if (operation!=CXSF_BYPASS) {
-                ols=itIsSymbolToPushOlReferences(referenceItem, sessionData.browserStack.top, &cms,
-                                                 DEFAULT_VALUE);
             }
             lastIncomingData.onLineRefMenuItem = cms;
-            if (ols || (operation==CXSF_BYPASS && canBypassAcceptableSymbol(referenceItem))) {
+            if (ols) {
                 lastIncomingData.onLineReferencedSym = 0;
                 log_trace("symbol %s is O.K. for %s (ols==%d)", referenceItem->linkName, options.browsedSymName, ols);
             } else {
@@ -985,15 +967,6 @@ static void scanFunction_Reference(int size,
                             options.serverOperation == OLO_PUSH_NAME) {
                             log_trace (":adding reference %s:%d", referenceFileItem->name, reference.position.line);
                             olcxAddReferenceToSymbolsMenu(lastIncomingData.onLineRefMenuItem, &reference);
-                        }
-                    } else if (operation == CXSF_BYPASS) {
-                        if (positionsAreEqual(olcxByPassPos,reference.position)) {
-                            // got the bypass reference
-                            log_trace(":adding bypass selected symbol %s", lastIncomingData.referenceItem->linkName);
-                            addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym,
-                                                   lastIncomingData.referenceItem, true, true,
-                                                   0, (SymbolRelation){.sameFile = false}, usage, 0, noPosition,
-                                                   UsageNone);
                         }
                     } else {
                         addReferenceToList(&sessionData.browserStack.top->references, &reference);
@@ -1196,10 +1169,6 @@ void fullScanFor(char *symbolName) {
     readOneAppropiateReferenceFile(symbolName, fullUpdateFunctionSequence);
 }
 
-void scanForBypass(char *symbolName) {
-    readOneAppropiateReferenceFile(symbolName, byPassFunctionSequence);
-}
-
 void scanReferencesToCreateMenu(char *symbolName){
     readOneAppropiateReferenceFile(symbolName, symbolMenuCreationFunctionSequence);
 }
@@ -1234,16 +1203,6 @@ static ScanFileFunctionStep fullScanFunctionSequence[]={
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_GENERATE_OUTPUT},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEFAULT},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIRST_PASS},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
-    {-1,NULL, 0},
-};
-
-static ScanFileFunctionStep byPassFunctionSequence[]={
-    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
-    {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
-    {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_BYPASS},
-    {CXFI_REFERENCE, scanFunction_Reference, CXSF_BYPASS},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };

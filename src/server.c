@@ -39,62 +39,6 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
 }
 
 
-static bool symbolCanBeIdentifiedByPosition(int fileNumber) {
-    int line,col;
-
-    // there is a serious problem with options memory for options got from
-    // the .c-xrefrc file. so for the moment this will not work.
-    // which problem ??????
-    // seems that those options are somewhere in ppmMemory overwritten?
-    //&return 0;
-    if (!requiresCreatingRefs(options.serverOperation))
-        return false;
-    if (options.browsedSymName == NULL)
-        return false;
-    log_trace("looking for sym %s on %s", options.browsedSymName, options.olcxlccursor);
-
-    // here I will need also the symbol name
-    // do not bypass commanline entered files, because of local symbols
-    // and because references from currently procesed file would
-    // be not loaded from the TAG file (it expects they are loaded
-    // by parsing).
-    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-    log_trace("commandLineEntered %s == %d", fileItem->name, fileItem->isArgument);
-    if (fileItem->isArgument)
-        return false;
-
-    // if references are not updated do not search it here
-    // there were fullUpdate time? why?
-    log_trace("checking last modified: %d, update: %d", fileItem->lastModified, fileItem->lastUpdateMtime);
-    if (fileItem->lastModified != fileItem->lastUpdateMtime)
-        return false;
-
-    // here read one reference file looking for the refs
-    // assume s_opt.olcxlccursor is correctly set;
-    getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
-    olcxByPassPos = makePosition(fileNumber, line, col);
-    olSetCallerPosition(olcxByPassPos);
-    scanForBypass(options.browsedSymName);
-
-    // if no symbol found, it may be a local symbol, try by parsing
-    log_trace("checking that %d != NULL", sessionData.browserStack.top->hkSelectedSym);
-    if (sessionData.browserStack.top->hkSelectedSym == NULL)
-        return false;
-
-    // here I should set caching to 1 and recover the cachePoint ???
-    // yes, because last file references are still stored, even if I
-    // update the cxref file, so do it only if switching file?
-    // but how to ensure that next pass will start parsing?
-    // By recovering of point 0 handled as such a special case.
-
-    /* This is probably resetting to initial file parsing state, it has nothing to do
-     * with caching, except that cacing also needs to reset those variables */
-    recoverCachePointZero();
-
-    log_trace("yes, it can be identified by position");
-    return true;
-}
-
 static int scheduleFileUsingTheMacro(void) {
     OlcxReferences *tmpc;
 
@@ -192,11 +136,7 @@ static void singlePass(int argc, char **argv,
 
     smartReadReferences();
     originalFileNumber = inputFileNumber;
-    if (symbolCanBeIdentifiedByPosition(inputFileNumber)) {
-        if (inputOpened)
-            closeInputFile();
-        return;
-    }
+
     if (inputOpened) {
         parseInputFile();
         *firstPassP = false;

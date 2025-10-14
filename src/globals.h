@@ -73,7 +73,6 @@ extern TypeModifier *preCreatedTypesTable[MAX_TYPE];
 extern TypeModifier *preCreatedPtr2TypeTable[MAX_TYPE];
 extern TypeModifier *preCreatedPtr2Ptr2TypeTable[MAX_TYPE];
 
-extern Position olcxByPassPos;
 extern Position cxRefPosition;
 
 extern int inputFileNumber;

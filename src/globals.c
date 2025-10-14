@@ -38,7 +38,6 @@ Completions collectedCompletions;
 
 /* **************** cached symbols ********************** */
 
-Position olcxByPassPos;
 Position cxRefPosition;         /* Maybe the position that we consider us "on"? */
 
 time_t fileProcessingStartTime;
