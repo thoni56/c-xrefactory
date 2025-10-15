@@ -186,7 +186,7 @@ static void setCurrentFileInfoFor(char *fileName) {
         number = addFileNameToFileTable(fileName);
         FileItem *fileItem = getFileItemWithFileNumber(number);
         name = fileItem->name;
-        checkFileModifiedTime(number);
+        updateFileModificationTracking(number);
         bool cxloading = fileItem->cxLoading;
         if (!existed) {
             cxloading = true;

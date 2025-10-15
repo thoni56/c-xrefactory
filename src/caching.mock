@@ -5,8 +5,12 @@
 Cache cache;
 
 
-bool checkFileModifiedTime(int fileIndex) {
-  return (bool) mock(fileIndex);
+void updateFileModificationTracking(int fileNumber) {
+  mock(fileNumber);
+}
+
+bool isFileModifiedSinceCached(int fileNumber) {
+  return (bool) mock(fileNumber);
 }
 
 void initCaching(void) {

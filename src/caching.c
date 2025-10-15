@@ -45,36 +45,52 @@ Cache cache;
 /* ========================================================================== */
 
 /**
- * Check if a file's modification time indicates it hasn't changed since last cache.
+ * Update a file's modification time tracking information.
  * 
- * This function implements file modification tracking for cache validation.
+ * This function updates the lastInspected and lastModified fields
+ * of a FileItem by checking the current file system state.
+ * Used for general file tracking purposes.
+ * 
+ * @param fileNumber The file number to update tracking for
+ */
+void updateFileModificationTracking(int fileNumber) {
+    time_t now = time(NULL);
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+    
+    fileItem->lastInspected = now;
+    
+    if (editorFileExists(fileItem->name)) {
+        fileItem->lastModified = editorFileModificationTime(fileItem->name);
+    }
+}
+
+/**
+ * Check if a file has been modified since last cache (for cache validation).
+ * 
+ * This function is specifically for cache validation - it checks if a file
+ * has changed since it was cached, without updating tracking information.
  * Files are considered current if they were inspected during this execution
  * or if their modification time matches the cached value.
  * 
  * @param fileNumber The file number to check
  * @return true if file is current (unchanged), false if modified or missing
  */
-bool checkFileModifiedTime(int fileNumber) {
+bool isFileModifiedSinceCached(int fileNumber) {
     time_t now = time(NULL);
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
 
     if (fileItem->lastInspected >= fileProcessingStartTime
         && fileItem->lastInspected <= now) {
         /* Assuming that files cannot change during one execution */
-        return true;
+        return false; /* Not modified since cached */
     }
+    
     if (!editorFileExists(fileItem->name)) {
-        return false;
+        return true; /* File missing = modified */
     }
 
-    fileItem->lastInspected = now;
     time_t modificationTime = editorFileModificationTime(fileItem->name);
-    if (modificationTime == fileItem->lastModified) {
-        return true;
-    } else {
-        fileItem->lastModified = modificationTime;
-        return false;
-    }
+    return (modificationTime != fileItem->lastModified); /* true if modified */
 }
 
 /* ========================================================================== */
@@ -207,10 +223,10 @@ static bool cachedIncludedFilePass(int index) {
     assert(index > 0);
     includeTop = cache.points[index].includeStackTop;
     for (int i = cache.points[index - 1].includeStackTop; i < includeTop; i++) {
-        bool fileIsCurrent = checkFileModifiedTime(cache.includeStack[i]);
+        bool fileIsModified = isFileModifiedSinceCached(cache.includeStack[i]);
         log_debug("mtime of %s eval to %s", getFileItemWithFileNumber(cache.includeStack[i])->name,
-                  fileIsCurrent ? "true" : "false");
-        if (!fileIsCurrent)
+                  fileIsModified ? "modified" : "unchanged");
+        if (fileIsModified)
             return false;
     }
     return true;
@@ -441,7 +457,7 @@ void cacheInclude(int fileNum) {
         return;
     log_debug("caching include of file %d: %s",
               cache.includeStackTop, getFileItemWithFileNumber(fileNum)->name);
-    checkFileModifiedTime(fileNum);
+    updateFileModificationTracking(fileNum);
     assert(cache.includeStackTop < INCLUDE_STACK_CACHE_SIZE);
     cache.includeStack[cache.includeStackTop] = fileNum;
     cache.includeStackTop ++;

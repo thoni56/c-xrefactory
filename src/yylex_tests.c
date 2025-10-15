@@ -137,7 +137,7 @@ Ensure(Yylex, can_process_include_directive) {
     expect(openFile, when(fileName, is_equal_to_string("some/path/include.h")), will_return(&file));
 
     /* Always  */
-    always_expect(checkFileModifiedTime);
+    always_expect(updateFileModificationTracking);
     always_expect(cacheInclude, will_capture_parameter(fileNum, fileNumber));
 
     /* Finally ensure that the include file is added as a reference */
@@ -202,7 +202,7 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
     expect(normalizeFileName_static, when(name, is_equal_to_string("path2/include.h")), will_return("path2/include.h"));
 
     /* Always  */
-    always_expect(checkFileModifiedTime);
+    always_expect(updateFileModificationTracking);
     always_expect(cacheInclude, will_capture_parameter(fileNum, fileNumber));
 
     /* Finally ensure that the include file is added as a reference */
@@ -263,7 +263,7 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
     expect(normalizeFileName_static, when(name, is_equal_to_string("path3/include.h")), will_return("path3/include.h"));
 
     /* Always  */
-    always_expect(checkFileModifiedTime);
+    always_expect(updateFileModificationTracking);
     always_expect(cacheInclude, will_capture_parameter(fileNum, fileNumber));
 
     /* Finally ensure that the include file is added as a reference */

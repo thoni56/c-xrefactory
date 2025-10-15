@@ -112,10 +112,24 @@ extern void recoverFromCache(void);
 extern void recoverMemoriesAfterOverflow(char *cxMemFreeBase);
 
 /**
- * Check if a file has been modified since last cache
- * @param fileIndex Index of file to check
+ * Update a file's modification time tracking information.
+ * 
+ * This function updates the lastInspected and lastModified fields
+ * of a FileItem by checking the current file system state.
+ * 
+ * @param fileNumber The file number to update tracking for
+ */
+extern void updateFileModificationTracking(int fileNumber);
+
+/**
+ * Check if a file has been modified since last cache (for cache validation).
+ * 
+ * This function is specifically for cache validation - it checks if a file
+ * has changed since it was cached, without updating tracking information.
+ * 
+ * @param fileNumber Index of file to check
  * @return true if file is up-to-date, false if modified
  */
-extern bool checkFileModifiedTime(int fileIndex);
+extern bool isFileModifiedSinceCached(int fileNumber);
 
 #endif

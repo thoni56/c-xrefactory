@@ -4,7 +4,7 @@
 #include "hash.h"
 #include "memory.h"
 #include "globals.h"            /* For cwd */
-#include "caching.h"            /* For checkFileModifiedTime() */
+#include "caching.h"
 
 
 /* Define the hashtab: */
@@ -135,7 +135,7 @@ int addFileNameToFileTable(char *fileName) {
     createdFileItem = newFileItem(normalizedFileName);
 
     fileNumber = fileTableAdd(&fileTable, createdFileItem);
-    checkFileModifiedTime(fileNumber); // it was too slow on load ?
+    updateFileModificationTracking(fileNumber); // Initialize file tracking
 
     return fileNumber;
 }
