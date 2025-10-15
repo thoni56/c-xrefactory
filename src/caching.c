@@ -1,3 +1,19 @@
+/**
+ * @file caching.c
+ * @brief Incremental parsing cache system
+ * 
+ * This file implements the caching system that enables incremental parsing
+ * in c-xrefactory. The cache stores tokenized input and parser state snapshots
+ * to avoid re-parsing unchanged code sections, significantly improving
+ * performance for large codebases.
+ * 
+ * Key concepts:
+ * - Cache Points: Complete parser state snapshots that can be restored
+ * - Input Caching: Storage of tokenized lexical input in a buffer
+ * - File Modification Tracking: Validation that included files haven't changed
+ * - Memory Recovery: Restoration of various memory pools to cached states
+ */
+
 #include "caching.h"
 
 #include <assert.h>
@@ -18,9 +34,26 @@
 
 #include "log.h"
 
+/* ========================================================================== */
+/*                              Global State                                 */
+/* ========================================================================== */
+
 Cache cache;
 
+/* ========================================================================== */
+/*                        File Modification Tracking                        */
+/* ========================================================================== */
 
+/**
+ * Check if a file's modification time indicates it hasn't changed since last cache.
+ * 
+ * This function implements file modification tracking for cache validation.
+ * Files are considered current if they were inspected during this execution
+ * or if their modification time matches the cached value.
+ * 
+ * @param fileNumber The file number to check
+ * @return true if file is current (unchanged), false if modified or missing
+ */
 bool checkFileModifiedTime(int fileNumber) {
     time_t now = time(NULL);
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
@@ -44,6 +77,9 @@ bool checkFileModifiedTime(int fileNumber) {
     }
 }
 
+/* ========================================================================== */
+/*                           Memory Recovery                                 */
+/* ========================================================================== */
 
 static void deleteReferencesOutOfMemory(Reference **referenceP) {
     while (*referenceP!=NULL) {
@@ -156,6 +192,16 @@ static void recoverMemoryFromIncludeList(void) {
     }
 }
 
+/**
+ * Validate that all files included between two cache points are still current.
+ * 
+ * This function checks file modification times for all files that were
+ * included between the previous cache point and the specified cache point.
+ * If any file has been modified, the cache is invalid.
+ * 
+ * @param index Cache point index to validate files for
+ * @return true if all included files are current, false if any were modified
+ */
 static bool cachedIncludedFilePass(int index) {
     int includeTop;
     assert(index > 0);
@@ -176,6 +222,25 @@ static void recoverCxMemory(void *cxMemoryFlushPoint) {
     mapOverReferenceTableWithIndex(recoverMemoryFromReferenceTableEntry);
 }
 
+/* ========================================================================== */
+/*                         Cache State Management                            */
+/* ========================================================================== */
+
+/**
+ * Initialize cache structure with specified state values.
+ * 
+ * This utility function sets all the cache state fields in one operation.
+ * Used when initializing the cache or updating its state during recovery.
+ * 
+ * @param cache Cache structure to fill
+ * @param cachingActive Whether caching should be active
+ * @param cachePointIndex Next available cache point index
+ * @param includeStackTop Current include stack depth
+ * @param free Next free position in lexem stream
+ * @param next Next input position to cache
+ * @param read Current read position in cache
+ * @param write Current write position in cache
+ */
 static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int includeStackTop, char *free,
                       char *next, char *read, char *write) {
     cache->active          = cachingActive;
@@ -215,6 +280,17 @@ void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
     recoverCachePointZero();
 }
 
+/**
+ * Restore parser state from a specific cache point.
+ * 
+ * This function performs a complete restoration of the parser state from
+ * a previously saved cache point, including memory pools, parsing context,
+ * and input stream position.
+ * 
+ * @param cachePointIndex Index of the cache point to restore from
+ * @param readUntil Input position to read until in cached stream  
+ * @param cachingActive Whether to activate caching after recovery
+ */
 void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive) {
     log_trace("Recovering cache point %d", cachePointIndex);
     CachePoint *cachePoint = &cache.points[cachePointIndex];
@@ -252,9 +328,9 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
     log_trace("finished recovering");
 }
 
-/* ******************************************************************* */
-/*                         recover from cache                          */
-/* ******************************************************************* */
+/* ========================================================================== */
+/*                           Cache Recovery                                  */
+/* ========================================================================== */
 
 void recoverFromCache(void) {
     int i;
@@ -283,40 +359,80 @@ void initCaching(void) {
     deactivateCaching();
 }
 
-/* ****************************************************************** */
-/*        Caching of input from LexemBuffer to LexInput               */
-/* ****************************************************************** */
+/* ========================================================================== */
+/*                            Input Caching                                  */
+/* ========================================================================== */
 
-void cacheInput(LexInput *input) {
-    int size;
-
-    ENTER();
+/**
+ * Check if input caching should be skipped due to current parsing context.
+ * 
+ * @return true if caching should be skipped, false if it can proceed
+ */
+static bool shouldSkipInputCaching(void) {
     if (!cachingIsActive()) {
         log_trace("Caching is not active");
-        LEAVE();
-        return;
+        return true;
     }
     if (includeStack.pointer != 0 || macroStackIndex != 0) {
         log_trace("In include or macro, will not cache now");
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Check if there's enough space in the cache buffer for the input.
+ * 
+ * @param size Number of bytes to cache
+ * @return true if there's enough space, false if cache is full
+ */
+static bool hasEnoughCacheSpace(int size) {
+    return (cache.free - cache.lexemStream + size < LEXEM_STREAM_CACHE_SIZE);
+}
+
+/**
+ * Copy input data to the cache buffer if not already cached.
+ * 
+ * @param input The input to cache
+ * @param size Number of bytes to copy
+ */
+static void copyInputToCache(LexInput *input, int size) {
+    /* Avoid copying if we are already reading from cached data */
+    if (input->inputType != INPUT_CACHE) {
+        /* Copy from next un-cached to the free area of the cache buffer */
+        memcpy(cache.free, cache.nextToCache, size);
+    }
+    cache.free += size;
+    cache.nextToCache = input->read;
+}
+
+/**
+ * Store lexical input in the cache buffer.
+ * 
+ * This function copies input tokens to the cache buffer for later reuse.
+ * Caching is skipped when inside includes/macros or when the buffer is full.
+ * 
+ * @param input The lexical input to cache
+ */
+void cacheInput(LexInput *input) {
+    ENTER();
+    
+    if (shouldSkipInputCaching()) {
         LEAVE();
         return;
     }
-    /* How much needs to be cached? input vs. cache?!? */
-    size = input->read - cache.nextToCache;
-
-    /* Is there space enough? */
-    if (cache.free - cache.lexemStream + size >= LEXEM_STREAM_CACHE_SIZE) {
+    
+    /* Calculate how much needs to be cached */
+    int size = input->read - cache.nextToCache;
+    
+    /* Check if there's enough space */
+    if (!hasEnoughCacheSpace(size)) {
         deactivateCaching();
         LEAVE();
         return;
     }
-
-    /* Avoid copying if we are already reading from cached data */
-    if (input->inputType != INPUT_CACHE)
-        /* Copy from next un-cached to the free area of the cache buffer */
-        memcpy(cache.free, cache.nextToCache, size);
-    cache.free += size;
-    cache.nextToCache = input->read;
+    
+    copyInputToCache(input, size);
     LEAVE();
 }
 
