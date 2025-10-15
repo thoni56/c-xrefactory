@@ -56,7 +56,7 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 				server -> cxref "handles references using" call
 				refactory -> cxref "handles references using" call
 
-                caching = Component caching "Caching File Reading"
+                caching = Component caching "Caching System" "Incremental parsing optimization with cache points, file modification tracking, and input stream caching for faster re-analysis" C
 				lexer = Component yylex "Lexical Analyser" C
 				parser = Component parser "Parser" C
 				parser -> lexer "reads tokenized source using" buffering
