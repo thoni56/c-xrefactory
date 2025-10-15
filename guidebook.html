@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.23">
-<meta name="author" content="v{VERSION} - Generated 2025-10-08">
+<meta name="generator" content="Asciidoctor 2.0.24">
+<meta name="author" content="v{VERSION} - Generated 2025-10-15">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -117,7 +117,6 @@ h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title str
 :not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
 pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
 pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
-pre>code{display:block}
 pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
 em em{font-style:normal}
 strong strong{font-weight:400}
@@ -220,6 +219,7 @@ table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
 .literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class=highlight],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
 .literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
 .listingblock>.content{position:relative}
+.listingblock pre>code{display:block}
 .listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
 .listingblock:hover code[data-lang]::before{display:block}
 .listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-10-08</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-10-15</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -959,14 +959,14 @@ database "==Source Code\n&lt;size:10&gt;[a set of files stored on disk]&lt;/size
 
 rectangle "C-xrefactory\n&lt;size:10&gt;[Software System]&lt;/size&gt;" &lt;&lt;Cxrefactory&gt;&gt; {
   rectangle "==cxrefCore\n&lt;size:10&gt;[Container: Refactoring Browser core]&lt;/size&gt;\n\nC Language program" &lt;&lt;Cxrefactory.cxrefCore&gt;&gt; as Cxrefactory.cxrefCore
-  database "==settingsStore\n&lt;size:10&gt;[Container: Configuration file for project settings]&lt;/size&gt;\n\nNon-standard format settings file" &lt;&lt;Cxrefactory.settingsStore&gt;&gt; as Cxrefactory.settingsStore
-  database "==referencesDb\n&lt;size:10&gt;[Container: Stores information about all inter-module references in the source code in the project which is updated by scanning all or parts of the source when required]&lt;/size&gt;\n\nSource code information storage" &lt;&lt;Cxrefactory.referencesDb&gt;&gt; as Cxrefactory.referencesDb
   rectangle "==editorExtension\n&lt;size:10&gt;[Container: Plugin]&lt;/size&gt;\n\nExtends the Editor with c-xref operations and interfaces to the c-xrefactory API" &lt;&lt;Cxrefactory.editorExtension&gt;&gt; as Cxrefactory.editorExtension
+  database "==settingsStore\n&lt;size:10&gt;[Container: Configuration file for project settings]&lt;/size&gt;\n\nNon-standard format settings file" &lt;&lt;Cxrefactory.settingsStore&gt;&gt; as Cxrefactory.settingsStore
+  database "==referencesDb\n&lt;size:10&gt;[Container: Persistent symbol database storing references, definitions, and metadata for all project symbols. Created via -create/-update operations, indexed by symbol hash for fast lookup]&lt;/size&gt;\n\nCross-Reference Database (.cx files)" &lt;&lt;Cxrefactory.referencesDb&gt;&gt; as Cxrefactory.referencesDb
 }
 
 Editor .[#707070,thickness=2].&gt; Cxrefactory.editorExtension : "&lt;color:#707070&gt;extends functionality using\n&lt;color:#707070&gt;&lt;size:8&gt;[plugin]&lt;/size&gt;"
 Cxrefactory.cxrefCore .[#707070,thickness=2].&gt; 3 : "&lt;color:#707070&gt;reads source code from\n&lt;color:#707070&gt;&lt;size:8&gt;[file I/O]&lt;/size&gt;"
-Cxrefactory.cxrefCore .[#707070,thickness=2].&gt; Cxrefactory.referencesDb : "&lt;color:#707070&gt;reads from and writes to\n&lt;color:#707070&gt;&lt;size:8&gt;[file I/O]&lt;/size&gt;"
+Cxrefactory.cxrefCore .[#707070,thickness=2].&gt; Cxrefactory.referencesDb : "&lt;color:#707070&gt;builds and queries\n&lt;color:#707070&gt;&lt;size:8&gt;[hash-based lookup]&lt;/size&gt;"
 Cxrefactory.editorExtension .[#707070,thickness=2].&gt; Cxrefactory.settingsStore : "&lt;color:#707070&gt;writes\n&lt;color:#707070&gt;&lt;size:8&gt;[new project wizard]&lt;/size&gt;"
 Cxrefactory.cxrefCore .[#707070,thickness=2].&gt; Cxrefactory.settingsStore : "&lt;color:#707070&gt;read"
 Cxrefactory.editorExtension .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore : "&lt;color:#707070&gt;API\n&lt;color:#707070&gt;&lt;size:8&gt;[requests information and gets commands to modify source code]&lt;/size&gt;"
@@ -1030,6 +1030,13 @@ skinparam database&lt;&lt;3&gt;&gt; {
   BorderColor #9a9a9a
   shadowing false
 }
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.browserStack&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
 skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.caching&gt;&gt; {
   BackgroundColor #85bbf0
   FontColor #000000
@@ -1058,6 +1065,13 @@ skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.lsp&gt;&gt; {
   roundCorner 20
   shadowing false
 }
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.lspAdapter&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
 skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.main&gt;&gt; {
   BackgroundColor #85bbf0
   FontColor #000000
@@ -1079,6 +1093,13 @@ skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.refactory&gt;&gt; {
   roundCorner 20
   shadowing false
 }
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.referenceTable&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
 skinparam database&lt;&lt;Cxrefactory.referencesDb&gt;&gt; {
   BackgroundColor #438dd5
   FontColor #ffffff
@@ -1086,6 +1107,13 @@ skinparam database&lt;&lt;Cxrefactory.referencesDb&gt;&gt; {
   shadowing false
 }
 skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.server&gt;&gt; {
+  BackgroundColor #85bbf0
+  FontColor #000000
+  BorderColor #5d82a8
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.symbolResolver&gt;&gt; {
   BackgroundColor #85bbf0
   FontColor #000000
   BorderColor #5d82a8
@@ -1113,16 +1141,20 @@ skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore&gt;&gt; {
 }
 
 database "==Source Code\n&lt;size:10&gt;[a set of files stored on disk]&lt;/size&gt;" &lt;&lt;3&gt;&gt; as 3
-database "==referencesDb\n&lt;size:10&gt;[Container: Stores information about all inter-module references in the source code in the project which is updated by scanning all or parts of the source when required]&lt;/size&gt;\n\nSource code information storage" &lt;&lt;Cxrefactory.referencesDb&gt;&gt; as Cxrefactory.referencesDb
+database "==referencesDb\n&lt;size:10&gt;[Container: Persistent symbol database storing references, definitions, and metadata for all project symbols. Created via -create/-update operations, indexed by symbol hash for fast lookup]&lt;/size&gt;\n\nCross-Reference Database (.cx files)" &lt;&lt;Cxrefactory.referencesDb&gt;&gt; as Cxrefactory.referencesDb
 
 rectangle "cxrefCore\n&lt;size:10&gt;[Container: Refactoring Browser core]&lt;/size&gt;" &lt;&lt;Cxrefactory.cxrefCore&gt;&gt; {
   rectangle "==main\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nMain program" &lt;&lt;Cxrefactory.cxrefCore.main&gt;&gt; as Cxrefactory.cxrefCore.main
   rectangle "==xref\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nCross-referencer" &lt;&lt;Cxrefactory.cxrefCore.xref&gt;&gt; as Cxrefactory.cxrefCore.xref
   rectangle "==server\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nEditor Server" &lt;&lt;Cxrefactory.cxrefCore.server&gt;&gt; as Cxrefactory.cxrefCore.server
   rectangle "==refactory\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nRefactory" &lt;&lt;Cxrefactory.cxrefCore.refactory&gt;&gt; as Cxrefactory.cxrefCore.refactory
-  rectangle "==lsp\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nLSP" &lt;&lt;Cxrefactory.cxrefCore.lsp&gt;&gt; as Cxrefactory.cxrefCore.lsp
+  rectangle "==lsp\n&lt;size:10&gt;[Component: Language Server Protocol implementation for IDE integration - currently limited by symbol database architecture]&lt;/size&gt;\n\nLSP Server" &lt;&lt;Cxrefactory.cxrefCore.lsp&gt;&gt; as Cxrefactory.cxrefCore.lsp
+  rectangle "==lspAdapter\n&lt;size:10&gt;[Component: Converts LSP requests to c-xrefactory operations - needs symbol database abstraction]&lt;/size&gt;\n\nLSP Adapter" &lt;&lt;Cxrefactory.cxrefCore.lspAdapter&gt;&gt; as Cxrefactory.cxrefCore.lspAdapter
   rectangle "==cxref\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nReference handler" &lt;&lt;Cxrefactory.cxrefCore.cxref&gt;&gt; as Cxrefactory.cxrefCore.cxref
-  rectangle "==cxfile\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nReference Storage using text files" &lt;&lt;Cxrefactory.cxrefCore.cxfile&gt;&gt; as Cxrefactory.cxrefCore.cxfile
+  rectangle "==cxfile\n&lt;size:10&gt;[Component: Manages persistent cross-reference database with symbol indexing and file-based storage]&lt;/size&gt;\n\nReference Storage (.cx files)" &lt;&lt;Cxrefactory.cxrefCore.cxfile&gt;&gt; as Cxrefactory.cxrefCore.cxfile
+  rectangle "==browserStack\n&lt;size:10&gt;[Component: Runtime symbol context stack for navigation, containing current references and symbol menus]&lt;/size&gt;\n\nBrowser Stack" &lt;&lt;Cxrefactory.cxrefCore.browserStack&gt;&gt; as Cxrefactory.cxrefCore.browserStack
+  rectangle "==symbolResolver\n&lt;size:10&gt;[Component: Converts cursor positions to symbols, loads references, and finds definitions]&lt;/size&gt;\n\nSymbol Resolution Pipeline" &lt;&lt;Cxrefactory.cxrefCore.symbolResolver&gt;&gt; as Cxrefactory.cxrefCore.symbolResolver
+  rectangle "==referenceTable\n&lt;size:10&gt;[Component: Runtime symbol cache loaded from .cx files for active session]&lt;/size&gt;\n\nIn-Memory Reference Table" &lt;&lt;Cxrefactory.cxrefCore.referenceTable&gt;&gt; as Cxrefactory.cxrefCore.referenceTable
   rectangle "==caching\n&lt;size:10&gt;[Component]&lt;/size&gt;\n\nCaching File Reading" &lt;&lt;Cxrefactory.cxrefCore.caching&gt;&gt; as Cxrefactory.cxrefCore.caching
   rectangle "==yylex\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nLexical Analyser" &lt;&lt;Cxrefactory.cxrefCore.yylex&gt;&gt; as Cxrefactory.cxrefCore.yylex
   rectangle "==parser\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nParser" &lt;&lt;Cxrefactory.cxrefCore.parser&gt;&gt; as Cxrefactory.cxrefCore.parser
@@ -1133,9 +1165,15 @@ Cxrefactory.cxrefCore.main .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.ser
 Cxrefactory.cxrefCore.main .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.refactory : "&lt;color:#707070&gt;dispatches to\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
 Cxrefactory.cxrefCore.main .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.lsp : "&lt;color:#707070&gt;dispatches to\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
 Cxrefactory.cxrefCore.refactory .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.server : "&lt;color:#707070&gt;uses\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
-Cxrefactory.cxrefCore.cxref .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxfile : "&lt;color:#707070&gt;stores references using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
-Cxrefactory.cxrefCore.lsp .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.refactory : "&lt;color:#707070&gt;uses\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
-Cxrefactory.cxrefCore.lsp .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxref : "&lt;color:#707070&gt;uses\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.cxref .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.symbolResolver : "&lt;color:#707070&gt;delegates symbol lookup to\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.symbolResolver .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxfile : "&lt;color:#707070&gt;loads symbol data via\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.symbolResolver .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.referenceTable : "&lt;color:#707070&gt;populates and queries\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.symbolResolver .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.browserStack : "&lt;color:#707070&gt;builds navigation context in\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.cxfile .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.referenceTable : "&lt;color:#707070&gt;loads symbols into\n&lt;color:#707070&gt;&lt;size:8&gt;[batch loading]&lt;/size&gt;"
+Cxrefactory.cxrefCore.lsp .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.lspAdapter : "&lt;color:#707070&gt;delegates to\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.lspAdapter .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.refactory : "&lt;color:#707070&gt;uses for refactoring\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.lspAdapter .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxref : "&lt;color:#707070&gt;uses for navigation\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
+Cxrefactory.cxrefCore.lspAdapter .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.symbolResolver : "&lt;color:#707070&gt;attempts symbol lookup via\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
 Cxrefactory.cxrefCore.xref .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxref : "&lt;color:#707070&gt;handles references using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
 Cxrefactory.cxrefCore.server .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxref : "&lt;color:#707070&gt;handles references using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
 Cxrefactory.cxrefCore.refactory .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxref : "&lt;color:#707070&gt;handles references using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
@@ -1144,7 +1182,7 @@ Cxrefactory.cxrefCore.parser .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.c
 Cxrefactory.cxrefCore.xref .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.parser : "&lt;color:#707070&gt;parses source code using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
 Cxrefactory.cxrefCore.server .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.parser : "&lt;color:#707070&gt;parses source code using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
 Cxrefactory.cxrefCore.yylex .[#707070,thickness=2].&gt; 3 : "&lt;color:#707070&gt;reads source code from\n&lt;color:#707070&gt;&lt;size:8&gt;[file I/O]&lt;/size&gt;"
-Cxrefactory.cxrefCore.cxfile .[#707070,thickness=2].&gt; Cxrefactory.referencesDb : "&lt;color:#707070&gt;reads from and writes to\n&lt;color:#707070&gt;&lt;size:8&gt;[file I/O]&lt;/size&gt;"
+Cxrefactory.cxrefCore.cxfile .[#707070,thickness=2].&gt; Cxrefactory.referencesDb : "&lt;color:#707070&gt;builds and queries\n&lt;color:#707070&gt;&lt;size:8&gt;[hash-based lookup]&lt;/size&gt;"
 @enduml</pre>
 </div>
 </div>
@@ -1570,7 +1608,579 @@ reference database, but this is still a work in progress to chisel
 this out.</p>
 </div>
 <div class="sect3">
-<h4 id="_cxfile">8.6.1. CXFILE</h4>
+<h4 id="_architecture_overview">8.6.1. Architecture Overview</h4>
+<div class="paragraph">
+<p>c-xrefactory&#8217;s core functionality relies on a sophisticated symbol database that stores cross-references, definitions, and usage information for all symbols in a project. The database is implemented as a collection of binary <code>.cx</code> files and supports:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Creation</strong> via <code>-create</code> operations that parse all project files</p>
+</li>
+<li>
+<p><strong>Updates</strong> via <code>-update</code> operations (incremental or full)</p>
+</li>
+<li>
+<p><strong>Queries</strong> during symbol lookup operations</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_database_structure_and_format">8.6.2. Database Structure and Format</h4>
+<div class="paragraph">
+<p>The symbol database uses a hash-partitioned file structure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cxrefs/
+├── files        # File metadata and paths
+├── 0000         # Symbol data for hash bucket 0
+├── 0001         # Symbol data for hash bucket 1
+└── ...          # Additional hash buckets based on referenceFileCount</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Each <code>.cx</code> file contains structured records with specific keys:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>CXFI_FILE_NAME</code>: File paths and metadata</p>
+</li>
+<li>
+<p><code>CXFI_SYMBOL_NAME</code>: Symbol names, types, and attributes</p>
+</li>
+<li>
+<p><code>CXFI_REFERENCE</code>: Individual symbol references with positions and usage types</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_symbol_resolution_pipeline">8.6.3. Symbol Resolution Pipeline</h4>
+<div class="paragraph">
+<p>The symbol lookup process follows this pipeline:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">1. Cursor Position Input
+   ↓
+2. Parse current file to identify symbol at position
+   ↓
+3. scanReferencesToCreateMenu(symbolName)
+   ↓
+4. Load symbol data from .cx files
+   ↓
+5. Populate sessionData.browserStack
+   ↓
+6. Find best definition via olcxOrderRefsAndGotoDefinition()
+   ↓
+7. Navigate to definition position</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_key_data_structures">8.6.4. Key Data Structures</h4>
+<div class="sect4">
+<h5 id="_browser_stack_sessiondata_browserstack">Browser Stack (<code>sessionData.browserStack</code>)</h5>
+<div class="paragraph">
+<p>The browser stack is the runtime data structure for symbol navigation:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef struct {
+    OlcxReferences *top;           // Current symbol being browsed
+    OlcxReferences *root;          // Stack base
+} OlcxReferencesStack;
+
+typedef struct {
+    Reference *current;            // Current reference
+    Reference *references;         // All references for symbol
+    SymbolsMenu *symbolsMenu;      // Available symbols for selection
+    Position callerPosition;       // Where lookup was initiated
+    ServerOperation operation;     // Type of operation (OLO_PUSH, etc.)
+} OlcxReferences;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_reference_information">Reference Information</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef struct {
+    Position position;             // File, line, column
+    Usage usage;                   // UsageDefined, UsageDeclared, UsageUsed
+    struct Reference *next;        // Linked list of references
+} Reference;
+
+typedef struct {
+    char *linkName;               // Symbol name with scope information
+    Type type;                    // Symbol type (function, variable, etc.)
+    Storage storage;              // Storage class
+    Scope scope;                  // Visibility scope
+    int includedFileNumber;       // File containing symbol
+    Reference *references;        // All references to this symbol
+} ReferenceItem;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_database_operations">8.6.5. Database Operations</h4>
+<div class="sect4">
+<h5 id="_database_creation_create">Database Creation (-create)</h5>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Parse all project files using C/Yacc parsers</p>
+</li>
+<li>
+<p>Generate <code>ReferenceItem</code> entries for each symbol</p>
+</li>
+<li>
+<p>Create <code>Reference</code> entries for each symbol usage</p>
+</li>
+<li>
+<p>Write structured records to <code>.cx</code> files</p>
+</li>
+<li>
+<p>Build hash-based index for fast lookup</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_database_updates_update">Database Updates (-update)</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Full Update</strong>: Rebuild entire database</p>
+</li>
+<li>
+<p><strong>Fast Update</strong>: Only process modified files based on timestamps</p>
+</li>
+<li>
+<p><strong>Incremental</strong>: Smart detection of changed dependencies</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_symbol_lookup_olo_push_operations">Symbol Lookup (OLO_PUSH operations)</h5>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>scanReferencesToCreateMenu(symbolName)</code> loads symbol data</p>
+</li>
+<li>
+<p><code>createSelectionMenu()</code> builds navigation menus</p>
+</li>
+<li>
+<p><code>olProcessSelectedReferences()</code> populates browser stack</p>
+</li>
+<li>
+<p><code>olcxOrderRefsAndGotoDefinition()</code> finds best definition</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_lsp_integration_challenges">8.6.6. LSP Integration Challenges</h4>
+<div class="sect4">
+<h5 id="_architectural_mismatch">Architectural Mismatch</h5>
+<div class="paragraph">
+<p>The current architecture was designed for <strong>batch processing</strong> and <strong>persistent databases</strong>, while LSP requires <strong>on-demand processing</strong> and <strong>responsive queries</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Current LSP Problems:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Persistent File Dependency</strong>: LSP <code>findDefinition()</code> calls <code>scanReferencesToCreateMenu()</code> which expects pre-existing <code>.cx</code> files</p>
+</li>
+<li>
+<p><strong>Project-Wide Requirement</strong>: Full project analysis required before individual file operations</p>
+</li>
+<li>
+<p><strong>Batch Processing Model</strong>: No support for incremental, per-request symbol resolution</p>
+</li>
+<li>
+<p><strong>Cold Start Problem</strong>: New projects have no <code>.cx</code> files, causing all LSP operations to fail</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Error Flow in LSP Mode:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">LSP textDocument/definition request
+↓
+findDefinition() called
+↓
+scanReferencesToCreateMenu() called
+↓
+No .cx files exist → empty results
+↓
+browserStack remains empty
+↓
+All definition requests return same default position</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_performance_characteristics">Performance Characteristics</h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Operation</th>
+<th class="tableblock halign-left valign-top">File-Based (.cx)</th>
+<th class="tableblock halign-left valign-top">On-Demand Parsing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Cold Start</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requires <code>-create</code> first</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parse file immediately</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Warm Queries</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">O(1) hash lookup</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">O(file_size) parsing</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Memory Usage</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Low (streaming)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High (in-memory cache)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Incremental Updates</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Smart file tracking</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Per-file invalidation</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Multi-project</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Separate databases</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Workspace-scoped</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_unified_symbol_database">8.6.7. Proposed Unified Symbol Database</h4>
+<div class="sect4">
+<h5 id="_core_insight_unified_on_demand_architecture">Core Insight: Unified On-Demand Architecture</h5>
+<div class="paragraph">
+<p>Both Emacs and LSP clients want the same thing: <strong>up-to-date symbol and reference information</strong>. The distinction between "file-based" and "on-demand" modes is artificial complexity. Instead, c-xrefactory should provide a unified interface that:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Always ensures information is current</strong> using existing dependency tracking</p>
+</li>
+<li>
+<p><strong>Scans incrementally</strong> only what&#8217;s needed, when needed</p>
+</li>
+<li>
+<p><strong>Uses <code>.cx</code> files as persistent cache</strong> for optimization</p>
+</li>
+<li>
+<p><strong>Eliminates cold start problems</strong> by avoiding upfront full-project scanning</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_simplified_interface_design">Simplified Interface Design</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef struct SymbolDatabase SymbolDatabase;
+
+typedef struct {
+    // Unified operations for any client (Emacs or LSP)
+    Symbol* (*lookupSymbol)(SymbolDatabase* db, const char* name, Position pos);
+    ReferenceList* (*getReferences)(SymbolDatabase* db, const char* name, Position pos);
+    ReferenceList* (*getOccurrences)(SymbolDatabase* db, const char* name, Position pos);
+
+    // All complexity hidden in implementation:
+    // - File modification checking (existing: checkFileModifiedTime)
+    // - Include dependency tracking (existing: cachedIncludedFilePass)
+    // - Incremental scanning (existing: makeIncludeClosureOfFilesToUpdate)
+    // - Persistent caching (existing: .cx file system)
+} SymbolDatabaseOperations;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_implementation_strategy_smart_on_demand">Implementation Strategy: Smart On-Demand</h5>
+<div class="paragraph">
+<p>The implementation leverages <strong>existing sophisticated logic</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">Symbol* lookupSymbol(const char* name, Position pos) {
+    // 1. Check if cached information is up-to-date
+    if (symbolInfoIsCurrent(name, pos)) {
+        return getCachedSymbolInfo(name, pos);  // Use .cx files when valid
+    }
+
+    // 2. Use existing dependency tracking to scan minimal set
+    FileList* filesToScan = calculateDependencyClosure(pos.file);
+    for (FileItem* file : filesToScan) {
+        if (!checkFileModifiedTime(file-&gt;fileNumber)) {
+            scanFileAndUpdateCache(file);  // Incremental scan
+        }
+    }
+
+    // 3. Update persistent cache for next time
+    updateSymbolCache(name, pos);
+
+    return getSymbolInfo(name, pos);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Key Benefits:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>No artificial modes</strong> - same code path for all clients</p>
+</li>
+<li>
+<p><strong>No cold start</strong> - first lookup triggers minimal necessary scanning</p>
+</li>
+<li>
+<p><strong>Incremental by design</strong> - only scans files that need updating</p>
+</li>
+<li>
+<p><strong>Persistent optimization</strong> - results cached in <code>.cx</code> files for next session</p>
+</li>
+<li>
+<p><strong>Existing logic reuse</strong> - leverages proven dependency tracking system</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_legacy_architecture_recognition">Legacy Architecture Recognition</h5>
+<div class="paragraph">
+<p>c-xrefactory evolved from a <strong>batch cross-referencer</strong> (like <code>ctags</code>) and was enhanced for real-time use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Legacy batch workflow:
+c-xref -create project.c     # Full scan, build .cx database
+c-xref -update modified.c    # Incremental update
+c-xref -olcxpush symbol      # Query pre-built database
+
+# Unified approach:
+c-xref -server               # Start server, scan on-demand as needed
+c-xref -lsp                  # Same logic, different protocol</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>.cx</code> files are essentially a <strong>persistent cache</strong> of analysis results, not a fundamental requirement.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_implementation_plan">Implementation Plan</h5>
+<div class="paragraph">
+<p><strong>Phase 1: Interface Unification</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Create unified <code>SymbolDatabase</code> interface</p>
+</li>
+<li>
+<p>Wrap existing logic in smart on-demand implementation</p>
+</li>
+<li>
+<p>Replace explicit <code>-create</code>/<code>-update</code> commands with automatic dependency checking</p>
+</li>
+<li>
+<p>Both Emacs and LSP use same code path</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Phase 2: Optimization</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Enhance existing dependency tracking for finer-grained invalidation</p>
+</li>
+<li>
+<p>Optimize in-memory caching strategies</p>
+</li>
+<li>
+<p>Background <code>.cx</code> file maintenance for long-running sessions</p>
+</li>
+<li>
+<p>Performance tuning for large codebases</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_benefits_of_unified_approach">Benefits of Unified Approach</h5>
+<div class="paragraph">
+<p><strong>Architectural Simplification:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Single code path</strong> for both Emacs and LSP clients - eliminates maintenance overhead</p>
+</li>
+<li>
+<p><strong>No mode distinctions</strong> - same smart logic serves all use cases optimally</p>
+</li>
+<li>
+<p><strong>Leverages existing logic</strong> - reuses proven dependency tracking and caching systems</p>
+</li>
+<li>
+<p><strong>Reduced complexity</strong> - eliminates artificial FILE_BASED/ON_DEMAND/HYBRID modes</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>User Experience Improvements:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Zero configuration</strong> - works immediately on any C project without setup</p>
+</li>
+<li>
+<p><strong>No cold start delay</strong> - first symbol lookup triggers minimal necessary scanning</p>
+</li>
+<li>
+<p><strong>Transparent caching</strong> - <code>.cx</code> files automatically maintained as performance optimization</p>
+</li>
+<li>
+<p><strong>Consistent behavior</strong> - same results whether using Emacs or modern IDE with LSP</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Performance Characteristics:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Minimal initial cost</strong> - avoids expensive upfront full-project scanning</p>
+</li>
+<li>
+<p><strong>Smart incremental updates</strong> - only rescans files that have actually changed</p>
+</li>
+<li>
+<p><strong>Automatic dependency tracking</strong> - includes files affected by changes get updated</p>
+</li>
+<li>
+<p><strong>Persistent optimization</strong> - analysis results cached across sessions</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Development Benefits:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Backward compatibility</strong> - existing Emacs workflows continue unchanged</p>
+</li>
+<li>
+<p><strong>Forward compatibility</strong> - natural path to modern LSP integration</p>
+</li>
+<li>
+<p><strong>Reduced maintenance</strong> - single implementation instead of multiple modes</p>
+</li>
+<li>
+<p><strong>Enhanced testability</strong> - unified logic easier to test comprehensively</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_existing_infrastructure_sophisticated_dependency_tracking">Existing Infrastructure: Sophisticated Dependency Tracking</h5>
+<div class="paragraph">
+<p>The unified approach leverages c-xrefactory&#8217;s <strong>existing sophisticated dependency management</strong> that handles include file relationships automatically:</p>
+</div>
+<div class="paragraph">
+<p><strong>File Modification Tracking</strong> (<code>filetable.h</code>, <code>caching.c</code>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef struct fileItem {
+    char *name;
+    time_t lastModified;        // Last known modification time
+    time_t lastInspected;       // Last time we checked
+    time_t lastUpdateMtime;     // Last update cycle time
+    time_t lastFullUpdateMtime; // Last full update time
+    // ... scheduling and state flags
+} FileItem;
+
+bool checkFileModifiedTime(int fileNumber);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Include Dependency Tracking</strong> (<code>yylex.c:474</code>, <code>caching.c:323-334</code>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
+    // ... setup include stack
+    includeStack.stack[includeStack.pointer++] = currentFile;
+    cacheInclude(currentFile.characterBuffer.fileNumber);  // Record dependency
+}
+
+// Cascading validation: if ANY included file changed, parent needs rescan
+static bool cachedIncludedFilePass(int index) {
+    for (int i = cache.points[index - 1].includeStackTop; i &lt; includeTop; i++) {
+        if (!checkFileModifiedTime(cache.includeStack[i]))
+            return false;  // ANY included file changed = need rescan
+    }
+    return true;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Automatic Include Closure</strong> (<code>xref.c:81-111</code>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">static void makeIncludeClosureOfFilesToUpdate(void) {
+    // If file A includes file B, and B is modified, A gets scheduled for update
+    bool fileAddedFlag = true;
+    while (fileAddedFlag) {
+        // Iterative closure: keeps adding dependent files until stable
+        for (all scheduled files) {
+            find_all_files_that_include_this_file();
+            schedule_them_for_update();
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Key Insight:</strong> This dependency tracking infrastructure is <strong>already production-ready</strong> and handles the complex cases (transitive dependencies, modification time checking, include stack management). The unified symbol database can leverage this existing logic instead of reimplementing dependency management.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_cxfile">8.6.8. CXFILE</h4>
 <div class="paragraph">
 <p>The current implementation of the reference database is file based,
 with an optimized storage format.</p>
@@ -1651,7 +2261,7 @@ generated data for expected data. This is now partly ongoing in the
 </div>
 </div>
 <div class="sect3">
-<h4 id="_reference_database_reading">8.6.2. Reference Database Reading</h4>
+<h4 id="_reference_database_reading">8.6.9. Reference Database Reading</h4>
 <div class="paragraph">
 <p>All information about an externally visible symbol is stored in one,
 and only one reference file, determined by hashing the linkname of the
@@ -3702,7 +4312,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-08 11:03:25 UTC
+Last updated 2025-10-15 12:17:35 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
