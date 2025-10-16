@@ -32,6 +32,9 @@ run:
 	echo $(COMMAND)
 	$(COMMAND)
 
+trace: ARGUMENTS += -trace
+trace: all
+
 init: systemd
 
 systemd:

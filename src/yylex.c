@@ -1837,6 +1837,7 @@ static LexInput createMacroBodyAsNewInput(MacroBody *macroBody, LexInput *actual
     buffer = ppmReallocc(buffer, bufferWrite - buffer, sizeof(char), bufferSize + MAX_LEXEM_SIZE);
 
     /* expand arguments */
+
     for (int i = 0; i < macroBody->argCount; i++) {
         expandMacroArgument(&actualArgumentsInput[i]);
     }
@@ -1953,7 +1954,9 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position macroPos
         for (;;) {
             lexem = getActualMacroArgument(previousLexemP, lexem, macroPosition, &beginPosition, &endPosition,
                                            &actualArgs[argumentIndex], macroBody->argCount, argumentIndex);
+            //ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
             log_trace("getActualMacroArgument: %s", lexemEnumNames[lexem]);
+            //printf("Macroposition: %d:%d:%d\n", macroPosition.file, macroPosition.line, macroPosition.col);
             argumentIndex++;
             if (lexem != ',' || argumentIndex >= macroBody->argCount)
                 break;
@@ -1979,7 +1982,7 @@ endOfFile:
         warningMessage(ERR_ST,"[getActualMacroArguments] unterminated macro call");
     }
     LEAVE();
-    return NULL;
+    return NULL;                /* WARNING this will probably crash the caller... */
 }
 
 /* **************************************************************** */
