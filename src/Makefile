@@ -404,10 +404,21 @@ gcov:
 ifeq ($(HAVE_APPLE_COV),yes)
 	# Darwin: Convert llvm-cov output to traditional .gcov format for Emacs cov-mode
 	if [ -f ../coverage/merged.profdata ]; then \
-		for src_file in $(SRCS); do \
-			if [ -f "$$src_file" ]; then \
-				./llvm2gcov.sh "$$src_file" > "$$src_file.gcov" 2>/dev/null || true ; \
-			fi ; \
+		echo "Generating .gcov files..." ; \
+		for src_file in *.c; do \
+			case "$$src_file" in \
+				*_tests.c) \
+					test_dylib="$${src_file%%.c}.dylib" ; \
+					if [ -f "$$test_dylib" ]; then \
+						./llvm2gcov_test.sh "$$src_file" "$$test_dylib" > "$$src_file.gcov" 2>/dev/null || true ; \
+					fi ; \
+					;; \
+				*) \
+					if [ -f "$$src_file" ]; then \
+						./llvm2gcov.sh "$$src_file" > "$$src_file.gcov" 2>/dev/null || true ; \
+					fi ; \
+					;; \
+			esac ; \
 		done ; \
 		echo "Darwin: Generated .gcov files for Emacs cov-mode using llvm-cov conversion" ; \
 	else \
@@ -582,8 +593,16 @@ unittests: parsers
 else
 unittests: parsers $(OBJS) $(UNITTESTS)
 	$(MAKE) -e clean-coverage
+ifeq ($(HAVE_APPLE_COV),yes)
+	# Darwin: Set LLVM_PROFILE_FILE to enable coverage data collection
+	LLVM_PROFILE_FILE="unittests-%p.profraw" $(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $(UNITTESTS)
+	# Darwin: Merge coverage data from unit tests, then generate gcov files
+	$(MAKE) -e merge-coverage-from-tests
+else
+	# Non-Darwin: Just run tests and generate gcov files directly
 	$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $(UNITTESTS)
 	$(MAKE) gcov
+endif
 	touch .unittests.done
 endif
 
