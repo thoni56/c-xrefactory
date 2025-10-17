@@ -17,6 +17,10 @@ all: .c-xrefrc
 		$(VERIFY) ; \
 	fi
 
+run:
+	echo $(COMMAND)
+	$(COMMAND)
+
 init: ffmpeg .c-xrefrc
 
 ffmpeg:

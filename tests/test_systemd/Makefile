@@ -28,6 +28,10 @@ expected:
 	../../src/c-xref.orig -xrefrc .c-xrefrc -p $(PWD) -create .
 	cxref_reader > expected
 
+run:
+	echo $(COMMAND)
+	$(COMMAND)
+
 init: systemd
 
 systemd:
