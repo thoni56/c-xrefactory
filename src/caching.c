@@ -1,12 +1,12 @@
 /**
  * @file caching.c
  * @brief Incremental parsing cache system
- * 
+ *
  * This file implements the caching system that enables incremental parsing
  * in c-xrefactory. The cache stores tokenized input and parser state snapshots
  * to avoid re-parsing unchanged code sections, significantly improving
  * performance for large codebases.
- * 
+ *
  * Key concepts:
  * - Cache Points: Complete parser state snapshots that can be restored
  * - Input Caching: Storage of tokenized lexical input in a buffer
@@ -46,19 +46,19 @@ Cache cache;
 
 /**
  * Update a file's modification time tracking information.
- * 
+ *
  * This function updates the lastInspected and lastModified fields
  * of a FileItem by checking the current file system state.
  * Used for general file tracking purposes.
- * 
+ *
  * @param fileNumber The file number to update tracking for
  */
 void updateFileModificationTracking(int fileNumber) {
     time_t now = time(NULL);
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-    
+
     fileItem->lastInspected = now;
-    
+
     if (editorFileExists(fileItem->name)) {
         fileItem->lastModified = editorFileModificationTime(fileItem->name);
     }
@@ -66,12 +66,12 @@ void updateFileModificationTracking(int fileNumber) {
 
 /**
  * Check if a file has been modified since last cache (for cache validation).
- * 
+ *
  * This function is specifically for cache validation - it checks if a file
  * has changed since it was cached, without updating tracking information.
  * Files are considered current if they were inspected during this execution
  * or if their modification time matches the cached value.
- * 
+ *
  * @param fileNumber The file number to check
  * @return true if file is current (unchanged), false if modified or missing
  */
@@ -84,7 +84,7 @@ bool isFileModifiedSinceCached(int fileNumber) {
         /* Assuming that files cannot change during one execution */
         return false; /* Not modified since cached */
     }
-    
+
     if (!editorFileExists(fileItem->name)) {
         return true; /* File missing = modified */
     }
@@ -210,11 +210,11 @@ static void recoverMemoryFromIncludeList(void) {
 
 /**
  * Validate that all files included between two cache points are still current.
- * 
+ *
  * This function checks file modification times for all files that were
  * included between the previous cache point and the specified cache point.
  * If any file has been modified, the cache is invalid.
- * 
+ *
  * @param index Cache point index to validate files for
  * @return true if all included files are current, false if any were modified
  */
@@ -244,10 +244,10 @@ static void recoverCxMemory(void *cxMemoryFlushPoint) {
 
 /**
  * Initialize cache structure with specified state values.
- * 
+ *
  * This utility function sets all the cache state fields in one operation.
  * Used when initializing the cache or updating its state during recovery.
- * 
+ *
  * @param cache Cache structure to fill
  * @param cachingActive Whether caching should be active
  * @param cachePointIndex Next available cache point index
@@ -298,13 +298,13 @@ void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
 
 /**
  * Restore parser state from a specific cache point.
- * 
+ *
  * This function performs a complete restoration of the parser state from
  * a previously saved cache point, including memory pools, parsing context,
  * and input stream position.
- * 
+ *
  * @param cachePointIndex Index of the cache point to restore from
- * @param readUntil Input position to read until in cached stream  
+ * @param readUntil Input position to read until in cached stream
  * @param cachingActive Whether to activate caching after recovery
  */
 void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive) {
@@ -381,7 +381,7 @@ void initCaching(void) {
 
 /**
  * Check if input caching should be skipped due to current parsing context.
- * 
+ *
  * @return true if caching should be skipped, false if it can proceed
  */
 static bool shouldSkipInputCaching(void) {
@@ -398,7 +398,7 @@ static bool shouldSkipInputCaching(void) {
 
 /**
  * Check if there's enough space in the cache buffer for the input.
- * 
+ *
  * @param size Number of bytes to cache
  * @return true if there's enough space, false if cache is full
  */
@@ -408,7 +408,7 @@ static bool hasEnoughCacheSpace(int size) {
 
 /**
  * Copy input data to the cache buffer if not already cached.
- * 
+ *
  * @param input The input to cache
  * @param size Number of bytes to copy
  */
@@ -424,30 +424,30 @@ static void copyInputToCache(LexInput *input, int size) {
 
 /**
  * Store lexical input in the cache buffer.
- * 
+ *
  * This function copies input tokens to the cache buffer for later reuse.
  * Caching is skipped when inside includes/macros or when the buffer is full.
- * 
+ *
  * @param input The lexical input to cache
  */
 void cacheInput(LexInput *input) {
     ENTER();
-    
+
     if (shouldSkipInputCaching()) {
         LEAVE();
         return;
     }
-    
+
     /* Calculate how much needs to be cached */
     int size = input->read - cache.nextToCache;
-    
+
     /* Check if there's enough space */
     if (!hasEnoughCacheSpace(size)) {
         deactivateCaching();
         LEAVE();
         return;
     }
-    
+
     copyInputToCache(input, size);
     LEAVE();
 }
