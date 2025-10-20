@@ -39,3 +39,6 @@ init: systemd
 
 systemd:
 	tar zxf systemd.tgz
+
+count:
+	gdb -x debug_count_restart.gdb --args $(COMMAND)
