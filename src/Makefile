@@ -204,11 +204,10 @@ devel: check-tokens
 	$(MAKE) -e clean-coverage
 	$(MAKE) -e devel-proper
 	$(MAKE) -e system-tests
-	$(MAKE) cloc
+	@$(MAKE) cloc
 
 .PHONY:devel-proper
 devel-proper: unit build
-	$(MAKE) -e test
 
 .PHONY:ci
 ci:
@@ -540,9 +539,7 @@ system-tests: c-xref
 	$(MAKE) -e test
 	$(MAKE) -e merge-coverage-from-tests
 	@$(MAKE) -e coverage-report
-ifneq ($(OS),Darwin)
-	@$(MAKE) -e cloc
-endif
+
 
 #########################################################################
 #
