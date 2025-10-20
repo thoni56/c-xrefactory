@@ -25,6 +25,7 @@
 #include "caching.h"
 #include "commons.h"
 #include "complete.h"
+#include "counters.h"
 #include "cxref.h"
 #include "extract.h"
 #include "filedescriptor.h"

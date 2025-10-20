@@ -44,6 +44,7 @@
 #include "caching.h"
 #include "commons.h"
 #include "complete.h"
+#include "counters.h"
 #include "cxref.h"
 #include "extract.h"
 #include "filedescriptor.h"
@@ -73,11 +74,11 @@ static void addYaccSymbolReference(Id *name, int usage);
 
 static int savedWorkMemoryIndex = 0;
 
-#line 158 "yacc_parser.y"
+#line 159 "yacc_parser.y"
 typedef union {
 #include "yystype.h"
 } YYSTYPE;
-#line 81 "yacc_parser.tab.c"
+#line 82 "yacc_parser.tab.c"
 #define TYPE_NAME 257
 #define INC_OP 258
 #define DEC_OP 259
@@ -2480,7 +2481,7 @@ YYSTYPE yylval;
 short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-#line 1953 "yacc_parser.y"
+#line 1954 "yacc_parser.y"
 
 static void addYaccSymbolReference(Id *id, int usage) {
     Symbol symbol = makeSymbol(id->name, TypeYaccSymbol, id->position);
@@ -2579,7 +2580,7 @@ void makeYaccCompletions(char *string, int len, Position position) {
         }
     }
 }
-#line 2583 "yacc_parser.tab.c"
+#line 2584 "yacc_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -2719,7 +2720,7 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 207 "yacc_parser.y"
+#line 208 "yacc_parser.y"
 {
             deactivateCaching();    /* no caching in yacc_parser */
             /* initialize locals*/
@@ -2728,31 +2729,31 @@ case 1:
         }
 break;
 case 2:
-#line 213 "yacc_parser.y"
+#line 214 "yacc_parser.y"
 {
             placeCachePoint(true);
         }
 break;
 case 7:
-#line 233 "yacc_parser.y"
+#line 234 "yacc_parser.y"
 {
             yyval.typeModifier = createNewAnonymousStructOrUnion(yyvsp[0].ast_id.data);
         }
 break;
 case 8:
-#line 236 "yacc_parser.y"
+#line 237 "yacc_parser.y"
 {
             specializeStructOrUnionDef(yyvsp[-3].typeModifier->typeSymbol, yyvsp[-1].ast_symbol.data);
             l_yaccUnion = yyvsp[-3].typeModifier->typeSymbol;
         }
 break;
 case 9:
-#line 240 "yacc_parser.y"
+#line 241 "yacc_parser.y"
 {
         }
 break;
 case 10:
-#line 242 "yacc_parser.y"
+#line 243 "yacc_parser.y"
 {
             Symbol   *res;
             int rr;
@@ -2766,7 +2767,7 @@ case 10:
         }
 break;
 case 15:
-#line 259 "yacc_parser.y"
+#line 260 "yacc_parser.y"
 {
             Symbol *ss;
 
@@ -2780,41 +2781,41 @@ case 15:
         }
 break;
 case 18:
-#line 278 "yacc_parser.y"
+#line 279 "yacc_parser.y"
 {
             addYaccSymbolReference(yyvsp[0].ast_id.data, UsageDeclared);
         }
 break;
 case 19:
-#line 281 "yacc_parser.y"
+#line 282 "yacc_parser.y"
 {
             addYaccSymbolReference(yyvsp[0].ast_id.data, UsageDeclared);
         }
 break;
 case 20:
-#line 287 "yacc_parser.y"
+#line 288 "yacc_parser.y"
 {
             addYaccSymbolReference(yyvsp[-1].ast_id.data, UsageDefined);
             addRuleLocalVariable(yyvsp[-1].ast_id.data, 0);
         }
 break;
 case 22:
-#line 292 "yacc_parser.y"
+#line 293 "yacc_parser.y"
 {
             addYaccSymbolReference(yyvsp[-1].ast_id.data, UsageDefined);
             addRuleLocalVariable(yyvsp[-1].ast_id.data, 0);
         }
 break;
 case 24:
-#line 297 "yacc_parser.y"
-{ assert(0); /* token never used */ }
-break;
-case 25:
 #line 298 "yacc_parser.y"
 { assert(0); /* token never used */ }
 break;
+case 25:
+#line 299 "yacc_parser.y"
+{ assert(0); /* token never used */ }
+break;
 case 31:
-#line 313 "yacc_parser.y"
+#line 314 "yacc_parser.y"
 {
             if (yyvsp[0].ast_id.data != NULL) {
                 addYaccSymbolReference(yyvsp[0].ast_id.data, UsageUsed);
@@ -2824,19 +2825,19 @@ case 31:
         }
 break;
 case 32:
-#line 320 "yacc_parser.y"
+#line 321 "yacc_parser.y"
 {
             yyval.ast_integer.data = 2;
         }
 break;
 case 33:
-#line 323 "yacc_parser.y"
+#line 324 "yacc_parser.y"
 {
             yyval.ast_integer.data = 1;
         }
 break;
 case 34:
-#line 326 "yacc_parser.y"
+#line 327 "yacc_parser.y"
 {
             if (yyvsp[0].ast_id.data != NULL) {
                 addYaccSymbolReference(yyvsp[0].ast_id.data, UsageUsed);
@@ -2846,35 +2847,35 @@ case 34:
         }
 break;
 case 35:
-#line 333 "yacc_parser.y"
+#line 334 "yacc_parser.y"
 {
             yyval.ast_integer.data = yyvsp[-1].ast_integer.data + 1;
         }
 break;
 case 36:
-#line 336 "yacc_parser.y"
+#line 337 "yacc_parser.y"
 {
             yyval.ast_integer.data = yyvsp[-1].ast_integer.data;
         }
 break;
 case 38:
-#line 344 "yacc_parser.y"
+#line 345 "yacc_parser.y"
 {
             yyval.ast_id.data = yyvsp[0].ast_id.data;
         }
 break;
 case 39:
-#line 347 "yacc_parser.y"
+#line 348 "yacc_parser.y"
 {
             yyval.ast_id.data = NULL;
         }
 break;
 case 40:
-#line 350 "yacc_parser.y"
+#line 351 "yacc_parser.y"
 { assert(0); /* token never used */ }
 break;
 case 143:
-#line 404 "yacc_parser.y"
+#line 405 "yacc_parser.y"
 {
         Symbol *symbol = yyvsp[0].ast_id.data->symbol;
         if (symbol != NULL && symbol->type == TypeDefault) {
@@ -2900,39 +2901,39 @@ case 143:
     }
 break;
 case 144:
-#line 427 "yacc_parser.y"
+#line 428 "yacc_parser.y"
 { yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeInt); yyval.ast_expressionType.data.reference = NULL;}
 break;
 case 145:
-#line 428 "yacc_parser.y"
-{ yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeBoolean); yyval.ast_expressionType.data.reference = NULL;}
-break;
-case 146:
 #line 429 "yacc_parser.y"
 { yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeBoolean); yyval.ast_expressionType.data.reference = NULL;}
 break;
-case 147:
+case 146:
 #line 430 "yacc_parser.y"
+{ yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeBoolean); yyval.ast_expressionType.data.reference = NULL;}
+break;
+case 147:
+#line 431 "yacc_parser.y"
 { yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeNull); yyval.ast_expressionType.data.reference = NULL;}
 break;
 case 148:
-#line 431 "yacc_parser.y"
+#line 432 "yacc_parser.y"
 { yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeInt); yyval.ast_expressionType.data.reference = NULL;}
 break;
 case 149:
-#line 432 "yacc_parser.y"
+#line 433 "yacc_parser.y"
 { yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeLong); yyval.ast_expressionType.data.reference = NULL;}
 break;
 case 150:
-#line 433 "yacc_parser.y"
+#line 434 "yacc_parser.y"
 { yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeFloat); yyval.ast_expressionType.data.reference = NULL;}
 break;
 case 151:
-#line 434 "yacc_parser.y"
+#line 435 "yacc_parser.y"
 { yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeDouble); yyval.ast_expressionType.data.reference = NULL;}
 break;
 case 152:
-#line 435 "yacc_parser.y"
+#line 436 "yacc_parser.y"
 {
         TypeModifier *modifier;
         modifier = newSimpleTypeModifier(TypeChar);
@@ -2941,24 +2942,24 @@ case 152:
     }
 break;
 case 153:
-#line 441 "yacc_parser.y"
+#line 442 "yacc_parser.y"
 {
         yyval.ast_expressionType.data = yyvsp[-1].ast_expressionType.data;
     }
 break;
 case 154:
-#line 444 "yacc_parser.y"
+#line 445 "yacc_parser.y"
 {       /* GNU's shit */
         yyval.ast_expressionType.data.typeModifier = &errorModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 155:
-#line 448 "yacc_parser.y"
+#line 449 "yacc_parser.y"
 { assert(0); /* token never used */ }
 break;
 case 159:
-#line 458 "yacc_parser.y"
+#line 459 "yacc_parser.y"
 {
         if (yyvsp[-3].ast_expressionType.data.typeModifier->type==TypePointer || yyvsp[-3].ast_expressionType.data.typeModifier->type==TypeArray) yyval.ast_expressionType.data.typeModifier=yyvsp[-3].ast_expressionType.data.typeModifier->next;
         else if (yyvsp[-1].ast_expressionType.data.typeModifier->type==TypePointer || yyvsp[-1].ast_expressionType.data.typeModifier->type==TypeArray) yyval.ast_expressionType.data.typeModifier=yyvsp[-1].ast_expressionType.data.typeModifier->next;
@@ -2968,14 +2969,14 @@ case 159:
     }
 break;
 case 160:
-#line 479 "yacc_parser.y"
+#line 480 "yacc_parser.y"
 {
                 yyval.typeModifier = upLevelFunctionCompletionType;
                 upLevelFunctionCompletionType = yyvsp[0].ast_expressionType.data.typeModifier;
             }
 break;
 case 161:
-#line 483 "yacc_parser.y"
+#line 484 "yacc_parser.y"
 {
         upLevelFunctionCompletionType = yyvsp[-3].typeModifier;
         if (yyvsp[-4].ast_expressionType.data.typeModifier->type==TypeFunction) {
@@ -2993,11 +2994,11 @@ case 161:
     }
 break;
 case 162:
-#line 498 "yacc_parser.y"
+#line 499 "yacc_parser.y"
 {setDirectStructureCompletionType(yyvsp[0].ast_expressionType.data.typeModifier);}
 break;
 case 163:
-#line 498 "yacc_parser.y"
+#line 499 "yacc_parser.y"
 {
         Symbol *rec=NULL;
         yyval.ast_expressionType.data.reference = findStructureFieldFromType(yyvsp[-3].ast_expressionType.data.typeModifier, yyvsp[0].ast_id.data, &rec);
@@ -3007,11 +3008,11 @@ case 163:
     }
 break;
 case 164:
-#line 505 "yacc_parser.y"
+#line 506 "yacc_parser.y"
 {setIndirectStructureCompletionType(yyvsp[0].ast_expressionType.data.typeModifier);}
 break;
 case 165:
-#line 505 "yacc_parser.y"
+#line 506 "yacc_parser.y"
 {
         Symbol *rec=NULL;
         yyval.ast_expressionType.data.reference = NULL;
@@ -3024,21 +3025,21 @@ case 165:
     }
 break;
 case 166:
-#line 515 "yacc_parser.y"
+#line 516 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = yyvsp[-1].ast_expressionType.data.typeModifier;
         resetReferenceUsage(yyvsp[-1].ast_expressionType.data.reference, UsageAddrUsed);
     }
 break;
 case 167:
-#line 519 "yacc_parser.y"
+#line 520 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = yyvsp[-1].ast_expressionType.data.typeModifier;
         resetReferenceUsage(yyvsp[-1].ast_expressionType.data.reference, UsageAddrUsed);
     }
 break;
 case 169:
-#line 527 "yacc_parser.y"
+#line 528 "yacc_parser.y"
 {
         IdList *idList;
         for (idList = yyvsp[-2].ast_idList.data; idList != NULL; idList = idList->next) {
@@ -3050,65 +3051,65 @@ case 169:
     }
 break;
 case 173:
-#line 545 "yacc_parser.y"
+#line 546 "yacc_parser.y"
 { assert(0); /* token never used */ }
 break;
 case 174:
-#line 549 "yacc_parser.y"
+#line 550 "yacc_parser.y"
 {
         yyval.ast_positionList.data = NULL;
     }
 break;
 case 175:
-#line 552 "yacc_parser.y"
+#line 553 "yacc_parser.y"
 {
             yyval.ast_positionList.data = newPositionList(noPosition, yyvsp[0].ast_positionList.data);
         }
 break;
 case 176:
-#line 558 "yacc_parser.y"
+#line 559 "yacc_parser.y"
 {
         yyval.ast_positionList.data = NULL;
     }
 break;
 case 177:
-#line 561 "yacc_parser.y"
+#line 562 "yacc_parser.y"
 {
         yyval.ast_positionList.data = yyvsp[-2].ast_positionList.data;
         appendPositionToList(&yyval.ast_positionList.data, yyvsp[-1].ast_position.data);
     }
 break;
 case 178:
-#line 565 "yacc_parser.y"
-{/* never used */}
-break;
-case 179:
 #line 566 "yacc_parser.y"
 {/* never used */}
 break;
+case 179:
+#line 567 "yacc_parser.y"
+{/* never used */}
+break;
 case 181:
-#line 571 "yacc_parser.y"
+#line 572 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = yyvsp[0].ast_expressionType.data.typeModifier;
         resetReferenceUsage(yyvsp[0].ast_expressionType.data.reference, UsageAddrUsed);
     }
 break;
 case 182:
-#line 575 "yacc_parser.y"
+#line 576 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = yyvsp[0].ast_expressionType.data.typeModifier;
         resetReferenceUsage(yyvsp[0].ast_expressionType.data.reference, UsageAddrUsed);
     }
 break;
 case 183:
-#line 579 "yacc_parser.y"
+#line 580 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = yyvsp[0].ast_expressionType.data.typeModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 184:
-#line 583 "yacc_parser.y"
+#line 584 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = newPointerTypeModifier(yyvsp[0].ast_expressionType.data.typeModifier);
         resetReferenceUsage(yyvsp[0].ast_expressionType.data.reference, UsageAddrUsed);
@@ -3116,7 +3117,7 @@ case 184:
     }
 break;
 case 185:
-#line 588 "yacc_parser.y"
+#line 589 "yacc_parser.y"
 {
         if (yyvsp[0].ast_expressionType.data.typeModifier->type==TypePointer || yyvsp[0].ast_expressionType.data.typeModifier->type==TypeArray) yyval.ast_expressionType.data.typeModifier=yyvsp[0].ast_expressionType.data.typeModifier->next;
         else yyval.ast_expressionType.data.typeModifier = &errorModifier;
@@ -3125,55 +3126,55 @@ case 185:
     }
 break;
 case 186:
-#line 594 "yacc_parser.y"
+#line 595 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeInt);
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 187:
-#line 598 "yacc_parser.y"
+#line 599 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeInt);
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 188:
-#line 603 "yacc_parser.y"
+#line 604 "yacc_parser.y"
 {
         labelReference(yyvsp[0].ast_id.data, UsageLvalUsed);
     }
 break;
 case 194:
-#line 617 "yacc_parser.y"
+#line 618 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = yyvsp[-2].ast_typeModifiers.data;
         yyval.ast_expressionType.data.reference = yyvsp[0].ast_expressionType.data.reference;
     }
 break;
 case 196:
-#line 625 "yacc_parser.y"
+#line 626 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 197:
-#line 629 "yacc_parser.y"
+#line 630 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 198:
-#line 633 "yacc_parser.y"
+#line 634 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 200:
-#line 641 "yacc_parser.y"
+#line 642 "yacc_parser.y"
 {
         if (yyvsp[0].ast_expressionType.data.typeModifier->type==TypePointer || yyvsp[0].ast_expressionType.data.typeModifier->type==TypeArray) yyval.ast_expressionType.data.typeModifier = yyvsp[0].ast_expressionType.data.typeModifier;
         else yyval.ast_expressionType.data.typeModifier = yyvsp[-2].ast_expressionType.data.typeModifier;
@@ -3181,7 +3182,7 @@ case 200:
     }
 break;
 case 201:
-#line 646 "yacc_parser.y"
+#line 647 "yacc_parser.y"
 {
         if (yyvsp[0].ast_expressionType.data.typeModifier->type==TypePointer || yyvsp[0].ast_expressionType.data.typeModifier->type==TypeArray) yyval.ast_expressionType.data.typeModifier = yyvsp[0].ast_expressionType.data.typeModifier;
         else yyval.ast_expressionType.data.typeModifier = yyvsp[-2].ast_expressionType.data.typeModifier;
@@ -3189,112 +3190,112 @@ case 201:
     }
 break;
 case 203:
-#line 655 "yacc_parser.y"
+#line 656 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 204:
-#line 659 "yacc_parser.y"
+#line 660 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 206:
-#line 667 "yacc_parser.y"
+#line 668 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 207:
-#line 671 "yacc_parser.y"
+#line 672 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 208:
-#line 675 "yacc_parser.y"
+#line 676 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 209:
-#line 679 "yacc_parser.y"
+#line 680 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 211:
-#line 687 "yacc_parser.y"
+#line 688 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 212:
-#line 691 "yacc_parser.y"
+#line 692 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 214:
-#line 699 "yacc_parser.y"
+#line 700 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 216:
-#line 707 "yacc_parser.y"
+#line 708 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 218:
-#line 715 "yacc_parser.y"
+#line 716 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 220:
-#line 723 "yacc_parser.y"
+#line 724 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 222:
-#line 731 "yacc_parser.y"
+#line 732 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = &defaultIntModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 224:
-#line 739 "yacc_parser.y"
+#line 740 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = yyvsp[-2].ast_expressionType.data.typeModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 225:
-#line 744 "yacc_parser.y"
+#line 745 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = yyvsp[0].ast_expressionType.data.typeModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 227:
-#line 752 "yacc_parser.y"
+#line 753 "yacc_parser.y"
 {
         if (yyvsp[-2].ast_expressionType.data.reference != NULL && options.serverOperation == OLO_EXTRACT) {
             Reference *r = duplicateReferenceInCxMemory(yyvsp[-2].ast_expressionType.data.reference);
@@ -3315,72 +3316,72 @@ case 227:
     }
 break;
 case 228:
-#line 773 "yacc_parser.y"
+#line 774 "yacc_parser.y"
 {yyval.ast_integer.data = '=';}
 break;
 case 229:
-#line 774 "yacc_parser.y"
+#line 775 "yacc_parser.y"
 {yyval.ast_integer.data = MUL_ASSIGN;}
 break;
 case 230:
-#line 775 "yacc_parser.y"
+#line 776 "yacc_parser.y"
 {yyval.ast_integer.data = DIV_ASSIGN;}
 break;
 case 231:
-#line 776 "yacc_parser.y"
+#line 777 "yacc_parser.y"
 {yyval.ast_integer.data = MOD_ASSIGN;}
 break;
 case 232:
-#line 777 "yacc_parser.y"
+#line 778 "yacc_parser.y"
 {yyval.ast_integer.data = ADD_ASSIGN;}
 break;
 case 233:
-#line 778 "yacc_parser.y"
+#line 779 "yacc_parser.y"
 {yyval.ast_integer.data = SUB_ASSIGN;}
 break;
 case 234:
-#line 779 "yacc_parser.y"
+#line 780 "yacc_parser.y"
 {yyval.ast_integer.data = LEFT_ASSIGN;}
 break;
 case 235:
-#line 780 "yacc_parser.y"
+#line 781 "yacc_parser.y"
 {yyval.ast_integer.data = RIGHT_ASSIGN;}
 break;
 case 236:
-#line 781 "yacc_parser.y"
+#line 782 "yacc_parser.y"
 {yyval.ast_integer.data = AND_ASSIGN;}
 break;
 case 237:
-#line 782 "yacc_parser.y"
+#line 783 "yacc_parser.y"
 {yyval.ast_integer.data = XOR_ASSIGN;}
 break;
 case 238:
-#line 783 "yacc_parser.y"
+#line 784 "yacc_parser.y"
 {yyval.ast_integer.data = OR_ASSIGN;}
 break;
 case 240:
-#line 788 "yacc_parser.y"
+#line 789 "yacc_parser.y"
 {
         yyval.ast_expressionType.data.typeModifier = yyvsp[0].ast_expressionType.data.typeModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
 break;
 case 242:
-#line 799 "yacc_parser.y"
+#line 800 "yacc_parser.y"
 {
         yyval.ast_unsigned.data = savedWorkMemoryIndex;
     }
 break;
 case 243:
-#line 805 "yacc_parser.y"
-{ savedWorkMemoryIndex = yyvsp[-2].ast_unsigned.data; }
-break;
-case 244:
 #line 806 "yacc_parser.y"
 { savedWorkMemoryIndex = yyvsp[-2].ast_unsigned.data; }
 break;
+case 244:
+#line 807 "yacc_parser.y"
+{ savedWorkMemoryIndex = yyvsp[-2].ast_unsigned.data; }
+break;
 case 245:
-#line 808 "yacc_parser.y"
+#line 809 "yacc_parser.y"
 {
 #if YYDEBUG
             char buffer[1000];
@@ -3390,21 +3391,21 @@ case 245:
         }
 break;
 case 248:
-#line 823 "yacc_parser.y"
+#line 824 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
         addNewDeclaration(symbolTable, yyvsp[-2].ast_symbol.data, yyvsp[-1].ast_symbol.data, yyvsp[0].ast_idList.data, StorageAuto);
     }
 break;
 case 249:
-#line 827 "yacc_parser.y"
+#line 828 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
         addNewDeclaration(symbolTable, yyvsp[-3].ast_symbol.data, yyvsp[-1].ast_symbol.data, yyvsp[0].ast_idList.data, StorageAuto);
     }
 break;
 case 250:
-#line 831 "yacc_parser.y"
+#line 832 "yacc_parser.y"
 {
         /* $$.d = &s_errorSymbol; */
         yyval.ast_symbol.data = typeSpecifier2(&errorModifier);
@@ -3416,7 +3417,7 @@ case 250:
     }
 break;
 case 253:
-#line 848 "yacc_parser.y"
+#line 849 "yacc_parser.y"
 {
         int usage;
         yyval.ast_id.data = yyvsp[0].ast_id.data;
@@ -3431,7 +3432,7 @@ case 253:
     }
 break;
 case 254:
-#line 863 "yacc_parser.y"
+#line 864 "yacc_parser.y"
 {
         assert(yyvsp[0].ast_id.data);
         assert(yyvsp[0].ast_id.data->symbol);
@@ -3439,19 +3440,19 @@ case 254:
     }
 break;
 case 255:
-#line 868 "yacc_parser.y"
+#line 869 "yacc_parser.y"
 {
         yyval.ast_symbol.data  = typeSpecifier1(yyvsp[0].ast_unsigned.data);
     }
 break;
 case 256:
-#line 871 "yacc_parser.y"
+#line 872 "yacc_parser.y"
 {
         yyval.ast_symbol.data  = typeSpecifier2(yyvsp[0].ast_typeModifiers.data);
     }
 break;
 case 257:
-#line 874 "yacc_parser.y"
+#line 875 "yacc_parser.y"
 {
         assert(yyvsp[0].ast_id.data);
         assert(yyvsp[0].ast_id.data->symbol);
@@ -3460,201 +3461,201 @@ case 257:
     }
 break;
 case 258:
-#line 880 "yacc_parser.y"
+#line 881 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
         declTypeSpecifier1(yyvsp[-1].ast_symbol.data,yyvsp[0].ast_unsigned.data);
     }
 break;
 case 259:
-#line 884 "yacc_parser.y"
+#line 885 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
         declTypeSpecifier2(yyvsp[-1].ast_symbol.data,yyvsp[0].ast_typeModifiers.data);
     }
 break;
 case 260:
-#line 888 "yacc_parser.y"
+#line 889 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
         declTypeSpecifier1(yyvsp[-1].ast_symbol.data,yyvsp[0].ast_unsigned.data);
     }
 break;
 case 261:
-#line 892 "yacc_parser.y"
+#line 893 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
         declTypeSpecifier1(yyvsp[-1].ast_symbol.data,yyvsp[0].ast_unsigned.data);
     }
 break;
 case 262:
-#line 896 "yacc_parser.y"
+#line 897 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
         declTypeSpecifier2(yyvsp[-1].ast_symbol.data,yyvsp[0].ast_typeModifiers.data);
     }
 break;
 case 263:
-#line 900 "yacc_parser.y"
+#line 901 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
         yyval.ast_symbol.data->storage = yyvsp[0].ast_unsigned.data;
     }
 break;
 case 264:
-#line 904 "yacc_parser.y"
+#line 905 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
     }
 break;
 case 265:
-#line 907 "yacc_parser.y"
+#line 908 "yacc_parser.y"
 {
         assert(0);
     }
 break;
 case 266:
-#line 910 "yacc_parser.y"
+#line 911 "yacc_parser.y"
 {
         assert(0); /* token never used */
     }
 break;
 case 267:
-#line 916 "yacc_parser.y"
+#line 917 "yacc_parser.y"
 {
         yyval.ast_symbol.data  = typeSpecifier1(TypeDefault);
         yyval.ast_symbol.data->storage = yyvsp[0].ast_unsigned.data;
     }
 break;
 case 268:
-#line 920 "yacc_parser.y"
+#line 921 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
         yyval.ast_symbol.data->storage = yyvsp[0].ast_unsigned.data;
     }
 break;
 case 269:
-#line 924 "yacc_parser.y"
+#line 925 "yacc_parser.y"
 {
         yyval.ast_symbol.data  = typeSpecifier1(yyvsp[0].ast_unsigned.data);
     }
 break;
 case 270:
-#line 927 "yacc_parser.y"
+#line 928 "yacc_parser.y"
 {
         declTypeSpecifier1(yyvsp[-1].ast_symbol.data, yyvsp[0].ast_unsigned.data);
     }
 break;
 case 271:
-#line 930 "yacc_parser.y"
+#line 931 "yacc_parser.y"
 {
         yyval.ast_symbol.data = typeSpecifier1(TypeDefault);
     }
 break;
 case 272:
-#line 933 "yacc_parser.y"
+#line 934 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
     }
 break;
 case 275:
-#line 946 "yacc_parser.y"
+#line 947 "yacc_parser.y"
 {
         yyval.ast_idList.data = NULL;
     }
 break;
 case 276:
-#line 949 "yacc_parser.y"
+#line 950 "yacc_parser.y"
 {
         yyval.ast_idList.data = yyvsp[0].ast_idList.data;
     }
 break;
 case 278:
-#line 959 "yacc_parser.y"
+#line 960 "yacc_parser.y"
 { yyval.ast_unsigned.data = StorageTypedef; }
 break;
 case 279:
-#line 960 "yacc_parser.y"
+#line 961 "yacc_parser.y"
 { yyval.ast_unsigned.data = StorageExtern; }
 break;
 case 280:
-#line 961 "yacc_parser.y"
+#line 962 "yacc_parser.y"
 { yyval.ast_unsigned.data = StorageStatic; }
 break;
 case 281:
-#line 962 "yacc_parser.y"
+#line 963 "yacc_parser.y"
 { yyval.ast_unsigned.data = StorageThreadLocal; }
 break;
 case 282:
-#line 963 "yacc_parser.y"
-{ yyval.ast_unsigned.data = StorageAuto; }
-break;
-case 283:
 #line 964 "yacc_parser.y"
 { yyval.ast_unsigned.data = StorageAuto; }
 break;
-case 284:
-#line 968 "yacc_parser.y"
-{ yyval.ast_unsigned.data = TypeDefault; }
+case 283:
+#line 965 "yacc_parser.y"
+{ yyval.ast_unsigned.data = StorageAuto; }
 break;
-case 285:
+case 284:
 #line 969 "yacc_parser.y"
 { yyval.ast_unsigned.data = TypeDefault; }
 break;
-case 286:
+case 285:
 #line 970 "yacc_parser.y"
 { yyval.ast_unsigned.data = TypeDefault; }
 break;
-case 287:
+case 286:
 #line 971 "yacc_parser.y"
 { yyval.ast_unsigned.data = TypeDefault; }
 break;
-case 288:
+case 287:
 #line 972 "yacc_parser.y"
 { yyval.ast_unsigned.data = TypeDefault; }
 break;
+case 288:
+#line 973 "yacc_parser.y"
+{ yyval.ast_unsigned.data = TypeDefault; }
+break;
 case 291:
-#line 981 "yacc_parser.y"
+#line 982 "yacc_parser.y"
 { yyval.ast_unsigned.data = TypeChar; }
 break;
 case 292:
-#line 982 "yacc_parser.y"
+#line 983 "yacc_parser.y"
 { yyval.ast_unsigned.data = TmodShort; }
 break;
 case 293:
-#line 983 "yacc_parser.y"
+#line 984 "yacc_parser.y"
 { yyval.ast_unsigned.data = TypeInt; }
 break;
 case 294:
-#line 984 "yacc_parser.y"
+#line 985 "yacc_parser.y"
 { yyval.ast_unsigned.data = TmodLong; }
 break;
 case 295:
-#line 985 "yacc_parser.y"
+#line 986 "yacc_parser.y"
 { yyval.ast_unsigned.data = TmodSigned; }
 break;
 case 296:
-#line 986 "yacc_parser.y"
+#line 987 "yacc_parser.y"
 { yyval.ast_unsigned.data = TmodUnsigned; }
 break;
 case 297:
-#line 987 "yacc_parser.y"
+#line 988 "yacc_parser.y"
 { yyval.ast_unsigned.data = TypeFloat; }
 break;
 case 298:
-#line 988 "yacc_parser.y"
+#line 989 "yacc_parser.y"
 { yyval.ast_unsigned.data = TypeDouble; }
 break;
 case 299:
-#line 989 "yacc_parser.y"
+#line 990 "yacc_parser.y"
 { yyval.ast_unsigned.data = TypeVoid; }
 break;
 case 300:
-#line 990 "yacc_parser.y"
+#line 991 "yacc_parser.y"
 { yyval.ast_unsigned.data = TypeBoolean; }
 break;
 case 305:
-#line 1004 "yacc_parser.y"
+#line 1005 "yacc_parser.y"
 {
         int usage;
         if (nestingLevel() == 0)
@@ -3665,7 +3666,7 @@ case 305:
     }
 break;
 case 306:
-#line 1012 "yacc_parser.y"
+#line 1013 "yacc_parser.y"
 {
         assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->typeSymbol);
         yyval.ast_typeModifiers.data = yyvsp[-3].ast_typeModifiers.data;
@@ -3673,37 +3674,37 @@ case 306:
     }
 break;
 case 307:
-#line 1017 "yacc_parser.y"
+#line 1018 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = yyvsp[-2].ast_typeModifiers.data;
     }
 break;
 case 308:
-#line 1023 "yacc_parser.y"
+#line 1024 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = simpleStructOrUnionSpecifier(yyvsp[-1].ast_id.data, yyvsp[0].ast_id.data, UsageDefined);
     }
 break;
 case 309:
-#line 1026 "yacc_parser.y"
+#line 1027 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = createNewAnonymousStructOrUnion(yyvsp[0].ast_id.data);
     }
 break;
 case 311:
-#line 1033 "yacc_parser.y"
+#line 1034 "yacc_parser.y"
 { assert(0); /* token never used */ }
 break;
 case 312:
-#line 1037 "yacc_parser.y"
-{ yyval.ast_id.data = yyvsp[0].ast_id.data; }
-break;
-case 313:
 #line 1038 "yacc_parser.y"
 { yyval.ast_id.data = yyvsp[0].ast_id.data; }
 break;
+case 313:
+#line 1039 "yacc_parser.y"
+{ yyval.ast_id.data = yyvsp[0].ast_id.data; }
+break;
 case 315:
-#line 1043 "yacc_parser.y"
+#line 1044 "yacc_parser.y"
 {
         if (yyvsp[-1].ast_symbol.data == &errorSymbol || yyvsp[-1].ast_symbol.data->type==TypeError) {
             yyval.ast_symbol.data = yyvsp[0].ast_symbol.data;
@@ -3716,7 +3717,7 @@ case 315:
     }
 break;
 case 316:
-#line 1056 "yacc_parser.y"
+#line 1057 "yacc_parser.y"
 {
         assert(yyvsp[-2].ast_symbol.data && yyvsp[-1].ast_symbol.data);
         for (Symbol *symbol=yyvsp[-1].ast_symbol.data; symbol!=NULL; symbol=symbol->next) {
@@ -3727,7 +3728,7 @@ case 316:
     }
 break;
 case 317:
-#line 1064 "yacc_parser.y"
+#line 1065 "yacc_parser.y"
 {
         yyval.ast_symbol.data = newSymbolAsCopyOf(&errorSymbol);
 #if YYDEBUG
@@ -3738,14 +3739,14 @@ case 317:
     }
 break;
 case 318:
-#line 1075 "yacc_parser.y"
+#line 1076 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[0].ast_symbol.data;
         assert(yyval.ast_symbol.data->next == NULL);
     }
 break;
 case 319:
-#line 1079 "yacc_parser.y"
+#line 1080 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
         assert(yyvsp[0].ast_symbol.data->next == NULL);
@@ -3753,19 +3754,19 @@ case 319:
     }
 break;
 case 320:
-#line 1087 "yacc_parser.y"
+#line 1088 "yacc_parser.y"
 {
         yyval.ast_symbol.data = createEmptyField();
     }
 break;
 case 321:
-#line 1090 "yacc_parser.y"
+#line 1091 "yacc_parser.y"
 {
         yyval.ast_symbol.data = createEmptyField();
     }
 break;
 case 324:
-#line 1098 "yacc_parser.y"
+#line 1099 "yacc_parser.y"
 {
         Usage usage;
         if (nestingLevel() == 0)
@@ -3776,7 +3777,7 @@ case 324:
     }
 break;
 case 325:
-#line 1106 "yacc_parser.y"
+#line 1107 "yacc_parser.y"
 {
         assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->type == TypeEnum && yyvsp[-3].ast_typeModifiers.data->typeSymbol);
         yyval.ast_typeModifiers.data = yyvsp[-3].ast_typeModifiers.data;
@@ -3787,50 +3788,50 @@ case 325:
     }
 break;
 case 326:
-#line 1114 "yacc_parser.y"
+#line 1115 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = createNewAnonymousEnum(yyvsp[-1].ast_symbolList.data);
     }
 break;
 case 327:
-#line 1120 "yacc_parser.y"
+#line 1121 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = simpleEnumSpecifier(yyvsp[0].ast_id.data, UsageDefined);
     }
 break;
 case 329:
-#line 1127 "yacc_parser.y"
+#line 1128 "yacc_parser.y"
 { assert(0); /* token never used */ }
 break;
 case 332:
-#line 1136 "yacc_parser.y"
+#line 1137 "yacc_parser.y"
 {
         yyval.ast_symbolList.data = createDefinitionList(yyvsp[0].ast_symbol.data);
     }
 break;
 case 333:
-#line 1139 "yacc_parser.y"
+#line 1140 "yacc_parser.y"
 {
         yyval.ast_symbolList.data = yyvsp[-2].ast_symbolList.data;
         LIST_APPEND(SymbolList, yyval.ast_symbolList.data, createDefinitionList(yyvsp[0].ast_symbol.data));
     }
 break;
 case 334:
-#line 1146 "yacc_parser.y"
+#line 1147 "yacc_parser.y"
 {
         yyval.ast_symbol.data = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[0].ast_id.data);
         addNewSymbolDefinition(symbolTable, inputFileName, yyval.ast_symbol.data, StorageConstant, UsageDefined);
     }
 break;
 case 335:
-#line 1150 "yacc_parser.y"
+#line 1151 "yacc_parser.y"
 {
         yyval.ast_symbol.data = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[-2].ast_id.data);
         addNewSymbolDefinition(symbolTable, inputFileName, yyval.ast_symbol.data, StorageConstant, UsageDefined);
     }
 break;
 case 336:
-#line 1154 "yacc_parser.y"
+#line 1155 "yacc_parser.y"
 {
         yyval.ast_symbol.data = newSymbolAsCopyOf(&errorSymbol);
 #if YYDEBUG
@@ -3841,11 +3842,11 @@ case 336:
     }
 break;
 case 337:
-#line 1162 "yacc_parser.y"
+#line 1163 "yacc_parser.y"
 { assert(0); /* token never used */ }
 break;
 case 339:
-#line 1167 "yacc_parser.y"
+#line 1168 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[0].ast_symbol.data;
         assert(yyval.ast_symbol.data->npointers == 0);
@@ -3853,20 +3854,20 @@ case 339:
     }
 break;
 case 340:
-#line 1175 "yacc_parser.y"
+#line 1176 "yacc_parser.y"
 {
         yyval.ast_symbol.data = newSymbol(yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->position);
     }
 break;
 case 341:
-#line 1178 "yacc_parser.y"
+#line 1179 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
         unpackPointers(yyval.ast_symbol.data);
     }
 break;
 case 342:
-#line 1182 "yacc_parser.y"
+#line 1183 "yacc_parser.y"
 {
         assert(yyvsp[-2].ast_symbol.data);
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
@@ -3874,7 +3875,7 @@ case 342:
     }
 break;
 case 343:
-#line 1187 "yacc_parser.y"
+#line 1188 "yacc_parser.y"
 {
         assert(yyvsp[-3].ast_symbol.data);
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
@@ -3882,7 +3883,7 @@ case 343:
     }
 break;
 case 344:
-#line 1192 "yacc_parser.y"
+#line 1193 "yacc_parser.y"
 {
         TypeModifier *modifier;
         assert(yyvsp[-2].ast_symbol.data);
@@ -3893,7 +3894,7 @@ case 344:
     }
 break;
 case 345:
-#line 1200 "yacc_parser.y"
+#line 1201 "yacc_parser.y"
 {
         TypeModifier *modifier;
         assert(yyvsp[-3].ast_symbol.data);
@@ -3905,7 +3906,7 @@ case 345:
     }
 break;
 case 346:
-#line 1209 "yacc_parser.y"
+#line 1210 "yacc_parser.y"
 {
         TypeModifier *modifier;
         assert(yyvsp[-3].ast_symbol.data);
@@ -3916,47 +3917,47 @@ case 346:
     }
 break;
 case 347:
-#line 1217 "yacc_parser.y"
+#line 1218 "yacc_parser.y"
 { assert(0); /* token never used */ }
 break;
 case 348:
-#line 1221 "yacc_parser.y"
+#line 1222 "yacc_parser.y"
 {
         yyval.ast_integer.data = 1;
     }
 break;
 case 349:
-#line 1224 "yacc_parser.y"
+#line 1225 "yacc_parser.y"
 {
         yyval.ast_integer.data = 1;
     }
 break;
 case 350:
-#line 1227 "yacc_parser.y"
+#line 1228 "yacc_parser.y"
 {
         yyval.ast_integer.data = yyvsp[0].ast_integer.data+1;
     }
 break;
 case 351:
-#line 1230 "yacc_parser.y"
+#line 1231 "yacc_parser.y"
 {
         yyval.ast_integer.data = yyvsp[0].ast_integer.data+1;
     }
 break;
 case 352:
-#line 1236 "yacc_parser.y"
+#line 1237 "yacc_parser.y"
 {
         yyval.ast_symbol.data  = typeSpecifier1(yyvsp[0].ast_unsigned.data);
     }
 break;
 case 353:
-#line 1239 "yacc_parser.y"
+#line 1240 "yacc_parser.y"
 {
         declTypeSpecifier1(yyvsp[-1].ast_symbol.data, yyvsp[0].ast_unsigned.data);
     }
 break;
 case 356:
-#line 1267 "yacc_parser.y"
+#line 1268 "yacc_parser.y"
 {
         assert(yyvsp[0].ast_id.data);
         assert(yyvsp[0].ast_id.data->symbol);
@@ -3965,19 +3966,19 @@ case 356:
     }
 break;
 case 357:
-#line 1273 "yacc_parser.y"
+#line 1274 "yacc_parser.y"
 {
         yyval.ast_symbol.data  = typeSpecifier1(yyvsp[0].ast_unsigned.data);
     }
 break;
 case 358:
-#line 1276 "yacc_parser.y"
+#line 1277 "yacc_parser.y"
 {
         yyval.ast_symbol.data  = typeSpecifier2(yyvsp[0].ast_typeModifiers.data);
     }
 break;
 case 359:
-#line 1279 "yacc_parser.y"
+#line 1280 "yacc_parser.y"
 {
         assert(yyvsp[0].ast_id.data);
         assert(yyvsp[0].ast_id.data->symbol);
@@ -3987,54 +3988,54 @@ case 359:
     }
 break;
 case 360:
-#line 1286 "yacc_parser.y"
+#line 1287 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
         declTypeSpecifier1(yyvsp[-1].ast_symbol.data,yyvsp[0].ast_unsigned.data);
     }
 break;
 case 361:
-#line 1290 "yacc_parser.y"
+#line 1291 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
         declTypeSpecifier2(yyvsp[-1].ast_symbol.data,yyvsp[0].ast_typeModifiers.data);
     }
 break;
 case 362:
-#line 1294 "yacc_parser.y"
+#line 1295 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
         declTypeSpecifier1(yyvsp[-1].ast_symbol.data,yyvsp[0].ast_unsigned.data);
     }
 break;
 case 363:
-#line 1298 "yacc_parser.y"
+#line 1299 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
         declTypeSpecifier1(yyvsp[-1].ast_symbol.data,yyvsp[0].ast_unsigned.data);
     }
 break;
 case 364:
-#line 1302 "yacc_parser.y"
+#line 1303 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
         declTypeSpecifier2(yyvsp[-1].ast_symbol.data,yyvsp[0].ast_typeModifiers.data);
     }
 break;
 case 365:
-#line 1306 "yacc_parser.y"
+#line 1307 "yacc_parser.y"
 {
         assert(0);
     }
 break;
 case 366:
-#line 1309 "yacc_parser.y"
+#line 1310 "yacc_parser.y"
 {
         assert(0); /* token never used */
     }
 break;
 case 368:
-#line 1316 "yacc_parser.y"
+#line 1317 "yacc_parser.y"
 {
         Symbol *symbol;
         Position pos = makePosition(-1, 0, 0);
@@ -4048,7 +4049,7 @@ case 368:
     }
 break;
 case 369:
-#line 1330 "yacc_parser.y"
+#line 1331 "yacc_parser.y"
 {
         Symbol *symbol;
         symbol = newSymbol(yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->position);
@@ -4057,7 +4058,7 @@ case 369:
     }
 break;
 case 370:
-#line 1336 "yacc_parser.y"
+#line 1337 "yacc_parser.y"
 {
         Symbol *symbol;
         symbol = newSymbol(yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->position);
@@ -4067,11 +4068,11 @@ case 370:
     }
 break;
 case 371:
-#line 1343 "yacc_parser.y"
+#line 1344 "yacc_parser.y"
 { assert(0); /* token never used */ }
 break;
 case 373:
-#line 1348 "yacc_parser.y"
+#line 1349 "yacc_parser.y"
 {
         Symbol *symbol;
         Position position = makePosition(-1, 0, 0);
@@ -4085,14 +4086,14 @@ case 373:
     }
 break;
 case 374:
-#line 1362 "yacc_parser.y"
+#line 1363 "yacc_parser.y"
 {
         yyval.ast_symbolPositionListPair.data.symbol = yyvsp[0].ast_symbol.data;
         yyval.ast_symbolPositionListPair.data.positionList = NULL;
     }
 break;
 case 375:
-#line 1366 "yacc_parser.y"
+#line 1367 "yacc_parser.y"
 {
         yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
         LIST_APPEND(Symbol, yyvsp[-2].ast_symbolPositionListPair.data.symbol, yyvsp[0].ast_symbol.data);
@@ -4100,20 +4101,20 @@ case 375:
     }
 break;
 case 376:
-#line 1375 "yacc_parser.y"
+#line 1376 "yacc_parser.y"
 {
         completeDeclarator(yyvsp[-1].ast_symbol.data, yyvsp[0].ast_symbol.data);
         yyval.ast_symbol.data = yyvsp[0].ast_symbol.data;
     }
 break;
 case 377:
-#line 1379 "yacc_parser.y"
+#line 1380 "yacc_parser.y"
 {
         yyval.ast_symbol.data = newSymbolAsType(NULL, NULL, noPosition, yyvsp[0].ast_typeModifiers.data);
     }
 break;
 case 378:
-#line 1382 "yacc_parser.y"
+#line 1383 "yacc_parser.y"
 {
         yyval.ast_symbol.data = newSymbolAsCopyOf(&errorSymbol);
 #if YYDEBUG
@@ -4124,20 +4125,20 @@ case 378:
     }
 break;
 case 379:
-#line 1393 "yacc_parser.y"
+#line 1394 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = yyvsp[0].ast_symbol.data->typeModifier;
     }
 break;
 case 380:
-#line 1396 "yacc_parser.y"
+#line 1397 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = yyvsp[0].ast_typeModifiers.data;
         LIST_APPEND(TypeModifier, yyval.ast_typeModifiers.data, yyvsp[-1].ast_symbol.data->typeModifier);
     }
 break;
 case 381:
-#line 1403 "yacc_parser.y"
+#line 1404 "yacc_parser.y"
 {
         int i;
         yyval.ast_typeModifiers.data = newPointerTypeModifier(NULL);
@@ -4145,13 +4146,13 @@ case 381:
     }
 break;
 case 382:
-#line 1408 "yacc_parser.y"
+#line 1409 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = yyvsp[0].ast_typeModifiers.data;
     }
 break;
 case 383:
-#line 1411 "yacc_parser.y"
+#line 1412 "yacc_parser.y"
 {
         int i;
         yyval.ast_typeModifiers.data = yyvsp[0].ast_typeModifiers.data;
@@ -4159,51 +4160,51 @@ case 383:
     }
 break;
 case 384:
-#line 1419 "yacc_parser.y"
+#line 1420 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = yyvsp[-1].ast_typeModifiers.data;
     }
 break;
 case 385:
-#line 1422 "yacc_parser.y"
+#line 1423 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = newArrayTypeModifier();
     }
 break;
 case 386:
-#line 1425 "yacc_parser.y"
+#line 1426 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = newArrayTypeModifier();
     }
 break;
 case 387:
-#line 1428 "yacc_parser.y"
+#line 1429 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = yyvsp[-2].ast_typeModifiers.data;
         appendComposedType(&(yyval.ast_typeModifiers.data), TypeArray);
     }
 break;
 case 388:
-#line 1432 "yacc_parser.y"
+#line 1433 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = yyvsp[-3].ast_typeModifiers.data;
         appendComposedType(&(yyval.ast_typeModifiers.data), TypeArray);
     }
 break;
 case 389:
-#line 1436 "yacc_parser.y"
+#line 1437 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = newFunctionTypeModifier(NULL, NULL, NULL);
     }
 break;
 case 390:
-#line 1439 "yacc_parser.y"
+#line 1440 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.data = newFunctionTypeModifier(yyvsp[-1].ast_symbolPositionListPair.data.symbol, NULL, NULL);
     }
 break;
 case 391:
-#line 1442 "yacc_parser.y"
+#line 1443 "yacc_parser.y"
 {
         TypeModifier *modifier;
         yyval.ast_typeModifiers.data = yyvsp[-2].ast_typeModifiers.data;
@@ -4212,7 +4213,7 @@ case 391:
     }
 break;
 case 392:
-#line 1448 "yacc_parser.y"
+#line 1449 "yacc_parser.y"
 {
         TypeModifier *modifier;
         yyval.ast_typeModifiers.data = yyvsp[-3].ast_typeModifiers.data;
@@ -4221,25 +4222,25 @@ case 392:
     }
 break;
 case 393:
-#line 1457 "yacc_parser.y"
+#line 1458 "yacc_parser.y"
 {
         yyval.ast_idList.data = NULL;
     }
 break;
 case 394:
-#line 1461 "yacc_parser.y"
+#line 1462 "yacc_parser.y"
 {
         yyval.ast_idList.data = yyvsp[-1].ast_idList.data;
     }
 break;
 case 395:
-#line 1464 "yacc_parser.y"
+#line 1465 "yacc_parser.y"
 {
         yyval.ast_idList.data = yyvsp[-2].ast_idList.data;
     }
 break;
 case 396:
-#line 1467 "yacc_parser.y"
+#line 1468 "yacc_parser.y"
 {
         yyval.ast_idList.data = NULL;
 #if YYDEBUG
@@ -4250,213 +4251,213 @@ case 396:
     }
 break;
 case 397:
-#line 1478 "yacc_parser.y"
+#line 1479 "yacc_parser.y"
 {
         yyval.ast_idList.data = yyvsp[-3].ast_idList.data;
         savedWorkMemoryIndex = yyvsp[-4].ast_unsigned.data;
     }
 break;
 case 398:
-#line 1482 "yacc_parser.y"
+#line 1483 "yacc_parser.y"
 {
         LIST_APPEND(IdList, yyvsp[-6].ast_idList.data, yyvsp[-3].ast_idList.data);
         savedWorkMemoryIndex = yyvsp[-4].ast_unsigned.data;
     }
 break;
 case 399:
-#line 1489 "yacc_parser.y"
+#line 1490 "yacc_parser.y"
 {
         yyval.ast_idList.data = NULL;
     }
 break;
 case 400:
-#line 1492 "yacc_parser.y"
+#line 1493 "yacc_parser.y"
 {
         yyval.ast_idList.data = stackMemoryAlloc(sizeof(IdList));
         *(yyval.ast_idList.data) = makeIdList(*yyvsp[-1].ast_id.data, NULL);
     }
 break;
 case 401:
-#line 1499 "yacc_parser.y"
+#line 1500 "yacc_parser.y"
 {
         yyval.ast_id.data = yyvsp[0].ast_id.data;
     }
 break;
 case 402:
-#line 1502 "yacc_parser.y"
+#line 1503 "yacc_parser.y"
 {
         LIST_APPEND(Id, yyvsp[-1].ast_id.data, yyvsp[0].ast_id.data);
     }
 break;
 case 403:
-#line 1508 "yacc_parser.y"
+#line 1509 "yacc_parser.y"
 {
         yyval.ast_id.data = stackMemoryAlloc(sizeof(Id));
         *(yyval.ast_id.data) = makeId("", NULL, noPosition);
     }
 break;
 case 404:
-#line 1512 "yacc_parser.y"
+#line 1513 "yacc_parser.y"
 {
         yyval.ast_id.data = stackMemoryAlloc(sizeof(Id));
         *(yyval.ast_id.data) = *(yyvsp[0].ast_id.data);
     }
 break;
 case 405:
-#line 1519 "yacc_parser.y"
+#line 1520 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
     }
 break;
 case 406:
-#line 1522 "yacc_parser.y"
+#line 1523 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
     }
 break;
 case 407:
-#line 1525 "yacc_parser.y"
+#line 1526 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
     }
 break;
 case 408:
-#line 1528 "yacc_parser.y"
+#line 1529 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
     }
 break;
 case 409:
-#line 1531 "yacc_parser.y"
+#line 1532 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
     }
 break;
 case 410:
-#line 1534 "yacc_parser.y"
+#line 1535 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
     }
 break;
 case 411:
-#line 1537 "yacc_parser.y"
+#line 1538 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
     }
 break;
 case 412:
-#line 1540 "yacc_parser.y"
+#line 1541 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
     }
 break;
 case 414:
-#line 1547 "yacc_parser.y"
+#line 1548 "yacc_parser.y"
 {
             generateSwitchCaseFork(false);
     }
 break;
 case 415:
-#line 1550 "yacc_parser.y"
+#line 1551 "yacc_parser.y"
 {
             generateSwitchCaseFork(false);
     }
 break;
 case 416:
-#line 1553 "yacc_parser.y"
+#line 1554 "yacc_parser.y"
 {
             generateSwitchCaseFork(false);
     }
 break;
 case 418:
-#line 1563 "yacc_parser.y"
+#line 1564 "yacc_parser.y"
 {
         labelReference(yyvsp[0].ast_id.data,UsageDefined);
     }
 break;
 case 419:
-#line 1566 "yacc_parser.y"
+#line 1567 "yacc_parser.y"
 { assert(0); /* token never used */ }
 break;
 case 420:
-#line 1570 "yacc_parser.y"
+#line 1571 "yacc_parser.y"
 {
         labelReference(yyvsp[0].ast_id.data,UsageUsed);
     }
 break;
 case 421:
-#line 1573 "yacc_parser.y"
+#line 1574 "yacc_parser.y"
 { assert(0); /* token never used */ }
 break;
 case 426:
-#line 1591 "yacc_parser.y"
+#line 1592 "yacc_parser.y"
 {
         labelReference(yyvsp[0].ast_id.data,UsageDeclared);
     }
 break;
 case 427:
-#line 1594 "yacc_parser.y"
+#line 1595 "yacc_parser.y"
 {
         labelReference(yyvsp[0].ast_id.data,UsageDeclared);
     }
 break;
 case 432:
-#line 1619 "yacc_parser.y"
+#line 1620 "yacc_parser.y"
 { yyval.ast_expressionType.data.typeModifier = NULL; yyval.ast_expressionType.data.reference = NULL; }
 break;
 case 433:
-#line 1620 "yacc_parser.y"
+#line 1621 "yacc_parser.y"
 { yyval.ast_expressionType.data = yyvsp[0].ast_expressionType.data; }
 break;
 case 435:
-#line 1628 "yacc_parser.y"
+#line 1629 "yacc_parser.y"
 {yyval.ast_integer.data = nextGeneratedLocalSymbol();}
 break;
 case 436:
-#line 1631 "yacc_parser.y"
+#line 1632 "yacc_parser.y"
 {yyval.ast_integer.data = nextGeneratedLabelSymbol();}
 break;
 case 437:
-#line 1634 "yacc_parser.y"
+#line 1635 "yacc_parser.y"
 {yyval.ast_integer.data = nextGeneratedGotoSymbol();}
 break;
 case 438:
-#line 1637 "yacc_parser.y"
+#line 1638 "yacc_parser.y"
 {yyval.ast_integer.data = nextGeneratedForkSymbol();}
 break;
 case 439:
-#line 1641 "yacc_parser.y"
+#line 1642 "yacc_parser.y"
 {
         generateInternalLabelReference(yyvsp[-1].ast_integer.data, UsageDefined);
     }
 break;
 case 440:
-#line 1644 "yacc_parser.y"
+#line 1645 "yacc_parser.y"
 {
         generateInternalLabelReference(yyvsp[-3].ast_integer.data, UsageDefined);
     }
 break;
 case 441:
-#line 1646 "yacc_parser.y"
+#line 1647 "yacc_parser.y"
 {
         generateInternalLabelReference(yyvsp[-2].ast_integer.data, UsageDefined);
     }
 break;
 case 442:
-#line 1649 "yacc_parser.y"
+#line 1650 "yacc_parser.y"
 {/*6*/
         yyval.symbol = addContinueBreakLabelSymbol(1000*yyvsp[0].ast_integer.data, SWITCH_LABEL_NAME);
     }
 break;
 case 443:
-#line 1651 "yacc_parser.y"
+#line 1652 "yacc_parser.y"
 {/*7*/
         yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data, BREAK_LABEL_NAME);
         generateInternalLabelReference(yyvsp[-1].ast_integer.data, UsageFork);
     }
 break;
 case 444:
-#line 1654 "yacc_parser.y"
+#line 1655 "yacc_parser.y"
 {
         generateSwitchCaseFork(true);
         deleteContinueBreakSymbol(yyvsp[-1].symbol);
@@ -4465,23 +4466,23 @@ case 444:
     }
 break;
 case 445:
-#line 1663 "yacc_parser.y"
+#line 1664 "yacc_parser.y"
 {completionTypeForForStatement=yyvsp[0].ast_expressionType.data;}
 break;
 case 448:
-#line 1673 "yacc_parser.y"
+#line 1674 "yacc_parser.y"
 {/*7*/
         yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-4].ast_integer.data, CONTINUE_LABEL_NAME);
     }
 break;
 case 449:
-#line 1675 "yacc_parser.y"
+#line 1676 "yacc_parser.y"
 {/*8*/
         yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data, BREAK_LABEL_NAME);
     }
 break;
 case 450:
-#line 1677 "yacc_parser.y"
+#line 1678 "yacc_parser.y"
 {
         deleteContinueBreakSymbol(yyvsp[-1].symbol);
         deleteContinueBreakSymbol(yyvsp[-2].symbol);
@@ -4490,19 +4491,19 @@ case 450:
     }
 break;
 case 451:
-#line 1684 "yacc_parser.y"
+#line 1685 "yacc_parser.y"
 { /*5*/
         yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data, CONTINUE_LABEL_NAME);
     }
 break;
 case 452:
-#line 1686 "yacc_parser.y"
+#line 1687 "yacc_parser.y"
 {/*6*/
         yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data, BREAK_LABEL_NAME);
     }
 break;
 case 453:
-#line 1688 "yacc_parser.y"
+#line 1689 "yacc_parser.y"
 {
         deleteContinueBreakSymbol(yyvsp[-2].symbol);
         deleteContinueBreakSymbol(yyvsp[-3].symbol);
@@ -4510,14 +4511,14 @@ case 453:
     }
 break;
 case 454:
-#line 1692 "yacc_parser.y"
+#line 1693 "yacc_parser.y"
 {
         generateInternalLabelReference(yyvsp[-11].ast_integer.data, UsageFork);
         generateInternalLabelReference(yyvsp[-9].ast_integer.data, UsageDefined);
     }
 break;
 case 455:
-#line 1700 "yacc_parser.y"
+#line 1701 "yacc_parser.y"
 { /*13*/
             generateInternalLabelReference(yyvsp[-7].ast_integer.data, UsageUsed);
             generateInternalLabelReference(yyvsp[-4].ast_integer.data, UsageDefined);
@@ -4525,13 +4526,13 @@ case 455:
         }
 break;
 case 456:
-#line 1705 "yacc_parser.y"
+#line 1706 "yacc_parser.y"
 { /*14*/
             yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data, BREAK_LABEL_NAME);
         }
 break;
 case 457:
-#line 1709 "yacc_parser.y"
+#line 1710 "yacc_parser.y"
 {
             deleteContinueBreakSymbol(yyvsp[-1].symbol);
             deleteContinueBreakSymbol(yyvsp[-2].symbol);
@@ -4540,7 +4541,7 @@ case 457:
         }
 break;
 case 458:
-#line 1719 "yacc_parser.y"
+#line 1720 "yacc_parser.y"
 { /*13*/
             generateInternalLabelReference(yyvsp[-7].ast_integer.data, UsageUsed);
             generateInternalLabelReference(yyvsp[-4].ast_integer.data, UsageDefined);
@@ -4548,13 +4549,13 @@ case 458:
         }
 break;
 case 459:
-#line 1724 "yacc_parser.y"
+#line 1725 "yacc_parser.y"
 { /*14*/
             yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data, BREAK_LABEL_NAME);
         }
 break;
 case 460:
-#line 1728 "yacc_parser.y"
+#line 1729 "yacc_parser.y"
 {
             deleteContinueBreakSymbol(yyvsp[-1].symbol);
             deleteContinueBreakSymbol(yyvsp[-2].symbol);
@@ -4563,37 +4564,37 @@ case 460:
         }
 break;
 case 466:
-#line 1743 "yacc_parser.y"
+#line 1744 "yacc_parser.y"
 {
         generateContinueBreakReference(CONTINUE_LABEL_NAME);
     }
 break;
 case 467:
-#line 1746 "yacc_parser.y"
+#line 1747 "yacc_parser.y"
 {
         generateContinueBreakReference(BREAK_LABEL_NAME);
     }
 break;
 case 468:
-#line 1749 "yacc_parser.y"
+#line 1750 "yacc_parser.y"
 {
         generateInternalLabelReference(-1, UsageUsed);
     }
 break;
 case 469:
-#line 1752 "yacc_parser.y"
+#line 1753 "yacc_parser.y"
 {
         generateInternalLabelReference(-1, UsageUsed);
     }
 break;
 case 470:
-#line 1757 "yacc_parser.y"
+#line 1758 "yacc_parser.y"
 {
         actionsBeforeAfterExternalDefinition();
     }
 break;
 case 486:
-#line 1801 "yacc_parser.y"
+#line 1802 "yacc_parser.y"
 {
         if (includeStack.pointer == 0) {
             placeCachePoint(true);
@@ -4601,7 +4602,7 @@ case 486:
     }
 break;
 case 487:
-#line 1806 "yacc_parser.y"
+#line 1807 "yacc_parser.y"
 {
         if (includeStack.pointer == 0) {
             placeCachePoint(true);
@@ -4609,19 +4610,19 @@ case 487:
     }
 break;
 case 489:
-#line 1815 "yacc_parser.y"
+#line 1816 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-2].ast_unsigned.data;
     }
 break;
 case 490:
-#line 1818 "yacc_parser.y"
+#line 1819 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-2].ast_unsigned.data;
     }
 break;
 case 491:
-#line 1821 "yacc_parser.y"
+#line 1822 "yacc_parser.y"
 {
         Symbol *symbol;
         int i;
@@ -4648,78 +4649,78 @@ case 491:
     }
 break;
 case 492:
-#line 1844 "yacc_parser.y"
+#line 1845 "yacc_parser.y"
 {
         endBlock();
         parsedInfo.function = NULL;
     }
 break;
 case 494:
-#line 1849 "yacc_parser.y"
+#line 1850 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-3].ast_unsigned.data;
     }
 break;
 case 495:
-#line 1852 "yacc_parser.y"
+#line 1853 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-5].ast_unsigned.data;
     }
 break;
 case 496:
-#line 1855 "yacc_parser.y"
+#line 1856 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-5].ast_unsigned.data;
     }
 break;
 case 497:
-#line 1858 "yacc_parser.y"
+#line 1859 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-2].ast_unsigned.data;
     }
 break;
 case 498:
-#line 1861 "yacc_parser.y"
+#line 1862 "yacc_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
     }
 break;
 case 499:
-#line 1864 "yacc_parser.y"
+#line 1865 "yacc_parser.y"
 {  /* empty external definition */
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
     }
 break;
 case 500:
-#line 1870 "yacc_parser.y"
+#line 1871 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
         addNewDeclaration(symbolTable, yyvsp[-2].ast_symbol.data, yyvsp[-1].ast_symbol.data, yyvsp[0].ast_idList.data, StorageExtern);
     }
 break;
 case 501:
-#line 1874 "yacc_parser.y"
+#line 1875 "yacc_parser.y"
 {
         yyval.ast_symbol.data = & defaultIntDefinition;
         addNewDeclaration(symbolTable, yyval.ast_symbol.data, yyvsp[-1].ast_symbol.data, yyvsp[0].ast_idList.data, StorageExtern);
     }
 break;
 case 502:
-#line 1878 "yacc_parser.y"
+#line 1879 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
         addNewDeclaration(symbolTable, yyvsp[-3].ast_symbol.data, yyvsp[-1].ast_symbol.data, yyvsp[0].ast_idList.data, StorageExtern);
     }
 break;
 case 503:
-#line 1882 "yacc_parser.y"
+#line 1883 "yacc_parser.y"
 {
         /* $$.d = &s_errorSymbol; */
         yyval.ast_symbol.data = typeSpecifier2(&errorModifier);
     }
 break;
 case 505:
-#line 1890 "yacc_parser.y"
+#line 1891 "yacc_parser.y"
 {
         assert(yyvsp[-1].ast_symbol.data->typeModifier && yyvsp[-1].ast_symbol.data->typeModifier->type == TypeFunction);
         Result r = mergeArguments(yyvsp[-1].ast_symbol.data->typeModifier->args, yyvsp[0].ast_symbol.data);
@@ -4728,13 +4729,13 @@ case 505:
     }
 break;
 case 506:
-#line 1899 "yacc_parser.y"
+#line 1900 "yacc_parser.y"
 {
         yyval.ast_symbol.data = NULL;
     }
 break;
 case 507:
-#line 1902 "yacc_parser.y"
+#line 1903 "yacc_parser.y"
 {
         Symbol *symbol;
         assert(yyvsp[-2].ast_symbol.data && yyvsp[-1].ast_symbol.data);
@@ -4745,26 +4746,26 @@ case 507:
     }
 break;
 case 508:
-#line 1913 "yacc_parser.y"
+#line 1914 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
     }
 break;
 case 509:
-#line 1916 "yacc_parser.y"
+#line 1917 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
         LIST_APPEND(Symbol, yyval.ast_symbol.data, yyvsp[-1].ast_symbol.data);
     }
 break;
 case 510:
-#line 1920 "yacc_parser.y"
+#line 1921 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
     }
 break;
 case 511:
-#line 1926 "yacc_parser.y"
+#line 1927 "yacc_parser.y"
 {
         completeDeclarator(&defaultIntDefinition, yyvsp[0].ast_symbol.data);
         assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->typeModifier);
@@ -4773,7 +4774,7 @@ case 511:
     }
 break;
 case 512:
-#line 1932 "yacc_parser.y"
+#line 1933 "yacc_parser.y"
 {
         completeDeclarator(yyvsp[-1].ast_symbol.data, yyvsp[0].ast_symbol.data);
         assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->typeModifier);
@@ -4782,14 +4783,14 @@ case 512:
     }
 break;
 case 513:
-#line 1941 "yacc_parser.y"
+#line 1942 "yacc_parser.y"
 { beginBlock(); }
 break;
 case 514:
-#line 1944 "yacc_parser.y"
+#line 1945 "yacc_parser.y"
 { endBlock(); }
 break;
-#line 4793 "yacc_parser.tab.c"
+#line 4794 "yacc_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
