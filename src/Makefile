@@ -434,8 +434,8 @@ coverage:
 
 
 .PHONY:merge-coverage-from-tests
-ifeq ($(HAVE_APPLE_COV),yes)
 merge-coverage-from-tests:
+ifeq ($(HAVE_APPLE_COV),yes)
 	# Darwin: Merge all .profraw files from tests using llvm-profdata
 	@mkdir -p ../coverage
 	-if find .. -name "*.profraw" | head -1 >/dev/null 2>&1; then \
