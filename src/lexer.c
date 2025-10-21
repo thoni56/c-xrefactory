@@ -423,13 +423,6 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
     int lexemStartingColumn;
     int fileOffsetForLexemStart;
 
-    /* first test whether the input is cached */
-    /* TODO: why do we need to know this? */
-    if (cachingIsActive() && includeStack.pointer == 0 && macroStackIndex == 0) {
-        cacheInput(&currentInput);
-        cache.nextToCache = lb->lexemStream;
-    }
-
     shiftAnyRemainingLexems(lb);
 
     char *lexemLimit = getLexemStreamWrite(lb) + LEXEM_BUFFER_SIZE - MAX_LEXEM_SIZE;

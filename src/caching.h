@@ -73,15 +73,6 @@ extern bool cachingIsActive(void);
 extern void placeCachePoint(bool inputCaching);
 
 
-/* ========== Cache Input Management ========== */
-
-/**
- * Store lexical input in the cache buffer
- * @param input The lexical input to cache
- */
-extern void cacheInput(LexInput *input);
-
-
 /**
  * Recover memory state after a memory overflow occurred
  * @param cxMemFreeBase Base pointer for cross-reference memory recovery

@@ -23,12 +23,9 @@
 #include "globals.h"
 #include "memory.h"
 #include "stackmemory.h"
-#include "options.h"
-#include "input.h"
 #include "yylex.h"
 #include "editor.h"
 #include "reftab.h"
-#include "symboltable.h"
 #include "filedescriptor.h"
 #include "filetable.h"
 
@@ -204,79 +201,6 @@ void initCaching(void) {
 /*                            Input Caching                                  */
 /* ========================================================================== */
 
-/**
- * Check if input caching should be skipped due to current parsing context.
- *
- * @return true if caching should be skipped, false if it can proceed
- */
-static bool shouldSkipInputCaching(void) {
-    if (!cachingIsActive()) {
-        log_trace("Caching is not active");
-        return true;
-    }
-    if (includeStack.pointer != 0 || macroStackIndex != 0) {
-        log_trace("In include or macro, will not cache now");
-        return true;
-    }
-    return false;
-}
-
-/**
- * Check if there's enough space in the cache buffer for the input.
- *
- * @param size Number of bytes to cache
- * @return true if there's enough space, false if cache is full
- */
-static bool hasEnoughCacheSpace(int size) {
-    return (cache.free - cache.lexemStream + size < LEXEM_STREAM_CACHE_SIZE);
-}
-
-/**
- * Copy input data to the cache buffer if not already cached.
- *
- * @param input The input to cache
- * @param size Number of bytes to copy
- */
-static void copyInputToCache(LexInput *input, int size) {
-    /* Avoid copying if we are already reading from cached data */
-    if (input->inputType != INPUT_CACHE) {
-        /* Copy from next un-cached to the free area of the cache buffer */
-        memcpy(cache.free, cache.nextToCache, size);
-    }
-    cache.free += size;
-    cache.nextToCache = input->read;
-}
-
-/**
- * Store lexical input in the cache buffer.
- *
- * This function copies input tokens to the cache buffer for later reuse.
- * Caching is skipped when inside includes/macros or when the buffer is full.
- *
- * @param input The lexical input to cache
- */
-void cacheInput(LexInput *input) {
-    ENTER();
-
-    if (shouldSkipInputCaching()) {
-        LEAVE();
-        return;
-    }
-
-    /* Calculate how much needs to be cached */
-    int size = input->read - cache.nextToCache;
-
-    /* Check if there's enough space */
-    if (!hasEnoughCacheSpace(size)) {
-        deactivateCaching();
-        LEAVE();
-        return;
-    }
-
-    copyInputToCache(input, size);
-    LEAVE();
-}
-
 static void fillCachePoint(CachePoint *cachePoint, CodeBlock *topBlock, int ppmMemoryIndex,
                            int cxMemoryIndex, int macroBodyMemoryIndex, char *lbcc, short int includeStackTop,
                            short int lineNumber, short int ifDepth, CppIfStack *ifStack, Counters counters) {
@@ -303,8 +227,7 @@ void placeCachePoint(bool inputCaching) {
         deactivateCaching();
         return;
     }
-    if (inputCaching)
-        cacheInput(&currentInput);
+
     if (!cachingIsActive())
         return;
     cachePoint = &cache.points[cache.index];
