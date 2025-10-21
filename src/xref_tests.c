@@ -22,6 +22,7 @@
 #include "progress.mock"
 #include "reftab.mock"
 #include "reference.mock"
+#include "yylex.mock"
 
 
 Describe(Xref);

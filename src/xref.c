@@ -23,6 +23,7 @@
 #include "proto.h"
 #include "protocol.h"
 #include "reftab.h"
+#include "yylex.h"
 
 
 // this is necessary to put new mtimes for header files
@@ -79,8 +80,6 @@ static ReferenceItem makeReferenceItemForIncludeFile(int fileNumber) {
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
-    void *cxFlushPoint = cxAlloc(0);
-
     fullScanFor(LINK_NAME_INCLUDE_REFS);
     // iterate over scheduled files
     bool fileAddedFlag = true;
@@ -106,8 +105,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
 
         }
     }
-    // Does this indicate that we are allocating a lot of memory that we should flush?
-    recoverMemoriesAfterOverflow(cxFlushPoint);
+    initAllInputs();
 }
 
 static void schedulingUpdateToProcess(FileItem *fileItem) {
