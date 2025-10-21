@@ -17,5 +17,4 @@ void parseCurrentInputFile(Language language) {
         uniyylval = &c_yylval;
         c_yyparse();
     }
-    deactivateCaching();
 }

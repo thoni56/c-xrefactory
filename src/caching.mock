@@ -2,21 +2,6 @@
 #include "caching.h"
 #include <cgreen/mocks.h>
 
-Cache cache;
-
-
-void activateCaching(void) {
-    mock();
-}
-
-void deactivateCaching(void) {
-    mock();
-}
-
-bool cachingIsActive(void) {
-    return (bool)mock();
-}
-
 void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
   mock(cxMemFreeBase);
 }

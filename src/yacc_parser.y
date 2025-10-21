@@ -206,7 +206,6 @@ static int savedWorkMemoryIndex = 0;
 
 yaccfile
     : Start_block {
-            deactivateCaching();    /* no caching in yacc_parser */
             // initialize locals
             l_yaccUnion = NULL;
             l_currentType = NULL;

@@ -21,19 +21,12 @@
 #include <string.h>
 
 #include "memory.h"
-#include "stackmemory.h"
 #include "yylex.h"
 #include "reftab.h"
-#include "filedescriptor.h"
 #include "filetable.h"
 
 #include "log.h"
 
-/* ========================================================================== */
-/*                              Global State                                 */
-/* ========================================================================== */
-
-Cache cache;
 
 /* ========================================================================== */
 /*                           Memory Recovery                                 */
@@ -83,26 +76,10 @@ static void recoverMemoryFromReferenceTable(void) {
     mapOverReferenceTableWithIndex(recoverMemoryFromReferenceTableEntry);
 }
 
-void recoverCxMemory(void *cxMemoryFlushPoint) {
+static void recoverCxMemory(void *cxMemoryFlushPoint) {
     cxFreeUntil(cxMemoryFlushPoint);
     recoverMemoryFromFileTable();
     recoverMemoryFromReferenceTable();
-}
-
-/* ========================================================================== */
-/*                         Cache State Management                            */
-/* ========================================================================== */
-
-void deactivateCaching(void) {
-    cache.active = false;
-}
-
-void activateCaching(void) {
-    cache.active = true;
-}
-
-bool cachingIsActive(void) {
-    return cache.active;
 }
 
 void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {

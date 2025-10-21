@@ -21,7 +21,6 @@
 
 void gotOnLineCxRefs(Position position) {
     if (requiresCreatingRefs(options.serverOperation)) {
-        deactivateCaching();
         cxRefPosition = position;
     }
 }

@@ -380,7 +380,6 @@ static void testCxrefCompletionId(LexemCode *out_lexem, char *id, Position posit
     assert(options.mode);
     if (options.mode == ServerMode) {
         if (lexem==IDENT_TO_COMPLETE) {
-            deactivateCaching();
             completionStringServed = true;
             if (currentLanguage == LANG_YACC) {
                 makeYaccCompletions(id, strlen(id), position);
@@ -463,12 +462,7 @@ void popInclude(void) {
     closeCharacterBuffer(&currentFile.characterBuffer);
     if (includeStack.pointer != 0) {
         currentFile = includeStack.stack[--includeStack.pointer];	/* buffers are copied !!!!!!, burk */
-        if (includeStack.pointer == 0 && cache.read != NULL) {
-            currentInput = makeLexInput(cache.lexemStream, cache.read, cache.write, NULL,
-                                        INPUT_CACHE);
-        } else {
-            setCurrentInputConsistency(&currentInput, &currentFile);
-        }
+        setCurrentInputConsistency(&currentInput, &currentFile);
     }
 }
 
