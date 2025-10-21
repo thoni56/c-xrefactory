@@ -137,10 +137,6 @@ static void recoverMemoryFromReferenceTableEntry(int index) {
     setReferenceItem(index, item);
 }
 
-// Deliberate NO-OP
-static void recoverMemoryFromFileTableEntry(FileItem *fileItem) {
-}
-
 static void recoverMemoryFromTypeStructOrUnion(Symbol *symbol) {
     assert(symbol->structSpec);
     if (isFreedStackMemory(symbol->structSpec->members)
@@ -214,7 +210,7 @@ static bool cachedIncludedFilePass(int index) {
 
 void recoverCxMemory(void *cxMemoryFlushPoint) {
     cxFreeUntil(cxMemoryFlushPoint);
-    mapOverFileTable(recoverMemoryFromFileTableEntry);
+    recoverMemoryFromFileTable();
     mapOverReferenceTableWithIndex(recoverMemoryFromReferenceTableEntry);
 }
 
@@ -305,7 +301,7 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
         log_trace("removing references");
         cxMemory.index = cachePoint->cxMemoryIndex;
         mapOverReferenceTableWithIndex(recoverMemoryFromReferenceTableEntry);
-        mapOverFileTable(recoverMemoryFromFileTableEntry);
+        recoverMemoryFromFileTable();
     }
     log_trace("recovering symbolTable");
     symbolTableMapWithIndex(symbolTable, recoverMemoryFromSymbolTableEntry);

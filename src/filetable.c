@@ -188,6 +188,14 @@ char *getNextArgumentFile(int *indexP) {
     return getNextInputFileFromFileTable(indexP, FILE_IS_ARGUMENT);
 }
 
+// NO-Op until we figure out how to do it...
+static void recoverMemoryFromFileTableEntry(FileItem *fileItem) {
+}
+
+void recoverMemoryFromFileTable(void) {
+    mapOverFileTable(recoverMemoryFromFileTableEntry);
+}
+
 void fileTableMemoryStatistics(void) {
     printMemoryStatisticsFor(&fileTableMemory);
 }

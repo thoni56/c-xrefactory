@@ -73,6 +73,8 @@ extern void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *p
 extern char *getNextScheduledFile(int *indexP);
 extern char *getNextArgumentFile(int *indexP);
 
+extern void recoverMemoryFromFileTable(void);
+
 extern void fileTableMemoryStatistics(void);
 
 #endif
