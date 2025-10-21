@@ -260,20 +260,9 @@ bool cachingIsActive(void) {
     return cache.active;
 }
 
-void recoverCachePointZero(void) {
-    assert(cache.points[0].topBlock == (CodeBlock*)stackMemory);
-    assert(cache.points[0].macroBodyMemoryIndex == 0);
-    assert(cache.points[0].includeStackTop == 0);
-    /* assert(cache.points[0].ppmMemoryIndex == 0); This won't always be true because
-                                                  * definitions from command line or
-                                                  * option file will reside here */
-    recoverCachePoint(0, cache.points[0].nextLexemP, false);
-}
-
 void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
     recoverCxMemory(cxMemFreeBase);
     initAllInputs();
-    recoverCachePointZero();
 }
 
 /**

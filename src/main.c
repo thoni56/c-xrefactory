@@ -437,10 +437,6 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         if (*firstPass) {
             initCaching();
             *firstPass = false;
-        } else {
-            /* We are reading this file again in another pass, i.e. with different -D,
-             * so reset all parsing info to initial values */
-            recoverCachePointZero();
         }
 
         initCwd();
@@ -704,10 +700,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         if (inmode == PROCESS_FILE_ARGUMENTS)
             processFileArguments();
     }
-
-    /* This is also in initializeFileProcessing(), do we need that? It seems this is to
-     * reset all parsing information to initial state... */
-    recoverCachePointZero();
 
     initCaching();
 

@@ -45,10 +45,6 @@ void placeCachePoint(bool inputCaching) {
   mock(inputCaching);
 }
 
-void recoverCachePointZero(void) {
-  mock();
-}
-
 void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
   mock(cxMemFreeBase);
 }

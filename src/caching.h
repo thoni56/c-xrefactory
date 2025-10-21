@@ -80,9 +80,6 @@ extern void placeCachePoint(bool inputCaching);
  */
 extern void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive);
 
-/** Restore parser state to the initial cache point (index 0) */
-extern void recoverCachePointZero(void);
-
 /* ========== Cache Input Management ========== */
 
 /**
