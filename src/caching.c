@@ -61,34 +61,6 @@ void updateFileModificationTracking(int fileNumber) {
     }
 }
 
-/**
- * Check if a file has been modified since last cache (for cache validation).
- *
- * This function is specifically for cache validation - it checks if a file
- * has changed since it was cached, without updating tracking information.
- * Files are considered current if they were inspected during this execution
- * or if their modification time matches the cached value.
- *
- * @param fileNumber The file number to check
- * @return true if file is current (unchanged), false if modified or missing
- */
-bool isFileModifiedSinceCached(int fileNumber) {
-    time_t now = time(NULL);
-    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-
-    if (fileItem->lastInspected >= fileProcessingStartTime
-        && fileItem->lastInspected <= now) {
-        /* Assuming that files cannot change during one execution */
-        return false; /* Not modified since cached */
-    }
-
-    if (!editorFileExists(fileItem->name)) {
-        return true; /* File missing = modified */
-    }
-
-    time_t modificationTime = editorFileModificationTime(fileItem->name);
-    return (modificationTime != fileItem->lastModified); /* true if modified */
-}
 
 /* ========================================================================== */
 /*                           Memory Recovery                                 */
