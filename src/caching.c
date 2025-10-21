@@ -188,18 +188,6 @@ static void recoverMemoryFromSymbolTableEntry(int i) {
     }
 }
 
-static void recoverMemoryFromIncludeList(void) {
-    StringList **pp;
-    pp = & options.includeDirs;
-    while (*pp!=NULL) {
-        if (ppmIsFreedPointer(*pp)) {
-            *pp = (*pp)->next;
-            continue;
-        }
-        pp= &(*pp)->next;
-    }
-}
-
 /**
  * Validate that all files included between two cache points are still current.
  *

@@ -530,6 +530,18 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     }
 }
 
+void recoverMemoryFromIncludeList(void) {
+    StringList **pp;
+    pp = & options.includeDirs;
+    while (*pp!=NULL) {
+        if (ppmIsFreedPointer(*pp)) {
+            *pp = (*pp)->next;
+            continue;
+        }
+        pp= &(*pp)->next;
+    }
+}
+
 char *expandPredefinedSpecialVariables_static(char *variable, char *inputFilename) {
     static char expanded[MAX_OPTION_LEN];
     int         i, j;

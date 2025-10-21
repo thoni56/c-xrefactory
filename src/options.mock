@@ -46,6 +46,10 @@ void dirInputFile(char *file, char *a1, char *a2, Completions *a3, void *a4, int
   mock(file, a1, a2, a3, a4, a5);
 }
 
+void recoverMemoryFromIncludeList(void) {
+    (void)mock();
+}
+
 bool packageOnCommandLine(char *packageName) {
   return (bool) mock(packageName);
 }

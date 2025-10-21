@@ -159,6 +159,7 @@ extern void setOptionVariable(char *name, char *val);
 extern char *getOptionVariable(char *name);
 
 extern void dirInputFile(MAP_FUN_SIGNATURE);
+extern void recoverMemoryFromIncludeList(void);
 
 extern void processFileArguments(void);
 extern void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag);
