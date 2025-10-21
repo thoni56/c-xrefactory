@@ -432,7 +432,6 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         || strcmp(previousStandardOptionsSection, standardOptionsSectionName) != 0 /* or a different project */
         || previousStandardOptionsFileModificationTime != modifiedTime       /* or the options file has changed */
         || previousLanguage != *outLanguage                                  /* or a different language? */
-        || cache.index == 1                                                  /* or the cache was reset */
     ) {
         if (*firstPass) {
             initCaching();
@@ -480,8 +479,6 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         placeCachePoint(false);
         deactivateCaching();
 
-        assert(cache.free == cache.points[0].nextLexemP);
-        assert(cache.free == cache.points[1].nextLexemP);
     } else {
         deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */

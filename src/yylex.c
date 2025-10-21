@@ -351,10 +351,6 @@ static LexemCode getLexemAndSavePointerToPrevious(char **previousLexemP) {
                 return END_OF_FILE_EXCEPTION;
             }
             setCurrentInputConsistency(&currentInput, &currentFile);
-        } else {
-            cache.read = cache.write = NULL;
-            cache.nextToCache = currentFile.lexemBuffer.read;
-            setCurrentInputConsistency(&currentInput, &currentFile);
         }
         if (previousLexemP != NULL)
             *previousLexemP = currentInput.read;

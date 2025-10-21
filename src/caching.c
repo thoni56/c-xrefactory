@@ -20,7 +20,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "globals.h"
 #include "memory.h"
 #include "stackmemory.h"
 #include "yylex.h"
@@ -167,22 +166,15 @@ void placeCachePoint(bool inputCaching) {
     CachePoint *cachePoint;
     if (!cachingIsActive())
         return;
-    if (includeStack.pointer != 0 || macroStackIndex != 0)
-        return;
-    if (cache.index >= MAX_CACHE_POINTS) {
-        deactivateCaching();
-        return;
-    }
 
-    if (!cachingIsActive())
-        return;
     cachePoint = &cache.points[cache.index];
     log_debug("placing cache point %d", cache.index);
     log_trace("currentBlock=%d, ppmMemory.index=%d, cxMemory.index=%d, macroBodyMemoryIndex=%d, cache.free =%d, \
 cache.includeStackTop=%d, currentFile.lineNumber=%d, currentFile.ifDepth=%d, currentFile.ifStack=%d",
               currentBlock, ppmMemory.index, cxMemory.index, getMacroBodyMemoryIndex(), cache.free,
               cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack);
-    fillCachePoint(cachePoint, currentBlock, ppmMemory.index, cxMemory.index, getMacroBodyMemoryIndex(), cache.free,
-                   cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack, counters);
+    fillCachePoint(cachePoint, currentBlock, ppmMemory.index, cxMemory.index, getMacroBodyMemoryIndex(),
+                   cache.free, cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth,
+                   currentFile.ifStack, counters);
     cache.index++;
 }
