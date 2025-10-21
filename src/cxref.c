@@ -355,7 +355,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
     assert(options.mode);
     if (options.mode==XrefMode) {
         if (!cxMemoryHasEnoughSpaceFor(CX_SPACE_RESERVE)) {
-            longjmp(cxmemOverflow, LONGJUMP_REASON_REFERENCE_OVERFLOW);
+            longjmp(errorLongJumpBuffer, LONGJUMP_REASON_REFERENCES_OVERFLOW);
         }
     }
 

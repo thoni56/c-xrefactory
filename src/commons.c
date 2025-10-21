@@ -423,5 +423,5 @@ void internalCheckFail(char *expr, char *file, int line) {
     fflush(errOut);
     // TODO: WAS: longjump is causing problems with refactory, the longjmp
     // is missplaced. Is it? Test for this case?
-    longjmp(cxmemOverflow, LONGJMP_REASON_FILE_ABORT);
+    longjmp(errorLongJumpBuffer, LONGJMP_REASON_FILE_ABORT);
 }

@@ -81,7 +81,7 @@ extern int originalCommandLineFileNumber;  /* number of original command line in
 
 extern char *storageNamesTable[MAX_STORAGE_NAMES];
 
-extern jmp_buf cxmemOverflow;
+extern jmp_buf errorLongJumpBuffer;
 
 extern char *inputFileName;
 

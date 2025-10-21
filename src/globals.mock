@@ -19,7 +19,7 @@ Position parsedPositions[IPP_MAX];
 
 Position staticPrefixStartPosition;
 
-jmp_buf cxmemOverflow;
+jmp_buf errorLongJumpBuffer;
 
 int currentPass;
 int maxPasses;

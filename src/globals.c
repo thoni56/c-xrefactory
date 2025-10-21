@@ -89,7 +89,7 @@ char cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 
 char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 
-jmp_buf cxmemOverflow;
+jmp_buf errorLongJumpBuffer;
 
 /* ********************************************************************** */
 /*                            real constants                              */

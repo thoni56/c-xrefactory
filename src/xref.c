@@ -309,8 +309,8 @@ void callXref(int argc, char **argv, bool isRefactoring) {
     for (;;) {
         currentPass = ANY_PASS;
         firstPass   = true;
-        if ((reason = setjmp(cxmemOverflow)) != 0) {
             referencesOverflowed(cxFreeBase, reason);
+        if ((reason = setjmp(errorLongJumpBuffer)) != 0) {
             if (reason == LONGJMP_REASON_FILE_ABORT) {
                 if (fileItem != NULL)
                     fileItem = fileItem->next;
