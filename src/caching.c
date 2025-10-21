@@ -109,53 +109,6 @@ static void deleteReferencesOutOfMemory(Reference **referenceP) {
     }
 }
 
-static void recoverMemoryFromTypeStructOrUnion(Symbol *symbol) {
-    assert(symbol->structSpec);
-    if (isFreedStackMemory(symbol->structSpec->members)
-        || ppmIsFreedPointer(symbol->structSpec->members)) {
-        symbol->structSpec->members = NULL;
-    }
-}
-
-static void recoverMemoryFromSymbolTableEntry(int i) {
-    Symbol **pp;
-    pp = &symbolTable->tab[i];
-    while (*pp!=NULL) {
-        switch ((*pp)->type) {
-        case TypeMacro:
-            if (ppmIsFreedPointer(*pp)) {
-                *pp = (*pp)->next;
-                continue;
-            }
-            break;
-        case TypeStruct:
-        case TypeUnion:
-            if (isFreedStackMemory(*pp) || ppmIsFreedPointer(*pp)) {
-                *pp = (*pp)->next;
-                continue;
-            } else {
-                recoverMemoryFromTypeStructOrUnion(*pp);
-            }
-            break;
-        case TypeEnum:
-            if (isFreedStackMemory(*pp)) {
-                *pp = (*pp)->next;
-                continue;
-            } else if (isFreedStackMemory((*pp)->enums)) {
-                (*pp)->enums = NULL;
-            }
-            break;
-        default:
-            if (isFreedStackMemory(*pp)) {
-                *pp = (*pp)->next;
-                continue;
-            }
-            break;
-        }
-        pp= &(*pp)->next;
-    }
-}
-
 /**
  * Validate that all files included between two cache points are still current.
  *
@@ -265,55 +218,6 @@ void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
     initAllInputs();
 }
 
-/**
- * Restore parser state from a specific cache point.
- *
- * This function performs a complete restoration of the parser state from
- * a previously saved cache point, including memory pools, parsing context,
- * and input stream position.
- *
- * @param cachePointIndex Index of the cache point to restore from
- * @param readUntil Input position to read until in cached stream
- * @param cachingActive Whether to activate caching after recovery
- */
-void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive) {
-    log_trace("Recovering cache point %d", cachePointIndex);
-    CachePoint *cachePoint = &cache.points[cachePointIndex];
-
-    log_debug("Flushing memories");
-    ppmMemory.index = cachePoint->ppmMemoryIndex;
-
-    setMacroBodyMemoryIndex(cachePoint->macroBodyMemoryIndex);
-    currentBlock = cachePoint->topBlock;
-    *currentBlock = cachePoint->topBlockContent;
-    counters = cachePoint->counters;
-    recoverMemoryFromFrameAllocations();
-    assert(options.mode);
-    if (options.mode==ServerMode && currentPass==1) {
-        /* remove old references, only on first pass of edit server */
-        log_trace("removing references");
-        cxMemory.index = cachePoint->cxMemoryIndex;
-        recoverMemoryFromReferenceTable();
-        recoverMemoryFromFileTable();
-    }
-
-    log_trace("recovering symbolTable");
-    symbolTableMapWithIndex(symbolTable, recoverMemoryFromSymbolTableEntry);
-
-    log_trace("recovering include list");
-    recoverMemoryFromIncludeList();
-
-    log_trace("recovering finished");
-
-    currentFile.lineNumber = cachePoint->lineNumber;
-    currentFile.ifDepth = cachePoint->ifDepth;
-    currentFile.ifStack = cachePoint->ifStack;
-    currentInput = makeLexInput(cache.lexemStream, cachePoint->nextLexemP, readUntil, NULL, INPUT_CACHE);
-    fillCache(&cache, cachingActive, cachePointIndex + 1, cachePoint->includeStackTop,
-              cachePoint->nextLexemP, currentInput.read, currentInput.read, currentInput.write);
-    log_trace("finished recovering");
-}
-
 /* ========================================================================== */
 /*                           Cache Recovery                                  */
 /* ========================================================================== */
@@ -336,7 +240,6 @@ void recoverFromCache(void) {
     assert(i > 1);
     /* now, recover state from the cache point 'i-1' */
     log_trace("recovering cache point %d", i-1);
-    recoverCachePoint(i-1, readUntil, true);
 }
 
 void initCaching(void) {

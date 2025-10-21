@@ -72,13 +72,6 @@ extern bool cachingIsActive(void);
  */
 extern void placeCachePoint(bool inputCaching);
 
-/**
- * Restore parser state from a specific cache point
- * @param cachePointIndex Index of cache point to restore from
- * @param readUntil Position to read until in cached input
- * @param cachingActive Whether to activate caching after recovery
- */
-extern void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive);
 
 /* ========== Cache Input Management ========== */
 
