@@ -36,10 +36,6 @@ void addMacroDefinedByOption(char *opt) {
     mock(opt);
 }
 
-bool cachedInputPass(int cpoint, char **cfromto) {
-    return (bool)mock(cpoint, cfromto);
-}
-
 LexemCode cexp_yylex(void) {
     return (int)mock();
 }

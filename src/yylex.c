@@ -2075,49 +2075,6 @@ void dumpLexemBuffer(LexemBuffer *lb) {
     log_debug("lexbufdump [stop]");
 }
 
-/* ************************************************************** */
-/*                   caching of input                             */
-/* ************************************************************** */
-bool cachedInputPass(int cpoint, char **cFrom) {
-    bool res = true;
-
-    assert(cpoint > 0);
-    char *cTo = cache.points[cpoint].nextLexemP;
-    char *cp = *cFrom;
-
-    while (cp < cTo) {
-        char *previousLexemP;
-        LexemCode lexem = getLexemAndSavePointerToPrevious(&previousLexemP);
-        ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
-
-        Position position;
-        int lineNumber;
-        getExtraLexemInformationFor(lexem, &currentInput.read, &lineNumber, NULL, &position, NULL, true);
-
-        unsigned lexemLength = currentInput.read-previousLexemP;
-        assert(lexemLength >= 0);
-        if (memcmp(previousLexemP, cp, lexemLength)) {
-            currentInput.read = previousLexemP;			/* unget last lexem */
-            res = false;
-            break;
-        }
-        if (isIdentifierLexem(lexem) || isPreprocessorToken(lexem)) {
-            if (onSameLine(position, cxRefPosition)) {
-                currentInput.read = previousLexemP;			/* unget last lexem */
-                res = false;
-                break;
-            }
-        }
-        cp += lexemLength;
-    }
-endOfFile:
-    setCurrentFileConsistency(&currentFile, &currentInput);
-    *cFrom = cp;
-    return res;
-endOfMacroArgument:
-    assert(0);
-    return false;
-}
 
 /* ***************************************************************** */
 /*                                 yylex                             */
