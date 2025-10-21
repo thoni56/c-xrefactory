@@ -61,6 +61,14 @@ void removeFromFrameUntil(FrameAllocation *untilP) {
         frameDump();
 }
 
+void recoverMemoryFromFrameAllocations(void) {
+    FrameAllocation **pp;
+    pp = &currentBlock->frameAllocations;
+    while (isFreedStackMemory(*pp)) {
+        *pp = (*pp)->next;
+    }
+}
+
 static void fillCodeBlock(CodeBlock *block, int firstFreeIndex, FrameAllocation *allocation, CodeBlock *outerBlock) {
     block->firstFreeIndex = firstFreeIndex;
     block->frameAllocations = allocation;

@@ -188,14 +188,6 @@ static void recoverMemoryFromSymbolTableEntry(int i) {
     }
 }
 
-static void recoverMemoryFromFrameAllocations(void) {
-    FrameAllocation **pp;
-    pp = &currentBlock->frameAllocations;
-    while (isFreedStackMemory(*pp)) {
-        *pp = (*pp)->next;
-    }
-}
-
 static void recoverMemoryFromIncludeList(void) {
     StringList **pp;
     pp = & options.includeDirs;
@@ -232,7 +224,7 @@ static bool cachedIncludedFilePass(int index) {
     return true;
 }
 
-static void recoverCxMemory(void *cxMemoryFlushPoint) {
+void recoverCxMemory(void *cxMemoryFlushPoint) {
     cxFreeUntil(cxMemoryFlushPoint);
     mapOverFileTable(recoverMemoryFromFileTableEntry);
     mapOverReferenceTableWithIndex(recoverMemoryFromReferenceTableEntry);

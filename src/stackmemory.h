@@ -39,7 +39,7 @@ extern int nestingLevel(void);
 
 extern bool isMemoryFromPreviousBlock(void *ppp);
 extern bool isFreedStackMemory(void *ptr);
-
+extern void recoverMemoryFromFrameAllocations(void);
 
 extern void addToFrame(void (*action)(void*), void *argument);
 extern void removeFromFrameUntil(FrameAllocation *untilP);
