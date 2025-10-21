@@ -5,3 +5,27 @@
 
 
 Counters counters;
+
+void resetAllCounters() {
+    (void)mock();
+}
+
+void resetLocalSymbolCounter(void) {
+    (void)mock();
+}
+
+int nextGeneratedLocalSymbol(void) {
+    return mock();
+}
+
+int nextGeneratedLabelSymbol(void) {
+    return mock();
+}
+
+int nextGeneratedGotoSymbol(void) {
+    return mock();
+}
+
+int nextGeneratedForkSymbol(void) {
+    return mock();
+}

@@ -9,6 +9,7 @@
 #include "commandlogger.h"
 #include "commons.h"
 #include "constants.h"
+#include "counters.h"
 #include "cxfile.h"
 #include "editor.h"
 #include "filedescriptor.h"
@@ -549,7 +550,7 @@ void totalTaskEntryInitialisations(void) {
     fileProcessingStartTime = time(NULL);
 
     // Data structures
-    memset(&counters, 0, sizeof(Counters));
+    resetAllCounters();
     options.includeDirs = NULL;
 
     initFileTable(MAX_FILES);

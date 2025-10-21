@@ -4635,7 +4635,7 @@ case 491:
         addNewSymbolDefinition(symbolTable, inputFileName, yyvsp[0].ast_symbol.data, StorageExtern, UsageDefined);
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
         beginBlock();
-        counters.localVar = 0;
+        resetLocalSymbolCounter();
         assert(yyvsp[0].ast_symbol.data->typeModifier && yyvsp[0].ast_symbol.data->typeModifier->type == TypeFunction);
         parsedInfo.function = yyvsp[0].ast_symbol.data;
         generateInternalLabelReference(-1, UsageDefined);

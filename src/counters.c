@@ -1,11 +1,22 @@
 #include "counters.h"
 
+#include <memory.h>
+
 #include "usage.h"
+
 
 Counters counters;
 
 /* Currently from semact.c ... */
 extern void generateInternalLabelReference(int counter, int usage);
+
+void resetAllCounters() {
+    memset(&counters, 0, sizeof(Counters));
+}
+
+void resetLocalSymbolCounter(void) {
+    counters.localVar = 0;
+}
 
 int nextGeneratedLocalSymbol(void) {
     return counters.localSym++;

@@ -1831,7 +1831,7 @@ external_definition
         addNewSymbolDefinition(symbolTable, inputFileName, $2.data, StorageExtern, UsageDefined);
         savedWorkMemoryIndex = $1.data;
         beginBlock();
-        counters.localVar = 0;
+        resetLocalSymbolCounter();
         assert($2.data->typeModifier && $2.data->typeModifier->type == TypeFunction);
         parsedInfo.function = $2.data;
         generateInternalLabelReference(-1, UsageDefined);

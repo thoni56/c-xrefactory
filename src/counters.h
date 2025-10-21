@@ -10,7 +10,8 @@ typedef struct counters {
 
 extern Counters counters;
 
-
+extern void resetAllCounters(void);
+extern void resetLocalSymbolCounter(void);
 extern int nextGeneratedLocalSymbol(void);
 extern int nextGeneratedLabelSymbol(void);
 extern int nextGeneratedGotoSymbol(void);

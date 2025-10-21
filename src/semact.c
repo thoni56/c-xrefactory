@@ -303,7 +303,7 @@ void setLocalVariableLinkName(Symbol *p) {
         int len = TMP_STRING_SIZE - tti;
         prettyPrintType(name+tti, &len, p->typeModifier, nnn, LINK_NAME_SEPARATOR, true);
         sprintf(name+tti+len,"%c%x-%x-%x-%x", LINK_NAME_SEPARATOR,
-                p->pos.file,p->pos.line,p->pos.col, counters.localVar++);
+                p->pos.file,p->pos.line,p->pos.col, nextGeneratedLocalSymbol());
     } else {
         if (p->storage==StorageExtern && ! options.exactPositionResolve) {
             sprintf(name,"%s", p->name);
