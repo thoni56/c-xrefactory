@@ -211,10 +211,7 @@ yaccfile
             l_yaccUnion = NULL;
             l_currentType = NULL;
         }
-        before_rules '%' '%' {
-            placeCachePoint(true);
-        }
-        rules '%' '%' file
+        before_rules '%' '%' rules '%' '%' file
     ;
 
 before_rules
@@ -1799,16 +1796,8 @@ file
     ;
 
 cached_external_definition_list
-    : external_definition               {
-        if (includeStack.pointer == 0) {
-            placeCachePoint(true);
-        }
-    }
-    | cached_external_definition_list _bef_ external_definition {
-        if (includeStack.pointer == 0) {
-            placeCachePoint(true);
-        }
-    }
+    : external_definition
+    | cached_external_definition_list _bef_ external_definition
     | error
     ;
 
@@ -1831,7 +1820,7 @@ external_definition
         addNewSymbolDefinition(symbolTable, inputFileName, $2.data, StorageExtern, UsageDefined);
         savedWorkMemoryIndex = $1.data;
         beginBlock();
-        resetLocalSymbolCounter();
+        counters.localVar = 0;
         assert($2.data->typeModifier && $2.data->typeModifier->type == TypeFunction);
         parsedInfo.function = $2.data;
         generateInternalLabelReference(-1, UsageDefined);

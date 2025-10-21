@@ -1590,16 +1590,8 @@ file
     ;
 
 cached_external_definition_list
-    : external_definition               {
-        if (includeStack.pointer == 0) {
-            placeCachePoint(true);
-        }
-    }
-    | cached_external_definition_list _bef_ external_definition {
-        if (includeStack.pointer == 0) {
-            placeCachePoint(true);
-        }
-    }
+    : external_definition
+    | cached_external_definition_list _bef_ external_definition
     | error
     ;
 

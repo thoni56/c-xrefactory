@@ -61,15 +61,6 @@ extern void deactivateCaching(void);
 /** Check if caching is currently active */
 extern bool cachingIsActive(void);
 
-/* ========== Cache Point Management ========== */
-
-/**
- * Create a new cache point storing current parser state
- * @param inputCaching Whether to cache current input before creating point
- */
-extern void placeCachePoint(bool inputCaching);
-
-
 /**
  * Recover memory state after a memory overflow occurred
  * @param cxMemFreeBase Base pointer for cross-reference memory recovery

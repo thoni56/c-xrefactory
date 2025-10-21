@@ -474,10 +474,6 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
 
         initTokenNamesTables();
 
-        activateCaching();
-        placeCachePoint(false);
-        deactivateCaching();
-
     } else {
         deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */

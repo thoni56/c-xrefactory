@@ -2017,7 +2017,7 @@ YYSTYPE yylval;
 short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-#line 1745 "c_parser.y"
+#line 1737 "c_parser.y"
 
 static CompletionFunctionsTable specialCompletionsCollectorsTable[]  = {
     {COMPLETE_FOR_STATEMENT1,    collectForStatementCompletions1},
@@ -3964,36 +3964,20 @@ case 328:
         actionsBeforeAfterExternalDefinition();
     }
 break;
-case 344:
-#line 1593 "c_parser.y"
-{
-        if (includeStack.pointer == 0) {
-            placeCachePoint(true);
-        }
-    }
-break;
-case 345:
-#line 1598 "c_parser.y"
-{
-        if (includeStack.pointer == 0) {
-            placeCachePoint(true);
-        }
-    }
-break;
 case 347:
-#line 1607 "c_parser.y"
+#line 1599 "c_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-2].ast_unsigned.data;
     }
 break;
 case 348:
-#line 1610 "c_parser.y"
+#line 1602 "c_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-2].ast_unsigned.data;
     }
 break;
 case 349:
-#line 1613 "c_parser.y"
+#line 1605 "c_parser.y"
 {
         Symbol *symbol;
         int i;
@@ -4020,78 +4004,78 @@ case 349:
     }
 break;
 case 350:
-#line 1636 "c_parser.y"
+#line 1628 "c_parser.y"
 {
         endBlock();
         parsedInfo.function = NULL;
     }
 break;
 case 352:
-#line 1641 "c_parser.y"
+#line 1633 "c_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-3].ast_unsigned.data;
     }
 break;
 case 353:
-#line 1644 "c_parser.y"
+#line 1636 "c_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-5].ast_unsigned.data;
     }
 break;
 case 354:
-#line 1647 "c_parser.y"
+#line 1639 "c_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-5].ast_unsigned.data;
     }
 break;
 case 355:
-#line 1650 "c_parser.y"
+#line 1642 "c_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-2].ast_unsigned.data;
     }
 break;
 case 356:
-#line 1653 "c_parser.y"
+#line 1645 "c_parser.y"
 {
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
     }
 break;
 case 357:
-#line 1656 "c_parser.y"
+#line 1648 "c_parser.y"
 {  /* empty external definition */
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
     }
 break;
 case 358:
-#line 1662 "c_parser.y"
+#line 1654 "c_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
         addNewDeclaration(symbolTable, yyvsp[-2].ast_symbol.data, yyvsp[-1].ast_symbol.data, yyvsp[0].ast_idList.data, StorageExtern);
     }
 break;
 case 359:
-#line 1666 "c_parser.y"
+#line 1658 "c_parser.y"
 {
         yyval.ast_symbol.data = & defaultIntDefinition;
         addNewDeclaration(symbolTable, yyval.ast_symbol.data, yyvsp[-1].ast_symbol.data, yyvsp[0].ast_idList.data, StorageExtern);
     }
 break;
 case 360:
-#line 1670 "c_parser.y"
+#line 1662 "c_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
         addNewDeclaration(symbolTable, yyvsp[-3].ast_symbol.data, yyvsp[-1].ast_symbol.data, yyvsp[0].ast_idList.data, StorageExtern);
     }
 break;
 case 361:
-#line 1674 "c_parser.y"
+#line 1666 "c_parser.y"
 {
         /* $$.d = &s_errorSymbol; */
         yyval.ast_symbol.data = typeSpecifier2(&errorModifier);
     }
 break;
 case 363:
-#line 1682 "c_parser.y"
+#line 1674 "c_parser.y"
 {
         assert(yyvsp[-1].ast_symbol.data->typeModifier && yyvsp[-1].ast_symbol.data->typeModifier->type == TypeFunction);
         Result r = mergeArguments(yyvsp[-1].ast_symbol.data->typeModifier->args, yyvsp[0].ast_symbol.data);
@@ -4100,13 +4084,13 @@ case 363:
     }
 break;
 case 364:
-#line 1691 "c_parser.y"
+#line 1683 "c_parser.y"
 {
         yyval.ast_symbol.data = NULL;
     }
 break;
 case 365:
-#line 1694 "c_parser.y"
+#line 1686 "c_parser.y"
 {
         Symbol *symbol;
         assert(yyvsp[-2].ast_symbol.data && yyvsp[-1].ast_symbol.data);
@@ -4117,26 +4101,26 @@ case 365:
     }
 break;
 case 366:
-#line 1705 "c_parser.y"
+#line 1697 "c_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
     }
 break;
 case 367:
-#line 1708 "c_parser.y"
+#line 1700 "c_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
         LIST_APPEND(Symbol, yyval.ast_symbol.data, yyvsp[-1].ast_symbol.data);
     }
 break;
 case 368:
-#line 1712 "c_parser.y"
+#line 1704 "c_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
     }
 break;
 case 369:
-#line 1718 "c_parser.y"
+#line 1710 "c_parser.y"
 {
         completeDeclarator(&defaultIntDefinition, yyvsp[0].ast_symbol.data);
         assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->typeModifier);
@@ -4145,7 +4129,7 @@ case 369:
     }
 break;
 case 370:
-#line 1724 "c_parser.y"
+#line 1716 "c_parser.y"
 {
         completeDeclarator(yyvsp[-1].ast_symbol.data, yyvsp[0].ast_symbol.data);
         assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->typeModifier);
@@ -4154,14 +4138,14 @@ case 370:
     }
 break;
 case 371:
-#line 1733 "c_parser.y"
+#line 1725 "c_parser.y"
 { beginBlock(); }
 break;
 case 372:
-#line 1736 "c_parser.y"
+#line 1728 "c_parser.y"
 { endBlock(); }
 break;
-#line 4165 "c_parser.tab.c"
+#line 4149 "c_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

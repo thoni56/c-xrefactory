@@ -17,10 +17,6 @@ bool cachingIsActive(void) {
     return (bool)mock();
 }
 
-void placeCachePoint(bool inputCaching) {
-  mock(inputCaching);
-}
-
 void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
   mock(cxMemFreeBase);
 }

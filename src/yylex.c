@@ -2274,7 +2274,6 @@ LexemCode yylex(void) {
  endOfFile:
     if (includeStack.pointer != 0) {
         popInclude();
-        placeCachePoint(true);
         goto nextYylex;
     }
     /* add the test whether in COMPLETION, communication string found */
