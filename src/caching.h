@@ -8,7 +8,7 @@
 
 /**
  * CachePoint - Represents a complete parser state snapshot
- * 
+ *
  * This structure captures all the necessary state information to restore
  * the parser to a specific point during incremental parsing. Each cache
  * point allows the parser to resume from a known-good state when files
@@ -30,7 +30,7 @@ typedef struct {
 
 /**
  * Cache - Main caching system state
- * 
+ *
  * This structure manages the incremental parsing cache, storing tokenized
  * input and parser state snapshots to enable fast re-parsing of unchanged
  * code sections.
@@ -91,11 +91,6 @@ extern void recoverCachePointZero(void);
  */
 extern void cacheInput(LexInput *input);
 
-/**
- * Record an included file in the cache for modification tracking
- * @param fileNum File number of the included file
- */
-extern void cacheInclude(int fileNum);
 
 /* ========== Cache Recovery and Validation ========== */
 
@@ -113,20 +108,20 @@ extern void recoverMemoriesAfterOverflow(char *cxMemFreeBase);
 
 /**
  * Update a file's modification time tracking information.
- * 
+ *
  * This function updates the lastInspected and lastModified fields
  * of a FileItem by checking the current file system state.
- * 
+ *
  * @param fileNumber The file number to update tracking for
  */
 extern void updateFileModificationTracking(int fileNumber);
 
 /**
  * Check if a file has been modified since last cache (for cache validation).
- * 
+ *
  * This function is specifically for cache validation - it checks if a file
  * has changed since it was cached, without updating tracking information.
- * 
+ *
  * @param fileNumber Index of file to check
  * @return true if file is up-to-date, false if modified
  */

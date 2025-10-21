@@ -433,19 +433,6 @@ void cacheInput(LexInput *input) {
     LEAVE();
 }
 
-void cacheInclude(int fileNum) {
-    if (!cachingIsActive())
-        return;
-    log_debug("caching include of file %d: %s",
-              cache.includeStackTop, getFileItemWithFileNumber(fileNum)->name);
-    updateFileModificationTracking(fileNum);
-    assert(cache.includeStackTop < INCLUDE_STACK_CACHE_SIZE);
-    cache.includeStack[cache.includeStackTop] = fileNum;
-    cache.includeStackTop ++;
-    if (cache.includeStackTop >= INCLUDE_STACK_CACHE_SIZE)
-        deactivateCaching();
-}
-
 static void fillCachePoint(CachePoint *cachePoint, CodeBlock *topBlock, int ppmMemoryIndex,
                            int cxMemoryIndex, int macroBodyMemoryIndex, char *lbcc, short int includeStackTop,
                            short int lineNumber, short int ifDepth, CppIfStack *ifStack, Counters counters) {

@@ -41,10 +41,6 @@ void cacheInput(LexInput *input) {
   mock();
 }
 
-void cacheInclude(int fileNum) {
-  mock(fileNum);
-}
-
 void placeCachePoint(bool inputCaching) {
   mock(inputCaching);
 }

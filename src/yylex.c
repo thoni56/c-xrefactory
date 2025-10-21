@@ -145,9 +145,6 @@ void initAllInputs(void) {
 }
 
 
-static void setCacheConsistency(Cache *cache, LexInput *input) {
-    cache->read = input->read;
-}
 static void setCurrentFileConsistency(FileDescriptor *file, LexInput *input) {
     file->lexemBuffer.read = input->read;
 }
@@ -453,9 +450,7 @@ static void addIncludeReferences(int fileNumber, Position position) {
 }
 
 void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
-    if (currentInput.inputType == INPUT_CACHE) {
-        setCacheConsistency(&cache, &currentInput);
-    } else {
+    if (currentInput.inputType != INPUT_CACHE) {
         setCurrentFileConsistency(&currentFile, &currentInput);
     }
     includeStack.stack[includeStack.pointer++] = currentFile;		/* buffers are copied !!!!!!, burk */
@@ -463,7 +458,6 @@ void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
         FATAL_ERROR(ERR_ST,"too deep nesting in includes", XREF_EXIT_ERR);
     }
     initInput(file, buffer, prepend, name);
-    cacheInclude(currentFile.characterBuffer.fileNumber);
 }
 
 void popInclude(void) {
