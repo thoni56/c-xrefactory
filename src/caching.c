@@ -109,30 +109,6 @@ static void deleteReferencesOutOfMemory(Reference **referenceP) {
     }
 }
 
-/**
- * Validate that all files included between two cache points are still current.
- *
- * This function checks file modification times for all files that were
- * included between the previous cache point and the specified cache point.
- * If any file has been modified, the cache is invalid.
- *
- * @param index Cache point index to validate files for
- * @return true if all included files are current, false if any were modified
- */
-static bool cachedIncludedFilePass(int index) {
-    int includeTop;
-    assert(index > 0);
-    includeTop = cache.points[index].includeStackTop;
-    for (int i = cache.points[index - 1].includeStackTop; i < includeTop; i++) {
-        bool fileIsModified = isFileModifiedSinceCached(cache.includeStack[i]);
-        log_debug("mtime of %s eval to %s", getFileItemWithFileNumber(cache.includeStack[i])->name,
-                  fileIsModified ? "modified" : "unchanged");
-        if (fileIsModified)
-            return false;
-    }
-    return true;
-}
-
 static void recoverMemoryFromReferenceTableEntry(int index) {
     ReferenceItem *item;
     ReferenceItem **itemP;
@@ -216,30 +192,6 @@ bool cachingIsActive(void) {
 void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
     recoverCxMemory(cxMemFreeBase);
     initAllInputs();
-}
-
-/* ========================================================================== */
-/*                           Cache Recovery                                  */
-/* ========================================================================== */
-
-void recoverFromCache(void) {
-    int i;
-    char *readUntil;
-
-    assert(cache.index >= 1);
-    deactivateCaching();
-    log_trace("reading from cache");
-    readUntil = cache.points[0].nextLexemP;
-    for (i = 1; i < cache.index; i++) {
-        log_trace("trying to recover cache point %d", i);
-        if (cachedInputPass(i, &readUntil) == 0)
-            break;
-        if (!cachedIncludedFilePass(i))
-            break;
-    }
-    assert(i > 1);
-    /* now, recover state from the cache point 'i-1' */
-    log_trace("recovering cache point %d", i-1);
 }
 
 void initCaching(void) {

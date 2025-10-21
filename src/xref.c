@@ -160,7 +160,6 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
         originalFileNumber = inputFileNumber;
         originalCommandLineFileNumber = originalFileNumber;
         if (inputOpened) {
-            recoverFromCache();  /* TODO Why do we need this here? */
             deactivateCaching(); /* no caching in cxref */
             if (options.fileTrace)
                 fprintf(stderr, "processInputFile: '%s\n", currentFile.fileName);

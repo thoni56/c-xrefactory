@@ -82,14 +82,6 @@ extern void placeCachePoint(bool inputCaching);
 extern void cacheInput(LexInput *input);
 
 
-/* ========== Cache Recovery and Validation ========== */
-
-/**
- * Attempt to recover parsing state from the most recent valid cache point
- * This validates cached input against current input and included file timestamps
- */
-extern void recoverFromCache(void);
-
 /**
  * Recover memory state after a memory overflow occurred
  * @param cxMemFreeBase Base pointer for cross-reference memory recovery
