@@ -1,6 +1,7 @@
 #include "filetable.h"
 
 #include "commons.h"            /* For fatalError() */
+#include "editor.h"
 #include "hash.h"
 #include "memory.h"
 #include "globals.h"            /* For cwd */
@@ -117,6 +118,17 @@ static int fileTableLookup(FileTable *table, char *fileName) {
 
 bool existsInFileTable(char *fileName) {
     return fileTableLookup(&fileTable, fileName) != -1;
+}
+
+void updateFileModificationTracking(int fileNumber) {
+    time_t now = time(NULL);
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+
+    fileItem->lastInspected = now;
+
+    if (editorFileExists(fileItem->name)) {
+        fileItem->lastModified = editorFileModificationTime(fileItem->name);
+    }
 }
 
 int addFileNameToFileTable(char *fileName) {

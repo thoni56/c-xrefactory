@@ -24,7 +24,6 @@
 #include "memory.h"
 #include "stackmemory.h"
 #include "yylex.h"
-#include "editor.h"
 #include "reftab.h"
 #include "filedescriptor.h"
 #include "filetable.h"
@@ -36,31 +35,6 @@
 /* ========================================================================== */
 
 Cache cache;
-
-/* ========================================================================== */
-/*                        File Modification Tracking                        */
-/* ========================================================================== */
-
-/**
- * Update a file's modification time tracking information.
- *
- * This function updates the lastInspected and lastModified fields
- * of a FileItem by checking the current file system state.
- * Used for general file tracking purposes.
- *
- * @param fileNumber The file number to update tracking for
- */
-void updateFileModificationTracking(int fileNumber) {
-    time_t now = time(NULL);
-    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-
-    fileItem->lastInspected = now;
-
-    if (editorFileExists(fileItem->name)) {
-        fileItem->lastModified = editorFileModificationTime(fileItem->name);
-    }
-}
-
 
 /* ========================================================================== */
 /*                           Memory Recovery                                 */

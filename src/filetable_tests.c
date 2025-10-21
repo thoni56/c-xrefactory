@@ -7,6 +7,7 @@
 #include "caching.mock"
 #include "commons.mock"
 #include "cxref.mock"
+#include "editor.mock"
 #include "globals.mock"
 #include "misc.mock"
 #include "stackmemory.h"

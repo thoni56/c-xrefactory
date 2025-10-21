@@ -26,6 +26,10 @@ bool existsInFileTable(char *fileName) {
     return mock(fileName);
 }
 
+void updateFileModificationTracking(int fileNumber) {
+  mock(fileNumber);
+}
+
 FileItem *getFileItemWithFileNumber(int fileNumber) {
     return (FileItem *)mock(fileNumber);
 }

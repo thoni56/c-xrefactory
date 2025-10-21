@@ -61,6 +61,7 @@ extern int addFileNameToFileTable(char *name);
 
 extern int  getFileNumberFromFileName(char *fileName);
 extern bool existsInFileTable(char *fileName);
+extern void updateFileModificationTracking(int fileNumber);
 
 extern FileItem *getFileItemWithFileNumber(int fileNumber);
 extern int getNextExistingFileNumber(int index);

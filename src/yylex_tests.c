@@ -16,7 +16,6 @@ void processIncludeDirective(Position includePosition, bool include_next);
 #include "macroargumenttable.h"
 #include "symboltable.h"
 
-#include "reference.mock"
 #include "c_parser.mock"
 #include "caching.mock"
 #include "cexp_parser.mock"
@@ -35,6 +34,7 @@ void processIncludeDirective(Position includePosition, bool include_next);
 #include "misc.mock"
 #include "options.mock"
 #include "parsers.mock"
+#include "reference.mock"
 #include "reftab.mock"
 #include "semact.mock"
 #include "stackmemory.h"
@@ -49,6 +49,7 @@ BeforeEach(Yylex) {
     options.mode = ServerMode;
     allocateMacroArgumentTable(MAX_MACRO_ARGS);
     initFileTable(100);
+    always_expect(editorFileExists, will_return(false));
     initNoFileNumber();
 
     initSymbolTable(100);

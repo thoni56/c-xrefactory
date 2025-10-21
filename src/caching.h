@@ -79,14 +79,4 @@ extern void placeCachePoint(bool inputCaching);
  */
 extern void recoverMemoriesAfterOverflow(char *cxMemFreeBase);
 
-/**
- * Update a file's modification time tracking information.
- *
- * This function updates the lastInspected and lastModified fields
- * of a FileItem by checking the current file system state.
- *
- * @param fileNumber The file number to update tracking for
- */
-extern void updateFileModificationTracking(int fileNumber);
-
 #endif
