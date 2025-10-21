@@ -7,6 +7,7 @@
 
 extern void allocateMacroArgumentTable(int count);
 extern void resetMacroArgumentTable(void);
+extern MacroArgumentTableElement makeMacroArgumentTableElement(char *name, char *linkName, int order);
 extern MacroArgumentTableElement *getMacroArgument(int index);
 extern int addMacroArgument(MacroArgumentTableElement *element);
 extern bool isMemberInMacroArguments(MacroArgumentTableElement *element, int *foundIndex);

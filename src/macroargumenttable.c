@@ -33,6 +33,14 @@ void resetMacroArgumentTable(void) {
     macroArgumentTableNoAllocInit(&macroArgumentTable, macroArgumentTable.size);
 }
 
+MacroArgumentTableElement makeMacroArgumentTableElement(char *name, char *linkName, int order) {
+    MacroArgumentTableElement element;
+    element.name = name;
+    element.linkName = linkName;
+    element.order = order;
+    return element;
+}
+
 MacroArgumentTableElement *getMacroArgument(int index) {
     return macroArgumentTable.tab[index];
 }

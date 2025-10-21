@@ -145,14 +145,6 @@ void initAllInputs(void) {
 }
 
 
-static MacroArgumentTableElement makeMacroArgumentTableElement(char *name, char *linkName, int order) {
-    MacroArgumentTableElement element;
-    element.name = name;
-    element.linkName = linkName;
-    element.order = order;
-    return element;
-}
-
 static void setCacheConsistency(Cache *cache, LexInput *input) {
     cache->read = input->read;
 }
