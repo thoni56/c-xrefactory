@@ -234,17 +234,26 @@ static void scheduleModifiedFilesToUpdate(bool isRefactoring) {
 }
 
 
+static void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
+    // This was some intricate recovery of various memories mixed with the caching.
+    // When the caching was removed piece by piece those functions were also removed.
+    // If "out of cxMemory" is ever to be handled they can be recovered from history
+    // beyond this point.
+    // static void deleteReferencesOutOfMemory(Reference **referenceP) { ...
+    // static void recoverMemoryFromReferenceTableEntry(int index) { ...
+    // static void recoverMemoryFromReferenceTable(void) { ...
+    // static void recoverCxMemory(void *cxMemoryFlushPoint) { ...
+}
+
 static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
     ENTER();
-    if (reason != LONGJMP_REASON_NONE) {
-        log_trace("swapping references to disk");
-        if (options.xref2) {
-            ppcGenRecord(PPC_INFORMATION, "swapping references to disk");
-            ppcGenRecord(PPC_INFORMATION, "");
-        } else {
-            fprintf(errOut, "swapping references to disk (please wait)\n");
-            fflush(errOut);
-        }
+    log_trace("swapping references to disk");
+    if (options.xref2) {
+        ppcGenRecord(PPC_INFORMATION, "swapping references to disk");
+        ppcGenRecord(PPC_INFORMATION, "");
+    } else {
+        fprintf(errOut, "swapping references to disk (please wait)\n");
+        fflush(errOut);
     }
     if (options.cxrefsLocation == NULL) {
         FATAL_ERROR(ERR_ST, "sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
@@ -309,11 +318,12 @@ void callXref(int argc, char **argv, bool isRefactoring) {
     for (;;) {
         currentPass = ANY_PASS;
         firstPass   = true;
-            referencesOverflowed(cxFreeBase, reason);
         if ((reason = setjmp(errorLongJumpBuffer)) != 0) {
             if (reason == LONGJMP_REASON_FILE_ABORT) {
                 if (fileItem != NULL)
                     fileItem = fileItem->next;
+            } else if (reason == LONGJUMP_REASON_REFERENCES_OVERFLOW) {
+                referencesOverflowed(cxFreeBase, reason);
             }
         } else {
             int inputCounter = 0;

@@ -5,8 +5,3 @@
 #include <string.h>
 
 #include "yylex.h"
-
-
-void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
-    initAllInputs();
-}
