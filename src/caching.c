@@ -109,34 +109,6 @@ static void deleteReferencesOutOfMemory(Reference **referenceP) {
     }
 }
 
-static void recoverMemoryFromReferenceTableEntry(int index) {
-    ReferenceItem *item;
-    ReferenceItem **itemP;
-
-    /* Since we always push older Reference items down the list on the same index we can
-       pop them off until we get to one that will not be flushed. If any left we
-       can just hook them in at the index.
-    */
-    item = getReferenceItem(index);
-    itemP = &item;
-
-    while (*itemP!=NULL) {
-        if (cxMemoryIsFreed(*itemP)) {
-            /* Out of memory, or would be flushed, un-hook it */
-            log_trace("deleting all references on %s", (*itemP)->linkName);
-            *itemP = (*itemP)->next;  /* Unlink it and look at next */
-            /* And since all references related to the referenceItem are allocated after
-             * the item itself they will automatically be flushed too */
-            continue;
-        } else {
-            /* The referenceItem is still in memory, but references might be flushed */
-            deleteReferencesOutOfMemory(&((*itemP)->references));
-        }
-        itemP = &((*itemP)->next);
-    }
-    setReferenceItem(index, item);
-}
-
 static void recoverMemoryFromTypeStructOrUnion(Symbol *symbol) {
     assert(symbol->structSpec);
     if (isFreedStackMemory(symbol->structSpec->members)
@@ -208,10 +180,42 @@ static bool cachedIncludedFilePass(int index) {
     return true;
 }
 
+static void recoverMemoryFromReferenceTableEntry(int index) {
+    ReferenceItem *item;
+    ReferenceItem **itemP;
+
+    /* Since we always push older Reference items down the list on the same index we can
+       pop them off until we get to one that will not be flushed. If any left we
+       can just hook them in at the index.
+    */
+    item = getReferenceItem(index);
+    itemP = &item;
+
+    while (*itemP!=NULL) {
+        if (cxMemoryIsFreed(*itemP)) {
+            /* Out of memory, or would be flushed, un-hook it */
+            log_trace("deleting all references on %s", (*itemP)->linkName);
+            *itemP = (*itemP)->next;  /* Unlink it and look at next */
+            /* And since all references related to the referenceItem are allocated after
+             * the item itself they will automatically be flushed too */
+            continue;
+        } else {
+            /* The referenceItem is still in memory, but references might be flushed */
+            deleteReferencesOutOfMemory(&((*itemP)->references));
+        }
+        itemP = &((*itemP)->next);
+    }
+    setReferenceItem(index, item);
+}
+
+static void recoverMemoryFromReferenceTable(void) {
+    mapOverReferenceTableWithIndex(recoverMemoryFromReferenceTableEntry);
+}
+
 void recoverCxMemory(void *cxMemoryFlushPoint) {
     cxFreeUntil(cxMemoryFlushPoint);
     recoverMemoryFromFileTable();
-    mapOverReferenceTableWithIndex(recoverMemoryFromReferenceTableEntry);
+    recoverMemoryFromReferenceTable();
 }
 
 /* ========================================================================== */
@@ -300,23 +304,24 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
         /* remove old references, only on first pass of edit server */
         log_trace("removing references");
         cxMemory.index = cachePoint->cxMemoryIndex;
-        mapOverReferenceTableWithIndex(recoverMemoryFromReferenceTableEntry);
+        recoverMemoryFromReferenceTable();
         recoverMemoryFromFileTable();
     }
+
     log_trace("recovering symbolTable");
     symbolTableMapWithIndex(symbolTable, recoverMemoryFromSymbolTableEntry);
 
-    log_trace("recovering finished");
-
-    // do not forget that includes are listed in PP_MEMORY too.
+    log_trace("recovering include list");
     recoverMemoryFromIncludeList();
+
+    log_trace("recovering finished");
 
     currentFile.lineNumber = cachePoint->lineNumber;
     currentFile.ifDepth = cachePoint->ifDepth;
     currentFile.ifStack = cachePoint->ifStack;
     currentInput = makeLexInput(cache.lexemStream, cachePoint->nextLexemP, readUntil, NULL, INPUT_CACHE);
-    fillCache(&cache, cachingActive, cachePointIndex + 1, cachePoint->includeStackTop, cachePoint->nextLexemP,
-              currentInput.read, currentInput.read, currentInput.write);
+    fillCache(&cache, cachingActive, cachePointIndex + 1, cachePoint->includeStackTop,
+              cachePoint->nextLexemP, currentInput.read, currentInput.read, currentInput.write);
     log_trace("finished recovering");
 }
 
