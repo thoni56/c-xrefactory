@@ -5,7 +5,6 @@
 #include "hash.h"
 #include "memory.h"
 #include "globals.h"            /* For cwd */
-#include "caching.h"
 
 
 /* Define the hashtab: */

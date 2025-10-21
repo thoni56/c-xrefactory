@@ -6,7 +6,6 @@
 #include "position.h"
 #include "semact.h"
 
-#include "caching.mock"
 #include "counters.mock"
 #include "commons.mock"
 #include "cxfile.mock"

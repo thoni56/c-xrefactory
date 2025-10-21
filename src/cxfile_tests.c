@@ -9,7 +9,6 @@
 #include "cxfile.h"
 #include "log.h"
 
-#include "caching.mock"
 #include "characterreader.mock"
 #include "commons.mock"
 #include "completion.mock"

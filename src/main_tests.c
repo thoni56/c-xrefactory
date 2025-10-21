@@ -5,7 +5,6 @@
 
 #include "log.h"
 
-#include "caching.mock"
 #include "counters.mock"
 #include "characterreader.mock"
 #include "commandlogger.mock"

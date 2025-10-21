@@ -1,4 +1,0 @@
-#ifndef CACHING_H_INCLUDED
-#define CACHING_H_INCLUDED
-
-#endif

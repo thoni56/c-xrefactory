@@ -6,7 +6,6 @@
 #include "log.h"
 
 
-#include "caching.mock"
 #include "characterreader.mock"
 #include "commons.mock"
 #include "complete.mock"

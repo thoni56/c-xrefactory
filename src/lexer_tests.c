@@ -5,7 +5,6 @@
 #include "lexer.h"
 #include "log.h"
 
-#include "caching.mock"
 #include "commons.mock"
 #include "filedescriptor.mock"
 #include "fileio.mock"

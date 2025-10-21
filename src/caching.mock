@@ -1,7 +1,0 @@
-/* -*- c -*-*/
-#include "caching.h"
-#include <cgreen/mocks.h>
-
-void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
-  mock(cxMemFreeBase);
-}

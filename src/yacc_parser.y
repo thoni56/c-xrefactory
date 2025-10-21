@@ -22,7 +22,6 @@
 #include <ctype.h>
 
 #include "ast.h"
-#include "caching.h"
 #include "commons.h"
 #include "complete.h"
 #include "counters.h"

@@ -6,7 +6,6 @@
 #include "log.h"
 #include "misc.h"
 
-#include "caching.mock"
 #include "commons.mock"
 #include "cxfile.mock"
 #include "cxref.mock"

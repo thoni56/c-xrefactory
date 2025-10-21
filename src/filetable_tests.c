@@ -4,7 +4,6 @@
 #include "filetable.h"
 #include "log.h"
 
-#include "caching.mock"
 #include "commons.mock"
 #include "cxref.mock"
 #include "editor.mock"

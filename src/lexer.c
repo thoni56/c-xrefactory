@@ -13,8 +13,6 @@
 #include "filedescriptor.h"
 #include "filetable.h"
 
-#include "caching.h"            /* cache && cacheInput() */
-
 #include "log.h"
 #include "misc.h"              /* requiresCreatingRefs() */
 

@@ -17,7 +17,6 @@ void processIncludeDirective(Position includePosition, bool include_next);
 #include "symboltable.h"
 
 #include "c_parser.mock"
-#include "caching.mock"
 #include "cexp_parser.mock"
 #include "characterreader.mock"
 #include "commons.mock"

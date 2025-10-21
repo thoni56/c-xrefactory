@@ -4,7 +4,6 @@
 #include <string.h>
 
 #include "c_parser.h"
-#include "caching.h"
 #include "cexp_parser.h"
 #include "commons.h"
 #include "constants.h"
