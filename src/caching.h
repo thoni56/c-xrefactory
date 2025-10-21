@@ -52,9 +52,6 @@ extern Cache cache;
 
 /* ========== Cache Lifecycle Management ========== */
 
-/** Initialize the caching system for a new parsing session */
-extern void initCaching(void);
-
 /** Enable input caching (tokens will be stored in cache buffer) */
 extern void activateCaching(void);
 

@@ -5,10 +5,6 @@
 Cache cache;
 
 
-void initCaching(void) {
-  mock();
-}
-
 void activateCaching(void) {
     mock();
 }

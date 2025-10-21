@@ -93,32 +93,6 @@ void recoverCxMemory(void *cxMemoryFlushPoint) {
 /*                         Cache State Management                            */
 /* ========================================================================== */
 
-/**
- * Initialize cache structure with specified state values.
- *
- * This utility function sets all the cache state fields in one operation.
- * Used when initializing the cache or updating its state during recovery.
- *
- * @param cache Cache structure to fill
- * @param cachingActive Whether caching should be active
- * @param cachePointIndex Next available cache point index
- * @param includeStackTop Current include stack depth
- * @param free Next free position in lexem stream
- * @param next Next input position to cache
- * @param read Current read position in cache
- * @param write Current write position in cache
- */
-static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int includeStackTop, char *free,
-                      char *next, char *read, char *write) {
-    cache->active          = cachingActive;
-    cache->index           = cachePointIndex;
-    cache->includeStackTop = includeStackTop;
-    cache->free            = free;
-    cache->nextToCache     = next;
-    cache->read   = read;
-    cache->write  = write;
-}
-
 void deactivateCaching(void) {
     cache.active = false;
 }
@@ -134,12 +108,6 @@ bool cachingIsActive(void) {
 void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
     recoverCxMemory(cxMemFreeBase);
     initAllInputs();
-}
-
-void initCaching(void) {
-    fillCache(&cache, true, 0, 0, cache.lexemStream, currentFile.lexemBuffer.read, NULL, NULL);
-    placeCachePoint(false);
-    deactivateCaching();
 }
 
 /* ========================================================================== */

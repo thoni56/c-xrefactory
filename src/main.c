@@ -434,7 +434,6 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         || previousLanguage != *outLanguage                                  /* or a different language? */
     ) {
         if (*firstPass) {
-            initCaching();
             *firstPass = false;
         }
 
@@ -633,9 +632,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         cxFreeUntil(tempAllocated);
     }
 
-    // must be after processing command line options
-    initCaching();
-
     // enclosed in cache point, because of persistent #define in XrefEdit. WTF?
     int argcount = 0;
     inputFileName = getNextArgumentFile(&argcount);
@@ -697,8 +693,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         if (inmode == PROCESS_FILE_ARGUMENTS)
             processFileArguments();
     }
-
-    initCaching();
 
     LEAVE();
 }
