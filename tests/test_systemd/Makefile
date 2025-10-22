@@ -32,6 +32,14 @@ run:
 	echo $(COMMAND)
 	$(COMMAND)
 
+UNIT_COMMAND = c-xref -xrefrc .c-xrefrc -p $$(PWD) stripped_unit.h
+
+count:
+	gdb -ex 'br yylex.c:1929' -x count.gdb -ex 'run' --args $(UNIT_COMMAND)
+
+break:
+	gdb -ex 'br yylex.c:1929' -ex 'ignore 1 647' -ex 'run' --args $(UNIT_COMMAND)
+
 trace: ARGUMENTS += -trace
 trace: all
 
@@ -39,6 +47,3 @@ init: systemd
 
 systemd:
 	tar zxf systemd.tgz
-
-count:
-	gdb -x debug_count_restart.gdb --args $(COMMAND)
