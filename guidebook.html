@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.25">
-<meta name="author" content="v{VERSION} - Generated 2025-10-17">
+<meta name="author" content="v{VERSION} - Generated 2025-10-23">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-10-17</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-10-23</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -472,7 +472,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_container_view">7.1. Container View</a></li>
 <li><a href="#_containers">7.2. Containers</a></li>
-<li><a href="#_caching_system_architecture">7.3. Caching System Architecture</a></li>
 </ul>
 </li>
 <li><a href="#_code">8. Code</a>
@@ -500,9 +499,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_main">9.7. Main</a></li>
 <li><a href="#_memory">9.8. Memory</a></li>
 <li><a href="#_cxfile_2">9.9. Cxfile</a></li>
-<li><a href="#_caching">9.10. Caching</a></li>
-<li><a href="#_c_xref_el">9.11. c-xref.el</a></li>
-<li><a href="#_c_xrefactory_el">9.12. c-xrefactory.el</a></li>
+<li><a href="#_c_xref_el">9.10. c-xref.el</a></li>
+<li><a href="#_c_xrefactory_el">9.11. c-xrefactory.el</a></li>
 </ul>
 </li>
 <li><a href="#_data_structures">10. Data Structures</a>
@@ -543,7 +541,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_huge_memory">15.3. HUGE Memory</a></li>
 <li><a href="#_bootstrapping">15.4. Bootstrapping</a></li>
 <li><a href="#_fill_macros">15.5. FILL macros</a></li>
-<li><a href="#_users">15.6. Users</a></li>
+<li><a href="#_caching_module">15.6. Caching Module</a></li>
+<li><a href="#_caching_system_architecture">15.7. Caching System Architecture</a></li>
+<li><a href="#_users">15.8. Users</a></li>
 </ul>
 </li>
 </ul>
@@ -960,8 +960,8 @@ database "==Source Code\n&lt;size:10&gt;[a set of files stored on disk]&lt;/size
 
 rectangle "C-xrefactory\n&lt;size:10&gt;[Software System]&lt;/size&gt;" &lt;&lt;Cxrefactory&gt;&gt; {
   rectangle "==cxrefCore\n&lt;size:10&gt;[Container: Refactoring Browser core]&lt;/size&gt;\n\nC Language program" &lt;&lt;Cxrefactory.cxrefCore&gt;&gt; as Cxrefactory.cxrefCore
-  rectangle "==editorExtension\n&lt;size:10&gt;[Container: Plugin]&lt;/size&gt;\n\nExtends the Editor with c-xref operations and interfaces to the c-xrefactory API" &lt;&lt;Cxrefactory.editorExtension&gt;&gt; as Cxrefactory.editorExtension
   database "==settingsStore\n&lt;size:10&gt;[Container: Configuration file for project settings]&lt;/size&gt;\n\nNon-standard format settings file" &lt;&lt;Cxrefactory.settingsStore&gt;&gt; as Cxrefactory.settingsStore
+  rectangle "==editorExtension\n&lt;size:10&gt;[Container: Plugin]&lt;/size&gt;\n\nExtends the Editor with c-xref operations and interfaces to the c-xrefactory API" &lt;&lt;Cxrefactory.editorExtension&gt;&gt; as Cxrefactory.editorExtension
   database "==referencesDb\n&lt;size:10&gt;[Container: Persistent symbol database storing references, definitions, and metadata for all project symbols. Created via -create/-update operations, indexed by symbol hash for fast lookup]&lt;/size&gt;\n\nCross-Reference Database (.cx files)" &lt;&lt;Cxrefactory.referencesDb&gt;&gt; as Cxrefactory.referencesDb
 }
 
@@ -1032,13 +1032,6 @@ skinparam database&lt;&lt;3&gt;&gt; {
   shadowing false
 }
 skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.browserStack&gt;&gt; {
-  BackgroundColor #85bbf0
-  FontColor #000000
-  BorderColor #5d82a8
-  roundCorner 20
-  shadowing false
-}
-skinparam rectangle&lt;&lt;Cxrefactory.cxrefCore.caching&gt;&gt; {
   BackgroundColor #85bbf0
   FontColor #000000
   BorderColor #5d82a8
@@ -1156,7 +1149,6 @@ rectangle "cxrefCore\n&lt;size:10&gt;[Container: Refactoring Browser core]&lt;/s
   rectangle "==browserStack\n&lt;size:10&gt;[Component: Runtime symbol context stack for navigation, containing current references and symbol menus]&lt;/size&gt;\n\nBrowser Stack" &lt;&lt;Cxrefactory.cxrefCore.browserStack&gt;&gt; as Cxrefactory.cxrefCore.browserStack
   rectangle "==symbolResolver\n&lt;size:10&gt;[Component: Converts cursor positions to symbols, loads references, and finds definitions]&lt;/size&gt;\n\nSymbol Resolution Pipeline" &lt;&lt;Cxrefactory.cxrefCore.symbolResolver&gt;&gt; as Cxrefactory.cxrefCore.symbolResolver
   rectangle "==referenceTable\n&lt;size:10&gt;[Component: Runtime symbol cache loaded from .cx files for active session]&lt;/size&gt;\n\nIn-Memory Reference Table" &lt;&lt;Cxrefactory.cxrefCore.referenceTable&gt;&gt; as Cxrefactory.cxrefCore.referenceTable
-  rectangle "==caching\n&lt;size:10&gt;[Component: Incremental parsing optimization with cache points, file modification tracking, and input stream caching for faster re-analysis]&lt;/size&gt;\n\nCaching System" &lt;&lt;Cxrefactory.cxrefCore.caching&gt;&gt; as Cxrefactory.cxrefCore.caching
   rectangle "==yylex\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nLexical Analyser" &lt;&lt;Cxrefactory.cxrefCore.yylex&gt;&gt; as Cxrefactory.cxrefCore.yylex
   rectangle "==parser\n&lt;size:10&gt;[Component: C]&lt;/size&gt;\n\nParser" &lt;&lt;Cxrefactory.cxrefCore.parser&gt;&gt; as Cxrefactory.cxrefCore.parser
 }
@@ -1179,7 +1171,6 @@ Cxrefactory.cxrefCore.xref .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxr
 Cxrefactory.cxrefCore.server .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxref : "&lt;color:#707070&gt;handles references using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
 Cxrefactory.cxrefCore.refactory .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.cxref : "&lt;color:#707070&gt;handles references using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
 Cxrefactory.cxrefCore.parser .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.yylex : "&lt;color:#707070&gt;reads tokenized source using\n&lt;color:#707070&gt;&lt;size:8&gt;[buffering]&lt;/size&gt;"
-Cxrefactory.cxrefCore.parser .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.caching : "&lt;color:#707070&gt;bookmarks cachepoints using"
 Cxrefactory.cxrefCore.xref .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.parser : "&lt;color:#707070&gt;parses source code using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
 Cxrefactory.cxrefCore.server .[#707070,thickness=2].&gt; Cxrefactory.cxrefCore.parser : "&lt;color:#707070&gt;parses source code using\n&lt;color:#707070&gt;&lt;size:8&gt;[call]&lt;/size&gt;"
 Cxrefactory.cxrefCore.yylex .[#707070,thickness=2].&gt; 3 : "&lt;color:#707070&gt;reads source code from\n&lt;color:#707070&gt;&lt;size:8&gt;[file I/O]&lt;/size&gt;"
@@ -1331,198 +1322,6 @@ when a symbol is looked up.</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_caching_system_architecture">7.3. Caching System Architecture</h3>
-<div class="paragraph">
-<p>The c-xrefactory includes a sophisticated caching system that enables incremental parsing by caching parsed input streams, parser state, and file modification tracking. This optimization allows for faster re-analysis when only portions of source files have changed.</p>
-</div>
-<div class="sect3">
-<h4 id="_core_design_principles">7.3.1. Core Design Principles</h4>
-<div class="paragraph">
-<p><strong>Cache Point Model</strong>: The system places strategic snapshots of parser state at external definition boundaries (functions, global variables, etc.). When files are re-processed, the system can validate cache integrity, recover from cache points, and resume parsing only from the first changed definition onward.</p>
-</div>
-<div class="paragraph">
-<p><strong>Separation of Concerns</strong>: Recent refactoring has separated file tracking from cache validation:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>updateFileModificationTracking()</code> - Updates file timestamps without side effects</p>
-</li>
-<li>
-<p><code>isFileModifiedSinceCached()</code> - Pure validation function for cache integrity</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_key_components">7.3.2. Key Components</h4>
-<div class="paragraph">
-<p><strong>Cache Point Management</strong> (<code>caching.c</code>):</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>placeCachePoint(bool)</code> - Places strategic parser state snapshots</p>
-</li>
-<li>
-<p><code>recoverFromCache()</code> - Restores parser state from cache points</p>
-</li>
-<li>
-<p><code>recoverCachePointZero()</code> - Resets to initial cache state</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>File Modification Tracking</strong>:</p>
-</div>
-<div class="paragraph">
-<p>The <code>FileItem</code> structure maintains multiple timestamp fields for tracking file modification:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">struct FileItem {
-    time_t lastModified;    // File's actual modification time
-    time_t lastInspected;   // When we last checked the file
-    // ... other fields
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Input Stream Caching</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>cacheInput()</code> - Caches tokenized input from lexer</p>
-</li>
-<li>
-<p><code>cachingIsActive()</code> - Checks if caching is currently enabled</p>
-</li>
-<li>
-<p><code>activateCaching()</code> / <code>deactivateCaching()</code> - Control caching state</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_parser_integration">7.3.3. Parser Integration</h4>
-<div class="paragraph">
-<p><strong>C Parser Integration</strong>: Both C and Yacc parsers place cache points after each <code>external_definition</code>, but only when not processing include files (<code>includeStack.pointer == 0</code>).</p>
-</div>
-<div class="paragraph">
-<p><strong>Parser-Specific Behavior</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>C Parser</strong>: Full caching enabled with regular cache point placement</p>
-</li>
-<li>
-<p><strong>Yacc Parser</strong>: Explicitly deactivates caching via <code>deactivateCaching()</code> but still places strategic cache points</p>
-</li>
-<li>
-<p><strong>Include Files</strong>: Cache points skipped during include processing</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_system_dependencies">7.3.4. System Dependencies</h4>
-<div class="paragraph">
-<p>The caching system is deeply integrated throughout the parsing pipeline:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 40%;">
-<col style="width: 40%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Component</th>
-<th class="tableblock halign-left valign-top">Functions Used</th>
-<th class="tableblock halign-left valign-top">Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>main.c</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>initCaching()</code>, <code>activateCaching()</code>, <code>recoverCachePointZero()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Lifecycle control</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lexer.c</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cacheInput()</code>, <code>cachingIsActive()</code>, <code>deactivateCaching()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Input processing</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>yylex.c</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updateFileModificationTracking()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">File tracking</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>filetable.c</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updateFileModificationTracking()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">File management</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>xref.c</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>recoverFromCache()</code>, recovery functions</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Cross-reference coordination</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>c_parser.y</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>placeCachePoint()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">C grammar integration</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>yacc_parser.y</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>deactivateCaching()</code>, <code>placeCachePoint()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Yacc grammar integration</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_performance_characteristics">7.3.5. Performance Characteristics</h4>
-<div class="paragraph">
-<p><strong>Cache Hit Scenarios</strong>:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Full Cache Hit</strong>: No file modifications since last parse - parser state recovered from cache point zero with minimal re-processing</p>
-</li>
-<li>
-<p><strong>Partial Cache Hit</strong>: File modified after Nth definition - recovery from cache point N with re-parsing only from point of change onward</p>
-</li>
-<li>
-<p><strong>Cache Miss</strong>: File structure changed or timestamps invalid - full re-parse with new cache points placed</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong>Optimization Benefits</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Memory usage scales with number of definitions, not file size</p>
-</li>
-<li>
-<p>File modification checking minimizes unnecessary re-reads</p>
-</li>
-<li>
-<p>Input stream caching reduces lexer overhead</p>
-</li>
-<li>
-<p>Strategic cache point placement enables clean recovery at definition boundaries</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -1581,7 +1380,7 @@ mean that we need to:</p>
 <div class="paragraph">
 <p>There is a variable in <code>main()</code> called <code>firstPassing</code> which is set and passed
 down through <code>mainEditServer()</code> until it is reset in
-<code>mainFileProcessingInitialisations()</code> after <code>initCaching()</code>.</p>
+<code>mainFileProcessingInitialisations()</code>.</p>
 </div>
 <div class="paragraph">
 <p>This is probably related to the fact that <code>c-xref</code> allows for passing
@@ -1753,7 +1552,7 @@ when done.</p>
 <p>It would be much better to call the "putLexem()"-functions with a
 lexemBuffer but there seems to be a few cases where the destination
 (often <code>dd</code>) is not a lexem stream inside a lexemBuffer. These might
-be related to macro handling or caching.</p>
+be related to macro handling.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2025,7 +1824,7 @@ All definition requests return same default position</code></pre>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_performance_characteristics_2">Performance Characteristics</h5>
+<h5 id="_performance_characteristics">Performance Characteristics</h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2312,7 +2111,7 @@ c-xref -lsp                  # Same logic, different protocol</code></pre>
 <p>The unified approach leverages c-xrefactory&#8217;s <strong>existing sophisticated dependency management</strong> that handles include file relationships automatically:</p>
 </div>
 <div class="paragraph">
-<p><strong>File Modification Tracking</strong> (<code>filetable.h</code>, <code>caching.c</code>):</p>
+<p><strong>File Modification Tracking</strong> (<code>filetable.h</code>):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2329,33 +2128,25 @@ bool checkFileModifiedTime(int fileNumber);</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>Include Dependency Tracking</strong> (<code>yylex.c:474</code>, <code>caching.c:323-334</code>):</p>
+<p><strong>Include Dependency Tracking</strong> (<code>yylex.c</code>):</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
     // ... setup include stack
     includeStack.stack[includeStack.pointer++] = currentFile;
-    cacheInclude(currentFile.characterBuffer.fileNumber);  // Record dependency
-}
-
-// Cascading validation: if ANY included file changed, parent needs rescan
-static bool cachedIncludedFilePass(int index) {
-    for (int i = cache.points[index - 1].includeStackTop; i &lt; includeTop; i++) {
-        if (!checkFileModifiedTime(cache.includeStack[i]))
-            return false;  // ANY included file changed = need rescan
-    }
-    return true;
+    // Track include relationships for dependency analysis
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>Automatic Include Closure</strong> (<code>xref.c:81-111</code>):</p>
+<p><strong>Automatic Include Closure</strong> (<code>xref.c:81-108</code>):</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">static void makeIncludeClosureOfFilesToUpdate(void) {
     // If file A includes file B, and B is modified, A gets scheduled for update
+    // This uses the reference database to track include relationships
     bool fileAddedFlag = true;
     while (fileAddedFlag) {
         // Iterative closure: keeps adding dependent files until stable
@@ -3181,7 +2972,7 @@ happen during the reading of a file. This incurred much complexity.</p>
 <h4 id="_future_direction">9.8.2. Future direction</h4>
 <div class="paragraph">
 <p>As virtual memory for a process in a modern OS is much larger than in the 1990&#8217;s it
-would not be impossible to remove this strategy of caching, overflow detection and
+would not be impossible to remove this strategy of overflow detection and
 recovery.</p>
 </div>
 <div class="paragraph">
@@ -3241,15 +3032,11 @@ value. The ':' indicates that the record is a filename.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_caching">9.10. Caching</h3>
+<h3 id="_c_xref_el">9.10. c-xref.el</h3>
 
 </div>
 <div class="sect2">
-<h3 id="_c_xref_el">9.11. c-xref.el</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_c_xrefactory_el">9.12. c-xrefactory.el</h3>
+<h3 id="_c_xrefactory_el">9.11. c-xrefactory.el</h3>
 
 </div>
 </div>
@@ -3315,9 +3102,6 @@ Reference o-- Reference : next</pre>
 <h3 id="_files_and_buffers">10.3. Files and Buffers</h3>
 <div class="paragraph">
 <p>Many strange things are going on with reading files so that is not completely understood yet.</p>
-</div>
-<div class="paragraph">
-<p>(There should probably be a section caching and one on lexing&#8230;&#8203;)</p>
 </div>
 <div class="paragraph">
 <p>Here is an initial attempt at illustrating how some of the file and text/lexem buffers are related.</p>
@@ -3407,7 +3191,7 @@ browser.</p>
 <div class="paragraph">
 <p>One evidence for this is that the refactory module calls the "main
 task" as a "sub-task".  This forces some intricate fiddling with the
-options data structure, like copying and caching it.  Which I don&#8217;t
+options data structure, like copying it.  Which I don&#8217;t
 fully understand yet.</p>
 </div>
 <div class="paragraph">
@@ -4460,7 +4244,212 @@ which fields are actually necessary to set.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_users">15.6. Users</h3>
+<h3 id="_caching_module">15.6. Caching Module</h3>
+<div class="paragraph">
+<p><strong>The caching module described below has been archived as it is no longer part of the current architecture.</strong></p>
+</div>
+<div class="paragraph">
+<p>The caching module was part of the memory management strategy when memory was scarce. It allowed
+the system to detect out-of-memory situations, discard, flush and re-use memory during file processing.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_caching_system_architecture">15.7. Caching System Architecture</h3>
+<div class="paragraph">
+<p><strong>The caching system described below has been archived as it is no longer part of the current architecture.</strong></p>
+</div>
+<div class="paragraph">
+<p>The c-xrefactory included a sophisticated caching system that enabled incremental parsing by caching parsed input streams, parser state, and file modification tracking. This optimization allowed for faster re-analysis when only portions of source files had changed.</p>
+</div>
+<div class="sect3">
+<h4 id="_core_design_principles">15.7.1. Core Design Principles</h4>
+<div class="paragraph">
+<p><strong>Cache Point Model</strong>: The system placed strategic snapshots of parser state at external definition boundaries (functions, global variables, etc.). When files were re-processed, the system could validate cache integrity, recover from cache points, and resume parsing only from the first changed definition onward.</p>
+</div>
+<div class="paragraph">
+<p><strong>Separation of Concerns</strong>: Recent refactoring had separated file tracking from cache validation:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>updateFileModificationTracking()</code> - Updated file timestamps without side effects</p>
+</li>
+<li>
+<p><code>isFileModifiedSinceCached()</code> - Pure validation function for cache integrity</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_key_components">15.7.2. Key Components</h4>
+<div class="paragraph">
+<p><strong>Cache Point Management</strong> (<code>caching.c</code>):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>placeCachePoint(bool)</code> - Placed strategic parser state snapshots</p>
+</li>
+<li>
+<p><code>recoverFromCache()</code> - Restored parser state from cache points</p>
+</li>
+<li>
+<p><code>recoverCachePointZero()</code> - Reset to initial cache state</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>File Modification Tracking</strong>:</p>
+</div>
+<div class="paragraph">
+<p>The <code>FileItem</code> structure maintained multiple timestamp fields for tracking file modification:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">struct FileItem {
+    time_t lastModified;    // File's actual modification time
+    time_t lastInspected;   // When we last checked the file
+    // ... other fields
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Input Stream Caching</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cacheInput()</code> - Cached tokenized input from lexer</p>
+</li>
+<li>
+<p><code>cachingIsActive()</code> - Checked if caching was currently enabled</p>
+</li>
+<li>
+<p><code>activateCaching()</code> / <code>deactivateCaching()</code> - Controlled caching state</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_parser_integration">15.7.3. Parser Integration</h4>
+<div class="paragraph">
+<p><strong>C Parser Integration</strong>: Both C and Yacc parsers placed cache points after each <code>external_definition</code>, but only when not processing include files (<code>includeStack.pointer == 0</code>).</p>
+</div>
+<div class="paragraph">
+<p><strong>Parser-Specific Behavior</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>C Parser</strong>: Full caching enabled with regular cache point placement</p>
+</li>
+<li>
+<p><strong>Yacc Parser</strong>: Explicitly deactivated caching via <code>deactivateCaching()</code> but still placed strategic cache points</p>
+</li>
+<li>
+<p><strong>Include Files</strong>: Cache points skipped during include processing</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_system_dependencies">15.7.4. System Dependencies</h4>
+<div class="paragraph">
+<p>The caching system was deeply integrated throughout the parsing pipeline:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Component</th>
+<th class="tableblock halign-left valign-top">Functions Used</th>
+<th class="tableblock halign-left valign-top">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>main.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>initCaching()</code>, <code>activateCaching()</code>, <code>recoverCachePointZero()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lifecycle control</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lexer.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cacheInput()</code>, <code>cachingIsActive()</code>, <code>deactivateCaching()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Input processing</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>yylex.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updateFileModificationTracking()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File tracking</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>filetable.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updateFileModificationTracking()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File management</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>xref.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>recoverFromCache()</code>, recovery functions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cross-reference coordination</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>c_parser.y</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>placeCachePoint()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">C grammar integration</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>yacc_parser.y</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>deactivateCaching()</code>, <code>placeCachePoint()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yacc grammar integration</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_performance_characteristics_2">15.7.5. Performance Characteristics</h4>
+<div class="paragraph">
+<p><strong>Cache Hit Scenarios</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Full Cache Hit</strong>: No file modifications since last parse - parser state recovered from cache point zero with minimal re-processing</p>
+</li>
+<li>
+<p><strong>Partial Cache Hit</strong>: File modified after Nth definition - recovery from cache point N with re-parsing only from point of change onward</p>
+</li>
+<li>
+<p><strong>Cache Miss</strong>: File structure changed or timestamps invalid - full re-parse with new cache points placed</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Optimization Benefits</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Memory usage scales with number of definitions, not file size</p>
+</li>
+<li>
+<p>File modification checking minimizes unnecessary re-reads</p>
+</li>
+<li>
+<p>Input stream caching reduces lexer overhead</p>
+</li>
+<li>
+<p>Strategic cache point placement enables clean recovery at definition boundaries</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_users">15.8. Users</h3>
 <div class="paragraph">
 <p><strong>The <code>-user</code> option has now been removed, both in the tool and the
   editor adaptors, and with it one instance of a hashlist, the
@@ -4505,7 +4494,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-17 11:13:29 UTC
+Last updated 2025-10-23 07:29:39 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
