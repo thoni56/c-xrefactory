@@ -113,7 +113,6 @@ Ensure(Yylex, can_handle_a_line_directive_without_number) {
 Ensure(Yylex, can_process_include_directive) {
     Position position     = (Position){1, 2, 3};
     FILE     file;
-    int      fileNumber;
     char    lexem_stream[100];
 
     lexem_stream[0] = (unsigned)STRING_LITERAL%256;
@@ -138,7 +137,6 @@ Ensure(Yylex, can_process_include_directive) {
 
     /* Always  */
     always_expect(updateFileModificationTracking);
-    always_expect(cacheInclude, will_capture_parameter(fileNum, fileNumber));
 
     /* Finally ensure that the include file is added as a reference */
     expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
@@ -149,7 +147,6 @@ Ensure(Yylex, can_process_include_directive) {
 
 Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) {
     Position position     = (Position){1, 2, 3};
-    int      fileNumber   = 0;
     FILE     file;
     char    lexem_stream[100];
 
@@ -203,7 +200,6 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
 
     /* Always  */
     always_expect(updateFileModificationTracking);
-    always_expect(cacheInclude, will_capture_parameter(fileNum, fileNumber));
 
     /* Finally ensure that the include file is added as a reference */
     expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
@@ -214,7 +210,6 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
 
 Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
     Position position     = (Position){1, 2, 3};
-    int      fileNumber   = 0;
     FILE     file;
     char     lexem_stream[100];
 
@@ -264,7 +259,6 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
 
     /* Always  */
     always_expect(updateFileModificationTracking);
-    always_expect(cacheInclude, will_capture_parameter(fileNum, fileNumber));
 
     /* Finally ensure that the include file is added as a reference */
     expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
