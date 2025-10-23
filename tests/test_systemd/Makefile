@@ -14,7 +14,7 @@ all:
 	else \
 		rm -rf CXrefs output systemd.log log ; \
 		sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" c-xrefrc.tpl > .c-xrefrc ; \
-		../run-with-progress $(COMMAND) ; \
+		../run-with-progress $(COMMAND) || exit 1 ; \
 		../../utils/cxref_reader | grep -v :0:0 > output ; \
 		if [ ! "$(shell uname -n)" = "thoni64" ] || diff -q output expected > /dev/null; then \
 			$(OK); \

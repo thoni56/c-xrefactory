@@ -8,6 +8,15 @@
 $@ > output.run &
 PROCID=$!
 while kill -0 $PROCID > /dev/null 2>&1 ; do sleep 1 ; printf "." ; done
+echo ""
 
 wait "$PROCID"            # reap the child
-exit $?                   # return child's exit code
+EXIT_CODE=$?              # save exit code
+
+if [ $EXIT_CODE -eq 139 ]; then
+    echo "run-with-progress: Process terminated with SIGSEGV" >&2
+elif [ $EXIT_CODE -ne 0 ]; then
+    echo "run-with-progress: Process failed with exit code $EXIT_CODE" >&2
+fi
+
+exit $EXIT_CODE
