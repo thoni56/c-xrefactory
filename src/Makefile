@@ -462,8 +462,8 @@ SYSTEM_TEST_COVERAGE_FILES = `ls ../tests/*/.cov/coverage.info | xargs printf --
 .PHONY:total-coverage
 total-coverage:
 	@mkdir -p ../coverage
-	if [ "$(HAVE_APPLE_COV)" = "yes" ]; then \
-		# Darwin: Export merged profdata to LCOV format for genhtml compatibility ; \
+ifeq ($(HAVE_APPLE_COV), yes)
+		# Darwin: Export merged profdata to LCOV format for genhtml compatibility
 		if [ -f ../coverage/merged.profdata ]; then \
 			$(LLVM_COV) export --format=lcov --instr-profile=../coverage/merged.profdata c-xref --sources . > ../coverage/total.info ; \
 		else \
@@ -471,23 +471,23 @@ total-coverage:
 				$(LLVM_PROFDATA) merge -sparse ../tests/*/.cov/*.profraw -o ../coverage/merged.profdata ; \
 				$(LLVM_COV) export --format=lcov --instr-profile=../coverage/merged.profdata c-xref --sources . > ../coverage/total.info ; \
 			fi ; \
-		fi ; \
-	else \
-		# Non-Darwin: Use traditional lcov approach ; \
-		if [ "$(HAVE_GCOV_TOOL)" = "yes" ]; then \
-			# Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from . ; \
-			$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed" || true ; \
-		else \
-			# The run_test script in ../tests has created a coverage.info in each test directory ; \
-			# So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...' ; \
-			# with lcov ; \
-			$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q -o ../coverage/total.info 2>&1 ; \
-		fi ; \
-		# @echo "LCOV-ing done..." ; \
-		# Then we can remove coverage for the ignored files ; \
-		$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info ; \
-		# LCOV --remove done... ; \
-	fi
+		fi
+else
+		# Non-Darwin: Use traditional lcov approach
+ifeq ($(HAVE_GCOV_TOOL), yes)
+			# Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
+			$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | grep -v "assuming not executed" || true
+else
+			# The run_test script in ../tests has created a coverage.info in each test directory
+			# So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...'
+			# with lcov
+			$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q -o ../coverage/total.info 2>&1
+endif
+		# @echo "LCOV-ing done..."
+		# Then we can remove coverage for the ignored files
+		$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
+		# LCOV --remove done...
+endif
 
 .PHONY:info2gcov
 info2gcov:
@@ -590,16 +590,16 @@ unittests: parsers
 else
 unittests: parsers $(OBJS) $(UNITTESTS)
 	$(MAKE) -e clean-coverage
-	if [ "$(HAVE_APPLE_COV)" = "yes" ]; then \
-		# Darwin: Set LLVM_PROFILE_FILE to enable coverage data collection ; \
-		LLVM_PROFILE_FILE="unittests-%p.profraw" $(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $(UNITTESTS) ; \
-		# Darwin: Merge coverage data from unit tests, then generate gcov files ; \
-		$(MAKE) -e merge-coverage-from-tests ; \
-	else \
-		# Non-Darwin: Just run tests and generate gcov files directly ; \
-		$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $(UNITTESTS) ; \
-		$(MAKE) gcov ; \
-	fi
+ifeq ("$(HAVE_APPLE_COV)", yes)
+		# Darwin: Set LLVM_PROFILE_FILE to enable coverage data collection
+		LLVM_PROFILE_FILE="unittests-%p.profraw" $(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $(UNITTESTS)
+		# Darwin: Merge coverage data from unit tests, then generate gcov files
+		$(MAKE) -e merge-coverage-from-tests
+else
+		# Non-Darwin: Just run tests and generate gcov files directly
+		$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $(UNITTESTS)
+		$(MAKE) gcov
+endif
 	touch .unittests.done
 endif
 
