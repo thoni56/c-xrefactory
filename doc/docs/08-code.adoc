@@ -33,7 +33,7 @@ mean that we need to:
 
 There is a variable in `main()` called `firstPassing` which is set and passed
 down through `mainEditServer()` until it is reset in
-`mainFileProcessingInitialisations()` after `initCaching()`.
+`mainFileProcessingInitialisations()`.
 
 This is probably related to the fact that `c-xref` allows for passing
 over the analyzed source multiple passes in case you compile the
@@ -148,7 +148,7 @@ when done.
 It would be much better to call the "putLexem()"-functions with a
 lexemBuffer but there seems to be a few cases where the destination
 (often `dd`) is not a lexem stream inside a lexemBuffer. These might
-be related to macro handling or caching.
+be related to macro handling.
 
 NOTE: This is a work-in-progress.  Currently most of the "normal"
 usages are prepared to use the LexemBuffer's pointers.  But the
@@ -479,7 +479,7 @@ The `.cx` files are essentially a **persistent cache** of analysis results, not 
 
 The unified approach leverages c-xrefactory's **existing sophisticated dependency management** that handles include file relationships automatically:
 
-**File Modification Tracking** (`filetable.h`, `caching.c`):
+**File Modification Tracking** (`filetable.h`):
 
 [source,c]
 ----
@@ -495,32 +495,24 @@ typedef struct fileItem {
 bool checkFileModifiedTime(int fileNumber);
 ----
 
-**Include Dependency Tracking** (`yylex.c:474`, `caching.c:323-334`):
+**Include Dependency Tracking** (`yylex.c`):
 
 [source,c]
 ----
 void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
     // ... setup include stack
     includeStack.stack[includeStack.pointer++] = currentFile;
-    cacheInclude(currentFile.characterBuffer.fileNumber);  // Record dependency
-}
-
-// Cascading validation: if ANY included file changed, parent needs rescan
-static bool cachedIncludedFilePass(int index) {
-    for (int i = cache.points[index - 1].includeStackTop; i < includeTop; i++) {
-        if (!checkFileModifiedTime(cache.includeStack[i]))
-            return false;  // ANY included file changed = need rescan
-    }
-    return true;
+    // Track include relationships for dependency analysis
 }
 ----
 
-**Automatic Include Closure** (`xref.c:81-111`):
+**Automatic Include Closure** (`xref.c:81-108`):
 
 [source,c]
 ----
 static void makeIncludeClosureOfFilesToUpdate(void) {
     // If file A includes file B, and B is modified, A gets scheduled for update
+    // This uses the reference database to track include relationships
     bool fileAddedFlag = true;
     while (fileAddedFlag) {
         // Iterative closure: keeps adding dependent files until stable

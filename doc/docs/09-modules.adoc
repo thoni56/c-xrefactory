@@ -67,7 +67,7 @@ happen during the reading of a file. This incurred much complexity.
 ==== Future direction
 
 As virtual memory for a process in a modern OS is much larger than in the 1990's it
-would not be impossible to remove this strategy of caching, overflow detection and
+would not be impossible to remove this strategy of overflow detection and
 recovery.
 
 A possibility to in an orderly fashion flush and reuse memory would still be needed.
@@ -105,8 +105,6 @@ since the reference database was last written.
 And the third part is "21:/usr/include/ctype.h", which is of a record
 type that is a bit more complex. The number is the length of the
 value. The ':' indicates that the record is a filename.
-
-=== Caching
 
 === c-xref.el
 

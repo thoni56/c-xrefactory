@@ -51,8 +51,6 @@ Reference o-- Reference : next
 
 Many strange things are going on with reading files so that is not completely understood yet.
 
-(There should probably be a section caching and one on lexing...)
-
 Here is an initial attempt at illustrating how some of the file and text/lexem buffers are related.
 
 [plantuml, buffer, png]
@@ -105,7 +103,7 @@ browser.
 
 One evidence for this is that the refactory module calls the "main
 task" as a "sub-task".  This forces some intricate fiddling with the
-options data structure, like copying and caching it.  Which I don't
+options data structure, like copying it.  Which I don't
 fully understand yet.
 
 TODO?: Strip away the various "regimes" into more separated concerns

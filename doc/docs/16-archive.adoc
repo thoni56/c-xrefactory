@@ -271,6 +271,117 @@ If successful, it would be much better, since we could probably get
 rid of the bootstrap, but primarily it would be more explicit about
 which fields are actually necessary to set.
 
+=== Caching Module
+
+**The caching module described below has been archived as it is no longer part of the current architecture.**
+
+The caching module was part of the memory management strategy when memory was scarce. It allowed
+the system to detect out-of-memory situations, discard, flush and re-use memory during file processing.
+
+=== Caching System Architecture
+
+**The caching system described below has been archived as it is no longer part of the current architecture.**
+
+The c-xrefactory included a sophisticated caching system that enabled incremental parsing by caching parsed input streams, parser state, and file modification tracking. This optimization allowed for faster re-analysis when only portions of source files had changed.
+
+==== Core Design Principles
+
+**Cache Point Model**: The system placed strategic snapshots of parser state at external definition boundaries (functions, global variables, etc.). When files were re-processed, the system could validate cache integrity, recover from cache points, and resume parsing only from the first changed definition onward.
+
+**Separation of Concerns**: Recent refactoring had separated file tracking from cache validation:
+
+* `updateFileModificationTracking()` - Updated file timestamps without side effects
+* `isFileModifiedSinceCached()` - Pure validation function for cache integrity
+
+==== Key Components
+
+**Cache Point Management** (`caching.c`):
+
+* `placeCachePoint(bool)` - Placed strategic parser state snapshots
+* `recoverFromCache()` - Restored parser state from cache points  
+* `recoverCachePointZero()` - Reset to initial cache state
+
+**File Modification Tracking**:
+
+The `FileItem` structure maintained multiple timestamp fields for tracking file modification:
+
+[source,c]
+----
+struct FileItem {
+    time_t lastModified;    // File's actual modification time
+    time_t lastInspected;   // When we last checked the file
+    // ... other fields
+}
+----
+
+**Input Stream Caching**:
+
+* `cacheInput()` - Cached tokenized input from lexer
+* `cachingIsActive()` - Checked if caching was currently enabled
+* `activateCaching()` / `deactivateCaching()` - Controlled caching state
+
+==== Parser Integration
+
+**C Parser Integration**: Both C and Yacc parsers placed cache points after each `external_definition`, but only when not processing include files (`includeStack.pointer == 0`).
+
+**Parser-Specific Behavior**:
+
+* **C Parser**: Full caching enabled with regular cache point placement
+* **Yacc Parser**: Explicitly deactivated caching via `deactivateCaching()` but still placed strategic cache points
+* **Include Files**: Cache points skipped during include processing
+
+==== System Dependencies
+
+The caching system was deeply integrated throughout the parsing pipeline:
+
+[cols="1,2,2"]
+|===
+|Component |Functions Used |Purpose
+
+|`main.c`
+|`initCaching()`, `activateCaching()`, `recoverCachePointZero()`
+|Lifecycle control
+
+|`lexer.c`  
+|`cacheInput()`, `cachingIsActive()`, `deactivateCaching()`
+|Input processing
+
+|`yylex.c`
+|`updateFileModificationTracking()`
+|File tracking
+
+|`filetable.c`
+|`updateFileModificationTracking()`
+|File management
+
+|`xref.c`
+|`recoverFromCache()`, recovery functions
+|Cross-reference coordination
+
+|`c_parser.y`
+|`placeCachePoint()`
+|C grammar integration
+
+|`yacc_parser.y`
+|`deactivateCaching()`, `placeCachePoint()`
+|Yacc grammar integration
+|===
+
+==== Performance Characteristics
+
+**Cache Hit Scenarios**:
+
+1. **Full Cache Hit**: No file modifications since last parse - parser state recovered from cache point zero with minimal re-processing
+2. **Partial Cache Hit**: File modified after Nth definition - recovery from cache point N with re-parsing only from point of change onward  
+3. **Cache Miss**: File structure changed or timestamps invalid - full re-parse with new cache points placed
+
+**Optimization Benefits**:
+
+* Memory usage scales with number of definitions, not file size
+* File modification checking minimizes unnecessary re-reads
+* Input stream caching reduces lexer overhead
+* Strategic cache point placement enables clean recovery at definition boundaries
+
 === Users
 
 **The `-user` option has now been removed, both in the tool and the
