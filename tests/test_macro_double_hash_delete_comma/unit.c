@@ -1,5 +1,3 @@
-#define delete_comma(...) int a, ##__VA_ARGS__;
+#define delete_comma(...) a, ##__VA_ARGS__
 
-void function() {
-    int delete_comma();
-}
+int delete_comma();
