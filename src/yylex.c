@@ -1430,21 +1430,20 @@ static void cxAddCollateReference(char *sym, char *cs, Position position) {
     addTrivialCxReference(tempString, TypeCppCollate, StorageDefault, position, UsageDefined);
 }
 
-static void resolveMacroArgument(char **nextLexemP, LexInput *actualArgumentsInput,
-                                 char **endOfInputLexems) {
+static char *resolveMacroArgument(char **nextLexemP, LexInput *actualArgumentsInput) {
     LexemCode lexem = getLexemCodeAndAdvance(nextLexemP);
     log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
     int argumentIndex;
     getExtraLexemInformationFor(lexem, nextLexemP, NULL, &argumentIndex, NULL, NULL, false);
     *nextLexemP = actualArgumentsInput[argumentIndex].begin;
-    *endOfInputLexems = actualArgumentsInput[argumentIndex].write;
+    return actualArgumentsInput[argumentIndex].write;
 }
 
-static void resolveRegularOperand(char **nextLexemP, char **endOfInputLexems) {
+static char *resolveRegularOperand(char **nextLexemP) {
     char *p = *nextLexemP;
     LexemCode lexem = getLexemCodeAndAdvance(&p);
     skipExtraLexemInformationFor(lexem, &p, false);
-    *endOfInputLexems = p;
+    return p;
 }
 
 static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWriteP,
@@ -1534,12 +1533,26 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
     }
     assert(*leftHandLexemP != NULL);
 
-    /* ... and right operands */
+    /* Check for empty right operand */
+    if (rightHandLexemP == NULL || *rightHandLexemP == NULL) {
+        log_trace("Token pasting with empty right operand - using left operand as-is");
+        LEAVE();
+        return *rightHandLexemP; // or could be NULL
+    }
+
+    /* ... and the right hand operand */
     char *endOfLexems = NULL;
     if (peekLexemCodeAt(*rightHandLexemP) == CPP_MACRO_ARGUMENT) {
-        resolveMacroArgument(rightHandLexemP, actualArgumentsInput, &endOfLexems);
+        endOfLexems = resolveMacroArgument(rightHandLexemP, actualArgumentsInput);
     } else {
-        resolveRegularOperand(rightHandLexemP, &endOfLexems);
+        endOfLexems = resolveRegularOperand(rightHandLexemP);
+    }
+
+    /* Check for empty right operand after possible expansion */
+    if (rightHandLexemP == NULL || *rightHandLexemP >= endOfLexems) {
+        log_trace("Token pasting with empty right operand - using left operand as-is");
+        LEAVE();
+        return *rightHandLexemP; // or could be NULL
     }
 
     /* Macro invocations next */
@@ -1788,7 +1801,7 @@ static LexInput createMacroBodyAsNewInput(MacroBody *macroBody, LexInput *actual
     char *nextBodyLexemToRead = macroBody->body;
     char *endOfBodyLexems = macroBody->body + macroBody->size;
 
-    while (nextBodyLexemToRead < endOfBodyLexems) {
+    while (nextBodyLexemToRead != NULL && nextBodyLexemToRead < endOfBodyLexems) {
         char *lexemStart   = nextBodyLexemToRead;
 
         LexemCode lexem = getLexemCodeAndAdvance(&nextBodyLexemToRead);
@@ -2284,10 +2297,14 @@ void decodeLexem(char *lexemP) {
     skipExtraLexemInformationFor(lexem, &lexemP, false);
 }
 
-void decodeLexems(char *lexemP, int count) {
-    for (int i=0; i<count; i++) {
+void decodeLexemsWithEndPointer(char *lexemP, char *endP) {
+    while (lexemP < endP) {
         LexemCode lexem = getLexemCodeAndAdvance(&lexemP);
         printf("%s\n", lexemEnumNames[lexem]);
         skipExtraLexemInformationFor(lexem, &lexemP, false);
     }
+}
+
+void decodeLexemsWithByteCount(char *lexemP, int byteCount) {
+    decodeLexemsWithEndPointer(lexemP, lexemP + byteCount);
 }
