@@ -2304,26 +2304,32 @@ void yylexMemoryStatistics(void) {
     printMemoryStatisticsFor(&macroBodyMemory);
 }
 
-void decodeLexem(char *lexemP) {
+void dumpLexem(char *lexemP) {
     LexemCode lexem = getLexemCodeAndAdvance(&lexemP);
-    printf("%s", lexemEnumNames[lexem]);
-    if (lexem == IDENTIFIER)
-        printf("(%s)", lexemP+LEXEMCODE_SIZE);
+    printf("%p : %s", lexemP, lexemEnumNames[lexem]);
+
+    if (lexem == IDENTIFIER || lexem == STRING_LITERAL) {
+        printf("(%s)", lexemP);
+    } else {
+        int lineNumber, value, length;
+        Position position;
+        getExtraLexemInformationFor(lexem, &lexemP, &lineNumber, &value, &position, &length, false);
+        if (lexem == CPP_MACRO_ARGUMENT)
+            printf("(%d)", value);
+    }
     printf("\n");
-    skipExtraLexemInformationFor(lexem, &lexemP, false);
 }
 
-void decodeLexemsWithEndPointer(char *lexemP, char *endP) {
+void dumpLexemsWithEndPointer(char *lexemP, char *endP) {
+    printf("-------------\n");
     while (lexemP < endP) {
-        printf("%p : %s", lexemP, lexemEnumNames[peekLexemCodeAt(lexemP)]);
+        dumpLexem(lexemP);
         LexemCode lexem = getLexemCodeAndAdvance(&lexemP);
-        if (lexem == IDENTIFIER)
-            printf("(%s)", lexemP);
-        printf("\n");
         skipExtraLexemInformationFor(lexem, &lexemP, false);
     }
+    printf("-------------\n");
 }
 
-void decodeLexemsWithByteCount(char *lexemP, int byteCount) {
-    decodeLexemsWithEndPointer(lexemP, lexemP + byteCount);
+void dumpLexemsWithByteCount(char *lexemP, int byteCount) {
+    dumpLexemsWithEndPointer(lexemP, lexemP + byteCount);
 }
