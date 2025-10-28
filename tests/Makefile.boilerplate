@@ -47,6 +47,11 @@ VERIFY = cmp output expected ; \
 		exit 0 ; \
 	fi
 
+# Target to just show and run the COMMAND
+run:
+	echo $(COMMAND)
+	$(COMMAND)
+
 # If the test requires a .c-xrefrc for test directory you need to
 # generate one. The .c-xrefrc requires absolute paths, and to work in
 # any directory, a .c-xrefrc can be generated from a common
