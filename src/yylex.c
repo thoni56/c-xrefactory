@@ -1511,19 +1511,19 @@ static void expandMacroInCollation(char *buffer, int *bufferSizeP, char **buffer
 
 /* **************************************************************** */
 // Returns updated position to continue reading from
-static char *collate(char *buffer,        // The allocated buffer for storing macro expansions
-                     int *bufferSizeP,     // Size of the buffer, which may need expanding
-                     char **bufferWriteP, // Current buffer write position (where we are writing)
-                     char **leftHandLexemP, // Left-hand lexem in the buffer (token before ##)
+static char *collate(char *writeBuffer,        // The allocated buffer for storing macro expansions
+                     int *writeBufferSizeP,     // Pointer to size of the buffer, which may need expanding
+                     char **writeBufferWriteP, // Current position in write buffer (where we are writing)
+                     char **leftHandLexemP, // Left-hand lexem already in the write buffer (token before ##)
                      char **rightHandLexemP, // Right-hand lexem to be processed (token after ##)
-                     LexInput *actualArgumentsInput // The argument values for this macro expansion
+                     LexInput *actualArgumentsInput // The argument values for the current macro expansion
 ) {
     ENTER();
     char *ppmMarker = ppmAllocc(0, sizeof(char));
 
     /* Macro argument resolution first for left ... */
     if (peekLexemCodeAt(*leftHandLexemP) == CPP_MACRO_ARGUMENT) {
-        *leftHandLexemP = resolveMacroArgumentAsLeftOperand(buffer, bufferSizeP, bufferWriteP,
+        *leftHandLexemP = resolveMacroArgumentAsLeftOperand(writeBuffer, writeBufferSizeP, writeBufferWriteP,
                                                             leftHandLexemP, actualArgumentsInput);
         if (*leftHandLexemP == NULL) {
             log_warn("Token pasting skipped: Left operand is NULL after expansion.");
@@ -1541,6 +1541,8 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
     }
 
     /* ... and the right hand operand */
+    /* Save the original position in the macro body before resolving */
+    char *originalRightHandP = *rightHandLexemP;
     char *endOfLexems = NULL;
     if (peekLexemCodeAt(*rightHandLexemP) == CPP_MACRO_ARGUMENT) {
         endOfLexems = resolveMacroArgument(rightHandLexemP, actualArgumentsInput);
@@ -1562,8 +1564,8 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
         Symbol *macroSymbol = findMacroSymbol(lexemString);
         if (macroSymbol != NULL) {
             log_trace("Macro found: '%s' (left-hand) -> expanding it", lexemString);
-            *bufferWriteP = lhs; /* We should write where current LHS, the macro, starts */
-            expandMacroInCollation(buffer, bufferSizeP, bufferWriteP, macroSymbol, actualArgumentsInput);
+            *writeBufferWriteP = lhs; /* We should write where current LHS, the macro, starts */
+            expandMacroInCollation(writeBuffer, writeBufferSizeP, writeBufferWriteP, macroSymbol, actualArgumentsInput);
         } else {
             log_trace("Identifier '%s' (left-hand) is NOT a macro", lexemString);
         }
@@ -1575,9 +1577,9 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
         Symbol *macroSymbol = findMacroSymbol(lexemString);
         if (findMacroSymbol(lexemString) != NULL) {
             log_trace("Macro found: '%s' (right-hand) -> expanding it", lexemString);
-            rhs = *bufferWriteP; /* RHS now starts where we will write now */
-            expandMacroInCollation(buffer, bufferSizeP, bufferWriteP, macroSymbol, actualArgumentsInput);
-            endOfLexems = *bufferWriteP; /* End is now where we have just finished writing */
+            rhs = *writeBufferWriteP; /* RHS now starts where we will write now */
+            expandMacroInCollation(writeBuffer, writeBufferSizeP, writeBufferWriteP, macroSymbol, actualArgumentsInput);
+            endOfLexems = *writeBufferWriteP; /* End is now where we have just finished writing */
         } else {
             log_trace("Identifier '%s' (right-hand) is NOT a macro", lexemString);
         }
@@ -1591,44 +1593,44 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
         /* TODO collation of all types of lexem pairs, not just id/const */
         if (leftHandLexem == IDENTIFIER && rightHandLexem == IDENTIFIER) {
             char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
-            *bufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
-            assert(**bufferWriteP == 0); /* Ensure at end of string */
+            *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
+            assert(**writeBufferWriteP == 0); /* Ensure at end of string */
 
             LexemCode rightHandLexem = getLexemCodeAndAdvance(&rhs);
             char *rightHandLexemString = rhs; /* For an ID the string follows, then extra info */
             Position position;
             getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, NULL, &position, NULL, false);
 
-            memmove(*bufferWriteP, rightHandLexemString, strlen(rightHandLexemString) + 1);
+            memmove(*writeBufferWriteP, rightHandLexemString, strlen(rightHandLexemString) + 1);
 
             position.col--;
             assert(position.col >= 0);
-            cxAddCollateReference(leftHandLexemString, *bufferWriteP, position);
+            cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
             position.col++;
 
-            *bufferWriteP += strlen(*bufferWriteP);
-            assert(**bufferWriteP == 0);
-            (*bufferWriteP)++;
-            putLexemPositionAt(position, bufferWriteP);
+            *writeBufferWriteP += strlen(*writeBufferWriteP);
+            assert(**writeBufferWriteP == 0);
+            (*writeBufferWriteP)++;
+            putLexemPositionAt(position, writeBufferWriteP);
         } else if (leftHandLexem == IDENTIFIER && rightHandLexem == CONSTANT) {
             char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
-            *bufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
-            assert(**bufferWriteP == 0); /* Ensure at end of string */
+            *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
+            assert(**writeBufferWriteP == 0); /* Ensure at end of string */
 
             LexemCode rightHandLexem = getLexemCodeAndAdvance(&rhs);
             int value;
             getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, &value, NULL, NULL, false);
 
             /* Get position from lefthand id, immediately after its string */
-            Position position = peekLexemPositionAt(*bufferWriteP + 1);
+            Position position = peekLexemPositionAt(*writeBufferWriteP + 1);
 
-            sprintf(*bufferWriteP, "%d", value); /* Concat the value to the end of the LHS ID */
-            cxAddCollateReference(leftHandLexemString, *bufferWriteP, position);
+            sprintf(*writeBufferWriteP, "%d", value); /* Concat the value to the end of the LHS ID */
+            cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
 
-            *bufferWriteP += strlen(*bufferWriteP);
-            assert(**bufferWriteP == 0);
-            (*bufferWriteP)++;
-            putLexemPositionAt(position, bufferWriteP);
+            *writeBufferWriteP += strlen(*writeBufferWriteP);
+            assert(**writeBufferWriteP == 0);
+            (*writeBufferWriteP)++;
+            putLexemPositionAt(position, writeBufferWriteP);
         } else if (leftHandLexem == CONSTANT && rightHandLexem == IDENTIFIER) {
             /* Retrieve value and position from the LHS CONSTANT */
             char *leftHandLexemStart = lhs;
@@ -1640,28 +1642,39 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
 
             /* Re-write to an IDENTIFIER */
             putLexemCodeAt(IDENTIFIER, &leftHandLexemStart);
-            *bufferWriteP = leftHandLexemStart; /* We want to write the id next */
+            *writeBufferWriteP = leftHandLexemStart; /* We want to write the id next */
 
             int lexem = getLexemCodeAndAdvance(&rhs);
             char *rightHandLexemString = rhs; /* For an ID the string follows, then the position */
             skipExtraLexemInformationFor(lexem, &rhs, false);
 
-            sprintf(*bufferWriteP, "%d%s", value, rightHandLexemString);
+            sprintf(*writeBufferWriteP, "%d%s", value, rightHandLexemString);
 
             assert(position.col >= 0);
-            cxAddCollateReference(rightHandLexemString, *bufferWriteP, position);
+            cxAddCollateReference(rightHandLexemString, *writeBufferWriteP, position);
             position.col++;
 
-            *bufferWriteP += strlen(*bufferWriteP);
-            assert(**bufferWriteP == 0);
-            (*bufferWriteP)++;
+            *writeBufferWriteP += strlen(*writeBufferWriteP);
+            assert(**writeBufferWriteP == 0);
+            (*writeBufferWriteP)++;
 
-            putLexemPositionAt(position, bufferWriteP);
+            putLexemPositionAt(position, writeBufferWriteP);
+        } else if (leftHandLexem == COMMA) {
+            /* Comma token pasting: keep comma, copy RHS after it */
+            *writeBufferWriteP = lhs;
+            /* Copy the comma lexem itself */
+            putLexemCodeAt(COMMA, writeBufferWriteP);
+            /* Advance past comma (and its extra info if any) */
+            char *tempP = lhs;
+            getLexemCodeAndAdvance(&tempP);
+            skipExtraLexemInformationFor(COMMA, &tempP, false);
+            *writeBufferWriteP = tempP;  // Now pointing past the comma
+            /* copyRemainingLexems will copy RHS starting here */
         } else {
             if (nextLexemIsIdentifierOrConstant(rhs)) {
                 char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
-                *bufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
-                assert(**bufferWriteP == 0); /* Ensure at end of string */
+                *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
+                assert(**writeBufferWriteP == 0); /* Ensure at end of string */
 
                 LexemCode rightHandLexem = getLexemCodeAndAdvance(&rhs);
                 char *rightHandLexemString = rhs; /* For an ID the string follows, then the position */
@@ -1672,32 +1685,33 @@ static char *collate(char *buffer,        // The allocated buffer for storing ma
                           rightHandLexemString, value);
 
                 if (isIdentifierLexem(rightHandLexem)) {
-                    strcpy(*bufferWriteP, rightHandLexemString);
+                    strcpy(*writeBufferWriteP, rightHandLexemString);
 
                     position.col--;
                     assert(position.col >= 0);
-                    cxAddCollateReference(leftHandLexemString, *bufferWriteP, position);
+                    cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
                     position.col++;
                 } else /* isConstantLexem() */ {
-                    position = peekLexemPositionAt(*bufferWriteP + 1); /* Position from lefthand id */
-                    sprintf(*bufferWriteP, "%d", value);
-                    cxAddCollateReference(leftHandLexemString, *bufferWriteP, position);
+                    position = peekLexemPositionAt(*writeBufferWriteP + 1); /* Position from lefthand id */
+                    sprintf(*writeBufferWriteP, "%d", value);
+                    cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
                 }
-                *bufferWriteP += strlen(*bufferWriteP);
-                assert(**bufferWriteP == 0);
-                (*bufferWriteP)++;
-                putLexemPositionAt(position, bufferWriteP);
+                *writeBufferWriteP += strlen(*writeBufferWriteP);
+                assert(**writeBufferWriteP == 0);
+                (*writeBufferWriteP)++;
+                putLexemPositionAt(position, writeBufferWriteP);
             }
         }
     }
-    *bufferSizeP = expandPreprocessorBufferIfOverflow(buffer, *bufferSizeP, *bufferWriteP);
+    *writeBufferSizeP = expandPreprocessorBufferIfOverflow(writeBuffer, *writeBufferSizeP, *writeBufferWriteP);
 
     /* rhsLexem have moved over all tokens used in the collation and now points to any trailing ones */
-    copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, rhs, endOfLexems);
+    copyRemainingLexems(writeBuffer, writeBufferSizeP, writeBufferWriteP, rhs, endOfLexems);
 
     ppmFreeUntil(ppmMarker); // Free any allocations done
     LEAVE();
-    return rhs;
+    /* Return the position in the macro body to continue reading from, not from the argument buffer */
+    return originalRightHandP;
 }
 
 static void macroArgumentsToString(char *res, LexInput *lexInput) {
@@ -1824,7 +1838,6 @@ static LexInput createMacroBodyAsNewInput(MacroBody *macroBody, LexInput *actual
     buffer = ppmReallocc(buffer, bufferWrite - buffer, sizeof(char), bufferSize + MAX_LEXEM_SIZE);
 
     /* expand arguments */
-
     for (int i = 0; i < macroBody->argCount; i++) {
         expandMacroArgument(&actualArgumentsInput[i]);
     }
@@ -2293,14 +2306,20 @@ void yylexMemoryStatistics(void) {
 
 void decodeLexem(char *lexemP) {
     LexemCode lexem = getLexemCodeAndAdvance(&lexemP);
-    printf("%s\n", lexemEnumNames[lexem]);
+    printf("%s", lexemEnumNames[lexem]);
+    if (lexem == IDENTIFIER)
+        printf("(%s)", lexemP+LEXEMCODE_SIZE);
+    printf("\n");
     skipExtraLexemInformationFor(lexem, &lexemP, false);
 }
 
 void decodeLexemsWithEndPointer(char *lexemP, char *endP) {
     while (lexemP < endP) {
+        printf("%p : %s", lexemP, lexemEnumNames[peekLexemCodeAt(lexemP)]);
         LexemCode lexem = getLexemCodeAndAdvance(&lexemP);
-        printf("%s\n", lexemEnumNames[lexem]);
+        if (lexem == IDENTIFIER)
+            printf("(%s)", lexemP);
+        printf("\n");
         skipExtraLexemInformationFor(lexem, &lexemP, false);
     }
 }
