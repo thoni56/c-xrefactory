@@ -2,15 +2,15 @@
 #include "input.h"
 #include <cgreen/mocks.h>
 
-LexInput currentInput;
+LexemStream currentInput;
 
-LexInput makeLexInput(char *begin, char *read, char *write, char *macroName, InputType inputType) {
-    LexInput input;
-    input.read      = read;
-    input.begin     = begin;
-    input.write     = write;
-    input.macroName = macroName;
-    input.inputType = inputType;
+LexemStream makeLexemStream(char *begin, char *read, char *write, char *macroName, InputType streamType) {
+    LexemStream stream;
+    stream.read       = read;
+    stream.begin      = begin;
+    stream.write      = write;
+    stream.macroName  = macroName;
+    stream.streamType = streamType;
 
-    return input;
+    return stream;
 }

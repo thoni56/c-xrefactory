@@ -4,10 +4,10 @@
 #include <stdbool.h>
 
 typedef enum inputType {
-    INPUT_NORMAL,
-    INPUT_MACRO,
-    INPUT_MACRO_ARGUMENT,
-    INPUT_CACHE,
+    NORMAL_STREAM,
+    MACRO_STREAM,
+    MACRO_ARGUMENT_STREAM,
+    INPUT_CACHE,                /* TODO: Remove this value, not used */
 } InputType;
 
 typedef struct {
@@ -15,15 +15,15 @@ typedef struct {
     char *read;                 /* next to read */
     char *write;                /* where to write next */
     char *macroName;
-    InputType inputType;
-} LexInput;
+    InputType streamType;
+} LexemStream;
 
 
-extern LexInput currentInput;
+extern LexemStream currentInput;
 
-extern LexInput makeLexInput(char *begin, char *read, char *write, char *macroName, InputType inputType);
+extern LexemStream makeLexemStream(char *begin, char *read, char *write, char *macroName, InputType inputType);
 
 /* LexInput API functions */
-bool lexInputHasMore(LexInput *input);
+bool lexemStreamHasMore(LexemStream *input);
 
 #endif

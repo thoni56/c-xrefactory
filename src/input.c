@@ -1,18 +1,18 @@
 #include "input.h"
 
-LexInput currentInput;
+LexemStream currentInput;
 
-LexInput makeLexInput(char *begin, char *read, char *write, char *macroName, InputType inputType) {
-    LexInput input;
-    input.begin     = begin;
-    input.read      = read;
-    input.write     = write;
-    input.macroName = macroName;
-    input.inputType = inputType;
+LexemStream makeLexemStream(char *begin, char *read, char *write, char *macroName, InputType streamType) {
+    LexemStream stream;
+    stream.begin      = begin;
+    stream.read       = read;
+    stream.write      = write;
+    stream.macroName  = macroName;
+    stream.streamType = streamType;
 
-    return input;
+    return stream;
 }
 
-bool lexInputHasMore(LexInput *input) {
-    return input->read < input->write;
+bool lexemStreamHasMore(LexemStream *stream) {
+    return stream->read < stream->write;
 }

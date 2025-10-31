@@ -2,7 +2,7 @@
 
 This chapter documents larger refactoring proposals that would significantly improve code quality but require careful planning and implementation.
 
-=== LexInput API Improvements
+=== LexemStream API Improvements
 
 ==== Problem Statement
 
@@ -12,7 +12,7 @@ The macro expansion and collation code (`collate()`, `replaceMacroArguments()`, 
 ----
 static char *collate(char *buffer, int *bufferSizeP, char **bufferWriteP, 
                      char **leftHandLexemP, char **rightHandLexemP, 
-                     LexInput *actualArgumentsInput);
+                     LexemStream *actualArgumentsInput);
 
 static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWriteP,
                                 char *nextLexemP, char *endOfInputLexems);
@@ -37,7 +37,7 @@ The codebase currently uses three different ways to represent lexem streams:
 - Used for lexing from files/editor buffers
 - Full API for manipulation: `putLexemCode()`, `getLexemCode()`, etc.
 
-*LexInput* (lightweight, pointer-based)::
+*LexemStream* (lightweight, pointer-based)::
 - Just 3 pointers + metadata: `begin`, `read`, `write`, `macroName`, `inputType`
 - Points to external memory (doesn't own it)
 - Used for macro expansion pipelines
@@ -47,9 +47,9 @@ The codebase currently uses three different ways to represent lexem streams:
 - Pointer + length: `char *body`, `int size`
 - Used for stored macro definitions
 
-===== LexInput buffer sources
+===== LexemStream buffer sources
 
-LexInput can point to 5 different memory sources:
+LexemStream can point to 5 different memory sources:
 
 1. `LexemBuffer.lexemStream` - Fixed array in file descriptor
 2. `ppmAlloc()` - Preprocessor macro memory (dynamic)
@@ -59,11 +59,11 @@ LexInput can point to 5 different memory sources:
 
 ==== Proposed Solution
 
-===== Add LexInput manipulation API
+===== Add LexemStream manipulation API
 
-Currently, LexInput has *zero manipulation functions*. All operations are done via raw pointer manipulation. We need to add an API similar to LexemBuffer.
+Currently, LexemStream has *zero manipulation functions*. All operations are done via raw pointer manipulation. We need to add an API similar to LexemBuffer.
 
-===== Phase 1: Extend LexInput structure
+===== Phase 1: Extend LexemStream structure
 
 Add optional buffer management fields:
 
@@ -77,11 +77,11 @@ typedef struct {
     InputType inputType;
     // NEW fields:
     int allocatedSize;  // Total allocated size (0 if not owned/unknown)
-    bool ownsBuffer;    // Whether this LexInput should manage/free the buffer
-} LexInput;
+    bool ownsBuffer;    // Whether this LexemStream should manage/free the buffer
+} LexemStream;
 ----
 
-NOTE: Alternative considered but rejected: Create separate `WritableLexInput` type. Pro: Cleaner separation of read vs write. Con: Yet another type, conversion overhead, more complex API.
+NOTE: Alternative considered but rejected: Create separate `WritableLexemStream` type. Pro: Cleaner separation of read vs write. Con: Yet another type, conversion overhead, more complex API.
 
 ===== Phase 2: Create manipulation API
 
@@ -92,31 +92,31 @@ New file: `src/lexinput.c` and extend `src/input.h`
 [source,c]
 ----
 // Creation
-LexInput lexInputCreateOwned(int initialSize);     // Allocates managed buffer
-LexInput lexInputCreateView(char *begin, char *end); // Read-only view
+LexemStream lexInputCreateOwned(int initialSize);     // Allocates managed buffer
+LexemStream lexInputCreateView(char *begin, char *end); // Read-only view
 
 // Capacity management
-void lexInputEnsureCapacity(LexInput *input, int additionalBytes);
-void lexInputReallocIfNeeded(LexInput *input, int needed);
-int lexInputRemainingCapacity(LexInput *input);
+void lexInputEnsureCapacity(LexemStream *input, int additionalBytes);
+void lexInputReallocIfNeeded(LexemStream *input, int needed);
+int lexInputRemainingCapacity(LexemStream *input);
 
 // Reading (advance read pointer)
-LexemCode lexInputGetLexem(LexInput *input);
-LexemCode lexInputPeekLexem(LexInput *input);  // Don't advance
-bool lexInputHasMore(LexInput *input);          // read < write
-void lexInputSkipLexem(LexInput *input);        // Skip current lexem
+LexemCode lexInputGetLexem(LexemStream *input);
+LexemCode lexInputPeekLexem(LexemStream *input);  // Don't advance
+bool lexInputHasMore(LexemStream *input);          // read < write
+void lexInputSkipLexem(LexemStream *input);        // Skip current lexem
 
 // Writing (advance write pointer)
-void lexInputPutLexemCode(LexInput *output, LexemCode lexem);
-void lexInputPutLexemPosition(LexInput *output, Position pos);
-void lexInputAppendBytes(LexInput *dest, char *src, int len);
-void lexInputCopyLexem(LexInput *dest, LexInput *src); // Copy one lexem from src to dest
+void lexInputPutLexemCode(LexemStream *output, LexemCode lexem);
+void lexInputPutLexemPosition(LexemStream *output, Position pos);
+void lexInputAppendBytes(LexemStream *dest, char *src, int len);
+void lexInputCopyLexem(LexemStream *dest, LexemStream *src); // Copy one lexem from src to dest
 
 // Cleanup
-void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true
+void lexInputFree(LexemStream *input);  // Only frees if ownsBuffer=true
 ----
 
-===== Phase 3: Refactor functions to use LexInput API
+===== Phase 3: Refactor functions to use LexemStream API
 
 ====== Example: collate() before
 
@@ -127,7 +127,7 @@ static char *collate(char *buffer,              // Destination buffer
                      char **bufferWriteP,       // Current write position
                      char **leftHandLexemP,     // Left operand read position
                      char **rightHandLexemP,    // Right operand read position
-                     LexInput *actualArgumentsInput)  // Source arguments
+                     LexemStream *actualArgumentsInput)  // Source arguments
 {
     // Manual buffer management scattered throughout:
     *bufferSizeP = expandPreprocessorBufferIfOverflow(buffer, *bufferSizeP, *bufferWriteP);
@@ -148,10 +148,10 @@ static char *collate(char *buffer,              // Destination buffer
 
 [source,c]
 ----
-static void collate(LexInput *output,           // Destination (manages its own buffer)
-                    LexInput *leftOperand,      // Left operand (with read position)
-                    LexInput *rightOperand,     // Right operand (with read position)
-                    LexInput *actualArgumentsInput)
+static void collate(LexemStream *output,           // Destination (manages its own buffer)
+                    LexemStream *leftOperand,      // Left operand (with read position)
+                    LexemStream *rightOperand,     // Right operand (with read position)
+                    LexemStream *actualArgumentsInput)
 {
     // Clean, high-level operations:
     lexInputEnsureCapacity(output, estimatedSize);
@@ -160,7 +160,7 @@ static void collate(LexInput *output,           // Destination (manages its own 
     lexInputCopyLexem(output, leftOperand);
     lexInputCopyLexem(output, rightOperand);
     
-    // State is encapsulated in LexInput structures
+    // State is encapsulated in LexemStream structures
 }
 ----
 
@@ -178,7 +178,7 @@ static void collate(LexInput *output,           // Destination (manages its own 
 ===== Code clarity
 * Functions have 2-3 parameters instead of 6+
 * Clear ownership and boundaries
-* Self-documenting code (LexInput instead of 3 raw pointers)
+* Self-documenting code (LexemStream instead of 3 raw pointers)
 
 ===== Maintainability
 * Centralized buffer management logic
@@ -191,7 +191,7 @@ static void collate(LexInput *output,           // Destination (manages its own 
 
 ==== Implementation Strategy
 
-Step 1: Add new fields to LexInput (backward compatible)::
+Step 1: Add new fields to LexemStream (backward compatible)::
 - Initialize `allocatedSize = 0` and `ownsBuffer = false` for all existing uses
 - No functional changes yet
 
@@ -217,7 +217,7 @@ Step 5: Cleanup::
 
 *Mitigation:* 
 
-* Make LexInput changes backward compatible
+* Make LexemStream changes backward compatible
 * Add new fields with safe defaults
 * Refactor incrementally, one function at a time
 * Run full test suite after each change
@@ -242,19 +242,19 @@ Step 5: Cleanup::
 
 ===== Why not unify with LexemBuffer?
 
-LexemBuffer and LexInput serve different purposes:
+LexemBuffer and LexemStream serve different purposes:
 
 * *LexemBuffer*: Heavy, file-oriented, owns fixed-size array, lots of metadata
-* *LexInput*: Lightweight, flexible views, points to various sources
+* *LexemStream*: Lightweight, flexible views, points to various sources
 
-Trying to unify them would make both worse. The real issue is LexInput lacks manipulation functions, not that two types exist.
+Trying to unify them would make both worse. The real issue is LexemStream lacks manipulation functions, not that two types exist.
 
 ===== Backward compatibility
 
 The proposed changes are designed to be backward compatible:
 
 * New fields default to "not owned, size unknown" (0, false)
-* Existing code that creates LexInput with `makeLexInput()` continues to work
+* Existing code that creates LexemStream with `makeLexemStream()` continues to work
 * Only new code uses the enhanced API
 
 ==== Open Questions
@@ -262,9 +262,9 @@ The proposed changes are designed to be backward compatible:
 . Should `lexInputEnsureCapacity()` use ppmAlloc or mbmAlloc?
 ** Probably depends on context - may need separate functions or a memory source parameter
 
-. How to handle the transition from raw pointers to LexInput?
+. How to handle the transition from raw pointers to LexemStream?
 ** Some functions receive raw pointers from outside (e.g., from MacroBody.body)
-** May need wrapper functions to create temporary LexInput views
+** May need wrapper functions to create temporary LexemStream views
 
 . Should we add debug assertions for bounds checking?
 ** Would help catch errors during development
@@ -274,7 +274,7 @@ The proposed changes are designed to be backward compatible:
 
 * Current code: `src/yylex.c` lines 1362-1823 (macro expansion)
 * LexemBuffer API: `src/lexembuffer.h` and `src/lexembuffer.c`
-* Current LexInput: `src/input.h` and `src/input.c`
+* Current LexemStream: `src/input.h` and `src/input.c`
 
 ==== Related Issues
 

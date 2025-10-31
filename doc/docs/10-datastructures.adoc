@@ -68,14 +68,14 @@ class CharacterBuffer {
   char[] : chars
 }
 
-class LexInput {
+class LexemStream {
   char* : macroName
   InputType : inputType
 }
-LexInput --> LexemBuffer : beginningOfBuffer, endOfBuffer, currentLexemP (into .lexemStream)
+LexemStream --> LexemBuffer : beginningOfBuffer, endOfBuffer, currentLexemP (into .lexemStream)
 ....
 
-NOTE: It would be nice if the `LexInput` structure could point to a
+NOTE: It would be nice if the `LexemStream` structure could point to a
 `LexemBuffer` instead of holding separate pointers which are
 impossible to know what they actually point to...
 
