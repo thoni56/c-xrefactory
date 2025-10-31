@@ -534,46 +534,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_yacc_semantic_data">14.1. Yacc semantic data</a></li>
 </ul>
 </li>
-<li><a href="#_proposed_refactorings">Proposed Refactorings</a>
-<ul class="sectlevel1">
-<li><a href="#_lexinput_api_improvements">1. LexInput API Improvements</a>
+<li><a href="#_proposed_refactorings">15. Proposed Refactorings</a>
 <ul class="sectlevel2">
-<li><a href="#_problem_statement">1.1. Problem Statement</a></li>
-<li><a href="#_current_architecture">1.2. Current Architecture</a></li>
-<li><a href="#_proposed_solution">1.3. Proposed Solution</a></li>
-<li><a href="#_benefits">1.4. Benefits</a></li>
-<li><a href="#_implementation_strategy">1.5. Implementation Strategy</a></li>
-<li><a href="#_risks_and_mitigation">1.6. Risks and Mitigation</a></li>
-<li><a href="#_notes">1.7. Notes</a></li>
-<li><a href="#_open_questions">1.8. Open Questions</a></li>
-<li><a href="#_references">1.9. References</a></li>
-<li><a href="#_related_issues">1.10. Related Issues</a></li>
+<li><a href="#_lexinput_api_improvements">15.1. LexInput API Improvements</a></li>
+<li><a href="#unified-symbol-database">15.2. Unified Symbol Database Architecture</a></li>
 </ul>
 </li>
-<li><a href="#unified-symbol-database">2. Unified Symbol Database Architecture</a>
+<li><a href="#_archive">16. Archive</a>
 <ul class="sectlevel2">
-<li><a href="#_problem_statement_2">2.1. Problem Statement</a></li>
-<li><a href="#_current_architecture_limitations">2.2. Current Architecture Limitations</a></li>
-<li><a href="#_proposed_solution_2">2.3. Proposed Solution</a></li>
-<li><a href="#_implementation_plan">2.4. Implementation Plan</a></li>
-<li><a href="#_benefits_2">2.5. Benefits</a></li>
-<li><a href="#_existing_infrastructure">2.6. Existing Infrastructure</a></li>
-<li><a href="#_open_questions_2">2.7. Open Questions</a></li>
-<li><a href="#_references_2">2.8. References</a></li>
-</ul>
-</li>
-<li><a href="#_archive">3. Archive</a>
-<ul class="sectlevel2">
-<li><a href="#_memory_strategies">3.1. Memory strategies</a></li>
-<li><a href="#_trivial_prechecks">3.2. Trivial Prechecks</a></li>
-<li><a href="#_huge_memory">3.3. HUGE Memory</a></li>
-<li><a href="#_bootstrapping">3.4. Bootstrapping</a></li>
-<li><a href="#_fill_macros">3.5. FILL macros</a></li>
-<li><a href="#_caching_module">3.6. Caching Module</a></li>
-<li><a href="#_caching_system_architecture">3.7. Caching System Architecture</a></li>
-<li><a href="#_users">3.8. Users</a></li>
-</ul>
-</li>
+<li><a href="#_memory_strategies">16.1. Memory strategies</a></li>
+<li><a href="#_trivial_prechecks">16.2. Trivial Prechecks</a></li>
+<li><a href="#_huge_memory">16.3. HUGE Memory</a></li>
+<li><a href="#_bootstrapping">16.4. Bootstrapping</a></li>
+<li><a href="#_fill_macros">16.5. FILL macros</a></li>
+<li><a href="#_caching_module">16.6. Caching Module</a></li>
+<li><a href="#_caching_system_architecture">16.7. Caching System Architecture</a></li>
+<li><a href="#_users">16.8. Users</a></li>
 </ul>
 </li>
 </ul>
@@ -3639,15 +3615,16 @@ Position position
 </div>
 </div>
 </div>
-<h1 id="_proposed_refactorings" class="sect0">Proposed Refactorings</h1>
+<div class="sect1">
+<h2 id="_proposed_refactorings">15. Proposed Refactorings</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>This chapter documents larger refactoring proposals that would significantly improve code quality but require careful planning and implementation.</p>
 </div>
-<div class="sect1">
-<h2 id="_lexinput_api_improvements">1. LexInput API Improvements</h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="_problem_statement">1.1. Problem Statement</h3>
+<h3 id="_lexinput_api_improvements">15.1. LexInput API Improvements</h3>
+<div class="sect3">
+<h4 id="_problem_statement">15.1.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The macro expansion and collation code (<code>collate()</code>, <code>replaceMacroArguments()</code>, etc.) in <code>src/yylex.c</code> suffers from <strong>pointer parameter proliferation</strong>, making it difficult to understand and maintain. Functions pass 5-6 separate parameters to track buffer state:</p>
 </div>
@@ -3681,10 +3658,10 @@ static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWrit
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_current_architecture">1.2. Current Architecture</h3>
 <div class="sect3">
-<h4 id="_three_representations_of_lexem_streams">1.2.1. Three representations of lexem streams</h4>
+<h4 id="_current_architecture">15.1.2. Current Architecture</h4>
+<div class="sect4">
+<h5 id="_three_representations_of_lexem_streams">Three representations of lexem streams</h5>
 <div class="paragraph">
 <p>The codebase currently uses three different ways to represent lexem streams:</p>
 </div>
@@ -3744,8 +3721,8 @@ static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWrit
 </dl>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_lexinput_buffer_sources">1.2.2. LexInput buffer sources</h4>
+<div class="sect4">
+<h5 id="_lexinput_buffer_sources">LexInput buffer sources</h5>
 <div class="paragraph">
 <p>LexInput can point to 5 different memory sources:</p>
 </div>
@@ -3770,16 +3747,16 @@ static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWrit
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_proposed_solution">1.3. Proposed Solution</h3>
 <div class="sect3">
-<h4 id="_add_lexinput_manipulation_api">1.3.1. Add LexInput manipulation API</h4>
+<h4 id="_proposed_solution">15.1.3. Proposed Solution</h4>
+<div class="sect4">
+<h5 id="_add_lexinput_manipulation_api">Add LexInput manipulation API</h5>
 <div class="paragraph">
 <p>Currently, LexInput has <strong>zero manipulation functions</strong>. All operations are done via raw pointer manipulation. We need to add an API similar to LexemBuffer.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_phase_1_extend_lexinput_structure">1.3.2. Phase 1: Extend LexInput structure</h4>
+<div class="sect4">
+<h5 id="_phase_1_extend_lexinput_structure">Phase 1: Extend LexInput structure</h5>
 <div class="paragraph">
 <p>Add optional buffer management fields:</p>
 </div>
@@ -3810,13 +3787,13 @@ Alternative considered but rejected: Create separate <code>WritableLexInput</cod
 </table>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_phase_2_create_manipulation_api">1.3.3. Phase 2: Create manipulation API</h4>
+<div class="sect4">
+<h5 id="_phase_2_create_manipulation_api">Phase 2: Create manipulation API</h5>
 <div class="paragraph">
 <p>New file: <code>src/lexinput.c</code> and extend <code>src/input.h</code></p>
 </div>
-<div class="sect4">
-<h5 id="_core_buffer_management">Core buffer management</h5>
+<div class="sect5">
+<h6 id="_core_buffer_management">Core buffer management</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Creation
@@ -3846,10 +3823,10 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_phase_3_refactor_functions_to_use_lexinput_api">1.3.4. Phase 3: Refactor functions to use LexInput API</h4>
 <div class="sect4">
-<h5 id="_example_collate_before">Example: collate() before</h5>
+<h5 id="_phase_3_refactor_functions_to_use_lexinput_api">Phase 3: Refactor functions to use LexInput API</h5>
+<div class="sect5">
+<h6 id="_example_collate_before">Example: collate() before</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">static char *collate(char *buffer,              // Destination buffer
@@ -3875,8 +3852,8 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </div>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_example_collate_after">Example: collate() after</h5>
+<div class="sect5">
+<h6 id="_example_collate_after">Example: collate() after</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">static void collate(LexInput *output,           // Destination (manages its own buffer)
@@ -3896,8 +3873,8 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </div>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_functions_to_refactor_priority_order">Functions to refactor (priority order)</h5>
+<div class="sect5">
+<h6 id="_functions_to_refactor_priority_order">Functions to refactor (priority order)</h6>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -3923,10 +3900,10 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_benefits">1.4. Benefits</h3>
 <div class="sect3">
-<h4 id="_code_clarity">1.4.1. Code clarity</h4>
+<h4 id="_benefits">15.1.4. Benefits</h4>
+<div class="sect4">
+<h5 id="_code_clarity">Code clarity</h5>
 <div class="ulist">
 <ul>
 <li>
@@ -3941,8 +3918,8 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </ul>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_maintainability">1.4.2. Maintainability</h4>
+<div class="sect4">
+<h5 id="_maintainability">Maintainability</h5>
 <div class="ulist">
 <ul>
 <li>
@@ -3957,8 +3934,8 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </ul>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_consistency">1.4.3. Consistency</h4>
+<div class="sect4">
+<h5 id="_consistency">Consistency</h5>
 <div class="ulist">
 <ul>
 <li>
@@ -3971,8 +3948,8 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_implementation_strategy">1.5. Implementation Strategy</h3>
+<div class="sect3">
+<h4 id="_implementation_strategy">15.1.5. Implementation Strategy</h4>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Step 1: Add new fields to LexInput (backward compatible)</dt>
@@ -4043,10 +4020,10 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </dl>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_risks_and_mitigation">1.6. Risks and Mitigation</h3>
 <div class="sect3">
-<h4 id="_risk_breaking_existing_code">1.6.1. Risk: Breaking existing code</h4>
+<h4 id="_risks_and_mitigation">15.1.6. Risks and Mitigation</h4>
+<div class="sect4">
+<h5 id="_risk_breaking_existing_code">Risk: Breaking existing code</h5>
 <div class="paragraph">
 <p><strong>Mitigation:</strong></p>
 </div>
@@ -4067,8 +4044,8 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </ul>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_risk_performance_regression">1.6.2. Risk: Performance regression</h4>
+<div class="sect4">
+<h5 id="_risk_performance_regression">Risk: Performance regression</h5>
 <div class="paragraph">
 <p><strong>Mitigation:</strong></p>
 </div>
@@ -4086,8 +4063,8 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </ul>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_risk_memory_leaks_from_ownsbuffer_confusion">1.6.3. Risk: Memory leaks from ownsBuffer confusion</h4>
+<div class="sect4">
+<h5 id="_risk_memory_leaks_from_ownsbuffer_confusion">Risk: Memory leaks from ownsBuffer confusion</h5>
 <div class="paragraph">
 <p><strong>Mitigation:</strong></p>
 </div>
@@ -4106,10 +4083,10 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_notes">1.7. Notes</h3>
 <div class="sect3">
-<h4 id="_why_not_unify_with_lexembuffer">1.7.1. Why not unify with LexemBuffer?</h4>
+<h4 id="_notes">15.1.7. Notes</h4>
+<div class="sect4">
+<h5 id="_why_not_unify_with_lexembuffer">Why not unify with LexemBuffer?</h5>
 <div class="paragraph">
 <p>LexemBuffer and LexInput serve different purposes:</p>
 </div>
@@ -4127,8 +4104,8 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 <p>Trying to unify them would make both worse. The real issue is LexInput lacks manipulation functions, not that two types exist.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_backward_compatibility">1.7.2. Backward compatibility</h4>
+<div class="sect4">
+<h5 id="_backward_compatibility">Backward compatibility</h5>
 <div class="paragraph">
 <p>The proposed changes are designed to be backward compatible:</p>
 </div>
@@ -4147,8 +4124,8 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_open_questions">1.8. Open Questions</h3>
+<div class="sect3">
+<h4 id="_open_questions">15.1.8. Open Questions</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -4190,8 +4167,8 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </ol>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_references">1.9. References</h3>
+<div class="sect3">
+<h4 id="_references">15.1.9. References</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4206,8 +4183,8 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_related_issues">1.10. Related Issues</h3>
+<div class="sect3">
+<h4 id="_related_issues">15.1.10. Related Issues</h4>
 <div class="paragraph">
 <p>This refactoring addresses the root cause identified in the discussion about replacing the malloc-based macro body memory system (commit e1d506f7). The memory tracking issues stem from the complexity of managing multiple pointer parameters across function boundaries.</p>
 </div>
@@ -4226,12 +4203,10 @@ When implementing this refactoring, consider starting with unit tests for the ne
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="unified-symbol-database">2. Unified Symbol Database Architecture</h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="_problem_statement_2">2.1. Problem Statement</h3>
+<h3 id="unified-symbol-database">15.2. Unified Symbol Database Architecture</h3>
+<div class="sect3">
+<h4 id="_problem_statement_2">15.2.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The current symbol database has evolved from a batch cross-referencer (like <code>ctags</code>) with artificial distinctions between "file-based" and "on-demand" modes. This creates:</p>
 </div>
@@ -4255,8 +4230,8 @@ When implementing this refactoring, consider starting with unit tests for the ne
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_current_architecture_limitations">2.2. Current Architecture Limitations</h3>
+<div class="sect3">
+<h4 id="_current_architecture_limitations">15.2.2. Current Architecture Limitations</h4>
 <div class="paragraph">
 <p>The existing system distinguishes between:</p>
 </div>
@@ -4302,10 +4277,10 @@ When implementing this refactoring, consider starting with unit tests for the ne
 </tbody>
 </table>
 </div>
-<div class="sect2">
-<h3 id="_proposed_solution_2">2.3. Proposed Solution</h3>
 <div class="sect3">
-<h4 id="_core_insight_unified_on_demand_architecture">2.3.1. Core Insight: Unified On-Demand Architecture</h4>
+<h4 id="_proposed_solution_2">15.2.3. Proposed Solution</h4>
+<div class="sect4">
+<h5 id="_core_insight_unified_on_demand_architecture">Core Insight: Unified On-Demand Architecture</h5>
 <div class="paragraph">
 <p>Both Emacs and LSP clients want the same thing: <strong>up-to-date symbol and reference information</strong>. The distinction between "file-based" and "on-demand" modes is artificial complexity. Instead, c-xrefactory should provide a unified interface that:</p>
 </div>
@@ -4326,8 +4301,8 @@ When implementing this refactoring, consider starting with unit tests for the ne
 </ol>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_simplified_interface_design">2.3.2. Simplified Interface Design</h4>
+<div class="sect4">
+<h5 id="_simplified_interface_design">Simplified Interface Design</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef struct SymbolDatabase SymbolDatabase;
@@ -4347,8 +4322,8 @@ typedef struct {
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_implementation_strategy_smart_on_demand">2.3.3. Implementation Strategy: Smart On-Demand</h4>
+<div class="sect4">
+<h5 id="_implementation_strategy_smart_on_demand">Implementation Strategy: Smart On-Demand</h5>
 <div class="paragraph">
 <p>The implementation leverages <strong>existing sophisticated logic</strong>:</p>
 </div>
@@ -4398,8 +4373,8 @@ typedef struct {
 </ul>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_legacy_architecture_recognition">2.3.4. Legacy Architecture Recognition</h4>
+<div class="sect4">
+<h5 id="_legacy_architecture_recognition">Legacy Architecture Recognition</h5>
 <div class="paragraph">
 <p>c-xrefactory evolved from a <strong>batch cross-referencer</strong> (like <code>ctags</code>) and was enhanced for real-time use:</p>
 </div>
@@ -4420,10 +4395,10 @@ c-xref -lsp                  # Same logic, different protocol</code></pre>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_implementation_plan">2.4. Implementation Plan</h3>
 <div class="sect3">
-<h4 id="_phase_1_interface_unification">2.4.1. Phase 1: Interface Unification</h4>
+<h4 id="_implementation_plan">15.2.4. Implementation Plan</h4>
+<div class="sect4">
+<h5 id="_phase_1_interface_unification">Phase 1: Interface Unification</h5>
 <div class="ulist">
 <ul>
 <li>
@@ -4441,8 +4416,8 @@ c-xref -lsp                  # Same logic, different protocol</code></pre>
 </ul>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_phase_2_optimization">2.4.2. Phase 2: Optimization</h4>
+<div class="sect4">
+<h5 id="_phase_2_optimization">Phase 2: Optimization</h5>
 <div class="ulist">
 <ul>
 <li>
@@ -4461,10 +4436,10 @@ c-xref -lsp                  # Same logic, different protocol</code></pre>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_benefits_2">2.5. Benefits</h3>
 <div class="sect3">
-<h4 id="_architectural_simplification">2.5.1. Architectural Simplification</h4>
+<h4 id="_benefits_2">15.2.5. Benefits</h4>
+<div class="sect4">
+<h5 id="_architectural_simplification">Architectural Simplification</h5>
 <div class="ulist">
 <ul>
 <li>
@@ -4482,8 +4457,8 @@ c-xref -lsp                  # Same logic, different protocol</code></pre>
 </ul>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_user_experience_improvements">2.5.2. User Experience Improvements</h4>
+<div class="sect4">
+<h5 id="_user_experience_improvements">User Experience Improvements</h5>
 <div class="ulist">
 <ul>
 <li>
@@ -4501,8 +4476,8 @@ c-xref -lsp                  # Same logic, different protocol</code></pre>
 </ul>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_performance_characteristics_2">2.5.3. Performance Characteristics</h4>
+<div class="sect4">
+<h5 id="_performance_characteristics_2">Performance Characteristics</h5>
 <div class="ulist">
 <ul>
 <li>
@@ -4520,8 +4495,8 @@ c-xref -lsp                  # Same logic, different protocol</code></pre>
 </ul>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_development_benefits">2.5.4. Development Benefits</h4>
+<div class="sect4">
+<h5 id="_development_benefits">Development Benefits</h5>
 <div class="ulist">
 <ul>
 <li>
@@ -4540,10 +4515,10 @@ c-xref -lsp                  # Same logic, different protocol</code></pre>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_existing_infrastructure">2.6. Existing Infrastructure</h3>
 <div class="sect3">
-<h4 id="_sophisticated_dependency_tracking">2.6.1. Sophisticated Dependency Tracking</h4>
+<h4 id="_existing_infrastructure">15.2.6. Existing Infrastructure</h4>
+<div class="sect4">
+<h5 id="_sophisticated_dependency_tracking">Sophisticated Dependency Tracking</h5>
 <div class="paragraph">
 <p>The unified approach leverages c-xrefactory&#8217;s <strong>existing sophisticated dependency management</strong> that handles include file relationships automatically:</p>
 </div>
@@ -4609,8 +4584,8 @@ This dependency tracking infrastructure is <strong>already production-ready</str
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_open_questions_2">2.7. Open Questions</h3>
+<div class="sect3">
+<h4 id="_open_questions_2">15.2.7. Open Questions</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -4655,8 +4630,8 @@ This dependency tracking infrastructure is <strong>already production-ready</str
 </ol>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_references_2">2.8. References</h3>
+<div class="sect3">
+<h4 id="_references_2">15.2.8. References</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4676,8 +4651,9 @@ This dependency tracking infrastructure is <strong>already production-ready</str
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
-<h2 id="_archive">3. Archive</h2>
+<h2 id="_archive">16. Archive</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>In this section you can find some descriptions and saved texts that
@@ -4686,7 +4662,7 @@ quirk, magic or bad coding is gone. But it is kept here as an archive
 for those wanting to do backtracking to original sources.</p>
 </div>
 <div class="sect2">
-<h3 id="_memory_strategies">3.1. Memory strategies</h3>
+<h3 id="_memory_strategies">16.1. Memory strategies</h3>
 <div class="paragraph">
 <p>There were a multitude of specialized memory allocation functions. In
 principle there where two types, static and dynamic. The dynamic could
@@ -4697,7 +4673,7 @@ be exteded using a overflow handler.</p>
 the actual struct. This was very confusing&#8230;&#8203;</p>
 </div>
 <div class="sect3">
-<h4 id="_static_memory_allocation">3.1.1. Static memory allocation</h4>
+<h4 id="_static_memory_allocation">16.1.1. Static memory allocation</h4>
 <div class="paragraph">
 <p>Static memory (SM_ prefix) are static areas allocated by the compiler
 which is then indexed using a similarly named index variable
@@ -4735,7 +4711,7 @@ the outermost CodeBlock</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_trivial_prechecks">3.2. Trivial Prechecks</h3>
+<h3 id="_trivial_prechecks">16.2. Trivial Prechecks</h3>
 <div class="paragraph">
 <p>The refactorer can call the server using <code>parseBufferUsingServer()</code> and add some extra options (in text form).
 One example is <code>setMovingPrecheckStandardEnvironment()</code> where it calls the server with <code>-olcxtrivialprecheck</code>.</p>
@@ -4763,7 +4739,7 @@ This theory should be checked by looking at the original source of the precheck 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_huge_memory">3.3. HUGE Memory</h3>
+<h3 id="_huge_memory">16.3. HUGE Memory</h3>
 <div class="paragraph">
 <p>Previously a HUGE model was also available (by re-compilation) to
 reach file numbers, lines and columns above 22 bits. But if you have
@@ -4772,9 +4748,9 @@ something radical before attempting cross referencing and refactoring.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_bootstrapping">3.4. Bootstrapping</h3>
+<h3 id="_bootstrapping">16.4. Bootstrapping</h3>
 <div class="sect3">
-<h4 id="_bootstrap_removed">3.4.1. BOOTSTRAP REMOVED!</h4>
+<h4 id="_bootstrap_removed">16.4.1. BOOTSTRAP REMOVED!</h4>
 <div class="paragraph">
 <p>Once the FILL-macros was removed, we could move the enum-generation to
 use the actual <code>c-xref</code>. So from now on we build <code>c-xref</code> directly
@@ -4786,7 +4762,7 @@ update. This is a big improvement over the previous situation!</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_fills_removed">3.4.2. FILLs REMOVED!</h4>
+<h4 id="_fills_removed">16.4.2. FILLs REMOVED!</h4>
 <div class="paragraph">
 <p>As indicated in <a href="#_fill_macros">FILL macros</a> the bootstrapping of FILL-macros has
 finally and fully been removed.</p>
@@ -4802,7 +4778,7 @@ text below is kept for historical reasons.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_rationale">3.4.3. Rationale</h4>
+<h4 id="_rationale">16.4.3. Rationale</h4>
 <div class="paragraph">
 <p><em>c-xref</em> uses a load of structures, and lists of them, that need to be
 created and initialized in a lot of places (such as the parsers). To
@@ -4825,7 +4801,7 @@ building and maintaining and to the structure of <em>c-xref</em>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_mechanism">3.4.4. Mechanism</h4>
+<h4 id="_mechanism">16.4.4. Mechanism</h4>
 <div class="paragraph">
 <p>The bootstrapping uses <em>c-xref</em>'s own capability to parse C-code and
 parse those structures and spit out filling macros, and some other
@@ -4876,7 +4852,7 @@ functions for each "class" instead of macros.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_compiler_defines">3.4.5. Compiler defines</h4>
+<h4 id="_compiler_defines">16.4.5. Compiler defines</h4>
 <div class="paragraph">
 <p>In <em>options.h</em> there are a number of definitions which somehow are
 sent to the compiler/preprocessor or used so that standard settings
@@ -4901,7 +4877,7 @@ completely replace the "programmed" ones in <code>options.c</code>?</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_enumtxt_generation_removed">3.4.6. EnumTxt generation REMOVED!</h4>
+<h4 id="_enumtxt_generation_removed">16.4.6. EnumTxt generation REMOVED!</h4>
 <div class="paragraph">
 <p>To be able to print the string values of enums the module generate.c
 (called when regime was RegimeGenerate) could also generate string
@@ -4914,7 +4890,7 @@ could do away with that whole "generate" functionality too.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_enumtxt">3.4.7. enumTxt</h4>
+<h4 id="_enumtxt">16.4.7. enumTxt</h4>
 <div class="paragraph">
 <p>For some cases the string representing the value of an Enum is needed.
 <code>c-xref</code> handles this using the "usual" 'parse code and generate' method.
@@ -4922,7 +4898,7 @@ The module <code>generate.c</code> does this generation too.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_include_paths">3.4.8. Include paths</h4>
+<h4 id="_include_paths">16.4.8. Include paths</h4>
 <div class="paragraph">
 <p>Also in <em>options.h</em> some standard-like include paths are added, but
 there is a better attempt in <em>getAndProcessGccOptions()</em> which uses
@@ -4933,7 +4909,7 @@ the compiler/preprocessor itself to figure out those paths.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_problems">3.4.9. Problems</h4>
+<h4 id="_problems">16.4.9. Problems</h4>
 <div class="paragraph">
 <p>Since at bootstrap there must exist FILL-macros with the correct field
 names this strategy is an obstacle to cleaning up the code since every
@@ -4949,7 +4925,7 @@ pass with BOOTSTRAP set, which it does.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_removing">3.4.10. Removing</h4>
+<h4 id="_removing">16.4.10. Removing</h4>
 <div class="paragraph">
 <p>I&#8217;ve started removing this step. In TODO.org I keep a hierarchical list
 of the actions to take (in a Mikado kind of style).</p>
@@ -4978,7 +4954,7 @@ CSV-file from that, and compare all rows.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_strtdef_h">3.4.11. strTdef.h</h4>
+<h4 id="_strtdef_h">16.4.11. strTdef.h</h4>
 <div class="paragraph">
 <p>The <code>strTdef.h</code> was generated using the option <code>-typedefs</code> as a part
 of the old <code>-task_regime_generate</code> strategy and generated typedef
@@ -5030,7 +5006,7 @@ included before the structs:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_fill_macros">3.5. FILL macros</h3>
+<h3 id="_fill_macros">16.5. FILL macros</h3>
 <div class="paragraph">
 <p><em><strong>The FILL macros are now fully replaced by native functions or some other,</strong></em>
 <em><strong>more refactoring-friendly, mechanism. Yeah!</strong></em>***</p>
@@ -5075,7 +5051,7 @@ which fields are actually necessary to set.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_caching_module">3.6. Caching Module</h3>
+<h3 id="_caching_module">16.6. Caching Module</h3>
 <div class="paragraph">
 <p><strong>The caching module described below has been archived as it is no longer part of the current architecture.</strong></p>
 </div>
@@ -5085,7 +5061,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_caching_system_architecture">3.7. Caching System Architecture</h3>
+<h3 id="_caching_system_architecture">16.7. Caching System Architecture</h3>
 <div class="paragraph">
 <p><strong>The caching system described below has been archived as it is no longer part of the current architecture.</strong></p>
 </div>
@@ -5093,7 +5069,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 <p>The c-xrefactory included a sophisticated caching system that enabled incremental parsing by caching parsed input streams, parser state, and file modification tracking. This optimization allowed for faster re-analysis when only portions of source files had changed.</p>
 </div>
 <div class="sect3">
-<h4 id="_core_design_principles">3.7.1. Core Design Principles</h4>
+<h4 id="_core_design_principles">16.7.1. Core Design Principles</h4>
 <div class="paragraph">
 <p><strong>Cache Point Model</strong>: The system placed strategic snapshots of parser state at external definition boundaries (functions, global variables, etc.). When files were re-processed, the system could validate cache integrity, recover from cache points, and resume parsing only from the first changed definition onward.</p>
 </div>
@@ -5112,7 +5088,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_key_components">3.7.2. Key Components</h4>
+<h4 id="_key_components">16.7.2. Key Components</h4>
 <div class="paragraph">
 <p><strong>Cache Point Management</strong> (<code>caching.c</code>):</p>
 </div>
@@ -5162,7 +5138,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_parser_integration">3.7.3. Parser Integration</h4>
+<h4 id="_parser_integration">16.7.3. Parser Integration</h4>
 <div class="paragraph">
 <p><strong>C Parser Integration</strong>: Both C and Yacc parsers placed cache points after each <code>external_definition</code>, but only when not processing include files (<code>includeStack.pointer == 0</code>).</p>
 </div>
@@ -5184,7 +5160,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_system_dependencies">3.7.4. System Dependencies</h4>
+<h4 id="_system_dependencies">16.7.4. System Dependencies</h4>
 <div class="paragraph">
 <p>The caching system was deeply integrated throughout the parsing pipeline:</p>
 </div>
@@ -5241,7 +5217,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </table>
 </div>
 <div class="sect3">
-<h4 id="_performance_characteristics_3">3.7.5. Performance Characteristics</h4>
+<h4 id="_performance_characteristics_3">16.7.5. Performance Characteristics</h4>
 <div class="paragraph">
 <p><strong>Cache Hit Scenarios</strong>:</p>
 </div>
@@ -5280,7 +5256,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_users">3.8. Users</h3>
+<h3 id="_users">16.8. Users</h3>
 <div class="paragraph">
 <p><strong>The <code>-user</code> option has now been removed, both in the tool and the
   editor adaptors, and with it one instance of a hashlist, the
@@ -5325,7 +5301,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-31 09:33:03 UTC
+Last updated 2025-10-31 13:07:25 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
