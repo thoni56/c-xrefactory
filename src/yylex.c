@@ -1448,13 +1448,15 @@ static char *resolveRegularOperand(char **nextLexemP) {
 
 static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWriteP,
                                 char *nextLexemP, char *endOfInputLexems) {
-    while (nextLexemP < endOfInputLexems) {
-        char *lexemStart = nextLexemP;
-        LexemCode lexem = getLexemCodeAndAdvance(&nextLexemP);
-        log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
-        skipExtraLexemInformationFor(lexem, &nextLexemP, false);
+    LexInput remainingInput = makeLexInput(nextLexemP, nextLexemP, endOfInputLexems, NULL, INPUT_NORMAL);
 
-        int lexemLength = nextLexemP - lexemStart;
+    while (lexInputHasMore(&remainingInput)) {
+        char *lexemStart = remainingInput.read;
+        LexemCode lexem = getLexemCodeAndAdvance(&remainingInput.read);
+        log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
+        skipExtraLexemInformationFor(lexem, &remainingInput.read, false);
+
+        int lexemLength = remainingInput.read - lexemStart;
         memcpy(*bufferWriteP, lexemStart, lexemLength);
         *bufferWriteP += lexemLength;
         *bufferSize = expandPreprocessorBufferIfOverflow(buffer, *bufferSize, *bufferWriteP);

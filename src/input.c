@@ -12,3 +12,7 @@ LexInput makeLexInput(char *begin, char *read, char *write, char *macroName, Inp
 
     return input;
 }
+
+bool lexInputHasMore(LexInput *input) {
+    return input->read < input->write;
+}

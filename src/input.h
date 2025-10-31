@@ -1,6 +1,7 @@
 #ifndef INPUT_H_INCLUDED
 #define INPUT_H_INCLUDED
 
+#include <stdbool.h>
 
 typedef enum inputType {
     INPUT_NORMAL,
@@ -21,5 +22,8 @@ typedef struct {
 extern LexInput currentInput;
 
 extern LexInput makeLexInput(char *begin, char *read, char *write, char *macroName, InputType inputType);
+
+/* LexInput API functions */
+bool lexInputHasMore(LexInput *input);
 
 #endif
