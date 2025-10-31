@@ -1,0 +1,531 @@
+== Proposed Refactorings
+
+This chapter documents larger refactoring proposals that would significantly improve code quality but require careful planning and implementation.
+
+=== LexInput API Improvements
+
+==== Problem Statement
+
+The macro expansion and collation code (`collate()`, `replaceMacroArguments()`, etc.) in `src/yylex.c` suffers from *pointer parameter proliferation*, making it difficult to understand and maintain. Functions pass 5-6 separate parameters to track buffer state:
+
+[source,c]
+----
+static char *collate(char *buffer, int *bufferSizeP, char **bufferWriteP, 
+                     char **leftHandLexemP, char **rightHandLexemP, 
+                     LexInput *actualArgumentsInput);
+
+static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWriteP,
+                                char *nextLexemP, char *endOfInputLexems);
+----
+
+This creates several issues:
+
+* Hard to track which pointers point into which buffers
+* Manual size/capacity management scattered throughout code
+* Easy to make mistakes with pointer arithmetic
+* Functions have 6+ parameters just for buffer management
+
+==== Current Architecture
+
+===== Three representations of lexem streams
+
+The codebase currently uses three different ways to represent lexem streams:
+
+*LexemBuffer* (structured, file-oriented)::
+- Fixed-size embedded array: `char lexemStream[LEXEM_BUFFER_SIZE]`
+- Metadata: `begin`, `read`, `write`, `position`, `fileOffset`, `backpatchPointer`
+- Used for lexing from files/editor buffers
+- Full API for manipulation: `putLexemCode()`, `getLexemCode()`, etc.
+
+*LexInput* (lightweight, pointer-based)::
+- Just 3 pointers + metadata: `begin`, `read`, `write`, `macroName`, `inputType`
+- Points to external memory (doesn't own it)
+- Used for macro expansion pipelines
+- *NO manipulation API - just raw pointer access*
+
+*MacroBody* (persistent storage)::
+- Pointer + length: `char *body`, `int size`
+- Used for stored macro definitions
+
+===== LexInput buffer sources
+
+LexInput can point to 5 different memory sources:
+
+1. `LexemBuffer.lexemStream` - Fixed array in file descriptor
+2. `ppmAlloc()` - Preprocessor macro memory (dynamic)
+3. `mbmAlloc()` - Macro body memory (dynamic)
+4. `NULL` - Empty/missing arguments
+5. External buffers from various sources
+
+==== Proposed Solution
+
+===== Add LexInput manipulation API
+
+Currently, LexInput has *zero manipulation functions*. All operations are done via raw pointer manipulation. We need to add an API similar to LexemBuffer.
+
+===== Phase 1: Extend LexInput structure
+
+Add optional buffer management fields:
+
+[source,c]
+----
+typedef struct {
+    char *begin;        // Start of buffer
+    char *read;         // Current read position
+    char *write;        // Current write position (= end for read-only)
+    char *macroName;    // Name of macro this input represents
+    InputType inputType;
+    // NEW fields:
+    int allocatedSize;  // Total allocated size (0 if not owned/unknown)
+    bool ownsBuffer;    // Whether this LexInput should manage/free the buffer
+} LexInput;
+----
+
+NOTE: Alternative considered but rejected: Create separate `WritableLexInput` type. Pro: Cleaner separation of read vs write. Con: Yet another type, conversion overhead, more complex API.
+
+===== Phase 2: Create manipulation API
+
+New file: `src/lexinput.c` and extend `src/input.h`
+
+====== Core buffer management
+
+[source,c]
+----
+// Creation
+LexInput lexInputCreateOwned(int initialSize);     // Allocates managed buffer
+LexInput lexInputCreateView(char *begin, char *end); // Read-only view
+
+// Capacity management
+void lexInputEnsureCapacity(LexInput *input, int additionalBytes);
+void lexInputReallocIfNeeded(LexInput *input, int needed);
+int lexInputRemainingCapacity(LexInput *input);
+
+// Reading (advance read pointer)
+LexemCode lexInputGetLexem(LexInput *input);
+LexemCode lexInputPeekLexem(LexInput *input);  // Don't advance
+bool lexInputHasMore(LexInput *input);          // read < write
+void lexInputSkipLexem(LexInput *input);        // Skip current lexem
+
+// Writing (advance write pointer)
+void lexInputPutLexemCode(LexInput *output, LexemCode lexem);
+void lexInputPutLexemPosition(LexInput *output, Position pos);
+void lexInputAppendBytes(LexInput *dest, char *src, int len);
+void lexInputCopyLexem(LexInput *dest, LexInput *src); // Copy one lexem from src to dest
+
+// Cleanup
+void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true
+----
+
+===== Phase 3: Refactor functions to use LexInput API
+
+====== Example: collate() before
+
+[source,c]
+----
+static char *collate(char *buffer,              // Destination buffer
+                     int *bufferSizeP,          // Destination allocated size
+                     char **bufferWriteP,       // Current write position
+                     char **leftHandLexemP,     // Left operand read position
+                     char **rightHandLexemP,    // Right operand read position
+                     LexInput *actualArgumentsInput)  // Source arguments
+{
+    // Manual buffer management scattered throughout:
+    *bufferSizeP = expandPreprocessorBufferIfOverflow(buffer, *bufferSizeP, *bufferWriteP);
+    
+    // Manual pointer arithmetic:
+    int lexemLength = nextInputLexemP - lexemStart;
+    memcpy(*bufferWriteP, lexemStart, lexemLength);
+    *bufferWriteP += lexemLength;
+    
+    // Complex state tracking:
+    char *lhs = *leftHandLexemP;
+    char *endOfLexems = NULL;
+    // ... many lines of pointer manipulation
+}
+----
+
+====== Example: collate() after
+
+[source,c]
+----
+static void collate(LexInput *output,           // Destination (manages its own buffer)
+                    LexInput *leftOperand,      // Left operand (with read position)
+                    LexInput *rightOperand,     // Right operand (with read position)
+                    LexInput *actualArgumentsInput)
+{
+    // Clean, high-level operations:
+    lexInputEnsureCapacity(output, estimatedSize);
+    
+    // Copy operations are explicit and clear:
+    lexInputCopyLexem(output, leftOperand);
+    lexInputCopyLexem(output, rightOperand);
+    
+    // State is encapsulated in LexInput structures
+}
+----
+
+====== Functions to refactor (priority order)
+
+1. *collate()* - Most complex, biggest win (yylex.c:1515)
+2. *copyRemainingLexems()* - Used by collate (yylex.c:1450)
+3. *resolveMacroArgumentAsLeftOperand()* - Complex pointer tracking (yylex.c:1465)
+4. *replaceMacroArguments()* - Many buffer operations (yylex.c:1717)
+5. *expandMacroArgument()* - Buffer management (yylex.c:1362)
+6. *createMacroBodyAsNewInput()* - Multiple buffers (yylex.c:1780)
+
+==== Benefits
+
+===== Code clarity
+* Functions have 2-3 parameters instead of 6+
+* Clear ownership and boundaries
+* Self-documenting code (LexInput instead of 3 raw pointers)
+
+===== Maintainability
+* Centralized buffer management logic
+* Easier to add bounds checking
+* Less error-prone
+
+===== Consistency
+* Similar philosophy to LexemBuffer
+* Uniform API for lexem stream operations
+
+==== Implementation Strategy
+
+Step 1: Add new fields to LexInput (backward compatible)::
+- Initialize `allocatedSize = 0` and `ownsBuffer = false` for all existing uses
+- No functional changes yet
+
+Step 2: Create lexinput.c with basic API::
+- Implement core functions: create, ensure capacity, append, copy
+- Add unit tests
+
+Step 3: Refactor one function as proof of concept::
+- Start with `copyRemainingLexems()` (simplest)
+- Validate approach works
+
+Step 4: Refactor remaining functions::
+- Work through priority list
+- Update call sites incrementally
+
+Step 5: Cleanup::
+- Remove old helper functions if no longer needed
+- Update documentation
+
+==== Risks and Mitigation
+
+===== Risk: Breaking existing code
+
+*Mitigation:* 
+
+* Make LexInput changes backward compatible
+* Add new fields with safe defaults
+* Refactor incrementally, one function at a time
+* Run full test suite after each change
+
+===== Risk: Performance regression
+
+*Mitigation:*
+
+* Keep buffer operations inline where critical
+* Profile before/after
+* The current code already does realloc, just manually
+
+===== Risk: Memory leaks from ownsBuffer confusion
+
+*Mitigation:*
+
+* Clear ownership semantics in documentation
+* Consider using explicit create/destroy pairs
+* Add assertions for debugging
+
+==== Notes
+
+===== Why not unify with LexemBuffer?
+
+LexemBuffer and LexInput serve different purposes:
+
+* *LexemBuffer*: Heavy, file-oriented, owns fixed-size array, lots of metadata
+* *LexInput*: Lightweight, flexible views, points to various sources
+
+Trying to unify them would make both worse. The real issue is LexInput lacks manipulation functions, not that two types exist.
+
+===== Backward compatibility
+
+The proposed changes are designed to be backward compatible:
+
+* New fields default to "not owned, size unknown" (0, false)
+* Existing code that creates LexInput with `makeLexInput()` continues to work
+* Only new code uses the enhanced API
+
+==== Open Questions
+
+. Should `lexInputEnsureCapacity()` use ppmAlloc or mbmAlloc?
+** Probably depends on context - may need separate functions or a memory source parameter
+
+. How to handle the transition from raw pointers to LexInput?
+** Some functions receive raw pointers from outside (e.g., from MacroBody.body)
+** May need wrapper functions to create temporary LexInput views
+
+. Should we add debug assertions for bounds checking?
+** Would help catch errors during development
+** Could be compiled out in production
+
+==== References
+
+* Current code: `src/yylex.c` lines 1362-1823 (macro expansion)
+* LexemBuffer API: `src/lexembuffer.h` and `src/lexembuffer.c`
+* Current LexInput: `src/input.h` and `src/input.c`
+
+==== Related Issues
+
+This refactoring addresses the root cause identified in the discussion about replacing the malloc-based macro body memory system (commit e1d506f7). The memory tracking issues stem from the complexity of managing multiple pointer parameters across function boundaries.
+
+---
+
+TIP: When implementing this refactoring, consider starting with unit tests for the new API functions before refactoring existing code. This will help validate the design and provide safety during migration.
+
+[[unified-symbol-database]]
+=== Unified Symbol Database Architecture
+
+==== Problem Statement
+
+The current symbol database has evolved from a batch cross-referencer (like `ctags`) with artificial distinctions between "file-based" and "on-demand" modes. This creates:
+
+* **Mode complexity**: Different code paths for Emacs vs LSP clients
+* **Cold start problems**: Requires upfront `-create` operation before use
+* **Manual updates**: Users must remember to run `-update` after changes
+* **Inconsistent behavior**: Different modes provide different guarantees
+* **Maintenance overhead**: Multiple implementations to maintain and test
+
+==== Current Architecture Limitations
+
+The existing system distinguishes between:
+
+[cols="1,1,1"]
+|===
+|Aspect |File-Based Mode |On-Demand Mode
+
+|**Cold Start**
+|Requires `-create` first
+|Parse file immediately
+
+|**Warm Queries**
+|O(1) hash lookup
+|O(file_size) parsing
+
+|**Memory Usage**
+|Low (streaming)
+|High (in-memory cache)
+
+|**Incremental Updates**
+|Smart file tracking
+|Per-file invalidation
+
+|**Multi-project**
+|Separate databases
+|Workspace-scoped
+|===
+
+==== Proposed Solution
+
+===== Core Insight: Unified On-Demand Architecture
+
+Both Emacs and LSP clients want the same thing: **up-to-date symbol and reference information**. The distinction between "file-based" and "on-demand" modes is artificial complexity. Instead, c-xrefactory should provide a unified interface that:
+
+1. **Always ensures information is current** using existing dependency tracking
+2. **Scans incrementally** only what's needed, when needed  
+3. **Uses `.cx` files as persistent cache** for optimization
+4. **Eliminates cold start problems** by avoiding upfront full-project scanning
+
+===== Simplified Interface Design
+
+[source,c]
+----
+typedef struct SymbolDatabase SymbolDatabase;
+
+typedef struct {
+    // Unified operations for any client (Emacs or LSP)
+    Symbol* (*lookupSymbol)(SymbolDatabase* db, const char* name, Position pos);
+    ReferenceList* (*getReferences)(SymbolDatabase* db, const char* name, Position pos);
+    ReferenceList* (*getOccurrences)(SymbolDatabase* db, const char* name, Position pos);
+    
+    // All complexity hidden in implementation:
+    // - File modification checking (existing: checkFileModifiedTime)
+    // - Include dependency tracking (existing: cachedIncludedFilePass) 
+    // - Incremental scanning (existing: makeIncludeClosureOfFilesToUpdate)
+    // - Persistent caching (existing: .cx file system)
+} SymbolDatabaseOperations;
+----
+
+===== Implementation Strategy: Smart On-Demand
+
+The implementation leverages **existing sophisticated logic**:
+
+[source,c]
+----
+Symbol* lookupSymbol(const char* name, Position pos) {
+    // 1. Check if cached information is up-to-date
+    if (symbolInfoIsCurrent(name, pos)) {
+        return getCachedSymbolInfo(name, pos);  // Use .cx files when valid
+    }
+    
+    // 2. Use existing dependency tracking to scan minimal set
+    FileList* filesToScan = calculateDependencyClosure(pos.file);
+    for (FileItem* file : filesToScan) {
+        if (!checkFileModifiedTime(file->fileNumber)) {
+            scanFileAndUpdateCache(file);  // Incremental scan
+        }
+    }
+    
+    // 3. Update persistent cache for next time
+    updateSymbolCache(name, pos);
+    
+    return getSymbolInfo(name, pos);
+}
+----
+
+**Key Benefits:**
+
+* **No artificial modes** - same code path for all clients
+* **No cold start** - first lookup triggers minimal necessary scanning
+* **Incremental by design** - only scans files that need updating
+* **Persistent optimization** - results cached in `.cx` files for next session
+* **Existing logic reuse** - leverages proven dependency tracking system
+
+===== Legacy Architecture Recognition
+
+c-xrefactory evolved from a **batch cross-referencer** (like `ctags`) and was enhanced for real-time use:
+
+[source,bash]
+----
+# Legacy batch workflow:
+c-xref -create project.c     # Full scan, build .cx database
+c-xref -update modified.c    # Incremental update
+c-xref -olcxpush symbol      # Query pre-built database
+
+# Unified approach:
+c-xref -server               # Start server, scan on-demand as needed
+c-xref -lsp                  # Same logic, different protocol
+----
+
+The `.cx` files are essentially a **persistent cache** of analysis results, not a fundamental requirement.
+
+==== Implementation Plan
+
+===== Phase 1: Interface Unification
+
+* Create unified `SymbolDatabase` interface
+* Wrap existing logic in smart on-demand implementation
+* Replace explicit `-create`/`-update` commands with automatic dependency checking
+* Both Emacs and LSP use same code path
+
+===== Phase 2: Optimization
+
+* Enhance existing dependency tracking for finer-grained invalidation
+* Optimize in-memory caching strategies
+* Background `.cx` file maintenance for long-running sessions
+* Performance tuning for large codebases
+
+==== Benefits
+
+===== Architectural Simplification
+
+* **Single code path** for both Emacs and LSP clients - eliminates maintenance overhead
+* **No mode distinctions** - same smart logic serves all use cases optimally
+* **Leverages existing logic** - reuses proven dependency tracking and caching systems
+* **Reduced complexity** - eliminates artificial FILE_BASED/ON_DEMAND/HYBRID modes
+
+===== User Experience Improvements
+
+* **Zero configuration** - works immediately on any C project without setup
+* **No cold start delay** - first symbol lookup triggers minimal necessary scanning
+* **Transparent caching** - `.cx` files automatically maintained as performance optimization
+* **Consistent behavior** - same results whether using Emacs or modern IDE with LSP
+
+===== Performance Characteristics
+
+* **Minimal initial cost** - avoids expensive upfront full-project scanning
+* **Smart incremental updates** - only rescans files that have actually changed
+* **Automatic dependency tracking** - includes files affected by changes get updated
+* **Persistent optimization** - analysis results cached across sessions
+
+===== Development Benefits
+
+* **Backward compatibility** - existing Emacs workflows continue unchanged
+* **Forward compatibility** - natural path to modern LSP integration
+* **Reduced maintenance** - single implementation instead of multiple modes
+* **Enhanced testability** - unified logic easier to test comprehensively
+
+==== Existing Infrastructure
+
+===== Sophisticated Dependency Tracking
+
+The unified approach leverages c-xrefactory's **existing sophisticated dependency management** that handles include file relationships automatically:
+
+**File Modification Tracking** (`filetable.h`):
+
+[source,c]
+----
+typedef struct fileItem {
+    char *name;
+    time_t lastModified;        // Last known modification time
+    time_t lastInspected;       // Last time we checked
+    time_t lastUpdateMtime;     // Last update cycle time  
+    time_t lastFullUpdateMtime; // Last full update time
+    // ... scheduling and state flags
+} FileItem;
+
+bool checkFileModifiedTime(int fileNumber);
+----
+
+**Include Dependency Tracking** (`yylex.c`):
+
+[source,c]
+----
+void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
+    // ... setup include stack
+    includeStack.stack[includeStack.pointer++] = currentFile;
+    // Track include relationships for dependency analysis
+}
+----
+
+**Automatic Include Closure** (`xref.c:81-108`):
+
+[source,c]
+----
+static void makeIncludeClosureOfFilesToUpdate(void) {
+    // If file A includes file B, and B is modified, A gets scheduled for update
+    // This uses the reference database to track include relationships
+    bool fileAddedFlag = true;
+    while (fileAddedFlag) {
+        // Iterative closure: keeps adding dependent files until stable
+        for (all scheduled files) {
+            find_all_files_that_include_this_file();
+            schedule_them_for_update();
+        }
+    }
+}
+----
+
+IMPORTANT: This dependency tracking infrastructure is **already production-ready** and handles the complex cases (transitive dependencies, modification time checking, include stack management). The unified symbol database can leverage this existing logic instead of reimplementing dependency management.
+
+==== Open Questions
+
+. Should we maintain backward compatibility with explicit `-create`/`-update` commands?
+** Probably yes, at least as no-ops or aliases to make transition easier
+
+. How to handle very large projects (>1M LOC)?
+** May need workspace-level configuration for incremental scanning thresholds
+** Consider lazy loading of symbol data
+
+. What's the migration path for existing users?
+** Existing `.cx` files should continue to work
+** Auto-migrate on first run with new version
+** Provide clear documentation on new behavior
+
+==== References
+
+* Current implementation: `src/cxfile.c`, `src/xref.c`
+* File tracking: `src/filetable.h`, `src/filetable.c`
+* Dependency tracking: `src/xref.c` lines 81-108
+* Current database description: See chapter 08 (Code) - Reference Database section
