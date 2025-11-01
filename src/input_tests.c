@@ -2,6 +2,12 @@
 
 #include "input.h"
 
+#include "globals.mock"
+#include "options.mock"
+#include "commons.mock"
+#include "characterreader.mock"
+
+
 Describe(LexemStream);
 BeforeEach(LexemStream) {}
 AfterEach(LexemStream) {}

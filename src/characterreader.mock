@@ -3,6 +3,7 @@
 
 #include <cgreen/mocks.h>
 
+#include "log.h"
 
 /* We never want to mock init-functions... */
 /* NB: copies of the actual functions... */
