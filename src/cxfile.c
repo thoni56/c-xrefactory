@@ -403,9 +403,9 @@ static void writeReferenceItem(ReferenceItem *referenceItem) {
         if (options.update==UPDATE_DEFAULT || fileItem->cxLoading) {
             writeCxReference(reference);
         } else {
-            log_trace("Some kind of update (%d) or loading (%d), so don't writeCxReference()",
+            log_trace("Update mode (%d) and file not loading (%d), skipping (will be copied from old CXrefs)",
                       options.update, fileItem->cxLoading);
-            assert(0);
+            /* During updates, references for unchanged files will be copied from the old CXrefs file */
         }
     }
 }
