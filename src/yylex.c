@@ -1543,13 +1543,22 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
     }
 
     /* ... and the right hand operand */
-    /* Save the original position in the macro body before resolving */
-    char *originalRightHandP = *rightHandLexemP;
+    /* Save the position to continue reading from in the macro body */
+    char *continueReadingFrom;
     char *endOfLexems = NULL;
     if (peekLexemCodeAt(*rightHandLexemP) == CPP_MACRO_ARGUMENT) {
+        /* Save position before resolveMacroArgument overwrites *rightHandLexemP */
+        char *argStart = *rightHandLexemP;
         endOfLexems = resolveMacroArgument(rightHandLexemP, actualArgumentsInput);
+        /* Skip past the CPP_MACRO_ARGUMENT token and its extra info in the macro body */
+        getLexemCodeAndAdvance(&argStart);
+        int argumentIndex;
+        getExtraLexemInformationFor(CPP_MACRO_ARGUMENT, &argStart, NULL, &argumentIndex, NULL, NULL, false);
+        continueReadingFrom = argStart;
     } else {
         endOfLexems = resolveRegularOperand(rightHandLexemP);
+        /* For non-macro arguments, continue reading from after the consumed lexem */
+        continueReadingFrom = endOfLexems;
     }
 
     /* Check for empty right operand after possible expansion */
@@ -1713,7 +1722,7 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
     ppmFreeUntil(ppmMarker); // Free any allocations done
     LEAVE();
     /* Return the position in the macro body to continue reading from, not from the argument buffer */
-    return originalRightHandP;
+    return continueReadingFrom;
 }
 
 static void macroArgumentsToString(char *res, LexemStream *lexInput) {
