@@ -28,10 +28,6 @@ expected:
 	../../src/c-xref.orig -xrefrc .c-xrefrc -p $(PWD) -create .
 	cxref_reader > expected
 
-run:
-	echo $(COMMAND)
-	$(COMMAND)
-
 UNIT_COMMAND = c-xref -xrefrc .c-xrefrc -p $$(PWD) stripped_unit.h
 
 count:
