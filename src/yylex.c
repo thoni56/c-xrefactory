@@ -1490,11 +1490,11 @@ static MacroBody *getMacroBody(Symbol *macroSymbol) {
     return macroSymbol->mbody;
 }
 
-static LexemStream createMacroBodyAsNewInput(MacroBody *macroBody, LexemStream *actualArgumentsInput);
+static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream *actualArgumentsInput);
 
 static void expandMacroInCollation(char *buffer, int *bufferSizeP, char **bufferWriteP, Symbol *macroSymbol, LexemStream *actualArgumentsInput) {
     MacroBody *macroBody = getMacroBody(macroSymbol);
-    LexemStream macroExpansion = createMacroBodyAsNewInput(macroBody, actualArgumentsInput);
+    LexemStream macroExpansion = createMacroBodyAsNewStream(macroBody, actualArgumentsInput);
 
     LexemStream inputStream = makeLexemStream(macroExpansion.begin, macroExpansion.begin, macroExpansion.write, NULL, NORMAL_STREAM);
     LexemStream outputStream = makeLexemStream(buffer, *bufferWriteP, *bufferWriteP, NULL, NORMAL_STREAM);
@@ -1809,7 +1809,7 @@ static char *replaceMacroArguments(LexemStream *actualArgumentsInput, char *read
 /* ********************* macro body replacement ***************** */
 /* ************************************************************** */
 
-static LexemStream createMacroBodyAsNewInput(MacroBody *macroBody, LexemStream *actualArgumentsInput) {
+static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream *actualArgumentsInput) {
     // Allocate space for an extra lexem so that users can overwrite and *then* expand
     int   bufferSize = MACRO_BODY_BUFFER_SIZE;
     char *buffer = ppmAllocc(bufferSize + MAX_LEXEM_SIZE, sizeof(char));
@@ -2050,7 +2050,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
         addMacroBaseUsageRef(macroSymbol);
     log_trace("create macro body '%s' as new input", macroBody->name);
 
-    LexemStream macroBodyInput = createMacroBodyAsNewInput(macroBody, actualArgumentsInput);
+    LexemStream macroBodyInput = createMacroBodyAsNewStream(macroBody, actualArgumentsInput);
 
     prependMacroInput(&macroBodyInput);
     log_trace("expanded macro '%s'", macroBody->name);
