@@ -1719,29 +1719,29 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
     return continueReadingFrom;
 }
 
-static void macroArgumentsToString(char *res, LexemStream *lexInput) {
-    char *cc, *lcc, *bcc;
+static void macroArgumentsToString(char *writeBuffer, LexemStream *lexInput) {
+    char *lexemReadP, *lexemContentP, *stringWriteP;
     int value;
 
-    bcc = res;
-    *bcc = 0;
-    cc = lexInput->begin;
-    while (cc < lexInput->write) {
-        LexemCode lexem = getLexemCodeAndAdvance(&cc);
-        lcc = cc;
-        getExtraLexemInformationFor(lexem, &cc, NULL, &value, NULL, NULL, false);
+    stringWriteP = writeBuffer;
+    *stringWriteP = 0;
+    lexemReadP = lexInput->begin;
+    while (lexemReadP < lexInput->write) {
+        LexemCode lexem = getLexemCodeAndAdvance(&lexemReadP);
+        lexemContentP = lexemReadP;
+        getExtraLexemInformationFor(lexem, &lexemReadP, NULL, &value, NULL, NULL, false);
         if (isIdentifierLexem(lexem)) {
-            sprintf(bcc, "%s", lcc);
-            bcc+=strlen(bcc);
+            sprintf(stringWriteP, "%s", lexemContentP);
+            stringWriteP += strlen(stringWriteP);
         } else if (lexem==STRING_LITERAL) {
-            sprintf(bcc,"\"%s\"", lcc);
-            bcc+=strlen(bcc);
+            sprintf(stringWriteP,"\"%s\"", lexemContentP);
+            stringWriteP += strlen(stringWriteP);
         } else if (lexem==CONSTANT) {
-            sprintf(bcc,"%d", value);
-            bcc+=strlen(bcc);
+            sprintf(stringWriteP,"%d", value);
+            stringWriteP += strlen(stringWriteP);
         } else if (lexem < 256) {
-            sprintf(bcc,"%c",lexem);
-            bcc+=strlen(bcc);
+            sprintf(stringWriteP,"%c",lexem);
+            stringWriteP += strlen(stringWriteP);
         }
     }
 }
