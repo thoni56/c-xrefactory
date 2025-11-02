@@ -1747,42 +1747,41 @@ static void macroArgumentsToString(char *writeBuffer, LexemStream *lexInput) {
 }
 
 static char *replaceMacroArguments(LexemStream *actualArgumentsInput, char *readBuffer, char **_writePointerP) {
-    char *currentLexemP = readBuffer;
-    char *endOfLexems   = *_writePointerP;
-
-    int bufferSize          = MACRO_BODY_BUFFER_SIZE;
+    int bufferSize = MACRO_BODY_BUFFER_SIZE;
     char *writeBuffer = mbmAlloc(bufferSize + MAX_LEXEM_SIZE);
-    char *writePointer = writeBuffer;
 
-    while (currentLexemP < endOfLexems) {
-        char *currentLexemStart = currentLexemP;
-        LexemCode lexem = getLexemCodeAndAdvance(&currentLexemP);
+    LexemStream inputStream = makeLexemStream(readBuffer, readBuffer, *_writePointerP, NULL, NORMAL_STREAM);
+    LexemStream outputStream = makeLexemStream(writeBuffer, writeBuffer, writeBuffer, NULL, NORMAL_STREAM);
+
+    while (lexemStreamHasMore(&inputStream)) {
+        char *lexemStart = inputStream.read;
+        LexemCode lexem = getLexemCodeAndAdvance(&inputStream.read);
 
         int argumentIndex;
         Position position;
-        getExtraLexemInformationFor(lexem, &currentLexemP, NULL, &argumentIndex, &position, NULL, false);
+        getExtraLexemInformationFor(lexem, &inputStream.read, NULL, &argumentIndex, &position, NULL, false);
 
         if (lexem == CPP_MACRO_ARGUMENT) {
             int len = actualArgumentsInput[argumentIndex].write - actualArgumentsInput[argumentIndex].begin;
-            expandMacroBodyBufferIfOverflow(writePointer, len, writeBuffer, &bufferSize);
-            memcpy(writePointer, actualArgumentsInput[argumentIndex].begin, len);
-            writePointer += len;
-        } else if (lexem == '#' && currentLexemP < endOfLexems
-                   && peekLexemCodeAt(currentLexemP) == CPP_MACRO_ARGUMENT) {
-            lexem = getLexemCodeAndAdvance(&currentLexemP);
+            expandMacroBodyBufferIfOverflow(outputStream.write, len, writeBuffer, &bufferSize);
+            memcpy(outputStream.write, actualArgumentsInput[argumentIndex].begin, len);
+            outputStream.write += len;
+        } else if (lexem == '#' && lexemStreamHasMore(&inputStream)
+                   && peekLexemCodeAt(inputStream.read) == CPP_MACRO_ARGUMENT) {
+            lexem = getLexemCodeAndAdvance(&inputStream.read);
             assert(lexem == CPP_MACRO_ARGUMENT);
-            getExtraLexemInformationFor(lexem, &currentLexemP, NULL, &argumentIndex, NULL, NULL, false);
+            getExtraLexemInformationFor(lexem, &inputStream.read, NULL, &argumentIndex, NULL, NULL, false);
 
-            putLexemCodeAt(STRING_LITERAL, &writePointer);
-            expandMacroBodyBufferIfOverflow(writePointer, MACRO_BODY_BUFFER_SIZE, writeBuffer, &bufferSize);
+            putLexemCodeAt(STRING_LITERAL, &outputStream.write);
+            expandMacroBodyBufferIfOverflow(outputStream.write, MACRO_BODY_BUFFER_SIZE, writeBuffer, &bufferSize);
 
-            macroArgumentsToString(writePointer, &actualArgumentsInput[argumentIndex]);
+            macroArgumentsToString(outputStream.write, &actualArgumentsInput[argumentIndex]);
             /* Skip over the string... */
-            int len = strlen(writePointer) + 1;
-            writePointer += len;
+            int len = strlen(outputStream.write) + 1;
+            outputStream.write += len;
 
             /* TODO: This should really be putLexPosition() but that takes a LexemBuffer... */
-            putLexemPositionAt(position, &writePointer);
+            putLexemPositionAt(position, &outputStream.write);
             if (len >= MACRO_BODY_BUFFER_SIZE - 15) {
                 char tmpBuffer[TMP_BUFF_SIZE];
                 sprintf(tmpBuffer, "size of #macro_argument exceeded MACRO_BODY_BUFFER_SIZE @%s:%d:%d",
@@ -1790,17 +1789,17 @@ static char *replaceMacroArguments(LexemStream *actualArgumentsInput, char *read
                 errorMessage(ERR_INTERNAL, tmpBuffer);
             }
         } else {
-            expandMacroBodyBufferIfOverflow(writePointer, (currentLexemStart - currentLexemP), writeBuffer,
+            expandMacroBodyBufferIfOverflow(outputStream.write, (lexemStart - inputStream.read), writeBuffer,
                                             &bufferSize);
-            assert(currentLexemP >= currentLexemStart);
-            int len = currentLexemP - currentLexemStart;
-            memcpy(writePointer, currentLexemStart, len);
-            writePointer += len;
+            assert(inputStream.read >= lexemStart);
+            int len = inputStream.read - lexemStart;
+            memcpy(outputStream.write, lexemStart, len);
+            outputStream.write += len;
         }
-        expandMacroBodyBufferIfOverflow(writePointer, 0, writeBuffer, &bufferSize);
+        expandMacroBodyBufferIfOverflow(outputStream.write, 0, writeBuffer, &bufferSize);
     }
-    mbmRealloc(writeBuffer, bufferSize + MAX_LEXEM_SIZE, writePointer - writeBuffer);
-    *_writePointerP = writePointer;
+    mbmRealloc(writeBuffer, bufferSize + MAX_LEXEM_SIZE, outputStream.write - writeBuffer);
+    *_writePointerP = outputStream.write;
 
     return writeBuffer;
 }
