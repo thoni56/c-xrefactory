@@ -1,5 +1,5 @@
-#ifndef INPUT_H_INCLUDED
-#define INPUT_H_INCLUDED
+#ifndef LEXEMSTREAM_H_INCLUDED
+#define LEXEMSTREAM_H_INCLUDED
 
 #include <stdbool.h>
 #include "lexem.h"

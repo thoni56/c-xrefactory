@@ -27,7 +27,7 @@ void processIncludeDirective(Position includePosition, bool include_next);
 #include "extract.mock"
 #include "fileio.mock"
 #include "globals.mock"
-#include "input.h"
+#include "lexemstream.h"
 #include "lexer.mock"
 #include "lexem.mock"
 #include "misc.mock"

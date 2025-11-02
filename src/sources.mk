@@ -1,6 +1,6 @@
 MODULES = c_parser.tab cexp_parser.tab characterreader commandlogger commons complete	\
 completion counters cxfile cxref editor editorbuffer editorbuffertable editormarker	\
-encoding extract filedescriptor fileio filetable globals hash id init input json_utils	\
+encoding extract filedescriptor fileio filetable globals hash id init lexemstream json_utils	\
 lexem lexembuffer lexer log lsp lsp_adapter lsp_dispatcher lsp_handler lsp_utils	\
 lsp_sender macroargumenttable main memory menu misc options parsers position ppc	\
 progress protocol refactorings refactory reference reftab semact server session		\

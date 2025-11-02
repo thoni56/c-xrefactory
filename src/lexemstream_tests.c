@@ -1,6 +1,6 @@
 #include <cgreen/cgreen.h>
 
-#include "input.h"
+#include "lexemstream.h"
 
 #include "globals.mock"
 #include "options.mock"

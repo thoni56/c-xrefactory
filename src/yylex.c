@@ -15,7 +15,7 @@
 #include "globals.h"
 #include "hash.h"
 #include "head.h"
-#include "input.h"
+#include "lexemstream.h"
 #include "lexem.h"
 #include "lexembuffer.h"
 #include "lexer.h"
