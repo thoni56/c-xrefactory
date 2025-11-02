@@ -1466,24 +1466,19 @@ static char *resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, ch
     int argumentIndex;
     getExtraLexemInformationFor(lexem, nextLexemP, NULL, &argumentIndex, NULL, NULL, false);
 
-    char *nextInputLexemP = actualArgumentsInput[argumentIndex].begin;
-    char *endOfInputLexems = actualArgumentsInput[argumentIndex].write;
+    LexemStream inputStream = makeLexemStream(actualArgumentsInput[argumentIndex].begin,
+                                              actualArgumentsInput[argumentIndex].begin,
+                                              actualArgumentsInput[argumentIndex].write,
+                                              NULL, NORMAL_STREAM);
+    LexemStream outputStream = makeLexemStream(buffer, *bufferWriteP, *bufferWriteP, NULL, NORMAL_STREAM);
 
     char *lastLexemP = NULL;
-    while (nextInputLexemP < endOfInputLexems) {
-        char *lexemStart = nextInputLexemP;
-        LexemCode lexem = getLexemCodeAndAdvance(&nextInputLexemP);
-        log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
-         skipExtraLexemInformationFor(lexem, &nextInputLexemP);
-
-        lastLexemP = *bufferWriteP;
-        assert(nextInputLexemP >= lexemStart);
-
-        int lexemLength = nextInputLexemP - lexemStart;
-        memcpy(*bufferWriteP, lexemStart, lexemLength);
-        *bufferWriteP += lexemLength;
-        *bufferSize = expandPreprocessorBufferIfOverflow(buffer, *bufferSize, *bufferWriteP);
+    while (lexemStreamHasMore(&inputStream)) {
+        lastLexemP = outputStream.write;
+        copyNextLexemFromStreamToStream(&inputStream, &outputStream);
+        *bufferSize = expandPreprocessorBufferIfOverflow(buffer, *bufferSize, outputStream.write);
     }
+    *bufferWriteP = outputStream.write;
     return lastLexemP;
 }
 
