@@ -330,6 +330,10 @@ static void skipExtraLexemInformationWithCountLines(LexemCode lexem, char **read
     getExtraLexemInformationFor(lexem, readPointerP, NULL, NULL, NULL, NULL, countLines);
 }
 
+static bool insideMacro(void) {
+    return macroStackIndex > 0;
+}
+
 /* Returns next lexem from currentInput and saves a pointer to the previous lexem */
 static LexemCode getLexemAndSavePointerToPrevious(char **previousLexemP) {
     LexemCode lexem;
@@ -338,7 +342,7 @@ static LexemCode getLexemAndSavePointerToPrevious(char **previousLexemP) {
      * backwards... */
     while (currentInput.read >= currentInput.write) {
         LexemStreamType inputType = currentInput.streamType;
-        if (macroStackIndex > 0) {
+        if (insideMacro()) {
             if (inputType == MACRO_ARGUMENT_STREAM) {
                 return END_OF_MACRO_ARGUMENT_EXCEPTION;
             }
@@ -1382,8 +1386,7 @@ static void expandMacroArgument(LexemStream *argumentInput) {
         char *nextLexemP = currentInput.read;
 
         Position position;
-        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
-                                    macroStackIndex == 0);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, !insideMacro());
         int length = ((char*)currentInput.read) - previousLexem;
         assert(length >= 0);
         memcpy(currentBufferP, previousLexem, length);
@@ -1864,7 +1867,7 @@ static LexemCode getLexSkippingLines(char **saveLexemP, int *lineNumberP,
     LexemCode lexem = getLexemAndSavePointerToPrevious(saveLexemP);
     while (lexem == LINE_TOKEN || lexem == '\n') {
         getExtraLexemInformationFor(lexem, &currentInput.read, lineNumberP, valueP, positionP, lengthP,
-                                    macroStackIndex == 0);
+                                    !insideMacro());
         lexem = getLexemAndSavePointerToPrevious(saveLexemP);
     }
     return lexem;
@@ -1910,7 +1913,7 @@ static LexemCode getActualMacroArgument(char *previousLexemP, LexemCode lexem, P
                                 endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL,
-                                    endPositionP, NULL, macroStackIndex == 0);
+                                    endPositionP, NULL, !insideMacro());
         if ((lexem == ',' || lexem == ')') && depth == 0) {
             offset++;
             handleMacroUsageParameterPositions(actualArgumentIndex + offset, macroPosition,
@@ -1949,7 +1952,7 @@ static LexemStream *getActualMacroArguments(MacroBody *macroBody, Position macro
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &endPosition, NULL,
-                                macroStackIndex == 0);
+                                !insideMacro());
 
     log_trace("getActualMacroArguments for %s: %s", macroBody->name, lexemEnumNames[lexem]);
 
@@ -1970,7 +1973,7 @@ static LexemStream *getActualMacroArguments(MacroBody *macroBody, Position macro
             lexem = getLexSkippingLines(&previousLexemP, NULL, NULL, NULL, NULL);
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
             getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, NULL, NULL,
-                                        macroStackIndex == 0);
+                                        !insideMacro());
         }
     }
     /* fill missing arguments */
@@ -2019,7 +2022,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
     MacroBody *macroBody = macroSymbol->mbody;
     if (macroBody == NULL)
         return false;	/* !!!!!         tricky,  undefined macro */
-    if (macroStackIndex == 0) { /* call from top level, init mem */
+    if (!insideMacro()) { /* call from top level, init memory */
         mbmInit();
     }
     log_trace("trying to expand macro '%s'", macroBody->name);
@@ -2041,7 +2044,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
         }
         Position lparPosition;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &lparPosition, NULL,
-                                    macroStackIndex == 0);
+                                    !insideMacro());
         actualArgumentsInput = getActualMacroArguments(macroBody, macroPosition, lparPosition);
     } else {
         actualArgumentsInput = NULL;
@@ -2173,7 +2176,7 @@ LexemCode yylex(void) {
             if (isProcessingPreprocessorIf) {
                 currentInput.read = previousLexem;
             } else {
-                skipExtraLexemInformationWithCountLines(lexem, &currentInput.read, macroStackIndex == 0);
+                skipExtraLexemInformationWithCountLines(lexem, &currentInput.read, !insideMacro());
                 for(;;) {
                     lexem = getLexem();
                     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
@@ -2187,7 +2190,7 @@ LexemCode yylex(void) {
         } else {
             Position position;
             getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
-                                        macroStackIndex == 0);
+                                        !insideMacro());
             setYylvalsForPosition(position, tokenNameLengthsTable[lexem]);
         }
         yytext = charText;
@@ -2199,7 +2202,7 @@ LexemCode yylex(void) {
         char *id = yytext = currentInput.read;
         Position position;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
-                                    macroStackIndex == 0);
+                                    !insideMacro());
         assert(options.mode);
         if (options.mode == ServerMode) {
             // TODO: ???????????? isn't this useless
@@ -2218,7 +2221,7 @@ LexemCode yylex(void) {
         goto finish;
     }
     if (lexem == OL_MARKER_TOKEN) {
-        skipExtraLexemInformationWithCountLines(lexem, &currentInput.read, macroStackIndex == 0);
+        skipExtraLexemInformationWithCountLines(lexem, &currentInput.read, !insideMacro());
         actionOnBlockMarker();
         goto nextYylex;
     }
@@ -2226,12 +2229,12 @@ LexemCode yylex(void) {
         Position position;
         yytext = tokenNamesTable[lexem];
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
-                                    macroStackIndex == 0);
+                                    !insideMacro());
         setYylvalsForPosition(position, tokenNameLengthsTable[lexem]);
         goto finish;
     }
     if (lexem == LINE_TOKEN) {
-        skipExtraLexemInformationWithCountLines(lexem, &currentInput.read, macroStackIndex == 0);
+        skipExtraLexemInformationWithCountLines(lexem, &currentInput.read, !insideMacro());
         goto nextYylex;
     }
     if (lexem == CONSTANT || lexem == LONG_CONSTANT) {
@@ -2239,7 +2242,7 @@ LexemCode yylex(void) {
         int length;
         Position position;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, &value, &position, &length,
-                                    macroStackIndex == 0);
+                                    !insideMacro());
         sprintf(constant,"%d",value);
         setYylvalsForInteger(value, position, length);
         yytext = constant;
@@ -2250,7 +2253,7 @@ LexemCode yylex(void) {
         Position position;
         yytext = "'fltp constant'";
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, &length,
-                                    macroStackIndex == 0);
+                                    !insideMacro());
         setYylvalsForPosition(position, length);
         goto finish;
     }
@@ -2258,7 +2261,7 @@ LexemCode yylex(void) {
         Position position;
         yytext = currentInput.read;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
-                                    macroStackIndex == 0);
+                                    !insideMacro());
         setYylvalsForPosition(position, strlen(yytext));
         goto finish;
     }
@@ -2267,7 +2270,7 @@ LexemCode yylex(void) {
         int length;
         Position position;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, &value, &position, &length,
-                                    macroStackIndex == 0);
+                                    !insideMacro());
         sprintf(constant,"'%c'",value);
         setYylvalsForInteger(value, position, length);
         yytext = constant;
@@ -2278,7 +2281,7 @@ LexemCode yylex(void) {
         Position position;
         yytext = currentInput.read;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
-                                    macroStackIndex == 0);
+                                    !insideMacro());
         if (lexem == IDENT_TO_COMPLETE) {
             testCxrefCompletionId(&lexem, yytext, position);
             while (includeStack.pointer != 0)
