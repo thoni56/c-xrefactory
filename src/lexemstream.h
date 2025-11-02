@@ -8,7 +8,6 @@ typedef enum lexemStreamType {
     NORMAL_STREAM,
     MACRO_STREAM,
     MACRO_ARGUMENT_STREAM,
-    INPUT_CACHE,                /* TODO: Remove this value, not used */
 } LexemStreamType;
 
 typedef struct {
