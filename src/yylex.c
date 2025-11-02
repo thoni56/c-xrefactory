@@ -1448,16 +1448,13 @@ static char *resolveRegularOperand(char **nextLexemP) {
 }
 
 static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWriteP,
-                                char *nextLexemP, char *endOfInputLexems) {
-    LexemStream inputStream = makeLexemStream(nextLexemP, nextLexemP, endOfInputLexems, NULL, NORMAL_STREAM);
-    LexemStream outputStream = makeLexemStream(buffer, *bufferWriteP, *bufferWriteP, NULL, NORMAL_STREAM);
-
-    while (lexemStreamHasMore(&inputStream)) {
-        copyNextLexemFromStreamToStream(&inputStream, &outputStream);
-        *bufferSize = expandPreprocessorBufferIfOverflow(buffer, *bufferSize, outputStream.write);
+                                LexemStream *inputStream, LexemStream *outputStream) {
+    while (lexemStreamHasMore(inputStream)) {
+        copyNextLexemFromStreamToStream(inputStream, outputStream);
+        *bufferSize = expandPreprocessorBufferIfOverflow(buffer, *bufferSize, outputStream->write);
     }
 
-    *bufferWriteP = outputStream.write;
+    *bufferWriteP = outputStream->write;
 }
 
 static char *resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, char **bufferWriteP,
@@ -1505,7 +1502,10 @@ static LexemStream createMacroBodyAsNewInput(MacroBody *macroBody, LexemStream *
 static void expandMacroInCollation(char *buffer, int *bufferSizeP, char **bufferWriteP, Symbol *macroSymbol, LexemStream *actualArgumentsInput) {
     MacroBody *macroBody = getMacroBody(macroSymbol);
     LexemStream macroExpansion = createMacroBodyAsNewInput(macroBody, actualArgumentsInput);
-    copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, macroExpansion.begin, macroExpansion.write);
+
+    LexemStream inputStream = makeLexemStream(macroExpansion.begin, macroExpansion.begin, macroExpansion.write, NULL, NORMAL_STREAM);
+    LexemStream outputStream = makeLexemStream(buffer, *bufferWriteP, *bufferWriteP, NULL, NORMAL_STREAM);
+    copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, &inputStream, &outputStream);
 }
 
 /* **************************************************************** */
@@ -1714,7 +1714,9 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
     *writeBufferSizeP = expandPreprocessorBufferIfOverflow(writeBuffer, *writeBufferSizeP, *writeBufferWriteP);
 
     /* rhsLexem have moved over all tokens used in the collation and now points to any trailing ones */
-    copyRemainingLexems(writeBuffer, writeBufferSizeP, writeBufferWriteP, rhs, endOfLexems);
+    LexemStream inputStream = makeLexemStream(rhs, rhs, endOfLexems, NULL, NORMAL_STREAM);
+    LexemStream outputStream = makeLexemStream(writeBuffer, *writeBufferWriteP, *writeBufferWriteP, NULL, NORMAL_STREAM);
+    copyRemainingLexems(writeBuffer, writeBufferSizeP, writeBufferWriteP, &inputStream, &outputStream);
 
     ppmFreeUntil(ppmMarker); // Free any allocations done
     LEAVE();
