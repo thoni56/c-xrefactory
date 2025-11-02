@@ -1447,14 +1447,12 @@ static char *resolveRegularOperand(char **nextLexemP) {
     return p;
 }
 
-static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWriteP,
-                                LexemStream *inputStream, LexemStream *outputStream) {
+static void copyRemainingLexems(char *buffer, int *bufferSize, LexemStream *inputStream,
+                                LexemStream *outputStream) {
     while (lexemStreamHasMore(inputStream)) {
         copyNextLexemFromStreamToStream(inputStream, outputStream);
         *bufferSize = expandPreprocessorBufferIfOverflow(buffer, *bufferSize, outputStream->write);
     }
-
-    *bufferWriteP = outputStream->write;
 }
 
 static char *resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, char **bufferWriteP,
@@ -1500,7 +1498,8 @@ static void expandMacroInCollation(char *buffer, int *bufferSizeP, char **buffer
 
     LexemStream inputStream = makeLexemStream(macroExpansion.begin, macroExpansion.begin, macroExpansion.write, NULL, NORMAL_STREAM);
     LexemStream outputStream = makeLexemStream(buffer, *bufferWriteP, *bufferWriteP, NULL, NORMAL_STREAM);
-    copyRemainingLexems(buffer, bufferSizeP, bufferWriteP, &inputStream, &outputStream);
+    copyRemainingLexems(buffer, bufferSizeP, &inputStream, &outputStream);
+    *bufferWriteP = outputStream.write;
 }
 
 /* **************************************************************** */
@@ -1711,7 +1710,8 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
     /* rhsLexem have moved over all tokens used in the collation and now points to any trailing ones */
     LexemStream inputStream = makeLexemStream(rhs, rhs, endOfLexems, NULL, NORMAL_STREAM);
     LexemStream outputStream = makeLexemStream(writeBuffer, *writeBufferWriteP, *writeBufferWriteP, NULL, NORMAL_STREAM);
-    copyRemainingLexems(writeBuffer, writeBufferSizeP, writeBufferWriteP, &inputStream, &outputStream);
+    copyRemainingLexems(writeBuffer, writeBufferSizeP, &inputStream, &outputStream);
+    *writeBufferWriteP = outputStream.write;
 
     ppmFreeUntil(ppmMarker); // Free any allocations done
     LEAVE();
