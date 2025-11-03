@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2025-10-31">
+<meta name="author" content="v{VERSION} - Generated 2025-11-03">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-10-31</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-11-03</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -536,7 +536,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_proposed_refactorings">15. Proposed Refactorings</a>
 <ul class="sectlevel2">
-<li><a href="#_lexinput_api_improvements">15.1. LexInput API Improvements</a></li>
+<li><a href="#_lexemstream_api_improvements">15.1. LexemStream API Improvements</a></li>
 <li><a href="#unified-symbol-database">15.2. Unified Symbol Database Architecture</a></li>
 </ul>
 </li>
@@ -2892,11 +2892,11 @@ class CharacterBuffer {
   char[] : chars
 }
 
-class LexInput {
+class LexemStream {
   char* : macroName
   InputType : inputType
 }
-LexInput --&gt; LexemBuffer : beginningOfBuffer, endOfBuffer, currentLexemP (into .lexemStream)</pre>
+LexemStream --&gt; LexemBuffer : beginningOfBuffer, endOfBuffer, currentLexemP (into .lexemStream)</pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -2906,7 +2906,7 @@ LexInput --&gt; LexemBuffer : beginningOfBuffer, endOfBuffer, currentLexemP (int
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-It would be nice if the <code>LexInput</code> structure could point to a
+It would be nice if the <code>LexemStream</code> structure could point to a
 <code>LexemBuffer</code> instead of holding separate pointers which are
 impossible to know what they actually point to&#8230;&#8203;
 </td>
@@ -3622,7 +3622,7 @@ Position position
 <p>This chapter documents larger refactoring proposals that would significantly improve code quality but require careful planning and implementation.</p>
 </div>
 <div class="sect2">
-<h3 id="_lexinput_api_improvements">15.1. LexInput API Improvements</h3>
+<h3 id="_lexemstream_api_improvements">15.1. LexemStream API Improvements</h3>
 <div class="sect3">
 <h4 id="_problem_statement">15.1.1. Problem Statement</h4>
 <div class="paragraph">
@@ -3632,7 +3632,7 @@ Position position
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">static char *collate(char *buffer, int *bufferSizeP, char **bufferWriteP,
                      char **leftHandLexemP, char **rightHandLexemP,
-                     LexInput *actualArgumentsInput);
+                     LexemStream *actualArgumentsInput);
 
 static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWriteP,
                                 char *nextLexemP, char *endOfInputLexems);</code></pre>
@@ -3686,7 +3686,7 @@ static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWrit
 </ul>
 </div>
 </dd>
-<dt class="hdlist1"><strong>LexInput</strong> (lightweight, pointer-based)</dt>
+<dt class="hdlist1"><strong>LexemStream</strong> (lightweight, pointer-based)</dt>
 <dd>
 <div class="ulist">
 <ul>
@@ -3722,9 +3722,9 @@ static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWrit
 </div>
 </div>
 <div class="sect4">
-<h5 id="_lexinput_buffer_sources">LexInput buffer sources</h5>
+<h5 id="_lexemstream_buffer_sources">LexemStream buffer sources</h5>
 <div class="paragraph">
-<p>LexInput can point to 5 different memory sources:</p>
+<p>LexemStream can point to 5 different memory sources:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -3750,13 +3750,13 @@ static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWrit
 <div class="sect3">
 <h4 id="_proposed_solution">15.1.3. Proposed Solution</h4>
 <div class="sect4">
-<h5 id="_add_lexinput_manipulation_api">Add LexInput manipulation API</h5>
+<h5 id="_add_lexemstream_manipulation_api">Add LexemStream manipulation API</h5>
 <div class="paragraph">
-<p>Currently, LexInput has <strong>zero manipulation functions</strong>. All operations are done via raw pointer manipulation. We need to add an API similar to LexemBuffer.</p>
+<p>Currently, LexemStream has <strong>zero manipulation functions</strong>. All operations are done via raw pointer manipulation. We need to add an API similar to LexemBuffer.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_phase_1_extend_lexinput_structure">Phase 1: Extend LexInput structure</h5>
+<h5 id="_phase_1_extend_lexemstream_structure">Phase 1: Extend LexemStream structure</h5>
 <div class="paragraph">
 <p>Add optional buffer management fields:</p>
 </div>
@@ -3770,8 +3770,8 @@ static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWrit
     InputType inputType;
     // NEW fields:
     int allocatedSize;  // Total allocated size (0 if not owned/unknown)
-    bool ownsBuffer;    // Whether this LexInput should manage/free the buffer
-} LexInput;</code></pre>
+    bool ownsBuffer;    // Whether this LexemStream should manage/free the buffer
+} LexemStream;</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -3781,7 +3781,7 @@ static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWrit
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Alternative considered but rejected: Create separate <code>WritableLexInput</code> type. Pro: Cleaner separation of read vs write. Con: Yet another type, conversion overhead, more complex API.
+Alternative considered but rejected: Create separate <code>WritableLexemStream</code> type. Pro: Cleaner separation of read vs write. Con: Yet another type, conversion overhead, more complex API.
 </td>
 </tr>
 </table>
@@ -3797,34 +3797,34 @@ Alternative considered but rejected: Create separate <code>WritableLexInput</cod
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Creation
-LexInput lexInputCreateOwned(int initialSize);     // Allocates managed buffer
-LexInput lexInputCreateView(char *begin, char *end); // Read-only view
+LexemStream lexInputCreateOwned(int initialSize);     // Allocates managed buffer
+LexemStream lexInputCreateView(char *begin, char *end); // Read-only view
 
 // Capacity management
-void lexInputEnsureCapacity(LexInput *input, int additionalBytes);
-void lexInputReallocIfNeeded(LexInput *input, int needed);
-int lexInputRemainingCapacity(LexInput *input);
+void lexInputEnsureCapacity(LexemStream *input, int additionalBytes);
+void lexInputReallocIfNeeded(LexemStream *input, int needed);
+int lexInputRemainingCapacity(LexemStream *input);
 
 // Reading (advance read pointer)
-LexemCode lexInputGetLexem(LexInput *input);
-LexemCode lexInputPeekLexem(LexInput *input);  // Don't advance
-bool lexInputHasMore(LexInput *input);          // read &lt; write
-void lexInputSkipLexem(LexInput *input);        // Skip current lexem
+LexemCode lexInputGetLexem(LexemStream *input);
+LexemCode lexInputPeekLexem(LexemStream *input);  // Don't advance
+bool lexInputHasMore(LexemStream *input);          // read &lt; write
+void lexInputSkipLexem(LexemStream *input);        // Skip current lexem
 
 // Writing (advance write pointer)
-void lexInputPutLexemCode(LexInput *output, LexemCode lexem);
-void lexInputPutLexemPosition(LexInput *output, Position pos);
-void lexInputAppendBytes(LexInput *dest, char *src, int len);
-void lexInputCopyLexem(LexInput *dest, LexInput *src); // Copy one lexem from src to dest
+void lexInputPutLexemCode(LexemStream *output, LexemCode lexem);
+void lexInputPutLexemPosition(LexemStream *output, Position pos);
+void lexInputAppendBytes(LexemStream *dest, char *src, int len);
+void lexInputCopyLexem(LexemStream *dest, LexemStream *src); // Copy one lexem from src to dest
 
 // Cleanup
-void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pre>
+void lexInputFree(LexemStream *input);  // Only frees if ownsBuffer=true</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_phase_3_refactor_functions_to_use_lexinput_api">Phase 3: Refactor functions to use LexInput API</h5>
+<h5 id="_phase_3_refactor_functions_to_use_lexemstream_api">Phase 3: Refactor functions to use LexemStream API</h5>
 <div class="sect5">
 <h6 id="_example_collate_before">Example: collate() before</h6>
 <div class="listingblock">
@@ -3834,7 +3834,7 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
                      char **bufferWriteP,       // Current write position
                      char **leftHandLexemP,     // Left operand read position
                      char **rightHandLexemP,    // Right operand read position
-                     LexInput *actualArgumentsInput)  // Source arguments
+                     LexemStream *actualArgumentsInput)  // Source arguments
 {
     // Manual buffer management scattered throughout:
     *bufferSizeP = expandPreprocessorBufferIfOverflow(buffer, *bufferSizeP, *bufferWriteP);
@@ -3856,10 +3856,10 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 <h6 id="_example_collate_after">Example: collate() after</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">static void collate(LexInput *output,           // Destination (manages its own buffer)
-                    LexInput *leftOperand,      // Left operand (with read position)
-                    LexInput *rightOperand,     // Right operand (with read position)
-                    LexInput *actualArgumentsInput)
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">static void collate(LexemStream *output,           // Destination (manages its own buffer)
+                    LexemStream *leftOperand,      // Left operand (with read position)
+                    LexemStream *rightOperand,     // Right operand (with read position)
+                    LexemStream *actualArgumentsInput)
 {
     // Clean, high-level operations:
     lexInputEnsureCapacity(output, estimatedSize);
@@ -3868,7 +3868,7 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
     lexInputCopyLexem(output, leftOperand);
     lexInputCopyLexem(output, rightOperand);
 
-    // State is encapsulated in LexInput structures
+    // State is encapsulated in LexemStream structures
 }</code></pre>
 </div>
 </div>
@@ -3913,7 +3913,7 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 <p>Clear ownership and boundaries</p>
 </li>
 <li>
-<p>Self-documenting code (LexInput instead of 3 raw pointers)</p>
+<p>Self-documenting code (LexemStream instead of 3 raw pointers)</p>
 </li>
 </ul>
 </div>
@@ -3952,7 +3952,7 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 <h4 id="_implementation_strategy">15.1.5. Implementation Strategy</h4>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Step 1: Add new fields to LexInput (backward compatible)</dt>
+<dt class="hdlist1">Step 1: Add new fields to LexemStream (backward compatible)</dt>
 <dd>
 <div class="ulist">
 <ul>
@@ -4030,7 +4030,7 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 <div class="ulist">
 <ul>
 <li>
-<p>Make LexInput changes backward compatible</p>
+<p>Make LexemStream changes backward compatible</p>
 </li>
 <li>
 <p>Add new fields with safe defaults</p>
@@ -4088,7 +4088,7 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 <div class="sect4">
 <h5 id="_why_not_unify_with_lexembuffer">Why not unify with LexemBuffer?</h5>
 <div class="paragraph">
-<p>LexemBuffer and LexInput serve different purposes:</p>
+<p>LexemBuffer and LexemStream serve different purposes:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -4096,12 +4096,12 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 <p><strong>LexemBuffer</strong>: Heavy, file-oriented, owns fixed-size array, lots of metadata</p>
 </li>
 <li>
-<p><strong>LexInput</strong>: Lightweight, flexible views, points to various sources</p>
+<p><strong>LexemStream</strong>: Lightweight, flexible views, points to various sources</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Trying to unify them would make both worse. The real issue is LexInput lacks manipulation functions, not that two types exist.</p>
+<p>Trying to unify them would make both worse. The real issue is LexemStream lacks manipulation functions, not that two types exist.</p>
 </div>
 </div>
 <div class="sect4">
@@ -4115,7 +4115,7 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 <p>New fields default to "not owned, size unknown" (0, false)</p>
 </li>
 <li>
-<p>Existing code that creates LexInput with <code>makeLexInput()</code> continues to work</p>
+<p>Existing code that creates LexemStream with <code>makeLexemStream()</code> continues to work</p>
 </li>
 <li>
 <p>Only new code uses the enhanced API</p>
@@ -4139,14 +4139,14 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 </div>
 </li>
 <li>
-<p>How to handle the transition from raw pointers to LexInput?</p>
+<p>How to handle the transition from raw pointers to LexemStream?</p>
 <div class="ulist">
 <ul>
 <li>
 <p>Some functions receive raw pointers from outside (e.g., from MacroBody.body)</p>
 </li>
 <li>
-<p>May need wrapper functions to create temporary LexInput views</p>
+<p>May need wrapper functions to create temporary LexemStream views</p>
 </li>
 </ul>
 </div>
@@ -4178,7 +4178,7 @@ void lexInputFree(LexInput *input);  // Only frees if ownsBuffer=true</code></pr
 <p>LexemBuffer API: <code>src/lexembuffer.h</code> and <code>src/lexembuffer.c</code></p>
 </li>
 <li>
-<p>Current LexInput: <code>src/input.h</code> and <code>src/input.c</code></p>
+<p>Current LexemStream: <code>src/input.h</code> and <code>src/input.c</code></p>
 </li>
 </ul>
 </div>
@@ -5301,7 +5301,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-31 13:07:25 UTC
+Last updated 2025-11-03 08:34:24 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
