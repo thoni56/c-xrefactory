@@ -1498,14 +1498,14 @@ static MacroBody *getMacroBody(Symbol *macroSymbol) {
 
 static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream *actualArgumentsInput);
 
-static void expandMacroInCollation(char *buffer, int *bufferSizeP, char **bufferWriteP, Symbol *macroSymbol, LexemStream *actualArgumentsInput) {
+static void expandMacroInCollation(char *buffer, int *bufferSizeP, LexemStream *outputStream,
+                                   Symbol *macroSymbol, LexemStream *actualArgumentsInput) {
     MacroBody *macroBody = getMacroBody(macroSymbol);
     LexemStream macroExpansion = createMacroBodyAsNewStream(macroBody, actualArgumentsInput);
 
-    LexemStream inputStream = makeLexemStream(macroExpansion.begin, macroExpansion.begin, macroExpansion.write, NULL, NORMAL_STREAM);
-    LexemStream outputStream = makeLexemStream(buffer, *bufferWriteP, *bufferWriteP, NULL, NORMAL_STREAM);
-    copyRemainingLexems(buffer, bufferSizeP, &inputStream, &outputStream);
-    *bufferWriteP = outputStream.write;
+    LexemStream inputStream = makeLexemStream(macroExpansion.begin, macroExpansion.begin, macroExpansion.write,
+                                              NULL, NORMAL_STREAM);
+    copyRemainingLexems(buffer, bufferSizeP, &inputStream, outputStream);
 }
 
 /* **************************************************************** */
@@ -1751,7 +1751,10 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
         if (macroSymbol != NULL) {
             log_trace("Macro found: '%s' (left-hand) -> expanding it", lexemString);
             *writeBufferWriteP = lhs; /* We should write where current LHS, the macro, starts */
-            expandMacroInCollation(writeBuffer, writeBufferSizeP, writeBufferWriteP, macroSymbol, actualArgumentsInput);
+            LexemStream outputStream = makeLexemStream(writeBuffer, *writeBufferWriteP, *writeBufferWriteP,
+                                                       NULL, NORMAL_STREAM);
+            expandMacroInCollation(writeBuffer, writeBufferSizeP, &outputStream, macroSymbol, actualArgumentsInput);
+            *writeBufferWriteP = outputStream.write;
         } else {
             log_trace("Identifier '%s' (left-hand) is NOT a macro", lexemString);
         }
@@ -1761,10 +1764,13 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
     if (isIdentifierLexem(peekLexemCodeAt(rhs))) {
         char *lexemString = rhs + LEXEMCODE_SIZE;
         Symbol *macroSymbol = findMacroSymbol(lexemString);
-        if (findMacroSymbol(lexemString) != NULL) {
+        if (macroSymbol != NULL) {
             log_trace("Macro found: '%s' (right-hand) -> expanding it", lexemString);
             rhs = *writeBufferWriteP; /* RHS now starts where we will write now */
-            expandMacroInCollation(writeBuffer, writeBufferSizeP, writeBufferWriteP, macroSymbol, actualArgumentsInput);
+            LexemStream outputStream = makeLexemStream(writeBuffer, *writeBufferWriteP, *writeBufferWriteP,
+                                                       NULL, NORMAL_STREAM);
+            expandMacroInCollation(writeBuffer, writeBufferSizeP, &outputStream, macroSymbol, actualArgumentsInput);
+            *writeBufferWriteP = outputStream.write;
             endOfLexems = *writeBufferWriteP; /* End is now where we have just finished writing */
         } else {
             log_trace("Identifier '%s' (right-hand) is NOT a macro", lexemString);
