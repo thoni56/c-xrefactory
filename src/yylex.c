@@ -334,12 +334,7 @@ static bool insideMacro(void) {
     return macroStackIndex > 0;
 }
 
-/* Returns next lexem from currentInput and saves a pointer to the previous lexem */
-static LexemCode getLexemAndSavePointerToPrevious(char **previousLexemP) {
-    LexemCode lexem;
-
-    /* TODO This is weird, shouldn't this test for next @ end? Seems
-     * backwards... */
+static LexemCode refillInputIfEmpty(char **previousLexemP) {
     while (currentInput.read >= currentInput.write) {
         LexemStreamType inputType = currentInput.streamType;
         if (insideMacro()) {
@@ -358,6 +353,17 @@ static LexemCode getLexemAndSavePointerToPrevious(char **previousLexemP) {
         if (previousLexemP != NULL)
             *previousLexemP = currentInput.read;
     }
+    return 0; /* Success */
+}
+
+/* Returns next lexem from currentInput and saves a pointer to the previous lexem */
+static LexemCode getLexemAndSavePointerToPrevious(char **previousLexemP) {
+    LexemCode lexem;
+
+    lexem = refillInputIfEmpty(previousLexemP);
+    if (lexem != 0)             /* END_OF_MACRO_ARGUMENT_EXCEPTION or END_OF_FILE_EXCEPTION */
+        return lexem;
+
     if (previousLexemP != NULL)
         *previousLexemP = currentInput.read;
     lexem = getLexemCodeAndAdvance(&currentInput.read);
@@ -1746,11 +1752,11 @@ static void macroArgumentsToString(char *writeBuffer, LexemStream *lexInput) {
     }
 }
 
-static char *replaceMacroArguments(LexemStream *actualArgumentsInput, char *readBuffer, char **_writePointerP) {
+static LexemStream replaceMacroArguments(LexemStream *actualArgumentsInput, char *readBuffer, char *readEnd) {
     int bufferSize = MACRO_BODY_BUFFER_SIZE;
     char *writeBuffer = mbmAlloc(bufferSize + MAX_LEXEM_SIZE);
 
-    LexemStream inputStream = makeLexemStream(readBuffer, readBuffer, *_writePointerP, NULL, NORMAL_STREAM);
+    LexemStream inputStream = makeLexemStream(readBuffer, readBuffer, readEnd, NULL, NORMAL_STREAM);
     LexemStream outputStream = makeLexemStream(writeBuffer, writeBuffer, writeBuffer, NULL, NORMAL_STREAM);
 
     while (lexemStreamHasMore(&inputStream)) {
@@ -1799,9 +1805,8 @@ static char *replaceMacroArguments(LexemStream *actualArgumentsInput, char *read
         expandMacroBodyBufferIfOverflow(outputStream.write, 0, writeBuffer, &bufferSize);
     }
     mbmRealloc(writeBuffer, bufferSize + MAX_LEXEM_SIZE, outputStream.write - writeBuffer);
-    *_writePointerP = outputStream.write;
 
-    return writeBuffer;
+    return makeLexemStream(writeBuffer, writeBuffer, outputStream.write, NULL, NORMAL_STREAM);
 }
 
 /* ************************************************************** */
@@ -1847,9 +1852,9 @@ static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream 
     }
 
     /* replace arguments into a different buffer to be used as the input */
-    char *buf2 = replaceMacroArguments(actualArgumentsInput, buffer, &bufferWrite);
+    LexemStream result = replaceMacroArguments(actualArgumentsInput, buffer, bufferWrite);
 
-    return makeLexemStream(buf2, buf2, bufferWrite, macroBody->name, MACRO_STREAM);
+    return makeLexemStream(result.begin, result.begin, result.write, macroBody->name, MACRO_STREAM);
 }
 
 /* *************************************************************** */
