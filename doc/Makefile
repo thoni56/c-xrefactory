@@ -5,7 +5,7 @@ all:
 
 start:
 	docker pull structurizr/lite
-	docker run --rm -p 8080:8080 -v $(PWD):/usr/local/structurizr structurizr/lite
+	docker run --rm -d -p 8080:8080 -v $(PWD):/usr/local/structurizr structurizr/lite
 
 ci html: dist/index.html dist/manual.html dist/guidebook.html dist/c-xrefactory.html
 
