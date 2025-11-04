@@ -529,3 +529,218 @@ IMPORTANT: This dependency tracking infrastructure is **already production-ready
 * File tracking: `src/filetable.h`, `src/filetable.c`
 * Dependency tracking: `src/xref.c` lines 81-108
 * Current database description: See chapter 08 (Code) - Reference Database section
+
+[[macro-expansion-module]]
+=== Extract Macro Expansion Module
+
+==== Problem Statement
+
+The `yylex.c` file is **2353 lines** and combines multiple responsibilities:
+
+* Lexical analysis and token reading
+* File and buffer management
+* Preprocessor directive processing
+* **Macro expansion system** (~800 lines)
+
+The macro expansion code is a substantial, cohesive subsystem that would benefit from extraction into its own module. Currently, it's deeply embedded in yylex.c, making both lexing and macro expansion harder to understand and test in isolation.
+
+==== Current Architecture
+
+The macro expansion system in `yylex.c` comprises:
+
+===== Core Responsibilities (~800 lines)
+
+* **Macro call expansion** - Main orchestration (`expandMacroCall()`)
+* **Argument processing** - Collection and recursive expansion
+* **Token collation** - `##` operator implementation
+* **Stringification** - `#` operator implementation
+* **Memory management** - Separate arenas for macro bodies (MBM) and arguments (PPM)
+* **Cyclic detection** - Preventing infinite macro recursion
+
+===== Key State
+
+[source,c]
+----
+int macroStackIndex;  // Current macro expansion depth
+static LexemStream macroInputStack[MACRO_INPUT_STACK_SIZE];
+static Memory macroBodyMemory;      // Long-lived: macro definitions
+static Memory macroArgumentsMemory; // Short-lived: expansion temporaries
+----
+
+===== Memory Lifetime Separation
+
+The system uses **two distinct memory arenas** with different lifetimes:
+
+* **MBM (Macro Body Memory)**: Persistent storage for macro definitions throughout compilation
+* **PPM (PreProcessor Memory)**: Temporary storage for expansion, collation, and argument processing
+
+This separation is fundamental and should be preserved in any refactoring.
+
+==== Proposed Solution
+
+Extract macro expansion into a new module: `macroexpansion.c/h`
+
+===== Public Interface
+
+The new module would expose a minimal, focused API:
+
+[source,c]
+----
+// Initialization
+void initMacroExpansion(void);
+int getMacroBodyMemoryIndex(void);
+void setMacroBodyMemoryIndex(int index);
+
+// Core expansion
+bool expandMacroCall(Symbol *macroSymbol, Position position);
+bool insideMacro(void);
+int getMacroStackDepth(void);
+
+// Memory allocation (exposed for macro definition processing)
+void *macroBodyAlloc(size_t size);
+void *macroBodyRealloc(void *ptr, size_t oldSize, size_t newSize);
+void *macroArgumentAlloc(size_t size);
+----
+
+===== Module Boundaries
+
+*What moves to macroexpansion.c:*
+
+* Macro call expansion and argument processing
+* Token collation (`collate()` and helpers)
+* Stringification (`macroArgumentsToString()`)
+* Cyclic call detection
+* MBM/PPM memory management
+* Buffer expansion utilities (`expandPreprocessorBufferIfOverflow()`, etc.)
+
+*What remains in yylex.c:*
+
+* Lexing and file input
+* Preprocessor directive processing (`#define`, `#ifdef`, etc.)
+* Include file handling
+* Main `yylex()` function
+* Macro symbol table operations
+
+*Dependencies:*
+
+The macro module would depend on:
+
+* Lexem stream operations (reading/writing)
+* Symbol lookup (`findMacroSymbol()`)
+* Cross-referencing (for collation and expansion references)
+* Current input state (via accessor functions)
+
+==== Benefits
+
+===== Architectural
+
+* **Separation of concerns**: Lexing vs. preprocessing clearly separated
+* **Reduced file size**: yylex.c drops from 2353 → ~1550 lines (34% reduction)
+* **Testability**: Macro expansion can be unit tested independently
+* **Clearer ownership**: Macro state and memory management centralized
+
+===== Maintainability
+
+* **Focused modules**: Each file has a single, clear purpose
+* **Easier reasoning**: Macro behavior isolated from lexer concerns
+* **Better documentation**: Module-level documentation for macro system
+
+===== Future flexibility
+
+* Could support different macro systems (C vs. C++)
+* Easier to add macro debugging/tracing
+* Independent optimization of macro expansion
+
+==== Implementation Strategy
+
+===== Phase 1: Preparation (Already Complete)
+
+✓ Create `LexemBufferDescriptor` type for buffer management +
+✓ Refactor buffer expansion functions to use descriptor +
+✓ Eliminate return values for size updates
+
+===== Phase 2: Create Module Structure
+
+* Create `macroexpansion.h` with public interface
+* Create `macroexpansion.c` with initial implementations
+* Move `LexemBufferDescriptor` to appropriate header
+* Create accessor functions for `currentInput` state
+
+===== Phase 3: Incremental Function Migration
+
+Move functions in this order (lowest risk first):
+
+1. **Memory management** - MBM/PPM allocation functions
+2. **Buffer expansion** - `expandPreprocessorBufferIfOverflow()`, `expandMacroBodyBufferIfOverflow()`
+3. **Support utilities** - `cyclicCall()`, `prependMacroInput()`
+4. **Token processing** - `collate()`, `resolveMacroArgument()`, etc.
+5. **Core expansion** - `expandMacroCall()`, `createMacroBodyAsNewStream()`, etc.
+
+===== Phase 4: Integration and Cleanup
+
+* Update yylex.c to use new interface
+* Run full test suite after each migration step
+* Add focused unit tests for macro expansion
+* Update build system
+* Document the new architecture
+
+==== Risks and Mitigation
+
+===== Risk: Complex dependencies
+
+*Mitigation:*
+
+* Create clear accessor functions for shared state
+* Use incremental approach - one function group at a time
+* Validate with tests after each step
+
+===== Risk: Performance overhead
+
+*Mitigation:*
+
+* Keep critical functions inline where necessary
+* Profile before/after migration
+* Current code already has abstraction layers
+
+*Assessment:* Low risk - macro operations are complex enough that function call overhead is negligible
+
+===== Risk: Breaking existing tests
+
+*Mitigation:*
+
+* Run test suite after every migration step
+* Keep interface behavior identical
+* Use compiler to catch interface mismatches
+
+==== Success Metrics
+
+* All existing tests pass
+* yylex.c reduced to ~1550 lines
+* New focused tests for macro expansion added
+* No performance regression (< 5% overhead acceptable)
+* Code review confirms improved clarity
+
+==== Open Questions
+
+. Should `findMacroSymbol()` move to the macro module or stay in yylex.c?
+** It's used by both lexer (for expansion triggering) and macro module (for nested expansions)
+** Probably belongs in a shared location or as part of symbol table operations
+
+. How to handle `currentInput` global state?
+** Options: Pass explicitly, use accessor functions, or provide context structure
+** Accessor functions likely cleanest: `getCurrentInput()`, `setCurrentInput()`
+
+. Should we extract preprocessor directives at the same time?
+** No - keep changes focused
+** Could be a future refactoring after macro extraction proves successful
+
+==== References
+
+* Current code: `src/yylex.c` lines 1327-2089 (macro expansion system)
+* Memory management: `src/memory.h`, `src/memory.c`
+* Symbol operations: `src/symbol.h`
+* Related refactoring: <<LexemStream API Improvements>> addresses buffer management patterns
+
+---
+
+NOTE: This refactoring is independent of the LexemStream API improvements but would benefit from them being completed first, as they simplify buffer management patterns throughout the macro expansion code.
