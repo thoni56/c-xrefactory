@@ -2,4 +2,6 @@
 #define svg_text(format, ...) \
     svg(format, ## __VA_ARGS__);
 
-svg_text("firmware");
+void test(void) {
+    svg_text("firmware");
+}

@@ -1560,9 +1560,31 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
 
     /* Check for empty right operand after possible expansion */
     if (rightHandLexemP == NULL || *rightHandLexemP >= endOfLexems) {
-        log_trace("Token pasting with empty right operand - using left operand as-is");
+        /* GNU extension: delete comma if pasting with empty __VA_ARGS__ */
+        if (peekLexemCodeAt(*leftHandLexemP) == COMMA) {
+            log_trace("Token pasting: deleting comma before empty __VA_ARGS__");
+            /* Don't write the comma - rewind write pointer to before it */
+            *writeBufferWriteP = *leftHandLexemP;
+        } else {
+            log_trace("Token pasting with empty right operand - using left operand as-is");
+        }
         LEAVE();
-        return *rightHandLexemP; // or could be NULL
+        return continueReadingFrom;
+    }
+
+    /* Check if right operand points to END_OF marker */
+    LexemCode rhsLexemCode = peekLexemCodeAt(*rightHandLexemP);
+    if (rhsLexemCode == END_OF_FILE_EXCEPTION || rhsLexemCode == END_OF_MACRO_ARGUMENT_EXCEPTION) {
+        /* GNU extension: delete comma if pasting with empty __VA_ARGS__ */
+        if (peekLexemCodeAt(*leftHandLexemP) == COMMA) {
+            log_trace("Token pasting: deleting comma before empty __VA_ARGS__ (END_OF marker)");
+            /* Don't write the comma - rewind write pointer to before it */
+            *writeBufferWriteP = *leftHandLexemP;
+        } else {
+            log_trace("Token pasting: right operand is END_OF marker (empty __VA_ARGS__)");
+        }
+        LEAVE();
+        return continueReadingFrom;
     }
 
     /* Macro invocations next */
