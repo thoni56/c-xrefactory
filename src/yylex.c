@@ -117,6 +117,11 @@ void setMacroBodyMemoryIndex(int index) {
 }
 
 
+typedef struct {
+    char *buffer;
+    int size;
+} LexemBufferDescriptor;
+
 static bool isIdentifierLexem(LexemCode lexem) {
     return lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND  || lexem==IDENT_TO_COMPLETE;
 }
@@ -1324,20 +1329,19 @@ endOfFile:
 /* ******************************************************************** */
 
 // Will always keep the buffer an extra MAX_LEXEM_SIZE in size
-static int expandPreprocessorBufferIfOverflow(char *buffer, int size, char *pointer) {
-    if (pointer >= buffer+size) {
-        size += MACRO_BODY_BUFFER_SIZE;
-        buffer = ppmReallocc(buffer, size+MAX_LEXEM_SIZE, sizeof(char),
-                             size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE);
+static void expandPreprocessorBufferIfOverflow(LexemBufferDescriptor *desc, char *pointer) {
+    if (pointer >= desc->buffer + desc->size) {
+        desc->size += MACRO_BODY_BUFFER_SIZE;
+        ppmReallocc(desc->buffer, desc->size+MAX_LEXEM_SIZE, sizeof(char),
+                    desc->size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE);
     }
-    return size;
 }
 
-// Will always keep the buffer an extra MAX_LEXEM_SIZE in size?
-static void expandMacroBodyBufferIfOverflow(char *pointer, int len, char *buffer, int *size) {
-    while (pointer + len >= buffer + *size) {
-        *size += MACRO_BODY_BUFFER_SIZE;
-        mbmRealloc(buffer, *size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE, *size+MAX_LEXEM_SIZE);
+// Will always keep the buffer an extra MAX_LEXEM_SIZE in size
+static void expandMacroBodyBufferIfOverflow(LexemBufferDescriptor *desc, char *writePosition, int requiredSpace) {
+    while (writePosition + requiredSpace >= desc->buffer + desc->size) {
+        desc->size += MACRO_BODY_BUFFER_SIZE;
+        mbmRealloc(desc->buffer, desc->size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE, desc->size+MAX_LEXEM_SIZE);
     }
 }
 
@@ -1368,19 +1372,18 @@ static void prependMacroInput(LexemStream *argumentBuffer) {
 
 
 static void expandMacroArgument(LexemStream *argumentInput) {
-    char *buffer;
     char *currentBufferP;
-    int bufferSize;
+    LexemBufferDescriptor bufferDesc;
 
     ENTER();
 
-    bufferSize = MACRO_BODY_BUFFER_SIZE;
+    bufferDesc.size = MACRO_BODY_BUFFER_SIZE;
 
     prependMacroInput(argumentInput);
 
     currentInput.streamType = MACRO_ARGUMENT_STREAM;
-    buffer = ppmAllocc(bufferSize+MAX_LEXEM_SIZE, sizeof(char));
-    currentBufferP = buffer;
+    bufferDesc.buffer = ppmAllocc(bufferDesc.size+MAX_LEXEM_SIZE, sizeof(char));
+    currentBufferP = bufferDesc.buffer;
 
     for(;;) {
         char *previousLexem;
@@ -1416,12 +1419,12 @@ static void expandMacroArgument(LexemStream *argumentInput) {
             }
         }
         currentBufferP += length;
-        bufferSize = expandPreprocessorBufferIfOverflow(buffer, bufferSize, currentBufferP);
+        expandPreprocessorBufferIfOverflow(&bufferDesc, currentBufferP);
     }
 endOfMacroArgument:
     currentInput = macroInputStack[--macroStackIndex];
-    buffer = ppmReallocc(buffer, currentBufferP-buffer, sizeof(char), bufferSize+MAX_LEXEM_SIZE);
-    *argumentInput = makeLexemStream(buffer, buffer, currentBufferP, NULL, NORMAL_STREAM);
+    ppmReallocc(bufferDesc.buffer, currentBufferP-bufferDesc.buffer, sizeof(char), bufferDesc.size+MAX_LEXEM_SIZE);
+    *argumentInput = makeLexemStream(bufferDesc.buffer, bufferDesc.buffer, currentBufferP, NULL, NORMAL_STREAM);
     LEAVE();
     return;
 endOfFile:
@@ -1453,15 +1456,15 @@ static char *resolveRegularOperand(char **nextLexemP) {
     return p;
 }
 
-static void copyRemainingLexems(char *buffer, int *bufferSize, LexemStream *inputStream,
+static void copyRemainingLexems(LexemBufferDescriptor *bufferDesc, LexemStream *inputStream,
                                 LexemStream *outputStream) {
     while (lexemStreamHasMore(inputStream)) {
         copyNextLexemFromStreamToStream(inputStream, outputStream);
-        *bufferSize = expandPreprocessorBufferIfOverflow(buffer, *bufferSize, outputStream->write);
+        expandPreprocessorBufferIfOverflow(bufferDesc, outputStream->write);
     }
 }
 
-static char *resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, char **bufferWriteP,
+static char *resolveMacroArgumentAsLeftOperand(LexemBufferDescriptor *bufferDesc, char **bufferWriteP,
                                               char **nextLexemP, LexemStream *actualArgumentsInput) {
     *bufferWriteP = *nextLexemP;
 
@@ -1474,13 +1477,13 @@ static char *resolveMacroArgumentAsLeftOperand(char *buffer, int *bufferSize, ch
                                               actualArgumentsInput[argumentIndex].begin,
                                               actualArgumentsInput[argumentIndex].write,
                                               NULL, NORMAL_STREAM);
-    LexemStream outputStream = makeLexemStream(buffer, *bufferWriteP, *bufferWriteP, NULL, NORMAL_STREAM);
+    LexemStream outputStream = makeLexemStream(bufferDesc->buffer, *bufferWriteP, *bufferWriteP, NULL, NORMAL_STREAM);
 
     char *lastLexemP = NULL;
     while (lexemStreamHasMore(&inputStream)) {
         lastLexemP = outputStream.write;
         copyNextLexemFromStreamToStream(&inputStream, &outputStream);
-        *bufferSize = expandPreprocessorBufferIfOverflow(buffer, *bufferSize, outputStream.write);
+        expandPreprocessorBufferIfOverflow(bufferDesc, outputStream.write);
     }
     *bufferWriteP = outputStream.write;
     return lastLexemP;
@@ -1498,14 +1501,14 @@ static MacroBody *getMacroBody(Symbol *macroSymbol) {
 
 static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream *actualArgumentsInput);
 
-static void expandMacroInCollation(char *buffer, int *bufferSizeP, LexemStream *outputStream,
+static void expandMacroInCollation(LexemBufferDescriptor *bufferDesc, LexemStream *outputStream,
                                    Symbol *macroSymbol, LexemStream *actualArgumentsInput) {
     MacroBody *macroBody = getMacroBody(macroSymbol);
     LexemStream macroExpansion = createMacroBodyAsNewStream(macroBody, actualArgumentsInput);
 
     LexemStream inputStream = makeLexemStream(macroExpansion.begin, macroExpansion.begin, macroExpansion.write,
                                               NULL, NORMAL_STREAM);
-    copyRemainingLexems(buffer, bufferSizeP, &inputStream, outputStream);
+    copyRemainingLexems(bufferDesc, &inputStream, outputStream);
 }
 
 /* **************************************************************** */
@@ -1674,8 +1677,7 @@ static void collate_const_const(char **writeBufferWriteP, char *lhs, char **rhsP
 
 /* **************************************************************** */
 // Returns updated position to continue reading from
-static char *collate(char *writeBuffer,        // The allocated buffer for storing macro expansions
-                     int *writeBufferSizeP,     // Pointer to size of the buffer, which may need expanding
+static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descriptor for storing macro expansions
                      char **writeBufferWriteP, // Current position in write buffer (where we are writing)
                      char **leftHandLexemP, // Left-hand lexem already in the write buffer (token before ##)
                      char **rightHandLexemP, // Right-hand lexem to be processed (token after ##)
@@ -1686,7 +1688,7 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
 
     /* Macro argument resolution first for left ... */
     if (peekLexemCodeAt(*leftHandLexemP) == CPP_MACRO_ARGUMENT) {
-        *leftHandLexemP = resolveMacroArgumentAsLeftOperand(writeBuffer, writeBufferSizeP, writeBufferWriteP,
+        *leftHandLexemP = resolveMacroArgumentAsLeftOperand(writeBufferDesc, writeBufferWriteP,
                                                             leftHandLexemP, actualArgumentsInput);
         if (*leftHandLexemP == NULL) {
             log_warn("Token pasting skipped: Left operand is NULL after expansion.");
@@ -1751,9 +1753,9 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
         if (macroSymbol != NULL) {
             log_trace("Macro found: '%s' (left-hand) -> expanding it", lexemString);
             *writeBufferWriteP = lhs; /* We should write where current LHS, the macro, starts */
-            LexemStream outputStream = makeLexemStream(writeBuffer, *writeBufferWriteP, *writeBufferWriteP,
+            LexemStream outputStream = makeLexemStream(writeBufferDesc->buffer, *writeBufferWriteP, *writeBufferWriteP,
                                                        NULL, NORMAL_STREAM);
-            expandMacroInCollation(writeBuffer, writeBufferSizeP, &outputStream, macroSymbol, actualArgumentsInput);
+            expandMacroInCollation(writeBufferDesc, &outputStream, macroSymbol, actualArgumentsInput);
             *writeBufferWriteP = outputStream.write;
         } else {
             log_trace("Identifier '%s' (left-hand) is NOT a macro", lexemString);
@@ -1767,9 +1769,9 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
         if (macroSymbol != NULL) {
             log_trace("Macro found: '%s' (right-hand) -> expanding it", lexemString);
             rhs = *writeBufferWriteP; /* RHS now starts where we will write now */
-            LexemStream outputStream = makeLexemStream(writeBuffer, *writeBufferWriteP, *writeBufferWriteP,
+            LexemStream outputStream = makeLexemStream(writeBufferDesc->buffer, *writeBufferWriteP, *writeBufferWriteP,
                                                        NULL, NORMAL_STREAM);
-            expandMacroInCollation(writeBuffer, writeBufferSizeP, &outputStream, macroSymbol, actualArgumentsInput);
+            expandMacroInCollation(writeBufferDesc, &outputStream, macroSymbol, actualArgumentsInput);
             *writeBufferWriteP = outputStream.write;
             endOfLexems = *writeBufferWriteP; /* End is now where we have just finished writing */
         } else {
@@ -1811,12 +1813,12 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
                 break;
         }
     }
-    *writeBufferSizeP = expandPreprocessorBufferIfOverflow(writeBuffer, *writeBufferSizeP, *writeBufferWriteP);
+    expandPreprocessorBufferIfOverflow(writeBufferDesc, *writeBufferWriteP);
 
     /* rhsLexem have moved over all tokens used in the collation and now points to any trailing ones */
     LexemStream inputStream = makeLexemStream(rhs, rhs, endOfLexems, NULL, NORMAL_STREAM);
-    LexemStream outputStream = makeLexemStream(writeBuffer, *writeBufferWriteP, *writeBufferWriteP, NULL, NORMAL_STREAM);
-    copyRemainingLexems(writeBuffer, writeBufferSizeP, &inputStream, &outputStream);
+    LexemStream outputStream = makeLexemStream(writeBufferDesc->buffer, *writeBufferWriteP, *writeBufferWriteP, NULL, NORMAL_STREAM);
+    copyRemainingLexems(writeBufferDesc, &inputStream, &outputStream);
     *writeBufferWriteP = outputStream.write;
 
     ppmFreeUntil(ppmMarker); // Free any allocations done
@@ -1853,11 +1855,12 @@ static void macroArgumentsToString(char *writeBuffer, LexemStream *lexInput) {
 }
 
 static LexemStream replaceMacroArguments(LexemStream *actualArgumentsInput, char *readBuffer, char *readEnd) {
-    int bufferSize = MACRO_BODY_BUFFER_SIZE;
-    char *writeBuffer = mbmAlloc(bufferSize + MAX_LEXEM_SIZE);
+    LexemBufferDescriptor bufferDesc;
+    bufferDesc.size = MACRO_BODY_BUFFER_SIZE;
+    bufferDesc.buffer = mbmAlloc(bufferDesc.size + MAX_LEXEM_SIZE);
 
     LexemStream inputStream = makeLexemStream(readBuffer, readBuffer, readEnd, NULL, NORMAL_STREAM);
-    LexemStream outputStream = makeLexemStream(writeBuffer, writeBuffer, writeBuffer, NULL, NORMAL_STREAM);
+    LexemStream outputStream = makeLexemStream(bufferDesc.buffer, bufferDesc.buffer, bufferDesc.buffer, NULL, NORMAL_STREAM);
 
     while (lexemStreamHasMore(&inputStream)) {
         char *lexemStart = inputStream.read;
@@ -1869,7 +1872,7 @@ static LexemStream replaceMacroArguments(LexemStream *actualArgumentsInput, char
 
         if (lexem == CPP_MACRO_ARGUMENT) {
             int len = actualArgumentsInput[argumentIndex].write - actualArgumentsInput[argumentIndex].begin;
-            expandMacroBodyBufferIfOverflow(outputStream.write, len, writeBuffer, &bufferSize);
+            expandMacroBodyBufferIfOverflow(&bufferDesc, outputStream.write, len);
             memcpy(outputStream.write, actualArgumentsInput[argumentIndex].begin, len);
             outputStream.write += len;
         } else if (lexem == '#' && lexemStreamHasMore(&inputStream)
@@ -1879,7 +1882,7 @@ static LexemStream replaceMacroArguments(LexemStream *actualArgumentsInput, char
             getExtraLexemInformationFor(lexem, &inputStream.read, NULL, &argumentIndex, NULL, NULL, false);
 
             putLexemCodeAt(STRING_LITERAL, &outputStream.write);
-            expandMacroBodyBufferIfOverflow(outputStream.write, MACRO_BODY_BUFFER_SIZE, writeBuffer, &bufferSize);
+            expandMacroBodyBufferIfOverflow(&bufferDesc, outputStream.write, MACRO_BODY_BUFFER_SIZE);
 
             macroArgumentsToString(outputStream.write, &actualArgumentsInput[argumentIndex]);
             /* Skip over the string... */
@@ -1895,18 +1898,17 @@ static LexemStream replaceMacroArguments(LexemStream *actualArgumentsInput, char
                 errorMessage(ERR_INTERNAL, tmpBuffer);
             }
         } else {
-            expandMacroBodyBufferIfOverflow(outputStream.write, (lexemStart - inputStream.read), writeBuffer,
-                                            &bufferSize);
+            expandMacroBodyBufferIfOverflow(&bufferDesc, outputStream.write, (lexemStart - inputStream.read));
             assert(inputStream.read >= lexemStart);
             int len = inputStream.read - lexemStart;
             memcpy(outputStream.write, lexemStart, len);
             outputStream.write += len;
         }
-        expandMacroBodyBufferIfOverflow(outputStream.write, 0, writeBuffer, &bufferSize);
+        expandMacroBodyBufferIfOverflow(&bufferDesc, outputStream.write, 0);
     }
-    mbmRealloc(writeBuffer, bufferSize + MAX_LEXEM_SIZE, outputStream.write - writeBuffer);
+    mbmRealloc(bufferDesc.buffer, bufferDesc.size + MAX_LEXEM_SIZE, outputStream.write - bufferDesc.buffer);
 
-    return makeLexemStream(writeBuffer, writeBuffer, outputStream.write, NULL, NORMAL_STREAM);
+    return makeLexemStream(bufferDesc.buffer, bufferDesc.buffer, outputStream.write, NULL, NORMAL_STREAM);
 }
 
 /* ************************************************************** */
@@ -1915,9 +1917,10 @@ static LexemStream replaceMacroArguments(LexemStream *actualArgumentsInput, char
 
 static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream *actualArgumentsInput) {
     // Allocate space for an extra lexem so that users can overwrite and *then* expand
-    int   bufferSize = MACRO_BODY_BUFFER_SIZE;
-    char *buffer = ppmAllocc(bufferSize + MAX_LEXEM_SIZE, sizeof(char));
-    char *bufferWrite  = buffer;
+    LexemBufferDescriptor bufferDesc;
+    bufferDesc.size = MACRO_BODY_BUFFER_SIZE;
+    bufferDesc.buffer = ppmAllocc(bufferDesc.size + MAX_LEXEM_SIZE, sizeof(char));
+    char *bufferWrite  = bufferDesc.buffer;
 
     char *lastWrittenLexem = NULL;
 
@@ -1932,7 +1935,7 @@ static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream 
 
         /* first make ## collations, if any */
         if (lexem == CPP_COLLATION && lastWrittenLexem != NULL && nextBodyLexemToRead < endOfBodyLexems) {
-            nextBodyLexemToRead = collate(buffer, &bufferSize, &bufferWrite, &lastWrittenLexem,
+            nextBodyLexemToRead = collate(&bufferDesc, &bufferWrite, &lastWrittenLexem,
                                            &nextBodyLexemToRead, actualArgumentsInput);
         } else {
             lastWrittenLexem = bufferWrite;
@@ -1942,9 +1945,9 @@ static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream 
             memcpy(bufferWrite, lexemStart, lexemLength);
             bufferWrite += lexemLength;
         }
-        bufferSize = expandPreprocessorBufferIfOverflow(buffer, bufferSize, bufferWrite);
+        expandPreprocessorBufferIfOverflow(&bufferDesc, bufferWrite);
     }
-    buffer = ppmReallocc(buffer, bufferWrite - buffer, sizeof(char), bufferSize + MAX_LEXEM_SIZE);
+    ppmReallocc(bufferDesc.buffer, bufferWrite - bufferDesc.buffer, sizeof(char), bufferDesc.size + MAX_LEXEM_SIZE);
 
     /* expand arguments */
     for (int i = 0; i < macroBody->argCount; i++) {
@@ -1952,7 +1955,7 @@ static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream 
     }
 
     /* replace arguments into a different buffer to be used as the input */
-    LexemStream result = replaceMacroArguments(actualArgumentsInput, buffer, bufferWrite);
+    LexemStream result = replaceMacroArguments(actualArgumentsInput, bufferDesc.buffer, bufferWrite);
 
     return makeLexemStream(result.begin, result.begin, result.write, macroBody->name, MACRO_STREAM);
 }
@@ -1978,11 +1981,11 @@ static LexemCode getActualMacroArgument(char *previousLexemP, LexemCode lexem, P
                                         int actualArgumentIndex
 ) {
     char *bufferP;
-    char *buffer;
+    LexemBufferDescriptor bufferDesc;
 
-    int bufferSize = MACRO_ARGUMENTS_BUFFER_SIZE;
-    buffer = ppmAllocc(bufferSize + MAX_LEXEM_SIZE, sizeof(char));
-    bufferP = buffer;
+    bufferDesc.size = MACRO_ARGUMENTS_BUFFER_SIZE;
+    bufferDesc.buffer = ppmAllocc(bufferDesc.size + MAX_LEXEM_SIZE, sizeof(char));
+    bufferP = bufferDesc.buffer;
 
     /* if lastArgument, collect everything there */
     bool isLastArgument = actualArgumentIndex + 1 == argumentCount;
@@ -2002,10 +2005,10 @@ static LexemCode getActualMacroArgument(char *previousLexemP, LexemCode lexem, P
         for (; previousLexemP < currentInput.read; previousLexemP++, bufferP++)
             *bufferP = *previousLexemP;
 
-        if (bufferP - buffer >= bufferSize) {
-            bufferSize += MACRO_ARGUMENTS_BUFFER_SIZE;
-            buffer = ppmReallocc(buffer, bufferSize + MAX_LEXEM_SIZE, sizeof(char),
-                                 bufferSize + MAX_LEXEM_SIZE - MACRO_ARGUMENTS_BUFFER_SIZE);
+        if (bufferP - bufferDesc.buffer >= bufferDesc.size) {
+            bufferDesc.size += MACRO_ARGUMENTS_BUFFER_SIZE;
+            ppmReallocc(bufferDesc.buffer, bufferDesc.size + MAX_LEXEM_SIZE, sizeof(char),
+                        bufferDesc.size + MAX_LEXEM_SIZE - MACRO_ARGUMENTS_BUFFER_SIZE);
         }
         lexem = getLexSkippingLines(&previousLexemP, NULL, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile,
@@ -2031,8 +2034,8 @@ endOfMacroArgument:;
     }
 
 end:
-    buffer = ppmReallocc(buffer, bufferP - buffer, sizeof(char), bufferSize + MAX_LEXEM_SIZE);
-    *actualArgumentsInput = makeLexemStream(buffer, buffer, bufferP, currentInput.macroName,
+    ppmReallocc(bufferDesc.buffer, bufferP - bufferDesc.buffer, sizeof(char), bufferDesc.size + MAX_LEXEM_SIZE);
+    *actualArgumentsInput = makeLexemStream(bufferDesc.buffer, bufferDesc.buffer, bufferP, currentInput.macroName,
                                          NORMAL_STREAM);
     return lexem;
 }
