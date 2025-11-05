@@ -1,0 +1,13 @@
+[C-xref] active project: 'CURDIR'
+printf
+    @source.c:1:17
+svg
+    @source.c:0:0
+    @source.c:1:8
+    @source.c:3:4
+svg_text
+    @source.c:0:0
+    @source.c:2:8
+    @source.c:6:4
+test
+    @source.c:5:5
