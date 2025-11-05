@@ -1538,6 +1538,31 @@ static void collate_id_id(char **writeBufferWriteP, char *lhs, char **rhsP) {
     *rhsP = rhs; /* Update rhs position after consuming */
 }
 
+/* Collate IDENTIFIER ## CONSTANT -> identifier with constant appended */
+static void collate_id_const(char **writeBufferWriteP, char *lhs, char **rhsP) {
+    char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
+    *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
+    assert(**writeBufferWriteP == 0); /* Ensure at end of string */
+
+    char *rhs = *rhsP;
+    LexemCode rightHandLexem = getLexemCodeAndAdvance(&rhs);
+    int value;
+    getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, &value, NULL, NULL, false);
+
+    /* Get position from lefthand id, immediately after its string */
+    Position position = peekLexemPositionAt(*writeBufferWriteP + 1);
+
+    sprintf(*writeBufferWriteP, "%d", value); /* Concat the value to the end of the LHS ID */
+    cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
+
+    *writeBufferWriteP += strlen(*writeBufferWriteP);
+    assert(**writeBufferWriteP == 0);
+    (*writeBufferWriteP)++;
+    putLexemPositionAt(position, writeBufferWriteP);
+
+    *rhsP = rhs; /* Update rhs position after consuming */
+}
+
 /* **************************************************************** */
 // Returns updated position to continue reading from
 static char *collate(char *writeBuffer,        // The allocated buffer for storing macro expansions
@@ -1654,24 +1679,7 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
         if (leftHandLexem == IDENTIFIER && rightHandLexem == IDENTIFIER) {
             collate_id_id(writeBufferWriteP, lhs, &rhs);
         } else if (leftHandLexem == IDENTIFIER && (rightHandLexem == CONSTANT || rightHandLexem == LONG_CONSTANT)) {
-            char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
-            *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
-            assert(**writeBufferWriteP == 0); /* Ensure at end of string */
-
-            LexemCode rightHandLexem = getLexemCodeAndAdvance(&rhs);
-            int value;
-            getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, &value, NULL, NULL, false);
-
-            /* Get position from lefthand id, immediately after its string */
-            Position position = peekLexemPositionAt(*writeBufferWriteP + 1);
-
-            sprintf(*writeBufferWriteP, "%d", value); /* Concat the value to the end of the LHS ID */
-            cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
-
-            *writeBufferWriteP += strlen(*writeBufferWriteP);
-            assert(**writeBufferWriteP == 0);
-            (*writeBufferWriteP)++;
-            putLexemPositionAt(position, writeBufferWriteP);
+            collate_id_const(writeBufferWriteP, lhs, &rhs);
         } else if ((leftHandLexem == CONSTANT || leftHandLexem == LONG_CONSTANT) && rightHandLexem == IDENTIFIER) {
             /* Retrieve value and position from the LHS CONSTANT */
             char *leftHandLexemStart = lhs;
