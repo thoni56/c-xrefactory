@@ -1515,8 +1515,7 @@ static void expandMacroInCollation(char *buffer, int *bufferSizeP, char **buffer
 typedef enum {
     LEX_ID       = 0x01,
     LEX_CONST    = 0x02,
-    LEX_COMMA    = 0x04,
-    LEX_OTHER    = 0x08
+    LEX_OTHER    = 0x04
 } LexemTypeFlag;
 
 #define PAIR(left, right) ((left << 4) | right)
@@ -1524,7 +1523,6 @@ typedef enum {
 static LexemTypeFlag classify_lexem(LexemCode code) {
     if (code == IDENTIFIER) return LEX_ID;
     if (code == CONSTANT || code == LONG_CONSTANT) return LEX_CONST;
-    if (code == COMMA) return LEX_COMMA;
     return LEX_OTHER;
 }
 
@@ -1615,20 +1613,6 @@ static void collate_const_id(char **writeBufferWriteP, char **lhsP, char **rhsP,
     *rhsP = rhs; /* Update rhs position after consuming */
 }
 
-/* Collate COMMA ## ANY -> keep comma, RHS will be copied after */
-static void collate_comma_any(char **writeBufferWriteP, char *lhs) {
-    /* Comma token pasting: keep comma, copy RHS after it */
-    *writeBufferWriteP = lhs;
-    /* Copy the comma lexem itself */
-    putLexemCodeAt(COMMA, writeBufferWriteP);
-    /* Advance past comma (and its extra info if any) */
-    char *tempP = lhs;
-    getLexemCodeAndAdvance(&tempP);
-    skipExtraLexemInformationFor(COMMA, &tempP);
-    *writeBufferWriteP = tempP;  // Now pointing past the comma
-    /* copyRemainingLexems will copy RHS starting here */
-}
-
 /* Collate CONSTANT ## CONSTANT (or CONSTANT ## ID) -> complex concatenation */
 static void collate_const_const(char **writeBufferWriteP, char *lhs, char **rhsP) {
     char *rhs = *rhsP;
@@ -1715,8 +1699,15 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
         continueReadingFrom = endOfLexems;
     }
 
-    /* Check for empty right operand after possible expansion */
-    if (rightHandLexemP == NULL || *rightHandLexemP >= endOfLexems) {
+    /* Check for empty right operand after possible expansion, or END_OF marker */
+    bool rhsIsEmpty = (rightHandLexemP == NULL || *rightHandLexemP >= endOfLexems);
+    bool rhsIsEndOfMarker = false;
+    if (!rhsIsEmpty) {
+        LexemCode rhsLexemCode = peekLexemCodeAt(*rightHandLexemP);
+        rhsIsEndOfMarker = (rhsLexemCode == END_OF_FILE_EXCEPTION || rhsLexemCode == END_OF_MACRO_ARGUMENT_EXCEPTION);
+    }
+    
+    if (rhsIsEmpty || rhsIsEndOfMarker) {
         /* GNU extension: delete comma if pasting with empty __VA_ARGS__ */
         if (peekLexemCodeAt(*leftHandLexemP) == COMMA) {
             log_trace("Token pasting: deleting comma before empty __VA_ARGS__");
@@ -1724,21 +1715,6 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
             *writeBufferWriteP = *leftHandLexemP;
         } else {
             log_trace("Token pasting with empty right operand - using left operand as-is");
-        }
-        LEAVE();
-        return continueReadingFrom;
-    }
-
-    /* Check if right operand points to END_OF marker */
-    LexemCode rhsLexemCode = peekLexemCodeAt(*rightHandLexemP);
-    if (rhsLexemCode == END_OF_FILE_EXCEPTION || rhsLexemCode == END_OF_MACRO_ARGUMENT_EXCEPTION) {
-        /* GNU extension: delete comma if pasting with empty __VA_ARGS__ */
-        if (peekLexemCodeAt(*leftHandLexemP) == COMMA) {
-            log_trace("Token pasting: deleting comma before empty __VA_ARGS__ (END_OF marker)");
-            /* Don't write the comma - rewind write pointer to before it */
-            *writeBufferWriteP = *leftHandLexemP;
-        } else {
-            log_trace("Token pasting: right operand is END_OF marker (empty __VA_ARGS__)");
         }
         LEAVE();
         return continueReadingFrom;
@@ -1798,15 +1774,9 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
                 collate_const_const(writeBufferWriteP, lhs, &rhs);
                 break;
 
-            case PAIR(LEX_COMMA, LEX_ID):
-            case PAIR(LEX_COMMA, LEX_CONST):
-            case PAIR(LEX_COMMA, LEX_COMMA):
-            case PAIR(LEX_COMMA, LEX_OTHER):
-                collate_comma_any(writeBufferWriteP, lhs);
-                break;
-
             default:
                 /* Unhandled token pasting combination */
+                /* Note: COMMA cases handled earlier via GNU extension (comma deletion with empty __VA_ARGS__) */
                 log_warn("Unhandled token pasting: %s ## %s",
                          lexemEnumNames[leftHandLexem], lexemEnumNames[rightHandLexem]);
                 break;
