@@ -1511,6 +1511,23 @@ static void expandMacroInCollation(char *buffer, int *bufferSizeP, char **buffer
 /* **************************************************************** */
 /* Token pasting handlers for different lexem type combinations */
 
+/* Lexem type classification for pattern matching */
+typedef enum {
+    LEX_ID       = 0x01,
+    LEX_CONST    = 0x02,
+    LEX_COMMA    = 0x04,
+    LEX_OTHER    = 0x08
+} LexemTypeFlag;
+
+#define PAIR(left, right) ((left << 4) | right)
+
+static LexemTypeFlag classify_lexem(LexemCode code) {
+    if (code == IDENTIFIER) return LEX_ID;
+    if (code == CONSTANT || code == LONG_CONSTANT) return LEX_CONST;
+    if (code == COMMA) return LEX_COMMA;
+    return LEX_OTHER;
+}
+
 /* Collate IDENTIFIER ## IDENTIFIER -> concatenated identifier */
 static void collate_id_id(char **writeBufferWriteP, char *lhs, char **rhsP) {
     char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
@@ -1595,6 +1612,56 @@ static void collate_const_id(char **writeBufferWriteP, char **lhsP, char **rhsP,
 
     putLexemPositionAt(position, writeBufferWriteP);
 
+    *rhsP = rhs; /* Update rhs position after consuming */
+}
+
+/* Collate COMMA ## ANY -> keep comma, RHS will be copied after */
+static void collate_comma_any(char **writeBufferWriteP, char *lhs) {
+    /* Comma token pasting: keep comma, copy RHS after it */
+    *writeBufferWriteP = lhs;
+    /* Copy the comma lexem itself */
+    putLexemCodeAt(COMMA, writeBufferWriteP);
+    /* Advance past comma (and its extra info if any) */
+    char *tempP = lhs;
+    getLexemCodeAndAdvance(&tempP);
+    skipExtraLexemInformationFor(COMMA, &tempP);
+    *writeBufferWriteP = tempP;  // Now pointing past the comma
+    /* copyRemainingLexems will copy RHS starting here */
+}
+
+/* Collate CONSTANT ## CONSTANT (or CONSTANT ## ID) -> complex concatenation */
+static void collate_const_const(char **writeBufferWriteP, char *lhs, char **rhsP) {
+    char *rhs = *rhsP;
+    if (nextLexemIsIdentifierOrConstant(rhs)) {
+        char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
+        *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
+        assert(**writeBufferWriteP == 0); /* Ensure at end of string */
+
+        LexemCode rightHandLexem = getLexemCodeAndAdvance(&rhs);
+        char *rightHandLexemString = rhs; /* For an ID the string follows, then the position */
+        int value;
+        Position position;
+        getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, &value, &position, NULL, false);
+        log_trace("Lexem after getExtraLexemInformationFor: lexem='%s', value=%d",
+                  rightHandLexemString, value);
+
+        if (isIdentifierLexem(rightHandLexem)) {
+            strcpy(*writeBufferWriteP, rightHandLexemString);
+
+            position.col--;
+            assert(position.col >= 0);
+            cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
+            position.col++;
+        } else /* isConstantLexem() */ {
+            position = peekLexemPositionAt(*writeBufferWriteP + 1); /* Position from lefthand id */
+            sprintf(*writeBufferWriteP, "%d", value);
+            cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
+        }
+        *writeBufferWriteP += strlen(*writeBufferWriteP);
+        assert(**writeBufferWriteP == 0);
+        (*writeBufferWriteP)++;
+        putLexemPositionAt(position, writeBufferWriteP);
+    }
     *rhsP = rhs; /* Update rhs position after consuming */
 }
 
@@ -1705,61 +1772,44 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
         }
     }
 
-    /* Now collate left and right hand tokens */
+    /* Now collate left and right hand tokens using pattern matching */
     LexemCode leftHandLexem = peekLexemCodeAt(lhs);
     LexemCode rightHandLexem = peekLexemCodeAt(rhs);
 
     if (rhs < endOfLexems) {
-        /* TODO collation of all types of lexem pairs, not just id/const */
-        if (leftHandLexem == IDENTIFIER && rightHandLexem == IDENTIFIER) {
-            collate_id_id(writeBufferWriteP, lhs, &rhs);
-        } else if (leftHandLexem == IDENTIFIER && (rightHandLexem == CONSTANT || rightHandLexem == LONG_CONSTANT)) {
-            collate_id_const(writeBufferWriteP, lhs, &rhs);
-        } else if ((leftHandLexem == CONSTANT || leftHandLexem == LONG_CONSTANT) && rightHandLexem == IDENTIFIER) {
-            collate_const_id(writeBufferWriteP, &lhs, &rhs, leftHandLexem);
-        } else if (leftHandLexem == COMMA) {
-            /* Comma token pasting: keep comma, copy RHS after it */
-            *writeBufferWriteP = lhs;
-            /* Copy the comma lexem itself */
-            putLexemCodeAt(COMMA, writeBufferWriteP);
-            /* Advance past comma (and its extra info if any) */
-            char *tempP = lhs;
-            getLexemCodeAndAdvance(&tempP);
-             skipExtraLexemInformationFor(COMMA, &tempP);
-            *writeBufferWriteP = tempP;  // Now pointing past the comma
-            /* copyRemainingLexems will copy RHS starting here */
-        } else {
-            assert((leftHandLexem == CONSTANT || leftHandLexem == LONG_CONSTANT) && (rightHandLexem == CONSTANT || rightHandLexem == LONG_CONSTANT));
-            if (nextLexemIsIdentifierOrConstant(rhs)) {
-                char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
-                *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
-                assert(**writeBufferWriteP == 0); /* Ensure at end of string */
+        LexemTypeFlag leftType = classify_lexem(leftHandLexem);
+        LexemTypeFlag rightType = classify_lexem(rightHandLexem);
+        int pattern = PAIR(leftType, rightType);
 
-                LexemCode rightHandLexem = getLexemCodeAndAdvance(&rhs);
-                char *rightHandLexemString = rhs; /* For an ID the string follows, then the position */
-                int value;
-                Position position;
-                getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, &value, &position, NULL, false);
-                log_trace("Lexem after getExtraLexemInformationFor: lexem='%s', value=%d",
-                          rightHandLexemString, value);
+        switch (pattern) {
+            case PAIR(LEX_ID, LEX_ID):
+                collate_id_id(writeBufferWriteP, lhs, &rhs);
+                break;
 
-                if (isIdentifierLexem(rightHandLexem)) {
-                    strcpy(*writeBufferWriteP, rightHandLexemString);
+            case PAIR(LEX_ID, LEX_CONST):
+                collate_id_const(writeBufferWriteP, lhs, &rhs);
+                break;
 
-                    position.col--;
-                    assert(position.col >= 0);
-                    cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
-                    position.col++;
-                } else /* isConstantLexem() */ {
-                    position = peekLexemPositionAt(*writeBufferWriteP + 1); /* Position from lefthand id */
-                    sprintf(*writeBufferWriteP, "%d", value);
-                    cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
-                }
-                *writeBufferWriteP += strlen(*writeBufferWriteP);
-                assert(**writeBufferWriteP == 0);
-                (*writeBufferWriteP)++;
-                putLexemPositionAt(position, writeBufferWriteP);
-            }
+            case PAIR(LEX_CONST, LEX_ID):
+                collate_const_id(writeBufferWriteP, &lhs, &rhs, leftHandLexem);
+                break;
+
+            case PAIR(LEX_CONST, LEX_CONST):
+                collate_const_const(writeBufferWriteP, lhs, &rhs);
+                break;
+
+            case PAIR(LEX_COMMA, LEX_ID):
+            case PAIR(LEX_COMMA, LEX_CONST):
+            case PAIR(LEX_COMMA, LEX_COMMA):
+            case PAIR(LEX_COMMA, LEX_OTHER):
+                collate_comma_any(writeBufferWriteP, lhs);
+                break;
+
+            default:
+                /* Unhandled token pasting combination */
+                log_warn("Unhandled token pasting: %s ## %s",
+                         lexemEnumNames[leftHandLexem], lexemEnumNames[rightHandLexem]);
+                break;
         }
     }
     *writeBufferSizeP = expandPreprocessorBufferIfOverflow(writeBuffer, *writeBufferSizeP, *writeBufferWriteP);
