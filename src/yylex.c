@@ -1509,6 +1509,36 @@ static void expandMacroInCollation(char *buffer, int *bufferSizeP, char **buffer
 }
 
 /* **************************************************************** */
+/* Token pasting handlers for different lexem type combinations */
+
+/* Collate IDENTIFIER ## IDENTIFIER -> concatenated identifier */
+static void collate_id_id(char **writeBufferWriteP, char *lhs, char **rhsP) {
+    char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
+    *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
+    assert(**writeBufferWriteP == 0); /* Ensure at end of string */
+
+    char *rhs = *rhsP;
+    LexemCode rightHandLexem = getLexemCodeAndAdvance(&rhs);
+    char *rightHandLexemString = rhs; /* For an ID the string follows, then extra info */
+    Position position;
+    getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, NULL, &position, NULL, false);
+
+    memmove(*writeBufferWriteP, rightHandLexemString, strlen(rightHandLexemString) + 1);
+
+    position.col--;
+    assert(position.col >= 0);
+    cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
+    position.col++;
+
+    *writeBufferWriteP += strlen(*writeBufferWriteP);
+    assert(**writeBufferWriteP == 0);
+    (*writeBufferWriteP)++;
+    putLexemPositionAt(position, writeBufferWriteP);
+    
+    *rhsP = rhs; /* Update rhs position after consuming */
+}
+
+/* **************************************************************** */
 // Returns updated position to continue reading from
 static char *collate(char *writeBuffer,        // The allocated buffer for storing macro expansions
                      int *writeBufferSizeP,     // Pointer to size of the buffer, which may need expanding
@@ -1622,26 +1652,7 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
     if (rhs < endOfLexems) {
         /* TODO collation of all types of lexem pairs, not just id/const */
         if (leftHandLexem == IDENTIFIER && rightHandLexem == IDENTIFIER) {
-            char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
-            *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
-            assert(**writeBufferWriteP == 0); /* Ensure at end of string */
-
-            LexemCode rightHandLexem = getLexemCodeAndAdvance(&rhs);
-            char *rightHandLexemString = rhs; /* For an ID the string follows, then extra info */
-            Position position;
-            getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, NULL, &position, NULL, false);
-
-            memmove(*writeBufferWriteP, rightHandLexemString, strlen(rightHandLexemString) + 1);
-
-            position.col--;
-            assert(position.col >= 0);
-            cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
-            position.col++;
-
-            *writeBufferWriteP += strlen(*writeBufferWriteP);
-            assert(**writeBufferWriteP == 0);
-            (*writeBufferWriteP)++;
-            putLexemPositionAt(position, writeBufferWriteP);
+            collate_id_id(writeBufferWriteP, lhs, &rhs);
         } else if (leftHandLexem == IDENTIFIER && (rightHandLexem == CONSTANT || rightHandLexem == LONG_CONSTANT)) {
             char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
             *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
