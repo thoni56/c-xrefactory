@@ -1642,7 +1642,7 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
             assert(**writeBufferWriteP == 0);
             (*writeBufferWriteP)++;
             putLexemPositionAt(position, writeBufferWriteP);
-        } else if (leftHandLexem == IDENTIFIER && rightHandLexem == CONSTANT) {
+        } else if (leftHandLexem == IDENTIFIER && (rightHandLexem == CONSTANT || rightHandLexem == LONG_CONSTANT)) {
             char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
             *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
             assert(**writeBufferWriteP == 0); /* Ensure at end of string */
@@ -1661,7 +1661,7 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
             assert(**writeBufferWriteP == 0);
             (*writeBufferWriteP)++;
             putLexemPositionAt(position, writeBufferWriteP);
-        } else if (leftHandLexem == CONSTANT && rightHandLexem == IDENTIFIER) {
+        } else if ((leftHandLexem == CONSTANT || leftHandLexem == LONG_CONSTANT) && rightHandLexem == IDENTIFIER) {
             /* Retrieve value and position from the LHS CONSTANT */
             char *leftHandLexemStart = lhs;
 
@@ -1701,6 +1701,7 @@ static char *collate(char *writeBuffer,        // The allocated buffer for stori
             *writeBufferWriteP = tempP;  // Now pointing past the comma
             /* copyRemainingLexems will copy RHS starting here */
         } else {
+            assert((leftHandLexem == CONSTANT || leftHandLexem == LONG_CONSTANT) && (rightHandLexem == CONSTANT || rightHandLexem == LONG_CONSTANT));
             if (nextLexemIsIdentifierOrConstant(rhs)) {
                 char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
                 *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
