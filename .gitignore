@@ -13,3 +13,4 @@ coverage
 *.info
 .tup
 log
+*.profraw
