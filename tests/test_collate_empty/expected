@@ -1,5 +1,21 @@
+EMPTY
+    @source.c:5:8
+    @source.c:6:10
+    @source.c:7:15
+EMPTY##foo
+    @source.c:6:16
+EMPTYfoo
+    @source.c:6:17
+PASTE
+    @source.c:4:8
+    @source.c:6:4
+    @source.c:7:4
+    @source.c:8:4
 a
-    @source.c:3:16
+    @source.c:2:16
+foo
+    @source.c:7:10
+    @source.c:8:12
 paste_empty
     @source.c:1:8
-    @source.c:3:4
+    @source.c:2:4

@@ -1696,13 +1696,6 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
     }
     assert(*leftHandLexemP != NULL);
 
-    /* Check for empty right operand */
-    if (rightHandLexemP == NULL || *rightHandLexemP == NULL) {
-        log_trace("Token pasting with empty right operand - using left operand as-is");
-        LEAVE();
-        return *rightHandLexemP; // or could be NULL
-    }
-
     /* ... and the right hand operand */
     /* Save the position to continue reading from in the macro body */
     char *continueReadingFrom;
@@ -1729,8 +1722,8 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
         LexemCode rhsLexemCode = peekLexemCodeAt(*rightHandLexemP);
         rhsIsEndOfMarker = (rhsLexemCode == END_OF_FILE_EXCEPTION || rhsLexemCode == END_OF_MACRO_ARGUMENT_EXCEPTION);
     }
-
-    if (rhsIsEmpty || rhsIsEndOfMarker) {
+     if (rhsIsEmpty || rhsIsEndOfMarker) {
+        log_trace("[DEBUG] Entering empty RHS handling block at line 1720");
         /* GNU extension: delete comma if pasting with empty __VA_ARGS__ */
         if (peekLexemCodeAt(*leftHandLexemP) == COMMA) {
             log_trace("Token pasting: deleting comma before empty __VA_ARGS__");
@@ -1933,6 +1926,7 @@ static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream 
 
         /* first make ## collations, if any */
         if (lexem == CPP_COLLATION && lastWrittenLexem != NULL && nextBodyLexemToRead < endOfBodyLexems) {
+            log_trace("[DEBUG] Found ## token, calling collate()");
             nextBodyLexemToRead = collate(&bufferDesc, &bufferWrite, &lastWrittenLexem,
                                            &nextBodyLexemToRead, actualArgumentsInput);
         } else {
