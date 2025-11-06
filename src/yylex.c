@@ -1594,7 +1594,7 @@ static void collate_const_id(char **writeBufferWriteP, char **lhsP, char **rhsP,
     *writeBufferWriteP = leftHandLexemStart; /* We want to write the id next */
 
     char *rhs = *rhsP;
-    int lexem = getLexemCodeAndAdvance(&rhs);
+    LexemCode lexem = getLexemCodeAndAdvance(&rhs);
     char *rightHandLexemString = rhs; /* For an ID the string follows, then the position */
     skipExtraLexemInformationFor(lexem, &rhs);
 
@@ -1617,34 +1617,42 @@ static void collate_const_id(char **writeBufferWriteP, char **lhsP, char **rhsP,
 static void collate_const_const(char **writeBufferWriteP, char *lhs, char **rhsP) {
     char *rhs = *rhsP;
     if (nextLexemIsIdentifierOrConstant(rhs)) {
-        char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
-        *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
-        assert(**writeBufferWriteP == 0); /* Ensure at end of string */
+        /* Get left constant value */
+        char *leftHandLexemStart = lhs;
+        int leftValue;
+        Position leftPosition;
+        LexemCode leftHandLexem = getLexemCodeAndAdvance(&lhs);
+        getExtraLexemInformationFor(leftHandLexem, &lhs, NULL, &leftValue, &leftPosition, NULL, false);
 
+        /* Re-write as IDENTIFIER at the start position */
+        putLexemCodeAt(IDENTIFIER, &leftHandLexemStart);
+        *writeBufferWriteP = leftHandLexemStart;
+
+        /* Get right operand */
         LexemCode rightHandLexem = getLexemCodeAndAdvance(&rhs);
-        char *rightHandLexemString = rhs; /* For an ID the string follows, then the position */
-        int value;
-        Position position;
-        getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, &value, &position, NULL, false);
-        log_trace("Lexem after getExtraLexemInformationFor: lexem='%s', value=%d",
-                  rightHandLexemString, value);
-
+        int rightValue;
+        Position rightPosition;
+        
         if (isIdentifierLexem(rightHandLexem)) {
-            strcpy(*writeBufferWriteP, rightHandLexemString);
-
-            position.col--;
-            assert(position.col >= 0);
-            cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
-            position.col++;
+            /* CONST ## ID: concatenate "leftValue" + "idString" */
+            char *rightHandLexemString = rhs;
+            getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, NULL, &rightPosition, NULL, false);
+            
+            sprintf(*writeBufferWriteP, "%d%s", leftValue, rightHandLexemString);
+            cxAddCollateReference(rightHandLexemString, *writeBufferWriteP, leftPosition);
         } else /* isConstantLexem() */ {
-            position = peekLexemPositionAt(*writeBufferWriteP + 1); /* Position from lefthand id */
-            sprintf(*writeBufferWriteP, "%d", value);
-            cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
+            /* CONST ## CONST: concatenate "leftValue" + "rightValue" as strings */
+            getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, &rightValue, &rightPosition, NULL, false);
+            
+            sprintf(*writeBufferWriteP, "%d%d", leftValue, rightValue);
+            /* Use left position for reference tracking */
+            cxAddCollateReference(*writeBufferWriteP, *writeBufferWriteP, leftPosition);
         }
+        
         *writeBufferWriteP += strlen(*writeBufferWriteP);
         assert(**writeBufferWriteP == 0);
         (*writeBufferWriteP)++;
-        putLexemPositionAt(position, writeBufferWriteP);
+        putLexemPositionAt(leftPosition, writeBufferWriteP);
     }
     *rhsP = rhs; /* Update rhs position after consuming */
 }
