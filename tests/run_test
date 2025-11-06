@@ -16,7 +16,7 @@ else
     
     # Darwin: Set environment variable for profraw output location
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        export LLVM_PROFILE_FILE=$1/.cov/test_%p.profraw
+        export LLVM_PROFILE_FILE=.cov/test_%p.profraw
     fi
     
     make --no-print-directory $GCOV_OPTIONS -C $1

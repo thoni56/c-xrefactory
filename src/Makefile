@@ -389,13 +389,25 @@ ifeq ($(HAVE_APPLE_COV),yes)
 	# Darwin: Remove .profraw and .profdata files
 	-find .. -name "*.profraw" -delete
 	-find .. -name "*.profdata" -delete
+	-rm ../coverage/merged.profdata
+	# Generate empty .gcov files to show zero coverage
+	@echo "Generating empty .gcov files to show zero coverage..."
+	@for src_file in *.c; do \
+		if [ -f "$$src_file" ]; then \
+			echo "        -:    0:Source:$$src_file" > "$$src_file.gcov" ; \
+			echo "        -:    0:Graph:none" >> "$$src_file.gcov" ; \
+			echo "        -:    0:Data:none" >> "$$src_file.gcov" ; \
+			echo "        -:    0:Runs:0" >> "$$src_file.gcov" ; \
+			awk '{ printf "        #:    %d:%s\n", NR, $$0 }' "$$src_file" >> "$$src_file.gcov" ; \
+		fi ; \
+	done
 else
 	# Non-Darwin: Use lcov to zero counters
 	-if command -v $(LCOV) > /dev/null 2>&1 ; then \
 		$(LCOV) -q -z -d .. ; \
 	fi
-endif
 	$(MAKE) gcov
+endif
 
 .PHONY:gcov
 # Create .gcov files for Emacs cov-mode
