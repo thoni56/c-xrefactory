@@ -171,6 +171,6 @@ void ungetChar(CharacterBuffer *cb, int ch) {
     if (ch == '\n')
         log_trace("Ungetting ('\\n')");
     else
-        log_trace("Ungetting ('%c')", ch);
+        log_trace("Ungetting ('%c'=%d)", ch, ch);
     *--(cb->nextUnread) = ch;
 }

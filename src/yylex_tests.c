@@ -93,6 +93,7 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
 
     /* If the define does not have a body, add the value of "1" */
     initInput(some_file, NULL, "__x86_64__ 1", NULL);
+
     currentFile.lineNumber = 1;
     processDefineDirective(false);
 }

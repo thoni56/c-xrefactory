@@ -294,7 +294,7 @@ static void getExtraLexemInformationFor(LexemCode lexem, char **readPointerP, in
     if (lexem > MULTI_TOKENS_START) {
         if (isIdentifierLexem(lexem) || lexem == STRING_LITERAL) {
             /* Both are followed by a string and a position */
-            log_trace("Getting extra lexem information for LEXEM '%s'", *readPointerP);
+            log_trace("Getting extra lexem information for %s '%s'", lexemEnumNames[lexem], *readPointerP);
             *readPointerP = strchr(*readPointerP, '\0') + 1;
             getAndSetOutPositionIfRequested(readPointerP, outPosition);
         } else if (lexem == LINE_TOKEN) {
@@ -329,6 +329,8 @@ static void getExtraLexemInformationFor(LexemCode lexem, char **readPointerP, in
     } else {
         getAndSetOutPositionIfRequested(readPointerP, outPosition);
     }
+    if (outPosition != NULL)
+        log_trace("Lexem position: (%d)@%d:%d", outPosition->file, outPosition->line, outPosition->col);
 }
 
 static void skipExtraLexemInformationWithCountLines(LexemCode lexem, char **readPointerP, bool countLines) {
@@ -1434,6 +1436,7 @@ endOfFile:
 static void cxAddCollateReference(char *sym, char *cs, Position position) {
     char tempString[TMP_STRING_SIZE];
     strcpy(tempString,sym);
+    log_trace("cs : %p, sym : %p", cs, sym);
     assert(cs>=sym && cs-sym<TMP_STRING_SIZE);
     sprintf(tempString+(cs-sym), "%c%c%s", LINK_NAME_COLLATE_SYMBOL,
             LINK_NAME_COLLATE_SYMBOL, cs);
@@ -1723,7 +1726,7 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
         rhsIsEndOfMarker = (rhsLexemCode == END_OF_FILE_EXCEPTION || rhsLexemCode == END_OF_MACRO_ARGUMENT_EXCEPTION);
     }
      if (rhsIsEmpty || rhsIsEndOfMarker) {
-        log_trace("[DEBUG] Entering empty RHS handling block at line 1720");
+        log_trace("[DEBUG] Entering empty RHS handling");
         /* GNU extension: delete comma if pasting with empty __VA_ARGS__ */
         if (peekLexemCodeAt(*leftHandLexemP) == COMMA) {
             log_trace("Token pasting: deleting comma before empty __VA_ARGS__");
