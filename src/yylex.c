@@ -1400,22 +1400,19 @@ static void expandMacroArgument(LexemStream *argumentInput) {
         assert(length >= 0);
         memcpy(currentBufferP, previousLexem, length);
 
-        // a hack, it is copied, but currentBufferP will be increased
-        // only if not an expanding macro, this is because
-        // 'macroCallExpand' can read new lexbuffer and destroy
-        // cInput, so copy it now.
         if (lexem == IDENTIFIER) {
             Symbol *macroSymbol = findMacroSymbol(nextLexemP);
             if (macroSymbol != NULL) {
                 /* it is a macro, provide macro expansion */
                 log_trace("Macro found: '%s' (argument) -> Should be expanded", nextLexemP);
+                char *savedBufferP = currentBufferP; /* In case 'expandMacroCall' expands the buffer */
                 if (expandMacroCall(macroSymbol, position))
                     continue; // with next lexem
                 else {
                     /* Failed expansion... */
-                    assert(macroSymbol!=NULL);
-                    if (macroSymbol->mbody!=NULL && cyclicCall(macroSymbol->mbody)) {
-                        putLexemCodeAt(IDENT_NO_CPP_EXPAND, &currentBufferP);
+                    assert(macroSymbol != NULL);
+                    if (macroSymbol->mbody != NULL && cyclicCall(macroSymbol->mbody)) {
+                        putLexemCodeAt(IDENT_NO_CPP_EXPAND, &savedBufferP);
                     }
                 }
             }
