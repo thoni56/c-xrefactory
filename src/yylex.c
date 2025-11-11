@@ -1504,6 +1504,11 @@ static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream 
 static void expandMacroInCollation(LexemBufferDescriptor *bufferDesc, LexemStream *outputStream,
                                    Symbol *macroSymbol, LexemStream *actualArgumentsInput) {
     MacroBody *macroBody = getMacroBody(macroSymbol);
+    if (macroBody == NULL) {
+        // Undefined macro (e.g., from #undef) - nothing to expand
+        log_trace("Macro '%s' has NULL body (undefined), skipping expansion", macroSymbol->name);
+        return;
+    }
     LexemStream macroExpansion = createMacroBodyAsNewStream(macroBody, actualArgumentsInput);
 
     LexemStream inputStream = makeLexemStream(macroExpansion.begin, macroExpansion.begin, macroExpansion.write,
