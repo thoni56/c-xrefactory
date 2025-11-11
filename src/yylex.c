@@ -1598,10 +1598,15 @@ static void collate_const_id(char **writeBufferWriteP, char **lhsP, char **rhsP,
     char *rightHandLexemString = rhs; /* For an ID the string follows, then the position */
     skipExtraLexemInformationFor(lexem, &rhs);
 
+    /* Calculate where RHS starts in the concatenated result */
+    char valueStr[32];
+    sprintf(valueStr, "%d", value);
+    int leftPartLength = strlen(valueStr);
+    
     sprintf(*writeBufferWriteP, "%d%s", value, rightHandLexemString);
 
     assert(position.col >= 0);
-    cxAddCollateReference(rightHandLexemString, *writeBufferWriteP, position);
+    cxAddCollateReference(*writeBufferWriteP, *writeBufferWriteP + leftPartLength, position);
     position.col++;
 
     *writeBufferWriteP += strlen(*writeBufferWriteP);
@@ -1638,15 +1643,25 @@ static void collate_const_const(char **writeBufferWriteP, char *lhs, char **rhsP
             char *rightHandLexemString = rhs;
             getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, NULL, &rightPosition, NULL, false);
             
+            /* Calculate where RHS starts */
+            char leftStr[32];
+            sprintf(leftStr, "%d", leftValue);
+            int leftPartLength = strlen(leftStr);
+            
             sprintf(*writeBufferWriteP, "%d%s", leftValue, rightHandLexemString);
-            cxAddCollateReference(rightHandLexemString, *writeBufferWriteP, leftPosition);
+            cxAddCollateReference(*writeBufferWriteP, *writeBufferWriteP + leftPartLength, leftPosition);
         } else /* isConstantLexem() */ {
             /* CONST ## CONST: concatenate "leftValue" + "rightValue" as strings */
             getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, &rightValue, &rightPosition, NULL, false);
             
+            /* Calculate where RHS starts */
+            char leftStr[32];
+            sprintf(leftStr, "%d", leftValue);
+            int leftPartLength = strlen(leftStr);
+            
             sprintf(*writeBufferWriteP, "%d%d", leftValue, rightValue);
             /* Use left position for reference tracking */
-            cxAddCollateReference(*writeBufferWriteP, *writeBufferWriteP, leftPosition);
+            cxAddCollateReference(*writeBufferWriteP, *writeBufferWriteP + leftPartLength, leftPosition);
         }
         
         *writeBufferWriteP += strlen(*writeBufferWriteP);

@@ -43,7 +43,7 @@
 /* ***************** several (mainly string size) bornes *************** */
 
 #define MAX_REF_LIST_LINE_LEN         1000    /* how long part of src is copied to list */
-#define TMP_STRING_SIZE                350
+#define TMP_STRING_SIZE               1000    /* Used by cxAddCollateReference for token pasting */
 #define REFACTORING_TMP_STRING_SIZE  10000
 #define MACRO_NAME_SIZE                500
 #define COMPLETION_STRING_SIZE         500	/* size of line in completion list */
