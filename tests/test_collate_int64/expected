@@ -1,12 +1,12 @@
 [C-xref] active project: 'CURDIR'
+-1##L
+    @source.c:2:29
 -1L
     @source.c:2:30
 INT64_MAX
     @source.c:0:0
     @source.c:2:8
     @source.c:4:11
-L
-    @source.c:2:29
 __INT64_C
     @source.c:0:0
     @source.c:1:8
