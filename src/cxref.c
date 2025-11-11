@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "constants.h"
 #include "reference.h"
 #include "visibility.h"
 #include "characterreader.h"
@@ -2012,7 +2013,10 @@ static char *createTagSearchLine_static(char *name, int fileNumber,
         || options.searchKind==SEARCH_FULL_SHORT) {
         sprintf(line, "%s", name);
     } else {
-        sprintf(line, "%-*s :%-*s :%s", *len1, name, *len2, file, dir);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-truncation"
+        snprintf(line, 2*COMPLETION_STRING_SIZE-1, "%-*s :%-*s :%s", *len1, name, *len2, file, dir);
+#pragma GCC diagnostic pop
     }
     return line;                /* static! */
 }
