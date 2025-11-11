@@ -1641,29 +1641,16 @@ static void collate_const_const(char **writeBufferWriteP, char *lhs, char **rhsP
         int rightValue;
         Position rightPosition;
 
-        if (isIdentifierLexem(rightHandLexem)) {
-            /* CONST ## ID: concatenate "leftValue" + "idString" */
-            char *rightHandLexemString = rhs;
-            getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, NULL, &rightPosition, NULL, false);
-            /* Calculate where RHS starts */
-            char leftStr[32];
-            sprintf(leftStr, "%d", leftValue);
-            int leftPartLength = strlen(leftStr);
+        getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, &rightValue, &rightPosition, NULL, false);
+        /* Calculate where RHS starts */
+        char leftStr[32];
+        sprintf(leftStr, "%d", leftValue);
+        int leftPartLength = strlen(leftStr);
 
-            sprintf(*writeBufferWriteP, "%d%s", leftValue, rightHandLexemString);
-            cxAddCollateReference(*writeBufferWriteP, *writeBufferWriteP + leftPartLength, leftPosition);
-        } else /* isConstantLexem() */ {
-            /* CONST ## CONST: concatenate "leftValue" + "rightValue" as strings */
-            getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, &rightValue, &rightPosition, NULL, false);
-            /* Calculate where RHS starts */
-            char leftStr[32];
-            sprintf(leftStr, "%d", leftValue);
-            int leftPartLength = strlen(leftStr);
+        sprintf(*writeBufferWriteP, "%d%d", leftValue, rightValue);
 
-            sprintf(*writeBufferWriteP, "%d%d", leftValue, rightValue);
-            /* Use left position for reference tracking */
-            cxAddCollateReference(*writeBufferWriteP, *writeBufferWriteP + leftPartLength, leftPosition);
-        }
+        /* Use left position for reference tracking */
+        cxAddCollateReference(*writeBufferWriteP, *writeBufferWriteP + leftPartLength, leftPosition);
 
         *writeBufferWriteP += strlen(*writeBufferWriteP);
         assert(**writeBufferWriteP == 0);
