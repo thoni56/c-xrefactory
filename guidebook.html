@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2025-11-11">
+<meta name="author" content="v{VERSION} - Generated 2025-11-12">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-11-11</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-11-12</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -538,6 +538,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_lexemstream_api_improvements">15.1. LexemStream API Improvements</a></li>
 <li><a href="#unified-symbol-database">15.2. Unified Symbol Database Architecture</a></li>
+<li><a href="#macro-expansion-module">15.3. Extract Macro Expansion Module</a></li>
 </ul>
 </li>
 <li><a href="#_archive">16. Archive</a>
@@ -4650,6 +4651,491 @@ This dependency tracking infrastructure is <strong>already production-ready</str
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="macro-expansion-module">15.3. Extract Macro Expansion Module</h3>
+<div class="sect3">
+<h4 id="_problem_statement_3">15.3.1. Problem Statement</h4>
+<div class="paragraph">
+<p>The <code>yylex.c</code> file is <strong>2353 lines</strong> and combines multiple responsibilities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Lexical analysis and token reading</p>
+</li>
+<li>
+<p>File and buffer management</p>
+</li>
+<li>
+<p>Preprocessor directive processing</p>
+</li>
+<li>
+<p><strong>Macro expansion system</strong> (~800 lines)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The macro expansion code is a substantial, cohesive subsystem that would benefit from extraction into its own module. Currently, it&#8217;s deeply embedded in yylex.c, making both lexing and macro expansion harder to understand and test in isolation.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_current_architecture_2">15.3.2. Current Architecture</h4>
+<div class="paragraph">
+<p>The macro expansion system in <code>yylex.c</code> comprises:</p>
+</div>
+<div class="sect4">
+<h5 id="_core_responsibilities_800_lines">Core Responsibilities (~800 lines)</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Macro call expansion</strong> - Main orchestration (<code>expandMacroCall()</code>)</p>
+</li>
+<li>
+<p><strong>Argument processing</strong> - Collection and recursive expansion</p>
+</li>
+<li>
+<p><strong>Token collation</strong> - <code>##</code> operator implementation</p>
+</li>
+<li>
+<p><strong>Stringification</strong> - <code>#</code> operator implementation</p>
+</li>
+<li>
+<p><strong>Memory management</strong> - Separate arenas for macro bodies (MBM) and arguments (PPM)</p>
+</li>
+<li>
+<p><strong>Cyclic detection</strong> - Preventing infinite macro recursion</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_key_state">Key State</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">int macroStackIndex;  // Current macro expansion depth
+static LexemStream macroInputStack[MACRO_INPUT_STACK_SIZE];
+static Memory macroBodyMemory;      // Long-lived: macro definitions
+static Memory macroArgumentsMemory; // Short-lived: expansion temporaries</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_memory_lifetime_separation">Memory Lifetime Separation</h5>
+<div class="paragraph">
+<p>The system uses <strong>two distinct memory arenas</strong> with different lifetimes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>MBM (Macro Body Memory)</strong>: Persistent storage for macro definitions throughout compilation</p>
+</li>
+<li>
+<p><strong>PPM (PreProcessor Memory)</strong>: Temporary storage for expansion, collation, and argument processing</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This separation is fundamental and should be preserved in any refactoring.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_solution_3">15.3.3. Proposed Solution</h4>
+<div class="paragraph">
+<p>Extract macro expansion into a new module: <code>macroexpansion.c/h</code></p>
+</div>
+<div class="sect4">
+<h5 id="_public_interface">Public Interface</h5>
+<div class="paragraph">
+<p>The new module would expose a minimal, focused API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Initialization
+void initMacroExpansion(void);
+int getMacroBodyMemoryIndex(void);
+void setMacroBodyMemoryIndex(int index);
+
+// Core expansion
+bool expandMacroCall(Symbol *macroSymbol, Position position);
+bool insideMacro(void);
+int getMacroStackDepth(void);
+
+// Memory allocation (exposed for macro definition processing)
+void *macroBodyAlloc(size_t size);
+void *macroBodyRealloc(void *ptr, size_t oldSize, size_t newSize);
+void *macroArgumentAlloc(size_t size);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_module_boundaries">Module Boundaries</h5>
+<div class="paragraph">
+<p><strong>What moves to macroexpansion.c:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Macro call expansion and argument processing</p>
+</li>
+<li>
+<p>Token collation (<code>collate()</code> and helpers)</p>
+</li>
+<li>
+<p>Stringification (<code>macroArgumentsToString()</code>)</p>
+</li>
+<li>
+<p>Cyclic call detection</p>
+</li>
+<li>
+<p>MBM/PPM memory management</p>
+</li>
+<li>
+<p>Buffer expansion utilities (<code>expandPreprocessorBufferIfOverflow()</code>, etc.)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>What remains in yylex.c:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Lexing and file input</p>
+</li>
+<li>
+<p>Preprocessor directive processing (<code>#define</code>, <code>#ifdef</code>, etc.)</p>
+</li>
+<li>
+<p>Include file handling</p>
+</li>
+<li>
+<p>Main <code>yylex()</code> function</p>
+</li>
+<li>
+<p>Macro symbol table operations</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Dependencies:</strong></p>
+</div>
+<div class="paragraph">
+<p>The macro module would depend on:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Lexem stream operations (reading/writing)</p>
+</li>
+<li>
+<p>Symbol lookup (<code>findMacroSymbol()</code>)</p>
+</li>
+<li>
+<p>Cross-referencing (for collation and expansion references)</p>
+</li>
+<li>
+<p>Current input state (via accessor functions)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_benefits_3">15.3.4. Benefits</h4>
+<div class="sect4">
+<h5 id="_architectural">Architectural</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Separation of concerns</strong>: Lexing vs. preprocessing clearly separated</p>
+</li>
+<li>
+<p><strong>Reduced file size</strong>: yylex.c drops from 2353 → ~1550 lines (34% reduction)</p>
+</li>
+<li>
+<p><strong>Testability</strong>: Macro expansion can be unit tested independently</p>
+</li>
+<li>
+<p><strong>Clearer ownership</strong>: Macro state and memory management centralized</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_maintainability_2">Maintainability</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Focused modules</strong>: Each file has a single, clear purpose</p>
+</li>
+<li>
+<p><strong>Easier reasoning</strong>: Macro behavior isolated from lexer concerns</p>
+</li>
+<li>
+<p><strong>Better documentation</strong>: Module-level documentation for macro system</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_future_flexibility">Future flexibility</h5>
+<div class="ulist">
+<ul>
+<li>
+<p>Could support different macro systems (C vs. C++)</p>
+</li>
+<li>
+<p>Easier to add macro debugging/tracing</p>
+</li>
+<li>
+<p>Independent optimization of macro expansion</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_implementation_strategy_2">15.3.5. Implementation Strategy</h4>
+<div class="sect4">
+<h5 id="_phase_1_preparation_already_complete">Phase 1: Preparation (Already Complete)</h5>
+<div class="paragraph">
+<p>✓ Create <code>LexemBufferDescriptor</code> type for buffer management<br>
+✓ Refactor buffer expansion functions to use descriptor<br>
+✓ Eliminate return values for size updates</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_phase_2_create_module_structure">Phase 2: Create Module Structure</h5>
+<div class="ulist">
+<ul>
+<li>
+<p>Create <code>macroexpansion.h</code> with public interface</p>
+</li>
+<li>
+<p>Create <code>macroexpansion.c</code> with initial implementations</p>
+</li>
+<li>
+<p>Move <code>LexemBufferDescriptor</code> to appropriate header</p>
+</li>
+<li>
+<p>Create accessor functions for <code>currentInput</code> state</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_phase_3_incremental_function_migration">Phase 3: Incremental Function Migration</h5>
+<div class="paragraph">
+<p>Move functions in this order (lowest risk first):</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Memory management</strong> - MBM/PPM allocation functions</p>
+</li>
+<li>
+<p><strong>Buffer expansion</strong> - <code>expandPreprocessorBufferIfOverflow()</code>, <code>expandMacroBodyBufferIfOverflow()</code></p>
+</li>
+<li>
+<p><strong>Support utilities</strong> - <code>cyclicCall()</code>, <code>prependMacroInput()</code></p>
+</li>
+<li>
+<p><strong>Token processing</strong> - <code>collate()</code>, <code>resolveMacroArgument()</code>, etc.</p>
+</li>
+<li>
+<p><strong>Core expansion</strong> - <code>expandMacroCall()</code>, <code>createMacroBodyAsNewStream()</code>, etc.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_phase_4_integration_and_cleanup">Phase 4: Integration and Cleanup</h5>
+<div class="ulist">
+<ul>
+<li>
+<p>Update yylex.c to use new interface</p>
+</li>
+<li>
+<p>Run full test suite after each migration step</p>
+</li>
+<li>
+<p>Add focused unit tests for macro expansion</p>
+</li>
+<li>
+<p>Update build system</p>
+</li>
+<li>
+<p>Document the new architecture</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_risks_and_mitigation_2">15.3.6. Risks and Mitigation</h4>
+<div class="sect4">
+<h5 id="_risk_complex_dependencies">Risk: Complex dependencies</h5>
+<div class="paragraph">
+<p><strong>Mitigation:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Create clear accessor functions for shared state</p>
+</li>
+<li>
+<p>Use incremental approach - one function group at a time</p>
+</li>
+<li>
+<p>Validate with tests after each step</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_risk_performance_overhead">Risk: Performance overhead</h5>
+<div class="paragraph">
+<p><strong>Mitigation:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Keep critical functions inline where necessary</p>
+</li>
+<li>
+<p>Profile before/after migration</p>
+</li>
+<li>
+<p>Current code already has abstraction layers</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Assessment:</strong> Low risk - macro operations are complex enough that function call overhead is negligible</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_risk_breaking_existing_tests">Risk: Breaking existing tests</h5>
+<div class="paragraph">
+<p><strong>Mitigation:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Run test suite after every migration step</p>
+</li>
+<li>
+<p>Keep interface behavior identical</p>
+</li>
+<li>
+<p>Use compiler to catch interface mismatches</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_success_metrics">15.3.7. Success Metrics</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>All existing tests pass</p>
+</li>
+<li>
+<p>yylex.c reduced to ~1550 lines</p>
+</li>
+<li>
+<p>New focused tests for macro expansion added</p>
+</li>
+<li>
+<p>No performance regression (&lt; 5% overhead acceptable)</p>
+</li>
+<li>
+<p>Code review confirms improved clarity</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_open_questions_3">15.3.8. Open Questions</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Should <code>findMacroSymbol()</code> move to the macro module or stay in yylex.c?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>It&#8217;s used by both lexer (for expansion triggering) and macro module (for nested expansions)</p>
+</li>
+<li>
+<p>Probably belongs in a shared location or as part of symbol table operations</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>How to handle <code>currentInput</code> global state?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Options: Pass explicitly, use accessor functions, or provide context structure</p>
+</li>
+<li>
+<p>Accessor functions likely cleanest: <code>getCurrentInput()</code>, <code>setCurrentInput()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Should we extract preprocessor directives at the same time?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>No - keep changes focused</p>
+</li>
+<li>
+<p>Could be a future refactoring after macro extraction proves successful</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_references_3">15.3.9. References</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Current code: <code>src/yylex.c</code> lines 1327-2089 (macro expansion system)</p>
+</li>
+<li>
+<p>Memory management: <code>src/memory.h</code>, <code>src/memory.c</code></p>
+</li>
+<li>
+<p>Symbol operations: <code>src/symbol.h</code></p>
+</li>
+<li>
+<p>Related refactoring: <a href="#_lexemstream_api_improvements">LexemStream API Improvements</a> addresses buffer management patterns</p>
+</li>
+</ul>
+</div>
+<hr>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This refactoring is independent of the LexemStream API improvements but would benefit from them being completed first, as they simplify buffer management patterns throughout the macro expansion code.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -5301,7 +5787,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-11 16:10:22 UTC
+Last updated 2025-11-12 06:09:36 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
