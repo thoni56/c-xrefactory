@@ -158,7 +158,7 @@ SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *symbol,
         new = createNewMenuItem(symbol, symbol->includedFileNumber, defpos, defusage,
                                 selected, visible, ooBits, relation, olusage, vlevel);
         LIST_CONS(new, *place);
-        log_trace(":adding browsed symbol '%s'", symbol->linkName);
+        log_debug(":adding browsed symbol '%s'", symbol->linkName);
     }
     return new;
 }

@@ -8,7 +8,7 @@ $(TEST): input.lsp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: ARGUMENTS+=-trace -log=log
+trace: ARGUMENTS+=-debug -log=log
 trace: $(TEST)
 
 input.lsp: input.json

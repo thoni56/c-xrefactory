@@ -36,7 +36,7 @@ count:
 break:
 	gdb -ex 'br yylex.c:1929' -ex 'ignore 1 647' -ex 'run' --args $(UNIT_COMMAND)
 
-trace: ARGUMENTS += -trace -log=log
+trace: ARGUMENTS += -debug -log=log
 trace: all
 
 init: systemd

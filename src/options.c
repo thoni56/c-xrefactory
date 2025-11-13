@@ -444,7 +444,7 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
         // yes in edit server you process also headers, etc.
         fileItem->isArgument = true;
     }
-    log_trace("recursively process command line argument file #%d '%s'", fileNumber, fileItem->name);
+    log_debug("recursively process command line argument file #%d '%s'", fileNumber, fileItem->name);
     if (!options.updateOnlyModifiedFiles) {
         fileItem->isScheduled = true;
     }
@@ -598,7 +598,7 @@ static void expandEnvironmentVariables(char *original, int availableSize, int *l
     bool expanded;
 
     i = d = 0;
-    log_trace("Expanding environment variables for option '%s'", original);
+    log_debug("Expanding environment variables for option '%s'", original);
     while (original[i] && i<availableSize-2) {
         startIndex = -1;
         expanded = false;
@@ -825,7 +825,7 @@ static int addOptionToArgs(MemoryKind memoryKind, char optionText[], int argc, c
     s = allocateSpaceForOption(memoryKind, strlen(optionText) + 1, sizeof(char));
     assert(s);
     strcpy(s, optionText);
-    log_trace("option %s read", s);
+    log_debug("option %s read", s);
     argv[argc] = s;
     if (argc < MAX_STD_ARGS - 1)
         argc++;
@@ -891,15 +891,15 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
         ch = getOptionFromFile(file, optionText, &len);
         assert(strlen(optionText) == len);
         if (ch==EOF) {
-            log_trace("got option from file (@EOF): '%s'", optionText);
+            log_debug("got option from file (@EOF): '%s'", optionText);
             break;
         } else {
-            log_trace("got option from file: '%s'", optionText);
+            log_debug("got option from file: '%s'", optionText);
         }
         if (len>=2 && optionText[0]=='[' && optionText[len-1]==']') {
-            log_trace("checking '%s'", optionText);
+            log_debug("checking '%s'", optionText);
             expandEnvironmentVariables(optionText+1, MAX_OPTION_LEN, &len, true);
-            log_trace("expanded '%s'", optionText);
+            log_debug("expanded '%s'", optionText);
             processProjectMarker(optionText, project, fileName, &projectUpdated, foundProjectName);
         } else if (projectUpdated && strncmp(optionText, "-pass", 5) == 0) {
             sscanf(optionText+5, "%d", &passNumber);
@@ -1522,7 +1522,7 @@ static bool processPOption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-p")==0) {
         ensureNextArgumentIsAFileName(&i, argc, argv);
-        log_trace("Current project '%s'", argv[i]);
+        log_debug("Current project '%s'", argv[i]);
         options.project = allocateStringForOption(&options.project, argv[i]);
     }
     else if (strcmp(argv[i], "-preload")==0) {
@@ -1754,7 +1754,7 @@ void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
     ENTER();
 
     for (i=1; i<argc; i++) {
-        log_trace("processing argument '%s'", argv[i]);
+        log_debug("processing argument '%s'", argv[i]);
 
         matched = false;
         if (argv[i][0] == '-') {

@@ -208,9 +208,9 @@ static void processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuf
 
     if (lexemStartsBeforeCursor(fileOffsetForCurrentLexem)
         && (lexemEndsAfterCursor(currentOffset) || (characterBuffer->isAtEOF && cursorIsAfterLastLexemInFile(currentOffset)))) {
-        log_trace("offset for current lexem == %d", fileOffsetForCurrentLexem);
-        log_trace("options.olCursorOffset == %d", options.olCursorOffset);
-        log_trace("currentOffset == %d", currentOffset);
+        log_debug("offset for current lexem == %d", fileOffsetForCurrentLexem);
+        log_debug("options.olCursorOffset == %d", options.olCursorOffset);
+        log_debug("currentOffset == %d", currentOffset);
         if (thisLexemCode == IDENTIFIER) {
             if (deltaOffset <= strlenOfBackpatchedIdentifier(lb)) {
                 /* We need to backpatch the current IDENTIFIER with an IDENT_TO_COMPLETE */
@@ -436,7 +436,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
         char *startOfCurrentLexem = getLexemStreamWrite(lb);
         saveBackpatchPosition(lb);
         lexemStartingColumn = columnPosition(cb);
-        log_trace("lexemStartingColumn = %d", lexemStartingColumn);
+        log_debug("lexemStartingColumn = %d", lexemStartingColumn);
 
         ch = skipPossibleStringPrefix(cb, ch);
 
@@ -754,7 +754,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                 if (options.serverOperation == OLO_EXTRACT) {
                     ch = skipBlanks(cb, ch);
                     int apos = fileOffsetFor(cb);
-                    log_trace(":pos1==%d, olCursorOffset==%d, olMarkOffset==%d",apos,options.olCursorOffset,options.olMarkOffset);
+                    log_debug(":pos1==%d, olCursorOffset==%d, olMarkOffset==%d",apos,options.olCursorOffset,options.olMarkOffset);
                     // all this is very, very HACK!!!
                     if (apos >= options.olCursorOffset && !parsedInfo.blockMarker1Set) {
                         if (parsedInfo.blockMarker2Set)

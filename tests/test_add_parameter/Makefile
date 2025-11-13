@@ -8,5 +8,5 @@ $(TEST):
 	@$(NORMALIZE) output.tmp | grep -v progress > output
 	@$(VERIFY)
 
-trace: EXTRA=-trace
+trace: EXTRA=-debug -log=log
 trace: $(TEST)

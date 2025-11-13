@@ -258,7 +258,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
         FATAL_ERROR(ERR_ST, "sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
     }
     for (int i=0; i < includeStack.pointer; i++) {
-        log_trace("inspecting include %d, fileNumber: %d", i,
+        log_debug("inspecting include %d, fileNumber: %d", i,
                   includeStack.stack[i].characterBuffer.fileNumber);
         if (includeStack.stack[i].characterBuffer.file != stdin) {
             int fileNumber = includeStack.stack[i].characterBuffer.fileNumber;
@@ -268,7 +268,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
         }
     }
     if (currentFile.characterBuffer.file != stdin) {
-        log_trace("inspecting current file, fileNumber: %d", currentFile.characterBuffer.fileNumber);
+        log_debug("inspecting current file, fileNumber: %d", currentFile.characterBuffer.fileNumber);
         int fileNumber                     = currentFile.characterBuffer.fileNumber;
         getFileItemWithFileNumber(fileNumber)->cxLoading = false;
         if (currentFile.characterBuffer.file != NULL)
@@ -287,7 +287,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
             fileItem->cxSaved = true;
             if (fileItem->isArgument)
                 savingFlag = true;
-            log_trace(" -># '%s'",fileItem->name);
+            log_debug(" -># '%s'",fileItem->name);
         }
     }
     if (!savingFlag && reason!=LONGJMP_REASON_FILE_ABORT) {

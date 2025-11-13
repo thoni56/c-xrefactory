@@ -317,7 +317,7 @@ static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
         tokenNameLengthsTable[token] = strlen(name);
         if ((isalpha(*name) || *name=='_') && (languages & currentLanguage)) {
             /* looks like a keyword */
-            log_trace("adding keyword '%s' to symbol table", name);
+            log_debug("adding keyword '%s' to symbol table", name);
             symbol = newSymbolAsKeyword(name, name, noPosition, token);
             symbol->type = TypeKeyword;
             symbol->storage = StorageDefault;

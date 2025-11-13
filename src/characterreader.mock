@@ -55,25 +55,25 @@ int fileOffsetFor(CharacterBuffer *cb) {
 
 int skipBlanks(CharacterBuffer *cb, int ch) {
     int r = (int)mock(cb, ch);
-    log_trace("skipBlanks(): returning '%c'", r);
+    log_debug("skipBlanks(): returning '%c'", r);
     return r;
 }
 
 int skipWhiteSpace(CharacterBuffer *cb, int ch) {
     int r = (int)mock(cb, ch);
-    log_trace("skipWhiteSpace(): returning '%c'", r);
+    log_debug("skipWhiteSpace(): returning '%c'", r);
     return r;
 }
 
 void skipCharacters(CharacterBuffer *buffer, unsigned count) {
     mock(buffer, count);
-    log_trace("skipCharacters(): skipping %d", count);
+    log_debug("skipCharacters(): skipping %d", count);
 }
 
 int getChar(CharacterBuffer *cb) {
     bool *isAtEOF = &cb->isAtEOF;
     int r = (int)mock(cb, isAtEOF);
-    log_trace("getChar(): returning '%c'", r);
+    log_debug("getChar(): returning '%c'", r);
     return r;
 }
 

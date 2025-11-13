@@ -9,5 +9,5 @@ $(TEST): .c-xrefrc
 	../../utils/cxref_reader >> output
 	$(VERIFY)
 
-trace: TRACE = -trace
+trace: TRACE = -debug
 trace: $(TEST)

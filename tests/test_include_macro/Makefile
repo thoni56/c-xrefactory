@@ -8,5 +8,5 @@ $(TEST): .c-xrefrc
 	@$(NORMALIZE) output.tmp > output
 	$(NO_TESTS)
 
-trace: TRACE = -trace
+trace: TRACE = -debug
 trace: $(TEST)

@@ -231,7 +231,7 @@ static void discoverBuiltinIncludePaths(void) {
             if (strncmp(line, "End of search list.", 19) == 0)
                 break;
             if (directoryExists(line)) {
-                log_trace("Add include '%s'", line);
+                log_debug("Add include '%s'", line);
                 addToStringListOption(&options.includeDirs, line);
             }
         } while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF);
@@ -367,21 +367,21 @@ static void discoverStandardDefines(void) {
     while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
         if (strncmp(line, "#define", strlen("#define")))
             log_error("Expected #define from compiler standard definitions");
-        log_trace("Add definition '%s'", line);
+        log_debug("Add definition '%s'", line);
         addMacroDefinedByOption(&line[strlen("#define")+1]);
     }
 
     /* Also define some faked standard base types and GNU-isms */
     for (int i=0; i<(int)sizeof(extra_defines)/sizeof(extra_defines[0]); i++) {
-        log_trace("Add definition '%s'", extra_defines[i]);
+        log_debug("Add definition '%s'", extra_defines[i]);
         addMacroDefinedByOption(extra_defines[i]);
     }
 
     for (int c=0; c<sizeof(compiler_dependent_defines)/sizeof(CompilerDependentDefines); c++) {
         if (strstr(compiler_dependent_defines[c].compiler, compiler_identification) != NULL) {
-            log_trace("Adding compiler specific defines for '%s'", compiler_dependent_defines[c].compiler);
+            log_debug("Adding compiler specific defines for '%s'", compiler_dependent_defines[c].compiler);
             for (char **d=compiler_dependent_defines[c].defines; *d != NULL; d++) {
-                log_trace("Add definition '%s'", *d);
+                log_debug("Add definition '%s'", *d);
                 addMacroDefinedByOption(*d);
             }
         }
@@ -612,7 +612,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         tempAllocated = (char *)cxAlloc(6*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
         cxFreeUntil(tempAllocated);
     } else {
-        log_trace("");
+        log_debug("");
     }
     if (options.mode==XrefMode) {
         // get some memory if cross referencing

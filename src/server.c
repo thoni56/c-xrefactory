@@ -61,7 +61,7 @@ static int scheduleFileUsingTheMacro(void) {
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
     }
-    log_trace(":scheduling file '%s'", getFileItemWithFileNumber(olMacro2PassFile)->name);
+    log_debug(":scheduling file '%s'", getFileItemWithFileNumber(olMacro2PassFile)->name);
     return olMacro2PassFile;
 }
 
@@ -108,11 +108,11 @@ static void parseInputFile(void) {
     if (options.fileTrace)
         fprintf(stderr, "parseInputFile: '%s\n", currentFile.fileName);
     if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
-        log_trace("parse start");
+        log_debug("parse start");
         parseCurrentInputFile(currentLanguage);
-        log_trace("parse end");
+        log_debug("parse end");
     } else
-        log_trace("Not parsing input because of server operation TAG_SEARCH or PUSH_NAME");
+        log_debug("Not parsing input because of server operation TAG_SEARCH or PUSH_NAME");
     closeInputFile();
 }
 

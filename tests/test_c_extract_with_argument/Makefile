@@ -6,7 +6,7 @@ $(TEST):
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: EXTRA=--extra \'-trace\'
+trace: EXTRA=--extra \'-debug\'
 trace: $(TEST)
 
 GDB_COMMANDS = -ex 'br refactory' -ex 'continue'

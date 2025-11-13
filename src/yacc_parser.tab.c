@@ -2532,9 +2532,9 @@ static bool validParserActionExistFor(int token) {
 static bool runCompletionsCollectorsIn(CompletionFunctionsTable *completionsTable) {
     int token;
     for (int i=0; (token=completionsTable[i].token) != 0; i++) {
-        log_trace("trying token %d", tokenNamesTable[token]);
+        log_debug("trying token %d", tokenNamesTable[token]);
         if (validParserActionExistFor(token)) {
-            log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
+            log_debug("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
             (*completionsTable[i].fun)(&collectedCompletions);
             if (collectedCompletions.abortFurtherCompletions)
                 return false;
@@ -2551,7 +2551,7 @@ static bool runCompletionsCollectorsIn(CompletionFunctionsTable *completionsTabl
 void makeYaccCompletions(char *string, int len, Position position) {
     CompletionLine completionLine;
 
-    log_trace("completing \"%s\"", string);
+    log_debug("completing \"%s\"", string);
     strncpy(collectedCompletions.idToProcess, string, MAX_FUNCTION_NAME_LENGTH);
     collectedCompletions.idToProcess[MAX_FUNCTION_NAME_LENGTH-1] = 0;
     initCompletions(&collectedCompletions, len, position);
@@ -2570,7 +2570,7 @@ void makeYaccCompletions(char *string, int len, Position position) {
                     } else {
                         completionLine = makeCompletionLine(tokenNamesTable[token], NULL, TypeToken, 0, NULL);
                     }
-                    log_trace("completing %d==%s(%s) in state %d", token, tokenNamesTable[token], tokenNamesTable[token], lastyystate);
+                    log_debug("completing %d==%s(%s) in state %d", token, tokenNamesTable[token], tokenNamesTable[token], lastyystate);
                     processName(tokenNamesTable[token], &completionLine, 0, &collectedCompletions);
                 }
         }

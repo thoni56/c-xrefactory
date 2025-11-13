@@ -8,7 +8,7 @@ $(TEST): CXrefs
 	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
 
-trace: EXTRA = \'-trace\'
+trace: EXTRA = \'-debug\'
 trace: $(TEST)
 
 CXrefs: .c-xrefrc

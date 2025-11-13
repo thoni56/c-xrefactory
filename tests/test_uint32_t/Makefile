@@ -27,5 +27,5 @@ $(TEST):
 	$(VERIFY)
 
 .PHONY: trace
-trace: TRACE=-trace
+trace: TRACE=-debug
 trace: $(TEST)

@@ -247,7 +247,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
 
     getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
 
-    log_trace("adding reference on %s(%d) at %d,%d,%d (%s) (%s) (%s)",
+    log_debug("adding reference on %s(%d) at %d,%d,%d (%s) (%s) (%s)",
               symbol->linkName, includedFileNumber, position.file, position.line,
               position.col, visibility==GlobalVisibility?"Global":"Local",
               usageKindEnumName[usage], storageEnumName[symbol->storage]);
@@ -292,7 +292,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
 
     int index;
     if (!isMemberInReferenceTable(&referenceItem, &index, &foundMember)) {
-        log_trace("allocating '%s'", symbol->linkName);
+        log_debug("allocating '%s'", symbol->linkName);
         char *linkName = cxAlloc(strlen(symbol->linkName)+1);
         strcpy(linkName, symbol->linkName);
         ReferenceItem *r = cxAlloc(sizeof(ReferenceItem));
@@ -303,7 +303,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
     }
 
     place = addToReferenceList(&foundMember->references, position, usage);
-    log_trace("checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s",
+    log_debug("checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s",
               getFileItemWithFileNumber(cxRefPosition.file)->name, cxRefPosition.file, cxRefPosition.line, cxRefPosition.col,
               fileItem->name, position.file, position.line, position.col,
               memcmp(&cxRefPosition, &position, sizeof(Position)), positionsAreEqual(cxRefPosition, position),
@@ -333,7 +333,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
                 defaultUsage = UsageDefined;
             }
             if (defaultPosition.file!=NO_FILE_NUMBER)
-                log_trace("getting definition position of %s at line %d", symbol->name, defaultPosition.line);
+                log_debug("getting definition position of %s at line %d", symbol->name, defaultPosition.line);
             if (! operationRequiresOnlyParsingNoPushing(options.serverOperation)) {
                 menu = addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, foundMember,
                                               true, true, 0, (SymbolRelation){.sameFile = false}, usage, 0,
@@ -360,7 +360,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
     }
 
     assert(place);
-    log_trace("returning %x == %s %s:%d", *place, usageKindEnumName[(*place)->usage],
+    log_debug("returning %x == %s %s:%d", *place, usageKindEnumName[(*place)->usage],
               getFileItemWithFileNumber((*place)->position.file)->name, (*place)->position.line);
     return *place;
 }
@@ -455,7 +455,7 @@ static void olcxAppendReference(Reference *ref, OlcxReferences *refs) {
     Reference *rr;
     rr = olcxCopyReference(ref);
     LIST_APPEND(Reference, refs->references, rr);
-    log_trace("olcx appending %s %s:%d:%d", usageKindEnumName[ref->usage],
+    log_debug("olcx appending %s %s:%d:%d", usageKindEnumName[ref->usage],
               getFileItemWithFileNumber(ref->position.file)->name, ref->position.line, ref->position.col);
 }
 
@@ -572,7 +572,7 @@ static void indicateNoReference(void) {
 static void olcxSetCurrentRefsOnCaller(OlcxReferences *refs) {
     Reference *r;
     for (r=refs->references; r!=NULL; r=r->next){
-        log_trace("checking %d:%d:%d to %d:%d:%d", r->position.file, r->position.line,r->position.col,
+        log_debug("checking %d:%d:%d to %d:%d:%d", r->position.file, r->position.line,r->position.col,
                   refs->callerPosition.file,  refs->callerPosition.line,  refs->callerPosition.col);
         if (!positionIsLessThan(r->position, refs->callerPosition))
             break;
@@ -1897,7 +1897,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
 #ifdef DUMP_SELECTION_MENU
 static void dumpSelectionMenu(SymbolsMenu *menu) {
     for (SymbolsMenu *s=menu; s!=NULL; s=s->next) {
-        log_trace(">> %d/%d %s %s %d", s->defaultRefn, s->refn, s->references.linkName,
+        log_debug(">> %d/%d %s %s %d", s->defaultRefn, s->refn, s->references.linkName,
             simpleFileName(getFileItemWithFileNumber(s->references.includedFileNumber)->name),
             s->outOnLine);
     }
@@ -2069,7 +2069,7 @@ void answerEditAction(void) {
     ENTER();
     assert(outputFile);
 
-    log_trace("Server operation = %s(%d)", operationNamesTable[options.serverOperation], options.serverOperation);
+    log_debug("Server operation = %s(%d)", operationNamesTable[options.serverOperation], options.serverOperation);
     switch (options.serverOperation) {
     case OLO_COMPLETION:
         printCompletions(&collectedCompletions);
@@ -2116,7 +2116,7 @@ void answerEditAction(void) {
                 char standardOptionsFileName[MAX_FILE_NAME_SIZE];
                 char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
                 char *inputFileName = getFileItemWithFileNumber(originalCommandLineFileNumber)->name;
-                log_trace("inputFileName = %s", inputFileName);
+                log_debug("inputFileName = %s", inputFileName);
                 searchStandardOptionsFileAndProjectForFile(inputFileName, standardOptionsFileName, standardOptionsSectionName);
                 if (standardOptionsFileName[0]==0 || standardOptionsSectionName[0]==0) {
                     if (!options.noErrors) {
@@ -2331,7 +2331,7 @@ static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceItem *referenceItem) {
             return ooBits;
     }
 
-    log_trace("olcxOoBits: linkName='%s' type=%d storage=%d visibility=%d",
+    log_debug("olcxOoBits: linkName='%s' type=%d storage=%d visibility=%d",
               referenceItem->linkName,
               referenceItem->type,
               referenceItem->storage,
@@ -2339,15 +2339,15 @@ static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceItem *referenceItem) {
         );
 
     if (strcmp(menu->references.linkName, referenceItem->linkName) == 0) {
-        log_trace("olcxOoBits: +sameName (OOC_OVERLOADING_EQUAL)");
+        log_debug("olcxOoBits: +sameName (OOC_OVERLOADING_EQUAL)");
         ooBits |= OOC_OVERLOADING_EQUAL;
     }
     if (referenceItem->includedFileNumber == menu->references.includedFileNumber) {
-        log_trace("olcxOoBits: +sameFile (OOC_VIRT_SAME_APPL_FUN_CLASS)");
+        log_debug("olcxOoBits: +sameFile (OOC_VIRT_SAME_APPL_FUN_CLASS)");
         ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
     }
 
-    log_trace("olcxOoBits: +ooBits = %o", ooBits);
+    log_debug("olcxOoBits: +ooBits = %o", ooBits);
     return ooBits;
 }
 
@@ -2412,13 +2412,13 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *reference) {
             if (defaultPosition.file == NO_FILE_NUMBER) {
                 defaultPosition = menu->defaultPosition;
                 defaultUsage = menu->defaultUsage;
-                log_trace(": propagating defpos (line %d) to menusym", defaultPosition.line);
+                log_debug(": propagating defpos (line %d) to menusym", defaultPosition.line);
             }
 
             int v = 0;
             if (vlevel==0 || ABS(vlevel)>ABS(v))
                 vlevel = v;
-            log_trace("ooBits for %s <-> %s %o %o", getFileItemWithFileNumber(menu->references.includedFileNumber)->name,
+            log_debug("ooBits for %s <-> %s %o %o", getFileItemWithFileNumber(menu->references.includedFileNumber)->name,
                       reference->linkName, oo, ooBits);
 
             SymbolRelation r = computeSymbolRelation(menu, reference);

@@ -294,7 +294,7 @@ static void getExtraLexemInformationFor(LexemCode lexem, char **readPointerP, in
     if (lexem > MULTI_TOKENS_START) {
         if (isIdentifierLexem(lexem) || lexem == STRING_LITERAL) {
             /* Both are followed by a string and a position */
-            log_trace("Getting extra lexem information for %s '%s'", lexemEnumNames[lexem], *readPointerP);
+            log_debug("Getting extra lexem information for %s '%s'", lexemEnumNames[lexem], *readPointerP);
             *readPointerP = strchr(*readPointerP, '\0') + 1;
             getAndSetOutPositionIfRequested(readPointerP, outPosition);
         } else if (lexem == LINE_TOKEN) {
@@ -330,7 +330,7 @@ static void getExtraLexemInformationFor(LexemCode lexem, char **readPointerP, in
         getAndSetOutPositionIfRequested(readPointerP, outPosition);
     }
     if (outPosition != NULL)
-        log_trace("Lexem position: (%d)@%d:%d", outPosition->file, outPosition->line, outPosition->col);
+        log_debug("Lexem position: (%d)@%d:%d", outPosition->file, outPosition->line, outPosition->col);
 }
 
 static void skipExtraLexemInformationWithCountLines(LexemCode lexem, char **readPointerP, bool countLines) {
@@ -376,7 +376,7 @@ static LexemCode getLexemAndSavePointerToPrevious(char **previousLexemP) {
     lexem = getLexemCodeAndAdvance(&currentInput.read);
     if (options.lexemTrace)
         printf("LEXEM read: %s\n", lexemEnumNames[lexem]);
-    log_trace("LEXEM read: %s", lexemEnumNames[lexem]);
+    log_debug("LEXEM read: %s", lexemEnumNames[lexem]);
     return lexem;
 }
 
@@ -444,12 +444,12 @@ static Symbol makeIncludeSymbolItem(Position pos) {
 void addFileAsIncludeReference(int fileNumber) {
     Position position = makePosition(fileNumber, 1, 0);
     Symbol symbol = makeIncludeSymbolItem(position);
-    log_trace("adding reference on file %d==%s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
+    log_debug("adding reference on file %d==%s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
     addCxReference(&symbol, position, UsageDefined, fileNumber);
 }
 
 static void addIncludeReference(int fileNumber, Position position) {
-    log_trace("adding reference on file %d==%s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
+    log_debug("adding reference on file %d==%s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
     Symbol symbol = makeIncludeSymbolItem(position);
     addCxReference(&symbol, position, UsageUsed, fileNumber);
 }
@@ -488,7 +488,7 @@ static bool openInclude(char includeType, char *name, bool is_include_next) {
     char normalizedName[MAX_FILE_NAME_SIZE];
     char path[MAX_FILE_NAME_SIZE];
 
-    log_trace("openInclude(%s)%s", name, is_include_next?" as include_next":"");
+    log_debug("openInclude(%s)%s", name, is_include_next?" as include_next":"");
 
     extractPathInto(currentFile.fileName, path);
 
@@ -515,7 +515,7 @@ static bool openInclude(char includeType, char *name, bool is_include_next) {
     /* If not an angle bracketed include, look first in the directory of the current file */
     if (includeType != '<') {
         strcpy(normalizedName, normalizeFileName_static(name, path));
-        log_trace("trying to open %s", normalizedName);
+        log_debug("trying to open %s", normalizedName);
         editorBuffer = findOrCreateAndLoadEditorBufferForFile(normalizedName);
         if (editorBuffer == NULL)
             file = openFile(normalizedName, "r");
@@ -535,7 +535,7 @@ static bool openInclude(char includeType, char *name, bool is_include_next) {
                 length++;
             }
             strcpy(normalizedName + length, name);
-            log_trace("trying to open '%s'", normalizedName);
+            log_debug("trying to open '%s'", normalizedName);
             editorBuffer = findOrCreateAndLoadEditorBufferForFile(normalizedName);
             if (editorBuffer == NULL)
                 file = openFile(normalizedName, "r");
@@ -544,7 +544,7 @@ static bool openInclude(char includeType, char *name, bool is_include_next) {
         });
     }
     if (editorBuffer==NULL && file==NULL) {
-        log_trace("failed to open '%s'", name);
+        log_debug("failed to open '%s'", name);
         return false;
     }
  found:
@@ -624,9 +624,9 @@ static void addMacroToTabs(Symbol *symbol, char *name) {
 
     isMember = symbolTableIsMember(symbolTable, symbol, &index, NULL);
     if (isMember) {
-        log_trace(": masking macro %s", name);
+        log_debug(": masking macro %s", name);
     } else {
-        log_trace(": adding macro %s", name);
+        log_debug(": adding macro %s", name);
     }
     symbolTablePush(symbolTable, symbol, index);
 }
@@ -664,7 +664,7 @@ static void handleMacroUsageParameterPositions(int argumentIndex, Position macro
 ) {
     if (options.serverOperation == OLO_GET_PARAM_COORDINATES
         && positionsAreEqual(macroPosition, cxRefPosition)) {
-        log_trace("checking param %d at %d,%d, final==%d", argumentIndex, beginPosition.col, endPosition.col,
+        log_debug("checking param %d at %d,%d, final==%d", argumentIndex, beginPosition.col, endPosition.col,
                   final);
         if (final) {
             if (argumentIndex==0) {
@@ -1332,19 +1332,24 @@ endOfFile:
 
 // Will always keep the buffer an extra MAX_LEXEM_SIZE in size
 static void expandPreprocessorBufferIfOverflow(LexemBufferDescriptor *desc, char *pointer) {
+    ENTER();
     if (pointer >= desc->buffer + desc->size) {
+        log_trace("Expanding buffer %p because pointer %p points outside", desc->buffer, pointer);
         desc->size += MACRO_BODY_BUFFER_SIZE;
         ppmReallocc(desc->buffer, desc->size+MAX_LEXEM_SIZE, sizeof(char),
                     desc->size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE);
     }
+    LEAVE();
 }
 
 // Will always keep the buffer an extra MAX_LEXEM_SIZE in size
 static void expandMacroBodyBufferIfOverflow(LexemBufferDescriptor *desc, char *writePosition, int requiredSpace) {
+    ENTER();
     while (writePosition + requiredSpace >= desc->buffer + desc->size) {
         desc->size += MACRO_BODY_BUFFER_SIZE;
         mbmRealloc(desc->buffer, desc->size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE, desc->size+MAX_LEXEM_SIZE);
     }
+    LEAVE();
 }
 
 /* *********************************************************** */
@@ -1404,7 +1409,7 @@ static void expandMacroArgument(LexemStream *argumentInput) {
             Symbol *macroSymbol = findMacroSymbol(nextLexemP);
             if (macroSymbol != NULL) {
                 /* it is a macro, provide macro expansion */
-                log_trace("Macro found: '%s' (argument) -> Should be expanded", nextLexemP);
+                log_debug("Macro found: '%s' (argument) -> Should be expanded", nextLexemP);
                 char *savedBufferP = currentBufferP; /* In case 'expandMacroCall' expands the buffer */
                 if (expandMacroCall(macroSymbol, position))
                     continue; // with next lexem
@@ -1433,7 +1438,7 @@ endOfFile:
 static void cxAddCollateReference(char *sym, char *cs, Position position) {
     char tempString[TMP_STRING_SIZE];
     strcpy(tempString,sym);
-    log_trace("cs : %p, sym : %p", cs, sym);
+    log_debug("cs : %p, sym : %p", cs, sym);
     assert(cs>=sym && cs-sym<TMP_STRING_SIZE);
     sprintf(tempString+(cs-sym), "%c%c%s", LINK_NAME_COLLATE_SYMBOL,
             LINK_NAME_COLLATE_SYMBOL, cs);
@@ -1442,7 +1447,7 @@ static void cxAddCollateReference(char *sym, char *cs, Position position) {
 
 static char *resolveMacroArgument(char **nextLexemP, LexemStream *actualArgumentsInput) {
     LexemCode lexem = getLexemCodeAndAdvance(nextLexemP);
-    log_trace("Lexem = '%s'", lexemEnumNames[lexem]);
+    log_debug("Lexem = '%s'", lexemEnumNames[lexem]);
     int argumentIndex;
     getExtraLexemInformationFor(lexem, nextLexemP, NULL, &argumentIndex, NULL, NULL, false);
     *nextLexemP = actualArgumentsInput[argumentIndex].begin;
@@ -1458,14 +1463,17 @@ static char *resolveRegularOperand(char **nextLexemP) {
 
 static void copyRemainingLexems(LexemBufferDescriptor *bufferDesc, LexemStream *inputStream,
                                 LexemStream *outputStream) {
+    ENTER();
     while (lexemStreamHasMore(inputStream)) {
         copyNextLexemFromStreamToStream(inputStream, outputStream);
         expandPreprocessorBufferIfOverflow(bufferDesc, outputStream->write);
     }
+    LEAVE();
 }
 
 static char *resolveMacroArgumentAsLeftOperand(LexemBufferDescriptor *bufferDesc, char **bufferWriteP,
                                               char **nextLexemP, LexemStream *actualArgumentsInput) {
+    ENTER();
     *bufferWriteP = *nextLexemP;
 
     LexemCode lexem = getLexemCodeAndAdvance(nextLexemP);
@@ -1486,6 +1494,8 @@ static char *resolveMacroArgumentAsLeftOperand(LexemBufferDescriptor *bufferDesc
         expandPreprocessorBufferIfOverflow(bufferDesc, outputStream.write);
     }
     *bufferWriteP = outputStream.write;
+
+    LEAVE();
     return lastLexemP;
 }
 
@@ -1506,7 +1516,7 @@ static void expandMacroInCollation(LexemBufferDescriptor *bufferDesc, LexemStrea
     MacroBody *macroBody = getMacroBody(macroSymbol);
     if (macroBody == NULL) {
         // Undefined macro (e.g., from #undef) - nothing to expand
-        log_trace("Macro '%s' has NULL body (undefined), skipping expansion", macroSymbol->name);
+        log_debug("Macro '%s' has NULL body (undefined), skipping expansion", macroSymbol->name);
         return;
     }
     LexemStream macroExpansion = createMacroBodyAsNewStream(macroBody, actualArgumentsInput);
@@ -1716,14 +1726,14 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
         rhsIsEndOfMarker = (rhsLexemCode == END_OF_FILE_EXCEPTION || rhsLexemCode == END_OF_MACRO_ARGUMENT_EXCEPTION);
     }
      if (rhsIsEmpty || rhsIsEndOfMarker) {
-        log_trace("[DEBUG] Entering empty RHS handling");
+        log_debug("Entering empty RHS handling");
         /* GNU extension: delete comma if pasting with empty __VA_ARGS__ */
         if (peekLexemCodeAt(*leftHandLexemP) == COMMA) {
-            log_trace("Token pasting: deleting comma before empty __VA_ARGS__");
+            log_debug("Token pasting: deleting comma before empty __VA_ARGS__");
             /* Don't write the comma - rewind write pointer to before it */
             *writeBufferWriteP = *leftHandLexemP;
         } else {
-            log_trace("Token pasting with empty right operand - using left operand as-is");
+            log_debug("Token pasting with empty right operand - using left operand as-is");
         }
         LEAVE();
         ppmFreeUntil(ppmMarker); // Free any allocations done
@@ -1736,14 +1746,14 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
         char *lexemString = lhs + LEXEMCODE_SIZE;
         Symbol *macroSymbol = findMacroSymbol(lexemString);
         if (macroSymbol != NULL) {
-            log_trace("Macro found: '%s' (left-hand) -> expanding it", lexemString);
+            log_debug("Macro found: '%s' (left-hand) -> expanding it", lexemString);
             *writeBufferWriteP = lhs; /* We should write where current LHS, the macro, starts */
             LexemStream outputStream = makeLexemStream(writeBufferDesc->buffer, *writeBufferWriteP, *writeBufferWriteP,
                                                        NULL, NORMAL_STREAM);
             expandMacroInCollation(writeBufferDesc, &outputStream, macroSymbol, actualArgumentsInput);
             *writeBufferWriteP = outputStream.write;
         } else {
-            log_trace("Identifier '%s' (left-hand) is NOT a macro", lexemString);
+            log_debug("Identifier '%s' (left-hand) is NOT a macro", lexemString);
         }
     }
 
@@ -1752,7 +1762,7 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
         char *lexemString = rhs + LEXEMCODE_SIZE;
         Symbol *macroSymbol = findMacroSymbol(lexemString);
         if (macroSymbol != NULL) {
-            log_trace("Macro found: '%s' (right-hand) -> expanding it", lexemString);
+            log_debug("Macro found: '%s' (right-hand) -> expanding it", lexemString);
             rhs = *writeBufferWriteP; /* RHS now starts where we will write now */
             LexemStream outputStream = makeLexemStream(writeBufferDesc->buffer, *writeBufferWriteP, *writeBufferWriteP,
                                                        NULL, NORMAL_STREAM);
@@ -1760,7 +1770,7 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
             *writeBufferWriteP = outputStream.write;
             endOfLexems = *writeBufferWriteP; /* End is now where we have just finished writing */
         } else {
-            log_trace("Identifier '%s' (right-hand) is NOT a macro", lexemString);
+            log_debug("Identifier '%s' (right-hand) is NOT a macro", lexemString);
         }
     }
 
@@ -1901,6 +1911,7 @@ static LexemStream replaceMacroArguments(LexemStream *actualArgumentsInput, char
 /* ************************************************************** */
 
 static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream *actualArgumentsInput) {
+    ENTER();
     // Allocate space for an extra lexem so that users can overwrite and *then* expand
     LexemBufferDescriptor bufferDesc;
     bufferDesc.size = MACRO_BODY_BUFFER_SIZE;
@@ -1920,7 +1931,6 @@ static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream 
 
         /* first make ## collations, if any */
         if (lexem == CPP_COLLATION && lastWrittenLexem != NULL && nextBodyLexemToRead < endOfBodyLexems) {
-            log_trace("[DEBUG] Found ## token, calling collate()");
             nextBodyLexemToRead = collate(&bufferDesc, &bufferWrite, &lastWrittenLexem,
                                           &nextBodyLexemToRead, actualArgumentsInput);
         } else {
@@ -1947,6 +1957,7 @@ static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream 
     /* replace arguments into a different buffer to be used as the input */
     LexemStream result = replaceMacroArguments(actualArgumentsInput, bufferDesc.buffer, bufferWrite);
 
+    LEAVE();
     return makeLexemStream(result.begin, result.begin, result.write, macroBody->name, MACRO_STREAM);
 }
 
@@ -2046,7 +2057,7 @@ static LexemStream *getActualMacroArguments(MacroBody *macroBody, Position macro
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &endPosition, NULL,
                                 !insideMacro());
 
-    log_trace("getActualMacroArguments for %s: %s", macroBody->name, lexemEnumNames[lexem]);
+    log_debug("getActualMacroArguments for %s: %s", macroBody->name, lexemEnumNames[lexem]);
 
     int argumentIndex = 0;
 
@@ -2057,7 +2068,7 @@ static LexemStream *getActualMacroArguments(MacroBody *macroBody, Position macro
             lexem = getActualMacroArgument(previousLexemP, lexem, macroPosition, &beginPosition, &endPosition,
                                            &actualArgs[argumentIndex], macroBody->argCount, argumentIndex);
             //ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
-            log_trace("getActualMacroArgument: %s", lexemEnumNames[lexem]);
+            log_debug("getActualMacroArgument: %s", lexemEnumNames[lexem]);
             //printf("Macroposition: %d:%d:%d\n", macroPosition.file, macroPosition.line, macroPosition.col);
             argumentIndex++;
             if (lexem != ',' || argumentIndex >= macroBody->argCount)
@@ -2117,7 +2128,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
     if (!insideMacro()) { /* call from top level, init memory */
         mbmInit();
     }
-    log_trace("trying to expand macro '%s'", macroBody->name);
+    log_debug("trying to expand macro '%s'", macroBody->name);
     if (cyclicCall(macroBody))
         return false;
 
@@ -2146,12 +2157,12 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
     addCxReference(macroSymbol, macroPosition, UsageUsed, NO_FILE_NUMBER);
     if (options.mode == XrefMode)
         addMacroBaseUsageRef(macroSymbol);
-    log_trace("create macro body '%s' as new input", macroBody->name);
+    log_debug("create macro body '%s' as new input", macroBody->name);
 
     LexemStream macroBodyInput = createMacroBodyAsNewStream(macroBody, actualArgumentsInput);
 
     prependMacroInput(&macroBodyInput);
-    log_trace("expanded macro '%s'", macroBody->name);
+    log_debug("expanded macro '%s'", macroBody->name);
 
     ppmFreeUntil(ppmMarker);
     return true;
@@ -2218,7 +2229,7 @@ static LexemCode lookupIdentifier(char *id, Position position) {
     Symbol *symbol = NULL;
     unsigned hash = hashFun(id) % symbolTable->size;
 
-    log_trace("looking for C id '%s' in symbol table %p", id, symbolTable);
+    log_debug("looking for C id '%s' in symbol table %p", id, symbolTable);
     for (Symbol *s=symbolTable->tab[hash]; s!=NULL; s=s->next) {
         if (strcmp(s->name, id) == 0) {
             if (symbol == NULL)
@@ -2301,7 +2312,7 @@ LexemCode yylex(void) {
             // TODO: ???????????? isn't this useless
             testCxrefCompletionId(&lexem, yytext, position);
         }
-        log_trace("id '%s' position %d, %d, %d", yytext, position.file, position.line, position.col);
+        log_debug("id '%s' position %d, %d, %d", yytext, position.file, position.line, position.col);
 
         Symbol *foundMacroSymbol = findMacroSymbol(yytext);
         if (lexem != IDENT_NO_CPP_EXPAND && foundMacroSymbol != NULL) {
@@ -2383,11 +2394,11 @@ LexemCode yylex(void) {
             goto endOfFile;
         }
     }
-    log_trace("unknown lexem %d", lexem);
+    log_debug("unknown lexem %d", lexem);
     goto endOfFile;
 
  finish:
-    log_trace("yytext='%s'(@ index %d)", yytext, cxMemory.index);
+    log_debug("yytext='%s'(@ index %d)", yytext, cxMemory.index);
     return lexem;
 
  endOfMacroArgument:

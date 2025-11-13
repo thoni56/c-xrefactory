@@ -15,7 +15,7 @@ $(TEST): .c-xrefrc
 		exit 0 ; \
 	fi
 
-trace: EXTRA=--extra "-trace"
+trace: EXTRA=--extra "-debug"
 trace: $(TEST)
 
 GDB_COMMANDS = -ex 'br server' -ex 'continue'

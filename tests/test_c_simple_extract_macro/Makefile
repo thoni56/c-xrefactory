@@ -19,7 +19,7 @@ $(TEST):
 		exit 0 ; \
 	fi
 
-trace: EXTRA = \'-trace\'
+trace: EXTRA = \'-debug\'
 trace: $(TEST)
 
 GDB_COMMANDS = -ex 'br refactory' -ex 'continue'

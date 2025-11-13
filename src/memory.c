@@ -59,7 +59,7 @@ void memoryResized(Memory *memory) {
 
 void memoryInit(Memory *memory, char *name, bool (*overflowHandler)(int n), int size) {
     ENTER();
-    log_trace("Init %s with new name '%s' and size %d", memory->name, name, size);
+    log_debug("Init %s with new name '%s' and size %d", memory->name, name, size);
     memory->name = name;
     memory->overflowHandler = overflowHandler;
     memory->name = name;
@@ -167,7 +167,7 @@ bool cxMemoryHasEnoughSpaceFor(size_t bytes) {
 }
 
 bool cxMemoryOverflowHandler(int n) {
-    log_trace("Handling CX memory overflow with n=%d", n);
+    log_debug("Handling CX memory overflow with n=%d", n);
     int oldsize = cxMemory.size;
     int newsize = calculateNewSize(n, oldsize);
 

@@ -13,5 +13,5 @@ include.h:
 	-rm include2.h*
 	touch include.h
 
-trace: EXTRA = -trace -log=trace
+trace: EXTRA = -debug -log=trace
 trace: $(TEST)

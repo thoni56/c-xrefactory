@@ -28,10 +28,10 @@ char stackMemory[SIZE_stackMemory];   /* Allocation using stackMemoryAlloc() et.
 
 
 static void frameDump(void) {
-    log_trace("*** begin frameDump");
+    log_debug("*** begin frameDump");
     for (FrameAllocation *f=currentBlock->frameAllocations; f!=NULL; f=f->next)
-        log_trace("%p ", f);
-    log_trace("*** end frameDump");
+        log_debug("%p ", f);
+    log_debug("*** end frameDump");
 }
 
 
@@ -108,13 +108,13 @@ static void *stackMemoryPush(void *pointer, int size) {
 }
 
 char *stackMemoryPushString(char *string) {
-    log_trace("Pushing string '%s'", string);
+    log_debug("Pushing string '%s'", string);
     return (char*)stackMemoryPush(string, strlen(string)+1);
 }
 
 void beginBlock(void) {
     CodeBlock *pushed, previous;
-    log_trace("Begin block");
+    log_debug("Begin block");
     previous = *currentBlock;
     pushed = stackMemoryPush(&previous, sizeof(CodeBlock));
     // allocation can't be reset to NULL, because in case of syntax errors
@@ -123,7 +123,7 @@ void beginBlock(void) {
 }
 
 void endBlock(void) {
-    log_trace("End block");
+    log_debug("End block");
     //&removeFromFrameUntil(NULL);
     assert(currentBlock && currentBlock->outerBlock);
     removeFromFrameUntil(currentBlock->outerBlock->frameAllocations);

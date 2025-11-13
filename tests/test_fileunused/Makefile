@@ -15,7 +15,7 @@ $(TEST):
 		exit 0 ; \
 	fi
 
-trace: EXTRA = --extra "-trace -log=log"
+trace: EXTRA = --extra "-debug -log=log"
 trace: $(TEST)
 
 GDB_COMMANDS = -ex 'br processOptions' -ex 'br pushLocalUnusedSymbolsAction' -ex 'continue'

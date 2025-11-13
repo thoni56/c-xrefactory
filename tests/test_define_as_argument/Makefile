@@ -11,7 +11,7 @@ $(TEST):
 	grep 2/[AB] CXrefs/* | wc -l | tr -d ' ' > output
 	$(VERIFY)
 
-trace: ARGUMENTS += -trace
+trace: ARGUMENTS += -debug
 trace: $(TEST)
 
 EXTRA_DEBUG =

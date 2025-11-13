@@ -792,9 +792,9 @@ static void checkForMultipleReferencesInSamePlace(OlcxReferences *rstack, Symbol
     sss    = &rstack->symbolsMenu->references;
     pushed = itIsSymbolToPushOlReferences(p, rstack, &cms, DEFAULT_VALUE);
     // TODO, this can be simplified, as ccms == cms.
-    log_trace(":checking %s to %s (%d)", p->linkName, sss->linkName, pushed);
+    log_debug(":checking %s to %s (%d)", p->linkName, sss->linkName, pushed);
     if (!pushed && olcxIsSameCxSymbol(p, sss)) {
-        log_trace("checking %s references", p->linkName);
+        log_debug("checking %s references", p->linkName);
         for (Reference *r = p->references; r != NULL; r = r->next) {
             if (isReferenceInList(r, rstack->references)) {
                 multipleReferencesInSamePlaceMessage(r);

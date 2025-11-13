@@ -6,7 +6,7 @@ $(TEST): .c-xrefrc
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: EXTRA+=--extra="-trace -log=log"
+trace: EXTRA+=--extra="-debug -log=log"
 trace: $(TEST)
 
 

@@ -8,5 +8,5 @@ $(TEST):
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: ARGUMENTS += -trace
+trace: ARGUMENTS += -debug
 trace: $(TEST)

@@ -8,7 +8,7 @@ $(TEST): CXrefs
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: ARGUMENTS+=-trace
+trace: ARGUMENTS+=-debug
 trace: $(TEST)
 
 CXrefs: .c-xrefrc

@@ -14,7 +14,7 @@ $(TEST): CXrefs
 		exit 0 ; \
 	fi
 
-trace: EXTRA = \'-trace\'
+trace: EXTRA = \'-debug\'
 trace: $(TEST)
 
 CXrefs: .c-xrefrc

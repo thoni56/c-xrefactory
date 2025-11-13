@@ -43,7 +43,7 @@ int styyerror(char *message) {
 
     if (strcmp(message, "syntax error") == 0) {
         if (displayingErrorMessages()) {
-            log_trace("Syntax error on: '%s'", yytext);
+            log_debug("Syntax error on: '%s'", yytext);
             sprintf(tmpBuff, "Syntax error on: %s", yytext);
             errorMessage(ERR_ST, tmpBuff);
         }
@@ -171,7 +171,7 @@ Result findStructureMemberSymbol(Symbol **resultingSymbolP, StructMemberFindInfo
             goto nextStruct;
         }
         if (structure != NULL)
-            log_trace(":looking in class %s(%d)", structure->linkName, info->superClassesCount);
+            log_debug(":looking in class %s(%d)", structure->linkName, info->superClassesCount);
         for (Symbol *m = info->nextMember; m != NULL; m = m->next) {
             // special gcc extension of anonymous struct field/member?
             // typedef struct {
@@ -452,11 +452,11 @@ static TypeModifier *createSimpleTypeModifier(Type type) {
     /* This seems to look first in pre-created types... */
     assert(type>=0 && type<MAX_TYPE);
     if (preCreatedTypesTable[type] == NULL) {
-        log_trace("creating simple type %d (='%s'), *not* found in pre-created types", type,
+        log_debug("creating simple type %d (='%s'), *not* found in pre-created types", type,
                   typeNamesTable[type]);
         p = newSimpleTypeModifier(type);
     } else {
-        log_trace("creating simple type %d (='%s'), found in pre-created types", type,
+        log_debug("creating simple type %d (='%s'), found in pre-created types", type,
                   typeNamesTable[type]);
         p = preCreatedTypesTable[type];
     }
@@ -648,7 +648,7 @@ void initSymStructSpec(StructSpec *symStruct, Symbol *records) {
 }
 
 TypeModifier *simpleStructOrUnionSpecifier(Id *typeName, Id *id, Usage usage) {
-    log_trace("new struct %s", id->name);
+    log_debug("new struct %s", id->name);
     assert(typeName && typeName->symbol && typeName->symbol->type == TypeKeyword);
     assert(typeName->symbol->keyword == STRUCT
            ||  typeName->symbol->keyword == UNION);

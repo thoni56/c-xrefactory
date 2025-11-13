@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -trace -log=log -update
+ARGUMENTS = -debug -log=log -update
 
 $(TEST): CXrefs
 	touch cexercise/*

@@ -26,7 +26,7 @@
 
 Describe(CxFile);
 BeforeEach(CxFile) {
-    log_set_level(LOG_DEBUG); /* Set to LOG_TRACE if needed */
+    log_set_level(LOG_ERROR); /* Set to LOG_DEBUG if needed */
 
     options.mode = ServerMode;
 }
@@ -70,7 +70,7 @@ Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
     int      sourceFileNumber1 = 44;
     FileItem fileItem1        = {.name = sourceFileName1};
 
-    // log_set_level(LOG_TRACE);
+    // log_set_level(LOG_DEBUG);
 
     options.cxrefsLocation     = "./CXrefs";
     options.referenceFileCount = 1;

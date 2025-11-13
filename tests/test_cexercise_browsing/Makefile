@@ -5,7 +5,7 @@ $(TEST):
 	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
 
-trace: EXTRA = \'-trace\'
+trace: EXTRA = \'-debug\'
 trace: $(TEST)
 
 GDB_COMMANDS = -ex 'br initLogging'
