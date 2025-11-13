@@ -1683,6 +1683,7 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
         if (*leftHandLexemP == NULL) {
             log_warn("Token pasting skipped: Left operand is NULL after expansion.");
             LEAVE();
+            ppmFreeUntil(ppmMarker); // Free any allocations done
             return *rightHandLexemP;
         }
     }
@@ -1725,6 +1726,7 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
             log_trace("Token pasting with empty right operand - using left operand as-is");
         }
         LEAVE();
+        ppmFreeUntil(ppmMarker); // Free any allocations done
         return continueReadingFrom;
     }
 
@@ -1914,13 +1916,13 @@ static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream 
         char *lexemStart   = nextBodyLexemToRead;
 
         LexemCode lexem = getLexemCodeAndAdvance(&nextBodyLexemToRead);
-         skipExtraLexemInformationFor(lexem, &nextBodyLexemToRead);
+        skipExtraLexemInformationFor(lexem, &nextBodyLexemToRead);
 
         /* first make ## collations, if any */
         if (lexem == CPP_COLLATION && lastWrittenLexem != NULL && nextBodyLexemToRead < endOfBodyLexems) {
             log_trace("[DEBUG] Found ## token, calling collate()");
             nextBodyLexemToRead = collate(&bufferDesc, &bufferWrite, &lastWrittenLexem,
-                                           &nextBodyLexemToRead, actualArgumentsInput);
+                                          &nextBodyLexemToRead, actualArgumentsInput);
         } else {
             lastWrittenLexem = bufferWrite;
             assert(nextBodyLexemToRead >= lexemStart);
@@ -1931,6 +1933,10 @@ static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream 
         }
         expandPreprocessorBufferIfOverflow(&bufferDesc, bufferWrite);
     }
+    log_debug("About to realloc (for macro '%s') buffer=%p, index=%d, oldSize=%d, expected_location=%p",
+              macroBody->name,
+              bufferDesc.buffer, ppmMemory.index, bufferDesc.size + MAX_LEXEM_SIZE,
+              &ppmMemory.area[ppmMemory.index - (bufferDesc.size + MAX_LEXEM_SIZE)]);
     ppmReallocc(bufferDesc.buffer, bufferWrite - bufferDesc.buffer, sizeof(char), bufferDesc.size + MAX_LEXEM_SIZE);
 
     /* expand arguments */
@@ -2126,6 +2132,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
 
         if (lexem != '(') {
             currentInput.read = previousLexemP;		/* unget lexem */
+            ppmFreeUntil(ppmMarker);
             return false;
         }
         Position lparPosition;
