@@ -139,6 +139,78 @@ you to capture all command arguments sent to the server/xref process
 to a file. This makes it possible to capture command sequences and
 "replay" them. Useful both for debugging and creating tests.
 
+==== Arena Allocator Lifetime Violations
+
+The preprocessor macro expansion code uses arena allocators (`ppmMemory`, `macroBodyMemory`)
+with stack-like discipline. Arena allocators are fast (pointer bumping) but require
+careful lifetime management.
+
+===== The Problem Pattern
+
+Arena allocators can only resize the most recent allocation ("top-of-stack").
+A common violation occurs when trying to resize a buffer after other allocations:
+
+[source,c]
+----
+buffer = ppmAllocc(size);           // Allocate buffer
+marker = ppmAllocc(0);              // Save marker for cleanup
+temp = ppmAllocc(tempSize);         // Allocate temporary
+ppmReallocc(buffer, newSize, ...);  // ❌ FAILS - buffer not at top!
+ppmFreeUntil(marker);               // Free temporaries
+----
+
+The correct pattern frees temporaries *before* growing the buffer:
+
+[source,c]
+----
+buffer = ppmAllocc(size);           // Allocate buffer
+marker = ppmAllocc(0);              // Save marker
+temp = ppmAllocc(tempSize);         // Allocate temporary (use it)
+ppmFreeUntil(marker);               // Free temporaries FIRST
+ppmReallocc(buffer, newSize, ...);  // ✅ Works - buffer now at top
+----
+
+===== Lifetime Violation Guards
+
+The arena allocator includes guards that catch lifetime violations with detailed diagnostics:
+
+*Guard 1: Buffer Resize Guard* (`memory.c` in `memoryRealloc()`)::
+Checks buffer is at top-of-stack before resizing. Provides expected vs actual locations
+and suggests moving `ppmFreeUntil()` earlier.
+
+*Guard 2: FreeUntil Bounds Guard* (`memory.c` in `memoryFreeUntil()`)::
+Ensures marker is within valid allocated range. Catches corrupted or wrong-arena markers.
+
+*Guard 3: Top-of-Stack Helper* (`memoryIsAtTop()`)::
+Allows explicit verification before operations requiring top-of-stack:
++
+[source,c]
+----
+assert(memoryIsAtTop(&ppmMemory, buffer, oldSize));
+ppmReallocc(buffer, newSize, sizeof(char), oldSize);
+----
+
+===== Example: test_collation_long_expansion
+
+This test case triggered the violation guard when macro expansion created a very large
+output (19 `FLAG_STRING` invocations). The `collate()` function was calling `ppmFreeUntil()`
+*after* `copyRemainingLexems()`, which needed to grow the caller's buffer.
+
+The fix: move `ppmFreeUntil()` to *before* `copyRemainingLexems()`. By this point,
+temporary allocations from macro expansion were already used and could be freed,
+allowing the buffer to become top-of-stack again.
+
+===== Debugging With Guards
+
+When a guard triggers:
+
+1. Read the fatal error messages - they explain what went wrong
+2. Look for the assertion location in the stack trace
+3. Check if `ppmFreeUntil()` is being called too late
+4. Verify buffer growth happens after temporaries are freed
+
+The guards turn subtle crashes into clear diagnostics that point to the fix.
+
 === Testing
 
 ==== Unittests ====
