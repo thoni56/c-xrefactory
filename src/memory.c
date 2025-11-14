@@ -107,8 +107,16 @@ static bool isInMemory(Memory *memory, void *pointer) {
 
 size_t memoryFreeUntil(Memory *memory, void *pointer) {
     assert(isInMemory(memory, pointer));
+    /* Ensure we're not freeing beyond current allocations (marker must be <= current index) */
+    int markerOffset = (char *)pointer - (char *)memory->area;
+    if (markerOffset > memory->index) {
+        log_fatal("Attempting to free '%s' arena until offset %d, but current index is only %d.",
+                  memory->name, markerOffset, memory->index);
+        log_fatal("This means the marker is beyond allocated memory - likely a marker from a different arena or corrupted.");
+        assert(markerOffset <= memory->index);
+    }
     int oldIndex = memory->index;
-    memory->index = (char *)pointer - (char *)memory->area;
+    memory->index = markerOffset;
     return oldIndex - memory->index;  // Amount freed (rolled back)
 }
 
@@ -116,9 +124,25 @@ static bool memoryPointerIsFreed(Memory *memory, void *pointer) {
     return memoryIsBetween(memory, pointer, memory->index, memory->size);
 }
 
+/* Check if a buffer is at the top-of-stack (most recent allocation) */
+bool memoryIsAtTop(Memory *memory, void *pointer, size_t size) {
+    return pointer == &memory->area[memory->index - size];
+}
+
 /* Reallocates the most recently allocated area in 'memory' to be different size */
 void *memoryRealloc(Memory *memory, void *pointer, size_t oldSize, size_t newSize) {
-    assert(pointer == &memory->area[memory->index-oldSize]); /* Can only realloc last alloc'd block */
+    /* Arena allocators can only resize the most recent allocation (top-of-stack).
+     * If this fails, check if ppmFreeUntil() was called too late, freeing allocations
+     * made AFTER the buffer being resized. The buffer must be at top-of-stack to grow. */
+    if (pointer != &memory->area[memory->index-oldSize]) {
+        log_fatal("Attempting to resize buffer %p (size=%zu) in '%s' arena, but it is not the most recent allocation.",
+                  pointer, oldSize, memory->name);
+        log_fatal("Expected buffer at %p (index=%d - oldSize=%zu = %d), but current top-of-stack is at %p (index=%d).",
+                  &memory->area[memory->index-oldSize], memory->index, oldSize, memory->index - (int)oldSize,
+                  &memory->area[memory->index], memory->index);
+        log_fatal("This usually means allocations made after the buffer need to be freed first (e.g., move ppmFreeUntil() earlier).");
+        assert(pointer == &memory->area[memory->index-oldSize]);
+    }
     memory->index += newSize - oldSize;
     return pointer;
 }

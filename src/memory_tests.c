@@ -6,12 +6,12 @@
 
 #include "commons.h"
 #include "constants.h"
-#include "log.h"
 #include "memory.h"
 
 #include "commons.mock" /* For fatalError() */
 #include "cxref.mock"   /* For freeOldestOlcx() */
 #include "globals.mock"
+#include "log.mock"
 
 
 static bool fatalErrorAllowed = false;
@@ -164,6 +164,7 @@ Ensure(Memory, should_fatal_if_reallocing_not_last_allocated) {
 
     void *pointer = memoryAlloc(&testMemory, 5);
 
+    fatalErrorAllowed = true;
     internalCheckFailAllowed = true;
     if (setjmp(internalCheckJmpbuf) == 0)
         memoryRealloc(&testMemory, pointer+1, 5, 6);

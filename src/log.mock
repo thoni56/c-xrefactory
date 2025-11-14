@@ -1,0 +1,14 @@
+#include <cgreen/mocks.h>
+
+typedef enum {
+    LOG_DEBUG, LOG_TRACE, LOG_INFO, LOG_WARN, LOG_ERROR, LOG_FATAL
+} LogLevel;
+
+
+void log_set_level(int level) {
+}
+
+void log_indent(void) {}
+void log_outdent(void) {}
+
+void log_log(LogLevel level, const char *file, int line, const char *fmt, ...) {}

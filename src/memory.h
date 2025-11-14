@@ -36,6 +36,7 @@ extern void *memoryRealloc(Memory *memory, void *pointer, size_t oldSize, size_t
 extern bool memoryIsBetween(Memory *memory, void *pointer, int low, int high);
 extern size_t memoryFreeUntil(Memory *memory, void *pointer);
 extern void memoryResized(Memory *memory);
+extern bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);
 
 /***********************************************************************/
 
