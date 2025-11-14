@@ -1,6 +1,7 @@
 #include "lexemstream.h"
 #include "lexem.h"
 #include "lexembuffer.h"
+#include "log.h"
 #include <string.h>
 
 LexemStream currentInput;
@@ -61,6 +62,7 @@ void copyNextLexemFromStreamToStream(LexemStream *inputStream, LexemStream *outp
 
     char *lexemStart = inputStream->read;
     LexemCode lexem = getLexemCodeAndAdvance(&inputStream->read);
+    log_debug("Copying %s at %p to %p", lexemEnumNames[lexem], inputStream->read, outputStream->write);
     skipExtraLexemInformationFor(lexem, &inputStream->read);
 
     int lexemLength = inputStream->read - lexemStart;
