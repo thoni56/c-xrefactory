@@ -23,7 +23,7 @@ typedef struct memory {
 extern void *ppmAlloc(size_t size);
 extern void *ppmAllocc(int count, size_t size);
 extern void *ppmReallocc(void *pointer, int newCount, size_t size, int oldCount);
-extern void  ppmFreeUntil(void *pointer);
+extern int   ppmFreeUntil(void *pointer);
 extern bool ppmIsFreedPointer(void *pointer);
 
 
@@ -34,7 +34,7 @@ extern void *memoryAlloc(Memory *memory, size_t size);
 
 extern void *memoryRealloc(Memory *memory, void *pointer, size_t oldSize, size_t newSize);
 extern bool memoryIsBetween(Memory *memory, void *pointer, int low, int high);
-extern void memoryFreeUntil(Memory *memory, void *pointer);
+extern size_t memoryFreeUntil(Memory *memory, void *pointer);
 extern void memoryResized(Memory *memory);
 
 /***********************************************************************/

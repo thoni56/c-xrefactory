@@ -105,9 +105,11 @@ static bool isInMemory(Memory *memory, void *pointer) {
     return memoryIsBetween(memory, pointer, 0, memory->index);
 }
 
-void memoryFreeUntil(Memory *memory, void *pointer) {
+size_t memoryFreeUntil(Memory *memory, void *pointer) {
     assert(isInMemory(memory, pointer));
+    int oldIndex = memory->index;
     memory->index = (char *)pointer - (char *)memory->area;
+    return oldIndex - memory->index;  // Amount freed (rolled back)
 }
 
 static bool memoryPointerIsFreed(Memory *memory, void *pointer) {
@@ -139,8 +141,8 @@ void *ppmReallocc(void *pointer, int newCount, size_t size, int oldCount) {
     return memoryReallocc(&ppmMemory, pointer, newCount, size, oldCount);
 }
 
-void ppmFreeUntil(void *pointer) {
-    memoryFreeUntil(&ppmMemory, pointer);
+int ppmFreeUntil(void *pointer) {
+    return memoryFreeUntil(&ppmMemory, pointer);
 }
 
 bool ppmIsFreedPointer(void *pointer) {
@@ -194,7 +196,7 @@ bool cxMemoryIsFreed(void *pointer) {
 }
 
 void cxFreeUntil(void *pointer) {
-    memoryFreeUntil(&cxMemory, pointer);
+    (void)memoryFreeUntil(&cxMemory, pointer);
 }
 
 void printMemoryStatisticsFor(Memory *memory) {
