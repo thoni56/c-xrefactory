@@ -1,6 +1,8 @@
 .c-xrefrc
 CXrefs
 log
+*.log
+trace
 output
 out
 *.tmp

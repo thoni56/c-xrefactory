@@ -1,0 +1,29 @@
+[C-xref] active project: 'CURDIR'
+INT16_MAX
+    @source.c:18:9
+INT16_MIN
+    @source.c:13:9
+INT32_MAX
+    @source.c:19:9
+INT32_MIN
+    @source.c:14:9
+INT64_MAX
+    @source.c:20:9
+INT64_MIN
+    @source.c:15:9
+INT8_MAX
+    @source.c:17:9
+INT8_MIN
+    @source.c:12:9
+UINT16_MAX
+    @source.c:24:9
+UINT32_MAX
+    @source.c:25:9
+UINT64_MAX
+    @source.c:26:9
+UINT8_MAX
+    @source.c:23:9
+__INT64_C
+    @source.c:2:10
+__UINT64_C
+    @source.c:3:10
