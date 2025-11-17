@@ -40,40 +40,162 @@ The `yylex` module has the standard interface required by any
 
 === Memory
 
-==== Background
+==== Responsibilities
 
-Although the memory "module" is not shown in the component diagram, it is very
-important. And it has also been a source for grievances and confusion as it is, and
-probably still are, contrieved and not so easy to understand.
+The Memory module provides arena-based allocation for performance-critical and request-scoped operations:
 
-The main "design" restricition for the design of the memory handling is the fact that in
-the early days, actual memory was scarce. To be able to cross-reference anything except
-the smallest systems, the fact that the amount of memory available was insufficient had
-to be handled.
+* Fast allocation for macro expansion and lexical analysis
+* Bulk deallocation for request-scoped cleanup
+* Multiple specialized arenas for different data lifetimes
+* Overflow detection and optional dynamic resizing
 
-Most of the memory types uses a statically allocated area inside which allocation can be
-done, this applies to memory for pre-processor information for example. These sizes
-could be extended only by re-compilation with a larger size for that type of memory.
+==== Design Rationale
 
-However, for the most important memory type, the `cxMemory`, it could be handled
-dynamically by detecting the out-of-memory situation and then discard, flush and re-use
-the memory.
+===== Historical Context
 
-The size of the `cxMemory` could also be extended up to the defined maximum size.
+In the 1990s when c-xrefactory originated, memory was scarce. The design had to:
 
-This in turn, forced the implementation of a caching strategy, since this overflow may
-happen during the reading of a file. This incurred much complexity.
+1. Minimize allocation overhead (no malloc/free per token)
+2. Support large projects despite limited RAM
+3. Allow overflow recovery via flushing and reuse
+4. Enable efficient bulk cleanup
 
-==== Future direction
+Most memory arenas use statically allocated areas. Only `cxMemory` supports dynamic resizing to handle out-of-memory situations by discarding, flushing and reusing memory. This forced implementation of a complex caching strategy since overflow could happen mid-file.
 
-As virtual memory for a process in a modern OS is much larger than in the 1990's it
-would not be impossible to remove this strategy of overflow detection and
-recovery.
+===== Modern Benefits
 
-A possibility to in an orderly fashion flush and reuse memory would still be needed.
+Even with abundant modern memory, arena allocators provide:
 
-A new type of memory, `FlushableMemory`, has been implemented but as yet, not officially
-replaced the current memory handling.
+* **Performance**: Bump pointer allocation is ~10x faster than malloc
+* **Cache locality**: Related data allocated contiguously
+* **Automatic cleanup**: Bulk deallocation prevents leaks
+* **Request scoping**: Natural fit for parsing/expansion operations
+
+==== Arena Types and Lifetimes
+
+[cols="1,2,1",options="header"]
+|===
+|Arena |Purpose |Lifetime
+
+|**cxMemory**
+|Symbol database, reference tables, cross-reference data
+|File or session
+
+|**ppmMemory**
+|Preprocessor macro expansion buffers (temporary allocations)
+|Per macro expansion
+
+|**macroBodyMemory**
+|Macro definition storage
+|Session
+
+|**macroArgumentsMemory**
+|Macro argument expansion
+|Per macro invocation
+
+|**fileTableMemory**
+|File metadata and paths
+|Session
+
+|**optMemory**
+|Command-line and config option strings (with special pointer adjustment)
+|Session
+|===
+
+==== Key Design Patterns
+
+===== Marker-Based Cleanup
+
+Functions save a marker before temporary allocations:
+
+[source,c]
+----
+char *marker = ppmAllocc(0);   // Save current index
+// ... temporary allocations ...
+ppmFreeUntil(marker);          // Bulk cleanup
+----
+
+===== Buffer Growth Pattern
+
+Long-lived buffers that may need to grow:
+
+[source,c]
+----
+// Allocate initial buffer
+bufferDesc.buffer = ppmAllocc(initialSize);
+
+// ... use buffer, may need growth ...
+
+// Free temporaries FIRST
+ppmFreeUntil(marker);
+
+// NOW buffer can grow (it's at top-of-stack)
+expandPreprocessorBufferIfOverflow(&bufferDesc, writePointer);
+----
+
+===== Overflow Handling
+
+The `cxMemory` arena supports dynamic resizing:
+
+[source,c]
+----
+bool cxMemoryOverflowHandler(int n) {
+    // Attempt to resize arena
+    // Return true if successful
+}
+
+memoryInit(&cxMemory, "cxMemory", cxMemoryOverflowHandler, initialSize);
+----
+
+When overflow occurs, handler can:
+
+1. Resize the arena (if within limits)
+2. Flush old data and reset
+3. Signal failure (fatal error)
+
+==== Interface
+
+Key functions (see `memory.h`):
+
+[source,c]
+----
+// Initialization
+void memoryInit(Memory *memory, char *name,
+                bool (*overflowHandler)(int n), int size);
+
+// Allocation
+void *memoryAlloc(Memory *memory, size_t size);
+void *memoryAllocc(Memory *memory, int count, size_t size);
+
+// Reallocation (only for most recent allocation)
+void *memoryRealloc(Memory *memory, void *pointer,
+                    size_t oldSize, size_t newSize);
+
+// Bulk deallocation
+size_t memoryFreeUntil(Memory *memory, void *marker);
+
+// Guards
+bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);
+----
+
+==== Common Pitfalls
+
+See the "Arena Allocator Lifetime Violations" section in the Development Environment chapter for:
+
+* Attempting to resize buffers not at top-of-stack
+* Calling `FreeUntil()` too late
+* Mixing arena lifetimes
+
+==== Future Directions
+
+Modern systems have abundant virtual memory. Possible improvements:
+
+1. **Simplify overflow handling** - Allocate larger initial arenas
+2. **Separate lifetime management** - Don't mix temporary and long-lived allocations
+3. **Consider alternatives** - Linear allocators for some use cases
+4. **Add debug modes** - Track allocation patterns and detect violations
+
+The experimental `FlushableMemory` type explores some of these ideas but hasn't replaced current implementation.
 
 === Cxfile
 

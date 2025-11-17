@@ -152,5 +152,70 @@ copy
 - all list nodes for the used option (allocated)
 - all list nodes for the string lists (allocated)
 
+=== Arena Allocators (Memory)
+
+Arena allocators (also called region-based or bump allocators) are the fundamental memory management strategy used throughout c-xrefactory for performance-critical operations like macro expansion and lexical analysis.
+
+==== The Memory Structure
+
+[source,c]
+----
+typedef struct memory {
+    char   *name;              // Arena name for diagnostics
+    bool  (*overflowHandler)(int n); // Optional resize handler
+    int     index;             // Next allocation offset (bump pointer)
+    int     max;               // High-water mark
+    size_t  size;              // Total arena size
+    char   *area;              // Actual memory region
+} Memory;
+----
+
+==== Allocation Model
+
+Arena allocators use **bump pointer allocation**:
+
+1. Allocation: Return `&area[index]`, then `index += size`
+2. Deallocation: Bulk rollback via `FreeUntil(marker)`
+3. Reallocation: Only possible for most recent allocation
+
+This is extremely fast (O(1) allocation) but requires stack-like discipline for deallocation.
+
+==== Stack-Like Discipline
+
+Arenas follow LIFO (last-in-first-out) cleanup:
+
+[source,c]
+----
+marker = ppmAllocc(0);        // Save current index
+temp1 = ppmAllocc(100);       // Allocate
+temp2 = ppmAllocc(200);       // Allocate
+// Use temp1, temp2...
+ppmFreeUntil(marker);         // Free both temp1 and temp2
+----
+
+==== Key Constraint: Top-of-Stack Reallocation
+
+Only the most recent allocation can be resized:
+
+[source,c]
+----
+buffer = ppmAllocc(1000);     // Allocate buffer
+temp = ppmAllocc(500);        // Allocate temporary
+ppmReallocc(buffer, ...);     // ❌ FAILS - buffer not at top
+----
+
+This constraint is enforced by guards in `memory.c` (see Development Environment chapter).
+
+==== Memory Arena Types
+
+c-xrefactory uses specialized arenas for different purposes (see Modules chapter for details):
+
+* `cxMemory` - Cross-reference database and symbol tables
+* `ppmMemory` - Preprocessor macro expansion (temporary)
+* `macroBodyMemory` - Macro body buffers
+* `macroArgumentsMemory` - Macro argument expansion
+* `fileTableMemory` - File table entries
+* `optMemory` - Option strings (with special pointer adjustment)
+
 
 

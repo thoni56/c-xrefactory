@@ -737,58 +737,33 @@ Requests that the editor replaces the string under the cursor, which should be '
 <position-off off={int} len={int}>{absolute path to file}</position-off>;;
 Indicates a position in the given file. 'off' is the character position in the file.
 
-==== Memory handling
+=== Memory handling
 
-Memory may be dynamically allocated using `malloc()` in which case it
-must be managed in the same manner as all `malloced` memory should to
-avoid memory leaks or pointer problems. This is used mostly for local
-and temporary areas.
+c-xrefactory uses custom memory management via arena allocators rather than malloc/free for performance-critical operations.
 
-But memory can also be locally managed using the structure `Memory`
-and related functions.
+See the **Modules** chapter for the design and architecture of the Memory module, and the **Data Structures** chapter for details on the arena allocator data structure and allocation model.
 
-===== The Memory type
+For debugging memory issues, especially arena lifetime violations, see the **Development Environment** chapter.
 
-Memory allocation using the `Memory` type allows managing memory
-locally and separately depending it its use. E.g. the primary memory
-is `cxMemory` where all collected references are stored including
-reference tables and other management areas. This type of memory can
-easily be discarded, e.g. when a file is completely analyzed or a
-refactoring is complete.
+==== The Memory Type
 
-Separate memory areas are managed through `ppmMemory`,
-`fileTableMemory`, macroArgumentsMemory` and `macroBodyMemory` and
-possibly others. This list indicate that this type of memory is used
-because the amount of source to be analysed may be so large that it
-does not fit at the same time and need to be cached/discarded and
-restored as needed.
+Memory allocation is managed through the `Memory` structure, which implements an arena/bump allocator. Different memory arenas serve different purposes:
 
-The `Memory` type allows both re-initializing with a different size
-and the optional choice to be notified when overflow happens using an
-`overflowHandler` function.
+* `cxMemory` - Cross-reference database (with overflow handling)
+* `ppmMemory` - Preprocessor macro expansion
+* `macroBodyMemory` - Macro definition storage
+* `macroArgumentsMemory` - Macro argument expansion
+* `fileTableMemory` - File table entries
+
+See **Modules** chapter for detailed description of each arena's purpose and lifetime.
 
 ==== Option Memory
 
-The memory handling for options deserves special explanation and attention.
+The `optMemory` arena requires special handling because `Options` structures are copied during operation. When copying, all pointers into option memory must be adjusted to point into the target structure's memory area, not the source's.
 
-When defining options, from the command line, options file or piped
-from an editor process, the strings need to be preserved and
-stored. This is done by "dynamically" allocating such areas in the
-"options memory", `optMemory`.
+Functions like `copyOptions()` perform this pointer adjustment through careful memory arithmetic, traversing a linked list of all memory locations that need updating.
 
-But since this is a integral part of the options structure, whenever
-an `Options` structure is copied, special care has to be taken so that
-the fields in the target structure points into the memory area of the
-target structure and not, as they did in the original structure, into
-the memory of the source structure.
-
-There are functions that, through tricky memory arithmetic, adjust all
-pointers to point correctly. To this end, all memory locations in an
-`Options` structure are collected in a linked list which can be
-traversed.
-
-NOTE: the nodes in the linked list are also allocated in the "dynamic"
-memory of the Options structure.
+NOTE: The linked list nodes themselves are allocated in the Options structure's dynamic memory.
 
 
 === Configuration
