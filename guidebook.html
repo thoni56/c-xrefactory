@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2025-11-12">
+<meta name="author" content="v{VERSION} - Generated 2025-11-18">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-11-12</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-11-18</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -485,7 +485,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_editor_plugin">8.7. Editor Plugin</a></li>
 <li><a href="#_editor_server">8.8. Editor Server</a></li>
 <li><a href="#_refactoring">8.9. Refactoring</a></li>
-<li><a href="#_configuration">8.10. Configuration</a></li>
+<li><a href="#_memory_handling">8.10. Memory handling</a></li>
+<li><a href="#_configuration">8.11. Configuration</a></li>
 </ul>
 </li>
 <li><a href="#_modules">9. Modules</a>
@@ -510,21 +511,23 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_files_and_buffers">10.3. Files and Buffers</a></li>
 <li><a href="#_modes">10.4. Modes</a></li>
 <li><a href="#_options_2">10.5. Options</a></li>
+<li><a href="#_arena_allocators_memory">10.6. Arena Allocators (Memory)</a></li>
 </ul>
 </li>
 <li><a href="#_algorithms">11. Algorithms</a>
 <ul class="sectlevel2">
 <li><a href="#_how_is_an_extract_refactoring_performed">11.1. How is an Extract refactoring performed?</a></li>
-<li><a href="#_how_does">11.2. How does &#8230;&#8203;</a></li>
-<li><a href="#_developing_here_be_dragons">11.3. Developing, here be dragons&#8230;&#8203;</a></li>
-<li><a href="#_setup">11.4. Setup</a></li>
-<li><a href="#_building">11.5. Building</a></li>
-<li><a href="#_versions">11.6. Versions</a></li>
-<li><a href="#_coding">11.7. Coding</a></li>
-<li><a href="#_debugging">11.8. Debugging</a></li>
-<li><a href="#_testing">11.9. Testing</a></li>
-<li><a href="#_utilities">11.10. Utilities</a></li>
-<li><a href="#_debugging_the_protocol">11.11. Debugging the protocol</a></li>
+<li><a href="#_how_does_lexem_stream_management_work">11.2. How does lexem stream management work?</a></li>
+<li><a href="#_how_does">11.3. How does &#8230;&#8203;</a></li>
+<li><a href="#_developing_here_be_dragons">11.4. Developing, here be dragons&#8230;&#8203;</a></li>
+<li><a href="#_setup">11.5. Setup</a></li>
+<li><a href="#_building">11.6. Building</a></li>
+<li><a href="#_versions">11.7. Versions</a></li>
+<li><a href="#_coding">11.8. Coding</a></li>
+<li><a href="#_debugging">11.9. Debugging</a></li>
+<li><a href="#_testing">11.10. Testing</a></li>
+<li><a href="#_utilities">11.11. Utilities</a></li>
+<li><a href="#_debugging_the_protocol">11.12. Debugging the protocol</a></li>
 </ul>
 </li>
 <li><a href="#_deployment">12. Deployment</a></li>
@@ -2499,66 +2502,53 @@ be renamed (replaced at all occurrences) by NEW_NAME.</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_memory_handling">8.9.5. Memory handling</h4>
+</div>
+<div class="sect2">
+<h3 id="_memory_handling">8.10. Memory handling</h3>
 <div class="paragraph">
-<p>Memory may be dynamically allocated using <code>malloc()</code> in which case it
-must be managed in the same manner as all <code>malloced</code> memory should to
-avoid memory leaks or pointer problems. This is used mostly for local
-and temporary areas.</p>
+<p>c-xrefactory uses custom memory management via arena allocators rather than malloc/free for performance-critical operations.</p>
 </div>
 <div class="paragraph">
-<p>But memory can also be locally managed using the structure <code>Memory</code>
-and related functions.</p>
-</div>
-<div class="sect4">
-<h5 id="_the_memory_type">The Memory type</h5>
-<div class="paragraph">
-<p>Memory allocation using the <code>Memory</code> type allows managing memory
-locally and separately depending it its use. E.g. the primary memory
-is <code>cxMemory</code> where all collected references are stored including
-reference tables and other management areas. This type of memory can
-easily be discarded, e.g. when a file is completely analyzed or a
-refactoring is complete.</p>
+<p>See the <strong>Modules</strong> chapter for the design and architecture of the Memory module, and the <strong>Data Structures</strong> chapter for details on the arena allocator data structure and allocation model.</p>
 </div>
 <div class="paragraph">
-<p>Separate memory areas are managed through <code>ppmMemory</code>,
-<code>fileTableMemory</code>, macroArgumentsMemory` and <code>macroBodyMemory</code> and
-possibly others. This list indicate that this type of memory is used
-because the amount of source to be analysed may be so large that it
-does not fit at the same time and need to be cached/discarded and
-restored as needed.</p>
-</div>
-<div class="paragraph">
-<p>The <code>Memory</code> type allows both re-initializing with a different size
-and the optional choice to be notified when overflow happens using an
-<code>overflowHandler</code> function.</p>
-</div>
-</div>
+<p>For debugging memory issues, especially arena lifetime violations, see the <strong>Development Environment</strong> chapter.</p>
 </div>
 <div class="sect3">
-<h4 id="_option_memory">8.9.6. Option Memory</h4>
+<h4 id="_the_memory_type">8.10.1. The Memory Type</h4>
 <div class="paragraph">
-<p>The memory handling for options deserves special explanation and attention.</p>
+<p>Memory allocation is managed through the <code>Memory</code> structure, which implements an arena/bump allocator. Different memory arenas serve different purposes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cxMemory</code> - Cross-reference database (with overflow handling)</p>
+</li>
+<li>
+<p><code>ppmMemory</code> - Preprocessor macro expansion</p>
+</li>
+<li>
+<p><code>macroBodyMemory</code> - Macro definition storage</p>
+</li>
+<li>
+<p><code>macroArgumentsMemory</code> - Macro argument expansion</p>
+</li>
+<li>
+<p><code>fileTableMemory</code> - File table entries</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>When defining options, from the command line, options file or piped
-from an editor process, the strings need to be preserved and
-stored. This is done by "dynamically" allocating such areas in the
-"options memory", <code>optMemory</code>.</p>
+<p>See <strong>Modules</strong> chapter for detailed description of each arena&#8217;s purpose and lifetime.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_option_memory">8.10.2. Option Memory</h4>
+<div class="paragraph">
+<p>The <code>optMemory</code> arena requires special handling because <code>Options</code> structures are copied during operation. When copying, all pointers into option memory must be adjusted to point into the target structure&#8217;s memory area, not the source&#8217;s.</p>
 </div>
 <div class="paragraph">
-<p>But since this is a integral part of the options structure, whenever
-an <code>Options</code> structure is copied, special care has to be taken so that
-the fields in the target structure points into the memory area of the
-target structure and not, as they did in the original structure, into
-the memory of the source structure.</p>
-</div>
-<div class="paragraph">
-<p>There are functions that, through tricky memory arithmetic, adjust all
-pointers to point correctly. To this end, all memory locations in an
-<code>Options</code> structure are collected in a linked list which can be
-traversed.</p>
+<p>Functions like <code>copyOptions()</code> perform this pointer adjustment through careful memory arithmetic, traversing a linked list of all memory locations that need updating.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2567,8 +2557,7 @@ traversed.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-the nodes in the linked list are also allocated in the "dynamic"
-memory of the Options structure.
+The linked list nodes themselves are allocated in the Options structure&#8217;s dynamic memory.
 </td>
 </tr>
 </table>
@@ -2576,7 +2565,7 @@ memory of the Options structure.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration">8.10. Configuration</h3>
+<h3 id="_configuration">8.11. Configuration</h3>
 <div class="paragraph">
 <p>The legacy <code>c-xref</code> normally, in "production", uses a common configuration file in the
 users home directory, <code>.c-xrefrc</code>. When a new project is defined its options will be
@@ -2594,7 +2583,7 @@ line each. These are always read, unless <code>-no-stdop</code> is used, before 
 allows for different "default" options for each project.</p>
 </div>
 <div class="sect3">
-<h4 id="_options">8.10.1. Options</h4>
+<h4 id="_options">8.11.1. Options</h4>
 <div class="paragraph">
 <p>There are three possible sources for options.</p>
 </div>
@@ -2619,7 +2608,7 @@ allows for different "default" options for each project.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_logic">8.10.2. Logic</h4>
+<h4 id="_logic">8.11.2. Logic</h4>
 <div class="paragraph">
 <p>When the editor has a file open it needs to "belong" to a project. The
 logic for finding which is very intricate and complicated.</p>
@@ -2709,56 +2698,270 @@ defines made as command line options (<code>-D</code>)</p>
 <div class="sect2">
 <h3 id="_memory">9.8. Memory</h3>
 <div class="sect3">
-<h4 id="_background_2">9.8.1. Background</h4>
+<h4 id="_responsibilities_2">9.8.1. Responsibilities</h4>
 <div class="paragraph">
-<p>Although the memory "module" is not shown in the component diagram, it is very
-important. And it has also been a source for grievances and confusion as it is, and
-probably still are, contrieved and not so easy to understand.</p>
+<p>The Memory module provides arena-based allocation for performance-critical and request-scoped operations:</p>
 </div>
-<div class="paragraph">
-<p>The main "design" restricition for the design of the memory handling is the fact that in
-the early days, actual memory was scarce. To be able to cross-reference anything except
-the smallest systems, the fact that the amount of memory available was insufficient had
-to be handled.</p>
-</div>
-<div class="paragraph">
-<p>Most of the memory types uses a statically allocated area inside which allocation can be
-done, this applies to memory for pre-processor information for example. These sizes
-could be extended only by re-compilation with a larger size for that type of memory.</p>
-</div>
-<div class="paragraph">
-<p>However, for the most important memory type, the <code>cxMemory</code>, it could be handled
-dynamically by detecting the out-of-memory situation and then discard, flush and re-use
-the memory.</p>
-</div>
-<div class="paragraph">
-<p>The size of the <code>cxMemory</code> could also be extended up to the defined maximum size.</p>
-</div>
-<div class="paragraph">
-<p>This in turn, forced the implementation of a caching strategy, since this overflow may
-happen during the reading of a file. This incurred much complexity.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Fast allocation for macro expansion and lexical analysis</p>
+</li>
+<li>
+<p>Bulk deallocation for request-scoped cleanup</p>
+</li>
+<li>
+<p>Multiple specialized arenas for different data lifetimes</p>
+</li>
+<li>
+<p>Overflow detection and optional dynamic resizing</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_future_direction">9.8.2. Future direction</h4>
+<h4 id="_design_rationale">9.8.2. Design Rationale</h4>
+<div class="sect4">
+<h5 id="_historical_context">Historical Context</h5>
 <div class="paragraph">
-<p>As virtual memory for a process in a modern OS is much larger than in the 1990&#8217;s it
-would not be impossible to remove this strategy of overflow detection and
-recovery.</p>
+<p>In the 1990s when c-xrefactory originated, memory was scarce. The design had to:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Minimize allocation overhead (no malloc/free per token)</p>
+</li>
+<li>
+<p>Support large projects despite limited RAM</p>
+</li>
+<li>
+<p>Allow overflow recovery via flushing and reuse</p>
+</li>
+<li>
+<p>Enable efficient bulk cleanup</p>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>A possibility to in an orderly fashion flush and reuse memory would still be needed.</p>
+<p>Most memory arenas use statically allocated areas. Only <code>cxMemory</code> supports dynamic resizing to handle out-of-memory situations by discarding, flushing and reusing memory. This forced implementation of a complex caching strategy since overflow could happen mid-file.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_modern_benefits">Modern Benefits</h5>
+<div class="paragraph">
+<p>Even with abundant modern memory, arena allocators provide:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Performance</strong>: Bump pointer allocation is ~10x faster than malloc</p>
+</li>
+<li>
+<p><strong>Cache locality</strong>: Related data allocated contiguously</p>
+</li>
+<li>
+<p><strong>Automatic cleanup</strong>: Bulk deallocation prevents leaks</p>
+</li>
+<li>
+<p><strong>Request scoping</strong>: Natural fit for parsing/expansion operations</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_arena_types_and_lifetimes">9.8.3. Arena Types and Lifetimes</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Arena</th>
+<th class="tableblock halign-left valign-top">Purpose</th>
+<th class="tableblock halign-left valign-top">Lifetime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>cxMemory</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Symbol database, reference tables, cross-reference data</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File or session</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>ppmMemory</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Preprocessor macro expansion buffers (temporary allocations)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Per macro expansion</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>macroBodyMemory</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Macro definition storage</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Session</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>macroArgumentsMemory</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Macro argument expansion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Per macro invocation</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>fileTableMemory</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File metadata and paths</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Session</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>optMemory</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Command-line and config option strings (with special pointer adjustment)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Session</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_key_design_patterns">9.8.4. Key Design Patterns</h4>
+<div class="sect4">
+<h5 id="_marker_based_cleanup">Marker-Based Cleanup</h5>
+<div class="paragraph">
+<p>Functions save a marker before temporary allocations:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">char *marker = ppmAllocc(0);   // Save current index
+// ... temporary allocations ...
+ppmFreeUntil(marker);          // Bulk cleanup</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_buffer_growth_pattern">Buffer Growth Pattern</h5>
+<div class="paragraph">
+<p>Long-lived buffers that may need to grow:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Allocate initial buffer
+bufferDesc.buffer = ppmAllocc(initialSize);
+
+// ... use buffer, may need growth ...
+
+// Free temporaries FIRST
+ppmFreeUntil(marker);
+
+// NOW buffer can grow (it's at top-of-stack)
+expandPreprocessorBufferIfOverflow(&amp;bufferDesc, writePointer);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_overflow_handling">Overflow Handling</h5>
+<div class="paragraph">
+<p>The <code>cxMemory</code> arena supports dynamic resizing:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">bool cxMemoryOverflowHandler(int n) {
+    // Attempt to resize arena
+    // Return true if successful
+}
+
+memoryInit(&amp;cxMemory, "cxMemory", cxMemoryOverflowHandler, initialSize);</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>A new type of memory, <code>FlushableMemory</code>, has been implemented but as yet, not officially
-replaced the current memory handling.</p>
+<p>When overflow occurs, handler can:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Resize the arena (if within limits)</p>
+</li>
+<li>
+<p>Flush old data and reset</p>
+</li>
+<li>
+<p>Signal failure (fatal error)</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_interface_2">9.8.5. Interface</h4>
+<div class="paragraph">
+<p>Key functions (see <code>memory.h</code>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Initialization
+void memoryInit(Memory *memory, char *name,
+                bool (*overflowHandler)(int n), int size);
+
+// Allocation
+void *memoryAlloc(Memory *memory, size_t size);
+void *memoryAllocc(Memory *memory, int count, size_t size);
+
+// Reallocation (only for most recent allocation)
+void *memoryRealloc(Memory *memory, void *pointer,
+                    size_t oldSize, size_t newSize);
+
+// Bulk deallocation
+size_t memoryFreeUntil(Memory *memory, void *marker);
+
+// Guards
+bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_common_pitfalls">9.8.6. Common Pitfalls</h4>
+<div class="paragraph">
+<p>See the "Arena Allocator Lifetime Violations" section in the Development Environment chapter for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Attempting to resize buffers not at top-of-stack</p>
+</li>
+<li>
+<p>Calling <code>FreeUntil()</code> too late</p>
+</li>
+<li>
+<p>Mixing arena lifetimes</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_future_directions">9.8.7. Future Directions</h4>
+<div class="paragraph">
+<p>Modern systems have abundant virtual memory. Possible improvements:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Simplify overflow handling</strong> - Allocate larger initial arenas</p>
+</li>
+<li>
+<p><strong>Separate lifetime management</strong> - Don&#8217;t mix temporary and long-lived allocations</p>
+</li>
+<li>
+<p><strong>Consider alternatives</strong> - Linear allocators for some use cases</p>
+</li>
+<li>
+<p><strong>Add debug modes</strong> - Track allocation patterns and detect violations</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The experimental <code>FlushableMemory</code> type explores some of these ideas but hasn&#8217;t replaced current implementation.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_cxfile_2">9.9. Cxfile</h3>
 <div class="sect3">
-<h4 id="_responsibilities_2">9.9.1. Responsibilities</h4>
+<h4 id="_responsibilities_3">9.9.1. Responsibilities</h4>
 <div class="paragraph">
 <p>Read and write the CXref database in "plain" text format.</p>
 </div>
@@ -3042,6 +3245,108 @@ copy</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_arena_allocators_memory">10.6. Arena Allocators (Memory)</h3>
+<div class="paragraph">
+<p>Arena allocators (also called region-based or bump allocators) are the fundamental memory management strategy used throughout c-xrefactory for performance-critical operations like macro expansion and lexical analysis.</p>
+</div>
+<div class="sect3">
+<h4 id="_the_memory_structure">10.6.1. The Memory Structure</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef struct memory {
+    char   *name;              // Arena name for diagnostics
+    bool  (*overflowHandler)(int n); // Optional resize handler
+    int     index;             // Next allocation offset (bump pointer)
+    int     max;               // High-water mark
+    size_t  size;              // Total arena size
+    char   *area;              // Actual memory region
+} Memory;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_allocation_model">10.6.2. Allocation Model</h4>
+<div class="paragraph">
+<p>Arena allocators use <strong>bump pointer allocation</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Allocation: Return <code>&amp;area[index]</code>, then <code>index += size</code></p>
+</li>
+<li>
+<p>Deallocation: Bulk rollback via <code>FreeUntil(marker)</code></p>
+</li>
+<li>
+<p>Reallocation: Only possible for most recent allocation</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This is extremely fast (O(1) allocation) but requires stack-like discipline for deallocation.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_stack_like_discipline">10.6.3. Stack-Like Discipline</h4>
+<div class="paragraph">
+<p>Arenas follow LIFO (last-in-first-out) cleanup:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">marker = ppmAllocc(0);        // Save current index
+temp1 = ppmAllocc(100);       // Allocate
+temp2 = ppmAllocc(200);       // Allocate
+// Use temp1, temp2...
+ppmFreeUntil(marker);         // Free both temp1 and temp2</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_key_constraint_top_of_stack_reallocation">10.6.4. Key Constraint: Top-of-Stack Reallocation</h4>
+<div class="paragraph">
+<p>Only the most recent allocation can be resized:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">buffer = ppmAllocc(1000);     // Allocate buffer
+temp = ppmAllocc(500);        // Allocate temporary
+ppmReallocc(buffer, ...);     // ❌ FAILS - buffer not at top</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This constraint is enforced by guards in <code>memory.c</code> (see Development Environment chapter).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_memory_arena_types">10.6.5. Memory Arena Types</h4>
+<div class="paragraph">
+<p>c-xrefactory uses specialized arenas for different purposes (see Modules chapter for details):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cxMemory</code> - Cross-reference database and symbol tables</p>
+</li>
+<li>
+<p><code>ppmMemory</code> - Preprocessor macro expansion (temporary)</p>
+</li>
+<li>
+<p><code>macroBodyMemory</code> - Macro body buffers</p>
+</li>
+<li>
+<p><code>macroArgumentsMemory</code> - Macro argument expansion</p>
+</li>
+<li>
+<p><code>fileTableMemory</code> - File table entries</p>
+</li>
+<li>
+<p><code>optMemory</code> - Option strings (with special pointer adjustment)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -3103,14 +3408,127 @@ function/macro/variable.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_does">11.2. How does &#8230;&#8203;</h3>
+<h3 id="_how_does_lexem_stream_management_work">11.2. How does lexem stream management work?</h3>
+<div class="paragraph">
+<p>Lexical analysis uses a stack of <code>LexemStream</code> structures to handle nested macro expansions. The key insight is that the stream type acts as a <strong>discriminator</strong> for buffer ownership and cleanup strategy.</p>
+</div>
+<div class="sect3">
+<h4 id="_the_stream_types">11.2.1. The Stream Types</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef enum {
+    NORMAL_STREAM,              // File or local buffer
+    MACRO_STREAM,               // Macro expansion
+    MACRO_ARGUMENT_STREAM,      // Macro argument expansion
+} LexemStreamType;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Historically, there was also a <code>CACHED_STREAM</code> type when the caching mechanism was still active. This confirms that stream types are fundamentally about <strong>buffer ownership and refill strategy</strong> - each type encodes where the buffer came from and how to handle it when exhausted.
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>NORMAL_STREAM</strong></dt>
+<dd>
+<p>Buffer from file&#8217;s <code>lexemBuffer</code> or a local temporary. Not allocated from arena memory, so no cleanup needed when stream exhausted.</p>
+</dd>
+<dt class="hdlist1"><strong>MACRO_STREAM</strong></dt>
+<dd>
+<p>Buffer allocated from <code>macroBodyMemory</code> arena during macro expansion. Must call <code>mbmFreeUntil(stream.begin)</code> when popping from stack to free the arena allocation.</p>
+</dd>
+<dt class="hdlist1"><strong>MACRO_ARGUMENT_STREAM</strong></dt>
+<dd>
+<p>Buffer allocated from <code>ppmMemory</code> arena during macro argument expansion. Signals <code>END_OF_MACRO_ARGUMENT_EXCEPTION</code> when exhausted (cleanup handled by caller).</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_refill_algorithm">11.2.2. The Refill Algorithm</h4>
+<div class="paragraph">
+<p>When <code>currentInput</code> runs out of lexems (<code>read &gt;= write</code>), <code>refillInputIfEmpty()</code> uses the stream type to decide what to do:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">while (currentInput.read &gt;= currentInput.write) {
+    LexemStreamType inputType = currentInput.streamType;
+
+    if (insideMacro()) {  // Stack not empty
+        if (inputType == MACRO_ARGUMENT_STREAM) {
+            return END_OF_MACRO_ARGUMENT_EXCEPTION;
+        }
+        // Only free MACRO_STREAM buffers (allocated from macroBodyMemory)
+        if (inputType == MACRO_STREAM) {
+            mbmFreeUntil(currentInput.begin);
+        }
+        currentInput = macroInputStack[--macroStackIndex];  // Pop
+    }
+    else if (inputType == NORMAL_STREAM) {
+        // Refill from file
+        buildLexemFromCharacters(&amp;currentFile.characterBuffer, ...);
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_key_invariant">11.2.3. Key Invariant</h4>
+<div class="paragraph">
+<p><strong>Stream type must match buffer allocation:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>MACRO_STREAM</code> → buffer allocated from <code>macroBodyMemory</code></p>
+</li>
+<li>
+<p><code>NORMAL_STREAM</code> → buffer NOT from macro arenas</p>
+</li>
+<li>
+<p><code>MACRO_ARGUMENT_STREAM</code> → buffer from <code>ppmMemory</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Violating this invariant causes fatal errors when trying to free buffers from the wrong arena.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_common_bug_pattern">11.2.4. Common Bug Pattern</h4>
+<div class="paragraph">
+<p>Pushing a <code>NORMAL_STREAM</code> onto the macro stack, then trying to free it as if it were <code>MACRO_STREAM</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// WRONG: Blindly freeing without checking type
+mbmFreeUntil(currentInput.begin);  // Fails if currentInput is NORMAL_STREAM!
+
+// CORRECT: Check type first
+if (inputType == MACRO_STREAM) {
+    mbmFreeUntil(currentInput.begin);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_does">11.3. How does &#8230;&#8203;</h3>
 <div class="paragraph">
 <p>TBD.
 == Development Environment</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_developing_here_be_dragons">11.3. Developing, here be dragons&#8230;&#8203;</h3>
+<h3 id="_developing_here_be_dragons">11.4. Developing, here be dragons&#8230;&#8203;</h3>
 <div class="paragraph">
 <p>First the code is <strong>terrible</strong>, lots of single and double character
 variables (<code>cc</code>, <code>ccc</code>, ..) and lost of administration on local
@@ -3160,13 +3578,13 @@ and symbol table stuff are heavily used)</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_setup">11.4. Setup</h3>
+<h3 id="_setup">11.5. Setup</h3>
 <div class="paragraph">
 <p>TBD.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_building">11.5. Building</h3>
+<h3 id="_building">11.6. Building</h3>
 <div class="paragraph">
 <p>You should be able build <code>c-xref</code> using something like (may have changed over time&#8230;&#8203;)</p>
 </div>
@@ -3213,7 +3631,7 @@ now builds like any other project.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_versions">11.6. Versions</h3>
+<h3 id="_versions">11.7. Versions</h3>
 <div class="paragraph">
 <p>The current sources are in 1.6.X range. This is the same as the orginal
 xrefactory and probably also the proprietary C++ supporting version.</p>
@@ -3237,9 +3655,9 @@ made the default and the 'non-xrefactory-II' communication removed.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_coding">11.7. Coding</h3>
+<h3 id="_coding">11.8. Coding</h3>
 <div class="sect3">
-<h4 id="_naming">11.7.1. Naming</h4>
+<h4 id="_naming">11.8.1. Naming</h4>
 <div class="paragraph">
 <p><em>C-xref</em> started (probably) as a cross-referencer for the languages
 supported (C, Java, C++), orginally had the name "xref" which became
@@ -3265,7 +3683,7 @@ history and a naming legacy to remember.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_modules_and_include_files">11.7.2. Modules and Include Files</h4>
+<h4 id="_modules_and_include_files">11.8.2. Modules and Include Files</h4>
 <div class="paragraph">
 <p>The source code for <code>c-xrefactory</code> was using a very old C style with a
 separate <code>proto.h</code> where all prototypes for all externally visible
@@ -3286,7 +3704,7 @@ still a work in progress.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_debugging">11.8. Debugging</h3>
+<h3 id="_debugging">11.9. Debugging</h3>
 <div class="paragraph">
 <p>TBD. Attachning <code>gdb</code>, <code>server-driver</code>&#8230;&#8203;</p>
 </div>
@@ -3299,11 +3717,114 @@ you to capture all command arguments sent to the server/xref process
 to a file. This makes it possible to capture command sequences and
 "replay" them. Useful both for debugging and creating tests.</p>
 </div>
+<div class="sect3">
+<h4 id="_arena_allocator_lifetime_violations">11.9.1. Arena Allocator Lifetime Violations</h4>
+<div class="paragraph">
+<p>The preprocessor macro expansion code uses arena allocators (<code>ppmMemory</code>, <code>macroBodyMemory</code>)
+with stack-like discipline. Arena allocators are fast (pointer bumping) but require
+careful lifetime management.</p>
+</div>
+<div class="sect4">
+<h5 id="_the_problem_pattern">The Problem Pattern</h5>
+<div class="paragraph">
+<p>Arena allocators can only resize the most recent allocation ("top-of-stack").
+A common violation occurs when trying to resize a buffer after other allocations:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">buffer = ppmAllocc(size);           // Allocate buffer
+marker = ppmAllocc(0);              // Save marker for cleanup
+temp = ppmAllocc(tempSize);         // Allocate temporary
+ppmReallocc(buffer, newSize, ...);  // ❌ FAILS - buffer not at top!
+ppmFreeUntil(marker);               // Free temporaries</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The correct pattern frees temporaries <strong>before</strong> growing the buffer:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">buffer = ppmAllocc(size);           // Allocate buffer
+marker = ppmAllocc(0);              // Save marker
+temp = ppmAllocc(tempSize);         // Allocate temporary (use it)
+ppmFreeUntil(marker);               // Free temporaries FIRST
+ppmReallocc(buffer, newSize, ...);  // ✅ Works - buffer now at top</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_lifetime_violation_guards">Lifetime Violation Guards</h5>
+<div class="paragraph">
+<p>The arena allocator includes guards that catch lifetime violations with detailed diagnostics:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Guard 1: Buffer Resize Guard</strong> (<code>memory.c</code> in <code>memoryRealloc()</code>)</dt>
+<dd>
+<p>Checks buffer is at top-of-stack before resizing. Provides expected vs actual locations
+and suggests moving <code>ppmFreeUntil()</code> earlier.</p>
+</dd>
+<dt class="hdlist1"><strong>Guard 2: FreeUntil Bounds Guard</strong> (<code>memory.c</code> in <code>memoryFreeUntil()</code>)</dt>
+<dd>
+<p>Ensures marker is within valid allocated range. Catches corrupted or wrong-arena markers.</p>
+</dd>
+<dt class="hdlist1"><strong>Guard 3: Top-of-Stack Helper</strong> (<code>memoryIsAtTop()</code>)</dt>
+<dd>
+<p>Allows explicit verification before operations requiring top-of-stack:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">assert(memoryIsAtTop(&amp;ppmMemory, buffer, oldSize));
+ppmReallocc(buffer, newSize, sizeof(char), oldSize);</code></pre>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_test_collation_long_expansion">Example: test_collation_long_expansion</h5>
+<div class="paragraph">
+<p>This test case triggered the violation guard when macro expansion created a very large
+output (19 <code>FLAG_STRING</code> invocations). The <code>collate()</code> function was calling <code>ppmFreeUntil()</code>
+<strong>after</strong> <code>copyRemainingLexems()</code>, which needed to grow the caller&#8217;s buffer.</p>
+</div>
+<div class="paragraph">
+<p>The fix: move <code>ppmFreeUntil()</code> to <strong>before</strong> <code>copyRemainingLexems()</code>. By this point,
+temporary allocations from macro expansion were already used and could be freed,
+allowing the buffer to become top-of-stack again.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_debugging_with_guards">Debugging With Guards</h5>
+<div class="paragraph">
+<p>When a guard triggers:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Read the fatal error messages - they explain what went wrong</p>
+</li>
+<li>
+<p>Look for the assertion location in the stack trace</p>
+</li>
+<li>
+<p>Check if <code>ppmFreeUntil()</code> is being called too late</p>
+</li>
+<li>
+<p>Verify buffer growth happens after temporaries are freed</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The guards turn subtle crashes into clear diagnostics that point to the fix.</p>
+</div>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_testing">11.9. Testing</h3>
+<h3 id="_testing">11.10. Testing</h3>
 <div class="sect3">
-<h4 id="_unittests">11.9.1. Unittests</h4>
+<h4 id="_unittests">11.10.1. Unittests</h4>
 <div class="paragraph">
 <p>There are very few unittests at this point, only covering single digit
 percent of the code. The "units" in this project are unclear and
@@ -3323,7 +3844,7 @@ empty test.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_acceptance_tests">11.9.2. Acceptance Tests</h4>
+<h4 id="_acceptance_tests">11.10.2. Acceptance Tests</h4>
 <div class="paragraph">
 <p>In the <code>tests</code> directory you will find tests that exercise the external
 behaviour of <code>c-xref</code>. Some tests actually do only that, they wouldn&#8217;t
@@ -3364,7 +3885,7 @@ the understanding grows.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_general_setup">11.9.3. General Setup</h4>
+<h4 id="_general_setup">11.10.3. General Setup</h4>
 <div class="paragraph">
 <p>Since all(?) <code>c-xref</code> operation rely on an options file which must
 contain absolute file paths (because the server runs as a separate
@@ -3383,7 +3904,7 @@ references. This way it is easy to ensure that all tests have updated
 </div>
 </div>
 <div class="sect3">
-<h4 id="_edit_server_driver_tests">11.9.4. Edit Server Driver Tests</h4>
+<h4 id="_edit_server_driver_tests">11.10.4. Edit Server Driver Tests</h4>
 <div class="paragraph">
 <p>Since many operations are performed from the editor, and the editor
 starts an "edit server" process, many tests need to emulate this
@@ -3403,7 +3924,7 @@ Interface](./Design:-Editor-Interface)).</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_creating_more_edit_server_tests">11.9.5. Creating More Edit Server Tests</h4>
+<h4 id="_creating_more_edit_server_tests">11.10.5. Creating More Edit Server Tests</h4>
 <div class="paragraph">
 <p>You can relatively easy re-create a sequence of interactions by using the
 sandboxed Emacs in <code>tests/sandboxed_emacs</code>.</p>
@@ -3478,9 +3999,9 @@ a rename of.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_utilities">11.10. Utilities</h3>
+<h3 id="_utilities">11.11. Utilities</h3>
 <div class="sect3">
-<h4 id="_covers">11.10.1. Covers</h4>
+<h4 id="_covers">11.11.1. Covers</h4>
 <div class="paragraph">
 <p><code>utils/covers.py</code> is a Python script that, in some enviroments, can list which test cases execute a particular line.</p>
 </div>
@@ -3498,7 +4019,7 @@ Find a test that covers that particular line and run it using the debugger (usua
 </div>
 </div>
 <div class="sect3">
-<h4 id="_sandboxed">11.10.2. Sandboxed</h4>
+<h4 id="_sandboxed">11.11.2. Sandboxed</h4>
 <div class="paragraph">
 <p><code>utils/sandboxed</code> starts a sandboxed Emacs that uses the current elisp code and the <code>c-xref</code> from src.
 This allows you to run a test changes without having to polute your own setup.</p>
@@ -3518,7 +4039,7 @@ See below.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_debugging_the_protocol">11.11. Debugging the protocol</h3>
+<h3 id="_debugging_the_protocol">11.12. Debugging the protocol</h3>
 <div class="paragraph">
 <p>There is a "pipe spy" in <code>tests/sandboxed_emacs</code>. You can build the
 spy using</p>
@@ -5787,7 +6308,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-12 06:09:36 UTC
+Last updated 2025-11-18 18:36:20 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
