@@ -348,7 +348,11 @@ static LexemCode refillInputIfEmpty(char **previousLexemP) {
             if (inputType == MACRO_ARGUMENT_STREAM) {
                 return END_OF_MACRO_ARGUMENT_EXCEPTION;
             }
-            mbmFreeUntil(currentInput.begin);
+            /* Only free if currentInput is actually a MACRO_STREAM allocated from macroBodyMemory.
+             * NORMAL_STREAM points to file's lexem buffer, not macro body memory. */
+            if (inputType == MACRO_STREAM) {
+                mbmFreeUntil(currentInput.begin);
+            }
             currentInput = macroInputStack[--macroStackIndex];
         } else if (inputType == NORMAL_STREAM) {
             setCurrentFileConsistency(&currentFile, &currentInput);

@@ -42,6 +42,83 @@ required.
 rename operation that renames the default named
 function/macro/variable.
 
+=== How does lexem stream management work?
+
+Lexical analysis uses a stack of `LexemStream` structures to handle nested macro expansions. The key insight is that the stream type acts as a **discriminator** for buffer ownership and cleanup strategy.
+
+==== The Stream Types
+
+[source,c]
+----
+typedef enum {
+    NORMAL_STREAM,              // File or local buffer
+    MACRO_STREAM,               // Macro expansion
+    MACRO_ARGUMENT_STREAM,      // Macro argument expansion
+} LexemStreamType;
+----
+
+NOTE: Historically, there was also a `CACHED_STREAM` type when the caching mechanism was still active. This confirms that stream types are fundamentally about **buffer ownership and refill strategy** - each type encodes where the buffer came from and how to handle it when exhausted.
+
+**NORMAL_STREAM**::
+Buffer from file's `lexemBuffer` or a local temporary. Not allocated from arena memory, so no cleanup needed when stream exhausted.
+
+**MACRO_STREAM**::
+Buffer allocated from `macroBodyMemory` arena during macro expansion. Must call `mbmFreeUntil(stream.begin)` when popping from stack to free the arena allocation.
+
+**MACRO_ARGUMENT_STREAM**::
+Buffer allocated from `ppmMemory` arena during macro argument expansion. Signals `END_OF_MACRO_ARGUMENT_EXCEPTION` when exhausted (cleanup handled by caller).
+
+==== The Refill Algorithm
+
+When `currentInput` runs out of lexems (`read >= write`), `refillInputIfEmpty()` uses the stream type to decide what to do:
+
+[source,c]
+----
+while (currentInput.read >= currentInput.write) {
+    LexemStreamType inputType = currentInput.streamType;
+
+    if (insideMacro()) {  // Stack not empty
+        if (inputType == MACRO_ARGUMENT_STREAM) {
+            return END_OF_MACRO_ARGUMENT_EXCEPTION;
+        }
+        // Only free MACRO_STREAM buffers (allocated from macroBodyMemory)
+        if (inputType == MACRO_STREAM) {
+            mbmFreeUntil(currentInput.begin);
+        }
+        currentInput = macroInputStack[--macroStackIndex];  // Pop
+    }
+    else if (inputType == NORMAL_STREAM) {
+        // Refill from file
+        buildLexemFromCharacters(&currentFile.characterBuffer, ...);
+    }
+}
+----
+
+==== Key Invariant
+
+**Stream type must match buffer allocation:**
+
+* `MACRO_STREAM` → buffer allocated from `macroBodyMemory`
+* `NORMAL_STREAM` → buffer NOT from macro arenas
+* `MACRO_ARGUMENT_STREAM` → buffer from `ppmMemory`
+
+Violating this invariant causes fatal errors when trying to free buffers from the wrong arena.
+
+==== Common Bug Pattern
+
+Pushing a `NORMAL_STREAM` onto the macro stack, then trying to free it as if it were `MACRO_STREAM`:
+
+[source,c]
+----
+// WRONG: Blindly freeing without checking type
+mbmFreeUntil(currentInput.begin);  // Fails if currentInput is NORMAL_STREAM!
+
+// CORRECT: Check type first
+if (inputType == MACRO_STREAM) {
+    mbmFreeUntil(currentInput.begin);
+}
+----
+
 === How does ...
 
 TBD.
