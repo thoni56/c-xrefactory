@@ -1,5 +1,42 @@
-== Decison Log
+== Decision Log
 
-Here we log all design and architectural decisions. Currently they are
-stored separately. Most of the actual, historic, decisons are of
-course lost.
+This chapter provides a historical record of significant design and architectural decisions made during the evolution of c-xrefactory.
+
+=== Overview
+
+The decision log documents choices that have shaped the architecture, implementation, and direction of c-xrefactory. Most decisions from the original 1990s development are lost to history, but as they can be deduced from the codebase and commit history, they are being retroactively documented.
+
+All architectural decisions are recorded using the https://adr.github.io/[Architecture Decision Record (ADR)] format and stored in the `adr/` directory. These ADRs are automatically integrated into the Structurizr documentation system.
+
+=== Viewing Decision Records
+
+The ADRs can be accessed in several ways:
+
+1. **Via Structurizr**: When viewing the https://structurizr.com/[Structurizr documentation], navigate to the "Decisions" section to see all ADRs with cross-references and visualizations.
+
+2. **Directly in the repository**: Browse the link:../../adr/[adr/] directory for markdown files containing individual decision records.
+
+3. **Command line**: Use `ls doc/adr/*.md` from the project root to list all decisions.
+
+=== Decision Categories
+
+Current ADRs cover several categories:
+
+* **Simplification decisions**: Removing unused features (Java support, HTML generation, etc.)
+* **Tooling decisions**: Choice of ADR format, documentation system
+* **Configuration decisions**: Automatic config file discovery
+* **Format decisions**: Reference data storage format
+
+For the complete list of decisions and their rationale, see the link:../../adr/[ADR directory] or the Decisions section in the Structurizr documentation.
+
+=== Creating New ADRs
+
+When making significant architectural decisions:
+
+1. Copy the template from `adr/templates/`
+2. Number it sequentially (e.g., `0012-description.md`)
+3. Fill in the context, decision, and consequences
+4. Commit it alongside the implementation
+5. Reference it in commit messages and pull requests
+
+See link:decisions#7[ADR-0007] for details on the ADR format and process.
