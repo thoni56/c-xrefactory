@@ -1524,6 +1524,10 @@ static void expandMacroInCollation(LexemBufferDescriptor *bufferDesc, LexemStrea
         log_debug("Macro '%s' has NULL body (undefined), skipping expansion", macroSymbol->name);
         return;
     }
+
+    /* createMacroBodyAsNewStream() now handles its own temp buffer cleanup.
+     * Arguments are expanded first, then temp buffer allocated and freed.
+     * This ensures nested expansions don't block outer buffer growth. */
     LexemStream macroExpansion = createMacroBodyAsNewStream(macroBody, actualArgumentsInput);
 
     LexemStream inputStream = makeLexemStream(macroExpansion.begin, macroExpansion.begin, macroExpansion.write,
@@ -1689,7 +1693,6 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
                      LexemStream *actualArgumentsInput // The argument values for the current macro expansion
 ) {
     ENTER();
-    char *ppmMarker = ppmAllocc(0, sizeof(char));
 
     /* Macro argument resolution first for left ... */
     if (peekLexemCodeAt(*leftHandLexemP) == CPP_MACRO_ARGUMENT) {
@@ -1698,7 +1701,6 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
         if (*leftHandLexemP == NULL) {
             log_warn("Token pasting skipped: Left operand is NULL after expansion.");
             LEAVE();
-            ppmFreeUntil(ppmMarker); // Free any allocations done
             return *rightHandLexemP;
         }
     }
@@ -1741,7 +1743,6 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
             log_debug("Token pasting with empty right operand - using left operand as-is");
         }
         LEAVE();
-        ppmFreeUntil(ppmMarker); // Free any allocations done
         return continueReadingFrom;
     }
 
@@ -1813,13 +1814,14 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
                 break;
         }
     }
-    ppmFreeUntil(ppmMarker); // Free any temporary allocations done
 
     /* rhsLexem have moved over all tokens used in the collation and now points to any trailing ones */
     LexemStream inputStream = makeLexemStream(rhs, rhs, endOfLexems, NULL, NORMAL_STREAM);
     LexemStream outputStream = makeLexemStream(writeBufferDesc->buffer, *writeBufferWriteP, *writeBufferWriteP, NULL, NORMAL_STREAM);
     copyRemainingLexems(writeBufferDesc, &inputStream, &outputStream);
     *writeBufferWriteP = outputStream.write;
+
+    /* No cleanup needed - expandMacroInCollation() manages its own temp buffer lifecycle */
 
     LEAVE();
     /* Return the position in the macro body to continue reading from, not from the argument buffer */
@@ -1916,6 +1918,11 @@ static LexemStream replaceMacroArguments(LexemStream *actualArgumentsInput, char
 
 static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream *actualArgumentsInput) {
     ENTER();
+
+    /* Save marker at start - everything allocated in this function will be freed at end.
+     * Result from replaceMacroArguments() goes to mbmMemory (different arena), so it survives. */
+    char *ppmMarker = ppmAllocc(0, sizeof(char));
+
     // Allocate space for an extra lexem so that users can overwrite and *then* expand
     LexemBufferDescriptor bufferDesc;
     bufferDesc.size = MACRO_BODY_BUFFER_SIZE;
@@ -1954,13 +1961,20 @@ static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream 
     ppmReallocc(bufferDesc.buffer, bufferWrite - bufferDesc.buffer, sizeof(char), bufferDesc.size + MAX_LEXEM_SIZE);
     bufferDesc.size = bufferWrite - bufferDesc.buffer;
 
-    /* expand arguments */
+    /* Expand arguments AFTER collation (since it needs unexpanded args) */
     for (int i = 0; i < macroBody->argCount; i++) {
         expandMacroArgument(&actualArgumentsInput[i]);
     }
 
-    /* replace arguments into a different buffer to be used as the input */
+    /* Replace arguments into result buffer (allocated from mbmMemory, survives ppmFreeUntil) */
     LexemStream result = replaceMacroArguments(actualArgumentsInput, bufferDesc.buffer, bufferWrite);
+
+    /* Free everything allocated in ppmMemory during this function:
+     * - bufferDesc.buffer
+     * - any nested expansion temp buffers
+     * - expanded argument buffers
+     */
+    ppmFreeUntil(ppmMarker);
 
     LEAVE();
     return makeLexemStream(result.begin, result.begin, result.write, macroBody->name, MACRO_STREAM);

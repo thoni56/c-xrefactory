@@ -266,7 +266,7 @@ refactorings.def: refactorings.h
 #########################################################################
 test:
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
-	$(MAKE) -e -C ../tests quick
+	$(MAKE) -e -C ../tests -k quick
 
 unit: check-tokens unittests
 
