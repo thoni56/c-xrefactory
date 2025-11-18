@@ -1509,31 +1509,8 @@ static bool nextLexemIsIdentifierOrConstant(char *nextInputLexemP) {
     return isIdentifierLexem(nextLexem) || isConstantLexem(nextLexem);
 }
 
-static MacroBody *getMacroBody(Symbol *macroSymbol) {
-    assert(macroSymbol->type == TypeMacro);
-    return macroSymbol->mbody;
-}
 
 static LexemStream createMacroBodyAsNewStream(MacroBody *macroBody, LexemStream *actualArgumentsInput);
-
-static void expandMacroInCollation(LexemBufferDescriptor *bufferDesc, LexemStream *outputStream,
-                                   Symbol *macroSymbol, LexemStream *actualArgumentsInput) {
-    MacroBody *macroBody = getMacroBody(macroSymbol);
-    if (macroBody == NULL) {
-        // Undefined macro (e.g., from #undef) - nothing to expand
-        log_debug("Macro '%s' has NULL body (undefined), skipping expansion", macroSymbol->name);
-        return;
-    }
-
-    /* createMacroBodyAsNewStream() now handles its own temp buffer cleanup.
-     * Arguments are expanded first, then temp buffer allocated and freed.
-     * This ensures nested expansions don't block outer buffer growth. */
-    LexemStream macroExpansion = createMacroBodyAsNewStream(macroBody, actualArgumentsInput);
-
-    LexemStream inputStream = makeLexemStream(macroExpansion.begin, macroExpansion.begin, macroExpansion.write,
-                                              NULL, NORMAL_STREAM);
-    copyRemainingLexems(bufferDesc, &inputStream, outputStream);
-}
 
 /* **************************************************************** */
 /* Token pasting handlers for different lexem type combinations */
@@ -1746,39 +1723,10 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
         return continueReadingFrom;
     }
 
-    /* Macro invocations next */
+    /* Per C standard: operands of ## are NOT macro-expanded before pasting.
+     * Macro expansion happens during the rescan phase after pasting. */
     char *lhs = *leftHandLexemP;
-    if (isIdentifierLexem(peekLexemCodeAt(lhs))) {
-        char *lexemString = lhs + LEXEMCODE_SIZE;
-        Symbol *macroSymbol = findMacroSymbol(lexemString);
-        if (macroSymbol != NULL) {
-            log_debug("Macro found: '%s' (left-hand) -> expanding it", lexemString);
-            *writeBufferWriteP = lhs; /* We should write where current LHS, the macro, starts */
-            LexemStream outputStream = makeLexemStream(writeBufferDesc->buffer, *writeBufferWriteP, *writeBufferWriteP,
-                                                       NULL, NORMAL_STREAM);
-            expandMacroInCollation(writeBufferDesc, &outputStream, macroSymbol, actualArgumentsInput);
-            *writeBufferWriteP = outputStream.write;
-        } else {
-            log_debug("Identifier '%s' (left-hand) is NOT a macro", lexemString);
-        }
-    }
-
     char *rhs = *rightHandLexemP;
-    if (isIdentifierLexem(peekLexemCodeAt(rhs))) {
-        char *lexemString = rhs + LEXEMCODE_SIZE;
-        Symbol *macroSymbol = findMacroSymbol(lexemString);
-        if (macroSymbol != NULL) {
-            log_debug("Macro found: '%s' (right-hand) -> expanding it", lexemString);
-            rhs = *writeBufferWriteP; /* RHS now starts where we will write now */
-            LexemStream outputStream = makeLexemStream(writeBufferDesc->buffer, *writeBufferWriteP, *writeBufferWriteP,
-                                                       NULL, NORMAL_STREAM);
-            expandMacroInCollation(writeBufferDesc, &outputStream, macroSymbol, actualArgumentsInput);
-            *writeBufferWriteP = outputStream.write;
-            endOfLexems = *writeBufferWriteP; /* End is now where we have just finished writing */
-        } else {
-            log_debug("Identifier '%s' (right-hand) is NOT a macro", lexemString);
-        }
-    }
 
     /* Now collate left and right hand tokens using pattern matching */
     LexemCode leftHandLexem = peekLexemCodeAt(lhs);
@@ -1820,8 +1768,6 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
     LexemStream outputStream = makeLexemStream(writeBufferDesc->buffer, *writeBufferWriteP, *writeBufferWriteP, NULL, NORMAL_STREAM);
     copyRemainingLexems(writeBufferDesc, &inputStream, &outputStream);
     *writeBufferWriteP = outputStream.write;
-
-    /* No cleanup needed - expandMacroInCollation() manages its own temp buffer lifecycle */
 
     LEAVE();
     /* Return the position in the macro body to continue reading from, not from the argument buffer */

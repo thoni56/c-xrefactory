@@ -7,7 +7,7 @@ NUM
     @source.c:0:0
     @source.c:1:8
     @source.c:4:15
-Two##Two
-    @source.c:1:11
-TwoTwo
-    @source.c:1:12
+NUM##NUM
+    @source.c:2:31
+NUMNUM
+    @source.c:2:32

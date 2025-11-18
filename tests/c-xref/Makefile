@@ -14,5 +14,5 @@ $(TEST): .c-xrefrc
 	  exit 1 ; \
 	fi
 
-trace: TRACE=-trace
+trace: TRACE=-debug
 trace: $(TEST)

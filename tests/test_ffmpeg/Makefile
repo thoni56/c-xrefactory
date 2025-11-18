@@ -17,6 +17,9 @@ all: .c-xrefrc
 		$(VERIFY) ; \
 	fi
 
+trace: ARGUMENTS += -debug -log=trace
+trace: all
+
 init: ffmpeg .c-xrefrc
 
 ffmpeg:

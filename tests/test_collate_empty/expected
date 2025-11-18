@@ -14,8 +14,11 @@ PASTE
 a
     @source.c:2:16
 foo
-    @source.c:7:10
     @source.c:8:12
+foo##EMPTY
+    @source.c:7:14
+fooEMPTY
+    @source.c:7:15
 paste_empty
     @source.c:1:8
     @source.c:2:4
