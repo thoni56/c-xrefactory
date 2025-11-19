@@ -282,7 +282,7 @@ static Int2StringDictionary typeNamesInitTable[] = {
     {TypeToken,             "token"},
     {TypeMacro,             "macro"},
     {TypeMacroArg,          "macro argument"},
-    {TypeUndefMacro,        "Undefined Macro"},
+    {TypeCppUndefMacro,        "Undefined Macro"},
     {TypeYaccSymbol,        "yacc symbol"},
     {TypeCppCollate,        "Cpp##sym"},
     {TypeSpecialComplete,    "(Completion Wizard)"},
@@ -339,7 +339,13 @@ void initTokenNamesTables(void) {
 
     /* and add the 'defined' keyword for #if */
     symbolP = newSymbol("defined", noPosition);
-    symbolP->type = TypeDefinedOp;
+    symbolP->type = TypeCppDefinedOp;
+    symbolP->storage = StorageDefault;
+    symbolTableAdd(symbolTable, symbolP);
+
+    /* and add the '__has_include' keyword for #if */
+    symbolP = newSymbol("__has_include", noPosition);
+    symbolP->type = TypeCppHasIncludeOp;
     symbolP->storage = StorageDefault;
     symbolTableAdd(symbolTable, symbolP);
 }

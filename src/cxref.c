@@ -113,52 +113,53 @@ static void setAvailableRefactorings(Symbol *symbol) {
         makeRefactoringAvailable(PPC_AVR_MOVE_PARAMETER, "macro");
         break;
     case TypeCppInclude:
+    case TypeCppHasIncludeOp:
         makeRefactoringAvailable(PPC_AVR_RENAME_INCLUDED_FILE, "");
         makeRefactoringAvailable(PPC_AVR_RENAME_MODULE, "");
         break;
-    case TypeChar:
-    case TypeUnsignedChar:
-    case TypeSignedChar:
-    case TypeInt:
-    case TypeUnsignedInt:
-    case TypeSignedInt:
-    case TypeShortInt:
-    case TypeShortUnsignedInt:
-    case TypeShortSignedInt:
-    case TypeLongInt:
-    case TypeLongUnsignedInt:
-    case TypeLongSignedInt:
-    case TypeFloat:
-    case TypeDouble:
-    case TypeUnion:
-    case TypeEnum:
-    case TypeVoid:
-    case TypePointer:
-    case TypeArray:
     case TypeAnonymousField:
-    case TypeError:
-    case TypeElipsis:
-    case TypeByte:
-    case TypeShort:
-    case TypeLong:
-    case TypeBoolean:
-    case TypeNull:
-    case TypeCppIfElse:
-    case TypeCppCollate:
-    case TypeYaccSymbol:
-    case TypeKeyword:
-    case TypeToken:
-    case TypeUndefMacro:
-    case TypeDefinedOp:
+    case TypeArray:
     case TypeBlockMarker:
+    case TypeBoolean:
+    case TypeByte:
+    case TypeChar:
+    case TypeCppCollate:
+    case TypeCppDefinedOp:
+    case TypeCppIfElse:
+    case TypeCppUndefMacro:
+    case TypeDouble:
+    case TypeElipsis:
+    case TypeEnum:
+    case TypeError:
     case TypeExpression:
-    case TypePackedType:
-    case TypeSpecialComplete:
-    case TypeNonImportedClass:
+    case TypeFloat:
+    case TypeFunction:
     case TypeInducedError:
     case TypeInheritedFullMethod:
-    case TypeFunction:
+    case TypeInt:
+    case TypeKeyword:
+    case TypeLong:
+    case TypeLongInt:
+    case TypeLongSignedInt:
+    case TypeLongUnsignedInt:
+    case TypeNonImportedClass:
+    case TypeNull:
+    case TypePackedType:
+    case TypePointer:
+    case TypeShort:
+    case TypeShortInt:
+    case TypeShortSignedInt:
+    case TypeShortUnsignedInt:
+    case TypeSignedChar:
+    case TypeSignedInt:
+    case TypeSpecialComplete:
     case TypeSpecialConstructorCompletion:
+    case TypeToken:
+    case TypeUnion:
+    case TypeUnsignedChar:
+    case TypeUnsignedInt:
+    case TypeVoid:
+    case TypeYaccSymbol:
     case TypeUnknown:
     case TypeDefault:
         makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");

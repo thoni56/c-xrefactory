@@ -110,6 +110,7 @@ static int savedWorkMemoryIndex = 0;
 
 %token CPP_COLLATION     /* ## in macro body */
 %token CPP_DEFINED_OP    /* defined(xxx) in #if */
+%token CPP_HAS_INCLUDE_OP /* __has_include(xxx) in #if */
 
 /* ******************************************************************** */
 /* special token signaling end of input */

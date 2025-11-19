@@ -33,6 +33,6 @@ typedef int CgreenTest;
 #define Ensure_NARG(...) ENSURE_macro_dispatcher(Ensure, __VA_ARGS__)
 #define Ensure(...) Ensure_NARG(0, __VA_ARGS__)(0, __VA_ARGS__)
 
-//Ensure(Test, expansion) {}
+Ensure(Test, expansion) {}
 //Ensure_NARG(0, Test, expansion)(0, Test, expansion) {1;}
-ENSURE_macro_dispatcher_(func, nargs)
+//ENSURE_macro_dispatcher_(func, nargs)

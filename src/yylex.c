@@ -484,6 +484,64 @@ void popInclude(void) {
     }
 }
 
+/* Check if an include file can be found without actually opening it */
+static bool canFindIncludeFile(char includeType, char *name) {
+    EditorBuffer *editorBuffer = NULL;
+    FILE *file = NULL;
+    StringList *includeDirP;
+    char wildcardExpandedPaths[MAX_OPTION_LEN];
+    char normalizedName[MAX_FILE_NAME_SIZE];
+    char path[MAX_FILE_NAME_SIZE];
+
+    log_debug("canFindIncludeFile(%s)", name);
+
+    extractPathInto(currentFile.fileName, path);
+
+    /* If not an angle bracketed include, look first in the directory of the current file */
+    if (includeType != '<') {
+        strcpy(normalizedName, normalizeFileName_static(name, path));
+        log_debug("trying to find %s", normalizedName);
+        editorBuffer = findOrCreateAndLoadEditorBufferForFile(normalizedName);
+        if (editorBuffer == NULL)
+            file = openFile(normalizedName, "r");
+        if (file != NULL) {
+            fclose(file);
+            return true;
+        }
+        if (editorBuffer != NULL)
+            return true;
+    }
+
+    /* If not found we need to walk the include paths... */
+    for (includeDirP = options.includeDirs; includeDirP != NULL && editorBuffer == NULL && file == NULL; includeDirP = includeDirP->next) {
+        strcpy(normalizedName, normalizeFileName_static(includeDirP->string, cwd));
+        expandWildcardsInOnePath(normalizedName, wildcardExpandedPaths, MAX_OPTION_LEN);
+        MAP_OVER_PATHS(wildcardExpandedPaths, {
+            int length;
+            strcpy(normalizedName, currentPath);
+            length = strlen(normalizedName);
+            if (length > 0 && normalizedName[length - 1] != FILE_PATH_SEPARATOR) {
+                normalizedName[length] = FILE_PATH_SEPARATOR;
+                length++;
+            }
+            strcpy(normalizedName + length, name);
+            log_debug("trying to find '%s'", normalizedName);
+            editorBuffer = findOrCreateAndLoadEditorBufferForFile(normalizedName);
+            if (editorBuffer == NULL)
+                file = openFile(normalizedName, "r");
+            if (editorBuffer != NULL || file != NULL)
+                goto found;
+        });
+    }
+    log_debug("failed to find '%s'", name);
+    return false;
+found:
+    if (file != NULL)
+        fclose(file);
+    log_debug("found file '%s'", normalizedName);
+    return true;
+}
+
 static bool openInclude(char includeType, char *name, bool is_include_next) {
     EditorBuffer *editorBuffer = NULL;
     FILE *file = NULL;
@@ -1181,6 +1239,83 @@ LexemCode cexp_yylex(void) {
             }
         }
         lexem = res;
+    } else if (lexem == CPP_HAS_INCLUDE_OP) {
+        Position position;
+        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+        ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
+
+        if (lexem != '(') {
+            if (options.mode!=ServerMode)
+                warningMessage(ERR_ST,"expected '(' after __has_include");
+            return 0;
+        }
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+
+        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+        ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
+
+        char *includeName;
+        char includeType;
+        char nameBuffer[MAX_FILE_NAME_SIZE];
+        
+        if (lexem == STRING_LITERAL) {
+            includeName = currentInput.read;
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+            includeType = *includeName;  /* First char is " or < */
+            includeName++;  /* Skip the quote */
+        } else if (lexem == '<') {
+            /* Handle <header> format */
+            includeType = '<';
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+            
+            /* Read until we find '>' */
+            char *p = nameBuffer;
+            for (;;) {
+                lexem = getLexem();
+                ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument);
+                if (lexem == '>') {
+                    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+                    break;
+                }
+                if (lexem == '\n' || p >= nameBuffer + MAX_FILE_NAME_SIZE - 1) {
+                    if (options.mode!=ServerMode)
+                        warningMessage(ERR_ST,"unterminated < in __has_include");
+                    return 0;
+                }
+                /* Copy the lexem text */
+                char *lexemText = currentInput.read;
+                getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+                while (lexemText < currentInput.read && p < nameBuffer + MAX_FILE_NAME_SIZE - 1) {
+                    *p++ = *lexemText++;
+                }
+            }
+            *p = '\0';
+            includeName = nameBuffer;
+            /* For angle brackets, we need to read the closing ')' */
+            lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+            ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument);
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+            if (lexem != ')' && options.mode!=ServerMode) {
+                warningMessage(ERR_ST,"missing ')' after __has_include(<...>");
+            }
+        } else {
+            if (options.mode!=ServerMode)
+                warningMessage(ERR_ST,"expected string literal or < in __has_include");
+            return 0;
+        }
+
+        /* For string literals, read the closing ')' */
+        if (includeType != '<') {
+            lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+            ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument);
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+            if (lexem != ')' && options.mode!=ServerMode) {
+                warningMessage(ERR_ST,"missing ')' after __has_include(\"\"");
+            }
+        }
+
+        bool fileFound = canFindIncludeFile(includeType, includeName);
+        lexem = cexpTranslateToken(CONSTANT, fileFound ? 1 : 0);
     } else {
         lexem = cexpTranslateToken(lexem, uniyylval->ast_integer.data);
     }
@@ -2202,8 +2337,11 @@ static LexemCode lookupIdentifier(char *id, Position position) {
                 symbol = s;
             if (isIdAKeyword(s, position))
                 return s->keyword;
-            if (s->type == TypeDefinedOp && isProcessingPreprocessorIf) {
+            if (s->type == TypeCppDefinedOp && isProcessingPreprocessorIf) {
                 return CPP_DEFINED_OP;
+            }
+            if (s->type == TypeCppHasIncludeOp && isProcessingPreprocessorIf) {
+                return CPP_HAS_INCLUDE_OP;
             }
             if (s->type == TypeDefault) {
                 setYylvalsForIdentifier(s->name, s, position);

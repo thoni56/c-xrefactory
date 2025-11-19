@@ -84,9 +84,10 @@
         ENUM(TypeLabel)                                                 \
         ENUM(TypeKeyword)                                               \
         ENUM(TypeToken)                                                 \
-        ENUM(TypeUndefMacro)                                            \
+        ENUM(TypeCppUndefMacro)                                            \
         ENUM(TypeMacroArg)                                              \
-        ENUM(TypeDefinedOp)                                             \
+        ENUM(TypeCppDefinedOp)                                             \
+        ENUM(TypeCppHasIncludeOp)                                          \
         ENUM(TypeBlockMarker)                                           \
         ENUM(TypeExpression)                                            \
         ENUM(TypePackedType)                                            \
