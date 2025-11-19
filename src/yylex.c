@@ -1268,7 +1268,7 @@ static LexemCode handleHasIncludeOp(void) {
     char *includeName;
     char includeType;
     char nameBuffer[MAX_FILE_NAME_SIZE];
-    
+
     if (lexem == STRING_LITERAL) {
         includeName = currentInput.read;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
@@ -1278,7 +1278,7 @@ static LexemCode handleHasIncludeOp(void) {
         /* Handle <header> format */
         includeType = '<';
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-        
+
         /* Read until we find '>' */
         char *p = nameBuffer;
         for (;;) {
@@ -1350,7 +1350,7 @@ static LexemCode handleHasIncludeNextOp(void) {
     char *includeName;
     char includeType;
     char nameBuffer[MAX_FILE_NAME_SIZE];
-    
+
     if (lexem == STRING_LITERAL) {
         includeName = currentInput.read;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
@@ -1360,7 +1360,7 @@ static LexemCode handleHasIncludeNextOp(void) {
         /* Handle <header> format */
         includeType = '<';
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-        
+
         /* Read until we find '>' */
         char *p = nameBuffer;
         for (;;) {
