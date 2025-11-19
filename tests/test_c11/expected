@@ -1,48 +1,51 @@
 [C-xref] active project: 'CURDIR'
-    @source.c:11:0
-    @source.c:21:0
+    @source.c:13:0
+    @source.c:23:0
 _Alignas
     @source.c:0:0
-    @source.c:13:0
+    @source.c:15:0
 _Alignof
     @source.c:0:0
-    @source.c:16:16
+    @source.c:18:16
 _STDALIGN_H
 _STDNORETURN_H
 __STDC_VERSION__
     @source.c:0:0
+    @source.c:1:16
 __alignas_is_defined
 __alignof_is_defined
 a16
-    @source.c:13:17
+    @source.c:15:17
 a32
-    @source.c:14:19
+    @source.c:16:19
 alignas
     @source.c:0:0
-    @source.c:14:0
+    @source.c:16:0
 alignment
-    @source.c:16:4
+    @source.c:18:4
 alignof
     @source.c:0:0
-    @source.c:17:12
+    @source.c:19:12
 atomic_int
-    @source.c:1:12
+    @source.c:3:12
 extern_tls
-    @source.c:6:25
+    @source.c:8:25
 gnu_tls
-    @source.c:7:26
+    @source.c:9:26
 int_atomic
-    @source.c:2:12
+    @source.c:4:12
 no_return
-    @source.c:19:15
+    @source.c:21:15
 noreturn
     @source.c:0:0
-    @source.c:22:0
+    @source.c:24:0
 size
-    @source.c:17:5
+    @source.c:19:5
 static_tls
-    @source.c:5:25
+    @source.c:7:25
 terminate
-    @source.c:22:14
+    @source.c:24:14
 tls_var
-    @source.c:4:18
+    @source.c:6:18
+version
+    @source.c:1:6

@@ -1,3 +1,5 @@
+char *version = __STDC_VERSION__;
+
 _Atomic int atomic_int;       // Treated as "atomic int"
 int _Atomic int_atomic;       // Equivalent syntax
 
