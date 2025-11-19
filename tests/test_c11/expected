@@ -1,34 +1,18 @@
 [C-xref] active project: 'CURDIR'
-%%%i:/.../stdalign.h
     @source.c:11:0
-    @stdalign.h:1:0
-%%%i:/.../stdnoreturn.h
     @source.c:21:0
-    @stdnoreturn.h:1:0
 _Alignas
     @source.c:0:0
     @source.c:13:0
-    @stdalign.h:20:16
 _Alignof
     @source.c:0:0
     @source.c:16:16
-    @stdalign.h:21:16
-__STDALIGN_H
-    @stdalign.h:11:8
+_STDALIGN_H
+_STDNORETURN_H
 __STDC_VERSION__
     @source.c:0:0
-    @stdalign.h:18:13
-    @stdalign.h:18:34
-    @stdnoreturn.h:22:13
-    @stdnoreturn.h:22:34
-__STDNORETURN_H
-    @stdnoreturn.h:11:8
 __alignas_is_defined
-    @stdalign.h:24:8
 __alignof_is_defined
-    @stdalign.h:25:8
-__noreturn_is_defined
-    @stdnoreturn.h:18:8
 a16
     @source.c:13:17
 a32
@@ -36,13 +20,11 @@ a32
 alignas
     @source.c:0:0
     @source.c:14:0
-    @stdalign.h:20:8
 alignment
     @source.c:16:4
 alignof
     @source.c:0:0
     @source.c:17:12
-    @stdalign.h:21:8
 atomic_int
     @source.c:1:12
 extern_tls
@@ -56,7 +38,6 @@ no_return
 noreturn
     @source.c:0:0
     @source.c:22:0
-    @stdnoreturn.h:17:8
 size
     @source.c:17:5
 static_tls
