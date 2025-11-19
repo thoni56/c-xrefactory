@@ -346,29 +346,27 @@ check-tokens: c_parser.tokens yacc_parser.tokens
 # we don't need to use c_parser.tab.h to define tokens
 lexem.h: lexem.h.head lexem.h.tail c_parser.tab.h character_lexems.txt Makefile
 	# Convert the non-character tokens to defines
-	# Standard BYACC (which does not work yet) defines YYSTYPE_IS_DECLARED in .tab.h which we don't want
-	grep define c_parser.tab.h | sed -e "s/#define \(.*\) \([0-9]*\)/\1 = \2,/" | grep -v YYSTYPE_IS_DECLARED > lexem.h.tab
+	@# Standard BYACC (which does not work yet) defines YYSTYPE_IS_DECLARED in .tab.h which we don't want
+	@grep define c_parser.tab.h | sed -e "s/#define \(.*\) \([0-9]*\)/\1 = \2,/" | grep -v YYSTYPE_IS_DECLARED > lexem.h.tab
 	# Combine the parts into a temporary file
-	cat lexem.h.head character_lexems.txt lexem.h.tab lexem.h.tail > lexem.h.tmp
-	# Temporary fix
-	mv lexem.h.tmp lexem.h
+	@cat lexem.h.head character_lexems.txt lexem.h.tab lexem.h.tail > lexem.h.tmp
 	# Sanity check for content, in case yacc errored out
-	#if grep " = " lexem.h.tmp > /dev/null ; then \
-	#	cmp lexem.h.tmp lexem.h || mv lexem.h.tmp lexem.h && rm lexem.h.tmp ; \
-	#else \
-	#	rm lexem.h.tmp ; \
-	#fi
+	@if grep " = " lexem.h.tmp > /dev/null ; then \
+		cmp lexem.h.tmp lexem.h || mv lexem.h.tmp lexem.h && rm lexem.h.tmp ; \
+	else \
+		rm lexem.h.tmp ; \
+	fi
 
-# Generate an init function for lexem names from lexem.h
 lexem.c: lexem.h Makefile
-	echo "#include \"lexem.h\"" > lexem.c.tmp
-	echo >> lexem.c.tmp
-	echo "char *lexemEnumNames[LAST_TOKEN];" >> lexem.c.tmp
-	echo >> lexem.c.tmp
-	echo "void initLexemEnumNames(void) {" >> lexem.c.tmp
-	grep = lexem.h | grep -v LAST_TOKEN | awk '{ printf "    lexemEnumNames[%s] = \"%s\";\n", $$3, $$1}' | sed 's/,]/]/g' >> lexem.c.tmp
-	echo "}" >> lexem.c.tmp
-	if ! cmp lexem.c lexem.c.tmp ; then \
+	# Generate an init function for lexem names from lexem.h
+	@echo "#include \"lexem.h\"" > lexem.c.tmp
+	@echo >> lexem.c.tmp
+	@echo "char *lexemEnumNames[LAST_TOKEN];" >> lexem.c.tmp
+	@echo >> lexem.c.tmp
+	@echo "void initLexemEnumNames(void) {" >> lexem.c.tmp
+	@grep = lexem.h | grep -v LAST_TOKEN | awk '{ printf "    lexemEnumNames[%s] = \"%s\";\n", $$3, $$1}' | sed 's/,]/]/g' >> lexem.c.tmp
+	@echo "}" >> lexem.c.tmp
+	@if ! cmp lexem.c lexem.c.tmp ; then \
 		mv lexem.c.tmp lexem.c ; \
 	else \
 		rm lexem.c.tmp ; \
@@ -378,8 +376,9 @@ lexem.c: lexem.h Makefile
 #########################################################################
 .PHONY:clean
 clean:
-	-$(MAKE) -C ../tests clean
-	-rm -rf $(OBJDIR) c-xref *.gcov
+	@-$(MAKE) -C ../tests clean & \
+	rm -rf $(OBJDIR) c-xref *.gcov & \
+	wait
 
 ########################################################################
 
@@ -387,11 +386,9 @@ clean:
 clean-coverage:
 ifeq ($(HAVE_APPLE_COV),yes)
 	# Darwin: Remove .profraw and .profdata files
-	-find .. -name "*.profraw" -delete
-	-find .. -name "*.profdata" -delete
-	-rm ../coverage/merged.profdata
+	@-find .. -name "*.profraw" -delete
+	@-find .. -name "*.profdata" -delete
 	# Generate empty .gcov files to show zero coverage
-	@echo "Generating empty .gcov files to show zero coverage..."
 	@for src_file in *.c; do \
 		if [ -f "$$src_file" ]; then \
 			echo "        -:    0:Source:$$src_file" > "$$src_file.gcov" ; \
@@ -403,7 +400,7 @@ ifeq ($(HAVE_APPLE_COV),yes)
 	done
 else
 	# Non-Darwin: Use lcov to zero counters
-	-if command -v $(LCOV) > /dev/null 2>&1 ; then \
+	@-if command -v $(LCOV) > /dev/null 2>&1 ; then \
 		$(LCOV) -q -z -d .. ; \
 	fi
 	$(MAKE) gcov
@@ -414,7 +411,7 @@ endif
 gcov:
 ifeq ($(HAVE_APPLE_COV),yes)
 	# Darwin: Convert llvm-cov output to traditional .gcov format for Emacs cov-mode
-	if [ -f ../coverage/merged.profdata ]; then \
+	@if [ -f ../coverage/merged.profdata ]; then \
 		echo "Generating .gcov files..." ; \
 		for src_file in *.c; do \
 			case "$$src_file" in \
@@ -450,14 +447,14 @@ merge-coverage-from-tests:
 ifeq ($(HAVE_APPLE_COV),yes)
 	# Darwin: Merge all .profraw files from tests using llvm-profdata
 	@mkdir -p ../coverage
-	-if find .. -name "*.profraw" | head -1 >/dev/null 2>&1; then \
+	@-if find .. -name "*.profraw" | head -1 >/dev/null 2>&1; then \
 		$(LLVM_PROFDATA) merge -sparse `find .. -name "*.profraw"` -o ../coverage/merged.profdata ; \
 	fi
 	$(MAKE) -e gcov
 else
 ifeq ($(HAVE_GCOV_TOOL),yes)
 	# Merge all gcda from all tests then make gcovs from those
-	-for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
+	@-for tc in ../tests/*/.cov ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
 	$(MAKE) -e gcov
 else
 	# Merge all .info to total.info then extract .gcovs from it
@@ -476,7 +473,7 @@ total-coverage:
 	@mkdir -p ../coverage
 ifeq ($(HAVE_APPLE_COV), yes)
 		# Darwin: Export merged profdata to LCOV format for genhtml compatibility
-		if [ -f ../coverage/merged.profdata ]; then \
+		@if [ -f ../coverage/merged.profdata ]; then \
 			$(LLVM_COV) export --format=lcov --instr-profile=../coverage/merged.profdata c-xref --sources . > ../coverage/total.info ; \
 		else \
 			if ls ../tests/*/.cov/*.profraw >/dev/null 2>&1; then \
