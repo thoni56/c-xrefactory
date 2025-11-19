@@ -1,5 +1,6 @@
 #define _SYMTAB_
 #include "symboltable.h"
+#include "log.h"
 
 
 #define HASH_FUN(element) hashFun(element->name)
@@ -12,6 +13,7 @@ SymbolTable *symbolTable;
 
 void initSymbolTable(int size) {
     symbolTable = stackMemoryAlloc(sizeof(SymbolTable));
+    log_debug("initSymbolTable: symbolTable allocated at %p", symbolTable);
     symbolTableInit(symbolTable, size);
 }
 

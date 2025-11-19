@@ -671,7 +671,7 @@ $(eval $(call UNITTEST,semact,memory stackmemory log protocol usage hash positio
 $(eval $(call UNITTEST,server,memory log session position stackmemory))
 $(eval $(call UNITTEST,stackmemory,memory log))
 $(eval $(call UNITTEST,symbol,memory stackmemory log))
-$(eval $(call UNITTEST,symboltable,hash log memory stackmemory))
+$(eval $(call UNITTEST,symboltable,hash memory stackmemory))
 $(eval $(call UNITTEST,symbol_database,log position memory stackmemory globals))
 $(eval $(call UNITTEST,undo,memory log))
 $(eval $(call UNITTEST,xref,memory log protocol))
