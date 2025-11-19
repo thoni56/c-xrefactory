@@ -67,6 +67,53 @@ parsing datastructures so that they can be accessed using the standard
 names in the parsing skeleton. The Makefile generates the parsers and
 renames the generated files as appropriate.
 
+=== Integrated Preprocessor
+
+_C-xrefactory_ includes its own integrated C preprocessor implementation rather than using the system's preprocessor (cpp, clang preprocessor, etc.). This is a crucial architectural decision that enables core functionality.
+
+==== Why Not Use the System Preprocessor?
+
+Using an external preprocessor would mean that all macros would be expanded before c-xrefactory sees the code. This would make it impossible to:
+
+* Navigate to macro definitions
+* Show macro usage and references
+* Refactor macro names and parameters
+* Complete macro identifiers
+* See macro arguments as distinct symbols
+* Understand the code structure as the programmer wrote it
+
+By parsing the source at the macro level, c-xrefactory operates as a **source-level tool** rather than a post-preprocessed tool. This allows it to work with the code as developers see and write it, preserving all macro information for navigation and refactoring.
+
+==== Implementation Details
+
+The integrated preprocessor is implemented in `yylex.c` and includes:
+
+* Macro definition handling (`processDefineDirective()`)
+* Macro expansion with argument substitution
+* Conditional compilation (`#if`, `#ifdef`, `#ifndef`, `#elif`, `#else`, `#endif`)
+* Include file processing (`#include`, `#include_next`)
+* Pragma directives (limited support)
+* Expression evaluation for `#if` directives (`cexp_parser.y`)
+
+==== Limitations
+
+The integrated preprocessor does not support all modern preprocessor features:
+
+* `__has_include()` and `__has_include_next()` operators (TODO item)
+* Platform-specific predefined macros (like `__arm64__`, `__x86_64__`) are not automatically defined
+* Some compiler-specific extensions may not be recognized
+
+These limitations mean that c-xrefactory may report syntax errors when encountering modern platform headers that use these features, even though the code compiles correctly with standard compilers.
+
+==== Trade-offs
+
+This design choice represents a fundamental trade-off:
+
+* **Gained**: Full macro-level navigation and refactoring capabilities
+* **Lost**: Perfect compatibility with all preprocessor extensions and platform-specific features
+
+The benefit of macro-level refactoring is considered more valuable than perfect preprocessor compatibility, as it is a key differentiator for c-xrefactory.
+
 === Refactoring and the parsers
 
 Some refactorings need more detailed information about the code, maybe all do?
