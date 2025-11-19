@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "c_parser.h"
-#include "cexp_parser.h"
+#include "cppexp_parser.h"
 #include "commons.h"
 #include "constants.h"
 #include "cxref.h"
@@ -1265,7 +1265,7 @@ static LexemCode handleHasIncludeOp(void) {
     }
 
     bool fileFound = canFindIncludeFile(includeType, includeName);
-    return cexpTranslateToken(CONSTANT, fileFound ? 1 : 0);
+    return cppexpTranslateToken(CONSTANT, fileFound ? 1 : 0);
 
 error:
     return 0;
@@ -1304,7 +1304,7 @@ static LexemCode handleDefinedOp(void) {
         addCxReference(macroSymbol, position, UsageUsed, NO_FILE_NUMBER);
 
     /* following call sets uniyylval */
-    LexemCode res = cexpTranslateToken(CONSTANT, macroSymbolFound);
+    LexemCode res = cppexpTranslateToken(CONSTANT, macroSymbolFound);
     if (haveParenthesis) {
         lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
@@ -1320,18 +1320,19 @@ error:
     return 0;
 }
 
-LexemCode cexp_yylex(void) {
+/* Entry from cppexp_parser */
+LexemCode cppexp_yylex(void) {
 
     LexemCode lexem = yylex();
     if (isIdentifierLexem(lexem)) {
         /* Undefined identifiers in #if expressions evaluate to 0 per C standard. */
-        lexem = cexpTranslateToken(CONSTANT, 0);
+        lexem = cppexpTranslateToken(CONSTANT, 0);
     } else if (lexem == CPP_DEFINED_OP) {
         lexem = handleDefinedOp();
     } else if (lexem == CPP_HAS_INCLUDE_OP) {
         lexem = handleHasIncludeOp();
     } else {
-        lexem = cexpTranslateToken(lexem, uniyylval->ast_integer.data);
+        lexem = cppexpTranslateToken(lexem, uniyylval->ast_integer.data);
     }
     return lexem;
 }
@@ -1340,7 +1341,7 @@ static void processIfDirective(void) {
     int parseError, lexem;
     isProcessingPreprocessorIf = true;
     log_debug(": #if");
-    parseError = cexp_yyparse();
+    parseError = cppexp_yyparse();
     do
         lexem = yylex();
     while (lexem != '\n');

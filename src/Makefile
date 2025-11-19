@@ -274,7 +274,7 @@ unit: check-tokens unittests
 # We generate parsers for C, Yacc and C expressions
 
 .PHONY:parsers
-parsers: c_parser.tab.[ch] yacc_parser.tab.[ch] cexp_parser.tab.[ch]
+parsers: c_parser.tab.[ch] yacc_parser.tab.[ch] cppexp_parser.tab.[ch]
 
 # Note the file prefix (-b) and symbol prefix (-p)
 # Also creates .rules files with only the rules in it
@@ -304,11 +304,11 @@ yacc_parser.y: c_parser.y
 	cat yacc_parser.head c_rules.txt yacc_parser.tail > yacc_parser.y
 	rm  yacc_parser.head c_rules.txt yacc_parser.tail
 
-.INTERMEDIATE: cexp_parser.tab.intermediate
-cexp_parser.tab.c cexp_parser.tab.h : cexp_parser.tab.intermediate ;
-cexp_parser.tab.intermediate : cexp_parser.y $(YACC)
-	$(YACC) -v -b cexp_parser -p cexp_yy cexp_parser.y
-	sed -E '/^$$/q' cexp_parser.output > cexp_parser.rules
+.INTERMEDIATE: cppexp_parser.tab.intermediate
+cppexp_parser.tab.c cppexp_parser.tab.h : cppexp_parser.tab.intermediate ;
+cppexp_parser.tab.intermediate : cppexp_parser.y $(YACC)
+	$(YACC) -v -b cppexp_parser -p cppexp_yy cppexp_parser.y
+	sed -E '/^$$/q' cppexp_parser.output > cppexp_parser.rules
 
 .INTERMEDIATE: yacc_parser.tab.intermediate
 yacc_parser.tab.c yacc_parser.tab.h : yacc_parser.tab.intermediate ;

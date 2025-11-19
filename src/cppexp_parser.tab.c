@@ -4,37 +4,37 @@
 #define yyclearin (yychar=(-1))
 #define yyerrok (yyerrflag=0)
 #define YYRECOVERING (yyerrflag!=0)
-#define yyparse cexp_yyparse
-#define yylex cexp_yylex
-#define yyerror cexp_yyerror
-#define yychar cexp_yychar
-#define lastyystate cexp_yylastyystate
-#define yyval cexp_yyval
-#define yylval cexp_yylval
-#define yydebug cexp_yydebug
-#define yynerrs cexp_yynerrs
-#define yyerrflag cexp_yyerrflag
-#define yyss cexp_yyss
-#define yyssp cexp_yyssp
-#define yyvs cexp_yyvs
-#define yyvsp cexp_yyvsp
-#define yylhs cexp_yylhs
-#define yylen cexp_yylen
-#define yydefred cexp_yydefred
-#define yydgoto cexp_yydgoto
-#define yysindex cexp_yysindex
-#define yyrindex cexp_yyrindex
-#define yygindex cexp_yygindex
-#define yytable cexp_yytable
-#define yycheck cexp_yycheck
-#define yyname cexp_yyname
-#define yyrule cexp_yyrule
-#define YYPREFIX "cexp_yy"
-#line 2 "cexp_parser.y"
+#define yyparse cppexp_yyparse
+#define yylex cppexp_yylex
+#define yyerror cppexp_yyerror
+#define yychar cppexp_yychar
+#define lastyystate cppexp_yylastyystate
+#define yyval cppexp_yyval
+#define yylval cppexp_yylval
+#define yydebug cppexp_yydebug
+#define yynerrs cppexp_yynerrs
+#define yyerrflag cppexp_yyerrflag
+#define yyss cppexp_yyss
+#define yyssp cppexp_yyssp
+#define yyvs cppexp_yyvs
+#define yyvsp cppexp_yyvsp
+#define yylhs cppexp_yylhs
+#define yylen cppexp_yylen
+#define yydefred cppexp_yydefred
+#define yydgoto cppexp_yydgoto
+#define yysindex cppexp_yysindex
+#define yyrindex cppexp_yyrindex
+#define yygindex cppexp_yygindex
+#define yytable cppexp_yytable
+#define yycheck cppexp_yycheck
+#define yyname cppexp_yyname
+#define yyrule cppexp_yyrule
+#define YYPREFIX "cppexp_yy"
+#line 2 "cppexp_parser.y"
 
 #include <stdlib.h>
 
-#include "cexp_parser.h"
+#include "cppexp_parser.h"
 
 #include "yylex.h"
 #include "semact.h"
@@ -50,10 +50,10 @@
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define cexp_yyerror styyerror
+#define cppexp_yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
-#line 57 "cexp_parser.tab.c"
+#line 57 "cppexp_parser.tab.c"
 #define number 257
 #define DEFINED 258
 #define EQ 259
@@ -67,17 +67,17 @@
 #define UNKNOWN 267
 #define UMINUS 268
 #define YYERRCODE 256
-short cexp_yylhs[] = {                                        -1,
+short cppexp_yylhs[] = {                                        -1,
     0,    0,    1,    1,    1,    1,    1,    1,    1,    1,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
     1,    1,    1,    1,    1,    1,    1,
 };
-short cexp_yylen[] = {                                         2,
+short cppexp_yylen[] = {                                         2,
     1,    1,    3,    3,    3,    3,    3,    3,    3,    3,
     3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
     5,    3,    2,    2,    2,    3,    1,
 };
-short cexp_yydefred[] = {                                      0,
+short cppexp_yydefred[] = {                                      0,
     2,   27,    0,    0,    0,    0,    0,    0,   23,   24,
    25,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -85,10 +85,10 @@ short cexp_yydefred[] = {                                      0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     3,    4,    5,    0,    0,
 };
-short cexp_yydgoto[] = {                                       7,
+short cppexp_yydgoto[] = {                                       7,
     8,
 };
-short cexp_yysindex[] = {                                    -20,
+short cppexp_yysindex[] = {                                    -20,
     0,    0,   64,   64,   64,   64,    0,  409,    0,    0,
     0,  285,   64,   64,   64,   64,   64,   64,   64,   64,
    64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
@@ -96,7 +96,7 @@ short cexp_yysindex[] = {                                    -20,
   463,  436,  368,  -31,  -31,  160,  -10,  -10,  -37,  -37,
     0,    0,    0,   64,  436,
 };
-short cexp_yyrindex[] = {                                      0,
+short cppexp_yyrindex[] = {                                      0,
     0,    0,    0,    0,    0,    0,    0,    2,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -104,11 +104,11 @@ short cexp_yyrindex[] = {                                      0,
    49,   34,    0,  115,  250,  131,  124,  183,    1,    9,
     0,    0,    0,    0,  123,
 };
-short cexp_yygindex[] = {                                      0,
+short cppexp_yygindex[] = {                                      0,
   632,
 };
 #define YYTABLESIZE 780
-short cexp_yytable[] = {                                      32,
+short cppexp_yytable[] = {                                      32,
     6,    1,    0,    0,   30,   32,   25,    0,    7,   31,
    30,   28,    4,   29,    0,   31,    0,    0,    0,    6,
     0,    0,    0,    8,    3,    0,   32,    0,   26,    0,
@@ -188,7 +188,7 @@ short cexp_yytable[] = {                                      32,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,   13,   14,   15,   16,   17,   18,
 };
-short cexp_yycheck[] = {                                      37,
+short cppexp_yycheck[] = {                                      37,
     0,    0,   -1,   -1,   42,   37,   38,   -1,    0,   47,
    42,   43,   33,   45,   -1,   47,   -1,   -1,   -1,   40,
    -1,   -1,   -1,    0,   45,   -1,   37,   -1,   60,   -1,
@@ -274,7 +274,7 @@ short cexp_yycheck[] = {                                      37,
 #endif
 #define YYMAXTOKEN 268
 #if YYDEBUG
-char *cexp_yyname[] = {
+char *cppexp_yyname[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 "'!'",0,0,0,"'%'","'&'",0,"'('","')'","'*'","'+'","','","'-'","'.'","'/'",0,0,0,
 0,0,0,0,0,0,0,"':'",0,"'<'","'='","'>'","'?'",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -285,7 +285,7 @@ char *cexp_yyname[] = {
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"number","DEFINED","EQ","NE","LE",
 "GE","LS","RS","ANDAND","OROR","UNKNOWN","UMINUS",
 };
-char *cexp_yyrule[] = {
+char *cppexp_yyrule[] = {
 "$accept : start",
 "start : e",
 "start : error",
@@ -342,10 +342,10 @@ YYSTYPE yylval;
 short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-#line 84 "cexp_parser.y"
+#line 84 "cppexp_parser.y"
 
 
-int cexpTranslateToken(int tok, int val) {
+int cppexpTranslateToken(int tok, int val) {
     if (tok == '\n') return(0);
     if (tok < 256) return(tok);
     switch (tok) {
@@ -367,7 +367,7 @@ int cexpTranslateToken(int tok, int val) {
     return(number);
     return(UNKNOWN);
 }
-#line 371 "cexp_parser.tab.c"
+#line 371 "cppexp_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -507,120 +507,120 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 47 "cexp_parser.y"
+#line 47 "cppexp_parser.y"
 { return(yyvsp[0]); }
 break;
 case 2:
-#line 48 "cexp_parser.y"
+#line 48 "cppexp_parser.y"
 { return(0); }
 break;
 case 3:
-#line 51 "cexp_parser.y"
+#line 51 "cppexp_parser.y"
 {yyval = yyvsp[-2] * yyvsp[0];}
 break;
 case 4:
-#line 52 "cexp_parser.y"
+#line 52 "cppexp_parser.y"
 {
         if (yyvsp[0] == 0) yyval = yyvsp[-2];
         else yyval = yyvsp[-2] / yyvsp[0];
     }
 break;
 case 5:
-#line 56 "cexp_parser.y"
+#line 56 "cppexp_parser.y"
 {
         if (yyvsp[0] == 0) yyval = yyvsp[-2];
         else yyval = yyvsp[-2] % yyvsp[0];
     }
 break;
 case 6:
-#line 60 "cexp_parser.y"
+#line 60 "cppexp_parser.y"
 {yyval = yyvsp[-2] + yyvsp[0];}
 break;
 case 7:
-#line 61 "cexp_parser.y"
+#line 61 "cppexp_parser.y"
 {yyval = yyvsp[-2] - yyvsp[0];}
 break;
 case 8:
-#line 62 "cexp_parser.y"
+#line 62 "cppexp_parser.y"
 {yyval = yyvsp[-2] << yyvsp[0];}
 break;
 case 9:
-#line 63 "cexp_parser.y"
+#line 63 "cppexp_parser.y"
 {yyval = yyvsp[-2] >> yyvsp[0];}
 break;
 case 10:
-#line 64 "cexp_parser.y"
+#line 64 "cppexp_parser.y"
 {yyval = yyvsp[-2] < yyvsp[0];}
 break;
 case 11:
-#line 65 "cexp_parser.y"
+#line 65 "cppexp_parser.y"
 {yyval = yyvsp[-2] > yyvsp[0];}
 break;
 case 12:
-#line 66 "cexp_parser.y"
+#line 66 "cppexp_parser.y"
 {yyval = yyvsp[-2] <= yyvsp[0];}
 break;
 case 13:
-#line 67 "cexp_parser.y"
+#line 67 "cppexp_parser.y"
 {yyval = yyvsp[-2] >= yyvsp[0];}
 break;
 case 14:
-#line 68 "cexp_parser.y"
+#line 68 "cppexp_parser.y"
 {yyval = yyvsp[-2] == yyvsp[0];}
 break;
 case 15:
-#line 69 "cexp_parser.y"
+#line 69 "cppexp_parser.y"
 {yyval = yyvsp[-2] != yyvsp[0];}
 break;
 case 16:
-#line 70 "cexp_parser.y"
+#line 70 "cppexp_parser.y"
 {yyval = yyvsp[-2] & yyvsp[0];}
 break;
 case 17:
-#line 71 "cexp_parser.y"
+#line 71 "cppexp_parser.y"
 {yyval = yyvsp[-2] ^ yyvsp[0];}
 break;
 case 18:
-#line 72 "cexp_parser.y"
+#line 72 "cppexp_parser.y"
 {yyval = yyvsp[-2] | yyvsp[0];}
 break;
 case 19:
-#line 73 "cexp_parser.y"
+#line 73 "cppexp_parser.y"
 {yyval = yyvsp[-2] && yyvsp[0];}
 break;
 case 20:
-#line 74 "cexp_parser.y"
+#line 74 "cppexp_parser.y"
 {yyval = yyvsp[-2] || yyvsp[0];}
 break;
 case 21:
-#line 75 "cexp_parser.y"
+#line 75 "cppexp_parser.y"
 {yyval = yyvsp[-4] ? yyvsp[-2] : yyvsp[0];}
 break;
 case 22:
-#line 76 "cexp_parser.y"
+#line 76 "cppexp_parser.y"
 {yyval = yyvsp[0];}
 break;
 case 23:
-#line 77 "cexp_parser.y"
+#line 77 "cppexp_parser.y"
 {yyval = -yyvsp[0];}
 break;
 case 24:
-#line 78 "cexp_parser.y"
+#line 78 "cppexp_parser.y"
 {yyval = !yyvsp[0];}
 break;
 case 25:
-#line 79 "cexp_parser.y"
+#line 79 "cppexp_parser.y"
 {yyval = ~yyvsp[0];}
 break;
 case 26:
-#line 80 "cexp_parser.y"
+#line 80 "cppexp_parser.y"
 {yyval = yyvsp[-1];}
 break;
 case 27:
-#line 81 "cexp_parser.y"
+#line 81 "cppexp_parser.y"
 {yyval= yyvsp[0];}
 break;
-#line 624 "cexp_parser.tab.c"
+#line 624 "cppexp_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

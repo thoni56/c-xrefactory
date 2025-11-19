@@ -93,7 +93,7 @@ The integrated preprocessor is implemented in `yylex.c` and includes:
 * Conditional compilation (`#if`, `#ifdef`, `#ifndef`, `#elif`, `#else`, `#endif`)
 * Include file processing (`#include`, `#include_next`)
 * Pragma directives (limited support)
-* Expression evaluation for `#if` directives (`cexp_parser.y`)
+* Expression evaluation for `#if` directives (`cppexp_parser.y`)
 
 ==== Limitations
 

@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#include "cexp_parser.h"
+#include "cppexp_parser.h"
 
 #include "yylex.h"
 #include "semact.h"
@@ -18,7 +18,7 @@
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define cexp_yyerror styyerror
+#define cppexp_yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
 %}
@@ -83,7 +83,7 @@ e:    e '*' e					{$$ = $1 * $3;}
 %%
 
 
-int cexpTranslateToken(int tok, int val) {
+int cppexpTranslateToken(int tok, int val) {
     if (tok == '\n') return(0);
     if (tok < 256) return(tok);
     switch (tok) {

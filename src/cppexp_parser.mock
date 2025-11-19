@@ -1,11 +1,11 @@
 /* -*- c -*-*/
-#include "cexp_parser.h"
+#include "cppexp_parser.h"
 #include <cgreen/mocks.h>
 
-int cexp_yyparse() {
+int cppexp_yyparse() {
   return (int) mock();
 }
 
-int cexpTranslateToken(int tok, int val) {
+int cppexpTranslateToken(int tok, int val) {
   return (int) mock(tok, val);
 }

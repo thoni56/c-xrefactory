@@ -36,7 +36,7 @@ void addMacroDefinedByOption(char *opt) {
     mock(opt);
 }
 
-LexemCode cexp_yylex(void) {
+LexemCode cppexp_yylex(void) {
     return (int)mock();
 }
 
