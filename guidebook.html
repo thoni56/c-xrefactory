@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2025-11-18">
+<meta name="author" content="v{VERSION} - Generated 2025-11-19">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-11-18</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-11-19</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -479,14 +479,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_commands">8.1. Commands</a></li>
 <li><a href="#_passes">8.2. Passes</a></li>
 <li><a href="#_parsers">8.3. Parsers</a></li>
-<li><a href="#_refactoring_and_the_parsers">8.4. Refactoring and the parsers</a></li>
-<li><a href="#_reading_files">8.5. Reading Files</a></li>
-<li><a href="#_reference_database">8.6. Reference Database</a></li>
-<li><a href="#_editor_plugin">8.7. Editor Plugin</a></li>
-<li><a href="#_editor_server">8.8. Editor Server</a></li>
-<li><a href="#_refactoring">8.9. Refactoring</a></li>
-<li><a href="#_memory_handling">8.10. Memory handling</a></li>
-<li><a href="#_configuration">8.11. Configuration</a></li>
+<li><a href="#_integrated_preprocessor">8.4. Integrated Preprocessor</a></li>
+<li><a href="#_refactoring_and_the_parsers">8.5. Refactoring and the parsers</a></li>
+<li><a href="#_reading_files">8.6. Reading Files</a></li>
+<li><a href="#_reference_database">8.7. Reference Database</a></li>
+<li><a href="#_editor_plugin">8.8. Editor Plugin</a></li>
+<li><a href="#_editor_server">8.9. Editor Server</a></li>
+<li><a href="#_refactoring">8.10. Refactoring</a></li>
+<li><a href="#_memory_handling">8.11. Memory handling</a></li>
+<li><a href="#_configuration">8.12. Configuration</a></li>
 </ul>
 </li>
 <li><a href="#_modules">9. Modules</a>
@@ -1488,7 +1489,110 @@ renames the generated files as appropriate.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_refactoring_and_the_parsers">8.4. Refactoring and the parsers</h3>
+<h3 id="_integrated_preprocessor">8.4. Integrated Preprocessor</h3>
+<div class="paragraph">
+<p><em>C-xrefactory</em> includes its own integrated C preprocessor implementation rather than using the system&#8217;s preprocessor (cpp, clang preprocessor, etc.). This is a crucial architectural decision that enables core functionality.</p>
+</div>
+<div class="sect3">
+<h4 id="_why_not_use_the_system_preprocessor">8.4.1. Why Not Use the System Preprocessor?</h4>
+<div class="paragraph">
+<p>Using an external preprocessor would mean that all macros would be expanded before c-xrefactory sees the code. This would make it impossible to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Navigate to macro definitions</p>
+</li>
+<li>
+<p>Show macro usage and references</p>
+</li>
+<li>
+<p>Refactor macro names and parameters</p>
+</li>
+<li>
+<p>Complete macro identifiers</p>
+</li>
+<li>
+<p>See macro arguments as distinct symbols</p>
+</li>
+<li>
+<p>Understand the code structure as the programmer wrote it</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>By parsing the source at the macro level, c-xrefactory operates as a <strong>source-level tool</strong> rather than a post-preprocessed tool. This allows it to work with the code as developers see and write it, preserving all macro information for navigation and refactoring.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_implementation_details">8.4.2. Implementation Details</h4>
+<div class="paragraph">
+<p>The integrated preprocessor is implemented in <code>yylex.c</code> and includes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Macro definition handling (<code>processDefineDirective()</code>)</p>
+</li>
+<li>
+<p>Macro expansion with argument substitution</p>
+</li>
+<li>
+<p>Conditional compilation (<code>#if</code>, <code>#ifdef</code>, <code>#ifndef</code>, <code>#elif</code>, <code>#else</code>, <code>#endif</code>)</p>
+</li>
+<li>
+<p>Include file processing (<code>#include</code>, <code>#include_next</code>)</p>
+</li>
+<li>
+<p>Pragma directives (limited support)</p>
+</li>
+<li>
+<p>Expression evaluation for <code>#if</code> directives (<code>cppexp_parser.y</code>)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_limitations">8.4.3. Limitations</h4>
+<div class="paragraph">
+<p>The integrated preprocessor does not support all modern preprocessor features:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Platform-specific predefined macros (like <code><em>arm64</em></code>, <code><em>x86_64</em></code>) are not automatically defined</p>
+</li>
+<li>
+<p>Some compiler-specific extensions may not be recognized (e.g. <code><em>has_feature()</code>, <code></em>building_module()</code>)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These limitations mean that c-xrefactory may report syntax errors when encountering modern platform headers that use these features, even though the code compiles correctly with standard compilers.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_trade_offs">8.4.4. Trade-offs</h4>
+<div class="paragraph">
+<p>This design choice represents a fundamental trade-off:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Gained</strong>: Full macro-level navigation and refactoring capabilities</p>
+</li>
+<li>
+<p><strong>Lost</strong>: Perfect compatibility with all preprocessor extensions and platform-specific features</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The benefit of macro-level refactoring is considered more valuable than perfect preprocessor compatibility, as it is a key differentiator for c-xrefactory.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_refactoring_and_the_parsers">8.5. Refactoring and the parsers</h3>
 <div class="paragraph">
 <p>Some refactorings need more detailed information about the code, maybe all do?</p>
 </div>
@@ -1557,7 +1661,7 @@ global variables.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_reading_files">8.5. Reading Files</h3>
+<h3 id="_reading_files">8.6. Reading Files</h3>
 <div class="paragraph">
 <p>Here are some speculations about how the complex file reading is structured.</p>
 </div>
@@ -1584,7 +1688,7 @@ wonder why this function does some initial reading, this should be
 pushed down to the buffers in the file descriptor.</p>
 </div>
 <div class="sect3">
-<h4 id="_lexingscanning">8.5.1. Lexing/scanning</h4>
+<h4 id="_lexingscanning">8.6.1. Lexing/scanning</h4>
 <div class="paragraph">
 <p>Lexing/scanning is performed in two layers, one in <code>lexer.c</code> which
 seems to be doing the actual lexing into lexems which are put in a
@@ -1629,7 +1733,7 @@ sequence.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_semantic_information">8.5.2. Semantic information</h4>
+<h4 id="_semantic_information">8.6.2. Semantic information</h4>
 <div class="paragraph">
 <p>As the refactoring functions need some amount of semantic information,
 in the sense of information gathered during parsing, this information
@@ -1646,7 +1750,7 @@ function structure. This structure is, at the point of writing, called
 </div>
 </div>
 <div class="sect2">
-<h3 id="_reference_database">8.6. Reference Database</h3>
+<h3 id="_reference_database">8.7. Reference Database</h3>
 <div class="paragraph">
 <p><code>c-xref</code> run in "xref" mode creates, or updates, a database of
 references for all externally visible symbols it encounters.</p>
@@ -1657,7 +1761,7 @@ reference database, but this is still a work in progress to chisel
 this out.</p>
 </div>
 <div class="sect3">
-<h4 id="_architecture_overview">8.6.1. Architecture Overview</h4>
+<h4 id="_architecture_overview">8.7.1. Architecture Overview</h4>
 <div class="paragraph">
 <p>c-xrefactory&#8217;s core functionality relies on a sophisticated symbol database that stores cross-references, definitions, and usage information for all symbols in a project. The database is implemented as a collection of binary <code>.cx</code> files and supports:</p>
 </div>
@@ -1676,7 +1780,7 @@ this out.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_database_structure_and_format">8.6.2. Database Structure and Format</h4>
+<h4 id="_database_structure_and_format">8.7.2. Database Structure and Format</h4>
 <div class="paragraph">
 <p>The symbol database uses a hash-partitioned file structure:</p>
 </div>
@@ -1707,7 +1811,7 @@ this out.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_symbol_resolution_pipeline">8.6.3. Symbol Resolution Pipeline</h4>
+<h4 id="_symbol_resolution_pipeline">8.7.3. Symbol Resolution Pipeline</h4>
 <div class="paragraph">
 <p>The symbol lookup process follows this pipeline:</p>
 </div>
@@ -1730,7 +1834,7 @@ this out.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_key_data_structures">8.6.4. Key Data Structures</h4>
+<h4 id="_key_data_structures">8.7.4. Key Data Structures</h4>
 <div class="sect4">
 <h5 id="_browser_stack_sessiondata_browserstack">Browser Stack (<code>sessionData.browserStack</code>)</h5>
 <div class="paragraph">
@@ -1776,7 +1880,7 @@ typedef struct {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_database_operations">8.6.5. Database Operations</h4>
+<h4 id="_database_operations">8.7.5. Database Operations</h4>
 <div class="sect4">
 <h5 id="_database_creation_create">Database Creation (-create)</h5>
 <div class="olist arabic">
@@ -1836,7 +1940,7 @@ typedef struct {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_lsp_integration_challenges">8.6.6. LSP Integration Challenges</h4>
+<h4 id="_lsp_integration_challenges">8.7.6. LSP Integration Challenges</h4>
 <div class="sect4">
 <h5 id="_architectural_mismatch">Architectural Mismatch</h5>
 <div class="paragraph">
@@ -1938,7 +2042,7 @@ A proposal for a unified symbol database architecture has been documented. See <
 </div>
 </div>
 <div class="sect3">
-<h4 id="_cxfile">8.6.7. CXFILE</h4>
+<h4 id="_cxfile">8.7.7. CXFILE</h4>
 <div class="paragraph">
 <p>The current implementation of the reference database is file based,
 with an optimized storage format.</p>
@@ -2019,7 +2123,7 @@ generated data for expected data. This is now partly ongoing in the
 </div>
 </div>
 <div class="sect3">
-<h4 id="_reference_database_reading">8.6.8. Reference Database Reading</h4>
+<h4 id="_reference_database_reading">8.7.8. Reference Database Reading</h4>
 <div class="paragraph">
 <p>All information about an externally visible symbol is stored in one,
 and only one reference file, determined by hashing the linkname of the
@@ -2041,7 +2145,7 @@ function for that key/tag/recordCode. If so, it will be called.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_plugin">8.7. Editor Plugin</h3>
+<h3 id="_editor_plugin">8.8. Editor Plugin</h3>
 <div class="paragraph">
 <p>The editor plugin has three different responsibilities:</p>
 </div>
@@ -2090,7 +2194,7 @@ output in the output file it sends a <code>&lt;sync&gt;</code> reply.</p>
 what it needs to do with it ("dispatching:").</p>
 </div>
 <div class="sect3">
-<h4 id="_invocations">8.7.1. Invocations</h4>
+<h4 id="_invocations">8.8.1. Invocations</h4>
 <div class="paragraph">
 <p>The editor invokes a new <code>c-xref</code> process for the following cases:</p>
 </div>
@@ -2114,7 +2218,7 @@ started, which is run by a separate <code>c-xref</code> process.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_buffers">8.7.2. Buffers</h4>
+<h4 id="_buffers">8.8.2. Buffers</h4>
 <div class="paragraph">
 <p>There is some magical editor buffer management happening inside of
 <code>c-xref</code> which is not clear to me at this point. Basically it looks
@@ -2135,7 +2239,7 @@ server the current content somehow, this is the <code>-preload</code> option.</p
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_server">8.8. Editor Server</h3>
+<h3 id="_editor_server">8.9. Editor Server</h3>
 <div class="paragraph">
 <p>When serving an editor the c-xrefactory application is divided into
 the server, <em>c-xref</em> and the editor part, at this point only Emacs:en
@@ -2143,7 +2247,7 @@ are supported so that&#8217;s implemented in the
 <code>editor/Emacs</code>-packages.</p>
 </div>
 <div class="sect3">
-<h4 id="_interaction">8.8.1. Interaction</h4>
+<h4 id="_interaction">8.9.1. Interaction</h4>
 <div class="paragraph">
 <p>The initial invocation of the edit server creates a process with which
 communication is over stdin/stdout using a protocol which from the editor
@@ -2198,7 +2302,7 @@ the options structure used only when refactoring.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_protocol">8.8.2. Protocol</h4>
+<h4 id="_protocol">8.9.2. Protocol</h4>
 <div class="paragraph">
 <p>Communication between the editor and the server is performed using
 text through standard input/output to/from <em>c-xref</em>. The protocol is
@@ -2229,7 +2333,7 @@ utf-8. This means that lengths need to indicate <em>characters</em> not bytes.</
 </div>
 </div>
 <div class="sect3">
-<h4 id="_invocation_of_server">8.8.3. Invocation of server</h4>
+<h4 id="_invocation_of_server">8.9.3. Invocation of server</h4>
 <div class="paragraph">
 <p>The editor fires up a server and keeps talking over the established
 channel (elisp function 'c-xref-start-server-process'). This probably
@@ -2272,7 +2376,7 @@ elisp-sources.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_communication_protocol">8.8.4. Communication Protocol</h4>
+<h4 id="_communication_protocol">8.9.4. Communication Protocol</h4>
 <div class="paragraph">
 <p>The editor server is started using the appropriate command line option
 and then it keeps the communication over stdin/stdout open.</p>
@@ -2316,7 +2420,7 @@ options.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_olcx_naming">8.8.5. OLCX Naming</h4>
+<h4 id="_olcx_naming">8.9.5. OLCX Naming</h4>
 <div class="paragraph">
 <p>It seems that all on-line editing server functions have an <code>olcx</code>
 prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
@@ -2324,12 +2428,12 @@ prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_refactoring">8.9. Refactoring</h3>
+<h3 id="_refactoring">8.10. Refactoring</h3>
 <div class="paragraph">
 <p>This is of course, the core in why I want to restore this, to get at its refactoring capabilities. So far, much is not understood, but here are some bits and pieces.</p>
 </div>
 <div class="sect3">
-<h4 id="_editor_interface">8.9.1. Editor interface</h4>
+<h4 id="_editor_interface">8.10.1. Editor interface</h4>
 <div class="paragraph">
 <p>One thing that really confused me in the beginning was that the editor, primarily Emacs, don&#8217;t use the actual server that it has started for refactoring operations (and perhaps for other things also?). Instead it creates a separate instance with which it talks to about one refactoring.</p>
 </div>
@@ -2352,13 +2456,13 @@ prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_interactions">8.9.2. Interactions</h4>
+<h4 id="_interactions">8.10.2. Interactions</h4>
 <div class="paragraph">
 <p>I haven&#8217;t investigated the internal flow of such a sequence, but it is starting to look like <code>c-xref</code> is internally re-reading the initialization, I&#8217;m not at this point sure what this means, I hope it&#8217;s not internal recursion&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_extraction">8.9.3. Extraction</h4>
+<h4 id="_extraction">8.10.3. Extraction</h4>
 <div class="paragraph">
 <p>Each type of refactoring has it&#8217;s own little "language". E.g. extracting a method/function using <code>-refactory -rfct-extract-function</code> will return something like</p>
 </div>
@@ -2399,7 +2503,7 @@ prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_protocol_2">8.9.4. Protocol</h4>
+<h4 id="_protocol_2">8.10.4. Protocol</h4>
 <div class="paragraph">
 <p>Dechiffrering the interaction between an editor and the edit server in
 <code>c-xrefactory</code> isn&#8217;t easy. The protocol isn&#8217;t very clear or
@@ -2504,7 +2608,7 @@ be renamed (replaced at all occurrences) by NEW_NAME.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_memory_handling">8.10. Memory handling</h3>
+<h3 id="_memory_handling">8.11. Memory handling</h3>
 <div class="paragraph">
 <p>c-xrefactory uses custom memory management via arena allocators rather than malloc/free for performance-critical operations.</p>
 </div>
@@ -2515,7 +2619,7 @@ be renamed (replaced at all occurrences) by NEW_NAME.</p>
 <p>For debugging memory issues, especially arena lifetime violations, see the <strong>Development Environment</strong> chapter.</p>
 </div>
 <div class="sect3">
-<h4 id="_the_memory_type">8.10.1. The Memory Type</h4>
+<h4 id="_the_memory_type">8.11.1. The Memory Type</h4>
 <div class="paragraph">
 <p>Memory allocation is managed through the <code>Memory</code> structure, which implements an arena/bump allocator. Different memory arenas serve different purposes:</p>
 </div>
@@ -2543,7 +2647,7 @@ be renamed (replaced at all occurrences) by NEW_NAME.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_option_memory">8.10.2. Option Memory</h4>
+<h4 id="_option_memory">8.11.2. Option Memory</h4>
 <div class="paragraph">
 <p>The <code>optMemory</code> arena requires special handling because <code>Options</code> structures are copied during operation. When copying, all pointers into option memory must be adjusted to point into the target structure&#8217;s memory area, not the source&#8217;s.</p>
 </div>
@@ -2565,7 +2669,7 @@ The linked list nodes themselves are allocated in the Options structure&#8217;s 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration">8.11. Configuration</h3>
+<h3 id="_configuration">8.12. Configuration</h3>
 <div class="paragraph">
 <p>The legacy <code>c-xref</code> normally, in "production", uses a common configuration file in the
 users home directory, <code>.c-xrefrc</code>. When a new project is defined its options will be
@@ -2583,7 +2687,7 @@ line each. These are always read, unless <code>-no-stdop</code> is used, before 
 allows for different "default" options for each project.</p>
 </div>
 <div class="sect3">
-<h4 id="_options">8.11.1. Options</h4>
+<h4 id="_options">8.12.1. Options</h4>
 <div class="paragraph">
 <p>There are three possible sources for options.</p>
 </div>
@@ -2608,7 +2712,7 @@ allows for different "default" options for each project.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_logic">8.11.2. Logic</h4>
+<h4 id="_logic">8.12.2. Logic</h4>
 <div class="paragraph">
 <p>When the editor has a file open it needs to "belong" to a project. The
 logic for finding which is very intricate and complicated.</p>
@@ -6308,7 +6412,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-18 18:36:20 UTC
+Last updated 2025-11-19 12:36:23 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
