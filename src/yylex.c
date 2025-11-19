@@ -1189,141 +1189,151 @@ endOfFile:
 
 /* ********************************* #IF ************************** */
 
+static LexemCode handleHasIncludeOp(void) {
+    Position position;
+    LexemCode lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+    ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
+
+    if (lexem != '(') {
+        if (options.mode!=ServerMode)
+            warningMessage(ERR_ST,"expected '(' after __has_include");
+        return 0;
+    }
+    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+
+    lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+    ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
+
+    char *includeName;
+    char includeType;
+    char nameBuffer[MAX_FILE_NAME_SIZE];
+    
+    if (lexem == STRING_LITERAL) {
+        includeName = currentInput.read;
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+        includeType = *includeName;  /* First char is " or < */
+        includeName++;  /* Skip the quote */
+    } else if (lexem == '<') {
+        /* Handle <header> format */
+        includeType = '<';
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+        
+        /* Read until we find '>' */
+        char *p = nameBuffer;
+        for (;;) {
+            lexem = getLexem();
+            ON_LEXEM_EXCEPTION_GOTO(lexem, error, error);
+            if (lexem == '>') {
+                getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+                break;
+            }
+            if (lexem == '\n' || p >= nameBuffer + MAX_FILE_NAME_SIZE - 1) {
+                if (options.mode!=ServerMode)
+                    warningMessage(ERR_ST,"unterminated < in __has_include");
+                return 0;
+            }
+            /* Copy the lexem text */
+            char *lexemText = currentInput.read;
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+            while (lexemText < currentInput.read && p < nameBuffer + MAX_FILE_NAME_SIZE - 1) {
+                *p++ = *lexemText++;
+            }
+        }
+        *p = '\0';
+        includeName = nameBuffer;
+        /* For angle brackets, we need to read the closing ')' */
+        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+        ON_LEXEM_EXCEPTION_GOTO(lexem, error, error);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+        if (lexem != ')' && options.mode!=ServerMode) {
+            warningMessage(ERR_ST,"missing ')' after __has_include(<...>");
+        }
+    } else {
+        if (options.mode!=ServerMode)
+            warningMessage(ERR_ST,"expected string literal or < in __has_include");
+        return 0;
+    }
+
+    /* For string literals, read the closing ')' */
+    if (includeType != '<') {
+        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+        ON_LEXEM_EXCEPTION_GOTO(lexem, error, error);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+        if (lexem != ')' && options.mode!=ServerMode) {
+            warningMessage(ERR_ST,"missing ')' after __has_include(\"\"");
+        }
+    }
+
+    bool fileFound = canFindIncludeFile(includeType, includeName);
+    return cexpTranslateToken(CONSTANT, fileFound ? 1 : 0);
+
+error:
+    return 0;
+}
+
+static LexemCode handleDefinedOp(void) {
+    Position position;
+    LexemCode lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+    ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
+
+    char *ch = currentInput.read;
+    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+
+    bool haveParenthesis;
+    if (lexem == '(') {
+        haveParenthesis = true;
+
+        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+        ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
+
+        ch = currentInput.read;
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+    } else {
+        haveParenthesis = false;
+    }
+
+    if (!isIdentifierLexem(lexem))
+        return 0;
+
+    Symbol *macroSymbol = findMacroSymbol(ch);
+    bool macroSymbolFound = macroSymbol != NULL;
+    if (macroSymbol != NULL && macroSymbol->mbody == NULL)
+        macroSymbolFound = false;   // undefined macro
+
+    if (macroSymbolFound)
+        addCxReference(macroSymbol, position, UsageUsed, NO_FILE_NUMBER);
+
+    /* following call sets uniyylval */
+    LexemCode res = cexpTranslateToken(CONSTANT, macroSymbolFound);
+    if (haveParenthesis) {
+        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+        ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
+
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+        if (lexem != ')' && options.mode!=ServerMode) {
+            warningMessage(ERR_ST,"missing ')' after defined( ");
+        }
+    }
+    return res;
+
+error:
+    return 0;
+}
+
 LexemCode cexp_yylex(void) {
 
     LexemCode lexem = yylex();
     if (isIdentifierLexem(lexem)) {
-        // this is useless, as it would be set to 0 anyway
+        /* Undefined identifiers in #if expressions evaluate to 0 per C standard. */
         lexem = cexpTranslateToken(CONSTANT, 0);
     } else if (lexem == CPP_DEFINED_OP) {
-        Position position;
-        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
-        ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
-
-        char *ch = currentInput.read;
-        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-
-        bool haveParenthesis;
-        if (lexem == '(') {
-            haveParenthesis = true;
-
-            lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
-            ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
-
-            ch = currentInput.read;
-            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-        } else {
-            haveParenthesis = false;
-        }
-
-        if (!isIdentifierLexem(lexem))
-            return 0;
-
-        Symbol *macroSymbol = findMacroSymbol(ch);
-        bool macroSymbolFound = macroSymbol != NULL;
-        if (macroSymbol != NULL && macroSymbol->mbody == NULL)
-            macroSymbolFound = false;   // undefined macro
-
-        if (macroSymbolFound)
-            addCxReference(macroSymbol, position, UsageUsed, NO_FILE_NUMBER);
-
-        /* following call sets uniyylval */
-        LexemCode res = cexpTranslateToken(CONSTANT, macroSymbolFound);
-        if (haveParenthesis) {
-            lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
-            ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
-
-            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-            if (lexem != ')' && options.mode!=ServerMode) {
-                warningMessage(ERR_ST,"missing ')' after defined( ");
-            }
-        }
-        lexem = res;
+        lexem = handleDefinedOp();
     } else if (lexem == CPP_HAS_INCLUDE_OP) {
-        Position position;
-        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
-        ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
-
-        if (lexem != '(') {
-            if (options.mode!=ServerMode)
-                warningMessage(ERR_ST,"expected '(' after __has_include");
-            return 0;
-        }
-        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-
-        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
-        ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
-
-        char *includeName;
-        char includeType;
-        char nameBuffer[MAX_FILE_NAME_SIZE];
-        
-        if (lexem == STRING_LITERAL) {
-            includeName = currentInput.read;
-            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-            includeType = *includeName;  /* First char is " or < */
-            includeName++;  /* Skip the quote */
-        } else if (lexem == '<') {
-            /* Handle <header> format */
-            includeType = '<';
-            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-            
-            /* Read until we find '>' */
-            char *p = nameBuffer;
-            for (;;) {
-                lexem = getLexem();
-                ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument);
-                if (lexem == '>') {
-                    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-                    break;
-                }
-                if (lexem == '\n' || p >= nameBuffer + MAX_FILE_NAME_SIZE - 1) {
-                    if (options.mode!=ServerMode)
-                        warningMessage(ERR_ST,"unterminated < in __has_include");
-                    return 0;
-                }
-                /* Copy the lexem text */
-                char *lexemText = currentInput.read;
-                getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-                while (lexemText < currentInput.read && p < nameBuffer + MAX_FILE_NAME_SIZE - 1) {
-                    *p++ = *lexemText++;
-                }
-            }
-            *p = '\0';
-            includeName = nameBuffer;
-            /* For angle brackets, we need to read the closing ')' */
-            lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
-            ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument);
-            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-            if (lexem != ')' && options.mode!=ServerMode) {
-                warningMessage(ERR_ST,"missing ')' after __has_include(<...>");
-            }
-        } else {
-            if (options.mode!=ServerMode)
-                warningMessage(ERR_ST,"expected string literal or < in __has_include");
-            return 0;
-        }
-
-        /* For string literals, read the closing ')' */
-        if (includeType != '<') {
-            lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
-            ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument);
-            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
-            if (lexem != ')' && options.mode!=ServerMode) {
-                warningMessage(ERR_ST,"missing ')' after __has_include(\"\"");
-            }
-        }
-
-        bool fileFound = canFindIncludeFile(includeType, includeName);
-        lexem = cexpTranslateToken(CONSTANT, fileFound ? 1 : 0);
+        lexem = handleHasIncludeOp();
     } else {
         lexem = cexpTranslateToken(lexem, uniyylval->ast_integer.data);
     }
     return lexem;
-endOfMacroArgument:
-    assert(0);
-endOfFile:
-    return 0;
 }
 
 static void processIfDirective(void) {
