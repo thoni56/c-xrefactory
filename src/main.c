@@ -337,6 +337,28 @@ static char *extra_defines[] = {
     "__builtin_offsetof(x, y) 0"
 };
 
+static void addFallbackDefinitions() {
+    /* Also define some faked standard base types and GNU-isms */
+    for (int i = 0; i < (int)sizeof(extra_defines) / sizeof(extra_defines[0]); i++) {
+        log_debug("Add definition '%s'", extra_defines[i]);
+        addMacroDefinedByOption(extra_defines[i]);
+    }
+
+    for (int c = 0; c < sizeof(compiler_dependent_defines) / sizeof(CompilerDependentDefines); c++) {
+        if (strstr(compiler_dependent_defines[c].compiler, compiler_identification) != NULL) {
+            log_debug("Adding compiler specific defines for '%s'",
+                      compiler_dependent_defines[c].compiler);
+            for (char **d = compiler_dependent_defines[c].defines; *d != NULL; d++) {
+                log_debug("Add definition '%s'", *d);
+                addMacroDefinedByOption(*d);
+            }
+        }
+    }
+}
+
+/* This function discovers the compiler builtin defines by making
+ * a call to it and then sets those up as if they where defined on
+ * the command line */
 static void discoverStandardDefines(void) {
     char line[MAX_OPTION_LEN];
     int len;
@@ -346,9 +368,9 @@ static void discoverStandardDefines(void) {
 
     ENTER();
 
-    /* This function discovers the compiler builtin defines by making
-     * a call to it and then sets those up as if they where defined on
-     * the command line */
+    /* Start with fallback definitions so that actual definitions will have priority */
+    addFallbackDefinitions();
+
     tempfile_name = create_temporary_filename();
     assert(strlen(tempfile_name)+1 < MAX_FILE_NAME_SIZE);
 
@@ -369,22 +391,6 @@ static void discoverStandardDefines(void) {
             log_error("Expected #define from compiler standard definitions");
         log_debug("Add definition '%s'", line);
         addMacroDefinedByOption(&line[strlen("#define")+1]);
-    }
-
-    /* Also define some faked standard base types and GNU-isms */
-    for (int i=0; i<(int)sizeof(extra_defines)/sizeof(extra_defines[0]); i++) {
-        log_debug("Add definition '%s'", extra_defines[i]);
-        addMacroDefinedByOption(extra_defines[i]);
-    }
-
-    for (int c=0; c<sizeof(compiler_dependent_defines)/sizeof(CompilerDependentDefines); c++) {
-        if (strstr(compiler_dependent_defines[c].compiler, compiler_identification) != NULL) {
-            log_debug("Adding compiler specific defines for '%s'", compiler_dependent_defines[c].compiler);
-            for (char **d=compiler_dependent_defines[c].defines; *d != NULL; d++) {
-                log_debug("Add definition '%s'", *d);
-                addMacroDefinedByOption(*d);
-            }
-        }
     }
 
     LEAVE();
