@@ -261,23 +261,23 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefixString, char 
 
 static void getAndSetOutPositionIfRequested(char **readPointerP, Position *outPositionP) {
     if (outPositionP != NULL)
-        *outPositionP = getLexemPositionAt(readPointerP);
+        *outPositionP = getLexemPositionAndAdvance(readPointerP);
     else
-        getLexemPositionAt(readPointerP);
+        getLexemPositionAndAdvance(readPointerP);
 }
 
 static void getAndSetOutLengthIfRequested(char **readPointerP, int *outLengthP) {
     if (outLengthP != NULL)
-        *outLengthP = getLexemIntAt(readPointerP);
+        *outLengthP = getLexemIntAndAdvance(readPointerP);
     else
-        getLexemIntAt(readPointerP);
+        getLexemIntAndAdvance(readPointerP);
 }
 
 static void getAndSetOutValueIfRequested(char **readPointerP, int *outValueP) {
     if (outValueP != NULL)
-        *outValueP = getLexemIntAt(readPointerP);
+        *outValueP = getLexemIntAndAdvance(readPointerP);
     else
-        getLexemIntAt(readPointerP);
+        getLexemIntAndAdvance(readPointerP);
 }
 
 /* ***************************************************************** */
@@ -298,7 +298,7 @@ static void getExtraLexemInformationFor(LexemCode lexem, char **readPointerP, in
             *readPointerP = strchr(*readPointerP, '\0') + 1;
             getAndSetOutPositionIfRequested(readPointerP, outPosition);
         } else if (lexem == LINE_TOKEN) {
-            int noOfLines = getLexemIntAt(readPointerP);
+            int noOfLines = getLexemIntAndAdvance(readPointerP);
             if (countLines) {
                 traceNewline(noOfLines);
                 currentFile.lineNumber += noOfLines;
@@ -997,16 +997,16 @@ protected void processDefineDirective(bool hasArguments) {
                 /* macro argument */
                 addTrivialCxReference(getMacroArgument(foundIndex)->linkName, TypeMacroArg, StorageDefault,
                                       position, UsageUsed);
-                putLexemCodeAt(CPP_MACRO_ARGUMENT, &lexemDestination);
-                putLexemIntAt(getMacroArgument(foundIndex)->order, &lexemDestination);
-                putLexemPositionAt(position, &lexemDestination);
+                putLexemCodeAndAdvance(CPP_MACRO_ARGUMENT, &lexemDestination);
+                putLexemIntAndAdvance(getMacroArgument(foundIndex)->order, &lexemDestination);
+                putLexemPositionAndAdvance(position, &lexemDestination);
             } else {
                 if (lexem==IDENT_TO_COMPLETE
                     || (lexem == IDENTIFIER && positionsAreEqual(position, cxRefPosition))) {
                     completionPositionFound = true;
                     completionStringInMacroBody = symbol->linkName;
                 }
-                putLexemCodeAt(lexem, &lexemDestination);
+                putLexemCodeAndAdvance(lexem, &lexemDestination);
                 /* Copy from input to destination (which is in the body buffer...) */
                 for (; currentLexemStart<currentInput.read; lexemDestination++,currentLexemStart++)
                     *lexemDestination = *currentLexemStart;
@@ -1712,7 +1712,7 @@ static void expandMacroArgument(LexemStream *argumentInput) {
                     /* Failed expansion... */
                     assert(macroSymbol != NULL);
                     if (macroSymbol->mbody != NULL && cyclicCall(macroSymbol->mbody)) {
-                        putLexemCodeAt(IDENT_NO_CPP_EXPAND, &savedBufferP);
+                        putLexemCodeAndAdvance(IDENT_NO_CPP_EXPAND, &savedBufferP);
                     }
                 }
             }
@@ -1824,7 +1824,7 @@ static LexemTypeFlag classify_lexem(LexemCode code) {
 /* Collate IDENTIFIER ## IDENTIFIER -> concatenated identifier */
 static void collate_id_id(char **writeBufferWriteP, char *lhs, char **rhsP) {
     /* After ## collation, result is always a regular IDENTIFIER eligible for expansion */
-    putLexemCodeAt(IDENTIFIER, &lhs);
+    putLexemCodeAndAdvance(IDENTIFIER, &lhs);
     char *leftHandLexemString = lhs;
     *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
     assert(**writeBufferWriteP == 0); /* Ensure at end of string */
@@ -1845,7 +1845,7 @@ static void collate_id_id(char **writeBufferWriteP, char *lhs, char **rhsP) {
     *writeBufferWriteP += strlen(*writeBufferWriteP);
     assert(**writeBufferWriteP == 0);
     (*writeBufferWriteP)++;
-    putLexemPositionAt(position, writeBufferWriteP);
+    putLexemPositionAndAdvance(position, writeBufferWriteP);
 
     *rhsP = rhs; /* Update rhs position after consuming */
 }
@@ -1870,7 +1870,7 @@ static void collate_id_const(char **writeBufferWriteP, char *lhs, char **rhsP) {
     *writeBufferWriteP += strlen(*writeBufferWriteP);
     assert(**writeBufferWriteP == 0);
     (*writeBufferWriteP)++;
-    putLexemPositionAt(position, writeBufferWriteP);
+    putLexemPositionAndAdvance(position, writeBufferWriteP);
 
     *rhsP = rhs; /* Update rhs position after consuming */
 }
@@ -1887,7 +1887,7 @@ static void collate_const_id(char **writeBufferWriteP, char **lhsP, char **rhsP,
     getExtraLexemInformationFor(leftHandLexem, &lhs, NULL, &value, &position, NULL, false);
 
     /* Re-write to an IDENTIFIER */
-    putLexemCodeAt(IDENTIFIER, &leftHandLexemStart);
+    putLexemCodeAndAdvance(IDENTIFIER, &leftHandLexemStart);
     *writeBufferWriteP = leftHandLexemStart; /* We want to write the id next */
 
     char *rhs = *rhsP;
@@ -1910,7 +1910,7 @@ static void collate_const_id(char **writeBufferWriteP, char **lhsP, char **rhsP,
     assert(**writeBufferWriteP == 0);
     (*writeBufferWriteP)++;
 
-    putLexemPositionAt(position, writeBufferWriteP);
+    putLexemPositionAndAdvance(position, writeBufferWriteP);
 
     *rhsP = rhs; /* Update rhs position after consuming */
 }
@@ -1927,7 +1927,7 @@ static void collate_const_const(char **writeBufferWriteP, char *lhs, char **rhsP
         getExtraLexemInformationFor(leftHandLexem, &lhs, NULL, &leftValue, &leftPosition, NULL, false);
 
         /* Re-write as IDENTIFIER at the start position */
-        putLexemCodeAt(IDENTIFIER, &leftHandLexemStart);
+        putLexemCodeAndAdvance(IDENTIFIER, &leftHandLexemStart);
         *writeBufferWriteP = leftHandLexemStart;
 
         /* Get right operand */
@@ -1949,7 +1949,7 @@ static void collate_const_const(char **writeBufferWriteP, char *lhs, char **rhsP
         *writeBufferWriteP += strlen(*writeBufferWriteP);
         assert(**writeBufferWriteP == 0);
         (*writeBufferWriteP)++;
-        putLexemPositionAt(leftPosition, writeBufferWriteP);
+        putLexemPositionAndAdvance(leftPosition, writeBufferWriteP);
     }
     *rhsP = rhs; /* Update rhs position after consuming */
 }
@@ -2121,7 +2121,7 @@ static LexemStream replaceMacroArguments(LexemStream *actualArgumentsInput, char
             assert(lexem == CPP_MACRO_ARGUMENT);
             getExtraLexemInformationFor(lexem, &inputStream.read, NULL, &argumentIndex, NULL, NULL, false);
 
-            putLexemCodeAt(STRING_LITERAL, &outputStream.write);
+            putLexemCodeAndAdvance(STRING_LITERAL, &outputStream.write);
             expandMacroBodyBufferIfOverflow(&bufferDesc, outputStream.write, MACRO_BODY_BUFFER_SIZE);
 
             macroArgumentsToString(outputStream.write, &actualArgumentsInput[argumentIndex]);
@@ -2130,7 +2130,7 @@ static LexemStream replaceMacroArguments(LexemStream *actualArgumentsInput, char
             outputStream.write += len;
 
             /* TODO: This should really be putLexPosition() but that takes a LexemBuffer... */
-            putLexemPositionAt(position, &outputStream.write);
+            putLexemPositionAndAdvance(position, &outputStream.write);
             if (len >= MACRO_BODY_BUFFER_SIZE - 15) {
                 char tmpBuffer[TMP_BUFF_SIZE];
                 sprintf(tmpBuffer, "size of #macro_argument exceeded MACRO_BODY_BUFFER_SIZE @%s:%d:%d",

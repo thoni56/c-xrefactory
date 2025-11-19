@@ -65,7 +65,7 @@ static void setup_lexBuffer_for_reading_identifier(void *data) {
     /* TODO: yylex does a lot of fishy stuff with the lexems instead
      * of using a LexemBuffer, so here we do as yylex does, although
      * mis-using the LexemBuffer interface */
-    putLexemCodeAt(IDENTIFIER, &lexemStreamP);
+    putLexemCodeAndAdvance(IDENTIFIER, &lexemStreamP);
 
     strcpy(lexemStreamP, currentFile.characterBuffer.chars);
     /* TODO: WTF This is mostly guesswork, no idea if this is how they are connected... */

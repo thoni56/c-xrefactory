@@ -30,7 +30,7 @@ extern void shiftAnyRemainingLexems(LexemBuffer *lb);
 
 extern void *getLexemStreamWrite(LexemBuffer *lb);
 
-extern void backpatchLexemCodeAt(LexemCode lexem, void *writePointer);
+extern void backpatchLexemCodeAndAdvance(LexemCode lexem, void *writePointer);
 
 extern void saveBackpatchPosition(LexemBuffer *lb);
 extern void backpatchLexemCode(LexemBuffer *lb, LexemCode lexem);
@@ -58,9 +58,9 @@ extern void putCharLiteralLexem(LexemBuffer *lb, CharacterBuffer *cb, int lexemS
 extern void terminateLexemString(LexemBuffer *lb);
 
 /* DEPRECATED? - Writes at where writePointer points to and advances it */
-extern void putLexemCodeAt(LexemCode lexem, char **writePointerP);
-extern void putLexemPositionAt(Position position, char **writePointerP);
-extern void putLexemIntAt(int integer, char **writePointerP);
+extern void putLexemCodeAndAdvance(LexemCode lexem, char **writePointerP);
+extern void putLexemPositionAndAdvance(Position position, char **writePointerP);
+extern void putLexemIntAndAdvance(int integer, char **writePointerP);
 
 /* Get elementary types */
 extern LexemCode getLexemCode(LexemBuffer *lb);
@@ -73,8 +73,8 @@ extern Position getLexemPosition(LexemBuffer *lb);
 
 /* Reads where a readPointer points and advances it */
 extern LexemCode getLexemCodeAndAdvance(char **readPointerP);
-extern int getLexemIntAt(char **readPointerP);
-extern Position getLexemPositionAt(char **readPointerP);
+extern int getLexemIntAndAdvance(char **readPointerP);
+extern Position getLexemPositionAndAdvance(char **readPointerP);
 
 extern LexemCode peekLexemCodeAt(char *readPointer);
 extern Position peekLexemPositionAt(char *readPointer);

@@ -82,9 +82,9 @@ Ensure(Lexer, can_scan_include_next) {
 
     assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
     getLexemCodeAndAdvance(&lexemPointer);
-    getLexemPositionAt(&lexemPointer);
+    getLexemPositionAndAdvance(&lexemPointer);
     assert_that(getLexemCodeAndAdvance(&lexemPointer), is_equal_to(CPP_INCLUDE_NEXT));
-    getLexemPositionAt(&lexemPointer);
+    getLexemPositionAndAdvance(&lexemPointer);
     assert_that(getLexemCodeAndAdvance(&lexemPointer), is_equal_to(STRING_LITERAL));
 }
 

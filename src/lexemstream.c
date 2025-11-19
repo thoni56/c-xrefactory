@@ -29,30 +29,30 @@ void skipExtraLexemInformationFor(LexemCode lexem, char **readPointerP) {
             lexem == STRING_LITERAL) {
             /* Skip string and position */
             *readPointerP = strchr(*readPointerP, '\0') + 1;
-            getLexemPositionAt(readPointerP);  /* Advances pointer */
+            getLexemPositionAndAdvance(readPointerP);  /* Advances pointer */
         } else if (lexem == LINE_TOKEN) {
-            getLexemIntAt(readPointerP);
+            getLexemIntAndAdvance(readPointerP);
         } else if (lexem == CONSTANT || lexem == LONG_CONSTANT) {
-            getLexemIntAt(readPointerP);       /* value */
-            getLexemPositionAt(readPointerP);  /* position */
-            getLexemIntAt(readPointerP);       /* length */
+            getLexemIntAndAdvance(readPointerP);       /* value */
+            getLexemPositionAndAdvance(readPointerP);  /* position */
+            getLexemIntAndAdvance(readPointerP);       /* length */
         } else if (lexem == DOUBLE_CONSTANT || lexem == FLOAT_CONSTANT) {
-            getLexemPositionAt(readPointerP);  /* position */
-            getLexemIntAt(readPointerP);       /* length */
+            getLexemPositionAndAdvance(readPointerP);  /* position */
+            getLexemIntAndAdvance(readPointerP);       /* length */
         } else if (lexem == CPP_MACRO_ARGUMENT) {
-            getLexemIntAt(readPointerP);       /* argument index */
-            getLexemPositionAt(readPointerP);  /* position */
+            getLexemIntAndAdvance(readPointerP);       /* argument index */
+            getLexemPositionAndAdvance(readPointerP);  /* position */
         } else if (lexem == CHAR_LITERAL) {
-            getLexemIntAt(readPointerP);       /* value */
-            getLexemPositionAt(readPointerP);  /* position */
-            getLexemIntAt(readPointerP);       /* length */
+            getLexemIntAndAdvance(readPointerP);       /* value */
+            getLexemPositionAndAdvance(readPointerP);  /* position */
+            getLexemIntAndAdvance(readPointerP);       /* length */
         }
     } else if (lexem > CPP_TOKENS_START && lexem < CPP_TOKENS_END) {
         /* Preprocessor tokens have position */
-        getLexemPositionAt(readPointerP);
+        getLexemPositionAndAdvance(readPointerP);
     } else {
         /* Simple tokens might have position */
-        getLexemPositionAt(readPointerP);
+        getLexemPositionAndAdvance(readPointerP);
     }
 }
 
