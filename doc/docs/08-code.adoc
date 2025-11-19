@@ -99,9 +99,8 @@ The integrated preprocessor is implemented in `yylex.c` and includes:
 
 The integrated preprocessor does not support all modern preprocessor features:
 
-* `__has_include()` and `__has_include_next()` operators (TODO item)
 * Platform-specific predefined macros (like `__arm64__`, `__x86_64__`) are not automatically defined
-* Some compiler-specific extensions may not be recognized
+* Some compiler-specific extensions may not be recognized (e.g. `__has_feature()`, `__building_module()`)
 
 These limitations mean that c-xrefactory may report syntax errors when encountering modern platform headers that use these features, even though the code compiles correctly with standard compilers.
 

@@ -47,8 +47,6 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 One of the key features is to be able to understand when files needs to be
 rescanned. I'm not sure how that works, but we need tests for it.
 * TODO Only do full updates, or what is the drawback of the non-full updates?
-* TODO __has_include_next() support
-** TODO Cover openInclude() with test
 * TODO FEATURE: Rename C Module
 ** TODO Rename .c file
 ** TODO Rename corresponding .h file if exists
@@ -242,19 +240,8 @@ There are both "-opt=value" and "-opt value" format options
   recognized (list e.g. at
   http://www.c-programming-simple-steps.com/c-keywords.html)
 
-* TODO Memory allocation is home grown, probably out of necessity. Refactor
-  to a state where it can be replaced (at least as an experiment) by
-  the memory allocation of current run-times. I can't see that even
-  32-bit memory restrictions (2 GB) should be a problem. The caching
-  might be tied into this, though.
-
-* TODO Naming. Generally it is heavy on short, write-only naming, we should
-  move towards full names as much as possible
-** TODO Use actual typedef names where ever possible
-** DONE Remove S_, s_ and other naming conventions
-
-* TODO Macros. There are many things that might need the magic of macros, but we
-  should watch out for "macro for optimisation" and remove that.
+* DONE __has_include_next() support
+** TODO Cover openInclude() with test
 * DONE Redefine log levels: TRACE - show what's called & DEBUG - extra information => reorder them
 * DONE Feature: Handle UTF correctly
   Currently you have to set coding in Emacs using `c-xref-file-encoding` which defaults

@@ -88,6 +88,7 @@
         ENUM(TypeMacroArg)                                              \
         ENUM(TypeCppDefinedOp)                                             \
         ENUM(TypeCppHasIncludeOp)                                          \
+        ENUM(TypeCppHasIncludeNextOp)                                      \
         ENUM(TypeBlockMarker)                                           \
         ENUM(TypeExpression)                                            \
         ENUM(TypePackedType)                                            \

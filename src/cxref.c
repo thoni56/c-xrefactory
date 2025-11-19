@@ -114,6 +114,7 @@ static void setAvailableRefactorings(Symbol *symbol) {
         break;
     case TypeCppInclude:
     case TypeCppHasIncludeOp:
+    case TypeCppHasIncludeNextOp:
         makeRefactoringAvailable(PPC_AVR_RENAME_INCLUDED_FILE, "");
         makeRefactoringAvailable(PPC_AVR_RENAME_MODULE, "");
         break;

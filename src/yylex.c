@@ -542,6 +542,67 @@ found:
     return true;
 }
 
+/* Check if an include file can be found using include_next semantics */
+static bool canFindIncludeFileNext(char includeType, char *name) {
+    EditorBuffer *editorBuffer = NULL;
+    FILE *file = NULL;
+    StringList *includeDirP;
+    char wildcardExpandedPaths[MAX_OPTION_LEN];
+    char normalizedName[MAX_FILE_NAME_SIZE];
+    char path[MAX_FILE_NAME_SIZE];
+
+    log_debug("canFindIncludeFileNext(%s)", name);
+
+    extractPathInto(currentFile.fileName, path);
+
+    StringList *start = options.includeDirs;
+
+    /* Find the include path which matches the current file's directory */
+    for (StringList *p = options.includeDirs; p != NULL; p = p->next) {
+        char normalizedIncludePath[MAX_FILE_NAME_SIZE];
+        strcpy(normalizedIncludePath, normalizeFileName_static(p->string, cwd));
+        int len = strlen(normalizedIncludePath);
+        if (normalizedIncludePath[len-1] != FILE_PATH_SEPARATOR) {
+            normalizedIncludePath[len] = FILE_PATH_SEPARATOR;
+            normalizedIncludePath[len+1] = '\0';
+        }
+        if (strcmp(normalizedIncludePath, path) == 0) {
+            /* Start search from the next include path */
+            start = p->next;
+            break;
+        }
+    }
+
+    /* Walk the include paths starting from the next one */
+    for (includeDirP = start; includeDirP != NULL && editorBuffer == NULL && file == NULL; includeDirP = includeDirP->next) {
+        strcpy(normalizedName, normalizeFileName_static(includeDirP->string, cwd));
+        expandWildcardsInOnePath(normalizedName, wildcardExpandedPaths, MAX_OPTION_LEN);
+        MAP_OVER_PATHS(wildcardExpandedPaths, {
+            int length;
+            strcpy(normalizedName, currentPath);
+            length = strlen(normalizedName);
+            if (length > 0 && normalizedName[length - 1] != FILE_PATH_SEPARATOR) {
+                normalizedName[length] = FILE_PATH_SEPARATOR;
+                length++;
+            }
+            strcpy(normalizedName + length, name);
+            log_debug("trying to find '%s'", normalizedName);
+            editorBuffer = findOrCreateAndLoadEditorBufferForFile(normalizedName);
+            if (editorBuffer == NULL)
+                file = openFile(normalizedName, "r");
+            if (editorBuffer != NULL || file != NULL)
+                goto found;
+        });
+    }
+    log_debug("failed to find '%s'", name);
+    return false;
+found:
+    if (file != NULL)
+        fclose(file);
+    log_debug("found file '%s'", normalizedName);
+    return true;
+}
+
 static bool openInclude(char includeType, char *name, bool is_include_next) {
     EditorBuffer *editorBuffer = NULL;
     FILE *file = NULL;
@@ -1271,6 +1332,88 @@ error:
     return 0;
 }
 
+static LexemCode handleHasIncludeNextOp(void) {
+    Position position;
+    LexemCode lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+    ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
+
+    if (lexem != '(') {
+        if (options.mode!=ServerMode)
+            warningMessage(ERR_ST,"expected '(' after __has_include_next");
+        return 0;
+    }
+    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+
+    lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+    ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
+
+    char *includeName;
+    char includeType;
+    char nameBuffer[MAX_FILE_NAME_SIZE];
+    
+    if (lexem == STRING_LITERAL) {
+        includeName = currentInput.read;
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+        includeType = *includeName;  /* First char is " or < */
+        includeName++;  /* Skip the quote */
+    } else if (lexem == '<') {
+        /* Handle <header> format */
+        includeType = '<';
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+        
+        /* Read until we find '>' */
+        char *p = nameBuffer;
+        for (;;) {
+            lexem = getLexem();
+            ON_LEXEM_EXCEPTION_GOTO(lexem, error, error);
+            if (lexem == '>') {
+                getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+                break;
+            }
+            if (lexem == '\n' || p >= nameBuffer + MAX_FILE_NAME_SIZE - 1) {
+                if (options.mode!=ServerMode)
+                    warningMessage(ERR_ST,"unterminated < in __has_include_next");
+                return 0;
+            }
+            /* Copy the lexem text */
+            char *lexemText = currentInput.read;
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+            while (lexemText < currentInput.read && p < nameBuffer + MAX_FILE_NAME_SIZE - 1) {
+                *p++ = *lexemText++;
+            }
+        }
+        *p = '\0';
+        includeName = nameBuffer;
+        /* For angle brackets, we need to read the closing ')' */
+        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+        ON_LEXEM_EXCEPTION_GOTO(lexem, error, error);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+        if (lexem != ')' && options.mode!=ServerMode) {
+            warningMessage(ERR_ST,"missing ')' after __has_include_next(<...>");
+        }
+    } else {
+        if (options.mode!=ServerMode)
+            warningMessage(ERR_ST,"expected string literal or < in __has_include_next");
+        return 0;
+    }
+
+    /* For string literals, read the closing ')' */
+    if (includeType != '<') {
+        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+        ON_LEXEM_EXCEPTION_GOTO(lexem, error, error);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
+        if (lexem != ')' && options.mode!=ServerMode) {
+            warningMessage(ERR_ST,"missing ')' after __has_include_next(\"\"");
+        }
+    }
+
+    bool fileFound = canFindIncludeFileNext(includeType, includeName);
+    return cppexpTranslateToken(CONSTANT, fileFound ? 1 : 0);
+
+error:
+    return 0;
+}
+
 static LexemCode handleDefinedOp(void) {
     Position position;
     LexemCode lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
@@ -1331,6 +1474,8 @@ LexemCode cppexp_yylex(void) {
         lexem = handleDefinedOp();
     } else if (lexem == CPP_HAS_INCLUDE_OP) {
         lexem = handleHasIncludeOp();
+    } else if (lexem == CPP_HAS_INCLUDE_NEXT_OP) {
+        lexem = handleHasIncludeNextOp();
     } else {
         lexem = cppexpTranslateToken(lexem, uniyylval->ast_integer.data);
     }
@@ -2353,6 +2498,9 @@ static LexemCode lookupIdentifier(char *id, Position position) {
             }
             if (s->type == TypeCppHasIncludeOp && isProcessingPreprocessorIf) {
                 return CPP_HAS_INCLUDE_OP;
+            }
+            if (s->type == TypeCppHasIncludeNextOp && isProcessingPreprocessorIf) {
+                return CPP_HAS_INCLUDE_NEXT_OP;
             }
             if (s->type == TypeDefault) {
                 setYylvalsForIdentifier(s->name, s, position);

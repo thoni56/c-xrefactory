@@ -348,6 +348,12 @@ void initTokenNamesTables(void) {
     symbolP->type = TypeCppHasIncludeOp;
     symbolP->storage = StorageDefault;
     symbolTableAdd(symbolTable, symbolP);
+
+    /* and add the '__has_include_next' keyword for #if */
+    symbolP = newSymbol("__has_include_next", noPosition);
+    symbolP->type = TypeCppHasIncludeNextOp;
+    symbolP->storage = StorageDefault;
+    symbolTableAdd(symbolTable, symbolP);
 }
 
 void initTypeNames(void) {
