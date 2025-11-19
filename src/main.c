@@ -379,7 +379,10 @@ static void discoverStandardDefines(void) {
     /* Need to pipe an empty file into gcc, an alternative would be to
        create an empty file, but that seems as much work as this */
     FILE *p = popen(command, "w");
-    closeFile(p);
+    if (p != NULL) {
+        fprintf(p, "\n");  /* Write a newline to provide empty input */
+        pclose(p);
+    }
 
     tempfile = openFile(tempfile_name, "r");
     if (tempfile==NULL) {

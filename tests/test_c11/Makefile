@@ -9,7 +9,7 @@ $(TEST):
 	../../utils/cxref_reader >> output
 	$(VERIFY)
 
-trace: ARGUMENTS += -debug
+trace: ARGUMENTS += -debug -log=log
 trace: $(TEST)
 
 EXTRA_DEBUG =

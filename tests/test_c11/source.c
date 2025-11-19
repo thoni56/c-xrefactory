@@ -1,5 +1,5 @@
-_Atomic int x;       // Treated as "atomic int"
-int _Atomic y;       // Equivalent syntax
+_Atomic int atomic_int;       // Treated as "atomic int"
+int _Atomic int_atomic;       // Equivalent syntax
 
 _Thread_local int tls_var;
 static _Thread_local int static_tls;
