@@ -532,10 +532,26 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </li>
 <li><a href="#_deployment">12. Deployment</a></li>
-<li><a href="#_decison_log">13. Decison Log</a></li>
-<li><a href="#_insights">14. Insights</a>
+<li><a href="#_decision_log">13. Decision Log</a>
 <ul class="sectlevel2">
-<li><a href="#_yacc_semantic_data">14.1. Yacc semantic data</a></li>
+<li><a href="#_overview">13.1. Overview</a></li>
+<li><a href="#_viewing_decision_records">13.2. Viewing Decision Records</a></li>
+<li><a href="#_decision_categories">13.3. Decision Categories</a></li>
+<li><a href="#_creating_new_adrs">13.4. Creating New ADRs</a></li>
+</ul>
+</li>
+<li><a href="#_roadmap">14. Roadmap</a>
+<ul class="sectlevel2">
+<li><a href="#_guiding_principles">14.1. Guiding Principles</a></li>
+<li><a href="#_recent_accomplishments_2025_q1">14.2. Recent Accomplishments (2025 Q1)</a></li>
+<li><a href="#_short_term_goals_next_3_6_months">14.3. Short-term Goals (Next 3-6 Months)</a></li>
+<li><a href="#_medium_term_goals_6_12_months">14.4. Medium-term Goals (6-12 Months)</a></li>
+<li><a href="#_long_term_vision_12_24_months">14.5. Long-term Vision (12-24 Months)</a></li>
+<li><a href="#_migration_and_compatibility_strategy">14.6. Migration and Compatibility Strategy</a></li>
+<li><a href="#_success_metrics">14.7. Success Metrics</a></li>
+<li><a href="#_risk_management">14.8. Risk Management</a></li>
+<li><a href="#_next_actions">14.9. Next Actions</a></li>
+<li><a href="#_conclusion">14.10. Conclusion</a></li>
 </ul>
 </li>
 <li><a href="#_proposed_refactorings">15. Proposed Refactorings</a>
@@ -545,16 +561,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#macro-expansion-module">15.3. Extract Macro Expansion Module</a></li>
 </ul>
 </li>
-<li><a href="#_archive">16. Archive</a>
+<li><a href="#_insights">16. Insights</a>
 <ul class="sectlevel2">
-<li><a href="#_memory_strategies">16.1. Memory strategies</a></li>
-<li><a href="#_trivial_prechecks">16.2. Trivial Prechecks</a></li>
-<li><a href="#_huge_memory">16.3. HUGE Memory</a></li>
-<li><a href="#_bootstrapping">16.4. Bootstrapping</a></li>
-<li><a href="#_fill_macros">16.5. FILL macros</a></li>
-<li><a href="#_caching_module">16.6. Caching Module</a></li>
-<li><a href="#_caching_system_architecture">16.7. Caching System Architecture</a></li>
-<li><a href="#_users">16.8. Users</a></li>
+<li><a href="#_yacc_semantic_data">16.1. Yacc semantic data</a></li>
+</ul>
+</li>
+<li><a href="#_archive">17. Archive</a>
+<ul class="sectlevel2">
+<li><a href="#_memory_strategies">17.1. Memory strategies</a></li>
+<li><a href="#_trivial_prechecks">17.2. Trivial Prechecks</a></li>
+<li><a href="#_huge_memory">17.3. HUGE Memory</a></li>
+<li><a href="#_bootstrapping">17.4. Bootstrapping</a></li>
+<li><a href="#_fill_macros">17.5. FILL macros</a></li>
+<li><a href="#_caching_module">17.6. Caching Module</a></li>
+<li><a href="#_caching_system_architecture">17.7. Caching System Architecture</a></li>
+<li><a href="#_users">17.8. Users</a></li>
 </ul>
 </li>
 </ul>
@@ -4185,58 +4206,974 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_decison_log">13. Decison Log</h2>
+<h2 id="_decision_log">13. Decision Log</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Here we log all design and architectural decisions. Currently they are
-stored separately. Most of the actual, historic, decisons are of
-course lost.</p>
+<p>This chapter provides a historical record of significant design and architectural decisions made during the evolution of c-xrefactory.</p>
+</div>
+<div class="sect2">
+<h3 id="_overview">13.1. Overview</h3>
+<div class="paragraph">
+<p>The decision log documents choices that have shaped the architecture, implementation, and direction of c-xrefactory. Most decisions from the original 1990s development are lost to history, but as they can be deduced from the codebase and commit history, they are being retroactively documented.</p>
+</div>
+<div class="paragraph">
+<p>All architectural decisions are recorded using the <a href="https://adr.github.io/">Architecture Decision Record (ADR)</a> format and stored in the <code>adr/</code> directory. These ADRs are automatically integrated into the Structurizr documentation system.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_viewing_decision_records">13.2. Viewing Decision Records</h3>
+<div class="paragraph">
+<p>The ADRs can be accessed in several ways:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Via Structurizr</strong>: When viewing the <a href="https://structurizr.com/">Structurizr documentation</a>, navigate to the "Decisions" section to see all ADRs with cross-references and visualizations.</p>
+</li>
+<li>
+<p><strong>Directly in the repository</strong>: Browse the <a href="../../adr/">adr/</a> directory for markdown files containing individual decision records.</p>
+</li>
+<li>
+<p><strong>Command line</strong>: Use <code>ls doc/adr/*.md</code> from the project root to list all decisions.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_decision_categories">13.3. Decision Categories</h3>
+<div class="paragraph">
+<p>Current ADRs cover several categories:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Simplification decisions</strong>: Removing unused features (Java support, HTML generation, etc.)</p>
+</li>
+<li>
+<p><strong>Tooling decisions</strong>: Choice of ADR format, documentation system</p>
+</li>
+<li>
+<p><strong>Configuration decisions</strong>: Automatic config file discovery</p>
+</li>
+<li>
+<p><strong>Format decisions</strong>: Reference data storage format</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For the complete list of decisions and their rationale, see the <a href="../../adr/">ADR directory</a> or the Decisions section in the Structurizr documentation.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_creating_new_adrs">13.4. Creating New ADRs</h3>
+<div class="paragraph">
+<p>When making significant architectural decisions:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Copy the template from <code>adr/templates/</code></p>
+</li>
+<li>
+<p>Number it sequentially (e.g., <code>0012-description.md</code>)</p>
+</li>
+<li>
+<p>Fill in the context, decision, and consequences</p>
+</li>
+<li>
+<p>Commit it alongside the implementation</p>
+</li>
+<li>
+<p>Reference it in commit messages and pull requests</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>See <a href="decisions#7">ADR-0007</a> for details on the ADR format and process.</p>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_insights">14. Insights</h2>
+<h2 id="_roadmap">14. Roadmap</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This chapter contains notes of all insights, large and small, that I make as I work on this project.
-These insights should at some point be moved to some other, more structured, part of this document.
-But rather than trying to find a structure where each new finding fits, I&#8217;m making it easy to just dump them here.
-We can refactor these into a better and better structure as we go.</p>
+<p>This chapter outlines the development roadmap for c-xrefactory, tracking completed work, current priorities, and future architectural goals.</p>
 </div>
 <div class="sect2">
-<h3 id="_yacc_semantic_data">14.1. Yacc semantic data</h3>
+<h3 id="_guiding_principles">14.1. Guiding Principles</h3>
 <div class="paragraph">
-<p>As per usual a Yacc grammar requires each non-terminal to have a type.
-Those types are named after which types of data they collect and
-propagate.  The names always starts with <code>ast_</code> and then comes the
-data type.  For example if some non-terminal needs to propagate a
-Symbol and a Position that structure would be called
-<code>ast_symbolParameterPair</code> ("Pair" being thrown in there for good
-measure&#8230;&#8203;).</p>
+<p>The roadmap is guided by these principles:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Incremental improvement</strong>: Each step should provide immediate value while moving toward long-term goals</p>
+</li>
+<li>
+<p><strong>Test-driven modernization</strong>: Maintain ~80% test coverage to enable confident refactoring</p>
+</li>
+<li>
+<p><strong>Backward compatibility</strong>: Preserve existing Emacs workflows while enabling modern IDE integration</p>
+</li>
+<li>
+<p><strong>Architectural simplification</strong>: Replace artificial mode distinctions with unified, smart on-demand behavior</p>
+</li>
+<li>
+<p><strong>Legacy code respect</strong>: Work with the existing 1990s codebase thoughtfully, not against it</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_recent_accomplishments_2025_q1">14.2. Recent Accomplishments (2025 Q1)</h3>
+<div class="sect3">
+<h4 id="_c_preprocessor_compliance_fixes">14.2.1. C Preprocessor Compliance Fixes</h4>
+<div class="paragraph">
+<p><strong>Problem</strong>: c-xrefactory was incorrectly expanding function-like macros during <code><mark></code> token pasting, violating C99 §6.10.3.3 which mandates that operands of <code></mark></code> should NOT be macro-expanded before concatenation.</p>
 </div>
 <div class="paragraph">
-<p>Each of those structures also always carries a begin and end position
-for that structure.  That means that any "ast" struct has three
-fields, <code>begin</code>, <code>end</code> and the data.  The data are sometimes a struct,
-like in this case, but can also be a single value, like an <code>int</code> or a
-pointer to a <code>Symbol</code>.</p>
+<p><strong>Impact</strong>: Caused SIGSEGV in <code>test_ffmpeg</code> when processing complex standard library macros like <code>INT64_MAX</code> which expands to <code>(<em>INT64_C(9223372036854775807))</code> where <code></em>INT64_C(c)</code> is defined as <code>c ## L</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Fix</strong>: Removed macro expansion logic from <code>collate()</code> function in <code>src/yylex.c:1749-1797</code>. Now matches GCC behavior exactly.</p>
+</div>
+<div class="paragraph">
+<p><strong>Test Updates</strong>: Updated 5 test cases to match correct GCC preprocessor behavior:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>test_collate_empty</code></p>
+</li>
+<li>
+<p><code>test_token_pasting_with_expansion</code></p>
+</li>
+<li>
+<p><code>test_token_pasting_with_expansion_lhs</code></p>
+</li>
+<li>
+<p><code>test_token_pasting_with_expansion_rhs</code></p>
+</li>
+<li>
+<p><code>test_token_pasting_with_illegal_expansion</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_memory_scaling_improvements">14.2.2. Memory Scaling Improvements</h4>
+<div class="paragraph">
+<p><strong>Problem</strong>: Large projects like ffmpeg were hitting the 30MB <code>stackMemory</code> limit during symbol table construction.</p>
+</div>
+<div class="paragraph">
+<p><strong>Root Cause</strong>: Stack memory is a persistent arena allocator that accumulates symbol tables across all parsed files. Growth is expected and normal for large projects.</p>
+</div>
+<div class="paragraph">
+<p><strong>Fix</strong>: Increased <code>SIZE_stackMemory</code> from 30MB to 100MB in <code>src/constants.h:19</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Diagnostic Additions</strong>: Added nesting level and stack index tracking in <code>src/xref.c</code> to monitor memory usage patterns and detect unbalanced block nesting.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_short_term_goals_next_3_6_months">14.3. Short-term Goals (Next 3-6 Months)</h3>
+<div class="sect3">
+<h4 id="_test_coverage_expansion">14.3.1. Test Coverage Expansion</h4>
+<div class="paragraph">
+<p><strong>Current Status</strong>: ~80% coverage, ongoing improvement</p>
+</div>
+<div class="paragraph">
+<p><strong>Priority</strong>: HIGH</p>
+</div>
+<div class="paragraph">
+<p><strong>Goals</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Achieve 85%+ coverage for core modules</p>
+</li>
+<li>
+<p>Add focused tests for macro expansion subsystem</p>
+</li>
+<li>
+<p>Expand coverage for LSP integration points</p>
+</li>
+<li>
+<p>Systematic testing of error handling paths</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_lsp_feature_completeness">14.3.2. LSP Feature Completeness</h4>
+<div class="paragraph">
+<p><strong>Current Status</strong>: Basic LSP communication works, features not yet accessible</p>
+</div>
+<div class="paragraph">
+<p><strong>Priority</strong>: HIGH</p>
+</div>
+<div class="paragraph">
+<p><strong>Goals</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Wire up existing symbol navigation to LSP protocol</p>
+</li>
+<li>
+<p>Implement <code>textDocument/definition</code> using reference database</p>
+</li>
+<li>
+<p>Implement <code>textDocument/references</code></p>
+</li>
+<li>
+<p>Implement <code>textDocument/hover</code> with symbol information</p>
+</li>
+<li>
+<p>Enable <code>textDocument/completion</code> for basic completion</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Approach</strong>: Leverage existing reference database (<code>refTab</code>) and symbol tables - no major architectural changes needed initially.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_documentation_completeness">14.3.3. Documentation Completeness</h4>
+<div class="paragraph">
+<p><strong>Current Status</strong>: Architecture documentation mostly complete</p>
+</div>
+<div class="paragraph">
+<p><strong>Priority</strong>: MEDIUM</p>
+</div>
+<div class="paragraph">
+<p><strong>Goals</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Complete Structurizr C4 model with all major components</p>
+</li>
+<li>
+<p>Document memory management strategies across all arenas</p>
+</li>
+<li>
+<p>Create user guide for LSP integration</p>
+</li>
+<li>
+<p>Document LSP vs Emacs feature parity matrix</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_medium_term_goals_6_12_months">14.4. Medium-term Goals (6-12 Months)</h3>
+<div class="paragraph">
+<p>These goals are detailed in <a href="16-proposed-refactorings.html">Chapter 16: Proposed Refactorings</a>. The roadmap establishes priority ordering:</p>
+</div>
+<div class="sect3">
+<h4 id="_1_lexemstream_api_improvements">14.4.1. 1. LexemStream API Improvements</h4>
+<div class="paragraph">
+<p><strong>Reference</strong>: <a href="16-proposed-refactorings.html">Proposed Refactorings - LexemStream API Improvements</a></p>
+</div>
+<div class="paragraph">
+<p><strong>Priority</strong>: HIGH (Foundation for other refactorings)</p>
+</div>
+<div class="paragraph">
+<p><strong>Rationale</strong>: The macro expansion code suffers from pointer parameter proliferation (6+ parameters per function). Adding a manipulation API to <code>LexemStream</code> (similar to <code>LexemBuffer</code>) will simplify buffer management and reduce error-prone pointer arithmetic.</p>
+</div>
+<div class="paragraph">
+<p><strong>Impact</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Reduces <code>collate()</code> from 6 parameters to 3-4</p>
+</li>
+<li>
+<p>Centralizes buffer management logic</p>
+</li>
+<li>
+<p>Enables clearer ownership semantics</p>
+</li>
+<li>
+<p>Foundation for macro module extraction</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Estimated Effort</strong>: 3-4 weeks</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Week 1: Design and implement core API</p>
+</li>
+<li>
+<p>Week 2: Refactor <code>copyRemainingLexems()</code> and <code>collate()</code> as proof-of-concept</p>
+</li>
+<li>
+<p>Week 3-4: Migrate remaining macro expansion functions</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_2_extract_macro_expansion_module">14.4.2. 2. Extract Macro Expansion Module</h4>
+<div class="paragraph">
+<p><strong>Reference</strong>: <a href="16-proposed-refactorings.html#macro-expansion-module">Proposed Refactorings - Extract Macro Expansion Module</a></p>
+</div>
+<div class="paragraph">
+<p><strong>Priority</strong>: MEDIUM (Depends on LexemStream API)</p>
+</div>
+<div class="paragraph">
+<p><strong>Rationale</strong>: <code>yylex.c</code> is 2353 lines combining lexing, file management, preprocessor directives, and macro expansion (~800 lines). Extracting macro expansion improves modularity and testability.</p>
+</div>
+<div class="paragraph">
+<p><strong>Impact</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Reduces yylex.c by 34% (~800 lines)</p>
+</li>
+<li>
+<p>Enables independent testing of macro expansion</p>
+</li>
+<li>
+<p>Clearer separation: lexing vs. preprocessing</p>
+</li>
+<li>
+<p>Facilitates future C++ macro support</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Estimated Effort</strong>: 4-6 weeks</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Week 1-2: Create module structure and move memory management</p>
+</li>
+<li>
+<p>Week 3-4: Migrate token processing and expansion logic</p>
+</li>
+<li>
+<p>Week 5-6: Integration, testing, and documentation</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_3_unified_symbol_database_architecture">14.4.3. 3. Unified Symbol Database Architecture</h4>
+<div class="paragraph">
+<p><strong>Reference</strong>: <a href="16-proposed-refactorings.html#unified-symbol-database">Proposed Refactorings - Unified Symbol Database Architecture</a></p>
+</div>
+<div class="paragraph">
+<p><strong>Priority</strong>: HIGH (Enables true on-demand LSP)</p>
+</div>
+<div class="paragraph">
+<p><strong>Rationale</strong>: Current artificial distinction between "file-based" and "on-demand" modes creates unnecessary complexity. Both Emacs and LSP clients want the same thing: up-to-date symbol information.</p>
+</div>
+<div class="paragraph">
+<p><strong>Key Insight</strong>: The <code>.cx</code> files are a <strong>persistent cache</strong> of analysis results, not a fundamental requirement. c-xrefactory should provide smart on-demand behavior that:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Always ensures information is current using existing dependency tracking</p>
+</li>
+<li>
+<p>Scans incrementally only what&#8217;s needed, when needed</p>
+</li>
+<li>
+<p>Uses <code>.cx</code> files for optimization, not as a prerequisite</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Impact</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Eliminates cold start</strong> - no upfront <code>-create</code> required</p>
+</li>
+<li>
+<p><strong>Single code path</strong> for Emacs and LSP</p>
+</li>
+<li>
+<p><strong>Transparent caching</strong> - <code>.cx</code> files automatically maintained</p>
+</li>
+<li>
+<p><strong>Leverages existing logic</strong> - reuses proven dependency tracking system</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Architecture</strong>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">Symbol* lookupSymbol(const char* name, Position pos) {
+    // 1. Check if cached information is up-to-date
+    if (symbolInfoIsCurrent(name, pos)) {
+        return getCachedSymbolInfo(name, pos);
+    }
 
-class ast_symbolPositionPair {
-Position begin
-Position end
-}
+    // 2. Use existing dependency tracking to scan minimal set
+    FileList* filesToScan = calculateDependencyClosure(pos.file);
+    for (FileItem* file : filesToScan) {
+        if (checkFileModifiedTime(file-&gt;fileNumber)) {
+            scanFileAndUpdateCache(file);
+        }
+    }
 
-ast_symbolPositionPair *-- SymbolPositionPair : data
-
-class SymbolPositionPair {
-Symbol *symbol
-Position position
-}</pre>
+    // 3. Update persistent cache
+    updateSymbolCache(name, pos);
+    return getSymbolInfo(name, pos);
+}</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p><strong>Estimated Effort</strong>: 8-12 weeks</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Week 1-3: Design unified interface and wrap existing logic</p>
+</li>
+<li>
+<p>Week 4-6: Implement smart dependency-driven on-demand scanning</p>
+</li>
+<li>
+<p>Week 7-9: Optimize caching strategies and incremental updates</p>
+</li>
+<li>
+<p>Week 10-12: Thorough testing, performance tuning, documentation</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_long_term_vision_12_24_months">14.5. Long-term Vision (12-24 Months)</h3>
+<div class="sect3">
+<h4 id="_on_demand_incremental_architecture_for_lsp">14.5.1. On-Demand Incremental Architecture for LSP</h4>
+<div class="paragraph">
+<p><strong>Current Limitation</strong>: Stack memory accumulates symbol tables across all files forever. This works for batch cross-referencing but is incompatible with long-running LSP servers handling file edits.</p>
+</div>
+<div class="paragraph">
+<p><strong>Vision</strong>: Enable true on-demand, per-file parsing suitable for LSP <code>textDocument/didChange</code> events.</p>
+</div>
+<div class="sect4">
+<h5 id="_two_phase_architecture">Two-Phase Architecture</h5>
+<div class="paragraph">
+<p><strong>Phase 1: Batch Indexing</strong> (Current behavior, optimized)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>For each file in project:
+    Parse file → populate refTab → discard stackMemory symbols
+
+Result: refTab contains all references, stackMemory reset between files</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Phase 2: LSP On-Demand</strong> (Future capability)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Load refTab from .cx files (persistent cache)
+
+On textDocument/didChange(file):
+    1. Remove old references for file from refTab
+    2. Reparse file → update refTab with new references
+    3. Reset stackMemory (symbols discarded, only refTab persists)
+    4. Navigation uses refTab, not stackMemory symbols!</pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_key_architectural_insights">Key Architectural Insights</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Navigation uses refTab, not stackMemory</strong>: This is crucial - symbol lookup queries the reference table, not the ephemeral symbol structures</p>
+</li>
+<li>
+<p><strong>stackMemory can be reset per-file</strong>: As long as refTab is updated first</p>
+</li>
+<li>
+<p><strong>Incremental file updates become possible</strong>: Parse → update refTab → discard symbols</p>
+</li>
+<li>
+<p><strong>Backward compatible</strong>: Batch mode continues to work exactly as before</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_memory_management_strategy">Memory Management Strategy</h5>
+<div class="paragraph">
+<p>After unified symbol database is complete, investigate:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Per-file stackMemory reset after populating refTab</p>
+</li>
+<li>
+<p>Separation of navigation data (refTab - persistent) from parsing data (stackMemory - ephemeral)</p>
+</li>
+<li>
+<p>Smart arena allocation strategies for long-running servers</p>
+</li>
+<li>
+<p>Background garbage collection for unused symbol data</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Estimated Effort</strong>: 16-20 weeks (major architectural work)</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_full_lsp_protocol_compliance">14.5.2. Full LSP Protocol Compliance</h4>
+<div class="paragraph">
+<p><strong>Dependencies</strong>: Unified symbol database, on-demand architecture</p>
+</div>
+<div class="paragraph">
+<p><strong>Goals</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Complete implementation of core LSP features:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>textDocument/definition</code> ✓ (basic navigation exists)</p>
+</li>
+<li>
+<p><code>textDocument/references</code> ✓ (reference database exists)</p>
+</li>
+<li>
+<p><code>textDocument/hover</code> (symbol information)</p>
+</li>
+<li>
+<p><code>textDocument/completion</code> ✓ (completion system exists)</p>
+</li>
+<li>
+<p><code>textDocument/rename</code> ✓ (refactoring engine exists)</p>
+</li>
+<li>
+<p><code>textDocument/documentSymbol</code> (symbol outline)</p>
+</li>
+<li>
+<p><code>textDocument/formatting</code> (if desired)</p>
+</li>
+<li>
+<p><code>workspace/symbol</code> (project-wide symbol search)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Performance optimization for large projects:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Lazy loading of symbol data</p>
+</li>
+<li>
+<p>Incremental parsing on file changes</p>
+</li>
+<li>
+<p>Background indexing</p>
+</li>
+<li>
+<p>Memory-mapped <code>.cx</code> file access</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Multi-workspace support</p>
+</li>
+<li>
+<p>Configuration via LSP initialization options</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Estimated Effort</strong>: 20-24 weeks (building on unified database)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_modern_ide_integration_showcase">14.5.3. Modern IDE Integration Showcase</h4>
+<div class="paragraph">
+<p><strong>Dependencies</strong>: Full LSP compliance</p>
+</div>
+<div class="paragraph">
+<p><strong>Goals</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>VS Code Extension</strong>: Official c-xrefactory extension with feature parity to Emacs</p>
+</li>
+<li>
+<p><strong>Vim/Neovim Support</strong>: LSP client configuration and documentation</p>
+</li>
+<li>
+<p><strong>Other IDEs</strong>: Ensure LSP implementation works with CLion, Qt Creator, etc.</p>
+</li>
+<li>
+<p><strong>Feature Demonstrations</strong>: Video tutorials showing refactoring capabilities</p>
+</li>
+<li>
+<p><strong>Benchmark Comparisons</strong>: Performance vs. clangd, ccls for large C codebases</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Marketing</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Emphasize unique C-specific features (macro understanding, Yacc support)</p>
+</li>
+<li>
+<p>Highlight safe refactoring capabilities</p>
+</li>
+<li>
+<p>Target embedded systems and legacy C projects</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_migration_and_compatibility_strategy">14.6. Migration and Compatibility Strategy</h3>
+<div class="sect3">
+<h4 id="_backward_compatibility_guarantee">14.6.1. Backward Compatibility Guarantee</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Existing Emacs workflows will continue to work unchanged</p>
+</li>
+<li>
+<p><code>.cx</code> file format remains compatible (or auto-migrates transparently)</p>
+</li>
+<li>
+<p>Command-line interface preserved (though some commands may become no-ops)</p>
+</li>
+<li>
+<p>All existing refactoring operations maintain behavior</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_deprecation_path">14.6.2. Deprecation Path</h4>
+<div class="paragraph">
+<p>When unified symbol database is complete:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>-create</code> becomes optional (auto-triggers on first query if needed)</p>
+</li>
+<li>
+<p><code>-update</code> becomes automatic (modification time checking)</p>
+</li>
+<li>
+<p>Mode flags (<code>FILE_BASED</code>, <code>ON_DEMAND</code>) deprecated internally</p>
+</li>
+<li>
+<p>User-visible options remain for backward compatibility but may have no effect</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_testing_strategy">14.6.3. Testing Strategy</h4>
+<div class="paragraph">
+<p>Throughout all changes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Zero test regressions</strong> - 140+ test suite must pass</p>
+</li>
+<li>
+<p><strong>Coverage maintenance</strong> - keep ~80%+ coverage during refactoring</p>
+</li>
+<li>
+<p><strong>Performance validation</strong> - no &gt;5% regression on large projects</p>
+</li>
+<li>
+<p><strong>Integration testing</strong> - both Emacs and LSP workflows tested</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_success_metrics">14.7. Success Metrics</h3>
+<div class="sect3">
+<h4 id="_technical_metrics">14.7.1. Technical Metrics</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Test Coverage</strong>: Maintain 80%, target 85%</p>
+</li>
+<li>
+<p><strong>Response Time</strong>: LSP <code>textDocument/definition</code> &lt; 100ms for 90th percentile</p>
+</li>
+<li>
+<p><strong>Memory Efficiency</strong>: LSP server &lt; 500MB RAM for 1M LOC project</p>
+</li>
+<li>
+<p><strong>Startup Time</strong>: Zero cold start delay (no mandatory <code>-create</code>)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_adoption_metrics">14.7.2. Adoption Metrics</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>VS Code Extension</strong>: 1000+ downloads in first 6 months</p>
+</li>
+<li>
+<p><strong>GitHub Stars</strong>: 500+ (currently ~150)</p>
+</li>
+<li>
+<p><strong>Issue Response</strong>: &lt;48 hours median time to first response</p>
+</li>
+<li>
+<p><strong>Documentation</strong>: 100% of features documented with examples</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_community_metrics">14.7.3. Community Metrics</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Contributors</strong>: 5+ active contributors beyond maintainer</p>
+</li>
+<li>
+<p><strong>LSP Compatibility</strong>: Works with 3+ major IDEs (VS Code, Vim, CLion)</p>
+</li>
+<li>
+<p><strong>User Satisfaction</strong>: Positive feedback on LSP integration</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_risk_management">14.8. Risk Management</h3>
+<div class="sect3">
+<h4 id="_technical_risks">14.8.1. Technical Risks</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Risk</th>
+<th class="tableblock halign-left valign-top">Likelihood</th>
+<th class="tableblock halign-left valign-top">Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Breaking existing Emacs users</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maintain strict backward compatibility, extensive testing, staged rollout</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Performance regression</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile before/after each change, performance test suite, optimization budget</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LSP protocol complexity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Low</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use existing battle-tested LSP libraries, focus on core features first</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Memory leaks in long-running server</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Careful arena allocator design, memory profiling, leak detection tools</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Difficulty attracting contributors</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Excellent documentation, beginner-friendly issues, responsive maintainer</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Competing with clangd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Focus on unique strengths: macro understanding, Yacc support, safe refactoring</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_mitigation_strategies">14.8.2. Mitigation Strategies</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Incremental delivery</strong>: Each phase provides standalone value</p>
+</li>
+<li>
+<p><strong>Continuous testing</strong>: Never sacrifice test coverage for features</p>
+</li>
+<li>
+<p><strong>User feedback loops</strong>: Early LSP alpha with select users</p>
+</li>
+<li>
+<p><strong>Fallback options</strong>: Keep old code paths during transition</p>
+</li>
+<li>
+<p><strong>Documentation first</strong>: Write the docs before the code</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_next_actions">14.9. Next Actions</h3>
+<div class="paragraph">
+<p>Priority tasks for immediate action:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Complete LSP handler wiring</strong> (1-2 weeks)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Map existing navigation functions to LSP requests</p>
+</li>
+<li>
+<p>Test with real LSP client (VS Code)</p>
+</li>
+<li>
+<p>Document any gaps</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Design LexemStream API</strong> (1 week)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Finalize interface based on proposal</p>
+</li>
+<li>
+<p>Create initial implementation</p>
+</li>
+<li>
+<p>Write unit tests</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Plan unified database refactoring</strong> (2 weeks)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Detailed design document</p>
+</li>
+<li>
+<p>Identify all affected code paths</p>
+</li>
+<li>
+<p>Prototype dependency-driven scanning</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Establish performance baseline</strong> (1 week)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Measure current Emacs operation speeds</p>
+</li>
+<li>
+<p>Profile memory usage patterns</p>
+</li>
+<li>
+<p>Document acceptable overhead budgets</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">14.10. Conclusion</h3>
+<div class="paragraph">
+<p>The roadmap balances immediate user value (LSP features, bug fixes) with long-term architectural health (unified database, modular design). Each phase builds on previous work, with clear success metrics and risk mitigation strategies.</p>
+</div>
+<div class="paragraph">
+<p>The end goal is a c-xrefactory that is:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Zero-configuration</strong>: Works immediately on any C project</p>
+</li>
+<li>
+<p><strong>Modern</strong>: First-class LSP support for all IDEs</p>
+</li>
+<li>
+<p><strong>Powerful</strong>: Unique C-specific features unmatched by competitors</p>
+</li>
+<li>
+<p><strong>Maintainable</strong>: Clean architecture enabling continued evolution</p>
+</li>
+<li>
+<p><strong>Backward compatible</strong>: Existing Emacs users unaffected</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This transformation from a 1990s batch cross-referencer to a modern, on-demand LSP server is achievable through careful incremental refactoring guided by comprehensive tests.</p>
+</div>
+<hr>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This roadmap is a living document. As priorities shift and new insights emerge, it will be updated to reflect current understanding and goals. See also <a href="16-proposed-refactorings.html">Chapter 16: Proposed Refactorings</a> for detailed technical proposals.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -5661,7 +6598,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_success_metrics">15.3.7. Success Metrics</h4>
+<h4 id="_success_metrics_2">15.3.7. Success Metrics</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -5764,7 +6701,54 @@ This refactoring is independent of the LexemStream API improvements but would be
 </div>
 </div>
 <div class="sect1">
-<h2 id="_archive">16. Archive</h2>
+<h2 id="_insights">16. Insights</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter contains notes of all insights, large and small, that I make as I work on this project.
+These insights should at some point be moved to some other, more structured, part of this document.
+But rather than trying to find a structure where each new finding fits, I&#8217;m making it easy to just dump them here.
+We can refactor these into a better and better structure as we go.</p>
+</div>
+<div class="sect2">
+<h3 id="_yacc_semantic_data">16.1. Yacc semantic data</h3>
+<div class="paragraph">
+<p>As per usual a Yacc grammar requires each non-terminal to have a type.
+Those types are named after which types of data they collect and
+propagate.  The names always starts with <code>ast_</code> and then comes the
+data type.  For example if some non-terminal needs to propagate a
+Symbol and a Position that structure would be called
+<code>ast_symbolParameterPair</code> ("Pair" being thrown in there for good
+measure&#8230;&#8203;).</p>
+</div>
+<div class="paragraph">
+<p>Each of those structures also always carries a begin and end position
+for that structure.  That means that any "ast" struct has three
+fields, <code>begin</code>, <code>end</code> and the data.  The data are sometimes a struct,
+like in this case, but can also be a single value, like an <code>int</code> or a
+pointer to a <code>Symbol</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+
+class ast_symbolPositionPair {
+Position begin
+Position end
+}
+
+ast_symbolPositionPair *-- SymbolPositionPair : data
+
+class SymbolPositionPair {
+Symbol *symbol
+Position position
+}</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_archive">17. Archive</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>In this section you can find some descriptions and saved texts that
@@ -5773,7 +6757,7 @@ quirk, magic or bad coding is gone. But it is kept here as an archive
 for those wanting to do backtracking to original sources.</p>
 </div>
 <div class="sect2">
-<h3 id="_memory_strategies">16.1. Memory strategies</h3>
+<h3 id="_memory_strategies">17.1. Memory strategies</h3>
 <div class="paragraph">
 <p>There were a multitude of specialized memory allocation functions. In
 principle there where two types, static and dynamic. The dynamic could
@@ -5784,7 +6768,7 @@ be exteded using a overflow handler.</p>
 the actual struct. This was very confusing&#8230;&#8203;</p>
 </div>
 <div class="sect3">
-<h4 id="_static_memory_allocation">16.1.1. Static memory allocation</h4>
+<h4 id="_static_memory_allocation">17.1.1. Static memory allocation</h4>
 <div class="paragraph">
 <p>Static memory (SM_ prefix) are static areas allocated by the compiler
 which is then indexed using a similarly named index variable
@@ -5822,7 +6806,7 @@ the outermost CodeBlock</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_trivial_prechecks">16.2. Trivial Prechecks</h3>
+<h3 id="_trivial_prechecks">17.2. Trivial Prechecks</h3>
 <div class="paragraph">
 <p>The refactorer can call the server using <code>parseBufferUsingServer()</code> and add some extra options (in text form).
 One example is <code>setMovingPrecheckStandardEnvironment()</code> where it calls the server with <code>-olcxtrivialprecheck</code>.</p>
@@ -5850,7 +6834,7 @@ This theory should be checked by looking at the original source of the precheck 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_huge_memory">16.3. HUGE Memory</h3>
+<h3 id="_huge_memory">17.3. HUGE Memory</h3>
 <div class="paragraph">
 <p>Previously a HUGE model was also available (by re-compilation) to
 reach file numbers, lines and columns above 22 bits. But if you have
@@ -5859,9 +6843,9 @@ something radical before attempting cross referencing and refactoring.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_bootstrapping">16.4. Bootstrapping</h3>
+<h3 id="_bootstrapping">17.4. Bootstrapping</h3>
 <div class="sect3">
-<h4 id="_bootstrap_removed">16.4.1. BOOTSTRAP REMOVED!</h4>
+<h4 id="_bootstrap_removed">17.4.1. BOOTSTRAP REMOVED!</h4>
 <div class="paragraph">
 <p>Once the FILL-macros was removed, we could move the enum-generation to
 use the actual <code>c-xref</code>. So from now on we build <code>c-xref</code> directly
@@ -5873,7 +6857,7 @@ update. This is a big improvement over the previous situation!</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_fills_removed">16.4.2. FILLs REMOVED!</h4>
+<h4 id="_fills_removed">17.4.2. FILLs REMOVED!</h4>
 <div class="paragraph">
 <p>As indicated in <a href="#_fill_macros">FILL macros</a> the bootstrapping of FILL-macros has
 finally and fully been removed.</p>
@@ -5889,7 +6873,7 @@ text below is kept for historical reasons.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_rationale">16.4.3. Rationale</h4>
+<h4 id="_rationale">17.4.3. Rationale</h4>
 <div class="paragraph">
 <p><em>c-xref</em> uses a load of structures, and lists of them, that need to be
 created and initialized in a lot of places (such as the parsers). To
@@ -5912,7 +6896,7 @@ building and maintaining and to the structure of <em>c-xref</em>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_mechanism">16.4.4. Mechanism</h4>
+<h4 id="_mechanism">17.4.4. Mechanism</h4>
 <div class="paragraph">
 <p>The bootstrapping uses <em>c-xref</em>'s own capability to parse C-code and
 parse those structures and spit out filling macros, and some other
@@ -5963,7 +6947,7 @@ functions for each "class" instead of macros.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_compiler_defines">16.4.5. Compiler defines</h4>
+<h4 id="_compiler_defines">17.4.5. Compiler defines</h4>
 <div class="paragraph">
 <p>In <em>options.h</em> there are a number of definitions which somehow are
 sent to the compiler/preprocessor or used so that standard settings
@@ -5988,7 +6972,7 @@ completely replace the "programmed" ones in <code>options.c</code>?</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_enumtxt_generation_removed">16.4.6. EnumTxt generation REMOVED!</h4>
+<h4 id="_enumtxt_generation_removed">17.4.6. EnumTxt generation REMOVED!</h4>
 <div class="paragraph">
 <p>To be able to print the string values of enums the module generate.c
 (called when regime was RegimeGenerate) could also generate string
@@ -6001,7 +6985,7 @@ could do away with that whole "generate" functionality too.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_enumtxt">16.4.7. enumTxt</h4>
+<h4 id="_enumtxt">17.4.7. enumTxt</h4>
 <div class="paragraph">
 <p>For some cases the string representing the value of an Enum is needed.
 <code>c-xref</code> handles this using the "usual" 'parse code and generate' method.
@@ -6009,7 +6993,7 @@ The module <code>generate.c</code> does this generation too.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_include_paths">16.4.8. Include paths</h4>
+<h4 id="_include_paths">17.4.8. Include paths</h4>
 <div class="paragraph">
 <p>Also in <em>options.h</em> some standard-like include paths are added, but
 there is a better attempt in <em>getAndProcessGccOptions()</em> which uses
@@ -6020,7 +7004,7 @@ the compiler/preprocessor itself to figure out those paths.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_problems">16.4.9. Problems</h4>
+<h4 id="_problems">17.4.9. Problems</h4>
 <div class="paragraph">
 <p>Since at bootstrap there must exist FILL-macros with the correct field
 names this strategy is an obstacle to cleaning up the code since every
@@ -6036,7 +7020,7 @@ pass with BOOTSTRAP set, which it does.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_removing">16.4.10. Removing</h4>
+<h4 id="_removing">17.4.10. Removing</h4>
 <div class="paragraph">
 <p>I&#8217;ve started removing this step. In TODO.org I keep a hierarchical list
 of the actions to take (in a Mikado kind of style).</p>
@@ -6065,7 +7049,7 @@ CSV-file from that, and compare all rows.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_strtdef_h">16.4.11. strTdef.h</h4>
+<h4 id="_strtdef_h">17.4.11. strTdef.h</h4>
 <div class="paragraph">
 <p>The <code>strTdef.h</code> was generated using the option <code>-typedefs</code> as a part
 of the old <code>-task_regime_generate</code> strategy and generated typedef
@@ -6117,7 +7101,7 @@ included before the structs:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_fill_macros">16.5. FILL macros</h3>
+<h3 id="_fill_macros">17.5. FILL macros</h3>
 <div class="paragraph">
 <p><em><strong>The FILL macros are now fully replaced by native functions or some other,</strong></em>
 <em><strong>more refactoring-friendly, mechanism. Yeah!</strong></em>***</p>
@@ -6162,7 +7146,7 @@ which fields are actually necessary to set.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_caching_module">16.6. Caching Module</h3>
+<h3 id="_caching_module">17.6. Caching Module</h3>
 <div class="paragraph">
 <p><strong>The caching module described below has been archived as it is no longer part of the current architecture.</strong></p>
 </div>
@@ -6172,7 +7156,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_caching_system_architecture">16.7. Caching System Architecture</h3>
+<h3 id="_caching_system_architecture">17.7. Caching System Architecture</h3>
 <div class="paragraph">
 <p><strong>The caching system described below has been archived as it is no longer part of the current architecture.</strong></p>
 </div>
@@ -6180,7 +7164,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 <p>The c-xrefactory included a sophisticated caching system that enabled incremental parsing by caching parsed input streams, parser state, and file modification tracking. This optimization allowed for faster re-analysis when only portions of source files had changed.</p>
 </div>
 <div class="sect3">
-<h4 id="_core_design_principles">16.7.1. Core Design Principles</h4>
+<h4 id="_core_design_principles">17.7.1. Core Design Principles</h4>
 <div class="paragraph">
 <p><strong>Cache Point Model</strong>: The system placed strategic snapshots of parser state at external definition boundaries (functions, global variables, etc.). When files were re-processed, the system could validate cache integrity, recover from cache points, and resume parsing only from the first changed definition onward.</p>
 </div>
@@ -6199,7 +7183,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_key_components">16.7.2. Key Components</h4>
+<h4 id="_key_components">17.7.2. Key Components</h4>
 <div class="paragraph">
 <p><strong>Cache Point Management</strong> (<code>caching.c</code>):</p>
 </div>
@@ -6249,7 +7233,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_parser_integration">16.7.3. Parser Integration</h4>
+<h4 id="_parser_integration">17.7.3. Parser Integration</h4>
 <div class="paragraph">
 <p><strong>C Parser Integration</strong>: Both C and Yacc parsers placed cache points after each <code>external_definition</code>, but only when not processing include files (<code>includeStack.pointer == 0</code>).</p>
 </div>
@@ -6271,7 +7255,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_system_dependencies">16.7.4. System Dependencies</h4>
+<h4 id="_system_dependencies">17.7.4. System Dependencies</h4>
 <div class="paragraph">
 <p>The caching system was deeply integrated throughout the parsing pipeline:</p>
 </div>
@@ -6328,7 +7312,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </table>
 </div>
 <div class="sect3">
-<h4 id="_performance_characteristics_3">16.7.5. Performance Characteristics</h4>
+<h4 id="_performance_characteristics_3">17.7.5. Performance Characteristics</h4>
 <div class="paragraph">
 <p><strong>Cache Hit Scenarios</strong>:</p>
 </div>
@@ -6367,7 +7351,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_users">16.8. Users</h3>
+<h3 id="_users">17.8. Users</h3>
 <div class="paragraph">
 <p><strong>The <code>-user</code> option has now been removed, both in the tool and the
   editor adaptors, and with it one instance of a hashlist, the
@@ -6412,7 +7396,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-19 22:30:16 UTC
+Last updated 2025-11-19 23:10:53 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
