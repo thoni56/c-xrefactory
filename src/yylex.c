@@ -1816,14 +1816,16 @@ typedef enum {
 #define PAIR(left, right) ((left << 4) | right)
 
 static LexemTypeFlag classify_lexem(LexemCode code) {
-    if (code == IDENTIFIER) return LEX_ID;
+    if (code == IDENTIFIER || code == IDENT_NO_CPP_EXPAND) return LEX_ID;
     if (code == CONSTANT || code == LONG_CONSTANT) return LEX_CONST;
     return LEX_OTHER;
 }
 
 /* Collate IDENTIFIER ## IDENTIFIER -> concatenated identifier */
 static void collate_id_id(char **writeBufferWriteP, char *lhs, char **rhsP) {
-    char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
+    /* After ## collation, result is always a regular IDENTIFIER eligible for expansion */
+    putLexemCodeAt(IDENTIFIER, &lhs);
+    char *leftHandLexemString = lhs;
     *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
     assert(**writeBufferWriteP == 0); /* Ensure at end of string */
 
