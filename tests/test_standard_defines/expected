@@ -1,0 +1,5 @@
+[C-xref] active project: 'CURDIR'
+__STDC_VERSION__
+    @source.c:1:7
+a
+    @source.c:2:4
