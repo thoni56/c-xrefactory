@@ -90,6 +90,9 @@ make -C byacc-1.9 clean # Clean bundled yacc
 
 ## Development Workflow
 
+### Automated Testing
+**IMPORTANT**: This project uses file watches that automatically rebuild and run tests when code changes are detected. **Do NOT run `make` or test commands unless explicitly requested by the user.** Simply make code changes and wait for the user to report test results from the watches.
+
 ### Parser Regeneration
 When modifying grammar files:
 ```bash
