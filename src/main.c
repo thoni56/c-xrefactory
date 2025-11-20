@@ -265,6 +265,9 @@ static void discoverBuiltinIncludePaths(void) {
 
 // TODO: Separate out "Apple clang"...
 static char *clang_defines[] = {
+    /* Compiler builtin types - map to simple type to avoid parse issues */
+    "__builtin_va_list char",
+    /* Integer types */
     "__int8_t int",
     "__int16_t int",
     "__int32_t int",
@@ -309,7 +312,6 @@ static char *clang_defines[] = {
     "__darwin_time_t int",
     "__darwin_uid_t int",
     "__darwin_useconds_t int",
-    "__darwin_va_list void*",
     "__darwin_wint_t int",
     NULL
 };
@@ -335,7 +337,6 @@ static char *extra_defines[] = {
     "__attribute__(xxx)",
     "__alignof__(xxx) 8",
     "__typeof__(xxx) int",
-    "__builtin_va_list void",
     /* Map 128-bit builtin types to plain types for parsing */
     "__int128_t long",
     "__uint128_t unsigned long",
