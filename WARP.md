@@ -93,6 +93,24 @@ make -C byacc-1.9 clean # Clean bundled yacc
 ### Automated Testing
 **IMPORTANT**: This project uses file watches that automatically rebuild and run tests when code changes are detected. **Do NOT run `make` or test commands unless explicitly requested by the user.** Simply make code changes and wait for the user to report test results from the watches.
 
+### Commit Message Format
+Commit messages should follow this format:
+```
+[topic]: Brief summary (50 chars or less)
+
+Optional detailed explanation of the change, why it was needed,
+and what it fixes or improves.
+```
+
+Common topic prefixes:
+- `[fix]` - Bug fixes
+- `[feat]` - New features
+- `[refactor]` - Code restructuring without behavior changes
+- `[test]` - Test additions or modifications
+- `[docs]` - Documentation changes
+- `[build]` - Build system or dependency changes
+- `[perf]` - Performance improvements
+
 ### Parser Regeneration
 When modifying grammar files:
 ```bash
