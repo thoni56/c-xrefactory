@@ -275,6 +275,12 @@ if __name__ == "__main__":
         verbose = False
 
     symbols = []
+
+    # Check if path exists
+    if not os.path.exists(args.path):
+        eprint("ERROR: '%s' does not exist" % args.path)
+        sys.exit(1)
+
     if os.path.isdir(args.path):
         verify_directory(directory_name)
 
@@ -292,6 +298,7 @@ if __name__ == "__main__":
                 lines = skip_header(lines)
                 symbols += unpack_symbols(lines)
     else:
+        # Single file case (e.g., when -refnum=1)
         lines = read_lines_from("", args.path)
         lines = skip_header(lines)
         (files, lines) = unpack_file_lines(lines)

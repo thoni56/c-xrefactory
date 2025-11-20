@@ -1,17 +1,48 @@
 #!/bin/bash
 
-# This script takes a `cxref_dump` or `cxref_reader` output and finds a symbol ($1) and
-# extract all references to that symbol, one per line
+# This script extracts references for symbols from a CXref database
+# Usage: cxref_extract <symbol> [symbol...]
+# Extracts all matching symbols in a single pass from ./CXrefs
 
-awk -v search="$1" '/^[^[:space:]]/ {
-        if (found) next
-        if (section ~ search) {
-            printf "%s", section
-            found = 1
+SCRIPT_DIR="$(dirname "$0")"
+cxref_dir="./CXrefs"
+
+if [ $# -lt 1 ]; then
+    echo "Usage: cxref_extract <symbol> [symbol...]" >&2
+    exit 1
+fi
+
+# Build pattern string for awk (symbol1|symbol2|symbol3)
+pattern=$(IFS='|'; echo "$*")
+
+"$SCRIPT_DIR/cxref_reader" "$cxref_dir" | awk -v pattern="$pattern" '
+    BEGIN {
+        # Split pattern into array for exact matching
+        n = split(pattern, symbols, "|")
+        for (i = 1; i <= n; i++) {
+            wanted[symbols[i]] = 1
         }
-        section = ""  # Börja en ny sektion
+    }
+    /^[^[:space:]]/ {
+        # Output previous section if it matched
+        if (section != "" && matched) {
+            printf "%s", section
+        }
+        section = ""
+        matched = 0
+        # Check if this symbol name matches (first word of line)
+        symbol_name = $1
+        if (symbol_name in wanted) {
+            matched = 1
+        }
     }
     {
         section = section $0 "\n"
+    }
+    END {
+        # Handle the last section
+        if (section != "" && matched) {
+            printf "%s", section
+        }
     }
 '

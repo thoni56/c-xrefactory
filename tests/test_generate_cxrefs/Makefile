@@ -5,21 +5,7 @@ include ../Makefile.boilerplate
 
 ARGUMENTS = -xrefactory-II -create -errors -o output.tmp src
 
-$(TEST): c_xrefrc_for_single_cxref_file
-	rm -rf CXrefs
+$(TEST):
 	$(COMMAND) | grep -v progress > log
-	../../utils/cxref_reader CXrefs | ../../utils/cxref_extract vApplClass | wc -l | tr -d ' ' > output
+	../../utils/cxref_extract referenceItem.vApplClass > output
 	$(VERIFY)
-
-c_xrefrc_for_single_cxref_file: .c-xrefrc
-ifeq ($(shell uname), Darwin)
-	sed -i '' 's/refnum=10/refnum=1/' .c-xrefrc
-else
-	sed -i 's/refnum=10/refnum=1/' .c-xrefrc
-endif
-
-.PHONY: expected
-expected: COMMAND = ../../src/c-xref.orig
-expected:
-	$(COMMAND) | grep -v progress > /dev/null
-	awk '/vApplClass/ {print $$3}' CXrefs > expected

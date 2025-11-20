@@ -4,5 +4,5 @@ ARGUMENTS = initializer_parsing.c -create -o output
 
 $(TEST): .c-xrefrc
 	@$(COMMAND)
-	@../../utils/cxref_reader | ../../utils/cxref_extract E0 > output
+	@../../utils/cxref_extract E0 > output
 	@$(VERIFY)

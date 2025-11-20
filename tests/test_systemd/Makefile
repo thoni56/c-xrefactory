@@ -1,47 +1,54 @@
 include ../Makefile.boilerplate
 
-# Generate full cross-reference info for systemd
-# Will dump it but only compare if we run on "thoni64"
-# since cross-references includes system files
+# Generate cross-reference info for systemd and extract specific identifiers
+# This makes the test portable by only checking systemd-defined symbols
 
 # It requires 23854076 (~23M) bytes of cxMemory
 
 ARGUMENTS = -create -o systemd.log
 
-all:
+# Portable identifiers defined in systemd sources (not system headers)
+IDENTIFIERS = \
+	Manager \
+	Unit \
+	Hashmap \
+	Set \
+	Iterator \
+	UnitRef \
+	safe_close \
+	parse_boolean \
+	strv_free \
+	strv_find \
+	hashmap_free \
+	string_hash_func \
+	log_open \
+	log_set_target \
+	ManagerState \
+	UnitActiveState \
+	LogTarget \
+	streq \
+	STRV_FOREACH \
+	WHITESPACE
+
+$(TEST):
 	@if [ ! -d systemd ] ; then \
 		echo "Tests in \"systemd\": not activated, run 'make init', 'make clean' to deactivate" ; \
 	else \
 		rm -rf CXrefs output systemd.log log ; \
 		sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" c-xrefrc.tpl > .c-xrefrc ; \
 		../run-with-progress $(COMMAND) || exit 1 ; \
-		../../utils/cxref_reader | grep -v :0:0 > output ; \
-		if [ "$(shell uname -n)" = "thoni64" ]; then \
-			if diff -q output expected > /dev/null; then \
-				$(OK); \
-			else \
-				$(FAIL); \
-			fi; \
-		else \
-			$(OK); \
-		fi; \
+		../../utils/cxref_extract $(IDENTIFIERS) > output ; \
+		$(VERIFY) ; \
 	fi
 
 expected:
+	rm -rf CXrefs systemd.log
 	sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" c-xrefrc.tpl > .c-xrefrc
-	../../src/c-xref.orig -xrefrc .c-xrefrc -p $(PWD) -create .
-	cxref_reader > expected
-
-UNIT_COMMAND = c-xref -xrefrc .c-xrefrc -p $$(PWD) stripped_unit.h
-
-count:
-	gdb -ex 'br yylex.c:1929' -x count.gdb -ex 'run' --args $(UNIT_COMMAND)
-
-break:
-	gdb -ex 'br yylex.c:1929' -ex 'ignore 1 647' -ex 'run' --args $(UNIT_COMMAND)
+	../run-with-progress $(COMMAND)
+	../../utils/cxref_extract $(IDENTIFIERS) > expected
 
 trace: ARGUMENTS += -debug -log=log
-trace: all
+trace: $(TEST)
 
 init: systemd
 
