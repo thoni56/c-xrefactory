@@ -20,9 +20,6 @@ Some useful commands:
 
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
-* DOING Expand __VA_ARGS__ correctly
-  `test_cgreen_simplified` exhibits an error that causes Cgreen tests to generate syntax errors
-  because __VA_ARGS__ can't be expanded correctly (I think)
 * DOING Ensure systemd as a test
   It needs to generate the same information on every run so that we
   can repeatedly match the content.
@@ -240,6 +237,9 @@ There are both "-opt=value" and "-opt value" format options
   recognized (list e.g. at
   http://www.c-programming-simple-steps.com/c-keywords.html)
 
+* DONE Expand __VA_ARGS__ correctly
+  `test_cgreen_simplified` exhibits an error that causes Cgreen tests to generate syntax errors
+  because __VA_ARGS__ can't be expanded correctly (I think)
 * DONE __has_include_next() support
 ** TODO Cover openInclude() with test
 * DONE Redefine log levels: TRACE - show what's called & DEBUG - extra information => reorder them
