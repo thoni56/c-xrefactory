@@ -1649,6 +1649,13 @@ static void expandMacroBodyBufferIfOverflow(LexemBufferDescriptor *desc, char *w
 
 /* *********************************************************** */
 
+/* C99 §6.10.3.4p2: "If the name of the macro being replaced is found during
+ * this scan of the replacement list (not including the rest of the source
+ * file's preprocessing tokens), it is not replaced. Furthermore, if any nested
+ * replacements encounter the name of the macro being replaced, it is not
+ * replaced." This function checks if expanding macroBody would cause such
+ * cyclic replacement by checking if the macro name appears in the current
+ * expansion stack. */
 static bool cyclicCall(MacroBody *macroBody) {
     char *name = macroBody->name;
     log_debug("Testing for cyclic call, '%s' against current '%s'", name, currentInput.macroName);
@@ -1673,6 +1680,12 @@ static void prependMacroInput(LexemStream *argumentBuffer) {
 }
 
 
+/* C99 §6.10.3.1p1: "After the arguments for the invocation of a function-like
+ * macro have been identified, argument substitution takes place. A parameter in
+ * the replacement list, unless preceded by a # or ## preprocessing token or
+ * followed by a ## preprocessing token, is replaced by the corresponding
+ * argument after all macros contained therein have been expanded."
+ * This function performs that expansion of macros within an argument. */
 static void expandMacroArgument(LexemStream *argumentInput) {
     char *currentBufferP;
     LexemBufferDescriptor bufferDesc;
@@ -1712,6 +1725,8 @@ static void expandMacroArgument(LexemStream *argumentInput) {
                     /* Failed expansion... */
                     assert(macroSymbol != NULL);
                     if (macroSymbol->mbody != NULL && cyclicCall(macroSymbol->mbody)) {
+                        /* C99 §6.10.3.4p2: Mark this identifier to prevent replacement
+                         * during rescanning, as it would cause cyclic expansion. */
                         putLexemCodeAndAdvance(IDENT_NO_CPP_EXPAND, &savedBufferP);
                     }
                 }
@@ -1821,9 +1836,12 @@ static LexemTypeFlag classify_lexem(LexemCode code) {
     return LEX_OTHER;
 }
 
-/* Collate IDENTIFIER ## IDENTIFIER -> concatenated identifier */
+/* Collate IDENTIFIER ## IDENTIFIER -> concatenated identifier
+ * C99 §6.10.3.3p3: "The resulting token is available for further macro
+ * replacement." Therefore, the result must be a regular IDENTIFIER (not
+ * IDENT_NO_CPP_EXPAND) so it can be expanded during the rescan phase. */
 static void collate_id_id(char **writeBufferWriteP, char *lhs, char **rhsP) {
-    /* After ## collation, result is always a regular IDENTIFIER eligible for expansion */
+    /* Convert to IDENTIFIER to make result eligible for macro expansion */
     putLexemCodeAndAdvance(IDENTIFIER, &lhs);
     char *leftHandLexemString = lhs;
     *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
@@ -2004,7 +2022,10 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
     }
      if (rhsIsEmpty || rhsIsEndOfMarker) {
         log_debug("Entering empty RHS handling");
-        /* GNU extension: delete comma if pasting with empty __VA_ARGS__ */
+        /* GCC extension (not C99): When ## is used with __VA_ARGS__ and the
+         * variable arguments are empty, the comma before ## is deleted.
+         * E.g., #define debug(fmt, ...) printf(fmt, ## __VA_ARGS__)
+         * debug("hello") expands to printf("hello") not printf("hello",) */
         if (peekLexemCodeAt(*leftHandLexemP) == COMMA) {
             log_debug("Token pasting: deleting comma before empty __VA_ARGS__");
             /* Don't write the comma - rewind write pointer to before it */
@@ -2067,6 +2088,11 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
     return continueReadingFrom;
 }
 
+/* C99 §6.10.3.2 (The # operator): "Each occurrence of white space between the
+ * argument's preprocessing tokens becomes a single space character in the
+ * character string literal. White space before the first preprocessing token
+ * and after the last preprocessing token composing the argument is deleted."
+ * This function converts a macro argument to a string literal for # operator. */
 static void macroArgumentsToString(char *writeBuffer, LexemStream *lexInput) {
     char *lexemReadP, *lexemContentP, *stringWriteP;
     int value;
