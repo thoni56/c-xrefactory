@@ -325,11 +325,21 @@ static char *extra_defines[] = {
     /* C23 */
     "typeof(xxx) int",
     "_BitInt(x) int",
-    /* GNUisms: */
+    /* Clang feature-detection builtins (stub to false) */
+    "__has_feature(x) 0",
+    "__has_extension(x) 0",
+    "__has_attribute(x) 0",
+    "__has_c_attribute(x) 0",
+    "__building_module(x) 0",
+    /* GNUisms and compiler-specific builtin type fallbacks */
     "__attribute__(xxx)",
     "__alignof__(xxx) 8",
     "__typeof__(xxx) int",
     "__builtin_va_list void",
+    /* Map 128-bit builtin types to plain types for parsing */
+    "__int128_t long",
+    "__uint128_t unsigned long",
+    /* Darwin extensions that sometimes appear as macros */
     "__LEAF",
     "__leaf__",
     "__extension__",
