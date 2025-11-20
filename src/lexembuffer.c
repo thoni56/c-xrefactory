@@ -311,6 +311,13 @@ void putIntegerLexem(LexemBuffer *lb, LexemCode lexem, long unsigned value, Char
     putLexemInt(lb, value);
     putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
     putLexemInt(lb, fileOffsetFor(cb) - lexStartFilePos);
+    /* Store text representation for token pasting */
+    char text[32];
+    sprintf(text, "%lu", value);
+    for (char *p = text; *p; p++) {
+        putLexemChar(lb, *p);
+    }
+    putLexemChar(lb, '\0');
 }
 
 void putCompletionLexem(LexemBuffer *lb, CharacterBuffer *cb, int len) {

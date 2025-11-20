@@ -36,6 +36,7 @@ void skipExtraLexemInformationFor(LexemCode lexem, char **readPointerP) {
             getLexemIntAndAdvance(readPointerP);       /* value */
             getLexemPositionAndAdvance(readPointerP);  /* position */
             getLexemIntAndAdvance(readPointerP);       /* length */
+            *readPointerP = strchr(*readPointerP, '\0') + 1;  /* text */
         } else if (lexem == DOUBLE_CONSTANT || lexem == FLOAT_CONSTANT) {
             getLexemPositionAndAdvance(readPointerP);  /* position */
             getLexemIntAndAdvance(readPointerP);       /* length */
