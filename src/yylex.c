@@ -309,6 +309,8 @@ static void getExtraLexemInformationFor(LexemCode lexem, char **readPointerP, in
             getAndSetOutValueIfRequested(readPointerP, outValue);
             getAndSetOutPositionIfRequested(readPointerP, outPosition);
             getAndSetOutLengthIfRequested(readPointerP, outLength);
+            /* Skip over text string (used for token pasting) */
+            *readPointerP = strchr(*readPointerP, '\0') + 1;
         } else if (lexem == DOUBLE_CONSTANT || lexem == FLOAT_CONSTANT) {
             getAndSetOutPositionIfRequested(readPointerP, outPosition);
             getAndSetOutLengthIfRequested(readPointerP, outLength);
