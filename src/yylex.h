@@ -36,6 +36,9 @@ extern int getMacroBodyMemoryIndex(void);
 extern void setMacroBodyMemoryIndex(int index);
 
 extern void initAllInputs(void);
+
+/* Expose helper to mask a macro as undefined (mbody == NULL) */
+void undefineMacroByName(const char *name);
 extern void initInput(FILE *file, EditorBuffer *buffer, char *prepend, char *fileName);
 extern void addFileAsIncludeReference(int filenum);
 extern void pushInclude(FILE *file, EditorBuffer *buff, char *name, char *prepend);

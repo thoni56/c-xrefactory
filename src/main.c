@@ -463,6 +463,8 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         options.includeDirs = NULL;
         getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName, standardOptionsSectionName);
         discoverStandardDefines();
+        /* Disable Clang Blocks to avoid parsing '^' block prototypes in system headers */
+        undefineMacroByName("__BLOCKS__");
         discoverBuiltinIncludePaths();
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 

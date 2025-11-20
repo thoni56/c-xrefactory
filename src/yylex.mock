@@ -32,6 +32,10 @@ void popInclude(void) {
     mock();
 }
 
+void undefineMacroByName(const char *name) {
+    mock(name);
+}
+
 void addMacroDefinedByOption(char *opt) {
     mock(opt);
 }

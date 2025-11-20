@@ -754,6 +754,19 @@ static void addMacroToTabs(Symbol *symbol, char *name) {
     symbolTablePush(symbolTable, symbol, index);
 }
 
+void undefineMacroByName(const char *name) {
+    /* Mask an existing macro with an undefined entry (mbody == NULL).
+       If macro didn't exist, still push an undefined mask so defined(name) -> false. */
+    Symbol *existing = findMacroSymbol((char *)name);
+    Symbol *m = ppmAlloc(sizeof(Symbol));
+    if (existing) {
+        *m = makeMacroSymbol(existing->linkName, noPosition);
+    } else {
+        *m = makeMacroSymbol((char *)name, noPosition);
+    }
+    addMacroToTabs(m, (char *)name);
+}
+
 static void setMacroArgumentName(MacroArgumentTableElement *arg, void *at) {
     char **argTab;
     argTab = (char**)at;
