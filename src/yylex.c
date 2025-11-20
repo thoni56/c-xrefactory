@@ -1881,7 +1881,22 @@ static void collate_id_id(char **writeBufferWriteP, char *lhs, char **rhsP) {
     *rhsP = rhs; /* Update rhs position after consuming */
 }
 
-/* Collate IDENTIFIER ## CONSTANT -> identifier with constant appended */
+/* Collate IDENTIFIER ## CONSTANT -> identifier with constant appended
+ *
+ * C99/C11 6.10.3.3 (Token-pasting operator ##):
+ * - The result of pasting is a new preprocessing token formed by textual
+ *   concatenation of the operands. The operands are not macro-expanded
+ *   before pasting; rescan happens after pasting.
+ * - When one operand is an identifier and the other is a pp-number, the
+ *   result is the concatenation of the identifier text and the pp-number
+ *   text (including any suffixes like 'L', 'U', 'UL', etc.).
+ *
+ * Example from Darwin headers: __POSIX_C_DEPRECATED(200112L)
+ * expands via token pasting to ___POSIX_C_DEPRECATED_STARTING_200112L.
+ *
+ * We therefore append the constant's textual form, preserving at least the
+ * 'L' suffix for long constants (others can be added as needed).
+ */
 static void collate_id_const(char **writeBufferWriteP, char *lhs, char **rhsP) {
     char *leftHandLexemString = lhs + LEXEMCODE_SIZE;
     *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
@@ -1889,24 +1904,40 @@ static void collate_id_const(char **writeBufferWriteP, char *lhs, char **rhsP) {
 
     char *rhs = *rhsP;
     LexemCode rightHandLexem = getLexemCodeAndAdvance(&rhs);
+
+    /* Extract numeric value (and position for references) */
     int value;
-    getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, &value, NULL, NULL, false);
+    Position position;
+    getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, &value, &position, NULL, false);
 
     /* Get position from lefthand id, immediately after its string */
-    Position position = peekLexemPositionAt(*writeBufferWriteP + 1);
+    Position idPos = peekLexemPositionAt(*writeBufferWriteP + 1);
 
-    sprintf(*writeBufferWriteP, "%d", value); /* Concat the value to the end of the LHS ID */
-    cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
+    /* Append the numeric text, preserving 'L' suffix for LONG_CONSTANT */
+    char buf[64];
+    sprintf(buf, "%d", value);
+    if (rightHandLexem == LONG_CONSTANT) {
+        strcat(buf, "L");
+    }
+
+    strcpy(*writeBufferWriteP, buf);
+    cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, idPos);
 
     *writeBufferWriteP += strlen(*writeBufferWriteP);
     assert(**writeBufferWriteP == 0);
     (*writeBufferWriteP)++;
-    putLexemPositionAndAdvance(position, writeBufferWriteP);
+    putLexemPositionAndAdvance(idPos, writeBufferWriteP);
 
     *rhsP = rhs; /* Update rhs position after consuming */
 }
 
-/* Collate CONSTANT ## IDENTIFIER -> identifier with constant prepended */
+/* Collate CONSTANT ## IDENTIFIER -> identifier with constant prepended
+ *
+ * C99/C11 6.10.3.3: The token resulting from pasting is formed by textual
+ * concatenation. For a numeric constant on the left and an identifier on the
+ * right, the numeric text (including suffix where applicable) precedes the
+ * identifier text.
+ */
 static void collate_const_id(char **writeBufferWriteP, char **lhsP, char **rhsP, LexemCode leftHandLexem) {
     char *lhs = *lhsP;
     /* Retrieve value and position from the LHS CONSTANT */
@@ -2050,8 +2081,8 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
         return continueReadingFrom;
     }
 
-    /* Per C standard: operands of ## are NOT macro-expanded before pasting.
-     * Macro expansion happens during the rescan phase after pasting. */
+/* Per C99/C11 6.10.3.3: operands of ## are NOT macro-expanded before
+     * pasting. Macro expansion (rescan) happens after pasting. */
     char *lhs = *leftHandLexemP;
     char *rhs = *rightHandLexemP;
 
