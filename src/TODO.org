@@ -20,9 +20,6 @@ Some useful commands:
 
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
-* DOING Ensure systemd as a test
-  It needs to generate the same information on every run so that we
-  can repeatedly match the content.
 * DOING FEATURE: LSP Find Definition
 ** DOING Initiate server so it can handle OLO_PUSH
 ** TODO Create an answer from gathered information
@@ -37,9 +34,6 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
    or ask...
 ** DONE Place the variable declaration on the preceeding line
 ** DONE Basic extract variable
-* DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
-** DONE clang definition table
-** TRY Use compiler identification to set extra needed definitions for clang
 * TODO Testcase for modified included file
 One of the key features is to be able to understand when files needs to be
 rescanned. I'm not sure how that works, but we need tests for it.
@@ -227,6 +221,9 @@ There are both "-opt=value" and "-opt value" format options
   are as small as possible. This is why IWYU exists!! It means "Include
   What You Use" and is a Clang related project at
   https://github.com/include-what-you-use/include-what-you-use)
+* TODO Maybe: Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
+** DONE clang definition table
+** TRY Use compiler identification to set extra needed definitions for clang
 * TODO Remove opt.xref2 since edit server mode is always called with this, isn't it?
   If so, make xref2 the way c-xref talks if in server mode. But this should also
   apply for refactory mode, right?
@@ -237,6 +234,9 @@ There are both "-opt=value" and "-opt value" format options
   recognized (list e.g. at
   http://www.c-programming-simple-steps.com/c-keywords.html)
 
+* DONE Ensure systemd as a test
+  It needs to generate the same information on every run so that we
+  can repeatedly match the content.
 * DONE Expand __VA_ARGS__ correctly
   `test_cgreen_simplified` exhibits an error that causes Cgreen tests to generate syntax errors
   because __VA_ARGS__ can't be expanded correctly (I think)
