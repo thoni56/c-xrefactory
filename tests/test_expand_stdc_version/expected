@@ -1,0 +1,9 @@
+<information len=<n>>C-xrefactory project: CURDIR</information>
+<information len=<n>>CURDIR/source.c</information>
+<information len=<n>>Generating 'CURDIR/CXrefs'</information>
+<sync>
+__STDC_VERSION__
+    @source.c:0:0
+    @source.c:1:21
+source.c!version
+    @source.c:1:11
