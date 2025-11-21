@@ -1928,12 +1928,18 @@ static void collate_id_const(char **writeBufferWriteP, char *lhs, char **rhsP) {
     *rhsP = rhs; /* Update rhs position after consuming */
 }
 
-/* Collate CONSTANT ## IDENTIFIER -> identifier with constant prepended
+/* Collate CONSTANT ## IDENTIFIER -> constant with suffix, or identifier
  *
  * C99/C11 6.10.3.3: The token resulting from pasting is formed by textual
  * concatenation. For a numeric constant on the left and an identifier on the
- * right, the numeric text (including suffix where applicable) precedes the
- * identifier text.
+ * right, the result depends on whether the identifier is a valid numeric suffix.
+ *
+ * Common cases:
+ * - 42 ## L   → 42L (LONG_CONSTANT)
+ * - 42 ## U   → 42U (CONSTANT, unsigned)
+ * - 42 ## UL  → 42UL (LONG_CONSTANT, unsigned)
+ * - 42 ## LL  → 42LL (LONG_CONSTANT, long long)
+ * - 42 ## foo → 42foo (IDENTIFIER)
  */
 static void collate_const_id(char **writeBufferWriteP, char **lhsP, char **rhsP, LexemCode leftHandLexem) {
     char *lhs = *lhsP;
@@ -1945,14 +1951,37 @@ static void collate_const_id(char **writeBufferWriteP, char **lhsP, char **rhsP,
     getLexemCodeAndAdvance(&lhs);
     getExtraLexemInformationFor(leftHandLexem, &lhs, NULL, NULL, &position, NULL, &leftText, false);
 
-    /* Re-write to an IDENTIFIER */
-    putLexemCodeAndAdvance(IDENTIFIER, &leftHandLexemStart);
-    *writeBufferWriteP = leftHandLexemStart; /* We want to write the id next */
-
     char *rhs = *rhsP;
     LexemCode lexem = getLexemCodeAndAdvance(&rhs);
     char *rightHandLexemString = rhs; /* For an ID the string follows, then the position */
     skipExtraLexemInformationFor(lexem, &rhs);
+
+    /* Check if the identifier is a numeric suffix (L, U, UL, LL, ULL, etc.) */
+    bool isNumericSuffix = (strcmp(rightHandLexemString, "L") == 0 ||
+                           strcmp(rightHandLexemString, "U") == 0 ||
+                           strcmp(rightHandLexemString, "UL") == 0 ||
+                           strcmp(rightHandLexemString, "LU") == 0 ||
+                           strcmp(rightHandLexemString, "LL") == 0 ||
+                           strcmp(rightHandLexemString, "ULL") == 0 ||
+                           strcmp(rightHandLexemString, "LLU") == 0);
+
+    /* Determine result token type */
+    LexemCode resultLexem;
+    if (isNumericSuffix) {
+        /* Suffixes with L or LL make it a LONG_CONSTANT */
+        if (strchr(rightHandLexemString, 'L') != NULL) {
+            resultLexem = LONG_CONSTANT;
+        } else {
+            resultLexem = CONSTANT;  /* Just U suffix */
+        }
+    } else {
+        /* Not a standard suffix, register result as an identifier, altough it's not.. */
+        resultLexem = IDENTIFIER;
+    }
+
+    /* Re-write to the appropriate token type */
+    putLexemCodeAndAdvance(resultLexem, &leftHandLexemStart);
+    *writeBufferWriteP = leftHandLexemStart;
 
     /* Calculate where RHS starts in the concatenated result */
     int leftPartLength = strlen(leftText);
