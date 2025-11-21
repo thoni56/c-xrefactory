@@ -184,6 +184,7 @@ static TokenNamesInitTable tokenNameInitTableNonAnsi[] = {
     {"__int16",         INT,				LANG_C | LANG_YACC},
     {"__int32",         INT,				LANG_C | LANG_YACC},
     {"__int64",         INT,				LANG_C | LANG_YACC},
+    {"__int128",        INT,				LANG_C | LANG_YACC},
     {NULL,              0,					LANG_C}         /* sentinel*/
 };
 
