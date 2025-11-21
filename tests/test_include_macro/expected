@@ -1,0 +1,12 @@
+<information len=<n>>C-xrefactory project: CURDIR</information>
+<information len=<n>>CURDIR/source.c</information>
+<warning len=<n>><A HREF="file://CURDIR/source.c#2" len=<n>>source.c:2</A> Include <> after macro expansion not yet implemented, sorry
+	use "" instead
+</warning>
+<error len=<n>><A HREF="file://CURDIR/source.c#2" len=<n>>source.c:2</A> Syntax error on: .
+</error>
+<error len=<n>><A HREF="file://CURDIR/source.c#2" len=<n>>source.c:2</A> Syntax error on: >
+</error>
+<warning len=<n>><A HREF="file://CURDIR/source.c#5" len=<n>>source.c:5</A> Can't open file file.h : No such file or directory
+</warning>
+<information len=<n>>Generating 'CURDIR/CXrefs'</information>
