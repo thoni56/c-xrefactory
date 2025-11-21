@@ -1989,20 +1989,28 @@ static void collate_const_const(char **writeBufferWriteP, char *lhs, char **rhsP
         LexemCode leftHandLexem = getLexemCodeAndAdvance(&lhs);
         getExtraLexemInformationFor(leftHandLexem, &lhs, NULL, NULL, &leftPosition, NULL, &leftText, false);
 
-        /* Re-write as IDENTIFIER at the start position */
-        putLexemCodeAndAdvance(IDENTIFIER, &leftHandLexemStart);
-        *writeBufferWriteP = leftHandLexemStart;
-
         /* Get right operand */
         LexemCode rightHandLexem = getLexemCodeAndAdvance(&rhs);
         char *rightText;
         Position rightPosition;
 
         getExtraLexemInformationFor(rightHandLexem, &rhs, NULL, NULL, &rightPosition, NULL, &rightText, false);
-        /* Calculate where RHS starts */
-        int leftPartLength = strlen(leftText);
 
-        sprintf(*writeBufferWriteP, "%s%s", leftText, rightText);
+        /* Concatenate the constant texts */
+        char concatenated[256];
+        sprintf(concatenated, "%s%s", leftText, rightText);
+
+        /* CONSTANT ## CONSTANT produces a CONSTANT (or LONG_CONSTANT if either was LONG) */
+        LexemCode resultLexem = (leftHandLexem == LONG_CONSTANT || rightHandLexem == LONG_CONSTANT)
+                                ? LONG_CONSTANT : CONSTANT;
+
+        /* Re-write as the appropriate constant type at the start position */
+        putLexemCodeAndAdvance(resultLexem, &leftHandLexemStart);
+        *writeBufferWriteP = leftHandLexemStart;
+
+        /* Write the concatenated text */
+        strcpy(*writeBufferWriteP, concatenated);
+        int leftPartLength = strlen(leftText);
 
         /* Use left position for reference tracking */
         cxAddCollateReference(*writeBufferWriteP, *writeBufferWriteP + leftPartLength, leftPosition);
