@@ -43,6 +43,7 @@ VERIFY = cmp output expected ; \
 		diff output expected ; \
 		exit 1 ; \
 	else \
+		rm -f output ; \
 		$(OK) ; \
 		exit 0 ; \
 	fi

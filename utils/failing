@@ -1,4 +1,5 @@
 #!/bin/bash
+# List test directories that have an output file (indicating a failed test)
 
 # Find the root of the project (c-xrefactory)
 PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo "")
@@ -7,16 +8,8 @@ if [[ -z "$PROJECT_ROOT" || "$(basename "$PROJECT_ROOT")" != "c-xrefactory" ]]; 
   exit 1
 fi
 
-# Look for test directories
 for dir in "$PROJECT_ROOT/tests/test_"*; do
-  if [[ -d "$dir" && ! -f "$dir/.suspended" ]]; then
-    # Check if 'output' and 'expected' files exist and compare them
-    if [[ -f "$dir/output" && -f "$dir/expected" ]]; then
-      if ! diff -q "$dir/output" "$dir/expected" >/dev/null; then
-        # Convert the absolute path to a relative path
-        relative_path=$(realpath --relative-to="$PWD" "$dir")
-        echo "$relative_path"
-      fi
+    if [ -d "$dir" ] && [ -f "$dir/output" ]; then
+        basename "$dir"
     fi
-  fi
 done
