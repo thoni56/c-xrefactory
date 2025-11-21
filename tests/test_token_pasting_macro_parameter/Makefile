@@ -1,8 +1,6 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = unit.c -o -log
-
 $(TEST):
 	$(COMMAND) > output.tmp 2>&1
 	$(NORMALIZE) output.tmp > output
