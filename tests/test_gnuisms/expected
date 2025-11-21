@@ -15,8 +15,10 @@ __attribute__
     @source.c:0:0
     @source.c:2:0
 __builtin_assume
+    @source.c:0:0
     @source.c:47:4
 __builtin_expect
+    @source.c:0:0
     @source.c:28:8
 __builtin_memcpy
     @source.c:43:4

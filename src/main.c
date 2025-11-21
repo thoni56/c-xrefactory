@@ -345,7 +345,9 @@ static char *extra_defines[] = {
     "__leaf__",
     "__extension__",
     "__builtin_types_compatible_p(x, y) 0",
-    "__builtin_offsetof(x, y) 0"
+    "__builtin_offsetof(x, y) 0",
+    "__builtin_expect(x, y) (x)",
+    "__builtin_assume(x)"
 };
 
 static void addFallbackDefinitions() {
