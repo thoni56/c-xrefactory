@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2025-11-20">
+<meta name="author" content="v{VERSION} - Generated 2025-11-21">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-11-20</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-11-21</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -3976,12 +3976,6 @@ behaviour of <code>c-xref</code>. Some tests actually do only that, they wouldn&
 really count as tests.</p>
 </div>
 <div class="paragraph">
-<p>Most acceptance tests are hacks at this point, Make-scripts tweaked
-until it produces some expected output. But at least they get the
-coverage up (working our way up to the mid 60%), and more are added as
-bugs are found so they provide increasing confidence when developing.</p>
-</div>
-<div class="paragraph">
 <p>There are two basic strategies for the tests:</p>
 </div>
 <div class="ulist">
@@ -3995,7 +3989,7 @@ bugs are found so they provide increasing confidence when developing.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>Some tests do not even test its output and only provide coverage.</p>
+<p>Some tests do not even test its output in any meaningful way and only provide coverage.</p>
 </div>
 <div class="paragraph">
 <p>Some tests do a very bad job at verifying, either because my
@@ -4010,7 +4004,67 @@ the understanding grows.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_general_setup">11.10.3. General Setup</h4>
+<h4 id="_test_structure">11.10.3. Test Structure</h4>
+<div class="paragraph">
+<p>Tests live in the <code>tests</code> directory and are auto-discovered by name: any directory starting with <code>test_</code> will be recognized as a test case.</p>
+</div>
+<div class="paragraph">
+<p>Each test typically includes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>source.c</code> (or similar) - the code under test</p>
+</li>
+<li>
+<p><code>expected</code> - the expected output</p>
+</li>
+<li>
+<p><code>Makefile</code> - test runner that uses the boilerplate</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Most tests use <code>tests/Makefile.boilerplate</code> which provides common macros:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-makefile hljs" data-lang="makefile">include ../Makefile.boilerplate
+
+$(TEST):
+	$(COMMAND) source.c -o output.tmp
+	$(NORMALIZE) output.tmp &gt; output
+	$(VERIFY)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The key macros are:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>$(COMMAND)</code></dt>
+<dd>
+<p>Runs <code>c-xref</code> with standard options and the test&#8217;s <code>.c-xrefrc</code></p>
+</dd>
+<dt class="hdlist1"><code>$(NORMALIZE)</code></dt>
+<dd>
+<p>Removes timestamps and other variable output</p>
+</dd>
+<dt class="hdlist1"><code>$(VERIFY)</code></dt>
+<dd>
+<p>Compares <code>output</code> with <code>expected</code>, removes <code>output</code> on success</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>When <code>$(VERIFY)</code> passes, the <code>output</code> file is removed. This means you can easily identify failing tests by looking for test directories that still contain an <code>output</code> file. The <code>utils/failing</code> script lists these.</p>
+</div>
+<div class="paragraph">
+<p>To suspend a test (skip it during test runs), create a <code>.suspended</code> file in the test directory.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_general_setup">11.10.4. General Setup</h4>
 <div class="paragraph">
 <p>Since all(?) <code>c-xref</code> operation rely on an options file which must
 contain absolute file paths (because the server runs as a separate
@@ -4029,7 +4083,7 @@ references. This way it is easy to ensure that all tests have updated
 </div>
 </div>
 <div class="sect3">
-<h4 id="_edit_server_driver_tests">11.10.4. Edit Server Driver Tests</h4>
+<h4 id="_edit_server_driver_tests">11.10.5. Edit Server Driver Tests</h4>
 <div class="paragraph">
 <p>Since many operations are performed from the editor, and the editor
 starts an "edit server" process, many tests need to emulate this
@@ -4049,7 +4103,7 @@ Interface](./Design:-Editor-Interface)).</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_creating_more_edit_server_tests">11.10.5. Creating More Edit Server Tests</h4>
+<h4 id="_creating_more_edit_server_tests">11.10.6. Creating More Edit Server Tests</h4>
 <div class="paragraph">
 <p>You can relatively easy re-create a sequence of interactions by using the
 sandboxed Emacs in <code>tests/sandboxed_emacs</code>.</p>
@@ -7396,7 +7450,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-20 14:36:18 UTC
+Last updated 2025-11-21 15:39:09 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
