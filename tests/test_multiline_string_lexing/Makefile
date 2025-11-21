@@ -5,6 +5,5 @@ ARGUMENTS = source.c
 # This test will always succeed unless c-xref fails, it used to hang on unterminated macro
 $(TEST):
 	@$(COMMAND) -o output.tmp
-	@$(NORMALIZE) output.tmp >> output
-	@$(OK)
-	@exit 0
+	@$(NORMALIZE) output.tmp > output
+	@$(VERIFY)

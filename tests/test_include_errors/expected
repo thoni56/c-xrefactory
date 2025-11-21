@@ -1,0 +1,5 @@
+<information len=<n>>C-xrefactory project: CURDIR</information>
+<information len=<n>>CURDIR/source.c</information>
+<warning len=<n>><A HREF="file://CURDIR/source.c#5" len=<n>>source.c:5</A> Can't open file somefile : No such file or directory
+</warning>
+<information len=<n>>Generating 'CURDIR/CXrefs'</information>

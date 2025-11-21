@@ -9,7 +9,7 @@ if [[ -z "$PROJECT_ROOT" || "$(basename "$PROJECT_ROOT")" != "c-xrefactory" ]]; 
 fi
 
 for dir in "$PROJECT_ROOT/tests/test_"*; do
-    if [ -d "$dir" ] && [ -f "$dir/output" ]; then
+    if [ -d "$dir" ] && [ -f "$dir/output" ] && [ ! -f "$dir/.suspended" ]; then
         basename "$dir"
     fi
 done
