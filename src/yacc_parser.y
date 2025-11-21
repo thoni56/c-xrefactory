@@ -802,6 +802,7 @@ Save_index
 declaration
     : Save_index declaration_specifiers ';'     { savedWorkMemoryIndex = $1.data; }
     | Save_index init_declarations ';'          { savedWorkMemoryIndex = $1.data; }
+    | Save_index static_assert_declaration ';'  { savedWorkMemoryIndex = $1.data; }
     | error
         {
 #if YYDEBUG
@@ -1057,6 +1058,11 @@ struct_declaration
             completeDeclarator($2.data, symbol);
         }
         $$.data = $3.data;
+        savedWorkMemoryIndex = $1.data;
+    }
+    | Save_index static_assert_declaration ';'  {
+        /* static_assert in struct - just ignore it */
+        $$.data = NULL;
         savedWorkMemoryIndex = $1.data;
     }
     | error                                             {
