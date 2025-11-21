@@ -235,17 +235,12 @@ In the `tests` directory you will find tests that exercise the external
 behaviour of `c-xref`. Some tests actually do only that, they wouldn't
 really count as tests.
 
-Most acceptance tests are hacks at this point, Make-scripts tweaked
-until it produces some expected output. But at least they get the
-coverage up (working our way up to the mid 60%), and more are added as
-bugs are found so they provide increasing confidence when developing.
-
 There are two basic strategies for the tests:
 
 - run a `c-xref` command, catch its output and verify
 - run a series of command using the EDIT_SERVER_DRIVER, collect output and results and verify
 
-Some tests do not even test its output and only provide coverage.
+Some tests do not even test its output in any meaningful way and only provide coverage.
 
 Some tests do a very bad job at verifying, either because my
 understanding at that time was very low, or because it is hard to
@@ -255,6 +250,38 @@ actually point to the correct place.
 
 Hopefully this will change as the code gets into a better state and
 the understanding grows.
+
+==== Test Structure
+
+Tests live in the `tests` directory and are auto-discovered by name: any directory starting with `test_` will be recognized as a test case.
+
+Each test typically includes:
+
+- `source.c` (or similar) - the code under test
+- `expected` - the expected output
+- `Makefile` - test runner that uses the boilerplate
+
+Most tests use `tests/Makefile.boilerplate` which provides common macros:
+
+[source,makefile]
+----
+include ../Makefile.boilerplate
+
+$(TEST):
+	$(COMMAND) source.c -o output.tmp
+	$(NORMALIZE) output.tmp > output
+	$(VERIFY)
+----
+
+The key macros are:
+
+`$(COMMAND)`:: Runs `c-xref` with standard options and the test's `.c-xrefrc`
+`$(NORMALIZE)`:: Removes timestamps and other variable output
+`$(VERIFY)`:: Compares `output` with `expected`, removes `output` on success
+
+When `$(VERIFY)` passes, the `output` file is removed. This means you can easily identify failing tests by looking for test directories that still contain an `output` file. The `utils/failing` script lists these.
+
+To suspend a test (skip it during test runs), create a `.suspended` file in the test directory.
 
 ==== General Setup
 
