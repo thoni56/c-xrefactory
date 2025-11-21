@@ -1263,6 +1263,10 @@ initializer
     | '{' initializer_list ',' '}'  {
         $$.data = $2.data;
     }
+      /* GNU extension: empty initializer */
+    | '{' '}'  {
+        $$.data = NULL;
+    }
     | error             {
         $$.data = NULL;
 #if YYDEBUG
