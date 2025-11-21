@@ -4,15 +4,11 @@ include ../Makefile.boilerplate
 
 
 $(TEST): CXrefs
-	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) >output.tmp 2>&1
-	@$(NORMALIZE) output.tmp > output
-	@if grep -q "ERROR.*commons.c:" output > /dev/null ; then \
-		$(FAIL) ; \
-		exit 1 ; \
-	else \
-		$(OK) ; \
-		exit 0 ; \
-	fi
+	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) >output.tmp1 2>&1
+	$(NORMALIZE) output.tmp1 > output.tmp
+	@-grep -q "ERROR.*commons.c:" output.tmp > output
+	rm output.tmp1
+	$(VERIFY)
 
 trace: EXTRA = \'-debug\'
 trace: $(TEST)

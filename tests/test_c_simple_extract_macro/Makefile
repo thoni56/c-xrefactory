@@ -8,16 +8,7 @@ $(TEST):
 	@# Then a rename - as the editor would
 	@-$(EDIT_SERVER_DRIVER) commands2.input $(EXTRA) > output2.tmp
 	@$(NORMALIZE) output2.tmp >> output
-	@diff output expected > /dev/null ; \
-	if [ $$? -ne 0 ] ; then \
-		$(FAIL) ; \
-		echo "diff output expected" ; \
-		diff output expected ; \
-		exit 1 ; \
-	else \
-		$(OK) ; \
-		exit 0 ; \
-	fi
+	$(VERIFY)
 
 trace: EXTRA = \'-debug\'
 trace: $(TEST)
