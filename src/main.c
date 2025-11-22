@@ -321,6 +321,8 @@ static CompilerDependentDefines compiler_dependent_defines[] = {{"clang", clang_
 
 
 static char *extra_defines[] = {
+    /* C99 */
+    "_Pragma(x)",
     /* C11 */
     "_Alignas(x)",
     "_Alignof(x) 8",
@@ -346,8 +348,11 @@ static char *extra_defines[] = {
     "__extension__",
     "__builtin_types_compatible_p(x, y) 0",
     "__builtin_offsetof(x, y) 0",
+    "offsetof(x, y) 0",
     "__builtin_expect(x, y) (x)",
-    "__builtin_assume(x)"
+    "__builtin_assume(x)",
+    "__builtin_va_arg(v, t) (*(t*)0)",
+    "__builtin_va_list void"
 };
 
 static void addFallbackDefinitions() {
