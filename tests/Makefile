@@ -23,8 +23,8 @@ void:
 # It will assume that if there is a directory starting with "test_"
 # it is a directory where you can run tests using "make"
 
-QUICK_TESTS = $(shell find . -maxdepth 1 -name 'test_*' -type d ! -exec test -e {}/.slow \; -print)
-SLOW_TESTS = $(shell find . -maxdepth 1 -name 'test_*' -type d -exec test -e {}/.slow \; -print)
+QUICK_TESTS = $(shell find . -maxdepth 1 -name 'test_*' -type d -exec test -e {}/Makefile \; ! -exec test -e {}/.slow \; -print)
+SLOW_TESTS = $(shell find . -maxdepth 1 -name 'test_*' -type d -exec test -e {}/Makefile \; -exec test -e {}/.slow \; -print)
 ALL_TESTS = $(QUICK_TESTS) $(SLOW_TESTS)
 
 
