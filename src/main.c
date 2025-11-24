@@ -317,11 +317,6 @@ static char *clang_defines[] = {
 };
 
 static char *gcc_defines[] = {
-    /* GCC extended float types (TS 18661-3 / C23) - not auto-discovered */
-    "_Float128 long double",
-    "_Float64 double",
-    "_Float32 float",
-    "_Float16 float",
     /* GCC type inference extension (used in stdatomic.h macros) */
     "__auto_type int",
     NULL
@@ -334,7 +329,7 @@ static CompilerDependentDefines compiler_dependent_defines[] = {
 };
 
 
-static char *extra_defines[] = {
+static char *fallback_defines[] = {
     /* C99 */
     "_Pragma(x)",
     /* C11 */
@@ -343,6 +338,10 @@ static char *extra_defines[] = {
     /* C23 */
     "typeof(xxx) int",
     "_BitInt(x) int",
+    "_Float128 long double",
+    "_Float64 double",
+    "_Float32 float",
+    "_Float16 float",
     /* Clang feature-detection builtins (stub to false) */
     "__has_feature(x) 0",
     "__has_extension(x) 0",
@@ -373,9 +372,9 @@ static char *extra_defines[] = {
 
 static void addFallbackDefinitions() {
     /* Also define some faked standard base types and GNU-isms */
-    for (int i = 0; i < (int)sizeof(extra_defines) / sizeof(extra_defines[0]); i++) {
-        log_debug("Add definition '%s'", extra_defines[i]);
-        addMacroDefinedByOption(extra_defines[i]);
+    for (int i = 0; i < (int)sizeof(fallback_defines) / sizeof(fallback_defines[0]); i++) {
+        log_debug("Add definition '%s'", fallback_defines[i]);
+        addMacroDefinedByOption(fallback_defines[i]);
     }
 
     for (int c = 0; c < sizeof(compiler_dependent_defines) / sizeof(CompilerDependentDefines); c++) {
