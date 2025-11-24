@@ -342,6 +342,8 @@ static char *extra_defines[] = {
     /* Map 128-bit builtin types to plain types for parsing */
     "__int128_t long",
     "__uint128_t unsigned long",
+    /* glibc internal type placeholders (used in math.h) */
+    "_Mdouble_ double",
     /* Darwin extensions that sometimes appear as macros */
     "__LEAF",
     "__leaf__",
@@ -480,10 +482,10 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         tmpIncludeDirs = options.includeDirs;
         options.includeDirs = NULL;
         getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName, standardOptionsSectionName);
+        discoverBuiltinIncludePaths();  /* Sets compiler_identification, must be before discoverStandardDefines */
         discoverStandardDefines();
         /* Disable Clang Blocks to avoid parsing '^' block prototypes in system headers */
         undefineMacroByName("__BLOCKS__");
-        discoverBuiltinIncludePaths();
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 
         if (options.mode != ServerMode && inputFileName == NULL) {
