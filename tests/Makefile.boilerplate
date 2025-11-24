@@ -62,11 +62,14 @@ run:
 # editors will automatically read the correct file as if it was in the
 # users HOME.
 #
-# TODO: we should check for a c-xrefrc.tpl in the test directory and
-# use that instead, currently they have to do this in the Makefile if
-# the standard does not work
-.c-xrefrc: ../c-xrefrc.tpl
-	@sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" ../c-xrefrc.tpl > .c-xrefrc
+# Uses local c-xrefrc.tpl if it exists, otherwise falls back to ../c-xrefrc.tpl
+# wildcard makes the local template optional - expands to empty if it doesn't exist
+.c-xrefrc: ../c-xrefrc.tpl $(wildcard c-xrefrc.tpl)
+	@if [ -f c-xrefrc.tpl ]; then \
+		sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" c-xrefrc.tpl > .c-xrefrc ; \
+	else \
+		sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" ../c-xrefrc.tpl > .c-xrefrc ; \
+	fi
 
 clean:
 	@-rm -rf CXrefs .c-xrefrc out* log *.log .cov/*

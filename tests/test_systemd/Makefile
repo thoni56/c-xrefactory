@@ -33,13 +33,11 @@ IDENTIFIERS = \
 $(TEST):
 	@if [ ! -d systemd ] ; then \
 		echo "Tests in \"systemd\": not activated, run 'make init', 'make clean' to deactivate" ; \
-	else \
-		rm -rf CXrefs output systemd.log log ; \
-		sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" c-xrefrc.tpl > .c-xrefrc ; \
-		../run-with-progress $(COMMAND) || exit 1 ; \
-		../../utils/cxref_extract $(IDENTIFIERS) > output ; \
-		$(VERIFY) ; \
 	fi
+	sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" c-xrefrc.tpl > .c-xrefrc
+	../run-with-progress $(COMMAND) || exit 1
+	../../utils/cxref_extract $(IDENTIFIERS) > output
+	$(VERIFY)
 
 expected:
 	rm -rf CXrefs systemd.log
