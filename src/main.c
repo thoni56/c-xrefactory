@@ -316,8 +316,22 @@ static char *clang_defines[] = {
     NULL
 };
 
+static char *gcc_defines[] = {
+    /* GCC extended float types (TS 18661-3 / C23) - not auto-discovered */
+    "_Float128 long double",
+    "_Float64 double",
+    "_Float32 float",
+    "_Float16 float",
+    /* GCC type inference extension (used in stdatomic.h macros) */
+    "__auto_type int",
+    NULL
+};
+
 typedef struct {char *compiler; char **defines;} CompilerDependentDefines;
-static CompilerDependentDefines compiler_dependent_defines[] = {{"clang", clang_defines}};
+static CompilerDependentDefines compiler_dependent_defines[] = {
+    {"clang", clang_defines},
+    {"gcc", gcc_defines}
+};
 
 
 static char *extra_defines[] = {
@@ -365,7 +379,7 @@ static void addFallbackDefinitions() {
     }
 
     for (int c = 0; c < sizeof(compiler_dependent_defines) / sizeof(CompilerDependentDefines); c++) {
-        if (strstr(compiler_dependent_defines[c].compiler, compiler_identification) != NULL) {
+        if (strstr(compiler_identification, compiler_dependent_defines[c].compiler) != NULL) {
             log_debug("Adding compiler specific defines for '%s'",
                       compiler_dependent_defines[c].compiler);
             for (char **d = compiler_dependent_defines[c].defines; *d != NULL; d++) {
