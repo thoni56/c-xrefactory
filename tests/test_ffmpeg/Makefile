@@ -10,17 +10,22 @@ ARGUMENTS = -create -o ffmpeg.log
 all: .c-xrefrc
 	if [ ! -d ffmpeg ] ; then \
 		echo "Tests in '$(TEST)': not activated, run 'make init', 'make clean' to deactivate" ; \
-	else \
-		rm -rf CXrefs ; \
-		../run-with-progress $(COMMAND) || exit 1 ; \
-		grep $(PWD) CXrefs/XFiles | grep \\.c | wc -l | tr -ds ' ' '' > output ; \
-		$(VERIFY) ; \
+		exit 0 ; \
 	fi
+	../run-with-progress $(COMMAND) || exit 1
+	grep $(PWD) CXrefs/XFiles | grep \\.c | wc -l | tr -ds ' ' '' > output
+	$(VERIFY)
 
 trace: ARGUMENTS += -debug -log=trace
-trace: all
+trace:
+	$(COMMAND)
+
+errors: ARGUMENTS += -errors
+errors:
+	$(COMMAND) &>errors
 
 init: ffmpeg .c-xrefrc
+	cd ffmpeg ; ./configure --disable-x86asm
 
 ffmpeg:
 	tar zxf ffmpeg.tgz
