@@ -284,7 +284,7 @@ static char *identifierReference_static(void) {
             sprintf(tempString, "<A HREF=\"file://%s#%d\" %s=%ld>%s</A>", fileName, currentFile.lineNumber, PPCA_LEN,
                     (unsigned long)strlen(fileNameAndLineNumber), fileNameAndLineNumber);
         } else {
-            sprintf(tempString, "%s:%d ", simpleFileName(getRealFileName_static(currentFile.fileName)),
+            sprintf(tempString, "%s:%d ", getRealFileName_static(currentFile.fileName),
                     currentFile.lineNumber);
         }
         int length = strlen(tempString);
