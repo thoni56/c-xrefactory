@@ -5,7 +5,7 @@
 #
 # Any arguments to this script will be used as c-xref options
 #
-$@ > output.run &
+$@ > run.stdout 2>run.stderr &
 PROCID=$!
 while kill -0 $PROCID > /dev/null 2>&1 ; do sleep 1 ; printf "." ; done
 echo ""
