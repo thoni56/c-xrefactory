@@ -15,7 +15,7 @@
 
 extern SymbolTable *symbolTable;
 
-#ifndef _SYMTAB_
+#ifndef IN_SYMBOLTABLE_C
 #undef HASH_TAB_NAME
 #undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE

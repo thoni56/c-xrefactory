@@ -1,4 +1,4 @@
-#define _SYMTAB_
+#define IN_SYMBOLTABLE_C
 #include "symboltable.h"
 #include "log.h"
 
@@ -41,3 +41,4 @@ void addSymbolToTable(SymbolTable *table, Symbol *symbol) {
     symbolTableIsMember(table, symbol, &i, NULL);
     symbolTablePush(table, symbol, i);
 }
+
