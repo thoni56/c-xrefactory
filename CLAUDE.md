@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**IMPORTANT: Path reminder** - The directory is called "Utveckling" (Swedish), NOT "Entwickling" (German). Always use the correct spelling in paths.
+
 ## Project Overview
 
 c-xrefactory is a refactoring browser and code navigation tool for C and Yacc files, integrated with GNU Emacs. It uses a client-server architecture where an Emacs plugin communicates with a C backend server that maintains a symbol database and performs refactoring operations.
