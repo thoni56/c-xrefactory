@@ -6,7 +6,7 @@ ARGUMENTS = -xrefactory-II -create -errors $(TRACE) -log=log -o output.tmp -prun
 
 $(TEST): .c-xrefrc
 	$(COMMAND) > output.tmp
-	grep tests CXrefs/XFiles | wc -l > output
+	grep $(PWD) CXrefs/XFiles | wc -l | tr -d ' ' > output
 	$(VERIFY)
 
 trace: TRACE = -debug

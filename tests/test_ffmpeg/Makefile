@@ -13,7 +13,7 @@ all: .c-xrefrc
 		exit 0 ; \
 	fi
 	../run-with-progress $(COMMAND) || exit 1
-	grep $(PWD) CXrefs/XFiles | grep \\.c | wc -l | tr -ds ' ' '' > output
+	grep $(PWD) CXrefs/XFiles | grep \\.c | wc -l | tr -d ' ' > output
 	$(VERIFY)
 
 trace: ARGUMENTS += -debug -log=trace
