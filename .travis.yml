@@ -28,6 +28,7 @@ script:
       fi
     - make ci                   # = unit, build & test (even slow)
     - cd ..
+    - src/c-xref -about
 
 branches:
     except:
