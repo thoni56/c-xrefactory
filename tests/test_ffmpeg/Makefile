@@ -25,7 +25,6 @@ errors:
 	$(COMMAND) &>errors
 
 init: ffmpeg .c-xrefrc
-	cd ffmpeg ; ./configure --disable-x86asm
 
 ffmpeg:
 	tar zxf ffmpeg.tgz
