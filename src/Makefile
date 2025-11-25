@@ -240,6 +240,8 @@ options_config.h: options_config.h.in generate_options_config.sh $(TAG_FILE)
 	./generate_options_config.sh
 options.c: options_config.h
 
+# Always check if git tag has changed
+.PHONY: $(TAG_FILE)
 $(TAG_FILE):
 	@echo "$$(git describe --abbrev=0 --tags)" > $@.tmp
 	@if [ ! -f $@ ] || ! cmp -s $@.tmp $@; then mv $@.tmp $@; else rm $@.tmp; fi
