@@ -331,6 +331,7 @@ static CompilerDependentDefines compiler_dependent_defines[] = {
 
 static char *fallback_defines[] = {
     /* C99 */
+    "_Bool int",
     "_Pragma(x)",
     /* C11 */
     "_Alignas(x)",

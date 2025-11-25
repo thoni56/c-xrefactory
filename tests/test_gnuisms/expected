@@ -8,6 +8,9 @@ SQUARE
     @source.c:0:0
     @source.c:60:8
     @source.c:62:12
+_Bool
+    @source.c:0:0
+    @source.c:31:4
 __alignof__
     @source.c:0:0
     @source.c:5:16
