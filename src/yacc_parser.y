@@ -531,6 +531,11 @@ compound_literal                /* Added in C99 */
         $$.data.typeModifier = $2.data;
         $$.data.reference = NULL;
     }
+    /* GNU extension: empty compound literal */
+    | '(' type_name ')' '{' '}'     {
+        $$.data.typeModifier = $2.data;
+        $$.data.reference = NULL;
+    }
     ;
 
 optional_comma
