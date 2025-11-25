@@ -139,6 +139,7 @@ if __name__ == "__main__":
                 if p.poll() == None:	# no error code yet? So still alive...
                     send_command(p, "-exit")
                     end_of_options(p)
+                sys.stdout.flush()
                 sys.exit(0)
 
             if command == '<sync>':
