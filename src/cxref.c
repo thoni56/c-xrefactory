@@ -1346,7 +1346,6 @@ static void setSelectedVisibleItems(SymbolsMenu *menu, ServerOperation command, 
         oovisible = OO_RENAME_FILTER_LEVEL;
         ooselected = RENAME_SELECTION_OO_BITS;
     } else {
-        //&oovisible = options.ooChecksBits;
         oovisible = menuFilterOoBits[filterLevel];
         ooselected = DEFAULT_SELECTION_OO_BITS;
     }

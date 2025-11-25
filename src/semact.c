@@ -165,9 +165,6 @@ Result findStructureMemberSymbol(Symbol **resultingSymbolP, StructMemberFindInfo
         assert(info);
         structure = info->currentStructure;
         if (structure != NULL && structure->structSpec->memberSearchCounter == info->memberFindCount) {
-            // to avoid multiple pass through the same super-class ??
-            //&fprintf(dumpOut,":%d==%d --> skipping class
-            //%s\n",structure->u.structSpec->memberSearchCounter,info->memberFindCount,structure->linkName);
             goto nextStruct;
         }
         if (structure != NULL)
