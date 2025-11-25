@@ -35,8 +35,6 @@ typedef struct editorMemoryBlock {
    allocated memory, why keep it in this array? */
 static EditorMemoryBlock *editorMemory[MAX_EDITOR_MEMORY_BLOCK_SIZE_BITS];
 
-#include "editorbuffertable.h"
-
 
 void editorInit(void) {
     initEditorBufferTable();
