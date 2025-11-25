@@ -1,0 +1,11 @@
+TEST
+    @source.c:0:0
+    @source.c:1:8
+    @source.c:2:4
+    @source.c:3:7
+    @source.c:4:8
+    @source.c:5:4
+bar
+    @source.c:4:13
+foo
+    @source.c:1:13
