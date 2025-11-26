@@ -1,0 +1,193 @@
+/*
+
+  .c template for hashed table of lists
+
+  See hashtab.tc for usage.
+
+  TOOD: unsure about exact difference between hashtab and hashlist...
+
+  A HASHLIST hashes an index and might then have a list of items on that index
+
+*/
+
+#include <string.h> // For memset()
+#include <stdbool.h>
+
+#include "commons.h"
+#include "hash.h"
+#include "stackmemory.h"
+
+
+#define GLUE(a,b) a ## b
+#define CONCAT(a,b) GLUE(a,b)
+
+/* Create a function PREFIX from TAB_NAME */
+#define HASH_FUN_PREFIX HASH_TAB_NAME
+
+
+void CONCAT(HASH_FUN_PREFIX,NoAllocInit)(HASH_TAB_TYPE *table, int size) {
+    table->size = size;
+    memset(table->tab, 0, sizeof(HASH_ELEM_TYPE *)*table->size);
+}
+
+
+void CONCAT(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *table, int size) {
+    table->tab = stackMemoryAlloc(size*sizeof(HASH_ELEM_TYPE *));
+    CONCAT(HASH_FUN_PREFIX,NoAllocInit)(table, size);
+}
+
+
+/* Use NULL for position and/or foundMemberPointer if you are not interested in them */
+bool CONCAT(HASH_FUN_PREFIX,IsMember)(
+    HASH_TAB_TYPE *table,
+    HASH_ELEM_TYPE *element,
+    int *position,              /* OUT */
+    HASH_ELEM_TYPE **foundMemberPointer /* OUT */
+) {
+    unsigned index;
+
+    index = HASH_FUN(element);
+    index = index % table->size;
+    if (position)
+        *position = index;
+    assert(table->tab != NULL);
+    for (HASH_ELEM_TYPE *e = table->tab[index]; e!=NULL; e=e->next) {
+        if (HASH_ELEM_EQUAL(e, element)) {
+            if (foundMemberPointer)
+                *foundMemberPointer = e;
+            return true;
+        }
+    }
+    if (foundMemberPointer)
+        *foundMemberPointer = NULL;
+    return false;
+}
+
+
+bool CONCAT(HASH_FUN_PREFIX,NextMember)(
+    HASH_ELEM_TYPE *element,
+    HASH_ELEM_TYPE **foundMemberPointer
+) {
+    assert(*foundMemberPointer);
+    for (HASH_ELEM_TYPE *e = (*foundMemberPointer)->next; e!=NULL; e=e->next) {
+        if (HASH_ELEM_EQUAL(e, element)) {
+            *foundMemberPointer = e;
+            return true;
+        }
+    }
+    *foundMemberPointer = NULL;
+    return false;
+}
+
+
+bool CONCAT(HASH_FUN_PREFIX,Delete)(
+    HASH_TAB_TYPE *table,
+    HASH_ELEM_TYPE *element
+) {
+    unsigned index;
+
+    index = HASH_FUN(element);
+    index = index % table->size;
+    assert(table->tab!=NULL);
+    for (HASH_ELEM_TYPE **e= &(table->tab[index]); *e!=NULL; e= &((*e)->next)) {
+        if (HASH_ELEM_EQUAL((*e), element)) {
+            *e = (*e)->next;
+            return true;
+        }
+    }
+    return false;
+}
+
+
+bool CONCAT(HASH_FUN_PREFIX,DeleteExact)(
+    HASH_TAB_TYPE *table,
+    HASH_ELEM_TYPE *element
+) {
+    unsigned index;
+
+    index = HASH_FUN(element);
+    index = index % table->size;
+    assert(table->tab!=NULL);
+    for (HASH_ELEM_TYPE **e= &(table->tab[index]); *e!=NULL; e= &((*e)->next)) {
+        if ((*e) == element) {
+            *e = (*e)->next;
+            return true;
+        }
+    }
+    return false;
+}
+
+
+void CONCAT(HASH_FUN_PREFIX,Push) (
+    HASH_TAB_TYPE *table,
+    HASH_ELEM_TYPE *element,
+    int position
+) {
+    element->next = table->tab[position];
+    table->tab[position] = element;
+}
+
+
+void CONCAT(HASH_FUN_PREFIX,SetLast) (
+    HASH_TAB_TYPE *table,
+    HASH_ELEM_TYPE *element,
+    int position
+) {
+    HASH_ELEM_TYPE **e;
+    for (e= &(table->tab[position]); *e!=NULL; e= &((*e)->next))
+        ;
+    *e = element;
+    element->next = NULL;
+}
+
+
+int CONCAT(HASH_FUN_PREFIX,Add) (
+    HASH_TAB_TYPE *table,
+    HASH_ELEM_TYPE *element
+) {
+    HASH_ELEM_TYPE *origin;
+    int position;
+    if (!CONCAT(HASH_FUN_PREFIX,IsMember)(table,element,&position,&origin)) {
+        CONCAT(HASH_FUN_PREFIX,Push) (table,element,position);
+    }
+    return position;
+}
+
+
+void CONCAT(HASH_FUN_PREFIX,Map)(
+    HASH_TAB_TYPE *table,
+    void (*fun)(HASH_ELEM_TYPE *)
+) {
+    for (int i=0; i<table->size; i++) {
+        for (HASH_ELEM_TYPE *element=table->tab[i]; element!=NULL; element=element->next)
+            (*fun)(element);
+    }
+}
+
+
+void CONCAT(HASH_FUN_PREFIX,MapWithPointer)(
+    HASH_TAB_TYPE *table,
+    void (*fun)(HASH_ELEM_TYPE *, void *),
+    void *a
+) {
+    for (int i=0; i<table->size; i++) {
+        for (HASH_ELEM_TYPE *element=table->tab[i]; element!=NULL; element=element->next)
+            (*fun)(element, a);
+    }
+}
+
+
+void CONCAT(HASH_FUN_PREFIX,MapWithIndex)(
+    HASH_TAB_TYPE *table,
+    void (*fun)(int)
+) {
+    for (int i=0; i<table->size; i++) {
+        if (table->tab[i] != NULL)
+            (*fun)(i);
+    }
+}
+
+
+/* Local variables: */
+/* Mode: c          */
+/* End:             */
