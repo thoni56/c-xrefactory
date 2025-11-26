@@ -1,6 +1,7 @@
 #define IN_SYMBOLTABLE_C
 #include "symboltable.h"
 #include "log.h"
+#include "memory.h"
 
 
 #define HASH_FUN(element) hashFun(element->name)
@@ -40,5 +41,23 @@ void addSymbolToTable(SymbolTable *table, Symbol *symbol) {
 
     symbolTableIsMember(table, symbol, &i, NULL);
     symbolTablePush(table, symbol, i);
+}
+
+void recoverSymbolTableMemory(void) {
+    /* Remove symbols that point to freed ppmMemory.
+     * This is called after ppmMemory.index has been reset to clear file-local macros
+     * (including header guards) while preserving predefined macros.
+     */
+    for (int i = 0; i < symbolTable->size; i++) {
+        Symbol **pp = &symbolTable->tab[i];
+        while (*pp != NULL) {
+            if (ppmIsFreedPointer(*pp)) {
+                /* Symbol itself points to freed memory - remove it */
+                *pp = (*pp)->next;
+                continue;
+            }
+            pp = &(*pp)->next;
+        }
+    }
 }
 

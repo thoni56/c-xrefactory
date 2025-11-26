@@ -453,6 +453,8 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
     char *fileName;
     StringList *tmpIncludeDirs;
     bool inputOpened;
+    /* Memory marker for predefined macros - equivalent to cache.points[0].ppmMemoryIndex */
+    static int ppmMemoryResetMarker = 0;
 
     ENTER();
 
@@ -502,6 +504,9 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         undefineMacroByName("__BLOCKS__");
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 
+        /* Save ppmMemory state after predefined macros - cache point 0 */
+        ppmMemoryResetMarker = ppmMemory.index;
+
         if (options.mode != ServerMode && inputFileName == NULL) {
             inputOpened = false;
             goto fini;
@@ -519,6 +524,14 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         initTokenNamesTables();
 
     } else {
+        /* We are processing another file - clear file-local macros (header guards, etc.)
+         * This is equivalent to the old recoverCachePointZero() that was removed in f17b0864.
+         * Reset ppmMemory to saved point and remove symbols pointing to freed memory. */
+        if (ppmMemoryResetMarker > 0) {
+            ppmMemory.index = ppmMemoryResetMarker;
+            recoverSymbolTableMemory();
+        }
+
         deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
         inputOpened = computeAndOpenInputFile();
@@ -672,7 +685,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         cxFreeUntil(tempAllocated);
     }
 
-    // enclosed in cache point, because of persistent #define in XrefEdit. WTF?
     int argcount = 0;
     inputFileName = getNextArgumentFile(&argcount);
     char fileName[MAX_FILE_NAME_SIZE];

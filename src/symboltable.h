@@ -26,5 +26,6 @@ extern int  addToSymbolTable(Symbol *symbol);
 extern void addSymbolToTable(SymbolTable *table, Symbol *symbol);
 extern Symbol *getSymbol(int index);
 extern int getNextExistingSymbol(int index);
+extern void recoverSymbolTableMemory(void);
 
 #endif

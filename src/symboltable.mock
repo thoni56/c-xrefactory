@@ -67,3 +67,7 @@ int addToSymbolTable(Symbol *symbol) { return (int)mock(symbol); }
 void addSymbolToTable(SymbolTable *symbolTable, Symbol *symbol) { /* TODO remove table argument? */
     mock(symbol, symbolTable);
 }
+
+void recoverSymbolTableMemory(void) {
+    mock();
+}
