@@ -2,17 +2,13 @@
 
 include ../Makefile.boilerplate
 
-$(TEST): .c-xrefrc
-	@sed 's%  $(CURDIR)%  ../../src%' .c-xrefrc > .c-xrefrc.tmp
-	@sed 's/=10/=1/' .c-xrefrc.tmp > .c-xrefrc
-	@../run-with-progress ../../src/c-xref -p $(CURDIR) -create $(TRACE) -o c-xref.log
-	if [ "`grep '<progress>' output | wc -l`" -gt 50 ] ; then \
-	  $(OK) ; \
-	  exit 0 ; \
-	else \
-	  $(FAIL) ; \
-	  exit 1 ; \
-	fi
+ARGUMENTS = -create -errors -filetrace $(TRACE) -o c-xref.log
 
-trace: TRACE=-debug
+$(TEST): .c-xrefrc
+	@../run-with-progress $(COMMAND) || exit -1
+
+original: CXREF = ../../src/c-xref.orig
+original: $(TEST)
+
+trace: TRACE=-debug -log=trace
 trace: $(TEST)
