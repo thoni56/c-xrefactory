@@ -499,13 +499,24 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         options.includeDirs = NULL;
         getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName, standardOptionsSectionName);
         discoverBuiltinIncludePaths();  /* Sets compiler_identification, must be before discoverStandardDefines */
+
+        /* Reset ppmMemory to saved marker BEFORE discovering defines for subsequent files */
+        if (ppmMemoryResetMarker > 0) {
+            log_debug("Resetting ppmMemory for file %s: index=%d -> %d", fileName, ppmMemory.index, ppmMemoryResetMarker);
+            ppmMemory.index = ppmMemoryResetMarker;
+            recoverSymbolTableMemory();
+        }
+
         discoverStandardDefines();
         /* Disable Clang Blocks to avoid parsing '^' block prototypes in system headers */
         undefineMacroByName("__BLOCKS__");
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 
-        /* Save ppmMemory state after predefined macros - cache point 0 */
-        ppmMemoryResetMarker = ppmMemory.index;
+        /* Save ppmMemory state after predefined macros - cache point 0 (only once!) */
+        if (ppmMemoryResetMarker == 0) {
+            ppmMemoryResetMarker = ppmMemory.index;
+            log_debug("Saved ppmMemoryResetMarker = %d (first file: %s)", ppmMemoryResetMarker, fileName);
+        }
 
         if (options.mode != ServerMode && inputFileName == NULL) {
             inputOpened = false;
@@ -528,6 +539,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
          * This is equivalent to the old recoverCachePointZero() that was removed in f17b0864.
          * Reset ppmMemory to saved point and remove symbols pointing to freed memory. */
         if (ppmMemoryResetMarker > 0) {
+            log_debug("Resetting ppmMemory for file %s: index=%d -> %d", fileName, ppmMemory.index, ppmMemoryResetMarker);
             ppmMemory.index = ppmMemoryResetMarker;
             recoverSymbolTableMemory();
         }
