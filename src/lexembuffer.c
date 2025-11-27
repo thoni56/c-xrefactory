@@ -207,14 +207,49 @@ void putLexemCodeWithPosition(LexemBuffer *lb, LexemCode lexem, Position positio
  * first character not part of the identifier */
 int putIdentifierLexem(LexemBuffer *lexemBuffer, CharacterBuffer *characterBuffer, int ch) {
     int column;
+    bool startsWithDollar = (ch == '$');
+    int length = 0;
 
     column = columnPosition(characterBuffer);
     putLexemCode(lexemBuffer, IDENTIFIER);
     do {
         putLexemChar(lexemBuffer, ch);
+        length++;
         ch = getChar(characterBuffer);
     } while (isalpha(ch) || isdigit(ch) || ch == '_'
              || (ch == '$' && LANGUAGE(LANG_YACC)));
+
+    /* Special handling for yacc typed references: $<type>$ or $<type>N */
+    if (startsWithDollar && length == 1 && ch == '<' && LANGUAGE(LANG_YACC)) {
+        /* We just consumed a single '$' and next is '<' - this is a typed reference */
+        /* Consume '<' */
+        putLexemChar(lexemBuffer, ch);
+        ch = getChar(characterBuffer);
+
+        /* Consume type name until '>' */
+        while (ch != '>' && ch != 0 && ch != '\n') {
+            putLexemChar(lexemBuffer, ch);
+            ch = getChar(characterBuffer);
+        }
+
+        /* Consume '>' */
+        if (ch == '>') {
+            putLexemChar(lexemBuffer, ch);
+            ch = getChar(characterBuffer);
+
+            /* Check for trailing '$' or digits: $<type>$ or $<type>N */
+            if (ch == '$') {
+                putLexemChar(lexemBuffer, ch);
+                ch = getChar(characterBuffer);
+            } else {
+                while (isdigit(ch)) {
+                    putLexemChar(lexemBuffer, ch);
+                    ch = getChar(characterBuffer);
+                }
+            }
+        }
+    }
+
     putLexemChar(lexemBuffer, 0);
     putLexemPositionFields(lexemBuffer, characterBuffer->fileNumber, characterBuffer->lineNumber, column);
 
