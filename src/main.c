@@ -430,6 +430,9 @@ static void discoverStandardDefines(void) {
         addMacroDefinedByOption(&line[strlen("#define")+1]);
     }
 
+    /* Disable special Clang Blocks to avoid parsing '^' block prototypes in Clang system headers */
+    undefineMacroByName("__BLOCKS__");
+
     LEAVE();
  }
 
@@ -508,8 +511,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         }
 
         discoverStandardDefines();
-        /* Disable Clang Blocks to avoid parsing '^' block prototypes in system headers */
-        undefineMacroByName("__BLOCKS__");
+
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 
         /* Save ppmMemory state after predefined macros - cache point 0 (only once!) */
