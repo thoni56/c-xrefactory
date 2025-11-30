@@ -2,7 +2,7 @@
 
 include ../Makefile.boilerplate
 
-ARGUMENTS = -create -errors $(TRACE) -o c-xref.log
+ARGUMENTS = -create -errors $(TRACE) -o c-xref.log -filetrace
 
 $(TEST): .c-xrefrc
 	$(COMMAND) >output 2>&1
