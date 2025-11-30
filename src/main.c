@@ -38,7 +38,7 @@
 static char previousStandardOptionsFile[MAX_FILE_NAME_SIZE];
 static char previousStandardOptionsSection[MAX_FILE_NAME_SIZE];
 static time_t previousStandardOptionsFileModificationTime;
-static int previousLanguage;
+static Language previousLanguage;
 static int previousPass;
 
 
@@ -448,6 +448,41 @@ static void getAndProcessXrefrcOptions(char *optionsFileName, char *optionsSecti
     }
 }
 
+/* Memory reset struct */
+static struct {
+    bool checkPointed;
+    CodeBlock *topBlock;
+    CodeBlock topBlockContent;
+    int macroBodyMemoryIndex;
+    int ppmMemoryIndex;
+    int cxMemoryIndex;
+} checkPoint = { .checkPointed = false };
+
+void saveMemoryCheckPoint(void) {
+    log_debug("Saving checkpoint: ppmMemoryIndex=%d", ppmMemory.index);
+
+    checkPoint.ppmMemoryIndex = ppmMemory.index;
+    checkPoint.topBlock = currentBlock;
+    checkPoint.topBlockContent = *currentBlock;
+    checkPoint.checkPointed = true;
+    checkPoint.cxMemoryIndex = cxMemory.index;
+}
+
+void restoreMemoryCheckPoint(void) {
+    log_debug("Restoring checkpoint: topBlock=%p, ppmMemoryIndex=%d",
+              checkPoint.topBlock, checkPoint.ppmMemoryIndex);
+
+    assert(checkPoint.checkPointed);
+
+    ppmMemory.index = checkPoint.ppmMemoryIndex;
+    //currentBlock = checkPoint.topBlock;
+    //*currentBlock = checkPoint.topBlockContent;
+    recoverMemoryFromFrameAllocations();
+    recoverSymbolTableMemory();
+    recoverMemoryFromIncludeList();
+}
+
+
 bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command-line options
                               int nargc, char **nargv, Language *outLanguage) {
     char standardOptionsFileName[MAX_FILE_NAME_SIZE];
@@ -456,8 +491,6 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
     char *fileName;
     StringList *tmpIncludeDirs;
     bool inputOpened;
-    /* Memory marker for predefined macros - equivalent to cache.points[0].ppmMemoryIndex */
-    static int ppmMemoryResetMarker = 0;
 
     ENTER();
 
@@ -480,8 +513,13 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         || previousStandardOptionsFileModificationTime != modifiedTime       /* or the options file has changed */
         || previousLanguage != *outLanguage                                  /* or a different language? */
     ) {
+        log_debug("initializeFileProcessing - if-branch with firstPass=%d", *firstPass);
+        log_debug("Memories: ppmMemory.index=%d, currentBlock=%p", ppmMemory.index, currentBlock);
         if (*firstPass) {
             *firstPass = false;
+        } else {
+            log_debug("Restoring memory checkpoint");
+            restoreMemoryCheckPoint();
         }
 
         initCwd();
@@ -503,22 +541,9 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName, standardOptionsSectionName);
         discoverBuiltinIncludePaths();  /* Sets compiler_identification, must be before discoverStandardDefines */
 
-        /* Reset ppmMemory to saved marker BEFORE discovering defines for subsequent files */
-        if (ppmMemoryResetMarker > 0) {
-            log_debug("Resetting ppmMemory for file %s: index=%d -> %d", fileName, ppmMemory.index, ppmMemoryResetMarker);
-            ppmMemory.index = ppmMemoryResetMarker;
-            recoverSymbolTableMemory();
-        }
-
         discoverStandardDefines();
 
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
-
-        /* Save ppmMemory state after predefined macros - cache point 0 (only once!) */
-        if (ppmMemoryResetMarker == 0) {
-            ppmMemoryResetMarker = ppmMemory.index;
-            log_debug("Saved ppmMemoryResetMarker = %d (first file: %s)", ppmMemoryResetMarker, fileName);
-        }
 
         if (options.mode != ServerMode && inputFileName == NULL) {
             inputOpened = false;
@@ -536,15 +561,12 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
 
         initTokenNamesTables();
 
+        saveMemoryCheckPoint();
+
     } else {
-        /* We are processing another file - clear file-local macros (header guards, etc.)
-         * This is equivalent to the old recoverCachePointZero() that was removed in f17b0864.
-         * Reset ppmMemory to saved point and remove symbols pointing to freed memory. */
-        if (ppmMemoryResetMarker > 0) {
-            log_debug("Resetting ppmMemory for file %s: index=%d -> %d", fileName, ppmMemory.index, ppmMemoryResetMarker);
-            ppmMemory.index = ppmMemoryResetMarker;
-            recoverSymbolTableMemory();
-        }
+        log_debug("initializeFileProcessing - else-branch with firstPass=%d", *firstPass);
+        log_debug("Memories: ppmMemory.index=%d, currentBlock=%p", ppmMemory.index, currentBlock);
+        restoreMemoryCheckPoint();
 
         deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
@@ -558,7 +580,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         if (options.xref2) {
             ppcGenRecord(PPC_INFORMATION, getRealFileName_static(inputFileName));
         } else {
-            log_info("Processing '%s'", getRealFileName_static(inputFileName));
+            log_info("Processing file '%s'", getRealFileName_static(inputFileName));
         }
     }
 

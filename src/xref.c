@@ -158,7 +158,7 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
         originalCommandLineFileNumber = originalFileNumber;
         if (inputOpened) {
             if (options.fileTrace)
-                fprintf(stderr, "processInputFile: '%s\n", currentFile.fileName);
+                fprintf(stderr, "Processing input file: '%s\n", currentFile.fileName);
             parseCurrentInputFile(currentLanguage);
             closeCharacterBuffer(&currentFile.characterBuffer);
             inputOpened = false;
