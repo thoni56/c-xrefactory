@@ -5,8 +5,9 @@ include ../Makefile.boilerplate
 ARGUMENTS = -create -errors -filetrace $(TRACE) -o c-xref.log
 
 $(TEST): .c-xrefrc
-	@../run-with-progress $(COMMAND) || exit -1
-	grep ERROR run.stderr | wc -l | tr -d ' ' > output
+	@../run-with-progress $(COMMAND) || exit
+	-grep ERROR run.stderr > output.tmp
+	cat output.tmp | wc -l | tr -d ' ' > output
 	$(VERIFY)
 
 trace: TRACE=-debug -log=trace
