@@ -451,33 +451,32 @@ static void getAndProcessXrefrcOptions(char *optionsFileName, char *optionsSecti
 /* Memory reset struct */
 static struct {
     bool checkPointed;
-    CodeBlock *topBlock;
-    CodeBlock topBlockContent;
-    int macroBodyMemoryIndex;
+    int firstFreeStackMemoryIndex;
     int ppmMemoryIndex;
-    int cxMemoryIndex;
 } checkPoint = { .checkPointed = false };
 
 void saveMemoryCheckPoint(void) {
     log_debug("Saving checkpoint: ppmMemoryIndex=%d", ppmMemory.index);
 
+    assert(currentBlock == (CodeBlock*)stackMemory);  // Must be at outermost level
+    assert(currentBlock->outerBlock == NULL);         // No nested blocks
+
     checkPoint.ppmMemoryIndex = ppmMemory.index;
-    checkPoint.topBlock = currentBlock;
-    checkPoint.topBlockContent = *currentBlock;
+    checkPoint.firstFreeStackMemoryIndex = currentBlock->firstFreeIndex;
+
     checkPoint.checkPointed = true;
-    checkPoint.cxMemoryIndex = cxMemory.index;
 }
 
 void restoreMemoryCheckPoint(void) {
-    log_debug("Restoring checkpoint: topBlock=%p, ppmMemoryIndex=%d",
-              checkPoint.topBlock, checkPoint.ppmMemoryIndex);
+    log_debug("Restoring checkpoint: firstFreeStackMemoryIndex=%p, ppmMemoryIndex=%d",
+              checkPoint.firstFreeStackMemoryIndex, checkPoint.ppmMemoryIndex);
 
     assert(checkPoint.checkPointed);
 
+    initOuterCodeBlock();
+    currentBlock->firstFreeIndex = checkPoint.firstFreeStackMemoryIndex;
+
     ppmMemory.index = checkPoint.ppmMemoryIndex;
-    //currentBlock = checkPoint.topBlock;
-    //*currentBlock = checkPoint.topBlockContent;
-    recoverMemoryFromFrameAllocations();
     recoverSymbolTableMemory();
     recoverMemoryFromIncludeList();
 }
