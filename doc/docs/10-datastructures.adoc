@@ -18,34 +18,8 @@ connection between the symbols and the references?!?
 
 So what are these actually?
 
-[plantuml, structures, png]
-....
-class Symbol {
-char *name
-Position position
-SymbolBits bits
-}
-Symbol o-- Symbol : next
-
-class SymbolList {
-}
-SymbolList o-- Symbol : symbol
-SymbolList o-- SymbolList : next
-
-class ReferencesItem {
-char *name
-ReferencesBits bits
-}
-ReferencesItem o-- Reference : references
-ReferencesItem o-- ReferencesItem : next
-
-class Reference {
-Usage usage
-Position position
-}
-Reference o-- Reference : next
-
-....
+.Symbol and Reference Data Structures
+image::diagrams/symbol-structures.svg[Symbol structures]
 
 === Files and Buffers
 
@@ -53,27 +27,8 @@ Many strange things are going on with reading files so that is not completely un
 
 Here is an initial attempt at illustrating how some of the file and text/lexem buffers are related.
 
-[plantuml, buffer, png]
-....
-class FileDescriptor {
-}
-FileDescriptor o-- LexemBuffer : lexemBuffer
-
-class LexemBuffer {
-  Lexem[] lexemStream
-}
-LexemBuffer o-- CharacterBuffer : buffer
-
-class CharacterBuffer {
-  char[] : chars
-}
-
-class LexemStream {
-  char* : macroName
-  InputType : inputType
-}
-LexemStream --> LexemBuffer : beginningOfBuffer, endOfBuffer, currentLexemP (into .lexemStream)
-....
+.File Descriptor and Buffer Relationships
+image::diagrams/buffer-structures.svg[Buffer structures]
 
 NOTE: It would be nice if the `LexemStream` structure could point to a
 `LexemBuffer` instead of holding separate pointers which are
