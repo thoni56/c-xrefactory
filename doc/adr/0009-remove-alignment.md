@@ -4,9 +4,7 @@ Date: 2022-12-18
 
 ## Status
 
-Accepted
-
-And implemented.
+Implemented (completed 2022-12-18)
 
 ## Deciders
 

@@ -40,6 +40,16 @@ The roadmap is guided by these principles:
 
 **Diagnostic Additions**: Added nesting level and stack index tracking in `src/xref.c` to monitor memory usage patterns and detect unbalanced block nesting.
 
+==== Caching System Removal
+
+**Decision**: Removed the complex lexem stream caching mechanism to enable architectural refactoring.
+
+**Impact**: Performance regression for large multi-file parsing (6.4× slowdown on test_ffmpeg/test_systemd), but enables critical modernization work.
+
+**Rationale**: The ~300 lines of cache code were deeply intertwined with parsing and memory management, blocking refactoring efforts. Removal provides clearer code structure at the cost of temporary performance regression.
+
+**See**: link:../adr/0012-remove-lexem-stream-caching.md[ADR-0012: Remove Lexem Stream Caching] for detailed rationale, trade-offs, and future optimization strategies.
+
 === Short-term Goals (Next 3-6 Months)
 
 ==== Test Coverage Expansion
@@ -130,57 +140,101 @@ These goals are detailed in <<16-proposed-refactorings.adoc#,Chapter 16: Propose
 * Week 3-4: Migrate token processing and expansion logic
 * Week 5-6: Integration, testing, and documentation
 
-==== 3. Unified Symbol Database Architecture
+==== 3. Header Re-parsing Optimization
 
-*Reference*: <<16-proposed-refactorings.adoc#unified-symbol-database,Proposed Refactorings - Unified Symbol Database Architecture>>
+*Priority*: MEDIUM (Addresses caching removal performance regression)
 
-*Priority*: HIGH (Enables true on-demand LSP)
+*Problem*: After removing the lexem stream cache, each source file re-parses all its included headers. For projects like ffmpeg with 2616 files including ~30-50 common headers each, this creates 78,000-130,000 redundant parsing operations.
 
-*Rationale*: Current artificial distinction between "file-based" and "on-demand" modes creates unnecessary complexity. Both Emacs and LSP clients want the same thing: up-to-date symbol information.
+*Proposed Solutions* (in order of implementation):
 
-*Key Insight*: The `.cx` files are a **persistent cache** of analysis results, not a fundamental requirement. c-xrefactory should provide smart on-demand behavior that:
+**Phase 1: Incremental `-create` Mode**
 
-* Always ensures information is current using existing dependency tracking
-* Scans incrementally only what's needed, when needed
-* Uses `.cx` files for optimization, not as a prerequisite
-
-*Impact*:
-
-* **Eliminates cold start** - no upfront `-create` required
-* **Single code path** for Emacs and LSP
-* **Transparent caching** - `.cx` files automatically maintained
-* **Leverages existing logic** - reuses proven dependency tracking system
-
-*Architecture*:
+Make `-create` operations incremental by default:
 
 [source,c]
 ----
-Symbol* lookupSymbol(const char* name, Position pos) {
-    // 1. Check if cached information is up-to-date
-    if (symbolInfoIsCurrent(name, pos)) {
-        return getCachedSymbolInfo(name, pos);
-    }
-
-    // 2. Use existing dependency tracking to scan minimal set
-    FileList* filesToScan = calculateDependencyClosure(pos.file);
-    for (FileItem* file : filesToScan) {
-        if (checkFileModifiedTime(file->fileNumber)) {
-            scanFileAndUpdateCache(file);
-        }
-    }
-
-    // 3. Update persistent cache
-    updateSymbolCache(name, pos);
-    return getSymbolInfo(name, pos);
-}
+c-xref -create
+  → Check .cx database for each file
+  → Only parse files that are:
+     - Not in database, OR
+     - Modified since last parse (mtime check)
+  → Significantly faster for iterative development
 ----
 
-*Estimated Effort*: 8-12 weeks
+*Impact*:
+* Second and subsequent `-create` runs become near-instant if no files changed
+* Leverages existing file modification tracking (`updateFileModificationTracking()`)
+* No architectural changes needed - just skip parsing if DB is current
+* Remains fully compatible with existing workflows
 
-* Week 1-3: Design unified interface and wrap existing logic
-* Week 4-6: Implement smart dependency-driven on-demand scanning
-* Week 7-9: Optimize caching strategies and incremental updates
-* Week 10-12: Thorough testing, performance tuning, documentation
+*Estimated Effort*: 1-2 weeks
+
+**Phase 2: Preprocessor Dependency Caching**
+
+Cache the **include graph** (which files include which headers) separately from parse results:
+
+[source,c]
+----
+// Lightweight structure - much smaller than full parse cache
+typedef struct {
+    int fileNumber;
+    int includeCount;
+    int includedFiles[]; // Array of file numbers
+    time_t lastChecked;
+} IncludeDependencyCache;
+----
+
+*Benefits*:
+* Fast closure computation without re-preprocessing
+* Track which files need reparsing when a header changes
+* Much simpler than full lexem stream caching
+* ~1KB per source file vs. ~100KB+ for full token cache
+
+*Estimated Effort*: 3-4 weeks
+
+**Phase 3: Selective Header Caching** (Future optimization)
+
+After architecture is clean, consider lightweight header caching:
+
+* Cache **only system headers** (unlikely to change): `<stdio.h>`, `<stdlib.h>`, etc.
+* Project headers always re-parsed (change frequently during development)
+* Cache key: (header path, mtime, compiler flags) → tokenized stream
+* Much simpler than removed cache: no cache points, no parser state snapshots
+
+*Design Constraint*: Any future caching must be **optional and transparent**:
+* Must work without cache (on-demand parsing as fallback)
+* Cache is pure optimization, not architectural requirement
+* Clear separation between parsing logic and caching logic
+
+*Estimated Effort*: 6-8 weeks (only after unified database complete)
+
+==== 4. Unified Symbol Database Architecture
+
+*Reference*: link:../adr/0014-adopt-on-demand-parsing-architecture.md[ADR-0014: Adopt On-Demand Parsing Architecture]
+
+*Priority*: HIGH (Enables true on-demand LSP)
+
+*Rationale*: Transition from batch-mode (mandatory `-create`) to on-demand parsing where operations work immediately. The `.cx` files become a transparent cache rather than a prerequisite.
+
+*Key Benefits*:
+* Zero cold start - no upfront `-create` required
+* Always up-to-date - automatic modification tracking
+* LSP-native - perfect fit for language server architecture
+* Single code path for Emacs and LSP clients
+
+*Implementation Plan* (see link:../adr/0014-adopt-on-demand-parsing-architecture.md[ADR-0014] for architecture details):
+* Phase 1: Incremental `-create` (1-2 weeks)
+* Phase 2: On-demand goto-definition proof-of-concept (3-4 weeks)
+* Phase 3: Extend to all refactorings (6-8 weeks)
+* Phase 4: Deprecate mandatory `-create` (2 weeks)
+
+*Estimated Effort*: 12-16 weeks total
+
+*Accepted Trade-offs*:
+* First operation on huge projects may have latency (1-5s)
+* Limited detection of archaic `extern` in .c files (see link:../adr/0013-limited-extern-detection-in-c-files.md[ADR-0013])
+* These trade-offs enable modern, responsive IDE integration
 
 === Long-term Vision (12-24 Months)
 
@@ -287,12 +341,14 @@ After unified symbol database is complete, investigate:
 
 ==== Deprecation Path
 
-When unified symbol database is complete:
+When unified symbol database is complete (see link:../adr/0014-adopt-on-demand-parsing-architecture.md[ADR-0014]):
 
-* `-create` becomes optional (auto-triggers on first query if needed)
+* `-create` becomes optional (auto-triggers on first operation if needed)
 * `-update` becomes automatic (modification time checking)
 * Mode flags (`FILE_BASED`, `ON_DEMAND`) deprecated internally
 * User-visible options remain for backward compatibility but may have no effect
+
+**Design Principle**: Zero breaking changes - existing workflows continue to work, new capabilities added transparently.
 
 ==== Testing Strategy
 
@@ -404,6 +460,18 @@ The end goal is a c-xrefactory that is:
 
 This transformation from a 1990s batch cross-referencer to a modern, on-demand LSP server is achievable through careful incremental refactoring guided by comprehensive tests.
 
+=== Related Architecture Decision Records
+
+Key architectural decisions supporting this roadmap:
+
+* link:../adr/0012-remove-lexem-stream-caching.md[ADR-0012: Remove Lexem Stream Caching] - Documents rationale for accepting 6.4× performance regression to enable refactoring
+* link:../adr/0013-limited-extern-detection-in-c-files.md[ADR-0013: Limited Extern Detection] - Accepted limitation for archaic C patterns
+* link:../adr/0014-adopt-on-demand-parsing-architecture.md[ADR-0014: On-Demand Parsing] - Core architectural shift from batch to on-demand
+
+See also:
+* <<16-proposed-refactorings.adoc#,Chapter 16: Proposed Refactorings>> for detailed technical proposals
+* link:../adr-process.md[ADR Process Guide] for complete decision history and ADR conventions
+
 ---
 
-NOTE: This roadmap is a living document. As priorities shift and new insights emerge, it will be updated to reflect current understanding and goals. See also <<16-proposed-refactorings.adoc#,Chapter 16: Proposed Refactorings>> for detailed technical proposals.
+NOTE: This roadmap is a living document. As priorities shift and new insights emerge, it will be updated to reflect current understanding and goals.
