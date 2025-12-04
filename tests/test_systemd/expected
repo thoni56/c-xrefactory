@@ -2877,6 +2877,7 @@ parse_boolean
     @util.c:77:11
     @util.c:335:4
     @util.c:4457:15
+    @util.h:30:11
     @util.h:148:4
 safe_close
     @ask-password-api.c:295:8
