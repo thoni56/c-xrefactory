@@ -140,7 +140,17 @@ if __name__ == "__main__":
                     send_command(p, "-exit")
                     end_of_options(p)
                 sys.stdout.flush()
-                sys.exit(0)
+                try:
+                    p.wait(timeout=5)  # Wait up to 5 seconds for clean shutdown
+                except subprocess.TimeoutExpired:
+                    eprint("Warning: Server did not exit cleanly within 5 seconds, killing...")
+                    p.kill()            # Force kill if it doesn't exit cleanly
+                    sys.exit(1)  # Timeout is an error
+                # c-xref uses exit code 64 (XREF_EXIT_BASE) as normal exit in server mode
+                # Only propagate actual errors (>= 65: XREF_EXIT_ERR, XREF_EXIT_NO_PROJECT, etc.)
+                if p.returncode is not None and p.returncode >= 65:
+                    sys.exit(p.returncode)
+                sys.exit(0)  # Success for 0, 64, or None
 
             if command == '<sync>':
                 end_of_options(p)
