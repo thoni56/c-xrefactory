@@ -558,6 +558,8 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
             goto fini;
         }
 
+        saveMemoryCheckPoint();
+
         deepCopyOptionsFromTo(&options, &savedOptions);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
         inputOpened = computeAndOpenInputFile();
@@ -568,8 +570,6 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         previousStandardOptionsFileModificationTime = modifiedTime;
         previousLanguage = *outLanguage;
         previousPass = currentPass;
-
-        saveMemoryCheckPoint();
 
     } else {
         log_debug("initializeFileProcessing - else-branch with firstPass=%d", *firstPass);
