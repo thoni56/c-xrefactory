@@ -15,6 +15,7 @@
 #include "fileio.h"
 #include "filetable.h"
 #include "globals.h"
+#include "head.h"
 #include "init.h"
 #include "lexem.h"
 #include "list.h"
@@ -537,10 +538,18 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
 
         tmpIncludeDirs = options.includeDirs;
         options.includeDirs = NULL;
+
+        int savedPass = currentPass;
+        currentPass = NO_PASS;
         getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName, standardOptionsSectionName);
+
         discoverBuiltinIncludePaths();  /* Sets compiler_identification, must be before discoverStandardDefines */
 
         discoverStandardDefines();
+
+        /* Then for the particular pass */
+        currentPass = savedPass;
+        getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName, standardOptionsSectionName);
 
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 
@@ -552,6 +561,8 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         deepCopyOptionsFromTo(&options, &savedOptions);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
         inputOpened = computeAndOpenInputFile();
+
+        /* Save these values as previous */
         strcpy(previousStandardOptionsFile,standardOptionsFileName);
         strcpy(previousStandardOptionsSection,standardOptionsSectionName);
         previousStandardOptionsFileModificationTime = modifiedTime;

@@ -43,6 +43,7 @@ typedef enum language {
 
 #define ANY_FILE (-1)    // must be different from any file number
 #define ANY_PASS (-1)    // must be different from any pass number which are 1 and up
+#define NO_PASS  0       // sentinel to skip all pass-specific options
 
 /* *********************************************************************** */
 
