@@ -582,9 +582,9 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
         inputOpened = computeAndOpenInputFile();
     }
-    // reset language once knowing all language suffixes
-    *outLanguage = getLanguageFor(fileName);
+
     inputFileNumber = currentFile.characterBuffer.fileNumber;
+
     assert(options.mode);
     if (options.mode==XrefMode) {
         if (options.xref2) {
