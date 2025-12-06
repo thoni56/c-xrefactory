@@ -446,6 +446,8 @@ static void getAndProcessXrefrcOptions(char *optionsFileName, char *optionsSecti
         // 'cxref_file_name' allocated in ppmMemory, then when memory
         // is got back by caching, it may provoke a problem
         processOptions(argc, argv, DONT_PROCESS_FILE_ARGUMENTS); /* .c-xrefrc opts*/
+    } else {
+        assert(0);
     }
 }
 
