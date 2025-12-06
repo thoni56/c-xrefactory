@@ -558,8 +558,6 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         previousLanguage = *outLanguage;
         previousPass = currentPass;
 
-        initTokenNamesTables();
-
         saveMemoryCheckPoint();
 
     } else {
@@ -719,6 +717,12 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         tempAllocated = (char *)cxAlloc(options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
         cxFreeUntil(tempAllocated);
     }
+
+    /* Initialize token names table with all C and Yacc keywords.
+     * This is done once globally after options are processed (for strictAnsi setting).
+     * Since we only support C and Yacc, include keywords for both languages. */
+    currentLanguage = LANG_C | LANG_YACC;
+    initTokenNamesTables();
 
     int argcount = 0;
     inputFileName = getNextArgumentFile(&argcount);
