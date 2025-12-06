@@ -4,7 +4,7 @@ Date: 2021-09-05
 
 ## Status:
 
-Accepted
+Implemented (2021-09-05 in d05874bb)
 
 ## Deciders
 

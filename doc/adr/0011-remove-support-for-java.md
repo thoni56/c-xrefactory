@@ -4,7 +4,7 @@ Date: 2024-04-12
 
 ## Status
 
-Accepted
+Implemented (2024-04-12 in ebf3df4c)
 
 Superceeds [Remove support for JavaDoc](0010-remove-support-for-javadoc.md).
 
@@ -43,5 +43,5 @@ Remove all support for Java, including parsing, browsing symbols and refactoring
 A lot of code can be removed which is good. A risk might be that we want to keep supporting Java but that is unlikely since there are better support for more modern versions of Java available.
 
 Using the Java version of some refactorings, like "Move Static Method", as a model for a C version, is still possible since all code is in the repo.
-The last commit with "complete" Java support is also tagged with "LAST_WITH_JAVA_SUPPORT" for easy identificatio.
+The last commit with "complete" Java support is also tagged with "LAST_WITH_JAVA_SUPPORT" for easy identification.
 
