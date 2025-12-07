@@ -549,6 +549,8 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
 
         discoverStandardDefines();
 
+        saveMemoryCheckPoint();
+
         /* Then for the particular pass */
         currentPass = savedPass;
         getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName, standardOptionsSectionName);
@@ -559,8 +561,6 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
             inputOpened = false;
             goto fini;
         }
-
-        saveMemoryCheckPoint();
 
         deepCopyOptionsFromTo(&options, &savedOptions);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
