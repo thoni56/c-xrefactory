@@ -35,7 +35,6 @@ Options presetOptions = {
     "gcc",                       // path to compiler to use for auto-discovering compiler and defines
     NULL,                        // strings for commandline entered definitions (-D)
     false,                       // completeParenthesis
-    false,                       // referenceListWithoutSource
     0,                           // comment moving level
     NULL,                        // prune name
     NULL,                        // input files
@@ -1575,9 +1574,6 @@ static bool processROption(int *argi, int argc, char **argv) {
     }
     else if (strncmp(argv[i], "-refs=",6)==0)    {
         setXrefsLocation(argv[i]+6);
-    }
-    else if (strcmp(argv[i], "-rlistwithoutsrc")==0) {
-        options.referenceListWithoutSource = true;
     }
     else if (strcmp(argv[i], "-refactory")==0)   {
         options.mode = RefactoryMode;

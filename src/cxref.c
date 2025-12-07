@@ -714,18 +714,14 @@ static void passRefsThroughSourceFile(Reference **inOutReferences,
     references = passNonPrintableRefsForFile(references, fileNumber, usageFilter);
     if (references==NULL || references->position.file != fileNumber)
         goto fin;
-    if (options.referenceListWithoutSource) {
-        ebuf = NULL;
-    } else {
-        ebuf = findOrCreateAndLoadEditorBufferForFile(cofileName);
-        if (ebuf==NULL) {
-            if (options.xref2) {
-                char tmpBuff[TMP_BUFF_SIZE];
-                sprintf(tmpBuff, "file '%s' not accessible", cofileName);
-                errorMessage(ERR_ST, tmpBuff);
-            } else {
-                fprintf(outputFile,"!!! file '%s' is not accessible", cofileName);
-            }
+    ebuf = findOrCreateAndLoadEditorBufferForFile(cofileName);
+    if (ebuf==NULL) {
+        if (options.xref2) {
+            char tmpBuff[TMP_BUFF_SIZE];
+            sprintf(tmpBuff, "file '%s' not accessible", cofileName);
+            errorMessage(ERR_ST, tmpBuff);
+        } else {
+            fprintf(outputFile,"!!! file '%s' is not accessible", cofileName);
         }
     }
 

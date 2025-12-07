@@ -63,7 +63,6 @@ typedef struct options {
     char *compiler;
     char *definitionStrings;
     bool completeParenthesis;
-    bool referenceListWithoutSource;
     CommentMovingMode commentMovingMode;
     StringList *pruneNames;
     StringList *inputFiles;
