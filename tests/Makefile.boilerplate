@@ -31,7 +31,7 @@ $(VERBOSE).SILENT:
 EDIT_SERVER_DRIVER = ../../utils/server_driver.py
 
 # Convert any (absolute) reference to current directory to CURDIR
-NORMALIZE = sed -e "s+$(CURDIR)+CURDIR+g" -e "s/ len=[0-9]*/ len=<n>/g" -e "s+/.*/usr/+/usr/+g"
+NORMALIZE = sed -e "s+$(CURDIR)+CURDIR+g" -e "s/ len=[0-9]*/ len=<n>/g" -e "s+/.*/usr/+/usr/+g" -e "s/[0-9][0-9]:[0-9][0-9]:[0-9][0-9]/00:00:00/g"
 
 # Do we need date normalization too?
 # -E 's/[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} [[:digit:]]{2}:[[:digit:]]{2}:[[:digit:]]{2}/0000-00-00 00:00:00/' >> output.tmp

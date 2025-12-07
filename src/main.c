@@ -762,7 +762,12 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         char **dfargv;
         ProcessFileArguments inmode;
 
+        /* Don't read pass-specific options during initialization - those are handled
+         * per-pass in initializeFileProcessing. Setting NO_PASS skips all -passN sections. */
+        int savedPass = currentPass;
+        currentPass = NO_PASS;
         readOptionsFromFile(standardOptionsFileName, &dfargc, &dfargv, standardOptionsSection, standardOptionsSection);
+        currentPass = savedPass;
         if (options.mode == RefactoryMode) {
             inmode = DONT_PROCESS_FILE_ARGUMENTS;
         } else if (options.mode==ServerMode) {
