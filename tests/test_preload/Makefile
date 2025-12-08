@@ -1,18 +1,18 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -preload preload.c original.c
+ARGUMENTS = -fastupdate -errors -preload source.c source.preload
 
-$(TEST): CXrefs
-	$(COMMAND) > output.tmp
+$(TEST): clean_cxrefs
+	../../utils/cxref_reader > output.tmp # should be empty since source.c is empty
+	$(COMMAND) >> output.tmp 2>&1
 	$(NORMALIZE) output.tmp > output
+	../../utils/cxref_reader >> output
 	$(VERIFY)
 
-trace: ARGUMENTS+=-debug
+trace: ARGUMENTS+=-debug -log=trace
 trace: $(TEST)
 
-CXrefs: .c-xrefrc
-	# Sources in subdir:
-	sed -e s:$(CURDIR)$$:$(CURDIR)/cexercise: .c-xrefrc > .c-xrefrc.tmp
-	mv .c-xrefrc.tmp .c-xrefrc
-	$(CXREF) -create -o $(TEST).log
+clean_cxrefs: .c-xrefrc
+	rm -rf CXrefs
+	$(CXREF) -create . -o /dev/null
