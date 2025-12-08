@@ -2,7 +2,7 @@ include ../Makefile.boilerplate
 
 $(TEST):
 	-rm -rf CXrefs
-	$(CXREF) -create
+	$(CXREF) -create -o /dev/null
 	$(EDIT_SERVER_DRIVER) $(SERVER_EXTRA) commands.input > output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)

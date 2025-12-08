@@ -17,10 +17,10 @@ CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -xrefrc C
 <sync>
 -olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=45 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
--olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=74 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxpop -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+-olcxpush -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
-<sync>
--olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=45 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 <exit>

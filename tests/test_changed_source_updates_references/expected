@@ -50,16 +50,9 @@ end-of-options
 
 <sync>
 <goto>
- <position-lc line=1 col=4 len=<n>>CURDIR/source.c</position-lc>
-</goto>
--olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=45 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
-end-of-options
-
-<sync>
-<goto>
  <position-lc line=9 col=11 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=45 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
@@ -67,12 +60,27 @@ end-of-options
 <goto>
  <position-lc line=2 col=4 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=45 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxpop -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
 <goto>
- <position-lc line=1 col=4 len=<n>>CURDIR/source.c</position-lc>
+ <position-lc line=2 col=4 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+<bottom-information len=<n>>Current top symbol: foo</bottom-information>
+-olcxpush -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=2 col=4 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+-olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=9 col=11 len=<n>>CURDIR/source.c</position-lc>
 </goto>
 -exit
 end-of-options
