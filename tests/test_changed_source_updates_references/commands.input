@@ -1,0 +1,26 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
+<sync>
+CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxpush -olcursor=6 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+-olcxnext -olcursor=4 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+-olcxnext -olcursor=62 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
+<sync>
+CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -xrefrc CURDIR/.c-xrefrc -p CURDIR -preload CURDIR/source.c CURDIR/source.preload
+-olcxpush -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=45 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=74 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=45 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+<exit>

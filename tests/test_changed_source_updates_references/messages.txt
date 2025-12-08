@@ -1,0 +1,175 @@
+Loading c-xrefprotocol...done
+Loading /etc/emacs/site-start.d/00debian.el (source)...done
+Loading /etc/emacs/site-start.d/50autoconf.el (source)...done
+Loading /etc/emacs/site-start.d/50dictionaries-common.el (source)...
+Loading debian-ispell (native compiled elisp)...
+Loading /var/cache/dictionaries-common/emacsen-ispell-default.el (source)...done
+Loading debian-ispell (native compiled elisp)...done
+Loading /var/cache/dictionaries-common/emacsen-ispell-dicts.el (source)...done
+Loading /etc/emacs/site-start.d/50dictionaries-common.el (source)...done
+Loading /etc/emacs/site-start.d/50figlet.el (source)...done
+Loading /etc/emacs/site-start.d/50latexmk.el (source)...done
+Loading /etc/emacs/site-start.d/50tup.el (source)...done
+Loading /etc/emacs/site-start.d/50xcscope-el.el (source)...done
+[yas] Prepared just-in-time loading of snippets successfully.
+For information about GNU Emacs and the GNU system, type C-h C-a.
+Loading /home/thoni/Utveckling/c-xrefactory/editors/emacs/c-xrefprotocol.el (source)...done
+LSP disabled for this session [2 times]
+No coverage data found for /home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c. [2 times]
+Package cl is deprecated
+Package autoload is deprecated
+calling: ("-xrefactory-II" "-crlfconversion" "-crconversion" "-o" "/tmp/c-xrefthoni-8091-99.tmp" "-server")
+sending: -olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-107.tmp
+dispatching: <set-info len=80>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references</set-info>
+
+Project: /home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references
+calling: ("-xrefactory-II" "-crlfconversion" "-crconversion" "-o" "/tmp/c-xrefthoni-8091.log" "-fastupdate" "-errors" "-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" "-p" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references")
+got: <sync>
+
+sending: -olcxpush  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-115.tmp" "-olcursor=4" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"  -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-123.tmp
+keeping tmp file /tmp/c-xrefthoni-8091-115.tmp
+dispatching: <goto>
+ <position-lc line=1 col=4 len=89>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c</position-lc>
+</goto>
+
+sending: -olcxnext  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-131.tmp" "-olcursor=4" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"  -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-139.tmp
+keeping tmp file /tmp/c-xrefthoni-8091-131.tmp
+dispatching: <goto>
+ <position-lc line=6 col=11 len=89>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c</position-lc>
+</goto>
+
+sending: -olcxnext  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-147.tmp" "-olcursor=62" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"  -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-155.tmp
+keeping tmp file /tmp/c-xrefthoni-8091-147.tmp
+dispatching: <bottom-information len=29>Moving to the first reference</bottom-information>
+<goto>
+ <position-lc line=1 col=4 len=89>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c</position-lc>
+</goto>
+
+Moving to the first reference
+sending: -olcxnext  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-163.tmp" "-olcursor=45" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"  -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-171.tmp
+keeping tmp file /tmp/c-xrefthoni-8091-163.tmp
+dispatching: <goto>
+ <position-lc line=6 col=11 len=89>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c</position-lc>
+</goto>
+
+sending: -olcxnext  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-179.tmp" "-olcursor=45" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"  -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-187.tmp
+keeping tmp file /tmp/c-xrefthoni-8091-179.tmp
+dispatching: <bottom-information len=29>Moving to the first reference</bottom-information>
+<goto>
+ <position-lc line=1 col=4 len=89>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c</position-lc>
+</goto>
+
+Moving to the first reference
+sending: -olcxnext  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-195.tmp" "-olcursor=4" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"  -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-203.tmp
+keeping tmp file /tmp/c-xrefthoni-8091-195.tmp
+dispatching: <goto>
+ <position-lc line=6 col=11 len=89>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c</position-lc>
+</goto>
+
+sending: -olcxpop  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-211.tmp" "-olcursor=45" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"  -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-219.tmp
+keeping tmp file /tmp/c-xrefthoni-8091-211.tmp
+dispatching: <goto>
+ <position-lc line=1 col=4 len=89>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c</position-lc>
+</goto>
+<bottom-information len=18>stack is now empty</bottom-information>
+
+stack is now empty
+sending: -olcxnext  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-227.tmp" "-olcursor=4" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"  -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-235.tmp
+keeping tmp file /tmp/c-xrefthoni-8091-227.tmp
+dispatching: <bottom-warning beep=1 len=11>Empty stack</bottom-warning>
+
+Empty stack
+sending: -olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-243.tmp
+dispatching: <set-info len=80>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references</set-info>
+
+Project: /home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references
+calling: ("-xrefactory-II" "-crlfconversion" "-crconversion" "-o" "/tmp/c-xrefthoni-8091.log" "-fastupdate" "-errors" "-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" "-p" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references" "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-251.tmp")
+got: <sync>
+
+keeping tmp file /tmp/c-xrefthoni-8091-251.tmp
+sending: -olcxpush  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-259.tmp" "-olcursor=4" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"  -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-267.tmp
+keeping tmp file /tmp/c-xrefthoni-8091-259.tmp
+dispatching: <goto>
+ <position-lc line=1 col=4 len=89>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c</position-lc>
+</goto>
+
+sending: -olcxnext  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-275.tmp" "-olcursor=4" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"  -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-283.tmp
+keeping tmp file /tmp/c-xrefthoni-8091-275.tmp
+dispatching: <goto>
+ <position-lc line=6 col=11 len=89>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c</position-lc>
+</goto>
+
+sending: -olcxnext  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-291.tmp" "-olcursor=45" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"  -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-299.tmp
+keeping tmp file /tmp/c-xrefthoni-8091-291.tmp
+dispatching: <goto>
+ <position-lc line=8 col=11 len=89>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c</position-lc>
+</goto>
+
+sending: -olcxnext  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-307.tmp" "-olcursor=74" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"  -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-315.tmp
+keeping tmp file /tmp/c-xrefthoni-8091-307.tmp
+dispatching: <bottom-information len=29>Moving to the first reference</bottom-information>
+<goto>
+ <position-lc line=1 col=4 len=89>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c</position-lc>
+</goto>
+
+Moving to the first reference
+sending: -olcxnext  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-323.tmp" "-olcursor=4" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"  -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-331.tmp
+keeping tmp file /tmp/c-xrefthoni-8091-323.tmp
+dispatching: <goto>
+ <position-lc line=6 col=11 len=89>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c</position-lc>
+</goto>
+
+sending: -olcxnext  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c" "/tmp/c-xrefthoni-8091-339.tmp" "-olcursor=45" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"  -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-8091-347.tmp
+keeping tmp file /tmp/c-xrefthoni-8091-339.tmp
+dispatching: <goto>
+ <position-lc line=8 col=11 len=89>/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c</position-lc>
+</goto>
+
