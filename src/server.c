@@ -4,6 +4,7 @@
 #include "complete.h"
 #include "cxfile.h"
 #include "cxref.h"
+#include "editorbuffer.h"
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
@@ -15,6 +16,7 @@
 #include "options.h"
 #include "parsers.h"
 #include "ppc.h"
+#include "reftab.h"
 #include "session.h"
 #include "yylex.h"
 
@@ -135,6 +137,13 @@ static void singlePass(int argc, char **argv,
     originalFileNumber = inputFileNumber;
 
     if (inputOpened) {
+        /* If the file has preloaded content, remove old references before parsing */
+        EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(inputFileName);
+        if (buffer != NULL && buffer->preLoadedFromFile != NULL) {
+            log_debug("file has preloaded content, removing old references for file %d", inputFileNumber);
+            removeReferencesForFile(inputFileNumber);
+        }
+
         parseInputFile();
         *firstPassP = false;
     }

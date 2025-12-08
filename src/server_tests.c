@@ -12,6 +12,7 @@
 #include "cxfile.mock"
 #include "cxref.mock"
 #include "editor.mock"
+#include "editorbuffer.mock"
 #include "filedescriptor.mock"
 #include "fileio.mock"
 #include "filetable.mock"

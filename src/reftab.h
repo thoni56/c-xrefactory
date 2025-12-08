@@ -27,5 +27,6 @@ extern bool isMemberInReferenceTable(ReferenceItem *item, int *indexP, Reference
 extern void mapOverReferenceTable(void (*fun)(ReferenceItem *));
 extern void mapOverReferenceTableWithIndex(void (*fun)(int));
 extern void mapOverReferenceTableWithPointer(void (*fun)(ReferenceItem *, void *), void *pointer);
+extern void removeReferencesForFile(int fileNumber);
 
 #endif

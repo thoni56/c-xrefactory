@@ -55,3 +55,7 @@ ReferenceItem *getReferenceItem(int index) {
 void setReferenceItem(int index, ReferenceItem *item) {
     mock(index, item);
 }
+
+void removeReferencesForFile(int fileNumber) {
+    mock(fileNumber);
+}
