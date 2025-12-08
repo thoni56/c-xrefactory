@@ -1,3 +1,14 @@
 [C-xref] active project: 'CURDIR'
-in_preload
+foo
     @source.c:1:4
+    @source.c:6:11
+main
+    @source.c:5:4
+[C-xref] active project: 'CURDIR'
+foo
+    @source.c:2:4
+    @source.c:9:11
+main
+    @source.c:8:4
+main2
+    @source.c:6:4
