@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=x -olcursor=792 CURDIR/cexercise/refactorings/rename.c -o server-buffer
+CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=x -olcursor=792 CURDIR/cexercise/refactorings/rename.c -o server-buffer
 <sync>
 <goto>
  <position-off off=328 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>

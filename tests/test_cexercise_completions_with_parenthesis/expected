@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -xrefrc CURDIR/.c-xrefrc -p CURDIR -server -completeparenthesis -o server-buffer
+CXREF -xrefactory-II -crlfconversion -crconversion -xrefrc CURDIR/.c-xrefrc -p CURDIR -server -completeparenthesis -o server-buffer
 -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/completions.c
 end-of-options
 

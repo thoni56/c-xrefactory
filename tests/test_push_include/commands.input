@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -server
+CXREF -xrefactory-II -crlfconversion -crconversion -server
 -olcxgetprojectname -xrefrc .c-xrefrc include.c
 <sync>
 -olcxpush -olcursor=6 include.c -xrefrc .c-xrefrc -p CURDIR

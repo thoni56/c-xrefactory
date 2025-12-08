@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -xrefrc CURDIR/.c-xrefrc -p CURDIR -server -o server-buffer
+CXREF -xrefactory-II -xrefrc CURDIR/.c-xrefrc -p CURDIR -server -o server-buffer
 -olcxpushfileunused  CURDIR/source1.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 

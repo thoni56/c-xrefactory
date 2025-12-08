@@ -1,1 +1,1 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract-macro -olmark=315 -olcursor=423 CURDIR/cexercise/refactorings/extract.c
+CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract-macro -olmark=315 -olcursor=423 CURDIR/cexercise/refactorings/extract.c

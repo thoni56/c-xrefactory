@@ -1,4 +1,4 @@
-../../src/c-xref -xrefrc CURDIR/.c-xrefrc source.c -xrefactory-II -server -log=log.log -commandlog=commands.log -o server-buffer
+CXREF -xrefrc CURDIR/.c-xrefrc source.c -xrefactory-II -server -log=log.log -commandlog=commands.log -o server-buffer
 -olcxtagsearch=int* -olcxlccursor=1:5 -olcursor=5 CURDIR/source.c -olcursor=85 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 

@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -log=log -server -o server-buffer
+CXREF -xrefactory-II -log=log -server -o server-buffer
 -xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxpush -olmark=623 -olcursor=623 CURDIR/cexercise/index.c
 end-of-options
 

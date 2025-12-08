@@ -1,4 +1,4 @@
-../../src/c-xref -xrefrc CURDIR/.c-xrefrc test_source/single_int1.c -xrefactory-II -server -log=log.log -commandlog=commands.log -o server-buffer
+CXREF -xrefrc CURDIR/.c-xrefrc test_source/single_int1.c -xrefactory-II -server -log=log.log -commandlog=commands.log -o server-buffer
 -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/test_source/single_int1.c
 end-of-options
 

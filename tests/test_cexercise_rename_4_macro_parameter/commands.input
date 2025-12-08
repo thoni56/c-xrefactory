@@ -1,1 +1,1 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=renameMi -olcursor=703 CURDIR/cexercise/refactorings/rename.c
+CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=renameMi -olcursor=703 CURDIR/cexercise/refactorings/rename.c

@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract-function -olmark=5350 -olcursor=5440 CURDIR/test_sources/yylex.c -log=log -o server-buffer
+CXREF -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract-function -olmark=5350 -olcursor=5440 CURDIR/test_sources/yylex.c -log=log -o server-buffer
 <sync>
 <extraction-dialog type=newFunction_> <str len=<n>>	newFunction_(fname, createdFileItem);
 </str>

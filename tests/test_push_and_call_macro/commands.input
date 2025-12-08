@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -errors -server
+CXREF -xrefactory-II -crlfconversion -crconversion -errors -server
 -olcxpushandcallmacro  -olcursor=97 CURDIR/source.c -xrefrc .c-xrefrc -p CURDIR
 <sync>
 <exit>

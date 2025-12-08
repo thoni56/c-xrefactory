@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -server -o server-buffer
+CXREF -xrefactory-II -server -o server-buffer
 end-of-options
 
 <sync>

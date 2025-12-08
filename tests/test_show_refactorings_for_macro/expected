@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -server -xrefrc CURDIR/.c-xrefrc -p CURDIR -o server-buffer
+CXREF -xrefactory-II -crlfconversion -crconversion -server -xrefrc CURDIR/.c-xrefrc -p CURDIR -o server-buffer
 -olcursor=696 CURDIR/cexercise/refactorings/rename.c -olcxgetrefactorings
 end-of-options
 

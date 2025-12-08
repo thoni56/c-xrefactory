@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
 -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 end-of-options
 

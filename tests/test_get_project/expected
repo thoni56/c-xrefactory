@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -server -o server-buffer
+CXREF -xrefactory-II -server -o server-buffer
 -olcxpush -olcursor=641 CURDIR/index.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 

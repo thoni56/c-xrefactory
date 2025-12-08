@@ -1,1 +1,1 @@
-../../src/c-xref -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract-function -olmark=54 -olcursor=125 CURDIR/source.c -log=log
+CXREF -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract-function -olmark=54 -olcursor=125 CURDIR/source.c -log=log

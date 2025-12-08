@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -xrefrc CURDIR/.c-xrefrc -p CURDIR -server
+CXREF -xrefactory-II -xrefrc CURDIR/.c-xrefrc -p CURDIR -server
 -olcxpushfileunused  CURDIR/source1.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -olcxmenufilter=2 -xrefrc CURDIR/.c-xrefrc -p CURDIR

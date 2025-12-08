@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -refactory -fullupdate -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=single_int_on_line_1_col_44 -olmark=58 -olcursor=58 CURDIR/test_source/single_int2.c -log=log -o server-buffer
+CXREF -xrefactory-II -refactory -fullupdate -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=single_int_on_line_1_col_44 -olmark=58 -olcursor=58 CURDIR/test_source/single_int2.c -log=log -o server-buffer
 <sync>
 <update-report>
 </update-report>

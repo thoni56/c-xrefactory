@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -server
+CXREF -xrefactory-II -crlfconversion -crconversion -server
 -olcxcomplet -maxcompls=500 -olinelen=120  -olcursor=53 CURDIR/completions.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 <exit>
