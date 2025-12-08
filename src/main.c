@@ -672,13 +672,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // supposing that file table is still here, but reinit it
     mapOverFileTable(clearFileItem);
 
-    // TODO: the following causes long jump, berk.
-    // And it can't be removed because of multiple tests
-    // failing with "cx_memory resizing required, see file TROUBLES"
-    // This just shows how impenetrable the memory management is...
-    char *tempAllocated = cxAlloc(CX_MEMORY_CHUNK_SIZE);
-    cxFreeUntil(tempAllocated);
-
     initReferenceTable(MAX_CXREF_ENTRIES);
 
     memoryInit(&ppmMemory, "pre-processor macros", NULL, SIZE_ppmMemory);
@@ -710,6 +703,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     /* TODO Is this because CX-memory is just discarded and
      * reallocated empty when resizing is necessary? And the various
      * modes need some initial amount of memory? */
+    char *tempAllocated;
     if (options.mode == RefactoryMode) {
         // some more memory for refactoring task
         assert(options.cxMemoryFactor>=1);
