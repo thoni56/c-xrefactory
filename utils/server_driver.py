@@ -22,7 +22,7 @@
 # be copied into the output so that the complete interaction can be
 # seen. Example commands file
 #
-#     ../../src/c-xref -xrefrc CURDIR/.c-xrefrc single_int1.c -xrefactory-II -task_regime_server
+#     ../../src/c-xref -xrefrc CURDIR/.c-xrefrc -xrefactory-II -server
 #     -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/single_int1.c
 #     <sync>
 #     -olcxcomplet CURDIR/single_int1.c -olcursor=85 -xrefrc CURDIR/.c-xrefrc -p CURDIR
@@ -53,6 +53,28 @@ def send_command(p, command):
     print(command)
     p.stdin.write((command+"\n").encode())
     p.stdin.flush()
+
+
+def execute_command(command, cxref_program, curdir):
+    """Execute external c-xref command and consume output until <sync>"""
+    # Print normalized command with CXREF kept as-is
+    print(command.replace("CURDIR", curdir))
+    # Execute with CXREF replaced by actual program path
+    external_cmd = command.replace("CURDIR", curdir).replace("CXREF", cxref_program)
+    external_process = subprocess.Popen(shlex.split(external_cmd),
+                                        stdout=subprocess.PIPE,
+                                        stderr=subprocess.STDOUT)
+    # Read output until <sync>
+    line = external_process.stdout.readline().decode()[:-1]
+    while line != '<sync>' and line != '':
+        print(line)
+        line = external_process.stdout.readline().decode()[:-1]
+    if line == '<sync>':
+        print(line)
+    external_process.wait()
+    if external_process.returncode != 0 and external_process.returncode != 64:
+        eprint(f"External command failed with exit code {external_process.returncode}")
+        sys.exit(external_process.returncode)
 
 
 def end_of_options(p):
@@ -132,8 +154,13 @@ if __name__ == "__main__":
         command = read_command(file)
         while command != '':
             while command != '<sync>' and command != '<exit>' and command != '': #and not "-refactory" in command:
-                send_command(p, command.replace("CURDIR", args.CURDIR))
-                command = read_command(file)
+                if command.startswith('CXREF'):
+                    # External command - run as separate process
+                    execute_command(command, cxref_program, args.CURDIR)
+                    command = read_command(file)
+                else:
+                    send_command(p, command.replace("CURDIR", args.CURDIR))
+                    command = read_command(file)
 
             if command == '<exit>':
                 if p.poll() == None:	# no error code yet? So still alive...
