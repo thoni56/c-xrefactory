@@ -376,7 +376,7 @@ void addTrivialCxReference(char *name, Type type, Storage storage, Position posi
 
 /* ***************************************************************** */
 
-static void deleteOlcxRefs(OlcxReferences **refsP, OlcxReferencesStack *stack) {
+static void deleteOlcxRefs(OlcxReferences **refsP, ReferencesStack *stack) {
     OlcxReferences    *refs = *refsP;
 
     freeReferences(refs->references);
@@ -397,7 +397,7 @@ static void deleteOlcxRefs(OlcxReferences **refsP, OlcxReferencesStack *stack) {
 }
 
 
-void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
+void olcxFreeOldCompletionItems(ReferencesStack *stack) {
     OlcxReferences **references;
 
     references = &stack->top;
@@ -412,7 +412,7 @@ void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
 }
 
 
-static void freePoppedBrowserStackItems(OlcxReferencesStack *stack) {
+static void freePoppedReferencesStackItems(ReferencesStack *stack) {
     assert(stack);
     // delete all after top
     while (stack->root != stack->top) {
@@ -421,7 +421,7 @@ static void freePoppedBrowserStackItems(OlcxReferencesStack *stack) {
     }
 }
 
-static OlcxReferences *pushEmptyReference(OlcxReferencesStack *stack) {
+static OlcxReferences *pushEmptyReference(ReferencesStack *stack) {
     OlcxReferences *res;
 
     res  = malloc(sizeof(OlcxReferences));
@@ -438,9 +438,9 @@ static OlcxReferences *pushEmptyReference(OlcxReferencesStack *stack) {
     return res;
 }
 
-void pushEmptySession(OlcxReferencesStack *stack) {
+void pushEmptySession(ReferencesStack *stack) {
     OlcxReferences *res;
-    freePoppedBrowserStackItems(stack);
+    freePoppedReferencesStackItems(stack);
     res = pushEmptyReference(stack);
     stack->top = stack->root = res;
 }
@@ -903,7 +903,7 @@ static void popSession(void) {
 
 static void popAndFreeSession(void) {
     popSession();
-    freePoppedBrowserStackItems(&sessionData.browserStack);
+    freePoppedReferencesStackItems(&sessionData.browserStack);
 }
 
 static OlcxReferences *pushSession(void) {
@@ -1384,7 +1384,7 @@ static void olcxReferenceFilterSet(int filterLevel) {
     olcxPrintRefList(";", refs);
 }
 
-static OlcxReferences *getNextTopStackItem(OlcxReferencesStack *stack) {
+static OlcxReferences *getNextTopStackItem(ReferencesStack *stack) {
     OlcxReferences *rr, *nextrr;
     nextrr = NULL;
     rr = stack->root;

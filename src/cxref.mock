@@ -83,7 +83,7 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *dd) {
     return (SymbolsMenu *) mock(dd);
 }
 
-void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
+void olcxFreeOldCompletionItems(ReferencesStack *stack) {
     mock(stack);
 }
 
@@ -91,7 +91,7 @@ void olCreateSelectionMenu(ServerOperation command) {
     mock(command);
 }
 
-void pushEmptySession(OlcxReferencesStack *stack) {
+void pushEmptySession(ReferencesStack *stack) {
     mock(stack);
 }
 
