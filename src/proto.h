@@ -164,6 +164,7 @@ typedef struct structSpec {
 
 #include "reference.h"
 #include "server.h"
+#include "referencesstack.h"
 
 typedef struct olcxReferences {
     struct reference    *references;      /* list of references */
@@ -180,11 +181,6 @@ typedef struct olcxReferences {
     int                    refsFilterLevel;
     struct olcxReferences *previous;
 } OlcxReferences;
-
-typedef struct OlcxReferencesStack {
-    OlcxReferences *top;
-    OlcxReferences *root;
-} OlcxReferencesStack;
 
 
 typedef struct parsedInfo {
