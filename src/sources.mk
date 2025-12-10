@@ -3,7 +3,7 @@ completion counters cxfile cxref editor editorbuffer editorbuffertable editormar
 encoding extract filedescriptor fileio filetable globals hash id init lexemstream json_utils	\
 lexem lexembuffer lexer log lsp lsp_adapter lsp_dispatcher lsp_handler lsp_utils	\
 lsp_sender macroargumenttable main memory menu misc options parsers position ppc	\
-progress protocol refactorings refactory reference reftab semact server session		\
+progress protocol refactorings refactory reference referencesstack reftab semact server session		\
 stackmemory storage stringlist symbol symboltable type typemodifier undo usage xref	\
 yacc_parser.tab yylex
 
