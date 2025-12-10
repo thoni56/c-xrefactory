@@ -7,37 +7,158 @@ These recipes serve as specifications for refactorings that c-xrefactory should 
 === Move Type to New File
 
 **Input:**
+
 - Type name to move
 - Source file containing type definition
 - Target file (new or existing)
 
 **Algorithm:**
 
-1. **Locate type definition** - Find the typedef/struct declaration in source file
+1. **Locate type definition**
 
-2. **Identify dependencies** - Determine what types/macros the definition references
+   - Find the typedef/struct declaration in source file
+
+2. **Identify dependencies**
+
+   - Determine what types/macros the definition references
 
 3. **Create/update target file:**
+
    - If new file: create with include guards and appropriate includes/forward declarations
    - If existing: open the file
 
-4. **Move definition** - Copy type definition to target file (with includes and forward declarations if new file)
+4. **Move definition**
+
+   - Copy type definition to target file (with includes and forward declarations if new file)
 
 5. **Replace in source file:**
+
    - If target is new file: Replace type definition with `#include "targetfile.h"`
    - If target is existing file: Remove type definition, add `#include "targetfile.h"` if not already present
 
 **Output:**
+
 - Type definition moved to target file
 - Source file includes the target file
 - Clean compilation
 
 **Notes:**
 
-* For new header files, steps 3-5 are particularly simple: create the new header with the type and replace the definition in source with an include
-* For existing headers, must check if include is already present before adding
-* Forward declarations (e.g., `struct foo;`) are sufficient for pointer-only dependencies
-* Full type definitions or includes needed for non-pointer members
+- For new header files, steps 3-5 are particularly simple: create the new header with the type and replace the definition in source with an include
+- For existing headers, must check if include is already present before adding
+- Forward declarations (e.g., `struct foo;`) are sufficient for pointer-only dependencies
+- Full type definitions or includes needed for non-pointer members
+
+---
+
+=== Introduce Semantic Type Aliases
+
+**Purpose:** Make implicit semantic distinctions explicit by introducing type aliases for a single struct used for multiple purposes.
+
+**When to use:**
+
+- A single struct/type is reused for semantically different purposes
+- Different usage contexts use different subsets of fields
+- Want to clarify intent without changing implementation
+- Want to prepare for future type divergence
+
+**Input:**
+
+- Original type name (e.g., `OlcxReferencesStack`)
+- List of semantic contexts where type is used (e.g., "browser", "completion", "retrieval")
+- Target file for type aliases (new or existing header)
+
+**Algorithm:**
+
+1. **Analyze usage patterns** - Identify distinct semantic contexts where type is used
+   - Group usage sites by purpose/domain
+   - Note which fields are used in each context
+   - Verify that contexts are truly semantically different
+
+2. **Create type aliases** - In appropriate header file, define semantic aliases:
+   ```c
+   typedef OriginalType SemanticName1;
+   typedef OriginalType SemanticName2;
+   // etc.
+   ```
+
+3. **Update structure declarations** - Change struct/variable declarations to use semantic types:
+   - Data structure fields
+   - Global variables
+   - Static variables
+
+4. **Update function signatures** - Change function parameters to use semantic types:
+   - Functions operating on specific context → specific alias
+   - Generic functions operating on any context → generic alias (if created)
+
+5. **Update call sites** - Verify all usages compile with new types
+
+6. **Verify** - Compile to ensure type compatibility
+
+**Output:**
+
+- Multiple type aliases for same underlying type
+- Declarations and signatures use semantic types
+- Intent clarified through type system
+- Foundation for future divergence
+
+**Example:**
+
+Given a "kitchen sink" struct used for three purposes:
+
+```c
+// Before - single type for everything
+typedef struct OlcxReferencesStack {
+    OlcxReferences *top;
+    OlcxReferences *root;
+} OlcxReferencesStack;
+
+typedef struct SessionData {
+    OlcxReferencesStack browserStack;      // Uses: references, symbolsMenu
+    OlcxReferencesStack completionsStack;  // Uses: completions
+    OlcxReferencesStack retrieverStack;    // Uses: completions
+} SessionData;
+
+void pushEmptySession(OlcxReferencesStack *stack);  // Generic
+```
+
+After introducing semantic aliases:
+
+```c
+// After - semantic aliases make intent clear
+typedef struct OlcxReferencesStack {
+    OlcxReferences *top;
+    OlcxReferences *root;
+} OlcxReferencesStack;
+
+// Semantic aliases
+typedef OlcxReferencesStack ReferencesStack;   // Generic
+typedef OlcxReferencesStack BrowserStack;      // For navigation
+typedef OlcxReferencesStack CompletionStack;   // For completion
+typedef OlcxReferencesStack RetrieverStack;    // For search
+
+typedef struct SessionData {
+    BrowserStack    browserStack;
+    CompletionStack completionsStack;
+    RetrieverStack  retrieverStack;
+} SessionData;
+
+void pushEmptySession(ReferencesStack *stack);  // Generic operation
+```
+
+**Benefits:**
+
+- Intent is immediately clear from type names
+- No runtime or ABI changes (aliases compile to same type)
+- Can add domain-specific operations per type later
+- Enables gradual migration toward separate types if needed
+
+**Notes:**
+
+- Particularly useful in C where classes/interfaces are unavailable
+- Type aliases are compile-time only - no runtime overhead
+- Can coexist with original type name during migration
+- Common pattern when refactoring legacy C code
 
 ---
 
