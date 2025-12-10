@@ -83,16 +83,8 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *dd) {
     return (SymbolsMenu *) mock(dd);
 }
 
-void olcxFreeOldCompletionItems(ReferencesStack *stack) {
-    mock(stack);
-}
-
 void olCreateSelectionMenu(ServerOperation command) {
     mock(command);
-}
-
-void pushEmptySession(ReferencesStack *stack) {
-    mock(stack);
 }
 
 bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {

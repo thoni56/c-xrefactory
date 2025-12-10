@@ -16,6 +16,7 @@
 #include "options.mock"
 #include "parsers.mock"
 #include "ppc.mock"
+#include "referencesstack.mock"
 #include "reftab.mock"
 #include "semact.mock"
 #include "symbol.mock"

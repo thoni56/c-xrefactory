@@ -28,11 +28,9 @@ extern int itIsSymbolToPushOlReferences(ReferenceItem *p, OlcxReferences *rstack
                                         SymbolsMenu **rss, int checkSelFlag);
 extern void putOnLineLoadedReferences(ReferenceItem *p);
 extern SymbolsMenu *createSelectionMenu(ReferenceItem *dd);
-extern void olcxFreeOldCompletionItems(ReferencesStack *stack);
 
 extern void olCreateSelectionMenu(ServerOperation command);
 extern bool olcxShowSelectionMenu(void);
-extern void pushEmptySession(ReferencesStack *stack);
 extern bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
 extern void getLineAndColumnCursorPositionFromCommandLineOptions( int *l, int *c );
 extern void olcxPushSpecialCheckMenuSym(char *symname);

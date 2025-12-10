@@ -164,7 +164,6 @@ typedef struct structSpec {
 
 #include "reference.h"
 #include "server.h"
-#include "referencesstack.h"
 
 typedef struct olcxReferences {
     struct reference    *references;      /* list of references */

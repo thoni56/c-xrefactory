@@ -6,11 +6,12 @@
 #include "head.h"               /* For 'protected' */
 #include "type.h"
 
-#include "reference.mock"
-#include "symbol.mock"
-#include "filetable.mock"       /* For NO_FILE_NUMBER */
-#include "options.mock"         /* For 'options' */
 #include "commons.mock"
+#include "filetable.mock"       /* For NO_FILE_NUMBER */
+#include "options.mock"
+#include "reference.mock"
+#include "referencesstack.mock"
+#include "symbol.mock"
 
 
 Describe(Completion);
