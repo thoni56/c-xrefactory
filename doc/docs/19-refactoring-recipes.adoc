@@ -1,0 +1,58 @@
+== Refactoring Recipes
+
+This chapter documents mechanical steps for refactoring operations. Each recipe describes the algorithmic steps that an automated refactoring tool would perform.
+
+These recipes serve as specifications for refactorings that c-xrefactory should automate.
+
+=== Move Type to New File
+
+**Input:**
+- Type name to move
+- Source file containing type definition
+- Target file (new or existing)
+
+**Algorithm:**
+
+1. **Locate type definition** - Find the typedef/struct declaration in source file
+
+2. **Identify dependencies** - Determine what types/macros the definition references
+
+3. **Create/update target file:**
+   - If new file: create with include guards and appropriate includes/forward declarations
+   - If existing: open the file
+
+4. **Move definition** - Copy type definition to target file (with includes and forward declarations if new file)
+
+5. **Replace in source file:**
+   - If target is new file: Replace type definition with `#include "targetfile.h"`
+   - If target is existing file: Remove type definition, add `#include "targetfile.h"` if not already present
+
+**Output:**
+- Type definition moved to target file
+- Source file includes the target file
+- Clean compilation
+
+**Notes:**
+
+* For new header files, steps 3-5 are particularly simple: create the new header with the type and replace the definition in source with an include
+* For existing headers, must check if include is already present before adding
+* Forward declarations (e.g., `struct foo;`) are sufficient for pointer-only dependencies
+* Full type definitions or includes needed for non-pointer members
+
+---
+
+=== Move Function to Different File
+
+TBD
+
+---
+
+=== Rename Symbol
+
+TBD
+
+---
+
+=== Extract Function
+
+TBD
