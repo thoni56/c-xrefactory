@@ -538,7 +538,7 @@ static void pushMarkersAsReferences(EditorMarkerList **markers, OlcxReferences *
     Reference *rr;
 
     rr = convertEditorMarkersToReferences(markers);
-    for (BrowserMenu *mm = refs->symbolsMenu; mm != NULL; mm = mm->next) {
+    for (BrowserMenu *mm = refs->menu; mm != NULL; mm = mm->next) {
         if (strcmp(mm->references.linkName, name) == 0) {
             for (Reference *r = rr; r != NULL; r = r->next) {
                 addReferenceToList(&mm->references.references, r);
@@ -560,7 +560,7 @@ static void askForReallyContinueConfirmation(void) {
 static bool handleSafetyCheckDifferenceLists(EditorMarkerList *diff1, EditorMarkerList *diff2,
                                              OlcxReferences *diffrefs) {
     if (diff1 != NULL || diff2 != NULL) {
-        for (BrowserMenu *mm = diffrefs->symbolsMenu; mm != NULL; mm = mm->next) {
+        for (BrowserMenu *mm = diffrefs->menu; mm != NULL; mm = mm->next) {
             mm->selected = true;
             mm->visible  = true;
             mm->ooBits   = 07777777;
@@ -788,8 +788,8 @@ static void checkForMultipleReferencesInSamePlace(OlcxReferences *rstack, Browse
     bool            pushed;
 
     p = &ccms->references;
-    assert(rstack && rstack->symbolsMenu);
-    sss    = &rstack->symbolsMenu->references;
+    assert(rstack && rstack->menu);
+    sss    = &rstack->menu->references;
     pushed = itIsSymbolToPushOlReferences(p, rstack, &cms, DEFAULT_VALUE);
     // TODO, this can be simplified, as ccms == cms.
     log_debug(":checking %s to %s (%d)", p->linkName, sss->linkName, pushed);

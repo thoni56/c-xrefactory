@@ -372,7 +372,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
     assert(options.mode);
     if (options.mode==XrefMode) {
         if (!cxMemoryHasEnoughSpaceFor(CX_SPACE_RESERVE)) {
-            longjmp(errorLongJumpBuffer, LONGJUMP_REASON_REFERENCES_OVERFLOW);
+            longjmp(errorLongJumpBuffer, LONGJMP_REASON_REFERENCES_OVERFLOW);
         }
     }
 
@@ -410,9 +410,9 @@ static void olcxAppendReference(Reference *ref, OlcxReferences *refs) {
 }
 
 /* fnum is file number of which references are added, can be ANY_FILE */
-static void olcxAddReferences(Reference *list, Reference **dlist,
-                              int fnum, int bestMatchFlag) {
-    Reference *revlist,*tmp;
+static void olcxAddReferences(Reference *list, Reference **dlist, int fnum) {
+    Reference *revlist, *tmp;
+
     /* from now, you should add it to macros as REVERSE_LIST_MAP() */
     revlist = NULL;
     while (list!=NULL) {
@@ -431,7 +431,7 @@ static void olcxAddReferences(Reference *list, Reference **dlist,
     list = revlist;
 }
 
-static void olcxAddReferencesToSymbolsMenuItem(BrowserMenu *menuItem, Reference *references) {
+static void addReferencesToBrowserMenuItem(BrowserMenu *menuItem, Reference *references) {
     for (Reference *r = references; r != NULL; r = r->next) {
         addReferenceToBrowserMenu(menuItem, r);
     }
@@ -753,10 +753,10 @@ static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
 
     assert(options.xref2);
     actn = getCurrentRefPosition(refs);
-    if (refs!=NULL && refs->symbolsMenu != NULL) {
+    if (refs!=NULL && refs->menu != NULL) {
         char tmp[MAX_CX_SYMBOL_SIZE];
         tmp[0]='\"';
-        symbolHighlightNameSprint(tmp+1, refs->symbolsMenu);
+        symbolHighlightNameSprint(tmp+1, refs->menu);
         len = strlen(tmp);
         tmp[len]='\"';
         tmp[len+1]=0;
@@ -877,10 +877,10 @@ static void findAndGotoDefinition(ReferenceableItem *sym) {
     oldtop = pushSession();
     refs = sessionData.browserStack.top;
     BrowserMenu menu = makeBrowserMenu(*sym, true, true, 0, UsageUsed, 0, UsageNone, noPosition);
-    refs->symbolsMenu = &menu;
+    refs->menu = &menu;
     fullScanFor(sym->linkName);
     orderRefsAndGotoDefinition(refs);
-    refs->symbolsMenu = NULL;
+    refs->menu = NULL;
     // recover stack
     popAndFreeSessionsUntil(oldtop);
 }
@@ -1117,16 +1117,16 @@ static void olcxSymbolMenuInspectDef(void) {
     OlcxReferences    *refs;
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
         return;
-    olcxMenuInspectDef(refs->symbolsMenu);
+    olcxMenuInspectDef(refs->menu);
 }
 
 void olProcessSelectedReferences(OlcxReferences *rstack,
                                  void (*referencesMapFun)(OlcxReferences *rstack, BrowserMenu *menu)) {
-    if (rstack->symbolsMenu == NULL)
+    if (rstack->menu == NULL)
         return;
 
     LIST_MERGE_SORT(Reference, rstack->references, olcxReferenceInternalLessFunction);
-    for (BrowserMenu *m = rstack->symbolsMenu; m != NULL; m = m->next) {
+    for (BrowserMenu *m = rstack->menu; m != NULL; m = m->next) {
         referencesMapFun(rstack, m);
     }
     olcxSetCurrentRefsOnCaller(rstack);
@@ -1136,8 +1136,7 @@ void olProcessSelectedReferences(OlcxReferences *rstack,
 static void genOnLineReferences(OlcxReferences *rstack, BrowserMenu *cms) {
     if (cms->selected) {
         assert(cms);
-        olcxAddReferences(cms->references.references, &rstack->references, ANY_FILE,
-                          isBestFitMatch(cms));
+        olcxAddReferences(cms->references.references, &rstack->references, ANY_FILE);
     }
 }
 
@@ -1153,7 +1152,7 @@ static void olcxMenuToggleSelect(void) {
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
-    for (ss=refs->symbolsMenu; ss!=NULL; ss=ss->next) {
+    for (ss=refs->menu; ss!=NULL; ss=ss->next) {
         line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
         if (line == options.olcxMenuSelectLineNum) {
             ss->selected = !ss->selected; // WTF! Was: ss->selected = ss->selected ^ 1;
@@ -1174,7 +1173,7 @@ static void olcxMenuSelectOnly(void) {
         return;
 
     selection = NULL;
-    for (BrowserMenu *menu=refs->symbolsMenu; menu!=NULL; menu=menu->next) {
+    for (BrowserMenu *menu=refs->menu; menu!=NULL; menu=menu->next) {
         menu->selected = false;
         int line = SYMBOL_MENU_FIRST_LINE + menu->outOnLine;
         if (line == options.olcxMenuSelectLineNum) {
@@ -1243,7 +1242,7 @@ static void olcxMenuSelectAll(bool selected) {
     if (refs->operation == OLO_GLOBAL_UNUSED) {
         ppcGenRecord(PPC_WARNING, "The browser does not display project unused symbols anymore");
     }
-    for (BrowserMenu *menu=refs->symbolsMenu; menu!=NULL; menu=menu->next) {
+    for (BrowserMenu *menu=refs->menu; menu!=NULL; menu=menu->next) {
         if (menu->visible)
             menu->selected = selected;
     }
@@ -1307,12 +1306,12 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
     if (refs!=NULL && flevel < MAX_MENU_FILTER_LEVEL && flevel >= 0) {
         if (refs->menuFilterLevel != flevel) {
             refs->menuFilterLevel = flevel;
-            setSelectedVisibleItems(refs->symbolsMenu, refs->operation, refs->menuFilterLevel);
+            setSelectedVisibleItems(refs->menu, refs->operation, refs->menuFilterLevel);
             olcxRecomputeSelRefs(refs);
         }
     }
     if (refs!=NULL) {
-        olcxPrintSelectionMenu(refs->symbolsMenu);
+        olcxPrintSelectionMenu(refs->menu);
     } else {
         olcxPrintSelectionMenu(NULL);
         olcxPrintRefList(";", NULL);
@@ -1431,8 +1430,8 @@ static void safetyCheckDiff(Reference **anr1,
     }
     diffrefs->current = diffrefs->references;
     if (diffrefs->references!=NULL) {
-        assert(diffrefs->symbolsMenu);
-        olcxAddReferencesToSymbolsMenuItem(diffrefs->symbolsMenu, diffrefs->references);
+        assert(diffrefs->menu);
+        addReferencesToBrowserMenuItem(diffrefs->menu, diffrefs->references);
     }
 }
 
@@ -1499,7 +1498,7 @@ static void olcxSafetyCheck(void) {
         sessionData.browserStack.top = sessionData.browserStack.top->previous;
         fprintf(outputFile, "*Done. No conflicts detected.");
     } else {
-        assert(diffrefs->symbolsMenu);
+        assert(diffrefs->menu);
         sessionData.browserStack.top = sessionData.browserStack.top->previous;
         fprintf(outputFile, " ** Some misinterpreted references detected. Please, undo last refactoring.");
     }
@@ -1574,7 +1573,7 @@ static void olcxNoSymbolFoundErrorMessage(void) {
 
 static bool olcxCheckSymbolExists(void) {
     if (sessionData.browserStack.top!=NULL
-        && sessionData.browserStack.top->symbolsMenu==NULL) {
+        && sessionData.browserStack.top->menu==NULL) {
         return false;
     }
     return true;
@@ -1607,7 +1606,7 @@ bool olcxShowSelectionMenu(void) {
         return false;
     }
     // first if just zero or one symbol, no resolution
-    first = sessionData.browserStack.top->symbolsMenu;
+    first = sessionData.browserStack.top->menu;
     if (first == NULL) {
         //&fprintf(dumpOut,"no resolve, no symbol\n"); fflush(dumpOut);
         return false; // no symbol
@@ -1625,7 +1624,7 @@ bool olcxShowSelectionMenu(void) {
         || options.serverOperation==OLO_ARGUMENT_MANIPULATION
     ) {
         // manually only if different
-        for (BrowserMenu *ss=sessionData.browserStack.top->symbolsMenu; ss!=NULL; ss=ss->next) {
+        for (BrowserMenu *ss=sessionData.browserStack.top->menu; ss!=NULL; ss=ss->next) {
             if (ss->selected) {
                 if (first == NULL) {
                     first = ss;
@@ -1635,7 +1634,7 @@ bool olcxShowSelectionMenu(void) {
             }
         }
     } else {
-        for (BrowserMenu *ss=sessionData.browserStack.top->symbolsMenu; ss!=NULL; ss=ss->next) {
+        for (BrowserMenu *ss=sessionData.browserStack.top->menu; ss!=NULL; ss=ss->next) {
             if (ss->visible) {
                 if (first!=NULL) {
                     return true;
@@ -1715,7 +1714,7 @@ void olCreateSelectionMenu(ServerOperation command) {
 
     mapOverReferenceTable(mapCreateSelectionMenu);
     mapOverReferenceTable(putOnLineLoadedReferences);
-    setSelectedVisibleItems(rstack->symbolsMenu, command, rstack->menuFilterLevel);
+    setSelectedVisibleItems(rstack->menu, command, rstack->menuFilterLevel);
     assert(rstack->references==NULL);
     olProcessSelectedReferences(rstack, genOnLineReferences);
 
@@ -1725,7 +1724,7 @@ void olCreateSelectionMenu(ServerOperation command) {
     // because they come out in the wrong order, but if the editor
     // client sorts them anyway (does it?) that would not matter
     LIST_MERGE_SORT(BrowserMenu,
-                    sessionData.browserStack.top->symbolsMenu,
+                    sessionData.browserStack.top->menu,
                     refItemsOrderLess);
 }
 
@@ -1736,7 +1735,7 @@ void olcxPushSpecialCheckMenuSym(char *symname) {
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
     rstack->hkSelectedSym = olCreateSpecialMenuItem(symname, NO_FILE_NUMBER, StorageDefault);
-    rstack->symbolsMenu = olCreateSpecialMenuItem(symname, NO_FILE_NUMBER, StorageDefault);
+    rstack->menu = olCreateSpecialMenuItem(symname, NO_FILE_NUMBER, StorageDefault);
 }
 
 static void olcxProcessGetRequest(void) {
@@ -2221,7 +2220,7 @@ int itIsSymbolToPushOlReferences(ReferenceableItem *referenceableItem,
                                  OlcxReferences *rstack,
                                  BrowserMenu **menu,
                                  int checkSelectedFlag) {
-    for (BrowserMenu *m=rstack->symbolsMenu; m!=NULL; m=m->next) {
+    for (BrowserMenu *m=rstack->menu; m!=NULL; m=m->next) {
         if ((m->selected || checkSelectedFlag==DO_NOT_CHECK_IF_SELECTED)
             && isSameCxSymbol(referenceableItem, &m->references))
         {
@@ -2360,7 +2359,7 @@ BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
         }
     }
     if (found) {
-        result = addReferenceableToBrowserMenu(&rstack->symbolsMenu, reference, false, false,
+        result = addReferenceableToBrowserMenu(&rstack->menu, reference, false, false,
                                         ooBits, relation, USAGE_ANY, vlevel, defaultPosition, defaultUsage);
     }
     return result;

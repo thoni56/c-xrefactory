@@ -21,7 +21,7 @@ typedef unsigned char uchar;
 
 typedef enum longjmpReason {
     LONGJMP_REASON_NONE = 0,
-    LONGJUMP_REASON_REFERENCES_OVERFLOW,
+    LONGJMP_REASON_REFERENCES_OVERFLOW,
     LONGJMP_REASON_FILE_ABORT
 } LongjmpReason;
 
@@ -173,7 +173,7 @@ typedef struct olcxReferences {
     struct reference      *references;     /* list of references for browsing */
     struct reference      *current;        /* current reference position */
     struct BrowserMenu    *hkSelectedSym;  /* resolved symbols under the cursor */
-    struct BrowserMenu    *symbolsMenu;    /* hkSelectedSyms plus same name */
+    struct BrowserMenu    *menu;    /* hkSelectedSyms plus same name */
     // following two lists should be probably split into hashed tables of lists
     // because of bad performances for class tree and global unused symbols
     int                    menuFilterLevel; /* filter level for menu display */

@@ -29,7 +29,7 @@ typedef struct referenceableItem {
     Scope                     scope : SCOPES_BITS;
     Visibility                visibility : 2;     /* local/global */
     struct reference         *references;
-    struct referenceableItem     *next; /* TODO: Link only for hashtab */
+    struct referenceableItem *next; /* TODO: Link only for hashtab */
 } ReferenceableItem;
 
 

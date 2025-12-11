@@ -24,7 +24,7 @@ void deleteOlcxRefs(ReferencesStack *stack, OlcxReferences **referencesP) {
     freeReferences(references->references);
     freeCompletions(references->completions);
     freeBrowserMenuList(references->hkSelectedSym);
-    freeBrowserMenuList(references->symbolsMenu);
+    freeBrowserMenuList(references->menu);
 
     // if deleting second entry point, update it
     if (references==stack->top) {

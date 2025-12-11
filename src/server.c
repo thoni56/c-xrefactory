@@ -55,11 +55,11 @@ static int scheduleFileUsingTheMacro(void) {
     }
 
     assert(sessionData.browserStack.top);
-    BrowserMenu *oldMenu = sessionData.browserStack.top->symbolsMenu;
-    sessionData.browserStack.top->symbolsMenu = &menu;
+    BrowserMenu *oldMenu = sessionData.browserStack.top->menu;
+    sessionData.browserStack.top->menu = &menu;
     olMacro2PassFile = NO_FILE_NUMBER;
     scanForMacroUsage(completionStringInMacroBody);
-    sessionData.browserStack.top->symbolsMenu = oldMenu;
+    sessionData.browserStack.top->menu = oldMenu;
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
     }

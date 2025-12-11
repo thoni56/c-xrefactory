@@ -321,7 +321,7 @@ void callXref(int argc, char **argv, bool isRefactoring) {
             if (reason == LONGJMP_REASON_FILE_ABORT) {
                 if (fileItem != NULL)
                     fileItem = fileItem->next;
-            } else if (reason == LONGJUMP_REASON_REFERENCES_OVERFLOW) {
+            } else if (reason == LONGJMP_REASON_REFERENCES_OVERFLOW) {
                 referencesOverflowed(cxFreeBase, reason);
             }
         } else {
