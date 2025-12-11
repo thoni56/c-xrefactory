@@ -144,8 +144,6 @@ typedef struct {
     struct symbol     *currentStructure; /* current class, NULL for loc vars. */
     struct symbol     *nextMember;
     unsigned           memberFindCount;
-    int                superClassesCount;
-    struct symbolList *superClasses[MAX_INHERITANCE_DEEP]; /* super classes stack */
     int                anonymousUnionsCount;
     struct symbol     *anonymousUnions[MAX_ANONYMOUS_FIELDS]; /* anonymous unions */
 } StructMemberFindInfo;

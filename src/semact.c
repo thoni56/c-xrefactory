@@ -28,7 +28,6 @@ void fillStructMemberFindInfo(StructMemberFindInfo *info, Symbol *currentStructu
     info->currentStructure     = currentStructure;
     info->nextMember           = nextRecord;
     info->memberFindCount     = memberFindCount;
-    info->superClassesCount    = 0;
     info->anonymousUnionsCount = 0;
 }
 
@@ -159,7 +158,6 @@ void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
 
 Result findStructureMemberSymbol(Symbol **resultingSymbolP, StructMemberFindInfo *info, char *memberName) {
     Symbol     *symbol, *structure;
-    SymbolList *list;
 
     for (;;) {
         assert(info);
@@ -167,8 +165,7 @@ Result findStructureMemberSymbol(Symbol **resultingSymbolP, StructMemberFindInfo
         if (structure != NULL && structure->structSpec->memberSearchCounter == info->memberFindCount) {
             goto nextStruct;
         }
-        if (structure != NULL)
-            log_debug(":looking in class %s(%d)", structure->linkName, info->superClassesCount);
+
         for (Symbol *m = info->nextMember; m != NULL; m = m->next) {
             // special gcc extension of anonymous struct field/member?
             // typedef struct {
@@ -181,7 +178,6 @@ Result findStructureMemberSymbol(Symbol **resultingSymbolP, StructMemberFindInfo
                 m->typeModifier->type == TypeAnonymousField && m->typeModifier->next != NULL &&
                 (m->typeModifier->next->type == TypeUnion || m->typeModifier->next->type == TypeStruct)
             ) {
-                // put the anonymous union as 'super class'
                 if (info->anonymousUnionsCount + 1 < MAX_ANONYMOUS_FIELDS) {
                     info->anonymousUnions[info->anonymousUnionsCount++] = m->typeModifier->next->typeSymbol;
                 }
@@ -203,20 +199,9 @@ Result findStructureMemberSymbol(Symbol **resultingSymbolP, StructMemberFindInfo
                 structure->structSpec->memberSearchCounter = info->memberFindCount;
             }
 
-            while (info->superClassesCount > 0 && info->superClasses[info->superClassesCount - 1] == NULL)
-                info->superClassesCount--;
-            if (info->superClassesCount == 0) {
-                info->nextMember = NULL;
-                *resultingSymbolP = &errorSymbol;
-                return RESULT_NOT_FOUND;
-            }
-            list = info->superClasses[info->superClassesCount - 1];
-            symbol = list->element;
-
-            info->superClasses[info->superClassesCount - 1] = list->next;
-            assert(symbol && (symbol->type == TypeStruct || symbol->type == TypeUnion));
-            //& fprintf(dumpOut,":pass to super class %s(%d)\n",symbol->linkName,info->superClassesCount);
-            //fflush(dumpOut);
+            info->nextMember = NULL;
+            *resultingSymbolP = &errorSymbol;
+            return RESULT_NOT_FOUND;
         }
         memberFindPush(symbol, info);
     }

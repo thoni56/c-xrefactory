@@ -9,7 +9,6 @@ void fillStructMemberFindInfo(StructMemberFindInfo *info, Symbol *currentStructu
     info->currentStructure     = currentStructure;
     info->nextMember           = nextRecord;
     info->memberFindCount      = memberFindCount;
-    info->superClassesCount    = 0;
     info->anonymousUnionsCount = 0;
 }
 
