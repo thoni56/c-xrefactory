@@ -1,22 +1,12 @@
 #ifndef REFERENCEABLEITEM_H_INCLUDED
 #define REFERENCEABLEITEM_H_INCLUDED
 
-#include "visibility.h"
-#include "position.h"
+#include "reference.h"
 #include "scope.h"
 #include "storage.h"
 #include "type.h"
-#include "usage.h"
+#include "visibility.h"
 
-
-#define SCOPES_BITS 3
-
-// An occurence of a referenceableItem
-typedef struct reference {
-    struct position   position;
-    Usage             usage;
-    struct reference *next;
-} Reference;
 
 // A variable, type, included file, ...
 typedef struct referenceableItem {
@@ -32,17 +22,6 @@ typedef struct referenceableItem {
     struct referenceableItem *next; /* TODO: Link only for hashtab */
 } ReferenceableItem;
 
-
-extern Reference *newReference(Position position, Usage usage, Reference *next);
-extern Reference makeReference(Position position, Usage usage, Reference *next);
-extern Reference *duplicateReferenceInCxMemory(Reference *r);
-extern void freeReferences(Reference *references);
-extern void setReferenceUsage(Reference *reference, Usage usage);
-extern Reference **addToReferenceList(Reference **list, Position pos, Usage usage);
-extern bool isReferenceInList(Reference *r, Reference *list);
-extern Reference *addReferenceToList(Reference **rlist,
-                                     Reference *ref);
-extern int fileNumberOfReference(Reference reference);
 
 extern ReferenceableItem makeReferenceableItem(char *name, Type type, Storage storage, Scope scope,
                                                Visibility visibility, int includedFileNumber);

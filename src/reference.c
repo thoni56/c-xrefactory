@@ -1,4 +1,4 @@
-#include "referenceableitem.h"
+#include "reference.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,7 +9,6 @@
 #include "log.h"
 #include "misc.h"
 #include "options.h"
-#include "type.h"
 #include "usage.h"
 
 
@@ -101,25 +100,6 @@ Reference *addReferenceToList(Reference **listP, Reference *ref) {
     if (!isVisibleUsage(ref->usage))
         return NULL; // no regular on-line refs
     return addReferenceWithoutUsageCheck(listP, ref);
-}
-
-ReferenceableItem makeReferenceableItem(char *name, Type type, Storage storage, Scope scope,
-                                        Visibility visibility, int includedFileNumber) {
-    ReferenceableItem item;
-
-    item.linkName = name;
-    item.type = type;
-    item.storage = storage;
-    item.scope = scope;
-    item.visibility = visibility;
-    if (includedFileNumber != NO_FILE_NUMBER)
-        assert(type == TypeCppInclude);
-    item.includedFileNumber = includedFileNumber;
-
-    item.references = NULL;
-    item.next = NULL;
-
-    return item;
 }
 
 int fileNumberOfReference(Reference reference) {

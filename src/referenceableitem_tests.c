@@ -1,7 +1,7 @@
 #include <cgreen/cgreen.h>
 #include <cgreen/unit.h>
 
-#include "reference.h"
+#include "referenceableitem.h"
 
 #include "options.mock"
 #include "misc.mock"
@@ -14,7 +14,5 @@ BeforeEach(ReferenceableItem) {}
 AfterEach(ReferenceableItem) {}
 
 
-Ensure(ReferenceableItem, can_allocate_and_free_a_reference) {
-    Reference *reference = newReference((Position){0,0,0}, UsageNone, NULL);
-    free(reference);
+Ensure(ReferenceableItem, can_run_an_empty_test) {
 }
