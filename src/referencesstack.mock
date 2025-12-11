@@ -1,0 +1,24 @@
+#include <cgreen/mocks.h>
+
+#include "referencesstack.h"
+
+
+void deleteOlcxRefs(ReferencesStack *stack, OlcxReferences **referencesP) {
+    mock(stack, referencesP);
+}
+
+void freePoppedReferencesStackItems(ReferencesStack *stack) {
+    mock(stack);
+}
+
+OlcxReferences *getNextTopStackItem(ReferencesStack *stack) {
+    return (OlcxReferences *) mock(stack);
+}
+
+void olcxFreeOldCompletionItems(ReferencesStack *stack) {
+    mock(stack);
+}
+
+void pushEmptySession(ReferencesStack *stack) {
+    mock(stack);
+}
