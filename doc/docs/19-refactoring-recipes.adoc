@@ -14,27 +14,28 @@ These recipes serve as specifications for refactorings that c-xrefactory should 
 
 **Algorithm:**
 
-1. **Locate type definition**
+1. **Availability**
 
-   - Find the typedef/struct declaration in source file
+   - Available when the selected symbol is a type, that symbol is the type to move
 
 2. **Identify dependencies**
 
-   - Determine what types/macros the definition references
+   - Determine what types/macros the definition references/uses
 
 3. **Create/update target file:**
 
    - If new file: create with include guards and appropriate includes/forward declarations
-   - If existing: open the file
+   - If existing: open the file and find a suitable insertion location
 
 4. **Move definition**
 
-   - Copy type definition to target file (with includes and forward declarations if new file)
+   - Copy type definition to target file
+   - Add necessary includes and forward declarations
 
 5. **Replace in source file:**
 
    - If target is new file: Replace type definition with `#include "targetfile.h"`
-   - If target is existing file: Remove type definition, add `#include "targetfile.h"` if not already present
+   - If target is existing file: Remove type definition, add `#include "targetfile.h"` if not already present in the source file
 
 **Output:**
 
@@ -162,9 +163,80 @@ void pushEmptySession(ReferencesStack *stack);  // Generic operation
 
 ---
 
+=== Rename Included File
+
+**Purpose:** Rename a header file and update all the include directives
+
+**When to use:**
+
+- A header file is inappropriately named
+- In the process of renaming a complete C "module" this is one step (until `c-xrefactory` can do all of that)
+
+**Input:**
+
+- The old and new file names
+- All `#include` locations for the old file
+
+**Availability**
+
+When the cursor is on an `#include` directive. The file it references will be the "source".
+
+**Algorithm:**
+
+1. **Rename the source file to the destination**
+
+2. **Update all include locations**
+   - This will often include multiple locations
+
+**Output:**
+
+- New header file
+- All `#include`s updated
+
+---
+
 === Move Function to Different File
 
-TBD
+**Purpose:** ...
+
+**When to use:**
+
+- ...
+
+**Input:**
+
+- ...
+
+**Algorithm:**
+
+1. **Step 1**
+2.
+
+**Output:**
+
+- ...
+
+**Example:**
+
+TBD.
+
+```c
+// Before ...
+```
+
+After introducing semantic aliases:
+
+```c
+// After ...
+```
+
+**Benefits:**
+
+- ...
+
+**Notes:**
+
+- ...
 
 ---
 
