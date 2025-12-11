@@ -539,9 +539,9 @@ static void pushMarkersAsReferences(EditorMarkerList **markers, OlcxReferences *
 
     rr = convertEditorMarkersToReferences(markers);
     for (BrowserMenu *mm = refs->menu; mm != NULL; mm = mm->next) {
-        if (strcmp(mm->references.linkName, name) == 0) {
+        if (strcmp(mm->referenceable.linkName, name) == 0) {
             for (Reference *r = rr; r != NULL; r = r->next) {
-                addReferenceToList(&mm->references.references, r);
+                addReferenceToList(&mm->referenceable.references, r);
             }
         }
     }
@@ -565,8 +565,8 @@ static bool handleSafetyCheckDifferenceLists(EditorMarkerList *diff1, EditorMark
             mm->visible  = true;
             mm->ooBits   = 07777777;
             // hack, freeing now all diffs computed by old method
-            freeReferences(mm->references.references);
-            mm->references.references = NULL;
+            freeReferences(mm->referenceable.references);
+            mm->referenceable.references = NULL;
         }
         pushMarkersAsReferences(&diff1, diffrefs, LINK_NAME_SAFETY_CHECK_MISSED);
         pushMarkersAsReferences(&diff2, diffrefs, LINK_NAME_SAFETY_CHECK_MISSED);
@@ -787,9 +787,9 @@ static void checkForMultipleReferencesInSamePlace(OlcxReferences *rstack, Browse
     BrowserMenu    *cms;
     bool            pushed;
 
-    p = &ccms->references;
+    p = &ccms->referenceable;
     assert(rstack && rstack->menu);
-    sss    = &rstack->menu->references;
+    sss    = &rstack->menu->referenceable;
     pushed = itIsSymbolToPushOlReferences(p, rstack, &cms, DEFAULT_VALUE);
     // TODO, this can be simplified, as ccms == cms.
     log_debug(":checking %s to %s (%d)", p->linkName, sss->linkName, pushed);
@@ -829,7 +829,7 @@ static void renameAtPoint(EditorMarker *point) {
     occurrences = pushGetAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
 
     BrowserMenu *symbolsMenu = sessionData.browserStack.top->hkSelectedSym;
-    char *symLinkName = symbolsMenu->references.linkName;
+    char *symLinkName = symbolsMenu->referenceable.linkName;
 
     EditorUndo *undoStartPoint = editorUndo;
 
@@ -1562,8 +1562,8 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     bool isMultiFileReferences = false;
     EditorMarkerList *markerList = getReferences(point, NULL, PPCV_BROWSER_TYPE_WARNING);
     BrowserMenu *menu = sessionData.browserStack.top->hkSelectedSym;
-    Scope scope = menu->references.scope;
-    Visibility visibility = menu->references.visibility;
+    Scope scope = menu->referenceable.scope;
+    Visibility visibility = menu->referenceable.visibility;
 
     if (markerList == NULL) {
         fileNumber = NO_FILE_NUMBER;

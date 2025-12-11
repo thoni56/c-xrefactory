@@ -249,11 +249,11 @@ char *simpleFileNameFromFileNum(int fnum) {
 }
 
 void prettyPrintLinkNameForSymbolInMenu(char *buffer, BrowserMenu *menu) {
-    if (menu->references.type == TypeCppInclude) {
+    if (menu->referenceable.type == TypeCppInclude) {
         sprintf(buffer, "%s",
-                simpleFileName(getRealFileName_static(getFileItemWithFileNumber(menu->references.includedFileNumber)->name)));
+                simpleFileName(getRealFileName_static(getFileItemWithFileNumber(menu->referenceable.includedFileNumber)->name)));
     } else {
-        prettyPrintLinkName(buffer, menu->references.linkName, MAX_CX_SYMBOL_SIZE);
+        prettyPrintLinkName(buffer, menu->referenceable.linkName, MAX_CX_SYMBOL_SIZE);
     }
 }
 

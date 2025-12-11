@@ -14,11 +14,11 @@
 #include "referenceableitem.h"
 
 
-BrowserMenu makeBrowserMenu(ReferenceableItem references, bool selected, bool visible, unsigned ooBits,
+BrowserMenu makeBrowserMenu(ReferenceableItem referenceable, bool selected, bool visible, unsigned ooBits,
                             char olUsage, short int vlevel, char defaultUsage, Position defaultPosition) {
     BrowserMenu menu;
 
-    menu.references = references;
+    menu.referenceable = referenceable;
     menu.selected   = selected;
     menu.visible    = visible;
     menu.ooBits     = ooBits;
@@ -39,8 +39,8 @@ BrowserMenu makeBrowserMenu(ReferenceableItem references, bool selected, bool vi
 }
 
 static BrowserMenu *freeBrowserMenu(BrowserMenu *menu) {
-    free(menu->references.linkName);
-    freeReferences(menu->references.references);
+    free(menu->referenceable.linkName);
+    freeReferences(menu->referenceable.references);
     BrowserMenu *next = menu->next;
     free(menu);
     return next;
@@ -61,7 +61,7 @@ bool isBestFitMatch(BrowserMenu *menu) {
 }
 
 void addReferenceToBrowserMenu(BrowserMenu *menu, Reference *reference) {
-    Reference *added = addReferenceToList(&menu->references.references, reference);
+    Reference *added = addReferenceToList(&menu->referenceable.references, reference);
     if (added!=NULL) {
         if (isDefinitionOrDeclarationUsage(reference->usage)) {
             if (reference->usage==UsageDefined && positionsAreEqual(reference->position, menu->defaultPosition)) {
@@ -135,7 +135,7 @@ static bool referenceableItemIsLess(ReferenceableItem *s1, ReferenceableItem *s2
 }
 
 static bool browserMenuIsLess(BrowserMenu *s1, BrowserMenu *s2) {
-    return referenceableItemIsLess(&s1->references, &s2->references);
+    return referenceableItemIsLess(&s1->referenceable, &s2->referenceable);
 }
 
 BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableItem *item,
@@ -194,8 +194,8 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, BrowserMenu *menu) {
     currentOutputLineInSymbolList++ ;
     ppcIndent();
     fprintf(file,"<%s %s=%d", PPC_SYMBOL, PPCA_LINE, menu->outOnLine+SYMBOL_MENU_FIRST_LINE);
-    if (menu->references.type!=TypeDefault) {
-        fprintf(file," %s=%s", PPCA_TYPE, typeNamesTable[menu->references.type]);
+    if (menu->referenceable.type!=TypeDefault) {
+        fprintf(file," %s=%s", PPCA_TYPE, typeNamesTable[menu->referenceable.type]);
     }
     olcxPrintMenuItemPrefix(file, menu, true);
 
@@ -207,8 +207,7 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, BrowserMenu *menu) {
 /* Mapped through 'splitMenuPerSymbolsAndMap()' */
 static void genNonVirtualsGlobRefLists(BrowserMenu *menu, void *p1) {
     FILE *file = (FILE *)p1;
-    BrowserMenu    *m;
-    ReferenceableItem *r;
+    BrowserMenu *m;
 
     // Are there are any visible references at all
     for (m=menu; m!=NULL && !m->visible; m=m->next)
@@ -217,11 +216,11 @@ static void genNonVirtualsGlobRefLists(BrowserMenu *menu, void *p1) {
         return;
 
     assert(menu!=NULL);
-    r = &menu->references;
+    ReferenceableItem *r = &menu->referenceable;
     assert(r!=NULL);
     //&fprintf(dumpOut,"storage of %s == %s\n",r->linkName,storagesName[r->storage]);
     for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
-        r = &m->references;
+        r = &m->referenceable;
         olcxMenuGenNonVirtualGlobSymList(file, m);
     }
 }
@@ -233,10 +232,10 @@ void splitMenuPerSymbolsAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *menu,
     rr = menu;
     while (rr!=NULL) {
         mp = NULL;
-        ss= &rr; cs= &rr->references;
+        ss= &rr; cs= &rr->referenceable;
         while (*ss!=NULL) {
             cc = *ss;
-            if (isSameCxSymbol(&cc->references, cs)) {
+            if (isSameCxSymbol(&cc->referenceable, cs)) {
                 // move cc it into map list
                 *ss = (*ss)->next;
                 cc->next = mp;

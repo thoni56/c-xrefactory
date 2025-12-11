@@ -8,7 +8,7 @@ typedef struct {
 } SymbolRelation;
 
 typedef struct BrowserMenu {
-    struct referenceableItem    references;
+    struct referenceableItem referenceable;
     bool                     selected;
     bool                     visible;
     unsigned                 ooBits;

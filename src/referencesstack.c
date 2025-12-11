@@ -42,7 +42,7 @@ void freePoppedReferencesStackItems(ReferencesStack *stack) {
     assert(stack);
     // delete all after top
     while (stack->root != stack->top) {
-        //&fprintf(dumpOut,":freeing %s\n", stack->root->hkSelectedSym->references.linkName);
+        //&fprintf(dumpOut,":freeing %s\n", stack->root->hkSelectedSym->referenceable.linkName);
         deleteOlcxRefs(stack, &stack->root);
     }
 }

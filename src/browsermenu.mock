@@ -5,7 +5,7 @@
 BrowserMenu makeBrowserMenu(ReferenceableItem references, bool selected, bool visible, unsigned ooBits,
                             char olUsage, short int vlevel, char defautlUsage, Position defaultPosition) {
     BrowserMenu menu;
-    menu.references = references;
+    menu.referenceable = references;
     menu.selected = selected;
     menu.visible = visible;
     menu.ooBits = ooBits;
