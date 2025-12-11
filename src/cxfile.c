@@ -273,7 +273,7 @@ void searchSymbolCheckReference(ReferenceableItem  *referenceableItem, Reference
         static int count = 0;
         sessionData.retrieverStack.top->completions = completionListPrepend(
             sessionData.retrieverStack.top->completions, sname, NULL, NULL, referenceableItem,
-            reference, referenceableItem->type, referenceableItem->includedFileNumber);
+            reference, referenceableItem->type, referenceableItem->includeFile);
         // compact completions from time to time
         count ++;
         if (count > COMPACT_TAGS_AFTER_SEARCH_COUNT) {
@@ -333,7 +333,7 @@ static void writeSymbolItem(void) {
     /* Then the reference info */
     ReferenceableItem *r = lastOutgoingData.referenceableItem;
     writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, r->type, "\n"); /* Why newline in the middle of all this? */
-    writeOptionalCompactRecord(CXFI_INCLUDEFILENUMBER, r->includedFileNumber, ""); /* TODO - not used, but are actually include file refence */
+    writeOptionalCompactRecord(CXFI_INCLUDEFILENUMBER, r->includeFile, ""); /* TODO - not used, but are actually include file refence */
     writeOptionalCompactRecord(CXFI_STORAGE, r->storage, "");
     lastOutgoingData.macroBaseFileGeneratedForSymbol = false;
     lastOutgoingData.symbolIsWritten = true;
@@ -389,7 +389,7 @@ static void writeReferenceableItem(ReferenceableItem *referenceableItem) {
     lastOutgoingData.cachedReferenceableItem = makeReferenceableItem(lastOutgoingData.cachedSymbolName,
                                                                  referenceableItem->type, referenceableItem->storage,
                                                                  referenceableItem->scope, referenceableItem->visibility,
-                                                                 referenceableItem->includedFileNumber);
+                                                                 referenceableItem->includeFile);
     lastOutgoingData.referenceableItem   = &lastOutgoingData.cachedReferenceableItem;
     lastOutgoingData.referenceableItem   = &lastOutgoingData.cachedReferenceableItem;
     lastOutgoingData.symbolIsWritten = false;

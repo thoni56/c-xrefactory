@@ -12,7 +12,7 @@
 typedef struct referenceableItem {
     char                     *linkName;
     Type                      type : SYMTYPES_BITS;
-    int                       includedFileNumber; /* FileNumber for the included file if
+    int                       includeFile; /* FileNumber for the included file if
                                                    * this is an '#include' Reference item:
                                                    * type = TypeCppInclude */
     Storage                   storage : STORAGES_BITS;

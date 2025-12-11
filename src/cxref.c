@@ -1048,7 +1048,7 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
 static BrowserMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage) {
     BrowserMenu *menu;
     ReferenceableItem r = makeReferenceableItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility, cfi);
-    menu = createNewMenuItem(&r, r.includedFileNumber, noPosition, UsageNone,
+    menu = createNewMenuItem(&r, r.includeFile, noPosition, UsageNone,
                              true, true, OOC_VIRT_SAME_APPL_FUN_CLASS, (SymbolRelation){.sameFile = true},
                              UsageUsed, 0);
     return menu;
@@ -1063,7 +1063,7 @@ bool isSameReferenceableItem(ReferenceableItem *p1, ReferenceableItem *p2) {
         return false;
     if (p1->storage != p2->storage)
         return false;
-    if (p1->includedFileNumber != p2->includedFileNumber)
+    if (p1->includeFile != p2->includeFile)
         return false;
 
     if (strcmp(p1->linkName, p2->linkName) != 0)
@@ -1832,7 +1832,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
 static void dumpSelectionMenu(BrowserMenu *menu) {
     for (BrowserMenu *s=menu; s!=NULL; s=s->next) {
         log_debug(">> %d/%d %s %s %d", s->defaultRefn, s->refn, s->referenceable.linkName,
-            simpleFileName(getFileItemWithFileNumber(s->referenceable.includedFileNumber)->name),
+            simpleFileName(getFileItemWithFileNumber(s->referenceable.includeFile)->name),
             s->outOnLine);
     }
 }
@@ -2275,7 +2275,7 @@ static unsigned olcxOoBits(BrowserMenu *menu, ReferenceableItem *referenceableIt
         log_debug("olcxOoBits: +sameName (OOC_OVERLOADING_EQUAL)");
         ooBits |= OOC_OVERLOADING_EQUAL;
     }
-    if (referenceableItem->includedFileNumber == menu->referenceable.includedFileNumber) {
+    if (referenceableItem->includeFile == menu->referenceable.includeFile) {
         log_debug("olcxOoBits: +sameFile (OOC_VIRT_SAME_APPL_FUN_CLASS)");
         ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
     }
@@ -2295,7 +2295,7 @@ static SymbolRelation computeSymbolRelation(BrowserMenu *menu, ReferenceableItem
             return relation;
     }
 
-    if (referenceableItem->includedFileNumber == menu->referenceable.includedFileNumber) {
+    if (referenceableItem->includeFile == menu->referenceable.includeFile) {
         relation.sameFile = true;
     }
 
@@ -2351,7 +2351,7 @@ BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
             int v = 0;
             if (vlevel==0 || ABS(vlevel)>ABS(v))
                 vlevel = v;
-            log_debug("ooBits for %s <-> %s %o %o", getFileItemWithFileNumber(menu->referenceable.includedFileNumber)->name,
+            log_debug("ooBits for %s <-> %s %o %o", getFileItemWithFileNumber(menu->referenceable.includeFile)->name,
                       reference->linkName, oo, ooBits);
 
             SymbolRelation r = computeSymbolRelation(menu, reference);

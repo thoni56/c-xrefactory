@@ -8,7 +8,7 @@
 
 
 ReferenceableItem makeReferenceableItem(char *name, Type type, Storage storage, Scope scope,
-                                        Visibility visibility, int includedFileNumber) {
+                                        Visibility visibility, int includeFile) {
     ReferenceableItem item;
 
     item.linkName = name;
@@ -16,9 +16,9 @@ ReferenceableItem makeReferenceableItem(char *name, Type type, Storage storage, 
     item.storage = storage;
     item.scope = scope;
     item.visibility = visibility;
-    if (includedFileNumber != NO_FILE_NUMBER)
+    if (includeFile != NO_FILE_NUMBER) /* Only '#include' can have a file number */
         assert(type == TypeCppInclude);
-    item.includedFileNumber = includedFileNumber;
+    item.includeFile = includeFile;
 
     item.references = NULL;
     item.next = NULL;

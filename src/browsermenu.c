@@ -115,9 +115,9 @@ static bool referenceableItemIsLess(ReferenceableItem *s1, ReferenceableItem *s2
         return true;
     else if (cmp > 0)
         return false;
-    if (s1->includedFileNumber < s2->includedFileNumber)
+    if (s1->includeFile < s2->includeFile)
         return true;
-    else if (s1->includedFileNumber > s2->includedFileNumber)
+    else if (s1->includeFile > s2->includeFile)
         return false;
     if (s1->type < s2->type)
         return true;
@@ -149,7 +149,7 @@ BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableIte
     BrowserMenu *new = *place;
     if (*place==NULL || browserMenuIsLess(&dummyMenu, *place)) {
         assert(item);
-        new = createNewMenuItem(item, item->includedFileNumber, defpos, defusage,
+        new = createNewMenuItem(item, item->includeFile, defpos, defusage,
                                 selected, visible, ooBits, relation, olusage, vlevel);
         LIST_CONS(new, *place);
         log_debug(":adding browsed symbol '%s'", item->linkName);
