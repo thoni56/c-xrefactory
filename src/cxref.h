@@ -12,7 +12,7 @@
 
 extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
 extern bool isSameCxSymbol(ReferenceableItem *p1, ReferenceableItem *p2);
-extern bool olcxIsSameCxSymbol(ReferenceableItem *p1, ReferenceableItem *p2);
+extern bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2);
 extern void olcxRecomputeSelRefs(OlcxReferences *refs );
 extern void olProcessSelectedReferences(OlcxReferences *rstack,
                                         void (*referencesMapFun)(OlcxReferences *rstack,

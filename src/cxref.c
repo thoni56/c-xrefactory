@@ -1063,13 +1063,15 @@ bool isSameCxSymbol(ReferenceableItem *p1, ReferenceableItem *p2) {
         return false;
     if (p1->storage != p2->storage)
         return false;
+    if (p1->includedFileNumber != p2->includedFileNumber)
+        return false;
 
     if (strcmp(p1->linkName, p2->linkName) != 0)
         return false;
     return true;
 }
 
-bool olcxIsSameCxSymbol(ReferenceableItem *p1, ReferenceableItem *p2) {
+bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2) {
     int n1len, n2len;
     char *n1start, *n2start;
 
@@ -1627,8 +1629,7 @@ bool olcxShowSelectionMenu(void) {
             if (ss->selected) {
                 if (first == NULL) {
                     first = ss;
-                } else if ((! isSameCxSymbol(&first->references, &ss->references))
-                           || first->references.includedFileNumber!=ss->references.includedFileNumber) {
+                } else if (! isSameCxSymbol(&first->references, &ss->references)) {
                     return true;
                 }
             }
@@ -2222,7 +2223,6 @@ int itIsSymbolToPushOlReferences(ReferenceableItem *referenceableItem,
                                  int checkSelectedFlag) {
     for (SymbolsMenu *m=rstack->symbolsMenu; m!=NULL; m=m->next) {
         if ((m->selected || checkSelectedFlag==DO_NOT_CHECK_IF_SELECTED)
-            && m->references.includedFileNumber == referenceableItem->includedFileNumber
             && isSameCxSymbol(referenceableItem, &m->references))
         {
             *menu = m;
@@ -2253,7 +2253,7 @@ void putOnLineLoadedReferences(ReferenceableItem *referenceableItem) {
 }
 
 static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceableItem *referenceableItem) {
-    assert(olcxIsSameCxSymbol(&menu->references, referenceableItem));
+    assert(haveSameBareName(&menu->references, referenceableItem));
     unsigned ooBits = 0;
 
     if (menu->references.type!=TypeCppCollate) {
@@ -2286,7 +2286,7 @@ static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceableItem *referenceableIt
 }
 
 static SymbolRelation computeSymbolRelation(SymbolsMenu *menu, ReferenceableItem *referenceableItem) {
-    assert(olcxIsSameCxSymbol(&menu->references, referenceableItem));
+    assert(haveSameBareName(&menu->references, referenceableItem));
     SymbolRelation relation = {.sameFile = false};
 
     if (menu->references.type != TypeCppCollate) {
@@ -2337,7 +2337,7 @@ SymbolsMenu *createSelectionMenu(ReferenceableItem *reference) {
 
     bool found = false;
     for (SymbolsMenu *menu=rstack->hkSelectedSym; menu!=NULL; menu=menu->next) {
-        if (olcxIsSameCxSymbol(reference, &menu->references)) {
+        if (haveSameBareName(reference, &menu->references)) {
             found = true;
 
             unsigned oo = olcxOoBits(menu, reference);

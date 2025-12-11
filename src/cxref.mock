@@ -20,7 +20,7 @@ bool isSameCxSymbolIncludingApplicationClass(ReferenceableItem *p1, Referenceabl
     return (bool) mock(p1, p2);
 }
 
-bool olcxIsSameCxSymbol(ReferenceableItem *p1, ReferenceableItem *p2) {
+bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2) {
     return (bool) mock(p1, p2);
 }
 
