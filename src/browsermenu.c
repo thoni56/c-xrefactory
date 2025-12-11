@@ -225,7 +225,7 @@ static void genNonVirtualsGlobRefLists(BrowserMenu *menu, void *p1) {
     }
 }
 
-void splitMenuPerSymbolsAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *menu, void *p1), void *p1) {
+void splitBrowserMenuAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *menu, void *p1), void *p1) {
     BrowserMenu    *rr, *mp, **ss, *cc, *all;
     ReferenceableItem *cs;
     all = NULL;
@@ -235,7 +235,7 @@ void splitMenuPerSymbolsAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *menu,
         ss= &rr; cs= &rr->referenceable;
         while (*ss!=NULL) {
             cc = *ss;
-            if (isSameCxSymbol(&cc->referenceable, cs)) {
+            if (isSameReferenceableItem(&cc->referenceable, cs)) {
                 // move cc it into map list
                 *ss = (*ss)->next;
                 cc->next = mp;
@@ -268,5 +268,5 @@ static void generateGlobalReferenceLists(BrowserMenu *menu, FILE *file) {
     for (BrowserMenu *m=menu; m!=NULL; m=m->next)
         m->outOnLine = 0;
     currentOutputLineInSymbolList = 1;
-    splitMenuPerSymbolsAndMap(menu, genNonVirtualsGlobRefLists, file);
+    splitBrowserMenuAndMap(menu, genNonVirtualsGlobRefLists, file);
 }

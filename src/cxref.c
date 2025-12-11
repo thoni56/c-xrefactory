@@ -1054,7 +1054,7 @@ static BrowserMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage st
     return menu;
 }
 
-bool isSameCxSymbol(ReferenceableItem *p1, ReferenceableItem *p2) {
+bool isSameReferenceableItem(ReferenceableItem *p1, ReferenceableItem *p2) {
     if (p1 == p2)
         return true;
     if (p1->visibility != p2->visibility)
@@ -1280,7 +1280,7 @@ static bool isRenameMenuSelection(int command) {
 static void setSelectedVisibleItems(BrowserMenu *menu, ServerOperation command, int filterLevel) {
     unsigned ooselected, oovisible;
     if (command == OLO_GLOBAL_UNUSED) {
-        splitMenuPerSymbolsAndMap(menu, selectUnusedSymbols, &filterLevel);
+        splitBrowserMenuAndMap(menu, selectUnusedSymbols, &filterLevel);
         return;
     }
 
@@ -1628,7 +1628,7 @@ bool olcxShowSelectionMenu(void) {
             if (ss->selected) {
                 if (first == NULL) {
                     first = ss;
-                } else if (! isSameCxSymbol(&first->referenceable, &ss->referenceable)) {
+                } else if (! isSameReferenceableItem(&first->referenceable, &ss->referenceable)) {
                     return true;
                 }
             }
@@ -2222,7 +2222,7 @@ int itIsSymbolToPushOlReferences(ReferenceableItem *referenceableItem,
                                  int checkSelectedFlag) {
     for (BrowserMenu *m=rstack->menu; m!=NULL; m=m->next) {
         if ((m->selected || checkSelectedFlag==DO_NOT_CHECK_IF_SELECTED)
-            && isSameCxSymbol(referenceableItem, &m->referenceable))
+            && isSameReferenceableItem(referenceableItem, &m->referenceable))
         {
             *menu = m;
             if (isBestFitMatch(m)) {

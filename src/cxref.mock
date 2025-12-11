@@ -12,7 +12,7 @@ BrowserMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage) 
     return (BrowserMenu *) mock(fieldName, cfi, storage);
 }
 
-bool isSameCxSymbol(ReferenceableItem *p1, ReferenceableItem *p2) {
+bool isSameReferenceableItem(ReferenceableItem *p1, ReferenceableItem *p2) {
     return (bool) mock(p1, p2);
 }
 

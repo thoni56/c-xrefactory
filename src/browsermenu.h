@@ -40,7 +40,7 @@ extern BrowserMenu *createNewMenuItem(ReferenceableItem *sym, int includedFileNu
 extern BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableItem *reference,
                                            bool selected, bool visible, unsigned ooBits, SymbolRelation relation,
                                            int olusage, int vlevel, Position defpos, int defusage);
-extern void splitMenuPerSymbolsAndMap(BrowserMenu *menu,
+extern void splitBrowserMenuAndMap(BrowserMenu *menu,
                                       void (*fun)(BrowserMenu *, void *),
                                       void *p1);
 

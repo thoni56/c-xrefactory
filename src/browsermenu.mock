@@ -55,6 +55,6 @@ BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableIte
                                defusage);
 }
 
-void splitMenuPerSymbolsAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *, void *), void *p1) {
+void splitBrowserMenuAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *, void *), void *p1) {
   mock(menu, fun, p1);
 }
