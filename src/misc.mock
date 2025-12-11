@@ -6,8 +6,8 @@ void dumpArguments(int nargc, char **nargv) {
   mock(nargc, nargv);
 }
 
-void symbolRefItemDump(ReferenceableItem *ss) {
-  mock(ss);
+void dumpReferenceableItem(ReferenceableItem *r) {
+  mock(r);
 }
 
 void prettyPrintType(char *buffer, int *size, TypeModifier *typeModifier, char *name, int separator,

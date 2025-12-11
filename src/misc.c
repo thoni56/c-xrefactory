@@ -51,12 +51,12 @@ void typeDump(TypeModifier *t) {
     log_debug("dumpStop");
 }
 
-void symbolRefItemDump(ReferenceableItem *s) {
+void dumpReferenceableItem(ReferenceableItem *r) {
     log_debug("%s\t%s %s %d %d %d %d",
-              s->linkName,
-              getFileItemWithFileNumber(s->includedFileNumber)->name,
-              s->type, s->storage, s->scope,
-              s->visibility);
+              r->linkName,
+              getFileItemWithFileNumber(r->includedFileNumber)->name,
+              r->type, r->storage, r->scope,
+              r->visibility);
 }
 
 /* *********************************************************************** */

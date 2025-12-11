@@ -379,6 +379,6 @@ void xref(int argc, char **argv) {
         ppcSynchronize();
     }
     //& fprintf(dumpOut, "\n\nDUMP\n\n"); fflush(dumpOut);
-    //& mapOverReferenceTable(symbolRefItemDump);
+    //& mapOverReferenceTable(dumpReferenceableItem);
     LEAVE();
 }
