@@ -160,7 +160,7 @@ typedef struct structSpec {
 
 /* ***************** on - line cross referencing ***************** */
 
-#include "reference.h"
+#include "referenceableitem.h"
 #include "server.h"
 
 typedef struct olcxReferences {

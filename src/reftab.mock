@@ -6,37 +6,37 @@ ReferenceTable referenceTable;
 
 // Actual implementation, but malloc() i.s.o. cxAlloc()
 void initReferenceTable(int size) {
-    referenceTable.tab = malloc(size*sizeof(ReferenceItem *));
+    referenceTable.tab = malloc(size*sizeof(ReferenceableItem *));
     referenceTable.size = size;
-    memset(referenceTable.tab, 0, sizeof(ReferenceItem *)*size);
+    memset(referenceTable.tab, 0, sizeof(ReferenceableItem *)*size);
 }
 
 void refTabNoAllocInit(ReferenceTable *table, int size) {
     mock(table, size);
 }
 
-bool isMemberInReferenceTable(ReferenceItem *element, int *position, ReferenceItem **foundMemberPointer
+bool isMemberInReferenceTable(ReferenceableItem *element, int *position, ReferenceableItem **foundMemberPointer
 ) {
     return (bool)mock(element, position, foundMemberPointer);
 }
 
-bool refTabNextMember(ReferenceItem *element, ReferenceItem **original) {
+bool refTabNextMember(ReferenceableItem *element, ReferenceableItem **original) {
     return (bool)mock(element, original);
 }
 
-void pushReferenceItem(ReferenceItem *element, int position) {
+void pushReferenceableItem(ReferenceableItem *element, int position) {
     mock(element, position);
 }
 
-int addToReferencesTable(ReferenceItem *referencesItem) {
+int addToReferencesTable(ReferenceableItem *referencesItem) {
     return mock(referencesItem);
 }
 
-void mapOverReferenceTable(void (*fun)(ReferenceItem *)) {
+void mapOverReferenceTable(void (*fun)(ReferenceableItem *)) {
     mock(fun);
 }
 
-void mapOverReferenceTableWithPointer(void (*fun)(ReferenceItem *, void *), void *pointer) {
+void mapOverReferenceTableWithPointer(void (*fun)(ReferenceableItem *, void *), void *pointer) {
     mock(fun, pointer);
 }
 
@@ -44,15 +44,15 @@ void mapOverReferenceTableWithIndex(void (*fun)(int)) {
     mock(fun);
 }
 
-int getNextExistingReferenceItem(int index) {
+int getNextExistingReferenceableItem(int index) {
     return (int)mock(index);
 }
 
-ReferenceItem *getReferenceItem(int index) {
-    return (ReferenceItem *)mock(index);
+ReferenceableItem *getReferenceableItem(int index) {
+    return (ReferenceableItem *)mock(index);
 }
 
-void setReferenceItem(int index, ReferenceItem *item) {
+void setReferenceableItem(int index, ReferenceableItem *item) {
     mock(index, item);
 }
 

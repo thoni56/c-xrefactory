@@ -46,7 +46,7 @@ typedef enum extractClassification {
 
 typedef struct programGraphNode {
     struct reference *ref;		/* original reference of node */
-    struct referenceItem *symRef;
+    struct referenceableItem *symRef;
     struct programGraphNode *jump;
     InspectionBits posBits;               /* INSIDE/OUSIDE block */
     InspectionBits stateBits;             /* visited + where set */
@@ -152,7 +152,7 @@ void generateSwitchCaseFork(bool isLast) {
 }
 
 static ProgramGraphNode *newProgramGraphNode(
-    Reference *ref, ReferenceItem *symRef,
+    Reference *ref, ReferenceableItem *symRef,
     ProgramGraphNode *jump, char posBits,
     char stateBits,
     char classifBits,
@@ -171,11 +171,11 @@ static ProgramGraphNode *newProgramGraphNode(
     return programGraph;
 }
 
-static void extractFunGraphRef(ReferenceItem *referenceItem, void *prog) {
+static void extractFunGraphRef(ReferenceableItem *referenceableItem, void *prog) {
     ProgramGraphNode **ap = (ProgramGraphNode **) prog;
-    for (Reference *r=referenceItem->references; r!=NULL; r=r->next) {
+    for (Reference *r=referenceableItem->references; r!=NULL; r=r->next) {
         if (cxMemoryPointerIsBetween(r,parsedInfo.cxMemoryIndexAtFunctionBegin,parsedInfo.cxMemoryIndexAtFunctionEnd)){
-            ProgramGraphNode *p = newProgramGraphNode(r, referenceItem, NULL, 0, 0, CLASSIFIED_AS_NONE, *ap);
+            ProgramGraphNode *p = newProgramGraphNode(r, referenceableItem, NULL, 0, 0, CLASSIFIED_AS_NONE, *ap);
             *ap = p;
         }
     }
@@ -191,7 +191,7 @@ static ProgramGraphNode *getGraphAddress(ProgramGraphNode *program, Reference *r
     return result;
 }
 
-static Reference *getDefinitionReference(ReferenceItem *lab) {
+static Reference *getDefinitionReference(ReferenceableItem *lab) {
     Reference *result;
 
     for (result=lab->references; result!=NULL && result->usage!=UsageDefined; result=result->next)
@@ -205,7 +205,7 @@ static Reference *getDefinitionReference(ReferenceItem *lab) {
 }
 
 static ProgramGraphNode *getLabelGraphAddress(ProgramGraphNode *program,
-                                                ReferenceItem     *lab
+                                                ReferenceableItem     *lab
                                                 ) {
     ProgramGraphNode  *res;
     Reference         *defref;
@@ -238,7 +238,7 @@ static bool isStructOrUnion(ProgramGraphNode *node) {
     return node->symRef->linkName[0]==LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
 }
 
-static void extSetSetStates(ProgramGraphNode *p, ReferenceItem *symRef, unsigned cstate) {
+static void extSetSetStates(ProgramGraphNode *p, ReferenceableItem *symRef, unsigned cstate) {
     unsigned cpos, oldStateBits;
 
     for (; p!=NULL; p=p->next) {
@@ -287,7 +287,7 @@ static ExtractClassification classifyLocalVariableExtraction0(
     ProgramGraphNode *varRef
 ) {
     ProgramGraphNode *p;
-    ReferenceItem     *symRef;
+    ReferenceableItem     *symRef;
     unsigned    inUsages,outUsages,outUsageBothExists;
     symRef = varRef->symRef;
     for (p=program; p!=NULL; p=p->next) {

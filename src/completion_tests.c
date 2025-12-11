@@ -19,13 +19,13 @@ BeforeEach(Completion) {}
 AfterEach(Completion) {}
 
 protected Completion *newCompletion(char *name, char *fullName, int lineCount, Visibility visibility,
-                                    Type csymType, struct reference ref, struct referenceItem sym);
+                                    Type csymType, struct reference ref, struct referenceableItem sym);
 
 protected void freeCompletion(Completion *completion);
 
 Ensure(Completion, can_allocate_and_free_a_completion) {
     Reference ref = makeReference((Position){0,0,0}, UsageNone, NULL);
-    ReferenceItem item = makeReferenceItem("", TypeInt, StorageDefault, AutoScope, LocalVisibility, 0);
+    ReferenceableItem item = makeReferenceableItem("", TypeInt, StorageDefault, AutoScope, LocalVisibility, 0);
     Completion *c = newCompletion("", "", 0, LocalVisibility, TypeInt, ref, item);
     freeCompletion(c);
 }

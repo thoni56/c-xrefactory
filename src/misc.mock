@@ -6,7 +6,7 @@ void dumpArguments(int nargc, char **nargv) {
   mock(nargc, nargv);
 }
 
-void symbolRefItemDump(ReferenceItem *ss) {
+void symbolRefItemDump(ReferenceableItem *ss) {
   mock(ss);
 }
 

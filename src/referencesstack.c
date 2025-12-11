@@ -4,7 +4,7 @@
 #include <assert.h>
 
 #include "proto.h"
-#include "reference.h"
+#include "referenceableitem.h"
 #include "completion.h"
 #include "menu.h"
 #include "options.h"

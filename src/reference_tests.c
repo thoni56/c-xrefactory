@@ -1,7 +1,7 @@
 #include <cgreen/cgreen.h>
 #include <cgreen/unit.h>
 
-#include "reference.h"
+#include "referenceableitem.h"
 
 #include "options.mock"
 #include "misc.mock"

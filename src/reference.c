@@ -1,4 +1,4 @@
-#include "reference.h"
+#include "referenceableitem.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,7 +47,7 @@ void freeReferences(Reference *references) {
     }
 }
 
-void resetReferenceUsage(Reference *reference,  Usage usage) {
+void setReferenceUsage(Reference *reference,  Usage usage) {
     if (reference != NULL && reference->usage > usage) {
         reference->usage = usage;
     }
@@ -103,9 +103,9 @@ Reference *addReferenceToList(Reference **listP, Reference *ref) {
     return addReferenceWithoutUsageCheck(listP, ref);
 }
 
-ReferenceItem makeReferenceItem(char *name, Type type, Storage storage, Scope scope,
-                                Visibility visibility, int includedFileNumber) {
-    ReferenceItem item;
+ReferenceableItem makeReferenceableItem(char *name, Type type, Storage storage, Scope scope,
+                                        Visibility visibility, int includedFileNumber) {
+    ReferenceableItem item;
 
     item.linkName = name;
     item.type = type;

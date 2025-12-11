@@ -2430,9 +2430,9 @@ endOfFile:
 
 static void addMacroBaseUsageRef(Symbol *macroSymbol) {
     Position basePos = makePosition(inputFileNumber, 0, 0);
-    ReferenceItem ppp = makeReferenceItem(macroSymbol->linkName, TypeMacro, StorageDefault,
-                                          GlobalScope, GlobalVisibility, NO_FILE_NUMBER);
-    ReferenceItem *memb;
+    ReferenceableItem ppp = makeReferenceableItem(macroSymbol->linkName, TypeMacro, StorageDefault,
+                                                  GlobalScope, GlobalVisibility, NO_FILE_NUMBER);
+    ReferenceableItem *memb;
     bool isMember = isMemberInReferenceTable(&ppp, NULL, &memb);
     Reference *r = NULL;
     if (isMember) {

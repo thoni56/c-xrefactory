@@ -2,7 +2,7 @@
 #define COMPLETION_H_INCLUDED
 
 #include "visibility.h"
-#include "reference.h"
+#include "referenceableitem.h"
 #include "symbol.h"
 #include "type.h"
 #include "constants.h"
@@ -17,7 +17,7 @@ typedef struct completion {
     Visibility            visibility; /* Global/Local */
     Type                  csymType; /* symtype of completion */
     struct reference      ref;
-    struct referenceItem  sym;
+    struct referenceableItem  sym;
     struct completion    *next;
 } Completion;
 
@@ -46,7 +46,7 @@ typedef struct completions {
 extern void freeCompletions(Completion *completions);
 
 extern Completion *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *s,
-                                         ReferenceItem *ri, Reference *dfpos, Type symType, int includedFileNumber);
+                                         ReferenceableItem *ri, Reference *dfpos, Type symType, int includedFileNumber);
 
 void tagSearchCompactShortResults(void);
 

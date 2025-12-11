@@ -3,7 +3,7 @@
 
 #include "position.h"
 #include "symbol.h"
-#include "reference.h"
+#include "referenceableitem.h"
 
 /* Opaque handle - implementation details hidden */
 typedef struct SymbolDatabase SymbolDatabase;

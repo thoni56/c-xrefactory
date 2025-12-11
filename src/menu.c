@@ -11,10 +11,10 @@
 #include "misc.h"
 #include "options.h"
 #include "ppc.h"
-#include "reference.h"
+#include "referenceableitem.h"
 
 
-SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool visible, unsigned ooBits,
+SymbolsMenu makeSymbolsMenu(ReferenceableItem references, bool selected, bool visible, unsigned ooBits,
                             char olUsage, short int vlevel, char defaultUsage, Position defaultPosition) {
     SymbolsMenu menu;
 
@@ -95,7 +95,7 @@ static char *olcxStringCopy(char *string) {
     return copy;
 }
 
-SymbolsMenu *createNewMenuItem(ReferenceItem *symbol, int includedFileNumber, Position defpos,
+SymbolsMenu *createNewMenuItem(ReferenceableItem *symbol, int includedFileNumber, Position defpos,
                                Usage defusage, bool selected, bool visible, unsigned ooBits,
                                SymbolRelation relation, Usage olusage, int vlevel) {
     SymbolsMenu   *symbolsMenu;
@@ -103,8 +103,8 @@ SymbolsMenu *createNewMenuItem(ReferenceItem *symbol, int includedFileNumber, Po
 
     allocatedNameCopy = olcxStringCopy(symbol->linkName);
 
-    ReferenceItem refItem = makeReferenceItem(allocatedNameCopy, symbol->type, symbol->storage, symbol->scope,
-                                              symbol->visibility, includedFileNumber);
+    ReferenceableItem refItem = makeReferenceableItem(allocatedNameCopy, symbol->type, symbol->storage, symbol->scope,
+                                                      symbol->visibility, includedFileNumber);
 
     symbolsMenu = malloc(sizeof(SymbolsMenu));
     *symbolsMenu = makeSymbolsMenu(refItem, selected, visible, ooBits, olusage, vlevel, defusage, defpos);
@@ -112,7 +112,7 @@ SymbolsMenu *createNewMenuItem(ReferenceItem *symbol, int includedFileNumber, Po
     return symbolsMenu;
 }
 
-static bool referenceItemIsLess(ReferenceItem *s1, ReferenceItem *s2) {
+static bool referenceableItemIsLess(ReferenceableItem *s1, ReferenceableItem *s2) {
     int cmp;
 
     cmp = strcmp(s1->linkName, s2->linkName);
@@ -140,10 +140,10 @@ static bool referenceItemIsLess(ReferenceItem *s1, ReferenceItem *s2) {
 }
 
 static bool olSymbolMenuIsLess(SymbolsMenu *s1, SymbolsMenu *s2) {
-    return referenceItemIsLess(&s1->references, &s2->references);
+    return referenceableItemIsLess(&s1->references, &s2->references);
 }
 
-SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *symbol,
+SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceableItem *symbol,
                                     bool selected, bool visible, unsigned ooBits, SymbolRelation relation,
                                     int olusage, int vlevel,
                                     Position defpos, int defusage) {
@@ -214,7 +214,7 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
 static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, void *p1) {
     FILE *file = (FILE *)p1;
     SymbolsMenu    *m;
-    ReferenceItem *r;
+    ReferenceableItem *r;
 
     // Are there are any visible references at all
     for (m=menu; m!=NULL && !m->visible; m=m->next)
@@ -234,7 +234,7 @@ static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, void *p1) {
 
 void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *menu, void *p1), void *p1) {
     SymbolsMenu    *rr, *mp, **ss, *cc, *all;
-    ReferenceItem *cs;
+    ReferenceableItem *cs;
     all = NULL;
     rr = menu;
     while (rr!=NULL) {

@@ -16,7 +16,7 @@
 #include "menu.h"
 #include "misc.h"
 #include "options.h"
-#include "reference.h"
+#include "referenceableitem.h"
 #include "reftab.h"
 #include "session.h"
 #include "usage.h"
@@ -88,7 +88,7 @@ static int generatedFieldKeyList[] = {
 typedef struct lastCxFileData {
     int                 onLineReferencedSym;
     SymbolsMenu        *onLineRefMenuItem;
-    ReferenceItem      *referenceItem;
+    ReferenceableItem      *referenceableItem;
     bool                symbolIsWritten;
     bool                macroBaseFileGeneratedForSymbol;
     bool                keyUsed[MAX_CHARS];
@@ -103,7 +103,7 @@ typedef struct lastCxFileData {
 
     // following item can be used only via symbolTab,
     // it is just to simplify memory handling !!!!!!!!!!!!!!!!
-    ReferenceItem      cachedReferenceItem;
+    ReferenceableItem      cachedReferenceableItem;
     char               cachedSymbolName[MAX_CX_SYMBOL_SIZE];
 } LastCxFileData;
 
@@ -243,17 +243,17 @@ bool symbolShouldBeHiddenFromSearchResults(char *name) {
     return false;
 }
 
-void searchSymbolCheckReference(ReferenceItem  *referenceItem, Reference *reference) {
+void searchSymbolCheckReference(ReferenceableItem  *referenceableItem, Reference *reference) {
     char ssname[MAX_CX_SYMBOL_SIZE];
     char *s, *sname;
     int slen;
 
-    if (referenceItem->type == TypeCppInclude)
+    if (referenceableItem->type == TypeCppInclude)
         return;   // no %%i symbols
-    if (symbolShouldBeHiddenFromSearchResults(referenceItem->linkName))
+    if (symbolShouldBeHiddenFromSearchResults(referenceableItem->linkName))
         return;
 
-    prettyPrintLinkName(ssname, referenceItem->linkName, MAX_CX_SYMBOL_SIZE);
+    prettyPrintLinkName(ssname, referenceableItem->linkName, MAX_CX_SYMBOL_SIZE);
     sname = ssname;
     slen = strlen(sname);
     // if completing without profile, cut profile
@@ -272,8 +272,8 @@ void searchSymbolCheckReference(ReferenceItem  *referenceItem, Reference *refere
     if (searchStringMatch(sname, slen)) {
         static int count = 0;
         sessionData.retrieverStack.top->completions = completionListPrepend(
-            sessionData.retrieverStack.top->completions, sname, NULL, NULL, referenceItem,
-            reference, referenceItem->type, referenceItem->includedFileNumber);
+            sessionData.retrieverStack.top->completions, sname, NULL, NULL, referenceableItem,
+            reference, referenceableItem->type, referenceableItem->includedFileNumber);
         // compact completions from time to time
         count ++;
         if (count > COMPACT_TAGS_AFTER_SEARCH_COUNT) {
@@ -331,7 +331,7 @@ static void writeSymbolItem(void) {
     writeOptionalCompactRecord(CXFI_SYMBOL_INDEX, 0, "");
 
     /* Then the reference info */
-    ReferenceItem *r = lastOutgoingData.referenceItem;
+    ReferenceableItem *r = lastOutgoingData.referenceableItem;
     writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, r->type, "\n"); /* Why newline in the middle of all this? */
     writeOptionalCompactRecord(CXFI_INCLUDEFILENUMBER, r->includedFileNumber, ""); /* TODO - not used, but are actually include file refence */
     writeOptionalCompactRecord(CXFI_STORAGE, r->storage, "");
@@ -381,22 +381,23 @@ static void writeFileNumberItem(FileItem *fileItem, int number) {
 
 /* *************************************************************** */
 
-static void writeReferenceItem(ReferenceItem *referenceItem) {
-    log_trace("generate cxref for symbol '%s'", referenceItem->linkName);
-    assert(strlen(referenceItem->linkName)+1 < MAX_CX_SYMBOL_SIZE);
+static void writeReferenceableItem(ReferenceableItem *referenceableItem) {
+    log_trace("generate cxref for symbol '%s'", referenceableItem->linkName);
+    assert(strlen(referenceableItem->linkName)+1 < MAX_CX_SYMBOL_SIZE);
 
-    strcpy(lastOutgoingData.cachedSymbolName, referenceItem->linkName);
-    lastOutgoingData.cachedReferenceItem = makeReferenceItem(
-                       lastOutgoingData.cachedSymbolName, referenceItem->type,
-                       referenceItem->storage, referenceItem->scope, referenceItem->visibility, referenceItem->includedFileNumber);
-    lastOutgoingData.referenceItem   = &lastOutgoingData.cachedReferenceItem;
-    lastOutgoingData.referenceItem   = &lastOutgoingData.cachedReferenceItem;
+    strcpy(lastOutgoingData.cachedSymbolName, referenceableItem->linkName);
+    lastOutgoingData.cachedReferenceableItem = makeReferenceableItem(lastOutgoingData.cachedSymbolName,
+                                                                 referenceableItem->type, referenceableItem->storage,
+                                                                 referenceableItem->scope, referenceableItem->visibility,
+                                                                 referenceableItem->includedFileNumber);
+    lastOutgoingData.referenceableItem   = &lastOutgoingData.cachedReferenceableItem;
+    lastOutgoingData.referenceableItem   = &lastOutgoingData.cachedReferenceableItem;
     lastOutgoingData.symbolIsWritten = false;
 
-    if (referenceItem->visibility == LocalVisibility)
+    if (referenceableItem->visibility == LocalVisibility)
         return;
 
-    for (Reference *reference = referenceItem->references; reference != NULL; reference = reference->next) {
+    for (Reference *reference = referenceableItem->references; reference != NULL; reference = reference->next) {
         FileItem *fileItem = getFileItemWithFileNumber(reference->position.file);
         log_trace("checking ref: loading=%d --< %s:%d", fileItem->cxLoading,
                   fileItem->name, reference->position.line);
@@ -501,14 +502,14 @@ static void writePartialReferenceFile(bool updateFlag,
 }
 
 static void writeReferencesFromMemoryIntoRefFileNo(int fileOrder) {
-    for (int i=getNextExistingReferenceItem(0); i != -1; i = getNextExistingReferenceItem(i+1)) {
-        for (ReferenceItem *r=getReferenceItem(i); r!=NULL; r=r->next) {
+    for (int i=getNextExistingReferenceableItem(0); i != -1; i = getNextExistingReferenceableItem(i+1)) {
+        for (ReferenceableItem *r=getReferenceableItem(i); r!=NULL; r=r->next) {
             if (r->visibility == LocalVisibility)
                 continue;
             if (r->references == NULL)
                 continue;
             if (cxFileHashNumberForSymbol(r->linkName) == fileOrder)
-                writeReferenceItem(r);
+                writeReferenceableItem(r);
             else
                 log_trace("Skipping reference with linkname \"%s\"", r->linkName);
         }
@@ -520,7 +521,7 @@ static void writeSingleReferenceFile(bool updating, char *filename) {
     writeCxFileHead();
     mapOverFileTableWithIndex(writeFileNumberItem);
     scanCxFileUsing(fullScanFunctionSequence);
-    mapOverReferenceTable(writeReferenceItem);
+    mapOverReferenceTable(writeReferenceableItem);
     closeCurrentReferenceFile();
 }
 
@@ -747,24 +748,24 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
         return;
     }
 
-    ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem;
-    lastIncomingData.referenceItem = referenceItem;
+    ReferenceableItem *referenceableItem = &lastIncomingData.cachedReferenceableItem;
+    lastIncomingData.referenceableItem = referenceableItem;
 
     int includedFileNumber;
     getIncludedFileNumber(&includedFileNumber);
-    *referenceItem = makeReferenceItem(id, symbolType, storage, GlobalScope, GlobalVisibility, includedFileNumber);
+    *referenceableItem = makeReferenceableItem(id, symbolType, storage, GlobalScope, GlobalVisibility, includedFileNumber);
 
-    ReferenceItem *foundReferenceItem;
-    if (!isMemberInReferenceTable(referenceItem, NULL, &foundReferenceItem)) {
-        // TODO: This is more or less the body of a newReferenceItem()
+    ReferenceableItem *foundReferenceableItem;
+    if (!isMemberInReferenceTable(referenceableItem, NULL, &foundReferenceableItem)) {
+        // TODO: This is more or less the body of a newReferenceableItem()
         char *ss = cxAlloc(len+1);
         strcpy(ss,id);
-        foundReferenceItem = cxAlloc(sizeof(ReferenceItem));
-        *foundReferenceItem = makeReferenceItem(ss, symbolType, storage,
-                                                GlobalScope, GlobalVisibility, includedFileNumber);
-        addToReferencesTable(foundReferenceItem);
+        foundReferenceableItem = cxAlloc(sizeof(ReferenceableItem));
+        *foundReferenceableItem = makeReferenceableItem(ss, symbolType, storage,
+                                                    GlobalScope, GlobalVisibility, includedFileNumber);
+        addToReferencesTable(foundReferenceableItem);
     }
-    lastIncomingData.referenceItem = foundReferenceItem;
+    lastIncomingData.referenceableItem = foundReferenceableItem;
     lastIncomingData.onLineReferencedSym = 0;
 }
 
@@ -772,24 +773,24 @@ static void cxfileCheckLastSymbolDeadness(void) {
     if (lastIncomingData.symbolToCheckForDeadness != -1
         && lastIncomingData.deadSymbolIsDefined
     ) {
-        addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, lastIncomingData.referenceItem,
+        addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, lastIncomingData.referenceableItem,
                                true, true, 0, (SymbolRelation){.sameFile = false}, UsageDefined, 0, noPosition,
                                UsageDefined);
     }
 }
 
 
-static bool symbolIsReportableAsUnused(ReferenceItem *referenceItem) {
-    if (referenceItem==NULL || referenceItem->linkName[0]==' ')
+static bool symbolIsReportableAsUnused(ReferenceableItem *referenceableItem) {
+    if (referenceableItem==NULL || referenceableItem->linkName[0]==' ')
         return false;
 
     // you need to be strong here, in fact struct record can be used
     // without using struct explicitly
-    if (referenceItem->type == TypeStruct)
+    if (referenceableItem->type == TypeStruct)
         return false;
 
     // in this first approach restrict this to variables and functions
-    if (referenceItem->type == TypeMacro)
+    if (referenceableItem->type == TypeMacro)
         return false;
     return true;
 }
@@ -811,29 +812,29 @@ static void scanFunction_SymbolName(int size,
 
     Type symbolType = getSymbolType();
 
-    ReferenceItem *referenceItem = &lastIncomingData.cachedReferenceItem;
-    lastIncomingData.referenceItem = referenceItem;
+    ReferenceableItem *referenceableItem = &lastIncomingData.cachedReferenceableItem;
+    lastIncomingData.referenceableItem = referenceableItem;
 
     int includedFileNumber;
     getIncludedFileNumber(&includedFileNumber);
-    *referenceItem = makeReferenceItem(id, symbolType, storage, GlobalScope, GlobalVisibility, includedFileNumber);
+    *referenceableItem = makeReferenceableItem(id, symbolType, storage, GlobalScope, GlobalVisibility, includedFileNumber);
 
-    ReferenceItem *foundMemberP;
-    bool isMember = isMemberInReferenceTable(referenceItem, NULL, &foundMemberP);
+    ReferenceableItem *foundMemberP;
+    bool isMember = isMemberInReferenceTable(referenceableItem, NULL, &foundMemberP);
     while (isMember && foundMemberP->visibility!=GlobalVisibility)
-        isMember = refTabNextMember(referenceItem, &foundMemberP);
+        isMember = refTabNextMember(referenceableItem, &foundMemberP);
 
     assert(options.mode);
     if (options.mode == XrefMode) {
         if (foundMemberP==NULL)
-            foundMemberP=referenceItem;
-        writeReferenceItem(foundMemberP);
-        referenceItem->references = foundMemberP->references; // note references to not generate multiple
+            foundMemberP=referenceableItem;
+        writeReferenceableItem(foundMemberP);
+        referenceableItem->references = foundMemberP->references; // note references to not generate multiple
         foundMemberP->references = NULL;      // HACK, remove them, to not be regenerated
     }
     if (options.mode == ServerMode) {
         if (operation == CXSF_DEAD_CODE_DETECTION) {
-            if (symbolIsReportableAsUnused(lastIncomingData.referenceItem)) {
+            if (symbolIsReportableAsUnused(lastIncomingData.referenceableItem)) {
                 lastIncomingData.symbolToCheckForDeadness = 0;
                 lastIncomingData.deadSymbolIsDefined = 0;
             } else {
@@ -843,7 +844,7 @@ static void scanFunction_SymbolName(int size,
             int ols = 0;
             SymbolsMenu *cms = NULL;
             if (operation == CXSF_MENU_CREATION) {
-                cms = createSelectionMenu(referenceItem);
+                cms = createSelectionMenu(referenceableItem);
                 if (cms == NULL) {
                     ols = 0;
                 } else {
@@ -856,7 +857,7 @@ static void scanFunction_SymbolName(int size,
             lastIncomingData.onLineRefMenuItem = cms;
             if (ols) {
                 lastIncomingData.onLineReferencedSym = 0;
-                log_trace("symbol %s is O.K. for %s (ols==%d)", referenceItem->linkName, options.browsedSymName, ols);
+                log_trace("symbol %s is O.K. for %s (ols==%d)", referenceableItem->linkName, options.browsedSymName, ols);
             } else {
                 if (lastIncomingData.onLineReferencedSym == 0) {
                     lastIncomingData.onLineReferencedSym = -1;
@@ -887,7 +888,7 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
 
     Position pos = makePosition(file, line, col);
     if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]) {
-        addToReferenceList(&lastIncomingData.referenceItem->references, pos, usage);
+        addToReferenceList(&lastIncomingData.referenceableItem->references, pos, usage);
     }
 }
 
@@ -922,7 +923,7 @@ static void scanFunction_Reference(int size,
         int copyrefFl;
         if (fileItem->cxLoading && fileItem->cxSaved) {
             /* if we repass refs after overflow */
-            copyrefFl = !isInReferenceList(lastIncomingData.referenceItem->references,
+            copyrefFl = !isInReferenceList(lastIncomingData.referenceableItem->references,
                                      usage, makePosition(file, line, col));
         } else {
             copyrefFl = !fileItem->cxLoading;
@@ -956,7 +957,7 @@ static void scanFunction_Reference(int size,
                          || options.searchKind==SEARCH_FULL_SHORT)
                         && reference.usage==UsageDeclared)
                     ) {
-                    searchSymbolCheckReference(lastIncomingData.referenceItem, &reference);
+                    searchSymbolCheckReference(lastIncomingData.referenceableItem, &reference);
                 }
             } else {
                 if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]) {

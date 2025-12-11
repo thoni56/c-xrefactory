@@ -11,7 +11,7 @@
 
 static ReferenceTable referenceTable;
 
-static bool equalReferenceItems(ReferenceItem *e1, ReferenceItem *e2) {
+static bool equalReferenceableItems(ReferenceableItem *e1, ReferenceableItem *e2) {
     return e1->type==e2->type
         && e1->storage==e2->storage
         && e1->visibility==e2->visibility
@@ -21,53 +21,53 @@ static bool equalReferenceItems(ReferenceItem *e1, ReferenceItem *e2) {
 
 
 #define HASH_FUN(element) (hashFun(element->linkName) + (unsigned)element->includedFileNumber)
-#define HASH_ELEM_EQUAL(e1,e2) equalReferenceItems(e1, e2)
+#define HASH_ELEM_EQUAL(e1,e2) equalReferenceableItems(e1, e2)
 
 #include "hashlist.tc"
 
 
 void initReferenceTable(int size) {
     // We want this in cx_memory, so can't use refTabInit() b.c it allocates in StackMemory
-    referenceTable.tab = cxAlloc(size*sizeof(ReferenceItem *));
+    referenceTable.tab = cxAlloc(size*sizeof(ReferenceableItem *));
     refTabNoAllocInit(&referenceTable, size);
 }
 
-ReferenceItem *getReferenceItem(int index) {
+ReferenceableItem *getReferenceableItem(int index) {
     assert(index < referenceTable.size);
     assert(referenceTable.tab[index]);
     return referenceTable.tab[index];
 }
 
-int getNextExistingReferenceItem(int index) {
+int getNextExistingReferenceableItem(int index) {
     for (int i=index; i < referenceTable.size; i++)
         if (referenceTable.tab[i] != NULL)
             return i;
     return -1;
 }
 
-int addToReferencesTable(ReferenceItem *referenceItem) {
-    return refTabAdd(&referenceTable, referenceItem);
+int addToReferencesTable(ReferenceableItem *referenceableItem) {
+    return refTabAdd(&referenceTable, referenceableItem);
 }
 
-void pushReferenceItem(ReferenceItem *element, int position) {
+void pushReferenceableItem(ReferenceableItem *element, int position) {
     refTabPush(&referenceTable, element, position);
 }
 
-void setReferenceItem(int index, ReferenceItem *item) {
+void setReferenceableItem(int index, ReferenceableItem *item) {
     referenceTable.tab[index] = item;
 }
 
-bool isMemberInReferenceTable(ReferenceItem *element, int *position, ReferenceItem **foundMemberPointer) {
+bool isMemberInReferenceTable(ReferenceableItem *element, int *position, ReferenceableItem **foundMemberPointer) {
     return refTabIsMember(&referenceTable, element, position, foundMemberPointer);
 }
 
-void mapOverReferenceTable(void (*fun)(ReferenceItem *)) {
+void mapOverReferenceTable(void (*fun)(ReferenceableItem *)) {
     ENTER();
     refTabMap(&referenceTable, fun);
     LEAVE();
 }
 
-void mapOverReferenceTableWithPointer(void (*fun)(ReferenceItem *, void *), void *pointer) {
+void mapOverReferenceTableWithPointer(void (*fun)(ReferenceableItem *, void *), void *pointer) {
     refTabMapWithPointer(&referenceTable, fun, pointer);
 }
 
@@ -79,7 +79,7 @@ void removeReferencesForFile(int fileNumber) {
     log_trace("removing all references for file number %d", fileNumber);
 
     for (int i = 0; i < referenceTable.size; i++) {
-        ReferenceItem *item = referenceTable.tab[i];
+        ReferenceableItem *item = referenceTable.tab[i];
         if (item == NULL)
             continue;
 

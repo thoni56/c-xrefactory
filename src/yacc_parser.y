@@ -512,11 +512,11 @@ postfix_expr
     }
     | postfix_expr INC_OP                       {
         $$.data.typeModifier = $1.data.typeModifier;
-        resetReferenceUsage($1.data.reference, UsageAddrUsed);
+        setReferenceUsage($1.data.reference, UsageAddrUsed);
     }
     | postfix_expr DEC_OP                       {
         $$.data.typeModifier = $1.data.typeModifier;
-        resetReferenceUsage($1.data.reference, UsageAddrUsed);
+        setReferenceUsage($1.data.reference, UsageAddrUsed);
     }
     | compound_literal
     ;
@@ -573,11 +573,11 @@ unary_expr
     : postfix_expr                  /*& { $$.data = $1.data; } &*/
     | INC_OP unary_expr             {
         $$.data.typeModifier = $2.data.typeModifier;
-        resetReferenceUsage($2.data.reference, UsageAddrUsed);
+        setReferenceUsage($2.data.reference, UsageAddrUsed);
     }
     | DEC_OP unary_expr             {
         $$.data.typeModifier = $2.data.typeModifier;
-        resetReferenceUsage($2.data.reference, UsageAddrUsed);
+        setReferenceUsage($2.data.reference, UsageAddrUsed);
     }
     | unary_operator cast_expr      {
         $$.data.typeModifier = $2.data.typeModifier;
@@ -585,7 +585,7 @@ unary_expr
     }
     | '&' cast_expr                 {
         $$.data.typeModifier = newPointerTypeModifier($2.data.typeModifier);
-        resetReferenceUsage($2.data.reference, UsageAddrUsed);
+        setReferenceUsage($2.data.reference, UsageAddrUsed);
         $$.data.reference = NULL;
     }
     | '*' cast_expr                 {
@@ -757,15 +757,15 @@ assignment_expr
             Reference *r = duplicateReferenceInCxMemory($1.data.reference);
             $1.data.reference->usage = UsageNone;
             if ($2.data == '=') {
-                resetReferenceUsage(r, UsageLvalUsed);
+                setReferenceUsage(r, UsageLvalUsed);
             } else {
-                resetReferenceUsage(r, UsageAddrUsed);
+                setReferenceUsage(r, UsageAddrUsed);
             }
         } else {
             if ($2.data == '=') {
-                resetReferenceUsage($1.data.reference, UsageLvalUsed);
+                setReferenceUsage($1.data.reference, UsageLvalUsed);
             } else {
-                resetReferenceUsage($1.data.reference, UsageAddrUsed);
+                setReferenceUsage($1.data.reference, UsageAddrUsed);
             }
         }
         $$.data = $1.data;    /* $$.d.r will be used for FOR completions ! */

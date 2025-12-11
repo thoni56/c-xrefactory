@@ -8,7 +8,7 @@
 #include "filetable.h"
 #include "list.h"
 #include "options.h"
-#include "reference.h"
+#include "referenceableitem.h"
 #include "session.h"
 #include "symbol.h"
 
@@ -16,7 +16,7 @@
 // Will create malloc():ed copies of name and fullName so caller don't have to
 protected Completion *newCompletion(char *name, char *fullName,
                                     int lineCount, Visibility visibility, Type csymType,
-                                    struct reference ref, struct referenceItem sym) {
+                                    struct reference ref, struct referenceableItem sym) {
     Completion *completion = malloc(sizeof(Completion));
 
     if (name != NULL) {
@@ -40,26 +40,26 @@ protected Completion *newCompletion(char *name, char *fullName,
 }
 
 // If symbol == NULL, then the pos is taken as default position of this ref !!!
-// If symbol != NULL && referenceItem != NULL then reference can be anything...
+// If symbol != NULL && referenceableItem != NULL then reference can be anything...
 Completion *completionListPrepend(Completion *completions, char *name, char *fullName, Symbol *symbol,
-                                  ReferenceItem *referenceItem, Reference *reference, Type type,
+                                  ReferenceableItem *referenceableItem, Reference *reference, Type type,
                                   int includedFileNumber) {
     Completion *completion;
 
-    if (referenceItem != NULL) {
+    if (referenceableItem != NULL) {
         // probably a 'search in tag' file item
-        char *linkName = strdup(referenceItem->linkName);
+        char *linkName = strdup(referenceableItem->linkName);
 
-        ReferenceItem item = makeReferenceItem(linkName, referenceItem->type,
-                                               referenceItem->storage, referenceItem->scope, referenceItem->visibility, referenceItem->includedFileNumber);
+        ReferenceableItem item = makeReferenceableItem(linkName, referenceableItem->type,
+                                                       referenceableItem->storage, referenceableItem->scope, referenceableItem->visibility, referenceableItem->includedFileNumber);
 
-        completion = newCompletion(name, fullName, 1, referenceItem->visibility, type, *reference, item);
+        completion = newCompletion(name, fullName, 1, referenceableItem->visibility, type, *reference, item);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
 
-        ReferenceItem item = makeReferenceItem("", TypeUnknown, StorageDefault,
-                                               AutoScope, LocalVisibility, NO_FILE_NUMBER);
+        ReferenceableItem item = makeReferenceableItem("", TypeUnknown, StorageDefault,
+                                                       AutoScope, LocalVisibility, NO_FILE_NUMBER);
 
         completion = newCompletion(name, fullName, 1, LocalVisibility, type, r, item);
     } else {
@@ -70,8 +70,8 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
         char *linkName = strdup(symbol->linkName);
 
-        ReferenceItem item = makeReferenceItem(linkName, symbol->type, storage,
-                                               scope, visibility, includedFileNumber);
+        ReferenceableItem item = makeReferenceableItem(linkName, symbol->type, storage,
+                                                       scope, visibility, includedFileNumber);
         completion = newCompletion(name, fullName, 1, visibility, type, r, item);
     }
     if (fullName!=NULL) {

@@ -783,7 +783,7 @@ static void multipleReferencesInSamePlaceMessage(Reference *r) {
 }
 
 static void checkForMultipleReferencesInSamePlace(OlcxReferences *rstack, SymbolsMenu *ccms) {
-    ReferenceItem *p, *sss;
+    ReferenceableItem *p, *sss;
     SymbolsMenu    *cms;
     bool            pushed;
 

@@ -45,8 +45,8 @@ static int scheduleFileUsingTheMacro(void) {
 
     assert(completionStringInMacroBody);
     tmpc = NULL;
-    ReferenceItem references = makeReferenceItem(completionStringInMacroBody, TypeMacro, StorageExtern,
-                                                 GlobalScope, GlobalVisibility, NO_FILE_NUMBER);
+    ReferenceableItem references = makeReferenceableItem(completionStringInMacroBody, TypeMacro, StorageExtern,
+                                                         GlobalScope, GlobalVisibility, NO_FILE_NUMBER);
 
     SymbolsMenu menu = makeSymbolsMenu(references, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);
     if (sessionData.browserStack.top==NULL) {

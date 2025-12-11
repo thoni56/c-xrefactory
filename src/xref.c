@@ -73,9 +73,9 @@ static FileItem *createListOfInputFileItems(void) {
     return fileItems;
 }
 
-static ReferenceItem makeReferenceItemForIncludeFile(int fileNumber) {
-    return makeReferenceItem(LINK_NAME_INCLUDE_REFS, TypeCppInclude, StorageExtern,
-                             GlobalScope, GlobalVisibility, fileNumber);
+static ReferenceableItem makeReferenceableItemForIncludeFile(int fileNumber) {
+    return makeReferenceableItem(LINK_NAME_INCLUDE_REFS, TypeCppInclude, StorageExtern,
+                                 GlobalScope, GlobalVisibility, fileNumber);
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
@@ -89,9 +89,9 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
             if (fileItem->scheduledToUpdate)
                 if (!fileItem->fullUpdateIncludesProcessed) {
                     fileItem->fullUpdateIncludesProcessed = true;
-                    ReferenceItem referenceItem = makeReferenceItemForIncludeFile(i);
-                    ReferenceItem *foundMemberP;
-                    if (isMemberInReferenceTable(&referenceItem, NULL, &foundMemberP)) {
+                    ReferenceableItem referenceableItem = makeReferenceableItemForIncludeFile(i);
+                    ReferenceableItem *foundMemberP;
+                    if (isMemberInReferenceTable(&referenceableItem, NULL, &foundMemberP)) {
                         for (Reference *r=foundMemberP->references; r!=NULL; r=r->next) {
                             FileItem *includerFile = getFileItemWithFileNumber(r->position.file);
                             if (!includerFile->scheduledToUpdate) {

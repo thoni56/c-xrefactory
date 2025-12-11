@@ -12,15 +12,15 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage) 
     return (SymbolsMenu *) mock(fieldName, cfi, storage);
 }
 
-bool isSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2) {
+bool isSameCxSymbol(ReferenceableItem *p1, ReferenceableItem *p2) {
     return (bool) mock(p1, p2);
 }
 
-bool isSameCxSymbolIncludingApplicationClass(ReferenceItem *p1, ReferenceItem *p2) {
+bool isSameCxSymbolIncludingApplicationClass(ReferenceableItem *p1, ReferenceableItem *p2) {
     return (bool) mock(p1, p2);
 }
 
-bool olcxIsSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2) {
+bool olcxIsSameCxSymbol(ReferenceableItem *p1, ReferenceableItem *p2) {
     return (bool) mock(p1, p2);
 }
 
@@ -70,16 +70,16 @@ void olCompletionListReverse(void) {
     mock();
 }
 
-int itIsSymbolToPushOlReferences(ReferenceItem *p, OlcxReferences *rstack, SymbolsMenu **rss,
+int itIsSymbolToPushOlReferences(ReferenceableItem *p, OlcxReferences *rstack, SymbolsMenu **rss,
                                int checkSelFlag) {
     return (int) mock(p, rstack, rss, checkSelFlag);
 }
 
-void putOnLineLoadedReferences(ReferenceItem *p) {
+void putOnLineLoadedReferences(ReferenceableItem *p) {
     mock(p);
 }
 
-SymbolsMenu *createSelectionMenu(ReferenceItem *dd) {
+SymbolsMenu *createSelectionMenu(ReferenceableItem *dd) {
     return (SymbolsMenu *) mock(dd);
 }
 

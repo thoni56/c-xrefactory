@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #include "constants.h"
-#include "reference.h"
+#include "referenceableitem.h"
 #include "referencesstack.h"
 #include "visibility.h"
 #include "characterreader.h"
@@ -283,25 +283,25 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
         break;
     }
 
-    ReferenceItem  referenceItem = makeReferenceItem(symbol->linkName, symbol->type,
-                                                     storage, scope, visibility, includedFileNumber);
-    ReferenceItem *foundMember;
+    ReferenceableItem referenceableItem = makeReferenceableItem(symbol->linkName, symbol->type,
+                                                             storage, scope, visibility, includedFileNumber);
+    ReferenceableItem *foundMember;
 
     if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH && options.searchKind==SEARCH_FULL) {
         Reference reference = makeReference(position, UsageNone, NULL);
-        searchSymbolCheckReference(&referenceItem, &reference);
+        searchSymbolCheckReference(&referenceableItem, &reference);
         return NULL;
     }
 
     int index;
-    if (!isMemberInReferenceTable(&referenceItem, &index, &foundMember)) {
+    if (!isMemberInReferenceTable(&referenceableItem, &index, &foundMember)) {
         log_debug("allocating '%s'", symbol->linkName);
         char *linkName = cxAlloc(strlen(symbol->linkName)+1);
         strcpy(linkName, symbol->linkName);
-        ReferenceItem *r = cxAlloc(sizeof(ReferenceItem));
-        *r = makeReferenceItem(linkName, symbol->type,
-                               storage, scope, visibility, includedFileNumber);
-        pushReferenceItem(r, index);
+        ReferenceableItem *r = cxAlloc(sizeof(ReferenceableItem));
+        *r = makeReferenceableItem(linkName, symbol->type,
+                                   storage, scope, visibility, includedFileNumber);
+        pushReferenceableItem(r, index);
         foundMember = r;
     }
 
@@ -856,7 +856,7 @@ static void popAndFreeSessionsUntil(OlcxReferences *oldtop) {
     }
 }
 
-static void findAndGotoDefinition(ReferenceItem *sym) {
+static void findAndGotoDefinition(ReferenceableItem *sym) {
     OlcxReferences *refs, *oldtop;
 
     // preserve popped items from browser first
@@ -1033,14 +1033,14 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
 
 static SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage) {
     SymbolsMenu *menu;
-    ReferenceItem r = makeReferenceItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility, cfi);
+    ReferenceableItem r = makeReferenceableItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility, cfi);
     menu = createNewMenuItem(&r, r.includedFileNumber, noPosition, UsageNone,
                              true, true, OOC_VIRT_SAME_APPL_FUN_CLASS, (SymbolRelation){.sameFile = true},
                              UsageUsed, 0);
     return menu;
 }
 
-bool isSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2) {
+bool isSameCxSymbol(ReferenceableItem *p1, ReferenceableItem *p2) {
     if (p1 == p2)
         return true;
     if (p1->visibility != p2->visibility)
@@ -1055,7 +1055,7 @@ bool isSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2) {
     return true;
 }
 
-bool olcxIsSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2) {
+bool olcxIsSameCxSymbol(ReferenceableItem *p1, ReferenceableItem *p2) {
     int n1len, n2len;
     char *n1start, *n2start;
 
@@ -1657,7 +1657,7 @@ static Position getCallerPositionFromCommandLineOption(void) {
 }
 
 static bool refItemsOrderLess(SymbolsMenu *menu1, SymbolsMenu *menu2) {
-    ReferenceItem *r1, *r2;
+    ReferenceableItem *r1, *r2;
     char *name1, *name2;
     int len1; UNUSED len1;
     int len2; UNUSED len2;
@@ -1673,7 +1673,7 @@ static bool refItemsOrderLess(SymbolsMenu *menu1, SymbolsMenu *menu2) {
     return cmp<0;
 }
 
-static void mapCreateSelectionMenu(ReferenceItem *p) {
+static void mapCreateSelectionMenu(ReferenceableItem *p) {
     createSelectionMenu(p);
 }
 
@@ -1843,13 +1843,13 @@ static void mainAnswerReferencePushingAction(ServerOperation operation) {
     }
 }
 
-static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceItem *referenceItem) {
+static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceableItem *referenceableItem) {
     bool used = false;
     Reference *definitionReference = NULL;
 
-    if (referenceItem->visibility != LocalVisibility)
+    if (referenceableItem->visibility != LocalVisibility)
         return;
-    for (Reference *r = referenceItem->references; r!=NULL; r=r->next) {
+    for (Reference *r = referenceableItem->references; r!=NULL; r=r->next) {
         if (isDefinitionOrDeclarationUsage(r->usage)) {
             if (r->position.file == inputFileNumber) {
                 if (isDefinitionUsage(r->usage)) {
@@ -1864,7 +1864,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceItem *referenceItem) 
         }
     }
     if (!used && definitionReference!=NULL) {
-        addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, referenceItem, true, true,
+        addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, referenceableItem, true, true,
                                0, (SymbolRelation){.sameFile = false}, UsageDefined, 0,
                                definitionReference->position, definitionReference->usage);
     }
@@ -2202,14 +2202,14 @@ void answerEditAction(void) {
     LEAVE();
 }
 
-int itIsSymbolToPushOlReferences(ReferenceItem *referenceItem,
+int itIsSymbolToPushOlReferences(ReferenceableItem *referenceableItem,
                                  OlcxReferences *rstack,
                                  SymbolsMenu **menu,
                                  int checkSelectedFlag) {
     for (SymbolsMenu *m=rstack->symbolsMenu; m!=NULL; m=m->next) {
         if ((m->selected || checkSelectedFlag==DO_NOT_CHECK_IF_SELECTED)
-            && m->references.includedFileNumber == referenceItem->includedFileNumber
-            && isSameCxSymbol(referenceItem, &m->references))
+            && m->references.includedFileNumber == referenceableItem->includedFileNumber
+            && isSameCxSymbol(referenceableItem, &m->references))
         {
             *menu = m;
             if (isBestFitMatch(m)) {
@@ -2224,45 +2224,45 @@ int itIsSymbolToPushOlReferences(ReferenceItem *referenceItem,
 }
 
 
-void putOnLineLoadedReferences(ReferenceItem *referenceItem) {
+void putOnLineLoadedReferences(ReferenceableItem *referenceableItem) {
     int ols;
     SymbolsMenu *cms;
 
-    ols = itIsSymbolToPushOlReferences(referenceItem, sessionData.browserStack.top,
+    ols = itIsSymbolToPushOlReferences(referenceableItem, sessionData.browserStack.top,
                                        &cms, DO_NOT_CHECK_IF_SELECTED);
     if (ols > 0) {
         assert(cms);
-        for (Reference *r=referenceItem->references; r!=NULL; r=r->next) {
+        for (Reference *r=referenceableItem->references; r!=NULL; r=r->next) {
             olcxAddReferenceToSymbolsMenu(cms, r);
         }
     }
 }
 
-static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceItem *referenceItem) {
-    assert(olcxIsSameCxSymbol(&menu->references, referenceItem));
+static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceableItem *referenceableItem) {
+    assert(olcxIsSameCxSymbol(&menu->references, referenceableItem));
     unsigned ooBits = 0;
 
     if (menu->references.type!=TypeCppCollate) {
-        if (menu->references.type != referenceItem->type)
+        if (menu->references.type != referenceableItem->type)
             return ooBits;
-        if (menu->references.storage != referenceItem->storage)
+        if (menu->references.storage != referenceableItem->storage)
             return ooBits;
-        if (menu->references.visibility != referenceItem->visibility)
+        if (menu->references.visibility != referenceableItem->visibility)
             return ooBits;
     }
 
     log_debug("olcxOoBits: linkName='%s' type=%d storage=%d visibility=%d",
-              referenceItem->linkName,
-              referenceItem->type,
-              referenceItem->storage,
-              referenceItem->visibility
+              referenceableItem->linkName,
+              referenceableItem->type,
+              referenceableItem->storage,
+              referenceableItem->visibility
         );
 
-    if (strcmp(menu->references.linkName, referenceItem->linkName) == 0) {
+    if (strcmp(menu->references.linkName, referenceableItem->linkName) == 0) {
         log_debug("olcxOoBits: +sameName (OOC_OVERLOADING_EQUAL)");
         ooBits |= OOC_OVERLOADING_EQUAL;
     }
-    if (referenceItem->includedFileNumber == menu->references.includedFileNumber) {
+    if (referenceableItem->includedFileNumber == menu->references.includedFileNumber) {
         log_debug("olcxOoBits: +sameFile (OOC_VIRT_SAME_APPL_FUN_CLASS)");
         ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
     }
@@ -2271,18 +2271,18 @@ static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceItem *referenceItem) {
     return ooBits;
 }
 
-static SymbolRelation computeSymbolRelation(SymbolsMenu *menu, ReferenceItem *referenceItem) {
-    assert(olcxIsSameCxSymbol(&menu->references, referenceItem));
+static SymbolRelation computeSymbolRelation(SymbolsMenu *menu, ReferenceableItem *referenceableItem) {
+    assert(olcxIsSameCxSymbol(&menu->references, referenceableItem));
     SymbolRelation relation = {.sameFile = false};
 
     if (menu->references.type != TypeCppCollate) {
-        if (menu->references.type != referenceItem->type ||
-            menu->references.storage != referenceItem->storage ||
-            menu->references.visibility != referenceItem->visibility)
+        if (menu->references.type != referenceableItem->type ||
+            menu->references.storage != referenceableItem->storage ||
+            menu->references.visibility != referenceableItem->visibility)
             return relation;
     }
 
-    if (referenceItem->includedFileNumber == menu->references.includedFileNumber) {
+    if (referenceableItem->includedFileNumber == menu->references.includedFileNumber) {
         relation.sameFile = true;
     }
 
@@ -2311,7 +2311,7 @@ static SymbolRelation accumulateSymbolRelation(SymbolRelation a, SymbolRelation 
     return result;
 }
 
-SymbolsMenu *createSelectionMenu(ReferenceItem *reference) {
+SymbolsMenu *createSelectionMenu(ReferenceableItem *reference) {
     SymbolsMenu *result = NULL;
 
     OlcxReferences *rstack = sessionData.browserStack.top;

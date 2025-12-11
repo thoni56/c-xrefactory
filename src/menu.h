@@ -1,14 +1,14 @@
 #ifndef MENU_H_INCLUDED
 #define MENU_H_INCLUDED
 
-#include "reference.h"
+#include "referenceableitem.h"
 
 typedef struct {
     bool sameFile;
 } SymbolRelation;
 
 typedef struct SymbolsMenu {
-    struct referenceItem    references;
+    struct referenceableItem    references;
     bool                     selected;
     bool                     visible;
     unsigned                 ooBits;
@@ -25,7 +25,7 @@ typedef struct SymbolsMenu {
 } SymbolsMenu;
 
 
-extern SymbolsMenu makeSymbolsMenu(ReferenceItem references, bool selected, bool visible,
+extern SymbolsMenu makeSymbolsMenu(ReferenceableItem references, bool selected, bool visible,
                                    unsigned ooBits, char olUsage, short int vlevel,
                                    char defUsage, struct position defpos);
 
@@ -34,10 +34,10 @@ extern void freeSymbolsMenuList(SymbolsMenu *menu);
 extern bool isBestFitMatch(SymbolsMenu *menu);
 extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference);
 extern void olcxPrintSelectionMenu(SymbolsMenu *menu);
-extern SymbolsMenu *createNewMenuItem(ReferenceItem *sym, int includedFileNumber,
+extern SymbolsMenu *createNewMenuItem(ReferenceableItem *sym, int includedFileNumber,
                                       Position defpos, Usage defusage, bool selected, bool visible,
                                       unsigned ooBits, SymbolRelation relation, Usage olusage, int vlevel);
-extern SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *reference,
+extern SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceableItem *reference,
                                            bool selected, bool visible, unsigned ooBits, SymbolRelation relation,
                                            int olusage, int vlevel, Position defpos, int defusage);
 extern void splitMenuPerSymbolsAndMap(SymbolsMenu *menu,

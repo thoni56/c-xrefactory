@@ -11,8 +11,8 @@
 
 
 extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
-extern bool isSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2);
-extern bool olcxIsSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2);
+extern bool isSameCxSymbol(ReferenceableItem *p1, ReferenceableItem *p2);
+extern bool olcxIsSameCxSymbol(ReferenceableItem *p1, ReferenceableItem *p2);
 extern void olcxRecomputeSelRefs(OlcxReferences *refs );
 extern void olProcessSelectedReferences(OlcxReferences *rstack,
                                         void (*referencesMapFun)(OlcxReferences *rstack,
@@ -24,10 +24,10 @@ extern Reference *addCxReference(Symbol *symbol, Position position, Usage usage,
 extern void addTrivialCxReference (char *name, Type type, Storage storage,
                                    Position position, Usage usage);
 extern void olSetCallerPosition(Position position);
-extern int itIsSymbolToPushOlReferences(ReferenceItem *p, OlcxReferences *rstack,
+extern int itIsSymbolToPushOlReferences(ReferenceableItem *p, OlcxReferences *rstack,
                                         SymbolsMenu **rss, int checkSelFlag);
-extern void putOnLineLoadedReferences(ReferenceItem *p);
-extern SymbolsMenu *createSelectionMenu(ReferenceItem *dd);
+extern void putOnLineLoadedReferences(ReferenceableItem *p);
+extern SymbolsMenu *createSelectionMenu(ReferenceableItem *dd);
 
 extern void olCreateSelectionMenu(ServerOperation command);
 extern bool olcxShowSelectionMenu(void);

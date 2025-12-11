@@ -8,7 +8,7 @@ void freeCompletions(Completion *completions) {
 }
 
 Completion *completionListPrepend(Completion *completions, char *name, char *fullName, Symbol *symbol,
-                                  ReferenceItem *referenceItem, Reference *reference,
+                                  ReferenceableItem *referenceItem, Reference *reference,
                                   Type type, int includedFileNumber) {
     return (Completion *)mock(name, fullName, symbol, referenceItem, reference, type, includedFileNumber,
                               completions);

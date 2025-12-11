@@ -1,6 +1,6 @@
 #include <cgreen/mocks.h>
 
-#include "reference.h"
+#include "referenceableitem.h"
 
 
 Reference *newReference(Position position, Usage usage, Reference *next) {
@@ -19,7 +19,7 @@ Reference makeReference(Position position, Usage usage, Reference *next) {
     return reference;
 }
 
-void fillReferenceItem(ReferenceItem *referencesItem, char *name, int includedFileNumber, Type symType,
+void fillReferenceItem(ReferenceableItem *referencesItem, char *name, int includedFileNumber, Type symType,
                        Storage storage, Scope scope, Visibility visibility) {
     referencesItem->linkName = name;
     referencesItem->includedFileNumber = includedFileNumber;
@@ -31,9 +31,9 @@ void fillReferenceItem(ReferenceItem *referencesItem, char *name, int includedFi
     referencesItem->visibility = visibility;
 }
 
-ReferenceItem makeReferenceItem(char *name, Type type, Storage storage, Scope scope, Visibility visibility,
-                                int includedFileNumber) {
-    ReferenceItem item;
+ReferenceableItem makeReferenceableItem(char *name, Type type, Storage storage, Scope scope, Visibility visibility,
+                                        int includedFileNumber) {
+    ReferenceableItem item;
     fillReferenceItem(&item, name, includedFileNumber, type, storage, scope, visibility);
     return item;
 }
