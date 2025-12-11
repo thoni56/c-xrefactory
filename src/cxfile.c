@@ -13,7 +13,7 @@
 #include "globals.h"
 #include "list.h"
 #include "log.h"
-#include "menu.h"
+#include "browsermenu.h"
 #include "misc.h"
 #include "options.h"
 #include "referenceableitem.h"
@@ -87,7 +87,7 @@ static int generatedFieldKeyList[] = {
 
 typedef struct lastCxFileData {
     int                 onLineReferencedSym;
-    SymbolsMenu        *onLineRefMenuItem;
+    BrowserMenu        *onLineRefMenuItem;
     ReferenceableItem      *referenceableItem;
     bool                symbolIsWritten;
     bool                macroBaseFileGeneratedForSymbol;
@@ -773,7 +773,7 @@ static void cxfileCheckLastSymbolDeadness(void) {
     if (lastIncomingData.symbolToCheckForDeadness != -1
         && lastIncomingData.deadSymbolIsDefined
     ) {
-        addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, lastIncomingData.referenceableItem,
+        addReferenceableToBrowserMenu(&sessionData.browserStack.top->hkSelectedSym, lastIncomingData.referenceableItem,
                                true, true, 0, (SymbolRelation){.sameFile = false}, UsageDefined, 0, noPosition,
                                UsageDefined);
     }
@@ -842,19 +842,19 @@ static void scanFunction_SymbolName(int size,
             }
         } else if (options.serverOperation!=OLO_TAG_SEARCH) {
             int ols = 0;
-            SymbolsMenu *cms = NULL;
+            BrowserMenu *menu = NULL;
             if (operation == CXSF_MENU_CREATION) {
-                cms = createSelectionMenu(referenceableItem);
-                if (cms == NULL) {
+                menu = createSelectionMenu(referenceableItem);
+                if (menu == NULL) {
                     ols = 0;
                 } else {
-                    if (isBestFitMatch(cms))
+                    if (isBestFitMatch(menu))
                         ols = 2;
                     else
                         ols = 1;
                 }
             }
-            lastIncomingData.onLineRefMenuItem = cms;
+            lastIncomingData.onLineRefMenuItem = menu;
             if (ols) {
                 lastIncomingData.onLineReferencedSym = 0;
                 log_trace("symbol %s is O.K. for %s (ols==%d)", referenceableItem->linkName, options.browsedSymName, ols);
@@ -967,7 +967,7 @@ static void scanFunction_Reference(int size,
                             options.serverOperation == OLO_GOTO || options.serverOperation == OLO_COMPLETION_GOTO ||
                             options.serverOperation == OLO_PUSH_NAME) {
                             log_trace (":adding reference %s:%d", referenceFileItem->name, reference.position.line);
-                            olcxAddReferenceToSymbolsMenu(lastIncomingData.onLineRefMenuItem, &reference);
+                            addReferenceToBrowserMenu(lastIncomingData.onLineRefMenuItem, &reference);
                         }
                     } else {
                         addReferenceToList(&sessionData.browserStack.top->references, &reference);

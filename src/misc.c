@@ -248,7 +248,7 @@ char *simpleFileNameFromFileNum(int fnum) {
     return simpleFileName(getRealFileName_static(getFileItemWithFileNumber(fnum)->name));
 }
 
-void prettyPrintLinkNameForSymbolInMenu(char *buffer, SymbolsMenu *menu) {
+void prettyPrintLinkNameForSymbolInMenu(char *buffer, BrowserMenu *menu) {
     if (menu->references.type == TypeCppInclude) {
         sprintf(buffer, "%s",
                 simpleFileName(getRealFileName_static(getFileItemWithFileNumber(menu->references.includedFileNumber)->name)));

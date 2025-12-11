@@ -1,5 +1,5 @@
-#ifndef MENU_H_INCLUDED
-#define MENU_H_INCLUDED
+#ifndef BROWSERMENU_H_INCLUDED
+#define BROWSERMENU_H_INCLUDED
 
 #include "referenceableitem.h"
 
@@ -7,7 +7,7 @@ typedef struct {
     bool sameFile;
 } SymbolRelation;
 
-typedef struct SymbolsMenu {
+typedef struct BrowserMenu {
     struct referenceableItem    references;
     bool                     selected;
     bool                     visible;
@@ -21,27 +21,27 @@ typedef struct SymbolsMenu {
     struct position          defaultPosition;
     int                      outOnLine;
     struct editorMarkerList *markers; /* for refactory only */
-    struct SymbolsMenu      *next;
-} SymbolsMenu;
+    struct BrowserMenu      *next;
+} BrowserMenu;
 
 
-extern SymbolsMenu makeSymbolsMenu(ReferenceableItem references, bool selected, bool visible,
+extern BrowserMenu makeBrowserMenu(ReferenceableItem references, bool selected, bool visible,
                                    unsigned ooBits, char olUsage, short int vlevel,
                                    char defUsage, struct position defpos);
 
-extern void freeSymbolsMenuList(SymbolsMenu *menu);
+extern void freeBrowserMenuList(BrowserMenu *menu);
 
-extern bool isBestFitMatch(SymbolsMenu *menu);
-extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference);
-extern void olcxPrintSelectionMenu(SymbolsMenu *menu);
-extern SymbolsMenu *createNewMenuItem(ReferenceableItem *sym, int includedFileNumber,
+extern bool isBestFitMatch(BrowserMenu *menu);
+extern void addReferenceToBrowserMenu(BrowserMenu *menu, Reference *reference);
+extern void olcxPrintSelectionMenu(BrowserMenu *menu);
+extern BrowserMenu *createNewMenuItem(ReferenceableItem *sym, int includedFileNumber,
                                       Position defpos, Usage defusage, bool selected, bool visible,
                                       unsigned ooBits, SymbolRelation relation, Usage olusage, int vlevel);
-extern SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceableItem *reference,
+extern BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableItem *reference,
                                            bool selected, bool visible, unsigned ooBits, SymbolRelation relation,
                                            int olusage, int vlevel, Position defpos, int defusage);
-extern void splitMenuPerSymbolsAndMap(SymbolsMenu *menu,
-                                      void (*fun)(SymbolsMenu *, void *),
+extern void splitMenuPerSymbolsAndMap(BrowserMenu *menu,
+                                      void (*fun)(BrowserMenu *, void *),
                                       void *p1);
 
 #endif

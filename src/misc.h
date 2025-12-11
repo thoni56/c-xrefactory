@@ -5,7 +5,7 @@
 #include "typemodifier.h"
 #include "constants.h"
 #include "server.h"
-#include "menu.h"
+#include "browsermenu.h"
 #include "completion.h"
 
 
@@ -62,7 +62,7 @@ extern int compareFileNames(char *ss1, char *ss2);
 extern int filenameCompare(char *ss1, char *ss2, int n);
 extern void prettyPrintLinkName(char *string, char *linkName, int maxlen);
 extern char *simpleFileNameFromFileNum(int fnum);
-extern void prettyPrintLinkNameForSymbolInMenu(char *ttt, SymbolsMenu *ss);
+extern void prettyPrintLinkNameForSymbolInMenu(char *ttt, BrowserMenu *ss);
 
 /* Strings */
 extern char *strmcpy(char *dest, char *src);

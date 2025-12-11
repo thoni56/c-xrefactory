@@ -1,4 +1,4 @@
-#include "menu.h"
+#include "browsermenu.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -14,9 +14,9 @@
 #include "referenceableitem.h"
 
 
-SymbolsMenu makeSymbolsMenu(ReferenceableItem references, bool selected, bool visible, unsigned ooBits,
+BrowserMenu makeBrowserMenu(ReferenceableItem references, bool selected, bool visible, unsigned ooBits,
                             char olUsage, short int vlevel, char defaultUsage, Position defaultPosition) {
-    SymbolsMenu menu;
+    BrowserMenu menu;
 
     menu.references = references;
     menu.selected   = selected;
@@ -38,29 +38,29 @@ SymbolsMenu makeSymbolsMenu(ReferenceableItem references, bool selected, bool vi
     return menu;
 }
 
-static SymbolsMenu *freeSymbolsMenu(SymbolsMenu *menu) {
+static BrowserMenu *freeBrowserMenu(BrowserMenu *menu) {
     free(menu->references.linkName);
     freeReferences(menu->references.references);
-    SymbolsMenu *next = menu->next;
+    BrowserMenu *next = menu->next;
     free(menu);
     return next;
 }
 
 
-void freeSymbolsMenuList(SymbolsMenu *menuList) {
-    SymbolsMenu *l;
+void freeBrowserMenuList(BrowserMenu *menuList) {
+    BrowserMenu *l;
 
     l = menuList;
     while (l != NULL) {
-        l = freeSymbolsMenu(l);
+        l = freeBrowserMenu(l);
     }
 }
 
-bool isBestFitMatch(SymbolsMenu *menu) {
+bool isBestFitMatch(BrowserMenu *menu) {
     return menu->relation.sameFile;
 }
 
-void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference) {
+void addReferenceToBrowserMenu(BrowserMenu *menu, Reference *reference) {
     Reference *added = addReferenceToList(&menu->references.references, reference);
     if (added!=NULL) {
         if (isDefinitionOrDeclarationUsage(reference->usage)) {
@@ -78,9 +78,9 @@ void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference) {
     }
 }
 
-static void generateGlobalReferenceLists(SymbolsMenu *menu, FILE *file);
+static void generateGlobalReferenceLists(BrowserMenu *menu, FILE *file);
 
-void olcxPrintSelectionMenu(SymbolsMenu *menu) {
+void olcxPrintSelectionMenu(BrowserMenu *menu) {
     assert(options.xref2);
 
     ppcBegin(PPC_SYMBOL_RESOLUTION);
@@ -90,26 +90,21 @@ void olcxPrintSelectionMenu(SymbolsMenu *menu) {
     ppcEnd(PPC_SYMBOL_RESOLUTION);
 }
 
-static char *olcxStringCopy(char *string) {
-    char *copy = strdup(string);
-    return copy;
-}
-
-SymbolsMenu *createNewMenuItem(ReferenceableItem *symbol, int includedFileNumber, Position defpos,
+BrowserMenu *createNewMenuItem(ReferenceableItem *item, int includedFileNumber, Position defpos,
                                Usage defusage, bool selected, bool visible, unsigned ooBits,
                                SymbolRelation relation, Usage olusage, int vlevel) {
-    SymbolsMenu   *symbolsMenu;
+    BrowserMenu   *menu;
     char          *allocatedNameCopy;
 
-    allocatedNameCopy = olcxStringCopy(symbol->linkName);
+    allocatedNameCopy = strdup(item->linkName);
 
-    ReferenceableItem refItem = makeReferenceableItem(allocatedNameCopy, symbol->type, symbol->storage, symbol->scope,
-                                                      symbol->visibility, includedFileNumber);
+    ReferenceableItem refItem = makeReferenceableItem(allocatedNameCopy, item->type, item->storage, item->scope,
+                                                      item->visibility, includedFileNumber);
 
-    symbolsMenu = malloc(sizeof(SymbolsMenu));
-    *symbolsMenu = makeSymbolsMenu(refItem, selected, visible, ooBits, olusage, vlevel, defusage, defpos);
-    symbolsMenu->relation = relation;
-    return symbolsMenu;
+    menu = malloc(sizeof(BrowserMenu));
+    *menu = makeBrowserMenu(refItem, selected, visible, ooBits, olusage, vlevel, defusage, defpos);
+    menu->relation = relation;
+    return menu;
 }
 
 static bool referenceableItemIsLess(ReferenceableItem *s1, ReferenceableItem *s2) {
@@ -139,26 +134,25 @@ static bool referenceableItemIsLess(ReferenceableItem *s1, ReferenceableItem *s2
     return false;
 }
 
-static bool olSymbolMenuIsLess(SymbolsMenu *s1, SymbolsMenu *s2) {
+static bool browserMenuIsLess(BrowserMenu *s1, BrowserMenu *s2) {
     return referenceableItemIsLess(&s1->references, &s2->references);
 }
 
-SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceableItem *symbol,
-                                    bool selected, bool visible, unsigned ooBits, SymbolRelation relation,
-                                    int olusage, int vlevel,
-                                    Position defpos, int defusage) {
-    SymbolsMenu **place;
+BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableItem *item,
+                                  bool selected, bool visible, unsigned ooBits, SymbolRelation relation,
+                                  int olusage, int vlevel, Position defpos, int defusage) {
+    BrowserMenu **place;
 
-    SymbolsMenu dummyMenu = makeSymbolsMenu(*symbol, 0, false, 0, olusage, vlevel, UsageNone, noPosition);
-    SORTED_LIST_PLACE3(place, SymbolsMenu, &dummyMenu, menuP, olSymbolMenuIsLess);
+    BrowserMenu dummyMenu = makeBrowserMenu(*item, 0, false, 0, olusage, vlevel, UsageNone, noPosition);
+    SORTED_LIST_PLACE3(place, BrowserMenu, &dummyMenu, menuP, browserMenuIsLess);
 
-    SymbolsMenu *new = *place;
-    if (*place==NULL || olSymbolMenuIsLess(&dummyMenu, *place)) {
-        assert(symbol);
-        new = createNewMenuItem(symbol, symbol->includedFileNumber, defpos, defusage,
+    BrowserMenu *new = *place;
+    if (*place==NULL || browserMenuIsLess(&dummyMenu, *place)) {
+        assert(item);
+        new = createNewMenuItem(item, item->includedFileNumber, defpos, defusage,
                                 selected, visible, ooBits, relation, olusage, vlevel);
         LIST_CONS(new, *place);
-        log_debug(":adding browsed symbol '%s'", symbol->linkName);
+        log_debug(":adding browsed symbol '%s'", item->linkName);
     }
     return new;
 }
@@ -166,7 +160,7 @@ SymbolsMenu *addBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceableItem *symb
 static int currentOutputLineInSymbolList =0;
 
 
-static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, bool selectable) {
+static void olcxPrintMenuItemPrefix(FILE *file, BrowserMenu *menu, bool selectable) {
     if (! selectable) {
         fprintf(file, " %s=2", PPCA_SELECTED);
     } else if (menu!=NULL && menu->selected) {
@@ -192,7 +186,7 @@ static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, bool selectab
     }
 }
 
-static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
+static void olcxMenuGenNonVirtualGlobSymList(FILE *file, BrowserMenu *menu) {
 
     if (currentOutputLineInSymbolList == 1)
         currentOutputLineInSymbolList++; // first line irregularity
@@ -211,9 +205,9 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
 }
 
 /* Mapped through 'splitMenuPerSymbolsAndMap()' */
-static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, void *p1) {
+static void genNonVirtualsGlobRefLists(BrowserMenu *menu, void *p1) {
     FILE *file = (FILE *)p1;
-    SymbolsMenu    *m;
+    BrowserMenu    *m;
     ReferenceableItem *r;
 
     // Are there are any visible references at all
@@ -226,14 +220,14 @@ static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, void *p1) {
     r = &menu->references;
     assert(r!=NULL);
     //&fprintf(dumpOut,"storage of %s == %s\n",r->linkName,storagesName[r->storage]);
-    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
         r = &m->references;
         olcxMenuGenNonVirtualGlobSymList(file, m);
     }
 }
 
-void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *menu, void *p1), void *p1) {
-    SymbolsMenu    *rr, *mp, **ss, *cc, *all;
+void splitMenuPerSymbolsAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *menu, void *p1), void *p1) {
+    BrowserMenu    *rr, *mp, **ss, *cc, *all;
     ReferenceableItem *cs;
     all = NULL;
     rr = menu;
@@ -254,7 +248,7 @@ void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *menu,
         }
         (*fun)(mp, p1);
         // reconstruct the list in all
-        LIST_APPEND(SymbolsMenu, mp, all);
+        LIST_APPEND(BrowserMenu, mp, all);
         all = mp;
     }
     // now find the original head and make it head,
@@ -271,8 +265,8 @@ void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *menu,
     }
 }
 
-static void generateGlobalReferenceLists(SymbolsMenu *menu, FILE *file) {
-    for (SymbolsMenu *m=menu; m!=NULL; m=m->next)
+static void generateGlobalReferenceLists(BrowserMenu *menu, FILE *file) {
+    for (BrowserMenu *m=menu; m!=NULL; m=m->next)
         m->outOnLine = 0;
     currentOutputLineInSymbolList = 1;
     splitMenuPerSymbolsAndMap(menu, genNonVirtualsGlobRefLists, file);

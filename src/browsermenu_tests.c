@@ -1,6 +1,6 @@
 #include <cgreen/cgreen.h>
 
-#include "menu.h"
+#include "browsermenu.h"
 
 #include "log.h"
 

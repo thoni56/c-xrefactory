@@ -5,6 +5,7 @@
 #include "log.h"
 
 /* Dependencies: */
+#include "browsermenu.mock"
 #include "characterreader.mock"
 #include "commons.mock"
 #include "complete.mock"
@@ -18,13 +19,12 @@
 #include "globals.mock"
 #include "lexer.mock"
 #include "main.mock"
-#include "menu.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "parsers.mock"
 #include "ppc.mock"
-#include "refactory.mock"
 #include "refactorings.mock"
+#include "refactory.mock"
 #include "reference.mock"
 #include "referencesstack.mock"
 #include "reftab.mock"

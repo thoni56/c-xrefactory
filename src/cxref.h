@@ -2,7 +2,7 @@
 #define CXREF_H_INCLUDED
 
 
-#include "menu.h"
+#include "browsermenu.h"
 #include "proto.h"
 #include "server.h"
 #include "symbol.h"
@@ -16,7 +16,7 @@ extern bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2);
 extern void olcxRecomputeSelRefs(OlcxReferences *refs );
 extern void olProcessSelectedReferences(OlcxReferences *rstack,
                                         void (*referencesMapFun)(OlcxReferences *rstack,
-                                                                 SymbolsMenu *ss));
+                                                                 BrowserMenu *ss));
 extern void olcxPopOnly(void);
 extern void olStackDeleteSymbol(OlcxReferences *refs);
 extern int getFileNumberFromName(char *name);
@@ -25,9 +25,9 @@ extern void addTrivialCxReference (char *name, Type type, Storage storage,
                                    Position position, Usage usage);
 extern void olSetCallerPosition(Position position);
 extern int itIsSymbolToPushOlReferences(ReferenceableItem *p, OlcxReferences *rstack,
-                                        SymbolsMenu **rss, int checkSelFlag);
+                                        BrowserMenu **rss, int checkSelFlag);
 extern void putOnLineLoadedReferences(ReferenceableItem *p);
-extern SymbolsMenu *createSelectionMenu(ReferenceableItem *dd);
+extern BrowserMenu *createSelectionMenu(ReferenceableItem *dd);
 
 extern void olCreateSelectionMenu(ServerOperation command);
 extern bool olcxShowSelectionMenu(void);

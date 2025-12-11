@@ -630,6 +630,7 @@ $(1)_tests.$(EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS)
 endef
 
 
+$(eval $(call UNITTEST,browsermenu,log protocol type position memory stackmemory usage))
 $(eval $(call UNITTEST,characterreader,log))
 $(eval $(call UNITTEST,commandlogger))
 $(eval $(call UNITTEST,commons,log protocol stringlist))
@@ -659,7 +660,6 @@ $(eval $(call UNITTEST,lsp_handler,log json_utils))
 $(eval $(call UNITTEST,macroargumenttable,memory log hash))
 $(eval $(call UNITTEST,main,memory log protocol position memory stackmemory session))
 $(eval $(call UNITTEST,memory))
-$(eval $(call UNITTEST,menu,log protocol type position memory stackmemory usage))
 $(eval $(call UNITTEST,misc,protocol log type memory stackmemory))
 $(eval $(call UNITTEST,options,protocol log position memory stackmemory))
 $(eval $(call UNITTEST,parsers,log))

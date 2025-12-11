@@ -8,8 +8,8 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return (int) mock(r1, r2);
 }
 
-SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage) {
-    return (SymbolsMenu *) mock(fieldName, cfi, storage);
+BrowserMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage) {
+    return (BrowserMenu *) mock(fieldName, cfi, storage);
 }
 
 bool isSameCxSymbol(ReferenceableItem *p1, ReferenceableItem *p2) {
@@ -29,7 +29,7 @@ void olcxRecomputeSelRefs(OlcxReferences *refs) {
 }
 
 void olProcessSelectedReferences(OlcxReferences *rstack, void (*referencesMapFun)(OlcxReferences *rstack,
-                                                                                    SymbolsMenu *ss)) {
+                                                                                    BrowserMenu *ss)) {
     mock(rstack, referencesMapFun);
 }
 
@@ -70,7 +70,7 @@ void olCompletionListReverse(void) {
     mock();
 }
 
-int itIsSymbolToPushOlReferences(ReferenceableItem *p, OlcxReferences *rstack, SymbolsMenu **rss,
+int itIsSymbolToPushOlReferences(ReferenceableItem *p, OlcxReferences *rstack, BrowserMenu **rss,
                                int checkSelFlag) {
     return (int) mock(p, rstack, rss, checkSelFlag);
 }
@@ -79,8 +79,8 @@ void putOnLineLoadedReferences(ReferenceableItem *p) {
     mock(p);
 }
 
-SymbolsMenu *createSelectionMenu(ReferenceableItem *dd) {
-    return (SymbolsMenu *) mock(dd);
+BrowserMenu *createSelectionMenu(ReferenceableItem *dd) {
+    return (BrowserMenu *) mock(dd);
 }
 
 void olCreateSelectionMenu(ServerOperation command) {

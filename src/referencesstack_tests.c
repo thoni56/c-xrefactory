@@ -4,9 +4,9 @@
 
 #include "log.h"
 
+#include "browsermenu.mock"
 #include "completion.mock"
 #include "globals.mock"
-#include "menu.mock"
 #include "options.mock"
 #include "reference.mock"
 

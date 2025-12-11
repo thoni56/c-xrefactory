@@ -6,6 +6,7 @@
 #include "log.h"
 
 
+#include "browsermenu.mock"
 #include "characterreader.mock"
 #include "commons.mock"
 #include "complete.mock"
@@ -21,7 +22,6 @@
 #include "lexer.mock"
 #include "macroargumenttable.mock"
 #include "main.mock"
-#include "menu.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "parsers.mock"

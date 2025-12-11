@@ -4,6 +4,7 @@
 
 #include "log.h"
 
+#include "browsermenu.mock"
 #include "commons.mock"
 #include "complete.mock"
 #include "cxfile.mock"
@@ -14,7 +15,6 @@
 #include "filetable.mock"
 #include "globals.mock"
 #include "main.mock"
-#include "menu.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "ppc.mock"

@@ -16,7 +16,7 @@
 #include "globals.h"
 #include "list.h"
 #include "log.h"
-#include "menu.h"
+#include "browsermenu.h"
 #include "misc.h"
 #include "options.h"
 #include "ppc.h"
@@ -61,9 +61,9 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return SORTED_LIST_LESS(r1, (*r2));
 }
 
-static void renameCollationSymbols(SymbolsMenu *menu) {
+static void renameCollationSymbols(BrowserMenu *menu) {
     assert(menu);
-    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
         char *cs = strchr(m->references.linkName, LINK_NAME_COLLATE_SYMBOL);
         if (cs!=NULL && m->references.type==TypeCppCollate) {
             char *newName;
@@ -244,7 +244,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
     Usage             defaultUsage;
     Reference       **place;
     Position         defaultPosition;
-    SymbolsMenu      *menu;
+    BrowserMenu      *menu;
 
     // do not record references during prescanning
     // this is because of cxMem overflow during prescanning (for ex. with -html)
@@ -352,7 +352,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
             if (defaultPosition.file!=NO_FILE_NUMBER)
                 log_debug("getting definition position of %s at line %d", symbol->name, defaultPosition.line);
             if (! operationRequiresOnlyParsingNoPushing(options.serverOperation)) {
-                menu = addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, foundMember,
+                menu = addReferenceableToBrowserMenu(&sessionData.browserStack.top->hkSelectedSym, foundMember,
                                               true, true, 0, (SymbolRelation){.sameFile = false}, usage, 0,
                                               defaultPosition, defaultUsage);
                 // hack added for EncapsulateField
@@ -431,9 +431,9 @@ static void olcxAddReferences(Reference *list, Reference **dlist,
     list = revlist;
 }
 
-static void olcxAddReferencesToSymbolsMenuItem(SymbolsMenu *menuItem, Reference *references) {
+static void olcxAddReferencesToSymbolsMenuItem(BrowserMenu *menuItem, Reference *references) {
     for (Reference *r = references; r != NULL; r = r->next) {
-        olcxAddReferenceToSymbolsMenu(menuItem, r);
+        addReferenceToBrowserMenu(menuItem, r);
     }
 }
 
@@ -728,7 +728,7 @@ static int getCurrentRefPosition(OlcxReferences *refs) {
     return actn;
 }
 
-static void symbolHighlightNameSprint(char *output, SymbolsMenu *menu) {
+static void symbolHighlightNameSprint(char *output, BrowserMenu *menu) {
     char *bb, *cc;
     int len, llen;
 
@@ -876,7 +876,7 @@ static void findAndGotoDefinition(ReferenceableItem *sym) {
     // preserve popped items from browser first
     oldtop = pushSession();
     refs = sessionData.browserStack.top;
-    SymbolsMenu menu = makeSymbolsMenu(*sym, true, true, 0, UsageUsed, 0, UsageNone, noPosition);
+    BrowserMenu menu = makeBrowserMenu(*sym, true, true, 0, UsageUsed, 0, UsageNone, noPosition);
     refs->symbolsMenu = &menu;
     fullScanFor(sym->linkName);
     orderRefsAndGotoDefinition(refs);
@@ -1036,7 +1036,7 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
     } else if (refs->hkSelectedSym==NULL) {
         ppcBottomInformation("Current top symbol: <empty>");
     } else {
-        SymbolsMenu *menu = refs->hkSelectedSym;
+        BrowserMenu *menu = refs->hkSelectedSym;
         char tempString[MAX_CX_SYMBOL_SIZE+MAX_SYMBOL_MESSAGE_LEN];
         sprintf(tempString, "Current top symbol: ");
         assert(strlen(tempString) < MAX_SYMBOL_MESSAGE_LEN);
@@ -1045,8 +1045,8 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
     }
 }
 
-static SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage) {
-    SymbolsMenu *menu;
+static BrowserMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage) {
+    BrowserMenu *menu;
     ReferenceableItem r = makeReferenceableItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility, cfi);
     menu = createNewMenuItem(&r, r.includedFileNumber, noPosition, UsageNone,
                              true, true, OOC_VIRT_SAME_APPL_FUN_CLASS, (SymbolRelation){.sameFile = true},
@@ -1092,8 +1092,8 @@ void olStackDeleteSymbol(OlcxReferences *refs) {
     deleteOlcxRefs(&sessionData.browserStack, referencesP);
 }
 
-static void olcxMenuInspectDef(SymbolsMenu *menu) {
-    SymbolsMenu *ss;
+static void olcxMenuInspectDef(BrowserMenu *menu) {
+    BrowserMenu *ss;
 
     for (ss=menu; ss!=NULL; ss=ss->next) {
         //&sprintf(tmpBuff,"checking line %d", ss->outOnLine); ppcBottomInformation(tmpBuff);
@@ -1121,19 +1121,19 @@ static void olcxSymbolMenuInspectDef(void) {
 }
 
 void olProcessSelectedReferences(OlcxReferences *rstack,
-                                 void (*referencesMapFun)(OlcxReferences *rstack, SymbolsMenu *menu)) {
+                                 void (*referencesMapFun)(OlcxReferences *rstack, BrowserMenu *menu)) {
     if (rstack->symbolsMenu == NULL)
         return;
 
     LIST_MERGE_SORT(Reference, rstack->references, olcxReferenceInternalLessFunction);
-    for (SymbolsMenu *m = rstack->symbolsMenu; m != NULL; m = m->next) {
+    for (BrowserMenu *m = rstack->symbolsMenu; m != NULL; m = m->next) {
         referencesMapFun(rstack, m);
     }
     olcxSetCurrentRefsOnCaller(rstack);
     LIST_MERGE_SORT(Reference, rstack->references, referenceIsLessThan);
 }
 
-static void genOnLineReferences(OlcxReferences *rstack, SymbolsMenu *cms) {
+static void genOnLineReferences(OlcxReferences *rstack, BrowserMenu *cms) {
     if (cms->selected) {
         assert(cms);
         olcxAddReferences(cms->references.references, &rstack->references, ANY_FILE,
@@ -1148,7 +1148,7 @@ void olcxRecomputeSelRefs(OlcxReferences *refs) {
 
 static void olcxMenuToggleSelect(void) {
     OlcxReferences    *refs;
-    SymbolsMenu     *ss;
+    BrowserMenu     *ss;
     int                 line;
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
@@ -1168,13 +1168,13 @@ static void olcxMenuToggleSelect(void) {
 
 static void olcxMenuSelectOnly(void) {
     OlcxReferences *refs;
-    SymbolsMenu *selection;
+    BrowserMenu *selection;
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
 
     selection = NULL;
-    for (SymbolsMenu *menu=refs->symbolsMenu; menu!=NULL; menu=menu->next) {
+    for (BrowserMenu *menu=refs->symbolsMenu; menu!=NULL; menu=menu->next) {
         menu->selected = false;
         int line = SYMBOL_MENU_FIRST_LINE + menu->outOnLine;
         if (line == options.olcxMenuSelectLineNum) {
@@ -1200,31 +1200,31 @@ static void olcxMenuSelectOnly(void) {
 
 
 /* Mapped though 'splitMenuPerSymbolsAndMap()' */
-static void selectUnusedSymbols(SymbolsMenu *menu, void *mapParameter1) {
+static void selectUnusedSymbols(BrowserMenu *menu, void *mapParameter1) {
     int filter;
     int *filterPointer;
 
     filterPointer = (int *)mapParameter1;
     filter = *filterPointer;
-    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
         m->visible = true; m->selected = false;
     }
-    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
         if (m->defaultRefn!=0 && m->refn==0)
             m->selected = true;
     }
-    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
         if (m->selected)
             goto fini2;
     }
     // Nothing selected, make the symbol unvisible
-    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
         m->visible = false;
     }
  fini2:
     if (filter>0) {
         // make all unselected unvisible
-        for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+        for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
             if (!m->selected)
                 m->visible = false;
         }
@@ -1243,7 +1243,7 @@ static void olcxMenuSelectAll(bool selected) {
     if (refs->operation == OLO_GLOBAL_UNUSED) {
         ppcGenRecord(PPC_WARNING, "The browser does not display project unused symbols anymore");
     }
-    for (SymbolsMenu *menu=refs->symbolsMenu; menu!=NULL; menu=menu->next) {
+    for (BrowserMenu *menu=refs->symbolsMenu; menu!=NULL; menu=menu->next) {
         if (menu->visible)
             menu->selected = selected;
     }
@@ -1251,11 +1251,11 @@ static void olcxMenuSelectAll(bool selected) {
     olcxPrintRefList(";", refs);
 }
 
-static void setDefaultSelectedVisibleItems(SymbolsMenu *menu,
+static void setDefaultSelectedVisibleItems(BrowserMenu *menu,
                                            unsigned ooVisible,
                                            unsigned ooSelected
 ) {
-    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
         unsigned ooBits = m->ooBits;
         bool visible = ooBitsGreaterOrEqual(ooBits, ooVisible);
         bool selected = false;
@@ -1278,7 +1278,7 @@ static bool isRenameMenuSelection(int command) {
         ;
 }
 
-static void setSelectedVisibleItems(SymbolsMenu *menu, ServerOperation command, int filterLevel) {
+static void setSelectedVisibleItems(BrowserMenu *menu, ServerOperation command, int filterLevel) {
     unsigned ooselected, oovisible;
     if (command == OLO_GLOBAL_UNUSED) {
         splitMenuPerSymbolsAndMap(menu, selectUnusedSymbols, &filterLevel);
@@ -1580,10 +1580,10 @@ static bool olcxCheckSymbolExists(void) {
     return true;
 }
 
-static SymbolsMenu *firstVisibleSymbol(SymbolsMenu *menu) {
-    SymbolsMenu *firstVisible = NULL;
+static BrowserMenu *firstVisibleSymbol(BrowserMenu *menu) {
+    BrowserMenu *firstVisible = NULL;
 
-    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
         if (m->visible) {
             firstVisible = m;
             break;
@@ -1594,7 +1594,7 @@ static SymbolsMenu *firstVisibleSymbol(SymbolsMenu *menu) {
 
 
 bool olcxShowSelectionMenu(void) {
-    SymbolsMenu *first, *fvisible;
+    BrowserMenu *first, *fvisible;
 
     // decide whether to show manual resolution menu
     assert(sessionData.browserStack.top);
@@ -1625,7 +1625,7 @@ bool olcxShowSelectionMenu(void) {
         || options.serverOperation==OLO_ARGUMENT_MANIPULATION
     ) {
         // manually only if different
-        for (SymbolsMenu *ss=sessionData.browserStack.top->symbolsMenu; ss!=NULL; ss=ss->next) {
+        for (BrowserMenu *ss=sessionData.browserStack.top->symbolsMenu; ss!=NULL; ss=ss->next) {
             if (ss->selected) {
                 if (first == NULL) {
                     first = ss;
@@ -1635,7 +1635,7 @@ bool olcxShowSelectionMenu(void) {
             }
         }
     } else {
-        for (SymbolsMenu *ss=sessionData.browserStack.top->symbolsMenu; ss!=NULL; ss=ss->next) {
+        for (BrowserMenu *ss=sessionData.browserStack.top->symbolsMenu; ss!=NULL; ss=ss->next) {
             if (ss->visible) {
                 if (first!=NULL) {
                     return true;
@@ -1647,7 +1647,7 @@ bool olcxShowSelectionMenu(void) {
     return false;
 }
 
-static bool olMenuHashFileNumLess(SymbolsMenu *s1, SymbolsMenu *s2) {
+static bool olMenuHashFileNumLess(BrowserMenu *s1, BrowserMenu *s2) {
     int h1 = cxFileHashNumberForSymbol(s1->references.linkName);
     int h2 = cxFileHashNumberForSymbol(s2->references.linkName);
     if (h1 < h2) return true;
@@ -1671,7 +1671,7 @@ static Position getCallerPositionFromCommandLineOption(void) {
     return makePosition(file, line, col);
 }
 
-static bool refItemsOrderLess(SymbolsMenu *menu1, SymbolsMenu *menu2) {
+static bool refItemsOrderLess(BrowserMenu *menu1, BrowserMenu *menu2) {
     ReferenceableItem *r1, *r2;
     char *name1, *name2;
     int len1; UNUSED len1;
@@ -1694,7 +1694,7 @@ static void mapCreateSelectionMenu(ReferenceableItem *p) {
 
 void olCreateSelectionMenu(ServerOperation command) {
     OlcxReferences  *rstack;
-    SymbolsMenu     *menu;
+    BrowserMenu     *menu;
 
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
@@ -1703,7 +1703,7 @@ void olCreateSelectionMenu(ServerOperation command) {
         return;
 
     renameCollationSymbols(menu);
-    LIST_SORT(SymbolsMenu, rstack->hkSelectedSym, olMenuHashFileNumLess);
+    LIST_SORT(BrowserMenu, rstack->hkSelectedSym, olMenuHashFileNumLess);
 
     menu = rstack->hkSelectedSym;
     while (menu!=NULL) {
@@ -1724,7 +1724,7 @@ void olCreateSelectionMenu(ServerOperation command) {
     // perhaps?  But here some test fail if this sorting is removed
     // because they come out in the wrong order, but if the editor
     // client sorts them anyway (does it?) that would not matter
-    LIST_MERGE_SORT(SymbolsMenu,
+    LIST_MERGE_SORT(BrowserMenu,
                     sessionData.browserStack.top->symbolsMenu,
                     refItemsOrderLess);
 }
@@ -1830,8 +1830,8 @@ static void olcxPrintPushingAction(ServerOperation operation) {
 }
 
 #ifdef DUMP_SELECTION_MENU
-static void dumpSelectionMenu(SymbolsMenu *menu) {
-    for (SymbolsMenu *s=menu; s!=NULL; s=s->next) {
+static void dumpSelectionMenu(BrowserMenu *menu) {
+    for (BrowserMenu *s=menu; s!=NULL; s=s->next) {
         log_debug(">> %d/%d %s %s %d", s->defaultRefn, s->refn, s->references.linkName,
             simpleFileName(getFileItemWithFileNumber(s->references.includedFileNumber)->name),
             s->outOnLine);
@@ -1879,7 +1879,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceableItem *referenceab
         }
     }
     if (!used && definitionReference!=NULL) {
-        addBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, referenceableItem, true, true,
+        addReferenceableToBrowserMenu(&sessionData.browserStack.top->hkSelectedSym, referenceableItem, true, true,
                                0, (SymbolRelation){.sameFile = false}, UsageDefined, 0,
                                definitionReference->position, definitionReference->usage);
     }
@@ -1887,7 +1887,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceableItem *referenceab
 
 static void pushLocalUnusedSymbolsAction(void) {
     OlcxReferences    *rstack;
-    SymbolsMenu     *ss;
+    BrowserMenu     *ss;
 
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
@@ -1905,7 +1905,7 @@ static void answerPushLocalUnusedSymbolsAction(void) {
 
 static void answerPushGlobalUnusedSymbolsAction(void) {
     OlcxReferences    *rstack;
-    SymbolsMenu     *ss;
+    BrowserMenu     *ss;
 
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
@@ -2219,9 +2219,9 @@ void answerEditAction(void) {
 
 int itIsSymbolToPushOlReferences(ReferenceableItem *referenceableItem,
                                  OlcxReferences *rstack,
-                                 SymbolsMenu **menu,
+                                 BrowserMenu **menu,
                                  int checkSelectedFlag) {
-    for (SymbolsMenu *m=rstack->symbolsMenu; m!=NULL; m=m->next) {
+    for (BrowserMenu *m=rstack->symbolsMenu; m!=NULL; m=m->next) {
         if ((m->selected || checkSelectedFlag==DO_NOT_CHECK_IF_SELECTED)
             && isSameCxSymbol(referenceableItem, &m->references))
         {
@@ -2240,19 +2240,19 @@ int itIsSymbolToPushOlReferences(ReferenceableItem *referenceableItem,
 
 void putOnLineLoadedReferences(ReferenceableItem *referenceableItem) {
     int ols;
-    SymbolsMenu *cms;
+    BrowserMenu *cms;
 
     ols = itIsSymbolToPushOlReferences(referenceableItem, sessionData.browserStack.top,
                                        &cms, DO_NOT_CHECK_IF_SELECTED);
     if (ols > 0) {
         assert(cms);
         for (Reference *r=referenceableItem->references; r!=NULL; r=r->next) {
-            olcxAddReferenceToSymbolsMenu(cms, r);
+            addReferenceToBrowserMenu(cms, r);
         }
     }
 }
 
-static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceableItem *referenceableItem) {
+static unsigned olcxOoBits(BrowserMenu *menu, ReferenceableItem *referenceableItem) {
     assert(haveSameBareName(&menu->references, referenceableItem));
     unsigned ooBits = 0;
 
@@ -2285,7 +2285,7 @@ static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceableItem *referenceableIt
     return ooBits;
 }
 
-static SymbolRelation computeSymbolRelation(SymbolsMenu *menu, ReferenceableItem *referenceableItem) {
+static SymbolRelation computeSymbolRelation(BrowserMenu *menu, ReferenceableItem *referenceableItem) {
     assert(haveSameBareName(&menu->references, referenceableItem));
     SymbolRelation relation = {.sameFile = false};
 
@@ -2325,8 +2325,8 @@ static SymbolRelation accumulateSymbolRelation(SymbolRelation a, SymbolRelation 
     return result;
 }
 
-SymbolsMenu *createSelectionMenu(ReferenceableItem *reference) {
-    SymbolsMenu *result = NULL;
+BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
+    BrowserMenu *result = NULL;
 
     OlcxReferences *rstack = sessionData.browserStack.top;
     unsigned ooBits = 0;
@@ -2336,7 +2336,7 @@ SymbolsMenu *createSelectionMenu(ReferenceableItem *reference) {
     Usage defaultUsage = UsageNone;
 
     bool found = false;
-    for (SymbolsMenu *menu=rstack->hkSelectedSym; menu!=NULL; menu=menu->next) {
+    for (BrowserMenu *menu=rstack->hkSelectedSym; menu!=NULL; menu=menu->next) {
         if (haveSameBareName(reference, &menu->references)) {
             found = true;
 
@@ -2360,7 +2360,7 @@ SymbolsMenu *createSelectionMenu(ReferenceableItem *reference) {
         }
     }
     if (found) {
-        result = addBrowsedSymbolToMenu(&rstack->symbolsMenu, reference, false, false,
+        result = addReferenceableToBrowserMenu(&rstack->symbolsMenu, reference, false, false,
                                         ooBits, relation, USAGE_ANY, vlevel, defaultPosition, defaultUsage);
     }
     return result;

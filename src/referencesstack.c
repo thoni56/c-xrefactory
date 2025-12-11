@@ -6,7 +6,7 @@
 #include "proto.h"
 #include "referenceableitem.h"
 #include "completion.h"
-#include "menu.h"
+#include "browsermenu.h"
 #include "options.h"
 #include "position.h"
 #include "globals.h"
@@ -23,8 +23,8 @@ void deleteOlcxRefs(ReferencesStack *stack, OlcxReferences **referencesP) {
 
     freeReferences(references->references);
     freeCompletions(references->completions);
-    freeSymbolsMenuList(references->hkSelectedSym);
-    freeSymbolsMenuList(references->symbolsMenu);
+    freeBrowserMenuList(references->hkSelectedSym);
+    freeBrowserMenuList(references->symbolsMenu);
 
     // if deleting second entry point, update it
     if (references==stack->top) {

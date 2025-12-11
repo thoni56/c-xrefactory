@@ -9,6 +9,7 @@
 #include "cxfile.h"
 #include "log.h"
 
+#include "browsermenu.mock"
 #include "characterreader.mock"
 #include "commons.mock"
 #include "completion.mock"
@@ -17,7 +18,6 @@
 #include "fileio.mock"
 #include "filetable.mock"
 #include "globals.mock"
-#include "menu.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "reference.mock"

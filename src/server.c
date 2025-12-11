@@ -48,14 +48,14 @@ static int scheduleFileUsingTheMacro(void) {
     ReferenceableItem references = makeReferenceableItem(completionStringInMacroBody, TypeMacro, StorageExtern,
                                                          GlobalScope, GlobalVisibility, NO_FILE_NUMBER);
 
-    SymbolsMenu menu = makeSymbolsMenu(references, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);
+    BrowserMenu menu = makeBrowserMenu(references, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);
     if (sessionData.browserStack.top==NULL) {
         pushEmptySession(&sessionData.browserStack);
         tmpc = sessionData.browserStack.top;
     }
 
     assert(sessionData.browserStack.top);
-    SymbolsMenu *oldMenu = sessionData.browserStack.top->symbolsMenu;
+    BrowserMenu *oldMenu = sessionData.browserStack.top->symbolsMenu;
     sessionData.browserStack.top->symbolsMenu = &menu;
     olMacro2PassFile = NO_FILE_NUMBER;
     scanForMacroUsage(completionStringInMacroBody);
