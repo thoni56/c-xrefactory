@@ -75,7 +75,6 @@ extern char *lastOccurenceInString(char *ss, int ch);
 
 extern bool requiresCreatingRefs(ServerOperation operation);
 extern void formatOutputLine(char *tt, int startingColumn);
-extern void getBareName(char *name, char **start, int *len);
 extern Language getLanguageFor(char *inFileName);
 
 #endif

@@ -107,10 +107,6 @@ void formatOutputLine(char *tt, int startingColumn) {
   mock(tt, startingColumn);
 }
 
-void getBareName(char *name, char **start, int *len) {
-    mock(name, start, len);
-}
-
 Language getLanguageFor(char *inFileName) {
     return (Language)mock(inFileName);
 }
