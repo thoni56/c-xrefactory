@@ -49,7 +49,7 @@ parsers. There are a number of parsers
 
 - C
 - Yacc
-- C expressions
+- C pre-processor expressions
 
 There might also exist small traces of the Java parser, which was
 previously a part of the free `c-xref`, and the C++ parser that
