@@ -10,7 +10,18 @@ typedef struct OlcxReferencesStack {
 } OlcxReferencesStack;
 
 /* Type aliases for semantic clarity - each stack uses the same structure
- * but for different purposes (different fields of OlcxReferences are used) */
+ * but for different purposes (different fields of OlcxReferences are used).
+ * All stacks use generic fields: previous, callerPosition, operation, accessTime.
+ *
+ * BrowserStack (code navigation, references, refactoring):
+ *   - references, current, hkSelectedSym, symbolsMenu, menuFilterLevel, refsFilterLevel
+ *
+ * CompletionStack (code completion):
+ *   - completions
+ *
+ * RetrieverStack (tag search):
+ *   - completions
+ */
 typedef OlcxReferencesStack ReferencesStack;
 typedef OlcxReferencesStack BrowserStack;
 typedef OlcxReferencesStack CompletionStack;

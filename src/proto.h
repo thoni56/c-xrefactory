@@ -164,19 +164,23 @@ typedef struct structSpec {
 #include "server.h"
 
 typedef struct olcxReferences {
-    struct reference    *references;      /* list of references */
-    struct reference    *current;         /* current reference */
-    ServerOperation      operation;       /* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
-    time_t               accessTime;      /* last access time */
-    struct position      callerPosition;  /* caller position */
-    struct completion *completions;       /* completions list for OLO_COMPLETION */
+    /* ===== Generic stack fields (used by all stack types) ===== */
+    struct olcxReferences *previous;      /* linked-list for stack mechanics */
+    struct position        callerPosition; /* where the operation was initiated */
+    ServerOperation        operation;      /* OLO_PUSH/OLO_LIST/OLO_COMPLETION/etc */
+
+    /* ===== Browser-specific fields (browserStack only) ===== */
+    struct reference      *references;     /* list of references for browsing */
+    struct reference      *current;        /* current reference position */
+    struct SymbolsMenu    *hkSelectedSym;  /* resolved symbols under the cursor */
+    struct SymbolsMenu    *symbolsMenu;    /* hkSelectedSyms plus same name */
     // following two lists should be probably split into hashed tables of lists
     // because of bad performances for class tree and global unused symbols
-    struct SymbolsMenu    *hkSelectedSym; /* resolved symbols under the cursor */
-    struct SymbolsMenu    *symbolsMenu;   /* hkSelectedSyms plus same name */
-    int                    menuFilterLevel;
-    int                    refsFilterLevel;
-    struct olcxReferences *previous;
+    int                    menuFilterLevel; /* filter level for menu display */
+    int                    refsFilterLevel; /* filter level for references display */
+
+    /* ===== Completion-specific fields (completionsStack & retrieverStack) ===== */
+    struct completion     *completions;    /* completions list for OLO_COMPLETION */
 } OlcxReferences;
 
 

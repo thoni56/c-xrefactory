@@ -54,7 +54,6 @@ static OlcxReferences *pushEmptyReference(ReferencesStack *stack) {
     *res = (OlcxReferences){.references      = NULL,
                             .current          = NULL,
                             .operation       = options.serverOperation,
-                            .accessTime      = fileProcessingStartTime,
                             .callerPosition  = noPosition,
                             .completions     = NULL,
                             .hkSelectedSym   = NULL,
