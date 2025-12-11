@@ -1,0 +1,50 @@
+#ifndef REFERENCEABLEITEM_H_INCLUDED
+#define REFERENCEABLEITEM_H_INCLUDED
+
+#include "visibility.h"
+#include "position.h"
+#include "scope.h"
+#include "storage.h"
+#include "type.h"
+#include "usage.h"
+
+
+#define SCOPES_BITS 3
+
+// An occurence of a referenceableItem
+typedef struct reference {
+    struct position   position;
+    Usage             usage;
+    struct reference *next;
+} Reference;
+
+// A variable, type, included file, ...
+typedef struct referenceableItem {
+    char                     *linkName;
+    Type                      type : SYMTYPES_BITS;
+    int                       includedFileNumber; /* FileNumber for the included file if
+                                                   * this is an '#include' Reference item:
+                                                   * type = TypeCppInclude */
+    Storage                   storage : STORAGES_BITS;
+    Scope                     scope : SCOPES_BITS;
+    Visibility                visibility : 2;     /* local/global */
+    struct reference         *references;
+    struct referenceableItem     *next; /* TODO: Link only for hashtab */
+} ReferenceableItem;
+
+
+extern Reference *newReference(Position position, Usage usage, Reference *next);
+extern Reference makeReference(Position position, Usage usage, Reference *next);
+extern Reference *duplicateReferenceInCxMemory(Reference *r);
+extern void freeReferences(Reference *references);
+extern void setReferenceUsage(Reference *reference, Usage usage);
+extern Reference **addToReferenceList(Reference **list, Position pos, Usage usage);
+extern bool isReferenceInList(Reference *r, Reference *list);
+extern Reference *addReferenceToList(Reference **rlist,
+                                     Reference *ref);
+extern int fileNumberOfReference(Reference reference);
+
+extern ReferenceableItem makeReferenceableItem(char *name, Type type, Storage storage, Scope scope,
+                                               Visibility visibility, int includedFileNumber);
+
+#endif
