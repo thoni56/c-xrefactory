@@ -1069,11 +1069,11 @@ bool olcxIsSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2) {
 }
 
 void olStackDeleteSymbol(OlcxReferences *refs) {
-    OlcxReferences **rr;
-    for (rr= &sessionData.browserStack.root; *rr!=NULL&&*rr!=refs; rr= &(*rr)->previous)
+    OlcxReferences **referencesP;
+    for (referencesP= &sessionData.browserStack.root; *referencesP!=NULL&&*referencesP!=refs; referencesP= &(*referencesP)->previous)
         ;
-    assert(*rr != NULL);
-    deleteOlcxRefs(rr, &sessionData.browserStack);
+    assert(*referencesP != NULL);
+    deleteOlcxRefs(&sessionData.browserStack, referencesP);
 }
 
 static void olcxMenuInspectDef(SymbolsMenu *menu) {

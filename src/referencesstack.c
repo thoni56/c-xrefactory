@@ -18,24 +18,24 @@
  * on the semantic context (browser navigation vs completion vs retrieval).
  */
 
-void deleteOlcxRefs(OlcxReferences **refsP, ReferencesStack *stack) {
-    OlcxReferences    *refs = *refsP;
+void deleteOlcxRefs(ReferencesStack *stack, OlcxReferences **referencesP) {
+    OlcxReferences *references = *referencesP;
 
-    freeReferences(refs->references);
-    freeCompletions(refs->completions);
-    freeSymbolsMenuList(refs->hkSelectedSym);
-    freeSymbolsMenuList(refs->symbolsMenu);
+    freeReferences(references->references);
+    freeCompletions(references->completions);
+    freeSymbolsMenuList(references->hkSelectedSym);
+    freeSymbolsMenuList(references->symbolsMenu);
 
     // if deleting second entry point, update it
-    if (refs==stack->top) {
-        stack->top = refs->previous;
+    if (references==stack->top) {
+        stack->top = references->previous;
     }
     // this is useless, but one never knows
-    if (refs==stack->root) {
-        stack->root = refs->previous;
+    if (references==stack->root) {
+        stack->root = references->previous;
     }
-    *refsP = refs->previous;
-    free(refs);
+    *referencesP = references->previous;
+    free(references);
 }
 
 void freePoppedReferencesStackItems(ReferencesStack *stack) {
@@ -43,7 +43,7 @@ void freePoppedReferencesStackItems(ReferencesStack *stack) {
     // delete all after top
     while (stack->root != stack->top) {
         //&fprintf(dumpOut,":freeing %s\n", stack->root->hkSelectedSym->references.linkName);
-        deleteOlcxRefs(&stack->root, stack);
+        deleteOlcxRefs(stack, &stack->root);
     }
 }
 
@@ -65,35 +65,35 @@ static OlcxReferences *pushEmptyReference(ReferencesStack *stack) {
 }
 
 void olcxFreeOldCompletionItems(ReferencesStack *stack) {
-    OlcxReferences **references;
+    OlcxReferences **referencesP;
 
-    references = &stack->top;
-    if (*references == NULL)
+    referencesP = &stack->top;
+    if (*referencesP == NULL)
         return;
     for (int i=1; i<MAX_COMPLETIONS_HISTORY_DEEP; i++) {
-        references = &(*references)->previous;
-        if (*references == NULL)
+        referencesP = &(*referencesP)->previous;
+        if (*referencesP == NULL)
             return;
     }
-    deleteOlcxRefs(references, stack);
+    deleteOlcxRefs(stack, referencesP);
 }
 
 void pushEmptySession(ReferencesStack *stack) {
-    OlcxReferences *res;
+    OlcxReferences *references;
     freePoppedReferencesStackItems(stack);
-    res = pushEmptyReference(stack);
-    stack->top = stack->root = res;
+    references = pushEmptyReference(stack);
+    stack->top = stack->root = references;
 }
 
 
 OlcxReferences *getNextTopStackItem(ReferencesStack *stack) {
-    OlcxReferences *rr, *nextrr;
-    nextrr = NULL;
-    rr = stack->root;
-    while (rr!=NULL && rr!=stack->top) {
-        nextrr = rr;
-        rr = rr->previous;
+    OlcxReferences *thisReferences, *nextReferences;
+    nextReferences = NULL;
+    thisReferences = stack->root;
+    while (thisReferences!=NULL && thisReferences!=stack->top) {
+        nextReferences = thisReferences;
+        thisReferences = thisReferences->previous;
     }
-    assert(rr==stack->top);
-    return nextrr;
+    assert(thisReferences==stack->top);
+    return nextReferences;
 }

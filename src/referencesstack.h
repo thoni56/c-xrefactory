@@ -17,7 +17,7 @@ typedef OlcxReferencesStack CompletionStack;
 typedef OlcxReferencesStack RetrieverStack;
 
 /* Generic stack operations */
-extern void deleteOlcxRefs(OlcxReferences **refsP, ReferencesStack *stack);
+extern void deleteOlcxRefs(ReferencesStack *stack, OlcxReferences **referencesP);
 extern void freePoppedReferencesStackItems(ReferencesStack *stack);
 extern OlcxReferences *getNextTopStackItem(ReferencesStack *stack);
 extern void olcxFreeOldCompletionItems(ReferencesStack *stack);
