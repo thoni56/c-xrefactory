@@ -168,7 +168,7 @@ static void olcxPrintMenuItemPrefix(FILE *file, BrowserMenu *menu, bool selectab
         fprintf(file, " %s=0", PPCA_SELECTED);
     }
 
-    fprintf(file, " %s=0", PPCA_BASE);
+    fprintf(file, " base=0");   /* Legacy value */
 
     if (menu==NULL || (menu->defaultRefn==0 && menu->refn==0) || !selectable) {
         fprintf(file, " %s=0 %s=0", PPCA_DEF_REFN, PPCA_REFN);

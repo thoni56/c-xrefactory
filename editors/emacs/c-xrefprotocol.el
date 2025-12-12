@@ -80,7 +80,6 @@
 (defconst c-xref_PPCA_LEVEL "lev")
 (defconst c-xref_PPCA_VCLASS "vcl")
 (defconst c-xref_PPCA_SELECTED "selected")
-(defconst c-xref_PPCA_BASE "base")
 (defconst c-xref_PPCA_DEF_REFN "drefn")
 (defconst c-xref_PPCA_REFN "refn")
 (defconst c-xref_PPCA_TYPE "type")
