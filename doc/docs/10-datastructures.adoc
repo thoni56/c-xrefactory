@@ -3,20 +3,67 @@
 There are a lot of different data structures used in `c-xrefactory`.
 This is a first step towards visualising some of them.
 
-=== ReferenceItems and References
+=== ReferenceableItem and Reference: Core Domain Concepts
 
-This is a fundamental pair. A `ReferenceItem` is the symbol that
-occurs at the locations that `References` indicate.
+These are the fundamental cross-reference data structures that represent the "what" and "where" of code entities.
 
-Each `ReferenceItem` has a linked list of `Reference`s, each denoting
-one occurence of that "symbol".
+==== ReferenceableItem
 
-=== Symbols and References
+A `ReferenceableItem` represents a **referenceable entity** in the codebase - something that can be referenced from multiple locations:
 
-There is also a structure called `Symbol`. But, why is there no
-connection between the symbols and the references?!?
+* Functions and variables
+* Types (structs, unions, enums, typedefs)
+* Macros
+* Include directives (special case: `TypeCppInclude`)
+* Yacc non-terminals and rules
 
-So what are these actually?
+Each `ReferenceableItem` contains:
+
+* `linkName` - Fully qualified name (e.g., `"MyClass::method"`)
+* `type` - What kind of entity (function, variable, type, etc.)
+* `storage`, `scope`, `visibility` - Language properties
+* `includeFile` - For `TypeCppInclude` items, which file is being included
+* `references` - Linked list of all `Reference` (occurrences) of this entity
+
+ReferenceableItems are stored in the `referenceableItemTable` (hash table) and persisted to `.cx` files.
+
+==== Reference (Occurrence)
+
+A `Reference` represents a **single occurrence** of a ReferenceableItem at a specific location:
+
+* `position` - File, line, and column where this occurrence appears
+* `usage` - How it's used (definition, declaration, usage, etc.)
+* `next` - Pointer to next occurrence in the list
+
+Each ReferenceableItem maintains a linked list of all its References, allowing you to find every place that entity appears in the codebase.
+
+**Note:** The term "Reference" in this context means "occurrence" - one specific use of an entity at one location. This is distinct from C++ references or reference semantics.
+
+=== Symbol (Parser Symbol Table)
+
+There is also a structure called `Symbol`. This is **separate from ReferenceableItem** and serves a different purpose:
+
+**`Symbol`** - Parser-level symbol table entry (temporary, exists only during parsing):
+
+* Used by the C/Yacc parser for semantic analysis
+* Contains type information, position, storage class
+* Lives in `symbolTable` (hash table) during file parsing
+* **Not persisted** - discarded after parsing completes
+
+**`ReferenceableItem`** - Cross-reference entity (persistent across entire codebase):
+
+* Created FROM Symbol properties when a referenceable construct is found
+* Stored in `referenceableItemTable` and saved to `.cx` files
+* Accumulates References from all files in the project
+
+**Relationship:** During parsing, when the parser encounters a referenceable symbol (function, variable, etc.), it:
+
+1. Creates a `Symbol` in `symbolTable` for semantic analysis
+2. Creates or finds a `ReferenceableItem` by copying Symbol properties
+3. Adds a `Reference` to that ReferenceableItem's list
+4. Discards the Symbol when parsing completes
+
+This separation allows the parser to maintain its own temporary symbol table while building the persistent cross-reference database.
 
 .Symbol and Reference Data Structures
 image::diagrams/symbol-structures.svg[Symbol structures]
@@ -218,7 +265,7 @@ The browser stack is a linked list of `OlcxReferences` entries, where each entry
 ==== Lifecycle
 
 1. **Push**: When user requests symbol references (e.g., `-olcxpush`), a new empty entry is created on the stack
-2. **Population**: After parsing, the entry is filled with `SymbolsMenu` structures containing references
+2. **Population**: After parsing, the entry is filled with `BrowserMenu` structures containing references
 3. **Navigation**: Commands like `-olcxnext` and `-olcxprevious` move through references in the current entry
 4. **Pop**: User can pop back to previous entries to return to earlier symbol lookups
 
@@ -226,46 +273,104 @@ The browser stack is a linked list of `OlcxReferences` entries, where each entry
 
 The browser stack is populated in two stages:
 
-1. **Parse-time**: References are collected in the reference table during file parsing
-2. **Menu Creation**: References are copied from the reference table into the browser stack entry via `putOnLineLoadedReferences()`
+1. **Parse-time**: References are collected in the referenceableItemTable during file parsing
+2. **Menu Creation**: ReferenceableItems are wrapped in BrowserMenu structures and added to the browser stack entry via `putOnLineLoadedReferences()`
 
 This separation means that browser stack entries can become stale if files are reparsed (e.g., with preloaded content) without refreshing the stack. Users typically need to pop and re-push to get fresh reference lists after edits.
 
-=== Symbols Menu
+=== Browser Menu
 
-A symbols menu is a navigable list of symbols with their references, organized for presentation to the user. Multiple symbols may appear in a single menu when name resolution finds several candidates (e.g., overloaded functions, inherited methods).
+A browser menu is a navigable list of referenceable items with their occurrences, organized for presentation to the user in Emacs. Multiple items may appear in a single menu when name resolution finds several candidates (e.g., symbols with the same name in different scopes).
 
-==== Structure
+==== BrowserMenu Structure
 
-Each `SymbolsMenu` entry contains:
+Each `BrowserMenu` entry is a menu item wrapping a `ReferenceableItem` with UI presentation state:
 
-* **Reference item**: The symbol itself (name, type, storage class, scope)
-* **Reference list**: All locations where this symbol appears
-* **Selection state**: Whether this symbol is currently selected for operations
-* **Filter state**: Whether this symbol passes current visibility filters
-* **Default reference**: The "best" reference to jump to (usually the definition)
+* **referenceable**: The embedded `ReferenceableItem` (the entity being browsed)
+  ** Contains `linkName`, `type`, `storage`, `scope`, `visibility`
+  ** Contains the list of `references` (occurrences) for this item
+* **selected**: Whether this item is currently selected for operations
+* **visible**: Whether this item passes current visibility filters
+* **defaultPosition**: The "best" occurrence to jump to (usually the definition)
+* **defaultUsage**: The usage type of the default occurrence
+* **outOnLine**: Display line number in the Emacs menu
+* **markers**: Editor markers for refactoring operations
+* **next**: Pointer to next menu item in the list
 
-==== Multiple Menus in One Session
+**Key insight:** `BrowserMenu` is not just a menu - it's a **menu item**. A collection of `BrowserMenu` items forms the actual menu shown to the user.
 
-A single browser stack entry can contain multiple symbols in its menu:
+==== Multiple Menu Items in One Session
 
-* **hkSelectedSym**: Symbols that matched at the cursor position (after disambiguation)
-* **symbolsMenu**: Complete menu including related symbols (same name, similar signatures)
+A single browser stack entry (`OlcxReferences`) can contain multiple `BrowserMenu` items:
+
+* **hkSelectedSym**: Menu items that matched at the cursor position (after disambiguation)
+* **symbolsMenu**: Complete menu including related items (same name, similar signatures)
 
 This allows users to:
 
 * See all candidates when a symbol is ambiguous
-* Navigate between related definitions (overloads, implementations)
-* Select specific symbols for refactoring operations
+* Navigate between related definitions (different scopes, include files)
+* Select specific items for refactoring operations
 
 ==== Menu Population
 
-Menus are populated by scanning the reference table:
+Browser menus are populated by scanning the referenceableItemTable:
 
-1. **Symbol lookup**: Find all `ReferenceItem` entries matching the requested symbol
-2. **Reference collection**: For each matching item, add its references to the menu
-3. **Sorting and filtering**: Order symbols by relevance and apply visibility filters
-4. **Selection**: Mark symbols that best match the cursor context
+1. **Symbol lookup**: Find all `ReferenceableItem` entries matching the requested symbol
+2. **Menu item creation**: Wrap each matching item in a `BrowserMenu` structure
+3. **Reference collection**: References are already in the ReferenceableItem
+4. **Sorting and filtering**: Order items by relevance and apply visibility filters
+5. **Selection**: Mark items that best match the cursor context (e.g., same file)
+
+=== Putting It All Together: Domain Model Summary
+
+Understanding the complete flow from parsing to browsing:
+
+==== During Parsing (Building the Cross-Reference Database)
+
+1. **Parser creates Symbols**: As the C/Yacc parser processes source code, it creates `Symbol` entries in `symbolTable` for semantic analysis
+2. **ReferenceableItems are created/found**: When encountering referenceable constructs (functions, variables, types, etc.):
+   * Create a `ReferenceableItem` from Symbol properties
+   * Check if it already exists in `referenceableItemTable`
+   * If new, add it to the table; if exists, reuse the existing one
+3. **References are recorded**: Add a `Reference` (occurrence) to the ReferenceableItem's list, recording position and usage
+4. **Symbols are discarded**: After parsing completes, the `symbolTable` is cleared (Symbols are temporary)
+5. **Database is persisted**: ReferenceableItems and their References are saved to `.cx` files
+
+**Result:** A persistent database mapping each entity (ReferenceableItem) to all its occurrences (References) across the entire codebase.
+
+==== During Browsing (Interactive Navigation)
+
+1. **User requests symbol info**: User places cursor on a symbol and invokes a command (e.g., "push to symbol")
+2. **Symbol lookup**: Server finds matching ReferenceableItem(s) in `referenceableItemTable`
+3. **BrowserMenu creation**: Each matching ReferenceableItem is wrapped in a `BrowserMenu` structure
+   * Adds UI state (selected, visible, display position)
+   * Marks best-fit match (e.g., same file as cursor)
+4. **Stack push**: BrowserMenu items are added to the browser stack (`OlcxReferences` entry)
+5. **Display to user**: Menu sent to Emacs showing all matching items and their occurrences
+6. **Navigation**: User can browse through references, select items, invoke refactorings
+
+**Result:** Interactive navigation through the cross-reference database with selection and filtering.
+
+==== Key Relationships
+
+[source]
+----
+Symbol (parser)
+    ↓ (creates during parsing)
+ReferenceableItem (persistent entity)
+    ├─→ references: Reference* (list of occurrences)
+    └─→ stored in: referenceableItemTable
+         ↓ (wrapped for browsing)
+      BrowserMenu (UI wrapper)
+         └─→ stored in: OlcxReferences.symbolsMenu (browser stack)
+----
+
+This architecture separates concerns:
+
+* **Parser symbols** - Temporary, for semantic analysis
+* **Cross-reference database** - Persistent, for finding all uses
+* **Browser menus** - Presentation layer, for user interaction
 
 
 
