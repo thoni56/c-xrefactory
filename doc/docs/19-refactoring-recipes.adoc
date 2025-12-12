@@ -4,6 +4,8 @@ This chapter documents mechanical steps for refactoring operations. Each recipe 
 
 These recipes serve as specifications for refactorings that c-xrefactory should automate.
 
+This chapter also lists potential refactorings that have not yet been decided or designed.
+
 === Move Type to New File
 
 **Input:**
@@ -165,11 +167,11 @@ void pushEmptySession(ReferencesStack *stack);  // Generic operation
 
 === Rename Included File
 
-**Purpose:** Rename a header file and update all the include directives
+**Purpose:** Rename a file appearing in an include and update all the include directives
 
 **When to use:**
 
-- A header file is inappropriately named
+- A (header) file is inappropriately named
 - In the process of renaming a complete C "module" this is one step (until `c-xrefactory` can do all of that)
 
 **Input:**
@@ -240,12 +242,18 @@ After introducing semantic aliases:
 
 ---
 
+=== Turn include guard into pragma once
+
+Tentative.
+
 === Rename Symbol
 
-TBD
-
----
+Implemented. TBD.
 
 === Extract Function
 
-TBD
+Implemented. TBD.
+
+=== Reorder Parameters
+
+Imlemented. TBD.
