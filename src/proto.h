@@ -163,9 +163,9 @@ typedef struct structSpec {
 #include "referenceableitem.h"
 #include "server.h"
 
-typedef struct olcxReferences {
+typedef struct SessionStackEntry {
     /* ===== Generic stack fields (used by all stack types) ===== */
-    struct olcxReferences *previous;      /* linked-list for stack mechanics */
+    struct SessionStackEntry *previous;      /* linked-list for stack mechanics */
     struct position        callerPosition; /* where the operation was initiated */
     ServerOperation        operation;      /* OLO_PUSH/OLO_LIST/OLO_COMPLETION/etc */
 
@@ -181,7 +181,7 @@ typedef struct olcxReferences {
 
     /* ===== Completion-specific fields (completionsStack & retrieverStack) ===== */
     struct completion     *completions;    /* completions list for OLO_COMPLETION */
-} OlcxReferences;
+} SessionStackEntry;
 
 
 typedef struct parsedInfo {

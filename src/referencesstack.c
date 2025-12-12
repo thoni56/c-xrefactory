@@ -18,8 +18,8 @@
  * on the semantic context (browser navigation vs completion vs retrieval).
  */
 
-void deleteOlcxRefs(ReferencesStack *stack, OlcxReferences **referencesP) {
-    OlcxReferences *references = *referencesP;
+void deleteOlcxRefs(ReferencesStack *stack, SessionStackEntry **referencesP) {
+    SessionStackEntry *references = *referencesP;
 
     freeReferences(references->references);
     freeCompletions(references->completions);
@@ -47,11 +47,11 @@ void freePoppedReferencesStackItems(ReferencesStack *stack) {
     }
 }
 
-static OlcxReferences *pushEmptyReference(ReferencesStack *stack) {
-    OlcxReferences *res;
+static SessionStackEntry *pushEmptyReference(ReferencesStack *stack) {
+    SessionStackEntry *res;
 
-    res  = malloc(sizeof(OlcxReferences));
-    *res = (OlcxReferences){.references      = NULL,
+    res  = malloc(sizeof(SessionStackEntry));
+    *res = (SessionStackEntry){.references      = NULL,
                             .current          = NULL,
                             .operation       = options.serverOperation,
                             .callerPosition  = noPosition,
@@ -64,7 +64,7 @@ static OlcxReferences *pushEmptyReference(ReferencesStack *stack) {
 }
 
 void olcxFreeOldCompletionItems(ReferencesStack *stack) {
-    OlcxReferences **referencesP;
+    SessionStackEntry **referencesP;
 
     referencesP = &stack->top;
     if (*referencesP == NULL)
@@ -78,15 +78,15 @@ void olcxFreeOldCompletionItems(ReferencesStack *stack) {
 }
 
 void pushEmptySession(ReferencesStack *stack) {
-    OlcxReferences *references;
+    SessionStackEntry *references;
     freePoppedReferencesStackItems(stack);
     references = pushEmptyReference(stack);
     stack->top = stack->root = references;
 }
 
 
-OlcxReferences *getNextTopStackItem(ReferencesStack *stack) {
-    OlcxReferences *thisReferences, *nextReferences;
+SessionStackEntry *getNextTopStackItem(ReferencesStack *stack) {
+    SessionStackEntry *thisReferences, *nextReferences;
     nextReferences = NULL;
     thisReferences = stack->root;
     while (thisReferences!=NULL && thisReferences!=stack->top) {

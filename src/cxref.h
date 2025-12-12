@@ -13,18 +13,18 @@
 extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
 extern bool isSameReferenceableItem(ReferenceableItem *p1, ReferenceableItem *p2);
 extern bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2);
-extern void olcxRecomputeSelRefs(OlcxReferences *refs );
-extern void olProcessSelectedReferences(OlcxReferences *rstack,
-                                        void (*referencesMapFun)(OlcxReferences *rstack,
+extern void olcxRecomputeSelRefs(SessionStackEntry *refs );
+extern void olProcessSelectedReferences(SessionStackEntry *rstack,
+                                        void (*referencesMapFun)(SessionStackEntry *rstack,
                                                                  BrowserMenu *ss));
 extern void olcxPopOnly(void);
-extern void olStackDeleteSymbol(OlcxReferences *refs);
+extern void olStackDeleteSymbol(SessionStackEntry *refs);
 extern int getFileNumberFromName(char *name);
 extern Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int includedFileNumber);
 extern void addTrivialCxReference (char *name, Type type, Storage storage,
                                    Position position, Usage usage);
 extern void olSetCallerPosition(Position position);
-extern int itIsSymbolToPushOlReferences(ReferenceableItem *p, OlcxReferences *rstack,
+extern int itIsSymbolToPushOlReferences(ReferenceableItem *p, SessionStackEntry *rstack,
                                         BrowserMenu **rss, int checkSelFlag);
 extern void putOnLineLoadedReferences(ReferenceableItem *p);
 extern BrowserMenu *createSelectionMenu(ReferenceableItem *dd);

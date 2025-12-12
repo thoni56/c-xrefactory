@@ -24,11 +24,11 @@ bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2) {
     return (bool) mock(p1, p2);
 }
 
-void olcxRecomputeSelRefs(OlcxReferences *refs) {
+void olcxRecomputeSelRefs(SessionStackEntry *refs) {
     mock(refs);
 }
 
-void olProcessSelectedReferences(OlcxReferences *rstack, void (*referencesMapFun)(OlcxReferences *rstack,
+void olProcessSelectedReferences(SessionStackEntry *rstack, void (*referencesMapFun)(SessionStackEntry *rstack,
                                                                                     BrowserMenu *ss)) {
     mock(rstack, referencesMapFun);
 }
@@ -37,7 +37,7 @@ void olcxPopOnly(void) {
     mock();
 }
 
-void olStackDeleteSymbol(OlcxReferences *refs) {
+void olStackDeleteSymbol(SessionStackEntry *refs) {
     mock(refs);
 }
 
@@ -70,7 +70,7 @@ void olCompletionListReverse(void) {
     mock();
 }
 
-int itIsSymbolToPushOlReferences(ReferenceableItem *p, OlcxReferences *rstack, BrowserMenu **rss,
+int itIsSymbolToPushOlReferences(ReferenceableItem *p, SessionStackEntry *rstack, BrowserMenu **rss,
                                int checkSelFlag) {
     return (int) mock(p, rstack, rss, checkSelFlag);
 }

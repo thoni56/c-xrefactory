@@ -41,7 +41,7 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
 
 
 static int scheduleFileUsingTheMacro(void) {
-    OlcxReferences *tmpc;
+    SessionStackEntry *tmpc;
 
     assert(completionStringInMacroBody);
     tmpc = NULL;

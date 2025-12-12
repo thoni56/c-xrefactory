@@ -3,7 +3,7 @@
 #include "referencesstack.h"
 
 
-void deleteOlcxRefs(ReferencesStack *stack, OlcxReferences **referencesP) {
+void deleteOlcxRefs(ReferencesStack *stack, SessionStackEntry **referencesP) {
     mock(stack, referencesP);
 }
 
@@ -11,8 +11,8 @@ void freePoppedReferencesStackItems(ReferencesStack *stack) {
     mock(stack);
 }
 
-OlcxReferences *getNextTopStackItem(ReferencesStack *stack) {
-    return (OlcxReferences *) mock(stack);
+SessionStackEntry *getNextTopStackItem(ReferencesStack *stack) {
+    return (SessionStackEntry *) mock(stack);
 }
 
 void olcxFreeOldCompletionItems(ReferencesStack *stack) {

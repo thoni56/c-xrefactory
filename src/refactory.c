@@ -534,7 +534,7 @@ static EditorMarker *getMarkFromOptions(EditorBuffer *buf) {
     return createMarkerAt(buf, refactoringOptions.olMarkOffset);
 }
 
-static void pushMarkersAsReferences(EditorMarkerList **markers, OlcxReferences *refs, char *name) {
+static void pushMarkersAsReferences(EditorMarkerList **markers, SessionStackEntry *refs, char *name) {
     Reference *rr;
 
     rr = convertEditorMarkersToReferences(markers);
@@ -558,7 +558,7 @@ static void askForReallyContinueConfirmation(void) {
 // ---------------------------------------------------------------------------------
 
 static bool handleSafetyCheckDifferenceLists(EditorMarkerList *diff1, EditorMarkerList *diff2,
-                                             OlcxReferences *diffrefs) {
+                                             SessionStackEntry *diffrefs) {
     if (diff1 != NULL || diff2 != NULL) {
         for (BrowserMenu *mm = diffrefs->menu; mm != NULL; mm = mm->next) {
             mm->selected = true;
@@ -594,7 +594,7 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
     EditorMarkerList *chks;
     EditorMarker     *defin;
     EditorMarkerList *diff1, *diff2;
-    OlcxReferences   *refs, *origrefs, *newrefs, *diffrefs;
+    SessionStackEntry   *refs, *origrefs, *newrefs, *diffrefs;
     int               pbflag;
     UNUSED            pbflag;
 
@@ -782,7 +782,7 @@ static void multipleReferencesInSamePlaceMessage(Reference *r) {
     ppcAskConfirmation(tmpBuff);
 }
 
-static void checkForMultipleReferencesInSamePlace(OlcxReferences *rstack, BrowserMenu *ccms) {
+static void checkForMultipleReferencesInSamePlace(SessionStackEntry *rstack, BrowserMenu *ccms) {
     ReferenceableItem *p, *sss;
     BrowserMenu    *cms;
     bool            pushed;
@@ -804,7 +804,7 @@ static void checkForMultipleReferencesInSamePlace(OlcxReferences *rstack, Browse
 }
 
 static void multipleOccurrenciesSafetyCheck(void) {
-    OlcxReferences *rstack;
+    SessionStackEntry *rstack;
 
     rstack = sessionData.browserStack.top;
     olProcessSelectedReferences(rstack, checkForMultipleReferencesInSamePlace);

@@ -401,7 +401,7 @@ static Reference *olcxCopyReference(Reference *reference) {
     return r;
 }
 
-static void olcxAppendReference(Reference *ref, OlcxReferences *refs) {
+static void olcxAppendReference(Reference *ref, SessionStackEntry *refs) {
     Reference *rr;
     rr = olcxCopyReference(ref);
     LIST_APPEND(Reference, refs->references, rr);
@@ -443,7 +443,7 @@ static void gotoOnlineCxref(Position position, Usage usage, char *suffix)
     ppcGotoPosition(position);
 }
 
-static bool sessionHasReferencesValidForOperation(SessionData *session, OlcxReferences **refs,
+static bool sessionHasReferencesValidForOperation(SessionData *session, SessionStackEntry **refs,
                                                   CheckNull checkNull) {
     assert(session);
     if (options.serverOperation==OLO_COMPLETION || options.serverOperation==OLO_COMPLETION_SELECT
@@ -462,7 +462,7 @@ static bool sessionHasReferencesValidForOperation(SessionData *session, OlcxRefe
 
 
 static void olcxRenameInit(void) {
-    OlcxReferences *refs;
+    SessionStackEntry *refs;
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
@@ -509,7 +509,7 @@ static bool referenceIsLessThanOrderImportant(Reference *r1, Reference *r2) {
 }
 
 
-static void olcxNaturalReorder(OlcxReferences *refs) {
+static void olcxNaturalReorder(SessionStackEntry *refs) {
     LIST_MERGE_SORT(Reference, refs->references, referenceIsLessThanOrderImportant);
 }
 
@@ -519,7 +519,7 @@ static void indicateNoReference(void) {
 }
 
 // references has to be ordered according internal file numbers order !!!!
-static void olcxSetCurrentRefsOnCaller(OlcxReferences *refs) {
+static void olcxSetCurrentRefsOnCaller(SessionStackEntry *refs) {
     Reference *r;
     for (r=refs->references; r!=NULL; r=r->next){
         log_debug("checking %d:%d:%d to %d:%d:%d", r->position.file, r->position.line,r->position.col,
@@ -535,7 +535,7 @@ static void olcxSetCurrentRefsOnCaller(OlcxReferences *refs) {
     }
 }
 
-static void orderRefsAndGotoDefinition(OlcxReferences *refs) {
+static void orderRefsAndGotoDefinition(SessionStackEntry *refs) {
     olcxNaturalReorder(refs);
     if (refs->references == NULL) {
         refs->current = refs->references;
@@ -550,7 +550,7 @@ static void orderRefsAndGotoDefinition(OlcxReferences *refs) {
 }
 
 static void olcxOrderRefsAndGotoDefinition(void) {
-    OlcxReferences *refs;
+    SessionStackEntry *refs;
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
@@ -712,7 +712,7 @@ bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
     return true;
 }
 
-static int getCurrentRefPosition(OlcxReferences *refs) {
+static int getCurrentRefPosition(SessionStackEntry *refs) {
     int actn = 0;
 
     Reference *r = NULL;
@@ -747,7 +747,7 @@ static void symbolHighlightNameSprint(char *output, BrowserMenu *menu) {
     }
 }
 
-static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
+static void olcxPrintRefList(char *commandString, SessionStackEntry *refs) {
     Reference *rr;
     int         actn, len;
 
@@ -776,13 +776,13 @@ static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
 }
 
 static void olcxReferenceList(char *commandString) {
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
     olcxPrintRefList(commandString, refs);
 }
 
-static void olcxGenGotoActReference(OlcxReferences *refs) {
+static void olcxGenGotoActReference(SessionStackEntry *refs) {
     if (refs->current != NULL) {
         gotoOnlineCxref(refs->current->position, refs->current->usage, "");
     } else {
@@ -791,7 +791,7 @@ static void olcxGenGotoActReference(OlcxReferences *refs) {
 }
 
 static void olcxPushOnly(void) {
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
     //&LIST_MERGE_SORT(Reference, refs->references, referenceIsLessThan);
@@ -799,7 +799,7 @@ static void olcxPushOnly(void) {
 }
 
 static void olcxPushAndCallMacro(void) {
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
     char                symbol[MAX_CX_SYMBOL_SIZE];
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
@@ -820,7 +820,7 @@ static void olcxPushAndCallMacro(void) {
 }
 
 static void olcxReferenceGotoRef(int refn) {
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
     Reference         *rr;
     int                 i,rfilter;
 
@@ -854,15 +854,15 @@ static void popAndFreeSession(void) {
     freePoppedReferencesStackItems(&sessionData.browserStack);
 }
 
-static OlcxReferences *pushSession(void) {
-    OlcxReferences *oldtop;
+static SessionStackEntry *pushSession(void) {
+    SessionStackEntry *oldtop;
     oldtop = sessionData.browserStack.top;
     sessionData.browserStack.top = sessionData.browserStack.root;
     pushEmptySession(&sessionData.browserStack);
     return oldtop;
 }
 
-static void popAndFreeSessionsUntil(OlcxReferences *oldtop) {
+static void popAndFreeSessionsUntil(SessionStackEntry *oldtop) {
     popAndFreeSession();
     // recover old top, but what if it was freed, hmm
     while (sessionData.browserStack.top!=NULL && sessionData.browserStack.top!=oldtop) {
@@ -871,7 +871,7 @@ static void popAndFreeSessionsUntil(OlcxReferences *oldtop) {
 }
 
 static void findAndGotoDefinition(ReferenceableItem *sym) {
-    OlcxReferences *refs, *oldtop;
+    SessionStackEntry *refs, *oldtop;
 
     // preserve popped items from browser first
     oldtop = pushSession();
@@ -886,7 +886,7 @@ static void findAndGotoDefinition(ReferenceableItem *sym) {
 }
 
 static void olcxReferenceGotoCompletion(int refn) {
-    OlcxReferences *refs;
+    SessionStackEntry *refs;
     Completion *completion;
 
     assert(refn > 0);
@@ -925,7 +925,7 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
     }
 }
 
-static void olcxSetActReferenceToFirstVisible(OlcxReferences *refs, Reference *r) {
+static void olcxSetActReferenceToFirstVisible(SessionStackEntry *refs, Reference *r) {
     int rlevel = usageFilterLevels[refs->refsFilterLevel];
 
     while (r!=NULL && r->usage>=rlevel)
@@ -944,7 +944,7 @@ static void olcxSetActReferenceToFirstVisible(OlcxReferences *refs, Reference *r
 }
 
 static void olcxReferencePlus(void) {
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
     Reference         *r;
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
@@ -958,7 +958,7 @@ static void olcxReferencePlus(void) {
 }
 
 static void olcxReferenceMinus(void) {
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
     Reference         *r,*l,*act;
     int                 rlevel;
     if (!sessionHasReferencesValidForOperation(&sessionData,  &refs, CHECK_NULL))
@@ -986,7 +986,7 @@ static void olcxReferenceMinus(void) {
 }
 
 static void olcxReferenceGotoDef(void) {
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
     Reference         *dr;
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
@@ -999,14 +999,14 @@ static void olcxReferenceGotoDef(void) {
 }
 
 static void olcxReferenceGotoCurrent(void) {
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
         return;
     olcxGenGotoActReference(refs);
 }
 
 static void olcxReferenceGetCurrentRefn(void) {
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
     int                 n;
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
         return;
@@ -1016,7 +1016,7 @@ static void olcxReferenceGetCurrentRefn(void) {
 }
 
 static void olcxReferenceGotoCaller(void) {
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
         return;
     if (refs->callerPosition.file != NO_FILE_NUMBER) {
@@ -1029,7 +1029,7 @@ static void olcxReferenceGotoCaller(void) {
 
 #define MAX_SYMBOL_MESSAGE_LEN 50
 
-static void olcxPrintSymbolName(OlcxReferences *refs) {
+static void olcxPrintSymbolName(SessionStackEntry *refs) {
     assert(options.xref2);
     if (refs==NULL) {
         ppcBottomInformation("stack is now empty");
@@ -1084,8 +1084,8 @@ bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2) {
     return true;
 }
 
-void olStackDeleteSymbol(OlcxReferences *refs) {
-    OlcxReferences **referencesP;
+void olStackDeleteSymbol(SessionStackEntry *refs) {
+    SessionStackEntry **referencesP;
     for (referencesP= &sessionData.browserStack.root; *referencesP!=NULL&&*referencesP!=refs; referencesP= &(*referencesP)->previous)
         ;
     assert(*referencesP != NULL);
@@ -1114,14 +1114,14 @@ static void olcxMenuInspectDef(BrowserMenu *menu) {
 }
 
 static void olcxSymbolMenuInspectDef(void) {
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
         return;
     olcxMenuInspectDef(refs->menu);
 }
 
-void olProcessSelectedReferences(OlcxReferences *rstack,
-                                 void (*referencesMapFun)(OlcxReferences *rstack, BrowserMenu *menu)) {
+void olProcessSelectedReferences(SessionStackEntry *rstack,
+                                 void (*referencesMapFun)(SessionStackEntry *rstack, BrowserMenu *menu)) {
     if (rstack->menu == NULL)
         return;
 
@@ -1133,20 +1133,20 @@ void olProcessSelectedReferences(OlcxReferences *rstack,
     LIST_MERGE_SORT(Reference, rstack->references, referenceIsLessThan);
 }
 
-static void genOnLineReferences(OlcxReferences *rstack, BrowserMenu *cms) {
+static void genOnLineReferences(SessionStackEntry *rstack, BrowserMenu *cms) {
     if (cms->selected) {
         assert(cms);
         olcxAddReferences(cms->referenceable.references, &rstack->references, ANY_FILE);
     }
 }
 
-void olcxRecomputeSelRefs(OlcxReferences *refs) {
+void olcxRecomputeSelRefs(SessionStackEntry *refs) {
     freeReferences(refs->references); refs->references = NULL;
     olProcessSelectedReferences(refs, genOnLineReferences);
 }
 
 static void olcxMenuToggleSelect(void) {
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
     BrowserMenu     *ss;
     int                 line;
 
@@ -1166,7 +1166,7 @@ static void olcxMenuToggleSelect(void) {
 }
 
 static void olcxMenuSelectOnly(void) {
-    OlcxReferences *refs;
+    SessionStackEntry *refs;
     BrowserMenu *selection;
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
@@ -1233,7 +1233,7 @@ static void selectUnusedSymbols(BrowserMenu *menu, void *mapParameter1) {
 
 
 static void olcxMenuSelectAll(bool selected) {
-    OlcxReferences *refs;
+    SessionStackEntry *refs;
 
     assert(options.xref2);
 
@@ -1298,7 +1298,7 @@ static void setSelectedVisibleItems(BrowserMenu *menu, ServerOperation command, 
 }
 
 static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
 
     assert(options.xref2);
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, DONT_CHECK_NULL))
@@ -1319,7 +1319,7 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
 }
 
 static void olcxReferenceFilterSet(int filterLevel) {
-    OlcxReferences *refs;
+    SessionStackEntry *refs;
 
     assert(options.xref2);
     if (!sessionHasReferencesValidForOperation(&sessionData,  &refs, DONT_CHECK_NULL))
@@ -1335,7 +1335,7 @@ static void olcxReferenceFilterSet(int filterLevel) {
 
 
 static void olcxReferenceRePush(void) {
-    OlcxReferences *refs, *nextrr;
+    SessionStackEntry *refs, *nextrr;
 
     assert(options.xref2);
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, DONT_CHECK_NULL))
@@ -1353,7 +1353,7 @@ static void olcxReferenceRePush(void) {
 }
 
 static void olcxReferencePop(void) {
-    OlcxReferences *refs;
+    SessionStackEntry *refs;
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
     if (refs->callerPosition.file != NO_FILE_NUMBER) {
@@ -1367,14 +1367,14 @@ static void olcxReferencePop(void) {
 }
 
 void olcxPopOnly(void) {
-    OlcxReferences *refs;
+    SessionStackEntry *refs;
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
     sessionData.browserStack.top = refs->previous;
 }
 
-static void safetyCheckAddDiffRef(Reference *r, OlcxReferences *diffrefs,
+static void safetyCheckAddDiffRef(Reference *r, SessionStackEntry *diffrefs,
                                   int mode) {
     int prefixchar;
     prefixchar = ' ';
@@ -1396,7 +1396,7 @@ static void safetyCheckAddDiffRef(Reference *r, OlcxReferences *diffrefs,
 
 static void safetyCheckDiff(Reference **anr1,
                             Reference **aor2,
-                            OlcxReferences *diffrefs
+                            SessionStackEntry *diffrefs
                             ) {
     Reference *r, *nr1, *or2;
     int mode;
@@ -1477,7 +1477,7 @@ static Reference *olcxCreateFileShiftedRefListForCheck(Reference *reference) {
 }
 
 static void olcxSafetyCheck(void) {
-    OlcxReferences *refs, *origrefs, *newrefs, *diffrefs;
+    SessionStackEntry *refs, *origrefs, *newrefs, *diffrefs;
     Reference *shifted;
     int pbflag=0;
     origrefs = newrefs = diffrefs = NULL;
@@ -1506,7 +1506,7 @@ static void olcxSafetyCheck(void) {
 }
 
 static void olCompletionSelect(void) {
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
     Completion      *rr;
 
     assert(options.xref2);
@@ -1524,7 +1524,7 @@ static void olCompletionSelect(void) {
 
 static void olcxReferenceSelectTagSearchItem(int refn) {
     Completion      *rr;
-    OlcxReferences    *refs;
+    SessionStackEntry    *refs;
     char                ttt[MAX_FUNCTION_NAME_LENGTH];
     assert(refn > 0);
     assert(sessionData.retrieverStack.top);
@@ -1541,7 +1541,7 @@ static void olcxReferenceSelectTagSearchItem(int refn) {
 }
 
 static void olCompletionBack(void) {
-    OlcxReferences    *top;
+    SessionStackEntry    *top;
 
     top = sessionData.completionsStack.top;
     if (top != NULL && top->previous != NULL) {
@@ -1552,7 +1552,7 @@ static void olCompletionBack(void) {
 }
 
 static void olCompletionForward(void) {
-    OlcxReferences    *top;
+    SessionStackEntry    *top;
 
     top = getNextTopStackItem(&sessionData.completionsStack);
     if (top != NULL) {
@@ -1692,7 +1692,7 @@ static void mapCreateSelectionMenu(ReferenceableItem *p) {
 }
 
 void olCreateSelectionMenu(ServerOperation command) {
-    OlcxReferences  *rstack;
+    SessionStackEntry  *rstack;
     BrowserMenu     *menu;
 
     assert(sessionData.browserStack.top);
@@ -1729,7 +1729,7 @@ void olCreateSelectionMenu(ServerOperation command) {
 }
 
 void olcxPushSpecialCheckMenuSym(char *symname) {
-    OlcxReferences *rstack;
+    SessionStackEntry *rstack;
 
     pushEmptySession(&sessionData.browserStack);
     assert(sessionData.browserStack.top);
@@ -1885,7 +1885,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceableItem *referenceab
 }
 
 static void pushLocalUnusedSymbolsAction(void) {
-    OlcxReferences    *rstack;
+    SessionStackEntry    *rstack;
     BrowserMenu     *ss;
 
     assert(sessionData.browserStack.top);
@@ -1903,7 +1903,7 @@ static void answerPushLocalUnusedSymbolsAction(void) {
 }
 
 static void answerPushGlobalUnusedSymbolsAction(void) {
-    OlcxReferences    *rstack;
+    SessionStackEntry    *rstack;
     BrowserMenu     *ss;
 
     assert(sessionData.browserStack.top);
@@ -1917,7 +1917,7 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
 }
 
 static void pushSymbolByName(char *name) {
-    OlcxReferences *rstack = sessionData.browserStack.top;
+    SessionStackEntry *rstack = sessionData.browserStack.top;
     rstack->hkSelectedSym = olCreateSpecialMenuItem(name, NO_FILE_NUMBER, StorageDefault);
     rstack->callerPosition = getCallerPositionFromCommandLineOption();
 }
@@ -1998,7 +1998,7 @@ static void printTagSearchResults(void) {
 }
 
 void answerEditAction(void) {
-    OlcxReferences *rstack, *nextrr;
+    SessionStackEntry *rstack, *nextrr;
 
     ENTER();
     assert(outputFile);
@@ -2217,7 +2217,7 @@ void answerEditAction(void) {
 }
 
 int itIsSymbolToPushOlReferences(ReferenceableItem *referenceableItem,
-                                 OlcxReferences *rstack,
+                                 SessionStackEntry *rstack,
                                  BrowserMenu **menu,
                                  int checkSelectedFlag) {
     for (BrowserMenu *m=rstack->menu; m!=NULL; m=m->next) {
@@ -2327,7 +2327,7 @@ static SymbolRelation accumulateSymbolRelation(SymbolRelation a, SymbolRelation 
 BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
     BrowserMenu *result = NULL;
 
-    OlcxReferences *rstack = sessionData.browserStack.top;
+    SessionStackEntry *rstack = sessionData.browserStack.top;
     unsigned ooBits = 0;
     SymbolRelation relation = {.sameFile = false};
     int vlevel = 0;
