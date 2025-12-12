@@ -563,7 +563,7 @@ static bool handleSafetyCheckDifferenceLists(EditorMarkerList *diff1, EditorMark
         for (BrowserMenu *mm = diffrefs->menu; mm != NULL; mm = mm->next) {
             mm->selected = true;
             mm->visible  = true;
-            mm->ooBits   = 07777777;
+            mm->filterLevel   = 07777777;
             // hack, freeing now all diffs computed by old method
             freeReferences(mm->referenceable.references);
             mm->referenceable.references = NULL;

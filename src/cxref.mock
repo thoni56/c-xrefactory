@@ -87,8 +87,8 @@ void createSelectionMenuForOperation(ServerOperation command) {
     mock(command);
 }
 
-bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
-    return (bool) mock(oo1, oo2);
+bool filterLevelAtLeast(unsigned level, unsigned atLeast) {
+    return (bool) mock(level, atLeast);
 }
 
 bool olcxShowSelectionMenu(void) {

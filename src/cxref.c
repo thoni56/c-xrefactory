@@ -41,17 +41,13 @@ static int usageFilterLevels[] = {
     UsageLvalUsed,
 };
 
-static unsigned menuFilterOoBits[MAX_MENU_FILTER_LEVEL] = {
-    (OOC_VIRT_ANY | OOC_OVERLOADING_ANY),
-    //& (OOC_VIRT_RELATED | OOC_OVERLOADING_ANY),
-    (OOC_VIRT_ANY | OOC_OVERLOADING_APPLICABLE),
-    (OOC_VIRT_SUBCLASS_OF_RELATED | OOC_OVERLOADING_APPLICABLE),
-    //& (OOC_VIRT_APPLICABLE | OOC_OVERLOADING_APPLICABLE),
-    //& (OOC_VIRT_SAME_FUN_CLASS | OOC_OVERLOADING_APPLICABLE),
-    //& (OOC_VIRT_SAME_APPL_FUN_CLASS | OOC_OVERLOADING_APPLICABLE),
+static unsigned menuFilterLevels[MAX_MENU_FILTER_LEVEL] = {
+    (FILE_MATCH_ANY | NAME_MATCH_ANY),
+    (FILE_MATCH_ANY | NAME_MATCH_APPLICABLE),
+    (FILE_MATCH_RELATED | NAME_MATCH_APPLICABLE)
 };
 
-#define OO_RENAME_FILTER_LEVEL (OOC_VIRT_SUBCLASS_OF_RELATED | OOC_OVERLOADING_APPLICABLE)
+#define OO_RENAME_FILTER_LEVEL (FILE_MATCH_RELATED | NAME_MATCH_APPLICABLE)
 
 
 
@@ -702,23 +698,28 @@ static void passRefsThroughSourceFile(Reference **inOutReferences,
 
 /* ******************************************************************** */
 
-bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
-    if ((oo1&OOC_OVERLOADING_MASK) < (oo2&OOC_OVERLOADING_MASK)) {
+bool filterLevelAtLeast(unsigned level, unsigned atLeast) {
+    if ((level&NAME_MATCH_MASK) < (atLeast&NAME_MATCH_MASK)) {
         return false;
     }
-    if ((oo1&OOC_VIRTUAL_MASK) < (oo2&OOC_VIRTUAL_MASK)) {
+    if ((level&FILE_MATCH_MASK) < (atLeast&FILE_MATCH_MASK)) {
         return false;
     }
     return true;
 }
 
-static int getCurrentRefPosition(SessionStackEntry *refs) {
+/* Check if menu item's match quality meets the filter requirement */
+static bool matchQualityMeetsRequirement(BrowserMenu *menu, unsigned requiredFilterLevel) {
+    return filterLevelAtLeast(menu->filterLevel, requiredFilterLevel);
+}
+
+static int getCurrentRefPosition(SessionStackEntry *entry) {
     int actn = 0;
 
     Reference *r = NULL;
-    if (refs!=NULL) {
-        int rlevel = usageFilterLevels[refs->refsFilterLevel];
-        for (r=refs->references; r!=NULL && r!=refs->current; r=r->next) {
+    if (entry!=NULL) {
+        int rlevel = usageFilterLevels[entry->refsFilterLevel];
+        for (r=entry->references; r!=NULL && r!=entry->current; r=r->next) {
             if (r->usage < rlevel)
                 actn++;
         }
@@ -1049,7 +1050,7 @@ static BrowserMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage st
     BrowserMenu *menu;
     ReferenceableItem r = makeReferenceableItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility, cfi);
     menu = createNewMenuItem(&r, r.includeFile, noPosition, UsageNone,
-                             true, true, OOC_VIRT_SAME_APPL_FUN_CLASS, (SymbolRelation){.sameFile = true},
+                             true, true, FILE_MATCH_SAME, (SymbolRelation){.sameFile = true},
                              UsageUsed);
     return menu;
 }
@@ -1256,11 +1257,10 @@ static void setDefaultSelectedVisibleItems(BrowserMenu *menu,
                                            unsigned ooSelected
 ) {
     for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
-        unsigned ooBits = m->ooBits;
-        bool visible = ooBitsGreaterOrEqual(ooBits, ooVisible);
+        bool visible = matchQualityMeetsRequirement(m, ooVisible);
         bool selected = false;
         if (visible) {
-            selected=ooBitsGreaterOrEqual(ooBits, ooSelected);
+            selected=matchQualityMeetsRequirement(m, ooSelected);
             if (m->referenceable.type==TypeCppCollate)
                 selected=false;
         }
@@ -1290,10 +1290,10 @@ static void setSelectedVisibleItems(BrowserMenu *menu, ServerOperation command, 
         ooselected = 0;
     } else if (isRenameMenuSelection(command)) {
         oovisible = OO_RENAME_FILTER_LEVEL;
-        ooselected = RENAME_SELECTION_OO_BITS;
+        ooselected = RENAME_SELECTION_FILTER;
     } else {
-        oovisible = menuFilterOoBits[filterLevel];
-        ooselected = DEFAULT_SELECTION_OO_BITS;
+        oovisible = menuFilterLevels[filterLevel];
+        ooselected = DEFAULT_SELECTION_FILTER;
     }
     setDefaultSelectedVisibleItems(menu, oovisible, ooselected);
 }
@@ -2253,20 +2253,20 @@ void putOnLineLoadedReferences(ReferenceableItem *referenceableItem) {
     }
 }
 
-static unsigned olcxOoBits(BrowserMenu *menu, ReferenceableItem *referenceableItem) {
+static unsigned filterLevelFromMenu(BrowserMenu *menu, ReferenceableItem *referenceableItem) {
     assert(haveSameBareName(&menu->referenceable, referenceableItem));
-    unsigned ooBits = 0;
+    unsigned level = 0;
 
     if (menu->referenceable.type!=TypeCppCollate) {
         if (menu->referenceable.type != referenceableItem->type)
-            return ooBits;
+            return level;
         if (menu->referenceable.storage != referenceableItem->storage)
-            return ooBits;
+            return level;
         if (menu->referenceable.visibility != referenceableItem->visibility)
-            return ooBits;
+            return level;
     }
 
-    log_debug("olcxOoBits: linkName='%s' type=%d storage=%d visibility=%d",
+    log_debug("filterLevelFromMenu: linkName='%s' type=%d storage=%d visibility=%d",
               referenceableItem->linkName,
               referenceableItem->type,
               referenceableItem->storage,
@@ -2274,16 +2274,16 @@ static unsigned olcxOoBits(BrowserMenu *menu, ReferenceableItem *referenceableIt
         );
 
     if (strcmp(menu->referenceable.linkName, referenceableItem->linkName) == 0) {
-        log_debug("olcxOoBits: +sameName (OOC_OVERLOADING_EQUAL)");
-        ooBits |= OOC_OVERLOADING_EQUAL;
+        log_debug("filterLevelFromMenu: +sameName (NAME_MATCH_EXACT)");
+        level |= NAME_MATCH_EXACT;
     }
     if (referenceableItem->includeFile == menu->referenceable.includeFile) {
-        log_debug("olcxOoBits: +sameFile (OOC_VIRT_SAME_APPL_FUN_CLASS)");
-        ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
+        log_debug("filterLevelFromMenu: +sameFile (FILE_MATCH_SAME)");
+        level |= FILE_MATCH_SAME;
     }
 
-    log_debug("olcxOoBits: +ooBits = %o", ooBits);
-    return ooBits;
+    log_debug("filterLevelFromMenu: +level = %o", level);
+    return level;
 }
 
 static SymbolRelation computeSymbolRelation(BrowserMenu *menu, ReferenceableItem *referenceableItem) {
@@ -2304,19 +2304,19 @@ static SymbolRelation computeSymbolRelation(BrowserMenu *menu, ReferenceableItem
     return relation;
 }
 
-static unsigned ooBitsMax(unsigned oo1, unsigned oo2) {
-    unsigned ooBits = 0;
-    if ((oo1&OOC_OVERLOADING_MASK) > (oo2&OOC_OVERLOADING_MASK)) {
-        ooBits |= (oo1&OOC_OVERLOADING_MASK);
+static unsigned filterLevelMax(unsigned oo1, unsigned oo2) {
+    unsigned level = 0;
+    if ((oo1&NAME_MATCH_MASK) > (oo2&NAME_MATCH_MASK)) {
+        level |= (oo1&NAME_MATCH_MASK);
     } else {
-        ooBits |= (oo2&OOC_OVERLOADING_MASK);
+        level |= (oo2&NAME_MATCH_MASK);
     }
-    if ((oo1&OOC_VIRTUAL_MASK) > (oo2&OOC_VIRTUAL_MASK)) {
-        ooBits |= (oo1&OOC_VIRTUAL_MASK);
+    if ((oo1&FILE_MATCH_MASK) > (oo2&FILE_MATCH_MASK)) {
+        level |= (oo1&FILE_MATCH_MASK);
     } else {
-        ooBits |= (oo2&OOC_VIRTUAL_MASK);
+        level |= (oo2&FILE_MATCH_MASK);
     }
-    return ooBits;
+    return level;
 }
 
 static SymbolRelation accumulateSymbolRelation(SymbolRelation a, SymbolRelation b) {
@@ -2330,7 +2330,7 @@ BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
     BrowserMenu *result = NULL;
 
     SessionStackEntry *rstack = sessionData.browsingStack.top;
-    unsigned ooBits = 0;
+    unsigned level = 0;
     SymbolRelation relation = {.sameFile = false};
     Position defaultPosition = noPosition;
     Usage defaultUsage = UsageNone;
@@ -2340,8 +2340,8 @@ BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
         if (haveSameBareName(reference, &menu->referenceable)) {
             found = true;
 
-            unsigned oo = olcxOoBits(menu, reference);
-            ooBits = ooBitsMax(oo, ooBits);
+            unsigned l = filterLevelFromMenu(menu, reference);
+            level = filterLevelMax(l, level);
 
             if (defaultPosition.file == NO_FILE_NUMBER) {
                 defaultPosition = menu->defaultPosition;
@@ -2349,8 +2349,8 @@ BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
                 log_debug(": propagating defpos (line %d) to menusym", defaultPosition.line);
             }
 
-            log_debug("ooBits for %s <-> %s %o %o", getFileItemWithFileNumber(menu->referenceable.includeFile)->name,
-                      reference->linkName, oo, ooBits);
+            log_debug("filterLevel for %s <-> %s %o %o", getFileItemWithFileNumber(menu->referenceable.includeFile)->name,
+                      reference->linkName, l, level);
 
             SymbolRelation r = computeSymbolRelation(menu, reference);
             relation = accumulateSymbolRelation(relation, r);
@@ -2358,7 +2358,7 @@ BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
     }
     if (found) {
         result = addReferenceableToBrowserMenu(&rstack->menu, reference, false, false,
-                                        ooBits, relation, USAGE_ANY, defaultPosition, defaultUsage);
+                                               level, relation, USAGE_ANY, defaultPosition, defaultUsage);
     }
     return result;
 }

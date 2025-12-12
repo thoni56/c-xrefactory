@@ -8,7 +8,7 @@ BrowserMenu makeBrowserMenu(ReferenceableItem references, bool selected, bool vi
     menu.referenceable = references;
     menu.selected = selected;
     menu.visible = visible;
-    menu.ooBits = ooBits;
+    menu.filterLevel = ooBits;
     menu.olUsage = olUsage;
     menu.defaultUsage = defautlUsage;
     menu.defaultPosition = defaultPosition;

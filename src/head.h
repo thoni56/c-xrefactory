@@ -133,29 +133,27 @@ typedef enum language {
 #define CHAR_AFTER_MARKER(marker) (*POINTER_AFTER_MARKER(marker))
 
 
-/* *******************   Object-Oriented Resolutions   ******************* */
+/* *******************   Symbol Match Quality Filters   ******************* */
 
-/* virtual resolution */
+/* File matching quality levels */
 
-#define OOC_VIRTUAL_MASK				00700 /* mask for virtual resolution */
-#define OOC_VIRT_ANY					00000 /* no matter the class */
-#define OOC_VIRT_SUBCLASS_OF_RELATED	00100 /* sub. of a related class */
-#define OOC_VIRT_RELATED				00200 /* + related to browsed applic.*/
-#define OOC_VIRT_SAME_FUN_CLASS			00300 /* + having the same fun class */
-#define OOC_VIRT_APPLICABLE				00400 /* + virtually applicable */
-#define OOC_VIRT_SAME_APPL_FUN_CLASS	00500 /* + having the same class */
+#define FILE_MATCH_MASK				00700 /* mask for file matching */
+#define FILE_MATCH_ANY				00000 /* any file */
+#define FILE_MATCH_RELATED			00100 /* related scope */
+#define FILE_MATCH_CLOSE			00300 /* close match (intermediate) */
+#define FILE_MATCH_SAME				00500 /* same file */
 
-/* overloading resolution */
+/* Name matching quality levels */
 
-#define OOC_OVERLOADING_MASK			07000 /* mask for overloading resolution */
-#define OOC_OVERLOADING_ANY				00000 /* no matter the signature */
-#define OOC_OVERLOADING_APPLICABLE		02000 /* + applicable signature */
-#define OOC_OVERLOADING_EQUAL			03000 /* + no con needed */
+#define NAME_MATCH_MASK				07000 /* mask for name matching */
+#define NAME_MATCH_ANY				00000 /* any name */
+#define NAME_MATCH_APPLICABLE		02000 /* applicable signature */
+#define NAME_MATCH_EXACT			03000 /* exact name match */
 
-/* when symbol is selected */
+/* Filter levels for symbol selection */
 
-#define DEFAULT_SELECTION_OO_BITS (OOC_VIRT_SAME_FUN_CLASS | OOC_OVERLOADING_APPLICABLE)
-#define RENAME_SELECTION_OO_BITS (OOC_VIRT_SUBCLASS_OF_RELATED | OOC_OVERLOADING_APPLICABLE)
+#define DEFAULT_SELECTION_FILTER (FILE_MATCH_CLOSE | NAME_MATCH_APPLICABLE)
+#define RENAME_SELECTION_FILTER (FILE_MATCH_RELATED | NAME_MATCH_APPLICABLE)
 
 /* *********************************************************************** */
 

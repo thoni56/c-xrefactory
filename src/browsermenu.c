@@ -14,14 +14,14 @@
 #include "referenceableitem.h"
 
 
-BrowserMenu makeBrowserMenu(ReferenceableItem referenceable, bool selected, bool visible, unsigned ooBits,
+BrowserMenu makeBrowserMenu(ReferenceableItem referenceable, bool selected, bool visible, unsigned filterLevel,
                             char olUsage, char defaultUsage, Position defaultPosition) {
     BrowserMenu menu;
 
     menu.referenceable = referenceable;
     menu.selected   = selected;
     menu.visible    = visible;
-    menu.ooBits     = ooBits;
+    menu.filterLevel     = filterLevel;
     menu.olUsage    = olUsage;
     menu.defaultUsage    = defaultUsage;
     menu.defaultPosition = defaultPosition;
@@ -90,7 +90,7 @@ void olcxPrintSelectionMenu(BrowserMenu *menu) {
 }
 
 BrowserMenu *createNewMenuItem(ReferenceableItem *item, int includedFileNumber, Position defpos,
-                               Usage defusage, bool selected, bool visible, unsigned ooBits,
+                               Usage defusage, bool selected, bool visible, unsigned filterLevel,
                                SymbolRelation relation, Usage olusage) {
     BrowserMenu   *menu;
     char          *allocatedNameCopy;
@@ -101,7 +101,7 @@ BrowserMenu *createNewMenuItem(ReferenceableItem *item, int includedFileNumber, 
                                                       item->visibility, includedFileNumber);
 
     menu = malloc(sizeof(BrowserMenu));
-    *menu = makeBrowserMenu(refItem, selected, visible, ooBits, olusage, defusage, defpos);
+    *menu = makeBrowserMenu(refItem, selected, visible, filterLevel, olusage, defusage, defpos);
     menu->relation = relation;
     return menu;
 }
@@ -137,8 +137,8 @@ static bool browserMenuIsLess(BrowserMenu *s1, BrowserMenu *s2) {
     return referenceableItemIsLess(&s1->referenceable, &s2->referenceable);
 }
 
-BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableItem *item,
-                                           bool selected, bool visible, unsigned ooBits, SymbolRelation relation,
+BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableItem *item, bool selected,
+                                           bool visible, unsigned filterLevel, SymbolRelation relation,
                                            int olusage, Position defpos, int defusage) {
     BrowserMenu **place;
 
@@ -149,7 +149,7 @@ BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableIte
     if (*place==NULL || browserMenuIsLess(&dummyMenu, *place)) {
         assert(item);
         new = createNewMenuItem(item, item->includeFile, defpos, defusage,
-                                selected, visible, ooBits, relation, olusage);
+                                selected, visible, filterLevel, relation, olusage);
         LIST_CONS(new, *place);
         log_debug(":adding browsed symbol '%s'", item->linkName);
     }
