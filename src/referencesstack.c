@@ -39,7 +39,7 @@ void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **entryP) {
     free(entry);
 }
 
-void freePoppedReferencesStackItems(SessionStack *stack) {
+void freePoppedSessionStackEntries(SessionStack *stack) {
     assert(stack);
     // delete all after top
     while (stack->root != stack->top) {
@@ -64,23 +64,23 @@ static SessionStackEntry *pushEmptyReference(SessionStack *stack) {
     return res;
 }
 
-void olcxFreeOldCompletionItems(SessionStack *stack) {
-    SessionStackEntry **referencesP;
+void freeOldCompletionStackEntries(SessionStack *stack) {
+    SessionStackEntry **stackEntry;
 
-    referencesP = &stack->top;
-    if (*referencesP == NULL)
+    stackEntry = &stack->top;
+    if (*stackEntry == NULL)
         return;
     for (int i=1; i<MAX_COMPLETIONS_HISTORY_DEEP; i++) {
-        referencesP = &(*referencesP)->previous;
-        if (*referencesP == NULL)
+        stackEntry = &(*stackEntry)->previous;
+        if (*stackEntry == NULL)
             return;
     }
-    deleteSessionStackEntry(stack, referencesP);
+    deleteSessionStackEntry(stack, stackEntry);
 }
 
 void pushEmptySession(SessionStack *stack) {
     SessionStackEntry *references;
-    freePoppedReferencesStackItems(stack);
+    freePoppedSessionStackEntries(stack);
     references = pushEmptyReference(stack);
     stack->top = stack->root = references;
 }

@@ -49,19 +49,19 @@ static int scheduleFileUsingTheMacro(void) {
                                                          GlobalScope, GlobalVisibility, NO_FILE_NUMBER);
 
     BrowserMenu menu = makeBrowserMenu(references, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);
-    if (sessionData.browserStack.top==NULL) {
-        pushEmptySession(&sessionData.browserStack);
-        tmpc = sessionData.browserStack.top;
+    if (sessionData.browsingStack.top==NULL) {
+        pushEmptySession(&sessionData.browsingStack);
+        tmpc = sessionData.browsingStack.top;
     }
 
-    assert(sessionData.browserStack.top);
-    BrowserMenu *oldMenu = sessionData.browserStack.top->menu;
-    sessionData.browserStack.top->menu = &menu;
+    assert(sessionData.browsingStack.top);
+    BrowserMenu *oldMenu = sessionData.browsingStack.top->menu;
+    sessionData.browsingStack.top->menu = &menu;
     olMacro2PassFile = NO_FILE_NUMBER;
     scanForMacroUsage(completionStringInMacroBody);
-    sessionData.browserStack.top->menu = oldMenu;
+    sessionData.browsingStack.top->menu = oldMenu;
     if (tmpc!=NULL) {
-        olStackDeleteSymbol(tmpc);
+        deleteEntryFromSessionStack(tmpc);
     }
     log_debug(":scheduling file '%s'", getFileItemWithFileNumber(olMacro2PassFile)->name);
     return olMacro2PassFile;
@@ -193,7 +193,7 @@ void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass)
     loadAllOpenedEditorBuffers();
 
     if (requiresCreatingRefs(options.serverOperation))
-        pushEmptySession(&sessionData.browserStack);
+        pushEmptySession(&sessionData.browsingStack);
 
     if (requiresProcessingInputFile(options.serverOperation)) {
         if (presetEditServerFileDependingStatics() == NULL) {

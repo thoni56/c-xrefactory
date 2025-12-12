@@ -7,7 +7,7 @@ void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **entryP) {
     mock(stack, entryP);
 }
 
-void freePoppedReferencesStackItems(SessionStack *stack) {
+void freePoppedSessionStackEntries(SessionStack *stack) {
     mock(stack);
 }
 
@@ -15,7 +15,7 @@ SessionStackEntry *getNextTopStackItem(SessionStack *stack) {
     return (SessionStackEntry *) mock(stack);
 }
 
-void olcxFreeOldCompletionItems(SessionStack *stack) {
+void freeOldCompletionStackEntries(SessionStack *stack) {
     mock(stack);
 }
 

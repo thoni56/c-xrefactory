@@ -271,8 +271,8 @@ void searchSymbolCheckReference(ReferenceableItem  *referenceableItem, Reference
     slen = strlen(sname);
     if (searchStringMatch(sname, slen)) {
         static int count = 0;
-        sessionData.retrieverStack.top->completions = completionListPrepend(
-            sessionData.retrieverStack.top->completions, sname, NULL, NULL, referenceableItem,
+        sessionData.retrievingStack.top->completions = completionListPrepend(
+            sessionData.retrievingStack.top->completions, sname, NULL, NULL, referenceableItem,
             reference, referenceableItem->type, referenceableItem->includeFile);
         // compact completions from time to time
         count ++;
@@ -773,14 +773,14 @@ static void cxfileCheckLastSymbolDeadness(void) {
     if (lastIncomingData.symbolToCheckForDeadness != -1
         && lastIncomingData.deadSymbolIsDefined
     ) {
-        addReferenceableToBrowserMenu(&sessionData.browserStack.top->hkSelectedSym, lastIncomingData.referenceableItem,
+        addReferenceableToBrowserMenu(&sessionData.browsingStack.top->hkSelectedSym, lastIncomingData.referenceableItem,
                                true, true, 0, (SymbolRelation){.sameFile = false}, UsageDefined, 0, noPosition,
                                UsageDefined);
     }
 }
 
 
-static bool symbolIsReportableAsUnused(ReferenceableItem *referenceableItem) {
+static bool referenceableIsReportableAsUnused(ReferenceableItem *referenceableItem) {
     if (referenceableItem==NULL || referenceableItem->linkName[0]==' ')
         return false;
 
@@ -834,7 +834,7 @@ static void scanFunction_SymbolName(int size,
     }
     if (options.mode == ServerMode) {
         if (operation == CXSF_DEAD_CODE_DETECTION) {
-            if (symbolIsReportableAsUnused(lastIncomingData.referenceableItem)) {
+            if (referenceableIsReportableAsUnused(lastIncomingData.referenceableItem)) {
                 lastIncomingData.symbolToCheckForDeadness = 0;
                 lastIncomingData.deadSymbolIsDefined = 0;
             } else {
@@ -970,7 +970,7 @@ static void scanFunction_Reference(int size,
                             addReferenceToBrowserMenu(lastIncomingData.onLineRefMenuItem, &reference);
                         }
                     } else {
-                        addReferenceToList(&sessionData.browserStack.top->references, &reference);
+                        addReferenceToList(&sessionData.browsingStack.top->references, &reference);
                     }
                 }
             }

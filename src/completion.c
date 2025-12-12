@@ -128,10 +128,10 @@ static void sortCompletionList(Completion **completions,
 }
 
 void tagSearchCompactShortResults(void) {
-    sortCompletionList(&sessionData.retrieverStack.top->completions,
+    sortCompletionList(&sessionData.retrievingStack.top->completions,
                        completionIsLessThan);
     if (options.searchKind == SEARCH_DEFINITIONS_SHORT
         || options.searchKind == SEARCH_FULL_SHORT) {
-        tagSearchShortRemoveMultipleLines(sessionData.retrieverStack.top->completions);
+        tagSearchShortRemoveMultipleLines(sessionData.retrievingStack.top->completions);
     }
 }

@@ -243,11 +243,11 @@ static void pushReferences(EditorMarker *point, char *pushOption, char *resolveM
     /* now remake task initialisation as for edit server */
     parseBufferUsingServer(refactoringOptions.project, point, NULL, pushOption, NULL);
 
-    assert(sessionData.browserStack.top != NULL);
-    if (sessionData.browserStack.top->hkSelectedSym == NULL) {
+    assert(sessionData.browsingStack.top != NULL);
+    if (sessionData.browsingStack.top->hkSelectedSym == NULL) {
         errorMessage(ERR_INTERNAL, "no symbol found for refactoring push");
     }
-    olCreateSelectionMenu(sessionData.browserStack.top->operation);
+    olCreateSelectionMenu(sessionData.browsingStack.top->operation);
     if (resolveMessage != NULL && olcxShowSelectionMenu()) {
         displayResolutionDialog(resolveMessage, messageType);
     }
@@ -258,11 +258,11 @@ static void safetyCheck(char *project, EditorMarker *point) {
     ensureReferencesAreUpdated(refactoringOptions.project);
     parseBufferUsingServer(project, point, NULL, "-olcxsafetycheck", NULL);
 
-    assert(sessionData.browserStack.top != NULL);
-    if (sessionData.browserStack.top->hkSelectedSym == NULL) {
+    assert(sessionData.browsingStack.top != NULL);
+    if (sessionData.browsingStack.top->hkSelectedSym == NULL) {
         errorMessage(ERR_ST, "No symbol found for refactoring safety check");
     }
-    olCreateSelectionMenu(sessionData.browserStack.top->operation);
+    olCreateSelectionMenu(sessionData.browsingStack.top->operation);
 }
 
 static char *getIdentifierOnMarker_static(EditorMarker *marker) {
@@ -572,7 +572,7 @@ static bool handleSafetyCheckDifferenceLists(EditorMarkerList *diff1, EditorMark
         pushMarkersAsReferences(&diff2, diffrefs, LINK_NAME_SAFETY_CHECK_MISSED);
         freeEditorMarkerListButNotMarkers(diff1);
         freeEditorMarkerListButNotMarkers(diff2);
-        olcxPopOnly();
+        popFromSession();
         if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
             /* TODO: Handle whatever this for C! Does it even happen!?!? */
             displayResolutionDialog("The module already exists and is referenced in the original"
@@ -610,7 +610,7 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
     olcxPushSpecialCheckMenuSym(LINK_NAME_SAFETY_CHECK_MISSED);
     safetyCheck(refactoringOptions.project, defin);
 
-    chks = convertReferencesToEditorMarkers(sessionData.browserStack.top->references);
+    chks = convertReferencesToEditorMarkers(sessionData.browsingStack.top->references);
 
     editorMarkersDifferences(occs, &chks, &diff1, &diff2);
 
@@ -657,7 +657,7 @@ static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *o
 static EditorMarker *createMarkerForExpressionStart(EditorMarker *marker, ExpressionStartKind kind) {
     Position position;
     parseBufferUsingServer(refactoringOptions.project, marker, NULL, "-olcxprimarystart", NULL);
-    olStackDeleteSymbol(sessionData.browserStack.top);
+    deleteEntryFromSessionStack(sessionData.browsingStack.top);
     if (kind == GET_PRIMARY_START) {
         position = primaryStartPosition;
     } else if (kind == GET_STATIC_PREFIX_START) {
@@ -760,8 +760,8 @@ static EditorMarkerList *getReferences(EditorMarker *point, char *resolveMessage
                                        int messageType) {
     EditorMarkerList *occs;
     pushReferences(point, "-olcxrename", resolveMessage, messageType); /* TODO: WTF do we use "rename"?!? */
-    assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
-    occs = convertReferencesToEditorMarkers(sessionData.browserStack.top->references);
+    assert(sessionData.browsingStack.top && sessionData.browsingStack.top->hkSelectedSym);
+    occs = convertReferencesToEditorMarkers(sessionData.browsingStack.top->references);
     return occs;
 }
 
@@ -806,7 +806,7 @@ static void checkForMultipleReferencesInSamePlace(SessionStackEntry *rstack, Bro
 static void multipleOccurrenciesSafetyCheck(void) {
     SessionStackEntry *rstack;
 
-    rstack = sessionData.browserStack.top;
+    rstack = sessionData.browsingStack.top;
     olProcessSelectedReferences(rstack, checkForMultipleReferencesInSamePlace);
 }
 
@@ -828,7 +828,7 @@ static void renameAtPoint(EditorMarker *point) {
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
     occurrences = pushGetAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
 
-    BrowserMenu *symbolsMenu = sessionData.browserStack.top->hkSelectedSym;
+    BrowserMenu *symbolsMenu = sessionData.browsingStack.top->hkSelectedSym;
     char *symLinkName = symbolsMenu->referenceable.linkName;
 
     EditorUndo *undoStartPoint = editorUndo;
@@ -905,7 +905,7 @@ static Result getParameterNamePosition(EditorMarker *point, char *fileName, int 
     assert(strcmp(nameOnPoint, fileName) == 0);
     sprintf(pushOptions, "-olcxgotoparname%d", argn);
     parseBufferUsingServer(refactoringOptions.project, point, NULL, pushOptions, NULL);
-    olcxPopOnly();
+    popFromSession();
     if (parameterPosition.file != NO_FILE_NUMBER) {
         return RESULT_OK;
     } else {
@@ -930,7 +930,7 @@ static Result getParameterPosition(EditorMarker *point, char *functionOrMacroNam
     clearParamPositions();
     sprintf(pushOptions, "-olcxgetparamcoord%d", argn);
     parseBufferUsingServer(refactoringOptions.project, point, NULL, pushOptions, NULL);
-    olcxPopOnly();
+    popFromSession();
 
     Result result = RESULT_OK;
     if (parameterBeginPosition.file == NO_FILE_NUMBER || parameterEndPosition.file == NO_FILE_NUMBER ||
@@ -1043,8 +1043,8 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
 static int isThisSymbolUsed(EditorMarker *marker) {
     int refn;
     pushReferences(marker, "-olcxpushforlm", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
-    LIST_LEN(refn, Reference, sessionData.browserStack.top->references);
-    olcxPopOnly();
+    LIST_LEN(refn, Reference, sessionData.browsingStack.top->references);
+    popFromSession();
     return refn > 1;
 }
 
@@ -1227,7 +1227,7 @@ static void applyParameterManipulation(EditorMarker *point, int manipulation, in
 
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     pushReferences(point, "-olcxargmanip", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
-    occurrences = convertReferencesToEditorMarkers(sessionData.browserStack.top->references);
+    occurrences = convertReferencesToEditorMarkers(sessionData.browsingStack.top->references);
 
     ppcGotoMarker(point);
 
@@ -1474,7 +1474,7 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
 
     EditorMarkerList *occs = getReferences(point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
-    assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
+    assert(sessionData.browsingStack.top && sessionData.browsingStack.top->hkSelectedSym);
 
     int count;
     LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListBefore);
@@ -1498,7 +1498,7 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
         moveBlockInEditorBuffer(startMarker, target, size, &editorUndo);
         //removeModifier(point, limitIndex, "static");
     } else {
-        assert(sessionData.browserStack.top != NULL && sessionData.browserStack.top->hkSelectedSym != NULL);
+        assert(sessionData.browsingStack.top != NULL && sessionData.browsingStack.top->hkSelectedSym != NULL);
         //theMethod = &sessionData.browserStack.top->hkSelectedSym->references;
         //pushAllReferencesOfMethod(point, "-olallchecks");
         //createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
@@ -1506,7 +1506,7 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
         //changeAccessModifier(point, limitIndex, "public");
         //pushAllReferencesOfMethod(point, "-olallchecks");
         //createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
-        assert(sessionData.browserStack.top && sessionData.browserStack.top->previous);
+        assert(sessionData.browsingStack.top && sessionData.browsingStack.top->previous);
         //mm1 = sessionData.browserStack.top->previous->menuSym;
         //mm2 = sessionData.browserStack.top->menuSym;
         //staticMoveCheckCorrespondance(mm1, mm2, theMethod);
@@ -1561,7 +1561,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     bool hasHeaderReferences = false;
     bool isMultiFileReferences = false;
     EditorMarkerList *markerList = getReferences(point, NULL, PPCV_BROWSER_TYPE_WARNING);
-    BrowserMenu *menu = sessionData.browserStack.top->hkSelectedSym;
+    BrowserMenu *menu = sessionData.browsingStack.top->hkSelectedSym;
     Scope scope = menu->referenceable.scope;
     Visibility visibility = menu->referenceable.visibility;
 
@@ -1609,7 +1609,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
 
     freeEditorMarkerListAndMarkers(markerList);
     markerList = NULL;
-    olcxPopOnly();
+    popFromSession();
 
     return selectedUpdateOption;
 }

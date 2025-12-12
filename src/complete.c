@@ -158,9 +158,9 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
 }
 
 static void olCompletionListInit(Position originalPos) {
-    olcxFreeOldCompletionItems(&sessionData.completionsStack);
-    pushEmptySession(&sessionData.completionsStack);
-    sessionData.completionsStack.top->callerPosition = originalPos;
+    freeOldCompletionStackEntries(&sessionData.completionStack);
+    pushEmptySession(&sessionData.completionStack);
+    sessionData.completionStack.top->callerPosition = originalPos;
 }
 
 
@@ -198,7 +198,7 @@ static void printCompletionsEnding(Completion *olc) {
 }
 
 void printCompletionsList(bool noFocus) {
-    Completion *completions = sessionData.completionsStack.top->completions;
+    Completion *completions = sessionData.completionStack.top->completions;
 
     printCompletionsBeginning(completions, noFocus);
     for(Completion *c=completions; c!=NULL; c=c->next) {
@@ -210,7 +210,7 @@ void printCompletionsList(bool noFocus) {
 }
 
 static void olCompletionListReverse(void) {
-    LIST_REVERSE(Completion, sessionData.completionsStack.top->completions);
+    LIST_REVERSE(Completion, sessionData.completionStack.top->completions);
 }
 
 void printCompletions(Completions *completions) {
@@ -223,12 +223,12 @@ void printCompletions(Completions *completions) {
         goto finishWithoutMenu;
     }
     if (!completions->fullMatchFlag && completions->alternativeCount==1) {
-        ppcGotoPosition(sessionData.completionsStack.top->callerPosition);
+        ppcGotoPosition(sessionData.completionStack.top->callerPosition);
         ppcGenRecord(PPC_SINGLE_COMPLETION, completions->alternatives[0].string);
         goto finishWithoutMenu;
     }
     if (!completions->fullMatchFlag && strlen(completions->prefix) > completions->idToProcessLength) {
-        ppcGotoPosition(sessionData.completionsStack.top->callerPosition);
+        ppcGotoPosition(sessionData.completionStack.top->callerPosition);
         ppcGenRecord(PPC_SINGLE_COMPLETION, completions->prefix);
         ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions");
         goto finishWithoutMenu;
@@ -248,8 +248,8 @@ void printCompletions(Completions *completions) {
     for(int ii=0; ii<max; ii++) {
         sprintFullCompletionInfo(completions, ii, indent);
         Reference ref;
-        sessionData.completionsStack.top->completions = completionListPrepend(
-            sessionData.completionsStack.top->completions, completions->alternatives[ii].string, ppcTmpBuff,
+        sessionData.completionStack.top->completions = completionListPrepend(
+            sessionData.completionStack.top->completions, completions->alternatives[ii].string, ppcTmpBuff,
             completions->alternatives[ii].symbol, NULL, &ref, completions->alternatives[ii].symbolType,
             NO_FILE_NUMBER);
     }
@@ -258,7 +258,7 @@ void printCompletions(Completions *completions) {
     fflush(outputFile);
     return;
  finishWithoutMenu:
-    sessionData.completionsStack.top = sessionData.completionsStack.top->previous;
+    sessionData.completionStack.top = sessionData.completionStack.top->previous;
     fflush(outputFile);
 }
 

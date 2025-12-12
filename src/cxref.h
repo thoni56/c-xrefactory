@@ -17,8 +17,8 @@ extern void olcxRecomputeSelRefs(SessionStackEntry *refs );
 extern void olProcessSelectedReferences(SessionStackEntry *rstack,
                                         void (*referencesMapFun)(SessionStackEntry *rstack,
                                                                  BrowserMenu *ss));
-extern void olcxPopOnly(void);
-extern void olStackDeleteSymbol(SessionStackEntry *refs);
+extern void popFromSession(void);
+extern void deleteEntryFromSessionStack(SessionStackEntry *refs);
 extern int getFileNumberFromName(char *name);
 extern Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int includedFileNumber);
 extern void addTrivialCxReference (char *name, Type type, Storage storage,

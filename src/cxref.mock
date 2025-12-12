@@ -33,11 +33,11 @@ void olProcessSelectedReferences(SessionStackEntry *rstack, void (*referencesMap
     mock(rstack, referencesMapFun);
 }
 
-void olcxPopOnly(void) {
+void popFromSession(void) {
     mock();
 }
 
-void olStackDeleteSymbol(SessionStackEntry *refs) {
+void deleteEntryFromSessionStack(SessionStackEntry *refs) {
     mock(refs);
 }
 

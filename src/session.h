@@ -28,9 +28,9 @@ typedef struct SessionStackEntry {
 } SessionStackEntry;
 
 typedef struct SessionData {
-    BrowserStack	browserStack;
-    CompletionStack	completionsStack;
-    RetrieverStack	retrieverStack;
+    BrowsingStack	browsingStack;
+    CompletionStack	completionStack;
+    RetrievingStack	retrievingStack;
 } SessionData;
 
 

@@ -22,15 +22,15 @@ typedef struct SessionStack {
  * RetrieverStack (tag search):
  *   - completions
  */
-typedef SessionStack BrowserStack;
+typedef SessionStack BrowsingStack;
 typedef SessionStack CompletionStack;
-typedef SessionStack RetrieverStack;
+typedef SessionStack RetrievingStack;
 
 /* Generic stack operations */
 extern void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **referencesP);
-extern void freePoppedReferencesStackItems(SessionStack *stack);
+extern void freePoppedSessionStackEntries(SessionStack *stack);
 extern SessionStackEntry *getNextTopStackItem(SessionStack *stack);
-extern void olcxFreeOldCompletionItems(SessionStack *stack);
+extern void freeOldCompletionStackEntries(SessionStack *stack);
 extern void pushEmptySession(SessionStack *stack);
 
 #endif
