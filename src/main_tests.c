@@ -28,7 +28,7 @@
 #include "parsers.mock"
 #include "ppc.mock"
 #include "refactory.mock"
-#include "reftab.mock"
+#include "referenceableitemtable.mock"
 #include "server.mock"
 #include "symboltable.mock"
 #include "type.mock"

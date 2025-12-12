@@ -25,7 +25,7 @@
 #include "misc.h"
 #include "options.h"
 #include "parsers.h"
-#include "reftab.h"
+#include "referenceableitemtable.h"
 #include "semact.h"
 #include "stackmemory.h"
 #include "storage.h"
@@ -2433,7 +2433,7 @@ static void addMacroBaseUsageRef(Symbol *macroSymbol) {
     ReferenceableItem ppp = makeReferenceableItem(macroSymbol->linkName, TypeMacro, StorageDefault,
                                                   GlobalScope, GlobalVisibility, NO_FILE_NUMBER);
     ReferenceableItem *memb;
-    bool isMember = isMemberInReferenceTable(&ppp, NULL, &memb);
+    bool isMember = isMemberInReferenceableItemTable(&ppp, NULL, &memb);
     Reference *r = NULL;
     if (isMember) {
         // this is optimization to avoid multiple base references

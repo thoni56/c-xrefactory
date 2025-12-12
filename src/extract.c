@@ -14,7 +14,7 @@
 #include "protocol.h"
 #include "ppc.h"
 #include "protocol.h"
-#include "reftab.h"
+#include "referenceableitemtable.h"
 #include "semact.h"
 #include "stackmemory.h"
 
@@ -222,7 +222,7 @@ static int linearOrder(ProgramGraphNode *n1, ProgramGraphNode *n2) {
 static ProgramGraphNode *makeProgramGraph(void) {
     ProgramGraphNode *program = NULL;
 
-    mapOverReferenceTableWithPointer(extractFunGraphRef, ((void *) &program));
+    mapOverReferenceableItemTableWithPointer(extractFunGraphRef, ((void *) &program));
     LIST_SORT(ProgramGraphNode, program, linearOrder);
     dumpProgramToLog(program);
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {

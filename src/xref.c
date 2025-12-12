@@ -21,7 +21,7 @@
 #include "ppc.h"
 #include "proto.h"
 #include "protocol.h"
-#include "reftab.h"
+#include "referenceableitemtable.h"
 #include "yylex.h"
 
 
@@ -91,7 +91,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
                     fileItem->fullUpdateIncludesProcessed = true;
                     ReferenceableItem referenceableItem = makeReferenceableItemForIncludeFile(i);
                     ReferenceableItem *foundMemberP;
-                    if (isMemberInReferenceTable(&referenceableItem, NULL, &foundMemberP)) {
+                    if (isMemberInReferenceableItemTable(&referenceableItem, NULL, &foundMemberP)) {
                         for (Reference *r=foundMemberP->references; r!=NULL; r=r->next) {
                             FileItem *includerFile = getFileItemWithFileNumber(r->position.file);
                             if (!includerFile->scheduledToUpdate) {
@@ -379,6 +379,6 @@ void xref(int argc, char **argv) {
         ppcSynchronize();
     }
     //& fprintf(dumpOut, "\n\nDUMP\n\n"); fflush(dumpOut);
-    //& mapOverReferenceTable(dumpReferenceableItem);
+    //& mapOverReferenceableItemTable(dumpReferenceableItem);
     LEAVE();
 }

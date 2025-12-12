@@ -29,7 +29,7 @@
 #include "proto.h"
 #include "protocol.h"
 #include "refactory.h"
-#include "reftab.h"
+#include "referenceableitemtable.h"
 #include "server.h"
 #include "stackmemory.h"
 #include "symboltable.h"
@@ -672,7 +672,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // supposing that file table is still here, but reinit it
     mapOverFileTable(clearFileItem);
 
-    initReferenceTable(MAX_CXREF_ENTRIES);
+    initReferenceableItemTable(MAX_CXREF_ENTRIES);
 
     memoryInit(&ppmMemory, "pre-processor macros", NULL, SIZE_ppmMemory);
     allocateMacroArgumentTable(MAX_MACRO_ARGS);

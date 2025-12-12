@@ -1,0 +1,61 @@
+/* -*- c -*-*/
+#include <cgreen/mocks.h>
+#include "referenceableitemtable.h"
+
+ReferenceableItemTable referenceableItemTable;
+
+// Actual implementation, but malloc() i.s.o. cxAlloc()
+void initReferenceableItemTable(int size) {
+    referenceableItemTable.tab = malloc(size*sizeof(ReferenceableItem *));
+    referenceableItemTable.size = size;
+    memset(referenceableItemTable.tab, 0, sizeof(ReferenceableItem *)*size);
+}
+
+void referenceableItemTableNoAllocInit(ReferenceableItemTable *table, int size) {
+    mock(table, size);
+}
+
+bool isMemberInReferenceableItemTable(ReferenceableItem *element, int *position, ReferenceableItem **foundMemberPointer
+) {
+    return (bool)mock(element, position, foundMemberPointer);
+}
+
+bool referenceableItemTableNextMember(ReferenceableItem *element, ReferenceableItem **original) {
+    return (bool)mock(element, original);
+}
+
+void pushReferenceableItem(ReferenceableItem *element, int position) {
+    mock(element, position);
+}
+
+int addToReferenceableItemTable(ReferenceableItem *referencesItem) {
+    return mock(referencesItem);
+}
+
+void mapOverReferenceableItemTable(void (*fun)(ReferenceableItem *)) {
+    mock(fun);
+}
+
+void mapOverReferenceableItemTableWithPointer(void (*fun)(ReferenceableItem *, void *), void *pointer) {
+    mock(fun, pointer);
+}
+
+void mapOverReferenceableItemTableWithIndex(void (*fun)(int)) {
+    mock(fun);
+}
+
+int getNextExistingReferenceableItem(int index) {
+    return (int)mock(index);
+}
+
+ReferenceableItem *getReferenceableItem(int index) {
+    return (ReferenceableItem *)mock(index);
+}
+
+void setReferenceableItem(int index, ReferenceableItem *item) {
+    mock(index, item);
+}
+
+void removeReferenceableItemsForFile(int fileNumber) {
+    mock(fileNumber);
+}

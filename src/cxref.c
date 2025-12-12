@@ -23,7 +23,7 @@
 #include "proto.h"
 #include "protocol.h"
 #include "refactorings.h"
-#include "reftab.h"
+#include "referenceableitemtable.h"
 #include "scope.h"
 #include "server.h"
 #include "session.h"
@@ -308,7 +308,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
     }
 
     int index;
-    if (!isMemberInReferenceTable(&referenceableItem, &index, &foundMember)) {
+    if (!isMemberInReferenceableItemTable(&referenceableItem, &index, &foundMember)) {
         log_debug("allocating '%s'", symbol->linkName);
         char *linkName = cxAlloc(strlen(symbol->linkName)+1);
         strcpy(linkName, symbol->linkName);
@@ -1712,8 +1712,8 @@ void olCreateSelectionMenu(ServerOperation command) {
             menu = menu->next;
     }
 
-    mapOverReferenceTable(mapCreateSelectionMenu);
-    mapOverReferenceTable(putOnLineLoadedReferences);
+    mapOverReferenceableItemTable(mapCreateSelectionMenu);
+    mapOverReferenceableItemTable(putOnLineLoadedReferences);
     setSelectedVisibleItems(rstack->menu, command, rstack->menuFilterLevel);
     assert(rstack->references==NULL);
     olProcessSelectedReferences(rstack, genOnLineReferences);
@@ -1892,7 +1892,7 @@ static void pushLocalUnusedSymbolsAction(void) {
     rstack = sessionData.browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss == NULL);
-    mapOverReferenceTable(mapAddLocalUnusedSymbolsToHkSelection);
+    mapOverReferenceableItemTable(mapAddLocalUnusedSymbolsToHkSelection);
     olCreateSelectionMenu(options.serverOperation);
 }
 

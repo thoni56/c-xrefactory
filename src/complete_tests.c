@@ -17,7 +17,7 @@
 #include "parsers.mock"
 #include "ppc.mock"
 #include "referencesstack.mock"
-#include "reftab.mock"
+#include "referenceableitemtable.mock"
 #include "semact.mock"
 #include "symbol.mock"
 #include "symboltable.mock"

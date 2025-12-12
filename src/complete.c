@@ -15,7 +15,7 @@
 #include "ppc.h"
 #include "protocol.h"
 #include "referencesstack.h"
-#include "reftab.h"
+#include "referenceableitemtable.h"
 #include "semact.h"
 #include "stackmemory.h"
 #include "type.h"
@@ -738,5 +738,5 @@ static void completeFromXrefFun(ReferenceableItem *s, void *c) {
 void collectYaccLexemCompletions(Completions *c) {
     SymbolCompletionInfo info;
     info = makeCompletionSymInfo(c, TypeYaccSymbol);
-    mapOverReferenceTableWithPointer(completeFromXrefFun, (void*) &info);
+    mapOverReferenceableItemTableWithPointer(completeFromXrefFun, (void*) &info);
 }

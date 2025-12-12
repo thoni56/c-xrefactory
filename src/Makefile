@@ -348,7 +348,7 @@ check-tokens: c_parser.tokens yacc_parser.tokens
 # we don't need to use c_parser.tab.h to define tokens
 lexem.h: lexem.h.head lexem.h.tail c_parser.tab.h character_lexems.txt Makefile
 	# Convert the non-character tokens to defines
-	@# Standard BYACC (which does not work yet) defines YYSTYPE_IS_DECLARED in .tab.h which we don't want
+	@# Standard BYACC (which does not work yet) defines YYSTYPE_IS_DECLARED in .tab.h which we do not want
 	@grep define c_parser.tab.h | sed -e "s/#define \(.*\) \([0-9]*\)/\1 = \2,/" | grep -v YYSTYPE_IS_DECLARED > lexem.h.tab
 	# Combine the parts into a temporary file
 	@cat lexem.h.head character_lexems.txt lexem.h.tab lexem.h.tail > lexem.h.tmp
@@ -379,7 +379,7 @@ lexem.c: lexem.h Makefile
 .PHONY:clean
 clean:
 	@-$(MAKE) -C ../tests clean & \
-	rm -rf $(OBJDIR) c-xref *.gcov & \
+	rm -rf $(OBJDIR) c-xref *.gcov *.$(UNITTEST_EXT) & \
 	wait
 
 ########################################################################
@@ -561,13 +561,13 @@ $(YACC): $(ROOTDIR)/byacc-1.9/*.[ch]
 
 
 # Find all *_tests.c automatically
-UNITTESTS = $(patsubst %.c,%.$(EXT),$(wildcard *_tests.c))
+UNITTESTS = $(patsubst %.c,%.$(UNITTEST_EXT),$(wildcard *_tests.c))
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
-	EXT=dylib
+	UNITTEST_EXT=dylib
 else
-	EXT=so
+	UNITTEST_EXT=so
 endif
 
 # If you have a make >3.something (MacOS don't!) you can use vpath to locate Cgreen library
@@ -615,7 +615,7 @@ endif
 endif
 
 # A test lib for a module is built from its .o and the _test.o (and some extras)
-#%_tests.$(EXT): %.o %_tests.o $(EXTRA_OBJS)
+#%_tests.$(UNITTEST_EXT): %.o %_tests.o $(EXTRA_OBJS)
 #	$(CC) -shared -o $@ $(sort $(EXTRA_OBJS) $^) $(LDLIBS) -lcgreen
 
 
@@ -625,7 +625,7 @@ define UNITTEST
 $(1)_DEPENDENCIES = $(2)
 $(1)_DEPS = $$(patsubst %,$(OBJDIR)/%.o,$$($(1)_DEPENDENCIES))
 $(OBJDIR)/$(1)_tests.o: CFLAGS += $(CGREEN_INCLUDE)
-$(1)_tests.$(EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS)
+$(1)_tests.$(UNITTEST_EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS)
 	$(CC) $(LDFLAGS) -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN_LIB) $(LIBS)
 endef
 
@@ -670,7 +670,7 @@ $(eval $(call UNITTEST,refactory,protocol usage position log memory stackmemory 
 $(eval $(call UNITTEST,reference,log usage memory position stackmemory))
 $(eval $(call UNITTEST,referenceableitem,log))
 $(eval $(call UNITTEST,referencesstack,log))
-$(eval $(call UNITTEST,reftab,log memory hash))
+$(eval $(call UNITTEST,referenceableitemtable,log memory hash))
 $(eval $(call UNITTEST,semact,memory stackmemory log protocol usage hash position storage type id))
 $(eval $(call UNITTEST,server,memory log session position stackmemory))
 $(eval $(call UNITTEST,stackmemory,memory log))

@@ -30,7 +30,7 @@
 #include "refactory.mock"
 #include "reference.mock"
 #include "referencesstack.mock"
-#include "reftab.mock"
+#include "referenceableitemtable.mock"
 #include "symboltable.mock"
 #include "type.mock"
 #include "yacc_parser.mock"

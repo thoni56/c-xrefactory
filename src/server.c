@@ -16,7 +16,7 @@
 #include "options.h"
 #include "parsers.h"
 #include "ppc.h"
-#include "reftab.h"
+#include "referenceableitemtable.h"
 #include "session.h"
 #include "yylex.h"
 
@@ -141,7 +141,7 @@ static void singlePass(int argc, char **argv,
         EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(inputFileName);
         if (buffer != NULL && buffer->preLoadedFromFile != NULL) {
             log_debug("file has preloaded content, removing old references for file %d", inputFileNumber);
-            removeReferencesForFile(inputFileNumber);
+            removeReferenceableItemsForFile(inputFileNumber);
         }
 
         parseInputFile();

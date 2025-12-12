@@ -21,7 +21,7 @@
 #include "misc.mock"
 #include "options.mock"
 #include "reference.mock"
-#include "reftab.mock"
+#include "referenceableitemtable.mock"
 
 
 Describe(CxFile);

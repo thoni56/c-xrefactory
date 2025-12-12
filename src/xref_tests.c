@@ -19,7 +19,7 @@
 #include "parsers.mock"
 #include "ppc.mock"
 #include "progress.mock"
-#include "reftab.mock"
+#include "referenceableitemtable.mock"
 #include "reference.mock"
 #include "yylex.mock"
 

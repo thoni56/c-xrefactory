@@ -17,7 +17,7 @@
 #include "misc.h"
 #include "options.h"
 #include "referenceableitem.h"
-#include "reftab.h"
+#include "referenceableitemtable.h"
 #include "session.h"
 #include "usage.h"
 
@@ -521,7 +521,7 @@ static void writeSingleReferenceFile(bool updating, char *filename) {
     writeCxFileHead();
     mapOverFileTableWithIndex(writeFileNumberItem);
     scanCxFileUsing(fullScanFunctionSequence);
-    mapOverReferenceTable(writeReferenceableItem);
+    mapOverReferenceableItemTable(writeReferenceableItem);
     closeCurrentReferenceFile();
 }
 
@@ -756,14 +756,14 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     *referenceableItem = makeReferenceableItem(id, symbolType, storage, GlobalScope, GlobalVisibility, includedFileNumber);
 
     ReferenceableItem *foundReferenceableItem;
-    if (!isMemberInReferenceTable(referenceableItem, NULL, &foundReferenceableItem)) {
+    if (!isMemberInReferenceableItemTable(referenceableItem, NULL, &foundReferenceableItem)) {
         // TODO: This is more or less the body of a newReferenceableItem()
         char *ss = cxAlloc(len+1);
         strcpy(ss,id);
         foundReferenceableItem = cxAlloc(sizeof(ReferenceableItem));
         *foundReferenceableItem = makeReferenceableItem(ss, symbolType, storage,
                                                     GlobalScope, GlobalVisibility, includedFileNumber);
-        addToReferencesTable(foundReferenceableItem);
+        addToReferenceableItemTable(foundReferenceableItem);
     }
     lastIncomingData.referenceableItem = foundReferenceableItem;
     lastIncomingData.onLineReferencedSym = 0;
@@ -820,9 +820,9 @@ static void scanFunction_SymbolName(int size,
     *referenceableItem = makeReferenceableItem(id, symbolType, storage, GlobalScope, GlobalVisibility, includedFileNumber);
 
     ReferenceableItem *foundMemberP;
-    bool isMember = isMemberInReferenceTable(referenceableItem, NULL, &foundMemberP);
+    bool isMember = isMemberInReferenceableItemTable(referenceableItem, NULL, &foundMemberP);
     while (isMember && foundMemberP->visibility!=GlobalVisibility)
-        isMember = refTabNextMember(referenceableItem, &foundMemberP);
+        isMember = referenceableItemTableNextMember(referenceableItem, &foundMemberP);
 
     assert(options.mode);
     if (options.mode == XrefMode) {
