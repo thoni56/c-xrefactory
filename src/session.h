@@ -1,7 +1,7 @@
 #ifndef SESSION_H_INCLUDED
 #define SESSION_H_INCLUDED
 
-#include "referencesstack.h"
+#include "sessionstack.h"
 
 #include "position.h"
 #include "server.h"

@@ -1,6 +1,6 @@
 #include <cgreen/mocks.h>
 
-#include "referencesstack.h"
+#include "sessionstack.h"
 
 
 void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **entryP) {

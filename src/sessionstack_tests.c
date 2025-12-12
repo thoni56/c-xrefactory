@@ -1,6 +1,6 @@
 #include <cgreen/cgreen.h>
 
-#include "referencesstack.h"
+#include "sessionstack.h"
 
 #include "log.h"
 
@@ -11,11 +11,11 @@
 #include "reference.mock"
 
 
-Describe(ReferencesStack);
-BeforeEach(ReferencesStack) {
+Describe(SessionStack);
+BeforeEach(SessionStack) {
     log_set_level(LOG_ERROR);
 }
-AfterEach(ReferencesStack) {}
+AfterEach(SessionStack) {}
 
-Ensure(ReferencesStack, can_run_an_empty_test) {
+Ensure(SessionStack, can_run_an_empty_test) {
 }

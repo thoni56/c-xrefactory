@@ -1,4 +1,4 @@
-#include "referencesstack.h"
+#include "sessionstack.h"
 
 #include <stdlib.h>
 #include <assert.h>

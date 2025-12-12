@@ -15,11 +15,11 @@
 #include "reference.mock"
 
 
-Describe(Menu);
-BeforeEach(Menu) {
+Describe(BrowserMenu);
+BeforeEach(BrowserMenu) {
     log_set_level(LOG_ERROR);
 }
-AfterEach(Menu) {}
+AfterEach(BrowserMenu) {}
 
-Ensure(Menu, can_run_empty_test) {
+Ensure(BrowserMenu, can_run_empty_test) {
 }
