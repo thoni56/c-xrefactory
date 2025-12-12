@@ -3,7 +3,7 @@
 
 
 #include "browsermenu.h"
-#include "proto.h"
+#include "session.h"
 #include "server.h"
 #include "symbol.h"
 #include "usage.h"

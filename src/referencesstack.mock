@@ -3,22 +3,22 @@
 #include "referencesstack.h"
 
 
-void deleteOlcxRefs(ReferencesStack *stack, SessionStackEntry **referencesP) {
-    mock(stack, referencesP);
+void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **entryP) {
+    mock(stack, entryP);
 }
 
-void freePoppedReferencesStackItems(ReferencesStack *stack) {
+void freePoppedReferencesStackItems(SessionStack *stack) {
     mock(stack);
 }
 
-SessionStackEntry *getNextTopStackItem(ReferencesStack *stack) {
+SessionStackEntry *getNextTopStackItem(SessionStack *stack) {
     return (SessionStackEntry *) mock(stack);
 }
 
-void olcxFreeOldCompletionItems(ReferencesStack *stack) {
+void olcxFreeOldCompletionItems(SessionStack *stack) {
     mock(stack);
 }
 
-void pushEmptySession(ReferencesStack *stack) {
+void pushEmptySession(SessionStack *stack) {
     mock(stack);
 }

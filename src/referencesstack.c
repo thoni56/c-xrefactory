@@ -4,50 +4,51 @@
 #include <assert.h>
 
 #include "proto.h"
-#include "referenceableitem.h"
 #include "completion.h"
 #include "browsermenu.h"
 #include "options.h"
 #include "position.h"
 #include "globals.h"
+#include "session.h"
 
-/* Generic stack operations for ReferencesStack and its semantic aliases
+
+/* Generic stack operations for SessionStack and its semantic aliases
  * (BrowserStack, CompletionStack, RetrieverStack).
  *
  * Functions here operate on the stack structure itself and don't depend
  * on the semantic context (browser navigation vs completion vs retrieval).
  */
 
-void deleteOlcxRefs(ReferencesStack *stack, SessionStackEntry **referencesP) {
-    SessionStackEntry *references = *referencesP;
+void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **entryP) {
+    SessionStackEntry *entry = *entryP;
 
-    freeReferences(references->references);
-    freeCompletions(references->completions);
-    freeBrowserMenuList(references->hkSelectedSym);
-    freeBrowserMenuList(references->menu);
+    freeReferences(entry->references);
+    freeCompletions(entry->completions);
+    freeBrowserMenuList(entry->hkSelectedSym);
+    freeBrowserMenuList(entry->menu);
 
     // if deleting second entry point, update it
-    if (references==stack->top) {
-        stack->top = references->previous;
+    if (entry==stack->top) {
+        stack->top = entry->previous;
     }
     // this is useless, but one never knows
-    if (references==stack->root) {
-        stack->root = references->previous;
+    if (entry==stack->root) {
+        stack->root = entry->previous;
     }
-    *referencesP = references->previous;
-    free(references);
+    *entryP = entry->previous;
+    free(entry);
 }
 
-void freePoppedReferencesStackItems(ReferencesStack *stack) {
+void freePoppedReferencesStackItems(SessionStack *stack) {
     assert(stack);
     // delete all after top
     while (stack->root != stack->top) {
         //&fprintf(dumpOut,":freeing %s\n", stack->root->hkSelectedSym->referenceable.linkName);
-        deleteOlcxRefs(stack, &stack->root);
+        deleteSessionStackEntry(stack, &stack->root);
     }
 }
 
-static SessionStackEntry *pushEmptyReference(ReferencesStack *stack) {
+static SessionStackEntry *pushEmptyReference(SessionStack *stack) {
     SessionStackEntry *res;
 
     res  = malloc(sizeof(SessionStackEntry));
@@ -63,7 +64,7 @@ static SessionStackEntry *pushEmptyReference(ReferencesStack *stack) {
     return res;
 }
 
-void olcxFreeOldCompletionItems(ReferencesStack *stack) {
+void olcxFreeOldCompletionItems(SessionStack *stack) {
     SessionStackEntry **referencesP;
 
     referencesP = &stack->top;
@@ -74,10 +75,10 @@ void olcxFreeOldCompletionItems(ReferencesStack *stack) {
         if (*referencesP == NULL)
             return;
     }
-    deleteOlcxRefs(stack, referencesP);
+    deleteSessionStackEntry(stack, referencesP);
 }
 
-void pushEmptySession(ReferencesStack *stack) {
+void pushEmptySession(SessionStack *stack) {
     SessionStackEntry *references;
     freePoppedReferencesStackItems(stack);
     references = pushEmptyReference(stack);
@@ -85,7 +86,7 @@ void pushEmptySession(ReferencesStack *stack) {
 }
 
 
-SessionStackEntry *getNextTopStackItem(ReferencesStack *stack) {
+SessionStackEntry *getNextTopStackItem(SessionStack *stack) {
     SessionStackEntry *thisReferences, *nextReferences;
     nextReferences = NULL;
     thisReferences = stack->root;

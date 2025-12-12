@@ -1084,12 +1084,12 @@ bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2) {
     return true;
 }
 
-void olStackDeleteSymbol(SessionStackEntry *refs) {
-    SessionStackEntry **referencesP;
-    for (referencesP= &sessionData.browserStack.root; *referencesP!=NULL&&*referencesP!=refs; referencesP= &(*referencesP)->previous)
+void olStackDeleteSymbol(SessionStackEntry *entry) {
+    SessionStackEntry **entryP;
+    for (entryP= &sessionData.browserStack.root; *entryP!=NULL&&*entryP!=entry; entryP= &(*entryP)->previous)
         ;
-    assert(*referencesP != NULL);
-    deleteOlcxRefs(&sessionData.browserStack, referencesP);
+    assert(*entryP != NULL);
+    deleteSessionStackEntry(&sessionData.browserStack, entryP);
 }
 
 static void olcxMenuInspectDef(BrowserMenu *menu) {

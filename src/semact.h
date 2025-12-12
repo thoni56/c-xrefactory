@@ -4,7 +4,7 @@
 #include "symbol.h"
 #include "symboltable.h"
 #include "usage.h"
-
+#include "reference.h"
 #include "id.h"
 #include "proto.h"
 
