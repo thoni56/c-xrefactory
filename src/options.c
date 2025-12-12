@@ -1099,7 +1099,7 @@ static bool processBOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
     else if (strncmp(argv[i], "-browsedsym=",12)==0)     {
-        options.browsedSymName = allocateStringForOption(&options.browsedSymName, argv[i]+12);
+        options.browsedName = allocateStringForOption(&options.browsedName, argv[i]+12);
     }
     else return false;
     *argi = i;
@@ -1482,13 +1482,13 @@ static bool processOOption(int *argi, int argc, char **argv) {
     }
     else if (strncmp(argv[i], "-olcxmenusingleselect",21)==0) {
         options.serverOperation = OLO_MENU_SELECT_ONLY;
-        options.olcxMenuSelectLineNum = 0;
-        sscanf(argv[i]+21, "%d",&options.olcxMenuSelectLineNum);
+        options.lineNumberOfMenuSelection = 0;
+        sscanf(argv[i]+21, "%d",&options.lineNumberOfMenuSelection);
     }
     else if (strncmp(argv[i], "-olcxmenuselect",15)==0) {
         options.serverOperation = OLO_MENU_SELECT;
-        options.olcxMenuSelectLineNum = 0;
-        sscanf(argv[i]+15, "%d",&options.olcxMenuSelectLineNum);
+        options.lineNumberOfMenuSelection = 0;
+        sscanf(argv[i]+15, "%d",&options.lineNumberOfMenuSelection);
     }
     else if (strcmp(argv[i], "-olcxmenuall")==0) {
         options.serverOperation = OLO_MENU_SELECT_ALL;

@@ -102,8 +102,8 @@ typedef struct options {
     bool noIncludeRefs;
     int filterValue;
     ResolveDialog manualResolve;
-    char *browsedSymName;
-    int olcxMenuSelectLineNum;
+    char *browsedName;
+    int lineNumberOfMenuSelection;
     int cxMemoryFactor;
     bool strictAnsi;
     char *project;

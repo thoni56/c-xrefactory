@@ -1098,7 +1098,7 @@ static void olcxMenuInspectDef(BrowserMenu *menu) {
     for (ss=menu; ss!=NULL; ss=ss->next) {
         //&sprintf(tmpBuff,"checking line %d", ss->outOnLine); ppcBottomInformation(tmpBuff);
         int line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
-        if (line == options.olcxMenuSelectLineNum)
+        if (line == options.lineNumberOfMenuSelection)
             goto breakl;
     }
  breakl:
@@ -1140,9 +1140,10 @@ static void genOnLineReferences(SessionStackEntry *rstack, BrowserMenu *cms) {
     }
 }
 
-void olcxRecomputeSelRefs(SessionStackEntry *refs) {
-    freeReferences(refs->references); refs->references = NULL;
-    olProcessSelectedReferences(refs, genOnLineReferences);
+void recomputeSelectedReferenceable(SessionStackEntry *entry) {
+    freeReferences(entry->references);
+    entry->references = NULL;
+    olProcessSelectedReferences(entry, genOnLineReferences);
 }
 
 static void olcxMenuToggleSelect(void) {
@@ -1154,9 +1155,9 @@ static void olcxMenuToggleSelect(void) {
         return;
     for (ss=refs->menu; ss!=NULL; ss=ss->next) {
         line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
-        if (line == options.olcxMenuSelectLineNum) {
+        if (line == options.lineNumberOfMenuSelection) {
             ss->selected = !ss->selected; // WTF! Was: ss->selected = ss->selected ^ 1;
-            olcxRecomputeSelRefs(refs);
+            recomputeSelectedReferenceable(refs);
             break;
         }
     }
@@ -1176,7 +1177,7 @@ static void olcxMenuSelectOnly(void) {
     for (BrowserMenu *menu=refs->menu; menu!=NULL; menu=menu->next) {
         menu->selected = false;
         int line = SYMBOL_MENU_FIRST_LINE + menu->outOnLine;
-        if (line == options.olcxMenuSelectLineNum) {
+        if (line == options.lineNumberOfMenuSelection) {
             menu->selected = true;
             selection = menu;
         }
@@ -1186,7 +1187,7 @@ static void olcxMenuSelectOnly(void) {
         ppcBottomWarning("No Symbol");
         return;
     }
-    olcxRecomputeSelRefs(refs);
+    recomputeSelectedReferenceable(refs);
 
     Reference *definition = getDefinitionRef(refs->references);
     if (definition != NULL) {
@@ -1246,7 +1247,7 @@ static void olcxMenuSelectAll(bool selected) {
         if (menu->visible)
             menu->selected = selected;
     }
-    olcxRecomputeSelRefs(refs);
+    recomputeSelectedReferenceable(refs);
     olcxPrintRefList(";", refs);
 }
 
@@ -1307,7 +1308,7 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
         if (refs->menuFilterLevel != flevel) {
             refs->menuFilterLevel = flevel;
             setSelectedVisibleItems(refs->menu, refs->operation, refs->menuFilterLevel);
-            olcxRecomputeSelRefs(refs);
+            recomputeSelectedReferenceable(refs);
         }
     }
     if (refs!=NULL) {

@@ -11,7 +11,7 @@
 
 extern bool isSameReferenceableItem(ReferenceableItem *p1, ReferenceableItem *p2);
 extern bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2);
-extern void olcxRecomputeSelRefs(SessionStackEntry *refs );
+extern void recomputeSelectedReferenceable(SessionStackEntry *refs );
 extern void olProcessSelectedReferences(SessionStackEntry *rstack,
                                         void (*referencesMapFun)(SessionStackEntry *rstack,
                                                                  BrowserMenu *ss));
@@ -31,7 +31,7 @@ extern void createSelectionMenuForOperation(ServerOperation command);
 extern bool olcxShowSelectionMenu(void);
 extern bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
 extern void getLineAndColumnCursorPositionFromCommandLineOptions( int *l, int *c );
-extern void olcxPushSpecialCheckMenuSym(char *symname);
+extern void olcxPushSpecialCheckMenuSym(char *name);
 
 extern void answerEditAction(void);
 

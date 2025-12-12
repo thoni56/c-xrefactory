@@ -546,7 +546,7 @@ static void pushMarkersAsReferences(EditorMarkerList **markers, SessionStackEntr
         }
     }
     freeReferences(rr);
-    olcxRecomputeSelRefs(refs);
+    recomputeSelectedReferenceable(refs);
 }
 
 // ------------------------- Trivial prechecks --------------------------------------

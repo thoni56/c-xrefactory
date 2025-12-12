@@ -25,7 +25,7 @@ typedef struct BrowserMenu {
 } BrowserMenu;
 
 
-extern BrowserMenu makeBrowserMenu(ReferenceableItem references, bool selected, bool visible,
+extern BrowserMenu makeBrowserMenu(ReferenceableItem referenceables, bool selected, bool visible,
                                    unsigned ooBits, char olUsage, short int vlevel,
                                    char defUsage, struct position defpos);
 

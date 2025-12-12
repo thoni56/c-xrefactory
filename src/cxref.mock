@@ -24,7 +24,7 @@ bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2) {
     return (bool) mock(p1, p2);
 }
 
-void olcxRecomputeSelRefs(SessionStackEntry *refs) {
+void recomputeSelectedReferenceable(SessionStackEntry *refs) {
     mock(refs);
 }
 

@@ -857,7 +857,7 @@ static void scanFunction_SymbolName(int size,
             lastIncomingData.onLineRefMenuItem = menu;
             if (ols) {
                 lastIncomingData.onLineReferencedSym = 0;
-                log_trace("symbol %s is O.K. for %s (ols==%d)", referenceableItem->linkName, options.browsedSymName, ols);
+                log_trace("symbol %s is O.K. for %s (ols==%d)", referenceableItem->linkName, options.browsedName, ols);
             } else {
                 if (lastIncomingData.onLineReferencedSym == 0) {
                     lastIncomingData.onLineReferencedSym = -1;
