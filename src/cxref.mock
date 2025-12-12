@@ -83,7 +83,7 @@ BrowserMenu *createSelectionMenu(ReferenceableItem *dd) {
     return (BrowserMenu *) mock(dd);
 }
 
-void olCreateSelectionMenu(ServerOperation command) {
+void createSelectionMenuForOperation(ServerOperation command) {
     mock(command);
 }
 

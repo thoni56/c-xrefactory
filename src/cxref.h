@@ -9,8 +9,6 @@
 #include "usage.h"
 
 
-
-extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
 extern bool isSameReferenceableItem(ReferenceableItem *p1, ReferenceableItem *p2);
 extern bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2);
 extern void olcxRecomputeSelRefs(SessionStackEntry *refs );
@@ -29,7 +27,7 @@ extern int itIsSymbolToPushOlReferences(ReferenceableItem *p, SessionStackEntry 
 extern void putOnLineLoadedReferences(ReferenceableItem *p);
 extern BrowserMenu *createSelectionMenu(ReferenceableItem *dd);
 
-extern void olCreateSelectionMenu(ServerOperation command);
+extern void createSelectionMenuForOperation(ServerOperation command);
 extern bool olcxShowSelectionMenu(void);
 extern bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
 extern void getLineAndColumnCursorPositionFromCommandLineOptions( int *l, int *c );

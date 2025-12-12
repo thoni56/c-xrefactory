@@ -57,8 +57,8 @@ static unsigned menuFilterOoBits[MAX_MENU_FILTER_LEVEL] = {
 
 /* *********************************************************************** */
 
-int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
-    return SORTED_LIST_LESS(r1, (*r2));
+static int referencePositionComparare(Reference *r1, Reference *r2) {
+    return positionIsLessThan(r1->position, r2->position);
 }
 
 static void renameCollationSymbols(BrowserMenu *menu) {
@@ -1125,7 +1125,7 @@ void olProcessSelectedReferences(SessionStackEntry *rstack,
     if (rstack->menu == NULL)
         return;
 
-    LIST_MERGE_SORT(Reference, rstack->references, olcxReferenceInternalLessFunction);
+    LIST_MERGE_SORT(Reference, rstack->references, referencePositionComparare);
     for (BrowserMenu *m = rstack->menu; m != NULL; m = m->next) {
         referencesMapFun(rstack, m);
     }
@@ -1401,8 +1401,8 @@ static void safetyCheckDiff(Reference **anr1,
                             ) {
     Reference *r, *nr1, *or2;
     int mode;
-    LIST_MERGE_SORT(Reference, *anr1, olcxReferenceInternalLessFunction);
-    LIST_MERGE_SORT(Reference, *aor2, olcxReferenceInternalLessFunction);
+    LIST_MERGE_SORT(Reference, *anr1, referencePositionComparare);
+    LIST_MERGE_SORT(Reference, *aor2, referencePositionComparare);
     nr1 = *anr1; or2 = *aor2;
     while (nr1!=NULL && or2!=NULL) {
         if (nr1->position.file==or2->position.file && nr1->position.line==or2->position.line) {
@@ -1473,7 +1473,7 @@ static Reference *olcxCreateFileShiftedRefListForCheck(Reference *reference) {
         }
         *resa=tt; tt->next=NULL; resa= &(tt->next);
     }
-    LIST_MERGE_SORT(Reference, res, olcxReferenceInternalLessFunction);
+    LIST_MERGE_SORT(Reference, res, referencePositionComparare);
     return res;
 }
 
@@ -1692,7 +1692,7 @@ static void mapCreateSelectionMenu(ReferenceableItem *p) {
     createSelectionMenu(p);
 }
 
-void olCreateSelectionMenu(ServerOperation command) {
+void createSelectionMenuForOperation(ServerOperation command) {
     SessionStackEntry  *rstack;
     BrowserMenu     *menu;
 
@@ -1841,7 +1841,7 @@ static void dumpSelectionMenu(BrowserMenu *menu) {
 
 static void mainAnswerReferencePushingAction(ServerOperation operation) {
     assert(requiresCreatingRefs(operation));
-    olCreateSelectionMenu(operation);
+    createSelectionMenuForOperation(operation);
 
     assert(options.xref2);
 #ifdef DUMP_SELECTION_MENU
@@ -1894,7 +1894,7 @@ static void pushLocalUnusedSymbolsAction(void) {
     ss = rstack->hkSelectedSym;
     assert(ss == NULL);
     mapOverReferenceableItemTable(mapAddLocalUnusedSymbolsToHkSelection);
-    olCreateSelectionMenu(options.serverOperation);
+    createSelectionMenuForOperation(options.serverOperation);
 }
 
 static void answerPushLocalUnusedSymbolsAction(void) {
@@ -1912,7 +1912,7 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
     ss = rstack->hkSelectedSym;
     assert(ss == NULL);
     scanForGlobalUnused(options.cxrefsLocation);
-    olCreateSelectionMenu(options.serverOperation);
+    createSelectionMenuForOperation(options.serverOperation);
     assert(options.xref2);
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
 }

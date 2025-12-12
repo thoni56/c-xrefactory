@@ -421,6 +421,10 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
     return markerList;
 }
 
+static int referencePositionComparer(Reference *r1, Reference *r2) {
+    return positionIsLessThan(r1->position, r2->position);
+}
+
 Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP) {
 
     LIST_MERGE_SORT(EditorMarkerList, *editorMarkerListP, editorMarkerListBefore);
@@ -452,7 +456,7 @@ Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP
             markers = markers->next;
         }
     }
-    LIST_MERGE_SORT(Reference, reference, olcxReferenceInternalLessFunction);
+    LIST_MERGE_SORT(Reference, reference, referencePositionComparer);
     return reference;
 }
 

@@ -247,7 +247,7 @@ static void pushReferences(EditorMarker *point, char *pushOption, char *resolveM
     if (sessionData.browsingStack.top->hkSelectedSym == NULL) {
         errorMessage(ERR_INTERNAL, "no symbol found for refactoring push");
     }
-    olCreateSelectionMenu(sessionData.browsingStack.top->operation);
+    createSelectionMenuForOperation(sessionData.browsingStack.top->operation);
     if (resolveMessage != NULL && olcxShowSelectionMenu()) {
         displayResolutionDialog(resolveMessage, messageType);
     }
@@ -262,7 +262,7 @@ static void safetyCheck(char *project, EditorMarker *point) {
     if (sessionData.browsingStack.top->hkSelectedSym == NULL) {
         errorMessage(ERR_ST, "No symbol found for refactoring safety check");
     }
-    olCreateSelectionMenu(sessionData.browsingStack.top->operation);
+    createSelectionMenuForOperation(sessionData.browsingStack.top->operation);
 }
 
 static char *getIdentifierOnMarker_static(EditorMarker *marker) {
