@@ -48,7 +48,7 @@ static int scheduleFileUsingTheMacro(void) {
     ReferenceableItem references = makeReferenceableItem(completionStringInMacroBody, TypeMacro, StorageExtern,
                                                          GlobalScope, GlobalVisibility, NO_FILE_NUMBER);
 
-    BrowserMenu menu = makeBrowserMenu(references, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);
+    BrowserMenu menu = makeBrowserMenu(references, 1, true, 0, UsageUsed, UsageNone, noPosition);
     if (sessionData.browsingStack.top==NULL) {
         pushEmptySession(&sessionData.browsingStack);
         tmpc = sessionData.browsingStack.top;

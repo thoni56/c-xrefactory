@@ -353,7 +353,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
                 log_debug("getting definition position of %s at line %d", symbol->name, defaultPosition.line);
             if (! operationRequiresOnlyParsingNoPushing(options.serverOperation)) {
                 menu = addReferenceableToBrowserMenu(&sessionData.browsingStack.top->hkSelectedSym, foundMember,
-                                              true, true, 0, (SymbolRelation){.sameFile = false}, usage, 0,
+                                              true, true, 0, (SymbolRelation){.sameFile = false}, usage,
                                               defaultPosition, defaultUsage);
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
@@ -876,7 +876,7 @@ static void findAndGotoDefinition(ReferenceableItem *sym) {
     // preserve popped items from browser first
     oldtop = pushSession();
     refs = sessionData.browsingStack.top;
-    BrowserMenu menu = makeBrowserMenu(*sym, true, true, 0, UsageUsed, 0, UsageNone, noPosition);
+    BrowserMenu menu = makeBrowserMenu(*sym, true, true, 0, UsageUsed, UsageNone, noPosition);
     refs->menu = &menu;
     fullScanFor(sym->linkName);
     orderRefsAndGotoDefinition(refs);
@@ -1050,7 +1050,7 @@ static BrowserMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage st
     ReferenceableItem r = makeReferenceableItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility, cfi);
     menu = createNewMenuItem(&r, r.includeFile, noPosition, UsageNone,
                              true, true, OOC_VIRT_SAME_APPL_FUN_CLASS, (SymbolRelation){.sameFile = true},
-                             UsageUsed, 0);
+                             UsageUsed);
     return menu;
 }
 
@@ -1881,7 +1881,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceableItem *referenceab
     }
     if (!used && definitionReference!=NULL) {
         addReferenceableToBrowserMenu(&sessionData.browsingStack.top->hkSelectedSym, referenceableItem, true, true,
-                               0, (SymbolRelation){.sameFile = false}, UsageDefined, 0,
+                               0, (SymbolRelation){.sameFile = false}, UsageDefined,
                                definitionReference->position, definitionReference->usage);
     }
 }
@@ -2332,7 +2332,6 @@ BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
     SessionStackEntry *rstack = sessionData.browsingStack.top;
     unsigned ooBits = 0;
     SymbolRelation relation = {.sameFile = false};
-    int vlevel = 0;
     Position defaultPosition = noPosition;
     Usage defaultUsage = UsageNone;
 
@@ -2350,9 +2349,6 @@ BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
                 log_debug(": propagating defpos (line %d) to menusym", defaultPosition.line);
             }
 
-            int v = 0;
-            if (vlevel==0 || ABS(vlevel)>ABS(v))
-                vlevel = v;
             log_debug("ooBits for %s <-> %s %o %o", getFileItemWithFileNumber(menu->referenceable.includeFile)->name,
                       reference->linkName, oo, ooBits);
 
@@ -2362,7 +2358,7 @@ BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
     }
     if (found) {
         result = addReferenceableToBrowserMenu(&rstack->menu, reference, false, false,
-                                        ooBits, relation, USAGE_ANY, vlevel, defaultPosition, defaultUsage);
+                                        ooBits, relation, USAGE_ANY, defaultPosition, defaultUsage);
     }
     return result;
 }

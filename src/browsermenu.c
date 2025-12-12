@@ -15,7 +15,7 @@
 
 
 BrowserMenu makeBrowserMenu(ReferenceableItem referenceable, bool selected, bool visible, unsigned ooBits,
-                            char olUsage, short int vlevel, char defaultUsage, Position defaultPosition) {
+                            char olUsage, char defaultUsage, Position defaultPosition) {
     BrowserMenu menu;
 
     menu.referenceable = referenceable;
@@ -23,7 +23,6 @@ BrowserMenu makeBrowserMenu(ReferenceableItem referenceable, bool selected, bool
     menu.visible    = visible;
     menu.ooBits     = ooBits;
     menu.olUsage    = olUsage;
-    menu.vlevel     = vlevel;
     menu.defaultUsage    = defaultUsage;
     menu.defaultPosition = defaultPosition;
 
@@ -92,7 +91,7 @@ void olcxPrintSelectionMenu(BrowserMenu *menu) {
 
 BrowserMenu *createNewMenuItem(ReferenceableItem *item, int includedFileNumber, Position defpos,
                                Usage defusage, bool selected, bool visible, unsigned ooBits,
-                               SymbolRelation relation, Usage olusage, int vlevel) {
+                               SymbolRelation relation, Usage olusage) {
     BrowserMenu   *menu;
     char          *allocatedNameCopy;
 
@@ -102,7 +101,7 @@ BrowserMenu *createNewMenuItem(ReferenceableItem *item, int includedFileNumber, 
                                                       item->visibility, includedFileNumber);
 
     menu = malloc(sizeof(BrowserMenu));
-    *menu = makeBrowserMenu(refItem, selected, visible, ooBits, olusage, vlevel, defusage, defpos);
+    *menu = makeBrowserMenu(refItem, selected, visible, ooBits, olusage, defusage, defpos);
     menu->relation = relation;
     return menu;
 }
@@ -139,18 +138,18 @@ static bool browserMenuIsLess(BrowserMenu *s1, BrowserMenu *s2) {
 }
 
 BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableItem *item,
-                                  bool selected, bool visible, unsigned ooBits, SymbolRelation relation,
-                                  int olusage, int vlevel, Position defpos, int defusage) {
+                                           bool selected, bool visible, unsigned ooBits, SymbolRelation relation,
+                                           int olusage, Position defpos, int defusage) {
     BrowserMenu **place;
 
-    BrowserMenu dummyMenu = makeBrowserMenu(*item, 0, false, 0, olusage, vlevel, UsageNone, noPosition);
+    BrowserMenu dummyMenu = makeBrowserMenu(*item, 0, false, 0, olusage, UsageNone, noPosition);
     SORTED_LIST_PLACE3(place, BrowserMenu, &dummyMenu, menuP, browserMenuIsLess);
 
     BrowserMenu *new = *place;
     if (*place==NULL || browserMenuIsLess(&dummyMenu, *place)) {
         assert(item);
         new = createNewMenuItem(item, item->includeFile, defpos, defusage,
-                                selected, visible, ooBits, relation, olusage, vlevel);
+                                selected, visible, ooBits, relation, olusage);
         LIST_CONS(new, *place);
         log_debug(":adding browsed symbol '%s'", item->linkName);
     }
@@ -169,11 +168,7 @@ static void olcxPrintMenuItemPrefix(FILE *file, BrowserMenu *menu, bool selectab
         fprintf(file, " %s=0", PPCA_SELECTED);
     }
 
-    if (menu != NULL && menu->vlevel==1 && ooBitsGreaterOrEqual(menu->ooBits, OOC_OVERLOADING_APPLICABLE)) {
-        fprintf(file, " %s=1", PPCA_BASE);
-    } else {
-        fprintf(file, " %s=0", PPCA_BASE);
-    }
+    fprintf(file, " %s=0", PPCA_BASE);
 
     if (menu==NULL || (menu->defaultRefn==0 && menu->refn==0) || !selectable) {
         fprintf(file, " %s=0 %s=0", PPCA_DEF_REFN, PPCA_REFN);

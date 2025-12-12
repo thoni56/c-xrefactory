@@ -3,14 +3,13 @@
 #include <cgreen/mocks.h>
 
 BrowserMenu makeBrowserMenu(ReferenceableItem references, bool selected, bool visible, unsigned ooBits,
-                            char olUsage, short int vlevel, char defautlUsage, Position defaultPosition) {
+                            char olUsage, char defautlUsage, Position defaultPosition) {
     BrowserMenu menu;
     menu.referenceable = references;
     menu.selected = selected;
     menu.visible = visible;
     menu.ooBits = ooBits;
     menu.olUsage = olUsage;
-    menu.vlevel = vlevel;
     menu.defaultUsage = defautlUsage;
     menu.defaultPosition = defaultPosition;
 
@@ -41,18 +40,16 @@ void olcxPrintSelectionMenu(BrowserMenu *menu) {
 
 BrowserMenu *createNewMenuItem(ReferenceableItem *sym, int includedFileNumber, Position defpos,
                                Usage defusage, bool selected, bool visible, unsigned ooBits,
-                               SymbolRelation relation, Usage olusage, int vlevel) {
+                               SymbolRelation relation, Usage olusage) {
     Position *defaultPosition = &defpos;
-    return (BrowserMenu *) mock(sym, includedFileNumber, defaultPosition, defusage, selected, visible, ooBits, olusage, vlevel);
+    return (BrowserMenu *) mock(sym, includedFileNumber, defaultPosition, defusage, selected, visible, ooBits, olusage);
 }
 
 BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableItem *reference,
                                       bool selected, bool visible, unsigned ooBits, SymbolRelation relation,
-                                      int olusage, int vlevel,
-                                      Position defpos, int defusage) {
+                                      int olusage, Position defpos, int defusage) {
     Position *defaultPosition = &defpos;
-    return (BrowserMenu *)mock(menuP, reference, selected, visible, ooBits, olusage, vlevel, defaultPosition,
-                               defusage);
+    return (BrowserMenu *)mock(menuP, reference, selected, visible, ooBits, olusage, defaultPosition, defusage);
 }
 
 void splitBrowserMenuAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *, void *), void *p1) {

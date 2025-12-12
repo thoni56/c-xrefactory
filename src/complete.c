@@ -420,7 +420,7 @@ static void completeFun(Symbol *symbol, void *c) {
     processName(symbol->name, &compLine, true, completionInfo->completions);
 }
 
-static void completeFunctionOrMethodName(Completions *c, bool orderFlag, int vlevel, Symbol *r, Symbol *vFunCl) {
+static void completeFunctionOrMethodName(Completions *c, bool orderFlag, Symbol *r, Symbol *vFunCl) {
     CompletionLine compLine;
     int cnamelen;
     char *cn, *cname, *psuff;
@@ -461,7 +461,7 @@ static void symbolCompletionFunction(Symbol *symbol, void *i) {
     completionName = symbol->name;
     if (completionName!=NULL) {
         if (symbol->type == TypeDefault && symbol->typeModifier!=NULL && symbol->typeModifier->type == TypeFunction) {
-            completeFunctionOrMethodName(info->res, true, 0, symbol, NULL);
+            completeFunctionOrMethodName(info->res, true, symbol, NULL);
         } else {
             completionLine = makeCompletionLine(completionName, symbol, symbol->type, 0, NULL);
             processName(completionName, &completionLine, 1, info->res);

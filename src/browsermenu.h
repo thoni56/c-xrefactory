@@ -14,7 +14,6 @@ typedef struct BrowserMenu {
     unsigned                 ooBits;
     SymbolRelation           relation;
     char                     olUsage; /* usage of symbol under cursor */
-    short int                vlevel;  /* virt. level of applClass <-> olsymbol*/
     short int                refn;
     short int                defaultRefn;
     char                     defaultUsage; /* usage of definition reference */
@@ -26,7 +25,7 @@ typedef struct BrowserMenu {
 
 
 extern BrowserMenu makeBrowserMenu(ReferenceableItem referenceables, bool selected, bool visible,
-                                   unsigned ooBits, char olUsage, short int vlevel,
+                                   unsigned ooBits, char olUsage,
                                    char defUsage, struct position defpos);
 
 extern void freeBrowserMenuList(BrowserMenu *menu);
@@ -36,10 +35,10 @@ extern void addReferenceToBrowserMenu(BrowserMenu *menu, Reference *reference);
 extern void olcxPrintSelectionMenu(BrowserMenu *menu);
 extern BrowserMenu *createNewMenuItem(ReferenceableItem *sym, int includedFileNumber,
                                       Position defpos, Usage defusage, bool selected, bool visible,
-                                      unsigned ooBits, SymbolRelation relation, Usage olusage, int vlevel);
+                                      unsigned ooBits, SymbolRelation relation, Usage olusage);
 extern BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableItem *reference,
                                            bool selected, bool visible, unsigned ooBits, SymbolRelation relation,
-                                           int olusage, int vlevel, Position defpos, int defusage);
+                                           int olusage, Position defpos, int defusage);
 extern void splitBrowserMenuAndMap(BrowserMenu *menu,
                                       void (*fun)(BrowserMenu *, void *),
                                       void *p1);
