@@ -191,7 +191,6 @@ There are both "-opt=value" and "-opt value" format options
 * TODO Clean up update modes
   There are a number of update modes available from the command line, 'fupdate',
   'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
-* TODO Make S_caching an abstract data type to hide CachePoint and Caching
 * TODO MISSING TEST CASES:
 ** DONE Test case for Move Parameter
 ** DONE Test case for dead symbol detection
@@ -203,7 +202,6 @@ There are both "-opt=value" and "-opt value" format options
    by code left outside the extraction, that declaration is moved to the
    extracted function. This should probably trigger "structure error".
 ** TODO Bug: translates a bool to int when completing arguments (probably elsewhere also)
-** DONE Bug: with g7871f and renaming options.allAllocatedStrings generates "cx_memory resizing required"
 * TODO Separate the options into sections and move them to separate structures
   The S_options structure is used to save or possibly create new sets, when
   refactoring. Then it should only contain what's needed for that.
@@ -235,10 +233,11 @@ There are both "-opt=value" and "-opt value" format options
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Why does -refactory read the users default .c-xrefrc? And why does -no-stdoptions
   prevent reading explicit -xrefrc options?
-* TODO Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
+* DONE Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
   recognized (list e.g. at
   http://www.c-programming-simple-steps.com/c-keywords.html)
 
+* DONE Bug: with g7871f and renaming options.allAllocatedStrings generates "cx_memory resizing required"
 * DONE Ensure systemd as a test
   It needs to generate the same information on every run so that we
   can repeatedly match the content.
