@@ -203,26 +203,8 @@ void checkExactPositionUpdate(bool printMessage) {
     }
 }
 
-static void getCxFilesListName(char **fileListFileNameP, char **suffixP) {
-    if (options.cxFileCount <= 1) {
-        *suffixP           = "";
-        *fileListFileNameP = options.cxFileLocation;
-    } else {
-        char cxFileName[MAX_FILE_NAME_SIZE];
-        *suffixP = CXFILENAME_FILES;
-        sprintf(cxFileName, "%s%s", options.cxFileLocation, *suffixP);
-        assert(strlen(cxFileName) < MAX_FILE_NAME_SIZE - 1);
-        *fileListFileNameP = cxFileName;
-    }
-}
-
 static void scheduleModifiedFilesToUpdate(bool isRefactoring) {
-    char        *fileListFileName;
-    char        *suffix;
-
     checkExactPositionUpdate(true);
-
-    getCxFilesListName(&fileListFileName, &suffix);
 
     mapOverFileTableWithBool(schedulingToUpdate, isRefactoring);
 

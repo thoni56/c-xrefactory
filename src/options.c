@@ -1004,7 +1004,7 @@ bool currentCxFileCountMatches(int foundCxFileCount) {
     return check;
 }
 
-static void getXrefrcFileName(char *fileName) {
+static void putXrefrcFileNameInto(char *fileName) {
     int hlen;
     char *home;
 
@@ -1936,7 +1936,7 @@ void searchStandardOptionsFileAndProjectForFile(char *sourceFilename, char *foun
         return;
 
     /* Try to find section in HOME config. */
-    getXrefrcFileName(foundOptionsFilename);
+    putXrefrcFileNameInto(foundOptionsFilename);
     optionsFile = openFile(foundOptionsFilename, "r");
     if (optionsFile != NULL) {
         // TODO: This does not work since a project (section) name does not define which sources

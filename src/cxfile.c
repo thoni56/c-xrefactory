@@ -22,6 +22,20 @@
 #include "usage.h"
 
 
+/* ***************************  cxref filenames ********************* */
+
+#if defined(__WIN32__)
+
+#define CXFILENAME_FILES "\\XFiles"
+#define CXFILENAME_PREFIX "\\X"
+
+#else
+
+#define CXFILENAME_FILES "/XFiles"
+#define CXFILENAME_PREFIX "/X"
+
+#endif
+
 /* *********************** INPUT/OUTPUT FIELD MARKERS ************************** */
 
 #define C_XREF_FILE_FORMAT_VERSION "1.8.0"

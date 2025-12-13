@@ -669,7 +669,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // supposing that file table is still here, but reinit it
     mapOverFileTable(clearFileItem);
 
-    initReferenceableItemTable(MAX_CXREF_ENTRIES);
+    initReferenceableItemTable(MAX_REFS_HASHTABLE_ENTRIES);
 
     memoryInit(&ppmMemory, "pre-processor macros", NULL, SIZE_ppmMemory);
     allocateMacroArgumentTable(MAX_MACRO_ARGS);
@@ -681,7 +681,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initPreCreatedTypes();
     initArchaicTypes();
 
-    initSymbolTable(MAX_SYMBOLS);
+    initSymbolTable(MAX_SYMBOLS_HASHTABLE_ENTRIES);
 
     initAllInputs();
     initCwd();

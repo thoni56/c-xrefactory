@@ -31,13 +31,13 @@
 #define CX_SPACE_RESERVE          50000	/* space reserve for refs from file */
 
 
-/* ************************** symbol table sizes ************************ */
+/* ************************** table sizes ************************ */
 
-#define MAX_FILES              50000	/* file table size, if you
-                                           change this, RECREATE Tag file */
-#define MAX_CXREF_ENTRIES      65536	/* just hash table size, not limit */
+#define MAX_FILES                       50000	/* file table size, if you
+                                                   change this, RECREATE Tag file */
+#define MAX_REFS_HASHTABLE_ENTRIES      65536	/* just hash table size, not limit */
 
-#define MAX_SYMBOLS             5000	/* just hash list table size */
+#define MAX_SYMBOLS_HASHTABLE_ENTRIES    5000	/* just hash list table size */
 
 
 /* ***************** several (mainly string size) bornes *************** */
@@ -130,27 +130,10 @@
 #define FILE_PATH_SEPARATOR '\\'
 #define PATH_SEPARATOR ';'
 #define FILE_BEGIN_DOT '_'
-/*typedef int pid_t;*/
 #else
 #define FILE_PATH_SEPARATOR '/'
 #define PATH_SEPARATOR ':'
 #define FILE_BEGIN_DOT '.'
-#endif
-
-
-/* ***************************  cxref filenames ********************* */
-
-
-#if defined(__WIN32__)
-
-#define CXFILENAME_FILES "\\XFiles"
-#define CXFILENAME_PREFIX "\\X"
-
-#else
-
-#define CXFILENAME_FILES "/XFiles"
-#define CXFILENAME_PREFIX "/X"
-
 #endif
 
 #endif
