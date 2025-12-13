@@ -47,7 +47,7 @@ void freeReferences(Reference *references) {
 }
 
 void setReferenceUsage(Reference *reference,  Usage usage) {
-    if (reference != NULL && reference->usage > usage) {
+    if (reference != NULL && isLessImportantUsageThan(reference->usage, usage)) {
         reference->usage = usage;
     }
 }

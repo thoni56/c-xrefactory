@@ -40,5 +40,8 @@ extern const char *usageKindEnumName[];
 extern bool isVisibleUsage(Usage usage);
 extern bool isDefinitionUsage(Usage usage);
 extern bool isDefinitionOrDeclarationUsage(Usage usage);
+extern bool isMoreImportantUsageThan(Usage usage1, Usage usage2);
+extern bool isLessImportantUsageThan(Usage usage1, Usage usage2);
+extern bool isAtMostAsImportantAs(Usage usage1, Usage usage2);
 
 #endif

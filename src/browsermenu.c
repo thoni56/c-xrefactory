@@ -66,7 +66,7 @@ void addReferenceToBrowserMenu(BrowserMenu *menu, Reference *reference) {
             if (reference->usage==UsageDefined && positionsAreEqual(reference->position, menu->defaultPosition)) {
                 added->usage = UsageOLBestFitDefined;
             }
-            if (reference->usage < menu->defaultUsage) {
+            if (isMoreImportantUsageThan(reference->usage, menu->defaultUsage)) {
                 menu->defaultUsage = reference->usage;
                 menu->defaultPosition = reference->position;
             }

@@ -324,7 +324,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
 
     if (options.mode == ServerMode
         && positionsAreEqual(cxRefPosition, position)
-        && usage<UsageMaxOnLineVisibleUsages
+        && isVisibleUsage(usage)
     ) {
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!
             if (strcmp(symbol->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
@@ -498,8 +498,8 @@ static bool usageImportantInOrder(Reference *r1, Reference *r2) {
 static bool referenceIsLessThanOrderImportant(Reference *r1, Reference *r2) {
     if (usageImportantInOrder(r1, r2)) {
         // in definition, declaration usage is important
-        if (r1->usage < r2->usage) return true;
-        if (r1->usage > r2->usage) return false;
+        if (isMoreImportantUsageThan(r1->usage, r2->usage)) return true;
+        if (isLessImportantUsageThan(r1->usage, r2->usage)) return false;
     }
     return referenceIsLessThan(r1, r2);
 }
@@ -536,7 +536,7 @@ static void orderRefsAndGotoDefinition(SessionStackEntry *refs) {
     if (refs->references == NULL) {
         refs->current = refs->references;
         indicateNoReference();
-    } else if (refs->references->usage <= UsageDeclared) {
+    } else if (!isLessImportantUsageThan(refs->references->usage, UsageDeclared)) {
         refs->current = refs->references;
         gotoOnlineCxref(refs->current->position, refs->current->usage, "");
     } else {
@@ -579,7 +579,7 @@ static void passSourcePutChar(int c, FILE *file) {
 
 
 static bool isUnfilteredUsage(Reference *ref, int usageFilter) {
-    return ref->usage < usageFilter;
+    return isMoreImportantUsageThan(ref->usage, usageFilter);
 }
 
 
@@ -605,7 +605,7 @@ static void linePosProcess(FILE *outFile,
     assert(options.xref2);
     do {
         if (isUnfilteredUsage(r1, usageFilter)) {
-            if (r2==NULL || r2->usage > r1->usage)
+            if (r2==NULL || isLessImportantUsageThan(r2->usage, r1->usage))
                 r2 = r1;
             if (! pendingRefFlag) {
                 sprintf(listLine+listLineIndex, "%s:%d:", fileName, r1->position.line);
@@ -616,7 +616,7 @@ static void linePosProcess(FILE *outFile,
         }
         r1=r1->next;
     } while (r1!=NULL && ((r1->position.file == position.file && r1->position.line == position.line)
-                          || (r1->usage > UsageMaxOnLineVisibleUsages)));
+                          || !isVisibleUsage(r1->usage)));
     if (r2!=NULL) {
         if (! cxfBuf->isAtEOF) {
             while (ch!='\n' && (! cxfBuf->isAtEOF)) {
@@ -720,7 +720,7 @@ static int getCurrentRefPosition(SessionStackEntry *entry) {
     if (entry!=NULL) {
         int rlevel = usageFilterLevels[entry->refsFilterLevel];
         for (ref=entry->references; ref!=NULL && ref!=entry->current; ref=ref->next) {
-            if (ref->usage < rlevel)
+            if (isMoreImportantUsageThan(ref->usage, rlevel))
                 position++;
         }
     }
@@ -828,8 +828,8 @@ static void olcxReferenceGotoRef(int refn) {
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
     rfilter = usageFilterLevels[refs->refsFilterLevel];
-    for (rr=refs->references,i=1; rr!=NULL && (i<refn||rr->usage>=rfilter); rr=rr->next){
-        if (rr->usage < rfilter) i++;
+    for (rr=refs->references,i=1; rr!=NULL && (i<refn||isAtMostAsImportantAs(rr->usage, rfilter)); rr=rr->next){
+        if (isMoreImportantUsageThan(rr->usage, rfilter)) i++;
     }
     refs->current = rr;
     olcxGenGotoActReference(refs);
@@ -929,7 +929,7 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
 static void olcxSetActReferenceToFirstVisible(SessionStackEntry *refs, Reference *r) {
     int rlevel = usageFilterLevels[refs->refsFilterLevel];
 
-    while (r!=NULL && r->usage>=rlevel)
+    while (r!=NULL && isAtMostAsImportantAs(r->usage, rlevel))
         r = r->next;
 
     if (r != NULL) {
@@ -938,7 +938,7 @@ static void olcxSetActReferenceToFirstVisible(SessionStackEntry *refs, Reference
         assert(options.xref2);
         ppcBottomInformation("Moving to the first reference");
         r = refs->references;
-        while (r!=NULL && r->usage>=rlevel)
+        while (r!=NULL && isAtMostAsImportantAs(r->usage, rlevel))
             r = r->next;
         refs->current = r;
     }
@@ -970,14 +970,14 @@ static void olcxReferenceMinus(void) {
         act = refs->current;
         l = NULL;
         for (r=refs->references; r!=act && r!=NULL; r=r->next) {
-            if (r->usage < rlevel)
+            if (isMoreImportantUsageThan(r->usage, rlevel))
                 l = r;
         }
         if (l==NULL) {
             assert(options.xref2);
             ppcBottomInformation("Moving to the last reference");
             for (; r!=NULL; r=r->next) {
-                if (r->usage < rlevel)
+                if (isMoreImportantUsageThan(r->usage, rlevel))
                     l = r;
             }
         }
