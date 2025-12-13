@@ -1,8 +1,0 @@
-CXrefs
-out
-log
-*.log
-.c-xrefrc
-__pycache__
-.vscode
-output
