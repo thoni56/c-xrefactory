@@ -991,16 +991,16 @@ void getPipedOptions(int *outNargc, char ***outNargv) {
     }
 }
 
-bool currentReferenceFileCountMatches(int foundReferenceFileCount) {
+bool currentCxFileCountMatches(int foundCxFileCount) {
     bool check;
 
-    if (options.referenceFileCount == 0)
+    if (options.cxFileCount == 0)
         check = true;
-    else if (options.referenceFileCount == 1)
-        check = (foundReferenceFileCount <= 1);
+    else if (options.cxFileCount == 1)
+        check = (foundCxFileCount <= 1);
     else
-        check = (foundReferenceFileCount == options.referenceFileCount);
-    options.referenceFileCount = foundReferenceFileCount;
+        check = (foundCxFileCount == options.cxFileCount);
+    options.cxFileCount = foundCxFileCount;
     return check;
 }
 
@@ -1553,14 +1553,14 @@ static void setXrefsLocation(char *argvi) {
         sprintf(tmpBuff, "'%s' is not an absolute path, correct -refs option", argvi);
         warningMessage(ERR_ST, tmpBuff);
     }
-    options.cxrefsLocation = allocateStringForOption(&options.cxrefsLocation, normalizeFileName_static(argvi, cwd));
+    options.cxFileLocation = allocateStringForOption(&options.cxFileLocation, normalizeFileName_static(argvi, cwd));
 }
 
 static bool processROption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
     else if (strncmp(argv[i], "-refnum=",8)==0)  {
-        sscanf(argv[i]+8, "%d", &options.referenceFileCount);
+        sscanf(argv[i]+8, "%d", &options.cxFileCount);
     }
     else if (strncmp(argv[i], "-renameto=", 10)==0) {
         options.renameTo = allocateStringForOption(&options.renameTo, argv[i]+10);

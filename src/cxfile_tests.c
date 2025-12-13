@@ -34,8 +34,8 @@ BeforeEach(CxFile) {
 }
 AfterEach(CxFile) {}
 
-Ensure(CxFile, can_run_empty_test) {
-    options.referenceFileCount = 1;
+Ensure(CxFile, will_return_no_hashnumber_for_single_cxfile) {
+    options.cxFileCount = 1;
     assert_that(cxFileHashNumberForSymbol(NULL), is_equal_to(0));
 }
 
@@ -74,10 +74,10 @@ Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
 
     // log_set_level(LOG_DEBUG);
 
-    options.cxrefsLocation     = "./CXrefs";
-    options.referenceFileCount = 1;
+    options.cxFileLocation     = "./CXrefs";
+    options.cxFileCount = 1;
 
-    expect(currentReferenceFileCountMatches, will_return(true));
+    expect(currentCxFileCountMatches, will_return(true));
 
     expect(openFile, when(fileName, is_equal_to_string("./CXrefs/XFiles")), will_return(xfilesFilePointer));
 
@@ -101,5 +101,5 @@ Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
 
     expect(closeFile, when(file, is_equal_to(xfilesFilePointer)));
 
-    normalScanReferenceFile("/XFiles");
+    normalScanCxFile("/XFiles");
 }

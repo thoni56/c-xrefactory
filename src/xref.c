@@ -173,19 +173,6 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
     }
 }
 
-static void getCxrefFilesListName(char **fileListFileNameP, char **suffixP) {
-    if (options.referenceFileCount <= 1) {
-        *suffixP           = "";
-        *fileListFileNameP = options.cxrefsLocation;
-    } else {
-        char cxrefsFileName[MAX_FILE_NAME_SIZE];
-        *suffixP = REFERENCE_FILENAME_FILES;
-        sprintf(cxrefsFileName, "%s%s", options.cxrefsLocation, *suffixP);
-        assert(strlen(cxrefsFileName) < MAX_FILE_NAME_SIZE - 1);
-        *fileListFileNameP = cxrefsFileName;
-    }
-}
-
 static void oneWholeFileProcessing(int argc, char **argv, FileItem *fileItem, bool *firstPass,
                                    bool *atLeastOneProcessed, bool isRefactoring) {
     inputFileName           = fileItem->name;
@@ -216,13 +203,26 @@ void checkExactPositionUpdate(bool printMessage) {
     }
 }
 
+static void getCxFilesListName(char **fileListFileNameP, char **suffixP) {
+    if (options.cxFileCount <= 1) {
+        *suffixP           = "";
+        *fileListFileNameP = options.cxFileLocation;
+    } else {
+        char cxFileName[MAX_FILE_NAME_SIZE];
+        *suffixP = CXFILENAME_FILES;
+        sprintf(cxFileName, "%s%s", options.cxFileLocation, *suffixP);
+        assert(strlen(cxFileName) < MAX_FILE_NAME_SIZE - 1);
+        *fileListFileNameP = cxFileName;
+    }
+}
+
 static void scheduleModifiedFilesToUpdate(bool isRefactoring) {
     char        *fileListFileName;
     char        *suffix;
 
     checkExactPositionUpdate(true);
 
-    getCxrefFilesListName(&fileListFileName, &suffix);
+    getCxFilesListName(&fileListFileName, &suffix);
 
     mapOverFileTableWithBool(schedulingToUpdate, isRefactoring);
 
@@ -254,7 +254,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
         fprintf(errOut, "swapping references to disk (please wait)\n");
         fflush(errOut);
     }
-    if (options.cxrefsLocation == NULL) {
+    if (options.cxFileLocation == NULL) {
         FATAL_ERROR(ERR_ST, "sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
     }
     for (int i=0; i < includeStack.pointer; i++) {
@@ -349,10 +349,10 @@ finish:
             }
             if (options.xref2) {
                 char tmpBuff[TMP_BUFF_SIZE];
-                sprintf(tmpBuff, "Generating '%s'", options.cxrefsLocation);
+                sprintf(tmpBuff, "Generating '%s'", options.cxFileLocation);
                 ppcGenRecord(PPC_INFORMATION, tmpBuff);
             } else {
-                log_info("Generating '%s'", options.cxrefsLocation);
+                log_info("Generating '%s'", options.cxFileLocation);
             }
             generateReferences();
         }

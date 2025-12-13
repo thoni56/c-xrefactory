@@ -144,16 +144,16 @@ static void initOptions(void) {
 }
 
 static void initStandardCxrefFileName(char *inputfile) {
-    static char standardCxrefFileName[MAX_FILE_NAME_SIZE];
+    static char standardCxFileName[MAX_FILE_NAME_SIZE];
 
-    extractPathInto(normalizeFileName_static(inputfile, cwd), standardCxrefFileName);
-    strcat(standardCxrefFileName, DEFAULT_CXREF_FILENAME);
-    assert(strlen(standardCxrefFileName) < MAX_FILE_NAME_SIZE);
+    extractPathInto(normalizeFileName_static(inputfile, cwd), standardCxFileName);
+    strcat(standardCxFileName, DEFAULT_CXREF_FILENAME);
+    assert(strlen(standardCxFileName) < MAX_FILE_NAME_SIZE);
 
-    strcpy(standardCxrefFileName, getRealFileName_static(normalizeFileName_static(standardCxrefFileName, cwd)));
-    assert(strlen(standardCxrefFileName) < MAX_FILE_NAME_SIZE);
+    strcpy(standardCxFileName, getRealFileName_static(normalizeFileName_static(standardCxFileName, cwd)));
+    assert(strlen(standardCxFileName) < MAX_FILE_NAME_SIZE);
 
-    options.cxrefsLocation = standardCxrefFileName;
+    options.cxFileLocation = standardCxFileName;
 }
 
 static void initializationsPerInvocation(void) {

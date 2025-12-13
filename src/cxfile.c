@@ -63,7 +63,7 @@ typedef enum {
     CXSF_MENU_CREATION,
     CXSF_DEAD_CODE_DETECTION,
     CXSF_PASS_MACRO_USAGE,
-} CxScanFileOperation;
+} CxFileScanOperation;
 
 
 static int generatedFieldKeyList[] = {
@@ -94,7 +94,7 @@ typedef struct lastCxFileData {
     bool                keyUsed[MAX_CHARS];
     int                 data[MAX_CHARS];
     void                (*handlerFunction[MAX_CHARS])(int size, int key, CharacterBuffer *cb,
-                                                      CxScanFileOperation operation);
+                                                      CxFileScanOperation operation);
     int                 argument[MAX_CHARS];
 
     // dead code detection vars
@@ -117,24 +117,24 @@ static unsigned fileNumberMapping[MAX_FILES];
 
 static FILE *cxFile = NULL;
 
-static FILE *currentReferenceFile;
+static FILE *currentCxFile;
 
-typedef struct scanFileFunctionStep {
+typedef struct cxFileScanStep {
     int		recordCode;
-    void    (*handlerFunction)(int size, int ri, CharacterBuffer *cb, CxScanFileOperation operation); /* TODO: Break out a type */
+    void    (*handlerFunction)(int size, int ri, CharacterBuffer *cb, CxFileScanOperation operation); /* TODO: Break out a type */
     int		argument;
-} ScanFileFunctionStep;
+} CxFileScanStep;
 
 
-static ScanFileFunctionStep normalScanFunctionSequence[];
-static ScanFileFunctionStep fullScanFunctionSequence[];
-static ScanFileFunctionStep fullUpdateFunctionSequence[];
-static ScanFileFunctionStep symbolMenuCreationFunctionSequence[];
-static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
-static ScanFileFunctionStep globalUnusedDetectionFunctionSequence[];
-static ScanFileFunctionStep symbolSearchFunctionSequence[];
+static CxFileScanStep normalScanSequence[];
+static CxFileScanStep fullScanSequence[];
+static CxFileScanStep fullUpdateSequence[];
+static CxFileScanStep symbolMenuCreationSequence[];
+static CxFileScanStep secondPassMacroUsageSequence[];
+static CxFileScanStep globalUnusedDetectionSequence[];
+static CxFileScanStep symbolSearchSequence[];
 
-static void scanCxFileUsing(ScanFileFunctionStep *scanFunctionTable);
+static void scanCxFileUsing(CxFileScanStep *scanSequence);
 
 
 static void fPutDecimal(int num, FILE *file) {
@@ -163,7 +163,7 @@ int cxFileHashNumberForSymbol(char *symbolName) {
     char       *ch;
     int        c;
 
-    if (options.referenceFileCount <= 1)
+    if (options.cxFileCount <= 1)
         return 0;
 
     hash = 0;
@@ -177,7 +177,7 @@ int cxFileHashNumberForSymbol(char *symbolName) {
         ch++;
     }
     hash = finalize_symbol_hash(hash);
-    hash %= options.referenceFileCount;
+    hash %= options.cxFileCount;
     return hash;
 }
 
@@ -445,37 +445,44 @@ static void writeCxFileHead(void) {
     assert(i < MAX_CHARS);
     stringRecord[i]=0;
     writeStringRecord(CXFI_KEY_LIST, stringRecord, "");
-    writeCompactRecord(CXFI_REFNUM, options.referenceFileCount, " ");
+    writeCompactRecord(CXFI_REFNUM, options.cxFileCount, " ");
     writeCompactRecord(CXFI_CHECK_NUMBER, composeCxfiCheckNum(MAX_FILES, options.exactPositionResolve), " ");
 }
 
 static char tmpFileName[MAX_FILE_NAME_SIZE];
 
-static void openInOutReferenceFile(bool updating, char *filename) {
+static void openInOutCxFile(bool updating, char *cxFileName) {
     if (updating) {
-        char *tempname = create_temporary_filename();
-        strcpy(tmpFileName, tempname);
-        copyFileFromTo(filename, tmpFileName);
+        if (fileExists(cxFileName)) {
+            char *tempname = create_temporary_filename();
+            strcpy(tmpFileName, tempname);
+            copyFileFromTo(cxFileName, tmpFileName);
+        } else
+            tmpFileName[0] = '\0';
     }
 
-    assert(filename);
-    cxFile = openFile(filename,"w");
+    assert(cxFileName);
+    cxFile = openFile(cxFileName,"w");
     if (cxFile == NULL)
-        FATAL_ERROR(ERR_CANT_OPEN, filename, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_CANT_OPEN, cxFileName, XREF_EXIT_ERR);
 
     if (updating) {
-        currentReferenceFile = openFile(tmpFileName, "r");
-        if (currentReferenceFile==NULL)
-            warningMessage(ERR_CANT_OPEN_FOR_READ, tmpFileName);
+        if (tmpFileName[0] != '\0') {
+            currentCxFile = openFile(tmpFileName, "r");
+            if (currentCxFile==NULL)
+                warningMessage(ERR_CANT_OPEN_FOR_READ, tmpFileName);
+        } else {
+            currentCxFile = NULL;
+        }
     } else {
-        currentReferenceFile = NULL;
+        currentCxFile = NULL;
     }
 }
 
-static void closeCurrentReferenceFile(void) {
-    if (currentReferenceFile != NULL) {
-        closeFile(currentReferenceFile);
-        currentReferenceFile = NULL;
+static void closeCurrentCxFile(void) {
+    if (currentCxFile != NULL) {
+        closeFile(currentCxFile);
+        currentCxFile = NULL;
         removeFile(tmpFileName);
     }
     closeFile(cxFile);
@@ -483,32 +490,29 @@ static void closeCurrentReferenceFile(void) {
 }
 
 /* suffix contains '/' at the beginning */
-static void writePartialReferenceFile(bool updateFlag,
-                                     char *dirname,
-                                     char *suffix,
-                                     void mapfun(FileItem *, int),
-                                     void mapfun2(FileItem *, int)) {
-    char filename[MAX_FILE_NAME_SIZE];
+static void writePartialCxFile(bool updateFlag, char *dirname, char *suffix,
+                               void mapfun(FileItem *, int), void mapfun2(FileItem *, int)) {
+    char cxFileName[MAX_FILE_NAME_SIZE];
 
-    sprintf(filename, "%s%s", dirname, suffix);
-    assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
-    openInOutReferenceFile(updateFlag, filename);
+    sprintf(cxFileName, "%s%s", dirname, suffix);
+    assert(strlen(cxFileName) < MAX_FILE_NAME_SIZE-1);
+    openInOutCxFile(updateFlag, cxFileName);
     writeCxFileHead();
     mapOverFileTableWithIndex(mapfun);
     if (mapfun2!=NULL)
         mapOverFileTableWithIndex(mapfun2);
-    scanCxFileUsing(fullScanFunctionSequence);
-    closeCurrentReferenceFile();
+    scanCxFileUsing(fullScanSequence);
+    closeCurrentCxFile();
 }
 
-static void writeReferencesFromMemoryIntoRefFileNo(int fileOrder) {
+static void writeReferencesFromMemoryIntoCxFile(int partitionNumber) {
     for (int i=getNextExistingReferenceableItem(0); i != -1; i = getNextExistingReferenceableItem(i+1)) {
         for (ReferenceableItem *r=getReferenceableItem(i); r!=NULL; r=r->next) {
             if (r->visibility == LocalVisibility)
                 continue;
             if (r->references == NULL)
                 continue;
-            if (cxFileHashNumberForSymbol(r->linkName) == fileOrder)
+            if (cxFileHashNumberForSymbol(r->linkName) == partitionNumber)
                 writeReferenceableItem(r);
             else
                 log_trace("Skipping reference with linkname \"%s\"", r->linkName);
@@ -516,41 +520,41 @@ static void writeReferencesFromMemoryIntoRefFileNo(int fileOrder) {
     }
 }
 
-static void writeSingleReferenceFile(bool updating, char *filename) {
-    openInOutReferenceFile(updating, filename);
+static void writeSingleCxFile(bool updating, char *filename) {
+    openInOutCxFile(updating, filename);
     writeCxFileHead();
     mapOverFileTableWithIndex(writeFileNumberItem);
-    scanCxFileUsing(fullScanFunctionSequence);
+    scanCxFileUsing(fullScanSequence);
     mapOverReferenceableItemTable(writeReferenceableItem);
-    closeCurrentReferenceFile();
+    closeCurrentCxFile();
 }
 
-static void writeMultipeReferenceFiles(bool updating, char *dirname) {
-    char  referenceFileName[MAX_FILE_NAME_SIZE];
+static void writeMultipeCxFiles(bool updating, char *dirName) {
+    char  cxFileName[MAX_FILE_NAME_SIZE];
 
-    createDirectory(dirname);
-    writePartialReferenceFile(updating, dirname, REFERENCE_FILENAME_FILES, writeFileNumberItem, NULL);
-    for (int i = 0; i < options.referenceFileCount; i++) {
-        sprintf(referenceFileName, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);
-        assert(strlen(referenceFileName) < MAX_FILE_NAME_SIZE - 1);
-        openInOutReferenceFile(updating, referenceFileName);
+    createDirectory(dirName);
+    writePartialCxFile(updating, dirName, CXFILENAME_FILES, writeFileNumberItem, NULL);
+    for (int i = 0; i < options.cxFileCount; i++) {
+        sprintf(cxFileName, "%s%s%04d", dirName, CXFILENAME_PREFIX, i);
+        assert(strlen(cxFileName) < MAX_FILE_NAME_SIZE - 1);
+        openInOutCxFile(updating, cxFileName);
         writeCxFileHead();
-        scanCxFileUsing(fullScanFunctionSequence);
-        writeReferencesFromMemoryIntoRefFileNo(i);
-        closeCurrentReferenceFile();
+        scanCxFileUsing(fullScanSequence);
+        writeReferencesFromMemoryIntoCxFile(i);
+        closeCurrentCxFile();
     }
 }
 
-void writeReferenceFile(bool updating, char *filename) {
+void writeCxFile(bool updating, char *fileName) {
     if (!updating)
-        removeFile(filename);
+        removeFile(fileName);
 
-    recursivelyCreateFileDirIfNotExists(filename);
+    recursivelyCreateFileDirIfNotExists(fileName);
 
-    if (options.referenceFileCount <= 1) {
-        writeSingleReferenceFile(updating, filename);
+    if (options.cxFileCount <= 1) {
+        writeSingleCxFile(updating, fileName);
     } else {
-        writeMultipeReferenceFiles(updating, filename);
+        writeMultipeCxFiles(updating, fileName);
     }
 }
 
@@ -572,7 +576,7 @@ static void writeCxFileCompatibilityError(char *message) {
 static void scanFunction_ReadKeys(int size,
                                   int key,
                                   CharacterBuffer *cb,
-                                  CxScanFileOperation operation
+                                  CxFileScanOperation operation
 ) {
     assert(key == CXFI_KEY_LIST);
     for (int i=0; i<size-1; i++) {
@@ -585,7 +589,7 @@ static void scanFunction_ReadKeys(int size,
 static void scanFunction_VersionCheck(int size,
                                       int key,
                                       CharacterBuffer *cb,
-                                      CxScanFileOperation operation
+                                      CxFileScanOperation operation
 ) {
     char versionString[TMP_STRING_SIZE];
     char thisVersionString[TMP_STRING_SIZE];
@@ -601,7 +605,7 @@ static void scanFunction_VersionCheck(int size,
 static void scanFunction_CheckNumber(int size,
                                      int key,
                                      CharacterBuffer *cb,
-                                     CxScanFileOperation operation
+                                     CxFileScanOperation operation
 ) {
     int magicNumber, fileCount;
     bool exactPositionLinkFlag;
@@ -632,7 +636,7 @@ static void scanFunction_CheckNumber(int size,
 static int fileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
     bool updateFromCxFile = true;
 
-    log_trace("re-read info from '%s' for '%s'?", options.cxrefsLocation, fileItem->name);
+    log_trace("re-read info from '%s' for '%s'?", options.cxFileLocation, fileItem->name);
     if (options.mode == XrefMode) {
         if (fileItem->cxLoading && !fileItem->cxSaved) {
             updateFromCxFile = false;
@@ -649,7 +653,7 @@ static int fileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
         }
     }
     log_trace("%s re-read info from '%s' for '%s'", updateFromCxFile?"yes,":"no, not necessary to",
-              options.cxrefsLocation, fileItem->name);
+              options.cxFileLocation, fileItem->name);
 
     return updateFromCxFile;
 }
@@ -657,7 +661,7 @@ static int fileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
 static void scanFunction_ReadFileName(int fileNameLength,
                                       int key,
                                       CharacterBuffer *cb,
-                                      CxScanFileOperation operation
+                                      CxFileScanOperation operation
 ) {
     char fileName[MAX_FILE_NAME_SIZE];
     FileItem *fileItem;
@@ -734,7 +738,7 @@ static void getIncludedFileNumber(int *includedFileNumber) {
 static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
                                                          int key,
                                                          CharacterBuffer *cb,
-                                                         CxScanFileOperation operation
+                                                         CxFileScanOperation operation
 ) {
     assert(key == CXFI_SYMBOL_NAME);
     Storage storage = lastIncomingData.data[CXFI_STORAGE];
@@ -798,7 +802,7 @@ static bool referenceableIsReportableAsUnused(ReferenceableItem *referenceableIt
 static void scanFunction_SymbolName(int size,
                                     int key,
                                     CharacterBuffer *cb,
-                                    CxScanFileOperation operation
+                                    CxFileScanOperation operation
 ) {
     assert(key == CXFI_SYMBOL_NAME);
     if (options.mode==ServerMode && operation==CXSF_DEAD_CODE_DETECTION) {
@@ -870,7 +874,7 @@ static void scanFunction_SymbolName(int size,
 static void scanFunction_ReferenceForFullUpdateSchedule(int size,
                                                         int key,
                                                         CharacterBuffer *cb,
-                                                        CxScanFileOperation operation
+                                                        CxFileScanOperation operation
 ) {
 
     assert(key == CXFI_REFERENCE);
@@ -906,7 +910,7 @@ static bool isInReferenceList(Reference *list, Usage usage, Position position) {
 static void scanFunction_Reference(int size,
                                    int key,
                                    CharacterBuffer *cb,
-                                   CxScanFileOperation operation
+                                   CxFileScanOperation operation
 ) {
     assert(key == CXFI_REFERENCE);
     Usage usage = lastIncomingData.data[CXFI_USAGE];
@@ -932,12 +936,12 @@ static void scanFunction_Reference(int size,
             writeCxReferenceBase(usage, file, line, col);
     } else if (options.mode == ServerMode) {
         Reference reference = makeReference(makePosition(file, line, col), usage, NULL);
-        FileItem *referenceFileItem = getFileItemWithFileNumber(reference.position.file);
+        FileItem *cxFileItem = getFileItemWithFileNumber(reference.position.file);
         if (operation == CXSF_DEAD_CODE_DETECTION) {
             if (isVisibleUsage(reference.usage)) {
                 // restrict reported symbols to those defined in project input file
                 if (isDefinitionUsage(reference.usage)
-                    && referenceFileItem->isArgument
+                    && cxFileItem->isArgument
                 ) {
                     lastIncomingData.deadSymbolIsDefined = 1;
                 } else if (! isDefinitionOrDeclarationUsage(reference.usage)) {
@@ -966,7 +970,7 @@ static void scanFunction_Reference(int size,
                         if (file != originalFileNumber || !fileItem->isArgument ||
                             options.serverOperation == OLO_GOTO || options.serverOperation == OLO_COMPLETION_GOTO ||
                             options.serverOperation == OLO_PUSH_NAME) {
-                            log_trace (":adding reference %s:%d", referenceFileItem->name, reference.position.line);
+                            log_trace (":adding reference %s:%d", cxFileItem->name, reference.position.line);
                             addReferenceToBrowserMenu(lastIncomingData.onLineRefMenuItem, &reference);
                         }
                     } else {
@@ -979,12 +983,12 @@ static void scanFunction_Reference(int size,
 }
 
 
-static void scanFunction_ReferenceFileCountCheck(int fileCountInReferenceFile,
-                                                 int key,
-                                                 CharacterBuffer *cb,
-                                                 CxScanFileOperation operation
+static void scanFunction_CxFileCountCheck(int fileCountInCxFile,
+                                          int key,
+                                          CharacterBuffer *cb,
+                                          CxFileScanOperation operation
 ) {
-    if (!currentReferenceFileCountMatches(fileCountInReferenceFile)) {
+    if (!currentCxFileCountMatches(fileCountInCxFile)) {
         assert(options.mode);
         FATAL_ERROR(ERR_ST,"The reference database was generated with different '-refnum' options, recreate it!", XREF_EXIT_ERR);
     }
@@ -1012,7 +1016,7 @@ static void resetIncomingData() {
     fileNumberMapping[NO_FILE_NUMBER]                = NO_FILE_NUMBER;
 }
 
-static void setupRecordKeyHandlersFromTable(ScanFileFunctionStep scanFunctionTable[]) {
+static void setupRecordKeyHandlersFromTable(CxFileScanStep scanFunctionTable[]) {
     /* Set up the keys and handlers from the provided table */
     for (int i = 0; scanFunctionTable[i].recordCode > 0; i++) {
         assert(scanFunctionTable[i].recordCode < MAX_CHARS);
@@ -1022,9 +1026,9 @@ static void setupRecordKeyHandlersFromTable(ScanFileFunctionStep scanFunctionTab
     }
 }
 
-static void scanCxFileUsing(ScanFileFunctionStep scanFunctionTable[]) {
+static void scanCxFileUsing(CxFileScanStep *scanSequence) {
     ENTER();
-    if (currentReferenceFile == NULL) {
+    if (currentCxFile == NULL) {
         log_trace("No reference file opened");
         LEAVE();
         return;
@@ -1032,9 +1036,9 @@ static void scanCxFileUsing(ScanFileFunctionStep scanFunctionTable[]) {
 
     resetIncomingData();
 
-    setupRecordKeyHandlersFromTable(scanFunctionTable);
+    setupRecordKeyHandlersFromTable(scanSequence);
 
-    initCharacterBufferFromFile(&cxFileCharacterBuffer, currentReferenceFile);
+    initCharacterBufferFromFile(&cxFileCharacterBuffer, currentCxFile);
     int ch = ' ';
     while (!cxFileCharacterBuffer.isAtEOF) {
         int scannedInt = scanInteger(&cxFileCharacterBuffer, &ch);
@@ -1070,35 +1074,33 @@ static void scanCxFileUsing(ScanFileFunctionStep scanFunctionTable[]) {
 
 
 /* suffix contains '/' at the beginning !!! */
-static bool scanReferenceFile(char *cxrefLocation, char *element1, char *element2,
-                              ScanFileFunctionStep *scanFunctionTable) {
+static bool scanCxFile(char *cxFileLocation, char *element1, char *element2, CxFileScanStep *scanSequence) {
     char fn[MAX_FILE_NAME_SIZE];
 
-    sprintf(fn, "%s%s%s", cxrefLocation, element1, element2);
+    sprintf(fn, "%s%s%s", cxFileLocation, element1, element2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     log_trace(":scanning file %s", fn);
-    currentReferenceFile = openFile(fn, "r");
-    if (currentReferenceFile==NULL) {
+    currentCxFile = openFile(fn, "r");
+    if (currentCxFile==NULL) {
         return false;
     } else {
-        scanCxFileUsing(scanFunctionTable);
-        closeFile(currentReferenceFile);
-        currentReferenceFile = NULL;
+        scanCxFileUsing(scanSequence);
+        closeFile(currentCxFile);
+        currentCxFile = NULL;
         return true;
     }
 }
 
-static void scanReferenceFiles(char *cxrefLocation, ScanFileFunctionStep *scanFunctionTable) {
-    char nn[MAX_FILE_NAME_SIZE];
-    int i;
+static void scanCxFiles(char *cxFileLocation, CxFileScanStep *scanSequence) {
 
-    if (options.referenceFileCount <= 1) {
-        scanReferenceFile(cxrefLocation,"","",scanFunctionTable);
+    if (options.cxFileCount <= 1) {
+        scanCxFile(cxFileLocation, "", "", scanSequence);
     } else {
-        scanReferenceFile(cxrefLocation,REFERENCE_FILENAME_FILES,"",scanFunctionTable);
-        for (i=0; i<options.referenceFileCount; i++) {
-            sprintf(nn,"%04d",i);
-            scanReferenceFile(cxrefLocation,REFERENCE_FILENAME_PREFIX,nn,scanFunctionTable);
+        scanCxFile(cxFileLocation,CXFILENAME_FILES,"",scanSequence);
+        for (int i=0; i<options.cxFileCount; i++) {
+            char partitionNumber[MAX_FILE_NAME_SIZE];
+            sprintf(partitionNumber, "%04d", i);
+            scanCxFile(cxFileLocation, CXFILENAME_PREFIX, partitionNumber, scanSequence);
         }
     }
 }
@@ -1107,28 +1109,28 @@ bool smartReadReferences(void) {
     static time_t savedModificationTime = 0; /* Cache previously read file data... */
     static off_t savedFileSize = 0;
     static char previouslyReadFileName[MAX_FILE_NAME_SIZE] = ""; /* ... and name */
-    char cxrefFileName[MAX_FILE_NAME_SIZE];
+    char cxFileName[MAX_FILE_NAME_SIZE];
 
-    if (options.referenceFileCount <= 1) {
-        sprintf(cxrefFileName, "%s", options.cxrefsLocation);
+    if (options.cxFileCount <= 1) {
+        sprintf(cxFileName, "%s", options.cxFileLocation);
     } else {
-        sprintf(cxrefFileName, "%s%s", options.cxrefsLocation, REFERENCE_FILENAME_FILES);
+        sprintf(cxFileName, "%s%s", options.cxFileLocation, CXFILENAME_FILES);
     }
-    if (editorFileExists(cxrefFileName)) {
-        size_t currentSize = editorFileSize(cxrefFileName);
-        time_t currentModificationTime = editorFileModificationTime(cxrefFileName);
-        if (strcmp(previouslyReadFileName, cxrefFileName) != 0
+    if (editorFileExists(cxFileName)) {
+        size_t currentSize = editorFileSize(cxFileName);
+        time_t currentModificationTime = editorFileModificationTime(cxFileName);
+        if (strcmp(previouslyReadFileName, cxFileName) != 0
             || savedModificationTime != currentModificationTime
             || savedFileSize != currentSize)
         {
-            log_trace(":(re)reading reference file '%s'", cxrefFileName);
-            if (scanReferenceFile(cxrefFileName, "", "", normalScanFunctionSequence)) {
-                strcpy(previouslyReadFileName, cxrefFileName);
+            log_trace(":(re)reading reference file '%s'", cxFileName);
+            if (scanCxFile(cxFileName, "", "", normalScanSequence)) {
+                strcpy(previouslyReadFileName, cxFileName);
                 savedModificationTime = currentModificationTime;
                 savedFileSize = currentSize;
             }
         } else {
-            log_trace(":skipping (re)reading reference file '%s'", cxrefFileName);
+            log_trace(":skipping (re)reading reference file '%s'", cxFileName);
         }
         return true;
     }
@@ -1136,14 +1138,12 @@ bool smartReadReferences(void) {
 }
 
 // symbolName can be NULL !!!!!!
-static void readOneAppropiateReferenceFile(char *symbolName,
-                                           ScanFileFunctionStep  scanFileFunctionTable[]
-) {
-    if (options.cxrefsLocation == NULL)
+static void readOneAppropiateCxFile(char *symbolName, CxFileScanStep *scanSequence) {
+    if (options.cxFileLocation == NULL)
         return;
     cxFile = stdout;
-    if (options.referenceFileCount <= 1) {
-        scanReferenceFile(options.cxrefsLocation, "", "", scanFileFunctionTable);
+    if (options.cxFileCount <= 1) {
+        scanCxFile(options.cxFileLocation, "", "", scanSequence);
     } else {
         if (!smartReadReferences())
             return;
@@ -1151,106 +1151,105 @@ static void readOneAppropiateReferenceFile(char *symbolName,
             return;
 
         /* following must be after reading XFiles*/
-        char fns[MAX_FILE_NAME_SIZE];
+        char partitionNumber[MAX_FILE_NAME_SIZE];
         int i = cxFileHashNumberForSymbol(symbolName);
 
-        sprintf(fns, "%04d", i);
-        assert(strlen(fns) < MAX_FILE_NAME_SIZE-1);
-        scanReferenceFile(options.cxrefsLocation, REFERENCE_FILENAME_PREFIX, fns,
-                          scanFileFunctionTable);
+        sprintf(partitionNumber, "%04d", i);
+        assert(strlen(partitionNumber) < MAX_FILE_NAME_SIZE-1);
+        scanCxFile(options.cxFileLocation, CXFILENAME_PREFIX, partitionNumber, scanSequence);
     }
 }
 
 
-void normalScanReferenceFile(char *name) {
-    scanReferenceFile(options.cxrefsLocation, name, "", normalScanFunctionSequence);
+void normalScanCxFile(char *name) {
+    scanCxFile(options.cxFileLocation, name, "", normalScanSequence);
 }
 
 void fullScanFor(char *symbolName) {
-    readOneAppropiateReferenceFile(symbolName, fullUpdateFunctionSequence);
+    readOneAppropiateCxFile(symbolName, fullUpdateSequence);
 }
 
 void scanReferencesToCreateMenu(char *symbolName){
-    readOneAppropiateReferenceFile(symbolName, symbolMenuCreationFunctionSequence);
+    readOneAppropiateCxFile(symbolName, symbolMenuCreationSequence);
 }
 
 void scanForMacroUsage(char *symbolName) {
-    readOneAppropiateReferenceFile(symbolName, secondPassMacroUsageFunctionSequence);
+    readOneAppropiateCxFile(symbolName, secondPassMacroUsageSequence);
 }
 
 void scanForGlobalUnused(char *cxrefLocation) {
-    scanReferenceFiles(cxrefLocation, globalUnusedDetectionFunctionSequence);
+    scanCxFiles(cxrefLocation, globalUnusedDetectionSequence);
 }
 
 void scanForSearch(char *cxrefLocation) {
-    scanReferenceFiles(cxrefLocation, symbolSearchFunctionSequence);
+    scanCxFiles(cxrefLocation, symbolSearchSequence);
 }
 
 
 /* ************************************************************ */
 
-static ScanFileFunctionStep normalScanFunctionSequence[]={
+static CxFileScanStep normalScanSequence[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
+    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
 
-static ScanFileFunctionStep fullScanFunctionSequence[]={
+static CxFileScanStep fullScanSequence[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_GENERATE_OUTPUT},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEFAULT},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIRST_PASS},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
+    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
 
-static ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
+static CxFileScanStep symbolMenuCreationSequence[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_MENU_CREATION},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_MENU_CREATION},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
+    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
 
-static ScanFileFunctionStep fullUpdateFunctionSequence[]={
+static CxFileScanStep fullUpdateSequence[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolNameForFullUpdateSchedule, CXSF_NOP},
     {CXFI_REFERENCE, scanFunction_ReferenceForFullUpdateSchedule, CXSF_NOP},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
+    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
 
-static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
+static CxFileScanStep secondPassMacroUsageSequence[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_PASS_MACRO_USAGE},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_PASS_MACRO_USAGE},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
+    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
 
-static ScanFileFunctionStep symbolSearchFunctionSequence[]={
+static CxFileScanStep symbolSearchSequence[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
+    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, SEARCH_SYMBOL},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIRST_PASS},
     {-1,NULL, 0},
 };
 
-static ScanFileFunctionStep globalUnusedDetectionFunctionSequence[]={
+static CxFileScanStep globalUnusedDetectionSequence[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
+    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEAD_CODE_DETECTION},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_DEAD_CODE_DETECTION},

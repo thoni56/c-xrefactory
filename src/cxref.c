@@ -1912,7 +1912,7 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
     rstack = sessionData.browsingStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss == NULL);
-    scanForGlobalUnused(options.cxrefsLocation);
+    scanForGlobalUnused(options.cxFileLocation);
     createSelectionMenuForOperation(options.serverOperation);
     assert(options.xref2);
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
@@ -2022,7 +2022,7 @@ void answerEditAction(void) {
         pushEmptySession(&sessionData.retrievingStack);
         sessionData.retrievingStack.top->callerPosition = givenPosition;
 
-        scanForSearch(options.cxrefsLocation);
+        scanForSearch(options.cxFileLocation);
         printTagSearchResults();
         break;
     }
@@ -2375,13 +2375,13 @@ void olSetCallerPosition(Position position) {
 void generateReferences(void) {
     static bool everUpdated = false;
 
-    if (options.cxrefsLocation == NULL)
+    if (options.cxFileLocation == NULL)
         return;
     if (!everUpdated && options.update == UPDATE_DEFAULT) {
         /* Then we don't update, but generate from scratch */
-        writeReferenceFile(false, options.cxrefsLocation);
+        writeCxFile(false, options.cxFileLocation);
         everUpdated = true;
     } else {
-        writeReferenceFile(true, options.cxrefsLocation);
+        writeCxFile(true, options.cxFileLocation);
     }
 }

@@ -71,7 +71,7 @@ void readOptionsFromCommand(char *command, int *outArgc, char ***outArgv, char *
   mock(command, outArgc, outArgv, sectionFile);
 }
 
-bool currentReferenceFileCountMatches(int foundReferenceFileCount) {
+bool currentCxFileCountMatches(int foundReferenceFileCount) {
   return (bool)mock(foundReferenceFileCount);
 }
 

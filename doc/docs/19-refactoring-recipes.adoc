@@ -193,7 +193,7 @@ When the cursor is on an `#include` directive. The file it references will be th
 **Output:**
 
 - New header file
-- All `#include`s updated
+- All `#include` directives updated
 
 ---
 

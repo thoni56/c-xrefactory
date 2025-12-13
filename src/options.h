@@ -88,7 +88,7 @@ typedef struct options {
     bool exactPositionResolve;
     char *outputFileName;
     StringList *includeDirs;
-    char *cxrefsLocation;
+    char *cxFileLocation;
 
     char *checkFileMovedFrom;
     char *checkFileMovedTo;
@@ -129,7 +129,7 @@ typedef struct options {
     bool errors;
     UpdateType update;
     bool updateOnlyModifiedFiles;
-    int referenceFileCount;
+    int cxFileCount;
 
     int variablesCount;
     Variable variables[MAX_SET_GET_OPTIONS];
@@ -174,7 +174,7 @@ extern bool readOptionsFromFileIntoArgs(FILE *ff, int *nargc, char ***nargv,
 extern void readOptionsFromFile(char *name, int *nargc, char ***nargv, char *project, char *foundProjectName);
 extern void readOptionsFromCommand(char *command, int *nargc, char ***nargv, char *sectionFile);
 extern void getPipedOptions(int *outNargc,char ***outNargv);
-extern bool currentReferenceFileCountMatches(int newRefNum);
+extern bool currentCxFileCountMatches(int newRefNum);
 
 extern void searchStandardOptionsFileAndProjectForFile(char *filename, char *optionsFilename,
                                char *foundProjectName);

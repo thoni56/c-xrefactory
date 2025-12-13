@@ -2,7 +2,7 @@
 #include "cxfile.h"
 #include <cgreen/mocks.h>
 
-void normalScanReferenceFile(char *name) {
+void normalScanCxFile(char *name) {
     mock(name);
 }
 
@@ -40,7 +40,7 @@ int cxFileHashNumberForSymbol(char *sym) {
   return (int) mock(sym);
 }
 
-void writeReferenceFile(bool updating, char *filename) {
+void writeCxFile(bool updating, char *filename) {
   mock(updating, filename);
 }
 
