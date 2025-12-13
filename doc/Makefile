@@ -24,7 +24,7 @@ view: diagrams
 	@echo "Starting Structurizr Lite on http://localhost:8080"
 	@echo "Press Ctrl+C when done, then run 'make stop' to clean up"
 	docker pull structurizr/lite
-	docker run --rm -d -p 8080:8080 -v $(PWD):/usr/local/structurizr structurizr/lite
+	docker run --rm -d -p 8080:8080 -v $(CURDIR):/usr/local/structurizr structurizr/lite
 	@echo ""
 	@echo "Structurizr Lite is running at http://localhost:8080"
 	@echo "Run 'make stop' to stop the container"
@@ -76,7 +76,7 @@ diagrams/%.svg: diagrams/src/%.puml
 	@echo "Generating $@ from $<"
 	@mkdir -p diagrams
 	docker run --rm \
-		-v $(PWD):/work \
+		-v $(CURDIR):/work \
 		-w /work \
 		plantuml/plantuml \
 		-tsvg -o diagrams $<
@@ -98,7 +98,7 @@ exported-structurizr-diagrams:
 	@echo "Exporting Structurizr diagrams to PlantUML..."
 	docker pull structurizr/cli:latest
 	docker run --rm \
-		-v $(PWD):/usr/local/structurizr \
+		-v $(CURDIR):/usr/local/structurizr \
 		structurizr/cli \
 		export -workspace workspace.dsl -format plantuml -output diagrams
 	@echo "Exported diagrams to diagrams/structurizr-*.puml"
