@@ -52,52 +52,53 @@ void freePoppedSessionStackEntries(SessionStack *stack) {
     }
 }
 
-static SessionStackEntry *pushEmptyReference(SessionStack *stack) {
-    SessionStackEntry *res;
+static SessionStackEntry *pushEntryWithNoReferences(SessionStack *stack) {
+    SessionStackEntry *entry;
 
-    res  = malloc(sizeof(SessionStackEntry));
-    *res = (SessionStackEntry){.references      = NULL,
-                            .current          = NULL,
-                            .operation       = options.serverOperation,
-                            .callerPosition  = noPosition,
-                            .completions     = NULL,
-                            .hkSelectedSym   = NULL,
-                            .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL,
-                            .refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
-                            .previous        = stack->top};
-    return res;
+    entry  = malloc(sizeof(SessionStackEntry));
+    *entry = (SessionStackEntry){
+        .references      = NULL,
+        .current         = NULL,
+        .operation       = options.serverOperation,
+        .callerPosition  = noPosition,
+        .completions     = NULL,
+        .hkSelectedSym   = NULL,
+        .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL,
+        .refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
+        .previous        = stack->top};
+    return entry;
 }
 
 void freeOldCompletionStackEntries(SessionStack *stack) {
-    SessionStackEntry **stackEntry;
+    SessionStackEntry **entry;
 
-    stackEntry = &stack->top;
-    if (*stackEntry == NULL)
+    entry = &stack->top;
+    if (*entry == NULL)
         return;
     for (int i=1; i<MAX_COMPLETIONS_HISTORY_DEEP; i++) {
-        stackEntry = &(*stackEntry)->previous;
-        if (*stackEntry == NULL)
+        entry = &(*entry)->previous;
+        if (*entry == NULL)
             return;
     }
-    deleteSessionStackEntry(stack, stackEntry);
+    deleteSessionStackEntry(stack, entry);
 }
 
 void pushEmptySession(SessionStack *stack) {
-    SessionStackEntry *references;
+    SessionStackEntry *entry;
     freePoppedSessionStackEntries(stack);
-    references = pushEmptyReference(stack);
-    stack->top = stack->root = references;
+    entry = pushEntryWithNoReferences(stack);
+    stack->top = stack->root = entry;
 }
 
 
 SessionStackEntry *getNextTopStackItem(SessionStack *stack) {
-    SessionStackEntry *thisReferences, *nextReferences;
-    nextReferences = NULL;
-    thisReferences = stack->root;
-    while (thisReferences!=NULL && thisReferences!=stack->top) {
-        nextReferences = thisReferences;
-        thisReferences = thisReferences->previous;
+    SessionStackEntry *this, *next;
+    next = NULL;
+    this = stack->root;
+    while (this!=NULL && this!=stack->top) {
+        next = this;
+        this = this->previous;
     }
-    assert(thisReferences==stack->top);
-    return nextReferences;
+    assert(this==stack->top);
+    return next;
 }
