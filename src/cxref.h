@@ -9,6 +9,22 @@
 #include "usage.h"
 
 
+enum menuFilterLevels {
+    MenuFilterAllWithName        = 0,  // Protocol value sent from Emacs
+    MenuFilterExactMatch         = 1,
+    MenuFilterExactMatchSameFile = 2,
+    MAX_MENU_FILTER_LEVEL,
+};
+
+enum refsFilterLevels {
+    ReferenceFilterAll                    = 0,  // Protocol value sent from Emacs
+    ReferenceFilterExcludeReads           = 1,  // also toplevel usage (USAGE_TOP_LEVEL_USED)
+    ReferenceFilterExcludeReadsAndAddress = 2,  // also extend usage (USAGE_EXTEND_USAGE)
+    ReferenceFilterDefinitionsOnly        = 3,
+    MAX_REF_LIST_FILTER_LEVEL,
+};
+
+
 extern bool isSameReferenceableItem(ReferenceableItem *p1, ReferenceableItem *p2);
 extern bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2);
 extern void recomputeSelectedReferenceable(SessionStackEntry *refs );

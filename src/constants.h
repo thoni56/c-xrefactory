@@ -102,9 +102,6 @@
 
 #define COMPACT_TAGS_AFTER_SEARCH_COUNT 10000	/* compact tag search results after n items*/
 
-#define DEFAULT_MENU_FILTER_LEVEL MenuFilterExactMatchSameFile
-#define DEFAULT_REFS_FILTER_LEVEL ReferenceFilterAll
-
 #define TMP_BUFF_SIZE   50000
 
 #define EXTRACT_REFERENCE_ARG_STRING "&"

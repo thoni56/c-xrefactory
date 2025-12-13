@@ -3,17 +3,20 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "proto.h"
-#include "completion.h"
 #include "browsermenu.h"
+#include "completion.h"
+#include "cxref.h"
+#include "globals.h"
 #include "options.h"
 #include "position.h"
-#include "globals.h"
 #include "session.h"
 
 
-/* Generic stack operations for SessionStack and its semantic aliases
- * (BrowserStack, CompletionStack, RetrieverStack).
+#define DEFAULT_MENU_FILTER_LEVEL MenuFilterExactMatchSameFile
+#define DEFAULT_REFS_FILTER_LEVEL ReferenceFilterAll
+
+
+/* Generic stack operations for SessionStack and its semantic aliases.
  *
  * Functions here operate on the stack structure itself and don't depend
  * on the semantic context (browser navigation vs completion vs retrieval).
