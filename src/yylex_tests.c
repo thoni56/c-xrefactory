@@ -5,7 +5,8 @@
 #include "lexembuffer.h"
 #include "memory.h"
 #include "yylex.h"
-/* Declare semi-private functions */
+
+/* Declare protected functions for testing */
 void processDefineDirective(bool hasArguments);
 void processLineDirective(void);
 void processIncludeDirective(Position includePosition, bool include_next);
@@ -53,7 +54,7 @@ BeforeEach(Yylex) {
 
     initSymbolTable(100);
 
-    memoryInit(&ppmMemory, "", NULL, SIZE_ppmMemory);
+    memoryInit(&ppmMemory, "", NULL, PreprocessorMemorySize);
 
     always_expect(initCharacterBuffer);
 }

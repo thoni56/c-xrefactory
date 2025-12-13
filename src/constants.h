@@ -15,12 +15,11 @@
 
 #define MacroArgumentsMemorySize  20000	/* macro args name in define */
 #define MacroBodyMemorySize     2000000	/* macro expansions */
-#define SIZE_optMemory           150000	/* memory used to store options strings */
-#define SIZE_stackMemory      100000000	/* parsing stack memory */
-#define SIZE_tmpWorkMemory       400000	/* additional tmp parsing stack memory */
+#define OptionsMemorySize        150000	/* memory used to store options strings */
+#define StackMemorySize      100000000	/* parsing stack memory */
 #define FileTableMemorySize     8000000	/* memory for file (and class) table */
 
-#define SIZE_ppmMemory         30000000	/* macro definitions */
+#define PreprocessorMemorySize 30000000	/* macro definitions */
 #define CX_MEMORY_INITIAL_SIZE 80000000
 #define CX_MEMORY_CHUNK_SIZE	2000000
                                         /* memory for cross references, can be

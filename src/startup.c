@@ -627,7 +627,7 @@ void totalTaskEntryInitialisations(void) {
     // Memory
     initCxMemory(CX_MEMORY_INITIAL_SIZE);
 
-    memoryInit(&presetOptions.memory, "preset options memory", NULL, SIZE_optMemory);
+    memoryInit(&presetOptions.memory, "preset options memory", NULL, OptionsMemorySize);
 
     // Inject error handling functions
     setFatalErrorHandlerForMemory(fatalError);
@@ -671,7 +671,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
     initReferenceableItemTable(MAX_REFS_HASHTABLE_ENTRIES);
 
-    memoryInit(&ppmMemory, "pre-processor macros", NULL, SIZE_ppmMemory);
+    memoryInit(&ppmMemory, "pre-processor macros", NULL, PreprocessorMemorySize);
     allocateMacroArgumentTable(MAX_MACRO_ARGS);
     initOuterCodeBlock();
 

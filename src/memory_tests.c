@@ -69,7 +69,7 @@ Ensure(Memory, can_allocate_dynamic_memory_with_overflow_handler) {
     char  *character = NULL;
     Memory memory = {};
 
-    memoryInit(&memory, "memory", overflowHandler, SIZE_optMemory);
+    memoryInit(&memory, "memory", overflowHandler, OptionsMemorySize);
     character = memoryAlloc(&memory, sizeof(char));
     assert_that(character, is_not_null);
 }

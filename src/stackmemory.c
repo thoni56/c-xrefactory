@@ -24,7 +24,7 @@ void setErrorHandlerForStackMemory(void (*function)(int code, char *message)) {
 }
 
 /* Stack memory - in this we allocate blocks which have separate free indices */
-char stackMemory[SIZE_stackMemory];   /* Allocation using stackMemoryAlloc() et.al */
+char stackMemory[StackMemorySize];   /* Allocation using stackMemoryAlloc() et.al */
 
 
 static void frameDump(void) {
@@ -89,7 +89,7 @@ void *stackMemoryAlloc(int size) {
     assert(currentBlock);
     mem_trace("stackMemoryAlloc: allocating %d bytes", size);
     i = currentBlock->firstFreeIndex;
-    if (i+size < SIZE_stackMemory) {
+    if (i+size < StackMemorySize) {
         currentBlock->firstFreeIndex = i+size;
         if (currentBlock->firstFreeIndex > stackMemoryMax)
             stackMemoryMax = currentBlock->firstFreeIndex;
@@ -149,7 +149,7 @@ bool isMemoryFromPreviousBlock(void *address) {
 
 bool isFreedStackMemory(void *ptr) {
     return ((char*)ptr >= stackMemory + currentBlock->firstFreeIndex &&
-            (char*)ptr < stackMemory + SIZE_stackMemory);
+            (char*)ptr < stackMemory + StackMemorySize);
 }
 
 void stackMemoryStatistics(void) {
