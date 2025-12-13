@@ -5,7 +5,7 @@
 
 #include "constants.h"
 #include "referenceableitem.h"
-#include "sessionstack.h"
+#include "session.h"
 #include "visibility.h"
 #include "characterreader.h"
 #include "commons.h"

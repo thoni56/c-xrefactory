@@ -1,8 +1,6 @@
 #ifndef SESSION_H_INCLUDED
 #define SESSION_H_INCLUDED
 
-#include "sessionstack.h"
-
 #include "position.h"
 #include "server.h"
 
@@ -27,6 +25,28 @@ typedef struct SessionStackEntry {
     struct completion     *completions;    /* completions list for OLO_COMPLETION */
 } SessionStackEntry;
 
+typedef struct SessionStack {
+    SessionStackEntry *top;
+    SessionStackEntry *root;
+} SessionStack;
+
+/* Type aliases for semantic clarity - each stack uses the same structure
+ * but for different purposes (different fields of OlcxReferences are used).
+ * All stacks use generic fields: previous, callerPosition, operation, accessTime.
+ *
+ * BrowsingStack (code navigation, references, refactoring):
+ *   - references, current, hkSelectedSym, symbolsMenu, menuFilterLevel, refsFilterLevel
+ *
+ * CompletionStack (code completion):
+ *   - completions
+ *
+ * RetrievingStack (tag search):
+ *   - completions
+ */
+typedef SessionStack BrowsingStack;
+typedef SessionStack CompletionStack;
+typedef SessionStack RetrievingStack;
+
 typedef struct SessionData {
     BrowsingStack	browsingStack;
     CompletionStack	completionStack;
@@ -35,5 +55,13 @@ typedef struct SessionData {
 
 
 extern SessionData sessionData;
+
+
+/* Generic stack operations */
+extern void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **referencesP);
+extern void freePoppedSessionStackEntries(SessionStack *stack);
+extern SessionStackEntry *getNextTopStackItem(SessionStack *stack);
+extern void freeOldCompletionStackEntries(SessionStack *stack);
+extern void pushEmptySession(SessionStack *stack);
 
 #endif

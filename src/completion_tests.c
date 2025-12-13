@@ -10,7 +10,7 @@
 #include "filetable.mock"       /* For NO_FILE_NUMBER */
 #include "options.mock"
 #include "reference.mock"
-#include "referencesstack.mock"
+#include "session.mock"
 #include "symbol.mock"
 
 

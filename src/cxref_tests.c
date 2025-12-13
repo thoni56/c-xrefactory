@@ -26,8 +26,8 @@
 #include "refactorings.mock"
 #include "refactory.mock"
 #include "reference.mock"
-#include "referencesstack.mock"
 #include "referenceableitemtable.mock"
+#include "session.mock"
 #include "symbol.mock"
 #include "yylex.mock"
 

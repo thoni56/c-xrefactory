@@ -16,7 +16,7 @@
 #include "options.mock"
 #include "parsers.mock"
 #include "ppc.mock"
-#include "referencesstack.mock"
+#include "session.mock"
 #include "referenceableitemtable.mock"
 #include "semact.mock"
 #include "symbol.mock"

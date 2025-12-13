@@ -7,6 +7,7 @@
 #include "browsermenu.mock"
 #include "commons.mock"
 #include "complete.mock"
+#include "completion.mock"
 #include "cxfile.mock"
 #include "cxref.mock"
 #include "editor.mock"
@@ -21,6 +22,7 @@
 #include "progress.mock"
 #include "reference.mock"
 #include "referenceableitemtable.mock"
+#include "session.mock"
 #include "server.mock"
 #include "xref.mock"
 

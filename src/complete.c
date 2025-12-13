@@ -14,7 +14,7 @@
 #include "options.h"
 #include "ppc.h"
 #include "protocol.h"
-#include "sessionstack.h"
+#include "session.h"
 #include "referenceableitemtable.h"
 #include "semact.h"
 #include "stackmemory.h"
