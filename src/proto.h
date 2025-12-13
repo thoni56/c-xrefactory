@@ -111,17 +111,17 @@ enum memoryClass {
 };
 
 enum menuFilterLevels {
-    FilterAllOfSameName,
-    FilterSameProfile,
-    FilterSameProfileRelatedClass,
+    MenuFilterAllWithName        = 0,  // Protocol value sent from Emacs
+    MenuFilterExactMatch         = 1,
+    MenuFilterExactMatchSameFile = 2,
     MAX_MENU_FILTER_LEVEL,
 };
 
 enum refsFilterLevels {
-    RFilterAll,
-    RFilterAddrVal, // also toplevel usage
-    RFilterLVal,    // also extend usage
-    RFilterDefinitions,
+    ReferenceFilterAll                    = 0,  // Protocol value sent from Emacs
+    ReferenceFilterExcludeReads           = 1,  // also toplevel usage (USAGE_TOP_LEVEL_USED)
+    ReferenceFilterExcludeReadsAndAddress = 2,  // also extend usage (USAGE_EXTEND_USAGE)
+    ReferenceFilterDefinitionsOnly        = 3,
     MAX_REF_LIST_FILTER_LEVEL,
 };
 
