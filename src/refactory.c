@@ -16,7 +16,7 @@
 #include "globals.h"
 #include "head.h"
 #include "list.h"
-#include "main.h"
+#include "startup.h"
 #include "misc.h"
 #include "options.h"
 #include "ppc.h"

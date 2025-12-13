@@ -22,6 +22,8 @@
 #include "options.mock"
 #include "reference.mock"
 #include "referenceableitemtable.mock"
+#include "session.mock"
+#include "startup.mock"
 
 
 Describe(CxFile);

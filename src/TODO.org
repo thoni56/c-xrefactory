@@ -203,18 +203,8 @@ There are both "-opt=value" and "-opt value" format options
    extracted function. This should probably trigger "structure error".
 ** TODO Bug: translates a bool to int when completing arguments (probably elsewhere also)
 * TODO Separate the options into sections and move them to separate structures
-  The S_options structure is used to save or possibly create new sets, when
+  The options structure is used to save or possibly create new sets, when
   refactoring. Then it should only contain what's needed for that.
-* TODO Make all modules independent on main
-** TODO Make refactory.c independent of main
-   This probably requires a lot more understanding of refactory.c and why
-   it is structured the way it is, it seems to be calling on itself and
-   main processing. Also refactory task is always performed in a separate
-   process, what happens if we specify -refactory as a PPC command?
-** DONE Document why main.h is needed
-** DONE Make commons.c independent of main
-** DONE Make options.c independent of main
-** DONE Make cxref.c independent of main
 * TODO Remove all -olcx commands that are not used by the editor interfaces?
 * TODO Ensure each header file is not dependent on the fact that some other
   header file is included before it. (Could this be done by taking each
@@ -233,6 +223,16 @@ There are both "-opt=value" and "-opt value" format options
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Why does -refactory read the users default .c-xrefrc? And why does -no-stdoptions
   prevent reading explicit -xrefrc options?
+* DONE Make all modules independent on main
+** DONE Make refactory.c independent of main
+   This probably requires a lot more understanding of refactory.c and why
+   it is structured the way it is, it seems to be calling on itself and
+   main processing. Also refactory task is always performed in a separate
+   process, what happens if we specify -refactory as a PPC command?
+** DONE Document why main.h is needed
+** DONE Make commons.c independent of main
+** DONE Make options.c independent of main
+** DONE Make cxref.c independent of main
 * DONE Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
   recognized (list e.g. at
   http://www.c-programming-simple-steps.com/c-keywords.html)

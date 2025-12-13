@@ -12,7 +12,7 @@
 #include "head.h"
 #include "list.h"
 #include "log.h"
-#include "main.h"
+#include "startup.h"
 #include "memory.h"
 #include "misc.h"
 #include "options.h"

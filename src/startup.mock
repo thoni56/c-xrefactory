@@ -1,0 +1,24 @@
+/* -*- c -*-*/
+#include "startup.h"
+#include <cgreen/mocks.h>
+
+void totalTaskEntryInitialisations(void) {
+  mock();
+}
+
+void mainTaskEntryInitialisations(int argc, char **argv) {
+  mock(argc, argv);
+}
+
+bool initializeFileProcessing(bool *firstPass, int argc, char **argv, int nargc, char **nargv,
+                              Language *outLanguage) {
+  return (bool)mock(firstPass, argc, argv, nargc, nargv, outLanguage);
+}
+
+void saveMemoryCheckPoint(void) {
+  mock();
+}
+
+void restoreMemoryCheckPoint(void) {
+  mock();
+}

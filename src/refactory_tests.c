@@ -15,7 +15,6 @@
 #include "editorbuffer.mock"
 #include "filetable.mock"
 #include "globals.mock"
-#include "main.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "ppc.mock"
@@ -24,6 +23,7 @@
 #include "referenceableitemtable.mock"
 #include "session.mock"
 #include "server.mock"
+#include "startup.mock"
 #include "xref.mock"
 
 

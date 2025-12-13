@@ -18,7 +18,6 @@
 #include "filetable.mock"
 #include "globals.mock"
 #include "lexer.mock"
-#include "main.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "parsers.mock"
@@ -28,6 +27,7 @@
 #include "reference.mock"
 #include "referenceableitemtable.mock"
 #include "session.mock"
+#include "startup.mock"
 #include "symbol.mock"
 #include "yylex.mock"
 

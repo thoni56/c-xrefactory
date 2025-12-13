@@ -13,7 +13,6 @@
 #include "filedescriptor.mock"
 #include "filetable.mock"
 #include "globals.mock"
-#include "main.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "parsers.mock"
@@ -21,6 +20,7 @@
 #include "progress.mock"
 #include "referenceableitemtable.mock"
 #include "reference.mock"
+#include "startup.mock"
 #include "yylex.mock"
 
 

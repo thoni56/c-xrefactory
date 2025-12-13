@@ -10,9 +10,7 @@
 #include "options.h"
 #include "server.h"
 #include "session.h"
-
-
-extern void totalTaskEntryInitialisations(void);
+#include "startup.h"
 
 JSON *findDefinition(const char *uri, JSON *position) {
     /* Extract LSP position parameters */

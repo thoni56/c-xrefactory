@@ -11,7 +11,7 @@
 #include "head.h"
 #include "lexer.h"
 #include "log.h"
-#include "main.h"
+#include "startup.h"
 #include "misc.h"
 #include "options.h"
 #include "parsers.h"
