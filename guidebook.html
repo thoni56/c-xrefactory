@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2025-12-02">
+<meta name="author" content="v{VERSION} - Generated 2025-12-13">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-12-02</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-12-13</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -507,12 +507,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_data_structures">10. Data Structures</a>
 <ul class="sectlevel2">
-<li><a href="#_referenceitems_and_references">10.1. ReferenceItems and References</a></li>
-<li><a href="#_symbols_and_references">10.2. Symbols and References</a></li>
+<li><a href="#_referenceableitem_and_reference_core_domain_concepts">10.1. ReferenceableItem and Reference: Core Domain Concepts</a></li>
+<li><a href="#_symbol_parser_symbol_table">10.2. Symbol (Parser Symbol Table)</a></li>
 <li><a href="#_files_and_buffers">10.3. Files and Buffers</a></li>
 <li><a href="#_modes">10.4. Modes</a></li>
 <li><a href="#_options_2">10.5. Options</a></li>
 <li><a href="#_arena_allocators_memory">10.6. Arena Allocators (Memory)</a></li>
+<li><a href="#_preload_mechanism">10.7. Preload Mechanism</a></li>
+<li><a href="#_browser_stack">10.8. Browser Stack</a></li>
+<li><a href="#_browser_menu">10.9. Browser Menu</a></li>
+<li><a href="#_putting_it_all_together_domain_model_summary">10.10. Putting It All Together: Domain Model Summary</a></li>
 </ul>
 </li>
 <li><a href="#_algorithms">11. Algorithms</a>
@@ -552,6 +556,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_risk_management">14.8. Risk Management</a></li>
 <li><a href="#_next_actions">14.9. Next Actions</a></li>
 <li><a href="#_conclusion">14.10. Conclusion</a></li>
+<li><a href="#_related_architecture_decision_records">14.11. Related Architecture Decision Records</a></li>
 </ul>
 </li>
 <li><a href="#_proposed_refactorings">15. Proposed Refactorings</a>
@@ -570,12 +575,23 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_memory_strategies">17.1. Memory strategies</a></li>
 <li><a href="#_trivial_prechecks">17.2. Trivial Prechecks</a></li>
-<li><a href="#_huge_memory">17.3. HUGE Memory</a></li>
-<li><a href="#_bootstrapping">17.4. Bootstrapping</a></li>
-<li><a href="#_fill_macros">17.5. FILL macros</a></li>
-<li><a href="#_caching_module">17.6. Caching Module</a></li>
-<li><a href="#_caching_system_architecture">17.7. Caching System Architecture</a></li>
-<li><a href="#_users">17.8. Users</a></li>
+<li><a href="#_caching_system">17.3. Caching System</a></li>
+<li><a href="#_huge_memory">17.4. HUGE Memory</a></li>
+<li><a href="#_bootstrapping">17.5. Bootstrapping</a></li>
+<li><a href="#_fill_macros">17.6. FILL macros</a></li>
+<li><a href="#_users">17.7. Users</a></li>
+</ul>
+</li>
+<li><a href="#_refactoring_recipes">18. Refactoring Recipes</a>
+<ul class="sectlevel2">
+<li><a href="#_move_type_to_new_file">18.1. Move Type to New File</a></li>
+<li><a href="#_introduce_semantic_type_aliases">18.2. Introduce Semantic Type Aliases</a></li>
+<li><a href="#_rename_included_file">18.3. Rename Included File</a></li>
+<li><a href="#_move_function_to_different_file">18.4. Move Function to Different File</a></li>
+<li><a href="#_turn_include_guard_into_pragma_once">18.5. Turn include guard into pragma once</a></li>
+<li><a href="#_rename_symbol">18.6. Rename Symbol</a></li>
+<li><a href="#_extract_function">18.7. Extract Function</a></li>
+<li><a href="#_reorder_parameters">18.8. Reorder Parameters</a></li>
 </ul>
 </li>
 </ul>
@@ -1485,7 +1501,7 @@ parsers. There are a number of parsers</p>
 <p>Yacc</p>
 </li>
 <li>
-<p>C expressions</p>
+<p>C pre-processor expressions</p>
 </li>
 </ul>
 </div>
@@ -3148,53 +3164,153 @@ value. The ':' indicates that the record is a filename.</p>
 This is a first step towards visualising some of them.</p>
 </div>
 <div class="sect2">
-<h3 id="_referenceitems_and_references">10.1. ReferenceItems and References</h3>
+<h3 id="_referenceableitem_and_reference_core_domain_concepts">10.1. ReferenceableItem and Reference: Core Domain Concepts</h3>
 <div class="paragraph">
-<p>This is a fundamental pair. A <code>ReferenceItem</code> is the symbol that
-occurs at the locations that <code>References</code> indicate.</p>
+<p>These are the fundamental cross-reference data structures that represent the "what" and "where" of code entities.</p>
+</div>
+<div class="sect3">
+<h4 id="_referenceableitem">10.1.1. ReferenceableItem</h4>
+<div class="paragraph">
+<p>A <code>ReferenceableItem</code> represents a <strong>referenceable entity</strong> in the codebase - something that can be referenced from multiple locations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Functions and variables</p>
+</li>
+<li>
+<p>Types (structs, unions, enums, typedefs)</p>
+</li>
+<li>
+<p>Macros</p>
+</li>
+<li>
+<p>Include directives (special case: <code>TypeCppInclude</code>)</p>
+</li>
+<li>
+<p>Yacc non-terminals and rules</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>Each <code>ReferenceItem</code> has a linked list of `Reference`s, each denoting
-one occurence of that "symbol".</p>
+<p>Each <code>ReferenceableItem</code> contains:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>linkName</code> - Fully qualified name (e.g., <code>"MyClass::method"</code>)</p>
+</li>
+<li>
+<p><code>type</code> - What kind of entity (function, variable, type, etc.)</p>
+</li>
+<li>
+<p><code>storage</code>, <code>scope</code>, <code>visibility</code> - Language properties</p>
+</li>
+<li>
+<p><code>includeFile</code> - For <code>TypeCppInclude</code> items, which file is being included</p>
+</li>
+<li>
+<p><code>references</code> - Linked list of all <code>Reference</code> (occurrences) of this entity</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>ReferenceableItems are stored in the <code>referenceableItemTable</code> (hash table) and persisted to <code>.cx</code> files.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reference_occurrence">10.1.2. Reference (Occurrence)</h4>
+<div class="paragraph">
+<p>A <code>Reference</code> represents a <strong>single occurrence</strong> of a ReferenceableItem at a specific location:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>position</code> - File, line, and column where this occurrence appears</p>
+</li>
+<li>
+<p><code>usage</code> - How it&#8217;s used (definition, declaration, usage, etc.)</p>
+</li>
+<li>
+<p><code>next</code> - Pointer to next occurrence in the list</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Each ReferenceableItem maintains a linked list of all its References, allowing you to find every place that entity appears in the codebase.</p>
+</div>
+<div class="paragraph">
+<p><strong>Note:</strong> The term "Reference" in this context means "occurrence" - one specific use of an entity at one location. This is distinct from C++ references or reference semantics.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_symbols_and_references">10.2. Symbols and References</h3>
+<h3 id="_symbol_parser_symbol_table">10.2. Symbol (Parser Symbol Table)</h3>
 <div class="paragraph">
-<p>There is also a structure called <code>Symbol</code>. But, why is there no
-connection between the symbols and the references?!?</p>
+<p>There is also a structure called <code>Symbol</code>. This is <strong>separate from ReferenceableItem</strong> and serves a different purpose:</p>
 </div>
 <div class="paragraph">
-<p>So what are these actually?</p>
+<p><strong><code>Symbol</code></strong> - Parser-level symbol table entry (temporary, exists only during parsing):</p>
 </div>
-<div class="listingblock">
+<div class="ulist">
+<ul>
+<li>
+<p>Used by the C/Yacc parser for semantic analysis</p>
+</li>
+<li>
+<p>Contains type information, position, storage class</p>
+</li>
+<li>
+<p>Lives in <code>symbolTable</code> (hash table) during file parsing</p>
+</li>
+<li>
+<p><strong>Not persisted</strong> - discarded after parsing completes</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong><code>ReferenceableItem</code></strong> - Cross-reference entity (persistent across entire codebase):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Created FROM Symbol properties when a referenceable construct is found</p>
+</li>
+<li>
+<p>Stored in <code>referenceableItemTable</code> and saved to <code>.cx</code> files</p>
+</li>
+<li>
+<p>Accumulates References from all files in the project</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Relationship:</strong> During parsing, when the parser encounters a referenceable symbol (function, variable, etc.), it:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Creates a <code>Symbol</code> in <code>symbolTable</code> for semantic analysis</p>
+</li>
+<li>
+<p>Creates or finds a <code>ReferenceableItem</code> by copying Symbol properties</p>
+</li>
+<li>
+<p>Adds a <code>Reference</code> to that ReferenceableItem&#8217;s list</p>
+</li>
+<li>
+<p>Discards the Symbol when parsing completes</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This separation allows the parser to maintain its own temporary symbol table while building the persistent cross-reference database.</p>
+</div>
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-class Symbol {
-char *name
-Position position
-SymbolBits bits
-}
-Symbol o-- Symbol : next
-
-class SymbolList {
-}
-SymbolList o-- Symbol : symbol
-SymbolList o-- SymbolList : next
-
-class ReferencesItem {
-char *name
-ReferencesBits bits
-}
-ReferencesItem o-- Reference : references
-ReferencesItem o-- ReferencesItem : next
-
-class Reference {
-Usage usage
-Position position
-}
-Reference o-- Reference : next</pre>
+<img src="diagrams/symbol-structures.svg" alt="Symbol structures">
 </div>
+<div class="title">Figure 1. Symbol and Reference Data Structures</div>
 </div>
 </div>
 <div class="sect2">
@@ -3205,28 +3321,11 @@ Reference o-- Reference : next</pre>
 <div class="paragraph">
 <p>Here is an initial attempt at illustrating how some of the file and text/lexem buffers are related.</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-class FileDescriptor {
-}
-FileDescriptor o-- LexemBuffer : lexemBuffer
-
-class LexemBuffer {
-  Lexem[] lexemStream
-}
-LexemBuffer o-- CharacterBuffer : buffer
-
-class CharacterBuffer {
-  char[] : chars
-}
-
-class LexemStream {
-  char* : macroName
-  InputType : inputType
-}
-LexemStream --&gt; LexemBuffer : beginningOfBuffer, endOfBuffer, currentLexemP (into .lexemStream)</pre>
+<img src="diagrams/buffer-structures.svg" alt="Buffer structures">
 </div>
+<div class="title">Figure 2. File Descriptor and Buffer Relationships</div>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -3467,6 +3566,364 @@ ppmReallocc(buffer, ...);     // ❌ FAILS - buffer not at top</code></pre>
 </li>
 <li>
 <p><code>optMemory</code> - Option strings (with special pointer adjustment)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_preload_mechanism">10.7. Preload Mechanism</h3>
+<div class="paragraph">
+<p>The preload mechanism allows the server to work with editor buffer contents that haven&#8217;t been saved to disk. This is essential for providing real-time symbol navigation and completion while the user is actively editing.</p>
+</div>
+<div class="sect3">
+<h4 id="_how_it_works">10.7.1. How It Works</h4>
+<div class="paragraph">
+<p>When an editor buffer is modified but not yet saved:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Editor Action</strong>: The Emacs client writes the current buffer content to a temporary file</p>
+</li>
+<li>
+<p><strong>Server Request</strong>: The client sends a request with <code>-preload &lt;filename&gt; &lt;tmpfile&gt;</code> options</p>
+</li>
+<li>
+<p><strong>Buffer Association</strong>: The server creates an <code>EditorBuffer</code> structure linking the on-disk filename to the temporary file containing the actual content</p>
+</li>
+<li>
+<p><strong>Transparent Parsing</strong>: When the server needs to parse the file, it transparently reads from the temporary file instead of the on-disk file</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_why_its_needed">10.7.2. Why It&#8217;s Needed</h4>
+<div class="paragraph">
+<p>Without preload, the server would only see the last saved version of the file. The preload mechanism ensures that:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Symbol navigation works with the current buffer state</p>
+</li>
+<li>
+<p>Completion suggests symbols based on what&#8217;s actually typed</p>
+</li>
+<li>
+<p>Refactorings operate on the current code, not stale saved content</p>
+</li>
+<li>
+<p>Users get immediate feedback without having to save constantly</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reference_management">10.7.3. Reference Management</h4>
+<div class="paragraph">
+<p>When a file is preloaded, the server must handle reference updates carefully:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Old references</strong> from the previous file version must be removed from the reference table before parsing</p>
+</li>
+<li>
+<p>This prevents duplicate references (one set at old positions, another at new positions)</p>
+</li>
+<li>
+<p>The removal happens in <code>removeReferencesForFile()</code> when preloaded content is detected</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_browser_stack">10.8. Browser Stack</h3>
+<div class="paragraph">
+<p>The browser stack maintains navigation history for symbol references, allowing users to browse through code by pushing symbol lookups and navigating back through previous queries.</p>
+</div>
+<div class="sect3">
+<h4 id="_structure">10.8.1. Structure</h4>
+<div class="paragraph">
+<p>The browser stack is a linked list of <code>OlcxReferences</code> entries, where each entry represents a symbol lookup session:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Stack entries</strong> contain complete symbol information and reference lists for one navigation session</p>
+</li>
+<li>
+<p><strong>Top pointer</strong> indicates the current active entry being navigated</p>
+</li>
+<li>
+<p><strong>Root pointer</strong> tracks the base of the stack (most recent entry still available)</p>
+</li>
+<li>
+<p>Entries between root and top are "future" navigation states that can be returned to via "next"</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_lifecycle">10.8.2. Lifecycle</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Push</strong>: When user requests symbol references (e.g., <code>-olcxpush</code>), a new empty entry is created on the stack</p>
+</li>
+<li>
+<p><strong>Population</strong>: After parsing, the entry is filled with <code>BrowserMenu</code> structures containing references</p>
+</li>
+<li>
+<p><strong>Navigation</strong>: Commands like <code>-olcxnext</code> and <code>-olcxprevious</code> move through references in the current entry</p>
+</li>
+<li>
+<p><strong>Pop</strong>: User can pop back to previous entries to return to earlier symbol lookups</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_relationship_to_parsing">10.8.3. Relationship to Parsing</h4>
+<div class="paragraph">
+<p>The browser stack is populated in two stages:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Parse-time</strong>: References are collected in the referenceableItemTable during file parsing</p>
+</li>
+<li>
+<p><strong>Menu Creation</strong>: ReferenceableItems are wrapped in BrowserMenu structures and added to the browser stack entry via <code>putOnLineLoadedReferences()</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This separation means that browser stack entries can become stale if files are reparsed (e.g., with preloaded content) without refreshing the stack. Users typically need to pop and re-push to get fresh reference lists after edits.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_browser_menu">10.9. Browser Menu</h3>
+<div class="paragraph">
+<p>A browser menu is a navigable list of referenceable items with their occurrences, organized for presentation to the user in Emacs. Multiple items may appear in a single menu when name resolution finds several candidates (e.g., symbols with the same name in different scopes).</p>
+</div>
+<div class="sect3">
+<h4 id="_browsermenu_structure">10.9.1. BrowserMenu Structure</h4>
+<div class="paragraph">
+<p>Each <code>BrowserMenu</code> entry is a menu item wrapping a <code>ReferenceableItem</code> with UI presentation state:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>referenceable</strong>: The embedded <code>ReferenceableItem</code> (the entity being browsed)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Contains <code>linkName</code>, <code>type</code>, <code>storage</code>, <code>scope</code>, <code>visibility</code></p>
+</li>
+<li>
+<p>Contains the list of <code>references</code> (occurrences) for this item</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>selected</strong>: Whether this item is currently selected for operations</p>
+</li>
+<li>
+<p><strong>visible</strong>: Whether this item passes current visibility filters</p>
+</li>
+<li>
+<p><strong>defaultPosition</strong>: The "best" occurrence to jump to (usually the definition)</p>
+</li>
+<li>
+<p><strong>defaultUsage</strong>: The usage type of the default occurrence</p>
+</li>
+<li>
+<p><strong>outOnLine</strong>: Display line number in the Emacs menu</p>
+</li>
+<li>
+<p><strong>markers</strong>: Editor markers for refactoring operations</p>
+</li>
+<li>
+<p><strong>next</strong>: Pointer to next menu item in the list</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Key insight:</strong> <code>BrowserMenu</code> is not just a menu - it&#8217;s a <strong>menu item</strong>. A collection of <code>BrowserMenu</code> items forms the actual menu shown to the user.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_multiple_menu_items_in_one_session">10.9.2. Multiple Menu Items in One Session</h4>
+<div class="paragraph">
+<p>A single browser stack entry (<code>OlcxReferences</code>) can contain multiple <code>BrowserMenu</code> items:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>hkSelectedSym</strong>: Menu items that matched at the cursor position (after disambiguation)</p>
+</li>
+<li>
+<p><strong>symbolsMenu</strong>: Complete menu including related items (same name, similar signatures)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This allows users to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>See all candidates when a symbol is ambiguous</p>
+</li>
+<li>
+<p>Navigate between related definitions (different scopes, include files)</p>
+</li>
+<li>
+<p>Select specific items for refactoring operations</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_menu_population">10.9.3. Menu Population</h4>
+<div class="paragraph">
+<p>Browser menus are populated by scanning the referenceableItemTable:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Symbol lookup</strong>: Find all <code>ReferenceableItem</code> entries matching the requested symbol</p>
+</li>
+<li>
+<p><strong>Menu item creation</strong>: Wrap each matching item in a <code>BrowserMenu</code> structure</p>
+</li>
+<li>
+<p><strong>Reference collection</strong>: References are already in the ReferenceableItem</p>
+</li>
+<li>
+<p><strong>Sorting and filtering</strong>: Order items by relevance and apply visibility filters</p>
+</li>
+<li>
+<p><strong>Selection</strong>: Mark items that best match the cursor context (e.g., same file)</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_putting_it_all_together_domain_model_summary">10.10. Putting It All Together: Domain Model Summary</h3>
+<div class="paragraph">
+<p>Understanding the complete flow from parsing to browsing:</p>
+</div>
+<div class="sect3">
+<h4 id="_during_parsing_building_the_cross_reference_database">10.10.1. During Parsing (Building the Cross-Reference Database)</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Parser creates Symbols</strong>: As the C/Yacc parser processes source code, it creates <code>Symbol</code> entries in <code>symbolTable</code> for semantic analysis</p>
+</li>
+<li>
+<p><strong>ReferenceableItems are created/found</strong>: When encountering referenceable constructs (functions, variables, types, etc.):</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Create a <code>ReferenceableItem</code> from Symbol properties</p>
+</li>
+<li>
+<p>Check if it already exists in <code>referenceableItemTable</code></p>
+</li>
+<li>
+<p>If new, add it to the table; if exists, reuse the existing one</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>References are recorded</strong>: Add a <code>Reference</code> (occurrence) to the ReferenceableItem&#8217;s list, recording position and usage</p>
+</li>
+<li>
+<p><strong>Symbols are discarded</strong>: After parsing completes, the <code>symbolTable</code> is cleared (Symbols are temporary)</p>
+</li>
+<li>
+<p><strong>Database is persisted</strong>: ReferenceableItems and their References are saved to <code>.cx</code> files</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Result:</strong> A persistent database mapping each entity (ReferenceableItem) to all its occurrences (References) across the entire codebase.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_during_browsing_interactive_navigation">10.10.2. During Browsing (Interactive Navigation)</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>User requests symbol info</strong>: User places cursor on a symbol and invokes a command (e.g., "push to symbol")</p>
+</li>
+<li>
+<p><strong>Symbol lookup</strong>: Server finds matching ReferenceableItem(s) in <code>referenceableItemTable</code></p>
+</li>
+<li>
+<p><strong>BrowserMenu creation</strong>: Each matching ReferenceableItem is wrapped in a <code>BrowserMenu</code> structure</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Adds UI state (selected, visible, display position)</p>
+</li>
+<li>
+<p>Marks best-fit match (e.g., same file as cursor)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Stack push</strong>: BrowserMenu items are added to the browser stack (<code>OlcxReferences</code> entry)</p>
+</li>
+<li>
+<p><strong>Display to user</strong>: Menu sent to Emacs showing all matching items and their occurrences</p>
+</li>
+<li>
+<p><strong>Navigation</strong>: User can browse through references, select items, invoke refactorings</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Result:</strong> Interactive navigation through the cross-reference database with selection and filtering.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_key_relationships">10.10.3. Key Relationships</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Symbol (parser)
+    ↓ (creates during parsing)
+ReferenceableItem (persistent entity)
+    ├─→ references: Reference* (list of occurrences)
+    └─→ stored in: referenceableItemTable
+         ↓ (wrapped for browsing)
+      BrowserMenu (UI wrapper)
+         └─→ stored in: OlcxReferences.symbolsMenu (browser stack)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This architecture separates concerns:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Parser symbols</strong> - Temporary, for semantic analysis</p>
+</li>
+<li>
+<p><strong>Cross-reference database</strong> - Persistent, for finding all uses</p>
+</li>
+<li>
+<p><strong>Browser menus</strong> - Presentation layer, for user interaction</p>
 </li>
 </ul>
 </div>
@@ -4430,6 +4887,21 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <p><strong>Diagnostic Additions</strong>: Added nesting level and stack index tracking in <code>src/xref.c</code> to monitor memory usage patterns and detect unbalanced block nesting.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_caching_system_removal">14.2.3. Caching System Removal</h4>
+<div class="paragraph">
+<p><strong>Decision</strong>: Removed the complex lexem stream caching mechanism to enable architectural refactoring.</p>
+</div>
+<div class="paragraph">
+<p><strong>Impact</strong>: Performance regression for large multi-file parsing (6.4× slowdown on test_ffmpeg/test_systemd), but enables critical modernization work.</p>
+</div>
+<div class="paragraph">
+<p><strong>Rationale</strong>: The ~300 lines of cache code were deeply intertwined with parsing and memory management, blocking refactoring efforts. Removal provides clearer code structure at the cost of temporary performance regression.</p>
+</div>
+<div class="paragraph">
+<p><strong>See</strong>: <a href="../adr/0012-remove-lexem-stream-caching.md">ADR-0012: Remove Lexem Stream Caching</a> for detailed rationale, trade-offs, and future optimization strategies.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_short_term_goals_next_3_6_months">14.3. Short-term Goals (Next 3-6 Months)</h3>
@@ -4624,94 +5096,134 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_3_unified_symbol_database_architecture">14.4.3. 3. Unified Symbol Database Architecture</h4>
+<h4 id="_3_header_re_parsing_optimization">14.4.3. 3. Header Re-parsing Optimization</h4>
 <div class="paragraph">
-<p><strong>Reference</strong>: <a href="16-proposed-refactorings.html#unified-symbol-database">Proposed Refactorings - Unified Symbol Database Architecture</a></p>
+<p><strong>Priority</strong>: MEDIUM (Addresses caching removal performance regression)</p>
+</div>
+<div class="paragraph">
+<p><strong>Problem</strong>: After removing the lexem stream cache, each source file re-parses all its included headers. For projects like ffmpeg with 2616 files including ~30-50 common headers each, this creates 78,000-130,000 redundant parsing operations.</p>
+</div>
+<div class="paragraph">
+<p><strong>Proposed Solutions</strong> (in order of implementation):</p>
+</div>
+<div class="paragraph">
+<p><strong>Phase 1: Incremental <code>-create</code> Mode</strong></p>
+</div>
+<div class="paragraph">
+<p>Make <code>-create</code> operations incremental by default:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">c-xref -create
+  → Check .cx database for each file
+  → Only parse files that are:
+     - Not in database, OR
+     - Modified since last parse (mtime check)
+  → Significantly faster for iterative development</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Impact</strong>:
+* Second and subsequent <code>-create</code> runs become near-instant if no files changed
+* Leverages existing file modification tracking (<code>updateFileModificationTracking()</code>)
+* No architectural changes needed - just skip parsing if DB is current
+* Remains fully compatible with existing workflows</p>
+</div>
+<div class="paragraph">
+<p><strong>Estimated Effort</strong>: 1-2 weeks</p>
+</div>
+<div class="paragraph">
+<p><strong>Phase 2: Preprocessor Dependency Caching</strong></p>
+</div>
+<div class="paragraph">
+<p>Cache the <strong>include graph</strong> (which files include which headers) separately from parse results:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Lightweight structure - much smaller than full parse cache
+typedef struct {
+    int fileNumber;
+    int includeCount;
+    int includedFiles[]; // Array of file numbers
+    time_t lastChecked;
+} IncludeDependencyCache;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Benefits</strong>:
+* Fast closure computation without re-preprocessing
+* Track which files need reparsing when a header changes
+* Much simpler than full lexem stream caching
+* ~1KB per source file vs. ~100KB+ for full token cache</p>
+</div>
+<div class="paragraph">
+<p><strong>Estimated Effort</strong>: 3-4 weeks</p>
+</div>
+<div class="paragraph">
+<p><strong>Phase 3: Selective Header Caching</strong> (Future optimization)</p>
+</div>
+<div class="paragraph">
+<p>After architecture is clean, consider lightweight header caching:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Cache <strong>only system headers</strong> (unlikely to change): <code>&lt;stdio.h&gt;</code>, <code>&lt;stdlib.h&gt;</code>, etc.</p>
+</li>
+<li>
+<p>Project headers always re-parsed (change frequently during development)</p>
+</li>
+<li>
+<p>Cache key: (header path, mtime, compiler flags) → tokenized stream</p>
+</li>
+<li>
+<p>Much simpler than removed cache: no cache points, no parser state snapshots</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Design Constraint</strong>: Any future caching must be <strong>optional and transparent</strong>:
+* Must work without cache (on-demand parsing as fallback)
+* Cache is pure optimization, not architectural requirement
+* Clear separation between parsing logic and caching logic</p>
+</div>
+<div class="paragraph">
+<p><strong>Estimated Effort</strong>: 6-8 weeks (only after unified database complete)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_4_unified_symbol_database_architecture">14.4.4. 4. Unified Symbol Database Architecture</h4>
+<div class="paragraph">
+<p><strong>Reference</strong>: <a href="../adr/0014-adopt-on-demand-parsing-architecture.md">ADR-0014: Adopt On-Demand Parsing Architecture</a></p>
 </div>
 <div class="paragraph">
 <p><strong>Priority</strong>: HIGH (Enables true on-demand LSP)</p>
 </div>
 <div class="paragraph">
-<p><strong>Rationale</strong>: Current artificial distinction between "file-based" and "on-demand" modes creates unnecessary complexity. Both Emacs and LSP clients want the same thing: up-to-date symbol information.</p>
+<p><strong>Rationale</strong>: Transition from batch-mode (mandatory <code>-create</code>) to on-demand parsing where operations work immediately. The <code>.cx</code> files become a transparent cache rather than a prerequisite.</p>
 </div>
 <div class="paragraph">
-<p><strong>Key Insight</strong>: The <code>.cx</code> files are a <strong>persistent cache</strong> of analysis results, not a fundamental requirement. c-xrefactory should provide smart on-demand behavior that:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Always ensures information is current using existing dependency tracking</p>
-</li>
-<li>
-<p>Scans incrementally only what&#8217;s needed, when needed</p>
-</li>
-<li>
-<p>Uses <code>.cx</code> files for optimization, not as a prerequisite</p>
-</li>
-</ul>
+<p><strong>Key Benefits</strong>:
+* Zero cold start - no upfront <code>-create</code> required
+* Always up-to-date - automatic modification tracking
+* LSP-native - perfect fit for language server architecture
+* Single code path for Emacs and LSP clients</p>
 </div>
 <div class="paragraph">
-<p><strong>Impact</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Eliminates cold start</strong> - no upfront <code>-create</code> required</p>
-</li>
-<li>
-<p><strong>Single code path</strong> for Emacs and LSP</p>
-</li>
-<li>
-<p><strong>Transparent caching</strong> - <code>.cx</code> files automatically maintained</p>
-</li>
-<li>
-<p><strong>Leverages existing logic</strong> - reuses proven dependency tracking system</p>
-</li>
-</ul>
+<p><strong>Implementation Plan</strong> (see <a href="../adr/0014-adopt-on-demand-parsing-architecture.md">ADR-0014</a> for architecture details):
+* Phase 1: Incremental <code>-create</code> (1-2 weeks)
+* Phase 2: On-demand goto-definition proof-of-concept (3-4 weeks)
+* Phase 3: Extend to all refactorings (6-8 weeks)
+* Phase 4: Deprecate mandatory <code>-create</code> (2 weeks)</p>
 </div>
 <div class="paragraph">
-<p><strong>Architecture</strong>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">Symbol* lookupSymbol(const char* name, Position pos) {
-    // 1. Check if cached information is up-to-date
-    if (symbolInfoIsCurrent(name, pos)) {
-        return getCachedSymbolInfo(name, pos);
-    }
-
-    // 2. Use existing dependency tracking to scan minimal set
-    FileList* filesToScan = calculateDependencyClosure(pos.file);
-    for (FileItem* file : filesToScan) {
-        if (checkFileModifiedTime(file-&gt;fileNumber)) {
-            scanFileAndUpdateCache(file);
-        }
-    }
-
-    // 3. Update persistent cache
-    updateSymbolCache(name, pos);
-    return getSymbolInfo(name, pos);
-}</code></pre>
-</div>
+<p><strong>Estimated Effort</strong>: 12-16 weeks total</p>
 </div>
 <div class="paragraph">
-<p><strong>Estimated Effort</strong>: 8-12 weeks</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Week 1-3: Design unified interface and wrap existing logic</p>
-</li>
-<li>
-<p>Week 4-6: Implement smart dependency-driven on-demand scanning</p>
-</li>
-<li>
-<p>Week 7-9: Optimize caching strategies and incremental updates</p>
-</li>
-<li>
-<p>Week 10-12: Thorough testing, performance tuning, documentation</p>
-</li>
-</ul>
+<p><strong>Accepted Trade-offs</strong>:
+* First operation on huge projects may have latency (1-5s)
+* Limited detection of archaic <code>extern</code> in .c files (see <a href="../adr/0013-limited-extern-detection-in-c-files.md">ADR-0013</a>)
+* These trade-offs enable modern, responsive IDE integration</p>
 </div>
 </div>
 </div>
@@ -4939,12 +5451,12 @@ On textDocument/didChange(file):
 <div class="sect3">
 <h4 id="_deprecation_path">14.6.2. Deprecation Path</h4>
 <div class="paragraph">
-<p>When unified symbol database is complete:</p>
+<p>When unified symbol database is complete (see <a href="../adr/0014-adopt-on-demand-parsing-architecture.md">ADR-0014</a>):</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>-create</code> becomes optional (auto-triggers on first query if needed)</p>
+<p><code>-create</code> becomes optional (auto-triggers on first operation if needed)</p>
 </li>
 <li>
 <p><code>-update</code> becomes automatic (modification time checking)</p>
@@ -4956,6 +5468,9 @@ On textDocument/didChange(file):
 <p>User-visible options remain for backward compatibility but may have no effect</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p><strong>Design Principle</strong>: Zero breaking changes - existing workflows continue to work, new capabilities added transparently.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5216,6 +5731,30 @@ On textDocument/didChange(file):
 <div class="paragraph">
 <p>This transformation from a 1990s batch cross-referencer to a modern, on-demand LSP server is achievable through careful incremental refactoring guided by comprehensive tests.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_related_architecture_decision_records">14.11. Related Architecture Decision Records</h3>
+<div class="paragraph">
+<p>Key architectural decisions supporting this roadmap:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../adr/0012-remove-lexem-stream-caching.md">ADR-0012: Remove Lexem Stream Caching</a> - Documents rationale for accepting 6.4× performance regression to enable refactoring</p>
+</li>
+<li>
+<p><a href="../adr/0013-limited-extern-detection-in-c-files.md">ADR-0013: Limited Extern Detection</a> - Accepted limitation for archaic C patterns</p>
+</li>
+<li>
+<p><a href="../adr/0014-adopt-on-demand-parsing-architecture.md">ADR-0014: On-Demand Parsing</a> - Core architectural shift from batch to on-demand</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>See also:
+* <a href="16-proposed-refactorings.html">Chapter 16: Proposed Refactorings</a> for detailed technical proposals
+* <a href="../adr-process.md">ADR Process Guide</a> for complete decision history and ADR conventions</p>
+</div>
 <hr>
 <div class="admonitionblock note">
 <table>
@@ -5224,7 +5763,7 @@ On textDocument/didChange(file):
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-This roadmap is a living document. As priorities shift and new insights emerge, it will be updated to reflect current understanding and goals. See also <a href="16-proposed-refactorings.html">Chapter 16: Proposed Refactorings</a> for detailed technical proposals.
+This roadmap is a living document. As priorities shift and new insights emerge, it will be updated to reflect current understanding and goals.
 </td>
 </tr>
 </table>
@@ -6888,337 +7427,20 @@ This theory should be checked by looking at the original source of the precheck 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_huge_memory">17.3. HUGE Memory</h3>
-<div class="paragraph">
-<p>Previously a HUGE model was also available (by re-compilation) to
-reach file numbers, lines and columns above 22 bits. But if you have
-more than 4 million lines (or columns!) you should probably do
-something radical before attempting cross referencing and refactoring.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_bootstrapping">17.4. Bootstrapping</h3>
-<div class="sect3">
-<h4 id="_bootstrap_removed">17.4.1. BOOTSTRAP REMOVED!</h4>
-<div class="paragraph">
-<p>Once the FILL-macros was removed, we could move the enum-generation to
-use the actual <code>c-xref</code>. So from now on we build <code>c-xref</code> directly
-from the sources in the repo. Changes to any enums will trigger a
-re-generation of the enumTxt-files but since the enumTxt-files are
-only conversion of enum values to strings any mismatch will not
-prevent compilation, and it would even be possible to a manual
-update. This is a big improvement over the previous situation!</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_fills_removed">17.4.2. FILLs REMOVED!</h4>
-<div class="paragraph">
-<p>As indicated in <a href="#_fill_macros">FILL macros</a> the bootstrapping of FILL-macros has
-finally and fully been removed.</p>
-</div>
-<div class="paragraph">
-<p>Gone is also the <code>compiler_defines.h</code>, which was just removed without
-any obvious adverse effects.  Maybe that will come back and bite me
-when we move to more platforms other than linux and MacOS&#8230;&#8203;</p>
-</div>
-<div class="paragraph">
-<p>Left is, at this point, only the <code>enumTxt</code> generation, so most of the
-text below is kept for historical reasons.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_rationale">17.4.3. Rationale</h4>
-<div class="paragraph">
-<p><em>c-xref</em> uses a load of structures, and lists of them, that need to be
-created and initialized in a lot of places (such as the parsers). To
-make this somewhat manageable, <em>c-xref</em> itself parses the strucures
-and generates macros that can be used to fill them with one call.</p>
-</div>
-<div class="paragraph">
-<p><em>c-xref</em> is also bootstrapped into reading in a lot of predefined
-header files to get system definitions as "preloaded
-definitions".</p>
-</div>
-<div class="paragraph">
-<p>Why this pre-loading was necessary, I don&#8217;t exactly know. It
-might be an optimization, or an idea that was born early and then just
-kept on and on. In any case it creates an extra complexity
-building and maintaining and to the structure of <em>c-xref</em>.</p>
-</div>
-<div class="paragraph">
-<p>So this must be removed, see below.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_mechanism">17.4.4. Mechanism</h4>
-<div class="paragraph">
-<p>The bootstrapping uses <em>c-xref</em>'s own capability to parse C-code and
-parse those structures and spit out filling macros, and some other
-stuff.</p>
-</div>
-<div class="paragraph">
-<p>This is done using options like `-task_regime_generate' which prints a
-lot of data structures on the standard output which is then fed into
-generated versions of <em>strFill</em>, <em>strTdef</em>(no longer exists) and
-<em>enumTxt</em> by the Makefile.</p>
-</div>
-<div class="paragraph">
-<p>The process starts with building a <em>c-xref.bs</em> executable from checked
-in sources. This compile uses a BOOTSTRAP define that causes some
-header files to include pre-generated versions of the generated files
-(currently <em>strFill.bs.h</em> and <em>enumTxt.bs.h</em>) which should work in all
-environments.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-if you change the name of a field in a structure that is subject
-to FILL-generation you will need to manually update the
-<em>strFill.bs.h</em>, but a "make cleaner all" will show you where those are.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>After the <em>c-xref.bs</em> has been built, it is used to generate <em>strFill</em>
-and <em>enumTxt</em> which might include specific structures for the current
-environment.</p>
-</div>
-<div class="paragraph">
-<p>HOWEVER: if FILL macros are used for structures which are different on
-some platforms, say a FILE structure, that FILL macro will have
-difference number of arguments, so I&#8217;m not sure how smart this "smart"
-generation technique actually is.</p>
-</div>
-<div class="paragraph">
-<p>TODO: Investigate alternative approaches to this generate "regime",
-perhaps move to a "class"-oriented structure with initialization
-functions for each "class" instead of macros.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_compiler_defines">17.4.5. Compiler defines</h4>
-<div class="paragraph">
-<p>In <em>options.h</em> there are a number of definitions which somehow are
-sent to the compiler/preprocessor or used so that standard settings
-are the same as if a program will be compiled using the standard
-compiler on the platform. At this point I don&#8217;t know exactly how this
-conversion from C declarations to compile time definitions is done,
-maybe just entered as symbols in one of the many symboltables?</p>
-</div>
-<div class="paragraph">
-<p>Typical examples include "__linux" but also on some platforms things
-like "fpos_t=long".</p>
-</div>
-<div class="paragraph">
-<p>I&#8217;ve implemented a mechanism that uses "gcc -E -mD" to print out and
-catch all compiler defines in <code>compiler_defines.h</code>. This was necessary
-because of such definitions on Darwin which where not in the
-"pre-programmed" ones.</p>
-</div>
-<div class="paragraph">
-<p>TODO?: As this is a more general approach it should possibly
-completely replace the "programmed" ones in <code>options.c</code>?</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_enumtxt_generation_removed">17.4.6. EnumTxt generation REMOVED!</h4>
-<div class="paragraph">
-<p>To be able to print the string values of enums the module generate.c
-(called when regime was RegimeGenerate) could also generate string
-arrays for all enums. By replacing that with some pre-processor magic
-for the few that was actually needed (mostly in log_trace() calls) we
-could do away with that whole "generate" functionality too.</p>
-</div>
-<div class="paragraph">
-<p>(Last commit with enum generation intact is <a href="https://github.com/thoni56/c-xrefactory/commit/aafd7b1f813f2c17c684ea87ac87a0be31cdd4c4" class="bare">https://github.com/thoni56/c-xrefactory/commit/aafd7b1f813f2c17c684ea87ac87a0be31cdd4c4</a>.)</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_enumtxt">17.4.7. enumTxt</h4>
-<div class="paragraph">
-<p>For some cases the string representing the value of an Enum is needed.
-<code>c-xref</code> handles this using the "usual" 'parse code and generate' method.
-The module <code>generate.c</code> does this generation too.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_include_paths">17.4.8. Include paths</h4>
-<div class="paragraph">
-<p>Also in <em>options.h</em> some standard-like include paths are added, but
-there is a better attempt in <em>getAndProcessGccOptions()</em> which uses
-the compiler/preprocessor itself to figure out those paths.</p>
-</div>
-<div class="paragraph">
-<p>TODO?: This is much better and should really be the only way, I think.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_problems">17.4.9. Problems</h4>
-<div class="paragraph">
-<p>Since at bootstrap there must exist FILL-macros with the correct field
-names this strategy is an obstacle to cleaning up the code since every
-field is referenced in the FILL macros. When a field (in a structure
-which <strong>are</strong> filled using the FILL macro) changes name, this will make
-initial compilation impossible until the names of that field is also
-changed in the <code>strFill.bs.h</code> file.</p>
-</div>
-<div class="paragraph">
-<p>One way to handle this is of course to use <code>c-xrefactory</code> itself and
-rename fields. This requires that the project settings also include a
-pass with BOOTSTRAP set, which it does.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_removing">17.4.10. Removing</h4>
-<div class="paragraph">
-<p>I&#8217;ve started removing this step. In TODO.org I keep a hierarchical list
-of the actions to take (in a Mikado kind of style).</p>
-</div>
-<div class="paragraph">
-<p>The basic strategy is to start with structures that no other structure
-depends on. Using the script <code>utils/struct2dot.py</code> you can generate a
-DOT graph that shows those dependencies.</p>
-</div>
-<div class="paragraph">
-<p>Removal can be done in a couple of ways</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>If it&#8217;s a very small structure you can replace a call to a <code>FILL_XXX()</code> macro
-with a <a href="https://gcc.gnu.org/onlinedocs/gcc/Compound-Literals.html">compound literal</a>.</p>
-</li>
-<li>
-<p>A better approach is usually to replace it with a <code>fillXXX()</code> function, or even
-better, with a <code>newXXX()</code>, if it consistently is preceeded with an allocation
-(in the same memory!). To see what fields vary you can grep all such calls, make a
-CSV-file from that, and compare all rows.</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_strtdef_h">17.4.11. strTdef.h</h4>
-<div class="paragraph">
-<p>The <code>strTdef.h</code> was generated using the option <code>-typedefs</code> as a part
-of the old <code>-task_regime_generate</code> strategy and generated typedef
-declarations for all types found in the parsed files.</p>
-</div>
-<div class="paragraph">
-<p>I also think that you could actually merge the struct definition with
-the typedef so that <em>strTdef.h</em> would not be needed. But it seems that
-this design is because the structures in <em>proto.h</em> are not a directed
-graph, so loops makes that impossible. Instead the typedefs are
-included before the structs:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>#include "strTdef.h"</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>struct someNode {
-    S_someOtherNode *this;
-    ...</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>struct someOtherNode {
-    S_someNode *that;
-    ...</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This is now ideomatically solved using the structs themselves:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>struct someNode {
-    struct someOtherNode *this;
-    ...</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>struct someOtherNode {
-    struct someNode *that;
-    ...</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_fill_macros">17.5. FILL macros</h3>
-<div class="paragraph">
-<p><em><strong>The FILL macros are now fully replaced by native functions or some other,</strong></em>
-<em><strong>more refactoring-friendly, mechanism. Yeah!</strong></em>***</p>
-</div>
-<div class="paragraph">
-<p>During bootstrapping a large number of macros named <em>__FILL_xxxx</em> is
-created. The intent is that you can fill a complete structure with one
-call, somewhat like a constructor, but here it&#8217;s used more generally
-every time a complex struct needs to be initialized.</p>
-</div>
-<div class="paragraph">
-<p>There are even <em>_FILLF_xxx</em> macros which allows filling fields in
-sub-structures at the same time.</p>
-</div>
-<div class="paragraph">
-<p>This is, in my mind, another catastrophic hack that makes
-understanding, and refactoring, <code>c-xrefactory</code> such a pain. Not to
-mention the extra bootstrap step.</p>
-</div>
-<div class="paragraph">
-<p>I just discovered the compound literals of C99. And I&#8217;ll experiment
-with replacing some of the FILL macros with compound literals assignments
-instead.</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>FILL_symbolList(memb, pdd, NULL);</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>could become (I think):</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>memb = (SymbolList){.d = pdd, .next = NULL};</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If successful, it would be much better, since we could probably get
-rid of the bootstrap, but primarily it would be more explicit about
-which fields are actually necessary to set.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_caching_module">17.6. Caching Module</h3>
-<div class="paragraph">
-<p><strong>The caching module described below has been archived as it is no longer part of the current architecture.</strong></p>
-</div>
-<div class="paragraph">
-<p>The caching module was part of the memory management strategy when memory was scarce. It allowed
-the system to detect out-of-memory situations, discard, flush and re-use memory during file processing.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_caching_system_architecture">17.7. Caching System Architecture</h3>
+<h3 id="_caching_system">17.3. Caching System</h3>
 <div class="paragraph">
 <p><strong>The caching system described below has been archived as it is no longer part of the current architecture.</strong></p>
 </div>
 <div class="paragraph">
-<p>The c-xrefactory included a sophisticated caching system that enabled incremental parsing by caching parsed input streams, parser state, and file modification tracking. This optimization allowed for faster re-analysis when only portions of source files had changed.</p>
+<p>The c-xrefactory included a sophisticated caching system that enabled
+incremental parsing by caching parsed input streams, parser state, and
+file modification tracking. This optimization allowed for faster
+re-analysis when only portions of source files had changed. It also
+allowed the system to detect out-of-memory situations, discard, flush
+and re-use memory during file processing.</p>
 </div>
 <div class="sect3">
-<h4 id="_core_design_principles">17.7.1. Core Design Principles</h4>
+<h4 id="_core_design_principles">17.3.1. Core Design Principles</h4>
 <div class="paragraph">
 <p><strong>Cache Point Model</strong>: The system placed strategic snapshots of parser state at external definition boundaries (functions, global variables, etc.). When files were re-processed, the system could validate cache integrity, recover from cache points, and resume parsing only from the first changed definition onward.</p>
 </div>
@@ -7237,7 +7459,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_key_components">17.7.2. Key Components</h4>
+<h4 id="_key_components">17.3.2. Key Components</h4>
 <div class="paragraph">
 <p><strong>Cache Point Management</strong> (<code>caching.c</code>):</p>
 </div>
@@ -7287,7 +7509,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_parser_integration">17.7.3. Parser Integration</h4>
+<h4 id="_parser_integration">17.3.3. Parser Integration</h4>
 <div class="paragraph">
 <p><strong>C Parser Integration</strong>: Both C and Yacc parsers placed cache points after each <code>external_definition</code>, but only when not processing include files (<code>includeStack.pointer == 0</code>).</p>
 </div>
@@ -7309,7 +7531,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_system_dependencies">17.7.4. System Dependencies</h4>
+<h4 id="_system_dependencies">17.3.4. System Dependencies</h4>
 <div class="paragraph">
 <p>The caching system was deeply integrated throughout the parsing pipeline:</p>
 </div>
@@ -7366,7 +7588,7 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </table>
 </div>
 <div class="sect3">
-<h4 id="_performance_characteristics_3">17.7.5. Performance Characteristics</h4>
+<h4 id="_performance_characteristics_3">17.3.5. Performance Characteristics</h4>
 <div class="paragraph">
 <p><strong>Cache Hit Scenarios</strong>:</p>
 </div>
@@ -7405,7 +7627,319 @@ the system to detect out-of-memory situations, discard, flush and re-use memory 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_users">17.8. Users</h3>
+<h3 id="_huge_memory">17.4. HUGE Memory</h3>
+<div class="paragraph">
+<p>Previously a HUGE model was also available (by re-compilation) to
+reach file numbers, lines and columns above 22 bits. But if you have
+more than 4 million lines (or columns!) you should probably do
+something radical before attempting cross referencing and refactoring.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bootstrapping">17.5. Bootstrapping</h3>
+<div class="sect3">
+<h4 id="_bootstrap_removed">17.5.1. BOOTSTRAP REMOVED!</h4>
+<div class="paragraph">
+<p>Once the FILL-macros was removed, we could move the enum-generation to
+use the actual <code>c-xref</code>. So from now on we build <code>c-xref</code> directly
+from the sources in the repo. Changes to any enums will trigger a
+re-generation of the enumTxt-files but since the enumTxt-files are
+only conversion of enum values to strings any mismatch will not
+prevent compilation, and it would even be possible to a manual
+update. This is a big improvement over the previous situation!</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_fills_removed">17.5.2. FILLs REMOVED!</h4>
+<div class="paragraph">
+<p>As indicated in <a href="#_fill_macros">FILL macros</a> the bootstrapping of FILL-macros has
+finally and fully been removed.</p>
+</div>
+<div class="paragraph">
+<p>Gone is also the <code>compiler_defines.h</code>, which was just removed without
+any obvious adverse effects.  Maybe that will come back and bite me
+when we move to more platforms other than linux and MacOS&#8230;&#8203;</p>
+</div>
+<div class="paragraph">
+<p>Left is, at this point, only the <code>enumTxt</code> generation, so most of the
+text below is kept for historical reasons.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_rationale">17.5.3. Rationale</h4>
+<div class="paragraph">
+<p><em>c-xref</em> uses a load of structures, and lists of them, that need to be
+created and initialized in a lot of places (such as the parsers). To
+make this somewhat manageable, <em>c-xref</em> itself parses the strucures
+and generates macros that can be used to fill them with one call.</p>
+</div>
+<div class="paragraph">
+<p><em>c-xref</em> is also bootstrapped into reading in a lot of predefined
+header files to get system definitions as "preloaded
+definitions".</p>
+</div>
+<div class="paragraph">
+<p>Why this pre-loading was necessary, I don&#8217;t exactly know. It
+might be an optimization, or an idea that was born early and then just
+kept on and on. In any case it creates an extra complexity
+building and maintaining and to the structure of <em>c-xref</em>.</p>
+</div>
+<div class="paragraph">
+<p>So this must be removed, see below.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_mechanism">17.5.4. Mechanism</h4>
+<div class="paragraph">
+<p>The bootstrapping uses <em>c-xref</em>'s own capability to parse C-code and
+parse those structures and spit out filling macros, and some other
+stuff.</p>
+</div>
+<div class="paragraph">
+<p>This is done using options like `-task_regime_generate' which prints a
+lot of data structures on the standard output which is then fed into
+generated versions of <em>strFill</em>, <em>strTdef</em>(no longer exists) and
+<em>enumTxt</em> by the Makefile.</p>
+</div>
+<div class="paragraph">
+<p>The process starts with building a <em>c-xref.bs</em> executable from checked
+in sources. This compile uses a BOOTSTRAP define that causes some
+header files to include pre-generated versions of the generated files
+(currently <em>strFill.bs.h</em> and <em>enumTxt.bs.h</em>) which should work in all
+environments.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+if you change the name of a field in a structure that is subject
+to FILL-generation you will need to manually update the
+<em>strFill.bs.h</em>, but a "make cleaner all" will show you where those are.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>After the <em>c-xref.bs</em> has been built, it is used to generate <em>strFill</em>
+and <em>enumTxt</em> which might include specific structures for the current
+environment.</p>
+</div>
+<div class="paragraph">
+<p>HOWEVER: if FILL macros are used for structures which are different on
+some platforms, say a FILE structure, that FILL macro will have
+difference number of arguments, so I&#8217;m not sure how smart this "smart"
+generation technique actually is.</p>
+</div>
+<div class="paragraph">
+<p>TODO: Investigate alternative approaches to this generate "regime",
+perhaps move to a "class"-oriented structure with initialization
+functions for each "class" instead of macros.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_compiler_defines">17.5.5. Compiler defines</h4>
+<div class="paragraph">
+<p>In <em>options.h</em> there are a number of definitions which somehow are
+sent to the compiler/preprocessor or used so that standard settings
+are the same as if a program will be compiled using the standard
+compiler on the platform. At this point I don&#8217;t know exactly how this
+conversion from C declarations to compile time definitions is done,
+maybe just entered as symbols in one of the many symboltables?</p>
+</div>
+<div class="paragraph">
+<p>Typical examples include "__linux" but also on some platforms things
+like "fpos_t=long".</p>
+</div>
+<div class="paragraph">
+<p>I&#8217;ve implemented a mechanism that uses "gcc -E -mD" to print out and
+catch all compiler defines in <code>compiler_defines.h</code>. This was necessary
+because of such definitions on Darwin which where not in the
+"pre-programmed" ones.</p>
+</div>
+<div class="paragraph">
+<p>TODO?: As this is a more general approach it should possibly
+completely replace the "programmed" ones in <code>options.c</code>?</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_enumtxt_generation_removed">17.5.6. EnumTxt generation REMOVED!</h4>
+<div class="paragraph">
+<p>To be able to print the string values of enums the module generate.c
+(called when regime was RegimeGenerate) could also generate string
+arrays for all enums. By replacing that with some pre-processor magic
+for the few that was actually needed (mostly in log_trace() calls) we
+could do away with that whole "generate" functionality too.</p>
+</div>
+<div class="paragraph">
+<p>(Last commit with enum generation intact is <a href="https://github.com/thoni56/c-xrefactory/commit/aafd7b1f813f2c17c684ea87ac87a0be31cdd4c4" class="bare">https://github.com/thoni56/c-xrefactory/commit/aafd7b1f813f2c17c684ea87ac87a0be31cdd4c4</a>.)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_enumtxt">17.5.7. enumTxt</h4>
+<div class="paragraph">
+<p>For some cases the string representing the value of an Enum is needed.
+<code>c-xref</code> handles this using the "usual" 'parse code and generate' method.
+The module <code>generate.c</code> does this generation too.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_include_paths">17.5.8. Include paths</h4>
+<div class="paragraph">
+<p>Also in <em>options.h</em> some standard-like include paths are added, but
+there is a better attempt in <em>getAndProcessGccOptions()</em> which uses
+the compiler/preprocessor itself to figure out those paths.</p>
+</div>
+<div class="paragraph">
+<p>TODO?: This is much better and should really be the only way, I think.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_problems">17.5.9. Problems</h4>
+<div class="paragraph">
+<p>Since at bootstrap there must exist FILL-macros with the correct field
+names this strategy is an obstacle to cleaning up the code since every
+field is referenced in the FILL macros. When a field (in a structure
+which <strong>are</strong> filled using the FILL macro) changes name, this will make
+initial compilation impossible until the names of that field is also
+changed in the <code>strFill.bs.h</code> file.</p>
+</div>
+<div class="paragraph">
+<p>One way to handle this is of course to use <code>c-xrefactory</code> itself and
+rename fields. This requires that the project settings also include a
+pass with BOOTSTRAP set, which it does.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_removing">17.5.10. Removing</h4>
+<div class="paragraph">
+<p>I&#8217;ve started removing this step. In TODO.org I keep a hierarchical list
+of the actions to take (in a Mikado kind of style).</p>
+</div>
+<div class="paragraph">
+<p>The basic strategy is to start with structures that no other structure
+depends on. Using the script <code>utils/struct2dot.py</code> you can generate a
+DOT graph that shows those dependencies.</p>
+</div>
+<div class="paragraph">
+<p>Removal can be done in a couple of ways</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>If it&#8217;s a very small structure you can replace a call to a <code>FILL_XXX()</code> macro
+with a <a href="https://gcc.gnu.org/onlinedocs/gcc/Compound-Literals.html">compound literal</a>.</p>
+</li>
+<li>
+<p>A better approach is usually to replace it with a <code>fillXXX()</code> function, or even
+better, with a <code>newXXX()</code>, if it consistently is preceeded with an allocation
+(in the same memory!). To see what fields vary you can grep all such calls, make a
+CSV-file from that, and compare all rows.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_strtdef_h">17.5.11. strTdef.h</h4>
+<div class="paragraph">
+<p>The <code>strTdef.h</code> was generated using the option <code>-typedefs</code> as a part
+of the old <code>-task_regime_generate</code> strategy and generated typedef
+declarations for all types found in the parsed files.</p>
+</div>
+<div class="paragraph">
+<p>I also think that you could actually merge the struct definition with
+the typedef so that <em>strTdef.h</em> would not be needed. But it seems that
+this design is because the structures in <em>proto.h</em> are not a directed
+graph, so loops makes that impossible. Instead the typedefs are
+included before the structs:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>#include "strTdef.h"</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>struct someNode {
+    S_someOtherNode *this;
+    ...</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>struct someOtherNode {
+    S_someNode *that;
+    ...</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is now ideomatically solved using the structs themselves:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>struct someNode {
+    struct someOtherNode *this;
+    ...</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>struct someOtherNode {
+    struct someNode *that;
+    ...</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_fill_macros">17.6. FILL macros</h3>
+<div class="paragraph">
+<p><em><strong>The FILL macros are now fully replaced by native functions or some other,</strong></em>
+<em><strong>more refactoring-friendly, mechanism. Yeah!</strong></em></p>
+</div>
+<div class="paragraph">
+<p>During bootstrapping a large number of macros named <em>__FILL_xxxx</em> is
+created. The intent is that you can fill a complete structure with one
+call, somewhat like a constructor, but here it&#8217;s used more generally
+every time a complex struct needs to be initialized.</p>
+</div>
+<div class="paragraph">
+<p>There are even <em>_FILLF_xxx</em> macros which allows filling fields in
+sub-structures at the same time.</p>
+</div>
+<div class="paragraph">
+<p>This is, in my mind, another catastrophic hack that makes
+understanding, and refactoring, <code>c-xrefactory</code> such a pain. Not to
+mention the extra bootstrap step.</p>
+</div>
+<div class="paragraph">
+<p>I just discovered the compound literals of C99. And I&#8217;ll experiment
+with replacing some of the FILL macros with compound literals assignments
+instead.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>FILL_symbolList(memb, pdd, NULL);</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>could become (I think):</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>memb = (SymbolList){.d = pdd, .next = NULL};</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If successful, it would be much better, since we could probably get
+rid of the bootstrap, but primarily it would be more explicit about
+which fields are actually necessary to set.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_users">17.7. Users</h3>
 <div class="paragraph">
 <p><strong>The <code>-user</code> option has now been removed, both in the tool and the
   editor adaptors, and with it one instance of a hashlist, the
@@ -7447,10 +7981,542 @@ removed.</p>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_refactoring_recipes">18. Refactoring Recipes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter documents mechanical steps for refactoring operations. Each recipe describes the algorithmic steps that an automated refactoring tool would perform.</p>
+</div>
+<div class="paragraph">
+<p>These recipes serve as specifications for refactorings that c-xrefactory should automate.</p>
+</div>
+<div class="paragraph">
+<p>This chapter also lists potential refactorings that have not yet been decided or designed.</p>
+</div>
+<div class="sect2">
+<h3 id="_move_type_to_new_file">18.1. Move Type to New File</h3>
+<div class="paragraph">
+<p><strong>Input:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Type name to move</p>
+</li>
+<li>
+<p>Source file containing type definition</p>
+</li>
+<li>
+<p>Target file (new or existing)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Algorithm:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Availability</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Available when the selected symbol is a type, that symbol is the type to move</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Identify dependencies</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Determine what types/macros the definition references/uses</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Create/update target file:</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>If new file: create with include guards and appropriate includes/forward declarations</p>
+</li>
+<li>
+<p>If existing: open the file and find a suitable insertion location</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Move definition</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Copy type definition to target file</p>
+</li>
+<li>
+<p>Add necessary includes and forward declarations</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Replace in source file:</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>If target is new file: Replace type definition with <code>#include "targetfile.h"</code></p>
+</li>
+<li>
+<p>If target is existing file: Remove type definition, add <code>#include "targetfile.h"</code> if not already present in the source file</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Output:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Type definition moved to target file</p>
+</li>
+<li>
+<p>Source file includes the target file</p>
+</li>
+<li>
+<p>Clean compilation</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Notes:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>For new header files, steps 3-5 are particularly simple: create the new header with the type and replace the definition in source with an include</p>
+</li>
+<li>
+<p>For existing headers, must check if include is already present before adding</p>
+</li>
+<li>
+<p>Forward declarations (e.g., <code>struct foo;</code>) are sufficient for pointer-only dependencies</p>
+</li>
+<li>
+<p>Full type definitions or includes needed for non-pointer members</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_introduce_semantic_type_aliases">18.2. Introduce Semantic Type Aliases</h3>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Make implicit semantic distinctions explicit by introducing type aliases for a single struct used for multiple purposes.</p>
+</div>
+<div class="paragraph">
+<p><strong>When to use:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A single struct/type is reused for semantically different purposes</p>
+</li>
+<li>
+<p>Different usage contexts use different subsets of fields</p>
+</li>
+<li>
+<p>Want to clarify intent without changing implementation</p>
+</li>
+<li>
+<p>Want to prepare for future type divergence</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Input:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Original type name (e.g., <code>OlcxReferencesStack</code>)</p>
+</li>
+<li>
+<p>List of semantic contexts where type is used (e.g., "browser", "completion", "retrieval")</p>
+</li>
+<li>
+<p>Target file for type aliases (new or existing header)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Algorithm:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Analyze usage patterns</strong> - Identify distinct semantic contexts where type is used</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Group usage sites by purpose/domain</p>
+</li>
+<li>
+<p>Note which fields are used in each context</p>
+</li>
+<li>
+<p>Verify that contexts are truly semantically different</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Create type aliases</strong> - In appropriate header file, define semantic aliases:
+<code><code>c
+typedef OriginalType SemanticName1;
+typedef OriginalType SemanticName2;
+// etc.
+</code></code></p>
+</li>
+<li>
+<p><strong>Update structure declarations</strong> - Change struct/variable declarations to use semantic types:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Data structure fields</p>
+</li>
+<li>
+<p>Global variables</p>
+</li>
+<li>
+<p>Static variables</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Update function signatures</strong> - Change function parameters to use semantic types:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Functions operating on specific context → specific alias</p>
+</li>
+<li>
+<p>Generic functions operating on any context → generic alias (if created)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Update call sites</strong> - Verify all usages compile with new types</p>
+</li>
+<li>
+<p><strong>Verify</strong> - Compile to ensure type compatibility</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Output:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Multiple type aliases for same underlying type</p>
+</li>
+<li>
+<p>Declarations and signatures use semantic types</p>
+</li>
+<li>
+<p>Intent clarified through type system</p>
+</li>
+<li>
+<p>Foundation for future divergence</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="paragraph">
+<p>Given a "kitchen sink" struct used for three purposes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Before - single type for everything
+typedef struct OlcxReferencesStack {
+    OlcxReferences *top;
+    OlcxReferences *root;
+} OlcxReferencesStack;
+
+typedef struct SessionData {
+    OlcxReferencesStack browserStack;      // Uses: references, symbolsMenu
+    OlcxReferencesStack completionsStack;  // Uses: completions
+    OlcxReferencesStack retrieverStack;    // Uses: completions
+} SessionData;
+
+void pushEmptySession(OlcxReferencesStack *stack);  // Generic</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After introducing semantic aliases:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// After - semantic aliases make intent clear
+typedef struct OlcxReferencesStack {
+    OlcxReferences *top;
+    OlcxReferences *root;
+} OlcxReferencesStack;
+
+// Semantic aliases
+typedef OlcxReferencesStack ReferencesStack;   // Generic
+typedef OlcxReferencesStack BrowserStack;      // For navigation
+typedef OlcxReferencesStack CompletionStack;   // For completion
+typedef OlcxReferencesStack RetrieverStack;    // For search
+
+typedef struct SessionData {
+    BrowserStack    browserStack;
+    CompletionStack completionsStack;
+    RetrieverStack  retrieverStack;
+} SessionData;
+
+void pushEmptySession(ReferencesStack *stack);  // Generic operation</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Benefits:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Intent is immediately clear from type names</p>
+</li>
+<li>
+<p>No runtime or ABI changes (aliases compile to same type)</p>
+</li>
+<li>
+<p>Can add domain-specific operations per type later</p>
+</li>
+<li>
+<p>Enables gradual migration toward separate types if needed</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Notes:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Particularly useful in C where classes/interfaces are unavailable</p>
+</li>
+<li>
+<p>Type aliases are compile-time only - no runtime overhead</p>
+</li>
+<li>
+<p>Can coexist with original type name during migration</p>
+</li>
+<li>
+<p>Common pattern when refactoring legacy C code</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_rename_included_file">18.3. Rename Included File</h3>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Rename a file appearing in an include and update all the include directives</p>
+</div>
+<div class="paragraph">
+<p><strong>When to use:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A (header) file is inappropriately named</p>
+</li>
+<li>
+<p>In the process of renaming a complete C "module" this is one step (until <code>c-xrefactory</code> can do all of that)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Input:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The old and new file names</p>
+</li>
+<li>
+<p>All <code>#include</code> locations for the old file</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Availability</strong></p>
+</div>
+<div class="paragraph">
+<p>When the cursor is on an <code>#include</code> directive. The file it references will be the "source".</p>
+</div>
+<div class="paragraph">
+<p><strong>Algorithm:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Rename the source file to the destination</strong></p>
+</li>
+<li>
+<p><strong>Update all include locations</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>This will often include multiple locations</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Output:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>New header file</p>
+</li>
+<li>
+<p>All `#include`s updated</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_move_function_to_different_file">18.4. Move Function to Different File</h3>
+<div class="paragraph">
+<p><strong>Purpose:</strong> &#8230;&#8203;</p>
+</div>
+<div class="paragraph">
+<p><strong>When to use:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Input:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Algorithm:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Step 1</strong>
+2.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Output:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="paragraph">
+<p>TBD.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Before ...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After introducing semantic aliases:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// After ...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Benefits:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Notes:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_turn_include_guard_into_pragma_once">18.5. Turn include guard into pragma once</h3>
+<div class="paragraph">
+<p>Tentative.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rename_symbol">18.6. Rename Symbol</h3>
+<div class="paragraph">
+<p>Implemented. TBD.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_extract_function">18.7. Extract Function</h3>
+<div class="paragraph">
+<p>Implemented. TBD.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reorder_parameters">18.8. Reorder Parameters</h3>
+<div class="paragraph">
+<p>Imlemented. TBD.</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-12-02 23:12:37 UTC
+Last updated 2025-12-13 20:02:42 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
