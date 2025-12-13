@@ -714,19 +714,19 @@ static bool matchQualityMeetsRequirement(BrowserMenu *menu, unsigned requiredFil
 }
 
 static int getCurrentRefPosition(SessionStackEntry *entry) {
-    int actn = 0;
+    int position = 0;
 
-    Reference *r = NULL;
+    Reference *ref = NULL;
     if (entry!=NULL) {
         int rlevel = usageFilterLevels[entry->refsFilterLevel];
-        for (r=entry->references; r!=NULL && r!=entry->current; r=r->next) {
-            if (r->usage < rlevel)
-                actn++;
+        for (ref=entry->references; ref!=NULL && ref!=entry->current; ref=ref->next) {
+            if (ref->usage < rlevel)
+                position++;
         }
     }
-    if (r==NULL)
-        actn = 0;
-    return actn;
+    if (ref==NULL)
+        position = 0;
+    return position;
 }
 
 static void symbolHighlightNameSprint(char *output, BrowserMenu *menu) {
