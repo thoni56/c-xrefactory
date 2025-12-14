@@ -4,7 +4,6 @@
 
 #include "commons.h"
 #include "cxref.h"
-#include "editor.h"
 #include "filedescriptor.h"
 #include "globals.h"
 #include "list.h"
