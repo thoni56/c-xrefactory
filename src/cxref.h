@@ -28,7 +28,7 @@ enum refsFilterLevels {
 extern bool isSameReferenceableItem(ReferenceableItem *p1, ReferenceableItem *p2);
 extern bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2);
 extern void recomputeSelectedReferenceable(SessionStackEntry *refs );
-extern void olProcessSelectedReferences(SessionStackEntry *rstack,
+extern void processSelectedReferences(SessionStackEntry *rstack,
                                         void (*referencesMapFun)(SessionStackEntry *rstack,
                                                                  BrowserMenu *ss));
 extern void popFromSession(void);

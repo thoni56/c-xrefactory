@@ -1046,28 +1046,29 @@ static void olcxPrintSymbolName(SessionStackEntry *refs) {
     }
 }
 
-static BrowserMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage) {
+static BrowserMenu *createSpecialMenuItem(char *fieldName, int includedFileNumber, Storage storage) {
     BrowserMenu *menu;
-    ReferenceableItem r = makeReferenceableItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility, cfi);
+    ReferenceableItem r = makeReferenceableItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility,
+                                                includedFileNumber);
     menu = createNewMenuItem(&r, r.includeFile, noPosition, UsageNone,
                              true, true, FILE_MATCH_SAME, (SymbolRelation){.sameFile = true},
                              UsageUsed);
     return menu;
 }
 
-bool isSameReferenceableItem(ReferenceableItem *p1, ReferenceableItem *p2) {
-    if (p1 == p2)
+bool isSameReferenceableItem(ReferenceableItem *referenceable1, ReferenceableItem *referenceable2) {
+    if (referenceable1 == referenceable2)
         return true;
-    if (p1->visibility != p2->visibility)
+    if (referenceable1->visibility != referenceable2->visibility)
         return false;
-    if (p1->type != TypeCppCollate && p2->type != TypeCppCollate && p1->type != p2->type)
+    if (referenceable1->type != TypeCppCollate && referenceable2->type != TypeCppCollate && referenceable1->type != referenceable2->type)
         return false;
-    if (p1->storage != p2->storage)
+    if (referenceable1->storage != referenceable2->storage)
         return false;
-    if (p1->includeFile != p2->includeFile)
+    if (referenceable1->includeFile != referenceable2->includeFile)
         return false;
 
-    if (strcmp(p1->linkName, p2->linkName) != 0)
+    if (strcmp(referenceable1->linkName, referenceable2->linkName) != 0)
         return false;
     return true;
 }
@@ -1100,9 +1101,9 @@ static void olcxMenuInspectDef(BrowserMenu *menu) {
         //&sprintf(tmpBuff,"checking line %d", ss->outOnLine); ppcBottomInformation(tmpBuff);
         int line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
         if (line == options.lineNumberOfMenuSelection)
-            goto breakl;
+            break;
     }
- breakl:
+
     if (ss == NULL) {
         indicateNoReference();
     } else {
@@ -1121,8 +1122,8 @@ static void olcxSymbolMenuInspectDef(void) {
     olcxMenuInspectDef(refs->menu);
 }
 
-void olProcessSelectedReferences(SessionStackEntry *rstack,
-                                 void (*referencesMapFun)(SessionStackEntry *rstack, BrowserMenu *menu)) {
+void processSelectedReferences(SessionStackEntry *rstack,
+                               void (*referencesMapFun)(SessionStackEntry *, BrowserMenu *)) {
     if (rstack->menu == NULL)
         return;
 
@@ -1144,7 +1145,7 @@ static void genOnLineReferences(SessionStackEntry *rstack, BrowserMenu *cms) {
 void recomputeSelectedReferenceable(SessionStackEntry *entry) {
     freeReferences(entry->references);
     entry->references = NULL;
-    olProcessSelectedReferences(entry, genOnLineReferences);
+    processSelectedReferences(entry, genOnLineReferences);
 }
 
 static void olcxMenuToggleSelect(void) {
@@ -1312,9 +1313,9 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
         }
     }
     if (refs!=NULL) {
-        olcxPrintSelectionMenu(refs->menu);
+        printSelectionMenu(refs->menu);
     } else {
-        olcxPrintSelectionMenu(NULL);
+        printSelectionMenu(NULL);
         olcxPrintRefList(";", NULL);
     }
 }
@@ -1595,8 +1596,6 @@ static BrowserMenu *firstVisibleSymbol(BrowserMenu *menu) {
 
 
 bool olcxShowSelectionMenu(void) {
-    BrowserMenu *first, *fvisible;
-
     // decide whether to show manual resolution menu
     assert(sessionData.browsingStack.top);
     if (options.serverOperation == OLO_PUSH_FOR_LOCAL_MOTION) {
@@ -1608,18 +1607,19 @@ bool olcxShowSelectionMenu(void) {
         return false;
     }
     // first if just zero or one symbol, no resolution
-    first = sessionData.browsingStack.top->menu;
+    BrowserMenu *first = sessionData.browsingStack.top->menu;
     if (first == NULL) {
         //&fprintf(dumpOut,"no resolve, no symbol\n"); fflush(dumpOut);
         return false; // no symbol
     }
-    fvisible = firstVisibleSymbol(first);
-    if (fvisible==NULL) {
+
+    BrowserMenu *firstVisible = firstVisibleSymbol(first);
+    if (firstVisible==NULL) {
         //&fprintf(dumpOut,"no resolve, no visible\n"); fflush(dumpOut);
         return false; // no visible
     }
     first = NULL;
-    if (options.serverOperation==OLO_PUSH
+    if (   options.serverOperation==OLO_PUSH
         || options.serverOperation==OLO_PUSH_ONLY
         || options.serverOperation==OLO_PUSH_AND_CALL_MACRO
         || options.serverOperation==OLO_RENAME
@@ -1636,25 +1636,25 @@ bool olcxShowSelectionMenu(void) {
             }
         }
     } else {
-        for (BrowserMenu *ss=sessionData.browsingStack.top->menu; ss!=NULL; ss=ss->next) {
-            if (ss->visible) {
+        for (BrowserMenu *menu=sessionData.browsingStack.top->menu; menu!=NULL; menu=menu->next) {
+            if (menu->visible) {
                 if (first!=NULL) {
                     return true;
                 }
-                first = ss;
+                first = menu;
             }
         }
     }
     return false;
 }
 
-static bool olMenuHashFileNumLess(BrowserMenu *s1, BrowserMenu *s2) {
-    int h1 = cxFileHashNumberForSymbol(s1->referenceable.linkName);
-    int h2 = cxFileHashNumberForSymbol(s2->referenceable.linkName);
-    if (h1 < h2) return true;
-    if (h1 > h2) return false;
-    if (s1->referenceable.visibility == LocalVisibility) return true;
-    if (s1->referenceable.visibility == LocalVisibility) return false;
+static bool olMenuHashFileNumLess(BrowserMenu *menu1, BrowserMenu *menu2) {
+    int hash1 = cxFileHashNumberForSymbol(menu1->referenceable.linkName);
+    int hash2 = cxFileHashNumberForSymbol(menu2->referenceable.linkName);
+    if (hash1 < hash2) return true;
+    if (hash1 > hash2) return false;
+    if (menu1->referenceable.visibility == LocalVisibility) return true;
+    if (menu1->referenceable.visibility == LocalVisibility) return false;
     // both files and categories equals ?
     return false;
 }
@@ -1718,7 +1718,7 @@ void createSelectionMenuForOperation(ServerOperation command) {
     mapOverReferenceableItemTable(putOnLineLoadedReferences);
     setSelectedVisibleItems(rstack->menu, command, rstack->menuFilterLevel);
     assert(rstack->references==NULL);
-    olProcessSelectedReferences(rstack, genOnLineReferences);
+    processSelectedReferences(rstack, genOnLineReferences);
 
     // isn't ordering useless ?
     // Again, the above comment was in the original code, by Marian
@@ -1736,8 +1736,8 @@ void olcxPushSpecialCheckMenuSym(char *symname) {
     pushEmptySession(&sessionData.browsingStack);
     assert(sessionData.browsingStack.top);
     rstack = sessionData.browsingStack.top;
-    rstack->hkSelectedSym = olCreateSpecialMenuItem(symname, NO_FILE_NUMBER, StorageDefault);
-    rstack->menu = olCreateSpecialMenuItem(symname, NO_FILE_NUMBER, StorageDefault);
+    rstack->hkSelectedSym = createSpecialMenuItem(symname, NO_FILE_NUMBER, StorageDefault);
+    rstack->menu = createSpecialMenuItem(symname, NO_FILE_NUMBER, StorageDefault);
 }
 
 static void olcxProcessGetRequest(void) {
@@ -1854,7 +1854,7 @@ static void mainAnswerReferencePushingAction(ServerOperation operation) {
         ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
     } else {
         assert(sessionData.browsingStack.top);
-        //&olProcessSelectedReferences(sessionData->browserStack.top, genOnLineReferences);
+        //&processSelectedReferences(sessionData->browserStack.top, genOnLineReferences);
         olcxPrintPushingAction(options.serverOperation);
     }
 }
@@ -1920,7 +1920,7 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
 
 static void pushSymbolByName(char *name) {
     SessionStackEntry *rstack = sessionData.browsingStack.top;
-    rstack->hkSelectedSym = olCreateSpecialMenuItem(name, NO_FILE_NUMBER, StorageDefault);
+    rstack->hkSelectedSym = createSpecialMenuItem(name, NO_FILE_NUMBER, StorageDefault);
     rstack->callerPosition = getCallerPositionFromCommandLineOption();
 }
 

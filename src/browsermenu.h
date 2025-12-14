@@ -24,7 +24,7 @@ typedef struct BrowserMenu {
 } BrowserMenu;
 
 
-extern BrowserMenu makeBrowserMenu(ReferenceableItem referenceables, bool selected, bool visible,
+extern BrowserMenu makeBrowserMenu(ReferenceableItem referenceable, bool selected, bool visible,
                                    unsigned filterLevel, char olUsage,
                                    char defUsage, struct position defpos);
 
@@ -32,16 +32,14 @@ extern void freeBrowserMenuList(BrowserMenu *menu);
 
 extern bool isBestFitMatch(BrowserMenu *menu);
 extern void addReferenceToBrowserMenu(BrowserMenu *menu, Reference *reference);
-extern void olcxPrintSelectionMenu(BrowserMenu *menu);
-extern BrowserMenu *createNewMenuItem(ReferenceableItem *sym, int includedFileNumber,
+extern void printSelectionMenu(BrowserMenu *menu);
+extern BrowserMenu *createNewMenuItem(ReferenceableItem *item, int includedFileNumber,
                                       Position defpos, Usage defusage, bool selected, bool visible,
                                       unsigned filterLevel, SymbolRelation relation, Usage olusage);
-extern BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableItem *reference,
+extern BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableItem *referenceable,
                                                   bool selected, bool visible, unsigned filterLevel,
                                                   SymbolRelation relation, int olusage, Position defpos,
                                                   int defusage);
-extern void splitBrowserMenuAndMap(BrowserMenu *menu,
-                                      void (*fun)(BrowserMenu *, void *),
-                                      void *p1);
+extern void splitBrowserMenuAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *, void *), void *p1);
 
 #endif

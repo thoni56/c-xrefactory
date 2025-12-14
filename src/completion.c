@@ -51,7 +51,8 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         char *linkName = strdup(referenceableItem->linkName);
 
         ReferenceableItem item = makeReferenceableItem(linkName, referenceableItem->type,
-                                                       referenceableItem->storage, referenceableItem->scope, referenceableItem->visibility, referenceableItem->includeFile);
+                                                       referenceableItem->storage, referenceableItem->scope,
+                                                       referenceableItem->visibility, referenceableItem->includeFile);
 
         completion = newCompletion(name, fullName, 1, referenceableItem->visibility, type, *reference, item);
     } else if (symbol==NULL) {

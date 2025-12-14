@@ -807,7 +807,7 @@ static void multipleOccurrenciesSafetyCheck(void) {
     SessionStackEntry *rstack;
 
     rstack = sessionData.browsingStack.top;
-    olProcessSelectedReferences(rstack, checkForMultipleReferencesInSamePlace);
+    processSelectedReferences(rstack, checkForMultipleReferencesInSamePlace);
 }
 
 // -------------------------------------------- Rename

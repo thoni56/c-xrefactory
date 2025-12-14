@@ -28,7 +28,7 @@ void recomputeSelectedReferenceable(SessionStackEntry *refs) {
     mock(refs);
 }
 
-void olProcessSelectedReferences(SessionStackEntry *rstack, void (*referencesMapFun)(SessionStackEntry *rstack,
+void processSelectedReferences(SessionStackEntry *rstack, void (*referencesMapFun)(SessionStackEntry *rstack,
                                                                                     BrowserMenu *ss)) {
     mock(rstack, referencesMapFun);
 }

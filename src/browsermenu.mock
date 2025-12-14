@@ -34,7 +34,7 @@ void addReferenceToBrowserMenu(BrowserMenu *menu, Reference *reference) {
     mock(menu, reference);
 }
 
-void olcxPrintSelectionMenu(BrowserMenu *menu) {
+void printSelectionMenu(BrowserMenu *menu) {
     mock(menu);
 }
 
