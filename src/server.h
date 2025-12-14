@@ -36,7 +36,6 @@
     ENUM(OLO_MENU_FILTER_MINUS)                 \
     ENUM(OLO_MENU_FILTER_PLUS)                  \
     ENUM(OLO_MENU_FILTER_SET)                   \
-    ENUM(OLO_MENU_INSPECT_DEF)                  \
     ENUM(OLO_MENU_SELECT)                       \
     ENUM(OLO_MENU_SELECT_ALL)                   \
     ENUM(OLO_MENU_SELECT_NONE)                  \

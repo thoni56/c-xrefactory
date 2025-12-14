@@ -1094,34 +1094,6 @@ void deleteEntryFromSessionStack(SessionStackEntry *entry) {
     deleteSessionStackEntry(&sessionData.browsingStack, entryP);
 }
 
-static void olcxMenuInspectDef(BrowserMenu *menu) {
-    BrowserMenu *ss;
-
-    for (ss=menu; ss!=NULL; ss=ss->next) {
-        //&sprintf(tmpBuff,"checking line %d", ss->outOnLine); ppcBottomInformation(tmpBuff);
-        int line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
-        if (line == options.lineNumberOfMenuSelection)
-            break;
-    }
-
-    if (ss == NULL) {
-        indicateNoReference();
-    } else {
-        if (ss->defaultPosition.file>=0 && ss->defaultPosition.file!=NO_FILE_NUMBER) {
-            gotoOnlineCxref(ss->defaultPosition, UsageDefined, "");
-        } else {
-            indicateNoReference();
-        }
-    }
-}
-
-static void olcxSymbolMenuInspectDef(void) {
-    SessionStackEntry    *refs;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
-        return;
-    olcxMenuInspectDef(refs->menu);
-}
-
 void processSelectedReferences(SessionStackEntry *rstack,
                                void (*referencesMapFun)(SessionStackEntry *, BrowserMenu *)) {
     if (rstack->menu == NULL)
@@ -2117,9 +2089,6 @@ void answerEditAction(void) {
         break;
     case OLO_POP_ONLY:
         popFromSession();
-        break;
-    case OLO_MENU_INSPECT_DEF:
-        olcxSymbolMenuInspectDef();
         break;
     case OLO_MENU_SELECT:
         olcxMenuToggleSelect();

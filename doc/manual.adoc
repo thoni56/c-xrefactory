@@ -327,8 +327,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 
 -olcxmenufilter::
 
--olcxmenuinspectdef::
-
 -olcxmenunone::
 
 -olcxmenuselect::
