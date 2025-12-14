@@ -8,18 +8,18 @@
 # $(TEST) target where the execution of the test should go.
 #
 
-include ../Makefile.messages
+MAKEFILE_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
+include $(MAKEFILE_DIR)/Makefile.messages
 
 # You can override which c-xref to run by setting CXREF_PROGRAM, but
 # each test need to define ARGUMENTS and can use $(COMMAND)
-CXREF_PROGRAM = ../../src/c-xref
+CXREF_PROGRAM = $(MAKEFILE_DIR)/../src/c-xref
 BASE_ARGUMENTS = -xrefrc .c-xrefrc -p $(CURDIR) $(EXTRA)
 CXREF = $(CXREF_PROGRAM) $(BASE_ARGUMENTS)
 COMMAND = $(CXREF) $(ARGUMENTS)
 
 # Define the test name as the directory name
 TEST = $(shell basename '$(CURDIR)')
-
 
 all: .c-xrefrc $(TEST)
 $(TEST): .c-xrefrc
@@ -28,7 +28,7 @@ $(TEST): .c-xrefrc
 $(VERBOSE).SILENT:
 
 # All tests that uses a server driver should use this
-EDIT_SERVER_DRIVER = ../../utils/server_driver.py
+EDIT_SERVER_DRIVER = $(MAKEFILE_DIR)/../utils/server_driver.py
 
 # Convert any (absolute) reference to current directory to CURDIR
 NORMALIZE = sed -e "s+$(CURDIR)+CURDIR+g" -e "s/ len=[0-9]*/ len=<n>/g" -e "s+/.*/usr/+/usr/+g" -e "s/[0-9][0-9]:[0-9][0-9]:[0-9][0-9]/00:00:00/g"
@@ -64,11 +64,11 @@ run:
 #
 # Uses local c-xrefrc.tpl if it exists, otherwise falls back to ../c-xrefrc.tpl
 # wildcard makes the local template optional - expands to empty if it doesn't exist
-.c-xrefrc: ../c-xrefrc.tpl $(wildcard c-xrefrc.tpl)
+.c-xrefrc: $(MAKEFILE_DIR)/c-xrefrc.tpl $(wildcard c-xrefrc.tpl)
 	@if [ -f c-xrefrc.tpl ]; then \
 		sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" c-xrefrc.tpl > .c-xrefrc ; \
 	else \
-		sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" ../c-xrefrc.tpl > .c-xrefrc ; \
+		sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" $(MAKEFILE_DIR)/c-xrefrc.tpl > .c-xrefrc ; \
 	fi
 
 clean:
