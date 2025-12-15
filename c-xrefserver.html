@@ -5,8 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2025-12-14">
-<title>C-xrefactory - a C/Yacc refactoring and code browsing tool - User Manual</title>
+<title>C-xref - a server for editing</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -434,610 +433,121 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 #footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/github.min.css">
 </head>
-<body class="article toc2 toc-left">
+<body class="article">
 <div id="header">
-<h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - User Manual</h1>
-<div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-12-14</span><br>
-</div>
-<div id="toc" class="toc2">
-<div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
-<li><a href="#_c_xrefactory_intro">1. C-xrefactory Intro</a>
-<ul class="sectlevel2">
-<li><a href="#_what_is_c_xrefactory">1.1. What is C-xrefactory?</a></li>
-<li><a href="#_about_this_document">1.2. About this document</a></li>
-<li><a href="#_history">1.3. History</a></li>
-<li><a href="#_installing">1.4. Installing</a></li>
-<li><a href="#_usage">1.5. Usage</a></li>
-<li><a href="#_the_configuration_file">1.6. The configuration file</a></li>
-</ul>
-</li>
-<li><a href="#_release_history">Appendix A: Release History</a>
-<ul class="sectlevel2">
-<li><a href="#_1_6_15">A.1. 1.6.15</a></li>
-<li><a href="#_1_6_13">A.2. 1.6.13</a></li>
-<li><a href="#_1_6_11">A.3. 1.6.11</a></li>
-<li><a href="#_1_6_10">A.4. 1.6.10</a></li>
-</ul>
-</li>
-<li><a href="#_acknowledgements">2. Acknowledgements</a></li>
-</ul>
-</div>
+<h1>C-xref - a server for editing</h1>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_c_xrefactory_intro">1. C-xrefactory Intro</h2>
+<h2 id="_introduction">Introduction</h2>
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-This document is very much a work in progress.
-</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_what_is_c_xrefactory">1.1. What is C-xrefactory?</h3>
 <div class="paragraph">
-<p><code>C-xrefactory</code> is a development tool for C developers that
-allows browsing variables and functions, as well as refactoring, in C
-and Yacc code.</p>
+<p>This is a short introduction to the server feature of <code>c-xrefactory</code> useful mostly for
+developing <code>c-xrefactory</code> itself, its Emacs client adapter or adapters for other editors
+or IDEs.</p>
 </div>
 <div class="paragraph">
-<p>Here is a list of features</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Full integration with Emacs</p>
-</li>
-<li>
-<p>Browsing source code in C supporting multiple pre-processing passes</p>
-</li>
-<li>
-<p>Designed to work with large projects (&gt; millions of lines)</p>
-</li>
-<li>
-<p>Fast update using only modified files</p>
-</li>
-<li>
-<p>First tool to <a href="https://www.martinfowler.com/articles/refactoringRubicon.html">Cross Refactoring&#8217;s Rubicon</a> as described by Martin Fowler</p>
-</li>
-<li>
-<p>Safe refactorings to</p>
-<div class="ulist">
-<ul>
-<li>
-<p>rename variables, functions etc.</p>
-</li>
-<li>
-<p>extract function/macro</p>
-</li>
-<li>
-<p>delete, add, move parameters</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Solid code completion</p>
-</li>
-<li>
-<p>Search for symbols using wildcards</p>
-</li>
-<li>
-<p>Find unused variables and functions, globally as well as locally</p>
-</li>
-<li>
-<p>Auto-detection of project</p>
-</li>
-<li>
-<p>Full undo in Emacs</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_about_this_document">1.2. About this document</h3>
-<div class="paragraph">
-<p>This document is a Work In Progress, as most things in this project at
-this stage.</p>
+<p>When <code>c-xref</code> is invoked with option "-server", it acts like a server reading input
+options from standard input and producing answers on the standard output.</p>
 </div>
 <div class="paragraph">
-<p>Things in this document might be out-dated, old, wrong or actually
-valid. Hopefully this will improve over time.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_history">1.3. History</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_installing">1.4. Installing</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_usage">1.5. Usage</h3>
-<div class="sect3">
-<h4 id="_emacs">1.5.1. Emacs</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_command_line_usage">1.5.2. Command line usage</h4>
-<div class="sect4">
-<h5 id="_use_case">Use case</h5>
-<div class="paragraph">
-<p>Normally the <code>c-xref</code> program is controlled from an editor adapter.
-But sometimes running it from the command line, e.g. as part setting
-up a project, investigating problems with <code>c-xref</code> or as a part of the
-<code>c-xrefactory</code> test suite, can be useful.</p>
+<p>Two pipes (standard input and output) are used only for small quantity of data and their
+main purpose is synchronisation between the editing environment and the c-xref
+task. Larger chunks of information, such as code snippets, are transfered using
+temporary files.</p>
 </div>
 <div class="paragraph">
-<p>Most options can be set in a configuration file to be effective for
-every execution of <code>c-xref</code> in a project.</p>
+<p>The <code>c-xref</code> task expects a suite of input options finished by the "end-of-options"
+string.  Options are basically those which can be used on command line (with exception
+of -I and -D options).  Moreover numerous special options not documented in the c-xref
+manual page can be used.  One of options should specify the output file for the answer.
+In such case the c-xref task computes the answer, stores it into the output file and
+then writes the "&lt;sync&gt;" string on its standard output.</p>
 </div>
 <div class="paragraph">
-<p>Here follows a description of the various available command line options.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_command_line_options">Command line options</h5>
-<div class="paragraph">
-<p>There is a large number of command line options.  Some of them might
-seem very obscure since they are only intended for use by the editor
-server protocol.  Below is a list of all of them grouped after their
-usage (grouping and descriptions is a Work In Progress).</p>
-</div>
-<div class="sect5">
-<h6 id="_operating_modes">Operating modes</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-refactory</dt>
-<dt class="hdlist1">-server</dt>
-<dd>
-<p><code>c-xrefactory</code> can operate in three different modes:</p>
-<div class="ulist">
-<ul>
-<li>
-<p>xref - the cross-referencer (default)</p>
-</li>
-<li>
-<p>server - editor server, started by editor adapters</p>
-</li>
-<li>
-<p>refactory - refactoring editor, normally called by editor adapters</p>
-</li>
-</ul>
-</div>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_cross_referencing_options">Cross-referencing options</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-create</dt>
-<dd>
-<p>Overwrite any existing crossreference data with a completely new set.</p>
-</dd>
-<dt class="hdlist1">-fastupdate</dt>
-<dt class="hdlist1">-fullupdate, -update</dt>
-<dd>
-<p>"Fast update" ignores updated header files.
-NOTE: This option might be removed in the future.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_selecting_configuration_information">Selecting configuration information</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-p &lt;project&gt;</dt>
-<dd>
-<p><code>c-xrefactory</code> has project-based configurations. The <code>-p</code> selects
-which of the projects available in the selected configuration file
-(see <code>-xrefrc</code> option) that should be applied.</p>
-</dd>
-<dt class="hdlist1">-stdop &lt;file&gt;</dt>
-<dd>
-<p>Read <code>file</code> as a configuration file containing options, as if it was included from the selected configuration file.
-This makes it possible to share certain configuration options between multiple configuration files/projects.</p>
-</dd>
-<dt class="hdlist1">-xrefrc=&lt;file&gt;</dt>
-<dt class="hdlist1">-xrefrc &lt;file&gt;</dt>
-<dd>
-<p>Read the indicated <code>file</code> instead of the default <code>~/.c-xrefrc</code> for configuration information.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_variables_etc">Variables etc.</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-set &lt;variable&gt; &lt;value&gt;</dt>
-<dd>
-<p>Set <code>variable</code> to 'value' in the same fashion as environment variables.
-Variables set in this way can be used in configuration files and queried using the command line option <code>-get</code>.</p>
-</dd>
-<dt class="hdlist1">-get &lt;variable&gt;</dt>
-<dd>
-<p>Get the value of a previously set "environment variable".
-The value will be transfered over the edit server protocol as a <code>PPC_SET_INFO</code> record.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_character_encoding_etc">Character encoding etc.</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-crconversion</dt>
-<dt class="hdlist1">-crlfconversion</dt>
-<dd>
-<p>Convert various line-ending conventions to LF.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_error_reporting_and_output">Error reporting and output</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-errors, -no-errors</dt>
-<dt class="hdlist1">-warnings</dt>
-<dt class="hdlist1">-infos</dt>
-<dt class="hdlist1">-debug</dt>
-<dt class="hdlist1">-trace</dt>
-<dd>
-<p>Select level of information to print.</p>
-</dd>
-<dt class="hdlist1">-yydebug</dt>
-<dd>
-<p>Enable debugging of the C and Yacc parsers according to the Yacc manual.</p>
-</dd>
-<dt class="hdlist1">-o &lt;file&gt;</dt>
-<dd>
-<p>Redirect all output to <code>file</code> rather than to standard output.</p>
-</dd>
-<dt class="hdlist1">-log=&lt;file&gt;</dt>
-<dd>
-<p>Place all log output in <code>file</code>.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_c_specific_options">C specific options</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-D&lt;macro&gt;[=&lt;body&gt;]</dt>
-<dd>
-<p>Define a preprocessor macro or variable with name <code>macro</code> in the same fashion as for the C/C++ pre-processor.
-This is typically used to set variables differently for different passes (see <code>-pass</code>).</p>
-</dd>
-<dt class="hdlist1">-I &lt;directory&gt;</dt>
-<dd>
-<p>Look for included C header files also in <code>directory</code>.
-If used multiple times the order of search will be the same as the order of the occurence of the <code>-I</code> options.</p>
-</dd>
-<dt class="hdlist1">-compiler &lt;path&gt;</dt>
-<dd>
-<p>Sets the path of the C compiler to use.
-<code>c-xrefactory</code> tries to setup pre-defined types, pre-processor variables, include paths etc. so that the parsing of the C source will be as close to what the compiler the project is using does.
-If the project is not using the default C compiler, <code>cc</code>, then this option allows <code>c-xrefactory</code> to inquire some compilers for their settings and apply them automatically.</p>
-</dd>
-<dt class="hdlist1">-csuffixes=&lt;suffixes&gt;</dt>
-<dd>
-<p>This option indicates which file suffixes to consider being a C file.
-Multiple suffixes should be separated by <code>:</code>.</p>
-</dd>
-<dt class="hdlist1">-strict</dt>
-<dd>
-<p>Reject keywords and types that are not part of the ANSI C standard, such as <code><em>asm</em></code>, <code>_near</code> and <code><em>const</em></code>.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_editor_adapterserver_configuration">Editor adapter/server configuration</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-xrefactory-II</dt>
-<dd>
-<p>Applicable only to <code>server</code> mode.
-Will use a second generation protocol between the edit server and the editor adapter.
-Using the edit server/refactorer without activating <code>-xrefactory-II</code> is deprecated.
-Will be deprecated and removed in the future when legacy protocol is removed.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_miscellaneous">Miscellaneous</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-about</dt>
-<dt class="hdlist1">-help</dt>
-<dt class="hdlist1">-version</dt>
-<dd>
-<p>Print short or long help text or version information.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_internal_options">Internal options</h6>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-This should probably be in the design document instead.
-</td>
-</tr>
-</table>
+<p>NOTE:</p>
 </div>
 <div class="paragraph">
-<p>The refactorer internally calls the main c-xref indexing function and controls it by passing "command line options".
-Here is a list of those "options", which shall not be used from the command line.</p>
+<p>If you wish to examine the exact communication between c-xref task and Emacs editor, you can edit the c-xref.el file and change the line:</p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-exactpositionresolve</dt>
-<dd>
-<p>If a symbol is defined in multiple places, like it can be in C, using this flag will consider those instances different based on them being in different locations.</p>
-</dd>
-</dl>
+<div class="literalblock">
+<div class="content">
+<pre>(defvar c-xref-debug-mode nil)</pre>
+</div>
 </div>
 <div class="paragraph">
-<p>What you want or need is unfortunately depending on your situation.
-If you don&#8217;t use this option then navigation and refactorings will affect all occurrences.</p>
+<p>to:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>(defvar c-xref-debug-mode t)</pre>
+</div>
 </div>
 <div class="paragraph">
-<p>One particular scenario is if you have mocked some functions (like with Cgreen) then you have at least two symbols with the same name and parameter lists.
-In this case you really want refactorings like renames and parameter changes to also affect the mocks, although they are not actually the "same" symbol.
-If <code>-exactpositionresolve</code> is used then the actual function and its mock version would be considered different symbols and a refactoring would only affect the selected one, leaving you to sync up the other manually.</p>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_as_yet_unsorted_options">As yet unsorted options</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-addimportdefault</dt>
-<dt class="hdlist1">-browsedsym</dt>
-<dt class="hdlist1">-commentmovinglevel</dt>
-<dt class="hdlist1">-completeparenthesis</dt>
-<dt class="hdlist1">-completioncasesensitive</dt>
-<dt class="hdlist1">-completionoverloadwizdeep</dt>
-<dt class="hdlist1">-continuerefactoring</dt>
-<dt class="hdlist1">-displaynestedwithouters</dt>
-<dt class="hdlist1">-exit</dt>
-<dt class="hdlist1">-filescasesensitive</dt>
-<dt class="hdlist1">-filescaseunsensitive</dt>
-<dt class="hdlist1">-maxcompls</dt>
-<dt class="hdlist1">-mf</dt>
-<dt class="hdlist1">-no-autoupdatefromsrc</dt>
-<dt class="hdlist1">-no-includerefresh</dt>
-<dt class="hdlist1">-no-includerefs</dt>
-<dt class="hdlist1">-olallchecks</dt>
-<dt class="hdlist1">-olcheckaccess</dt>
-<dt class="hdlist1">-olchecklinkage</dt>
-<dt class="hdlist1">-olcomplback</dt>
-<dt class="hdlist1">-olcomplforward</dt>
-<dt class="hdlist1">-olcomplselect</dt>
-<dt class="hdlist1">-olcursor</dt>
-<dt class="hdlist1">-olcxargmanip</dt>
-<dt class="hdlist1">-olcxcbrowse</dt>
-<dt class="hdlist1">-olcxcgoto</dt>
-<dt class="hdlist1">-olcxcomplet</dt>
-<dt class="hdlist1">-olcxcplsearch</dt>
-<dt class="hdlist1">-olcxctinspectdef</dt>
-<dt class="hdlist1">-olcxencapsulate</dt>
-<dt class="hdlist1">-olcxencapsulatesc1</dt>
-<dt class="hdlist1">-olcxencapsulatesc2</dt>
-<dt class="hdlist1">-olcxextract</dt>
-<dt class="hdlist1">-olcxfilter</dt>
-<dt class="hdlist1">-olcxgetcurrentrefn</dt>
-<dt class="hdlist1">-olcxgetparamcoord</dt>
-<dt class="hdlist1">-olcxgetprojectname</dt>
-<dt class="hdlist1">-olcxgetrefactorings</dt>
-<dt class="hdlist1">-olcxgetsymboltype</dt>
-<dt class="hdlist1">-olcxgoto</dt>
-<dt class="hdlist1">-olcxgotocaller</dt>
-<dt class="hdlist1">-olcxgotocurrent</dt>
-<dt class="hdlist1">-olcxgotodef</dt>
-<dt class="hdlist1">-olcxgotoparname</dt>
-<dt class="hdlist1">-olcxintersection</dt>
-<dt class="hdlist1">-olcxlccursor</dt>
-<dt class="hdlist1">-olcxmctarget</dt>
-<dt class="hdlist1">-olcxmenuall</dt>
-<dt class="hdlist1">-olcxmenufilter</dt>
-<dt class="hdlist1">-olcxmenuinspectdef</dt>
-<dt class="hdlist1">-olcxmenunone</dt>
-<dt class="hdlist1">-olcxmenuselect</dt>
-<dt class="hdlist1">-olcxmenusingleselect</dt>
-<dt class="hdlist1">-olcxmethodlines</dt>
-<dt class="hdlist1">-olcxmmtarget</dt>
-<dt class="hdlist1">-olcxmodified</dt>
-<dt class="hdlist1">-olcxnext</dt>
-<dt class="hdlist1">-olcxnotfqt</dt>
-<dt class="hdlist1">-olcxparnum</dt>
-<dt class="hdlist1">-olcxparnum2</dt>
-<dt class="hdlist1">-olcxpop</dt>
-<dt class="hdlist1">-olcxpoponly</dt>
-<dt class="hdlist1">-olcxprevious</dt>
-<dt class="hdlist1">-olcxprimarystart</dt>
-<dt class="hdlist1">-olcxpush</dt>
-<dt class="hdlist1">-olcxpushandcallmacro</dt>
-<dt class="hdlist1">-olcxpushfileunused</dt>
-<dt class="hdlist1">-olcxpushforlm</dt>
-<dt class="hdlist1">-olcxpushglobalunused</dt>
-<dt class="hdlist1">-olcxpushname</dt>
-<dt class="hdlist1">-olcxpushonly</dt>
-<dt class="hdlist1">-olcxpushspecialname</dt>
-<dt class="hdlist1">-olcxrename</dt>
-<dt class="hdlist1">-olcxrepush</dt>
-<dt class="hdlist1">-olcxsafetycheck</dt>
-<dt class="hdlist1">-olcxsafetycheckinit</dt>
-<dt class="hdlist1">-olcxsafetycheckmovedblock</dt>
-<dt class="hdlist1">-olcxsafetycheckmovedfile</dt>
-<dt class="hdlist1">-olcxsyntaxpass</dt>
-<dt class="hdlist1">-olcxtaggoto</dt>
-<dt class="hdlist1">-olcxtagsearch</dt>
-<dt class="hdlist1">-olcxtagsearchback</dt>
-<dt class="hdlist1">-olcxtagsearchforward</dt>
-<dt class="hdlist1">-olcxtagselect</dt>
-<dt class="hdlist1">-olcxtarget</dt>
-<dt class="hdlist1">-olcxtops</dt>
-<dt class="hdlist1">-olcxtoptype</dt>
-<dt class="hdlist1">-olcxunmodified</dt>
-<dt class="hdlist1">-olcxwindel</dt>
-<dt class="hdlist1">-olcxwindelfile</dt>
-<dt class="hdlist1">-olcxwindelwin</dt>
-<dt class="hdlist1">-olexaddress</dt>
-<dt class="hdlist1">-olexmacro</dt>
-<dt class="hdlist1">-olinelen</dt>
-<dt class="hdlist1">-olmanualresolve</dt>
-<dt class="hdlist1">-olmark</dt>
-<dt class="hdlist1">-olnodialog</dt>
-<dt class="hdlist1">-optinclude</dt>
-<dt class="hdlist1">-pass</dt>
-<dt class="hdlist1">-delay=&lt;n&gt;</dt>
-<dd>
-<p>Will sleep <code>n</code> seconds before starting <code>c-xref</code>.  Useful when attaching a debugger to an
-edit server process.  Will only work on initial invocation in server mode.</p>
-</dd>
-<dt class="hdlist1">-preload &lt;file1&gt; &lt;file2&gt;</dt>
-<dd>
-<p>Indicates that the current content of the editor copy of <code>file2</code> is available in
-<code>file1</code>.  If an editor has an edited, non-saved, buffer holding a relevant <code>file2</code> it is
-supposed that the editor adaptor saves the content into a file and indicates this to the
-edit server using this option.</p>
-</dd>
-<dt class="hdlist1">-prune</dt>
-<dt class="hdlist1">-refnum</dt>
-<dt class="hdlist1">-refs</dt>
-<dt class="hdlist1">-renameto</dt>
-<dt class="hdlist1">-resetIncludeDirs</dt>
-<dt class="hdlist1">-rfct-add-param</dt>
-<dt class="hdlist1">-rfct-add-to-imports</dt>
-<dt class="hdlist1">-rfct-del-param</dt>
-<dt class="hdlist1">-rfct-expand</dt>
-<dt class="hdlist1">-rfct-extract-macro</dt>
-<dt class="hdlist1">-rfct-extract-function</dt>
-<dt class="hdlist1">-rfct-move-param</dt>
-<dt class="hdlist1">-rfct-param1</dt>
-<dt class="hdlist1">-rfct-param2</dt>
-<dt class="hdlist1">-rfct-rename</dt>
-<dt class="hdlist1">-rlistwithoutsrc</dt>
-<dt class="hdlist1">-searchdef</dt>
-<dt class="hdlist1">-searchdefshortlist</dt>
-<dt class="hdlist1">-searchshortlist</dt>
-<dd>
-<p>&#8230;&#8203;</p>
-</dd>
-</dl>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_the_configuration_file">1.6. The configuration file</h3>
-
+<p>You can of course also set the variable manually. This will make Emacs display all informations exchanged with c-xref task in the <strong>Messages</strong> buffer.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_release_history">Appendix A: Release History</h2>
+<h2 id="_example">Example</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In this section only the introduction or changes of major user level features are listed, and thus only MINOR versions.
-For a detailed log of features, enhancements and bug fixes visit the projects repository on GitHub, <a href="https://github.com/thoni56/c-xrefactory" class="bare">https://github.com/thoni56/c-xrefactory</a>.</p>
+<p>The simplest example of c-xref comunication protocol is an invocation of a completion function.
+Let&#8217;s consider that we have a file t.c containing the following text:</p>
 </div>
-<div class="sect2">
-<h3 id="_1_6_15">A.1. 1.6.15</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>Add support for for-loop initializers in C</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_1_6_13">A.2. 1.6.13</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>Add support for C compound literals</p>
-</li>
-</ul>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>----------------------------------------------------------------------
+struct toto {int x,y;} t;
+
+main() {
+  t.
+  ;
+  ma
+}
+----------------------------------------------------------------------</code></pre>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_1_6_11">A.3. 1.6.11</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>First version in github based of Sourceforge GPL&#8217;d source</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_1_6_10">A.4. 1.6.10</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>Latest version from <a href="https://xrefactory.com" class="bare">https://xrefactory.com</a></p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_acknowledgements">2. Acknowledgements</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Thanks to</p>
+<p>The following sequence of commands will call c-xref server task, ask for
+all completions after "t." string at line 4 (offset 40), then it will
+ask for completion on line 5 (offset 49).</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Marián Vittek, Bratislawa University, and his helpers that created
-this tool over many years.</p>
-</li>
-</ul>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>vittek:~/tmp&gt;~/c-xref/c-xref -server -xrefactory-II
+-olcxcomplet
+-olcursor=40
+/home/vittek/tmp/t.c
+end-of-options
+
+&lt;no-project-found len=20&gt;/home/vittek/tmp/t.c&lt;/no-project-found&gt;
+&lt;all-completions nofocus=0 len=19&gt;x  :int x
+y  :int y&lt;/all-completions&gt;
+&lt;sync&gt;
+
+
+-olcxcomplet
+-olcursor=49
+/home/vittek/tmp/t.c
+end-of-options
+
+&lt;no-project-found len=20&gt;/home/vittek/tmp/t.c&lt;/no-project-found&gt;
+&lt;goto&gt;
+&lt;position-lc line=6 col=2 len=20&gt;/home/vittek/tmp/t.c&lt;/position-lc&gt;
+&lt;/goto&gt;
+&lt;single-completion len=4&gt;main&lt;/single-completion&gt;
+&lt;sync&gt;</code></pre>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-12-14 09:44:01 UTC
+Last updated 2025-12-15 21:57:34 UTC
 </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
-<script>
-if (!hljs.initHighlighting.called) {
-  hljs.initHighlighting.called = true
-  ;[].slice.call(document.querySelectorAll('pre.highlight > code[data-lang]')).forEach(function (el) { hljs.highlightBlock(el) })
-}
-</script>
 </body>
 </html>
