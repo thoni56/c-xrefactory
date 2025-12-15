@@ -1,0 +1,775 @@
+:source-highlighter: highlightjs
+:icons: font
+:numbered:
+:toc: left
+:pp: ++
+:title-page:
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= C-xrefactory - a C/Yacc refactoring and code browsing tool - User Manual
+v{VERSION} - Generated {localdate}
+
+
+== Introduction
+
+=== What is C-xrefactory?
+
+`C-xrefactory` is a development tool for C developers that allows browsing variables and functions, as well as refactoring, in C and Yacc code.
+
+==== Features
+
+* Full integration with Emacs
+* Browsing source code in C supporting multiple pre-processing passes
+* Designed to work with large projects (> millions of lines)
+* Fast update using only modified files
+* First tool to https://www.martinfowler.com/articles/refactoringRubicon.html[Cross Refactoring's Rubicon] as described by Martin Fowler
+* Safe refactorings to
+** rename variables, functions etc.
+** extract function/macro
+** delete, add, move parameters
+* Solid code completion
+* Search for symbols using wildcards
+* Find unused variables and functions, globally as well as locally
+* Auto-detection of project
+* Full undo in Emacs
+
+=== About this document
+
+This document is a Work In Progress, as most things in this project at this stage.
+
+Things in this document might be out-dated, old, wrong or actually valid. Hopefully this will improve over time.
+
+=== History
+
+=== Installing
+
+C-xrefactory works with recent Emacsen on Linux (including WSL), Cygwin, Msys2-MSYS and MacOS/Darwin.
+
+==== From repository
+
+Clone the repository and load it in Emacs:
+
+[source,bash]
+----
+git clone https://github.com/thoni56/c-xrefactory
+emacs -l c-xrefactory/load.el
+----
+
+NOTE: You can clone the repository anywhere and use a full path to `load.el`.
+
+==== Using el-get
+
+If you use `el-get` for package management:
+
+----
+M-x el-get-install<ENTER>c-xrefactory<ENTER>
+----
+
+TIP: You can easily install `el-get` in your running Emacs using a snippet from https://github.com/dimitri/el-get[el-get's GitHub repository], but don't forget to add the `el-get` pieces to your Emacs init.
+
+==== Platform-specific setup
+
+If your Emacs runs in a "standard" *ix-like environment with `bash`, `make`, `cc` etc. you probably don't need anything in particular.
+
+For Windows users, it is recommended to do development in WSL (especially WSL2). For detailed platform-specific setup instructions, including how to run Emacs graphically from WSL using X11 servers, see the https://github.com/thoni56/c-xrefactory/blob/main/README.md[README] in the project repository.
+
+
+== Getting Started
+
+=== Quick start
+
+To quickly start working with C-xrefactory just invoke any of its functions from the 'c-xref' menu in Emacs. You will be asked for creation of a project. Then C-xrefactory will create its database for the project and is ready for use.
+
+C-xrefactory functions can be accessed via the 'c-xref' menu in Emacs. Optionally the most frequent functions can be bound to shortcuts. C-xrefactory can also be customized via standard Emacs customization dialog.
+
+=== Projects
+
+C-xrefactory is project based; you will need to create and maintain a description of your projects. C-xrefactory projects can be autodetected. C-xrefactory detects the 'active project' from the path of currently edited file. Each project contains list of 'autodetection directories' specifying when the project should be triggered 'active'. Only one project at the time can be active. In consequence 'autodetection directories' have to be distinct for all projects. Information about the selected 'active project' is displayed after each browsing action in the bottom information line of the editor.
+
+NOTE: Project autodetection directories are (in general) not the same as directories containing project files. Project files can contain common libraries used in many projects, while project detection directory should be the directory which is project specific, i.e. directory containing project specific files not shared with other projects.
+
+=== ReferenceDB
+
+The main part of C-xrefactory is the 'ReferenceDB'. Each project has its references stored in special files specified by options. They contain information about your project sources. In particular, information about all symbols, their linking properties, place(s) of definition and all usages. The ReferenceDB can be split into any number of files. The number of files can be specified by user. A larger number of files makes browsing faster, but makes creation and update slower. The maintenance of the ReferenceDB is to a large extent automatic. However they may become inconsistent, and when they do it is recommended to re-create the ReferenceDB manually.
+
+=== C-xref task
+
+C-xrefactory cooperates with an external task 'c-xref'. If you feel that the task has run into an inconsistent state, you can invoke the 'Kill c-xref task' function.
+
+
+== Completion
+
+Completion is implemented with the function 'Complete', in Emacs usually bound to the the kbd:[F8] key. Completion tries to complete identifier before the cursor by contextually appropriate strings. C-xrefactory is recognizing different context among them, completion of function parameters, variable definitions, etc. When several possibilities are available a completion dialog appears.
+
+=== Completion Dialog
+
+Each line of the dialog contains following information: the identifier to insert and the full definition of the symbol.
+
+Symbol can be selected using standard motion keys. The following special keys are available:
+
+* kbd:[Return] — close dialog and insert completion.
+* kbd:[Space] — inspect definition of the symbol.
+* kbd:[Escape] — return to invocation place and close dialog.
+
+
+== Browser
+
+C-xrefactory browser allows resolving any symbol in source file, inspect its definition and all usages. Following four basic functions are available for browsing and it is usual to bind them to hot-keys:
+
+* Browser > Push Symbol and Goto Definition
+* Browser > Pop Symbol
+* Browser > Previous Reference
+* Browser > Next Reference
+
+=== Basic browsing workflow
+
+When browsing a symbol, you first need to activate it by moving the caret on an occurrence of the symbol and invoke 'Push Symbol and Goto Definition' function. In the case of success the caret is moved to the definition of the symbol. This is because inspecting definition is the most usual browsing function and it is performed together with the resolution. After successful resolution you can inspect all usages of the symbol using 'Previous' and 'Next Reference' functions.
+
+=== The browser stack concept
+
+The browser allows simultaneous browsing of multiple symbols. For example, let's imagine you are browsing all usages of a variable 'variable' and you see that it is used as a parameter of a method 'method'. So, you wish to find the definition of the 'method'. In this situation simply put caret on the 'method' and invoke 'Push Symbol and Goto Definition' once more time. You will be moved to the definition of the 'method' and you can inspect its code. After this you wish to continue browsing remaining usages of the 'variable'. But when you try to use 'Previous' and 'Next Reference' you see that those functions are now inspecting all usages of the 'method' (not 'variable' as you wish). In this situation you first need to invoke the function 'Backward'. After this, the 'Previous' and 'Next Reference' functions work with usages of the 'variable'.
+
+As illustrated by this example, C-xrefactory browser is based on a browser stack. Newly browsed symbols are pushed on the top of the stack by the function 'Push Symbol and Goto Definition'. Functions 'Previous' and 'Next Reference' are inspecting previous and next usage of the symbol placed on the top of the stack. Function 'Backward' is removing one element from the top of the stack.
+
+It is possible to push back an element which was popped from the stack by error. This is done with the function 'Browser > Forward'. This function is particularly useful when using visualization of the browser stack in the Browser Dialog.
+
+=== Push by name
+
+Another way to push references onto the browser stack is the function: 'Browser > Push Name and Goto Definition'. This function takes the string under the cursor, scans the ReferenceDB and pushes ALL symbols having this name. No semantic information such as scopes or file is taken into account. This function is useful for finding the definition of a known symbol rather than to browse existing code.
+
+=== Browser Dialog
+
+Browser dialog allows visualization of C-xrefactory browser stack by displaying its top element. It contains two major information panes. Information displayed in information panes can be filtered by selecting filter from combo boxes placed above.
+
+==== Toolbar
+
+Browser toolbar contains four buttons putting new symbol(s) onto browser stack.
+
+* *Push Symbol and Goto Definition*. This function parses the buffer opened in the editor pane and resolves the symbol pointed by the caret. This symbol is then pushed onto the browser stack. Then the caret is moved to the definition of the symbol. This is the most used browsing function. If you want to browse a symbol from your program, this is the function to be used. Other functions are used for few specific cases when this function can not do the job.
+
+* *Browse File Local Unused Symbols*. This function parses the buffer opened in the editor pane and pushes onto browser stack all unused symbols with local scope. Those are local variables, method parameters, but also labels and import statements, so this function can be used to purge imports.
+
+* *Browse Global Unused Symbols*. This function scans references and pushes them onto the browser stack.
+
+Four other functions are accessible from the Toolbar:
+
+* *Backward*. Go back to the previously browsed symbol.
+
+* *Forward*. Go forward to the symbol (if any) from where you went back.
+
+* *Previous Reference*. Move to the previous reference of currently browsed symbol.
+
+* *Next Reference*. Move to the next reference of currently browsed symbol.
+
+==== Browse name field
+
+The browse name text field can be used to manually enter a name to be pushed onto the browser stack. This may be used when you wish to browse a symbol which you do not see in your source code. Otherwise, it is more natural to use either "Push Name and Goto Definition" or "Push Symbol and Goto Definition" function.
+
+==== Symbol Pane
+
+The symbol information pane contains symbol names, profile information and where those symbols are defined. Window is organized as tree. The tree shows the location of the symbols definition followed by the number of references.
+
+.Mouse operations
+[cols="1,3"]
+|===
+|<mouse-left-button> |select only one symbol and inspect definition
+|<mouse-right-button> |toggle select/unselect
+|<SHIFT><mouse-left-button> |toggle select/unselect
+|===
+
+.Multi-selection
+Multiple symbols can be selected in the Symbol Pane. When multiple symbols are selected, the References Pane will show references from all selected symbols combined. This is useful when you want to view references for multiple related symbols together. For example, you might select multiple local variables named 'i' from different functions to see all their usages in one view.
+
+.Available filters
+[cols="1,3"]
+|===
+|Equal name |all symbols of given name are displayed. Tree is not restricted.
+|Equal profile |the browsed symbol is displayed. Tree is not restricted.
+|Relevant |the browsed symbol is displayed. Tree does not display references not related to the browsed symbol.
+|===
+
+==== References Pane
+
+The references pane contains list of references. Each reference is listed together with corresponding line of source code. The list is selectable and selected reference is automatically opened in editor.
+
+.Filters for classes
+[cols="1,3"]
+|===
+|Level 3 |Only definitions and declarations are shown.
+|Level 2 |As level 3 plus usages in the EXTENDS and IMPLEMENTS clauses
+|Level 1 |As level 2 plus all usages in the top level scope (in global vars and method definitions). This can be used to see all the methods working with a particular type.
+|Level 0 |All references are shown.
+|===
+
+.Filters for variables
+[cols="1,3"]
+|===
+|Level 3 |Only definitions and declarations are shown.
+|Level 2 |As level 3 plus l-value usages.
+|Level 1 |Not used.
+|Level 0 |All references are shown.
+|===
+
+
+== Symbol Retriever
+
+C-xrefactory symbol retriever is useful for finding forgotten symbol names and for finding symbols from third parties libraries. You enter a string to search and C-xrefactory scans the references for matches. All symbols matching entered string are reported.
+
+Entered strings are interpreted as shell expressions and are composed from a sequence of characters possibly containing wildcard characters. The following wildcard characters can be used:
+
+* `*` expands to any (possibly empty) string
+* `?` expands to any single character
+* `[...]` expands to one of the enclosed characters
+
+Ranges of characters can be included between `[` and `]`, so for example `[a-zA-Z]` matches any letter, `[0-9]` matches any digit, as per usual in shell expressions. If the first character following the `[` is a `^` then the meaning of the expansion is inverted, for example `[^0-9]` expands to any non-digit character. A symbol is reported only if it completely matches the searched string. Method profile is considered as part of the name of the method, for example, the expression `*(*int*)` will report all methods taking at least one parameter of type int. Letters are considered case insensitive except letters enclosed between `[` and `]`.
+
+For example the expression `*get*` will report all symbols containing the string 'get', for example symbols `getField` and `Target` will match. Expression `get*` will report all symbols starting by the string 'get'. Expression `[A-Z]*` will report all symbols starting by an upper case letter. Expression `get[abc0-2]*` will report all symbols starting by the string 'get' followed by one of characters a,b,c,0,1,2 followed by any (possibly empty) string, so for example `getact` will match, but `getAccount` will not.
+
+If you enter an expression which does not contain any of the wildcard characters `*`, `?` or `[` then C-xrefactory reports all symbols containing the entered string. For example, entering `get` as the expression is equivalent to entering `*get*`.
+
+
+== Refactorer
+
+Refactoring is a software development and maintenance process where the source code is changed in such a way that it does not alter the external behaviour. C-xrefactory offers automatic support for several general refactoring patterns available via refactorer function. Whenever it is possible it also checks that performed modifications do not change program behaviour. For example, in case of symbol renaming, C-xrefactory checks whether renamed symbol does not clash with an existing one, etc.
+
+Invocation of refactorings will display a pop up menu with refactorings available for symbol pointed by the caret. Selection of one of items will perform the refactoring.
+
+Here follows the list of refactorings implemented by C-xrefactory:
+
+* <<rename-symbol>>
+* <<add-parameter>>
+* <<delete-parameter>>
+* <<move-parameter>>
+* <<extract-function-macro>>
+* <<rename-include-file>>
+* <<set-target>>
+
+
+== Refactorings
+
+[[rename-symbol]]
+=== Rename Symbol
+
+*Description*: Change the name of a program symbol
+
+*Example*:
+
+_Before refactoring_:
+
+[source,c]
+----
+for (int a=0; a<args.length; a++) {
+    action(args[a]);
+}
+----
+
+_After refactoring_:
+
+[source,c]
+----
+for (int i=0; i<args.length; i++) {
+    action(args[i]);
+}
+----
+
+*Refactoring Context*: Cursor has to be on the symbol.
+
+*Input parameters*: New name of the symbol (for example: 'i')
+
+*Mechanics*: Replace old symbol name by the new name on all its occurrences in the project.
+
+[[add-parameter]]
+=== Add Parameter
+
+*Description*: Add parameter to a method, function or macro.
+
+*Example*:
+
+_Before refactoring_:
+
+[source,c]
+----
+public int method(int x) {
+    if (x<=1)
+        return 1;
+    return method(x-1)+method(x-2);
+}
+----
+
+_After refactoring_:
+
+[source,c]
+----
+public int method(int x, int y) {
+    if (x<=1)
+        return 1;
+    return method(x-1, 0)+method(x-2, 0);
+}
+----
+
+*Refactoring Context*: Cursor has to be on the method's (function's or macro's) name.
+
+*Input parameters*: Position of the new parameter, its declaration and default value. (for example: '2', 'int y' and '0').
+
+*Mechanics*: Inspect all references of the method (function or macro) and add declaration of the new parameter to each definition and default value to each invocation of the method.
+
+[[delete-parameter]]
+=== Delete Parameter
+
+*Description*: Delete parameter of a method, function or macro.
+
+*Example*:
+
+_Before refactoring_:
+
+[source,c]
+----
+public int method(int x, int y) {
+    if (x<=1)
+        return 1;
+    return method(x-1, 0)+method(x-2, 0);
+}
+----
+
+_After refactoring_:
+
+[source,c]
+----
+public int method(int x) {
+    if (x<=1)
+        return 1;
+    return method(x-1)+method(x-2);
+}
+----
+
+*Refactoring Context*: Cursor has to be on the method's (function's or macro's) name.
+
+*Input parameters*: Position of the parameter to delete (for example: '2').
+
+*Mechanics*: Inspect all references of the method (function or macro) and remove the parameter.
+
+[[move-parameter]]
+=== Move Parameter
+
+*Description*: Reorder parameter of a method, function or macro.
+
+*Example*:
+
+_Before refactoring_:
+
+[source,c]
+----
+public int method(int x, int y) {
+    if (x<=1)
+        return 1;
+    return method(x-1, 0)+method(x-2, 0);
+}
+----
+
+_After refactoring_:
+
+[source,c]
+----
+public int method(int y, int x) {
+    if (x<=1)
+        return 1;
+    return method(0, x-1)+method(0, x-2);
+}
+----
+
+*Refactoring Context*: Cursor has to be on the method's (function's or macro's) name.
+
+*Input parameters*: Old and new positions of the parameter (for example: '1' and '2').
+
+*Mechanics*: Inspect all references of the method and move the parameter from its original to its new position.
+
+[[extract-function-macro]]
+=== Extract Function/Macro
+
+*Description*: Extract region into a new function or macro.
+
+*Example*:
+
+_Before refactoring_:
+
+[source,c]
+----
+int main(int argc, char *argv[]) {
+    int n,x,y,t;
+    n = atoi(argv[1]);
+    x=0; y=1;
+    for (int i=0; i<n; i++) {
+        t=x+y; x=y; y=t;
+    }
+    sprintf("%d-th fib == %d", n, x);
+}
+----
+
+_After refactoring_:
+
+[source,c]
+----
+static int fib(int n) {
+    int x, y, t;
+    x=0; y=1;
+    for (int i=0; i<n; i++) {
+        t=x+y; x=y; y=t;
+    }
+    return x;
+}
+
+int main(int argc, char *argv[]) {
+    int n,x,y,t;
+    n = atoi(argv[1]);
+    x = fib(n);
+    sprintf("%d-th fib == %d", n, x);
+}
+----
+
+*Refactoring Context*: The code for extraction has to be selected within the editor.
+
+*Input Parameters*: Name of the new function or macro.
+
+*Mechanics*: Copy the region before the function, generate new header and footer based on static analysis of code and generate call to the new method at the original place.
+
+[[rename-include-file]]
+=== Rename Include File
+
+*Description*: Change the name of a file included with the `#include` directive and change all references to it.
+
+*Refactoring Context*: Cursor is on an `#include` directive for a file included with `"`. System files cannot be renamed.
+
+*Mechanics*: Rename the file and change all `#include` directives referencing the file accordingly.
+
+[[set-target]]
+=== Set Target for Next Moving Refactoring
+
+*Description*: Set target position for moving refactorings
+
+*Refactoring Context*: Cursor has to be on the position where the function or variable will be moved.
+
+*Input Parameters*: None.
+
+
+== Command line usage
+
+=== Use case
+
+Normally the `c-xref` program is controlled from an editor adapter. But sometimes running it from the command line, e.g. as part of setting up a project, investigating problems with `c-xref` or as a part of the `c-xrefactory` test suite, can be useful.
+
+Most options can be set in a configuration file to be effective for every execution of `c-xref` in a project.
+
+Here follows a description of the various available command line options.
+
+=== Command line options
+
+There is a large number of command line options. Some of them might seem very obscure since they are only intended for use by the editor server protocol. Below is a list of all of them grouped after their usage (grouping and descriptions is a Work In Progress).
+
+==== Operating modes
+
+`c-xrefactory` can operate in three different modes:
+
+* xref - the cross-referencer (default)
+* server - editor server, started by editor adapters
+* refactory - refactoring editor, normally called by editor adapters
+
+-refactory::
+Activate refactory mode.
+
+-server::
+Activate server mode.
+
+==== Cross-referencing options
+
+-create::
+Overwrite any existing cross-reference data with a completely new set.
+
+-fastupdate::
+"Fast update" ignores updated header files.
++
+NOTE: This option might be removed in the future.
+
+-fullupdate, -update::
+Update the cross-reference database including header files.
+
+==== Selecting configuration information
+
+-p <project>::
+`c-xrefactory` has project-based configurations. The `-p` selects which of the projects available in the selected configuration file (see `-xrefrc` option) that should be applied.
+
+-stdop <file>::
+Read `file` as a configuration file containing options, as if it was included from the selected configuration file. This makes it possible to share certain configuration options between multiple configuration files/projects.
+
+-xrefrc=<file>::
+-xrefrc <file>::
+Read the indicated `file` instead of the default `~/.c-xrefrc` for configuration information.
+
+==== Variables etc.
+
+-set <variable> <value>::
+Set `variable` to 'value' in the same fashion as environment variables. Variables set in this way can be used in configuration files and queried using the command line option `-get`.
+
+-get <variable>::
+Get the value of a previously set "environment variable". The value will be transferred over the edit server protocol as a `PPC_SET_INFO` record.
+
+==== Character encoding etc.
+
+-crconversion::
+-crlfconversion::
+Convert various line-ending conventions to LF.
+
+==== Error reporting and output
+
+-errors, -no-errors::
+-warnings::
+-infos::
+-trace::
+-debug::
+Select level of information to print.
+
+-yydebug::
+Enable debugging of the C and Yacc parsers according to the Yacc manual.
+
+-o <file>::
+Redirect all output to `file` rather than to standard output.
+
+-log=<file>::
+Place all log output in `file`.
+
+==== C specific options
+
+-D<macro>[=<body>]::
+Define a preprocessor macro or variable with name `macro` in the same fashion as for the C/C{pp} pre-processor. This is typically used to set variables differently for different passes (see `-pass`).
+
+-I <directory>::
+Look for included C header files also in `directory`. If used multiple times the order of search will be the same as the order of the occurrence of the `-I` options.
+
+-compiler <path>::
+Sets the path of the C compiler to use. `c-xrefactory` tries to setup pre-defined types, pre-processor variables, include paths etc. so that the parsing of the C source will be as close to what the compiler the project is using does. If the project is not using the default C compiler, `cc`, then this option allows `c-xrefactory` to inquire some compilers for their settings and apply them automatically.
+
+-csuffixes=<suffixes>::
+This option indicates which file suffixes to consider being a C file. Multiple suffixes should be separated by `:`.
+
+-strict::
+Reject keywords and types that are not part of the ANSI C standard, such as `__asm__`, `_near` and `__const__`.
+
+==== Editor adapter/server configuration
+
+-xrefactory-II::
+Applicable only to `server` mode. Will use a second generation protocol between the edit server and the editor adapter. Using the edit server/refactorer without activating `-xrefactory-II` is deprecated. The option itself Will be deprecated and removed in the future when the legacy protocol is removed.
+
+==== Browser operations
+
+These options are primarily used by the editor server protocol but can be invoked from the command line for testing or debugging purposes.
+
+-olcxpush::
+Push symbol at cursor position onto the browser stack and navigate to its definition.
+
+-olcxpushname::
+Push all symbols with the given name onto the browser stack, without semantic resolution.
+
+-olcxpushonly::
+Push symbol onto the browser stack without navigation.
+
+-olcxpop::
+Remove the top symbol from the browser stack (backward navigation).
+
+-olcxpoponly::
+Remove the top symbol without navigation.
+
+-olcxrepush::
+Re-push the top symbol (forward navigation after going backward).
+
+-olcxnext::
+Navigate to the next reference of the currently browsed symbol.
+
+-olcxprevious::
+Navigate to the previous reference of the currently browsed symbol.
+
+-olcxgoto::
+Navigate to the currently selected reference.
+
+-olcxgotodef::
+Navigate to the definition of the currently browsed symbol.
+
+-olcxgotocurrent::
+Navigate to the current position in the reference list.
+
+-olcxmenuselect::
+Toggle the selection state of a menu item. This allows multi-selection where references from multiple selected symbols are combined in the reference list. Useful for viewing references of related symbols (e.g., multiple local variables named 'i' in different functions) together.
+
+-olcxmenusingleselect::
+Deselect all menu items, select only the specified item, and navigate to its definition. This is the default behavior for single-symbol browsing.
+
+-olcxmenuall::
+Select all symbols in the current menu.
+
+-olcxmenunone::
+Deselect all symbols in the current menu.
+
+-olcxmenufilter::
+Apply a filter to the menu display.
+
+-olcxpushfileunused::
+Push all unused file-local symbols onto the browser stack.
+
+-olcxpushglobalunused::
+Push all unused global symbols onto the browser stack.
+
+==== Miscellaneous
+
+-about::
+-help::
+-version::
+Print short or long help text or version information.
+
+-delay=<n>::
+Will sleep `n` seconds before starting `c-xref`. Useful when attaching a debugger to an edit server process. Will only work on initial invocation in server mode.
+
+-preload <file1> <file2>::
+Indicates that the current content of the editor copy of `file2` is available in `file1`. If an editor has an edited, non-saved, buffer holding a relevant `file2` it is supposed that the editor adaptor saves the content into a file and indicates this to the edit server using this option.
+
+==== Internal options
+
+NOTE: This should probably be in the design document instead.
+
+The refactorer internally calls the main c-xref indexing function and controls it by passing "command line options". Here is a list of those "options", which shall not be used from the command line.
+
+-exactpositionresolve::
+If a symbol is defined in multiple places, like it can be in C, using this flag will consider those instances different based on them being in different locations.
++
+What you want or need is unfortunately depending on your situation. If you don't use this option then navigation and refactorings will affect all occurrences.
++
+One particular scenario is if you have mocked some functions (like with Cgreen) then you have at least two symbols with the same name and parameter lists. In this case you really want refactorings like renames and parameter changes to also affect the mocks, although they are not actually the "same" symbol. If `-exactpositionresolve` is used then the actual function and its mock version would be considered different symbols and a refactoring would only affect the selected one, leaving you to sync up the other manually.
+
+==== As yet undocumented options
+
+The following options exist but are not yet fully documented:
+
+-addimportdefault::
+-browsedsym::
+-commentmovinglevel::
+-completeparenthesis::
+-completioncasesensitive::
+-completionoverloadwizdeep::
+-continuerefactoring::
+-displaynestedwithouters::
+-exit::
+-filescasesensitive::
+-filescaseunsensitive::
+-maxcompls::
+-mf::
+-no-autoupdatefromsrc::
+-no-includerefresh::
+-no-includerefs::
+-olallchecks::
+-olcheckaccess::
+-olchecklinkage::
+-olcomplback::
+-olcomplforward::
+-olcomplselect::
+-olcursor::
+-olcxargmanip::
+-olcxcbrowse::
+-olcxcgoto::
+-olcxcomplet::
+-olcxcplsearch::
+-olcxctinspectdef::
+-olcxencapsulate::
+-olcxencapsulatesc1::
+-olcxencapsulatesc2::
+-olcxextract::
+-olcxfilter::
+-olcxgetcurrentrefn::
+-olcxgetparamcoord::
+-olcxgetprojectname::
+-olcxgetrefactorings::
+-olcxgetsymboltype::
+-olcxgotocaller::
+-olcxgotoparname::
+-olcxintersection::
+-olcxlccursor::
+-olcxmctarget::
+-olcxmethodlines::
+-olcxmmtarget::
+-olcxmodified::
+-olcxnotfqt::
+-olcxparnum::
+-olcxparnum2::
+-olcxprimarystart::
+-olcxpushandcallmacro::
+-olcxpushforlm::
+-olcxpushspecialname::
+-olcxrename::
+-olcxsafetycheck::
+-olcxsafetycheckinit::
+-olcxsafetycheckmovedblock::
+-olcxsafetycheckmovedfile::
+-olcxsyntaxpass::
+-olcxtaggoto::
+-olcxtagsearch::
+-olcxtagsearchback::
+-olcxtagsearchforward::
+-olcxtagselect::
+-olcxtarget::
+-olcxtops::
+-olcxtoptype::
+-olcxunmodified::
+-olcxwindel::
+-olcxwindelfile::
+-olcxwindelwin::
+-olexaddress::
+-olexmacro::
+-olinelen::
+-olmanualresolve::
+-olmark::
+-olnodialog::
+-optinclude::
+-pass::
+-prune::
+-refnum::
+-refs::
+-renameto::
+-resetIncludeDirs::
+-rfct-add-param::
+-rfct-add-to-imports::
+-rfct-del-param::
+-rfct-expand::
+-rfct-extract-macro::
+-rfct-extract-function::
+-rfct-move-param::
+-rfct-param1::
+-rfct-param2::
+-rfct-rename::
+-rlistwithoutsrc::
+-searchdef::
+-searchdefshortlist::
+-searchshortlist::
+
+== The configuration file
+
+T.B.D.
+
+[appendix]
+== Feedback
+
+Any feedback is welcome at the https://github.com/thoni56/c-xrefactory[c-xrefactory GitHub repository].
+
+
+[appendix]
+== License
+
+You can read the license at the https://github.com/thoni56/c-xrefactory/blob/main/LICENSE[c-xrefactory GitHub repository].
+
+
+== Acknowledgements
+
+Thanks to:
+
+* Marián Vittek, Bratislava University, and his helpers that created this tool over many years.
