@@ -36,7 +36,7 @@
     ENUM(OLO_MENU_FILTER_MINUS)                 \
     ENUM(OLO_MENU_FILTER_PLUS)                  \
     ENUM(OLO_MENU_FILTER_SET)                   \
-    ENUM(OLO_MENU_SELECT)                       \
+    ENUM(OLO_MENU_SELECT_THIS_AND_GOTO_DEFINITION)  \
     ENUM(OLO_MENU_SELECT_ALL)                   \
     ENUM(OLO_MENU_SELECT_NONE)                  \
     ENUM(OLO_MENU_SELECT_ONLY)                  \
@@ -55,7 +55,7 @@
     ENUM(OLO_REF_FILTER_SET)                    \
     ENUM(OLO_RENAME)                            \
     ENUM(OLO_REPUSH)                            \
-    ENUM(OLO_SAFETY_CHECK)                     \
+    ENUM(OLO_SAFETY_CHECK)                      \
     ENUM(OLO_SET_MOVE_FUNCTION_TARGET)          \
     ENUM(OLO_TAGGOTO)                           \
     ENUM(OLO_TAGSELECT)                         \
@@ -73,14 +73,13 @@
        OLO_TAGGOTO,             - goto tag search result
        OLO_TAGSELECT,           - select tag search result
        OLO_EXTRACT,             - extract block into separate function
-       OLO_MENU_INSPECT_DEF,	- inspect definition from symbol menu
-       OLO_MENU_SELECT,         - select the line from symbol menu
-       OLO_MENU_SELECT_ONLY,	- select only the line from symbol menu
+       OLO_MENU_SELECT,         - select/toggle the line from symbol menu
+       OLO_MENU_SELECT_THIS_AND_GOTO_DEFINITION,	- select only the line from symbol menu
        OLO_MENU_SELECT_ALL,     - select all from symbol menu
        OLO_MENU_SELECT_NONE,	- select none from symbol menu
-       OLO_MENU_FILTER_SET,     - more strong filtering
-       OLO_MENU_FILTER_PLUS,	- more strong filtering
-       OLO_MENU_FILTER_MINUS,	- smaller filtering
+       OLO_MENU_FILTER_SET,     - set filter level
+       OLO_MENU_FILTER_PLUS,	- stronger filtering
+       OLO_MENU_FILTER_MINUS,	- weaker filtering
        OLO_MENU_GO,             - push references from selected menu items
        OLO_CHECK_VERSION,       - check version correspondance
        OLO_REMOVE_WIN,          - just remove window of top references

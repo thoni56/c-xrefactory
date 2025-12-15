@@ -55,7 +55,7 @@ CompletionLine makeCompletionLine(char *string, Symbol *symbol, Type symbolType,
     CompletionLine line;
     line.string = string;
     line.symbol = symbol;
-    line.symbolType = symbolType;
+    line.type = symbolType;
     line.margn = margn;
     line.margs = margs;
     return line;
@@ -107,13 +107,13 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
     char *ppc;
 
     ppc = ppcTmpBuff;
-    if (completions->alternatives[index].symbolType == TypeCppUndefMacro)
+    if (completions->alternatives[index].type == TypeCppUndefMacro)
         return;
 
     // remove parenthesis (if any)
     strcpy(tempString, completions->alternatives[index].string);
     tempLength = strlen(tempString);
-    if (tempLength>0 && tempString[tempLength-1]==')' && completions->alternatives[index].symbolType!=TypeInheritedFullMethod) {
+    if (tempLength>0 && tempString[tempLength-1]==')' && completions->alternatives[index].type!=TypeInheritedFullMethod) {
         tempLength--;
         tempString[tempLength]=0;
     }
@@ -126,7 +126,7 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
     ppc += strlen(ppc);
     size = COMPLETION_STRING_SIZE;
     l = 0;
-    if (completions->alternatives[index].symbolType==TypeDefault) {
+    if (completions->alternatives[index].type==TypeDefault) {
         assert(completions->alternatives[index].symbol && completions->alternatives[index].symbol->typeModifier);
         typeDefinitionExpressionFlag = true;
         if (completions->alternatives[index].symbol->storage == StorageTypedef) {
@@ -138,12 +138,12 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
         char *pname = completions->alternatives[index].symbol->name;
         prettyPrintType(tempString+l, &size, completions->alternatives[index].symbol->typeModifier, pname, ' ',
                    typeDefinitionExpressionFlag);
-    } else if (completions->alternatives[index].symbolType==TypeMacro) {
+    } else if (completions->alternatives[index].type==TypeMacro) {
         prettyPrintMacroDefinition(tempString, &size, completions->alternatives[index].string,
                                    completions->alternatives[index].margn, completions->alternatives[index].margs);
     } else {
-        assert(completions->alternatives[index].symbolType>=0 && completions->alternatives[index].symbolType<MAX_TYPE);
-        sprintf(tempString,"%s", typeNamesTable[completions->alternatives[index].symbolType]);
+        assert(completions->alternatives[index].type>=0 && completions->alternatives[index].type<MAX_TYPE);
+        sprintf(tempString,"%s", typeNamesTable[completions->alternatives[index].type]);
     }
 
     formatFullCompletions(tempString, indent+FULL_COMPLETION_INDENT_CHARS+2, cindent);
@@ -250,7 +250,7 @@ void printCompletions(Completions *completions) {
         Reference ref;
         sessionData.completionStack.top->completions = completionListPrepend(
             sessionData.completionStack.top->completions, completions->alternatives[ii].string, ppcTmpBuff,
-            completions->alternatives[ii].symbol, NULL, &ref, completions->alternatives[ii].symbolType,
+            completions->alternatives[ii].symbol, NULL, &ref, completions->alternatives[ii].type,
             NO_FILE_NUMBER);
     }
     olCompletionListReverse();
@@ -267,7 +267,7 @@ void printCompletions(Completions *completions) {
 static bool isTheSameSymbol(CompletionLine *c1, CompletionLine *c2) {
     if (strcmp(c1->string, c2->string) != 0)
         return false;
-    if (c1->symbolType != c2->symbolType)
+    if (c1->type != c2->type)
         return false;
     return true;
 }
@@ -336,20 +336,21 @@ static bool reallyInsert(CompletionLine *a, int *aip, char *s, CompletionLine *t
     return true;
 }
 
-static void computeComPrefix(char *d, char *s) {
-    while (*d == *s /*& && *s!='(' || (!options.completionCaseSensitive && tolower(*d)==tolower(*s)) &*/) {
-        if (*d == 0) return;
+static void computeCompletionPrefix(char *d, char *s) {
+    while (*d == *s) {
+        if (*d == 0)
+            return;
         d++; s++;
     }
     *d = 0;
 }
 
-static bool completionTestPrefix(Completions *ci, char *s) {
+static bool completionTestPrefix(Completions *completions, char *s) {
     char *d;
-    d = ci->idToProcess;
+    d = completions->idToProcess;
     while (*d == *s || (!options.completionCaseSensitive && tolower(*d)==tolower(*s))) {
         if (*d == 0) {
-            ci->isCompleteFlag = true;    /* complete, but maybe not unique*/
+            completions->isCompleteFlag = true;    /* complete, but maybe not unique*/
             return 0;
         }
         d++; s++;
@@ -380,7 +381,7 @@ static void completionInsertName(char *name, CompletionLine *completionLine, boo
             ci->fullMatchFlag = false;
             l = strlen(name/*+len*/);
             if (l > ci->maxLen) ci->maxLen = l;
-            computeComPrefix(ci->prefix, name);
+            computeCompletionPrefix(ci->prefix, name);
         }
     }
 }

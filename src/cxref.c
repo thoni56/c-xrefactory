@@ -79,7 +79,7 @@ static void renameCollationSymbols(BrowserMenu *menu) {
 
 /* *********************************************************************** */
 
-static Reference *getDefinitionRef(Reference *reference) {
+static Reference *getDefinitionReference(Reference *reference) {
     Reference *definitionReference = NULL;
 
     for (Reference *r=reference; r!=NULL; r=r->next) {
@@ -820,19 +820,18 @@ static void olcxPushAndCallMacro(void) {
     LIST_REVERSE(Reference, refs->references);
 }
 
-static void olcxReferenceGotoRef(int refn) {
-    SessionStackEntry    *refs;
-    Reference         *rr;
-    int                 i,rfilter;
-
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
+static void gotoReferenceWithIndex(int referenceIndex) {
+    SessionStackEntry *sessionStackEntry;
+    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionStackEntry, CHECK_NULL))
         return;
-    rfilter = usageFilterLevels[refs->refsFilterLevel];
-    for (rr=refs->references,i=1; rr!=NULL && (i<refn||isAtMostAsImportantAs(rr->usage, rfilter)); rr=rr->next){
-        if (isMoreImportantUsageThan(rr->usage, rfilter)) i++;
+
+    int filterLevel = usageFilterLevels[sessionStackEntry->refsFilterLevel];
+    Reference *r = sessionStackEntry->references;
+    for (int i=1; r!=NULL && (i<referenceIndex||isAtMostAsImportantAs(r->usage, filterLevel)); r=r->next){
+        if (isMoreImportantUsageThan(r->usage, filterLevel)) i++;
     }
-    refs->current = rr;
-    olcxGenGotoActReference(refs);
+    sessionStackEntry->current = r;
+    olcxGenGotoActReference(sessionStackEntry);
 }
 
 static Completion *olCompletionNthLineRef(Completion *cpls, int refn) {
@@ -886,23 +885,23 @@ static void findAndGotoDefinition(ReferenceableItem *sym) {
     popAndFreeSessionsUntil(oldtop);
 }
 
-static void olcxReferenceGotoCompletion(int refn) {
-    SessionStackEntry *refs;
-    Completion *completion;
+static void olcxReferenceGotoCompletion(int referenceIndex) {
+    assert(referenceIndex > 0);
 
-    assert(refn > 0);
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
+    SessionStackEntry *sessionStackEntry;
+    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionStackEntry, CHECK_NULL))
         return;
-    completion = olCompletionNthLineRef(refs->completions, refn);
+
+    Completion *completion = olCompletionNthLineRef(sessionStackEntry->completions, referenceIndex);
     if (completion != NULL) {
-        if (completion->visibility == LocalVisibility /*& || refs->operation == OLO_TAG_SEARCH &*/) {
-            if (positionsAreNotEqual(completion->ref.position, noPosition)) {
-                gotoOnlineCxref(completion->ref.position, UsageDefined, "");
+        if (completion->visibility == LocalVisibility) {
+            if (positionsAreNotEqual(completion->reference.position, noPosition)) {
+                gotoOnlineCxref(completion->reference.position, UsageDefined, "");
             } else {
                 indicateNoReference();
             }
         } else {
-            findAndGotoDefinition(&completion->sym);
+            findAndGotoDefinition(&completion->referenceable);
         }
     } else {
         indicateNoReference();
@@ -916,8 +915,8 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
     assert(sessionData.retrievingStack.top);
     rr = olCompletionNthLineRef(sessionData.retrievingStack.top->completions, refn);
     if (rr != NULL) {
-        if (positionsAreNotEqual(rr->ref.position, noPosition)) {
-            gotoOnlineCxref(rr->ref.position, UsageDefined, "");
+        if (positionsAreNotEqual(rr->reference.position, noPosition)) {
+            gotoOnlineCxref(rr->reference.position, UsageDefined, "");
         } else {
             indicateNoReference();
         }
@@ -992,7 +991,7 @@ static void olcxReferenceGotoDef(void) {
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
         return;
-    dr = getDefinitionRef(refs->references);
+    dr = getDefinitionReference(refs->references);
     if (dr != NULL) refs->current = dr;
     else refs->current = refs->references;
     //&fprintf(dumpOut,"goto ref %d %d\n", refs->current->position.line, refs->current->position.col);
@@ -1120,35 +1119,32 @@ void recomputeSelectedReferenceable(SessionStackEntry *entry) {
     processSelectedReferences(entry, genOnLineReferences);
 }
 
-static void olcxMenuToggleSelect(void) {
-    SessionStackEntry    *refs;
-    BrowserMenu     *ss;
-    int                 line;
-
+static void toggleMenuSelect(void) {
+    SessionStackEntry *refs;
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
-    for (ss=refs->menu; ss!=NULL; ss=ss->next) {
-        line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
+
+    BrowserMenu *menu;
+    for (menu=refs->menu; menu!=NULL; menu=menu->next) {
+        int line = SYMBOL_MENU_FIRST_LINE + menu->outOnLine;
         if (line == options.lineNumberOfMenuSelection) {
-            ss->selected = !ss->selected; // WTF! Was: ss->selected = ss->selected ^ 1;
+            menu->selected = !menu->selected; // WTF! Was: ss->selected = ss->selected ^ 1;
             recomputeSelectedReferenceable(refs);
             break;
         }
     }
-    if (ss!=NULL) {
+    if (menu!=NULL) {
         olcxPrintRefList(";", refs);
     }
 }
 
 static void olcxMenuSelectOnly(void) {
-    SessionStackEntry *refs;
-    BrowserMenu *selection;
-
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
+    SessionStackEntry *stackEntry;
+    if (!sessionHasReferencesValidForOperation(&sessionData, &stackEntry, CHECK_NULL))
         return;
 
-    selection = NULL;
-    for (BrowserMenu *menu=refs->menu; menu!=NULL; menu=menu->next) {
+    BrowserMenu *selection = NULL;
+    for (BrowserMenu *menu=stackEntry->menu; menu!=NULL; menu=menu->next) {
         menu->selected = false;
         int line = SYMBOL_MENU_FIRST_LINE + menu->outOnLine;
         if (line == options.lineNumberOfMenuSelection) {
@@ -1161,13 +1157,13 @@ static void olcxMenuSelectOnly(void) {
         ppcBottomWarning("No Symbol");
         return;
     }
-    recomputeSelectedReferenceable(refs);
+    recomputeSelectedReferenceable(stackEntry);
 
-    Reference *definition = getDefinitionRef(refs->references);
+    Reference *definition = getDefinitionReference(stackEntry->references);
     if (definition != NULL) {
-        refs->current = definition;
-        olcxPrintRefList(";", refs);
-        ppcGotoPosition(refs->current->position);
+        stackEntry->current = definition;
+        olcxPrintRefList(";", stackEntry);
+        ppcGotoPosition(stackEntry->current->position);
     } else
         ppcBottomWarning("Definition not found");
 }
@@ -1546,11 +1542,12 @@ static void olcxNoSymbolFoundErrorMessage(void) {
 }
 
 
-static bool olcxCheckSymbolExists(void) {
+static bool haveBrowsingMenu(void) {
     if (sessionData.browsingStack.top!=NULL
         && sessionData.browsingStack.top->menu==NULL) {
         return false;
     }
+    assert(sessionData.browsingStack.top != NULL);
     return true;
 }
 
@@ -1732,7 +1729,7 @@ static void olcxProcessGetRequest(void) {
 static void olcxPrintPushingAction(ServerOperation operation) {
     switch (operation) {
     case OLO_PUSH:
-        if (olcxCheckSymbolExists()) {
+        if (haveBrowsingMenu()) {
             olcxOrderRefsAndGotoDefinition();
         } else {
             // to auto repush symbol by name, but I do not like it.
@@ -1743,7 +1740,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
         }
         break;
     case OLO_PUSH_NAME:
-        if (olcxCheckSymbolExists()) {
+        if (haveBrowsingMenu()) {
             olcxOrderRefsAndGotoDefinition();
         } else {
             olcxNoSymbolFoundErrorMessage();
@@ -1755,7 +1752,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
         // no output for dead code detection ???
         break;
     case OLO_LIST:
-        if (olcxCheckSymbolExists()) {
+        if (haveBrowsingMenu()) {
             olcxReferenceList(";");
         } else {
             olcxNoSymbolFoundErrorMessage();
@@ -1763,7 +1760,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
         }
         break;
     case OLO_PUSH_ONLY:
-        if (olcxCheckSymbolExists()) {
+        if (haveBrowsingMenu()) {
             olcxPushOnly();
         } else {
             olcxNoSymbolFoundErrorMessage();
@@ -1771,7 +1768,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
         }
         break;
     case OLO_PUSH_AND_CALL_MACRO:
-        if (olcxCheckSymbolExists()) {
+        if (haveBrowsingMenu()) {
             olcxPushAndCallMacro();
         } else {
             olcxNoSymbolFoundErrorMessage();
@@ -1779,20 +1776,20 @@ static void olcxPrintPushingAction(ServerOperation operation) {
         }
         break;
     case OLO_PUSH_FOR_LOCAL_MOTION:
-        if (olcxCheckSymbolExists())
+        if (haveBrowsingMenu())
             olcxPushOnly();
         else
             olcxNoSymbolFoundErrorMessage();
         break;
     case OLO_RENAME:
     case OLO_ARGUMENT_MANIPULATION:
-        if (olcxCheckSymbolExists())
+        if (haveBrowsingMenu())
             olcxRenameInit();
         else
             olcxNoSymbolFoundErrorMessage();
         break;
     case OLO_SAFETY_CHECK:
-        if (olcxCheckSymbolExists())
+        if (haveBrowsingMenu())
             olcxSafetyCheck();
         else
             olcxNoSymbolFoundErrorMessage();
@@ -1939,7 +1936,7 @@ static void printTagSearchResults(void) {
     // the first loop is counting the length of fields
     assert(sessionData.retrievingStack.top);
     for (Completion *cc=sessionData.retrievingStack.top->completions; cc!=NULL; cc=cc->next) {
-        ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->ref),
+        ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->reference),
                                    &len1, &len2);
     }
     if (options.olineLen >= 50000) {
@@ -1958,7 +1955,7 @@ static void printTagSearchResults(void) {
         ppcBegin(PPC_SYMBOL_LIST);
     assert(sessionData.retrievingStack.top);
     for (Completion *cc=sessionData.retrievingStack.top->completions; cc!=NULL; cc=cc->next) {
-        ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->ref),
+        ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->reference),
                                    &len1, &len2);
         if (options.xref2) {
             ppcGenRecord(PPC_STRING_VALUE, ls);
@@ -2067,7 +2064,7 @@ void answerEditAction(void) {
         olCompletionForward();
         break;
     case OLO_GOTO:
-        olcxReferenceGotoRef(options.olcxGotoVal);
+        gotoReferenceWithIndex(options.olcxGotoVal);
         break;
     case OLO_COMPLETION_GOTO:
         olcxReferenceGotoCompletion(options.olcxGotoVal);
@@ -2090,8 +2087,8 @@ void answerEditAction(void) {
     case OLO_POP_ONLY:
         popFromSession();
         break;
-    case OLO_MENU_SELECT:
-        olcxMenuToggleSelect();
+    case OLO_MENU_SELECT_THIS_AND_GOTO_DEFINITION:
+        toggleMenuSelect();
         break;
     case OLO_MENU_SELECT_ONLY:
         olcxMenuSelectOnly();

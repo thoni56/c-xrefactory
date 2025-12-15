@@ -31,9 +31,9 @@ protected Completion *newCompletion(char *name, char *fullName,
 
     completion->lineCount = lineCount;
     completion->visibility = visibility;
-    completion->csymType = csymType;
-    completion->ref = ref;
-    completion->sym = sym;
+    completion->type = csymType;
+    completion->reference = ref;
+    completion->referenceable = sym;
     completion->next = NULL;
 
     return completion;
@@ -89,8 +89,8 @@ protected void freeCompletion(Completion *completion) {
     free(completion->name);
     free(completion->fullName);
     if (completion->visibility == GlobalVisibility) {
-        assert(completion->sym.linkName);
-        free(completion->sym.linkName);
+        assert(completion->referenceable.linkName);
+        free(completion->referenceable.linkName);
     }
     free(completion);
 }

@@ -1486,7 +1486,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
         sscanf(argv[i]+21, "%d",&options.lineNumberOfMenuSelection);
     }
     else if (strncmp(argv[i], "-olcxmenuselect",15)==0) {
-        options.serverOperation = OLO_MENU_SELECT;
+        options.serverOperation = OLO_MENU_SELECT_THIS_AND_GOTO_DEFINITION;
         options.lineNumberOfMenuSelection = 0;
         sscanf(argv[i]+15, "%d",&options.lineNumberOfMenuSelection);
     }

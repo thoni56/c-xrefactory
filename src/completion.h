@@ -15,16 +15,16 @@ typedef struct completion {
     char                 *fullName;
     short int             lineCount;
     Visibility            visibility; /* Global/Local */
-    Type                  csymType; /* symtype of completion */
-    struct reference      ref;
-    struct referenceableItem  sym;
+    Type                  type; /* symtype of completion */
+    struct reference      reference;
+    struct referenceableItem  referenceable;
     struct completion    *next;
 } Completion;
 
 typedef struct completionLine {
     char          *string;
     struct symbol *symbol;
-    Type           symbolType;
+    Type           type;
     short int      margn;
     char         **margs;
 } CompletionLine;
@@ -45,7 +45,7 @@ typedef struct completions {
 
 extern void freeCompletions(Completion *completions);
 
-extern Completion *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *s,
+extern Completion *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *symbol,
                                          ReferenceableItem *ri, Reference *dfpos, Type symType, int includedFileNumber);
 
 void tagSearchCompactShortResults(void);
