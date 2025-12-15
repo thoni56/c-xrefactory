@@ -1,5 +1,5 @@
 = c-xrefactory Documentation
 
-* link:c-xrefactory.html[Quick User Guide]
-* link:manual.html[User Manual] WORK IN PROGRESS!
+* link:user-manual.html[User Manual]
+* link:c-xrefserver.html[Server Protocol] - for developers
 * link:guidebook.html[Software Guidebook] WORK IN PROGRESS!

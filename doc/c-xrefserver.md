@@ -1,16 +1,25 @@
-# C-Xref task used as server for editing
+# C-xref - a server for editing
 
 ## Introduction
 
-When c-xref is invoked with option "-task\_regime\_server", it acts like a server reading input options from standard input and producing answers on the standard output.
+This is a short introduction to the server feature of `c-xrefactory` useful mostly for
+developing `c-xrefactory` itself, its Emacs client adapter or adapters for other editors
+or IDEs.
 
-Because on majority of OS, pipes are slower than temporary files, two pipes (standard input and output) are used only for small quantity of data and their main purpose is synchronisation between the editing environment and the c-xref task.
+When `c-xref` is invoked with option "-server", it acts like a server reading input
+options from standard input and producing answers on the standard output.
 
-The c-xref task expects a suite of input options finished by the "end-of-options" string.
-Options are basically those which can be used on command line (with exception of -I and -D options).
-Moreover numerous special options not documented in the c-xref manual page can be used.
-One of options should specify the output file for the answer.
-In such case the c-xref task computes the answer, stores it into the output file and then writes the "<sync>" string on its standard output.
+Two pipes (standard input and output) are used only for small quantity of data and their
+main purpose is synchronisation between the editing environment and the c-xref
+task. Larger chunks of information, such as code snippets, are transfered using
+temporary files.
+
+The `c-xref` task expects a suite of input options finished by the "end-of-options"
+string.  Options are basically those which can be used on command line (with exception
+of -I and -D options).  Moreover numerous special options not documented in the c-xref
+manual page can be used.  One of options should specify the output file for the answer.
+In such case the c-xref task computes the answer, stores it into the output file and
+then writes the "<sync>" string on its standard output.
 
 NOTE:
 
@@ -22,7 +31,7 @@ to:
 
     (defvar c-xref-debug-mode t)
 
-This will make Emacs display all informations exchanged with c-xref task in the *Messages* buffer.
+You can of course also set the variable manually. This will make Emacs display all informations exchanged with c-xref task in the *Messages* buffer.
 
 
 
@@ -48,7 +57,7 @@ all completions after "t." string at line 4 (offset 40), then it will
 ask for completion on line 5 (offset 49).
 
 ```
-vittek:~/tmp>~/c-xref/c-xref -task_regime_server -xrefactory-II
+vittek:~/tmp>~/c-xref/c-xref -server -xrefactory-II
 -olcxcomplet
 -olcursor=40
 /home/vittek/tmp/t.c

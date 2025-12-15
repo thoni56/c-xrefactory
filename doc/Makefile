@@ -107,18 +107,18 @@ exported-structurizr-diagrams:
 # Static HTML Generation (for CI/GitHub Pages)
 #==============================================================================
 
-html ci: dist/index.html dist/manual.html dist/guidebook.html dist/c-xrefactory.html
+html ci: dist/index.html dist/user-manual.html dist/c-xrefserver.html dist/guidebook.html
 	@echo "HTML documentation built in dist/"
 
 dist/index.html: index.adoc
 	@mkdir -p dist
 	asciidoctor $^ -D dist
 
-dist/c-xrefactory.html: c-xrefactory.md
+dist/user-manual.html: user-manual.adoc
 	@mkdir -p dist
 	asciidoctor $^ -D dist
 
-dist/manual.html: manual.adoc
+dist/c-xrefserver.html: c-xrefserver.md
 	@mkdir -p dist
 	asciidoctor $^ -D dist
 
