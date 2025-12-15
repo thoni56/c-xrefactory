@@ -245,13 +245,12 @@ void printCompletions(Completions *completions) {
         max = options.maxCompletions;
     else
         max = completions->alternativeCount;
-    for(int ii=0; ii<max; ii++) {
-        sprintFullCompletionInfo(completions, ii, indent);
-        Reference ref;
+    for(int i=0; i<max; i++) {
+        sprintFullCompletionInfo(completions, i, indent);
+        Reference r;
         sessionData.completionStack.top->completions = completionListPrepend(
-            sessionData.completionStack.top->completions, completions->alternatives[ii].string, ppcTmpBuff,
-            completions->alternatives[ii].symbol, NULL, &ref,
-            NO_FILE_NUMBER);
+            sessionData.completionStack.top->completions, completions->alternatives[i].string, ppcTmpBuff,
+            completions->alternatives[i].symbol, NULL, &r, NO_FILE_NUMBER);
     }
     olCompletionListReverse();
     printCompletionsList(completions->noFocusOnCompletions);

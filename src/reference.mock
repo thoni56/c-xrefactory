@@ -56,7 +56,7 @@ bool isReferenceInList(Reference *r, Reference *list) {
     return (bool) mock(r, list);
 }
 
-Reference *addReferenceToList(Reference **rlist, Reference *ref) {
+Reference *addReferenceToList(Reference *ref, Reference **rlist) {
     return (Reference *) mock(rlist, ref);
 }
 

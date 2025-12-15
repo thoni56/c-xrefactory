@@ -988,7 +988,7 @@ static void scanFunction_Reference(int size,
                             addReferenceToBrowserMenu(lastIncomingData.onLineRefMenuItem, &reference);
                         }
                     } else {
-                        addReferenceToList(&sessionData.browsingStack.top->references, &reference);
+                        addReferenceToList(&reference, &sessionData.browsingStack.top->references);
                     }
                 }
             }

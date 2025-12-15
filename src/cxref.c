@@ -293,9 +293,8 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
         break;
     }
 
-    ReferenceableItem referenceableItem = makeReferenceableItem(symbol->linkName, symbol->type,
-                                                             storage, scope, visibility, includedFileNumber);
-    ReferenceableItem *foundMember;
+    ReferenceableItem referenceableItem = makeReferenceableItem(symbol->linkName, symbol->type, storage, scope,
+                                                                visibility, includedFileNumber);
 
     if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH && options.searchKind==SEARCH_FULL) {
         Reference reference = makeReference(position, UsageNone, NULL);
@@ -304,6 +303,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
     }
 
     int index;
+    ReferenceableItem *foundMember;
     if (!isMemberInReferenceableItemTable(&referenceableItem, &index, &foundMember)) {
         log_debug("allocating '%s'", symbol->linkName);
         char *linkName = cxAlloc(strlen(symbol->linkName)+1);
@@ -317,8 +317,8 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
 
     place = addToReferenceList(&foundMember->references, position, usage);
     log_debug("checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s",
-              getFileItemWithFileNumber(cxRefPosition.file)->name, cxRefPosition.file, cxRefPosition.line, cxRefPosition.col,
-              fileItem->name, position.file, position.line, position.col,
+              getFileItemWithFileNumber(cxRefPosition.file)->name, cxRefPosition.file, cxRefPosition.line,
+              cxRefPosition.col, fileItem->name, position.file, position.line, position.col,
               memcmp(&cxRefPosition, &position, sizeof(Position)), positionsAreEqual(cxRefPosition, position),
               usage, symbol->linkName);
 
@@ -389,51 +389,49 @@ void addTrivialCxReference(char *name, Type type, Storage storage, Position posi
 
 
 
-static Reference *olcxCopyReference(Reference *reference) {
-    Reference *r;
-    r = malloc(sizeof(Reference));
+static Reference *copyReference(Reference *reference) {
+    Reference *r = malloc(sizeof(Reference));
     *r = *reference;
     r->next = NULL;
     return r;
 }
 
-static void olcxAppendReference(Reference *ref, SessionStackEntry *refs) {
-    Reference *rr;
-    rr = olcxCopyReference(ref);
-    LIST_APPEND(Reference, refs->references, rr);
-    log_debug("olcx appending %s %s:%d:%d", usageKindEnumName[ref->usage],
-              getFileItemWithFileNumber(ref->position.file)->name, ref->position.line, ref->position.col);
+static void appendReference(Reference *reference, SessionStackEntry *sessionStackEntry) {
+    Reference *copy;
+    copy = copyReference(reference);
+    LIST_APPEND(Reference, sessionStackEntry->references, copy);
+    log_debug("olcx appending %s %s:%d:%d", usageKindEnumName[reference->usage],
+              getFileItemWithFileNumber(reference->position.file)->name, reference->position.line, reference->position.col);
 }
 
-/* fnum is file number of which references are added, can be ANY_FILE */
-static void olcxAddReferences(Reference *list, Reference **dlist, int fnum) {
-    Reference *revlist, *tmp;
+static void addReferencesFromFileToList(Reference *references, int fileNumber, Reference **listP) {
 
-    /* from now, you should add it to macros as REVERSE_LIST_MAP() */
-    revlist = NULL;
-    while (list!=NULL) {
-        tmp = list->next; list->next = revlist;
-        revlist = list;   list = tmp;
+    /* from now, you should add it to macros as REVERSE_LIST_MAP() WTF? Huh? */
+    Reference *revlist = NULL;
+    while (references!=NULL) {
+        Reference *tmp = references->next; references->next = revlist;
+        revlist = references; references = tmp;
     }
-    list = revlist;
+
+    references = revlist;
     revlist = NULL;
-    while (list!=NULL) {
-        if (fnum==ANY_FILE || fnum==list->position.file) {
-            addReferenceToList(dlist, list);
+    while (references!=NULL) {
+        if (fileNumber==ANY_FILE || fileNumber==references->position.file) {
+            addReferenceToList(references, listP);
         }
-        tmp = list->next; list->next = revlist;
-        revlist = list;   list = tmp;
+        Reference *tmp = references->next; references->next = revlist;
+        revlist = references; references = tmp;
     }
-    list = revlist;
+    references = revlist;
 }
 
-static void addReferencesToBrowserMenuItem(BrowserMenu *menuItem, Reference *references) {
+static void extendBrowserMenuWithReferences(BrowserMenu *menuItem, Reference *references) {
     for (Reference *r = references; r != NULL; r = r->next) {
         addReferenceToBrowserMenu(menuItem, r);
     }
 }
 
-static void gotoOnlineCxref(Position position, Usage usage, char *suffix)
+static void gotoPosition(Position position)
 {
     assert(options.xref2);
     ppcGotoPosition(position);
@@ -457,13 +455,13 @@ static bool sessionHasReferencesValidForOperation(SessionData *session, SessionS
 }
 
 
-static void olcxRenameInit(void) {
-    SessionStackEntry *refs;
+static void initializeRename(void) {
+    SessionStackEntry *sessionStackEntry;
 
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionStackEntry, CHECK_NULL))
         return;
-    refs->current = refs->references;
-    gotoOnlineCxref(refs->current->position, refs->current->usage, "");
+    sessionStackEntry->current = sessionStackEntry->references;
+    gotoPosition(sessionStackEntry->current->position);
 }
 
 
@@ -505,8 +503,8 @@ static bool referenceIsLessThanOrderImportant(Reference *r1, Reference *r2) {
 }
 
 
-static void olcxNaturalReorder(SessionStackEntry *refs) {
-    LIST_MERGE_SORT(Reference, refs->references, referenceIsLessThanOrderImportant);
+static void olcxNaturalReorder(SessionStackEntry *sessionStackEntry) {
+    LIST_MERGE_SORT(Reference, sessionStackEntry->references, referenceIsLessThanOrderImportant);
 }
 
 static void indicateNoReference(void) {
@@ -515,19 +513,19 @@ static void indicateNoReference(void) {
 }
 
 // references has to be ordered according internal file numbers order !!!!
-static void olcxSetCurrentRefsOnCaller(SessionStackEntry *refs) {
+static void olcxSetCurrentRefsOnCaller(SessionStackEntry *sessionStackEntry) {
     Reference *r;
-    for (r=refs->references; r!=NULL; r=r->next){
+    for (r=sessionStackEntry->references; r!=NULL; r=r->next){
         log_debug("checking %d:%d:%d to %d:%d:%d", r->position.file, r->position.line,r->position.col,
-                  refs->callerPosition.file,  refs->callerPosition.line,  refs->callerPosition.col);
-        if (!positionIsLessThan(r->position, refs->callerPosition))
+                  sessionStackEntry->callerPosition.file,  sessionStackEntry->callerPosition.line,  sessionStackEntry->callerPosition.col);
+        if (!positionIsLessThan(r->position, sessionStackEntry->callerPosition))
             break;
     }
     // it should never be NULL, but one never knows - DUH! We have coverage to show that you are wrong
     if (r == NULL) {
-        refs->current = refs->references;
+        sessionStackEntry->current = sessionStackEntry->references;
     } else {
-        refs->current = r;
+        sessionStackEntry->current = r;
     }
 }
 
@@ -538,7 +536,7 @@ static void orderRefsAndGotoDefinition(SessionStackEntry *refs) {
         indicateNoReference();
     } else if (!isLessImportantUsageThan(refs->references->usage, UsageDeclared)) {
         refs->current = refs->references;
-        gotoOnlineCxref(refs->current->position, refs->current->usage, "");
+        gotoPosition(refs->current->position);
     } else {
         assert(options.xref2);
         ppcWarning("Definition not found");
@@ -785,7 +783,7 @@ static void olcxReferenceList(char *commandString) {
 
 static void olcxGenGotoActReference(SessionStackEntry *refs) {
     if (refs->current != NULL) {
-        gotoOnlineCxref(refs->current->position, refs->current->usage, "");
+        gotoPosition(refs->current->position);
     } else {
         indicateNoReference();
     }
@@ -896,7 +894,7 @@ static void olcxReferenceGotoCompletion(int referenceIndex) {
     if (completion != NULL) {
         if (completion->visibility == LocalVisibility) {
             if (positionsAreNotEqual(completion->reference.position, noPosition)) {
-                gotoOnlineCxref(completion->reference.position, UsageDefined, "");
+                gotoPosition(completion->reference.position);
             } else {
                 indicateNoReference();
             }
@@ -916,7 +914,7 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
     rr = olCompletionNthLineRef(sessionData.retrievingStack.top->completions, refn);
     if (rr != NULL) {
         if (positionsAreNotEqual(rr->reference.position, noPosition)) {
-            gotoOnlineCxref(rr->reference.position, UsageDefined, "");
+            gotoPosition(rr->reference.position);
         } else {
             indicateNoReference();
         }
@@ -1020,7 +1018,7 @@ static void olcxReferenceGotoCaller(void) {
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
         return;
     if (refs->callerPosition.file != NO_FILE_NUMBER) {
-        gotoOnlineCxref(refs->callerPosition, UsageUsed, "");
+        gotoPosition(refs->callerPosition);
 
     } else {
         indicateNoReference();
@@ -1093,23 +1091,23 @@ void deleteEntryFromSessionStack(SessionStackEntry *entry) {
     deleteSessionStackEntry(&sessionData.browsingStack, entryP);
 }
 
-void processSelectedReferences(SessionStackEntry *rstack,
+void processSelectedReferences(SessionStackEntry *sessionStackEntry,
                                void (*referencesMapFun)(SessionStackEntry *, BrowserMenu *)) {
-    if (rstack->menu == NULL)
+    if (sessionStackEntry->menu == NULL)
         return;
 
-    LIST_MERGE_SORT(Reference, rstack->references, referencePositionComparare);
-    for (BrowserMenu *m = rstack->menu; m != NULL; m = m->next) {
-        referencesMapFun(rstack, m);
+    LIST_MERGE_SORT(Reference, sessionStackEntry->references, referencePositionComparare);
+    for (BrowserMenu *m = sessionStackEntry->menu; m != NULL; m = m->next) {
+        referencesMapFun(sessionStackEntry, m);
     }
-    olcxSetCurrentRefsOnCaller(rstack);
-    LIST_MERGE_SORT(Reference, rstack->references, referenceIsLessThan);
+    olcxSetCurrentRefsOnCaller(sessionStackEntry);
+    LIST_MERGE_SORT(Reference, sessionStackEntry->references, referenceIsLessThan);
 }
 
-static void genOnLineReferences(SessionStackEntry *rstack, BrowserMenu *cms) {
-    if (cms->selected) {
-        assert(cms);
-        olcxAddReferences(cms->referenceable.references, &rstack->references, ANY_FILE);
+static void genOnLineReferences(SessionStackEntry *sessionStackEntry, BrowserMenu *menu) {
+    assert(menu);
+    if (menu->selected) {
+        addReferencesFromFileToList(menu->referenceable.references, ANY_FILE, &sessionStackEntry->references);
     }
 }
 
@@ -1327,7 +1325,7 @@ static void olcxReferencePop(void) {
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
     if (refs->callerPosition.file != NO_FILE_NUMBER) {
-        gotoOnlineCxref(refs->callerPosition, UsageUsed, "");
+        gotoPosition(refs->callerPosition);
     } else {
         indicateNoReference();
     }
@@ -1362,7 +1360,7 @@ static void safetyCheckAddDiffRef(Reference *r, SessionStackEntry *diffrefs,
     } else {
         assert(0);
     }
-    olcxAppendReference(r, diffrefs);
+    appendReference(r, diffrefs);
 }
 
 static void safetyCheckDiff(Reference **anr1,
@@ -1402,7 +1400,7 @@ static void safetyCheckDiff(Reference **anr1,
     diffrefs->current = diffrefs->references;
     if (diffrefs->references!=NULL) {
         assert(diffrefs->menu);
-        addReferencesToBrowserMenuItem(diffrefs->menu, diffrefs->references);
+        extendBrowserMenuWithReferences(diffrefs->menu, diffrefs->references);
     }
 }
 
@@ -1784,7 +1782,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
     case OLO_RENAME:
     case OLO_ARGUMENT_MANIPULATION:
         if (haveBrowsingMenu())
-            olcxRenameInit();
+            initializeRename();
         else
             olcxNoSymbolFoundErrorMessage();
         break;
@@ -2120,7 +2118,7 @@ void answerEditAction(void) {
         // it is used from refactory, but that probably only executes
         // the parsers and server and not cxref...
         if (completionStringServed && parameterPosition.file != NO_FILE_NUMBER) {
-            gotoOnlineCxref(parameterPosition, UsageDefined, "");
+            gotoPosition(parameterPosition);
             deleteEntryFromSessionStack(sessionData.browsingStack.top);
         } else {
             char tmpBuff[TMP_BUFF_SIZE];
@@ -2130,7 +2128,7 @@ void answerEditAction(void) {
         break;
     case OLO_GET_PRIMARY_START:
         if (completionStringServed && primaryStartPosition.file != NO_FILE_NUMBER) {
-            gotoOnlineCxref(primaryStartPosition, UsageDefined, "");
+            gotoPosition(primaryStartPosition);
             deleteEntryFromSessionStack(sessionData.browsingStack.top);
         } else {
             errorMessage(ERR_ST, "Begin of primary expression not found.");

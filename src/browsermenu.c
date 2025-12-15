@@ -60,7 +60,7 @@ bool isBestFitMatch(BrowserMenu *menu) {
 }
 
 void addReferenceToBrowserMenu(BrowserMenu *menu, Reference *reference) {
-    Reference *added = addReferenceToList(&menu->referenceable.references, reference);
+    Reference *added = addReferenceToList(reference, &menu->referenceable.references);
     if (added!=NULL) {
         if (isDefinitionOrDeclarationUsage(reference->usage)) {
             if (reference->usage==UsageDefined && positionsAreEqual(reference->position, menu->defaultPosition)) {

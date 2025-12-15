@@ -78,7 +78,7 @@ bool isReferenceInList(Reference *reference, Reference *list) {
     return true;
 }
 
-static Reference *addReferenceWithoutUsageCheck(Reference **listP, Reference *ref) {
+static Reference *addReferenceToListWithoutUsageCheck(Reference *ref, Reference **listP) {
     Reference **placeInList;
     Reference *r = NULL;
 
@@ -94,12 +94,12 @@ static Reference *addReferenceWithoutUsageCheck(Reference **listP, Reference *re
 }
 
 
-Reference *addReferenceToList(Reference **listP, Reference *ref) {
+Reference *addReferenceToList(Reference *ref, Reference **listP) {
     log_debug("checking ref %s %s:%d:%d at %d", usageKindEnumName[ref->usage],
               simpleFileName(getFileItemWithFileNumber(ref->position.file)->name), ref->position.line, ref->position.col, ref);
     if (!isVisibleUsage(ref->usage))
         return NULL; // no regular on-line refs
-    return addReferenceWithoutUsageCheck(listP, ref);
+    return addReferenceToListWithoutUsageCheck(ref, listP);
 }
 
 int fileNumberOfReference(Reference reference) {

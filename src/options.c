@@ -506,8 +506,6 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
             ;
         }
     } else if (editorFileExists(dirName)) {
-        // .class can be inside a jar archive, but this makes problem on
-        // recursive read of a directory, it attempts to read .class
         if (isTopDirectory==0
             && !fileNameHasOneOfSuffixes(fname, options.cFilesSuffixes)
             && compareFileNames(suff, ".y")!=0

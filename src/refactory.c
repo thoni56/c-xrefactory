@@ -541,7 +541,7 @@ static void pushMarkersAsReferences(EditorMarkerList **markers, SessionStackEntr
     for (BrowserMenu *mm = refs->menu; mm != NULL; mm = mm->next) {
         if (strcmp(mm->referenceable.linkName, name) == 0) {
             for (Reference *r = rr; r != NULL; r = r->next) {
-                addReferenceToList(&mm->referenceable.references, r);
+                addReferenceToList(r, &mm->referenceable.references);
             }
         }
     }
