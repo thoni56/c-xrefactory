@@ -14,9 +14,8 @@
 
 
 // Will create malloc():ed copies of name and fullName so caller don't have to
-protected Completion *newCompletion(char *name, char *fullName,
-                                    int lineCount, Visibility visibility, Type csymType,
-                                    struct reference ref, struct referenceableItem sym) {
+protected Completion *newCompletion(char *name, char *fullName, int lineCount, Visibility visibility,
+                                    Reference reference, ReferenceableItem referenceable) {
     Completion *completion = malloc(sizeof(Completion));
 
     if (name != NULL) {
@@ -31,9 +30,8 @@ protected Completion *newCompletion(char *name, char *fullName,
 
     completion->lineCount = lineCount;
     completion->visibility = visibility;
-    completion->type = csymType;
-    completion->reference = ref;
-    completion->referenceable = sym;
+    completion->reference = reference;
+    completion->referenceable = referenceable;
     completion->next = NULL;
 
     return completion;
@@ -42,7 +40,7 @@ protected Completion *newCompletion(char *name, char *fullName,
 // If symbol == NULL, then the pos is taken as default position of this ref !!!
 // If symbol != NULL && referenceableItem != NULL then reference can be anything...
 Completion *completionListPrepend(Completion *completions, char *name, char *fullName, Symbol *symbol,
-                                  ReferenceableItem *referenceableItem, Reference *reference, Type type,
+                                  ReferenceableItem *referenceableItem, Reference *reference,
                                   int includedFileNumber) {
     Completion *completion;
 
@@ -54,7 +52,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
                                                        referenceableItem->storage, referenceableItem->scope,
                                                        referenceableItem->visibility, referenceableItem->includeFile);
 
-        completion = newCompletion(name, fullName, 1, referenceableItem->visibility, type, *reference, item);
+        completion = newCompletion(name, fullName, 1, referenceableItem->visibility, *reference, item);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
@@ -62,7 +60,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         ReferenceableItem item = makeReferenceableItem("", TypeUnknown, StorageDefault,
                                                        AutoScope, LocalVisibility, NO_FILE_NUMBER);
 
-        completion = newCompletion(name, fullName, 1, LocalVisibility, type, r, item);
+        completion = newCompletion(name, fullName, 1, LocalVisibility, r, item);
     } else {
         Reference r = makeReference(symbol->pos, UsageNone, NULL);
         Visibility visibility;
@@ -73,7 +71,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
 
         ReferenceableItem item = makeReferenceableItem(linkName, symbol->type, storage,
                                                        scope, visibility, includedFileNumber);
-        completion = newCompletion(name, fullName, 1, visibility, type, r, item);
+        completion = newCompletion(name, fullName, 1, visibility, r, item);
     }
     if (fullName!=NULL) {
         for (int i=0; fullName[i]; i++) {

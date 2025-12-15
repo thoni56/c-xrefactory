@@ -250,7 +250,7 @@ void printCompletions(Completions *completions) {
         Reference ref;
         sessionData.completionStack.top->completions = completionListPrepend(
             sessionData.completionStack.top->completions, completions->alternatives[ii].string, ppcTmpBuff,
-            completions->alternatives[ii].symbol, NULL, &ref, completions->alternatives[ii].type,
+            completions->alternatives[ii].symbol, NULL, &ref,
             NO_FILE_NUMBER);
     }
     olCompletionListReverse();

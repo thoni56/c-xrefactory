@@ -15,7 +15,6 @@ typedef struct completion {
     char                 *fullName;
     short int             lineCount;
     Visibility            visibility; /* Global/Local */
-    Type                  type; /* symtype of completion */
     struct reference      reference;
     struct referenceableItem  referenceable;
     struct completion    *next;
@@ -46,7 +45,7 @@ typedef struct completions {
 extern void freeCompletions(Completion *completions);
 
 extern Completion *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *symbol,
-                                         ReferenceableItem *ri, Reference *dfpos, Type symType, int includedFileNumber);
+                                         ReferenceableItem *ri, Reference *dfpos, int includedFileNumber);
 
 void tagSearchCompactShortResults(void);
 

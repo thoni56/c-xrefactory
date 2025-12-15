@@ -287,7 +287,7 @@ void searchSymbolCheckReference(ReferenceableItem  *referenceableItem, Reference
         static int count = 0;
         sessionData.retrievingStack.top->completions = completionListPrepend(
             sessionData.retrievingStack.top->completions, sname, NULL, NULL, referenceableItem,
-            reference, referenceableItem->type, referenceableItem->includeFile);
+            reference, referenceableItem->includeFile);
         // compact completions from time to time
         count ++;
         if (count > COMPACT_TAGS_AFTER_SEARCH_COUNT) {
