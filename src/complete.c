@@ -24,6 +24,9 @@
 
 
 #define FULL_COMPLETION_INDENT_CHARS 2
+#define MIN_COMPLETION_INDENT_REST 40     /* minimal columns for symbol informations */
+#define MIN_COMPLETION_INDENT 20          /* minimal colums for symbol */
+#define MAX_COMPLETION_INDENT 70          /* maximal completion indent with scroll bar */
 
 
 typedef struct {

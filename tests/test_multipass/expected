@@ -1,6 +1,6 @@
 [C-xref] active project: 'CURDIR'
-00:00:00 ERROR commons.c:364: CURDIR/multipass.c:10  Syntax error on: error
-00:00:00 ERROR commons.c:364: CURDIR/multipass.c:10  Syntax error on: !
+00:00:00 ERROR commons.c:367: CURDIR/multipass.c:10  Syntax error on: error
+00:00:00 ERROR commons.c:367: CURDIR/multipass.c:10  Syntax error on: !
 PASS1
     @multipass.c:5:7
 PASS2

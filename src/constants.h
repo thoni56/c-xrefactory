@@ -1,10 +1,6 @@
 #ifndef CONSTANTS_H_INCLUDED
 #define CONSTANTS_H_INCLUDED
 
-/* ************************************************************** */
-/* ********  Constants useful for source - distribution  ******** */
-/*        You are free to adapt this file to your needs           */
-/* ************************************************************** */
 
 #if defined(__WIN32) && (! defined(__WIN32__))
 #define __WIN32__ 1
@@ -44,19 +40,17 @@
 #define MAX_REF_LIST_LINE_LEN         1000    /* how long part of src is copied to list */
 #define TMP_STRING_SIZE               1000    /* Used by cxAddCollateReference for token pasting */
 #define REFACTORING_TMP_STRING_SIZE  10000
-#define MACRO_NAME_SIZE                500
 #define COMPLETION_STRING_SIZE         500	/* size of line in completion list */
 #define MAX_EXTRACT_FUN_HEAD_SIZE    10000
 
-#define MAX_FILE_NAME_SIZE		1000
-#define MAX_FUNCTION_NAME_LENGTH		1000
-#define MAX_REF_LEN             3000
+#define MAX_FILE_NAME_SIZE            1000
+#define MAX_FUNCTION_NAME_LENGTH      1000
 #define MAX_CX_SYMBOL_SIZE		3000
 #define MAX_INHERITANCE_DEEP     200
 #define MAX_ANONYMOUS_FIELDS     200
 #define MAX_APPL_OVERLOAD_FUNS	1000	/* max applicable overloaded funs */
 #define MAX_OPTION_LEN         10000
-#define MAX_COMPLETIONS        10002	/* max items in completion list */
+#define MAX_COMPLETIONS        10000	/* max items in completion list */
 
 #define MAX_SOURCE_PATH_SIZE	MAX_OPTION_LEN
 
@@ -69,53 +63,26 @@
 
 #define MAX_MACRO_ARGS		500		/* max number of macro args */
 #define INCLUDE_STACK_SIZE   80		/* max include depth */
-#define MACRO_INPUT_STACK_SIZE	500		/* max depth of macro bodies nesting */
-
-#define MACRO_BODY_BUFFER_SIZE		 2000		/* allocation unit for macro body */
-#define MACRO_ARGUMENTS_BUFFER_SIZE	 2000		/* allocation unit for macro act arg */
 
 /* **************  size of file reading buffers ***************** */
 
 #define CHARACTER_BUFFER_SIZE 1024
 #define LEXEM_BUFFER_SIZE (1024 + MAX_LEXEM_SIZE) /* must be bigger than MAX_LEXEM_SIZE */
 
-#define MAX_UNGET_CHARS 20		/* reserve for ungetChar in char buffer */
-#define MAX_LEXEM_SIZE MAX_FUNCTION_NAME_LENGTH /* max size of 1 lexem
-                                            (string, ident) should be
-                                            bigger than
-                                            MAX_FUN_NAME_SIZE */
+#define MAX_LEXEM_SIZE MAX_FUNCTION_NAME_LENGTH /* max size of 1 lexem (string, ident)
+                                            should be bigger than MAX_FUNCTION_NAME_SIZE */
 
 #define YYIDBUFFER_SIZE 128	/* number of buffered tokens       */
-
-
-/* ***************************** caching ******************************** */
-
-#define LEXEM_STREAM_CACHE_SIZE      300000
-#define MAX_CACHE_POINTS        500
-#define INCLUDE_STACK_CACHE_SIZE		1000
 
 
 /* *************************************************************** */
 
 #define MAX_PPC_RECORD_SIZE    100000	/* max length of xref-2 communication record */
 
-#define COMPACT_TAGS_AFTER_SEARCH_COUNT 10000	/* compact tag search results after n items*/
-
 #define TMP_BUFF_SIZE   50000
 
-#define EXTRACT_REFERENCE_ARG_STRING "&"
-
-#define MAX_STD_ARGS (MAX_FILES+20)
-#define END_OF_OPTIONS_STRING "end-of-options"
 
 #define DEFAULT_CXREF_FILENAME "CXrefs"
-
-#define MAX_COMPLETIONS_HISTORY_DEEP 10   /* maximal length of completion history */
-#define MIN_COMPLETION_INDENT_REST 40     /* minimal columns for symbol informations */
-#define MIN_COMPLETION_INDENT 20          /* minimal colums for symbol */
-#define MAX_COMPLETION_INDENT 70          /* maximal completion indent with scroll bar */
-#define MAX_TAG_SEARCH_INDENT 80          /* maximal tag search indentation with scroll */
-#define MAX_TAG_SEARCH_INDENT_RATIO 66    /* maximal tag search indentation screen ratio in % */
 
 
 /* just constants to be checked, that are data type limits              */

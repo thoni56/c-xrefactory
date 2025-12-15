@@ -19,6 +19,8 @@
 
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000
+#define EXTRACT_REFERENCE_ARG_STRING "&"
+
 
 /* ********************** code inspection state bits ********************* */
 

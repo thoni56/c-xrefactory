@@ -22,6 +22,9 @@
 #include "usage.h"
 
 
+#define COMPACT_TAGS_AFTER_SEARCH_COUNT 10000	/* compact tag search results after n items*/
+
+
 /* ***************************  cxref filenames ********************* */
 
 #if defined(__WIN32__)

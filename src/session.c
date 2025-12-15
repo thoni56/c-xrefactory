@@ -13,6 +13,9 @@
 
 SessionData sessionData;
 
+
+#define MAX_COMPLETIONS_HISTORY_DEEP 10   /* maximal length of completion history */
+
 #define DEFAULT_MENU_FILTER_LEVEL MenuFilterExactMatchSameFile
 #define DEFAULT_REFS_FILTER_LEVEL ReferenceFilterAll
 

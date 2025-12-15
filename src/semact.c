@@ -23,11 +23,14 @@
 #include "log.h"
 
 
+#define MACRO_NAME_SIZE 500
+
+
 void fillStructMemberFindInfo(StructMemberFindInfo *info, Symbol *currentStructure,
                               Symbol *nextRecord, unsigned memberFindCount) {
-    info->currentStructure     = currentStructure;
-    info->nextMember           = nextRecord;
-    info->memberFindCount     = memberFindCount;
+    info->currentStructure = currentStructure;
+    info->nextMember = nextRecord;
+    info->memberFindCount = memberFindCount;
     info->anonymousUnionsCount = 0;
 }
 

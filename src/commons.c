@@ -18,6 +18,9 @@
 #include "ppc.h"
 
 
+#define MAX_REF_LEN             3000
+
+
 void openOutputFile(char *outputFileName) {
     closeOutputFile();
     if (outputFileName!=NULL) {

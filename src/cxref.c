@@ -33,6 +33,10 @@
 #include "usage.h"
 
 
+#define MAX_TAG_SEARCH_INDENT 80          /* maximal tag search indentation with scroll */
+#define MAX_TAG_SEARCH_INDENT_RATIO 66    /* maximal tag search indentation screen ratio in % */
+
+
 /* These levels are also used in the Emacs UI */
 static int usageFilterLevels[] = {
     UsageMaxOnLineVisibleUsages,

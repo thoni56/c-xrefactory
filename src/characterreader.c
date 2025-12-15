@@ -9,6 +9,9 @@
 #include "log.h"
 
 
+#define MAX_UNGET_CHARS 20
+
+
 void fillCharacterBuffer(CharacterBuffer *characterBuffer,
                          char *next,
                          char *end,
