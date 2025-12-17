@@ -188,6 +188,18 @@ static void processFile(int argc, char **argv,
     fileItem->isScheduled = false;
 }
 
+static void reparseFile(int argc, char **argv, int nargc, char **nargv, bool *firstPassP,
+                        FileItem *fileItem) {
+    inputFileName = fileItem->name;
+    currentLanguage = getLanguageFor(inputFileName);
+    bool inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
+    if (inputOpened) {
+        parseInputFile();
+        fileItem->lastParsedMtime = editorFileModificationTime(fileItem->name);
+        *firstPassP = false;
+    }
+}
+
 static void processModifiedFilesForNavigation(int argc, char **argv,
                                               int nargc, char **nargv,
                                               bool *firstPassP) {
@@ -217,15 +229,7 @@ static void processModifiedFilesForNavigation(int argc, char **argv,
                 int savedOriginalFileNumber = originalFileNumber;
                 Language savedLanguage = currentLanguage;
 
-                /* Reparse the file */
-                inputFileName = fileItem->name;
-                currentLanguage = getLanguageFor(inputFileName);
-                bool inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
-                if (inputOpened) {
-                    parseInputFile();
-                    fileItem->lastUpdateMtime = editorFileModificationTime(fileItem->name);
-                    *firstPassP = false;
-                }
+                reparseFile(argc, argv, nargc, nargv, firstPassP, fileItem);
 
                 /* Restore state */
                 inputFileName = savedInputFileName;
