@@ -200,10 +200,14 @@ static void reparseFile(int argc, char **argv, int nargc, char **nargv, bool *fi
     }
 }
 
+static bool fileModifiedSinceLastParse(FileItem *fileItem) {
+    return editorFileModificationTime(fileItem->name) != fileItem->lastParsedMtime;
+}
+
 static void processModifiedFilesForNavigation(int argc, char **argv,
                                               int nargc, char **nargv,
                                               bool *firstPassP) {
-    /* Check which files with preloaded buffers have been modified.
+    /* Check which files with buffers have been modified.
      * For each modified file, reparse it to update references in the referenceableItemTable.
      * Then rebuild the current session's reference list. */
 
@@ -216,9 +220,7 @@ static void processModifiedFilesForNavigation(int argc, char **argv,
         EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
 
         if (buffer != NULL) {
-            /* This file has a preloaded buffer. Check if it's been modified
-             * by comparing the buffer's modification time with the last parse time */
-            if (editorFileModificationTime(fileItem->name) != fileItem->lastUpdateMtime) {
+            if (fileModifiedSinceLastParse(fileItem)) {
                 log_debug("File %s has been modified, reparsing...", fileItem->name);
 
                 removeReferenceableItemsForFile(i);

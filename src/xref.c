@@ -139,7 +139,7 @@ static void schedulingToUpdate(FileItem *fileItem, bool calledDuringRefactoring)
             fileItem->scheduledToUpdate = true;
         }
     } else {
-        if (editorFileModificationTime(fileItem->name) != fileItem->lastUpdateMtime) {
+        if (editorFileModificationTime(fileItem->name) != fileItem->lastParsedMtime) {
             fileItem->scheduledToUpdate = true;
         }
     }
@@ -178,7 +178,7 @@ static void oneWholeFileProcessing(int argc, char **argv, FileItem *fileItem, bo
     inputFileName           = fileItem->name;
     fileProcessingStartTime = time(NULL);
     // O.K. but this is missing all header files
-    fileItem->lastUpdateMtime = fileItem->lastModified;
+    fileItem->lastParsedMtime = fileItem->lastModified;
     if (options.update == UPDATE_FULL || options.create) {
         fileItem->lastFullUpdateMtime = fileItem->lastModified;
     }

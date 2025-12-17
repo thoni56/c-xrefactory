@@ -390,7 +390,7 @@ static void writeCxReference(Reference *reference) {
 static void writeFileNumberItem(FileItem *fileItem, int number) {
     // keys = fpmia:
     writeOptionalCompactRecord(CXFI_FILE_NUMBER, number, "\n");
-    writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileItem->lastUpdateMtime, " ");
+    writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileItem->lastParsedMtime, " ");
     writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fileItem->lastFullUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_COMMAND_LINE_ARGUMENT, fileItem->isArgument, "");
     writeStringRecord(CXFI_FILE_NAME, fileItem->name, " ");
@@ -703,8 +703,8 @@ static void scanFunction_ReadFileName(int fileNameLength,
         fileItem->isArgument = isArgument;
         if (fileItem->lastFullUpdateMtime == 0)
             fileItem->lastFullUpdateMtime=fumtime;
-        if (fileItem->lastUpdateMtime == 0)
-            fileItem->lastUpdateMtime=umtime;
+        if (fileItem->lastParsedMtime == 0)
+            fileItem->lastParsedMtime=umtime;
         assert(options.mode);
         if (options.mode == XrefMode) {
             if (operation == CXSF_GENERATE_OUTPUT) {
@@ -723,10 +723,8 @@ static void scanFunction_ReadFileName(int fileNameLength,
         }
         if (fileItem->lastFullUpdateMtime == 0)
             fileItem->lastFullUpdateMtime=fumtime;
-        if (fileItem->lastUpdateMtime == 0)
-            fileItem->lastUpdateMtime=umtime;
-        //&if (fumtime>fileItem->lastFullUpdateMtime) fileItem->lastFullUpdateMtime=fumtime;
-        //&if (umtime>fileItem->lastUpdateMtime) fileItem->lastUpdateMtime=umtime;
+        if (fileItem->lastParsedMtime == 0)
+            fileItem->lastParsedMtime=umtime;
     }
     fileItem->isFromCxfile = true;
     fileNumberMapping[lastIncomingFileNumber]=fileNumber;

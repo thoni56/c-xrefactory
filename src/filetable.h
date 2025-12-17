@@ -26,7 +26,7 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     char *name;
     time_t lastModified;
     time_t lastInspected;
-    time_t lastUpdateMtime;
+    time_t lastParsedMtime;
     time_t lastFullUpdateMtime;
     bool cxLoading : 1;
     bool cxLoaded : 1;
