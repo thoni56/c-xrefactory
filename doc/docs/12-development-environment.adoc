@@ -215,25 +215,24 @@ The guards turn subtle crashes into clear diagnostics that point to the fix.
 
 ==== Unittests ====
 
-There are very few unittests at this point, only covering single digit
-percent of the code. The "units" in this project are unclear and
-entangled so creating unittests is hard since it was not build to be
-tested, test driven or even clearly modularized.
+There are not very many unittests at this point, only covering a quarter of the
+code. The "units" in this project are unclear and entangled so creating unittests is
+hard since it was not build to be tested, test driven or even clearly modularized.
 
-All unittests use `Cgreen` as the unittest framework. If you are
-unfamiliar with it the most important point is that it can mock
-functions, so you will find mock implementations of all external
-functions for a module in a corresponding `<module>.mock` file.
+All unittests use `Cgreen` as the unittest framework. If you are unfamiliar with it the
+most important point is that it can mock functions, so you will find mock
+implementations of all external functions for a module in a corresponding
+`<module>.mock` file.
 
-Many modules are at least under test, meaning there is a
-<module>_tests.c in the unittest directory. Often only containing an
-empty test.
+Many modules are at least under test, meaning there is a <module>_tests.c in the
+unittest directory. Often only containing an empty test.
 
 ==== Acceptance Tests
 
-In the `tests` directory you will find tests that exercise the external
-behaviour of `c-xref`. Some tests actually do only that, they wouldn't
-really count as tests.
+In the `tests` directory you will find tests that exercise the external behaviour of
+`c-xref`, "acceptance tests" or "system tests". Some tests actually do only that, they
+wouldn't really count as tests as there are no verification except for the code being
+executed.
 
 There are two basic strategies for the tests:
 
@@ -242,14 +241,13 @@ There are two basic strategies for the tests:
 
 Some tests do not even test its output in any meaningful way and only provide coverage.
 
-Some tests do a very bad job at verifying, either because my
-understanding at that time was very low, or because it is hard to
-verify the output. E.g. the "test" for generate references are only
-grepping the CXrefs files for some strings, not verifying that they
-actually point to the correct place.
+Some tests do a very bad job at verifying, either because my understanding at that time
+was very low, or because it is hard to verify the output. E.g. a "test" for generating
+references might only grepping the CXrefs files for some strings, not verifying that
+they actually point to the correct place.
 
-Hopefully this will change as the code gets into a better state and
-the understanding grows.
+Hopefully this will change as the code gets into a better state and the understanding
+grows.
 
 ==== Test Structure
 

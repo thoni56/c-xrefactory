@@ -119,6 +119,344 @@ if (inputType == MACRO_STREAM) {
 }
 ----
 
+=== Editor Buffers and Incremental Updates
+
+This section describes how `c-xrefactory` handles the reality that source code exists in
+two places: on disk as files, and in memory as editor buffers. It also explains the
+different update strategies and how references flow through the system.
+
+==== Editor Buffer Abstraction
+
+===== The Duality of Source Code
+
+When a user edits code in Emacs, the source code exists in two forms:
+
+* **Disk files**: The saved state on the filesystem
+* **Editor buffers**: The current (possibly unsaved) state in the editor
+
+For code analysis to be useful during active editing, c-xrefactory must treat **editor
+buffers as the source of truth** when they exist.
+
+===== The Preloading Mechanism
+
+When the Emacs client sends a command to the `c-xref` server (like PUSH or NEXT), it uses
+the `-preload` option to transmit modified buffers:
+
+----
+-preload <original-file> <temp-file>
+----
+
+For example:
+----
+-olcxnext -olcursor=5 /project/foo.c -preload /project/foo.c /tmp/emacs-xxx.tmp
+----
+
+**The process:**
+
+1. Emacs creates a temporary file containing the current buffer content
+2. The temp file's modification time represents when the buffer was last modified
+3. The server loads this into an `EditorBuffer` structure
+4. When parsing, the server reads from the temp file (buffer content) instead of the disk file
+
+This ensures that the server analyzes what the user sees in the editor, not the potentially stale disk file.
+
+===== EditorBuffer Lifecycle
+
+[source,c]
+----
+EditorBuffer {
+    char *name;              // Original filename
+    char *preLoadedFromFile; // Path to temp file with buffer content
+    time_t modificationTime; // When buffer was last modified
+    ...
+}
+----
+
+* Created by `loadAllOpenedEditorBuffers()` at the start of each server operation
+* Lives only for the duration of that operation
+* Destroyed by `closeAllEditorBuffers()` at operation end
+
+==== Modification Time Tracking
+
+To implement incremental updates, c-xrefactory tracks when each file/buffer was last parsed.
+
+===== The Fields
+
+Each `FileItem` in the file table has:
+
+* `lastParsedMtime` - The modification time when we last parsed this file (any update mode)
+* `lastFullUpdateMtime` - The modification time when we last did a FULL update (including header propagation)
+
+These are `time_t` values (seconds since epoch).
+
+===== Dual Semantics
+
+The `lastParsedMtime` field has dual semantics depending on context:
+
+* **For disk files**: Stores the file's mtime when it was parsed
+* **For editor buffers**: Stores the buffer's mtime (from the preloaded temp file)
+
+This works because `editorFileModificationTime()` abstracts over both:
+
+[source,c]
+----
+time_t editorFileModificationTime(char *filename) {
+    EditorBuffer *buffer = getEditorBuffer(filename);
+    if (buffer != NULL && buffer->preLoadedFromFile != NULL) {
+        return buffer->modificationTime;  // Buffer time
+    } else {
+        return fileModificationTime(filename);  // Disk time
+    }
+}
+----
+
+The abstraction is seamless: code can check "has this file changed?" without caring whether it's a disk file or editor buffer.
+
+===== Change Detection
+
+To determine if a file/buffer needs reparsing:
+
+[source,c]
+----
+if (editorFileModificationTime(fileItem->name) != fileItem->lastParsedMtime) {
+    // File/buffer has changed since we last parsed it
+    reparse(fileItem);
+    fileItem->lastParsedMtime = editorFileModificationTime(fileItem->name);
+}
+----
+
+This pattern appears in:
+
+* `schedulingToUpdate()` - Marks files needing update before batch processing
+* `processModifiedFilesForNavigation()` - Detects modified buffers during navigation
+
+==== Update Strategies
+
+`C-xrefactory` has two update strategies that trade off speed against completeness.
+
+===== Fast Update (Default)
+
+**When used:**
+
+* Automatic updates before PUSH operations (if enabled)
+* Explicit `-fastupdate` command
+
+**What it does:**
+
+1. Checks which source files (.c) have changed (compares modification times)
+2. Reparses only those changed source files
+3. Updates the references database
+
+**Trade-off:**
+
+* ✅ **Fast**: Only reparses files that actually changed
+* ❌ **Incomplete**: Doesn't detect when header files change
+
+**Example:**
+
+----
+foo.h modified → fast update → foo.h not reparsed
+foo.c unchanged → foo.c not reparsed
+Result: foo.c still has stale information about symbols from foo.h
+----
+
+===== Full Update
+
+**When used:**
+
+* Explicit `-update` command
+* When `-exactpositionresolve` is enabled (forces full update)
+
+**What it does:**
+
+1. Checks which files (source OR headers) have changed
+2. If a header changed, finds all source files that include it (transitively)
+3. Reparses all affected source files
+4. Updates the references database
+
+**The algorithm** (`makeIncludeClosureOfFilesToUpdate`):
+
+1. Mark all changed files as `scheduledToUpdate`
+2. For each marked file:
+   - Find all files that `#include` it (by looking up include references)
+   - Mark those files as `scheduledToUpdate` too
+3. Repeat until no new files are added (transitive closure)
+4. Reparse all marked source files
+
+**Trade-off:**
+
+* ✅ **Complete**: Catches header changes and propagates to all users
+* ❌ **Slower**: Can trigger reparsing of many source files if a common header changes
+
+**Example:**
+
+----
+common.h modified → full update → finds 50 files that include it
+Result: Reparses all 50 source files to pick up header changes
+----
+
+===== When Does the Difference Matter?
+
+With modern CPUs and SSDs, the performance difference is often negligible for small to
+medium projects. The fast update's header-blindness can lead to subtle bugs where
+changes don't propagate. Full update is generally safer and more correct.
+
+==== Reference Lifecycle
+
+References flow through multiple stages in c-xrefactory, with different storage
+locations and ownership models at each stage.
+
+===== Stage 1: Parsing
+
+When a file is parsed:
+
+1. Symbols are discovered (functions, variables, types, etc.)
+2. For each symbol, a `ReferenceableItem` is created or looked up in the `referenceableItemTable`
+3. Each usage of that symbol creates a `Reference` with a position
+4. The reference is added to the referenceable's reference list
+
+**Storage:** `cxMemory` (a custom arena allocator)
+
+**Lifetime:** Lives until the next update that reparses that file
+
+===== Stage 2: The ReferenceableItemTable
+
+The canonical storage for all references.
+
+[source,c]
+----
+ReferenceableItem {
+    char *linkName;        // Symbol identifier
+    Type type;             // Function, variable, macro, etc.
+    Reference *references; // Linked list of all uses
+    ...
+}
+----
+
+**Key properties:**
+
+* Allocated in `cxMemory`
+* Persistent across multiple server operations
+* Updated incrementally as files are reparsed
+* References are **not individually free'd** - they're arena-allocated
+
+===== Stage 3: Session Stacks
+
+When a user performs a PUSH operation (browsing a symbol), a session is created:
+
+[source,c]
+----
+SessionStackEntry {
+    BrowserMenu *menu;       // Selected symbols
+    Reference *references;   // COPY of references for navigation
+    Reference *current;      // Current position in navigation
+    ...
+}
+----
+
+**Key properties:**
+
+* The `references` list is a **copy** (via `malloc`) of references from the referenceableItemTable
+* Each reference is individually allocated with `malloc` (see `addReferenceToList`)
+* When the session is destroyed, references are individually `free`'d (see `freeReferences`)
+* Sessions are **snapshots in time** - they don't automatically update when the table changes
+
+===== Why Separate Storage?
+
+**Memory ownership:**
+
+* Table references: Arena-allocated, freed in bulk
+* Session references: Individually allocated, individually freed
+
+If sessions pointed directly to table references, we'd have:
+
+* Dangling pointers when the table is updated
+* Double-free errors when sessions are destroyed
+* Memory corruption from mixed allocation strategies
+
+**Snapshots vs. live data:**
+
+* The table is the "live" source of truth
+* Sessions are working copies for a specific browsing operation
+* Users expect their navigation stack to be stable during browsing
+
+===== The Staleness Problem
+
+The separation causes a problem: session references can become stale.
+
+**Scenario:**
+
+1. User PUSHes symbol `foo` → Session created with references at lines 10, 50, 100
+2. User edits a file, adding lines
+3. User navigates with NEXT → Session still points to lines 10, 50, 100 (wrong!)
+
+**Solution:** `processModifiedFilesForNavigation()`
+
+When NEXT/PREVIOUS operations occur, the server:
+
+1. Detects which editor buffers have changed (modification time check)
+2. Reparses those buffers (updates referenceableItemTable)
+3. **Rebuilds** the current session's reference list from the updated table
+4. Preserves the user's navigation position by index
+
+[source,c]
+----
+// Find user's position in old list
+int currentIndex = 0;
+Reference *ref = session->references;
+while (ref != NULL && ref != session->current) {
+    currentIndex++;
+    ref = ref->next;
+}
+
+// Free old list and rebuild from table
+freeReferences(session->references);
+session->references = NULL;
+for (BrowserMenu *menu = session->menu; menu != NULL; menu = menu->next) {
+    if (menu->selected) {
+        ReferenceableItem *updatedItem = lookupInTable(&menu->referenceable);
+        addReferencesFromFileToList(updatedItem->references, ANY_FILE,
+                                    &session->references);
+    }
+}
+
+// Restore position by index
+ref = session->references;
+for (int i = 0; i < currentIndex && ref->next != NULL; i++) {
+    ref = ref->next;
+}
+session->current = ref;
+----
+
+This keeps navigation working correctly with live-edited code.
+
+===== Trade-offs of the Incremental Approach
+
+**Advantages:**
+
+* Minimal latency - only reparses changed buffers
+* Uses editor buffer content (user's current view)
+* Preserves navigation position naturally
+
+**Limitations:**
+
+* Like fast update: doesn't reparse includers of changed headers
+* Only updates the current session (other sessions on the stack remain stale)
+* Only happens during NEXT/PREVIOUS (not other operations)
+
+For typical usage (navigating within files being actively edited), these limitations rarely matter. A fresh PUSH creates a new session with fresh references.
+
+==== Summary
+
+The key insights:
+
+1. **Editor buffers are the source of truth** when they exist (via preloading)
+2. **Modification times** are tracked uniformly for files and buffers
+3. **Fast update** trades completeness for speed (doesn't chase headers)
+4. **Full update** is more thorough but can reparse many files
+5. **References live in two places**: canonical table (arena memory) and session copies (malloc)
+6. **Sessions are snapshots** that can become stale, requiring incremental rebuilding during navigation
+
 === How does ...
 
 TBD.
