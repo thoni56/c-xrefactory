@@ -12,6 +12,11 @@ typedef struct SessionStackEntry {
     ServerOperation        operation;      /* OLO_PUSH/OLO_LIST/OLO_COMPLETION/etc */
 
     /* ===== Browser-specific fields (browserStack only) ===== */
+    /* IMPORTANT: references are COPIES (malloc'd) from referenceableItemTable.
+     * They are snapshots at PUSH time and can become stale if files are modified.
+     * See processModifiedFilesForNavigation() for how stale references are refreshed
+     * during navigation operations. Do NOT point these directly at table references
+     * as they have different memory ownership (table=cxMemory, session=malloc). */
     struct reference      *references;     /* list of references for browsing */
     struct reference      *current;        /* current reference position */
     struct BrowserMenu    *hkSelectedSym;  /* resolved symbols under the cursor */

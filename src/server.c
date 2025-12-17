@@ -1,5 +1,6 @@
 #include "server.h"
 
+#include "browsermenu.h"
 #include "commons.h"
 #include "complete.h"
 #include "cxfile.h"
@@ -187,10 +188,113 @@ static void processFile(int argc, char **argv,
     fileItem->isScheduled = false;
 }
 
+static void processModifiedFilesForNavigation(int argc, char **argv,
+                                              int nargc, char **nargv,
+                                              bool *firstPassP) {
+    /* Check which files with preloaded buffers have been modified.
+     * For each modified file, reparse it to update references in the referenceableItemTable.
+     * Then rebuild the current session's reference list. */
+
+    ENTER();
+
+    /* Iterate through all open editor buffers and check if they're modified */
+    bool anyModified = false;
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i+1)) {
+        FileItem *fileItem = getFileItemWithFileNumber(i);
+        EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
+
+        if (buffer != NULL) {
+            /* This file has a preloaded buffer. Check if it's been modified
+             * by comparing the buffer's modification time with the last parse time */
+            if (editorFileModificationTime(fileItem->name) != fileItem->lastUpdateMtime) {
+                log_debug("File %s has been modified, reparsing...", fileItem->name);
+
+                removeReferenceableItemsForFile(i);
+
+                /* Save current state */
+                char *savedInputFileName = inputFileName;
+                int savedInputFileNumber = inputFileNumber;
+                int savedOriginalFileNumber = originalFileNumber;
+                Language savedLanguage = currentLanguage;
+
+                /* Reparse the file */
+                inputFileName = fileItem->name;
+                currentLanguage = getLanguageFor(inputFileName);
+                bool inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
+                if (inputOpened) {
+                    parseInputFile();
+                    fileItem->lastUpdateMtime = editorFileModificationTime(fileItem->name);
+                    *firstPassP = false;
+                }
+
+                /* Restore state */
+                inputFileName = savedInputFileName;
+                inputFileNumber = savedInputFileNumber;
+                originalFileNumber = savedOriginalFileNumber;
+                currentLanguage = savedLanguage;
+
+                anyModified = true;
+            }
+        }
+    }
+
+    /* If any files were modified, update menu items to point to the refreshed
+     * referenceables in the table, then recompute references in the current session */
+    if (anyModified && sessionData.browsingStack.top != NULL && sessionData.browsingStack.top->menu != NULL) {
+        log_debug("Updating menu referenceables and recomputing session references");
+
+        /* Find the current reference's index in the list before recomputing */
+        int currentIndex = 0;
+        if (sessionData.browsingStack.top->current != NULL) {
+            Reference *ref = sessionData.browsingStack.top->references;
+            while (ref != NULL && ref != sessionData.browsingStack.top->current) {
+                currentIndex++;
+                ref = ref->next;
+            }
+        }
+
+        /* Free the old session reference list since it has stale positions */
+        freeReferences(sessionData.browsingStack.top->references);
+        sessionData.browsingStack.top->references = NULL;
+
+        /* Rebuild the reference list directly from the updated referenceableItemTable */
+        for (BrowserMenu *menu = sessionData.browsingStack.top->menu; menu != NULL; menu = menu->next) {
+            if (menu->selected) {
+                ReferenceableItem *updatedItem = NULL;
+                if (isMemberInReferenceableItemTable(&menu->referenceable, NULL, &updatedItem)) {
+                    if (updatedItem != NULL) {
+                        /* Add references from the updated item in the table (this copies them) */
+                        addReferencesFromFileToList(updatedItem->references, ANY_FILE,
+                                                   &sessionData.browsingStack.top->references);
+                    }
+                }
+            }
+        }
+
+        /* Restore current to the same index in the new list (or the last reference if list is shorter) */
+        if (sessionData.browsingStack.top->references != NULL) {
+            Reference *ref = sessionData.browsingStack.top->references;
+            int index = 0;
+            while (ref->next != NULL && index < currentIndex) {
+                ref = ref->next;
+                index++;
+            }
+            sessionData.browsingStack.top->current = ref;
+        }
+    }
+    LEAVE();
+}
+
 void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass) {
     ENTER();
 
     loadAllOpenedEditorBuffers();
+
+    /* For navigation operations (NEXT/PREVIOUS), reparse any modified files
+     * and update the current session's references before navigating */
+    if (options.serverOperation == OLO_NEXT || options.serverOperation == OLO_PREVIOUS) {
+        processModifiedFilesForNavigation(argc, argv, nargc, nargv, firstPass);
+    }
 
     if (requiresCreatingRefs(options.serverOperation))
         pushEmptySession(&sessionData.browsingStack);

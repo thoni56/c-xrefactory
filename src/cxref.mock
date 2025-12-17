@@ -28,6 +28,10 @@ void recomputeSelectedReferenceable(SessionStackEntry *refs) {
     mock(refs);
 }
 
+void addReferencesFromFileToList(Reference *references, int fileNumber, Reference **listP) {
+    mock(references, fileNumber, listP);
+}
+
 void processSelectedReferences(SessionStackEntry *rstack, void (*referencesMapFun)(SessionStackEntry *rstack,
                                                                                     BrowserMenu *ss)) {
     mock(rstack, referencesMapFun);

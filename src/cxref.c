@@ -408,7 +408,7 @@ static void appendReference(Reference *reference, SessionStackEntry *sessionStac
               getFileItemWithFileNumber(reference->position.file)->name, reference->position.line, reference->position.col);
 }
 
-static void addReferencesFromFileToList(Reference *references, int fileNumber, Reference **listP) {
+void addReferencesFromFileToList(Reference *references, int fileNumber, Reference **listP) {
 
     /* from now, you should add it to macros as REVERSE_LIST_MAP() WTF? Huh? */
     Reference *revlist = NULL;
