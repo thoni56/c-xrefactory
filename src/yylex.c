@@ -353,18 +353,19 @@ static bool insideMacro(void) {
     return macroStackIndex > 0;
 }
 
-static LexemCode refillInputIfEmpty(char **previousLexemP) {
+/* Refills currentInput when exhausted. Returns exception codes or 0 on success.
+ * Handles three cases:
+ * 1. Inside macro: pop macro stack or return END_OF_MACRO_ARGUMENT_EXCEPTION
+ * 2. Normal input: lex more characters or return END_OF_FILE_EXCEPTION
+ * 3. Cached input: restore from cache */
+static LexemCode refillCurrentInputIfExhausted(char **previousLexemP) {
     while (currentInput.read >= currentInput.write) {
         LexemStreamType inputType = currentInput.streamType;
         if (insideMacro()) {
             if (inputType == MACRO_ARGUMENT_STREAM) {
                 return END_OF_MACRO_ARGUMENT_EXCEPTION;
             }
-            /* Only free if currentInput is actually a MACRO_STREAM allocated from macroBodyMemory.
-             * NORMAL_STREAM points to file's lexem buffer, not macro body memory. */
-            if (inputType == MACRO_STREAM) {
-                mbmFreeUntil(currentInput.begin);
-            }
+            mbmFreeUntil(currentInput.begin);
             currentInput = macroInputStack[--macroStackIndex];
         } else if (inputType == NORMAL_STREAM) {
             setCurrentFileConsistency(&currentFile, &currentInput);
@@ -376,16 +377,17 @@ static LexemCode refillInputIfEmpty(char **previousLexemP) {
         if (previousLexemP != NULL)
             *previousLexemP = currentInput.read;
     }
-    return 0; /* Success */
+    return 0; /* Success - input has lexems available */
 }
 
 /* Returns next lexem from currentInput and saves a pointer to the previous lexem */
 static LexemCode getLexemAndSavePointerToPrevious(char **previousLexemP) {
     LexemCode lexem;
+    LexemCode refillResult;
 
-    lexem = refillInputIfEmpty(previousLexemP);
-    if (lexem != 0)             /* END_OF_MACRO_ARGUMENT_EXCEPTION or END_OF_FILE_EXCEPTION */
-        return lexem;
+    refillResult = refillCurrentInputIfExhausted(previousLexemP);
+    if (refillResult != 0)
+        return refillResult; /* Return exception code */
 
     if (previousLexemP != NULL)
         *previousLexemP = currentInput.read;
