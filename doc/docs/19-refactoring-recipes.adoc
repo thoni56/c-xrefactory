@@ -242,10 +242,6 @@ After introducing semantic aliases:
 
 ---
 
-=== Turn include guard into pragma once
-
-Tentative.
-
 === Rename Symbol
 
 Implemented. TBD.
@@ -257,3 +253,11 @@ Implemented. TBD.
 === Reorder Parameters
 
 Imlemented. TBD.
+
+=== Turn include guard into pragma once
+
+Tentative.
+
+=== Change return type
+
+Tentative.
