@@ -2,12 +2,12 @@
 #include "c_parser.h"
 #include <cgreen/mocks.h>
 
-void initServer(ArgumentsVector args, int nargc, char **nargv) {
-  mock(nargc, nargv);
+void initServer(ArgumentsVector args) {
+    mock(args.argc, args.argv);
 }
 
-void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass) {
-  mock(argc, argv, nargc, nargv, firstPass);
+void callServer(ArgumentsVector args, ArgumentsVector nargs, bool *firstPass) {
+  mock(args.argc, args.argv, nargs.argc, nargs.argv, firstPass);
 }
 
 void server(ArgumentsVector args) {

@@ -14,8 +14,8 @@ void processFileArguments(void) {
     mock();
 }
 
-void processOptions(ArgumentsVector args, int argc, char **argv, ProcessFileArguments infilesFlag) {
-  mock(argc, argv, infilesFlag);
+void processOptions(ArgumentsVector args, ProcessFileArguments infilesFlag) {
+  mock(args.argc, args.argv, infilesFlag);
 }
 
 void setOptionVariable(char *name, char *val) {
@@ -58,17 +58,17 @@ char *expandPredefinedSpecialVariables_static(char *variable, char *inputFilenam
   return (char *) mock(variable);
 }
 
-bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, MemoryKind memoryKind,
+bool readOptionsFromFileIntoArgs(FILE *file, ArgumentsVector *outArgs, MemoryKind memoryKind,
                                  char *fileName, char *project, char *unused) {
-  return (bool) mock(file, outArgc, outArgv, memoryKind, fileName, project);
+  return (bool) mock(file, outArgs->argc, outArgs->argv, memoryKind, fileName, project);
 }
 
-void readOptionsFromFile(char *fileName, int *outArgc, char ***outArgv, char *sectionFile, char *project) {
-  mock(fileName, outArgc, outArgv, sectionFile, project);
+void readOptionsFromFile(char *fileName, ArgumentsVector *outArgs, char *section, char *project) {
+    mock(fileName, outArgs->argc, outArgs->argv, section, project);
 }
 
-void readOptionsFromCommand(char *command, int *outArgc, char ***outArgv, char *sectionFile) {
-  mock(command, outArgc, outArgv, sectionFile);
+void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *sectionFile) {
+  mock(command, outArgs->argc, outArgs->argv, sectionFile);
 }
 
 bool currentCxFileCountMatches(int foundReferenceFileCount) {

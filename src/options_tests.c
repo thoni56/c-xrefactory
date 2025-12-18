@@ -178,7 +178,7 @@ Ensure(Options, can_parse_about_command_line_option) {
     char *argv[] = {"", "-about"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, 2, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, DONT_PROCESS_FILE_ARGUMENTS);
     assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
 }
 
@@ -186,7 +186,7 @@ Ensure(Options, can_parse_version_command_line_option) {
     char *argv[] = {"", "-version"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, 2, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, DONT_PROCESS_FILE_ARGUMENTS);
     assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
 }
 
@@ -194,7 +194,7 @@ Ensure(Options, can_parse_double_dash_version_command_line_option) {
     char *argv[] = {"", "--version"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, 2, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, DONT_PROCESS_FILE_ARGUMENTS);
     assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
 }
 
@@ -202,7 +202,7 @@ Ensure(Options, can_parse_xrefrc_option_with_equals) {
     char *argv[] = {"", "-xrefrc=abc"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, 2, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, DONT_PROCESS_FILE_ARGUMENTS);
     assert_that(options.xrefrc, is_equal_to_string("abc"));
 }
 
@@ -210,22 +210,21 @@ Ensure(Options, can_parse_xrefrc_option_with_filename_separate) {
     char *argv[] = {"", "-xrefrc", "abc"};
     ArgumentsVector args = {3, argv};
 
-    processOptions(args, 3, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, DONT_PROCESS_FILE_ARGUMENTS);
     assert_that(options.xrefrc, is_equal_to_string("abc"));
 }
 
 Ensure(Options, can_readOptionsFromFileIntoArgs) {
     FILE *file = NULL;
-    int nargc;
-    char **nargv[1000];
     char project[1000];
     char unused[1000];
 
     expect(readChar, will_return(EOF));
 
-    readOptionsFromFileIntoArgs(file, &nargc, nargv, ALLOCATE_IN_SM, "", project, unused);
+    ArgumentsVector nargs;
+    readOptionsFromFileIntoArgs(file, &nargs, ALLOCATE_IN_SM, "", project, unused);
 
-    assert_that(nargc, is_equal_to(1)); /* Which is actually no arguments... */
+    assert_that(nargs.argc, is_equal_to(1)); /* Which is actually no arguments... */
 }
 
 static void expect_characters(char string[], bool eof) {
@@ -518,7 +517,7 @@ Ensure(Options, can_parse_parameter_name_option) {
     char* arguments[] = {"", "-rfct-parameter-name=int arg"};
     ArgumentsVector args = {2, arguments};
 
-    processOptions(args, 2, arguments, false);
+    processOptions(args, false);
     assert_that(options.refactor_parameter_name, is_equal_to_string("int arg"));
 }
 
@@ -526,7 +525,7 @@ Ensure(Options, can_parse_parameter_value_option) {
     char* arguments[] = {"", "-rfct-parameter-value=42"};
     ArgumentsVector args = {2, arguments};
 
-    processOptions(args, 2, arguments, false);
+    processOptions(args, false);
     assert_that(options.refactor_parameter_value, is_equal_to_string("42"));
 }
 
@@ -534,6 +533,6 @@ Ensure(Options, can_parse_target_line_option) {
     char* arguments[] = {"", "-rfct-target-line=99"};
     ArgumentsVector args = {2, arguments};
 
-    processOptions(args, 2, arguments, false);
+    processOptions(args, false);
     assert_that(options.refactor_target_line, is_equal_to_string("99"));
 }

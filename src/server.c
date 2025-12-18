@@ -120,20 +120,19 @@ static void parseInputFile(void) {
     closeInputFile();
 }
 
-void initServer(ArgumentsVector args, int nargc, char **nargv) {
+void initServer(ArgumentsVector args) {
     clearAvailableRefactorings();
-    processOptions(args, nargc, nargv, PROCESS_FILE_ARGUMENTS); /* no include or define options */
+    processOptions(args, PROCESS_FILE_ARGUMENTS); /* no include or define options */
     processFileArguments();
     initCompletions(&collectedCompletions, 0, noPosition);
 }
 
-static void singlePass(int argc, char **argv,
-                       int nargc, char **nargv,
+static void singlePass(ArgumentsVector args, ArgumentsVector nargs,
                        bool *firstPassP
 ) {
     bool inputOpened = false;
 
-    inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
+    inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
 
     smartReadReferences();
     originalFileNumber = inputFileNumber;
@@ -162,7 +161,7 @@ static void singlePass(int argc, char **argv,
         int ol2procfile = scheduleFileUsingTheMacro();
         if (ol2procfile!=NO_FILE_NUMBER) {
             inputFileName = getFileItemWithFileNumber(ol2procfile)->name;
-            inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
+            inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
             if (inputOpened) {
                 parseInputFile();
                 *firstPassP = false;
@@ -171,10 +170,7 @@ static void singlePass(int argc, char **argv,
     }
 }
 
-static void processFile(int argc, char **argv,
-                        int nargc, char **nargv,
-                        bool *firstPassP
-) {
+static void processFile(ArgumentsVector args, ArgumentsVector nargs, bool *firstPassP) {
     FileItem *fileItem = getFileItemWithFileNumber(originalCommandLineFileNumber);
 
     assert(fileItem->isScheduled);
@@ -182,18 +178,17 @@ static void processFile(int argc, char **argv,
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         inputFileName = fileItem->name;
         assert(inputFileName!=NULL);
-        singlePass(argc, argv, nargc, nargv, firstPassP);
+        singlePass(args, nargs, firstPassP);
         if (options.serverOperation==OLO_EXTRACT || (completionStringServed && !requiresCreatingRefs(options.serverOperation)))
             break;
     }
     fileItem->isScheduled = false;
 }
 
-static void reparseFile(int argc, char **argv, int nargc, char **nargv, bool *firstPassP,
-                        FileItem *fileItem) {
+static void reparseFile(FileItem *fileItem, ArgumentsVector args, ArgumentsVector nargs, bool *firstPassP) {
     inputFileName = fileItem->name;
     currentLanguage = getLanguageFor(inputFileName);
-    bool inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
+    bool inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
     if (inputOpened) {
         parseInputFile();
         fileItem->lastParsedMtime = editorFileModificationTime(fileItem->name);
@@ -205,9 +200,7 @@ static bool fileModifiedSinceLastParse(FileItem *fileItem) {
     return editorFileModificationTime(fileItem->name) != fileItem->lastParsedMtime;
 }
 
-static void processModifiedFilesForNavigation(int argc, char **argv,
-                                              int nargc, char **nargv,
-                                              bool *firstPassP) {
+static void processModifiedFilesForNavigation(ArgumentsVector args, ArgumentsVector nargs, bool *firstPassP) {
     /* Check which files with buffers have been modified.
      * For each modified file, reparse it to update references in the referenceableItemTable.
      * Then rebuild the current session's reference list. */
@@ -232,7 +225,7 @@ static void processModifiedFilesForNavigation(int argc, char **argv,
                 int savedOriginalFileNumber = originalFileNumber;
                 Language savedLanguage = currentLanguage;
 
-                reparseFile(argc, argv, nargc, nargv, firstPassP, fileItem);
+                reparseFile(fileItem, args, nargs, firstPassP);
 
                 /* Restore state */
                 inputFileName = savedInputFileName;
@@ -335,7 +328,8 @@ static void processModifiedFilesForNavigation(int argc, char **argv,
     LEAVE();
 }
 
-void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass) {
+
+void callServer(ArgumentsVector args, ArgumentsVector nargs, bool *firstPass) {
     ENTER();
 
     loadAllOpenedEditorBuffers();
@@ -344,7 +338,7 @@ void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass)
      * and update the current session's references before navigating */
     if (options.serverOperation == OLO_NEXT || options.serverOperation == OLO_PREVIOUS ||
         options.serverOperation == OLO_POP || options.serverOperation == OLO_POP_ONLY) {
-        processModifiedFilesForNavigation(argc, argv, nargc, nargv, firstPass);
+        processModifiedFilesForNavigation(args, nargs, firstPass);
     }
 
     if (requiresCreatingRefs(options.serverOperation))
@@ -354,12 +348,11 @@ void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass)
         if (presetEditServerFileDependingStatics() == NULL) {
             errorMessage(ERR_ST, "No input file");
         } else {
-            processFile(argc, argv, nargc, nargv, firstPass);
+            processFile(args, nargs, firstPass);
         }
     } else {
         if (presetEditServerFileDependingStatics() != NULL) {
             getFileItemWithFileNumber(originalCommandLineFileNumber)->isScheduled = false;
-            // added [26.12.2002] because of loading options without input file
             inputFileName = NULL;
         }
     }
@@ -383,11 +376,11 @@ void server(ArgumentsVector args) {
         openOutputFile(options.outputFileName);
         //&dumpArguments(nargc, nargv);
         log_trace("Server: Getting request");
-        initServer(pipedOptions, pipedOptions.argc, pipedOptions.argv);
+        initServer(pipedOptions);
         if (outputFile==stdout && options.outputFileName!=NULL) {
             openOutputFile(options.outputFileName);
         }
-        callServer(args.argc, args.argv, pipedOptions.argc, pipedOptions.argv, &firstPass);
+        callServer(args, pipedOptions, &firstPass);
         if (options.serverOperation == OLO_ABOUT) {
             aboutMessage();
         } else {

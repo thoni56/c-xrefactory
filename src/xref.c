@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "argumentsvector.h"
 #include "commons.h"
 #include "cxfile.h"
 #include "cxref.h"
@@ -153,7 +154,11 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
     for (currentPass = 1; currentPass <= maxPasses; currentPass++) {
         if (!*firstPassP)
             deepCopyOptionsFromTo(&savedOptions, &options);
-        inputOpened = initializeFileProcessing(firstPassP, argc, argv, 0, NULL, &currentLanguage);
+
+        ArgumentsVector args = {.argc = argc, .argv = argv};
+        ArgumentsVector nargs = {.argc = 0, .argv = NULL};
+
+        inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
         originalFileNumber = inputFileNumber;
         originalCommandLineFileNumber = originalFileNumber;
         if (inputOpened) {

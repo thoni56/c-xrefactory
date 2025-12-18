@@ -134,6 +134,7 @@ rescanned. I'm not sure how that works, but we need tests for it.
   but not used in any '%type' declaration meaning all non-terminals
   have it.
 * TODO Bug: test_c_extract_function_with_out_variables should actually find the declaration and handle it
+* TODO Make Emacs client verify arguments better (e.g. Add Parameter - position should be number)
 * TODO Available refactorings should not show Delete Parameter if there are none
 * TODO Available refactorings should not show Move Parameter if there are less than two
 * TODO Set xref2 to true as default and then convert all test cases that fail, remove the option
@@ -152,11 +153,6 @@ rescanned. I'm not sure how that works, but we need tests for it.
 * TODO Header files. There are a number of sections in the proto.h that
   indicates which file/module it declares an externa interface for. We
   should move that to a <module>.h file instead.
-* TODO BUG: sometimes cxref data gets out of sync with actual code (in Emacs)
-  E.g. when removing a line in a enum list, enums get extra references where they "used
-  to be".  Unknown if it has to do with buffer management, it is not possible to
-  reproduce yet.  It might be related to re-loading references from the db - it seems it
-  only merges new references, and don't correctly remove/move the old ones.
 * TODO BUG: an unterminated "assert(" (with the c-xref def of it: MACRO) breaks
   with error message "size of #macro_argument exceeded MACRO_UNIT_SIZE"
 * TODO BUG: a completion inside a non-terminated #if.. seems to hang
@@ -223,6 +219,11 @@ There are both "-opt=value" and "-opt value" format options
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Why does -refactory read the users default .c-xrefrc? And why does -no-stdoptions
   prevent reading explicit -xrefrc options?
+* DONE BUG: sometimes cxref data gets out of sync with actual code (in Emacs)
+  E.g. when removing a line in a enum list, enums get extra references where they "used
+  to be".  Unknown if it has to do with buffer management, it is not possible to
+  reproduce yet.  It might be related to re-loading references from the db - it seems it
+  only merges new references, and don't correctly remove/move the old ones.
 * DONE Make all modules independent on main
 ** DONE Make refactory.c independent of main
    This probably requires a lot more understanding of refactory.c and why

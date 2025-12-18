@@ -162,7 +162,7 @@ extern void dirInputFile(MAP_FUN_SIGNATURE);
 extern void recoverMemoryFromIncludeList(void);
 
 extern void processFileArguments(void);
-extern void processOptions(ArgumentsVector args, int argc, char **argv, ProcessFileArguments infilesFlag);
+extern void processOptions(ArgumentsVector args, ProcessFileArguments infilesFlag);
 
 /* Handling of allocated string and string list options that need to be "shifted" on deep copy */
 extern char *allocateStringForOption(char **pointerToOption, char *string);
@@ -170,10 +170,10 @@ extern void addToStringListOption(StringList **pointerToOption, char *string);
 extern void deepCopyOptionsFromTo(Options *src, Options *dest);
 
 extern char *expandPredefinedSpecialVariables_static(char *output, char *inputFilename);
-extern bool readOptionsFromFileIntoArgs(FILE *file, int *nargc, char ***nargv, MemoryKind memFlag,
+extern bool readOptionsFromFileIntoArgs(FILE *file, ArgumentsVector *outArgs, MemoryKind memFlag,
                                         char *sectionFile, char *project, char *section);
-extern void readOptionsFromFile(char *name, int *nargc, char ***nargv, char *project, char *foundProjectName);
-extern void readOptionsFromCommand(char *command, int *nargc, char ***nargv, char *sectionFile);
+extern void readOptionsFromFile(char *name, ArgumentsVector *outArgs, char *project, char *foundProjectName);
+extern void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *sectionFile);
 extern ArgumentsVector getPipedOptions(void);
 extern bool currentCxFileCountMatches(int newRefNum);
 

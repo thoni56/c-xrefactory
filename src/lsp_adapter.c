@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "argumentsvector.h"
 #include "filetable.h"
 #include "json_utils.h"
 #include "lsp_utils.h"
@@ -46,13 +47,12 @@ JSON *findDefinition(const char *uri, JSON *position) {
     processFileArguments();
 
     /* Run the server pipeline to find definition */
-    int argc = 0;
-    char **argv = NULL;
-    int nargc = 0;
-    char **nargv = NULL;
+    ArgumentsVector args = {.argc = 0, .argv = NULL};
+    ArgumentsVector nargs = {.argc = 0, .argv = NULL};
+
     bool firstPass;
 
-    callServer(argc, argv, nargc, nargv, &firstPass);
+    callServer(args, nargs, &firstPass);
 
     /* Extract results from browser stack */
     JSON *result = NULL;

@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 
+#include "argumentsvector.h"
 #include "head.h" /* For Language type */
 
 
@@ -11,8 +12,8 @@
 extern void totalTaskEntryInitialisations(void);
 extern void mainTaskEntryInitialisations(int argc, char **argv);
 
-extern bool initializeFileProcessing(bool *firstPass, int argc, char **argv, int nargc, char **nargv,
-                                     Language *outLanguage);
+extern bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, Language *outLanguage,
+                                     bool *firstPass);
 
 /* Memory checkpoint management for option file reloading */
 extern void saveMemoryCheckPoint(void);

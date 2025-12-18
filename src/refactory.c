@@ -190,31 +190,34 @@ static void parseBufferUsingServer(char *project, EditorMarker *point, EditorMar
     if (pushOption2 != NULL) {
         argumentVector[argumentCount++] = pushOption2;
     }
-    ArgumentsVector args = {.argc = argumentCount, .argv = argumentVector};
-    initServer(args, argumentCount, argumentVector);
-    callServer(argument_count(serverStandardOptions), serverStandardOptions, argumentCount, argumentVector,
+    ArgumentsVector args = {.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
+    ArgumentsVector nargs = {.argc = argumentCount, .argv = argumentVector};
+    initServer(nargs);
+    callServer(args, nargs,
                &editServerSubTaskFirstPass);
 }
 
 static void beInteractive(void) {
-    ArgumentsVector pipedOptions;
-
     ENTER();
     deepCopyOptionsFromTo(&options, &savedOptions);
     for (;;) {
         closeOutputFile();
         ppcSynchronize();
         deepCopyOptionsFromTo(&savedOptions, &options);
+
         ArgumentsVector args = {.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
-        processOptions(args, argument_count(serverStandardOptions), serverStandardOptions, DONT_PROCESS_FILE_ARGUMENTS);
-        pipedOptions = getPipedOptions();
+        processOptions(args, DONT_PROCESS_FILE_ARGUMENTS);
+
+        ArgumentsVector pipedOptions = getPipedOptions();
         openOutputFile(refactoringOptions.outputFileName);
         if (pipedOptions.argc <= 1)
             break;
-        initServer(pipedOptions, pipedOptions.argc, pipedOptions.argv);
+
+        initServer(pipedOptions);
         if (options.continueRefactoring != RC_NONE)
             break;
-        callServer(argument_count(serverStandardOptions), serverStandardOptions, pipedOptions.argc, pipedOptions.argv,
+
+        callServer(args, pipedOptions,
                    &editServerSubTaskFirstPass);
         answerEditAction();
     }
