@@ -2,6 +2,9 @@
 #include "commandlogger.h"
 #include <cgreen/mocks.h>
 
-void logCommands(int argc, char *argv[]) {
-    mock(argc, argv);
+#include "argumentsvector.h"
+
+
+void logCommands(ArgumentsVector args) {
+    mock(args.argc, args.argv);
 }

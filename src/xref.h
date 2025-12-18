@@ -2,8 +2,10 @@
 #define XREF_INCLUDED
 #include <stdbool.h>
 
+#include "options.h"
+
+
 extern void checkExactPositionUpdate(bool printMessage);
 extern void callXref(int argc, char **argv, bool isRefactoring);
-extern void xref(int argc, char **argv);
-
+extern void xref(ArgumentsVector args);
 #endif

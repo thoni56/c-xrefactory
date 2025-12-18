@@ -2,6 +2,7 @@
 #include <cgreen/constraint_syntax_helpers.h>
 #include <cgreen/mocks.h>
 
+#include "argumentsvector.h"
 #include "commandlogger.h"
 #include "fileio.mock"
 #include "options.mock"
@@ -34,7 +35,8 @@ Ensure(CommandsLogger, can_log_a_single_argument) {
            will_capture_parameter(buffer, buffer));
     always_expect(writeFile);
 
-    logCommands(1, argv);
+    ArgumentsVector args = {1, argv};
+    logCommands(args);
 
     assert_that(size*count, is_equal_to(strlen(argv[0])));
     assert_that(buffer, is_equal_to_string("command"));
@@ -56,7 +58,8 @@ Ensure(CommandsLogger, can_log_multiple_arguments) {
                   will_capture_parameter(buffer, output),
                   with_side_effect(&concat_output, &output));
 
-    logCommands(3, argv);
+    ArgumentsVector args = {3, argv};
+    logCommands(args);
 
     assert_that(buffer, is_equal_to_string("command arg1 arg2\n"));
 }
@@ -69,7 +72,8 @@ Ensure(CommandsLogger, can_handle_null_argv0) {
                   will_capture_parameter(buffer, output),
                   with_side_effect(&concat_output, &output));
 
-    logCommands(3, argv);
+    ArgumentsVector args = {3, argv};
+    logCommands(args);
 
     assert_that(buffer, is_equal_to_string("arg1 arg2\n"));
 }
@@ -82,7 +86,8 @@ Ensure(CommandsLogger, can_remove_current_directory_from_argument) {
                   will_capture_parameter(buffer, output),
                   with_side_effect(&concat_output, &output));
 
-    logCommands(3, argv);
+    ArgumentsVector args = {3, argv};
+    logCommands(args);
 
     assert_that(buffer, is_equal_to_string("arg1 arg2\n"));
 }

@@ -8,6 +8,7 @@
    mainTaskEntryInitialisations
    mainOpenOutputFile
  */
+#include "argumentsvector.h"
 #include "commons.h"
 #include "cxref.h"
 #include "editor.h"
@@ -173,7 +174,7 @@ static void ensureReferencesAreUpdated(char *project) {
 }
 
 static void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *mark,
-                                  char *pushOption, char *pushOption2) {
+                                   char *pushOption, char *pushOption2) {
     int   argumentCount;
     char *argumentVector[MAX_NARGV_OPTIONS_COUNT];
 
@@ -189,14 +190,14 @@ static void parseBufferUsingServer(char *project, EditorMarker *point, EditorMar
     if (pushOption2 != NULL) {
         argumentVector[argumentCount++] = pushOption2;
     }
-    initServer(argumentCount, argumentVector);
+    ArgumentsVector args = {.argc = argumentCount, .argv = argumentVector};
+    initServer(args, argumentCount, argumentVector);
     callServer(argument_count(serverStandardOptions), serverStandardOptions, argumentCount, argumentVector,
                &editServerSubTaskFirstPass);
 }
 
 static void beInteractive(void) {
-    int    argumentCount;
-    char **argumentVectorP;
+    ArgumentsVector pipedOptions;
 
     ENTER();
     deepCopyOptionsFromTo(&options, &savedOptions);
@@ -204,15 +205,16 @@ static void beInteractive(void) {
         closeOutputFile();
         ppcSynchronize();
         deepCopyOptionsFromTo(&savedOptions, &options);
-        processOptions(argument_count(serverStandardOptions), serverStandardOptions, DONT_PROCESS_FILE_ARGUMENTS);
-        getPipedOptions(&argumentCount, &argumentVectorP);
+        ArgumentsVector args = {.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
+        processOptions(args, argument_count(serverStandardOptions), serverStandardOptions, DONT_PROCESS_FILE_ARGUMENTS);
+        pipedOptions = getPipedOptions();
         openOutputFile(refactoringOptions.outputFileName);
-        if (argumentCount <= 1)
+        if (pipedOptions.argc <= 1)
             break;
-        initServer(argumentCount, argumentVectorP);
+        initServer(pipedOptions, pipedOptions.argc, pipedOptions.argv);
         if (options.continueRefactoring != RC_NONE)
             break;
-        callServer(argument_count(serverStandardOptions), serverStandardOptions, argumentCount, argumentVectorP,
+        callServer(argument_count(serverStandardOptions), serverStandardOptions, pipedOptions.argc, pipedOptions.argv,
                    &editServerSubTaskFirstPass);
         answerEditAction();
     }

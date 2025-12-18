@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "enums.h"
+#include "argumentsvector.h"
 
 
 /* ************** on-line (browsing) operations for c-xref server  ********** */
@@ -108,8 +109,8 @@ typedef enum {
 
 extern const char* operationNamesTable[];
 
-extern void initServer(int nargc, char **nargv);
+extern void initServer(ArgumentsVector args, int nargc, char **nargv);
 extern void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass);
-extern void server(int argc, char **argv);
+extern void server(ArgumentsVector args);
 
 #endif

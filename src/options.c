@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#include "argumentsvector.h"
 #include "commandlogger.h"
 #include "commons.h"
 #include "globals.h"
@@ -835,11 +836,11 @@ static int addOptionToArgs(MemoryKind memoryKind, char optionText[], int argc, c
     return argc;
 }
 
-static void ensureNextArgumentIsAFileName(int *i, int argc, char *argv[]) {
+static void ensureNextArgumentIsAFileName(int *i, ArgumentsVector args, int argc, char *argv[]) {
     (*i)++;
-    if (*i >= argc) {
+    if (*i >= args.argc) {
         char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "file name expected after %s", argv[*i - 1]);
+        sprintf(tmpBuff, "file name expected after %s", args.argv[*i - 1]);
         errorMessage(ERR_ST, tmpBuff);
         usage();
         exit(1);
@@ -975,13 +976,14 @@ void readOptionsFromCommand(char *command, int *outArgc, char ***outArgv, char *
     closeFile(file);
 }
 
-void getPipedOptions(int *outNargc, char ***outNargv) {
-    *outNargc = 0;
+ArgumentsVector getPipedOptions(void) {
+    ArgumentsVector outArgs;
+    outArgs.argc = 0;
     assert(options.mode);
     if (options.mode == ServerMode) {
         char unused[MAX_FILE_NAME_SIZE];
-        readOptionsFromFileIntoArgs(stdin, outNargc, outNargv, ALLOCATE_IN_SM, "", NULL, unused);
-        logCommands(*outNargc, *outNargv);
+        readOptionsFromFileIntoArgs(stdin, &outArgs.argc, &outArgs.argv, ALLOCATE_IN_SM, "", NULL, unused);
+        logCommands(outArgs);
         /* those options can't contain include or define options, sections neither */
         int c = getc(stdin);
         if (c == EOF) {
@@ -992,6 +994,7 @@ void getPipedOptions(int *outNargc, char ***outNargv) {
             FATAL_ERROR(ERR_INTERNAL, "broken input pipe", XREF_EXIT_ERR);
         }
     }
+    return outArgs;
 }
 
 bool currentCxFileCountMatches(int foundCxFileCount) {
@@ -1068,12 +1071,13 @@ static bool isAbsolutePath(char *p) {
 
 
 static int handleIncludeOption(int argc, char **argv, int i) {
-    int nargc;
-    char **nargv;
-    ensureNextArgumentIsAFileName(&i, argc, argv);
+    ArgumentsVector args = {.argc = argc, .argv = argv};
+    ArgumentsVector nargs;
 
-    readOptionsFromFile(argv[i], &nargc, &nargv, "", NULL);
-    processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
+    ensureNextArgumentIsAFileName(&i, args, argc, argv);
+
+    readOptionsFromFile(args.argv[i], &nargs.argc, &nargs.argv, "", NULL);
+    processOptions(nargs, nargs.argc, nargs.argv, DONT_PROCESS_FILE_ARGUMENTS);
 
     return i;
 }
@@ -1329,7 +1333,7 @@ static bool processNOption(int *argi, int argc, char **argv) {
     return true;
 }
 
-static bool processOOption(int *argi, int argc, char **argv) {
+static bool processOOption(int *argi, ArgumentsVector args, int argc, char **argv) {
     int i = * argi;
     if (0) {}
     else if (strncmp(argv[i], "-olinelen=",10)==0) {
@@ -1507,7 +1511,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
         i = handleIncludeOption(argc, argv, i);
     }
     else if (strcmp(argv[i], "-o")==0) {
-        ensureNextArgumentIsAFileName(&i, argc, argv);
+        ensureNextArgumentIsAFileName(&i, args, argc, argv);
         options.outputFileName = allocateStringForOption(&options.outputFileName, argv[i]);
     }
     else return false;
@@ -1515,7 +1519,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
     return true;
 }
 
-static bool processPOption(int *argi, int argc, char **argv) {
+static bool processPOption(int *argi, ArgumentsVector args, int argc, char **argv) {
     int i = *argi;
 
     if (0) {}
@@ -1523,18 +1527,18 @@ static bool processPOption(int *argi, int argc, char **argv) {
         errorMessage(ERR_ST, "'-pass' option can't be entered from command line");
     }
     else if (strcmp(argv[i], "-p")==0) {
-        ensureNextArgumentIsAFileName(&i, argc, argv);
+        ensureNextArgumentIsAFileName(&i, args, argc, argv);
         log_debug("Current project '%s'", argv[i]);
         options.project = allocateStringForOption(&options.project, argv[i]);
     }
     else if (strcmp(argv[i], "-preload")==0) {
-        ensureNextArgumentIsAFileName(&i, argc, argv);
+        ensureNextArgumentIsAFileName(&i, args, argc, argv);
 
         char normalizedFileName[MAX_FILE_NAME_SIZE];
         char *file = argv[i];
         strcpy(normalizedFileName, normalizeFileName_static(file, cwd));
 
-        ensureNextArgumentIsAFileName(&i, argc, argv);
+        ensureNextArgumentIsAFileName(&i, args, argc, argv);
         char *preloadFile = argv[i];
         openEditorBufferFromPreload(normalizedFileName, preloadFile);
     }
@@ -1559,7 +1563,7 @@ static void setXrefsLocation(char *argvi) {
     options.cxFileLocation = allocateStringForOption(&options.cxFileLocation, normalizeFileName_static(argvi, cwd));
 }
 
-static bool processROption(int *argi, int argc, char **argv) {
+static bool processROption(int *argi, ArgumentsVector args, int argc, char **argv) {
     int i = * argi;
     if (0) {}
     else if (strncmp(argv[i], "-refnum=",8)==0)  {
@@ -1572,7 +1576,7 @@ static bool processROption(int *argi, int argc, char **argv) {
         options.includeDirs = NULL;
     }
     else if (strcmp(argv[i], "-refs")==0)    {
-        ensureNextArgumentIsAFileName(&i, argc, argv);
+        ensureNextArgumentIsAFileName(&i, args, argc, argv);
         setXrefsLocation(argv[i]);
     }
     else if (strncmp(argv[i], "-refs=",6)==0)    {
@@ -1703,7 +1707,7 @@ static bool processWOption(int *argi, int argc, char **argv) {
     return true;
 }
 
-static bool processXOption(int *argi, int argc, char **argv) {
+static bool processXOption(int *argi, ArgumentsVector args, int argc, char **argv) {
     int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-xrefactory-II") == 0){
@@ -1713,7 +1717,7 @@ static bool processXOption(int *argi, int argc, char **argv) {
         options.xrefrc = allocateStringForOption(&options.xrefrc, argv[i]+8);
     }
     else if (strcmp(argv[i], "-xrefrc") == 0) {
-        ensureNextArgumentIsAFileName(&i, argc, argv);
+        ensureNextArgumentIsAFileName(&i, args, argc, argv);
         options.xrefrc = allocateStringForOption(&options.xrefrc, argv[i]);
     }
     else return false;
@@ -1746,11 +1750,14 @@ static bool processDashOption(int *argi, int argc, char **argv) {
     return true;
 }
 
-void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
+void processOptions(ArgumentsVector args, int argc, char **argv, ProcessFileArguments infilesFlag) {
     int i;
     bool matched;
 
     ENTER();
+
+    assert(args.argc == argc);
+    assert(args.argv == argv);
 
     for (i=1; i<argc; i++) {
         log_debug("processing argument '%s'", argv[i]);
@@ -1801,13 +1808,13 @@ void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
                 matched = processNOption(&i, argc, argv);
                 break;
             case 'o': case 'O':
-                matched = processOOption(&i, argc, argv);
+                matched = processOOption(&i, args, argc, argv);
                 break;
             case 'p': case 'P':
-                matched = processPOption(&i, argc, argv);
+                matched = processPOption(&i, args, argc, argv);
                 break;
             case 'r': case 'R':
-                matched = processROption(&i, argc, argv);
+                matched = processROption(&i, args, argc, argv);
                 break;
             case 's': case 'S':
                 matched = processSOption(&i, argc, argv);
@@ -1825,7 +1832,7 @@ void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
                 matched = processWOption(&i, argc, argv);
                 break;
             case 'x': case 'X':
-                matched = processXOption(&i, argc, argv);
+                matched = processXOption(&i, args, argc, argv);
                 break;
             case 'y': case 'Y':
                 matched = processYOption(&i, argc, argv);

@@ -2,6 +2,7 @@
 #include <cgreen/constraint_syntax_helpers.h>
 #include <cgreen/mocks.h>
 
+#include "argumentsvector.h"
 #include "constants.h"
 
 #include "globals.h"
@@ -175,36 +176,41 @@ Ensure(Options, will_find_config_file_in_parent_directory) {
 
 Ensure(Options, can_parse_about_command_line_option) {
     char *argv[] = {"", "-about"};
+    ArgumentsVector args = {2, argv};
 
-    processOptions(2, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, 2, argv, DONT_PROCESS_FILE_ARGUMENTS);
     assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
 }
 
 Ensure(Options, can_parse_version_command_line_option) {
     char *argv[] = {"", "-version"};
+    ArgumentsVector args = {2, argv};
 
-    processOptions(2, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, 2, argv, DONT_PROCESS_FILE_ARGUMENTS);
     assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
 }
 
 Ensure(Options, can_parse_double_dash_version_command_line_option) {
     char *argv[] = {"", "--version"};
+    ArgumentsVector args = {2, argv};
 
-    processOptions(2, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, 2, argv, DONT_PROCESS_FILE_ARGUMENTS);
     assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
 }
 
 Ensure(Options, can_parse_xrefrc_option_with_equals) {
     char *argv[] = {"", "-xrefrc=abc"};
+    ArgumentsVector args = {2, argv};
 
-    processOptions(2, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, 2, argv, DONT_PROCESS_FILE_ARGUMENTS);
     assert_that(options.xrefrc, is_equal_to_string("abc"));
 }
 
 Ensure(Options, can_parse_xrefrc_option_with_filename_separate) {
     char *argv[] = {"", "-xrefrc", "abc"};
+    ArgumentsVector args = {3, argv};
 
-    processOptions(3, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, 3, argv, DONT_PROCESS_FILE_ARGUMENTS);
     assert_that(options.xrefrc, is_equal_to_string("abc"));
 }
 
@@ -510,18 +516,24 @@ Ensure(Options, can_deep_copy_options_with_two_stringlist_option_with_two_string
 
 Ensure(Options, can_parse_parameter_name_option) {
     char* arguments[] = {"", "-rfct-parameter-name=int arg"};
-    processOptions(2, arguments, false);
+    ArgumentsVector args = {2, arguments};
+
+    processOptions(args, 2, arguments, false);
     assert_that(options.refactor_parameter_name, is_equal_to_string("int arg"));
 }
 
 Ensure(Options, can_parse_parameter_value_option) {
     char* arguments[] = {"", "-rfct-parameter-value=42"};
-    processOptions(2, arguments, false);
+    ArgumentsVector args = {2, arguments};
+
+    processOptions(args, 2, arguments, false);
     assert_that(options.refactor_parameter_value, is_equal_to_string("42"));
 }
 
 Ensure(Options, can_parse_target_line_option) {
     char* arguments[] = {"", "-rfct-target-line=99"};
-    processOptions(2, arguments, false);
+    ArgumentsVector args = {2, arguments};
+
+    processOptions(args, 2, arguments, false);
     assert_that(options.refactor_target_line, is_equal_to_string("99"));
 }

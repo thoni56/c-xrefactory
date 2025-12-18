@@ -350,12 +350,12 @@ finish:
     }
 }
 
-void xref(int argc, char **argv) {
+void xref(ArgumentsVector args) {
     ENTER();
     openOutputFile(options.outputFileName);
     loadAllOpenedEditorBuffers();
 
-    callXref(argc, argv, false);
+    callXref(args.argc, args.argv, false);
     closeOutputFile();
     if (options.xref2) {
         ppcSynchronize();

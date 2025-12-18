@@ -10,6 +10,6 @@ void callXref(int argc, char **argv, bool isRefactoring) {
     mock(argc, argv, isRefactoring);
 }
 
-void xref(int argc, char **argv) {
-    mock(argc, argv);
+void xref(ArgumentsVector args) {
+    mock(args.argc, args.argv);
 }

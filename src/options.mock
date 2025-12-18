@@ -14,7 +14,7 @@ void processFileArguments(void) {
     mock();
 }
 
-void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
+void processOptions(ArgumentsVector args, int argc, char **argv, ProcessFileArguments infilesFlag) {
   mock(argc, argv, infilesFlag);
 }
 
@@ -79,8 +79,8 @@ char *findConfigFile(char *cwd) {
     return (char *)mock(cwd);
 }
 
-void getPipedOptions(int *outNargc, char ***outNargv) {
-  mock(outNargc, outNargv);
+ArgumentsVector getPipedOptions(void) {
+    return *(ArgumentsVector*)mock();
 }
 
 void searchStandardOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename, char *foundProjectName) {

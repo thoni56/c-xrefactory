@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "argumentsvector.h"
 #include "commandlogger.h"
 #include "commons.h"
 #include "fileio.h"
@@ -10,7 +11,6 @@
 #include "log.h"
 #include "lsp.h"
 #include "memory.h"
-#include "options.h"
 #include "proto.h"
 #include "refactory.h"
 #include "server.h"
@@ -21,25 +21,25 @@
 
 
 /* initLogging() is called as the first thing in main() so we look for log command line options here */
-static void initLogging(int argc, char *argv[]) {
+static void initLogging(ArgumentsVector args) {
     char fileName[MAX_FILE_NAME_SIZE+1] = "";
     LogLevel log_level = LOG_ERROR;
     LogLevel console_level = LOG_FATAL;
 
-    for (int i=0; i<argc; i++) {
+    for (int i=0; i<args.argc; i++) {
         /* Levels in the log file, if enabled */
-        if (strncmp(argv[i], "-log=", 5)==0)
-            strcpy(fileName, &argv[i][5]);
-        if (strcmp(argv[i], "-debug") == 0)
+        if (strncmp(args.argv[i], "-log=", 5)==0)
+            strcpy(fileName, &args.argv[i][5]);
+        if (strcmp(args.argv[i], "-debug") == 0)
             log_level = LOG_DEBUG;
-        if (strcmp(argv[i], "-trace") == 0)
+        if (strcmp(args.argv[i], "-trace") == 0)
             log_level = LOG_TRACE;
         /* Levels on the console */
-        if (strcmp(argv[i], "-errors") == 0)
+        if (strcmp(args.argv[i], "-errors") == 0)
             console_level = LOG_ERROR;
-        if (strcmp(argv[i], "-warnings") == 0)
+        if (strcmp(args.argv[i], "-warnings") == 0)
             console_level = LOG_WARN;
-        if (strcmp(argv[i], "-infos") == 0)
+        if (strcmp(args.argv[i], "-infos") == 0)
             console_level = LOG_INFO;
     }
 
@@ -55,7 +55,7 @@ static void initLogging(int argc, char *argv[]) {
 
     /* Should we log the arguments? */
     if (true)
-        logCommands(argc, argv);
+        logCommands(args);
 }
 
 static void checkForStartupDelay(int argc, char *argv[]) {
@@ -74,8 +74,10 @@ static void checkForStartupDelay(int argc, char *argv[]) {
 int main(int argc, char *argv[]) {
     checkForStartupDelay(argc, argv);
 
+    ArgumentsVector args = {.argc = argc, .argv = argv};
+
     /* Options are read very late down below, so we need to setup logging before then */
-    initLogging(argc, argv);
+    initLogging(args);
     ENTER();
 
     /* And if we want to run the experimental LSP server, ignore anything else */
@@ -99,9 +101,9 @@ int main(int argc, char *argv[]) {
     if (options.mode == RefactoryMode)
         refactory();
     if (options.mode == XrefMode)
-        xref(argc, argv);
+        xref(args);
     if (options.mode == ServerMode)
-        server(argc, argv);
+        server(args);
 
     if (options.statistics) {
         printMemoryStatistics();

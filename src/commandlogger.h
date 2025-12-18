@@ -1,6 +1,9 @@
 #ifndef COMMANDLOGGER_H_INCLUDED
 #define COMMANDLOGGER_H_INCLUDED
 
-extern void logCommands(int argc, char *argv[]);
+#include "argumentsvector.h"
+
+
+extern void logCommands(ArgumentsVector args);
 
 #endif

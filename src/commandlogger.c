@@ -22,7 +22,7 @@ static char *removePattern(char *source, const char *pattern) {
     return modifiableCopy;
 }
 
-void logCommands(int argc, char *argv[]) {
+void logCommands(ArgumentsVector args) {
     if (!options.commandlog)
         return;
 
@@ -33,14 +33,14 @@ void logCommands(int argc, char *argv[]) {
     getCwd(cwd, sizeof(cwd));
     strcat(cwd, "/");
 
-    for (int i=0; i<argc-1; i++) {
-        if (argv[i] != NULL) {
-            char *cleaned = removePattern(argv[i], cwd);
+    for (int i=0; i<args.argc-1; i++) {
+        if (args.argv[i] != NULL) {
+            char *cleaned = removePattern(args.argv[i], cwd);
             writeFile(commandsLogfile, cleaned, strlen(cleaned), 1);
             writeFile(commandsLogfile, " ", 1, 1);
         }
     }
-    char *cleaned = removePattern(argv[argc-1], cwd);
+    char *cleaned = removePattern(args.argv[args.argc-1], cwd);
     writeFile(commandsLogfile, cleaned, strlen(cleaned), 1);
     writeFile(commandsLogfile, "\n", 1, 1);
 }

@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "argumentsvector.h"
 #include "characterreader.h"
 #include "commons.h"
 #include "constants.h"
@@ -434,14 +435,13 @@ static void discoverStandardDefines(void) {
  }
 
 static void getAndProcessXrefrcOptions(char *optionsFileName, char *optionsSectionName, char *project) {
-    int argc;
-    char **argv;
     if (*optionsFileName != 0) {
-        readOptionsFromFile(optionsFileName, &argc, &argv, optionsSectionName, project);
+        ArgumentsVector args;
+        readOptionsFromFile(optionsFileName, &args.argc, &args.argv, optionsSectionName, project);
         // warning, the following can overwrite variables like
         // 'cxref_file_name' allocated in ppmMemory, then when memory
         // is got back by caching, it may provoke a problem
-        processOptions(argc, argv, DONT_PROCESS_FILE_ARGUMENTS); /* .c-xrefrc opts*/
+        processOptions(args, args.argc, args.argv, DONT_PROCESS_FILE_ARGUMENTS); /* .c-xrefrc opts*/
     } else {
         assert(0);
     }
@@ -504,6 +504,8 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
     else
         modifiedTime = previousStandardOptionsFileModificationTime;               // !!! just for now
 
+    ArgumentsVector args = {.argc = argc, .argv = argv};
+    ArgumentsVector nargs = {.argc = nargc, .argv = nargv};
     if (*firstPass
         || previousPass != currentPass                                       /* We are in a different pass */
         || strcmp(previousStandardOptionsFile, standardOptionsFileName) != 0 /* or we are using a different options file */
@@ -525,13 +527,13 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         initStandardCxrefFileName(fileName);
 
         /* A lot of options handling... */
-        processOptions(argc, argv, DONT_PROCESS_FILE_ARGUMENTS);   /* command line opts */
+        processOptions(args, argc, argv, DONT_PROCESS_FILE_ARGUMENTS);   /* command line opts */
         /* piped options (no include or define options)
            must be before .xrefrc file options, but, the s_cachedOptions
            must be set after .c-xrefrc file, but s_cachedOptions can't contain
            piped options, !!! berk.
         */
-        processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
+        processOptions(nargs, nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
         reInitCwd(standardOptionsFileName, standardOptionsSectionName);
 
         tmpIncludeDirs = options.includeDirs;
@@ -559,7 +561,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         }
 
         deepCopyOptionsFromTo(&options, &savedOptions);
-        processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
+        processOptions(nargs, nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
         inputOpened = computeAndOpenInputFile();
 
         /* Save these values as previous */
@@ -575,7 +577,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         restoreMemoryCheckPoint();
 
         deepCopyOptionsFromTo(&savedOptions, &options);
-        processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
+        processOptions(nargs, nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
         inputOpened = computeAndOpenInputFile();
     }
 
@@ -662,6 +664,7 @@ static void clearFileItem(FileItem *fileItem) {
 
 void mainTaskEntryInitialisations(int argc, char **argv) {
     ENTER();
+    ArgumentsVector args = {.argc = argc, .argv = argv};
 
     fileAbortEnabled = false;
 
@@ -692,7 +695,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     previousStandardOptionsSection[0] = 0;
 
     /* now pre-read the option file */
-    processOptions(argc, argv, PROCESS_FILE_ARGUMENTS);
+    processOptions(args, argc, argv, PROCESS_FILE_ARGUMENTS);
     processFileArguments();
 
     /* Ensure CX-memory has room enough for things by invoking memory resize if not */
@@ -750,13 +753,14 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     if (standardOptionsFileName[0]!=0) {
         int dfargc;
         char **dfargv;
+        ArgumentsVector dfargs;
         ProcessFileArguments inmode;
 
         /* Don't read pass-specific options during initialization - those are handled
          * per-pass in initializeFileProcessing. Setting NO_PASS skips all -passN sections. */
         int savedPass = currentPass;
         currentPass = NO_PASS;
-        readOptionsFromFile(standardOptionsFileName, &dfargc, &dfargv, standardOptionsSection, standardOptionsSection);
+        readOptionsFromFile(standardOptionsFileName, &dfargs.argc, &dfargs.argv, standardOptionsSection, standardOptionsSection);
         currentPass = savedPass;
         if (options.mode == RefactoryMode) {
             inmode = DONT_PROCESS_FILE_ARGUMENTS;
@@ -772,6 +776,8 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         if (options.mode==ServerMode) {
             options.noErrors = true;
         }
+        dfargc = dfargs.argc;
+        dfargv = dfargs.argv;
         // there is a problem with INFILES_ENABLED (update for safetycheck),
         // It should first load cxref file, in order to protect file numbers.
         if (inmode==PROCESS_FILE_ARGUMENTS && options.update && !options.create) { /* TODO: .update != UPDATE_CREATE?!?! */
@@ -781,10 +787,10 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
             // I need to read options first in order to have the name
             // of cxref file.
             // I need to read fstab also to remove removed files on update
-            processOptions(dfargc, dfargv, DONT_PROCESS_FILE_ARGUMENTS);
+            processOptions(dfargs, dfargc, dfargv, DONT_PROCESS_FILE_ARGUMENTS);
             smartReadReferences();
         }
-        processOptions(dfargc, dfargv, inmode);
+        processOptions(dfargs, dfargc, dfargv, inmode);
         // recover value of errors messages
         if (options.mode==ServerMode)
             options.noErrors = previousNoErrorsOption;

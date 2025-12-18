@@ -1,5 +1,6 @@
 #include "server.h"
 
+#include "argumentsvector.h"
 #include "browsermenu.h"
 #include "commons.h"
 #include "complete.h"
@@ -119,9 +120,9 @@ static void parseInputFile(void) {
     closeInputFile();
 }
 
-void initServer(int nargc, char **nargv) {
+void initServer(ArgumentsVector args, int nargc, char **nargv) {
     clearAvailableRefactorings();
-    processOptions(nargc, nargv, PROCESS_FILE_ARGUMENTS); /* no include or define options */
+    processOptions(args, nargc, nargv, PROCESS_FILE_ARGUMENTS); /* no include or define options */
     processFileArguments();
     initCompletions(&collectedCompletions, 0, noPosition);
 }
@@ -252,7 +253,7 @@ static void processModifiedFilesForNavigation(int argc, char **argv,
     }
 
     /* Check if the current session needs refresh (either because of modifications or the flag) */
-    if (sessionData.browsingStack.top != NULL && 
+    if (sessionData.browsingStack.top != NULL &&
         sessionData.browsingStack.top->needsRefresh &&
         sessionData.browsingStack.top->menu != NULL) {
         log_debug("Updating menu referenceables and recomputing session references");
@@ -365,8 +366,8 @@ void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass)
     LEAVE();
 }
 
-void server(int argc, char **argv) {
-    int nargc;  char **nargv;
+void server(ArgumentsVector args) {
+    ArgumentsVector pipedOptions;
     bool firstPass;
 
     ENTER();
@@ -376,17 +377,17 @@ void server(int argc, char **argv) {
     for(;;) {
         currentPass = ANY_PASS;
         deepCopyOptionsFromTo(&savedOptions, &options);
-        getPipedOptions(&nargc, &nargv);
-        // O.K. -o option given on command line should catch also file not found
-        // message
+
+        pipedOptions = getPipedOptions();
+        // -o option on command line should catch also file not found
         openOutputFile(options.outputFileName);
         //&dumpArguments(nargc, nargv);
         log_trace("Server: Getting request");
-        initServer(nargc, nargv);
+        initServer(pipedOptions, pipedOptions.argc, pipedOptions.argv);
         if (outputFile==stdout && options.outputFileName!=NULL) {
             openOutputFile(options.outputFileName);
         }
-        callServer(argc, argv, nargc, nargv, &firstPass);
+        callServer(args.argc, args.argv, pipedOptions.argc, pipedOptions.argv, &firstPass);
         if (options.serverOperation == OLO_ABOUT) {
             aboutMessage();
         } else {

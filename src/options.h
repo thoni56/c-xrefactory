@@ -1,6 +1,7 @@
 #ifndef OPTIONS_H_INCLUDED
 #define OPTIONS_H_INCLUDED
 
+#include "argumentsvector.h"
 #include "proto.h"
 #include "head.h"
 #include <stdbool.h>
@@ -161,7 +162,7 @@ extern void dirInputFile(MAP_FUN_SIGNATURE);
 extern void recoverMemoryFromIncludeList(void);
 
 extern void processFileArguments(void);
-extern void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag);
+extern void processOptions(ArgumentsVector args, int argc, char **argv, ProcessFileArguments infilesFlag);
 
 /* Handling of allocated string and string list options that need to be "shifted" on deep copy */
 extern char *allocateStringForOption(char **pointerToOption, char *string);
@@ -169,11 +170,11 @@ extern void addToStringListOption(StringList **pointerToOption, char *string);
 extern void deepCopyOptionsFromTo(Options *src, Options *dest);
 
 extern char *expandPredefinedSpecialVariables_static(char *output, char *inputFilename);
-extern bool readOptionsFromFileIntoArgs(FILE *ff, int *nargc, char ***nargv,
-                    MemoryKind memFl, char *sectionFile, char *project, char *resSection);
+extern bool readOptionsFromFileIntoArgs(FILE *file, int *nargc, char ***nargv, MemoryKind memFlag,
+                                        char *sectionFile, char *project, char *section);
 extern void readOptionsFromFile(char *name, int *nargc, char ***nargv, char *project, char *foundProjectName);
 extern void readOptionsFromCommand(char *command, int *nargc, char ***nargv, char *sectionFile);
-extern void getPipedOptions(int *outNargc,char ***outNargv);
+extern ArgumentsVector getPipedOptions(void);
 extern bool currentCxFileCountMatches(int newRefNum);
 
 extern void searchStandardOptionsFileAndProjectForFile(char *filename, char *optionsFilename,
