@@ -131,9 +131,6 @@ static void schedulingToUpdate(FileItem *fileItem, bool calledDuringRefactoring)
         fileItem->isArgument = false;
         fileItem->isScheduled = false;
         fileItem->scheduledToUpdate = false;
-        // (missing of following if) has caused that all class hierarchy items
-        // as well as all cxreferences based in .class files were lost
-        // on -update, a very serious bug !!!!
         fileItem->cxLoading = true;
     } else if (options.update == UPDATE_FULL) {
         if (editorFileModificationTime(fileItem->name) != fileItem->lastFullUpdateMtime) {
@@ -147,7 +144,7 @@ static void schedulingToUpdate(FileItem *fileItem, bool calledDuringRefactoring)
     log_trace("Scheduling '%s' to update: %s", fileItem->name, fileItem->scheduledToUpdate?"yes":"no");
 }
 
-static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLeastOneProcessedP) {
+static void processInputFile(ArgumentsVector args, bool *firstPassP, bool *atLeastOneProcessedP) {
     bool inputOpened;
 
     maxPasses = 1;
@@ -155,7 +152,6 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
         if (!*firstPassP)
             deepCopyOptionsFromTo(&savedOptions, &options);
 
-        ArgumentsVector args = {.argc = argc, .argv = argv};
         ArgumentsVector nargs = {.argc = 0, .argv = NULL};
 
         inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
@@ -178,7 +174,7 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
     }
 }
 
-static void oneWholeFileProcessing(int argc, char **argv, FileItem *fileItem, bool *firstPass,
+static void oneWholeFileProcessing(ArgumentsVector args, FileItem *fileItem, bool *firstPass,
                                    bool *atLeastOneProcessed, bool isRefactoring) {
     inputFileName           = fileItem->name;
     fileProcessingStartTime = time(NULL);
@@ -187,17 +183,15 @@ static void oneWholeFileProcessing(int argc, char **argv, FileItem *fileItem, bo
     if (options.update == UPDATE_FULL || options.create) {
         fileItem->lastFullUpdateMtime = fileItem->lastModified;
     }
-    processInputFile(argc, argv, firstPass, atLeastOneProcessed);
+    processInputFile(args, firstPass, atLeastOneProcessed);
     // now free the buffer because it tooks too much memory,
     // but I can not free it when refactoring, nor when preloaded,
     // so be very careful about this!!!
-    // TODO: WTF? All test still passes if we reverse this comparison...
     if (!isRefactoring) {
         closeEditorBufferIfCloseable(inputFileName);
         closeAllEditorBuffersIfClosable();
     }
 }
-
 
 void checkExactPositionUpdate(bool printMessage) {
     if (options.update == UPDATE_FAST && options.exactPositionResolve) {
@@ -284,7 +278,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
     LEAVE();
 }
 
-void callXref(int argc, char **argv, bool isRefactoring) {
+void callXref(ArgumentsVector args, bool isRefactoring) {
     // These are static because of the longjmp() maybe happening
     static char     *cxFreeBase;
     static bool      firstPass, atLeastOneProcessed;
@@ -316,7 +310,7 @@ void callXref(int argc, char **argv, bool isRefactoring) {
             fileAbortEnabled = true;
 
             for (; fileItem != NULL; fileItem = fileItem->next) {
-                oneWholeFileProcessing(argc, argv, fileItem, &firstPass, &atLeastOneProcessed, isRefactoring);
+                oneWholeFileProcessing(args, fileItem, &firstPass, &atLeastOneProcessed, isRefactoring);
                 fileItem->isScheduled       = false;
                 fileItem->scheduledToUpdate = false;
                 if (options.xref2)
@@ -360,7 +354,7 @@ void xref(ArgumentsVector args) {
     openOutputFile(options.outputFileName);
     loadAllOpenedEditorBuffers();
 
-    callXref(args.argc, args.argv, false);
+    callXref(args, false);
     closeOutputFile();
     if (options.xref2) {
         ppcSynchronize();

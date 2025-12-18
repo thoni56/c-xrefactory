@@ -481,7 +481,7 @@ void restoreMemoryCheckPoint(void) {
 }
 
 
-bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, Language *outLanguage, bool *firstPass) {
+bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestArgs, Language *outLanguage, bool *firstPass) {
     char standardOptionsFileName[MAX_FILE_NAME_SIZE];
     char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
     time_t modifiedTime;
@@ -524,13 +524,13 @@ bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, Langu
         initStandardCxrefFileName(fileName);
 
         /* A lot of options handling... */
-        processOptions(args, DONT_PROCESS_FILE_ARGUMENTS);   /* command line opts */
+        processOptions(baseArgs, DONT_PROCESS_FILE_ARGUMENTS);   /* command line opts */
         /* piped options (no include or define options)
            must be before .xrefrc file options, but, the s_cachedOptions
            must be set after .c-xrefrc file, but s_cachedOptions can't contain
            piped options, !!! berk.
         */
-        processOptions(nargs, DONT_PROCESS_FILE_ARGUMENTS);
+        processOptions(requestArgs, DONT_PROCESS_FILE_ARGUMENTS);
         reInitCwd(standardOptionsFileName, standardOptionsSectionName);
 
         tmpIncludeDirs = options.includeDirs;
@@ -558,7 +558,7 @@ bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, Langu
         }
 
         deepCopyOptionsFromTo(&options, &savedOptions);
-        processOptions(nargs, DONT_PROCESS_FILE_ARGUMENTS);
+        processOptions(requestArgs, DONT_PROCESS_FILE_ARGUMENTS);
         inputOpened = computeAndOpenInputFile();
 
         /* Save these values as previous */
@@ -574,7 +574,7 @@ bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, Langu
         restoreMemoryCheckPoint();
 
         deepCopyOptionsFromTo(&savedOptions, &options);
-        processOptions(nargs, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
+        processOptions(requestArgs, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
         inputOpened = computeAndOpenInputFile();
     }
 
@@ -659,9 +659,8 @@ static void clearFileItem(FileItem *fileItem) {
     fileItem->cxSaved = false;
 }
 
-void mainTaskEntryInitialisations(int argc, char **argv) {
+void mainTaskEntryInitialisations(ArgumentsVector args) {
     ENTER();
-    ArgumentsVector args = {.argc = argc, .argv = argv};
 
     fileAbortEnabled = false;
 

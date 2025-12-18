@@ -202,17 +202,17 @@ static void prettyPrintMacroArgument(char *buffer, char *arg, bool last) {
     }
 }
 
-void prettyPrintMacroDefinition(char *buffer, int *bufferSize, char *macroName, int argc, char **argv) {
+void prettyPrintMacroDefinition(char *buffer, int *bufferSize, char *macroName, int argumentCount, char **arguments) {
     assert(*bufferSize > TYPE_STR_RESERVE);
     strcpy(buffer, "#define ");
     strcat(buffer, macroName);
 
     assert(strlen(buffer) < *bufferSize);
-    if (argc != -1) {
+    if (argumentCount != -1) {
         strcat(buffer, "(");
-        for (int i = 0; i < argc; i++) {
-            bool last = (i == argc-1);
-            prettyPrintMacroArgument(buffer, argv[i], last);
+        for (int i = 0; i < argumentCount; i++) {
+            bool last = (i == argumentCount-1);
+            prettyPrintMacroArgument(buffer, arguments[i], last);
             if (strlen(buffer) + TYPE_STR_RESERVE >= *bufferSize) {
                 strcat(buffer, "...");
                 break;

@@ -1,5 +1,6 @@
 #include <cgreen/cgreen.h>
 
+#include "argumentsvector.h"
 #include "memory.h"
 #include "xref.h"
 
@@ -37,5 +38,6 @@ Ensure(Xref, mainCallXref_without_input_files_gives_error_message) {
 
     initCxMemory(10000);
 
-    callXref(0, NULL, true);
+    ArgumentsVector args = {.argc = 0, .argv = NULL};
+    callXref(args, true);
 }

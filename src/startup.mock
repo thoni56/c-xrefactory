@@ -6,8 +6,8 @@ void totalTaskEntryInitialisations(void) {
   mock();
 }
 
-void mainTaskEntryInitialisations(int argc, char **argv) {
-  mock(argc, argv);
+void mainTaskEntryInitialisations(ArgumentsVector args) {
+  mock(args.argc, args.argv);
 }
 
 bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, Language *outLanguage,

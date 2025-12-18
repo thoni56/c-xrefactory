@@ -16,6 +16,7 @@
 #include "server.h"
 #include "stackmemory.h"
 #include "startup.h"
+#include "options.h"
 #include "xref.h"
 #include "yylex.h"
 
@@ -81,7 +82,7 @@ int main(int argc, char *argv[]) {
     ENTER();
 
     /* And if we want to run the experimental LSP server, ignore anything else */
-    if (want_lsp_server(argc, argv))
+    if (want_lsp_server(args))
         return lsp_server(stdin);
 
     /* else continue with legacy implementation */
@@ -96,7 +97,7 @@ int main(int argc, char *argv[]) {
 
     currentPass = ANY_PASS;
     totalTaskEntryInitialisations();
-    mainTaskEntryInitialisations(argc, argv);
+    mainTaskEntryInitialisations(args);
 
     if (options.mode == RefactoryMode)
         refactory();

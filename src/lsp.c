@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "argumentsvector.h"
 #include "json_utils.h"
 #include "lsp_dispatcher.h"
 #include "lsp_errors.h"
@@ -13,9 +14,9 @@
 #define MAX_HEADER_FIELD_LEN 1000
 
 
-bool want_lsp_server(int argc, char **argv) {
-    for (int i=0; i<argc; i++)
-        if (strcmp(argv[i], "-lsp") == 0)
+bool want_lsp_server(ArgumentsVector args) {
+    for (int i=0; i<args.argc; i++)
+        if (strcmp(args.argv[i], "-lsp") == 0)
             return true;
     return false;
 }

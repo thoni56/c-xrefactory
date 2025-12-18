@@ -10,7 +10,7 @@
 /* High-level initialization functions called by various entry points */
 
 extern void totalTaskEntryInitialisations(void);
-extern void mainTaskEntryInitialisations(int argc, char **argv);
+extern void mainTaskEntryInitialisations(ArgumentsVector args);
 
 extern bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, Language *outLanguage,
                                      bool *firstPass);

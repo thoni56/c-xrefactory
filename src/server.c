@@ -127,9 +127,7 @@ void initServer(ArgumentsVector args) {
     initCompletions(&collectedCompletions, 0, noPosition);
 }
 
-static void singlePass(ArgumentsVector args, ArgumentsVector nargs,
-                       bool *firstPassP
-) {
+static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstPassP) {
     bool inputOpened = false;
 
     inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
@@ -170,7 +168,7 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs,
     }
 }
 
-static void processFile(ArgumentsVector args, ArgumentsVector nargs, bool *firstPassP) {
+static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *firstPassP) {
     FileItem *fileItem = getFileItemWithFileNumber(originalCommandLineFileNumber);
 
     assert(fileItem->isScheduled);
@@ -178,17 +176,17 @@ static void processFile(ArgumentsVector args, ArgumentsVector nargs, bool *first
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         inputFileName = fileItem->name;
         assert(inputFileName!=NULL);
-        singlePass(args, nargs, firstPassP);
+        singlePass(baseArgs, requestArgs, firstPassP);
         if (options.serverOperation==OLO_EXTRACT || (completionStringServed && !requiresCreatingRefs(options.serverOperation)))
             break;
     }
     fileItem->isScheduled = false;
 }
 
-static void reparseFile(FileItem *fileItem, ArgumentsVector args, ArgumentsVector nargs, bool *firstPassP) {
+static void reparseFile(FileItem *fileItem, ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *firstPassP) {
     inputFileName = fileItem->name;
     currentLanguage = getLanguageFor(inputFileName);
-    bool inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
+    bool inputOpened = initializeFileProcessing(baseArgs, requestArgs, &currentLanguage, firstPassP);
     if (inputOpened) {
         parseInputFile();
         fileItem->lastParsedMtime = editorFileModificationTime(fileItem->name);
@@ -200,7 +198,7 @@ static bool fileModifiedSinceLastParse(FileItem *fileItem) {
     return editorFileModificationTime(fileItem->name) != fileItem->lastParsedMtime;
 }
 
-static void processModifiedFilesForNavigation(ArgumentsVector args, ArgumentsVector nargs, bool *firstPassP) {
+static void processModifiedFilesForNavigation(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *firstPassP) {
     /* Check which files with buffers have been modified.
      * For each modified file, reparse it to update references in the referenceableItemTable.
      * Then rebuild the current session's reference list. */
@@ -225,7 +223,7 @@ static void processModifiedFilesForNavigation(ArgumentsVector args, ArgumentsVec
                 int savedOriginalFileNumber = originalFileNumber;
                 Language savedLanguage = currentLanguage;
 
-                reparseFile(fileItem, args, nargs, firstPassP);
+                reparseFile(fileItem, baseArgs, requestArgs, firstPassP);
 
                 /* Restore state */
                 inputFileName = savedInputFileName;
@@ -329,7 +327,7 @@ static void processModifiedFilesForNavigation(ArgumentsVector args, ArgumentsVec
 }
 
 
-void callServer(ArgumentsVector args, ArgumentsVector nargs, bool *firstPass) {
+void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *firstPass) {
     ENTER();
 
     loadAllOpenedEditorBuffers();
@@ -338,7 +336,7 @@ void callServer(ArgumentsVector args, ArgumentsVector nargs, bool *firstPass) {
      * and update the current session's references before navigating */
     if (options.serverOperation == OLO_NEXT || options.serverOperation == OLO_PREVIOUS ||
         options.serverOperation == OLO_POP || options.serverOperation == OLO_POP_ONLY) {
-        processModifiedFilesForNavigation(args, nargs, firstPass);
+        processModifiedFilesForNavigation(baseArgs, requestArgs, firstPass);
     }
 
     if (requiresCreatingRefs(options.serverOperation))
@@ -348,7 +346,7 @@ void callServer(ArgumentsVector args, ArgumentsVector nargs, bool *firstPass) {
         if (presetEditServerFileDependingStatics() == NULL) {
             errorMessage(ERR_ST, "No input file");
         } else {
-            processFile(args, nargs, firstPass);
+            processFile(baseArgs, requestArgs, firstPass);
         }
     } else {
         if (presetEditServerFileDependingStatics() != NULL) {

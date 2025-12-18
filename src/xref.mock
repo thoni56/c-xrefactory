@@ -6,8 +6,8 @@ void checkExactPositionUpdate(bool printMessage) {
     mock(printMessage);
 }
 
-void callXref(int argc, char **argv, bool isRefactoring) {
-    mock(argc, argv, isRefactoring);
+void callXref(ArgumentsVector args, bool isRefactoring) {
+    mock(args.argc, args.argv, isRefactoring);
 }
 
 void xref(ArgumentsVector args) {

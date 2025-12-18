@@ -823,17 +823,16 @@ static void *allocateSpaceForOption(MemoryKind memoryKind, int count, size_t siz
     }
 }
 
-static int addOptionToArgs(MemoryKind memoryKind, char optionText[], int argc, char *argv[]) {
-    char *s = NULL;
-    s = allocateSpaceForOption(memoryKind, strlen(optionText) + 1, sizeof(char));
-    assert(s);
-    strcpy(s, optionText);
-    log_debug("option %s read", s);
-    argv[argc] = s;
-    if (argc < MAX_STD_ARGS - 1)
-        argc++;
+static int addOptionToArgs(MemoryKind memoryKind, char optionText[], int argCount, char *arguments[]) {
+    char *space = allocateSpaceForOption(memoryKind, strlen(optionText) + 1, sizeof(char));
+    assert(space);
+    strcpy(space, optionText);
+    log_debug("option %s read", space);
+    arguments[argCount] = space;
+    if (argCount < MAX_STD_ARGS - 1)
+        argCount++;
 
-    return argc;
+    return argCount;
 }
 
 static void ensureNextArgumentIsAFileName(int *i, ArgumentsVector args) {
@@ -1076,12 +1075,12 @@ static bool isAbsolutePath(char *p) {
 
 
 static int handleIncludeOption(int i, ArgumentsVector args) {
-    ArgumentsVector newArgs;
+    ArgumentsVector includedArgs;
 
     ensureNextArgumentIsAFileName(&i, args);
 
-    readOptionsFromFile(args.argv[i], &newArgs, "", NULL);
-    processOptions(newArgs, DONT_PROCESS_FILE_ARGUMENTS);
+    readOptionsFromFile(args.argv[i], &includedArgs, "", NULL);
+    processOptions(includedArgs, DONT_PROCESS_FILE_ARGUMENTS);
 
     return i;
 }

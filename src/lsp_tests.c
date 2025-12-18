@@ -1,6 +1,7 @@
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
 
+#include "argumentsvector.h"
 #include "lsp.h"
 
 #include "log.h"
@@ -17,15 +18,21 @@ AfterEach(Lsp) {}
 
 Ensure(Lsp, returns_true_when_lsp_option_is_in_argv) {
     char *one_arg[] = {"-lsp"};
-    assert_that(want_lsp_server(sizeof(one_arg)/sizeof(one_arg[0]), one_arg));
+    ArgumentsVector oneArgs = {.argc = sizeof(one_arg)/sizeof(one_arg[0]), one_arg};
+    assert_that(want_lsp_server(oneArgs));
+
     char *three_args[] = {"program", "arg1", "-lsp"};
-    assert_that(want_lsp_server(sizeof(three_args)/sizeof(three_args[0]), three_args));
+    ArgumentsVector args = {.argc = sizeof(three_args)/sizeof(three_args[0]), three_args};
+    assert_that(want_lsp_server(args));
 }
 
 Ensure(Lsp, returns_false_when_lsp_option_is_not_in_argv) {
-    char *args[] = {"abc"};
-    assert_that(!want_lsp_server(0, NULL));
-    assert_that(!want_lsp_server(1, args));
+    char *arguments[] = {"abc"};
+    ArgumentsVector args = {.argc = 0, .argv = NULL};
+    assert_that(!want_lsp_server(args));
+
+    args = (ArgumentsVector){.argc = 1, .argv = arguments};
+    assert_that(!want_lsp_server(args));
 }
 
 Ensure(Lsp, will_return_when_dispatcher_returns_error) {

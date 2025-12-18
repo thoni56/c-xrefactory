@@ -161,15 +161,16 @@ static void ensureReferencesAreUpdated(char *project) {
     argumentVector[argumentCount++] = updateOption;
 
     currentPass = ANY_PASS;
-    mainTaskEntryInitialisations(argumentCount, argumentVector);
+    ArgumentsVector args = {.argc = argumentCount, .argv = argumentVector};
+    mainTaskEntryInitialisations(args);
 
-    callXref(argumentCount, argumentVector, true);
+    callXref(args, true);
 
     deepCopyOptionsFromTo(&savedOptions, &options);
     ppcEnd(PPC_UPDATE_REPORT);
 
-    // return into editSubTaskState
-    mainTaskEntryInitialisations(argument_count(serverStandardOptions), serverStandardOptions);
+    args = (ArgumentsVector){.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
+    mainTaskEntryInitialisations(args);
     editServerSubTaskFirstPass = true;
 }
 
@@ -193,8 +194,7 @@ static void parseBufferUsingServer(char *project, EditorMarker *point, EditorMar
     ArgumentsVector args = {.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
     ArgumentsVector nargs = {.argc = argumentCount, .argv = argumentVector};
     initServer(nargs);
-    callServer(args, nargs,
-               &editServerSubTaskFirstPass);
+    callServer(args, nargs, &editServerSubTaskFirstPass);
 }
 
 static void beInteractive(void) {
@@ -1663,7 +1663,8 @@ void refactory(void) {
     refactoringStartingPoint = editorUndo;
 
     // init subtask
-    mainTaskEntryInitialisations(argument_count(serverStandardOptions), serverStandardOptions);
+    ArgumentsVector args = {.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
+    mainTaskEntryInitialisations(args);
     editServerSubTaskFirstPass = true;
 
     progressFactor = 1;

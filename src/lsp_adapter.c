@@ -47,12 +47,12 @@ JSON *findDefinition(const char *uri, JSON *position) {
     processFileArguments();
 
     /* Run the server pipeline to find definition */
-    ArgumentsVector args = {.argc = 0, .argv = NULL};
-    ArgumentsVector nargs = {.argc = 0, .argv = NULL};
+    ArgumentsVector commandLineArgs = {.argc = 0, .argv = NULL};
+    ArgumentsVector operationArgs = {.argc = 0, .argv = NULL};
 
     bool firstPass;
 
-    callServer(args, nargs, &firstPass);
+    callServer(commandLineArgs, operationArgs, &firstPass);
 
     /* Extract results from browser stack */
     JSON *result = NULL;

@@ -4,8 +4,10 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include "argumentsvector.h"
 
-extern bool want_lsp_server(int argc, char *argv[]);
+
+extern bool want_lsp_server(ArgumentsVector args);
 extern int lsp_server(FILE *input);
 
 #endif
