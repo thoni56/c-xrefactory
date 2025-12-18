@@ -68,6 +68,7 @@ static SessionStackEntry *pushEntryWithNoReferences(SessionStack *stack) {
         .hkSelectedSym   = NULL,
         .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL,
         .refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
+        .needsRefresh    = false,
         .previous        = stack->top};
     return entry;
 }

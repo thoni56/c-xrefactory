@@ -27,7 +27,6 @@
 #include "proto.h"
 #include "protocol.h"
 #include "referenceableitemtable.h"
-#include "server.h"
 #include "stackmemory.h"
 #include "symboltable.h"
 #include "xref.h"

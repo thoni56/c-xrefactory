@@ -244,9 +244,17 @@ static void processModifiedFilesForNavigation(int argc, char **argv,
         }
     }
 
-    /* If any files were modified, update menu items to point to the refreshed
-     * referenceables in the table, then recompute references in the current session */
-    if (anyModified && sessionData.browsingStack.top != NULL && sessionData.browsingStack.top->menu != NULL) {
+    /* If any files were modified, mark all sessions in the stack as needing refresh */
+    if (anyModified) {
+        for (SessionStackEntry *entry = sessionData.browsingStack.root; entry != NULL; entry = entry->previous) {
+            entry->needsRefresh = true;
+        }
+    }
+
+    /* Check if the current session needs refresh (either because of modifications or the flag) */
+    if (sessionData.browsingStack.top != NULL && 
+        sessionData.browsingStack.top->needsRefresh &&
+        sessionData.browsingStack.top->menu != NULL) {
         log_debug("Updating menu referenceables and recomputing session references");
 
         /* Find the current reference's index in the list before recomputing */
@@ -255,6 +263,21 @@ static void processModifiedFilesForNavigation(int argc, char **argv,
             Reference *ref = sessionData.browsingStack.top->references;
             while (ref != NULL && ref != sessionData.browsingStack.top->current) {
                 currentIndex++;
+                ref = ref->next;
+            }
+        }
+
+        /* Find which reference (by index) matches the callerPosition, so we can update it */
+        int callerIndex = -1;
+        if (sessionData.browsingStack.top->callerPosition.file != NO_FILE_NUMBER) {
+            Reference *ref = sessionData.browsingStack.top->references;
+            int index = 0;
+            while (ref != NULL) {
+                if (positionsAreEqual(ref->position, sessionData.browsingStack.top->callerPosition)) {
+                    callerIndex = index;
+                    break;
+                }
+                index++;
                 ref = ref->next;
             }
         }
@@ -287,6 +310,26 @@ static void processModifiedFilesForNavigation(int argc, char **argv,
             }
             sessionData.browsingStack.top->current = ref;
         }
+
+        /* Update callerPosition to the same index in the new list if it was found in the old list */
+        if (callerIndex >= 0 && sessionData.browsingStack.top->references != NULL) {
+            Reference *ref = sessionData.browsingStack.top->references;
+            int index = 0;
+            while (ref != NULL && index < callerIndex) {
+                ref = ref->next;
+                index++;
+            }
+            if (ref != NULL) {
+                log_debug("Updating callerPosition from %d:%d to %d:%d",
+                         sessionData.browsingStack.top->callerPosition.line,
+                         sessionData.browsingStack.top->callerPosition.col,
+                         ref->position.line, ref->position.col);
+                sessionData.browsingStack.top->callerPosition = ref->position;
+            }
+        }
+
+        /* Clear the needsRefresh flag now that we've rebuilt this session */
+        sessionData.browsingStack.top->needsRefresh = false;
     }
     LEAVE();
 }
@@ -296,9 +339,10 @@ void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass)
 
     loadAllOpenedEditorBuffers();
 
-    /* For navigation operations (NEXT/PREVIOUS), reparse any modified files
+    /* For navigation operations (NEXT/PREVIOUS/POP), reparse any modified files
      * and update the current session's references before navigating */
-    if (options.serverOperation == OLO_NEXT || options.serverOperation == OLO_PREVIOUS) {
+    if (options.serverOperation == OLO_NEXT || options.serverOperation == OLO_PREVIOUS ||
+        options.serverOperation == OLO_POP || options.serverOperation == OLO_POP_ONLY) {
         processModifiedFilesForNavigation(argc, argv, nargc, nargv, firstPass);
     }
 
