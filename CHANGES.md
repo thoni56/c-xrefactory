@@ -1,19 +1,43 @@
+# Version 1.8.2
+
+- Remove caching, slowdown but less complexity in code
+
+# Version 1.8.1
+
+- Add C11, C19 and C22 features and symbols
+
+# Version 1.8.0
+
+- Remove Java-specific fields in references database
+
+# Version 1.7.1
+
+- Many refactorings and tidyings
+- New refactoring: Rename Included File
+
+# Version 1.6.22
+
+- Support for Java & Jedit removed
+- Many, many refactorings and tidyings
+
+# Version 1.6.16
+
+- HTML cross-referencing removed
+
 # Version 1.6.13
 
-Add support for compound literals in C.
-
-Thousands of refactorings...
+- Add support for compound literals in C.
+- Thousands of refactorings...
 
 
 # Version 1.6.12
 
-Adding the first test (ever?) for some coverage.
+- Adding the first test (ever?) for some coverage.
 
 
 # Version 1.6.11
 
-First version as c-xrefactory picked from sourceforge and moved to GitHub by @thoni56,
-https://github.com/thoni56/c-xrefactory for future changes.
+- First version as c-xrefactory picked from sourceforge and moved to GitHub by @thoni56, https://github.com/thoni56/c-xrefactory for future changes.
 
 
 # Version 1.6.10
