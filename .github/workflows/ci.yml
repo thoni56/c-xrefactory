@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches-ignore:
+      - stable
+      - gh_pages
+      - previous_stable
+  pull_request:
+    branches-ignore:
+      - stable
+      - gh_pages
+      - previous_stable
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-22.04  # jammy
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for stable branch push
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ca-certificates lcov libcjson-dev
+          sudo update-ca-certificates
+
+      - name: Show tool versions
+        run: |
+          lcov --version
+          gcov --version
+
+      - name: Install Cgreen test framework
+        run: |
+          wget https://github.com/cgreen-devs/cgreen/releases/download/1.6.1/cgreen-1.6.1-x86_64-linux-gnu.deb
+          sudo dpkg -i ./cgreen-1.6.1-x86_64-linux-gnu.deb
+          cgreen-runner --version
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r utils/requirements.txt
+
+      - name: Install Coveralls tools
+        run: |
+          gem install coveralls-lcov
+          curl -L https://coveralls.io/coveralls-linux.tar.gz | sudo tar -xz -C /usr/local/bin
+
+      - name: Run unit tests with coverage (for Codecov)
+        run: |
+          cd src
+          make COVERAGE=--coverage unit
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          flags: unittests
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: Reset coverage counters
+        run: |
+          cd src
+          lcov -q -z -d .
+
+      - name: Run full CI suite (unit + build + all tests)
+        run: |
+          cd src
+          make ci
+
+      - name: Test c-xref binary
+        run: |
+          src/c-xref -about
+
+      - name: Upload coverage to Coveralls
+        run: |
+          coveralls report
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        continue-on-error: true
+
+      - name: Move stable branch on main
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git push -f https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} main:refs/heads/stable
+        continue-on-error: true
