@@ -16,6 +16,9 @@ jobs:
   build-and-test:
     runs-on: ubuntu-22.04  # jammy
 
+    env:
+      TERM: xterm
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
