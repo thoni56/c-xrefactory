@@ -5,4 +5,3 @@ CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-
 <sync>
 -continuerefactoring -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
-<exit>
