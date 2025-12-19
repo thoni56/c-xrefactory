@@ -4,8 +4,8 @@
 #
 UTILS="$(dirname "$(realpath "$0")")"
 
-FILES=$(find "$UTILS/../editors/emacs" -type f -name "*.el" ! -name "compileCxrefactory.el")
-LOAD_FILES=$(printf " -l %q" $FILES)
+# Load only the main file (c-xrefactory.el) which handles loading dependencies
+MAIN_FILE="$UTILS/../editors/emacs/c-xrefactory.el"
 
 # Ensure we don't load compiled stuff
 rm -f $UTILS/../editors/emacs/*.elc
@@ -18,8 +18,10 @@ else
 fi
 
 # Construct Emacs command with proper quoting
+# Use -Q to skip loading init file, ensuring a pristine environment
+# This verifies c-xrefactory works in a clean setup without user customizations
 if [[ -n "$OPTIONS_FILE" ]]; then
-  emacs $LOAD_FILES \
+  emacs -Q -l "$MAIN_FILE" \
     --eval "(setq c-xref-options-file $OPTIONS_FILE)" \
     --eval "(setq c-xref-exec-directory \"$UTILS/../src/\")" \
     --eval "(setq c-xref-debug-mode t)" \
@@ -27,7 +29,7 @@ if [[ -n "$OPTIONS_FILE" ]]; then
     --eval "(advice-add 'lsp :override (lambda (&rest args) (message \"LSP disabled for this session\")))" \
     "$@"
 else
-  emacs $LOAD_FILES \
+  emacs -Q -l "$MAIN_FILE" \
     --eval "(setq c-xref-exec-directory \"$UTILS/../src/\")" \
     --eval "(setq c-xref-debug-mode t)" \
     --eval "(setq c-xref-debug-preserve-tmp-files t)" \

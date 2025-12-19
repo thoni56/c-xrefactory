@@ -584,8 +584,8 @@ faces and highlighting in buffers created by C-xrefactory.
 ;; local browse menu
 (defvar c-xref-lm-menu (make-sparse-keymap "Local Motion"))
 (fset 'c-xref-lm-menu (symbol-value 'c-xref-lm-menu))
-(define-key c-xref-lm-menu [c-xref-lm-next] '("Next Usage of This Symbol (or Alternatives)" . c-xref-alternative-next-reference))
-(define-key c-xref-lm-menu [c-xref-lm-previous] '("Previous Usage of This Symbol (or Alternatives)" . c-xref-alternative-previous-reference))
+(define-key c-xref-lm-menu [c-xref-lm-next] '("Next Reference to This Symbol (or Alternatives)" . c-xref-alternative-next-reference))
+(define-key c-xref-lm-menu [c-xref-lm-previous] '("Previous Reference to This Symbol (or Alternatives)" . c-xref-alternative-previous-reference))
 
 (defvar c-xref-sb-menu (make-sparse-keymap "Browsing with Symbol Stack"))
 (fset 'c-xref-sb-menu (symbol-value 'c-xref-sb-menu))
@@ -620,8 +620,8 @@ faces and highlighting in buffers created by C-xrefactory.
 
 (defvar c-xref-unused-menu (make-sparse-keymap "Unused Symbols Detection"))
 (fset 'c-xref-unused-menu (symbol-value 'c-xref-unused-menu))
-(define-key c-xref-unused-menu [c-xref-dm-globals] '("Browse Project Unused Symbols" . c-xref-push-global-unused-symbols))
-(define-key c-xref-unused-menu [c-xref-dm-locals] '("Browse File Unused Symbols" . c-xref-push-this-file-unused-symbols))
+(define-key c-xref-unused-menu [c-xref-dm-globals] '("Browse Unused Symbols in Project" . c-xref-push-global-unused-symbols))
+(define-key c-xref-unused-menu [c-xref-dm-locals] '("Browse Unused Symbols in File" . c-xref-push-this-file-unused-symbols))
 
 (defvar c-xref-misc-menu (make-sparse-keymap "Misc Menu"))
 (fset 'c-xref-misc-menu (symbol-value 'c-xref-misc-menu))
@@ -650,9 +650,9 @@ faces and highlighting in buffers created by C-xrefactory.
 (define-key c-xref-menu [c-xref-sb-menu] '("Browsing with Symbol Stack" . c-xref-sb-menu))
 (define-key c-xref-menu [c-xref-lm-menu] '("Local Motion" . c-xref-lm-menu))
 (define-key c-xref-menu [separator-buffers3] '("--"))
-(define-key c-xref-menu [c-xref-fast-update-refs] '("Fast Update of References" . c-xref-fast-update-refs))
-(define-key c-xref-menu [c-xref-update-refs] '("Full Update of References" . c-xref-update-refs))
-(define-key c-xref-menu [c-xref-create-refs] '("Create C-xref Reference DB" . c-xref-create-refs))
+(define-key c-xref-menu [c-xref-create-refs] '("Rebuild References DB" . c-xref-create-refs))
+(define-key c-xref-menu [c-xref-update-refs] '("Update References - Full" . c-xref-update-refs))
+(define-key c-xref-menu [c-xref-fast-update-refs] '("Update References - Fast" . c-xref-fast-update-refs))
 (define-key c-xref-menu [separator-buffers6] '("--"))
 (define-key c-xref-menu [(f8)] '("Complete Identifier" . c-xref-completion))
 (define-key c-xref-menu [c-xref-ide-menu] '("Emacs IDE" . c-xref-ide-menu))
