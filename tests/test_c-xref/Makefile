@@ -2,7 +2,7 @@
 
 include ../Makefile.boilerplate
 
-ARGUMENTS = -xrefrc .c-xrefrc -p $(abspath $(CURDIR)/../../src) -create -errors -filetrace $(TRACE) -o c-xref.log
+ARGUMENTS = -xrefrc $(abspath $(CURDIR)/.c-xrefrc) -p $(abspath $(CURDIR)/../../src) -create -errors -filetrace $(TRACE) -o c-xref.log
 
 COMMAND = $(CXREF_PROGRAM) $(ARGUMENTS)
 
