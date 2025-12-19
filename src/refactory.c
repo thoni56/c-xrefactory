@@ -197,6 +197,21 @@ static void parseBufferUsingServer(char *project, EditorMarker *point, EditorMar
     callServer(args, nargs, &editServerSubTaskFirstPass);
 }
 
+/* Interactive command loop for refactoring operations that need user input.
+ *
+ * Called from refactoring operations (like rename) when user interaction is needed,
+ * typically via displayResolutionDialog() to handle name collisions or symbol selection.
+ *
+ * OPERATION:
+ * - Reads commands from stdin via getPipedOptions() (sent by editor/test driver)
+ * - Processes interactive commands like -olcxmenufilter, -olcxfilter
+ * - Continues looping until:
+ *   1. -continuerefactoring is received (sets continueRefactoring = RC_CONTINUE)
+ *   2. Empty input (pipedOptions.argc <= 1)
+ *
+ * IMPORTANT: After this function returns, control goes back to refactory() which
+ * then exits the process. The editor should NOT send <exit> after -continuerefactoring.
+ */
 static void beInteractive(void) {
     ENTER();
     deepCopyOptionsFromTo(&options, &savedOptions);
@@ -1621,6 +1636,28 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
 
 // --------------------------------------------------------------------
 
+/* Main entry point for refactoring operations (-refactory mode).
+ *
+ * This function is called when c-xref is invoked with the -refactory option.
+ * It runs as a separate process from the main editor server and handles the
+ * complete lifecycle of a refactoring operation.
+ *
+ * PROCESS LIFECYCLE:
+ * 1. Performs initial refactoring operation (rename, extract, parameter manipulation, etc.)
+ * 2. If user interaction is needed (e.g., name collisions, symbol selection), enters
+ *    beInteractive() which waits for piped commands from the editor
+ * 3. When -continuerefactoring is received, exits interactive mode
+ * 4. Completes the refactoring and THE PROCESS EXITS AUTOMATICALLY
+ *
+ * IMPORTANT: The refactory process always exits when this function returns. Tests and
+ * editor clients should NOT send an explicit <exit> command after -continuerefactoring,
+ * as the process will have already terminated (causing a race condition in tests).
+ *
+ * The function never returns to a command loop - it's a one-shot operation that either:
+ * - Completes immediately (for simple refactorings)
+ * - Enters beInteractive() for user decisions, then completes
+ * - Errors out via FATAL_ERROR
+ */
 void refactory(void) {
 
     ENTER();
