@@ -79,7 +79,7 @@ diagrams/%.svg: diagrams/src/%.puml
 		-v $(CURDIR):/work \
 		-w /work \
 		plantuml/plantuml \
-		-tsvg -o diagrams $<
+		-tsvg -o .. $<
 
 # Clean generated diagram images (keeps source .puml files)
 clean-diagrams:
