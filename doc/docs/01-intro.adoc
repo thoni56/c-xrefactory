@@ -1,62 +1,55 @@
 == Intro
 
-`c-xrefactory` is a software tool and a project aiming at restoring
-the sources of that old, but very useful, tool to a state where it can
-be enhanced and be the foundation for a highly capable refactoring
-browser.
+`c-xrefactory` is a software tool and a project aiming at restoring the sources of that
+old, but very useful, tool to a state where it can be enhanced and be the foundation for
+a highly capable refactoring browser.
 
-It _is_ currently in working condition, so you can use it. For
-information about that, see the
+It _is_ currently in excellent working condition, so you can use it in your daily
+work. I do. For information about how to do that, see the
 https://github.com/thoni56/c-xrefactory/blob/main/README.md[README.md].
 
 === Caution
 
 As indicated by the
-https://github.com/thoni56/c-xrefactory/blob/main/README.md[README.md],
-this is a long term restoration project. So anything you find in this
-document might be old, incorrect, guesses, temporary holders for
-thoughts or theories. Or actually true and useful.
+https://github.com/thoni56/c-xrefactory/blob/main/README.md[README.md], this is a long
+term restoration project. So anything you find in this document might be old, incorrect,
+guesses, temporary holders for thoughts or theories. Or actually true and useful.
 
-Especially names of variables, functions and modules is prone to
-change as understanding of them increases. They might also be
-refactored into something entirently different.
+Especially names of variables, functions and modules is prone to change as understanding
+of them increases. They might also be refactored into something entirently different.
 
-As this point this document is just a collection of unstructured
-thougths, guesses, historic anecdotes and ideas. For example, the
-previously existing, and also unstructured, wiki pages have just been
-pasted in here in an attempt to collect everything in a single
-document. Perhaps that will make it possible to "refactor" the
-information into something actually useful.
+This document has progressed from non-existing, to a collection of unstructured
+thougths, guesses, historic anecdotes, ideas and a collection of unstructured,
+pre-existing, wiki pages, and is now quite useful.  Perhaps it will continue to be
+improved and "refactored" into something valuable for anyone who venture into this
+project.
 
-The last part of this document is an Archive where completely obsolete
-descriptions have been moved for future software archeologists to
-find.
+The last part of this document is an Archive where completely obsolete descriptions have
+been moved for future software archeologists to find.
 
 === Background
 
 You will find some background about the project in the
 https://github.com/thoni56/c-xrefactory/blob/main/README.md[README.md].
 
-This document tries to collect the knowledge and understanding about
-how `c-xrefactory` actually works, plans for making it better, both in
-terms of working with the source, its structure and its features.
+This document tries to collect the knowledge and understanding about how `c-xrefactory`
+actually works, plans for making it better, both in terms of working with the source,
+its structure and its features.
 
-Hopefully over time this will be the design documentation of
-`c-xrefactory`, which, at that time, will be a fairly well structured
-and useful piece of software.
+Hopefully over time this will be the design documentation of `c-xrefactory`, which, at
+that time, will be a fairly well structured and useful piece of software.
 
 === Goal
 
-Ultimately `c-xrefactory` could become _the_ refactoring browser for
-C, the one that everybody uses. As suggested by @tajmone in GitHub
-issue #39, by switching to a general protocol, we could possibly plug
-this in to many editors.
+Ultimately `c-xrefactory` could become _the_ refactoring browser for C, the one that
+everybody uses. As suggested by @tajmone in GitHub issue #39, by switching to a general
+protocol, we could possibly plug this in to many editors.
 
-However, to do that we need to refactor out the protocol parts. And to
-do that we need a better structure, and to dare to change that, we
-need to understand more of the intricacies of this beast, and we need
-tests. So the normal legacy code catch 22 applies...
+However, to do that we need to refactor out the protocol parts. And to do that we need a
+better structure, and to dare to change that, we need to understand more of the
+intricacies of this beast, and we need tests. So the normal legacy code catch 22
+applies...
 
-Test coverage is starting to look good, coming up to about 80% at the
-time of writing this. But that is mostly "application level"
-execution, rather than actual tests.
+Test coverage is starting to look good, coming up to slightly above 80% at the time of
+writing this. Many "tests" are just "application level" execution, rather than actual
+tests, but also this is improving.
