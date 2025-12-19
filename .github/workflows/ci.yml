@@ -45,7 +45,7 @@ jobs:
 
       - name: Install Coveralls tools
         run: |
-          gem install coveralls-lcov
+          sudo gem install coveralls-lcov
           curl -L https://coveralls.io/coveralls-linux.tar.gz | sudo tar -xz -C /usr/local/bin
 
       - name: Run unit tests with coverage (for Codecov)
