@@ -624,42 +624,37 @@ This document is very much a work in progress.
 <h2 id="_intro">1. Intro</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><code>c-xrefactory</code> is a software tool and a project aiming at restoring
-the sources of that old, but very useful, tool to a state where it can
-be enhanced and be the foundation for a highly capable refactoring
-browser.</p>
+<p><code>c-xrefactory</code> is a software tool and a project aiming at restoring the sources of that
+old, but very useful, tool to a state where it can be enhanced and be the foundation for
+a highly capable refactoring browser.</p>
 </div>
 <div class="paragraph">
-<p>It <em>is</em> currently in working condition, so you can use it. For
-information about that, see the
+<p>It <em>is</em> currently in excellent working condition, so you can use it in your daily
+work. I do. For information about how to do that, see the
 <a href="https://github.com/thoni56/c-xrefactory/blob/main/README.md">README.md</a>.</p>
 </div>
 <div class="sect2">
 <h3 id="_caution">1.1. Caution</h3>
 <div class="paragraph">
 <p>As indicated by the
-<a href="https://github.com/thoni56/c-xrefactory/blob/main/README.md">README.md</a>,
-this is a long term restoration project. So anything you find in this
-document might be old, incorrect, guesses, temporary holders for
-thoughts or theories. Or actually true and useful.</p>
+<a href="https://github.com/thoni56/c-xrefactory/blob/main/README.md">README.md</a>, this is a long
+term restoration project. So anything you find in this document might be old, incorrect,
+guesses, temporary holders for thoughts or theories. Or actually true and useful.</p>
 </div>
 <div class="paragraph">
-<p>Especially names of variables, functions and modules is prone to
-change as understanding of them increases. They might also be
-refactored into something entirently different.</p>
+<p>Especially names of variables, functions and modules is prone to change as understanding
+of them increases. They might also be refactored into something entirently different.</p>
 </div>
 <div class="paragraph">
-<p>As this point this document is just a collection of unstructured
-thougths, guesses, historic anecdotes and ideas. For example, the
-previously existing, and also unstructured, wiki pages have just been
-pasted in here in an attempt to collect everything in a single
-document. Perhaps that will make it possible to "refactor" the
-information into something actually useful.</p>
+<p>This document has progressed from non-existing, to a collection of unstructured
+thougths, guesses, historic anecdotes, ideas and a collection of unstructured,
+pre-existing, wiki pages, and is now quite useful.  Perhaps it will continue to be
+improved and "refactored" into something valuable for anyone who venture into this
+project.</p>
 </div>
 <div class="paragraph">
-<p>The last part of this document is an Archive where completely obsolete
-descriptions have been moved for future software archeologists to
-find.</p>
+<p>The last part of this document is an Archive where completely obsolete descriptions have
+been moved for future software archeologists to find.</p>
 </div>
 </div>
 <div class="sect2">
@@ -669,34 +664,32 @@ find.</p>
 <a href="https://github.com/thoni56/c-xrefactory/blob/main/README.md">README.md</a>.</p>
 </div>
 <div class="paragraph">
-<p>This document tries to collect the knowledge and understanding about
-how <code>c-xrefactory</code> actually works, plans for making it better, both in
-terms of working with the source, its structure and its features.</p>
+<p>This document tries to collect the knowledge and understanding about how <code>c-xrefactory</code>
+actually works, plans for making it better, both in terms of working with the source,
+its structure and its features.</p>
 </div>
 <div class="paragraph">
-<p>Hopefully over time this will be the design documentation of
-<code>c-xrefactory</code>, which, at that time, will be a fairly well structured
-and useful piece of software.</p>
+<p>Hopefully over time this will be the design documentation of <code>c-xrefactory</code>, which, at
+that time, will be a fairly well structured and useful piece of software.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_goal">1.3. Goal</h3>
 <div class="paragraph">
-<p>Ultimately <code>c-xrefactory</code> could become <em>the</em> refactoring browser for
-C, the one that everybody uses. As suggested by @tajmone in GitHub
-issue #39, by switching to a general protocol, we could possibly plug
-this in to many editors.</p>
+<p>Ultimately <code>c-xrefactory</code> could become <em>the</em> refactoring browser for C, the one that
+everybody uses. As suggested by @tajmone in GitHub issue #39, by switching to a general
+protocol, we could possibly plug this in to many editors.</p>
 </div>
 <div class="paragraph">
-<p>However, to do that we need to refactor out the protocol parts. And to
-do that we need a better structure, and to dare to change that, we
-need to understand more of the intricacies of this beast, and we need
-tests. So the normal legacy code catch 22 applies&#8230;&#8203;</p>
+<p>However, to do that we need to refactor out the protocol parts. And to do that we need a
+better structure, and to dare to change that, we need to understand more of the
+intricacies of this beast, and we need tests. So the normal legacy code catch 22
+applies&#8230;&#8203;</p>
 </div>
 <div class="paragraph">
-<p>Test coverage is starting to look good, coming up to about 80% at the
-time of writing this. But that is mostly "application level"
-execution, rather than actual tests.</p>
+<p>Test coverage is starting to look good, coming up to slightly above 80% at the time of
+writing this. Many "tests" are just "application level" execution, rather than actual
+tests, but also this is improving.</p>
 </div>
 </div>
 </div>
@@ -9166,7 +9159,7 @@ void pushEmptySession(ReferencesStack *stack);  // Generic operation</code></pre
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-12-19 15:05:52 UTC
+Last updated 2025-12-19 15:55:21 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
