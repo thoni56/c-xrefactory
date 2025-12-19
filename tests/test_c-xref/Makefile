@@ -6,7 +6,7 @@ ARGUMENTS = -xrefrc $(abspath $(CURDIR)/.c-xrefrc) -p $(abspath $(CURDIR)/../../
 
 COMMAND = $(CXREF_PROGRAM) $(ARGUMENTS)
 
-$(TEST): .c-xrefrc
+$(TEST):
 	@# Point sources to the src directory
 	sed 's:/tests/test_c-xref/../..::' .c-xrefrc > .c-xrefrc.new
 	mv .c-xrefrc.new .c-xrefrc
