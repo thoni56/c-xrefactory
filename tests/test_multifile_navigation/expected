@@ -1,15 +1,17 @@
 CXREF -xrefactory-II -xrefrc CURDIR/.c-xrefrc -p CURDIR -server -o server-buffer
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/source1.c
 end-of-options
 
 <sync>
--olcxpush -olcursor=35 CURDIR/common.h -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<set-info len=<n>>CURDIR</set-info>
+-olcxpush -preload CURDIR/common.h CURDIR/common.preload -olcursor=35 CURDIR/common.h -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=3 col=2 len=<n>>CURDIR/common.h</position-lc>
 </goto>
--olcxnext -olcursor=32 CURDIR/common.h -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxnext -preload CURDIR/common.h CURDIR/common.preload -olcursor=32 CURDIR/common.h -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
