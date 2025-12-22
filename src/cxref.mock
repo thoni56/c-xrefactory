@@ -111,6 +111,6 @@ void answerEditAction(void) {
     mock();
 }
 
-void generateReferences(void) {
+void saveReferences(void) {
     mock();
 }

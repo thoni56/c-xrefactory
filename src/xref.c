@@ -256,7 +256,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
             closeCharacterBuffer(&currentFile.characterBuffer);
     }
     if (options.mode==XrefMode)
-        generateReferences();
+        saveReferences();
     recoverMemoriesAfterOverflow(cxMemFreeBase);
 
     /* ************ start with CXREFS and memories clean ************ */
@@ -335,7 +335,7 @@ finish:
             } else {
                 log_info("Generating '%s'", options.cxFileLocation);
             }
-            generateReferences();
+            saveReferences();
         }
     } else if (options.serverOperation == OLO_ABOUT) {
         aboutMessage();

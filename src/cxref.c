@@ -2340,16 +2340,16 @@ void olSetCallerPosition(Position position) {
 }
 
 
-void generateReferences(void) {
+void saveReferences(void) {
     static bool everUpdated = false;
 
     if (options.cxFileLocation == NULL)
         return;
     if (!everUpdated && options.update == UPDATE_DEFAULT) {
         /* Then we don't update, but generate from scratch */
-        writeCxFile(false, options.cxFileLocation);
+        saveReferencesToStore(false, options.cxFileLocation);
         everUpdated = true;
     } else {
-        writeCxFile(true, options.cxFileLocation);
+        saveReferencesToStore(true, options.cxFileLocation);
     }
 }

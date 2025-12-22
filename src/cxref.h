@@ -51,6 +51,6 @@ extern void olcxPushSpecialCheckMenuSym(char *name);
 
 extern void answerEditAction(void);
 
-extern void generateReferences(void);
+extern void saveReferences(void);
 
 #endif

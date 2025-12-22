@@ -563,7 +563,7 @@ static void writeMultipeCxFiles(bool updating, char *dirName) {
     }
 }
 
-void writeCxFile(bool updating, char *fileName) {
+static void writeCxFile(int updating, char *fileName) {
     if (!updating)
         removeFile(fileName);
 
@@ -574,6 +574,10 @@ void writeCxFile(bool updating, char *fileName) {
     } else {
         writeMultipeCxFiles(updating, fileName);
     }
+}
+
+void saveReferencesToStore(bool updating, char *fileName) {
+    writeCxFile(updating, fileName);
 }
 
 static void writeCxFileCompatibilityError(char *message) {
@@ -587,7 +591,6 @@ static void writeCxFileCompatibilityError(char *message) {
         FATAL_ERROR(ERR_ST, message, XREF_EXIT_ERR);
     }
 }
-
 
 /* ************************* READ **************************** */
 
