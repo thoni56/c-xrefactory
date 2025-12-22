@@ -1643,23 +1643,6 @@ static Position getCallerPositionFromCommandLineOption(void) {
     return makePosition(file, line, col);
 }
 
-static bool refItemsOrderLess(BrowserMenu *menu1, BrowserMenu *menu2) {
-    ReferenceableItem *r1, *r2;
-    char *name1, *name2;
-    int len1; UNUSED len1;
-    int len2; UNUSED len2;
-
-    r1 = &menu1->referenceable;
-    r2 = &menu2->referenceable;
-    getBareName(r1->linkName, &name1, &len1);
-    getBareName(r2->linkName, &name2, &len2);
-    int cmp = strcmp(name1, name2);
-    if (cmp!=0)
-        return cmp<0;
-    cmp = strcmp(r1->linkName, r2->linkName);
-    return cmp<0;
-}
-
 static void mapCreateSelectionMenu(ReferenceableItem *p) {
     createSelectionMenu(p);
 }
@@ -1690,15 +1673,6 @@ void createSelectionMenuForOperation(ServerOperation command) {
     setSelectedVisibleItems(rstack->menu, command, rstack->menuFilterLevel);
     assert(rstack->references==NULL);
     processSelectedReferences(rstack, genOnLineReferences);
-
-    // isn't ordering useless ?
-    // Again, the above comment was in the original code, by Marian
-    // perhaps?  But here some test fail if this sorting is removed
-    // because they come out in the wrong order, but if the editor
-    // client sorts them anyway (does it?) that would not matter
-    LIST_MERGE_SORT(BrowserMenu,
-                    sessionData.browsingStack.top->menu,
-                    refItemsOrderLess);
 }
 
 void olcxPushSpecialCheckMenuSym(char *symname) {

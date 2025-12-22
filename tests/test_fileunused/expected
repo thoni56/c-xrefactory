@@ -9,8 +9,8 @@ end-of-options
 
 <sync>
 <resolution>
- <symbol line=2 selected=1 base=0 drefn=1 refn=0 len=<n>>argc</symbol>
- <symbol line=3 selected=1 base=0 drefn=1 refn=0 len=<n>>argv</symbol>
+ <symbol line=2 selected=1 base=0 drefn=1 refn=0 len=<n>>argv</symbol>
+ <symbol line=3 selected=1 base=0 drefn=1 refn=0 len=<n>>argc</symbol>
  <symbol line=4 selected=1 base=0 drefn=1 refn=0 len=<n>>c</symbol>
 </resolution>
 -olcxpushfileunused  CURDIR/source2.c -xrefrc CURDIR/.c-xrefrc -p CURDIR

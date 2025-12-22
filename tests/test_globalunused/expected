@@ -9,8 +9,8 @@ end-of-options
 
 <sync>
 <resolution>
- <symbol line=2 selected=1 base=0 drefn=1 refn=0 len=<n>>main</symbol>
- <symbol line=3 selected=1 base=0 drefn=1 refn=0 len=<n>>unused_integer</symbol>
+ <symbol line=2 selected=1 base=0 drefn=1 refn=0 len=<n>>unused_integer</symbol>
+ <symbol line=3 selected=1 base=0 drefn=1 refn=0 len=<n>>main</symbol>
 </resolution>
 -exit
 end-of-options
