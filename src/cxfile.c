@@ -11,6 +11,7 @@
 #include "fileio.h"
 #include "filetable.h"
 #include "globals.h"
+#include "head.h"
 #include "list.h"
 #include "log.h"
 #include "browsermenu.h"
@@ -1176,7 +1177,7 @@ static void readOneAppropiateCxFile(char *symbolName, CxFileScanStep *scanSequen
 }
 
 
-void normalScanCxFile(char *name) {
+protected void normalScanCxFile(char *name) {
     scanCxFile(options.cxFileLocation, name, "", normalScanSequence);
 }
 

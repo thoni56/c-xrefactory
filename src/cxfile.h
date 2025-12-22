@@ -4,7 +4,6 @@
 #include "referenceableitem.h"
 
 
-extern void normalScanCxFile(char *name);
 extern void fullScanFor(char *symbolName);
 extern void scanReferencesToCreateMenu(char *symbolName);
 extern void scanForMacroUsage(char *symbolName);

@@ -25,6 +25,8 @@
 #include "session.mock"
 #include "startup.mock"
 
+protected void normalScanCxFile(char *name);
+
 
 Describe(CxFile);
 BeforeEach(CxFile) {
