@@ -51,7 +51,7 @@ static unsigned menuFilterLevels[MAX_MENU_FILTER_LEVEL] = {
     (FILE_MATCH_RELATED | NAME_MATCH_APPLICABLE)
 };
 
-#define OO_RENAME_FILTER_LEVEL (FILE_MATCH_RELATED | NAME_MATCH_APPLICABLE)
+#define RENAME_FILTER_LEVEL (FILE_MATCH_RELATED | NAME_MATCH_APPLICABLE)
 
 
 
@@ -1224,14 +1224,14 @@ static void olcxMenuSelectAll(bool selected) {
 }
 
 static void setDefaultSelectedVisibleItems(BrowserMenu *menu,
-                                           unsigned ooVisible,
-                                           unsigned ooSelected
+                                           unsigned visibleLevel,
+                                           unsigned selectedLevel
 ) {
     for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
-        bool visible = matchQualityMeetsRequirement(m, ooVisible);
+        bool visible = matchQualityMeetsRequirement(m, visibleLevel);
         bool selected = false;
         if (visible) {
-            selected=matchQualityMeetsRequirement(m, ooSelected);
+            selected=matchQualityMeetsRequirement(m, selectedLevel);
             if (m->referenceable.type==TypeCppCollate)
                 selected=false;
         }
@@ -1250,23 +1250,23 @@ static bool isRenameMenuSelection(int command) {
 }
 
 static void setSelectedVisibleItems(BrowserMenu *menu, ServerOperation command, int filterLevel) {
-    unsigned ooselected, oovisible;
+    unsigned selected, visible;
     if (command == OLO_GLOBAL_UNUSED) {
         splitBrowserMenuAndMap(menu, selectUnusedSymbols, &filterLevel);
         return;
     }
 
     if (command == OLO_PUSH_NAME) {
-        oovisible = 0;
-        ooselected = 0;
+        visible = 0;
+        selected = 0;
     } else if (isRenameMenuSelection(command)) {
-        oovisible = OO_RENAME_FILTER_LEVEL;
-        ooselected = RENAME_SELECTION_FILTER;
+        visible = RENAME_FILTER_LEVEL;
+        selected = RENAME_SELECTION_FILTER;
     } else {
-        oovisible = menuFilterLevels[filterLevel];
-        ooselected = DEFAULT_SELECTION_FILTER;
+        visible = menuFilterLevels[filterLevel];
+        selected = DEFAULT_SELECTION_FILTER;
     }
-    setDefaultSelectedVisibleItems(menu, oovisible, ooselected);
+    setDefaultSelectedVisibleItems(menu, visible, selected);
 }
 
 static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
