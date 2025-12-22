@@ -873,16 +873,16 @@ static void popAndFreeSessionsUntil(SessionStackEntry *oldtop) {
 }
 
 static void findAndGotoDefinition(ReferenceableItem *sym) {
-    SessionStackEntry *refs, *oldtop;
-
     // preserve popped items from browser first
-    oldtop = pushSession();
-    refs = sessionData.browsingStack.top;
+    SessionStackEntry *oldtop = pushSession();
+
+    SessionStackEntry *top = sessionData.browsingStack.top;
     BrowserMenu menu = makeBrowserMenu(*sym, true, true, 0, UsageUsed, UsageNone, noPosition);
-    refs->menu = &menu;
+    top->menu = &menu;
     fullScanFor(sym->linkName);
-    orderRefsAndGotoDefinition(refs);
-    refs->menu = NULL;
+    orderRefsAndGotoDefinition(top);
+    top->menu = NULL;
+
     // recover stack
     popAndFreeSessionsUntil(oldtop);
 }
