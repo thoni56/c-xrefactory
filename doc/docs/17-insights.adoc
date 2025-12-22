@@ -38,3 +38,71 @@ Position position
 
 ....
 
+
+=== Navigation Architecture and the Preloading Limitation
+
+Date: 2025-12-22
+
+==== How Symbol Navigation Works
+
+Symbol navigation (PUSH/NEXT/PREVIOUS/POP) merges references from **two sources**:
+
+1. **Disk CXrefs Database** - Reflects saved files on disk
+2. **In-Memory ReferenceableItem Table** - Reflects current server state including preloaded editor buffers
+
+When you PUSH on a symbol, the navigation menu creation (function `createSelectionMenuForOperation`) does:
+
+1. **Load from disk** - Scans CXrefs files for the symbol (via `scanReferencesToCreateMenu`)
+   * Creates menu items with disk-based line numbers
+
+2. **Merge from memory** - Maps over the in-memory table (via `putOnLineLoadedReferences`)
+   * Adds references from parsed/preloaded buffers with current line numbers
+   * Duplicate detection prevents the same reference appearing twice
+
+3. **Build session** - Copies merged references to the navigation session
+
+This dual-source approach allows navigation without full project parse while providing updated positions for modified files.
+
+==== The Fundamental Limitation
+
+**The Emacs client only preloads the currently active file**, not all modified editor buffers.
+
+This creates incorrect navigation after editing non-current files:
+
+```
+1. PUSH on symbol in common.h → session has refs with disk line numbers
+2. NEXT to usage in source1.c (becomes current, gets preloaded)
+3. User adds line in source1.c → server knows via preload
+4. NEXT to source2.c → source1.c NO LONGER preloaded
+   - Server has no knowledge of source1.c modification
+   - Session still has old line number from step 1
+5. NEXT wraps to source1.c → WRONG LINE
+   - Points to line before actual usage
+```
+
+==== Why Our Fix Attempt Didn't Work
+
+We attempted to fix this (commit 8052518a4) by detecting modified files via timestamp comparison and reparsing them in `processModifiedFilesForNavigation`. **This failed because:**
+
+* Can only detect modifications in **preloaded** files (current file)
+* Cannot know about changes in non-preloaded modified buffers
+* Client protocol doesn't support sending multiple preloaded buffers
+
+==== Potential Solutions
+
+* **Client preloads all modified buffers** - Requires Emacs client changes
+* **LSP-style protocol** (did_open/did_change) - Major architectural change
+* **Accept the limitation** - Document current behavior
+* **Force save before cross-file navigation** - Intrusive UX
+
+As of 2025-12-22, the limitation remains documented but unfixed. The attempted fix was reverted to preserve the original working architecture.
+
+==== Architectural Invariants
+
+**MUST be maintained:**
+
+* Disk CXrefs = State of files on disk (from last tags generation)
+* ReferenceableItem Table = Disk state + preloaded editor buffers
+* Session references = Snapshot at PUSH time
+
+The table can NEVER reflect non-preloaded modified files because the server doesn't receive that information from the client.

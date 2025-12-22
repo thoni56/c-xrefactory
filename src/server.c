@@ -1,7 +1,5 @@
 #include "server.h"
 
-#include "argumentsvector.h"
-#include "browsermenu.h"
 #include "commons.h"
 #include "complete.h"
 #include "cxfile.h"
@@ -183,161 +181,10 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs, b
     fileItem->isScheduled = false;
 }
 
-static void reparseFile(FileItem *fileItem, ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *firstPassP) {
-    inputFileName = fileItem->name;
-    currentLanguage = getLanguageFor(inputFileName);
-    bool inputOpened = initializeFileProcessing(baseArgs, requestArgs, &currentLanguage, firstPassP);
-    if (inputOpened) {
-        parseInputFile();
-        fileItem->lastParsedMtime = editorFileModificationTime(fileItem->name);
-        *firstPassP = false;
-    }
-}
-
-static bool fileModifiedSinceLastParse(FileItem *fileItem) {
-    return editorFileModificationTime(fileItem->name) != fileItem->lastParsedMtime;
-}
-
-static void processModifiedFilesForNavigation(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *firstPassP) {
-    /* Check which files with buffers have been modified.
-     * For each modified file, reparse it to update references in the referenceableItemTable.
-     * Then rebuild the current session's reference list. */
-
-    ENTER();
-
-    /* Iterate through all open editor buffers and check if they're modified */
-    bool anyModified = false;
-    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i+1)) {
-        FileItem *fileItem = getFileItemWithFileNumber(i);
-        EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
-
-        if (buffer != NULL) {
-            if (fileModifiedSinceLastParse(fileItem)) {
-                log_debug("File %s has been modified, reparsing...", fileItem->name);
-
-                removeReferenceableItemsForFile(i);
-
-                /* Save current state */
-                char *savedInputFileName = inputFileName;
-                int savedInputFileNumber = inputFileNumber;
-                int savedOriginalFileNumber = originalFileNumber;
-                Language savedLanguage = currentLanguage;
-
-                reparseFile(fileItem, baseArgs, requestArgs, firstPassP);
-
-                /* Restore state */
-                inputFileName = savedInputFileName;
-                inputFileNumber = savedInputFileNumber;
-                originalFileNumber = savedOriginalFileNumber;
-                currentLanguage = savedLanguage;
-
-                anyModified = true;
-            }
-        }
-    }
-
-    /* If any files were modified, mark all sessions in the stack as needing refresh */
-    if (anyModified) {
-        for (SessionStackEntry *entry = sessionData.browsingStack.root; entry != NULL; entry = entry->previous) {
-            entry->needsRefresh = true;
-        }
-    }
-
-    /* Check if the current session needs refresh (either because of modifications or the flag) */
-    if (sessionData.browsingStack.top != NULL &&
-        sessionData.browsingStack.top->needsRefresh &&
-        sessionData.browsingStack.top->menu != NULL) {
-        log_debug("Updating menu referenceables and recomputing session references");
-
-        /* Find the current reference's index in the list before recomputing */
-        int currentIndex = 0;
-        if (sessionData.browsingStack.top->current != NULL) {
-            Reference *ref = sessionData.browsingStack.top->references;
-            while (ref != NULL && ref != sessionData.browsingStack.top->current) {
-                currentIndex++;
-                ref = ref->next;
-            }
-        }
-
-        /* Find which reference (by index) matches the callerPosition, so we can update it */
-        int callerIndex = -1;
-        if (sessionData.browsingStack.top->callerPosition.file != NO_FILE_NUMBER) {
-            Reference *ref = sessionData.browsingStack.top->references;
-            int index = 0;
-            while (ref != NULL) {
-                if (positionsAreEqual(ref->position, sessionData.browsingStack.top->callerPosition)) {
-                    callerIndex = index;
-                    break;
-                }
-                index++;
-                ref = ref->next;
-            }
-        }
-
-        /* Free the old session reference list since it has stale positions */
-        freeReferences(sessionData.browsingStack.top->references);
-        sessionData.browsingStack.top->references = NULL;
-
-        /* Rebuild the reference list directly from the updated referenceableItemTable */
-        for (BrowserMenu *menu = sessionData.browsingStack.top->menu; menu != NULL; menu = menu->next) {
-            if (menu->selected) {
-                ReferenceableItem *updatedItem = NULL;
-                if (isMemberInReferenceableItemTable(&menu->referenceable, NULL, &updatedItem)) {
-                    if (updatedItem != NULL) {
-                        /* Add references from the updated item in the table (this copies them) */
-                        addReferencesFromFileToList(updatedItem->references, ANY_FILE,
-                                                   &sessionData.browsingStack.top->references);
-                    }
-                }
-            }
-        }
-
-        /* Restore current to the same index in the new list (or the last reference if list is shorter) */
-        if (sessionData.browsingStack.top->references != NULL) {
-            Reference *ref = sessionData.browsingStack.top->references;
-            int index = 0;
-            while (ref->next != NULL && index < currentIndex) {
-                ref = ref->next;
-                index++;
-            }
-            sessionData.browsingStack.top->current = ref;
-        }
-
-        /* Update callerPosition to the same index in the new list if it was found in the old list */
-        if (callerIndex >= 0 && sessionData.browsingStack.top->references != NULL) {
-            Reference *ref = sessionData.browsingStack.top->references;
-            int index = 0;
-            while (ref != NULL && index < callerIndex) {
-                ref = ref->next;
-                index++;
-            }
-            if (ref != NULL) {
-                log_debug("Updating callerPosition from %d:%d to %d:%d",
-                         sessionData.browsingStack.top->callerPosition.line,
-                         sessionData.browsingStack.top->callerPosition.col,
-                         ref->position.line, ref->position.col);
-                sessionData.browsingStack.top->callerPosition = ref->position;
-            }
-        }
-
-        /* Clear the needsRefresh flag now that we've rebuilt this session */
-        sessionData.browsingStack.top->needsRefresh = false;
-    }
-    LEAVE();
-}
-
-
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *firstPass) {
     ENTER();
 
     loadAllOpenedEditorBuffers();
-
-    /* For navigation operations (NEXT/PREVIOUS/POP), reparse any modified files
-     * and update the current session's references before navigating */
-    if (options.serverOperation == OLO_NEXT || options.serverOperation == OLO_PREVIOUS ||
-        options.serverOperation == OLO_POP || options.serverOperation == OLO_POP_ONLY) {
-        processModifiedFilesForNavigation(baseArgs, requestArgs, firstPass);
-    }
 
     if (requiresCreatingRefs(options.serverOperation))
         pushEmptySession(&sessionData.browsingStack);
