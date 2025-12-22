@@ -245,7 +245,7 @@ static bool searchStringNonWildcardFitness(char *cxtag, int len) {
     return true;
 }
 
-bool searchStringMatch(char *cxtag, int len) {
+static bool searchStringMatch(char *cxtag, int len) {
     if (containsWildcard(options.olcxSearchString))
         return shellMatch(cxtag, len, options.olcxSearchString, false);
     else
@@ -253,23 +253,13 @@ bool searchStringMatch(char *cxtag, int len) {
 }
 
 
-// Filter out symbols which pollute search results
-bool symbolShouldBeHiddenFromSearchResults(char *name) {
-    // internal xref symbol?
-    if (name[0] == ' ')
-        return true;
-    return false;
-}
-
 void searchSymbolCheckReference(ReferenceableItem  *referenceableItem, Reference *reference) {
     char ssname[MAX_CX_SYMBOL_SIZE];
     char *s, *sname;
     int slen;
 
     if (referenceableItem->type == TypeCppInclude)
-        return;   // no %%i symbols
-    if (symbolShouldBeHiddenFromSearchResults(referenceableItem->linkName))
-        return;
+        return;   // no %%i symbols (== "#include" ReferenceableItem)
 
     prettyPrintLinkName(ssname, referenceableItem->linkName, MAX_CX_SYMBOL_SIZE);
     sname = ssname;

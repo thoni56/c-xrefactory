@@ -505,10 +505,7 @@ static void completeMemberNames(Completions *completions, Symbol *symbol) {
         assert(foundSymbol);
 
         name = foundSymbol->name;
-        if (name!=NULL && *name != 0 && foundSymbol->type != TypeError
-            // Hmm. I hope it will not filter out something important
-            && !symbolShouldBeHiddenFromSearchResults(foundSymbol->linkName)
-        ) {
+        if (name!=NULL && *name != 0 && foundSymbol->type != TypeError) {
             assert(info.currentStructure && info.currentStructure->structSpec);
             assert(foundSymbol->type == TypeDefault);
             completionLine = makeCompletionLine(name, foundSymbol, TypeDefault, 0, NULL);

@@ -28,10 +28,6 @@ bool searchStringMatch(char *cxtag, int slen) {
   return (int) mock(cxtag, slen);
 }
 
-bool symbolShouldBeHiddenFromSearchResults(char *name) {
-  return (bool) mock(name);
-}
-
 void searchSymbolCheckReference(ReferenceableItem *symbolReferences, Reference *reference) {
   mock(symbolReferences, reference);
 }
