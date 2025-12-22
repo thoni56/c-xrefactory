@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2025-12-20">
+<meta name="author" content="v{VERSION} - Generated 2025-12-22">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-12-20</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-12-22</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -574,6 +574,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_insights">17. Insights</a>
 <ul class="sectlevel2">
 <li><a href="#_yacc_semantic_data">17.1. Yacc semantic data</a></li>
+<li><a href="#_navigation_architecture_and_the_preloading_limitation">17.2. Navigation Architecture and the Preloading Limitation</a></li>
 </ul>
 </li>
 <li><a href="#_archive">18. Archive</a>
@@ -7975,6 +7976,148 @@ Position position
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_navigation_architecture_and_the_preloading_limitation">17.2. Navigation Architecture and the Preloading Limitation</h3>
+<div class="paragraph">
+<p>Date: 2025-12-22</p>
+</div>
+<div class="sect3">
+<h4 id="_how_symbol_navigation_works">17.2.1. How Symbol Navigation Works</h4>
+<div class="paragraph">
+<p>Symbol navigation (PUSH/NEXT/PREVIOUS/POP) merges references from <strong>two sources</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Disk CXrefs Database</strong> - Reflects saved files on disk</p>
+</li>
+<li>
+<p><strong>In-Memory ReferenceableItem Table</strong> - Reflects current server state including preloaded editor buffers</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>When you PUSH on a symbol, the navigation menu creation (function <code>createSelectionMenuForOperation</code>) does:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Load from disk</strong> - Scans CXrefs files for the symbol (via <code>scanReferencesToCreateMenu</code>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Creates menu items with disk-based line numbers</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Merge from memory</strong> - Maps over the in-memory table (via <code>putOnLineLoadedReferences</code>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Adds references from parsed/preloaded buffers with current line numbers</p>
+</li>
+<li>
+<p>Duplicate detection prevents the same reference appearing twice</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Build session</strong> - Copies merged references to the navigation session</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This dual-source approach allows navigation without full project parse while providing updated positions for modified files.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_fundamental_limitation">17.2.2. The Fundamental Limitation</h4>
+<div class="paragraph">
+<p><strong>The Emacs client only preloads the currently active file</strong>, not all modified editor buffers.</p>
+</div>
+<div class="paragraph">
+<p>This creates incorrect navigation after editing non-current files:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">1. PUSH on symbol in common.h → session has refs with disk line numbers
+2. NEXT to usage in source1.c (becomes current, gets preloaded)
+3. User adds line in source1.c → server knows via preload
+4. NEXT to source2.c → source1.c NO LONGER preloaded
+   - Server has no knowledge of source1.c modification
+   - Session still has old line number from step 1
+5. NEXT wraps to source1.c → WRONG LINE
+   - Points to line before actual usage</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_why_our_fix_attempt_didnt_work">17.2.3. Why Our Fix Attempt Didn&#8217;t Work</h4>
+<div class="paragraph">
+<p>We attempted to fix this (commit 8052518a4) by detecting modified files via timestamp comparison and reparsing them in <code>processModifiedFilesForNavigation</code>. <strong>This failed because:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Can only detect modifications in <strong>preloaded</strong> files (current file)</p>
+</li>
+<li>
+<p>Cannot know about changes in non-preloaded modified buffers</p>
+</li>
+<li>
+<p>Client protocol doesn&#8217;t support sending multiple preloaded buffers</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_potential_solutions">17.2.4. Potential Solutions</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Client preloads all modified buffers</strong> - Requires Emacs client changes</p>
+</li>
+<li>
+<p><strong>LSP-style protocol</strong> (did_open/did_change) - Major architectural change</p>
+</li>
+<li>
+<p><strong>Accept the limitation</strong> - Document current behavior</p>
+</li>
+<li>
+<p><strong>Force save before cross-file navigation</strong> - Intrusive UX</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>As of 2025-12-22, the limitation remains documented but unfixed. The attempted fix was reverted to preserve the original working architecture.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_architectural_invariants">17.2.5. Architectural Invariants</h4>
+<div class="paragraph">
+<p><strong>MUST be maintained:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Disk CXrefs = State of files on disk (from last tags generation)</p>
+</li>
+<li>
+<p>ReferenceableItem Table = Disk state + preloaded editor buffers</p>
+</li>
+<li>
+<p>Session references = Snapshot at PUSH time</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The table can NEVER reflect non-preloaded modified files because the server doesn&#8217;t receive that information from the client.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -9159,7 +9302,7 @@ void pushEmptySession(ReferencesStack *stack);  // Generic operation</code></pre
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-12-20 09:19:49 UTC
+Last updated 2025-12-22 14:11:00 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
