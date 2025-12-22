@@ -44,6 +44,6 @@ void writeCxFile(bool updating, char *filename) {
   mock(updating, filename);
 }
 
-bool smartReadReferences(void) {
+bool smartReadFileNumbersFromStore(void) {
   return (bool) mock();
 }

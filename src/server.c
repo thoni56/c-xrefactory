@@ -130,7 +130,7 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
 
     inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
 
-    smartReadReferences();
+    smartReadFileNumbersFromStore();
     originalFileNumber = inputFileNumber;
 
     if (inputOpened) {

@@ -1120,7 +1120,7 @@ static void scanCxFiles(char *cxFileLocation, CxFileScanStep *scanSequence) {
     }
 }
 
-bool smartReadReferences(void) {
+bool smartReadFileNumbersFromStore(void) {
     static time_t savedModificationTime = 0; /* Cache previously read file data... */
     static off_t savedFileSize = 0;
     static char previouslyReadFileName[MAX_FILE_NAME_SIZE] = ""; /* ... and name */
@@ -1160,7 +1160,7 @@ static void readOneAppropiateCxFile(char *symbolName, CxFileScanStep *scanSequen
     if (options.cxFileCount <= 1) {
         scanCxFile(options.cxFileLocation, "", "", scanSequence);
     } else {
-        if (!smartReadReferences())
+        if (!smartReadFileNumbersFromStore())
             return;
         if (symbolName == NULL)
             return;
