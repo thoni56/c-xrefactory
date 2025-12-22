@@ -57,7 +57,7 @@ static unsigned menuFilterLevels[MAX_MENU_FILTER_LEVEL] = {
 
 /* *********************************************************************** */
 
-static int referencePositionComparare(Reference *r1, Reference *r2) {
+static int referencePositionIsLess(Reference *r1, Reference *r2) {
     return positionIsLessThan(r1->position, r2->position);
 }
 
@@ -1100,7 +1100,7 @@ void processSelectedReferences(SessionStackEntry *sessionStackEntry,
     if (sessionStackEntry->menu == NULL)
         return;
 
-    LIST_MERGE_SORT(Reference, sessionStackEntry->references, referencePositionComparare);
+    LIST_MERGE_SORT(Reference, sessionStackEntry->references, referencePositionIsLess);
     for (BrowserMenu *m = sessionStackEntry->menu; m != NULL; m = m->next) {
         referencesMapFun(sessionStackEntry, m);
     }
@@ -1373,8 +1373,8 @@ static void safetyCheckDiff(Reference **anr1,
                             ) {
     Reference *r, *nr1, *or2;
     int mode;
-    LIST_MERGE_SORT(Reference, *anr1, referencePositionComparare);
-    LIST_MERGE_SORT(Reference, *aor2, referencePositionComparare);
+    LIST_MERGE_SORT(Reference, *anr1, referencePositionIsLess);
+    LIST_MERGE_SORT(Reference, *aor2, referencePositionIsLess);
     nr1 = *anr1; or2 = *aor2;
     while (nr1!=NULL && or2!=NULL) {
         if (nr1->position.file==or2->position.file && nr1->position.line==or2->position.line) {
@@ -1445,7 +1445,7 @@ static Reference *olcxCreateFileShiftedRefListForCheck(Reference *reference) {
         }
         *resa=tt; tt->next=NULL; resa= &(tt->next);
     }
-    LIST_MERGE_SORT(Reference, res, referencePositionComparare);
+    LIST_MERGE_SORT(Reference, res, referencePositionIsLess);
     return res;
 }
 
