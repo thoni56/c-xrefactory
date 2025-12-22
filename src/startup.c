@@ -780,7 +780,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
             // of cxref file.
             // I need to read fstab also to remove removed files on update
             processOptions(dfargs, DONT_PROCESS_FILE_ARGUMENTS);
-            smartReadFileNumbersFromStore();
+            loadFileNumbersFromStore();
         }
         processOptions(dfargs, inmode);
         // recover value of errors messages

@@ -80,7 +80,7 @@ static ReferenceableItem makeReferenceableItemForIncludeFile(int fileNumber) {
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
-    fullScanFor(LINK_NAME_INCLUDE_REFS);
+    ensureReferencesAreLoadedFor(LINK_NAME_INCLUDE_REFS);
     // iterate over scheduled files
     bool fileAddedFlag = true;
     while (fileAddedFlag) {

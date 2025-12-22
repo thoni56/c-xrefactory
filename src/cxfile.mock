@@ -6,7 +6,7 @@ void normalScanCxFile(char *name) {
     mock(name);
 }
 
-void fullScanFor(char *symbolName) { mock(symbolName); }
+void ensureReferencesAreLoadedFor(char *symbolName) { mock(symbolName); }
 
 void scanForBypass(char *symbolName) {
     mock(symbolName);
@@ -44,6 +44,6 @@ void saveReferencesToStore(bool updating, char *filename) {
   mock(updating, filename);
 }
 
-bool smartReadFileNumbersFromStore(void) {
+bool loadFileNumbersFromStore(void) {
   return (bool) mock();
 }
