@@ -94,9 +94,9 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
                     ReferenceableItem *foundMemberP;
                     if (isMemberInReferenceableItemTable(&referenceableItem, NULL, &foundMemberP)) {
                         for (Reference *r=foundMemberP->references; r!=NULL; r=r->next) {
-                            FileItem *includerFile = getFileItemWithFileNumber(r->position.file);
-                            if (!includerFile->scheduledToUpdate) {
-                                includerFile->scheduledToUpdate = true;
+                            FileItem *includingFile = getFileItemWithFileNumber(r->position.file);
+                            if (!includingFile->scheduledToUpdate) {
+                                includingFile->scheduledToUpdate = true;
                                 fileAddedFlag = true;
                             }
                         }
