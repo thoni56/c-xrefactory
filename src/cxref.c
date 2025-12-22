@@ -927,7 +927,7 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
     }
 }
 
-static void olcxSetActReferenceToFirstVisible(SessionStackEntry *refs, Reference *r) {
+static void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference *r) {
     int rlevel = usageFilterLevels[refs->refsFilterLevel];
 
     while (r!=NULL && isAtMostAsImportantAs(r->usage, rlevel))
@@ -945,7 +945,7 @@ static void olcxSetActReferenceToFirstVisible(SessionStackEntry *refs, Reference
     }
 }
 
-static void olcxReferencePlus(void) {
+static void gotoNextReference(void) {
     SessionStackEntry    *refs;
     Reference         *r;
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
@@ -954,12 +954,12 @@ static void olcxReferencePlus(void) {
         refs->current = refs->references;
     else {
         r = refs->current->next;
-        olcxSetActReferenceToFirstVisible(refs, r);
+        setCurrentReferenceToFirstVisible(refs, r);
     }
     olcxGenGotoActReference(refs);
 }
 
-static void olcxReferenceMinus(void) {
+static void gotoPreviousReference(void) {
     SessionStackEntry    *refs;
     Reference         *r,*l,*act;
     int                 rlevel;
@@ -1301,7 +1301,7 @@ static void olcxReferenceFilterSet(int filterLevel) {
     }
     // move to the visible reference
     if (refs!=NULL)
-        olcxSetActReferenceToFirstVisible(refs, refs->current);
+        setCurrentReferenceToFirstVisible(refs, refs->current);
     olcxPrintRefList(";", refs);
 }
 
@@ -2039,10 +2039,10 @@ void answerEditAction(void) {
         olcxProcessGetRequest();
         break;
     case OLO_NEXT:
-        olcxReferencePlus();
+        gotoNextReference();
         break;
     case OLO_PREVIOUS:
-        olcxReferenceMinus();
+        gotoPreviousReference();
         break;
     case OLO_GOTO_DEF:
         olcxReferenceGotoDef();
