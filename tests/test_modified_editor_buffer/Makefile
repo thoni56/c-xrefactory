@@ -1,5 +1,8 @@
 include ../Makefile.boilerplate
 
+# This test tries to describe what should happen on PUSH and an editor buffer is modified
+# Current implementation cannot handle that so this test is suspended
+
 $(TEST):
 	touch source.preload # ensure the preloaded buffer has a more recent timestamp
 	rm -rf CXrefs
