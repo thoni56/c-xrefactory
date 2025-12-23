@@ -14,7 +14,6 @@ typedef struct SessionStackEntry {
     /* ===== Browser-specific fields (browserStack only) ===== */
     struct reference      *references;     /* list of references for browsing */
     struct reference      *current;        /* current reference position */
-    bool                   needsRefresh;   /* true if files were reparsed since session creation */
     struct BrowserMenu    *hkSelectedSym;  /* resolved symbols under the cursor */
     struct BrowserMenu    *menu;    /* hkSelectedSyms plus same name */
     // following two lists should be probably split into hashed tables of lists

@@ -122,7 +122,6 @@ SessionStackEntry *newEmptySessionStackEntry(void) {
         .hkSelectedSym   = NULL,
         .menuFilterLevel = 0,
         .refsFilterLevel = 0,
-        .needsRefresh    = false,
         .previous        = NULL};
     return entry;
 }

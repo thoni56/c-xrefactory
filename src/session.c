@@ -66,7 +66,6 @@ static SessionStackEntry *newEmptySessionStackEntry(void) {
         .hkSelectedSym   = NULL,
         .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL,
         .refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
-        .needsRefresh    = false,
         .previous        = NULL};
     return entry;
 }
