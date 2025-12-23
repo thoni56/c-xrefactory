@@ -267,8 +267,8 @@ void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Reference 
         if (s!=NULL)
             *s = 0;
     }
-    // For Java this removed the packagename, perhaps. Now some "magic" symbols, like
-    // 'drand48_data.__c' and '.__fds_bits', gets mangles, or maybe those *are* package names...
+
+    // Remove any possible struct/union member name so that the reference refers to the same referenceable
     do {
         s = strchr(name, '.');
         if (s!=NULL)
