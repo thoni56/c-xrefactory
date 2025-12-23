@@ -402,24 +402,21 @@ static LexemCode getLexem(void) {
 /*                                                                   */
 /* ***************************************************************** */
 
-static void testCxrefCompletionId(LexemCode *out_lexem, char *id, Position position) {
-    LexemCode lexem;
-
-    lexem = *out_lexem;
+static LexemCode checkCompletionsForId(LexemCode lexem, char *id, Position position) {
     assert(options.mode);
     if (options.mode == ServerMode) {
-        if (lexem==IDENT_TO_COMPLETE) {
+        if (lexem == IDENT_TO_COMPLETE) {
             completionStringServed = true;
             if (currentLanguage == LANG_YACC) {
                 makeYaccCompletions(id, strlen(id), position);
             } else {
                 makeCCompletions(id, strlen(id), position);
             }
-            /* here should be a longjmp to stop file processing !!!! */
-            lexem = IDENTIFIER;
+            /* Here should also be a longjmp to stop file processing !!!! Why? */
+            return IDENTIFIER;
         }
     }
-    *out_lexem = lexem;
+    return lexem;
 }
 
 /* ********************************** #LINE *********************** */
@@ -906,7 +903,7 @@ protected void processDefineDirective(bool hasArguments) {
     Position macroPosition;
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &macroPosition, NULL, NULL, true);
 
-    testCxrefCompletionId(&lexem, currentLexemStart, macroPosition);    /* for cross-referencing */
+    lexem = checkCompletionsForId(lexem, currentLexemStart, macroPosition);    /* for cross-referencing */
     if (lexem != IDENTIFIER)
         return;
 
@@ -1109,7 +1106,7 @@ static void processUndefineDirective(void) {
 
     ch = currentInput.read;
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL, true);
-    testCxrefCompletionId(&lexem, ch, position);
+    lexem = checkCompletionsForId(lexem, ch, position);
 
     if (isIdentifierLexem(lexem)) {
 
@@ -1233,7 +1230,7 @@ static void processIfdefDirective(bool isIfdef) {
     /* Then we are probably looking at the id... */
     ch = currentInput.read;
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL, true);
-    testCxrefCompletionId(&lexem, ch, position);
+    lexem = checkCompletionsForId(lexem, ch, position);
 
     if (!isIdentifierLexem(lexem))
         return;
@@ -2649,7 +2646,7 @@ LexemCode yylex(void) {
         assert(options.mode);
         if (options.mode == ServerMode) {
             // TODO: ???????????? isn't this useless
-            testCxrefCompletionId(&lexem, yytext, position);
+            lexem = checkCompletionsForId(lexem, yytext, position);
         }
         log_debug("id '%s' position %d, %d, %d", yytext, position.file, position.line, position.col);
 
@@ -2726,7 +2723,7 @@ LexemCode yylex(void) {
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                     NULL, !insideMacro());
         if (lexem == IDENT_TO_COMPLETE) {
-            testCxrefCompletionId(&lexem, yytext, position);
+            lexem = checkCompletionsForId(lexem, yytext, position);
             while (includeStack.pointer != 0)
                 popInclude();
             /* while (getLexBuf(&cFile.lb)) cFile.lb.cc = cFile.lb.fin;*/
