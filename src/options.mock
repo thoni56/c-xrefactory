@@ -58,7 +58,7 @@ char *expandPredefinedSpecialVariables_static(char *variable, char *inputFilenam
   return (char *) mock(variable);
 }
 
-bool readOptionsFromFileIntoArgs(FILE *file, ArgumentsVector *outArgs, MemoryKind memoryKind,
+bool readOptionsFromFileIntoArgs(FILE *file, ArgumentsVector *outArgs, AllocateMemoryKind memoryKind,
                                  char *fileName, char *project, char *unused) {
   return (bool) mock(file, outArgs->argc, outArgs->argv, memoryKind, fileName, project);
 }

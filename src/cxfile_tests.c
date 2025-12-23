@@ -128,7 +128,7 @@ SessionStackEntry *newEmptySessionStackEntry(void) {
 }
 
 Ensure(CxFile, can_check_references_for_referenceable_in_search) {
-    ReferenceableItem item = makeReferenceableItem("item", TypeInt, StorageDefault, FileScope, LocalVisibility, NO_FILE_NUMBER);
+    ReferenceableItem item = makeReferenceableItem("item", TypeInt, StorageDefault, FileScope, VisibilityLocal, NO_FILE_NUMBER);
     Reference reference;
     SessionStackEntry *stackEntry = newEmptySessionStackEntry();
 

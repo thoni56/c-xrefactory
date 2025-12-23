@@ -441,7 +441,7 @@ static void getAndProcessXrefrcOptions(char *optionsFileName, char *optionsSecti
         // warning, the following can overwrite variables like
         // 'cxref_file_name' allocated in ppmMemory, then when memory
         // is got back by caching, it may provoke a problem
-        processOptions(args, DONT_PROCESS_FILE_ARGUMENTS); /* .c-xrefrc opts*/
+        processOptions(args, PROCESS_FILE_ARGUMENTS_NO); /* .c-xrefrc opts*/
     } else {
         assert(0);
     }
@@ -524,13 +524,13 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         initStandardCxrefFileName(fileName);
 
         /* A lot of options handling... */
-        processOptions(baseArgs, DONT_PROCESS_FILE_ARGUMENTS);   /* command line opts */
+        processOptions(baseArgs, PROCESS_FILE_ARGUMENTS_NO);   /* command line opts */
         /* piped options (no include or define options)
            must be before .xrefrc file options, but, the s_cachedOptions
            must be set after .c-xrefrc file, but s_cachedOptions can't contain
            piped options, !!! berk.
         */
-        processOptions(requestArgs, DONT_PROCESS_FILE_ARGUMENTS);
+        processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO);
         reInitCwd(standardOptionsFileName, standardOptionsSectionName);
 
         tmpIncludeDirs = options.includeDirs;
@@ -558,7 +558,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         }
 
         deepCopyOptionsFromTo(&options, &savedOptions);
-        processOptions(requestArgs, DONT_PROCESS_FILE_ARGUMENTS);
+        processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO);
         inputOpened = computeAndOpenInputFile();
 
         /* Save these values as previous */
@@ -574,7 +574,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         restoreMemoryCheckPoint();
 
         deepCopyOptionsFromTo(&savedOptions, &options);
-        processOptions(requestArgs, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
+        processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO); /* no include or define options */
         inputOpened = computeAndOpenInputFile();
     }
 
@@ -615,8 +615,8 @@ void totalTaskEntryInitialisations(void) {
     fileAbortEnabled = false;
 
     // Limits
-    assert(MAX_TYPE < power(2,SYMTYPES_BITS));
-    assert(MAX_STORAGE_NAMES < power(2,STORAGES_BITS));
+    assert(MAX_TYPE < power(2,TYPE_BITS));
+    assert(STORAGE_ENUMS_MAX < power(2,STORAGES_BITS));
     assert(MAX_SCOPES < power(2,SCOPES_BITS));
 
     // Strings
@@ -691,7 +691,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
     previousStandardOptionsSection[0] = 0;
 
     /* now pre-read the option file */
-    processOptions(args, PROCESS_FILE_ARGUMENTS);
+    processOptions(args, PROCESS_FILE_ARGUMENTS_YES);
     processFileArguments();
 
     /* Ensure CX-memory has room enough for things by invoking memory resize if not */
@@ -757,13 +757,13 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
         readOptionsFromFile(standardOptionsFileName, &dfargs, standardOptionsSection, standardOptionsSection);
         currentPass = savedPass;
         if (options.mode == RefactoryMode) {
-            inmode = DONT_PROCESS_FILE_ARGUMENTS;
+            inmode = PROCESS_FILE_ARGUMENTS_NO;
         } else if (options.mode==ServerMode) {
-            inmode = DONT_PROCESS_FILE_ARGUMENTS;
+            inmode = PROCESS_FILE_ARGUMENTS_NO;
         } else if (options.create || options.project!=NULL || options.update != UPDATE_DEFAULT) {
-            inmode = PROCESS_FILE_ARGUMENTS;
+            inmode = PROCESS_FILE_ARGUMENTS_YES;
         } else {
-            inmode = DONT_PROCESS_FILE_ARGUMENTS;
+            inmode = PROCESS_FILE_ARGUMENTS_NO;
         }
         // disable error reporting on xref task on this pre-reading of .c-xrefrc
         bool previousNoErrorsOption = options.noErrors;
@@ -772,14 +772,14 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
         }
         // there is a problem with INFILES_ENABLED (update for safetycheck),
         // It should first load cxref file, in order to protect file numbers.
-        if (inmode==PROCESS_FILE_ARGUMENTS && options.update && !options.create) { /* TODO: .update != UPDATE_CREATE?!?! */
+        if (inmode==PROCESS_FILE_ARGUMENTS_YES && options.update && !options.create) { /* TODO: .update != UPDATE_CREATE?!?! */
             //&fprintf(dumpOut, "PREREADING !!!!!!!!!!!!!!!!\n");
             // this makes a problem: I need to preread cxref file before
             // reading input files in order to preserve hash numbers, but
             // I need to read options first in order to have the name
             // of cxref file.
             // I need to read fstab also to remove removed files on update
-            processOptions(dfargs, DONT_PROCESS_FILE_ARGUMENTS);
+            processOptions(dfargs, PROCESS_FILE_ARGUMENTS_NO);
             loadFileNumbersFromStore();
         }
         processOptions(dfargs, inmode);
@@ -787,7 +787,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
         if (options.mode==ServerMode)
             options.noErrors = previousNoErrorsOption;
         checkExactPositionUpdate(false);
-        if (inmode == PROCESS_FILE_ARGUMENTS)
+        if (inmode == PROCESS_FILE_ARGUMENTS_YES)
             processFileArguments();
     }
 

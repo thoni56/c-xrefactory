@@ -400,7 +400,7 @@ static void writeReferenceableItem(ReferenceableItem *referenceableItem) {
     lastOutgoingData.referenceableItem   = &lastOutgoingData.cachedReferenceableItem;
     lastOutgoingData.symbolIsWritten = false;
 
-    if (referenceableItem->visibility == LocalVisibility)
+    if (referenceableItem->visibility == VisibilityLocal)
         return;
 
     for (Reference *reference = referenceableItem->references; reference != NULL; reference = reference->next) {
@@ -514,7 +514,7 @@ static void writePartialCxFile(bool updateFlag, char *dirname, char *suffix,
 static void writeReferencesFromMemoryIntoCxFile(int partitionNumber) {
     for (int i=getNextExistingReferenceableItem(0); i != -1; i = getNextExistingReferenceableItem(i+1)) {
         for (ReferenceableItem *r=getReferenceableItem(i); r!=NULL; r=r->next) {
-            if (r->visibility == LocalVisibility)
+            if (r->visibility == VisibilityLocal)
                 continue;
             if (r->references == NULL)
                 continue;
@@ -764,7 +764,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
 
     int includedFileNumber;
     getIncludedFileNumber(&includedFileNumber);
-    *referenceableItem = makeReferenceableItem(id, symbolType, storage, GlobalScope, GlobalVisibility, includedFileNumber);
+    *referenceableItem = makeReferenceableItem(id, symbolType, storage, GlobalScope, VisibilityGlobal, includedFileNumber);
 
     ReferenceableItem *foundReferenceableItem;
     if (!isMemberInReferenceableItemTable(referenceableItem, NULL, &foundReferenceableItem)) {
@@ -773,7 +773,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
         strcpy(ss,id);
         foundReferenceableItem = cxAlloc(sizeof(ReferenceableItem));
         *foundReferenceableItem = makeReferenceableItem(ss, symbolType, storage,
-                                                    GlobalScope, GlobalVisibility, includedFileNumber);
+                                                    GlobalScope, VisibilityGlobal, includedFileNumber);
         addToReferenceableItemTable(foundReferenceableItem);
     }
     lastIncomingData.referenceableItem = foundReferenceableItem;
@@ -828,11 +828,11 @@ static void scanFunction_SymbolName(int size,
 
     int includedFileNumber;
     getIncludedFileNumber(&includedFileNumber);
-    *referenceableItem = makeReferenceableItem(id, symbolType, storage, GlobalScope, GlobalVisibility, includedFileNumber);
+    *referenceableItem = makeReferenceableItem(id, symbolType, storage, GlobalScope, VisibilityGlobal, includedFileNumber);
 
     ReferenceableItem *foundMemberP;
     bool isMember = isMemberInReferenceableItemTable(referenceableItem, NULL, &foundMemberP);
-    while (isMember && foundMemberP->visibility!=GlobalVisibility)
+    while (isMember && foundMemberP->visibility!=VisibilityGlobal)
         isMember = referenceableItemTableNextMember(referenceableItem, &foundMemberP);
 
     assert(options.mode);

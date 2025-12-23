@@ -111,4 +111,4 @@ TypeModifier *preCreatedTypesTable[MAX_TYPE];
 TypeModifier *preCreatedPtr2TypeTable[MAX_TYPE];
 TypeModifier *preCreatedPtr2Ptr2TypeTable[MAX_TYPE];
 
-char *storageNamesTable[MAX_STORAGE_NAMES];
+char *storageNamesTable[STORAGE_ENUMS_MAX];

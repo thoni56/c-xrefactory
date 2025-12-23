@@ -178,7 +178,7 @@ Ensure(Options, can_parse_about_command_line_option) {
     char *argv[] = {"", "-about"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
     assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
 }
 
@@ -186,7 +186,7 @@ Ensure(Options, can_parse_version_command_line_option) {
     char *argv[] = {"", "-version"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
     assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
 }
 
@@ -194,7 +194,7 @@ Ensure(Options, can_parse_double_dash_version_command_line_option) {
     char *argv[] = {"", "--version"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
     assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
 }
 
@@ -202,7 +202,7 @@ Ensure(Options, can_parse_xrefrc_option_with_equals) {
     char *argv[] = {"", "-xrefrc=abc"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
     assert_that(options.xrefrc, is_equal_to_string("abc"));
 }
 
@@ -210,7 +210,7 @@ Ensure(Options, can_parse_xrefrc_option_with_filename_separate) {
     char *argv[] = {"", "-xrefrc", "abc"};
     ArgumentsVector args = {3, argv};
 
-    processOptions(args, DONT_PROCESS_FILE_ARGUMENTS);
+    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
     assert_that(options.xrefrc, is_equal_to_string("abc"));
 }
 

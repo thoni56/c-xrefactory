@@ -124,7 +124,7 @@ static void setAvailableRefactorings(Symbol *symbol) {
     case TypeCppCollate:
     case TypeCppDefinedOp:
     case TypeCppIfElse:
-    case TypeCppUndefMacro:
+    case TypeCppUndefinedMacro:
     case TypeDouble:
     case TypeElipsis:
     case TypeEnum:
@@ -261,7 +261,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
 
     log_debug("adding reference on %s(%d) at %d,%d,%d (%s) (%s) (%s)",
               symbol->linkName, includedFileNumber, position.file, position.line,
-              position.col, visibility==GlobalVisibility?"Global":"Local",
+              position.col, visibility==VisibilityGlobal?"Global":"Local",
               usageKindEnumName[usage], storageEnumName[symbol->storage]);
 
     assert(options.mode);
@@ -271,7 +271,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
             if (inputFileNumber != currentFile.characterBuffer.fileNumber)
                 return NULL;
         } else {
-            if (visibility==GlobalVisibility && symbol->type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
+            if (visibility==VisibilityGlobal && symbol->type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
                 if (originalFileNumber != position.file && options.noIncludeRefs)
                     return NULL;
@@ -282,7 +282,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
         }
         break;
     case XrefMode:
-        if (visibility == LocalVisibility)
+        if (visibility == VisibilityLocal)
             return NULL; /* dont cxref local symbols */
         if (!fileItem->cxLoading)
             return NULL;
@@ -446,7 +446,7 @@ static bool sessionHasReferencesValidForOperation(SessionData *session, SessionS
     } else {
         *entryP = session->browsingStack.top;
     }
-    if (checkNull==CHECK_NULL && *entryP == NULL) {
+    if (checkNull==CHECK_NULL_YES && *entryP == NULL) {
         assert(options.xref2);
         ppcBottomWarning("Empty stack");
         return false;
@@ -458,7 +458,7 @@ static bool sessionHasReferencesValidForOperation(SessionData *session, SessionS
 static void initializeRename(void) {
     SessionStackEntry *sessionStackEntry;
 
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionStackEntry, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionStackEntry, CHECK_NULL_YES))
         return;
     sessionStackEntry->current = sessionStackEntry->references;
     gotoPosition(sessionStackEntry->current->position);
@@ -546,7 +546,7 @@ static void orderRefsAndGotoDefinition(SessionStackEntry *refs) {
 static void olcxOrderRefsAndGotoDefinition(void) {
     SessionStackEntry *refs;
 
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL_YES))
         return;
     orderRefsAndGotoDefinition(refs);
 }
@@ -776,7 +776,7 @@ static void olcxPrintRefList(char *commandString, SessionStackEntry *refs) {
 
 static void olcxReferenceList(char *commandString) {
     SessionStackEntry    *refs;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL_YES))
         return;
     olcxPrintRefList(commandString, refs);
 }
@@ -791,7 +791,7 @@ static void olcxGenGotoActReference(SessionStackEntry *refs) {
 
 static void olcxPushOnly(void) {
     SessionStackEntry    *refs;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL_YES))
         return;
     //&LIST_MERGE_SORT(Reference, refs->references, referenceIsLessThan);
     olcxGenGotoActReference(refs);
@@ -801,7 +801,7 @@ static void olcxPushAndCallMacro(void) {
     SessionStackEntry    *refs;
     char                symbol[MAX_CX_SYMBOL_SIZE];
 
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL_YES))
         return;
     LIST_MERGE_SORT(Reference, refs->references, referenceIsLessThan);
     LIST_REVERSE(Reference, refs->references);
@@ -820,7 +820,7 @@ static void olcxPushAndCallMacro(void) {
 
 static void gotoReferenceWithIndex(int referenceIndex) {
     SessionStackEntry *sessionStackEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionStackEntry, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionStackEntry, CHECK_NULL_YES))
         return;
 
     int filterLevel = usageFilterLevels[sessionStackEntry->refsFilterLevel];
@@ -887,12 +887,12 @@ static void olcxReferenceGotoCompletion(int referenceIndex) {
     assert(referenceIndex > 0);
 
     SessionStackEntry *sessionStackEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionStackEntry, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionStackEntry, CHECK_NULL_YES))
         return;
 
     Completion *completion = olCompletionNthLineRef(sessionStackEntry->completions, referenceIndex);
     if (completion != NULL) {
-        if (completion->visibility == LocalVisibility) {
+        if (completion->visibility == VisibilityLocal) {
             if (positionsAreNotEqual(completion->reference.position, noPosition)) {
                 gotoPosition(completion->reference.position);
             } else {
@@ -944,7 +944,7 @@ static void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference
 static void gotoNextReference(void) {
     SessionStackEntry    *refs;
     Reference         *r;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL_YES))
         return;
     if (refs->current == NULL)
         refs->current = refs->references;
@@ -959,7 +959,7 @@ static void gotoPreviousReference(void) {
     SessionStackEntry    *refs;
     Reference         *r,*l,*act;
     int                 rlevel;
-    if (!sessionHasReferencesValidForOperation(&sessionData,  &refs, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData,  &refs, CHECK_NULL_YES))
         return;
     rlevel = usageFilterLevels[refs->refsFilterLevel];
     if (refs->current == NULL) refs->current = refs->references;
@@ -987,7 +987,7 @@ static void olcxReferenceGotoDef(void) {
     SessionStackEntry    *refs;
     Reference         *dr;
 
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL_YES))
         return;
     dr = getDefinitionReference(refs->references);
     if (dr != NULL) refs->current = dr;
@@ -998,7 +998,7 @@ static void olcxReferenceGotoDef(void) {
 
 static void olcxReferenceGotoCurrent(void) {
     SessionStackEntry    *refs;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL_YES))
         return;
     olcxGenGotoActReference(refs);
 }
@@ -1006,7 +1006,7 @@ static void olcxReferenceGotoCurrent(void) {
 static void olcxReferenceGetCurrentRefn(void) {
     SessionStackEntry    *refs;
     int                 n;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL_YES))
         return;
     n = getCurrentRefPosition(refs);
     assert(options.xref2);
@@ -1015,7 +1015,7 @@ static void olcxReferenceGetCurrentRefn(void) {
 
 static void olcxReferenceGotoCaller(void) {
     SessionStackEntry    *refs;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL_YES))
         return;
     if (refs->callerPosition.file != NO_FILE_NUMBER) {
         gotoPosition(refs->callerPosition);
@@ -1045,7 +1045,7 @@ static void olcxPrintSymbolName(SessionStackEntry *refs) {
 
 static BrowserMenu *createSpecialMenuItem(char *fieldName, int includedFileNumber, Storage storage) {
     BrowserMenu *menu;
-    ReferenceableItem r = makeReferenceableItem(fieldName, TypeDefault, storage, GlobalScope, GlobalVisibility,
+    ReferenceableItem r = makeReferenceableItem(fieldName, TypeDefault, storage, GlobalScope, VisibilityGlobal,
                                                 includedFileNumber);
     menu = createNewMenuItem(&r, r.includeFile, noPosition, UsageNone,
                              true, true, FILE_MATCH_SAME, (SymbolRelation){.sameFile = true},
@@ -1119,7 +1119,7 @@ void recomputeSelectedReferenceable(SessionStackEntry *entry) {
 
 static void toggleMenuSelect(void) {
     SessionStackEntry *refs;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL_YES))
         return;
 
     BrowserMenu *menu;
@@ -1138,7 +1138,7 @@ static void toggleMenuSelect(void) {
 
 static void olcxMenuSelectOnly(void) {
     SessionStackEntry *stackEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &stackEntry, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &stackEntry, CHECK_NULL_YES))
         return;
 
     BrowserMenu *selection = NULL;
@@ -1206,7 +1206,7 @@ static void olcxMenuSelectAll(bool selected) {
 
     assert(options.xref2);
 
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL_YES))
         return;
     if (refs->operation == OLO_GLOBAL_UNUSED) {
         ppcGenRecord(PPC_WARNING, "The browser does not display project unused symbols anymore");
@@ -1269,7 +1269,7 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
     SessionStackEntry    *refs;
 
     assert(options.xref2);
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, DONT_CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL_NO))
         return;
     if (refs!=NULL && flevel < MAX_MENU_FILTER_LEVEL && flevel >= 0) {
         if (refs->menuFilterLevel != flevel) {
@@ -1290,7 +1290,7 @@ static void olcxReferenceFilterSet(int filterLevel) {
     SessionStackEntry *refs;
 
     assert(options.xref2);
-    if (!sessionHasReferencesValidForOperation(&sessionData,  &refs, DONT_CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData,  &refs, CHECK_NULL_NO))
         return;
     if (refs!=NULL && filterLevel < MAX_REF_LIST_FILTER_LEVEL && filterLevel >= 0) {
         refs->refsFilterLevel = filterLevel;
@@ -1306,7 +1306,7 @@ static void olcxReferenceRePush(void) {
     SessionStackEntry *refs, *nextrr;
 
     assert(options.xref2);
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, DONT_CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL_NO))
         return;
     nextrr = getNextTopStackItem(&sessionData.browsingStack);
     if (nextrr != NULL) {
@@ -1322,7 +1322,7 @@ static void olcxReferenceRePush(void) {
 
 static void olcxReferencePop(void) {
     SessionStackEntry *refs;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL_YES))
         return;
     if (refs->callerPosition.file != NO_FILE_NUMBER) {
         gotoPosition(refs->callerPosition);
@@ -1338,7 +1338,7 @@ void popFromSession(void) {
     SessionStackEntry *entry;
 
     /* Why this check? */
-    if (!sessionHasReferencesValidForOperation(&sessionData, &entry, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &entry, CHECK_NULL_YES))
         return;
     sessionData.browsingStack.top = entry->previous;
 }
@@ -1479,7 +1479,7 @@ static void olCompletionSelect(void) {
     Completion      *rr;
 
     assert(options.xref2);
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL_YES))
         return;
     rr = olCompletionNthLineRef(refs->completions, options.olcxGotoVal);
     if (rr==NULL) {
@@ -1620,8 +1620,8 @@ static bool olMenuHashFileNumLess(BrowserMenu *menu1, BrowserMenu *menu2) {
     int hash2 = cxFileHashNumberForSymbol(menu2->referenceable.linkName);
     if (hash1 < hash2) return true;
     if (hash1 > hash2) return false;
-    if (menu1->referenceable.visibility == LocalVisibility) return true;
-    if (menu1->referenceable.visibility == LocalVisibility) return false;
+    if (menu1->referenceable.visibility == VisibilityLocal) return true;
+    if (menu1->referenceable.visibility == VisibilityLocal) return false;
     // both files and categories equals ?
     return false;
 }
@@ -1804,7 +1804,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceableItem *referenceab
     bool used = false;
     Reference *definitionReference = NULL;
 
-    if (referenceableItem->visibility != LocalVisibility)
+    if (referenceableItem->visibility != VisibilityLocal)
         return;
     for (Reference *r = referenceableItem->references; r!=NULL; r=r->next) {
         if (isDefinitionOrDeclarationUsage(r->usage)) {

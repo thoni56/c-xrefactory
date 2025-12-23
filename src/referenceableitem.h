@@ -11,7 +11,7 @@
 // A variable, type, included file, ...
 typedef struct referenceableItem {
     char                     *linkName;
-    Type                      type : SYMTYPES_BITS;
+    Type                      type : TYPE_BITS;
     int                       includeFile; /* FileNumber for the included file if
                                                    * this is an '#include' Reference item:
                                                    * type = TypeCppInclude */

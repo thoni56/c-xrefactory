@@ -80,15 +80,15 @@
         ENUM(TypeCppInclude)                                            \
         ENUM(TypeCppIfElse)                                             \
         ENUM(TypeCppCollate)                                            \
+        ENUM(TypeCppUndefinedMacro)                                     \
         ENUM(TypeYaccSymbol)                                            \
         ENUM(TypeLabel)                                                 \
         ENUM(TypeKeyword)                                               \
         ENUM(TypeToken)                                                 \
-        ENUM(TypeCppUndefMacro)                                            \
         ENUM(TypeMacroArg)                                              \
-        ENUM(TypeCppDefinedOp)                                             \
-        ENUM(TypeCppHasIncludeOp)                                          \
-        ENUM(TypeCppHasIncludeNextOp)                                      \
+        ENUM(TypeCppDefinedOp)                                          \
+        ENUM(TypeCppHasIncludeOp)                                       \
+        ENUM(TypeCppHasIncludeNextOp)                                   \
         ENUM(TypeBlockMarker)                                           \
         ENUM(TypeExpression)                                            \
         ENUM(TypePackedType)                                            \
@@ -101,7 +101,7 @@
         ENUM(MAX_TYPE)                                                  \
 /* If these becomes more than 256, increase SYMTYPES_BITS */
 
-#define SYMTYPES_BITS 7
+#define TYPE_BITS 7
 
 
 typedef enum type {

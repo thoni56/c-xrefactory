@@ -46,7 +46,7 @@ static int scheduleFileUsingTheMacro(void) {
     assert(completionStringInMacroBody);
     tmpc = NULL;
     ReferenceableItem references = makeReferenceableItem(completionStringInMacroBody, TypeMacro, StorageExtern,
-                                                         GlobalScope, GlobalVisibility, NO_FILE_NUMBER);
+                                                         GlobalScope, VisibilityGlobal, NO_FILE_NUMBER);
 
     BrowserMenu menu = makeBrowserMenu(references, 1, true, 0, UsageUsed, UsageNone, noPosition);
     if (sessionData.browsingStack.top==NULL) {
@@ -120,7 +120,7 @@ static void parseInputFile(void) {
 
 void initServer(ArgumentsVector args) {
     clearAvailableRefactorings();
-    processOptions(args, PROCESS_FILE_ARGUMENTS); /* no include or define options */
+    processOptions(args, PROCESS_FILE_ARGUMENTS_YES); /* no include or define options */
     processFileArguments();
     initCompletions(&collectedCompletions, 0, noPosition);
 }

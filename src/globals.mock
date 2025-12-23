@@ -65,7 +65,7 @@ Language currentLanguage;
 TypeModifier *structMemberCompletionType;
 Completions collectedCompletions;
 
-char *storageNamesTable[MAX_STORAGE_NAMES];
+char *storageNamesTable[STORAGE_ENUMS_MAX];
 
 unsigned memberFindCount = 1;
 

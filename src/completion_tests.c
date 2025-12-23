@@ -24,8 +24,8 @@ protected void freeCompletion(Completion *completion);
 
 Ensure(Completion, can_allocate_and_free_a_completion) {
     Reference ref = makeReference((Position){0,0,0}, UsageNone, NULL);
-    ReferenceableItem item = makeReferenceableItem("", TypeInt, StorageDefault, AutoScope, LocalVisibility, 0);
-    Completion *c = newCompletion("", "", 0, LocalVisibility, ref, item);
+    ReferenceableItem item = makeReferenceableItem("", TypeInt, StorageDefault, AutoScope, VisibilityLocal, 0);
+    Completion *c = newCompletion("", "", 0, VisibilityLocal, ref, item);
     freeCompletion(c);
 }
 

@@ -13,7 +13,7 @@
     ENUM(StorageThreadLocal)                \
     ENUM(StorageTypedef)                    \
     ENUM(StorageRegister)                   \
-    ENUM(MAX_STORAGE_NAMES)
+    ENUM(STORAGE_ENUMS_MAX)
     /* If this becomes more than 32 increase STORAGES_BITS !!!!!!!! */
 
 #define STORAGES_BITS 5		/* logarithm of MAX_STORAGE */

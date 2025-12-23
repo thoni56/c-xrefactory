@@ -283,7 +283,7 @@ static Int2StringDictionary typeNamesInitTable[] = {
     {TypeToken,             "token"},
     {TypeMacro,             "macro"},
     {TypeMacroArg,          "macro argument"},
-    {TypeCppUndefMacro,        "Undefined Macro"},
+    {TypeCppUndefinedMacro, "Undefined Macro"},
     {TypeYaccSymbol,        "yacc symbol"},
     {TypeCppCollate,        "Cpp##sym"},
     {TypeSpecialComplete,    "(Completion Wizard)"},
@@ -366,7 +366,7 @@ void initTypeNames(void) {
 }
 
 void initStorageNames(void) {
-    for (int i=0; i<MAX_STORAGE_NAMES; i++)
+    for (int i=0; i<STORAGE_ENUMS_MAX; i++)
         storageNamesTable[i]="";
     for (int i=0; storageNamesInitTable[i].i != -1; i++) {
         Int2StringDictionary *s = &storageNamesInitTable[i];

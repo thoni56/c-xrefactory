@@ -79,7 +79,7 @@ extern int inputFileNumber;
 extern int originalFileNumber;     /* number of original file */
 extern int originalCommandLineFileNumber;  /* number of original command line input file? */
 
-extern char *storageNamesTable[MAX_STORAGE_NAMES];
+extern char *storageNamesTable[STORAGE_ENUMS_MAX];
 
 extern jmp_buf errorLongJumpBuffer;
 

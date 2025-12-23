@@ -58,9 +58,9 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         r.next = NULL;
 
         ReferenceableItem item = makeReferenceableItem("", TypeUnknown, StorageDefault,
-                                                       AutoScope, LocalVisibility, NO_FILE_NUMBER);
+                                                       AutoScope, VisibilityLocal, NO_FILE_NUMBER);
 
-        completion = newCompletion(name, fullName, 1, LocalVisibility, r, item);
+        completion = newCompletion(name, fullName, 1, VisibilityLocal, r, item);
     } else {
         Reference r = makeReference(symbol->pos, UsageNone, NULL);
         Visibility visibility;
@@ -86,7 +86,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
 protected void freeCompletion(Completion *completion) {
     free(completion->name);
     free(completion->fullName);
-    if (completion->visibility == GlobalVisibility) {
+    if (completion->visibility == VisibilityGlobal) {
         assert(completion->referenceable.linkName);
         free(completion->referenceable.linkName);
     }

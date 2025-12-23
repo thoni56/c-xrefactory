@@ -110,7 +110,7 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
     char *ppc;
 
     ppc = ppcTmpBuff;
-    if (completions->alternatives[index].type == TypeCppUndefMacro)
+    if (completions->alternatives[index].type == TypeCppUndefinedMacro)
         return;
 
     // remove parenthesis (if any)
@@ -414,7 +414,7 @@ static void completeFun(Symbol *symbol, void *c) {
         compLine = makeCompletionLine(symbol->name, symbol, symbol->type, 0, NULL);
     } else {
         if (symbol->mbody == NULL) {
-            compLine = makeCompletionLine(symbol->name, symbol, TypeCppUndefMacro, 0, NULL);
+            compLine = makeCompletionLine(symbol->name, symbol, TypeCppUndefinedMacro, 0, NULL);
         } else {
             compLine = makeCompletionLine(symbol->name, symbol, symbol->type, symbol->mbody->argCount,
                                symbol->mbody->argumentNames);

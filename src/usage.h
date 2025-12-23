@@ -26,7 +26,6 @@
     ENUM(UsageMaxOnLineVisibleUsages)           \
     ENUM(UsageNone)                             \
     ENUM(UsageMacroBaseFileUsage)               \
-    ENUM(MAX_USAGES)                            \
     ENUM(USAGE_ANY)                             \
     ENUM(USAGE_FILTER)
 

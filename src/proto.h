@@ -20,35 +20,35 @@ typedef unsigned char uchar;
 */
 
 typedef enum longjmpReason {
-    LONGJMP_REASON_NONE = 0,
+    LONGJMP_REASON_NONE = 0,    /* Make sure it's zero */
     LONGJMP_REASON_REFERENCES_OVERFLOW,
     LONGJMP_REASON_FILE_ABORT
 } LongjmpReason;
 
 typedef enum resolveDialog {
-    RESOLVE_DIALOG_DEFAULT = LONGJMP_REASON_FILE_ABORT + 1,
+    RESOLVE_DIALOG_DEFAULT,
     RESOLVE_DIALOG_ALWAYS,
     RESOLVE_DIALOG_NEVER,
 } ResolveDialog;
 
 typedef enum {
-    DONT_ALLOCATE = RESOLVE_DIALOG_NEVER + 1,
+    ALLOCATE_NONE,
     ALLOCATE_IN_SM,
     ALLOCATE_IN_PP
-} MemoryKind;
+} AllocateMemoryKind;
 
 typedef enum {
-    DONT_PROCESS_FILE_ARGUMENTS = ALLOCATE_IN_PP + 1,
-    PROCESS_FILE_ARGUMENTS
+    PROCESS_FILE_ARGUMENTS_NO,
+    PROCESS_FILE_ARGUMENTS_YES
 } ProcessFileArguments;
 
 typedef enum {
-    DONT_CHECK_NULL = PROCESS_FILE_ARGUMENTS + 1,
-    CHECK_NULL
+    CHECK_NULL_NO,
+    CHECK_NULL_YES
 } CheckNull;
 
 typedef enum {
-    SEARCH_FULL = CHECK_NULL + 1,
+    SEARCH_FULL,
     SEARCH_DEFINITIONS,
     SEARCH_FULL_SHORT,
     SEARCH_DEFINITIONS_SHORT
@@ -66,7 +66,7 @@ typedef enum {
 } ExpressionStartKind;
 
 enum miscellaneous { /* misc. constants */
-    DEFAULT_VALUE = SEARCH_DEFINITIONS_SHORT + 1,
+    DEFAULT_VALUE = GET_STATIC_PREFIX_START + 1,
     SEARCH_SYMBOL,
     DO_NOT_CHECK_IF_SELECTED,
     DIFF_MISSING_REF,

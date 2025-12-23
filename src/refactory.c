@@ -221,7 +221,7 @@ static void beInteractive(void) {
         deepCopyOptionsFromTo(&savedOptions, &options);
 
         ArgumentsVector args = {.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
-        processOptions(args, DONT_PROCESS_FILE_ARGUMENTS);
+        processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
 
         ArgumentsVector pipedOptions = getPipedOptions();
         openOutputFile(refactoringOptions.outputFileName);
@@ -674,19 +674,19 @@ static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *o
     }
 }
 
-static EditorMarker *createMarkerForExpressionStart(EditorMarker *marker, ExpressionStartKind kind) {
+static EditorMarker *createMarkerForExpressionStart(EditorMarker *marker, ExpressionStartKind startKind) {
     Position position;
     parseBufferUsingServer(refactoringOptions.project, marker, NULL, "-olcxprimarystart", NULL);
     deleteEntryFromSessionStack(sessionData.browsingStack.top);
-    if (kind == GET_PRIMARY_START) {
+    if (startKind == GET_PRIMARY_START) {
         position = primaryStartPosition;
-    } else if (kind == GET_STATIC_PREFIX_START) {
+    } else if (startKind == GET_STATIC_PREFIX_START) {
         position = staticPrefixStartPosition;
     } else {
         assert(0);
     }
     if (position.file == NO_FILE_NUMBER) {
-        if (kind == GET_STATIC_PREFIX_START) {
+        if (startKind == GET_STATIC_PREFIX_START) {
             fatalErrorOnPosition(marker, ERR_ST,
                                  "Can't determine static prefix. Maybe non-static reference to a static object? "
                                  "Make this invocation static before refactoring.");
@@ -1602,7 +1602,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
         }
     }
 
-    if (visibility == LocalVisibility) {
+    if (visibility == VisibilityLocal) {
         // useless to update when there is nothing about the symbol in Tags
         selectedUpdateOption = "";
     } else if (hasHeaderReferences) {
