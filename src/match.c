@@ -127,10 +127,8 @@ static void sortMatchList(Match **matches,
 }
 
 void tagSearchCompactShortResults(void) {
-    sortMatchList(&sessionData.searchingStack.top->matches,
-                       matchIsLessThan);
-    if (options.searchKind == SEARCH_DEFINITIONS_SHORT
-        || options.searchKind == SEARCH_FULL_SHORT) {
+    sortMatchList(&sessionData.searchingStack.top->matches, matchIsLessThan);
+    if (options.searchKind == SEARCH_DEFINITIONS_SHORT || options.searchKind == SEARCH_FULL_SHORT) {
         tagSearchShortRemoveMultipleLines(sessionData.searchingStack.top->matches);
     }
 }
