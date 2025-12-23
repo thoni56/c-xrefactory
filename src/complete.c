@@ -5,21 +5,21 @@
 
 #include "commons.h"
 #include "completion.h"
-#include "cxfile.h"
 #include "filetable.h"
 #include "globals.h"
 #include "list.h"
 #include "log.h"
+#include "match.h"
 #include "misc.h"
 #include "options.h"
 #include "ppc.h"
 #include "protocol.h"
-#include "session.h"
 #include "referenceableitemtable.h"
 #include "semact.h"
+#include "session.h"
+#include "session.h"
 #include "stackmemory.h"
 #include "type.h"
-#include "session.h"
 #include "yylex.h"
 
 
@@ -35,7 +35,7 @@ typedef struct {
 } SymbolCompletionInfo;
 
 typedef struct {
-    struct completions *res;
+    struct completions *completions;
     Storage storage;
 } SymbolCompletionFunctionInfo;
 
@@ -73,7 +73,7 @@ static SymbolCompletionInfo makeCompletionSymInfo(Completions *completions, Type
 
 static SymbolCompletionFunctionInfo makeCompletionSymFunInfo(Completions *completions, Storage storage) {
     SymbolCompletionFunctionInfo info;
-    info.res = completions;
+    info.completions = completions;
     info.storage = storage;
     return info;
 }
@@ -160,16 +160,16 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
     }
 }
 
-static void olCompletionListInit(Position originalPos) {
+static void completionListInit(Position originalPos) {
     freeOldCompletionStackEntries(&sessionData.completionStack);
     pushEmptySession(&sessionData.completionStack);
     sessionData.completionStack.top->callerPosition = originalPos;
 }
 
 
-static int completionsWillPrintEllipsis(Match *olc) {
+static int completionsWillPrintEllipsis(Match *match) {
     int max, ellipsis;
-    LIST_LEN(max, Match, olc);
+    LIST_LEN(max, Match, match);
     ellipsis = 0;
     if (max >= MAX_COMPLETIONS - 2 || max == options.maxCompletions) {
         ellipsis = 1;
@@ -178,23 +178,23 @@ static int completionsWillPrintEllipsis(Match *olc) {
 }
 
 
-static void printCompletionsBeginning(Match *olc, int noFocus) {
+static void printCompletionsBeginning(Match *match, int noFocus) {
     int tlen = 0;
-    for (Match *cc=olc; cc!=NULL; cc=cc->next) {
+    for (Match *cc=match; cc!=NULL; cc=cc->next) {
         tlen += strlen(cc->fullName);
         if (cc->next!=NULL) tlen++;
     }
-    if (completionsWillPrintEllipsis(olc))
+    if (completionsWillPrintEllipsis(match))
         tlen += 4;
     ppcBeginAllCompletions(noFocus, tlen);
 }
 
-static void printOneCompletion(Match *olc) {
-    fprintf(outputFile, "%s", olc->fullName);
+static void printOneCompletion(Match *match) {
+    fprintf(outputFile, "%s", match->fullName);
 }
 
-static void printCompletionsEnding(Match *olc) {
-    if (completionsWillPrintEllipsis(olc)) {
+static void printCompletionsEnding(Match *match) {
+    if (completionsWillPrintEllipsis(match)) {
         fprintf(outputFile,"\n...");
     }
     ppcEnd(PPC_ALL_COMPLETIONS);
@@ -212,7 +212,7 @@ void printCompletionsList(bool noFocus) {
     printCompletionsEnding(completions);
 }
 
-static void olCompletionListReverse(void) {
+static void reverseCompletionList(void) {
     LIST_REVERSE(Match, sessionData.completionStack.top->matches);
 }
 
@@ -220,7 +220,7 @@ void printCompletions(Completions *completions) {
     int indent, max;
 
     // O.K. there will be a menu diplayed, clear the old one
-    olCompletionListInit(completions->idToProcessPosition);
+    completionListInit(completions->idToProcessPosition);
     if (completions->alternativeCount == 0) {
         ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **");
         goto finishWithoutMenu;
@@ -255,7 +255,7 @@ void printCompletions(Completions *completions) {
             sessionData.completionStack.top->matches, completions->alternatives[i].string, ppcTmpBuff,
             completions->alternatives[i].symbol, NULL, &r, NO_FILE_NUMBER);
     }
-    olCompletionListReverse();
+    reverseCompletionList();
     printCompletionsList(completions->noFocusOnCompletions);
     fflush(outputFile);
     return;
@@ -274,7 +274,7 @@ static bool isTheSameSymbol(CompletionLine *c1, CompletionLine *c2) {
     return true;
 }
 
-static int completionOrderCmp(CompletionLine *c1, CompletionLine *c2) {
+static int completionOrderComparer(CompletionLine *c1, CompletionLine *c2) {
     int     l1, l2;
     char    *s1, *s2;
 
@@ -304,7 +304,7 @@ static bool reallyInsert(CompletionLine *a, int *aip, char *s, CompletionLine *t
         // binary search
         while (l <= r) {
             x = (l + r) / 2;
-            c = completionOrderCmp(t, &a[x]);
+            c = completionOrderComparer(t, &a[x]);
             if (c == 0) { /* identifier still in completions */
                 return false;
             }
@@ -365,7 +365,7 @@ static bool completionTestPrefix(Completions *completions, char *s) {
 static void completionInsertName(char *name, CompletionLine *completionLine, bool orderFlag,
                                  Completions *ci) {
     int len,l;
-    //&completionLine->string  = name;
+
     name = completionLine->string;
     len = ci->idToProcessLength;
     if (ci->alternativeCount == 0) {
@@ -464,10 +464,10 @@ static void symbolCompletionFunction(Symbol *symbol, void *i) {
     completionName = symbol->name;
     if (completionName!=NULL) {
         if (symbol->type == TypeDefault && symbol->typeModifier!=NULL && symbol->typeModifier->type == TypeFunction) {
-            completeFunctionOrMethodName(info->res, true, symbol, NULL);
+            completeFunctionOrMethodName(info->completions, true, symbol, NULL);
         } else {
             completionLine = makeCompletionLine(completionName, symbol, symbol->type, 0, NULL);
-            processName(completionName, &completionLine, 1, info->res);
+            processName(completionName, &completionLine, 1, info->completions);
         }
     }
 }

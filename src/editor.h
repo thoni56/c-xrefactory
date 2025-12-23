@@ -8,6 +8,7 @@
 #include "editorbuffer.h"
 #include "editormarker.h"
 #include "proto.h"
+#include "reference.h"
 #include "undo.h"
 
 

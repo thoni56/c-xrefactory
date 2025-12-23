@@ -9,6 +9,7 @@
 #include "json_utils.h"
 #include "lsp_utils.h"
 #include "options.h"
+#include "reference.h"
 #include "server.h"
 #include "session.h"
 #include "startup.h"

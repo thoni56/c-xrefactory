@@ -22,4 +22,7 @@ extern void freeMatches(Match *matches);
 extern Match *prependToMatches(Match *matches, char *name, char *fullText, Symbol *symbol,
                                ReferenceableItem *referenceableItem, Reference *dfpos, int includedFileNumber);
 
+/* Move to 'search' */
+extern void tagSearchCompactShortResults(void);
+
 #endif

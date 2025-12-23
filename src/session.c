@@ -4,17 +4,17 @@
 
 #include "browsermenu.h"
 #include "commons.h"
-#include "completion.h"
 #include "cxref.h"
-#include "options.h"
 #include "globals.h"
+#include "match.h"
+#include "options.h"
 #include "reference.h"
 
 
 SessionData sessionData;
 
 
-#define MAX_COMPLETIONS_HISTORY_DEEP 10   /* maximal length of completion history */
+#define MAX_COMPLETIONS_HISTORY 10   /* maximal length of completion history */
 
 #define DEFAULT_MENU_FILTER_LEVEL MenuFilterExactMatchSameFile
 #define DEFAULT_REFS_FILTER_LEVEL ReferenceFilterAll
@@ -82,7 +82,7 @@ void freeOldCompletionStackEntries(SessionStack *stack) {
     entry = &stack->top;
     if (*entry == NULL)
         return;
-    for (int i=1; i<MAX_COMPLETIONS_HISTORY_DEEP; i++) {
+    for (int i=1; i<MAX_COMPLETIONS_HISTORY; i++) {
         entry = &(*entry)->previous;
         if (*entry == NULL)
             return;

@@ -1,11 +1,12 @@
 MODULES = browsermenu c_parser.tab cppexp_parser.tab characterreader commandlogger	\
-commons complete completion counters cxfile cxref editor editorbuffer editorbuffertable	\
+commons complete counters cxfile cxref editor editorbuffer editorbuffertable		\
 editormarker encoding extract filedescriptor fileio filetable globals hash id init	\
 lexemstream json_utils lexem lexembuffer lexer log lsp lsp_adapter lsp_dispatcher	\
-lsp_handler lsp_utils lsp_sender macroargumenttable main memory misc options parsers	\
-position ppc progress protocol refactorings refactory reference referenceableitem	\
-referenceableitemtable semact server session stackmemory startup storage stringlist symbol	\
-symboltable type typemodifier undo usage xref yacc_parser.tab yylex
+lsp_handler lsp_utils lsp_sender macroargumenttable main match memory misc options	\
+parsers position ppc progress protocol refactorings refactory reference			\
+referenceableitem referenceableitemtable semact server session stackmemory startup	\
+storage stringlist symbol symboltable type typemodifier undo usage xref yacc_parser.tab	\
+yylex
 
 modules:
 	@echo MODULES=$(MODULES)

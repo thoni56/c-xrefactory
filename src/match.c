@@ -1,4 +1,4 @@
-#include "completion.h"
+#include "match.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -14,35 +14,35 @@
 
 
 // Will create malloc():ed copies of name and fullName so caller don't have to
-protected Match *newCompletion(char *name, char *fullName, int lineCount, Visibility visibility,
-                                    Reference reference, ReferenceableItem referenceable) {
-    Match *completion = malloc(sizeof(Match));
+protected Match *newMatch(char *name, char *fullName, int lineCount, Visibility visibility,
+                          Reference reference, ReferenceableItem referenceable) {
+    Match *match = malloc(sizeof(Match));
 
     if (name != NULL) {
-        completion->name = strdup(name);
+        match->name = strdup(name);
     } else
-        completion->name = NULL;
+        match->name = NULL;
 
     if (fullName != NULL) {
-        completion->fullName = strdup(fullName);
+        match->fullName = strdup(fullName);
     } else
-        completion->fullName = NULL;
+        match->fullName = NULL;
 
-    completion->lineCount = lineCount;
-    completion->visibility = visibility;
-    completion->reference = reference;
-    completion->referenceable = referenceable;
-    completion->next = NULL;
+    match->lineCount = lineCount;
+    match->visibility = visibility;
+    match->reference = reference;
+    match->referenceable = referenceable;
+    match->next = NULL;
 
-    return completion;
+    return match;
 }
 
 // If symbol == NULL, then the pos is taken as default position of this ref !!!
 // If symbol != NULL && referenceableItem != NULL then reference can be anything...
-Match *prependToMatches(Match *completions, char *name, char *fullName, Symbol *symbol,
-                                  ReferenceableItem *referenceableItem, Reference *reference,
-                                  int includedFileNumber) {
-    Match *completion;
+Match *prependToMatches(Match *matches, char *name, char *fullName, Symbol *symbol,
+                        ReferenceableItem *referenceableItem, Reference *reference,
+                        int includedFileNumber) {
+    Match *match;
 
     if (referenceableItem != NULL) {
         // probably a 'search in tag' file item
@@ -52,7 +52,7 @@ Match *prependToMatches(Match *completions, char *name, char *fullName, Symbol *
                                                        referenceableItem->storage, referenceableItem->scope,
                                                        referenceableItem->visibility, referenceableItem->includeFileNumber);
 
-        completion = newCompletion(name, fullName, 1, referenceableItem->visibility, *reference, item);
+        match = newMatch(name, fullName, 1, referenceableItem->visibility, *reference, item);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
@@ -60,7 +60,7 @@ Match *prependToMatches(Match *completions, char *name, char *fullName, Symbol *
         ReferenceableItem item = makeReferenceableItem("", TypeUnknown, StorageDefault,
                                                        AutoScope, VisibilityLocal, NO_FILE_NUMBER);
 
-        completion = newCompletion(name, fullName, 1, VisibilityLocal, r, item);
+        match = newMatch(name, fullName, 1, VisibilityLocal, r, item);
     } else {
         Reference r = makeReference(symbol->pos, UsageNone, NULL);
         Visibility visibility;
@@ -71,40 +71,40 @@ Match *prependToMatches(Match *completions, char *name, char *fullName, Symbol *
 
         ReferenceableItem item = makeReferenceableItem(linkName, symbol->type, storage,
                                                        scope, visibility, includedFileNumber);
-        completion = newCompletion(name, fullName, 1, visibility, r, item);
+        match = newMatch(name, fullName, 1, visibility, r, item);
     }
     if (fullName!=NULL) {
         for (int i=0; fullName[i]; i++) {
             if (fullName[i] == '\n')
-                completion->lineCount++;
+                match->lineCount++;
         }
     }
-    completion->next = completions;
-    return completion;
+    match->next = matches;
+    return match;
 }
 
-protected void freeCompletion(Match *completion) {
-    free(completion->name);
-    free(completion->fullName);
-    if (completion->visibility == VisibilityGlobal) {
-        assert(completion->referenceable.linkName);
-        free(completion->referenceable.linkName);
+protected void freeMatch(Match *match) {
+    free(match->name);
+    free(match->fullName);
+    if (match->visibility == VisibilityGlobal) {
+        assert(match->referenceable.linkName);
+        free(match->referenceable.linkName);
     }
-    free(completion);
+    free(match);
 }
 
 
-void freeMatches(Match *r) {
+void freeMatches(Match *matches) {
     Match *tmp;
 
-    while (r!=NULL) {
-        tmp = r->next;
-        freeCompletion(r);
-        r = tmp;
+    while (matches!=NULL) {
+        tmp = matches->next;
+        freeMatch(matches);
+        matches = tmp;
     }
 }
 
-static bool completionIsLessThan(Match *c1, Match *c2) {
+static bool matchIsLessThan(Match *c1, Match *c2) {
     return strcmp(c1->name, c2->name) < 0;
 }
 
@@ -115,20 +115,20 @@ static void tagSearchShortRemoveMultipleLines(Match *list) {
             // O.K. remove redundant one
             Match *tmp = l->next;
             l->next = l->next->next;
-            freeCompletion(tmp);
+            freeMatch(tmp);
             goto again;          /* Again, but don't advance */
         }
     }
 }
 
-static void sortCompletionList(Match **completions,
-                               bool (*compareFunction)(Match *c1, Match *c2)) {
-    LIST_MERGE_SORT(Match, *completions, compareFunction);
+static void sortMatchList(Match **matches,
+                          bool (*compareFunction)(Match *c1, Match *c2)) {
+    LIST_MERGE_SORT(Match, *matches, compareFunction);
 }
 
 void tagSearchCompactShortResults(void) {
-    sortCompletionList(&sessionData.searchingStack.top->matches,
-                       completionIsLessThan);
+    sortMatchList(&sessionData.searchingStack.top->matches,
+                       matchIsLessThan);
     if (options.searchKind == SEARCH_DEFINITIONS_SHORT
         || options.searchKind == SEARCH_FULL_SHORT) {
         tagSearchShortRemoveMultipleLines(sessionData.searchingStack.top->matches);

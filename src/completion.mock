@@ -1,6 +1,6 @@
 #include <cgreen/mocks.h>
 
-#include "completion.h"
+#include "match.h"
 
 
 void freeMatches(Match *completions) {

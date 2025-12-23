@@ -3,34 +3,35 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "constants.h"
-#include "referenceableitem.h"
-#include "session.h"
-#include "visibility.h"
+#include "browsermenu.h"
 #include "characterreader.h"
 #include "commons.h"
 #include "complete.h"
+#include "constants.h"
 #include "cxfile.h"
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
 #include "list.h"
 #include "log.h"
-#include "browsermenu.h"
+#include "match.h"
 #include "misc.h"
 #include "options.h"
 #include "ppc.h"
 #include "proto.h"
 #include "protocol.h"
 #include "refactorings.h"
+#include "referenceableitem.h"
 #include "referenceableitemtable.h"
 #include "scope.h"
 #include "server.h"
+#include "session.h"
 #include "session.h"
 #include "storage.h"
 #include "symbol.h"
 #include "type.h"
 #include "usage.h"
+#include "visibility.h"
 
 
 #define MAX_TAG_SEARCH_INDENT 80          /* maximal tag search indentation with scroll */
@@ -834,15 +835,15 @@ static void gotoReferenceWithIndex(int referenceIndex) {
     olcxGenGotoActReference(sessionStackEntry);
 }
 
-static Match *olCompletionNthLineRef(Match *cpls, int refn) {
-    Match *rr, *rrr;
-    int i;
+static Match *getMatchOnNthLine(Match *matches, int n) {
+    Match *last, *this;
 
-    for (rr=rrr=cpls, i=1; i<=refn && rrr!=NULL; rrr=rrr->next) {
-        i += rrr->lineCount;
-        rr = rrr;
+    this = matches;
+    for (int i=1; i<=n && this!=NULL; this=this->next) {
+        i += this->lineCount;
+        last = this;
     }
-    return rr;
+    return last;
 }
 
 static void popSession(void) {
@@ -885,38 +886,38 @@ static void findAndGotoDefinition(ReferenceableItem *sym) {
     popAndFreeSessionsUntil(oldtop);
 }
 
-static void olcxReferenceGotoCompletion(int referenceIndex) {
+static void gotoCompletion(int referenceIndex) {
     assert(referenceIndex > 0);
 
     SessionStackEntry *sessionStackEntry;
     if (!sessionHasReferencesValidForOperation(&sessionData, &sessionStackEntry, CHECK_NULL_YES))
         return;
 
-    Match *completion = olCompletionNthLineRef(sessionStackEntry->matches, referenceIndex);
-    if (completion != NULL) {
-        if (completion->visibility == VisibilityLocal) {
-            if (positionsAreNotEqual(completion->reference.position, noPosition)) {
-                gotoPosition(completion->reference.position);
+    Match *match = getMatchOnNthLine(sessionStackEntry->matches, referenceIndex);
+    if (match != NULL) {
+        if (match->visibility == VisibilityLocal) {
+            if (positionsAreNotEqual(match->reference.position, noPosition)) {
+                gotoPosition(match->reference.position);
             } else {
                 indicateNoReference();
             }
         } else {
-            findAndGotoDefinition(&completion->referenceable);
+            findAndGotoDefinition(&match->referenceable);
         }
     } else {
         indicateNoReference();
     }
 }
 
-static void olcxReferenceGotoTagSearchItem(int refn) {
-    Match *rr;
+static void gotoTagSearchItem(int refn) {
+    Match *match;
 
     assert(refn > 0);
     assert(sessionData.searchingStack.top);
-    rr = olCompletionNthLineRef(sessionData.searchingStack.top->matches, refn);
-    if (rr != NULL) {
-        if (positionsAreNotEqual(rr->reference.position, noPosition)) {
-            gotoPosition(rr->reference.position);
+    match = getMatchOnNthLine(sessionData.searchingStack.top->matches, refn);
+    if (match != NULL) {
+        if (positionsAreNotEqual(match->reference.position, noPosition)) {
+            gotoPosition(match->reference.position);
         } else {
             indicateNoReference();
         }
@@ -1476,42 +1477,43 @@ static void olcxSafetyCheck(void) {
     fflush(outputFile);
 }
 
-static void olCompletionSelect(void) {
-    SessionStackEntry    *refs;
-    Match      *rr;
+static void selectCompletion(void) {
+    SessionStackEntry *entry;
+    Match *match;
 
     assert(options.xref2);
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &entry, CHECK_NULL_YES))
         return;
-    rr = olCompletionNthLineRef(refs->matches, options.olcxGotoVal);
-    if (rr==NULL) {
+    match = getMatchOnNthLine(entry->matches, options.olcxGotoVal);
+    if (match==NULL) {
         errorMessage(ERR_ST, "selection out of range.");
         return;
     }
     assert(sessionData.completionStack.root!=NULL);
     ppcGotoPosition(sessionData.completionStack.root->callerPosition);
-    ppcGenRecord(PPC_SINGLE_COMPLETION, rr->name);
+    ppcGenRecord(PPC_SINGLE_COMPLETION, match->name);
 }
 
 static void olcxReferenceSelectTagSearchItem(int refn) {
-    Match      *rr;
-    SessionStackEntry    *refs;
-    char                ttt[MAX_FUNCTION_NAME_LENGTH];
+    Match *match;
+    SessionStackEntry *entry;
+    char buffer[MAX_FUNCTION_NAME_LENGTH];
+
     assert(refn > 0);
     assert(sessionData.searchingStack.top);
-    refs = sessionData.searchingStack.top;
-    rr = olCompletionNthLineRef(refs->matches, refn);
-    if (rr == NULL) {
+    entry = sessionData.searchingStack.top;
+    match = getMatchOnNthLine(entry->matches, refn);
+    if (match == NULL) {
         errorMessage(ERR_ST, "selection out of range.");
         return;
     }
     assert(sessionData.searchingStack.root!=NULL);
     ppcGotoPosition(sessionData.searchingStack.root->callerPosition);
-    sprintf(ttt, " %s", rr->name);
-    ppcGenRecord(PPC_SINGLE_COMPLETION, ttt);
+    sprintf(buffer, " %s", match->name);
+    ppcGenRecord(PPC_SINGLE_COMPLETION, buffer);
 }
 
-static void olCompletionBack(void) {
+static void completionBackward(void) {
     SessionStackEntry    *top;
 
     top = sessionData.completionStack.top;
@@ -1522,7 +1524,7 @@ static void olCompletionBack(void) {
     }
 }
 
-static void olCompletionForward(void) {
+static void completionForward(void) {
     SessionStackEntry    *top;
 
     top = getNextTopStackItem(&sessionData.completionStack);
@@ -2029,22 +2031,22 @@ void answerEditAction(void) {
         olcxReferenceGetCurrentRefn();
         break;
     case OLO_COMPLETION_SELECT:
-        olCompletionSelect();
+        selectCompletion();
         break;
     case OLO_COMPLETION_BACK:
-        olCompletionBack();
+        completionBackward();
         break;
     case OLO_COMPLETION_FORWARD:
-        olCompletionForward();
+        completionForward();
         break;
     case OLO_GOTO:
         gotoReferenceWithIndex(options.olcxGotoVal);
         break;
     case OLO_COMPLETION_GOTO:
-        olcxReferenceGotoCompletion(options.olcxGotoVal);
+        gotoCompletion(options.olcxGotoVal);
         break;
     case OLO_TAGGOTO:
-        olcxReferenceGotoTagSearchItem(options.olcxGotoVal);
+        gotoTagSearchItem(options.olcxGotoVal);
         break;
     case OLO_TAGSELECT:
         olcxReferenceSelectTagSearchItem(options.olcxGotoVal);

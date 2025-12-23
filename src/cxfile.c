@@ -3,9 +3,9 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "browsermenu.h"
 #include "characterreader.h"
 #include "commons.h"
-#include "completion.h"
 #include "cxref.h"
 #include "editor.h"
 #include "fileio.h"
@@ -14,7 +14,7 @@
 #include "head.h"
 #include "list.h"
 #include "log.h"
-#include "browsermenu.h"
+#include "match.h"
 #include "misc.h"
 #include "options.h"
 #include "referenceableitem.h"

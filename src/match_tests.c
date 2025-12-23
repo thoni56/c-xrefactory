@@ -1,7 +1,8 @@
+#include "match.h"
+
 #include <cgreen/cgreen.h>
 #include <cgreen/unit.h>
 
-#include "completion.h"
 
 #include "head.h"               /* For 'protected' */
 #include "type.h"
@@ -14,22 +15,23 @@
 #include "symbol.mock"
 
 
-Describe(Completion);
-BeforeEach(Completion) {}
-AfterEach(Completion) {}
+Describe(Match);
+BeforeEach(Match) {}
+AfterEach(Match) {}
 
-protected Match *newCompletion(char *name, char *fullName, int lineCount, Visibility visibility, struct reference ref, struct referenceableItem sym);
+protected Match *newMatch(char *name, char *fullName, int lineCount, Visibility visibility, struct reference ref,
+                          struct referenceableItem sym);
 
-protected void freeCompletion(Match *completion);
+protected void freeMatch(Match *match);
 
-Ensure(Completion, can_allocate_and_free_a_completion) {
+Ensure(Match, can_allocate_and_free_a_match) {
     Reference ref = makeReference((Position){0,0,0}, UsageNone, NULL);
     ReferenceableItem item = makeReferenceableItem("", TypeInt, StorageDefault, AutoScope, VisibilityLocal, 0);
-    Match *c = newCompletion("", "", 0, VisibilityLocal, ref, item);
-    freeCompletion(c);
+    Match *c = newMatch("", "", 0, VisibilityLocal, ref, item);
+    freeMatch(c);
 }
 
-Ensure(Completion, can_allocate_and_free_completions) {
+Ensure(Match, can_allocate_and_free_completions) {
     Reference ref;
     Match *l = prependToMatches(NULL, "", "", NULL, NULL, &ref, 0);
     l = prependToMatches(l, "", "", NULL, NULL, &ref, 0);

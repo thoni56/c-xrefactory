@@ -1,0 +1,17 @@
+#include <cgreen/mocks.h>
+
+#include "match.h"
+
+
+void freeMatch(Match *match) {
+    mock(match);
+}
+
+void freeMatches(Match *matches) {
+    mock(matches);
+}
+
+Match *prependToMatches(Match *matches, char *name, char *fullText, Symbol *symbol,
+                        ReferenceableItem *referenceableItem, Reference *dfpos, int includedFileNumber) {
+    return (Match *)mock(matches, name, fullText, symbol, referenceableItem, dfpos, includedFileNumber);
+}
