@@ -252,35 +252,36 @@ static bool searchStringMatch(char *cxtag, int len) {
 
 
 void searchSymbolCheckReference(ReferenceableItem  *referenceableItem, Reference *reference) {
-    char ssname[MAX_CX_SYMBOL_SIZE];
-    char *s, *sname;
-    int slen;
+    char buffer[MAX_CX_SYMBOL_SIZE];
+    char *s, *name;
 
     if (referenceableItem->type == TypeCppInclude)
         return;   // no %%i symbols (== "#include" ReferenceableItem)
 
-    prettyPrintLinkName(ssname, referenceableItem->linkName, MAX_CX_SYMBOL_SIZE);
-    sname = ssname;
-    slen = strlen(sname);
+    prettyPrintLinkName(buffer, referenceableItem->linkName, MAX_CX_SYMBOL_SIZE);
+    name = buffer;
+
     // if completing without profile, cut profile
-    if (options.searchKind==SEARCH_DEFINITIONS_SHORT
-        || options.searchKind==SEARCH_FULL_SHORT) {
-        s = strchr(sname, '(');
-        if (s!=NULL) *s = 0;
-    }
-    // cut package name(?) for checking
-    do {
-        s = strchr(sname, '.');
+    if (options.searchKind==SEARCH_DEFINITIONS_SHORT || options.searchKind==SEARCH_FULL_SHORT) {
+        s = strchr(name, '(');
         if (s!=NULL)
-            sname = s+1;
+            *s = 0;
+    }
+    // For Java this removed the packagename, perhaps. Now some "magic" symbols, like
+    // 'drand48_data.__c' and '.__fds_bits', gets mangles, or maybe those *are* package names...
+    do {
+        s = strchr(name, '.');
+        if (s!=NULL)
+            name = s+1;
     } while (s!=NULL);
-    slen = strlen(sname);
-    if (searchStringMatch(sname, slen)) {
-        static int count = 0;
+
+    if (searchStringMatch(name, strlen(name))) {
         sessionData.searchingStack.top->completions = completionListPrepend(
-            sessionData.searchingStack.top->completions, sname, NULL, NULL, referenceableItem,
+            sessionData.searchingStack.top->completions, name, NULL, NULL, referenceableItem,
             reference, referenceableItem->includeFileNumber);
+
         // compact completions from time to time
+        static int count = 0;
         count ++;
         if (count > COMPACT_TAGS_AFTER_SEARCH_COUNT) {
             tagSearchCompactShortResults();
