@@ -284,6 +284,328 @@ This refactoring addresses the root cause identified in the discussion about rep
 
 TIP: When implementing this refactoring, consider starting with unit tests for the new API functions before refactoring existing code. This will help validate the design and provide safety during migration.
 
+[[clean-persistence-store]]
+=== Clean Persistence Store Abstraction
+
+==== Problem Statement
+
+The `cxfile` module currently mixes multiple responsibilities that should be separated:
+
+* **Persistence implementation** (reading/writing .cx files) ✓ Correct level
+* **Search and filter operations** (matching search strings) ✗ Wrong level
+* **Operation-specific loading** (menu creation, macro completion, unused detection) ✗ Too specific
+* **Treated as source of truth** (when it should be just a cache) ✗ Architectural confusion
+
+This mixing creates tight coupling, makes testing difficult, and prevents future architectural improvements (like LSP integration or alternative storage backends).
+
+==== Architectural Confusion: In-Memory vs Persistence
+
+The current code conflates two distinct concepts:
+
+*Reference Database* (Smart Layer - Source of Truth)::
+- **Always in-memory**: The `referenceableItemTable` hash table
+- Answers queries fast from RAM
+- Decides when to load from persistence
+- Decides when to save to persistence
+- Manages invalidation and staleness
+- **This is the actual database**
+
+*Persistence Store* (Dumb Layer - Durable Cache)::
+- **Always on disk/database**: The `.cx` files (or future SQLite, etc.)
+- Just knows how to save/load a specific format
+- Has NO in-memory state of its own
+- No business logic, no searching, no filtering
+- **This is just the storage mechanism**
+
+IMPORTANT: The persistence layer is **always about durable storage** that survives restarts. "In-memory persistence" is a contradiction - persistence means surviving across sessions.
+
+==== Current Architecture Problems
+
+===== Mixed Abstraction Levels
+
+The current `cxfile.h` public interface exposes:
+
+[source,c]
+----
+// Operation-specific scanning (too high-level for storage)
+extern void scanReferencesToCreateMenu(char *symbolName);
+extern void scanForMacroUsage(char *symbolName);
+extern void scanForGlobalUnused(char *cxrefFileName);
+extern void scanForSearch(char *cxrefFileName);
+
+// Implementation details leaked (partitioning is internal)
+extern int cxFileHashNumberForSymbol(char *symbol);
+extern void searchSymbolCheckReference(ReferenceableItem *item, Reference *ref);
+
+// Generic API (already identified as "Abstract API")
+extern bool loadFileNumbersFromStore(void);
+extern void ensureReferencesAreLoadedFor(char *symbolName);
+extern void saveReferencesToStore(bool updating, char *name);
+----
+
+Problems:
+
+* **Four `scan*` functions**: Encode specific use cases (menu, macro, unused, search) instead of providing generic operations
+* **Implementation details exposed**: `cxFileHashNumberForSymbol()` is a partitioning optimization that shouldn't be public
+* **Search logic in storage**: `searchSymbolCheckReference()` mixes filtering with persistence
+* **Side-effect heavy**: All functions mutate global `referenceableItemTable` implicitly
+
+===== Tight Coupling to Use Cases
+
+Currently `cxfile.c` knows about:
+
+* Browser menus (`scanReferencesToCreateMenu`)
+* Macro completion (`scanForMacroUsage`)
+* Unused symbol detection (`scanForGlobalUnused`)
+* Symbol search (`scanForSearch`)
+
+A persistence layer shouldn't know about any of these! These are *clients* of storage, not responsibilities of storage.
+
+===== Wrong Source of Truth
+
+From the navigation debugging (see Insights chapter), we discovered:
+
+[source,c]
+----
+// In cxref.c - loads FROM DISK directly
+scanReferencesToCreateMenu(symbolName);  // Treats .cx files as truth
+----
+
+This bypasses the in-memory `referenceableItemTable`, treating disk as authoritative. But the **actual truth** is:
+
+----
+referenceableItemTable = Disk state (.cx files) + Preloaded editor buffers
+----
+
+The disk is just a **cache** of the last saved state, not the current truth.
+
+==== Proposed Architecture
+
+===== Two-Layer Design
+
+[source]
+----
+┌──────────────────────────────────────────────────┐
+│  Reference Database (Smart Layer)                │
+│  Source of Truth: referenceableItemTable (RAM)   │
+│                                                  │
+│  - Fast in-memory queries                        │
+│  - Knows what's current vs stale                 │
+│  - Handles invalidation/refresh                  │
+│  - Decides when to load/save                     │
+│  - Unified interface for all clients             │
+└──────────────────────────────────────────────────┘
+                      ↓
+        (only when loading/saving needed)
+                      ↓
+┌──────────────────────────────────────────────────┐
+│  Persistence Store (Dumb Layer)                  │
+│  Durable Cache: .cx files on disk                │
+│                                                  │
+│  - Just save/load binary format                  │
+│  - No business logic                             │
+│  - No in-memory state                            │
+│  - Can be swapped (SQLite, Protobuf, etc.)       │
+└──────────────────────────────────────────────────┘
+----
+
+===== Clean Persistence Store Interface
+
+[source,c]
+----
+// persistence_store.h - Pure storage operations
+#ifndef PERSISTENCE_STORE_H_INCLUDED
+#define PERSISTENCE_STORE_H_INCLUDED
+
+#include "referenceableitem.h"
+
+/* ============================================
+ * Store Lifecycle
+ * ============================================ */
+
+// Load metadata (file numbers, timestamps)
+extern bool persistenceLoadMetadata(void);
+
+// Persist all references to durable storage
+extern void persistenceSaveAll(bool updating, char *location);
+
+/* ============================================
+ * Reference Loading (into referenceableItemTable)
+ * ============================================ */
+
+// Load references for specific symbol into memory table
+// Returns true if symbol found in storage
+extern bool persistenceLoadSymbol(char *symbolName);
+
+/* ============================================
+ * Bulk Scanning
+ * ============================================ */
+
+// Scan entire storage, calling visitor for each reference
+// Visitor decides what to do with each reference
+typedef void (*PersistenceVisitor)(ReferenceableItem *item,
+                                    Reference *ref,
+                                    void *context);
+extern void persistenceScanAll(PersistenceVisitor visitor, void *context);
+
+#endif
+----
+
+===== Reference Database Interface
+
+This layer provides the "smart" operations that clients actually need:
+
+[source,c]
+----
+// reference_database.h - Smart operations (initially thin wrapper)
+#ifndef REFERENCE_DATABASE_H_INCLUDED
+#define REFERENCE_DATABASE_H_INCLUDED
+
+#include "referenceableitem.h"
+#include "position.h"
+
+// Initialize the in-memory reference database
+extern bool refDbInitialize(void);
+
+// Lookup symbol in the in-memory table
+// Automatically loads from persistence if not in memory
+extern ReferenceableItem* refDbLookupSymbol(char *name);
+
+// Get all references for a symbol
+// Ensures data is loaded and current
+extern Reference* refDbGetReferences(char *symbolName);
+
+// Mark a file's references as stale (needs reload)
+extern void refDbInvalidateFile(int fileNumber);
+
+// Persist the current in-memory state
+extern void refDbSave(bool updating, char *location);
+
+#endif
+----
+
+NOTE: This interface starts simple but is where the *Unified Symbol Database* refactoring (next section) will add smart on-demand loading, dependency tracking, and invalidation logic.
+
+==== Migration Strategy
+
+===== Phase 1: Create Clean Boundaries (No Behavior Change)
+
+. Rename `cxfile.h` → `cxfile_internal.h` (implementation detail)
+. Create `persistence_store.h` with clean interface
+. Create `persistence_store.c` that delegates to `cxfile_*` functions
+. Update all callers to use `persistence_store.h` instead of `cxfile.h`
+
+Result: Same behavior, cleaner names, clear intent.
+
+===== Phase 2: Extract Operation Logic
+
+Move operation-specific logic OUT of persistence layer:
+
+*Search Logic*:: `searchSymbolCheckReference()` → new `search.c` module
++
+[source,c]
+----
+// Before: In cxfile.c (WRONG LEVEL)
+void searchSymbolCheckReference(ReferenceableItem *item, Reference *ref) {
+    if (searchStringMatch(...)) {
+        reportMatch(item, ref);
+    }
+}
+
+// After: In search.c (RIGHT LEVEL)
+void searchForSymbol(char *pattern) {
+    persistenceScanAll(checkSearchMatch, pattern);
+}
+
+static void checkSearchMatch(ReferenceableItem *item, Reference *ref, void *ctx) {
+    if (searchStringMatch(item->linkName, (char *)ctx)) {
+        reportMatch(item, ref);
+    }
+}
+----
+
+*Unused Detection*:: Extract from `cxfile.c` to `refactorings.c` or new `analysis.c`
+
+*Menu Creation*:: Keep in `cxref.c` but use clean `refDbGetReferences()` instead of direct disk scanning
+
+===== Phase 3: Hide Implementation Details
+
+Make these functions `static` (internal to cxfile.c):
+
+* `cxFileHashNumberForSymbol()` - partitioning is implementation detail
+* `searchSymbolCheckReference()` - moved to search module
+* All internal scanning logic
+
+===== Phase 4: Consolidate Scanning Functions
+
+Replace four specific scanners with generic visitor pattern:
+
+[cols="1,1"]
+|===
+|Old (Use-Case Specific) |New (Generic)
+
+|`scanReferencesToCreateMenu(name)`
+|`refDbGetReferences(name)`
+
+|`scanForMacroUsage(name)`
+|`refDbGetReferences(name)`
+
+|`scanForGlobalUnused(location)`
+|`persistenceScanAll(checkUnused, ctx)`
+
+|`scanForSearch(location)`
+|`persistenceScanAll(checkMatch, pattern)`
+|===
+
+==== Benefits
+
+*Testability*:: Can mock `persistence_store.h` for testing navigation without .cx files
++
+*Future Storage Backends*:: Could implement with SQLite, in-memory testing mock, or different binary format
++
+*Clear Boundaries*:: Storage vs search vs navigation clearly separated
++
+*Simpler Interface*:: 4 functions instead of 9, clearer responsibilities
++
+*Less Coupling*:: Parsing code doesn't call storage directly, goes through reference database
++
+*LSP Readiness*:: Reference database layer is where LSP `textDocument/didChange` integration will live
+
+==== Relationship to Unified Symbol Database
+
+This refactoring is the **foundation** for the larger *Unified Symbol Database Architecture* (next section):
+
+* **Clean persistence layer** enables swapping storage backends without affecting clients
+* **Reference database layer** is where smart on-demand loading logic will live
+* **Separation of concerns** makes the unified architecture clearer
+
+Migration path:
+
+. First: Clean up persistence (this refactoring)
+. Then: Add smart on-demand logic to reference database (next refactoring)
+. Finally: Both Emacs and LSP use same unified code path
+
+==== Implementation Checklist
+
+- [ ] Create `persistence_store.h` with proposed interface
+- [ ] Create `persistence_store.c` delegating to cxfile
+- [ ] Rename `cxfile.h` → `cxfile_internal.h`
+- [ ] Create `reference_database.h` (thin wrapper initially)
+- [ ] Create `reference_database.c` delegating to persistence
+- [ ] Update all callers to use new interfaces
+- [ ] Move search logic from cxfile to search module
+- [ ] Move unused detection logic to appropriate module
+- [ ] Make `cxFileHashNumberForSymbol` static
+- [ ] Make `searchSymbolCheckReference` static or remove
+- [ ] Add unit tests for both interfaces
+- [ ] Update documentation
+
+==== References
+
+* Current implementation: `src/cxfile.c`, `src/cxfile.h`
+* In-memory table: `src/reftab.c` (referenceableItemTable)
+* Navigation architecture: Chapter 17 (Insights) - Navigation Architecture section
+
 [[unified-symbol-database]]
 === Unified Symbol Database Architecture
 
@@ -359,29 +681,45 @@ typedef struct {
 
 ===== Implementation Strategy: Smart On-Demand
 
+IMPORTANT: This refactoring builds on the *Clean Persistence Store* foundation (previous section). The smart logic lives in the **in-memory reference database layer**, while `.cx` files remain a **durable cache** for persistence.
+
 The implementation leverages **existing sophisticated logic**:
 
 [source,c]
 ----
 Symbol* lookupSymbol(const char* name, Position pos) {
-    // 1. Check if cached information is up-to-date
-    if (symbolInfoIsCurrent(name, pos)) {
-        return getCachedSymbolInfo(name, pos);  // Use .cx files when valid
+    // 1. Check if in-memory table has current information
+    if (refTableHasCurrent(name, pos)) {
+        return lookupInMemoryTable(name, pos);  // Answer from RAM
     }
-    
-    // 2. Use existing dependency tracking to scan minimal set
-    FileList* filesToScan = calculateDependencyClosure(pos.file);
-    for (FileItem* file : filesToScan) {
-        if (!checkFileModifiedTime(file->fileNumber)) {
-            scanFileAndUpdateCache(file);  // Incremental scan
+
+    // 2. Load from persistence if not in memory
+    if (!refTableHasSymbol(name)) {
+        persistenceLoadSymbol(name);  // Load .cx into referenceableItemTable
+    }
+
+    // 3. Check if loaded data is stale (file modified since load)
+    if (refTableDataIsStale(name, pos)) {
+        // Use existing dependency tracking to scan minimal set
+        FileList* filesToScan = calculateDependencyClosure(pos.file);
+        for (FileItem* file : filesToScan) {
+            if (checkFileModifiedTime(file->fileNumber)) {
+                parseFileAndUpdateTable(file);  // Reparse into memory
+            }
         }
     }
-    
-    // 3. Update persistent cache for next time
-    updateSymbolCache(name, pos);
-    
-    return getSymbolInfo(name, pos);
+
+    // 4. Answer from in-memory table (now guaranteed current)
+    return lookupInMemoryTable(name, pos);
 }
+----
+
+**Architectural Layers:**
+
+----
+Query → Reference Database (in-memory, smart) → Persistence Store (disk, dumb)
+        ↑                                         ↑
+        Always answers from RAM                   Only for load/save
 ----
 
 **Key Benefits:**
@@ -389,7 +727,8 @@ Symbol* lookupSymbol(const char* name, Position pos) {
 * **No artificial modes** - same code path for all clients
 * **No cold start** - first lookup triggers minimal necessary scanning
 * **Incremental by design** - only scans files that need updating
-* **Persistent optimization** - results cached in `.cx` files for next session
+* **In-memory speed** - all queries answered from RAM (referenceableItemTable)
+* **Durable cache** - `.cx` files persist state across sessions
 * **Existing logic reuse** - leverages proven dependency tracking system
 
 ===== Legacy Architecture Recognition
@@ -408,7 +747,7 @@ c-xref -server               # Start server, scan on-demand as needed
 c-xref -lsp                  # Same logic, different protocol
 ----
 
-The `.cx` files are essentially a **persistent cache** of analysis results, not a fundamental requirement.
+IMPORTANT: The `.cx` files are a **durable cache** that persists the in-memory `referenceableItemTable` between sessions. They are an optimization, not the database itself. The actual database is always in RAM.
 
 ==== Implementation Plan
 

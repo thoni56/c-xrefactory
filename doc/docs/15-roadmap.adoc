@@ -209,19 +209,53 @@ After architecture is clean, consider lightweight header caching:
 
 *Estimated Effort*: 6-8 weeks (only after unified database complete)
 
-==== 4. Unified Symbol Database Architecture
+==== 4. Clean Persistence Store Abstraction
 
-*Reference*: link:../adr/0014-adopt-on-demand-parsing-architecture.md[ADR-0014: Adopt On-Demand Parsing Architecture]
+*Reference*: <<16-proposed-refactorings.adoc#clean-persistence-store,Proposed Refactorings - Clean Persistence Store Abstraction>>
+
+*Priority*: HIGH (Foundation for Unified Symbol Database)
+
+*Rationale*: The `cxfile` module currently mixes persistence (reading/writing .cx files), search operations, and menu creation logic. This tight coupling prevents architectural improvements like LSP integration and alternative storage backends.
+
+*Key Problem*: Code conflates two distinct concepts:
+* **Reference Database** (in-memory `referenceableItemTable` - the source of truth)
+* **Persistence Store** (.cx files on disk - durable cache)
+
+Currently `.cx` files are sometimes treated as authoritative, when they should be just a cache.
+
+*Impact*:
+
+* Creates two clean layers: smart in-memory database vs. dumb durable storage
+* Enables testing without .cx files (mock persistence layer)
+* Foundation for LSP `textDocument/didChange` integration
+* Allows future storage backend alternatives (SQLite, etc.)
+* Removes ~200 lines of mixed-responsibility code
+
+*Estimated Effort*: 4-6 weeks
+
+* Week 1-2: Create `persistence_store.h` and `reference_database.h` facades
+* Week 3: Extract search/unused-detection logic to proper modules
+* Week 4: Hide implementation details (`cxFileHashNumberForSymbol` becomes static)
+* Week 5-6: Testing, documentation, and cleanup
+
+==== 5. Unified Symbol Database Architecture
+
+*Reference*:
+* <<16-proposed-refactorings.adoc#unified-symbol-database,Proposed Refactorings - Unified Symbol Database Architecture>>
+* link:../adr/0014-adopt-on-demand-parsing-architecture.md[ADR-0014: Adopt On-Demand Parsing Architecture]
 
 *Priority*: HIGH (Enables true on-demand LSP)
 
-*Rationale*: Transition from batch-mode (mandatory `-create`) to on-demand parsing where operations work immediately. The `.cx` files become a transparent cache rather than a prerequisite.
+*Dependencies*: Clean Persistence Store Abstraction (item 4 above)
+
+*Rationale*: Transition from batch-mode (mandatory `-create`) to on-demand parsing where operations work immediately. Builds on the clean persistence layer to add smart invalidation, dependency tracking, and unified client interface.
 
 *Key Benefits*:
 * Zero cold start - no upfront `-create` required
 * Always up-to-date - automatic modification tracking
 * LSP-native - perfect fit for language server architecture
 * Single code path for Emacs and LSP clients
+* Smart logic lives in in-memory layer, persistence is just durable cache
 
 *Implementation Plan* (see link:../adr/0014-adopt-on-demand-parsing-architecture.md[ADR-0014] for architecture details):
 * Phase 1: Incremental `-create` (1-2 weeks)
