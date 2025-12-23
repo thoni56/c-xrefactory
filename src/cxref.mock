@@ -50,7 +50,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *pos, Usage usage_arg, int
     return (Reference *) mock(symbol, pos, usage, includedFileNumber);
 }
 
-Reference *addCxReference(Symbol *symbol, Position pos, Usage usage, int includedFileNumber) {
+Reference *handleFoundSymbolReference(Symbol *symbol, Position pos, Usage usage, int includedFileNumber) {
     char *symbol_name = symbol->name; /* "meta" parameter to be able to access field */
     Position *position = &pos;
     return (Reference *) mock(symbol, symbol_name, position, usage, includedFileNumber);

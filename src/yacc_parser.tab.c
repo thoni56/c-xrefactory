@@ -2485,7 +2485,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 
 static void addYaccSymbolReference(Id *id, int usage) {
     Symbol symbol = makeSymbol(id->name, TypeYaccSymbol, id->position);
-    addCxReference(&symbol, id->position, usage, NO_FILE_NUMBER);
+    handleFoundSymbolReference(&symbol, id->position, usage, NO_FILE_NUMBER);
 }
 
 static void addRuleLocalVariable(Id *name, int order) {
@@ -2875,7 +2875,7 @@ case 142:
             assert(symbol->storage != StorageTypedef);
             yyval.ast_expressionType.data.typeModifier = symbol->typeModifier;
             assert(options.mode);
-            yyval.ast_expressionType.data.reference = addCxReference(symbol, yyvsp[0].ast_id.data->position, UsageUsed, NO_FILE_NUMBER);
+            yyval.ast_expressionType.data.reference = handleFoundSymbolReference(symbol, yyvsp[0].ast_id.data->position, UsageUsed, NO_FILE_NUMBER);
         } else {
             /* implicit function declaration */
             TypeModifier *modifier;
@@ -2889,7 +2889,7 @@ case 142:
             newSymbol->storage = StorageExtern;
 
             definitionSymbol = addNewSymbolDefinition(symbolTable, inputFileName, newSymbol, StorageExtern, UsageUsed);
-            yyval.ast_expressionType.data.reference = addCxReference(definitionSymbol, yyvsp[0].ast_id.data->position, UsageUsed, NO_FILE_NUMBER);
+            yyval.ast_expressionType.data.reference = handleFoundSymbolReference(definitionSymbol, yyvsp[0].ast_id.data->position, UsageUsed, NO_FILE_NUMBER);
         }
     }
 break;
@@ -3432,7 +3432,7 @@ case 254:
             usage = USAGE_TOP_LEVEL_USED;
         else
             usage = UsageUsed;
-        addCxReference(yyvsp[0].ast_id.data->symbol, yyvsp[0].ast_id.data->position,usage,NO_FILE_NUMBER);
+        handleFoundSymbolReference(yyvsp[0].ast_id.data->symbol, yyvsp[0].ast_id.data->position,usage,NO_FILE_NUMBER);
     }
 break;
 case 255:

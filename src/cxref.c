@@ -233,7 +233,7 @@ static void getBareName(char *name, char **start, int *len) {
 }
 
 /* ********************************************************************* */
-Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int includedFileNumber) {
+Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage usage, int includedFileNumber) {
     Visibility        visibility;
     Scope             scope;
     Storage           storage;
@@ -383,7 +383,7 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
 void addTrivialCxReference(char *name, Type type, Storage storage, Position position, Usage usage) {
     Symbol symbol = makeSymbol(name, type, position);
     symbol.storage = storage;
-    addCxReference(&symbol, position, usage, NO_FILE_NUMBER);
+    handleFoundSymbolReference(&symbol, position, usage, NO_FILE_NUMBER);
 }
 
 

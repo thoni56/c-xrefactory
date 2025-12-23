@@ -405,7 +405,7 @@ primary_expr
             assert(symbol->storage != StorageTypedef);
             $$.data.typeModifier = symbol->typeModifier;
             assert(options.mode);
-            $$.data.reference = addCxReference(symbol, $1.data->position, UsageUsed, NO_FILE_NUMBER);
+            $$.data.reference = handleFoundSymbolReference(symbol, $1.data->position, UsageUsed, NO_FILE_NUMBER);
         } else {
             /* implicit function declaration */
             TypeModifier *modifier;
@@ -419,7 +419,7 @@ primary_expr
             newSymbol->storage = StorageExtern;
 
             definitionSymbol = addNewSymbolDefinition(symbolTable, inputFileName, newSymbol, StorageExtern, UsageUsed);
-            $$.data.reference = addCxReference(definitionSymbol, $1.data->position, UsageUsed, NO_FILE_NUMBER);
+            $$.data.reference = handleFoundSymbolReference(definitionSymbol, $1.data->position, UsageUsed, NO_FILE_NUMBER);
         }
     }
     | CHAR_LITERAL          { $$.data.typeModifier = newSimpleTypeModifier(TypeInt); $$.data.reference = NULL;}
@@ -859,7 +859,7 @@ user_defined_type
             usage = USAGE_TOP_LEVEL_USED;
         else
             usage = UsageUsed;
-        addCxReference($1.data->symbol, $1.data->position,usage,NO_FILE_NUMBER);
+        handleFoundSymbolReference($1.data->symbol, $1.data->position,usage,NO_FILE_NUMBER);
     }
     ;
 
@@ -1958,7 +1958,7 @@ identifier
 
 static void addYaccSymbolReference(Id *id, int usage) {
     Symbol symbol = makeSymbol(id->name, TypeYaccSymbol, id->position);
-    addCxReference(&symbol, id->position, usage, NO_FILE_NUMBER);
+    handleFoundSymbolReference(&symbol, id->position, usage, NO_FILE_NUMBER);
 }
 
 static void addRuleLocalVariable(Id *name, int order) {

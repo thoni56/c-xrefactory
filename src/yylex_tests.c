@@ -90,7 +90,7 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
     /* This is the confirmation that there is a symbol p with a
      * field with name equal to DEFINE
      */
-    expect(addCxReference, when(symbol_name, is_equal_to_string(DEFINE)));
+    expect(handleFoundSymbolReference, when(symbol_name, is_equal_to_string(DEFINE)));
 
     /* If the define does not have a body, add the value of "1" */
     initInput(some_file, NULL, "__x86_64__ 1", NULL);
@@ -141,7 +141,7 @@ Ensure(Yylex, can_process_include_directive) {
     always_expect(updateFileModificationTracking);
 
     /* Finally ensure that the include file is added as a reference */
-    expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
+    expect(handleFoundSymbolReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
            times(2)); /* Don't know why two times... */
 
     processIncludeDirective(position, false);
@@ -204,7 +204,7 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
     always_expect(updateFileModificationTracking);
 
     /* Finally ensure that the include file is added as a reference */
-    expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
+    expect(handleFoundSymbolReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
            times(2)); /* Don't know why two times... */
 
     processIncludeDirective(position, false);
@@ -263,7 +263,7 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
     always_expect(updateFileModificationTracking);
 
     /* Finally ensure that the include file is added as a reference */
-    expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
+    expect(handleFoundSymbolReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
            times(2)); /* Don't know why two times... */
 
     processIncludeDirective(position, true);

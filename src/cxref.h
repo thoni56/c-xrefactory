@@ -34,7 +34,7 @@ extern void processSelectedReferences(SessionStackEntry *rstack,
 extern void popFromSession(void);
 extern void deleteEntryFromSessionStack(SessionStackEntry *refs);
 extern int getFileNumberFromName(char *name);
-extern Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int includedFileNumber);
+extern Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage usage, int includedFileNumber);
 extern void addTrivialCxReference (char *name, Type type, Storage storage,
                                    Position position, Usage usage);
 extern void olSetCallerPosition(Position position);

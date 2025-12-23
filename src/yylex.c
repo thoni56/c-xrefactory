@@ -458,13 +458,13 @@ void addFileAsIncludeReference(int fileNumber) {
     Position position = makePosition(fileNumber, 1, 0);
     Symbol symbol = makeIncludeSymbolItem(position);
     log_debug("adding reference on file %d==%s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
-    addCxReference(&symbol, position, UsageDefined, fileNumber);
+    handleFoundSymbolReference(&symbol, position, UsageDefined, fileNumber);
 }
 
 static void addIncludeReference(int fileNumber, Position position) {
     log_debug("adding reference on file %d==%s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
     Symbol symbol = makeIncludeSymbolItem(position);
-    addCxReference(&symbol, position, UsageUsed, fileNumber);
+    handleFoundSymbolReference(&symbol, position, UsageUsed, fileNumber);
 }
 
 static void addIncludeReferences(int fileNumber, Position position) {
@@ -1062,7 +1062,7 @@ endOfBody:
 
     addMacroToTabs(symbol, macroName);
     assert(options.mode);
-    addCxReference(symbol, macroPosition, UsageDefined, NO_FILE_NUMBER);
+    handleFoundSymbolReference(symbol, macroPosition, UsageDefined, NO_FILE_NUMBER);
     return;
 
 endOfMacroArgument:
@@ -1116,7 +1116,7 @@ static void processUndefineDirective(void) {
         log_debug("Undefine macro %s", ch);
         Symbol *member;
         if ((member = findMacroSymbol(ch)) != NULL) {
-            addCxReference(member, position, UsageUndefinedMacro, NO_FILE_NUMBER);
+            handleFoundSymbolReference(member, position, UsageUndefinedMacro, NO_FILE_NUMBER);
 
             Symbol *m = ppmAlloc(sizeof(Symbol));
             *m = makeMacroSymbol(member->linkName, position);
@@ -1245,7 +1245,7 @@ static void processIfdefDirective(bool isIfdef) {
         macroDefined = false;	// undefined macro
 
     if (macroDefined) {
-        addCxReference(macroSymbol, position, UsageUsed, NO_FILE_NUMBER);
+        handleFoundSymbolReference(macroSymbol, position, UsageUsed, NO_FILE_NUMBER);
         if (isIfdef) {
             log_debug("#ifdef (true)");
             deleteSrc = false;
@@ -1466,7 +1466,7 @@ static LexemCode handleDefinedOp(void) {
         macroSymbolFound = false;   // undefined macro
 
     if (macroSymbolFound)
-        addCxReference(macroSymbol, position, UsageUsed, NO_FILE_NUMBER);
+        handleFoundSymbolReference(macroSymbol, position, UsageUsed, NO_FILE_NUMBER);
 
     /* following call sets uniyylval */
     LexemCode res = cppexpTranslateToken(CONSTANT, macroSymbolFound);
@@ -2448,7 +2448,7 @@ static void addMacroBaseUsageRef(Symbol *macroSymbol) {
         }
     }
     if (!isMember || r==NULL) {
-        addCxReference(macroSymbol, basePos, UsageMacroBaseFileUsage, NO_FILE_NUMBER);
+        handleFoundSymbolReference(macroSymbol, basePos, UsageMacroBaseFileUsage, NO_FILE_NUMBER);
     }
 }
 
@@ -2487,7 +2487,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
         actualArgumentsInput = NULL;
     }
     assert(options.mode);
-    addCxReference(macroSymbol, macroPosition, UsageUsed, NO_FILE_NUMBER);
+    handleFoundSymbolReference(macroSymbol, macroPosition, UsageUsed, NO_FILE_NUMBER);
     if (options.mode == XrefMode)
         addMacroBaseUsageRef(macroSymbol);
     log_debug("create macro body '%s' as new input", macroBody->name);
