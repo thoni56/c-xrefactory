@@ -50,7 +50,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
 
         ReferenceableItem item = makeReferenceableItem(linkName, referenceableItem->type,
                                                        referenceableItem->storage, referenceableItem->scope,
-                                                       referenceableItem->visibility, referenceableItem->includeFile);
+                                                       referenceableItem->visibility, referenceableItem->includeFileNumber);
 
         completion = newCompletion(name, fullName, 1, referenceableItem->visibility, *reference, item);
     } else if (symbol==NULL) {

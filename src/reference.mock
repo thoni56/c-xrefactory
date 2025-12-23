@@ -22,7 +22,7 @@ Reference makeReference(Position position, Usage usage, Reference *next) {
 void fillReferenceItem(ReferenceableItem *referencesItem, char *name, int includedFileNumber, Type symType,
                        Storage storage, Scope scope, Visibility visibility) {
     referencesItem->linkName = name;
-    referencesItem->includeFile = includedFileNumber;
+    referencesItem->includeFileNumber = includedFileNumber;
     referencesItem->references = NULL;
     referencesItem->next = NULL;
     referencesItem->type = symType;

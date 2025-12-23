@@ -54,7 +54,7 @@ void typeDump(TypeModifier *t) {
 void dumpReferenceableItem(ReferenceableItem *r) {
     log_debug("%s\t%s %s %d %d %d %d",
               r->linkName,
-              getFileItemWithFileNumber(r->includeFile)->name,
+              getFileItemWithFileNumber(r->includeFileNumber)->name,
               r->type, r->storage, r->scope,
               r->visibility);
 }
@@ -251,7 +251,7 @@ char *simpleFileNameFromFileNum(int fnum) {
 void prettyPrintLinkNameForSymbolInMenu(char *buffer, BrowserMenu *menu) {
     if (menu->referenceable.type == TypeCppInclude) {
         sprintf(buffer, "%s",
-                simpleFileName(getRealFileName_static(getFileItemWithFileNumber(menu->referenceable.includeFile)->name)));
+                simpleFileName(getRealFileName_static(getFileItemWithFileNumber(menu->referenceable.includeFileNumber)->name)));
     } else {
         prettyPrintLinkName(buffer, menu->referenceable.linkName, MAX_CX_SYMBOL_SIZE);
     }

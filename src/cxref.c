@@ -1047,7 +1047,7 @@ static BrowserMenu *createSpecialMenuItem(char *fieldName, int includedFileNumbe
     BrowserMenu *menu;
     ReferenceableItem r = makeReferenceableItem(fieldName, TypeDefault, storage, GlobalScope, VisibilityGlobal,
                                                 includedFileNumber);
-    menu = createNewMenuItem(&r, r.includeFile, noPosition, UsageNone,
+    menu = createNewMenuItem(&r, r.includeFileNumber, noPosition, UsageNone,
                              true, true, FILE_MATCH_SAME, (SymbolRelation){.sameFile = true},
                              UsageUsed);
     return menu;
@@ -1062,7 +1062,7 @@ bool isSameReferenceableItem(ReferenceableItem *referenceable1, ReferenceableIte
         return false;
     if (referenceable1->storage != referenceable2->storage)
         return false;
-    if (referenceable1->includeFile != referenceable2->includeFile)
+    if (referenceable1->includeFileNumber != referenceable2->includeFileNumber)
         return false;
 
     if (strcmp(referenceable1->linkName, referenceable2->linkName) != 0)
@@ -1775,7 +1775,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
 static void dumpSelectionMenu(BrowserMenu *menu) {
     for (BrowserMenu *s=menu; s!=NULL; s=s->next) {
         log_debug(">> %d/%d %s %s %d", s->defaultRefn, s->refn, s->referenceable.linkName,
-            simpleFileName(getFileItemWithFileNumber(s->referenceable.includeFile)->name),
+            simpleFileName(getFileItemWithFileNumber(s->referenceable.includeFileNumber)->name),
             s->outOnLine);
     }
 }
@@ -2215,7 +2215,7 @@ static unsigned filterLevelFromMenu(BrowserMenu *menu, ReferenceableItem *refere
         log_debug("filterLevelFromMenu: +sameName (NAME_MATCH_EXACT)");
         level |= NAME_MATCH_EXACT;
     }
-    if (referenceableItem->includeFile == menu->referenceable.includeFile) {
+    if (referenceableItem->includeFileNumber == menu->referenceable.includeFileNumber) {
         log_debug("filterLevelFromMenu: +sameFile (FILE_MATCH_SAME)");
         level |= FILE_MATCH_SAME;
     }
@@ -2235,7 +2235,7 @@ static SymbolRelation computeSymbolRelation(BrowserMenu *menu, ReferenceableItem
             return relation;
     }
 
-    if (referenceableItem->includeFile == menu->referenceable.includeFile) {
+    if (referenceableItem->includeFileNumber == menu->referenceable.includeFileNumber) {
         relation.sameFile = true;
     }
 
@@ -2287,7 +2287,7 @@ BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
                 log_debug(": propagating defpos (line %d) to menusym", defaultPosition.line);
             }
 
-            log_debug("filterLevel for %s <-> %s %o %o", getFileItemWithFileNumber(menu->referenceable.includeFile)->name,
+            log_debug("filterLevel for %s <-> %s %o %o", getFileItemWithFileNumber(menu->referenceable.includeFileNumber)->name,
                       reference->linkName, l, level);
 
             SymbolRelation r = computeSymbolRelation(menu, reference);

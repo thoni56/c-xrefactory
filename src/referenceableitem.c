@@ -18,7 +18,7 @@ ReferenceableItem makeReferenceableItem(char *name, Type type, Storage storage, 
     item.visibility = visibility;
     if (includeFile != NO_FILE_NUMBER) /* Only '#include' can have a file number */
         assert(type == TypeCppInclude);
-    item.includeFile = includeFile;
+    item.includeFileNumber = includeFile;
 
     item.references = NULL;
     item.next = NULL;

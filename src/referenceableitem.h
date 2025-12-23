@@ -12,9 +12,9 @@
 typedef struct referenceableItem {
     char                     *linkName;
     Type                      type : TYPE_BITS;
-    int                       includeFile; /* FileNumber for the included file if
-                                                   * this is an '#include' Reference item:
-                                                   * type = TypeCppInclude */
+    int                       includeFileNumber; /* FileNumber for the included file if
+                                                  * this is an '#include' Reference item:
+                                                  * type = TypeCppInclude */
     Storage                   storage : STORAGES_BITS;
     Scope                     scope : SCOPES_BITS;
     Visibility                visibility : 2;     /* local/global */
