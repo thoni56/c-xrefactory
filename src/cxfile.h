@@ -10,7 +10,7 @@ extern void scanForGlobalUnused(char *cxrefFileName);
 extern void scanForSearch(char *cxrefFileName);
 
 extern int cxFileHashNumberForSymbol(char *symbol);
-extern void searchSymbolCheckReference(ReferenceableItem *symbolReference, Reference *reference);
+extern void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Reference *reference);
 
 // Abstract API
 extern bool loadFileNumbersFromStore(void);

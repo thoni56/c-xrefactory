@@ -28,8 +28,8 @@ bool searchStringMatch(char *cxtag, int slen) {
   return (int) mock(cxtag, slen);
 }
 
-void searchSymbolCheckReference(ReferenceableItem *symbolReferences, Reference *reference) {
-  mock(symbolReferences, reference);
+void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Reference *reference) {
+  mock(referenceableItem, reference);
 }
 
 int cxFileHashNumberForSymbol(char *sym) {
