@@ -910,8 +910,8 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
     Completion *rr;
 
     assert(refn > 0);
-    assert(sessionData.retrievingStack.top);
-    rr = olCompletionNthLineRef(sessionData.retrievingStack.top->completions, refn);
+    assert(sessionData.searchingStack.top);
+    rr = olCompletionNthLineRef(sessionData.searchingStack.top->completions, refn);
     if (rr != NULL) {
         if (positionsAreNotEqual(rr->reference.position, noPosition)) {
             gotoPosition(rr->reference.position);
@@ -1496,15 +1496,15 @@ static void olcxReferenceSelectTagSearchItem(int refn) {
     SessionStackEntry    *refs;
     char                ttt[MAX_FUNCTION_NAME_LENGTH];
     assert(refn > 0);
-    assert(sessionData.retrievingStack.top);
-    refs = sessionData.retrievingStack.top;
+    assert(sessionData.searchingStack.top);
+    refs = sessionData.searchingStack.top;
     rr = olCompletionNthLineRef(refs->completions, refn);
     if (rr == NULL) {
         errorMessage(ERR_ST, "selection out of range.");
         return;
     }
-    assert(sessionData.retrievingStack.root!=NULL);
-    ppcGotoPosition(sessionData.retrievingStack.root->callerPosition);
+    assert(sessionData.searchingStack.root!=NULL);
+    ppcGotoPosition(sessionData.searchingStack.root->callerPosition);
     sprintf(ttt, " %s", rr->name);
     ppcGenRecord(PPC_SINGLE_COMPLETION, ttt);
 }
@@ -1906,8 +1906,8 @@ static void printTagSearchResults(void) {
     tagSearchCompactShortResults();
 
     // the first loop is counting the length of fields
-    assert(sessionData.retrievingStack.top);
-    for (Completion *cc=sessionData.retrievingStack.top->completions; cc!=NULL; cc=cc->next) {
+    assert(sessionData.searchingStack.top);
+    for (Completion *cc=sessionData.searchingStack.top->completions; cc!=NULL; cc=cc->next) {
         ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->reference),
                                    &len1, &len2);
     }
@@ -1925,8 +1925,8 @@ static void printTagSearchResults(void) {
     // the second is writing
     if (options.xref2)
         ppcBegin(PPC_SYMBOL_LIST);
-    assert(sessionData.retrievingStack.top);
-    for (Completion *cc=sessionData.retrievingStack.top->completions; cc!=NULL; cc=cc->next) {
+    assert(sessionData.searchingStack.top);
+    for (Completion *cc=sessionData.searchingStack.top->completions; cc!=NULL; cc=cc->next) {
         ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->reference),
                                    &len1, &len2);
         if (options.xref2) {
@@ -1960,26 +1960,26 @@ void answerEditAction(void) {
         Position givenPosition = getCallerPositionFromCommandLineOption();
         if (!options.xref2)
             fprintf(outputFile,";");
-        pushEmptySession(&sessionData.retrievingStack);
-        sessionData.retrievingStack.top->callerPosition = givenPosition;
+        pushEmptySession(&sessionData.searchingStack);
+        sessionData.searchingStack.top->callerPosition = givenPosition;
 
         scanForSearch(options.cxFileLocation);
         printTagSearchResults();
         break;
     }
     case OLO_TAG_SEARCH_BACK:
-        if (sessionData.retrievingStack.top!=NULL &&
-            sessionData.retrievingStack.top->previous!=NULL) {
-            sessionData.retrievingStack.top = sessionData.retrievingStack.top->previous;
-            ppcGotoPosition(sessionData.retrievingStack.top->callerPosition);
+        if (sessionData.searchingStack.top!=NULL &&
+            sessionData.searchingStack.top->previous!=NULL) {
+            sessionData.searchingStack.top = sessionData.searchingStack.top->previous;
+            ppcGotoPosition(sessionData.searchingStack.top->callerPosition);
             printTagSearchResults();
         }
         break;
     case OLO_TAG_SEARCH_FORWARD:
-        nextrr = getNextTopStackItem(&sessionData.retrievingStack);
+        nextrr = getNextTopStackItem(&sessionData.searchingStack);
         if (nextrr != NULL) {
-            sessionData.retrievingStack.top = nextrr;
-            ppcGotoPosition(sessionData.retrievingStack.top->callerPosition);
+            sessionData.searchingStack.top = nextrr;
+            ppcGotoPosition(sessionData.searchingStack.top->callerPosition);
             printTagSearchResults();
         }
         break;

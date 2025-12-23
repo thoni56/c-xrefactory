@@ -277,8 +277,8 @@ void searchSymbolCheckReference(ReferenceableItem  *referenceableItem, Reference
     slen = strlen(sname);
     if (searchStringMatch(sname, slen)) {
         static int count = 0;
-        sessionData.retrievingStack.top->completions = completionListPrepend(
-            sessionData.retrievingStack.top->completions, sname, NULL, NULL, referenceableItem,
+        sessionData.searchingStack.top->completions = completionListPrepend(
+            sessionData.searchingStack.top->completions, sname, NULL, NULL, referenceableItem,
             reference, referenceableItem->includeFileNumber);
         // compact completions from time to time
         count ++;

@@ -45,12 +45,12 @@ typedef struct SessionStack {
  */
 typedef SessionStack BrowsingStack;
 typedef SessionStack CompletionStack;
-typedef SessionStack RetrievingStack;
+typedef SessionStack SearchingStack;
 
 typedef struct SessionData {
     BrowsingStack	browsingStack;
     CompletionStack	completionStack;
-    RetrievingStack	retrievingStack;
+    SearchingStack	searchingStack;
 } SessionData;
 
 
