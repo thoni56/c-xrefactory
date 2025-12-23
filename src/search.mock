@@ -1,0 +1,7 @@
+#include "search.h"
+
+#include <cgreen/mocks.h>
+
+void tagSearchCompactShortResults(void) {
+    mock();
+}

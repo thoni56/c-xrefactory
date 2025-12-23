@@ -14,7 +14,7 @@
 
 
 // Will create malloc():ed copies of name and fullName so caller don't have to
-protected Match *newMatch(char *name, char *fullName, int lineCount, Visibility visibility,
+Match *newMatch(char *name, char *fullName, int lineCount, Visibility visibility,
                           Reference reference, ReferenceableItem referenceable) {
     Match *match = malloc(sizeof(Match));
 
@@ -101,34 +101,5 @@ void freeMatches(Match *matches) {
         tmp = matches->next;
         freeMatch(matches);
         matches = tmp;
-    }
-}
-
-static bool matchIsLessThan(Match *c1, Match *c2) {
-    return strcmp(c1->name, c2->name) < 0;
-}
-
-static void tagSearchShortRemoveMultipleLines(Match *list) {
-    for (Match *l=list; l!=NULL; l=l->next) {
-    again:
-        if (l->next!=NULL && strcmp(l->name, l->next->name)==0) {
-            // O.K. remove redundant one
-            Match *tmp = l->next;
-            l->next = l->next->next;
-            freeMatch(tmp);
-            goto again;          /* Again, but don't advance */
-        }
-    }
-}
-
-static void sortMatchList(Match **matches,
-                          bool (*compareFunction)(Match *c1, Match *c2)) {
-    LIST_MERGE_SORT(Match, *matches, compareFunction);
-}
-
-void tagSearchCompactShortResults(void) {
-    sortMatchList(&sessionData.searchingStack.top->matches, matchIsLessThan);
-    if (options.searchKind == SEARCH_DEFINITIONS_SHORT || options.searchKind == SEARCH_FULL_SHORT) {
-        tagSearchShortRemoveMultipleLines(sessionData.searchingStack.top->matches);
     }
 }

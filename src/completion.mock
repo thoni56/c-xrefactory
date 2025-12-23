@@ -1,17 +1,1 @@
 #include <cgreen/mocks.h>
-
-#include "match.h"
-
-
-void freeMatches(Match *completions) {
-    mock(completions);
-}
-
-Match *prependToMatches(Match *completions, char *name, char *fullName, Symbol *symbol,
-                                  ReferenceableItem *referenceItem, Reference *reference, int includedFileNumber) {
-    return (Match *)mock(name, fullName, symbol, referenceItem, reference, includedFileNumber, completions);
-}
-
-void tagSearchCompactShortResults(void) {
-    mock();
-}

@@ -1,6 +1,6 @@
-#include <cgreen/cgreen.h>
-
 #include "session.h"
+
+#include <cgreen/cgreen.h>
 
 #include "log.h"
 
@@ -8,6 +8,7 @@
 #include "commons.mock"
 #include "completion.mock"
 #include "globals.mock"
+#include "match.mock"
 #include "options.mock"
 #include "reference.mock"
 

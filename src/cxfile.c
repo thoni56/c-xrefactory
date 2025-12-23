@@ -19,6 +19,7 @@
 #include "options.h"
 #include "referenceableitem.h"
 #include "referenceableitemtable.h"
+#include "search.h"
 #include "session.h"
 #include "usage.h"
 

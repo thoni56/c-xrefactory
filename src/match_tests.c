@@ -22,8 +22,6 @@ AfterEach(Match) {}
 protected Match *newMatch(char *name, char *fullName, int lineCount, Visibility visibility, struct reference ref,
                           struct referenceableItem sym);
 
-protected void freeMatch(Match *match);
-
 Ensure(Match, can_allocate_and_free_a_match) {
     Reference ref = makeReference((Position){0,0,0}, UsageNone, NULL);
     ReferenceableItem item = makeReferenceableItem("", TypeInt, StorageDefault, AutoScope, VisibilityLocal, 0);

@@ -24,6 +24,7 @@
 #include "referenceableitem.h"
 #include "referenceableitemtable.h"
 #include "scope.h"
+#include "search.h"
 #include "server.h"
 #include "session.h"
 #include "session.h"
