@@ -295,10 +295,12 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
     ReferenceableItem referenceableItem = makeReferenceableItem(symbol->linkName, symbol->type, storage, scope,
                                                                 visibility, includedFileNumber);
 
-    if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH && options.searchKind==SEARCH_FULL) {
-        Reference reference = makeReference(position, UsageNone, NULL);
-        searchSymbolCheckReference(&referenceableItem, &reference);
-        return NULL;
+    if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH) {
+        if (options.searchKind==SEARCH_FULL) {
+            Reference reference = makeReference(position, UsageNone, NULL);
+            searchSymbolCheckReference(&referenceableItem, &reference);
+            return NULL;
+        }
     }
 
     int index;
