@@ -99,11 +99,7 @@ static Reference *getDefinitionReference(Reference *reference) {
 static void setAvailableRefactorings(Symbol *symbol) {
     switch (symbol->type) {
     case TypeStruct:
-        makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
-        break;
     case TypeMacroArg:
-        makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
-        break;
     case TypeLabel:
         makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
         break;
@@ -189,7 +185,7 @@ static void setAvailableRefactorings(Symbol *symbol) {
     }
 }
 
-static void olGetAvailableRefactorings(void) {
+static void printAvailableRefactorings(void) {
     int count;
 
     assert(options.xref2);
@@ -2113,7 +2109,7 @@ void answerEditAction(void) {
         }
         break;
     case OLO_GET_AVAILABLE_REFACTORINGS:
-        olGetAvailableRefactorings();
+        printAvailableRefactorings();
         deleteEntryFromSessionStack(sessionData.browsingStack.top);
         break;
     case OLO_PUSH_NAME:
