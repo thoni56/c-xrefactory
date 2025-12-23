@@ -55,10 +55,8 @@ void freePoppedSessionStackEntries(SessionStack *stack) {
     }
 }
 
-static SessionStackEntry *pushEntryWithNoReferences(SessionStack *stack) {
-    SessionStackEntry *entry;
-
-    entry  = malloc(sizeof(SessionStackEntry));
+static SessionStackEntry *newEmptySessionStackEntry(void) {
+    SessionStackEntry *entry  = malloc(sizeof(SessionStackEntry));
     *entry = (SessionStackEntry){
         .references      = NULL,
         .current         = NULL,
@@ -69,7 +67,13 @@ static SessionStackEntry *pushEntryWithNoReferences(SessionStack *stack) {
         .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL,
         .refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
         .needsRefresh    = false,
-        .previous        = stack->top};
+        .previous        = NULL};
+    return entry;
+}
+
+static SessionStackEntry *pushEntryWithNoReferences(SessionStack *stack) {
+    SessionStackEntry *entry = newEmptySessionStackEntry();
+    entry->previous = stack->top;
     return entry;
 }
 

@@ -60,7 +60,7 @@ extern char *getFileSuffix(char *fn);
 extern int pathncmp(char *ss1, char *ss2, int n, bool caseSensitive);
 extern int compareFileNames(char *ss1, char *ss2);
 extern int filenameCompare(char *ss1, char *ss2, int n);
-extern void prettyPrintLinkName(char *string, char *linkName, int maxlen);
+extern void prettyPrintLinkName(char *buffer, char *linkName, int maxlen);
 extern char *simpleFileNameFromFileNum(int fnum);
 extern void prettyPrintLinkNameForSymbolInMenu(char *ttt, BrowserMenu *ss);
 

@@ -209,16 +209,14 @@ static bool searchSingleStringEqual(char *s, char *c) {
 }
 
 static bool searchSingleStringMatch(char *cxtag, char *searchedStr, int len) {
-    char *cc;
-    int i, pilotc;
-
     assert(searchedStr);
-    pilotc = tolower(*searchedStr);
-    if (pilotc == '^') {
+
+    if (searchedStr[0] == '^') {
         // check for exact prefix
         return searchSingleStringEqual(searchedStr+1, cxtag);
     } else {
-        cc = cxtag;
+        char *cc = cxtag;
+        int i;
         for (cc=cxtag, i=0; *cc && i<len; cc++,i++) {
             if (searchSingleStringEqual(searchedStr, cc))
                 return true;

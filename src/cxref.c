@@ -244,7 +244,6 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
     Usage             defaultUsage;
     Reference       **place;
     Position         defaultPosition;
-    BrowserMenu      *menu;
 
     // do not record references during prescanning
     // this is because of cxMem overflow during prescanning (for ex. with -html)
@@ -352,9 +351,10 @@ Reference *addCxReference(Symbol *symbol, Position position, Usage usage, int in
             if (defaultPosition.file!=NO_FILE_NUMBER)
                 log_debug("getting definition position of %s at line %d", symbol->name, defaultPosition.line);
             if (! operationRequiresOnlyParsingNoPushing(options.serverOperation)) {
-                menu = addReferenceableToBrowserMenu(&sessionData.browsingStack.top->hkSelectedSym, foundMember,
-                                              true, true, 0, (SymbolRelation){.sameFile = false}, usage,
-                                              defaultPosition, defaultUsage);
+                BrowserMenu *menu = addReferenceableToBrowserMenu(&sessionData.browsingStack.top->hkSelectedSym,
+                                                                  foundMember, true, true, 0,
+                                                                  (SymbolRelation){.sameFile = false}, usage,
+                                                                  defaultPosition, defaultUsage);
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
                 if (isDefinitionUsage(usage)) {

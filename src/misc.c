@@ -225,7 +225,7 @@ void prettyPrintMacroDefinition(char *buffer, int *bufferSize, char *macroName, 
 
 /* ******************************************************************* */
 
-void prettyPrintLinkName(char *string, char *linkName, int maxlen) {
+void prettyPrintLinkName(char *buffer, char *linkName, int maxlen) {
     /* Skip any file reference in the linkName */
     char *chP = strchr(linkName, LINK_NAME_SEPARATOR);
     if (chP==NULL)
@@ -234,7 +234,7 @@ void prettyPrintLinkName(char *string, char *linkName, int maxlen) {
         chP++;
 
     /* Copy the name */
-    char *targetP = string;
+    char *targetP = buffer;
     for (; *chP && *chP!='('; chP++) {
         *targetP++ = *chP;
         maxlen--;

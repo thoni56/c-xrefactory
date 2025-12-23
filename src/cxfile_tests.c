@@ -21,9 +21,14 @@
 #include "misc.mock"
 #include "options.mock"
 #include "reference.mock"
+#include "referenceableitem.h"
 #include "referenceableitemtable.mock"
+#include "scope.h"
+#include "session.h"
 #include "session.mock"
 #include "startup.mock"
+#include "storage.h"
+#include "visibility.h"
 
 protected void normalScanCxFile(char *name);
 
@@ -104,4 +109,36 @@ Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
     expect(closeFile, when(file, is_equal_to(xfilesFilePointer)));
 
     normalScanCxFile("/XFiles");
+}
+
+SessionStackEntry *newEmptySessionStackEntry(void) {
+    SessionStackEntry *entry  = malloc(sizeof(SessionStackEntry));
+    *entry = (SessionStackEntry){
+        .references      = NULL,
+        .current         = NULL,
+        .operation       = options.serverOperation,
+        .callerPosition  = noPosition,
+        .completions     = NULL,
+        .hkSelectedSym   = NULL,
+        .menuFilterLevel = 0,
+        .refsFilterLevel = 0,
+        .needsRefresh    = false,
+        .previous        = NULL};
+    return entry;
+}
+
+Ensure(CxFile, can_check_references_for_referenceable_in_search) {
+    ReferenceableItem item = makeReferenceableItem("item", TypeInt, StorageDefault, FileScope, LocalVisibility, NO_FILE_NUMBER);
+    Reference reference;
+    SessionStackEntry *stackEntry = newEmptySessionStackEntry();
+
+    options.olcxSearchString = "Sym";
+    sessionData.retrievingStack.top = stackEntry;
+
+    expect(prettyPrintLinkName, will_set_contents_of_output_parameter(buffer, "SymbolName", 11));
+    expect(containsWildcard, will_return(false));
+
+    expect(completionListPrepend, when(name, is_equal_to_string("SymbolName")));
+
+    searchSymbolCheckReference(&item, &reference);
 }

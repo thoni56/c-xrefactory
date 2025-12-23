@@ -87,8 +87,8 @@ int filenameCompare(char *ss1, char *ss2, int n) {
   return (int) mock(ss1, ss2, n);
 }
 
-void prettyPrintLinkName(char *string, char *linkName, int maxlen) {
-  mock(string, linkName, maxlen);
+void prettyPrintLinkName(char *buffer, char *linkName, int maxlen) {
+  mock(buffer, linkName, maxlen);
 }
 
 char *simpleFileNameFromFileNum(int fnum) {
