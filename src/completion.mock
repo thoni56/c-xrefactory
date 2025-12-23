@@ -3,13 +3,13 @@
 #include "completion.h"
 
 
-void freeCompletions(Completion *completions) {
+void freeMatches(Match *completions) {
     mock(completions);
 }
 
-Completion *completionListPrepend(Completion *completions, char *name, char *fullName, Symbol *symbol,
+Match *prependToMatches(Match *completions, char *name, char *fullName, Symbol *symbol,
                                   ReferenceableItem *referenceItem, Reference *reference, int includedFileNumber) {
-    return (Completion *)mock(name, fullName, symbol, referenceItem, reference, includedFileNumber, completions);
+    return (Match *)mock(name, fullName, symbol, referenceItem, reference, includedFileNumber, completions);
 }
 
 void tagSearchCompactShortResults(void) {

@@ -1,24 +1,13 @@
 #ifndef COMPLETION_H_INCLUDED
 #define COMPLETION_H_INCLUDED
 
-#include "visibility.h"
+#include "constants.h"
+#include "match.h"
 #include "referenceableitem.h"
 #include "symbol.h"
-#include "type.h"
-#include "constants.h"
 
 
 /* ***************** COMPLETION STRUCTURES ********************** */
-
-typedef struct completion {
-    char                 *name;
-    char                 *fullName;
-    short int             lineCount;
-    Visibility            visibility; /* Global/Local */
-    struct reference      reference;
-    struct referenceableItem  referenceable;
-    struct completion    *next;
-} Completion;
 
 typedef struct completionLine {
     char          *string;
@@ -42,10 +31,10 @@ typedef struct completions {
     int                   alternativeCount;
 } Completions;
 
-extern void freeCompletions(Completion *completions);
+extern void freeMatches(Match *completions);
 
-extern Completion *completionListPrepend(Completion *completions, char *name, char *fullText, Symbol *symbol,
-                                         ReferenceableItem *ri, Reference *dfpos, int includedFileNumber);
+extern Match *prependToMatches(Match *matches, char *name, char *fullText, Symbol *symbol,
+                               ReferenceableItem *referenceableItem, Reference *dfpos, int includedFileNumber);
 
 void tagSearchCompactShortResults(void);
 

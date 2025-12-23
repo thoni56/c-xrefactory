@@ -251,7 +251,7 @@ static bool searchStringMatch(char *cxtag, int len) {
 }
 
 
-void searchSymbolCheckReference(ReferenceableItem  *referenceableItem, Reference *reference) {
+void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Reference *reference) {
     char buffer[MAX_CX_SYMBOL_SIZE];
     char *s, *name;
 
@@ -276,8 +276,8 @@ void searchSymbolCheckReference(ReferenceableItem  *referenceableItem, Reference
     } while (s!=NULL);
 
     if (searchStringMatch(name, strlen(name))) {
-        sessionData.searchingStack.top->completions = completionListPrepend(
-            sessionData.searchingStack.top->completions, name, NULL, NULL, referenceableItem,
+        sessionData.searchingStack.top->matches = prependToMatches(
+            sessionData.searchingStack.top->matches, name, NULL, NULL, referenceableItem,
             reference, referenceableItem->includeFileNumber);
 
         // compact completions from time to time

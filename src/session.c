@@ -30,7 +30,7 @@ void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **entryP) {
     SessionStackEntry *entry = *entryP;
 
     freeReferences(entry->references);
-    freeCompletions(entry->completions);
+    freeMatches(entry->matches);
     freeBrowserMenuList(entry->hkSelectedSym);
     freeBrowserMenuList(entry->menu);
 
@@ -62,7 +62,7 @@ static SessionStackEntry *newEmptySessionStackEntry(void) {
         .current         = NULL,
         .operation       = options.serverOperation,
         .callerPosition  = noPosition,
-        .completions     = NULL,
+        .matches     = NULL,
         .hkSelectedSym   = NULL,
         .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL,
         .refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,

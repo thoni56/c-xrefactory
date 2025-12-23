@@ -118,7 +118,7 @@ SessionStackEntry *newEmptySessionStackEntry(void) {
         .current         = NULL,
         .operation       = options.serverOperation,
         .callerPosition  = noPosition,
-        .completions     = NULL,
+        .matches     = NULL,
         .hkSelectedSym   = NULL,
         .menuFilterLevel = 0,
         .refsFilterLevel = 0,
@@ -137,7 +137,7 @@ Ensure(CxFile, can_check_references_for_referenceable_in_search) {
     expect(prettyPrintLinkName, will_set_contents_of_output_parameter(buffer, "SymbolName", 11));
     expect(containsWildcard, will_return(false));
 
-    expect(completionListPrepend, when(name, is_equal_to_string("SymbolName")));
+    expect(prependToMatches, when(name, is_equal_to_string("SymbolName")));
 
     searchSymbolCheckReference(&item, &reference);
 }

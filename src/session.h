@@ -21,8 +21,8 @@ typedef struct SessionStackEntry {
     int                    menuFilterLevel; /* filter level for menu display */
     int                    refsFilterLevel; /* filter level for references display */
 
-    /* ===== Completion-specific fields (completionsStack & retrieverStack) ===== */
-    struct completion     *completions;    /* completions list for OLO_COMPLETION */
+    /* ===== Completion and Searching-specific fields (completionStack & searchingStack) ===== */
+    struct Match          *matches;
 } SessionStackEntry;
 
 typedef struct SessionStack {

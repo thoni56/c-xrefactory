@@ -167,9 +167,9 @@ static void olCompletionListInit(Position originalPos) {
 }
 
 
-static int completionsWillPrintEllipsis(Completion *olc) {
+static int completionsWillPrintEllipsis(Match *olc) {
     int max, ellipsis;
-    LIST_LEN(max, Completion, olc);
+    LIST_LEN(max, Match, olc);
     ellipsis = 0;
     if (max >= MAX_COMPLETIONS - 2 || max == options.maxCompletions) {
         ellipsis = 1;
@@ -178,9 +178,9 @@ static int completionsWillPrintEllipsis(Completion *olc) {
 }
 
 
-static void printCompletionsBeginning(Completion *olc, int noFocus) {
+static void printCompletionsBeginning(Match *olc, int noFocus) {
     int tlen = 0;
-    for (Completion *cc=olc; cc!=NULL; cc=cc->next) {
+    for (Match *cc=olc; cc!=NULL; cc=cc->next) {
         tlen += strlen(cc->fullName);
         if (cc->next!=NULL) tlen++;
     }
@@ -189,11 +189,11 @@ static void printCompletionsBeginning(Completion *olc, int noFocus) {
     ppcBeginAllCompletions(noFocus, tlen);
 }
 
-static void printOneCompletion(Completion *olc) {
+static void printOneCompletion(Match *olc) {
     fprintf(outputFile, "%s", olc->fullName);
 }
 
-static void printCompletionsEnding(Completion *olc) {
+static void printCompletionsEnding(Match *olc) {
     if (completionsWillPrintEllipsis(olc)) {
         fprintf(outputFile,"\n...");
     }
@@ -201,10 +201,10 @@ static void printCompletionsEnding(Completion *olc) {
 }
 
 void printCompletionsList(bool noFocus) {
-    Completion *completions = sessionData.completionStack.top->completions;
+    Match *completions = sessionData.completionStack.top->matches;
 
     printCompletionsBeginning(completions, noFocus);
-    for(Completion *c=completions; c!=NULL; c=c->next) {
+    for(Match *c=completions; c!=NULL; c=c->next) {
         printOneCompletion(c);
         if (c->next!=NULL)
             fprintf(outputFile,"\n");
@@ -213,7 +213,7 @@ void printCompletionsList(bool noFocus) {
 }
 
 static void olCompletionListReverse(void) {
-    LIST_REVERSE(Completion, sessionData.completionStack.top->completions);
+    LIST_REVERSE(Match, sessionData.completionStack.top->matches);
 }
 
 void printCompletions(Completions *completions) {
@@ -251,8 +251,8 @@ void printCompletions(Completions *completions) {
     for(int i=0; i<max; i++) {
         sprintFullCompletionInfo(completions, i, indent);
         Reference r;
-        sessionData.completionStack.top->completions = completionListPrepend(
-            sessionData.completionStack.top->completions, completions->alternatives[i].string, ppcTmpBuff,
+        sessionData.completionStack.top->matches = prependToMatches(
+            sessionData.completionStack.top->matches, completions->alternatives[i].string, ppcTmpBuff,
             completions->alternatives[i].symbol, NULL, &r, NO_FILE_NUMBER);
     }
     olCompletionListReverse();
