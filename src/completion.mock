@@ -1,1 +1,3 @@
+#include "completion.h"
+
 #include <cgreen/mocks.h>

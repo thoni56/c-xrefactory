@@ -55,7 +55,7 @@ void freePoppedSessionStackEntries(SessionStack *stack) {
     }
 }
 
-static SessionStackEntry *newEmptySessionStackEntry(void) {
+protected SessionStackEntry *newEmptySessionStackEntry(void) {
     SessionStackEntry *entry  = malloc(sizeof(SessionStackEntry));
     *entry = (SessionStackEntry){
         .references      = NULL,

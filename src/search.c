@@ -10,8 +10,8 @@
 #include "session.h"
 
 
-static bool matchIsLessThan(Match *c1, Match *c2) {
-    return strcmp(c1->name, c2->name) < 0;
+static bool matchNameIsLessThan(Match *m1, Match *m2) {
+    return strcmp(m1->name, m2->name) < 0;
 }
 
 static void sortMatchList(Match **matches,
@@ -19,22 +19,20 @@ static void sortMatchList(Match **matches,
     LIST_MERGE_SORT(Match, *matches, compareFunction);
 }
 
-static void tagSearchShortRemoveMultipleLines(Match *matches) {
+static void removeMatchesWithSameName(Match *matches) {
     for (Match *m = matches; m != NULL; m = m->next) {
-    again:
-        if (m->next != NULL && strcmp(m->name, m->next->name) == 0) {
+        while (m->next != NULL && strcmp(m->name, m->next->name) == 0) {
             // O.K. remove redundant one
             Match *tmp = m->next;
             m->next = m->next->next;
             freeMatch(tmp);
-            goto again;          /* Again, but don't advance */
         }
     }
 }
 
 void tagSearchCompactShortResults(void) {
-    sortMatchList(&sessionData.searchingStack.top->matches, matchIsLessThan);
+    sortMatchList(&sessionData.searchingStack.top->matches, matchNameIsLessThan);
     if (options.searchKind == SEARCH_DEFINITIONS_SHORT || options.searchKind == SEARCH_FULL_SHORT) {
-        tagSearchShortRemoveMultipleLines(sessionData.searchingStack.top->matches);
+        removeMatchesWithSameName(sessionData.searchingStack.top->matches);
     }
 }
