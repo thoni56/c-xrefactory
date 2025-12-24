@@ -1083,3 +1083,435 @@ Move functions in this order (lowest risk first):
 ---
 
 NOTE: This refactoring is independent of the LexemStream API improvements but would benefit from them being completed first, as they simplify buffer management patterns throughout the macro expansion code.
+
+[[move-function-refactoring]]
+=== Move Function Between Files
+
+==== Problem Statement
+
+Moving functions between C source files is a frequent manual refactoring task that requires:
+
+* Cutting function definition from source file
+* Pasting into target file
+* Changing `static` to `extern` (or vice versa)
+* Adding function declaration to appropriate header
+* Updating `#include` directives in both files
+* Ensuring all dependencies (headers, types, macros) are available in target file
+
+This is **error-prone** and **tedious**, especially for functions with complex dependencies.
+
+==== Discovery: Existing Move Refactorings in c-xref-java
+
+The Java-supporting version at `/home/thoni/Utveckling/c-xref-java` contains substantial move refactoring infrastructure:
+
+[source,c]
+----
+// From c-xref-java/src/refactorings.def
+#define AVR_MOVE_STATIC_METHOD 80
+#define AVR_MOVE_CLASS 160
+#define AVR_MOVE_CLASS_TO_NEW_FILE 170
+#define AVR_MOVE_STATIC_FIELD 70
+#define AVR_MOVE_FIELD 90
+----
+
+**Key implementations** in `c-xref-java/src/refactory.c`:
+
+* `moveStaticMethod()` (line 2974) - Moves static methods between classes
+* `moveClass()` (line 3074+) - Moves entire classes
+* `moveStaticObjectAndMakeItPublic()` (line 2814) - Core move logic
+* `applyExpandShortNames()` (line 2300) - Dependency expansion before move
+* `reduceNamesAndAddImports()` (line 2645) - Import management after move
+
+==== Leverageable Code from Java Version
+
+===== Core Move Logic (Directly Reusable)
+
+**Text block extraction/movement** is language-agnostic:
+
+[source,c]
+----
+// From refactory.c:2865-2874
+size = mend->offset - mstart->offset;
+moveBlockInEditorBuffer(target, mstart, size, &editorUndo);
+----
+
+**Reference finding and updating** already works for C:
+
+[source,c]
+----
+// From refactory.c:2843-2862
+occs = getReferences(point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListBefore);
+for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
+    // Update each call site
+}
+----
+
+**Access modifier changes** map to C visibility:
+
+[source,c]
+----
+// From refactory.c:2868
+changeAccessModifier(point, limitIndex, "public");
+// C equivalent: change "static" → "extern", add header declaration
+----
+
+===== Dependency Management Pattern (Needs C Adaptation)
+
+**Java approach:**
+
+[source,c]
+----
+// 1. Expand short names to fully qualified
+applyExpandShortNames(point);
+   // Before:  List myList;
+   // After:   java.util.List myList;
+
+// 2. Move the code
+moveBlockInEditorBuffer(target, mstart, size, &editorUndo);
+
+// 3. Reduce names and add imports
+reduceNamesAndAddImports(&regions, INTERACTIVE_NO);
+   // Before:  java.util.List myList;
+   // After:   List myList; (with "import java.util.List;" added)
+----
+
+**C equivalent approach:**
+
+[source,c]
+----
+// 1. Find required headers by analyzing dependencies
+findRequiredHeaders(functionStart, functionEnd, &neededHeaders, &headerCount);
+   // Scan function body for:
+   // - Function calls → which header declares them?
+   // - Type references → which header defines them?
+   // - Macro usage → which header defines them?
+   // Use symbol database to find declarations
+
+// 2. Move the code (same as Java)
+moveBlockInEditorBuffer(target, mstart, size, &editorUndo);
+
+// 3. Add include directives to target file
+addRequiredIncludes(targetFile, neededHeaders, headerCount);
+   // Insert #include directives at top of target file
+----
+
+==== Proposed Implementation
+
+===== Phase 1: Basic Move (MVP - Immediate Value)
+
+**Estimated effort**: 1-2 weeks
+
+Implement minimal viable move that handles 80% of cases:
+
+[source,c]
+----
+void moveFunction(EditorMarker *point, EditorMarker *target) {
+    EditorMarker *functionStart, *functionEnd;
+    bool wasStatic;
+
+    // 1. Find function boundaries (copy from Java getMethodLimitsForMoving)
+    getFunctionLimits(point, &functionStart, &functionEnd);
+
+    // 2. Check if function is static
+    wasStatic = isFunctionStatic(functionStart);
+
+    // 3. Extract and move text block
+    int size = functionEnd->offset - functionStart->offset;
+    moveBlockInEditorBuffer(target, functionStart, size, &editorUndo);
+
+    // 4. If was static, prompt user for visibility change
+    if (wasStatic) {
+        if (promptUser("Function was static, make extern?")) {
+            changeStaticToExtern(point);
+            promptForHeaderFile("Add declaration to which header?");
+            // User inputs header filename
+            addDeclarationToHeader(selectedHeader, functionSignature);
+        }
+    }
+
+    // 5. Generate output
+    applyWholeRefactoringFromUndo();
+}
+----
+
+**Value:**
+- Eliminates manual cut/paste
+- Handles multi-line function correctly
+- Prompts for static→extern decision
+- User still manually fixes includes (acceptable for MVP)
+
+**Leverages from c-xref-java:**
+- `getMethodLimitsForMoving()` pattern (line 2908)
+- `moveBlockInEditorBuffer()` (already exists)
+- Undo/redo infrastructure
+- Reference finding for call sites
+
+===== Phase 2: Smart Include Management
+
+**Estimated effort**: 2-3 weeks
+
+Add automatic header dependency analysis:
+
+[source,c]
+----
+void findRequiredHeaders(EditorMarker *start, EditorMarker *end,
+                         char ***headersOut, int *countOut) {
+    StringList *headers = NULL;
+
+    // Parse function body to collect all symbols used
+    parseRegion(start, end);
+
+    // For each symbol (function, type, macro) used in the function:
+    for (Symbol *sym = usedSymbols; sym != NULL; sym = sym->next) {
+        // Look up in symbol database
+        ReferenceableItem *item = lookupSymbolInTable(sym->name);
+        if (item != NULL) {
+            // Find which header declares this symbol
+            FileItem *declaringFile = getFileItem(item->references->position.file);
+            if (isHeaderFile(declaringFile->name)) {
+                // Add to required headers list (with dedup)
+                addUniqueString(&headers, declaringFile->name);
+            }
+        }
+    }
+
+    // Convert list to array
+    *countOut = countList(headers);
+    *headersOut = listToArray(headers);
+}
+
+void addRequiredIncludes(EditorBuffer *targetFile, char **headers, int count) {
+    // Find insertion point (after existing includes or after comments)
+    EditorMarker *insertPoint = findIncludeSectionEnd(targetFile);
+
+    // Check which headers are already included
+    for (int i = 0; i < count; i++) {
+        if (!fileAlreadyIncludesHeader(targetFile, headers[i])) {
+            char includeLine[MAX_LINE];
+            sprintf(includeLine, "#include \"%s\"\n", headers[i]);
+            insertString(insertPoint, includeLine);
+        }
+    }
+}
+----
+
+**Value:**
+- Automatically determines which headers are needed
+- Inserts `#include` directives
+- Prevents build breakage from missing dependencies
+
+**New code required**: ~300 lines
+- Header dependency analysis: ~150 lines
+- Include directive insertion: ~100 lines
+- Helper functions: ~50 lines
+
+===== Phase 3: Static Helper Functions
+
+**Estimated effort**: 1-2 weeks
+
+Detect and optionally move tightly-coupled static helpers:
+
+[source,c]
+----
+static void detectStaticHelpers(EditorMarker *functionStart,
+                                 EditorMarker *functionEnd,
+                                 Symbol ***helpersOut, int *countOut) {
+    SymbolList *helpers = NULL;
+
+    // Find all function calls within the moved function
+    parseRegion(functionStart, functionEnd);
+    for (Symbol *calledFunc = calledFunctions; calledFunc != NULL;
+         calledFunc = calledFunc->next) {
+        // Is it static in the same file?
+        if (calledFunc->storage == StorageStatic &&
+            calledFunc->pos.file == functionStart->buffer->fileNumber) {
+            // Add to helpers list
+            addSymbol(&helpers, calledFunc);
+        }
+    }
+
+    *countOut = countList(helpers);
+    *helpersOut = listToArray(helpers);
+}
+
+// In moveFunction():
+if (staticHelperCount > 0) {
+    if (promptUser("Move %d static helper function(s) too?", staticHelperCount)) {
+        for (int i = 0; i < staticHelperCount; i++) {
+            moveFunction(staticHelpers[i]->pos, target);
+        }
+    }
+}
+----
+
+**Value:**
+- Prevents broken builds from missing static helpers
+- Maintains logical cohesion
+- Reduces manual follow-up work
+
+===== Phase 4: Polish
+
+**Estimated effort**: 1 week
+
+- Preview dialog showing what will be moved
+- Better insertion point heuristics (group with related functions)
+- Handle comments and documentation
+- Update existing callers if needed
+
+==== Code Locations
+
+===== In c-xref-java (Leverage These)
+
+[cols="1,2,1"]
+|===
+|Function |Purpose |Line
+
+|`moveStaticObjectAndMakeItPublic`
+|Core move logic with reference updating
+|2814
+
+|`getMethodLimitsForMoving`
+|Find function boundaries using parser
+|2908
+
+|`applyExpandShortNames`
+|Pattern for dependency analysis (adapt for C)
+|2300
+
+|`reduceNamesAndAddImports`
+|Pattern for import management (adapt for C)
+|2645
+
+|`moveBlockInEditorBuffer`
+|Language-agnostic text movement
+|Used at 2867
+
+|`getReferences`
+|Find all call sites (already works for C)
+|Used at 2843
+
+|`changeAccessModifier`
+|Change visibility (adapt for static/extern)
+|Used at 2868
+|===
+
+===== In c-xrefactory (Already Available)
+
+* `EditorMarker` position tracking - `src/editor.h`
+* `EditorBuffer` text manipulation - `src/editorbuffer.h`
+* Undo/redo infrastructure - `src/editor.c`
+* Symbol database lookups - `src/reftab.c`
+* Reference tracking - `src/reference.c`
+
+==== Implementation Effort Summary
+
+[cols="1,1,2"]
+|===
+|Phase |Effort |Value
+
+|Phase 1: Basic Move
+|1-2 weeks
+|**High** - Eliminates manual cut/paste, handles 80% of cases
+
+|Phase 2: Include Management
+|2-3 weeks
+|**High** - Prevents build breakage, major time saver
+
+|Phase 3: Static Helpers
+|1-2 weeks
+|**Medium** - Nice to have, improves completeness
+
+|Phase 4: Polish
+|1 week
+|**Low** - Quality of life improvements
+|===
+
+**Total for Phases 1-2**: 3-5 weeks
+**Total for full implementation**: 5-8 weeks
+
+**Comparison to estimated-from-scratch**: 6-8 weeks
+**Savings from leveraging Java code**: ~30% effort reduction
+
+==== Benefits
+
+*Developer Productivity*::
+- Frequent manual refactoring becomes automated
+- Reduces errors from missed dependencies
+- Maintains code quality during reorganization
+
+*Code Quality*::
+- Correct header management (no missing includes)
+- Proper visibility (static vs extern)
+- Preserves all references and call sites
+
+*Showcase for c-xrefactory*::
+- Demonstrates unique C-specific refactoring capabilities
+- Differentiates from generic LSP servers
+- Builds on existing Java refactoring experience
+
+==== Risks and Mitigation
+
+[cols="1,1,2"]
+|===
+|Risk |Likelihood |Mitigation
+
+|Complex header dependencies
+|Medium
+|Start with simple cases in Phase 1, iterate in Phase 2
+
+|Parser limitations finding function boundaries
+|Low
+|Already works for extract function refactoring
+
+|Missing static helper detection
+|Medium
+|Make it optional, user can manually move helpers
+
+|Breaking builds with incorrect includes
+|Medium
+|Generate preview, allow user to review before applying
+|===
+
+==== Success Metrics
+
+* **Phase 1 MVP**: Successfully moves function 90% of cases without build errors
+* **Phase 2**: Correctly identifies and adds required headers 80% of time
+* **Phase 3**: Detects static helpers with >95% accuracy
+* **User adoption**: Refactoring used frequently by active c-xrefactory users
+
+==== Alternatives Considered
+
+*Manual refactoring with editor macros*::
+- Fragile, error-prone
+- No understanding of code structure
+- Can't handle dependencies
+
+*Use generic LSP move/rename*::
+- LSP has no "move function" operation
+- Would need custom extension
+- Doesn't understand C header dependencies
+
+*Wait for Clangd to implement*::
+- Clangd has no move function refactoring
+- C++-focused, may not handle C idioms well
+- We have opportunity to do it first and better
+
+==== References
+
+* Java implementation: `/home/thoni/Utveckling/c-xref-java/src/refactory.c`
+* Current extract function: `src/extract.c` (proves function boundary detection works)
+* Editor infrastructure: `src/editor.c`, `src/editorbuffer.c`
+* Symbol database: `src/reftab.c`, `src/referenceableitemtable.c`
+
+==== Next Steps
+
+1. **After persistence store cleanup**: Take a break from architectural work
+2. **Implement Phase 1 MVP**: 1-2 weeks for immediate value
+3. **Gather usage feedback**: Identify most common dependency patterns
+4. **Implement Phase 2**: Based on real-world usage patterns
+5. **Document and showcase**: Blog post, video demonstration
+
+---
+
+NOTE: Even Phase 1 MVP provides significant value by eliminating manual text manipulation. The developer who does this refactoring "very often" confirms the high ROI potential.
