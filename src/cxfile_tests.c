@@ -127,6 +127,11 @@ SessionStackEntry *newEmptySessionStackEntry(void) {
     return entry;
 }
 
+#define will_set_contents_of_output_parameter_to_string(parameter_name, pointer_to_string)              \
+    create_set_parameter_value_constraint(#parameter_name, (intptr_t)pointer_to_string,                 \
+                                          strlen(pointer_to_string)+1)
+
+
 Ensure(CxFile, can_check_references_for_referenceable_in_search) {
     ReferenceableItem item = makeReferenceableItem("item", TypeInt, StorageDefault, FileScope, VisibilityLocal, NO_FILE_NUMBER);
     Reference reference;
@@ -135,7 +140,7 @@ Ensure(CxFile, can_check_references_for_referenceable_in_search) {
     options.olcxSearchString = "Sym";
     sessionData.searchingStack.top = stackEntry;
 
-    expect(prettyPrintLinkName, will_set_contents_of_output_parameter(buffer, "SymbolName", 11));
+    expect(prettyPrintLinkName, will_set_contents_of_output_parameter_to_string(buffer, "SymbolName"));
     expect(containsWildcard, will_return(false));
 
     expect(prependToMatches, when(name, is_equal_to_string("SymbolName")));
