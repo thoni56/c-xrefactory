@@ -39,6 +39,7 @@ named references: "$name" or "$<tag>name"
 * TODO BUG? Forward declarations
 It seems that all references to `expandMacroCall` in yylex.c is found, more importantly,
 the actual definition is not.
+* TODO Still losing some cx(?) memory after pro-longed periods of usage
 * TODO Testcase for modified included file
 One of the key features is to be able to understand when files needs to be
 rescanned. I'm not sure how that works, but we need tests for it.
