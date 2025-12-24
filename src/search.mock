@@ -2,6 +2,6 @@
 
 #include <cgreen/mocks.h>
 
-void tagSearchCompactShortResults(void) {
+void compactSearchResultsShort(void) {
     mock();
 }

@@ -876,7 +876,7 @@ static void findAndGotoDefinition(ReferenceableItem *referenceable) {
     popAndFreeSessionsUntil(oldtop);
 }
 
-static void gotoCompletion(int referenceIndex) {
+static void gotoMatch(int referenceIndex) {
     assert(referenceIndex > 0);
 
     SessionStackEntry *sessionStackEntry;
@@ -899,7 +899,7 @@ static void gotoCompletion(int referenceIndex) {
     }
 }
 
-static void gotoTagSearchItem(int refn) {
+static void gotoSearchItem(int refn) {
     Match *match;
 
     assert(refn > 0);
@@ -1484,15 +1484,13 @@ static void selectCompletion(void) {
     ppcGenRecord(PPC_SINGLE_COMPLETION, match->name);
 }
 
-static void olcxReferenceSelectTagSearchItem(int refn) {
-    Match *match;
-    SessionStackEntry *entry;
+static void selectSearchItem(int refn) {
     char buffer[MAX_FUNCTION_NAME_LENGTH];
 
     assert(refn > 0);
     assert(sessionData.searchingStack.top);
-    entry = sessionData.searchingStack.top;
-    match = getMatchOnNthLine(entry->matches, refn);
+    SessionStackEntry *entry = sessionData.searchingStack.top;
+    Match *match = getMatchOnNthLine(entry->matches, refn);
     if (match == NULL) {
         errorMessage(ERR_ST, "selection out of range.");
         return;
@@ -1861,7 +1859,7 @@ static void pushSymbolByName(char *name) {
 
 #define maxOf(a, b) (((a) > (b)) ? (a) : (b))
 
-static char *createTagSearchLine_static(char *name, int fileNumber,
+static char *createSearchLine_static(char *name, int fileNumber,
                                         int *len1, int *len2) {
     static char line[2*COMPLETION_STRING_SIZE];
     char file[TMP_STRING_SIZE];
@@ -1892,17 +1890,17 @@ static char *createTagSearchLine_static(char *name, int fileNumber,
     return line;                /* static! */
 }
 
-static void printTagSearchResults(void) {
+static void printSearchResults(void) {
     int len1, len2, len;
     char *ls;
 
     len1 = len2 = 0;
-    tagSearchCompactShortResults();
+    compactSearchResultsShort();
 
     // the first loop is counting the length of fields
     assert(sessionData.searchingStack.top);
-    for (Match *cc=sessionData.searchingStack.top->matches; cc!=NULL; cc=cc->next) {
-        ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->reference),
+    for (Match *m=sessionData.searchingStack.top->matches; m!=NULL; m=m->next) {
+        ls = createSearchLine_static(m->name, fileNumberOfReference(m->reference),
                                    &len1, &len2);
     }
     if (options.olineLen >= 50000) {
@@ -1920,8 +1918,8 @@ static void printTagSearchResults(void) {
     if (options.xref2)
         ppcBegin(PPC_SYMBOL_LIST);
     assert(sessionData.searchingStack.top);
-    for (Match *cc=sessionData.searchingStack.top->matches; cc!=NULL; cc=cc->next) {
-        ls = createTagSearchLine_static(cc->name, fileNumberOfReference(cc->reference),
+    for (Match *m=sessionData.searchingStack.top->matches; m!=NULL; m=m->next) {
+        ls = createSearchLine_static(m->name, fileNumberOfReference(m->reference),
                                    &len1, &len2);
         if (options.xref2) {
             ppcGenRecord(PPC_STRING_VALUE, ls);
@@ -1956,14 +1954,14 @@ void answerEditAction(void) {
         sessionData.searchingStack.top->callerPosition = givenPosition;
 
         scanForSearch(options.cxFileLocation);
-        printTagSearchResults();
+        printSearchResults();
         break;
     }
     case OLO_TAG_SEARCH_BACK:
         if (sessionData.searchingStack.top!=NULL && sessionData.searchingStack.top->previous!=NULL) {
             sessionData.searchingStack.top = sessionData.searchingStack.top->previous;
             ppcGotoPosition(sessionData.searchingStack.top->callerPosition);
-            printTagSearchResults();
+            printSearchResults();
         }
         break;
     case OLO_TAG_SEARCH_FORWARD: {
@@ -1971,7 +1969,7 @@ void answerEditAction(void) {
         if (next != NULL) {
             sessionData.searchingStack.top = next;
             ppcGotoPosition(sessionData.searchingStack.top->callerPosition);
-            printTagSearchResults();
+            printSearchResults();
         }
         break;
     }
@@ -2031,13 +2029,13 @@ void answerEditAction(void) {
         gotoReferenceWithIndex(options.olcxGotoVal);
         break;
     case OLO_COMPLETION_GOTO:
-        gotoCompletion(options.olcxGotoVal);
+        gotoMatch(options.olcxGotoVal);
         break;
     case OLO_TAGGOTO:
-        gotoTagSearchItem(options.olcxGotoVal);
+        gotoSearchItem(options.olcxGotoVal);
         break;
     case OLO_TAGSELECT:
-        olcxReferenceSelectTagSearchItem(options.olcxGotoVal);
+        selectSearchItem(options.olcxGotoVal);
         break;
     case OLO_REF_FILTER_SET:
         olcxReferenceFilterSet(options.filterValue);

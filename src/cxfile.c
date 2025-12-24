@@ -285,7 +285,7 @@ void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Reference 
         static int count = 0;
         count ++;
         if (count > COMPACT_TAGS_AFTER_SEARCH_COUNT) {
-            tagSearchCompactShortResults();
+            compactSearchResultsShort();
             count = 0;
         }
     }

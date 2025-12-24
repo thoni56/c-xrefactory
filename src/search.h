@@ -1,3 +1,3 @@
 #pragma once
 
-void tagSearchCompactShortResults(void);
+void compactSearchResultsShort(void);

@@ -37,7 +37,7 @@ Ensure(Search, can_compact_empty_search_results) {
 
     never_expect(freeMatch);    /* No match should be freed, no matches */
 
-    tagSearchCompactShortResults();
+    compactSearchResultsShort();
 }
 
 Ensure(Search, can_compact_search_results_with_single_match) {
@@ -47,7 +47,7 @@ Ensure(Search, can_compact_search_results_with_single_match) {
 
     never_expect(freeMatch);    /* No match should be freed, no duplicates */
 
-    tagSearchCompactShortResults();
+    compactSearchResultsShort();
 }
 
 Ensure(Search, can_compact_search_results_with_many_equal_matches) {
@@ -59,5 +59,5 @@ Ensure(Search, can_compact_search_results_with_many_equal_matches) {
 
     expect(freeMatch, times(2)); /* Two duplicated matches should be freed */
 
-    tagSearchCompactShortResults();
+    compactSearchResultsShort();
 }

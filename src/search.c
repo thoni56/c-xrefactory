@@ -30,7 +30,7 @@ static void removeMatchesWithSameName(Match *matches) {
     }
 }
 
-void tagSearchCompactShortResults(void) {
+void compactSearchResultsShort(void) {
     sortMatchList(&sessionData.searchingStack.top->matches, matchNameIsLessThan);
     if (options.searchKind == SEARCH_DEFINITIONS_SHORT || options.searchKind == SEARCH_FULL_SHORT) {
         removeMatchesWithSameName(sessionData.searchingStack.top->matches);
