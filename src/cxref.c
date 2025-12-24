@@ -1946,8 +1946,6 @@ static void printTagSearchResults(void) {
 }
 
 void answerEditAction(void) {
-    SessionStackEntry *rstack, *nextrr;
-
     ENTER();
     assert(outputFile);
 
@@ -1973,21 +1971,21 @@ void answerEditAction(void) {
         break;
     }
     case OLO_TAG_SEARCH_BACK:
-        if (sessionData.searchingStack.top!=NULL &&
-            sessionData.searchingStack.top->previous!=NULL) {
+        if (sessionData.searchingStack.top!=NULL && sessionData.searchingStack.top->previous!=NULL) {
             sessionData.searchingStack.top = sessionData.searchingStack.top->previous;
             ppcGotoPosition(sessionData.searchingStack.top->callerPosition);
             printTagSearchResults();
         }
         break;
-    case OLO_TAG_SEARCH_FORWARD:
-        nextrr = getNextTopStackItem(&sessionData.searchingStack);
-        if (nextrr != NULL) {
-            sessionData.searchingStack.top = nextrr;
+    case OLO_TAG_SEARCH_FORWARD: {
+        SessionStackEntry *next = getNextTopStackItem(&sessionData.searchingStack);
+        if (next != NULL) {
+            sessionData.searchingStack.top = next;
             ppcGotoPosition(sessionData.searchingStack.top->callerPosition);
             printTagSearchResults();
         }
         break;
+    }
     case OLO_ACTIVE_PROJECT:
         if (options.project != NULL) {
             ppcGenRecord(PPC_SET_INFO, options.project);
@@ -2127,10 +2125,10 @@ void answerEditAction(void) {
     case OLO_LOCAL_UNUSED:
         answerPushLocalUnusedSymbolsAction();
         break;
-    case OLO_ARGUMENT_MANIPULATION:
-        rstack = sessionData.browsingStack.top;
-        assert(rstack!=NULL);
-        if (rstack->hkSelectedSym == NULL) {
+    case OLO_ARGUMENT_MANIPULATION: {
+        SessionStackEntry *stack = sessionData.browsingStack.top;
+        assert(stack!=NULL);
+        if (stack->hkSelectedSym == NULL) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,"Cursor (point) has to be positioned on a method or constructor name before invocation of this refactoring, not on the parameter itself. Please move the cursor onto the method (constructor) name and reinvoke the refactoring.");
             errorMessage(ERR_ST, tmpBuff);
@@ -2138,6 +2136,7 @@ void answerEditAction(void) {
             mainAnswerReferencePushingAction(options.serverOperation);
         }
         break;
+    }
     case OLO_PUSH:
     case OLO_PUSH_ONLY:
     case OLO_PUSH_AND_CALL_MACRO:
