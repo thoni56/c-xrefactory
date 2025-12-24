@@ -23,4 +23,6 @@ extern void freeMatches(Match *matches);
 extern Match *prependToMatches(Match *matches, char *name, char *fullText, Symbol *symbol,
                                ReferenceableItem *referenceableItem, Reference *dfpos, int includedFileNumber);
 
+extern Match *getMatchOnNthLine(Match *matches, int n);
+
 #endif

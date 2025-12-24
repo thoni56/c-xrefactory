@@ -103,3 +103,14 @@ void freeMatches(Match *matches) {
         matches = tmp;
     }
 }
+
+Match *getMatchOnNthLine(Match *matches, int n) {
+    Match *last, *this;
+
+    this = matches;
+    for (int i=1; i<=n && this!=NULL; this=this->next) {
+        i += this->lineCount;
+        last = this;
+    }
+    return last;
+}

@@ -15,3 +15,7 @@ Match *prependToMatches(Match *matches, char *name, char *fullText, Symbol *symb
                         ReferenceableItem *referenceableItem, Reference *dfpos, int includedFileNumber) {
     return (Match *)mock(matches, name, fullText, symbol, referenceableItem, dfpos, includedFileNumber);
 }
+
+Match *getMatchOnNthLine(Match *matches, int n) {
+    return (Match *)mock(matches, n);
+}

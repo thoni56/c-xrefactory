@@ -836,17 +836,6 @@ static void gotoReferenceWithIndex(int referenceIndex) {
     olcxGenGotoActReference(sessionStackEntry);
 }
 
-static Match *getMatchOnNthLine(Match *matches, int n) {
-    Match *last, *this;
-
-    this = matches;
-    for (int i=1; i<=n && this!=NULL; this=this->next) {
-        i += this->lineCount;
-        last = this;
-    }
-    return last;
-}
-
 static void popSession(void) {
     sessionData.browsingStack.top = sessionData.browsingStack.top->previous;
 }
