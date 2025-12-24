@@ -288,12 +288,12 @@ void setLocalVariableLinkName(Symbol *p) {
         int len = TMP_STRING_SIZE - tti;
         prettyPrintType(name+tti, &len, p->typeModifier, nnn, LINK_NAME_SEPARATOR, true);
         sprintf(name+tti+len,"%c%x-%x-%x-%x", LINK_NAME_SEPARATOR,
-                p->pos.file,p->pos.line,p->pos.col, nextGeneratedLocalSymbol());
+                p->position.file,p->position.line,p->position.col, nextGeneratedLocalSymbol());
     } else {
         if (p->storage==StorageExtern && ! options.exactPositionResolve) {
             sprintf(name,"%s", p->name);
         } else {
-            sprintf(name,"%x-%x-%x%c%s",p->pos.file,p->pos.line,p->pos.col,
+            sprintf(name,"%x-%x-%x%c%s",p->position.file,p->position.line,p->position.col,
                     LINK_NAME_SEPARATOR, p->name);
         }
     }
@@ -313,7 +313,7 @@ static void setStaticFunctionLinkName(Symbol *p, char *fileName, int usage) {
     // With exactPositionResolve interpret them as distinct symbols for
     // each compilation unit.
     if (usage==UsageDefined && ! options.exactPositionResolve) {
-        basefname=getFileItemWithFileNumber(p->pos.file)->name;
+        basefname=getFileItemWithFileNumber(p->position.file)->name;
     } else {
         basefname=fileName;
     }
@@ -354,7 +354,7 @@ Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbo
         setStaticFunctionLinkName(symbol, fileName, usage);
     }
     addSymbolToFrame(table, symbol);
-    handleFoundSymbolReference(symbol, symbol->pos, usage, NO_FILE_NUMBER);
+    handleFoundSymbolReference(symbol, symbol->position, usage, NO_FILE_NUMBER);
     return symbol;
 }
 
@@ -414,20 +414,20 @@ void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol
         if (pp != NULL && pp != parameter) {
             Symbol *foundMember;
             if (symbolTableIsMember(table, parameterCopy, NULL, &foundMember)) {
-                handleFoundSymbolReference(foundMember, parameter->pos, UsageUsed, NO_FILE_NUMBER);
+                handleFoundSymbolReference(foundMember, parameter->position, UsageUsed, NO_FILE_NUMBER);
             }
         } else {
             addNewSymbolDefinition(table, inputFileName, parameterCopy, StorageAuto, UsageDefined);
         }
         if (options.serverOperation == OLO_EXTRACT) {
-            handleFoundSymbolReference(parameterCopy, parameterCopy->pos, UsageLvalUsed, NO_FILE_NUMBER);
+            handleFoundSymbolReference(parameterCopy, parameterCopy->position, UsageLvalUsed, NO_FILE_NUMBER);
         }
     }
     if (options.serverOperation == OLO_GOTO_PARAM_NAME
         && position == options.olcxGotoVal
-        && positionsAreEqual(function->pos, cxRefPosition))
+        && positionsAreEqual(function->position, cxRefPosition))
     {
-        parameterPosition = parameter->pos;
+        parameterPosition = parameter->position;
     }
 }
 
@@ -676,20 +676,20 @@ void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
         iname="";
     assert(symbol);
     if (options.exactPositionResolve) {
-        FileItem *fileItem = getFileItemWithFileNumber(symbol->pos.file);
+        FileItem *fileItem = getFileItemWithFileNumber(symbol->position.file);
         fname = simpleFileName(fileItem->name);
-        sprintf(tmp, "%x-%s-%x-%x%c", hashFun(fileItem->name), fname, symbol->pos.line, symbol->pos.col,
+        sprintf(tmp, "%x-%s-%x-%x%c", hashFun(fileItem->name), fname, symbol->position.line, symbol->position.col,
                 LINK_NAME_SEPARATOR);
     } else if (iname[0]==0) {
         Symbol *member;
         // anonymous enum/structure/union ...
-        int fileNumber = symbol->pos.file;
+        int fileNumber = symbol->position.file;
         symbol->name=iname;
         symbol->linkName=iname;
         order = 0;
         isMember = symbolTableIsMember(symbolTable, symbol, NULL, &member);
         while (isMember) {
-            if (member->pos.file==fileNumber)
+            if (member->position.file==fileNumber)
                 order++;
             isMember = symbolTableNextMember(symbol, &member);
         }
@@ -697,7 +697,7 @@ void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
         sprintf(tmp, "%s%c%d%c", fname, FILE_PATH_SEPARATOR, order, LINK_NAME_SEPARATOR);
         /*&     // macros will be identified by name only?
           } else if (symbol->type == TypeMacro) {
-          sprintf(tmp, "%x%c", symbol->pos.file, LINK_NAME_SEPARATOR);
+          sprintf(tmp, "%x%c", symbol->position.file, LINK_NAME_SEPARATOR);
           &*/
     } else {
         tmp[0] = 0;
@@ -775,7 +775,7 @@ void specializeStructOrUnionDef(Symbol *symbol, Symbol *recordSymbol) {
     for (Symbol *r=recordSymbol; r!=NULL; r=r->next) {
         if (r->name != NULL) {
             r->linkName = string3ConcatInStackMem(symbol->linkName, ".", r->name);
-            handleFoundSymbolReference(r, r->pos,UsageDefined, NO_FILE_NUMBER);
+            handleFoundSymbolReference(r, r->position,UsageDefined, NO_FILE_NUMBER);
         }
     }
 }
@@ -896,7 +896,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position lpar,
         return;
     if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES)
         return;
-    if (positionsAreNotEqual(decl->pos, cxRefPosition))
+    if (positionsAreNotEqual(decl->position, cxRefPosition))
         return;
     handleParameterPositions(lpar, commas, rpar, hasParam, isVoid);
 }

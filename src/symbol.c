@@ -12,7 +12,7 @@
 static void fillSymbol(Symbol *symbol, char *name, char *linkName, Position pos) {
     symbol->name = name;
     symbol->linkName = linkName;
-    symbol->pos = pos;
+    symbol->position = pos;
     symbol->typeModifier = NULL;
     symbol->next = NULL;
     symbol->type = TypeDefault;
@@ -29,7 +29,7 @@ Symbol makeSymbol(char *name, Type type, Position pos) {
 }
 
 Symbol makeMacroSymbol(char *name, Position pos) {
-    Symbol symbol = {.name = name, .linkName = name, .pos = pos, .type = TypeMacro, .storage = StorageDefault};
+    Symbol symbol = {.name = name, .linkName = name, .position = pos, .type = TypeMacro, .storage = StorageDefault};
     return symbol;
 }
 

@@ -1847,6 +1847,20 @@ external_definition
             addFunctionParameterToSymTable(symbolTable, $2.data, symbol, i);
         }
     } compound_statement {
+        /* Capture function boundaries for move-function refactoring */
+        if (parsedInfo.function != NULL
+            && parsedInfo.function->position.file != NO_FILE_NUMBER
+            && positionIsLessThan(parsedInfo.function->position, cxRefPosition)
+            && options.theRefactoring == AVR_MOVE_FUNCTION) {
+            /* We just finished parsing a function that contains the cursor position.
+             * Record the function boundaries for getFunctionBoundariesForMoving().
+             * Note: We can't get the exact end position here, but we record the start.
+             * The refactory code will need to scan forward to find the closing brace.
+             */
+            parsedPositions[IPP_FUNCTION_BEGIN] = $2.begin;
+            /* End position will be set by scanning forward from compound_statement */
+            parsedPositions[IPP_FUNCTION_END] = $4.end;
+        }
         endBlock();
         parsedInfo.function = NULL;
     }
@@ -1976,7 +1990,7 @@ static void addRuleLocalVariable(Id *name, int order) {
             ss = newSymbol(nn, name->position);
             ss->storage = StorageAuto;
 
-            ss->pos.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
+            ss->position.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
             addNewDeclaration(symbolTable, p, ss, NULL, StorageAuto);
         }
     }

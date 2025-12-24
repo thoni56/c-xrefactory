@@ -14,9 +14,9 @@
 
 typedef struct symbol {
     char    *name;
-    char    *linkName; /* fully qualified name for cx */
-    Position pos;      /* definition position for most syms */
-    unsigned npointers : 4; /* tmp. stored # of dcl. ptrs */
+    char    *linkName;          /* fully qualified name for cx */
+    Position position;          /* definition position for most syms */
+    unsigned npointers : 4;     /* tmp. stored # of dcl. ptrs */
     Storage  storage : STORAGES_BITS;
     Type     type : TYPE_BITS;
     /* can be Default/Struct/Union/Enum/Label/Keyword/Macro */

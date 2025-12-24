@@ -62,7 +62,7 @@ Match *prependToMatches(Match *matches, char *name, char *fullName, Symbol *symb
 
         match = newMatch(name, fullName, 1, VisibilityLocal, r, item);
     } else {
-        Reference r = makeReference(symbol->pos, UsageNone, NULL);
+        Reference r = makeReference(symbol->position, UsageNone, NULL);
         Visibility visibility;
         Scope scope;
         Storage storage;

@@ -345,7 +345,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
             defaultUsage = UsageNone;
             if (symbol->type==TypeMacro && ! options.exactPositionResolve) {
                 // a hack for macros
-                defaultPosition = symbol->pos;
+                defaultPosition = symbol->position;
                 defaultUsage = UsageDefined;
             }
             if (defaultPosition.file!=NO_FILE_NUMBER)

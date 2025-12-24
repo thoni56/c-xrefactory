@@ -40,13 +40,13 @@ Ensure(Semact, can_capture_positions_for_empty_parameter_list) {
     */
 
     /* void function() ... */
-    Symbol symbol = {.pos = {.file=42, .line = 5, .col = 12}};
+    Symbol symbol = {.position = {.file=42, .line = 5, .col = 12}};
     Position lpar = {.file = 42, .line = 5, .col = 20};
     Position rpar = {.file = 42, .line = 5, .col = 21};
 
     options.mode = ServerMode;
     options.serverOperation = OLO_GOTO_PARAM_NAME;
-    cxRefPosition = symbol.pos;
+    cxRefPosition = symbol.position;
 
     /* No position list (commas) for no parameters */
     handleDeclaratorParamPositions(&symbol, lpar, NULL, rpar, false, false);
@@ -59,14 +59,14 @@ Ensure(Semact, can_capture_positions_for_empty_parameter_list) {
 
 Ensure(Semact, can_capture_positions_for_one_parameter) {
     /* void function(int arg) ... */
-    Symbol symbol = {.pos = {.file=42, .line = 5, .col = 12}};
+    Symbol symbol = {.position = {.file=42, .line = 5, .col = 12}};
     Position lpar = {.file = 42, .line = 5, .col = 20};
     Position rpar = {.file = 42, .line = 5, .col = 28};
 
     options.mode = ServerMode;
     options.serverOperation = OLO_GOTO_PARAM_NAME;
     options.olcxGotoVal = 1;
-    cxRefPosition = symbol.pos;
+    cxRefPosition = symbol.position;
 
     handleDeclaratorParamPositions(&symbol, lpar, NULL, rpar, true, false);
 
@@ -78,7 +78,7 @@ Ensure(Semact, can_capture_positions_for_one_parameter) {
 
 Ensure(Semact, can_capture_positions_for_two_parameters) {
     /* void function(int arg, char *string) ... */
-    Symbol symbol = {.pos = {.file=42, .line = 5, .col = 12}};
+    Symbol symbol = {.position = {.file=42, .line = 5, .col = 12}};
     Position lpar = {.file = 42, .line = 5, .col = 20};
     Position rpar = {.file = 42, .line = 5, .col = 42};
     Position comma = {.file = 5, .line = 5, .col = 28};
@@ -87,7 +87,7 @@ Ensure(Semact, can_capture_positions_for_two_parameters) {
     options.mode = ServerMode;
     options.serverOperation = OLO_GOTO_PARAM_NAME;
     options.olcxGotoVal = 1;
-    cxRefPosition = symbol.pos;
+    cxRefPosition = symbol.position;
 
     handleDeclaratorParamPositions(&symbol, lpar, &commas, rpar, true, false);
 
@@ -99,14 +99,14 @@ Ensure(Semact, can_capture_positions_for_two_parameters) {
 
 Ensure(Semact, can_capture_positions_for_void_parameter_list) {
     /* void function(void) ... */
-    Symbol symbol = {.pos = {.file=42, .line = 5, .col = 12}};
+    Symbol symbol = {.position = {.file=42, .line = 5, .col = 12}};
     Position lpar = {.file = 42, .line = 5, .col = 20};
     Position rpar = {.file = 42, .line = 5, .col = 25};
 
     options.mode = ServerMode;
     options.serverOperation = OLO_GOTO_PARAM_NAME;
     options.olcxGotoVal = 1;
-    cxRefPosition = symbol.pos;
+    cxRefPosition = symbol.position;
 
     handleDeclaratorParamPositions(&symbol, lpar, NULL, rpar, true, true);
 
