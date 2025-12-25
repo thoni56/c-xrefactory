@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2025-12-24">
+<meta name="author" content="v{VERSION} - Generated 2025-12-25">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-12-24</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-12-25</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -570,6 +570,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#clean-persistence-store">16.2. Clean Persistence Store Abstraction</a></li>
 <li><a href="#unified-symbol-database">16.3. Unified Symbol Database Architecture</a></li>
 <li><a href="#macro-expansion-module">16.4. Extract Macro Expansion Module</a></li>
+<li><a href="#move-function-refactoring">16.5. Move Function Between Files</a></li>
 </ul>
 </li>
 <li><a href="#_insights">17. Insights</a>
@@ -8598,6 +8599,735 @@ This refactoring is independent of the LexemStream API improvements but would be
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="move-function-refactoring">16.5. Move Function Between Files</h3>
+<div class="sect3">
+<h4 id="_problem_statement_5">16.5.1. Problem Statement</h4>
+<div class="paragraph">
+<p>Moving functions between C source files is a frequent manual refactoring task that requires:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Cutting function definition from source file</p>
+</li>
+<li>
+<p>Pasting into target file</p>
+</li>
+<li>
+<p>Changing <code>static</code> to <code>extern</code> (or vice versa)</p>
+</li>
+<li>
+<p>Adding function declaration to appropriate header</p>
+</li>
+<li>
+<p>Updating <code>#include</code> directives in both files</p>
+</li>
+<li>
+<p>Ensuring all dependencies (headers, types, macros) are available in target file</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This is <strong>error-prone</strong> and <strong>tedious</strong>, especially for functions with complex dependencies.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_discovery_existing_move_refactorings_in_c_xref_java">16.5.2. Discovery: Existing Move Refactorings in c-xref-java</h4>
+<div class="paragraph">
+<p>The Java-supporting version at <code>/home/thoni/Utveckling/c-xref-java</code> contains substantial move refactoring infrastructure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// From c-xref-java/src/refactorings.def
+#define AVR_MOVE_STATIC_METHOD 80
+#define AVR_MOVE_CLASS 160
+#define AVR_MOVE_CLASS_TO_NEW_FILE 170
+#define AVR_MOVE_STATIC_FIELD 70
+#define AVR_MOVE_FIELD 90</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Key implementations</strong> in <code>c-xref-java/src/refactory.c</code>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>moveStaticMethod()</code> (line 2974) - Moves static methods between classes</p>
+</li>
+<li>
+<p><code>moveClass()</code> (line 3074+) - Moves entire classes</p>
+</li>
+<li>
+<p><code>moveStaticObjectAndMakeItPublic()</code> (line 2814) - Core move logic</p>
+</li>
+<li>
+<p><code>applyExpandShortNames()</code> (line 2300) - Dependency expansion before move</p>
+</li>
+<li>
+<p><code>reduceNamesAndAddImports()</code> (line 2645) - Import management after move</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_leverageable_code_from_java_version">16.5.3. Leverageable Code from Java Version</h4>
+<div class="sect4">
+<h5 id="_core_move_logic_directly_reusable">Core Move Logic (Directly Reusable)</h5>
+<div class="paragraph">
+<p><strong>Text block extraction/movement</strong> is language-agnostic:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// From refactory.c:2865-2874
+size = mend-&gt;offset - mstart-&gt;offset;
+moveBlockInEditorBuffer(target, mstart, size, &amp;editorUndo);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Reference finding and updating</strong> already works for C:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// From refactory.c:2843-2862
+occs = getReferences(point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListBefore);
+for (EditorMarkerList *ll = occs; ll != NULL; ll = ll-&gt;next) {
+    // Update each call site
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Access modifier changes</strong> map to C visibility:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// From refactory.c:2868
+changeAccessModifier(point, limitIndex, "public");
+// C equivalent: change "static" → "extern", add header declaration</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_dependency_management_pattern_needs_c_adaptation">Dependency Management Pattern (Needs C Adaptation)</h5>
+<div class="paragraph">
+<p><strong>Java approach:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// 1. Expand short names to fully qualified
+applyExpandShortNames(point);
+   // Before:  List myList;
+   // After:   java.util.List myList;
+
+// 2. Move the code
+moveBlockInEditorBuffer(target, mstart, size, &amp;editorUndo);
+
+// 3. Reduce names and add imports
+reduceNamesAndAddImports(&amp;regions, INTERACTIVE_NO);
+   // Before:  java.util.List myList;
+   // After:   List myList; (with "import java.util.List;" added)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>C equivalent approach:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// 1. Find required headers by analyzing dependencies
+findRequiredHeaders(functionStart, functionEnd, &amp;neededHeaders, &amp;headerCount);
+   // Scan function body for:
+   // - Function calls → which header declares them?
+   // - Type references → which header defines them?
+   // - Macro usage → which header defines them?
+   // Use symbol database to find declarations
+
+// 2. Move the code (same as Java)
+moveBlockInEditorBuffer(target, mstart, size, &amp;editorUndo);
+
+// 3. Add include directives to target file
+addRequiredIncludes(targetFile, neededHeaders, headerCount);
+   // Insert #include directives at top of target file</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_implementation">16.5.4. Proposed Implementation</h4>
+<div class="sect4">
+<h5 id="_phase_1_basic_move_mvp_immediate_value">Phase 1: Basic Move (MVP - Immediate Value)</h5>
+<div class="paragraph">
+<p><strong>Estimated effort</strong>: 1-2 weeks</p>
+</div>
+<div class="paragraph">
+<p>Implement minimal viable move that handles 80% of cases:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">void moveFunction(EditorMarker *point, EditorMarker *target) {
+    EditorMarker *functionStart, *functionEnd;
+    bool wasStatic;
+
+    // 1. Find function boundaries (copy from Java getMethodLimitsForMoving)
+    getFunctionLimits(point, &amp;functionStart, &amp;functionEnd);
+
+    // 2. Check if function is static
+    wasStatic = isFunctionStatic(functionStart);
+
+    // 3. Extract and move text block
+    int size = functionEnd-&gt;offset - functionStart-&gt;offset;
+    moveBlockInEditorBuffer(target, functionStart, size, &amp;editorUndo);
+
+    // 4. If was static, prompt user for visibility change
+    if (wasStatic) {
+        if (promptUser("Function was static, make extern?")) {
+            changeStaticToExtern(point);
+            promptForHeaderFile("Add declaration to which header?");
+            // User inputs header filename
+            addDeclarationToHeader(selectedHeader, functionSignature);
+        }
+    }
+
+    // 5. Generate output
+    applyWholeRefactoringFromUndo();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Value:</strong>
+- Eliminates manual cut/paste
+- Handles multi-line function correctly
+- Prompts for static→extern decision
+- User still manually fixes includes (acceptable for MVP)</p>
+</div>
+<div class="paragraph">
+<p><strong>Leverages from c-xref-java:</strong>
+- <code>getMethodLimitsForMoving()</code> pattern (line 2908)
+- <code>moveBlockInEditorBuffer()</code> (already exists)
+- Undo/redo infrastructure
+- Reference finding for call sites</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_phase_2_smart_include_management">Phase 2: Smart Include Management</h5>
+<div class="paragraph">
+<p><strong>Estimated effort</strong>: 2-3 weeks</p>
+</div>
+<div class="paragraph">
+<p>Add automatic header dependency analysis and improve static detection:</p>
+</div>
+<div class="paragraph">
+<p><strong>Improvements to static detection:</strong></p>
+</div>
+<div class="paragraph">
+<p>Currently, Phase 1 uses simple string search for "static " keyword. This works for common cases but has limitations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Does not skip comments (e.g., <code>/* This is a static function */\nvoid func()</code> would incorrectly match)</p>
+</li>
+<li>
+<p>Does not handle macros (e.g., <code>#define STATIC static</code>)</p>
+</li>
+<li>
+<p>Character-by-character search, not token-based</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Phase 2 should use parser-based detection:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Instead of string search, use the symbol's storage class from parser
+bool isStaticFunction(Symbol *sym) {
+    return sym-&gt;storage == StorageStatic;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This leverages information the parser already has, avoiding comment/macro issues.</p>
+</div>
+<div class="paragraph">
+<p><strong>Header dependency analysis:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">void findRequiredHeaders(EditorMarker *start, EditorMarker *end,
+                         char ***headersOut, int *countOut) {
+    StringList *headers = NULL;
+
+    // Parse function body to collect all symbols used
+    parseRegion(start, end);
+
+    // For each symbol (function, type, macro) used in the function:
+    for (Symbol *sym = usedSymbols; sym != NULL; sym = sym-&gt;next) {
+        // Look up in symbol database
+        ReferenceableItem *item = lookupSymbolInTable(sym-&gt;name);
+        if (item != NULL) {
+            // Find which header declares this symbol
+            FileItem *declaringFile = getFileItem(item-&gt;references-&gt;position.file);
+            if (isHeaderFile(declaringFile-&gt;name)) {
+                // Add to required headers list (with dedup)
+                addUniqueString(&amp;headers, declaringFile-&gt;name);
+            }
+        }
+    }
+
+    // Convert list to array
+    *countOut = countList(headers);
+    *headersOut = listToArray(headers);
+}
+
+void addRequiredIncludes(EditorBuffer *targetFile, char **headers, int count) {
+    // Find insertion point (after existing includes or after comments)
+    EditorMarker *insertPoint = findIncludeSectionEnd(targetFile);
+
+    // Check which headers are already included
+    for (int i = 0; i &lt; count; i++) {
+        if (!fileAlreadyIncludesHeader(targetFile, headers[i])) {
+            char includeLine[MAX_LINE];
+            sprintf(includeLine, "#include \"%s\"\n", headers[i]);
+            insertString(insertPoint, includeLine);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Value:</strong>
+- Automatically determines which headers are needed
+- Inserts <code>#include</code> directives
+- Prevents build breakage from missing dependencies</p>
+</div>
+<div class="paragraph">
+<p><strong>New code required</strong>: ~300 lines
+- Header dependency analysis: ~150 lines
+- Include directive insertion: ~100 lines
+- Helper functions: ~50 lines</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_phase_3_static_helper_functions">Phase 3: Static Helper Functions</h5>
+<div class="paragraph">
+<p><strong>Estimated effort</strong>: 1-2 weeks</p>
+</div>
+<div class="paragraph">
+<p>Detect and optionally move tightly-coupled static helpers:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">static void detectStaticHelpers(EditorMarker *functionStart,
+                                 EditorMarker *functionEnd,
+                                 Symbol ***helpersOut, int *countOut) {
+    SymbolList *helpers = NULL;
+
+    // Find all function calls within the moved function
+    parseRegion(functionStart, functionEnd);
+    for (Symbol *calledFunc = calledFunctions; calledFunc != NULL;
+         calledFunc = calledFunc-&gt;next) {
+        // Is it static in the same file?
+        if (calledFunc-&gt;storage == StorageStatic &amp;&amp;
+            calledFunc-&gt;pos.file == functionStart-&gt;buffer-&gt;fileNumber) {
+            // Add to helpers list
+            addSymbol(&amp;helpers, calledFunc);
+        }
+    }
+
+    *countOut = countList(helpers);
+    *helpersOut = listToArray(helpers);
+}
+
+// In moveFunction():
+if (staticHelperCount &gt; 0) {
+    if (promptUser("Move %d static helper function(s) too?", staticHelperCount)) {
+        for (int i = 0; i &lt; staticHelperCount; i++) {
+            moveFunction(staticHelpers[i]-&gt;pos, target);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Value:</strong>
+- Prevents broken builds from missing static helpers
+- Maintains logical cohesion
+- Reduces manual follow-up work</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_phase_4_polish">Phase 4: Polish</h5>
+<div class="paragraph">
+<p><strong>Estimated effort</strong>: 1 week</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Preview dialog showing what will be moved</p>
+</li>
+<li>
+<p>Better insertion point heuristics (group with related functions)</p>
+</li>
+<li>
+<p>Handle comments and documentation</p>
+</li>
+<li>
+<p>Update existing callers if needed</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_code_locations">16.5.5. Code Locations</h4>
+<div class="sect4">
+<h5 id="_in_c_xref_java_leverage_these">In c-xref-java (Leverage These)</h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Purpose</th>
+<th class="tableblock halign-left valign-top">Line</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>moveStaticObjectAndMakeItPublic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Core move logic with reference updating</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2814</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>getMethodLimitsForMoving</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Find function boundaries using parser</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2908</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>applyExpandShortNames</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pattern for dependency analysis (adapt for C)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2300</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>reduceNamesAndAddImports</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pattern for import management (adapt for C)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2645</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>moveBlockInEditorBuffer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Language-agnostic text movement</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Used at 2867</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>getReferences</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Find all call sites (already works for C)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Used at 2843</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>changeAccessModifier</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Change visibility (adapt for static/extern)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Used at 2868</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_in_c_xrefactory_already_available">In c-xrefactory (Already Available)</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>EditorMarker</code> position tracking - <code>src/editor.h</code></p>
+</li>
+<li>
+<p><code>EditorBuffer</code> text manipulation - <code>src/editorbuffer.h</code></p>
+</li>
+<li>
+<p>Undo/redo infrastructure - <code>src/editor.c</code></p>
+</li>
+<li>
+<p>Symbol database lookups - <code>src/reftab.c</code></p>
+</li>
+<li>
+<p>Reference tracking - <code>src/reference.c</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_implementation_effort_summary">16.5.6. Implementation Effort Summary</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Phase</th>
+<th class="tableblock halign-left valign-top">Effort</th>
+<th class="tableblock halign-left valign-top">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 1: Basic Move</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1-2 weeks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>High</strong> - Eliminates manual cut/paste, handles 80% of cases</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 2: Include Management</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2-3 weeks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>High</strong> - Prevents build breakage, major time saver</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 3: Static Helpers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1-2 weeks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Medium</strong> - Nice to have, improves completeness</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 4: Polish</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 week</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Low</strong> - Quality of life improvements</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Total for Phases 1-2</strong>: 3-5 weeks
+<strong>Total for full implementation</strong>: 5-8 weeks</p>
+</div>
+<div class="paragraph">
+<p><strong>Comparison to estimated-from-scratch</strong>: 6-8 weeks
+<strong>Savings from leveraging Java code</strong>: ~30% effort reduction</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_benefits_5">16.5.7. Benefits</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Developer Productivity</strong></dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Frequent manual refactoring becomes automated</p>
+</li>
+<li>
+<p>Reduces errors from missed dependencies</p>
+</li>
+<li>
+<p>Maintains code quality during reorganization</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Code Quality</strong></dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Correct header management (no missing includes)</p>
+</li>
+<li>
+<p>Proper visibility (static vs extern)</p>
+</li>
+<li>
+<p>Preserves all references and call sites</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Showcase for c-xrefactory</strong></dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Demonstrates unique C-specific refactoring capabilities</p>
+</li>
+<li>
+<p>Differentiates from generic LSP servers</p>
+</li>
+<li>
+<p>Builds on existing Java refactoring experience</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_risks_and_mitigation_3">16.5.8. Risks and Mitigation</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Risk</th>
+<th class="tableblock halign-left valign-top">Likelihood</th>
+<th class="tableblock halign-left valign-top">Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Complex header dependencies</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Start with simple cases in Phase 1, iterate in Phase 2</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parser limitations finding function boundaries</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Low</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Already works for extract function refactoring</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Missing static helper detection</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Make it optional, user can manually move helpers</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Breaking builds with incorrect includes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Generate preview, allow user to review before applying</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_success_metrics_3">16.5.9. Success Metrics</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Phase 1 MVP</strong>: Successfully moves function 90% of cases without build errors</p>
+</li>
+<li>
+<p><strong>Phase 2</strong>: Correctly identifies and adds required headers 80% of time</p>
+</li>
+<li>
+<p><strong>Phase 3</strong>: Detects static helpers with &gt;95% accuracy</p>
+</li>
+<li>
+<p><strong>User adoption</strong>: Refactoring used frequently by active c-xrefactory users</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_alternatives_considered">16.5.10. Alternatives Considered</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Manual refactoring with editor macros</strong></dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Fragile, error-prone</p>
+</li>
+<li>
+<p>No understanding of code structure</p>
+</li>
+<li>
+<p>Can&#8217;t handle dependencies</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Use generic LSP move/rename</strong></dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>LSP has no "move function" operation</p>
+</li>
+<li>
+<p>Would need custom extension</p>
+</li>
+<li>
+<p>Doesn&#8217;t understand C header dependencies</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Wait for Clangd to implement</strong></dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Clangd has no move function refactoring</p>
+</li>
+<li>
+<p>C++-focused, may not handle C idioms well</p>
+</li>
+<li>
+<p>We have opportunity to do it first and better</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_references_5">16.5.11. References</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Java implementation: <code>/home/thoni/Utveckling/c-xref-java/src/refactory.c</code></p>
+</li>
+<li>
+<p>Current extract function: <code>src/extract.c</code> (proves function boundary detection works)</p>
+</li>
+<li>
+<p>Editor infrastructure: <code>src/editor.c</code>, <code>src/editorbuffer.c</code></p>
+</li>
+<li>
+<p>Symbol database: <code>src/reftab.c</code>, <code>src/referenceableitemtable.c</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_next_steps">16.5.12. Next Steps</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>After persistence store cleanup</strong>: Take a break from architectural work</p>
+</li>
+<li>
+<p><strong>Implement Phase 1 MVP</strong>: 1-2 weeks for immediate value</p>
+</li>
+<li>
+<p><strong>Gather usage feedback</strong>: Identify most common dependency patterns</p>
+</li>
+<li>
+<p><strong>Implement Phase 2</strong>: Based on real-world usage patterns</p>
+</li>
+<li>
+<p><strong>Document and showcase</strong>: Blog post, video demonstration</p>
+</li>
+</ol>
+</div>
+<hr>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Even Phase 1 MVP provides significant value by eliminating manual text manipulation. The developer who does this refactoring "very often" confirms the high ROI potential.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -9971,7 +10701,7 @@ void pushEmptySession(ReferencesStack *stack);  // Generic operation</code></pre
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-12-24 09:08:43 UTC
+Last updated 2025-12-25 14:39:36 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
