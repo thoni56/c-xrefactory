@@ -13,3 +13,7 @@ void compactSearchResultsShort(void) {
 void gotoSearchItem(int refn) {
     mock(refn);
 }
+
+void selectSearchItem(int refn) {
+    mock(refn);
+}

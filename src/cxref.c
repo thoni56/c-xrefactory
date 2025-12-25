@@ -439,12 +439,6 @@ static void extendBrowserMenuWithReferences(BrowserMenu *menuItem, Reference *re
     }
 }
 
-static void gotoPosition(Position position)
-{
-    assert(options.xref2);
-    ppcGotoPosition(position);
-}
-
 static bool sessionHasReferencesValidForOperation(SessionData *session, SessionStackEntry **entryP,
                                                   CheckNull checkNull) {
     assert(session);
@@ -540,7 +534,7 @@ static void orderRefsAndGotoDefinition(SessionStackEntry *refs) {
         indicateNoReference();
     } else if (!isLessImportantUsageThan(refs->references->usage, UsageDeclared)) {
         refs->current = refs->references;
-        gotoPosition(refs->current->position);
+        ppcGotoPosition(refs->current->position);
     } else {
         assert(options.xref2);
         ppcWarning("Definition not found");
@@ -787,7 +781,7 @@ static void olcxReferenceList(char *commandString) {
 
 static void olcxGenGotoActReference(SessionStackEntry *refs) {
     if (refs->current != NULL) {
-        gotoPosition(refs->current->position);
+        ppcGotoPosition(refs->current->position);
     } else {
         indicateNoReference();
     }
@@ -887,7 +881,7 @@ static void gotoMatch(int referenceIndex) {
     if (match != NULL) {
         if (match->visibility == VisibilityLocal) {
             if (positionsAreNotEqual(match->reference.position, noPosition)) {
-                gotoPosition(match->reference.position);
+                ppcGotoPosition(match->reference.position);
             } else {
                 indicateNoReference();
             }
@@ -995,7 +989,7 @@ static void olcxReferenceGotoCaller(void) {
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL_YES))
         return;
     if (refs->callerPosition.file != NO_FILE_NUMBER) {
-        gotoPosition(refs->callerPosition);
+        ppcGotoPosition(refs->callerPosition);
 
     } else {
         indicateNoReference();
@@ -1302,7 +1296,7 @@ static void olcxReferencePop(void) {
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL_YES))
         return;
     if (refs->callerPosition.file != NO_FILE_NUMBER) {
-        gotoPosition(refs->callerPosition);
+        ppcGotoPosition(refs->callerPosition);
     } else {
         indicateNoReference();
     }
@@ -1468,22 +1462,6 @@ static void selectCompletion(void) {
     ppcGenRecord(PPC_SINGLE_COMPLETION, match->name);
 }
 
-static void selectSearchItem(int refn) {
-    char buffer[MAX_FUNCTION_NAME_LENGTH];
-
-    assert(refn > 0);
-    assert(sessionData.searchingStack.top);
-    SessionStackEntry *entry = sessionData.searchingStack.top;
-    Match *match = getMatchOnNthLine(entry->matches, refn);
-    if (match == NULL) {
-        errorMessage(ERR_ST, "selection out of range.");
-        return;
-    }
-    assert(sessionData.searchingStack.root!=NULL);
-    ppcGotoPosition(sessionData.searchingStack.root->callerPosition);
-    sprintf(buffer, " %s", match->name);
-    ppcGenRecord(PPC_SINGLE_COMPLETION, buffer);
-}
 
 static void completionBackward(void) {
     SessionStackEntry    *top;
@@ -2033,7 +2011,7 @@ void answerEditorAction(void) {
         // it is used from refactory, but that probably only executes
         // the parsers and server and not cxref...
         if (completionStringServed && parameterPosition.file != NO_FILE_NUMBER) {
-            gotoPosition(parameterPosition);
+            ppcGotoPosition(parameterPosition);
             deleteEntryFromSessionStack(sessionData.browsingStack.top);
         } else {
             char tmpBuff[TMP_BUFF_SIZE];
@@ -2043,7 +2021,7 @@ void answerEditorAction(void) {
         break;
     case OLO_GET_PRIMARY_START:
         if (completionStringServed && primaryStartPosition.file != NO_FILE_NUMBER) {
-            gotoPosition(primaryStartPosition);
+            ppcGotoPosition(primaryStartPosition);
             deleteEntryFromSessionStack(sessionData.browsingStack.top);
         } else {
             errorMessage(ERR_ST, "Begin of primary expression not found.");

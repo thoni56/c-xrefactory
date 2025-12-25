@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "list.h"
 #include "match.h"
@@ -13,6 +14,7 @@
 #include "misc.h"
 #include "globals.h"
 #include "ppc.h"
+#include "protocol.h"
 
 
 static bool matchNameIsLessThan(Match *m1, Match *m2) {
@@ -35,7 +37,23 @@ static void removeMatchesWithSameName(Match *matches) {
     }
 }
 
-#define maxOf(a, b) (((a) > (b)) ? (a) : (b))
+void selectSearchItem(int refn) {
+    char buffer[MAX_FUNCTION_NAME_LENGTH];
+
+    assert(refn > 0);
+    assert(sessionData.searchingStack.top);
+    SessionStackEntry *entry = sessionData.searchingStack.top;
+    Match *match = getMatchOnNthLine(entry->matches, refn);
+    if (match == NULL) {
+        errorMessage(ERR_ST, "selection out of range.");
+        return;
+    }
+    assert(sessionData.searchingStack.root != NULL);
+    ppcGotoPosition(sessionData.searchingStack.root->callerPosition);
+    sprintf(buffer, " %s", match->name);
+    ppcGenRecord(PPC_SINGLE_COMPLETION, buffer);
+}
+
 
 void gotoSearchItem(int refn) {
     Match *match;
@@ -53,6 +71,9 @@ void gotoSearchItem(int refn) {
         indicateNoReference();
     }
 }
+
+#define maxOf(a, b) (((a) > (b)) ? (a) : (b))
+
 char *createSearchLine_static(char *name, int fileNumber, int *len1, int *len2) {
     static char line[2 * COMPLETION_STRING_SIZE];
     char file[TMP_STRING_SIZE];
