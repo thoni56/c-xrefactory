@@ -103,3 +103,7 @@ void ppcGenOffsetPosition(char *fn, int offset) {
 void ppcAskConfirmation(char *message) {
     mock(message);
 }
+
+void indicateNoReference(void) {
+    mock();
+}

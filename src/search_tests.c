@@ -14,6 +14,9 @@
 #include "match.mock"
 #include "options.mock"
 #include "reference.mock"
+#include "misc.mock"
+#include "filetable.mock"
+#include "ppc.mock"
 
 
 Describe(Search);
@@ -22,7 +25,7 @@ BeforeEach(Search) {
 }
 AfterEach(Search) {}
 
-SessionStackEntry *newEmptySessionStackEntry(void);
+protected SessionStackEntry *newEmptySessionStackEntry(void);
 
 static Match *newMatch(char *name) {
     Match *match = (Match *)malloc(sizeof(Match));

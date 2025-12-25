@@ -2,6 +2,14 @@
 
 #include <cgreen/mocks.h>
 
+char *createSearchLine_static(char *name, int fileNumber, int *len1, int *len2) {
+    return (char *)mock(name, fileNumber, len1, len2);
+}
+
 void compactSearchResultsShort(void) {
     mock();
+}
+
+void gotoSearchItem(int refn) {
+    mock(refn);
 }

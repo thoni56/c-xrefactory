@@ -6,6 +6,7 @@
 #include "globals.h"
 #include "protocol.h"
 #include "filetable.h"
+#include "options.h"
 
 
 static int ppcIndentOffset = 0;
@@ -183,6 +184,10 @@ void ppcBottomInformation(char *message) {
     fflush(outputFile);
 }
 
+void indicateNoReference(void) {
+    assert(options.xref2);
+    ppcBottomInformation("No reference");
+}
 void ppcAskConfirmation(char *message) {
     ppcGenRecord(PPC_ASK_CONFIRMATION, message);
 }
