@@ -4,7 +4,8 @@ include ../Makefile.boilerplate
 ARGUMENTS = -xrefactory-II -refactory -rfct-move-function -commentmovinglevel=0 -movetargetfile=target.c -rfct-target-line=3 -olcursor=12 source.c
 
 $(TEST): .c-xrefrc
-	@$(COMMAND) > output.tmp
+	touch *.c
+	-@$(COMMAND) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 

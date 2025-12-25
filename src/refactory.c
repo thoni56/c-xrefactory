@@ -1465,7 +1465,7 @@ static bool validTargetPlace(EditorMarker *target, char *checkOpt) {
     return valid;
 }
 
-static EditorMarker *removeStaticPrefix(EditorMarker *marker) {
+EditorMarker *removeStaticPrefix(EditorMarker *marker) {
     EditorMarker *startMarker;
 
     startMarker = createMarkerForExpressionStart(marker, GET_STATIC_PREFIX_START);
@@ -1484,9 +1484,6 @@ static EditorMarker *removeStaticPrefix(EditorMarker *marker) {
 static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorMarker *point,
                                               EditorMarker *endMarker, EditorMarker *target,
                                               ToCheckOrNot check, int limitIndex) {
-    EditorMarker *movedEnd = duplicateEditorMarker(endMarker);
-    movedEnd->offset--;
-
     int size = endMarker->offset - startMarker->offset;
     if (target->buffer == startMarker->buffer && target->offset > startMarker->offset &&
         target->offset < startMarker->offset + size) {
@@ -1494,53 +1491,38 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
         return;
     }
 
-    // O.K. move
-    char nameOnPoint[TMP_STRING_SIZE];
-    strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
-    assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
+    /* Check if function has "static" keyword and remove it BEFORE moving.
+     * Search from function start to function name for "static " pattern.
+     * For Phase 1 MVP: we just remove static, user manually handles extern/headers. */
+    EditorMarker *searchMarker = newEditorMarker(startMarker->buffer, startMarker->offset);
+    bool foundStatic = false;
+    EditorMarker *staticMarker = NULL;
 
-    EditorMarkerList *occs = getReferences(point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
-    assert(sessionData.browsingStack.top && sessionData.browsingStack.top->hkSelectedSym);
+    while (searchMarker->offset < point->offset) {
+        char *text = &startMarker->buffer->allocation.text[searchMarker->offset];
+        int remaining = point->offset - searchMarker->offset;
 
-    int count;
-    LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListBefore);
-    LIST_LEN(count, EditorMarkerList, occs);
-    int progress = 0;
-
-    EditorRegionList *regions  = NULL;
-    for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
-        if (!isDefinitionOrDeclarationUsage(ll->usage)) {
-            EditorMarker *pp  = removeStaticPrefix(ll->marker);
-            EditorMarker *ppp = newEditorMarker(ll->marker->buffer, ll->marker->offset);
-            moveEditorMarkerBeyondIdentifier(ppp, 1);
-            regions = newEditorRegionList(pp, ppp, regions);
+        /* Check if we're at "static " (with space or tab after) */
+        if (remaining >= 7 && strncmp(text, "static", 6) == 0 &&
+            (text[6] == ' ' || text[6] == '\t')) {
+            foundStatic = true;
+            staticMarker = newEditorMarker(startMarker->buffer, searchMarker->offset);
+            break;
         }
-        writeRelativeProgress((100*progress++) / count);
+        searchMarker->offset++;
     }
-    writeRelativeProgress(100);
+    freeEditorMarker(searchMarker);
 
-    size = endMarker->offset - startMarker->offset;
-    if (check == NO_CHECKS) {
-        moveBlockInEditorBuffer(startMarker, target, size, &editorUndo);
-        //removeModifier(point, limitIndex, "static");
-    } else {
-        assert(sessionData.browsingStack.top != NULL && sessionData.browsingStack.top->hkSelectedSym != NULL);
-        //theMethod = &sessionData.browserStack.top->hkSelectedSym->references;
-        //pushAllReferencesOfMethod(point, "-olallchecks");
-        //createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
-        moveBlockInEditorBuffer(startMarker, target, size, &editorUndo);
-        //changeAccessModifier(point, limitIndex, "public");
-        //pushAllReferencesOfMethod(point, "-olallchecks");
-        //createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
-        assert(sessionData.browsingStack.top && sessionData.browsingStack.top->previous);
-        //mm1 = sessionData.browserStack.top->previous->menuSym;
-        //mm2 = sessionData.browserStack.top->menuSym;
-        //staticMoveCheckCorrespondance(mm1, mm2, theMethod);
+    /* Remove "static " keyword BEFORE moving, to avoid tracking offset changes */
+    if (foundStatic) {
+        replaceStringInEditorBuffer(staticMarker->buffer, staticMarker->offset, 7, "", 0, &editorUndo);
+        freeEditorMarker(staticMarker);
+        /* Adjust size since we removed 7 characters */
+        size -= 7;
     }
 
-    EditorMarker *pp = duplicateEditorMarker(startMarker);
-    EditorMarker *ppp = duplicateEditorMarker(movedEnd);
-    regions = newEditorRegionList(pp, ppp, regions);
+    /* Now move the (possibly modified) function block */
+    moveBlockInEditorBuffer(startMarker, target, size, &editorUndo);
 }
 
 static void moveFunction(EditorMarker *point) {
@@ -1734,7 +1716,7 @@ void refactory(void) {
                               refactoringOptions.parnum2);
         break;
     case AVR_MOVE_FUNCTION:
-        progressFactor = 4;
+        progressFactor = 2;  /* Simple move without multi-step progress */
         moveFunction(point);
         break;
     case AVR_EXTRACT_FUNCTION:
