@@ -113,7 +113,7 @@ static void sortMatchList(Match **matches,
     LIST_MERGE_SORT(Match, *matches, compareFunction);
 }
 
-void sortMatchListDescending(Match **matches) {
+void sortMatchListByName(Match **matches) {
     sortMatchList(matches, matchNameIsLessThan);
 }
 

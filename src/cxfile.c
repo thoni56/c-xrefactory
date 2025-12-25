@@ -278,7 +278,7 @@ void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Reference 
         static int count = 0;
         count ++;
         if (count > COMPACT_TAGS_AFTER_SEARCH_COUNT) {
-            sortMatchListDescending(&sessionData.searchingStack.top->matches);
+            sortMatchListByName(&sessionData.searchingStack.top->matches);
             count = 0;
         }
     }

@@ -24,6 +24,6 @@ extern Match *prependToMatches(Match *matches, char *name, char *fullText, Symbo
                                ReferenceableItem *referenceableItem, Reference *dfpos, int includedFileNumber);
 
 extern Match *getMatchOnNthLine(Match *matches, int n);
-extern void sortMatchListDescending(Match **matches);
+extern void sortMatchListByName(Match **matches);
 
 #endif
