@@ -1251,7 +1251,29 @@ void moveFunction(EditorMarker *point, EditorMarker *target) {
 
 **Estimated effort**: 2-3 weeks
 
-Add automatic header dependency analysis:
+Add automatic header dependency analysis and improve static detection:
+
+**Improvements to static detection:**
+
+Currently, Phase 1 uses simple string search for "static " keyword. This works for common cases but has limitations:
+
+- Does not skip comments (e.g., `/* This is a static function */\nvoid func()` would incorrectly match)
+- Does not handle macros (e.g., `#define STATIC static`)
+- Character-by-character search, not token-based
+
+Phase 2 should use parser-based detection:
+
+[source,c]
+----
+// Instead of string search, use the symbol's storage class from parser
+bool isStaticFunction(Symbol *sym) {
+    return sym->storage == StorageStatic;
+}
+----
+
+This leverages information the parser already has, avoiding comment/macro issues.
+
+**Header dependency analysis:**
 
 [source,c]
 ----
