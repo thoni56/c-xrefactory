@@ -1,4 +1,5 @@
 <update-report>
+ <information len=<n>>C-xrefactory project: CURDIR</information>
  <information len=<n>>CURDIR/source.c</information>
  <information len=<n>>CURDIR/target.c</information>
  <information len=<n>>Generating 'CURDIR/CXrefs'</information>

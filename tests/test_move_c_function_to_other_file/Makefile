@@ -6,7 +6,7 @@ ARGUMENTS = -xrefactory-II -refactory -rfct-move-function -commentmovinglevel=0 
 $(TEST): .c-xrefrc
 	touch *.c
 	-@$(COMMAND) > output.tmp
-	@$(NORMALIZE) output.tmp > output
+	@$(NORMALIZE) output.tmp | grep -v progress > output
 	$(VERIFY)
 
 trace: EXTRA = \'-debug\'

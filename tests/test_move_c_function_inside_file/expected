@@ -1,0 +1,18 @@
+<update-report>
+ <information len=<n>>C-xrefactory project: CURDIR</information>
+ <information len=<n>>CURDIR/source.c</information>
+ <information len=<n>>Generating 'CURDIR/CXrefs'</information>
+</update-report>
+<goto>
+ <position-off off=77 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<cut-block val=39 len=<n>></cut-block>
+<goto>
+ <position-off off=39 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<paste-block len=<n>></paste-block>
+<goto>
+ <position-off off=56 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<indent-block val=3 len=<n>></indent-block>
+<sync>

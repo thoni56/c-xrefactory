@@ -1491,29 +1491,32 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
         return;
     }
 
-    /* Check if function has "static" keyword and remove it BEFORE moving.
-     * Search from function start to function name for "static " pattern.
+    /* Check if function has "static" keyword and remove it when moving between files.
+     * When moving within the same file, keep static (visibility doesn't change).
      * For Phase 1 MVP: we just remove static, user manually handles extern/headers. */
+    bool movingBetweenFiles = (startMarker->buffer != target->buffer);
     EditorMarker *searchMarker = newEditorMarker(startMarker->buffer, startMarker->offset);
     bool foundStatic = false;
     EditorMarker *staticMarker = NULL;
 
-    while (searchMarker->offset < point->offset) {
-        char *text = &startMarker->buffer->allocation.text[searchMarker->offset];
-        int remaining = point->offset - searchMarker->offset;
+    if (movingBetweenFiles) {
+        while (searchMarker->offset < point->offset) {
+            char *text = &startMarker->buffer->allocation.text[searchMarker->offset];
+            int remaining = point->offset - searchMarker->offset;
 
-        /* Check if we're at "static " (with space or tab after) */
-        if (remaining >= 7 && strncmp(text, "static", 6) == 0 &&
-            (text[6] == ' ' || text[6] == '\t')) {
-            foundStatic = true;
-            staticMarker = newEditorMarker(startMarker->buffer, searchMarker->offset);
-            break;
+            /* Check if we're at "static " (with space or tab after) */
+            if (remaining >= 7 && strncmp(text, "static", 6) == 0 &&
+                (text[6] == ' ' || text[6] == '\t')) {
+                foundStatic = true;
+                staticMarker = newEditorMarker(startMarker->buffer, searchMarker->offset);
+                break;
+            }
+            searchMarker->offset++;
         }
-        searchMarker->offset++;
     }
     freeEditorMarker(searchMarker);
 
-    /* Remove "static " keyword BEFORE moving, to avoid tracking offset changes */
+    /* Remove "static " keyword BEFORE moving (only when moving between files) */
     if (foundStatic) {
         replaceStringInEditorBuffer(staticMarker->buffer, staticMarker->offset, 7, "", 0, &editorUndo);
         freeEditorMarker(staticMarker);
