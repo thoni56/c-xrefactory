@@ -1432,8 +1432,6 @@ static bool processOOption(int *argi, ArgumentsVector args) {
         options.serverOperation=OLO_COMPLETION;
     else if (strcmp(args.argv[i], "-olcxmmtarget")==0)
         options.serverOperation=OLO_SET_MOVE_FUNCTION_TARGET;
-    else if (strcmp(args.argv[i], "-olcxmethodlines")==0)
-        options.serverOperation=OLO_GET_METHOD_COORD;
     else if (strcmp(args.argv[i], "-olcxgetprojectname")==0) {
         options.serverOperation=OLO_ACTIVE_PROJECT;
     }
