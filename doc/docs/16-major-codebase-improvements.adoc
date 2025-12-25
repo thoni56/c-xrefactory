@@ -6,14 +6,16 @@ These are distinct from the user-facing refactorings documented in "Refactoring 
 
 === LexemStream API Improvements
 
+**Status**: PARTIALLY COMPLETE (November 2025)
+
 ==== Problem Statement
 
 The macro expansion and collation code (`collate()`, `replaceMacroArguments()`, etc.) in `src/yylex.c` suffers from *pointer parameter proliferation*, making it difficult to understand and maintain. Functions pass 5-6 separate parameters to track buffer state:
 
 [source,c]
 ----
-static char *collate(char *buffer, int *bufferSizeP, char **bufferWriteP, 
-                     char **leftHandLexemP, char **rightHandLexemP, 
+static char *collate(char *buffer, int *bufferSizeP, char **bufferWriteP,
+                     char **leftHandLexemP, char **rightHandLexemP,
                      LexemStream *actualArgumentsInput);
 
 static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWriteP,
@@ -26,6 +28,39 @@ This creates several issues:
 * Manual size/capacity management scattered throughout code
 * Easy to make mistakes with pointer arithmetic
 * Functions have 6+ parameters just for buffer management
+
+==== Current Implementation Status (2025-11)
+
+**What's been implemented:**
+
+✓ **Basic API functions** (`src/lexemstream.c`, `src/lexemstream.h`):
+- `lexemStreamHasMore()` - Check if stream has more lexems
+- `copyNextLexemFromStreamToStream()` - Copy one lexem between streams
+- `skipExtraLexemInformationFor()` - Skip lexem metadata
+
+✓ **Partially refactored functions**:
+- `copyRemainingLexems()` - Now uses `LexemStream` API (yylex.c:1794)
+- `replaceMacroArguments()` - Refactored to use `LexemStream` (commit 73239531)
+- `expandMacroArgument()` - Takes `LexemStream *argumentInput` (yylex.c:1708)
+- `resolveMacroArgumentAsLeftOperand()` - Partially uses API (commit 06e7e17e)
+
+**What remains to be done:**
+
+✗ **Extended LexemStream structure** - No ownership fields yet:
+- Missing: `allocatedSize`, `ownsBuffer` fields
+- Structure still lightweight (5 fields only)
+
+✗ **Full API not created** - Missing functions:
+- Creation: `lexInputCreateOwned()`, `lexInputCreateView()`
+- Capacity: `lexInputEnsureCapacity()`, `lexInputReallocIfNeeded()`
+- Writing: `lexInputPutLexemCode()`, `lexInputAppendBytes()`
+- Cleanup: `lexInputFree()`
+
+✗ **Major functions still using old style**:
+- `collate()` - Still has 5 pointer parameters (yylex.c:2022)
+- Several helper functions: `collate_id_id()`, `collate_const_const()`, etc.
+
+**Progress estimate**: ~40% complete (basic API exists, some refactoring done, but major work remains)
 
 ==== Current Architecture
 
@@ -1258,86 +1293,126 @@ addRequiredIncludes(targetFile, neededHeaders, headerCount);
 - `src/misc.c` - added `OLO_GET_FUNCTION_BOUNDS` to `requiresCreatingRefs()`
 - `tests/test_move_c_function_*/` - enabled and passing
 
-===== Phase 2: Smart Include Management
+===== Phase 2: Add Function Declaration to Header
 
-**Relative complexity**: 2-3× Phase 1 (based on completed Phase 1 as baseline)
+**Relative complexity**: ~0.5× Phase 1
 
-Add automatic header dependency analysis and improve static detection:
+Add automatic function declaration to target file's header:
 
-**Improvements to static detection:**
+**Approach:**
 
-Currently, Phase 1 uses simple string search for "static " keyword. This works for common cases but has limitations:
+Following C conventions, when moving a function to `target.c`, add its declaration to `target.h` so other files can call it. This is much simpler than analyzing all dependencies.
 
-- Does not skip comments (e.g., `/* This is a static function */\nvoid func()` would incorrectly match)
-- Does not handle macros (e.g., `#define STATIC static`)
-- Character-by-character search, not token-based
+**Algorithm:**
 
-Phase 2 should use parser-based detection:
+1. Determine target file path (e.g., `/path/to/target.c`)
+2. Derive header path by replacing `.c` with `.h` (e.g., `/path/to/target.h`)
+3. If header doesn't exist, create it with include guards
+4. Find insertion point in header (after includes, before end of guard)
+5. Generate function declaration from Symbol: `extern void func(int a);`
+6. Insert declaration into header
+7. User manually adds any needed `#include` directives to target file
 
-[source,c]
-----
-// Instead of string search, use the symbol's storage class from parser
-bool isStaticFunction(Symbol *sym) {
-    return sym->storage == StorageStatic;
-}
-----
-
-This leverages information the parser already has, avoiding comment/macro issues.
-
-**Header dependency analysis:**
+**Implementation sketch:**
 
 [source,c]
 ----
-void findRequiredHeaders(EditorMarker *start, EditorMarker *end,
-                         char ***headersOut, int *countOut) {
-    StringList *headers = NULL;
-
-    // Parse function body to collect all symbols used
-    parseRegion(start, end);
-
-    // For each symbol (function, type, macro) used in the function:
-    for (Symbol *sym = usedSymbols; sym != NULL; sym = sym->next) {
-        // Look up in symbol database
-        ReferenceableItem *item = lookupSymbolInTable(sym->name);
-        if (item != NULL) {
-            // Find which header declares this symbol
-            FileItem *declaringFile = getFileItem(item->references->position.file);
-            if (isHeaderFile(declaringFile->name)) {
-                // Add to required headers list (with dedup)
-                addUniqueString(&headers, declaringFile->name);
-            }
-        }
+char *getHeaderPathForSourceFile(char *sourcePath) {
+    // "/path/to/target.c" -> "/path/to/target.h"
+    char *header = stackMemoryAlloc(strlen(sourcePath) + 1);
+    strcpy(header, sourcePath);
+    char *ext = strrchr(header, '.');
+    if (ext && strcmp(ext, ".c") == 0) {
+        strcpy(ext, ".h");
     }
-
-    // Convert list to array
-    *countOut = countList(headers);
-    *headersOut = listToArray(headers);
+    return header;
 }
 
-void addRequiredIncludes(EditorBuffer *targetFile, char **headers, int count) {
-    // Find insertion point (after existing includes or after comments)
-    EditorMarker *insertPoint = findIncludeSectionEnd(targetFile);
-
-    // Check which headers are already included
-    for (int i = 0; i < count; i++) {
-        if (!fileAlreadyIncludesHeader(targetFile, headers[i])) {
-            char includeLine[MAX_LINE];
-            sprintf(includeLine, "#include \"%s\"\n", headers[i]);
-            insertString(insertPoint, includeLine);
-        }
+void createHeaderIfNeeded(char *headerPath) {
+    if (!fileExists(headerPath)) {
+        // Create header with include guards
+        // "#ifndef TARGET_H\n#define TARGET_H\n\n#endif\n"
+        char *guardName = makeIncludeGuardName(headerPath);
+        // Write to file or EditorBuffer
     }
+}
+
+char *generateFunctionSignature(Symbol *function) {
+    // Reconstruct function signature from Symbol
+    // Example: "extern void func(int a, char *b)"
+    // Need to walk function->typeModifier to build type string
+    // This is the trickiest part
+}
+
+void addFunctionDeclarationToHeader(Symbol *function, char *headerPath) {
+    // 1. Open or load header into EditorBuffer
+    // 2. Find insertion point (before final #endif)
+    // 3. Generate signature: "extern void func(int a);\n"
+    // 4. Insert declaration
+}
+
+// In moveFunction() after moving the function block:
+if (movingBetweenFiles) {
+    char *headerPath = getHeaderPathForSourceFile(targetFilePath);
+    createHeaderIfNeeded(headerPath);
+    addFunctionDeclarationToHeader(parsedInfo.function, headerPath);
 }
 ----
+
+**Required infrastructure** (already exists):
+- `Symbol` with function information (symbol.h)
+- `Symbol.typeModifier` - contains return type and parameter information
+- `EditorBuffer` manipulation for header file editing
+- File path utilities
+
+**Challenges:**
+
+1. **Generating function signature**: Need to reconstruct `void func(int a, char *b)` from Symbol's type information
+   - Walk `typeModifier` chain to build type string
+   - Handle pointers, arrays, function pointers correctly
+   - Parameter names might not be available (use `arg1`, `arg2`, etc.)
+
+2. **Finding insertion point in header**: Where to add the declaration?
+   - After `#include` directives
+   - Before final `#endif` of include guard
+   - After existing declarations (maintain some order)
+
+3. **Creating header file**: If `target.h` doesn't exist
+   - Generate include guard name from filename (`TARGET_H`)
+   - Create basic header structure
+   - Or warn user and skip?
+
+4. **Header guard formats**: Different styles exist
+   - `#ifndef HEADER_H` / `#define HEADER_H` / `#endif`
+   - `#pragma once`
+   - Need to detect and handle both
 
 **Value:**
-- Automatically determines which headers are needed
-- Inserts `#include` directives
-- Prevents build breakage from missing dependencies
+- Automatically makes moved function callable from other files
+- Follows C convention of declarations in `.h`, definitions in `.c`
+- Much simpler than full dependency analysis
+- User still controls `#include` directives (maintains flexibility)
 
-**New code required**: ~300 lines
-- Header dependency analysis: ~150 lines
-- Include directive insertion: ~100 lines
-- Helper functions: ~50 lines
+**New code required**: ~150 lines
+- Header path derivation: ~20 lines
+- Signature generation from Symbol: ~60 lines (complex type reconstruction)
+- Header file manipulation: ~50 lines
+- Include guard detection/creation: ~20 lines
+
+**Success Criteria**:
+1. ✓ When moving function to `target.c`, declaration is added to `target.h`
+2. ✓ Function signature is correctly generated (return type, name, parameters)
+3. ✓ Declaration is inserted at appropriate location in header
+4. ✓ If header doesn't exist, either create it or warn user
+5. ✓ Duplicate declarations are avoided (check if already present)
+6. ✓ Works with both `#ifndef` guards and `#pragma once`
+7. ✓ No regression in Phase 1 functionality
+
+**Acceptable limitations** (defer to Phase 3/4):
+- User manually adds `#include` directives to target `.c` file
+- May not preserve exact parameter names if not in Symbol
+- Basic include guard format if creating new header
+- Doesn't remove declaration from old header (user handles manually)
 
 ===== Phase 3: Static Helper Functions
 

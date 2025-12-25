@@ -96,32 +96,48 @@ The roadmap is guided by these principles:
 
 === Medium-term Goals (6-12 Months)
 
-These goals are detailed in <<16-proposed-refactorings.adoc#,Chapter 16: Proposed Refactorings>>. The roadmap establishes priority ordering:
+These goals are detailed in <<16-major-codebase-improvements.adoc#,Chapter 16: Major Codebase Improvements>>. The roadmap proposes a priority ordering:
 
 ==== 1. LexemStream API Improvements
 
-*Reference*: <<16-proposed-refactorings.adoc#,Proposed Refactorings - LexemStream API Improvements>>
+*Reference*: <<16-major-codebase-improvements.adoc#,Major Codebase Improvements - LexemStream API Improvements>>
+
+*Status*: **PARTIALLY COMPLETE** (~40% done as of November 2025)
 
 *Priority*: HIGH (Foundation for other refactorings)
 
 *Rationale*: The macro expansion code suffers from pointer parameter proliferation (6+ parameters per function). Adding a manipulation API to `LexemStream` (similar to `LexemBuffer`) will simplify buffer management and reduce error-prone pointer arithmetic.
 
+*Completed work*:
+
+* ✓ Basic API functions created (`lexemStreamHasMore`, `copyNextLexemFromStreamToStream`)
+* ✓ `copyRemainingLexems()` refactored to use API
+* ✓ `replaceMacroArguments()` refactored to use LexemStreams
+* ✓ `expandMacroArgument()` now uses LexemStream parameter
+
+*Remaining work*:
+
+* ✗ Extend LexemStream structure with ownership fields (`allocatedSize`, `ownsBuffer`)
+* ✗ Create full API (creation, capacity management, cleanup functions)
+* ✗ Refactor `collate()` - still has 5 pointer parameters
+* ✗ Migrate remaining helper functions
+
 *Impact*:
 
-* Reduces `collate()` from 6 parameters to 3-4
+* Reduces `collate()` from 5-6 parameters to 3-4
 * Centralizes buffer management logic
 * Enables clearer ownership semantics
 * Foundation for macro module extraction
 
-*Estimated Effort*: 3-4 weeks
+*Remaining Effort*: 2-3 weeks
 
-* Week 1: Design and implement core API
-* Week 2: Refactor `copyRemainingLexems()` and `collate()` as proof-of-concept
-* Week 3-4: Migrate remaining macro expansion functions
+* Week 1: Extend structure and create full API
+* Week 2: Refactor `collate()` and helper functions
+* Week 3: Testing, cleanup, and documentation
 
 ==== 2. Extract Macro Expansion Module
 
-*Reference*: <<16-proposed-refactorings.adoc#macro-expansion-module,Proposed Refactorings - Extract Macro Expansion Module>>
+*Reference*: <<16-major-codebase-improvements.adoc#macro-expansion-module,Major Codebase Improvements - Extract Macro Expansion Module>>
 
 *Priority*: MEDIUM (Depends on LexemStream API)
 
@@ -211,7 +227,7 @@ After architecture is clean, consider lightweight header caching:
 
 ==== 4. Clean Persistence Store Abstraction
 
-*Reference*: <<16-proposed-refactorings.adoc#clean-persistence-store,Proposed Refactorings - Clean Persistence Store Abstraction>>
+*Reference*: <<16-major-codebase-improvements.adoc#clean-persistence-store,Major Codebase Improvements - Clean Persistence Store Abstraction>>
 
 *Priority*: HIGH (Foundation for Unified Symbol Database)
 
@@ -241,7 +257,7 @@ Currently `.cx` files are sometimes treated as authoritative, when they should b
 ==== 5. Unified Symbol Database Architecture
 
 *Reference*:
-* <<16-proposed-refactorings.adoc#unified-symbol-database,Proposed Refactorings - Unified Symbol Database Architecture>>
+* <<16-major-codebase-improvements.adoc#unified-symbol-database,Major Codebase Improvements - Unified Symbol Database Architecture>>
 * link:../adr/0014-adopt-on-demand-parsing-architecture.md[ADR-0014: Adopt On-Demand Parsing Architecture]
 
 *Priority*: HIGH (Enables true on-demand LSP)
@@ -503,7 +519,7 @@ Key architectural decisions supporting this roadmap:
 * link:../adr/0014-adopt-on-demand-parsing-architecture.md[ADR-0014: On-Demand Parsing] - Core architectural shift from batch to on-demand
 
 See also:
-* <<16-proposed-refactorings.adoc#,Chapter 16: Proposed Refactorings>> for detailed technical proposals
+* <<16-major-codebase-improvements.adoc#,Chapter 16: Major Codebase Improvements>> for detailed technical proposals
 * link:../adr-process.md[ADR Process Guide] for complete decision history and ADR conventions
 
 ---
