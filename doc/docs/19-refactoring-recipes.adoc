@@ -261,3 +261,83 @@ Tentative.
 === Change return type
 
 Tentative.
+---
+
+=== Make Function Static
+
+**Purpose:** Convert functions that are only used within their compilation unit to `static` storage class for better encapsulation and compiler optimization.
+
+**When to use:**
+
+- Function has external linkage but no external callers
+- Want to make implementation details explicit
+- Enable compiler optimizations and reduce global namespace pollution
+
+**Input:**
+
+- Non-static function definition
+- All references to that function
+
+**Availability:**
+
+When cursor is on a non-static function definition where all callers are in the same file.
+
+**Algorithm:**
+
+1. **Check current storage class** - Skip if already `static`
+
+2. **Find definition and all references**
+   - Locate function definition (not declarations)
+   - Collect all call sites across project
+
+3. **Verify all references are local**
+   - For each reference (excluding definition itself):
+     * Check if in same file as definition
+     * If any reference is in different file, abort
+   - Check if declared in header files (public API), abort if yes
+
+4. **Apply transformation**
+   - Find beginning of function definition
+   - Insert "static " before return type
+
+**Output:**
+
+- Function marked as `static`
+- Compiler can optimize more aggressively
+- Clear signal that function is internal
+
+**Example:**
+
+```c
+// Before - helper function with external linkage
+int helperCompare(const void *a, const void *b) {
+    return *(int*)a - *(int*)b;
+}
+
+void publicSort(int *array, size_t n) {
+    qsort(array, n, sizeof(int), helperCompare);
+}
+
+// After - explicitly internal
+static int helperCompare(const void *a, const void *b) {
+    return *(int*)a - *(int*)b;
+}
+
+void publicSort(int *array, size_t n) {
+    qsort(array, n, sizeof(int), helperCompare);
+}
+```
+
+**Benefits:**
+
+- Better encapsulation and code clarity
+- Enables inlining and other compiler optimizations  
+- Smaller symbol tables, no name collisions
+- Safe to refactor (can't break external code)
+
+**Notes:**
+
+- Similar to "Unused Symbols" detection but finds LOCAL-ONLY usage instead of NO usage
+- Cannot handle functions used via function pointers passed externally (requires manual verification)
+- Estimated complexity: ~0.3× Move Function Phase 1
+
