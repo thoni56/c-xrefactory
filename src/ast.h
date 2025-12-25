@@ -11,6 +11,9 @@
 // The following structures are used in the parsers, they always
 // contain fields for begin and end position of parse tree
 // node and additional 'data' for semantic actions.
+//
+// NOTE that the end field points *at* the last character, so a one character lexem will
+// have the same begin and end.
 
 typedef struct {
     struct position begin, end;

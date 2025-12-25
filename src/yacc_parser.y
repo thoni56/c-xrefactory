@@ -1855,10 +1855,11 @@ external_definition
             /* We just finished parsing a function that contains the cursor position.
              * Record the function boundaries using the positions from the grammar.
              * $2.begin is the start of function_definition_head
-             * $4.end is the end of compound_statement
+             * $4.end is the position OF the closing '}', so we increment col to point AFTER it
              */
             parsedPositions[IPP_FUNCTION_BEGIN] = $2.begin;
             parsedPositions[IPP_FUNCTION_END] = $4.end;
+            parsedPositions[IPP_FUNCTION_END].col++;  /* Move past the closing '}' */
         }
         endBlock();
         parsedInfo.function = NULL;
