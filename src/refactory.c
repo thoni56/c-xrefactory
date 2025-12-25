@@ -175,8 +175,8 @@ static void ensureReferencesAreUpdated(char *project) {
     editServerSubTaskFirstPass = true;
 }
 
-static void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *mark,
-                                   char *pushOption, char *pushOption2) {
+void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *mark,
+                            char *pushOption, char *pushOption2) {
     int   argumentCount;
     char *argumentVector[MAX_NARGV_OPTIONS_COUNT];
 
@@ -1416,30 +1416,6 @@ fini:
     mm->offset = theBeginningOffset;
 }
 
-static void getFunctionBoundariesForMoving(EditorMarker *point, EditorMarker **methodStartP,
-                                           EditorMarker **methodEndP) {
-    EditorMarker *mstart, *mend;
-
-    parsedPositions[IPP_FUNCTION_BEGIN].file = parsedPositions[IPP_FUNCTION_END].file = NO_FILE_NUMBER;
-
-    // get function boundaries
-    parseBufferUsingServer(refactoringOptions.project, point, NULL, "-olcxgetfunctionbounds", NULL);
-
-    if (parsedPositions[IPP_FUNCTION_BEGIN].file == NO_FILE_NUMBER || parsedPositions[IPP_FUNCTION_END].file == NO_FILE_NUMBER) {
-        FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
-    }
-
-    mstart = newEditorMarkerForPosition(parsedPositions[IPP_FUNCTION_BEGIN]);
-    mend   = newEditorMarkerForPosition(parsedPositions[IPP_FUNCTION_BEGIN + 1]);
-
-    moveMarkerToTheBeginOfDefinitionScope(mstart);
-    moveMarkerToTheEndOfDefinitionScope(mend);
-
-    assert(mstart->buffer == mend->buffer);
-    *methodStartP = mstart;
-    *methodEndP   = mend;
-}
-
 static EditorMarker *getTargetFromOptions(void) {
     EditorMarker *target;
     EditorBuffer *tb;
@@ -1535,14 +1511,23 @@ static void moveFunction(EditorMarker *point) {
     if (!validTargetPlace(target, "-olcxmovetarget"))
         return;
 
-    /* Test: Prove parsing module links correctly */
-    ParseConfig config = createParseConfigFromOptions();
-    (void)config; /* Unused for now */
-
     ensureReferencesAreUpdated(refactoringOptions.project);
 
-    EditorMarker *functionStart, *functionEnd;
-    getFunctionBoundariesForMoving(point, &functionStart, &functionEnd);
+    /* Use new parsing API to get function boundaries */
+    ParseConfig config = createParseConfigFromOptions();
+    Position cursorPos = makePositionFromEditorMarker(point);
+    FunctionBoundariesResult bounds = parseToGetFunctionBoundaries(point->buffer, &config, cursorPos);
+
+    if (!bounds.found) {
+        FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
+    }
+
+    /* Convert positions to markers and adjust for definition scope */
+    EditorMarker *functionStart = newEditorMarkerForPosition(bounds.functionBegin);
+    EditorMarker *functionEnd = newEditorMarkerForPosition(bounds.functionEnd);
+    moveMarkerToTheBeginOfDefinitionScope(functionStart);
+    moveMarkerToTheEndOfDefinitionScope(functionEnd);
+
     int lines = countLinesBetweenEditorMarkers(functionStart, functionEnd);
 
     // O.K. Now STARTING!

@@ -6,3 +6,13 @@ ParseConfig createParseConfigFromOptions(void) {
     ParseConfig *parseConfig = (ParseConfig *)mock();
     return *parseConfig;
 }
+
+FunctionBoundariesResult parseToGetFunctionBoundaries(
+    EditorBuffer *buffer,
+    ParseConfig  *config,
+    Position      cursorPos
+) {
+    Position *cursorPosP = &cursorPos;
+    FunctionBoundariesResult *result = (FunctionBoundariesResult *)mock(buffer, config, cursorPosP);
+    return *result;
+}

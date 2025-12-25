@@ -75,3 +75,8 @@ int moveEditorMarkerBeyondIdentifier(EditorMarker *m, int direction) {
 int moveEditorMarkerToNonBlankOrNewline(EditorMarker *m, int direction) {
   return (int) mock(m, direction);
 }
+
+Position makePositionFromEditorMarker(EditorMarker *marker) {
+    Position *position = (Position *)mock(marker);
+    return *position;
+}

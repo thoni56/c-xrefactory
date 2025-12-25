@@ -57,6 +57,39 @@ EditorMarker *newEditorMarkerForPosition(Position position) {
     return marker;
 }
 
+Position makePositionFromEditorMarker(EditorMarker *marker) {
+    assert(marker);
+
+    EditorBuffer *buffer = marker->buffer;
+    if (buffer == NULL) {
+        return noPosition;
+    }
+
+    char *text = buffer->allocation.text;
+    int targetOffset = marker->offset;
+
+    int line = 1;
+    char *lineStart = text;
+
+    /* Scan to marker position, counting lines */
+    for (int i = 0; i < targetOffset; i++) {
+        if (text[i] == '\n') {
+            line++;
+            lineStart = text + i + 1;  /* Start of next line is after the newline */
+        }
+    }
+
+    int col = text + targetOffset - lineStart;  /* Distance from line start to marker */
+
+    Position position = {
+        .file = buffer->fileNumber,
+        .line = line,
+        .col = col
+    };
+
+    return position;
+}
+
 EditorMarker *createEditorMarkerForBufferBegin(EditorBuffer *buffer) {
     return newEditorMarker(buffer, 0);
 }
