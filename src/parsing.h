@@ -14,4 +14,10 @@ typedef struct {
     bool        strictAnsi;      /* ANSI C mode vs extensions */
 } ParseConfig;
 
+/**
+ * Create parse configuration from current global options.
+ * Temporary bridge function until callers build ParseConfig themselves.
+ */
+extern ParseConfig createParseConfigFromOptions(void);
+
 #endif

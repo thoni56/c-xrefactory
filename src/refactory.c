@@ -17,6 +17,7 @@
 #include "globals.h"
 #include "head.h"
 #include "list.h"
+#include "parsing.h"
 #include "startup.h"
 #include "misc.h"
 #include "options.h"
@@ -1533,6 +1534,10 @@ static void moveFunction(EditorMarker *point) {
 
     if (!validTargetPlace(target, "-olcxmovetarget"))
         return;
+
+    /* Test: Prove parsing module links correctly */
+    ParseConfig config = createParseConfigFromOptions();
+    (void)config; /* Unused for now */
 
     ensureReferencesAreUpdated(refactoringOptions.project);
 

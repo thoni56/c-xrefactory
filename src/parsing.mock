@@ -1,0 +1,7 @@
+#include "parsing.h"
+
+#include <cgreen/mocks.h>
+
+ParseConfig createParseConfigFromOptions(void) {
+    mock();
+}

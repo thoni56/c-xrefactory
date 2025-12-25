@@ -17,6 +17,7 @@
 #include "globals.mock"
 #include "misc.mock"
 #include "options.mock"
+#include "parsing.mock"
 #include "ppc.mock"
 #include "progress.mock"
 #include "reference.mock"
