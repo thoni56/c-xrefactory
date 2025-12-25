@@ -19,3 +19,7 @@ Match *prependToMatches(Match *matches, char *name, char *fullText, Symbol *symb
 Match *getMatchOnNthLine(Match *matches, int n) {
     return (Match *)mock(matches, n);
 }
+
+void sortMatchListDescending(Match **matches) {
+    mock(matches);
+}

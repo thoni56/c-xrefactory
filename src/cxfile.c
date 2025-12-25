@@ -262,13 +262,6 @@ void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Reference 
     prettyPrintLinkName(buffer, referenceableItem->linkName, MAX_CX_SYMBOL_SIZE);
     name = buffer;
 
-    // if completing without profile, cut profile
-    if (options.searchKind==SEARCH_DEFINITIONS_SHORT || options.searchKind==SEARCH_FULL_SHORT) {
-        s = strchr(name, '(');
-        if (s!=NULL)
-            *s = 0;
-    }
-
     // Remove any possible struct/union member name so that the reference refers to the same referenceable
     do {
         s = strchr(name, '.');
@@ -285,7 +278,7 @@ void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Reference 
         static int count = 0;
         count ++;
         if (count > COMPACT_TAGS_AFTER_SEARCH_COUNT) {
-            compactSearchResultsShort();
+            sortMatchListDescending(&sessionData.searchingStack.top->matches);
             count = 0;
         }
     }
@@ -966,10 +959,7 @@ static void scanFunction_Reference(int size,
         } else {
             if (options.serverOperation == OLO_TAG_SEARCH) {
                 if (reference.usage==UsageDefined
-                    || ((options.searchKind==SEARCH_FULL
-                         || options.searchKind==SEARCH_FULL_SHORT)
-                        && reference.usage==UsageDeclared)
-                    ) {
+                    || (options.searchKind==SEARCH_FULL && reference.usage==UsageDeclared)) {
                     searchSymbolCheckReference(lastIncomingData.referenceableItem, &reference);
                 }
             } else {

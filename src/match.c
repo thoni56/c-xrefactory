@@ -104,6 +104,19 @@ void freeMatches(Match *matches) {
     }
 }
 
+static bool matchNameIsLessThan(Match *m1, Match *m2) {
+    return strcmp(m1->name, m2->name) < 0;
+}
+
+static void sortMatchList(Match **matches,
+                          bool (*compareFunction)(Match *, Match *)) {
+    LIST_MERGE_SORT(Match, *matches, compareFunction);
+}
+
+void sortMatchListDescending(Match **matches) {
+    sortMatchList(matches, matchNameIsLessThan);
+}
+
 Match *getMatchOnNthLine(Match *matches, int n) {
     Match *last = NULL;
     Match *this = matches;

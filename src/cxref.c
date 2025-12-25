@@ -1824,7 +1824,7 @@ static void printSearchResults(void) {
     char *ls;
 
     len1 = len2 = 0;
-    compactSearchResultsShort();
+    sortMatchListDescending(&sessionData.searchingStack.top->matches);
 
     // the first loop is counting the length of fields
     assert(sessionData.searchingStack.top);

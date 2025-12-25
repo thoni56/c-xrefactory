@@ -49,9 +49,7 @@ typedef enum {
 
 typedef enum {
     SEARCH_FULL,
-    SEARCH_DEFINITIONS,
-    SEARCH_FULL_SHORT,
-    SEARCH_DEFINITIONS_SHORT
+    SEARCH_DEFINITIONS
 } SearchKind;
 
 typedef enum {

@@ -1647,12 +1647,6 @@ static bool processSOption(int *argi, ArgumentsVector args) {
     else if (strcmp(args.argv[i], "-searchdef")==0) {
         options.searchKind = SEARCH_DEFINITIONS;
     }
-    else if (strcmp(args.argv[i], "-searchshortlist")==0) {
-        options.searchKind = SEARCH_FULL_SHORT;
-    }
-    else if (strcmp(args.argv[i], "-searchdefshortlist")==0) {
-        options.searchKind = SEARCH_DEFINITIONS_SHORT;
-    }
     else if (strcmp(args.argv[i], "-server")==0) {
         options.mode = ServerMode;
         options.xref2 = true;
