@@ -240,7 +240,7 @@ static void beInteractive(void) {
 
         callServer(args, pipedOptions,
                    &editServerSubTaskFirstPass);
-        answerEditAction();
+        answerEditorAction();
     }
     LEAVE();
 }

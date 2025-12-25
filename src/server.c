@@ -229,7 +229,7 @@ void server(ArgumentsVector args) {
         if (options.serverOperation == OLO_ABOUT) {
             aboutMessage();
         } else {
-            answerEditAction();
+            answerEditorAction();
         }
         //& options.outputFileName = NULL;  // why this was here ???
         //editorCloseBufferIfNotUsedElsewhere(s_input_file_name);

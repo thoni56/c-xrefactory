@@ -49,7 +49,7 @@ extern bool filterLevelAtLeast(unsigned level, unsigned atLeast);
 extern void getLineAndColumnCursorPositionFromCommandLineOptions( int *l, int *c );
 extern void olcxPushSpecialCheckMenuSym(char *name);
 
-extern void answerEditAction(void);
+extern void answerEditorAction(void);
 
 extern void saveReferences(void);
 

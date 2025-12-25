@@ -65,5 +65,5 @@ Ensure(CxRef, will_return_no_active_project_if_no_optionfile_found) {
            when(kind, is_equal_to(PPC_NO_PROJECT)),
            when(message, contains_string("file.c")));
 
-    answerEditAction();
+    answerEditorAction();
 }

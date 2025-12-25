@@ -1936,7 +1936,7 @@ static void printSearchResults(void) {
         ppcEnd(PPC_SYMBOL_LIST);
 }
 
-void answerEditAction(void) {
+void answerEditorAction(void) {
     ENTER();
     assert(outputFile);
 

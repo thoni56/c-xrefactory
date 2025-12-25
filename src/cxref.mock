@@ -107,7 +107,7 @@ void olcxPushSpecial(char *fieldName, int command) {
     mock(fieldName, command);
 }
 
-void answerEditAction(void) {
+void answerEditorAction(void) {
     mock();
 }
 
