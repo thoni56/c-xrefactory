@@ -21,7 +21,7 @@ ParseConfig createParseConfigFromOptions(void) {
 extern void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *mark,
                                    char *pushOption, char *pushOption2);
 
-FunctionBoundariesResult parseToGetFunctionBoundaries(
+static FunctionBoundariesResult parseToGetFunctionBoundaries(
     EditorBuffer *buffer,
     ParseConfig  *config,
     Position      cursorPos
@@ -62,5 +62,47 @@ FunctionBoundariesResult parseToGetFunctionBoundaries(
     return result;
 }
 
+static MoveTargetValidationResult parseToValidateMoveTarget(
+    EditorBuffer *buffer,
+    ParseConfig  *config,
+    Position      targetPos
+) {
+    MoveTargetValidationResult result = {
+        .valid = false
+    };
+
+    /* Bridge implementation: Use existing infrastructure temporarily */
+    (void)config; /* TODO: Apply config before parsing */
+
+    /* Clear previous results */
+    parsedInfo.moveTargetAccepted = false;
+
+    /* Create marker at target position for existing API */
+    EditorMarker *marker = newEditorMarkerForPosition(targetPos);
+    if (marker->buffer != buffer) {
+        freeEditorMarker(marker);
+        return result;
+    }
+
+    /* Call existing parsing infrastructure */
+    parseBufferUsingServer(options.project, marker, NULL, "-olcxmovetarget", NULL);
+
+    /* Extract result from global state */
+    result.valid = parsedInfo.moveTargetAccepted;
+
+    freeEditorMarker(marker);
     return result;
+}
+
+bool isValidMoveTarget(EditorMarker *target) {
+    ParseConfig config = createParseConfigFromOptions();
+    Position targetPos = makePositionFromEditorMarker(target);
+    MoveTargetValidationResult result = parseToValidateMoveTarget(target->buffer, &config, targetPos);
+    return result.valid;
+}
+
+FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
+    ParseConfig config = createParseConfigFromOptions();
+    Position cursorPos = makePositionFromEditorMarker(marker);
+    return parseToGetFunctionBoundaries(marker->buffer, &config, cursorPos);
 }

@@ -6,6 +6,8 @@
 #include "stringlist.h"
 #include "editorbuffer.h"
 
+typedef struct editorMarker EditorMarker;
+
 /**
  * Configuration for parsing - reusable across operations.
  * Contains preprocessor and language settings needed for parsing.
@@ -26,25 +28,34 @@ typedef struct {
 } FunctionBoundariesResult;
 
 /**
+ * Result of parsing to validate a move target position.
+ */
+typedef struct {
+    bool valid;                  /* True if position is valid for moving a function to */
+} MoveTargetValidationResult;
+
+/**
  * Create parse configuration from current global options.
  * Temporary bridge function until callers build ParseConfig themselves.
  */
 extern ParseConfig createParseConfigFromOptions(void);
 
 /**
- * Parse to find the boundaries of the function containing the cursor.
+ * Check if a marker position is valid for moving a function to.
+ * Convenience function that uses current global options.
  *
- * Used by: Move Function refactoring
+ * @param target        Editor marker at target position
+ * @return              True if position is valid for moving a function to
+ */
+extern bool isValidMoveTarget(EditorMarker *target);
+
+/**
+ * Get the boundaries of the function containing the marker position.
+ * Convenience function that uses current global options.
  *
- * @param buffer        Editor buffer to parse
- * @param config        Parsing configuration (include dirs, defines, etc.)
- * @param cursorPos     Position of cursor - determines which function to find
+ * @param marker        Editor marker at cursor position
  * @return              Result with function boundaries, or found=false if no function at cursor
  */
-extern FunctionBoundariesResult parseToGetFunctionBoundaries(
-    EditorBuffer *buffer,
-    ParseConfig  *config,
-    Position      cursorPos
-);
+extern FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker);
 
 #endif

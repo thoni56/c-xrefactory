@@ -1431,17 +1431,6 @@ static EditorMarker *getTargetFromOptions(void) {
     return target;
 }
 
-static bool validTargetPlace(EditorMarker *target, char *checkOpt) {
-    bool valid = true;
-
-    parseBufferUsingServer(refactoringOptions.project, target, NULL, checkOpt, NULL);
-    if (!parsedInfo.moveTargetAccepted) {
-        valid = false;
-        errorMessage(ERR_ST, "Invalid target place");
-    }
-    return valid;
-}
-
 EditorMarker *removeStaticPrefix(EditorMarker *marker) {
     EditorMarker *startMarker;
 
@@ -1508,15 +1497,15 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
 static void moveFunction(EditorMarker *point) {
     EditorMarker *target = getTargetFromOptions();
 
-    if (!validTargetPlace(target, "-olcxmovetarget"))
+    if (!isValidMoveTarget(target)) {
+        errorMessage(ERR_ST, "Invalid target place");
         return;
+    }
 
     ensureReferencesAreUpdated(refactoringOptions.project);
 
-    /* Use new parsing API to get function boundaries */
-    ParseConfig config = createParseConfigFromOptions();
-    Position cursorPos = makePositionFromEditorMarker(point);
-    FunctionBoundariesResult bounds = parseToGetFunctionBoundaries(point->buffer, &config, cursorPos);
+    /* Get function boundaries */
+    FunctionBoundariesResult bounds = getFunctionBoundaries(point);
 
     if (!bounds.found) {
         FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
