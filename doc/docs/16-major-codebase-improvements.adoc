@@ -1,6 +1,8 @@
-== Proposed Refactorings
+== Major Codebase Improvements
 
-This chapter documents larger refactoring proposals that would significantly improve code quality but require careful planning and implementation.
+This chapter documents larger architectural changes and improvements that would significantly enhance code quality, maintainability, and performance but require careful planning and implementation.
+
+These are distinct from the user-facing refactorings documented in "Refactoring Recipes" - those are operations users apply to their code, while these are improvements to c-xrefactory's own codebase.
 
 === LexemStream API Improvements
 
@@ -1198,58 +1200,67 @@ addRequiredIncludes(targetFile, neededHeaders, headerCount);
 
 ==== Proposed Implementation
 
-===== Phase 1: Basic Move (MVP - Immediate Value)
+**Estimation Approach**: We use relative complexity estimates (Story Points) with Phase 1 as the baseline (1×). This is more meaningful for hobby/OSS development than calendar time estimates. As phases complete, we can track velocity and refine future estimates.
 
-**Estimated effort**: 1-2 weeks
+===== Phase 1: Basic Move (MVP - Immediate Value) ✓ COMPLETED
 
-Implement minimal viable move that handles 80% of cases:
+**Relative complexity**: 1× (baseline for future estimates)
 
-[source,c]
-----
-void moveFunction(EditorMarker *point, EditorMarker *target) {
-    EditorMarker *functionStart, *functionEnd;
-    bool wasStatic;
+**Status**: Completed December 2024 / January 2025
 
-    // 1. Find function boundaries (copy from Java getMethodLimitsForMoving)
-    getFunctionLimits(point, &functionStart, &functionEnd);
+**Implementation**: Handles 80% of common move function use cases with minimal user intervention.
 
-    // 2. Check if function is static
-    wasStatic = isFunctionStatic(functionStart);
+**What was implemented:**
 
-    // 3. Extract and move text block
-    int size = functionEnd->offset - functionStart->offset;
-    moveBlockInEditorBuffer(target, functionStart, size, &editorUndo);
+1. **Parser Integration** (`src/c_parser.y`, `src/yacc_parser.y`):
+   - Added semantic actions to capture function boundaries during parsing
+   - Uses `parsedPositions[IPP_FUNCTION_BEGIN/END]` to store function extent
+   - Includes closing brace and trailing newline in boundary detection
+   - Server operation `OLO_GET_FUNCTION_BOUNDS` triggers boundary capture
 
-    // 4. If was static, prompt user for visibility change
-    if (wasStatic) {
-        if (promptUser("Function was static, make extern?")) {
-            changeStaticToExtern(point);
-            promptForHeaderFile("Add declaration to which header?");
-            // User inputs header filename
-            addDeclarationToHeader(selectedHeader, functionSignature);
-        }
-    }
+2. **Function Boundary Detection** (`src/refactory.c`):
+   - `getFunctionBoundariesForMoving()` uses parser to find exact function extent
+   - Handles comments and decorations before/after function
+   - Works for both static and non-static functions
 
-    // 5. Generate output
-    applyWholeRefactoringFromUndo();
-}
-----
+3. **Static Keyword Removal** (`src/refactory.c`):
+   - Simple string search for "static " from function start to name
+   - Only removes static when moving **between files** (not within same file)
+   - Automatically removes without user prompting (streamlined UX)
+   - Removes 7 characters ("static ") before moving to avoid offset tracking
 
-**Value:**
-- Eliminates manual cut/paste
-- Handles multi-line function correctly
-- Prompts for static→extern decision
-- User still manually fixes includes (acceptable for MVP)
+4. **UI Integration** (`src/cxref.c`):
+   - "Move Function" appears in refactoring menu only on function **definitions** (not call sites)
+   - Uses `isDefinitionUsage()` to filter appropriately
+   - Two-step workflow: set target, then invoke move
 
-**Leverages from c-xref-java:**
-- `getMethodLimitsForMoving()` pattern (line 2908)
-- `moveBlockInEditorBuffer()` (already exists)
-- Undo/redo infrastructure
-- Reference finding for call sites
+5. **Target Validation** (`src/refactory.c`, `src/yylex.c`):
+   - Validates target is at global scope (not inside function/struct)
+   - Uses `parsedInfo.moveTargetAccepted` flag from parser
+
+6. **Tests**:
+   - `test_move_c_function_to_other_file/` - moves between files, removes static
+   - `test_move_c_function_inside_file/` - moves within file, keeps static
+   - Both tests passing with deterministic output
+
+**What user manually handles (acceptable for MVP):**
+
+- Adding function declaration to header files
+- Adding `#include` directives for dependencies
+- Moving tightly-coupled static helper functions
+
+**Files modified:**
+
+- `src/c_parser.y` - parser integration for boundary detection
+- `src/yacc_parser.y` - same for yacc files
+- `src/refactory.c` - simplified `moveStaticFunctionAndMakeItExtern()`
+- `src/cxref.c` - UI filter for definitions only
+- `src/misc.c` - added `OLO_GET_FUNCTION_BOUNDS` to `requiresCreatingRefs()`
+- `tests/test_move_c_function_*/` - enabled and passing
 
 ===== Phase 2: Smart Include Management
 
-**Estimated effort**: 2-3 weeks
+**Relative complexity**: 2-3× Phase 1 (based on completed Phase 1 as baseline)
 
 Add automatic header dependency analysis and improve static detection:
 
@@ -1330,7 +1341,7 @@ void addRequiredIncludes(EditorBuffer *targetFile, char **headers, int count) {
 
 ===== Phase 3: Static Helper Functions
 
-**Estimated effort**: 1-2 weeks
+**Relative complexity**: 1-1.5× Phase 1
 
 Detect and optionally move tightly-coupled static helpers:
 
@@ -1374,7 +1385,7 @@ if (staticHelperCount > 0) {
 
 ===== Phase 4: Polish
 
-**Estimated effort**: 1 week
+**Relative complexity**: 0.5-1× Phase 1
 
 - Preview dialog showing what will be moved
 - Better insertion point heuristics (group with related functions)
