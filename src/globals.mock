@@ -58,8 +58,6 @@ int originalCommandLineFileNumber;
 Position olcxByPassPos;
 int olMacro2PassFile;
 
-Position noPosition = {-1, 0, 0};
-
 Language currentLanguage;
 
 TypeModifier *structMemberCompletionType;

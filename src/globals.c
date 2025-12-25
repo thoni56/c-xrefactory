@@ -82,7 +82,6 @@ TypeModifier defaultVoidModifier;
 Symbol defaultVoidDefinition;
 TypeModifier errorModifier;
 Symbol errorSymbol;
-Position noPosition = {-1, 0, 0};
 
 
 char cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
