@@ -2595,7 +2595,7 @@ static LexemCode lookupIdentifier(char *id, Position position) {
 
 
 static void actionOnBlockMarker(void) {
-    if (options.serverOperation == OLO_SET_MOVE_FUNCTION_TARGET) {
+    if (options.serverOperation == OLO_SET_MOVE_TARGET) {
         parsedInfo.moveTargetAccepted = parsedInfo.function == NULL;
     } else if (options.serverOperation == OLO_EXTRACT) {
         extractActionOnBlockMarker();

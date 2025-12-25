@@ -197,7 +197,7 @@ static int savedWorkMemoryIndex = 0;
 %type <ast_expressionType> inclusive_or_expr logical_and_expr logical_or_expr
 %type <ast_expressionType> conditional_expr assignment_expr expr maybe_expr
 
-%type <ast_position> STRING_LITERAL '(' ',' ')'
+%type <ast_position> STRING_LITERAL '(' ',' ')' '{' '}' compound_statement
 
 /* *************************************************************** */
 /* *************************************************************** */
@@ -1587,8 +1587,8 @@ label_name
     ;
 
 compound_statement
-    : '{' '}'
-    | '{' Start_block label_decls_opt statement_list End_block '}'
+    : '{' '}' { $$.begin = $1.data; $$.end = $2.data; }
+    | '{' Start_block label_decls_opt statement_list End_block '}' { $$.begin = $1.data; $$.end = $6.data; }
 /*&
     | '{' Start_block label_decls_opt declaration_list End_block '}'
     | '{' Start_block label_decls_opt declaration_list statement_list End_block '}'
@@ -1850,15 +1850,14 @@ external_definition
         /* Capture function boundaries for move-function refactoring */
         if (parsedInfo.function != NULL
             && parsedInfo.function->position.file != NO_FILE_NUMBER
-            && positionIsLessThan(parsedInfo.function->position, cxRefPosition)
-            && options.theRefactoring == AVR_MOVE_FUNCTION) {
+            && options.serverOperation == OLO_GET_FUNCTION_BOUNDS
+            && positionIsBetween(cxRefPosition, $2.begin, $4.end)) {
             /* We just finished parsing a function that contains the cursor position.
-             * Record the function boundaries for getFunctionBoundariesForMoving().
-             * Note: We can't get the exact end position here, but we record the start.
-             * The refactory code will need to scan forward to find the closing brace.
+             * Record the function boundaries using the positions from the grammar.
+             * $2.begin is the start of function_definition_head
+             * $4.end is the end of compound_statement
              */
             parsedPositions[IPP_FUNCTION_BEGIN] = $2.begin;
-            /* End position will be set by scanning forward from compound_statement */
             parsedPositions[IPP_FUNCTION_END] = $4.end;
         }
         endBlock();

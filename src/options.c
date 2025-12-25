@@ -1430,8 +1430,10 @@ static bool processOOption(int *argi, ArgumentsVector args) {
         options.serverOperation = OLO_PREVIOUS;
     else if (strcmp(args.argv[i], "-olcxcomplet")==0)
         options.serverOperation=OLO_COMPLETION;
-    else if (strcmp(args.argv[i], "-olcxmmtarget")==0)
-        options.serverOperation=OLO_SET_MOVE_FUNCTION_TARGET;
+    else if (strcmp(args.argv[i], "-olcxmovetarget")==0)
+        options.serverOperation=OLO_SET_MOVE_TARGET;
+    else if (strcmp(args.argv[i], "-olcxgetfunctionbounds")==0)
+        options.serverOperation=OLO_GET_FUNCTION_BOUNDS;
     else if (strcmp(args.argv[i], "-olcxgetprojectname")==0) {
         options.serverOperation=OLO_ACTIVE_PROJECT;
     }

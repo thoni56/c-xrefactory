@@ -782,7 +782,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     ) {
                         gotOnLineCxRefs(position);
                     }
-                    if (options.serverOperation == OLO_SET_MOVE_FUNCTION_TARGET) {
+                    if (options.serverOperation == OLO_SET_MOVE_TARGET) {
                         // TODO: Figure out what the problem with this
                         // is for C. Marian's comment below indicate
                         // CPP problem, but if we will try to

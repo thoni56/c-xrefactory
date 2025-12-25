@@ -32,7 +32,8 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
     return operation==OLO_COMPLETION
            || operation==OLO_EXTRACT
            || operation==OLO_TAG_SEARCH
-           || operation==OLO_SET_MOVE_FUNCTION_TARGET
+           || operation==OLO_SET_MOVE_TARGET
+           || operation==OLO_GET_FUNCTION_BOUNDS
            || operation==OLO_GET_ENV_VALUE
            || requiresCreatingRefs(operation)
         ;

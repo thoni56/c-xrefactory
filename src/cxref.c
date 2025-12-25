@@ -2064,7 +2064,7 @@ void answerEditAction(void) {
     case OLO_MENU_FILTER_SET:
         olcxMenuSelectPlusolcxMenuSelectFilterSet(options.filterValue);
         break;
-    case OLO_SET_MOVE_FUNCTION_TARGET:
+    case OLO_SET_MOVE_TARGET:
         assert(options.xref2);
         if (!parsedInfo.moveTargetAccepted) {
             ppcGenRecord(PPC_ERROR, "Invalid target place");

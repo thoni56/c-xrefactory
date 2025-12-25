@@ -765,6 +765,7 @@ bool requiresCreatingRefs(ServerOperation operation) {
         ||  operation==OLO_ARGUMENT_MANIPULATION
         ||  operation==OLO_SAFETY_CHECK
         ||  operation==OLO_GET_PRIMARY_START
+        ||  operation==OLO_GET_FUNCTION_BOUNDS
         ;
 }
 

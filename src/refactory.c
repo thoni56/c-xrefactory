@@ -183,6 +183,12 @@ static void parseBufferUsingServer(char *project, EditorMarker *point, EditorMar
 
     assert(options.mode == ServerMode);
 
+    /* Clear accumulated input files from previous parses to avoid global state pollution.
+     * This is crucial when parseBufferUsingServer() is called multiple times (e.g.,
+     * target validation followed by function boundaries check). Without this, getNextScheduledFile()
+     * would return the wrong file because it searches from index 0. */
+    options.inputFiles = NULL;
+
     setArguments(argumentVector, project, point, mark);
     argumentCount = argument_count(argumentVector);
     if (pushOption != NULL) {
@@ -1416,7 +1422,7 @@ static void getFunctionBoundariesForMoving(EditorMarker *point, EditorMarker **m
     parsedPositions[IPP_FUNCTION_BEGIN].file = parsedPositions[IPP_FUNCTION_END].file = NO_FILE_NUMBER;
 
     // get function boundaries
-    parseBufferUsingServer(refactoringOptions.project, point, NULL, "", NULL);
+    parseBufferUsingServer(refactoringOptions.project, point, NULL, "-olcxgetfunctionbounds", NULL);
 
     if (parsedPositions[IPP_FUNCTION_BEGIN].file == NO_FILE_NUMBER || parsedPositions[IPP_FUNCTION_END].file == NO_FILE_NUMBER) {
         FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
@@ -1540,7 +1546,7 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
 static void moveFunction(EditorMarker *point) {
     EditorMarker *target = getTargetFromOptions();
 
-    if (!validTargetPlace(target, "-olcxmmtarget"))
+    if (!validTargetPlace(target, "-olcxmovetarget"))
         return;
 
     ensureReferencesAreUpdated(refactoringOptions.project);

@@ -188,7 +188,7 @@ static int savedWorkMemoryIndex = 0;
 %type <ast_expressionType> inclusive_or_expr logical_and_expr logical_or_expr
 %type <ast_expressionType> conditional_expr assignment_expr expr maybe_expr
 
-%type <ast_position> STRING_LITERAL '(' ',' ')'
+%type <ast_position> STRING_LITERAL '(' ',' ')' '{' '}' compound_statement
 
 %start file
 %%
@@ -1382,8 +1382,8 @@ label_name
     ;
 
 compound_statement
-    : '{' '}'
-    | '{' Start_block label_decls_opt statement_list End_block '}'
+    : '{' '}' { $$.begin = $1.data; $$.end = $2.data; }
+    | '{' Start_block label_decls_opt statement_list End_block '}' { $$.begin = $1.data; $$.end = $6.data; }
 /*&
     | '{' Start_block label_decls_opt declaration_list End_block '}'
     | '{' Start_block label_decls_opt declaration_list statement_list End_block '}'
@@ -1642,6 +1642,19 @@ external_definition
             addFunctionParameterToSymTable(symbolTable, $2.data, symbol, i);
         }
     } compound_statement {
+        /* Capture function boundaries for move-function refactoring */
+        if (parsedInfo.function != NULL
+            && parsedInfo.function->position.file != NO_FILE_NUMBER
+            && options.serverOperation == OLO_GET_FUNCTION_BOUNDS
+            && positionIsBetween(cxRefPosition, $2.begin, $4.end)) {
+            /* We just finished parsing a function that contains the cursor position.
+             * Record the function boundaries using the positions from the grammar.
+             * $2.begin is the start of function_definition_head
+             * $4.end is the end of compound_statement
+             */
+            parsedPositions[IPP_FUNCTION_BEGIN] = $2.begin;
+            parsedPositions[IPP_FUNCTION_END] = $4.end;
+        }
         endBlock();
         parsedInfo.function = NULL;
     }
