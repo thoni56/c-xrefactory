@@ -48,11 +48,16 @@
 #
 #	make watch
 #
-# 9: watch sources to build and run unittests (use as compile command in Emacs!):
+# 9: watch sources to build and run unittests with notification (use as compile command in Emacs!):
 #
 #	make watch-for-unittests
 #
-# 10: watch for unittests completion and run all systemtests (use in a separate
+# 10: watch for unittests completion and run the build (use in a separate
+#     terminal):
+#
+#	make watch-for-build
+#
+# 11: watch for build completion and run all systemtests (use in a separate
 #     terminal):
 #
 #	make watch-for-systemtests
@@ -256,6 +261,7 @@ build-proper: c-xref
 
 c-xref: check-tokens $(OBJS) editor-defs
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
+	@touch .build.done
 
 editor-defs: refactorings.def
 	$(MAKE) -C ../editors
@@ -537,20 +543,27 @@ watch-for-unittests:
 watch-for-unittests-silent:
 	watchexec --no-vcs-ignore -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- make -j$(JOBS) unit
 
+.PHONY: watch-for-build
+watch-for-build:
+	watchexec --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Build make -j$(JOBS) c-xref
+
 .PHONY: watch-for-systemtests
 watch-for-systemtests:
-	watchexec --no-vcs-ignore -e done -- execnotify -t Systemtests make -j$(JOBS) system-tests
+	watchexec --no-vcs-ignore -f '*/.build.done' -- execnotify -t Systemtests make -j$(JOBS) system-tests-proper
 
 .PHONY: watch-for-systemtests-silent
 watch-for-systemtests-silent:
-	watchexec --no-vcs-ignore -e done -- make -j$(JOBS) system-tests
+	watchexec --no-vcs-ignore -e done -- make -j$(JOBS) system-tests-proper
 
-.PHONY: system-tests
-system-tests: c-xref
+.PHONY: system-tests-proper
+system-tests-proper:
 	$(MAKE) -e test
 	$(MAKE) -e merge-coverage-from-tests
 	@$(MAKE) -e coverage-report
 
+.PHONY: system-tests
+system-tests: c-xref
+	$(MAKE) system-tests-proper
 
 #########################################################################
 #
@@ -611,7 +624,7 @@ else
 		$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $(UNITTESTS)
 		$(MAKE) gcov
 endif
-	touch .unittests.done
+	@touch .unittests.done
 endif
 
 # A test lib for a module is built from its .o and the _test.o (and some extras)
