@@ -98,7 +98,7 @@ static Reference *getDefinitionReference(Reference *reference) {
     return definitionReference;
 }
 
-static void setAvailableRefactorings(Symbol *symbol) {
+static void setAvailableRefactorings(Symbol *symbol, Usage usage) {
     switch (symbol->type) {
     case TypeStruct:
     case TypeMacroArg:
@@ -168,7 +168,11 @@ static void setAvailableRefactorings(Symbol *symbol) {
             makeRefactoringAvailable(PPC_AVR_ADD_PARAMETER, "");
             makeRefactoringAvailable(PPC_AVR_DEL_PARAMETER, "");
             makeRefactoringAvailable(PPC_AVR_MOVE_PARAMETER, "");
-            makeRefactoringAvailable(PPC_AVR_MOVE_FUNCTION, "");
+            /* Only offer "Move Function" when cursor is on the function definition,
+             * not on references/call sites, to make intent clear */
+            if (isDefinitionUsage(usage)) {
+                makeRefactoringAvailable(PPC_AVR_MOVE_FUNCTION, "");
+            }
         }
         break;
     case MODIFIERS_START:
@@ -332,7 +336,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!
             if (strcmp(symbol->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
                 if (options.serverOperation == OLO_GET_AVAILABLE_REFACTORINGS) {
-                    setAvailableRefactorings(symbol);
+                    setAvailableRefactorings(symbol, usage);
                 }
             }
         } else {
@@ -362,7 +366,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
                     menu->defaultUsage = usage;
                 }
                 if (options.serverOperation == OLO_GET_AVAILABLE_REFACTORINGS) {
-                    setAvailableRefactorings(symbol);
+                    setAvailableRefactorings(symbol, usage);
                 }
             }
         }
