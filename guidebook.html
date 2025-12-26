@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2025-12-25">
+<meta name="author" content="v{VERSION} - Generated 2025-12-26">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2025-12-25</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2025-12-26</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -564,7 +564,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_related_architecture_decision_records">15.11. Related Architecture Decision Records</a></li>
 </ul>
 </li>
-<li><a href="#_proposed_refactorings">16. Proposed Refactorings</a>
+<li><a href="#_major_codebase_improvements">16. Major Codebase Improvements</a>
 <ul class="sectlevel2">
 <li><a href="#_lexemstream_api_improvements">16.1. LexemStream API Improvements</a></li>
 <li><a href="#clean-persistence-store">16.2. Clean Persistence Store Abstraction</a></li>
@@ -601,6 +601,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_reorder_parameters">19.7. Reorder Parameters</a></li>
 <li><a href="#_turn_include_guard_into_pragma_once">19.8. Turn include guard into pragma once</a></li>
 <li><a href="#_change_return_type">19.9. Change return type</a></li>
+<li><a href="#_make_function_static">19.10. Make Function Static</a></li>
 </ul>
 </li>
 </ul>
@@ -5639,12 +5640,15 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <div class="sect2">
 <h3 id="_medium_term_goals_6_12_months">15.4. Medium-term Goals (6-12 Months)</h3>
 <div class="paragraph">
-<p>These goals are detailed in <a href="16-proposed-refactorings.html">Chapter 16: Proposed Refactorings</a>. The roadmap establishes priority ordering:</p>
+<p>These goals are detailed in <a href="16-major-codebase-improvements.html">Chapter 16: Major Codebase Improvements</a>. The roadmap proposes a priority ordering:</p>
 </div>
 <div class="sect3">
 <h4 id="_1_lexemstream_api_improvements">15.4.1. 1. LexemStream API Improvements</h4>
 <div class="paragraph">
-<p><strong>Reference</strong>: <a href="16-proposed-refactorings.html">Proposed Refactorings - LexemStream API Improvements</a></p>
+<p><strong>Reference</strong>: <a href="16-major-codebase-improvements.html">Major Codebase Improvements - LexemStream API Improvements</a></p>
+</div>
+<div class="paragraph">
+<p><strong>Status</strong>: <strong>PARTIALLY COMPLETE</strong> (~40% done as of November 2025)</p>
 </div>
 <div class="paragraph">
 <p><strong>Priority</strong>: HIGH (Foundation for other refactorings)</p>
@@ -5653,12 +5657,50 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <p><strong>Rationale</strong>: The macro expansion code suffers from pointer parameter proliferation (6+ parameters per function). Adding a manipulation API to <code>LexemStream</code> (similar to <code>LexemBuffer</code>) will simplify buffer management and reduce error-prone pointer arithmetic.</p>
 </div>
 <div class="paragraph">
+<p><strong>Completed work</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Basic API functions created (<code>lexemStreamHasMore</code>, <code>copyNextLexemFromStreamToStream</code>)</p>
+</li>
+<li>
+<p>✓ <code>copyRemainingLexems()</code> refactored to use API</p>
+</li>
+<li>
+<p>✓ <code>replaceMacroArguments()</code> refactored to use LexemStreams</p>
+</li>
+<li>
+<p>✓ <code>expandMacroArgument()</code> now uses LexemStream parameter</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Remaining work</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✗ Extend LexemStream structure with ownership fields (<code>allocatedSize</code>, <code>ownsBuffer</code>)</p>
+</li>
+<li>
+<p>✗ Create full API (creation, capacity management, cleanup functions)</p>
+</li>
+<li>
+<p>✗ Refactor <code>collate()</code> - still has 5 pointer parameters</p>
+</li>
+<li>
+<p>✗ Migrate remaining helper functions</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
 <p><strong>Impact</strong>:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Reduces <code>collate()</code> from 6 parameters to 3-4</p>
+<p>Reduces <code>collate()</code> from 5-6 parameters to 3-4</p>
 </li>
 <li>
 <p>Centralizes buffer management logic</p>
@@ -5672,18 +5714,18 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p><strong>Estimated Effort</strong>: 3-4 weeks</p>
+<p><strong>Remaining Effort</strong>: 2-3 weeks</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Week 1: Design and implement core API</p>
+<p>Week 1: Extend structure and create full API</p>
 </li>
 <li>
-<p>Week 2: Refactor <code>copyRemainingLexems()</code> and <code>collate()</code> as proof-of-concept</p>
+<p>Week 2: Refactor <code>collate()</code> and helper functions</p>
 </li>
 <li>
-<p>Week 3-4: Migrate remaining macro expansion functions</p>
+<p>Week 3: Testing, cleanup, and documentation</p>
 </li>
 </ul>
 </div>
@@ -5691,7 +5733,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <div class="sect3">
 <h4 id="_2_extract_macro_expansion_module">15.4.2. 2. Extract Macro Expansion Module</h4>
 <div class="paragraph">
-<p><strong>Reference</strong>: <a href="16-proposed-refactorings.html#macro-expansion-module">Proposed Refactorings - Extract Macro Expansion Module</a></p>
+<p><strong>Reference</strong>: <a href="16-major-codebase-improvements.html#macro-expansion-module">Major Codebase Improvements - Extract Macro Expansion Module</a></p>
 </div>
 <div class="paragraph">
 <p><strong>Priority</strong>: MEDIUM (Depends on LexemStream API)</p>
@@ -5834,7 +5876,7 @@ typedef struct {
 <div class="sect3">
 <h4 id="_4_clean_persistence_store_abstraction">15.4.4. 4. Clean Persistence Store Abstraction</h4>
 <div class="paragraph">
-<p><strong>Reference</strong>: <a href="16-proposed-refactorings.html#clean-persistence-store">Proposed Refactorings - Clean Persistence Store Abstraction</a></p>
+<p><strong>Reference</strong>: <a href="16-major-codebase-improvements.html#clean-persistence-store">Major Codebase Improvements - Clean Persistence Store Abstraction</a></p>
 </div>
 <div class="paragraph">
 <p><strong>Priority</strong>: HIGH (Foundation for Unified Symbol Database)</p>
@@ -5896,7 +5938,7 @@ typedef struct {
 <h4 id="_5_unified_symbol_database_architecture">15.4.5. 5. Unified Symbol Database Architecture</h4>
 <div class="paragraph">
 <p><strong>Reference</strong>:
-* <a href="16-proposed-refactorings.html#unified-symbol-database">Proposed Refactorings - Unified Symbol Database Architecture</a>
+* <a href="16-major-codebase-improvements.html#unified-symbol-database">Major Codebase Improvements - Unified Symbol Database Architecture</a>
 * <a href="../adr/0014-adopt-on-demand-parsing-architecture.md">ADR-0014: Adopt On-Demand Parsing Architecture</a></p>
 </div>
 <div class="paragraph">
@@ -6459,7 +6501,7 @@ On textDocument/didChange(file):
 </div>
 <div class="paragraph">
 <p>See also:
-* <a href="16-proposed-refactorings.html">Chapter 16: Proposed Refactorings</a> for detailed technical proposals
+* <a href="16-major-codebase-improvements.html">Chapter 16: Major Codebase Improvements</a> for detailed technical proposals
 * <a href="../adr-process.md">ADR Process Guide</a> for complete decision history and ADR conventions</p>
 </div>
 <hr>
@@ -6479,13 +6521,19 @@ This roadmap is a living document. As priorities shift and new insights emerge, 
 </div>
 </div>
 <div class="sect1">
-<h2 id="_proposed_refactorings">16. Proposed Refactorings</h2>
+<h2 id="_major_codebase_improvements">16. Major Codebase Improvements</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This chapter documents larger refactoring proposals that would significantly improve code quality but require careful planning and implementation.</p>
+<p>This chapter documents larger architectural changes and improvements that would significantly enhance code quality, maintainability, and performance but require careful planning and implementation.</p>
+</div>
+<div class="paragraph">
+<p>These are distinct from the user-facing refactorings documented in "Refactoring Recipes" - those are operations users apply to their code, while these are improvements to c-xrefactory&#8217;s own codebase.</p>
 </div>
 <div class="sect2">
 <h3 id="_lexemstream_api_improvements">16.1. LexemStream API Improvements</h3>
+<div class="paragraph">
+<p><strong>Status</strong>: PARTIALLY COMPLETE (November 2025)</p>
+</div>
 <div class="sect3">
 <h4 id="_problem_statement">16.1.1. Problem Statement</h4>
 <div class="paragraph">
@@ -6522,7 +6570,49 @@ static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWrit
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_architecture">16.1.2. Current Architecture</h4>
+<h4 id="_current_implementation_status_2025_11">16.1.2. Current Implementation Status (2025-11)</h4>
+<div class="paragraph">
+<p><strong>What&#8217;s been implemented:</strong></p>
+</div>
+<div class="paragraph">
+<p>✓ <strong>Basic API functions</strong> (<code>src/lexemstream.c</code>, <code>src/lexemstream.h</code>):
+- <code>lexemStreamHasMore()</code> - Check if stream has more lexems
+- <code>copyNextLexemFromStreamToStream()</code> - Copy one lexem between streams
+- <code>skipExtraLexemInformationFor()</code> - Skip lexem metadata</p>
+</div>
+<div class="paragraph">
+<p>✓ <strong>Partially refactored functions</strong>:
+- <code>copyRemainingLexems()</code> - Now uses <code>LexemStream</code> API (yylex.c:1794)
+- <code>replaceMacroArguments()</code> - Refactored to use <code>LexemStream</code> (commit 73239531)
+- <code>expandMacroArgument()</code> - Takes <code>LexemStream *argumentInput</code> (yylex.c:1708)
+- <code>resolveMacroArgumentAsLeftOperand()</code> - Partially uses API (commit 06e7e17e)</p>
+</div>
+<div class="paragraph">
+<p><strong>What remains to be done:</strong></p>
+</div>
+<div class="paragraph">
+<p>✗ <strong>Extended LexemStream structure</strong> - No ownership fields yet:
+- Missing: <code>allocatedSize</code>, <code>ownsBuffer</code> fields
+- Structure still lightweight (5 fields only)</p>
+</div>
+<div class="paragraph">
+<p>✗ <strong>Full API not created</strong> - Missing functions:
+- Creation: <code>lexInputCreateOwned()</code>, <code>lexInputCreateView()</code>
+- Capacity: <code>lexInputEnsureCapacity()</code>, <code>lexInputReallocIfNeeded()</code>
+- Writing: <code>lexInputPutLexemCode()</code>, <code>lexInputAppendBytes()</code>
+- Cleanup: <code>lexInputFree()</code></p>
+</div>
+<div class="paragraph">
+<p>✗ <strong>Major functions still using old style</strong>:
+- <code>collate()</code> - Still has 5 pointer parameters (yylex.c:2022)
+- Several helper functions: <code>collate_id_id()</code>, <code>collate_const_const()</code>, etc.</p>
+</div>
+<div class="paragraph">
+<p><strong>Progress estimate</strong>: ~40% complete (basic API exists, some refactoring done, but major work remains)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_current_architecture">16.1.3. Current Architecture</h4>
 <div class="sect4">
 <h5 id="_three_representations_of_lexem_streams">Three representations of lexem streams</h5>
 <div class="paragraph">
@@ -6611,7 +6701,7 @@ static void copyRemainingLexems(char *buffer, int *bufferSize, char **bufferWrit
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_solution">16.1.3. Proposed Solution</h4>
+<h4 id="_proposed_solution">16.1.4. Proposed Solution</h4>
 <div class="sect4">
 <h5 id="_add_lexemstream_manipulation_api">Add LexemStream manipulation API</h5>
 <div class="paragraph">
@@ -6764,7 +6854,7 @@ void lexInputFree(LexemStream *input);  // Only frees if ownsBuffer=true</code><
 </div>
 </div>
 <div class="sect3">
-<h4 id="_benefits">16.1.4. Benefits</h4>
+<h4 id="_benefits">16.1.5. Benefits</h4>
 <div class="sect4">
 <h5 id="_code_clarity">Code clarity</h5>
 <div class="ulist">
@@ -6812,7 +6902,7 @@ void lexInputFree(LexemStream *input);  // Only frees if ownsBuffer=true</code><
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation_strategy">16.1.5. Implementation Strategy</h4>
+<h4 id="_implementation_strategy">16.1.6. Implementation Strategy</h4>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Step 1: Add new fields to LexemStream (backward compatible)</dt>
@@ -6884,7 +6974,7 @@ void lexInputFree(LexemStream *input);  // Only frees if ownsBuffer=true</code><
 </div>
 </div>
 <div class="sect3">
-<h4 id="_risks_and_mitigation">16.1.6. Risks and Mitigation</h4>
+<h4 id="_risks_and_mitigation">16.1.7. Risks and Mitigation</h4>
 <div class="sect4">
 <h5 id="_risk_breaking_existing_code">Risk: Breaking existing code</h5>
 <div class="paragraph">
@@ -6947,7 +7037,7 @@ void lexInputFree(LexemStream *input);  // Only frees if ownsBuffer=true</code><
 </div>
 </div>
 <div class="sect3">
-<h4 id="_notes">16.1.7. Notes</h4>
+<h4 id="_notes">16.1.8. Notes</h4>
 <div class="sect4">
 <h5 id="_why_not_unify_with_lexembuffer">Why not unify with LexemBuffer?</h5>
 <div class="paragraph">
@@ -6988,7 +7078,7 @@ void lexInputFree(LexemStream *input);  // Only frees if ownsBuffer=true</code><
 </div>
 </div>
 <div class="sect3">
-<h4 id="_open_questions">16.1.8. Open Questions</h4>
+<h4 id="_open_questions">16.1.9. Open Questions</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -7031,7 +7121,7 @@ void lexInputFree(LexemStream *input);  // Only frees if ownsBuffer=true</code><
 </div>
 </div>
 <div class="sect3">
-<h4 id="_references">16.1.9. References</h4>
+<h4 id="_references">16.1.10. References</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -7047,7 +7137,7 @@ void lexInputFree(LexemStream *input);  // Only frees if ownsBuffer=true</code><
 </div>
 </div>
 <div class="sect3">
-<h4 id="_related_issues">16.1.10. Related Issues</h4>
+<h4 id="_related_issues">16.1.11. Related Issues</h4>
 <div class="paragraph">
 <p>This refactoring addresses the root cause identified in the discussion about replacing the malloc-based macro body memory system (commit e1d506f7). The memory tracking issues stem from the complexity of managing multiple pointer parameters across function boundaries.</p>
 </div>
@@ -8754,164 +8844,371 @@ addRequiredIncludes(targetFile, neededHeaders, headerCount);
 </div>
 <div class="sect3">
 <h4 id="_proposed_implementation">16.5.4. Proposed Implementation</h4>
-<div class="sect4">
-<h5 id="_phase_1_basic_move_mvp_immediate_value">Phase 1: Basic Move (MVP - Immediate Value)</h5>
 <div class="paragraph">
-<p><strong>Estimated effort</strong>: 1-2 weeks</p>
-</div>
-<div class="paragraph">
-<p>Implement minimal viable move that handles 80% of cases:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">void moveFunction(EditorMarker *point, EditorMarker *target) {
-    EditorMarker *functionStart, *functionEnd;
-    bool wasStatic;
-
-    // 1. Find function boundaries (copy from Java getMethodLimitsForMoving)
-    getFunctionLimits(point, &amp;functionStart, &amp;functionEnd);
-
-    // 2. Check if function is static
-    wasStatic = isFunctionStatic(functionStart);
-
-    // 3. Extract and move text block
-    int size = functionEnd-&gt;offset - functionStart-&gt;offset;
-    moveBlockInEditorBuffer(target, functionStart, size, &amp;editorUndo);
-
-    // 4. If was static, prompt user for visibility change
-    if (wasStatic) {
-        if (promptUser("Function was static, make extern?")) {
-            changeStaticToExtern(point);
-            promptForHeaderFile("Add declaration to which header?");
-            // User inputs header filename
-            addDeclarationToHeader(selectedHeader, functionSignature);
-        }
-    }
-
-    // 5. Generate output
-    applyWholeRefactoringFromUndo();
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Value:</strong>
-- Eliminates manual cut/paste
-- Handles multi-line function correctly
-- Prompts for static→extern decision
-- User still manually fixes includes (acceptable for MVP)</p>
-</div>
-<div class="paragraph">
-<p><strong>Leverages from c-xref-java:</strong>
-- <code>getMethodLimitsForMoving()</code> pattern (line 2908)
-- <code>moveBlockInEditorBuffer()</code> (already exists)
-- Undo/redo infrastructure
-- Reference finding for call sites</p>
-</div>
+<p><strong>Estimation Approach</strong>: We use relative complexity estimates (Story Points) with Phase 1 as the baseline (1×). This is more meaningful for hobby/OSS development than calendar time estimates. As phases complete, we can track velocity and refine future estimates.</p>
 </div>
 <div class="sect4">
-<h5 id="_phase_2_smart_include_management">Phase 2: Smart Include Management</h5>
+<h5 id="_phase_1_basic_move_mvp_immediate_value_completed">Phase 1: Basic Move (MVP - Immediate Value) ✓ COMPLETED</h5>
 <div class="paragraph">
-<p><strong>Estimated effort</strong>: 2-3 weeks</p>
+<p><strong>Relative complexity</strong>: 1× (baseline for future estimates)</p>
 </div>
 <div class="paragraph">
-<p>Add automatic header dependency analysis and improve static detection:</p>
+<p><strong>Status</strong>: Completed December 2024 / January 2025</p>
 </div>
 <div class="paragraph">
-<p><strong>Improvements to static detection:</strong></p>
+<p><strong>Implementation</strong>: Handles 80% of common move function use cases with minimal user intervention.</p>
 </div>
 <div class="paragraph">
-<p>Currently, Phase 1 uses simple string search for "static " keyword. This works for common cases but has limitations:</p>
+<p><strong>What was implemented:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Parser Integration</strong> (<code>src/c_parser.y</code>, <code>src/yacc_parser.y</code>):</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Added semantic actions to capture function boundaries during parsing</p>
+</li>
+<li>
+<p>Uses <code>parsedPositions[IPP_FUNCTION_BEGIN/END]</code> to store function extent</p>
+</li>
+<li>
+<p>Includes closing brace and trailing newline in boundary detection</p>
+</li>
+<li>
+<p>Server operation <code>OLO_GET_FUNCTION_BOUNDS</code> triggers boundary capture</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Function Boundary Detection</strong> (<code>src/refactory.c</code>):</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>getFunctionBoundariesForMoving()</code> uses parser to find exact function extent</p>
+</li>
+<li>
+<p>Handles comments and decorations before/after function</p>
+</li>
+<li>
+<p>Works for both static and non-static functions</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Static Keyword Removal</strong> (<code>src/refactory.c</code>):</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Simple string search for "static " from function start to name</p>
+</li>
+<li>
+<p>Only removes static when moving <strong>between files</strong> (not within same file)</p>
+</li>
+<li>
+<p>Automatically removes without user prompting (streamlined UX)</p>
+</li>
+<li>
+<p>Removes 7 characters ("static ") before moving to avoid offset tracking</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>UI Integration</strong> (<code>src/cxref.c</code>):</p>
+<div class="ulist">
+<ul>
+<li>
+<p>"Move Function" appears in refactoring menu only on function <strong>definitions</strong> (not call sites)</p>
+</li>
+<li>
+<p>Uses <code>isDefinitionUsage()</code> to filter appropriately</p>
+</li>
+<li>
+<p>Two-step workflow: set target, then invoke move</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Target Validation</strong> (<code>src/refactory.c</code>, <code>src/yylex.c</code>):</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Validates target is at global scope (not inside function/struct)</p>
+</li>
+<li>
+<p>Uses <code>parsedInfo.moveTargetAccepted</code> flag from parser</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Tests</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>test_move_c_function_to_other_file/</code> - moves between files, removes static</p>
+</li>
+<li>
+<p><code>test_move_c_function_inside_file/</code> - moves within file, keeps static</p>
+</li>
+<li>
+<p>Both tests passing with deterministic output</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>What user manually handles (acceptable for MVP):</strong></p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Does not skip comments (e.g., <code>/* This is a static function */\nvoid func()</code> would incorrectly match)</p>
+<p>Adding function declaration to header files</p>
 </li>
 <li>
-<p>Does not handle macros (e.g., <code>#define STATIC static</code>)</p>
+<p>Adding <code>#include</code> directives for dependencies</p>
 </li>
 <li>
-<p>Character-by-character search, not token-based</p>
+<p>Moving tightly-coupled static helper functions</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Phase 2 should use parser-based detection:</p>
+<p><strong>Files modified:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>src/c_parser.y</code> - parser integration for boundary detection</p>
+</li>
+<li>
+<p><code>src/yacc_parser.y</code> - same for yacc files</p>
+</li>
+<li>
+<p><code>src/refactory.c</code> - simplified <code>moveStaticFunctionAndMakeItExtern()</code></p>
+</li>
+<li>
+<p><code>src/cxref.c</code> - UI filter for definitions only</p>
+</li>
+<li>
+<p><code>src/misc.c</code> - added <code>OLO_GET_FUNCTION_BOUNDS</code> to <code>requiresCreatingRefs()</code></p>
+</li>
+<li>
+<p><code>tests/test_move_c_function_*/</code> - enabled and passing</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_phase_2_add_function_declaration_to_header">Phase 2: Add Function Declaration to Header</h5>
+<div class="paragraph">
+<p><strong>Relative complexity</strong>: ~0.5× Phase 1</p>
+</div>
+<div class="paragraph">
+<p>Add automatic function declaration to target file&#8217;s header:</p>
+</div>
+<div class="paragraph">
+<p><strong>Approach:</strong></p>
+</div>
+<div class="paragraph">
+<p>Following C conventions, when moving a function to <code>target.c</code>, add its declaration to <code>target.h</code> so other files can call it. This is much simpler than analyzing all dependencies.</p>
+</div>
+<div class="paragraph">
+<p><strong>Algorithm:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Determine target file path (e.g., <code>/path/to/target.c</code>)</p>
+</li>
+<li>
+<p>Derive header path by replacing <code>.c</code> with <code>.h</code> (e.g., <code>/path/to/target.h</code>)</p>
+</li>
+<li>
+<p>If header doesn&#8217;t exist, create it with include guards</p>
+</li>
+<li>
+<p>Find insertion point in header (after includes, before end of guard)</p>
+</li>
+<li>
+<p>Generate function declaration from Symbol: <code>extern void func(int a);</code></p>
+</li>
+<li>
+<p>Insert declaration into header</p>
+</li>
+<li>
+<p>User manually adds any needed <code>#include</code> directives to target file</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Implementation sketch:</strong></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Instead of string search, use the symbol's storage class from parser
-bool isStaticFunction(Symbol *sym) {
-    return sym-&gt;storage == StorageStatic;
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This leverages information the parser already has, avoiding comment/macro issues.</p>
-</div>
-<div class="paragraph">
-<p><strong>Header dependency analysis:</strong></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">void findRequiredHeaders(EditorMarker *start, EditorMarker *end,
-                         char ***headersOut, int *countOut) {
-    StringList *headers = NULL;
-
-    // Parse function body to collect all symbols used
-    parseRegion(start, end);
-
-    // For each symbol (function, type, macro) used in the function:
-    for (Symbol *sym = usedSymbols; sym != NULL; sym = sym-&gt;next) {
-        // Look up in symbol database
-        ReferenceableItem *item = lookupSymbolInTable(sym-&gt;name);
-        if (item != NULL) {
-            // Find which header declares this symbol
-            FileItem *declaringFile = getFileItem(item-&gt;references-&gt;position.file);
-            if (isHeaderFile(declaringFile-&gt;name)) {
-                // Add to required headers list (with dedup)
-                addUniqueString(&amp;headers, declaringFile-&gt;name);
-            }
-        }
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">char *getHeaderPathForSourceFile(char *sourcePath) {
+    // "/path/to/target.c" -&gt; "/path/to/target.h"
+    char *header = stackMemoryAlloc(strlen(sourcePath) + 1);
+    strcpy(header, sourcePath);
+    char *ext = strrchr(header, '.');
+    if (ext &amp;&amp; strcmp(ext, ".c") == 0) {
+        strcpy(ext, ".h");
     }
-
-    // Convert list to array
-    *countOut = countList(headers);
-    *headersOut = listToArray(headers);
+    return header;
 }
 
-void addRequiredIncludes(EditorBuffer *targetFile, char **headers, int count) {
-    // Find insertion point (after existing includes or after comments)
-    EditorMarker *insertPoint = findIncludeSectionEnd(targetFile);
-
-    // Check which headers are already included
-    for (int i = 0; i &lt; count; i++) {
-        if (!fileAlreadyIncludesHeader(targetFile, headers[i])) {
-            char includeLine[MAX_LINE];
-            sprintf(includeLine, "#include \"%s\"\n", headers[i]);
-            insertString(insertPoint, includeLine);
-        }
+void createHeaderIfNeeded(char *headerPath) {
+    if (!fileExists(headerPath)) {
+        // Create header with include guards
+        // "#ifndef TARGET_H\n#define TARGET_H\n\n#endif\n"
+        char *guardName = makeIncludeGuardName(headerPath);
+        // Write to file or EditorBuffer
     }
+}
+
+char *generateFunctionSignature(Symbol *function) {
+    // Reconstruct function signature from Symbol
+    // Example: "extern void func(int a, char *b)"
+    // Need to walk function-&gt;typeModifier to build type string
+    // This is the trickiest part
+}
+
+void addFunctionDeclarationToHeader(Symbol *function, char *headerPath) {
+    // 1. Open or load header into EditorBuffer
+    // 2. Find insertion point (before final #endif)
+    // 3. Generate signature: "extern void func(int a);\n"
+    // 4. Insert declaration
+}
+
+// In moveFunction() after moving the function block:
+if (movingBetweenFiles) {
+    char *headerPath = getHeaderPathForSourceFile(targetFilePath);
+    createHeaderIfNeeded(headerPath);
+    addFunctionDeclarationToHeader(parsedInfo.function, headerPath);
 }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p><strong>Required infrastructure</strong> (already exists):
+- <code>Symbol</code> with function information (symbol.h)
+- <code>Symbol.typeModifier</code> - contains return type and parameter information
+- <code>EditorBuffer</code> manipulation for header file editing
+- File path utilities</p>
+</div>
+<div class="paragraph">
+<p><strong>Challenges:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Generating function signature</strong>: Need to reconstruct <code>void func(int a, char *b)</code> from Symbol&#8217;s type information</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Walk <code>typeModifier</code> chain to build type string</p>
+</li>
+<li>
+<p>Handle pointers, arrays, function pointers correctly</p>
+</li>
+<li>
+<p>Parameter names might not be available (use <code>arg1</code>, <code>arg2</code>, etc.)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Finding insertion point in header</strong>: Where to add the declaration?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>After <code>#include</code> directives</p>
+</li>
+<li>
+<p>Before final <code>#endif</code> of include guard</p>
+</li>
+<li>
+<p>After existing declarations (maintain some order)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Creating header file</strong>: If <code>target.h</code> doesn&#8217;t exist</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Generate include guard name from filename (<code>TARGET_H</code>)</p>
+</li>
+<li>
+<p>Create basic header structure</p>
+</li>
+<li>
+<p>Or warn user and skip?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Header guard formats</strong>: Different styles exist</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>#ifndef HEADER_H</code> / <code>#define HEADER_H</code> / <code>#endif</code></p>
+</li>
+<li>
+<p><code>#pragma once</code></p>
+</li>
+<li>
+<p>Need to detect and handle both</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
 </div>
 <div class="paragraph">
 <p><strong>Value:</strong>
-- Automatically determines which headers are needed
-- Inserts <code>#include</code> directives
-- Prevents build breakage from missing dependencies</p>
+- Automatically makes moved function callable from other files
+- Follows C convention of declarations in <code>.h</code>, definitions in <code>.c</code>
+- Much simpler than full dependency analysis
+- User still controls <code>#include</code> directives (maintains flexibility)</p>
 </div>
 <div class="paragraph">
-<p><strong>New code required</strong>: ~300 lines
-- Header dependency analysis: ~150 lines
-- Include directive insertion: ~100 lines
-- Helper functions: ~50 lines</p>
+<p><strong>New code required</strong>: ~150 lines
+- Header path derivation: ~20 lines
+- Signature generation from Symbol: ~60 lines (complex type reconstruction)
+- Header file manipulation: ~50 lines
+- Include guard detection/creation: ~20 lines</p>
+</div>
+<div class="paragraph">
+<p><strong>Success Criteria</strong>:
+1. ✓ When moving function to <code>target.c</code>, declaration is added to <code>target.h</code>
+2. ✓ Function signature is correctly generated (return type, name, parameters)
+3. ✓ Declaration is inserted at appropriate location in header
+4. ✓ If header doesn&#8217;t exist, either create it or warn user
+5. ✓ Duplicate declarations are avoided (check if already present)
+6. ✓ Works with both <code>#ifndef</code> guards and <code>#pragma once</code>
+7. ✓ No regression in Phase 1 functionality</p>
+</div>
+<div class="paragraph">
+<p><strong>Acceptable limitations</strong> (defer to Phase 3/4):
+- User manually adds <code>#include</code> directives to target <code>.c</code> file
+- May not preserve exact parameter names if not in Symbol
+- Basic include guard format if creating new header
+- Doesn&#8217;t remove declaration from old header (user handles manually)</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="_phase_3_static_helper_functions">Phase 3: Static Helper Functions</h5>
 <div class="paragraph">
-<p><strong>Estimated effort</strong>: 1-2 weeks</p>
+<p><strong>Relative complexity</strong>: 1-1.5× Phase 1</p>
 </div>
 <div class="paragraph">
 <p>Detect and optionally move tightly-coupled static helpers:</p>
@@ -8959,7 +9256,7 @@ if (staticHelperCount &gt; 0) {
 <div class="sect4">
 <h5 id="_phase_4_polish">Phase 4: Polish</h5>
 <div class="paragraph">
-<p><strong>Estimated effort</strong>: 1 week</p>
+<p><strong>Relative complexity</strong>: 0.5-1× Phase 1</p>
 </div>
 <div class="ulist">
 <ul>
@@ -10693,7 +10990,183 @@ void pushEmptySession(ReferencesStack *stack);  // Generic operation</code></pre
 <div class="sect2">
 <h3 id="_change_return_type">19.9. Change return type</h3>
 <div class="paragraph">
-<p>Tentative.</p>
+<p>Tentative.
+---</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_make_function_static">19.10. Make Function Static</h3>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Convert functions that are only used within their compilation unit to <code>static</code> storage class for better encapsulation and compiler optimization.</p>
+</div>
+<div class="paragraph">
+<p><strong>When to use:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Function has external linkage but no external callers</p>
+</li>
+<li>
+<p>Want to make implementation details explicit</p>
+</li>
+<li>
+<p>Enable compiler optimizations and reduce global namespace pollution</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Input:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Non-static function definition</p>
+</li>
+<li>
+<p>All references to that function</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Availability:</strong></p>
+</div>
+<div class="paragraph">
+<p>When cursor is on a non-static function definition where all callers are in the same file.</p>
+</div>
+<div class="paragraph">
+<p><strong>Algorithm:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Check current storage class</strong> - Skip if already <code>static</code></p>
+</li>
+<li>
+<p><strong>Find definition and all references</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Locate function definition (not declarations)</p>
+</li>
+<li>
+<p>Collect all call sites across project</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Verify all references are local</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>For each reference (excluding definition itself):</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Check if in same file as definition</p>
+</li>
+<li>
+<p>If any reference is in different file, abort</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Check if declared in header files (public API), abort if yes</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Apply transformation</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Find beginning of function definition</p>
+</li>
+<li>
+<p>Insert "static " before return type</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Output:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Function marked as <code>static</code></p>
+</li>
+<li>
+<p>Compiler can optimize more aggressively</p>
+</li>
+<li>
+<p>Clear signal that function is internal</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Before - helper function with external linkage
+int helperCompare(const void *a, const void *b) {
+    return *(int*)a - *(int*)b;
+}
+
+void publicSort(int *array, size_t n) {
+    qsort(array, n, sizeof(int), helperCompare);
+}
+
+// After - explicitly internal
+static int helperCompare(const void *a, const void *b) {
+    return *(int*)a - *(int*)b;
+}
+
+void publicSort(int *array, size_t n) {
+    qsort(array, n, sizeof(int), helperCompare);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Benefits:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Better encapsulation and code clarity</p>
+</li>
+<li>
+<p>Enables inlining and other compiler optimizations</p>
+</li>
+<li>
+<p>Smaller symbol tables, no name collisions</p>
+</li>
+<li>
+<p>Safe to refactor (can&#8217;t break external code)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Notes:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Similar to "Unused Symbols" detection but finds LOCAL-ONLY usage instead of NO usage</p>
+</li>
+<li>
+<p>Cannot handle functions used via function pointers passed externally (requires manual verification)</p>
+</li>
+<li>
+<p>Estimated complexity: ~0.3× Move Function Phase 1</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -10701,7 +11174,7 @@ void pushEmptySession(ReferencesStack *stack);  // Generic operation</code></pre
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-12-25 15:27:08 UTC
+Last updated 2025-12-26 12:12:54 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
