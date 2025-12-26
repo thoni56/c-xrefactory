@@ -14,6 +14,7 @@
 #include "startup.h"
 #include "misc.h"
 #include "options.h"
+#include "parsing.h"
 #include "parsers.h"
 #include "ppc.h"
 #include "referenceableitemtable.h"
@@ -109,6 +110,8 @@ static void closeInputFile(void) {
 static void parseInputFile(void) {
     if (options.fileTrace)
         fprintf(stderr, "parseInputFile: '%s\n", currentFile.fileName);
+    /* Bridge: Sync parsingConfig for all operations using parseCurrentInputFile entry point */
+    parsingConfig.operation = getParserOperation(options.serverOperation);
     if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
         log_debug("parse start");
         parseCurrentInputFile(currentLanguage);

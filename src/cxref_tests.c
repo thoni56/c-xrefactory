@@ -22,6 +22,7 @@
 #include "misc.mock"
 #include "options.mock"
 #include "parsers.mock"
+#include "parsing.mock"
 #include "ppc.mock"
 #include "refactorings.mock"
 #include "refactory.mock"

@@ -12,6 +12,7 @@
 #include "globals.mock"
 #include "lexem.mock"
 #include "misc.mock"
+#include "parsing.mock"
 #include "options.mock"
 #include "yylex.mock"
 

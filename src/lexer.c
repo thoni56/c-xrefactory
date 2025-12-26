@@ -7,6 +7,7 @@
 #include "lexem.h"
 #include "lexembuffer.h"
 #include "options.h"
+#include "parsing.h"
 #include "commons.h"
 #include "server.h"
 #include "yylex.h"
@@ -215,7 +216,7 @@ static void processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuf
             if (deltaOffset <= strlenOfBackpatchedIdentifier(lb)) {
                 /* We need to backpatch the current IDENTIFIER with an IDENT_TO_COMPLETE */
                 backpatchLexemCode(lb, IDENT_TO_COMPLETE);
-                if (options.serverOperation == OLO_COMPLETION) {
+                if (parsingConfig.operation == PARSER_OP_COMPLETION) {
                     /* And for completion we need to terminate the identifier where the cursor is */
                     /* Move to position cursor is on in the already written identifier */
                     /* We can use the backpatchP since it has moved to begining of string */
@@ -751,7 +752,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
 
             if (fileNumberFrom(cb) == originalFileNumber && fileNumberFrom(cb) != NO_FILE_NUMBER
                 && fileNumberFrom(cb) != -1) {
-                if (options.serverOperation == OLO_EXTRACT) {
+                if (parsingConfig.operation == PARSER_OP_EXTRACT) {
                     ch = skipBlanks(cb, ch);
                     int apos = fileOffsetFor(cb);
                     log_debug(":pos1==%d, olCursorOffset==%d, olMarkOffset==%d",apos,options.olCursorOffset,options.olMarkOffset);
@@ -771,7 +772,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                         putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(lb, parChar, position);
                         parsedInfo.blockMarker2Set = true;
                     }
-                } else if (options.serverOperation == OLO_COMPLETION) {
+                } else if (parsingConfig.operation == PARSER_OP_COMPLETION) {
                     ch = skipBlanks(cb, ch);
                     lexem = peekLexemCodeAt(startOfCurrentLexem);
                     processCompletionOrSearch(cb, lb, position, currentLexemFileOffset,
@@ -782,7 +783,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     ) {
                         gotOnLineCxRefs(position);
                     }
-                    if (options.serverOperation == OLO_SET_MOVE_TARGET) {
+                    if (parsingConfig.operation == PARSER_OP_VALIDATE_MOVE_TARGET) {
                         // TODO: Figure out what the problem with this
                         // is for C. Marian's comment below indicate
                         // CPP problem, but if we will try to
