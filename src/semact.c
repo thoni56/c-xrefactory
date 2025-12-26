@@ -7,6 +7,7 @@
 #include "globals.h"
 #include "filedescriptor.h"
 #include "options.h"
+#include "parsing.h"
 #include "misc.h"
 #include "proto.h"
 #include "storage.h"
@@ -261,7 +262,7 @@ void labelReference(Id *id,  Usage usage) {
 }
 
 void generateInternalLabelReference(int counter, int usage) {
-    if (options.serverOperation != OLO_EXTRACT)
+    if (parsingConfig.operation != PARSER_OP_EXTRACT)
         return;
 
     char labelName[TMP_STRING_SIZE];
@@ -278,7 +279,7 @@ void generateInternalLabelReference(int counter, int usage) {
 
 void setLocalVariableLinkName(Symbol *p) {
     char name[TMP_STRING_SIZE];
-    if (options.serverOperation == OLO_EXTRACT) {
+    if (parsingConfig.operation == PARSER_OP_EXTRACT) {
         char nnn[TMP_STRING_SIZE];
         // extract variable, must pass all needed informations in linkname
         sprintf(nnn, "%c%s%c", LINK_NAME_SEPARATOR, p->name, LINK_NAME_SEPARATOR);
@@ -419,11 +420,11 @@ void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol
         } else {
             addNewSymbolDefinition(table, inputFileName, parameterCopy, StorageAuto, UsageDefined);
         }
-        if (options.serverOperation == OLO_EXTRACT) {
+        if (parsingConfig.operation == PARSER_OP_EXTRACT) {
             handleFoundSymbolReference(parameterCopy, parameterCopy->position, UsageLvalUsed, NO_FILE_NUMBER);
         }
     }
-    if (options.serverOperation == OLO_GOTO_PARAM_NAME
+    if (parsingConfig.operation == PARSER_OP_TRACK_PARAMETERS
         && position == options.olcxGotoVal
         && positionsAreEqual(function->position, cxRefPosition))
     {
@@ -894,7 +895,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position lpar,
                                     ) {
     if (options.mode != ServerMode)
         return;
-    if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES)
+    if (parsingConfig.operation != PARSER_OP_TRACK_PARAMETERS)
         return;
     if (positionsAreNotEqual(decl->position, cxRefPosition))
         return;
@@ -907,7 +908,7 @@ void handleInvocationParamPositions(Reference *ref, Position lpar,
                                     ) {
     if (options.mode != ServerMode)
         return;
-    if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES)
+    if (parsingConfig.operation != PARSER_OP_TRACK_PARAMETERS)
         return;
     if (ref==NULL || positionsAreNotEqual(ref->position, cxRefPosition))
         return;

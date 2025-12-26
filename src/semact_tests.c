@@ -16,6 +16,7 @@
 #include "globals.mock"
 #include "misc.mock"
 #include "options.mock"
+#include "parsing.mock"
 #include "server.h"
 #include "symbol.mock"
 #include "symboltable.mock"
@@ -45,7 +46,7 @@ Ensure(Semact, can_capture_positions_for_empty_parameter_list) {
     Position rpar = {.file = 42, .line = 5, .col = 21};
 
     options.mode = ServerMode;
-    options.serverOperation = OLO_GOTO_PARAM_NAME;
+    parsingConfig.operation = PARSER_OP_TRACK_PARAMETERS;
     cxRefPosition = symbol.position;
 
     /* No position list (commas) for no parameters */
@@ -64,7 +65,7 @@ Ensure(Semact, can_capture_positions_for_one_parameter) {
     Position rpar = {.file = 42, .line = 5, .col = 28};
 
     options.mode = ServerMode;
-    options.serverOperation = OLO_GOTO_PARAM_NAME;
+    parsingConfig.operation = PARSER_OP_TRACK_PARAMETERS;
     options.olcxGotoVal = 1;
     cxRefPosition = symbol.position;
 
@@ -85,7 +86,7 @@ Ensure(Semact, can_capture_positions_for_two_parameters) {
     PositionList commas = { .position = comma, .next = NULL };
 
     options.mode = ServerMode;
-    options.serverOperation = OLO_GOTO_PARAM_NAME;
+    parsingConfig.operation = PARSER_OP_TRACK_PARAMETERS;
     options.olcxGotoVal = 1;
     cxRefPosition = symbol.position;
 
@@ -104,7 +105,7 @@ Ensure(Semact, can_capture_positions_for_void_parameter_list) {
     Position rpar = {.file = 42, .line = 5, .col = 25};
 
     options.mode = ServerMode;
-    options.serverOperation = OLO_GOTO_PARAM_NAME;
+    parsingConfig.operation = PARSER_OP_TRACK_PARAMETERS;
     options.olcxGotoVal = 1;
     cxRefPosition = symbol.position;
 
