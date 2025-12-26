@@ -3,19 +3,16 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "commons.h"
+#include "filetable.h"
 #include "globals.h"
 #include "lexem.h"
 #include "lexembuffer.h"
-#include "options.h"
-#include "parsing.h"
-#include "commons.h"
-#include "server.h"
-#include "yylex.h"
-#include "filedescriptor.h"
-#include "filetable.h"
-
 #include "log.h"
 #include "misc.h"              /* requiresCreatingRefs() */
+#include "options.h"
+#include "parsing.h"
+#include "server.h"
 
 
 void gotOnLineCxRefs(Position position) {
