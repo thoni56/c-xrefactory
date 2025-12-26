@@ -32,7 +32,6 @@
 #include "globals.h"
 #include "list.h"
 #include "log.h"
-#include "options.h"
 #include "parsing.h"
 #include "semact.h"
 #include "stackmemory.h"
@@ -405,7 +404,6 @@ primary_expr
         if (symbol != NULL && symbol->type == TypeDefault) {
             assert(symbol->storage != StorageTypedef);
             $$.data.typeModifier = symbol->typeModifier;
-            assert(options.mode);
             $$.data.reference = handleFoundSymbolReference(symbol, $1.data->position, UsageUsed, NO_FILE_NUMBER);
         } else {
             /* implicit function declaration */
@@ -853,7 +851,6 @@ user_defined_type
     : TYPE_NAME                                             {
         int usage;
         $$.data = $1.data;
-        assert(options.mode);
         assert($1.data);
         assert($1.data->symbol);
         if (nestingLevel() == 0)
