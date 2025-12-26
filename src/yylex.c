@@ -24,6 +24,7 @@
 #include "memory.h"
 #include "misc.h"
 #include "options.h"
+#include "parsing.h"
 #include "parsers.h"
 #include "referenceableitemtable.h"
 #include "semact.h"
@@ -784,7 +785,7 @@ static void handleMacroDefinitionParameterPositions(int argi, Position macroPosi
                                                     Position beginPosition,
                                                     Position position, Position endPosition,
                                                     bool final) {
-    if ((options.serverOperation == OLO_GOTO_PARAM_NAME || options.serverOperation == OLO_GET_PARAM_COORDINATES)
+    if (parsingConfig.operation == PARSER_OP_TRACK_PARAMETERS
         && positionsAreEqual(macroPosition, cxRefPosition)) {
         if (final) {
             if (argi==0) {
@@ -804,7 +805,7 @@ static void handleMacroUsageParameterPositions(int argumentIndex, Position macro
                                                Position beginPosition, Position endPosition,
                                                bool final
 ) {
-    if (options.serverOperation == OLO_GET_PARAM_COORDINATES
+    if (parsingConfig.operation == PARSER_OP_TRACK_PARAMETERS
         && positionsAreEqual(macroPosition, cxRefPosition)) {
         log_debug("checking param %d at %d,%d, final==%d", argumentIndex, beginPosition.col, endPosition.col,
                   final);
@@ -2595,9 +2596,9 @@ static LexemCode lookupIdentifier(char *id, Position position) {
 
 
 static void actionOnBlockMarker(void) {
-    if (options.serverOperation == OLO_SET_MOVE_TARGET) {
+    if (parsingConfig.operation == PARSER_OP_VALIDATE_MOVE_TARGET) {
         parsedInfo.moveTargetAccepted = parsedInfo.function == NULL;
-    } else if (options.serverOperation == OLO_EXTRACT) {
+    } else if (parsingConfig.operation == PARSER_OP_EXTRACT) {
         extractActionOnBlockMarker();
     }
 }

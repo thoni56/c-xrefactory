@@ -2,6 +2,10 @@
 
 #include <cgreen/mocks.h>
 
+
+ParsingConfig parsingConfig;
+
+
 ParseConfig createParseConfigFromOptions(void) {
     ParseConfig *parseConfig = (ParseConfig *)mock();
     return *parseConfig;

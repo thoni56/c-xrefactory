@@ -201,6 +201,10 @@ void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *ma
     ArgumentsVector args = {.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
     ArgumentsVector nargs = {.argc = argumentCount, .argv = argumentVector};
     initServer(nargs);
+
+    /* Bridge: Sync parsingConfig with options.serverOperation for old code path */
+    parsingConfig.operation = getParserOperation(options.serverOperation);
+
     callServer(args, nargs, &editServerSubTaskFirstPass);
 }
 

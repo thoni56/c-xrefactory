@@ -34,6 +34,7 @@ void processIncludeDirective(Position includePosition, bool include_next);
 #include "misc.mock"
 #include "options.mock"
 #include "parsers.mock"
+#include "parsing.mock"
 #include "reference.mock"
 #include "referenceableitemtable.mock"
 #include "semact.mock"
