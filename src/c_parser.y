@@ -31,6 +31,7 @@
 #include "list.h"
 #include "log.h"
 #include "options.h"
+#include "parsing.h"
 #include "semact.h"
 #include "stackmemory.h"
 #include "symbol.h"
@@ -548,7 +549,7 @@ conditional_expr
 assignment_expr
     : conditional_expr                                  /*& { $$.data = $1.data; } &*/
     | unary_expr assignment_operator assignment_expr    {
-        if ($1.data.reference != NULL && options.serverOperation == OLO_EXTRACT) {
+        if ($1.data.reference != NULL && parsingConfig.operation == PARSER_OP_EXTRACT) {
             Reference *r = duplicateReferenceInCxMemory($1.data.reference);
             $1.data.reference->usage = UsageNone;
             if ($2.data == '=') {
@@ -1645,7 +1646,7 @@ external_definition
         /* Capture function boundaries for move-function refactoring */
         if (parsedInfo.function != NULL
             && parsedInfo.function->position.file != NO_FILE_NUMBER
-            && options.serverOperation == OLO_GET_FUNCTION_BOUNDS
+            && parsingConfig.operation == PARSER_OP_GET_FUNCTION_BOUNDS
             && positionIsBetween(cxRefPosition, $2.begin, $4.end)) {
             /* We just finished parsing a function that contains the cursor position.
              * Record the function boundaries using the positions from the grammar.

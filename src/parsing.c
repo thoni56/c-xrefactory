@@ -8,6 +8,10 @@
 #include "position.h"
 
 
+/* Global parsing configuration - set before parsing starts */
+ParsingConfig parsingConfig;
+
+
 ParseConfig createParseConfigFromOptions(void) {
     ParseConfig config = {
         .includeDirs = options.includeDirs,
@@ -15,6 +19,24 @@ ParseConfig createParseConfigFromOptions(void) {
         .strictAnsi = options.strictAnsi
     };
     return config;
+}
+
+ParserOperation getParserOperation(ServerOperation serverOp) {
+    switch (serverOp) {
+        case OLO_GET_FUNCTION_BOUNDS:
+            return PARSER_OP_GET_FUNCTION_BOUNDS;
+        case OLO_SET_MOVE_TARGET:
+            return PARSER_OP_VALIDATE_MOVE_TARGET;
+        case OLO_EXTRACT:
+            return PARSER_OP_EXTRACT;
+        case OLO_GOTO_PARAM_NAME:
+        case OLO_GET_PARAM_COORDINATES:
+            return PARSER_OP_TRACK_PARAMETERS;
+        case OLO_COMPLETION:
+            return PARSER_OP_COMPLETION;
+        default:
+            return PARSER_OP_NORMAL;
+    }
 }
 
 /* Bridge to existing implementation - temporarily uses external parseBufferUsingServer */
@@ -32,8 +54,12 @@ static FunctionBoundariesResult parseToGetFunctionBoundaries(
         .functionEnd = noPosition
     };
 
-    /* Bridge implementation: Use existing infrastructure temporarily */
-    (void)config; /* TODO: Apply config before parsing */
+    /* Set up parsing configuration for subsystem */
+    parsingConfig.includeDirs = config->includeDirs;
+    parsingConfig.defines = config->defines;
+    parsingConfig.strictAnsi = config->strictAnsi;
+    parsingConfig.operation = PARSER_OP_GET_FUNCTION_BOUNDS;
+    parsingConfig.cursorPos = cursorPos;
 
     /* Clear previous results */
     parsedPositions[IPP_FUNCTION_BEGIN] = noPosition;
@@ -47,7 +73,7 @@ static FunctionBoundariesResult parseToGetFunctionBoundaries(
         return result;
     }
 
-    /* Call existing parsing infrastructure */
+    /* Bridge: Still calls old infrastructure via magic string */
     parseBufferUsingServer(options.project, marker, NULL, "-olcxgetfunctionbounds", NULL);
 
     /* Extract results from global state */
@@ -71,8 +97,12 @@ static MoveTargetValidationResult parseToValidateMoveTarget(
         .valid = false
     };
 
-    /* Bridge implementation: Use existing infrastructure temporarily */
-    (void)config; /* TODO: Apply config before parsing */
+    /* Set up parsing configuration for subsystem */
+    parsingConfig.includeDirs = config->includeDirs;
+    parsingConfig.defines = config->defines;
+    parsingConfig.strictAnsi = config->strictAnsi;
+    parsingConfig.operation = PARSER_OP_VALIDATE_MOVE_TARGET;
+    parsingConfig.cursorPos = targetPos;
 
     /* Clear previous results */
     parsedInfo.moveTargetAccepted = false;
@@ -84,7 +114,7 @@ static MoveTargetValidationResult parseToValidateMoveTarget(
         return result;
     }
 
-    /* Call existing parsing infrastructure */
+    /* Bridge: Still calls old infrastructure via magic string */
     parseBufferUsingServer(options.project, marker, NULL, "-olcxmovetarget", NULL);
 
     /* Extract result from global state */

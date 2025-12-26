@@ -5,8 +5,22 @@
 #include "position.h"
 #include "stringlist.h"
 #include "editorbuffer.h"
+#include "server.h"
 
 typedef struct editorMarker EditorMarker;
+
+/**
+ * Operation that determines parser behavior.
+ * Decouples parsing from server operation types.
+ */
+typedef enum {
+    PARSER_OP_NORMAL,              /* Just parse, create references */
+    PARSER_OP_GET_FUNCTION_BOUNDS, /* Record function boundaries */
+    PARSER_OP_VALIDATE_MOVE_TARGET,/* Check if position is valid move target */
+    PARSER_OP_EXTRACT,             /* Extract refactoring - track blocks/vars */
+    PARSER_OP_TRACK_PARAMETERS,    /* Track parameter positions for navigation */
+    PARSER_OP_COMPLETION           /* Code completion context */
+} ParserOperation;
 
 /**
  * Configuration for parsing - reusable across operations.
@@ -17,6 +31,24 @@ typedef struct {
     char       *defines;         /* -D preprocessor definitions */
     bool        strictAnsi;      /* ANSI C mode vs extensions */
 } ParseConfig;
+
+/**
+ * Complete parsing configuration including operation and context.
+ * This is the input to the parsing subsystem - set before parsing starts.
+ */
+typedef struct {
+    StringList      *includeDirs;  /* -I include directories */
+    char            *defines;      /* -D preprocessor definitions */
+    bool             strictAnsi;   /* ANSI C mode vs extensions */
+    ParserOperation  operation;    /* What should parser do? */
+    Position         cursorPos;    /* Cursor position (for bounded operations) */
+} ParsingConfig;
+
+/**
+ * Global parsing configuration.
+ * Set this before calling parser to configure its behavior.
+ */
+extern ParsingConfig parsingConfig;
 
 /**
  * Result of parsing to find function boundaries.
@@ -39,6 +71,15 @@ typedef struct {
  * Temporary bridge function until callers build ParseConfig themselves.
  */
 extern ParseConfig createParseConfigFromOptions(void);
+
+/**
+ * Convert server operation to parser operation.
+ * Maps high-level server requests to parser-specific behaviors.
+ *
+ * @param serverOp      Server operation from request
+ * @return              Corresponding parser operation
+ */
+extern ParserOperation getParserOperation(ServerOperation serverOp);
 
 /**
  * Check if a marker position is valid for moving a function to.

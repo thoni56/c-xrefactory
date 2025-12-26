@@ -7,6 +7,10 @@ ParseConfig createParseConfigFromOptions(void) {
     return *parseConfig;
 }
 
+ParserOperation getParserOperation(ServerOperation serverOp) {
+    return (ParserOperation)mock(serverOp);
+}
+
 bool isValidMoveTarget(EditorMarker *target) {
     return (bool)mock(target);
 }
