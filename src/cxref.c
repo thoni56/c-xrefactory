@@ -1736,7 +1736,6 @@ static void dumpSelectionMenu(BrowserMenu *menu) {
 #endif
 
 static void mainAnswerReferencePushingAction(ServerOperation operation) {
-    assert(requiresCreatingRefs(operation));
     createSelectionMenuForOperation(operation);
 
     assert(options.xref2);

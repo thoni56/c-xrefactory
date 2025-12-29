@@ -748,27 +748,6 @@ bool fileNameHasOneOfSuffixes(char *fname, char *suffs) {
 
 /* ************************************************************* */
 
-bool requiresCreatingRefs(ServerOperation operation) {
-    return operation==OLO_PUSH
-        ||  operation==OLO_PUSH_ONLY
-        ||  operation==OLO_PUSH_AND_CALL_MACRO
-        ||  operation==OLO_GOTO_PARAM_NAME
-        ||  operation==OLO_GET_PARAM_COORDINATES
-        ||  operation==OLO_GET_AVAILABLE_REFACTORINGS
-        ||  operation==OLO_PUSH_NAME
-        ||  operation==OLO_PUSH_FOR_LOCAL_MOTION
-        ||  operation==OLO_GET_LAST_IMPORT_LINE
-        ||  operation==OLO_GLOBAL_UNUSED
-        ||  operation==OLO_LOCAL_UNUSED
-        ||  operation==OLO_LIST
-        ||  operation==OLO_RENAME
-        ||  operation==OLO_ARGUMENT_MANIPULATION
-        ||  operation==OLO_SAFETY_CHECK
-        ||  operation==OLO_GET_PRIMARY_START
-        ||  operation==OLO_GET_FUNCTION_BOUNDS
-        ;
-}
-
 void formatOutputLine(char *line, int startingColumn) {
     int pos, n;
     char *nlp, *p;

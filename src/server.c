@@ -27,6 +27,26 @@ const char *operationNamesTable[] = {
 };
 
 
+static bool needsReferenceDatabase(ServerOperation operation) {
+    return operation==OLO_PUSH
+        ||  operation==OLO_PUSH_ONLY
+        ||  operation==OLO_PUSH_AND_CALL_MACRO
+        ||  operation==OLO_GOTO_PARAM_NAME
+        ||  operation==OLO_GET_PARAM_COORDINATES
+        ||  operation==OLO_GET_AVAILABLE_REFACTORINGS
+        ||  operation==OLO_PUSH_NAME
+        ||  operation==OLO_PUSH_FOR_LOCAL_MOTION
+        ||  operation==OLO_GET_LAST_IMPORT_LINE
+        ||  operation==OLO_GLOBAL_UNUSED
+        ||  operation==OLO_LOCAL_UNUSED
+        ||  operation==OLO_LIST
+        ||  operation==OLO_RENAME
+        ||  operation==OLO_ARGUMENT_MANIPULATION
+        ||  operation==OLO_SAFETY_CHECK
+        ||  operation==OLO_GET_PRIMARY_START
+        ||  operation==OLO_GET_FUNCTION_BOUNDS
+        ;
+}
 
 static bool requiresProcessingInputFile(ServerOperation operation) {
     return operation==OLO_COMPLETION
@@ -35,7 +55,7 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
            || operation==OLO_SET_MOVE_TARGET
            || operation==OLO_GET_FUNCTION_BOUNDS
            || operation==OLO_GET_ENV_VALUE
-           || requiresCreatingRefs(operation)
+           || needsReferenceDatabase(operation)
         ;
 }
 
@@ -148,7 +168,7 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
     }
     if (options.olCursorOffset==0) {
         // special case, push the file as include reference
-        if (requiresCreatingRefs(options.serverOperation)) {
+        if (needsReferenceDatabase(options.serverOperation)) {
             Position position = makePosition(inputFileNumber, 1, 0);
             cxRefPosition = position;
             addFileAsIncludeReference(inputFileNumber);
@@ -177,7 +197,7 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs, b
         inputFileName = fileItem->name;
         assert(inputFileName!=NULL);
         singlePass(baseArgs, requestArgs, firstPassP);
-        if (options.serverOperation==OLO_EXTRACT || (completionStringServed && !requiresCreatingRefs(options.serverOperation)))
+        if (options.serverOperation==OLO_EXTRACT || (completionStringServed && !needsReferenceDatabase(options.serverOperation)))
             break;
     }
     fileItem->isScheduled = false;
@@ -188,7 +208,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *fir
 
     loadAllOpenedEditorBuffers();
 
-    if (requiresCreatingRefs(options.serverOperation))
+    if (needsReferenceDatabase(options.serverOperation))
         pushEmptySession(&sessionData.browsingStack);
 
     if (requiresProcessingInputFile(options.serverOperation)) {

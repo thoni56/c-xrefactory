@@ -99,10 +99,6 @@ void prettyPrintLinkNameForSymbolInMenu(char *ttt, BrowserMenu *ss) {
   mock(ttt, ss);
 }
 
-bool requiresCreatingRefs(ServerOperation operation) {
-  return (bool) mock(operation);
-}
-
 void formatOutputLine(char *tt, int startingColumn) {
   mock(tt, startingColumn);
 }
