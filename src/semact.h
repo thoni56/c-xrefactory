@@ -1,6 +1,24 @@
 #ifndef SEMACT_H_INCLUDED
 #define SEMACT_H_INCLUDED
 
+/**
+ * @file semact.h
+ * @brief Core Semantic Actions
+ *
+ * Category: Parsing Infrastructure - Semantic Actions (General)
+ *
+ * Semantic actions called by the parser for most/all operations during parsing.
+ * These handle fundamental language constructs: symbol definitions, type checking,
+ * scope management, parameter tracking.
+ *
+ * Uses parsingConfig.operation to adapt behavior:
+ * - PARSER_OP_TRACK_PARAMETERS: Capture parameter positions for navigation
+ * - PARSER_OP_EXTRACT: Special handling for extractable variables
+ *
+ * Called from: c_parser.y, yacc_parser.y (directly from grammar rules)
+ * Calls: Symbol tables, reference tracking, type system
+ */
+
 #include "symbol.h"
 #include "symboltable.h"
 #include "usage.h"

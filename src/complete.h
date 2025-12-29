@@ -1,6 +1,28 @@
 #ifndef COMPLETE_H_INCLUDED
 #define COMPLETE_H_INCLUDED
 
+/**
+ * @file complete.h
+ * @brief Code Completion
+ *
+ * Category: Parsing Infrastructure - Feature-Specific Semantic Actions
+ *
+ * Semantic actions for code completion context analysis.
+ * Only active when parsingConfig.operation == PARSER_OP_COMPLETION.
+ *
+ * During parsing, analyzes:
+ * - Identifier at cursor position (type, scope context)
+ * - Expression context (member access, function calls)
+ * - Available symbols in current scope
+ *
+ * Generates:
+ * - List of completion candidates with type information
+ * - Context-aware filtering (members, functions, variables)
+ *
+ * Called from: lexer.c (when IDENT_TO_COMPLETE token is found)
+ * Related: completion.h (completion data structures)
+ */
+
 #include "proto.h"              /* For ExpressionTokenType */
 #include "completion.h"
 

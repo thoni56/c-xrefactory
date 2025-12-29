@@ -1,6 +1,45 @@
 #ifndef PARSING_H_INCLUDED
 #define PARSING_H_INCLUDED
 
+/**
+ * @file parsing.h
+ * @brief Parsing Subsystem Interface
+ *
+ * Parsing Subsystem Architecture
+ * ==============================
+ *
+ * This module provides the public interface to the parsing subsystem,
+ * decoupling parsing behavior from server operations.
+ *
+ * Flow during parsing:
+ *
+ *   server.c (orchestration)
+ *     │ sets parsingConfig.operation
+ *     ↓
+ *   c_parser.y / yacc_parser.y (parsing infrastructure)
+ *     │
+ *     ├─→ yylex.c / lexer.c (tokenization)
+ *     │   └─→ needsReferenceAtCursor() → sets cxRefPosition
+ *     │
+ *     ├─→ semact.c (core semantic actions - called from grammar rules)
+ *     │   ├─→ symbol tables, type checking
+ *     │   └─→ reference.c (manages reference lists)
+ *     │       └─→ allowsDuplicateReferences()
+ *     │
+ *     ├─→ extract.c (feature semantic actions - if PARSER_OP_EXTRACT)
+ *     │   └─→ track blocks, variables, control flow
+ *     │
+ *     └─→ complete.c (feature semantic actions - if PARSER_OP_COMPLETION)
+ *         └─→ build completion candidates
+ *
+ * Module Categories:
+ * - Parsing Infrastructure: Core parsing and lexical analysis
+ * - Core Semantic Actions: General-purpose symbol/type handling (semact.c)
+ * - Feature Semantic Actions: Operation-specific analysis (extract.c, complete.c)
+ * - Parsing Support Libraries: Data structures and utilities (reference.c)
+ * - Orchestration: High-level coordination (server.c, refactory.c, cxref.c)
+ */
+
 #include <stdbool.h>
 #include "position.h"
 #include "stringlist.h"
@@ -88,6 +127,15 @@ extern ParserOperation getParserOperation(ServerOperation serverOp);
  * @return              True if operation needs to know what symbol/reference cursor is on
  */
 extern bool needsReferenceAtCursor(ParserOperation op);
+
+/**
+ * Check if parser operation allows duplicate references at same position.
+ * Extract operation needs all references including duplicates to analyze data flow.
+ *
+ * @param op            Parser operation to check
+ * @return              True if operation allows duplicate references
+ */
+extern bool allowsDuplicateReferences(ParserOperation op);
 
 /**
  * Check if a marker position is valid for moving a function to.
