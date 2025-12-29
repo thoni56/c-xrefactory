@@ -82,6 +82,14 @@ extern ParseConfig createParseConfigFromOptions(void);
 extern ParserOperation getParserOperation(ServerOperation serverOp);
 
 /**
+ * Check if parser operation needs to record reference at cursor position.
+ *
+ * @param op            Parser operation to check
+ * @return              True if operation needs to know what symbol/reference cursor is on
+ */
+extern bool needsReferenceAtCursor(ParserOperation op);
+
+/**
  * Check if a marker position is valid for moving a function to.
  * Convenience function that uses current global options.
  *

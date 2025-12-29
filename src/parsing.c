@@ -39,6 +39,12 @@ ParserOperation getParserOperation(ServerOperation serverOp) {
     }
 }
 
+bool needsReferenceAtCursor(ParserOperation op) {
+    return op != PARSER_OP_EXTRACT
+        && op != PARSER_OP_COMPLETION
+        && op != PARSER_OP_VALIDATE_MOVE_TARGET;
+}
+
 /* Bridge to existing implementation - temporarily uses external parseBufferUsingServer */
 extern void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *mark,
                                    char *pushOption, char *pushOption2);

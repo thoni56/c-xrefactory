@@ -16,7 +16,7 @@
 
 
 void gotOnLineCxRefs(Position position) {
-    if (requiresCreatingRefs(options.serverOperation)) {
+    if (needsReferenceAtCursor(parsingConfig.operation)) {
         cxRefPosition = position;
     }
 }
