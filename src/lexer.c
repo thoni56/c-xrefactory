@@ -778,7 +778,9 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     if (currentLexemFileOffset <= options.olCursorOffset
                         && fileOffsetFor(cb) >= options.olCursorOffset
                     ) {
-                        gotOnLineCxRefs(position);
+                        if (needsReferenceAtCursor(parsingConfig.operation)) {
+                            cxRefPosition = position;
+                        }
                     }
                     if (parsingConfig.operation == PARSER_OP_VALIDATE_MOVE_TARGET) {
                         // TODO: Figure out what the problem with this

@@ -151,9 +151,9 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
         // special case, push the file as include reference
         if (requiresCreatingRefs(options.serverOperation)) {
             Position position = makePosition(inputFileNumber, 1, 0);
-            gotOnLineCxRefs(position);
+            cxRefPosition = position;
+            addFileAsIncludeReference(inputFileNumber);
         }
-        addFileAsIncludeReference(inputFileNumber);
     }
     if (completionPositionFound && !completionStringServed) {
         // on-line action with cursor in an un-used macro body ???
