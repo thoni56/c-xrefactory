@@ -1346,10 +1346,10 @@ static bool processOOption(int *argi, ArgumentsVector args) {
         else options.olineLen--;
     }
     else if (strncmp(args.argv[i], "-olcursor=",10)==0) {
-        sscanf(args.argv[i]+10, "%d",&options.olCursorOffset);
+        sscanf(args.argv[i]+10, "%d",&options.cursorOffset);
     }
     else if (strncmp(args.argv[i], "-olmark=",8)==0) {
-        sscanf(args.argv[i]+8, "%d",&options.olMarkOffset);
+        sscanf(args.argv[i]+8, "%d",&options.markOffset);
     }
     else if (strcmp(args.argv[i], "-olcxextract")==0) {
         options.serverOperation = OLO_EXTRACT;

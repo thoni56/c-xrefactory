@@ -166,7 +166,7 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
         parseInputFile();
         *firstPassP = false;
     }
-    if (options.olCursorOffset==0) {
+    if (options.cursorOffset==0) {
         // special case, push the file as include reference
         if (needsReferenceDatabase(options.serverOperation)) {
             Position position = makePosition(inputFileNumber, 1, 0);

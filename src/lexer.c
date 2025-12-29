@@ -180,15 +180,15 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
 }
 
 static bool lexemStartsBeforeCursor(int fileOffsetForCurrentLexem) {
-    return fileOffsetForCurrentLexem < options.olCursorOffset;
+    return fileOffsetForCurrentLexem < options.cursorOffset;
 }
 
 static bool lexemEndsAfterCursor(int currentOffset) {
-    return currentOffset >= options.olCursorOffset;
+    return currentOffset >= options.cursorOffset;
 }
 
 static bool cursorIsAfterLastLexemInFile(int currentOffset) {
-    return currentOffset + 1 == options.olCursorOffset;
+    return currentOffset + 1 == options.cursorOffset;
 }
 
 /* Turn an identifier into a COMPLETE-lexem, return next character to process */
@@ -199,7 +199,7 @@ static void processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuf
     if (lexemStartsBeforeCursor(fileOffsetForCurrentLexem)
         && (lexemEndsAfterCursor(currentOffset) || (characterBuffer->isAtEOF && cursorIsAfterLastLexemInFile(currentOffset)))) {
         log_debug("offset for current lexem == %d", fileOffsetForCurrentLexem);
-        log_debug("options.olCursorOffset == %d", options.olCursorOffset);
+        log_debug("options.olCursorOffset == %d", options.cursorOffset);
         log_debug("currentOffset == %d", currentOffset);
         if (thisLexemCode == IDENTIFIER) {
             if (deltaOffset <= strlenOfBackpatchedIdentifier(lb)) {
@@ -216,15 +216,15 @@ static void processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuf
                 }
             } else {
                 // completion after an identifier
-                putCompletionLexem(lb, characterBuffer, currentOffset - options.olCursorOffset);
+                putCompletionLexem(lb, characterBuffer, currentOffset - options.cursorOffset);
             }
         } else if ((thisLexemCode == LINE_TOKEN || thisLexemCode == STRING_LITERAL)
-                   && (currentOffset != options.olCursorOffset)) {
+                   && (currentOffset != options.cursorOffset)) {
             // completion inside special lexems, do
             // NO COMPLETION
         } else {
             // completion after another lexem
-            putCompletionLexem(lb, characterBuffer, currentOffset - options.olCursorOffset);
+            putCompletionLexem(lb, characterBuffer, currentOffset - options.cursorOffset);
         }
     }
 }
@@ -743,17 +743,18 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                 && fileNumberFrom(cb) != -1) {
                 if (parsingConfig.operation == PARSER_OP_EXTRACT) {
                     ch = skipBlanks(cb, ch);
-                    int apos = fileOffsetFor(cb);
-                    log_debug(":pos1==%d, olCursorOffset==%d, olMarkOffset==%d",apos,options.olCursorOffset,options.olMarkOffset);
+                    int offset = fileOffsetFor(cb);
+                    log_debug(":offset==%d, cursor==%d, mark==%d", offset, options.cursorOffset,
+                              options.markOffset);
                     // all this is very, very HACK!!!
-                    if (apos >= options.olCursorOffset && !parsedInfo.blockMarker1Set) {
+                    if (offset >= options.cursorOffset && !parsedInfo.blockMarker1Set) {
                         if (parsedInfo.blockMarker2Set)
                             parChar='}';
                         else
                             parChar = '{';
                         putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(lb, parChar, position);
                         parsedInfo.blockMarker1Set = true;
-                    } else if (apos >= options.olMarkOffset && !parsedInfo.blockMarker2Set){
+                    } else if (offset >= options.markOffset && !parsedInfo.blockMarker2Set){
                         if (parsedInfo.blockMarker1Set)
                             parChar='}';
                         else
@@ -765,10 +766,10 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     ch = skipBlanks(cb, ch);
                     lexem = peekLexemCodeAt(startOfCurrentLexem);
                     processCompletionOrSearch(cb, lb, position, currentLexemFileOffset,
-                                              options.olCursorOffset - currentLexemFileOffset, lexem);
+                                              options.cursorOffset - currentLexemFileOffset, lexem);
                 } else {
-                    if (currentLexemFileOffset <= options.olCursorOffset
-                        && fileOffsetFor(cb) >= options.olCursorOffset
+                    if (currentLexemFileOffset <= options.cursorOffset
+                        && fileOffsetFor(cb) >= options.cursorOffset
                     ) {
                         if (needsReferenceAtCursor(parsingConfig.operation)) {
                             cxRefPosition = position;
@@ -788,7 +789,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                         // only for Java refactorings
                         ch = skipBlanks(cb, ch);
                         int apos = fileOffsetFor(cb);
-                        if (apos >= options.olCursorOffset && !parsedInfo.blockMarker1Set) {
+                        if (apos >= options.cursorOffset && !parsedInfo.blockMarker1Set) {
                             putLexemCodeWithPosition(lb, OL_MARKER_TOKEN, position);
                             parsedInfo.blockMarker1Set = true;
                         }

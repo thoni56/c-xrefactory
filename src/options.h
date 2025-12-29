@@ -116,8 +116,8 @@ typedef struct options {
     int maxCompletions;
     bool create;
     int tabulator;
-    int olCursorOffset;
-    int olMarkOffset;
+    int cursorOffset;
+    int markOffset;
     Mode mode;
     bool debug;
     bool trace;

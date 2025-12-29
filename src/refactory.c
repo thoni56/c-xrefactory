@@ -557,12 +557,12 @@ static EditorMarker *createMarkerAt(EditorBuffer *buf, int offset) {
 
 static EditorMarker *getPointFromOptions(EditorBuffer *buf) {
     assert(buf);
-    return createMarkerAt(buf, refactoringOptions.olCursorOffset);
+    return createMarkerAt(buf, refactoringOptions.cursorOffset);
 }
 
 static EditorMarker *getMarkFromOptions(EditorBuffer *buf) {
     assert(buf);
-    return createMarkerAt(buf, refactoringOptions.olMarkOffset);
+    return createMarkerAt(buf, refactoringOptions.markOffset);
 }
 
 static void pushMarkersAsReferences(EditorMarkerList **markers, SessionStackEntry *refs, char *name) {

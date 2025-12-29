@@ -37,7 +37,7 @@ JSON *findDefinition(const char *uri, JSON *position) {
     options.mode = ServerMode;
     options.xref2 = true;
     options.serverOperation = OLO_PUSH;
-    options.olCursorOffset = cursorOffset;
+    options.cursorOffset = cursorOffset;
 
     /* Clear and set input file */
     options.inputFiles = NULL;
