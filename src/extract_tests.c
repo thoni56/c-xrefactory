@@ -12,6 +12,7 @@
 #include "globals.mock"
 #include "misc.mock"
 #include "options.mock"
+#include "parsing.mock"
 #include "ppc.mock"
 #include "referenceableitemtable.mock"
 #include "semact.mock"
