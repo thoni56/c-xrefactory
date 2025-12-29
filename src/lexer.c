@@ -9,17 +9,9 @@
 #include "lexem.h"
 #include "lexembuffer.h"
 #include "log.h"
-#include "misc.h"              /* requiresCreatingRefs() */
 #include "options.h"
 #include "parsing.h"
-#include "server.h"
 
-
-void gotOnLineCxRefs(Position position) {
-    if (needsReferenceAtCursor(parsingConfig.operation)) {
-        cxRefPosition = position;
-    }
-}
 
 /* ***************************************************************** */
 /*                         Lexical Analysis                          */

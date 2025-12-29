@@ -9,7 +9,6 @@
 #include "filetable.h"
 #include "globals.h"
 #include "head.h"
-#include "lexer.h"
 #include "log.h"
 #include "startup.h"
 #include "misc.h"

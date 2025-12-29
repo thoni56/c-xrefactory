@@ -7,6 +7,5 @@
 
 
 extern bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb);
-extern void gotOnLineCxRefs(Position position);
 
 #endif
