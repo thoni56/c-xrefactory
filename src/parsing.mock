@@ -19,6 +19,10 @@ bool needsReferenceAtCursor(ParserOperation op) {
     return (bool)mock(op);
 }
 
+bool allowsDuplicateReferences(ParserOperation op) {
+    return (bool)mock(op);
+}
+
 bool isValidMoveTarget(EditorMarker *target) {
     return (bool)mock(target);
 }

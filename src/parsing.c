@@ -45,6 +45,10 @@ bool needsReferenceAtCursor(ParserOperation op) {
         && op != PARSER_OP_VALIDATE_MOVE_TARGET;
 }
 
+bool allowsDuplicateReferences(ParserOperation op) {
+    return op == PARSER_OP_EXTRACT;
+}
+
 /* Bridge to existing implementation - temporarily uses external parseBufferUsingServer */
 extern void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *mark,
                                    char *pushOption, char *pushOption2);

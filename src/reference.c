@@ -7,8 +7,9 @@
 #include "filetable.h"
 #include "list.h"
 #include "log.h"
+#include "memory.h"
 #include "misc.h"
-#include "options.h"
+#include "parsing.h"
 #include "usage.h"
 
 
@@ -59,7 +60,7 @@ Reference **addToReferenceList(Reference **list,
 
     SORTED_LIST_PLACE2(place, reference, list);
     if (*place==NULL || SORTED_LIST_NEQ((*place),reference)
-        || options.serverOperation==OLO_EXTRACT) {
+        || allowsDuplicateReferences(parsingConfig.operation)) {
         Reference *r = cxAlloc(sizeof(Reference));
         *r = makeReference(pos, usage, NULL);
         LIST_CONS(r, (*place));

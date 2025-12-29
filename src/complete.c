@@ -12,6 +12,7 @@
 #include "match.h"
 #include "misc.h"
 #include "options.h"
+#include "parsing.h"
 #include "ppc.h"
 #include "protocol.h"
 #include "referenceableitemtable.h"
@@ -665,7 +666,7 @@ static bool isForStatementCompletionSymbol(
     Symbol **symbolP,
     char **nextRecord
 ) {
-    if (options.serverOperation != OLO_COMPLETION)
+    if (parsingConfig.operation != PARSER_OP_COMPLETION)
         return false;
     if (token->typeModifier==NULL)
         return false;
