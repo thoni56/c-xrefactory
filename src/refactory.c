@@ -203,13 +203,7 @@ void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *ma
     initServer(nargs);
 
     /* Bridge: Sync parsingConfig with options for old code path */
-    parsingConfig.includeDirs = options.includeDirs;
-    parsingConfig.defines = options.definitionStrings;
-    parsingConfig.strictAnsi = options.strictAnsi;
-    parsingConfig.operation = getParserOperation(options.serverOperation);
-    parsingConfig.cursorOffset = options.cursorOffset;
-    parsingConfig.markOffset = options.markOffset;
-
+    syncParsingConfigFromOptions();
     callServer(args, nargs, &editServerSubTaskFirstPass);
 }
 
