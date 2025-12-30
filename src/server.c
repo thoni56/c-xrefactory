@@ -130,6 +130,9 @@ static void parseInputFile(void) {
     if (options.fileTrace)
         fprintf(stderr, "parseInputFile: '%s\n", currentFile.fileName);
     /* Bridge: Sync parsingConfig for all operations using parseCurrentInputFile entry point */
+    parsingConfig.includeDirs = options.includeDirs;
+    parsingConfig.defines = options.definitionStrings;
+    parsingConfig.strictAnsi = options.strictAnsi;
     parsingConfig.operation = getParserOperation(options.serverOperation);
     parsingConfig.cursorOffset = options.cursorOffset;
     parsingConfig.markOffset = options.markOffset;

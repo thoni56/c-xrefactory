@@ -167,7 +167,7 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
     currentInput.write = currentInput.begin + strlen(lexem_stream);
 
     /* Setup include paths */
-    options.includeDirs = newStringList("path1", newStringList("path2", NULL));
+    parsingConfig.includeDirs = newStringList("path1", newStringList("path2", NULL));
 
     /* Setup so that we are reading file "path1/include.h" */
     currentFile.fileName = "path1/include.h";
@@ -182,7 +182,7 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
     /* ... and it should not exist in cwd either... */
     expect(openFile, when(fileName, is_equal_to_string("path1/include.h")), will_return(NULL));
 
-    /* So now we search through include paths (options.includeDirs) which may include wildcards */
+    /* So now we search through include paths (parsingConfig.includeDirs) which may include wildcards */
     expect(normalizeFileName_static, when(name, is_equal_to_string("path1")), will_return("path1/include.h"));
     expect(expandWildcardsInOnePath, when(filename, is_equal_to_string("path1/include.h")),
            will_set_contents_of_parameter(outpaths, "path1", sizeof(char *)));
@@ -229,7 +229,7 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
     currentInput.write = currentInput.begin + strlen(lexem_stream);
 
     /* Setup include paths */
-    options.includeDirs = newStringList("path1", newStringList("path2", newStringList("path3", NULL)));
+    parsingConfig.includeDirs = newStringList("path1", newStringList("path2", newStringList("path3", NULL)));
 
     /* Setup so that we are reading file "path2/include.h" */
     currentFile.fileName = "path2/include.h";
@@ -242,7 +242,7 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
     expect(normalizeFileName_static, when(name, is_equal_to_string("path2")),
            when(relative_to, is_equal_to_string("cwd")), will_return("path2"));
 
-    /* So now we search through include paths (options.includeDirs) starting at the one after path2... */
+    /* So now we search through include paths (parsingConfig.includeDirs) starting at the one after path2... */
     expect(normalizeFileName_static, when(name, is_equal_to_string("path3")),
            when(relative_to, is_equal_to_string("cwd")), will_return("path3/include.h"));
     /* And it might contain wildcards, so ... */

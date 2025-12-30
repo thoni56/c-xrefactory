@@ -202,8 +202,13 @@ void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *ma
     ArgumentsVector nargs = {.argc = argumentCount, .argv = argumentVector};
     initServer(nargs);
 
-    /* Bridge: Sync parsingConfig with options.serverOperation for old code path */
+    /* Bridge: Sync parsingConfig with options for old code path */
+    parsingConfig.includeDirs = options.includeDirs;
+    parsingConfig.defines = options.definitionStrings;
+    parsingConfig.strictAnsi = options.strictAnsi;
     parsingConfig.operation = getParserOperation(options.serverOperation);
+    parsingConfig.cursorOffset = options.cursorOffset;
+    parsingConfig.markOffset = options.markOffset;
 
     callServer(args, nargs, &editServerSubTaskFirstPass);
 }

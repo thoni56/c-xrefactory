@@ -520,7 +520,7 @@ static bool canFindIncludeFile(char includeType, char *name) {
     }
 
     /* If not found we need to walk the include paths... */
-    for (includeDirP = options.includeDirs; includeDirP != NULL && editorBuffer == NULL && file == NULL; includeDirP = includeDirP->next) {
+    for (includeDirP = parsingConfig.includeDirs; includeDirP != NULL && editorBuffer == NULL && file == NULL; includeDirP = includeDirP->next) {
         strcpy(normalizedName, normalizeFileName_static(includeDirP->string, cwd));
         expandWildcardsInOnePath(normalizedName, wildcardExpandedPaths, MAX_OPTION_LEN);
         MAP_OVER_PATHS(wildcardExpandedPaths, {
@@ -562,10 +562,10 @@ static bool canFindIncludeFileNext(char includeType, char *name) {
 
     extractPathInto(currentFile.fileName, path);
 
-    StringList *start = options.includeDirs;
+    StringList *start = parsingConfig.includeDirs;
 
     /* Find the include path which matches the current file's directory */
-    for (StringList *p = options.includeDirs; p != NULL; p = p->next) {
+    for (StringList *p = parsingConfig.includeDirs; p != NULL; p = p->next) {
         char normalizedIncludePath[MAX_FILE_NAME_SIZE];
         strcpy(normalizedIncludePath, normalizeFileName_static(p->string, cwd));
         int len = strlen(normalizedIncludePath);
@@ -622,11 +622,11 @@ static bool openInclude(char includeType, char *name, bool is_include_next) {
 
     extractPathInto(currentFile.fileName, path);
 
-    StringList *start = options.includeDirs;
+    StringList *start = parsingConfig.includeDirs;
 
     if (is_include_next) {
         /* #include_next, (read this from the same directory) so find the include path which matches this */
-        for (StringList *p = options.includeDirs; p != NULL; p = p->next) {
+        for (StringList *p = parsingConfig.includeDirs; p != NULL; p = p->next) {
             char normalizedIncludePath[MAX_FILE_NAME_SIZE];
             strcpy(normalizedIncludePath, normalizeFileName_static(p->string, cwd));
             int len = strlen(normalizedIncludePath);
