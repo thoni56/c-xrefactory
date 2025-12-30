@@ -126,16 +126,21 @@ static void closeInputFile(void) {
     }
 }
 
-static void parseInputFile(void) {
-    if (options.fileTrace)
-        fprintf(stderr, "parseInputFile: '%s\n", currentFile.fileName);
-    /* Bridge: Sync parsingConfig for all operations using parseCurrentInputFile entry point */
+static void syncParsingConfigFromOptions() {
     parsingConfig.includeDirs = options.includeDirs;
     parsingConfig.defines = options.definitionStrings;
     parsingConfig.strictAnsi = options.strictAnsi;
     parsingConfig.operation = getParserOperation(options.serverOperation);
     parsingConfig.cursorOffset = options.cursorOffset;
     parsingConfig.markOffset = options.markOffset;
+}
+
+
+static void parseInputFile(void) {
+    if (options.fileTrace)
+        fprintf(stderr, "parseInputFile: '%s\n", currentFile.fileName);
+    /* Bridge: Sync parsingConfig for all operations using parseCurrentInputFile entry point */
+    syncParsingConfigFromOptions();
     if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
         log_debug("parse start");
         parseCurrentInputFile(currentLanguage);
