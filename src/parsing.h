@@ -81,6 +81,8 @@ typedef struct {
     bool             strictAnsi;   /* ANSI C mode vs extensions */
     ParserOperation  operation;    /* What should parser do? */
     Position         cursorPos;    /* Cursor position (for bounded operations) */
+    int              cursorOffset; /* Byte offset of cursor in file */
+    int              markOffset;   /* Byte offset of mark (selection end), -1 if no selection */
 } ParsingConfig;
 
 /**

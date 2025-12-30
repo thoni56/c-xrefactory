@@ -180,15 +180,15 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
 }
 
 static bool lexemStartsBeforeCursor(int fileOffsetForCurrentLexem) {
-    return fileOffsetForCurrentLexem < options.cursorOffset;
+    return fileOffsetForCurrentLexem < parsingConfig.cursorOffset;
 }
 
 static bool lexemEndsAfterCursor(int currentOffset) {
-    return currentOffset >= options.cursorOffset;
+    return currentOffset >= parsingConfig.cursorOffset;
 }
 
 static bool cursorIsAfterLastLexemInFile(int currentOffset) {
-    return currentOffset + 1 == options.cursorOffset;
+    return currentOffset + 1 == parsingConfig.cursorOffset;
 }
 
 /* Turn an identifier into a COMPLETE-lexem, return next character to process */
@@ -199,7 +199,7 @@ static void processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuf
     if (lexemStartsBeforeCursor(fileOffsetForCurrentLexem)
         && (lexemEndsAfterCursor(currentOffset) || (characterBuffer->isAtEOF && cursorIsAfterLastLexemInFile(currentOffset)))) {
         log_debug("offset for current lexem == %d", fileOffsetForCurrentLexem);
-        log_debug("options.olCursorOffset == %d", options.cursorOffset);
+        log_debug("cursorOffset == %d", parsingConfig.cursorOffset);
         log_debug("currentOffset == %d", currentOffset);
         if (thisLexemCode == IDENTIFIER) {
             if (deltaOffset <= strlenOfBackpatchedIdentifier(lb)) {
@@ -216,15 +216,15 @@ static void processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuf
                 }
             } else {
                 // completion after an identifier
-                putCompletionLexem(lb, characterBuffer, currentOffset - options.cursorOffset);
+                putCompletionLexem(lb, characterBuffer, currentOffset - parsingConfig.cursorOffset);
             }
         } else if ((thisLexemCode == LINE_TOKEN || thisLexemCode == STRING_LITERAL)
-                   && (currentOffset != options.cursorOffset)) {
+                   && (currentOffset != parsingConfig.cursorOffset)) {
             // completion inside special lexems, do
             // NO COMPLETION
         } else {
             // completion after another lexem
-            putCompletionLexem(lb, characterBuffer, currentOffset - options.cursorOffset);
+            putCompletionLexem(lb, characterBuffer, currentOffset - parsingConfig.cursorOffset);
         }
     }
 }

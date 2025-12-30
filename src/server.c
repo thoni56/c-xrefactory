@@ -131,6 +131,8 @@ static void parseInputFile(void) {
         fprintf(stderr, "parseInputFile: '%s\n", currentFile.fileName);
     /* Bridge: Sync parsingConfig for all operations using parseCurrentInputFile entry point */
     parsingConfig.operation = getParserOperation(options.serverOperation);
+    parsingConfig.cursorOffset = options.cursorOffset;
+    parsingConfig.markOffset = options.markOffset;
     if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
         log_debug("parse start");
         parseCurrentInputFile(currentLanguage);
