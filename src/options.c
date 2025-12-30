@@ -40,7 +40,6 @@ Options presetOptions = {
     false,                       // exit
     "gcc",                       // path to compiler to use for auto-discovering compiler and defines
     NULL,                        // strings for commandline entered definitions (-D)
-    false,                       // completeParenthesis
     0,                           // comment moving level
     NULL,                        // prune name
     NULL,                        // input files
@@ -1126,8 +1125,6 @@ static bool processCOption(int *argi, ArgumentsVector args) {
         options.eolConversion|=CR_EOL_CONVERSION;
     else if (strcmp(args.argv[i], "-completioncasesensitive")==0)
         options.completionCaseSensitive = true;
-    else if (strcmp(args.argv[i], "-completeparenthesis")==0)
-        options.completeParenthesis = true;
     else if (strncmp(args.argv[i], "-commentmovinglevel=",20)==0) {
         sscanf(args.argv[i]+20, "%d", (int*)&options.commentMovingMode);
     }

@@ -206,8 +206,6 @@
 ;; by default truncation is disallowed in order to see profiles
 (defvar c-xref-completion-truncate-lines nil)
 
-(defvar c-xref-completion-inserts-parenthesis nil)
-
 ;; by default the automatic project selection is on.
 (defvar c-xref-current-project nil)
 
@@ -376,11 +374,6 @@ completions.
 
       (defcustom c-xref-completion-delete-pending-identifier t
             "If on, after inserting a completion C-xrefactory deletes the rest of the old identifier after the point."
-            :type '(boolean)
-            :group 'c-xrefactory-completion)
-
-      (defcustom c-xref-completion-inserts-parenthesis nil
-            "If on, C-xrefactory will insert an open parenthesis after a function or macro name."
             :type '(boolean)
             :group 'c-xrefactory-completion)
 

@@ -5026,9 +5026,6 @@ separate window.
     (if c-xref-completion-case-sensitive
             (setq opt (format "%s -completioncasesensitive" opt))
       )
-    (if c-xref-completion-inserts-parenthesis
-            (setq opt (format "%s -completeparenthesis" opt))
-      )
     (if c-xref-completion-truncate-lines
             (setq opt (format "%s -olinelen=50000" opt))
       (setq opt (format "%s -olinelen=%d" opt (window-width)))

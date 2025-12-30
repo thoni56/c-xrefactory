@@ -431,19 +431,18 @@ static void completeFunctionOrMethodName(Completions *c, bool orderFlag, Symbol 
 
     cname = r->name;
     cnamelen = strlen(cname);
-    if (!options.completeParenthesis) {
-        cn = cname;
+
+    /* Always add parentheses for function completions */
+    assert(r->typeModifier!=NULL);
+    if (r->typeModifier!=NULL && r->typeModifier->args == NULL) {
+        psuff = "()";
     } else {
-        assert(r->typeModifier!=NULL);
-        if (r->typeModifier!=NULL && r->typeModifier->args == NULL) {
-            psuff = "()";
-        } else {
-            psuff = "(";
-        }
-        cn = stackMemoryAlloc(cnamelen+strlen(psuff)+1);
-        strcpy(cn, cname);
-        strcpy(cn+cnamelen, psuff);
+        psuff = "(";
     }
+    cn = stackMemoryAlloc(cnamelen+strlen(psuff)+1);
+    strcpy(cn, cname);
+    strcpy(cn+cnamelen, psuff);
+
     compLine = makeCompletionLine(cn, r, TypeDefault,0,NULL);
     processName(cn, &compLine, orderFlag, c);
 }

@@ -13,7 +13,7 @@ end-of-options
 <goto>
  <position-lc line=28 col=4 len=<n>>CURDIR/cexercise/completions.c</position-lc>
 </goto>
-<single-completion len=<n>>completions</single-completion>
+<single-completion len=<n>>completions()</single-completion>
 -xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=1014 CURDIR/cexercise/completions.c
 end-of-options
 
@@ -21,7 +21,7 @@ end-of-options
 <goto>
  <position-lc line=32 col=4 len=<n>>CURDIR/cexercise/completions.c</position-lc>
 </goto>
-<single-completion len=<n>>sprintf</single-completion>
+<single-completion len=<n>>sprintf(</single-completion>
 -xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=1050 CURDIR/cexercise/completions.c
 end-of-options
 

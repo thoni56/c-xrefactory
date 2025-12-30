@@ -655,7 +655,6 @@ The following options exist but are not yet fully documented:
 -addimportdefault::
 -browsedsym::
 -commentmovinglevel::
--completeparenthesis::
 -completioncasesensitive::
 -completionoverloadwizdeep::
 -continuerefactoring::
