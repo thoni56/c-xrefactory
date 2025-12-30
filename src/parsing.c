@@ -47,6 +47,7 @@ void syncParsingConfigFromOptions() {
     parsingConfig.cursorOffset = options.cursorOffset;
     parsingConfig.markOffset = options.markOffset;
     parsingConfig.extractMode = options.extractMode;
+    parsingConfig.targetParameterIndex = options.olcxGotoVal;
 }
 
 bool needsReferenceAtCursor(ParserOperation op) {

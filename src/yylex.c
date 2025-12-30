@@ -790,10 +790,10 @@ static void handleMacroDefinitionParameterPositions(int argi, Position macroPosi
         if (final) {
             if (argi==0) {
                 setParamPositionForFunctionWithoutParams(beginPosition);
-            } else if (argi < options.olcxGotoVal) {
+            } else if (argi < parsingConfig.targetParameterIndex) {
                 setParamPositionForParameterBeyondRange(endPosition);
             }
-        } else if (argi == options.olcxGotoVal) {
+        } else if (argi == parsingConfig.targetParameterIndex) {
             parameterPosition = position;
             parameterBeginPosition = beginPosition;
             parameterEndPosition = endPosition;
@@ -812,10 +812,10 @@ static void handleMacroUsageParameterPositions(int argumentIndex, Position macro
         if (final) {
             if (argumentIndex==0) {
                 setParamPositionForFunctionWithoutParams(beginPosition);
-            } else if (argumentIndex < options.olcxGotoVal) {
+            } else if (argumentIndex < parsingConfig.targetParameterIndex) {
                 setParamPositionForParameterBeyondRange(endPosition);
             }
-        } else if (argumentIndex == options.olcxGotoVal) {
+        } else if (argumentIndex == parsingConfig.targetParameterIndex) {
             parameterBeginPosition = beginPosition;
             parameterEndPosition = endPosition;
         }

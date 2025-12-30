@@ -85,6 +85,7 @@ typedef struct {
     int              cursorOffset; /* Byte offset of cursor in file */
     int              markOffset;   /* Byte offset of mark (selection end), -1 if no selection */
     ExtractMode      extractMode;  /* Which extraction type (function/macro/variable) */
+    int              targetParameterIndex; /* Which parameter to track (for PARSE_TO_TRACK_PARAMETERS) */
 } ParsingConfig;
 
 /**

@@ -66,7 +66,7 @@ Ensure(Semact, can_capture_positions_for_one_parameter) {
 
     options.mode = ServerMode;
     parsingConfig.operation = PARSE_TO_TRACK_PARAMETERS;
-    options.olcxGotoVal = 1;
+    parsingConfig.targetParameterIndex = 1;
     cxRefPosition = symbol.position;
 
     handleDeclaratorParamPositions(&symbol, lpar, NULL, rpar, true, false);
@@ -87,7 +87,7 @@ Ensure(Semact, can_capture_positions_for_two_parameters) {
 
     options.mode = ServerMode;
     parsingConfig.operation = PARSE_TO_TRACK_PARAMETERS;
-    options.olcxGotoVal = 1;
+    parsingConfig.targetParameterIndex = 1;
     cxRefPosition = symbol.position;
 
     handleDeclaratorParamPositions(&symbol, lpar, &commas, rpar, true, false);
@@ -106,7 +106,7 @@ Ensure(Semact, can_capture_positions_for_void_parameter_list) {
 
     options.mode = ServerMode;
     parsingConfig.operation = PARSE_TO_TRACK_PARAMETERS;
-    options.olcxGotoVal = 1;
+    parsingConfig.targetParameterIndex = 1;
     cxRefPosition = symbol.position;
 
     handleDeclaratorParamPositions(&symbol, lpar, NULL, rpar, true, true);

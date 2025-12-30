@@ -425,7 +425,7 @@ void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol
         }
     }
     if (parsingConfig.operation == PARSE_TO_TRACK_PARAMETERS
-        && position == options.olcxGotoVal
+        && position == parsingConfig.targetParameterIndex
         && positionsAreEqual(function->position, cxRefPosition))
     {
         parameterPosition = parameter->position;
@@ -854,7 +854,7 @@ static void handleParameterPositions(Position lpar, PositionList *commas, Positi
         parameterCount++;
     }
 
-    int argn = options.olcxGotoVal;
+    int argn = parsingConfig.targetParameterIndex;
     assert(argn > 0);           /* TODO: WTF is Parameter0 and when is it used? */
     if (argn == 0) {
         setParamPositionForParameter0(lpar);
