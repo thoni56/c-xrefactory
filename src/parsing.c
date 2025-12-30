@@ -39,6 +39,15 @@ ParserOperation getParserOperation(ServerOperation serverOp) {
     }
 }
 
+void syncParsingConfigFromOptions() {
+    parsingConfig.includeDirs = options.includeDirs;
+    parsingConfig.defines = options.definitionStrings;
+    parsingConfig.strictAnsi = options.strictAnsi;
+    parsingConfig.operation = getParserOperation(options.serverOperation);
+    parsingConfig.cursorOffset = options.cursorOffset;
+    parsingConfig.markOffset = options.markOffset;
+}
+
 bool needsReferenceAtCursor(ParserOperation op) {
     return op != PARSER_OP_EXTRACT
         && op != PARSER_OP_COMPLETION

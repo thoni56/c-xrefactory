@@ -11,6 +11,10 @@ ParseConfig createParseConfigFromOptions(void) {
     return *parseConfig;
 }
 
+void syncParsingConfigFromOptions() {
+    mock();
+}
+
 ParserOperation getParserOperation(ServerOperation serverOp) {
     return (ParserOperation)mock(serverOp);
 }

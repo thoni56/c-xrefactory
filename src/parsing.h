@@ -122,6 +122,8 @@ extern ParseConfig createParseConfigFromOptions(void);
  */
 extern ParserOperation getParserOperation(ServerOperation serverOp);
 
+extern void syncParsingConfigFromOptions();
+
 /**
  * Check if parser operation needs to record reference at cursor position.
  *
