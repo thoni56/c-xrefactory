@@ -93,13 +93,12 @@ Options presetOptions = {
     "0:3",                      // olcxlccursor
     "",                         /* olcxSearchString */
     79,                         /* olineLen */
-    "*_",                       /* olExtractAddrParPrefix */
     0,                          // extractMode, must be zero TODO Why?
     MAX_COMPLETIONS,            /* maxCompletions */
     0,                          /* create */
     8,                          /* tabulator */
-    -1,                         /* olCursorPos */
-    -1,                         /* olMarkPos */
+    -1,                         /* cursorOffset */
+    -1,                         /* markOffset */
     XrefMode,                   /* operating mode */
     false,                      /* debug */
     false,                      /* trace */

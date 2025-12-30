@@ -111,7 +111,6 @@ typedef struct options {
     char *olcxlccursor;
     char *olcxSearchString;
     int olineLen;
-    char *olExtractAddrParPrefix; /* Prefix for parameter names when extraction requires out arguments */
     ExtractMode extractMode;
     int maxCompletions;
     bool create;

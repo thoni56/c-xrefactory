@@ -8,8 +8,8 @@
 #include "globals.h"
 #include "list.h"
 #include "log.h"
+#include "memory.h"
 #include "misc.h"
-#include "options.h"
 #include "parsing.h"
 #include "protocol.h"
 #include "ppc.h"
@@ -21,6 +21,7 @@
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000
 #define EXTRACT_REFERENCE_ARG_STRING "&"
+#define EXTRACT_OUTPUT_PARAM_PREFIX "*_"
 
 
 /* ********************** code inspection state bits ********************* */
@@ -735,7 +736,8 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
             ||  p->classification == CLASSIFIED_AS_OUT_ARGUMENT
             ||  p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
         ) {
-            getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, options.olExtractAddrParPrefix, true);
+            getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, EXTRACT_OUTPUT_PARAM_PREFIX,
+                                                    true);
             sprintf(nhead+nhi, "%s%s", isFirstArgument?"(":", " , declaration);
             nhi += strlen(nhead+nhi);
             isFirstArgument = false;
@@ -792,7 +794,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
                     strcatf(resultingString, ";\n\t%s",declaration);
             }
             if (p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT) {
-                strcatf(resultingString, " = %s%s", options.olExtractAddrParPrefix, name);
+                strcatf(resultingString, " = %s%s", EXTRACT_OUTPUT_PARAM_PREFIX, name);
             }
             isFirstArgument = false;
         }
@@ -814,7 +816,7 @@ static void generateNewFunctionTail(ProgramGraphNode *program) {
             ||  p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
         ) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
-            strcatf(resultingString, "\t%s%s = %s;\n", options.olExtractAddrParPrefix,
+            strcatf(resultingString, "\t%s%s = %s;\n", EXTRACT_OUTPUT_PARAM_PREFIX,
                     name, name);
         }
     }
