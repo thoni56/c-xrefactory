@@ -1,0 +1,32 @@
+<update-report>
+ <information len=<n>>C-xrefactory project: CURDIR</information>
+ <information len=<n>>CURDIR/source.c</information>
+ <information len=<n>>CURDIR/target.c</information>
+ <information len=<n>>Generating 'CURDIR/CXrefs'</information>
+</update-report>
+<goto>
+ <position-off off=0 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>static </str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=0 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<cut-block val=31 len=<n>></cut-block>
+<goto>
+ <position-off off=19 len=<n>>CURDIR/target.c</position-off>
+</goto>
+<paste-block len=<n>></paste-block>
+<goto>
+ <position-off off=0 len=<n>>CURDIR/target.h</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>extern void func();
+</str>
+</replacement>
+<goto>
+ <position-off off=24 len=<n>>CURDIR/target.c</position-off>
+</goto>
+<indent-block val=3 len=<n>></indent-block>
+<sync>

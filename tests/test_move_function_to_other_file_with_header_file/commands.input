@@ -1,0 +1,2 @@
+CXREF -xrefactory-II -refactory -xrefrc .c-xrefrc -p CURDIR -rfct-move-function -commentmovinglevel=0 -movetargetfile=CURDIR/target.c -rfct-target-line=3 -olcursor=12 CURDIR/source.c
+<exit>

@@ -14,6 +14,7 @@
 #include "editormarker.mock"
 #include "editorbuffer.mock"
 #include "filetable.mock"
+#include "fileio.mock"
 #include "globals.mock"
 #include "misc.mock"
 #include "options.mock"

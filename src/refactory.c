@@ -13,6 +13,7 @@
 #include "cxref.h"
 #include "editor.h"
 #include "editormarker.h"
+#include "fileio.h"
 #include "filetable.h"
 #include "globals.h"
 #include "head.h"
@@ -29,6 +30,7 @@
 #include "scope.h"
 #include "server.h"
 #include "session.h"
+#include "stackmemory.h"
 #include "undo.h"
 #include "xref.h"
 
@@ -1450,6 +1452,39 @@ EditorMarker *removeStaticPrefix(EditorMarker *marker) {
     return startMarker;
 }
 
+static char *createExternDeclaration(EditorMarker *startMarker, EditorMarker *endMarker, char *functionSignature) {
+    int searchOffset = startMarker->offset;
+    int braceOffset = -1;
+    char *text = startMarker->buffer->allocation.text;
+
+    while (searchOffset < endMarker->offset) {
+        if (text[searchOffset] == '{') {
+            braceOffset = searchOffset;
+            break;
+        }
+        searchOffset++;
+    }
+
+    if (braceOffset != -1) {
+        /* Extract signature (from start to just before '{') */
+        int signatureLength = braceOffset - startMarker->offset;
+        functionSignature = stackMemoryAlloc(signatureLength + 1);
+        strncpy(functionSignature, &text[startMarker->offset], signatureLength);
+        functionSignature[signatureLength] = '\0';
+
+        /* Trim trailing whitespace from signature */
+        int i = signatureLength - 1;
+        while (i >= 0
+               && (functionSignature[i] == ' ' || functionSignature[i] == '\t'
+                   || functionSignature[i] == '\n' || functionSignature[i] == '\r')) {
+            functionSignature[i] = '\0';
+            i--;
+        }
+    }
+
+    return functionSignature;
+}
+
 static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorMarker *point,
                                               EditorMarker *endMarker, EditorMarker *target,
                                               ToCheckOrNot check, int limitIndex) {
@@ -1493,8 +1528,52 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
         size -= 7;
     }
 
+    /* Extract function signature for extern declaration (before moving) */
+    char *functionSignature = NULL;
+    if (movingBetweenFiles) {
+        /* Find the opening brace to determine where signature ends */
+        functionSignature = createExternDeclaration(startMarker, endMarker, functionSignature);
+    }
+
     /* Now move the (possibly modified) function block */
     moveBlockInEditorBuffer(startMarker, target, size, &editorUndo);
+
+    /* After moving the function, check if we need to add an extern declaration to the header */
+    char *headerFileName = NULL;
+    if (movingBetweenFiles) {
+        char *targetFileName = target->buffer->fileName;
+        char *suffix = getFileSuffix(targetFileName);
+
+        if (strcmp(suffix, ".c") == 0) {
+            /* Build header filename by replacing .c with .h */
+            char headerPath[MAX_FILE_NAME_SIZE];
+            int baseLength = suffix - targetFileName;  /* Length up to the '.' */
+
+            strncpy(headerPath, targetFileName, baseLength);
+            headerPath[baseLength] = '\0';
+            strcat(headerPath, ".h");
+
+            if (fileExists(headerPath)) {
+                headerFileName = stackMemoryAlloc(strlen(headerPath) + 1);
+                strcpy(headerFileName, headerPath);
+            }
+        }
+    }
+
+    /* Insert extern declaration into header file if we have both header and signature */
+    if (headerFileName != NULL && functionSignature != NULL) {
+        /* Build extern declaration: "extern <signature>;\n" */
+        char *externDecl = stackMemoryAlloc(strlen("extern ") + strlen(functionSignature) + strlen(";\n") + 1);
+        strcpy(externDecl, "extern ");
+        strcat(externDecl, functionSignature);
+        strcat(externDecl, ";\n");
+
+        /* Get or create the header buffer */
+        EditorBuffer *headerBuffer = findOrCreateAndLoadEditorBufferForFile(headerFileName);
+
+        /* Insert at the beginning of the header file */
+        replaceStringInEditorBuffer(headerBuffer, 0, 0, externDecl, strlen(externDecl), &editorUndo);
+    }
 }
 
 static void moveFunction(EditorMarker *point) {
