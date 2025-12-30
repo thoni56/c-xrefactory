@@ -53,12 +53,12 @@ typedef struct editorMarker EditorMarker;
  * Decouples parsing from server operation types.
  */
 typedef enum {
-    PARSER_OP_NORMAL,              /* Just parse, create references */
-    PARSER_OP_GET_FUNCTION_BOUNDS, /* Record function boundaries */
-    PARSER_OP_VALIDATE_MOVE_TARGET,/* Check if position is valid move target */
-    PARSER_OP_EXTRACT,             /* Extract refactoring - track blocks/vars */
-    PARSER_OP_TRACK_PARAMETERS,    /* Track parameter positions for navigation */
-    PARSER_OP_COMPLETION           /* Code completion context */
+    PARSE_TO_CREATE_REFERENCES,    /* Just parse, create references */
+    PARSE_TO_GET_FUNCTION_BOUNDS,  /* Record function boundaries */
+    PARSE_TO_VALIDATE_MOVE_TARGET, /* Check if position is valid move target */
+    PARSE_TO_EXTRACT,              /* Extract refactoring - track blocks/vars */
+    PARSE_TO_TRACK_PARAMETERS,     /* Track parameter positions for navigation */
+    PARSE_TO_COMPLETE              /* Complete code at cursor */
 } ParserOperation;
 
 /**

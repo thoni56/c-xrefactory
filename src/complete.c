@@ -666,7 +666,7 @@ static bool isForStatementCompletionSymbol(
     Symbol **symbolP,
     char **nextRecord
 ) {
-    if (parsingConfig.operation != PARSER_OP_COMPLETION)
+    if (parsingConfig.operation != PARSE_TO_COMPLETE)
         return false;
     if (token->typeModifier==NULL)
         return false;

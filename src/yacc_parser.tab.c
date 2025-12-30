@@ -3296,7 +3296,7 @@ break;
 case 227:
 #line 754 "yacc_parser.y"
 {
-        if (yyvsp[-2].ast_expressionType.data.reference != NULL && parsingConfig.operation == PARSER_OP_EXTRACT) {
+        if (yyvsp[-2].ast_expressionType.data.reference != NULL && parsingConfig.operation == PARSE_TO_EXTRACT) {
             Reference *r = duplicateReferenceInCxMemory(yyvsp[-2].ast_expressionType.data.reference);
             yyvsp[-2].ast_expressionType.data.reference->usage = UsageNone;
             if (yyvsp[-1].ast_integer.data == '=') {
@@ -4662,7 +4662,7 @@ case 495:
         /* Capture function boundaries for move-function refactoring */
         if (parsedInfo.function != NULL
             && parsedInfo.function->position.file != NO_FILE_NUMBER
-            && parsingConfig.operation == PARSER_OP_GET_FUNCTION_BOUNDS
+            && parsingConfig.operation == PARSE_TO_GET_FUNCTION_BOUNDS
             && positionIsBetween(cxRefPosition, yyvsp[-2].ast_symbol.begin, yyvsp[0].ast_position.end)) {
             /* We just finished parsing a function that contains the cursor position.
              * Record the function boundaries using the positions from the grammar.

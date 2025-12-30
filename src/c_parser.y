@@ -547,7 +547,7 @@ conditional_expr
 assignment_expr
     : conditional_expr                                  /*& { $$.data = $1.data; } &*/
     | unary_expr assignment_operator assignment_expr    {
-        if ($1.data.reference != NULL && parsingConfig.operation == PARSER_OP_EXTRACT) {
+        if ($1.data.reference != NULL && parsingConfig.operation == PARSE_TO_EXTRACT) {
             Reference *r = duplicateReferenceInCxMemory($1.data.reference);
             $1.data.reference->usage = UsageNone;
             if ($2.data == '=') {
@@ -1643,7 +1643,7 @@ external_definition
         /* Capture function boundaries for move-function refactoring */
         if (parsedInfo.function != NULL
             && parsedInfo.function->position.file != NO_FILE_NUMBER
-            && parsingConfig.operation == PARSER_OP_GET_FUNCTION_BOUNDS
+            && parsingConfig.operation == PARSE_TO_GET_FUNCTION_BOUNDS
             && positionIsBetween(cxRefPosition, $2.begin, $4.end)) {
             /* We just finished parsing a function that contains the cursor position.
              * Record the function boundaries using the positions from the grammar.

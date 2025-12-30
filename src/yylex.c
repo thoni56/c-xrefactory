@@ -785,7 +785,7 @@ static void handleMacroDefinitionParameterPositions(int argi, Position macroPosi
                                                     Position beginPosition,
                                                     Position position, Position endPosition,
                                                     bool final) {
-    if (parsingConfig.operation == PARSER_OP_TRACK_PARAMETERS
+    if (parsingConfig.operation == PARSE_TO_TRACK_PARAMETERS
         && positionsAreEqual(macroPosition, cxRefPosition)) {
         if (final) {
             if (argi==0) {
@@ -805,7 +805,7 @@ static void handleMacroUsageParameterPositions(int argumentIndex, Position macro
                                                Position beginPosition, Position endPosition,
                                                bool final
 ) {
-    if (parsingConfig.operation == PARSER_OP_TRACK_PARAMETERS
+    if (parsingConfig.operation == PARSE_TO_TRACK_PARAMETERS
         && positionsAreEqual(macroPosition, cxRefPosition)) {
         log_debug("checking param %d at %d,%d, final==%d", argumentIndex, beginPosition.col, endPosition.col,
                   final);
@@ -2596,9 +2596,9 @@ static LexemCode lookupIdentifier(char *id, Position position) {
 
 
 static void actionOnBlockMarker(void) {
-    if (parsingConfig.operation == PARSER_OP_VALIDATE_MOVE_TARGET) {
+    if (parsingConfig.operation == PARSE_TO_VALIDATE_MOVE_TARGET) {
         parsedInfo.moveTargetAccepted = parsedInfo.function == NULL;
-    } else if (parsingConfig.operation == PARSER_OP_EXTRACT) {
+    } else if (parsingConfig.operation == PARSE_TO_EXTRACT) {
         extractActionOnBlockMarker();
     }
 }

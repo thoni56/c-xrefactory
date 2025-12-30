@@ -24,18 +24,18 @@ ParseConfig createParseConfigFromOptions(void) {
 ParserOperation getParserOperation(ServerOperation serverOp) {
     switch (serverOp) {
         case OLO_GET_FUNCTION_BOUNDS:
-            return PARSER_OP_GET_FUNCTION_BOUNDS;
+            return PARSE_TO_GET_FUNCTION_BOUNDS;
         case OLO_SET_MOVE_TARGET:
-            return PARSER_OP_VALIDATE_MOVE_TARGET;
+            return PARSE_TO_VALIDATE_MOVE_TARGET;
         case OLO_EXTRACT:
-            return PARSER_OP_EXTRACT;
+            return PARSE_TO_EXTRACT;
         case OLO_GOTO_PARAM_NAME:
         case OLO_GET_PARAM_COORDINATES:
-            return PARSER_OP_TRACK_PARAMETERS;
+            return PARSE_TO_TRACK_PARAMETERS;
         case OLO_COMPLETION:
-            return PARSER_OP_COMPLETION;
+            return PARSE_TO_COMPLETE;
         default:
-            return PARSER_OP_NORMAL;
+            return PARSE_TO_CREATE_REFERENCES;
     }
 }
 
@@ -49,13 +49,13 @@ void syncParsingConfigFromOptions() {
 }
 
 bool needsReferenceAtCursor(ParserOperation op) {
-    return op != PARSER_OP_EXTRACT
-        && op != PARSER_OP_COMPLETION
-        && op != PARSER_OP_VALIDATE_MOVE_TARGET;
+    return op != PARSE_TO_EXTRACT
+        && op != PARSE_TO_COMPLETE
+        && op != PARSE_TO_VALIDATE_MOVE_TARGET;
 }
 
 bool allowsDuplicateReferences(ParserOperation op) {
-    return op == PARSER_OP_EXTRACT;
+    return op == PARSE_TO_EXTRACT;
 }
 
 /* Bridge to existing implementation - temporarily uses external parseBufferUsingServer */
@@ -77,7 +77,7 @@ static FunctionBoundariesResult parseToGetFunctionBoundaries(
     parsingConfig.includeDirs = config->includeDirs;
     parsingConfig.defines = config->defines;
     parsingConfig.strictAnsi = config->strictAnsi;
-    parsingConfig.operation = PARSER_OP_GET_FUNCTION_BOUNDS;
+    parsingConfig.operation = PARSE_TO_GET_FUNCTION_BOUNDS;
     parsingConfig.cursorPosition = cursorPos;
 
     /* Clear previous results */
@@ -120,7 +120,7 @@ static MoveTargetValidationResult parseToValidateMoveTarget(
     parsingConfig.includeDirs = config->includeDirs;
     parsingConfig.defines = config->defines;
     parsingConfig.strictAnsi = config->strictAnsi;
-    parsingConfig.operation = PARSER_OP_VALIDATE_MOVE_TARGET;
+    parsingConfig.operation = PARSE_TO_VALIDATE_MOVE_TARGET;
     parsingConfig.cursorPosition = targetPosition;
 
     /* Clear previous results */

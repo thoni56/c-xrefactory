@@ -262,7 +262,7 @@ void labelReference(Id *id,  Usage usage) {
 }
 
 void generateInternalLabelReference(int counter, int usage) {
-    if (parsingConfig.operation != PARSER_OP_EXTRACT)
+    if (parsingConfig.operation != PARSE_TO_EXTRACT)
         return;
 
     char labelName[TMP_STRING_SIZE];
@@ -279,7 +279,7 @@ void generateInternalLabelReference(int counter, int usage) {
 
 void setLocalVariableLinkName(Symbol *p) {
     char name[TMP_STRING_SIZE];
-    if (parsingConfig.operation == PARSER_OP_EXTRACT) {
+    if (parsingConfig.operation == PARSE_TO_EXTRACT) {
         char nnn[TMP_STRING_SIZE];
         // extract variable, must pass all needed informations in linkname
         sprintf(nnn, "%c%s%c", LINK_NAME_SEPARATOR, p->name, LINK_NAME_SEPARATOR);
@@ -420,11 +420,11 @@ void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol
         } else {
             addNewSymbolDefinition(table, inputFileName, parameterCopy, StorageAuto, UsageDefined);
         }
-        if (parsingConfig.operation == PARSER_OP_EXTRACT) {
+        if (parsingConfig.operation == PARSE_TO_EXTRACT) {
             handleFoundSymbolReference(parameterCopy, parameterCopy->position, UsageLvalUsed, NO_FILE_NUMBER);
         }
     }
-    if (parsingConfig.operation == PARSER_OP_TRACK_PARAMETERS
+    if (parsingConfig.operation == PARSE_TO_TRACK_PARAMETERS
         && position == options.olcxGotoVal
         && positionsAreEqual(function->position, cxRefPosition))
     {
@@ -895,7 +895,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position lpar,
                                     ) {
     if (options.mode != ServerMode)
         return;
-    if (parsingConfig.operation != PARSER_OP_TRACK_PARAMETERS)
+    if (parsingConfig.operation != PARSE_TO_TRACK_PARAMETERS)
         return;
     if (positionsAreNotEqual(decl->position, cxRefPosition))
         return;
@@ -908,7 +908,7 @@ void handleInvocationParamPositions(Reference *ref, Position lpar,
                                     ) {
     if (options.mode != ServerMode)
         return;
-    if (parsingConfig.operation != PARSER_OP_TRACK_PARAMETERS)
+    if (parsingConfig.operation != PARSE_TO_TRACK_PARAMETERS)
         return;
     if (ref==NULL || positionsAreNotEqual(ref->position, cxRefPosition))
         return;

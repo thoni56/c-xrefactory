@@ -89,7 +89,7 @@ void dumpProgram(ProgramGraphNode *program) {
 Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
     Symbol *symbol;
 
-    if (parsingConfig.operation != PARSER_OP_EXTRACT)
+    if (parsingConfig.operation != PARSE_TO_EXTRACT)
         return NULL;
 
     symbol = newSymbolAsLabel(name, name, noPosition, labn);
@@ -105,7 +105,7 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
 void deleteContinueBreakLabelSymbol(char *name) {
     Symbol symbol, *foundSymbol;
 
-    if (parsingConfig.operation != PARSER_OP_EXTRACT)
+    if (parsingConfig.operation != PARSE_TO_EXTRACT)
         return;
 
     fillSymbolWithLabel(&symbol, name, name, noPosition, 0);
@@ -122,7 +122,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
 void generateContinueBreakReference(char *name) {
     Symbol symbol, *foundSymbol;
 
-    if (parsingConfig.operation != PARSER_OP_EXTRACT)
+    if (parsingConfig.operation != PARSE_TO_EXTRACT)
         return;
 
     fillSymbolWithLabel(&symbol, name, name, noPosition, 0);
@@ -137,7 +137,7 @@ void generateContinueBreakReference(char *name) {
 void generateSwitchCaseFork(bool isLast) {
     Symbol symbol, *foundSymbol;
 
-    if (parsingConfig.operation != PARSER_OP_EXTRACT)
+    if (parsingConfig.operation != PARSE_TO_EXTRACT)
         return;
 
     fillSymbolWithLabel(&symbol, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, noPosition, 0);
@@ -927,7 +927,7 @@ void actionsBeforeAfterExternalDefinition(void) {
         && parsedInfo.cxMemoryIndexAtFunctionBegin != 0
         && parsedInfo.cxMemoryIndexAtFunctionBegin <= parsedInfo.cxMemoryIndexAtBlockBegin
         // is it an extraction action ?
-        && parsingConfig.operation == PARSER_OP_EXTRACT
+        && parsingConfig.operation == PARSE_TO_EXTRACT
         && (! parsedInfo.extractProcessedFlag))
     {
         // O.K. make extraction
@@ -960,6 +960,6 @@ void extractActionOnBlockMarker(void) {
 }
 
 void deleteContinueBreakSymbol(Symbol *symbol) {
-    if (parsingConfig.operation == PARSER_OP_EXTRACT)
+    if (parsingConfig.operation == PARSE_TO_EXTRACT)
         deleteSymDef(symbol);
 }
