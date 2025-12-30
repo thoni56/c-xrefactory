@@ -1452,7 +1452,8 @@ EditorMarker *removeStaticPrefix(EditorMarker *marker) {
     return startMarker;
 }
 
-static char *createExternDeclaration(EditorMarker *startMarker, EditorMarker *endMarker, char *functionSignature) {
+static char *extractFunctionSignature(EditorMarker *startMarker, EditorMarker *endMarker) {
+
     int searchOffset = startMarker->offset;
     int braceOffset = -1;
     char *text = startMarker->buffer->allocation.text;
@@ -1465,6 +1466,7 @@ static char *createExternDeclaration(EditorMarker *startMarker, EditorMarker *en
         searchOffset++;
     }
 
+    char *functionSignature;
     if (braceOffset != -1) {
         /* Extract signature (from start to just before '{') */
         int signatureLength = braceOffset - startMarker->offset;
@@ -1485,94 +1487,114 @@ static char *createExternDeclaration(EditorMarker *startMarker, EditorMarker *en
     return functionSignature;
 }
 
+static char *findCorrespondingHeaderFile(EditorMarker *target) {
+    char *targetFileName = target->buffer->fileName;
+    char *suffix = getFileSuffix(targetFileName);
+    char *headerFileName = NULL;
+
+    if (strcmp(suffix, ".c") == 0) {
+        /* Build header filename by replacing .c with .h */
+        char headerPath[MAX_FILE_NAME_SIZE];
+        int baseLength = suffix - targetFileName; /* Length up to the '.' */
+
+        strncpy(headerPath, targetFileName, baseLength);
+        headerPath[baseLength] = '\0';
+        strcat(headerPath, ".h");
+
+        if (fileExists(headerPath)) {
+            headerFileName = stackMemoryAlloc(strlen(headerPath) + 1);
+            strcpy(headerFileName, headerPath);
+        }
+    }
+
+    return headerFileName;
+}
+
+static void insertExternDeclaration(char *functionSignature, char *headerFileName) {
+    /* Build extern declaration: "extern <signature>;\n" */
+    char *externDecl =
+        stackMemoryAlloc(strlen("extern ") + strlen(functionSignature) + strlen(";\n") + 1);
+    strcpy(externDecl, "extern ");
+    strcat(externDecl, functionSignature);
+    strcat(externDecl, ";\n");
+
+    /* Get or create the buffer for the header file */
+    EditorBuffer *headerBuffer = findOrCreateAndLoadEditorBufferForFile(headerFileName);
+
+    /* Insert at the beginning of the header file */
+    replaceStringInEditorBuffer(headerBuffer, 0, 0, externDecl, strlen(externDecl), &editorUndo);
+}
+
+static bool lookingAtStatic(char *text, int remaining) {
+    return remaining >= strlen("static ") && strncmp(text, "static", 6) == 0
+        && (text[6] == ' ' || text[6] == '\t');
+}
+
+static int removeStaticKeywordIfPresent(EditorMarker *startMarker, EditorMarker *point, int size) {
+    EditorMarker *searchMarker = newEditorMarker(startMarker->buffer, startMarker->offset);
+    EditorMarker *staticMarker = NULL;
+    bool foundStatic = false;
+
+    while (searchMarker->offset < point->offset) {
+        char *text = &startMarker->buffer->allocation.text[searchMarker->offset];
+        int remaining = point->offset - searchMarker->offset;
+
+        /* Check if we're at "static " (with space or tab after) */
+        if (lookingAtStatic(text, remaining)) {
+            foundStatic = true;
+            staticMarker = newEditorMarker(startMarker->buffer, searchMarker->offset);
+            break;
+        }
+        searchMarker->offset++;
+    }
+    freeEditorMarker(searchMarker);
+
+    if (foundStatic) {
+        replaceStringInEditorBuffer(staticMarker->buffer, staticMarker->offset, 7, "", 0, &editorUndo);
+        freeEditorMarker(staticMarker);
+        /* Adjust size since we removed "static " */
+        size -= strlen("static ");
+    }
+
+    return size;
+}
+
 static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorMarker *point,
-                                              EditorMarker *endMarker, EditorMarker *target,
-                                              ToCheckOrNot check, int limitIndex) {
-    int size = endMarker->offset - startMarker->offset;
+                                              EditorMarker *endMarker, EditorMarker *target) {
+    int functionBlockSize = endMarker->offset - startMarker->offset;
     if (target->buffer == startMarker->buffer && target->offset > startMarker->offset &&
-        target->offset < startMarker->offset + size) {
+        target->offset < startMarker->offset + functionBlockSize) {
         ppcGenRecord(PPC_INFORMATION, "You can't move something into itself.");
         return;
     }
 
     /* Check if function has "static" keyword and remove it when moving between files.
-     * When moving within the same file, keep static (visibility doesn't change).
-     * For Phase 1 MVP: we just remove static, user manually handles extern/headers. */
+     * When moving within the same file, keep static (visibility doesn't change). */
     bool movingBetweenFiles = (startMarker->buffer != target->buffer);
-    EditorMarker *searchMarker = newEditorMarker(startMarker->buffer, startMarker->offset);
-    bool foundStatic = false;
-    EditorMarker *staticMarker = NULL;
 
     if (movingBetweenFiles) {
-        while (searchMarker->offset < point->offset) {
-            char *text = &startMarker->buffer->allocation.text[searchMarker->offset];
-            int remaining = point->offset - searchMarker->offset;
-
-            /* Check if we're at "static " (with space or tab after) */
-            if (remaining >= 7 && strncmp(text, "static", 6) == 0 &&
-                (text[6] == ' ' || text[6] == '\t')) {
-                foundStatic = true;
-                staticMarker = newEditorMarker(startMarker->buffer, searchMarker->offset);
-                break;
-            }
-            searchMarker->offset++;
-        }
-    }
-    freeEditorMarker(searchMarker);
-
-    /* Remove "static " keyword BEFORE moving (only when moving between files) */
-    if (foundStatic) {
-        replaceStringInEditorBuffer(staticMarker->buffer, staticMarker->offset, 7, "", 0, &editorUndo);
-        freeEditorMarker(staticMarker);
-        /* Adjust size since we removed 7 characters */
-        size -= 7;
+        functionBlockSize = removeStaticKeywordIfPresent(startMarker, point, functionBlockSize);
     }
 
     /* Extract function signature for extern declaration (before moving) */
     char *functionSignature = NULL;
     if (movingBetweenFiles) {
         /* Find the opening brace to determine where signature ends */
-        functionSignature = createExternDeclaration(startMarker, endMarker, functionSignature);
+        functionSignature = extractFunctionSignature(startMarker, endMarker);
     }
 
     /* Now move the (possibly modified) function block */
-    moveBlockInEditorBuffer(startMarker, target, size, &editorUndo);
+    moveBlockInEditorBuffer(startMarker, target, functionBlockSize, &editorUndo);
 
     /* After moving the function, check if we need to add an extern declaration to the header */
     char *headerFileName = NULL;
     if (movingBetweenFiles) {
-        char *targetFileName = target->buffer->fileName;
-        char *suffix = getFileSuffix(targetFileName);
-
-        if (strcmp(suffix, ".c") == 0) {
-            /* Build header filename by replacing .c with .h */
-            char headerPath[MAX_FILE_NAME_SIZE];
-            int baseLength = suffix - targetFileName;  /* Length up to the '.' */
-
-            strncpy(headerPath, targetFileName, baseLength);
-            headerPath[baseLength] = '\0';
-            strcat(headerPath, ".h");
-
-            if (fileExists(headerPath)) {
-                headerFileName = stackMemoryAlloc(strlen(headerPath) + 1);
-                strcpy(headerFileName, headerPath);
-            }
-        }
+        headerFileName = findCorrespondingHeaderFile(target);
     }
 
     /* Insert extern declaration into header file if we have both header and signature */
     if (headerFileName != NULL && functionSignature != NULL) {
-        /* Build extern declaration: "extern <signature>;\n" */
-        char *externDecl = stackMemoryAlloc(strlen("extern ") + strlen(functionSignature) + strlen(";\n") + 1);
-        strcpy(externDecl, "extern ");
-        strcat(externDecl, functionSignature);
-        strcat(externDecl, ";\n");
-
-        /* Get or create the header buffer */
-        EditorBuffer *headerBuffer = findOrCreateAndLoadEditorBufferForFile(headerFileName);
-
-        /* Insert at the beginning of the header file */
-        replaceStringInEditorBuffer(headerBuffer, 0, 0, externDecl, strlen(externDecl), &editorUndo);
+        insertExternDeclaration(functionSignature, headerFileName);
     }
 }
 
@@ -1602,7 +1624,7 @@ static void moveFunction(EditorMarker *point) {
     int lines = countLinesBetweenEditorMarkers(functionStart, functionEnd);
 
     // O.K. Now STARTING!
-    moveStaticFunctionAndMakeItExtern(functionStart, point, functionEnd, target, APPLY_CHECKS, IPP_FUNCTION_BEGIN);
+    moveStaticFunctionAndMakeItExtern(functionStart, point, functionEnd, target);
 
     // and generate output
     applyWholeRefactoringFromUndo();
