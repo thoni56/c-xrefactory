@@ -9,7 +9,6 @@
 #include "lexem.h"
 #include "lexembuffer.h"
 #include "log.h"
-#include "options.h"
 #include "parsing.h"
 
 
@@ -405,7 +404,74 @@ static int skipPossibleStringPrefix(CharacterBuffer *cb, int ch) {
     return ch;
 }
 
-bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
+static int postProcessLexemForServerOperations(CharacterBuffer *cb, LexemBuffer *lb, int ch,
+                                               char *startOfCurrentLexem) {
+    int parChar;
+    Position position;
+    int currentLexemFileOffset = lb->fileOffset;
+    position = lb->position;
+
+    if (fileNumberFrom(cb) == originalFileNumber && fileNumberFrom(cb) != NO_FILE_NUMBER
+        && fileNumberFrom(cb) != -1) {
+        if (parsingConfig.operation == PARSER_OP_EXTRACT) {
+            ch = skipBlanks(cb, ch);
+            int offset = fileOffsetFor(cb);
+            log_debug(":offset==%d, cursor==%d, mark==%d", offset, parsingConfig.cursorOffset,
+                      parsingConfig.markOffset);
+            // all this is very, very HACK!!!
+            if (offset >= parsingConfig.cursorOffset && !parsedInfo.blockMarker1Set) {
+                if (parsedInfo.blockMarker2Set)
+                    parChar = '}';
+                else
+                    parChar = '{';
+                putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(lb, parChar, position);
+                parsedInfo.blockMarker1Set = true;
+            } else if (offset >= parsingConfig.markOffset && !parsedInfo.blockMarker2Set) {
+                if (parsedInfo.blockMarker1Set)
+                    parChar = '}';
+                else
+                    parChar = '{';
+                putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(lb, parChar, position);
+                parsedInfo.blockMarker2Set = true;
+            }
+        } else if (parsingConfig.operation == PARSER_OP_COMPLETION) {
+            ch = skipBlanks(cb, ch);
+            LexemCode lexem = peekLexemCodeAt(startOfCurrentLexem);
+            processCompletionOrSearch(cb, lb, position, currentLexemFileOffset,
+                                      parsingConfig.cursorOffset - currentLexemFileOffset, lexem);
+        } else {
+            if (currentLexemFileOffset <= parsingConfig.cursorOffset
+                && fileOffsetFor(cb) >= parsingConfig.cursorOffset) {
+                if (needsReferenceAtCursor(parsingConfig.operation)) {
+                    cxRefPosition = position;
+                }
+            }
+            if (parsingConfig.operation == PARSER_OP_VALIDATE_MOVE_TARGET) {
+                // TODO: Figure out what the problem with this
+                // is for C. Marian's comment below indicate
+                // CPP problem, but if we will try to
+                // implement "Move Function" for C, we need to
+                // be able to do this. There is no test for
+                // MOVE_FUNCTION yet...
+
+                // if (LANGUAGE(LANG_JAVA)) {
+                //  there is a problem with this, when browsing at CPP construction
+                //  that is why I restrict it to Java language! It is usefull
+                //  only for Java refactorings
+                ch = skipBlanks(cb, ch);
+                int apos = fileOffsetFor(cb);
+                if (apos >= parsingConfig.cursorOffset && !parsedInfo.blockMarker1Set) {
+                    putLexemCodeWithPosition(lb, OL_MARKER_TOKEN, position);
+                    parsedInfo.blockMarker1Set = true;
+                }
+            }
+        }
+    }
+
+    return ch;
+}
+
+bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb, bool inServerMode) {
     LexemCode lexem;
     int lexemStartingColumn;
     int fileOffsetForLexemStart;
@@ -450,7 +516,6 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             putIntegerLexem(lb, lexem, integerValue, cb, lexemStartingColumn, fileOffsetForLexemStart);
             goto nextLexem;
         } else switch (ch) {
-                /* ************   special character *********************  */
             case '.':
                 fileOffsetForLexemStart = fileOffsetFor(cb);
                 ch = getChar(cb);
@@ -733,69 +798,8 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             }
         assert(0);
     nextLexem:
-        if (options.mode == ServerMode) {
-            int parChar;
-            Position position;
-            int currentLexemFileOffset = lb->fileOffset;
-            position = lb->position;
-
-            if (fileNumberFrom(cb) == originalFileNumber && fileNumberFrom(cb) != NO_FILE_NUMBER
-                && fileNumberFrom(cb) != -1) {
-                if (parsingConfig.operation == PARSER_OP_EXTRACT) {
-                    ch = skipBlanks(cb, ch);
-                    int offset = fileOffsetFor(cb);
-                    log_debug(":offset==%d, cursor==%d, mark==%d", offset, options.cursorOffset,
-                              options.markOffset);
-                    // all this is very, very HACK!!!
-                    if (offset >= options.cursorOffset && !parsedInfo.blockMarker1Set) {
-                        if (parsedInfo.blockMarker2Set)
-                            parChar='}';
-                        else
-                            parChar = '{';
-                        putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(lb, parChar, position);
-                        parsedInfo.blockMarker1Set = true;
-                    } else if (offset >= options.markOffset && !parsedInfo.blockMarker2Set){
-                        if (parsedInfo.blockMarker1Set)
-                            parChar='}';
-                        else
-                            parChar = '{';
-                        putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(lb, parChar, position);
-                        parsedInfo.blockMarker2Set = true;
-                    }
-                } else if (parsingConfig.operation == PARSER_OP_COMPLETION) {
-                    ch = skipBlanks(cb, ch);
-                    lexem = peekLexemCodeAt(startOfCurrentLexem);
-                    processCompletionOrSearch(cb, lb, position, currentLexemFileOffset,
-                                              options.cursorOffset - currentLexemFileOffset, lexem);
-                } else {
-                    if (currentLexemFileOffset <= options.cursorOffset
-                        && fileOffsetFor(cb) >= options.cursorOffset
-                    ) {
-                        if (needsReferenceAtCursor(parsingConfig.operation)) {
-                            cxRefPosition = position;
-                        }
-                    }
-                    if (parsingConfig.operation == PARSER_OP_VALIDATE_MOVE_TARGET) {
-                        // TODO: Figure out what the problem with this
-                        // is for C. Marian's comment below indicate
-                        // CPP problem, but if we will try to
-                        // implement "Move Function" for C, we need to
-                        // be able to do this. There is no test for
-                        // MOVE_FUNCTION yet...
-
-                        //if (LANGUAGE(LANG_JAVA)) {
-                        // there is a problem with this, when browsing at CPP construction
-                        // that is why I restrict it to Java language! It is usefull
-                        // only for Java refactorings
-                        ch = skipBlanks(cb, ch);
-                        int apos = fileOffsetFor(cb);
-                        if (apos >= options.cursorOffset && !parsedInfo.blockMarker1Set) {
-                            putLexemCodeWithPosition(lb, OL_MARKER_TOKEN, position);
-                            parsedInfo.blockMarker1Set = true;
-                        }
-                    }
-                }
-            }
+        if (inServerMode) {
+            ch = postProcessLexemForServerOperations(cb, lb, ch, startOfCurrentLexem);
         }
     } while (ch != -1);
 

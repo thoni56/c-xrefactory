@@ -4,6 +4,6 @@
 #include "lexer.h"
 
 
-bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *buffer) {
+bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *buffer, bool inServerMode) {
   return (bool) mock(buffer);
 }

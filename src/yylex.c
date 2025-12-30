@@ -366,7 +366,7 @@ static LexemCode refillInputIfEmpty(char **previousLexemP) {
             currentInput = macroInputStack[--macroStackIndex];
         } else if (inputType == NORMAL_STREAM) {
             setCurrentFileConsistency(&currentFile, &currentInput);
-            if (!buildLexemFromCharacters(&currentFile.characterBuffer, &currentFile.lexemBuffer)) {
+            if (!buildLexemFromCharacters(&currentFile.characterBuffer, &currentFile.lexemBuffer, options.mode == ServerMode)) {
                 return END_OF_FILE_EXCEPTION;
             }
             setCurrentInputConsistency(&currentInput, &currentFile);
