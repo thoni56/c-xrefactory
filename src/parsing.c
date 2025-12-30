@@ -69,7 +69,7 @@ static FunctionBoundariesResult parseToGetFunctionBoundaries(
     parsingConfig.defines = config->defines;
     parsingConfig.strictAnsi = config->strictAnsi;
     parsingConfig.operation = PARSER_OP_GET_FUNCTION_BOUNDS;
-    parsingConfig.cursorPos = cursorPos;
+    parsingConfig.cursorPosition = cursorPos;
 
     /* Clear previous results */
     parsedPositions[IPP_FUNCTION_BEGIN] = noPosition;
@@ -101,7 +101,7 @@ static FunctionBoundariesResult parseToGetFunctionBoundaries(
 static MoveTargetValidationResult parseToValidateMoveTarget(
     EditorBuffer *buffer,
     ParseConfig  *config,
-    Position      targetPos
+    Position      targetPosition
 ) {
     MoveTargetValidationResult result = {
         .valid = false
@@ -112,13 +112,13 @@ static MoveTargetValidationResult parseToValidateMoveTarget(
     parsingConfig.defines = config->defines;
     parsingConfig.strictAnsi = config->strictAnsi;
     parsingConfig.operation = PARSER_OP_VALIDATE_MOVE_TARGET;
-    parsingConfig.cursorPos = targetPos;
+    parsingConfig.cursorPosition = targetPosition;
 
     /* Clear previous results */
     parsedInfo.moveTargetAccepted = false;
 
     /* Create marker at target position for existing API */
-    EditorMarker *marker = newEditorMarkerForPosition(targetPos);
+    EditorMarker *marker = newEditorMarkerForPosition(targetPosition);
     if (marker->buffer != buffer) {
         freeEditorMarker(marker);
         return result;
