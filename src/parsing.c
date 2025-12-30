@@ -46,6 +46,7 @@ void syncParsingConfigFromOptions() {
     parsingConfig.operation = getParserOperation(options.serverOperation);
     parsingConfig.cursorOffset = options.cursorOffset;
     parsingConfig.markOffset = options.markOffset;
+    parsingConfig.extractMode = options.extractMode;
 }
 
 bool needsReferenceAtCursor(ParserOperation op) {

@@ -521,7 +521,7 @@ static void reclassifyInOutVariables(ProgramGraphNode *program) {
     bool uniqueOutFlag = true;
 
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
-        if (options.extractMode == EXTRACT_FUNCTION) {
+        if (parsingConfig.extractMode == EXTRACT_FUNCTION) {
             if (p->classification == CLASSIFIED_AS_OUT_ARGUMENT
                 || p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
             ) {
@@ -546,7 +546,7 @@ static void reclassifyInOutVariables(ProgramGraphNode *program) {
     op = NULL;
     uniqueOutFlag = true;
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
-        if (options.extractMode == EXTRACT_FUNCTION) {
+        if (parsingConfig.extractMode == EXTRACT_FUNCTION) {
             if (p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT) {
                 if (op == NULL)
                     op = p;
@@ -882,7 +882,7 @@ static void makeExtraction(void) {
     setInOutBlockFields(program);
     dumpProgramToLog(program);
 
-    if (options.extractMode!=EXTRACT_MACRO && areThereJumpsInOrOutOfBlock(program)) {
+    if (parsingConfig.extractMode!=EXTRACT_MACRO && areThereJumpsInOrOutOfBlock(program)) {
         errorMessage(ERR_ST, "There are jumps in or out of region");
         return;
     }
@@ -890,21 +890,21 @@ static void makeExtraction(void) {
     reclassifyInOutVariables(program);
 
     char *extractionName;
-    if (options.extractMode == EXTRACT_VARIABLE)
+    if (parsingConfig.extractMode == EXTRACT_VARIABLE)
         extractionName = "newVariable_";
-    else if (options.extractMode==EXTRACT_MACRO) {
+    else if (parsingConfig.extractMode==EXTRACT_MACRO) {
         extractionName = "NEW_MACRO_";
     } else
         extractionName = "newFunction_";
 
     ppcBeginWithStringAttribute(PPC_EXTRACTION_DIALOG, PPCA_TYPE, extractionName);
 
-    if (options.extractMode==EXTRACT_MACRO) {
+    if (parsingConfig.extractMode==EXTRACT_MACRO) {
         generateNewMacroCall(program, extractionName);
         generateNewMacroHead(program, extractionName);
         generateNewMacroTail();
         generateLineNumber(parsedInfo.functionBeginPosition);
-    } else if (options.extractMode == EXTRACT_VARIABLE) {
+    } else if (parsingConfig.extractMode == EXTRACT_VARIABLE) {
         generateNewVariableAccess(program, extractionName);
         generateNewVariableDeclaration(program, extractionName);
         generateNewVariableTail();

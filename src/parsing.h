@@ -44,6 +44,7 @@
 #include "position.h"
 #include "stringlist.h"
 #include "editorbuffer.h"
+#include "extract.h"
 #include "server.h"
 
 typedef struct editorMarker EditorMarker;
@@ -83,6 +84,7 @@ typedef struct {
     Position         cursorPosition; /* Cursor position (for bounded operations) */
     int              cursorOffset; /* Byte offset of cursor in file */
     int              markOffset;   /* Byte offset of mark (selection end), -1 if no selection */
+    ExtractMode      extractMode;  /* Which extraction type (function/macro/variable) */
 } ParsingConfig;
 
 /**
