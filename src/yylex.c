@@ -389,7 +389,7 @@ static LexemCode getLexemAndSavePointerToPrevious(char **previousLexemP) {
         *previousLexemP = currentInput.read;
     lexem = getLexemCodeAndAdvance(&currentInput.read);
     if (options.lexemTrace)
-        printf("LEXEM read: %s\n", lexemEnumNames[lexem]);
+        fprintf(stderr, "LEXEM read: %s\n", lexemEnumNames[lexem]);
     log_debug("LEXEM read: %s", lexemEnumNames[lexem]);
     return lexem;
 }
