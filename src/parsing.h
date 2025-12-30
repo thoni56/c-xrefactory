@@ -46,6 +46,8 @@
 #include "editorbuffer.h"
 #include "extract.h"
 #include "server.h"
+#include "options.h"
+
 
 typedef struct editorMarker EditorMarker;
 
@@ -63,17 +65,7 @@ typedef enum {
 } ParserOperation;
 
 /**
- * Configuration for parsing - reusable across operations.
- * Contains preprocessor and language settings needed for parsing.
- */
-typedef struct {
-    StringList *includeDirs;     /* -I include directories */
-    char       *defines;         /* -D preprocessor definitions */
-    bool        strictAnsi;      /* ANSI C mode vs extensions */
-} ParseConfig;
-
-/**
- * Complete parsing configuration including operation and context.
+ * Parsing configuration including operation and context.
  * This is the input to the parsing subsystem - set before parsing starts.
  */
 typedef struct {
@@ -111,12 +103,6 @@ typedef struct {
 } MoveTargetValidationResult;
 
 /**
- * Create parse configuration from current global options.
- * Temporary bridge function until callers build ParseConfig themselves.
- */
-extern ParseConfig createParseConfigFromOptions(void);
-
-/**
  * Convert server operation to parser operation.
  * Maps high-level server requests to parser-specific behaviors.
  *
@@ -125,7 +111,7 @@ extern ParseConfig createParseConfigFromOptions(void);
  */
 extern ParserOperation getParserOperation(ServerOperation serverOp);
 
-extern void syncParsingConfigFromOptions();
+extern void syncParsingConfigFromOptions(Options options);
 
 /**
  * Check if parser operation needs to record reference at cursor position.

@@ -2,16 +2,16 @@
 
 #include <cgreen/mocks.h>
 
+#include "editormarker.h"
+#include "options.h"
+#include "parsing.h"
+#include "server.h"
+
 
 ParsingConfig parsingConfig;
 
 
-ParseConfig createParseConfigFromOptions(void) {
-    ParseConfig *parseConfig = (ParseConfig *)mock();
-    return *parseConfig;
-}
-
-void syncParsingConfigFromOptions() {
+void syncParsingConfigFromOptions(Options options) {
     mock();
 }
 

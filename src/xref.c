@@ -162,7 +162,7 @@ static void processInputFile(ArgumentsVector args, bool *firstPassP, bool *atLea
             if (options.fileTrace)
                 fprintf(stderr, "Processing input file: '%s\n", currentFile.fileName);
             /* Sync parsingConfig for batch xref mode */
-            syncParsingConfigFromOptions();
+            syncParsingConfigFromOptions(options);
             parseCurrentInputFile(currentLanguage);
             closeCharacterBuffer(&currentFile.characterBuffer);
             inputOpened = false;

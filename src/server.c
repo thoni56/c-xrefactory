@@ -132,7 +132,7 @@ static void parseInputFile(void) {
     if (options.fileTrace)
         fprintf(stderr, "parseInputFile: '%s\n", currentFile.fileName);
     /* Bridge: Sync parsingConfig for all operations using parseCurrentInputFile entry point */
-    syncParsingConfigFromOptions();
+    syncParsingConfigFromOptions(options);
     if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
         log_debug("parse start");
         parseCurrentInputFile(currentLanguage);
