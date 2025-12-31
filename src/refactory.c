@@ -1894,6 +1894,47 @@ static int compareIncludeTexts(const void *a, const void *b) {
     return strcmp(ia->text, ib->text);
 }
 
+static char *createOrganizedIncludes(IncludeEntry **groups[], int groupCounts[]) {
+    char *organizedIncludes = stackMemoryAlloc(10000);  // Large buffer
+    organizedIncludes[0] = '\0';
+
+    for (int g = 0; g < 4; g++) {
+        if (groupCounts[g] == 0)
+            continue;
+
+        // Add blank line between groups (except before first group)
+        if (organizedIncludes[0] != '\0') {
+            strcat(organizedIncludes, "\n");
+        }
+
+        for (int i = 0; i < groupCounts[g]; i++) {
+            strcat(organizedIncludes, groups[g][i]->text); // Already includes newline
+        }
+    }
+
+    // Ensure trailing newline
+    int len = strlen(organizedIncludes);
+    if (len == 0 || organizedIncludes[len - 1] != '\n') {
+        strcat(organizedIncludes, "\n");
+    }
+    return organizedIncludes;
+}
+
+static void sortEachGroup(IncludeEntry **groups[], int groupCounts[]) {
+    for (int g = 0; g < 4; g++) {
+        if (groupCounts[g] > 1) {
+            qsort(groups[g], groupCounts[g], sizeof(IncludeEntry *), compareIncludeTexts);
+        }
+    }
+}
+
+static void growArray(IncludeEntry **groups[], int groupCounts[], int groupCapacities[], int group) {
+    groupCapacities[group] *= 2;
+    IncludeEntry **newGroup = stackMemoryAlloc(groupCapacities[group] * sizeof(IncludeEntry *));
+    memcpy(newGroup, groups[group], groupCounts[group] * sizeof(IncludeEntry *));
+    groups[group] = newGroup;
+}
+
 static void organizeIncludes(EditorMarker *point) {
     assert(point);
 
@@ -1924,9 +1965,13 @@ static void organizeIncludes(EditorMarker *point) {
     for (int i = 0; i < count; i++) {
         char *text = includes[i].text;
         char *includeStart = strstr(text, "#include");
-        if (!includeStart) continue;
+
+        if (!includeStart)
+            continue;
+
         includeStart += 8;  // Skip "#include"
-        while (*includeStart && isspace(*includeStart)) includeStart++;
+        while (*includeStart && isspace(*includeStart))
+            includeStart++;
 
         int group;
         if (*includeStart == '<') {
@@ -1957,46 +2002,16 @@ static void organizeIncludes(EditorMarker *point) {
             group = 2;  // Default to project header
         }
 
-        // Grow array if needed
         if (groupCounts[group] >= groupCapacities[group]) {
-            groupCapacities[group] *= 2;
-            IncludeEntry **newGroup = stackMemoryAlloc(groupCapacities[group] * sizeof(IncludeEntry *));
-            memcpy(newGroup, groups[group], groupCounts[group] * sizeof(IncludeEntry *));
-            groups[group] = newGroup;
+            growArray(groups, groupCounts, groupCapacities, group);
         }
 
         groups[group][groupCounts[group]++] = &includes[i];
     }
 
-    // Sort each group
-    for (int g = 0; g < 4; g++) {
-        if (groupCounts[g] > 1) {
-            qsort(groups[g], groupCounts[g], sizeof(IncludeEntry *), compareIncludeTexts);
-        }
-    }
+    sortEachGroup(groups, groupCounts);
 
-    // Generate replacement text
-    char *newText = stackMemoryAlloc(10000);  // Large buffer
-    newText[0] = '\0';
-
-    for (int g = 0; g < 4; g++) {
-        if (groupCounts[g] == 0) continue;
-
-        // Add blank line between groups (except before first group)
-        if (newText[0] != '\0') {
-            strcat(newText, "\n");
-        }
-
-        for (int i = 0; i < groupCounts[g]; i++) {
-            strcat(newText, groups[g][i]->text);  // Already includes newline
-        }
-    }
-
-    // Ensure trailing newline
-    int len = strlen(newText);
-    if (len == 0 || newText[len-1] != '\n') {
-        strcat(newText, "\n");
-    }
+    char *newText = createOrganizedIncludes(groups, groupCounts);
 
     // Apply replacement
     int startOffset = includes[0].offset;
