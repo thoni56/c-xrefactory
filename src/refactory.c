@@ -1935,6 +1935,51 @@ static void growArray(IncludeEntry **groups[], int groupCounts[], int groupCapac
     groups[group] = newGroup;
 }
 
+static void applyReplacement(EditorBuffer *buffer, IncludeEntry *includes, int count, char *newText) {
+    int startOffset = includes[0].offset;
+    int endOffset = includes[count - 1].offset + includes[count - 1].length;
+    int deleteSize = endOffset - startOffset;
+
+    replaceStringInEditorBuffer(buffer, startOffset, deleteSize, newText, strlen(newText), &editorUndo);
+}
+
+static int classifyInclude(char *ownHeaderName, char *includeStart) {
+    int group;
+    includeStart += 8; // Skip "#include"
+    while (*includeStart && isspace(*includeStart))
+        includeStart++;
+
+    if (*includeStart == '<') {
+        // System header
+        group = 1;
+    } else if (*includeStart == '"') {
+        // Extract filename
+        char *nameStart = includeStart + 1;
+        char *nameEnd = strchr(nameStart, '"');
+        if (nameEnd) {
+            int nameLen = nameEnd - nameStart;
+            char *includedFile = stackMemoryAlloc(nameLen + 1);
+            strncpy(includedFile, nameStart, nameLen);
+            includedFile[nameLen] = '\0';
+
+            // Check if it's own header
+            if (ownHeaderName && strcmp(includedFile, ownHeaderName) == 0) {
+                group = 0; // Own header
+            } else if (strstr(includedFile, ".h")) {
+                group = 2; // Project .h header
+            } else {
+                group = 3; // Other
+            }
+        } else {
+            group = 2; // Default to project header
+        }
+    } else {
+        group = 2; // Default to project header
+    }
+
+    return group;
+}
+
 static void organizeIncludes(EditorMarker *point) {
     assert(point);
 
@@ -1948,10 +1993,9 @@ static void organizeIncludes(EditorMarker *point) {
         return;
     }
 
-    // Determine own header name
     char *ownHeaderName = getOwnHeaderName(buffer->fileName);
 
-    // Classify includes into 4 groups
+    // Classify includes into 4 groups: own header, system headers, other headers, other includes
     IncludeEntry **groups[4];  // Array of pointers for each group
     int groupCounts[4] = {0, 0, 0, 0};
     int groupCapacities[4];
@@ -1966,47 +2010,15 @@ static void organizeIncludes(EditorMarker *point) {
         char *text = includes[i].text;
         char *includeStart = strstr(text, "#include");
 
-        if (!includeStart)
-            continue;
+        if (includeStart) {
+            int group = classifyInclude(ownHeaderName, includeStart);
 
-        includeStart += 8;  // Skip "#include"
-        while (*includeStart && isspace(*includeStart))
-            includeStart++;
-
-        int group;
-        if (*includeStart == '<') {
-            // System header
-            group = 1;
-        } else if (*includeStart == '"') {
-            // Extract filename
-            char *nameStart = includeStart + 1;
-            char *nameEnd = strchr(nameStart, '"');
-            if (nameEnd) {
-                int nameLen = nameEnd - nameStart;
-                char *includedFile = stackMemoryAlloc(nameLen + 1);
-                strncpy(includedFile, nameStart, nameLen);
-                includedFile[nameLen] = '\0';
-
-                // Check if it's own header
-                if (ownHeaderName && strcmp(includedFile, ownHeaderName) == 0) {
-                    group = 0;  // Own header
-                } else if (strstr(includedFile, ".h")) {
-                    group = 2;  // Project .h header
-                } else {
-                    group = 3;  // Other
-                }
-            } else {
-                group = 2;  // Default to project header
+            if (groupCounts[group] >= groupCapacities[group]) {
+                growArray(groups, groupCounts, groupCapacities, group);
             }
-        } else {
-            group = 2;  // Default to project header
-        }
 
-        if (groupCounts[group] >= groupCapacities[group]) {
-            growArray(groups, groupCounts, groupCapacities, group);
+            groups[group][groupCounts[group]++] = &includes[i];
         }
-
-        groups[group][groupCounts[group]++] = &includes[i];
     }
 
     sortEachGroup(groups, groupCounts);
@@ -2014,11 +2026,7 @@ static void organizeIncludes(EditorMarker *point) {
     char *newText = createOrganizedIncludes(groups, groupCounts);
 
     // Apply replacement
-    int startOffset = includes[0].offset;
-    int endOffset = includes[count-1].offset + includes[count-1].length;
-    int deleteSize = endOffset - startOffset;
-
-    replaceStringInEditorBuffer(buffer, startOffset, deleteSize, newText, strlen(newText), &editorUndo);
+    applyReplacement(buffer, includes, count, newText);
 
     // Generate output
     applyWholeRefactoringFromUndo();
