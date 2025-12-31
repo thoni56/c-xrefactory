@@ -1,3 +1,14 @@
+# Version 1.8.4
+
+- Add basic extern declaration and include of header file for Move Function
+- Many tidyings and refactorings
+- Improved architecture for Parsing meta module
+- Decouple Parsing from all parsing and feature specific options using ParsingConfig
+
+# Version 1.8.3
+
+- Basic Move Function To Other File
+
 # Version 1.8.2
 
 - Remove caching, slowdown but less complexity in code

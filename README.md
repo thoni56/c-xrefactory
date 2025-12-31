@@ -17,13 +17,16 @@ _C_ & _Yacc_.
 
 ## Features
 
-- navigate to definition and through all usages of any type of symbol
+- navigate to definition and all usages of it of any type of symbol, including `#include`
+- search and browse for all symbols
 - rename any type of symbol - variable, field, type, macro, parameter, or Yacc grammar
   rule
 - add, delete or re-order function and macro parameter
 - rename included file
 - extract function, macro or variable
-- detect unused symbols locally or in the complete project
+- move function to another file adding extern declaration and include of header file
+- detect unused symbols in a file or in the complete project
+- more to come!
 
 ## Install
 
