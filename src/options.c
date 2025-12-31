@@ -11,6 +11,7 @@
 #include "memory.h"
 #include "misc.h"
 #include "cxref.h"
+#include "refactorings.h"
 #include "yylex.h"
 #include "editor.h"
 #include "fileio.h"
@@ -1604,6 +1605,9 @@ static bool processROption(int *argi, ArgumentsVector args) {
     }
     else if (strcmp(args.argv[i], "-rfct-move-function")==0) {
         options.theRefactoring = AVR_MOVE_FUNCTION;
+    }
+    else if (strcmp(args.argv[i], "-rfct-organize-includes")==0) {
+        options.theRefactoring = AVR_ORGANIZE_INCLUDES;
     }
     else if (strcmp(args.argv[i], "-rfct-extract-function")==0) {
         options.theRefactoring = AVR_EXTRACT_FUNCTION;

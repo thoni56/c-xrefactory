@@ -176,6 +176,7 @@
      (list c-xref_PPC_AVR_EXTRACT_MACRO "Extract Macro" 'c-xref-extract-macro nil)
      (list c-xref_PPC_AVR_EXTRACT_VARIABLE "Extract Variable" 'c-xref-extract-variable nil)
      (list c-xref_PPC_AVR_MOVE_FUNCTION "Move Function" 'c-xref-move-function nil)
+     (list c-xref_PPC_AVR_ORGANIZE_INCLUDES "Organize Includes" 'c-xref-organize-includes nil)
      (list c-xref_PPC_AVR_SET_MOVE_TARGET "Set Target for Next Moving Refactoring" 'c-xref-set-moving-target-position nil)
      (list c-xref_PPC_AVR_UNDO "Undo Last Refactoring" 'c-xref-undo-last-refactoring nil)
      ))
@@ -7175,6 +7176,12 @@ refactoring.
         (c-xref-moving '("-rfct-move-function"))
         (c-xref-refactoring-finish-actions)
 ))
+
+(defun c-xref-organize-includes (rd)
+  (c-xref-refactoring-init-actions "organizing includes")
+  (c-xref-server-call-refactoring-task (list "-rfct-organize-includes"))
+  (c-xref-refactoring-finish-actions)
+)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; EXTRACT ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

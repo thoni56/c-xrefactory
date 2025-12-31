@@ -1744,6 +1744,256 @@ static void extractVariable(EditorMarker *point, EditorMarker *mark) {
     parseBufferUsingServer(refactoringOptions.project, point, mark, "-olcxextract", "-olexvariable");
 }
 
+
+// Organize Includes
+
+typedef struct {
+    int offset;         // Position in buffer
+    int length;         // Length of #include line
+    char *text;         // The actual line text
+} IncludeEntry;
+
+// Find start of line containing offset
+static int findLineStart(char *text, int offset) {
+    while (offset > 0 && text[offset - 1] != '\n') {
+        offset--;
+    }
+    return offset;
+}
+
+// Find end of line containing offset (points to newline or end of buffer)
+static int findLineEnd(char *text, int size, int offset) {
+    while (offset < size && text[offset] != '\n') {
+        offset++;
+    }
+    return offset;
+}
+
+// Check if line at offset is an include directive
+static bool isIncludeLine(char *text, int size, int lineStart) {
+    int i = lineStart;
+    // Skip leading whitespace
+    while (i < size && (text[i] == ' ' || text[i] == '\t')) i++;
+    // Check for #include
+    return (i < size && text[i] == '#' && i + 8 <= size && strncmp(&text[i], "#include", 8) == 0);
+}
+
+static int collectIncludes(EditorBuffer *buffer, int cursorOffset, IncludeEntry **outIncludes) {
+    char *text = buffer->allocation.text;
+    int size = buffer->size;
+    int count = 0;
+    int capacity = 10;
+    IncludeEntry *includes = stackMemoryAlloc(capacity * sizeof(IncludeEntry));
+
+    // Find the start of the line where cursor is
+    int cursorLine = findLineStart(text, cursorOffset);
+
+    // Scan backward to find start of include block
+    int blockStart = cursorLine;
+    while (blockStart > 0) {
+        int prevLineEnd = blockStart - 1; // Points to newline before current line
+        int prevLineStart = findLineStart(text, prevLineEnd);
+
+        // Check if previous line is include or blank
+        bool isBlank = true;
+        for (int i = prevLineStart; i < prevLineEnd; i++) {
+            if (text[i] != ' ' && text[i] != '\t') {
+                isBlank = false;
+                break;
+            }
+        }
+
+        if (isIncludeLine(text, size, prevLineStart)) {
+            blockStart = prevLineStart;
+        } else if (isBlank) {
+            blockStart = prevLineStart;
+        } else {
+            // Hit non-include, non-blank line - stop
+            break;
+        }
+    }
+
+    // Scan forward to find end of include block
+    int blockEnd = findLineEnd(text, size, cursorLine);
+    if (blockEnd < size) blockEnd++; // Include the newline
+
+    while (blockEnd < size) {
+        int nextLineStart = blockEnd;
+        int nextLineEnd = findLineEnd(text, size, nextLineStart);
+
+        // Check if next line is include or blank
+        bool isBlank = true;
+        for (int i = nextLineStart; i < nextLineEnd; i++) {
+            if (text[i] != ' ' && text[i] != '\t') {
+                isBlank = false;
+                break;
+            }
+        }
+
+        if (isIncludeLine(text, size, nextLineStart)) {
+            blockEnd = nextLineEnd;
+            if (blockEnd < size) blockEnd++; // Include newline
+        } else if (isBlank) {
+            blockEnd = nextLineEnd;
+            if (blockEnd < size) blockEnd++; // Include newline
+        } else {
+            // Hit non-include, non-blank line - stop
+            break;
+        }
+    }
+
+    // Now collect all includes in the range [blockStart, blockEnd)
+    int i = blockStart;
+    while (i < blockEnd) {
+        // Skip whitespace/blank lines
+        int lineStart = i;
+        int lineEnd = findLineEnd(text, size, i);
+
+        if (isIncludeLine(text, size, lineStart)) {
+            // Store include
+            if (count >= capacity) {
+                capacity *= 2;
+                IncludeEntry *newIncludes = stackMemoryAlloc(capacity * sizeof(IncludeEntry));
+                memcpy(newIncludes, includes, count * sizeof(IncludeEntry));
+                includes = newIncludes;
+            }
+
+            includes[count].offset = lineStart;
+            includes[count].length = lineEnd - lineStart + 1; // Include newline
+            includes[count].text = stackMemoryAlloc(includes[count].length + 1);
+            strncpy(includes[count].text, &text[lineStart], includes[count].length);
+            includes[count].text[includes[count].length] = '\0';
+            count++;
+        }
+
+        // Move to next line
+        i = lineEnd;
+        if (i < size && text[i] == '\n') i++;
+    }
+
+    *outIncludes = includes;
+    return count;
+}
+
+static char *getOwnHeaderName(char *sourceFileName) {
+    // Get basename without path or suffix
+    char *basename = simpleFileNameWithoutSuffix_static(sourceFileName);
+
+    // Build .h filename
+    int nameLen = strlen(basename);
+    char *headerName = stackMemoryAlloc(nameLen + 3);  // +3 for ".h\0"
+    strcpy(headerName, basename);
+    strcpy(headerName + nameLen, ".h");
+
+    return headerName;
+}
+
+static int compareIncludeTexts(const void *a, const void *b) {
+    const IncludeEntry *ia = *(const IncludeEntry **)a;
+    const IncludeEntry *ib = *(const IncludeEntry **)b;
+    return strcmp(ia->text, ib->text);
+}
+
+static void organizeIncludes(EditorMarker *point) {
+    assert(point);
+
+    EditorBuffer *buffer = point->buffer;
+
+    IncludeEntry *includes;
+    int count = collectIncludes(buffer, point->offset, &includes);
+
+    if (count == 0) {
+        errorMessage(ERR_ST, "No includes found");
+        return;
+    }
+
+    // Determine own header name
+    char *ownHeaderName = getOwnHeaderName(buffer->fileName);
+
+    // Classify includes into 4 groups
+    IncludeEntry *groups[4][10];  // Max 10 per group for now
+    int groupCounts[4] = {0, 0, 0, 0};
+
+    for (int i = 0; i < count; i++) {
+        char *text = includes[i].text;
+        char *includeStart = strstr(text, "#include");
+        if (!includeStart) continue;
+        includeStart += 8;  // Skip "#include"
+        while (*includeStart && isspace(*includeStart)) includeStart++;
+
+        int group;
+        if (*includeStart == '<') {
+            // System header
+            group = 1;
+        } else if (*includeStart == '"') {
+            // Extract filename
+            char *nameStart = includeStart + 1;
+            char *nameEnd = strchr(nameStart, '"');
+            if (nameEnd) {
+                int nameLen = nameEnd - nameStart;
+                char *includedFile = stackMemoryAlloc(nameLen + 1);
+                strncpy(includedFile, nameStart, nameLen);
+                includedFile[nameLen] = '\0';
+
+                // Check if it's own header
+                if (ownHeaderName && strcmp(includedFile, ownHeaderName) == 0) {
+                    group = 0;  // Own header
+                } else if (strstr(includedFile, ".h")) {
+                    group = 2;  // Project .h header
+                } else {
+                    group = 3;  // Other
+                }
+            } else {
+                group = 2;  // Default to project header
+            }
+        } else {
+            group = 2;  // Default to project header
+        }
+
+        groups[group][groupCounts[group]++] = &includes[i];
+    }
+
+    // Sort each group
+    for (int g = 0; g < 4; g++) {
+        if (groupCounts[g] > 1) {
+            qsort(groups[g], groupCounts[g], sizeof(IncludeEntry *), compareIncludeTexts);
+        }
+    }
+
+    // Generate replacement text
+    char *newText = stackMemoryAlloc(10000);  // Large buffer
+    newText[0] = '\0';
+
+    for (int g = 0; g < 4; g++) {
+        if (groupCounts[g] == 0) continue;
+
+        // Add blank line between groups (except before first group)
+        if (newText[0] != '\0') {
+            strcat(newText, "\n");
+        }
+
+        for (int i = 0; i < groupCounts[g]; i++) {
+            strcat(newText, groups[g][i]->text);  // Already includes newline
+        }
+    }
+
+    // Ensure trailing newline
+    int len = strlen(newText);
+    if (len == 0 || newText[len-1] != '\n') {
+        strcat(newText, "\n");
+    }
+
+    // Apply replacement
+    int startOffset = includes[0].offset;
+    int endOffset = includes[count-1].offset + includes[count-1].length;
+    int deleteSize = endOffset - startOffset;
+
+    replaceStringInEditorBuffer(buffer, startOffset, deleteSize, newText, strlen(newText), &editorUndo);
+
+    // Generate output
+    applyWholeRefactoringFromUndo();
+}
+
 static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     int               fileNumber;
     char             *selectedUpdateOption;
@@ -1915,6 +2165,10 @@ void refactory(void) {
     case AVR_EXTRACT_VARIABLE:
         progressFactor = 1;
         extractVariable(point, mark);
+        break;
+    case AVR_ORGANIZE_INCLUDES:
+        progressFactor = 1;
+        organizeIncludes(point);
         break;
     default:
         errorMessage(ERR_INTERNAL, "unknown refactoring");

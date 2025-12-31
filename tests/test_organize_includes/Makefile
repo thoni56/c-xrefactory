@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 
-ARGUMENTS = -xrefactory-II -refactory -rfct-organize-includes source.c
+ARGUMENTS = -xrefactory-II -refactory -rfct-organize-includes -olcursor=0 source.c
 
 $(TEST): .c-xrefrc
 	touch *.c

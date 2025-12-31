@@ -116,6 +116,7 @@ static void setAvailableRefactorings(Symbol *symbol, Usage usage) {
     case TypeCppHasIncludeNextOp:
         makeRefactoringAvailable(PPC_AVR_RENAME_INCLUDED_FILE, "");
         makeRefactoringAvailable(PPC_AVR_RENAME_MODULE, "");
+        makeRefactoringAvailable(PPC_AVR_ORGANIZE_INCLUDES, "");
         break;
     case TypeAnonymousField:
     case TypeArray:

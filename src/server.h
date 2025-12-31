@@ -43,6 +43,7 @@
     ENUM(OLO_MENU_SELECT_ONLY)                  \
     ENUM(OLO_NEXT)                              \
     ENUM(OLO_NOOP)                              \
+    ENUM(OLO_ORGANIZE_INCLUDES)                 \
     ENUM(OLO_POP)                               \
     ENUM(OLO_POP_ONLY)                          \
     ENUM(OLO_PREVIOUS)                          \
@@ -67,7 +68,7 @@
 
 
 #if 0
-   Here are comments about some of the operation enums:
+Here are some original comments about some of the operation enums (not all of them makes any sense...)
        OLO_RENAME,              - same as push, just another ordering
        OLO_ARG_MANIP,           - as rename, constructors resolved as functions
        OLO_PUSH_SPECIAL_NAME,	- also reparsing current file
