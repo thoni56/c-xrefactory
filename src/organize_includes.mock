@@ -1,0 +1,7 @@
+/* -*- c -*-*/
+#include "organize_includes.h"
+#include <cgreen/mocks.h>
+
+void organizeIncludes(EditorMarker *point) {
+    mock(point);
+}

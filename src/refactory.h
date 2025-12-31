@@ -3,5 +3,6 @@
 
 
 extern void refactory(void);
+extern void applyWholeRefactoringFromUndo(void);
 
 #endif
