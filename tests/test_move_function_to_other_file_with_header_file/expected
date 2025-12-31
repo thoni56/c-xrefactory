@@ -19,11 +19,11 @@
 </goto>
 <paste-block len=<n>></paste-block>
 <goto>
- <position-off off=0 len=<n>>CURDIR/target.h</position-off>
+ <position-off off=40 len=<n>>CURDIR/target.h</position-off>
 </goto>
 <replacement>
- <str len=<n>></str>  <str len=<n>>extern void func();
-</str>
+ <str len=<n>></str>  <str len=<n>>
+extern void func();</str>
 </replacement>
 <goto>
  <position-off off=24 len=<n>>CURDIR/target.c</position-off>

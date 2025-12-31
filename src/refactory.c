@@ -12,6 +12,7 @@
 #include "commons.h"
 #include "cxref.h"
 #include "editor.h"
+#include "editorbuffer.h"
 #include "editormarker.h"
 #include "fileio.h"
 #include "filetable.h"
@@ -1510,19 +1511,43 @@ static char *findCorrespondingHeaderFile(EditorMarker *target) {
     return headerFileName;
 }
 
-static void insertExternDeclaration(char *functionSignature, char *headerFileName) {
+static int findHeaderInsertionPoint(EditorBuffer *headerBuffer) {
+    char *text = headerBuffer->allocation.text;
+    int size = headerBuffer->size;
+
+    /* Search backwards for "\n#endif" pattern */
+    for (int i = size - 1; i >= 1; i--) {
+        if (text[i-1] == '\n' && text[i] == '#') {
+            /* Found newline followed by # - check if it's #endif */
+            if (i + 5 < size && strncmp(&text[i], "#endif", 6) == 0) {
+                int offset = i - 1;  /* Start at the '\n' before '#' */
+                while (offset > 0 && isspace(text[offset-1])) {
+                    offset--;
+                }
+                return offset;
+            }
+        }
+    }
+
+    /* Edge case: file starts with #endif (no preceding newline), just insert it first */
+    if (size >= 6 && strncmp(text, "#endif", 6) == 0) {
+        return 0;
+    }
+
+    /* No #endif found - insert at end */
+    return size;
+}
+
+static void insertExternDeclaration(char *functionSignature, EditorBuffer *headerBuffer, int offset) {
     /* Build extern declaration: "extern <signature>;\n" */
     char *externDecl =
-        stackMemoryAlloc(strlen("extern ") + strlen(functionSignature) + strlen(";\n") + 1);
-    strcpy(externDecl, "extern ");
+        stackMemoryAlloc(strlen("\nextern ") + strlen(functionSignature) + strlen(";") + 1);
+    strcpy(externDecl, "\nextern ");
     strcat(externDecl, functionSignature);
-    strcat(externDecl, ";\n");
-
-    /* Get or create the buffer for the header file */
-    EditorBuffer *headerBuffer = findOrCreateAndLoadEditorBufferForFile(headerFileName);
+    strcat(externDecl, ";");
 
     /* Insert at the beginning of the header file */
-    replaceStringInEditorBuffer(headerBuffer, 0, 0, externDecl, strlen(externDecl), &editorUndo);
+    replaceStringInEditorBuffer(headerBuffer, offset, 0, externDecl, strlen(externDecl), &editorUndo);
 }
 
 static bool lookingAtStatic(char *text, int remaining) {
@@ -1594,7 +1619,9 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
 
     /* Insert extern declaration into header file if we have both header and signature */
     if (headerFileName != NULL && functionSignature != NULL) {
-        insertExternDeclaration(functionSignature, headerFileName);
+        EditorBuffer *headerBuffer = findOrCreateAndLoadEditorBufferForFile(headerFileName);
+        int insertionOffset = findHeaderInsertionPoint(headerBuffer);
+        insertExternDeclaration(functionSignature, headerBuffer, insertionOffset);
     }
 }
 
