@@ -1,0 +1,485 @@
+#include "move_function.h"
+
+#include <assert.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "commons.h"
+#include "cxfile.h"
+#include "cxref.h"
+#include "editor.h"
+#include "editormarker.h"
+#include "editorbuffer.h"
+#include "filetable.h"
+#include "fileio.h"
+#include "globals.h"
+#include "misc.h"
+#include "options.h"
+#include "parsing.h"
+#include "ppc.h"
+#include "proto.h"
+#include "refactory.h"
+#include "reference.h"
+#include "referenceableitemtable.h"
+#include "stackmemory.h"
+#include "undo.h"
+
+
+static void moveMarkerToTheEndOfDefinitionScope(EditorMarker *mm) {
+    int offset;
+    offset = mm->offset;
+    moveEditorMarkerToNonBlankOrNewline(mm, 1);
+    if (mm->offset >= mm->buffer->allocation.bufferSize) {
+        return;
+    }
+    if (CHAR_ON_MARKER(mm) == '/' && CHAR_AFTER_MARKER(mm) == '/') {
+        if (options.commentMovingMode == CM_NO_COMMENT)
+            return;
+        moveEditorMarkerToNewline(mm, 1);
+        mm->offset++;
+    } else if (CHAR_ON_MARKER(mm) == '/' && CHAR_AFTER_MARKER(mm) == '*') {
+        if (options.commentMovingMode == CM_NO_COMMENT)
+            return;
+        mm->offset++;
+        mm->offset++;
+        while (mm->offset < mm->buffer->allocation.bufferSize &&
+               (CHAR_ON_MARKER(mm) != '*' || CHAR_AFTER_MARKER(mm) != '/')) {
+            mm->offset++;
+        }
+        if (mm->offset < mm->buffer->allocation.bufferSize) {
+            mm->offset++;
+            mm->offset++;
+        }
+        offset = mm->offset;
+        moveEditorMarkerToNonBlankOrNewline(mm, 1);
+        if (CHAR_ON_MARKER(mm) == '\n')
+            mm->offset++;
+        else
+            mm->offset = offset;
+    } else if (CHAR_ON_MARKER(mm) == '\n') {
+        mm->offset++;
+    } else {
+        if (options.commentMovingMode == CM_NO_COMMENT)
+            return;
+        mm->offset = offset;
+    }
+}
+
+static int markerWRTComment(EditorMarker *mm, int *commentBeginOffset) {
+    char *b, *s, *e, *mms;
+    assert(mm->buffer && mm->buffer->allocation.text);
+    s   = mm->buffer->allocation.text;
+    e   = s + mm->buffer->allocation.bufferSize;
+    mms = s + mm->offset;
+    while (s < e && s < mms) {
+        b = s;
+        if (*s == '/' && (s + 1) < e && *(s + 1) == '*') {
+            // /**/ comment
+            s += 2;
+            while ((s + 1) < e && !(*s == '*' && *(s + 1) == '/'))
+                s++;
+            if (s + 1 < e)
+                s += 2;
+            if (s > mms) {
+                *commentBeginOffset = b - mm->buffer->allocation.text;
+                return MARKER_IS_IN_STAR_COMMENT;
+            }
+        } else if (*s == '/' && s + 1 < e && *(s + 1) == '/') {
+            // // comment
+            s += 2;
+            while (s < e && *s != '\n')
+                s++;
+            if (s < e)
+                s += 1;
+            if (s > mms) {
+                *commentBeginOffset = b - mm->buffer->allocation.text;
+                return MARKER_IS_IN_SLASH_COMMENT;
+            }
+        } else if (*s == '"') {
+            // string, pass it removing all inside (also /**/ comments)
+            s++;
+            while (s < e && *s != '"') {
+                s++;
+                if (*s == '\\') {
+                    s++;
+                    s++;
+                }
+            }
+            if (s < e)
+                s++;
+        } else {
+            s++;
+        }
+    }
+    return MARKER_IS_IN_CODE;
+}
+
+static void moveMarkerToTheBeginOfDefinitionScope(EditorMarker *mm) {
+    int theBeginningOffset, comBeginOffset, mp;
+    int slashedCommentsProcessed, staredCommentsProcessed;
+
+    slashedCommentsProcessed = staredCommentsProcessed = 0;
+    for (;;) {
+        theBeginningOffset = mm->offset;
+        mm->offset--;
+        moveEditorMarkerToNonBlankOrNewline(mm, -1);
+        if (CHAR_ON_MARKER(mm) == '\n') {
+            theBeginningOffset = mm->offset + 1;
+            mm->offset--;
+        }
+        if (options.commentMovingMode == CM_NO_COMMENT)
+            goto fini;
+        moveEditorMarkerToNonBlank(mm, -1);
+        mp = markerWRTComment(mm, &comBeginOffset);
+        if (mp == MARKER_IS_IN_CODE)
+            goto fini;
+        else if (mp == MARKER_IS_IN_STAR_COMMENT) {
+            if (options.commentMovingMode == CM_SINGLE_SLASHED)
+                goto fini;
+            if (options.commentMovingMode == CM_ALL_SLASHED)
+                goto fini;
+            if (staredCommentsProcessed > 0 && options.commentMovingMode == CM_SINGLE_STARRED)
+                goto fini;
+            if (staredCommentsProcessed > 0 &&
+                options.commentMovingMode == CM_SINGLE_SLASHED_AND_STARRED)
+                goto fini;
+            staredCommentsProcessed++;
+            mm->offset = comBeginOffset;
+        }
+        // slash comment, skip them all
+        else if (mp == MARKER_IS_IN_SLASH_COMMENT) {
+            if (options.commentMovingMode == CM_SINGLE_STARRED)
+                goto fini;
+            if (options.commentMovingMode == CM_ALL_STARRED)
+                goto fini;
+            if (slashedCommentsProcessed > 0 && options.commentMovingMode == CM_SINGLE_SLASHED)
+                goto fini;
+            if (slashedCommentsProcessed > 0 &&
+                options.commentMovingMode == CM_SINGLE_SLASHED_AND_STARRED)
+                goto fini;
+            slashedCommentsProcessed++;
+            mm->offset = comBeginOffset;
+        } else {
+            warningMessage(ERR_INTERNAL, "A new comment?");
+            goto fini;
+        }
+    }
+fini:
+    mm->offset = theBeginningOffset;
+}
+
+static EditorMarker *getTargetFromOptions(void) {
+    EditorMarker *target;
+    EditorBuffer *tb;
+    int           tline;
+
+    tb = findOrCreateAndLoadEditorBufferForFile(
+        normalizeFileName_static(refactoringOptions.moveTargetFile, cwd));
+    if (tb == NULL)
+        FATAL_ERROR(ERR_ST, "Could not find a buffer for target position", XREF_EXIT_ERR);
+    target = newEditorMarker(tb, 0);
+    sscanf(refactoringOptions.refactor_target_line, "%d", &tline);
+    moveEditorMarkerToLineAndColumn(target, tline, 0);
+    return target;
+}
+
+EditorMarker *removeStaticPrefix(EditorMarker *marker) {
+    EditorMarker *startMarker;
+
+    startMarker = createMarkerForExpressionStart(marker, GET_STATIC_PREFIX_START);
+    if (startMarker == NULL) {
+        // this is an error, this is just to avoid possible core dump in the future
+        startMarker = newEditorMarker(marker->buffer, marker->offset);
+    } else {
+        int savedOffset = startMarker->offset;
+        removeNonCommentCode(startMarker, marker->offset - startMarker->offset);
+        // return it back to beginning of name(?)
+        startMarker->offset = savedOffset;
+    }
+    return startMarker;
+}
+
+static char *extractFunctionSignature(EditorMarker *startMarker, EditorMarker *endMarker) {
+
+    int searchOffset = startMarker->offset;
+    int braceOffset = -1;
+    char *text = startMarker->buffer->allocation.text;
+
+    while (searchOffset < endMarker->offset) {
+        if (text[searchOffset] == '{') {
+            braceOffset = searchOffset;
+            break;
+        }
+        searchOffset++;
+    }
+
+    char *functionSignature;
+    if (braceOffset != -1) {
+        /* Extract signature (from start to just before '{') */
+        int signatureLength = braceOffset - startMarker->offset;
+        functionSignature = stackMemoryAlloc(signatureLength + 1);
+        strncpy(functionSignature, &text[startMarker->offset], signatureLength);
+        functionSignature[signatureLength] = '\0';
+
+        /* Trim trailing whitespace from signature */
+        int i = signatureLength - 1;
+        while (i >= 0
+               && (functionSignature[i] == ' ' || functionSignature[i] == '\t'
+                   || functionSignature[i] == '\n' || functionSignature[i] == '\r')) {
+            functionSignature[i] = '\0';
+            i--;
+        }
+    }
+
+    return functionSignature;
+}
+
+static char *findCorrespondingHeaderFile(EditorMarker *target) {
+    char *targetFileName = target->buffer->fileName;
+    char *suffix = getFileSuffix(targetFileName);
+    char *headerFileName = NULL;
+
+    if (strcmp(suffix, ".c") == 0) {
+        /* Build header filename by replacing .c with .h */
+        char headerPath[MAX_FILE_NAME_SIZE];
+        int baseLength = suffix - targetFileName; /* Length up to the '.' */
+
+        strncpy(headerPath, targetFileName, baseLength);
+        headerPath[baseLength] = '\0';
+        strcat(headerPath, ".h");
+
+        if (fileExists(headerPath)) {
+            headerFileName = stackMemoryAlloc(strlen(headerPath) + 1);
+            strcpy(headerFileName, headerPath);
+        }
+    }
+
+    return headerFileName;
+}
+
+static int findHeaderInsertionPoint(EditorBuffer *headerBuffer) {
+    char *text = headerBuffer->allocation.text;
+    int size = headerBuffer->size;
+
+    /* Search backwards for "\n#endif" pattern */
+    for (int i = size - 1; i >= 1; i--) {
+        if (text[i-1] == '\n' && text[i] == '#') {
+            /* Found newline followed by # - check if it's #endif */
+            if (i + 5 < size && strncmp(&text[i], "#endif", 6) == 0) {
+                int offset = i - 1;  /* Start at the '\n' before '#' */
+                while (offset > 0 && isspace(text[offset-1])) {
+                    offset--;
+                }
+                return offset;
+            }
+        }
+    }
+
+    /* Edge case: file starts with #endif (no preceding newline), just insert it first */
+    if (size >= 6 && strncmp(text, "#endif", 6) == 0) {
+        return 0;
+    }
+
+    /* No #endif found - insert at end */
+    return size;
+}
+
+static void insertExternDeclaration(char *functionSignature, EditorBuffer *headerBuffer, int offset) {
+    /* Build extern declaration: "extern <signature>;\n" */
+    char *externDecl =
+        stackMemoryAlloc(strlen("\nextern ") + strlen(functionSignature) + strlen(";") + 1);
+    strcpy(externDecl, "\nextern ");
+    strcat(externDecl, functionSignature);
+    strcat(externDecl, ";");
+
+    /* Insert at the beginning of the header file */
+    replaceStringInEditorBuffer(headerBuffer, offset, 0, externDecl, strlen(externDecl), &editorUndo);
+}
+
+static bool lookingAtStatic(char *text, int remaining) {
+    return remaining >= strlen("static ") && strncmp(text, "static", 6) == 0
+        && (text[6] == ' ' || text[6] == '\t');
+}
+
+static int removeStaticKeywordIfPresent(EditorMarker *startMarker, EditorMarker *point, int size) {
+    EditorMarker *searchMarker = newEditorMarker(startMarker->buffer, startMarker->offset);
+    EditorMarker *staticMarker = NULL;
+    bool foundStatic = false;
+
+    while (searchMarker->offset < point->offset) {
+        char *text = &startMarker->buffer->allocation.text[searchMarker->offset];
+        int remaining = point->offset - searchMarker->offset;
+
+        /* Check if we're at "static " (with space or tab after) */
+        if (lookingAtStatic(text, remaining)) {
+            foundStatic = true;
+            staticMarker = newEditorMarker(startMarker->buffer, searchMarker->offset);
+            break;
+        }
+        searchMarker->offset++;
+    }
+    freeEditorMarker(searchMarker);
+
+    if (foundStatic) {
+        replaceStringInEditorBuffer(staticMarker->buffer, staticMarker->offset, 7, "", 0, &editorUndo);
+        freeEditorMarker(staticMarker);
+        /* Adjust size since we removed "static " */
+        size -= strlen("static ");
+    }
+
+    return size;
+}
+
+static bool sourceAlreadyIncludesHeader(EditorBuffer *sourceBuffer, char *headerFileName) {
+    int sourceFileNumber = sourceBuffer->fileNumber;
+    int headerFileNumber = getFileNumberFromName(headerFileName);
+
+    if (headerFileNumber == NO_FILE_NUMBER) {
+        return false;  /* Header file not in file table yet */
+    }
+
+    /* Ensure include references are loaded from database */
+    ensureReferencesAreLoadedFor(LINK_NAME_INCLUDE_REFS);
+
+    /* Create search item for the header file */
+    ReferenceableItem searchItem = makeReferenceableItem(
+        LINK_NAME_INCLUDE_REFS,
+        TypeCppInclude,
+        StorageExtern,
+        GlobalScope,
+        VisibilityGlobal,
+        headerFileNumber
+        );
+
+    /* Look it up in the reference table */
+    ReferenceableItem *foundItem;
+    if (isMemberInReferenceableItemTable(&searchItem, NULL, &foundItem)) {
+        /* Check if source file appears in the references */
+        for (Reference *ref = foundItem->references; ref != NULL; ref = ref->next) {
+            if (ref->position.file == sourceFileNumber && ref->usage == UsageUsed) {
+                return true;  /* source.c already includes header! */
+            }
+        }
+    }
+
+    return false;  /* Include not found */
+}
+
+static int findIncludeInsertionPoint(EditorBuffer *buffer) {
+    char *text = buffer->allocation.text;
+    int size = buffer->size;
+    int lastIncludeEnd = 0;  /* Position after last include, or 0 if none found */
+
+    /* Scan forward looking for #include directives */
+    for (int i = 0; i < size - 8; i++) {  /* 8 = strlen("#include") */
+        /* Look for newline followed by #include (or start of file) */
+        if ((i == 0 || text[i-1] == '\n') && text[i] == '#') {
+            if (strncmp(&text[i], "#include", 8) == 0) {
+                /* Found an include - find the end of this line */
+                int j = i + 8;
+                while (j < size && text[j] != '\n') {
+                    j++;
+                }
+                if (j < size) {
+                    lastIncludeEnd = j + 1;  /* Position after the newline */
+                }
+            }
+        }
+    }
+
+    return lastIncludeEnd;  /* 0 if no includes found = insert at start */
+}
+
+
+static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorMarker *point,
+                                              EditorMarker *endMarker, EditorMarker *target) {
+    int functionBlockSize = endMarker->offset - startMarker->offset;
+    EditorBuffer *sourceBuffer = startMarker->buffer;
+    if (target->buffer == startMarker->buffer && target->offset > startMarker->offset &&
+        target->offset < startMarker->offset + functionBlockSize) {
+        ppcGenRecord(PPC_INFORMATION, "You can't move something into itself.");
+        return;
+    }
+
+    /* Check if function has "static" keyword and remove it when moving between files.
+     * When moving within the same file, keep static (visibility doesn't change). */
+    bool movingBetweenFiles = (startMarker->buffer != target->buffer);
+
+    if (movingBetweenFiles) {
+        functionBlockSize = removeStaticKeywordIfPresent(startMarker, point, functionBlockSize);
+    }
+
+    /* Extract function signature for extern declaration (before moving) */
+    char *functionSignature = NULL;
+    if (movingBetweenFiles) {
+        /* Find the opening brace to determine where signature ends */
+        functionSignature = extractFunctionSignature(startMarker, endMarker);
+    }
+
+    /* Now move the (possibly modified) function block */
+    moveBlockInEditorBuffer(startMarker, target, functionBlockSize, &editorUndo);
+
+    /* After moving the function, check if we need to add an extern declaration to the header */
+    char *headerFileName = NULL;
+    if (movingBetweenFiles) {
+        headerFileName = findCorrespondingHeaderFile(target);
+    }
+
+    /* Insert extern declaration into header file if we have both header and signature */
+    if (headerFileName != NULL && functionSignature != NULL) {
+        EditorBuffer *headerBuffer = findOrCreateAndLoadEditorBufferForFile(headerFileName);
+        int insertionOffset = findHeaderInsertionPoint(headerBuffer);
+        insertExternDeclaration(functionSignature, headerBuffer, insertionOffset);
+
+        /* Check if source file needs to include the header */
+        if (!sourceAlreadyIncludesHeader(sourceBuffer, headerFileName)) {
+            /* Build the include directive */
+            char *baseHeaderName = simpleFileName(headerFileName);
+            char *includeDirective = stackMemoryAlloc(strlen("#include \"") + strlen(baseHeaderName) + strlen("\"\n") + 1);
+            strcpy(includeDirective, "#include \"");
+            strcat(includeDirective, baseHeaderName);
+            strcat(includeDirective, "\"\n");
+
+            /* Insert at beginning of source file */
+            int insertionOffset = findIncludeInsertionPoint(sourceBuffer);
+            replaceStringInEditorBuffer(sourceBuffer, insertionOffset, 0, includeDirective, strlen(includeDirective), &editorUndo);
+        }
+    }
+}
+
+void moveFunction(EditorMarker *point) {
+    EditorMarker *target = getTargetFromOptions();
+
+    if (!isValidMoveTarget(target)) {
+        errorMessage(ERR_ST, "Invalid target place");
+        return;
+    }
+
+    ensureReferencesAreUpdated(refactoringOptions.project);
+
+    /* Get function boundaries */
+    FunctionBoundariesResult bounds = getFunctionBoundaries(point);
+
+    if (!bounds.found) {
+        FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
+    }
+
+    /* Convert positions to markers and adjust for definition scope */
+    EditorMarker *functionStart = newEditorMarkerForPosition(bounds.functionBegin);
+    EditorMarker *functionEnd = newEditorMarkerForPosition(bounds.functionEnd);
+    moveMarkerToTheBeginOfDefinitionScope(functionStart);
+    moveMarkerToTheEndOfDefinitionScope(functionEnd);
+
+    int lines = countLinesBetweenEditorMarkers(functionStart, functionEnd);
+
+    // O.K. Now STARTING!
+    moveStaticFunctionAndMakeItExtern(functionStart, point, functionEnd, target);
+
+    // and generate output
+    applyWholeRefactoringFromUndo();
+    ppcGotoMarker(point);
+    ppcValueRecord(PPC_INDENT, lines, "");
+}

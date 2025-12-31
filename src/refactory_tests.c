@@ -17,6 +17,7 @@
 #include "fileio.mock"
 #include "globals.mock"
 #include "misc.mock"
+#include "move_function.mock"
 #include "options.mock"
 #include "organize_includes.mock"
 #include "parsing.mock"
