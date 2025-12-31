@@ -1,0 +1,24 @@
+<update-report>
+ <information len=<n>>C-xrefactory project: CURDIR</information>
+ <information len=<n>>CURDIR/source.c</information>
+ <information len=<n>>Generating 'CURDIR/CXrefs'</information>
+</update-report>
+<goto>
+ <position-off off=0 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>#include "memory.h"
+#include <string.h>
+#include "source.h"
+#include <stdio.h>
+#include "commons.h"
+</str>  <str len=<n>>#include "source.h"
+
+#include <stdio.h>
+#include <string.h>
+
+#include "commons.h"
+#include "memory.h"
+</str>
+</replacement>
+<sync>
