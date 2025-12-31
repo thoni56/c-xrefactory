@@ -1,3 +1,5 @@
+#include "source.h"
+
 static void func() {
     int a = 0;
 }

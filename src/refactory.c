@@ -10,6 +10,7 @@
  */
 #include "argumentsvector.h"
 #include "commons.h"
+#include "cxfile.h"
 #include "cxref.h"
 #include "editor.h"
 #include "editorbuffer.h"
@@ -20,6 +21,7 @@
 #include "head.h"
 #include "list.h"
 #include "parsing.h"
+#include "referenceableitemtable.h"
 #include "startup.h"
 #include "misc.h"
 #include "options.h"
@@ -1578,9 +1580,71 @@ static int removeStaticKeywordIfPresent(EditorMarker *startMarker, EditorMarker 
     return size;
 }
 
+static bool sourceAlreadyIncludesHeader(EditorBuffer *sourceBuffer, char *headerFileName) {
+    int sourceFileNumber = sourceBuffer->fileNumber;
+    int headerFileNumber = getFileNumberFromName(headerFileName);
+
+    if (headerFileNumber == NO_FILE_NUMBER) {
+        return false;  /* Header file not in file table yet */
+    }
+
+    /* Ensure include references are loaded from database */
+    ensureReferencesAreLoadedFor(LINK_NAME_INCLUDE_REFS);
+
+    /* Create search item for the header file */
+    ReferenceableItem searchItem = makeReferenceableItem(
+        LINK_NAME_INCLUDE_REFS,
+        TypeCppInclude,
+        StorageExtern,
+        GlobalScope,
+        VisibilityGlobal,
+        headerFileNumber
+        );
+
+    /* Look it up in the reference table */
+    ReferenceableItem *foundItem;
+    if (isMemberInReferenceableItemTable(&searchItem, NULL, &foundItem)) {
+        /* Check if source file appears in the references */
+        for (Reference *ref = foundItem->references; ref != NULL; ref = ref->next) {
+            if (ref->position.file == sourceFileNumber && ref->usage == UsageUsed) {
+                return true;  /* source.c already includes header! */
+            }
+        }
+    }
+
+    return false;  /* Include not found */
+}
+
+static int findIncludeInsertionPoint(EditorBuffer *buffer) {
+    char *text = buffer->allocation.text;
+    int size = buffer->size;
+    int lastIncludeEnd = 0;  /* Position after last include, or 0 if none found */
+
+    /* Scan forward looking for #include directives */
+    for (int i = 0; i < size - 8; i++) {  /* 8 = strlen("#include") */
+        /* Look for newline followed by #include (or start of file) */
+        if ((i == 0 || text[i-1] == '\n') && text[i] == '#') {
+            if (strncmp(&text[i], "#include", 8) == 0) {
+                /* Found an include - find the end of this line */
+                int j = i + 8;
+                while (j < size && text[j] != '\n') {
+                    j++;
+                }
+                if (j < size) {
+                    lastIncludeEnd = j + 1;  /* Position after the newline */
+                }
+            }
+        }
+    }
+
+    return lastIncludeEnd;  /* 0 if no includes found = insert at start */
+}
+
+
 static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorMarker *point,
                                               EditorMarker *endMarker, EditorMarker *target) {
     int functionBlockSize = endMarker->offset - startMarker->offset;
+    EditorBuffer *sourceBuffer = startMarker->buffer;
     if (target->buffer == startMarker->buffer && target->offset > startMarker->offset &&
         target->offset < startMarker->offset + functionBlockSize) {
         ppcGenRecord(PPC_INFORMATION, "You can't move something into itself.");
@@ -1616,6 +1680,20 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
         EditorBuffer *headerBuffer = findOrCreateAndLoadEditorBufferForFile(headerFileName);
         int insertionOffset = findHeaderInsertionPoint(headerBuffer);
         insertExternDeclaration(functionSignature, headerBuffer, insertionOffset);
+
+        /* Check if source file needs to include the header */
+        if (!sourceAlreadyIncludesHeader(sourceBuffer, headerFileName)) {
+            /* Build the include directive */
+            char *baseHeaderName = simpleFileName(headerFileName);
+            char *includeDirective = stackMemoryAlloc(strlen("#include \"") + strlen(baseHeaderName) + strlen("\"\n") + 1);
+            strcpy(includeDirective, "#include \"");
+            strcat(includeDirective, baseHeaderName);
+            strcat(includeDirective, "\"\n");
+
+            /* Insert at beginning of source file */
+            int insertionOffset = findIncludeInsertionPoint(sourceBuffer);
+            replaceStringInEditorBuffer(sourceBuffer, insertionOffset, 0, includeDirective, strlen(includeDirective), &editorUndo);
+        }
     }
 }
 

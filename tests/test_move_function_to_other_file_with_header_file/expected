@@ -5,13 +5,13 @@
  <information len=<n>>Generating 'CURDIR/CXrefs'</information>
 </update-report>
 <goto>
- <position-off off=0 len=<n>>CURDIR/source.c</position-off>
+ <position-off off=21 len=<n>>CURDIR/source.c</position-off>
 </goto>
 <replacement>
  <str len=<n>>static </str>  <str len=<n>></str>
 </replacement>
 <goto>
- <position-off off=0 len=<n>>CURDIR/source.c</position-off>
+ <position-off off=21 len=<n>>CURDIR/source.c</position-off>
 </goto>
 <cut-block val=31 len=<n>></cut-block>
 <goto>
@@ -26,7 +26,14 @@
 extern void func();</str>
 </replacement>
 <goto>
- <position-off off=24 len=<n>>CURDIR/target.c</position-off>
+ <position-off off=20 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>#include "target.h"
+</str>
+</replacement>
+<goto>
+ <position-off off=23 len=<n>>CURDIR/target.c</position-off>
 </goto>
 <indent-block val=3 len=<n>></indent-block>
 <sync>
