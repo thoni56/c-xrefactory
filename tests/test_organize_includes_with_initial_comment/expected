@@ -1,0 +1,19 @@
+<goto>
+ <position-off off=29 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>#include "memory.h"
+#include <string.h>
+#include "source.h"
+#include <stdio.h>
+#include "commons.h"
+</str>  <str len=<n>>#include "source.h"
+
+#include <stdio.h>
+#include <string.h>
+
+#include "commons.h"
+#include "memory.h"
+</str>
+</replacement>
+<sync>

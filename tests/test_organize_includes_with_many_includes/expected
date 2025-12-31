@@ -1,0 +1,58 @@
+<goto>
+ <position-off off=0 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>#include "xref.h"
+
+#include <string.h>
+#include <stdlib.h>
+
+#include "argumentsvector.h"
+#include "commons.h"
+#include "cxfile.h"
+#include "cxref.h"
+#include "filedescriptor.h"
+#include "filetable.h"
+#include "globals.h"
+#include "head.h"
+#include "list.h"
+#include "log.h"
+#include "startup.h"
+#include "memory.h"
+#include "misc.h"
+#include "options.h"
+#include "parsers.h"
+#include "parsing.h"
+#include "ppc.h"
+#include "proto.h"
+#include "protocol.h"
+#include "referenceableitemtable.h"
+#include "yylex.h"
+</str>  <str len=<n>>#include <stdlib.h>
+#include <string.h>
+
+#include "argumentsvector.h"
+#include "commons.h"
+#include "cxfile.h"
+#include "cxref.h"
+#include "filedescriptor.h"
+#include "filetable.h"
+#include "globals.h"
+#include "head.h"
+#include "list.h"
+#include "log.h"
+#include "memory.h"
+#include "misc.h"
+#include "options.h"
+#include "parsers.h"
+#include "parsing.h"
+#include "ppc.h"
+#include "proto.h"
+#include "protocol.h"
+#include "referenceableitemtable.h"
+#include "startup.h"
+#include "xref.h"
+#include "yylex.h"
+</str>
+</replacement>
+<sync>

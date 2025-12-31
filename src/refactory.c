@@ -1911,8 +1911,15 @@ static void organizeIncludes(EditorMarker *point) {
     char *ownHeaderName = getOwnHeaderName(buffer->fileName);
 
     // Classify includes into 4 groups
-    IncludeEntry *groups[4][10];  // Max 10 per group for now
+    IncludeEntry **groups[4];  // Array of pointers for each group
     int groupCounts[4] = {0, 0, 0, 0};
+    int groupCapacities[4];
+
+    // Allocate initial capacity for each group
+    for (int g = 0; g < 4; g++) {
+        groupCapacities[g] = 10;
+        groups[g] = stackMemoryAlloc(groupCapacities[g] * sizeof(IncludeEntry *));
+    }
 
     for (int i = 0; i < count; i++) {
         char *text = includes[i].text;
@@ -1948,6 +1955,14 @@ static void organizeIncludes(EditorMarker *point) {
             }
         } else {
             group = 2;  // Default to project header
+        }
+
+        // Grow array if needed
+        if (groupCounts[group] >= groupCapacities[group]) {
+            groupCapacities[group] *= 2;
+            IncludeEntry **newGroup = stackMemoryAlloc(groupCapacities[group] * sizeof(IncludeEntry *));
+            memcpy(newGroup, groups[group], groupCounts[group] * sizeof(IncludeEntry *));
+            groups[group] = newGroup;
         }
 
         groups[group][groupCounts[group]++] = &includes[i];
