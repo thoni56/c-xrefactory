@@ -778,10 +778,7 @@ static void renameIncludes(EditorMarkerList *markers, char *currentIncludeFileNa
     renameFile(markerForTheFile, newName);
 }
 
-static void simpleRename(EditorMarkerList *markerList, EditorMarker *marker, char *symbolName,
-                         char *symbolLinkName
-) {
-    // assert(options.theRefactoring == refactoringOptions.theRefactoring);
+static void simpleRename(EditorMarkerList *markerList, EditorMarker *marker, char *symbolName) {
     assert(refactoringOptions.theRefactoring != AVR_RENAME_INCLUDED_FILE);
     for (EditorMarkerList *l = markerList; l != NULL; l = l->next) {
         renameFromTo(l->marker, symbolName, refactoringOptions.renameTo);
@@ -861,14 +858,11 @@ static void renameAtPoint(EditorMarker *point) {
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
     occurrences = pushGetAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
 
-    BrowserMenu *symbolsMenu = sessionData.browsingStack.top->hkSelectedSym;
-    char *symLinkName = symbolsMenu->referenceable.linkName;
-
     EditorUndo *undoStartPoint = editorUndo;
 
     multipleOccurrenciesSafetyCheck();
 
-    simpleRename(occurrences, point, nameOnPoint, symLinkName);
+    simpleRename(occurrences, point, nameOnPoint);
     //&dumpEditorBuffers();
     EditorUndo *redoTrack = NULL;
     if (!makeSafetyCheckAndUndo(point, &occurrences, undoStartPoint, &redoTrack)) {
@@ -1081,7 +1075,7 @@ static int isThisSymbolUsed(EditorMarker *marker) {
     return refn > 1;
 }
 
-static int isParameterUsedExceptRecursiveCalls(EditorMarker *pmarker, EditorMarker *fmarker) {
+static int isParameterUsedExceptRecursiveCalls(EditorMarker *pmarker) {
     // TODO: simplification for now - is it used at all?
     return isThisSymbolUsed(pmarker);
 }
@@ -1104,7 +1098,7 @@ static void checkThatParameterIsUnused(EditorMarker *marker, char *functionName,
     EditorMarker *positionMarker = newEditorMarkerForPosition(parameterPosition);
     strncpy(parameterName, getIdentifierOnMarker_static(positionMarker), TMP_STRING_SIZE);
     parameterName[TMP_STRING_SIZE - 1] = 0;
-    if (isParameterUsedExceptRecursiveCalls(positionMarker, marker)) {
+    if (isParameterUsedExceptRecursiveCalls(positionMarker)) {
         char tmpBuff[TMP_BUFF_SIZE];
         if (checkKind == CHECK_FOR_ADD_PARAM) {
             sprintf(tmpBuff, "parameter '%s' clashes with an existing symbol, continue anyway?", parameterName);
