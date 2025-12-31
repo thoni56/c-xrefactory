@@ -1980,15 +1980,31 @@ static int classifyInclude(char *ownHeaderName, char *includeStart) {
     return group;
 }
 
+static void addIncludeToCorrectGroup(IncludeEntry *include, char *ownHeaderName,
+                                     IncludeEntry **groups[], int groupCounts[],
+                                     int groupCapacities[]) {
+    char *includeStart = strstr(include->text, "#include");
+
+    if (includeStart) {
+        int group = classifyInclude(ownHeaderName, includeStart);
+
+        if (groupCounts[group] >= groupCapacities[group]) {
+            growArray(groups, groupCounts, groupCapacities, group);
+        }
+
+        groups[group][groupCounts[group]++] = include;
+    }
+}
+
 static void organizeIncludes(EditorMarker *point) {
     assert(point);
 
     EditorBuffer *buffer = point->buffer;
 
     IncludeEntry *includes;
-    int count = collectIncludes(buffer, point->offset, &includes);
+    int noOfIncludes = collectIncludes(buffer, point->offset, &includes);
 
-    if (count == 0) {
+    if (noOfIncludes == 0) {
         errorMessage(ERR_ST, "No includes found");
         return;
     }
@@ -2006,35 +2022,20 @@ static void organizeIncludes(EditorMarker *point) {
         groups[g] = stackMemoryAlloc(groupCapacities[g] * sizeof(IncludeEntry *));
     }
 
-    for (int i = 0; i < count; i++) {
-        char *text = includes[i].text;
-        char *includeStart = strstr(text, "#include");
-
-        if (includeStart) {
-            int group = classifyInclude(ownHeaderName, includeStart);
-
-            if (groupCounts[group] >= groupCapacities[group]) {
-                growArray(groups, groupCounts, groupCapacities, group);
-            }
-
-            groups[group][groupCounts[group]++] = &includes[i];
-        }
+    for (int i = 0; i < noOfIncludes; i++) {
+        addIncludeToCorrectGroup(&includes[i], ownHeaderName, groups, groupCounts, groupCapacities);
     }
 
     sortEachGroup(groups, groupCounts);
 
     char *newText = createOrganizedIncludes(groups, groupCounts);
 
-    // Apply replacement
-    applyReplacement(buffer, includes, count, newText);
+    applyReplacement(buffer, includes, noOfIncludes, newText);
 
-    // Generate output
     applyWholeRefactoringFromUndo();
 }
 
 static char *computeUpdateOptionForSymbol(EditorMarker *point) {
-    int               fileNumber;
-    char             *selectedUpdateOption;
 
     assert(point != NULL && point->buffer != NULL);
     currentLanguage = getLanguageFor(point->buffer->fileName);
@@ -2046,6 +2047,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     Scope scope = menu->referenceable.scope;
     Visibility visibility = menu->referenceable.visibility;
 
+    int fileNumber;
     if (markerList == NULL) {
         fileNumber = NO_FILE_NUMBER;
     } else {
@@ -2063,6 +2065,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
         }
     }
 
+    char *selectedUpdateOption;
     if (visibility == VisibilityLocal) {
         // useless to update when there is nothing about the symbol in Tags
         selectedUpdateOption = "";
