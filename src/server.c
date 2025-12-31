@@ -10,14 +10,14 @@
 #include "globals.h"
 #include "head.h"
 #include "log.h"
-#include "startup.h"
 #include "misc.h"
 #include "options.h"
-#include "parsing.h"
 #include "parsers.h"
+#include "parsing.h"
 #include "ppc.h"
 #include "referenceableitemtable.h"
 #include "session.h"
+#include "startup.h"
 #include "yylex.h"
 
 

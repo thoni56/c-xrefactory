@@ -1,7 +1,7 @@
 #include "xref.h"
 
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "argumentsvector.h"
 #include "commons.h"
@@ -13,17 +13,17 @@
 #include "head.h"
 #include "list.h"
 #include "log.h"
-#include "startup.h"
 #include "memory.h"
 #include "misc.h"
 #include "options.h"
 #include "parsers.h"
 #include "parsing.h"
-#include "progress.h"
 #include "ppc.h"
+#include "progress.h"
 #include "proto.h"
 #include "protocol.h"
 #include "referenceableitemtable.h"
+#include "startup.h"
 #include "yylex.h"
 
 

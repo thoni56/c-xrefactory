@@ -1,10 +1,11 @@
+#include "server.h"
+
+/* Unittests for Server */
+
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
 
-#include "server.h"
-
 #include "log.h"
-
 
 #include "browsermenu.mock"
 #include "characterreader.mock"
