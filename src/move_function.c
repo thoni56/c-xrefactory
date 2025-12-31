@@ -28,178 +28,162 @@
 #include "undo.h"
 
 
-static void moveMarkerToTheEndOfDefinitionScope(EditorMarker *mm) {
+static void moveMarkerToTheEndOfDefinitionScope(EditorMarker *marker) {
     int offset;
-    offset = mm->offset;
-    moveEditorMarkerToNonBlankOrNewline(mm, 1);
-    if (mm->offset >= mm->buffer->allocation.bufferSize) {
+    offset = marker->offset;
+    moveEditorMarkerToNonBlankOrNewline(marker, 1);
+    if (marker->offset >= marker->buffer->allocation.bufferSize) {
         return;
     }
-    if (CHAR_ON_MARKER(mm) == '/' && CHAR_AFTER_MARKER(mm) == '/') {
+    if (CHAR_ON_MARKER(marker) == '/' && CHAR_AFTER_MARKER(marker) == '/') {
         if (options.commentMovingMode == CM_NO_COMMENT)
             return;
-        moveEditorMarkerToNewline(mm, 1);
-        mm->offset++;
-    } else if (CHAR_ON_MARKER(mm) == '/' && CHAR_AFTER_MARKER(mm) == '*') {
+        moveEditorMarkerToNewline(marker, 1);
+        marker->offset++;
+    } else if (CHAR_ON_MARKER(marker) == '/' && CHAR_AFTER_MARKER(marker) == '*') {
         if (options.commentMovingMode == CM_NO_COMMENT)
             return;
-        mm->offset++;
-        mm->offset++;
-        while (mm->offset < mm->buffer->allocation.bufferSize &&
-               (CHAR_ON_MARKER(mm) != '*' || CHAR_AFTER_MARKER(mm) != '/')) {
-            mm->offset++;
+        marker->offset++;
+        marker->offset++;
+        while (marker->offset < marker->buffer->allocation.bufferSize &&
+               (CHAR_ON_MARKER(marker) != '*' || CHAR_AFTER_MARKER(marker) != '/')) {
+            marker->offset++;
         }
-        if (mm->offset < mm->buffer->allocation.bufferSize) {
-            mm->offset++;
-            mm->offset++;
+        if (marker->offset < marker->buffer->allocation.bufferSize) {
+            marker->offset++;
+            marker->offset++;
         }
-        offset = mm->offset;
-        moveEditorMarkerToNonBlankOrNewline(mm, 1);
-        if (CHAR_ON_MARKER(mm) == '\n')
-            mm->offset++;
+        offset = marker->offset;
+        moveEditorMarkerToNonBlankOrNewline(marker, 1);
+        if (CHAR_ON_MARKER(marker) == '\n')
+            marker->offset++;
         else
-            mm->offset = offset;
-    } else if (CHAR_ON_MARKER(mm) == '\n') {
-        mm->offset++;
+            marker->offset = offset;
+    } else if (CHAR_ON_MARKER(marker) == '\n') {
+        marker->offset++;
     } else {
         if (options.commentMovingMode == CM_NO_COMMENT)
             return;
-        mm->offset = offset;
+        marker->offset = offset;
     }
 }
 
-static int markerWRTComment(EditorMarker *mm, int *commentBeginOffset) {
-    char *b, *s, *e, *mms;
-    assert(mm->buffer && mm->buffer->allocation.text);
-    s   = mm->buffer->allocation.text;
-    e   = s + mm->buffer->allocation.bufferSize;
-    mms = s + mm->offset;
-    while (s < e && s < mms) {
-        b = s;
-        if (*s == '/' && (s + 1) < e && *(s + 1) == '*') {
+static MarkerLocationKind markerWRTComment(EditorMarker *marker, int *commentBeginOffset) {
+    char *begin, *end, *mms;
+    assert(marker->buffer && marker->buffer->allocation.text);
+    char *text = marker->buffer->allocation.text;
+    end = text + marker->buffer->allocation.bufferSize;
+    mms = text + marker->offset;
+    while (text < end && text < mms) {
+        begin = text;
+        if (*text == '/' && (text + 1) < end && *(text + 1) == '*') {
             // /**/ comment
-            s += 2;
-            while ((s + 1) < e && !(*s == '*' && *(s + 1) == '/'))
-                s++;
-            if (s + 1 < e)
-                s += 2;
-            if (s > mms) {
-                *commentBeginOffset = b - mm->buffer->allocation.text;
+            text += 2;
+            while ((text + 1) < end && !(*text == '*' && *(text + 1) == '/'))
+                text++;
+            if (text + 1 < end)
+                text += 2;
+            if (text > mms) {
+                *commentBeginOffset = begin - marker->buffer->allocation.text;
                 return MARKER_IS_IN_STAR_COMMENT;
             }
-        } else if (*s == '/' && s + 1 < e && *(s + 1) == '/') {
+        } else if (*text == '/' && text + 1 < end && *(text + 1) == '/') {
             // // comment
-            s += 2;
-            while (s < e && *s != '\n')
-                s++;
-            if (s < e)
-                s += 1;
-            if (s > mms) {
-                *commentBeginOffset = b - mm->buffer->allocation.text;
+            text += 2;
+            while (text < end && *text != '\n')
+                text++;
+            if (text < end)
+                text += 1;
+            if (text > mms) {
+                *commentBeginOffset = begin - marker->buffer->allocation.text;
                 return MARKER_IS_IN_SLASH_COMMENT;
             }
-        } else if (*s == '"') {
+        } else if (*text == '"') {
             // string, pass it removing all inside (also /**/ comments)
-            s++;
-            while (s < e && *s != '"') {
-                s++;
-                if (*s == '\\') {
-                    s++;
-                    s++;
+            text++;
+            while (text < end && *text != '"') {
+                text++;
+                if (*text == '\\') {
+                    text++;
+                    text++;
                 }
             }
-            if (s < e)
-                s++;
+            if (text < end)
+                text++;
         } else {
-            s++;
+            text++;
         }
     }
     return MARKER_IS_IN_CODE;
 }
 
-static void moveMarkerToTheBeginOfDefinitionScope(EditorMarker *mm) {
-    int theBeginningOffset, comBeginOffset, mp;
-    int slashedCommentsProcessed, staredCommentsProcessed;
+static void moveMarkerToTheBeginOfDefinitionScope(EditorMarker *marker) {
+    int offsetToBeginning;
 
-    slashedCommentsProcessed = staredCommentsProcessed = 0;
+    int slashedCommentsProcessed = 0;
+    int staredCommentsProcessed = 0;
     for (;;) {
-        theBeginningOffset = mm->offset;
-        mm->offset--;
-        moveEditorMarkerToNonBlankOrNewline(mm, -1);
-        if (CHAR_ON_MARKER(mm) == '\n') {
-            theBeginningOffset = mm->offset + 1;
-            mm->offset--;
+        offsetToBeginning = marker->offset;
+        marker->offset--;
+        moveEditorMarkerToNonBlankOrNewline(marker, -1);
+        if (CHAR_ON_MARKER(marker) == '\n') {
+            offsetToBeginning = marker->offset + 1;
+            marker->offset--;
         }
         if (options.commentMovingMode == CM_NO_COMMENT)
-            goto fini;
-        moveEditorMarkerToNonBlank(mm, -1);
-        mp = markerWRTComment(mm, &comBeginOffset);
-        if (mp == MARKER_IS_IN_CODE)
-            goto fini;
-        else if (mp == MARKER_IS_IN_STAR_COMMENT) {
+            break;
+        moveEditorMarkerToNonBlank(marker, -1);
+        int comBeginOffset;
+        MarkerLocationKind markerLocationKind = markerWRTComment(marker, &comBeginOffset);
+        if (markerLocationKind == MARKER_IS_IN_CODE)
+            break;
+        else if (markerLocationKind == MARKER_IS_IN_STAR_COMMENT) {
             if (options.commentMovingMode == CM_SINGLE_SLASHED)
-                goto fini;
+                break;
             if (options.commentMovingMode == CM_ALL_SLASHED)
-                goto fini;
+                break;
             if (staredCommentsProcessed > 0 && options.commentMovingMode == CM_SINGLE_STARRED)
-                goto fini;
+                break;
             if (staredCommentsProcessed > 0 &&
                 options.commentMovingMode == CM_SINGLE_SLASHED_AND_STARRED)
-                goto fini;
+                break;
             staredCommentsProcessed++;
-            mm->offset = comBeginOffset;
+            marker->offset = comBeginOffset;
         }
         // slash comment, skip them all
-        else if (mp == MARKER_IS_IN_SLASH_COMMENT) {
+        else if (markerLocationKind == MARKER_IS_IN_SLASH_COMMENT) {
             if (options.commentMovingMode == CM_SINGLE_STARRED)
-                goto fini;
+                break;
             if (options.commentMovingMode == CM_ALL_STARRED)
-                goto fini;
+                break;
             if (slashedCommentsProcessed > 0 && options.commentMovingMode == CM_SINGLE_SLASHED)
-                goto fini;
+                break;
             if (slashedCommentsProcessed > 0 &&
                 options.commentMovingMode == CM_SINGLE_SLASHED_AND_STARRED)
-                goto fini;
+                break;
             slashedCommentsProcessed++;
-            mm->offset = comBeginOffset;
+            marker->offset = comBeginOffset;
         } else {
             warningMessage(ERR_INTERNAL, "A new comment?");
-            goto fini;
+            break;
         }
     }
-fini:
-    mm->offset = theBeginningOffset;
+    marker->offset = offsetToBeginning;
 }
 
 static EditorMarker *getTargetFromOptions(void) {
     EditorMarker *target;
-    EditorBuffer *tb;
-    int           tline;
+    EditorBuffer *targetBuffer;
+    int           targetLine;
 
-    tb = findOrCreateAndLoadEditorBufferForFile(
+    targetBuffer = findOrCreateAndLoadEditorBufferForFile(
         normalizeFileName_static(refactoringOptions.moveTargetFile, cwd));
-    if (tb == NULL)
+    if (targetBuffer == NULL)
         FATAL_ERROR(ERR_ST, "Could not find a buffer for target position", XREF_EXIT_ERR);
-    target = newEditorMarker(tb, 0);
-    sscanf(refactoringOptions.refactor_target_line, "%d", &tline);
-    moveEditorMarkerToLineAndColumn(target, tline, 0);
+    target = newEditorMarker(targetBuffer, 0);
+    sscanf(refactoringOptions.refactor_target_line, "%d", &targetLine);
+    moveEditorMarkerToLineAndColumn(target, targetLine, 0);
     return target;
-}
-
-EditorMarker *removeStaticPrefix(EditorMarker *marker) {
-    EditorMarker *startMarker;
-
-    startMarker = createMarkerForExpressionStart(marker, GET_STATIC_PREFIX_START);
-    if (startMarker == NULL) {
-        // this is an error, this is just to avoid possible core dump in the future
-        startMarker = newEditorMarker(marker->buffer, marker->offset);
-    } else {
-        int savedOffset = startMarker->offset;
-        removeNonCommentCode(startMarker, marker->offset - startMarker->offset);
-        // return it back to beginning of name(?)
-        startMarker->offset = savedOffset;
-    }
-    return startMarker;
 }
 
 static char *extractFunctionSignature(EditorMarker *startMarker, EditorMarker *endMarker) {
@@ -324,7 +308,8 @@ static int removeStaticKeywordIfPresent(EditorMarker *startMarker, EditorMarker 
     freeEditorMarker(searchMarker);
 
     if (foundStatic) {
-        replaceStringInEditorBuffer(staticMarker->buffer, staticMarker->offset, 7, "", 0, &editorUndo);
+        replaceStringInEditorBuffer(staticMarker->buffer, staticMarker->offset, strlen("static "),
+                                    "", 0, &editorUndo);
         freeEditorMarker(staticMarker);
         /* Adjust size since we removed "static " */
         size -= strlen("static ");
@@ -345,14 +330,9 @@ static bool sourceAlreadyIncludesHeader(EditorBuffer *sourceBuffer, char *header
     ensureReferencesAreLoadedFor(LINK_NAME_INCLUDE_REFS);
 
     /* Create search item for the header file */
-    ReferenceableItem searchItem = makeReferenceableItem(
-        LINK_NAME_INCLUDE_REFS,
-        TypeCppInclude,
-        StorageExtern,
-        GlobalScope,
-        VisibilityGlobal,
-        headerFileNumber
-        );
+    ReferenceableItem searchItem = makeReferenceableItem(LINK_NAME_INCLUDE_REFS, TypeCppInclude,
+                                                         StorageExtern, GlobalScope, VisibilityGlobal,
+                                                         headerFileNumber);
 
     /* Look it up in the reference table */
     ReferenceableItem *foundItem;
@@ -360,7 +340,7 @@ static bool sourceAlreadyIncludesHeader(EditorBuffer *sourceBuffer, char *header
         /* Check if source file appears in the references */
         for (Reference *ref = foundItem->references; ref != NULL; ref = ref->next) {
             if (ref->position.file == sourceFileNumber && ref->usage == UsageUsed) {
-                return true;  /* source.c already includes header! */
+                return true;  /* source file already includes header! */
             }
         }
     }
@@ -460,7 +440,6 @@ void moveFunction(EditorMarker *point) {
 
     ensureReferencesAreUpdated(refactoringOptions.project);
 
-    /* Get function boundaries */
     FunctionBoundariesResult bounds = getFunctionBoundaries(point);
 
     if (!bounds.found) {
@@ -475,7 +454,6 @@ void moveFunction(EditorMarker *point) {
 
     int lines = countLinesBetweenEditorMarkers(functionStart, functionEnd);
 
-    // O.K. Now STARTING!
     moveStaticFunctionAndMakeItExtern(functionStart, point, functionEnd, target);
 
     // and generate output
