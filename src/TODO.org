@@ -54,12 +54,12 @@ rescanned. I'm not sure how that works, but we need tests for it.
 *** DONE Update all #includes
 *** DONE Prohibit rename of files included with '<>'
 * TODO FEATURE: New refactoring: move function for C
-** TODO Fill ParsedInfo begin/end for requested function
-** TODO Fixup the preliminary version of the actual move
-** TODO Move any declaration in source.h file to target.h
 ** TODO BONUS Move a mock function to the target mock file if it exists
 ** DONE Pick-up pieces from Java version and hack them into a preliminary version
 ** DONE Accept target position
+** DONE Fill ParsedInfo begin/end for requested function
+** DONE Fixup the preliminary version of the actual move
+** DONE Move any declaration in source.h file to target.h
 * TRY Project local .c-xrefrc with relative file paths so it can be checked in to a repo
    We could start with having same format but how to handle project names?
 ** TODO Change to having reference file in the project tree?

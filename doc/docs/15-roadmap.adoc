@@ -288,6 +288,83 @@ Currently `.cx` files are sometimes treated as authoritative, when they should b
 
 === Long-term Vision (12-24 Months)
 
+==== New Refactoring Features
+
+===== Extract Function from Expression
+
+*Current Limitation*: Extract function only works on statement-level code blocks. Attempting to extract an expression (e.g., a complex boolean condition inside an `if` statement) fails because the system cannot detect expression context.
+
+*Vision*: Enable extraction of arbitrary expressions as separate functions with appropriate return types.
+
+*Examples*:
+
+**Boolean Predicate Extraction:**
+[source,c]
+----
+// Before:
+if (functionSignature[i] == ' ' || functionSignature[i] == '\t' ||
+    functionSignature[i] == '\n')
+
+// After extraction:
+static bool isWhitespace(char c) {
+    return c == ' ' || c == '\t' || c == '\n';
+}
+
+if (isWhitespace(functionSignature[i]))
+----
+
+**Arithmetic Expression Extraction:**
+[source,c]
+----
+// Before:
+for (int i = 0; i < sizeof(dispatch)/sizeof(dispatch[0]); i++)
+
+// After extraction:
+static size_t dispatchTableSize(void) {
+    return sizeof(dispatch)/sizeof(dispatch[0]);
+}
+
+for (int i = 0; i < dispatchTableSize(); i++)
+----
+
+*Technical Approach*:
+
+The investigation (documented in agent task a16ff53) identified the core blocker: the parser cannot currently detect whether block markers are placed within an expression context versus statement context.
+
+**Recommended Implementation Strategy:**
+
+1. **Parsing Context Stack** (1 week)
+   * Add `ParsingContext` enum tracking current grammar production
+   * Implement context stack with push/pop operations
+   * Modify grammar rules to track context (`CONTEXT_IF_CONDITION`, `CONTEXT_WHILE_CONDITION`, `CONTEXT_RETURN_EXPR`, etc.)
+   * Capture context when block markers are encountered
+
+2. **Expression Type Inference** (1 week)
+   * Detect expression type from operators and operands
+   * Infer return type (bool, int, size_t, etc.)
+   * Handle type promotions and casts
+
+3. **Modified Extraction Logic** (1-2 weeks)
+   * Simplify variable classification for expressions (all inputs, no outputs)
+   * Generate appropriate return statement
+   * Handle call-site substitution without assignment
+   * Extract source text and substitute parameter names
+
+4. **Testing and Refinement** (1 week)
+   * Test with various expression contexts
+   * Handle edge cases (nested expressions, macro arguments, etc.)
+   * Validate type inference accuracy
+
+*Alternative Approach*: Add user dialog to explicitly mark extraction as expression-based rather than auto-detecting, which would reduce implementation time to 2-3 weeks but provide less seamless UX.
+
+*Current Code State*: The extraction infrastructure already has commented placeholders (`isInExpression` boolean with TODO comments saying "how can we know this...?"), indicating this feature was originally planned but the detection mechanism was never solved.
+
+*Estimated Effort*: 4-5 weeks for full automatic detection, or 2-3 weeks for dialog-based approach
+
+*Priority*: MEDIUM-LOW (valuable feature but less critical than LSP enablement)
+
+*Dependencies*: None - can be developed independently
+
 ==== On-Demand Incremental Architecture for LSP
 
 *Current Limitation*: Stack memory accumulates symbol tables across all files forever. This works for batch cross-referencing but is incompatible with long-running LSP servers handling file edits.
