@@ -201,7 +201,7 @@ static char *extractFunctionSignature(EditorMarker *startMarker, EditorMarker *e
         searchOffset++;
     }
 
-    char *functionSignature;
+    char *functionSignature = NULL;
     if (braceOffset != -1) {
         /* Extract signature (from start to just before '{') */
         int signatureLength = braceOffset - startMarker->offset;
