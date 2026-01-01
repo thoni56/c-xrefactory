@@ -21,6 +21,7 @@
 #include "head.h"
 #include "list.h"
 #include "parsing.h"
+#include "position.h"
 #include "referenceableitemtable.h"
 #include "startup.h"
 #include "misc.h"
@@ -692,7 +693,7 @@ static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *o
 }
 
 EditorMarker *createMarkerForExpressionStart(EditorMarker *marker, ExpressionStartKind startKind) {
-    Position position;
+    Position position = noPosition;
     parseBufferUsingServer(refactoringOptions.project, marker, NULL, "-olcxprimarystart", NULL);
     deleteEntryFromSessionStack(sessionData.browsingStack.top);
     if (startKind == GET_PRIMARY_START) {
