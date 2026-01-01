@@ -56,7 +56,7 @@ Place cursor on an identifier and `go to definition` (<kbd>F6</kbd>),
 navigate between occurrences (<kbd>F3</kbd>, <kbd>F4</kbd>), refactor
 (<kbd>F11</kbd>) with `rename`, mark some code and `extract function`.
 
-Your C programming and code will never be the same. Some highlights:
+Your C programming and code will never be the same.
 
 When installed correctly there will be an Emacs menu called `C-xref`
 for easy access to most functions.
