@@ -4,7 +4,7 @@
 #
 UTILS="$(dirname "$(realpath "$0")")"
 
-emacs --no-splash -l $UTILS/lsp-initialize.el $@ &
+emacs --no-splash -q -l $UTILS/lsp-initialize.el $@ &
 emacs_pid=$!
 read -p "Ange PID för processen du vill debugga: " pid
 if [ -z "$pid" ]; then
