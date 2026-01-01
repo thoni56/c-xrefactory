@@ -1,0 +1,43 @@
+@startuml
+' Symbol and Reference data structures
+' Used in docs/10-datastructures.adoc
+
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+
+class Symbol {
+  +char *name
+  +Position position
+  +SymbolBits bits
+}
+Symbol o-- Symbol : next
+
+class SymbolList {
+}
+SymbolList o-- Symbol : symbol
+SymbolList o-- SymbolList : next
+
+class ReferencesItem {
+  +char *name
+  +ReferencesBits bits
+}
+ReferencesItem o-- Reference : references
+ReferencesItem o-- ReferencesItem : next
+
+class Reference {
+  +Usage usage
+  +Position position
+}
+Reference o-- Reference : next
+
+note right of Symbol
+  Symbol table entries for
+  identifiers during parsing
+end note
+
+note right of ReferencesItem
+  Persistent reference database
+  stored in .cx files
+end note
+
+@enduml

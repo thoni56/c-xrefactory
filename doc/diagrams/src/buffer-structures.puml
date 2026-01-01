@@ -1,0 +1,40 @@
+@startuml
+' File and buffer data structures
+' Used in docs/10-datastructures.adoc
+
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+
+class FileDescriptor {
+}
+FileDescriptor o-- LexemBuffer : lexemBuffer
+
+class LexemBuffer {
+  +Lexem[] lexemStream
+}
+LexemBuffer o-- CharacterBuffer : buffer
+
+class CharacterBuffer {
+  +char[] chars
+}
+
+class LexemStream {
+  +char* macroName
+  +InputType inputType
+  +char* begin
+  +char* read
+  +char* write
+}
+LexemStream ..> LexemBuffer : points into\nlexemStream
+
+note right of LexemStream
+  Lightweight pointer-based
+  stream for macro expansion
+end note
+
+note right of LexemBuffer
+  Fixed-size buffer for
+  lexing from files
+end note
+
+@enduml

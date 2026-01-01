@@ -6,3 +6,5 @@ workspace.json
 structurizr.properties
 guidebook.adoc
 dist
+docs/diagrams
+diagrams/structurizr-*.puml
