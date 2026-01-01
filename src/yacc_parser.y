@@ -52,8 +52,6 @@ static Symbol *l_currentType = NULL;
 static void addRuleLocalVariable(Id *name, int order);
 static void addYaccSymbolReference(Id *name, int usage);
 
-static int savedWorkMemoryIndex = 0;
-
 %}
 
 /* Token definitions *must* be the same in all parsers. The following
@@ -451,7 +449,7 @@ string_literals
     ;
 
 postfix_expr
-    : primary_expr                              /*& { $$.data = $1.data; } &*/
+    : primary_expr                              { $$.data = $1.data; }
     | postfix_expr '[' expr ']'                 {
         if ($1.data.typeModifier->type==TypePointer || $1.data.typeModifier->type==TypeArray) $$.data.typeModifier=$1.data.typeModifier->next;
         else if ($3.data.typeModifier->type==TypePointer || $3.data.typeModifier->type==TypeArray) $$.data.typeModifier=$3.data.typeModifier->next;
@@ -543,7 +541,7 @@ optional_comma
     ;
 
 field_identifier
-    : identifier                /*& { $$.data = $1.data; } &*/
+    : identifier                      { $$.data = $1.data; }
     | COMPLETE_STRUCT_MEMBER_NAME     { assert(0); /* token never used */ }
     ;
 
@@ -569,7 +567,7 @@ argument_expr_list
     ;
 
 unary_expr
-    : postfix_expr                  /*& { $$.data = $1.data; } &*/
+    : postfix_expr                  { $$.data = $1.data; }
     | INC_OP unary_expr             {
         $$.data.typeModifier = $2.data.typeModifier;
         setReferenceUsage($2.data.reference, UsageAddrUsed);
@@ -615,7 +613,7 @@ unary_operator
     ;
 
 cast_expr
-    : unary_expr                        /*& { $$.data = $1.data; } &*/
+    : unary_expr                        { $$.data = $1.data; }
     | '(' type_name ')' cast_expr       {
         $$.data.typeModifier = $2.data;
         $$.data.reference = $4.data.reference;
@@ -623,7 +621,7 @@ cast_expr
     ;
 
 multiplicative_expr
-    : cast_expr                         /*& { $$.data = $1.data; } &*/
+    : cast_expr                         { $$.data = $1.data; }
     | multiplicative_expr '*' cast_expr {
         $$.data.typeModifier = &defaultIntModifier;
         $$.data.reference = NULL;
@@ -639,7 +637,7 @@ multiplicative_expr
     ;
 
 additive_expr
-    : multiplicative_expr                       /*& { $$.data = $1.data; } &*/
+    : multiplicative_expr                       { $$.data = $1.data; }
     | additive_expr '+' multiplicative_expr     {
         if ($3.data.typeModifier->type==TypePointer || $3.data.typeModifier->type==TypeArray) $$.data.typeModifier = $3.data.typeModifier;
         else $$.data.typeModifier = $1.data.typeModifier;
@@ -653,7 +651,7 @@ additive_expr
     ;
 
 shift_expr
-    : additive_expr                             /*& { $$.data = $1.data; } &*/
+    : additive_expr                             { $$.data = $1.data; }
     | shift_expr LEFT_OP additive_expr          {
         $$.data.typeModifier = &defaultIntModifier;
         $$.data.reference = NULL;
@@ -665,7 +663,7 @@ shift_expr
     ;
 
 relational_expr
-    : shift_expr                                /*& { $$.data = $1.data; } &*/
+    : shift_expr                                { $$.data = $1.data; }
     | relational_expr '<' shift_expr            {
         $$.data.typeModifier = &defaultIntModifier;
         $$.data.reference = NULL;
@@ -685,7 +683,7 @@ relational_expr
     ;
 
 equality_expr
-    : relational_expr                           /*& { $$.data = $1.data; } &*/
+    : relational_expr                           { $$.data = $1.data; }
     | equality_expr EQ_OP relational_expr       {
         $$.data.typeModifier = &defaultIntModifier;
         $$.data.reference = NULL;
@@ -697,7 +695,7 @@ equality_expr
     ;
 
 and_expr
-    : equality_expr                             /*& { $$.data = $1.data; } &*/
+    : equality_expr                             { $$.data = $1.data; }
     | and_expr '&' equality_expr                {
         $$.data.typeModifier = &defaultIntModifier;
         $$.data.reference = NULL;
@@ -705,7 +703,7 @@ and_expr
     ;
 
 exclusive_or_expr
-    : and_expr                                  /*& { $$.data = $1.data; } &*/
+    : and_expr                                  { $$.data = $1.data; }
     | exclusive_or_expr '^' and_expr            {
         $$.data.typeModifier = &defaultIntModifier;
         $$.data.reference = NULL;
@@ -713,7 +711,7 @@ exclusive_or_expr
     ;
 
 inclusive_or_expr
-    : exclusive_or_expr                         /*& { $$.data = $1.data; } &*/
+    : exclusive_or_expr                         { $$.data = $1.data; }
     | inclusive_or_expr '|' exclusive_or_expr   {
         $$.data.typeModifier = &defaultIntModifier;
         $$.data.reference = NULL;
@@ -721,7 +719,7 @@ inclusive_or_expr
     ;
 
 logical_and_expr
-    : inclusive_or_expr                         /*& { $$.data = $1.data; } &*/
+    : inclusive_or_expr                         { $$.data = $1.data; }
     | logical_and_expr AND_OP inclusive_or_expr {
         $$.data.typeModifier = &defaultIntModifier;
         $$.data.reference = NULL;
@@ -729,7 +727,7 @@ logical_and_expr
     ;
 
 logical_or_expr
-    : logical_and_expr                          /*& { $$.data = $1.data; } &*/
+    : logical_and_expr                          { $$.data = $1.data; }
     | logical_or_expr OR_OP logical_and_expr    {
         $$.data.typeModifier = &defaultIntModifier;
         $$.data.reference = NULL;
@@ -737,7 +735,7 @@ logical_or_expr
     ;
 
 conditional_expr
-    : logical_or_expr                                           /*& { $$.data = $1.data; } &*/
+    : logical_or_expr                                           { $$.data = $1.data; }
     | logical_or_expr '?' logical_or_expr ':' conditional_expr  {
         $$.data.typeModifier = $3.data.typeModifier;
         $$.data.reference = NULL;
@@ -750,7 +748,7 @@ conditional_expr
     ;
 
 assignment_expr
-    : conditional_expr                                  /*& { $$.data = $1.data; } &*/
+    : conditional_expr                                  { $$.data = $1.data; }
     | unary_expr assignment_operator assignment_expr    {
         if ($1.data.reference != NULL && parsingConfig.operation == PARSE_TO_EXTRACT) {
             Reference *r = duplicateReferenceInCxMemory($1.data.reference);
@@ -786,7 +784,7 @@ assignment_operator
     ;
 
 expr
-    : assignment_expr                           /*& { $$.data = $1.data; } &*/
+    : assignment_expr                           { $$.data = $1.data; }
     | expr ',' assignment_expr                  {
         $$.data.typeModifier = $3.data.typeModifier;
         $$.data.reference = NULL;
@@ -797,16 +795,10 @@ constant_expr
     : conditional_expr
     ;
 
-Save_index
-    :    {
-        $$.data = savedWorkMemoryIndex;
-    }
-    ;
-
 declaration
-    : Save_index declaration_specifiers ';'     { savedWorkMemoryIndex = $1.data; }
-    | Save_index init_declarations ';'          { savedWorkMemoryIndex = $1.data; }
-    | Save_index static_assert_declaration ';'  { savedWorkMemoryIndex = $1.data; }
+    : declaration_specifiers ';'
+    | init_declarations ';'
+    | static_assert_declaration ';'
     | error
         {
 #if YYDEBUG
@@ -954,7 +946,7 @@ eq_initializer_opt
     ;
 
 init_declarator
-    : declarator asm_opt /* eq_initializer_opt   { $$.d = $1.d; } */
+    : declarator asm_opt                          { $$.data = $1.data; }
     ;
 
 storage_class_specifier
@@ -993,8 +985,8 @@ type_specifier1
     ;
 
 type_specifier2
-    : struct_or_union_specifier     /*& { $$.data = $1.data; } &*/
-    | enum_specifier                /*& { $$.data = $1.data; } &*/
+    : struct_or_union_specifier     { $$.data = $1.data; }
+    | enum_specifier                { $$.data = $1.data; }
     ;
 
 function_specifier
@@ -1031,7 +1023,7 @@ struct_or_union_define_specifier
     ;
 
 struct_identifier
-    : identifier            /*& { $$.data = $1.data; } &*/
+    : identifier               { $$.data = $1.data; }
     | COMPLETE_STRUCT_NAME     { assert(0); /* token never used */ }
     ;
 
@@ -1041,7 +1033,7 @@ struct_or_union
     ;
 
 struct_declaration_list
-    : struct_declaration                                /*& { $$.data = $1.data; } &*/
+    : struct_declaration                                { $$.data = $1.data; }
     | struct_declaration_list struct_declaration        {
         if ($1.data == &errorSymbol || $1.data->type==TypeError) {
             $$.data = $2.data;
@@ -1055,18 +1047,16 @@ struct_declaration_list
     ;
 
 struct_declaration
-    : Save_index type_specifier_list struct_declarator_list ';'     {
-        assert($2.data && $3.data);
-        for (Symbol *symbol=$3.data; symbol!=NULL; symbol=symbol->next) {
-            completeDeclarator($2.data, symbol);
+    : type_specifier_list struct_declarator_list ';'     {
+        assert($1.data && $2.data);
+        for (Symbol *symbol=$2.data; symbol!=NULL; symbol=symbol->next) {
+            completeDeclarator($1.data, symbol);
         }
-        $$.data = $3.data;
-        savedWorkMemoryIndex = $1.data;
+        $$.data = $2.data;
     }
-    | Save_index static_assert_declaration ';'  {
+    | static_assert_declaration ';'  {
         /* static_assert in struct - just ignore it */
         $$.data = NULL;
-        savedWorkMemoryIndex = $1.data;
     }
     | error                                             {
         $$.data = newSymbolAsCopyOf(&errorSymbol);
@@ -1097,8 +1087,8 @@ struct_declarator
     | ':' constant_expr             {
         $$.data = createEmptyField();
     }
-    | declarator                    /*& { $$.data = $1.data; } &*/
-    | declarator ':' constant_expr  /*& { $$.data = $1.data; } &*/
+    | declarator                    { $$.data = $1.data; }
+    | declarator ':' constant_expr  { $$.data = $1.data; }
     ;
 
 enum_specifier
@@ -1130,13 +1120,13 @@ enum_define_specifier
     ;
 
 enum_identifier
-    : identifier            /*& { $$.data = $1.data; } &*/
-    | COMPLETE_ENUM_NAME       { assert(0); /* token never used */ }
+    : identifier            { $$.data = $1.data; }
+    | COMPLETE_ENUM_NAME    { assert(0); /* token never used */ }
     ;
 
 enumerator_list_comma
-    : enumerator_list               /*& { $$.data = $1.data; } &*/
-    | enumerator_list ','           /*& { $$.data = $1.data; } &*/
+    : enumerator_list       { $$.data = $1.data; }
+    | enumerator_list ','   { $$.data = $1.data; }
     ;
 
 enumerator_list
@@ -1170,7 +1160,7 @@ enumerator
     ;
 
 declarator
-    : declarator2                                       /*& { $$.data = $1.data; } &*/
+    : declarator2                                       { $$.data = $1.data; }
     | pointer declarator2                               {
         $$.data = $2.data;
         assert($$.data->npointers == 0);
@@ -1266,8 +1256,8 @@ type_specifier_list
 */
 
 type_specifier_list
-    : type_mod_specifier_list                       /*& { $$.data = $1.data; } &*/
-    | type_specifier_list0                          /*& { $$.data = $1.data; } &*/
+    : type_mod_specifier_list                       { $$.data = $1.data; }
+    | type_specifier_list0                          { $$.data = $1.data; }
     ;
 
 type_specifier_list0
@@ -1319,7 +1309,7 @@ type_specifier_list0
     ;
 
 parameter_identifier_list
-    : identifier_list                           /*& { $$.data = $1.data; } &*/
+    : identifier_list                            { $$.data = $1.data; }
     | identifier_list ',' ELLIPSIS               {
         Symbol *symbol;
         Position pos = makePosition(-1, 0, 0);
@@ -1351,7 +1341,7 @@ identifier_list
     ;
 
 parameter_type_list
-    : parameter_list                    /*& { $$.data = $1.data; } &*/
+    : parameter_list                             { $$.data = $1.data; }
     | parameter_list ',' ELLIPSIS                {
         Symbol *symbol;
         Position position = makePosition(-1, 0, 0);
@@ -1486,13 +1476,11 @@ initializer
     ;
 
 initializer_list
-    : Save_index designation_opt Start_block initializer End_block {
-        $$.data = $2.data;
-        savedWorkMemoryIndex = $1.data;
+    : designation_opt Start_block initializer End_block {
+        $$.data = $1.data;
     }
-    | initializer_list ',' Save_index designation_opt Start_block initializer End_block {
-        LIST_APPEND(IdList, $1.data, $4.data);
-        savedWorkMemoryIndex = $3.data;
+    | initializer_list ',' designation_opt Start_block initializer End_block {
+        LIST_APPEND(IdList, $1.data, $3.data);
     }
     ;
 
@@ -1527,30 +1515,14 @@ designator
     ;
 
 statement
-    : Save_index labeled_statement      {
-        savedWorkMemoryIndex = $1.data;
-    }
-    | Save_index compound_statement     {
-        savedWorkMemoryIndex = $1.data;
-    }
-    | Save_index expression_statement       {
-        savedWorkMemoryIndex = $1.data;
-    }
-    | Save_index selection_statement        {
-        savedWorkMemoryIndex = $1.data;
-    }
-    | Save_index iteration_statement        {
-        savedWorkMemoryIndex = $1.data;
-    }
-    | Save_index jump_statement     {
-        savedWorkMemoryIndex = $1.data;
-    }
-    | Save_index asm_statement      {
-        savedWorkMemoryIndex = $1.data;
-    }
-    | Save_index error  {
-        savedWorkMemoryIndex = $1.data;
-    }
+    : labeled_statement
+    | compound_statement
+    | expression_statement
+    | selection_statement
+    | iteration_statement
+    | jump_statement
+    | asm_statement
+    | error
     ;
 
 label
@@ -1815,72 +1787,55 @@ cached_external_definition_list
     ;
 
 external_definition
-    : Save_index declaration_specifiers ';'     {
-        savedWorkMemoryIndex = $1.data;
-    }
-    | Save_index top_init_declarations ';'      {
-        savedWorkMemoryIndex = $1.data;
-    }
-    | Save_index function_definition_head {
+    : declaration_specifiers ';'
+    | top_init_declarations ';'
+    | function_definition_head {
         Symbol *symbol;
         int i;
-        assert($2.data);
+        assert($1.data);
         // I think that due to the following line sometimes
         // storage was not extern, see 'addNewSymbolDef'
-        // if ($2.data->storage == StorageDefault) $2.data->storage = StorageExtern;
+        // if ($1.data->storage == StorageDefault) $1.data->storage = StorageExtern;
         // TODO!!!, here you should check if there is previous declaration of
         // the function, if yes and is declared static, make it static!
-        addNewSymbolDefinition(symbolTable, inputFileName, $2.data, StorageExtern, UsageDefined);
-        savedWorkMemoryIndex = $1.data;
+        addNewSymbolDefinition(symbolTable, inputFileName, $1.data, StorageExtern, UsageDefined);
         beginBlock();
         counters.localVar = 0;
-        assert($2.data->typeModifier && $2.data->typeModifier->type == TypeFunction);
-        parsedInfo.function = $2.data;
+        assert($1.data->typeModifier && $1.data->typeModifier->type == TypeFunction);
+        parsedInfo.function = $1.data;
         generateInternalLabelReference(-1, UsageDefined);
-        for (symbol=$2.data->typeModifier->args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
+        for (symbol=$1.data->typeModifier->args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
             if (symbol->type == TypeElipsis)
                 continue;
             if (symbol->typeModifier == NULL)
                 symbol->typeModifier = &defaultIntModifier;
-            addFunctionParameterToSymTable(symbolTable, $2.data, symbol, i);
+            addFunctionParameterToSymTable(symbolTable, $1.data, symbol, i);
         }
     } compound_statement {
         /* Capture function boundaries for move-function refactoring */
         if (parsedInfo.function != NULL
             && parsedInfo.function->position.file != NO_FILE_NUMBER
             && parsingConfig.operation == PARSE_TO_GET_FUNCTION_BOUNDS
-            && positionIsBetween(cxRefPosition, $2.begin, $4.end)) {
+            && positionIsBetween(cxRefPosition, $1.begin, $3.end)) {
             /* We just finished parsing a function that contains the cursor position.
              * Record the function boundaries using the positions from the grammar.
-             * $2.begin is the start of function_definition_head
-             * $4.end is the position OF the closing '}', so we increment col to point AFTER it
+             * $1.begin is the start of function_definition_head
+             * $3.end is the position OF the closing '}', so we increment col to point AFTER it
              */
-            parsedPositions[IPP_FUNCTION_BEGIN] = $2.begin;
-            parsedPositions[IPP_FUNCTION_END] = $4.end;
+            parsedPositions[IPP_FUNCTION_BEGIN] = $1.begin;
+            parsedPositions[IPP_FUNCTION_END] = $3.end;
             parsedPositions[IPP_FUNCTION_END].col++;  /* Move past the closing '}' */
         }
         endBlock();
         parsedInfo.function = NULL;
     }
-    | Save_index static_assert_declaration ';'
-    | Save_index EXTERN STRING_LITERAL  external_definition {
-        savedWorkMemoryIndex = $1.data;
-    }
-    | Save_index EXTERN STRING_LITERAL  '{' cached_external_definition_list '}' {
-        savedWorkMemoryIndex = $1.data;
-    }
-    | Save_index ASM_KEYWORD '(' expr ')' ';'       {
-        savedWorkMemoryIndex = $1.data;
-    }
-    | Save_index error compound_statement       {
-        savedWorkMemoryIndex = $1.data;
-    }
-    | Save_index error      {
-        savedWorkMemoryIndex = $1.data;
-    }
-    | Save_index ';'        {  /* empty external definition */
-        savedWorkMemoryIndex = $1.data;
-    }
+    | static_assert_declaration ';'
+    | EXTERN STRING_LITERAL  external_definition
+    | EXTERN STRING_LITERAL  '{' cached_external_definition_list '}'
+    | ASM_KEYWORD '(' expr ')' ';'
+    | error compound_statement
+    | error
+    | ';' /* empty external definition */
     ;
 
 top_init_declarations
@@ -1903,7 +1858,7 @@ top_init_declarations
     ;
 
 function_definition_head
-    : function_head_declaration                         /*& { $$.data = $1.data; } &*/
+    : function_head_declaration                         { $$.data = $1.data; }
     | function_definition_head fun_arg_declaration      {
         assert($1.data->typeModifier && $1.data->typeModifier->type == TypeFunction);
         Result r = mergeArguments($1.data->typeModifier->args, $2.data);
@@ -1962,8 +1917,8 @@ End_block:     { endBlock(); }
     ;
 
 identifier
-    : IDENTIFIER    /*& { $$.data = $1.data; } &*/
-    | TYPE_NAME     /*& { $$.data = $1.data; } &*/
+    : IDENTIFIER    { $$.data = $1.data; }
+    | TYPE_NAME     { $$.data = $1.data; }
     ;
 
 %%
