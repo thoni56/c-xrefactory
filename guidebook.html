@@ -5979,7 +5979,153 @@ typedef struct {
 <div class="sect2">
 <h3 id="_long_term_vision_12_24_months">15.5. Long-term Vision (12-24 Months)</h3>
 <div class="sect3">
-<h4 id="_on_demand_incremental_architecture_for_lsp">15.5.1. On-Demand Incremental Architecture for LSP</h4>
+<h4 id="_new_refactoring_features">15.5.1. New Refactoring Features</h4>
+<div class="sect4">
+<h5 id="_extract_function_from_expression">Extract Function from Expression</h5>
+<div class="paragraph">
+<p><strong>Current Limitation</strong>: Extract function only works on statement-level code blocks. Attempting to extract an expression (e.g., a complex boolean condition inside an <code>if</code> statement) fails because the system cannot detect expression context.</p>
+</div>
+<div class="paragraph">
+<p><strong>Vision</strong>: Enable extraction of arbitrary expressions as separate functions with appropriate return types.</p>
+</div>
+<div class="paragraph">
+<p><strong>Examples</strong>:</p>
+</div>
+<div class="paragraph">
+<p><strong>Boolean Predicate Extraction:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Before:
+if (functionSignature[i] == ' ' || functionSignature[i] == '\t' ||
+    functionSignature[i] == '\n')
+
+// After extraction:
+static bool isWhitespace(char c) {
+    return c == ' ' || c == '\t' || c == '\n';
+}
+
+if (isWhitespace(functionSignature[i]))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Arithmetic Expression Extraction:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Before:
+for (int i = 0; i &lt; sizeof(dispatch)/sizeof(dispatch[0]); i++)
+
+// After extraction:
+static size_t dispatchTableSize(void) {
+    return sizeof(dispatch)/sizeof(dispatch[0]);
+}
+
+for (int i = 0; i &lt; dispatchTableSize(); i++)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Technical Approach</strong>:</p>
+</div>
+<div class="paragraph">
+<p>The investigation (documented in agent task a16ff53) identified the core blocker: the parser cannot currently detect whether block markers are placed within an expression context versus statement context.</p>
+</div>
+<div class="paragraph">
+<p><strong>Recommended Implementation Strategy:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Parsing Context Stack</strong> (1 week)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Add <code>ParsingContext</code> enum tracking current grammar production</p>
+</li>
+<li>
+<p>Implement context stack with push/pop operations</p>
+</li>
+<li>
+<p>Modify grammar rules to track context (<code>CONTEXT_IF_CONDITION</code>, <code>CONTEXT_WHILE_CONDITION</code>, <code>CONTEXT_RETURN_EXPR</code>, etc.)</p>
+</li>
+<li>
+<p>Capture context when block markers are encountered</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Expression Type Inference</strong> (1 week)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Detect expression type from operators and operands</p>
+</li>
+<li>
+<p>Infer return type (bool, int, size_t, etc.)</p>
+</li>
+<li>
+<p>Handle type promotions and casts</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Modified Extraction Logic</strong> (1-2 weeks)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Simplify variable classification for expressions (all inputs, no outputs)</p>
+</li>
+<li>
+<p>Generate appropriate return statement</p>
+</li>
+<li>
+<p>Handle call-site substitution without assignment</p>
+</li>
+<li>
+<p>Extract source text and substitute parameter names</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Testing and Refinement</strong> (1 week)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Test with various expression contexts</p>
+</li>
+<li>
+<p>Handle edge cases (nested expressions, macro arguments, etc.)</p>
+</li>
+<li>
+<p>Validate type inference accuracy</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Alternative Approach</strong>: Add user dialog to explicitly mark extraction as expression-based rather than auto-detecting, which would reduce implementation time to 2-3 weeks but provide less seamless UX.</p>
+</div>
+<div class="paragraph">
+<p><strong>Current Code State</strong>: The extraction infrastructure already has commented placeholders (<code>isInExpression</code> boolean with TODO comments saying "how can we know this&#8230;&#8203;?"), indicating this feature was originally planned but the detection mechanism was never solved.</p>
+</div>
+<div class="paragraph">
+<p><strong>Estimated Effort</strong>: 4-5 weeks for full automatic detection, or 2-3 weeks for dialog-based approach</p>
+</div>
+<div class="paragraph">
+<p><strong>Priority</strong>: MEDIUM-LOW (valuable feature but less critical than LSP enablement)</p>
+</div>
+<div class="paragraph">
+<p><strong>Dependencies</strong>: None - can be developed independently</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_on_demand_incremental_architecture_for_lsp">15.5.2. On-Demand Incremental Architecture for LSP</h4>
 <div class="paragraph">
 <p><strong>Current Limitation</strong>: Stack memory accumulates symbol tables across all files forever. This works for batch cross-referencing but is incompatible with long-running LSP servers handling file edits.</p>
 </div>
@@ -6060,7 +6206,7 @@ On textDocument/didChange(file):
 </div>
 </div>
 <div class="sect3">
-<h4 id="_full_lsp_protocol_compliance">15.5.2. Full LSP Protocol Compliance</h4>
+<h4 id="_full_lsp_protocol_compliance">15.5.3. Full LSP Protocol Compliance</h4>
 <div class="paragraph">
 <p><strong>Dependencies</strong>: Unified symbol database, on-demand architecture</p>
 </div>
@@ -6132,7 +6278,7 @@ On textDocument/didChange(file):
 </div>
 </div>
 <div class="sect3">
-<h4 id="_modern_ide_integration_showcase">15.5.3. Modern IDE Integration Showcase</h4>
+<h4 id="_modern_ide_integration_showcase">15.5.4. Modern IDE Integration Showcase</h4>
 <div class="paragraph">
 <p><strong>Dependencies</strong>: Full LSP compliance</p>
 </div>
@@ -11174,7 +11320,7 @@ void publicSort(int *array, size_t n) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-01 18:19:10 UTC
+Last updated 2026-01-01 19:37:34 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
