@@ -146,8 +146,8 @@ typedef struct parsedInfo {
     bool              blockMarker2Set;
     bool              moveTargetAccepted;
     int               methodCoordEndLine;
-    struct codeBlock *workMemoryIndexAtBlockBegin;
-    struct codeBlock *workMemoryIndexAtBlockEnd;
+    struct codeBlock *blockAtBegin;
+    struct codeBlock *blockAtEnd;
     struct symbol    *function;
     unsigned          functionBeginPosition;
     int               cxMemoryIndexAtFunctionBegin;

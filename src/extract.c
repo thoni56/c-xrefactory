@@ -841,7 +841,7 @@ static bool programStructureMismatch() {
     return parsedInfo.cxMemoryIndexAtFunctionBegin > parsedInfo.cxMemoryIndexAtBlockBegin
         || parsedInfo.cxMemoryIndexAtBlockBegin > parsedInfo.cxMemoryIndexAtBlockEnd
         || parsedInfo.cxMemoryIndexAtBlockEnd > parsedInfo.cxMemoryIndexAtFunctionEnd
-        || parsedInfo.workMemoryIndexAtBlockBegin != parsedInfo.workMemoryIndexAtBlockEnd;
+        || parsedInfo.blockAtBegin != parsedInfo.blockAtEnd;
 }
 
 static void generateNewVariableAccess(ProgramGraphNode *program, char *extractionName) {
@@ -951,11 +951,11 @@ void actionsBeforeAfterExternalDefinition(void) {
 void extractActionOnBlockMarker(void) {
     if (parsedInfo.cxMemoryIndexAtBlockBegin == 0) {
         parsedInfo.cxMemoryIndexAtBlockBegin = cxMemory.index;
-        parsedInfo.workMemoryIndexAtBlockBegin = currentBlock->outerBlock;
+        parsedInfo.blockAtBegin = currentBlock->outerBlock;
     } else {
         assert(parsedInfo.cxMemoryIndexAtBlockEnd == 0);
         parsedInfo.cxMemoryIndexAtBlockEnd = cxMemory.index;
-        parsedInfo.workMemoryIndexAtBlockEnd = currentBlock->outerBlock;
+        parsedInfo.blockAtEnd = currentBlock->outerBlock;
     }
     Position pos = makePosition(currentFile.characterBuffer.fileNumber, 0, 0);
     addTrivialCxReference("Block", TypeBlockMarker, StorageDefault, pos, UsageUsed);
