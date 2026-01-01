@@ -1,10 +1,11 @@
-#include <cgreen/cgreen.h>
-
 #include "cxref.h"
 
-#include "log.h"
+/* Unittests for Cxref */
 
-/* Dependencies: */
+#include <cgreen/cgreen.h>
+
+#include "log.h"
+#include "protocol.h"
 #include "browsermenu.mock"
 #include "characterreader.mock"
 #include "commons.mock"

@@ -1,9 +1,8 @@
 #ifndef PPC_INCLUDED
 #define PPC_INCLUDED
 
-#include "protocol.h"
-
-#include "editor.h"
+#include "reference.h"
+#include "editormarker.h"
 
 
 extern void ppcSynchronize(void);

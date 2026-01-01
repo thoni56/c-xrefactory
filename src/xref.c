@@ -7,6 +7,7 @@
 #include "commons.h"
 #include "cxfile.h"
 #include "cxref.h"
+#include "editor.h"
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"

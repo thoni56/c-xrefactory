@@ -21,6 +21,7 @@
 #include "parsing.h"
 #include "ppc.h"
 #include "proto.h"
+#include "protocol.h"
 #include "refactory.h"
 #include "reference.h"
 #include "referenceableitemtable.h"

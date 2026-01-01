@@ -4,6 +4,7 @@
 #include "complete.h"
 #include "cxfile.h"
 #include "cxref.h"
+#include "editor.h"
 #include "editorbuffer.h"
 #include "filedescriptor.h"
 #include "filetable.h"

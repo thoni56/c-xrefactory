@@ -43,10 +43,6 @@ void ppcBeginAllCompletions(int nofocus, int len) {
   mock(nofocus, len);
 }
 
-void ppcGenTwoNumericsAndrecord(char *kind, char *attr1, int val1, char *attr2, int val2, char *message, char *suff) {
-  mock(kind, attr1, val1, attr2, val2, message, suff);
-}
-
 void ppcGenRecordWithNumeric(char *kind, char *attr, int val, char *message) {
   mock(kind, attr, val, message);
 }
