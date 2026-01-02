@@ -1,0 +1,9 @@
+Content-Length: 131
+
+{"jsonrpc":"2.0","id":1,"result":{"capabilities":{"codeActionProvider":true,"definitionProvider":true}},"positionEncoding":"utf-8"}
+Content-Length: 24
+
+{"jsonrpc":"2.0","id":2}
+Content-Length: 38
+
+{"jsonrpc":"2.0","id":3,"result":null}
