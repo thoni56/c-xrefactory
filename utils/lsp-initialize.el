@@ -23,9 +23,10 @@
   (lsp-register-client
    (make-lsp-client
     :new-connection (lsp-stdio-connection (list c-xref-exec "-lsp" "-log=log" "-trace"))
+    :activation-fn (lsp-activate-on "c")
     :major-modes '(c-mode)
     :server-id 'c-xrefactory-lsp
-    :priority 0))
+    :priority 1))
 
   ;; Automatically enable lsp-mode for c-mode buffers
   (add-hook 'c-mode-hook #'lsp))
