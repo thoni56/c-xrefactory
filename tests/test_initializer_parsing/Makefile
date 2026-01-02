@@ -1,8 +1,9 @@
 include ../Makefile.boilerplate
 
-ARGUMENTS = initializer_parsing.c -create -o output
+ARGUMENTS = initializer_parsing.c -create -o output.tmp
 
 $(TEST): .c-xrefrc
 	@$(COMMAND)
-	@../../utils/cxref_extract E0 > output
+	@../../utils/cxref_extract CXrefs E0 >> output.tmp
+	$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
