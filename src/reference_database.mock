@@ -6,15 +6,6 @@
 #include <cgreen/mocks.h>
 #include "referenceableitem.h"
 
-static ReferenceDatabase *referenceDatabase = NULL;
-
-ReferenceDatabase *getReferenceDatabase(void) {
-    return referenceDatabase;
-}
-
-void setReferenceDatabase(ReferenceDatabase *db) {
-    referenceDatabase = db;
-}
 
 ReferenceDatabase *createReferenceDatabase(void) {
     return (ReferenceDatabase *) mock();

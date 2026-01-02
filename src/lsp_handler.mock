@@ -3,6 +3,16 @@
 #include "lsp_handler.h"
 
 
+static ReferenceDatabase *referenceDatabase = NULL;
+
+ReferenceDatabase *getReferenceDatabase(void) {
+    return referenceDatabase;
+}
+
+void setReferenceDatabase(ReferenceDatabase *db) {
+    referenceDatabase = db;
+}
+
 void handle_initialize(JSON *request) {
     mock(request);
 }

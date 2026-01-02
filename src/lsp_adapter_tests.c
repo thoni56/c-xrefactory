@@ -1,17 +1,18 @@
 #include "lsp_adapter.h"
-#include "lsp_handler.h"
 
-/* Unittests for lsp_adapter */
+/* Unittests */
 
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
 #include <cgreen/mocks.h>
 #include <cjson/cJSON.h>
+
 #include "log.h"
 
-#include "filetable.mock"
-#include "reference_database.mock"
 #include "commons.mock"
+#include "filetable.mock"
+#include "lsp_handler.mock"
+#include "reference_database.mock"
 
 
 Describe(LspAdapter);
