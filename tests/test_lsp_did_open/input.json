@@ -1,0 +1,26 @@
+[
+    {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "initialize",
+        "params": {
+            "rootUri": null,
+            "capabilities": {}
+        }
+    },
+    {"jsonrpc":"2.0","method":"initialized"},
+    {
+        "jsonrpc": "2.0",
+        "method": "textDocument/didOpen",
+        "params": {
+            "textDocument": {
+                "uri": "file:///path/to/file.txt",
+                "languageId": "plaintext",
+                "version": 1,
+                "text": "This is the content of the file."
+            }
+        }
+    },
+    {"jsonrpc":"2.0","id":2,"method":"shutdown"},
+    {"jsonrpc":"2.0","method":"exit"}
+]
