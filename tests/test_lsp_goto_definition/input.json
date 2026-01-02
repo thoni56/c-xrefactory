@@ -30,8 +30,8 @@
                 "uri": "file:///home/thoni/Utveckling/c-xrefactory/tests/test_lsp_goto_definition/source.c"
             },
             "position": {
-                "line": 3,
-                "character": 0
+                "line": 6,
+                "character": 20
             }
         }
     },
