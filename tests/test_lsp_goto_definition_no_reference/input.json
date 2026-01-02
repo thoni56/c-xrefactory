@@ -1,0 +1,40 @@
+[
+    {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "initialize",
+        "params": {
+            "rootUri": "file:///home/thoni/Utveckling/c-xrefactory/tests/test_lsp_goto_definition",
+            "capabilities": {}
+        }
+    },
+    {"jsonrpc":"2.0","method":"initialized"},
+    {
+        "jsonrpc": "2.0",
+        "method": "textDocument/didOpen",
+        "params": {
+            "textDocument": {
+                "uri": "file:///home/thoni/Utveckling/c-xrefactory/tests/test_lsp_goto_definition/source.c",
+                "languageId": "c",
+                "version": 1,
+                "text": "int myFunction(int x) {\n    return x * 2;\n}\n\nint main(void) {\n    int result = myFunction(42);\n    return result;\n}\n"
+            }
+        }
+    },
+    {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "method": "textDocument/definition",
+        "params": {
+            "textDocument": {
+                "uri": "file:///home/thoni/Utveckling/c-xrefactory/tests/test_lsp_goto_definition/source.c"
+            },
+            "position": {
+                "line": 3,
+                "character": 0
+            }
+        }
+    },
+    {"jsonrpc":"2.0","id":3,"method":"shutdown"},
+    {"jsonrpc":"2.0","method":"exit"}
+]
