@@ -4,9 +4,9 @@ editormarker encoding extract filedescriptor fileio filetable globals hash id in
 lexemstream json_utils lexem lexembuffer lexer log lsp lsp_adapter lsp_dispatcher	\
 lsp_handler lsp_utils lsp_sender macroargumenttable main match memory misc options	\
 move_function organize_includes parsing parsers position ppc progress protocol		\
-refactorings refactory reference referenceableitem referenceableitemtable search	\
-semact server session stackmemory startup storage stringlist symbol symboltable type	\
-typemodifier undo usage xref yacc_parser.tab yylex
+refactorings refactory reference referenceableitem referenceableitemtable		\
+reference_database search semact server session stackmemory startup storage stringlist	\
+symbol symboltable type typemodifier undo usage xref yacc_parser.tab yylex
 
 modules:
 	@echo MODULES=$(MODULES)
