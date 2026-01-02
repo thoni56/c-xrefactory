@@ -4,17 +4,13 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "argumentsvector.h"
-#include "filetable.h"
 #include "json_utils.h"
+#include "log.h"
 #include "lsp_utils.h"
-#include "options.h"
-#include "reference.h"
-#include "server.h"
-#include "session.h"
-#include "startup.h"
+
 
 JSON *findDefinition(const char *uri, JSON *position) {
+    log_trace("findDefinition: ENTRY");
     /* Extract LSP position parameters */
     JSON *lineJson = cJSON_GetObjectItem(position, "line");
     JSON *characterJson = cJSON_GetObjectItem(position, "character");
@@ -30,53 +26,18 @@ JSON *findDefinition(const char *uri, JSON *position) {
     char *filePath = uriToFilePath(uri);
     int cursorOffset = lspPositionToByteOffset(filePath, line, character);
 
-    /* Set up minimal server options for definition lookup */
-    Options savedOptions = options;  /* Save current state */
+    /* TODO: Implement goto-definition without legacy server infrastructure
+     *
+     * What we need:
+     * 1. Parse the file (or use already-parsed EditorBuffer from didOpen)
+     * 2. Find the symbol at cursorOffset
+     * 3. Look up its definition in the symbol database
+     * 4. Return the definition location
+     *
+     * For now, return NULL to indicate "not found"
+     */
+    (void)filePath;
+    (void)cursorOffset;
 
-    /* Configure for definition lookup */
-    options.mode = ServerMode;
-    options.xref2 = true;
-    options.serverOperation = OLO_PUSH;
-    options.cursorOffset = cursorOffset;
-
-    /* Clear and set input file */
-    options.inputFiles = NULL;
-    addToStringListOption(&options.inputFiles, filePath);
-
-    /* Initialize and process */
-    totalTaskEntryInitialisations();
-    processFileArguments();
-
-    /* Run the server pipeline to find definition */
-    ArgumentsVector commandLineArgs = {.argc = 0, .argv = NULL};
-    ArgumentsVector operationArgs = {.argc = 0, .argv = NULL};
-
-    bool firstPass;
-
-    callServer(commandLineArgs, operationArgs, &firstPass);
-
-    /* Extract results from browser stack */
-    JSON *result = NULL;
-    if (sessionData.browsingStack.top && sessionData.browsingStack.top->current) {
-        Position defPosition = sessionData.browsingStack.top->current->position;
-        char *defFileName = getFileItemWithFileNumber(defPosition.file)->name;
-
-        /* Convert c-xrefactory position to LSP coordinates */
-        /* c-xrefactory uses 1-based line numbers, 0-based column numbers */
-        /* LSP uses 0-based line and character numbers */
-        int defLine = defPosition.line - 1;  /* Convert to 0-based */
-        int defCharacter = defPosition.col;  /* Already 0-based column within line */
-
-        /* Create LSP response */
-        result = cJSON_CreateObject();
-        char defUriBuffer[1024];
-        snprintf(defUriBuffer, sizeof(defUriBuffer), "file://%s", defFileName);
-        add_json_string(result, "uri", defUriBuffer);
-        add_lsp_range(result, defLine, defCharacter, defLine, defCharacter + 1);
-    }
-
-    /* Restore options */
-    options = savedOptions;
-
-    return result;
+    return NULL;
 }

@@ -3,6 +3,8 @@
 #include "stackmemory.h"
 #include "log.h"
 #include "globals.h"
+#include "position.h"
+#include "referenceableitemtable.h"
 #include <stdlib.h>
 
 /* Opaque implementation structure */
@@ -10,6 +12,41 @@ struct SymbolDatabase {
     /* For now, just a placeholder */
     int placeholder;
 };
+
+/* Context for searching the ReferenceableItemTable by position */
+typedef struct {
+    Position targetPosition;
+    ReferenceableItem *found;
+} FindReferenceableContext;
+
+/* Callback for mapOverReferenceableItemTableWithPointer */
+static void checkReferenceableItemAtPosition(ReferenceableItem *item, void *contextPtr) {
+    FindReferenceableContext *context = (FindReferenceableContext *)contextPtr;
+
+    /* If already found, skip */
+    if (context->found != NULL)
+        return;
+
+    /* Walk the references list for this item */
+    for (Reference *ref = item->references; ref != NULL; ref = ref->next) {
+        if (positionsAreEqual(ref->position, context->targetPosition)) {
+            context->found = item;
+            return;
+        }
+    }
+}
+
+/* Find the ReferenceableItem that has a Reference at the given position */
+static ReferenceableItem* findReferenceableItemWithReferenceAt(Position pos) {
+    FindReferenceableContext context = {
+        .targetPosition = pos,
+        .found = NULL
+    };
+
+    mapOverReferenceableItemTableWithPointer(checkReferenceableItemAtPosition, &context);
+
+    return context.found;
+}
 
 SymbolDatabase* createSymbolDatabase(void) {
     SymbolDatabase* db = malloc(sizeof(SymbolDatabase));
