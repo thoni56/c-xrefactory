@@ -871,13 +871,10 @@ static char *allocateLinkName(char *argumentName, Position position) {
     return argLinkName;
 }
 
-static void swapPositions(Position **_parpos1, Position **_parpos2) {
-    Position *parpos1 = *_parpos1, *parpos2 = *_parpos2;
-    Position *tmppos = parpos1;
-    parpos1 = parpos2;
-    parpos2 = tmppos;
-    *_parpos1 = parpos1;
-    *_parpos2 = parpos2;
+protected void swapPositions(Position *inOutPosition1, Position *inOutPosition2) {
+    Position tmppos = *inOutPosition1;
+    *inOutPosition1 = *inOutPosition2;
+    *inOutPosition2 = tmppos;
 }
 
 /* Public only for unittesting */
@@ -890,11 +887,6 @@ protected void processDefineDirective(bool hasArguments) {
     Symbol *symbol = NULL;
 
     initMacroArgumentsMemory();
-
-    Position ppb1 = noPosition;
-    Position ppb2 = noPosition;
-    Position *parpos1 = &ppb1;
-    Position *parpos2 = &ppb2;
 
     LexemCode lexem = getLexem();
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
@@ -924,11 +916,14 @@ protected void processDefineDirective(bool hasArguments) {
 
     if (hasArguments) {
         Position position;
+        Position previousDelimiterPosition = noPosition;
+        Position currentDelimiterPosition = noPosition;
+
         lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, parpos2, NULL, NULL, true);
-        *parpos1 = *parpos2;
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &currentDelimiterPosition, NULL, NULL, true);
+        previousDelimiterPosition = currentDelimiterPosition;
         if (lexem != '(')
             goto errorlabel;
         argumentCount++;
@@ -960,19 +955,19 @@ protected void processDefineDirective(bool hasArguments) {
                 lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-                swapPositions(&parpos1, &parpos2);
+                swapPositions(&previousDelimiterPosition, &currentDelimiterPosition);
 
-                getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, parpos2, NULL, NULL, true);
+                getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &currentDelimiterPosition, NULL, NULL, true);
                 if (!ellipsis) {
                     addTrivialCxReference(getMacroArgument(argumentIndex)->linkName, TypeMacroArg, StorageDefault,
                                           position, UsageDefined);
-                    handleMacroDefinitionParameterPositions(argumentCount, macroPosition, *parpos1, position,
-                                                            *parpos2, false);
+                    handleMacroDefinitionParameterPositions(argumentCount, macroPosition, previousDelimiterPosition, position,
+                                                            currentDelimiterPosition, false);
                 }
                 if (lexem == ELLIPSIS) {
                     lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
                     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
-                    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, parpos2, NULL, NULL, true);
+                    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &currentDelimiterPosition, NULL, NULL, true);
                 }
                 if (lexem == ')')
                     break;
@@ -982,11 +977,11 @@ protected void processDefineDirective(bool hasArguments) {
                 lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
             }
-            handleMacroDefinitionParameterPositions(argumentCount, macroPosition, *parpos1, noPosition, *parpos2,
+            handleMacroDefinitionParameterPositions(argumentCount, macroPosition, previousDelimiterPosition, noPosition, currentDelimiterPosition,
                                                     true);
         } else {
-            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, parpos2, NULL, NULL, true);
-            handleMacroDefinitionParameterPositions(argumentCount, macroPosition, *parpos1, noPosition, *parpos2,
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &currentDelimiterPosition, NULL, NULL, true);
+            handleMacroDefinitionParameterPositions(argumentCount, macroPosition, previousDelimiterPosition, noPosition, currentDelimiterPosition,
                                                     true);
         }
     }

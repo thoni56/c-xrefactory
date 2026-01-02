@@ -1,9 +1,11 @@
 #include <cgreen/cgreen.h>
+#include <cgreen/constraint_syntax_helpers.h>
 
 #include "constants.h"
 #include "lexem.h"
 #include "lexembuffer.h"
 #include "memory.h"
+#include "position.h"
 #include "yylex.h"
 
 /* Declare protected functions for testing */
@@ -268,4 +270,22 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
            times(2)); /* Don't know why two times... */
 
     processIncludeDirective(position, true);
+}
+
+
+extern void swapPositions(Position *inOutPosition1, Position *inOutPosition2);
+
+Ensure(Yylex, can_swap_two_positions) {
+    Position position1 = makePosition(17, 18, 19);
+    Position position2 = makePosition(42, 43, 44);
+
+    swapPositions(&position1, &position2);
+
+    assert_that(position1.file, is_equal_to(42));
+    assert_that(position1.line, is_equal_to(43));
+    assert_that(position1.col, is_equal_to(44));
+
+    assert_that(position2.file, is_equal_to(17));
+    assert_that(position2.line, is_equal_to(18));
+    assert_that(position2.col, is_equal_to(19));
 }
