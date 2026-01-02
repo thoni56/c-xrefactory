@@ -12,7 +12,18 @@
 #include "lsp_sender.h"
 #include "json_utils.h"
 #include "lsp_adapter.h"
+#include "reference_database.h"
 
+/* Global reference database for the LSP session */
+static ReferenceDatabase *referenceDatabase = NULL;
+
+ReferenceDatabase *getReferenceDatabase(void) {
+    return referenceDatabase;
+}
+
+void setReferenceDatabase(ReferenceDatabase *db) {
+    referenceDatabase = db;
+}
 
 static char *filename_from_uri(const char *uri) {
     char *uri_prefix = "file://";
