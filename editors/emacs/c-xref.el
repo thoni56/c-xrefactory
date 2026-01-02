@@ -501,7 +501,9 @@ interrupted by C-g. If there are such files, delete them.
     ))
 
 ;;
-(c-xref-remove-old-temporary-files)
+;; Only clean up old temp files in interactive sessions, not during byte-compilation
+(unless noninteractive
+  (c-xref-remove-old-temporary-files))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
