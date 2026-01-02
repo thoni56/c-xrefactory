@@ -1,23 +1,24 @@
+#include "lsp_handler.h"
+
+/* Unittests */
+
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
 #include <cgreen/internal/assertions_internal.h>
-#include <cgreen/unit.h>
 #include <cgreen/mocks.h>
+#include <cgreen/unit.h>
 #include <cjson/cJSON.h>
 
-#include "lsp_handler.h"
-
-#include "log.h"
 #include "json_utils.h"
+#include "log.h"
 
+#include "cgreen_equal_to_json.c"
 #include "editor.mock"
 #include "editorbuffer.mock"
 #include "editorbuffertable.mock"
 #include "filetable.mock"
-#include "lsp_sender.mock"
 #include "lsp_adapter.mock"
-
-#include "cgreen_equal_to_json.c"
+#include "lsp_sender.mock"
 
 
 Describe(LspHandler);

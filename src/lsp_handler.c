@@ -1,18 +1,19 @@
 #include "lsp_handler.h"
 
 #include <cjson/cJSON.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "editor.h"
 #include "editorbuffer.h"
 #include "editorbuffertable.h"
 #include "filetable.h"
-#include "log.h"
-#include "lsp_sender.h"
 #include "json_utils.h"
+#include "log.h"
 #include "lsp_adapter.h"
+#include "lsp_sender.h"
 #include "reference_database.h"
+
 
 /* Global reference database for the LSP session */
 static ReferenceDatabase *referenceDatabase = NULL;
