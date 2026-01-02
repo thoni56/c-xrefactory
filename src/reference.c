@@ -54,15 +54,15 @@ void setReferenceUsage(Reference *reference,  Usage usage) {
 }
 
 Reference **addToReferenceList(Reference **list,
-                               Position pos, Usage usage) {
+                               Position position, Usage usage) {
     Reference **place;
-    Reference reference = makeReference(pos, usage, NULL);
+    Reference reference = makeReference(position, usage, NULL);
 
     SORTED_LIST_PLACE2(place, reference, list);
     if (*place==NULL || SORTED_LIST_NEQ((*place),reference)
         || allowsDuplicateReferences(parsingConfig.operation)) {
         Reference *r = cxAlloc(sizeof(Reference));
-        *r = makeReference(pos, usage, NULL);
+        *r = makeReference(position, usage, NULL);
         LIST_CONS(r, (*place));
     } else {
         assert(*place);
@@ -95,12 +95,13 @@ static Reference *addReferenceToListWithoutUsageCheck(Reference *ref, Reference 
 }
 
 
-Reference *addReferenceToList(Reference *ref, Reference **listP) {
-    log_debug("checking ref %s %s:%d:%d at %d", usageKindEnumName[ref->usage],
-              simpleFileName(getFileItemWithFileNumber(ref->position.file)->name), ref->position.line, ref->position.col, ref);
-    if (!isVisibleUsage(ref->usage))
+Reference *addReferenceToList(Reference *reference, Reference **listP) {
+    log_debug("checking ref %s %s:%d:%d at %d", usageKindEnumName[reference->usage],
+              simpleFileName(getFileItemWithFileNumber(reference->position.file)->name),
+              reference->position.line, reference->position.col, reference);
+    if (!isVisibleUsage(reference->usage))
         return NULL; // no regular on-line refs
-    return addReferenceToListWithoutUsageCheck(ref, listP);
+    return addReferenceToListWithoutUsageCheck(reference, listP);
 }
 
 int fileNumberOfReference(Reference reference) {

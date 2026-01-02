@@ -15,7 +15,7 @@
 
 
 typedef struct {
-    int offset;  // Position in buffer
+    int offset;  // Offset in buffer
     int length;  // Length of #include line
     char *text;  // The actual line text
 } IncludeEntry;

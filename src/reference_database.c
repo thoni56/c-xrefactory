@@ -38,9 +38,9 @@ static void checkReferenceableItemAtPosition(ReferenceableItem *item, void *cont
 }
 
 /* Find the ReferenceableItem that has a Reference at the given position */
-/*static*/ ReferenceableItem* findReferenceableItemWithReferenceAt(Position pos) {
+static ReferenceableItem* findReferenceableItemWithReferenceAt(Position position) {
     FindReferenceableContext context = {
-        .targetPosition = pos,
+        .targetPosition = position,
         .found = NULL
     };
 
@@ -75,7 +75,8 @@ static Position extractDefinitionPosition(ReferenceableItem *item) {
     return noPosition;
 }
 
-ReferenceableResult findReferenceableAt(ReferenceDatabase *db, const char *fileName, Position pos) {
+ReferenceableResult findReferenceableAt(ReferenceDatabase *db, const char *fileName,
+                                        Position position) {
     // TODO: This is where we would:
     // 1. Check if fileName needs to be rescanned (file modification time, etc.)
     // 2. Call parseCurrentInputFile() or similar to populate reference tables
@@ -86,7 +87,7 @@ ReferenceableResult findReferenceableAt(ReferenceDatabase *db, const char *fileN
     (void)fileName;  // fileName would be used for lazy parsing
 
     /* Find the ReferenceableItem that has a reference at this position */
-    ReferenceableItem *item = findReferenceableItemWithReferenceAt(pos);
+    ReferenceableItem *item = findReferenceableItemWithReferenceAt(position);
 
     if (item == NULL) {
         return makeReferenceableFailure();
@@ -98,16 +99,17 @@ ReferenceableResult findReferenceableAt(ReferenceDatabase *db, const char *fileN
     return makeReferenceableResult(item, definition, true);
 }
 
-ReferencesResult getReferencesTo(ReferenceDatabase *db, const char *fileName, Position pos) {
+ReferencesResult getReferencesTo(ReferenceDatabase *db, const char *fileName, Position position) {
     // TODO: Automatically check if fileName or its dependencies have changed
     // TODO: Parse/reparse only the files that need updating
-    // TODO: Then find all references to the referenceable at pos
+    // TODO: Then find all references to the referenceable at position
     return makeReferencesFailure();
 }
 
 
 /* Utility functions */
-ReferenceableResult makeReferenceableResult(ReferenceableItem *referenceable, Position definition, bool found) {
+ReferenceableResult makeReferenceableResult(ReferenceableItem *referenceable, Position definition,
+                                            bool found) {
     ReferenceableResult result;
     result.referenceable = referenceable;
     result.definition = definition;

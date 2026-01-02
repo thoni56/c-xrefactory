@@ -50,16 +50,18 @@ int addToReferenceableItemTable(ReferenceableItem *referenceableItem) {
     return referenceableItemTableAdd(&referenceableItemTable, referenceableItem);
 }
 
-void pushReferenceableItem(ReferenceableItem *element, int position) {
-    referenceableItemTablePush(&referenceableItemTable, element, position);
+void pushReferenceableItem(ReferenceableItem *element, int offset) {
+    referenceableItemTablePush(&referenceableItemTable, element, offset);
 }
 
 void setReferenceableItem(int index, ReferenceableItem *item) {
     referenceableItemTable.tab[index] = item;
 }
 
-bool isMemberInReferenceableItemTable(ReferenceableItem *element, int *position, ReferenceableItem **foundMemberPointer) {
-    return referenceableItemTableIsMember(&referenceableItemTable, element, position, foundMemberPointer);
+bool isMemberInReferenceableItemTable(ReferenceableItem *element, int *offsetP,
+                                      ReferenceableItem **foundMemberPointer) {
+    return referenceableItemTableIsMember(&referenceableItemTable, element, offsetP,
+                                          foundMemberPointer);
 }
 
 void mapOverReferenceableItemTable(void (*fun)(ReferenceableItem *)) {
@@ -68,7 +70,8 @@ void mapOverReferenceableItemTable(void (*fun)(ReferenceableItem *)) {
     LEAVE();
 }
 
-void mapOverReferenceableItemTableWithPointer(void (*fun)(ReferenceableItem *, void *), void *pointer) {
+void mapOverReferenceableItemTableWithPointer(void (*fun)(ReferenceableItem *, void *),
+                                              void *pointer) {
     referenceableItemTableMapWithPointer(&referenceableItemTable, fun, pointer);
 }
 

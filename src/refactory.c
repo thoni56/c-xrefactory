@@ -462,7 +462,7 @@ void applyWholeRefactoringFromUndo(void) {
     editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
 }
 
-static void fatalErrorOnPosition(EditorMarker *p, int errType, char *message) {
+static void fatalErrorOnMarker(EditorMarker *p, int errType, char *message) {
     EditorUndo *redo;
     redo = NULL;
     editorUndoUntil(refactoringStartingPoint, &redo);
@@ -705,11 +705,11 @@ EditorMarker *createMarkerForExpressionStart(EditorMarker *marker, ExpressionSta
     }
     if (position.file == NO_FILE_NUMBER) {
         if (startKind == GET_STATIC_PREFIX_START) {
-            fatalErrorOnPosition(marker, ERR_ST,
+            fatalErrorOnMarker(marker, ERR_ST,
                                  "Can't determine static prefix. Maybe non-static reference to a static object? "
                                  "Make this invocation static before refactoring.");
         } else {
-            fatalErrorOnPosition(marker, ERR_INTERNAL, "Can't determine beginning of primary expression");
+            fatalErrorOnMarker(marker, ERR_INTERNAL, "Can't determine beginning of primary expression");
         }
         return NULL;
     } else {
@@ -922,7 +922,7 @@ static void renameAtInclude(EditorMarker *point) {
     freeEditorMarkerListAndMarkers(occurrences); // O(n^2)!
 }
 
-static void clearParamPositions(void) {
+static void clearParameterPositions(void) {
     parameterPosition      = noPosition;
     parameterBeginPosition = noPosition;
     parameterEndPosition   = noPosition;
@@ -933,7 +933,7 @@ static Result getParameterNamePosition(EditorMarker *point, char *fileName, int 
     char *nameOnPoint;
 
     nameOnPoint = getIdentifierOnMarker_static(point);
-    clearParamPositions();
+    clearParameterPositions();
     assert(strcmp(nameOnPoint, fileName) == 0);
     sprintf(pushOptions, "-olcxgotoparname%d", argn);
     parseBufferUsingServer(refactoringOptions.project, point, NULL, pushOptions, NULL);
@@ -959,7 +959,7 @@ static Result getParameterPosition(EditorMarker *point, char *functionOrMacroNam
         errorMessage(ERR_ST, tmpBuff);
     }
 
-    clearParamPositions();
+    clearParameterPositions();
     sprintf(pushOptions, "-olcxgetparamcoord%d", argn);
     parseBufferUsingServer(refactoringOptions.project, point, NULL, pushOptions, NULL);
     popFromSession();
@@ -1129,18 +1129,18 @@ static void addParameter(EditorMarker *pos, char *fname, int argumentNumber, Usa
     }
 }
 
-static void deleteParameter(EditorMarker *pos, char *fname, int argumentNumber, Usage usage) {
+static void deleteParameter(EditorMarker *marker, char *fname, int argumentNumber, Usage usage) {
     char         *text;
     EditorMarker *m1, *m2;
 
-    Result res = getParameterPosition(pos, fname, argumentNumber);
+    Result res = getParameterPosition(marker, fname, argumentNumber);
     if (res != RESULT_OK)
         return;
 
     m1 = newEditorMarkerForPosition(parameterBeginPosition);
     m2 = newEditorMarkerForPosition(parameterEndPosition);
 
-    text = pos->buffer->allocation.text;
+    text = marker->buffer->allocation.text;
 
     if (positionsAreEqual(parameterBeginPosition, parameterEndPosition)) {
         if (text[m1->offset] == '(') {
@@ -1165,8 +1165,8 @@ static void deleteParameter(EditorMarker *pos, char *fname, int argumentNumber, 
         }
         if (isDefinitionUsage(usage)) {
             // this must be at the end, because it discards values
-            // of s_paramBeginPosition and s_paramEndPosition
-            checkThatParameterIsUnused(pos, fname, argumentNumber, CHECK_FOR_DEL_PARAM);
+            // of parameterBeginPosition and parameterEndPosition
+            checkThatParameterIsUnused(marker, fname, argumentNumber, CHECK_FOR_DEL_PARAM);
         }
 
         assert(m1->offset <= m2->offset);
@@ -1176,20 +1176,20 @@ static void deleteParameter(EditorMarker *pos, char *fname, int argumentNumber, 
     freeEditorMarker(m2);
 }
 
-static void moveParameter(EditorMarker *pos, char *fname, int argFrom, int argTo) {
+static void moveParameter(EditorMarker *marker, char *fname, int argFrom, int argTo) {
     char         *text;
     char          par[REFACTORING_TMP_STRING_SIZE];
     int           plen;
     EditorMarker *m1, *m2;
 
-    Result res = getParameterPosition(pos, fname, argFrom);
+    Result res = getParameterPosition(marker, fname, argFrom);
     if (res != RESULT_OK)
         return;
 
     m1 = newEditorMarkerForPosition(parameterBeginPosition);
     m2 = newEditorMarkerForPosition(parameterEndPosition);
 
-    text      = pos->buffer->allocation.text;
+    text      = marker->buffer->allocation.text;
     plen      = 0;
     par[plen] = 0;
 
@@ -1215,8 +1215,8 @@ static void moveParameter(EditorMarker *pos, char *fname, int argFrom, int argTo
         plen = m2->offset - m1->offset;
         strncpy(par, MARKER_TO_POINTER(m1), plen);
         par[plen] = 0;
-        deleteParameter(pos, fname, argFrom, UsageUsed);
-        addStringAsParameter(pos, NULL, fname, argTo, par);
+        deleteParameter(marker, fname, argFrom, UsageUsed);
+        addStringAsParameter(marker, NULL, fname, argTo, par);
     }
     freeEditorMarker(m1);
     freeEditorMarker(m2);

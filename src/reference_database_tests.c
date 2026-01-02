@@ -34,8 +34,8 @@ Ensure(ReferenceDatabase, lookup_automatically_scans_empty_file_and_returns_not_
 
     // When I lookup a referenceable in a file that hasn't been scanned yet
     // (The database should automatically and invisibly scan the file and find nothing)
-    Position lookupPos = {.file = 1, .line = 3, .col = 10};
-    ReferenceableResult result = findReferenceableAt(db, "test.c", lookupPos);
+    Position lookupPosition = {.file = 1, .line = 3, .col = 10};
+    ReferenceableResult result = findReferenceableAt(db, "test.c", lookupPosition);
 
     // Then I should get a failure result
     // (because the database found no referenceable at that position)

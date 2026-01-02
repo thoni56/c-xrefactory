@@ -10,6 +10,7 @@ Describe(Position);
 BeforeEach(Position) {}
 AfterEach(Position) {}
 
+
 Ensure(Position, can_add_two_positions) {
     Position pos  = {0, 0, 0};
     Position pos1 = {1, 1, 1};

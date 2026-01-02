@@ -52,7 +52,7 @@ extern void declTypeSpecifier2(Symbol *d, TypeModifier *t);
 extern TypeModifier *addComposedTypeToSymbol(Symbol *symbol, Type type);
 extern TypeModifier *appendComposedType(TypeModifier **d, Type type);
 extern void completeDeclarator(Symbol *t, Symbol *d);
-extern void addFunctionParameterToSymTable(SymbolTable *tab, Symbol *function, Symbol *p, int i);
+extern void addFunctionParameterToSymbolTable(SymbolTable *tab, Symbol *function, Symbol *p, int i);
 extern SymbolList *createDefinitionList(Symbol *symbol);
 extern Symbol *createSimpleDefinition(Storage storage, Type type, Id *id);
 extern int findStructureMember(Symbol *symbol, char *memberName, Symbol	**foundMemberSymbol);
@@ -63,7 +63,7 @@ extern TypeModifier *simpleStructOrUnionSpecifier(Id *typeName, Id *id, Usage us
 extern TypeModifier *createNewAnonymousStructOrUnion(Id *typeName);
 extern void specializeStructOrUnionDef(Symbol *sd, Symbol *rec);
 extern TypeModifier *simpleEnumSpecifier(Id *id, Usage usage);
-extern void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory);
+extern void setGlobalFileDepNames(char *iname, Symbol *symbol, MemoryClass memory);
 extern TypeModifier *createNewAnonymousEnum(SymbolList *enums);
 extern void appendPositionToList(PositionList **list, Position position);
 extern void setParamPositionForFunctionWithoutParams(Position lpar);
@@ -72,7 +72,7 @@ extern Symbol *createEmptyField(void);
 extern void handleDeclaratorParamPositions(Symbol *decl, Position lpar,
                                            PositionList *commas, Position rpar,
                                            bool hasParam, bool isVoid);
-extern void handleInvocationParamPositions(Reference *ref, Position lpar,
+extern void handleInvocationParameterPositions(Reference *ref, Position lpar,
                                            PositionList *commas, Position rpar,
                                            bool hasParam);
 extern void setLocalVariableLinkName(struct symbol *p);

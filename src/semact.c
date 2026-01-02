@@ -399,7 +399,8 @@ Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declarat
     return declaration;
 }
 
-void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol *parameter, int position) {
+void addFunctionParameterToSymbolTable(SymbolTable *table, Symbol *function, Symbol *parameter,
+                                       int parameterIndex) {
     if (parameter->name != NULL && parameter->type!=TypeError) {
         Symbol *parameterCopy = newSymbolAsCopyOf(parameter);
         Symbol *pp;
@@ -425,7 +426,7 @@ void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol
         }
     }
     if (parsingConfig.operation == PARSE_TO_TRACK_PARAMETERS
-        && position == parsingConfig.targetParameterIndex
+        && parameterIndex == parsingConfig.targetParameterIndex
         && positionsAreEqual(function->position, cxRefPosition))
     {
         parameterPosition = parameter->position;
@@ -668,7 +669,7 @@ TypeModifier *simpleStructOrUnionSpecifier(Id *typeName, Id *id, Usage usage) {
     return &foundMemberP->structSpec->type;
 }
 
-void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
+void setGlobalFileDepNames(char *iname, Symbol *symbol, MemoryClass memory) {
     char *mname, *fname;
     char tmp[MACRO_NAME_SIZE];
     int isMember, order, len, len2;
@@ -679,8 +680,8 @@ void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
     if (options.exactPositionResolve) {
         FileItem *fileItem = getFileItemWithFileNumber(symbol->position.file);
         fname = simpleFileName(fileItem->name);
-        sprintf(tmp, "%x-%s-%x-%x%c", hashFun(fileItem->name), fname, symbol->position.line, symbol->position.col,
-                LINK_NAME_SEPARATOR);
+        sprintf(tmp, "%x-%s-%x-%x%c", hashFun(fileItem->name), fname, symbol->position.line,
+                symbol->position.col, LINK_NAME_SEPARATOR);
     } else if (iname[0]==0) {
         Symbol *member;
         // anonymous enum/structure/union ...
@@ -776,7 +777,7 @@ void specializeStructOrUnionDef(Symbol *symbol, Symbol *recordSymbol) {
     for (Symbol *r=recordSymbol; r!=NULL; r=r->next) {
         if (r->name != NULL) {
             r->linkName = string3ConcatInStackMem(symbol->linkName, ".", r->name);
-            handleFoundSymbolReference(r, r->position,UsageDefined, NO_FILE_NUMBER);
+            handleFoundSymbolReference(r, r->position, UsageDefined, NO_FILE_NUMBER);
         }
     }
 }
@@ -814,23 +815,23 @@ void appendPositionToList(PositionList **list, Position position) {
     LIST_APPEND(PositionList, (*list), ppl);
 }
 
-void setParamPositionForFunctionWithoutParams(Position lpar) {
-    parameterBeginPosition = lpar;
-    parameterEndPosition = lpar;
+void setParamPositionForFunctionWithoutParams(Position lparPosition) {
+    parameterBeginPosition = lparPosition;
+    parameterEndPosition = lparPosition;
 }
 
-static void setParamPositionForParameter0(Position lpar) {
-    parameterBeginPosition = lpar;
-    parameterEndPosition = lpar;
+static void setParamPositionForParameter0(Position lparPosition) {
+    parameterBeginPosition = lparPosition;
+    parameterEndPosition = lparPosition;
 }
 
-void setParamPositionForParameterBeyondRange(Position rpar) {
-    parameterBeginPosition = rpar;
-    parameterEndPosition = rpar;
+void setParamPositionForParameterBeyondRange(Position rparPosition) {
+    parameterBeginPosition = rparPosition;
+    parameterEndPosition = rparPosition;
 }
 
-static void handleParameterPositions(Position lpar, PositionList *commas, Position rpar, bool hasParam,
-                                     bool isVoid) {
+static void handleParameterPositions(Position lparPosition, PositionList *commaPositions,
+                                     Position rparPosition, bool hasParameters, bool isVoid) {
     Position     position1, position2;
     PositionList *list;
 
@@ -844,37 +845,37 @@ static void handleParameterPositions(Position lpar, PositionList *commas, Positi
     parameterListIsVoid = isVoid;
     parameterCount = 0;
 
-    if (!hasParam) {
-        setParamPositionForFunctionWithoutParams(lpar);
+    if (!hasParameters) {
+        setParamPositionForFunctionWithoutParams(lparPosition);
         return;
     }
 
     if (!isVoid) {
-        LIST_LEN(parameterCount, PositionList, commas);
+        LIST_LEN(parameterCount, PositionList, commaPositions);
         parameterCount++;
     }
 
     int argn = parsingConfig.targetParameterIndex;
     assert(argn > 0);           /* TODO: WTF is Parameter0 and when is it used? */
     if (argn == 0) {
-        setParamPositionForParameter0(lpar);
+        setParamPositionForParameter0(lparPosition);
     } else {
-        list = commas;
-        position1 = lpar;
+        list = commaPositions;
+        position1 = lparPosition;
         if (list != NULL)
             position2 = list->position;
         else
-            position2 = rpar;
+            position2 = rparPosition;
         int i;
         for (i=2; list != NULL && i <= argn; list = list->next, i++) {
             position1 = list->position;
             if (list->next != NULL)
                 position2 = list->next->position;
             else
-                position2 = rpar;
+                position2 = rparPosition;
         }
         if (list == NULL && i <= argn) {
-            setParamPositionForParameterBeyondRange(rpar);
+            setParamPositionForParameterBeyondRange(rparPosition);
         } else {
             parameterBeginPosition = position1;
             parameterEndPosition   = position2;
@@ -883,34 +884,32 @@ static void handleParameterPositions(Position lpar, PositionList *commas, Positi
 }
 
 Symbol *createEmptyField(void) {
-    TypeModifier *p;
+    TypeModifier *typeModifier;
 
-    p = newSimpleTypeModifier(TypeAnonymousField);
-    return newSymbolAsType("", "", noPosition, p);
+    typeModifier = newSimpleTypeModifier(TypeAnonymousField);
+    return newSymbolAsType("", "", noPosition, typeModifier);
 }
 
-void handleDeclaratorParamPositions(Symbol *decl, Position lpar,
-                                    PositionList *commas, Position rpar,
-                                    bool hasParam, bool isVoid
-                                    ) {
+void handleDeclaratorParamPositions(Symbol *symbol, Position lparPosition,
+                                    PositionList *commaPositions, Position rparPositions,
+                                    bool hasParameters, bool isVoid) {
     if (options.mode != ServerMode)
         return;
     if (parsingConfig.operation != PARSE_TO_TRACK_PARAMETERS)
         return;
-    if (positionsAreNotEqual(decl->position, cxRefPosition))
+    if (positionsAreNotEqual(symbol->position, cxRefPosition))
         return;
-    handleParameterPositions(lpar, commas, rpar, hasParam, isVoid);
+    handleParameterPositions(lparPosition, commaPositions, rparPositions, hasParameters, isVoid);
 }
 
-void handleInvocationParamPositions(Reference *ref, Position lpar,
-                                    PositionList *commas, Position rpar,
-                                    bool hasParam
-                                    ) {
+void handleInvocationParameterPositions(Reference *reference, Position lparPosition,
+                                        PositionList *commaPositions, Position rparPosition,
+                                        bool hasParameters) {
     if (options.mode != ServerMode)
         return;
     if (parsingConfig.operation != PARSE_TO_TRACK_PARAMETERS)
         return;
-    if (ref==NULL || positionsAreNotEqual(ref->position, cxRefPosition))
+    if (reference==NULL || positionsAreNotEqual(reference->position, cxRefPosition))
         return;
-    handleParameterPositions(lpar, commas, rpar, hasParam, false);
+    handleParameterPositions(lparPosition, commaPositions, rparPosition, hasParameters, false);
 }

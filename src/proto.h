@@ -102,10 +102,10 @@ enum {
 };
 
 
-enum memoryClass {
+typedef enum memoryClass {
     MEMORY_XX,                  /* Means StackMemory... */
     MEMORY_PPM,
-};
+} MemoryClass;
 
 typedef enum result {
     RESULT_OK,

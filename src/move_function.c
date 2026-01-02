@@ -352,7 +352,7 @@ static bool sourceAlreadyIncludesHeader(EditorBuffer *sourceBuffer, char *header
 static int findIncludeInsertionPoint(EditorBuffer *buffer) {
     char *text = buffer->allocation.text;
     int size = buffer->size;
-    int lastIncludeEnd = 0;  /* Position after last include, or 0 if none found */
+    int lastIncludeEnd = 0;  /* Offset after last include, or 0 if none found */
 
     /* Scan forward looking for #include directives */
     for (int i = 0; i < size - 8; i++) {  /* 8 = strlen("#include") */
@@ -365,7 +365,7 @@ static int findIncludeInsertionPoint(EditorBuffer *buffer) {
                     j++;
                 }
                 if (j < size) {
-                    lastIncludeEnd = j + 1;  /* Position after the newline */
+                    lastIncludeEnd = j + 1;  /* Offset after the newline */
                 }
             }
         }

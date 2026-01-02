@@ -274,9 +274,9 @@ postfix_expr
         if ($1.data.typeModifier->type==TypeFunction) {
             $$.data.typeModifier=$1.data.typeModifier->next;
             if ($4.data == NULL) {
-                handleInvocationParamPositions($1.data.reference, $3.data, NULL, $5.data, 0);
+                handleInvocationParameterPositions($1.data.reference, $3.data, NULL, $5.data, 0);
             } else {
-                handleInvocationParamPositions($1.data.reference, $3.data, $4.data->next, $5.data, 1);
+                handleInvocationParameterPositions($1.data.reference, $3.data, $4.data->next, $5.data, 1);
             }
         } else {
             $$.data.typeModifier = &errorModifier;
@@ -1603,7 +1603,7 @@ external_definition
                 continue;
             if (symbol->typeModifier == NULL)
                 symbol->typeModifier = &defaultIntModifier;
-            addFunctionParameterToSymTable(symbolTable, $1.data, symbol, i);
+            addFunctionParameterToSymbolTable(symbolTable, $1.data, symbol, i);
         }
     } compound_statement {
         /* Capture function boundaries for move-function refactoring */

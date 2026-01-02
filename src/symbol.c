@@ -9,10 +9,10 @@
 #include "type.h"
 
 
-static void fillSymbol(Symbol *symbol, char *name, char *linkName, Position pos) {
+static void fillSymbol(Symbol *symbol, char *name, char *linkName, Position position) {
     symbol->name = name;
     symbol->linkName = linkName;
-    symbol->position = pos;
+    symbol->position = position;
     symbol->typeModifier = NULL;
     symbol->next = NULL;
     symbol->type = TypeDefault;
@@ -21,34 +21,36 @@ static void fillSymbol(Symbol *symbol, char *name, char *linkName, Position pos)
 }
 
 /* Storage = StorageDefault */
-Symbol makeSymbol(char *name, Type type, Position pos) {
+Symbol makeSymbol(char *name, Type type, Position position) {
     Symbol symbol;
-    fillSymbol(&symbol, name, name, pos);
+    fillSymbol(&symbol, name, name, position);
     symbol.type = type;
     return symbol;
 }
 
-Symbol makeMacroSymbol(char *name, Position pos) {
-    Symbol symbol = {.name = name, .linkName = name, .position = pos, .type = TypeMacro, .storage = StorageDefault};
+Symbol makeMacroSymbol(char *name, Position position) {
+    Symbol symbol = {.name = name, .linkName = name, .position = position, .type = TypeMacro,
+        .storage = StorageDefault};
     return symbol;
 }
 
-void fillSymbolWithTypeModifier(Symbol *symbol, char *name, char *linkName, Position pos,
+void fillSymbolWithTypeModifier(Symbol *symbol, char *name, char *linkName, Position position,
                                 struct typeModifier *typeModifier) {
-    fillSymbol(symbol, name, linkName, pos);
+    fillSymbol(symbol, name, linkName, position);
     symbol->typeModifier = typeModifier;
 }
 
-void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, Position pos, int labelIndex) {
-    fillSymbol(symbol, name, linkName, pos);
+void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, Position position,
+                         int labelIndex) {
+    fillSymbol(symbol, name, linkName, position);
     symbol->labelIndex = labelIndex;
 }
 
 /* Allocate and init a new Symbol in StackMemory */
-Symbol *newSymbol(char *name, Position pos) {
+Symbol *newSymbol(char *name, Position position) {
     Symbol *s;
     s = stackMemoryAlloc(sizeof(Symbol));
-    *s = makeSymbol(name, TypeDefault, pos);
+    *s = makeSymbol(name, TypeDefault, position);
     return s;
 }
 
@@ -59,26 +61,26 @@ Symbol *newSymbolAsCopyOf(Symbol *original) {
     return s;
 }
 
-Symbol *newSymbolAsKeyword(char *name, char *linkName, Position pos, int keyWordVal) {
-    Symbol *s = newSymbol(name, pos);
+Symbol *newSymbolAsKeyword(char *name, char *linkName, Position position, int keyWordVal) {
+    Symbol *s = newSymbol(name, position);
     s->keyword = keyWordVal;
     return s;
 }
 
-Symbol *newSymbolAsType(char *name, char *linkName, Position pos, struct typeModifier *type) {
-    Symbol *s = newSymbol(name, pos);
+Symbol *newSymbolAsType(char *name, char *linkName, Position position, struct typeModifier *type) {
+    Symbol *s = newSymbol(name, position);
     s->typeModifier = type;
     return s;
 }
 
-Symbol *newSymbolAsEnum(char *name, char *linkName, Position pos, struct symbolList *enums) {
-    Symbol *s = newSymbol(name, pos);
+Symbol *newSymbolAsEnum(char *name, char *linkName, Position position, struct symbolList *enums) {
+    Symbol *s = newSymbol(name, position);
     s->enums = enums;
     return s;
 }
 
-Symbol *newSymbolAsLabel(char *name, char *linkName, Position pos, int labelIndex) {
-    Symbol *s = newSymbol(name, pos);
+Symbol *newSymbolAsLabel(char *name, char *linkName, Position position, int labelIndex) {
+    Symbol *s = newSymbol(name, position);
     s->labelIndex = labelIndex;
     return s;
 }

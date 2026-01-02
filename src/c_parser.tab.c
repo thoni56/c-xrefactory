@@ -2299,9 +2299,9 @@ case 19:
         if (yyvsp[-4].ast_expressionType.data.typeModifier->type==TypeFunction) {
             yyval.ast_expressionType.data.typeModifier=yyvsp[-4].ast_expressionType.data.typeModifier->next;
             if (yyvsp[-1].ast_positionList.data == NULL) {
-                handleInvocationParamPositions(yyvsp[-4].ast_expressionType.data.reference, yyvsp[-2].ast_position.data, NULL, yyvsp[0].ast_position.data, 0);
+                handleInvocationParameterPositions(yyvsp[-4].ast_expressionType.data.reference, yyvsp[-2].ast_position.data, NULL, yyvsp[0].ast_position.data, 0);
             } else {
-                handleInvocationParamPositions(yyvsp[-4].ast_expressionType.data.reference, yyvsp[-2].ast_position.data, yyvsp[-1].ast_positionList.data->next, yyvsp[0].ast_position.data, 1);
+                handleInvocationParameterPositions(yyvsp[-4].ast_expressionType.data.reference, yyvsp[-2].ast_position.data, yyvsp[-1].ast_positionList.data->next, yyvsp[0].ast_position.data, 1);
             }
         } else {
             yyval.ast_expressionType.data.typeModifier = &errorModifier;
@@ -4018,7 +4018,7 @@ case 352:
                 continue;
             if (symbol->typeModifier == NULL)
                 symbol->typeModifier = &defaultIntModifier;
-            addFunctionParameterToSymTable(symbolTable, yyvsp[0].ast_symbol.data, symbol, i);
+            addFunctionParameterToSymbolTable(symbolTable, yyvsp[0].ast_symbol.data, symbol, i);
         }
     }
 break;

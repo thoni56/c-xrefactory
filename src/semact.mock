@@ -96,7 +96,7 @@ void completeDeclarator(Symbol *t, Symbol *d) {
     mock(t, d);
 }
 
-void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol *parameter, int position) {
+void addFunctionParameterToSymbolTable(SymbolTable *table, Symbol *function, Symbol *parameter, int position) {
     mock(function, parameter, position, table);
 }
 
@@ -140,9 +140,9 @@ TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
     return (TypeModifier *) mock(id, usage);
 }
 
-void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
-    char **pp_name = &pp->name;
-    mock(iname, pp, pp_name, memory);
+void setGlobalFileDepNames(char *iname, Symbol *symbol, MemoryClass memory) {
+    char **pp_name = &symbol->name;
+    mock(iname, symbol, pp_name, memory);
 }
 
 TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
@@ -175,7 +175,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position leftParenthesis, Posi
     mock(decl, lpar, commas, rpar, hasParam, isVoid);
 }
 
-void handleInvocationParamPositions(Reference *ref, Position leftParenthesis, PositionList *commas,
+void handleInvocationParameterPositions(Reference *ref, Position leftParenthesis, PositionList *commas,
                                     Position rightParenthesis, bool hasParam) {
     Position *lpar = &leftParenthesis;
     Position *rpar = &rightParenthesis;
