@@ -668,6 +668,7 @@ $(eval $(call UNITTEST,lexembuffer,characterreader position memory stackmemory l
 $(eval $(call UNITTEST,lexer,log lexembuffer characterreader position memory stackmemory))
 $(eval $(call UNITTEST,list,log))
 $(eval $(call UNITTEST,lsp,log json_utils))
+$(eval $(call UNITTEST,lsp_adapter,log json_utils lsp_utils position stackmemory))
 $(eval $(call UNITTEST,lsp_utils,log))
 $(eval $(call UNITTEST,lsp_dispatcher,log json_utils))
 $(eval $(call UNITTEST,lsp_handler,log json_utils))
