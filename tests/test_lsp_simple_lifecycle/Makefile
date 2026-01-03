@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.lsp
 
 
 ARGUMENTS = -lsp

@@ -1,11 +1,11 @@
-include ../Makefile.boilerplate
+include ../Makefile.lsp
 
 
 ARGUMENTS = -lsp -debug -log=log $(DELAY)
 
 $(TEST): input.lsp
 	$(COMMAND) > output.tmp < input.lsp
-	$(NORMALIZE) output.tmp > output
+	$(NORMALIZE) output.tmp | tail -n +4 > output
 	$(VERIFY)
 
 trace: ARGUMENTS+=-debug -log=log
