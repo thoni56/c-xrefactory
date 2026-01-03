@@ -407,9 +407,8 @@ static int skipPossibleStringPrefix(CharacterBuffer *cb, int ch) {
 static int postProcessLexemForServerOperations(CharacterBuffer *cb, LexemBuffer *lb, int ch,
                                                char *startOfCurrentLexem) {
     int parChar;
-    Position position;
     int currentLexemFileOffset = lb->fileOffset;
-    position = lb->position;
+    Position position = lb->position;
 
     if (fileNumberFrom(cb) == originalFileNumber && fileNumberFrom(cb) != NO_FILE_NUMBER
         && fileNumberFrom(cb) != -1) {

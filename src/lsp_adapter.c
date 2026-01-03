@@ -14,12 +14,12 @@
 #include "reference_database.h"
 
 
-JSON *findDefinition(const char *uri, JSON *position) {
+JSON *findDefinition(const char *uri, JSON *positionJson) {
     ENTER();
 
     /* Extract LSP position parameters */
-    JSON *lineJson = cJSON_GetObjectItem(position, "line");
-    JSON *characterJson = cJSON_GetObjectItem(position, "character");
+    JSON *lineJson = cJSON_GetObjectItem(positionJson, "line");
+    JSON *characterJson = cJSON_GetObjectItem(positionJson, "character");
 
     if (!lineJson || !characterJson) {
         LEAVE();
@@ -41,7 +41,7 @@ JSON *findDefinition(const char *uri, JSON *position) {
     }
 
     /* Create Position from LSP coordinates (LSP is 0-based, c-xrefactory is 1-based for lines) */
-    Position pos = {
+    Position position = {
         .file = fileNumber,
         .line = lspLine + 1,     // Convert 0-based to 1-based
         .col = lspCharacter      // Both use 0-based columns
@@ -53,11 +53,11 @@ JSON *findDefinition(const char *uri, JSON *position) {
         log_trace("findDefinition: No reference database available");
         return NULL;
     }
-    ReferenceableResult result = findReferenceableAt(db, filePath, pos);
+    ReferenceableResult result = findReferenceableAt(db, filePath, position);
 
     /* If not found, return NULL */
     if (!result.found) {
-        log_trace("findDefinition: No referenceable found at position");
+        log_trace("findDefinition: No referenceable found at position %d:%d:%d", position.file, position.line, position.col);
         LEAVE();
         return NULL;
     }

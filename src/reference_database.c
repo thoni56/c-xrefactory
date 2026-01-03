@@ -7,6 +7,7 @@
 #include "referenceableitemtable.h"
 #include "usage.h"
 #include <stdlib.h>
+#include <string.h>
 
 /* Opaque implementation structure */
 struct ReferenceDatabase {
@@ -20,6 +21,17 @@ typedef struct {
     ReferenceableItem *found;
 } FindReferenceableContext;
 
+/* Check if target position is within the reference identifier */
+static bool positionIsWithinReference(Position refStart, Position target, const char *linkName) {
+    /* Must be same file and line */
+    if (refStart.file != target.file || refStart.line != target.line)
+        return false;
+
+    /* Check if target column is within the identifier */
+    int length = strlen(linkName);
+    return target.col >= refStart.col && target.col < refStart.col + length;
+}
+
 /* Callback for mapOverReferenceableItemTableWithPointer */
 static void checkReferenceableItemAtPosition(ReferenceableItem *item, void *contextPtr) {
     FindReferenceableContext *context = (FindReferenceableContext *)contextPtr;
@@ -30,7 +42,11 @@ static void checkReferenceableItemAtPosition(ReferenceableItem *item, void *cont
 
     /* Walk the references list for this item */
     for (Reference *ref = item->references; ref != NULL; ref = ref->next) {
-        if (positionsAreEqual(ref->position, context->targetPosition)) {
+        if (positionIsWithinReference(ref->position, context->targetPosition, item->linkName)) {
+            log_trace("Found referenceable '%s' at %d:%d (target was %d:%d, length %zu)",
+                     item->linkName, ref->position.line, ref->position.col,
+                     context->targetPosition.line, context->targetPosition.col,
+                     strlen(item->linkName));
             context->found = item;
             return;
         }
