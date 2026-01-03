@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 
 ARGUMENTS = test_source/hello.c

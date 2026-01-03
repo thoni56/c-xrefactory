@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 
 ARGUMENTS = -xrefactory-II -refactory -rfct-organize-includes -olcursor=$(OFFSET) source.c

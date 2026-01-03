@@ -1,6 +1,6 @@
 # Automated tests for <test case>
 
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 YACC = ../../byacc-1.9/yacc
 

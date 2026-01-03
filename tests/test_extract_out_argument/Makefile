@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 
 ARGUMENTS = -xrefactory-II -refactory -rfct-extract-function -olmark=50 -olcursor=80 $(CURDIR)/source.c

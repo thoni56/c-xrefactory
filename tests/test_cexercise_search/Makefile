@@ -1,6 +1,6 @@
 # Automated tests for exercising completion server
 
-include ../Makefile.boilerplate
+include ../Makefile.server
 
 
 $(TEST): CXrefs

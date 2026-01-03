@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 # Generate cross-reference info for systemd and extract specific identifiers
 # This makes the test portable by only checking systemd-defined symbols

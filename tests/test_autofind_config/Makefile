@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 $(TEST):
 	@-rm -r .c-xrefdb 2> /dev/null

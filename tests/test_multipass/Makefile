@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 # Test multi-pass parsing with pass-specific defines
 # PASS1 should define `pass1`

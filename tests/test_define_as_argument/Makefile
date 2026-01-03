@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 # This test doesn't really test anything. I was hoping that we could get the variables a
 # and b to become references in the expansion of line 3, but obviously not ...

@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 
 ARGUMENTS = -fastupdate -errors -preload source.c source.preload

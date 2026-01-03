@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 $(TEST):
 	$(COMMAND) source.c -o output.tmp

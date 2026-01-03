@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 
 ARGUMENTS = -refactory -rfct-rename-included-file -renameto=include2.h -olcursor=6 include.c $(EXTRA)

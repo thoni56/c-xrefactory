@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 $(TEST): .c-xrefrc
 	@$(COMMAND) -create -o $(TEST).log

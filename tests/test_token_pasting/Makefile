@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 # This test token pasting which mostly works. It does not include token pasting into
 # numbers, which doesn't. There is another, suspended, test for that.

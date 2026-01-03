@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 
 ARGUMENTS = -xrefactory-II -create -errors $(TRACE) -refs REFS -log=log -o output.ignore

@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 
 ARGUMENTS = -xrefactory-II -refactory -rfct-move-param -olcxparnum=1 -olcxparnum2=2 -olcursor=17 $(CURDIR)/source.c

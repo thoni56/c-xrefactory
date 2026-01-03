@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 ARGUMENTS = -xrefactory-II -refactory -rfct-rename -renameto=VVV -olcursor=6790 main.c
 

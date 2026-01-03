@@ -1,7 +1,7 @@
 include ../Makefile.server
 
 $(TEST):
-	$(CXREF) -create
+	$(CXREF) -create > /dev/null
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

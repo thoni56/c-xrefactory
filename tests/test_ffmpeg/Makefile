@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 # This test ensures that c-xref have generated an entry in CXrefs/XFiles for each
 # .c file in the directory - 2616 files

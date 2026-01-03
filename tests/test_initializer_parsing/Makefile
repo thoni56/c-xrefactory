@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 ARGUMENTS = initializer_parsing.c -create -o output.tmp
 

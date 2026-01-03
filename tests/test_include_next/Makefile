@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 # How c-xrefactory gets include paths:
 #     LANG=C gcc -v -x c -o /dev/null /dev/null >out 2>&1

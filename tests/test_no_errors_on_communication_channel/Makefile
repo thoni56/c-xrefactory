@@ -1,6 +1,6 @@
 # Automated tests to ensure that a full update does not give unexpected errors in server
 #
-include ../Makefile.boilerplate
+include ../Makefile.server
 
 
 $(TEST): CXrefs

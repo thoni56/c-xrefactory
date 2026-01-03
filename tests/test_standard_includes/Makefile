@@ -1,7 +1,7 @@
 # Automated test for finding standard includes (uses stdbool.h)
 # Initial version
 
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 $(TEST):
 	@rm -rf C-Xrefs $(TEST).log

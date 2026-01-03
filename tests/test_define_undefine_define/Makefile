@@ -1,6 +1,6 @@
 # Running c-xref on itself to ensure that it doesn't crash and can show progress
 
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
 ARGUMENTS = -create -errors $(TRACE) -o c-xref.log -log=log
 
