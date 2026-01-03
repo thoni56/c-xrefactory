@@ -19,6 +19,7 @@
 #include "filetable.mock"
 #include "lsp_adapter.mock"
 #include "lsp_sender.mock"
+#include "parsing.mock"
 #include "reference_database.mock"
 
 
@@ -63,7 +64,9 @@ Ensure(LspHandler, sends_correct_initialize_response) {
     JSON *captured_response; // A copy created by the mock function for send_response_and_delete()
 
     expect(initFileTable);
+    expect(initNoFileNumber);
     expect(initEditorBufferTable);
+    expect(initializeParsingSubsystem);
     expect(createReferenceDatabase);
 
     expect(send_response_and_delete, will_capture_parameter(response, captured_response));
@@ -146,6 +149,7 @@ Ensure(LspHandler, handles_did_open) {
     expect(createNewEditorBuffer, when(fileName, is_equal_to_string("/path/to/file.c")),
         will_return(&buffer));
     expect(loadTextIntoEditorBuffer, when(buffer, is_equal_to(&buffer)), when(text, is_equal_to_string(text)));
+    expect(parseToCreateReferences);
 
     // Action
     handle_did_open(did_open_request);

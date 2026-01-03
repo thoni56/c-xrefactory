@@ -12,6 +12,7 @@
 #include "log.h"
 #include "lsp_adapter.h"
 #include "lsp_sender.h"
+#include "parsing.h"
 #include "reference_database.h"
 
 
@@ -46,8 +47,12 @@ void handle_initialize(JSON *request) {
     add_json_string(response, "positionEncoding", "utf-8");
 
     initFileTable(100);
+    initNoFileNumber();  /* Sets NO_FILE_NUMBER to a valid file table index */
     initEditorBufferTable();
-    
+
+    /* Initialize parsing subsystem */
+    initializeParsingSubsystem();
+
     /* Create the reference database for this LSP session */
     referenceDatabase = createReferenceDatabase();
     log_trace("LSP: Reference database created");
@@ -120,6 +125,18 @@ void handle_did_open(JSON *notification) {
     char *fileName = filename_from_uri(uri);
     EditorBuffer *buffer = createNewEditorBuffer(fileName, NULL, time(NULL), strlen(text));
     loadTextIntoEditorBuffer(buffer, time(NULL), text);
+    buffer->textLoaded = true;  /* Mark text as loaded for getOpenedAndLoadedEditorBuffer() */
+
+    /* Determine language from languageId */
+    Language language = LANG_C;  /* Default to C */
+    if (strcmp(languageId, "yacc") == 0) {
+        language = LANG_YACC;
+    }
+
+    /* Parse the file to populate the reference database */
+    log_trace("LSP: Parsing file '%s' as %s", buffer->fileName, language == LANG_YACC ? "YACC" : "C");
+    parseToCreateReferences(buffer->fileName, language);
+    log_trace("LSP: Finished parsing file '%s'", buffer->fileName);
 }
 
 

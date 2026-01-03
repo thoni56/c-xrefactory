@@ -43,6 +43,8 @@ Ensure(LspAdapter, findDefinition_returns_location) {
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)),
            will_return_by_value(mockedFileItem, sizeof(mockedFileItem)));
 
+    expect(getFileNumberFromFileName, will_return(42));
+
     cJSON *result = findDefinition(uri, position);
 
     assert_that(result, is_not_null);

@@ -1,11 +1,21 @@
 #include "parsing.h"
 
+#include "characterreader.h"
+#include "constants.h"
 #include "editorbuffer.h"
 #include "editormarker.h"
 #include "filetable.h"
 #include "globals.h"
+#include "init.h"
+#include "log.h"
+#include "memory.h"
 #include "options.h"
+#include "parsers.h"
 #include "position.h"
+#include "referenceableitemtable.h"
+#include "stackmemory.h"
+#include "symboltable.h"
+#include "yylex.h"
 
 
 /* Global parsing configuration - set before parsing starts */
@@ -105,4 +115,73 @@ FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
     }
 
     return result;
+}
+
+void initializeParsingSubsystem(void) {
+    /* Initialize stack memory FIRST - everything else may allocate from it */
+    initOuterCodeBlock();
+
+    /* Initialize cx memory pool for cross-reference data */
+    initCxMemory(CX_MEMORY_INITIAL_SIZE);
+
+    /* Set server mode - required by parser assertions */
+    options.mode = ServerMode;
+
+    /* Prevent lowercasing of filenames on case-sensitive filesystems.
+     * This ensures buffer lookups match how files were stored during didOpen. */
+    options.fileNamesCaseSensitive = true;
+
+    /* Initialize type system - required before parsing */
+    initPreCreatedTypes();
+    initArchaicTypes();
+
+    /* Initialize symbol table for parsing */
+    initSymbolTable(MAX_SYMBOLS_HASHTABLE_ENTRIES);
+
+    /* Initialize referenceable item table for storing parsed symbols */
+    initReferenceableItemTable(MAX_REFS_HASHTABLE_ENTRIES);
+}
+
+static void setupParsingConfigForCreateReferences(void) {
+    /* Configure parser to just create references, no cursor-specific operations */
+    parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
+    /* Use NO_FILE_NUMBER for "no cursor" - it's a valid FileItem so lookups work */
+    parsingConfig.cursorPosition = makePosition(NO_FILE_NUMBER, 0, 0);
+    parsingConfig.cursorOffset = -1;
+    parsingConfig.markOffset = -1;
+    parsingConfig.includeDirs = NULL;  /* TODO: Get from LSP initialize params or .c-xrefrc */
+    parsingConfig.defines = NULL;      /* TODO: Get from LSP initialize params or .c-xrefrc */
+    parsingConfig.strictAnsi = false;
+    parsingConfig.extractMode = EXTRACT_FUNCTION;  /* Doesn't matter for CREATE_REFERENCES */
+    parsingConfig.targetParameterIndex = 0;
+
+    /* Set global cxRefPosition to match parsingConfig.cursorPosition */
+    cxRefPosition = parsingConfig.cursorPosition;
+}
+
+void parseToCreateReferences(const char *fileName, Language language) {
+    EditorBuffer *buffer;
+
+    /* Get the editor buffer that was loaded in didOpen */
+    buffer = getOpenedAndLoadedEditorBuffer((char *)fileName);
+    if (buffer == NULL) {
+        log_error("parseToCreateReferences: No buffer found for '%s'", fileName);
+        return;
+    }
+
+    /* Setup parsing configuration */
+    setupParsingConfigForCreateReferences();
+
+    /* Setup input for parsing - this initializes the currentFile global */
+    initInput(NULL, buffer, "\n", (char *)fileName);
+
+    log_trace("parseToCreateReferences: Parsing '%s' as %s", fileName,
+              language == LANG_YACC ? "YACC" : "C");
+
+    /* Parse the file - this populates the ReferenceableItemTable */
+    parseCurrentInputFile(language);
+
+    /* TODO Cleanup - close the character buffer if it's from a file (not stdin) */
+
+    log_trace("parseToCreateReferences: Completed parsing '%s'", fileName);
 }

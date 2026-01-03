@@ -148,4 +148,20 @@ extern bool isValidMoveTarget(EditorMarker *target);
  */
 extern FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker);
 
+/**
+ * Initialize the parsing subsystem.
+ * Must be called once before any parsing operations.
+ * Sets up minimal state needed for parsing to work.
+ */
+extern void initializeParsingSubsystem(void);
+
+/**
+ * Parse a file to create references in the reference database.
+ * Minimal parsing interface that bypasses legacy server infrastructure.
+ *
+ * @param fileName      Absolute path to the file to parse
+ * @param language      Language to parse as (LANG_C or LANG_YACC)
+ */
+extern void parseToCreateReferences(const char *fileName, Language language);
+
 #endif

@@ -35,3 +35,11 @@ FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
     FunctionBoundariesResult *result = (FunctionBoundariesResult *)mock(marker);
     return *result;
 }
+
+void initializeParsingSubsystem(void) {
+    mock();
+}
+
+void parseToCreateReferences(const char *fileName, Language language) {
+    mock(fileName, language);
+}

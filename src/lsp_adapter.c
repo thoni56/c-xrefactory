@@ -32,15 +32,17 @@ JSON *findDefinition(const char *uri, JSON *position) {
     /* Convert URI to file path */
     char *filePath = uriToFilePath(uri);
 
-    /* TODO: Convert file path to file number
-     * For now we don't have the file number, so we can't create a proper Position.
-     * This will need to be implemented when we integrate with file parsing.
-     */
-    (void)filePath;
+    /* Convert file path to file number */
+    int fileNumber = getFileNumberFromFileName(filePath);
+    if (fileNumber == -1) {
+        log_trace("findDefinition: File not found in file table: %s", filePath);
+        LEAVE();
+        return NULL;
+    }
 
     /* Create Position from LSP coordinates (LSP is 0-based, c-xrefactory is 1-based for lines) */
     Position pos = {
-        .file = NO_FILE_NUMBER,  // TODO: Get actual file number
+        .file = fileNumber,
         .line = lspLine + 1,     // Convert 0-based to 1-based
         .col = lspCharacter      // Both use 0-based columns
     };
