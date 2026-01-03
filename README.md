@@ -10,23 +10,31 @@
 _C_ & _Yacc_.
 
 > [!CAUTION]
-> `c-xrefactory` is still under radical refactorings and restructuring, and
+> `c-xrefactory` is under constant radical refactorings and restructuring, and
 > might be missing some tests, so occasional hiccups are possible. I use it almost
 > everyday and the stable version, which you get if you install as per below, has passed
 > all tests. But YMMV.
 
 ## Features
 
-- navigate to definition and all usages of it of any type of symbol, including `#include`
+- navigate to definition and all usages of any type of referenceable, including `#include`
 - search and browse for all symbols
 - rename any type of symbol - variable, field, type, macro, parameter, or Yacc grammar
   rule
 - add, delete or re-order function and macro parameter
 - rename included file
+- organize includes
 - extract function, macro or variable
 - move function to another file adding extern declaration and include of header file
 - detect unused symbols in a file or in the complete project
 - more to come!
+
+## LSP progress
+
+`c-xrefactory` have an experimental LSP implementation. One feature has been rudimentary
+implemented:
+
+- `textDocument/definition` - translates to Goto Definition or something like that in editors
 
 ## Install
 

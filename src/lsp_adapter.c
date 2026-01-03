@@ -56,7 +56,7 @@ JSON *findDefinition(const char *uri, JSON *positionJson) {
     ReferenceableResult result = findReferenceableAt(db, filePath, position);
 
     /* If not found, return NULL */
-    if (!result.found) {
+    if (!result.found || result.referenceable == NULL) {
         log_trace("findDefinition: No referenceable found at position %d:%d:%d", position.file, position.line, position.col);
         LEAVE();
         return NULL;
@@ -74,14 +74,16 @@ JSON *findDefinition(const char *uri, JSON *positionJson) {
     cJSON *location = cJSON_CreateObject();
     cJSON_AddStringToObject(location, "uri", uri_buffer);
 
-    /* Add range with start and end positions */
+    /* Add range spanning the entire identifier */
     /* Convert c-xrefactory line (1-based) to LSP line (0-based) */
     int lspDefLine = result.definition.line - 1;
-    int lspDefCol = result.definition.col;
+    int lspDefStartCol = result.definition.col;
+    int identifierLength = strlen(result.referenceable->linkName);
+    int lspDefEndCol = lspDefStartCol + identifierLength;
 
-    add_lsp_range(location, lspDefLine, lspDefCol, lspDefLine, lspDefCol);
+    add_lsp_range(location, lspDefLine, lspDefStartCol, lspDefLine, lspDefEndCol);
 
-    log_trace("findDefinition: Returning location at %s:%d:%d", definitionFilePath, lspDefLine, lspDefCol);
+    log_trace("findDefinition: Returning location at %s:%d:%d-%d", definitionFilePath, lspDefLine, lspDefStartCol, lspDefEndCol);
 
     LEAVE();
     return location;

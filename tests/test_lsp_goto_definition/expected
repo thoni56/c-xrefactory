@@ -1,9 +1,9 @@
 Content-Length: 131
 
 {"jsonrpc":"2.0","id":1,"result":{"capabilities":{"codeActionProvider":true,"definitionProvider":true}},"positionEncoding":"utf-8"}
-Content-Length: 199
+Content-Length: 201
 
-{"jsonrpc":"2.0","id":2,"result":{"uri":"file:///home/thoni/Utveckling/c-xrefactory/tests/test_lsp_goto_definition/source.c","range":{"start":{"line":0,"character":4},"end":{"line":0,"character":14}}}}
+{"jsonrpc":"2.0","id":2,"result":{"uri":"file://CURDIR/source.c","range":{"start":{"line":0,"character":4},"end":{"line":0,"character":14}}}}
 Content-Length: 38
 
 {"jsonrpc":"2.0","id":3,"result":null}

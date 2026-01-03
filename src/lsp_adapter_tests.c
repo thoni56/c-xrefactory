@@ -12,6 +12,7 @@
 #include "commons.mock"
 #include "filetable.mock"
 #include "lsp_handler.mock"
+#include "referenceableitem.h"
 #include "reference_database.mock"
 
 
@@ -36,7 +37,10 @@ Ensure(LspAdapter, findDefinition_returns_location) {
     cJSON_AddNumberToObject(position, "character", 20);
 
     /* Mock the findReferenceableAt call */
-    ReferenceableResult mockResult = {.definition = {.file = 42, .line = 2, .col = 6}, .found = true};
+    ReferenceableItem referenceable = {.linkName = "symbol" };
+    ReferenceableResult mockResult = {.referenceable = &referenceable,
+        .definition = {.file = 42, .line = 2, .col = 6},
+        .found = true};
     expect(findReferenceableAt, will_return_by_value(mockResult, sizeof(ReferenceableResult)));
 
     FileItem mockedFileItem = {.name = fileName};
