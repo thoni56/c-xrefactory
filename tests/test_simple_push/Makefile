@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.server
 
 
 $(TEST): .c-xrefrc

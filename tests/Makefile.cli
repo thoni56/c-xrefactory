@@ -1,0 +1,29 @@
+# Makefile for command-line interface tests
+#
+# Include this instead of Makefile.boilerplate for tests that invoke c-xref
+# directly from the command line (not through LSP or server driver).
+# Provides debugging targets that work with direct command-line invocation.
+
+include $(dir $(lastword $(MAKEFILE_LIST)))/Makefile.boilerplate
+
+# Platform detection for automatic debugger selection
+UNAME_S := $(shell uname -s)
+
+# Main debug target - automatically uses the platform's default debugger
+ifeq ($(UNAME_S),Darwin)
+debug:
+	lldb -o 'breakpoint set --name main' -o 'breakpoint set --name internalCheckFail' $(EXTRA_DEBUG) -o 'process launch -- $(BASE_ARGUMENTS) $(ARGUMENTS)' $(CXREF_PROGRAM)
+else
+debug:
+	gdb $(CXREF_PROGRAM) -ex 'br main' -ex 'br internalCheckFail' $(EXTRA_DEBUG) -ex 'run $(BASE_ARGUMENTS) $(ARGUMENTS)'
+endif
+
+# Explicit debugger targets for when you want a specific one
+gdb:
+	gdb $(CXREF_PROGRAM) -ex 'br main' -ex 'br internalCheckFail' $(EXTRA_DEBUG) -ex 'run $(BASE_ARGUMENTS) $(ARGUMENTS)'
+
+cgdb:
+	cgdb $(CXREF_PROGRAM) -ex 'br main' -ex 'br internalCheckFail' $(EXTRA_DEBUG) -ex 'run $(BASE_ARGUMENTS) $(ARGUMENTS)'
+
+lldb:
+	lldb -o 'breakpoint set --name main' -o 'breakpoint set --name internalCheckFail' $(EXTRA_DEBUG) -o 'process launch -- $(BASE_ARGUMENTS) $(ARGUMENTS)' $(CXREF_PROGRAM)

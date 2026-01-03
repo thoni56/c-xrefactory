@@ -1,0 +1,20 @@
+# Makefile for server driver-based tests
+#
+# Include this instead of Makefile.boilerplate for tests that use the edit server driver.
+# Provides server-specific debug target that starts the driver and attaches gdb
+
+include $(dir $(lastword $(MAKEFILE_LIST)))/Makefile.boilerplate
+
+# Override debug target for server driver tests
+# Starts the server driver with a delay, then attaches gdb to the c-xref process
+# Usage: make debug
+# Set GDB_COMMANDS to add extra gdb commands (e.g., GDB_COMMANDS="-ex 'br someFunction'")
+
+debug:
+	@{ \
+		$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp & \
+		pid=$$! ; \
+		sleep 1 ; \
+		cxref_pid=$$(pgrep -P $$pid c-xref) ; \
+		sudo gdb -pid $$cxref_pid -ex 'br internalCheckFail' $(GDB_COMMANDS) ; \
+	}
