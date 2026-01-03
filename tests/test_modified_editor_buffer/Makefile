@@ -1,4 +1,4 @@
-include ../Makefile.boilerplate
+include ../Makefile.server
 
 # This test tries to describe what should happen on PUSH and an editor buffer is modified
 # Current implementation cannot handle that so this test is suspended
@@ -6,7 +6,7 @@ include ../Makefile.boilerplate
 $(TEST):
 	touch source.preload # ensure the preloaded buffer has a more recent timestamp
 	rm -rf CXrefs
-	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 

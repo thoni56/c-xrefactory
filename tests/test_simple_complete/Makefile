@@ -1,10 +1,10 @@
-# Automated tests for exercising completion functionality
+# Automated tests for exercising completion server
 
 include ../Makefile.boilerplate
 
 
 $(TEST): CXrefs
-	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
 

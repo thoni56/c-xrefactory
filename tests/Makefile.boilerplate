@@ -28,7 +28,7 @@ $(TEST): .c-xrefrc
 $(VERBOSE).SILENT:
 
 # All tests that uses a server driver should use this
-EDIT_SERVER_DRIVER = $(MAKEFILE_DIR)/../utils/server_driver.py
+SERVER_DRIVER = $(MAKEFILE_DIR)/../utils/server_driver.py
 
 # Convert any (absolute) reference to current directory to CURDIR
 NORMALIZE = sed -e "s+$(CURDIR)+CURDIR+g" -e "s/ len=[0-9]*/ len=<n>/g" -e "s+/.*/usr/+/usr/+g" -e "s/[0-9][0-9]:[0-9][0-9]:[0-9][0-9]/00:00:00/g"

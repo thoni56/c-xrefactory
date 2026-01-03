@@ -1,12 +1,12 @@
-include ../Makefile.boilerplate
+include ../Makefile.server
 
 
 $(TEST):
 	@# First do the extract
-	@-$(EDIT_SERVER_DRIVER) commands1.input $(EXTRA) > output1.tmp
+	@-$(SERVER_DRIVER) commands1.input $(EXTRA) > output1.tmp
 	@$(NORMALIZE) output1.tmp > output
 	@# Then a rename - as the editor would
-	@-$(EDIT_SERVER_DRIVER) commands2.input $(EXTRA) > output2.tmp
+	@-$(SERVER_DRIVER) commands2.input $(EXTRA) > output2.tmp
 	@$(NORMALIZE) output2.tmp >> output
 	$(VERIFY)
 

@@ -1,9 +1,9 @@
-include ../Makefile.boilerplate
+include ../Makefile.server
 
 CXREF = ../../src/c-xref
 
 $(TEST):
-	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 

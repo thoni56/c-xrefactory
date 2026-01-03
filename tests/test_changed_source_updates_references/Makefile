@@ -1,10 +1,10 @@
-include ../Makefile.boilerplate
+include ../Makefile.server
 
 $(TEST):
 	-rm -rf CXrefs
 	$(CXREF) -create -o /dev/null
 	touch source.preload
-	$(EDIT_SERVER_DRIVER) $(SERVER_EXTRA) commands.input > output.tmp
+	$(SERVER_DRIVER) $(SERVER_EXTRA) commands.input > output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 

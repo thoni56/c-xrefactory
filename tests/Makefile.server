@@ -12,7 +12,7 @@ include $(dir $(lastword $(MAKEFILE_LIST)))/Makefile.boilerplate
 
 debug:
 	@{ \
-		$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp & \
+		$(SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp & \
 		pid=$$! ; \
 		sleep 1 ; \
 		cxref_pid=$$(pgrep -P $$pid c-xref) ; \

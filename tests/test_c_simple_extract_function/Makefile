@@ -1,9 +1,9 @@
-include ../Makefile.boilerplate
+include ../Makefile.server
 
 
 $(TEST):
 	@# First do the extract
-	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
