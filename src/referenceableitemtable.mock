@@ -9,6 +9,7 @@ void initReferenceableItemTable(int size) {
     referenceableItemTable.tab = malloc(size*sizeof(ReferenceableItem *));
     referenceableItemTable.size = size;
     memset(referenceableItemTable.tab, 0, sizeof(ReferenceableItem *)*size);
+    mock(size);
 }
 
 void referenceableItemTableNoAllocInit(ReferenceableItemTable *table, int size) {
