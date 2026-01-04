@@ -1,6 +1,6 @@
-include ../Makefile.boilerplate
+include ../Makefile.cli
 
-ARGUMENTS = -xrefactory-II -refactory -rfct-extract-variable -olmark=44 -olcursor=49 source.c
+ARGUMENTS = -xrefactory-II -refactory -rfct-extract-variable -olmark=49 -olcursor=44 source.c
 
 $(TEST): .c-xrefrc
 	$(COMMAND) > output.tmp
