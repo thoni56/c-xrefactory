@@ -328,11 +328,32 @@ static bool isVariableUsedOutsideBlock(unsigned outUsages) {
     return hasBit(outUsages, DATAFLOW_INSIDE_BLOCK) || hasBit(outUsages, DATAFLOW_OUTSIDE_BLOCK);
 }
 
-static ExtractClassification classifyLocalVariableExtraction0(ProgramGraphNode *program,
-                                                              ProgramGraphNode *variableNode) {
+static void collectVariableUsages(ProgramGraphNode *program, ProgramGraphNode *variableNode,
+                                  unsigned *inUsages, unsigned *outUsages
+) {
+    ProgramGraphNode *p;
+
+    *inUsages = 0;
+    *outUsages = 0;
+
+    for (p = program; p != NULL; p = p->next) {
+        if (p->referenceableItem == variableNode->referenceableItem
+            && p->reference->usage != UsageNone) {
+            if (p->regionSide == DATAFLOW_INSIDE_BLOCK) {
+                *inUsages |= p->state;
+            } else if (p->regionSide == DATAFLOW_OUTSIDE_BLOCK) {
+                *outUsages |= p->state;
+            } else
+                assert(0);
+        }
+    }
+}
+
+static ExtractClassification classifyVariableUsingDataFlow(ProgramGraphNode *program,
+                                                           ProgramGraphNode *variableNode) {
     ProgramGraphNode *p;
     ReferenceableItem *referenceableItem;
-    unsigned inUsages, outUsages, outUsageBothExists;
+    unsigned inUsages, outUsages;
 
     referenceableItem = variableNode->referenceableItem;
     for (p=program; p!=NULL; p=p->next) {
@@ -342,16 +363,7 @@ static ExtractClassification classifyLocalVariableExtraction0(ProgramGraphNode *
     //&dumpProgramToLog(program);
     analyzeVariableDataFlow(program, referenceableItem, DATAFLOW_ANALYZED);
     //&dumpProgramToLog(program);
-    inUsages = outUsages = outUsageBothExists = 0;
-    for (p=program; p!=NULL; p=p->next) {
-        if (p->referenceableItem == variableNode->referenceableItem && p->reference->usage != UsageNone) {
-            if (p->regionSide == DATAFLOW_INSIDE_BLOCK) {
-                inUsages |= p->state;
-            } else if (p->regionSide == DATAFLOW_OUTSIDE_BLOCK) {
-                outUsages |= p->state;
-            } else assert(0);
-        }
-    }
+    collectVariableUsages(program, variableNode, &inUsages, &outUsages);
 
     // inUsages marks usages in the block (from inside, or from ouside)
     // outUsages marks usages out of block (from inside, or from ouside)
@@ -388,7 +400,7 @@ static ExtractClassification classifyLocalVariableForExtraction(
 ) {
     ExtractClassification classification;
 
-    classification = classifyLocalVariableExtraction0(program, varRef);
+    classification = classifyVariableUsingDataFlow(program, varRef);
     if (isStructOrUnion(varRef) && classification!=CLASSIFIED_AS_NONE && classification!=CLASSIFIED_AS_LOCAL_VAR) {
         return CLASSIFIED_AS_ADDRESS_ARGUMENT;
     }
