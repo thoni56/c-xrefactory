@@ -48,12 +48,13 @@ typedef enum extractClassification {
 } ExtractClassification;
 
 typedef struct programGraphNode {
-    struct reference *ref;		/* original reference of node */
-    struct referenceableItem *symRef;
+    struct reference *reference;             /* original reference of node */
+    struct referenceableItem *referenceableItem;
     struct programGraphNode *jump;
-    InspectionBits posBits;               /* INSIDE/OUSIDE block */
-    InspectionBits stateBits;             /* visited + where set */
-    ExtractClassification classification; /* resulting classification */
+    InspectionBits regionSide;               /* INSIDE/OUSIDE block */
+    InspectionBits state;                    /* where value comes from + flow flags */
+    bool visited;                            /* visited during dataflow traversal */
+    ExtractClassification classification;    /* resulting classification */
     struct programGraphNode *next;
 } ProgramGraphNode;
 
@@ -62,10 +63,10 @@ static void dumpProgramToLog(ProgramGraphNode *program) {
     log_trace("[ProgramDump begin]");
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
         log_trace("%p: %2d %2d %s %s", p,
-                p->posBits, p->stateBits,
-                p->symRef->linkName,
-                usageKindEnumName[p->ref->usage]+5);
-        if (p->symRef->type==TypeLabel && p->ref->usage!=UsageDefined) {
+                p->regionSide, p->state,
+                p->referenceableItem->linkName,
+                usageKindEnumName[p->reference->usage]+5);
+        if (p->referenceableItem->type==TypeLabel && p->reference->usage!=UsageDefined) {
             log_trace("    Jump: %p", p->jump);
         }
     }
@@ -77,10 +78,10 @@ void dumpProgram(ProgramGraphNode *program) {
     printf("[ProgramDump begin]\n");
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
         printf("%p: %2d %2d %s %s\n", p,
-                p->posBits, p->stateBits,
-                p->symRef->linkName,
-                usageKindEnumName[p->ref->usage]+5);
-        if (p->symRef->type==TypeLabel && p->ref->usage!=UsageDefined) {
+                p->regionSide, p->state,
+                p->referenceableItem->linkName,
+                usageKindEnumName[p->reference->usage]+5);
+        if (p->referenceableItem->type==TypeLabel && p->reference->usage!=UsageDefined) {
             printf("    Jump: %p\n", p->jump);
         }
     }
@@ -154,21 +155,19 @@ void generateSwitchCaseFork(bool isLast) {
     }
 }
 
-static ProgramGraphNode *newProgramGraphNode(
-    Reference *ref, ReferenceableItem *symRef,
-    ProgramGraphNode *jump, char posBits,
-    char stateBits,
-    char classifBits,
-    ProgramGraphNode *next
+static ProgramGraphNode *newProgramGraphNode(ReferenceableItem *referenceableItem,
+    Reference *reference, ProgramGraphNode *jump, char regionSide, char state,
+    char classifcation, ProgramGraphNode *next
 ) {
     ProgramGraphNode *programGraph = cxAlloc(sizeof(ProgramGraphNode));
 
-    programGraph->ref = ref;
-    programGraph->symRef = symRef;
+    programGraph->reference = reference;
+    programGraph->referenceableItem = referenceableItem;
     programGraph->jump = jump;
-    programGraph->posBits = posBits;
-    programGraph->stateBits = stateBits;
-    programGraph->classification = classifBits;
+    programGraph->regionSide = regionSide;
+    programGraph->state = state;
+    programGraph->visited = false;
+    programGraph->classification = classifcation;
     programGraph->next = next;
 
     return programGraph;
@@ -178,7 +177,7 @@ static void extractFunGraphRef(ReferenceableItem *referenceableItem, void *prog)
     ProgramGraphNode **ap = (ProgramGraphNode **) prog;
     for (Reference *r=referenceableItem->references; r!=NULL; r=r->next) {
         if (cxMemoryPointerIsBetween(r,parsedInfo.cxMemoryIndexAtFunctionBegin,parsedInfo.cxMemoryIndexAtFunctionEnd)){
-            ProgramGraphNode *p = newProgramGraphNode(r, referenceableItem, NULL, 0, 0, CLASSIFIED_AS_NONE, *ap);
+            ProgramGraphNode *p = newProgramGraphNode(referenceableItem, r, NULL, 0, 0, CLASSIFIED_AS_NONE, *ap);
             *ap = p;
         }
     }
@@ -188,7 +187,7 @@ static ProgramGraphNode *getGraphAddress(ProgramGraphNode *program, Reference *r
     ProgramGraphNode *result = NULL;
 
     for (ProgramGraphNode *p=program; result==NULL && p!=NULL; p=p->next) {
-        if (p->ref == ref)
+        if (p->reference == ref)
             result = p;
     }
     return result;
@@ -218,8 +217,8 @@ static ProgramGraphNode *getLabelGraphAddress(ProgramGraphNode *program,
     return res;
 }
 
-static int linearOrder(ProgramGraphNode *n1, ProgramGraphNode *n2) {
-    return n1->ref < n2->ref;
+static bool linearOrder(ProgramGraphNode *n1, ProgramGraphNode *n2) {
+    return n1->reference < n2->reference;
 }
 
 static ProgramGraphNode *makeProgramGraph(void) {
@@ -229,62 +228,76 @@ static ProgramGraphNode *makeProgramGraph(void) {
     LIST_SORT(ProgramGraphNode, program, linearOrder);
     dumpProgramToLog(program);
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
-        if (p->symRef->type==TypeLabel && p->ref->usage!=UsageDefined) {
+        if (p->referenceableItem->type==TypeLabel && p->reference->usage!=UsageDefined) {
             // resolve the jump
-            p->jump = getLabelGraphAddress(program, p->symRef);
+            p->jump = getLabelGraphAddress(program, p->referenceableItem);
         }
     }
     return program;
 }
 
 static bool isStructOrUnion(ProgramGraphNode *node) {
-    return node->symRef->linkName[0]==LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
+    return node->referenceableItem->linkName[0]==LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
 }
 
-static void extSetSetStates(ProgramGraphNode *p, ReferenceableItem *symRef, unsigned cstate) {
-    unsigned cpos, oldStateBits;
+static void analyzeVariableDataFlow(ProgramGraphNode *p, ReferenceableItem *referenceableItem,
+                                    unsigned incomingState) {
+    unsigned propagatingState = incomingState;  // State flowing through the for-loop
 
     for (; p!=NULL; p=p->next) {
-    cont:
-        if (p->stateBits == cstate)
-            return;
-        oldStateBits = p->stateBits;
-        cstate = p->stateBits = (cstate | oldStateBits | INSPECTION_VISITED);
-        cpos = p->posBits | INSPECTION_VISITED;
-        if (p->symRef == symRef) {          // the examined variable
-            if (p->ref->usage == UsageAddrUsed) {
-                cstate = cpos;
+    again:
+        // === Avoid redundant processing ===
+        if (p->visited && p->state == propagatingState)
+            return;  // Fixed point reached; no new information
+        p->visited = true;
+
+        // === Accumulate state from incoming + node's stored state ===
+        unsigned accumulatedState = (propagatingState | p->state);
+        p->state = accumulatedState;
+
+        // === Process node based on type and variable being analyzed ===
+        unsigned nodeProcessingState = accumulatedState;
+        unsigned valueStateIfAssignedHere = p->regionSide;
+
+        if (p->referenceableItem == referenceableItem) {          // the examined variable
+            if (p->reference->usage == UsageAddrUsed) {
+                nodeProcessingState = valueStateIfAssignedHere;
                 // change only state, so usage is kept
-            } else if (p->ref->usage == UsageLvalUsed
-                       || (p->ref->usage == UsageDefined
-                           && ! isStructOrUnion(p))
-                       ) {
-                // change also current value, because there is no usage
-                p->stateBits = cstate = cpos;
+            } else if (p->reference->usage == UsageLvalUsed
+                       || (p->reference->usage == UsageDefined && ! isStructOrUnion(p))
+                ) {
+                // variable is assigned here, so reset its stored state too
+                p->state = nodeProcessingState = valueStateIfAssignedHere;
             }
-        } else if (p->symRef->type==TypeBlockMarker &&
-                   (p->posBits&INSPECTION_INSIDE_BLOCK) == 0) {
+        } else if (p->referenceableItem->type==TypeBlockMarker &&
+                   (p->regionSide&INSPECTION_INSIDE_BLOCK) == 0) {
+            // === Region boundary crossing: add special flags ===
             // leaving the block
-            if (cstate & INSPECTION_INSIDE_BLOCK) {
-                // leaving and value is set from inside, preset for possible
-                // reentering
-                cstate |= INSPECTION_INSIDE_REENTER;
+            if (nodeProcessingState & INSPECTION_INSIDE_BLOCK) {
+                // leaving and value is set from inside, preset for possible reentering
+                nodeProcessingState |= INSPECTION_INSIDE_REENTER;
             }
-            if (cstate & INSPECTION_OUTSIDE_BLOCK) {
+            if (nodeProcessingState & INSPECTION_OUTSIDE_BLOCK) {
                 // leaving and value is set from outside, set value passing flag
-                cstate |= INSPECTION_INSIDE_PASSING;
-            }
-        } else if (p->symRef->type==TypeLabel) {
-            if (p->ref->usage==UsageUsed) {  // goto
-                p = p->jump;
-                goto cont;
-            } else if (p->ref->usage==UsageFork) {   // branching
-                extSetSetStates(p->jump, symRef, cstate);
+                nodeProcessingState |= INSPECTION_INSIDE_PASSING;
             }
         }
+
+        // === Handle control flow (labels, gotos, branches) ===
+        if (p->referenceableItem->type==TypeLabel) {
+            if (p->reference->usage==UsageUsed) {  // goto
+                propagatingState = nodeProcessingState;
+                p = p->jump;
+                goto again;
+            } else if (p->reference->usage==UsageFork) {   // branching
+                analyzeVariableDataFlow(p->jump, referenceableItem, nodeProcessingState);
+            }
+        }
+
+        // === Carry forward for next iteration ===
+        propagatingState = nodeProcessingState;
     }
 }
-
 static ExtractClassification classifyLocalVariableExtraction0(
     ProgramGraphNode *program,
     ProgramGraphNode *varRef
@@ -292,27 +305,28 @@ static ExtractClassification classifyLocalVariableExtraction0(
     ProgramGraphNode *p;
     ReferenceableItem     *symRef;
     unsigned    inUsages,outUsages,outUsageBothExists;
-    symRef = varRef->symRef;
+    symRef = varRef->referenceableItem;
     for (p=program; p!=NULL; p=p->next) {
-        p->stateBits = 0;
+        p->state = 0;
+        p->visited = false;
     }
     //&dumpProgramToLog(program);
-    extSetSetStates(program, symRef, INSPECTION_VISITED);
+    analyzeVariableDataFlow(program, symRef, INSPECTION_VISITED);
     //&dumpProgramToLog(program);
     inUsages = outUsages = outUsageBothExists = 0;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->symRef == varRef->symRef && p->ref->usage != UsageNone) {
-            if (p->posBits==INSPECTION_INSIDE_BLOCK) {
-                inUsages |= p->stateBits;
-            } else if (p->posBits==INSPECTION_OUTSIDE_BLOCK) {
-                outUsages |= p->stateBits;
+        if (p->referenceableItem == varRef->referenceableItem && p->reference->usage != UsageNone) {
+            if (p->regionSide == INSPECTION_INSIDE_BLOCK) {
+                inUsages |= p->state;
+            } else if (p->regionSide == INSPECTION_OUTSIDE_BLOCK) {
+                outUsages |= p->state;
             } else assert(0);
         }
     }
 
     // inUsages marks usages in the block (from inside, or from ouside)
     // outUsages marks usages out of block (from inside, or from ouside)
-    if (varRef->posBits == INSPECTION_OUTSIDE_BLOCK) {
+    if (varRef->regionSide == INSPECTION_OUTSIDE_BLOCK) {
         // a variable defined outside of the block
         if (outUsages & INSPECTION_INSIDE_BLOCK) {
             // a value set in the block is used outside
@@ -373,22 +387,22 @@ static void setInOutBlockFields(ProgramGraphNode *program) {
     unsigned    pos;
     pos = INSPECTION_OUTSIDE_BLOCK;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->symRef->type == TypeBlockMarker) {
+        if (p->referenceableItem->type == TypeBlockMarker) {
             toogleInOutBlock(&pos);
         }
-        p->posBits = pos;
+        p->regionSide = pos;
     }
 }
 
 static bool areThereJumpsInOrOutOfBlock(ProgramGraphNode *program) {
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
-        assert(p->symRef!=NULL);
-        if (p->symRef->type==TypeLabel) {
-            assert(p->ref!=NULL);
-            if (p->ref->usage==UsageUsed || p->ref->usage==UsageFork) {
+        assert(p->referenceableItem!=NULL);
+        if (p->referenceableItem->type==TypeLabel) {
+            assert(p->reference!=NULL);
+            if (p->reference->usage==UsageUsed || p->reference->usage==UsageFork) {
                 assert(p->jump != NULL);
-                if (p->posBits != p->jump->posBits) {
-                    //&fprintf(dumpOut,"jump in/out at %s : %x\n",p->symRef->linkName, p);
+                if (p->regionSide != p->jump->regionSide) {
+                    //&fprintf(dumpOut,"jump in/out at %s : %x\n",p->referenceableItem->linkName, p);
                     return true;
                 }
             }
@@ -398,9 +412,9 @@ static bool areThereJumpsInOrOutOfBlock(ProgramGraphNode *program) {
 }
 
 static bool isLocalVariable(ProgramGraphNode *node) {
-    return node->ref->usage==UsageDefined
-        &&  node->symRef->type==TypeDefault
-        &&  node->symRef->scope==AutoScope;
+    return node->reference->usage==UsageDefined
+        &&  node->referenceableItem->type==TypeDefault
+        &&  node->referenceableItem->scope==AutoScope;
 }
 
 static void classifyLocalVariables(ProgramGraphNode *program) {
@@ -596,7 +610,7 @@ static void generateNewMacroCall(ProgramGraphNode *program, char *extractionName
             ||  p->classification == CLASSIFIED_AS_LOCAL_VAR
         ) {
             char name[TMP_STRING_SIZE];
-            getLocalVariableNameFromLinkName(p->symRef->linkName, name);
+            getLocalVariableNameFromLinkName(p->referenceableItem->linkName, name);
             strcatf(resultingString, "%s%s", isFirstArgument?"(":", " , name);
             isFirstArgument = false;
         }
@@ -627,7 +641,7 @@ static void generateNewMacroHead(ProgramGraphNode *program, char *extractionName
             ||  p->classification == CLASSIFIED_AS_LOCAL_VAR
         ) {
             char name[MAX_EXTRACT_FUN_HEAD_SIZE];
-            getLocalVariableNameFromLinkName(p->symRef->linkName, name);
+            getLocalVariableNameFromLinkName(p->referenceableItem->linkName, name);
             strcatf(resultingString, "%s%s", isFirstArgument?"(":"," , name);
             isFirstArgument = false;
         }
@@ -661,8 +675,8 @@ static void generateNewFunctionCall(ProgramGraphNode *program, char *extractionN
     if (p!=NULL) {
         char name[TMP_STRING_SIZE];
         char declaration[TMP_STRING_SIZE];
-        getLocalVariableNameFromLinkName(p->symRef->linkName, name);
-        getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, "", true);
+        getLocalVariableNameFromLinkName(p->referenceableItem->linkName, name);
+        getLocalVariableDeclarationFromLinkName(p->referenceableItem->linkName, declaration, "", true);
         if (p->classification == CLASSIFIED_AS_LOCAL_RESULT_VALUE) {
             strcatf(resultingString, "\t%s = ", declaration);
         } else {
@@ -679,7 +693,7 @@ static void generateNewFunctionCall(ProgramGraphNode *program, char *extractionN
             || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
         ) {
             char name[TMP_STRING_SIZE];
-            getLocalVariableNameFromLinkName(p->symRef->linkName, name);
+            getLocalVariableNameFromLinkName(p->referenceableItem->linkName, name);
             strcatf(resultingString, "%s%s", isFirstArgument?"(":", " , name);
             isFirstArgument = false;
         }
@@ -691,7 +705,7 @@ static void generateNewFunctionCall(ProgramGraphNode *program, char *extractionN
             || p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
         ) {
             char name[TMP_STRING_SIZE];
-            getLocalVariableNameFromLinkName(p->symRef->linkName, name);
+            getLocalVariableNameFromLinkName(p->referenceableItem->linkName, name);
             strcatf(resultingString, "%s&%s", isFirstArgument?"(":", " , name);
             isFirstArgument = false;
         }
@@ -725,7 +739,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
         if (p->classification == CLASSIFIED_AS_VALUE_ARGUMENT
             || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
         ) {
-            getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, "", true);
+            getLocalVariableDeclarationFromLinkName(p->referenceableItem->linkName, declaration, "", true);
             sprintf(nhead+nhi, "%s%s", isFirstArgument?"(":", " , declaration);
             nhi += strlen(nhead+nhi);
             isFirstArgument = false;
@@ -736,7 +750,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
             ||  p->classification == CLASSIFIED_AS_OUT_ARGUMENT
             ||  p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
         ) {
-            getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, EXTRACT_OUTPUT_PARAM_PREFIX,
+            getLocalVariableDeclarationFromLinkName(p->referenceableItem->linkName, declaration, EXTRACT_OUTPUT_PARAM_PREFIX,
                                                     true);
             sprintf(nhead+nhi, "%s%s", isFirstArgument?"(":", " , declaration);
             nhi += strlen(nhead+nhi);
@@ -745,7 +759,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
     }
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == CLASSIFIED_AS_ADDRESS_ARGUMENT) {
-            getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, EXTRACT_REFERENCE_ARG_STRING, true);
+            getLocalVariableDeclarationFromLinkName(p->referenceableItem->linkName, declaration, EXTRACT_REFERENCE_ARG_STRING, true);
             sprintf(nhead+nhi, "%s%s", isFirstArgument?"(":", " , declaration);
             nhi += strlen(nhead+nhi);
             isFirstArgument = false;
@@ -765,7 +779,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
     if (p==NULL) {
         strcatf(resultingString,"void %s",nhead);
     } else {
-        getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, nhead, false);
+        getLocalVariableDeclarationFromLinkName(p->referenceableItem->linkName, declaration, nhead, false);
         strcatf(resultingString, "%s", declaration);
     }
 
@@ -779,11 +793,11 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
             || p->classification == CLASSIFIED_AS_LOCAL_VAR
             || p->classification == CLASSIFIED_AS_OUT_ARGUMENT
             || p->classification == CLASSIFIED_AS_RESULT_VALUE
-            || (p->symRef->storage == StorageExtern
-                && p->ref->usage == UsageDeclared)
+            || (p->referenceableItem->storage == StorageExtern
+                && p->reference->usage == UsageDeclared)
         ) {
-            getLocalVariableNameFromLinkName(p->symRef->linkName, name);
-            getLocalVarStringFromLinkName(p->symRef->linkName, name, declarator, declaration, "", true);
+            getLocalVariableNameFromLinkName(p->referenceableItem->linkName, name);
+            getLocalVarStringFromLinkName(p->referenceableItem->linkName, name, declarator, declaration, "", true);
             if (strcmp(ldcla,declarator)==0) {
                 strcatf(resultingString, ",%s",declaration+ldclaLen);
             } else {
@@ -815,7 +829,7 @@ static void generateNewFunctionTail(ProgramGraphNode *program) {
             ||  p->classification == CLASSIFIED_AS_OUT_ARGUMENT
             ||  p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
         ) {
-            getLocalVariableNameFromLinkName(p->symRef->linkName, name);
+            getLocalVariableNameFromLinkName(p->referenceableItem->linkName, name);
             strcatf(resultingString, "\t%s%s = %s;\n", EXTRACT_OUTPUT_PARAM_PREFIX,
                     name, name);
         }
@@ -825,7 +839,7 @@ static void generateNewFunctionTail(ProgramGraphNode *program) {
             || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
             || p->classification == CLASSIFIED_AS_LOCAL_RESULT_VALUE
             ) {
-            getLocalVariableNameFromLinkName(p->symRef->linkName, name);
+            getLocalVariableNameFromLinkName(p->referenceableItem->linkName, name);
             strcatf(resultingString, "\n\treturn %s;\n", name);
         }
     }
