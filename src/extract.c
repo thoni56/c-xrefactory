@@ -24,15 +24,15 @@
 #define EXTRACT_OUTPUT_PARAM_PREFIX "*_"
 
 
-/* ********************** code inspection state bits ********************* */
+/* ********************** Data Flow analysis bits ********************* */
 
 typedef enum {
-    INSPECTION_VISITED = 1,
-    INSPECTION_INSIDE_BLOCK = 2,
-    INSPECTION_OUTSIDE_BLOCK = 4,
-    INSPECTION_INSIDE_REENTER = 8,		/* value reenters the block             */
-    INSPECTION_INSIDE_PASSING = 16		/* a non-modified values pass via block */
-} InspectionBits;
+    DATAFLOW_ANALYZED = 1,
+    DATAFLOW_INSIDE_BLOCK = 2,
+    DATAFLOW_OUTSIDE_BLOCK = 4,
+    DATAFLOW_INSIDE_REENTER = 8,		/* value reenters the block             */
+    DATAFLOW_INSIDE_PASSING = 16		/* a non-modified values pass via block */
+} DataFlowBits;
 
 typedef enum extractClassification {
     CLASSIFIED_AS_LOCAL_VAR,
@@ -48,13 +48,13 @@ typedef enum extractClassification {
 } ExtractClassification;
 
 typedef struct programGraphNode {
-    struct reference *reference;             /* original reference of node */
+    struct reference *reference;          /* original reference of node */
     struct referenceableItem *referenceableItem;
     struct programGraphNode *jump;
-    InspectionBits regionSide;               /* INSIDE/OUSIDE block */
-    InspectionBits state;                    /* where value comes from + flow flags */
-    bool visited;                            /* visited during dataflow traversal */
-    ExtractClassification classification;    /* resulting classification */
+    DataFlowBits regionSide;              /* INSIDE/OUTSIDE block */
+    DataFlowBits state;                   /* where value comes from + flow flags */
+    bool visited;                         /* visited during dataflow traversal */
+    ExtractClassification classification; /* resulting classification */
     struct programGraphNode *next;
 } ProgramGraphNode;
 
@@ -156,8 +156,9 @@ void generateSwitchCaseFork(bool isLast) {
 }
 
 static ProgramGraphNode *newProgramGraphNode(ReferenceableItem *referenceableItem,
-    Reference *reference, ProgramGraphNode *jump, char regionSide, char state,
-    char classifcation, ProgramGraphNode *next
+                                             Reference *reference, ProgramGraphNode *jump,
+                                             char regionSide, char state, char classifcation,
+                                             ProgramGraphNode *next
 ) {
     ProgramGraphNode *programGraph = cxAlloc(sizeof(ProgramGraphNode));
 
@@ -176,8 +177,11 @@ static ProgramGraphNode *newProgramGraphNode(ReferenceableItem *referenceableIte
 static void extractFunGraphRef(ReferenceableItem *referenceableItem, void *prog) {
     ProgramGraphNode **ap = (ProgramGraphNode **) prog;
     for (Reference *r=referenceableItem->references; r!=NULL; r=r->next) {
-        if (cxMemoryPointerIsBetween(r,parsedInfo.cxMemoryIndexAtFunctionBegin,parsedInfo.cxMemoryIndexAtFunctionEnd)){
-            ProgramGraphNode *p = newProgramGraphNode(referenceableItem, r, NULL, 0, 0, CLASSIFIED_AS_NONE, *ap);
+        if (cxMemoryPointerIsBetween(r, parsedInfo.cxMemoryIndexAtFunctionBegin,
+                                     parsedInfo.cxMemoryIndexAtFunctionEnd)
+            ){
+            ProgramGraphNode *p = newProgramGraphNode(referenceableItem, r, NULL, 0, 0,
+                                                      CLASSIFIED_AS_NONE, *ap);
             *ap = p;
         }
     }
@@ -237,7 +241,11 @@ static ProgramGraphNode *makeProgramGraph(void) {
 }
 
 static bool isStructOrUnion(ProgramGraphNode *node) {
-    return node->referenceableItem->linkName[0]==LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
+    return node->referenceableItem->linkName[0] == LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
+}
+
+static bool hasBit(unsigned state, DataFlowBits bit) {
+    return (state & bit) != 0;
 }
 
 static void analyzeVariableDataFlow(ProgramGraphNode *p, ReferenceableItem *referenceableItem,
@@ -270,16 +278,16 @@ static void analyzeVariableDataFlow(ProgramGraphNode *p, ReferenceableItem *refe
                 p->state = nodeProcessingState = valueStateIfAssignedHere;
             }
         } else if (p->referenceableItem->type==TypeBlockMarker &&
-                   (p->regionSide&INSPECTION_INSIDE_BLOCK) == 0) {
+                   (p->regionSide&DATAFLOW_INSIDE_BLOCK) == 0) {
             // === Region boundary crossing: add special flags ===
             // leaving the block
-            if (nodeProcessingState & INSPECTION_INSIDE_BLOCK) {
+            if (hasBit(nodeProcessingState, DATAFLOW_INSIDE_BLOCK)) {
                 // leaving and value is set from inside, preset for possible reentering
-                nodeProcessingState |= INSPECTION_INSIDE_REENTER;
+                nodeProcessingState |= DATAFLOW_INSIDE_REENTER;
             }
-            if (nodeProcessingState & INSPECTION_OUTSIDE_BLOCK) {
+            if (hasBit(nodeProcessingState, DATAFLOW_OUTSIDE_BLOCK)) {
                 // leaving and value is set from outside, set value passing flag
-                nodeProcessingState |= INSPECTION_INSIDE_PASSING;
+                nodeProcessingState |= DATAFLOW_INSIDE_PASSING;
             }
         }
 
@@ -298,27 +306,48 @@ static void analyzeVariableDataFlow(ProgramGraphNode *p, ReferenceableItem *refe
         propagatingState = nodeProcessingState;
     }
 }
-static ExtractClassification classifyLocalVariableExtraction0(
-    ProgramGraphNode *program,
-    ProgramGraphNode *varRef
-) {
+
+static bool isValueFromBlockUsedAfter(unsigned outUsages) {
+    return hasBit(outUsages, DATAFLOW_INSIDE_BLOCK);
+}
+
+static bool hasSimpleOutflowOnly(unsigned inUsages, unsigned outUsages) {
+    return !hasBit(inUsages, DATAFLOW_INSIDE_REENTER) && !hasBit(inUsages, DATAFLOW_OUTSIDE_BLOCK)
+        && !hasBit(outUsages, DATAFLOW_INSIDE_PASSING);
+}
+
+static bool isValueUsedFromOutside(unsigned inUsages) {
+    return hasBit(inUsages, DATAFLOW_INSIDE_REENTER);
+}
+
+static bool hasAnyUsageInBlock(unsigned inUsages) {
+    return inUsages != 0;
+}
+
+static bool isVariableUsedOutsideBlock(unsigned outUsages) {
+    return hasBit(outUsages, DATAFLOW_INSIDE_BLOCK) || hasBit(outUsages, DATAFLOW_OUTSIDE_BLOCK);
+}
+
+static ExtractClassification classifyLocalVariableExtraction0(ProgramGraphNode *program,
+                                                              ProgramGraphNode *variableNode) {
     ProgramGraphNode *p;
-    ReferenceableItem     *symRef;
-    unsigned    inUsages,outUsages,outUsageBothExists;
-    symRef = varRef->referenceableItem;
+    ReferenceableItem *referenceableItem;
+    unsigned inUsages, outUsages, outUsageBothExists;
+
+    referenceableItem = variableNode->referenceableItem;
     for (p=program; p!=NULL; p=p->next) {
         p->state = 0;
         p->visited = false;
     }
     //&dumpProgramToLog(program);
-    analyzeVariableDataFlow(program, symRef, INSPECTION_VISITED);
+    analyzeVariableDataFlow(program, referenceableItem, DATAFLOW_ANALYZED);
     //&dumpProgramToLog(program);
     inUsages = outUsages = outUsageBothExists = 0;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->referenceableItem == varRef->referenceableItem && p->reference->usage != UsageNone) {
-            if (p->regionSide == INSPECTION_INSIDE_BLOCK) {
+        if (p->referenceableItem == variableNode->referenceableItem && p->reference->usage != UsageNone) {
+            if (p->regionSide == DATAFLOW_INSIDE_BLOCK) {
                 inUsages |= p->state;
-            } else if (p->regionSide == INSPECTION_OUTSIDE_BLOCK) {
+            } else if (p->regionSide == DATAFLOW_OUTSIDE_BLOCK) {
                 outUsages |= p->state;
             } else assert(0);
         }
@@ -326,30 +355,25 @@ static ExtractClassification classifyLocalVariableExtraction0(
 
     // inUsages marks usages in the block (from inside, or from ouside)
     // outUsages marks usages out of block (from inside, or from ouside)
-    if (varRef->regionSide == INSPECTION_OUTSIDE_BLOCK) {
+    if (variableNode->regionSide == DATAFLOW_OUTSIDE_BLOCK) {
         // a variable defined outside of the block
-        if (outUsages & INSPECTION_INSIDE_BLOCK) {
+        if (isValueFromBlockUsedAfter(outUsages)) {
             // a value set in the block is used outside
-            if ((inUsages & INSPECTION_INSIDE_REENTER) == 0
-                && (inUsages & INSPECTION_OUTSIDE_BLOCK) == 0
-                && (outUsages & INSPECTION_INSIDE_PASSING) == 0
-            ) {
+            if (hasSimpleOutflowOnly(inUsages, outUsages)) {
                 return CLASSIFIED_AS_OUT_ARGUMENT;
             } else {
                 return CLASSIFIED_AS_IN_OUT_ARGUMENT;
             }
         }
-        if (inUsages & INSPECTION_INSIDE_REENTER)
+        if (isValueUsedFromOutside(inUsages))
             return CLASSIFIED_AS_IN_OUT_ARGUMENT;
-        if (inUsages & INSPECTION_OUTSIDE_BLOCK)
+        if (hasBit(inUsages, DATAFLOW_OUTSIDE_BLOCK))
             return CLASSIFIED_AS_VALUE_ARGUMENT;
-        if (inUsages)
+        if (hasAnyUsageInBlock(inUsages))
             return CLASSIFIED_AS_LOCAL_VAR;
         return CLASSIFIED_AS_NONE;
     } else {
-        if (outUsages & INSPECTION_INSIDE_BLOCK
-            || outUsages & INSPECTION_OUTSIDE_BLOCK
-        ) {
+        if (isVariableUsedOutsideBlock(outUsages)) {
             // a variable defined inside the region used outside
             return CLASSIFIED_AS_LOCAL_OUT_ARGUMENT;
         } else {
@@ -372,10 +396,10 @@ static ExtractClassification classifyLocalVariableForExtraction(
 }
 
 static unsigned toogleInOutBlock(unsigned *pos) {
-    if (*pos == INSPECTION_INSIDE_BLOCK)
-        *pos = INSPECTION_OUTSIDE_BLOCK;
-    else if (*pos == INSPECTION_OUTSIDE_BLOCK)
-        *pos = INSPECTION_INSIDE_BLOCK;
+    if (*pos == DATAFLOW_INSIDE_BLOCK)
+        *pos = DATAFLOW_OUTSIDE_BLOCK;
+    else if (*pos == DATAFLOW_OUTSIDE_BLOCK)
+        *pos = DATAFLOW_INSIDE_BLOCK;
     else
         assert(0);
 
@@ -385,7 +409,7 @@ static unsigned toogleInOutBlock(unsigned *pos) {
 static void setInOutBlockFields(ProgramGraphNode *program) {
     ProgramGraphNode *p;
     unsigned    pos;
-    pos = INSPECTION_OUTSIDE_BLOCK;
+    pos = DATAFLOW_OUTSIDE_BLOCK;
     for (p=program; p!=NULL; p=p->next) {
         if (p->referenceableItem->type == TypeBlockMarker) {
             toogleInOutBlock(&pos);
