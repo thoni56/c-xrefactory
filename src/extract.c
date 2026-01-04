@@ -240,10 +240,6 @@ static ProgramGraphNode *makeProgramGraph(void) {
     return program;
 }
 
-static bool isStructOrUnion(ProgramGraphNode *node) {
-    return node->referenceableItem->linkName[0] == LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
-}
-
 static bool hasBit(unsigned state, DataFlowBits bit) {
     return (state & bit) != 0;
 }
@@ -272,8 +268,7 @@ static void analyzeVariableDataFlow(ProgramGraphNode *p, ReferenceableItem *refe
                 nodeProcessingState = valueStateIfAssignedHere;
                 // change only state, so usage is kept
             } else if (p->reference->usage == UsageLvalUsed
-                       || (p->reference->usage == UsageDefined && ! isStructOrUnion(p))
-                ) {
+                       || p->reference->usage == UsageDefined) {
                 // variable is assigned here, so reset its stored state too
                 p->state = nodeProcessingState = valueStateIfAssignedHere;
             }
@@ -394,19 +389,6 @@ static ExtractClassification classifyVariableUsingDataFlow(ProgramGraphNode *pro
     }
 }
 
-static ExtractClassification classifyLocalVariableForExtraction(
-    ProgramGraphNode *program,
-    ProgramGraphNode *varRef
-) {
-    ExtractClassification classification;
-
-    classification = classifyVariableUsingDataFlow(program, varRef);
-    if (isStructOrUnion(varRef) && classification!=CLASSIFIED_AS_NONE && classification!=CLASSIFIED_AS_LOCAL_VAR) {
-        return CLASSIFIED_AS_ADDRESS_ARGUMENT;
-    }
-    return classification;
-}
-
 static unsigned toogleInOutBlock(unsigned *pos) {
     if (*pos == DATAFLOW_INSIDE_BLOCK)
         *pos = DATAFLOW_OUTSIDE_BLOCK;
@@ -454,10 +436,9 @@ static bool isLocalVariable(ProgramGraphNode *node) {
 }
 
 static void classifyLocalVariables(ProgramGraphNode *program) {
-    ProgramGraphNode *p;
-    for (p=program; p!=NULL; p=p->next) {
-        if (isLocalVariable(p)) {
-            p->classification = classifyLocalVariableForExtraction(program,p);
+    for (ProgramGraphNode *node=program; node!=NULL; node=node->next) {
+        if (isLocalVariable(node)) {
+            node->classification = classifyVariableUsingDataFlow(program, node);
         }
     }
 }

@@ -1,0 +1,13 @@
+<extraction-dialog type=newFunction_> <str len=<n>>	sum = newFunction_(p);
+</str>
+ <str len=<n>>static int newFunction_(struct Point  p) {
+	int sum;
+</str>
+ <str len=<n>>
+	return sum;
+}
+
+</str>
+  <int val=2 len=<n>></int>
+</extraction-dialog>
+<sync>
