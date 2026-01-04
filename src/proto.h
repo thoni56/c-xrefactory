@@ -144,8 +144,8 @@ typedef struct structSpec {
 
 typedef struct parsedInfo {
     bool              extractProcessedFlag;
-    bool              blockMarker1Set;
-    bool              blockMarker2Set;
+    bool              regionMarkerAtCursorInserted;
+    bool              regionMarkerAtMarkInserted;
     bool              moveTargetAccepted;
     int               methodCoordEndLine;
     struct codeBlock *blockAtBegin;

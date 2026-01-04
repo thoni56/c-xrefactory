@@ -376,13 +376,22 @@ static int handleNewline(CharacterBuffer *cb, LexemBuffer *lb, int lexemStarting
     return ch;
 }
 
-static void putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(LexemBuffer *lb, int parChar,
-                                                                      Position position) {
-    /* TODO Why do we put this contrived sequence of lexems? */
+static void putRegionMarker(LexemBuffer *lb, int parChar, Position position) {
+    // Inserts synthetic tokens to mark extraction block boundaries.
+    // The sequence (parChar ; OL_MARKER_TOKEN parChar) allows the extraction
+    // analysis to identify which references are inside vs outside the block.
     putLexemCodeWithPosition(lb, parChar, position);
     putLexemCodeWithPosition(lb, ';', position);
     putLexemCodeWithPosition(lb, OL_MARKER_TOKEN, position);
     putLexemCodeWithPosition(lb, parChar, position);
+}
+
+void putRegionBeginMarker(LexemBuffer *lb, Position position) {
+    putRegionMarker(lb, '{', position);
+}
+
+void putRegionEndMarker(LexemBuffer *lb, Position position) {
+    putRegionMarker(lb, '}', position);
 }
 
 static int skipPossibleStringPrefix(CharacterBuffer *cb, int ch) {
@@ -404,9 +413,28 @@ static int skipPossibleStringPrefix(CharacterBuffer *cb, int ch) {
     return ch;
 }
 
+static void putRegionBeginOrEndMarker(CharacterBuffer *cb, LexemBuffer *lb, Position position) {
+    int offset = fileOffsetFor(cb);
+    log_debug(":offset==%d, cursor==%d, mark==%d", offset, parsingConfig.cursorOffset,
+              parsingConfig.markOffset);
+
+    if (offset >= parsingConfig.cursorOffset && !parsedInfo.regionMarkerAtCursorInserted) {
+        if (parsedInfo.regionMarkerAtMarkInserted)
+            putRegionEndMarker(lb, position);
+        else
+            putRegionBeginMarker(lb, position);
+        parsedInfo.regionMarkerAtCursorInserted = true;
+    } else if (offset >= parsingConfig.markOffset && !parsedInfo.regionMarkerAtMarkInserted) {
+        if (parsedInfo.regionMarkerAtCursorInserted)
+            putRegionEndMarker(lb, position);
+        else
+            putRegionBeginMarker(lb, position);
+        parsedInfo.regionMarkerAtMarkInserted = true;
+    }
+}
+
 static int postProcessLexemForServerOperations(CharacterBuffer *cb, LexemBuffer *lb, int ch,
                                                char *startOfCurrentLexem) {
-    int parChar;
     int currentLexemFileOffset = lb->fileOffset;
     Position position = lb->position;
 
@@ -414,25 +442,7 @@ static int postProcessLexemForServerOperations(CharacterBuffer *cb, LexemBuffer 
         && fileNumberFrom(cb) != -1) {
         if (parsingConfig.operation == PARSE_TO_EXTRACT) {
             ch = skipBlanks(cb, ch);
-            int offset = fileOffsetFor(cb);
-            log_debug(":offset==%d, cursor==%d, mark==%d", offset, parsingConfig.cursorOffset,
-                      parsingConfig.markOffset);
-            // all this is very, very HACK!!!
-            if (offset >= parsingConfig.cursorOffset && !parsedInfo.blockMarker1Set) {
-                if (parsedInfo.blockMarker2Set)
-                    parChar = '}';
-                else
-                    parChar = '{';
-                putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(lb, parChar, position);
-                parsedInfo.blockMarker1Set = true;
-            } else if (offset >= parsingConfig.markOffset && !parsedInfo.blockMarker2Set) {
-                if (parsedInfo.blockMarker1Set)
-                    parChar = '}';
-                else
-                    parChar = '{';
-                putDoubleParenthesisSemicolonsAMarkerAndDoubleParenthesis(lb, parChar, position);
-                parsedInfo.blockMarker2Set = true;
-            }
+            putRegionBeginOrEndMarker(cb, lb, position);
         } else if (parsingConfig.operation == PARSE_TO_COMPLETE) {
             ch = skipBlanks(cb, ch);
             LexemCode lexem = peekLexemCodeAt(startOfCurrentLexem);
@@ -459,9 +469,9 @@ static int postProcessLexemForServerOperations(CharacterBuffer *cb, LexemBuffer 
                 //  only for Java refactorings
                 ch = skipBlanks(cb, ch);
                 int apos = fileOffsetFor(cb);
-                if (apos >= parsingConfig.cursorOffset && !parsedInfo.blockMarker1Set) {
+                if (apos >= parsingConfig.cursorOffset && !parsedInfo.regionMarkerAtCursorInserted) {
                     putLexemCodeWithPosition(lb, OL_MARKER_TOKEN, position);
-                    parsedInfo.blockMarker1Set = true;
+                    parsedInfo.regionMarkerAtCursorInserted = true;
                 }
             }
         }
