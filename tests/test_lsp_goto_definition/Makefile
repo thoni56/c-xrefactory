@@ -5,7 +5,7 @@ ARGUMENTS = -lsp
 
 $(TEST): input.lsp
 	$(COMMAND) > output.tmp < input.lsp
-	$(NORMALIZE) output.tmp | tail -n +4 > output
+	$(NORMALIZE) output.tmp | tail -n +4 | grep -v Content-Length > output
 	$(VERIFY)
 
 trace: ARGUMENTS+=-debug -log=log

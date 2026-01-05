@@ -1,6 +1,4 @@
-Content-Length: 201
 
 {"jsonrpc":"2.0","id":2,"result":{"uri":"file://CURDIR/source.c","range":{"start":{"line":0,"character":4},"end":{"line":0,"character":14}}}}
-Content-Length: 38
 
 {"jsonrpc":"2.0","id":3,"result":null}
