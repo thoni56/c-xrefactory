@@ -553,9 +553,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_guiding_principles">15.1. Guiding Principles</a></li>
 <li><a href="#_recent_accomplishments_2025_q1">15.2. Recent Accomplishments (2025 Q1)</a></li>
-<li><a href="#_short_term_goals_next_3_6_months">15.3. Short-term Goals (Next 3-6 Months)</a></li>
+<li><a href="#_short_term_goals">15.3. Short-term Goals</a></li>
 <li><a href="#_medium_term_goals_6_12_months">15.4. Medium-term Goals (6-12 Months)</a></li>
-<li><a href="#_long_term_vision_12_24_months">15.5. Long-term Vision (12-24 Months)</a></li>
+<li><a href="#_long_term_vision">15.5. Long-term Vision</a></li>
 <li><a href="#_migration_and_compatibility_strategy">15.6. Migration and Compatibility Strategy</a></li>
 <li><a href="#_success_metrics">15.7. Success Metrics</a></li>
 <li><a href="#_risk_management">15.8. Risk Management</a></li>
@@ -571,37 +571,36 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#unified-symbol-database">16.3. Unified Symbol Database Architecture</a></li>
 <li><a href="#macro-expansion-module">16.4. Extract Macro Expansion Module</a></li>
 <li><a href="#move-function-refactoring">16.5. Move Function Between Files</a></li>
+<li><a href="#clean-parser-api">16.6. Clean Parser API and Multi-File Definition Support</a></li>
 </ul>
 </li>
-<li><a href="#_insights">17. Insights</a>
+<li><a href="#_planned_or_ongoing_features">17. Planned or Ongoing Features</a>
 <ul class="sectlevel2">
-<li><a href="#_yacc_semantic_data">17.1. Yacc semantic data</a></li>
-<li><a href="#_navigation_architecture_and_the_preloading_limitation">17.2. Navigation Architecture and the Preloading Limitation</a></li>
+<li><a href="#_move_function_between_files">17.1. Move Function Between Files</a></li>
 </ul>
 </li>
-<li><a href="#_archive">18. Archive</a>
+<li><a href="#_insights">18. Insights</a>
 <ul class="sectlevel2">
-<li><a href="#_memory_strategies">18.1. Memory strategies</a></li>
-<li><a href="#_trivial_prechecks">18.2. Trivial Prechecks</a></li>
-<li><a href="#_caching_system">18.3. Caching System</a></li>
-<li><a href="#_huge_memory">18.4. HUGE Memory</a></li>
-<li><a href="#_bootstrapping">18.5. Bootstrapping</a></li>
-<li><a href="#_fill_macros">18.6. FILL macros</a></li>
-<li><a href="#_users">18.7. Users</a></li>
+<li><a href="#_yacc_semantic_data">18.1. Yacc semantic data</a></li>
+<li><a href="#_navigation_architecture_and_the_preloading_limitation">18.2. Navigation Architecture and the Preloading Limitation</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">19. Refactoring Recipes</a>
 <ul class="sectlevel2">
-<li><a href="#_move_type_to_new_file">19.1. Move Type to New File</a></li>
-<li><a href="#_introduce_semantic_type_aliases">19.2. Introduce Semantic Type Aliases</a></li>
-<li><a href="#_rename_included_file">19.3. Rename Included File</a></li>
-<li><a href="#_move_function_to_different_file">19.4. Move Function to Different File</a></li>
-<li><a href="#_rename_symbol">19.5. Rename Symbol</a></li>
-<li><a href="#_extract_function">19.6. Extract Function</a></li>
-<li><a href="#_reorder_parameters">19.7. Reorder Parameters</a></li>
-<li><a href="#_turn_include_guard_into_pragma_once">19.8. Turn include guard into pragma once</a></li>
-<li><a href="#_change_return_type">19.9. Change return type</a></li>
-<li><a href="#_make_function_static">19.10. Make Function Static</a></li>
+<li><a href="#_existing_refactorings">19.1. Existing Refactorings</a></li>
+<li><a href="#_suggested_refactorings">19.2. Suggested Refactorings</a></li>
+<li><a href="#_introduce_semantic_type_aliases">19.3. Introduce Semantic Type Aliases</a></li>
+</ul>
+</li>
+<li><a href="#_archive">20. Archive</a>
+<ul class="sectlevel2">
+<li><a href="#_memory_strategies">20.1. Memory strategies</a></li>
+<li><a href="#_trivial_prechecks">20.2. Trivial Prechecks</a></li>
+<li><a href="#_caching_system">20.3. Caching System</a></li>
+<li><a href="#_huge_memory">20.4. HUGE Memory</a></li>
+<li><a href="#_bootstrapping">20.5. Bootstrapping</a></li>
+<li><a href="#_fill_macros">20.6. FILL macros</a></li>
+<li><a href="#_users">20.7. Users</a></li>
 </ul>
 </li>
 </ul>
@@ -5463,7 +5462,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <p><strong>Incremental improvement</strong>: Each step should provide immediate value while moving toward long-term goals</p>
 </li>
 <li>
-<p><strong>Test-driven modernization</strong>: Maintain ~80% test coverage to enable confident refactoring</p>
+<p><strong>Test-driven modernization</strong>: Maintain 85%+ test coverage to enable confident refactoring</p>
 </li>
 <li>
 <p><strong>Backward compatibility</strong>: Preserve existing Emacs workflows while enabling modern IDE integration</p>
@@ -5545,31 +5544,31 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_short_term_goals_next_3_6_months">15.3. Short-term Goals (Next 3-6 Months)</h3>
+<h3 id="_short_term_goals">15.3. Short-term Goals</h3>
 <div class="sect3">
 <h4 id="_test_coverage_expansion">15.3.1. Test Coverage Expansion</h4>
 <div class="paragraph">
-<p><strong>Current Status</strong>: ~80% coverage, ongoing improvement</p>
+<p><strong>Current Status</strong>: <strong>85%+ overall coverage achieved</strong> (January 2025)</p>
 </div>
 <div class="paragraph">
-<p><strong>Priority</strong>: HIGH</p>
+<p><strong>Priority</strong>: MEDIUM (maintenance mode)</p>
 </div>
 <div class="paragraph">
-<p><strong>Goals</strong>:</p>
+<p><strong>Ongoing Work</strong>:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Achieve 85%+ coverage for core modules</p>
+<p>Maintain 85%+ overall coverage as new features are added</p>
 </li>
 <li>
-<p>Add focused tests for macro expansion subsystem</p>
+<p>Add focused tests for LSP integration points as they&#8217;re implemented</p>
 </li>
 <li>
-<p>Expand coverage for LSP integration points</p>
+<p>Systematic testing of error handling paths in new code</p>
 </li>
 <li>
-<p>Systematic testing of error handling paths</p>
+<p>Monitor coverage regressions during refactoring</p>
 </li>
 </ul>
 </div>
@@ -5577,35 +5576,45 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <div class="sect3">
 <h4 id="_lsp_feature_completeness">15.3.2. LSP Feature Completeness</h4>
 <div class="paragraph">
-<p><strong>Current Status</strong>: Basic LSP communication works, features not yet accessible</p>
+<p><strong>Current Status</strong>: Basic LSP communication works, single-file <code>textDocument/definition</code> implemented</p>
 </div>
 <div class="paragraph">
 <p><strong>Priority</strong>: HIGH</p>
 </div>
 <div class="paragraph">
-<p><strong>Goals</strong>:</p>
+<p><strong>Completed Work</strong>:
+* ✓ <code>textDocument/definition</code> for <strong>single-file lookups</strong> (January 2025)
+* ✓ Clean parser API in <code>parsing.h/c</code> enabling operation-based control
+* ✓ Reference database integration working for in-memory queries</p>
+</div>
+<div class="paragraph">
+<p><strong>Remaining Goals</strong>:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Wire up existing symbol navigation to LSP protocol</p>
+<p><strong>Multi-file definition lookup</strong> - Requires symbol type persistence and include graph</p>
 </li>
 <li>
-<p>Implement <code>textDocument/definition</code> using reference database</p>
+<p><code>textDocument/references</code> using reference database</p>
 </li>
 <li>
-<p>Implement <code>textDocument/references</code></p>
+<p><code>textDocument/hover</code> with symbol information</p>
 </li>
 <li>
-<p>Implement <code>textDocument/hover</code> with symbol information</p>
+<p><code>textDocument/completion</code> for basic completion</p>
 </li>
 <li>
-<p>Enable <code>textDocument/completion</code> for basic completion</p>
+<p>Cross-file symbol resolution</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p><strong>Approach</strong>: Leverage existing reference database (<code>refTab</code>) and symbol tables - no major architectural changes needed initially.</p>
+<p><strong>Approach</strong>:
+* Single-file done via clean API (no <code>.cx</code> files needed)
+* Multi-file requires enhancements: see <a href="#clean-parser-api">Clean Parser API and Multi-File Definition Support</a> for investigation
+* Leverage existing reference database (<code>refTab</code>) and symbol tables
+* Reuse parser infrastructure via new clean ParserOperation API</p>
 </div>
 </div>
 <div class="sect3">
@@ -5714,18 +5723,18 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p><strong>Remaining Effort</strong>: 2-3 weeks</p>
+<p><strong>Remaining Effort</strong>: Smaller effort, can be completed independently</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Week 1: Extend structure and create full API</p>
+<p>Extend structure and create full API</p>
 </li>
 <li>
-<p>Week 2: Refactor <code>collate()</code> and helper functions</p>
+<p>Refactor <code>collate()</code> and helper functions</p>
 </li>
 <li>
-<p>Week 3: Testing, cleanup, and documentation</p>
+<p>Testing, cleanup, and documentation</p>
 </li>
 </ul>
 </div>
@@ -5761,18 +5770,18 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p><strong>Estimated Effort</strong>: 4-6 weeks</p>
+<p><strong>Effort</strong>: Larger refactoring, depends on LexemStream API completion</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Week 1-2: Create module structure and move memory management</p>
+<p>Create module structure and move memory management</p>
 </li>
 <li>
-<p>Week 3-4: Migrate token processing and expansion logic</p>
+<p>Migrate token processing and expansion logic</p>
 </li>
 <li>
-<p>Week 5-6: Integration, testing, and documentation</p>
+<p>Integration, testing, and documentation</p>
 </li>
 </ul>
 </div>
@@ -5812,7 +5821,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 * Remains fully compatible with existing workflows</p>
 </div>
 <div class="paragraph">
-<p><strong>Estimated Effort</strong>: 1-2 weeks</p>
+<p><strong>Effort</strong>: Smaller effort, mostly configuration changes</p>
 </div>
 <div class="paragraph">
 <p><strong>Phase 2: Preprocessor Dependency Caching</strong></p>
@@ -5839,7 +5848,7 @@ typedef struct {
 * ~1KB per source file vs. ~100KB+ for full token cache</p>
 </div>
 <div class="paragraph">
-<p><strong>Estimated Effort</strong>: 3-4 weeks</p>
+<p><strong>Effort</strong>: Medium effort, moderate complexity but straightforward scope</p>
 </div>
 <div class="paragraph">
 <p><strong>Phase 3: Selective Header Caching</strong> (Future optimization)</p>
@@ -5870,7 +5879,7 @@ typedef struct {
 * Clear separation between parsing logic and caching logic</p>
 </div>
 <div class="paragraph">
-<p><strong>Estimated Effort</strong>: 6-8 weeks (only after unified database complete)</p>
+<p><strong>Effort</strong>: Larger effort, deferred to after unified database architecture is complete</p>
 </div>
 </div>
 <div class="sect3">
@@ -5885,9 +5894,17 @@ typedef struct {
 <p><strong>Rationale</strong>: The <code>cxfile</code> module currently mixes persistence (reading/writing .cx files), search operations, and menu creation logic. This tight coupling prevents architectural improvements like LSP integration and alternative storage backends.</p>
 </div>
 <div class="paragraph">
-<p><strong>Key Problem</strong>: Code conflates two distinct concepts:
-* <strong>Reference Database</strong> (in-memory <code>referenceableItemTable</code> - the source of truth)
-* <strong>Persistence Store</strong> (.cx files on disk - durable cache)</p>
+<p><strong>Key Problem</strong>: Code conflates two distinct concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Reference Database</strong> (in-memory <code>referenceableItemTable</code> - the source of truth)</p>
+</li>
+<li>
+<p><strong>Persistence Store</strong> (.cx files on disk - durable cache)</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>Currently <code>.cx</code> files are sometimes treated as authoritative, when they should be just a cache.</p>
@@ -5915,21 +5932,21 @@ typedef struct {
 </ul>
 </div>
 <div class="paragraph">
-<p><strong>Estimated Effort</strong>: 4-6 weeks</p>
+<p><strong>Effort</strong>: Medium effort, requires careful abstraction layer design</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Week 1-2: Create <code>persistence_store.h</code> and <code>reference_database.h</code> facades</p>
+<p>Create <code>persistence_store.h</code> and <code>reference_database.h</code> facades</p>
 </li>
 <li>
-<p>Week 3: Extract search/unused-detection logic to proper modules</p>
+<p>Extract search/unused-detection logic to proper modules</p>
 </li>
 <li>
-<p>Week 4: Hide implementation details (<code>cxFileHashNumberForSymbol</code> becomes static)</p>
+<p>Hide implementation details (<code>cxFileHashNumberForSymbol</code> becomes static)</p>
 </li>
 <li>
-<p>Week 5-6: Testing, documentation, and cleanup</p>
+<p>Testing, documentation, and cleanup</p>
 </li>
 </ul>
 </div>
@@ -5960,13 +5977,13 @@ typedef struct {
 </div>
 <div class="paragraph">
 <p><strong>Implementation Plan</strong> (see <a href="../adr/0014-adopt-on-demand-parsing-architecture.md">ADR-0014</a> for architecture details):
-* Phase 1: Incremental <code>-create</code> (1-2 weeks)
-* Phase 2: On-demand goto-definition proof-of-concept (3-4 weeks)
-* Phase 3: Extend to all refactorings (6-8 weeks)
-* Phase 4: Deprecate mandatory <code>-create</code> (2 weeks)</p>
+* Phase 1: Incremental <code>-create</code> (foundation)
+* Phase 2: On-demand goto-definition proof-of-concept (medium effort)
+* Phase 3: Extend to all refactorings (larger effort)
+* Phase 4: Deprecate mandatory <code>-create</code> (smaller cleanup)</p>
 </div>
 <div class="paragraph">
-<p><strong>Estimated Effort</strong>: 12-16 weeks total</p>
+<p><strong>Effort</strong>: Larger foundational work, enables all on-demand features</p>
 </div>
 <div class="paragraph">
 <p><strong>Accepted Trade-offs</strong>:
@@ -5977,7 +5994,7 @@ typedef struct {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_long_term_vision_12_24_months">15.5. Long-term Vision (12-24 Months)</h3>
+<h3 id="_long_term_vision">15.5. Long-term Vision</h3>
 <div class="sect3">
 <h4 id="_new_refactoring_features">15.5.1. New Refactoring Features</h4>
 <div class="sect4">
@@ -5987,6 +6004,9 @@ typedef struct {
 </div>
 <div class="paragraph">
 <p><strong>Vision</strong>: Enable extraction of arbitrary expressions as separate functions with appropriate return types.</p>
+</div>
+<div class="paragraph">
+<p><strong>Value</strong>: Removes artificial restriction, makes refactoring tool more complete and less surprising to users.</p>
 </div>
 <div class="paragraph">
 <p><strong>Examples</strong>:</p>
@@ -6036,7 +6056,7 @@ for (int i = 0; i &lt; dispatchTableSize(); i++)</code></pre>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><strong>Parsing Context Stack</strong> (1 week)</p>
+<p><strong>Parsing Context Stack</strong></p>
 <div class="ulist">
 <ul>
 <li>
@@ -6055,7 +6075,7 @@ for (int i = 0; i &lt; dispatchTableSize(); i++)</code></pre>
 </div>
 </li>
 <li>
-<p><strong>Expression Type Inference</strong> (1 week)</p>
+<p><strong>Expression Type Inference</strong></p>
 <div class="ulist">
 <ul>
 <li>
@@ -6071,7 +6091,7 @@ for (int i = 0; i &lt; dispatchTableSize(); i++)</code></pre>
 </div>
 </li>
 <li>
-<p><strong>Modified Extraction Logic</strong> (1-2 weeks)</p>
+<p><strong>Modified Extraction Logic</strong></p>
 <div class="ulist">
 <ul>
 <li>
@@ -6090,7 +6110,7 @@ for (int i = 0; i &lt; dispatchTableSize(); i++)</code></pre>
 </div>
 </li>
 <li>
-<p><strong>Testing and Refinement</strong> (1 week)</p>
+<p><strong>Testing and Refinement</strong></p>
 <div class="ulist">
 <ul>
 <li>
@@ -6108,13 +6128,13 @@ for (int i = 0; i &lt; dispatchTableSize(); i++)</code></pre>
 </ol>
 </div>
 <div class="paragraph">
-<p><strong>Alternative Approach</strong>: Add user dialog to explicitly mark extraction as expression-based rather than auto-detecting, which would reduce implementation time to 2-3 weeks but provide less seamless UX.</p>
+<p><strong>Alternative Approach</strong>: Add user dialog to explicitly mark extraction as expression-based rather than auto-detecting, which would be simpler but provide less seamless UX.</p>
 </div>
 <div class="paragraph">
 <p><strong>Current Code State</strong>: The extraction infrastructure already has commented placeholders (<code>isInExpression</code> boolean with TODO comments saying "how can we know this&#8230;&#8203;?"), indicating this feature was originally planned but the detection mechanism was never solved.</p>
 </div>
 <div class="paragraph">
-<p><strong>Estimated Effort</strong>: 4-5 weeks for full automatic detection, or 2-3 weeks for dialog-based approach</p>
+<p><strong>Effort</strong>: Medium effort for full automatic detection, smaller if using dialog-based approach</p>
 </div>
 <div class="paragraph">
 <p><strong>Priority</strong>: MEDIUM-LOW (valuable feature but less critical than LSP enablement)</p>
@@ -6201,7 +6221,7 @@ On textDocument/didChange(file):
 </ul>
 </div>
 <div class="paragraph">
-<p><strong>Estimated Effort</strong>: 16-20 weeks (major architectural work)</p>
+<p><strong>Effort</strong>: Large foundational work with significant architectural implications</p>
 </div>
 </div>
 </div>
@@ -6274,7 +6294,7 @@ On textDocument/didChange(file):
 </ul>
 </div>
 <div class="paragraph">
-<p><strong>Estimated Effort</strong>: 20-24 weeks (building on unified database)</p>
+<p><strong>Effort</strong>: Large effort building on unified database architecture</p>
 </div>
 </div>
 <div class="sect3">
@@ -6379,7 +6399,7 @@ On textDocument/didChange(file):
 <p><strong>Zero test regressions</strong> - 140+ test suite must pass</p>
 </li>
 <li>
-<p><strong>Coverage maintenance</strong> - keep ~80%+ coverage during refactoring</p>
+<p><strong>Coverage maintenance</strong> - keep 85%+ coverage during refactoring</p>
 </li>
 <li>
 <p><strong>Performance validation</strong> - no &gt;5% regression on large projects</p>
@@ -6398,7 +6418,7 @@ On textDocument/didChange(file):
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Test Coverage</strong>: Maintain 80%, target 85%</p>
+<p><strong>Test Coverage</strong>: Maintain 85%+</p>
 </li>
 <li>
 <p><strong>Response Time</strong>: LSP <code>textDocument/definition</code> &lt; 100ms for 90th percentile</p>
@@ -6530,7 +6550,7 @@ On textDocument/didChange(file):
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><strong>Complete LSP handler wiring</strong> (1-2 weeks)</p>
+<p><strong>Complete LSP handler wiring</strong></p>
 <div class="ulist">
 <ul>
 <li>
@@ -6546,7 +6566,7 @@ On textDocument/didChange(file):
 </div>
 </li>
 <li>
-<p><strong>Design LexemStream API</strong> (1 week)</p>
+<p><strong>Design LexemStream API</strong></p>
 <div class="ulist">
 <ul>
 <li>
@@ -6562,7 +6582,7 @@ On textDocument/didChange(file):
 </div>
 </li>
 <li>
-<p><strong>Plan unified database refactoring</strong> (2 weeks)</p>
+<p><strong>Plan unified database refactoring</strong></p>
 <div class="ulist">
 <ul>
 <li>
@@ -6578,7 +6598,7 @@ On textDocument/didChange(file):
 </div>
 </li>
 <li>
-<p><strong>Establish performance baseline</strong> (1 week)</p>
+<p><strong>Establish performance baseline</strong></p>
 <div class="ulist">
 <ul>
 <li>
@@ -9402,7 +9422,7 @@ if (staticHelperCount &gt; 0) {
 <div class="sect4">
 <h5 id="_phase_4_polish">Phase 4: Polish</h5>
 <div class="paragraph">
-<p><strong>Relative complexity</strong>: 0.5-1× Phase 1</p>
+<p><strong>Scope</strong>: Smaller effort, quality-of-life improvements</p>
 </div>
 <div class="ulist">
 <ul>
@@ -9502,50 +9522,27 @@ if (staticHelperCount &gt; 0) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation_effort_summary">16.5.6. Implementation Effort Summary</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Phase</th>
-<th class="tableblock halign-left valign-top">Effort</th>
-<th class="tableblock halign-left valign-top">Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 1: Basic Move</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1-2 weeks</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>High</strong> - Eliminates manual cut/paste, handles 80% of cases</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 2: Include Management</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2-3 weeks</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>High</strong> - Prevents build breakage, major time saver</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 3: Static Helpers</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1-2 weeks</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Medium</strong> - Nice to have, improves completeness</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 4: Polish</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1 week</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Low</strong> - Quality of life improvements</p></td>
-</tr>
-</tbody>
-</table>
+<h4 id="_implementation_summary">16.5.6. Implementation Summary</h4>
 <div class="paragraph">
-<p><strong>Total for Phases 1-2</strong>: 3-5 weeks
-<strong>Total for full implementation</strong>: 5-8 weeks</p>
+<p>||===
+||Phase |Value
+|
+||Phase 1: Basic Move
+||<strong>High</strong> - Eliminates manual cut/paste, handles 80% of cases
+|
+||Phase 2: Include Management
+||<strong>High</strong> - Prevents build breakage, major time saver
+|
+||Phase 3: Static Helpers
+||<strong>Medium</strong> - Nice to have, improves completeness
+|
+||Phase 4: Polish
+||<strong>Low</strong> - Quality of life improvements
+||===</p>
 </div>
 <div class="paragraph">
-<p><strong>Comparison to estimated-from-scratch</strong>: 6-8 weeks
-<strong>Savings from leveraging Java code</strong>: ~30% effort reduction</p>
+<p><strong>Phases 1-2 provide most value</strong>, independently testable
+<strong>Leverages existing Java refactoring code</strong>, reduces complexity significantly</p>
 </div>
 </div>
 <div class="sect3">
@@ -9743,7 +9740,7 @@ if (staticHelperCount &gt; 0) {
 <p><strong>After persistence store cleanup</strong>: Take a break from architectural work</p>
 </li>
 <li>
-<p><strong>Implement Phase 1 MVP</strong>: 1-2 weeks for immediate value</p>
+<p><strong>Implement Phase 1 MVP</strong>: Smaller effort, high value</p>
 </li>
 <li>
 <p><strong>Gather usage feedback</strong>: Identify most common dependency patterns</p>
@@ -9771,10 +9768,703 @@ Even Phase 1 MVP provides significant value by eliminating manual text manipulat
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="clean-parser-api">16.6. Clean Parser API and Multi-File Definition Support</h3>
+<div class="sect3">
+<h4 id="_current_state_recent_lsp_definition_finding_success">16.6.1. Current State: Recent LSP Definition Finding Success</h4>
+<div class="paragraph">
+<p>The recent implementation of <code>textDocument/definition</code> for LSP created a <strong>clean, operation-based parser API</strong> in <code>parsing.h/c</code> that successfully decouples high-level operations from low-level parsing details. This API discovery presents an opportunity to gradually modernize legacy parsing infrastructure.</p>
+</div>
+<div class="paragraph">
+<p><strong>What works</strong>:
+* Single-file definition lookup via clean <code>parsing.h</code> interface
+* Operation-based configuration (ParserOperation enum)
+* No reliance on <code>.cx</code> files for immediate queries</p>
+</div>
+<div class="paragraph">
+<p><strong>What doesn&#8217;t work yet</strong>:
+* Multi-file definitions (symbol defined in different file than reference)
+* Cross-file type resolution
+* Include graph persistence</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_problem_statement_6">16.6.2. Problem Statement</h4>
+<div class="paragraph">
+<p>The LSP definition finding currently fails when a symbol&#8217;s <strong>definition is in a different file</strong> from the reference. This requires:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Symbol type information</strong> - Current reference database only stores name and position, not types needed for resolution</p>
+</li>
+<li>
+<p><strong>Include graph</strong> - Don&#8217;t know which files include which headers to find definition files</p>
+</li>
+<li>
+<p><strong>Multi-file parsing</strong> - Ability to efficiently reparse relevant files without loading entire project</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>More broadly, the legacy codebase still relies on <strong>magic string command routing</strong> to drive parsing behavior:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Scattered throughout codebase (cxref.c, refactory.c, server.c, etc.)
+parseBufferUsingServer(project, point, mark, "-olcxpush", NULL);
+parseBufferUsingServer(project, point, mark, "-olcxmovetarget", NULL);
+parseBufferUsingServer(project, point, mark, "-olcxmodemenu", NULL);
+// ... 20+ more magic strings, each with unclear semantics</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This makes the codebase fragile, hard to understand, and difficult to extend with new operations.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_parser_api_innovation">16.6.3. The Parser API Innovation</h4>
+<div class="paragraph">
+<p>The new <code>parsing.h</code> interface provides:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef enum {
+    PARSE_TO_CREATE_REFERENCES,    /* Just parse, create references */
+    PARSE_TO_GET_FUNCTION_BOUNDS,  /* Record function boundaries */
+    PARSE_TO_VALIDATE_MOVE_TARGET, /* Check if position is valid move target */
+    PARSE_TO_EXTRACT,              /* Extract refactoring - track blocks/vars */
+    PARSE_TO_TRACK_PARAMETERS,     /* Track parameter positions for navigation */
+    PARSE_TO_COMPLETE              /* Complete code at cursor */
+} ParserOperation;
+
+typedef struct {
+    StringList      *includeDirs;  /* -I include directories */
+    char            *defines;      /* -D preprocessor definitions */
+    bool             strictAnsi;   /* ANSI C mode vs extensions */
+    ParserOperation  operation;    /* What should parser do? */
+    Position         cursorPosition; /* Cursor location for bounded operations */
+    int              cursorOffset; /* Byte offset of cursor in file */
+    int              markOffset;   /* Byte offset of mark (selection end) */
+    ExtractMode      extractMode;  /* Which extraction type (function/macro/variable) */
+    int              targetParameterIndex; /* Which parameter to track */
+} ParsingConfig;
+
+/* Configuration is set before parsing starts */
+extern ParsingConfig parsingConfig;
+
+/* Predicate functions document behavior */
+extern bool needsReferenceAtCursor(ParserOperation op);
+extern bool allowsDuplicateReferences(ParserOperation op);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Key innovations</strong>:
+* Enum-based operations - Discoverable list (IDE autocomplete shows all options)
+* Configuration struct - Single point of setup, no scattered global flags
+* Operation predicates - Self-documenting behavior (<code>needsReferenceAtCursor</code>, <code>allowsDuplicateReferences</code>)
+* Type-safe - Compile-time checking replaces runtime magic string matching</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_benefits_of_backporting_this_api">16.6.4. Benefits of Backporting This API</h4>
+<div class="sect4">
+<h5 id="_code_clarity_and_safety">Code Clarity and Safety</h5>
+<div class="paragraph">
+<p>Replace magic strings with discoverable enums:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">/* Before: What does this do? Need to search for documentation */
+parseBufferUsingServer(options.project, target, NULL, "-olcxmovetarget", NULL);
+
+/* After: Immediately obvious */
+parsingConfig.operation = PARSE_TO_VALIDATE_MOVE_TARGET;
+parsingConfig.cursorPosition = makePositionFromMarker(target);
+parseCurrentInputFile(LANG_C);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace scattered global flags with structured configuration:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">/* Before: Scattered throughout, unclear semantics */
+options.olcxPushButton = 1;
+options.olcxRenameOption = 1;
+s_noParametersToExpand = 0;
+originalFileNumber = someValue;
+
+/* After: All configuration in one place, clear purpose */
+parsingConfig.operation = PARSE_TO_COMPLETE;
+parsingConfig.targetParameterIndex = 5;
+parsingConfig.extractMode = EXTRACT_VARIABLE;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_foundation_for_multi_file_definition_lookup">Foundation for Multi-File Definition Lookup</h5>
+<div class="paragraph">
+<p>The clean API makes it easier to implement required enhancements:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">/* New operation for multi-file definition lookup */
+typedef enum {
+    /* ... existing operations ... */
+    PARSE_TO_RESOLVE_DEFINITION,  /* NEW: Find definition across files */
+} ParserOperation;
+
+/* Simpler to add new parsing modes when API is clean */
+parsingConfig.operation = PARSE_TO_RESOLVE_DEFINITION;
+parsingConfig.symbolName = "findReferenceableAt";
+parsingConfig.startFile = fileNumber;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_easier_feature_development">Easier Feature Development</h5>
+<div class="paragraph">
+<p>Adding new operations becomes straightforward:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Add to <code>ParserOperation</code> enum</p>
+</li>
+<li>
+<p>Implement predicate functions if needed</p>
+</li>
+<li>
+<p>Add semantic actions in grammar</p>
+</li>
+<li>
+<p>Done - no magic strings to maintain</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_implementation_plan_three_non_blocking_phases">16.6.5. Implementation Plan: Three Non-Blocking Phases</h4>
+<div class="sect4">
+<h5 id="_phase_1_expose_new_api_alongside_legacy_code">Phase 1: Expose New API Alongside Legacy Code</h5>
+<div class="paragraph">
+<p><strong>Scope</strong>: Purely additive - new API works alongside legacy code
+<strong>Risk</strong>: LOW (no changes to existing code paths)
+<strong>Value</strong>: Proof of concept, enables gradual migration</p>
+</div>
+<div class="paragraph">
+<p><strong>Approach</strong>:
+1. <code>parseWithConfig()</code> becomes primary entry point
+2. <code>parseBufferUsingServer()</code> internally bridges legacy magic strings to new <code>ParsingConfig</code>
+3. Both code paths work identically (verified with tests)
+4. No changes needed to existing functionality</p>
+</div>
+<div class="paragraph">
+<p><strong>Benefit</strong>: Can merge this without affecting legacy code at all</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_phase_2_migrate_high_value_callsites">Phase 2: Migrate High-Value Callsites</h5>
+<div class="paragraph">
+<p><strong>Scope</strong>: Refactor 50%+ of parsing infrastructure
+<strong>Risk</strong>: MEDIUM (refactoring, but with tests)
+<strong>Value</strong>: Significant improvement to codebase clarity</p>
+</div>
+<div class="paragraph">
+<p><strong>Priority callsites</strong>:
+1. LSP handlers - Already partially using new API
+2. Definition finding - Multi-file lookup
+3. Extract refactoring - Complex logic, multiple operations
+4. Move function - Multiple parsing passes</p>
+</div>
+<div class="paragraph">
+<p><strong>Benefit</strong>: 50%+ of parsing infrastructure modernized, multi-file definitions enabled</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_phase_3_complete_legacy_code_cleanup">Phase 3: Complete Legacy Code Cleanup</h5>
+<div class="paragraph">
+<p><strong>Scope</strong>: Remove all magic string command routing, consolidate parsing
+<strong>Risk</strong>: MEDIUM (larger refactoring)
+<strong>Value</strong>: Long-term maintainability and extensibility</p>
+</div>
+<div class="paragraph">
+<p><strong>Scope</strong>:
+* Remove all magic string command routing
+* Consolidate parsing entry points
+* Eliminate scattered global flags
+* Document parser behavior in code</p>
+</div>
+<div class="paragraph">
+<p><strong>Benefit</strong>: Codebase future-proof for new operations</p>
+</div>
+<div class="paragraph">
+<p><strong>Important</strong>: Phase 3 is <strong>optional</strong> - Phases 1-2 already provide most value</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_multi_file_definition_requirements">16.6.6. Multi-File Definition: Requirements</h4>
+<div class="sect4">
+<h5 id="_1_symbol_type_information_persistence">1. Symbol Type Information Persistence</h5>
+<div class="paragraph">
+<p><strong>Current</strong>: ReferenceableItemTable only stores name, position, kind
+<strong>Needed</strong>: Minimal type info for cross-file resolution</p>
+</div>
+<div class="paragraph">
+<p><strong>Lightweight approach</strong> (preferred over full type serialization):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">/* Extend ReferenceableItem with minimal type data */
+struct ReferenceableItem {
+    /* ... existing fields ... */
+    char *returnType;      /* For functions: return type string */
+    int   parameterCount;  /* For functions: number of parameters */
+    bool  isDefinition;    /* True if this is the function/variable definition */
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Scope</strong>: Extend ReferenceableItem, careful memory management</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_2_include_graph_construction">2. Include Graph Construction</h5>
+<div class="paragraph">
+<p><strong>Current</strong>: Include relationships processed during lexing, not persisted
+<strong>Needed</strong>: Map of which files include which headers</p>
+</div>
+<div class="paragraph">
+<p><strong>Lightweight approach</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef struct {
+    int   sourceFile;         /* File with #include directive */
+    int   includedFile;       /* File being included */
+    bool  isSystemInclude;    /* &lt;&gt; vs \"\" */
+} IncludeEdge;
+
+/* Stored in file's metadata, retrievable by file number */
+int getIncludedFileCount(int fileNumber);
+int getIncludedFile(int fileNumber, int index);
+int *getIncludingFiles(int fileNumber);  /* Files that include this one */</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Scope</strong>: Moderate effort, moderate complexity</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_3_incremental_multi_file_parsing">3. Incremental Multi-File Parsing</h5>
+<div class="paragraph">
+<p><strong>Current</strong>: Full project parse or single-file parse
+<strong>Needed</strong>: Efficient "parse files needed for definition lookup" operation</p>
+</div>
+<div class="paragraph">
+<p><strong>Approach</strong>:
+1. Use include graph to find "definition file candidates"
+2. Parse only those files (typically 1-5 for most projects)
+3. Store symbols in special "definition lookup" arena
+4. Return to in-memory reference table when done</p>
+</div>
+<div class="paragraph">
+<p><strong>Scope</strong>: Parse relevant files, update reference table</p>
+</div>
+<div class="paragraph">
+<p><strong>Total for full multi-file support</strong>: Larger foundational work combining above three components</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_code_locations_2">16.6.7. Code Locations</h4>
+<div class="paragraph">
+<p><strong>New Parser API</strong>:
+* <code>src/parsing.h</code> - Public interface (167 lines)
+* <code>src/parsing.c</code> - Implementation with bridges (187 lines)
+* Functions: <code>getParserOperation()</code>, <code>needsReferenceAtCursor()</code>, <code>parseToCreateReferences()</code></p>
+</div>
+<div class="paragraph">
+<p><strong>Legacy code currently using magic strings</strong>:
+* <code>src/cxref.c</code> - 20+ <code>parseBufferUsingServer()</code> calls
+* <code>src/refactory.c</code> - 10+ operations
+* <code>src/extract.c</code> - Multiple parsing passes
+* <code>src/complete.c</code> - Completion-specific parsing
+* <code>src/server.c</code> - Operation dispatch</p>
+</div>
+<div class="paragraph">
+<p><strong>Files for multi-file support</strong>:
+* <code>src/reference_database.h/c</code> - Add symbol type info
+* <code>src/yylex.c</code> - Build include graph
+* <code>src/filetable.h/c</code> - Persist include relationships</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_success_metrics_4">16.6.8. Success Metrics</h4>
+<div class="paragraph">
+<p><strong>Phase 1</strong>:
+* ✓ New <code>ParsingConfig</code> API works alongside legacy strings
+* ✓ No performance regression
+* ✓ Both code paths tested and working</p>
+</div>
+<div class="paragraph">
+<p><strong>Phase 2</strong>:
+* ✓ 50%+ of parsing callsites use new API
+* ✓ Multi-file definition lookup works
+* ✓ All existing tests still pass</p>
+</div>
+<div class="paragraph">
+<p><strong>Phase 3</strong> (if pursued):
+* ✓ All parsing driven by enum operations
+* ✓ Magic strings completely removed
+* ✓ New developers understand control flow</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_risks_and_mitigation_4">16.6.9. Risks and Mitigation</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Risk</th>
+<th class="tableblock halign-left valign-top">Likelihood</th>
+<th class="tableblock halign-left valign-top">Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Breaking existing workflows</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 1 keeps old API working, extensive testing, clear migration timeline</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Incomplete refactoring</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 1-2 provide value even if Phase 3 never completes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Performance regression</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Low</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New API does same work, just different control flow; profile before/after</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Memory overhead from type info</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use lightweight approach, store only essential fields, consider lazy loading</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_related_work">16.6.10. Related Work</h4>
+<div class="paragraph">
+<p>This refactoring supports:
+* <strong>ADR-0014</strong> (On-Demand Parsing) - Single code path for all operations
+* <strong>Unified Symbol Database</strong> (next major refactoring) - Requires clean parsing API
+* <strong>LSP Multi-File Support</strong> - Immediately enables cross-file definition lookup</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_notes_2">16.6.11. Notes</h4>
+<div class="paragraph">
+<p>The key insight is that we can <strong>backport this gradually without breaking anything</strong>. The bridge pattern (new API calls old code for now) lets us improve incrementally, retiring magic strings and globals one section at a time.</p>
+</div>
+<div class="paragraph">
+<p>Phase 1 proves the approach works with minimal risk. Phases 2-3 build on proven foundation, so failure to complete them doesn&#8217;t harm existing functionality.</p>
+</div>
+<div class="paragraph">
+<p>Multi-file definitions are one motivating use case, but the real long-term benefit is a codebase where parsing behavior is <strong>discoverable and type-safe</strong> instead of driven by magic strings scattered throughout 25-year-old code.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_insights">17. Insights</h2>
+<h2 id="_planned_or_ongoing_features">17. Planned or Ongoing Features</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter documents new, user-facing, features, often refactoring operations, that have been designed but not yet (fully) implemented, or are under architectural investigation.</p>
+</div>
+<div class="paragraph">
+<p>These are distinct from "Major Codebase Improvements" (Chapter 16) which focus on internal architecture and code quality.</p>
+</div>
+<div class="paragraph">
+<p>For user-level specifications of refactoring operations (both existing and proposed), see <a href="19-refactoring-recipes.adoc">Chapter 19: Refactoring Recipes</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="_move_function_between_files">17.1. Move Function Between Files</h3>
+<div class="paragraph">
+<p><strong>Status</strong>: Phase 1 MVP complete (December 2024), accepts target and removes static keyword.</p>
+</div>
+<div class="paragraph">
+<p><strong>Scope</strong>: Implements the mechanical operation of moving a function definition from one C source file to another while maintaining correct references and visibility.</p>
+</div>
+<div class="paragraph">
+<p>This refactoring pairs with the move function parser API improvements discussed in <a href="16-major-codebase-improvements.adoc#clean-parser-api">Clean Parser API and Multi-File Definition Support</a>.</p>
+</div>
+<div class="sect3">
+<h4 id="_overview_2">17.1.1. Overview</h4>
+<div class="paragraph">
+<p>Moving a function between files requires:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Identifying the exact function boundaries</p>
+</li>
+<li>
+<p>Determining what declarations are needed in target files</p>
+</li>
+<li>
+<p>Removing <code>static</code> keyword (changing scope to external)</p>
+</li>
+<li>
+<p>Creating or updating header file declarations</p>
+</li>
+<li>
+<p>Managing include directives</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The operation has been implemented in phases, starting with basic move capability and expanding to automatic declaration management.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_phase_1_basic_move_complete">17.1.2. Phase 1: Basic Move (COMPLETE)</h4>
+<div class="paragraph">
+<p><strong>What&#8217;s implemented</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Function boundary detection using parser semantic actions</p>
+</li>
+<li>
+<p>Removal of <code>static</code> keyword when moving between files</p>
+</li>
+<li>
+<p>Proper positioning of function in target file</p>
+</li>
+<li>
+<p>Automatic addition of extern declaration to target file&#8217;s header (non-intelligent placement, no dependency-handling)</p>
+</li>
+<li>
+<p>Availability check: refactoring only appears on function definitions (not call sites)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>What works</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Moves function from source file to different target file</p>
+</li>
+<li>
+<p>Removes <code>static</code> keyword to make function externally callable</p>
+</li>
+<li>
+<p>Adds extern function declaration to target file&#8217;s header automatically</p>
+</li>
+<li>
+<p>Handles comments and decorations around function</p>
+</li>
+<li>
+<p>Works for both C and Yacc files</p>
+</li>
+<li>
+<p>Successfully tested with move_c_function test cases</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>What users must handle manually</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Verify extern declaration placement in header (Phase 1 placement is non-intelligent)</p>
+</li>
+<li>
+<p>Adding <code>#include</code> directives for dependencies</p>
+</li>
+<li>
+<p>Moving tightly-coupled static helper functions</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Value</strong>: Eliminates manual cut/paste, removes 50+ lines of boilerplate per move operation. Declaration automatically added (though placement and dependencies may need manual adjustment).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_phase_2_automatic_header_declaration">17.1.3. Phase 2: Automatic Header Declaration</h4>
+<div class="paragraph">
+<p><strong>Scope</strong>: Generate function declaration in target file&#8217;s header</p>
+</div>
+<div class="paragraph">
+<p><strong>Approach</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Derive header filename from source: <code>target.c</code> → <code>target.h</code></p>
+</li>
+<li>
+<p>Create header if it doesn&#8217;t exist (with include guards)</p>
+</li>
+<li>
+<p>Insert function declaration at appropriate location</p>
+</li>
+<li>
+<p>User manually adds <code>#include</code> directives</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Challenges</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Reconstructing function signature from Symbol type information</p>
+</li>
+<li>
+<p>Handling various include guard formats (<code>#ifndef</code> vs <code>#pragma once</code>)</p>
+</li>
+<li>
+<p>Finding appropriate insertion point in header</p>
+</li>
+<li>
+<p>Avoiding duplicate declarations</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Value</strong>: Automatically makes moved function callable from other files, follows C convention of declarations in headers.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_phase_3_static_helper_function_detection">17.1.4. Phase 3: Static Helper Function Detection</h4>
+<div class="paragraph">
+<p><strong>Scope</strong>: Identify and optionally move tightly-coupled static functions</p>
+</div>
+<div class="paragraph">
+<p>When moving a function that calls static helper functions in the same file, optionally move those helpers too.</p>
+</div>
+<div class="paragraph">
+<p><strong>Algorithm</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Parse region containing function to move</p>
+</li>
+<li>
+<p>Find all function calls within that function</p>
+</li>
+<li>
+<p>Check if called functions are static in same file</p>
+</li>
+<li>
+<p>Prompt user to move helpers too</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Value</strong>: Prevents broken builds from missing dependencies, maintains logical cohesion.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_phase_4_polish_future">17.1.5. Phase 4: Polish (Future)</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Preview dialog showing what will be moved</p>
+</li>
+<li>
+<p>Better insertion point heuristics</p>
+</li>
+<li>
+<p>Handle embedded documentation (comments, doxygen)</p>
+</li>
+<li>
+<p>Smart handling of related functions</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_design_notes">17.1.6. Design Notes</h4>
+<div class="paragraph">
+<p>This is more complex than simple text movement because it affects visibility (static vs extern), requires understanding header file conventions, and involves cross-file dependencies.</p>
+</div>
+<div class="paragraph">
+<p><strong>Related work</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Similar functionality exists in c-xref-java version (<code>moveStaticObjectAndMakeItPublic()</code>)</p>
+</li>
+<li>
+<p>Parser infrastructure already proved with extract function refactoring</p>
+</li>
+<li>
+<p>Function boundary detection confirmed working in move function tests</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Dependencies</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Depends on clean parser API for reliable boundary detection</p>
+</li>
+<li>
+<p>Leverages existing reference database for finding all references</p>
+</li>
+<li>
+<p>Uses existing editor buffer manipulation infrastructure</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_references_6">17.1.7. References</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Implementation: <code>src/refactory.c</code> - <code>moveStaticFunctionAndMakeItExtern()</code></p>
+</li>
+<li>
+<p>Parser integration: <code>src/c_parser.y</code>, <code>src/yacc_parser.y</code></p>
+</li>
+<li>
+<p>Tests: <code>tests/test_move_c_function_*/</code></p>
+</li>
+<li>
+<p>Architecture discussion: <a href="16-major-codebase-improvements.adoc#clean-parser-api">Clean Parser API section</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_insights">18. Insights</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This chapter contains notes of all insights, large and small, that I make as I work on this project.
@@ -9783,7 +10473,7 @@ But rather than trying to find a structure where each new finding fits, I&#8217;
 We can refactor these into a better and better structure as we go.</p>
 </div>
 <div class="sect2">
-<h3 id="_yacc_semantic_data">17.1. Yacc semantic data</h3>
+<h3 id="_yacc_semantic_data">18.1. Yacc semantic data</h3>
 <div class="paragraph">
 <p>As per usual a Yacc grammar requires each non-terminal to have a type.
 Those types are named after which types of data they collect and
@@ -9819,12 +10509,12 @@ Position position
 </div>
 </div>
 <div class="sect2">
-<h3 id="_navigation_architecture_and_the_preloading_limitation">17.2. Navigation Architecture and the Preloading Limitation</h3>
+<h3 id="_navigation_architecture_and_the_preloading_limitation">18.2. Navigation Architecture and the Preloading Limitation</h3>
 <div class="paragraph">
 <p>Date: 2025-12-22</p>
 </div>
 <div class="sect3">
-<h4 id="_how_symbol_navigation_works">17.2.1. How Symbol Navigation Works</h4>
+<h4 id="_how_symbol_navigation_works">18.2.1. How Symbol Navigation Works</h4>
 <div class="paragraph">
 <p>Symbol navigation (PUSH/NEXT/PREVIOUS/POP) merges references from <strong>two sources</strong>:</p>
 </div>
@@ -9876,7 +10566,7 @@ Position position
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_fundamental_limitation">17.2.2. The Fundamental Limitation</h4>
+<h4 id="_the_fundamental_limitation">18.2.2. The Fundamental Limitation</h4>
 <div class="paragraph">
 <p><strong>The Emacs client only preloads the currently active file</strong>, not all modified editor buffers.</p>
 </div>
@@ -9897,7 +10587,7 @@ Position position
 </div>
 </div>
 <div class="sect3">
-<h4 id="_why_our_fix_attempt_didnt_work">17.2.3. Why Our Fix Attempt Didn&#8217;t Work</h4>
+<h4 id="_why_our_fix_attempt_didnt_work">18.2.3. Why Our Fix Attempt Didn&#8217;t Work</h4>
 <div class="paragraph">
 <p>We attempted to fix this (commit 8052518a4) by detecting modified files via timestamp comparison and reparsing them in <code>processModifiedFilesForNavigation</code>. <strong>This failed because:</strong></p>
 </div>
@@ -9916,7 +10606,7 @@ Position position
 </div>
 </div>
 <div class="sect3">
-<h4 id="_potential_solutions">17.2.4. Potential Solutions</h4>
+<h4 id="_potential_solutions">18.2.4. Potential Solutions</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -9938,7 +10628,7 @@ Position position
 </div>
 </div>
 <div class="sect3">
-<h4 id="_architectural_invariants">17.2.5. Architectural Invariants</h4>
+<h4 id="_architectural_invariants">18.2.5. Architectural Invariants</h4>
 <div class="paragraph">
 <p><strong>MUST be maintained:</strong></p>
 </div>
@@ -9963,660 +10653,217 @@ Position position
 </div>
 </div>
 <div class="sect1">
-<h2 id="_archive">18. Archive</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>In this section you can find some descriptions and saved texts that
-described how things were before. They are no longer true, since that
-quirk, magic or bad coding is gone. But it is kept here as an archive
-for those wanting to do backtracking to original sources.</p>
-</div>
-<div class="sect2">
-<h3 id="_memory_strategies">18.1. Memory strategies</h3>
-<div class="paragraph">
-<p>There were a multitude of specialized memory allocation functions. In
-principle there where two types, static and dynamic. The dynamic could
-be exteded using a overflow handler.</p>
-</div>
-<div class="paragraph">
-<p>Also one type had a struct where the actual area was extended beyond
-the actual struct. This was very confusing&#8230;&#8203;</p>
-</div>
-<div class="sect3">
-<h4 id="_static_memory_allocation">18.1.1. Static memory allocation</h4>
-<div class="paragraph">
-<p>Static memory (SM_ prefix) are static areas allocated by the compiler
-which is then indexed using a similarly named index variable
-(e.g. <code>ftMemory</code> and <code>ftMemoryIndex</code>), something the macros took
-advantage of. These are</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>ftMemory</code></p>
-</li>
-<li>
-<p><code>ppmMemory</code></p>
-</li>
-<li>
-<p><code>mbMemory</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>One special case of static memory also exist:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>stackMemory</code> - synchronous with program structure and has CodeBlock
-markers, so there is a special <code>stackMemoryInit()</code> that initializes
-the outermost CodeBlock</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>These areas cannot be extended, when it overruns the program stops.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_trivial_prechecks">18.2. Trivial Prechecks</h3>
-<div class="paragraph">
-<p>The refactorer can call the server using <code>parseBufferUsingServer()</code> and add some extra options (in text form).
-One example is <code>setMovingPrecheckStandardEnvironment()</code> where it calls the server with <code>-olcxtrivialprecheck</code>.</p>
-</div>
-<div class="paragraph">
-<p>However <code>parseBufferUsingServer()</code> uses <code>callServer()</code> which never <code>answerEditAction()</code>.</p>
-</div>
-<div class="paragraph">
-<p>In <code>answerEditAction()</code> the call to (unused) <code>olTrivialRefactoringPreCheck()</code> also requires an <code>options.trivialPreCheckCode</code> which is neither send by <code>setMovingPrecheckStandardEnvironment()</code> nor parsed by <code>processOptions()</code>.</p>
-</div>
-<div class="paragraph">
-<p>The only guess I have is that previously all prechecks where handled by the <code>-olcxtrivialprecheck</code> option in calls to the server, and have now moved to their respective refactorings.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-This theory should be checked by looking at the original source of the precheck functions and compare that with any possible checks in the corresponding refactoring code.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_caching_system">18.3. Caching System</h3>
-<div class="paragraph">
-<p><strong>The caching system described below has been archived as it is no longer part of the current architecture.</strong></p>
-</div>
-<div class="paragraph">
-<p>The c-xrefactory included a sophisticated caching system that enabled
-incremental parsing by caching parsed input streams, parser state, and
-file modification tracking. This optimization allowed for faster
-re-analysis when only portions of source files had changed. It also
-allowed the system to detect out-of-memory situations, discard, flush
-and re-use memory during file processing.</p>
-</div>
-<div class="sect3">
-<h4 id="_core_design_principles">18.3.1. Core Design Principles</h4>
-<div class="paragraph">
-<p><strong>Cache Point Model</strong>: The system placed strategic snapshots of parser state at external definition boundaries (functions, global variables, etc.). When files were re-processed, the system could validate cache integrity, recover from cache points, and resume parsing only from the first changed definition onward.</p>
-</div>
-<div class="paragraph">
-<p><strong>Separation of Concerns</strong>: Recent refactoring had separated file tracking from cache validation:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>updateFileModificationTracking()</code> - Updated file timestamps without side effects</p>
-</li>
-<li>
-<p><code>isFileModifiedSinceCached()</code> - Pure validation function for cache integrity</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_key_components">18.3.2. Key Components</h4>
-<div class="paragraph">
-<p><strong>Cache Point Management</strong> (<code>caching.c</code>):</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>placeCachePoint(bool)</code> - Placed strategic parser state snapshots</p>
-</li>
-<li>
-<p><code>recoverFromCache()</code> - Restored parser state from cache points</p>
-</li>
-<li>
-<p><code>recoverCachePointZero()</code> - Reset to initial cache state</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>File Modification Tracking</strong>:</p>
-</div>
-<div class="paragraph">
-<p>The <code>FileItem</code> structure maintained multiple timestamp fields for tracking file modification:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">struct FileItem {
-    time_t lastModified;    // File's actual modification time
-    time_t lastInspected;   // When we last checked the file
-    // ... other fields
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Input Stream Caching</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>cacheInput()</code> - Cached tokenized input from lexer</p>
-</li>
-<li>
-<p><code>cachingIsActive()</code> - Checked if caching was currently enabled</p>
-</li>
-<li>
-<p><code>activateCaching()</code> / <code>deactivateCaching()</code> - Controlled caching state</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_parser_integration">18.3.3. Parser Integration</h4>
-<div class="paragraph">
-<p><strong>C Parser Integration</strong>: Both C and Yacc parsers placed cache points after each <code>external_definition</code>, but only when not processing include files (<code>includeStack.pointer == 0</code>).</p>
-</div>
-<div class="paragraph">
-<p><strong>Parser-Specific Behavior</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>C Parser</strong>: Full caching enabled with regular cache point placement</p>
-</li>
-<li>
-<p><strong>Yacc Parser</strong>: Explicitly deactivated caching via <code>deactivateCaching()</code> but still placed strategic cache points</p>
-</li>
-<li>
-<p><strong>Include Files</strong>: Cache points skipped during include processing</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_system_dependencies">18.3.4. System Dependencies</h4>
-<div class="paragraph">
-<p>The caching system was deeply integrated throughout the parsing pipeline:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 40%;">
-<col style="width: 40%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Component</th>
-<th class="tableblock halign-left valign-top">Functions Used</th>
-<th class="tableblock halign-left valign-top">Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>main.c</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>initCaching()</code>, <code>activateCaching()</code>, <code>recoverCachePointZero()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Lifecycle control</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lexer.c</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cacheInput()</code>, <code>cachingIsActive()</code>, <code>deactivateCaching()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Input processing</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>yylex.c</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updateFileModificationTracking()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">File tracking</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>filetable.c</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updateFileModificationTracking()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">File management</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>xref.c</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>recoverFromCache()</code>, recovery functions</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Cross-reference coordination</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>c_parser.y</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>placeCachePoint()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">C grammar integration</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>yacc_parser.y</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>deactivateCaching()</code>, <code>placeCachePoint()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Yacc grammar integration</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_performance_characteristics_3">18.3.5. Performance Characteristics</h4>
-<div class="paragraph">
-<p><strong>Cache Hit Scenarios</strong>:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Full Cache Hit</strong>: No file modifications since last parse - parser state recovered from cache point zero with minimal re-processing</p>
-</li>
-<li>
-<p><strong>Partial Cache Hit</strong>: File modified after Nth definition - recovery from cache point N with re-parsing only from point of change onward</p>
-</li>
-<li>
-<p><strong>Cache Miss</strong>: File structure changed or timestamps invalid - full re-parse with new cache points placed</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong>Optimization Benefits</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Memory usage scales with number of definitions, not file size</p>
-</li>
-<li>
-<p>File modification checking minimizes unnecessary re-reads</p>
-</li>
-<li>
-<p>Input stream caching reduces lexer overhead</p>
-</li>
-<li>
-<p>Strategic cache point placement enables clean recovery at definition boundaries</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_huge_memory">18.4. HUGE Memory</h3>
-<div class="paragraph">
-<p>Previously a HUGE model was also available (by re-compilation) to
-reach file numbers, lines and columns above 22 bits. But if you have
-more than 4 million lines (or columns!) you should probably do
-something radical before attempting cross referencing and refactoring.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_bootstrapping">18.5. Bootstrapping</h3>
-<div class="sect3">
-<h4 id="_bootstrap_removed">18.5.1. BOOTSTRAP REMOVED!</h4>
-<div class="paragraph">
-<p>Once the FILL-macros was removed, we could move the enum-generation to
-use the actual <code>c-xref</code>. So from now on we build <code>c-xref</code> directly
-from the sources in the repo. Changes to any enums will trigger a
-re-generation of the enumTxt-files but since the enumTxt-files are
-only conversion of enum values to strings any mismatch will not
-prevent compilation, and it would even be possible to a manual
-update. This is a big improvement over the previous situation!</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_fills_removed">18.5.2. FILLs REMOVED!</h4>
-<div class="paragraph">
-<p>As indicated in <a href="#_fill_macros">FILL macros</a> the bootstrapping of FILL-macros has
-finally and fully been removed.</p>
-</div>
-<div class="paragraph">
-<p>Gone is also the <code>compiler_defines.h</code>, which was just removed without
-any obvious adverse effects.  Maybe that will come back and bite me
-when we move to more platforms other than linux and MacOS&#8230;&#8203;</p>
-</div>
-<div class="paragraph">
-<p>Left is, at this point, only the <code>enumTxt</code> generation, so most of the
-text below is kept for historical reasons.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_rationale">18.5.3. Rationale</h4>
-<div class="paragraph">
-<p><em>c-xref</em> uses a load of structures, and lists of them, that need to be
-created and initialized in a lot of places (such as the parsers). To
-make this somewhat manageable, <em>c-xref</em> itself parses the strucures
-and generates macros that can be used to fill them with one call.</p>
-</div>
-<div class="paragraph">
-<p><em>c-xref</em> is also bootstrapped into reading in a lot of predefined
-header files to get system definitions as "preloaded
-definitions".</p>
-</div>
-<div class="paragraph">
-<p>Why this pre-loading was necessary, I don&#8217;t exactly know. It
-might be an optimization, or an idea that was born early and then just
-kept on and on. In any case it creates an extra complexity
-building and maintaining and to the structure of <em>c-xref</em>.</p>
-</div>
-<div class="paragraph">
-<p>So this must be removed, see below.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_mechanism">18.5.4. Mechanism</h4>
-<div class="paragraph">
-<p>The bootstrapping uses <em>c-xref</em>'s own capability to parse C-code and
-parse those structures and spit out filling macros, and some other
-stuff.</p>
-</div>
-<div class="paragraph">
-<p>This is done using options like `-task_regime_generate' which prints a
-lot of data structures on the standard output which is then fed into
-generated versions of <em>strFill</em>, <em>strTdef</em>(no longer exists) and
-<em>enumTxt</em> by the Makefile.</p>
-</div>
-<div class="paragraph">
-<p>The process starts with building a <em>c-xref.bs</em> executable from checked
-in sources. This compile uses a BOOTSTRAP define that causes some
-header files to include pre-generated versions of the generated files
-(currently <em>strFill.bs.h</em> and <em>enumTxt.bs.h</em>) which should work in all
-environments.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-if you change the name of a field in a structure that is subject
-to FILL-generation you will need to manually update the
-<em>strFill.bs.h</em>, but a "make cleaner all" will show you where those are.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>After the <em>c-xref.bs</em> has been built, it is used to generate <em>strFill</em>
-and <em>enumTxt</em> which might include specific structures for the current
-environment.</p>
-</div>
-<div class="paragraph">
-<p>HOWEVER: if FILL macros are used for structures which are different on
-some platforms, say a FILE structure, that FILL macro will have
-difference number of arguments, so I&#8217;m not sure how smart this "smart"
-generation technique actually is.</p>
-</div>
-<div class="paragraph">
-<p>TODO: Investigate alternative approaches to this generate "regime",
-perhaps move to a "class"-oriented structure with initialization
-functions for each "class" instead of macros.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_compiler_defines">18.5.5. Compiler defines</h4>
-<div class="paragraph">
-<p>In <em>options.h</em> there are a number of definitions which somehow are
-sent to the compiler/preprocessor or used so that standard settings
-are the same as if a program will be compiled using the standard
-compiler on the platform. At this point I don&#8217;t know exactly how this
-conversion from C declarations to compile time definitions is done,
-maybe just entered as symbols in one of the many symboltables?</p>
-</div>
-<div class="paragraph">
-<p>Typical examples include "__linux" but also on some platforms things
-like "fpos_t=long".</p>
-</div>
-<div class="paragraph">
-<p>I&#8217;ve implemented a mechanism that uses "gcc -E -mD" to print out and
-catch all compiler defines in <code>compiler_defines.h</code>. This was necessary
-because of such definitions on Darwin which where not in the
-"pre-programmed" ones.</p>
-</div>
-<div class="paragraph">
-<p>TODO?: As this is a more general approach it should possibly
-completely replace the "programmed" ones in <code>options.c</code>?</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_enumtxt_generation_removed">18.5.6. EnumTxt generation REMOVED!</h4>
-<div class="paragraph">
-<p>To be able to print the string values of enums the module generate.c
-(called when regime was RegimeGenerate) could also generate string
-arrays for all enums. By replacing that with some pre-processor magic
-for the few that was actually needed (mostly in log_trace() calls) we
-could do away with that whole "generate" functionality too.</p>
-</div>
-<div class="paragraph">
-<p>(Last commit with enum generation intact is <a href="https://github.com/thoni56/c-xrefactory/commit/aafd7b1f813f2c17c684ea87ac87a0be31cdd4c4" class="bare">https://github.com/thoni56/c-xrefactory/commit/aafd7b1f813f2c17c684ea87ac87a0be31cdd4c4</a>.)</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_enumtxt">18.5.7. enumTxt</h4>
-<div class="paragraph">
-<p>For some cases the string representing the value of an Enum is needed.
-<code>c-xref</code> handles this using the "usual" 'parse code and generate' method.
-The module <code>generate.c</code> does this generation too.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_include_paths">18.5.8. Include paths</h4>
-<div class="paragraph">
-<p>Also in <em>options.h</em> some standard-like include paths are added, but
-there is a better attempt in <em>getAndProcessGccOptions()</em> which uses
-the compiler/preprocessor itself to figure out those paths.</p>
-</div>
-<div class="paragraph">
-<p>TODO?: This is much better and should really be the only way, I think.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_problems">18.5.9. Problems</h4>
-<div class="paragraph">
-<p>Since at bootstrap there must exist FILL-macros with the correct field
-names this strategy is an obstacle to cleaning up the code since every
-field is referenced in the FILL macros. When a field (in a structure
-which <strong>are</strong> filled using the FILL macro) changes name, this will make
-initial compilation impossible until the names of that field is also
-changed in the <code>strFill.bs.h</code> file.</p>
-</div>
-<div class="paragraph">
-<p>One way to handle this is of course to use <code>c-xrefactory</code> itself and
-rename fields. This requires that the project settings also include a
-pass with BOOTSTRAP set, which it does.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_removing">18.5.10. Removing</h4>
-<div class="paragraph">
-<p>I&#8217;ve started removing this step. In TODO.org I keep a hierarchical list
-of the actions to take (in a Mikado kind of style).</p>
-</div>
-<div class="paragraph">
-<p>The basic strategy is to start with structures that no other structure
-depends on. Using the script <code>utils/struct2dot.py</code> you can generate a
-DOT graph that shows those dependencies.</p>
-</div>
-<div class="paragraph">
-<p>Removal can be done in a couple of ways</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>If it&#8217;s a very small structure you can replace a call to a <code>FILL_XXX()</code> macro
-with a <a href="https://gcc.gnu.org/onlinedocs/gcc/Compound-Literals.html">compound literal</a>.</p>
-</li>
-<li>
-<p>A better approach is usually to replace it with a <code>fillXXX()</code> function, or even
-better, with a <code>newXXX()</code>, if it consistently is preceeded with an allocation
-(in the same memory!). To see what fields vary you can grep all such calls, make a
-CSV-file from that, and compare all rows.</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_strtdef_h">18.5.11. strTdef.h</h4>
-<div class="paragraph">
-<p>The <code>strTdef.h</code> was generated using the option <code>-typedefs</code> as a part
-of the old <code>-task_regime_generate</code> strategy and generated typedef
-declarations for all types found in the parsed files.</p>
-</div>
-<div class="paragraph">
-<p>I also think that you could actually merge the struct definition with
-the typedef so that <em>strTdef.h</em> would not be needed. But it seems that
-this design is because the structures in <em>proto.h</em> are not a directed
-graph, so loops makes that impossible. Instead the typedefs are
-included before the structs:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>#include "strTdef.h"</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>struct someNode {
-    S_someOtherNode *this;
-    ...</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>struct someOtherNode {
-    S_someNode *that;
-    ...</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This is now ideomatically solved using the structs themselves:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>struct someNode {
-    struct someOtherNode *this;
-    ...</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>struct someOtherNode {
-    struct someNode *that;
-    ...</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_fill_macros">18.6. FILL macros</h3>
-<div class="paragraph">
-<p><em><strong>The FILL macros are now fully replaced by native functions or some other,</strong></em>
-<em><strong>more refactoring-friendly, mechanism. Yeah!</strong></em></p>
-</div>
-<div class="paragraph">
-<p>During bootstrapping a large number of macros named <em>__FILL_xxxx</em> is
-created. The intent is that you can fill a complete structure with one
-call, somewhat like a constructor, but here it&#8217;s used more generally
-every time a complex struct needs to be initialized.</p>
-</div>
-<div class="paragraph">
-<p>There are even <em>_FILLF_xxx</em> macros which allows filling fields in
-sub-structures at the same time.</p>
-</div>
-<div class="paragraph">
-<p>This is, in my mind, another catastrophic hack that makes
-understanding, and refactoring, <code>c-xrefactory</code> such a pain. Not to
-mention the extra bootstrap step.</p>
-</div>
-<div class="paragraph">
-<p>I just discovered the compound literals of C99. And I&#8217;ll experiment
-with replacing some of the FILL macros with compound literals assignments
-instead.</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>FILL_symbolList(memb, pdd, NULL);</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>could become (I think):</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>memb = (SymbolList){.d = pdd, .next = NULL};</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If successful, it would be much better, since we could probably get
-rid of the bootstrap, but primarily it would be more explicit about
-which fields are actually necessary to set.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_users">18.7. Users</h3>
-<div class="paragraph">
-<p><strong>The <code>-user</code> option has now been removed, both in the tool and the
-  editor adaptors, and with it one instance of a hashlist, the
-  <code>olcxTab</code>, which now is a single structure, the <code>sessionData</code>.</strong></p>
-</div>
-<div class="paragraph">
-<p>There is an option called <code>-user</code> which Emacs sets to the frame-id. To
-me that indicates that the concept is that for each frame you create
-you get a different "user" with the <code>c-xref</code> server that you (Emacs)
-created.</p>
-</div>
-<div class="paragraph">
-<p>The jedit adapter seems to do something similar:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>options.add("-user");
-Options.add(s.getViewParameter(data.viewId));</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Looking at the sources to find when the function
-<code>olcxSetCurrentUser()</code> is called it seems that you could have
-different completion, refactorings, etc. going on at the same time in
-different frames.</p>
-</div>
-<div class="paragraph">
-<p>Completions etc. requires user interaction so they are not controlled
-by the editor in itself only. At first glance though, the editor
-(Emacs) seems to block multiple refactorings and referencs maintenance
-tasks running at the same time.</p>
-</div>
-<div class="paragraph">
-<p>This leaves just a few use cases for multiple "users", and I think it
-adds unnecessary complexity. Going for a more "one user" approach,
-like the model in the language server protocol, this could really be
-removed.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="_refactoring_recipes">19. Refactoring Recipes</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This chapter documents mechanical steps for refactoring operations. Each recipe describes the algorithmic steps that an automated refactoring tool would perform.</p>
 </div>
 <div class="paragraph">
-<p>These recipes serve as specifications for refactorings that c-xrefactory should automate.</p>
-</div>
-<div class="paragraph">
-<p>This chapter also lists potential refactorings that have not yet been decided or designed.</p>
+<p>For detailed discussions of refactoring feature architecture and implementation phases, see <a href="16a-planned-refactorings.adoc">Chapter 16a: Planned Refactoring Features</a>.</p>
 </div>
 <div class="sect2">
-<h3 id="_move_type_to_new_file">19.1. Move Type to New File</h3>
+<h3 id="_existing_refactorings">19.1. Existing Refactorings</h3>
+<div class="paragraph">
+<p>Refactorings that are already implemented and available.</p>
+</div>
+<div class="sect3">
+<h4 id="_rename_symbol">19.1.1. Rename Symbol</h4>
+<div class="paragraph">
+<p>Implemented. TBD.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_extract_function">19.1.2. Extract Function</h4>
+<div class="paragraph">
+<p>Implemented. TBD.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reorder_parameters">19.1.3. Reorder Parameters</h4>
+<div class="paragraph">
+<p>Implemented. TBD.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_make_function_static">19.1.4. Make Function Static</h4>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Convert functions that are only used within their compilation unit to <code>static</code> storage class for better encapsulation and compiler optimization.</p>
+</div>
+<div class="paragraph">
+<p><strong>When to use:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Function has external linkage but no external callers</p>
+</li>
+<li>
+<p>Want to make implementation details explicit</p>
+</li>
+<li>
+<p>Enable compiler optimizations and reduce global namespace pollution</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Input:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Non-static function definition</p>
+</li>
+<li>
+<p>All references to that function</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Availability:</strong></p>
+</div>
+<div class="paragraph">
+<p>When cursor is on a non-static function definition where all callers are in the same file.</p>
+</div>
+<div class="paragraph">
+<p><strong>Algorithm:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Check current storage class</strong> - Skip if already <code>static</code></p>
+</li>
+<li>
+<p><strong>Find definition and all references</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Locate function definition (not declarations)</p>
+</li>
+<li>
+<p>Collect all call sites across project</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Verify all references are local</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>For each reference (excluding definition itself):</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Check if in same file as definition</p>
+</li>
+<li>
+<p>If any reference is in different file, abort</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Check if declared in header files (public API), abort if yes</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Apply transformation</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Find beginning of function definition</p>
+</li>
+<li>
+<p>Insert "static " before return type</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Output:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Function marked as <code>static</code></p>
+</li>
+<li>
+<p>Compiler can optimize more aggressively</p>
+</li>
+<li>
+<p>Clear signal that function is internal</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Before - helper function with external linkage
+int helperCompare(const void *a, const void *b) {
+    return *(int*)a - *(int*)b;
+}
+
+void publicSort(int *array, size_t n) {
+    qsort(array, n, sizeof(int), helperCompare);
+}
+
+// After - explicitly internal
+static int helperCompare(const void *a, const void *b) {
+    return *(int*)a - *(int*)b;
+}
+
+void publicSort(int *array, size_t n) {
+    qsort(array, n, sizeof(int), helperCompare);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Benefits:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Better encapsulation and code clarity</p>
+</li>
+<li>
+<p>Enables inlining and other compiler optimizations</p>
+</li>
+<li>
+<p>Smaller symbol tables, no name collisions</p>
+</li>
+<li>
+<p>Safe to refactor (can&#8217;t break external code)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Notes:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Similar to "Unused Symbols" detection but finds LOCAL-ONLY usage instead of NO usage</p>
+</li>
+<li>
+<p>Cannot handle functions used via function pointers passed externally (requires manual verification)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_suggested_refactorings">19.2. Suggested Refactorings</h3>
+<div class="paragraph">
+<p>Refactorings that have been proposed, designed, or partially implemented but are not yet available.</p>
+</div>
+<div class="sect3">
+<h4 id="_move_type_to_new_file">19.2.1. Move Type to New File</h4>
 <div class="paragraph">
 <p><strong>Input:</strong></p>
 </div>
@@ -10736,8 +10983,9 @@ removed.</p>
 </div>
 <hr>
 </div>
+</div>
 <div class="sect2">
-<h3 id="_introduce_semantic_type_aliases">19.2. Introduce Semantic Type Aliases</h3>
+<h3 id="_introduce_semantic_type_aliases">19.3. Introduce Semantic Type Aliases</h3>
 <div class="paragraph">
 <p><strong>Purpose:</strong> Make implicit semantic distinctions explicit by introducing type aliases for a single struct used for multiple purposes.</p>
 </div>
@@ -10949,9 +11197,8 @@ void pushEmptySession(ReferencesStack *stack);  // Generic operation</code></pre
 </ul>
 </div>
 <hr>
-</div>
-<div class="sect2">
-<h3 id="_rename_included_file">19.3. Rename Included File</h3>
+<div class="sect3">
+<h4 id="_rename_included_file">19.3.1. Rename Included File</h4>
 <div class="paragraph">
 <p><strong>Purpose:</strong> Rename a file appearing in an include and update all the include directives</p>
 </div>
@@ -11022,126 +11269,31 @@ void pushEmptySession(ReferencesStack *stack);  // Generic operation</code></pre
 </div>
 <hr>
 </div>
-<div class="sect2">
-<h3 id="_move_function_to_different_file">19.4. Move Function to Different File</h3>
+<div class="sect3">
+<h4 id="_move_function_to_different_file">19.3.2. Move Function to Different File</h4>
 <div class="paragraph">
-<p><strong>Purpose:</strong> &#8230;&#8203;</p>
-</div>
-<div class="paragraph">
-<p><strong>When to use:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>&#8230;&#8203;</p>
-</li>
-</ul>
+<p>See <a href="16a-planned-refactorings.adoc">Chapter 16a: Planned Refactoring Features</a> for detailed design and implementation status.</p>
 </div>
 <div class="paragraph">
-<p><strong>Input:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>&#8230;&#8203;</p>
-</li>
-</ul>
+<p>Proposed refactoring to move a function definition from one C source file to another while automatically managing visibility (static vs extern) and potentially adding necessary declarations and includes.</p>
 </div>
 <div class="paragraph">
-<p><strong>Algorithm:</strong></p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Step 1</strong>
-2.</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong>Output:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>&#8230;&#8203;</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Example:</strong></p>
-</div>
-<div class="paragraph">
-<p>TBD.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Before ...</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>After introducing semantic aliases:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// After ...</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Benefits:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>&#8230;&#8203;</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Notes:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>&#8230;&#8203;</p>
-</li>
-</ul>
+<p><strong>Status</strong>: Phase 1 MVP complete.</p>
 </div>
 <hr>
 </div>
-<div class="sect2">
-<h3 id="_rename_symbol">19.5. Rename Symbol</h3>
-<div class="paragraph">
-<p>Implemented. TBD.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_extract_function">19.6. Extract Function</h3>
-<div class="paragraph">
-<p>Implemented. TBD.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_reorder_parameters">19.7. Reorder Parameters</h3>
-<div class="paragraph">
-<p>Imlemented. TBD.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_turn_include_guard_into_pragma_once">19.8. Turn include guard into pragma once</h3>
+<div class="sect3">
+<h4 id="_turn_include_guard_into_pragma_once">19.3.3. Turn include guard into pragma once</h4>
 <div class="paragraph">
 <p>Tentative.</p>
 </div>
+<hr>
 </div>
-<div class="sect2">
-<h3 id="_change_return_type">19.9. Change return type</h3>
+<div class="sect3">
+<h4 id="_change_return_type">19.3.4. Change return type</h4>
 <div class="paragraph">
-<p>Tentative.
----</p>
+<p>Tentative.</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_make_function_static">19.10. Make Function Static</h3>
 <div class="paragraph">
 <p><strong>Purpose:</strong> Convert functions that are only used within their compilation unit to <code>static</code> storage class for better encapsulation and compiler optimization.</p>
 </div>
@@ -11318,9 +11470,651 @@ void publicSort(int *array, size_t n) {
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_archive">20. Archive</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this section you can find some descriptions and saved texts that
+described how things were before. They are no longer true, since that
+quirk, magic or bad coding is gone. But it is kept here as an archive
+for those wanting to do backtracking to original sources.</p>
+</div>
+<div class="sect2">
+<h3 id="_memory_strategies">20.1. Memory strategies</h3>
+<div class="paragraph">
+<p>There were a multitude of specialized memory allocation functions. In
+principle there where two types, static and dynamic. The dynamic could
+be exteded using a overflow handler.</p>
+</div>
+<div class="paragraph">
+<p>Also one type had a struct where the actual area was extended beyond
+the actual struct. This was very confusing&#8230;&#8203;</p>
+</div>
+<div class="sect3">
+<h4 id="_static_memory_allocation">20.1.1. Static memory allocation</h4>
+<div class="paragraph">
+<p>Static memory (SM_ prefix) are static areas allocated by the compiler
+which is then indexed using a similarly named index variable
+(e.g. <code>ftMemory</code> and <code>ftMemoryIndex</code>), something the macros took
+advantage of. These are</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ftMemory</code></p>
+</li>
+<li>
+<p><code>ppmMemory</code></p>
+</li>
+<li>
+<p><code>mbMemory</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>One special case of static memory also exist:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>stackMemory</code> - synchronous with program structure and has CodeBlock
+markers, so there is a special <code>stackMemoryInit()</code> that initializes
+the outermost CodeBlock</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These areas cannot be extended, when it overruns the program stops.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_trivial_prechecks">20.2. Trivial Prechecks</h3>
+<div class="paragraph">
+<p>The refactorer can call the server using <code>parseBufferUsingServer()</code> and add some extra options (in text form).
+One example is <code>setMovingPrecheckStandardEnvironment()</code> where it calls the server with <code>-olcxtrivialprecheck</code>.</p>
+</div>
+<div class="paragraph">
+<p>However <code>parseBufferUsingServer()</code> uses <code>callServer()</code> which never <code>answerEditAction()</code>.</p>
+</div>
+<div class="paragraph">
+<p>In <code>answerEditAction()</code> the call to (unused) <code>olTrivialRefactoringPreCheck()</code> also requires an <code>options.trivialPreCheckCode</code> which is neither send by <code>setMovingPrecheckStandardEnvironment()</code> nor parsed by <code>processOptions()</code>.</p>
+</div>
+<div class="paragraph">
+<p>The only guess I have is that previously all prechecks where handled by the <code>-olcxtrivialprecheck</code> option in calls to the server, and have now moved to their respective refactorings.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This theory should be checked by looking at the original source of the precheck functions and compare that with any possible checks in the corresponding refactoring code.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_caching_system">20.3. Caching System</h3>
+<div class="paragraph">
+<p><strong>The caching system described below has been archived as it is no longer part of the current architecture.</strong></p>
+</div>
+<div class="paragraph">
+<p>The c-xrefactory included a sophisticated caching system that enabled
+incremental parsing by caching parsed input streams, parser state, and
+file modification tracking. This optimization allowed for faster
+re-analysis when only portions of source files had changed. It also
+allowed the system to detect out-of-memory situations, discard, flush
+and re-use memory during file processing.</p>
+</div>
+<div class="sect3">
+<h4 id="_core_design_principles">20.3.1. Core Design Principles</h4>
+<div class="paragraph">
+<p><strong>Cache Point Model</strong>: The system placed strategic snapshots of parser state at external definition boundaries (functions, global variables, etc.). When files were re-processed, the system could validate cache integrity, recover from cache points, and resume parsing only from the first changed definition onward.</p>
+</div>
+<div class="paragraph">
+<p><strong>Separation of Concerns</strong>: Recent refactoring had separated file tracking from cache validation:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>updateFileModificationTracking()</code> - Updated file timestamps without side effects</p>
+</li>
+<li>
+<p><code>isFileModifiedSinceCached()</code> - Pure validation function for cache integrity</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_key_components">20.3.2. Key Components</h4>
+<div class="paragraph">
+<p><strong>Cache Point Management</strong> (<code>caching.c</code>):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>placeCachePoint(bool)</code> - Placed strategic parser state snapshots</p>
+</li>
+<li>
+<p><code>recoverFromCache()</code> - Restored parser state from cache points</p>
+</li>
+<li>
+<p><code>recoverCachePointZero()</code> - Reset to initial cache state</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>File Modification Tracking</strong>:</p>
+</div>
+<div class="paragraph">
+<p>The <code>FileItem</code> structure maintained multiple timestamp fields for tracking file modification:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">struct FileItem {
+    time_t lastModified;    // File's actual modification time
+    time_t lastInspected;   // When we last checked the file
+    // ... other fields
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Input Stream Caching</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cacheInput()</code> - Cached tokenized input from lexer</p>
+</li>
+<li>
+<p><code>cachingIsActive()</code> - Checked if caching was currently enabled</p>
+</li>
+<li>
+<p><code>activateCaching()</code> / <code>deactivateCaching()</code> - Controlled caching state</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_parser_integration">20.3.3. Parser Integration</h4>
+<div class="paragraph">
+<p><strong>C Parser Integration</strong>: Both C and Yacc parsers placed cache points after each <code>external_definition</code>, but only when not processing include files (<code>includeStack.pointer == 0</code>).</p>
+</div>
+<div class="paragraph">
+<p><strong>Parser-Specific Behavior</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>C Parser</strong>: Full caching enabled with regular cache point placement</p>
+</li>
+<li>
+<p><strong>Yacc Parser</strong>: Explicitly deactivated caching via <code>deactivateCaching()</code> but still placed strategic cache points</p>
+</li>
+<li>
+<p><strong>Include Files</strong>: Cache points skipped during include processing</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_system_dependencies">20.3.4. System Dependencies</h4>
+<div class="paragraph">
+<p>The caching system was deeply integrated throughout the parsing pipeline:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Component</th>
+<th class="tableblock halign-left valign-top">Functions Used</th>
+<th class="tableblock halign-left valign-top">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>main.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>initCaching()</code>, <code>activateCaching()</code>, <code>recoverCachePointZero()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lifecycle control</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lexer.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cacheInput()</code>, <code>cachingIsActive()</code>, <code>deactivateCaching()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Input processing</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>yylex.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updateFileModificationTracking()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File tracking</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>filetable.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updateFileModificationTracking()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File management</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>xref.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>recoverFromCache()</code>, recovery functions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cross-reference coordination</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>c_parser.y</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>placeCachePoint()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">C grammar integration</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>yacc_parser.y</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>deactivateCaching()</code>, <code>placeCachePoint()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yacc grammar integration</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_performance_characteristics_3">20.3.5. Performance Characteristics</h4>
+<div class="paragraph">
+<p><strong>Cache Hit Scenarios</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Full Cache Hit</strong>: No file modifications since last parse - parser state recovered from cache point zero with minimal re-processing</p>
+</li>
+<li>
+<p><strong>Partial Cache Hit</strong>: File modified after Nth definition - recovery from cache point N with re-parsing only from point of change onward</p>
+</li>
+<li>
+<p><strong>Cache Miss</strong>: File structure changed or timestamps invalid - full re-parse with new cache points placed</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Optimization Benefits</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Memory usage scales with number of definitions, not file size</p>
+</li>
+<li>
+<p>File modification checking minimizes unnecessary re-reads</p>
+</li>
+<li>
+<p>Input stream caching reduces lexer overhead</p>
+</li>
+<li>
+<p>Strategic cache point placement enables clean recovery at definition boundaries</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_huge_memory">20.4. HUGE Memory</h3>
+<div class="paragraph">
+<p>Previously a HUGE model was also available (by re-compilation) to
+reach file numbers, lines and columns above 22 bits. But if you have
+more than 4 million lines (or columns!) you should probably do
+something radical before attempting cross referencing and refactoring.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bootstrapping">20.5. Bootstrapping</h3>
+<div class="sect3">
+<h4 id="_bootstrap_removed">20.5.1. BOOTSTRAP REMOVED!</h4>
+<div class="paragraph">
+<p>Once the FILL-macros was removed, we could move the enum-generation to
+use the actual <code>c-xref</code>. So from now on we build <code>c-xref</code> directly
+from the sources in the repo. Changes to any enums will trigger a
+re-generation of the enumTxt-files but since the enumTxt-files are
+only conversion of enum values to strings any mismatch will not
+prevent compilation, and it would even be possible to a manual
+update. This is a big improvement over the previous situation!</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_fills_removed">20.5.2. FILLs REMOVED!</h4>
+<div class="paragraph">
+<p>As indicated in <a href="#_fill_macros">FILL macros</a> the bootstrapping of FILL-macros has
+finally and fully been removed.</p>
+</div>
+<div class="paragraph">
+<p>Gone is also the <code>compiler_defines.h</code>, which was just removed without
+any obvious adverse effects.  Maybe that will come back and bite me
+when we move to more platforms other than linux and MacOS&#8230;&#8203;</p>
+</div>
+<div class="paragraph">
+<p>Left is, at this point, only the <code>enumTxt</code> generation, so most of the
+text below is kept for historical reasons.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_rationale">20.5.3. Rationale</h4>
+<div class="paragraph">
+<p><em>c-xref</em> uses a load of structures, and lists of them, that need to be
+created and initialized in a lot of places (such as the parsers). To
+make this somewhat manageable, <em>c-xref</em> itself parses the strucures
+and generates macros that can be used to fill them with one call.</p>
+</div>
+<div class="paragraph">
+<p><em>c-xref</em> is also bootstrapped into reading in a lot of predefined
+header files to get system definitions as "preloaded
+definitions".</p>
+</div>
+<div class="paragraph">
+<p>Why this pre-loading was necessary, I don&#8217;t exactly know. It
+might be an optimization, or an idea that was born early and then just
+kept on and on. In any case it creates an extra complexity
+building and maintaining and to the structure of <em>c-xref</em>.</p>
+</div>
+<div class="paragraph">
+<p>So this must be removed, see below.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_mechanism">20.5.4. Mechanism</h4>
+<div class="paragraph">
+<p>The bootstrapping uses <em>c-xref</em>'s own capability to parse C-code and
+parse those structures and spit out filling macros, and some other
+stuff.</p>
+</div>
+<div class="paragraph">
+<p>This is done using options like `-task_regime_generate' which prints a
+lot of data structures on the standard output which is then fed into
+generated versions of <em>strFill</em>, <em>strTdef</em>(no longer exists) and
+<em>enumTxt</em> by the Makefile.</p>
+</div>
+<div class="paragraph">
+<p>The process starts with building a <em>c-xref.bs</em> executable from checked
+in sources. This compile uses a BOOTSTRAP define that causes some
+header files to include pre-generated versions of the generated files
+(currently <em>strFill.bs.h</em> and <em>enumTxt.bs.h</em>) which should work in all
+environments.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+if you change the name of a field in a structure that is subject
+to FILL-generation you will need to manually update the
+<em>strFill.bs.h</em>, but a "make cleaner all" will show you where those are.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>After the <em>c-xref.bs</em> has been built, it is used to generate <em>strFill</em>
+and <em>enumTxt</em> which might include specific structures for the current
+environment.</p>
+</div>
+<div class="paragraph">
+<p>HOWEVER: if FILL macros are used for structures which are different on
+some platforms, say a FILE structure, that FILL macro will have
+difference number of arguments, so I&#8217;m not sure how smart this "smart"
+generation technique actually is.</p>
+</div>
+<div class="paragraph">
+<p>TODO: Investigate alternative approaches to this generate "regime",
+perhaps move to a "class"-oriented structure with initialization
+functions for each "class" instead of macros.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_compiler_defines">20.5.5. Compiler defines</h4>
+<div class="paragraph">
+<p>In <em>options.h</em> there are a number of definitions which somehow are
+sent to the compiler/preprocessor or used so that standard settings
+are the same as if a program will be compiled using the standard
+compiler on the platform. At this point I don&#8217;t know exactly how this
+conversion from C declarations to compile time definitions is done,
+maybe just entered as symbols in one of the many symboltables?</p>
+</div>
+<div class="paragraph">
+<p>Typical examples include "__linux" but also on some platforms things
+like "fpos_t=long".</p>
+</div>
+<div class="paragraph">
+<p>I&#8217;ve implemented a mechanism that uses "gcc -E -mD" to print out and
+catch all compiler defines in <code>compiler_defines.h</code>. This was necessary
+because of such definitions on Darwin which where not in the
+"pre-programmed" ones.</p>
+</div>
+<div class="paragraph">
+<p>TODO?: As this is a more general approach it should possibly
+completely replace the "programmed" ones in <code>options.c</code>?</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_enumtxt_generation_removed">20.5.6. EnumTxt generation REMOVED!</h4>
+<div class="paragraph">
+<p>To be able to print the string values of enums the module generate.c
+(called when regime was RegimeGenerate) could also generate string
+arrays for all enums. By replacing that with some pre-processor magic
+for the few that was actually needed (mostly in log_trace() calls) we
+could do away with that whole "generate" functionality too.</p>
+</div>
+<div class="paragraph">
+<p>(Last commit with enum generation intact is <a href="https://github.com/thoni56/c-xrefactory/commit/aafd7b1f813f2c17c684ea87ac87a0be31cdd4c4" class="bare">https://github.com/thoni56/c-xrefactory/commit/aafd7b1f813f2c17c684ea87ac87a0be31cdd4c4</a>.)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_enumtxt">20.5.7. enumTxt</h4>
+<div class="paragraph">
+<p>For some cases the string representing the value of an Enum is needed.
+<code>c-xref</code> handles this using the "usual" 'parse code and generate' method.
+The module <code>generate.c</code> does this generation too.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_include_paths">20.5.8. Include paths</h4>
+<div class="paragraph">
+<p>Also in <em>options.h</em> some standard-like include paths are added, but
+there is a better attempt in <em>getAndProcessGccOptions()</em> which uses
+the compiler/preprocessor itself to figure out those paths.</p>
+</div>
+<div class="paragraph">
+<p>TODO?: This is much better and should really be the only way, I think.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_problems">20.5.9. Problems</h4>
+<div class="paragraph">
+<p>Since at bootstrap there must exist FILL-macros with the correct field
+names this strategy is an obstacle to cleaning up the code since every
+field is referenced in the FILL macros. When a field (in a structure
+which <strong>are</strong> filled using the FILL macro) changes name, this will make
+initial compilation impossible until the names of that field is also
+changed in the <code>strFill.bs.h</code> file.</p>
+</div>
+<div class="paragraph">
+<p>One way to handle this is of course to use <code>c-xrefactory</code> itself and
+rename fields. This requires that the project settings also include a
+pass with BOOTSTRAP set, which it does.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_removing">20.5.10. Removing</h4>
+<div class="paragraph">
+<p>I&#8217;ve started removing this step. In TODO.org I keep a hierarchical list
+of the actions to take (in a Mikado kind of style).</p>
+</div>
+<div class="paragraph">
+<p>The basic strategy is to start with structures that no other structure
+depends on. Using the script <code>utils/struct2dot.py</code> you can generate a
+DOT graph that shows those dependencies.</p>
+</div>
+<div class="paragraph">
+<p>Removal can be done in a couple of ways</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>If it&#8217;s a very small structure you can replace a call to a <code>FILL_XXX()</code> macro
+with a <a href="https://gcc.gnu.org/onlinedocs/gcc/Compound-Literals.html">compound literal</a>.</p>
+</li>
+<li>
+<p>A better approach is usually to replace it with a <code>fillXXX()</code> function, or even
+better, with a <code>newXXX()</code>, if it consistently is preceeded with an allocation
+(in the same memory!). To see what fields vary you can grep all such calls, make a
+CSV-file from that, and compare all rows.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_strtdef_h">20.5.11. strTdef.h</h4>
+<div class="paragraph">
+<p>The <code>strTdef.h</code> was generated using the option <code>-typedefs</code> as a part
+of the old <code>-task_regime_generate</code> strategy and generated typedef
+declarations for all types found in the parsed files.</p>
+</div>
+<div class="paragraph">
+<p>I also think that you could actually merge the struct definition with
+the typedef so that <em>strTdef.h</em> would not be needed. But it seems that
+this design is because the structures in <em>proto.h</em> are not a directed
+graph, so loops makes that impossible. Instead the typedefs are
+included before the structs:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>#include "strTdef.h"</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>struct someNode {
+    S_someOtherNode *this;
+    ...</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>struct someOtherNode {
+    S_someNode *that;
+    ...</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is now ideomatically solved using the structs themselves:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>struct someNode {
+    struct someOtherNode *this;
+    ...</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>struct someOtherNode {
+    struct someNode *that;
+    ...</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_fill_macros">20.6. FILL macros</h3>
+<div class="paragraph">
+<p><em><strong>The FILL macros are now fully replaced by native functions or some other,</strong></em>
+<em><strong>more refactoring-friendly, mechanism. Yeah!</strong></em></p>
+</div>
+<div class="paragraph">
+<p>During bootstrapping a large number of macros named <em>__FILL_xxxx</em> is
+created. The intent is that you can fill a complete structure with one
+call, somewhat like a constructor, but here it&#8217;s used more generally
+every time a complex struct needs to be initialized.</p>
+</div>
+<div class="paragraph">
+<p>There are even <em>_FILLF_xxx</em> macros which allows filling fields in
+sub-structures at the same time.</p>
+</div>
+<div class="paragraph">
+<p>This is, in my mind, another catastrophic hack that makes
+understanding, and refactoring, <code>c-xrefactory</code> such a pain. Not to
+mention the extra bootstrap step.</p>
+</div>
+<div class="paragraph">
+<p>I just discovered the compound literals of C99. And I&#8217;ll experiment
+with replacing some of the FILL macros with compound literals assignments
+instead.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>FILL_symbolList(memb, pdd, NULL);</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>could become (I think):</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>memb = (SymbolList){.d = pdd, .next = NULL};</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If successful, it would be much better, since we could probably get
+rid of the bootstrap, but primarily it would be more explicit about
+which fields are actually necessary to set.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_users">20.7. Users</h3>
+<div class="paragraph">
+<p><strong>The <code>-user</code> option has now been removed, both in the tool and the
+  editor adaptors, and with it one instance of a hashlist, the
+  <code>olcxTab</code>, which now is a single structure, the <code>sessionData</code>.</strong></p>
+</div>
+<div class="paragraph">
+<p>There is an option called <code>-user</code> which Emacs sets to the frame-id. To
+me that indicates that the concept is that for each frame you create
+you get a different "user" with the <code>c-xref</code> server that you (Emacs)
+created.</p>
+</div>
+<div class="paragraph">
+<p>The jedit adapter seems to do something similar:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>options.add("-user");
+Options.add(s.getViewParameter(data.viewId));</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Looking at the sources to find when the function
+<code>olcxSetCurrentUser()</code> is called it seems that you could have
+different completion, refactorings, etc. going on at the same time in
+different frames.</p>
+</div>
+<div class="paragraph">
+<p>Completions etc. requires user interaction so they are not controlled
+by the editor in itself only. At first glance though, the editor
+(Emacs) seems to block multiple refactorings and referencs maintenance
+tasks running at the same time.</p>
+</div>
+<div class="paragraph">
+<p>This leaves just a few use cases for multiple "users", and I think it
+adds unnecessary complexity. Going for a more "one user" approach,
+like the model in the language server protocol, this could really be
+removed.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-05 08:56:48 UTC
+Last updated 2026-01-05 13:10:09 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
