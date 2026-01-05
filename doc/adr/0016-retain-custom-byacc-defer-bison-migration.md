@@ -4,7 +4,7 @@ Date: 2026-01-01
 
 ## Status
 
-Decided
+Accepted
 
 ## Deciders
 
