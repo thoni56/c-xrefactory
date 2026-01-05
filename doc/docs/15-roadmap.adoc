@@ -7,7 +7,7 @@ This chapter outlines the development roadmap for c-xrefactory, tracking complet
 The roadmap is guided by these principles:
 
 * **Incremental improvement**: Each step should provide immediate value while moving toward long-term goals
-* **Test-driven modernization**: Maintain ~80% test coverage to enable confident refactoring
+* **Test-driven modernization**: Maintain 85%+ test coverage to enable confident refactoring
 * **Backward compatibility**: Preserve existing Emacs workflows while enabling modern IDE integration
 * **Architectural simplification**: Replace artificial mode distinctions with unified, smart on-demand behavior
 * **Legacy code respect**: Work with the existing 1990s codebase thoughtfully, not against it
@@ -50,36 +50,45 @@ The roadmap is guided by these principles:
 
 **See**: link:../adr/0012-remove-lexem-stream-caching.md[ADR-0012: Remove Lexem Stream Caching] for detailed rationale, trade-offs, and future optimization strategies.
 
-=== Short-term Goals (Next 3-6 Months)
+=== Short-term Goals
 
 ==== Test Coverage Expansion
 
-*Current Status*: ~80% coverage, ongoing improvement
+*Current Status*: **85%+ overall coverage achieved** (January 2025)
 
-*Priority*: HIGH
+*Priority*: MEDIUM (maintenance mode)
 
-*Goals*:
+*Ongoing Work*:
 
-* Achieve 85%+ coverage for core modules
-* Add focused tests for macro expansion subsystem
-* Expand coverage for LSP integration points
-* Systematic testing of error handling paths
+* Maintain 85%+ overall coverage as new features are added
+* Add focused tests for LSP integration points as they're implemented
+* Systematic testing of error handling paths in new code
+* Monitor coverage regressions during refactoring
 
 ==== LSP Feature Completeness
 
-*Current Status*: Basic LSP communication works, features not yet accessible
+*Current Status*: Basic LSP communication works, single-file `textDocument/definition` implemented
 
 *Priority*: HIGH
 
-*Goals*:
+*Completed Work*:
+* ✓ `textDocument/definition` for **single-file lookups** (January 2025)
+* ✓ Clean parser API in `parsing.h/c` enabling operation-based control
+* ✓ Reference database integration working for in-memory queries
 
-* Wire up existing symbol navigation to LSP protocol
-* Implement `textDocument/definition` using reference database
-* Implement `textDocument/references`
-* Implement `textDocument/hover` with symbol information
-* Enable `textDocument/completion` for basic completion
+*Remaining Goals*:
 
-*Approach*: Leverage existing reference database (`refTab`) and symbol tables - no major architectural changes needed initially.
+* **Multi-file definition lookup** - Requires symbol type persistence and include graph
+* `textDocument/references` using reference database
+* `textDocument/hover` with symbol information
+* `textDocument/completion` for basic completion
+* Cross-file symbol resolution
+
+*Approach*: 
+* Single-file done via clean API (no `.cx` files needed)
+* Multi-file requires enhancements: see <<Clean Parser API and Multi-File Definition Support>> for investigation
+* Leverage existing reference database (`refTab`) and symbol tables
+* Reuse parser infrastructure via new clean ParserOperation API
 
 ==== Documentation Completeness
 
@@ -129,11 +138,11 @@ These goals are detailed in <<16-major-codebase-improvements.adoc#,Chapter 16: M
 * Enables clearer ownership semantics
 * Foundation for macro module extraction
 
-*Remaining Effort*: 2-3 weeks
+*Remaining Effort*: Smaller effort, can be completed independently
 
-* Week 1: Extend structure and create full API
-* Week 2: Refactor `collate()` and helper functions
-* Week 3: Testing, cleanup, and documentation
+* Extend structure and create full API
+* Refactor `collate()` and helper functions  
+* Testing, cleanup, and documentation
 
 ==== 2. Extract Macro Expansion Module
 
@@ -150,11 +159,11 @@ These goals are detailed in <<16-major-codebase-improvements.adoc#,Chapter 16: M
 * Clearer separation: lexing vs. preprocessing
 * Facilitates future C++ macro support
 
-*Estimated Effort*: 4-6 weeks
+*Effort*: Larger refactoring, depends on LexemStream API completion
 
-* Week 1-2: Create module structure and move memory management
-* Week 3-4: Migrate token processing and expansion logic
-* Week 5-6: Integration, testing, and documentation
+* Create module structure and move memory management
+* Migrate token processing and expansion logic
+* Integration, testing, and documentation
 
 ==== 3. Header Re-parsing Optimization
 
@@ -184,7 +193,7 @@ c-xref -create
 * No architectural changes needed - just skip parsing if DB is current
 * Remains fully compatible with existing workflows
 
-*Estimated Effort*: 1-2 weeks
+*Effort*: Smaller effort, mostly configuration changes
 
 **Phase 2: Preprocessor Dependency Caching**
 
@@ -207,7 +216,7 @@ typedef struct {
 * Much simpler than full lexem stream caching
 * ~1KB per source file vs. ~100KB+ for full token cache
 
-*Estimated Effort*: 3-4 weeks
+*Effort*: Medium effort, moderate complexity but straightforward scope
 
 **Phase 3: Selective Header Caching** (Future optimization)
 
@@ -223,7 +232,7 @@ After architecture is clean, consider lightweight header caching:
 * Cache is pure optimization, not architectural requirement
 * Clear separation between parsing logic and caching logic
 
-*Estimated Effort*: 6-8 weeks (only after unified database complete)
+*Effort*: Larger effort, deferred to after unified database architecture is complete
 
 ==== 4. Clean Persistence Store Abstraction
 
@@ -234,6 +243,7 @@ After architecture is clean, consider lightweight header caching:
 *Rationale*: The `cxfile` module currently mixes persistence (reading/writing .cx files), search operations, and menu creation logic. This tight coupling prevents architectural improvements like LSP integration and alternative storage backends.
 
 *Key Problem*: Code conflates two distinct concepts:
+
 * **Reference Database** (in-memory `referenceableItemTable` - the source of truth)
 * **Persistence Store** (.cx files on disk - durable cache)
 
@@ -247,12 +257,12 @@ Currently `.cx` files are sometimes treated as authoritative, when they should b
 * Allows future storage backend alternatives (SQLite, etc.)
 * Removes ~200 lines of mixed-responsibility code
 
-*Estimated Effort*: 4-6 weeks
+*Effort*: Medium effort, requires careful abstraction layer design
 
-* Week 1-2: Create `persistence_store.h` and `reference_database.h` facades
-* Week 3: Extract search/unused-detection logic to proper modules
-* Week 4: Hide implementation details (`cxFileHashNumberForSymbol` becomes static)
-* Week 5-6: Testing, documentation, and cleanup
+* Create `persistence_store.h` and `reference_database.h` facades
+* Extract search/unused-detection logic to proper modules
+* Hide implementation details (`cxFileHashNumberForSymbol` becomes static)
+* Testing, documentation, and cleanup
 
 ==== 5. Unified Symbol Database Architecture
 
@@ -274,19 +284,19 @@ Currently `.cx` files are sometimes treated as authoritative, when they should b
 * Smart logic lives in in-memory layer, persistence is just durable cache
 
 *Implementation Plan* (see link:../adr/0014-adopt-on-demand-parsing-architecture.md[ADR-0014] for architecture details):
-* Phase 1: Incremental `-create` (1-2 weeks)
-* Phase 2: On-demand goto-definition proof-of-concept (3-4 weeks)
-* Phase 3: Extend to all refactorings (6-8 weeks)
-* Phase 4: Deprecate mandatory `-create` (2 weeks)
+* Phase 1: Incremental `-create` (foundation)
+* Phase 2: On-demand goto-definition proof-of-concept (medium effort)
+* Phase 3: Extend to all refactorings (larger effort)
+* Phase 4: Deprecate mandatory `-create` (smaller cleanup)
 
-*Estimated Effort*: 12-16 weeks total
+*Effort*: Larger foundational work, enables all on-demand features
 
 *Accepted Trade-offs*:
 * First operation on huge projects may have latency (1-5s)
 * Limited detection of archaic `extern` in .c files (see link:../adr/0013-limited-extern-detection-in-c-files.md[ADR-0013])
 * These trade-offs enable modern, responsive IDE integration
 
-=== Long-term Vision (12-24 Months)
+=== Long-term Vision
 
 ==== New Refactoring Features
 
@@ -295,6 +305,8 @@ Currently `.cx` files are sometimes treated as authoritative, when they should b
 *Current Limitation*: Extract function only works on statement-level code blocks. Attempting to extract an expression (e.g., a complex boolean condition inside an `if` statement) fails because the system cannot detect expression context.
 
 *Vision*: Enable extraction of arbitrary expressions as separate functions with appropriate return types.
+
+*Value*: Removes artificial restriction, makes refactoring tool more complete and less surprising to users.
 
 *Examples*:
 
@@ -333,33 +345,33 @@ The investigation (documented in agent task a16ff53) identified the core blocker
 
 **Recommended Implementation Strategy:**
 
-1. **Parsing Context Stack** (1 week)
+1. **Parsing Context Stack**
    * Add `ParsingContext` enum tracking current grammar production
    * Implement context stack with push/pop operations
    * Modify grammar rules to track context (`CONTEXT_IF_CONDITION`, `CONTEXT_WHILE_CONDITION`, `CONTEXT_RETURN_EXPR`, etc.)
    * Capture context when block markers are encountered
 
-2. **Expression Type Inference** (1 week)
+2. **Expression Type Inference**
    * Detect expression type from operators and operands
    * Infer return type (bool, int, size_t, etc.)
    * Handle type promotions and casts
 
-3. **Modified Extraction Logic** (1-2 weeks)
+3. **Modified Extraction Logic**
    * Simplify variable classification for expressions (all inputs, no outputs)
    * Generate appropriate return statement
    * Handle call-site substitution without assignment
    * Extract source text and substitute parameter names
 
-4. **Testing and Refinement** (1 week)
+4. **Testing and Refinement**
    * Test with various expression contexts
    * Handle edge cases (nested expressions, macro arguments, etc.)
    * Validate type inference accuracy
 
-*Alternative Approach*: Add user dialog to explicitly mark extraction as expression-based rather than auto-detecting, which would reduce implementation time to 2-3 weeks but provide less seamless UX.
+*Alternative Approach*: Add user dialog to explicitly mark extraction as expression-based rather than auto-detecting, which would be simpler but provide less seamless UX.
 
 *Current Code State*: The extraction infrastructure already has commented placeholders (`isInExpression` boolean with TODO comments saying "how can we know this...?"), indicating this feature was originally planned but the detection mechanism was never solved.
 
-*Estimated Effort*: 4-5 weeks for full automatic detection, or 2-3 weeks for dialog-based approach
+*Effort*: Medium effort for full automatic detection, smaller if using dialog-based approach
 
 *Priority*: MEDIUM-LOW (valuable feature but less critical than LSP enablement)
 
@@ -410,7 +422,7 @@ After unified symbol database is complete, investigate:
 * Smart arena allocation strategies for long-running servers
 * Background garbage collection for unused symbol data
 
-*Estimated Effort*: 16-20 weeks (major architectural work)
+*Effort*: Large foundational work with significant architectural implications
 
 ==== Full LSP Protocol Compliance
 
@@ -437,7 +449,7 @@ After unified symbol database is complete, investigate:
 * Multi-workspace support
 * Configuration via LSP initialization options
 
-*Estimated Effort*: 20-24 weeks (building on unified database)
+*Effort*: Large effort building on unified database architecture
 
 ==== Modern IDE Integration Showcase
 
@@ -482,7 +494,7 @@ When unified symbol database is complete (see link:../adr/0014-adopt-on-demand-p
 Throughout all changes:
 
 * **Zero test regressions** - 140+ test suite must pass
-* **Coverage maintenance** - keep ~80%+ coverage during refactoring
+* **Coverage maintenance** - keep 85%+ coverage during refactoring
 * **Performance validation** - no >5% regression on large projects
 * **Integration testing** - both Emacs and LSP workflows tested
 
@@ -490,7 +502,7 @@ Throughout all changes:
 
 ==== Technical Metrics
 
-* **Test Coverage**: Maintain 80%+, target 85%+
+* **Test Coverage**: Maintain 85%+
 * **Response Time**: LSP `textDocument/definition` < 100ms for 90th percentile
 * **Memory Efficiency**: LSP server < 500MB RAM for 1M LOC project
 * **Startup Time**: Zero cold start delay (no mandatory `-create`)
@@ -553,22 +565,22 @@ Throughout all changes:
 
 Priority tasks for immediate action:
 
-1. **Complete LSP handler wiring** (1-2 weeks)
+1. **Complete LSP handler wiring**
    * Map existing navigation functions to LSP requests
    * Test with real LSP client (VS Code)
    * Document any gaps
 
-2. **Design LexemStream API** (1 week)
+2. **Design LexemStream API**
    * Finalize interface based on proposal
    * Create initial implementation
    * Write unit tests
 
-3. **Plan unified database refactoring** (2 weeks)
+3. **Plan unified database refactoring**
    * Detailed design document
    * Identify all affected code paths
    * Prototype dependency-driven scanning
 
-4. **Establish performance baseline** (1 week)
+4. **Establish performance baseline**
    * Measure current Emacs operation speeds
    * Profile memory usage patterns
    * Document acceptable overhead budgets

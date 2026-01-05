@@ -1,0 +1,119 @@
+== Planned or Ongoing Features
+
+This chapter documents new, user-facing, features, often refactoring operations, that have been designed but not yet (fully) implemented, or are under architectural investigation.
+
+These are distinct from "Major Codebase Improvements" (Chapter 16) which focus on internal architecture and code quality.
+
+For user-level specifications of refactoring operations (both existing and proposed), see link:19-refactoring-recipes.adoc[Chapter 19: Refactoring Recipes].
+
+=== Move Function Between Files
+
+**Status**: Phase 1 MVP complete (December 2024), accepts target and removes static keyword.
+
+**Scope**: Implements the mechanical operation of moving a function definition from one C source file to another while maintaining correct references and visibility.
+
+This refactoring pairs with the move function parser API improvements discussed in link:16-major-codebase-improvements.adoc#clean-parser-api[Clean Parser API and Multi-File Definition Support].
+
+==== Overview
+
+Moving a function between files requires:
+
+1. Identifying the exact function boundaries
+2. Determining what declarations are needed in target files
+3. Removing `static` keyword (changing scope to external)
+4. Creating or updating header file declarations
+5. Managing include directives
+
+The operation has been implemented in phases, starting with basic move capability and expanding to automatic declaration management.
+
+==== Phase 1: Basic Move (COMPLETE)
+
+**What's implemented**:
+
+* Function boundary detection using parser semantic actions
+* Removal of `static` keyword when moving between files
+* Proper positioning of function in target file
+* Automatic addition of extern declaration to target file's header (non-intelligent placement, no dependency-handling)
+* Availability check: refactoring only appears on function definitions (not call sites)
+
+**What works**:
+
+* Moves function from source file to different target file
+* Removes `static` keyword to make function externally callable
+* Adds extern function declaration to target file's header automatically
+* Handles comments and decorations around function
+* Works for both C and Yacc files
+* Successfully tested with move_c_function test cases
+
+**What users must handle manually**:
+
+* Verify extern declaration placement in header (Phase 1 placement is non-intelligent)
+* Adding `#include` directives for dependencies
+* Moving tightly-coupled static helper functions
+
+**Value**: Eliminates manual cut/paste, removes 50+ lines of boilerplate per move operation. Declaration automatically added (though placement and dependencies may need manual adjustment).
+
+==== Phase 2: Automatic Header Declaration
+
+**Scope**: Generate function declaration in target file's header
+
+**Approach**:
+
+1. Derive header filename from source: `target.c` → `target.h`
+2. Create header if it doesn't exist (with include guards)
+3. Insert function declaration at appropriate location
+4. User manually adds `#include` directives
+
+**Challenges**:
+
+* Reconstructing function signature from Symbol type information
+* Handling various include guard formats (`#ifndef` vs `#pragma once`)
+* Finding appropriate insertion point in header
+* Avoiding duplicate declarations
+
+**Value**: Automatically makes moved function callable from other files, follows C convention of declarations in headers.
+
+==== Phase 3: Static Helper Function Detection
+
+**Scope**: Identify and optionally move tightly-coupled static functions
+
+When moving a function that calls static helper functions in the same file, optionally move those helpers too.
+
+**Algorithm**:
+
+1. Parse region containing function to move
+2. Find all function calls within that function
+3. Check if called functions are static in same file
+4. Prompt user to move helpers too
+
+**Value**: Prevents broken builds from missing dependencies, maintains logical cohesion.
+
+==== Phase 4: Polish (Future)
+
+* Preview dialog showing what will be moved
+* Better insertion point heuristics
+* Handle embedded documentation (comments, doxygen)
+* Smart handling of related functions
+
+==== Design Notes
+
+This is more complex than simple text movement because it affects visibility (static vs extern), requires understanding header file conventions, and involves cross-file dependencies.
+
+**Related work**:
+
+* Similar functionality exists in c-xref-java version (`moveStaticObjectAndMakeItPublic()`)
+* Parser infrastructure already proved with extract function refactoring
+* Function boundary detection confirmed working in move function tests
+
+**Dependencies**:
+
+* Depends on clean parser API for reliable boundary detection
+* Leverages existing reference database for finding all references
+* Uses existing editor buffer manipulation infrastructure
+
+==== References
+
+* Implementation: `src/refactory.c` - `moveStaticFunctionAndMakeItExtern()`
+* Parser integration: `src/c_parser.y`, `src/yacc_parser.y`
+* Tests: `tests/test_move_c_function_*/`
+* Architecture discussion: link:16-major-codebase-improvements.adoc#clean-parser-api[Clean Parser API section]

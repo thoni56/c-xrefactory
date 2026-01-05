@@ -88,6 +88,55 @@ make -C byacc-1.9 clean # Clean bundled yacc
   - `c-xref.el`: Core functionality binding
   - `c-xrefprotocol.el`: Protocol communication
 
+## Planning & Architecture Philosophy
+
+### No Time Estimates (#noestimates)
+
+This is a hobby/OSS project with variable contributor availability. **Do not use calendar time estimates** in planning documents or proposals.
+
+Instead, emphasize:
+- **Value** - What becomes possible after this work?
+- **Scope** - What exactly is included/excluded?
+- **Dependencies** - What must be done first?
+- **Risk** - What could go wrong?
+- **Relative effort** - If discussing effort at all, use only: "smaller", "larger", "foundational"
+
+Acceptable phrasing:
+- "Smaller effort, can be tested independently"
+- "Larger refactoring, requires careful test coverage"
+- "Foundational work that enables X and Y"
+- "Depends on completion of clean persistence store"
+- "Can be deferred without blocking other work"
+
+Avoid:
+- "2-3 weeks", "1 month", "2 days" (calendar time)
+- Story points (still conflates effort with time)
+- Pressure language: "urgent", "critical path", "must be done ASAP"
+- False precision: "14 hours", "3 weeks exactly"
+
+### Planning Documents
+
+When requesting architecture plans or refactoring strategies:
+1. **No time estimates** - focus on scope and success metrics
+2. Include **risk analysis and mitigations**
+3. Document **assumptions and open questions**
+4. Make each **phase independently valuable**
+5. Clarify **dependencies between phases**
+
+Example structure:
+```
+## Phase 1: [What it does]
+**Dependencies**: None (or what must be done first)
+**Risk**: [What could go wrong]
+**Scope**: Clearly define what's in/out
+**Success criteria**: How to know it worked
+**Value**: What becomes possible after this
+
+## Phase 2: [What it does]
+**Dependencies**: Phase 1 completion
+...
+```
+
 ## Development Workflow
 
 ### Automated Testing

@@ -1460,7 +1460,7 @@ if (staticHelperCount > 0) {
 
 ===== Phase 4: Polish
 
-**Relative complexity**: 0.5-1× Phase 1
+**Scope**: Smaller effort, quality-of-life improvements
 
 - Preview dialog showing what will be moved
 - Better insertion point heuristics (group with related functions)
@@ -1512,34 +1512,27 @@ if (staticHelperCount > 0) {
 * Symbol database lookups - `src/reftab.c`
 * Reference tracking - `src/reference.c`
 
-==== Implementation Effort Summary
+==== Implementation Summary
 
-[cols="1,1,2"]
-|===
-|Phase |Effort |Value
+[cols="1,2"]
+||===
+||Phase |Value
+|
+||Phase 1: Basic Move
+||**High** - Eliminates manual cut/paste, handles 80% of cases
+|
+||Phase 2: Include Management
+||**High** - Prevents build breakage, major time saver
+|
+||Phase 3: Static Helpers
+||**Medium** - Nice to have, improves completeness
+|
+||Phase 4: Polish
+||**Low** - Quality of life improvements
+||===
 
-|Phase 1: Basic Move
-|1-2 weeks
-|**High** - Eliminates manual cut/paste, handles 80% of cases
-
-|Phase 2: Include Management
-|2-3 weeks
-|**High** - Prevents build breakage, major time saver
-
-|Phase 3: Static Helpers
-|1-2 weeks
-|**Medium** - Nice to have, improves completeness
-
-|Phase 4: Polish
-|1 week
-|**Low** - Quality of life improvements
-|===
-
-**Total for Phases 1-2**: 3-5 weeks
-**Total for full implementation**: 5-8 weeks
-
-**Comparison to estimated-from-scratch**: 6-8 weeks
-**Savings from leveraging Java code**: ~30% effort reduction
+**Phases 1-2 provide most value**, independently testable
+**Leverages existing Java refactoring code**, reduces complexity significantly
 
 ==== Benefits
 
@@ -1615,7 +1608,7 @@ if (staticHelperCount > 0) {
 ==== Next Steps
 
 1. **After persistence store cleanup**: Take a break from architectural work
-2. **Implement Phase 1 MVP**: 1-2 weeks for immediate value
+2. **Implement Phase 1 MVP**: Smaller effort, high value
 3. **Gather usage feedback**: Identify most common dependency patterns
 4. **Implement Phase 2**: Based on real-world usage patterns
 5. **Document and showcase**: Blog post, video demonstration
@@ -1623,3 +1616,322 @@ if (staticHelperCount > 0) {
 ---
 
 NOTE: Even Phase 1 MVP provides significant value by eliminating manual text manipulation. The developer who does this refactoring "very often" confirms the high ROI potential.
+
+[[clean-parser-api]]
+=== Clean Parser API and Multi-File Definition Support
+
+==== Current State: Recent LSP Definition Finding Success
+
+The recent implementation of `textDocument/definition` for LSP created a **clean, operation-based parser API** in `parsing.h/c` that successfully decouples high-level operations from low-level parsing details. This API discovery presents an opportunity to gradually modernize legacy parsing infrastructure.
+
+**What works**:
+* Single-file definition lookup via clean `parsing.h` interface
+* Operation-based configuration (ParserOperation enum)
+* No reliance on `.cx` files for immediate queries
+
+**What doesn't work yet**:
+* Multi-file definitions (symbol defined in different file than reference)
+* Cross-file type resolution
+* Include graph persistence
+
+==== Problem Statement
+
+The LSP definition finding currently fails when a symbol's **definition is in a different file** from the reference. This requires:
+
+1. **Symbol type information** - Current reference database only stores name and position, not types needed for resolution
+2. **Include graph** - Don't know which files include which headers to find definition files
+3. **Multi-file parsing** - Ability to efficiently reparse relevant files without loading entire project
+
+More broadly, the legacy codebase still relies on **magic string command routing** to drive parsing behavior:
+
+[source,c]
+----
+// Scattered throughout codebase (cxref.c, refactory.c, server.c, etc.)
+parseBufferUsingServer(project, point, mark, "-olcxpush", NULL);
+parseBufferUsingServer(project, point, mark, "-olcxmovetarget", NULL);
+parseBufferUsingServer(project, point, mark, "-olcxmodemenu", NULL);
+// ... 20+ more magic strings, each with unclear semantics
+----
+
+This makes the codebase fragile, hard to understand, and difficult to extend with new operations.
+
+==== The Parser API Innovation
+
+The new `parsing.h` interface provides:
+
+[source,c]
+----
+typedef enum {
+    PARSE_TO_CREATE_REFERENCES,    /* Just parse, create references */
+    PARSE_TO_GET_FUNCTION_BOUNDS,  /* Record function boundaries */
+    PARSE_TO_VALIDATE_MOVE_TARGET, /* Check if position is valid move target */
+    PARSE_TO_EXTRACT,              /* Extract refactoring - track blocks/vars */
+    PARSE_TO_TRACK_PARAMETERS,     /* Track parameter positions for navigation */
+    PARSE_TO_COMPLETE              /* Complete code at cursor */
+} ParserOperation;
+
+typedef struct {
+    StringList      *includeDirs;  /* -I include directories */
+    char            *defines;      /* -D preprocessor definitions */
+    bool             strictAnsi;   /* ANSI C mode vs extensions */
+    ParserOperation  operation;    /* What should parser do? */
+    Position         cursorPosition; /* Cursor location for bounded operations */
+    int              cursorOffset; /* Byte offset of cursor in file */
+    int              markOffset;   /* Byte offset of mark (selection end) */
+    ExtractMode      extractMode;  /* Which extraction type (function/macro/variable) */
+    int              targetParameterIndex; /* Which parameter to track */
+} ParsingConfig;
+
+/* Configuration is set before parsing starts */
+extern ParsingConfig parsingConfig;
+
+/* Predicate functions document behavior */
+extern bool needsReferenceAtCursor(ParserOperation op);
+extern bool allowsDuplicateReferences(ParserOperation op);
+----
+
+**Key innovations**:
+* Enum-based operations - Discoverable list (IDE autocomplete shows all options)
+* Configuration struct - Single point of setup, no scattered global flags
+* Operation predicates - Self-documenting behavior (`needsReferenceAtCursor`, `allowsDuplicateReferences`)
+* Type-safe - Compile-time checking replaces runtime magic string matching
+
+==== Benefits of Backporting This API
+
+===== Code Clarity and Safety
+
+Replace magic strings with discoverable enums:
+
+[source,c]
+----
+/* Before: What does this do? Need to search for documentation */
+parseBufferUsingServer(options.project, target, NULL, "-olcxmovetarget", NULL);
+
+/* After: Immediately obvious */
+parsingConfig.operation = PARSE_TO_VALIDATE_MOVE_TARGET;
+parsingConfig.cursorPosition = makePositionFromMarker(target);
+parseCurrentInputFile(LANG_C);
+----
+
+Replace scattered global flags with structured configuration:
+
+[source,c]
+----
+/* Before: Scattered throughout, unclear semantics */
+options.olcxPushButton = 1;
+options.olcxRenameOption = 1;
+s_noParametersToExpand = 0;
+originalFileNumber = someValue;
+
+/* After: All configuration in one place, clear purpose */
+parsingConfig.operation = PARSE_TO_COMPLETE;
+parsingConfig.targetParameterIndex = 5;
+parsingConfig.extractMode = EXTRACT_VARIABLE;
+----
+
+===== Foundation for Multi-File Definition Lookup
+
+The clean API makes it easier to implement required enhancements:
+
+[source,c]
+----
+/* New operation for multi-file definition lookup */
+typedef enum {
+    /* ... existing operations ... */
+    PARSE_TO_RESOLVE_DEFINITION,  /* NEW: Find definition across files */
+} ParserOperation;
+
+/* Simpler to add new parsing modes when API is clean */
+parsingConfig.operation = PARSE_TO_RESOLVE_DEFINITION;
+parsingConfig.symbolName = "findReferenceableAt";
+parsingConfig.startFile = fileNumber;
+----
+
+===== Easier Feature Development
+
+Adding new operations becomes straightforward:
+
+1. Add to `ParserOperation` enum
+2. Implement predicate functions if needed
+3. Add semantic actions in grammar
+4. Done - no magic strings to maintain
+
+==== Implementation Plan: Three Non-Blocking Phases
+
+===== Phase 1: Expose New API Alongside Legacy Code
+
+**Scope**: Purely additive - new API works alongside legacy code
+**Risk**: LOW (no changes to existing code paths)
+**Value**: Proof of concept, enables gradual migration
+
+**Approach**:
+1. `parseWithConfig()` becomes primary entry point
+2. `parseBufferUsingServer()` internally bridges legacy magic strings to new `ParsingConfig`
+3. Both code paths work identically (verified with tests)
+4. No changes needed to existing functionality
+
+**Benefit**: Can merge this without affecting legacy code at all
+
+===== Phase 2: Migrate High-Value Callsites
+
+**Scope**: Refactor 50%+ of parsing infrastructure
+**Risk**: MEDIUM (refactoring, but with tests)
+**Value**: Significant improvement to codebase clarity
+
+**Priority callsites**:
+1. LSP handlers - Already partially using new API
+2. Definition finding - Multi-file lookup
+3. Extract refactoring - Complex logic, multiple operations
+4. Move function - Multiple parsing passes
+
+**Benefit**: 50%+ of parsing infrastructure modernized, multi-file definitions enabled
+
+===== Phase 3: Complete Legacy Code Cleanup
+
+**Scope**: Remove all magic string command routing, consolidate parsing
+**Risk**: MEDIUM (larger refactoring)
+**Value**: Long-term maintainability and extensibility
+
+**Scope**:
+* Remove all magic string command routing
+* Consolidate parsing entry points
+* Eliminate scattered global flags
+* Document parser behavior in code
+
+**Benefit**: Codebase future-proof for new operations
+
+**Important**: Phase 3 is **optional** - Phases 1-2 already provide most value
+
+==== Multi-File Definition: Requirements
+
+===== 1. Symbol Type Information Persistence
+
+**Current**: ReferenceableItemTable only stores name, position, kind
+**Needed**: Minimal type info for cross-file resolution
+
+**Lightweight approach** (preferred over full type serialization):
+
+[source,c]
+----
+/* Extend ReferenceableItem with minimal type data */
+struct ReferenceableItem {
+    /* ... existing fields ... */
+    char *returnType;      /* For functions: return type string */
+    int   parameterCount;  /* For functions: number of parameters */
+    bool  isDefinition;    /* True if this is the function/variable definition */
+};
+----
+
+**Scope**: Extend ReferenceableItem, careful memory management
+
+===== 2. Include Graph Construction
+
+**Current**: Include relationships processed during lexing, not persisted
+**Needed**: Map of which files include which headers
+
+**Lightweight approach**:
+
+[source,c]
+----
+typedef struct {
+    int   sourceFile;         /* File with #include directive */
+    int   includedFile;       /* File being included */
+    bool  isSystemInclude;    /* <> vs \"\" */
+} IncludeEdge;
+
+/* Stored in file's metadata, retrievable by file number */
+int getIncludedFileCount(int fileNumber);
+int getIncludedFile(int fileNumber, int index);
+int *getIncludingFiles(int fileNumber);  /* Files that include this one */
+----
+
+**Scope**: Moderate effort, moderate complexity
+
+===== 3. Incremental Multi-File Parsing
+
+**Current**: Full project parse or single-file parse
+**Needed**: Efficient "parse files needed for definition lookup" operation
+
+**Approach**:
+1. Use include graph to find "definition file candidates"
+2. Parse only those files (typically 1-5 for most projects)
+3. Store symbols in special "definition lookup" arena
+4. Return to in-memory reference table when done
+
+**Scope**: Parse relevant files, update reference table
+
+**Total for full multi-file support**: Larger foundational work combining above three components
+
+==== Code Locations
+
+**New Parser API**:
+* `src/parsing.h` - Public interface (167 lines)
+* `src/parsing.c` - Implementation with bridges (187 lines)
+* Functions: `getParserOperation()`, `needsReferenceAtCursor()`, `parseToCreateReferences()`
+
+**Legacy code currently using magic strings**:
+* `src/cxref.c` - 20+ `parseBufferUsingServer()` calls
+* `src/refactory.c` - 10+ operations
+* `src/extract.c` - Multiple parsing passes
+* `src/complete.c` - Completion-specific parsing
+* `src/server.c` - Operation dispatch
+
+**Files for multi-file support**:
+* `src/reference_database.h/c` - Add symbol type info
+* `src/yylex.c` - Build include graph
+* `src/filetable.h/c` - Persist include relationships
+
+==== Success Metrics
+
+**Phase 1**:
+* ✓ New `ParsingConfig` API works alongside legacy strings
+* ✓ No performance regression
+* ✓ Both code paths tested and working
+
+**Phase 2**:
+* ✓ 50%+ of parsing callsites use new API
+* ✓ Multi-file definition lookup works
+* ✓ All existing tests still pass
+
+**Phase 3** (if pursued):
+* ✓ All parsing driven by enum operations
+* ✓ Magic strings completely removed
+* ✓ New developers understand control flow
+
+==== Risks and Mitigation
+
+[cols="1,1,2"]
+|===
+|Risk |Likelihood |Mitigation
+
+|Breaking existing workflows
+|Medium
+|Phase 1 keeps old API working, extensive testing, clear migration timeline
+
+|Incomplete refactoring
+|Medium
+|Phase 1-2 provide value even if Phase 3 never completes
+
+|Performance regression
+|Low
+|New API does same work, just different control flow; profile before/after
+
+|Memory overhead from type info
+|Medium
+|Use lightweight approach, store only essential fields, consider lazy loading
+|===
+
+==== Related Work
+
+This refactoring supports:
+* **ADR-0014** (On-Demand Parsing) - Single code path for all operations
+* **Unified Symbol Database** (next major refactoring) - Requires clean parsing API
+* **LSP Multi-File Support** - Immediately enables cross-file definition lookup
+
+==== Notes
+
+The key insight is that we can **backport this gradually without breaking anything**. The bridge pattern (new API calls old code for now) lets us improve incrementally, retiring magic strings and globals one section at a time.
+
+Phase 1 proves the approach works with minimal risk. Phases 2-3 build on proven foundation, so failure to complete them doesn't harm existing functionality.
+
+Multi-file definitions are one motivating use case, but the real long-term benefit is a codebase where parsing behavior is **discoverable and type-safe** instead of driven by magic strings scattered throughout 25-year-old code.

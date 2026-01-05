@@ -2,11 +2,106 @@
 
 This chapter documents mechanical steps for refactoring operations. Each recipe describes the algorithmic steps that an automated refactoring tool would perform.
 
-These recipes serve as specifications for refactorings that c-xrefactory should automate.
+For detailed discussions of refactoring feature architecture and implementation phases, see link:16a-planned-refactorings.adoc[Chapter 16a: Planned Refactoring Features].
 
-This chapter also lists potential refactorings that have not yet been decided or designed.
+=== Existing Refactorings
 
-=== Move Type to New File
+Refactorings that are already implemented and available.
+
+==== Rename Symbol
+
+Implemented. TBD.
+
+==== Extract Function
+
+Implemented. TBD.
+
+==== Reorder Parameters
+
+Implemented. TBD.
+
+==== Make Function Static
+
+**Purpose:** Convert functions that are only used within their compilation unit to `static` storage class for better encapsulation and compiler optimization.
+
+**When to use:**
+
+- Function has external linkage but no external callers
+- Want to make implementation details explicit
+- Enable compiler optimizations and reduce global namespace pollution
+
+**Input:**
+
+- Non-static function definition
+- All references to that function
+
+**Availability:**
+
+When cursor is on a non-static function definition where all callers are in the same file.
+
+**Algorithm:**
+
+1. **Check current storage class** - Skip if already `static`
+
+2. **Find definition and all references**
+   - Locate function definition (not declarations)
+   - Collect all call sites across project
+
+3. **Verify all references are local**
+   - For each reference (excluding definition itself):
+     * Check if in same file as definition
+     * If any reference is in different file, abort
+   - Check if declared in header files (public API), abort if yes
+
+4. **Apply transformation**
+   - Find beginning of function definition
+   - Insert "static " before return type
+
+**Output:**
+
+- Function marked as `static`
+- Compiler can optimize more aggressively
+- Clear signal that function is internal
+
+**Example:**
+
+```c
+// Before - helper function with external linkage
+int helperCompare(const void *a, const void *b) {
+    return *(int*)a - *(int*)b;
+}
+
+void publicSort(int *array, size_t n) {
+    qsort(array, n, sizeof(int), helperCompare);
+}
+
+// After - explicitly internal
+static int helperCompare(const void *a, const void *b) {
+    return *(int*)a - *(int*)b;
+}
+
+void publicSort(int *array, size_t n) {
+    qsort(array, n, sizeof(int), helperCompare);
+}
+```
+
+**Benefits:**
+
+- Better encapsulation and code clarity
+- Enables inlining and other compiler optimizations
+- Smaller symbol tables, no name collisions
+- Safe to refactor (can't break external code)
+
+**Notes:**
+
+- Similar to "Unused Symbols" detection but finds LOCAL-ONLY usage instead of NO usage
+- Cannot handle functions used via function pointers passed externally (requires manual verification)
+
+=== Suggested Refactorings
+
+Refactorings that have been proposed, designed, or partially implemented but are not yet available.
+
+==== Move Type to New File
 
 **Input:**
 
@@ -165,7 +260,7 @@ void pushEmptySession(ReferencesStack *stack);  // Generic operation
 
 ---
 
-=== Rename Included File
+==== Rename Included File
 
 **Purpose:** Rename a file appearing in an include and update all the include directives
 
@@ -197,73 +292,25 @@ When the cursor is on an `#include` directive. The file it references will be th
 
 ---
 
-=== Move Function to Different File
+==== Move Function to Different File
 
-**Purpose:** ...
+See link:16a-planned-refactorings.adoc[Chapter 16a: Planned Refactoring Features] for detailed design and implementation status.
 
-**When to use:**
+Proposed refactoring to move a function definition from one C source file to another while automatically managing visibility (static vs extern) and potentially adding necessary declarations and includes.
 
-- ...
-
-**Input:**
-
-- ...
-
-**Algorithm:**
-
-1. **Step 1**
-2.
-
-**Output:**
-
-- ...
-
-**Example:**
-
-TBD.
-
-```c
-// Before ...
-```
-
-After introducing semantic aliases:
-
-```c
-// After ...
-```
-
-**Benefits:**
-
-- ...
-
-**Notes:**
-
-- ...
+**Status**: Phase 1 MVP complete.
 
 ---
 
-=== Rename Symbol
-
-Implemented. TBD.
-
-=== Extract Function
-
-Implemented. TBD.
-
-=== Reorder Parameters
-
-Imlemented. TBD.
-
-=== Turn include guard into pragma once
+==== Turn include guard into pragma once
 
 Tentative.
 
-=== Change return type
-
-Tentative.
 ---
 
-=== Make Function Static
+==== Change return type
+
+Tentative.
 
 **Purpose:** Convert functions that are only used within their compilation unit to `static` storage class for better encapsulation and compiler optimization.
 
