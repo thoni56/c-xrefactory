@@ -2219,11 +2219,11 @@ case 2:
 break;
 case 3:
 #line 217 "c_parser.y"
-{ yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeBoolean); yyval.ast_expressionType.data.reference = NULL;}
+{ yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeBool); yyval.ast_expressionType.data.reference = NULL;}
 break;
 case 4:
 #line 218 "c_parser.y"
-{ yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeBoolean); yyval.ast_expressionType.data.reference = NULL;}
+{ yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeBool); yyval.ast_expressionType.data.reference = NULL;}
 break;
 case 5:
 #line 219 "c_parser.y"
@@ -3029,7 +3029,7 @@ case 158:
 break;
 case 159:
 #line 778 "c_parser.y"
-{ yyval.ast_unsigned.data = TypeBoolean; }
+{ yyval.ast_unsigned.data = TypeBool; }
 break;
 case 160:
 #line 782 "c_parser.y"

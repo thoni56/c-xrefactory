@@ -2868,11 +2868,11 @@ case 143:
 break;
 case 144:
 #line 423 "yacc_parser.y"
-{ yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeBoolean); yyval.ast_expressionType.data.reference = NULL;}
+{ yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeBool); yyval.ast_expressionType.data.reference = NULL;}
 break;
 case 145:
 #line 424 "yacc_parser.y"
-{ yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeBoolean); yyval.ast_expressionType.data.reference = NULL;}
+{ yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeBool); yyval.ast_expressionType.data.reference = NULL;}
 break;
 case 146:
 #line 425 "yacc_parser.y"
@@ -3678,7 +3678,7 @@ case 299:
 break;
 case 300:
 #line 984 "yacc_parser.y"
-{ yyval.ast_unsigned.data = TypeBoolean; }
+{ yyval.ast_unsigned.data = TypeBool; }
 break;
 case 301:
 #line 988 "yacc_parser.y"

@@ -121,7 +121,7 @@ static void setAvailableRefactorings(Symbol *symbol, Usage usage) {
     case TypeAnonymousField:
     case TypeArray:
     case TypeBlockMarker:
-    case TypeBoolean:
+    case TypeBool:
     case TypeByte:
     case TypeChar:
     case TypeCppCollate:

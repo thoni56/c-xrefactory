@@ -73,7 +73,7 @@
         ENUM(TypeByte)                                                  \
         ENUM(TypeShort)                                                 \
         ENUM(TypeLong)                                                  \
-        ENUM(TypeBoolean)                                               \
+        ENUM(TypeBool)                                                  \
         ENUM(TypeNull)                                                  \
         ENUM(MAX_CTYPE)                                                 \
         ENUM(TypeMacro)                                                 \

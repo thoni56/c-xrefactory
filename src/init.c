@@ -199,7 +199,7 @@ static int preCreatedTypesInitTable[] = {
     TypeByte,
     TypeShort,
     TypeLong,
-    TypeBoolean,
+    TypeBool,
     TypeNull,
     -1,
 };
@@ -253,7 +253,7 @@ static Int2StringDictionary typeNamesInitTable[] = {
     {TypeByte,              "byte"},
     {TypeShort,             "short"},
     {TypeLong,              "long"},
-    {TypeBoolean,           "boolean"},
+    {TypeBool,              "boolean"},
     {TypeNull,              "null"},
 
     {TypeLabel,             "label"},

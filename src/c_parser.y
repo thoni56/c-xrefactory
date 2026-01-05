@@ -214,8 +214,8 @@ primary_expr
         }
     }
     | CHAR_LITERAL          { $$.data.typeModifier = newSimpleTypeModifier(TypeInt); $$.data.reference = NULL;}
-    | TRUE_LITERAL          { $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean); $$.data.reference = NULL;}
-    | FALSE_LITERAL         { $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean); $$.data.reference = NULL;}
+    | TRUE_LITERAL          { $$.data.typeModifier = newSimpleTypeModifier(TypeBool); $$.data.reference = NULL;}
+    | FALSE_LITERAL         { $$.data.typeModifier = newSimpleTypeModifier(TypeBool); $$.data.reference = NULL;}
     | NULL_LITERAL          { $$.data.typeModifier = newSimpleTypeModifier(TypeNull); $$.data.reference = NULL;}
     | CONSTANT              { $$.data.typeModifier = newSimpleTypeModifier(TypeInt); $$.data.reference = NULL;}
     | LONG_CONSTANT         { $$.data.typeModifier = newSimpleTypeModifier(TypeLong); $$.data.reference = NULL;}
@@ -775,7 +775,7 @@ type_specifier1
     | FLOAT     { $$.data = TypeFloat; }
     | DOUBLE    { $$.data = TypeDouble; }
     | VOID      { $$.data = TypeVoid; }
-    | _BOOL     { $$.data = TypeBoolean; }
+    | _BOOL     { $$.data = TypeBool; }
     ;
 
 type_specifier2
