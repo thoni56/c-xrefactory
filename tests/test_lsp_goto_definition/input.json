@@ -4,7 +4,7 @@
         "id": 1,
         "method": "initialize",
         "params": {
-            "rootUri": "file:///home/thoni/Utveckling/c-xrefactory/tests/test_lsp_goto_definition",
+            "rootUri": "file://CURDIR",
             "capabilities": {}
         }
     },
@@ -14,7 +14,7 @@
         "method": "textDocument/didOpen",
         "params": {
             "textDocument": {
-                "uri": "file:///home/thoni/Utveckling/c-xrefactory/tests/test_lsp_goto_definition/source.c",
+                "uri": "file://CURDIR/source.c",
                 "languageId": "c",
                 "version": 1,
                 "text": "int myFunction(int x) {\n    return x * 2;\n}\n\nint main(void) {\n    int result = myFunction(42);\n    return result;\n}\n"
@@ -27,7 +27,7 @@
         "method": "textDocument/definition",
         "params": {
             "textDocument": {
-                "uri": "file:///home/thoni/Utveckling/c-xrefactory/tests/test_lsp_goto_definition/source.c"
+                "uri": "file://CURDIR/source.c"
             },
             "position": {
                 "line": 5,

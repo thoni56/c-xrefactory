@@ -12,4 +12,4 @@ trace: ARGUMENTS+=-debug -log=log
 trace: $(TEST)
 
 input.lsp: input.json
-	../../utils/lsp_driver.py input.json > input.lsp
+	../../utils/lsp_driver.py input.json --curdir=$(CURDIR) > input.lsp
