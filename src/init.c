@@ -22,6 +22,8 @@ typedef struct tokenNameIni {
 } TokenNamesInitTable;
 
 
+/* Order among synonyms/aliases is important, the last one will be shown as the
+ * alternative when completing. This table includes the canonical token names. */
 static TokenNamesInitTable tokenNamesCanonical[] = {
     {"asm",         ASM_KEYWORD,	LANG_C | LANG_YACC},
     {"auto",        AUTO,			LANG_C | LANG_YACC},
@@ -62,16 +64,12 @@ static TokenNamesInitTable tokenNamesCanonical[] = {
     {"while",       WHILE,			LANG_C | LANG_YACC},
 
     /* Order of synonyms is important for completion - the last one will be picked as suggestion */
-    {"__restrict",  RESTRICT,       LANG_C},
-    {"__restrict__",RESTRICT,       LANG_C},
     {"restrict",    RESTRICT,		LANG_C},
 
     {"_Atomic",     _ATOMIC,		LANG_C},
-    {"_Bool",       _BOOL,			LANG_C},
     {"bool",        _BOOL,			LANG_C},
     {"_Noreturn",   _NORETURN,		LANG_C},
     {"_Thread_local", _THREADLOCAL,	LANG_C},
-    {"_Static_assert", _STATIC_ASSERT, LANG_C},
     {"static_assert", _STATIC_ASSERT, LANG_C},
 
     /*
@@ -149,7 +147,7 @@ static TokenNamesInitTable tokenNamesCanonical[] = {
     {NULL,                0,                LANG_C}         /* sentinel*/
 };
 
-static TokenNamesInitTable tokenNamesGccAliases[] = {
+static TokenNamesInitTable tokenNamesAliases[] = {
     {"__const",         CONST,				LANG_C | LANG_YACC},
     {"__const__",       CONST,				LANG_C | LANG_YACC},
     {"__signed",        SIGNED,				LANG_C | LANG_YACC},
@@ -161,6 +159,10 @@ static TokenNamesInitTable tokenNamesGccAliases[] = {
     {"__asm",           ASM_KEYWORD,		LANG_C},
     {"__asm__",         ASM_KEYWORD,		LANG_C},
     {"__label__",       LABEL,				LANG_C},
+    {"__restrict",      RESTRICT,           LANG_C},
+    {"__restrict__",    RESTRICT,           LANG_C},
+    {"_Bool",           _BOOL,              LANG_C},
+    {"_Static_assert",  _STATIC_ASSERT,     LANG_C},
     {NULL,              0,					LANG_C}         /* sentinel*/
 };
 
@@ -306,9 +308,9 @@ static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
 
 void initTokenNamesTables(void) {
 
-    initTokensFromTable(tokenNamesGccAliases);
+    initTokensFromTable(tokenNamesAliases);
 
-    /* regular tokentab at last, because we wish to have correct names */
+    /* Canonical token names last, because we wish to show them when completing */
     initTokensFromTable(tokenNamesCanonical);
 
     /* and add the 'defined' keyword for #if */
