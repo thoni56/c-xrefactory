@@ -339,8 +339,12 @@ yacc_parser.tokens: yacc_parser.y
 	cat yacc_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > yacc_parser.tokens
 
 # Ensure they are extracted by making the parser object files dependent on them
-$(OBJDIR)/c_parser.tab.o : c_parser.tokens
-$(OBJDIR)/yacc_parser.tab.o : yacc_parser.tokens
+$(OBJDIR)/c_parser.tab.o : c_parser.tokens lexem.h
+$(OBJDIR)/yacc_parser.tab.o : yacc_parser.tokens lexem.h
+
+# All object files depend on the generated lexem.h (which is generated from c_parser.tab.h)
+# This ensures that when enum values change, all files that use them are recompiled
+$(OBJS): lexem.h
 
 # And compare the three token sections to ensure that they are exactly the same
 .PHONY:check-tokens
@@ -544,17 +548,21 @@ watch-for-unittests:
 watch-for-unittests-silent:
 	watchexec --no-vcs-ignore -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- make -j$(JOBS) unit
 
-.PHONY: watch-for-build
-watch-for-build:
+.PHONY: watch-for-build-only
+watch-for-build-only:
 	watchexec --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Build make -j$(JOBS) c-xref
+
+.PHONY: watch-for-systemtests-only
+watch-for-systemtests-only:
+	watchexec --no-vcs-ignore -f '*/.build.done' -- execnotify -t Systemtests make -j$(JOBS) system-tests-proper
 
 .PHONY: watch-for-systemtests
 watch-for-systemtests:
-	watchexec --no-vcs-ignore -f '*/.build.done' -- execnotify -t Systemtests make -j$(JOBS) system-tests-proper
+	watchexec --no-vcs-ignore -f '*/.unittests.done' -- make -j system-tests
 
 .PHONY: watch-for-systemtests-silent
 watch-for-systemtests-silent:
-	watchexec --no-vcs-ignore -e done -- make -j$(JOBS) system-tests-proper
+	watchexec --no-vcs-ignore -f '*/.unittests.done' -- make -j$(JOBS) system-tests-proper
 
 .PHONY: system-tests-proper
 system-tests-proper:

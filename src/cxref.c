@@ -122,7 +122,6 @@ static void setAvailableRefactorings(Symbol *symbol, Usage usage) {
     case TypeArray:
     case TypeBlockMarker:
     case TypeBool:
-    case TypeByte:
     case TypeChar:
     case TypeCppCollate:
     case TypeCppDefinedOp:
@@ -147,7 +146,6 @@ static void setAvailableRefactorings(Symbol *symbol, Usage usage) {
     case TypeNull:
     case TypePackedType:
     case TypePointer:
-    case TypeShort:
     case TypeShortInt:
     case TypeShortSignedInt:
     case TypeShortUnsignedInt:

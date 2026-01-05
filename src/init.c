@@ -196,8 +196,6 @@ static int preCreatedTypesInitTable[] = {
     TmodLongSigned,
     TmodLongUnsigned,
     /* JAVA_TYPES, */
-    TypeByte,
-    TypeShort,
     TypeLong,
     TypeBool,
     TypeNull,
@@ -250,8 +248,6 @@ static Int2StringDictionary typeNamesInitTable[] = {
 
     {TypeElipsis,           "elipsis"},
 
-    {TypeByte,              "byte"},
-    {TypeShort,             "short"},
     {TypeLong,              "long"},
     {TypeBool,              "boolean"},
     {TypeNull,              "null"},

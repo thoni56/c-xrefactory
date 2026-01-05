@@ -70,8 +70,6 @@
         ENUM(TmodLongUnsigned)                                          \
         ENUM(TYPE_MODIFIERS_END)                                        \
         ENUM(TypeElipsis)                                               \
-        ENUM(TypeByte)                                                  \
-        ENUM(TypeShort)                                                 \
         ENUM(TypeLong)                                                  \
         ENUM(TypeBool)                                                  \
         ENUM(TypeNull)                                                  \
