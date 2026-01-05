@@ -1,12 +1,11 @@
 
 Symbol: referenceItem.vApplClass
   References: 27
+    CURDIR/src/completion.c:64:51
     CURDIR/src/cxfile.c:269:59
     CURDIR/src/cxfile.c:330:49
     CURDIR/src/cxfile.c:331:51
     CURDIR/src/cxfile.c:395:38
-    CURDIR/src/reftab.c:18:15
-    CURDIR/src/reftab.c:18:31
     CURDIR/src/cxref.c:1168:38
     CURDIR/src/cxref.c:1168:53
     CURDIR/src/cxref.c:1773:48
@@ -17,8 +16,6 @@ Symbol: referenceItem.vApplClass
     CURDIR/src/cxref.c:2371:54
     CURDIR/src/cxref.c:2406:57
     CURDIR/src/cxref.c:2421:81
-    CURDIR/src/completion.c:64:51
-    CURDIR/src/reference.c:35:20
     CURDIR/src/menu.c:114:12
     CURDIR/src/menu.c:114:29
     CURDIR/src/menu.c:116:17
@@ -27,4 +24,7 @@ Symbol: referenceItem.vApplClass
     CURDIR/src/menu.c:148:70
     CURDIR/src/misc.c:54:29
     CURDIR/src/misc.c:335:83
+    CURDIR/src/reference.c:35:20
     CURDIR/src/reference.h:29:30
+    CURDIR/src/reftab.c:18:15
+    CURDIR/src/reftab.c:18:31

@@ -197,6 +197,7 @@ def extract_symbols(cxref_path, symbol_names):
 
     target_symbols = set(symbol_names)
     found_any = False
+    collected_symbols = []
 
     if not os.path.exists(cxref_path):
         eprint(f"Error: {cxref_path} does not exist")
@@ -219,15 +220,26 @@ def extract_symbols(cxref_path, symbol_names):
                 lines = skip_header(lines)
                 symbols = unpack_symbols(lines)
 
-                # Filter and print matching symbols
+                # Collect matching symbols
                 for sym in symbols:
                     if sym.symbolname in target_symbols:
                         found_any = True
-                        print(f"\nSymbol: {sym.symbolname}")
-                        print(f"  References: {len(sym.references)}")
-                        for ref in sym.references:
-                            filename = get_filename_from_id(ref.fileid, files)
-                            print(f"    {filename}:{ref.lineno}:{ref.colno}")
+                        collected_symbols.append(sym)
+
+        # Sort symbols by name, then print them
+        collected_symbols.sort(key=lambda s: s.symbolname)
+        for sym in collected_symbols:
+            print(f"\nSymbol: {sym.symbolname}")
+            print(f"  References: {len(sym.references)}")
+            # Sort references by filename, line, column
+            sorted_refs = sorted(sym.references, key=lambda r: (
+                os.path.basename(get_filename_from_id(r.fileid, files)),
+                r.lineno if r.lineno else 0,
+                r.colno if r.colno else 0
+            ))
+            for ref in sorted_refs:
+                filename = get_filename_from_id(ref.fileid, files)
+                print(f"    {filename}:{ref.lineno}:{ref.colno}")
 
     else:
         # Single file mode
@@ -236,14 +248,26 @@ def extract_symbols(cxref_path, symbol_names):
         (files, lines) = unpack_file_lines(lines)
         symbols = unpack_symbols(lines)
 
+        # Collect and sort matching symbols
         for sym in symbols:
             if sym.symbolname in target_symbols:
                 found_any = True
-                print(f"\nSymbol: {sym.symbolname}")
-                print(f"  References: {len(sym.references)}")
-                for ref in sym.references:
-                    filename = get_filename_from_id(ref.fileid, files)
-                    print(f"    {filename}:{ref.lineno}:{ref.colno}")
+                collected_symbols.append(sym)
+
+        # Sort symbols by name, then print them
+        collected_symbols.sort(key=lambda s: s.symbolname)
+        for sym in collected_symbols:
+            print(f"\nSymbol: {sym.symbolname}")
+            print(f"  References: {len(sym.references)}")
+            # Sort references by filename, line, column
+            sorted_refs = sorted(sym.references, key=lambda r: (
+                os.path.basename(get_filename_from_id(r.fileid, files)),
+                r.lineno if r.lineno else 0,
+                r.colno if r.colno else 0
+            ))
+            for ref in sorted_refs:
+                filename = get_filename_from_id(ref.fileid, files)
+                print(f"    {filename}:{ref.lineno}:{ref.colno}")
 
     if not found_any:
         print(f"No symbols found matching: {', '.join(symbol_names)}", file=sys.stderr)
