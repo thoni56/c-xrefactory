@@ -1,16 +1,15 @@
 #include "init.h"
 
-#include <string.h>
 #include <ctype.h>
+#include <string.h>
 
-#include "globals.h"
-#include "options.h"
-#include "lexem.h"
-
-#include "log.h"
 #include "commons.h"
+#include "globals.h"
+#include "lexem.h"
+#include "log.h"
 #include "storage.h"
 #include "symboltable.h"
+
 
 /* *********************************************************************** */
 /* ********************* TABLES TO INIT TABLES *************************** */
@@ -22,13 +21,8 @@ typedef struct tokenNameIni {
     unsigned    languages;
 } TokenNamesInitTable;
 
-typedef struct typeCharCodeIni {
-    int         symType;
-    char		code;
-} TypeCharCodeInit;
 
-
-static TokenNamesInitTable tokenNameInitTable1[] = {
+static TokenNamesInitTable tokenNamesCanonical[] = {
     {"asm",         ASM_KEYWORD,	LANG_C | LANG_YACC},
     {"auto",        AUTO,			LANG_C | LANG_YACC},
     {"enum",        ENUM,			LANG_C | LANG_YACC},
@@ -155,7 +149,7 @@ static TokenNamesInitTable tokenNameInitTable1[] = {
     {NULL,                0,                LANG_C}         /* sentinel*/
 };
 
-static TokenNamesInitTable tokenNameInitTableNonAnsi[] = {
+static TokenNamesInitTable tokenNamesGccAliases[] = {
     {"__const",         CONST,				LANG_C | LANG_YACC},
     {"__const__",       CONST,				LANG_C | LANG_YACC},
     {"__signed",        SIGNED,				LANG_C | LANG_YACC},
@@ -167,24 +161,6 @@ static TokenNamesInitTable tokenNameInitTableNonAnsi[] = {
     {"__asm",           ASM_KEYWORD,		LANG_C},
     {"__asm__",         ASM_KEYWORD,		LANG_C},
     {"__label__",       LABEL,				LANG_C},
-    {"__near",          ANONYMOUS_MODIFIER,	LANG_C | LANG_YACC},
-    {"__far",           ANONYMOUS_MODIFIER,	LANG_C | LANG_YACC},
-    {"__pascal",        ANONYMOUS_MODIFIER,	LANG_C | LANG_YACC},
-    {"_near",           ANONYMOUS_MODIFIER,	LANG_C | LANG_YACC},
-    {"_far",            ANONYMOUS_MODIFIER,	LANG_C | LANG_YACC},
-    {"_pascal",         ANONYMOUS_MODIFIER,	LANG_C | LANG_YACC},
-    {"_const",          ANONYMOUS_MODIFIER,	LANG_C | LANG_YACC},
-    {"__near",          ANONYMOUS_MODIFIER,	LANG_C | LANG_YACC},
-    {"__far",           ANONYMOUS_MODIFIER,	LANG_C | LANG_YACC},
-    {"__pascal",        ANONYMOUS_MODIFIER,	LANG_C | LANG_YACC},
-    {"__cdecl",         ANONYMOUS_MODIFIER,	LANG_C | LANG_YACC},
-    {"__fastcall",      ANONYMOUS_MODIFIER,	LANG_C | LANG_YACC},
-    {"__stdcall",       ANONYMOUS_MODIFIER,	LANG_C | LANG_YACC},
-    {"__int8",          INT,				LANG_C | LANG_YACC},
-    {"__int16",         INT,				LANG_C | LANG_YACC},
-    {"__int32",         INT,				LANG_C | LANG_YACC},
-    {"__int64",         INT,				LANG_C | LANG_YACC},
-    {"__int128",        INT,				LANG_C | LANG_YACC},
     {NULL,              0,					LANG_C}         /* sentinel*/
 };
 
@@ -329,17 +305,14 @@ static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
 
 
 void initTokenNamesTables(void) {
-    Symbol *symbolP;
 
-    if (!options.strictAnsi) {
-        initTokensFromTable(tokenNameInitTableNonAnsi);
-    }
+    initTokensFromTable(tokenNamesGccAliases);
 
     /* regular tokentab at last, because we wish to have correct names */
-    initTokensFromTable(tokenNameInitTable1);
+    initTokensFromTable(tokenNamesCanonical);
 
     /* and add the 'defined' keyword for #if */
-    symbolP = newSymbol("defined", noPosition);
+    Symbol *symbolP = newSymbol("defined", noPosition);
     symbolP->type = TypeCppDefinedOp;
     symbolP->storage = StorageDefault;
     symbolTableAdd(symbolTable, symbolP);

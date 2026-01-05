@@ -56,7 +56,7 @@ _Thread_local  :keyword
 _Noreturn      :keyword
 inline         :keyword
 asm            :keyword
-__stdcall      :keyword</all-completions>
+__inline__     :keyword</all-completions>
 -exit
 end-of-options
 

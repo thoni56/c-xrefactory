@@ -88,7 +88,6 @@ Options presetOptions = {
     NULL,                       // browsed symbol name
     0,
     1,                          // cxMemoryFactor
-    0,                          /* strict ansi */
     NULL,                       /* project */
     "0:3",                      // olcxlccursor
     "",                         /* olcxSearchString */
@@ -1636,8 +1635,6 @@ static bool processSOption(int *argi, ArgumentsVector args) {
     int i = *argi;
 
     if (0) {}
-    else if (strcmp(args.argv[i], "-strict")==0)
-        options.strictAnsi = true;
     else if (strcmp(args.argv[i], "-stdop")==0) {
         i = handleIncludeOption(i, args);
     }

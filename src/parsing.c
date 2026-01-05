@@ -43,7 +43,6 @@ ParserOperation getParserOperation(ServerOperation serverOp) {
 void syncParsingConfigFromOptions(Options options) {
     parsingConfig.includeDirs = options.includeDirs;
     parsingConfig.defines = options.definitionStrings;
-    parsingConfig.strictAnsi = options.strictAnsi;
     parsingConfig.operation = getParserOperation(options.serverOperation);
     parsingConfig.cursorOffset = options.cursorOffset;
     parsingConfig.markOffset = options.markOffset;

@@ -105,7 +105,6 @@ typedef struct options {
     char *browsedName;
     int lineNumberOfMenuSelection;
     int cxMemoryFactor;
-    bool strictAnsi;
     char *project;
     char *olcxlccursor;
     char *olcxSearchString;

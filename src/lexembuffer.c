@@ -287,17 +287,9 @@ void putStringConstantLexem(LexemBuffer *lb, CharacterBuffer *cb, int lexemStart
             cb->lineNumber++;
             cb->lineBegin    = cb->nextUnread;
             cb->columnOffset = 0;
-            if (options.strictAnsi && (options.debug || options.errors)) {
-                warningMessage(ERR_ST, "string constant through end of line");
-            }
         }
-        // in Java CR LF can't be a part of string, even there
-        // are benchmarks making Xrefactory coredump if CR or LF
-        // is a part of strings
-    } while (ch != '\"' && (ch != '\n' || !options.strictAnsi) && ch != -1);
-    if (ch == -1 && options.mode != ServerMode) {
-        warningMessage(ERR_ST, "string constant through EOF");
-    }
+    } while (ch != '\"' && ch != -1); /* Permissively allows strings to span newlines, as GCC allows */
+
     terminateLexemString(lb);
     putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
     putLexemLines(lb, lineNumberFrom(cb) - line);
