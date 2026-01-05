@@ -36,14 +36,15 @@ $(TEST):
 	fi
 	sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" c-xrefrc.tpl > .c-xrefrc
 	../run-with-progress $(COMMAND) || exit 1
-	../../utils/cxref_extract $(IDENTIFIERS) > output
+	../../utils/cxref_extract CXrefs $(IDENTIFIERS) > output.tmp
+	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
 expected:
 	rm -rf CXrefs systemd.log
 	sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" c-xrefrc.tpl > .c-xrefrc
 	../run-with-progress $(COMMAND)
-	../../utils/cxref_extract $(IDENTIFIERS) > expected
+	../../utils/cxref_extract CXrefs $(IDENTIFIERS) > expected
 
 trace: ARGUMENTS += -debug -log=log
 trace: $(TEST)
