@@ -158,7 +158,6 @@ static void initStandardCxrefFileName(char *inputfile) {
 
 static void initializationsPerInvocation(void) {
     parsedInfo = (ParsedInfo){0,};
-    cxRefPosition = NO_POSITION;
     completionPositionFound = false;
     completionStringServed = false;
     completionStringInMacroBody = NULL;

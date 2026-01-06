@@ -17,6 +17,8 @@
 #include "match.h"
 #include "misc.h"
 #include "options.h"
+#include "parsing.h"
+#include "position.h"
 #include "ppc.h"
 #include "proto.h"
 #include "protocol.h"
@@ -238,13 +240,14 @@ static void getBareName(char *name, char **start, int *len) {
 }
 
 /* ********************************************************************* */
-Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage usage, int includedFileNumber) {
+Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage usage,
+                                      int includedFileNumber) {
     Visibility        visibility;
     Scope             scope;
     Storage           storage;
     Usage             defaultUsage;
     Reference       **place;
-    Position         defaultPosition;
+    Position          defaultPosition;
 
     // do not record references during prescanning
     // this is because of cxMem overflow during prescanning (for ex. with -html)
@@ -322,14 +325,9 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
     }
 
     place = addToReferenceList(&foundMember->references, position, usage);
-    log_debug("checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s",
-              getFileItemWithFileNumber(cxRefPosition.file)->name, cxRefPosition.file, cxRefPosition.line,
-              cxRefPosition.col, fileItem->name, position.file, position.line, position.col,
-              memcmp(&cxRefPosition, &position, sizeof(Position)), positionsAreEqual(cxRefPosition, position),
-              usage, symbol->linkName);
 
     if (options.mode == ServerMode
-        && positionsAreEqual(cxRefPosition, position)
+        && positionsAreEqual(parsingConfig.cursorPosition, position)
         && isVisibleUsage(usage)
     ) {
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!

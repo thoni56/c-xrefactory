@@ -4669,7 +4669,7 @@ case 494:
         if (parsedInfo.function != NULL
             && parsedInfo.function->position.file != NO_FILE_NUMBER
             && parsingConfig.operation == PARSE_TO_GET_FUNCTION_BOUNDS
-            && positionIsBetween(cxRefPosition, yyvsp[-2].ast_symbol.begin, yyvsp[0].ast_position.end)) {
+            && positionIsBetween(parsingConfig.cursorPosition, yyvsp[-2].ast_symbol.begin, yyvsp[0].ast_position.end)) {
             /* We just finished parsing a function that contains the cursor position.
              * Record the function boundaries using the positions from the grammar.
              * $1.begin is the start of function_definition_head

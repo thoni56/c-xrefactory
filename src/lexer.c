@@ -452,7 +452,7 @@ static int postProcessLexemForServerOperations(CharacterBuffer *cb, LexemBuffer 
             if (currentLexemFileOffset <= parsingConfig.cursorOffset
                 && fileOffsetFor(cb) >= parsingConfig.cursorOffset) {
                 if (needsReferenceAtCursor(parsingConfig.operation)) {
-                    cxRefPosition = position;
+                    parsingConfig.cursorPosition = position;
                 }
             }
             if (parsingConfig.operation == PARSE_TO_VALIDATE_MOVE_TARGET) {

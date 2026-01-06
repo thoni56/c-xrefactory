@@ -26,6 +26,7 @@
 #include "options.h"
 #include "parsing.h"
 #include "parsers.h"
+#include "position.h"
 #include "referenceableitemtable.h"
 #include "semact.h"
 #include "stackmemory.h"
@@ -788,7 +789,7 @@ static void handleMacroDefinitionParameterPositions(int argi, Position macroPosi
                                                     Position position, Position endPosition,
                                                     bool final) {
     if (parsingConfig.operation == PARSE_TO_TRACK_PARAMETERS
-        && positionsAreEqual(macroPosition, cxRefPosition)) {
+        && positionsAreEqual(macroPosition, parsingConfig.cursorPosition)) {
         if (final) {
             if (argi==0) {
                 setParamPositionForFunctionWithoutParams(beginPosition);
@@ -808,7 +809,7 @@ static void handleMacroUsageParameterPositions(int argumentIndex, Position macro
                                                bool final
 ) {
     if (parsingConfig.operation == PARSE_TO_TRACK_PARAMETERS
-        && positionsAreEqual(macroPosition, cxRefPosition)) {
+        && positionsAreEqual(macroPosition, parsingConfig.cursorPosition)) {
         log_debug("checking param %d at %d,%d, final==%d", argumentIndex, beginPosition.col, endPosition.col,
                   final);
         if (final) {
@@ -1029,7 +1030,7 @@ protected void processDefineDirective(bool hasArguments) {
                 putLexemPositionAndAdvance(position, &lexemDestination);
             } else {
                 if (lexem==IDENT_TO_COMPLETE
-                    || (lexem == IDENTIFIER && positionsAreEqual(position, cxRefPosition))) {
+                    || (lexem == IDENTIFIER && positionsAreEqual(position, parsingConfig.cursorPosition))) {
                     completionPositionFound = true;
                     completionStringInMacroBody = symbol->linkName;
                 }

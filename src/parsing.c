@@ -47,6 +47,7 @@ void syncParsingConfigFromOptions(Options options) {
     parsingConfig.markOffset = options.markOffset;
     parsingConfig.extractMode = options.extractMode;
     parsingConfig.targetParameterIndex = options.olcxGotoVal;
+    parsingConfig.cursorPosition = NO_POSITION;
 }
 
 bool needsReferenceAtCursor(ParserOperation op) {
@@ -143,7 +144,7 @@ void initializeParsingSubsystem(void) {
 static void setupParsingConfigForCreateReferences(void) {
     /* Configure parser to just create references, no cursor-specific operations */
     parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
-    parsingConfig.cursorPosition = makePosition(NO_FILE_NUMBER, 0, 0);
+    parsingConfig.cursorPosition = NO_POSITION;
     parsingConfig.cursorOffset = -1;
     parsingConfig.markOffset = -1;
     parsingConfig.includeDirs = NULL;  /* TODO: Get from LSP initialize params or .c-xrefrc */
@@ -151,9 +152,6 @@ static void setupParsingConfigForCreateReferences(void) {
     parsingConfig.strictAnsi = false;
     parsingConfig.extractMode = EXTRACT_FUNCTION;  /* Doesn't matter for CREATE_REFERENCES */
     parsingConfig.targetParameterIndex = 0;
-
-    /* Set global cxRefPosition to match parsingConfig.cursorPosition */
-    cxRefPosition = parsingConfig.cursorPosition;
 }
 
 void parseToCreateReferences(const char *fileName, Language language) {

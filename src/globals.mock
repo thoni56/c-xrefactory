@@ -73,8 +73,6 @@ Position parameterPosition;
 Position parameterBeginPosition;
 Position parameterEndPosition;
 
-Position cxRefPosition;
-
 int inputFileNumber;
 char *inputFileName;
 time_t fileProcessingStartTime;

@@ -38,8 +38,6 @@ Completions collectedCompletions;
 
 /* **************** cached symbols ********************** */
 
-Position cxRefPosition;         /* Maybe the position that we consider us "on"? */
-
 time_t fileProcessingStartTime;
 
 Language currentLanguage;

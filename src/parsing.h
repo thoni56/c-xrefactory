@@ -19,7 +19,7 @@
  *   c_parser.y / yacc_parser.y (parsing infrastructure)
  *     │
  *     ├─→ yylex.c / lexer.c (tokenization)
- *     │   └─→ needsReferenceAtCursor() → sets cxRefPosition
+ *     │   └─→ needsReferenceAtCursor() → collects the position of the reference the cursor is inside
  *     │
  *     ├─→ semact.c (core semantic actions - called from grammar rules)
  *     │   ├─→ symbol tables, type checking

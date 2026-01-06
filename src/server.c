@@ -173,7 +173,7 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
         // special case, push the file as include reference
         if (needsReferenceDatabase(options.serverOperation)) {
             Position position = makePosition(inputFileNumber, 1, 0);
-            cxRefPosition = position;
+            parsingConfig.cursorPosition = position;
             addFileAsIncludeReference(inputFileNumber);
         }
     }

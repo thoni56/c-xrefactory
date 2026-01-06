@@ -9,6 +9,7 @@
 #include "options.h"
 #include "parsing.h"
 #include "misc.h"
+#include "position.h"
 #include "proto.h"
 #include "storage.h"
 #include "type.h"
@@ -427,7 +428,7 @@ void addFunctionParameterToSymbolTable(SymbolTable *table, Symbol *function, Sym
     }
     if (parsingConfig.operation == PARSE_TO_TRACK_PARAMETERS
         && parameterIndex == parsingConfig.targetParameterIndex
-        && positionsAreEqual(function->position, cxRefPosition))
+        && positionsAreEqual(function->position, parsingConfig.cursorPosition))
     {
         parameterPosition = parameter->position;
     }
@@ -897,7 +898,7 @@ void handleDeclaratorParamPositions(Symbol *symbol, Position lparPosition,
         return;
     if (parsingConfig.operation != PARSE_TO_TRACK_PARAMETERS)
         return;
-    if (positionsAreNotEqual(symbol->position, cxRefPosition))
+    if (positionsAreNotEqual(symbol->position, parsingConfig.cursorPosition))
         return;
     handleParameterPositions(lparPosition, commaPositions, rparPositions, hasParameters, isVoid);
 }
@@ -909,7 +910,7 @@ void handleInvocationParameterPositions(Reference *reference, Position lparPosit
         return;
     if (parsingConfig.operation != PARSE_TO_TRACK_PARAMETERS)
         return;
-    if (reference==NULL || positionsAreNotEqual(reference->position, cxRefPosition))
+    if (reference==NULL || positionsAreNotEqual(reference->position, parsingConfig.cursorPosition))
         return;
     handleParameterPositions(lparPosition, commaPositions, rparPosition, hasParameters, false);
 }
