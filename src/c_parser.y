@@ -199,18 +199,17 @@ primary_expr
             $$.data.reference = handleFoundSymbolReference(symbol, $1.data->position, UsageUsed, NO_FILE_NUMBER);
         } else {
             /* implicit function declaration */
-            TypeModifier *modifier;
-            Symbol *newSymbol;
-            Symbol *definitionSymbol;
-
-            modifier = newTypeModifier(TypeInt, NULL, NULL);
+            TypeModifier *modifier = newTypeModifier(TypeInt, NULL, NULL);
             $$.data.typeModifier = newFunctionTypeModifier(NULL, NULL, modifier);
 
-            newSymbol = newSymbolAsType($1.data->name, $1.data->name, $1.data->position, $$.data.typeModifier);
+            Symbol *newSymbol = newSymbolAsType($1.data->name, $1.data->name, $1.data->position,
+                                                $$.data.typeModifier);
             newSymbol->storage = StorageExtern;
 
-            definitionSymbol = addNewSymbolDefinition(symbolTable, inputFileName, newSymbol, StorageExtern, UsageUsed);
-            $$.data.reference = handleFoundSymbolReference(definitionSymbol, $1.data->position, UsageUsed, NO_FILE_NUMBER);
+            Symbol *definitionSymbol = addNewSymbolDefinition(symbolTable, inputFileName, newSymbol,
+                                                              StorageExtern, UsageUsed);
+            $$.data.reference = handleFoundSymbolReference(definitionSymbol, $1.data->position,
+                                                           UsageUsed, NO_FILE_NUMBER);
         }
     }
     | CHAR_LITERAL          { $$.data.typeModifier = newSimpleTypeModifier(TypeInt); $$.data.reference = NULL;}
@@ -1105,10 +1104,7 @@ type_specifier_list0
 parameter_identifier_list
     : identifier_list                            { $$.data = $1.data; }
     | identifier_list ',' ELLIPSIS               {
-        Symbol *symbol;
-        Position pos = NO_POSITION;
-
-        symbol = newSymbol("", pos);
+        Symbol *symbol = newSymbol("", NO_POSITION);
         symbol->type = TypeElipsis;
         $$.data = $1.data;
 
@@ -1119,14 +1115,11 @@ parameter_identifier_list
 
 identifier_list
     : IDENTIFIER                                {
-        Symbol *symbol;
-        symbol = newSymbol($1.data->name, $1.data->position);
-        $$.data.symbol = symbol;
+        $$.data.symbol = newSymbol($1.data->name, $1.data->position);
         $$.data.positionList = NULL;
     }
     | identifier_list ',' identifier            {
-        Symbol *symbol;
-        symbol = newSymbol($3.data->name, $3.data->position);
+        Symbol *symbol = newSymbol($3.data->name, $3.data->position);
         $$.data = $1.data;
         LIST_APPEND(Symbol, $$.data.symbol, symbol);
         appendPositionToList(&$$.data.positionList, $2.data);
@@ -1137,10 +1130,7 @@ identifier_list
 parameter_type_list
     : parameter_list                             { $$.data = $1.data; }
     | parameter_list ',' ELLIPSIS                {
-        Symbol *symbol;
-        Position position = NO_POSITION;
-
-        symbol = newSymbol("", position);
+        Symbol *symbol = newSymbol("", NO_POSITION);
         symbol->type = TypeElipsis;
         $$.data = $1.data;
 
@@ -1584,8 +1574,6 @@ external_definition
     : declaration_specifiers ';'
     | top_init_declarations ';'
     | function_definition_head {
-        Symbol *symbol;
-        int i;
         assert($1.data);
         // I think that due to the following line sometimes
         // storage was not extern, see 'addNewSymbolDef'
@@ -1598,12 +1586,15 @@ external_definition
         assert($1.data->typeModifier && $1.data->typeModifier->type == TypeFunction);
         parsedInfo.function = $1.data;
         generateInternalLabelReference(-1, UsageDefined);
-        for (symbol=$1.data->typeModifier->args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
+
+        int i = 1;
+        for (Symbol *symbol=$1.data->typeModifier->args; symbol!=NULL; symbol=symbol->next) {
             if (symbol->type == TypeElipsis)
                 continue;
             if (symbol->typeModifier == NULL)
                 symbol->typeModifier = &defaultIntModifier;
             addFunctionParameterToSymbolTable(symbolTable, $1.data, symbol, i);
+            i++;
         }
     } compound_statement {
         /* Capture function boundaries for move-function refactoring */
@@ -1666,9 +1657,8 @@ fun_arg_declaration
         $$.data = NULL;
     }
     | declaration_specifiers fun_arg_init_declarations ';'      {
-        Symbol *symbol;
         assert($1.data && $2.data);
-        for(symbol=$2.data; symbol!=NULL; symbol=symbol->next) {
+        for (Symbol *symbol=$2.data; symbol!=NULL; symbol=symbol->next) {
             completeDeclarator($1.data, symbol);
         }
         $$.data = $2.data;
