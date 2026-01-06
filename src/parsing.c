@@ -1,6 +1,5 @@
 #include "parsing.h"
 
-#include "characterreader.h"
 #include "constants.h"
 #include "editorbuffer.h"
 #include "editormarker.h"
@@ -89,8 +88,8 @@ bool isValidMoveTarget(EditorMarker *target) {
 FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
     FunctionBoundariesResult result = {
         .found = false,
-        .functionBegin = noPosition,
-        .functionEnd = noPosition
+        .functionBegin = NO_POSITION,
+        .functionEnd = NO_POSITION
     };
 
     /* Set up parsing configuration */
@@ -99,8 +98,8 @@ FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
     parsingConfig.cursorPosition = makePositionFromEditorMarker(marker);
 
     /* Clear previous results */
-    parsedPositions[IPP_FUNCTION_BEGIN] = noPosition;
-    parsedPositions[IPP_FUNCTION_END] = noPosition;
+    parsedPositions[IPP_FUNCTION_BEGIN] = NO_POSITION;
+    parsedPositions[IPP_FUNCTION_END] = NO_POSITION;
 
     /* Bridge: Still calls old infrastructure via magic string */
     parseBufferUsingServer(options.project, marker, NULL, "-olcxgetfunctionbounds", NULL);

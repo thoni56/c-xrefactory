@@ -4,6 +4,8 @@
 #include <stdbool.h>
 
 
+#define NO_POSITION (Position){.file = NO_FILE_NUMBER, .line = -1, .col = -1}
+
 typedef struct position {
     int file;
     int line;
