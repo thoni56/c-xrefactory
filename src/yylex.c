@@ -789,7 +789,7 @@ static void handleMacroDefinitionParameterPositions(int argi, Position macroPosi
                                                     Position position, Position endPosition,
                                                     bool final) {
     if (parsingConfig.operation == PARSE_TO_TRACK_PARAMETERS
-        && positionsAreEqual(macroPosition, parsingConfig.cursorPosition)) {
+        && positionsAreEqual(macroPosition, parsingConfig.positionOfSelectedReference)) {
         if (final) {
             if (argi==0) {
                 setParamPositionForFunctionWithoutParams(beginPosition);
@@ -809,7 +809,7 @@ static void handleMacroUsageParameterPositions(int argumentIndex, Position macro
                                                bool final
 ) {
     if (parsingConfig.operation == PARSE_TO_TRACK_PARAMETERS
-        && positionsAreEqual(macroPosition, parsingConfig.cursorPosition)) {
+        && positionsAreEqual(macroPosition, parsingConfig.positionOfSelectedReference)) {
         log_debug("checking param %d at %d,%d, final==%d", argumentIndex, beginPosition.col, endPosition.col,
                   final);
         if (final) {
@@ -1030,7 +1030,7 @@ protected void processDefineDirective(bool hasArguments) {
                 putLexemPositionAndAdvance(position, &lexemDestination);
             } else {
                 if (lexem==IDENT_TO_COMPLETE
-                    || (lexem == IDENTIFIER && positionsAreEqual(position, parsingConfig.cursorPosition))) {
+                    || (lexem == IDENTIFIER && positionsAreEqual(position, parsingConfig.positionOfSelectedReference))) {
                     completionPositionFound = true;
                     completionStringInMacroBody = symbol->linkName;
                 }

@@ -47,7 +47,7 @@ void syncParsingConfigFromOptions(Options options) {
     parsingConfig.markOffset = options.markOffset;
     parsingConfig.extractMode = options.extractMode;
     parsingConfig.targetParameterIndex = options.olcxGotoVal;
-    parsingConfig.cursorPosition = NO_POSITION;
+    parsingConfig.positionOfSelectedReference = NO_POSITION;
 }
 
 bool needsReferenceAtCursor(ParserOperation op) {
@@ -72,7 +72,7 @@ bool isValidMoveTarget(EditorMarker *target) {
     /* Set up parsing configuration */
     syncParsingConfigFromOptions(options);
     parsingConfig.operation = PARSE_TO_VALIDATE_MOVE_TARGET;
-    parsingConfig.cursorPosition = makePositionFromEditorMarker(target);
+    parsingConfig.positionOfSelectedReference = makePositionFromEditorMarker(target);
 
     /* Clear previous results */
     parsedInfo.moveTargetAccepted = false;
@@ -96,7 +96,7 @@ FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
     /* Set up parsing configuration */
     syncParsingConfigFromOptions(options);
     parsingConfig.operation = PARSE_TO_GET_FUNCTION_BOUNDS;
-    parsingConfig.cursorPosition = makePositionFromEditorMarker(marker);
+    parsingConfig.positionOfSelectedReference = makePositionFromEditorMarker(marker);
 
     /* Clear previous results */
     parsedPositions[IPP_FUNCTION_BEGIN] = NO_POSITION;
@@ -144,7 +144,7 @@ void initializeParsingSubsystem(void) {
 static void setupParsingConfigForCreateReferences(void) {
     /* Configure parser to just create references, no cursor-specific operations */
     parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
-    parsingConfig.cursorPosition = NO_POSITION;
+    parsingConfig.positionOfSelectedReference = NO_POSITION;
     parsingConfig.cursorOffset = -1;
     parsingConfig.markOffset = -1;
     parsingConfig.includeDirs = NULL;  /* TODO: Get from LSP initialize params or .c-xrefrc */

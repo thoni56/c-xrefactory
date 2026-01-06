@@ -1807,11 +1807,12 @@ external_definition
         if (parsedInfo.function != NULL
             && parsedInfo.function->position.file != NO_FILE_NUMBER
             && parsingConfig.operation == PARSE_TO_GET_FUNCTION_BOUNDS
-            && positionIsBetween(parsingConfig.cursorPosition, $1.begin, $3.end)) {
-            /* We just finished parsing a function that contains the cursor position.
-             * Record the function boundaries using the positions from the grammar.
-             * $1.begin is the start of function_definition_head
-             * $3.end is the position OF the closing '}', so we increment col to point AFTER it
+            && positionIsBetween(parsingConfig.positionOfSelectedReference, $1.begin, $3.end)) {
+            /* We just finished parsing a function that contains the cursor position,
+             * actually the Reference the cursor is inside.  Record the function
+             * boundaries using the positions from the grammar.  $1.begin is the start
+             * of function_definition_head $3.end is the position OF the closing '}', so
+             * we increment col to point AFTER it
              */
             parsedPositions[IPP_FUNCTION_BEGIN] = $1.begin;
             parsedPositions[IPP_FUNCTION_END] = $3.end;

@@ -428,7 +428,7 @@ void addFunctionParameterToSymbolTable(SymbolTable *table, Symbol *function, Sym
     }
     if (parsingConfig.operation == PARSE_TO_TRACK_PARAMETERS
         && parameterIndex == parsingConfig.targetParameterIndex
-        && positionsAreEqual(function->position, parsingConfig.cursorPosition))
+        && positionsAreEqual(function->position, parsingConfig.positionOfSelectedReference))
     {
         parameterPosition = parameter->position;
     }
@@ -898,7 +898,7 @@ void handleDeclaratorParamPositions(Symbol *symbol, Position lparPosition,
         return;
     if (parsingConfig.operation != PARSE_TO_TRACK_PARAMETERS)
         return;
-    if (positionsAreNotEqual(symbol->position, parsingConfig.cursorPosition))
+    if (positionsAreNotEqual(symbol->position, parsingConfig.positionOfSelectedReference))
         return;
     handleParameterPositions(lparPosition, commaPositions, rparPositions, hasParameters, isVoid);
 }
@@ -910,7 +910,7 @@ void handleInvocationParameterPositions(Reference *reference, Position lparPosit
         return;
     if (parsingConfig.operation != PARSE_TO_TRACK_PARAMETERS)
         return;
-    if (reference==NULL || positionsAreNotEqual(reference->position, parsingConfig.cursorPosition))
+    if (reference==NULL || positionsAreNotEqual(reference->position, parsingConfig.positionOfSelectedReference))
         return;
     handleParameterPositions(lparPosition, commaPositions, rparPosition, hasParameters, false);
 }

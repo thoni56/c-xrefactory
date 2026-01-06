@@ -73,8 +73,13 @@ typedef struct {
     char            *defines;      /* -D preprocessor definitions */
     bool             strictAnsi;   /* ANSI C mode vs extensions */
     ParserOperation  operation;    /* What should parser do? */
-    Position         cursorPosition; /* Cursor position (for bounded operations) */
-    int              cursorOffset; /* Byte offset of cursor in file */
+    int              cursorOffset; /* Byte offset of cursor in the file sent by the
+                                    * legacy client.. */
+    Position         positionOfSelectedReference; /* ... which the lexer turns into a
+                                                   * position by inspecting the lexems
+                                                   * to find the one the offset is
+                                                   * inside. The _beginning_ of that
+                                                   * lexem becomes the position. */
     int              markOffset;   /* Byte offset of mark (selection end), -1 if no selection */
     ExtractMode      extractMode;  /* Which extraction type (function/macro/variable) */
     int              targetParameterIndex; /* Which parameter to track (for PARSE_TO_TRACK_PARAMETERS) */

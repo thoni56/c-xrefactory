@@ -48,7 +48,7 @@ Ensure(Semact, can_capture_positions_for_empty_parameter_list) {
 
     options.mode = ServerMode;
     parsingConfig.operation = PARSE_TO_TRACK_PARAMETERS;
-    parsingConfig.cursorPosition = symbol.position;
+    parsingConfig.positionOfSelectedReference = symbol.position;
     /* No position list (commas) for no parameters */
     handleDeclaratorParamPositions(&symbol, lpar, NULL, rpar, false, false);
 
@@ -67,7 +67,7 @@ Ensure(Semact, can_capture_positions_for_one_parameter) {
     options.mode = ServerMode;
     parsingConfig.operation = PARSE_TO_TRACK_PARAMETERS;
     parsingConfig.targetParameterIndex = 1;
-    parsingConfig.cursorPosition = symbol.position;
+    parsingConfig.positionOfSelectedReference = symbol.position;
     handleDeclaratorParamPositions(&symbol, lpar, NULL, rpar, true, false);
 
     assert_that(positionsAreEqual(parameterBeginPosition, lpar));
@@ -87,7 +87,7 @@ Ensure(Semact, can_capture_positions_for_two_parameters) {
     options.mode = ServerMode;
     parsingConfig.operation = PARSE_TO_TRACK_PARAMETERS;
     parsingConfig.targetParameterIndex = 1;
-    parsingConfig.cursorPosition = symbol.position;
+    parsingConfig.positionOfSelectedReference = symbol.position;
 
     handleDeclaratorParamPositions(&symbol, lpar, &commas, rpar, true, false);
     assert_that(positionsAreEqual(parameterBeginPosition, lpar));
@@ -105,7 +105,7 @@ Ensure(Semact, can_capture_positions_for_void_parameter_list) {
     options.mode = ServerMode;
     parsingConfig.operation = PARSE_TO_TRACK_PARAMETERS;
     parsingConfig.targetParameterIndex = 1;
-    parsingConfig.cursorPosition = symbol.position;
+    parsingConfig.positionOfSelectedReference = symbol.position;
 
     handleDeclaratorParamPositions(&symbol, lpar, NULL, rpar, true, true);
     assert_that(positionsAreEqual(parameterBeginPosition, lpar));

@@ -327,7 +327,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
     place = addToReferenceList(&foundMember->references, position, usage);
 
     if (options.mode == ServerMode
-        && positionsAreEqual(parsingConfig.cursorPosition, position)
+        && positionsAreEqual(parsingConfig.positionOfSelectedReference, position)
         && isVisibleUsage(usage)
     ) {
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!
