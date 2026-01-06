@@ -165,10 +165,10 @@ extern void initializeParsingSubsystem(void);
  * Handles both editor buffers and disk files: tries editor buffer first,
  * falls back to loading from disk if not found.
  * Works for all modes: LSP, xref batch processing, and refactoring.
+ * Language is automatically determined from the filename extension.
  *
  * @param fileName      Absolute path to the file to parse
- * @param language      Language to parse as (LANG_C or LANG_YACC)
  */
-extern void parseToCreateReferences(const char *fileName, Language language);
+extern void parseToCreateReferences(const char *fileName);
 
 #endif

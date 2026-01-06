@@ -162,8 +162,8 @@ static void processInputFile(ArgumentsVector args, bool *firstPassP, bool *atLea
         if (inputOpened) {
             if (options.fileTrace)
                 fprintf(stderr, "Processing input file: '%s\n", currentFile.fileName);
-            /* Parse file to create references (handles both editor buffers and disk files) */
-            parseToCreateReferences(inputFileName, currentLanguage);
+            /* Parse file to create references (language derived from filename) */
+            parseToCreateReferences(inputFileName);
             closeCharacterBuffer(&currentFile.characterBuffer);
             inputOpened = false;
             currentFile.characterBuffer.file = stdin;

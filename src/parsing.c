@@ -8,6 +8,7 @@
 #include "init.h"
 #include "log.h"
 #include "memory.h"
+#include "misc.h"
 #include "options.h"
 #include "parsers.h"
 #include "position.h"
@@ -123,7 +124,12 @@ void initializeParsingSubsystem(void) {
     /* Initialize cx memory pool for cross-reference data */
     initCxMemory(CX_MEMORY_INITIAL_SIZE);
 
-    /* Set server mode - required by parser assertions */
+    /* Copy preset options as baseline (file suffixes, defaults, etc.)
+     * This gives us the same baseline as XRef mode without the expensive
+     * project discovery and compiler interrogation that initializeFileProcessing does. */
+    deepCopyOptionsFromTo(&presetOptions, &options);
+
+    /* Override mode to ServerMode - required by parser assertions */
     options.mode = ServerMode;
 
     /* Prevent lowercasing of filenames on case-sensitive filesystems.
@@ -141,7 +147,7 @@ void initializeParsingSubsystem(void) {
     initReferenceableItemTable(MAX_REFS_HASHTABLE_ENTRIES);
 }
 
-void parseToCreateReferences(const char *fileName, Language language) {
+void parseToCreateReferences(const char *fileName) {
     EditorBuffer *buffer;
 
     /* Try to get editor buffer first (preferred for LSP, refactoring, xref with open editors) */
@@ -160,6 +166,9 @@ void parseToCreateReferences(const char *fileName, Language language) {
     syncParsingConfigFromOptions(options);
     parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
     parsingConfig.fileName = fileName;
+
+    /* Determine language from filename extension */
+    Language language = getLanguageFor((char *)fileName);
 
     /* Setup input for parsing - this initializes the currentFile global */
     initInput(NULL, buffer, "\n", (char *)fileName);

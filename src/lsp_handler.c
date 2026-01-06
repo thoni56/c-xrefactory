@@ -116,25 +116,19 @@ void handle_did_open(JSON *notification) {
 
     JSON *textDocument = get_json_item(params, "textDocument");
     const char *uri = get_json_string_item(textDocument, "uri");
-    const char *languageId = get_json_string_item(textDocument, "languageId");
     const char *text = get_json_string_item(textDocument, "text");
 
-    log_trace("LSP: Opened file '%s', language '%s', text = '%s'", uri, languageId, text);
+    log_trace("LSP: Opened file '%s', text = '%s'", uri, text);
 
     char *fileName = filename_from_uri(uri);
     EditorBuffer *buffer = createNewEditorBuffer(fileName, NULL, time(NULL), strlen(text));
     loadTextIntoEditorBuffer(buffer, time(NULL), text);
     buffer->textLoaded = true;  /* Mark text as loaded for getOpenedAndLoadedEditorBuffer() */
 
-    /* Determine language from languageId */
-    Language language = LANG_C;  /* Default to C */
-    if (strcmp(languageId, "yacc") == 0) {
-        language = LANG_YACC;
-    }
-
-    /* Parse the file to populate the reference database */
-    log_trace("LSP: Parsing file '%s' as %s", buffer->fileName, language == LANG_YACC ? "YACC" : "C");
-    parseToCreateReferences(buffer->fileName, language);
+    /* Parse the file to populate the reference database.
+     * Language is derived from filename extension by parseToCreateReferences(). */
+    log_trace("LSP: Parsing file '%s'", buffer->fileName);
+    parseToCreateReferences(buffer->fileName);
     log_trace("LSP: Finished parsing file '%s'", buffer->fileName);
 }
 
