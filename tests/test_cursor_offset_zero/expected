@@ -1,0 +1,10 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-olcxgetrefactorings -olcursor=0 -xrefrc CURDIR/.c-xrefrc CURDIR/test.c
+end-of-options
+
+<sync>
+<available-refactorings>
+</available-refactorings>
+-exit
+end-of-options
+
