@@ -1,7 +1,6 @@
 #include "position.h"
 #include "stackmemory.h"
 
-Position noPosition = {-1, 0, 0};
 
 Position makePosition(int file, int line, int col) {
     return (Position){.file = file, .line = line, .col = col};

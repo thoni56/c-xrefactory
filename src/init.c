@@ -293,7 +293,7 @@ static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
         if ((isalpha(*name) || *name=='_') && (languages & currentLanguage)) {
             /* looks like a keyword */
             log_debug("adding keyword '%s' to symbol table", name);
-            symbol = newSymbolAsKeyword(name, name, noPosition, token);
+            symbol = newSymbolAsKeyword(name, name, NO_POSITION, token);
             symbol->type = TypeKeyword;
             symbol->storage = StorageDefault;
             symbolTableAdd(symbolTable, symbol);
@@ -310,19 +310,19 @@ void initTokenNamesTables(void) {
     initTokensFromTable(tokenNamesCanonical);
 
     /* and add the 'defined' keyword for #if */
-    Symbol *symbolP = newSymbol("defined", noPosition);
+    Symbol *symbolP = newSymbol("defined", NO_POSITION);
     symbolP->type = TypeCppDefinedOp;
     symbolP->storage = StorageDefault;
     symbolTableAdd(symbolTable, symbolP);
 
     /* and add the '__has_include' keyword for #if */
-    symbolP = newSymbol("__has_include", noPosition);
+    symbolP = newSymbol("__has_include", NO_POSITION);
     symbolP->type = TypeCppHasIncludeOp;
     symbolP->storage = StorageDefault;
     symbolTableAdd(symbolTable, symbolP);
 
     /* and add the '__has_include_next' keyword for #if */
-    symbolP = newSymbol("__has_include_next", noPosition);
+    symbolP = newSymbol("__has_include_next", NO_POSITION);
     symbolP->type = TypeCppHasIncludeNextOp;
     symbolP->storage = StorageDefault;
     symbolTableAdd(symbolTable, symbolP);
@@ -349,15 +349,15 @@ void initStorageNames(void) {
 
 void initArchaicTypes(void) {
     initTypeModifier(&defaultIntModifier, TypeInt);
-    fillSymbolWithTypeModifier(&defaultIntDefinition, NULL, NULL, noPosition, &defaultIntModifier);
+    fillSymbolWithTypeModifier(&defaultIntDefinition, NULL, NULL, NO_POSITION, &defaultIntModifier);
 
     initTypeModifier(&defaultPackedTypeModifier, TypePackedType);
 
     initTypeModifier(&defaultVoidModifier,TypeVoid);
-    fillSymbolWithTypeModifier(&defaultVoidDefinition, NULL, NULL, noPosition, &defaultVoidModifier);
+    fillSymbolWithTypeModifier(&defaultVoidDefinition, NULL, NULL, NO_POSITION, &defaultVoidModifier);
 
     initTypeModifier(&errorModifier, TypeError);
-    fillSymbolWithTypeModifier(&errorSymbol, "__ERROR__", "__ERROR__", noPosition, &errorModifier);
+    fillSymbolWithTypeModifier(&errorSymbol, "__ERROR__", "__ERROR__", NO_POSITION, &errorModifier);
     errorSymbol.type = TypeError;
     errorSymbol.storage = StorageDefault;
 }

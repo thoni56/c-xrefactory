@@ -344,7 +344,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
             olstringUsage = usage;
             assert(sessionData.browsingStack.top);
             olSetCallerPosition(position);
-            defaultPosition = noPosition;
+            defaultPosition = NO_POSITION;
             defaultUsage = UsageNone;
             if (symbol->type==TypeMacro && ! options.exactPositionResolve) {
                 // a hack for macros
@@ -859,7 +859,8 @@ static void findAndGotoDefinition(ReferenceableItem *referenceable) {
     SessionStackEntry *oldtop = pushSession();
 
     SessionStackEntry *top = sessionData.browsingStack.top;
-    BrowserMenu menu = makeBrowserMenu(*referenceable, true, true, 0, UsageUsed, UsageNone, noPosition);
+    BrowserMenu menu = makeBrowserMenu(*referenceable, true, true, 0, UsageUsed, UsageNone,
+                                       NO_POSITION);
     top->menu = &menu;
     ensureReferencesAreLoadedFor(referenceable->linkName);
     orderRefsAndGotoDefinition(top);
@@ -879,7 +880,7 @@ static void gotoMatch(int referenceIndex) {
     Match *match = getMatchOnNthLine(sessionStackEntry->matches, referenceIndex);
     if (match != NULL) {
         if (match->visibility == VisibilityLocal) {
-            if (positionsAreNotEqual(match->reference.position, noPosition)) {
+            if (positionsAreNotEqual(match->reference.position, NO_POSITION)) {
                 ppcGotoPosition(match->reference.position);
             } else {
                 indicateNoReference();
@@ -1017,7 +1018,7 @@ static BrowserMenu *createSpecialMenuItem(char *fieldName, int includedFileNumbe
     BrowserMenu *menu;
     ReferenceableItem r = makeReferenceableItem(fieldName, TypeDefault, storage, GlobalScope, VisibilityGlobal,
                                                 includedFileNumber);
-    menu = createNewMenuItem(&r, r.includeFileNumber, noPosition, UsageNone,
+    menu = createNewMenuItem(&r, r.includeFileNumber, NO_POSITION, UsageNone,
                              true, true, FILE_MATCH_SAME, (SymbolRelation){.sameFile = true},
                              UsageUsed);
     return menu;
@@ -2188,7 +2189,7 @@ BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
     SessionStackEntry *rstack = sessionData.browsingStack.top;
     unsigned level = 0;
     SymbolRelation relation = {.sameFile = false};
-    Position defaultPosition = noPosition;
+    Position defaultPosition = NO_POSITION;
     Usage defaultUsage = UsageNone;
 
     bool found = false;

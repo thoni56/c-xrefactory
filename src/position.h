@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+extern int NO_FILE_NUMBER;      /* Don't pull in all of `filetable.h` */
+
 
 #define NO_POSITION (Position){.file = NO_FILE_NUMBER, .line = -1, .col = -1}
 
@@ -17,7 +19,6 @@ typedef struct positionList {
     struct positionList *next;
 } PositionList;
 
-extern Position noPosition;
 
 extern PositionList *newPositionList(Position position, PositionList *next);
 

@@ -94,7 +94,7 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
     if (parsingConfig.operation != PARSE_TO_EXTRACT)
         return NULL;
 
-    symbol = newSymbolAsLabel(name, name, noPosition, labn);
+    symbol = newSymbolAsLabel(name, name, NO_POSITION, labn);
     symbol->type = TypeLabel;
     symbol->storage = StorageAuto;
 
@@ -110,7 +110,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
     if (parsingConfig.operation != PARSE_TO_EXTRACT)
         return;
 
-    fillSymbolWithLabel(&symbol, name, name, noPosition, 0);
+    fillSymbolWithLabel(&symbol, name, name, NO_POSITION, 0);
     symbol.type = TypeLabel;
     symbol.storage = StorageAuto;
 
@@ -127,7 +127,7 @@ void generateContinueBreakReference(char *name) {
     if (parsingConfig.operation != PARSE_TO_EXTRACT)
         return;
 
-    fillSymbolWithLabel(&symbol, name, name, noPosition, 0);
+    fillSymbolWithLabel(&symbol, name, name, NO_POSITION, 0);
     symbol.type = TypeLabel;
     symbol.storage = StorageAuto;
 
@@ -142,7 +142,7 @@ void generateSwitchCaseFork(bool isLast) {
     if (parsingConfig.operation != PARSE_TO_EXTRACT)
         return;
 
-    fillSymbolWithLabel(&symbol, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, noPosition, 0);
+    fillSymbolWithLabel(&symbol, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, NO_POSITION, 0);
     symbol.type = TypeLabel;
     symbol.storage = StorageAuto;
 

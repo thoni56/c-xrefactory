@@ -3039,7 +3039,7 @@ break;
 case 175:
 #line 551 "yacc_parser.y"
 {
-            yyval.ast_positionList.data = newPositionList(noPosition, yyvsp[0].ast_positionList.data);
+            yyval.ast_positionList.data = newPositionList(NO_POSITION, yyvsp[0].ast_positionList.data);
         }
 break;
 case 176:
@@ -4188,7 +4188,7 @@ break;
 case 378:
 #line 1366 "yacc_parser.y"
 {
-        yyval.ast_symbol.data = newSymbolAsType(NULL, NULL, noPosition, yyvsp[0].ast_typeModifiers.data);
+        yyval.ast_symbol.data = newSymbolAsType(NULL, NULL, NO_POSITION, yyvsp[0].ast_typeModifiers.data);
     }
 break;
 case 379:
@@ -4375,7 +4375,7 @@ case 405:
 #line 1497 "yacc_parser.y"
 {
         yyval.ast_id.data = stackMemoryAlloc(sizeof(Id));
-        *(yyval.ast_id.data) = makeId("", NULL, noPosition);
+        *(yyval.ast_id.data) = makeId("", NULL, NO_POSITION);
     }
 break;
 case 406:

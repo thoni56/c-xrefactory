@@ -62,7 +62,7 @@ Position makePositionFromEditorMarker(EditorMarker *marker) {
 
     EditorBuffer *buffer = marker->buffer;
     if (buffer == NULL) {
-        return noPosition;
+        return NO_POSITION;
     }
 
     char *text = buffer->allocation.text;

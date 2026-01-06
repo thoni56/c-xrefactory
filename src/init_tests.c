@@ -6,6 +6,7 @@
 
 #include "commons.mock"
 #include "globals.mock"
+#include "filetable.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "symbol.mock"

@@ -87,8 +87,8 @@ static Position extractDefinitionPosition(ReferenceableItem *item) {
             return ref->position;
         }
     }
-    /* No definition found - return noPosition */
-    return noPosition;
+    /* No definition found - return no position */
+    return NO_POSITION;
 }
 
 ReferenceableResult findReferenceableAt(ReferenceDatabase *db, const char *fileName,
@@ -142,7 +142,7 @@ ReferencesResult makeReferencesResult(Reference *references, int count, bool fou
 }
 
 ReferenceableResult makeReferenceableFailure(void) {
-    return makeReferenceableResult(NULL, noPosition, false);
+    return makeReferenceableResult(NULL, NO_POSITION, false);
 }
 
 ReferencesResult makeReferencesFailure(void) {

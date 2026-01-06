@@ -1,3 +1,7 @@
+#include "yylex.h"
+
+/* Unittests */
+
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
 
@@ -6,7 +10,6 @@
 #include "lexembuffer.h"
 #include "memory.h"
 #include "position.h"
-#include "yylex.h"
 
 /* Declare protected functions for testing */
 void processDefineDirective(bool hasArguments);
@@ -15,14 +18,16 @@ void processIncludeDirective(Position includePosition, bool include_next);
 
 #include "filedescriptor.h"
 #include "filetable.h"
+#include "lexemstream.h"
 #include "log.h"
 #include "macroargumenttable.h"
+#include "stackmemory.h"
 #include "symboltable.h"
 
 #include "c_parser.mock"
-#include "cppexp_parser.mock"
 #include "characterreader.mock"
 #include "commons.mock"
+#include "cppexp_parser.mock"
 #include "cxfile.mock"
 #include "cxref.mock"
 #include "editor.mock"
@@ -30,9 +35,8 @@ void processIncludeDirective(Position includePosition, bool include_next);
 #include "extract.mock"
 #include "fileio.mock"
 #include "globals.mock"
-#include "lexemstream.h"
-#include "lexer.mock"
 #include "lexem.mock"
+#include "lexer.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "parsers.mock"
@@ -40,7 +44,6 @@ void processIncludeDirective(Position includePosition, bool include_next);
 #include "reference.mock"
 #include "referenceableitemtable.mock"
 #include "semact.mock"
-#include "stackmemory.h"
 #include "yacc_parser.mock"
 
 

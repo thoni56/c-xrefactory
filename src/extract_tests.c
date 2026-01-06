@@ -9,6 +9,7 @@
 #include "commons.mock"
 #include "cxref.mock"
 #include "filedescriptor.mock"
+#include "filetable.mock"
 #include "globals.mock"
 #include "misc.mock"
 #include "options.mock"

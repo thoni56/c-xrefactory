@@ -139,11 +139,13 @@ static bool browserMenuIsLess(BrowserMenu *s1, BrowserMenu *s2) {
 }
 
 BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableItem *referenceable, bool selected,
-                                           bool visible, unsigned filterLevel, SymbolRelation relation,
-                                           int olusage, Position defpos, int defusage) {
+                                           bool visible, unsigned filterLevel,
+                                           SymbolRelation relation, int olusage, Position defpos,
+                                           int defusage) {
     BrowserMenu **place;
 
-    BrowserMenu dummyMenu = makeBrowserMenu(*referenceable, 0, false, 0, olusage, UsageNone, noPosition);
+    BrowserMenu dummyMenu = makeBrowserMenu(*referenceable, 0, false, 0, olusage, UsageNone,
+                                            NO_POSITION);
     SORTED_LIST_PLACE3(place, BrowserMenu, &dummyMenu, menuP, browserMenuIsLess);
 
     BrowserMenu *new = *place;

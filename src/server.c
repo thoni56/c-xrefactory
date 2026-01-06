@@ -69,7 +69,7 @@ static int scheduleFileUsingTheMacro(void) {
     ReferenceableItem references = makeReferenceableItem(completionStringInMacroBody, TypeMacro, StorageExtern,
                                                          GlobalScope, VisibilityGlobal, NO_FILE_NUMBER);
 
-    BrowserMenu menu = makeBrowserMenu(references, 1, true, 0, UsageUsed, UsageNone, noPosition);
+    BrowserMenu menu = makeBrowserMenu(references, 1, true, 0, UsageUsed, UsageNone, NO_POSITION);
     if (sessionData.browsingStack.top==NULL) {
         pushEmptySession(&sessionData.browsingStack);
         tmpc = sessionData.browsingStack.top;
@@ -92,8 +92,8 @@ static int scheduleFileUsingTheMacro(void) {
 static char *presetEditServerFileDependingStatics(void) {
     fileProcessingStartTime = time(NULL);
 
-    primaryStartPosition = noPosition;
-    staticPrefixStartPosition = noPosition;
+    primaryStartPosition = NO_POSITION;
+    staticPrefixStartPosition = NO_POSITION;
 
     // This is pretty stupid, there is always only one input file
     // in edit server, otherwise it is an error
@@ -147,7 +147,7 @@ void initServer(ArgumentsVector args) {
     clearAvailableRefactorings();
     processOptions(args, PROCESS_FILE_ARGUMENTS_YES); /* no include or define options */
     processFileArguments();
-    initCompletions(&collectedCompletions, 0, noPosition);
+    initCompletions(&collectedCompletions, 0, NO_POSITION);
 }
 
 static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstPassP) {

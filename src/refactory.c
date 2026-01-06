@@ -693,7 +693,7 @@ static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *o
 }
 
 EditorMarker *createMarkerForExpressionStart(EditorMarker *marker, ExpressionStartKind startKind) {
-    Position position = noPosition;
+    Position position = NO_POSITION;
     parseBufferUsingServer(refactoringOptions.project, marker, NULL, "-olcxprimarystart", NULL);
     deleteEntryFromSessionStack(sessionData.browsingStack.top);
     if (startKind == GET_PRIMARY_START) {
@@ -923,9 +923,9 @@ static void renameAtInclude(EditorMarker *point) {
 }
 
 static void clearParameterPositions(void) {
-    parameterPosition      = noPosition;
-    parameterBeginPosition = noPosition;
-    parameterEndPosition   = noPosition;
+    parameterPosition      = NO_POSITION;
+    parameterBeginPosition = NO_POSITION;
+    parameterEndPosition   = NO_POSITION;
 }
 
 static Result getParameterNamePosition(EditorMarker *point, char *fileName, int argn) {

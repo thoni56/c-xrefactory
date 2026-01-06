@@ -62,7 +62,7 @@ void gotoSearchItem(int refn) {
     assert(sessionData.searchingStack.top);
     match = getMatchOnNthLine(sessionData.searchingStack.top->matches, refn);
     if (match != NULL) {
-        if (positionsAreNotEqual(match->reference.position, noPosition)) {
+        if (positionsAreNotEqual(match->reference.position, NO_POSITION)) {
             ppcGotoPosition(match->reference.position);
         } else {
             indicateNoReference();

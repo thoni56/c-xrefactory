@@ -7,6 +7,7 @@
 #include "commons.mock"
 #include <string.h>
 #include "referenceableitemtable.mock"
+#include "filetable.mock"
 
 
 Describe(ReferenceDatabase);

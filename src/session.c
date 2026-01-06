@@ -61,7 +61,7 @@ protected SessionStackEntry *newEmptySessionStackEntry(void) {
         .references      = NULL,
         .current         = NULL,
         .operation       = options.serverOperation,
-        .callerPosition  = noPosition,
+        .callerPosition  = NO_POSITION,
         .matches         = NULL,
         .hkSelectedSym   = NULL,
         .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL,

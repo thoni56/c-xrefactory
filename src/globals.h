@@ -57,7 +57,6 @@ extern TypeModifier defaultVoidModifier;
 extern Symbol defaultVoidDefinition;
 extern TypeModifier errorModifier;
 extern Symbol errorSymbol;
-extern Position noPosition;
 
 extern uchar typeLongChange[MAX_TYPE];
 extern uchar typeShortChange[MAX_TYPE];

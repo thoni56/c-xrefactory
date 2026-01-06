@@ -158,7 +158,7 @@ static void initStandardCxrefFileName(char *inputfile) {
 
 static void initializationsPerInvocation(void) {
     parsedInfo = (ParsedInfo){0,};
-    cxRefPosition = noPosition;
+    cxRefPosition = NO_POSITION;
     completionPositionFound = false;
     completionStringServed = false;
     completionStringInMacroBody = NULL;
@@ -640,8 +640,6 @@ void totalTaskEntryInitialisations(void) {
     options.includeDirs = NULL;
 
     initFileTable(MAX_FILES);
-
-    noPosition = makePosition(NO_FILE_NUMBER, 0, 0);
     inputFileNumber = NO_FILE_NUMBER;
 
     editorInit();

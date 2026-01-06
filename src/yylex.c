@@ -686,7 +686,7 @@ static bool openInclude(char includeType, char *name, bool is_include_next) {
 }
 
 static Symbol *findMacroSymbol(char *name) {
-    Symbol symbol = makeMacroSymbol(name, noPosition);
+    Symbol symbol = makeMacroSymbol(name, NO_POSITION);
     Symbol *memberP;
     if (symbolTableIsMember(symbolTable, &symbol, NULL, &memberP))
         return memberP;
@@ -769,9 +769,9 @@ void undefineMacroByName(const char *name) {
     Symbol *existing = findMacroSymbol((char *)name);
     Symbol *m = ppmAlloc(sizeof(Symbol));
     if (existing) {
-        *m = makeMacroSymbol(existing->linkName, noPosition);
+        *m = makeMacroSymbol(existing->linkName, NO_POSITION);
     } else {
-        *m = makeMacroSymbol((char *)name, noPosition);
+        *m = makeMacroSymbol((char *)name, NO_POSITION);
     }
     addMacroToTabs(m, (char *)name);
 }
@@ -918,8 +918,8 @@ protected void processDefineDirective(bool hasArguments) {
 
     if (hasArguments) {
         Position position;
-        Position previousDelimiterPosition = noPosition;
-        Position currentDelimiterPosition = noPosition;
+        Position previousDelimiterPosition = NO_POSITION;
+        Position currentDelimiterPosition = NO_POSITION;
 
         lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
@@ -986,14 +986,14 @@ protected void processDefineDirective(bool hasArguments) {
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
             }
             handleMacroDefinitionParameterPositions(argumentCount, macroPosition,
-                                                    previousDelimiterPosition, noPosition,
+                                                    previousDelimiterPosition, NO_POSITION,
                                                     currentDelimiterPosition,
                                                     true);
         } else {
             getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL,
                                         &currentDelimiterPosition, NULL, NULL, true);
             handleMacroDefinitionParameterPositions(argumentCount, macroPosition,
-                                                    previousDelimiterPosition, noPosition,
+                                                    previousDelimiterPosition, NO_POSITION,
                                                     currentDelimiterPosition, true);
         }
     }

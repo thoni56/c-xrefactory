@@ -713,7 +713,7 @@ void collectForStatementCompletions2(Completions* c) {
 
 void completeUpFunProfile(Completions *c) {
     if (upLevelFunctionCompletionType != NULL && c->idToProcess[0] == 0 && c->alternativeCount == 0) {
-        Symbol *dd = newSymbolAsType("    ", "    ", noPosition, upLevelFunctionCompletionType);
+        Symbol *dd = newSymbolAsType("    ", "    ", NO_POSITION, upLevelFunctionCompletionType);
 
         c->alternatives[0] = makeCompletionLine("    ", dd, TypeDefault, 0, NULL);
         c->fullMatchFlag = true;

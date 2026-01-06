@@ -343,7 +343,7 @@ argument_expr_list_opt
         $$.data = NULL;
     }
     |   argument_expr_list          {
-            $$.data = newPositionList(noPosition, $1.data);
+            $$.data = newPositionList(NO_POSITION, $1.data);
         }
     ;
 
@@ -1158,7 +1158,7 @@ parameter_declaration
         $$.data = $2.data;
     }
     | type_name                                 {
-        $$.data = newSymbolAsType(NULL, NULL, noPosition, $1.data);
+        $$.data = newSymbolAsType(NULL, NULL, NO_POSITION, $1.data);
     }
     | error                                     {
         $$.data = newSymbolAsCopyOf(&errorSymbol);
@@ -1290,7 +1290,7 @@ designator_list
 designator
     : '[' constant_expr ']'     {
         $$.data = stackMemoryAlloc(sizeof(Id));
-        *($$.data) = makeId("", NULL, noPosition);
+        *($$.data) = makeId("", NULL, NO_POSITION);
     }
     | '.' field_identifier    {
         $$.data = stackMemoryAlloc(sizeof(Id));
