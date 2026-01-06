@@ -63,7 +63,19 @@ JSON *findDefinition(const char *uri, JSON *positionJson) {
     }
 
     /* Get filename from file number */
+    if (result.definition.file == NO_FILE_NUMBER) {
+        log_trace("findDefinition: Definition has invalid file number");
+        LEAVE();
+        return NULL;
+    }
+
     FileItem *fileItem = getFileItemWithFileNumber(result.definition.file);
+    if (fileItem == NULL) {
+        log_trace("findDefinition: Could not get file item for file number %d", result.definition.file);
+        LEAVE();
+        return NULL;
+    }
+
     char *definitionFilePath = fileItem->name;
 
     /* Create URI from file path */
