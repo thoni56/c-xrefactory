@@ -159,6 +159,7 @@ void parseToCreateReferences(const char *fileName, Language language) {
     /* Setup parsing configuration from global options (includes discovered defines, include paths) */
     syncParsingConfigFromOptions(options);
     parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
+    parsingConfig.fileName = fileName;
 
     /* Setup input for parsing - this initializes the currentFile global */
     initInput(NULL, buffer, "\n", (char *)fileName);

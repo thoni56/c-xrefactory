@@ -69,6 +69,7 @@ typedef enum {
  * This is the input to the parsing subsystem - set before parsing starts.
  */
 typedef struct {
+    const char      *fileName;     /* File to parse */
     StringList      *includeDirs;  /* -I include directories */
     char            *defines;      /* -D preprocessor definitions */
     ParserOperation  operation;    /* What should parser do? */
