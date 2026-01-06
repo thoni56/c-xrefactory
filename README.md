@@ -126,7 +126,11 @@ and protocol to get closer to that point.
 
 Experimental work has been started and it is possible to hook up
 the `c-xrefactory` server to an LSP client. The basic communication
-works but no features are yet accessible.
+works and `textDocument/definition` (go-to-definition) is implemented
+for file global symbols (functions, global variables, types). Symbols
+outside the current document and local variables are not yet handled
+due to architectural differences in how the LSP mode indexes symbols
+compared to the legacy Emacs client.
 
 ### Java notes
 

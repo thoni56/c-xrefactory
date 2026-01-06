@@ -1904,3 +1904,70 @@ The key insight is that we can **backport this gradually without breaking anythi
 Phase 1 proves the approach works with minimal risk. Phases 2-3 build on proven foundation, so failure to complete them doesn't harm existing functionality.
 
 Multi-file definitions are one motivating use case, but the real long-term benefit is a codebase where parsing behavior is **discoverable and type-safe** instead of driven by magic strings scattered throughout 25-year-old code.
+
+=== LSP Implementation Progress
+
+**Status**: EXPERIMENTAL (January 2026)
+
+==== Current Implementation (2026-01)
+
+**What works:**
+
+✓ **Basic LSP communication**: Server startup, initialization, shutdown
+✓ **textDocument/didOpen**: Parse and index files as they're opened
+✓ **textDocument/definition**: Go-to-definition for global symbols
+- Functions: Full support
+- Global variables: Full support  
+- Types: Full support
+
+**Known limitations:**
+
+✗ **Local variables**: Go-to-definition not supported
+
+- Cause: Local variables not indexed in `ReferenceableItemTable` during background/'xref' parsing
+- Legacy Emacs mode works because it reparses with cursor position, making locals available in transient tables
+- LSP background indexing has no cursor, so locals aren't tracked
+- Fix requires: Store locals in reference table OR implement scope-based lookup
+
+✗ **Multi-file symbols**: Symbols in other files not accessible
+
+- Only the currently opened file is parsed and indexed
+- Cross-file references require include graph and on-demand parsing (see "Parsing Subsystem" section)
+
+==== Code Locations
+
+**LSP Infrastructure**:
+
+* `src/lsp.c` - LSP server main loop and message handling
+* `src/lsp_handler.c` - Request/notification handlers  
+* `src/lsp_adapter.c` - Translate LSP requests to c-xrefactory queries
+* `src/lsp_sender.c` - JSON-RPC response formatting
+* `src/json_utils.c` - JSON construction helpers
+
+**Key functions**:
+
+* `initializeParsingSubsystem()` - Initialize options and tables for LSP mode
+* `parseToCreateReferences()` - Parse file and populate reference database
+* `findDefinition()` - Look up symbol at position, return definition location
+
+==== Architecture Notes
+
+**Options initialization**: LSP mode now calls `deepCopyOptionsFromTo(&presetOptions, &options)` to get baseline configuration including file suffixes, avoiding the expensive project discovery and compiler interrogation that XRef mode performs.
+
+**Language detection**: Derives language from filename extension via `getLanguageFor()`, consistent with XRef mode. LSP protocol's `languageId` field is currently ignored.
+
+**Reference database**: In-memory `ReferenceableItemTable` populated by parsing. Currently cleared on each parse; future work will make it persistent across files.
+
+==== Next Steps
+
+To achieve feature parity with legacy Emacs mode:
+
+1. **Local variable support**: Either index locals in reference table, or implement function-scope lookup
+2. **Multi-file support**: Implement include graph and on-demand parsing (foundational work in "Parsing Subsystem" section)
+3. **Additional LSP features**: References, hover, completion, rename
+
+==== Related Work
+
+* **Parsing Subsystem Refactoring** - Provides foundation for multi-file support
+* **ADR-0014** (On-Demand Parsing) - Architecture for efficient cross-file lookups
+* **Unified Symbol Database** - Will enable persistent indexing across files
