@@ -16,9 +16,9 @@ The roadmap is guided by these principles:
 
 ==== C Preprocessor Compliance Fixes
 
-**Problem**: c-xrefactory was incorrectly expanding function-like macros during `##` token pasting, violating C99 §6.10.3.3 which mandates that operands of `##` should NOT be macro-expanded before concatenation.
+**Problem**: c-xrefactory was incorrectly expanding function-like macros during `pass:[##]` token pasting, violating C99 §6.10.3.3 which mandates that operands of `pass:[##]` should NOT be macro-expanded before concatenation.
 
-**Impact**: Caused SIGSEGV in `test_ffmpeg` when processing complex standard library macros like `INT64_MAX` which expands to `(__INT64_C(9223372036854775807))` where `__INT64_C(c)` is defined as `c ## L`.
+**Impact**: Caused SIGSEGV in `test_ffmpeg` when processing complex standard library macros like `INT64_MAX` which expands to `(__INT64_C(9223372036854775807))` where `__INT64_C(c)` is defined as `c pass:[##] L`.
 
 **Fix**: Removed macro expansion logic from `collate()` function in `src/yylex.c:1749-1797`. Now matches GCC behavior exactly.
 
@@ -65,30 +65,26 @@ The roadmap is guided by these principles:
 * Systematic testing of error handling paths in new code
 * Monitor coverage regressions during refactoring
 
-==== LSP Feature Completeness
+==== LSP Integration
 
-*Current Status*: Basic LSP communication works, single-file `textDocument/definition` implemented
+*Current Status*: Experimental support for modern editor integration
 
-*Priority*: HIGH
+*Priority*: HIGH - Opens c-xrefactory to wider audience beyond Emacs
 
-*Completed Work*:
-* ✓ `textDocument/definition` for **single-file lookups** (January 2025)
-* ✓ Clean parser API in `parsing.h/c` enabling operation-based control
-* ✓ Reference database integration working for in-memory queries
+*Value*: Enable VS Code, Neovim, and other LSP-capable editors to use c-xrefactory's refactoring and navigation features.
 
-*Remaining Goals*:
+*Current Capabilities*:
 
-* **Multi-file definition lookup** - Requires symbol type persistence and include graph
-* `textDocument/references` using reference database
-* `textDocument/hover` with symbol information
-* `textDocument/completion` for basic completion
-* Cross-file symbol resolution
+* ✓ Go-to-definition for functions, global variables, types (single file)
+* ✓ Files parsed as opened, immediate symbol availability
 
-*Approach*: 
-* Single-file done via clean API (no `.cx` files needed)
-* Multi-file requires enhancements: see <<Clean Parser API and Multi-File Definition Support>> for investigation
-* Leverage existing reference database (`refTab`) and symbol tables
-* Reuse parser infrastructure via new clean ParserOperation API
+*Key Limitations*:
+
+* Single-file scope only (must open file before navigating to it)
+* Local variables not supported
+* Only `textDocument/definition` implemented
+
+*Next Steps*: See link:16-planned-features.adoc#lsp-integration[Chapter 16: LSP Integration] for details and link:17-major-codebase-improvements.adoc[Chapter 17] for technical architecture.
 
 ==== Documentation Completeness
 
@@ -103,514 +99,34 @@ The roadmap is guided by these principles:
 * Create user guide for LSP integration
 * Document LSP vs Emacs feature parity matrix
 
-=== Medium-term Goals (6-12 Months)
+=== Medium-term Goals
 
-These goals are detailed in <<16-major-codebase-improvements.adoc#,Chapter 16: Major Codebase Improvements>>. The roadmap proposes a priority ordering:
+Focused on internal code quality and architecture improvements that enable future features. Detailed in link:17-major-codebase-improvements.adoc[Chapter 17: Major Codebase Improvements].
 
-==== 1. LexemStream API Improvements
+==== Code Quality Improvements
 
-*Reference*: <<16-major-codebase-improvements.adoc#,Major Codebase Improvements - LexemStream API Improvements>>
+**LexemStream API**: Reduce pointer parameter proliferation in macro expansion code (6+ params → 3-4). Foundation for further modularization.
 
-*Status*: **PARTIALLY COMPLETE** (~40% done as of November 2025)
+**Macro Module Extraction**: Separate 800 lines of macro expansion logic from `yylex.c` for better testability and maintainability.
 
-*Priority*: HIGH (Foundation for other refactorings)
+**Header Re-parsing Optimization**: Address performance regression from cache removal. Make incremental builds faster.
 
-*Rationale*: The macro expansion code suffers from pointer parameter proliferation (6+ parameters per function). Adding a manipulation API to `LexemStream` (similar to `LexemBuffer`) will simplify buffer management and reduce error-prone pointer arithmetic.
+==== Architectural Improvements
 
-*Completed work*:
+**Clean Persistence Store**: Separate in-memory reference database from disk storage (.cx files). Enables LSP integration and testing without files.
 
-* ✓ Basic API functions created (`lexemStreamHasMore`, `copyNextLexemFromStreamToStream`)
-* ✓ `copyRemainingLexems()` refactored to use API
-* ✓ `replaceMacroArguments()` refactored to use LexemStreams
-* ✓ `expandMacroArgument()` now uses LexemStream parameter
+**Unified Symbol Database**: Transition from batch-mode (`-create` required) to on-demand parsing. Enables zero cold-start for LSP.
 
-*Remaining work*:
-
-* ✗ Extend LexemStream structure with ownership fields (`allocatedSize`, `ownsBuffer`)
-* ✗ Create full API (creation, capacity management, cleanup functions)
-* ✗ Refactor `collate()` - still has 5 pointer parameters
-* ✗ Migrate remaining helper functions
-
-*Impact*:
-
-* Reduces `collate()` from 5-6 parameters to 3-4
-* Centralizes buffer management logic
-* Enables clearer ownership semantics
-* Foundation for macro module extraction
-
-*Remaining Effort*: Smaller effort, can be completed independently
-
-* Extend structure and create full API
-* Refactor `collate()` and helper functions  
-* Testing, cleanup, and documentation
-
-==== 2. Extract Macro Expansion Module
-
-*Reference*: <<16-major-codebase-improvements.adoc#macro-expansion-module,Major Codebase Improvements - Extract Macro Expansion Module>>
-
-*Priority*: MEDIUM (Depends on LexemStream API)
-
-*Rationale*: `yylex.c` is 2353 lines combining lexing, file management, preprocessor directives, and macro expansion (~800 lines). Extracting macro expansion improves modularity and testability.
-
-*Impact*:
-
-* Reduces yylex.c by 34% (~800 lines)
-* Enables independent testing of macro expansion
-* Clearer separation: lexing vs. preprocessing
-* Facilitates future C++ macro support
-
-*Effort*: Larger refactoring, depends on LexemStream API completion
-
-* Create module structure and move memory management
-* Migrate token processing and expansion logic
-* Integration, testing, and documentation
-
-==== 3. Header Re-parsing Optimization
-
-*Priority*: MEDIUM (Addresses caching removal performance regression)
-
-*Problem*: After removing the lexem stream cache, each source file re-parses all its included headers. For projects like ffmpeg with 2616 files including ~30-50 common headers each, this creates 78,000-130,000 redundant parsing operations.
-
-*Proposed Solutions* (in order of implementation):
-
-**Phase 1: Incremental `-create` Mode**
-
-Make `-create` operations incremental by default:
-
-[source,c]
-----
-c-xref -create
-  → Check .cx database for each file
-  → Only parse files that are:
-     - Not in database, OR
-     - Modified since last parse (mtime check)
-  → Significantly faster for iterative development
-----
-
-*Impact*:
-* Second and subsequent `-create` runs become near-instant if no files changed
-* Leverages existing file modification tracking (`updateFileModificationTracking()`)
-* No architectural changes needed - just skip parsing if DB is current
-* Remains fully compatible with existing workflows
-
-*Effort*: Smaller effort, mostly configuration changes
-
-**Phase 2: Preprocessor Dependency Caching**
-
-Cache the **include graph** (which files include which headers) separately from parse results:
-
-[source,c]
-----
-// Lightweight structure - much smaller than full parse cache
-typedef struct {
-    int fileNumber;
-    int includeCount;
-    int includedFiles[]; // Array of file numbers
-    time_t lastChecked;
-} IncludeDependencyCache;
-----
-
-*Benefits*:
-* Fast closure computation without re-preprocessing
-* Track which files need reparsing when a header changes
-* Much simpler than full lexem stream caching
-* ~1KB per source file vs. ~100KB+ for full token cache
-
-*Effort*: Medium effort, moderate complexity but straightforward scope
-
-**Phase 3: Selective Header Caching** (Future optimization)
-
-After architecture is clean, consider lightweight header caching:
-
-* Cache **only system headers** (unlikely to change): `<stdio.h>`, `<stdlib.h>`, etc.
-* Project headers always re-parsed (change frequently during development)
-* Cache key: (header path, mtime, compiler flags) → tokenized stream
-* Much simpler than removed cache: no cache points, no parser state snapshots
-
-*Design Constraint*: Any future caching must be **optional and transparent**:
-* Must work without cache (on-demand parsing as fallback)
-* Cache is pure optimization, not architectural requirement
-* Clear separation between parsing logic and caching logic
-
-*Effort*: Larger effort, deferred to after unified database architecture is complete
-
-==== 4. Clean Persistence Store Abstraction
-
-*Reference*: <<16-major-codebase-improvements.adoc#clean-persistence-store,Major Codebase Improvements - Clean Persistence Store Abstraction>>
-
-*Priority*: HIGH (Foundation for Unified Symbol Database)
-
-*Rationale*: The `cxfile` module currently mixes persistence (reading/writing .cx files), search operations, and menu creation logic. This tight coupling prevents architectural improvements like LSP integration and alternative storage backends.
-
-*Key Problem*: Code conflates two distinct concepts:
-
-* **Reference Database** (in-memory `referenceableItemTable` - the source of truth)
-* **Persistence Store** (.cx files on disk - durable cache)
-
-Currently `.cx` files are sometimes treated as authoritative, when they should be just a cache.
-
-*Impact*:
-
-* Creates two clean layers: smart in-memory database vs. dumb durable storage
-* Enables testing without .cx files (mock persistence layer)
-* Foundation for LSP `textDocument/didChange` integration
-* Allows future storage backend alternatives (SQLite, etc.)
-* Removes ~200 lines of mixed-responsibility code
-
-*Effort*: Medium effort, requires careful abstraction layer design
-
-* Create `persistence_store.h` and `reference_database.h` facades
-* Extract search/unused-detection logic to proper modules
-* Hide implementation details (`cxFileHashNumberForSymbol` becomes static)
-* Testing, documentation, and cleanup
-
-==== 5. Unified Symbol Database Architecture
-
-*Reference*:
-* <<16-major-codebase-improvements.adoc#unified-symbol-database,Major Codebase Improvements - Unified Symbol Database Architecture>>
-* link:../adr/0014-adopt-on-demand-parsing-architecture.md[ADR-0014: Adopt On-Demand Parsing Architecture]
-
-*Priority*: HIGH (Enables true on-demand LSP)
-
-*Dependencies*: Clean Persistence Store Abstraction (item 4 above)
-
-*Rationale*: Transition from batch-mode (mandatory `-create`) to on-demand parsing where operations work immediately. Builds on the clean persistence layer to add smart invalidation, dependency tracking, and unified client interface.
-
-*Key Benefits*:
-* Zero cold start - no upfront `-create` required
-* Always up-to-date - automatic modification tracking
-* LSP-native - perfect fit for language server architecture
-* Single code path for Emacs and LSP clients
-* Smart logic lives in in-memory layer, persistence is just durable cache
-
-*Implementation Plan* (see link:../adr/0014-adopt-on-demand-parsing-architecture.md[ADR-0014] for architecture details):
-* Phase 1: Incremental `-create` (foundation)
-* Phase 2: On-demand goto-definition proof-of-concept (medium effort)
-* Phase 3: Extend to all refactorings (larger effort)
-* Phase 4: Deprecate mandatory `-create` (smaller cleanup)
-
-*Effort*: Larger foundational work, enables all on-demand features
-
-*Accepted Trade-offs*:
-* First operation on huge projects may have latency (1-5s)
-* Limited detection of archaic `extern` in .c files (see link:../adr/0013-limited-extern-detection-in-c-files.md[ADR-0013])
-* These trade-offs enable modern, responsive IDE integration
+**Multi-file Support**: Build include graph, enable cross-file navigation. Critical for full LSP feature parity.
 
 === Long-term Vision
 
-==== New Refactoring Features
+User-facing features and modern IDE capabilities enabled by architectural improvements:
 
-===== Extract Function from Expression
+**Additional Refactorings**: Extract expression (not just statements), smart helper function detection, preview dialogs.
 
-*Current Limitation*: Extract function only works on statement-level code blocks. Attempting to extract an expression (e.g., a complex boolean condition inside an `if` statement) fails because the system cannot detect expression context.
+**Full LSP Protocol**: Complete `textDocument/references`, hover, completion, rename, document symbols, workspace search.
 
-*Vision*: Enable extraction of arbitrary expressions as separate functions with appropriate return types.
+**Modern IDE Showcase**: VS Code extension, Neovim plugin, performance optimization for large projects.
 
-*Value*: Removes artificial restriction, makes refactoring tool more complete and less surprising to users.
-
-*Examples*:
-
-**Boolean Predicate Extraction:**
-[source,c]
-----
-// Before:
-if (functionSignature[i] == ' ' || functionSignature[i] == '\t' ||
-    functionSignature[i] == '\n')
-
-// After extraction:
-static bool isWhitespace(char c) {
-    return c == ' ' || c == '\t' || c == '\n';
-}
-
-if (isWhitespace(functionSignature[i]))
-----
-
-**Arithmetic Expression Extraction:**
-[source,c]
-----
-// Before:
-for (int i = 0; i < sizeof(dispatch)/sizeof(dispatch[0]); i++)
-
-// After extraction:
-static size_t dispatchTableSize(void) {
-    return sizeof(dispatch)/sizeof(dispatch[0]);
-}
-
-for (int i = 0; i < dispatchTableSize(); i++)
-----
-
-*Technical Approach*:
-
-The investigation (documented in agent task a16ff53) identified the core blocker: the parser cannot currently detect whether block markers are placed within an expression context versus statement context.
-
-**Recommended Implementation Strategy:**
-
-1. **Parsing Context Stack**
-   * Add `ParsingContext` enum tracking current grammar production
-   * Implement context stack with push/pop operations
-   * Modify grammar rules to track context (`CONTEXT_IF_CONDITION`, `CONTEXT_WHILE_CONDITION`, `CONTEXT_RETURN_EXPR`, etc.)
-   * Capture context when block markers are encountered
-
-2. **Expression Type Inference**
-   * Detect expression type from operators and operands
-   * Infer return type (bool, int, size_t, etc.)
-   * Handle type promotions and casts
-
-3. **Modified Extraction Logic**
-   * Simplify variable classification for expressions (all inputs, no outputs)
-   * Generate appropriate return statement
-   * Handle call-site substitution without assignment
-   * Extract source text and substitute parameter names
-
-4. **Testing and Refinement**
-   * Test with various expression contexts
-   * Handle edge cases (nested expressions, macro arguments, etc.)
-   * Validate type inference accuracy
-
-*Alternative Approach*: Add user dialog to explicitly mark extraction as expression-based rather than auto-detecting, which would be simpler but provide less seamless UX.
-
-*Current Code State*: The extraction infrastructure already has commented placeholders (`isInExpression` boolean with TODO comments saying "how can we know this...?"), indicating this feature was originally planned but the detection mechanism was never solved.
-
-*Effort*: Medium effort for full automatic detection, smaller if using dialog-based approach
-
-*Priority*: MEDIUM-LOW (valuable feature but less critical than LSP enablement)
-
-*Dependencies*: None - can be developed independently
-
-==== On-Demand Incremental Architecture for LSP
-
-*Current Limitation*: Stack memory accumulates symbol tables across all files forever. This works for batch cross-referencing but is incompatible with long-running LSP servers handling file edits.
-
-*Vision*: Enable true on-demand, per-file parsing suitable for LSP `textDocument/didChange` events.
-
-===== Two-Phase Architecture
-
-**Phase 1: Batch Indexing** (Current behavior, optimized)
-
-----
-For each file in project:
-    Parse file → populate refTab → discard stackMemory symbols
-
-Result: refTab contains all references, stackMemory reset between files
-----
-
-**Phase 2: LSP On-Demand** (Future capability)
-
-----
-Load refTab from .cx files (persistent cache)
-
-On textDocument/didChange(file):
-    1. Remove old references for file from refTab
-    2. Reparse file → update refTab with new references
-    3. Reset stackMemory (symbols discarded, only refTab persists)
-    4. Navigation uses refTab, not stackMemory symbols!
-----
-
-===== Key Architectural Insights
-
-* **Navigation uses refTab, not stackMemory**: This is crucial - symbol lookup queries the reference table, not the ephemeral symbol structures
-* **stackMemory can be reset per-file**: As long as refTab is updated first
-* **Incremental file updates become possible**: Parse → update refTab → discard symbols
-* **Backward compatible**: Batch mode continues to work exactly as before
-
-===== Memory Management Strategy
-
-After unified symbol database is complete, investigate:
-
-* Per-file stackMemory reset after populating refTab
-* Separation of navigation data (refTab - persistent) from parsing data (stackMemory - ephemeral)
-* Smart arena allocation strategies for long-running servers
-* Background garbage collection for unused symbol data
-
-*Effort*: Large foundational work with significant architectural implications
-
-==== Full LSP Protocol Compliance
-
-*Dependencies*: Unified symbol database, on-demand architecture
-
-*Goals*:
-
-* Complete implementation of core LSP features:
-** `textDocument/definition` ✓ (basic navigation exists)
-** `textDocument/references` ✓ (reference database exists)
-** `textDocument/hover` (symbol information)
-** `textDocument/completion` ✓ (completion system exists)
-** `textDocument/rename` ✓ (refactoring engine exists)
-** `textDocument/documentSymbol` (symbol outline)
-** `textDocument/formatting` (if desired)
-** `workspace/symbol` (project-wide symbol search)
-
-* Performance optimization for large projects:
-** Lazy loading of symbol data
-** Incremental parsing on file changes
-** Background indexing
-** Memory-mapped `.cx` file access
-
-* Multi-workspace support
-* Configuration via LSP initialization options
-
-*Effort*: Large effort building on unified database architecture
-
-==== Modern IDE Integration Showcase
-
-*Dependencies*: Full LSP compliance
-
-*Goals*:
-
-* **VS Code Extension**: Official c-xrefactory extension with feature parity to Emacs
-* **Vim/Neovim Support**: LSP client configuration and documentation
-* **Other IDEs**: Ensure LSP implementation works with CLion, Qt Creator, etc.
-* **Feature Demonstrations**: Video tutorials showing refactoring capabilities
-* **Benchmark Comparisons**: Performance vs. clangd, ccls for large C codebases
-
-*Marketing*:
-
-* Emphasize unique C-specific features (macro understanding, Yacc support)
-* Highlight safe refactoring capabilities
-* Target embedded systems and legacy C projects
-
-=== Migration and Compatibility Strategy
-
-==== Backward Compatibility Guarantee
-
-* Existing Emacs workflows will continue to work unchanged
-* `.cx` file format remains compatible (or auto-migrates transparently)
-* Command-line interface preserved (though some commands may become no-ops)
-* All existing refactoring operations maintain behavior
-
-==== Deprecation Path
-
-When unified symbol database is complete (see link:../adr/0014-adopt-on-demand-parsing-architecture.md[ADR-0014]):
-
-* `-create` becomes optional (auto-triggers on first operation if needed)
-* `-update` becomes automatic (modification time checking)
-* Mode flags (`FILE_BASED`, `ON_DEMAND`) deprecated internally
-* User-visible options remain for backward compatibility but may have no effect
-
-**Design Principle**: Zero breaking changes - existing workflows continue to work, new capabilities added transparently.
-
-==== Testing Strategy
-
-Throughout all changes:
-
-* **Zero test regressions** - 140+ test suite must pass
-* **Coverage maintenance** - keep 85%+ coverage during refactoring
-* **Performance validation** - no >5% regression on large projects
-* **Integration testing** - both Emacs and LSP workflows tested
-
-=== Success Metrics
-
-==== Technical Metrics
-
-* **Test Coverage**: Maintain 85%+
-* **Response Time**: LSP `textDocument/definition` < 100ms for 90th percentile
-* **Memory Efficiency**: LSP server < 500MB RAM for 1M LOC project
-* **Startup Time**: Zero cold start delay (no mandatory `-create`)
-
-==== Adoption Metrics
-
-* **VS Code Extension**: 1000+ downloads in first 6 months
-* **GitHub Stars**: 500+ (currently ~150)
-* **Issue Response**: <48 hours median time to first response
-* **Documentation**: 100% of features documented with examples
-
-==== Community Metrics
-
-* **Contributors**: 5+ active contributors beyond maintainer
-* **LSP Compatibility**: Works with 3+ major IDEs (VS Code, Vim, CLion)
-* **User Satisfaction**: Positive feedback on LSP integration
-
-=== Risk Management
-
-==== Technical Risks
-
-[cols="1,1,2"]
-|===
-|Risk |Likelihood |Mitigation
-
-|Breaking existing Emacs users
-|Medium
-|Maintain strict backward compatibility, extensive testing, staged rollout
-
-|Performance regression
-|Medium
-|Profile before/after each change, performance test suite, optimization budget
-
-|LSP protocol complexity
-|Low
-|Use existing battle-tested LSP libraries, focus on core features first
-
-|Memory leaks in long-running server
-|Medium
-|Careful arena allocator design, memory profiling, leak detection tools
-
-|Difficulty attracting contributors
-|High
-|Excellent documentation, beginner-friendly issues, responsive maintainer
-
-|Competing with clangd
-|High
-|Focus on unique strengths: macro understanding, Yacc support, safe refactoring
-|===
-
-==== Mitigation Strategies
-
-* **Incremental delivery**: Each phase provides standalone value
-* **Continuous testing**: Never sacrifice test coverage for features
-* **User feedback loops**: Early LSP alpha with select users
-* **Fallback options**: Keep old code paths during transition
-* **Documentation first**: Write the docs before the code
-
-=== Next Actions
-
-Priority tasks for immediate action:
-
-1. **Complete LSP handler wiring**
-   * Map existing navigation functions to LSP requests
-   * Test with real LSP client (VS Code)
-   * Document any gaps
-
-2. **Design LexemStream API**
-   * Finalize interface based on proposal
-   * Create initial implementation
-   * Write unit tests
-
-3. **Plan unified database refactoring**
-   * Detailed design document
-   * Identify all affected code paths
-   * Prototype dependency-driven scanning
-
-4. **Establish performance baseline**
-   * Measure current Emacs operation speeds
-   * Profile memory usage patterns
-   * Document acceptable overhead budgets
-
-=== Conclusion
-
-The roadmap balances immediate user value (LSP features, bug fixes) with long-term architectural health (unified database, modular design). Each phase builds on previous work, with clear success metrics and risk mitigation strategies.
-
-The end goal is a c-xrefactory that is:
-
-* **Zero-configuration**: Works immediately on any C project
-* **Modern**: First-class LSP support for all IDEs
-* **Powerful**: Unique C-specific features unmatched by competitors
-* **Maintainable**: Clean architecture enabling continued evolution
-* **Backward compatible**: Existing Emacs users unaffected
-
-This transformation from a 1990s batch cross-referencer to a modern, on-demand LSP server is achievable through careful incremental refactoring guided by comprehensive tests.
-
-=== Related Architecture Decision Records
-
-Key architectural decisions supporting this roadmap:
-
-* link:../adr/0012-remove-lexem-stream-caching.md[ADR-0012: Remove Lexem Stream Caching] - Documents rationale for accepting 6.4× performance regression to enable refactoring
-* link:../adr/0013-limited-extern-detection-in-c-files.md[ADR-0013: Limited Extern Detection] - Accepted limitation for archaic C patterns
-* link:../adr/0014-adopt-on-demand-parsing-architecture.md[ADR-0014: On-Demand Parsing] - Core architectural shift from batch to on-demand
-
-See also:
-* <<16-major-codebase-improvements.adoc#,Chapter 16: Major Codebase Improvements>> for detailed technical proposals
-* link:../adr-process.md[ADR Process Guide] for complete decision history and ADR conventions
-
----
-
-NOTE: This roadmap is a living document. As priorities shift and new insights emerge, it will be updated to reflect current understanding and goals.
+For technical details on these items, see link:17-major-codebase-improvements.adoc[Chapter 17: Major Codebase Improvements] and link:16-planned-features.adoc[Chapter 16: Planned Features].

@@ -1,0 +1,94 @@
+== Planned Features
+
+This chapter documents planned user-facing features—new refactorings, navigation capabilities, and editor integrations. These represent functionality users will interact with directly.
+
+For internal architectural improvements and code quality work, see link:17-major-codebase-improvements.adoc[Chapter 17: Major Codebase Improvements].
+
+For detailed specifications of refactoring operations (both existing and planned), see link:19-refactoring-recipes.adoc[Chapter 19: Refactoring Recipes].
+
+=== Move Function Between Files
+
+**Status**: Phase 1 MVP complete (December 2024)
+
+==== Use Case
+
+Reorganize code by moving function definitions between source files while maintaining correctness. Essential for refactoring large codebases into better module structure.
+
+**Example**: Extract a utility function from `main.c` to `utils.c`, automatically handling visibility changes and header declarations.
+
+==== What Works Now
+
+* Move a function from one source file to another
+* Automatically removes `static` keyword (makes function externally accessible)
+* Adds extern declaration to target file's header
+* Preserves comments and function decorations
+* Works for both C and Yacc files
+
+==== Current Limitations
+
+* Header declaration placement may need manual adjustment
+* You must manually add required `#include` directives
+* Static helper functions aren't moved automatically (Phase 3 goal)
+
+==== Planned Improvements
+
+**Smarter header placement**: Automatically find the right location in header files based on existing declarations and dependencies.
+
+**Helper function detection**: Identify and optionally move static helper functions that the moved function depends on. Prevents broken builds.
+
+**Include management**: Automatically add necessary `#include` directives based on dependencies.
+
+**Preview**: Show what will be changed before applying the refactoring.
+
+==== Related Work
+
+For technical implementation details, see link:17-major-codebase-improvements.adoc#clean-parser-api[Chapter 17: Clean Parser API].
+
+=== LSP Integration
+
+**Status**: EXPERIMENTAL (January 2026)
+
+==== Use Case
+
+Language Server Protocol (LSP) integration enables c-xrefactory to work with modern editors and IDEs (VS Code, vim/neovim with LSP plugins, etc.) beyond Emacs. This opens c-xrefactory's refactoring and navigation capabilities to a much wider audience.
+
+==== What Works
+
+**Go to Definition** (`textDocument/definition`):
+
+* ✓ Functions - Jump to function definition from any call site
+* ✓ Global variables - Navigate to variable declarations
+* ✓ Types - Find typedef and struct definitions
+
+**File Parsing**:
+
+* ✓ Files are parsed as they're opened in the editor
+* ✓ Symbols become available for navigation immediately
+
+==== Current Limitations
+
+**Single-file scope**: Only symbols in the currently opened file are accessible. To navigate to a function in another file, you must first open that file.
+
+**No local variables**: Go-to-definition doesn't work for local variables or function parameters. This works in Emacs mode but requires architectural changes for LSP.
+
+**Missing LSP features**: Only `textDocument/definition` is implemented. Coming features:
+
+* Find all references
+* Hover information  
+* Code completion
+* Rename refactoring
+* Organize imports
+
+==== How to Use
+
+See the README for LSP client configuration examples. Basic setup:
+
+1. Build c-xrefactory with `make`
+2. Configure your editor's LSP client to use `c-xref -lsp` as the server command
+3. Open C or Yacc files
+4. Use your editor's "go to definition" command
+
+==== Related Work
+
+* link:17-major-codebase-improvements.adoc[Chapter 17: Major Codebase Improvements] discusses the technical architecture
+* Multi-file support requires include graph and on-demand parsing (foundational work described in Chapter 17)

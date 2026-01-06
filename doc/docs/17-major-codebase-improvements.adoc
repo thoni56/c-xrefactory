@@ -1,8 +1,8 @@
 == Major Codebase Improvements
 
-This chapter documents larger architectural changes and improvements that would significantly enhance code quality, maintainability, and performance but require careful planning and implementation.
+This chapter documents internal architectural changes and technical debt reduction efforts that improve code quality, maintainability, and performance. These are improvements to c-xrefactory's own implementation, not features users interact with directly.
 
-These are distinct from the user-facing refactorings documented in "Refactoring Recipes" - those are operations users apply to their code, while these are improvements to c-xrefactory's own codebase.
+For planned user-facing features, see link:16-planned-features.adoc[Chapter 16: Planned Features].
 
 === LexemStream API Improvements
 
@@ -34,11 +34,13 @@ This creates several issues:
 **What's been implemented:**
 
 ✓ **Basic API functions** (`src/lexemstream.c`, `src/lexemstream.h`):
+
 - `lexemStreamHasMore()` - Check if stream has more lexems
 - `copyNextLexemFromStreamToStream()` - Copy one lexem between streams
 - `skipExtraLexemInformationFor()` - Skip lexem metadata
 
 ✓ **Partially refactored functions**:
+
 - `copyRemainingLexems()` - Now uses `LexemStream` API (yylex.c:1794)
 - `replaceMacroArguments()` - Refactored to use `LexemStream` (commit 73239531)
 - `expandMacroArgument()` - Takes `LexemStream *argumentInput` (yylex.c:1708)
@@ -47,16 +49,19 @@ This creates several issues:
 **What remains to be done:**
 
 ✗ **Extended LexemStream structure** - No ownership fields yet:
+
 - Missing: `allocatedSize`, `ownsBuffer` fields
 - Structure still lightweight (5 fields only)
 
 ✗ **Full API not created** - Missing functions:
+
 - Creation: `lexInputCreateOwned()`, `lexInputCreateView()`
 - Capacity: `lexInputEnsureCapacity()`, `lexInputReallocIfNeeded()`
 - Writing: `lexInputPutLexemCode()`, `lexInputAppendBytes()`
 - Cleanup: `lexInputFree()`
 
 ✗ **Major functions still using old style**:
+
 - `collate()` - Still has 5 pointer parameters (yylex.c:2022)
 - Several helper functions: `collate_id_id()`, `collate_const_const()`, etc.
 
@@ -69,18 +74,21 @@ This creates several issues:
 The codebase currently uses three different ways to represent lexem streams:
 
 *LexemBuffer* (structured, file-oriented)::
+
 - Fixed-size embedded array: `char lexemStream[LEXEM_BUFFER_SIZE]`
 - Metadata: `begin`, `read`, `write`, `position`, `fileOffset`, `backpatchPointer`
 - Used for lexing from files/editor buffers
 - Full API for manipulation: `putLexemCode()`, `getLexemCode()`, etc.
 
 *LexemStream* (lightweight, pointer-based)::
+
 - Just 3 pointers + metadata: `begin`, `read`, `write`, `macroName`, `inputType`
 - Points to external memory (doesn't own it)
 - Used for macro expansion pipelines
 - *NO manipulation API - just raw pointer access*
 
 *MacroBody* (persistent storage)::
+
 - Pointer + length: `char *body`, `int size`
 - Used for stored macro definitions
 
@@ -297,13 +305,16 @@ The proposed changes are designed to be backward compatible:
 ==== Open Questions
 
 . Should `lexInputEnsureCapacity()` use ppmAlloc or mbmAlloc?
+
 ** Probably depends on context - may need separate functions or a memory source parameter
 
 . How to handle the transition from raw pointers to LexemStream?
+
 ** Some functions receive raw pointers from outside (e.g., from MacroBody.body)
 ** May need wrapper functions to create temporary LexemStream views
 
 . Should we add debug assertions for bounds checking?
+
 ** Would help catch errors during development
 ** Could be compiled out in production
 
@@ -340,6 +351,7 @@ This mixing creates tight coupling, makes testing difficult, and prevents future
 The current code conflates two distinct concepts:
 
 *Reference Database* (Smart Layer - Source of Truth)::
+
 - **Always in-memory**: The `referenceableItemTable` hash table
 - Answers queries fast from RAM
 - Decides when to load from persistence
@@ -348,6 +360,7 @@ The current code conflates two distinct concepts:
 - **This is the actual database**
 
 *Persistence Store* (Dumb Layer - Durable Cache)::
+
 - **Always on disk/database**: The `.cx` files (or future SQLite, etc.)
 - Just knows how to save/load a specific format
 - Has NO in-memory state of its own
@@ -1904,70 +1917,3 @@ The key insight is that we can **backport this gradually without breaking anythi
 Phase 1 proves the approach works with minimal risk. Phases 2-3 build on proven foundation, so failure to complete them doesn't harm existing functionality.
 
 Multi-file definitions are one motivating use case, but the real long-term benefit is a codebase where parsing behavior is **discoverable and type-safe** instead of driven by magic strings scattered throughout 25-year-old code.
-
-=== LSP Implementation Progress
-
-**Status**: EXPERIMENTAL (January 2026)
-
-==== Current Implementation (2026-01)
-
-**What works:**
-
-✓ **Basic LSP communication**: Server startup, initialization, shutdown
-✓ **textDocument/didOpen**: Parse and index files as they're opened
-✓ **textDocument/definition**: Go-to-definition for global symbols
-- Functions: Full support
-- Global variables: Full support  
-- Types: Full support
-
-**Known limitations:**
-
-✗ **Local variables**: Go-to-definition not supported
-
-- Cause: Local variables not indexed in `ReferenceableItemTable` during background/'xref' parsing
-- Legacy Emacs mode works because it reparses with cursor position, making locals available in transient tables
-- LSP background indexing has no cursor, so locals aren't tracked
-- Fix requires: Store locals in reference table OR implement scope-based lookup
-
-✗ **Multi-file symbols**: Symbols in other files not accessible
-
-- Only the currently opened file is parsed and indexed
-- Cross-file references require include graph and on-demand parsing (see "Parsing Subsystem" section)
-
-==== Code Locations
-
-**LSP Infrastructure**:
-
-* `src/lsp.c` - LSP server main loop and message handling
-* `src/lsp_handler.c` - Request/notification handlers  
-* `src/lsp_adapter.c` - Translate LSP requests to c-xrefactory queries
-* `src/lsp_sender.c` - JSON-RPC response formatting
-* `src/json_utils.c` - JSON construction helpers
-
-**Key functions**:
-
-* `initializeParsingSubsystem()` - Initialize options and tables for LSP mode
-* `parseToCreateReferences()` - Parse file and populate reference database
-* `findDefinition()` - Look up symbol at position, return definition location
-
-==== Architecture Notes
-
-**Options initialization**: LSP mode now calls `deepCopyOptionsFromTo(&presetOptions, &options)` to get baseline configuration including file suffixes, avoiding the expensive project discovery and compiler interrogation that XRef mode performs.
-
-**Language detection**: Derives language from filename extension via `getLanguageFor()`, consistent with XRef mode. LSP protocol's `languageId` field is currently ignored.
-
-**Reference database**: In-memory `ReferenceableItemTable` populated by parsing. Currently cleared on each parse; future work will make it persistent across files.
-
-==== Next Steps
-
-To achieve feature parity with legacy Emacs mode:
-
-1. **Local variable support**: Either index locals in reference table, or implement function-scope lookup
-2. **Multi-file support**: Implement include graph and on-demand parsing (foundational work in "Parsing Subsystem" section)
-3. **Additional LSP features**: References, hover, completion, rename
-
-==== Related Work
-
-* **Parsing Subsystem Refactoring** - Provides foundation for multi-file support
-* **ADR-0014** (On-Demand Parsing) - Architecture for efficient cross-file lookups
-* **Unified Symbol Database** - Will enable persistent indexing across files
