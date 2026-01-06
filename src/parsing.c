@@ -141,41 +141,24 @@ void initializeParsingSubsystem(void) {
     initReferenceableItemTable(MAX_REFS_HASHTABLE_ENTRIES);
 }
 
-static void setupParsingConfigForCreateReferences(void) {
-    /* Configure parser to just create references, no cursor-specific operations */
-    parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
-    parsingConfig.positionOfSelectedReference = NO_POSITION;
-    parsingConfig.cursorOffset = -1;
-    parsingConfig.markOffset = -1;
-    parsingConfig.includeDirs = NULL;  /* TODO: Get from LSP initialize params or .c-xrefrc */
-    parsingConfig.defines = NULL;      /* TODO: Get from LSP initialize params or .c-xrefrc */
-    parsingConfig.extractMode = EXTRACT_FUNCTION;  /* Doesn't matter for CREATE_REFERENCES */
-    parsingConfig.targetParameterIndex = 0;
-}
-
-void parseFileForReferences(void) {
-    /* Parse file for reference creation.
-     * Assumes: currentFile is open, currentLanguage is set, options are configured.
-     * Responsibility: Set up parsingConfig correctly for reference creation.
-     * Does NOT: Manage configuration or file lifecycle (handled by caller).
-     */
-    syncParsingConfigFromOptions(options);
-    parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
-    parseCurrentInputFile(currentLanguage);
-}
-
 void parseToCreateReferences(const char *fileName, Language language) {
     EditorBuffer *buffer;
 
-    /* Get the editor buffer that was loaded in didOpen */
+    /* Try to get editor buffer first (preferred for LSP, refactoring, xref with open editors) */
     buffer = getOpenedAndLoadedEditorBuffer((char *)fileName);
+
+    /* Fall back to disk file if editor buffer not found (common in xref batch mode) */
     if (buffer == NULL) {
-        log_error("parseToCreateReferences: No buffer found for '%s'", fileName);
-        return;
+        buffer = findOrCreateAndLoadEditorBufferForFile((char *)fileName);
+        if (buffer == NULL) {
+            log_error("parseToCreateReferences: Could not open '%s'", fileName);
+            return;
+        }
     }
 
-    /* Setup parsing configuration */
-    setupParsingConfigForCreateReferences();
+    /* Setup parsing configuration from global options (includes discovered defines, include paths) */
+    syncParsingConfigFromOptions(options);
+    parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
 
     /* Setup input for parsing - this initializes the currentFile global */
     initInput(NULL, buffer, "\n", (char *)fileName);
@@ -185,8 +168,6 @@ void parseToCreateReferences(const char *fileName, Language language) {
 
     /* Parse the file - this populates the ReferenceableItemTable */
     parseCurrentInputFile(language);
-
-    /* TODO Cleanup - close the character buffer if it's from a file (not stdin) */
 
     log_trace("parseToCreateReferences: Completed parsing '%s'", fileName);
 }
