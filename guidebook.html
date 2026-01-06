@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-01-05">
+<meta name="author" content="v{VERSION} - Generated 2026-01-06">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-01-05</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-01-06</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -9825,38 +9825,7 @@ parseBufferUsingServer(project, point, mark, "-olcxmodemenu", NULL);
 <div class="sect3">
 <h4 id="_the_parser_api_innovation">16.6.3. The Parser API Innovation</h4>
 <div class="paragraph">
-<p>The new <code>parsing.h</code> interface provides:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef enum {
-    PARSE_TO_CREATE_REFERENCES,    /* Just parse, create references */
-    PARSE_TO_GET_FUNCTION_BOUNDS,  /* Record function boundaries */
-    PARSE_TO_VALIDATE_MOVE_TARGET, /* Check if position is valid move target */
-    PARSE_TO_EXTRACT,              /* Extract refactoring - track blocks/vars */
-    PARSE_TO_TRACK_PARAMETERS,     /* Track parameter positions for navigation */
-    PARSE_TO_COMPLETE              /* Complete code at cursor */
-} ParserOperation;
-
-typedef struct {
-    StringList      *includeDirs;  /* -I include directories */
-    char            *defines;      /* -D preprocessor definitions */
-    bool             strictAnsi;   /* ANSI C mode vs extensions */
-    ParserOperation  operation;    /* What should parser do? */
-    Position         cursorPosition; /* Cursor location for bounded operations */
-    int              cursorOffset; /* Byte offset of cursor in file */
-    int              markOffset;   /* Byte offset of mark (selection end) */
-    ExtractMode      extractMode;  /* Which extraction type (function/macro/variable) */
-    int              targetParameterIndex; /* Which parameter to track */
-} ParsingConfig;
-
-/* Configuration is set before parsing starts */
-extern ParsingConfig parsingConfig;
-
-/* Predicate functions document behavior */
-extern bool needsReferenceAtCursor(ParserOperation op);
-extern bool allowsDuplicateReferences(ParserOperation op);</code></pre>
-</div>
+<p>The new <code>parsing.h</code> interface provides operation-based configuration (see <code>src/parsing.h</code> for details):</p>
 </div>
 <div class="paragraph">
 <p><strong>Key innovations</strong>:
@@ -9878,9 +9847,9 @@ extern bool allowsDuplicateReferences(ParserOperation op);</code></pre>
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">/* Before: What does this do? Need to search for documentation */
 parseBufferUsingServer(options.project, target, NULL, "-olcxmovetarget", NULL);
 
-/* After: Immediately obvious */
+/* After: Type-safe and self-documenting via ParserOperation enum */
 parsingConfig.operation = PARSE_TO_VALIDATE_MOVE_TARGET;
-parsingConfig.cursorPosition = makePositionFromMarker(target);
+parsingConfig.positionOfSelectedReference = makePositionFromMarker(target);
 parseCurrentInputFile(LANG_C);</code></pre>
 </div>
 </div>
@@ -12114,7 +12083,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-05 18:06:11 UTC
+Last updated 2026-01-06 21:53:19 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
