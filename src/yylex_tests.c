@@ -52,16 +52,16 @@ BeforeEach(Yylex) {
     options.mode = ServerMode;
     allocateMacroArgumentTable(MAX_MACRO_ARGS);
     initFileTable(100);
-    always_expect(editorFileExists, will_return(false));
-    initNoFileNumber();
 
     initSymbolTable(100);
 
     memoryInit(&ppmMemory, "", NULL, PreprocessorMemorySize);
 
     always_expect(initCharacterBuffer);
+    always_expect(editorFileExists, will_return(false));
 }
 AfterEach(Yylex) {}
+
 
 static void setup_lexBuffer_for_reading_identifier(void *data) {
     char *lexemStreamP = currentFile.lexemBuffer.lexemStream;
@@ -118,7 +118,7 @@ Ensure(Yylex, can_handle_a_line_directive_without_number) {
 Ensure(Yylex, can_process_include_directive) {
     Position position     = (Position){1, 2, 3};
     FILE     file;
-    char    lexem_stream[100];
+    char     lexem_stream[100];
 
     lexem_stream[0] = (unsigned)STRING_LITERAL%256;
     lexem_stream[1] = STRING_LITERAL/256;

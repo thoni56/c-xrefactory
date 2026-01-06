@@ -54,7 +54,6 @@ extern int NO_FILE_NUMBER;
 
 
 extern void initFileTable(int size);
-extern void initNoFileNumber(void);
 
 extern int addFileItemToFileTable(FileItem *fileItem);
 extern int addFileNameToFileTable(char *name);

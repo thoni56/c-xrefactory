@@ -47,7 +47,6 @@ void handle_initialize(JSON *request) {
     add_json_string(response, "positionEncoding", "utf-8");
 
     initFileTable(100);
-    initNoFileNumber();  /* Sets NO_FILE_NUMBER to a valid file table index */
     initEditorBufferTable();
 
     /* Initialize parsing subsystem */

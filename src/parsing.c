@@ -144,7 +144,6 @@ void initializeParsingSubsystem(void) {
 static void setupParsingConfigForCreateReferences(void) {
     /* Configure parser to just create references, no cursor-specific operations */
     parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
-    /* Use NO_FILE_NUMBER for "no cursor" - it's a valid FileItem so lookups work */
     parsingConfig.cursorPosition = makePosition(NO_FILE_NUMBER, 0, 0);
     parsingConfig.cursorOffset = -1;
     parsingConfig.markOffset = -1;

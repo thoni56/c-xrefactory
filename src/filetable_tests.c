@@ -78,7 +78,9 @@ Ensure(FileTable, can_return_next_existing_file_index) {
 }
 
 Ensure(FileTable, will_return_error_for_no_more_next_file_item) {
-    assert_that(getNextExistingFileNumber(0), is_equal_to(-1));
+    int fileNumber = getNextExistingFileNumber(0); /* Will find NO_FILE_NUMBER */
+    assert_that(fileNumber, is_not_equal_to(-1));
+    assert_that(getNextExistingFileNumber(fileNumber+1), is_equal_to(-1));
 }
 
 static int  mapFunctionCalled = 0;
@@ -96,7 +98,7 @@ Ensure(FileTable, can_map) {
 
     mapOverFileTable(mapFunction);
 
-    assert_that(mapFunctionCalled, is_equal_to(2));
+    assert_that(mapFunctionCalled, is_equal_to(3)); /* + NO_FILE_NUMBER */
 }
 
 static int  mapFunctionWithIndexCalled = 0;
@@ -112,7 +114,7 @@ Ensure(FileTable, can_map_with_index) {
 
     mapOverFileTableWithIndex(mapFunctionWithIndex);
 
-    assert_that(mapFunctionWithIndexCalled, is_equal_to(1));
+    assert_that(mapFunctionWithIndexCalled, is_equal_to(2));  /* + NO_FILE_NUMBER */
 }
 
 static int variable;
@@ -135,5 +137,5 @@ Ensure(FileTable, can_map_with_pointer) {
 
     mapOverFileTableWithPointer(mapFunctionWithPointer, &variable);
 
-    assert_that(mapFunctionWithPointerCalled, is_equal_to(3));
+    assert_that(mapFunctionWithPointerCalled, is_equal_to(4));  /* + NO_FILE_NUMBER */
 }

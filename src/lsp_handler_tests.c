@@ -64,7 +64,6 @@ Ensure(LspHandler, sends_correct_initialize_response) {
     JSON *captured_response; // A copy created by the mock function for send_response_and_delete()
 
     expect(initFileTable);
-    expect(initNoFileNumber);
     expect(initEditorBufferTable);
     expect(initializeParsingSubsystem);
     expect(createReferenceDatabase);

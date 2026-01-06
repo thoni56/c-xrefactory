@@ -34,7 +34,7 @@ static void *ftAlloc(size_t size) {
 
 
 int NO_FILE_NUMBER;                /* Initialized to an actual index in initNoFile() which needs
-                                   to be called early */
+                                      to be called early */
 
 static FileTable fileTable;
 
@@ -82,12 +82,9 @@ void initFileTable(int count) {
     ftInit();
     fileTable.tab = ftAlloc(count*sizeof(FileItem *));
     fileTableNoAllocInit(&fileTable, count);
-}
 
-void initNoFileNumber(void) {
     FileItem *fileItem = newFileItem(NO_FILE_NAME);
-
-    /* Add it to the fileTab and remember its index for future use */
+    /* Add the "no file" to the fileTable and remember its index for future use */
     NO_FILE_NUMBER = fileTableAdd(&fileTable, fileItem);
 }
 

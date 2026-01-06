@@ -640,7 +640,6 @@ void totalTaskEntryInitialisations(void) {
     options.includeDirs = NULL;
 
     initFileTable(MAX_FILES);
-    initNoFileNumber();             /* Sets NO_FILE_NUMBER to something real */
 
     noPosition = makePosition(NO_FILE_NUMBER, 0, 0);
     inputFileNumber = NO_FILE_NUMBER;
