@@ -1657,38 +1657,7 @@ This makes the codebase fragile, hard to understand, and difficult to extend wit
 
 ==== The Parser API Innovation
 
-The new `parsing.h` interface provides:
-
-[source,c]
-----
-typedef enum {
-    PARSE_TO_CREATE_REFERENCES,    /* Just parse, create references */
-    PARSE_TO_GET_FUNCTION_BOUNDS,  /* Record function boundaries */
-    PARSE_TO_VALIDATE_MOVE_TARGET, /* Check if position is valid move target */
-    PARSE_TO_EXTRACT,              /* Extract refactoring - track blocks/vars */
-    PARSE_TO_TRACK_PARAMETERS,     /* Track parameter positions for navigation */
-    PARSE_TO_COMPLETE              /* Complete code at cursor */
-} ParserOperation;
-
-typedef struct {
-    StringList      *includeDirs;  /* -I include directories */
-    char            *defines;      /* -D preprocessor definitions */
-    bool             strictAnsi;   /* ANSI C mode vs extensions */
-    ParserOperation  operation;    /* What should parser do? */
-    Position         cursorPosition; /* Cursor location for bounded operations */
-    int              cursorOffset; /* Byte offset of cursor in file */
-    int              markOffset;   /* Byte offset of mark (selection end) */
-    ExtractMode      extractMode;  /* Which extraction type (function/macro/variable) */
-    int              targetParameterIndex; /* Which parameter to track */
-} ParsingConfig;
-
-/* Configuration is set before parsing starts */
-extern ParsingConfig parsingConfig;
-
-/* Predicate functions document behavior */
-extern bool needsReferenceAtCursor(ParserOperation op);
-extern bool allowsDuplicateReferences(ParserOperation op);
-----
+The new `parsing.h` interface provides operation-based configuration (see `src/parsing.h` for details):
 
 **Key innovations**:
 * Enum-based operations - Discoverable list (IDE autocomplete shows all options)
@@ -1707,9 +1676,9 @@ Replace magic strings with discoverable enums:
 /* Before: What does this do? Need to search for documentation */
 parseBufferUsingServer(options.project, target, NULL, "-olcxmovetarget", NULL);
 
-/* After: Immediately obvious */
+/* After: Type-safe and self-documenting via ParserOperation enum */
 parsingConfig.operation = PARSE_TO_VALIDATE_MOVE_TARGET;
-parsingConfig.cursorPosition = makePositionFromMarker(target);
+parsingConfig.positionOfSelectedReference = makePositionFromMarker(target);
 parseCurrentInputFile(LANG_C);
 ----
 
