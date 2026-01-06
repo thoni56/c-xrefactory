@@ -71,7 +71,6 @@ typedef enum {
 typedef struct {
     StringList      *includeDirs;  /* -I include directories */
     char            *defines;      /* -D preprocessor definitions */
-    bool             strictAnsi;   /* ANSI C mode vs extensions */
     ParserOperation  operation;    /* What should parser do? */
     int              cursorOffset; /* Byte offset of cursor in the file sent by the
                                     * legacy client.. */

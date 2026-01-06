@@ -149,7 +149,6 @@ static void setupParsingConfigForCreateReferences(void) {
     parsingConfig.markOffset = -1;
     parsingConfig.includeDirs = NULL;  /* TODO: Get from LSP initialize params or .c-xrefrc */
     parsingConfig.defines = NULL;      /* TODO: Get from LSP initialize params or .c-xrefrc */
-    parsingConfig.strictAnsi = false;
     parsingConfig.extractMode = EXTRACT_FUNCTION;  /* Doesn't matter for CREATE_REFERENCES */
     parsingConfig.targetParameterIndex = 0;
 }
