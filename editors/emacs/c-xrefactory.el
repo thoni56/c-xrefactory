@@ -36,6 +36,7 @@
 
   (define-key keymap [(f6)] 'c-xref-push-and-goto-definition)
   (define-key keymap [(control f6)] 'c-xref-browse-symbol)
+  (define-key keymap [\M-f6] 'c-xref-search-definition)
   (define-key keymap [(f5)] 'c-xref-pop-and-return)
   (define-key keymap [(control f5)] 'c-xref-re-push)
   (define-key keymap [(f4)] 'c-xref-next-reference)
@@ -638,7 +639,7 @@ faces and highlighting in buffers created by C-xrefactory.
 (define-key c-xref-menu [c-xref-refactor] '("Refactor" . c-xref-refactor))
 (define-key c-xref-menu [separator-buffers4] '("--"))
 (define-key c-xref-menu [c-xref-search-tag] '("Search Symbol" . c-xref-search-in-tag-file))
-(define-key c-xref-menu [c-xref-search-def] '("Search Definition in Tags" . c-xref-search-definition-in-tag-file))
+(define-key c-xref-menu [c-xref-search-def] '("Search Definition in Tags" . c-xref-search-definition))
 (define-key c-xref-menu [c-xref-dm-menu] '("Unused Symbols Detection" . c-xref-unused-menu))
 (define-key c-xref-menu [c-xref-sb-menu] '("Browsing with Symbol Stack" . c-xref-sb-menu))
 (define-key c-xref-menu [c-xref-lm-menu] '("Local Motion" . c-xref-lm-menu))
@@ -752,7 +753,7 @@ your .c-xrefrc file.
 (autoload 'c-xref-re-push "c-xref" c-xref-default-documentation-string t)
 
 (autoload 'c-xref-search-in-tag-file "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-search-definition-in-tag-file "c-xref" c-xref-default-documentation-string t)
+(autoload 'c-xref-search-definition "c-xref" c-xref-default-documentation-string t)
 
 (autoload 'c-xref-push-this-file-unused-symbols "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-push-global-unused-symbols "c-xref" c-xref-default-documentation-string t)

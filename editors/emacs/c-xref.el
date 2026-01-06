@@ -356,7 +356,7 @@
 
 
 (defvar c-xref-context-help-buffer " *help*")
-(defvar c-xref-help-map (make-sparse-keymap "C-Xref refactorings"))
+(defvar c-xref-help-map (make-sparse-keymap "C-xref refactorings"))
 (define-key c-xref-help-map [up] 'c-xref-modal-dialog-previous-line-no-sentinel)
 (define-key c-xref-help-map [down] 'c-xref-modal-dialog-next-line-no-sentinel)
 (define-key c-xref-help-map [kp-up] 'c-xref-modal-dialog-previous-line-no-sentinel)
@@ -5725,12 +5725,13 @@ symbols containing the entered string. For example, entering
   )
 
 (defun c-xref-search-in-tag-file ()
-  "Search for string(s) in tags.
+  "Search for string(s) amongst references.
 
-This function asks for strings to search, then it inspects the tags of
-active project looking for symbols containing the given string(s). For
-each  such  symbol it  displays  the  symbol  name together  with  its
-definition location.  Strings are matched against the full symbol name.
+This function asks for strings to search, then it inspects the
+references in the active project looking for symbols containing
+the given string(s). For each such symbol it displays the symbol
+name together with its definition location.  Strings are matched
+against the full symbol name.
 "
   (interactive "")
   (let ((sym) (syms) (line) (col))
@@ -5746,7 +5747,7 @@ definition location.  Strings are matched against the full symbol name.
     ;;(profile-results)
     ))
 
-(defun c-xref-search-definition-in-tag-file ()
+(defun c-xref-search-definition ()
   "Search for a symbol defined in the project.
 
 This function asks for strings to search, then it inspects the
