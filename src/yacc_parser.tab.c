@@ -4122,7 +4122,7 @@ case 369:
 #line 1313 "yacc_parser.y"
 {
         Symbol *symbol;
-        Position pos = makePosition(-1, 0, 0);
+        Position pos = NO_POSITION;
 
         symbol = newSymbol("", pos);
         symbol->type = TypeElipsis;
@@ -4163,7 +4163,7 @@ case 374:
 #line 1345 "yacc_parser.y"
 {
         Symbol *symbol;
-        Position position = makePosition(-1, 0, 0);
+        Position position = NO_POSITION;
 
         symbol = newSymbol("", position);
         symbol->type = TypeElipsis;

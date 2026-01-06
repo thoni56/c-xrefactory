@@ -1106,7 +1106,7 @@ parameter_identifier_list
     : identifier_list                            { $$.data = $1.data; }
     | identifier_list ',' ELLIPSIS               {
         Symbol *symbol;
-        Position pos = makePosition(-1, 0, 0);
+        Position pos = NO_POSITION;
 
         symbol = newSymbol("", pos);
         symbol->type = TypeElipsis;
@@ -1138,7 +1138,7 @@ parameter_type_list
     : parameter_list                             { $$.data = $1.data; }
     | parameter_list ',' ELLIPSIS                {
         Symbol *symbol;
-        Position position = makePosition(-1, 0, 0);
+        Position position = NO_POSITION;
 
         symbol = newSymbol("", position);
         symbol->type = TypeElipsis;
