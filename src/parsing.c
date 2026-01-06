@@ -153,6 +153,17 @@ static void setupParsingConfigForCreateReferences(void) {
     parsingConfig.targetParameterIndex = 0;
 }
 
+void parseFileForReferences(void) {
+    /* Parse file for reference creation.
+     * Assumes: currentFile is open, currentLanguage is set, options are configured.
+     * Responsibility: Set up parsingConfig correctly for reference creation.
+     * Does NOT: Manage configuration or file lifecycle (handled by caller).
+     */
+    syncParsingConfigFromOptions(options);
+    parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
+    parseCurrentInputFile(currentLanguage);
+}
+
 void parseToCreateReferences(const char *fileName, Language language) {
     EditorBuffer *buffer;
 

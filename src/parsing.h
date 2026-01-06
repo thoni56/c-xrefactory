@@ -160,6 +160,14 @@ extern FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker);
 extern void initializeParsingSubsystem(void);
 
 /**
+ * Parse current file for reference creation.
+ * Intended for batch xref processing where config is already set up.
+ * Assumes: currentFile is open, currentLanguage is set, options configured.
+ * Does NOT manage config or file lifecycle (caller's responsibility).
+ */
+extern void parseFileForReferences(void);
+
+/**
  * Parse a file to create references in the reference database.
  * Minimal parsing interface that bypasses legacy server infrastructure.
  *

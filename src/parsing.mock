@@ -40,6 +40,10 @@ void initializeParsingSubsystem(void) {
     mock();
 }
 
+void parseFileForReferences(void) {
+    mock();
+}
+
 void parseToCreateReferences(const char *fileName, Language language) {
     mock(fileName, language);
 }
