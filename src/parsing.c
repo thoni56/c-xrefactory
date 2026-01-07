@@ -177,7 +177,7 @@ void parseToCreateReferences(const char *fileName) {
               language == LANG_YACC ? "YACC" : "C");
 
     /* Parse the file - this populates the ReferenceableItemTable */
-    parseCurrentInputFile(language);
+    callParser(language);
 
     log_trace("parseToCreateReferences: Completed parsing '%s'", fileName);
 }

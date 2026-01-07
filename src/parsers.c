@@ -7,7 +7,7 @@
 YYSTYPE *uniyylval = &c_yylval;
 
 
-void parseCurrentInputFile(Language language) {
+void callParser(Language language) {
     if (language == LANG_YACC) {
         uniyylval = &yacc_yylval;
         yacc_yyparse();

@@ -136,7 +136,7 @@ static void parseInputFile(void) {
     syncParsingConfigFromOptions(options);
     if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
         log_debug("parse start");
-        parseCurrentInputFile(currentLanguage);
+        callParser(currentLanguage);
         log_debug("parse end");
     } else
         log_debug("Not parsing input because of server operation TAG_SEARCH or PUSH_NAME");
