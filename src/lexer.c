@@ -441,7 +441,7 @@ static int postProcessLexemForServerOperations(CharacterBuffer *cb, LexemBuffer 
     Position position = lb->position;
 
     assert(fileNumberFrom(cb) != -1); /* Old way to say NO_FILE_NUMBER, should not happen anymore */
-    if (fileNumberFrom(cb) == topLevelFileNumber && fileNumberFrom(cb) != NO_FILE_NUMBER) {
+    if (fileNumberFrom(cb) == parsingConfig.inputFileNumber && fileNumberFrom(cb) != NO_FILE_NUMBER) {
         // We are in a real file (!= NO_FILE_NUMBER) and that is the one we are
         if (parsingConfig.operation == PARSE_TO_EXTRACT) {
             ch = skipBlanks(cb, ch);

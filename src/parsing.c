@@ -24,7 +24,6 @@ ParsingConfig parsingConfig;
 
 
 int currentFileNumber = -1;     /* Currently parsed file, maybe a header file */
-int topLevelFileNumber = -1;    /* Top level file */
 
 
 ParserOperation getParserOperation(ServerOperation serverOp) {
@@ -170,20 +169,19 @@ void parseToCreateReferences(const char *fileName) {
     /* Setup parsing configuration from global options (includes discovered defines, include paths) */
     syncParsingConfigFromOptions(options);
     parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
-    parsingConfig.fileName = fileName;
 
     /* Determine language from filename extension */
     Language language = getLanguageFor((char *)fileName);
 
     /* Setup input for parsing - this initializes the currentFile global */
     initInput(NULL, buffer, "\n", (char *)fileName);
-    topLevelFileNumber = currentFile.characterBuffer.fileNumber;
+    parsingConfig.inputFileNumber = currentFile.characterBuffer.fileNumber;
 
     log_trace("parseToCreateReferences: Parsing '%s' as %s", fileName,
               language == LANG_YACC ? "YACC" : "C");
 
-    /* Parse the file - this populates the ReferenceableItemTable */
-    currentFileNumber = topLevelFileNumber;
+    /* Parse the file - populating the ReferenceableItemTable */
+    currentFileNumber = parsingConfig.inputFileNumber;
     callParser(language);
 
     log_trace("parseToCreateReferences: Completed parsing '%s'", fileName);

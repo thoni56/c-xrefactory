@@ -131,11 +131,11 @@ static void parseInputFile(void) {
     if (options.fileTrace)
         fprintf(stderr, "parseInputFile: '%s\n", currentFile.fileName);
 
-    /* Bridge: Sync parsingConfig for all operations using parseCurrentInputFile entry point */
+    /* Bridge: Sync parsingConfig for all operations using this entry point */
     syncParsingConfigFromOptions(options);
     if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
         log_debug("parse start");
-        currentFileNumber = topLevelFileNumber;
+        currentFileNumber = parsingConfig.inputFileNumber;
         callParser(currentLanguage);
         log_debug("parse end");
     } else
@@ -157,15 +157,15 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
     inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
 
     loadFileNumbersFromStore();
-    topLevelFileNumber = currentFile.characterBuffer.fileNumber;
+    parsingConfig.inputFileNumber = currentFile.characterBuffer.fileNumber;
 
     if (inputOpened) {
         /* If the file has preloaded content, remove old references before parsing */
         EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(inputFileName);
         if (buffer != NULL && buffer->preLoadedFromFile != NULL) {
             log_debug("file has preloaded content, removing old references for file %d",
-                      topLevelFileNumber);
-            removeReferenceableItemsForFile(topLevelFileNumber);
+                      parsingConfig.inputFileNumber);
+            removeReferenceableItemsForFile(parsingConfig.inputFileNumber);
         }
 
         parseInputFile();
@@ -174,9 +174,9 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
     if (options.cursorOffset==0) {
         // special case, push the file as include reference
         if (needsReferenceDatabase(options.serverOperation)) {
-            Position position = makePosition(topLevelFileNumber, 1, 0);
+            Position position = makePosition(parsingConfig.inputFileNumber, 1, 0);
             parsingConfig.positionOfSelectedReference = position;
-            addFileAsIncludeReference(topLevelFileNumber);
+            addFileAsIncludeReference(parsingConfig.inputFileNumber);
         }
     }
     if (completionPositionFound && !completionStringServed) {

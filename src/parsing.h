@@ -69,19 +69,23 @@ typedef enum {
  * This is the input to the parsing subsystem - set before parsing starts.
  */
 typedef struct {
-    const char      *fileName;     /* File to parse */
-    StringList      *includeDirs;  /* -I include directories */
-    char            *defines;      /* -D preprocessor definitions */
-    ParserOperation  operation;    /* What should parser do? */
-    int              cursorOffset; /* Byte offset of cursor in the file sent by the
-                                    * legacy client.. */
+    ParserOperation  operation;                   /* What should parser do? */
+    int              inputFileNumber;             /* The fileNumber for the "main" file
+                                                   * that the parse started from. */
+    StringList      *includeDirs;                 /* -I include directories */
+    char            *defines;                     /* -D preprocessor definitions */
+    int              markOffset;                  /* Byte offset of the mark (one end of
+                                                   * the selection), -1 if no
+                                                   * selection */
+    int              cursorOffset;                /* Byte offset of cursor (other end)
+                                                   * in the file sent by the legacy
+                                                   * client... */
     Position         positionOfSelectedReference; /* ... which the lexer turns into a
                                                    * position by inspecting the lexems
-                                                   * to find the one the offset is
+                                                   * to find the one the cursorOffset is
                                                    * inside. The _beginning_ of that
                                                    * lexem becomes the position. */
-    int              markOffset;   /* Byte offset of mark (selection end), -1 if no selection */
-    ExtractMode      extractMode;  /* Which extraction type (function/macro/variable) */
+    ExtractMode      extractMode;   /* Which extraction type (function/macro/variable) */
     int              targetParameterIndex; /* Which parameter to track (for PARSE_TO_TRACK_PARAMETERS) */
 } ParsingConfig;
 
@@ -107,11 +111,6 @@ typedef struct {
     bool valid;                  /* True if position is valid for moving a function to */
 } MoveTargetValidationResult;
 
-
-/**
- * The fileNumber for the "main" file that the parse started from. Is not a header file.
- */
-extern int topLevelFileNumber;
 
 /**
  * The filenumber for the currently parsed file, might be an include file.

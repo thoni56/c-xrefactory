@@ -550,6 +550,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 
         if (options.mode != ServerMode && inputFileName == NULL) {
+            /* TODO Create a test that covers this */
             inputOpened = false;
             goto fini;
         }

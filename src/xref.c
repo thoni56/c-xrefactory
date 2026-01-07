@@ -157,7 +157,7 @@ static void processInputFile(ArgumentsVector args, bool *firstPassP, bool *atLea
         ArgumentsVector nargs = {.argc = 0, .argv = NULL};
 
         inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
-        topLevelFileNumber = currentFileNumber;
+        parsingConfig.inputFileNumber = currentFileNumber;
         if (inputOpened) {
             if (options.fileTrace)
                 fprintf(stderr, "Processing input file: '%s\n", currentFile.fileName);
