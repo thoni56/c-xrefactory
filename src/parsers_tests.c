@@ -1,12 +1,14 @@
+#include "parsers.h"
+
+/* Unittests */
+
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
 
-#include "parsers.h"
-
 #include "log.h"
 
-#include "yacc_parser.mock"
 #include "c_parser.mock"
+#include "yacc_parser.mock"
 
 
 Describe(Parsers);
