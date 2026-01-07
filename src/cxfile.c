@@ -1201,11 +1201,11 @@ void scanForSearch(char *cxrefLocation) {
    a marker indicating the type of the field, e.g. a 'f' for a file number or 'l' for
    line number.
 
-   Reading will gather a data field and then its type, e.g. 3548f. The value (3548) in
-   the structure `lastIncomingData` so that it can be reused if left out, for example in
-   the next position (file, line, column). So 3548f3lc15l is actually two positions in
-   file 3548, one on line 3, column 1 and another in the same file, line 5, also in
-   column 1.
+   Reading will gather a data field and then its type, e.g. 3548f. The value (3548) is
+   stored in the structure `lastIncomingData` so that it can be reused if left out, for
+   example in the next position (file, line, column). So 3548f3l1c5l is actually two
+   positions in file 3548, one on line 3, column 1 and another in the same file, line 5,
+   also in column 1.
 
    Then the scan dispatch table used will be consulted to see if there is an entry for
    the marker, if so it will call the scan function.
