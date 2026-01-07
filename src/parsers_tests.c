@@ -9,6 +9,7 @@
 
 #include "c_parser.mock"
 #include "yacc_parser.mock"
+#include "parsing.mock"
 
 
 Describe(Parsers);

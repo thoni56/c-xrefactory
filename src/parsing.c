@@ -45,13 +45,16 @@ ParserOperation getParserOperation(ServerOperation serverOp) {
 }
 
 void syncParsingConfigFromOptions(Options options) {
+    parsingConfig.operation = getParserOperation(options.serverOperation);
+
     parsingConfig.includeDirs = options.includeDirs;
     parsingConfig.defines = options.definitionStrings;
-    parsingConfig.operation = getParserOperation(options.serverOperation);
+
     parsingConfig.cursorOffset = options.cursorOffset;
     parsingConfig.markOffset = options.markOffset;
     parsingConfig.extractMode = options.extractMode;
     parsingConfig.targetParameterIndex = options.olcxGotoVal;
+
     parsingConfig.positionOfSelectedReference = NO_POSITION;
 }
 
@@ -173,7 +176,7 @@ void parseToCreateReferences(const char *fileName) {
     /* Determine language from filename extension */
     Language language = getLanguageFor((char *)fileName);
 
-    /* Setup input for parsing - this initializes the currentFile global */
+    /* Setup input for parsing */
     initInput(NULL, buffer, "\n", (char *)fileName);
     parsingConfig.inputFileNumber = currentFile.characterBuffer.fileNumber;
 
@@ -181,8 +184,7 @@ void parseToCreateReferences(const char *fileName) {
               language == LANG_YACC ? "YACC" : "C");
 
     /* Parse the file - populating the ReferenceableItemTable */
-    currentFileNumber = parsingConfig.inputFileNumber;
-    callParser(language);
+    callParser(parsingConfig.inputFileNumber, language);
 
     log_trace("parseToCreateReferences: Completed parsing '%s'", fileName);
 }

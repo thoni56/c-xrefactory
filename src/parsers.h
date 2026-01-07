@@ -44,6 +44,6 @@ extern int yacc_yydebug;
 
 extern YYSTYPE *uniyylval;
 
-void callParser(Language language);
+void callParser(int fileNumber, Language language);
 
 #endif

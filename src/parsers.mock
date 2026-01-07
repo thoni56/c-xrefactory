@@ -10,6 +10,6 @@ int c_yydebug;
 int yacc_yydebug;
 
 
-void callParser(Language language) {
+void callParser(int fileNumber, Language language) {
     mock();
 }
