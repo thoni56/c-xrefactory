@@ -478,6 +478,19 @@ void restoreMemoryCheckPoint(void) {
 }
 
 
+/* Heavy orchestration-level initialization for legacy Server/Xref modes.
+ * Handles multi-project server architecture where project settings can change per file.
+ *
+ * This contrasts with LSP mode's lightweight initialization (parseToCreateReferences + initInput)
+ * which assumes one-time project setup.
+ *
+ * Major phases:
+ * 1. Project discovery - find .c-xrefrc file and determine project section
+ * 2. Options processing - load project settings, handle changes
+ * 3. Compiler interrogation - discover system includes and compiler defines
+ * 4. Memory checkpointing - cache expensive discoveries for same-project files
+ * 5. Input setup - finally calls computeAndOpenInputFile() -> initInput()
+ */
 bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestArgs, Language *outLanguage, bool *firstPass) {
     char standardOptionsFileName[MAX_FILE_NAME_SIZE];
     char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
@@ -488,6 +501,8 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
     ENTER();
 
+    /* === PHASE 1: Project Discovery === */
+    /* Find which .c-xrefrc file and project section applies to this file */
     fileName = inputFileName;
     *outLanguage = getLanguageFor(fileName);
     searchStandardOptionsFileAndProjectForFile(fileName, standardOptionsFileName, standardOptionsSectionName);
@@ -500,6 +515,9 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
     else
         modifiedTime = previousStandardOptionsFileModificationTime;               // !!! just for now
 
+    /* Determine if we need full initialization or can restore from checkpoint.
+     * Full init required when: first pass, different pass, different project,
+     * options file changed, or different language. */
     if (*firstPass
         || previousPass != currentPass                                       /* We are in a different pass */
         || strcmp(previousStandardOptionsFile, standardOptionsFileName) != 0 /* or we are using a different options file */
@@ -507,6 +525,8 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         || previousStandardOptionsFileModificationTime != modifiedTime       /* or the options file has changed */
         || previousLanguage != *outLanguage                                  /* or a different language? */
     ) {
+        /* === PHASE 2: Options File Processing === */
+        /* Load and process project settings from .c-xrefrc */
         log_debug("initializeFileProcessing - if-branch with firstPass=%d", *firstPass);
         log_debug("Memories: ppmMemory.index=%d, currentBlock=%p", ppmMemory.index, currentBlock);
         if (*firstPass) {
@@ -520,7 +540,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         initOptions();
         initStandardCxrefFileName(fileName);
 
-        /* A lot of options handling... */
+        /* Process options in specific order: command line, request args, .c-xrefrc */
         processOptions(baseArgs, PROCESS_FILE_ARGUMENTS_NO);   /* command line opts */
         /* piped options (no include or define options)
            must be before .xrefrc file options, but, the s_cachedOptions
@@ -537,10 +557,14 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         currentPass = NO_PASS;
         getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName, standardOptionsSectionName);
 
+        /* === PHASE 3: Compiler Interrogation === */
+        /* Run compiler to discover system includes and predefined macros (expensive!) */
         discoverBuiltinIncludePaths();  /* Sets compiler_identification, must be before discoverStandardDefines */
 
         discoverStandardDefines();
 
+        /* === PHASE 4: Memory Checkpoint === */
+        /* Save memory state so subsequent files in same project can skip phases 2-3 */
         saveMemoryCheckPoint();
 
         /* Then for the particular pass */
@@ -557,7 +581,8 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
         deepCopyOptionsFromTo(&options, &savedOptions);
         processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO);
-        inputOpened = computeAndOpenInputFile();
+        /* === PHASE 5: Input Setup === */
+        inputOpened = computeAndOpenInputFile();  /* Finally calls initInput() */
 
         /* Save these values as previous */
         strcpy(previousStandardOptionsFile,standardOptionsFileName);
@@ -567,13 +592,14 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         previousPass = currentPass;
 
     } else {
+        /* Same project as last file - restore from checkpoint (fast path) */
         log_debug("initializeFileProcessing - else-branch with firstPass=%d", *firstPass);
         log_debug("Memories: ppmMemory.index=%d, currentBlock=%p", ppmMemory.index, currentBlock);
-        restoreMemoryCheckPoint();
+        restoreMemoryCheckPoint();  /* Skip phases 2-3, restore cached compiler discovery */
 
         deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO); /* no include or define options */
-        inputOpened = computeAndOpenInputFile();
+        inputOpened = computeAndOpenInputFile();  /* Phase 5 only */
     }
 
     assert(options.mode);
