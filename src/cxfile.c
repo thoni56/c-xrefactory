@@ -81,7 +81,7 @@ typedef enum {
     CXSF_FIRST_PASS,
     CXSF_MENU_CREATION,
     CXSF_DEAD_CODE_DETECTION,
-    CXSF_PASS_MACRO_USAGE,
+    CXSF_FIND_MACRO_EXPANSION_FILE,
 } CxFileScanOperation;
 
 
@@ -149,7 +149,7 @@ static CxFileScanStep normalScanSequence[];
 static CxFileScanStep fullScanSequence[];
 static CxFileScanStep fullUpdateSequence[];
 static CxFileScanStep symbolMenuCreationSequence[];
-static CxFileScanStep secondPassMacroUsageSequence[];
+static CxFileScanStep macroExpansionScanSequence[];
 static CxFileScanStep globalUnusedDetectionSequence[];
 static CxFileScanStep symbolSearchSequence[];
 
@@ -589,7 +589,7 @@ static void writeCxFileCompatibilityError(char *message) {
 static void scanFunction_ReadKeys(int size,
                                   int key,
                                   CharacterBuffer *cb,
-                                  CxFileScanOperation operation
+                                  CxFileScanOperation scanOperation
 ) {
     assert(key == CXFI_KEY_LIST);
     for (int i=0; i<size-1; i++) {
@@ -602,7 +602,7 @@ static void scanFunction_ReadKeys(int size,
 static void scanFunction_VersionCheck(int size,
                                       int key,
                                       CharacterBuffer *cb,
-                                      CxFileScanOperation operation
+                                      CxFileScanOperation scanOperation
 ) {
     char versionString[TMP_STRING_SIZE];
     char thisVersionString[TMP_STRING_SIZE];
@@ -618,7 +618,7 @@ static void scanFunction_VersionCheck(int size,
 static void scanFunction_CheckNumber(int size,
                                      int key,
                                      CharacterBuffer *cb,
-                                     CxFileScanOperation operation
+                                     CxFileScanOperation scanOperation
 ) {
     int magicNumber, fileCount;
     bool exactPositionLinkFlag;
@@ -674,7 +674,7 @@ static int fileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
 static void scanFunction_ReadFileName(int fileNameLength,
                                       int key,
                                       CharacterBuffer *cb,
-                                      CxFileScanOperation operation
+                                      CxFileScanOperation scanOperation
 ) {
     char fileName[MAX_FILE_NAME_SIZE];
     FileItem *fileItem;
@@ -703,7 +703,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
             fileItem->lastParsedMtime=umtime;
         assert(options.mode);
         if (options.mode == XrefMode) {
-            if (operation == CXSF_GENERATE_OUTPUT) {
+            if (scanOperation == CXSF_GENERATE_OUTPUT) {
                 writeFileNumberItem(fileItem, fileNumber);
             }
         }
@@ -749,7 +749,7 @@ static void getIncludedFileNumber(int *includedFileNumber) {
 static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
                                                          int key,
                                                          CharacterBuffer *cb,
-                                                         CxFileScanOperation operation
+                                                         CxFileScanOperation scanOperation
 ) {
     assert(key == CXFI_SYMBOL_NAME);
     Storage storage = lastIncomingData.data[CXFI_STORAGE];
@@ -814,10 +814,10 @@ static bool referenceableIsReportableAsUnused(ReferenceableItem *referenceableIt
 static void scanFunction_SymbolName(int size,
                                     int key,
                                     CharacterBuffer *cb,
-                                    CxFileScanOperation operation
+                                    CxFileScanOperation scanOperation
 ) {
     assert(key == CXFI_SYMBOL_NAME);
-    if (options.mode==ServerMode && operation==CXSF_DEAD_CODE_DETECTION) {
+    if (options.mode==ServerMode && scanOperation==CXSF_DEAD_CODE_DETECTION) {
         // check if previous symbol was dead
         cxfileCheckLastSymbolDeadness();
     }
@@ -849,7 +849,7 @@ static void scanFunction_SymbolName(int size,
         foundMemberP->references = NULL;      // HACK, remove them, to not be regenerated
     }
     if (options.mode == ServerMode) {
-        if (operation == CXSF_DEAD_CODE_DETECTION) {
+        if (scanOperation == CXSF_DEAD_CODE_DETECTION) {
             if (referenceableIsReportableAsUnused(lastIncomingData.referenceableItem)) {
                 lastIncomingData.symbolToCheckForDeadness = 0;
                 lastIncomingData.deadSymbolIsDefined = 0;
@@ -859,7 +859,7 @@ static void scanFunction_SymbolName(int size,
         } else if (options.serverOperation!=OLO_TAG_SEARCH) {
             int ols = 0;
             BrowserMenu *menu = NULL;
-            if (operation == CXSF_MENU_CREATION || operation == CXSF_PASS_MACRO_USAGE) {
+            if (scanOperation == CXSF_MENU_CREATION || scanOperation == CXSF_FIND_MACRO_EXPANSION_FILE) {
                 menu = createSelectionMenu(referenceableItem);
                 if (menu == NULL) {
                     ols = 0;
@@ -886,7 +886,7 @@ static void scanFunction_SymbolName(int size,
 static void scanFunction_Reference_ForFullUpdateSchedule(int size,
                                                         int key,
                                                         CharacterBuffer *cb,
-                                                        CxFileScanOperation operation
+                                                        CxFileScanOperation scanOperation
 ) {
 
     assert(key == CXFI_REFERENCE);
@@ -922,7 +922,7 @@ static bool isInReferenceList(Reference *list, Usage usage, Position position) {
 static void scanFunction_Reference(int size,
                                    int key,
                                    CharacterBuffer *cb,
-                                   CxFileScanOperation operation
+                                   CxFileScanOperation scanOperation
 ) {
     assert(key == CXFI_REFERENCE);
     Usage usage = lastIncomingData.data[CXFI_USAGE];
@@ -949,7 +949,7 @@ static void scanFunction_Reference(int size,
     } else if (options.mode == ServerMode) {
         Reference reference = makeReference(makePosition(file, line, col), usage, NULL);
         FileItem *cxFileItem = getFileItemWithFileNumber(reference.position.file);
-        if (operation == CXSF_DEAD_CODE_DETECTION) {
+        if (scanOperation == CXSF_DEAD_CODE_DETECTION) {
             if (isVisibleUsage(reference.usage)) {
                 // restrict reported symbols to those defined in project input file
                 if (isDefinitionUsage(reference.usage)
@@ -960,11 +960,11 @@ static void scanFunction_Reference(int size,
                     lastIncomingData.symbolToCheckForDeadness = -1;
                 }
             }
-        } else if (operation == CXSF_PASS_MACRO_USAGE) {
+        } else if (scanOperation == CXSF_FIND_MACRO_EXPANSION_FILE) {
             if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]
                 && reference.usage == UsageMacroBaseFileUsage
             ) {
-                olMacro2PassFile = reference.position.file;
+                fileToParseForMacroExpansion = reference.position.file;
             }
         } else {
             if (options.serverOperation == OLO_TAG_SEARCH) {
@@ -977,7 +977,7 @@ static void scanFunction_Reference(int size,
                 }
             } else {
                 if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]) {
-                    if (operation == CXSF_MENU_CREATION) {
+                    if (scanOperation == CXSF_MENU_CREATION) {
                         assert(lastIncomingData.onLineRefMenuItem);
                         log_trace (":adding reference %s:%d", cxFileItem->name, reference.position.line);
                         addReferenceToBrowserMenu(lastIncomingData.onLineRefMenuItem, &reference);
@@ -994,7 +994,7 @@ static void scanFunction_Reference(int size,
 static void scanFunction_CxFileCountCheck(int fileCountInCxFile,
                                           int key,
                                           CharacterBuffer *cb,
-                                          CxFileScanOperation operation
+                                          CxFileScanOperation scanOperation
 ) {
     if (!currentCxFileCountMatches(fileCountInCxFile)) {
         assert(options.mode);
@@ -1182,7 +1182,7 @@ void scanReferencesToCreateMenu(char *symbolName){
 }
 
 void scanForMacroUsage(char *symbolName) {
-    readOneAppropiateCxFile(symbolName, secondPassMacroUsageSequence);
+    readOneAppropiateCxFile(symbolName, macroExpansionScanSequence);
 }
 
 void scanForGlobalUnused(char *cxrefLocation) {
@@ -1252,11 +1252,11 @@ static CxFileScanStep fullUpdateSequence[]={
     {-1,NULL, 0},
 };
 
-static CxFileScanStep secondPassMacroUsageSequence[]={
+static CxFileScanStep macroExpansionScanSequence[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_PASS_MACRO_USAGE},
-    {CXFI_REFERENCE, scanFunction_Reference, CXSF_PASS_MACRO_USAGE},
+    {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_FIND_MACRO_EXPANSION_FILE},
+    {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIND_MACRO_EXPANSION_FILE},
     {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
@@ -1270,11 +1270,11 @@ static CxFileScanStep symbolSearchSequence[]={
     {-1,NULL, 0},
 };
 
-static CxFileScanStep globalUnusedDetectionSequence[]={
+static CxFileScanStep globalUnusedDetectionSequence[] = {
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEAD_CODE_DETECTION},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_DEAD_CODE_DETECTION},
-    {-1,NULL, 0},
+    {-1, NULL, 0},
 };

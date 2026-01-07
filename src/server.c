@@ -78,14 +78,14 @@ static int scheduleFileUsingTheMacro(void) {
     assert(sessionData.browsingStack.top);
     BrowserMenu *oldMenu = sessionData.browsingStack.top->hkSelectedSym;
     sessionData.browsingStack.top->hkSelectedSym = &menu;
-    olMacro2PassFile = NO_FILE_NUMBER;
+    fileToParseForMacroExpansion = NO_FILE_NUMBER;
     scanForMacroUsage(completionStringInMacroBody);
     sessionData.browsingStack.top->hkSelectedSym = oldMenu;
     if (tmpc!=NULL) {
         deleteEntryFromSessionStack(tmpc);
     }
-    log_debug(":scheduling file '%s'", getFileItemWithFileNumber(olMacro2PassFile)->name);
-    return olMacro2PassFile;
+    log_debug(":scheduling file '%s'", getFileItemWithFileNumber(fileToParseForMacroExpansion)->name);
+    return fileToParseForMacroExpansion;
 }
 
 // WTF does "DependingStatics" mean?
@@ -182,9 +182,9 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
         // Cursor is on an identifier inside a macro body definition, which hasn't been
         // processed as a symbol yet. Find and parse a file where the macro is invoked
         // so the macro expansion will resolve the identifier as an actual symbol.
-        int ol2procfile = scheduleFileUsingTheMacro();
-        if (ol2procfile!=NO_FILE_NUMBER) {
-            inputFileName = getFileItemWithFileNumber(ol2procfile)->name;
+        int fileWithMacroExpansion = scheduleFileUsingTheMacro();
+        if (fileWithMacroExpansion!=NO_FILE_NUMBER) {
+            inputFileName = getFileItemWithFileNumber(fileWithMacroExpansion)->name;
             inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
             if (inputOpened) {
                 parseInputFile();

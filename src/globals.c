@@ -52,8 +52,8 @@ char *cppVarArgsName = "__VA_ARGS__";
 bool completionPositionFound = false;
 bool completionStringServed = false;
 Usage olstringUsage = 0;
-char *completionStringInMacroBody = NULL;
-int olMacro2PassFile;
+char *completionStringInMacroBody;
+int fileToParseForMacroExpansion;
 
 /* ******************* yytext for yacc ****************** */
 char *yytext;

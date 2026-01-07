@@ -55,7 +55,7 @@ Usage olstringUsage = 0;
 Usage olstringUsage;
 int requestFileNumber;
 Position olcxByPassPos;
-int olMacro2PassFile;
+int fileToParseForMacroExpansion;
 
 Language currentLanguage;
 
