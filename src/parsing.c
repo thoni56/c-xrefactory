@@ -3,6 +3,7 @@
 #include "constants.h"
 #include "editorbuffer.h"
 #include "editormarker.h"
+#include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
 #include "init.h"
@@ -172,11 +173,13 @@ void parseToCreateReferences(const char *fileName) {
 
     /* Setup input for parsing - this initializes the currentFile global */
     initInput(NULL, buffer, "\n", (char *)fileName);
+    topLevelFileNumber = currentFile.characterBuffer.fileNumber;
 
     log_trace("parseToCreateReferences: Parsing '%s' as %s", fileName,
               language == LANG_YACC ? "YACC" : "C");
 
     /* Parse the file - this populates the ReferenceableItemTable */
+    currentFileNumber = topLevelFileNumber;
     callParser(language);
 
     log_trace("parseToCreateReferences: Completed parsing '%s'", fileName);

@@ -139,8 +139,6 @@ static bool computeAndOpenInputFile(void) {
 
 static void initOptions(void) {
     deepCopyOptionsFromTo(&presetOptions, &options);
-
-    currentFileNumber   = NO_FILE_NUMBER;
 }
 
 static void initStandardCxrefFileName(char *inputfile) {
@@ -577,8 +575,6 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         inputOpened = computeAndOpenInputFile();
     }
 
-    currentFileNumber = currentFile.characterBuffer.fileNumber;
-
     assert(options.mode);
     if (options.mode==XrefMode) {
         if (options.xref2) {
@@ -639,7 +635,6 @@ void totalTaskEntryInitialisations(void) {
     options.includeDirs = NULL;
 
     initFileTable(MAX_FILES);
-    currentFileNumber = NO_FILE_NUMBER;
 
     editorInit();
 
