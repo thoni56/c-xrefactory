@@ -556,7 +556,8 @@ static void writeMultipeCxFiles(bool updating, char *dirName) {
 
 static void writeCxFile(int updating, char *fileName) {
     if (!updating)
-        removeFile(fileName);
+        removeFile(fileName);   /* TODO: removeFileOrDirectory() - this will not work
+                                 * when changing from refnum > 1 to refnum = 1 */
 
     recursivelyCreateFileDirIfNotExists(fileName);
 

@@ -179,7 +179,9 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
         }
     }
     if (completionPositionFound && !completionStringServed) {
-        // on-line action with cursor in an un-used macro body ???
+        // Cursor is on an identifier inside a macro body definition, which hasn't been
+        // processed as a symbol yet. Find and parse a file where the macro is invoked
+        // so the macro expansion will resolve the identifier as an actual symbol.
         int ol2procfile = scheduleFileUsingTheMacro();
         if (ol2procfile!=NO_FILE_NUMBER) {
             inputFileName = getFileItemWithFileNumber(ol2procfile)->name;
