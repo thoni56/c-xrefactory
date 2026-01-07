@@ -76,11 +76,11 @@ static int scheduleFileUsingTheMacro(void) {
     }
 
     assert(sessionData.browsingStack.top);
-    BrowserMenu *oldMenu = sessionData.browsingStack.top->menu;
-    sessionData.browsingStack.top->menu = &menu;
+    BrowserMenu *oldMenu = sessionData.browsingStack.top->hkSelectedSym;
+    sessionData.browsingStack.top->hkSelectedSym = &menu;
     olMacro2PassFile = NO_FILE_NUMBER;
     scanForMacroUsage(completionStringInMacroBody);
-    sessionData.browsingStack.top->menu = oldMenu;
+    sessionData.browsingStack.top->hkSelectedSym = oldMenu;
     if (tmpc!=NULL) {
         deleteEntryFromSessionStack(tmpc);
     }

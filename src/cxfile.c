@@ -859,7 +859,7 @@ static void scanFunction_SymbolName(int size,
         } else if (options.serverOperation!=OLO_TAG_SEARCH) {
             int ols = 0;
             BrowserMenu *menu = NULL;
-            if (operation == CXSF_MENU_CREATION) {
+            if (operation == CXSF_MENU_CREATION || operation == CXSF_PASS_MACRO_USAGE) {
                 menu = createSelectionMenu(referenceableItem);
                 if (menu == NULL) {
                     ols = 0;

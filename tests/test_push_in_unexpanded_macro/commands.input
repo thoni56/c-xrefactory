@@ -1,0 +1,6 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/macro.h
+<sync>
+-olcxpush  -olcursor=69 CURDIR/macro.h  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+<exit>

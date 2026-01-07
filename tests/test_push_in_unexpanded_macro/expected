@@ -1,0 +1,15 @@
+[C-xref] active project: 'CURDIR'
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/macro.h
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-olcxpush  -olcursor=69 CURDIR/macro.h  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<display-or-update-browser len=<n>></display-or-update-browser>
+-exit
+end-of-options
+
