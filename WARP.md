@@ -229,3 +229,9 @@ The tool supports sophisticated refactoring operations:
 - Include file renaming
 - Dead code detection and removal
 - Yacc grammar symbol navigation
+
+## Misc
+
+When discussing documentation, in particularly when adding text or descriptions, the
+term 'docs' refers to the Structurizr-based Asciidoc documentation located in the
+doc/docs directory.
