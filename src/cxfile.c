@@ -142,18 +142,18 @@ typedef struct cxFileScanStep {
     int		recordCode;
     void    (*handlerFunction)(int size, int ri, CharacterBuffer *cb, CxFileScanOperation operation); /* TODO: Break out a type */
     int		argument;
-} CxFileScanStep;
+} CxFileScanDispatchEntry;
 
 
-static CxFileScanStep normalScanSequence[];
-static CxFileScanStep fullScanSequence[];
-static CxFileScanStep fullUpdateSequence[];
-static CxFileScanStep symbolMenuCreationSequence[];
-static CxFileScanStep macroExpansionScanSequence[];
-static CxFileScanStep globalUnusedDetectionSequence[];
-static CxFileScanStep symbolSearchSequence[];
+static CxFileScanDispatchEntry normalScanDispatchTable[];
+static CxFileScanDispatchEntry fullScanDispatchTable[];
+static CxFileScanDispatchEntry fullUpdateScanDispatchTable[];
+static CxFileScanDispatchEntry symbolMenuCreationScanDispatchTable[];
+static CxFileScanDispatchEntry macroExpansionScanDispatchTable[];
+static CxFileScanDispatchEntry globalUnusedDetectionScanDispatchTable[];
+static CxFileScanDispatchEntry symbolSearchScanDispatchTable[];
 
-static void scanCxFileUsing(CxFileScanStep *scanSequence);
+static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable);
 
 
 static void fPutDecimal(int num, FILE *file) {
@@ -510,7 +510,7 @@ static void writePartialCxFile(bool updateFlag, char *dirname, char *suffix,
     mapOverFileTableWithIndex(mapfun);
     if (mapfun2!=NULL)
         mapOverFileTableWithIndex(mapfun2);
-    scanCxFileUsing(fullScanSequence);
+    scanCxFileUsing(fullScanDispatchTable);
     closeCurrentCxFile();
 }
 
@@ -533,7 +533,7 @@ static void writeSingleCxFile(bool updating, char *filename) {
     openInOutCxFile(updating, filename);
     writeCxFileHead();
     mapOverFileTableWithIndex(writeFileNumberItem);
-    scanCxFileUsing(fullScanSequence);
+    scanCxFileUsing(fullScanDispatchTable);
     mapOverReferenceableItemTable(writeReferenceableItem);
     closeCurrentCxFile();
 }
@@ -548,7 +548,7 @@ static void writeMultipeCxFiles(bool updating, char *dirName) {
         assert(strlen(cxFileName) < MAX_FILE_NAME_SIZE - 1);
         openInOutCxFile(updating, cxFileName);
         writeCxFileHead();
-        scanCxFileUsing(fullScanSequence);
+        scanCxFileUsing(fullScanDispatchTable);
         writeReferencesFromMemoryIntoCxFile(i);
         closeCurrentCxFile();
     }
@@ -1024,7 +1024,7 @@ static void resetIncomingData() {
     fileNumberMapping[NO_FILE_NUMBER]                = NO_FILE_NUMBER;
 }
 
-static void setupRecordKeyHandlersFromTable(CxFileScanStep scanFunctionTable[]) {
+static void setupRecordKeyHandlersFromTable(CxFileScanDispatchEntry scanFunctionTable[]) {
     /* Set up the keys and handlers from the provided table */
     for (int i = 0; scanFunctionTable[i].recordCode > 0; i++) {
         assert(scanFunctionTable[i].recordCode < MAX_CHARS);
@@ -1034,7 +1034,7 @@ static void setupRecordKeyHandlersFromTable(CxFileScanStep scanFunctionTable[]) 
     }
 }
 
-static void scanCxFileUsing(CxFileScanStep *scanSequence) {
+static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable) {
     ENTER();
     if (currentCxFile == NULL) {
         log_trace("No reference file opened");
@@ -1044,7 +1044,7 @@ static void scanCxFileUsing(CxFileScanStep *scanSequence) {
 
     resetIncomingData();
 
-    setupRecordKeyHandlersFromTable(scanSequence);
+    setupRecordKeyHandlersFromTable(scanDispatchTable);
 
     initCharacterBufferFromFile(&cxFileCharacterBuffer, currentCxFile);
     int ch = ' ';
@@ -1082,7 +1082,8 @@ static void scanCxFileUsing(CxFileScanStep *scanSequence) {
 
 
 /* suffix contains '/' at the beginning !!! */
-static bool scanCxFile(char *cxFileLocation, char *element1, char *element2, CxFileScanStep *scanSequence) {
+static bool scanCxFile(char *cxFileLocation, char *element1, char *element2,
+                       CxFileScanDispatchEntry *scanDispatchTable) {
     char fn[MAX_FILE_NAME_SIZE];
 
     sprintf(fn, "%s%s%s", cxFileLocation, element1, element2);
@@ -1092,23 +1093,23 @@ static bool scanCxFile(char *cxFileLocation, char *element1, char *element2, CxF
     if (currentCxFile==NULL) {
         return false;
     } else {
-        scanCxFileUsing(scanSequence);
+        scanCxFileUsing(scanDispatchTable);
         closeFile(currentCxFile);
         currentCxFile = NULL;
         return true;
     }
 }
 
-static void scanCxFiles(char *cxFileLocation, CxFileScanStep *scanSequence) {
+static void scanCxFiles(char *cxFileLocation, CxFileScanDispatchEntry *scanDispatchTable) {
 
     if (options.cxFileCount <= 1) {
-        scanCxFile(cxFileLocation, "", "", scanSequence);
+        scanCxFile(cxFileLocation, "", "", scanDispatchTable);
     } else {
-        scanCxFile(cxFileLocation,CXFILENAME_FILES,"",scanSequence);
+        scanCxFile(cxFileLocation,CXFILENAME_FILES,"",scanDispatchTable);
         for (int i=0; i<options.cxFileCount; i++) {
             char partitionNumber[MAX_FILE_NAME_SIZE];
             sprintf(partitionNumber, "%04d", i);
-            scanCxFile(cxFileLocation, CXFILENAME_PREFIX, partitionNumber, scanSequence);
+            scanCxFile(cxFileLocation, CXFILENAME_PREFIX, partitionNumber, scanDispatchTable);
         }
     }
 }
@@ -1132,7 +1133,7 @@ bool loadFileNumbersFromStore(void) {
             || savedFileSize != currentSize)
         {
             log_trace(":(re)reading reference file '%s'", cxFileName);
-            if (scanCxFile(cxFileName, "", "", normalScanSequence)) {
+            if (scanCxFile(cxFileName, "", "", normalScanDispatchTable)) {
                 strcpy(previouslyReadFileName, cxFileName);
                 savedModificationTime = currentModificationTime;
                 savedFileSize = currentSize;
@@ -1146,12 +1147,12 @@ bool loadFileNumbersFromStore(void) {
 }
 
 // symbolName can be NULL !!!!!!
-static void readOneAppropiateCxFile(char *symbolName, CxFileScanStep *scanSequence) {
+static void readOneAppropiateCxFile(char *symbolName, CxFileScanDispatchEntry *scanDispatchTable) {
     if (options.cxFileLocation == NULL)
         return;
     cxFile = stdout;
     if (options.cxFileCount <= 1) {
-        scanCxFile(options.cxFileLocation, "", "", scanSequence);
+        scanCxFile(options.cxFileLocation, "", "", scanDispatchTable);
     } else {
         if (!loadFileNumbersFromStore())
             return;
@@ -1164,33 +1165,33 @@ static void readOneAppropiateCxFile(char *symbolName, CxFileScanStep *scanSequen
 
         sprintf(partitionNumber, "%04d", i);
         assert(strlen(partitionNumber) < MAX_FILE_NAME_SIZE-1);
-        scanCxFile(options.cxFileLocation, CXFILENAME_PREFIX, partitionNumber, scanSequence);
+        scanCxFile(options.cxFileLocation, CXFILENAME_PREFIX, partitionNumber, scanDispatchTable);
     }
 }
 
 
 protected void normalScanCxFile(char *name) {
-    scanCxFile(options.cxFileLocation, name, "", normalScanSequence);
+    scanCxFile(options.cxFileLocation, name, "", normalScanDispatchTable);
 }
 
 void ensureReferencesAreLoadedFor(char *symbolName) {
-    readOneAppropiateCxFile(symbolName, fullUpdateSequence);
+    readOneAppropiateCxFile(symbolName, fullUpdateScanDispatchTable);
 }
 
 void scanReferencesToCreateMenu(char *symbolName){
-    readOneAppropiateCxFile(symbolName, symbolMenuCreationSequence);
+    readOneAppropiateCxFile(symbolName, symbolMenuCreationScanDispatchTable);
 }
 
 void scanForMacroUsage(char *symbolName) {
-    readOneAppropiateCxFile(symbolName, macroExpansionScanSequence);
+    readOneAppropiateCxFile(symbolName, macroExpansionScanDispatchTable);
 }
 
 void scanForGlobalUnused(char *cxrefLocation) {
-    scanCxFiles(cxrefLocation, globalUnusedDetectionSequence);
+    scanCxFiles(cxrefLocation, globalUnusedDetectionScanDispatchTable);
 }
 
 void scanForSearch(char *cxrefLocation) {
-    scanCxFiles(cxrefLocation, symbolSearchSequence);
+    scanCxFiles(cxrefLocation, symbolSearchScanDispatchTable);
 }
 
 
@@ -1201,17 +1202,18 @@ void scanForSearch(char *cxrefLocation) {
    line number.
 
    Reading will gather a data field and then its type, e.g. 3548f. The value (3548) in
-   the structure `lastIcoming` so that it can be reused if left out, for example in the
-   next position (file, line, column). So 3548f3lc15l is actually two positions in file
-   3548, one on line 3, column 1 and another in the same file, line 5, also in column 1.
+   the structure `lastIncomingData` so that it can be reused if left out, for example in
+   the next position (file, line, column). So 3548f3lc15l is actually two positions in
+   file 3548, one on line 3, column 1 and another in the same file, line 5, also in
+   column 1.
 
-   Then the scan sequence used will be consulted to see if there is an entry for the
-   marker, if so it will call the scan function.
+   Then the scan dispatch table used will be consulted to see if there is an entry for
+   the marker, if so it will call the scan function.
 
  */
 
 
-static CxFileScanStep normalScanSequence[]={
+static CxFileScanDispatchEntry normalScanDispatchTable[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
@@ -1219,7 +1221,7 @@ static CxFileScanStep normalScanSequence[]={
     {-1,NULL, 0},
 };
 
-static CxFileScanStep fullScanSequence[]={
+static CxFileScanDispatchEntry fullScanDispatchTable[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
@@ -1230,7 +1232,7 @@ static CxFileScanStep fullScanSequence[]={
     {-1,NULL, 0},
 };
 
-static CxFileScanStep symbolMenuCreationSequence[]={
+static CxFileScanDispatchEntry symbolMenuCreationScanDispatchTable[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
@@ -1241,7 +1243,7 @@ static CxFileScanStep symbolMenuCreationSequence[]={
     {-1,NULL, 0},
 };
 
-static CxFileScanStep fullUpdateSequence[]={
+static CxFileScanDispatchEntry fullUpdateScanDispatchTable[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
@@ -1252,7 +1254,7 @@ static CxFileScanStep fullUpdateSequence[]={
     {-1,NULL, 0},
 };
 
-static CxFileScanStep macroExpansionScanSequence[]={
+static CxFileScanDispatchEntry macroExpansionScanDispatchTable[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_FIND_MACRO_EXPANSION_FILE},
@@ -1261,7 +1263,7 @@ static CxFileScanStep macroExpansionScanSequence[]={
     {-1,NULL, 0},
 };
 
-static CxFileScanStep symbolSearchSequence[]={
+static CxFileScanDispatchEntry symbolSearchScanDispatchTable[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
@@ -1270,7 +1272,7 @@ static CxFileScanStep symbolSearchSequence[]={
     {-1,NULL, 0},
 };
 
-static CxFileScanStep globalUnusedDetectionSequence[] = {
+static CxFileScanDispatchEntry globalUnusedDetectionScanDispatchTable[] = {
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
