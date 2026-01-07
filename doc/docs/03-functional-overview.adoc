@@ -63,3 +63,26 @@ the functionality of `c-xrefactory` into the LSP protocol. This will
 allow use of `c-xrefactory` from not only Emacs but also Visual Studio
 Code or any other editor that supports the LSP protocol.
 
+==== LSP Protocol Limitations
+
+The LSP protocol was designed for single-shot, non-interactive operations.
+This creates constraints for c-xrefactory's advanced refactorings:
+
+**Interactive Refactorings**: C-xrefactory's extract/parameter operations
+require multi-step user input (names, positions, declarations). LSP's
+`textDocument/codeAction` doesn't support interactive dialogs.
+
+**Symbol Browsing**: C-xrefactory provides interactive symbol browsers
+with filtering and keyboard navigation. LSP returns flat reference lists
+with no standard for interactive UI.
+
+**Strategy**: The LSP implementation aims to:
+
+- Provide basic IDE features (definition, completion, simple refactorings)
+  to modern editors
+- Expose c-xrefactory's advanced refactoring capabilities where possible
+- Keep the Emacs client as the primary interface for full interactive features
+
+LSP serves to make c-xrefactory more accessible while the Emacs client
+probably will remain the gateway to its complete refactoring power.
+
