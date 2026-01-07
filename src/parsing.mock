@@ -10,6 +10,8 @@
 
 ParsingConfig parsingConfig;
 
+int currentFileNumber;
+
 
 void syncParsingConfigFromOptions(Options options) {
     mock();

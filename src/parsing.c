@@ -22,6 +22,9 @@
 /* Global parsing configuration - set before parsing starts */
 ParsingConfig parsingConfig;
 
+/* Currently parsed file, maybe a header file */
+int currentFileNumber = -1;
+
 
 ParserOperation getParserOperation(ServerOperation serverOp) {
     switch (serverOp) {

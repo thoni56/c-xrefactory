@@ -73,7 +73,6 @@ Position parameterPosition;
 Position parameterBeginPosition;
 Position parameterEndPosition;
 
-int currentFileNumber;
 char *inputFileName;
 time_t fileProcessingStartTime;
 

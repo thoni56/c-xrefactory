@@ -108,6 +108,12 @@ typedef struct {
 } MoveTargetValidationResult;
 
 /**
+ * The filenumber for the currently parsed file, might be an include file.
+ * Parsing internal use only.
+ */
+extern int currentFileNumber;
+
+/**
  * Convert server operation to parser operation.
  * Maps high-level server requests to parser-specific behaviors.
  *
