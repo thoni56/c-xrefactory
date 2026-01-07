@@ -2463,7 +2463,7 @@ endOfFile:
 /* **************************************************************** */
 
 static void addMacroBaseUsageRef(Symbol *macroSymbol) {
-    Position basePos = makePosition(inputFileNumber, 0, 0);
+    Position basePos = makePosition(currentFileNumber, 0, 0);
     ReferenceableItem ppp = makeReferenceableItem(macroSymbol->linkName, TypeMacro, StorageDefault,
                                                   GlobalScope, VisibilityGlobal, NO_FILE_NUMBER);
     ReferenceableItem *memb;

@@ -52,9 +52,9 @@ bool completionPositionFound = false;
 bool completionStringServed = false;
 char *completionStringInMacroBody = NULL;
 Usage olstringUsage = 0;
-int originalFileNumber = -1;
+int topLevelFileNumber = -1;
 Usage olstringUsage;
-int originalCommandLineFileNumber;
+int requestFileNumber;
 Position olcxByPassPos;
 int olMacro2PassFile;
 
@@ -73,7 +73,7 @@ Position parameterPosition;
 Position parameterBeginPosition;
 Position parameterEndPosition;
 
-int inputFileNumber;
+int currentFileNumber;
 char *inputFileName;
 time_t fileProcessingStartTime;
 

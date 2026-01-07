@@ -69,9 +69,9 @@ FILE *errOut=NULL;
 
 bool cxResizingBlocked = false;
 
-int inputFileNumber          = -1;
-int originalFileNumber     = -1;
-int originalCommandLineFileNumber  = -1;
+int currentFileNumber = -1;
+int topLevelFileNumber = -1;
+int requestFileNumber = -1;
 
 TypeModifier defaultIntModifier;
 Symbol defaultIntDefinition;

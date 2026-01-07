@@ -72,9 +72,9 @@ extern TypeModifier *preCreatedTypesTable[MAX_TYPE];
 extern TypeModifier *preCreatedPtr2TypeTable[MAX_TYPE];
 extern TypeModifier *preCreatedPtr2Ptr2TypeTable[MAX_TYPE];
 
-extern int inputFileNumber;
-extern int originalFileNumber;     /* number of original file */
-extern int originalCommandLineFileNumber;  /* number of original command line input file? */
+extern int currentFileNumber;
+extern int topLevelFileNumber;
+extern int requestFileNumber;
 
 extern char *storageNamesTable[STORAGE_ENUMS_MAX];
 

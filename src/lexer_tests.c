@@ -31,6 +31,7 @@ AfterEach(Lexer) {}
 
 Ensure(Lexer, will_signal_false_for_empty_lexbuffer) {
     initCharacterBufferFromFile(&characterBuffer, NULL);
+    characterBuffer.fileNumber = 42;
 
     assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer, true), is_false);
 }

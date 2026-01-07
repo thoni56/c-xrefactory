@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "characterreader.h"
 #include "commons.h"
 #include "filetable.h"
 #include "globals.h"
@@ -10,6 +11,7 @@
 #include "lexembuffer.h"
 #include "log.h"
 #include "parsing.h"
+#include "position.h"
 
 
 /* ***************************************************************** */
@@ -438,8 +440,9 @@ static int postProcessLexemForServerOperations(CharacterBuffer *cb, LexemBuffer 
     int currentLexemFileOffset = lb->fileOffset;
     Position position = lb->position;
 
-    if (fileNumberFrom(cb) == originalFileNumber && fileNumberFrom(cb) != NO_FILE_NUMBER
-        && fileNumberFrom(cb) != -1) {
+    assert(fileNumberFrom(cb) != -1); /* Old way to say NO_FILE_NUMBER, should not happen anymore */
+    if (fileNumberFrom(cb) == topLevelFileNumber && fileNumberFrom(cb) != NO_FILE_NUMBER) {
+        // We are in a real file (!= NO_FILE_NUMBER) and that is the one we are
         if (parsingConfig.operation == PARSE_TO_EXTRACT) {
             ch = skipBlanks(cb, ch);
             putRegionBeginOrEndMarker(cb, lb, position);

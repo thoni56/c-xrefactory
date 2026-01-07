@@ -276,12 +276,12 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
     switch (options.mode) {
     case ServerMode:
         if (options.serverOperation == OLO_EXTRACT) {
-            if (inputFileNumber != currentFile.characterBuffer.fileNumber)
+            if (currentFileNumber != currentFile.characterBuffer.fileNumber)
                 return NULL;
         } else {
             if (visibility==VisibilityGlobal && symbol->type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
-                if (originalFileNumber != position.file && options.noIncludeRefs)
+                if (topLevelFileNumber != position.file && options.noIncludeRefs)
                     return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
@@ -1586,7 +1586,7 @@ void getLineAndColumnCursorPositionFromCommandLineOptions(int *l, int *c) {
 static Position getCallerPositionFromCommandLineOption(void) {
     int file, line, col;
 
-    file = originalFileNumber;
+    file = topLevelFileNumber;
     getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
     return makePosition(file, line, col);
 }
@@ -1759,7 +1759,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceableItem *referenceab
         return;
     for (Reference *r = referenceableItem->references; r!=NULL; r=r->next) {
         if (isDefinitionOrDeclarationUsage(r->usage)) {
-            if (r->position.file == inputFileNumber) {
+            if (r->position.file == currentFileNumber) {
                 if (isDefinitionUsage(r->usage)) {
                     definitionReference = r;
                 }
@@ -1903,12 +1903,12 @@ void answerEditorAction(void) {
         if (options.project != NULL) {
             ppcGenRecord(PPC_SET_INFO, options.project);
         } else {
-            if (originalCommandLineFileNumber == NO_FILE_NUMBER) {
+            if (requestFileNumber == NO_FILE_NUMBER) {
                 ppcGenRecord(PPC_ERROR, "No source file to identify project");
             } else {
                 char standardOptionsFileName[MAX_FILE_NAME_SIZE];
                 char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
-                char *inputFileName = getFileItemWithFileNumber(originalCommandLineFileNumber)->name;
+                char *inputFileName = getFileItemWithFileNumber(requestFileNumber)->name;
                 log_debug("inputFileName = %s", inputFileName);
                 searchStandardOptionsFileAndProjectForFile(inputFileName, standardOptionsFileName, standardOptionsSectionName);
                 if (standardOptionsFileName[0]==0 || standardOptionsSectionName[0]==0) {

@@ -157,12 +157,10 @@ static void processInputFile(ArgumentsVector args, bool *firstPassP, bool *atLea
         ArgumentsVector nargs = {.argc = 0, .argv = NULL};
 
         inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
-        originalFileNumber = inputFileNumber;
-        originalCommandLineFileNumber = originalFileNumber;
+        topLevelFileNumber = currentFileNumber;
         if (inputOpened) {
             if (options.fileTrace)
                 fprintf(stderr, "Processing input file: '%s\n", currentFile.fileName);
-            /* Parse file to create references (language derived from filename) */
             parseToCreateReferences(inputFileName);
             closeCharacterBuffer(&currentFile.characterBuffer);
             inputOpened = false;

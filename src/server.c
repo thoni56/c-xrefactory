@@ -101,7 +101,7 @@ static char *presetEditServerFileDependingStatics(void) {
     inputFileName = getNextScheduledFile(&fileNumber);
     if (inputFileName == NULL) { /* No more input files... */
         // conservative message, probably macro invoked on nonsaved file, TODO: WTF?
-        originalCommandLineFileNumber = NO_FILE_NUMBER;
+        requestFileNumber = NO_FILE_NUMBER;
         return NULL;
     }
 
@@ -112,7 +112,7 @@ static char *presetEditServerFileDependingStatics(void) {
         getFileItemWithFileNumber(i)->isScheduled = false;
     }
 
-    originalCommandLineFileNumber = fileNumber;
+    requestFileNumber = fileNumber;
 
     char *fileName = inputFileName;
     currentLanguage = getLanguageFor(fileName);
@@ -156,14 +156,14 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
     inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
 
     loadFileNumbersFromStore();
-    originalFileNumber = inputFileNumber;
+    topLevelFileNumber = currentFileNumber;
 
     if (inputOpened) {
         /* If the file has preloaded content, remove old references before parsing */
         EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(inputFileName);
         if (buffer != NULL && buffer->preLoadedFromFile != NULL) {
-            log_debug("file has preloaded content, removing old references for file %d", inputFileNumber);
-            removeReferenceableItemsForFile(inputFileNumber);
+            log_debug("file has preloaded content, removing old references for file %d", currentFileNumber);
+            removeReferenceableItemsForFile(currentFileNumber);
         }
 
         parseInputFile();
@@ -172,9 +172,9 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
     if (options.cursorOffset==0) {
         // special case, push the file as include reference
         if (needsReferenceDatabase(options.serverOperation)) {
-            Position position = makePosition(inputFileNumber, 1, 0);
+            Position position = makePosition(currentFileNumber, 1, 0);
             parsingConfig.positionOfSelectedReference = position;
-            addFileAsIncludeReference(inputFileNumber);
+            addFileAsIncludeReference(currentFileNumber);
         }
     }
     if (completionPositionFound && !completionStringServed) {
@@ -192,7 +192,7 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
 }
 
 static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *firstPassP) {
-    FileItem *fileItem = getFileItemWithFileNumber(originalCommandLineFileNumber);
+    FileItem *fileItem = getFileItemWithFileNumber(requestFileNumber);
 
     assert(fileItem->isScheduled);
     maxPasses = 1;
@@ -222,7 +222,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *fir
         }
     } else {
         if (presetEditServerFileDependingStatics() != NULL) {
-            getFileItemWithFileNumber(originalCommandLineFileNumber)->isScheduled = false;
+            getFileItemWithFileNumber(requestFileNumber)->isScheduled = false;
             inputFileName = NULL;
         }
     }
