@@ -72,7 +72,6 @@ extern TypeModifier *preCreatedTypesTable[MAX_TYPE];
 extern TypeModifier *preCreatedPtr2TypeTable[MAX_TYPE];
 extern TypeModifier *preCreatedPtr2Ptr2TypeTable[MAX_TYPE];
 
-extern int topLevelFileNumber;
 extern int requestFileNumber;
 
 extern char *storageNamesTable[STORAGE_ENUMS_MAX];

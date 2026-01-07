@@ -69,7 +69,6 @@ FILE *errOut=NULL;
 
 bool cxResizingBlocked = false;
 
-int topLevelFileNumber = -1;
 int requestFileNumber = -1;
 
 TypeModifier defaultIntModifier;

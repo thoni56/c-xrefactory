@@ -107,6 +107,12 @@ typedef struct {
     bool valid;                  /* True if position is valid for moving a function to */
 } MoveTargetValidationResult;
 
+
+/**
+ * The fileNumber for the "main" file that the parse started from. Is not a header file.
+ */
+extern int topLevelFileNumber;
+
 /**
  * The filenumber for the currently parsed file, might be an include file.
  * Parsing internal use only.

@@ -17,6 +17,7 @@
 #include "match.h"
 #include "misc.h"
 #include "options.h"
+#include "parsing.h"
 #include "referenceableitem.h"
 #include "referenceableitemtable.h"
 #include "search.h"
@@ -978,9 +979,11 @@ static void scanFunction_Reference(int size,
                 if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]) {
                     if (operation == CXSF_MENU_CREATION) {
                         assert(lastIncomingData.onLineRefMenuItem);
-                        if (file != topLevelFileNumber || !fileItem->isArgument ||
-                            options.serverOperation == OLO_GOTO || options.serverOperation == OLO_COMPLETION_GOTO ||
-                            options.serverOperation == OLO_PUSH_NAME) {
+                        if (file != topLevelFileNumber || !fileItem->isArgument
+                            || options.serverOperation == OLO_GOTO
+                            || options.serverOperation == OLO_COMPLETION_GOTO
+                            || options.serverOperation == OLO_PUSH_NAME
+                        ) {
                             log_trace (":adding reference %s:%d", cxFileItem->name, reference.position.line);
                             addReferenceToBrowserMenu(lastIncomingData.onLineRefMenuItem, &reference);
                         }

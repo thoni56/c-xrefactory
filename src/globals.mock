@@ -52,7 +52,6 @@ bool completionPositionFound = false;
 bool completionStringServed = false;
 char *completionStringInMacroBody = NULL;
 Usage olstringUsage = 0;
-int topLevelFileNumber = -1;
 Usage olstringUsage;
 int requestFileNumber;
 Position olcxByPassPos;

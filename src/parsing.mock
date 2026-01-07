@@ -10,7 +10,8 @@
 
 ParsingConfig parsingConfig;
 
-int currentFileNumber;
+int currentFileNumber = -1;
+int topLevelFileNumber = -1;
 
 
 void syncParsingConfigFromOptions(Options options) {
