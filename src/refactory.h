@@ -1,9 +1,10 @@
 #ifndef REFACTORY_H_INCLUDED
 #define REFACTORY_H_INCLUDED
 
-#include "editor.h"
+#include "editormarker.h"
 #include "options.h"
 #include "proto.h"
+
 
 extern Options refactoringOptions;
 

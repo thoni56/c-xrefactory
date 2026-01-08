@@ -117,7 +117,6 @@ static char *presetEditServerFileDependingStatics(void) {
     char *fileName = inputFileName;
     currentLanguage = getLanguageFor(fileName);
 
-    // O.K. just to be sure, there is no other input file
     return fileName;
 }
 

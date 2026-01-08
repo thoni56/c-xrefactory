@@ -577,6 +577,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
         deepCopyOptionsFromTo(&options, &savedOptions);
         processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO);
+
         /* === PHASE 5: Input Setup === */
         inputOpened = computeAndOpenInputFile();  /* Finally calls initInput() */
 

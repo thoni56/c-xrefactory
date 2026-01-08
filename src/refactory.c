@@ -1434,15 +1434,14 @@ void refactory(void) {
     case AVR_RENAME_MODULE:
     case AVR_RENAME_INCLUDED_FILE:
         progressFactor = 2;
-        updateOption   = computeUpdateOptionForSymbol(point);
+        updateOption = computeUpdateOptionForSymbol(point);
         renameAtInclude(point);
         break;
     case AVR_ADD_PARAMETER:
     case AVR_DEL_PARAMETER:
     case AVR_MOVE_PARAMETER:
         progressFactor = 3;
-        updateOption   = computeUpdateOptionForSymbol(point);
-        currentLanguage = getLanguageFor(file);
+        updateOption = computeUpdateOptionForSymbol(point);
         parameterManipulation(point, refactoringOptions.theRefactoring, refactoringOptions.parnum,
                               refactoringOptions.parnum2);
         break;
