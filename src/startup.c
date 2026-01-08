@@ -733,10 +733,8 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
         cxFreeUntil(tempAllocated);
     }
 
-    /* Initialize token names table with all C and Yacc keywords.
-     * This is done once globally after options are processed (for strictAnsi setting).
-     * Since we only support C and Yacc, include keywords for both languages. */
     currentLanguage = LANG_C | LANG_YACC;
+    /* Initialize token names table with all C and Yacc keywords. */
     initTokenNamesTables();
 
     int argcount = 0;
