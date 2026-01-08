@@ -70,25 +70,23 @@
         ENUM(TmodLongUnsigned)                                          \
         ENUM(TYPE_MODIFIERS_END)                                        \
         ENUM(TypeElipsis)                                               \
-        ENUM(TypeByte)                                                  \
-        ENUM(TypeShort)                                                 \
         ENUM(TypeLong)                                                  \
-        ENUM(TypeBoolean)                                               \
+        ENUM(TypeBool)                                                  \
         ENUM(TypeNull)                                                  \
         ENUM(MAX_CTYPE)                                                 \
         ENUM(TypeMacro)                                                 \
         ENUM(TypeCppInclude)                                            \
         ENUM(TypeCppIfElse)                                             \
         ENUM(TypeCppCollate)                                            \
+        ENUM(TypeCppUndefinedMacro)                                     \
         ENUM(TypeYaccSymbol)                                            \
         ENUM(TypeLabel)                                                 \
         ENUM(TypeKeyword)                                               \
         ENUM(TypeToken)                                                 \
-        ENUM(TypeCppUndefMacro)                                            \
         ENUM(TypeMacroArg)                                              \
-        ENUM(TypeCppDefinedOp)                                             \
-        ENUM(TypeCppHasIncludeOp)                                          \
-        ENUM(TypeCppHasIncludeNextOp)                                      \
+        ENUM(TypeCppDefinedOp)                                          \
+        ENUM(TypeCppHasIncludeOp)                                       \
+        ENUM(TypeCppHasIncludeNextOp)                                   \
         ENUM(TypeBlockMarker)                                           \
         ENUM(TypeExpression)                                            \
         ENUM(TypePackedType)                                            \
@@ -101,7 +99,7 @@
         ENUM(MAX_TYPE)                                                  \
 /* If these becomes more than 256, increase SYMTYPES_BITS */
 
-#define SYMTYPES_BITS 7
+#define TYPE_BITS 7
 
 
 typedef enum type {

@@ -4,11 +4,10 @@
 #include "globals.h"
 #include "usage.h"
 
+
+
 bool fileAbortEnabled;
 
-#include "lexem.h"
-
-TypeModifier *preCreatedTypesTable[MAX_TYPE];
 Symbol errorSymbol;
 
 bool olStringSecondProcessing;
@@ -27,9 +26,11 @@ int maxPasses;
 FILE *outputFile;
 FILE *errOut=NULL;
 
-TypeModifier *preCreatedTypesTable[MAX_TYPE];
-TypeModifier *preCreatedPtr2TypeTable[MAX_TYPE];
-TypeModifier *preCreatedPtr2Ptr2TypeTable[MAX_TYPE];
+TypeModifier *builtinTypesTable[MAX_TYPE];
+TypeModifier *builtinPtr2TypeTable[MAX_TYPE];
+TypeModifier *builtinPtr2Ptr2TypeTable[MAX_TYPE];
+
+#include "lexem.h"
 
 uchar typeShortChange[MAX_TYPE];
 uchar typeLongChange[MAX_TYPE];

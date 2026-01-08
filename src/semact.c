@@ -439,14 +439,14 @@ static TypeModifier *createSimpleTypeModifier(Type type) {
 
     /* This seems to look first in pre-created types... */
     assert(type>=0 && type<MAX_TYPE);
-    if (preCreatedTypesTable[type] == NULL) {
+    if (builtinTypesTable[type] == NULL) {
         log_debug("creating simple type %d (='%s'), *not* found in pre-created types", type,
                   typeNamesTable[type]);
         p = newSimpleTypeModifier(type);
     } else {
         log_debug("creating simple type %d (='%s'), found in pre-created types", type,
                   typeNamesTable[type]);
-        p = preCreatedTypesTable[type];
+        p = builtinTypesTable[type];
     }
     assert(p->type == type);
 
@@ -504,8 +504,8 @@ static TypeModifier * mergeBaseModTypes(TypeModifier *t1, TypeModifier *t2) {
     if (t2->type == TypeDefault) return t1;
     assert(t1->type >=0 && t1->type<MAX_TYPE);
     assert(t2->type >=0 && t2->type<MAX_TYPE);
-    if (preCreatedTypesTable[t2->type] == NULL) return t2;  /* not base type */
-    if (preCreatedTypesTable[t1->type] == NULL) return t1;  /* not base type */
+    if (builtinTypesTable[t2->type] == NULL) return t2;  /* not base type */
+    if (builtinTypesTable[t1->type] == NULL) return t1;  /* not base type */
     return mergeBaseType(t1, t2);
 }
 
@@ -562,16 +562,16 @@ void completeDeclarator(Symbol *type, Symbol *declarator) {
             declarator->npointers--;
             assert(typeModifier->typeSymbol && typeModifier->typeSymbol->type == typeModifier->type && typeModifier->typeSymbol->structSpec);
             typeModifier = &typeModifier->typeSymbol->structSpec->ptrtype;
-        } else if (declarator->npointers >= 2 && preCreatedPtr2Ptr2TypeTable[typeModifier->type] != NULL
+        } else if (declarator->npointers >= 2 && builtinPtr2Ptr2TypeTable[typeModifier->type] != NULL
                    && typeModifier->typedefSymbol == NULL) {
             assert(typeModifier->next == NULL); /* not a user defined type */
             declarator->npointers -= 2;
-            typeModifier = preCreatedPtr2Ptr2TypeTable[typeModifier->type];
-        } else if (declarator->npointers >= 1 && preCreatedPtr2TypeTable[typeModifier->type] != NULL
+            typeModifier = builtinPtr2Ptr2TypeTable[typeModifier->type];
+        } else if (declarator->npointers >= 1 && builtinPtr2TypeTable[typeModifier->type] != NULL
                    && typeModifier->typedefSymbol == NULL) {
             assert(typeModifier->next == NULL); /* not a user defined type */
             declarator->npointers--;
-            typeModifier = preCreatedPtr2TypeTable[typeModifier->type];
+            typeModifier = builtinPtr2TypeTable[typeModifier->type];
         }
     }
     unpackPointers(declarator);

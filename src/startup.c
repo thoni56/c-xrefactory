@@ -689,7 +689,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
     // init options as soon as possible! for exampl initCwd needs them
     initOptions();
 
-    initPreCreatedTypes();
+    initBuiltinTypes();
     initArchaicTypes();
 
     initSymbolTable(MAX_SYMBOLS_HASHTABLE_ENTRIES);

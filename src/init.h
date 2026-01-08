@@ -4,7 +4,7 @@
 extern void initTokenNamesTables(void);
 extern void initTypeCharCodeTab(void);
 extern void initArchaicTypes(void);
-extern void initPreCreatedTypes(void);
+extern void initBuiltinTypes(void);
 extern void initStorageNames(void);
 extern void initTypeNames(void);
 

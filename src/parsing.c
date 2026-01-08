@@ -144,7 +144,7 @@ void initializeParsingSubsystem(void) {
     options.fileNamesCaseSensitive = true;
 
     /* Initialize type system - required before parsing */
-    initPreCreatedTypes();
+    initBuiltinTypes();
     initArchaicTypes();
 
     /* Initialize symbol table for parsing */

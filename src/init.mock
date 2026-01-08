@@ -17,7 +17,7 @@ void initArchaicTypes(void) {
     mock();
 }
 
-void initPreCreatedTypes(void) {
+void initBuiltinTypes(void) {
     mock();
 }
 
@@ -28,4 +28,3 @@ void initStorageNames(void) {
 void initTypeNames(void) {
     mock();
 }
-

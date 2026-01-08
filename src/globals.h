@@ -68,9 +68,9 @@ extern TypeModifier *upLevelFunctionCompletionType;
 extern char *tokenNamesTable[];
 extern int tokenNameLengthsTable[];
 
-extern TypeModifier *preCreatedTypesTable[MAX_TYPE];
-extern TypeModifier *preCreatedPtr2TypeTable[MAX_TYPE];
-extern TypeModifier *preCreatedPtr2Ptr2TypeTable[MAX_TYPE];
+extern TypeModifier *builtinTypesTable[MAX_TYPE];
+extern TypeModifier *builtinPtr2TypeTable[MAX_TYPE];
+extern TypeModifier *builtinPtr2Ptr2TypeTable[MAX_TYPE];
 
 extern int requestFileNumber;
 

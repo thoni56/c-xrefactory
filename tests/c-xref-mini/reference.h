@@ -1,49 +1,46 @@
 #ifndef REFERENCE_H_INCLUDED
 #define REFERENCE_H_INCLUDED
 
-#include "visibility.h"
+/**
+ * @file reference.h
+ * @brief Reference List Management
+ *
+ * Category: Parsing Support Library - Data Structures
+ *
+ * Manages lists of symbol references (occurrences/usages) during parsing.
+ * Not semantic actions itself, but provides data structures used by
+ * symbol tracking during parse.
+ *
+ * Adapts behavior based on parsingConfig.operation:
+ * - PARSER_OP_EXTRACT: Allows duplicate references at same position
+ *   (needed for data flow analysis)
+ * - Other operations: Deduplicates references at same position
+ *   (updates usage type instead)
+ *
+ * Called from: cxref.c (handleFoundSymbolReference during parsing),
+ *              cxfile.c (loading references from database)
+ */
+
 #include "position.h"
-#include "scope.h"
-#include "storage.h"
-#include "type.h"
 #include "usage.h"
 
 
-#define SCOPES_BITS 3
-
-// An occurence of a referenceItem
+// An occurence of a referenceableItem
 typedef struct reference {
     struct position   position;
     Usage             usage;
     struct reference *next;
 } Reference;
 
-// A variable, type, included file, ...
-typedef struct referenceItem {
-    char                     *linkName;
-    Type                      type : SYMTYPES_BITS;
-    int                       includedFileNumber; /* FileNumber for the included file if
-                                           * this is an '#include' Reference item:
-                                           * type = TypeCppInclude */
-    Storage                   storage : STORAGES_BITS;
-    Scope                     scope : SCOPES_BITS;
-    Visibility                visibility : 2;     /* local/global */
-    struct reference         *references;
-    struct referenceItem     *next; /* TODO: Link only for hashtab */
-} ReferenceItem;
-
 
 extern Reference *newReference(Position position, Usage usage, Reference *next);
 extern Reference makeReference(Position position, Usage usage, Reference *next);
 extern Reference *duplicateReferenceInCxMemory(Reference *r);
 extern void freeReferences(Reference *references);
-extern void resetReferenceUsage(Reference *reference, Usage usage);
+extern void setReferenceUsage(Reference *reference, Usage usage);
 extern Reference **addToReferenceList(Reference **list, Position pos, Usage usage);
 extern bool isReferenceInList(Reference *r, Reference *list);
-extern Reference *addReferenceToList(Reference **rlist,
-                                     Reference *ref);
-extern ReferenceItem makeReferenceItem(char *name, Type type, Storage storage, Scope scope,
-                                       Visibility visibility, int includedFileNumber);
+extern Reference *addReferenceToList(Reference *ref, Reference **rlist);
 extern int fileNumberOfReference(Reference reference);
 
 #endif

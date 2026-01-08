@@ -26,7 +26,6 @@
     ENUM(UsageMaxOnLineVisibleUsages)           \
     ENUM(UsageNone)                             \
     ENUM(UsageMacroBaseFileUsage)               \
-    ENUM(MAX_USAGES)                            \
     ENUM(USAGE_ANY)                             \
     ENUM(USAGE_FILTER)
 
@@ -40,5 +39,8 @@ extern const char *usageKindEnumName[];
 extern bool isVisibleUsage(Usage usage);
 extern bool isDefinitionUsage(Usage usage);
 extern bool isDefinitionOrDeclarationUsage(Usage usage);
+extern bool isMoreImportantUsageThan(Usage usage1, Usage usage2);
+extern bool isLessImportantUsageThan(Usage usage1, Usage usage2);
+extern bool isAtMostAsImportantAs(Usage usage1, Usage usage2);
 
 #endif

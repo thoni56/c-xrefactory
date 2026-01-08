@@ -3,9 +3,8 @@
 
 
 typedef enum visibility {
-    GlobalVisibility,
-    LocalVisibility,
-    MAX_VISIBILITY
+    VisibilityGlobal,
+    VisibilityLocal
 } Visibility;
 
 

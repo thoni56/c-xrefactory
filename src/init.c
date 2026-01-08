@@ -163,7 +163,7 @@ static TokenNamesInitTable tokenNamesAliases[] = {
 };
 
 
-static int preCreatedTypesInitTable[] = {
+static int builtinTypesInitTable[] = {
     TypeDefault,
     TypeChar,
     TypeUnsignedChar,
@@ -179,10 +179,13 @@ static int preCreatedTypesInitTable[] = {
     TypeLongSignedInt,
     TypeFloat,
     TypeDouble,
+    TypeLong,
+    TypeBool,
+    TypeNull,
     TypeVoid,
     TypeError,
     TypeAnonymousField,
-    /* MODIFIERS, */
+    /* MODIFIERS: */
     TmodLong,
     TmodShort,
     TmodSigned,
@@ -191,10 +194,6 @@ static int preCreatedTypesInitTable[] = {
     TmodShortUnsigned,
     TmodLongSigned,
     TmodLongUnsigned,
-    /* JAVA_TYPES, */
-    TypeLong,
-    TypeBool,
-    TypeNull,
     -1,
 };
 
@@ -358,25 +357,26 @@ void initArchaicTypes(void) {
     errorSymbol.storage = StorageDefault;
 }
 
-void initPreCreatedTypes(void) {
+void initBuiltinTypes(void) {
     for (int i=0; i<MAX_TYPE; i++) {
-        preCreatedTypesTable[i] = NULL;
-        preCreatedPtr2TypeTable[i] = NULL;
+        builtinTypesTable[i] = NULL;
+        builtinPtr2TypeTable[i] = NULL;
+        builtinPtr2Ptr2TypeTable[i] = NULL;
     }
 
     for (int i=0; ; i++) {
-        int t = preCreatedTypesInitTable[i];
+        int t = builtinTypesInitTable[i];
         if (t<0)
             break;
 
         /* pre-create X */
         assert(t>=0 && t<MAX_TYPE);
-        preCreatedTypesTable[t] = newTypeModifier(t, NULL, NULL);
+        builtinTypesTable[t] = newTypeModifier(t, NULL, NULL);
 
         /* pre-create *X */
-        preCreatedPtr2TypeTable[t] = newTypeModifier(TypePointer, NULL, preCreatedTypesTable[t]);
+        builtinPtr2TypeTable[t] = newTypeModifier(TypePointer, NULL, builtinTypesTable[t]);
 
         /* pre-create **X */
-        preCreatedPtr2Ptr2TypeTable[t] = newTypeModifier(TypePointer, NULL, preCreatedPtr2TypeTable[t]);
+        builtinPtr2Ptr2TypeTable[t] = newTypeModifier(TypePointer, NULL, builtinPtr2TypeTable[t]);
     }
 }

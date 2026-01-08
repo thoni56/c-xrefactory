@@ -11,7 +11,6 @@
 */
 
 #include <string.h> // For memset()
-#include <stdbool.h>
 
 #include "commons.h"
 #include "hash.h"
@@ -187,6 +186,11 @@ void CONCAT(HASH_FUN_PREFIX,MapWithIndex)(
     }
 }
 
+
+#undef GLUE
+#undef CONCAT
+#undef HASH_TAB_TYPE
+#undef HASH_FUN_PREFIX
 
 /* Local variables: */
 /* Mode: c          */
