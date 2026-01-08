@@ -15,6 +15,11 @@ typedef struct typeModifier {
 } TypeModifier;
 
 
+extern TypeModifier *builtinTypesTable[MAX_TYPE];
+extern TypeModifier *builtinPtr2TypeTable[MAX_TYPE];
+extern TypeModifier *builtinPtr2Ptr2TypeTable[MAX_TYPE];
+
+
 /* Allocates in stack space, aka XX-memory */
 extern TypeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, TypeModifier *next);
 extern TypeModifier *newSimpleTypeModifier(Type kind);

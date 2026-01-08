@@ -4,6 +4,7 @@
 #include "globals.h"
 #include "usage.h"
 
+#include "lexem.h"
 
 
 bool fileAbortEnabled;
@@ -26,11 +27,6 @@ int maxPasses;
 FILE *outputFile;
 FILE *errOut=NULL;
 
-TypeModifier *builtinTypesTable[MAX_TYPE];
-TypeModifier *builtinPtr2TypeTable[MAX_TYPE];
-TypeModifier *builtinPtr2Ptr2TypeTable[MAX_TYPE];
-
-#include "lexem.h"
 
 uchar typeShortChange[MAX_TYPE];
 uchar typeLongChange[MAX_TYPE];

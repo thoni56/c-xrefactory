@@ -9,6 +9,7 @@
 #include "log.h"
 #include "storage.h"
 #include "symboltable.h"
+#include "typemodifier.h"
 
 
 /* *********************************************************************** */

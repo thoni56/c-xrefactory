@@ -68,10 +68,6 @@ extern TypeModifier *upLevelFunctionCompletionType;
 extern char *tokenNamesTable[];
 extern int tokenNameLengthsTable[];
 
-extern TypeModifier *builtinTypesTable[MAX_TYPE];
-extern TypeModifier *builtinPtr2TypeTable[MAX_TYPE];
-extern TypeModifier *builtinPtr2Ptr2TypeTable[MAX_TYPE];
-
 extern int requestFileNumber;
 
 extern char *storageNamesTable[STORAGE_ENUMS_MAX];

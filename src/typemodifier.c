@@ -7,6 +7,11 @@
 #include "stackmemory.h"
 
 
+TypeModifier *builtinTypesTable[MAX_TYPE];
+TypeModifier *builtinPtr2TypeTable[MAX_TYPE];
+TypeModifier *builtinPtr2Ptr2TypeTable[MAX_TYPE];
+
+
 static void fillTypeModifier(TypeModifier *typeModifier, Type type, Symbol *typedefSymbol, TypeModifier *next) {
     memset(typeModifier, 0, sizeof(*typeModifier));
     typeModifier->type = type;

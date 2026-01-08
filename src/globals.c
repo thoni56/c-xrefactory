@@ -102,8 +102,4 @@ uchar typeUnsignedChange[MAX_TYPE];
 char *tokenNamesTable[LAST_TOKEN];
 int tokenNameLengthsTable[LAST_TOKEN];
 
-TypeModifier *builtinTypesTable[MAX_TYPE];
-TypeModifier *builtinPtr2TypeTable[MAX_TYPE];
-TypeModifier *builtinPtr2Ptr2TypeTable[MAX_TYPE];
-
 char *storageNamesTable[STORAGE_ENUMS_MAX];

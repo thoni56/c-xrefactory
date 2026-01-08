@@ -2,6 +2,12 @@
 #include "typemodifier.h"
 #include <cgreen/mocks.h>
 
+
+TypeModifier *builtinTypesTable[MAX_TYPE];
+TypeModifier *builtinPtr2TypeTable[MAX_TYPE];
+TypeModifier *builtinPtr2Ptr2TypeTable[MAX_TYPE];
+
+
 TypeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, TypeModifier *next) {
   return (TypeModifier *) mock(kind, typedefSymbol, next);
 }
