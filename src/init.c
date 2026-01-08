@@ -63,20 +63,15 @@ static TokenNamesInitTable tokenNamesCanonical[] = {
     {"volatile",    VOLATILE,		LANG_C | LANG_YACC},
     {"while",       WHILE,			LANG_C | LANG_YACC},
 
-    /* Order of synonyms is important for completion - the last one will be picked as suggestion */
     {"restrict",    RESTRICT,		LANG_C},
 
-    {"_Atomic",     _ATOMIC,		LANG_C},
     {"bool",        _BOOL,			LANG_C},
+    {"_Atomic",     _ATOMIC,		LANG_C},
     {"_Noreturn",   _NORETURN,		LANG_C},
     {"_Thread_local", _THREADLOCAL,	LANG_C},
     {"static_assert", _STATIC_ASSERT, LANG_C},
 
-    /*
-      {"token",       TOKEN,		LANG_YACC},
-      {"type",        TYPE,			LANG_YACC},
-    */
-
+    /* Operators... */
     {"...",         ELLIPSIS,		LANG_C},
     {">>=",         RIGHT_ASSIGN,	LANG_C},
     {"<<=",         LEFT_ASSIGN,	LANG_C},
@@ -147,6 +142,7 @@ static TokenNamesInitTable tokenNamesCanonical[] = {
     {NULL,                0,                LANG_C}         /* sentinel*/
 };
 
+/* ... and here are some synonyms: */
 static TokenNamesInitTable tokenNamesAliases[] = {
     {"__const",         CONST,				LANG_C | LANG_YACC},
     {"__const__",       CONST,				LANG_C | LANG_YACC},

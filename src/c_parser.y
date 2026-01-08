@@ -78,9 +78,6 @@
 
 %token TRUE_LITERAL FALSE_LITERAL NULL_LITERAL
 
-/* yacc-special */
-%token TOKEN TYPE
-
 /* gcc specials */
 %token LABEL
 
