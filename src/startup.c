@@ -36,7 +36,6 @@
 static char previousStandardOptionsFile[MAX_FILE_NAME_SIZE];
 static char previousStandardOptionsSection[MAX_FILE_NAME_SIZE];
 static time_t previousStandardOptionsFileModificationTime;
-static Language previousLanguage;
 static int previousPass;
 
 
@@ -491,7 +490,7 @@ void restoreMemoryCheckPoint(void) {
  * 4. Memory checkpointing - cache expensive discoveries for same-project files
  * 5. Input setup - finally calls computeAndOpenInputFile() -> initInput()
  */
-bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestArgs, Language *outLanguage, bool *firstPass) {
+bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *firstPass) {
     char standardOptionsFileName[MAX_FILE_NAME_SIZE];
     char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
     time_t modifiedTime;
@@ -504,7 +503,6 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
     /* === PHASE 1: Project Discovery === */
     /* Find which .c-xrefrc file and project section applies to this file */
     fileName = inputFileName;
-    *outLanguage = getLanguageFor(fileName);
     searchStandardOptionsFileAndProjectForFile(fileName, standardOptionsFileName, standardOptionsSectionName);
     handlePathologicProjectCases(fileName, standardOptionsFileName, standardOptionsSectionName, true);
 
@@ -517,13 +515,11 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
     /* Determine if we need full initialization or can restore from checkpoint.
      * Full init required when: first pass, different pass, different project,
-     * options file changed, or different language. */
-    if (*firstPass
-        || previousPass != currentPass                                       /* We are in a different pass */
+     * or the current options file changed. */
+    if (previousPass != currentPass                                       /* We are in a different pass */
         || strcmp(previousStandardOptionsFile, standardOptionsFileName) != 0 /* or we are using a different options file */
         || strcmp(previousStandardOptionsSection, standardOptionsSectionName) != 0 /* or a different project */
         || previousStandardOptionsFileModificationTime != modifiedTime       /* or the options file has changed */
-        || previousLanguage != *outLanguage                                  /* or a different language? */
     ) {
         /* === PHASE 2: Options File Processing === */
         /* Load and process project settings from .c-xrefrc */
@@ -588,7 +584,6 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         strcpy(previousStandardOptionsFile,standardOptionsFileName);
         strcpy(previousStandardOptionsSection,standardOptionsSectionName);
         previousStandardOptionsFileModificationTime = modifiedTime;
-        previousLanguage = *outLanguage;
         previousPass = currentPass;
 
     } else {

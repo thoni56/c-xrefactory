@@ -153,7 +153,7 @@ void initServer(ArgumentsVector args) {
 static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstPassP) {
     bool inputOpened = false;
 
-    inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
+    inputOpened = initializeFileProcessing(args, nargs, firstPassP);
 
     loadFileNumbersFromStore();
     parsingConfig.inputFileNumber = currentFile.characterBuffer.fileNumber;
@@ -185,7 +185,7 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
         int fileWithMacroExpansion = scheduleFileUsingTheMacro();
         if (fileWithMacroExpansion!=NO_FILE_NUMBER) {
             inputFileName = getFileItemWithFileNumber(fileWithMacroExpansion)->name;
-            inputOpened = initializeFileProcessing(args, nargs, &currentLanguage, firstPassP);
+            inputOpened = initializeFileProcessing(args, nargs, firstPassP);
             if (inputOpened) {
                 parseInputFile();
                 *firstPassP = false;

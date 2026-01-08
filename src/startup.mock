@@ -10,9 +10,9 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
   mock(args.argc, args.argv);
 }
 
-bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, Language *outLanguage,
+bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs,
                               bool *firstPass) {
-  return (bool)mock(firstPass, args.argc, args.argv, nargs.argc, nargs.argv, outLanguage);
+  return (bool)mock(firstPass, args.argc, args.argv, nargs.argc, nargs.argv);
 }
 
 void saveMemoryCheckPoint(void) {
