@@ -70,8 +70,6 @@ extern int tokenNameLengthsTable[];
 
 extern int requestFileNumber;
 
-extern char *storageNamesTable[STORAGE_ENUMS_MAX];
-
 extern jmp_buf errorLongJumpBuffer;
 
 extern char *inputFileName;

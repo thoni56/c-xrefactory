@@ -23,7 +23,8 @@ typedef enum storage {
     ALL_STORAGE_ENUMS(GENERATE_ENUM_VALUE)
 } Storage;
 
-
 extern const char *storageEnumName[];
+
+extern char *storageNamesTable[STORAGE_ENUMS_MAX];
 
 #endif

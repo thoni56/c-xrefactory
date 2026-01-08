@@ -101,5 +101,3 @@ uchar typeUnsignedChange[MAX_TYPE];
  * NULL and the length is zero. */
 char *tokenNamesTable[LAST_TOKEN];
 int tokenNameLengthsTable[LAST_TOKEN];
-
-char *storageNamesTable[STORAGE_ENUMS_MAX];

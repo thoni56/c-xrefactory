@@ -59,8 +59,6 @@ Language currentLanguage;
 TypeModifier *structMemberCompletionType;
 Completions collectedCompletions;
 
-char *storageNamesTable[STORAGE_ENUMS_MAX];
-
 unsigned memberFindCount = 1;
 
 bool parameterListIsVoid;           /* Is what looks like a parameter actually "void" */

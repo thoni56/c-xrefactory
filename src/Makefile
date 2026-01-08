@@ -670,7 +670,7 @@ $(eval $(call UNITTEST,extract,position log memory stackmemory storage type id u
 $(eval $(call UNITTEST,fileio,log))
 $(eval $(call UNITTEST,filetable,log memory stackmemory hash))
 $(eval $(call UNITTEST,id,log memory stackmemory))
-$(eval $(call UNITTEST,init,log position stackmemory))
+$(eval $(call UNITTEST,init,log position stackmemory storage))
 $(eval $(call UNITTEST,lexemstream, lexem lexembuffer log))
 $(eval $(call UNITTEST,lexembuffer,characterreader position memory stackmemory log))
 $(eval $(call UNITTEST,lexer,log lexembuffer characterreader position memory stackmemory))
