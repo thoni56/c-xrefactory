@@ -60,10 +60,8 @@ Options presetOptions = {
     NULL,                        // moveTargetFile
 #if defined (__WIN32__)
     "c;C",                       // cFilesSuffixes
-    "java;JAV",                  // javaFilesSuffixes
 #else
     "c:C",                       // cFilesSuffixes
-    "java",                      // javaFilesSuffixes
 #endif
     true,                        // fileNamesCaseSensitive
     SEARCH_FULL,                 // search Tag file specifics

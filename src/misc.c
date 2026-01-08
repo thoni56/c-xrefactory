@@ -782,15 +782,9 @@ Language getLanguageFor(char *fileName) {
     char *suffix;
     Language language = LANG_C;
 
-    if (fileNameHasOneOfSuffixes(fileName, options.javaFilesSuffixes)) {
-        FATAL_ERROR(ERR_ST, "Java is no longer supported", -1);
-    } else {
-        suffix = getFileSuffix(fileName);
-        if (compareFileNames(suffix, ".y")==0) {
-            language = LANG_YACC;
-        } else {
-            language = LANG_C;
-        }
+    suffix = getFileSuffix(fileName);
+    if (compareFileNames(suffix, ".y")==0) {
+        language = LANG_YACC;
     }
     return language;
 }

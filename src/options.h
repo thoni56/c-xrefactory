@@ -81,7 +81,6 @@ typedef struct options {
     bool xref2;
     char *moveTargetFile;
     char *cFilesSuffixes;
-    char *javaFilesSuffixes;    /* Keep this for warnings about Java not being supported... */
     bool fileNamesCaseSensitive;
     SearchKind searchKind;
     bool noErrors;
