@@ -113,7 +113,6 @@ static bool computeAndOpenInputFile(void) {
     FILE *inputFile;
     EditorBuffer *inputBuffer;
 
-    assert(currentLanguage);
     inputBuffer = NULL;
 
     inputFile = NULL;
@@ -734,7 +733,6 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
         cxFreeUntil(tempAllocated);
     }
 
-    currentLanguage = LANG_C | LANG_YACC;
     /* Initialize token names table with all C and Yacc keywords. */
     initTokenNamesTables();
 
