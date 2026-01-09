@@ -1251,7 +1251,6 @@ static void extractVariable(EditorMarker *point, EditorMarker *mark) {
 static char *computeUpdateOptionForSymbol(EditorMarker *point) {
 
     assert(point != NULL && point->buffer != NULL);
-    currentLanguage = getLanguageFor(point->buffer->fileName);
 
     bool hasHeaderReferences = false;
     bool isMultiFileReferences = false;

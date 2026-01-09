@@ -169,22 +169,20 @@ void parseToCreateReferences(const char *fileName) {
         }
     }
 
+    /* Setup input for parsing */
+    initInput(NULL, buffer, "\n", (char *)fileName);
+
     /* Setup parsing configuration from global options (includes discovered defines, include paths) */
     syncParsingConfigFromOptions(options);
     parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
-
-    /* Determine language from filename extension */
-    Language language = getLanguageFor((char *)fileName);
-
-    /* Setup input for parsing */
-    initInput(NULL, buffer, "\n", (char *)fileName);
     parsingConfig.inputFileNumber = currentFile.characterBuffer.fileNumber;
+    currentLanguage = getLanguageFor((char *)fileName);
 
     log_trace("parseToCreateReferences: Parsing '%s' as %s", fileName,
-              language == LANG_YACC ? "YACC" : "C");
+              currentLanguage == LANG_YACC ? "YACC" : "C");
 
     /* Parse the file - populating the ReferenceableItemTable */
-    callParser(parsingConfig.inputFileNumber, language);
+    callParser(parsingConfig.inputFileNumber, currentLanguage);
 
     log_trace("parseToCreateReferences: Completed parsing '%s'", fileName);
 }

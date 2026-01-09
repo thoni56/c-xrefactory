@@ -111,7 +111,6 @@ static char *presetEditServerFileDependingStatics(void) {
     requestFileNumber = fileNumber;
 
     char *fileName = inputFileName;
-    currentLanguage = getLanguageFor(fileName);
 
     return fileName;
 }
@@ -128,6 +127,7 @@ static void parseInputFile(void) {
 
     /* Bridge: Sync parsingConfig for all operations using this entry point */
     syncParsingConfigFromOptions(options);
+    currentLanguage = getLanguageFor(inputFileName);
     if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
         log_debug("parse start");
         callParser(parsingConfig.inputFileNumber, currentLanguage);
