@@ -247,7 +247,7 @@ static char *findCorrespondingHeaderFile(EditorMarker *target) {
 
 static int findHeaderInsertionPoint(EditorBuffer *headerBuffer) {
     char *text = headerBuffer->allocation.text;
-    int size = headerBuffer->size;
+    int size = getSizeOfEditorBuffer(headerBuffer);
 
     /* Search backwards for "\n#endif" pattern */
     for (int i = size - 1; i >= 1; i--) {
@@ -351,7 +351,7 @@ static bool sourceAlreadyIncludesHeader(EditorBuffer *sourceBuffer, char *header
 
 static int findIncludeInsertionPoint(EditorBuffer *buffer) {
     char *text = buffer->allocation.text;
-    int size = buffer->size;
+    int size = getSizeOfEditorBuffer(buffer);
     int lastIncludeEnd = 0;  /* Offset after last include, or 0 if none found */
 
     /* Scan forward looking for #include directives */

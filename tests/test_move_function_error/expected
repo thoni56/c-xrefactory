@@ -1,0 +1,28 @@
+<update-report>
+</update-report>
+<goto>
+ <position-off off=4407 len=<n>>CURDIR/server.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>static </str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=4407 len=<n>>CURDIR/server.c</position-off>
+</goto>
+<cut-block val=133 len=<n>></cut-block>
+<goto>
+ <position-off off=1171 len=<n>>CURDIR/parsing.c</position-off>
+</goto>
+<paste-block len=<n>></paste-block>
+<goto>
+ <position-off off=7224 len=<n>>CURDIR/parsing.h</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>
+extern void setupParsingConfig();</str>
+</replacement>
+<goto>
+ <position-off off=1176 len=<n>>CURDIR/parsing.c</position-off>
+</goto>
+<indent-block val=4 len=<n>></indent-block>
+<sync>
