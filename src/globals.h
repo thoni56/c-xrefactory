@@ -75,7 +75,6 @@ extern char *inputFileName;
 extern time_t fileProcessingStartTime;
 
 
-extern Language currentLanguage;
 extern int currentPass;
 extern int maxPasses;
 

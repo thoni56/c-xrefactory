@@ -176,10 +176,10 @@ void parseToCreateReferences(const char *fileName) {
     syncParsingConfigFromOptions(options);
     parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
     parsingConfig.inputFileNumber = currentFile.characterBuffer.fileNumber;
-    parsingConfig.language = currentLanguage = getLanguageFor((char *)fileName);
+    parsingConfig.language = getLanguageFor((char *)fileName);
 
     log_trace("parseToCreateReferences: Parsing '%s' as %s", fileName,
-              currentLanguage == LANG_YACC ? "YACC" : "C");
+              parsingConfig.language == LANG_YACC ? "YACC" : "C");
 
     /* Parse the file - populating the ReferenceableItemTable */
     callParser(parsingConfig.inputFileNumber, parsingConfig.language);

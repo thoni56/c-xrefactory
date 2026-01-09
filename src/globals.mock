@@ -52,8 +52,6 @@ int requestFileNumber;
 Position olcxByPassPos;
 int fileToParseForMacroExpansion;
 
-Language currentLanguage;
-
 TypeModifier *structMemberCompletionType;
 Completions collectedCompletions;
 

@@ -13,6 +13,7 @@
 #include "lexem.mock"
 #include "misc.mock"
 #include "options.mock"
+#include "parsing.h"
 #include "parsing.mock"
 #include "yylex.mock"
 
@@ -22,7 +23,7 @@ static LexemBuffer     lexemBuffer;
 
 Describe(Lexer);
 BeforeEach(Lexer) {
-    currentLanguage = LANG_C;
+    parsingConfig.language = LANG_C;
     log_set_level(LOG_ERROR);
     initLexemBuffer(&lexemBuffer);
     always_expect(cachingIsActive, will_return(false));

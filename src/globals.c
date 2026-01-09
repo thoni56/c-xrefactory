@@ -36,7 +36,6 @@ Completions collectedCompletions;
 
 time_t fileProcessingStartTime;
 
-Language currentLanguage;
 int currentPass;
 int maxPasses;
 
