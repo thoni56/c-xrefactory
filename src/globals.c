@@ -23,10 +23,6 @@ Position parameterPosition;
 Position parameterBeginPosition;
 Position parameterEndPosition;
 
-
-Position primaryStartPosition;
-Position staticPrefixStartPosition;
-
 Id yyIdBuffer[YYIDBUFFER_SIZE];
 int yyIdBufferIndex = 0;
 

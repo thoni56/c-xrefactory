@@ -462,18 +462,6 @@ void applyWholeRefactoringFromUndo(void) {
     editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
 }
 
-static void fatalErrorOnMarker(EditorMarker *p, int errType, char *message) {
-    EditorUndo *redo;
-    redo = NULL;
-    editorUndoUntil(refactoringStartingPoint, &redo);
-    ppcGotoMarker(p);
-    FATAL_ERROR(errType, message, XREF_EXIT_ERR);
-    // unreachable, but do the things properly
-    editorApplyUndos(redo, NULL, &editorUndo, GEN_NO_OUTPUT);
-}
-
-// -------------------------- end of Undos
-
 void removeNonCommentCode(EditorMarker *marker, int length) {
     assert(marker->buffer && marker->buffer->allocation.text);
     char *s  = marker->buffer->allocation.text + marker->offset;
@@ -689,36 +677,6 @@ static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *o
         pp = newEditorMarker(pos->buffer, off1);
         ppcPreCheck(pp, off2 - off1);
         freeEditorMarker(pp);
-    }
-}
-
-EditorMarker *createMarkerForExpressionStart(EditorMarker *marker, ExpressionStartKind startKind) {
-    Position position = NO_POSITION;
-    parseBufferUsingServer(refactoringOptions.project, marker, NULL, "-olcxprimarystart", NULL);
-    deleteEntryFromSessionStack(sessionData.browsingStack.top);
-    if (startKind == GET_PRIMARY_START) {
-        position = primaryStartPosition;
-    } else if (startKind == GET_STATIC_PREFIX_START) {
-        position = staticPrefixStartPosition;
-    } else {
-        assert(0);
-    }
-    if (position.file == NO_FILE_NUMBER) {
-        if (startKind == GET_STATIC_PREFIX_START) {
-            fatalErrorOnMarker(marker, ERR_ST,
-                                 "Can't determine static prefix. Maybe non-static reference to a static object? "
-                                 "Make this invocation static before refactoring.");
-        } else {
-            fatalErrorOnMarker(marker, ERR_INTERNAL, "Can't determine beginning of primary expression");
-        }
-        return NULL;
-    } else {
-        EditorBuffer *buffer    = getOpenedAndLoadedEditorBuffer(getFileItemWithFileNumber(position.file)->name);
-        EditorMarker *newMarker = newEditorMarker(buffer, 0);
-        moveEditorMarkerToLineAndColumn(newMarker, position.line, position.col);
-        assert(newMarker->buffer == marker->buffer);
-        assert(newMarker->offset <= marker->offset);
-        return newMarker;
     }
 }
 

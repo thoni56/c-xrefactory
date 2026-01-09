@@ -17,8 +17,6 @@ bool cxResizingBlocked;
 ParsedInfo parsedInfo;
 Position parsedPositions[IPP_MAX];
 
-Position staticPrefixStartPosition;
-
 jmp_buf errorLongJumpBuffer;
 
 int currentPass;
@@ -74,7 +72,6 @@ char cwd[MAX_FILE_NAME_SIZE];
 
 ParsedInfo parsedInfo;
 TypeModifier *upLevelFunctionCompletionType; /* TODO move to Complete */
-Position primaryStartPosition;
 
 TypeModifier defaultVoidModifier;
 Symbol defaultVoidDefinition;

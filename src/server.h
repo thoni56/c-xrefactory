@@ -25,7 +25,6 @@
     ENUM(OLO_GET_LAST_IMPORT_LINE)              \
     ENUM(OLO_GET_METHOD_COORD)                  \
     ENUM(OLO_GET_PARAM_COORDINATES)             \
-    ENUM(OLO_GET_PRIMARY_START)                 \
     ENUM(OLO_GLOBAL_UNUSED)                     \
     ENUM(OLO_GOTO)                              \
     ENUM(OLO_GOTO_CALLER)                       \

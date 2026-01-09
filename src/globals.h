@@ -39,8 +39,6 @@ extern Position parameterPosition;
 extern Position parameterBeginPosition;
 extern Position parameterEndPosition;
 
-extern Position primaryStartPosition;
-extern Position staticPrefixStartPosition;
 extern Id yyIdBuffer[YYIDBUFFER_SIZE];
 extern int yyIdBufferIndex;
 

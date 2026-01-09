@@ -44,7 +44,6 @@ static bool needsReferenceDatabase(ServerOperation operation) {
         ||  operation==OLO_RENAME
         ||  operation==OLO_ARGUMENT_MANIPULATION
         ||  operation==OLO_SAFETY_CHECK
-        ||  operation==OLO_GET_PRIMARY_START
         ||  operation==OLO_GET_FUNCTION_BOUNDS
         ;
 }
@@ -91,9 +90,6 @@ static int scheduleFileUsingTheMacro(void) {
 // WTF does "DependingStatics" mean?
 static char *presetEditServerFileDependingStatics(void) {
     fileProcessingStartTime = time(NULL);
-
-    primaryStartPosition = NO_POSITION;
-    staticPrefixStartPosition = NO_POSITION;
 
     // This is pretty stupid, there is always only one input file
     // in edit server, otherwise it is an error

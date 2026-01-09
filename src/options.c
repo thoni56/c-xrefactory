@@ -1392,9 +1392,6 @@ static bool processOOption(int *argi, ArgumentsVector args) {
         options.parnum2 = 0;
         sscanf(args.argv[i]+13, "%d", &options.parnum2);
     }
-    else if (strcmp(args.argv[i], "-olcxprimarystart")==0) {
-        options.serverOperation = OLO_GET_PRIMARY_START;
-    }
     else if (strcmp(args.argv[i], "-olcxgetrefactorings")==0)     {
         options.serverOperation = OLO_GET_AVAILABLE_REFACTORINGS;
     }

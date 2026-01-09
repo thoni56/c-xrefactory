@@ -2016,14 +2016,6 @@ void answerEditorAction(void) {
             errorMessage(ERR_ST, tmpBuff);
         }
         break;
-    case OLO_GET_PRIMARY_START:
-        if (completionStringServed && primaryStartPosition.file != NO_FILE_NUMBER) {
-            ppcGotoPosition(primaryStartPosition);
-            deleteEntryFromSessionStack(sessionData.browsingStack.top);
-        } else {
-            errorMessage(ERR_ST, "Begin of primary expression not found.");
-        }
-        break;
     case OLO_GET_AVAILABLE_REFACTORINGS:
         printAvailableRefactorings();
         deleteEntryFromSessionStack(sessionData.browsingStack.top);
