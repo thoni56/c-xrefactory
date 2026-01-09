@@ -127,10 +127,11 @@ static void parseInputFile(void) {
 
     /* Bridge: Sync parsingConfig for all operations using this entry point */
     syncParsingConfigFromOptions(options);
-    currentLanguage = getLanguageFor(inputFileName);
+    parsingConfig.language = currentLanguage = getLanguageFor(inputFileName);
+
     if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
         log_debug("parse start");
-        callParser(parsingConfig.inputFileNumber, currentLanguage);
+        callParser(parsingConfig.inputFileNumber, parsingConfig.language);
         log_debug("parse end");
     } else
         log_debug("Not parsing input because of server operation TAG_SEARCH or PUSH_NAME");

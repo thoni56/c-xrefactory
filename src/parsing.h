@@ -72,6 +72,7 @@ typedef struct {
     ParserOperation  operation;                   /* What should parser do? */
     int              inputFileNumber;             /* The fileNumber for the "main" file
                                                    * that the parse started from. */
+    Language         language;
     StringList      *includeDirs;                 /* -I include directories */
     char            *defines;                     /* -D preprocessor definitions */
     int              markOffset;                  /* Byte offset of the mark (one end of

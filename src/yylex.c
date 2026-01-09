@@ -410,7 +410,7 @@ static LexemCode checkCompletionsForId(LexemCode lexem, char *id, Position posit
     if (options.mode == ServerMode) {
         if (lexem == IDENT_TO_COMPLETE) {
             completionStringServed = true;
-            if (currentLanguage == LANG_YACC) {
+            if (parsingConfig.language == LANG_YACC) {
                 makeYaccCompletions(id, strlen(id), position);
             } else {
                 makeCCompletions(id, strlen(id), position);
