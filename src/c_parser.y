@@ -61,9 +61,6 @@
 /* c-only */
 %token PTR_OP ELLIPSIS
 
-/* yacc-only */
-%token YACC_PERC YACC_DPERC
-
 /* ************************** KEYWORDS ******************************** */
 
 %token STATIC BREAK CASE CHAR CONST CONTINUE DEFAULT DO DOUBLE ELSE

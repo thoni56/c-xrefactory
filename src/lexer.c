@@ -645,20 +645,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb, bool inServe
                     putLexemWithColumn(lb, MOD_ASSIGN, cb, lexemStartingColumn);
                     ch = getChar(cb);
                     goto nextLexem;
-                }
-                /*&
-                  else if (LANGUAGE(LANG_YACC) && ch == '{') {
-                      putLexemWithColumn(lb, YACC_PERC_LPAR, cb, lexemStartingColumn);
-                      ch = getChar(cb);
-                      goto nextLexem;
-                  }
-                  else if (LANGUAGE(LANG_YACC) && ch == '}') {
-                      putLexemWithColumn(lb, YACC_PERC_RPAR, cb, lexemStartingColumn);
-                      ch = getChar(cb);
-                      goto nextLexem;
-                  }
-                  &*/
-                else {
+                } else {
                     putLexemWithColumn(lb, '%', cb, lexemStartingColumn);
                     goto nextLexem;
                 }
