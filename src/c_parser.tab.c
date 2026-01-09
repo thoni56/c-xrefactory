@@ -2171,7 +2171,7 @@ case 1:
                                                 yyval.ast_expressionType.data.typeModifier);
             newSymbol->storage = StorageExtern;
 
-            Symbol *definitionSymbol = addNewSymbolDefinition(symbolTable, inputFileName, newSymbol,
+            Symbol *definitionSymbol = addNewSymbolDefinition(symbolTable, parsingConfig.fileName, newSymbol,
                                                               StorageExtern, UsageUsed);
             yyval.ast_expressionType.data.reference = handleFoundSymbolReference(definitionSymbol, yyvsp[0].ast_id.data->position,
                                                            UsageUsed, NO_FILE_NUMBER);
@@ -3204,14 +3204,14 @@ case 194:
 #line 930 "c_parser.y"
 {
         yyval.ast_symbol.data = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[0].ast_id.data);
-        addNewSymbolDefinition(symbolTable, inputFileName, yyval.ast_symbol.data, StorageConstant, UsageDefined);
+        addNewSymbolDefinition(symbolTable, parsingConfig.fileName, yyval.ast_symbol.data, StorageConstant, UsageDefined);
     }
 break;
 case 195:
 #line 934 "c_parser.y"
 {
         yyval.ast_symbol.data = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[-2].ast_id.data);
-        addNewSymbolDefinition(symbolTable, inputFileName, yyval.ast_symbol.data, StorageConstant, UsageDefined);
+        addNewSymbolDefinition(symbolTable, parsingConfig.fileName, yyval.ast_symbol.data, StorageConstant, UsageDefined);
     }
 break;
 case 196:
@@ -3961,7 +3961,7 @@ case 352:
         /* if ($1.data->storage == StorageDefault) $1.data->storage = StorageExtern;*/
         /* TODO!!!, here you should check if there is previous declaration of*/
         /* the function, if yes and is declared static, make it static!*/
-        addNewSymbolDefinition(symbolTable, inputFileName, yyvsp[0].ast_symbol.data, StorageExtern, UsageDefined);
+        addNewSymbolDefinition(symbolTable, parsingConfig.fileName, yyvsp[0].ast_symbol.data, StorageExtern, UsageDefined);
         beginBlock();
         counters.localVar = 0;
         assert(yyvsp[0].ast_symbol.data->typeModifier && yyvsp[0].ast_symbol.data->typeModifier->type == TypeFunction);

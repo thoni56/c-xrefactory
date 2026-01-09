@@ -133,12 +133,11 @@ static void parseInputFile(void) {
         fprintf(stderr, "parseInputFile: '%s\n", currentFile.fileName);
 
     /* Bridge: Sync parsingConfig for all operations using this entry point */
-    syncParsingConfigFromOptions(options);
-    parsingConfig.language = getLanguageFor(inputFileName);
+    setupParsingConfig(requestFileNumber);
 
     if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
         log_debug("parse start");
-        callParser(parsingConfig.inputFileNumber, parsingConfig.language);
+        callParser(parsingConfig.fileNumber, parsingConfig.language);
         log_debug("parse end");
     } else
         log_debug("Not parsing input because of server operation TAG_SEARCH or PUSH_NAME");
@@ -159,15 +158,15 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
     inputOpened = initializeFileProcessing(args, nargs, firstPassP);
 
     loadFileNumbersFromStore();
-    parsingConfig.inputFileNumber = currentFile.characterBuffer.fileNumber;
+    parsingConfig.fileNumber = currentFile.characterBuffer.fileNumber;
 
     if (inputOpened) {
         /* If the file has preloaded content, remove old references before parsing */
         EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(inputFileName);
         if (buffer != NULL && buffer->preLoadedFromFile != NULL) {
             log_debug("file has preloaded content, removing old references for file %d",
-                      parsingConfig.inputFileNumber);
-            removeReferenceableItemsForFile(parsingConfig.inputFileNumber);
+                      parsingConfig.fileNumber);
+            removeReferenceableItemsForFile(parsingConfig.fileNumber);
         }
 
         parseInputFile();
@@ -176,9 +175,9 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
     if (options.cursorOffset==0) {
         // special case, push the file as include reference
         if (needsReferenceDatabase(options.serverOperation)) {
-            Position position = makePosition(parsingConfig.inputFileNumber, 1, 0);
+            Position position = makePosition(parsingConfig.fileNumber, 1, 0);
             parsingConfig.positionOfSelectedReference = position;
-            addFileAsIncludeReference(parsingConfig.inputFileNumber);
+            addFileAsIncludeReference(parsingConfig.fileNumber);
         }
     }
     if (completionPositionFound && !completionStringServed) {
@@ -248,9 +247,10 @@ void server(ArgumentsVector args) {
         deepCopyOptionsFromTo(&savedOptions, &options);
 
         pipedOptions = getPipedOptions();
-        // -o option on command line should catch also file not found
+        // TODO -o option on command line should catch also file not found
         openOutputFile(options.outputFileName);
         //&dumpArguments(nargc, nargv);
+
         log_trace("Server: Getting request");
         initServer(pipedOptions);
         if (outputFile==stdout && options.outputFileName!=NULL) {
@@ -262,8 +262,7 @@ void server(ArgumentsVector args) {
         } else {
             answerEditorAction();
         }
-        //& options.outputFileName = NULL;  // why this was here ???
-        //editorCloseBufferIfNotUsedElsewhere(s_input_file_name);
+
         closeAllEditorBuffers();
         closeOutputFile();
         if (options.xref2)

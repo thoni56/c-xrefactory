@@ -70,8 +70,9 @@ typedef enum {
  */
 typedef struct {
     ParserOperation  operation;                   /* What should parser do? */
-    int              inputFileNumber;             /* The fileNumber for the "main" file
+    int              fileNumber;                  /* The fileNumber for the "main" file
                                                    * that the parse started from. */
+    char            *fileName;
     Language         language;
     StringList      *includeDirs;                 /* -I include directories */
     char            *defines;                     /* -D preprocessor definitions */
@@ -182,5 +183,6 @@ extern void initializeParsingSubsystem(void);
  * @param fileName      Absolute path to the file to parse
  */
 extern void parseToCreateReferences(const char *fileName);
+extern void setupParsingConfig(int fileNumber);
 
 #endif

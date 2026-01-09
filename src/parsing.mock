@@ -17,6 +17,10 @@ void syncParsingConfigFromOptions(Options options) {
     mock();
 }
 
+void setupParsingConfig(int fileNumber) {
+    mock();
+}
+
 ParserOperation getParserOperation(ServerOperation serverOp) {
     return (ParserOperation)mock(serverOp);
 }

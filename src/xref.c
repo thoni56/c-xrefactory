@@ -157,7 +157,7 @@ static void processInputFile(ArgumentsVector args, bool *firstPassP, bool *atLea
         ArgumentsVector nargs = {.argc = 0, .argv = NULL};
 
         inputOpened = initializeFileProcessing(args, nargs, firstPassP);
-        parsingConfig.inputFileNumber = currentFileNumber;
+        parsingConfig.fileNumber = currentFileNumber;
 
         if (inputOpened) {
             if (options.fileTrace)

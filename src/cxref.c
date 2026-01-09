@@ -281,7 +281,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
         } else {
             if (visibility==VisibilityGlobal && symbol->type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
-                if (parsingConfig.inputFileNumber != position.file && options.noIncludeRefs)
+                if (parsingConfig.fileNumber != position.file && options.noIncludeRefs)
                     return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
@@ -1586,7 +1586,7 @@ void getLineAndColumnCursorPositionFromCommandLineOptions(int *l, int *c) {
 static Position getCallerPositionFromCommandLineOption(void) {
     int file, line, col;
 
-    file = parsingConfig.inputFileNumber;
+    file = parsingConfig.fileNumber;
     getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
     return makePosition(file, line, col);
 }

@@ -200,7 +200,7 @@ primary_expr
                                                 $$.data.typeModifier);
             newSymbol->storage = StorageExtern;
 
-            Symbol *definitionSymbol = addNewSymbolDefinition(symbolTable, inputFileName, newSymbol,
+            Symbol *definitionSymbol = addNewSymbolDefinition(symbolTable, parsingConfig.fileName, newSymbol,
                                                               StorageExtern, UsageUsed);
             $$.data.reference = handleFoundSymbolReference(definitionSymbol, $1.data->position,
                                                            UsageUsed, NO_FILE_NUMBER);
@@ -929,11 +929,11 @@ enumerator_list
 enumerator
     : identifier                            {
         $$.data = createSimpleDefinition(StorageConstant,TypeInt,$1.data);
-        addNewSymbolDefinition(symbolTable, inputFileName, $$.data, StorageConstant, UsageDefined);
+        addNewSymbolDefinition(symbolTable, parsingConfig.fileName, $$.data, StorageConstant, UsageDefined);
     }
     | identifier '=' constant_expr          {
         $$.data = createSimpleDefinition(StorageConstant,TypeInt,$1.data);
-        addNewSymbolDefinition(symbolTable, inputFileName, $$.data, StorageConstant, UsageDefined);
+        addNewSymbolDefinition(symbolTable, parsingConfig.fileName, $$.data, StorageConstant, UsageDefined);
     }
     | error                                 {
         $$.data = newSymbolAsCopyOf(&errorSymbol);
@@ -1574,7 +1574,7 @@ external_definition
         // if ($1.data->storage == StorageDefault) $1.data->storage = StorageExtern;
         // TODO!!!, here you should check if there is previous declaration of
         // the function, if yes and is declared static, make it static!
-        addNewSymbolDefinition(symbolTable, inputFileName, $1.data, StorageExtern, UsageDefined);
+        addNewSymbolDefinition(symbolTable, parsingConfig.fileName, $1.data, StorageExtern, UsageDefined);
         beginBlock();
         counters.localVar = 0;
         assert($1.data->typeModifier && $1.data->typeModifier->type == TypeFunction);

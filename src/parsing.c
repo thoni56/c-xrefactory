@@ -44,6 +44,7 @@ ParserOperation getParserOperation(ServerOperation serverOp) {
     }
 }
 
+
 void syncParsingConfigFromOptions(Options options) {
     parsingConfig.operation = getParserOperation(options.serverOperation);
 
@@ -56,6 +57,13 @@ void syncParsingConfigFromOptions(Options options) {
     parsingConfig.targetParameterIndex = options.olcxGotoVal;
 
     parsingConfig.positionOfSelectedReference = NO_POSITION;
+}
+
+void setupParsingConfig(int fileNumber) {
+  syncParsingConfigFromOptions(options);
+  parsingConfig.fileNumber = fileNumber;
+  parsingConfig.fileName = getFileItemWithFileNumber(fileNumber)->name;
+  parsingConfig.language = getLanguageFor(parsingConfig.fileName);
 }
 
 bool needsReferenceAtCursor(ParserOperation op) {
@@ -175,14 +183,14 @@ void parseToCreateReferences(const char *fileName) {
     /* Setup parsing configuration from global options (includes discovered defines, include paths) */
     syncParsingConfigFromOptions(options);
     parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
-    parsingConfig.inputFileNumber = currentFile.characterBuffer.fileNumber;
+    parsingConfig.fileNumber = currentFile.characterBuffer.fileNumber;
     parsingConfig.language = getLanguageFor((char *)fileName);
 
     log_trace("parseToCreateReferences: Parsing '%s' as %s", fileName,
               parsingConfig.language == LANG_YACC ? "YACC" : "C");
 
     /* Parse the file - populating the ReferenceableItemTable */
-    callParser(parsingConfig.inputFileNumber, parsingConfig.language);
+    callParser(parsingConfig.fileNumber, parsingConfig.language);
 
     log_trace("parseToCreateReferences: Completed parsing '%s'", fileName);
 }

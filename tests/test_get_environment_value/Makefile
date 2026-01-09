@@ -16,4 +16,4 @@ tweaked-c-xrefrc: .c-xrefrc
 	echo "  -set env ENV" >> .c-xrefrc
 
 
-GDB_COMMANDS = -ex 'br searchStandardOptionsFileAndSectionForFile' -ex 'br errorMessage' -ex 'br answerEditAction' -ex 'continue'
+GDB_COMMANDS = -ex 'br errorMessage' -ex 'br fatalError' -ex 'br server.c:103' -ex 'br server.c:115' -ex 'cont'
