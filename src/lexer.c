@@ -371,7 +371,7 @@ static int handleNewline(CharacterBuffer *cb, LexemBuffer *lb, int lexemStarting
         }
     }
     putLexemWithColumn(lb, '\n', cb, lexemStartingColumn);
-    if (ch == '#' && LANGUAGE(LANG_C | LANG_YACC)) {
+    if (ch == '#') {
         ch = processCppToken(cb, lb);
     }
 
@@ -459,14 +459,11 @@ static int postProcessLexemForServerOperations(CharacterBuffer *cb, LexemBuffer 
                 }
             }
             if (parsingConfig.operation == PARSE_TO_VALIDATE_MOVE_TARGET) {
-                // TODO: Figure out what the problem with this
-                // is for C. Marian's comment below indicate
-                // CPP problem, but if we will try to
-                // implement "Move Function" for C, we need to
-                // be able to do this. There is no test for
-                // MOVE_FUNCTION yet...
+                // TODO: Figure out what the problem with this is for C. Marian's
+                // comment below indicate CPP problem. We have implemented "Move
+                // Function" for C... Do we need a test for "browsing at CPP construction"?!?
 
-                // if (LANGUAGE(LANG_JAVA)) {
+                // if (LANG_JAVA) {
                 //  there is a problem with this, when browsing at CPP construction
                 //  that is why I restrict it to Java language! It is usefull
                 //  only for Java refactorings
@@ -508,7 +505,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb, bool inServe
 
         ch = skipPossibleStringPrefix(cb, ch);
 
-        if (ch == '_' || isalpha(ch) || (ch=='$' && LANGUAGE(LANG_YACC))) {
+        if (ch == '_' || isalpha(ch) || (ch=='$' && parsingConfig.language == LANG_YACC)) {
             ch = putIdentifierLexem(lb, cb, ch);
             lexem = IDENTIFIER;
             goto nextLexem;
@@ -531,7 +528,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb, bool inServe
             case '.':
                 fileOffsetForLexemStart = fileOffsetFor(cb);
                 ch = getChar(cb);
-                if (ch == '.' && LANGUAGE(LANG_C|LANG_YACC)) {
+                if (ch == '.') {
                     ch = getChar(cb);
                     if (ch == '.') {
                         ch = getChar(cb);
@@ -565,7 +562,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb, bool inServe
                     putLexemWithColumn(lb, DEC_OP, cb, lexemStartingColumn);
                     ch = getChar(cb);
                     goto nextLexem;
-                } else if (ch=='>' && LANGUAGE(LANG_C|LANG_YACC)) {
+                } else if (ch=='>') {
                     ch = getChar(cb);
                     putLexemWithColumn(lb, PTR_OP, cb, lexemStartingColumn);
                     goto nextLexem;

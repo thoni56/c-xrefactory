@@ -9,6 +9,7 @@
 #include "globals.h"
 #include "lexem.h"
 #include "options.h"
+#include "parsing.h"
 
 //
 // Basic manipulation, these should preferably be private in favour
@@ -217,10 +218,10 @@ int putIdentifierLexem(LexemBuffer *lexemBuffer, CharacterBuffer *characterBuffe
         length++;
         ch = getChar(characterBuffer);
     } while (isalpha(ch) || isdigit(ch) || ch == '_'
-             || (ch == '$' && LANGUAGE(LANG_YACC)));
+             || (ch == '$' && parsingConfig.language == LANG_YACC));
 
     /* Special handling for yacc typed references: $<type>$ or $<type>N */
-    if (startsWithDollar && length == 1 && ch == '<' && LANGUAGE(LANG_YACC)) {
+    if (startsWithDollar && length == 1 && ch == '<' && parsingConfig.language == LANG_YACC) {
         /* We just consumed a single '$' and next is '<' - this is a typed reference */
         /* Consume '<' */
         putLexemChar(lexemBuffer, ch);

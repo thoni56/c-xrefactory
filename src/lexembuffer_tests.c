@@ -1,8 +1,11 @@
+#include "lexembuffer.h"
+
+/* Unittests */
+
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
 
 #include "head.h"
-#include "lexembuffer.h"
 #include "log.h"
 
 #include "commons.mock"
@@ -10,6 +13,7 @@
 #include "globals.mock"
 #include "lexem.mock"
 #include "options.mock"
+#include "parsing.mock"
 
 
 static LexemBuffer lb;
