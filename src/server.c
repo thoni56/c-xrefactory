@@ -87,32 +87,39 @@ static int scheduleFileUsingTheMacro(void) {
     return fileToParseForMacroExpansion;
 }
 
-// WTF does "DependingStatics" mean?
-static char *presetEditServerFileDependingStatics(void) {
+/* Prepare a single input file for this request, maybe?
+ *
+ * TODO This function does something but the logic is seriously broken so it is
+ * impossible to improve further until that mystery is sorted.
+ */
+static bool prepareInputFileForRequest(void) {
     fileProcessingStartTime = time(NULL);
 
-    // This is pretty stupid, there is always only one input file
-    // in edit server, otherwise it is an error
+    // Server mode: get a single scheduled file for this request
+    // TODO: why is it picking the first scheduled in fileNumber order?
     int fileNumber = 0;
     inputFileName = getNextScheduledFile(&fileNumber);
     if (inputFileName == NULL) { /* No more input files... */
-        // conservative message, probably macro invoked on nonsaved file, TODO: WTF?
+        // No file scheduled - likely the operation doesn't need one, or error
         requestFileNumber = NO_FILE_NUMBER;
-        return NULL;
+        return false;
     }
 
-    /* TODO: This seems strange, we only assert that the first file is scheduled to process.
-       Then reset all other files, why? */
     assert(getFileItemWithFileNumber(fileNumber)->isScheduled);
+
+    /* Ensure only this file is processed during this request */
+    /* TODO: this is clearing all fileItems with a fileNumber above the one found
+     * above. That just doesn't make sense... */
     for (int i=getNextExistingFileNumber(fileNumber+1); i != -1; i = getNextExistingFileNumber(i+1)) {
-        getFileItemWithFileNumber(i)->isScheduled = false;
+        FileItem *fileItem = getFileItemWithFileNumber(i);
+        if (fileItem->isScheduled) {
+            log_trace("Found unexpected scheduled file, '%s', unscheduling it.", fileItem->name);
+        }
+        fileItem->isScheduled = false;
     }
 
     requestFileNumber = fileNumber;
-
-    char *fileName = inputFileName;
-
-    return fileName;
+    return true;
 }
 
 static void closeInputFile(void) {
@@ -214,13 +221,13 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *fir
         pushEmptySession(&sessionData.browsingStack);
 
     if (requiresProcessingInputFile(options.serverOperation)) {
-        if (presetEditServerFileDependingStatics() == NULL) {
-            errorMessage(ERR_ST, "No input file");
-        } else {
+        if (prepareInputFileForRequest()) {
             processFile(baseArgs, requestArgs, firstPass);
+        } else {
+            errorMessage(ERR_ST, "No input file");
         }
     } else {
-        if (presetEditServerFileDependingStatics() != NULL) {
+        if (prepareInputFileForRequest()) {
             getFileItemWithFileNumber(requestFileNumber)->isScheduled = false;
             inputFileName = NULL;
         }
