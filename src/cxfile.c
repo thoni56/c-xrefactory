@@ -625,7 +625,7 @@ static void scanFunction_CheckNumber(int size,
     char tmpBuff[TMP_BUFF_SIZE];
 
     assert(key == CXFI_CHECK_NUMBER);
-    if (options.create)
+    if (options.update == UPDATE_CREATE)
         return; // no check when creating new file
 
     magicNumber = lastIncomingData.data[CXFI_CHECK_NUMBER];

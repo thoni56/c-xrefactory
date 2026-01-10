@@ -33,6 +33,7 @@ typedef enum updateType {
     UPDATE_DEFAULT = 0,              // must be zero because of tests like 'if (options.update)...'
     UPDATE_FAST,
     UPDATE_FULL,
+    UPDATE_CREATE,                   // create from scratch, skip compatibility checks
 } UpdateType;
 
 /* *******************      comment moving levels for refactoring      *************** */
@@ -110,7 +111,6 @@ typedef struct options {
     int olineLen;
     ExtractMode extractMode;
     int maxCompletions;
-    bool create;
     int tabulator;
     int cursorOffset;
     int markOffset;

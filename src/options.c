@@ -92,7 +92,6 @@ Options presetOptions = {
     79,                         /* olineLen */
     0,                          // extractMode, must be zero TODO Why?
     MAX_COMPLETIONS,            /* maxCompletions */
-    0,                          /* create */
     8,                          /* tabulator */
     -1,                         /* cursorOffset */
     -1,                         /* markOffset */
@@ -1133,7 +1132,7 @@ static bool processCOption(int *argi, ArgumentsVector args) {
         options.cFilesSuffixes = allocateStringForOption(&options.cFilesSuffixes, args.argv[i]+11);
     }
     else if (strcmp(args.argv[i], "-create")==0)
-        options.create = true;
+        options.update = UPDATE_CREATE;
     else if (strncmp(args.argv[i], "-compiler=", 10)==0) {
         options.compiler = allocateStringForOption(&options.compiler, &args.argv[i][10]);
     } else

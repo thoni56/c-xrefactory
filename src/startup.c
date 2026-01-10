@@ -768,7 +768,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
             inmode = PROCESS_FILE_ARGUMENTS_NO;
         } else if (options.mode==ServerMode) {
             inmode = PROCESS_FILE_ARGUMENTS_NO;
-        } else if (options.create || options.project!=NULL || options.update != UPDATE_DEFAULT) {
+        } else if (options.project!=NULL || options.update != UPDATE_DEFAULT) {
             inmode = PROCESS_FILE_ARGUMENTS_YES;
         } else {
             inmode = PROCESS_FILE_ARGUMENTS_NO;
@@ -780,7 +780,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
         }
         // there is a problem with INFILES_ENABLED (update for safetycheck),
         // It should first load cxref file, in order to protect file numbers.
-        if (inmode==PROCESS_FILE_ARGUMENTS_YES && options.update && !options.create) { /* TODO: .update != UPDATE_CREATE?!?! */
+        if (inmode==PROCESS_FILE_ARGUMENTS_YES && options.update && options.update != UPDATE_CREATE) {
             //&fprintf(dumpOut, "PREREADING !!!!!!!!!!!!!!!!\n");
             // this makes a problem: I need to preread cxref file before
             // reading input files in order to preserve hash numbers, but

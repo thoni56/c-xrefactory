@@ -30,7 +30,7 @@
 
 // this is necessary to put new mtimes for header files
 static void setFullUpdateMtimesInFileItem(FileItem *fi) {
-    if (fi->scheduledToUpdate || options.create) {
+    if (fi->scheduledToUpdate || options.update == UPDATE_CREATE) {
         fi->lastFullUpdateMtime = fi->lastModified;
     }
 }
@@ -177,19 +177,19 @@ static void processInputFile(ArgumentsVector args, bool *firstPassP, bool *atLea
 }
 
 static void oneWholeFileProcessing(ArgumentsVector args, FileItem *fileItem, bool *firstPass,
-                                   bool *atLeastOneProcessed, bool isRefactoring) {
+                                   bool *atLeastOneProcessed, XrefConfig *config) {
     inputFileName           = fileItem->name;
     fileProcessingStartTime = time(NULL);
     // O.K. but this is missing all header files
     fileItem->lastParsedMtime = fileItem->lastModified;
-    if (options.update == UPDATE_FULL || options.create) {
+    if (config->updateType == UPDATE_FULL || config->updateType == UPDATE_CREATE) {
         fileItem->lastFullUpdateMtime = fileItem->lastModified;
     }
     processInputFile(args, firstPass, atLeastOneProcessed);
     // now free the buffer because it tooks too much memory,
     // but I can not free it when refactoring, nor when preloaded,
     // so be very careful about this!!!
-    if (!isRefactoring) {
+    if (!config->isRefactoring) {
         closeEditorBufferIfCloseable(inputFileName);
         closeAllEditorBuffersIfClosable();
     }
@@ -313,7 +313,7 @@ void callXref(ArgumentsVector args, XrefConfig *config) {
 
             for (; fileItem != NULL; fileItem = fileItem->next) {
                 oneWholeFileProcessing(args, fileItem, &firstPass, &atLeastOneProcessed,
-                                       config->isRefactoring);
+                                       config);
                 fileItem->isScheduled       = false;
                 fileItem->scheduledToUpdate = false;
                 if (options.xref2)
