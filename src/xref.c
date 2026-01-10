@@ -204,12 +204,12 @@ void checkExactPositionUpdate(bool printMessage) {
     }
 }
 
-static void scheduleModifiedFilesToUpdate(bool isRefactoring) {
+static void scheduleModifiedFilesToUpdate(XrefConfig *config) {
     checkExactPositionUpdate(true);
 
-    mapOverFileTableWithBool(schedulingToUpdate, isRefactoring);
+    mapOverFileTableWithBool(schedulingToUpdate, config->isRefactoring);
 
-    if (options.update==UPDATE_FULL) {
+    if (config->updateType == UPDATE_FULL) {
         makeIncludeClosureOfFilesToUpdate();
     }
     mapOverFileTable(schedulingUpdateToProcess);
@@ -292,8 +292,8 @@ void callXref(ArgumentsVector args, XrefConfig *config) {
     currentPass = ANY_PASS;
     cxFreeBase = cxAlloc(0);
     cxResizingBlocked = true;
-    if (options.update)
-        scheduleModifiedFilesToUpdate(config->isRefactoring);
+    if (config->updateType)
+        scheduleModifiedFilesToUpdate(config);
     atLeastOneProcessed = false;
     fileItem = createListOfInputFileItems();
     LIST_LEN(numberOfInputs, FileItem, fileItem);
@@ -328,7 +328,7 @@ finish:
     fileAbortEnabled = false;
     if (atLeastOneProcessed) {
         if (options.mode == XrefMode) {
-            if (options.update == UPDATE_DEFAULT || options.update == UPDATE_FULL) {
+            if (config->updateType == UPDATE_DEFAULT || config->updateType == UPDATE_FULL) {
                 mapOverFileTable(setFullUpdateMtimesInFileItem);
             }
             if (options.xref2) {
@@ -342,7 +342,7 @@ finish:
         }
     } else if (options.serverOperation == OLO_ABOUT) {
         aboutMessage();
-    } else if (options.update == UPDATE_DEFAULT) {
+    } else if (config->updateType == UPDATE_DEFAULT) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "no input file");
         errorMessage(ERR_ST, tmpBuff);
