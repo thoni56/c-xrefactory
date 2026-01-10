@@ -180,11 +180,8 @@ void parseToCreateReferences(const char *fileName) {
     /* Setup input for parsing */
     initInput(NULL, buffer, "\n", (char *)fileName);
 
-    /* Setup parsing configuration from global options (includes discovered defines, include paths) */
-    syncParsingConfigFromOptions(options);
+    setupParsingConfig(currentFile.characterBuffer.fileNumber);
     parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
-    parsingConfig.fileNumber = currentFile.characterBuffer.fileNumber;
-    parsingConfig.language = getLanguageFor((char *)fileName);
 
     log_trace("parseToCreateReferences: Parsing '%s' as %s", fileName,
               parsingConfig.language == LANG_YACC ? "YACC" : "C");

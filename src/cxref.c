@@ -1908,12 +1908,12 @@ void answerEditorAction(void) {
             } else {
                 char standardOptionsFileName[MAX_FILE_NAME_SIZE];
                 char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
-                char *inputFileName = getFileItemWithFileNumber(requestFileNumber)->name;
-                log_debug("inputFileName = %s", inputFileName);
-                searchStandardOptionsFileAndProjectForFile(inputFileName, standardOptionsFileName, standardOptionsSectionName);
+                char *fileName = getFileItemWithFileNumber(requestFileNumber)->name;
+                log_debug("inputFileName = %s", fileName);
+                searchStandardOptionsFileAndProjectForFile(fileName, standardOptionsFileName, standardOptionsSectionName);
                 if (standardOptionsFileName[0]==0 || standardOptionsSectionName[0]==0) {
                     if (!options.noErrors) {
-                        ppcGenRecord(PPC_NO_PROJECT, inputFileName);
+                        ppcGenRecord(PPC_NO_PROJECT, fileName);
                     }
                 } else {
                     ppcGenRecord(PPC_SET_INFO, standardOptionsSectionName);
@@ -2061,7 +2061,6 @@ void answerEditorAction(void) {
     } // switch
 
     fflush(outputFile);
-    inputFileName = NULL;
     LEAVE();
 }
 

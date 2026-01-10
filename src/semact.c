@@ -395,7 +395,7 @@ Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declarat
         usage = UsageDeclared;
     else if (declaration->storage == StorageExtern)
         usage = UsageDeclared;
-    addNewSymbolDefinition(table, inputFileName, declaration, storage, usage);
+    addNewSymbolDefinition(table, parsingConfig.fileName, declaration, storage, usage);
     addInitializerRefs(declaration, idList);
     return declaration;
 }
@@ -420,7 +420,7 @@ void addFunctionParameterToSymbolTable(SymbolTable *table, Symbol *function, Sym
                 handleFoundSymbolReference(foundMember, parameter->position, UsageUsed, NO_FILE_NUMBER);
             }
         } else {
-            addNewSymbolDefinition(table, inputFileName, parameterCopy, StorageAuto, UsageDefined);
+            addNewSymbolDefinition(table, parsingConfig.fileName, parameterCopy, StorageAuto, UsageDefined);
         }
         if (parsingConfig.operation == PARSE_TO_EXTRACT) {
             handleFoundSymbolReference(parameterCopy, parameterCopy->position, UsageLvalUsed, NO_FILE_NUMBER);

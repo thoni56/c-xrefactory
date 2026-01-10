@@ -1365,9 +1365,9 @@ void refactory(void) {
     if (argumentFile == NULL)
         FATAL_ERROR(ERR_ST, "no input file", XREF_EXIT_ERR);
 
-    char inputFileName[MAX_FILE_NAME_SIZE];
-    strcpy(inputFileName, argumentFile);
-    char *file = inputFileName;
+    char fileName[MAX_FILE_NAME_SIZE];
+    strcpy(fileName, argumentFile);
+    char *file = fileName;
     EditorBuffer *buf = findOrCreateAndLoadEditorBufferForFile(file);
 
     EditorMarker *point = getPointFromOptions(buf);
