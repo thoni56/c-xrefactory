@@ -106,3 +106,107 @@ As of 2025-12-22, the limitation remains documented but unfixed. The attempted f
 * Session references = Snapshot at PUSH time
 
 The table can NEVER reflect non-preloaded modified files because the server doesn't receive that information from the client.
+
+=== RefactoryMode Internally Calls XrefMode
+
+Date: 2025-01-10
+
+==== The Key Architectural Insight
+
+**RefactoryMode runs XrefMode as an internal sub-task to update the reference database before performing refactorings.**
+
+This is critical to understand because:
+
+* Refactorings need current cross-reference data to find all symbol occurrences
+* Server mode never creates/updates references (it only serves queries)
+* RefactoryMode is a separate process invocation, not part of the interactive server
+
+==== How It Works
+
+When a refactoring is invoked:
+
+[source,c]
+----
+refactory() [refactory.c:1337]
+  │
+  ├─ 1. Compute update strategy based on symbol scope/visibility
+  │    updateOption = computeUpdateOptionForSymbol(point)
+  │      • Local symbols: "" (no update - not in database)
+  │      • Header symbols: "-update" (full update required)
+  │      • Multi-file global: "-fastupdate" (incremental)
+  │      • Single-file global: "" (no update needed)
+  │
+  ├─ 2. Perform the refactoring operation
+  │    renameAtPoint() / parameterManipulation() / etc.
+  │
+  └─ 3. Update references via internal XrefMode call
+       ensureReferencesAreUpdated(project) [line 146]
+         ├─ Save current options
+         ├─ Build argument vector with updateOption
+         ├─ mainTaskEntryInitialisations(args)
+         └─ callXref(args, true)  ← NESTS XREF MODE!
+----
+
+==== Why Refactorings Are Separate Processes
+
+The Emacs client spawns a **separate RefactoryMode process** rather than using the interactive server because:
+
+1. **Xref update can be slow** - Would block the interactive server for user operations
+2. **Options isolation** - The nested `callXref()` "messes all static variables including options" (code comment, line 143-145)
+3. **Memory requirements** - Refactorings need more memory than interactive operations (see `mainTaskEntryInitialisations` allocation logic)
+
+==== The Three Modes Relationship
+
+[source]
+----
+ServerMode (c-xref -server)
+  - Never creates/updates references
+  - Serves queries from existing .cx files
+  - Long-running interactive process
+  - Handles: completion, goto-definition, push/pop navigation
+
+XrefMode (c-xref -create / -update)
+  - Creates and updates .cx reference files
+  - Batch operation over all scheduled files
+  - Exits when complete
+
+RefactoryMode (c-xref -refactory ...)
+  - Separate one-shot process per refactoring
+  - INTERNALLY calls XrefMode (via callXref) to update references
+  - Applies source code edits
+  - Exits when complete
+----
+
+==== Code Evidence
+
+[source,c]
+----
+// From refactory.c:143-145
+// be very careful when calling this function as it is messing all static variables
+// including options, ...
+// call to this function MUST be followed by a pushing action, to refresh options
+void ensureReferencesAreUpdated(char *project) {
+    // ...
+    deepCopyOptionsFromTo(&options, &savedOptions);
+
+    // Build xref arguments including update option
+    argumentVector[argumentCount++] = updateOption;
+
+    // Re-initialize as if starting fresh xref task
+    mainTaskEntryInitialisations(args);
+
+    // THE KEY CALL: Run XrefMode nested inside RefactoryMode
+    callXref(args, true);
+
+    // Restore options after the nested task
+    deepCopyOptionsFromTo(&savedOptions, &options);
+}
+----
+
+==== Implications
+
+* **You cannot do refactorings in ServerMode** - the architecture doesn't support it
+* **ServerMode never receives `-update` or `-create`** - those are XrefMode/RefactoryMode only
+* **Refactorings are always consistent** - they get fresh reference data before executing
+* **Performance trade-off** - Smart update strategies (local vs header vs multi-file) minimize update cost
+* **Process isolation** - Separate RefactoryMode process prevents server state corruption
