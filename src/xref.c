@@ -195,9 +195,9 @@ static void oneWholeFileProcessing(ArgumentsVector args, FileItem *fileItem, boo
     }
 }
 
-void checkExactPositionUpdate(bool printMessage) {
-    if (options.update == UPDATE_FAST && options.exactPositionResolve) {
-        options.update = UPDATE_FULL;
+void checkExactPositionUpdate(UpdateType *updateType, bool printMessage) {
+    if (*updateType == UPDATE_FAST && options.exactPositionResolve) {
+        *updateType = UPDATE_FULL;
         if (printMessage) {
             warningMessage(ERR_ST, "-exactpositionresolve implies full update");
         }
@@ -205,7 +205,7 @@ void checkExactPositionUpdate(bool printMessage) {
 }
 
 static void scheduleModifiedFilesToUpdate(XrefConfig *config) {
-    checkExactPositionUpdate(true);
+    checkExactPositionUpdate(&config->updateType, true);
 
     mapOverFileTableWithBool(schedulingToUpdate, config->isRefactoring);
 
@@ -328,7 +328,8 @@ finish:
     fileAbortEnabled = false;
     if (atLeastOneProcessed) {
         if (options.mode == XrefMode) {
-            if (config->updateType == UPDATE_DEFAULT || config->updateType == UPDATE_FULL) {
+            if (config->updateType == UPDATE_DEFAULT || config->updateType == UPDATE_FULL
+                || config->updateType == UPDATE_CREATE) {
                 mapOverFileTable(setFullUpdateMtimesInFileItem);
             }
             if (options.xref2) {

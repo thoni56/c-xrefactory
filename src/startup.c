@@ -607,7 +607,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
  fini:
     initializationsPerInvocation();
 
-    checkExactPositionUpdate(false);
+    checkExactPositionUpdate(&options.update, false);
 
     LEAVE();
     return inputOpened;
@@ -794,7 +794,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
         // recover value of errors messages
         if (options.mode==ServerMode)
             options.noErrors = previousNoErrorsOption;
-        checkExactPositionUpdate(false);
+        checkExactPositionUpdate(&options.update, false);
         if (inmode == PROCESS_FILE_ARGUMENTS_YES)
             processFileArguments();
     }

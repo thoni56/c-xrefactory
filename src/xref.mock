@@ -2,8 +2,8 @@
 
 #include "xref.h"
 
-void checkExactPositionUpdate(bool printMessage) {
-    mock(printMessage);
+void checkExactPositionUpdate(UpdateType *updateType, bool printMessage) {
+    mock(updateType, printMessage);
 }
 
 void callXref(ArgumentsVector args, XrefConfig *config) {
