@@ -246,8 +246,8 @@ static void initInputFromFile(char *prefix, char **bufferStartOut, int *bufferSi
 
 /* Init input from file, editor buffer and/or prefix */
 void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefixString, char *fileName) {
-    char   *bufferStart;
-    int     bufferSize, offset;
+    char *bufferStart;
+    int bufferSize, offset;
 
     /* This can be called from various context where one or both are
      * NULL, and we don't know which... */

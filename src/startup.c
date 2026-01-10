@@ -109,25 +109,23 @@ static void handlePathologicProjectCases(char *fileName, char *outFName, char *s
     }
 }
 
-static bool computeAndOpenInputFile(void) {
-    FILE *inputFile;
-    EditorBuffer *inputBuffer;
+static bool computeAndOpenInputFile(char *fileName) {
+    FILE *inputFile = NULL;
 
-    inputBuffer = NULL;
+    EditorBuffer *inputBuffer = findOrCreateAndLoadEditorBufferForFile(fileName);
 
-    inputFile = NULL;
-    inputBuffer = findOrCreateAndLoadEditorBufferForFile(inputFileName);
     if (inputBuffer == NULL) {
 #if defined (__WIN32__)
-        inputFile = openFile(inputFileName, "rb");
+        inputFile = openFile(fileName, "rb");
 #else
-        inputFile = openFile(inputFileName, "r");
+        inputFile = openFile(fileName, "r");
 #endif
         if (inputFile == NULL) {
-            errorMessage(ERR_CANT_OPEN, inputFileName);
+            errorMessage(ERR_CANT_OPEN, fileName);
         }
     }
-    initInput(inputFile, inputBuffer, "\n", inputFileName);
+
+    initInput(inputFile, inputBuffer, "\n", fileName);
     if (inputFile==NULL && inputBuffer==NULL) {
         return false;
     } else {
@@ -578,7 +576,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO);
 
         /* === PHASE 5: Input Setup === */
-        inputOpened = computeAndOpenInputFile();  /* Finally calls initInput() */
+        inputOpened = computeAndOpenInputFile(inputFileName);  /* Finally calls initInput() */
 
         /* Save these values as previous */
         strcpy(previousStandardOptionsFile,standardOptionsFileName);
@@ -594,7 +592,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
         deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO); /* no include or define options */
-        inputOpened = computeAndOpenInputFile();  /* Phase 5 only */
+        inputOpened = computeAndOpenInputFile(inputFileName);  /* Phase 5 only */
     }
 
     assert(options.mode);
