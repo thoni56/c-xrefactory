@@ -39,6 +39,11 @@ Ensure(Xref, mainCallXref_without_input_files_gives_error_message) {
 
     initCxMemory(10000);
 
+    XrefConfig config = {
+        .projectName = NULL,
+        .updateType = UPDATE_DEFAULT,
+        .isRefactoring = true
+    };
     ArgumentsVector args = {.argc = 0, .argv = NULL};
-    callXref(args, true);
+    callXref(args, &config);
 }

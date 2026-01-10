@@ -74,6 +74,18 @@ Options refactoringOptions;
 
 static char *updateOption = "-fastupdate";
 
+static UpdateType updateOptionToUpdateType(char *updateOption) {
+    if (updateOption == NULL || *updateOption == '\0') {
+        return UPDATE_DEFAULT;
+    } else if (strcmp(updateOption, "-fastupdate") == 0) {
+        return UPDATE_FAST;
+    } else if (strcmp(updateOption, "-update") == 0) {
+        return UPDATE_FULL;
+    } else {
+        return UPDATE_DEFAULT;  /* Unknown option, default to no update */
+    }
+}
+
 
 static int argument_count(char **argv) {
     int count;
@@ -173,7 +185,12 @@ void ensureReferencesAreUpdated(char *project) {
     ArgumentsVector args = {.argc = argumentCount, .argv = argumentVector};
     mainTaskEntryInitialisations(args);
 
-    callXref(args, true);
+    XrefConfig config = {
+        .projectName = project,
+        .updateType = updateOptionToUpdateType(updateOption),
+        .isRefactoring = true
+    };
+    callXref(args, &config);
 
     deepCopyOptionsFromTo(&savedOptions, &options);
     ppcEnd(PPC_UPDATE_REPORT);

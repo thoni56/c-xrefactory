@@ -280,7 +280,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
     LEAVE();
 }
 
-void callXref(ArgumentsVector args, bool isRefactoring) {
+void callXref(ArgumentsVector args, XrefConfig *config) {
     // These are static because of the longjmp() maybe happening
     static char     *cxFreeBase;
     static bool      firstPass, atLeastOneProcessed;
@@ -293,7 +293,7 @@ void callXref(ArgumentsVector args, bool isRefactoring) {
     cxFreeBase = cxAlloc(0);
     cxResizingBlocked = true;
     if (options.update)
-        scheduleModifiedFilesToUpdate(isRefactoring);
+        scheduleModifiedFilesToUpdate(config->isRefactoring);
     atLeastOneProcessed = false;
     fileItem = createListOfInputFileItems();
     LIST_LEN(numberOfInputs, FileItem, fileItem);
@@ -312,7 +312,8 @@ void callXref(ArgumentsVector args, bool isRefactoring) {
             fileAbortEnabled = true;
 
             for (; fileItem != NULL; fileItem = fileItem->next) {
-                oneWholeFileProcessing(args, fileItem, &firstPass, &atLeastOneProcessed, isRefactoring);
+                oneWholeFileProcessing(args, fileItem, &firstPass, &atLeastOneProcessed,
+                                       config->isRefactoring);
                 fileItem->isScheduled       = false;
                 fileItem->scheduledToUpdate = false;
                 if (options.xref2)
@@ -356,7 +357,12 @@ void xref(ArgumentsVector args) {
     openOutputFile(options.outputFileName);
     loadAllOpenedEditorBuffers();
 
-    callXref(args, false);
+    XrefConfig config = {
+        .projectName = options.project,
+        .updateType = options.update,
+        .isRefactoring = false
+    };
+    callXref(args, &config);
     closeOutputFile();
     if (options.xref2) {
         ppcSynchronize();
