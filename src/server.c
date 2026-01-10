@@ -98,8 +98,7 @@ static bool prepareInputFileForRequest(void) {
     // Server mode: get a single scheduled file for this request
     // TODO: why is it picking the first scheduled in fileNumber order?
     int fileNumber = 0;
-    inputFileName = getNextScheduledFile(&fileNumber);
-    if (inputFileName == NULL) { /* No more input files... */
+    if (getNextScheduledFile(&fileNumber) == NULL) { /* No more input files... */
         // No file scheduled - likely the operation doesn't need one, or error
         requestFileNumber = NO_FILE_NUMBER;
         return false;

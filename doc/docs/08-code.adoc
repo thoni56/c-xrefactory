@@ -117,13 +117,12 @@ server() [server.c:237] - Infinite request loop
        └─> callServer(baseArgs, requestArgs, &firstPass) [server.c:214]
             │
             ├─> prepareInputFileForRequest() [server.c:95]
-            │    ├─ SETS: inputFileName = getNextScheduledFile(&fileNumber) [line 101]
+            │    ├─ Gets first scheduled file (local check only)
             │    ├─ SETS: requestFileNumber = NO_FILE_NUMBER [line 104] (if no file)
             │    └─ SETS: requestFileNumber = fileNumber [line 121] (if file found)
             │
             └─> processFile(baseArgs, requestArgs, &firstPass) [server.c:199]
                  ├─ SETS: inputFileName = fileItem->name [line 205]
-                 │        (overwrites what prepareInputFileForRequest set!)
                  │
                  └─> singlePass(args, nargs, &firstPass) [server.c:155]
                       │
@@ -212,15 +211,14 @@ parseToCreateReferences(fileName) [parsing.c:165]
 
 ==== Key Observations
 
-===== Multiple Assignments to `inputFileName`
+===== Assignments to `inputFileName`
 
-*Server Mode:* Set THREE times!
+*Server Mode:* Set once per file processed
 
-* `prepareInputFileForRequest()` line 101
-* `processFile()` line 205 (overwrites!)
-* Optionally in macro completion case line 189
+* `processFile()` line 205 - sets the file for the current request
+* Special case: macro completion may parse a different file (line 189) to resolve symbols in unexpanded macro bodies
 
-*Xref Mode:* Set ONCE
+*Xref Mode:* Set ONCE per file
 
 * `oneWholeFileProcessing()` line 181
 
