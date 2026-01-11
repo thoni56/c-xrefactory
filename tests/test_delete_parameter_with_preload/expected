@@ -1,0 +1,25 @@
+[C-xref] active project: 'CURDIR'
+<update-report>
+ <information len=<n>>C-xrefactory project: CURDIR</information>
+ <information len=<n>>CURDIR/source.c</information>
+ <information len=<n>>Generating 'CURDIR/CXrefs'</information>
+</update-report>
+<goto>
+ <position-off off=75 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<goto>
+ <position-off off=96 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>, int param2</str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=170 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>, 2</str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=75 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<sync>

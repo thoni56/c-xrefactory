@@ -11,6 +11,8 @@ CXREF -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract
 </extraction-dialog>
 CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=extracted -olcursor=179 -preload CURDIR/test_source/hello.c CURDIR/test_source/hello-extracted.c CURDIR/test_source/hello.c -log=log2 -o server-buffer
 <sync>
+<update-report>
+</update-report>
 <goto>
  <position-off off=31 len=<n>>CURDIR/test_source/hello.c</position-off>
 </goto>
@@ -22,6 +24,8 @@ CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-
 <goto>
  <position-off off=176 len=<n>>CURDIR/test_source/hello.c</position-off>
 </goto>
+<update-report>
+</update-report>
 <goto>
  <position-off off=32 len=<n>>CURDIR/test_source/hello.c</position-off>
 </goto>

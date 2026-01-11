@@ -1293,6 +1293,12 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
         }
     }
 
+    // Check if the buffer containing the symbol has been modified
+    if (point->buffer->preLoadedFromFile != NULL) {
+        // Buffer is modified - we MUST update to get correct positions
+        return "-fastupdate";  // or "-update" to be safe
+    }
+
     char *selectedUpdateOption;
     if (visibility == VisibilityLocal) {
         // useless to update when there is nothing about the symbol in Tags

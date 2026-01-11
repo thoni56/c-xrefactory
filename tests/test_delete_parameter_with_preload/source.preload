@@ -1,0 +1,9 @@
+// Modified file - extra comment shifts positions
+// Original file
+int targetFunction(int param1, int param2) {
+    return param1 + 2;
+}
+
+int main(void) {
+    return targetFunction(1, 2);
+}
