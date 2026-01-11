@@ -5,6 +5,7 @@ ARGUMENTS = -refactory -rfct-del-param -olcxparnum=2 -olcursor=75 source.c -prel
 
 $(TEST):
 	$(CXREF) -create > output.tmp
+	touch source.preload                 # ensure this is newer than db
 	$(COMMAND) >> output.tmp 2>&1
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
