@@ -440,37 +440,54 @@ static void getAndProcessXrefrcOptions(char *optionsFileName, char *optionsSecti
     }
 }
 
-/* Memory reset struct */
-static struct {
-    bool checkPointed;
+/* Memory checkpoint structure */
+typedef struct {
+    bool saved;
     int firstFreeStackMemoryIndex;
     int ppmMemoryIndex;
-} checkPoint = { .checkPointed = false };
+} MemoryCheckpoint;
 
-void saveMemoryCheckPoint(void) {
-    log_debug("Saving checkpoint: ppmMemoryIndex=%d", ppmMemory.index);
+/* Checkpoint 1: After options loaded, before compiler discovery
+ * NOTE: Not yet implemented - would allow sharing compiler discovery across projects */
+MemoryCheckpoint checkpoint1 = { .saved = false };
+
+/* Checkpoint 2: After compiler discovery (currently used as sole checkpoint)
+ * Saved after Phase 3 (compiler interrogation), allows reuse of expensive compiler
+ * discovery when processing multiple files in the same project. */
+static MemoryCheckpoint checkpoint2 = { .saved = false };
+
+static void saveCheckpoint(MemoryCheckpoint *checkpoint) {
+    log_debug("Saving checkpoint %p: ppmMemoryIndex=%d", (void*)checkpoint, ppmMemory.index);
 
     assert(currentBlock == (CodeBlock*)stackMemory);  // Must be at outermost level
     assert(currentBlock->outerBlock == NULL);         // No nested blocks
 
-    checkPoint.ppmMemoryIndex = ppmMemory.index;
-    checkPoint.firstFreeStackMemoryIndex = currentBlock->firstFreeIndex;
+    checkpoint->ppmMemoryIndex = ppmMemory.index;
+    checkpoint->firstFreeStackMemoryIndex = currentBlock->firstFreeIndex;
 
-    checkPoint.checkPointed = true;
+    checkpoint->saved = true;
+}
+
+void saveMemoryCheckPoint(void) {
+    saveCheckpoint(&checkpoint2);
+}
+
+static void restoreCheckpoint(MemoryCheckpoint *checkpoint) {
+    log_debug("Restoring checkpoint %p: firstFreeStackMemoryIndex=%d, ppmMemoryIndex=%d",
+              (void*)checkpoint, checkpoint->firstFreeStackMemoryIndex, checkpoint->ppmMemoryIndex);
+
+    assert(checkpoint->saved);
+
+    initOuterCodeBlock();
+    currentBlock->firstFreeIndex = checkpoint->firstFreeStackMemoryIndex;
+
+    ppmMemory.index = checkpoint->ppmMemoryIndex;
+    recoverSymbolTableMemory();
+    recoverMemoryFromIncludeList();
 }
 
 void restoreMemoryCheckPoint(void) {
-    log_debug("Restoring checkpoint: firstFreeStackMemoryIndex=%p, ppmMemoryIndex=%d",
-              checkPoint.firstFreeStackMemoryIndex, checkPoint.ppmMemoryIndex);
-
-    assert(checkPoint.checkPointed);
-
-    initOuterCodeBlock();
-    currentBlock->firstFreeIndex = checkPoint.firstFreeStackMemoryIndex;
-
-    ppmMemory.index = checkPoint.ppmMemoryIndex;
-    recoverSymbolTableMemory();
-    recoverMemoryFromIncludeList();
+    restoreCheckpoint(&checkpoint2);
 }
 
 
@@ -520,14 +537,15 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
     ) {
         /* === PHASE 2: Options File Processing === */
         /* Load and process project settings from .c-xrefrc */
-        log_debug("initializeFileProcessing - if-branch with firstPass=%d", *firstPass);
+        log_debug("initializeFileProcessing - if-branch, checkpoint2.saved=%d", checkpoint2.saved);
         log_debug("Memories: ppmMemory.index=%d, currentBlock=%p", ppmMemory.index, currentBlock);
-        if (*firstPass) {
-            *firstPass = false;
-        } else {
-            log_debug("Restoring memory checkpoint");
+        if (checkpoint2.saved) {
+            /* Not first pass - reset memory to discard previous project's data */
+            log_debug("Restoring checkpoint 2 to reset memory");
             restoreMemoryCheckPoint();
         }
+        /* Note: On first pass, checkpoint2.saved is false, so we skip restore */
+        *firstPass = false;
 
         initCwd();
         initOptions();
@@ -586,7 +604,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
     } else {
         /* Same project as last file - restore from checkpoint (fast path) */
-        log_debug("initializeFileProcessing - else-branch with firstPass=%d", *firstPass);
+        log_debug("initializeFileProcessing - else-branch (same project, restoring checkpoint 2)");
         log_debug("Memories: ppmMemory.index=%d, currentBlock=%p", ppmMemory.index, currentBlock);
         restoreMemoryCheckPoint();  /* Skip phases 2-3, restore cached compiler discovery */
 
