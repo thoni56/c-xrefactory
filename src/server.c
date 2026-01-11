@@ -151,10 +151,10 @@ void initServer(ArgumentsVector args) {
     initCompletions(&collectedCompletions, 0, NO_POSITION);
 }
 
-static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstPassP) {
+static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
     bool inputOpened = false;
 
-    inputOpened = initializeFileProcessing(args, nargs, firstPassP);
+    inputOpened = initializeFileProcessing(args, nargs);
 
     loadFileNumbersFromStore();
     parsingConfig.fileNumber = currentFile.characterBuffer.fileNumber;
@@ -169,7 +169,6 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
         }
 
         parseInputFile();
-        *firstPassP = false;
     }
     if (options.cursorOffset==0) {
         // special case, push the file as include reference
@@ -186,16 +185,15 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs, bool *firstP
         int fileWithMacroExpansion = scheduleFileUsingTheMacro();
         if (fileWithMacroExpansion!=NO_FILE_NUMBER) {
             inputFileName = getFileItemWithFileNumber(fileWithMacroExpansion)->name;
-            inputOpened = initializeFileProcessing(args, nargs, firstPassP);
+            inputOpened = initializeFileProcessing(args, nargs);
             if (inputOpened) {
                 parseInputFile();
-                *firstPassP = false;
             }
         }
     }
 }
 
-static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *firstPassP) {
+static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     FileItem *fileItem = getFileItemWithFileNumber(requestFileNumber);
 
     assert(fileItem->isScheduled);
@@ -203,14 +201,14 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs, b
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         inputFileName = fileItem->name;
         assert(inputFileName!=NULL);
-        singlePass(baseArgs, requestArgs, firstPassP);
+        singlePass(baseArgs, requestArgs);
         if (options.serverOperation==OLO_EXTRACT || (completionStringServed && !needsReferenceDatabase(options.serverOperation)))
             break;
     }
     fileItem->isScheduled = false;
 }
 
-void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *firstPass) {
+void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     ENTER();
 
     loadAllOpenedEditorBuffers();
@@ -220,7 +218,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *fir
 
     if (requiresProcessingInputFile(options.serverOperation)) {
         if (prepareInputFileForRequest()) {
-            processFile(baseArgs, requestArgs, firstPass);
+            processFile(baseArgs, requestArgs);
         } else {
             errorMessage(ERR_ST, "No input file");
         }
@@ -235,11 +233,10 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *fir
 
 void server(ArgumentsVector args) {
     ArgumentsVector pipedOptions;
-    bool firstPass;
 
     ENTER();
     cxResizingBlocked = true;
-    firstPass = true;
+
     deepCopyOptionsFromTo(&options, &savedOptions);
     for(;;) {
         currentPass = ANY_PASS;
@@ -255,7 +252,7 @@ void server(ArgumentsVector args) {
         if (outputFile==stdout && options.outputFileName!=NULL) {
             openOutputFile(options.outputFileName);
         }
-        callServer(args, pipedOptions, &firstPass);
+        callServer(args, pipedOptions);
         if (options.serverOperation == OLO_ABOUT) {
             aboutMessage();
         } else {

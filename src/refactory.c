@@ -229,7 +229,7 @@ void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *ma
 
     /* Bridge: Sync parsingConfig with options for old code path */
     syncParsingConfigFromOptions(options);
-    callServer(args, nargs, &editServerSubTaskFirstPass);
+    callServer(args, nargs);
 }
 
 /* Interactive command loop for refactoring operations that need user input.
@@ -267,8 +267,7 @@ static void beInteractive(void) {
         if (options.continueRefactoring != RC_NONE)
             break;
 
-        callServer(args, pipedOptions,
-                   &editServerSubTaskFirstPass);
+        callServer(args, pipedOptions);
         answerEditorAction();
     }
     LEAVE();

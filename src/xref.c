@@ -151,12 +151,9 @@ static void processInputFile(ArgumentsVector args, bool *firstPassP, bool *atLea
 
     maxPasses = 1;
     for (currentPass = 1; currentPass <= maxPasses; currentPass++) {
-        if (!*firstPassP)
-            deepCopyOptionsFromTo(&savedOptions, &options);
-
         ArgumentsVector nargs = {.argc = 0, .argv = NULL};
 
-        inputOpened = initializeFileProcessing(args, nargs, firstPassP);
+        inputOpened = initializeFileProcessing(args, nargs);
         parsingConfig.fileNumber = currentFileNumber;
 
         if (inputOpened) {

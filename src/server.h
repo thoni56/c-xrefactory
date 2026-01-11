@@ -111,7 +111,7 @@ typedef enum {
 extern const char* operationNamesTable[];
 
 extern void initServer(ArgumentsVector args);
-extern void callServer(ArgumentsVector args, ArgumentsVector nargs, bool *firstPass);
+extern void callServer(ArgumentsVector args, ArgumentsVector nargs);
 extern void server(ArgumentsVector args);
 
 #endif

@@ -504,7 +504,7 @@ void restoreMemoryCheckPoint(void) {
  * 4. Memory checkpointing - cache expensive discoveries for same-project files
  * 5. Input setup - finally calls computeAndOpenInputFile() -> initInput()
  */
-bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool *firstPass) {
+bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     char standardOptionsFileName[MAX_FILE_NAME_SIZE];
     char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
     time_t modifiedTime;
@@ -544,8 +544,6 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
             log_debug("Restoring checkpoint 2 to reset memory");
             restoreMemoryCheckPoint();
         }
-        /* Note: On first pass, checkpoint2.saved is false, so we skip restore */
-        *firstPass = false;
 
         initCwd();
         initOptions();

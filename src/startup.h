@@ -11,8 +11,7 @@
 extern void totalTaskEntryInitialisations(void);
 extern void mainTaskEntryInitialisations(ArgumentsVector args);
 
-extern bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs,
-                                     bool *firstPass);
+extern bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs);
 
 /* Memory checkpoint management for option file reloading */
 extern void saveMemoryCheckPoint(void);

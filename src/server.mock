@@ -6,8 +6,8 @@ void initServer(ArgumentsVector args) {
     mock(args.argc, args.argv);
 }
 
-void callServer(ArgumentsVector args, ArgumentsVector nargs, bool *firstPass) {
-  mock(args.argc, args.argv, nargs.argc, nargs.argv, firstPass);
+void callServer(ArgumentsVector args, ArgumentsVector nargs) {
+  mock(args.argc, args.argv, nargs.argc, nargs.argv);
 }
 
 void server(ArgumentsVector args) {
