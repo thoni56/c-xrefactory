@@ -540,7 +540,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         log_debug("initializeFileProcessing - if-branch, checkpoint2.saved=%d", checkpoint2.saved);
         log_debug("Memories: ppmMemory.index=%d, currentBlock=%p", ppmMemory.index, currentBlock);
         if (checkpoint2.saved) {
-            /* Not first pass - reset memory to discard previous project's data */
+            /* Reset memory to discard previous project's data */
             log_debug("Restoring checkpoint 2 to reset memory");
             restoreMemoryCheckPoint();
         }

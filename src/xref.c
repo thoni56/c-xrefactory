@@ -172,8 +172,8 @@ static void processInputFile(ArgumentsVector args, bool *atLeastOneProcessedP) {
     }
 }
 
-static void oneWholeFileProcessing(ArgumentsVector args, FileItem *fileItem,
-                                   bool *atLeastOneProcessed, XrefConfig *config) {
+static void oneWholeFileProcessing(ArgumentsVector args, FileItem *fileItem, XrefConfig *config,
+                                   bool *atLeastOneProcessed) {
     inputFileName           = fileItem->name;
     fileProcessingStartTime = time(NULL);
     // O.K. but this is missing all header files
@@ -307,8 +307,7 @@ void callXref(ArgumentsVector args, XrefConfig *config) {
             fileAbortEnabled = true;
 
             for (; fileItem != NULL; fileItem = fileItem->next) {
-                oneWholeFileProcessing(args, fileItem, &atLeastOneProcessed,
-                                       config);
+                oneWholeFileProcessing(args, fileItem, config, &atLeastOneProcessed);
                 fileItem->isScheduled       = false;
                 fileItem->scheduledToUpdate = false;
                 if (options.xref2)
