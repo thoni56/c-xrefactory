@@ -1,4 +1,106 @@
 <update-report>
+ <information len=<n>>C-xrefactory project: CURDIR</information>
+ <information len=<n>>CURDIR/parsing.c</information>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.h#44" len=<n>>parsing.h:44</A> Can't open file position.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.h#45" len=<n>>parsing.h:45</A> Can't open file stringlist.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.h#46" len=<n>>parsing.h:46</A> Can't open file editorbuffer.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.h#47" len=<n>>parsing.h:47</A> Can't open file extract.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.h#6" len=<n>>server.h:6</A> Can't open file enums.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.h#7" len=<n>>server.h:7</A> Can't open file argumentsvector.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.h#49" len=<n>>parsing.h:49</A> Can't open file options.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#3" len=<n>>parsing.c:3</A> Can't open file constants.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#4" len=<n>>parsing.c:4</A> Can't open file editorbuffer.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#5" len=<n>>parsing.c:5</A> Can't open file editormarker.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#6" len=<n>>parsing.c:6</A> Can't open file filedescriptor.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#7" len=<n>>parsing.c:7</A> Can't open file filetable.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#8" len=<n>>parsing.c:8</A> Can't open file globals.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#9" len=<n>>parsing.c:9</A> Can't open file init.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#10" len=<n>>parsing.c:10</A> Can't open file log.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#12" len=<n>>parsing.c:12</A> Can't open file misc.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#13" len=<n>>parsing.c:13</A> Can't open file options.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#14" len=<n>>parsing.c:14</A> Can't open file parsers.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#15" len=<n>>parsing.c:15</A> Can't open file position.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#16" len=<n>>parsing.c:16</A> Can't open file referenceableitemtable.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#17" len=<n>>parsing.c:17</A> Can't open file stackmemory.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#18" len=<n>>parsing.c:18</A> Can't open file symboltable.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.c#19" len=<n>>parsing.c:19</A> Can't open file yylex.h : No such file or directory
+</warning>
+ <information len=<n>>CURDIR/server.c</information>
+ <warning len=<n>><A HREF="file://CURDIR/server.h#6" len=<n>>server.h:6</A> Can't open file enums.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.h#7" len=<n>>server.h:7</A> Can't open file argumentsvector.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#3" len=<n>>server.c:3</A> Can't open file commons.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#4" len=<n>>server.c:4</A> Can't open file complete.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#5" len=<n>>server.c:5</A> Can't open file cxfile.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#6" len=<n>>server.c:6</A> Can't open file cxref.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#7" len=<n>>server.c:7</A> Can't open file editor.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#8" len=<n>>server.c:8</A> Can't open file editorbuffer.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#9" len=<n>>server.c:9</A> Can't open file filedescriptor.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#10" len=<n>>server.c:10</A> Can't open file filetable.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#11" len=<n>>server.c:11</A> Can't open file globals.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#12" len=<n>>server.c:12</A> Can't open file head.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#13" len=<n>>server.c:13</A> Can't open file log.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#14" len=<n>>server.c:14</A> Can't open file misc.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#15" len=<n>>server.c:15</A> Can't open file options.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#16" len=<n>>server.c:16</A> Can't open file parsers.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.h#44" len=<n>>parsing.h:44</A> Can't open file position.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.h#45" len=<n>>parsing.h:45</A> Can't open file stringlist.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.h#46" len=<n>>parsing.h:46</A> Can't open file editorbuffer.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.h#47" len=<n>>parsing.h:47</A> Can't open file extract.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/parsing.h#49" len=<n>>parsing.h:49</A> Can't open file options.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#18" len=<n>>server.c:18</A> Can't open file ppc.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#19" len=<n>>server.c:19</A> Can't open file referenceableitemtable.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#20" len=<n>>server.c:20</A> Can't open file session.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#21" len=<n>>server.c:21</A> Can't open file startup.h : No such file or directory
+</warning>
+ <warning len=<n>><A HREF="file://CURDIR/server.c#22" len=<n>>server.c:22</A> Can't open file yylex.h : No such file or directory
+</warning>
+ <information len=<n>>Generating 'CURDIR/CXrefs'</information>
 </update-report>
 <goto>
  <position-off off=4407 len=<n>>CURDIR/server.c</position-off>
