@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-01-09">
+<meta name="author" content="v{VERSION} - Generated 2026-01-11">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-01-09</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-01-11</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -478,16 +478,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_commands">8.1. Commands</a></li>
 <li><a href="#_passes">8.2. Passes</a></li>
-<li><a href="#_parsers">8.3. Parsers</a></li>
-<li><a href="#_integrated_preprocessor">8.4. Integrated Preprocessor</a></li>
-<li><a href="#_refactoring_and_the_parsers">8.5. Refactoring and the parsers</a></li>
-<li><a href="#_reading_files">8.6. Reading Files</a></li>
-<li><a href="#_reference_database">8.7. Reference Database</a></li>
-<li><a href="#_editor_plugin">8.8. Editor Plugin</a></li>
-<li><a href="#_editor_server">8.9. Editor Server</a></li>
-<li><a href="#_refactoring">8.10. Refactoring</a></li>
-<li><a href="#_memory_handling">8.11. Memory handling</a></li>
-<li><a href="#_configuration">8.12. Configuration</a></li>
+<li><a href="#_file_processing_orchestration">8.3. File Processing Orchestration</a></li>
+<li><a href="#_parsers">8.4. Parsers</a></li>
+<li><a href="#_integrated_preprocessor">8.5. Integrated Preprocessor</a></li>
+<li><a href="#_refactoring_and_the_parsers">8.6. Refactoring and the parsers</a></li>
+<li><a href="#_reading_files">8.7. Reading Files</a></li>
+<li><a href="#_reference_database">8.8. Reference Database</a></li>
+<li><a href="#_editor_plugin">8.9. Editor Plugin</a></li>
+<li><a href="#_editor_server">8.10. Editor Server</a></li>
+<li><a href="#_refactoring">8.11. Refactoring</a></li>
+<li><a href="#_memory_handling">8.12. Memory handling</a></li>
+<li><a href="#_configuration">8.13. Configuration</a></li>
 </ul>
 </li>
 <li><a href="#_modules">9. Modules</a>
@@ -577,6 +578,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_yacc_semantic_data">18.1. Yacc semantic data</a></li>
 <li><a href="#_navigation_architecture_and_the_preloading_limitation">18.2. Navigation Architecture and the Preloading Limitation</a></li>
+<li><a href="#_refactorymode_internally_calls_xrefmode">18.3. RefactoryMode Internally Calls XrefMode</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">19. Refactoring Recipes</a>
@@ -1521,7 +1523,459 @@ setting the maxPass variable to 1 before entering the loop&#8230;&#8203;).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_parsers">8.3. Parsers</h3>
+<h3 id="_file_processing_orchestration">8.3. File Processing Orchestration</h3>
+<div class="paragraph">
+<p>The file processing architecture differs significantly between Server mode, Xref mode, and LSP mode, with confusing global state and naming inconsistencies that make the code hard to follow.</p>
+</div>
+<div class="sect3">
+<h4 id="_file_scheduling_how_files_get_marked_for_processing">8.3.1. File Scheduling - How Files Get Marked for Processing</h4>
+<div class="paragraph">
+<p>All modes begin by marking files for processing using the <code>isScheduled</code> flag in the file table.</p>
+</div>
+<div class="sect4">
+<h5 id="_initial_scheduling_all_modes">Initial Scheduling (All Modes)</h5>
+<div class="paragraph">
+<p><strong>Called from:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Server: <code>initServer()</code> → <code>processFileArguments()</code> [<code>server.c:151</code>]</p>
+</li>
+<li>
+<p>Xref: <code>mainTaskEntryInitialisations()</code> → <code>processFileArguments()</code> [<code>startup.c:706</code>]</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Flow:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">processFileArguments() [options.c:1893]
+  │
+  └─&gt; FOR each file in options.inputFiles
+       │
+       └─&gt; processFileArgument(filename) [options.c:1864]
+            │
+            └─&gt; dirInputFile(...) [options.c:465]
+                 ├─ If directory: recursively map over files
+                 ├─ If file: scheduleCommandLineEnteredFileToProcess(filename)
+                 │           └─ SETS: fileItem-&gt;isScheduled = true [line 450]
+                 └─ If wildcard: expand and recurse</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Result:</strong> All command-line files (and directory contents if <code>-r</code> flag) are marked with <code>isScheduled = true</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_additional_update_scheduling_xref_mode_only">Additional Update Scheduling (Xref Mode Only)</h5>
+<div class="paragraph">
+<p><strong>Called from:</strong> <code>callXref()</code> → <code>scheduleModifiedFilesToUpdate()</code> [<code>xref.c:296</code>]</p>
+</div>
+<div class="paragraph">
+<p><strong>Flow:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">scheduleModifiedFilesToUpdate(isRefactoring) [xref.c:207]
+  │
+  ├─&gt; mapOverFileTable(schedulingToUpdate, isRefactoring)
+  │    └─ For each file: if modified, SETS: fileItem-&gt;scheduledToUpdate = true
+  │
+  ├─&gt; If UPDATE_FULL: makeIncludeClosureOfFilesToUpdate()
+  │    └─ Expands scheduledToUpdate to include all files that #include updated files
+  │
+  └─&gt; mapOverFileTable(schedulingUpdateToProcess)
+       └─ For each file: if (scheduledToUpdate &amp;&amp; isArgument)
+           SETS: fileItem-&gt;isScheduled = true [line 115]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Result:</strong> In update mode, only modified files (and their includers) get <code>isScheduled = true</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_server_mode_flow">8.3.2. Server Mode Flow</h4>
+<div class="paragraph">
+<p><strong>SINGLE FILE PER REQUEST</strong> - Server processes one file per request, but all files are initially scheduled by <code>processFileArguments()</code> in <code>initServer()</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">initServer(args) [server.c:148]
+  ├─&gt; processOptions(args, ...)
+  ├─&gt; processFileArguments()  ← SCHEDULES ALL FILES
+  └─ Sets up completions
+
+server() [server.c:237] - Infinite request loop
+  │
+  └─&gt; FOR EACH REQUEST:
+       │
+       └─&gt; callServer(baseArgs, requestArgs, &amp;firstPass) [server.c:214]
+            │
+            ├─&gt; prepareInputFileForRequest() [server.c:95]
+            │    ├─ Gets first scheduled file (local check only)
+            │    ├─ SETS: requestFileNumber = NO_FILE_NUMBER [line 104] (if no file)
+            │    └─ SETS: requestFileNumber = fileNumber [line 121] (if file found)
+            │
+            └─&gt; processFile(baseArgs, requestArgs, &amp;firstPass) [server.c:199]
+                 ├─ SETS: inputFileName = fileItem-&gt;name [line 205]
+                 │
+                 └─&gt; singlePass(args, nargs, &amp;firstPass) [server.c:155]
+                      │
+                      ├─&gt; initializeFileProcessing(args, nargs, &amp;firstPass) [startup.c:490]
+                      │    ├─ READS: fileName = inputFileName [line 502]
+                      │    ├─ USES: parsingConfig.fileNumber = currentFile.characterBuffer.fileNumber [line 161]
+                      │    │
+                      │    └─&gt; computeAndOpenInputFile(inputFileName) [startup.c:112]
+                      │         ├─ Gets EditorBuffer or opens file
+                      │         │
+                      │         └─&gt; initInput(inputFile, inputBuffer, "\n", fileName) [yylex.c]
+                      │              └─ Sets up currentFile global with CharacterBuffer
+                      │
+                      ├─&gt; parseInputFile() [server.c:131]
+                      │    ├─ USES: currentFile.fileName [line 133]
+                      │    ├─ Calls setupParsingConfig(requestFileNumber) [line 136]
+                      │    │
+                      │    └─&gt; callParser(parsingConfig.fileNumber, parsingConfig.language) [line 140]
+                      │
+                      └─&gt; SPECIAL CASE: Completion in macro body [lines 183-196]
+                           ├─ SETS: inputFileName = getFileItemWithFileNumber(...)-&gt;name [line 189]
+                           ├─&gt; initializeFileProcessing(args, nargs, &amp;firstPass) [again]
+                           └─&gt; parseInputFile() [again]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_xref_mode_flow">8.3.3. Xref Mode Flow</h4>
+<div class="paragraph">
+<p><strong>PROCESSES ALL SCHEDULED FILES</strong> - Xref creates a list of all scheduled files and processes them in a loop.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">xref(args) [xref.c:354]
+  │
+  └─&gt; callXref(args, isRefactoring) [xref.c:283]
+       │
+       ├─&gt; IF options.update:
+       │    └─&gt; scheduleModifiedFilesToUpdate(isRefactoring) [line 296]
+       │         └─ Adds modified files to scheduled list
+       │
+       ├─&gt; fileItem = createListOfInputFileItems() [line 298]
+       │    └─ Creates linked list of ALL scheduled files (sorted by directory)
+       │
+       └─&gt; FOR LOOP over fileItem list [line 314]
+            │
+            └─&gt; oneWholeFileProcessing(args, fileItem, &amp;firstPass, ...) [xref.c:179]
+                 ├─ SETS: inputFileName = fileItem-&gt;name [line 181]
+                 │
+                 └─&gt; processInputFile(args, &amp;firstPass, &amp;atLeastOneProcessed) [xref.c:149]
+                      │
+                      ├─&gt; initializeFileProcessing(args, nargs, &amp;firstPass) [startup.c:490]
+                      │    ├─ READS: fileName = inputFileName [line 502]
+                      │    │
+                      │    └─&gt; computeAndOpenInputFile(inputFileName) [startup.c:112]
+                      │         └─&gt; initInput(inputFile, inputBuffer, "\n", fileName) [yylex.c]
+                      │              └─ Sets currentFile.characterBuffer.fileNumber
+                      │
+                      ├─ SETS: parsingConfig.fileNumber = currentFileNumber [line 160]
+                      │         (NOTE: currentFileNumber is DIFFERENT global!)
+                      │
+                      └─&gt; parseToCreateReferences(inputFileName) [parsing.c:165]
+                           ├─ Gets EditorBuffer using fileName parameter
+                           │
+                           ├─&gt; initInput(NULL, buffer, "\n", fileName) [line 181]
+                           │    └─ DUPLICATE call! Already called in initializeFileProcessing!
+                           │
+                           ├─ Calls setupParsingConfig(currentFile.characterBuffer.fileNumber) [line 183]
+                           │
+                           └─&gt; callParser(parsingConfig.fileNumber, parsingConfig.language) [line 190]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_lsp_mode_flow_new_simplified">8.3.4. LSP Mode Flow (New, Simplified)</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">parseToCreateReferences(fileName) [parsing.c:165]
+  ├─ Takes fileName as PARAMETER (not from global!)
+  ├─ Gets EditorBuffer
+  │
+  ├─&gt; initInput(NULL, buffer, "\n", fileName) [line 181]
+  │    └─ Sets currentFile.characterBuffer.fileNumber
+  │
+  ├─&gt; setupParsingConfig(currentFile.characterBuffer.fileNumber) [line 183]
+  │
+  └─&gt; callParser(parsingConfig.fileNumber, parsingConfig.language) [line 190]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_key_observations">8.3.5. Key Observations</h4>
+<div class="sect4">
+<h5 id="_assignments_to_inputfilename">Assignments to <code>inputFileName</code></h5>
+<div class="paragraph">
+<p><strong>Server Mode:</strong> Set once per file processed</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>processFile()</code> line 205 - sets the file for the current request</p>
+</li>
+<li>
+<p>Special case: macro completion may parse a different file (line 189) to resolve symbols in unexpanded macro bodies</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Xref Mode:</strong> Set ONCE per file</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>oneWholeFileProcessing()</code> line 181</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_requestfilenumber_only_used_in_server_mode"><code>requestFileNumber</code> Only Used in Server Mode</h5>
+<div class="ulist">
+<ul>
+<li>
+<p>Set in <code>prepareInputFileForRequest()</code> (lines 104, 121)</p>
+</li>
+<li>
+<p>Used in <code>parseInputFile()</code> line 136: <code>setupParsingConfig(requestFileNumber)</code></p>
+</li>
+<li>
+<p>NOT used in Xref mode at all</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_confusion_three_different_file_number_globals">Confusion: THREE Different File Number Globals!</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">inputFileName           // The file name being processed
+requestFileNumber       // Server: file number from scheduled file (server.c)
+currentFileNumber       // Xref: file number after parsing starts (parsing.c:26)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In <code>xref.c</code> line 160:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">parsingConfig.fileNumber = currentFileNumber;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>But <code>currentFileNumber</code> is defined in <code>parsing.c:26</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">int currentFileNumber = -1;     /* Currently parsed file, maybe a header file */</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The comment reveals the distinction: <code>currentFileNumber</code> can change DURING parsing when entering <code>#include</code> files, while <code>requestFileNumber</code> stays constant as "the file we were asked to process."</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_double_initinput_call_in_xref_mode">Double <code>initInput()</code> Call in Xref Mode</h5>
+<div class="paragraph">
+<p>In Xref mode, <code>initInput()</code> is called TWICE for the same file:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>First in <code>initializeFileProcessing()</code> → <code>computeAndOpenInputFile()</code> [<code>startup.c:128</code>]</p>
+</li>
+<li>
+<p>Second in <code>parseToCreateReferences()</code> [<code>parsing.c:181</code>]</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This appears to be a bug or wasteful duplication.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_initializefileprocessing_is_heavy_orchestration"><code>initializeFileProcessing</code> is Heavy Orchestration</h5>
+<div class="paragraph">
+<p>This 500-line function does five major phases:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Phase 1</strong>: Project discovery (find <code>.c-xrefrc</code>)</p>
+</li>
+<li>
+<p><strong>Phase 2</strong>: Options processing</p>
+</li>
+<li>
+<p><strong>Phase 3</strong>: Compiler interrogation (expensive! runs <code>gcc -v</code>)</p>
+</li>
+<li>
+<p><strong>Phase 4</strong>: Memory checkpointing (to skip Phase 3 for same-project files)</p>
+</li>
+<li>
+<p><strong>Phase 5</strong>: Finally calls <code>computeAndOpenInputFile()</code> → <code>initInput()</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The <code>firstPass</code> parameter gates Phase 4&#8217;s memory checkpoint save/restore.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_naming_inconsistency">Naming Inconsistency</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>inputFileName</code> - used in both Server and Xref modes, but set in different places</p>
+</li>
+<li>
+<p><code>requestFileNumber</code> - only Server mode, represents the file from the request</p>
+</li>
+<li>
+<p><code>currentFileNumber</code> - only Xref mode(?), set by <code>initInput()</code> after file opened</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If they represent the same concept (the file being processed), they should have parallel names.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_summary_multi_file_vs_single_file_processing">8.3.6. Summary: Multi-File vs Single-File Processing</h4>
+<div class="sect4">
+<h5 id="_server_mode_single_file_per_request">Server Mode - Single File Per Request</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Scheduling</strong>: All files scheduled ONCE in <code>initServer()</code> → <code>processFileArguments()</code></p>
+</li>
+<li>
+<p><strong>Processing</strong>: Each request picks ONE file via <code>prepareInputFileForRequest()</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Uses <code>getNextScheduledFile()</code> to get first scheduled file</p>
+</li>
+<li>
+<p>FLAWED: unschedules all higher-numbered files (works because <code>c-xref .</code> schedules all)</p>
+</li>
+<li>
+<p>Sets both <code>inputFileName</code> and <code>requestFileNumber</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Loop</strong>: Infinite request loop in <code>server()</code> - different file per request</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_xref_mode_all_files_per_invocation">Xref Mode - All Files Per Invocation</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Scheduling</strong>: All files scheduled in <code>mainTaskEntryInitialisations()</code> → <code>processFileArguments()</code></p>
+</li>
+<li>
+<p><strong>Additional</strong>: In update mode, <code>scheduleModifiedFilesToUpdate()</code> adds modified files</p>
+</li>
+<li>
+<p><strong>Processing</strong>: <code>createListOfInputFileItems()</code> creates list of ALL scheduled files</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Loops over entire list in <code>callXref()</code> [line 314]</p>
+</li>
+<li>
+<p>Each file processed via <code>oneWholeFileProcessing()</code></p>
+</li>
+<li>
+<p>Sets <code>inputFileName</code> for each file</p>
+</li>
+<li>
+<p>Uses <code>currentFileNumber</code> (different global!) instead of <code>requestFileNumber</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Loop</strong>: Single invocation processes all files</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_lsp_mode_single_file_per_request">LSP Mode - Single File Per Request</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>No scheduling</strong>: Takes fileName as direct parameter</p>
+</li>
+<li>
+<p><strong>No global state</strong>: <code>parseToCreateReferences(fileName)</code> - clean interface</p>
+</li>
+<li>
+<p><strong>Processing</strong>: Direct call, no file table lookup needed</p>
+</li>
+<li>
+<p><strong>Modern design</strong>: Avoids the legacy scheduling/global state complexity</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_opportunities_for_alignment">8.3.7. Opportunities for Alignment</h4>
+<div class="paragraph">
+<p>The Server and Xref paths do similar things but with different names and structures, creating cognitive overhead. Potential improvements:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Naming consistency</strong>: <code>processFile()</code> (server) vs <code>oneWholeFileProcessing()</code> (xref) could both use consistent naming</p>
+</li>
+<li>
+<p><strong>Eliminate duplication</strong>: Fix the double <code>initInput()</code> call in xref path</p>
+</li>
+<li>
+<p><strong>Extract common logic</strong>: The inner "process one file" logic should be identical between modes</p>
+</li>
+<li>
+<p><strong>Make differences explicit</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Server: <code>for (each request) { process one file }</code></p>
+</li>
+<li>
+<p>Xref: <code>for (each scheduled file) { process one file }</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The paths are intertwined but different, making it hard to keep in your head which one you&#8217;re modifying. Making them more similar where possible would reduce cognitive load during refactoring work.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parsers">8.4. Parsers</h3>
 <div class="paragraph">
 <p><em>C-xref</em> uses a patched version of Berkley yacc to generate
 parsers. There are a number of parsers</p>
@@ -1560,12 +2014,12 @@ renames the generated files as appropriate.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_integrated_preprocessor">8.4. Integrated Preprocessor</h3>
+<h3 id="_integrated_preprocessor">8.5. Integrated Preprocessor</h3>
 <div class="paragraph">
 <p><em>C-xrefactory</em> includes its own integrated C preprocessor implementation rather than using the system&#8217;s preprocessor (cpp, clang preprocessor, etc.). This is a crucial architectural decision that enables core functionality.</p>
 </div>
 <div class="sect3">
-<h4 id="_why_not_use_the_system_preprocessor">8.4.1. Why Not Use the System Preprocessor?</h4>
+<h4 id="_why_not_use_the_system_preprocessor">8.5.1. Why Not Use the System Preprocessor?</h4>
 <div class="paragraph">
 <p>Using an external preprocessor would mean that all macros would be expanded before c-xrefactory sees the code. This would make it impossible to:</p>
 </div>
@@ -1596,7 +2050,7 @@ renames the generated files as appropriate.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation_details">8.4.2. Implementation Details</h4>
+<h4 id="_implementation_details">8.5.2. Implementation Details</h4>
 <div class="paragraph">
 <p>The integrated preprocessor is implemented in <code>yylex.c</code> and includes:</p>
 </div>
@@ -1624,7 +2078,7 @@ renames the generated files as appropriate.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_limitations">8.4.3. Limitations</h4>
+<h4 id="_limitations">8.5.3. Limitations</h4>
 <div class="paragraph">
 <p>The integrated preprocessor does not support all modern preprocessor features:</p>
 </div>
@@ -1643,7 +2097,7 @@ renames the generated files as appropriate.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_trade_offs">8.4.4. Trade-offs</h4>
+<h4 id="_trade_offs">8.5.4. Trade-offs</h4>
 <div class="paragraph">
 <p>This design choice represents a fundamental trade-off:</p>
 </div>
@@ -1663,7 +2117,7 @@ renames the generated files as appropriate.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_refactoring_and_the_parsers">8.5. Refactoring and the parsers</h3>
+<h3 id="_refactoring_and_the_parsers">8.6. Refactoring and the parsers</h3>
 <div class="paragraph">
 <p>Some refactorings need more detailed information about the code, maybe all do?</p>
 </div>
@@ -1732,7 +2186,7 @@ global variables.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_reading_files">8.6. Reading Files</h3>
+<h3 id="_reading_files">8.7. Reading Files</h3>
 <div class="paragraph">
 <p>Here are some speculations about how the complex file reading is structured.</p>
 </div>
@@ -1759,7 +2213,7 @@ wonder why this function does some initial reading, this should be
 pushed down to the buffers in the file descriptor.</p>
 </div>
 <div class="sect3">
-<h4 id="_lexingscanning">8.6.1. Lexing/scanning</h4>
+<h4 id="_lexingscanning">8.7.1. Lexing/scanning</h4>
 <div class="paragraph">
 <p>Lexing/scanning is performed in two layers, one in <code>lexer.c</code> which
 seems to be doing the actual lexing into lexems which are put in a
@@ -1804,7 +2258,7 @@ sequence.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_semantic_information">8.6.2. Semantic information</h4>
+<h4 id="_semantic_information">8.7.2. Semantic information</h4>
 <div class="paragraph">
 <p>As the refactoring functions need some amount of semantic information,
 in the sense of information gathered during parsing, this information
@@ -1821,7 +2275,7 @@ function structure. This structure is, at the point of writing, called
 </div>
 </div>
 <div class="sect2">
-<h3 id="_reference_database">8.7. Reference Database</h3>
+<h3 id="_reference_database">8.8. Reference Database</h3>
 <div class="paragraph">
 <p><code>c-xref</code> run in "xref" mode creates, or updates, a database of
 references for all externally visible symbols it encounters.</p>
@@ -1832,7 +2286,7 @@ reference database, but this is still a work in progress to chisel
 this out.</p>
 </div>
 <div class="sect3">
-<h4 id="_architecture_overview">8.7.1. Architecture Overview</h4>
+<h4 id="_architecture_overview">8.8.1. Architecture Overview</h4>
 <div class="paragraph">
 <p>c-xrefactory&#8217;s core functionality relies on a sophisticated symbol database that stores cross-references, definitions, and usage information for all symbols in a project. The database is implemented as a collection of binary <code>.cx</code> files and supports:</p>
 </div>
@@ -1851,7 +2305,7 @@ this out.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_database_structure_and_format">8.7.2. Database Structure and Format</h4>
+<h4 id="_database_structure_and_format">8.8.2. Database Structure and Format</h4>
 <div class="paragraph">
 <p>The symbol database uses a hash-partitioned file structure:</p>
 </div>
@@ -1882,7 +2336,7 @@ this out.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_symbol_resolution_pipeline">8.7.3. Symbol Resolution Pipeline</h4>
+<h4 id="_symbol_resolution_pipeline">8.8.3. Symbol Resolution Pipeline</h4>
 <div class="paragraph">
 <p>The symbol lookup process follows this pipeline:</p>
 </div>
@@ -1905,7 +2359,7 @@ this out.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_key_data_structures">8.7.4. Key Data Structures</h4>
+<h4 id="_key_data_structures">8.8.4. Key Data Structures</h4>
 <div class="sect4">
 <h5 id="_browser_stack_sessiondata_browserstack">Browser Stack (<code>sessionData.browserStack</code>)</h5>
 <div class="paragraph">
@@ -1951,7 +2405,7 @@ typedef struct {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_database_operations">8.7.5. Database Operations</h4>
+<h4 id="_database_operations">8.8.5. Database Operations</h4>
 <div class="sect4">
 <h5 id="_database_creation_create">Database Creation (-create)</h5>
 <div class="olist arabic">
@@ -2011,7 +2465,7 @@ typedef struct {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_lsp_integration_challenges">8.7.6. LSP Integration Challenges</h4>
+<h4 id="_lsp_integration_challenges">8.8.6. LSP Integration Challenges</h4>
 <div class="sect4">
 <h5 id="_architectural_mismatch">Architectural Mismatch</h5>
 <div class="paragraph">
@@ -2113,7 +2567,7 @@ A proposal for a unified symbol database architecture has been documented. See <
 </div>
 </div>
 <div class="sect3">
-<h4 id="_cxfile">8.7.7. CXFILE</h4>
+<h4 id="_cxfile">8.8.7. CXFILE</h4>
 <div class="paragraph">
 <p>The current implementation of the reference database is file based,
 with an optimized storage format.</p>
@@ -2194,7 +2648,7 @@ generated data for expected data. This is now partly ongoing in the
 </div>
 </div>
 <div class="sect3">
-<h4 id="_reference_database_reading">8.7.8. Reference Database Reading</h4>
+<h4 id="_reference_database_reading">8.8.8. Reference Database Reading</h4>
 <div class="paragraph">
 <p>All information about an externally visible symbol is stored in one,
 and only one reference file, determined by hashing the linkname of the
@@ -2216,7 +2670,7 @@ function for that key/tag/recordCode. If so, it will be called.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_plugin">8.8. Editor Plugin</h3>
+<h3 id="_editor_plugin">8.9. Editor Plugin</h3>
 <div class="paragraph">
 <p>The editor plugin has three different responsibilities:</p>
 </div>
@@ -2265,7 +2719,7 @@ output in the output file it sends a <code>&lt;sync&gt;</code> reply.</p>
 what it needs to do with it ("dispatching:").</p>
 </div>
 <div class="sect3">
-<h4 id="_invocations">8.8.1. Invocations</h4>
+<h4 id="_invocations">8.9.1. Invocations</h4>
 <div class="paragraph">
 <p>The editor invokes a new <code>c-xref</code> process for the following cases:</p>
 </div>
@@ -2289,7 +2743,7 @@ started, which is run by a separate <code>c-xref</code> process.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_buffers">8.8.2. Buffers</h4>
+<h4 id="_buffers">8.9.2. Buffers</h4>
 <div class="paragraph">
 <p>There is some magical editor buffer management happening inside of
 <code>c-xref</code> which is not clear to me at this point. Basically it looks
@@ -2310,7 +2764,7 @@ server the current content somehow, this is the <code>-preload</code> option.</p
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_server">8.9. Editor Server</h3>
+<h3 id="_editor_server">8.10. Editor Server</h3>
 <div class="paragraph">
 <p>When serving an editor the c-xrefactory application is divided into
 the server, <em>c-xref</em> and the editor part, at this point only Emacs:en
@@ -2318,7 +2772,7 @@ are supported so that&#8217;s implemented in the
 <code>editor/Emacs</code>-packages.</p>
 </div>
 <div class="sect3">
-<h4 id="_interaction">8.9.1. Interaction</h4>
+<h4 id="_interaction">8.10.1. Interaction</h4>
 <div class="paragraph">
 <p>The initial invocation of the edit server creates a process with which
 communication is over stdin/stdout using a protocol which from the editor
@@ -2373,7 +2827,7 @@ the options structure used only when refactoring.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_protocol">8.9.2. Protocol</h4>
+<h4 id="_protocol">8.10.2. Protocol</h4>
 <div class="paragraph">
 <p>Communication between the editor and the server is performed using
 text through standard input/output to/from <em>c-xref</em>. The protocol is
@@ -2404,7 +2858,7 @@ utf-8. This means that lengths need to indicate <em>characters</em> not bytes.</
 </div>
 </div>
 <div class="sect3">
-<h4 id="_invocation_of_server">8.9.3. Invocation of server</h4>
+<h4 id="_invocation_of_server">8.10.3. Invocation of server</h4>
 <div class="paragraph">
 <p>The editor fires up a server and keeps talking over the established
 channel (elisp function 'c-xref-start-server-process'). This probably
@@ -2447,7 +2901,7 @@ elisp-sources.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_communication_protocol">8.9.4. Communication Protocol</h4>
+<h4 id="_communication_protocol">8.10.4. Communication Protocol</h4>
 <div class="paragraph">
 <p>The editor server is started using the appropriate command line option
 and then it keeps the communication over stdin/stdout open.</p>
@@ -2491,7 +2945,7 @@ options.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_olcx_naming">8.9.5. OLCX Naming</h4>
+<h4 id="_olcx_naming">8.10.5. OLCX Naming</h4>
 <div class="paragraph">
 <p>It seems that all on-line editing server functions have an <code>olcx</code>
 prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
@@ -2499,12 +2953,12 @@ prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_refactoring">8.10. Refactoring</h3>
+<h3 id="_refactoring">8.11. Refactoring</h3>
 <div class="paragraph">
 <p>This is of course, the core in why I want to restore this, to get at its refactoring capabilities. So far, much is not understood, but here are some bits and pieces.</p>
 </div>
 <div class="sect3">
-<h4 id="_editor_interface">8.10.1. Editor interface</h4>
+<h4 id="_editor_interface">8.11.1. Editor interface</h4>
 <div class="paragraph">
 <p>One thing that really confused me in the beginning was that the editor, primarily Emacs, don&#8217;t use the actual server that it has started for refactoring operations (and perhaps for other things also?). Instead it creates a separate instance with which it talks to about one refactoring.</p>
 </div>
@@ -2527,13 +2981,13 @@ prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_interactions">8.10.2. Interactions</h4>
+<h4 id="_interactions">8.11.2. Interactions</h4>
 <div class="paragraph">
 <p>I haven&#8217;t investigated the internal flow of such a sequence, but it is starting to look like <code>c-xref</code> is internally re-reading the initialization, I&#8217;m not at this point sure what this means, I hope it&#8217;s not internal recursion&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_extraction">8.10.3. Extraction</h4>
+<h4 id="_extraction">8.11.3. Extraction</h4>
 <div class="paragraph">
 <p>Each type of refactoring has it&#8217;s own little "language". E.g. extracting a method/function using <code>-refactory -rfct-extract-function</code> will return something like</p>
 </div>
@@ -2574,7 +3028,7 @@ prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_protocol_2">8.10.4. Protocol</h4>
+<h4 id="_protocol_2">8.11.4. Protocol</h4>
 <div class="paragraph">
 <p>Dechiffrering the interaction between an editor and the edit server in
 <code>c-xrefactory</code> isn&#8217;t easy. The protocol isn&#8217;t very clear or
@@ -2679,7 +3133,7 @@ be renamed (replaced at all occurrences) by NEW_NAME.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_memory_handling">8.11. Memory handling</h3>
+<h3 id="_memory_handling">8.12. Memory handling</h3>
 <div class="paragraph">
 <p>c-xrefactory uses custom memory management via arena allocators rather than malloc/free for performance-critical operations.</p>
 </div>
@@ -2690,7 +3144,7 @@ be renamed (replaced at all occurrences) by NEW_NAME.</p>
 <p>For debugging memory issues, especially arena lifetime violations, see the <strong>Development Environment</strong> chapter.</p>
 </div>
 <div class="sect3">
-<h4 id="_the_memory_type">8.11.1. The Memory Type</h4>
+<h4 id="_the_memory_type">8.12.1. The Memory Type</h4>
 <div class="paragraph">
 <p>Memory allocation is managed through the <code>Memory</code> structure, which implements an arena/bump allocator. Different memory arenas serve different purposes:</p>
 </div>
@@ -2718,7 +3172,7 @@ be renamed (replaced at all occurrences) by NEW_NAME.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_option_memory">8.11.2. Option Memory</h4>
+<h4 id="_option_memory">8.12.2. Option Memory</h4>
 <div class="paragraph">
 <p>The <code>optMemory</code> arena requires special handling because <code>Options</code> structures are copied during operation. When copying, all pointers into option memory must be adjusted to point into the target structure&#8217;s memory area, not the source&#8217;s.</p>
 </div>
@@ -2740,7 +3194,7 @@ The linked list nodes themselves are allocated in the Options structure&#8217;s 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration">8.12. Configuration</h3>
+<h3 id="_configuration">8.13. Configuration</h3>
 <div class="paragraph">
 <p>The legacy <code>c-xref</code> normally, in "production", uses a common configuration file in the
 users home directory, <code>.c-xrefrc</code>. When a new project is defined its options will be
@@ -2758,7 +3212,7 @@ line each. These are always read, unless <code>-no-stdop</code> is used, before 
 allows for different "default" options for each project.</p>
 </div>
 <div class="sect3">
-<h4 id="_options">8.12.1. Options</h4>
+<h4 id="_options">8.13.1. Options</h4>
 <div class="paragraph">
 <p>There are three possible sources for options.</p>
 </div>
@@ -2783,7 +3237,7 @@ allows for different "default" options for each project.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_logic">8.12.2. Logic</h4>
+<h4 id="_logic">8.13.2. Logic</h4>
 <div class="paragraph">
 <p>When the editor has a file open it needs to "belong" to a project. The
 logic for finding which is very intricate and complicated.</p>
@@ -8955,6 +9409,153 @@ Position position
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_refactorymode_internally_calls_xrefmode">18.3. RefactoryMode Internally Calls XrefMode</h3>
+<div class="paragraph">
+<p>Date: 2025-01-10</p>
+</div>
+<div class="sect3">
+<h4 id="_the_key_architectural_insight">18.3.1. The Key Architectural Insight</h4>
+<div class="paragraph">
+<p><strong>RefactoryMode runs XrefMode as an internal sub-task to update the reference database before performing refactorings.</strong></p>
+</div>
+<div class="paragraph">
+<p>This is critical to understand because:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Refactorings need current cross-reference data to find all symbol occurrences</p>
+</li>
+<li>
+<p>Server mode never creates/updates references (it only serves queries)</p>
+</li>
+<li>
+<p>RefactoryMode is a separate process invocation, not part of the interactive server</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_how_it_works_2">18.3.2. How It Works</h4>
+<div class="paragraph">
+<p>When a refactoring is invoked:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">refactory() [refactory.c:1337]
+  │
+  ├─ 1. Compute update strategy based on symbol scope/visibility
+  │    updateOption = computeUpdateOptionForSymbol(point)
+  │      • Local symbols: "" (no update - not in database)
+  │      • Header symbols: "-update" (full update required)
+  │      • Multi-file global: "-fastupdate" (incremental)
+  │      • Single-file global: "" (no update needed)
+  │
+  ├─ 2. Perform the refactoring operation
+  │    renameAtPoint() / parameterManipulation() / etc.
+  │
+  └─ 3. Update references via internal XrefMode call
+       ensureReferencesAreUpdated(project) [line 146]
+         ├─ Save current options
+         ├─ Build argument vector with updateOption
+         ├─ mainTaskEntryInitialisations(args)
+         └─ callXref(args, true)  ← NESTS XREF MODE!</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_why_refactorings_are_separate_processes">18.3.3. Why Refactorings Are Separate Processes</h4>
+<div class="paragraph">
+<p>The Emacs client spawns a <strong>separate RefactoryMode process</strong> rather than using the interactive server because:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Xref update can be slow</strong> - Would block the interactive server for user operations</p>
+</li>
+<li>
+<p><strong>Options isolation</strong> - The nested <code>callXref()</code> "messes all static variables including options" (code comment, line 143-145)</p>
+</li>
+<li>
+<p><strong>Memory requirements</strong> - Refactorings need more memory than interactive operations (see <code>mainTaskEntryInitialisations</code> allocation logic)</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_three_modes_relationship">18.3.4. The Three Modes Relationship</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">ServerMode (c-xref -server)
+  - Never creates/updates references
+  - Serves queries from existing .cx files
+  - Long-running interactive process
+  - Handles: completion, goto-definition, push/pop navigation
+
+XrefMode (c-xref -create / -update)
+  - Creates and updates .cx reference files
+  - Batch operation over all scheduled files
+  - Exits when complete
+
+RefactoryMode (c-xref -refactory ...)
+  - Separate one-shot process per refactoring
+  - INTERNALLY calls XrefMode (via callXref) to update references
+  - Applies source code edits
+  - Exits when complete</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_code_evidence">18.3.5. Code Evidence</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// From refactory.c:143-145
+// be very careful when calling this function as it is messing all static variables
+// including options, ...
+// call to this function MUST be followed by a pushing action, to refresh options
+void ensureReferencesAreUpdated(char *project) {
+    // ...
+    deepCopyOptionsFromTo(&amp;options, &amp;savedOptions);
+
+    // Build xref arguments including update option
+    argumentVector[argumentCount++] = updateOption;
+
+    // Re-initialize as if starting fresh xref task
+    mainTaskEntryInitialisations(args);
+
+    // THE KEY CALL: Run XrefMode nested inside RefactoryMode
+    callXref(args, true);
+
+    // Restore options after the nested task
+    deepCopyOptionsFromTo(&amp;savedOptions, &amp;options);
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_implications">18.3.6. Implications</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>You cannot do refactorings in ServerMode</strong> - the architecture doesn&#8217;t support it</p>
+</li>
+<li>
+<p><strong>ServerMode never receives <code>-update</code> or <code>-create</code></strong> - those are XrefMode/RefactoryMode only</p>
+</li>
+<li>
+<p><strong>Refactorings are always consistent</strong> - they get fresh reference data before executing</p>
+</li>
+<li>
+<p><strong>Performance trade-off</strong> - Smart update strategies (local vs header vs multi-file) minimize update cost</p>
+</li>
+<li>
+<p><strong>Process isolation</strong> - Separate RefactoryMode process prevents server state corruption</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -10419,7 +11020,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-09 18:02:39 UTC
+Last updated 2026-01-11 14:46:47 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
