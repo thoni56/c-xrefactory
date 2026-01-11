@@ -458,6 +458,7 @@ static MemoryCheckpoint checkpoint1 = { .saved = false };
 
 static void saveCheckpoint(MemoryCheckpoint *checkpoint) {
     log_debug("Saving checkpoint %p: ppmMemoryIndex=%d", (void*)checkpoint, ppmMemory.index);
+    log_debug("firstFreeStackMemoryIndex=%d", currentBlock->firstFreeIndex);
 
     assert(currentBlock == (CodeBlock*)stackMemory);  // Must be at outermost level
     assert(currentBlock->outerBlock == NULL);         // No nested blocks
@@ -543,7 +544,6 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
         /* Load and process project settings from .c-xrefrc */
         log_debug("initializeFileProcessing - if-branch, checkpoint0.saved=%d", checkpoint0.saved);
-        log_debug("Memories: ppmMemory.index=%d, currentBlock=%p", ppmMemory.index, currentBlock);
 
         initCwd();
         initOptions();
