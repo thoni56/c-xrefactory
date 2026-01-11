@@ -1,0 +1,25 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxpush -olcursor=5 CURDIR/projectA/fileA1.c -xrefrc CURDIR/.c-xrefrc -p projectA
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=4 len=<n>>CURDIR/projectA/fileA1.c</position-lc>
+</goto>
+-olcxpush -olcursor=5 CURDIR/projectB/fileB1.c -xrefrc CURDIR/.c-xrefrc -p projectB
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=4 len=<n>>CURDIR/projectB/fileB1.c</position-lc>
+</goto>
+-olcxpush -olcursor=5 CURDIR/projectB/fileB2.c -xrefrc CURDIR/.c-xrefrc -p projectB
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=4 len=<n>>CURDIR/projectB/fileB2.c</position-lc>
+</goto>
+-exit
+end-of-options
+
