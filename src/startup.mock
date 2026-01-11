@@ -13,11 +13,3 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
 bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs) {
   return (bool)mock(args.argc, args.argv, nargs.argc, nargs.argv);
 }
-
-void saveMemoryCheckPoint(void) {
-  mock();
-}
-
-void restoreMemoryCheckPoint(void) {
-  mock();
-}

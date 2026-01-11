@@ -447,14 +447,14 @@ typedef struct {
     int ppmMemoryIndex;
 } MemoryCheckpoint;
 
-/* Checkpoint 1: After options loaded, before compiler discovery
- * NOTE: Not yet implemented - would allow sharing compiler discovery across projects */
-MemoryCheckpoint checkpoint1 = { .saved = false };
+/* Checkpoint 0: After mainTaskEntryInitialisations (general initialization),
+ * "reset to clean state" */
+static MemoryCheckpoint checkpoint0 = { .saved = false };
 
-/* Checkpoint 2: After compiler discovery (currently used as sole checkpoint)
+/* Checkpoint 1: After compiler discovery (currently used as sole checkpoint)
  * Saved after Phase 3 (compiler interrogation), allows reuse of expensive compiler
  * discovery when processing multiple files in the same project. */
-static MemoryCheckpoint checkpoint2 = { .saved = false };
+static MemoryCheckpoint checkpoint1 = { .saved = false };
 
 static void saveCheckpoint(MemoryCheckpoint *checkpoint) {
     log_debug("Saving checkpoint %p: ppmMemoryIndex=%d", (void*)checkpoint, ppmMemory.index);
@@ -468,8 +468,8 @@ static void saveCheckpoint(MemoryCheckpoint *checkpoint) {
     checkpoint->saved = true;
 }
 
-void saveMemoryCheckPoint(void) {
-    saveCheckpoint(&checkpoint2);
+void saveMemoryCheckPoint(MemoryCheckpoint *checkpoint) {
+    saveCheckpoint(&checkpoint1);
 }
 
 static void restoreCheckpoint(MemoryCheckpoint *checkpoint) {
@@ -486,8 +486,8 @@ static void restoreCheckpoint(MemoryCheckpoint *checkpoint) {
     recoverMemoryFromIncludeList();
 }
 
-void restoreMemoryCheckPoint(void) {
-    restoreCheckpoint(&checkpoint2);
+void restoreMemoryCheckPoint(MemoryCheckpoint *checkpoint) {
+    restoreCheckpoint(&checkpoint1);
 }
 
 
@@ -536,14 +536,14 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         || previousStandardOptionsFileModificationTime != modifiedTime       /* or the options file has changed */
     ) {
         /* === PHASE 2: Options File Processing === */
+        if (checkpoint0.saved)
+            restoreCheckpoint(&checkpoint0);
+        else
+            saveCheckpoint(&checkpoint0);
+
         /* Load and process project settings from .c-xrefrc */
-        log_debug("initializeFileProcessing - if-branch, checkpoint2.saved=%d", checkpoint2.saved);
+        log_debug("initializeFileProcessing - if-branch, checkpoint0.saved=%d", checkpoint0.saved);
         log_debug("Memories: ppmMemory.index=%d, currentBlock=%p", ppmMemory.index, currentBlock);
-        if (checkpoint2.saved) {
-            /* Reset memory to discard previous project's data */
-            log_debug("Restoring checkpoint 2 to reset memory");
-            restoreMemoryCheckPoint();
-        }
 
         initCwd();
         initOptions();
@@ -574,7 +574,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
         /* === PHASE 4: Memory Checkpoint === */
         /* Save memory state so subsequent files in same project can skip phases 2-3 */
-        saveMemoryCheckPoint();
+        saveMemoryCheckPoint(&checkpoint1);
 
         /* Then for the particular pass */
         currentPass = savedPass;
@@ -602,9 +602,9 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
     } else {
         /* Same project as last file - restore from checkpoint (fast path) */
-        log_debug("initializeFileProcessing - else-branch (same project, restoring checkpoint 2)");
+        log_debug("initializeFileProcessing - else-branch (same project, restoring checkpoint 1)");
         log_debug("Memories: ppmMemory.index=%d, currentBlock=%p", ppmMemory.index, currentBlock);
-        restoreMemoryCheckPoint();  /* Skip phases 2-3, restore cached compiler discovery */
+        restoreMemoryCheckPoint(&checkpoint1);  /* Skip phases 2-3, restore cached compiler discovery */
 
         deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO); /* no include or define options */
