@@ -447,13 +447,13 @@ typedef struct {
     int ppmMemoryIndex;
 } MemoryCheckpoint;
 
-/* Checkpoint 0: After mainTaskEntryInitialisations (general initialization),
- * "reset to clean state" */
+/* Checkpoint 0: Saved before any options loading.  Reset to get a completely clean
+ * settings state. */
 static MemoryCheckpoint checkpoint0 = { .saved = false };
 
-/* Checkpoint 1: After compiler discovery (currently used as sole checkpoint)
- * Saved after Phase 3 (compiler interrogation), allows reuse of expensive compiler
- * discovery when processing multiple files in the same project. */
+/* Checkpoint 1: Saved after compiler discovery, but before pass-specific
+ * settings. Reset to process more files in the same project, with the same or different
+ * pass */
 static MemoryCheckpoint checkpoint1 = { .saved = false };
 
 static void saveCheckpoint(MemoryCheckpoint *checkpoint) {
