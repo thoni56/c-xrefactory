@@ -5,7 +5,7 @@ ARGUMENTS = -xrefactory-II -refactory -rfct-add-param -olcxparnum=14 -rfct-param
 
 $(TEST):
 	$(COMMAND) $(EXTRA) > output.tmp
-	@$(NORMALIZE) output.tmp | grep -v progress > output
+	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
 
 trace: EXTRA=-debug -log=log

@@ -5,7 +5,7 @@ ARGUMENTS = -xrefactory-II -refactory -rfct-extract-function -olmark=50 -olcurso
 
 $(TEST):
 	$(COMMAND) -log=log $(EXTRA) > output.tmp
-	@$(NORMALIZE) output.tmp | grep -v progress > output
+	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
 
 trace: EXTRA=-debug

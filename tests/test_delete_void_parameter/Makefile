@@ -5,7 +5,7 @@ ARGUMENTS = -xrefactory-II -refactory -rfct-del-param -olcxparnum=1 -olcursor=17
 
 $(TEST): .c-xrefrc
 	$(COMMAND) -log=log $(EXTRA) > output.tmp
-	@$(NORMALIZE) output.tmp | grep -v progress > output
+	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
 
 trace: EXTRA=-debug

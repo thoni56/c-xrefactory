@@ -7,7 +7,7 @@ $(TEST): .c-xrefrc
 	touch *.c
 	-@$(MAKE) --no-print-directory OFFSET=0 run-once > output.tmp
 	-@$(MAKE) --no-print-directory OFFSET=78 run-once >> output.tmp
-	@$(NORMALIZE) output.tmp | grep -v progress > output
+	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
 run-once:

@@ -6,7 +6,7 @@ ARGUMENTS = -refactory -rfct-rename-included-file -renameto=include2.h -olcursor
 $(TEST): include.h
 	$(CXREF) -create > output.tmp
 	$(COMMAND) > output.tmp
-	$(NORMALIZE) output.tmp | grep -v progress > output
+	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
 include.h:
