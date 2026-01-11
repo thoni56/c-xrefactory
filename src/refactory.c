@@ -34,7 +34,6 @@
 #include "scope.h"
 #include "server.h"
 #include "session.h"
-#include "stackmemory.h"
 #include "undo.h"
 #include "xref.h"
 
@@ -52,8 +51,6 @@ typedef enum {
 } ToCheckOrNot;
 
 static EditorUndo *refactoringStartingPoint;
-
-static bool editServerSubTaskFirstPass = true;
 
 static char *serverStandardOptions[] = {
     "xref",
@@ -197,7 +194,6 @@ void ensureReferencesAreUpdated(char *project) {
 
     args = (ArgumentsVector){.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
     mainTaskEntryInitialisations(args);
-    editServerSubTaskFirstPass = true;
 }
 
 void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *mark,
@@ -1400,7 +1396,6 @@ void refactory(void) {
     // init subtask
     ArgumentsVector args = {.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
     mainTaskEntryInitialisations(args);
-    editServerSubTaskFirstPass = true;
 
     progressFactor = 1;
 

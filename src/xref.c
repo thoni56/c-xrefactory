@@ -146,7 +146,7 @@ static void schedulingToUpdate(FileItem *fileItem, bool calledDuringRefactoring)
     log_trace("Scheduling '%s' to update: %s", fileItem->name, fileItem->scheduledToUpdate?"yes":"no");
 }
 
-static void processInputFile(ArgumentsVector args, bool *firstPassP, bool *atLeastOneProcessedP) {
+static void processInputFile(ArgumentsVector args, bool *atLeastOneProcessedP) {
     bool inputOpened;
 
     maxPasses = 1;
@@ -168,12 +168,11 @@ static void processInputFile(ArgumentsVector args, bool *firstPassP, bool *atLea
             errorMessage(ERR_CANT_OPEN, inputFileName);
             fprintf(errOut, "\tmaybe forgotten -p option?\n");
         }
-        *firstPassP                          = false;
         currentFile.characterBuffer.isAtEOF = false;
     }
 }
 
-static void oneWholeFileProcessing(ArgumentsVector args, FileItem *fileItem, bool *firstPass,
+static void oneWholeFileProcessing(ArgumentsVector args, FileItem *fileItem,
                                    bool *atLeastOneProcessed, XrefConfig *config) {
     inputFileName           = fileItem->name;
     fileProcessingStartTime = time(NULL);
@@ -182,7 +181,7 @@ static void oneWholeFileProcessing(ArgumentsVector args, FileItem *fileItem, boo
     if (config->updateType == UPDATE_FULL || config->updateType == UPDATE_CREATE) {
         fileItem->lastFullUpdateMtime = fileItem->lastModified;
     }
-    processInputFile(args, firstPass, atLeastOneProcessed);
+    processInputFile(args, atLeastOneProcessed);
     // now free the buffer because it tooks too much memory,
     // but I can not free it when refactoring, nor when preloaded,
     // so be very careful about this!!!
@@ -280,7 +279,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
 void callXref(ArgumentsVector args, XrefConfig *config) {
     // These are static because of the longjmp() maybe happening
     static char     *cxFreeBase;
-    static bool      firstPass, atLeastOneProcessed;
+    static bool      atLeastOneProcessed;
     static FileItem *fileItem;
     static int       numberOfInputs;
 
@@ -296,7 +295,6 @@ void callXref(ArgumentsVector args, XrefConfig *config) {
     LIST_LEN(numberOfInputs, FileItem, fileItem);
     for (;;) {
         currentPass = ANY_PASS;
-        firstPass   = true;
         if ((reason = setjmp(errorLongJumpBuffer)) != 0) {
             if (reason == LONGJMP_REASON_FILE_ABORT) {
                 if (fileItem != NULL)
@@ -309,7 +307,7 @@ void callXref(ArgumentsVector args, XrefConfig *config) {
             fileAbortEnabled = true;
 
             for (; fileItem != NULL; fileItem = fileItem->next) {
-                oneWholeFileProcessing(args, fileItem, &firstPass, &atLeastOneProcessed,
+                oneWholeFileProcessing(args, fileItem, &atLeastOneProcessed,
                                        config);
                 fileItem->isScheduled       = false;
                 fileItem->scheduledToUpdate = false;
