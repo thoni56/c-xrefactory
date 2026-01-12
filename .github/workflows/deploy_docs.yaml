@@ -25,7 +25,7 @@ jobs:
 
       - name: Install Asciidoctor and Asciidoctor-Diagram
         run: |
-          gem install asciidoctor asciidoctor-diagram asciidoctor-pdf --user-install
+          gem install asciidoctor asciidoctor-diagram asciidoctor-diagram-plantuml asciidoctor-pdf --user-install
           echo "PATH=$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:$PATH" >> $GITHUB_ENV
 
       - name: Run Make
