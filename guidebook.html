@@ -1610,23 +1610,18 @@ mean that we need to:</p>
 <div class="sect2">
 <h3 id="_passes">8.2. Passes</h3>
 <div class="paragraph">
-<p>There is a variable in <code>main()</code> called <code>firstPassing</code> which is set and passed
-down through <code>mainEditServer()</code> until it is reset in
-<code>mainFileProcessingInitialisations()</code>.</p>
-</div>
-<div class="paragraph">
-<p>This is probably related to the fact that <code>c-xref</code> allows for passing
-over the analyzed source multiple passes in case you compile the
-project sources with different C defines. Variables in the <code>c-xref</code>
-sources indicate this, e.g the loops in <code>mainEditServerProcessFile()</code>
-and <code>mainXrefProcessInputFile()</code> (which are both strangely limited by
-setting the maxPass variable to 1 before entering the loop&#8230;&#8203;).</p>
+<p><code>c-xrefactory</code> makes it possible to parse the analyzed source multiple passes in case
+you compile the project sources with different C defines. In the project configuration
+file you specify `-passN' followed by the settings, typically C PreProcessor defines,
+that are to be applied for this pass over the sources.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_file_processing_orchestration">8.3. File Processing Orchestration</h3>
 <div class="paragraph">
-<p>The file processing architecture differs significantly between Server mode, Xref mode, and LSP mode, with confusing global state and naming inconsistencies that make the code hard to follow.</p>
+<p>The file processing architecture differs significantly between Server mode, Xref mode,
+and LSP mode, with confusing global state and naming inconsistencies that make the code
+hard to follow.</p>
 </div>
 <div class="sect3">
 <h4 id="_file_scheduling_how_files_get_marked_for_processing">8.3.1. File Scheduling - How Files Get Marked for Processing</h4>
@@ -11146,7 +11141,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-12 12:33:03 UTC
+Last updated 2026-01-12 15:32:37 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
