@@ -14,7 +14,11 @@ _C_ & _Yacc_.
 - navigate to definition and all usages of any type of referenceable,
   including variables, types, fields, enums, and also `#include`s and
   Yacc non-terminals and semantic attributes
+
 - search and browse for all symbols
+
+- semantics-aware completion
+
 - rename any type of symbol - variable, field, type, macro, parameter, or Yacc grammar
   non-terminal
 - add, delete or re-order function and macro parameter
@@ -23,6 +27,7 @@ _C_ & _Yacc_.
 - extract function, macro or variable
 - move function to another file adding extern declaration and include of header file
 - detect unused symbols in a file or in the complete project
+
 - _more to come!_
 
 ## LSP progress

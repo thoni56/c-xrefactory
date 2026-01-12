@@ -1,6 +1,6 @@
 == Functional Overview
 
-The _c-xref_ program is actually a mish-mash of a multitude of
+The _c-xref_ program is, or rather was, a mish-mash of a multitude of
 features baked into one program. This is the major cause of the mess
 that it is source-wise.
 
@@ -44,7 +44,7 @@ within the editor
 
 C and Yacc source code is supported.
 
-==== Navigation and Browsing
+==== Navigation
 
 A user can navigate all references of a symbol, limited to the
 semantic scope of that symbol, by "Goto Definition" and then navigate
@@ -54,22 +54,31 @@ symbol is used.
 NOTE: This also applies to non-terminals and semantic attributes in
 Yacc grammars!
 
+==== Browsing
+
 It is also possible to search for definitions or symbols containing a
 string, including possible wildcards. This will present various forms
 of "menues" where filters can be applied and a found symbol be
 inspected.
 
-Together these provides a comprehensive set of features for exploring
-and navigating any code base.
+==== Completion
+
+As `c-xrefactory` have information about symbols and their semantic scope,
+it can also provide semantically informed completions and suggestions.
 
 ==== Automated refactorings
 
-In his book "Refactoring" Martin Fowler describes a large number of
-refactorings, changes to source code that does not change the
-behaviour, but improves it structure and readability. In an article
-from 2001 he actually pronounces `Xref`, the ancestor to
-`c-xrefactory`, to be the first tool to cross "Refactorings Rubicon",
-being able to extract a function semantically correct.
+In his book "Refactoring" Martin Fowler describes a large number of refactorings,
+changes to source code that does not change the behaviour, but improves it structure and
+readability. For each refactoring they describe step by step which edits to make to
+apply the refactoring manually.
+
+The natural next step was of course to attempt to automate this in editors or IDEs,
+which started to happen.
+
+In an article from 2001 Martin pronounces `Xref`, the ancestor to `c-xrefactory`, to be
+the first tool to cross "Refactorings Rubicon", being able to extract a function
+semantically correct.
 
 The term "automated" means that some software can examine the source
 code and quickly and safely modify it using patterns from the list of
