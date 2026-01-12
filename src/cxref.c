@@ -165,7 +165,7 @@ static void setAvailableRefactorings(Symbol *symbol, Usage usage) {
     case TypeDefault:
         makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
 
-        if (symbol->typeModifier->type == TypeFunction || symbol->typeModifier->type == TypeMacro) {
+        if (symbol->typeModifier && (symbol->typeModifier->type == TypeFunction || symbol->typeModifier->type == TypeMacro)) {
             makeRefactoringAvailable(PPC_AVR_ADD_PARAMETER, "");
             makeRefactoringAvailable(PPC_AVR_DEL_PARAMETER, "");
             makeRefactoringAvailable(PPC_AVR_MOVE_PARAMETER, "");

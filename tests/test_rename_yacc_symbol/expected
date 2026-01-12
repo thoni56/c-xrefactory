@@ -1,0 +1,508 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/source.y
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-olcxpush  -olcursor=301 CURDIR/source.y  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=26 col=0 len=<n>>CURDIR/source.y</position-lc>
+</goto>
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/source.y
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-olcxgetrefactorings  -olcursor=362 CURDIR/source.y  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<available-refactorings>
+  <int val=10 len=<n>></int>
+  <int val=300 len=<n>></int>
+</available-refactorings>
+CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=e1 -olcursor=362 CURDIR/source.y
+<goto>
+ <position-off off=300 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>>	e	</precheck>
+<goto>
+ <position-off off=361 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>>
+e:</precheck>
+<goto>
+ <position-off off=367 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=373 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=401 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=407 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=484 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=490 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=567 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=573 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=601 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=607 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=635 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=640 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=669 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=674 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=703 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=709 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=737 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=743 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=771 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=776 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=805 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=810 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=839 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=844 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=873 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=878 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=907 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=913 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=941 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=947 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=975 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=981 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=1009 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=1018 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=1046 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=1053 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=1082 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=1088 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=1094 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=1126 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=1132 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=1160 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=1198 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=1227 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e	</precheck>
+<goto>
+ <position-off off=1256 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<precheck len=<n>> e </precheck>
+<goto>
+ <position-off off=363 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<goto>
+ <position-off off=301 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=363 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=370 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=377 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=406 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=413 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=491 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=498 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=576 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=583 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=612 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=619 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=648 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=654 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=684 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=690 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=720 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=727 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=756 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=763 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=792 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=798 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=828 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=834 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=864 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=870 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=900 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=906 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=936 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=943 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=972 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=979 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1008 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1015 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1044 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1054 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1083 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1091 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1121 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1128 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1135 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1168 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1175 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1204 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1243 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1273 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=1303 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<replacement>
+ <str len=<n>>e</str>  <str len=<n>>e1</str>
+</replacement>
+<goto>
+ <position-off off=363 len=<n>>CURDIR/source.y</position-off>
+</goto>
+<sync>
+-exit
+end-of-options
+

@@ -1,0 +1,11 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/source.y
+<sync>
+-olcxpush  -olcursor=301 CURDIR/source.y  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/source.y
+<sync>
+-olcxgetrefactorings  -olcursor=362 CURDIR/source.y  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=e1 -olcursor=362 CURDIR/source.y
+<exit>
