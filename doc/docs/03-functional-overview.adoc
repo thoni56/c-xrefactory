@@ -30,6 +30,63 @@ each having a clear usage.
 The following sections are aimed at describing various features of
 `c-xrefactory`.
 
+=== Main functionality
+
+A programmer constantly needs to navigate, understand and improve the
+source code in order to lessen the cognitive load for understanding
+and making changes.
+
+`c-xrefactory` provides two sets of functions for this directly from
+within the editor
+
+- navigation, searching and browsing symbols
+- automated refactorings, i.e. non-behaviour changing edits
+
+C and Yacc source code is supported.
+
+==== Navigation and Browsing
+
+A user can navigate all references of a symbol, limited to the
+semantic scope of that symbol, by "Goto Definition" and then navigate
+using "Next/previous Reference". This is a fast way to inspect where a
+symbol is used.
+
+NOTE: This also applies to non-terminals and semantic attributes in
+Yacc grammars!
+
+It is also possible to search for definitions or symbols containing a
+string, including possible wildcards. This will present various forms
+of "menues" where filters can be applied and a found symbol be
+inspected.
+
+Together these provides a comprehensive set of features for exploring
+and navigating any code base.
+
+==== Automated refactorings
+
+In his book "Refactoring" Martin Fowler describes a large number of
+refactorings, changes to source code that does not change the
+behaviour, but improves it structure and readability. In an article
+from 2001 he actually pronounces `Xref`, the ancestor to
+`c-xrefactory`, to be the first tool to cross "Refactorings Rubicon",
+being able to extract a function semantically correct.
+
+The term "automated" means that some software can examine the source
+code and quickly and safely modify it using patterns from the list of
+possible refactorings, without user interaction. Many refactorings in
+the book, and on the website, are applicable mostly for OO-languages,
+but many also apply to C. `c-xrefactory` can perform some of
+them. More are considered for implementation.
+
+- "Rename Symbol" - change the name of a variable, type, function only for the semantic scope of the symbol
+- "Extract Macro/Function" - a region of the code can be extracted to a new function or macro
+- "Organize Includes" - clean up a list of #include directives by particioning and sorting them
+- "Rename Included File" - rename the file in the #include directive and update all other #include directives of that file
+- "Move Function To Other File" - move a function to another file, automatically add an extern declaration in an appropriate header file and ensure that is included in the file where the function originally was
+
+Using these automated refactorings it is much easier and safer to
+continuously maintain and improve the quality of any code base.
+
 === Options, option files and configuration
 
 The current version of C-xrefactory allows only two possible sets of

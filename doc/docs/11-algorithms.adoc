@@ -42,6 +42,16 @@ required.
 rename operation that renames the default named
 function/macro/variable.
 
+===== Two-Phase Architecture
+
+Extraction operates in two phases:
+
+1. **Collection Phase (during parsing)**: Parser semantic hooks track control flow by registering synthetic labels and collecting references within the marked region.
+
+2. **Analysis Phase (after parsing)**: The extraction module analyzes the collected control flow data, classifies variables by usage patterns, and generates the refactored code (call site, function definition, postamble).
+
+This separation keeps the parser clean and makes extraction logic independently testable.
+
 === How does lexem stream management work?
 
 Lexical analysis uses a stack of `LexemStream` structures to handle nested macro expansions. The key insight is that the stream type acts as a **discriminator** for buffer ownership and cleanup strategy.

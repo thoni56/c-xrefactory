@@ -34,6 +34,10 @@ The `yylex` module has the standard interface required by any
 
 === Refactory
 
+=== Extract
+
+Analyzes control flow for extract-function/macro/variable refactoring. Operates in two phases: collection during parsing (registers synthetic labels, gathers references) and analysis after parsing (classifies variables, generates output).
+
 === Cxref
 
 === Main

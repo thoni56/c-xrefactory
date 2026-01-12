@@ -9,25 +9,21 @@
 `c-xrefactory` is a free Emacs refactoring tool and code browser for
 _C_ & _Yacc_.
 
-> [!CAUTION]
-> `c-xrefactory` is under constant radical refactorings and restructuring, and
-> might be missing some tests, so occasional hiccups are possible. I use it almost
-> everyday and the stable version, which you get if you install as per below, has passed
-> all tests. But YMMV.
-
 ## Features
 
-- navigate to definition and all usages of any type of referenceable, including `#include`
+- navigate to definition and all usages of any type of referenceable,
+  including variables, types, fields, enums, and also `#include`s and
+  Yacc non-terminals and semantic attributes
 - search and browse for all symbols
 - rename any type of symbol - variable, field, type, macro, parameter, or Yacc grammar
-  rule
+  non-terminal
 - add, delete or re-order function and macro parameter
 - rename included file
 - organize includes
 - extract function, macro or variable
 - move function to another file adding extern declaration and include of header file
 - detect unused symbols in a file or in the complete project
-- more to come!
+- _more to come!_
 
 ## LSP progress
 
@@ -132,6 +128,12 @@ outside the current document and local variables are not yet handled
 due to architectural differences in how the LSP mode indexes symbols
 compared to the legacy Emacs client.
 
+> [!CAUTION]
+> `c-xrefactory` is still under constant radical refactorings and restructuring, and
+> might be missing some tests, so occasional hiccups are possible. I use it almost
+> everyday and the stable version, which you get if you install as per below, has passed
+> all tests. But YMMV.
+
 ### Java notes
 
 > [!IMPORTANT]
@@ -189,12 +191,12 @@ documents and the wiki has been removed.
 
 ## The Story
 
-Once apon a time there was [www.xref.sk], a site promoting possibly the
-worlds first refactoring browser to cross the ["Refactoring's Rubicon"].
-That site seems to be going up and (mostly) down and there has been no
-support for many years, but it seems that [www.xrefactory.com] is now a
-better and more stable URL to the original Xrefactory, where it is
-still available.
+Once apon a time there was [www.xref.sk], a site promoting possibly
+the worlds first refactoring browser to cross the ["Refactoring's
+Rubicon"] according to Martin Fowler in 2001.  That site seems to be
+going up and (mostly) down and there has been no support for many
+years, but it seems that [www.xrefactory.com] is now a better and more
+stable URL to the original Xrefactory, where it is still available.
 
 At that time it had a free Java and C version, and also a paid C++
 version. Development seems to have been headed by a [Marián Vittek].
