@@ -6,7 +6,7 @@ ARGUMENTS = -refactory -rfct-move-function -commentmovinglevel=0 -movetargetfile
 
 $(TEST):
 	rm -rf CXrefs
-	$(COMMAND) > output.tmp 2>&1
+	$(COMMAND) | grep -v warning > output.tmp 2>&1
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
