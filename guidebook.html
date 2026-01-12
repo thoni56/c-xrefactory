@@ -456,8 +456,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_context">2. Context</a></li>
 <li><a href="#_functional_overview">3. Functional Overview</a>
 <ul class="sectlevel2">
-<li><a href="#_options_option_files_and_configuration">3.1. Options, option files and configuration</a></li>
-<li><a href="#_lsp">3.2. LSP</a></li>
+<li><a href="#_main_functionality">3.1. Main functionality</a></li>
+<li><a href="#_options_option_files_and_configuration">3.2. Options, option files and configuration</a></li>
+<li><a href="#_lsp">3.3. LSP</a></li>
 </ul>
 </li>
 <li><a href="#_quality_attributes">4. Quality Attributes</a></li>
@@ -498,12 +499,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_xref">9.3. Xref</a></li>
 <li><a href="#_server">9.4. Server</a></li>
 <li><a href="#_refactory">9.5. Refactory</a></li>
-<li><a href="#_cxref">9.6. Cxref</a></li>
-<li><a href="#_main">9.7. Main</a></li>
-<li><a href="#_memory">9.8. Memory</a></li>
-<li><a href="#_cxfile_2">9.9. Cxfile</a></li>
-<li><a href="#_c_xref_el">9.10. c-xref.el</a></li>
-<li><a href="#_c_xrefactory_el">9.11. c-xrefactory.el</a></li>
+<li><a href="#_extract">9.6. Extract</a></li>
+<li><a href="#_cxref">9.7. Cxref</a></li>
+<li><a href="#_main">9.8. Main</a></li>
+<li><a href="#_memory">9.9. Memory</a></li>
+<li><a href="#_cxfile_2">9.10. Cxfile</a></li>
+<li><a href="#_c_xref_el">9.11. c-xref.el</a></li>
+<li><a href="#_c_xrefactory_el">9.12. c-xrefactory.el</a></li>
 </ul>
 </li>
 <li><a href="#_data_structures">10. Data Structures</a>
@@ -854,7 +856,106 @@ each having a clear usage.</p>
 <code>c-xrefactory</code>.</p>
 </div>
 <div class="sect2">
-<h3 id="_options_option_files_and_configuration">3.1. Options, option files and configuration</h3>
+<h3 id="_main_functionality">3.1. Main functionality</h3>
+<div class="paragraph">
+<p>A programmer constantly needs to navigate, understand and improve the
+source code in order to lessen the cognitive load for understanding
+and making changes.</p>
+</div>
+<div class="paragraph">
+<p><code>c-xrefactory</code> provides two sets of functions for this directly from
+within the editor</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>navigation, searching and browsing symbols</p>
+</li>
+<li>
+<p>automated refactorings, i.e. non-behaviour changing edits</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>C and Yacc source code is supported.</p>
+</div>
+<div class="sect3">
+<h4 id="_navigation_and_browsing">3.1.1. Navigation and Browsing</h4>
+<div class="paragraph">
+<p>A user can navigate all references of a symbol, limited to the
+semantic scope of that symbol, by "Goto Definition" and then navigate
+using "Next/previous Reference". This is a fast way to inspect where a
+symbol is used.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This also applies to non-terminals and semantic attributes in
+Yacc grammars!
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>It is also possible to search for definitions or symbols containing a
+string, including possible wildcards. This will present various forms
+of "menues" where filters can be applied and a found symbol be
+inspected.</p>
+</div>
+<div class="paragraph">
+<p>Together these provides a comprehensive set of features for exploring
+and navigating any code base.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_automated_refactorings">3.1.2. Automated refactorings</h4>
+<div class="paragraph">
+<p>In his book "Refactoring" Martin Fowler describes a large number of
+refactorings, changes to source code that does not change the
+behaviour, but improves it structure and readability. In an article
+from 2001 he actually pronounces <code>Xref</code>, the ancestor to
+<code>c-xrefactory</code>, to be the first tool to cross "Refactorings Rubicon",
+being able to extract a function semantically correct.</p>
+</div>
+<div class="paragraph">
+<p>The term "automated" means that some software can examine the source
+code and quickly and safely modify it using patterns from the list of
+possible refactorings, without user interaction. Many refactorings in
+the book, and on the website, are applicable mostly for OO-languages,
+but many also apply to C. <code>c-xrefactory</code> can perform some of
+them. More are considered for implementation.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>"Rename Symbol" - change the name of a variable, type, function only for the semantic scope of the symbol</p>
+</li>
+<li>
+<p>"Extract Macro/Function" - a region of the code can be extracted to a new function or macro</p>
+</li>
+<li>
+<p>"Organize Includes" - clean up a list of #include directives by particioning and sorting them</p>
+</li>
+<li>
+<p>"Rename Included File" - rename the file in the #include directive and update all other #include directives of that file</p>
+</li>
+<li>
+<p>"Move Function To Other File" - move a function to another file, automatically add an extern declaration in an appropriate header file and ensure that is included in the file where the function originally was</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Using these automated refactorings it is much easier and safer to
+continuously maintain and improve the quality of any code base.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options_option_files_and_configuration">3.2. Options, option files and configuration</h3>
 <div class="paragraph">
 <p>The current version of C-xrefactory allows only two possible sets of
 configuration/options.</p>
@@ -887,7 +988,7 @@ will be stuck with that in the whole session and for all projects.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_lsp">3.2. LSP</h3>
+<h3 id="_lsp">3.3. LSP</h3>
 <div class="paragraph">
 <p>The LSP protocol is a common protocol for language servers such as
 <code>clangd</code> and <code>c-xrefactory</code>. It allows an editor (client) to interface
@@ -903,7 +1004,7 @@ allow use of <code>c-xrefactory</code> from not only Emacs but also Visual Studi
 Code or any other editor that supports the LSP protocol.</p>
 </div>
 <div class="sect3">
-<h4 id="_lsp_protocol_limitations">3.2.1. LSP Protocol Limitations</h4>
+<h4 id="_lsp_protocol_limitations">3.3.1. LSP Protocol Limitations</h4>
 <div class="paragraph">
 <p>The LSP protocol was designed for single-shot, non-interactive operations.
 This creates constraints for c-xrefactory&#8217;s advanced refactorings:</p>
@@ -3317,17 +3418,23 @@ defines made as command line options (<code>-D</code>)</p>
 
 </div>
 <div class="sect2">
-<h3 id="_cxref">9.6. Cxref</h3>
+<h3 id="_extract">9.6. Extract</h3>
+<div class="paragraph">
+<p>Analyzes control flow for extract-function/macro/variable refactoring. Operates in two phases: collection during parsing (registers synthetic labels, gathers references) and analysis after parsing (classifies variables, generates output).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cxref">9.7. Cxref</h3>
 
 </div>
 <div class="sect2">
-<h3 id="_main">9.7. Main</h3>
+<h3 id="_main">9.8. Main</h3>
 
 </div>
 <div class="sect2">
-<h3 id="_memory">9.8. Memory</h3>
+<h3 id="_memory">9.9. Memory</h3>
 <div class="sect3">
-<h4 id="_responsibilities_2">9.8.1. Responsibilities</h4>
+<h4 id="_responsibilities_2">9.9.1. Responsibilities</h4>
 <div class="paragraph">
 <p>The Memory module provides arena-based allocation for performance-critical and request-scoped operations:</p>
 </div>
@@ -3349,7 +3456,7 @@ defines made as command line options (<code>-D</code>)</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_rationale">9.8.2. Design Rationale</h4>
+<h4 id="_design_rationale">9.9.2. Design Rationale</h4>
 <div class="sect4">
 <h5 id="_historical_context">Historical Context</h5>
 <div class="paragraph">
@@ -3399,7 +3506,7 @@ defines made as command line options (<code>-D</code>)</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_arena_types_and_lifetimes">9.8.3. Arena Types and Lifetimes</h4>
+<h4 id="_arena_types_and_lifetimes">9.9.3. Arena Types and Lifetimes</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3448,7 +3555,7 @@ defines made as command line options (<code>-D</code>)</p>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_key_design_patterns">9.8.4. Key Design Patterns</h4>
+<h4 id="_key_design_patterns">9.9.4. Key Design Patterns</h4>
 <div class="sect4">
 <h5 id="_marker_based_cleanup">Marker-Based Cleanup</h5>
 <div class="paragraph">
@@ -3516,7 +3623,7 @@ memoryInit(&amp;cxMemory, "cxMemory", cxMemoryOverflowHandler, initialSize);</co
 </div>
 </div>
 <div class="sect3">
-<h4 id="_interface_2">9.8.5. Interface</h4>
+<h4 id="_interface_2">9.9.5. Interface</h4>
 <div class="paragraph">
 <p>Key functions (see <code>memory.h</code>):</p>
 </div>
@@ -3543,7 +3650,7 @@ bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_common_pitfalls">9.8.6. Common Pitfalls</h4>
+<h4 id="_common_pitfalls">9.9.6. Common Pitfalls</h4>
 <div class="paragraph">
 <p>See the "Arena Allocator Lifetime Violations" section in the Development Environment chapter for:</p>
 </div>
@@ -3562,7 +3669,7 @@ bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_future_directions">9.8.7. Future Directions</h4>
+<h4 id="_future_directions">9.9.7. Future Directions</h4>
 <div class="paragraph">
 <p>Modern systems have abundant virtual memory. Possible improvements:</p>
 </div>
@@ -3588,15 +3695,15 @@ bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_cxfile_2">9.9. Cxfile</h3>
+<h3 id="_cxfile_2">9.10. Cxfile</h3>
 <div class="sect3">
-<h4 id="_responsibilities_3">9.9.1. Responsibilities</h4>
+<h4 id="_responsibilities_3">9.10.1. Responsibilities</h4>
 <div class="paragraph">
 <p>Read and write the CXref database in "plain" text format.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_file_format">9.9.2. File format</h4>
+<h4 id="_file_format">9.10.2. File format</h4>
 <div class="paragraph">
 <p>The current file format for the cross-reference data consists of records with the general format</p>
 </div>
@@ -3635,11 +3742,11 @@ value. The ':' indicates that the record is a filename.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_c_xref_el">9.10. c-xref.el</h3>
+<h3 id="_c_xref_el">9.11. c-xref.el</h3>
 
 </div>
 <div class="sect2">
-<h3 id="_c_xrefactory_el">9.11. c-xrefactory.el</h3>
+<h3 id="_c_xrefactory_el">9.12. c-xrefactory.el</h3>
 
 </div>
 </div>
@@ -4475,6 +4582,25 @@ rename operation that renames the default named
 function/macro/variable.</p>
 </li>
 </ol>
+</div>
+<div class="sect4">
+<h5 id="_two_phase_architecture">Two-Phase Architecture</h5>
+<div class="paragraph">
+<p>Extraction operates in two phases:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Collection Phase (during parsing)</strong>: Parser semantic hooks track control flow by registering synthetic labels and collecting references within the marked region.</p>
+</li>
+<li>
+<p><strong>Analysis Phase (after parsing)</strong>: The extraction module analyzes the collected control flow data, classifies variables by usage patterns, and generates the refactored code (call site, function definition, postamble).</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This separation keeps the parser clean and makes extraction logic independently testable.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -11020,7 +11146,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-12 08:56:15 UTC
+Last updated 2026-01-12 12:33:03 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
