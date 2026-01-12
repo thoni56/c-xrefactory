@@ -31,20 +31,16 @@ mean that we need to:
 
 === Passes
 
-There is a variable in `main()` called `firstPassing` which is set and passed
-down through `mainEditServer()` until it is reset in
-`mainFileProcessingInitialisations()`.
-
-This is probably related to the fact that `c-xref` allows for passing
-over the analyzed source multiple passes in case you compile the
-project sources with different C defines. Variables in the `c-xref`
-sources indicate this, e.g the loops in `mainEditServerProcessFile()`
-and `mainXrefProcessInputFile()` (which are both strangely limited by
-setting the maxPass variable to 1 before entering the loop...).
+`c-xrefactory` makes it possible to parse the analyzed source multiple passes in case
+you compile the project sources with different C defines. In the project configuration
+file you specify `-passN' followed by the settings, typically C PreProcessor defines,
+that are to be applied for this pass over the sources.
 
 === File Processing Orchestration
 
-The file processing architecture differs significantly between Server mode, Xref mode, and LSP mode, with confusing global state and naming inconsistencies that make the code hard to follow.
+The file processing architecture differs significantly between Server mode, Xref mode,
+and LSP mode, with confusing global state and naming inconsistencies that make the code
+hard to follow.
 
 ==== File Scheduling - How Files Get Marked for Processing
 
