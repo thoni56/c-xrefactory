@@ -6,6 +6,6 @@ CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -xrefrc C
 <sync>
 -olcxnext  -olcursor=5 CURDIR/source.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR -preload CURDIR/source.c CURDIR/source.preload
 <sync>
--olcxnext  -olcursor=68 CURDIR/source.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxnext  -olcursor=68 CURDIR/source.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR -preload CURDIR/source.c CURDIR/source.preload
 <sync>
 <exit>
