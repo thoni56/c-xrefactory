@@ -1176,17 +1176,15 @@ type_name
 
 abstract_declarator
     : pointer                               {
-        int i;
         $$.data = newPointerTypeModifier(NULL);
-        for(i=1; i<$1.data; i++) appendComposedType(&($$.data), TypePointer);
+        for (int i=1; i<$1.data; i++) appendComposedType(&($$.data), TypePointer);
     }
     | abstract_declarator2                  {
         $$.data = $1.data;
     }
     | pointer abstract_declarator2          {
-        int i;
         $$.data = $2.data;
-        for(i=0; i<$1.data; i++) appendComposedType(&($$.data), TypePointer);
+        for (int i=0; i<$1.data; i++) appendComposedType(&($$.data), TypePointer);
     }
     ;
 
