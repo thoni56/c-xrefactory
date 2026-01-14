@@ -73,7 +73,7 @@ ifeq ($(OS),Darwin)
 		INCLUDES += -I/opt/homebrew/include
 	else
 		LIBS += -L/usr/local/lib
-		INCLUDES += -I/opt/local/include
+		INCLUDES += -I/usr/local/include
 	endif
 endif
 
@@ -88,7 +88,6 @@ ifeq ($(OS),Darwin)
 else
 	EXT=so
 endif
-
 ifeq ($(findstring CYGWIN,$(OS)),CYGWIN)
 	EXT=dll
 endif
@@ -605,6 +604,10 @@ $(YACC): $(ROOTDIR)/byacc-1.9/*.[ch]
 UNITTESTS = $(patsubst %.c,%.$(UNITTEST_EXT),$(wildcard *_tests.c))
 
 OS := $(shell uname)
+ifeq ($(findstring CYGWIN,$(OS)),CYGWIN)
+    OS := Cygwin
+	UNITTEST_EXT=dll
+endif
 ifeq ($(OS),Darwin)
 	UNITTEST_EXT=dylib
 else
