@@ -1,6 +1,5 @@
 #include "lsp_handler.h"
 
-#include <cjson/cJSON.h>
 #include <stdlib.h>
 #include <string.h>
 

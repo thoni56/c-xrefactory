@@ -1,7 +1,6 @@
 #include "json_utils.h"
 
 #include <string.h>
-#include <cjson/cJSON.h>
 
 
 /* ====================== LSP =================================== */

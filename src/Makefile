@@ -64,7 +64,10 @@
 #
 #########################################################################
 
-OS := $(shell uname)
+OS := $(strip $(shell uname))
+ifneq ($(findstring CYGWIN,$(OS)),)
+    OS := Cygwin
+endif
 
 # Where might libraries be?
 ifeq ($(OS),Darwin)
@@ -77,24 +80,23 @@ ifeq ($(OS),Darwin)
 	endif
 endif
 
-ifeq ($(findstring CYGWIN,$(OS)),CYGWIN)
+ifeq ($(OS),Cygwin)
 	LIBS += -L/usr/local/lib
 endif
 
 # What are they called?
-OS := $(shell uname)
 ifeq ($(OS),Darwin)
 	EXT=dylib
 else
 	EXT=so
 endif
-ifeq ($(findstring CYGWIN,$(OS)),CYGWIN)
+ifeq ($(OS),Cygwin)
 	EXT=dll
 endif
 
 
 # Extra libraries to link
-LIBS += -lz -lcjson
+LIBS += -lz 
 
 
 # Figure out reasonable number of parallel jobs
@@ -138,12 +140,24 @@ CFLAGS = -g $(OPTIMIZATION) $(INCLUDES) -fPIC -MMD -funsigned-char $(WARNINGS) $
 
 LDFLAGS = $(COVERAGE)
 
-ROOTDIR=..
+ROOT_DIR=..
+
+##
+## Third party packages:
+## - byacc
+## - cJSON
+##
 
 # We need our own yacc - although it is no longer patched for
 # recursive parsing for Java, the grammars are not adapted to modern
 # byacc and yacc/bison
-YACC=$(ROOTDIR)/byacc-1.9/yacc
+YACC_DIR=$(ROOT_DIR)/byacc-1.9/
+YACC=$(YACC_DIR)/yacc
+
+# cJSON as submodule
+CJSON_DIR=3pp/cJSON
+CFLAGS += -I$(CJSON_DIR)
+
 
 # On Darwin we can use gcc-14 if available
 # CC=gcc-14
@@ -596,16 +610,14 @@ system-tests: c-xref
 #
 # Trigger building our patched yacc if it doesn't exist
 
-$(YACC): $(ROOTDIR)/byacc-1.9/*.[ch]
-	$(MAKE) -C $(ROOTDIR)/byacc-1.9
+$(YACC): $(ROOT_DIR)/byacc-1.9/*.[ch]
+	$(MAKE) -C $(ROOT_DIR)/byacc-1.9
 
 
 # Find all *_tests.c automatically
 UNITTESTS = $(patsubst %.c,%.$(UNITTEST_EXT),$(wildcard *_tests.c))
 
-OS := $(shell uname)
-ifeq ($(findstring CYGWIN,$(OS)),CYGWIN)
-    OS := Cygwin
+ifeq ($(OS),Cygwin)
 	UNITTEST_EXT=dll
 endif
 ifeq ($(OS),Darwin)
@@ -613,6 +625,7 @@ ifeq ($(OS),Darwin)
 else
 	UNITTEST_EXT=so
 endif
+
 
 # If you have a make >3.something (MacOS don't!) you can use vpath to locate Cgreen library
 # as a dependency which will automatically be linked
@@ -638,7 +651,7 @@ ifeq ($(OS),Darwin)
 	endif
 endif
 
-ifeq ($(findstring CYGWIN,$(OS)),CYGWIN)
+ifeq ($(OS),Cygwin)
 	CGREEN_LIB = -L/usr/local/lib -lcgreen
 endif
 
@@ -702,11 +715,11 @@ $(eval $(call UNITTEST,lexemstream, lexem lexembuffer log))
 $(eval $(call UNITTEST,lexembuffer,characterreader position memory stackmemory log))
 $(eval $(call UNITTEST,lexer,log lexembuffer characterreader position memory stackmemory))
 $(eval $(call UNITTEST,list,log))
-$(eval $(call UNITTEST,lsp,log json_utils))
-$(eval $(call UNITTEST,lsp_adapter,log json_utils lsp_utils position stackmemory))
+$(eval $(call UNITTEST,lsp,log json_utils cJSON))
+$(eval $(call UNITTEST,lsp_adapter,log json_utils lsp_utils position stackmemory cJSON))
 $(eval $(call UNITTEST,lsp_utils,log))
-$(eval $(call UNITTEST,lsp_dispatcher,log json_utils))
-$(eval $(call UNITTEST,lsp_handler,log json_utils))
+$(eval $(call UNITTEST,lsp_dispatcher,log json_utils cJSON))
+$(eval $(call UNITTEST,lsp_handler,log json_utils cJSON))
 $(eval $(call UNITTEST,macroargumenttable,memory log hash))
 $(eval $(call UNITTEST,match))
 $(eval $(call UNITTEST,memory))
@@ -748,4 +761,7 @@ else
 	@echo GCOV_TOOL = $(GCOV_TOOL)
 	@echo HAVE_INFO2GCOV = $(HAVE_INFO2GCOV)
 	@echo SYSTEM_TEST_COVERAGE_FILES = $(SYSTEM_TEST_COVERAGE_FILES)
+	@echo LIBS = $(LIBS)
+	@echo CGREEN_LIB = $(CGREEN_LIB)
+	@echo OS = $(OS)
 endif

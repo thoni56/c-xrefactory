@@ -7,7 +7,6 @@
 #include <cgreen/internal/assertions_internal.h>
 #include <cgreen/mocks.h>
 #include <cgreen/unit.h>
-#include <cjson/cJSON.h>
 
 #include "json_utils.h"
 #include "log.h"

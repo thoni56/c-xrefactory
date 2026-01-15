@@ -2,7 +2,8 @@
 #define CJSON_UTILS_H_INCLUDED
 
 #include <stdbool.h>
-#include <cjson/cJSON.h>
+#include "cJSON.h"
+
 
 typedef cJSON JSON;
 

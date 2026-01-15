@@ -2,7 +2,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <cjson/cJSON.h>
 
 #include "json_utils.h"
 #include "log.h"
