@@ -87,6 +87,8 @@ static void noteNewLexemPosition(LexemBuffer *lb, CharacterBuffer *cb) {
     lb->position.file = cb->fileNumber;
     lb->position.line = cb->lineNumber;
     lb->position.col  = columnPosition(cb);
+    log_trace("noteNewLexemPosition: file=%d line=%d col=%d offset=%d",
+              cb->fileNumber, cb->lineNumber, columnPosition(cb), fileOffsetFor(cb));
 }
 
 static LexemCode preprocessorLexemFromString(const char *preprocessorWord) {
@@ -341,6 +343,7 @@ static int handleNewline(CharacterBuffer *cb, LexemBuffer *lb, int lexemStarting
         FATAL_ERROR(ERR_ST, "position over MAX_REFERENCABLE_LINE, read TROUBLES in README file",
                     XREF_EXIT_ERR);
     }
+    log_trace("handleNewline: line %d -> %d (file %d)", cb->lineNumber, cb->lineNumber + 1, cb->fileNumber);
     cb->lineNumber++;
     cb->lineBegin    = cb->nextUnread;
     cb->columnOffset = 0;

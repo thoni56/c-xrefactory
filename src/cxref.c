@@ -261,6 +261,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
     if (position.file == NO_FILE_NUMBER)
         return NULL;
 
+    ENTER();
     assert(position.file<MAX_FILES);
 
     FileItem *fileItem = getFileItemWithFileNumber(position.file);
@@ -276,13 +277,17 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
     switch (options.mode) {
     case ServerMode:
         if (options.serverOperation == OLO_EXTRACT) {
-            if (currentFileNumber != currentFile.characterBuffer.fileNumber)
+            if (currentFileNumber != currentFile.characterBuffer.fileNumber) {
+                LEAVE();
                 return NULL;
+            }
         } else {
             if (visibility==VisibilityGlobal && symbol->type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
-                if (parsingConfig.fileNumber != position.file && options.noIncludeRefs)
+                if (parsingConfig.fileNumber != position.file && options.noIncludeRefs) {
+                    LEAVE();
                     return NULL;
+                }
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
                 //&fprintf(dumpOut,"%s comm %d\n", fileItem->name, fileItem->isArgument);
@@ -290,10 +295,14 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
         }
         break;
     case XrefMode:
-        if (visibility == VisibilityLocal)
+        if (visibility == VisibilityLocal) {
+            LEAVE();
             return NULL; /* dont cxref local symbols */
-        if (!fileItem->cxLoading)
+        }
+        if (!fileItem->cxLoading) {
+            LEAVE();
             return NULL;
+        }
         break;
     default:
         assert(0);              /* Should not happen */
@@ -307,6 +316,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
         if (options.searchKind==SEARCH_FULL) {
             Reference reference = makeReference(position, UsageNone, NULL);
             searchSymbolCheckReference(&referenceableItem, &reference);
+            LEAVE();
             return NULL;
         }
     }
@@ -380,6 +390,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
     assert(place);
     log_debug("returning %x == %s %s:%d", *place, usageKindEnumName[(*place)->usage],
               getFileItemWithFileNumber((*place)->position.file)->name, (*place)->position.line);
+    LEAVE();
     return *place;
 }
 
@@ -910,18 +921,86 @@ static void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference
     }
 }
 
+static bool isReferenceFileStale(Reference *ref) {
+    if (ref == NULL)
+        return false;
+
+    int fileNum = ref->position.file;
+    char *fileName = getFileItemWithFileNumber(fileNum)->name;
+    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileName);
+
+    return (buffer != NULL && buffer->preLoadedFromFile != NULL);
+}
+
 static void gotoNextReference(void) {
-    SessionStackEntry    *refs;
-    Reference         *r;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL_YES))
+    SessionStackEntry *sessionEntry;
+    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
         return;
-    if (refs->current == NULL)
-        refs->current = refs->references;
-    else {
-        r = refs->current->next;
-        setCurrentReferenceToFirstVisible(refs, r);
+
+    // Determine next reference we would navigate to
+    Reference *next = (sessionEntry->current == NULL)
+        ? sessionEntry->references
+        : sessionEntry->current->next;
+
+    if (isReferenceFileStale(next)) {
+        int fileNum = next->position.file;
+        char *fileName = getFileItemWithFileNumber(fileNum)->name;
+
+        log_debug("Refreshing stale references for file %d: %s", fileNum, fileName);
+
+        // Save current position for restoration
+        Position savedPos = sessionEntry->current
+            ? sessionEntry->current->position
+            : makePosition(NO_FILE_NUMBER, 0, 0);
+
+        // Update database: remove old, parse fresh
+        removeReferenceableItemsForFile(fileNum);
+
+        parseToCreateReferences(fileName);
+
+        // Update menu items to have fresh reference pointers from database.
+        // After removeReferenceableItemsForFile() + parseToCreateReferences(),
+        // menu->referenceable.references points to freed/stale memory.
+        for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
+            // Look up fresh item from database (exact match including includeFileNumber)
+            int index;
+            ReferenceableItem *freshItem;
+            if (isMemberInReferenceableItemTable(&menu->referenceable, &index, &freshItem)) {
+                // Free old malloc'd copies and create new ones from fresh database refs
+                freeReferences(menu->referenceable.references);
+                menu->referenceable.references = NULL;
+                addReferencesFromFileToList(freshItem->references, ANY_FILE, &menu->referenceable.references);
+            }
+            // If not found, item might have been removed or menu is for a different file (leave as-is)
+        }
+
+        // Rebuild session's reference list from updated database
+        recomputeSelectedReferenceable(sessionEntry);
+        // Log after recomputeSelectedReferenceable(refs):
+        log_debug("After rebuild, session references:");
+        for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
+            log_debug("  Session ref at %s:%d:%d",
+                      getFileItemWithFileNumber(r->position.file)->name,
+                      r->position.line, r->position.col);
+        }
+
+        // Restore position: find first reference after saved position
+        sessionEntry->current = sessionEntry->references;
+        while (sessionEntry->current != NULL) {
+            if (positionIsLessThan(savedPos, sessionEntry->current->position)) {
+                break;  // Found first reference after where we were
+            }
+            sessionEntry->current = sessionEntry->current->next;
+        }
+    } else {
+        if (sessionEntry->current == NULL)
+            sessionEntry->current = sessionEntry->references;
+        else {
+            next = sessionEntry->current->next;
+            setCurrentReferenceToFirstVisible(sessionEntry, next);
+        }
     }
-    olcxGenGotoActReference(refs);
+    olcxGenGotoActReference(sessionEntry);
 }
 
 static void gotoPreviousReference(void) {
