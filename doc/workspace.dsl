@@ -19,7 +19,7 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 
 			editor -> cxrefactory_el "extends functionality using" plugin
 
-			cxrefCore = container cxrefCore "C Language program" "Refactoring Browser core" {
+			cxrefProgram = container cxrefProgram "C Language program" "Refactoring Browser core" {
 				main = Component main "Main program" C
 				xref = Component xref "Cross-referencer" C
 				server = Component server "Editor Server" C
@@ -80,10 +80,10 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 			cxfile -> fileMetadata "tracks file changes for" "incremental updates"
 
 			editorExtension -> settingsStore "writes" "new project wizard"
-			cxrefCore -> settingsStore "read"
-			editorExtension -> cxrefCore "API" "requests information and gets commands to modify source code"
-			cxrefCore -> referencesDb "read/write"
-			cxrefCore -> source "read/analyze"
+			cxrefProgram -> settingsStore "read"
+			editorExtension -> cxrefProgram "API" "requests information and gets commands to modify source code"
+			cxrefProgram -> referencesDb "read/write"
+			cxrefProgram -> source "read/analyze"
 		}
 
 		developer -> editor "usual editor/IDE operations"
@@ -113,7 +113,7 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 	    autolayout lr
 		}
 
-		component cxrefCore CxrefCore {
+		component cxrefProgram CxrefCore {
 	    include *
 	    autolayout lr
 		}
