@@ -932,6 +932,33 @@ static bool isReferenceFileStale(Reference *ref) {
     return (buffer != NULL && buffer->preLoadedFromFile != NULL);
 }
 
+static void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber) {
+    // Update database: remove old, parse fresh
+    removeReferenceableItemsForFile(fileNumber);
+
+    parseToCreateReferences(getFileItemWithFileNumber(fileNumber)->name);
+
+    // Update menu items to have fresh reference pointers from database.
+    // After removeReferenceableItemsForFile() + parseToCreateReferences(),
+    // menu->referenceable.references points to freed/stale memory.
+    for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
+        // Look up fresh item from database (exact match including includeFileNumber)
+        int index;
+        ReferenceableItem *freshItem;
+        if (isMemberInReferenceableItemTable(&menu->referenceable, &index, &freshItem)) {
+            // Free old malloc'd copies and create new ones from fresh database refs
+            freeReferences(menu->referenceable.references);
+            menu->referenceable.references = NULL;
+            addReferencesFromFileToList(freshItem->references, ANY_FILE,
+                                        &menu->referenceable.references);
+        }
+        // If not found, item might have been removed or menu is for a different file (leave as-is)
+    }
+
+    // Rebuild session's reference list from updated database
+    recomputeSelectedReferenceable(sessionEntry);
+}
+
 static void gotoNextReference(void) {
     SessionStackEntry *sessionEntry;
     if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
@@ -953,29 +980,8 @@ static void gotoNextReference(void) {
             ? sessionEntry->current->position
             : makePosition(NO_FILE_NUMBER, 0, 0);
 
-        // Update database: remove old, parse fresh
-        removeReferenceableItemsForFile(fileNum);
+        refreshStaleReferencesInSession(sessionEntry, fileNum);
 
-        parseToCreateReferences(fileName);
-
-        // Update menu items to have fresh reference pointers from database.
-        // After removeReferenceableItemsForFile() + parseToCreateReferences(),
-        // menu->referenceable.references points to freed/stale memory.
-        for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
-            // Look up fresh item from database (exact match including includeFileNumber)
-            int index;
-            ReferenceableItem *freshItem;
-            if (isMemberInReferenceableItemTable(&menu->referenceable, &index, &freshItem)) {
-                // Free old malloc'd copies and create new ones from fresh database refs
-                freeReferences(menu->referenceable.references);
-                menu->referenceable.references = NULL;
-                addReferencesFromFileToList(freshItem->references, ANY_FILE, &menu->referenceable.references);
-            }
-            // If not found, item might have been removed or menu is for a different file (leave as-is)
-        }
-
-        // Rebuild session's reference list from updated database
-        recomputeSelectedReferenceable(sessionEntry);
         // Log after recomputeSelectedReferenceable(refs):
         log_debug("After rebuild, session references:");
         for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
