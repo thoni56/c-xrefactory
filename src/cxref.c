@@ -926,17 +926,33 @@ static bool isReferenceFileStale(Reference *ref) {
         return false;
 
     int fileNum = ref->position.file;
-    char *fileName = getFileItemWithFileNumber(fileNum)->name;
-    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileName);
+    FileItem *fileItem = getFileItemWithFileNumber(fileNum);
+    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
 
-    return (buffer != NULL && buffer->preLoadedFromFile != NULL);
+    // No buffer = not stale (using disk file)
+    if (buffer == NULL)
+        return false;
+
+    // Buffer exists but no preload = not stale (unchanged from disk)
+    if (buffer->preLoadedFromFile == NULL)
+        return false;
+
+    // Stale if buffer was modified after last parse
+    return buffer->modificationTime > fileItem->lastParsedMtime;
 }
 
 static void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber) {
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+
     // Update database: remove old, parse fresh
     removeReferenceableItemsForFile(fileNumber);
+    parseToCreateReferences(fileItem->name);
 
-    parseToCreateReferences(getFileItemWithFileNumber(fileNumber)->name);
+    // Mark file as freshly parsed so we don't re-refresh in this request
+    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
+    if (buffer != NULL) {
+        fileItem->lastParsedMtime = buffer->modificationTime;
+    }
 
     // Update menu items to have fresh reference pointers from database.
     // After removeReferenceableItemsForFile() + parseToCreateReferences(),
