@@ -921,26 +921,6 @@ static void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference
     }
 }
 
-static bool isReferenceFileStale(Reference *ref) {
-    if (ref == NULL)
-        return false;
-
-    int fileNum = ref->position.file;
-    FileItem *fileItem = getFileItemWithFileNumber(fileNum);
-    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
-
-    // No buffer = not stale (using disk file)
-    if (buffer == NULL)
-        return false;
-
-    // Buffer exists but no preload = not stale (unchanged from disk)
-    if (buffer->preLoadedFromFile == NULL)
-        return false;
-
-    // Stale if buffer was modified after last parse
-    return buffer->modificationTime > fileItem->lastParsedMtime;
-}
-
 static void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
 
@@ -975,53 +955,73 @@ static void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int
     recomputeSelectedReferenceable(sessionEntry);
 }
 
+static bool isFileNumberStale(int fileNumber) {
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
+
+    // No preload = not stale
+    if (buffer == NULL || buffer->preLoadedFromFile == NULL)
+        return false;
+
+    // Already refreshed? (lastParsedMtime updated to buffer's mtime after refresh)
+    if (fileItem->lastParsedMtime >= buffer->modificationTime)
+        return false;
+
+    return true;
+}
+
+static bool refreshFileIfStale(SessionStackEntry *sessionEntry, Reference *ref) {
+    if (ref == NULL)
+        return false;
+
+    int fileNumber = ref->position.file;
+    if (!isFileNumberStale(fileNumber))
+        return false;
+
+    log_debug("Refreshing stale file %d: %s", fileNumber,
+              getFileItemWithFileNumber(fileNumber)->name);
+    refreshStaleReferencesInSession(sessionEntry, fileNumber);
+    return true;
+}
+
+static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos) {
+    // After a refresh for "next", find the first reference AFTER savedPos
+    sessionEntry->current = sessionEntry->references;
+    while (sessionEntry->current != NULL) {
+        if (positionIsLessThan(savedPos, sessionEntry->current->position))
+            break;  // Found first reference after where we were
+        sessionEntry->current = sessionEntry->current->next;
+    }
+}
+
 static void gotoNextReference(void) {
     SessionStackEntry *sessionEntry;
     if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
         return;
 
-    // Determine next reference we would navigate to
+    // Determine the next reference we would navigate to
     Reference *next = (sessionEntry->current == NULL)
         ? sessionEntry->references
         : sessionEntry->current->next;
 
-    if (isReferenceFileStale(next)) {
-        int fileNum = next->position.file;
-        char *fileName = getFileItemWithFileNumber(fileNum)->name;
-
-        log_debug("Refreshing stale references for file %d: %s", fileNum, fileName);
-
+    // If that file is stale, refresh before navigating
+    if (refreshFileIfStale(sessionEntry, next)) {
         // Save current position for restoration
         Position savedPos = sessionEntry->current
             ? sessionEntry->current->position
             : makePosition(NO_FILE_NUMBER, 0, 0);
 
-        refreshStaleReferencesInSession(sessionEntry, fileNum);
-
-        // Log after recomputeSelectedReferenceable(refs):
-        log_debug("After rebuild, session references:");
-        for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
-            log_debug("  Session ref at %s:%d:%d",
-                      getFileItemWithFileNumber(r->position.file)->name,
-                      r->position.line, r->position.col);
-        }
-
-        // Restore position: find first reference after saved position
-        sessionEntry->current = sessionEntry->references;
-        while (sessionEntry->current != NULL) {
-            if (positionIsLessThan(savedPos, sessionEntry->current->position)) {
-                break;  // Found first reference after where we were
-            }
-            sessionEntry->current = sessionEntry->current->next;
-        }
+        // After refresh, go to first reference after saved position
+        restoreToNextReferenceAfterRefresh(sessionEntry, savedPos);
     } else {
+        // Normal navigation - advance to next reference
         if (sessionEntry->current == NULL)
             sessionEntry->current = sessionEntry->references;
         else {
-            next = sessionEntry->current->next;
             setCurrentReferenceToFirstVisible(sessionEntry, next);
         }
     }
+
     olcxGenGotoActReference(sessionEntry);
 }
 
