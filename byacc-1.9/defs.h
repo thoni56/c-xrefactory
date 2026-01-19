@@ -273,9 +273,9 @@ extern short final_state;
 
 /* global functions */
 
-extern char *allocate(unsigned n);
-extern bucket *lookup(char *name);
-extern bucket *make_bucket(char *name);
+extern char *allocate();
+extern bucket *lookup();
+extern bucket *make_bucket();
 
 
 /* system variables */
