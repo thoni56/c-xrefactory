@@ -69,8 +69,8 @@ char *rassoc;
 short **derives;
 char *nullable;
 
-extern char *mktemp();
-extern char *getenv();
+extern int mkstemp(char *);
+extern char *getenv(const char *);
 
 
 void done(int k)
@@ -280,10 +280,6 @@ void create_file_names(void)
     text_file_name[len + 5] = 't';
     union_file_name[len + 5] = 'u';
 
-    mktemp(action_file_name);
-    mktemp(text_file_name);
-    mktemp(union_file_name);
-
     len = strlen(file_prefix);
 
     output_file_name = MALLOC(len + 7);
@@ -327,13 +323,24 @@ void open_files(void)
         if (input_file == 0)
             open_error(input_file_name);
     }
-    action_file = fopen(action_file_name, "w");
-    if (action_file == 0)
-        open_error(action_file_name);
 
-    text_file = fopen(text_file_name, "w");
-    if (text_file == 0)
+    int action_fd = mkstemp(action_file_name);
+    if (action_fd == -1)
+        open_error(action_file_name);
+    action_file = fdopen(action_fd, "w");
+    if (action_file == 0) {
+        close(action_fd);
+        open_error(action_file_name);
+    }
+
+    int text_fd = mkstemp(text_file_name);
+    if (text_fd == -1)
         open_error(text_file_name);
+    text_file = fdopen(text_fd, "w");
+    if (text_file == 0) {
+        close(text_fd);
+        open_error(text_file_name);
+    }
 
     if (vflag) {
         verbose_file = fopen(verbose_file_name, "w");
@@ -344,9 +351,14 @@ void open_files(void)
         defines_file = fopen(defines_file_name, "w");
         if (defines_file == 0)
             open_error(defines_file_name);
-        union_file = fopen(union_file_name, "w");
-        if (union_file == 0)
+        int union_fd = mkstemp(union_file_name);
+        if (union_fd == -1)
             open_error(union_file_name);
+        union_file = fdopen(union_fd, "w");
+        if (union_file == 0) {
+            close(union_fd);
+            open_error(union_file_name);
+        }
     }
     output_file = fopen(output_file_name, "w");
     if (output_file == 0)
