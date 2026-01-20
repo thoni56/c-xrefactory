@@ -69,8 +69,8 @@ char *rassoc;
 short **derives;
 char *nullable;
 
-extern char *mktemp();
-extern char *getenv();
+extern char *mktemp(char *template);
+extern char *getenv(const char *name);
 
 
 void done(int k)

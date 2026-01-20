@@ -17,10 +17,10 @@ short final_state;
 static int SRcount;
 static int RRcount;
 
-extern action *parse_actions();
-extern action *get_shifts();
-extern action *add_reductions();
-extern action *add_reduce();
+extern action *parse_actions(int stateno);
+extern action *get_shifts(int stateno);
+extern action *add_reductions(int stateno, action *actions);
+extern action *add_reduce(action *actions, int ruleno, int symbol);
 
 
 /* Forward declarations */
