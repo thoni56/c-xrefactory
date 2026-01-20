@@ -292,10 +292,10 @@ void write_section(char *section[])
     register FILE *f;
 
     f = code_file;
-    for (i = 0; s = section[i]; ++i)
+    for (i = 0; (s = section[i]); ++i)
     {
     ++outline;
-    while (c = *s)
+    while ((c = *s))
     {
         putc(c, f);
         ++s;
