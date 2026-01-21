@@ -111,7 +111,9 @@ The table can NEVER reflect non-preloaded modified files because the server does
 
 Date: 2025-01-10
 
-==== The Key Architectural Insight
+NOTE: This section describes the **current architecture** as of January 2025. ADR-0014 (Adopt On-Demand Parsing Architecture) proposes eliminating this `callXref()` pattern in favor of unified on-demand parsing. See section 17.2 (Unified Symbol Database Architecture) for the planned future architecture where refactoring uses the same in-memory references as navigation.
+
+==== The Key Architectural Insight (Current Architecture)
 
 **RefactoryMode runs XrefMode as an internal sub-task to update the reference database before performing refactorings.**
 
@@ -210,3 +212,72 @@ void ensureReferencesAreUpdated(char *project) {
 * **Refactorings are always consistent** - they get fresh reference data before executing
 * **Performance trade-off** - Smart update strategies (local vs header vs multi-file) minimize update cost
 * **Process isolation** - Separate RefactoryMode process prevents server state corruption
+
+=== The lastParsedMtime Optimization and Refactoring Conflict
+
+Date: 2025-01-21
+
+==== Problem Discovery
+
+When implementing staleness detection for navigation (refreshing references when files are modified), we added an optimization to `server.c`:
+
+[source,c]
+----
+// After parsing with preload, update lastParsedMtime
+if (buffer != NULL && buffer->preLoadedFromFile != NULL) {
+    FileItem *fileItem = getFileItemWithFileNumber(parsingConfig.fileNumber);
+    fileItem->lastParsedMtime = buffer->modificationTime;
+}
+----
+
+This optimization prevents navigation from thinking a file is "stale" immediately after parsing it with preloaded content.
+
+==== The Conflict
+
+This broke refactoring operations (`test_delete_parameter_with_preload`). The problem:
+
+1. **Server parses with preload** → In-memory references have correct positions (e.g., line 3)
+2. **`lastParsedMtime` updated** → File marked as "freshly parsed"
+3. **Refactoring triggers `callXref()`** → xref checks timestamps
+4. **xref sees `editorFileModificationTime() == lastParsedMtime`** → Concludes "file already indexed"
+5. **xref skips re-indexing** → Persistent `.cx` keeps old positions (e.g., line 2)
+6. **Refactoring uses stale `.cx` data** → Wrong positions, operation fails
+
+==== Root Cause: Two Sources of Truth
+
+The architecture has two sources of references:
+
+1. **In-memory references** (ReferenceableItemTable) - populated by parsing, used by navigation
+2. **Persistent .cx database** - populated by xref, used by refactoring
+
+The `lastParsedMtime` optimization conflated these:
+* It correctly told navigation "in-memory is current"
+* But incorrectly told xref "persistent database is current" (when it wasn't)
+
+==== The Workaround
+
+Exclude refactoring operations from the optimization:
+
+[source,c]
+----
+if (buffer != NULL && buffer->preLoadedFromFile != NULL
+    && options.serverOperation != OLO_RENAME
+    && options.serverOperation != OLO_ARGUMENT_MANIPULATION
+    && options.serverOperation != OLO_SAFETY_CHECK) {
+    fileItem->lastParsedMtime = buffer->modificationTime;
+}
+----
+
+This allows:
+* Navigation to use the optimization (in-memory is sufficient)
+* Refactoring to trigger xref re-indexing (reads preload, updates .cx correctly)
+
+==== Architectural Lesson
+
+This workaround highlights the fundamental tension: **navigation and refactoring use different sources of truth**. The proper fix is ADR-0014's unified on-demand architecture where both use the same in-memory reference database, eliminating the need for `callXref()` entirely.
+
+==== Related
+
+* ADR-0014: Adopt On-Demand Parsing Architecture
+* Section 17.2: Unified Symbol Database Architecture
+* Section 18.3: RefactoryMode Internally Calls XrefMode (describes current architecture)

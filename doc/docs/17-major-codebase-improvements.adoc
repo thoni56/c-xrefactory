@@ -404,6 +404,33 @@ typedef struct {
 
 IMPORTANT: This refactoring builds on the *Clean Persistence Store* foundation (previous section). The smart logic lives in the **in-memory reference database layer**, while `.cx` files remain a **durable cache** for persistence.
 
+===== Core Principle: In-Memory Is Always Authoritative
+
+The fundamental architectural shift is that **in-memory references are the single source of truth** once a file is parsed:
+
+----
+┌─────────────────────────────────────────────────────────────┐
+│                   In-memory references                       │
+│                   (single source of truth)                   │
+└─────────────────────────────────────────────────────────────┘
+        ▲                    │                    ▲
+        │ parse              │ persist            │ parse on demand
+        │ on demand          │ (background)       │
+        │                    ▼                    │
+┌───────┴───────┐   ┌────────────────┐   ┌───────┴───────┐
+│    server     │   │  .cx cache     │   │   refactory   │
+│  (navigation) │   │  (startup      │   │ (finds files, │
+│               │   │   speedup)     │   │  parses them) │
+└───────────────┘   └────────────────┘   └───────────────┘
+----
+
+**Key changes from current architecture:**
+
+1. **In-memory is authoritative** - once a file is parsed, that's the truth
+2. **.cx becomes a cache** - only for faster startup, never consulted during operations
+3. **Refactoring parses on demand** - no `callXref()`, just parse the files it needs
+4. **Navigation and refactoring use same code path** - unified architecture
+
 The implementation leverages **existing sophisticated logic**:
 
 [source,c]
@@ -568,6 +595,45 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
 ----
 
 IMPORTANT: This dependency tracking infrastructure is **already production-ready** and handles the complex cases (transitive dependencies, modification time checking, include stack management). The unified symbol database can leverage this existing logic instead of reimplementing dependency management.
+
+===== Refactoring Without callXref()
+
+The current architecture has RefactoryMode internally calling XrefMode (`callXref()`) to update the persistent `.cx` database before performing refactorings (see Insights chapter, section "RefactoryMode Internally Calls XrefMode").
+
+With the unified on-demand architecture, refactoring uses the **same in-memory reference database** as navigation:
+
+[source,c]
+----
+void performRefactoring(Symbol *symbol) {
+    // 1. Find files where symbol is referenced (from in-memory refs)
+    FileList *referencingFiles = getFilesWithReferencesTo(symbol->name);
+
+    // 2. Compute include closure of those files
+    //    Uses existing makeIncludeClosureOfFilesToUpdate() infrastructure
+    FileList *potentialReferences = computeIncludeClosure(referencingFiles);
+
+    // 3. Filter to only stale files (mtime > lastParsedMtime)
+    for (FileItem *f : potentialReferences) {
+        if (f->lastModified > f->lastParsedMtime) {
+            parseFileIntoMemory(f);  // Uses preload if available
+        }
+    }
+    // Files already parsed with current content are NOT reparsed
+
+    // 4. Perform refactoring using in-memory references
+    // Same reference list used by navigation is now used by refactoring
+    applyRefactoring(symbol, potentialReferences);
+}
+----
+
+**Key simplification**: By limiting support to "include file patterns" only (see ADR-0013), we don't need to scan the entire project for archaic `extern` declarations in `.c` files. The include graph provides a complete and correct dependency closure.
+
+**Benefits:**
+
+* **Single code path** - Navigation and refactoring use the same reference database
+* **No xref subprocess** - Eliminates process isolation complexity
+* **Preloads work correctly** - Modified editor buffers are used directly
+* **Faster refactoring** - Only stale files are reparsed, not entire project
 
 ==== Open Questions
 

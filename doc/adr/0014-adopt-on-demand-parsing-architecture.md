@@ -105,33 +105,38 @@ Symbol* lookupSymbol(const char* name, Position pos) {
 
 ### Refactoring Operation Flow
 
+The current architecture has RefactoryMode internally calling XrefMode (`callXref()`) to
+update the persistent `.cx` database before performing refactorings. This creates the
+architectural complexity described in the Problem Statement.
+
+With on-demand parsing, refactoring uses the **same in-memory reference database** as
+navigation, eliminating the need for `callXref()`:
+
 ```c
 void renameSymbol(const char* oldName, const char* newName, Position pos) {
-    // 1. Parse current file if needed
-    ensureFileParsed(pos.file);
+    // 1. Find files where symbol is referenced (from in-memory refs)
+    FileList *referencingFiles = getFilesWithReferencesTo(oldName);
 
-    // 2. Find symbol definition
-    Symbol *symbol = findSymbol(oldName, pos);
+    // 2. Compute include closure of those files
+    //    If symbol is in header.h, find all files that include header.h
+    FileList *potentialReferences = computeIncludeClosure(referencingFiles);
 
-    // 3. Compute which files might reference it
-    FileList *potentialReferences;
-    if (symbolIsGlobal(symbol)) {
-        // Global: find all files including the defining header
-        potentialReferences = findFilesIncludingHeader(symbol->definedIn);
-    } else {
-        // Local: just current file
-        potentialReferences = { pos.file };
-    }
-
-    // 4. Parse relevant files
+    // 3. Filter to only stale files (mtime > lastParsedMtime)
     for (FileItem *f : potentialReferences) {
-        ensureFileParsed(f);
+        if (f->lastModified > f->lastParsedMtime) {
+            parseFileIntoMemory(f);  // Uses preload if available
+        }
     }
+    // Files already parsed with current content are NOT reparsed
 
-    // 5. Perform rename
+    // 4. Perform rename using in-memory references
     performRename(oldName, newName, potentialReferences);
 }
 ```
+
+**Key simplification**: By limiting support to "include file patterns" only (see ADR-0013),
+we don't need to scan the entire project for archaic `extern` declarations in `.c` files.
+The include graph provides a complete and correct dependency closure.
 
 ### Dependency Closure Computation
 
