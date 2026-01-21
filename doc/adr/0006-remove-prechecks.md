@@ -4,7 +4,7 @@ Date: 2022-04-14
 
 ## Status
 
-Accepted and implemented.
+Implemented
 
 ### Context and Problem Statement
 
