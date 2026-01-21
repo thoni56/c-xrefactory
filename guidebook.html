@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-01-20">
+<meta name="author" content="v{VERSION} - Generated 2026-01-21">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-01-20</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-01-21</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -581,6 +581,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_yacc_semantic_data">18.1. Yacc semantic data</a></li>
 <li><a href="#_navigation_architecture_and_the_preloading_limitation">18.2. Navigation Architecture and the Preloading Limitation</a></li>
 <li><a href="#_refactorymode_internally_calls_xrefmode">18.3. RefactoryMode Internally Calls XrefMode</a></li>
+<li><a href="#_the_lastparsedmtime_optimization_and_refactoring_conflict">18.4. The lastParsedMtime Optimization and Refactoring Conflict</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">19. Refactoring Recipes</a>
@@ -718,7 +719,7 @@ and automated edits, refactorings, through the editor.</p>
 <h2 id="_functional_overview">3. Functional Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <em>c-xref</em> program is actually a mish-mash of a multitude of
+<p>The <em>c-xref</em> program is, or rather was, a mish-mash of a multitude of
 features baked into one program. This is the major cause of the mess
 that it is source-wise.</p>
 </div>
@@ -791,7 +792,7 @@ within the editor</p>
 <p>C and Yacc source code is supported.</p>
 </div>
 <div class="sect3">
-<h4 id="_navigation_and_browsing">3.1.1. Navigation and Browsing</h4>
+<h4 id="_navigation">3.1.1. Navigation</h4>
 <div class="paragraph">
 <p>A user can navigate all references of a symbol, limited to the
 semantic scope of that symbol, by "Goto Definition" and then navigate
@@ -811,26 +812,39 @@ Yacc grammars!
 </tr>
 </table>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_browsing">3.1.2. Browsing</h4>
 <div class="paragraph">
 <p>It is also possible to search for definitions or symbols containing a
 string, including possible wildcards. This will present various forms
 of "menues" where filters can be applied and a found symbol be
 inspected.</p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_completion">3.1.3. Completion</h4>
 <div class="paragraph">
-<p>Together these provides a comprehensive set of features for exploring
-and navigating any code base.</p>
+<p>As <code>c-xrefactory</code> have information about symbols and their semantic scope,
+it can also provide semantically informed completions and suggestions.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_automated_refactorings">3.1.2. Automated refactorings</h4>
+<h4 id="_automated_refactorings">3.1.4. Automated refactorings</h4>
 <div class="paragraph">
-<p>In his book "Refactoring" Martin Fowler describes a large number of
-refactorings, changes to source code that does not change the
-behaviour, but improves it structure and readability. In an article
-from 2001 he actually pronounces <code>Xref</code>, the ancestor to
-<code>c-xrefactory</code>, to be the first tool to cross "Refactorings Rubicon",
-being able to extract a function semantically correct.</p>
+<p>In his book "Refactoring" Martin Fowler describes a large number of refactorings,
+changes to source code that does not change the behaviour, but improves it structure and
+readability. For each refactoring they describe step by step which edits to make to
+apply the refactoring manually.</p>
+</div>
+<div class="paragraph">
+<p>The natural next step was of course to attempt to automate this in editors or IDEs,
+which started to happen.</p>
+</div>
+<div class="paragraph">
+<p>In an article from 2001 Martin pronounces <code>Xref</code>, the ancestor to <code>c-xrefactory</code>, to be
+the first tool to cross "Refactorings Rubicon", being able to extract a function
+semantically correct.</p>
 </div>
 <div class="paragraph">
 <p>The term "automated" means that some software can examine the source
@@ -6777,6 +6791,48 @@ This refactoring builds on the <strong>Clean Persistence Store</strong> foundati
 </tr>
 </table>
 </div>
+</div>
+<div class="sect4">
+<h5 id="_core_principle_in_memory_is_always_authoritative">Core Principle: In-Memory Is Always Authoritative</h5>
+<div class="paragraph">
+<p>The fundamental architectural shift is that <strong>in-memory references are the single source of truth</strong> once a file is parsed:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>┌─────────────────────────────────────────────────────────────┐
+│                   In-memory references                       │
+│                   (single source of truth)                   │
+└─────────────────────────────────────────────────────────────┘
+        ▲                    │                    ▲
+        │ parse              │ persist            │ parse on demand
+        │ on demand          │ (background)       │
+        │                    ▼                    │
+┌───────┴───────┐   ┌────────────────┐   ┌───────┴───────┐
+│    server     │   │  .cx cache     │   │   refactory   │
+│  (navigation) │   │  (startup      │   │ (finds files, │
+│               │   │   speedup)     │   │  parses them) │
+└───────────────┘   └────────────────┘   └───────────────┘</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Key changes from current architecture:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>In-memory is authoritative</strong> - once a file is parsed, that&#8217;s the truth</p>
+</li>
+<li>
+<p><strong>.cx becomes a cache</strong> - only for faster startup, never consulted during operations</p>
+</li>
+<li>
+<p><strong>Refactoring parses on demand</strong> - no <code>callXref()</code>, just parse the files it needs</p>
+</li>
+<li>
+<p><strong>Navigation and refactoring use same code path</strong> - unified architecture</p>
+</li>
+</ol>
+</div>
 <div class="paragraph">
 <p>The implementation leverages <strong>existing sophisticated logic</strong>:</p>
 </div>
@@ -7062,6 +7118,61 @@ This dependency tracking infrastructure is <strong>already production-ready</str
 </td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_refactoring_without_callxref">Refactoring Without callXref()</h5>
+<div class="paragraph">
+<p>The current architecture has RefactoryMode internally calling XrefMode (<code>callXref()</code>) to update the persistent <code>.cx</code> database before performing refactorings (see Insights chapter, section "RefactoryMode Internally Calls XrefMode").</p>
+</div>
+<div class="paragraph">
+<p>With the unified on-demand architecture, refactoring uses the <strong>same in-memory reference database</strong> as navigation:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">void performRefactoring(Symbol *symbol) {
+    // 1. Find files where symbol is referenced (from in-memory refs)
+    FileList *referencingFiles = getFilesWithReferencesTo(symbol-&gt;name);
+
+    // 2. Compute include closure of those files
+    //    Uses existing makeIncludeClosureOfFilesToUpdate() infrastructure
+    FileList *potentialReferences = computeIncludeClosure(referencingFiles);
+
+    // 3. Filter to only stale files (mtime &gt; lastParsedMtime)
+    for (FileItem *f : potentialReferences) {
+        if (f-&gt;lastModified &gt; f-&gt;lastParsedMtime) {
+            parseFileIntoMemory(f);  // Uses preload if available
+        }
+    }
+    // Files already parsed with current content are NOT reparsed
+
+    // 4. Perform refactoring using in-memory references
+    // Same reference list used by navigation is now used by refactoring
+    applyRefactoring(symbol, potentialReferences);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Key simplification</strong>: By limiting support to "include file patterns" only (see ADR-0013), we don&#8217;t need to scan the entire project for archaic <code>extern</code> declarations in <code>.c</code> files. The include graph provides a complete and correct dependency closure.</p>
+</div>
+<div class="paragraph">
+<p><strong>Benefits:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Single code path</strong> - Navigation and refactoring use the same reference database</p>
+</li>
+<li>
+<p><strong>No xref subprocess</strong> - Eliminates process isolation complexity</p>
+</li>
+<li>
+<p><strong>Preloads work correctly</strong> - Modified editor buffers are used directly</p>
+</li>
+<li>
+<p><strong>Faster refactoring</strong> - Only stale files are reparsed, not entire project</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -9096,8 +9207,20 @@ pointer to a <code>Symbol</code>.</p>
 <div class="paragraph">
 <p>Date: 2025-01-10</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This section describes the <strong>current architecture</strong> as of January 2025. ADR-0014 (Adopt On-Demand Parsing Architecture) proposes eliminating this <code>callXref()</code> pattern in favor of unified on-demand parsing. See section 17.2 (Unified Symbol Database Architecture) for the planned future architecture where refactoring uses the same in-memory references as navigation.
+</td>
+</tr>
+</table>
+</div>
 <div class="sect3">
-<h4 id="_the_key_architectural_insight">18.3.1. The Key Architectural Insight</h4>
+<h4 id="_the_key_architectural_insight_current_architecture">18.3.1. The Key Architectural Insight (Current Architecture)</h4>
 <div class="paragraph">
 <p><strong>RefactoryMode runs XrefMode as an internal sub-task to update the reference database before performing refactorings.</strong></p>
 </div>
@@ -9233,6 +9356,122 @@ void ensureReferencesAreUpdated(char *project) {
 </li>
 <li>
 <p><strong>Process isolation</strong> - Separate RefactoryMode process prevents server state corruption</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_lastparsedmtime_optimization_and_refactoring_conflict">18.4. The lastParsedMtime Optimization and Refactoring Conflict</h3>
+<div class="paragraph">
+<p>Date: 2025-01-21</p>
+</div>
+<div class="sect3">
+<h4 id="_problem_discovery">18.4.1. Problem Discovery</h4>
+<div class="paragraph">
+<p>When implementing staleness detection for navigation (refreshing references when files are modified), we added an optimization to <code>server.c</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// After parsing with preload, update lastParsedMtime
+if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
+    FileItem *fileItem = getFileItemWithFileNumber(parsingConfig.fileNumber);
+    fileItem-&gt;lastParsedMtime = buffer-&gt;modificationTime;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This optimization prevents navigation from thinking a file is "stale" immediately after parsing it with preloaded content.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_conflict">18.4.2. The Conflict</h4>
+<div class="paragraph">
+<p>This broke refactoring operations (<code>test_delete_parameter_with_preload</code>). The problem:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Server parses with preload</strong> → In-memory references have correct positions (e.g., line 3)</p>
+</li>
+<li>
+<p><strong><code>lastParsedMtime</code> updated</strong> → File marked as "freshly parsed"</p>
+</li>
+<li>
+<p><strong>Refactoring triggers <code>callXref()</code></strong> → xref checks timestamps</p>
+</li>
+<li>
+<p><strong>xref sees <code>editorFileModificationTime() == lastParsedMtime</code></strong> → Concludes "file already indexed"</p>
+</li>
+<li>
+<p><strong>xref skips re-indexing</strong> → Persistent <code>.cx</code> keeps old positions (e.g., line 2)</p>
+</li>
+<li>
+<p><strong>Refactoring uses stale <code>.cx</code> data</strong> → Wrong positions, operation fails</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_root_cause_two_sources_of_truth">18.4.3. Root Cause: Two Sources of Truth</h4>
+<div class="paragraph">
+<p>The architecture has two sources of references:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>In-memory references</strong> (ReferenceableItemTable) - populated by parsing, used by navigation</p>
+</li>
+<li>
+<p><strong>Persistent .cx database</strong> - populated by xref, used by refactoring</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The <code>lastParsedMtime</code> optimization conflated these:
+* It correctly told navigation "in-memory is current"
+* But incorrectly told xref "persistent database is current" (when it wasn&#8217;t)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_workaround">18.4.4. The Workaround</h4>
+<div class="paragraph">
+<p>Exclude refactoring operations from the optimization:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL
+    &amp;&amp; options.serverOperation != OLO_RENAME
+    &amp;&amp; options.serverOperation != OLO_ARGUMENT_MANIPULATION
+    &amp;&amp; options.serverOperation != OLO_SAFETY_CHECK) {
+    fileItem-&gt;lastParsedMtime = buffer-&gt;modificationTime;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This allows:
+* Navigation to use the optimization (in-memory is sufficient)
+* Refactoring to trigger xref re-indexing (reads preload, updates .cx correctly)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_architectural_lesson">18.4.5. Architectural Lesson</h4>
+<div class="paragraph">
+<p>This workaround highlights the fundamental tension: <strong>navigation and refactoring use different sources of truth</strong>. The proper fix is ADR-0014&#8217;s unified on-demand architecture where both use the same in-memory reference database, eliminating the need for <code>callXref()</code> entirely.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_related">18.4.6. Related</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>ADR-0014: Adopt On-Demand Parsing Architecture</p>
+</li>
+<li>
+<p>Section 17.2: Unified Symbol Database Architecture</p>
+</li>
+<li>
+<p>Section 18.3: RefactoryMode Internally Calls XrefMode (describes current architecture)</p>
 </li>
 </ul>
 </div>
@@ -10702,7 +10941,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-20 10:01:20 UTC
+Last updated 2026-01-21 20:56:56 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
