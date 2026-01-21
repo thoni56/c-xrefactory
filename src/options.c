@@ -80,7 +80,6 @@ Options presetOptions = {
     "",                         // getValue
 
     /* MIXED THINGS... */
-    false,                      // noIncludeRefs
     0,
     RESOLVE_DIALOG_DEFAULT,     // manual symbol resolution TODO: This is different from any of the RESOLVE values above, why?
     NULL,                       // browsed symbol name
@@ -92,7 +91,7 @@ Options presetOptions = {
     79,                         /* olineLen */
     0,                          // extractMode, must be zero TODO Why?
     MAX_COMPLETIONS,            /* maxCompletions */
-    8,                          /* tabulator */
+    4,                          /* tabulator */
     -1,                         /* cursorOffset */
     -1,                         /* markOffset */
     XrefMode,                   /* operating mode */
@@ -1317,10 +1316,6 @@ static bool processMOption(int *argi, ArgumentsVector args) {
 static bool processNOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
-    else if (strcmp(args.argv[i], "-no-includerefs")==0)
-        options.noIncludeRefs = true;
-    else if (strcmp(args.argv[i], "-no-includerefresh")==0)
-        options.noIncludeRefs=true;
     else if (strcmp(args.argv[i], "-no-errors")==0)
         options.noErrors = true;
     else

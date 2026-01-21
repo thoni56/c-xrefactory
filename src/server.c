@@ -11,7 +11,6 @@
 #include "globals.h"
 #include "head.h"
 #include "log.h"
-#include "misc.h"
 #include "options.h"
 #include "parsers.h"
 #include "parsing.h"

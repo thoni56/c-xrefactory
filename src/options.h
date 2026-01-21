@@ -99,7 +99,6 @@ typedef struct options {
     char *variableToGet;
 
     /* MIXED THINGS... */
-    bool noIncludeRefs;
     int filterValue;
     ResolveDialog manualResolve;
     char *browsedName;

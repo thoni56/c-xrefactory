@@ -5,7 +5,6 @@
 typedef struct counters {
     int localSym;
     int localVar;
-    int anonymousClassCounter;
 } Counters;
 
 extern Counters counters;

@@ -281,17 +281,6 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
                 LEAVE();
                 return NULL;
             }
-        } else {
-            if (visibility==VisibilityGlobal && symbol->type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
-                // do not load references if not the currently edited file
-                if (parsingConfig.fileNumber != position.file && options.noIncludeRefs) {
-                    LEAVE();
-                    return NULL;
-                }
-                // do not load references if current file is an
-                // included header, they will be reloaded from ref file
-                //&fprintf(dumpOut,"%s comm %d\n", fileItem->name, fileItem->isArgument);
-            }
         }
         break;
     case XrefMode:
