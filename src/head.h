@@ -54,20 +54,13 @@ typedef enum language {
 // special link names starts by one space character
 // special local link names starts by two spaces
 #define LINK_NAME_UNIMPORTED_QUALIFIED_ITEM     "  unimported type"
-#define LINK_NAME_FUNCTION_SEPARATOR            "  fun separator"
 #define LINK_NAME_SAFETY_CHECK_MISSED           "  Conflicting References"
-#define LINK_NAME_INDUCED_ERROR                 "  References Misinterpreted due to previous Errors"
 
 #define LINK_NAME_SEPARATOR '!'
 #define LINK_NAME_COLLATE_SYMBOL '#'
-#define LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG '*'
 #define LINK_NAME_EXTRACT_DEFAULT_FLAG ' '
 
 #define LINK_NAME_INCLUDE_REFS "%%%i"		// no #, netscape does not like them
-
-/* *********************************************************************** */
-
-#define ABS(xxx) ((xxx>0)?(xxx):(-(xxx)))
 
 
 /* *************************************************************** */
@@ -82,8 +75,6 @@ typedef enum language {
 
 /* ***************** OLCX COMMUNICATION CHARS ******************** */
 
-#define COLCX_GOTO_REFERENCE        "#"
-#define COLCX_GOTO_REFERENCE_LIST   "@"
 #define COLCX_LIST					";"
 
 /* *************************************************************** */
