@@ -169,6 +169,19 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
         }
 
         parseInputFile();
+
+        /* Mark file as freshly parsed so navigation doesn't think it's stale.
+         * But NOT for refactoring operations (RENAME, ARGUMENT_MANIPULATION, SAFETY_CHECK)
+         * because those trigger xref updates that use lastParsedMtime to decide
+         * whether to re-index - and xref reads from disk, not the preload buffer.
+         */
+        if (buffer != NULL && buffer->preLoadedFromFile != NULL
+            && options.serverOperation != OLO_RENAME
+            && options.serverOperation != OLO_ARGUMENT_MANIPULATION
+            && options.serverOperation != OLO_SAFETY_CHECK) {
+            FileItem *fileItem = getFileItemWithFileNumber(parsingConfig.fileNumber);
+            fileItem->lastParsedMtime = buffer->modificationTime;
+        }
     }
     if (options.cursorOffset==0) {
         // special case, push the file as include reference

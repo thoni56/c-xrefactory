@@ -984,6 +984,21 @@ static bool refreshFileIfStale(SessionStackEntry *sessionEntry, Reference *ref) 
     return true;
 }
 
+/* Save current position and refresh target file if stale.
+ *
+ * IMPORTANT: Position must be saved BEFORE refresh because refresh frees the old
+ * reference list, making sessionEntry->current a dangling pointer.
+ *
+ * Returns true if refresh happened (caller should restore position from savedPosOut).
+ */
+static bool savePositionAndRefreshIfStale(SessionStackEntry *sessionEntry, Reference *target,
+                                          Position *savedPosOut) {
+    *savedPosOut = sessionEntry->current
+        ? sessionEntry->current->position
+        : makePosition(NO_FILE_NUMBER, 0, 0);
+    return refreshFileIfStale(sessionEntry, target);
+}
+
 static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos) {
     // After a refresh for "next", find the first reference AFTER savedPos
     sessionEntry->current = sessionEntry->references;
@@ -994,24 +1009,99 @@ static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, 
     }
 }
 
+static void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos, int filterLevel) {
+    // After a refresh for "previous", find the last reference BEFORE savedPos
+    sessionEntry->current = NULL;
+    for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
+        if (!positionIsLessThan(r->position, savedPos))
+            break;  // At or past saved position
+        if (isMoreImportantUsageThan(r->usage, filterLevel))
+            sessionEntry->current = r;
+    }
+}
+
+/*
+ * Staleness handling for NEXT/PREVIOUS:
+ *
+ * The Emacs client sends preload (modified buffer content) only for the CURRENT file
+ * (where the cursor is when the command is issued). We leverage this in two ways:
+ *
+ * 1. Source file refresh: When user navigates (NEXT/PREVIOUS), they're usually at a
+ *    reference they previously navigated to. If they edited that file, we refresh it
+ *    first, keeping current position.
+ *
+ * 2. Target file refresh: If navigating within the same file, the target reference's
+ *    file also has preload, so we can refresh and find the correct next/previous.
+ *
+ * For cross-file navigation (target != source), the target won't have a preload,
+ * so we can't detect its staleness. The user can recover by doing any operation
+ * from the target file, which will then send its preload.
+ */
+
+/* Restore current to nearest reference at or after savedPos (for "stay put" after refresh) */
+static void restoreToNearestReference(SessionStackEntry *sessionEntry, Position savedPos, int filterLevel) {
+    Reference *nearest = NULL;
+    for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
+        if (!isMoreImportantUsageThan(r->usage, filterLevel))
+            continue;
+        if (positionIsLessThan(r->position, savedPos)) {
+            nearest = r;  // Keep track of last reference before savedPos
+        } else {
+            // Found first reference at or after savedPos - prefer it
+            nearest = r;
+            break;
+        }
+    }
+    sessionEntry->current = nearest;
+}
+
+/* Refresh the source file (where cursor is) if stale.
+ *
+ * When user does NEXT/PREVIOUS, they're usually at a reference in the session.
+ * If that file was modified, refresh it first and restore current position.
+ *
+ * Returns true if refresh happened.
+ */
+static bool refreshSourceFileIfStale(SessionStackEntry *sessionEntry) {
+    if (requestFileNumber == NO_FILE_NUMBER)
+        return false;
+
+    if (!isFileNumberStale(requestFileNumber))
+        return false;
+
+    // Save position before refresh
+    Position savedPos = sessionEntry->current
+        ? sessionEntry->current->position
+        : makePosition(NO_FILE_NUMBER, 0, 0);
+
+    log_debug("Refreshing stale source file %d: %s", requestFileNumber,
+              getFileItemWithFileNumber(requestFileNumber)->name);
+    refreshStaleReferencesInSession(sessionEntry, requestFileNumber);
+
+    // Restore to nearest reference (stay put, don't advance)
+    int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
+    restoreToNearestReference(sessionEntry, savedPos, filterLevel);
+
+    return true;
+}
+
 static void gotoNextReference(void) {
     SessionStackEntry *sessionEntry;
     if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
         return;
+
+    // First, refresh the source file (where cursor is) if stale
+    refreshSourceFileIfStale(sessionEntry);
 
     // Determine the next reference we would navigate to
     Reference *next = (sessionEntry->current == NULL)
         ? sessionEntry->references
         : sessionEntry->current->next;
 
-    // If that file is stale, refresh before navigating
-    if (refreshFileIfStale(sessionEntry, next)) {
-        // Save current position for restoration
-        Position savedPos = sessionEntry->current
-            ? sessionEntry->current->position
-            : makePosition(NO_FILE_NUMBER, 0, 0);
-
-        // After refresh, go to first reference after saved position
+    // Save position and refresh if stale - position saved BEFORE refresh since
+    // current pointer becomes dangling after refresh
+    Position savedPos;
+    if (savePositionAndRefreshIfStale(sessionEntry, next, &savedPos)) {
         restoreToNextReferenceAfterRefresh(sessionEntry, savedPos);
     } else {
         // Normal navigation - advance to next reference
@@ -1025,32 +1115,66 @@ static void gotoNextReference(void) {
     olcxGenGotoActReference(sessionEntry);
 }
 
-static void gotoPreviousReference(void) {
-    SessionStackEntry    *refs;
-    Reference         *r,*l,*act;
-    int                 rlevel;
-    if (!sessionHasReferencesValidForOperation(&sessionData,  &refs, CHECK_NULL_YES))
-        return;
-    rlevel = usageFilterLevels[refs->refsFilterLevel];
-    if (refs->current == NULL) refs->current = refs->references;
-    else {
-        act = refs->current;
-        l = NULL;
-        for (r=refs->references; r!=act && r!=NULL; r=r->next) {
-            if (isMoreImportantUsageThan(r->usage, rlevel))
-                l = r;
+static Reference *findPreviousReference(SessionStackEntry *sessionEntry, int filterLevel) {
+    // Find the reference before current that passes the filter
+    Reference *previous = NULL;
+    if (sessionEntry->current != NULL) {
+        for (Reference *r = sessionEntry->references;
+             r != sessionEntry->current && r != NULL;
+             r = r->next) {
+            if (isMoreImportantUsageThan(r->usage, filterLevel))
+                previous = r;
         }
-        if (l==NULL) {
-            assert(options.xref2);
-            ppcBottomInformation("Moving to the last reference");
-            for (; r!=NULL; r=r->next) {
-                if (isMoreImportantUsageThan(r->usage, rlevel))
-                    l = r;
-            }
-        }
-        refs->current = l;
     }
-    olcxGenGotoActReference(refs);
+    return previous;
+}
+
+static Reference *findLastReference(SessionStackEntry *sessionEntry, int filterLevel) {
+    Reference *last = NULL;
+    for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
+        if (isMoreImportantUsageThan(r->usage, filterLevel))
+            last = r;
+    }
+    return last;
+}
+
+static void gotoPreviousReference(void) {
+    SessionStackEntry *sessionEntry;
+    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
+        return;
+
+    // First, refresh the source file (where cursor is) if stale
+    refreshSourceFileIfStale(sessionEntry);
+
+    int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
+
+    // Determine the previous reference we would navigate to
+    Reference *previous = findPreviousReference(sessionEntry, filterLevel);
+
+    // Save position and refresh if stale - position saved BEFORE refresh since
+    // current pointer becomes dangling after refresh
+    Position savedPos;
+    if (savePositionAndRefreshIfStale(sessionEntry, previous, &savedPos)) {
+        restoreToPreviousReferenceAfterRefresh(sessionEntry, savedPos, filterLevel);
+        if (sessionEntry->current == NULL) {
+            // Wrap to last reference
+            ppcBottomInformation("Moving to the last reference");
+            sessionEntry->current = findLastReference(sessionEntry, filterLevel);
+        }
+    } else {
+        // Normal navigation
+        if (sessionEntry->current == NULL) {
+            sessionEntry->current = sessionEntry->references;
+        } else if (previous != NULL) {
+            sessionEntry->current = previous;
+        } else {
+            // Wrap to last reference
+            ppcBottomInformation("Moving to the last reference");
+            sessionEntry->current = findLastReference(sessionEntry, filterLevel);
+        }
+    }
+
+    olcxGenGotoActReference(sessionEntry);
 }
 
 static void olcxReferenceGotoDef(void) {
