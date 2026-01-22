@@ -6,9 +6,10 @@ For internal architectural improvements and code quality work, see link:17-major
 
 For detailed specifications of refactoring operations (both existing and planned), see link:19-refactoring-recipes.adoc[Chapter 19: Refactoring Recipes].
 
+[[move-function-refactoring]]
 === Move Function Between Files
 
-**Status**: Phase 1 MVP complete (December 2024)
+**Status**: Phase 1 complete (December 2024)
 
 ==== Use Case
 
@@ -19,30 +20,25 @@ Reorganize code by moving function definitions between source files while mainta
 ==== What Works Now
 
 * Move a function from one source file to another
-* Automatically removes `static` keyword (makes function externally accessible)
+* Automatically removes possible `static` keyword (makes function externally accessible)
 * Adds extern declaration to target file's header
 * Preserves comments and function decorations
 * Works for both C and Yacc files
 
-==== Current Limitations
+==== Next steps
 
-* Header declaration placement may need manual adjustment
-* You must manually add required `#include` directives
-* Static helper functions aren't moved automatically (Phase 3 goal)
-
-==== Planned Improvements
-
-**Smarter header placement**: Automatically find the right location in header files based on existing declarations and dependencies.
-
-**Helper function detection**: Identify and optionally move static helper functions that the moved function depends on. Prevents broken builds.
+**Remove extern declaration**: Remove the moved functions extern declaration from the
+  header file for the source, if the function was not static.
 
 **Include management**: Automatically add necessary `#include` directives based on dependencies.
 
+**Helper function detection**: Identify and optionally move static helper functions that
+  the moved function depends on. Prevents broken builds.
+
+**Smarter header placement**: Automatically find the right location in header files
+  based on existing declarations and dependencies.
+
 **Preview**: Show what will be changed before applying the refactoring.
-
-==== Related Work
-
-For technical implementation details, see link:17-major-codebase-improvements.adoc#clean-parser-api[Chapter 17: Clean Parser API].
 
 === LSP Integration
 
