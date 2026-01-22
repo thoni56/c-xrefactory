@@ -330,6 +330,8 @@ Migration path:
 [[unified-symbol-database]]
 === Unified Symbol Database Architecture
 
+NOTE: This section describes the implementation details for the "Memory as Truth" architectural vision. See link:15-roadmap.adoc[Chapter 15: Roadmap] for the high-level dependency chain showing how this work relates to other architectural goals.
+
 ==== Problem Statement
 
 The current symbol database has evolved from a batch cross-referencer (like `ctags`) with artificial distinctions between "file-based" and "on-demand" modes. This creates:

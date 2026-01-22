@@ -1,10 +1,8 @@
 == Roadmap
 
-This chapter outlines the development roadmap for c-xrefactory, tracking completed work, current priorities, and future architectural goals.
+This chapter outlines the high-level architectural and feature goals for c-xrefactory. For implementation details, see link:17-major-codebase-improvements.adoc[Chapter 17: Major Codebase Improvements].
 
 === Guiding Principles
-
-The roadmap is guided by these principles:
 
 * **Incremental improvement**: Each step should provide immediate value while moving toward long-term goals
 * **Test-driven modernization**: Maintain 85%+ test coverage to enable confident refactoring
@@ -12,121 +10,193 @@ The roadmap is guided by these principles:
 * **Architectural simplification**: Replace artificial mode distinctions with unified, smart on-demand behavior
 * **Legacy code respect**: Work with the existing 1990s codebase thoughtfully, not against it
 
-=== Recent Accomplishments (2025 Q1)
+=== Architectural Vision: Memory as Truth
 
-==== C Preprocessor Compliance Fixes
+==== The Goal
 
-**Problem**: c-xrefactory was incorrectly expanding function-like macros during `pass:[##]` token pasting, violating C99 §6.10.3.3 which mandates that operands of `pass:[##]` should NOT be macro-expanded before concatenation.
+**In-memory references become the single source of truth.** Currently, the system has two sources (in-memory `referenceableItemTable` and `.cx` files on disk) with different code paths for navigation vs. refactoring. This creates complexity, bugs, and makes preloaded editor buffers work inconsistently.
 
-**Impact**: Caused SIGSEGV in `test_ffmpeg` when processing complex standard library macros like `INT64_MAX` which expands to `(__INT64_C(9223372036854775807))` where `__INT64_C(c)` is defined as `c pass:[##] L`.
+==== Dependency Chain
 
-**Fix**: Removed macro expansion logic from `collate()` function in `src/yylex.c:1749-1797`. Now matches GCC behavior exactly.
+The following diagram shows how the architectural pieces depend on each other. Work proceeds from bottom to top.
 
-**Test Updates**: Updated 5 test cases to match correct GCC preprocessor behavior:
+----
+┌─────────────────────────────────────────────────────────────────────┐
+│                    ARCHITECTURAL GOAL                                │
+│         "In-memory references are the single source of truth"        │
+└─────────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                         REQUIRES                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│  A. Refactoring uses in-memory table (no callXref)                  │
+│  B. Navigation uses in-memory table (no .cx lookups mid-session)    │
+│  C. In-memory table is always current for all modified files        │
+└─────────────────────────────────────────────────────────────────────┘
+         │                    │                         │
+         ▼                    ▼                         ▼
+┌─────────────────┐  ┌─────────────────┐  ┌─────────────────────────┐
+│ A. No callXref  │  │ B. Index-based  │  │ C. Table always current │
+│ in refactoring  │  │    sessions     │  │                         │
+└────────┬────────┘  └────────┬────────┘  └────────────┬────────────┘
+         │                    │                         │
+         │                    │                         ▼
+         │                    │           ┌─────────────────────────┐
+         │                    │           │ C1. All modified files  │
+         │                    │           │     are preloaded       │
+         │                    │           │ (Emacs client change)   │
+         │                    │           └────────────┬────────────┘
+         │                    │                        │
+         │                    │                        ▼
+         │                    │           ┌─────────────────────────┐
+         │                    │           │ C2. Preloaded files     │
+         │                    │           │     parsed upfront      │
+         │                    │           │ (before any operation)  │
+         │                    │           └────────────┬────────────┘
+         │                    │                        │
+         │                    ▼                        │
+         │           ┌─────────────────┐               │
+         │           │ B1. Session     │               │
+         │           │ stores key +    │◄──────────────┘
+         │           │ position, not   │  (upfront refresh works
+         │           │ copies          │   because navigation reads
+         │           └────────┬────────┘   from current table)
+         │                    │
+         │                    ▼
+         │           ┌─────────────────┐
+         │           │ B2. Table not   │
+         │           │ corrupted by    │
+         │           │ project mixing  │
+         │           └────────┬────────┘
+         │                    │
+         ▼                    ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    SINGLE-PROJECT SERVER POLICY                      │
+│         (Server handles one project, client manages switching)       │
+└─────────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                       ALSO ENABLES                                   │
+├─────────────────────────────────────────────────────────────────────┤
+│  • .cx becomes startup cache only (not consulted during ops)        │
+│  • Include closure sufficient for finding affected files (ADR-13)   │
+│  • LSP mode can use same architecture                               │
+│  • Simpler mental model for debugging                               │
+└─────────────────────────────────────────────────────────────────────┘
+----
 
-* `test_collate_empty`
-* `test_token_pasting_with_expansion`
-* `test_token_pasting_with_expansion_lhs`
-* `test_token_pasting_with_expansion_rhs`
-* `test_token_pasting_with_illegal_expansion`
+==== Component Summary
 
-==== Memory Scaling Improvements
+[cols="1,3"]
+|===
+|Component |Description
 
-**Problem**: Large projects like ffmpeg were hitting the 30MB `stackMemory` limit during symbol table construction.
+|**Single-project server**
+|Foundation: Server handles one project at a time. Client (Emacs) manages project switching by restarting server or using separate server instances. Eliminates table corruption from project mixing and enables index-based sessions.
 
-**Root Cause**: Stack memory is a persistent arena allocator that accumulates symbol tables across all parsed files. Growth is expected and normal for large projects.
+|**Index-based sessions**
+|Session stores symbol key + current position instead of copying all references. Navigation reads directly from in-memory table, eliminating the "stale session copies" problem.
 
-**Fix**: Increased `SIZE_stackMemory` from 30MB to 100MB in `src/constants.h:19`.
+|**Upfront preload refresh**
+|All preloaded files are parsed at start of each request, before any operation runs. Ensures in-memory table is always current. Requires index-based sessions to work (otherwise session copies would still be stale).
 
-**Diagnostic Additions**: Added nesting level and stack index tracking in `src/xref.c` to monitor memory usage patterns and detect unbalanced block nesting.
+|**Emacs preloads all modified buffers**
+|Client-side change: Send `-preload` for all modified buffers, not just current file. Without this, server is blind to modifications in non-current files.
 
-==== Caching System Removal
+|**No callXref in refactoring**
+|Refactoring uses same in-memory table as navigation. Include closure (already implemented) finds affected files; parse on demand. Eliminates the architectural split between navigation and refactoring code paths.
+|===
 
-**Decision**: Removed the complex lexem stream caching mechanism to enable architectural refactoring.
+==== Related Decisions and Details
 
-**Impact**: Performance regression for large multi-file parsing (6.4× slowdown on test_ffmpeg/test_systemd), but enables critical modernization work.
+* **ADR-13**: No archaic extern patterns - limits symbol visibility to include-based, making include closure complete
+* **ADR-14**: Adopt on-demand parsing architecture - formalizes this direction
+* **Chapter 17**: Implementation details for Clean Persistence Store and Unified Symbol Database
 
-**Rationale**: The ~300 lines of cache code were deeply intertwined with parsing and memory management, blocking refactoring efforts. Removal provides clearer code structure at the cost of temporary performance regression.
+==== Current State (January 2025)
 
-**See**: link:../adr/0012-remove-lexem-stream-caching.md[ADR-0012: Remove Lexem Stream Caching] for detailed rationale, trade-offs, and future optimization strategies.
+The foundation work is **not yet started**. Current workarounds (like excluding refactoring operations from `lastParsedMtime` updates) paper over the architectural tension but don't resolve it.
 
-=== Short-term Goals
+See link:18-insights.adoc[Chapter 18: Insights] section "The lastParsedMtime Optimization and Refactoring Conflict" for a concrete example of the current complexity.
 
-==== Test Coverage Expansion
+=== Feature Vision: Full LSP Support
 
-*Current Status*: **85%+ overall coverage achieved** (January 2025)
+==== The Goal
 
-*Priority*: MEDIUM (maintenance mode)
+Enable VS Code, Neovim, and other LSP-capable editors to use c-xrefactory's refactoring and navigation features with full feature parity to the Emacs integration.
 
-*Ongoing Work*:
+==== Current State
 
-* Maintain 85%+ overall coverage as new features are added
-* Add focused tests for LSP integration points as they're implemented
-* Systematic testing of error handling paths in new code
-* Monitor coverage regressions during refactoring
-
-==== LSP Integration
-
-*Current Status*: Experimental support for modern editor integration
-
-*Priority*: HIGH - Opens c-xrefactory to wider audience beyond Emacs
-
-*Value*: Enable VS Code, Neovim, and other LSP-capable editors to use c-xrefactory's refactoring and navigation features.
-
-*Current Capabilities*:
-
-* ✓ Go-to-definition for functions, global variables, types (single file)
+* ✓ Go-to-definition for functions, global variables, types (single file only)
 * ✓ Files parsed as opened, immediate symbol availability
 
-*Key Limitations*:
+==== Planned Capabilities
 
-* Single-file scope only (must open file before navigating to it)
-* Local variables not supported
-* Only `textDocument/definition` implemented
+[cols="1,1"]
+|===
+|Feature |Enables
 
-*Next Steps*: See link:16-planned-features.adoc#lsp-integration[Chapter 16: LSP Integration] for details and link:17-major-codebase-improvements.adoc[Chapter 17] for technical architecture.
+|**Multi-file navigation**
+|Jump to definitions in other files without opening them first
 
-==== Documentation Completeness
+|**Find all references**
+|Show all usages of a symbol across the project
 
-*Current Status*: Architecture documentation mostly complete
+|**Hover information**
+|Display type and documentation on mouse hover
 
-*Priority*: MEDIUM
+|**Code completion**
+|Context-aware symbol completion
 
-*Goals*:
+|**Rename refactoring**
+|Safe rename across all files
 
-* Complete Structurizr C4 model with all major components
-* Document memory management strategies across all arenas
-* Create user guide for LSP integration
-* Document LSP vs Emacs feature parity matrix
+|**Workspace search**
+|Find symbols by name across project
+|===
 
-=== Medium-term Goals
+==== Dependencies
 
-Focused on internal code quality and architecture improvements that enable future features. Detailed in link:17-major-codebase-improvements.adoc[Chapter 17: Major Codebase Improvements].
+Full LSP support depends on the "Memory as Truth" architecture:
 
-==== Code Quality Improvements
+* Multi-file navigation requires the unified symbol database
+* Rename refactoring requires the "no callXref" path
+* All features benefit from single-project server simplicity
 
-**LexemStream API**: Reduce pointer parameter proliferation in macro expansion code (6+ params → 3-4). Foundation for further modularization.
+=== Feature Vision: Modern Refactorings
 
-**Macro Module Extraction**: Separate 800 lines of macro expansion logic from `yylex.c` for better testability and maintainability.
+==== The Goal
 
-**Header Re-parsing Optimization**: Address performance regression from cache removal. Make incremental builds faster.
+Provide refactoring capabilities that understand C semantics, going beyond what generic text-based tools can offer.
 
-==== Architectural Improvements
+==== Current Capabilities
 
-**Clean Persistence Store**: Separate in-memory reference database from disk storage (.cx files). Enables LSP integration and testing without files.
+* ✓ Rename (symbols, parameters, macros)
+* ✓ Extract function/macro/variable
+* ✓ Add/delete/reorder parameters
+* ✓ Move function between files (Phase 1 MVP)
 
-**Unified Symbol Database**: Transition from batch-mode (`-create` required) to on-demand parsing. Enables zero cold-start for LSP.
+==== Planned Improvements
 
-**Multi-file Support**: Build include graph, enable cross-file navigation. Critical for full LSP feature parity.
+[cols="1,2"]
+|===
+|Feature |Value
 
-=== Long-term Vision
+|**Move function Phase 2**
+|Automatically add function declaration to target header file
 
-User-facing features and modern IDE capabilities enabled by architectural improvements:
+|**Move function Phase 3**
+|Detect and optionally move tightly-coupled static helper functions
 
-**Additional Refactorings**: Extract expression (not just statements), smart helper function detection, preview dialogs.
+|**Smart include management**
+|Automatically add/remove `#include` directives based on dependencies
 
-**Full LSP Protocol**: Complete `textDocument/references`, hover, completion, rename, document symbols, workspace search.
+|**Refactoring preview**
+|Show what will be changed before applying
+|===
 
-**Modern IDE Showcase**: VS Code extension, Neovim plugin, performance optimization for large projects.
+==== Details
 
-For technical details on these items, see link:17-major-codebase-improvements.adoc[Chapter 17: Major Codebase Improvements] and link:16-planned-features.adoc[Chapter 16: Planned Features].
+See link:17-major-codebase-improvements.adoc#move-function-refactoring[Chapter 17: Move Function Between Files] for implementation details and phase breakdown.
