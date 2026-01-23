@@ -42,7 +42,7 @@ required.
 rename operation that renames the default named
 function/macro/variable.
 
-===== Two-Phase Architecture
+*_Two-Phase Architecture_*
 
 Extraction operates in two phases:
 
@@ -137,7 +137,7 @@ different update strategies and how references flow through the system.
 
 ==== Editor Buffer Abstraction
 
-===== The Duality of Source Code
+*_The Duality of Source Code_*
 
 When a user edits code in Emacs, the source code exists in two forms:
 
@@ -147,7 +147,7 @@ When a user edits code in Emacs, the source code exists in two forms:
 For code analysis to be useful during active editing, c-xrefactory must treat **editor
 buffers as the source of truth** when they exist.
 
-===== The Preloading Mechanism
+*_The Preloading Mechanism_*
 
 When the Emacs client sends a command to the `c-xref` server (like PUSH or NEXT), it uses
 the `-preload` option to transmit modified buffers:
@@ -170,7 +170,7 @@ For example:
 
 This ensures that the server analyzes what the user sees in the editor, not the potentially stale disk file.
 
-===== EditorBuffer Lifecycle
+*_EditorBuffer Lifecycle_*
 
 [source,c]
 ----
@@ -190,7 +190,7 @@ EditorBuffer {
 
 To implement incremental updates, c-xrefactory tracks when each file/buffer was last parsed.
 
-===== The Fields
+*_The Fields_*
 
 Each `FileItem` in the file table has:
 
@@ -199,7 +199,7 @@ Each `FileItem` in the file table has:
 
 These are `time_t` values (seconds since epoch).
 
-===== Dual Semantics
+*_Dual Semantics_*
 
 The `lastParsedMtime` field has dual semantics depending on context:
 
@@ -222,7 +222,7 @@ time_t editorFileModificationTime(char *filename) {
 
 The abstraction is seamless: code can check "has this file changed?" without caring whether it's a disk file or editor buffer.
 
-===== Change Detection
+*_Change Detection_*
 
 To determine if a file/buffer needs reparsing:
 
@@ -244,7 +244,7 @@ This pattern appears in:
 
 `C-xrefactory` has two update strategies that trade off speed against completeness.
 
-===== Fast Update (Default)
+*_Fast Update (Default)_*
 
 **When used:**
 
@@ -270,7 +270,7 @@ foo.c unchanged → foo.c not reparsed
 Result: foo.c still has stale information about symbols from foo.h
 ----
 
-===== Full Update
+*_Full Update_*
 
 **When used:**
 
@@ -305,7 +305,7 @@ common.h modified → full update → finds 50 files that include it
 Result: Reparses all 50 source files to pick up header changes
 ----
 
-===== When Does the Difference Matter?
+*_When Does the Difference Matter?_*
 
 With modern CPUs and SSDs, the performance difference is often negligible for small to
 medium projects. The fast update's header-blindness can lead to subtle bugs where
@@ -316,7 +316,7 @@ changes don't propagate. Full update is generally safer and more correct.
 References flow through multiple stages in c-xrefactory, with different storage
 locations and ownership models at each stage.
 
-===== Stage 1: Parsing
+*_Stage 1: Parsing_*
 
 When a file is parsed:
 
@@ -329,7 +329,7 @@ When a file is parsed:
 
 **Lifetime:** Lives until the next update that reparses that file
 
-===== Stage 2: The ReferenceableItemTable
+*_Stage 2: The ReferenceableItemTable_*
 
 The canonical storage for all references.
 
@@ -350,7 +350,7 @@ ReferenceableItem {
 * Updated incrementally as files are reparsed
 * References are **not individually free'd** - they're arena-allocated
 
-===== Stage 3: Session Stacks
+*_Stage 3: Session Stacks_*
 
 When a user performs a PUSH operation (browsing a symbol), a session is created:
 
@@ -371,7 +371,7 @@ SessionStackEntry {
 * When the session is destroyed, references are individually `free`'d (see `freeReferences`)
 * Sessions are **snapshots in time** - they don't automatically update when the table changes
 
-===== Why Separate Storage?
+*_Why Separate Storage?_*
 
 **Memory ownership:**
 
@@ -390,7 +390,7 @@ If sessions pointed directly to table references, we'd have:
 * Sessions are working copies for a specific browsing operation
 * Users expect their navigation stack to be stable during browsing
 
-===== The Staleness Problem
+*_The Staleness Problem_*
 
 The separation causes a problem: session references can become stale.
 
@@ -440,7 +440,7 @@ session->current = ref;
 
 This keeps navigation working correctly with live-edited code.
 
-===== Trade-offs of the Incremental Approach
+*_Trade-offs of the Incremental Approach_*
 
 **Advantages:**
 

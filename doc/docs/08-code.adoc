@@ -46,7 +46,7 @@ hard to follow.
 
 All modes begin by marking files for processing using the `isScheduled` flag in the file table.
 
-===== Initial Scheduling (All Modes)
+*_Initial Scheduling (All Modes)_*
 
 *Called from:*
 
@@ -72,7 +72,7 @@ processFileArguments() [options.c:1893]
 
 *Result:* All command-line files (and directory contents if `-r` flag) are marked with `isScheduled = true`.
 
-===== Additional Update Scheduling (Xref Mode Only)
+*_Additional Update Scheduling (Xref Mode Only)_*
 
 *Called from:* `callXref()` → `scheduleModifiedFilesToUpdate()` [`xref.c:296`]
 
@@ -207,7 +207,7 @@ parseToCreateReferences(fileName) [parsing.c:165]
 
 ==== Key Observations
 
-===== Assignments to `inputFileName`
+*_Assignments to `inputFileName`_*
 
 *Server Mode:* Set once per file processed
 
@@ -218,13 +218,13 @@ parseToCreateReferences(fileName) [parsing.c:165]
 
 * `oneWholeFileProcessing()` line 181
 
-===== `requestFileNumber` Only Used in Server Mode
+*_`requestFileNumber` Only Used in Server Mode_*
 
 * Set in `prepareInputFileForRequest()` (lines 104, 121)
 * Used in `parseInputFile()` line 136: `setupParsingConfig(requestFileNumber)`
 * NOT used in Xref mode at all
 
-===== Confusion: THREE Different File Number Globals!
+*_Confusion: THREE Different File Number Globals!_*
 
 [source,c]
 ----
@@ -247,7 +247,7 @@ int currentFileNumber = -1;     /* Currently parsed file, maybe a header file */
 
 The comment reveals the distinction: `currentFileNumber` can change DURING parsing when entering `#include` files, while `requestFileNumber` stays constant as "the file we were asked to process."
 
-===== Double `initInput()` Call in Xref Mode
+*_Double `initInput()` Call in Xref Mode_*
 
 In Xref mode, `initInput()` is called TWICE for the same file:
 
@@ -256,7 +256,7 @@ In Xref mode, `initInput()` is called TWICE for the same file:
 
 This appears to be a bug or wasteful duplication.
 
-===== `initializeFileProcessing` is Heavy Orchestration
+*_`initializeFileProcessing` is Heavy Orchestration_*
 
 This 500-line function does five major phases:
 
@@ -268,7 +268,7 @@ This 500-line function does five major phases:
 
 The `firstPass` parameter gates Phase 4's memory checkpoint save/restore.
 
-===== Naming Inconsistency
+*_Naming Inconsistency_*
 
 * `inputFileName` - used in both Server and Xref modes, but set in different places
 * `requestFileNumber` - only Server mode, represents the file from the request
@@ -278,7 +278,7 @@ If they represent the same concept (the file being processed), they should have 
 
 ==== Summary: Multi-File vs Single-File Processing
 
-===== Server Mode - Single File Per Request
+*_Server Mode - Single File Per Request_*
 
 * *Scheduling*: All files scheduled ONCE in `initServer()` → `processFileArguments()`
 * *Processing*: Each request picks ONE file via `prepareInputFileForRequest()`
@@ -287,7 +287,7 @@ If they represent the same concept (the file being processed), they should have 
 ** Sets both `inputFileName` and `requestFileNumber`
 * *Loop*: Infinite request loop in `server()` - different file per request
 
-===== Xref Mode - All Files Per Invocation
+*_Xref Mode - All Files Per Invocation_*
 
 * *Scheduling*: All files scheduled in `mainTaskEntryInitialisations()` → `processFileArguments()`
 * *Additional*: In update mode, `scheduleModifiedFilesToUpdate()` adds modified files
@@ -298,7 +298,7 @@ If they represent the same concept (the file being processed), they should have 
 ** Uses `currentFileNumber` (different global!) instead of `requestFileNumber`
 * *Loop*: Single invocation processes all files
 
-===== LSP Mode - Single File Per Request
+*_LSP Mode - Single File Per Request_*
 
 * *No scheduling*: Takes fileName as direct parameter
 * *No global state*: `parseToCreateReferences(fileName)` - clean interface
@@ -548,7 +548,7 @@ The symbol lookup process follows this pipeline:
 
 ==== Key Data Structures
 
-===== Browser Stack (`sessionData.browserStack`)
+*_Browser Stack (`sessionData.browserStack`)_*
 
 The browser stack is the runtime data structure for symbol navigation:
 
@@ -568,7 +568,7 @@ typedef struct {
 } OlcxReferences;
 ----
 
-===== Reference Information
+*_Reference Information_*
 
 [source,c]
 ----
@@ -590,7 +590,7 @@ typedef struct {
 
 ==== Database Operations
 
-===== Database Creation (-create)
+*_Database Creation (-create)_*
 
 1. Parse all project files using C/Yacc parsers
 2. Generate `ReferenceItem` entries for each symbol
@@ -598,13 +598,13 @@ typedef struct {
 4. Write structured records to `.cx` files
 5. Build hash-based index for fast lookup
 
-===== Database Updates (-update)
+*_Database Updates (-update)_*
 
 * **Full Update**: Rebuild entire database
 * **Fast Update**: Only process modified files based on timestamps
 * **Incremental**: Smart detection of changed dependencies
 
-===== Symbol Lookup (OLO_PUSH operations)
+*_Symbol Lookup (OLO_PUSH operations)_*
 
 1. `scanReferencesToCreateMenu(symbolName)` loads symbol data
 2. `createSelectionMenu()` builds navigation menus
@@ -613,7 +613,7 @@ typedef struct {
 
 ==== LSP Integration Challenges
 
-===== Architectural Mismatch
+*_Architectural Mismatch_*
 
 The current architecture was designed for **batch processing** and **persistent databases**, while LSP requires **on-demand processing** and **responsive queries**.
 
@@ -640,7 +640,7 @@ browserStack remains empty
 All definition requests return same default position
 ```
 
-===== Performance Characteristics
+*_Performance Characteristics_*
 
 [cols="1,1,1",options="header"]
 |===
@@ -998,7 +998,7 @@ more details.
 All of these require a `-p` (project) option to know which c-xref
 project options to read.
 
-===== General Principles
+*_General Principles_*
 
 Refactorings are done using a separate invocation, the edit server
 mode cannot handle refactorings. At least that is how the Emacs client
@@ -1021,7 +1021,7 @@ like presenting some menu selection.
 My guess at this point is that it is the refactoring
 server that closes the connection when it is done...
 
-===== Rename
+*_Rename_*
 
 *Invocation:* `-rfct-rename -renameto=NEW_NAME -olcursor=POSITION FILE`
 
@@ -1045,7 +1045,7 @@ followed by sequence of
 </replacement>
 ```
 
-===== Protocol Messages
+*_Protocol Messages_*
 
 <goto>{position-off}</goto> -> editor;;
 Request the editor to move cursor to the indicated position (file, position).

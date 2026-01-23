@@ -55,7 +55,7 @@ The Memory module provides arena-based allocation for performance-critical and r
 
 ==== Design Rationale
 
-===== Historical Context
+*_Historical Context_*
 
 In the 1990s when c-xrefactory originated, memory was scarce. The design had to:
 
@@ -66,7 +66,7 @@ In the 1990s when c-xrefactory originated, memory was scarce. The design had to:
 
 Most memory arenas use statically allocated areas. Only `cxMemory` supports dynamic resizing to handle out-of-memory situations by discarding, flushing and reusing memory. This forced implementation of a complex caching strategy since overflow could happen mid-file.
 
-===== Modern Benefits
+*_Modern Benefits_*
 
 Even with abundant modern memory, arena allocators provide:
 
@@ -108,7 +108,7 @@ Even with abundant modern memory, arena allocators provide:
 
 ==== Key Design Patterns
 
-===== Marker-Based Cleanup
+*_Marker-Based Cleanup_*
 
 Functions save a marker before temporary allocations:
 
@@ -119,7 +119,7 @@ char *marker = ppmAllocc(0);   // Save current index
 ppmFreeUntil(marker);          // Bulk cleanup
 ----
 
-===== Buffer Growth Pattern
+*_Buffer Growth Pattern_*
 
 Long-lived buffers that may need to grow:
 
@@ -137,7 +137,7 @@ ppmFreeUntil(marker);
 expandPreprocessorBufferIfOverflow(&bufferDesc, writePointer);
 ----
 
-===== Overflow Handling
+*_Overflow Handling_*
 
 The `cxMemory` arena supports dynamic resizing:
 

@@ -145,7 +145,7 @@ The preprocessor macro expansion code uses arena allocators (`ppmMemory`, `macro
 with stack-like discipline. Arena allocators are fast (pointer bumping) but require
 careful lifetime management.
 
-===== The Problem Pattern
+*_The Problem Pattern_*
 
 Arena allocators can only resize the most recent allocation ("top-of-stack").
 A common violation occurs when trying to resize a buffer after other allocations:
@@ -170,7 +170,7 @@ ppmFreeUntil(marker);               // Free temporaries FIRST
 ppmReallocc(buffer, newSize, ...);  // ✅ Works - buffer now at top
 ----
 
-===== Lifetime Violation Guards
+*_Lifetime Violation Guards_*
 
 The arena allocator includes guards that catch lifetime violations with detailed diagnostics:
 
@@ -190,7 +190,7 @@ assert(memoryIsAtTop(&ppmMemory, buffer, oldSize));
 ppmReallocc(buffer, newSize, sizeof(char), oldSize);
 ----
 
-===== Example: test_collation_long_expansion
+*_Example: test_collation_long_expansion_*
 
 This test case triggered the violation guard when macro expansion created a very large
 output (19 `FLAG_STRING` invocations). The `collate()` function was calling `ppmFreeUntil()`
@@ -200,7 +200,7 @@ The fix: move `ppmFreeUntil()` to *before* `copyRemainingLexems()`. By this poin
 temporary allocations from macro expansion were already used and could be freed,
 allowing the buffer to become top-of-stack again.
 
-===== Debugging With Guards
+*_Debugging With Guards_*
 
 When a guard triggers:
 

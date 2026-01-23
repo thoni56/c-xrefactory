@@ -42,7 +42,7 @@ IMPORTANT: The persistence layer is **always about durable storage** that surviv
 
 ==== Current Architecture Problems
 
-===== Mixed Abstraction Levels
+**Mixed Abstraction Levels**
 
 The current `cxfile.h` public interface exposes:
 
@@ -71,7 +71,7 @@ Problems:
 * **Search logic in storage**: `searchSymbolCheckReference()` mixes filtering with persistence
 * **Side-effect heavy**: All functions mutate global `referenceableItemTable` implicitly
 
-===== Tight Coupling to Use Cases
+*_Tight Coupling to Use Cases_*
 
 Currently `cxfile.c` knows about:
 
@@ -82,7 +82,7 @@ Currently `cxfile.c` knows about:
 
 A persistence layer shouldn't know about any of these! These are *clients* of storage, not responsibilities of storage.
 
-===== Wrong Source of Truth
+*_Wrong Source of Truth_*
 
 From the navigation debugging (see Insights chapter), we discovered:
 
@@ -102,7 +102,7 @@ The disk is just a **cache** of the last saved state, not the current truth.
 
 ==== Proposed Architecture
 
-===== Two-Layer Design
+*_Two-Layer Design_*
 
 [source]
 ----
@@ -130,7 +130,7 @@ The disk is just a **cache** of the last saved state, not the current truth.
 └──────────────────────────────────────────────────┘
 ----
 
-===== Clean Persistence Store Interface
+*_Clean Persistence Store Interface_*
 
 [source,c]
 ----
@@ -172,7 +172,7 @@ extern void persistenceScanAll(PersistenceVisitor visitor, void *context);
 #endif
 ----
 
-===== Reference Database Interface
+*_Reference Database Interface_*
 
 This layer provides the "smart" operations that clients actually need:
 
@@ -209,7 +209,7 @@ NOTE: This interface starts simple but is where the *Unified Symbol Database* re
 
 ==== Migration Strategy
 
-===== Phase 1: Create Clean Boundaries (No Behavior Change)
+*_Phase 1: Create Clean Boundaries (No Behavior Change)_*
 
 . Rename `cxfile.h` → `cxfile_internal.h` (implementation detail)
 . Create `persistence_store.h` with clean interface
@@ -218,7 +218,7 @@ NOTE: This interface starts simple but is where the *Unified Symbol Database* re
 
 Result: Same behavior, cleaner names, clear intent.
 
-===== Phase 2: Extract Operation Logic
+*_Phase 2: Extract Operation Logic_*
 
 Move operation-specific logic OUT of persistence layer:
 
@@ -249,7 +249,7 @@ static void checkSearchMatch(ReferenceableItem *item, Reference *ref, void *ctx)
 
 *Menu Creation*:: Keep in `cxref.c` but use clean `refDbGetReferences()` instead of direct disk scanning
 
-===== Phase 3: Hide Implementation Details
+*_Phase 3: Hide Implementation Details_*
 
 Make these functions `static` (internal to cxfile.c):
 
@@ -257,7 +257,7 @@ Make these functions `static` (internal to cxfile.c):
 * `searchSymbolCheckReference()` - moved to search module
 * All internal scanning logic
 
-===== Phase 4: Consolidate Scanning Functions
+*_Phase 4: Consolidate Scanning Functions_*
 
 Replace four specific scanners with generic visitor pattern:
 
@@ -373,7 +373,7 @@ The existing system distinguishes between:
 
 ==== Proposed Solution
 
-===== Core Insight: Unified On-Demand Architecture
+*_Core Insight: Unified On-Demand Architecture_*
 
 Both Emacs and LSP clients want the same thing: **up-to-date symbol and reference information**. The distinction between "file-based" and "on-demand" modes is artificial complexity. Instead, c-xrefactory should provide a unified interface that:
 
@@ -382,7 +382,7 @@ Both Emacs and LSP clients want the same thing: **up-to-date symbol and referenc
 3. **Uses `.cx` files as persistent cache** for optimization
 4. **Eliminates cold start problems** by avoiding upfront full-project scanning
 
-===== Simplified Interface Design
+*_Simplified Interface Design_*
 
 [source,c]
 ----
@@ -402,11 +402,11 @@ typedef struct {
 } SymbolDatabaseOperations;
 ----
 
-===== Implementation Strategy: Smart On-Demand
+*_Implementation Strategy: Smart On-Demand_*
 
 IMPORTANT: This refactoring builds on the *Clean Persistence Store* foundation (previous section). The smart logic lives in the **in-memory reference database layer**, while `.cx` files remain a **durable cache** for persistence.
 
-===== Core Principle: In-Memory Is Always Authoritative
+*_Core Principle: In-Memory Is Always Authoritative_*
 
 The fundamental architectural shift is that **in-memory references are the single source of truth** once a file is parsed:
 
@@ -482,7 +482,7 @@ Query → Reference Database (in-memory, smart) → Persistence Store (disk, dum
 * **Existing logic reuse** - leverages proven dependency tracking system
 
 [[cache-miss-detection]]
-***Cache Miss Detection Algorithm***
+*_Cache Miss Detection Algorithm_*
 
 The `.cx` file follows standard cache semantics. For any file access, this algorithm determines whether to use cached references or re-parse:
 
@@ -527,7 +527,7 @@ For file F:
 
 **Persistence constraint**: Only disk-sourced references are written to `.cx`. References parsed from preloaded buffers (unsaved editor content) are never persisted, preventing stale data from surviving across sessions.
 
-***Legacy Architecture Recognition***
+*_Legacy Architecture Recognition_*
 
 c-xrefactory evolved from a **batch cross-referencer** (like `ctags`) and was enhanced for real-time use:
 
@@ -547,14 +547,14 @@ IMPORTANT: The `.cx` files are a **durable cache** that persists the in-memory `
 
 ==== Implementation Plan
 
-===== Phase 1: Interface Unification
+*_Phase 1: Interface Unification_*
 
 * Create unified `SymbolDatabase` interface
 * Wrap existing logic in smart on-demand implementation
 * Replace explicit `-create`/`-update` commands with automatic dependency checking
 * Both Emacs and LSP use same code path
 
-===== Phase 2: Optimization
+*_Phase 2: Optimization_*
 
 * Enhance existing dependency tracking for finer-grained invalidation
 * Optimize in-memory caching strategies
@@ -563,28 +563,28 @@ IMPORTANT: The `.cx` files are a **durable cache** that persists the in-memory `
 
 ==== Benefits
 
-===== Architectural Simplification
+*_Architectural Simplification_*
 
 * **Single code path** for both Emacs and LSP clients - eliminates maintenance overhead
 * **No mode distinctions** - same smart logic serves all use cases optimally
 * **Leverages existing logic** - reuses proven dependency tracking and caching systems
 * **Reduced complexity** - eliminates artificial FILE_BASED/ON_DEMAND/HYBRID modes
 
-===== User Experience Improvements
+*_User Experience Improvements_*
 
 * **Zero configuration** - works immediately on any C project without setup
 * **No cold start delay** - first symbol lookup triggers minimal necessary scanning
 * **Transparent caching** - `.cx` files automatically maintained as performance optimization
 * **Consistent behavior** - same results whether using Emacs or modern IDE with LSP
 
-===== Performance Characteristics
+*_Performance Characteristics_*
 
 * **Minimal initial cost** - avoids expensive upfront full-project scanning
 * **Smart incremental updates** - only rescans files that have actually changed
 * **Automatic dependency tracking** - includes files affected by changes get updated
 * **Persistent optimization** - analysis results cached across sessions
 
-===== Development Benefits
+*_Development Benefits_*
 
 * **Backward compatibility** - existing Emacs workflows continue unchanged
 * **Forward compatibility** - natural path to modern LSP integration
@@ -593,7 +593,7 @@ IMPORTANT: The `.cx` files are a **durable cache** that persists the in-memory `
 
 ==== Existing Infrastructure
 
-===== Sophisticated Dependency Tracking
+*_Sophisticated Dependency Tracking_*
 
 The unified approach leverages c-xrefactory's **existing sophisticated dependency management** that handles include file relationships automatically:
 
@@ -644,7 +644,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
 
 IMPORTANT: This dependency tracking infrastructure is **already production-ready** and handles the complex cases (transitive dependencies, modification time checking, include stack management). The unified symbol database can leverage this existing logic instead of reimplementing dependency management.
 
-===== Refactoring Without callXref()
+*_Refactoring Without callXref()_*
 
 The current architecture has RefactoryMode internally calling XrefMode (`callXref()`) to update the persistent `.cx` database before performing refactorings (see Insights chapter, section "RefactoryMode Internally Calls XrefMode").
 
@@ -722,7 +722,7 @@ The macro expansion code is a substantial, cohesive subsystem that would benefit
 
 The macro expansion system in `yylex.c` comprises:
 
-===== Core Responsibilities (~800 lines)
+*_Core Responsibilities (~800 lines)_*
 
 * **Macro call expansion** - Main orchestration (`expandMacroCall()`)
 * **Argument processing** - Collection and recursive expansion
@@ -731,7 +731,7 @@ The macro expansion system in `yylex.c` comprises:
 * **Memory management** - Separate arenas for macro bodies (MBM) and arguments (PPM)
 * **Cyclic detection** - Preventing infinite macro recursion
 
-===== Key State
+*_Key State_*
 
 [source,c]
 ----
@@ -741,7 +741,7 @@ static Memory macroBodyMemory;      // Long-lived: macro definitions
 static Memory macroArgumentsMemory; // Short-lived: expansion temporaries
 ----
 
-===== Memory Lifetime Separation
+*_Memory Lifetime Separation_*
 
 The system uses **two distinct memory arenas** with different lifetimes:
 
@@ -754,7 +754,7 @@ This separation is fundamental and should be preserved in any refactoring.
 
 Extract macro expansion into a new module: `macroexpansion.c/h`
 
-===== Public Interface
+*_Public Interface_*
 
 The new module would expose a minimal, focused API:
 
@@ -776,7 +776,7 @@ void *macroBodyRealloc(void *ptr, size_t oldSize, size_t newSize);
 void *macroArgumentAlloc(size_t size);
 ----
 
-===== Module Boundaries
+*_Module Boundaries_*
 
 *What moves to macroexpansion.c:*
 
@@ -806,20 +806,20 @@ The macro module would depend on:
 
 ==== Benefits
 
-===== Architectural
+*_Architectural_*
 
 * **Separation of concerns**: Lexing vs. preprocessing clearly separated
 * **Reduced file size**: yylex.c drops from 2353 → ~1550 lines (34% reduction)
 * **Testability**: Macro expansion can be unit tested independently
 * **Clearer ownership**: Macro state and memory management centralized
 
-===== Maintainability
+*_Maintainability_*
 
 * **Focused modules**: Each file has a single, clear purpose
 * **Easier reasoning**: Macro behavior isolated from lexer concerns
 * **Better documentation**: Module-level documentation for macro system
 
-===== Future flexibility
+*_Future flexibility_*
 
 * Could support different macro systems (C vs. C++)
 * Easier to add macro debugging/tracing
@@ -827,20 +827,20 @@ The macro module would depend on:
 
 ==== Implementation Strategy
 
-===== Phase 1: Preparation (Already Complete)
+*_Phase 1: Preparation (Already Complete)_*
 
 ✓ Create `LexemBufferDescriptor` type for buffer management +
 ✓ Refactor buffer expansion functions to use descriptor +
 ✓ Eliminate return values for size updates
 
-===== Phase 2: Create Module Structure
+*_Phase 2: Create Module Structure_*
 
 * Create `macroexpansion.h` with public interface
 * Create `macroexpansion.c` with initial implementations
 * Move `LexemBufferDescriptor` to appropriate header
 * Create accessor functions for `currentInput` state
 
-===== Phase 3: Incremental Function Migration
+*_Phase 3: Incremental Function Migration_*
 
 Move functions in this order (lowest risk first):
 
@@ -850,7 +850,7 @@ Move functions in this order (lowest risk first):
 4. **Token processing** - `collate()`, `resolveMacroArgument()`, etc.
 5. **Core expansion** - `expandMacroCall()`, `createMacroBodyAsNewStream()`, etc.
 
-===== Phase 4: Integration and Cleanup
+*_Phase 4: Integration and Cleanup_*
 
 * Update yylex.c to use new interface
 * Run full test suite after each migration step
@@ -860,7 +860,7 @@ Move functions in this order (lowest risk first):
 
 ==== Risks and Mitigation
 
-===== Risk: Complex dependencies
+*_Risk: Complex dependencies_*
 
 *Mitigation:*
 
@@ -868,7 +868,7 @@ Move functions in this order (lowest risk first):
 * Use incremental approach - one function group at a time
 * Validate with tests after each step
 
-===== Risk: Performance overhead
+*_Risk: Performance overhead_*
 
 *Mitigation:*
 
@@ -878,7 +878,7 @@ Move functions in this order (lowest risk first):
 
 *Assessment:* Low risk - macro operations are complex enough that function call overhead is negligible
 
-===== Risk: Breaking existing tests
+*_Risk: Breaking existing tests_*
 
 *Mitigation:*
 
@@ -972,7 +972,7 @@ The new `parsing.h` interface provides operation-based configuration (see `src/p
 
 ==== Benefits of Backporting This API
 
-===== Code Clarity and Safety
+*_Code Clarity and Safety_*
 
 Replace magic strings with discoverable enums:
 
@@ -1003,7 +1003,7 @@ parsingConfig.targetParameterIndex = 5;
 parsingConfig.extractMode = EXTRACT_VARIABLE;
 ----
 
-===== Foundation for Multi-File Definition Lookup
+*_Foundation for Multi-File Definition Lookup_*
 
 The clean API makes it easier to implement required enhancements:
 
@@ -1021,7 +1021,7 @@ parsingConfig.symbolName = "findReferenceableAt";
 parsingConfig.startFile = fileNumber;
 ----
 
-===== Easier Feature Development
+*_Easier Feature Development_*
 
 Adding new operations becomes straightforward:
 
@@ -1032,7 +1032,7 @@ Adding new operations becomes straightforward:
 
 ==== Implementation Plan: Three Non-Blocking Phases
 
-===== Phase 1: Expose New API Alongside Legacy Code
+*_Phase 1: Expose New API Alongside Legacy Code_*
 
 **Scope**: Purely additive - new API works alongside legacy code
 **Risk**: LOW (no changes to existing code paths)
@@ -1046,7 +1046,7 @@ Adding new operations becomes straightforward:
 
 **Benefit**: Can merge this without affecting legacy code at all
 
-===== Phase 2: Migrate High-Value Callsites
+*_Phase 2: Migrate High-Value Callsites_*
 
 **Scope**: Refactor 50%+ of parsing infrastructure
 **Risk**: MEDIUM (refactoring, but with tests)
@@ -1060,7 +1060,7 @@ Adding new operations becomes straightforward:
 
 **Benefit**: 50%+ of parsing infrastructure modernized, multi-file definitions enabled
 
-===== Phase 3: Complete Legacy Code Cleanup
+*_Phase 3: Complete Legacy Code Cleanup_*
 
 **Scope**: Remove all magic string command routing, consolidate parsing
 **Risk**: MEDIUM (larger refactoring)
@@ -1078,7 +1078,7 @@ Adding new operations becomes straightforward:
 
 ==== Multi-File Definition: Requirements
 
-===== 1. Symbol Type Information Persistence
+*_Symbol Type Information Persistence_*
 
 **Current**: ReferenceableItemTable only stores name, position, kind
 **Needed**: Minimal type info for cross-file resolution
@@ -1098,7 +1098,7 @@ struct ReferenceableItem {
 
 **Scope**: Extend ReferenceableItem, careful memory management
 
-===== 2. Include Graph Construction
+*_Include Graph Construction_*
 
 **Current**: Include relationships processed during lexing, not persisted
 **Needed**: Map of which files include which headers
@@ -1121,7 +1121,7 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */
 
 **Scope**: Moderate effort, moderate complexity
 
-===== 3. Incremental Multi-File Parsing
+*_Incremental Multi-File Parsing_*
 
 **Current**: Full project parse or single-file parse
 **Needed**: Efficient "parse files needed for definition lookup" operation
