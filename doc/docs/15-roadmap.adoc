@@ -109,6 +109,20 @@ The following diagram shows how the architectural pieces depend on each other. W
 |Refactoring uses same in-memory table as navigation. Include closure (already implemented) finds affected files; parse on demand. Eliminates the architectural split between navigation and refactoring code paths.
 |===
 
+==== .cx File: Standard Cache Semantics
+
+The `.cx` file is a **startup cache**, not a database. It follows standard cache semantics:
+
+* **Cache miss**: No entry, or entry is stale → parse from authoritative source
+* **Cache hit**: Entry exists and is current → use cached references
+
+**Authoritative sources** (in priority order):
+
+1. **Editor preload buffer** - if Emacs sends `-preload` for a file, that content is authoritative
+2. **Disk file** - verified by mtime comparison against stored `lastParsedMtime`
+
+The cache self-heals: missing `.cx` (cold start) or stale `.cx` (crash, external changes) are detected and corrected on access. See link:17-major-codebase-improvements.adoc#cache-miss-detection[Chapter 17: Cache Miss Detection] for the precise algorithm.
+
 ==== Related Decisions and Details
 
 * **ADR-13**: No archaic extern patterns - limits symbol visibility to include-based, making include closure complete

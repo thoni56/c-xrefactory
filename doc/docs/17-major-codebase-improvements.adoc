@@ -481,7 +481,53 @@ Query → Reference Database (in-memory, smart) → Persistence Store (disk, dum
 * **Durable cache** - `.cx` files persist state across sessions
 * **Existing logic reuse** - leverages proven dependency tracking system
 
-===== Legacy Architecture Recognition
+[[cache-miss-detection]]
+***Cache Miss Detection Algorithm***
+
+The `.cx` file follows standard cache semantics. For any file access, this algorithm determines whether to use cached references or re-parse:
+
+[source]
+----
+For file F:
+
+1. Is there an active preload for F?
+   YES → Preload is authoritative. Use/parse preload content.
+         (Preload = "editor says this is current content")
+   NO  → Continue to step 2
+
+2. Do we have references for F in memory?
+   NO  → Cache miss. Parse from disk.
+   YES → Continue to step 3
+
+3. Does stored lastParsedMtime match current disk mtime?
+   NO  → Cache miss. Re-parse from disk.
+   YES → Cache hit. Use existing references.
+----
+
+**Key insight**: Two authoritative sources exist, with clear priority:
+
+[cols="1,2,2"]
+|===
+|Source |Detection |When used
+
+|**Editor preload**
+|Preload exists for file
+|Editor has unsaved changes; preload content is truth
+
+|**Disk file**
+|mtime comparison
+|No preload; disk content is truth
+|===
+
+**Self-healing behavior**:
+
+* **Missing .cx** (cold start): Step 2 triggers parse on demand
+* **Stale .cx** (crash, external changes): Step 3 mtime check catches it
+* **Preload override**: Step 1 ensures editor content always wins
+
+**Persistence constraint**: Only disk-sourced references are written to `.cx`. References parsed from preloaded buffers (unsaved editor content) are never persisted, preventing stale data from surviving across sessions.
+
+***Legacy Architecture Recognition***
 
 c-xrefactory evolved from a **batch cross-referencer** (like `ctags`) and was enhanced for real-time use:
 
