@@ -78,6 +78,14 @@ The following diagram shows how the architectural pieces depend on each other. W
                                   │
                                   ▼
 ┌─────────────────────────────────────────────────────────────────────┐
+│                    ENABLED BY (makes it natural)                     │
+├─────────────────────────────────────────────────────────────────────┤
+│  Project-local .c-xrefrc with automatic upward discovery            │
+│  (See section: Foundational Change: Project-Local Configuration)    │
+└─────────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌─────────────────────────────────────────────────────────────────────┐
 │                       ALSO ENABLES                                   │
 ├─────────────────────────────────────────────────────────────────────┤
 │  • .cx becomes startup cache only (not consulted during ops)        │
@@ -134,6 +142,125 @@ The cache self-heals: missing `.cx` (cold start) or stale `.cx` (crash, external
 The foundation work is **not yet started**. Current workarounds (like excluding refactoring operations from `lastParsedMtime` updates) paper over the architectural tension but don't resolve it.
 
 See link:18-insights.adoc[Chapter 18: Insights] section "The lastParsedMtime Optimization and Refactoring Conflict" for a concrete example of the current complexity.
+
+=== Foundational Change: Project-Local Configuration
+
+==== The Goal
+
+Enable project-local `.c-xrefrc` files with automatic discovery, replacing the current `$HOME/.c-xrefrc` multi-project architecture. This makes single-project server operation **natural** rather than restrictive.
+
+==== Current Architecture
+
+* Single `$HOME/.c-xrefrc` contains sections for all projects
+* All paths must be absolute (not portable across machines)
+* Client asks server "which project covers this file?"
+* Server searches through all project sections to find a match
+
+==== Target Architecture
+
+**Automatic project discovery:**
+
+----
+Operation on /foo/bar/src/file.c
+         ↓
+Search upward: /foo/bar/src/.c-xrefrc? No
+               /foo/bar/.c-xrefrc? Yes → project root is /foo/bar/
+         ↓
+Server locks to this single project
+----
+
+**Two-file configuration split:**
+
+[cols="1,2,1"]
+|===
+|File |Purpose |Version control
+
+|`.c-xrefrc`
+|Project settings: compiler flags, `-D` defines, relative source paths
+|Committed
+
+|`.c-xrefrc.local`
+|Machine-specific: external library paths, personal preferences
+|Gitignored
+
+|`$HOME/.c-xrefrc`
+|Global defaults, backward compatibility
+|N/A
+|===
+
+**Settings cascade** (priority low→high):
+
+1. Built-in defaults
+2. `$HOME/.c-xrefrc` (global, backward compat)
+3. `.c-xrefrc` (project, committed)
+4. `.c-xrefrc.local` (project, local overrides)
+5. Command-line options
+
+==== How This Enables Single-Project Server
+
+With automatic project discovery:
+
+* Project determined by file location, not explicit `-p` parameter
+* Server "locks" to discovered project root on first request
+* Request for file outside project → reject or prompt "add to project?"
+* Multi-project operation becomes impossible by design
+
+This makes single-project server a **natural consequence**, not an artificial restriction.
+
+==== Protocol Evolution
+
+The existing `-getproject <file>` command becomes the lock point:
+
+----
+First -getproject <file>:
+  1. Upward search for .c-xrefrc from <file>
+  2. If found: LOCK to that directory as project root
+  3. Return project root (or name)
+
+Subsequent -getproject <file>:
+  1. Is <file> under locked project root?
+  2. Yes → return same project
+  3. No  → error "file not in current project"
+----
+
+**Key insight**: The client's existing pattern of sending `-getproject` before each operation requires no change. The server simply adds locking behavior.
+
+==== Implementation Phases
+
+**Phase 1: Upward search with locking** (minimal, unblocks single-project server)
+
+* Add upward search for `.c-xrefrc` in `-getproject` handler
+* First successful discovery locks server to that project root
+* Subsequent requests for files outside root return error
+* If no `.c-xrefrc` found: fall back to `$HOME/.c-xrefrc` (backward compat)
+* Paths still absolute (no change to path handling yet)
+
+**Phase 2: Relative paths**
+
+* Paths in project-local `.c-xrefrc` resolved relative to project root
+* Enables version-controllable project settings
+* `$HOME/.c-xrefrc` continues using absolute paths
+
+**Phase 3: Local overrides**
+
+* Add `.c-xrefrc.local` support
+* External library paths, personal preferences
+* Document: add `.c-xrefrc.local` to `.gitignore`
+
+**Phase 4: Migration tooling** (optional)
+
+* Tool to extract `$HOME/.c-xrefrc` sections into project-local files
+* Deprecation warnings for multi-project `$HOME/.c-xrefrc` usage
+
+==== Relationship to Memory as Truth
+
+This work directly enables the **Single-Project Server Policy** at the base of the Memory as Truth dependency chain. Without a natural way to scope to a single project, enforcing single-project operation would feel like an artificial limitation to users.
+
+==== Open Questions
+
+* Projects with sources in multiple unrelated directories - multiple `-I` paths but single root?
+* Environment variable expansion in `.c-xrefrc.local` (e.g., `${MYLIB_PATH}/include`)?
+* Migration path for users with complex multi-project `$HOME/.c-xrefrc`?
 
 === Feature Vision: Full LSP Support
 
