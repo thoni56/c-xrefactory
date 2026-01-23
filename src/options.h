@@ -105,6 +105,7 @@ typedef struct options {
     int lineNumberOfMenuSelection;
     int cxMemoryFactor;
     char *project;
+    char *detectedProjectRoot;  /* Directory where .c-xrefrc was found via auto-detection */
     char *olcxlccursor;
     char *olcxSearchString;
     int olineLen;

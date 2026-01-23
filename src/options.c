@@ -86,6 +86,7 @@ Options presetOptions = {
     0,
     1,                          // cxMemoryFactor
     NULL,                       /* project */
+    "",                         /* detected project root */
     "0:3",                      // olcxlccursor
     "",                         /* olcxSearchString */
     79,                         /* olineLen */
@@ -1939,15 +1940,17 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundO
             FILE *optionsFile = openFile(candidatePath, "r");
             if (optionsFile != NULL) {
                 ArgumentsVector nargs;
-                char projectName[MAX_FILE_NAME_SIZE];
+                char projectName[MAX_FILE_NAME_SIZE+16];
                 bool found = readOptionsFromFileIntoArgs(optionsFile, &nargs, ALLOCATE_NONE, sourceFilename,
                                                          options.project, projectName);
                 closeFile(optionsFile);
                 if (found) {
                     strcpy(foundOptionsFilename, candidatePath);
                     strcpy(foundProjectName, projectName);
-                    log_debug("Found project-local config '%s' covering '%s', project '%s'",
-                              candidatePath, sourceFilename, foundProjectName);
+                    /* Store project root for convention-based paths (e.g., .c-xref/db/) */
+                    options.detectedProjectRoot = allocateStringForOption(&options.detectedProjectRoot, searchDir);
+                    log_debug("Found project-local config '%s' covering '%s', project '%s', root '%s'",
+                              candidatePath, sourceFilename, foundProjectName, options.detectedProjectRoot);
                     return true;
                 }
             }

@@ -57,6 +57,8 @@ static unsigned menuFilterLevels[MAX_MENU_FILTER_LEVEL] = {
 
 #define RENAME_FILTER_LEVEL (FILE_MATCH_RELATED | NAME_MATCH_APPLICABLE)
 
+/* Single-project policy: server locks to first project discovered */
+static char *lockedProject = NULL;
 
 
 /* *********************************************************************** */
@@ -2076,6 +2078,14 @@ void answerEditorAction(void) {
     ENTER();
     assert(outputFile);
 
+    /* Single-project policy: require project lock before any operation except getprojectname.
+       Only enforced in auto-discovery mode (no explicit -xrefrc). */
+    if (options.xrefrc == NULL && lockedProject == NULL &&
+        options.serverOperation != OLO_ACTIVE_PROJECT) {
+        FATAL_ERROR(ERR_ST, "Server operation without locked project - client must call -getprojectname first",
+                    XREF_EXIT_ERR);
+    }
+
     log_debug("Server operation = %s(%d)", operationNamesTable[options.serverOperation], options.serverOperation);
     switch (options.serverOperation) {
     case OLO_COMPLETION:
@@ -2126,10 +2136,22 @@ void answerEditorAction(void) {
                 log_debug("inputFileName = %s", fileName);
                 searchStandardOptionsFileAndProjectForFile(fileName, standardOptionsFileName, standardOptionsSectionName);
                 if (standardOptionsFileName[0]==0 || standardOptionsSectionName[0]==0) {
-                    if (!options.noErrors) {
+                    /* No project found for this file */
+                    if (lockedProject != NULL) {
+                        /* Server is locked - return specific error */
+                        char errorMsg[MAX_FILE_NAME_SIZE + 50];
+                        sprintf(errorMsg, "File not covered by current project: %s", lockedProject);
+                        ppcGenRecord(PPC_ERROR, errorMsg);
+                    } else if (!options.noErrors) {
                         ppcGenRecord(PPC_NO_PROJECT, fileName);
                     }
                 } else {
+                    /* Project found - check lock */
+                    if (lockedProject == NULL) {
+                        /* First project discovery - lock to it */
+                        lockedProject = strdup(standardOptionsSectionName);
+                        log_debug("Server locked to project: %s", lockedProject);
+                    }
                     ppcGenRecord(PPC_SET_INFO, standardOptionsSectionName);
                 }
             }

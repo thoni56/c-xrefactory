@@ -1,8 +1,10 @@
 CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/browsing.c
 end-of-options
 
 <sync>
--olcxtagsearch=ilist -searchdef -olinelen=159 -olcxlccursor=1:0 -olcursor=0 CURDIR/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<set-info len=<n>>CURDIR</set-info>
+-olcxtagsearch=ilist -searchdef -olinelen=159 -olcxlccursor=1:0 -olcursor=0 CURDIR/browsing.c -p CURDIR
 end-of-options
 
 <sync>
