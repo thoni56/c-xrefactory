@@ -373,8 +373,13 @@ Ensure(Options, can_return_standard_options_filename_and_section_as_for_ffmpeg) 
     char sectionName[1000];
     FILE file;
 
-    expect(getEnv, when(variable, is_equal_to_string("HOME")),
-           will_return("HOME"));
+    // Searching upwards from current dir
+    expect(directoryName_static, will_return("HOME/projectdir"));
+    expect(fileExists, will_return(false)); /* HOME/projectdir/.c-xrefrc */
+    expect(fileExists, will_return(true)); /* HOME/.c-xrefrc */
+
+    /* expect(getEnv, when(variable, is_equal_to_string("HOME")), */
+    /*        will_return("HOME")); */
     expect(openFile, when(fileName, is_equal_to_string("HOME/.c-xrefrc")),
            will_return(&file));
 

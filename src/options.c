@@ -1918,6 +1918,52 @@ protected bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFil
     return false;
 }
 
+/* Search upward from sourceFilename for a project-local .c-xrefrc file.
+ * Returns true if found and the config covers the source file.
+ * Sets foundOptionsFilename to the path of the .c-xrefrc file.
+ * Sets foundProjectName to the project name from the matching section.
+ */
+static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundOptionsFilename,
+                                               char *foundProjectName) {
+    char searchDir[MAX_FILE_NAME_SIZE];
+    char candidatePath[MAX_FILE_NAME_SIZE + 16];  /* Extra space for "/.c-xrefrc" suffix */
+
+    /* Start from the directory containing the source file */
+    strcpy(searchDir, directoryName_static(sourceFilename));
+
+    while (searchDir[0] != 0 && strlen(searchDir) > 1) {
+        snprintf(candidatePath, sizeof(candidatePath), "%s/.c-xrefrc", searchDir);
+        log_trace("Checking for project-local config: %s", candidatePath);
+
+        if (fileExists(candidatePath)) {
+            FILE *optionsFile = openFile(candidatePath, "r");
+            if (optionsFile != NULL) {
+                ArgumentsVector nargs;
+                char projectName[MAX_FILE_NAME_SIZE];
+                bool found = readOptionsFromFileIntoArgs(optionsFile, &nargs, ALLOCATE_NONE, sourceFilename,
+                                                         options.project, projectName);
+                closeFile(optionsFile);
+                if (found) {
+                    strcpy(foundOptionsFilename, candidatePath);
+                    strcpy(foundProjectName, projectName);
+                    log_debug("Found project-local config '%s' covering '%s', project '%s'",
+                              candidatePath, sourceFilename, foundProjectName);
+                    return true;
+                }
+            }
+        }
+
+        /* Move up one directory */
+        char *lastSlash = strrchr(searchDir, '/');
+        if (lastSlash == NULL || lastSlash == searchDir) {
+            break;  /* Reached root or no more slashes */
+        }
+        *lastSlash = 0;
+    }
+
+    return false;
+}
+
 void searchStandardOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename,
                                                 char *foundProjectName) {
     int    fileno;
@@ -1930,7 +1976,14 @@ void searchStandardOptionsFileAndProjectForFile(char *sourceFilename, char *foun
     if (sourceFilename == NULL)
         return;
 
-    /* Try to find section in HOME config. */
+    /* If no explicit -xrefrc was provided, try to find a project-local .c-xrefrc by searching upward */
+    if (options.xrefrc == NULL) {
+        if (searchUpwardForProjectLocalConfig(sourceFilename, foundOptionsFilename, foundProjectName)) {
+            return;
+        }
+    }
+
+    /* Fall back: try to find section in explicit -xrefrc or HOME config. */
     putXrefrcFileNameInto(foundOptionsFilename);
     optionsFile = openFile(foundOptionsFilename, "r");
     if (optionsFile != NULL) {
