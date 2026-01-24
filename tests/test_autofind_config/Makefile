@@ -1,6 +1,9 @@
 include ../Makefile.server
 
 $(TEST):
-	@$(SERVER_DRIVER) commands.input > output.tmp
+	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
+
+trace: EXTRA = --extra '-trace -log=debug'
+trace: $(TEST)

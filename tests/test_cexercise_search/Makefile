@@ -8,7 +8,7 @@ $(TEST): CXrefs
 	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
 
-trace: EXTRA = \'-debug\'
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
 
 CXrefs:
