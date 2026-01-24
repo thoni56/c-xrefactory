@@ -8,6 +8,7 @@
 #include "commandlogger.h"
 #include "commons.h"
 #include "globals.h"
+#include "head.h"
 #include "memory.h"
 #include "misc.h"
 #include "cxref.h"
@@ -1542,6 +1543,13 @@ static bool processPOption(int *argi, ArgumentsVector args) {
 
 static void setXrefsLocation(char *arg) {
     static bool messageWritten=false;
+
+    /* In auto-detection mode, -refs is ignored - we use convention-based path */
+    if (options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
+        log_warn("-refs is ignored in project auto-detection mode (using %s/.c-xref/db)",
+                 options.detectedProjectRoot);
+        return;
+    }
 
     if (options.mode==XrefMode && !messageWritten && !isAbsolutePath(arg)) {
         char tmpBuff[TMP_BUFF_SIZE];
