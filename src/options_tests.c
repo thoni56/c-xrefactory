@@ -397,12 +397,6 @@ Ensure(Options, can_return_standard_options_filename_and_section_as_for_ffmpeg) 
     assert_that(sectionName, is_equal_to_string("ffmpeg"));
 }
 
-/* We need new functionality that registers only option fields that
- * needs to be "shifted" as they need to be shifted wrt. to the
- * Options structure, as opposed to pointer into the options memory
- * which needs to be shifted wrt. that memory. (Which will be
- * allocated and not a part of the options structure at some point
- * when we move to Memory2 for options.memory) */
 Ensure(Options, collects_option_field_that_allocate_a_string_in_options_space) {
     allocateStringForOption(&options.pushName, "pushName");
 
