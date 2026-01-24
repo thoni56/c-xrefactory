@@ -1900,8 +1900,35 @@ void processFileArguments(void) {
 }
 
 
-/* Return a project name if found, else NULL */
-/* Only handles cases where the file path is included in the project name/section */
+/* Get the project name from an options file (first section header).
+ * Used in auto-detection mode where file coverage is implicit.
+ * Returns true if a section was found, false otherwise.
+ */
+static bool getProjectNameFromOptionsFile(FILE *optionsFile, /* out */ char *projectName) {
+    int ch = ' ';
+
+    while (ch != EOF) {
+        while (ch == ' ' || ch == '\t' || ch == '\n')
+            ch = readChar(optionsFile);
+        if (ch == '[') {
+            int i = 0;
+            while (ch != ']' && ch != EOF) {
+                ch = readChar(optionsFile);
+                projectName[i++] = ch;
+            }
+            projectName[i-1] = '\0';
+            return true;
+        } else {
+            while (ch != '\n' && ch != EOF)
+                ch = readChar(optionsFile);
+        }
+    }
+    return false;
+}
+
+
+/* LEGACY: Return a project name if found, else NULL. Only handles cases where the file
+ * path is included in the project name/section. */
 protected bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFile, /* out */ char *projectName) {
     int ch = ' ';              /* Something to get started */
 
@@ -1954,10 +1981,10 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundO
         if (fileExists(candidatePath)) {
             FILE *optionsFile = openFile(candidatePath, "r");
             if (optionsFile != NULL) {
-                ArgumentsVector nargs;
                 char projectName[MAX_FILE_NAME_SIZE+16];
-                bool found = readOptionsFromFileIntoArgs(optionsFile, &nargs, ALLOCATE_NONE, sourceFilename,
-                                                         options.project, projectName);
+                /* In auto-detection mode, file coverage is implicit (file is under config dir).
+                 * Just extract the project name from the first section header. */
+                bool found = getProjectNameFromOptionsFile(optionsFile, projectName);
                 closeFile(optionsFile);
                 if (found) {
                     strcpy(foundOptionsFilename, candidatePath);

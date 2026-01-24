@@ -59,6 +59,7 @@ static unsigned menuFilterLevels[MAX_MENU_FILTER_LEVEL] = {
 
 /* Single-project policy: server locks to first project discovered */
 static char *lockedProject = NULL;
+static char *lockedProjectRoot = NULL;
 
 
 /* *********************************************************************** */
@@ -2130,29 +2131,38 @@ void answerEditorAction(void) {
             if (requestFileNumber == NO_FILE_NUMBER) {
                 ppcGenRecord(PPC_ERROR, "No source file to identify project");
             } else {
-                char projectOptionsFileName[MAX_FILE_NAME_SIZE];
-                char projectOptionsSectionName[MAX_FILE_NAME_SIZE];
                 char *fileName = getFileItemWithFileNumber(requestFileNumber)->name;
                 log_debug("inputFileName = %s", fileName);
-                searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName, projectOptionsSectionName);
-                if (projectOptionsFileName[0]==0 || projectOptionsSectionName[0]==0) {
-                    /* No project found for this file */
-                    if (lockedProject != NULL) {
-                        /* Server is locked - return specific error */
+
+                if (lockedProject != NULL) {
+                    /* Server is locked - just check if file is under locked project root */
+                    if (lockedProjectRoot != NULL &&
+                        strncmp(fileName, lockedProjectRoot, strlen(lockedProjectRoot)) == 0) {
+                        ppcGenRecord(PPC_SET_INFO, lockedProject);
+                    } else {
                         char errorMsg[MAX_FILE_NAME_SIZE + 50];
                         sprintf(errorMsg, "File not covered by current project: %s", lockedProject);
                         ppcGenRecord(PPC_ERROR, errorMsg);
-                    } else if (!options.noErrors) {
-                        ppcGenRecord(PPC_NO_PROJECT, fileName);
                     }
                 } else {
-                    /* Project found - check lock */
-                    if (lockedProject == NULL) {
-                        /* First project discovery - lock to it */
+                    /* Not locked yet - search for project */
+                    char projectOptionsFileName[MAX_FILE_NAME_SIZE];
+                    char projectOptionsSectionName[MAX_FILE_NAME_SIZE];
+                    searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName, projectOptionsSectionName);
+                    if (projectOptionsFileName[0]==0 || projectOptionsSectionName[0]==0) {
+                        if (!options.noErrors) {
+                            ppcGenRecord(PPC_NO_PROJECT, fileName);
+                        }
+                    } else {
+                        /* Project found - lock to it */
                         lockedProject = strdup(projectOptionsSectionName);
-                        log_debug("Server locked to project: %s", lockedProject);
+                        if (options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
+                            lockedProjectRoot = strdup(options.detectedProjectRoot);
+                        }
+                        log_debug("Server locked to project: %s (root: %s)", lockedProject,
+                                  lockedProjectRoot ? lockedProjectRoot : "none");
+                        ppcGenRecord(PPC_SET_INFO, projectOptionsSectionName);
                     }
-                    ppcGenRecord(PPC_SET_INFO, projectOptionsSectionName);
                 }
             }
         }
