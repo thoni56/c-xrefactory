@@ -1929,8 +1929,15 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundO
     char searchDir[MAX_FILE_NAME_SIZE];
     char candidatePath[MAX_FILE_NAME_SIZE + 16];  /* Extra space for "/.c-xrefrc" suffix */
 
-    /* Start from the directory containing the source file */
-    strcpy(searchDir, directoryName_static(sourceFilename));
+    ENTER();
+
+    /* Start from the directory containing the source file, or from the directory itself */
+    if (isDirectory(sourceFilename)) {
+        strcpy(searchDir, sourceFilename);
+    } else {
+        strcpy(searchDir, directoryName_static(sourceFilename));
+    }
+    log_debug("sourceFilename='%s', searchDir='%s'", sourceFilename, searchDir);
 
     while (searchDir[0] != 0 && strlen(searchDir) > 1) {
         snprintf(candidatePath, sizeof(candidatePath), "%s/.c-xrefrc", searchDir);
@@ -1964,6 +1971,8 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundO
         *lastSlash = 0;
     }
 
+    log_debug("Could not detect project-local config covering '%s'", sourceFilename);
+    LEAVE();
     return false;
 }
 

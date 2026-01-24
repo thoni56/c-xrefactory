@@ -373,7 +373,8 @@ Ensure(Options, can_return_standard_options_filename_and_section_as_for_ffmpeg) 
     char sectionName[1000];
     FILE file;
 
-    // Searching upwards from current dir
+    // Searching upwards from current dir - auto-detect using the source filename
+    expect(isDirectory, will_return(false));
     expect(directoryName_static, will_return("HOME/projectdir"));
     expect(fileExists, will_return(false)); /* HOME/projectdir/.c-xrefrc */
     expect(fileExists, will_return(true)); /* HOME/.c-xrefrc */
