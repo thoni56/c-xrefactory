@@ -237,7 +237,7 @@ static void expect_characters(char string[], bool eof) {
         expect(readChar, will_return(EOF));
 }
 
-xEnsure(Options, can_find_standard_options_file_from_sourcefile_path) {
+xEnsure(Options, can_find_project_options_file_from_sourcefile_path) {
     FILE optionsFile;
     char optionsFilename[1000];
     char section[1000] = "/home/project";
@@ -286,7 +286,7 @@ Ensure(Options, should_get_back_stored_option_variable_value) {
     assert_that(getOptionVariable(name), is_equal_to_string(value));
 }
 
-xEnsure(Options, can_get_options_file_from_filename_using_searchStandardOptionsFileAndSectionForFile) {
+xEnsure(Options, can_get_options_file_from_filename_using_searchProjectOptionsFileAndSectionForFile) {
     char optionsFilename[100];
     char sectionName[100];
     FILE file;
@@ -368,19 +368,15 @@ Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_other_project_
 }
 
 
-Ensure(Options, can_return_standard_options_filename_and_section_as_for_ffmpeg) {
+Ensure(Options, can_return_project_options_filename_and_section_in_legacy_mode) {
     char optionsFilename[1000];
     char sectionName[1000];
     FILE file;
 
-    // Searching upwards from current dir - auto-detect using the source filename
-    expect(isDirectory, will_return(false));
-    expect(directoryName_static, will_return("HOME/projectdir"));
-    expect(fileExists, will_return(false)); /* HOME/projectdir/.c-xrefrc */
-    expect(fileExists, will_return(true)); /* HOME/.c-xrefrc */
+    // LEGACY mode: explicit -xrefrc, uses path-based section matching
+    options.xrefrc = "HOME/.c-xrefrc";
 
-    /* expect(getEnv, when(variable, is_equal_to_string("HOME")), */
-    /*        will_return("HOME")); */
+    expect(normalizeFileName_static, will_return("HOME/.c-xrefrc"));
     expect(openFile, when(fileName, is_equal_to_string("HOME/.c-xrefrc")),
            will_return(&file));
 
@@ -392,9 +388,34 @@ Ensure(Options, can_return_standard_options_filename_and_section_as_for_ffmpeg) 
 
     options.project = "ffmpeg";
     searchForProjectOptionsFileAndProjectForFile("/home/thoni/Utveckling/c-xrefactory/tests/ffmpeg",
-                                               optionsFilename, sectionName);
+                                                 optionsFilename, sectionName);
 
     assert_that(sectionName, is_equal_to_string("ffmpeg"));
+}
+
+Ensure(Options, can_return_project_name_from_autodetected_config) {
+    char optionsFilename[1000];
+    char sectionName[1000];
+    FILE file;
+
+    // AUTO-DETECT mode: no explicit -xrefrc, searches upward, only reads section header
+    expect(isDirectory, will_return(false));
+    expect(directoryName_static, will_return("HOME/projectdir"));
+    expect(fileExists, will_return(true)); /* HOME/projectdir/.c-xrefrc */
+
+    expect(openFile, when(fileName, is_equal_to_string("HOME/projectdir/.c-xrefrc")),
+           will_return(&file));
+
+    /* getProjectNameFromOptionsFile only reads up to the ']' */
+    expect_characters("[myproject", false);
+    expect(readChar, will_return(']'));
+
+    expect(closeFile);
+
+    searchForProjectOptionsFileAndProjectForFile("/home/thoni/Utveckling/c-xrefactory/tests/myproject",
+                                               optionsFilename, sectionName);
+
+    assert_that(sectionName, is_equal_to_string("myproject"));
 }
 
 Ensure(Options, collects_option_field_that_allocate_a_string_in_options_space) {
