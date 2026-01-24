@@ -88,3 +88,22 @@ See the README for LSP client configuration examples. Basic setup:
 
 * link:17-major-codebase-improvements.adoc[Chapter 17: Major Codebase Improvements] discusses the technical architecture
 * Multi-file support requires include graph and on-demand parsing (foundational work described in Chapter 17)
+
+=== Rename function handles `expect`
+
+Many unittest frameworks have a feature for isolating a unit, often referred to as
+"mocks", in C the "unit" of mocking/stubbing/doubling is almost always a function. These
+mocks need to understand how they should respond to a call. As they have no logic they
+are "programmed" by expressing conditions and responses.
+
+In particular, Cgreen, has an `expect()` which takes the function name as the first
+parameter, and then constraints to apply and values to return. This is implemented using
+CPP macros so the function name is just text, and cannot be detected using normal
+C-parsing/analysis.
+
+Renaming a function that appears in an `expect` will not rename that reference. This
+will usually cause the unittest to fail, because there is no call to that, no longer
+existin, function.
+
+A handy extension of the "Rename Function" would be to find these using some special
+magic and replace them too.
