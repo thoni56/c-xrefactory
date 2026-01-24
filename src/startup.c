@@ -518,7 +518,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
     /* === PHASE 1: Project Discovery === */
     /* Find which .c-xrefrc file and project section applies to this file */
     fileName = inputFileName;
-    searchStandardOptionsFileAndProjectForFile(fileName, standardOptionsFileName, standardOptionsSectionName);
+    searchForProjectOptionsFileAndProjectForFile(fileName, standardOptionsFileName, standardOptionsSectionName);
     handlePathologicProjectCases(fileName, standardOptionsFileName, standardOptionsSectionName, true);
 
     initAllInputs();
@@ -765,7 +765,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
 
     char standardOptionsFileName[MAX_FILE_NAME_SIZE];
     char standardOptionsSection[MAX_FILE_NAME_SIZE];
-    searchStandardOptionsFileAndProjectForFile(fileName, standardOptionsFileName, standardOptionsSection);
+    searchForProjectOptionsFileAndProjectForFile(fileName, standardOptionsFileName, standardOptionsSection);
     handlePathologicProjectCases(fileName, standardOptionsFileName, standardOptionsSection, false);
 
     reInitCwd(standardOptionsFileName, standardOptionsSection);

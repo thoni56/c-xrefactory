@@ -2130,12 +2130,12 @@ void answerEditorAction(void) {
             if (requestFileNumber == NO_FILE_NUMBER) {
                 ppcGenRecord(PPC_ERROR, "No source file to identify project");
             } else {
-                char standardOptionsFileName[MAX_FILE_NAME_SIZE];
-                char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
+                char projectOptionsFileName[MAX_FILE_NAME_SIZE];
+                char projectOptionsSectionName[MAX_FILE_NAME_SIZE];
                 char *fileName = getFileItemWithFileNumber(requestFileNumber)->name;
                 log_debug("inputFileName = %s", fileName);
-                searchStandardOptionsFileAndProjectForFile(fileName, standardOptionsFileName, standardOptionsSectionName);
-                if (standardOptionsFileName[0]==0 || standardOptionsSectionName[0]==0) {
+                searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName, projectOptionsSectionName);
+                if (projectOptionsFileName[0]==0 || projectOptionsSectionName[0]==0) {
                     /* No project found for this file */
                     if (lockedProject != NULL) {
                         /* Server is locked - return specific error */
@@ -2149,10 +2149,10 @@ void answerEditorAction(void) {
                     /* Project found - check lock */
                     if (lockedProject == NULL) {
                         /* First project discovery - lock to it */
-                        lockedProject = strdup(standardOptionsSectionName);
+                        lockedProject = strdup(projectOptionsSectionName);
                         log_debug("Server locked to project: %s", lockedProject);
                     }
-                    ppcGenRecord(PPC_SET_INFO, standardOptionsSectionName);
+                    ppcGenRecord(PPC_SET_INFO, projectOptionsSectionName);
                 }
             }
         }

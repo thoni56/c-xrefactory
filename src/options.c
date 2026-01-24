@@ -1990,8 +1990,8 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundO
     return false;
 }
 
-void searchStandardOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename,
-                                                char *foundProjectName) {
+void searchForProjectOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename,
+                                                  char *foundProjectName) {
     int    fileno;
     bool   found = false;
     FILE  *optionsFile;

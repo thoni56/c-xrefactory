@@ -173,8 +173,8 @@ extern void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char
 extern ArgumentsVector getPipedOptions(void);
 extern bool currentCxFileCountMatches(int newRefNum);
 
-extern void searchStandardOptionsFileAndProjectForFile(char *filename, char *optionsFilename,
-                               char *foundProjectName);
+extern void searchForProjectOptionsFileAndProjectForFile(char *filename, char *optionsFilename,
+                                                         char *foundProjectName);
 
 /* Experimental */
 extern char *findConfigFile(char *cwd);

@@ -83,7 +83,7 @@ ArgumentsVector getPipedOptions(void) {
     return *(ArgumentsVector*)mock();
 }
 
-void searchStandardOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename, char *foundProjectName) {
+void searchForProjectOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename, char *foundProjectName) {
   mock(sourceFilename, foundOptionsFilename, foundProjectName);
 }
 

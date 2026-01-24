@@ -251,7 +251,7 @@ xEnsure(Options, can_find_standard_options_file_from_sourcefile_path) {
            will_return(0));
     expect(closeFile);
 
-    searchStandardOptionsFileAndProjectForFile("/home/project/sourcefile.c", optionsFilename, section);
+    searchForProjectOptionsFileAndProjectForFile("/home/project/sourcefile.c", optionsFilename, section);
 
     assert_that(optionsFilename, is_equal_to_string("HOME/.c-xrefrc"));
     assert_that(section, is_equal_to_string("/home/project"));
@@ -305,7 +305,7 @@ xEnsure(Options, can_get_options_file_from_filename_using_searchStandardOptionsF
 
     expect(closeFile, when(file, is_equal_to(&file)));
 
-    searchStandardOptionsFileAndProjectForFile("/path/filename.c", optionsFilename, sectionName);
+    searchForProjectOptionsFileAndProjectForFile("/path/filename.c", optionsFilename, sectionName);
 
     assert_that(optionsFilename, is_equal_to_string("HOME/.c-xrefrc"));
     assert_that(sectionName, is_equal_to_string("/path"));
@@ -391,7 +391,7 @@ Ensure(Options, can_return_standard_options_filename_and_section_as_for_ffmpeg) 
     expect(closeFile);
 
     options.project = "ffmpeg";
-    searchStandardOptionsFileAndProjectForFile("/home/thoni/Utveckling/c-xrefactory/tests/ffmpeg",
+    searchForProjectOptionsFileAndProjectForFile("/home/thoni/Utveckling/c-xrefactory/tests/ffmpeg",
                                                optionsFilename, sectionName);
 
     assert_that(sectionName, is_equal_to_string("ffmpeg"));
