@@ -418,6 +418,31 @@ Ensure(Options, can_return_project_name_from_autodetected_config) {
     assert_that(sectionName, is_equal_to_string("myproject"));
 }
 
+Ensure(Options, sets_convention_based_database_path_when_autodetecting) {
+    char optionsFilename[1000];
+    char sectionName[1000];
+    FILE file;
+
+    // AUTO-DETECT mode should set cxFileLocation to <projectRoot>/.c-xref/db
+    expect(isDirectory, will_return(false));
+    expect(directoryName_static, will_return("/home/user/myproject"));
+    expect(fileExists, will_return(true));
+
+    expect(openFile, when(fileName, is_equal_to_string("/home/user/myproject/.c-xrefrc")),
+           will_return(&file));
+
+    expect_characters("[myproject", false);
+    expect(readChar, will_return(']'));
+
+    expect(closeFile);
+
+    searchForProjectOptionsFileAndProjectForFile("/home/user/myproject/source.c",
+                                               optionsFilename, sectionName);
+
+    assert_that(options.detectedProjectRoot, is_equal_to_string("/home/user/myproject"));
+    assert_that(options.cxFileLocation, is_equal_to_string("/home/user/myproject/.c-xref/db"));
+}
+
 Ensure(Options, uses_directory_basename_as_project_name_for_empty_config) {
     char optionsFilename[1000];
     char sectionName[1000];
