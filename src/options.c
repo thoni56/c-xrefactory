@@ -501,11 +501,6 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
                               dirName, NULL, NULL, nrecurseFlag, &isTopDirectory);
             editorMapOnNonExistantFiles(dirName, dirInputFile, DEPTH_ANY,
                                         dirName, NULL, NULL, nrecurseFlag, &isTopDirectory);
-        } else {
-            // no error, let it be
-            //& sprintf(tmpBuff, "omitting directory %s, missing '-r' option ?",dirName);
-            //& warningMessage(ERR_ST,tmpBuff);
-            ;
         }
     } else if (editorFileExists(dirName)) {
         if (isTopDirectory==0
@@ -1569,9 +1564,6 @@ static bool processROption(int *argi, ArgumentsVector args) {
     else if (strncmp(args.argv[i], "-renameto=", 10)==0) {
         options.renameTo = allocateStringForOption(&options.renameTo, args.argv[i]+10);
     }
-    else if (strcmp(args.argv[i], "-resetIncludeDirs")==0) {
-        options.includeDirs = NULL;
-    }
     else if (strcmp(args.argv[i], "-refs")==0)    {
         ensureNextArgumentIsAFileName(&i, args);
         setXrefsLocation(args.argv[i]);
@@ -1633,9 +1625,6 @@ static bool processSOption(int *argi, ArgumentsVector args) {
     int i = *argi;
 
     if (0) {}
-    else if (strcmp(args.argv[i], "-stdop")==0) {
-        i = handleIncludeOption(i, args);
-    }
     else if (strcmp(args.argv[i], "-set")==0) {
         i = handleSetOption(i, args);
     }

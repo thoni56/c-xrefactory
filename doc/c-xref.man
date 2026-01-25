@@ -5,6 +5,7 @@ c-xref \- A cross referencing tool for C/Yacc.
 .SH SYNOPSIS
 .hy 0
 .na
+
 .TP
 .B c-xref
 .RB "[\|" "options"\&\|]
@@ -13,14 +14,17 @@ c-xref \- A cross referencing tool for C/Yacc.
 .ad b
 .hy 1
 .SH TYPICAL INVOCATION FORMS
+
 .TP
 .B c-xref
 .I -p
 <project>
+
 .TP
 .B c-xref
 .I -update -p
 <project>
+
 .TP
 .B c-xref
 <srcdir>
@@ -69,7 +73,8 @@ Order of options on command line is important. Options are processed in order
 in which they are written.
 
 .SH OPTIONS
-Here is the table of command options accepted by c-xref.
+Here is the table of the user relevant command options accepted by c-xref.
+
 .TP
 .B \-p project
 At the beginning of the execution, read and process
@@ -81,23 +86,14 @@ configuration file. This option is used to abstract from concrete
 options and file names when using c-xref from command line and from several
 IDEs.
 For more info, see the .c-xrefrc file documentation.
-.TP
-.B \-r
-The default if a directory is entered as
-.I infile
-all files from the directory having the suffix '.c' or '.y'
-are processed recursively. (Note that it is useless to process the '.h' suffixes as
-they are processed when included by a '.c' file).
-This option is obsolete now.
-.TP
-.B \-\-r
-Do not process directories recursively. This is inverse option to -r option.
+
 .TP
 .B \-prune paths
 When recursively searching for input files do not enter into directories in paths. Paths
 can be either a simple name, an absolute path, or a ':' (';' under MS-Windows)
 separated list of both. For example -prune CVS:/project/backup will forbids scanning of
 the directory /project/backup as well as all directories named CVS.
+
 .TP
 .B \-I dir
 Add the directory
@@ -110,6 +106,7 @@ If specified more than one `\|\c
 the directories are scanned in left-to-right order. If the directory is specified
 using relative path, it is considered relative to the currently
 parsed file directory.
+
 .TP
 .BI "\-D" "name"\c
 \&
@@ -118,6 +115,7 @@ Predefine \c
 \& as a macro, with definition `\|\c
 .B 1\c
 \&\|'.
+
 .TP
 .BI "\-D" "name" = definition
 \&
@@ -126,19 +124,7 @@ Predefine \c
 \& as a macro, with definition \c
 .I definition\c
 \&.
-.TP
-.B \-resetIncludeDirs
-This option removes all directories from include directory list (including
-the default include directories like /usr/include).
-This option should be used before any -I option.
-.TP
-.B \-cacheincludes
-This option makes c-xref keep read include files in memory
-and reuse them when processing next files.
-This can improve time performance when many source files are using
-common header files. Especially if those header files are read
-over network or from a slow drive. It will increase space requirements,
-however.
+
 .TP
 .B \-refs file
 This option specifies the file where the cross-references
@@ -148,6 +134,7 @@ option is present then the
 .I file
 indicates the directory where cross-reference
 files are stored.
+
 .TP
 .B "\-refnum=<number>"
 This option specifies how many cross reference files will be generated.
@@ -164,19 +151,8 @@ You should specify the
 proportionally to the size
 of your project.
 Do not forget to delete the old cross-reference file if
-you change the -refnum from 1 to a bigger value.
-.TP
-.B "\-refalphahash"
-Split references into 28 files depending on the first letter of the
-symbol. This option is useful when generating HTML form, because
-it makes easy to find cross references for given symbol name.
-This option excludes using of the -refnum option.
-.TP
-.B "\-refalpha2hash"
-Split references into 28*28 files depending on the first two letters of the
-symbol. This option is useful when generating HTML form, because
-it makes easy to find cross references for given symbol name.
-This option excludes using of the -refnum option.
+you change the -refnum from 1 to a different value.
+
 .TP
 .B "\-exactpositionresolve"
 This option controls how symbols which are local to a compilation
@@ -222,18 +198,21 @@ in the existing cross-reference file are checked and only those
 having newer modification time than existing cross-reference file
 are scheduled to be processed. Also all files which includes (by
 Cpp pre-processor) those files are scheduled to be processed.
+
 .TP
 .B "\-fastupdate"
 The same as -update with the difference that files which include
 modified files are not scheduled to be processed. Unless you
 are using also '-exactpositionresolve' option this is
 enough for most references to be correctly updated.
+
 .TP
 .B "\-fullupdate"
 Force update of input files. This option is like the
 .I -update
 option with the difference that input files entered on command
 line are always reparsed (independent of their modification time).
+
 .TP
 .B "\-set <name> <value>"
 The c-xref task provide a simple environment management. The -set option
@@ -264,6 +243,7 @@ a.out command. When a command string is enclosed in quotas it
 can contain newline characters to separate sequence of commands.
 For more info about compile and run commands see on-line Emacs help of
 the corresponding C-xrefactory macros.
+
 .TP
 .B \-encoding=<type>
 This option specifies international encoding of input files. Available
@@ -272,18 +252,7 @@ are 'default', 'european', 'euc', 'sjis', 'utf', 'utf-8', 'utf-16', 'utf-16le'
 and 'utf-16be'. The 'default' value results in standard ASCII (and 'utf-8')
 characters. If your files contain, for example, 8-bit european characters, then you
 should include -encoding=european into your project setting.
-.TP
-.B \-optinclude file (or \-stdop file)
-This option causes that the file `\|\c
-.I file\c
-\&\|' is read and scanned for further options. When used in an .c-xrefrc file
-this options includes options defined in
-.I file.
-However, if the included file is modified while c-xref task is running
-then c-xref is unable to automatically reload new options.
-If you use -optinclude
-(-stdop) option, and you modify included file, you will need to kill
-and restart c-xref server task in order that changes take effect.
+
 .TP
 .B -mf=<n>
 This option sets the memory factor for cross-references. The larger is the
@@ -295,6 +264,7 @@ is 1. For example the '-mf=10' option causes that the memory used for
 cross-references will be increased by the factor of 10. This option can be
 used only as command line option. If you use it inside the ~/.c-xrefrc file
 it has no effect.
+
 .TP
 .B "\-pass<n>"
 Strictly speaking this is not c-xref option. It is used in the .c-xrefrc
@@ -302,11 +272,7 @@ configuration file to describe how to process source files in multiple passes.
 Multiple passes are necessary if you need to process your C sources
 for several initial macro settings. For more informations about this option
 read the 'c-xrefrc' manual page.
-.TP
-.B "\-no-cppcomments"
-When scanning input files, do not consider the string `\|\c
-.I //\c
-\&\|' as beginning of a comment ended by end of line.
+
 .TP
 .B "\-csuffixes=<suffixes>"
 This option defines list of suffixes (separated by ':' character under Unix and ';' under MS-Windows)
@@ -315,15 +281,18 @@ into Tag file and parsed with C-xrefactory's C parser. Suffixes should not start
 dot character which is considered as suffix separator automatically. For example
 suffixes "c:tc" mean that files ending by ".c" or ".tc" strings are considered as C input
 files.
+
 .TP
 .B "\-filescasesensitive" "\-filescaseunsensitive"
 This option controls whether c-xref is considering two file names differing only
 in cases as the same file or not. By default file names are considered as case
 sensitive. Setting names to be case unsensitive may avoid confusion
 in C #include directives under MS-Windows system.
+
 .TP
 .B "\-errors"
 Report all error messages.
+
 .TP
 .B "\-noconversion \-crconversion \-crlfconversion"
 Options controling end of line character conversions. By default c-xref automatically
@@ -331,6 +300,7 @@ determines which character sequence should be considered as end-of-line. Those
 options force c-xref to consider respectively linefeed (-noconversion), return (-crconversion),
 or return followed by linefeed (-crlfconversion) as beginning of next line. Those
 cases corresponds respectively to Unix, Mac OS and Windows systems.
+
 .TP
 .B "-debug"
 Produce debugging output tracing execution and
