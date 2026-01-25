@@ -12,4 +12,4 @@ trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
 
 CXrefs:
-	@$(COMMAND) test_source -create -o $(TEST).log
+	@$(CXREF_PROGRAM) test_source -create -o $(TEST).log
