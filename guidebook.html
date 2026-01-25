@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-01-23">
+<meta name="author" content="v{VERSION} - Generated 2026-01-25">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-01-23</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-01-25</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -556,48 +556,46 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_guiding_principles">15.1. Guiding Principles</a></li>
 <li><a href="#_architectural_vision_memory_as_truth">15.2. Architectural Vision: Memory as Truth</a></li>
-<li><a href="#_feature_vision_full_lsp_support">15.3. Feature Vision: Full LSP Support</a></li>
-<li><a href="#_feature_vision_modern_refactorings">15.4. Feature Vision: Modern Refactorings</a></li>
+<li><a href="#_foundational_change_project_local_configuration">15.3. Foundational Change: Project-Local Configuration</a></li>
+<li><a href="#_feature_vision_full_lsp_support">15.4. Feature Vision: Full LSP Support</a></li>
+<li><a href="#_feature_vision_modern_refactorings">15.5. Feature Vision: Modern Refactorings</a></li>
 </ul>
 </li>
 <li><a href="#_planned_features">16. Planned Features</a>
 <ul class="sectlevel2">
 <li><a href="#move-function-refactoring">16.1. Move Function Between Files</a></li>
 <li><a href="#_lsp_integration">16.2. LSP Integration</a></li>
+<li><a href="#_rename_function_handles_expect">16.3. Rename function handles <code>expect</code></a></li>
+<li><a href="#_clean_persistence_store_abstraction">16.4. Clean Persistence Store Abstraction</a></li>
+<li><a href="#unified-symbol-database">16.5. Unified Symbol Database Architecture</a></li>
+<li><a href="#macro-expansion-module">16.6. Extract Macro Expansion Module</a></li>
+<li><a href="#clean-parser-api">16.7. Clean Parser API and Multi-File Definition Support</a></li>
 </ul>
 </li>
-<li><a href="#_major_codebase_improvements">17. Major Codebase Improvements</a>
+<li><a href="#_insights">17. Insights</a>
 <ul class="sectlevel2">
-<li><a href="#_clean_persistence_store_abstraction">17.1. Clean Persistence Store Abstraction</a></li>
-<li><a href="#unified-symbol-database">17.2. Unified Symbol Database Architecture</a></li>
-<li><a href="#macro-expansion-module">17.3. Extract Macro Expansion Module</a></li>
-<li><a href="#clean-parser-api">17.4. Clean Parser API and Multi-File Definition Support</a></li>
+<li><a href="#_yacc_semantic_data">17.1. Yacc semantic data</a></li>
+<li><a href="#_navigation_architecture_and_the_preloading_limitation">17.2. Navigation Architecture and the Preloading Limitation</a></li>
+<li><a href="#_refactorymode_internally_calls_xrefmode">17.3. RefactoryMode Internally Calls XrefMode</a></li>
+<li><a href="#_the_lastparsedmtime_optimization_and_refactoring_conflict">17.4. The lastParsedMtime Optimization and Refactoring Conflict</a></li>
 </ul>
 </li>
-<li><a href="#_insights">18. Insights</a>
+<li><a href="#_refactoring_recipes">18. Refactoring Recipes</a>
 <ul class="sectlevel2">
-<li><a href="#_yacc_semantic_data">18.1. Yacc semantic data</a></li>
-<li><a href="#_navigation_architecture_and_the_preloading_limitation">18.2. Navigation Architecture and the Preloading Limitation</a></li>
-<li><a href="#_refactorymode_internally_calls_xrefmode">18.3. RefactoryMode Internally Calls XrefMode</a></li>
-<li><a href="#_the_lastparsedmtime_optimization_and_refactoring_conflict">18.4. The lastParsedMtime Optimization and Refactoring Conflict</a></li>
+<li><a href="#_existing_refactorings">18.1. Existing Refactorings</a></li>
+<li><a href="#_suggested_refactorings">18.2. Suggested Refactorings</a></li>
+<li><a href="#_introduce_semantic_type_aliases">18.3. Introduce Semantic Type Aliases</a></li>
 </ul>
 </li>
-<li><a href="#_refactoring_recipes">19. Refactoring Recipes</a>
+<li><a href="#_archive">19. Archive</a>
 <ul class="sectlevel2">
-<li><a href="#_existing_refactorings">19.1. Existing Refactorings</a></li>
-<li><a href="#_suggested_refactorings">19.2. Suggested Refactorings</a></li>
-<li><a href="#_introduce_semantic_type_aliases">19.3. Introduce Semantic Type Aliases</a></li>
-</ul>
-</li>
-<li><a href="#_archive">20. Archive</a>
-<ul class="sectlevel2">
-<li><a href="#_memory_strategies">20.1. Memory strategies</a></li>
-<li><a href="#_trivial_prechecks">20.2. Trivial Prechecks</a></li>
-<li><a href="#_caching_system">20.3. Caching System</a></li>
-<li><a href="#_huge_memory">20.4. HUGE Memory</a></li>
-<li><a href="#_bootstrapping">20.5. Bootstrapping</a></li>
-<li><a href="#_fill_macros">20.6. FILL macros</a></li>
-<li><a href="#_users">20.7. Users</a></li>
+<li><a href="#_memory_strategies">19.1. Memory strategies</a></li>
+<li><a href="#_trivial_prechecks">19.2. Trivial Prechecks</a></li>
+<li><a href="#_caching_system">19.3. Caching System</a></li>
+<li><a href="#_huge_memory">19.4. HUGE Memory</a></li>
+<li><a href="#_bootstrapping">19.5. Bootstrapping</a></li>
+<li><a href="#_fill_macros">19.6. FILL macros</a></li>
+<li><a href="#_users">19.7. Users</a></li>
 </ul>
 </li>
 </ul>
@@ -5737,6 +5735,14 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
                                   │
                                   ▼
 ┌─────────────────────────────────────────────────────────────────────┐
+│                    ENABLED BY (makes it natural)                     │
+├─────────────────────────────────────────────────────────────────────┤
+│  Project-local .c-xrefrc with automatic upward discovery            │
+│  (See section: Foundational Change: Project-Local Configuration)    │
+└─────────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌─────────────────────────────────────────────────────────────────────┐
 │                       ALSO ENABLES                                   │
 ├─────────────────────────────────────────────────────────────────────┤
 │  • .cx becomes startup cache only (not consulted during ops)        │
@@ -5843,15 +5849,254 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_feature_vision_full_lsp_support">15.3. Feature Vision: Full LSP Support</h3>
+<h3 id="_foundational_change_project_local_configuration">15.3. Foundational Change: Project-Local Configuration</h3>
 <div class="sect3">
 <h4 id="_the_goal_2">15.3.1. The Goal</h4>
+<div class="paragraph">
+<p>Enable project-local <code>.c-xrefrc</code> files with automatic discovery, replacing the current <code>$HOME/.c-xrefrc</code> multi-project architecture. This makes single-project server operation <strong>natural</strong> rather than restrictive.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_current_architecture">15.3.2. Current Architecture</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Single <code>$HOME/.c-xrefrc</code> contains sections for all projects</p>
+</li>
+<li>
+<p>All paths must be absolute (not portable across machines)</p>
+</li>
+<li>
+<p>Client asks server "which project covers this file?"</p>
+</li>
+<li>
+<p>Server searches through all project sections to find a match</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_target_architecture">15.3.3. Target Architecture</h4>
+<div class="paragraph">
+<p><strong>Automatic project discovery:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Operation on /foo/bar/src/file.c
+         ↓
+Search upward: /foo/bar/src/.c-xrefrc? No
+               /foo/bar/.c-xrefrc? Yes → project root is /foo/bar/
+         ↓
+Server locks to this single project</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Two-file configuration split:</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">File</th>
+<th class="tableblock halign-left valign-top">Purpose</th>
+<th class="tableblock halign-left valign-top">Version control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>.c-xrefrc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project settings: compiler flags, <code>-D</code> defines, relative source paths</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Committed</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>.c-xrefrc.local</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Machine-specific: external library paths, personal preferences</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gitignored</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>$HOME/.c-xrefrc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Global defaults, backward compatibility</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">N/A</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Settings cascade</strong> (priority low→high):</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Built-in defaults</p>
+</li>
+<li>
+<p><code>$HOME/.c-xrefrc</code> (global, backward compat)</p>
+</li>
+<li>
+<p><code>.c-xrefrc</code> (project, committed)</p>
+</li>
+<li>
+<p><code>.c-xrefrc.local</code> (project, local overrides)</p>
+</li>
+<li>
+<p>Command-line options</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_how_this_enables_single_project_server">15.3.4. How This Enables Single-Project Server</h4>
+<div class="paragraph">
+<p>With automatic project discovery:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Project determined by file location, not explicit <code>-p</code> parameter</p>
+</li>
+<li>
+<p>Server "locks" to discovered project root on first request</p>
+</li>
+<li>
+<p>Request for file outside project → reject or prompt "add to project?"</p>
+</li>
+<li>
+<p>Multi-project operation becomes impossible by design</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This makes single-project server a <strong>natural consequence</strong>, not an artificial restriction.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_protocol_evolution">15.3.5. Protocol Evolution</h4>
+<div class="paragraph">
+<p>The existing <code>-getproject &lt;file&gt;</code> command becomes the lock point:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>First -getproject &lt;file&gt;:
+  1. Upward search for .c-xrefrc from &lt;file&gt;
+  2. If found: LOCK to that directory as project root
+  3. Return project root (or name)
+
+Subsequent -getproject &lt;file&gt;:
+  1. Is &lt;file&gt; under locked project root?
+  2. Yes → return same project
+  3. No  → error "file not in current project"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Key insight</strong>: The client&#8217;s existing pattern of sending <code>-getproject</code> before each operation requires no change. The server simply adds locking behavior.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_implementation_phases">15.3.6. Implementation Phases</h4>
+<div class="paragraph">
+<p><strong>Phase 1: Upward search with locking</strong> (minimal, unblocks single-project server)</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Add upward search for <code>.c-xrefrc</code> in <code>-getproject</code> handler</p>
+</li>
+<li>
+<p>First successful discovery locks server to that project root</p>
+</li>
+<li>
+<p>Subsequent requests for files outside root return error</p>
+</li>
+<li>
+<p>If no <code>.c-xrefrc</code> found: fall back to <code>$HOME/.c-xrefrc</code> (backward compat)</p>
+</li>
+<li>
+<p>Paths still absolute (no change to path handling yet)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Phase 2: Relative paths</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Paths in project-local <code>.c-xrefrc</code> resolved relative to project root</p>
+</li>
+<li>
+<p>Enables version-controllable project settings</p>
+</li>
+<li>
+<p><code>$HOME/.c-xrefrc</code> continues using absolute paths</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Phase 3: Local overrides</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Add <code>.c-xrefrc.local</code> support</p>
+</li>
+<li>
+<p>External library paths, personal preferences</p>
+</li>
+<li>
+<p>Document: add <code>.c-xrefrc.local</code> to <code>.gitignore</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Phase 4: Migration tooling</strong> (optional)</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Tool to extract <code>$HOME/.c-xrefrc</code> sections into project-local files</p>
+</li>
+<li>
+<p>Deprecation warnings for multi-project <code>$HOME/.c-xrefrc</code> usage</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_relationship_to_memory_as_truth">15.3.7. Relationship to Memory as Truth</h4>
+<div class="paragraph">
+<p>This work directly enables the <strong>Single-Project Server Policy</strong> at the base of the Memory as Truth dependency chain. Without a natural way to scope to a single project, enforcing single-project operation would feel like an artificial limitation to users.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_open_questions">15.3.8. Open Questions</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Projects with sources in multiple unrelated directories - multiple <code>-I</code> paths but single root?</p>
+</li>
+<li>
+<p>Environment variable expansion in <code>.c-xrefrc.local</code> (e.g., <code>${MYLIB_PATH}/include</code>)?</p>
+</li>
+<li>
+<p>Migration path for users with complex multi-project <code>$HOME/.c-xrefrc</code>?</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_feature_vision_full_lsp_support">15.4. Feature Vision: Full LSP Support</h3>
+<div class="sect3">
+<h4 id="_the_goal_3">15.4.1. The Goal</h4>
 <div class="paragraph">
 <p>Enable VS Code, Neovim, and other LSP-capable editors to use c-xrefactory&#8217;s refactoring and navigation features with full feature parity to the Emacs integration.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_state">15.3.2. Current State</h4>
+<h4 id="_current_state">15.4.2. Current State</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -5864,7 +6109,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_planned_capabilities">15.3.3. Planned Capabilities</h4>
+<h4 id="_planned_capabilities">15.4.3. Planned Capabilities</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -5905,7 +6150,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_dependencies">15.3.4. Dependencies</h4>
+<h4 id="_dependencies">15.4.4. Dependencies</h4>
 <div class="paragraph">
 <p>Full LSP support depends on the "Memory as Truth" architecture:</p>
 </div>
@@ -5925,15 +6170,15 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_feature_vision_modern_refactorings">15.4. Feature Vision: Modern Refactorings</h3>
+<h3 id="_feature_vision_modern_refactorings">15.5. Feature Vision: Modern Refactorings</h3>
 <div class="sect3">
-<h4 id="_the_goal_3">15.4.1. The Goal</h4>
+<h4 id="_the_goal_4">15.5.1. The Goal</h4>
 <div class="paragraph">
 <p>Provide refactoring capabilities that understand C semantics, going beyond what generic text-based tools can offer.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_capabilities">15.4.2. Current Capabilities</h4>
+<h4 id="_current_capabilities">15.5.2. Current Capabilities</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -5952,7 +6197,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_planned_improvements">15.4.3. Planned Improvements</h4>
+<h4 id="_planned_improvements">15.5.3. Planned Improvements</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -5985,7 +6230,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_details">15.4.4. Details</h4>
+<h4 id="_details">15.5.4. Details</h4>
 <div class="paragraph">
 <p>See <a href="17-major-codebase-improvements.adoc#move-function-refactoring">Chapter 17: Move Function Between Files</a> for implementation details and phase breakdown.</p>
 </div>
@@ -6173,21 +6418,41 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_rename_function_handles_expect">16.3. Rename function handles <code>expect</code></h3>
+<div class="paragraph">
+<p>Many unittest frameworks have a feature for isolating a unit, often referred to as
+"mocks", in C the "unit" of mocking/stubbing/doubling is almost always a function. These
+mocks need to understand how they should respond to a call. As they have no logic they
+are "programmed" by expressing conditions and responses.</p>
 </div>
+<div class="paragraph">
+<p>In particular, Cgreen, has an <code>expect()</code> which takes the function name as the first
+parameter, and then constraints to apply and values to return. This is implemented using
+CPP macros so the function name is just text, and cannot be detected using normal
+C-parsing/analysis.</p>
 </div>
-<div class="sect1">
-<h2 id="_major_codebase_improvements">17. Major Codebase Improvements</h2>
-<div class="sectionbody">
+<div class="paragraph">
+<p>Renaming a function that appears in an <code>expect</code> will not rename that reference. This
+will usually cause the unittest to fail, because there is no call to that, no longer
+existin, function.</p>
+</div>
+<div class="paragraph">
+<p>A handy extension of the "Rename Function" would be to find these using some special
+magic and replace them too.
+== Major Codebase Improvements</p>
+</div>
 <div class="paragraph">
 <p>This chapter documents internal architectural changes and technical debt reduction efforts that improve code quality, maintainability, and performance. These are improvements to c-xrefactory&#8217;s own implementation, not features users interact with directly.</p>
 </div>
 <div class="paragraph">
 <p>For planned user-facing features, see <a href="16-planned-features.adoc">Chapter 16: Planned Features</a>.</p>
 </div>
+</div>
 <div class="sect2">
-<h3 id="_clean_persistence_store_abstraction">17.1. Clean Persistence Store Abstraction</h3>
+<h3 id="_clean_persistence_store_abstraction">16.4. Clean Persistence Store Abstraction</h3>
 <div class="sect3">
-<h4 id="_problem_statement">17.1.1. Problem Statement</h4>
+<h4 id="_problem_statement">16.4.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The <code>cxfile</code> module currently mixes multiple responsibilities that should be separated:</p>
 </div>
@@ -6212,7 +6477,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_architectural_confusion_in_memory_vs_persistence">17.1.2. Architectural Confusion: In-Memory vs Persistence</h4>
+<h4 id="_architectural_confusion_in_memory_vs_persistence">16.4.2. Architectural Confusion: In-Memory vs Persistence</h4>
 <div class="paragraph">
 <p>The current code conflates two distinct concepts:</p>
 </div>
@@ -6281,7 +6546,7 @@ The persistence layer is <strong>always about durable storage</strong> that surv
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_architecture_problems">17.1.3. Current Architecture Problems</h4>
+<h4 id="_current_architecture_problems">16.4.3. Current Architecture Problems</h4>
 <div class="paragraph">
 <p><strong>Mixed Abstraction Levels</strong></p>
 </div>
@@ -6375,7 +6640,7 @@ scanReferencesToCreateMenu(symbolName);  // Treats .cx files as truth</code></pr
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_architecture">17.1.4. Proposed Architecture</h4>
+<h4 id="_proposed_architecture">16.4.4. Proposed Architecture</h4>
 <div class="paragraph">
 <p><strong><em>Two-Layer Design</em></strong></p>
 </div>
@@ -6497,7 +6762,7 @@ This interface starts simple but is where the <strong>Unified Symbol Database</s
 </div>
 </div>
 <div class="sect3">
-<h4 id="_migration_strategy">17.1.5. Migration Strategy</h4>
+<h4 id="_migration_strategy">16.4.5. Migration Strategy</h4>
 <div class="paragraph">
 <p><strong><em>Phase 1: Create Clean Boundaries (No Behavior Change)</em></strong></p>
 </div>
@@ -6620,7 +6885,7 @@ static void checkSearchMatch(ReferenceableItem *item, Reference *ref, void *ctx)
 </table>
 </div>
 <div class="sect3">
-<h4 id="_benefits">17.1.6. Benefits</h4>
+<h4 id="_benefits">16.4.6. Benefits</h4>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><strong>Testability</strong></dt>
@@ -6651,7 +6916,7 @@ static void checkSearchMatch(ReferenceableItem *item, Reference *ref, void *ctx)
 </div>
 </div>
 <div class="sect3">
-<h4 id="_relationship_to_unified_symbol_database">17.1.7. Relationship to Unified Symbol Database</h4>
+<h4 id="_relationship_to_unified_symbol_database">16.4.7. Relationship to Unified Symbol Database</h4>
 <div class="paragraph">
 <p>This refactoring is the <strong>foundation</strong> for the larger <strong>Unified Symbol Database Architecture</strong> (next section):</p>
 </div>
@@ -6686,7 +6951,7 @@ static void checkSearchMatch(ReferenceableItem *item, Reference *ref, void *ctx)
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation_checklist">17.1.8. Implementation Checklist</h4>
+<h4 id="_implementation_checklist">16.4.8. Implementation Checklist</h4>
 <div class="ulist checklist">
 <ul class="checklist">
 <li>
@@ -6729,7 +6994,7 @@ static void checkSearchMatch(ReferenceableItem *item, Reference *ref, void *ctx)
 </div>
 </div>
 <div class="sect3">
-<h4 id="_references">17.1.9. References</h4>
+<h4 id="_references">16.4.9. References</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -6746,7 +7011,7 @@ static void checkSearchMatch(ReferenceableItem *item, Reference *ref, void *ctx)
 </div>
 </div>
 <div class="sect2">
-<h3 id="unified-symbol-database">17.2. Unified Symbol Database Architecture</h3>
+<h3 id="unified-symbol-database">16.5. Unified Symbol Database Architecture</h3>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -6760,7 +7025,7 @@ This section describes the implementation details for the "Memory as Truth" arch
 </table>
 </div>
 <div class="sect3">
-<h4 id="_problem_statement_2">17.2.1. Problem Statement</h4>
+<h4 id="_problem_statement_2">16.5.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The current symbol database has evolved from a batch cross-referencer (like <code>ctags</code>) with artificial distinctions between "file-based" and "on-demand" modes. This creates:</p>
 </div>
@@ -6785,7 +7050,7 @@ This section describes the implementation details for the "Memory as Truth" arch
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_architecture_limitations">17.2.2. Current Architecture Limitations</h4>
+<h4 id="_current_architecture_limitations">16.5.2. Current Architecture Limitations</h4>
 <div class="paragraph">
 <p>The existing system distinguishes between:</p>
 </div>
@@ -6832,7 +7097,7 @@ This section describes the implementation details for the "Memory as Truth" arch
 </table>
 </div>
 <div class="sect3">
-<h4 id="_proposed_solution">17.2.3. Proposed Solution</h4>
+<h4 id="_proposed_solution">16.5.3. Proposed Solution</h4>
 <div class="paragraph">
 <p><strong><em>Core Insight: Unified On-Demand Architecture</em></strong></p>
 </div>
@@ -7104,7 +7369,7 @@ The <code>.cx</code> files are a <strong>durable cache</strong> that persists th
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation_plan">17.2.4. Implementation Plan</h4>
+<h4 id="_implementation_plan">16.5.4. Implementation Plan</h4>
 <div class="paragraph">
 <p><strong><em>Phase 1: Interface Unification</em></strong></p>
 </div>
@@ -7145,7 +7410,7 @@ The <code>.cx</code> files are a <strong>durable cache</strong> that persists th
 </div>
 </div>
 <div class="sect3">
-<h4 id="_benefits_2">17.2.5. Benefits</h4>
+<h4 id="_benefits_2">16.5.5. Benefits</h4>
 <div class="paragraph">
 <p><strong><em>Architectural Simplification</em></strong></p>
 </div>
@@ -7224,7 +7489,7 @@ The <code>.cx</code> files are a <strong>durable cache</strong> that persists th
 </div>
 </div>
 <div class="sect3">
-<h4 id="_existing_infrastructure">17.2.6. Existing Infrastructure</h4>
+<h4 id="_existing_infrastructure">16.5.6. Existing Infrastructure</h4>
 <div class="paragraph">
 <p><strong><em>Sophisticated Dependency Tracking</em></strong></p>
 </div>
@@ -7348,7 +7613,7 @@ This dependency tracking infrastructure is <strong>already production-ready</str
 </div>
 </div>
 <div class="sect3">
-<h4 id="_open_questions">17.2.7. Open Questions</h4>
+<h4 id="_open_questions_2">16.5.7. Open Questions</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -7394,7 +7659,7 @@ This dependency tracking infrastructure is <strong>already production-ready</str
 </div>
 </div>
 <div class="sect3">
-<h4 id="_references_2">17.2.8. References</h4>
+<h4 id="_references_2">16.5.8. References</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -7414,9 +7679,9 @@ This dependency tracking infrastructure is <strong>already production-ready</str
 </div>
 </div>
 <div class="sect2">
-<h3 id="macro-expansion-module">17.3. Extract Macro Expansion Module</h3>
+<h3 id="macro-expansion-module">16.6. Extract Macro Expansion Module</h3>
 <div class="sect3">
-<h4 id="_problem_statement_3">17.3.1. Problem Statement</h4>
+<h4 id="_problem_statement_3">16.6.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The <code>yylex.c</code> file is <strong>2353 lines</strong> and combines multiple responsibilities:</p>
 </div>
@@ -7441,7 +7706,7 @@ This dependency tracking infrastructure is <strong>already production-ready</str
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_architecture">17.3.2. Current Architecture</h4>
+<h4 id="_current_architecture_2">16.6.2. Current Architecture</h4>
 <div class="paragraph">
 <p>The macro expansion system in <code>yylex.c</code> comprises:</p>
 </div>
@@ -7502,7 +7767,7 @@ static Memory macroArgumentsMemory; // Short-lived: expansion temporaries</code>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_solution_2">17.3.3. Proposed Solution</h4>
+<h4 id="_proposed_solution_2">16.6.3. Proposed Solution</h4>
 <div class="paragraph">
 <p>Extract macro expansion into a new module: <code>macroexpansion.c/h</code></p>
 </div>
@@ -7604,7 +7869,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_benefits_3">17.3.4. Benefits</h4>
+<h4 id="_benefits_3">16.6.4. Benefits</h4>
 <div class="paragraph">
 <p><strong><em>Architectural</em></strong></p>
 </div>
@@ -7658,7 +7923,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation_strategy">17.3.5. Implementation Strategy</h4>
+<h4 id="_implementation_strategy">16.6.5. Implementation Strategy</h4>
 <div class="paragraph">
 <p><strong><em>Phase 1: Preparation (Already Complete)</em></strong></p>
 </div>
@@ -7735,7 +8000,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_risks_and_mitigation">17.3.6. Risks and Mitigation</h4>
+<h4 id="_risks_and_mitigation">16.6.6. Risks and Mitigation</h4>
 <div class="paragraph">
 <p><strong><em>Risk: Complex dependencies</em></strong></p>
 </div>
@@ -7798,7 +8063,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_success_metrics">17.3.7. Success Metrics</h4>
+<h4 id="_success_metrics">16.6.7. Success Metrics</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -7820,7 +8085,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_open_questions_2">17.3.8. Open Questions</h4>
+<h4 id="_open_questions_3">16.6.8. Open Questions</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -7866,7 +8131,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_references_3">17.3.9. References</h4>
+<h4 id="_references_3">16.6.9. References</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -7899,9 +8164,9 @@ This refactoring is independent of the LexemStream API improvements but would be
 </div>
 </div>
 <div class="sect2">
-<h3 id="clean-parser-api">17.4. Clean Parser API and Multi-File Definition Support</h3>
+<h3 id="clean-parser-api">16.7. Clean Parser API and Multi-File Definition Support</h3>
 <div class="sect3">
-<h4 id="_current_state_recent_lsp_definition_finding_success">17.4.1. Current State: Recent LSP Definition Finding Success</h4>
+<h4 id="_current_state_recent_lsp_definition_finding_success">16.7.1. Current State: Recent LSP Definition Finding Success</h4>
 <div class="paragraph">
 <p>The recent implementation of <code>textDocument/definition</code> for LSP created a <strong>clean, operation-based parser API</strong> in <code>parsing.h/c</code> that successfully decouples high-level operations from low-level parsing details. This API discovery presents an opportunity to gradually modernize legacy parsing infrastructure.</p>
 </div>
@@ -7939,7 +8204,7 @@ This refactoring is independent of the LexemStream API improvements but would be
 </div>
 </div>
 <div class="sect3">
-<h4 id="_problem_statement_4">17.4.2. Problem Statement</h4>
+<h4 id="_problem_statement_4">16.7.2. Problem Statement</h4>
 <div class="paragraph">
 <p>The LSP definition finding currently fails when a symbol&#8217;s <strong>definition is in a different file</strong> from the reference. This requires:</p>
 </div>
@@ -7973,7 +8238,7 @@ parseBufferUsingServer(project, point, mark, "-olcxmodemenu", NULL);
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_parser_api_innovation">17.4.3. The Parser API Innovation</h4>
+<h4 id="_the_parser_api_innovation">16.7.3. The Parser API Innovation</h4>
 <div class="paragraph">
 <p>The new <code>parsing.h</code> interface provides operation-based configuration (see <code>src/parsing.h</code> for details):</p>
 </div>
@@ -7986,7 +8251,7 @@ parseBufferUsingServer(project, point, mark, "-olcxmodemenu", NULL);
 </div>
 </div>
 <div class="sect3">
-<h4 id="_benefits_of_backporting_this_api">17.4.4. Benefits of Backporting This API</h4>
+<h4 id="_benefits_of_backporting_this_api">16.7.4. Benefits of Backporting This API</h4>
 <div class="paragraph">
 <p><strong><em>Code Clarity and Safety</em></strong></p>
 </div>
@@ -8065,7 +8330,7 @@ parsingConfig.startFile = fileNumber;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation_plan_three_non_blocking_phases">17.4.5. Implementation Plan: Three Non-Blocking Phases</h4>
+<h4 id="_implementation_plan_three_non_blocking_phases">16.7.5. Implementation Plan: Three Non-Blocking Phases</h4>
 <div class="paragraph">
 <p><strong><em>Phase 1: Expose New API Alongside Legacy Code</em></strong></p>
 </div>
@@ -8125,7 +8390,7 @@ parsingConfig.startFile = fileNumber;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_multi_file_definition_requirements">17.4.6. Multi-File Definition: Requirements</h4>
+<h4 id="_multi_file_definition_requirements">16.7.6. Multi-File Definition: Requirements</h4>
 <div class="paragraph">
 <p><strong><em>Symbol Type Information Persistence</em></strong></p>
 </div>
@@ -8199,7 +8464,7 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */</code
 </div>
 </div>
 <div class="sect3">
-<h4 id="_code_locations">17.4.7. Code Locations</h4>
+<h4 id="_code_locations">16.7.7. Code Locations</h4>
 <div class="paragraph">
 <p><strong>New Parser API</strong>:
 * <code>src/parsing.h</code> - Public interface (167 lines)
@@ -8222,7 +8487,7 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */</code
 </div>
 </div>
 <div class="sect3">
-<h4 id="_success_metrics_2">17.4.8. Success Metrics</h4>
+<h4 id="_success_metrics_2">16.7.8. Success Metrics</h4>
 <div class="paragraph">
 <p><strong>Phase 1</strong>:
 * ✓ New <code>ParsingConfig</code> API works alongside legacy strings
@@ -8243,7 +8508,7 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */</code
 </div>
 </div>
 <div class="sect3">
-<h4 id="_risks_and_mitigation_2">17.4.9. Risks and Mitigation</h4>
+<h4 id="_risks_and_mitigation_2">16.7.9. Risks and Mitigation</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -8282,7 +8547,7 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */</code
 </table>
 </div>
 <div class="sect3">
-<h4 id="_related_work_2">17.4.10. Related Work</h4>
+<h4 id="_related_work_2">16.7.10. Related Work</h4>
 <div class="paragraph">
 <p>This refactoring supports:
 * <strong>ADR-0014</strong> (On-Demand Parsing) - Single code path for all operations
@@ -8291,7 +8556,7 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */</code
 </div>
 </div>
 <div class="sect3">
-<h4 id="_notes">17.4.11. Notes</h4>
+<h4 id="_notes">16.7.11. Notes</h4>
 <div class="paragraph">
 <p>The key insight is that we can <strong>backport this gradually without breaking anything</strong>. The bridge pattern (new API calls old code for now) lets us improve incrementally, retiring magic strings and globals one section at a time.</p>
 </div>
@@ -8306,7 +8571,7 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */</code
 </div>
 </div>
 <div class="sect1">
-<h2 id="_insights">18. Insights</h2>
+<h2 id="_insights">17. Insights</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This chapter contains notes of all insights, large and small, that I make as I work on this project.
@@ -8315,7 +8580,7 @@ But rather than trying to find a structure where each new finding fits, I&#8217;
 We can refactor these into a better and better structure as we go.</p>
 </div>
 <div class="sect2">
-<h3 id="_yacc_semantic_data">18.1. Yacc semantic data</h3>
+<h3 id="_yacc_semantic_data">17.1. Yacc semantic data</h3>
 <div class="paragraph">
 <p>As per usual a Yacc grammar requires each non-terminal to have a type.
 Those types are named after which types of data they collect and
@@ -8339,12 +8604,12 @@ pointer to a <code>Symbol</code>.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_navigation_architecture_and_the_preloading_limitation">18.2. Navigation Architecture and the Preloading Limitation</h3>
+<h3 id="_navigation_architecture_and_the_preloading_limitation">17.2. Navigation Architecture and the Preloading Limitation</h3>
 <div class="paragraph">
 <p>Date: 2025-12-22</p>
 </div>
 <div class="sect3">
-<h4 id="_how_symbol_navigation_works">18.2.1. How Symbol Navigation Works</h4>
+<h4 id="_how_symbol_navigation_works">17.2.1. How Symbol Navigation Works</h4>
 <div class="paragraph">
 <p>Symbol navigation (PUSH/NEXT/PREVIOUS/POP) merges references from <strong>two sources</strong>:</p>
 </div>
@@ -8396,7 +8661,7 @@ pointer to a <code>Symbol</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_fundamental_limitation">18.2.2. The Fundamental Limitation</h4>
+<h4 id="_the_fundamental_limitation">17.2.2. The Fundamental Limitation</h4>
 <div class="paragraph">
 <p><strong>The Emacs client only preloads the currently active file</strong>, not all modified editor buffers.</p>
 </div>
@@ -8417,7 +8682,7 @@ pointer to a <code>Symbol</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_why_our_fix_attempt_didnt_work">18.2.3. Why Our Fix Attempt Didn&#8217;t Work</h4>
+<h4 id="_why_our_fix_attempt_didnt_work">17.2.3. Why Our Fix Attempt Didn&#8217;t Work</h4>
 <div class="paragraph">
 <p>We attempted to fix this (commit 8052518a4) by detecting modified files via timestamp comparison and reparsing them in <code>processModifiedFilesForNavigation</code>. <strong>This failed because:</strong></p>
 </div>
@@ -8436,7 +8701,7 @@ pointer to a <code>Symbol</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_potential_solutions">18.2.4. Potential Solutions</h4>
+<h4 id="_potential_solutions">17.2.4. Potential Solutions</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8458,7 +8723,7 @@ pointer to a <code>Symbol</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_architectural_invariants">18.2.5. Architectural Invariants</h4>
+<h4 id="_architectural_invariants">17.2.5. Architectural Invariants</h4>
 <div class="paragraph">
 <p><strong>MUST be maintained:</strong></p>
 </div>
@@ -8481,7 +8746,7 @@ pointer to a <code>Symbol</code>.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_refactorymode_internally_calls_xrefmode">18.3. RefactoryMode Internally Calls XrefMode</h3>
+<h3 id="_refactorymode_internally_calls_xrefmode">17.3. RefactoryMode Internally Calls XrefMode</h3>
 <div class="paragraph">
 <p>Date: 2025-01-10</p>
 </div>
@@ -8498,7 +8763,7 @@ This section describes the <strong>current architecture</strong> as of January 2
 </table>
 </div>
 <div class="sect3">
-<h4 id="_the_key_architectural_insight_current_architecture">18.3.1. The Key Architectural Insight (Current Architecture)</h4>
+<h4 id="_the_key_architectural_insight_current_architecture">17.3.1. The Key Architectural Insight (Current Architecture)</h4>
 <div class="paragraph">
 <p><strong>RefactoryMode runs XrefMode as an internal sub-task to update the reference database before performing refactorings.</strong></p>
 </div>
@@ -8520,7 +8785,7 @@ This section describes the <strong>current architecture</strong> as of January 2
 </div>
 </div>
 <div class="sect3">
-<h4 id="_how_it_works_2">18.3.2. How It Works</h4>
+<h4 id="_how_it_works_2">17.3.2. How It Works</h4>
 <div class="paragraph">
 <p>When a refactoring is invoked:</p>
 </div>
@@ -8548,7 +8813,7 @@ This section describes the <strong>current architecture</strong> as of January 2
 </div>
 </div>
 <div class="sect3">
-<h4 id="_why_refactorings_are_separate_processes">18.3.3. Why Refactorings Are Separate Processes</h4>
+<h4 id="_why_refactorings_are_separate_processes">17.3.3. Why Refactorings Are Separate Processes</h4>
 <div class="paragraph">
 <p>The Emacs client spawns a <strong>separate RefactoryMode process</strong> rather than using the interactive server because:</p>
 </div>
@@ -8567,7 +8832,7 @@ This section describes the <strong>current architecture</strong> as of January 2
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_three_modes_relationship">18.3.4. The Three Modes Relationship</h4>
+<h4 id="_the_three_modes_relationship">17.3.4. The Three Modes Relationship</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">ServerMode (c-xref -server)
@@ -8590,7 +8855,7 @@ RefactoryMode (c-xref -refactory ...)
 </div>
 </div>
 <div class="sect3">
-<h4 id="_code_evidence">18.3.5. Code Evidence</h4>
+<h4 id="_code_evidence">17.3.5. Code Evidence</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// From refactory.c:143-145
@@ -8617,7 +8882,7 @@ void ensureReferencesAreUpdated(char *project) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implications">18.3.6. Implications</h4>
+<h4 id="_implications">17.3.6. Implications</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8640,12 +8905,12 @@ void ensureReferencesAreUpdated(char *project) {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_the_lastparsedmtime_optimization_and_refactoring_conflict">18.4. The lastParsedMtime Optimization and Refactoring Conflict</h3>
+<h3 id="_the_lastparsedmtime_optimization_and_refactoring_conflict">17.4. The lastParsedMtime Optimization and Refactoring Conflict</h3>
 <div class="paragraph">
 <p>Date: 2025-01-21</p>
 </div>
 <div class="sect3">
-<h4 id="_problem_discovery">18.4.1. Problem Discovery</h4>
+<h4 id="_problem_discovery">17.4.1. Problem Discovery</h4>
 <div class="paragraph">
 <p>When implementing staleness detection for navigation (refreshing references when files are modified), we added an optimization to <code>server.c</code>:</p>
 </div>
@@ -8663,7 +8928,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_conflict">18.4.2. The Conflict</h4>
+<h4 id="_the_conflict">17.4.2. The Conflict</h4>
 <div class="paragraph">
 <p>This broke refactoring operations (<code>test_delete_parameter_with_preload</code>). The problem:</p>
 </div>
@@ -8691,7 +8956,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_root_cause_two_sources_of_truth">18.4.3. Root Cause: Two Sources of Truth</h4>
+<h4 id="_root_cause_two_sources_of_truth">17.4.3. Root Cause: Two Sources of Truth</h4>
 <div class="paragraph">
 <p>The architecture has two sources of references:</p>
 </div>
@@ -8712,7 +8977,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_workaround">18.4.4. The Workaround</h4>
+<h4 id="_the_workaround">17.4.4. The Workaround</h4>
 <div class="paragraph">
 <p>Exclude refactoring operations from the optimization:</p>
 </div>
@@ -8733,13 +8998,13 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_architectural_lesson">18.4.5. Architectural Lesson</h4>
+<h4 id="_architectural_lesson">17.4.5. Architectural Lesson</h4>
 <div class="paragraph">
 <p>This workaround highlights the fundamental tension: <strong>navigation and refactoring use different sources of truth</strong>. The proper fix is ADR-0014&#8217;s unified on-demand architecture where both use the same in-memory reference database, eliminating the need for <code>callXref()</code> entirely.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_related">18.4.6. Related</h4>
+<h4 id="_related">17.4.6. Related</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8758,7 +9023,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_refactoring_recipes">19. Refactoring Recipes</h2>
+<h2 id="_refactoring_recipes">18. Refactoring Recipes</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This chapter documents mechanical steps for refactoring operations. Each recipe describes the algorithmic steps that an automated refactoring tool would perform.</p>
@@ -8767,30 +9032,30 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 <p>For detailed discussions of refactoring feature architecture and implementation phases, see <a href="16a-planned-refactorings.adoc">Chapter 16a: Planned Refactoring Features</a>.</p>
 </div>
 <div class="sect2">
-<h3 id="_existing_refactorings">19.1. Existing Refactorings</h3>
+<h3 id="_existing_refactorings">18.1. Existing Refactorings</h3>
 <div class="paragraph">
 <p>Refactorings that are already implemented and available.</p>
 </div>
 <div class="sect3">
-<h4 id="_rename_symbol">19.1.1. Rename Symbol</h4>
+<h4 id="_rename_symbol">18.1.1. Rename Symbol</h4>
 <div class="paragraph">
 <p>Implemented. TBD.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_extract_function">19.1.2. Extract Function</h4>
+<h4 id="_extract_function">18.1.2. Extract Function</h4>
 <div class="paragraph">
 <p>Implemented. TBD.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_reorder_parameters">19.1.3. Reorder Parameters</h4>
+<h4 id="_reorder_parameters">18.1.3. Reorder Parameters</h4>
 <div class="paragraph">
 <p>Implemented. TBD.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_make_function_static">19.1.4. Make Function Static</h4>
+<h4 id="_make_function_static">18.1.4. Make Function Static</h4>
 <div class="paragraph">
 <p><strong>Purpose:</strong> Convert functions that are only used within their compilation unit to <code>static</code> storage class for better encapsulation and compiler optimization.</p>
 </div>
@@ -8963,12 +9228,12 @@ void publicSort(int *array, size_t n) {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_suggested_refactorings">19.2. Suggested Refactorings</h3>
+<h3 id="_suggested_refactorings">18.2. Suggested Refactorings</h3>
 <div class="paragraph">
 <p>Refactorings that have been proposed, designed, or partially implemented but are not yet available.</p>
 </div>
 <div class="sect3">
-<h4 id="_move_type_to_new_file">19.2.1. Move Type to New File</h4>
+<h4 id="_move_type_to_new_file">18.2.1. Move Type to New File</h4>
 <div class="paragraph">
 <p><strong>Input:</strong></p>
 </div>
@@ -9090,7 +9355,7 @@ void publicSort(int *array, size_t n) {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_introduce_semantic_type_aliases">19.3. Introduce Semantic Type Aliases</h3>
+<h3 id="_introduce_semantic_type_aliases">18.3. Introduce Semantic Type Aliases</h3>
 <div class="paragraph">
 <p><strong>Purpose:</strong> Make implicit semantic distinctions explicit by introducing type aliases for a single struct used for multiple purposes.</p>
 </div>
@@ -9303,7 +9568,7 @@ void pushEmptySession(ReferencesStack *stack);  // Generic operation</code></pre
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_rename_included_file">19.3.1. Rename Included File</h4>
+<h4 id="_rename_included_file">18.3.1. Rename Included File</h4>
 <div class="paragraph">
 <p><strong>Purpose:</strong> Rename a file appearing in an include and update all the include directives</p>
 </div>
@@ -9375,7 +9640,7 @@ void pushEmptySession(ReferencesStack *stack);  // Generic operation</code></pre
 <hr>
 </div>
 <div class="sect3">
-<h4 id="_move_function_to_different_file">19.3.2. Move Function to Different File</h4>
+<h4 id="_move_function_to_different_file">18.3.2. Move Function to Different File</h4>
 <div class="paragraph">
 <p>See <a href="16a-planned-refactorings.adoc">Chapter 16a: Planned Refactoring Features</a> for detailed design and implementation status.</p>
 </div>
@@ -9388,14 +9653,14 @@ void pushEmptySession(ReferencesStack *stack);  // Generic operation</code></pre
 <hr>
 </div>
 <div class="sect3">
-<h4 id="_turn_include_guard_into_pragma_once">19.3.3. Turn include guard into pragma once</h4>
+<h4 id="_turn_include_guard_into_pragma_once">18.3.3. Turn include guard into pragma once</h4>
 <div class="paragraph">
 <p>Tentative.</p>
 </div>
 <hr>
 </div>
 <div class="sect3">
-<h4 id="_change_return_type">19.3.4. Change return type</h4>
+<h4 id="_change_return_type">18.3.4. Change return type</h4>
 <div class="paragraph">
 <p>Tentative.</p>
 </div>
@@ -9576,7 +9841,7 @@ void publicSort(int *array, size_t n) {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_archive">20. Archive</h2>
+<h2 id="_archive">19. Archive</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>In this section you can find some descriptions and saved texts that
@@ -9585,7 +9850,7 @@ quirk, magic or bad coding is gone. But it is kept here as an archive
 for those wanting to do backtracking to original sources.</p>
 </div>
 <div class="sect2">
-<h3 id="_memory_strategies">20.1. Memory strategies</h3>
+<h3 id="_memory_strategies">19.1. Memory strategies</h3>
 <div class="paragraph">
 <p>There were a multitude of specialized memory allocation functions. In
 principle there where two types, static and dynamic. The dynamic could
@@ -9596,7 +9861,7 @@ be exteded using a overflow handler.</p>
 the actual struct. This was very confusing&#8230;&#8203;</p>
 </div>
 <div class="sect3">
-<h4 id="_static_memory_allocation">20.1.1. Static memory allocation</h4>
+<h4 id="_static_memory_allocation">19.1.1. Static memory allocation</h4>
 <div class="paragraph">
 <p>Static memory (SM_ prefix) are static areas allocated by the compiler
 which is then indexed using a similarly named index variable
@@ -9634,7 +9899,7 @@ the outermost CodeBlock</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_trivial_prechecks">20.2. Trivial Prechecks</h3>
+<h3 id="_trivial_prechecks">19.2. Trivial Prechecks</h3>
 <div class="paragraph">
 <p>The refactorer can call the server using <code>parseBufferUsingServer()</code> and add some extra options (in text form).
 One example is <code>setMovingPrecheckStandardEnvironment()</code> where it calls the server with <code>-olcxtrivialprecheck</code>.</p>
@@ -9662,7 +9927,7 @@ This theory should be checked by looking at the original source of the precheck 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_caching_system">20.3. Caching System</h3>
+<h3 id="_caching_system">19.3. Caching System</h3>
 <div class="paragraph">
 <p><strong>The caching system described below has been archived as it is no longer part of the current architecture.</strong></p>
 </div>
@@ -9675,7 +9940,7 @@ allowed the system to detect out-of-memory situations, discard, flush
 and re-use memory during file processing.</p>
 </div>
 <div class="sect3">
-<h4 id="_core_design_principles">20.3.1. Core Design Principles</h4>
+<h4 id="_core_design_principles">19.3.1. Core Design Principles</h4>
 <div class="paragraph">
 <p><strong>Cache Point Model</strong>: The system placed strategic snapshots of parser state at external definition boundaries (functions, global variables, etc.). When files were re-processed, the system could validate cache integrity, recover from cache points, and resume parsing only from the first changed definition onward.</p>
 </div>
@@ -9694,7 +9959,7 @@ and re-use memory during file processing.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_key_components">20.3.2. Key Components</h4>
+<h4 id="_key_components">19.3.2. Key Components</h4>
 <div class="paragraph">
 <p><strong>Cache Point Management</strong> (<code>caching.c</code>):</p>
 </div>
@@ -9744,7 +10009,7 @@ and re-use memory during file processing.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_parser_integration">20.3.3. Parser Integration</h4>
+<h4 id="_parser_integration">19.3.3. Parser Integration</h4>
 <div class="paragraph">
 <p><strong>C Parser Integration</strong>: Both C and Yacc parsers placed cache points after each <code>external_definition</code>, but only when not processing include files (<code>includeStack.pointer == 0</code>).</p>
 </div>
@@ -9766,7 +10031,7 @@ and re-use memory during file processing.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_system_dependencies">20.3.4. System Dependencies</h4>
+<h4 id="_system_dependencies">19.3.4. System Dependencies</h4>
 <div class="paragraph">
 <p>The caching system was deeply integrated throughout the parsing pipeline:</p>
 </div>
@@ -9823,7 +10088,7 @@ and re-use memory during file processing.</p>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_performance_characteristics">20.3.5. Performance Characteristics</h4>
+<h4 id="_performance_characteristics">19.3.5. Performance Characteristics</h4>
 <div class="paragraph">
 <p><strong>Cache Hit Scenarios</strong>:</p>
 </div>
@@ -9862,7 +10127,7 @@ and re-use memory during file processing.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_huge_memory">20.4. HUGE Memory</h3>
+<h3 id="_huge_memory">19.4. HUGE Memory</h3>
 <div class="paragraph">
 <p>Previously a HUGE model was also available (by re-compilation) to
 reach file numbers, lines and columns above 22 bits. But if you have
@@ -9871,9 +10136,9 @@ something radical before attempting cross referencing and refactoring.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_bootstrapping">20.5. Bootstrapping</h3>
+<h3 id="_bootstrapping">19.5. Bootstrapping</h3>
 <div class="sect3">
-<h4 id="_bootstrap_removed">20.5.1. BOOTSTRAP REMOVED!</h4>
+<h4 id="_bootstrap_removed">19.5.1. BOOTSTRAP REMOVED!</h4>
 <div class="paragraph">
 <p>Once the FILL-macros was removed, we could move the enum-generation to
 use the actual <code>c-xref</code>. So from now on we build <code>c-xref</code> directly
@@ -9885,7 +10150,7 @@ update. This is a big improvement over the previous situation!</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_fills_removed">20.5.2. FILLs REMOVED!</h4>
+<h4 id="_fills_removed">19.5.2. FILLs REMOVED!</h4>
 <div class="paragraph">
 <p>As indicated in <a href="#_fill_macros">FILL macros</a> the bootstrapping of FILL-macros has
 finally and fully been removed.</p>
@@ -9901,7 +10166,7 @@ text below is kept for historical reasons.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_rationale">20.5.3. Rationale</h4>
+<h4 id="_rationale">19.5.3. Rationale</h4>
 <div class="paragraph">
 <p><em>c-xref</em> uses a load of structures, and lists of them, that need to be
 created and initialized in a lot of places (such as the parsers). To
@@ -9924,7 +10189,7 @@ building and maintaining and to the structure of <em>c-xref</em>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_mechanism">20.5.4. Mechanism</h4>
+<h4 id="_mechanism">19.5.4. Mechanism</h4>
 <div class="paragraph">
 <p>The bootstrapping uses <em>c-xref</em>'s own capability to parse C-code and
 parse those structures and spit out filling macros, and some other
@@ -9975,7 +10240,7 @@ functions for each "class" instead of macros.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_compiler_defines">20.5.5. Compiler defines</h4>
+<h4 id="_compiler_defines">19.5.5. Compiler defines</h4>
 <div class="paragraph">
 <p>In <em>options.h</em> there are a number of definitions which somehow are
 sent to the compiler/preprocessor or used so that standard settings
@@ -10000,7 +10265,7 @@ completely replace the "programmed" ones in <code>options.c</code>?</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_enumtxt_generation_removed">20.5.6. EnumTxt generation REMOVED!</h4>
+<h4 id="_enumtxt_generation_removed">19.5.6. EnumTxt generation REMOVED!</h4>
 <div class="paragraph">
 <p>To be able to print the string values of enums the module generate.c
 (called when regime was RegimeGenerate) could also generate string
@@ -10013,7 +10278,7 @@ could do away with that whole "generate" functionality too.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_enumtxt">20.5.7. enumTxt</h4>
+<h4 id="_enumtxt">19.5.7. enumTxt</h4>
 <div class="paragraph">
 <p>For some cases the string representing the value of an Enum is needed.
 <code>c-xref</code> handles this using the "usual" 'parse code and generate' method.
@@ -10021,7 +10286,7 @@ The module <code>generate.c</code> does this generation too.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_include_paths">20.5.8. Include paths</h4>
+<h4 id="_include_paths">19.5.8. Include paths</h4>
 <div class="paragraph">
 <p>Also in <em>options.h</em> some standard-like include paths are added, but
 there is a better attempt in <em>getAndProcessGccOptions()</em> which uses
@@ -10032,7 +10297,7 @@ the compiler/preprocessor itself to figure out those paths.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_problems">20.5.9. Problems</h4>
+<h4 id="_problems">19.5.9. Problems</h4>
 <div class="paragraph">
 <p>Since at bootstrap there must exist FILL-macros with the correct field
 names this strategy is an obstacle to cleaning up the code since every
@@ -10048,7 +10313,7 @@ pass with BOOTSTRAP set, which it does.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_removing">20.5.10. Removing</h4>
+<h4 id="_removing">19.5.10. Removing</h4>
 <div class="paragraph">
 <p>I&#8217;ve started removing this step. In TODO.org I keep a hierarchical list
 of the actions to take (in a Mikado kind of style).</p>
@@ -10077,7 +10342,7 @@ CSV-file from that, and compare all rows.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_strtdef_h">20.5.11. strTdef.h</h4>
+<h4 id="_strtdef_h">19.5.11. strTdef.h</h4>
 <div class="paragraph">
 <p>The <code>strTdef.h</code> was generated using the option <code>-typedefs</code> as a part
 of the old <code>-task_regime_generate</code> strategy and generated typedef
@@ -10129,7 +10394,7 @@ included before the structs:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_fill_macros">20.6. FILL macros</h3>
+<h3 id="_fill_macros">19.6. FILL macros</h3>
 <div class="paragraph">
 <p><em><strong>The FILL macros are now fully replaced by native functions or some other,</strong></em>
 <em><strong>more refactoring-friendly, mechanism. Yeah!</strong></em></p>
@@ -10174,7 +10439,7 @@ which fields are actually necessary to set.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_users">20.7. Users</h3>
+<h3 id="_users">19.7. Users</h3>
 <div class="paragraph">
 <p><strong>The <code>-user</code> option has now been removed, both in the tool and the
   editor adaptors, and with it one instance of a hashlist, the
@@ -10219,7 +10484,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-23 11:46:34 UTC
+Last updated 2026-01-25 19:09:08 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

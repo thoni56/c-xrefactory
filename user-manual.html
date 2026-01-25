@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-01-23">
+<meta name="author" content="v{VERSION} - Generated 2026-01-25">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - User Manual</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - User Manual</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-01-23</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-01-25</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -494,9 +494,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_command_line_options">8.2. Command line options</a></li>
 </ul>
 </li>
+<li><a href="#_the_configuration_file">9. The configuration file</a></li>
 <li><a href="#_feedback">Appendix A: Feedback</a></li>
 <li><a href="#_license">Appendix B: License</a></li>
-<li><a href="#_acknowledgements">9. Acknowledgements</a></li>
+<li><a href="#_acknowledgements">10. Acknowledgements</a></li>
 </ul>
 </div>
 </div>
@@ -634,7 +635,11 @@ You can easily install <code>el-get</code> in your running Emacs using a snippet
 <p>If your Emacs runs in a "standard" *ix-like environment with <code>bash</code>, <code>make</code>, <code>cc</code> etc. you probably don&#8217;t need anything in particular.</p>
 </div>
 <div class="paragraph">
-<p>For Windows users, it is recommended to do development in WSL (especially WSL2). For detailed platform-specific setup instructions, including how to run Emacs graphically from WSL using X11 servers, see the <a href="https://github.com/thoni56/c-xrefactory/blob/main/README.md">README</a> in the project repository.</p>
+<p>For Windows users, it is recommended to do development in WSL (especially WSL2). For
+detailed platform-specific setup instructions, including how to run Emacs graphically
+from WSL using X11 servers, see the
+<a href="https://github.com/thoni56/c-xrefactory/blob/main/README.md">README</a> in the project
+repository.</p>
 </div>
 </div>
 </div>
@@ -646,16 +651,27 @@ You can easily install <code>el-get</code> in your running Emacs using a snippet
 <div class="sect2">
 <h3 id="_quick_start">2.1. Quick start</h3>
 <div class="paragraph">
-<p>To quickly start working with C-xrefactory just invoke any of its functions from the 'c-xref' menu in Emacs. You will be asked for creation of a project. Then C-xrefactory will create its database for the project and is ready for use.</p>
+<p>To quickly start working with C-xrefactory just invoke any of its functions from the
+'c-xref' menu in Emacs. You will be asked for creation of a project. Then C-xrefactory
+will create its database for the project and is ready for use.</p>
 </div>
 <div class="paragraph">
-<p>C-xrefactory functions can be accessed via the 'c-xref' menu in Emacs. Optionally the most frequent functions can be bound to shortcuts. C-xrefactory can also be customized via standard Emacs customization dialog.</p>
+<p>C-xrefactory functions can be accessed via the 'c-xref' menu in Emacs. Optionally the
+most frequent functions can be bound to shortcuts. C-xrefactory can also be customized
+via standard Emacs customization dialog.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_projects">2.2. Projects</h3>
 <div class="paragraph">
-<p>C-xrefactory is project based; you will need to create and maintain a description of your projects. C-xrefactory projects can be autodetected. C-xrefactory detects the 'active project' from the path of currently edited file. Each project contains list of 'autodetection directories' specifying when the project should be triggered 'active'. Only one project at the time can be active. In consequence 'autodetection directories' have to be distinct for all projects. Information about the selected 'active project' is displayed after each browsing action in the bottom information line of the editor.</p>
+<p>C-xrefactory is project based; you will need to create and maintain a description of
+your projects. C-xrefactory projects can be autodetected. C-xrefactory detects the
+'active project' from the path of currently edited file. Each project contains list of
+'autodetection directories' specifying when the project should be triggered
+'active'. Only one project at the time can be active. In consequence 'autodetection
+directories' have to be distinct for all projects. Information about the selected
+'active project' is displayed after each browsing action in the bottom information line
+of the editor.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -664,7 +680,11 @@ You can easily install <code>el-get</code> in your running Emacs using a snippet
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Project autodetection directories are (in general) not the same as directories containing project files. Project files can contain common libraries used in many projects, while project detection directory should be the directory which is project specific, i.e. directory containing project specific files not shared with other projects.
+Project autodetection directories are (in general) not the same as directories
+containing project files. Project files can contain common libraries used in many
+projects, while project detection directory should be the directory which is project
+specific, i.e. directory containing project specific files not shared with other
+projects.
 </td>
 </tr>
 </table>
@@ -673,13 +693,21 @@ Project autodetection directories are (in general) not the same as directories c
 <div class="sect2">
 <h3 id="_referencedb">2.3. ReferenceDB</h3>
 <div class="paragraph">
-<p>The main part of C-xrefactory is the 'ReferenceDB'. Each project has its references stored in special files specified by options. They contain information about your project sources. In particular, information about all symbols, their linking properties, place(s) of definition and all usages. The ReferenceDB can be split into any number of files. The number of files can be specified by user. A larger number of files makes browsing faster, but makes creation and update slower. The maintenance of the ReferenceDB is to a large extent automatic. However they may become inconsistent, and when they do it is recommended to re-create the ReferenceDB manually.</p>
+<p>The main part of C-xrefactory is the 'ReferenceDB'. Each project has its references
+stored in special files specified by options. They contain information about your
+project sources. In particular, information about all symbols, their linking properties,
+place(s) of definition and all usages. The ReferenceDB can be split into any number of
+files. The number of files can be specified by user. A larger number of files makes
+browsing faster, but makes creation and update slower. The maintenance of the
+ReferenceDB is to a large extent automatic. However they may become inconsistent, and
+when they do it is recommended to re-create the ReferenceDB manually.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_c_xref_task">2.4. C-xref task</h3>
 <div class="paragraph">
-<p>C-xrefactory cooperates with an external task 'c-xref'. If you feel that the task has run into an inconsistent state, you can invoke the 'Kill c-xref task' function.</p>
+<p>C-xrefactory cooperates with an external task 'c-xref'. If you feel that the task has
+run into an inconsistent state, you can invoke the 'Kill c-xref task' function.</p>
 </div>
 </div>
 </div>
@@ -688,12 +716,17 @@ Project autodetection directories are (in general) not the same as directories c
 <h2 id="_completion">3. Completion</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Completion is implemented with the function 'Complete', in Emacs usually bound to the the kbd:[F8] key. Completion tries to complete identifier before the cursor by contextually appropriate strings. C-xrefactory is recognizing different context among them, completion of function parameters, variable definitions, etc. When several possibilities are available a completion dialog appears.</p>
+<p>Completion is implemented with the function 'Complete', in Emacs usually bound to the
+the kbd:[F8] key. Completion tries to complete identifier before the cursor by
+contextually appropriate strings. C-xrefactory is recognizing different context among
+them, completion of function parameters, variable definitions, etc. When several
+possibilities are available a completion dialog appears.</p>
 </div>
 <div class="sect2">
 <h3 id="_completion_dialog">3.1. Completion Dialog</h3>
 <div class="paragraph">
-<p>Each line of the dialog contains following information: the identifier to insert and the full definition of the symbol.</p>
+<p>Each line of the dialog contains following information: the identifier to insert and the
+full definition of the symbol.</p>
 </div>
 <div class="paragraph">
 <p>Symbol can be selected using standard motion keys. The following special keys are available:</p>
@@ -718,7 +751,9 @@ Project autodetection directories are (in general) not the same as directories c
 <h2 id="_browser">4. Browser</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>C-xrefactory browser allows resolving any symbol in source file, inspect its definition and all usages. Following four basic functions are available for browsing and it is usual to bind them to hot-keys:</p>
+<p>C-xrefactory browser allows resolving any symbol in source file, inspect its definition
+and all usages. Following four basic functions are available for browsing and it is
+usual to bind them to hot-keys:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -739,31 +774,57 @@ Project autodetection directories are (in general) not the same as directories c
 <div class="sect2">
 <h3 id="_basic_browsing_workflow">4.1. Basic browsing workflow</h3>
 <div class="paragraph">
-<p>When browsing a symbol, you first need to activate it by moving the caret on an occurrence of the symbol and invoke 'Push Symbol and Goto Definition' function. In the case of success the caret is moved to the definition of the symbol. This is because inspecting definition is the most usual browsing function and it is performed together with the resolution. After successful resolution you can inspect all usages of the symbol using 'Previous' and 'Next Reference' functions.</p>
+<p>When browsing a symbol, you first need to activate it by moving the caret on an
+occurrence of the symbol and invoke 'Push Symbol and Goto Definition' function. In the
+case of success the caret is moved to the definition of the symbol. This is because
+inspecting definition is the most usual browsing function and it is performed together
+with the resolution. After successful resolution you can inspect all usages of the
+symbol using 'Previous' and 'Next Reference' functions.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_the_browser_stack_concept">4.2. The browser stack concept</h3>
 <div class="paragraph">
-<p>The browser allows simultaneous browsing of multiple symbols. For example, let&#8217;s imagine you are browsing all usages of a variable 'variable' and you see that it is used as a parameter of a method 'method'. So, you wish to find the definition of the 'method'. In this situation simply put caret on the 'method' and invoke 'Push Symbol and Goto Definition' once more time. You will be moved to the definition of the 'method' and you can inspect its code. After this you wish to continue browsing remaining usages of the 'variable'. But when you try to use 'Previous' and 'Next Reference' you see that those functions are now inspecting all usages of the 'method' (not 'variable' as you wish). In this situation you first need to invoke the function 'Backward'. After this, the 'Previous' and 'Next Reference' functions work with usages of the 'variable'.</p>
+<p>The browser allows simultaneous browsing of multiple symbols. For example, let&#8217;s imagine
+you are browsing all usages of a variable 'variable' and you see that it is used as a
+parameter of a method 'method'. So, you wish to find the definition of the 'method'. In
+this situation simply put caret on the 'method' and invoke 'Push Symbol and Goto
+Definition' once more time. You will be moved to the definition of the 'method' and you
+can inspect its code. After this you wish to continue browsing remaining usages of the
+'variable'. But when you try to use 'Previous' and 'Next Reference' you see that those
+functions are now inspecting all usages of the 'method' (not 'variable' as you wish). In
+this situation you first need to invoke the function 'Backward'. After this, the
+'Previous' and 'Next Reference' functions work with usages of the 'variable'.</p>
 </div>
 <div class="paragraph">
-<p>As illustrated by this example, C-xrefactory browser is based on a browser stack. Newly browsed symbols are pushed on the top of the stack by the function 'Push Symbol and Goto Definition'. Functions 'Previous' and 'Next Reference' are inspecting previous and next usage of the symbol placed on the top of the stack. Function 'Backward' is removing one element from the top of the stack.</p>
+<p>As illustrated by this example, C-xrefactory browser is based on a browser stack. Newly
+browsed symbols are pushed on the top of the stack by the function 'Push Symbol and Goto
+Definition'. Functions 'Previous' and 'Next Reference' are inspecting previous and next
+usage of the symbol placed on the top of the stack. Function 'Backward' is removing one
+element from the top of the stack.</p>
 </div>
 <div class="paragraph">
-<p>It is possible to push back an element which was popped from the stack by error. This is done with the function 'Browser &gt; Forward'. This function is particularly useful when using visualization of the browser stack in the Browser Dialog.</p>
+<p>It is possible to push back an element which was popped from the stack by error. This is
+done with the function 'Browser &gt; Forward'. This function is particularly useful when
+using visualization of the browser stack in the Browser Dialog.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_push_by_name">4.3. Push by name</h3>
 <div class="paragraph">
-<p>Another way to push references onto the browser stack is the function: 'Browser &gt; Push Name and Goto Definition'. This function takes the string under the cursor, scans the ReferenceDB and pushes ALL symbols having this name. No semantic information such as scopes or file is taken into account. This function is useful for finding the definition of a known symbol rather than to browse existing code.</p>
+<p>Another way to push references onto the browser stack is the function: 'Browser &gt; Push
+Name and Goto Definition'. This function takes the string under the cursor, scans the
+ReferenceDB and pushes ALL symbols having this name. No semantic information such as
+scopes or file is taken into account. This function is useful for finding the definition
+of a known symbol rather than to browse existing code.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_browser_dialog">4.4. Browser Dialog</h3>
 <div class="paragraph">
-<p>Browser dialog allows visualization of C-xrefactory browser stack by displaying its top element. It contains two major information panes. Information displayed in information panes can be filtered by selecting filter from combo boxes placed above.</p>
+<p>Browser dialog allows visualization of C-xrefactory browser stack by displaying its top
+element. It contains two major information panes. Information displayed in information
+panes can be filtered by selecting filter from combo boxes placed above.</p>
 </div>
 <div class="sect3">
 <h4 id="_toolbar">4.4.1. Toolbar</h4>
@@ -773,13 +834,22 @@ Project autodetection directories are (in general) not the same as directories c
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Push Symbol and Goto Definition</strong>. This function parses the buffer opened in the editor pane and resolves the symbol pointed by the caret. This symbol is then pushed onto the browser stack. Then the caret is moved to the definition of the symbol. This is the most used browsing function. If you want to browse a symbol from your program, this is the function to be used. Other functions are used for few specific cases when this function can not do the job.</p>
+<p><strong>Push Symbol and Goto Definition</strong>. This function parses the buffer opened in the
+editor pane and resolves the symbol pointed by the caret. This symbol is then pushed
+onto the browser stack. Then the caret is moved to the definition of the symbol. This
+is the most used browsing function. If you want to browse a symbol from your program,
+this is the function to be used. Other functions are used for few specific cases when
+this function can not do the job.</p>
 </li>
 <li>
-<p><strong>Browse File Local Unused Symbols</strong>. This function parses the buffer opened in the editor pane and pushes onto browser stack all unused symbols with local scope. Those are local variables, method parameters, but also labels and import statements, so this function can be used to purge imports.</p>
+<p><strong>Browse File Local Unused Symbols</strong>. This function parses the buffer opened in the
+editor pane and pushes onto browser stack all unused symbols with local scope. Those
+are local variables, method parameters, but also labels and import statements, so
+this function can be used to purge imports.</p>
 </li>
 <li>
-<p><strong>Browse Global Unused Symbols</strong>. This function scans references and pushes them onto the browser stack.</p>
+<p><strong>Browse Global Unused Symbols</strong>. This function scans references and pushes them onto
+the browser stack.</p>
 </li>
 </ul>
 </div>
@@ -806,13 +876,18 @@ Project autodetection directories are (in general) not the same as directories c
 <div class="sect3">
 <h4 id="_browse_name_field">4.4.2. Browse name field</h4>
 <div class="paragraph">
-<p>The browse name text field can be used to manually enter a name to be pushed onto the browser stack. This may be used when you wish to browse a symbol which you do not see in your source code. Otherwise, it is more natural to use either "Push Name and Goto Definition" or "Push Symbol and Goto Definition" function.</p>
+<p>The browse name text field can be used to manually enter a name to be pushed onto the
+browser stack. This may be used when you wish to browse a symbol which you do not see in
+your source code. Otherwise, it is more natural to use either "Push Name and Goto
+Definition" or "Push Symbol and Goto Definition" function.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_symbol_pane">4.4.3. Symbol Pane</h4>
 <div class="paragraph">
-<p>The symbol information pane contains symbol names, profile information and where those symbols are defined. Window is organized as tree. The tree shows the location of the symbols definition followed by the number of references.</p>
+<p>The symbol information pane contains symbol names, profile information and where those
+symbols are defined. Window is organized as tree. The tree shows the location of the
+symbols definition followed by the number of references.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. Mouse operations</caption>
@@ -837,7 +912,11 @@ Project autodetection directories are (in general) not the same as directories c
 </table>
 <div class="paragraph">
 <div class="title">Multi-selection</div>
-<p>Multiple symbols can be selected in the Symbol Pane. When multiple symbols are selected, the References Pane will show references from all selected symbols combined. This is useful when you want to view references for multiple related symbols together. For example, you might select multiple local variables named 'i' from different functions to see all their usages in one view.</p>
+<p>Multiple symbols can be selected in the Symbol Pane. When multiple symbols are selected,
+the References Pane will show references from all selected symbols combined. This is
+useful when you want to view references for multiple related symbols together. For
+example, you might select multiple local variables named 'i' from different functions to
+see all their usages in one view.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 2. Available filters</caption>
@@ -864,7 +943,9 @@ Project autodetection directories are (in general) not the same as directories c
 <div class="sect3">
 <h4 id="_references_pane">4.4.4. References Pane</h4>
 <div class="paragraph">
-<p>The references pane contains list of references. Each reference is listed together with corresponding line of source code. The list is selectable and selected reference is automatically opened in editor.</p>
+<p>The references pane contains list of references. Each reference is listed together with
+corresponding line of source code. The list is selectable and selected reference is
+automatically opened in editor.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 3. Filters for classes</caption>
@@ -924,10 +1005,15 @@ Project autodetection directories are (in general) not the same as directories c
 <h2 id="_symbol_retriever">5. Symbol Retriever</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>C-xrefactory symbol retriever is useful for finding forgotten symbol names and for finding symbols from third parties libraries. You enter a string to search and C-xrefactory scans the references for matches. All symbols matching entered string are reported.</p>
+<p>C-xrefactory symbol retriever is useful for finding forgotten symbol names and for
+finding symbols from third parties libraries. You enter a string to search and
+C-xrefactory scans the references for matches. All symbols matching entered string are
+reported.</p>
 </div>
 <div class="paragraph">
-<p>Entered strings are interpreted as shell expressions and are composed from a sequence of characters possibly containing wildcard characters. The following wildcard characters can be used:</p>
+<p>Entered strings are interpreted as shell expressions and are composed from a sequence of
+characters possibly containing wildcard characters. The following wildcard characters
+can be used:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -943,13 +1029,27 @@ Project autodetection directories are (in general) not the same as directories c
 </ul>
 </div>
 <div class="paragraph">
-<p>Ranges of characters can be included between <code>[</code> and <code>]</code>, so for example <code>[a-zA-Z]</code> matches any letter, <code>[0-9]</code> matches any digit, as per usual in shell expressions. If the first character following the <code>[</code> is a <code>^</code> then the meaning of the expansion is inverted, for example <code>[^0-9]</code> expands to any non-digit character. A symbol is reported only if it completely matches the searched string. Method profile is considered as part of the name of the method, for example, the expression <code><strong>(*int</strong>)</code> will report all methods taking at least one parameter of type int. Letters are considered case insensitive except letters enclosed between <code>[</code> and <code>]</code>.</p>
+<p>Ranges of characters can be included between <code>[</code> and <code>]</code>, so for example <code>[a-zA-Z]</code>
+matches any letter, <code>[0-9]</code> matches any digit, as per usual in shell expressions. If the
+first character following the <code>[</code> is a <code>^</code> then the meaning of the expansion is
+inverted, for example <code>[^0-9]</code> expands to any non-digit character. A symbol is reported
+only if it completely matches the searched string. Method profile is considered as part
+of the name of the method, for example, the expression <code><strong>(*int</strong>)</code> will report all
+methods taking at least one parameter of type int. Letters are considered case
+insensitive except letters enclosed between <code>[</code> and <code>]</code>.</p>
 </div>
 <div class="paragraph">
-<p>For example the expression <code><strong>get</strong></code> will report all symbols containing the string 'get', for example symbols <code>getField</code> and <code>Target</code> will match. Expression <code>get*</code> will report all symbols starting by the string 'get'. Expression <code><strong class="A-Z"></code> will report all symbols starting by an upper case letter. Expression <code>get[abc0-2]</strong></code> will report all symbols starting by the string 'get' followed by one of characters a,b,c,0,1,2 followed by any (possibly empty) string, so for example <code>getact</code> will match, but <code>getAccount</code> will not.</p>
+<p>For example the expression <code><strong>get</strong></code> will report all symbols containing the string 'get',
+for example symbols <code>getField</code> and <code>Target</code> will match. Expression <code>get*</code> will report
+all symbols starting by the string 'get'. Expression <code><strong class="A-Z"></code> will report all symbols
+starting by an upper case letter. Expression <code>get[abc0-2]</strong></code> will report all symbols
+starting by the string 'get' followed by one of characters a,b,c,0,1,2 followed by any
+(possibly empty) string, so for example <code>getact</code> will match, but <code>getAccount</code> will not.</p>
 </div>
 <div class="paragraph">
-<p>If you enter an expression which does not contain any of the wildcard characters <code><strong></code>, <code>?</code> or <code>[</code> then C-xrefactory reports all symbols containing the entered string. For example, entering <code>get</code> as the expression is equivalent to entering <code>*get</strong></code>.</p>
+<p>If you enter an expression which does not contain any of the wildcard characters <code><strong></code>,
+<code>?</code> or <code>[</code> then C-xrefactory reports all symbols containing the entered string. For
+example, entering <code>get</code> as the expression is equivalent to entering <code>*get</strong></code>.</p>
 </div>
 </div>
 </div>
@@ -957,10 +1057,16 @@ Project autodetection directories are (in general) not the same as directories c
 <h2 id="_refactorer">6. Refactorer</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Refactoring is a software development and maintenance process where the source code is changed in such a way that it does not alter the external behaviour. C-xrefactory offers automatic support for several general refactoring patterns available via refactorer function. Whenever it is possible it also checks that performed modifications do not change program behaviour. For example, in case of symbol renaming, C-xrefactory checks whether renamed symbol does not clash with an existing one, etc.</p>
+<p>Refactoring is a software development and maintenance process where the source code is
+changed in such a way that it does not alter the external behaviour. C-xrefactory offers
+automatic support for several general refactoring patterns available via refactorer
+function. Whenever it is possible it also checks that performed modifications do not
+change program behaviour. For example, in case of symbol renaming, C-xrefactory checks
+whether renamed symbol does not clash with an existing one, etc.</p>
 </div>
 <div class="paragraph">
-<p>Invocation of refactorings will display a pop up menu with refactorings available for symbol pointed by the caret. Selection of one of items will perform the refactoring.</p>
+<p>Invocation of refactorings will display a pop up menu with refactorings available for
+symbol pointed by the caret. Selection of one of items will perform the refactoring.</p>
 </div>
 <div class="paragraph">
 <p>Here follows the list of refactorings implemented by C-xrefactory:</p>
@@ -1069,10 +1175,13 @@ Project autodetection directories are (in general) not the same as directories c
 <p><strong>Refactoring Context</strong>: Cursor has to be on the method&#8217;s (function&#8217;s or macro&#8217;s) name.</p>
 </div>
 <div class="paragraph">
-<p><strong>Input parameters</strong>: Position of the new parameter, its declaration and default value. (for example: '2', 'int y' and '0').</p>
+<p><strong>Input parameters</strong>: Position of the new parameter, its declaration and default
+ value. (for example: '2', 'int y' and '0').</p>
 </div>
 <div class="paragraph">
-<p><strong>Mechanics</strong>: Inspect all references of the method (function or macro) and add declaration of the new parameter to each definition and default value to each invocation of the method.</p>
+<p><strong>Mechanics</strong>: Inspect all references of the method (function or macro) and add
+ declaration of the new parameter to each definition and default value to each
+ invocation of the method.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1247,7 +1356,9 @@ int main(int argc, char *argv[]) {
 <div class="sect2">
 <h3 id="_use_case">8.1. Use case</h3>
 <div class="paragraph">
-<p>Normally the <code>c-xref</code> program is controlled from an editor adapter. But sometimes running it from the command line, e.g. as part of setting up a project, investigating problems with <code>c-xref</code> or as a part of the <code>c-xrefactory</code> test suite, can be useful.</p>
+<p>Normally the <code>c-xref</code> program is controlled from an editor adapter. But sometimes
+running it from the command line, e.g. as part of setting up a project, investigating
+problems with <code>c-xref</code> or as a part of the <code>c-xrefactory</code> test suite, can be useful.</p>
 </div>
 <div class="paragraph">
 <p>Most options can be set in a configuration file to be effective for every execution of <code>c-xref</code> in a project.</p>
@@ -1259,7 +1370,10 @@ int main(int argc, char *argv[]) {
 <div class="sect2">
 <h3 id="_command_line_options">8.2. Command line options</h3>
 <div class="paragraph">
-<p>There is a large number of command line options. Some of them might seem very obscure since they are only intended for use by the editor server protocol. Below is a list of all of them grouped after their usage (grouping and descriptions is a Work In Progress).</p>
+<p>There is a large number of command line options. Some of them might seem very obscure
+since they are only intended for use by the editor server protocol. Below is a list of
+some of the ones that might be interesting from a user perspective, grouped after their
+usage (grouping and descriptions is a Work In Progress).</p>
 </div>
 <div class="sect3">
 <h4 id="_operating_modes">8.2.1. Operating modes</h4>
@@ -1269,7 +1383,7 @@ int main(int argc, char *argv[]) {
 <div class="ulist">
 <ul>
 <li>
-<p>xref - the cross-referencer (default)</p>
+<p>xref - the cross-referencer</p>
 </li>
 <li>
 <p>server - editor server, started by editor adapters</p>
@@ -1329,11 +1443,9 @@ This option might be removed in the future.
 <dl>
 <dt class="hdlist1">-p &lt;project&gt;</dt>
 <dd>
-<p><code>c-xrefactory</code> has project-based configurations. The <code>-p</code> selects which of the projects available in the selected configuration file (see <code>-xrefrc</code> option) that should be applied.</p>
-</dd>
-<dt class="hdlist1">-stdop &lt;file&gt;</dt>
-<dd>
-<p>Read <code>file</code> as a configuration file containing options, as if it was included from the selected configuration file. This makes it possible to share certain configuration options between multiple configuration files/projects.</p>
+<p><code>c-xrefactory</code> has project-based configurations. The <code>-p</code> selects which
+of the projects available in the selected configuration file (see <code>-xrefrc</code> option) that
+should be applied.</p>
 </dd>
 <dt class="hdlist1">-xrefrc=&lt;file&gt;</dt>
 <dt class="hdlist1">-xrefrc &lt;file&gt;</dt>
@@ -1349,11 +1461,14 @@ This option might be removed in the future.
 <dl>
 <dt class="hdlist1">-set &lt;variable&gt; &lt;value&gt;</dt>
 <dd>
-<p>Set <code>variable</code> to 'value' in the same fashion as environment variables. Variables set in this way can be used in configuration files and queried using the command line option <code>-get</code>.</p>
+<p>Set <code>variable</code> to 'value' in the same fashion as environment
+variables. Variables set in this way can be used in configuration files and queried
+using the command line option <code>-get</code>.</p>
 </dd>
 <dt class="hdlist1">-get &lt;variable&gt;</dt>
 <dd>
-<p>Get the value of a previously set "environment variable". The value will be transferred over the edit server protocol as a <code>PPC_SET_INFO</code> record.</p>
+<p>Get the value of a previously set "environment variable". The value
+will be transferred over the edit server protocol as a <code>PPC_SET_INFO</code> record.</p>
 </dd>
 </dl>
 </div>
@@ -1416,10 +1531,6 @@ This option might be removed in the future.
 <dt class="hdlist1">-csuffixes=&lt;suffixes&gt;</dt>
 <dd>
 <p>This option indicates which file suffixes to consider being a C file. Multiple suffixes should be separated by <code>:</code>.</p>
-</dd>
-<dt class="hdlist1">-strict</dt>
-<dd>
-<p>Reject keywords and types that are not part of the ANSI C standard, such as <code><em>asm</em></code>, <code>_near</code> and <code><em>const</em></code>.</p>
 </dd>
 </dl>
 </div>
@@ -1538,152 +1649,14 @@ This option might be removed in the future.
 </dl>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_internal_options">8.2.11. Internal options</h4>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-This should probably be in the design document instead.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The refactorer internally calls the main c-xref indexing function and controls it by passing "command line options". Here is a list of those "options", which shall not be used from the command line.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-exactpositionresolve</dt>
-<dd>
-<p>If a symbol is defined in multiple places, like it can be in C, using this flag will consider those instances different based on them being in different locations.</p>
-<div class="paragraph">
-<p>What you want or need is unfortunately depending on your situation. If you don&#8217;t use this option then navigation and refactorings will affect all occurrences.</p>
-</div>
-<div class="paragraph">
-<p>One particular scenario is if you have mocked some functions (like with Cgreen) then you have at least two symbols with the same name and parameter lists. In this case you really want refactorings like renames and parameter changes to also affect the mocks, although they are not actually the "same" symbol. If <code>-exactpositionresolve</code> is used then the actual function and its mock version would be considered different symbols and a refactoring would only affect the selected one, leaving you to sync up the other manually.</p>
-</div>
-</dd>
-</dl>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_as_yet_undocumented_options">8.2.12. As yet undocumented options</h4>
-<div class="paragraph">
-<p>The following options exist but are not yet fully documented:</p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-addimportdefault</dt>
-<dt class="hdlist1">-browsedsym</dt>
-<dt class="hdlist1">-commentmovinglevel</dt>
-<dt class="hdlist1">-completioncasesensitive</dt>
-<dt class="hdlist1">-completionoverloadwizdeep</dt>
-<dt class="hdlist1">-continuerefactoring</dt>
-<dt class="hdlist1">-displaynestedwithouters</dt>
-<dt class="hdlist1">-exit</dt>
-<dt class="hdlist1">-filescasesensitive</dt>
-<dt class="hdlist1">-filescaseunsensitive</dt>
-<dt class="hdlist1">-maxcompls</dt>
-<dt class="hdlist1">-mf</dt>
-<dt class="hdlist1">-no-autoupdatefromsrc</dt>
-<dt class="hdlist1">-no-includerefresh</dt>
-<dt class="hdlist1">-no-includerefs</dt>
-<dt class="hdlist1">-olallchecks</dt>
-<dt class="hdlist1">-olcheckaccess</dt>
-<dt class="hdlist1">-olchecklinkage</dt>
-<dt class="hdlist1">-olcomplback</dt>
-<dt class="hdlist1">-olcomplforward</dt>
-<dt class="hdlist1">-olcomplselect</dt>
-<dt class="hdlist1">-olcursor</dt>
-<dt class="hdlist1">-olcxargmanip</dt>
-<dt class="hdlist1">-olcxcbrowse</dt>
-<dt class="hdlist1">-olcxcgoto</dt>
-<dt class="hdlist1">-olcxcomplet</dt>
-<dt class="hdlist1">-olcxcplsearch</dt>
-<dt class="hdlist1">-olcxctinspectdef</dt>
-<dt class="hdlist1">-olcxencapsulate</dt>
-<dt class="hdlist1">-olcxencapsulatesc1</dt>
-<dt class="hdlist1">-olcxencapsulatesc2</dt>
-<dt class="hdlist1">-olcxextract</dt>
-<dt class="hdlist1">-olcxfilter</dt>
-<dt class="hdlist1">-olcxgetcurrentrefn</dt>
-<dt class="hdlist1">-olcxgetparamcoord</dt>
-<dt class="hdlist1">-olcxgetprojectname</dt>
-<dt class="hdlist1">-olcxgetrefactorings</dt>
-<dt class="hdlist1">-olcxgetsymboltype</dt>
-<dt class="hdlist1">-olcxgotocaller</dt>
-<dt class="hdlist1">-olcxgotoparname</dt>
-<dt class="hdlist1">-olcxintersection</dt>
-<dt class="hdlist1">-olcxlccursor</dt>
-<dt class="hdlist1">-olcxmctarget</dt>
-<dt class="hdlist1">-olcxmethodlines</dt>
-<dt class="hdlist1">-olcxmmtarget</dt>
-<dt class="hdlist1">-olcxmodified</dt>
-<dt class="hdlist1">-olcxnotfqt</dt>
-<dt class="hdlist1">-olcxparnum</dt>
-<dt class="hdlist1">-olcxparnum2</dt>
-<dt class="hdlist1">-olcxprimarystart</dt>
-<dt class="hdlist1">-olcxpushandcallmacro</dt>
-<dt class="hdlist1">-olcxpushforlm</dt>
-<dt class="hdlist1">-olcxpushspecialname</dt>
-<dt class="hdlist1">-olcxrename</dt>
-<dt class="hdlist1">-olcxsafetycheck</dt>
-<dt class="hdlist1">-olcxsafetycheckinit</dt>
-<dt class="hdlist1">-olcxsafetycheckmovedblock</dt>
-<dt class="hdlist1">-olcxsafetycheckmovedfile</dt>
-<dt class="hdlist1">-olcxsyntaxpass</dt>
-<dt class="hdlist1">-olcxtaggoto</dt>
-<dt class="hdlist1">-olcxtagsearch</dt>
-<dt class="hdlist1">-olcxtagsearchback</dt>
-<dt class="hdlist1">-olcxtagsearchforward</dt>
-<dt class="hdlist1">-olcxtagselect</dt>
-<dt class="hdlist1">-olcxtarget</dt>
-<dt class="hdlist1">-olcxtops</dt>
-<dt class="hdlist1">-olcxtoptype</dt>
-<dt class="hdlist1">-olcxunmodified</dt>
-<dt class="hdlist1">-olcxwindel</dt>
-<dt class="hdlist1">-olcxwindelfile</dt>
-<dt class="hdlist1">-olcxwindelwin</dt>
-<dt class="hdlist1">-olexaddress</dt>
-<dt class="hdlist1">-olexmacro</dt>
-<dt class="hdlist1">-olinelen</dt>
-<dt class="hdlist1">-olmanualresolve</dt>
-<dt class="hdlist1">-olmark</dt>
-<dt class="hdlist1">-olnodialog</dt>
-<dt class="hdlist1">-optinclude</dt>
-<dt class="hdlist1">-pass</dt>
-<dt class="hdlist1">-prune</dt>
-<dt class="hdlist1">-refnum</dt>
-<dt class="hdlist1">-refs</dt>
-<dt class="hdlist1">-renameto</dt>
-<dt class="hdlist1">-resetIncludeDirs</dt>
-<dt class="hdlist1">-rfct-add-param</dt>
-<dt class="hdlist1">-rfct-add-to-imports</dt>
-<dt class="hdlist1">-rfct-del-param</dt>
-<dt class="hdlist1">-rfct-expand</dt>
-<dt class="hdlist1">-rfct-extract-macro</dt>
-<dt class="hdlist1">-rfct-extract-function</dt>
-<dt class="hdlist1">-rfct-move-param</dt>
-<dt class="hdlist1">-rfct-param1</dt>
-<dt class="hdlist1">-rfct-param2</dt>
-<dt class="hdlist1">-rfct-rename</dt>
-<dt class="hdlist1">-rlistwithoutsrc</dt>
-<dt class="hdlist1">-searchdef</dt>
-<dt class="hdlist1">-searchdefshortlist</dt>
-<dt class="hdlist1">-searchshortlist</dt>
-<dd>
-<p>== The configuration file</p>
-</dd>
-</dl>
-</div>
+<div class="sect1">
+<h2 id="_the_configuration_file">9. The configuration file</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>T.B.D.</p>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -1704,7 +1677,7 @@ This should probably be in the design document instead.
 </div>
 </div>
 <div class="sect1">
-<h2 id="_acknowledgements">9. Acknowledgements</h2>
+<h2 id="_acknowledgements">10. Acknowledgements</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Thanks to:</p>
@@ -1721,7 +1694,7 @@ This should probably be in the design document instead.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-23 11:45:42 UTC
+Last updated 2026-01-25 19:08:23 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
