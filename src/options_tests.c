@@ -418,6 +418,34 @@ Ensure(Options, can_return_project_name_from_autodetected_config) {
     assert_that(sectionName, is_equal_to_string("myproject"));
 }
 
+Ensure(Options, uses_directory_basename_as_project_name_for_empty_config) {
+    char optionsFilename[1000];
+    char sectionName[1000];
+    FILE file;
+
+    // AUTO-DETECT mode with empty .c-xrefrc - project name defaults to directory basename
+    expect(isDirectory, will_return(false));
+    expect(directoryName_static, will_return("/home/user/myproject"));
+    expect(fileExists, will_return(true)); /* /home/user/myproject/.c-xrefrc */
+
+    expect(openFile, when(fileName, is_equal_to_string("/home/user/myproject/.c-xrefrc")),
+           will_return(&file));
+
+    /* Empty file - just returns EOF */
+    expect(readChar, will_return(EOF));
+
+    expect(closeFile);
+
+    /* simpleFileName extracts basename from directory path */
+    expect(simpleFileName, will_return("myproject"));
+
+    searchForProjectOptionsFileAndProjectForFile("/home/user/myproject/source.c",
+                                               optionsFilename, sectionName);
+
+    /* Project name should be basename of the directory */
+    assert_that(sectionName, is_equal_to_string("myproject"));
+}
+
 Ensure(Options, collects_option_field_that_allocate_a_string_in_options_space) {
     allocateStringForOption(&options.pushName, "pushName");
 

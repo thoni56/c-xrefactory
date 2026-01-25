@@ -1975,21 +1975,24 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundO
                  * Just extract the project name from the first section header. */
                 bool found = getProjectNameFromOptionsFile(optionsFile, projectName);
                 closeFile(optionsFile);
-                if (found) {
-                    strcpy(foundOptionsFilename, candidatePath);
-                    strcpy(foundProjectName, projectName);
-                    /* Store project root for convention-based paths */
-                    options.detectedProjectRoot = allocateStringForOption(&options.detectedProjectRoot, searchDir);
-                    /* Set convention-based database path: <projectRoot>/.c-xref/db */
-                    char dbPath[MAX_FILE_NAME_SIZE+16]; /* Extra space for "/.c-xref/db" */
-                    sprintf(dbPath, "%s/.c-xref/db", searchDir);
-                    options.cxFileLocation = allocateStringForOption(&options.cxFileLocation, dbPath);
-                    log_debug("Detected project-local config '%s' covering '%s', project '%s', root '%s', db '%s'",
-                              candidatePath, sourceFilename, foundProjectName,
-                              options.detectedProjectRoot, options.cxFileLocation);
-                    LEAVE();
-                    return true;
+                if (!found) {
+                    /* Empty config or no section - use directory basename as project name */
+                    strcpy(projectName, simpleFileName(searchDir));
+                    log_debug("Empty config, using directory basename as project name: %s", projectName);
                 }
+                strcpy(foundOptionsFilename, candidatePath);
+                strcpy(foundProjectName, projectName);
+                /* Store project root for convention-based paths */
+                options.detectedProjectRoot = allocateStringForOption(&options.detectedProjectRoot, searchDir);
+                /* Set convention-based database path: <projectRoot>/.c-xref/db */
+                char dbPath[MAX_FILE_NAME_SIZE+16]; /* Extra space for "/.c-xref/db" */
+                sprintf(dbPath, "%s/.c-xref/db", searchDir);
+                options.cxFileLocation = allocateStringForOption(&options.cxFileLocation, dbPath);
+                log_debug("Detected project-local config '%s' covering '%s', project '%s', root '%s', db '%s'",
+                          candidatePath, sourceFilename, foundProjectName,
+                          options.detectedProjectRoot, options.cxFileLocation);
+                LEAVE();
+                return true;
             }
         }
 
