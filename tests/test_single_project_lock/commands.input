@@ -1,0 +1,6 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server
+-olcxgetprojectname CURDIR/project_a/source.c
+<sync>
+-olcxgetprojectname CURDIR/project_b/source.c
+<sync>
+<exit>

@@ -1,0 +1,14 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-olcxgetprojectname CURDIR/project_a/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>project_a</set-info>
+-olcxgetprojectname CURDIR/project_b/source.c
+end-of-options
+
+<sync>
+<error len=<n>>File not covered by current project: project_a</error>
+-exit
+end-of-options
+
