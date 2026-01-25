@@ -120,6 +120,8 @@ Options presetOptions = {
     false,                      /* memory statistics print out on exit */
 };
 
+/* Auto-detected project root (survives initOptions() which overwrites options struct) */
+static char autoDetectedProjectRoot[MAX_FILE_NAME_SIZE] = "";
 
 /* memory where on-line given options are stored */
 static Memory optMemory;
@@ -1943,6 +1945,33 @@ protected bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFil
     return false;
 }
 
+/* Apply convention-based database path for auto-detected projects.
+ * Called after options processing to set cxFileLocation to <projectRoot>/.c-xref/db
+ * if auto-detection was used and no explicit -refs was specified in the config.
+ */
+void applyConventionBasedDatabasePath(void) {
+    if (autoDetectedProjectRoot[0] == '\0') {
+        /* Not in auto-detect mode */
+        return;
+    }
+
+    /* Only apply if no explicit -xrefrc was specified (true auto-detect mode) */
+    if (options.xrefrc != NULL) {
+        return;
+    }
+
+    /* Check if an explicit -refs was set in the config by comparing with the default.
+     * If cxFileLocation still contains the default "CXrefs" pattern, replace it. */
+    if (options.cxFileLocation != NULL &&
+        strstr(options.cxFileLocation, "CXrefs") != NULL) {
+        char dbPath[MAX_FILE_NAME_SIZE + 16];
+        sprintf(dbPath, "%s/.c-xref/db", autoDetectedProjectRoot);
+        options.cxFileLocation = allocateStringForOption(&options.cxFileLocation, dbPath);
+        options.detectedProjectRoot = allocateStringForOption(&options.detectedProjectRoot, autoDetectedProjectRoot);
+        log_debug("Applied convention-based database path: %s", options.cxFileLocation);
+    }
+}
+
 /* Search upward from sourceFilename for a project-local .c-xrefrc file.
  * Returns true if found and the config covers the source file.
  * Sets foundOptionsFilename to the path of the .c-xrefrc file.
@@ -1982,15 +2011,10 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundO
                 }
                 strcpy(foundOptionsFilename, candidatePath);
                 strcpy(foundProjectName, projectName);
-                /* Store project root for convention-based paths */
-                options.detectedProjectRoot = allocateStringForOption(&options.detectedProjectRoot, searchDir);
-                /* Set convention-based database path: <projectRoot>/.c-xref/db */
-                char dbPath[MAX_FILE_NAME_SIZE+16]; /* Extra space for "/.c-xref/db" */
-                sprintf(dbPath, "%s/.c-xref/db", searchDir);
-                options.cxFileLocation = allocateStringForOption(&options.cxFileLocation, dbPath);
-                log_debug("Detected project-local config '%s' covering '%s', project '%s', root '%s', db '%s'",
-                          candidatePath, sourceFilename, foundProjectName,
-                          options.detectedProjectRoot, options.cxFileLocation);
+                /* Store project root in module-static variable (survives initOptions()) */
+                strcpy(autoDetectedProjectRoot, searchDir);
+                log_debug("Detected project-local config '%s' covering '%s', project '%s', root '%s'",
+                          candidatePath, sourceFilename, foundProjectName, autoDetectedProjectRoot);
                 LEAVE();
                 return true;
             }
@@ -2017,6 +2041,7 @@ void searchForProjectOptionsFileAndProjectForFile(char *sourceFilename, char *fo
 
     foundOptionsFilename[0] = 0;
     foundProjectName[0] = 0;
+    autoDetectedProjectRoot[0] = '\0';  /* Reset for each invocation */
 
     if (sourceFilename == NULL)
         return;

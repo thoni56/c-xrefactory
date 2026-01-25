@@ -591,6 +591,9 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         deepCopyOptionsFromTo(&options, &savedOptions);
         processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO);
 
+        /* Apply convention-based db path for auto-detected projects (after all options processed) */
+        applyConventionBasedDatabasePath();
+
         /* === PHASE 5: Input Setup === */
         inputOpened = computeAndOpenInputFile(inputFileName);  /* Finally calls initInput() */
 

@@ -175,6 +175,7 @@ extern bool currentCxFileCountMatches(int newRefNum);
 
 extern void searchForProjectOptionsFileAndProjectForFile(char *filename, char *optionsFilename,
                                                          char *foundProjectName);
+extern void applyConventionBasedDatabasePath(void);
 
 /* Experimental */
 extern char *findConfigFile(char *cwd);
