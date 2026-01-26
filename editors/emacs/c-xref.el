@@ -1899,10 +1899,9 @@ tries to delete C-xrefactory windows first.
   (let ((proc) (frame-id) (opts))
     (setq proc (cdr (assoc 'process dispatch-data)))
     (setq frame-id (cdr (assoc 'frame-id dispatch-data)))
-    (setq opts (format "%s %s -xrefrc \"%s\" -p \"%s\""
+    (setq opts (format "%s %s -p \"%s\""
                                commands
                                (if c-xref-browser-lists-source-lines "" "-rlistwithoutsrc ")
-                               c-xref-options-file
                                c-xref-active-project
                                ))
 
@@ -1963,7 +1962,6 @@ tries to delete C-xrefactory windows first.
     (setq opts (append opts (c-xref-server-save-buffers-to-tmp-files bl)))
     (setq opts (append opts (c-xref-server-get-point-and-mark-options )))
     (setq opts (append (list "-refactory"
-                                         "-xrefrc" c-xref-options-file
                                          "-p" c-xref-active-project
                                          )
                                opts))
@@ -1990,7 +1988,6 @@ tries to delete C-xrefactory windows first.
               ))
     (setq bl (c-xref-server-get-list-of-buffers-to-save-to-tmp-files t))
     (setq opts (append opts (list "-errors"
-                                                  "-xrefrc" c-xref-options-file
                                                   "-p" c-xref-active-project
                                                   )))
     (setq opts (append opts (c-xref-server-save-buffers-to-tmp-files bl)))
@@ -2042,7 +2039,7 @@ tries to delete C-xrefactory windows first.
       (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data
                                                          proc))
       (c-xref-send-data-to-running-process
-       (format "-olcxgetprojectname -xrefrc \"%s\" \"%s\"" c-xref-options-file (buffer-file-name))
+       (format "-olcxgetprojectname \"%s\"" (buffer-file-name))
        proc)
       (c-xref-wait-until-task-sync proc nil)
       (c-xref-server-read-answer-file-and-dispatch c-xref-global-dispatch-data nil)
@@ -3844,227 +3841,61 @@ will be deleted.
     package
     ))
 
+(defun c-xref-find-project-root ()
+  "Find project root by looking for .git directory.
+Returns the directory containing .git, or the current file's directory if not found."
+  (let ((git-root (locate-dominating-file (buffer-file-name) ".git")))
+    (if git-root
+        (expand-file-name git-root)
+      (file-name-directory (buffer-file-name)))))
+
 (defun c-xref-project-new ()
-  "Create new project in  the .c-xrefrc C-xrefactory option file.
+  "Create a new C-xrefactory project.
 
-This function will ask a few questions about your project and
-then create a project description in the .c-xrefrc configuration
-file.  It adds some common options for further manual editing.
-This function creates a simple description which can cover most
-projects.  It is mostly useful for C-xrefactory beginners.
-Advanced users will probably prefer to create and edit their
-.c-xrefrc file manually.  See also `c-xrefrc' and `c-xref' manual
-pages for more info on the format of the .c-xrefrc file and
-available options.
+Creates a .c-xrefrc file in the project root directory.
+The project root is auto-detected from .git location, or you can
+specify it manually.
 
-To delete a project, just edit the .c-xrefrc file and delete the
-part belonging to this project.
+The created config file is minimal - just the project name and
+source directory. You can edit it later to add include paths (-I)
+or macro definitions (-D) if needed.
 "
   (interactive "")
-  (let ((pname) (checked) (tname) (breakcheck) (pcomments)
-            (pact) (pedit) (sfiles) (pfiles) (refs)
-            (inidir) (mif) (miff) (mifloop) (apfiles) (crtag) (stat)
-            (ptdef) (if) (ifiles "") (ifloop) (iff) (ifmess) (rest "")
-            (aaa) (rrr) (pasi) (pasn) (hom) (exactp))
+  (let ((project-root) (project-name) (config-file) (create-tags))
     (c-xref-soft-select-dispach-data-caller-window c-xref-this-buffer-dispatch-data)
-    ;; no entry point initialisations, it calls get-active-project
     (c-xref-entry-point-make-initialisations-no-project-required)
-    (if (eq c-xref-platform 'windows)
-            (setq inidir "c:\\")
-      (setq inidir "/")
-      )
-    (setq hom (getenv "HOME"))
-    (if hom (setq hom (c-xref-remove-pending-slash (c-xref-backslashify-name hom))))
-    ;; this is a hack, just to create initial file (if not yet done)
-    (c-xref-softly-preset-project "")
-    ;;
-    (setq pname (c-xref-backslashify-name (c-xref-file-directory-name (buffer-file-name))))
-    (setq sfiles pname)
-    (setq pname (c-xref-read-path-from-minibuffer "Enter new project name: " pname))
-    (find-file c-xref-options-file)
-    (setq checked nil)
-    (while (not checked)
-      (setq pname (c-xref-remove-pending-slash pname))
-      (goto-char (point-min))
-      (if (search-forward (concat "[" pname "]") nil t)
-              (setq pname (c-xref-read-path-from-minibuffer
-                               "** Name already used, new name: " pname))
-            (goto-char (point-min))
-            (if (or (search-forward (concat "[" pname "/") nil t)
-                        (search-forward (concat "[" pname "\\") nil t))
-                (setq pname (c-xref-read-path-from-minibuffer
-                                     "** Name overlaps an existing project, enter new name: " pname))
-              (setq tname pname)
-              (setq breakcheck nil)
-              (while (and tname (not breakcheck))
-                (setq tname (c-xref-file-directory-name tname))
-                (goto-char (point-min))
-                (if (and tname
-                             (search-forward (concat "[" tname "]") nil t))
-                        (progn
-                          (setq pname (c-xref-read-path-from-minibuffer
-                                           "** This name is covered, enter new name: " pname))
-                          (setq breakcheck t)
-                          )))
-              (if (not breakcheck)
-                  (setq checked t)
-                )
-              )))
-    ;; The name is checked
-    (save-buffer)
-    (kill-buffer nil)
-    (setq pfiles (c-xref-read-path-from-minibuffer
-                          "Directory containing project sources: " sfiles))
-    (setq mifloop t)
-    (setq apfiles (c-xref-optionify-string pfiles "\""))
-    (while mifloop
-      (progn
-            (setq mif (read-from-minibuffer
-                           "Add another source directory [yn]? " "n"))
-            (if (or (equal mif "y") (equal mif "Y"))
-                (progn
-                  (setq miff (c-xref-read-path-from-minibuffer
-                                      "Additional source:  " sfiles))
-                  (setq apfiles (format "%s\n  %s" apfiles (c-xref-optionify-string miff "\"")))
-                  )
-              (setq mifloop nil)
-              )))
-    (if hom
-            (progn
-              (setq refs (format "%s%cCXrefs%c%s" hom c-xref-slash c-xref-slash
-                                         (c-xref-cut-string-prefix
-                                          (c-xref-cut-string-prefix (c-xref-backslashify-name pname)
-                                                                                (format "%s%c" hom c-xref-slash)
-                                                                                (eq c-xref-platform 'windows))
-                                          (format "%c" c-xref-slash)
-                                          nil)))
-              )
-      (setq refs (format "%s%cCXrefs" pfiles c-xref-slash))
-      )
-    (setq refs (c-xref-remove-dangerous-fname-chars refs))
-    (setq refs (c-xref-read-path-from-minibuffer
-                        "Directory to store references database/tag files in:  " refs))
 
-    (setq ifiles "")
-    (setq ifmess "Do you use some ")
-    (if (eq c-xref-platform 'windows)
-            (progn
-              (setq iff (c-xref-read-path-from-minibuffer "Directory containing standard headers (stdio.h, stdlib.h, ...): " inidir))
-              (setq ifiles (format "%s\n  -I %s" ifiles
-                                               (c-xref-optionify-string (c-xref-remove-pending-slash iff) "\"")))
-              (setq ifmess "Add any ")
-              ))
-    (setq ifloop t)
-    (while ifloop
-          (progn
-            (setq if (read-from-minibuffer
-                          (concat ifmess "nonstandard include directory (-I option) [yn]? ") "n"))
-            (if (or (equal if "y") (equal if "Y"))
-                (progn
-                      (setq iff (c-xref-read-path-from-minibuffer
-                                     "Additional include directory:  " inidir))
-                      (setq ifiles (format "%s\n  -I %s" ifiles
-                                                   (c-xref-optionify-string (c-xref-remove-pending-slash iff) "\"")))
-                      )
-              (setq ifloop nil)
-              )
-            (setq ifmess "Add another ")
-            ))
-    (if (not (equal ifiles ""))
-            (setq ifiles (concat "  //  include directories" ifiles))
-          )
-    ;;
-    (setq exactp (read-from-minibuffer
-                          "Is this a huge project with numerous name conflicts [yn]? " "n"))
-    ;;
-    (setq rest "")
-    (setq c-xref-foo-macros-counter 1)
-    (setq aaa (read-from-minibuffer
-                       "Do you compile sources with command line macro definitions (-D option) [yn]? " "n"))
-    (if (or (equal aaa "y") (equal aaa "Y"))
-            (progn
-              (setq aaa (read-from-minibuffer
-                             "Do you compile sources several times with different macro settings [yn]? " "n"))
-              (if (or (equal aaa "y") (equal aaa "Y"))
-                      (progn
-                        (setq pasn (string-to-number
-                                        (read-from-minibuffer
-                                         "How many compilations with different initial macro settings: " "2")))
-                        (setq aaa (read-from-minibuffer
-                                       "Are there macros common to all compilations [yn]? " "n"))
-                        (if (or (equal aaa "y") (equal aaa "Y"))
-                            (progn
-                                  (setq rest (concat rest
-                                                             (c-xref-collect-macros-for-new-project ""
-                                                                                                    "A common macro to be defined in all compilations: "
-                                                                                                    "Add another common macro definition")))
-                                  ))
-                        (setq pasi 1)
-                        (while (<= pasi pasn)
-                          (progn
-                            (setq rest (format "%s\n  -pass%d" rest pasi))
-                            (setq rest (concat rest
-                                                           (c-xref-collect-macros-for-new-project "  "
-                                                                                                  (format "A macro specific to compilation #%d: " pasi)
-                                                                                                  (format "Add another macro definition for compilation #%d"pasi))))
-                            (setq pasi (+ pasi 1))
-                            ))
-                        )
-                ;; a single pass macros
-                (setq rest (concat rest
-                                               (c-xref-collect-macros-for-new-project ""
-                                                                                      "A macro defined during compilation: "
-                                                                                      "Add another macro definition")))
-                )
-              )
-      (if (not (equal rest ""))
-              (setq rest (concat "  //  pre-processor macros and passes specification"
-                                         rest))
-            )
-      )
+    ;; Find project root (look for .git or use current directory)
+    (setq project-root (c-xref-find-project-root))
+    (setq project-root (read-directory-name "Project root: " project-root nil t))
+    (setq project-root (expand-file-name project-root))
 
-    ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; all questions done
-    (find-file c-xref-options-file)
-    (c-xref-append-new-project-section pname "y" ;; pcomments
-                                                       pfiles apfiles ifiles
-                                                       rest refs exactp)
-    ;;
-    (save-buffer)
-    (search-backward (concat "[" pname "]"))
-    (recenter)
+    ;; Default project name to directory basename
+    (setq project-name (file-name-nondirectory (directory-file-name project-root)))
+    (setq project-name (read-string "Project name: " project-name))
 
-    ;; just ask here and make it later
-    (setq c-xref-current-project nil)
-    (c-xref-softly-preset-project pname)
-    (setq pact (read-from-minibuffer
-                        "Make the new project active [yn]? " "n"))
+    ;; Create .c-xrefrc file in project root
+    (setq config-file (expand-file-name ".c-xrefrc" project-root))
+    (if (file-exists-p config-file)
+        (if (not (y-or-n-p (format "%s already exists. Overwrite? " config-file)))
+            (error "Aborted")))
 
-    (setq pedit "n")
-    ;;  (setq pedit (read-from-minibuffer
-    ;;               "Do you wish to adjust options manually [yn]? " "n"))
-    (if (or (equal pedit "n") (equal pedit "N"))
-            (progn
-              (kill-buffer nil)
-              (setq crtag "y")
-              (setq crtag (read-from-minibuffer
-                               "Can I create tags for this project [yn]? " "y"))
-              (if (or (equal crtag "y") (equal crtag "Y"))
-                  (progn
-                        (setq c-xref-current-project pname)
-                        (c-xref-create-refs)
-                        (setq c-xref-current-project nil)
-                ;;                              (c-xref-project-exit-message-on-nonzero stat)
+    ;; Write minimal config file
+    (with-temp-file config-file
+      (insert (format "[%s]\n" project-name))
+      (insert "  .\n"))
 
-                ))))
+    (message "Created %s" config-file)
 
-    (if (or (equal pact "y") (equal pact "Y"))
-            (progn
-              (setq c-xref-current-project pname)
-              (message "All done. Project '%s' is now active." pname)
-              )
-      (setq c-xref-current-project nil)
-      (message "All done. Setting project auto-detection.")
-      )
+    ;; Ask to create tags
+    (setq create-tags (y-or-n-p "Create reference database now? "))
+    (if create-tags
+        (progn
+          (setq c-xref-current-project project-name)
+          (c-xref-create-refs)
+          (setq c-xref-current-project nil)))
+
+    (message "Project '%s' created. Database at %s.c-xref/db" project-name project-root)
     ))
 
 
