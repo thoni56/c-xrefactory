@@ -399,6 +399,7 @@ Ensure(Options, can_return_project_name_from_autodetected_config) {
     FILE file;
 
     // AUTO-DETECT mode: no explicit -xrefrc, searches upward, only reads section header
+    always_expect(getEnv, will_return("HOME"));
     expect(isDirectory, will_return(false));
     expect(directoryName_static, will_return("HOME/projectdir"));
     expect(fileExists, will_return(true)); /* HOME/projectdir/.c-xrefrc */
@@ -425,6 +426,7 @@ Ensure(Options, sets_convention_based_database_path_when_autodetecting) {
 
     // AUTO-DETECT mode should set cxFileLocation to <projectRoot>/.c-xref/db
     // after applyConventionBasedDatabasePath() is called
+    always_expect(getEnv, will_return("HOME"));
     expect(isDirectory, will_return(false));
     expect(directoryName_static, will_return("/home/user/myproject"));
     expect(fileExists, will_return(true));
@@ -456,6 +458,7 @@ Ensure(Options, uses_directory_basename_as_project_name_for_empty_config) {
     FILE file;
 
     // AUTO-DETECT mode with empty .c-xrefrc - project name defaults to directory basename
+    always_expect(getEnv, will_return("HOME"));
     expect(isDirectory, will_return(false));
     expect(directoryName_static, will_return("/home/user/myproject"));
     expect(fileExists, will_return(true)); /* /home/user/myproject/.c-xrefrc */

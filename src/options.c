@@ -1976,11 +1976,13 @@ void applyConventionBasedDatabasePath(void) {
  * Returns true if found and the config covers the source file.
  * Sets foundOptionsFilename to the path of the .c-xrefrc file.
  * Sets foundProjectName to the project name from the matching section.
+ * Stops at HOME directory to avoid finding ~/.c-xrefrc (which is the global config).
  */
 static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundOptionsFilename,
                                                char *foundProjectName) {
     char searchDir[MAX_FILE_NAME_SIZE];
     char candidatePath[MAX_FILE_NAME_SIZE + 16];  /* Extra space for "/.c-xrefrc" suffix */
+    char *homeDir = getEnv("HOME");
 
     ENTER();
 
@@ -1993,6 +1995,11 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundO
     log_debug("sourceFilename='%s', searchDir='%s'", sourceFilename, searchDir);
 
     while (searchDir[0] != 0 && strlen(searchDir) > 1) {
+        /* Stop at HOME to avoid finding ~/.c-xrefrc (global config, not project-local) */
+        if (homeDir != NULL && strcmp(searchDir, homeDir) == 0) {
+            log_debug("Reached HOME directory, stopping search");
+            break;
+        }
         snprintf(candidatePath, sizeof(candidatePath), "%s/.c-xrefrc", searchDir);
         log_trace("Checking for project-local config: %s", candidatePath);
 
