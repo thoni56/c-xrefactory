@@ -62,19 +62,19 @@ rescanned. I'm not sure how that works, but we need tests for it.
 ** DONE Fill ParsedInfo begin/end for requested function
 ** DONE Fixup the preliminary version of the actual move
 ** DONE Move any declaration in source.h file to target.h
-* TRY Project local .c-xrefrc with relative file paths so it can be checked in to a repo
-   We could start with having same format but how to handle project names?
-** TODO Change to having reference file in the project tree?
-   This needs some thinking. Find it by looking upwards in the dir, on
-   create we need to ask where to store it starting with current
-   directory. This could enable storing non-absolute filenames in the
-   xrefs, they should be relative to where the db is.
-** TODO Make "get project" lookup the directory tree for closest .c-xrefrc that covers the file
-   Maybe it could return the path to the project file as the name of the project? Yes.
-   NOTE: any -prune should be considered too, how? why? example?
+* DONE Project local .c-xrefrc with convention-based database location
+   New projects use project-local .c-xrefrc with database at .c-xref/db (v1.9).
+   Legacy ~/.c-xrefrc projects continue to work via fallback.
+** DONE Reference database stored in project tree at .c-xref/db
+   Convention-based path applied automatically when using project-local config.
+** DONE Make "get project" lookup the directory tree for closest .c-xrefrc
+   Upward search from source file, stops at HOME to avoid finding ~/.c-xrefrc.
 ** TODO Make all filenames relative in the options file
-** TODO A "-p" should first look at the path of the "project name" to see if there is a .c-xrefrc there
-** TODO Do we even need the db? Probably, for very large projects it's too slow to always generate
+   Would allow .c-xrefrc to be checked into version control.
+** DONE Simplified project creation wizard in Emacs
+   Detects git root, creates minimal .c-xrefrc, offers to generate database.
+** TODO Migrate legacy config to project-local
+   Feature to move a section from ~/.c-xrefrc to project-local .c-xrefrc.
 ** DONE Function to lookup the closest .c-xrefrc and potentially use its directory path as project name
 * TODO Still problems with UTF-8 positioning
   Example: try to rename something in lexer_tests below the multi-byte strings.
@@ -145,14 +145,16 @@ rescanned. I'm not sure how that works, but we need tests for it.
 ** TODO Figure out in which regime xref2 is relevant
 * TODO errOut - figure out how they should be set in various scenarios
 * TODO ROADMAP
-** TODO Project local .c-xrefrc with relative file paths so it can be checked in to a repo
+** DONE Project local .c-xrefrc with convention-based database (v1.9)
+** TODO Make filenames relative in .c-xrefrc so it can be checked into version control
 ** TODO Cleaner interface Refactorer -> Server/Tag-generator
 *** TODO Separate refactory options into separate struct
 *** TODO Restructure option handling into -refactory, -server, -generate(?)
     those are main options, you can only have one, and selecting one
     will allow a set of separate options valid for that "mode"
-* TODO Store Xrefs in .c-xrefdb parallel to the .c-xrefrc used, remove possibility to define it
-  How to make this backwards compatible? We don't need to... If it is empty it will be regenerated
+* DONE Store Xrefs in .c-xref/db parallel to the .c-xrefrc used (v1.9)
+  Convention-based database path for project-local configs. Legacy -refs option still works for
+  backward compatibility with existing ~/.c-xrefrc configurations.
 * TODO Header files. There are a number of sections in the proto.h that
   indicates which file/module it declares an externa interface for. We
   should move that to a <module>.h file instead.
