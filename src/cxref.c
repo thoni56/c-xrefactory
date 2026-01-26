@@ -2469,8 +2469,8 @@ void saveReferences(void) {
 
     if (options.cxFileLocation == NULL)
         return;
-    if (!everUpdated && options.update == UPDATE_DEFAULT) {
-        /* Then we don't update, but generate from scratch */
+    if (options.update == UPDATE_CREATE || (!everUpdated && options.update == UPDATE_DEFAULT)) {
+        /* Generate from scratch - don't preserve old data */
         saveReferencesToStore(false, options.cxFileLocation);
         everUpdated = true;
     } else {

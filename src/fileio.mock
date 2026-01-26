@@ -47,6 +47,10 @@ void removeFile(char *fileName) {
     mock(fileName);
 }
 
+void recursivelyDeleteDirectory(char *dirName) {
+    mock(dirName);
+}
+
 size_t readFile(FILE *file, void *buffer, size_t size, size_t count) {
     return (size_t)mock(buffer, size, count, file);
 }

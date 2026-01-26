@@ -1,5 +1,6 @@
 #include "fileio.h"
 
+#include <dirent.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -71,6 +72,38 @@ void recursivelyCreateFileDirIfNotExists(char *fpath) {
 void removeFile(char *fileName) {
     log_trace("removing file '%s'", fileName);
     unlink(fileName);
+}
+
+void recursivelyDeleteDirectory(char *dirName) {
+    DIR *dir;
+    struct dirent *entry;
+    char filePath[MAX_FILE_NAME_SIZE];
+
+    log_trace("recursively deleting directory '%s'", dirName);
+
+    dir = opendir(dirName);
+    if (dir == NULL) {
+        /* Not a directory or doesn't exist - try to remove as file */
+        unlink(dirName);
+        return;
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            continue;
+
+        snprintf(filePath, sizeof(filePath), "%s/%s", dirName, entry->d_name);
+
+        struct stat st;
+        if (stat(filePath, &st) == 0 && S_ISDIR(st.st_mode)) {
+            recursivelyDeleteDirectory(filePath);
+        } else {
+            unlink(filePath);
+        }
+    }
+
+    closedir(dir);
+    rmdir(dirName);
 }
 
 int fileStatus(char *path, struct stat *statP) {

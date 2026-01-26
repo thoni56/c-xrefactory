@@ -554,10 +554,9 @@ static void writeMultipeCxFiles(bool updating, char *dirName) {
     }
 }
 
-static void writeCxFile(int updating, char *fileName) {
+static void writeCxFiles(int updating, char *fileName) {
     if (!updating)
-        removeFile(fileName);   /* TODO: removeFileOrDirectory() - this will not work
-                                 * when changing from refnum > 1 to refnum = 1 */
+        recursivelyDeleteDirectory(fileName);
 
     recursivelyCreateFileDirIfNotExists(fileName);
 
@@ -569,7 +568,7 @@ static void writeCxFile(int updating, char *fileName) {
 }
 
 void saveReferencesToStore(bool updating, char *fileName) {
-    writeCxFile(updating, fileName);
+    writeCxFiles(updating, fileName);
 }
 
 static void writeCxFileCompatibilityError(char *message) {
