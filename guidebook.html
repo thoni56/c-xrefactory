@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-01-25">
+<meta name="author" content="v{VERSION} - Generated 2026-01-26">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-01-25</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-01-26</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -566,10 +566,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#move-function-refactoring">16.1. Move Function Between Files</a></li>
 <li><a href="#_lsp_integration">16.2. LSP Integration</a></li>
 <li><a href="#_rename_function_handles_expect">16.3. Rename function handles <code>expect</code></a></li>
-<li><a href="#_clean_persistence_store_abstraction">16.4. Clean Persistence Store Abstraction</a></li>
-<li><a href="#unified-symbol-database">16.5. Unified Symbol Database Architecture</a></li>
-<li><a href="#macro-expansion-module">16.6. Extract Macro Expansion Module</a></li>
-<li><a href="#clean-parser-api">16.7. Clean Parser API and Multi-File Definition Support</a></li>
+<li><a href="#_migrate_to_project_local_config">16.4. Migrate to project local config</a></li>
+<li><a href="#_clean_persistence_store_abstraction">16.5. Clean Persistence Store Abstraction</a></li>
+<li><a href="#unified-symbol-database">16.6. Unified Symbol Database Architecture</a></li>
+<li><a href="#macro-expansion-module">16.7. Extract Macro Expansion Module</a></li>
+<li><a href="#clean-parser-api">16.8. Clean Parser API and Multi-File Definition Support</a></li>
 </ul>
 </li>
 <li><a href="#_insights">17. Insights</a>
@@ -6439,7 +6440,25 @@ existin, function.</p>
 </div>
 <div class="paragraph">
 <p>A handy extension of the "Rename Function" would be to find these using some special
-magic and replace them too.
+magic and replace them too.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_migrate_to_project_local_config">16.4. Migrate to project local config</h3>
+<div class="paragraph">
+<p>Previously <code>c-xrefactory</code> promoted a user-central config file, <code>~/.c-xrefrc</code> which
+contained the config for all projects by containing a section for each project. The "New
+Project" wizard in the Emacs client created new sections in this file.</p>
+</div>
+<div class="paragraph">
+<p>Since 1.9 the promoted model is a project local config file, a <code>.c-xrefrc</code> in the root
+of the project tree. The main advantage is that it can be checked in to repo and it will
+not contain absolute file paths.</p>
+</div>
+<div class="paragraph">
+<p>Legacy project configs will continue to work, but a user might want to migrate a
+project. It&#8217;s fairly easy to do by hande, but as polishing touch, providing a client
+operation to do that would be nice.
 == Major Codebase Improvements</p>
 </div>
 <div class="paragraph">
@@ -6450,9 +6469,9 @@ magic and replace them too.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_clean_persistence_store_abstraction">16.4. Clean Persistence Store Abstraction</h3>
+<h3 id="_clean_persistence_store_abstraction">16.5. Clean Persistence Store Abstraction</h3>
 <div class="sect3">
-<h4 id="_problem_statement">16.4.1. Problem Statement</h4>
+<h4 id="_problem_statement">16.5.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The <code>cxfile</code> module currently mixes multiple responsibilities that should be separated:</p>
 </div>
@@ -6477,7 +6496,7 @@ magic and replace them too.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_architectural_confusion_in_memory_vs_persistence">16.4.2. Architectural Confusion: In-Memory vs Persistence</h4>
+<h4 id="_architectural_confusion_in_memory_vs_persistence">16.5.2. Architectural Confusion: In-Memory vs Persistence</h4>
 <div class="paragraph">
 <p>The current code conflates two distinct concepts:</p>
 </div>
@@ -6546,7 +6565,7 @@ The persistence layer is <strong>always about durable storage</strong> that surv
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_architecture_problems">16.4.3. Current Architecture Problems</h4>
+<h4 id="_current_architecture_problems">16.5.3. Current Architecture Problems</h4>
 <div class="paragraph">
 <p><strong>Mixed Abstraction Levels</strong></p>
 </div>
@@ -6640,7 +6659,7 @@ scanReferencesToCreateMenu(symbolName);  // Treats .cx files as truth</code></pr
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_architecture">16.4.4. Proposed Architecture</h4>
+<h4 id="_proposed_architecture">16.5.4. Proposed Architecture</h4>
 <div class="paragraph">
 <p><strong><em>Two-Layer Design</em></strong></p>
 </div>
@@ -6762,7 +6781,7 @@ This interface starts simple but is where the <strong>Unified Symbol Database</s
 </div>
 </div>
 <div class="sect3">
-<h4 id="_migration_strategy">16.4.5. Migration Strategy</h4>
+<h4 id="_migration_strategy">16.5.5. Migration Strategy</h4>
 <div class="paragraph">
 <p><strong><em>Phase 1: Create Clean Boundaries (No Behavior Change)</em></strong></p>
 </div>
@@ -6885,7 +6904,7 @@ static void checkSearchMatch(ReferenceableItem *item, Reference *ref, void *ctx)
 </table>
 </div>
 <div class="sect3">
-<h4 id="_benefits">16.4.6. Benefits</h4>
+<h4 id="_benefits">16.5.6. Benefits</h4>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><strong>Testability</strong></dt>
@@ -6916,7 +6935,7 @@ static void checkSearchMatch(ReferenceableItem *item, Reference *ref, void *ctx)
 </div>
 </div>
 <div class="sect3">
-<h4 id="_relationship_to_unified_symbol_database">16.4.7. Relationship to Unified Symbol Database</h4>
+<h4 id="_relationship_to_unified_symbol_database">16.5.7. Relationship to Unified Symbol Database</h4>
 <div class="paragraph">
 <p>This refactoring is the <strong>foundation</strong> for the larger <strong>Unified Symbol Database Architecture</strong> (next section):</p>
 </div>
@@ -6951,7 +6970,7 @@ static void checkSearchMatch(ReferenceableItem *item, Reference *ref, void *ctx)
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation_checklist">16.4.8. Implementation Checklist</h4>
+<h4 id="_implementation_checklist">16.5.8. Implementation Checklist</h4>
 <div class="ulist checklist">
 <ul class="checklist">
 <li>
@@ -6994,7 +7013,7 @@ static void checkSearchMatch(ReferenceableItem *item, Reference *ref, void *ctx)
 </div>
 </div>
 <div class="sect3">
-<h4 id="_references">16.4.9. References</h4>
+<h4 id="_references">16.5.9. References</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -7011,7 +7030,7 @@ static void checkSearchMatch(ReferenceableItem *item, Reference *ref, void *ctx)
 </div>
 </div>
 <div class="sect2">
-<h3 id="unified-symbol-database">16.5. Unified Symbol Database Architecture</h3>
+<h3 id="unified-symbol-database">16.6. Unified Symbol Database Architecture</h3>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -7025,7 +7044,7 @@ This section describes the implementation details for the "Memory as Truth" arch
 </table>
 </div>
 <div class="sect3">
-<h4 id="_problem_statement_2">16.5.1. Problem Statement</h4>
+<h4 id="_problem_statement_2">16.6.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The current symbol database has evolved from a batch cross-referencer (like <code>ctags</code>) with artificial distinctions between "file-based" and "on-demand" modes. This creates:</p>
 </div>
@@ -7050,7 +7069,7 @@ This section describes the implementation details for the "Memory as Truth" arch
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_architecture_limitations">16.5.2. Current Architecture Limitations</h4>
+<h4 id="_current_architecture_limitations">16.6.2. Current Architecture Limitations</h4>
 <div class="paragraph">
 <p>The existing system distinguishes between:</p>
 </div>
@@ -7097,7 +7116,7 @@ This section describes the implementation details for the "Memory as Truth" arch
 </table>
 </div>
 <div class="sect3">
-<h4 id="_proposed_solution">16.5.3. Proposed Solution</h4>
+<h4 id="_proposed_solution">16.6.3. Proposed Solution</h4>
 <div class="paragraph">
 <p><strong><em>Core Insight: Unified On-Demand Architecture</em></strong></p>
 </div>
@@ -7369,7 +7388,7 @@ The <code>.cx</code> files are a <strong>durable cache</strong> that persists th
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation_plan">16.5.4. Implementation Plan</h4>
+<h4 id="_implementation_plan">16.6.4. Implementation Plan</h4>
 <div class="paragraph">
 <p><strong><em>Phase 1: Interface Unification</em></strong></p>
 </div>
@@ -7410,7 +7429,7 @@ The <code>.cx</code> files are a <strong>durable cache</strong> that persists th
 </div>
 </div>
 <div class="sect3">
-<h4 id="_benefits_2">16.5.5. Benefits</h4>
+<h4 id="_benefits_2">16.6.5. Benefits</h4>
 <div class="paragraph">
 <p><strong><em>Architectural Simplification</em></strong></p>
 </div>
@@ -7489,7 +7508,7 @@ The <code>.cx</code> files are a <strong>durable cache</strong> that persists th
 </div>
 </div>
 <div class="sect3">
-<h4 id="_existing_infrastructure">16.5.6. Existing Infrastructure</h4>
+<h4 id="_existing_infrastructure">16.6.6. Existing Infrastructure</h4>
 <div class="paragraph">
 <p><strong><em>Sophisticated Dependency Tracking</em></strong></p>
 </div>
@@ -7613,7 +7632,7 @@ This dependency tracking infrastructure is <strong>already production-ready</str
 </div>
 </div>
 <div class="sect3">
-<h4 id="_open_questions_2">16.5.7. Open Questions</h4>
+<h4 id="_open_questions_2">16.6.7. Open Questions</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -7659,7 +7678,7 @@ This dependency tracking infrastructure is <strong>already production-ready</str
 </div>
 </div>
 <div class="sect3">
-<h4 id="_references_2">16.5.8. References</h4>
+<h4 id="_references_2">16.6.8. References</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -7679,9 +7698,9 @@ This dependency tracking infrastructure is <strong>already production-ready</str
 </div>
 </div>
 <div class="sect2">
-<h3 id="macro-expansion-module">16.6. Extract Macro Expansion Module</h3>
+<h3 id="macro-expansion-module">16.7. Extract Macro Expansion Module</h3>
 <div class="sect3">
-<h4 id="_problem_statement_3">16.6.1. Problem Statement</h4>
+<h4 id="_problem_statement_3">16.7.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The <code>yylex.c</code> file is <strong>2353 lines</strong> and combines multiple responsibilities:</p>
 </div>
@@ -7706,7 +7725,7 @@ This dependency tracking infrastructure is <strong>already production-ready</str
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_architecture_2">16.6.2. Current Architecture</h4>
+<h4 id="_current_architecture_2">16.7.2. Current Architecture</h4>
 <div class="paragraph">
 <p>The macro expansion system in <code>yylex.c</code> comprises:</p>
 </div>
@@ -7767,7 +7786,7 @@ static Memory macroArgumentsMemory; // Short-lived: expansion temporaries</code>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_solution_2">16.6.3. Proposed Solution</h4>
+<h4 id="_proposed_solution_2">16.7.3. Proposed Solution</h4>
 <div class="paragraph">
 <p>Extract macro expansion into a new module: <code>macroexpansion.c/h</code></p>
 </div>
@@ -7869,7 +7888,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_benefits_3">16.6.4. Benefits</h4>
+<h4 id="_benefits_3">16.7.4. Benefits</h4>
 <div class="paragraph">
 <p><strong><em>Architectural</em></strong></p>
 </div>
@@ -7923,7 +7942,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation_strategy">16.6.5. Implementation Strategy</h4>
+<h4 id="_implementation_strategy">16.7.5. Implementation Strategy</h4>
 <div class="paragraph">
 <p><strong><em>Phase 1: Preparation (Already Complete)</em></strong></p>
 </div>
@@ -8000,7 +8019,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_risks_and_mitigation">16.6.6. Risks and Mitigation</h4>
+<h4 id="_risks_and_mitigation">16.7.6. Risks and Mitigation</h4>
 <div class="paragraph">
 <p><strong><em>Risk: Complex dependencies</em></strong></p>
 </div>
@@ -8063,7 +8082,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_success_metrics">16.6.7. Success Metrics</h4>
+<h4 id="_success_metrics">16.7.7. Success Metrics</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8085,7 +8104,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_open_questions_3">16.6.8. Open Questions</h4>
+<h4 id="_open_questions_3">16.7.8. Open Questions</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -8131,7 +8150,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_references_3">16.6.9. References</h4>
+<h4 id="_references_3">16.7.9. References</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8164,9 +8183,9 @@ This refactoring is independent of the LexemStream API improvements but would be
 </div>
 </div>
 <div class="sect2">
-<h3 id="clean-parser-api">16.7. Clean Parser API and Multi-File Definition Support</h3>
+<h3 id="clean-parser-api">16.8. Clean Parser API and Multi-File Definition Support</h3>
 <div class="sect3">
-<h4 id="_current_state_recent_lsp_definition_finding_success">16.7.1. Current State: Recent LSP Definition Finding Success</h4>
+<h4 id="_current_state_recent_lsp_definition_finding_success">16.8.1. Current State: Recent LSP Definition Finding Success</h4>
 <div class="paragraph">
 <p>The recent implementation of <code>textDocument/definition</code> for LSP created a <strong>clean, operation-based parser API</strong> in <code>parsing.h/c</code> that successfully decouples high-level operations from low-level parsing details. This API discovery presents an opportunity to gradually modernize legacy parsing infrastructure.</p>
 </div>
@@ -8204,7 +8223,7 @@ This refactoring is independent of the LexemStream API improvements but would be
 </div>
 </div>
 <div class="sect3">
-<h4 id="_problem_statement_4">16.7.2. Problem Statement</h4>
+<h4 id="_problem_statement_4">16.8.2. Problem Statement</h4>
 <div class="paragraph">
 <p>The LSP definition finding currently fails when a symbol&#8217;s <strong>definition is in a different file</strong> from the reference. This requires:</p>
 </div>
@@ -8238,7 +8257,7 @@ parseBufferUsingServer(project, point, mark, "-olcxmodemenu", NULL);
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_parser_api_innovation">16.7.3. The Parser API Innovation</h4>
+<h4 id="_the_parser_api_innovation">16.8.3. The Parser API Innovation</h4>
 <div class="paragraph">
 <p>The new <code>parsing.h</code> interface provides operation-based configuration (see <code>src/parsing.h</code> for details):</p>
 </div>
@@ -8251,7 +8270,7 @@ parseBufferUsingServer(project, point, mark, "-olcxmodemenu", NULL);
 </div>
 </div>
 <div class="sect3">
-<h4 id="_benefits_of_backporting_this_api">16.7.4. Benefits of Backporting This API</h4>
+<h4 id="_benefits_of_backporting_this_api">16.8.4. Benefits of Backporting This API</h4>
 <div class="paragraph">
 <p><strong><em>Code Clarity and Safety</em></strong></p>
 </div>
@@ -8330,7 +8349,7 @@ parsingConfig.startFile = fileNumber;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation_plan_three_non_blocking_phases">16.7.5. Implementation Plan: Three Non-Blocking Phases</h4>
+<h4 id="_implementation_plan_three_non_blocking_phases">16.8.5. Implementation Plan: Three Non-Blocking Phases</h4>
 <div class="paragraph">
 <p><strong><em>Phase 1: Expose New API Alongside Legacy Code</em></strong></p>
 </div>
@@ -8390,7 +8409,7 @@ parsingConfig.startFile = fileNumber;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_multi_file_definition_requirements">16.7.6. Multi-File Definition: Requirements</h4>
+<h4 id="_multi_file_definition_requirements">16.8.6. Multi-File Definition: Requirements</h4>
 <div class="paragraph">
 <p><strong><em>Symbol Type Information Persistence</em></strong></p>
 </div>
@@ -8464,7 +8483,7 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */</code
 </div>
 </div>
 <div class="sect3">
-<h4 id="_code_locations">16.7.7. Code Locations</h4>
+<h4 id="_code_locations">16.8.7. Code Locations</h4>
 <div class="paragraph">
 <p><strong>New Parser API</strong>:
 * <code>src/parsing.h</code> - Public interface (167 lines)
@@ -8487,7 +8506,7 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */</code
 </div>
 </div>
 <div class="sect3">
-<h4 id="_success_metrics_2">16.7.8. Success Metrics</h4>
+<h4 id="_success_metrics_2">16.8.8. Success Metrics</h4>
 <div class="paragraph">
 <p><strong>Phase 1</strong>:
 * ✓ New <code>ParsingConfig</code> API works alongside legacy strings
@@ -8508,7 +8527,7 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */</code
 </div>
 </div>
 <div class="sect3">
-<h4 id="_risks_and_mitigation_2">16.7.9. Risks and Mitigation</h4>
+<h4 id="_risks_and_mitigation_2">16.8.9. Risks and Mitigation</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -8547,7 +8566,7 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */</code
 </table>
 </div>
 <div class="sect3">
-<h4 id="_related_work_2">16.7.10. Related Work</h4>
+<h4 id="_related_work_2">16.8.10. Related Work</h4>
 <div class="paragraph">
 <p>This refactoring supports:
 * <strong>ADR-0014</strong> (On-Demand Parsing) - Single code path for all operations
@@ -8556,7 +8575,7 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */</code
 </div>
 </div>
 <div class="sect3">
-<h4 id="_notes">16.7.11. Notes</h4>
+<h4 id="_notes">16.8.11. Notes</h4>
 <div class="paragraph">
 <p>The key insight is that we can <strong>backport this gradually without breaking anything</strong>. The bridge pattern (new API calls old code for now) lets us improve incrementally, retiring magic strings and globals one section at a time.</p>
 </div>
@@ -10484,7 +10503,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-25 19:09:08 UTC
+Last updated 2026-01-26 21:10:34 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
