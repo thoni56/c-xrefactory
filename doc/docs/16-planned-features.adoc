@@ -107,3 +107,17 @@ existin, function.
 
 A handy extension of the "Rename Function" would be to find these using some special
 magic and replace them too.
+
+=== Migrate to project local config
+
+Previously `c-xrefactory` promoted a user-central config file, `~/.c-xrefrc` which
+contained the config for all projects by containing a section for each project. The "New
+Project" wizard in the Emacs client created new sections in this file.
+
+Since 1.9 the promoted model is a project local config file, a `.c-xrefrc` in the root
+of the project tree. The main advantage is that it can be checked in to repo and it will
+not contain absolute file paths.
+
+Legacy project configs will continue to work, but a user might want to migrate a
+project. It's fairly easy to do by hande, but as polishing touch, providing a client
+operation to do that would be nice.
