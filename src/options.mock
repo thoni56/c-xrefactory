@@ -63,8 +63,8 @@ bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, AllocateMemoryKin
   return (bool) mock(file, outArgs->argc, outArgs->argv, memoryKind, fileName, project);
 }
 
-void readOptionsFromFile(char *fileName, ArgumentsVector *outArgs, char *section, char *project) {
-    mock(fileName, outArgs->argc, outArgs->argv, section, project);
+ArgumentsVector readOptionsFromFile(char *fileName, char *section, char *project) {
+    return *(ArgumentsVector *)mock(fileName, section, project);
 }
 
 void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *sectionFile) {

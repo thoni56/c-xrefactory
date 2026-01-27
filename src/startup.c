@@ -432,7 +432,7 @@ static void getAndProcessXrefrcOptions(char *optionsFileName, char *project) {
 
     ArgumentsVector args;
 
-    readOptionsFromFile(optionsFileName, &args, project, project);
+    args = readOptionsFromFile(optionsFileName, project, project);
     processOptions(args, PROCESS_FILE_ARGUMENTS_NO); /* .c-xrefrc opts*/
 }
 
@@ -785,7 +785,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
          * per-pass in initializeFileProcessing. Setting NO_PASS skips all -passN sections. */
         int savedPass = currentPass;
         currentPass = NO_PASS;
-        readOptionsFromFile(standardOptionsFileName, &dfargs, standardOptionsSection, standardOptionsSection);
+        dfargs = readOptionsFromFile(standardOptionsFileName, standardOptionsSection, standardOptionsSection);
         currentPass = savedPass;
         if (options.mode == RefactoryMode) {
             inmode = PROCESS_FILE_ARGUMENTS_NO;

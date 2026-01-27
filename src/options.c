@@ -947,15 +947,17 @@ bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, AllocateMemoryKin
     return found;
 }
 
-void readOptionsFromFile(char *fileName, ArgumentsVector *outArgs, char *section, char *project) {
+ArgumentsVector readOptionsFromFile(char *fileName, char *section, char *project) {
     FILE *file;
     char unused[MAX_FILE_NAME_SIZE];
+    ArgumentsVector args;
 
     file = openFile(fileName, "r");
     if (file==NULL)
         FATAL_ERROR(ERR_CANT_OPEN, fileName, XREF_EXIT_ERR);
-    readOptionsIntoArgs(file, outArgs, ALLOCATE_IN_PP, section, project, unused);
+    readOptionsIntoArgs(file, &args, ALLOCATE_IN_PP, section, project, unused);
     closeFile(file);
+    return args;
 }
 
 void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *section) {
@@ -1046,7 +1048,7 @@ static int handleIncludeOption(int i, ArgumentsVector args) {
 
     ensureNextArgumentIsAFileName(&i, args);
 
-    readOptionsFromFile(args.argv[i], &includedArgs, "", NULL);
+    includedArgs = readOptionsFromFile(args.argv[i], "", NULL);
     processOptions(includedArgs, PROCESS_FILE_ARGUMENTS_NO);
 
     return i;

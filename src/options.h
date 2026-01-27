@@ -166,19 +166,18 @@ extern void addToStringListOption(StringList **pointerToOption, char *string);
 extern void deepCopyOptionsFromTo(Options *src, Options *dest);
 
 extern char *expandPredefinedSpecialVariables_static(char *output, char *inputFilename);
+
 extern bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, AllocateMemoryKind memFlag,
                                         char *sectionFile, char *project, char *section);
-extern void readOptionsFromFile(char *name, ArgumentsVector *outArgs, char *project, char *foundProjectName);
 extern void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *sectionFile);
+extern ArgumentsVector readOptionsFromFile(char *name, char *project, char *foundProjectName);
 extern ArgumentsVector readOptionsFromPipe(void);
+
 extern bool currentCxFileCountMatches(int newRefNum);
 
 extern void searchForProjectOptionsFileAndProjectForFile(char *filename, char *optionsFilename,
                                                          char *foundProjectName);
 extern void applyConventionBasedDatabasePath(void);
-
-/* Experimental */
-extern char *findConfigFile(char *cwd);
 
 extern void printOptionsMemoryStatistics(void);
 
