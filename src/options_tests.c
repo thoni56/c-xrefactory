@@ -189,7 +189,7 @@ Ensure(Options, can_readOptionsFromFileIntoArgs) {
     expect(readChar, will_return(EOF));
 
     ArgumentsVector nargs;
-    readOptionsIntoArgs(file, &nargs, ALLOCATE_IN_SM, "", project, unused);
+    readOptionsIntoArgs(file, &nargs, &ppmMemory, "", project, unused);
 
     assert_that(nargs.argc, is_equal_to(1)); /* Which is actually no arguments... */
 }

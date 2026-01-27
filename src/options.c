@@ -800,20 +800,8 @@ static void processProjectMarker(char *markerText, char *currentProject, char *f
 }
 
 
-// TODO - should take a Memory * instead of using a kind...
-static void *allocateSpaceForOption(AllocateMemoryKind memoryKind, int count, size_t size) {
-    if (memoryKind==ALLOCATE_IN_SM) {
-        return memoryAllocc(&optMemory, count, size);
-    } else if (memoryKind==ALLOCATE_IN_PP) {
-        return ppmAllocc(count, size);
-    } else {
-        assert(0);
-        return NULL;
-    }
-}
-
-static int addOptionToArgs(AllocateMemoryKind memoryKind, char optionText[], int argCount, char *arguments[]) {
-    char *space = allocateSpaceForOption(memoryKind, strlen(optionText) + 1, sizeof(char));
+static int addOptionToArgsInMemory(Memory *memory, char optionText[], int argCount, char *arguments[]) {
+    char *space = memoryAllocc(memory, strlen(optionText) + 1, sizeof(char));
     assert(space);
     strcpy(space, optionText);
     log_debug("option %s read", space);
@@ -860,8 +848,8 @@ static int handleSetOption(int i, ArgumentsVector args) {
     return i;
 }
 
-bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, AllocateMemoryKind memoryKind,
-                                 char *fileName, char *project, char *foundProjectName) {
+bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, Memory *memory, char *fileName, char *project,
+                         char *foundProjectName) {
     char optionText[MAX_OPTION_LEN];
     int len, ch, passNumber=0;
     bool projectUpdated, isActivePass;
@@ -874,7 +862,7 @@ bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, AllocateMemoryKin
     projectUpdated = isActivePass = true;
     foundProjectName[0]=0;
 
-    if (memoryKind == ALLOCATE_IN_SM)
+    if (memory == &optMemory)
         memoryInit(&optMemory, "argument options", NULL, OptionsMemorySize);
 
     bool found = false;
@@ -899,21 +887,21 @@ bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, AllocateMemoryKin
             isActivePass = passNumber==currentPass || currentPass==ANY_PASS;
             if (passNumber > maxPasses)
                 maxPasses = passNumber;
-        } else if (strcmp(optionText,"-set")==0 && (projectUpdated && isActivePass) && memoryKind!=ALLOCATE_NONE) {
+        } else if (strcmp(optionText,"-set")==0 && (projectUpdated && isActivePass) && memory != NULL) {
             // pre-evaluation of -set
             found = true;
-            if (memoryKind != ALLOCATE_NONE) {
-                argc = addOptionToArgs(memoryKind, optionText, argc, argv);
+            if (memory != NULL) {
+                argc = addOptionToArgsInMemory(memory, optionText, argc, argv);
             }
             ch = getOptionFromFile(file, optionText, &len);
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
-            if (memoryKind != ALLOCATE_NONE) {
-                argc = addOptionToArgs(memoryKind, optionText, argc, argv);
+            if (memory != NULL) {
+                argc = addOptionToArgsInMemory(memory, optionText, argc, argv);
             }
             ch = getOptionFromFile(file, optionText, &len);
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
-            if (memoryKind != ALLOCATE_NONE) {
-                argc = addOptionToArgs(memoryKind, optionText, argc, argv);
+            if (memory != NULL) {
+                argc = addOptionToArgsInMemory(memory, optionText, argc, argv);
             }
             if (argc < MAX_STD_ARGS) {
                 assert(argc >= 3);
@@ -923,8 +911,8 @@ bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, AllocateMemoryKin
         } else if (ch != EOF && (projectUpdated && isActivePass)) {
             found = true;
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
-            if (memoryKind != ALLOCATE_NONE) {
-                argc = addOptionToArgs(memoryKind, optionText, argc, argv);
+            if (memory != NULL) {
+                argc = addOptionToArgsInMemory(memory, optionText, argc, argv);
             }
         }
     }
@@ -932,9 +920,9 @@ bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, AllocateMemoryKin
         errorMessage(ERR_ST, "too many options");
 
     char **allocatedVector = NULL;
-    if (found && memoryKind!=ALLOCATE_NONE) {
+    if (found && memory != NULL) {
         // Allocate an array of correct size to return instead of local variable argv
-        allocatedVector = allocateSpaceForOption(memoryKind, argc, sizeof(char*));
+        allocatedVector = memoryAllocc(memory, argc, sizeof(char*));
         allocatedVector[0] = NULL;        /* Not used, ensure NULL */
         for (int i=1; i<argc; i++)
             allocatedVector[i] = argv[i];
@@ -955,7 +943,7 @@ ArgumentsVector readOptionsFromFile(char *fileName, char *section, char *project
     file = openFile(fileName, "r");
     if (file==NULL)
         FATAL_ERROR(ERR_CANT_OPEN, fileName, XREF_EXIT_ERR);
-    readOptionsIntoArgs(file, &args, ALLOCATE_IN_PP, section, project, unused);
+    readOptionsIntoArgs(file, &args, &ppmMemory, section, project, unused);
     closeFile(file);
     return args;
 }
@@ -967,7 +955,7 @@ void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *secti
     file = popen(command, "r");
     if (file==NULL)
         FATAL_ERROR(ERR_CANT_OPEN, command, XREF_EXIT_ERR);
-    readOptionsIntoArgs(file, outArgs, ALLOCATE_IN_PP, section, NULL, unused);
+    readOptionsIntoArgs(file, outArgs, &ppmMemory, section, NULL, unused);
     closeFile(file);
 }
 
@@ -977,7 +965,7 @@ ArgumentsVector readOptionsFromPipe(void) {
     assert(options.mode);
     if (options.mode == ServerMode) {
         char unused[MAX_FILE_NAME_SIZE];
-        readOptionsIntoArgs(stdin, &args, ALLOCATE_IN_SM, "", NULL, unused);
+        readOptionsIntoArgs(stdin, &args, &optMemory, "", NULL, unused);
         logCommands(args);
         /* those options can't contain include or define options, sections neither */
         int c = getc(stdin);
@@ -2041,8 +2029,8 @@ void searchForProjectOptionsFileAndProjectForFile(char *sourceFilename, char *fo
     optionsFile = openFile(foundOptionsFilename, "r");
     if (optionsFile != NULL) {
         ArgumentsVector nargs;
-        found = readOptionsIntoArgs(optionsFile, &nargs, ALLOCATE_NONE, sourceFilename,
-                                            options.project, foundProjectName);
+        found = readOptionsIntoArgs(optionsFile, &nargs, NULL, sourceFilename,
+                                    options.project, foundProjectName);
         if (found) {
             log_debug("options file '%s', project '%s' found", foundOptionsFilename, foundProjectName);
         }

@@ -32,12 +32,6 @@ typedef enum resolveDialog {
 } ResolveDialog;
 
 typedef enum {
-    ALLOCATE_NONE,
-    ALLOCATE_IN_SM,
-    ALLOCATE_IN_PP
-} AllocateMemoryKind;
-
-typedef enum {
     PROCESS_FILE_ARGUMENTS_NO,
     PROCESS_FILE_ARGUMENTS_YES
 } ProcessFileArguments;
