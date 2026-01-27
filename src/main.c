@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
            start processing for real ... Allocating initial CX memory */
         if (cxResizingBlocked) {
             FATAL_ERROR(ERR_ST, "cx_memory resizing required, see file TROUBLES",
-                       XREF_EXIT_ERR);
+                       EXIT_FAILURE);
         }
     }
 

@@ -1007,7 +1007,7 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
             sprintf(tmpBuff,
                     "Something went wrong here, probably different parameter coordinates at different cpp passes.");
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-            FATAL_ERROR(ERR_INTERNAL, tmpBuff, XREF_EXIT_ERR);
+            FATAL_ERROR(ERR_INTERNAL, tmpBuff, EXIT_FAILURE);
             assert(0);
         }
     } else {
@@ -1120,7 +1120,7 @@ static void deleteParameter(EditorMarker *marker, char *fname, int argumentNumbe
         } else {
             FATAL_ERROR(ERR_INTERNAL,
                        "Something goes wrong, probably different parameter coordinates at different cpp passes.",
-                       XREF_EXIT_ERR);
+                       EXIT_FAILURE);
             assert(0);
         }
         errorMessage(ERR_ST, "Parameter number out of limits");
@@ -1171,7 +1171,7 @@ static void moveParameter(EditorMarker *marker, char *fname, int argFrom, int ar
         } else {
             FATAL_ERROR(ERR_INTERNAL,
                        "Something goes wrong, probably different parameter coordinates at different cpp passes.",
-                       XREF_EXIT_ERR);
+                       EXIT_FAILURE);
             assert(0);
         }
         errorMessage(ERR_ST, "Parameter out of limit");
@@ -1357,7 +1357,7 @@ void refactory(void) {
     ENTER();
 
     if (options.project == NULL) {
-        FATAL_ERROR(ERR_ST, "You have to specify active project with -p option", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, "You have to specify active project with -p option", EXIT_FAILURE);
     }
 
     deepCopyOptionsFromTo(&options, &refactoringOptions); // save command line options !!!!
@@ -1381,7 +1381,7 @@ void refactory(void) {
     char *argumentFile = getNextScheduledFile(&argCount);
 
     if (argumentFile == NULL)
-        FATAL_ERROR(ERR_ST, "no input file", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, "no input file", EXIT_FAILURE);
 
     char fileName[MAX_FILE_NAME_SIZE];
     strcpy(fileName, argumentFile);

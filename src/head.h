@@ -32,15 +32,6 @@ typedef enum language {
 
 /* *********************************************************************** */
 
-
-/* *********************************************************************** */
-
-#define XREF_EXIT_BASE          64	// base for exit status
-#define XREF_EXIT_ERR           65
-#define XREF_EXIT_NO_PROJECT    66
-
-/* *********************************************************************** */
-
 #define ANY_FILE (-1)    // must be different from any file number
 #define ANY_PASS (-1)    // must be different from any pass number which are 1 and up
 #define NO_PASS  0       // sentinel to skip all pass-specific options

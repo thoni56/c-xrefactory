@@ -152,7 +152,7 @@ void aboutMessage(void) {
         fprintf(stdout, "%s", output);
     }
     if (options.exit)
-        exit(XREF_EXIT_BASE);
+        exit(EXIT_SUCCESS);
 }
 
 
@@ -487,7 +487,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     if (strlen(dirName) >= MAX_FILE_NAME_SIZE) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "file name %s is too long", dirName);
-        FATAL_ERROR(ERR_ST, tmpBuff, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, tmpBuff, EXIT_FAILURE);
     }
     suff = getFileSuffix(fname);
     // Directories are never in editor buffers...
@@ -685,7 +685,7 @@ protected int getOptionFromFile(FILE *file, char *text, int *chars_read) {
                 ch=readChar(file);
             }
             if (ch!='\"' && options.mode!=ServerMode) {
-                FATAL_ERROR(ERR_ST, "option string through end of file", XREF_EXIT_ERR);
+                FATAL_ERROR(ERR_ST, "option string through end of file", EXIT_FAILURE);
             }
         } else if (ch=='`') {
             text[count++]=ch;
@@ -820,7 +820,7 @@ static void ensureNextArgumentIsAFileName(int *i, ArgumentsVector args) {
         sprintf(tmpBuff, "file name expected after %s", args.argv[*i - 1]);
         errorMessage(ERR_ST, tmpBuff);
         usage();
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -831,7 +831,7 @@ static void ensureThereIsAnotherArgument(int *i, ArgumentsVector args) {
         sprintf(tmpBuff, "further argument(s) expected after %s", args.argv[*i-1]);
         errorMessage(ERR_ST, tmpBuff);
         usage();
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -942,7 +942,7 @@ ArgumentsVector readOptionsFromFile(char *fileName, char *section, char *project
 
     file = openFile(fileName, "r");
     if (file==NULL)
-        FATAL_ERROR(ERR_CANT_OPEN, fileName, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_CANT_OPEN, fileName, EXIT_FAILURE);
     readOptionsIntoArgs(file, &args, &ppmMemory, section, project, unused);
     closeFile(file);
     return args;
@@ -954,7 +954,7 @@ void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *secti
 
     file = popen(command, "r");
     if (file==NULL)
-        FATAL_ERROR(ERR_CANT_OPEN, command, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_CANT_OPEN, command, EXIT_FAILURE);
     readOptionsIntoArgs(file, outArgs, &ppmMemory, section, NULL, unused);
     closeFile(file);
 }
@@ -973,8 +973,8 @@ ArgumentsVector readOptionsFromPipe(void) {
             /* Just log and exit since we don't know if there is someone there... */
             /* We also want a clean exit() if we are going for coverage */
             log_error("Broken pipe");
-            exit(-1);
-            FATAL_ERROR(ERR_INTERNAL, "broken input pipe", XREF_EXIT_ERR);
+            exit(EXIT_FAILURE);
+            FATAL_ERROR(ERR_INTERNAL, "broken input pipe", EXIT_FAILURE);
         }
     }
     return args;
@@ -1132,7 +1132,7 @@ static bool processEOption(int *argi, ArgumentsVector args) {
         logging_selected.errors = true;
     } else if (strcmp(args.argv[i], "-exit")==0) {
         log_debug("Exiting");
-        exit(XREF_EXIT_BASE);
+        exit(EXIT_SUCCESS);
     }
     else if (strcmp(args.argv[i], "-exactpositionresolve")==0) {
         options.exactPositionResolve = true;
@@ -1191,7 +1191,7 @@ static bool processHOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (strcmp(args.argv[i], "-help")==0) {
         usage();
-        exit(0);
+        exit(EXIT_SUCCESS);
     }
     else return false;
     *argi = i;
@@ -1261,7 +1261,7 @@ static bool processMOption(int *argi, ArgumentsVector args) {
         int mf;
         sscanf(args.argv[i]+4, "%d", &mf);
         if (mf<0 || mf>=255) {
-            FATAL_ERROR(ERR_ST, "memory factor out of range <1,255>", XREF_EXIT_ERR);
+            FATAL_ERROR(ERR_ST, "memory factor out of range <1,255>", EXIT_FAILURE);
         }
         options.cxMemoryFactor = mf;
     }
@@ -1804,7 +1804,7 @@ void processOptions(ArgumentsVector args, ProcessFileArguments doProcessFiles) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "unknown option %s, (try c-xref -help)\n", args.argv[i]);
             if (options.mode==XrefMode) {
-                FATAL_ERROR(ERR_ST, tmpBuff, XREF_EXIT_ERR);
+                FATAL_ERROR(ERR_ST, tmpBuff, EXIT_FAILURE);
             } else
                 errorMessage(ERR_ST, tmpBuff);
         }

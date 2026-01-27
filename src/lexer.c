@@ -2,6 +2,7 @@
 
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "characterreader.h"
 #include "commons.h"
@@ -337,11 +338,11 @@ static int handleNewline(CharacterBuffer *cb, LexemBuffer *lb, int lexemStarting
     int ch;
     if (columnPosition(cb) >= MAX_REFERENCABLE_COLUMN) {
         FATAL_ERROR(ERR_ST, "position over MAX_REFERENCABLE_COLUMN, read TROUBLES in README file",
-                    XREF_EXIT_ERR);
+                    EXIT_FAILURE);
     }
     if (lineNumberFrom(cb) >= MAX_REFERENCABLE_LINE) {
         FATAL_ERROR(ERR_ST, "position over MAX_REFERENCABLE_LINE, read TROUBLES in README file",
-                    XREF_EXIT_ERR);
+                    EXIT_FAILURE);
     }
     log_trace("handleNewline: line %d -> %d (file %d)", cb->lineNumber, cb->lineNumber + 1, cb->fileNumber);
     cb->lineNumber++;

@@ -97,7 +97,7 @@ void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, siz
 
     FILE *file = openFile(fileName, "r");
     if (file == NULL) {
-        FATAL_ERROR(ERR_CANT_OPEN, fileName, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_CANT_OPEN, fileName, EXIT_FAILURE);
     }
 
     int size = bufferSize;
@@ -140,7 +140,7 @@ void allocateNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
     if (space == NULL) {
         space = malloc(allocatedSize+1);
         if (space == NULL)
-            FATAL_ERROR(ERR_NO_MEMORY, "global malloc", XREF_EXIT_ERR);
+            FATAL_ERROR(ERR_NO_MEMORY, "global malloc", EXIT_FAILURE);
         // put magic
         space[allocatedSize] = 0x3b;
     } else {
@@ -309,7 +309,7 @@ cont:
         time_t currentTime = time(NULL);
         if (lastQuasiSaveTime > currentTime + 5) {
             FATAL_ERROR(ERR_INTERNAL, "last save in the future, travelling in time?",
-                        XREF_EXIT_ERR);
+                        EXIT_FAILURE);
         } else if (lastQuasiSaveTime >= currentTime) {
             sleep(1 + lastQuasiSaveTime - currentTime);
         }

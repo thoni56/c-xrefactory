@@ -2,6 +2,7 @@
 
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "c_parser.h"
 #include "cppexp_parser.h"
@@ -478,7 +479,7 @@ void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
     setCurrentFileConsistency(&currentFile, &currentInput);
     includeStack.stack[includeStack.pointer++] = currentFile;		/* buffers are copied !!!!!!, burk */
     if (includeStack.pointer >= INCLUDE_STACK_SIZE) {
-        FATAL_ERROR(ERR_ST,"too deep nesting in includes", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST,"too deep nesting in includes", EXIT_FAILURE);
     }
     initInput(file, buffer, prepend, name);
 }

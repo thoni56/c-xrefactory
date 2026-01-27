@@ -1,12 +1,11 @@
 #include "stackmemory.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 #include "commons.h"
 #include "constants.h"
-#include "head.h"
 #include "log.h"
-#include "memory.h"
 #include "proto.h"
 
 
@@ -95,7 +94,7 @@ void *stackMemoryAlloc(int size) {
             stackMemoryMax = currentBlock->firstFreeIndex;
         return &stackMemory[i];
     } else {
-        fatalError(ERR_ST,"i+size > SIZE_stackMemory,\n\tstack memory overflowed,\n\tread TROUBLES section of README file\n", XREF_EXIT_ERR, __FILE__, __LINE__);
+        fatalError(ERR_ST,"i+size > SIZE_stackMemory,\n\tstack memory overflowed,\n\tread TROUBLES section of README file\n", EXIT_FAILURE, __FILE__, __LINE__);
         /* Should not return, but for testing and compilers sake return something */
         return NULL;
     }

@@ -191,7 +191,7 @@ static void setAvailableRefactorings(Symbol *symbol, Usage usage) {
     case TYPE_MODIFIERS_END:
     case MAX_CTYPE:
     case MAX_TYPE:
-        FATAL_ERROR(ERR_INTERNAL, "unexpected case for symbol type in setAvailableRefactoringsInMenu()", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_INTERNAL, "unexpected case for symbol type in setAvailableRefactoringsInMenu()", EXIT_FAILURE);
     }
 }
 
@@ -2085,7 +2085,7 @@ void answerEditorAction(void) {
     if (options.xrefrc == NULL && lockedProject == NULL && options.project == NULL &&
         options.serverOperation != OLO_ACTIVE_PROJECT) {
         FATAL_ERROR(ERR_ST, "Server operation without locked project - client must call -getprojectname first",
-                    XREF_EXIT_ERR);
+                    EXIT_FAILURE);
     }
 
     log_debug("Server operation = %s(%d)", operationNamesTable[options.serverOperation], options.serverOperation);

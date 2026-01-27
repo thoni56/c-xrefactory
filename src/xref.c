@@ -233,7 +233,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
         fflush(errOut);
     }
     if (options.cxFileLocation == NULL) {
-        FATAL_ERROR(ERR_ST, "sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, "sorry no file for cxrefs, use -refs option", EXIT_FAILURE);
     }
     for (int i=0; i < includeStack.pointer; i++) {
         log_debug("inspecting include %d, fileNumber: %d", i,
@@ -270,7 +270,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
     }
     if (!savingFlag && reason!=LONGJMP_REASON_FILE_ABORT) {
         /* references overflowed, but no whole file readed */
-        FATAL_ERROR(ERR_NO_MEMORY, "cxMemory", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_NO_MEMORY, "cxMemory", EXIT_FAILURE);
     }
     LEAVE();
 }

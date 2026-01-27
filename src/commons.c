@@ -166,7 +166,7 @@ char *normalizeFileName_static(char *name, char *relative_to) {
     if (strlen(normalizedFileName) >= MAX_FILE_NAME_SIZE) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "file name %s is too long", normalizedFileName);
-        FATAL_ERROR(ERR_ST, tmpBuff, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, tmpBuff, EXIT_FAILURE);
     }
     return normalizedFileName;  /* A static variable! */
 }
@@ -215,7 +215,7 @@ char *create_temporary_filename(void) {
 #endif
     log_trace("Created temporary filename: %s", temporary_name);
     if (strlen(temporary_name) == 0)
-        FATAL_ERROR(ERR_ST, "couldn't create temporary file name", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, "couldn't create temporary file name", EXIT_FAILURE);
 
     // Remember to remove this file at exit
     temporary_filenames = newStringList(temporary_name, temporary_filenames);
@@ -419,7 +419,7 @@ void internalCheckFail(char *expr, char *file, int line) {
         || options.mode == RefactoryMode
         || !fileAbortEnabled
     ) {
-        emergencyExit(XREF_EXIT_ERR);
+        emergencyExit(EXIT_FAILURE);
     }
 
     fprintf(errOut, "\t file aborted!\n");

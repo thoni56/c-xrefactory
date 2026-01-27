@@ -56,6 +56,7 @@
 
 
 #include <string.h>             /* For memset() */
+#include <stdlib.h>
 
 #include "head.h"
 #include "log.h"
@@ -128,7 +129,7 @@ int CONCAT(HASH_FUN_PREFIX,Add) (
     }
     table->numberOfElements ++;
     if ((table->numberOfElements * 9) / 8 >= table->size) {
-        FATAL_ERROR(ERR_ST, "[hashAdd] file table overflowed", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, "[hashAdd] file table overflowed", EXIT_FAILURE);
     }
     table->tab[posid] = element;
     return posid;

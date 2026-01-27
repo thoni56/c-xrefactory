@@ -2,6 +2,7 @@
 
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "browsermenu.h"
 #include "characterreader.h"
@@ -473,7 +474,7 @@ static void openInOutCxFile(bool updating, char *cxFileName) {
     assert(cxFileName);
     cxFile = openFile(cxFileName,"w");
     if (cxFile == NULL)
-        FATAL_ERROR(ERR_CANT_OPEN, cxFileName, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_CANT_OPEN, cxFileName, EXIT_FAILURE);
 
     if (updating) {
         if (tmpFileName[0] != '\0') {
@@ -579,7 +580,7 @@ static void writeCxFileCompatibilityError(char *message) {
             lastMessageTime = time(NULL);
         }
     } else {
-        FATAL_ERROR(ERR_ST, message, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, message, EXIT_FAILURE);
     }
 }
 
@@ -997,7 +998,7 @@ static void scanFunction_CxFileCountCheck(int fileCountInCxFile,
 ) {
     if (!currentCxFileCountMatches(fileCountInCxFile)) {
         assert(options.mode);
-        FATAL_ERROR(ERR_ST,"The reference database was generated with different '-refnum' options, recreate it!", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST,"The reference database was generated with different '-refnum' options, recreate it!", EXIT_FAILURE);
     }
 }
 

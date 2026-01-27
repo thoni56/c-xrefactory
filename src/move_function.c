@@ -180,7 +180,7 @@ static EditorMarker *getTargetFromOptions(void) {
     targetBuffer = findOrCreateAndLoadEditorBufferForFile(
         normalizeFileName_static(refactoringOptions.moveTargetFile, cwd));
     if (targetBuffer == NULL)
-        FATAL_ERROR(ERR_ST, "Could not find a buffer for target position", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, "Could not find a buffer for target position", EXIT_FAILURE);
     target = newEditorMarker(targetBuffer, 0);
     sscanf(refactoringOptions.refactor_target_line, "%d", &targetLine);
     moveEditorMarkerToLineAndColumn(target, targetLine, 0);
@@ -444,7 +444,7 @@ void moveFunction(EditorMarker *point) {
     FunctionBoundariesResult bounds = getFunctionBoundaries(point);
 
     if (!bounds.found) {
-        FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", EXIT_FAILURE);
     }
 
     /* Convert positions to markers and adjust for definition scope */

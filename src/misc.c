@@ -583,7 +583,7 @@ static void expandWildcardsInOnePathRecursiveMaybe(char *fileName, char **outpat
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "expanded option %s overflows over MAX_OPTION_LEN",
                     *outpaths-(MAX_OPTION_LEN-*availableSpace));
-            FATAL_ERROR(ERR_ST, tmpBuff, XREF_EXIT_ERR);
+            FATAL_ERROR(ERR_ST, tmpBuff, EXIT_FAILURE);
         }
     }
 }

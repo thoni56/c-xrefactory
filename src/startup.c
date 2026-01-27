@@ -51,7 +51,7 @@ static void writeOptionsFileMessage(char *file, char *outFName, char *outSect) {
             if (options.mode == ServerMode) {
                 errorMessage(ERR_ST, tmpBuff);
             } else {
-                FATAL_ERROR(ERR_ST, tmpBuff, XREF_EXIT_NO_PROJECT);
+                FATAL_ERROR(ERR_ST, tmpBuff, EXIT_FAILURE);
             }
         } else if (options.xref2) {
             ppcGenRecord(PPC_NO_PROJECT,file);

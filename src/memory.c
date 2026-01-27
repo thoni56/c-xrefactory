@@ -80,7 +80,7 @@ void *memoryAllocc(Memory *memory, int count, size_t size) {
         if (memory->overflowHandler != NULL && memory->overflowHandler(count))
             memoryResized(memory);
         else
-            fatalMemoryError(ERR_NO_MEMORY, memory->name, XREF_EXIT_ERR, __FILE__, __LINE__);
+            fatalMemoryError(ERR_NO_MEMORY, memory->name, EXIT_FAILURE, __FILE__, __LINE__);
     }
     memory->index += count*size;
     if (memory->index > memory->max)
