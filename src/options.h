@@ -166,7 +166,7 @@ extern void addToStringListOption(StringList **pointerToOption, char *string);
 extern void deepCopyOptionsFromTo(Options *src, Options *dest);
 
 extern char *expandPredefinedSpecialVariables_static(char *output, char *inputFilename);
-extern bool readOptionsFromFileIntoArgs(FILE *file, ArgumentsVector *outArgs, AllocateMemoryKind memFlag,
+extern bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, AllocateMemoryKind memFlag,
                                         char *sectionFile, char *project, char *section);
 extern void readOptionsFromFile(char *name, ArgumentsVector *outArgs, char *project, char *foundProjectName);
 extern void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *sectionFile);

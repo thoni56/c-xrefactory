@@ -860,7 +860,7 @@ static int handleSetOption(int i, ArgumentsVector args) {
     return i;
 }
 
-bool readOptionsFromFileIntoArgs(FILE *file, ArgumentsVector *outArgs, AllocateMemoryKind memoryKind,
+bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, AllocateMemoryKind memoryKind,
                                  char *fileName, char *project, char *foundProjectName) {
     char optionText[MAX_OPTION_LEN];
     int len, ch, passNumber=0;
@@ -954,7 +954,7 @@ void readOptionsFromFile(char *fileName, ArgumentsVector *outArgs, char *section
     file = openFile(fileName, "r");
     if (file==NULL)
         FATAL_ERROR(ERR_CANT_OPEN, fileName, XREF_EXIT_ERR);
-    readOptionsFromFileIntoArgs(file, outArgs, ALLOCATE_IN_PP, section, project, unused);
+    readOptionsIntoArgs(file, outArgs, ALLOCATE_IN_PP, section, project, unused);
     closeFile(file);
 }
 
@@ -965,7 +965,7 @@ void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *secti
     file = popen(command, "r");
     if (file==NULL)
         FATAL_ERROR(ERR_CANT_OPEN, command, XREF_EXIT_ERR);
-    readOptionsFromFileIntoArgs(file, outArgs, ALLOCATE_IN_PP, section, NULL, unused);
+    readOptionsIntoArgs(file, outArgs, ALLOCATE_IN_PP, section, NULL, unused);
     closeFile(file);
 }
 
@@ -975,7 +975,7 @@ ArgumentsVector getPipedOptions(void) {
     assert(options.mode);
     if (options.mode == ServerMode) {
         char unused[MAX_FILE_NAME_SIZE];
-        readOptionsFromFileIntoArgs(stdin, &args, ALLOCATE_IN_SM, "", NULL, unused);
+        readOptionsIntoArgs(stdin, &args, ALLOCATE_IN_SM, "", NULL, unused);
         logCommands(args);
         /* those options can't contain include or define options, sections neither */
         int c = getc(stdin);
@@ -2039,7 +2039,7 @@ void searchForProjectOptionsFileAndProjectForFile(char *sourceFilename, char *fo
     optionsFile = openFile(foundOptionsFilename, "r");
     if (optionsFile != NULL) {
         ArgumentsVector nargs;
-        found = readOptionsFromFileIntoArgs(optionsFile, &nargs, ALLOCATE_NONE, sourceFilename,
+        found = readOptionsIntoArgs(optionsFile, &nargs, ALLOCATE_NONE, sourceFilename,
                                             options.project, foundProjectName);
         if (found) {
             log_debug("options file '%s', project '%s' found", foundOptionsFilename, foundProjectName);
