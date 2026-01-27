@@ -593,6 +593,11 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         /* Apply convention-based db path for auto-detected projects (after all options processed) */
         applyConventionBasedDatabasePath();
 
+        /* Clear per-request options before saving - these shouldn't persist across requests.
+         * The -p option specifies project for the current request only (needed for legacy
+         * ~/.c-xrefrc with multiple projects), but shouldn't leak to future requests. */
+        options.project = NULL;
+
         deepCopyOptionsFromTo(&options, &savedOptions);
 
         /* === PHASE 5: Input Setup === */

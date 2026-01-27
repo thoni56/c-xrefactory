@@ -2367,6 +2367,29 @@ on active project selection).
     i
     ))
 
+(defun c-xref-server-dispatch-project-mismatch (ss i len dispatch-data)
+  "Handle project mismatch - server is locked to a different project."
+  (let ((tlen) (locked-project))
+    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
+    (setq locked-project (c-xref-char-list-substring ss i (+ i tlen)))
+    (setq i (+ i tlen))
+    (setq i (c-xref-server-parse-xml-tag ss i len))
+    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_PROJECT_MISMATCH)
+    (if (c-xref-yes-or-no-window
+         (format "Server is locked to project '%s'.\nSwitch to this file's project? (Server will restart)"
+                 locked-project)
+         t dispatch-data)
+        (progn
+          ;; Kill the server process to release the lock
+          (c-xref-kill-xref-process nil)
+          ;; Signal that we should retry - caller should handle this
+          (error "Server restarted, please retry operation.")
+          )
+      (error "Cancelled - staying with current project")
+      )
+    i
+    ))
+
 (defvar c-xref-confirmation-dialog-map (make-sparse-keymap "C-xref confirmation"))
 (define-key c-xref-confirmation-dialog-map [up] 'c-xref-modal-dialog-previous-line)
 (define-key c-xref-confirmation-dialog-map [down] 'c-xref-modal-dialog-next-line)
@@ -3247,6 +3270,9 @@ Special hotkeys available:
        (
             (equal c-xref-server-ctag c-xref_PPC_NO_PROJECT)
             (setq i (c-xref-server-dispatch-no-project ss i len dispatch-data)))
+       (
+            (equal c-xref-server-ctag c-xref_PPC_PROJECT_MISMATCH)
+            (setq i (c-xref-server-dispatch-project-mismatch ss i len dispatch-data)))
        (
             (equal c-xref-server-ctag c-xref_PPC_ASK_CONFIRMATION)
             (setq i (c-xref-server-dispatch-ask-confirmation ss i len dispatch-data c-xref-server-ctag)))

@@ -4,11 +4,18 @@ end-of-options
 
 <sync>
 <set-info len=<n>>project_a</set-info>
+-olcxpush -olcursor=4 CURDIR/project_a/source.c -p project_a
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=4 len=<n>>CURDIR/project_a/source.c</position-lc>
+</goto>
 -olcxgetprojectname CURDIR/project_b/source.c
 end-of-options
 
 <sync>
-<error len=<n>>File not covered by current project: project_a</error>
+<project-mismatch len=<n>>project_a</project-mismatch>
 -exit
 end-of-options
 

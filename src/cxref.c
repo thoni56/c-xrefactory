@@ -2140,27 +2140,29 @@ void answerEditorAction(void) {
                         strncmp(fileName, lockedProjectRoot, strlen(lockedProjectRoot)) == 0) {
                         ppcGenRecord(PPC_SET_INFO, lockedProject);
                     } else {
-                        char errorMsg[MAX_FILE_NAME_SIZE + 50];
-                        sprintf(errorMsg, "File not covered by current project: %s", lockedProject);
-                        ppcGenRecord(PPC_ERROR, errorMsg);
+                        /* Project mismatch - tell client which project we're locked to */
+                        ppcGenRecord(PPC_PROJECT_MISMATCH, lockedProject);
                     }
                 } else {
                     /* Not locked yet - search for project */
                     char projectOptionsFileName[MAX_FILE_NAME_SIZE];
                     char projectOptionsSectionName[MAX_FILE_NAME_SIZE];
                     searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName, projectOptionsSectionName);
+                    /* Populate options.detectedProjectRoot from autoDetectedProjectRoot (if auto-detected) */
+                    applyConventionBasedDatabasePath();
                     if (projectOptionsFileName[0]==0 || projectOptionsSectionName[0]==0) {
                         if (!options.noErrors) {
                             ppcGenRecord(PPC_NO_PROJECT, fileName);
                         }
                     } else {
-                        /* Project found - lock to it */
-                        lockedProject = strdup(projectOptionsSectionName);
+                        /* Only enable single-project lock for auto-detected projects.
+                         * Legacy ~/.c-xrefrc configs don't have a project root to lock to,
+                         * and rely on client sending -p with each request. */
                         if (options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
+                            lockedProject = strdup(projectOptionsSectionName);
                             lockedProjectRoot = strdup(options.detectedProjectRoot);
+                            log_debug("Server locked to project: %s (root: %s)", lockedProject, lockedProjectRoot);
                         }
-                        log_debug("Server locked to project: %s (root: %s)", lockedProject,
-                                  lockedProjectRoot ? lockedProjectRoot : "none");
                         ppcGenRecord(PPC_SET_INFO, projectOptionsSectionName);
                     }
                 }

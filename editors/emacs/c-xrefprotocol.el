@@ -39,6 +39,7 @@
 (defconst c-xref_PPC_UPDATE_CURRENT_REFERENCE "update-current-refn")
 
 (defconst c-xref_PPC_NO_PROJECT "no-project-found")
+(defconst c-xref_PPC_PROJECT_MISMATCH "project-mismatch")
 (defconst c-xref_PPC_NO_SYMBOL "no-symbol-found")
 (defconst c-xref_PPC_SET_INFO "set-info")
 (defconst c-xref_PPC_WARNING "warning")

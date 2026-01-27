@@ -30,6 +30,7 @@ PROTOCOL_ITEM(String, PPC_SRC_LINE,                     "src-line")
 PROTOCOL_ITEM(String, PPC_UPDATE_CURRENT_REFERENCE,     "update-current-refn")
 
 PROTOCOL_ITEM(String, PPC_NO_PROJECT,                   "no-project-found")
+PROTOCOL_ITEM(String, PPC_PROJECT_MISMATCH,             "project-mismatch")
 PROTOCOL_ITEM(String, PPC_NO_SYMBOL,                    "no-symbol-found")
 PROTOCOL_ITEM(String, PPC_SET_INFO,                     "set-info")
 PROTOCOL_ITEM(String, PPC_WARNING,                      "warning")

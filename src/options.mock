@@ -87,6 +87,10 @@ void searchForProjectOptionsFileAndProjectForFile(char *sourceFilename, char *fo
   mock(sourceFilename, foundOptionsFilename, foundProjectName);
 }
 
+void applyConventionBasedDatabasePath(void) {
+    mock();
+}
+
 void printOptionsMemoryStatistics(void) {
     mock();
 }
