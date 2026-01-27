@@ -1030,28 +1030,6 @@ static void putXrefrcFileNameInto(char *fileName) {
     assert(strlen(fileName) < MAX_FILE_NAME_SIZE-1);
 }
 
-/* Experimental: Auto-finding config file in a source tree */
-char *findConfigFile(char *start) {
-    char currentDir[strlen(start)+1];
-    char *normalizedFileName = normalizeFileName_static(".c-xrefrc", start);
-
-    strcpy(currentDir, start);
-    /* Remove possible trailing file separator */
-    if (cwd[strlen(cwd)] == FILE_PATH_SEPARATOR)
-        cwd[strlen(cwd)] = '\0';
-
-    while (!fileExists(normalizedFileName)) {
-        char *p = strrchr(cwd, FILE_PATH_SEPARATOR);
-        if (p == NULL || p == cwd)
-            return NULL;
-        else {
-            *p = 0;
-            normalizedFileName = normalizeFileName_static(".c-xrefrc", cwd);
-        }
-    }
-    return normalizedFileName;
-}
-
 #if defined(__WIN32__)
 static bool isAbsolutePath(char *p) {
     if (p[0]!=0 && p[1]==':' && p[2]==FILE_PATH_SEPARATOR)

@@ -75,15 +75,12 @@ bool currentCxFileCountMatches(int foundReferenceFileCount) {
   return (bool)mock(foundReferenceFileCount);
 }
 
-char *findConfigFile(char *cwd) {
-    return (char *)mock(cwd);
-}
-
 ArgumentsVector getPipedOptions(void) {
     return *(ArgumentsVector*)mock();
 }
 
-void searchForProjectOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename, char *foundProjectName) {
+void searchForProjectOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename,
+                                                  char *foundProjectName) {
   mock(sourceFilename, foundOptionsFilename, foundProjectName);
 }
 
