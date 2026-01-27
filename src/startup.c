@@ -502,8 +502,8 @@ void restoreMemoryCheckPoint(MemoryCheckpoint *checkpoint) {
  * 5. Input setup - finally calls computeAndOpenInputFile() -> initInput()
  */
 bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
-    char standardOptionsFileName[MAX_FILE_NAME_SIZE];
-    char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
+    char projectOptionsFileName[MAX_FILE_NAME_SIZE];
+    char projectSectionName[MAX_FILE_NAME_SIZE];
     time_t modifiedTime;
     char *fileName;
     StringList *tmpIncludeDirs;
@@ -514,13 +514,13 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
     /* === PHASE 1: Project Discovery === */
     /* Find which .c-xrefrc file and project section applies to this file */
     fileName = inputFileName;
-    searchForProjectOptionsFileAndProjectForFile(fileName, standardOptionsFileName, standardOptionsSectionName);
-    handlePathologicProjectCases(fileName, standardOptionsFileName, standardOptionsSectionName, true);
+    searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName, projectSectionName);
+    handlePathologicProjectCases(fileName, projectOptionsFileName, projectSectionName, true);
 
     initAllInputs();
 
-    if (standardOptionsFileName[0] != 0 )
-        modifiedTime = fileModificationTime(standardOptionsFileName);
+    if (projectOptionsFileName[0] != 0 )
+        modifiedTime = fileModificationTime(projectOptionsFileName);
     else
         modifiedTime = previousStandardOptionsFileModificationTime;               // !!! just for now
 
@@ -528,8 +528,8 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
      * Full init required when: first pass, different pass, different project,
      * or the current options file changed. */
     if (previousPass != currentPass                                       /* We are in a different pass */
-        || strcmp(previousStandardOptionsFile, standardOptionsFileName) != 0 /* or we are using a different options file */
-        || strcmp(previousStandardOptionsSection, standardOptionsSectionName) != 0 /* or a different project */
+        || strcmp(previousStandardOptionsFile, projectOptionsFileName) != 0 /* or we are using a different options file */
+        || strcmp(previousStandardOptionsSection, projectSectionName) != 0 /* or a different project */
         || previousStandardOptionsFileModificationTime != modifiedTime       /* or the options file has changed */
     ) {
         /* === PHASE 2: Options File Processing === */
@@ -553,14 +553,14 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
            piped options, !!! berk.
         */
         processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO);
-        reInitCwd(standardOptionsFileName, standardOptionsSectionName);
+        reInitCwd(projectOptionsFileName, projectSectionName);
 
         tmpIncludeDirs = options.includeDirs;
         options.includeDirs = NULL;
 
         int savedPass = currentPass;
         currentPass = NO_PASS;
-        getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName);
+        getAndProcessXrefrcOptions(projectOptionsFileName, projectSectionName);
 
         /* === PHASE 3: Compiler Interrogation === */
         /* Run compiler to discover system includes and predefined macros (expensive!) */
@@ -574,7 +574,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
         /* Then for the particular pass */
         currentPass = savedPass;
-        getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName);
+        getAndProcessXrefrcOptions(projectOptionsFileName, projectSectionName);
 
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 
@@ -602,8 +602,8 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         inputOpened = computeAndOpenInputFile(inputFileName);  /* Finally calls initInput() */
 
         /* Save these values as previous */
-        strcpy(previousStandardOptionsFile,standardOptionsFileName);
-        strcpy(previousStandardOptionsSection,standardOptionsSectionName);
+        strcpy(previousStandardOptionsFile,projectOptionsFileName);
+        strcpy(previousStandardOptionsSection,projectSectionName);
         previousStandardOptionsFileModificationTime = modifiedTime;
         previousPass = currentPass;
 
