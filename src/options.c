@@ -128,10 +128,6 @@ static Memory optMemory;
 
 static char base[MAX_FILE_NAME_SIZE];
 
-static char previousStandardOptionsFile[MAX_FILE_NAME_SIZE];
-static char previousStandardOptionsProject[MAX_FILE_NAME_SIZE];
-
-
 #define ENV_DEFAULT_VAR_FILE            "${__file}"
 #define ENV_DEFAULT_VAR_PATH            "${__path}"
 #define ENV_DEFAULT_VAR_NAME            "${__name}"
@@ -2064,8 +2060,6 @@ void searchForProjectOptionsFileAndProjectForFile(char *sourceFilename, char *fo
         // project will return non-existent project. And then return "not found"?
         fileno = getFileNumberFromName(sourceFilename);
         if (fileno != NO_FILE_NUMBER && getFileItemWithFileNumber(fileno)->isFromCxfile) {
-            strcpy(foundOptionsFilename, previousStandardOptionsFile);
-            strcpy(foundProjectName, previousStandardOptionsProject);
             return;
         }
     }
