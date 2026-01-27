@@ -2080,8 +2080,9 @@ void answerEditorAction(void) {
     assert(outputFile);
 
     /* Single-project policy: require project lock before any operation except getprojectname.
-       Only enforced in auto-discovery mode (no explicit -xrefrc). */
-    if (options.xrefrc == NULL && lockedProject == NULL &&
+       Only enforced in auto-discovery mode (no explicit -xrefrc).
+       Legacy mode (with -p option) is also allowed - client sends project with each request. */
+    if (options.xrefrc == NULL && lockedProject == NULL && options.project == NULL &&
         options.serverOperation != OLO_ACTIVE_PROJECT) {
         FATAL_ERROR(ERR_ST, "Server operation without locked project - client must call -getprojectname first",
                     XREF_EXIT_ERR);
@@ -2135,16 +2136,28 @@ void answerEditorAction(void) {
                 log_debug("inputFileName = %s", fileName);
 
                 if (lockedProject != NULL) {
-                    /* Server is locked - just check if file is under locked project root */
-                    if (lockedProjectRoot != NULL &&
-                        strncmp(fileName, lockedProjectRoot, strlen(lockedProjectRoot)) == 0) {
-                        ppcGenRecord(PPC_SET_INFO, lockedProject);
+                    /* Server is locked - check if this file belongs to the locked project */
+                    if (lockedProjectRoot != NULL) {
+                        /* Auto-detected project - check file path against project root */
+                        if (strncmp(fileName, lockedProjectRoot, strlen(lockedProjectRoot)) == 0) {
+                            ppcGenRecord(PPC_SET_INFO, lockedProject);
+                        } else {
+                            ppcGenRecord(PPC_PROJECT_MISMATCH, lockedProject);
+                        }
                     } else {
-                        /* Project mismatch - tell client which project we're locked to */
-                        ppcGenRecord(PPC_PROJECT_MISMATCH, lockedProject);
+                        /* Legacy project - search for project and compare names */
+                        char projectOptionsFileName[MAX_FILE_NAME_SIZE];
+                        char projectOptionsSectionName[MAX_FILE_NAME_SIZE];
+                        searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName, projectOptionsSectionName);
+                        if (projectOptionsSectionName[0] != '\0' &&
+                            strcmp(projectOptionsSectionName, lockedProject) == 0) {
+                            ppcGenRecord(PPC_SET_INFO, lockedProject);
+                        } else {
+                            ppcGenRecord(PPC_PROJECT_MISMATCH, lockedProject);
+                        }
                     }
                 } else {
-                    /* Not locked yet - search for project */
+                    /* Not locked yet - search for project and lock to it */
                     char projectOptionsFileName[MAX_FILE_NAME_SIZE];
                     char projectOptionsSectionName[MAX_FILE_NAME_SIZE];
                     searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName, projectOptionsSectionName);
@@ -2155,13 +2168,15 @@ void answerEditorAction(void) {
                             ppcGenRecord(PPC_NO_PROJECT, fileName);
                         }
                     } else {
-                        /* Only enable single-project lock for auto-detected projects.
-                         * Legacy ~/.c-xrefrc configs don't have a project root to lock to,
-                         * and rely on client sending -p with each request. */
+                        /* Lock to this project */
+                        lockedProject = strdup(projectOptionsSectionName);
                         if (options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
-                            lockedProject = strdup(projectOptionsSectionName);
+                            /* Auto-detected project - also lock to the root path */
                             lockedProjectRoot = strdup(options.detectedProjectRoot);
                             log_debug("Server locked to project: %s (root: %s)", lockedProject, lockedProjectRoot);
+                        } else {
+                            /* Legacy project - lock by name only */
+                            log_debug("Server locked to project: %s (legacy, no root)", lockedProject);
                         }
                         ppcGenRecord(PPC_SET_INFO, projectOptionsSectionName);
                     }

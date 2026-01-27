@@ -595,10 +595,12 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
         /* Clear per-request options before saving - these shouldn't persist across requests.
          * The -p option specifies project for the current request only (needed for legacy
-         * ~/.c-xrefrc with multiple projects), but shouldn't leak to future requests. */
+         * ~/.c-xrefrc with multiple projects), but shouldn't leak to future requests.
+         * We restore it after saving so it remains available for the current request. */
+        char *currentRequestProject = options.project;
         options.project = NULL;
-
         deepCopyOptionsFromTo(&options, &savedOptions);
+        options.project = currentRequestProject;
 
         /* === PHASE 5: Input Setup === */
         inputOpened = computeAndOpenInputFile(inputFileName);  /* Finally calls initInput() */
