@@ -427,17 +427,13 @@ static void discoverStandardDefines(void) {
     LEAVE();
  }
 
-static void getAndProcessXrefrcOptions(char *optionsFileName, char *optionsSectionName, char *project) {
-    if (*optionsFileName != 0) {
-        ArgumentsVector args;
-        readOptionsFromFile(optionsFileName, &args, optionsSectionName, project);
-        // warning, the following can overwrite variables like
-        // 'cxref_file_name' allocated in ppmMemory, then when memory
-        // is got back by caching, it may provoke a problem
-        processOptions(args, PROCESS_FILE_ARGUMENTS_NO); /* .c-xrefrc opts*/
-    } else {
-        assert(0);
-    }
+static void getAndProcessXrefrcOptions(char *optionsFileName, char *project) {
+    assert(*optionsFileName != 0);
+
+    ArgumentsVector args;
+
+    readOptionsFromFile(optionsFileName, &args, project, project);
+    processOptions(args, PROCESS_FILE_ARGUMENTS_NO); /* .c-xrefrc opts*/
 }
 
 /* Memory checkpoint structure */
@@ -564,7 +560,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
         int savedPass = currentPass;
         currentPass = NO_PASS;
-        getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName, standardOptionsSectionName);
+        getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName);
 
         /* === PHASE 3: Compiler Interrogation === */
         /* Run compiler to discover system includes and predefined macros (expensive!) */
@@ -578,7 +574,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
         /* Then for the particular pass */
         currentPass = savedPass;
-        getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName, standardOptionsSectionName);
+        getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName);
 
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 
