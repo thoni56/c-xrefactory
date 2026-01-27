@@ -170,7 +170,7 @@ extern bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, AllocateMe
                                         char *sectionFile, char *project, char *section);
 extern void readOptionsFromFile(char *name, ArgumentsVector *outArgs, char *project, char *foundProjectName);
 extern void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *sectionFile);
-extern ArgumentsVector getPipedOptions(void);
+extern ArgumentsVector readOptionsFromPipe(void);
 extern bool currentCxFileCountMatches(int newRefNum);
 
 extern void searchForProjectOptionsFileAndProjectForFile(char *filename, char *optionsFilename,

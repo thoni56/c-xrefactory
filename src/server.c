@@ -254,7 +254,7 @@ void server(ArgumentsVector args) {
         currentPass = ANY_PASS;
         deepCopyOptionsFromTo(&savedOptions, &options);
 
-        pipedOptions = getPipedOptions();
+        pipedOptions = readOptionsFromPipe();
         // TODO -o option on command line should catch also file not found
         openOutputFile(options.outputFileName);
         //&dumpArguments(nargc, nargv);

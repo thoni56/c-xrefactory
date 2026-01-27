@@ -234,7 +234,7 @@ void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *ma
  * typically via displayResolutionDialog() to handle name collisions or symbol selection.
  *
  * OPERATION:
- * - Reads commands from stdin via getPipedOptions() (sent by editor/test driver)
+ * - Reads commands from stdin via readOptionsFromPipe() (sent by editor/test driver)
  * - Processes interactive commands like -olcxmenufilter, -olcxfilter
  * - Continues looping until:
  *   1. -continuerefactoring is received (sets continueRefactoring = RC_CONTINUE)
@@ -254,7 +254,7 @@ static void beInteractive(void) {
         ArgumentsVector args = {.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
         processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
 
-        ArgumentsVector pipedOptions = getPipedOptions();
+        ArgumentsVector pipedOptions = readOptionsFromPipe();
         openOutputFile(refactoringOptions.outputFileName);
         if (pipedOptions.argc <= 1)
             break;

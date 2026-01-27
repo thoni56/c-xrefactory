@@ -969,7 +969,7 @@ void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *secti
     closeFile(file);
 }
 
-ArgumentsVector getPipedOptions(void) {
+ArgumentsVector readOptionsFromPipe(void) {
     ArgumentsVector args = {.argc = 0};
 
     assert(options.mode);

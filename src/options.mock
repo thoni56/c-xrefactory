@@ -71,12 +71,12 @@ void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *secti
   mock(command, outArgs->argc, outArgs->argv, sectionFile);
 }
 
-bool currentCxFileCountMatches(int foundReferenceFileCount) {
-  return (bool)mock(foundReferenceFileCount);
+ArgumentsVector readOptionsFromPipe(void) {
+    return *(ArgumentsVector*)mock();
 }
 
-ArgumentsVector getPipedOptions(void) {
-    return *(ArgumentsVector*)mock();
+bool currentCxFileCountMatches(int foundReferenceFileCount) {
+  return (bool)mock(foundReferenceFileCount);
 }
 
 void searchForProjectOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename,
