@@ -1625,13 +1625,16 @@ tries to delete C-xrefactory windows first.
   (let ((oldpct) (opts))
     (setq oldpct process-connection-type)
     (setq process-connection-type nil)
-    (setq opts (append (list
-                                    "-xrefactory-II"
-                                    "-crlfconversion"
-                                    "-crconversion"
-                                    "-o" ofile
-                                    )
-                               initopts))
+    (setq opts (list "-xrefactory-II"
+                     "-crlfconversion"
+                     "-crconversion"
+                     "-o" ofile))
+
+;;    (when c-xref-debug-mode
+;;      (setq opts (append opts (list "-debug" "-log=log"))))
+
+    (setq opts (append opts initopts))
+
     (if c-xref-debug-mode (message "calling: %S" opts))
     (set proc (cons
                    (apply 'start-process
