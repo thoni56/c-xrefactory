@@ -1,12 +1,12 @@
 include ../Makefile.server
 
 $(TEST):
-	$(CXREF) -create > /dev/null
-	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	$(CXREF_PROGRAM) -p $(CURDIR) -create > /dev/null
+	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: EXTRA = --extra \'-trace\'
+trace: EXTRA = '-debug -log=trace'
 trace: $(TEST)
 
 GDB_COMMANDS =
