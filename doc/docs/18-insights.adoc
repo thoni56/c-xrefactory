@@ -281,3 +281,32 @@ This workaround highlights the fundamental tension: **navigation and refactoring
 * ADR-0014: Adopt On-Demand Parsing Architecture
 * Section 17.2: Unified Symbol Database Architecture
 * Section 18.3: RefactoryMode Internally Calls XrefMode (describes current architecture)
+
+=== Stale File Refresh and Cross-File References
+
+Date: 2025-01-29
+
+==== Stale Detection
+
+When navigating (PUSH/NEXT), the server detects if the current file is "stale" by comparing:
+
+* `fileItem->lastParsedMtime` (from disk database or last parse)
+* `buffer->modificationTime` (from preloaded editor buffer)
+
+If `buffer->modificationTime > lastParsedMtime`, the file is considered stale and `refreshStaleReferencesInSession()` is called.
+
+==== The Refresh Algorithm
+
+`refreshStaleReferencesInSession()` in `cxref.c` must preserve cross-file references while updating references from the modified file:
+
+1. `removeReferenceableItemsForFile()` - removes old references FROM the stale file
+2. `parseToCreateReferences()` - re-parses, adds fresh references FROM that file to in-memory table
+3. Clear menu refs - necessary so step 4 doesn't reject as duplicates
+4. `scanReferencesToCreateMenu()` - reload ALL refs from disk database (cross-file refs)
+5. `extendBrowserMenuWithReferences()` - merge in-memory refs (fresh positions from current file)
+
+The key insight: after step 2, the in-memory table only has references FROM the current file. Cross-file references (from other files TO symbols here) must come from the disk database via step 4.
+
+==== Architectural Note
+
+This is a manifestation of the "two sources of truth" architecture. The long-term fix (per roadmap) is to parse all project files at startup, keeping complete references in memory. Then stale refresh would just re-parse the single file and the in-memory table would already have all cross-file references.
