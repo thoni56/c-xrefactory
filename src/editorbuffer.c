@@ -84,7 +84,7 @@ void freeEditorBuffer(EditorBuffer *buffer) {
     freeMarkersInEditorBuffer(buffer);
 
     if (buffer->textLoaded) {
-        log_trace("freeing allocated block %d of size %d", buffer->allocation.allocatedBlock,
+        log_trace("freeing allocated block 0x%x of size %d", buffer->allocation.allocatedBlock,
                   buffer->allocation.allocatedSize);
         checkForMagicMarker(&buffer->allocation);
         freeTextSpace(buffer->allocation.allocatedBlock,
