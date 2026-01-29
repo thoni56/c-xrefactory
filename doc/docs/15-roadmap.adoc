@@ -143,6 +143,41 @@ The foundation work is **not yet started**. Current workarounds (like excluding 
 
 See link:18-insights.adoc[Chapter 18: Insights] section "The lastParsedMtime Optimization and Refactoring Conflict" for a concrete example of the current complexity.
 
+==== Key Finding: Unified In-Memory Table (January 2025)
+
+Investigation revealed that **both XrefMode and ServerMode use the same in-memory `ReferenceableItemTable`**. This is the key to an incremental implementation path.
+
+**How it works:**
+
+* `handleFoundSymbolReference()` in `cxref.c` handles references found during parsing
+* It calls `isMemberInReferenceableItemTable()` to check if symbol exists
+* If not found, creates new entry; if found, adds reference to existing entry
+* This same table is used by both modes - there's no separate "server table" vs "xref table"
+
+**The disk scan operations** (`ensureReferencesAreLoadedFor`, `scanReferencesToCreateMenu`, etc.):
+
+* Read from `.cx` files on disk
+* Also call `isMemberInReferenceableItemTable()` to check/merge with existing entries
+* If parsing has already populated the table, these operations find data already present
+
+**Incremental implementation path:**
+
+[cols="1,3"]
+|===
+|Step |Description
+
+|**1. Parse all files at startup**
+|When server starts with no disk cache, enumerate all project source files and parse them. This populates `ReferenceableItemTable` completely.
+
+|**2. Existing code continues to work**
+|Scan operations like `ensureReferencesAreLoadedFor` find symbols already in memory. They effectively become no-ops (or fast merges of identical data).
+
+|**3. Remove scan operations**
+|Once step 1 is proven, scan operations are dead code and can be removed, simplifying the architecture.
+|===
+
+This path allows incremental progress: step 1 makes the system work correctly, step 3 cleans up the code. The existing navigation and refactoring code doesn't need immediate changes.
+
 === Foundational Change: Project-Local Configuration
 
 ==== The Goal
