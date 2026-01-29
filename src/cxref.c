@@ -916,9 +916,47 @@ static void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference
 static void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
 
-    // Update database: remove old, parse fresh
+    // Update in-memory table: remove old, parse fresh
     removeReferenceableItemsForFile(fileNumber);
     parseToCreateReferences(fileItem->name);
+
+    // Clear menu refs BEFORE scanning - the old refs would cause duplicates to be rejected.
+    // This must happen before scan so scan can repopulate fresh.
+    for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
+        freeReferences(menu->referenceable.references);
+        menu->referenceable.references = NULL;
+    }
+
+    // Reload cross-file references from disk database for affected symbols.
+    // The scan finds all refs stored in .cx files and adds them to menu.
+    for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
+        scanReferencesToCreateMenu(menu->referenceable.linkName);
+    }
+
+    // Remove refs from the refreshed file - disk has stale positions.
+    // Fresh positions come from in-memory table (parsed with preload) below.
+    for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
+        Reference **refP = &menu->referenceable.references;
+        while (*refP != NULL) {
+            if ((*refP)->position.file == fileNumber) {
+                Reference *toFree = *refP;
+                *refP = (*refP)->next;
+                free(toFree);
+            } else {
+                refP = &(*refP)->next;
+            }
+        }
+    }
+
+    // Merge in-memory refs into menu. This adds refs from the freshly parsed file
+    // with updated positions (from preloaded content).
+    for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
+        int index;
+        ReferenceableItem *freshItem;
+        if (isMemberInReferenceableItemTable(&menu->referenceable, &index, &freshItem)) {
+            extendBrowserMenuWithReferences(menu, freshItem->references);
+        }
+    }
 
     // Mark file as freshly parsed so we don't re-refresh in this request
     EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
@@ -926,24 +964,7 @@ static void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int
         fileItem->lastParsedMtime = buffer->modificationTime;
     }
 
-    // Update menu items to have fresh reference pointers from database.
-    // After removeReferenceableItemsForFile() + parseToCreateReferences(),
-    // menu->referenceable.references points to freed/stale memory.
-    for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
-        // Look up fresh item from database (exact match including includeFileNumber)
-        int index;
-        ReferenceableItem *freshItem;
-        if (isMemberInReferenceableItemTable(&menu->referenceable, &index, &freshItem)) {
-            // Free old malloc'd copies and create new ones from fresh database refs
-            freeReferences(menu->referenceable.references);
-            menu->referenceable.references = NULL;
-            addReferencesFromFileToList(freshItem->references, ANY_FILE,
-                                        &menu->referenceable.references);
-        }
-        // If not found, item might have been removed or menu is for a different file (leave as-is)
-    }
-
-    // Rebuild session's reference list from updated database
+    // Rebuild session's reference list from updated menu
     recomputeSelectedReferenceable(sessionEntry);
 }
 
