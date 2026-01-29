@@ -1992,6 +1992,7 @@ tries to delete C-xrefactory windows first.
     (setq bl (c-xref-server-get-list-of-buffers-to-save-to-tmp-files t))
     (setq opts (append opts (list "-errors"
                                                   "-p" c-xref-active-project
+                                                  (expand-file-name default-directory)
                                                   )))
     (setq opts (append opts (c-xref-server-save-buffers-to-tmp-files bl)))
     ;;  (setq c-xref-tags-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-tags-process))
