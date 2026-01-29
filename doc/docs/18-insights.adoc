@@ -284,7 +284,7 @@ This workaround highlights the fundamental tension: **navigation and refactoring
 
 === Stale File Refresh and Cross-File References
 
-Date: 2025-01-29
+Date: 2025-01-29 (Updated: 2026-01-29)
 
 ==== Stale Detection
 
@@ -299,13 +299,40 @@ If `buffer->modificationTime > lastParsedMtime`, the file is considered stale an
 
 `refreshStaleReferencesInSession()` in `cxref.c` must preserve cross-file references while updating references from the modified file:
 
-1. `removeReferenceableItemsForFile()` - removes old references FROM the stale file
-2. `parseToCreateReferences()` - re-parses, adds fresh references FROM that file to in-memory table
-3. Clear menu refs - necessary so step 4 doesn't reject as duplicates
-4. `scanReferencesToCreateMenu()` - reload ALL refs from disk database (cross-file refs)
-5. `extendBrowserMenuWithReferences()` - merge in-memory refs (fresh positions from current file)
+1. `removeReferenceableItemsForFile()` - remove old refs from in-memory table
+2. `parseToCreateReferences()` - re-parse with preload, add fresh refs to in-memory table
+3. Remove stale-file refs from menu - preserves cross-file refs, removes outdated positions
+4. `extendBrowserMenuWithReferences()` - merge fresh refs from in-memory table
+5. Mark file as freshly parsed (`lastParsedMtime = buffer->modificationTime`)
+6. `recomputeSelectedReferenceable()` - rebuild session's reference list from updated menu
 
-The key insight: after step 2, the in-memory table only has references FROM the current file. Cross-file references (from other files TO symbols here) must come from the disk database via step 4.
+**Key insights:**
+
+* The menu already has cross-file refs from the original PUSH operation (which scanned disk)
+* We do NOT clear menu refs and re-scan from disk during refresh
+* Scanning from disk creates problems: `addReferenceableToBrowserMenu` creates NEW menu items
+  when `includeFileNumber` differs, and these new items have `selected=false`
+* Only SELECTED menu items contribute refs to the session's reference list
+* So scanning would add refs to new (unselected) items, leaving the original (selected) item empty
+
+==== Why Scanning From Disk Fails
+
+During PUSH, `createSelectionMenu` creates menu items and adds them to `sessionEntry->menu`.
+These items are marked as selected. When you NEXT, the menu's reference list is what gets
+used for navigation (via `recomputeSelectedReferenceable`).
+
+If during refresh we:
+1. Clear menu refs
+2. Scan from disk
+
+The scan calls `createSelectionMenu` which in turn calls `addReferenceableToBrowserMenu`.
+This function compares incoming items by `(linkName, includeFileNumber, type)`. If the
+`includeFileNumber` from the disk scan differs from the existing menu item's value,
+a **new** menu item is created with `selected=false`.
+
+The refs are then added to this new unselected item, while the original selected item
+has empty refs. `recomputeSelectedReferenceable` only processes selected items, so
+navigation loses most of its references.
 
 ==== Architectural Note
 
