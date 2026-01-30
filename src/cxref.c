@@ -920,21 +920,12 @@ static void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int
     removeReferenceableItemsForFile(fileNumber);
     parseToCreateReferences(fileItem->name);
 
-    // Clear menu refs BEFORE scanning - the old refs would cause duplicates to be rejected.
-    // This must happen before scan so scan can repopulate fresh.
-    for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
-        freeReferences(menu->referenceable.references);
-        menu->referenceable.references = NULL;
-    }
-
-    // Reload cross-file references from disk database for affected symbols.
-    // The scan finds all refs stored in .cx files and adds them to menu.
-    for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
-        scanReferencesToCreateMenu(menu->referenceable.linkName);
-    }
-
-    // Remove refs from the refreshed file - disk has stale positions.
-    // Fresh positions come from in-memory table (parsed with preload) below.
+    // Remove refs for the stale file from menu - the menu already has cross-file refs
+    // from the original PUSH operation. We only need to remove the stale file's refs
+    // (which have old positions) and replace them with fresh refs from in-memory table.
+    // NOTE: We do NOT clear all refs and scan from disk because the scan creates new
+    // menu items (with selected=false) due to differing includeFileNumber, which
+    // breaks the session's reference list (only selected items contribute refs).
     for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
         Reference **refP = &menu->referenceable.references;
         while (*refP != NULL) {
@@ -948,13 +939,19 @@ static void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int
         }
     }
 
-    // Merge in-memory refs into menu. This adds refs from the freshly parsed file
+    // Merge fresh refs from in-memory table. This adds refs for the stale file
     // with updated positions (from preloaded content).
+    // NOTE: We match by linkName only, not by all ReferenceableItem fields, because
+    // the menu's item may have different includeFileNumber/type/etc. than what the
+    // parser creates. The hash table lookup requires exact match of all fields, so
+    // we iterate over the table and match by linkName.
     for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
-        int index;
-        ReferenceableItem *freshItem;
-        if (isMemberInReferenceableItemTable(&menu->referenceable, &index, &freshItem)) {
-            extendBrowserMenuWithReferences(menu, freshItem->references);
+        for (int i = getNextExistingReferenceableItem(0); i >= 0;
+             i = getNextExistingReferenceableItem(i + 1)) {
+            ReferenceableItem *item = getReferenceableItem(i);
+            if (strcmp(item->linkName, menu->referenceable.linkName) == 0) {
+                extendBrowserMenuWithReferences(menu, item->references);
+            }
         }
     }
 
@@ -1014,11 +1011,23 @@ static bool savePositionAndRefreshIfStale(SessionStackEntry *sessionEntry, Refer
 
 static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos) {
     // After a refresh for "next", find the first reference AFTER savedPos
+    int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
+
     sessionEntry->current = sessionEntry->references;
     while (sessionEntry->current != NULL) {
-        if (positionIsLessThan(savedPos, sessionEntry->current->position))
+        if (positionIsLessThan(savedPos, sessionEntry->current->position)
+            && isMoreImportantUsageThan(sessionEntry->current->usage, filterLevel))
             break;  // Found first reference after where we were
         sessionEntry->current = sessionEntry->current->next;
+    }
+
+    // If no reference found after savedPos, wrap to first reference
+    if (sessionEntry->current == NULL) {
+        ppcBottomInformation("Moving to the first reference");
+        sessionEntry->current = sessionEntry->references;
+        while (sessionEntry->current != NULL
+               && isAtMostAsImportantAs(sessionEntry->current->usage, filterLevel))
+            sessionEntry->current = sessionEntry->current->next;
     }
 }
 
@@ -1051,21 +1060,28 @@ static void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEnt
  * from the target file, which will then send its preload.
  */
 
-/* Restore current to nearest reference at or after savedPos (for "stay put" after refresh) */
+/* Restore current to the reference matching savedPos (for "stay put" after refresh).
+ *
+ * Note: The reference list is sorted by filename, but Position comparison uses file numbers.
+ * These orderings can differ, so we find an exact match by file number rather than using
+ * position ordering for "nearest" lookup.
+ */
 static void restoreToNearestReference(SessionStackEntry *sessionEntry, Position savedPos, int filterLevel) {
-    Reference *nearest = NULL;
+    Reference *match = NULL;
+    Reference *firstVisible = NULL;
     for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
         if (!isMoreImportantUsageThan(r->usage, filterLevel))
             continue;
-        if (positionIsLessThan(r->position, savedPos)) {
-            nearest = r;  // Keep track of last reference before savedPos
-        } else {
-            // Found first reference at or after savedPos - prefer it
-            nearest = r;
+        if (firstVisible == NULL)
+            firstVisible = r;
+        if (r->position.file == savedPos.file &&
+            r->position.line == savedPos.line &&
+            r->position.col == savedPos.col) {
+            match = r;
             break;
         }
     }
-    sessionEntry->current = nearest;
+    sessionEntry->current = match ? match : firstVisible;
 }
 
 /* Refresh the source file (where cursor is) if stale.
