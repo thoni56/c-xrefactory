@@ -1,309 +1,87 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## How We Work Together
 
-**IMPORTANT: Path reminder** - The directory is called "Utveckling" (Swedish), NOT "Entwickling" (German). Always use the correct spelling in paths.
+**STOP before acting.** This is a collaborative project. When you see something that could be done:
+1. Discuss it first
+2. Ask "Should I do X?" before doing X
+3. Answer questions without acting on them
+4. If unsure what to do, ask
 
-## Project Overview
+**The user often prefers to make changes themselves**, especially refactoring, since they can use c-xrefactory itself. Propose changes, don't just make them.
 
-c-xrefactory is a refactoring browser and code navigation tool for C and Yacc files, integrated with GNU Emacs. It uses a client-server architecture where an Emacs plugin communicates with a C backend server that maintains a symbol database and performs refactoring operations.
+**Never:**
+- Make code changes without explicit agreement
+- "Clean up" debug logging, comments, or code style unprompted
+- Run tests unless asked (watch commands are running in background)
+- Give time estimates
 
-**Key Capabilities:**
-- Navigate to definitions and browse all usages of symbols (functions, variables, types, macros, Yacc rules)
-- Rename symbols safely across entire projects
-- Add/delete/reorder function and macro parameters
-- Extract functions, macros, and variables
-- Detect unused symbols
-- Code completion with full symbol definitions
-- Yacc grammar special support (navigate non-terminals, semantic actions, $<n> references)
+**The directory is "Utveckling" (Swedish), not "Entwickling" (German).**
 
-## Build Commands
-
-### Production Build
-```bash
-make              # From root: builds c-xref binary and compiles Emacs lisp
-make -C src prod  # Optimized build without coverage instrumentation
-```
-
-### Development Build
-```bash
-make -C src          # Build with coverage, run unit tests
-make -C src devel    # Build, run quick system tests, generate coverage
-make -C src unit     # Build and run unit tests only
-```
-
-### Testing
-```bash
-# From root or tests directory:
-make test            # Run all quick tests
-make -C tests quick  # Run only fast tests
-make -C tests all    # Run both quick and slow tests
-make -C tests slow   # Run only slow tests (marked with .slow file)
-
-# Run single test:
-cd tests/test_<name> && make
-
-# Parallel test execution:
-make -j -C tests all
-```
-
-### Coverage
-```bash
-# Generate coverage for specific workflow:
-make -C src clean-coverage  # Reset coverage counters
-# <run tests or single test>
-make -C src coverage        # Merge coverage from all tests, generate .gcov files
-
-# HTML coverage report:
-make -C src coverage-report # Creates ../coverage/index.html
-
-# For development (quick tests + coverage):
-make -C src devel
-```
-
-**Platform Notes:**
-- **Darwin/macOS**: Uses Apple's LLVM coverage tools (`llvm-profdata`, `llvm-cov`)
-- **Linux**: Uses traditional `gcov`/`lcov` toolchain
-
-## Architecture
-
-### Client-Server Model
-
-**Emacs Plugin** (`editors/emacs/`)
-- `c-xrefactory.el` - Main UI, menus, keybindings
-- `c-xref.el` - Core integration functions
-- `c-xrefprotocol.el` - Protocol communication with backend
-
-**C Backend Server** (`src/`)
-- `server.c` - Request handler (60+ OLO_* operations)
-- `main.c` - Entry point and initialization
-- Symbol database with persistent `.cx` file storage
-
-### Core Subsystems
-
-**Parsing Pipeline:**
-- `c_parser.y`, `yacc_parser.y`, `cexp_parser.y` - Yacc grammar files
-- `yylex.c` - Main lexer (tokenization)
-- `lexer.c`, `lexembuffer.c`, `lexemstream.c` - Lexical analysis
-- `parsers.c` - Orchestrates parsing for C and Yacc files
-- Uses custom `byacc-1.9` (in `../byacc-1.9/`) - not modern bison compatible
-- **Integrated C Preprocessor**: Custom preprocessor implementation that preserves macro information for navigation and refactoring (does NOT use system `cpp`)
-
-**Symbol Management:**
-- `symbol.c`, `symbol_database.c` - Symbol representation and database
-- `symboltable.c` - In-memory symbol tables
-- `reftab.c` - Reference table (in-memory)
-- `cxfile.c` - Persistent cross-reference storage (`.cx` files)
-- `completion.c` - Completion suggestions
-- `reference.c` - Symbol reference tracking
-
-**Refactoring Engine:**
-- `refactorings.c` - Main refactoring operations (rename, parameter manipulation)
-- `extract.c` - Extract function/macro/variable
-- `usage.c` - Track and analyze symbol usage
-- `editor.c` - Apply source code changes
-
-**LSP (Experimental):**
-- `lsp.c`, `lsp_dispatcher.c`, `lsp_handler.c`, `lsp_adapter.c`, `lsp_sender.c`
-- Basic LSP communication works but features not yet accessible
-- Needs architectural cleanup to properly integrate with symbol database
-
-**Memory Management:**
-- `memory.c` - Custom memory allocation with pooling
-- `stackmemory.c` - Stack-based temporary allocation
-- Stack memory used extensively for per-request temporary data
-
-**Utilities:**
-- `hash.c` - Hash tables for fast symbol lookup
-- `filetable.c`, `fileio.c` - File management
-- `position.c` - Source position tracking
-- `encoding.c` - Character encoding (UTF-8, UTF-16, EUC, SJIS)
-- `log.c` - Logging infrastructure
-
-### Generated Files
-
-**Do not edit these files directly:**
-- `c_parser.tab.[ch]`, `yacc_parser.tab.[ch]`, `cexp_parser.tab.[ch]` - Generated by yacc
-- `lexem.h`, `lexem.c` - Auto-generated from parser token definitions
-- `yacc_parser.y` - Partially generated (C grammar rules copied from `c_parser.y`)
-- `options_config.h` - Generated with git version info
-
-**Token synchronization:**
-- `c_parser.y` and `yacc_parser.y` must have identical token sections
-- `make check-tokens` ensures synchronization (runs automatically during build)
-
-### Test Architecture
-
-**140+ test cases** in `tests/`:
-- Each `test_*` directory is an auto-discovered test
-- Tests marked with `.slow` file run separately (`make slow`)
-- Tests marked with `.suspended` file are skipped
-
-**Test Execution:**
-- `run_test` script executes each test and collects coverage
-- Parallel execution supported with per-test coverage directories (`.cov/`)
-- Each test has its own Makefile
-
-**Unit Tests:**
-- Using Cgreen framework (`*_tests.c` files)
-- Tests are compiled to `.so` (Linux) or `.dylib` (Darwin) libraries
-- Run with `cgreen-runner`
-- ~80% code coverage target (ongoing improvement)
-
-### Common Patterns
-
-**Adding a new module:**
-1. Create `module.c` and `module.h`
-2. Add module name to `MODULES` in `src/sources.mk`
-3. Create `module_tests.c` for unit tests
-4. Add unittest macro in `src/Makefile` using `$(eval $(call UNITTEST,module,dependencies))`
-
-**Parser modifications:**
-1. Edit `c_parser.y` or `cexp_parser.y` (never `yacc_parser.y` C rules section)
-2. If tokens change, update both `c_parser.y` and `yacc_parser.y` token sections identically
-3. Build will auto-generate `.tab.[ch]` files and verify token sync
-
-**Adding refactoring operation:**
-1. Add enum value to `refactorings.h` (AVR_* for Available Refactorings)
-2. Implement in `refactorings.c` or related module
-3. Update `server.c` to handle new OLO_* operation if needed
-4. Add test case in `tests/test_<feature>/`
-
-## Planning & Architecture Philosophy
+## Project Principles
 
 ### No Time Estimates (#noestimates)
 
-This is a hobby/OSS project with variable contributor availability. **Do not use calendar time estimates** in planning documents or proposals.
+This is a hobby/OSS project. Do not use calendar time estimates.
 
-Instead, emphasize:
-- **Value** - What becomes possible after this work?
-- **Scope** - What exactly is included/excluded?
-- **Dependencies** - What must be done first?
-- **Risk** - What could go wrong?
-- **Relative effort** - If discussing effort at all, use only: "smaller", "larger", "foundational"
+Instead emphasize: **Value**, **Scope**, **Dependencies**, **Risk**
 
-Acceptable phrasing:
-- "Smaller effort, can be tested independently"
-- "Larger refactoring, requires careful test coverage"
-- "Foundational work that enables X and Y"
-- "Depends on completion of clean persistence store"
+Use relative effort only: "smaller", "larger", "foundational"
 
-Avoid:
-- "2-3 weeks", "1 month", "2 days" (calendar time)
-- Story points (still conflates effort with time)
-- Pressure language: "urgent", "critical path", "must be done ASAP"
+### Test-Driven Development
 
-### Planning Documents
+- Create a failing test FIRST before fixing bugs
+- Tests are in `tests/test_<name>/` directories
 
-When creating architecture plans or refactoring strategies:
-1. **No time estimates** - focus on scope and success metrics
-2. Include **risk analysis and mitigations**
-3. Document **assumptions and open questions**
-4. Make each **phase independently valuable**
-5. Clarify **dependencies between phases**
+### Unittests
 
-Example structure:
-```
-## Phase 1: [What it does]
-**Dependencies**: None (or what must be done first)
-**Risk**: [What could go wrong]
-**Scope**: Clearly define what's in/out
-**Success criteria**: How to know it worked
-**Value**: What becomes possible after this
+- Using Cgreen
+- Mock functions are defined in <module>.mock
+- Mock files are included in the test
+- Only a few, simple, module files are linked as is, defined in the Makefile
 
-## Phase 2: [What it does]
-**Dependencies**: Phase 1 completion
-...
-```
+### When Tests Pass
 
-## Development Workflow
+Remove debug logging, then commit (after discussion).
 
-**IMPORTANT: Watch commands are usually running in background**
+## Build & Test Commands
 
-The developer typically has watch commands running in the background (e.g., `make -C src watch-for-unittests` and/or `make -C src watch-for-systemtests`) which provide immediate feedback on code changes. Therefore:
-
-- **Do NOT run tests automatically after making changes**
-- **Only run tests when explicitly asked**
-- The watch processes will automatically detect file changes and run appropriate tests
-
-**Typical development cycle:**
 ```bash
-# Start with unit tests (fast feedback):
-make -C src watch-for-unittests  # Auto-rebuild on file changes
+make -C src                 # Development build with coverage
+make -C src test            # Run quick tests
+cd tests/test_<name> && make  # Run single test
+```
 
-# In separate terminal, watch for system tests:
+Watch commands (usually already running):
+```bash
+make -C src watch-for-unittests
 make -C src watch-for-systemtests
-
-# Or combined:
-make -C src watch  # Runs both unit and system tests
-
-# For coverage-driven development:
-make -C src clean-coverage
-# <run specific test>
-make -C src coverage
-# View .gcov files in Emacs with cov-mode
 ```
 
-**File watching:**
-- Uses `watchexec` and `execnotify` for auto-rebuild
-- Ignores generated files (`.tab.[ch]`, `lexem.h`)
+## Architecture Overview
 
-**Commit message format:**
+**Client-Server Model:**
+- Emacs plugin (`editors/emacs/`) communicates with C backend (`src/`)
+- Backend maintains symbol database in `.cx` files
+
+**Key Subsystems:**
+- Parsing: `c_parser.y`, `yacc_parser.y`, `yylex.c` (uses custom `byacc-1.9`)
+- Symbols: `symbol.c`, `cxfile.c`, `reference.c`
+- Refactoring: `refactorings.c`, `extract.c`
+- Server: `server.c` handles 60+ operations
+
+**Generated files (don't edit):** `*.tab.[ch]`, `lexem.[ch]`, `options_config.h`
+
+## Commit Messages
+
 ```
-[topic]: Brief summary (50 chars or less)
+[topic]: Brief summary
 
-Optional detailed explanation of the change, why it was needed,
-and what it fixes or improves.
+Optional detailed explanation.
 ```
 
-Common topic prefixes:
-- `[fix]` - Bug fixes
-- `[feat]` - New features
-- `[refactor]` - Code restructuring without behavior changes
-- `[test]` - Test additions or modifications
-- `[docs]` - Documentation changes
-- `[build]` - Build system or dependency changes
-- `[perf]` - Performance improvements
-
-**Important constraints:**
-- This is legacy code from the 1990s undergoing modernization
-- ~80% test coverage enables confident refactoring
-- Must maintain backward compatibility with existing `.cx` databases
-- No unit test for parsers themselves (grammar-level testing through system tests)
-- Yacc/Bison version sensitive - uses custom `byacc-1.9`
-
-## Platform-Specific Notes
-
-**Darwin/macOS:**
-- May need Homebrew packages: `brew install cjson` (check Makefile for library paths)
-- Uses LLVM coverage tools instead of gcov/lcov
-- On ARM64: libraries in `/opt/homebrew/lib`
-- On x86_64: libraries in `/usr/local/lib`
-
-**Linux/WSL:**
-- Requires `libz`, `libcjson`
-- Uses traditional gcov/lcov toolchain
-- May need `gcov-tool` for efficient coverage merging
-
-**All platforms:**
-- Requires `cgreen` and `cgreen-runner` for unit tests
-- Parallel builds use `nproc` (Linux) or `sysctl -n hw.physicalcpu` (Darwin) for job count
-
-## Critical Dependencies
-
-- **Custom byacc-1.9**: Grammars not compatible with modern bison/byacc
-- **Emacs**: Primary (and only) editor integration
-- **libz, libcjson**: Runtime dependencies
-- **cgreen**: Unit test framework
-
-## Code Style Notes
-
-- Functions use camelCase (legacy style)
-- Extensive use of global state and static variables (being refactored)
-- Memory management via custom allocators, not malloc/free directly
-- Stack memory pattern: allocate at request start, free at request end
-- No C++ features (pure C codebase)
+Topics: `[fix]`, `[feat]`, `[refactor]`, `[test]`, `[docs]`, `[build]`
 
 ## Documentation
 
-When discussing documentation, particularly when adding text or descriptions, the term **'docs'** refers to the Structurizr-based Asciidoc documentation located in the `doc/docs/` directory, not general markdown files or comments.
+The term **'docs'** refers to Structurizr-based Asciidoc in `doc/docs/`, not markdown files.
