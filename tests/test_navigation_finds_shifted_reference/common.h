@@ -1,0 +1,2 @@
+// Common header
+int CommonItem;

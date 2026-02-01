@@ -1,7 +1,8 @@
 #include "cxref.h"
 
-#include <string.h>
+#include <limits.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "browsermenu.h"
 #include "characterreader.h"
@@ -1065,23 +1066,37 @@ static void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEnt
  * Note: The reference list is sorted by filename, but Position comparison uses file numbers.
  * These orderings can differ, so we find an exact match by file number rather than using
  * position ordering for "nearest" lookup.
+ *
+ * If exact match not found (e.g., lines shifted due to edits), find nearest in same file.
  */
 static void restoreToNearestReference(SessionStackEntry *sessionEntry, Position savedPos, int filterLevel) {
-    Reference *match = NULL;
+    Reference *exactMatch = NULL;
+    Reference *nearestInSameFile = NULL;
+    int nearestDistance = INT_MAX;
     Reference *firstVisible = NULL;
+
     for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
         if (!isMoreImportantUsageThan(r->usage, filterLevel))
             continue;
         if (firstVisible == NULL)
             firstVisible = r;
-        if (r->position.file == savedPos.file &&
-            r->position.line == savedPos.line &&
-            r->position.col == savedPos.col) {
-            match = r;
-            break;
+
+        if (r->position.file == savedPos.file) {
+            if (r->position.line == savedPos.line && r->position.col == savedPos.col) {
+                exactMatch = r;
+                break;
+            }
+            int distance = abs(r->position.line - savedPos.line);
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestInSameFile = r;
+            }
         }
     }
-    sessionEntry->current = match ? match : firstVisible;
+
+    sessionEntry->current = exactMatch ? exactMatch
+                          : nearestInSameFile ? nearestInSameFile
+                          : firstVisible;
 }
 
 /* Refresh the source file (where cursor is) if stale.
