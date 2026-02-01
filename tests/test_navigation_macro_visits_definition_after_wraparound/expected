@@ -1,0 +1,45 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/source1.c
+end-of-options
+
+<sync>
+<set-info len=<n>>test_navigation_macro_visits_definition_after_wraparound</set-info>
+-olcxpush -preload CURDIR/common.h CURDIR/common.preload -olcursor=8 CURDIR/common.h -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=8 len=<n>>CURDIR/common.h</position-lc>
+</goto>
+-olcxnext -preload CURDIR/common.h CURDIR/common.preload -olcursor=8 CURDIR/common.h -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=9 len=<n>>CURDIR/source1.c</position-lc>
+</goto>
+-olcxnext -preload CURDIR/source1.c CURDIR/source1.preload -olcursor=30 CURDIR/source1.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=9 len=<n>>CURDIR/source2.c</position-lc>
+</goto>
+-olcxnext -preload CURDIR/source2.c CURDIR/source2.preload -olcursor=30 CURDIR/source2.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=9 len=<n>>CURDIR/source3.c</position-lc>
+</goto>
+-olcxnext -preload CURDIR/source3.c CURDIR/source3.preload -olcursor=30 CURDIR/source3.c -p CURDIR
+end-of-options
+
+<sync>
+<bottom-information len=<n>>Moving to the first reference</bottom-information>
+<goto>
+ <position-lc line=1 col=8 len=<n>>CURDIR/common.h</position-lc>
+</goto>
+-exit
+end-of-options
+
