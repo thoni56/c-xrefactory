@@ -1353,6 +1353,7 @@ void recomputeSelectedReferenceable(SessionStackEntry *entry) {
     freeReferences(entry->references);
     entry->references = NULL;
     processSelectedReferences(entry, genOnLineReferences);
+    LIST_MERGE_SORT(Reference, entry->references, referenceIsLessThanOrderImportant);
 }
 
 static void toggleMenuSelect(void) {
