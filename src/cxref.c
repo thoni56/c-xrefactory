@@ -228,6 +228,14 @@ static bool operationRequiresOnlyParsingNoPushing(int operation) {
     return operation==OLO_GLOBAL_UNUSED || operation==OLO_LOCAL_UNUSED;
 }
 
+static bool operationShouldUpdateCallerPosition(int operation) {
+    return operation == OLO_PUSH
+        || operation == OLO_PUSH_AND_CALL_MACRO
+        || operation == OLO_PUSH_FOR_LOCAL_MOTION
+        || operation == OLO_PUSH_NAME
+        || operation == OLO_PUSH_ONLY;
+}
+
 
 static void getBareName(char *name, char **start, int *len) {
     int   _c_;
@@ -344,7 +352,13 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
             completionStringServed = true;
             olstringUsage = usage;
             assert(sessionData.browsingStack.top);
-            olSetCallerPosition(position);
+            /* Only update callerPosition during PUSH operations.
+             * During NEXT/PREVIOUS with staleness refresh, we parse files
+             * but should NOT update callerPosition - it should remain as
+             * set during the original PUSH. */
+            if (operationShouldUpdateCallerPosition(options.serverOperation)) {
+                olSetCallerPosition(position);
+            }
             defaultPosition = NO_POSITION;
             defaultUsage = UsageNone;
             if (symbol->type==TypeMacro && ! options.exactPositionResolve) {
