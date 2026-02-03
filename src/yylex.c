@@ -1037,6 +1037,13 @@ protected void processDefineDirective(bool hasArguments) {
                     completionPositionFound = true;
                     completionStringInMacroBody = symbol->linkName;
                 }
+                /* Record reference if identifier is a known macro */
+                if (lexem == IDENTIFIER) {
+                    Symbol *referencedMacro = findMacroSymbol(currentLexemStart);
+                    if (referencedMacro != NULL) {
+                        handleFoundSymbolReference(referencedMacro, position, UsageUsed, NO_FILE_NUMBER);
+                    }
+                }
                 putLexemCodeAndAdvance(lexem, &lexemDestination);
                 /* Copy from input to destination (which is in the body buffer...) */
                 for (; currentLexemStart<currentInput.read; lexemDestination++,currentLexemStart++)

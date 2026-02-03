@@ -25,5 +25,8 @@ UINT8_MAX
     @source.c:23:9
 __INT64_C
     @source.c:2:10
+    @source.c:15:22
+    @source.c:20:21
 __UINT64_C
     @source.c:3:10
+    @source.c:26:22

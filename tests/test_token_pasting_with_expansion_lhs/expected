@@ -6,6 +6,7 @@ EXPAND
 NUM
     @source.c:0:0
     @source.c:1:8
+    @source.c:2:27
     @source.c:4:19
 NUM##num
     @source.c:2:31

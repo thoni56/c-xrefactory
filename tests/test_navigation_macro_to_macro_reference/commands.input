@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -server
+-olcxgetprojectname CURDIR/macros.h
+<sync>
+-olcxpush -preload CURDIR/macros.h CURDIR/macros.preload -olcursor=79 CURDIR/macros.h -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/macros.h CURDIR/macros.preload -olcursor=79 CURDIR/macros.h -p CURDIR
+<sync>
+<exit>
