@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-01-29">
+<meta name="author" content="v{VERSION} - Generated 2026-02-03">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-01-29</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-02-03</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -9116,7 +9116,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 <div class="sect2">
 <h3 id="_stale_file_refresh_and_cross_file_references">17.5. Stale File Refresh and Cross-File References</h3>
 <div class="paragraph">
-<p>Date: 2025-01-29</p>
+<p>Date: 2025-01-29 (Updated: 2026-01-29)</p>
 </div>
 <div class="sect3">
 <h4 id="_stale_detection">17.5.1. Stale Detection</h4>
@@ -9145,28 +9145,75 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><code>removeReferenceableItemsForFile()</code> - removes old references FROM the stale file</p>
+<p><code>removeReferenceableItemsForFile()</code> - remove old refs from in-memory table</p>
 </li>
 <li>
-<p><code>parseToCreateReferences()</code> - re-parses, adds fresh references FROM that file to in-memory table</p>
+<p><code>parseToCreateReferences()</code> - re-parse with preload, add fresh refs to in-memory table</p>
 </li>
 <li>
-<p>Clear menu refs - necessary so step 4 doesn&#8217;t reject as duplicates</p>
+<p>Remove stale-file refs from menu - preserves cross-file refs, removes outdated positions</p>
 </li>
 <li>
-<p><code>scanReferencesToCreateMenu()</code> - reload ALL refs from disk database (cross-file refs)</p>
+<p><code>extendBrowserMenuWithReferences()</code> - merge fresh refs from in-memory table</p>
 </li>
 <li>
-<p><code>extendBrowserMenuWithReferences()</code> - merge in-memory refs (fresh positions from current file)</p>
+<p>Mark file as freshly parsed (<code>lastParsedMtime = buffer&#8594;modificationTime</code>)</p>
+</li>
+<li>
+<p><code>recomputeSelectedReferenceable()</code> - rebuild session&#8217;s reference list from updated menu</p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>The key insight: after step 2, the in-memory table only has references FROM the current file. Cross-file references (from other files TO symbols here) must come from the disk database via step 4.</p>
+<p><strong>Key insights:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The menu already has cross-file refs from the original PUSH operation (which scanned disk)</p>
+</li>
+<li>
+<p>We do NOT clear menu refs and re-scan from disk during refresh</p>
+</li>
+<li>
+<p>Scanning from disk creates problems: <code>addReferenceableToBrowserMenu</code> creates NEW menu items
+when <code>includeFileNumber</code> differs, and these new items have <code>selected=false</code></p>
+</li>
+<li>
+<p>Only SELECTED menu items contribute refs to the session&#8217;s reference list</p>
+</li>
+<li>
+<p>So scanning would add refs to new (unselected) items, leaving the original (selected) item empty</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_architectural_note">17.5.3. Architectural Note</h4>
+<h4 id="_why_scanning_from_disk_fails">17.5.3. Why Scanning From Disk Fails</h4>
+<div class="paragraph">
+<p>During PUSH, <code>createSelectionMenu</code> creates menu items and adds them to <code>sessionEntry&#8594;menu</code>.
+These items are marked as selected. When you NEXT, the menu&#8217;s reference list is what gets
+used for navigation (via <code>recomputeSelectedReferenceable</code>).</p>
+</div>
+<div class="paragraph">
+<p>If during refresh we:
+1. Clear menu refs
+2. Scan from disk</p>
+</div>
+<div class="paragraph">
+<p>The scan calls <code>createSelectionMenu</code> which in turn calls <code>addReferenceableToBrowserMenu</code>.
+This function compares incoming items by <code>(linkName, includeFileNumber, type)</code>. If the
+<code>includeFileNumber</code> from the disk scan differs from the existing menu item&#8217;s value,
+a <strong>new</strong> menu item is created with <code>selected=false</code>.</p>
+</div>
+<div class="paragraph">
+<p>The refs are then added to this new unselected item, while the original selected item
+has empty refs. <code>recomputeSelectedReferenceable</code> only processes selected items, so
+navigation loses most of its references.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_architectural_note">17.5.4. Architectural Note</h4>
 <div class="paragraph">
 <p>This is a manifestation of the "two sources of truth" architecture. The long-term fix (per roadmap) is to parse all project files at startup, keeping complete references in memory. Then stale refresh would just re-parse the single file and the in-memory table would already have all cross-file references.</p>
 </div>
@@ -10636,7 +10683,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-29 12:56:59 UTC
+Last updated 2026-02-03 18:59:32 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
