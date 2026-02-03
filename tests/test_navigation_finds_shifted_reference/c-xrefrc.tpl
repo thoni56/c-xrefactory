@@ -1,4 +1,1 @@
 [test_navigation_finds_shifted_reference]
-  //  input files
-  source.c
-  middle.c

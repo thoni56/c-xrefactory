@@ -1,0 +1,2 @@
+[test_navigation_macro_wraparound_to_definition]
+.

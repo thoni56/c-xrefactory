@@ -1,0 +1,1 @@
+[test_navigation_macro_visits_definition_after_wraparound]

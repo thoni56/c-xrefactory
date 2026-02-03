@@ -4,7 +4,7 @@ include ../Makefile.server
 # in the editor buffer (preload differs from disk file).
 
 $(TEST):
-	$(CXREF_PROGRAM) -p $(CURDIR) -create > /dev/null
+	$(CXREF_PROGRAM) -p $(CURDIR) -create . > /dev/null
 	sleep 2
 	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	@$(NORMALIZE) output.tmp > output
