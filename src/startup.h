@@ -13,4 +13,8 @@ extern void mainTaskEntryInitialisations(ArgumentsVector args);
 
 extern bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs);
 
+/* Restore to checkpoint after compiler discovery (clearing file-local macros).
+ * Used by staleness refresh to reset macro state before re-parsing. */
+extern void restoreMemoryCheckPoint(void);
+
 #endif

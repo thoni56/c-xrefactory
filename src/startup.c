@@ -483,7 +483,7 @@ static void restoreCheckpoint(MemoryCheckpoint *checkpoint) {
     recoverMemoryFromIncludeList();
 }
 
-void restoreMemoryCheckPoint(MemoryCheckpoint *checkpoint) {
+void restoreMemoryCheckPoint(void) {
     restoreCheckpoint(&checkpoint1);
 }
 
@@ -611,7 +611,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         /* Same project as last file - restore from checkpoint (fast path) */
         log_debug("initializeFileProcessing - else-branch (same project, restoring checkpoint 1)");
         log_debug("Memories: ppmMemory.index=%d, currentBlock=%p", ppmMemory.index, currentBlock);
-        restoreMemoryCheckPoint(&checkpoint1);  /* Skip phases 2-3, restore cached compiler discovery */
+        restoreMemoryCheckPoint();  /* Skip phases 2-3, restore cached compiler discovery */
 
         deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO); /* no include or define options */

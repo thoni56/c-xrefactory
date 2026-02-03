@@ -31,11 +31,13 @@
 #include "server.h"
 #include "session.h"
 #include "session.h"
+#include "startup.h"
 #include "storage.h"
 #include "symbol.h"
 #include "type.h"
 #include "usage.h"
 #include "visibility.h"
+#include "yylex.h"
 
 
 #define MAX_TAG_SEARCH_INDENT 80          /* maximal tag search indentation with scroll */
@@ -933,6 +935,12 @@ static void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int
 
     // Update in-memory table: remove old, parse fresh
     removeReferenceableItemsForFile(fileNumber);
+
+    // Reset macro state before re-parsing to clear header guards from previous parse.
+    // Without this, #ifndef guards would prevent parsing the file body.
+    restoreMemoryCheckPoint();
+    initAllInputs();
+
     parseToCreateReferences(fileItem->name);
 
     // Remove refs for the stale file from menu - the menu already has cross-file refs
