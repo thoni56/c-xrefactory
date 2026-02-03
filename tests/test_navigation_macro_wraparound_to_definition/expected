@@ -1,0 +1,52 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/aaa_usage.c
+end-of-options
+
+<sync>
+<set-info len=<n>>test_navigation_macro_wraparound_to_definition</set-info>
+-olcxpush -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=8 len=<n>>CURDIR/zzz_define.h</position-lc>
+</goto>
+-olcxnext -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=9 len=<n>>CURDIR/aaa_usage.c</position-lc>
+</goto>
+-olcxnext -preload CURDIR/aaa_usage.c CURDIR/aaa_usage.preload -olcursor=32 CURDIR/aaa_usage.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=9 len=<n>>CURDIR/bbb_usage.c</position-lc>
+</goto>
+-olcxnext -preload CURDIR/bbb_usage.c CURDIR/bbb_usage.preload -olcursor=32 CURDIR/bbb_usage.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=9 len=<n>>CURDIR/ccc_usage.c</position-lc>
+</goto>
+-olcxnext -preload CURDIR/ccc_usage.c CURDIR/ccc_usage.preload -olcursor=32 CURDIR/ccc_usage.c -p CURDIR
+end-of-options
+
+<sync>
+<bottom-information len=<n>>Moving to the first reference</bottom-information>
+<goto>
+ <position-lc line=1 col=8 len=<n>>CURDIR/zzz_define.h</position-lc>
+</goto>
+-olcxnext -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=9 len=<n>>CURDIR/aaa_usage.c</position-lc>
+</goto>
+-exit
+end-of-options
+
