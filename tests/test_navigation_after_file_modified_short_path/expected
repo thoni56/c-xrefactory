@@ -3,7 +3,7 @@ CXREF -xrefactory-II -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>test_navigation_after_file_modified</set-info>
+<set-info len=<n>>test_navigation_after_file_modified_short_path</set-info>
 -olcxpush -preload CURDIR/source.c CURDIR/source.preload1 -olcursor=50 CURDIR/source.c -p CURDIR
 end-of-options
 

@@ -1,0 +1,1 @@
+[test_navigation_after_file_modified_short_path]
