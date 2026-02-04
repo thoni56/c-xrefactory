@@ -13,6 +13,7 @@
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
+#include "head.h"
 #include "list.h"
 #include "log.h"
 #include "match.h"
@@ -1035,6 +1036,8 @@ static bool savePositionAndRefreshIfStale(SessionStackEntry *sessionEntry, Refer
 }
 
 static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos) {
+    ENTER();
+
     // After a refresh for "next", find the first reference AFTER savedPos
     int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
 
@@ -1054,10 +1057,12 @@ static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, 
                && isAtMostAsImportantAs(sessionEntry->current->usage, filterLevel))
             sessionEntry->current = sessionEntry->current->next;
     }
+    LEAVE();
 }
 
 static void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
                                                    int filterLevel) {
+    ENTER();
     // After a refresh for "previous", find the last reference BEFORE savedPos
     sessionEntry->current = NULL;
     for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
@@ -1066,6 +1071,7 @@ static void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEnt
         if (isMoreImportantUsageThan(r->usage, filterLevel))
             sessionEntry->current = r;
     }
+    LEAVE();
 }
 
 /*
@@ -1154,9 +1160,13 @@ static bool refreshSourceFileIfStale(SessionStackEntry *sessionEntry) {
 }
 
 static void gotoNextReference(void) {
+    ENTER();
+
     SessionStackEntry *sessionEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES)) {
+        LEAVE();
         return;
+    }
 
     // First, refresh the source file (where cursor is) if stale
     refreshSourceFileIfStale(sessionEntry);
@@ -1168,7 +1178,7 @@ static void gotoNextReference(void) {
 
     // Save position and refresh if stale - position saved BEFORE refresh since
     // current pointer becomes dangling after refresh
-    Position savedPos;
+    Position savedPos = getCurrentPosition(sessionEntry);
     if (savePositionAndRefreshIfStale(sessionEntry, next, &savedPos)) {
         restoreToNextReferenceAfterRefresh(sessionEntry, savedPos);
     } else {
@@ -1181,6 +1191,7 @@ static void gotoNextReference(void) {
     }
 
     olcxGenGotoActReference(sessionEntry);
+    LEAVE();
 }
 
 static Reference *findPreviousReference(SessionStackEntry *sessionEntry, int filterLevel) {
@@ -1207,9 +1218,13 @@ static Reference *findLastReference(SessionStackEntry *sessionEntry, int filterL
 }
 
 static void gotoPreviousReference(void) {
+    ENTER();
+
     SessionStackEntry *sessionEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES)) {
+        LEAVE();
         return;
+    }
 
     // First, refresh the source file (where cursor is) if stale
     refreshSourceFileIfStale(sessionEntry);
@@ -1221,7 +1236,7 @@ static void gotoPreviousReference(void) {
 
     // Save position and refresh if stale - position saved BEFORE refresh since
     // current pointer becomes dangling after refresh
-    Position savedPos;
+    Position savedPos = getCurrentPosition(sessionEntry);
     if (savePositionAndRefreshIfStale(sessionEntry, previous, &savedPos)) {
         restoreToPreviousReferenceAfterRefresh(sessionEntry, savedPos, filterLevel);
         if (sessionEntry->current == NULL) {
@@ -1243,6 +1258,7 @@ static void gotoPreviousReference(void) {
     }
 
     olcxGenGotoActReference(sessionEntry);
+    LEAVE();
 }
 
 static void olcxReferenceGotoDef(void) {
