@@ -72,6 +72,24 @@ static int referencePositionIsLess(Reference *r1, Reference *r2) {
     return positionIsLessThan(r1->position, r2->position);
 }
 
+/* Compare positions the same way referenceIsLessThan sorts references:
+   by filename, then file number, then line, then column.
+   Note: simpleFileNameFromFileNum uses a static buffer, so we must
+   copy the first result before calling it again. */
+static bool positionIsLessThanByFilename(Position p1, Position p2) {
+    char fn1[MAX_FILE_NAME_SIZE];
+    strcpy(fn1, simpleFileNameFromFileNum(p1.file));
+    char *fn2 = simpleFileNameFromFileNum(p2.file);
+    int fc = strcmp(fn1, fn2);
+    if (fc < 0) return true;
+    if (fc > 0) return false;
+    if (p1.file < p2.file) return true;
+    if (p1.file > p2.file) return false;
+    if (p1.line < p2.line) return true;
+    if (p1.line > p2.line) return false;
+    return p1.col < p2.col;
+}
+
 static void renameCollationSymbols(BrowserMenu *menu) {
     assert(menu);
     for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
@@ -528,13 +546,13 @@ static void olcxNaturalReorder(SessionStackEntry *sessionStackEntry) {
 }
 
 
-// references has to be ordered according internal file numbers order !!!!
+// references are ordered by filename (see referenceIsLessThan)
 static void olcxSetCurrentRefsOnCaller(SessionStackEntry *sessionStackEntry) {
     Reference *r;
     for (r=sessionStackEntry->references; r!=NULL; r=r->next){
         log_debug("checking %d:%d:%d to %d:%d:%d", r->position.file, r->position.line,r->position.col,
                   sessionStackEntry->callerPosition.file,  sessionStackEntry->callerPosition.line,  sessionStackEntry->callerPosition.col);
-        if (!positionIsLessThan(r->position, sessionStackEntry->callerPosition))
+        if (!positionIsLessThanByFilename(r->position, sessionStackEntry->callerPosition))
             break;
     }
     // it should never be NULL, but one never knows - DUH! We have coverage to show that you are wrong
@@ -1030,7 +1048,7 @@ static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, 
 
     sessionEntry->current = sessionEntry->references;
     while (sessionEntry->current != NULL) {
-        if (positionIsLessThan(savedPos, sessionEntry->current->position)
+        if (positionIsLessThanByFilename(savedPos, sessionEntry->current->position)
             && isMoreImportantUsageThan(sessionEntry->current->usage, filterLevel))
             break;  // Found first reference after where we were
         sessionEntry->current = sessionEntry->current->next;
@@ -1053,7 +1071,7 @@ static void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEnt
     // After a refresh for "previous", find the last reference BEFORE savedPos
     sessionEntry->current = NULL;
     for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
-        if (!positionIsLessThan(r->position, savedPos))
+        if (!positionIsLessThanByFilename(r->position, savedPos))
             break;  // At or past saved position
         if (isMoreImportantUsageThan(r->usage, filterLevel))
             sessionEntry->current = r;
