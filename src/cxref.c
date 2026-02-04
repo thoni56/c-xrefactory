@@ -1022,19 +1022,6 @@ static Position getCurrentPosition(SessionStackEntry *sessionEntry) {
     return sessionEntry->current ? sessionEntry->current->position : makePosition(NO_FILE_NUMBER, 0, 0);
 }
 
-/* Save current position and refresh target file if stale.
- *
- * IMPORTANT: Position must be saved BEFORE refresh because refresh frees the old
- * reference list, making sessionEntry->current a dangling pointer.
- *
- * Returns true if refresh happened (caller should restore position from savedPosOut).
- */
-static bool savePositionAndRefreshIfStale(SessionStackEntry *sessionEntry, Reference *target,
-                                          Position *savedPosOut) {
-    *savedPosOut = getCurrentPosition(sessionEntry);
-    return refreshFileIfStale(sessionEntry, target);
-}
-
 static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos) {
     ENTER();
 
@@ -1179,7 +1166,7 @@ static void gotoNextReference(void) {
     // Save position and refresh if stale - position saved BEFORE refresh since
     // current pointer becomes dangling after refresh
     Position savedPos = getCurrentPosition(sessionEntry);
-    if (savePositionAndRefreshIfStale(sessionEntry, next, &savedPos)) {
+    if (refreshFileIfStale(sessionEntry, next)) {
         restoreToNextReferenceAfterRefresh(sessionEntry, savedPos);
     } else {
         // Normal navigation - advance to next reference
@@ -1237,7 +1224,7 @@ static void gotoPreviousReference(void) {
     // Save position and refresh if stale - position saved BEFORE refresh since
     // current pointer becomes dangling after refresh
     Position savedPos = getCurrentPosition(sessionEntry);
-    if (savePositionAndRefreshIfStale(sessionEntry, previous, &savedPos)) {
+    if (refreshFileIfStale(sessionEntry, previous)) {
         restoreToPreviousReferenceAfterRefresh(sessionEntry, savedPos, filterLevel);
         if (sessionEntry->current == NULL) {
             // Wrap to last reference
