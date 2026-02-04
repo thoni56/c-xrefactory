@@ -5,18 +5,20 @@ include ../Makefile.server
 # TARGET file of navigation is stale.
 #
 # Scenario:
-# - PUSH on 'counter' in header.h (at definition)
-# - NEXT navigates to source.c (which has a newer preload, simulating modification)
-# - The target file (source.c) is stale, triggering refresh during navigation
+# - PUSH on 'counter' in source.c
+# - NEXT navigates to header.h (definition)
+# - NEXT again, now source.c has a newer preload (source.modified with shifted lines)
+# - Cursor stays in header.h but we send modified preload for source.c
+# - Navigation targets source.c which is stale, triggering refresh
+# - Reference positions should be from the MODIFIED file (line 7, not line 4)
 
 $(TEST):
 	$(CXREF_PROGRAM) -p $(CURDIR) -create . > /dev/null
-# Create preloads - header.h first (used for PUSH)
+# Create preloads for original content
 	cp header.h header.preload
 	cp source.c source.preload1
-# Ensure timestamp difference
+# Ensure source.modified has newer timestamp than source.preload1
 	sleep 2
-# Create newer preload for source.c (simulating modification after PUSH)
 	touch source.modified
 	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	@$(NORMALIZE) output.tmp > output

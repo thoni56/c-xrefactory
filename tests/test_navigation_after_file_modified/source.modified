@@ -1,0 +1,12 @@
+/* Modified version with extra lines */
+/* Line 2 */
+/* Line 3 */
+#include "header.h"
+
+void increment(void) {
+    counter++;
+}
+
+void decrement(void) {
+    counter--;
+}
