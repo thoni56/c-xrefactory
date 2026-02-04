@@ -1017,6 +1017,10 @@ static bool refreshFileIfStale(SessionStackEntry *sessionEntry, Reference *ref) 
     return true;
 }
 
+static Position getCurrentPosition(SessionStackEntry *sessionEntry) {
+    return sessionEntry->current ? sessionEntry->current->position : makePosition(NO_FILE_NUMBER, 0, 0);
+}
+
 /* Save current position and refresh target file if stale.
  *
  * IMPORTANT: Position must be saved BEFORE refresh because refresh frees the old
@@ -1026,9 +1030,7 @@ static bool refreshFileIfStale(SessionStackEntry *sessionEntry, Reference *ref) 
  */
 static bool savePositionAndRefreshIfStale(SessionStackEntry *sessionEntry, Reference *target,
                                           Position *savedPosOut) {
-    *savedPosOut = sessionEntry->current
-        ? sessionEntry->current->position
-        : makePosition(NO_FILE_NUMBER, 0, 0);
+    *savedPosOut = getCurrentPosition(sessionEntry);
     return refreshFileIfStale(sessionEntry, target);
 }
 
@@ -1054,7 +1056,8 @@ static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, 
     }
 }
 
-static void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos, int filterLevel) {
+static void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
+                                                   int filterLevel) {
     // After a refresh for "previous", find the last reference BEFORE savedPos
     sessionEntry->current = NULL;
     for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
@@ -1121,6 +1124,7 @@ static void restoreToNearestReference(SessionStackEntry *sessionEntry, Position 
                           : firstVisible;
 }
 
+
 /* Refresh the source file (where cursor is) if stale.
  *
  * When user does NEXT/PREVIOUS, they're usually at a reference in the session.
@@ -1136,9 +1140,7 @@ static bool refreshSourceFileIfStale(SessionStackEntry *sessionEntry) {
         return false;
 
     // Save position before refresh
-    Position savedPos = sessionEntry->current
-        ? sessionEntry->current->position
-        : makePosition(NO_FILE_NUMBER, 0, 0);
+    Position savedPos = getCurrentPosition(sessionEntry);
 
     log_debug("Refreshing stale source file %d: %s", requestFileNumber,
               getFileItemWithFileNumber(requestFileNumber)->name);
