@@ -1040,12 +1040,11 @@ static Position getCurrentPosition(SessionStackEntry *sessionEntry) {
     return sessionEntry->current ? sessionEntry->current->position : makePosition(NO_FILE_NUMBER, 0, 0);
 }
 
-static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos) {
+static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
+                                               int filterLevel) {
     ENTER();
 
     // After a refresh for "next", find the first reference AFTER savedPos
-    int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
-
     sessionEntry->current = sessionEntry->references;
     while (sessionEntry->current != NULL) {
         if (positionIsLessThanByFilename(savedPos, sessionEntry->current->position)
@@ -1176,6 +1175,8 @@ static void gotoNextReference(void) {
     // First, refresh the source file (where cursor is) if stale
     refreshSourceFileIfStale(sessionEntry);
 
+    int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
+
     // Determine the next reference we would navigate to
     Reference *next = (sessionEntry->current == NULL)
         ? sessionEntry->references
@@ -1185,7 +1186,7 @@ static void gotoNextReference(void) {
     // current pointer becomes dangling after refresh
     Position savedPos = getCurrentPosition(sessionEntry);
     if (refreshFileIfStale(sessionEntry, next)) {
-        restoreToNextReferenceAfterRefresh(sessionEntry, savedPos);
+        restoreToNextReferenceAfterRefresh(sessionEntry, savedPos, filterLevel);
     } else {
         // Normal navigation - advance to next reference
         if (sessionEntry->current == NULL)
