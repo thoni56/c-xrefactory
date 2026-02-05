@@ -35,6 +35,7 @@ typedef enum {
 
 
 extern const char *usageKindEnumName[];
+extern int usageFilterLevels[];
 
 extern bool isVisibleUsage(Usage usage);
 extern bool isDefinitionUsage(Usage usage);

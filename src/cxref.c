@@ -46,14 +46,6 @@
 #define MAX_TAG_SEARCH_INDENT_RATIO 66    /* maximal tag search indentation screen ratio in % */
 
 
-/* These levels are also used in the Emacs UI */
-static int usageFilterLevels[] = {
-    UsageMaxOnLineVisibleUsages,
-    UsageUsed,
-    UsageAddrUsed,
-    UsageLvalUsed,
-};
-
 static unsigned menuFilterLevels[MAX_MENU_FILTER_LEVEL] = {
     (FILE_MATCH_ANY | NAME_MATCH_ANY),
     (FILE_MATCH_ANY | NAME_MATCH_APPLICABLE),
@@ -904,23 +896,6 @@ static void gotoMatch(int referenceIndex) {
 }
 
 
-static void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference *r) {
-    int rlevel = usageFilterLevels[refs->refsFilterLevel];
-
-    while (r!=NULL && isAtMostAsImportantAs(r->usage, rlevel))
-        r = r->next;
-
-    if (r != NULL) {
-        refs->current = r;
-    } else {
-        assert(options.xref2);
-        ppcBottomInformation("Moving to the first reference");
-        r = refs->references;
-        while (r!=NULL && isAtMostAsImportantAs(r->usage, rlevel))
-            r = r->next;
-        refs->current = r;
-    }
-}
 
 static void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);

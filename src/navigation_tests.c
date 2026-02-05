@@ -8,6 +8,7 @@
 #include "commons.mock"
 #include "filetable.mock"
 #include "misc.mock"
+#include "options.mock"
 #include "ppc.mock"
 
 

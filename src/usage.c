@@ -5,6 +5,14 @@ const char *usageKindEnumName[] = {
     ALL_USAGE_ENUMS(GENERATE_ENUM_STRING)
 };
 
+/* These levels are also used in the Emacs UI */
+int usageFilterLevels[] = {
+    UsageMaxOnLineVisibleUsages,
+    UsageUsed,
+    UsageAddrUsed,
+    UsageLvalUsed,
+};
+
 
 bool isVisibleUsage(Usage usage) {
     return usage < UsageMaxOnLineVisibleUsages;

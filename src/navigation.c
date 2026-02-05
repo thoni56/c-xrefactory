@@ -3,9 +3,11 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include "commons.h"
 #include "head.h"
 #include "log.h"
 #include "misc.h"
+#include "options.h"
 #include "ppc.h"
 
 
@@ -101,5 +103,23 @@ void setCurrentToFirstReferenceAfterCallerPosition(SessionStackEntry *sessionSta
       sessionStackEntry->current = sessionStackEntry->references;
   } else {
       sessionStackEntry->current = r;
+  }
+}
+
+void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference *r) {
+  int rlevel = usageFilterLevels[refs->refsFilterLevel];
+
+  while (r != NULL && isAtMostAsImportantAs(r->usage, rlevel))
+      r = r->next;
+
+  if (r != NULL) {
+      refs->current = r;
+  } else {
+      assert(options.xref2);
+      ppcBottomInformation("Moving to the first reference");
+      r = refs->references;
+      while (r != NULL && isAtMostAsImportantAs(r->usage, rlevel))
+          r = r->next;
+      refs->current = r;
   }
 }
