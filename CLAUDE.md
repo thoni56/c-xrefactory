@@ -31,7 +31,8 @@ Use relative effort only: "smaller", "larger", "foundational"
 ### Test-Driven Development
 
 - Create a failing test FIRST before fixing bugs
-- Tests are in `tests/test_<name>/` directories
+- Unittests are using Cgreen and are always run on build
+- Systemtests are in `tests/test_<name>/` directories
 
 ### Unittests
 
@@ -40,9 +41,15 @@ Use relative effort only: "smaller", "larger", "foundational"
 - Mock files are included in the test
 - Only a few, simple, module files are linked as is, defined in the Makefile
 
-### When Tests Pass
+### System Tests
 
-Remove debug logging, then commit (after discussion).
+- Live in `tests/test_<testname>` directories
+- Each directory needs a `.c-xrefrc` that is created automatically on `make` either from a local `c-xrefrc.tpl` or a common template if it doesn't exist
+- `make clean` removes all generated files, such as the `.c-xrefrc` and the diskdb, so that the directory will be populated from afresh
+- The existance of a `.suspended` file means the test will not be run when all system tests are run, it can still be run using `make` in the test directory
+- Output is usually collected in an `output.tmp` that can be normalized to not fail on paths, lengths, dates etc.
+- `output` is removed when it matches `expected`, so a remaining `output` means the test failed
+- the test diff is designed to say "remove (`<`) this and insert (`>`) that to get the expected output"
 
 ## Build & Test Commands
 
