@@ -4,7 +4,6 @@
 #include <memory.h>
 
 #include "commons.h"
-#include "cxref.h"
 #include "editorbuffer.h"
 #include "editorbuffertable.h"
 #include "encoding.h"
