@@ -1,0 +1,39 @@
+<update-report>
+ <information len=<n>>C-xrefactory project: CURDIR</information>
+ <information len=<n>>CURDIR/server.c</information>
+ <information len=<n>>CURDIR/target.c</information>
+ <information len=<n>>Generating 'CURDIR/CXrefs'</information>
+</update-report>
+<goto>
+ <position-off off=4407 len=<n>>CURDIR/server.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>static </str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=4407 len=<n>>CURDIR/server.c</position-off>
+</goto>
+<cut-block val=133 len=<n>></cut-block>
+<goto>
+ <position-off off=20 len=<n>>CURDIR/target.c</position-off>
+</goto>
+<paste-block len=<n>></paste-block>
+<goto>
+ <position-off off=51 len=<n>>CURDIR/target.h</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>
+extern void setupParsingConfig();</str>
+</replacement>
+<goto>
+ <position-off off=451 len=<n>>CURDIR/server.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>#include "target.h"
+</str>
+</replacement>
+<goto>
+ <position-off off=25 len=<n>>CURDIR/target.c</position-off>
+</goto>
+<indent-block val=4 len=<n>></indent-block>
+<sync>

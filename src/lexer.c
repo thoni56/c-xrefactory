@@ -803,6 +803,19 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb, bool inServe
         }
     } while (ch != -1);
 
+    /* Insert marker at end-of-file if cursor is at/past end and marker not yet inserted.
+     * This handles the case where cursor is at EOF in a minimal file (e.g., just #include).
+     * IMPORTANT: Only insert if we actually reached EOF (ch == -1), not just buffer full. */
+    if (ch == -1
+        && inServerMode
+        && parsingConfig.operation == PARSE_TO_VALIDATE_MOVE_TARGET
+        && fileNumberFrom(cb) == parsingConfig.fileNumber
+        && fileNumberFrom(cb) != NO_FILE_NUMBER
+        && !parsedInfo.regionMarkerAtCursorInserted) {
+        putLexemCodeWithPosition(lb, OL_MARKER_TOKEN, lb->position);
+        parsedInfo.regionMarkerAtCursorInserted = true;
+    }
+
     if ((char *)getLexemStreamWrite(lb) == lb->lexemStream)
         return false;
     else
