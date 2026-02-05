@@ -25,3 +25,7 @@ void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Pos
 Position getCurrentPosition(SessionStackEntry *sessionEntry) {
     return *(Position *)mock(sessionEntry);
 }
+
+Reference *findPreviousReference(SessionStackEntry *sessionEntry, int filterLevel) {
+    return (Reference *)mock(sessionEntry, filterLevel);
+}

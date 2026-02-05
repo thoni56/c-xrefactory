@@ -1147,19 +1147,6 @@ static void gotoNextReference(void) {
     LEAVE();
 }
 
-static Reference *findPreviousReference(SessionStackEntry *sessionEntry, int filterLevel) {
-    // Find the reference before current that passes the filter
-    Reference *previous = NULL;
-    if (sessionEntry->current != NULL) {
-        for (Reference *r = sessionEntry->references;
-             r != sessionEntry->current && r != NULL;
-             r = r->next) {
-            if (isMoreImportantUsageThan(r->usage, filterLevel))
-                previous = r;
-        }
-    }
-    return previous;
-}
 
 static Reference *findLastReference(SessionStackEntry *sessionEntry, int filterLevel) {
     Reference *last = NULL;

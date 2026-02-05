@@ -3,6 +3,7 @@
 
 #include "position.h"
 #include "session.h"
+#include "reference.h"
 
 
 extern bool positionIsLessThanByFilename(Position p1, Position p2);
@@ -11,5 +12,6 @@ extern void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, 
 extern void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
                                                    int filterLevel);
 extern Position getCurrentPosition(SessionStackEntry *sessionEntry);
+extern Reference *findPreviousReference(SessionStackEntry *sessionEntry, int filterLevel);
 
 #endif

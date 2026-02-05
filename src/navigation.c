@@ -64,3 +64,16 @@ void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Pos
 Position getCurrentPosition(SessionStackEntry *sessionEntry) {
   return sessionEntry->current ? sessionEntry->current->position : makePosition(NO_FILE_NUMBER, 0, 0);
 }
+
+Reference *findPreviousReference(SessionStackEntry *sessionEntry, int filterLevel) {
+  // Find the reference before current that passes the filter
+  Reference *previous = NULL;
+  if (sessionEntry->current != NULL) {
+      for (Reference *r = sessionEntry->references; r != sessionEntry->current && r != NULL;
+           r = r->next) {
+          if (isMoreImportantUsageThan(r->usage, filterLevel))
+              previous = r;
+      }
+  }
+  return previous;
+}
