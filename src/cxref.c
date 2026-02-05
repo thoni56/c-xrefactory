@@ -956,6 +956,9 @@ static void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int
 }
 
 static bool isFileNumberStale(int fileNumber) {
+    if (fileNumber == NO_FILE_NUMBER)
+        return false;
+
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
 
@@ -1050,9 +1053,6 @@ static void restoreToNearestReference(SessionStackEntry *sessionEntry, Position 
  * Returns true if refresh happened.
  */
 static bool refreshSourceFileIfStale(SessionStackEntry *sessionEntry) {
-    if (requestFileNumber == NO_FILE_NUMBER)
-        return false;
-
     if (!isFileNumberStale(requestFileNumber))
         return false;
 
