@@ -29,3 +29,11 @@ Position getCurrentPosition(SessionStackEntry *sessionEntry) {
 Reference *findPreviousReference(SessionStackEntry *sessionEntry, int filterLevel) {
     return (Reference *)mock(sessionEntry, filterLevel);
 }
+
+Reference *findLastReference(SessionStackEntry *sessionEntry, int filterLevel) {
+    return (Reference *)mock(sessionEntry, filterLevel);
+}
+
+void setCurrentToFirstReferenceAfterCallerPosition(SessionStackEntry *sessionStackEntry) {
+    mock(sessionStackEntry);
+}

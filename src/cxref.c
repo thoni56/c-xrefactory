@@ -535,21 +535,6 @@ static void olcxNaturalReorder(SessionStackEntry *sessionStackEntry) {
 
 
 // references are ordered by filename (see referenceIsLessThan)
-static void olcxSetCurrentRefsOnCaller(SessionStackEntry *sessionStackEntry) {
-    Reference *r;
-    for (r=sessionStackEntry->references; r!=NULL; r=r->next){
-        log_debug("checking %d:%d:%d to %d:%d:%d", r->position.file, r->position.line,r->position.col,
-                  sessionStackEntry->callerPosition.file,  sessionStackEntry->callerPosition.line,  sessionStackEntry->callerPosition.col);
-        if (!positionIsLessThanByFilename(r->position, sessionStackEntry->callerPosition))
-            break;
-    }
-    // it should never be NULL, but one never knows - DUH! We have coverage to show that you are wrong
-    if (r == NULL) {
-        sessionStackEntry->current = sessionStackEntry->references;
-    } else {
-        sessionStackEntry->current = r;
-    }
-}
 
 static void orderRefsAndGotoDefinition(SessionStackEntry *refs) {
     olcxNaturalReorder(refs);
@@ -1148,14 +1133,6 @@ static void gotoNextReference(void) {
 }
 
 
-static Reference *findLastReference(SessionStackEntry *sessionEntry, int filterLevel) {
-    Reference *last = NULL;
-    for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
-        if (isMoreImportantUsageThan(r->usage, filterLevel))
-            last = r;
-    }
-    return last;
-}
 
 static void gotoPreviousReference(void) {
     ENTER();
@@ -1318,7 +1295,7 @@ void processSelectedReferences(SessionStackEntry *sessionStackEntry,
     for (BrowserMenu *m = sessionStackEntry->menu; m != NULL; m = m->next) {
         referencesMapFun(sessionStackEntry, m);
     }
-    olcxSetCurrentRefsOnCaller(sessionStackEntry);
+    setCurrentToFirstReferenceAfterCallerPosition(sessionStackEntry);
     LIST_MERGE_SORT(Reference, sessionStackEntry->references, referenceIsLessThan);
 }
 

@@ -13,5 +13,7 @@ extern void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEnt
                                                    int filterLevel);
 extern Position getCurrentPosition(SessionStackEntry *sessionEntry);
 extern Reference *findPreviousReference(SessionStackEntry *sessionEntry, int filterLevel);
+extern Reference *findLastReference(SessionStackEntry *sessionEntry, int filterLevel);
+extern void setCurrentToFirstReferenceAfterCallerPosition(SessionStackEntry *sessionStackEntry);
 
 #endif
