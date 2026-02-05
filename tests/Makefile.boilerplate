@@ -37,10 +37,10 @@ NORMALIZE = sed -e "s+$(CURDIR)+CURDIR+g" -e "s/ len=[0-9]*/ len=<n>/g" -e "s+/.
 # -E 's/[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} [[:digit:]]{2}:[[:digit:]]{2}:[[:digit:]]{2}/0000-00-00 00:00:00/' >> output.tmp
 
 # Verification is often done by comparing an output with the expected
-VERIFY = diff --strip-trailing-cr output expected > /dev/null 2>&1 ; \
+VERIFY = diff --strip-trailing-cr expected output > /dev/null 2>&1 ; \
 	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \
-		diff --strip-trailing-cr output expected ; \
+		diff --strip-trailing-cr expected output ; \
 		exit 1 ; \
 	else \
 		rm -f output ; \
