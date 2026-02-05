@@ -39,6 +39,7 @@
 #include "usage.h"
 #include "visibility.h"
 #include "yylex.h"
+#include "navigation.h"
 
 
 #define MAX_TAG_SEARCH_INDENT 80          /* maximal tag search indentation with scroll */
@@ -76,19 +77,6 @@ static int referencePositionIsLess(Reference *r1, Reference *r2) {
    by filename, then file number, then line, then column.
    Note: simpleFileNameFromFileNum uses a static buffer, so we must
    copy the first result before calling it again. */
-static bool positionIsLessThanByFilename(Position p1, Position p2) {
-    char fn1[MAX_FILE_NAME_SIZE];
-    strcpy(fn1, simpleFileNameFromFileNum(p1.file));
-    char *fn2 = simpleFileNameFromFileNum(p2.file);
-    int fc = strcmp(fn1, fn2);
-    if (fc < 0) return true;
-    if (fc > 0) return false;
-    if (p1.file < p2.file) return true;
-    if (p1.file > p2.file) return false;
-    if (p1.line < p2.line) return true;
-    if (p1.line > p2.line) return false;
-    return p1.col < p2.col;
-}
 
 static void renameCollationSymbols(BrowserMenu *menu) {
     assert(menu);
@@ -1036,47 +1024,6 @@ static bool refreshFileIfStale(SessionStackEntry *sessionEntry, Reference *ref) 
     return true;
 }
 
-static Position getCurrentPosition(SessionStackEntry *sessionEntry) {
-    return sessionEntry->current ? sessionEntry->current->position : makePosition(NO_FILE_NUMBER, 0, 0);
-}
-
-static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
-                                               int filterLevel) {
-    ENTER();
-
-    // After a refresh for "next", find the first reference AFTER savedPos
-    sessionEntry->current = sessionEntry->references;
-    while (sessionEntry->current != NULL) {
-        if (positionIsLessThanByFilename(savedPos, sessionEntry->current->position)
-            && isMoreImportantUsageThan(sessionEntry->current->usage, filterLevel))
-            break;  // Found first reference after where we were
-        sessionEntry->current = sessionEntry->current->next;
-    }
-
-    // If no reference found after savedPos, wrap to first reference
-    if (sessionEntry->current == NULL) {
-        ppcBottomInformation("Moving to the first reference");
-        sessionEntry->current = sessionEntry->references;
-        while (sessionEntry->current != NULL
-               && isAtMostAsImportantAs(sessionEntry->current->usage, filterLevel))
-            sessionEntry->current = sessionEntry->current->next;
-    }
-    LEAVE();
-}
-
-static void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
-                                                   int filterLevel) {
-    ENTER();
-    // After a refresh for "previous", find the last reference BEFORE savedPos
-    sessionEntry->current = NULL;
-    for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
-        if (!positionIsLessThanByFilename(r->position, savedPos))
-            break;  // At or past saved position
-        if (isMoreImportantUsageThan(r->usage, filterLevel))
-            sessionEntry->current = r;
-    }
-    LEAVE();
-}
 
 /*
  * Staleness handling for NEXT/PREVIOUS:

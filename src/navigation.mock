@@ -1,0 +1,27 @@
+#include "navigation.h"
+
+/* Mocks */
+
+#include <cgreen/mocks.h>
+
+bool positionIsLessThanByFilename(Position pos1, Position pos2) {
+    Position *p1 = &pos1;
+    Position *p2 = &pos2;
+    return (bool)mock(p1, p2);
+}
+
+void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPosition,
+                                        int filterLevel) {
+    Position *savedPos = &savedPosition;
+    mock(sessionEntry, savedPos, filterLevel);
+}
+
+void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPosition,
+                                            int filterLevel) {
+    Position *savedPos = &savedPosition;
+    mock(sessionEntry, savedPos, filterLevel);
+}
+
+Position getCurrentPosition(SessionStackEntry *sessionEntry) {
+    return *(Position *)mock(sessionEntry);
+}

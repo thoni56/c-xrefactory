@@ -96,7 +96,7 @@ endif
 
 
 # Extra libraries to link
-LIBS += -lz 
+LIBS += -lz
 
 
 # Figure out reasonable number of parallel jobs
@@ -724,6 +724,7 @@ $(eval $(call UNITTEST,macroargumenttable,memory log hash))
 $(eval $(call UNITTEST,match))
 $(eval $(call UNITTEST,memory))
 $(eval $(call UNITTEST,misc,protocol log type memory stackmemory))
+$(eval $(call UNITTEST,navigation,protocol position usage stackmemory log))
 $(eval $(call UNITTEST,options,protocol log position memory stackmemory))
 $(eval $(call UNITTEST,parsers,log))
 $(eval $(call UNITTEST,position,log))
