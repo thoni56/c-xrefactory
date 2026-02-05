@@ -532,7 +532,7 @@ static void orderRefsAndGotoDefinition(SessionStackEntry *refs) {
     olcxNaturalReorder(refs);
     if (refs->references == NULL) {
         refs->current = refs->references;
-        indicateNoReference();
+        ppcIndicateNoReference();
     } else if (!isLessImportantUsageThan(refs->references->usage, UsageDeclared)) {
         refs->current = refs->references;
         ppcGotoPosition(refs->current->position);
@@ -784,7 +784,7 @@ static void olcxGenGotoActReference(SessionStackEntry *refs) {
     if (refs->current != NULL) {
         ppcGotoPosition(refs->current->position);
     } else {
-        indicateNoReference();
+        ppcIndicateNoReference();
     }
 }
 
@@ -885,13 +885,13 @@ static void gotoMatch(int referenceIndex) {
             if (positionsAreNotEqual(match->reference.position, NO_POSITION)) {
                 ppcGotoPosition(match->reference.position);
             } else {
-                indicateNoReference();
+                ppcIndicateNoReference();
             }
         } else {
             findAndGotoDefinition(&match->referenceable);
         }
     } else {
-        indicateNoReference();
+        ppcIndicateNoReference();
     }
 }
 
@@ -1191,7 +1191,7 @@ static void olcxReferenceGotoCaller(void) {
         ppcGotoPosition(refs->callerPosition);
 
     } else {
-        indicateNoReference();
+        ppcIndicateNoReference();
     }
 }
 
@@ -1498,7 +1498,7 @@ static void olcxReferencePop(void) {
     if (refs->callerPosition.file != NO_FILE_NUMBER) {
         ppcGotoPosition(refs->callerPosition);
     } else {
-        indicateNoReference();
+        ppcIndicateNoReference();
     }
     //& deleteEntryFromSessionStack(refs);  // this was before non deleting pop
     sessionData.browsingStack.top = refs->previous;

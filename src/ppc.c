@@ -184,10 +184,11 @@ void ppcBottomInformation(char *message) {
     fflush(outputFile);
 }
 
-void indicateNoReference(void) {
+void ppcIndicateNoReference(void) {
     assert(options.xref2);
     ppcBottomInformation("No reference");
 }
+
 void ppcAskConfirmation(char *message) {
     ppcGenRecord(PPC_ASK_CONFIRMATION, message);
 }

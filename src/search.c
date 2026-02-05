@@ -65,10 +65,10 @@ void gotoSearchItem(int refn) {
         if (positionsAreNotEqual(match->reference.position, NO_POSITION)) {
             ppcGotoPosition(match->reference.position);
         } else {
-            indicateNoReference();
+            ppcIndicateNoReference();
         }
     } else {
-        indicateNoReference();
+        ppcIndicateNoReference();
     }
 }
 

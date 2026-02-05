@@ -28,7 +28,7 @@ extern void ppcEnd(char *kind);
 extern void ppcBottomInformation(char *string);
 extern void ppcWarning(char *message);
 extern void ppcBottomWarning(char *message);
-extern void indicateNoReference(void);
+extern void ppcIndicateNoReference(void);
 
 extern void ppcAskConfirmation(char *message);
 
