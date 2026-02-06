@@ -955,7 +955,7 @@ static void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int
     recomputeSelectedReferenceable(sessionEntry);
 }
 
-static bool isFileNumberStale(int fileNumber) {
+static bool fileNumberIsStale(int fileNumber) {
     if (fileNumber == NO_FILE_NUMBER)
         return false;
 
@@ -978,7 +978,7 @@ static bool refreshFileIfStale(SessionStackEntry *sessionEntry, Reference *ref) 
         return false;
 
     int fileNumber = ref->position.file;
-    if (!isFileNumberStale(fileNumber))
+    if (!fileNumberIsStale(fileNumber))
         return false;
 
     log_debug("Refreshing stale file %d: %s", fileNumber,
@@ -1055,7 +1055,7 @@ static void gotoNextReference(void) {
 
     int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
 
-    if (isFileNumberStale(requestFileNumber)) {
+    if (fileNumberIsStale(requestFileNumber)) {
         Position savedPos1 = getCurrentPosition(sessionEntry);
         log_debug("Refreshing stale source file %d: %s", requestFileNumber,
                   getFileItemWithFileNumber(requestFileNumber)->name);
@@ -1099,7 +1099,7 @@ static void gotoPreviousReference(void) {
 
     int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
 
-    if (isFileNumberStale(requestFileNumber)) {
+    if (fileNumberIsStale(requestFileNumber)) {
         Position savedPos1 = getCurrentPosition(sessionEntry);
         log_debug("Refreshing stale source file %d: %s", requestFileNumber,
                   getFileItemWithFileNumber(requestFileNumber)->name);
