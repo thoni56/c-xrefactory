@@ -18,5 +18,8 @@ extern void setCurrentToFirstReferenceAfterCallerPosition(SessionStackEntry *ses
 extern void setCurrentReferenceToPreviousOrLast(SessionStackEntry *refs, Reference *previousReference,
                                                 int filterLevel);
 extern void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference *r);
+extern void gotoNextReference(void);
+extern void gotoPreviousReference(void);
+extern void restoreToNearestReference(SessionStackEntry *sessionEntry, Position savedPos, int filterLevel);
 
 #endif

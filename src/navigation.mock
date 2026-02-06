@@ -46,3 +46,11 @@ void setCurrentReferenceToPreviousOrLast(SessionStackEntry *refs, Reference *pre
                                          int filterLevel) {
     mock(refs, previousReference, filterLevel);
 }
+
+void gotoNextReference(void) {
+    mock();
+}
+
+void gotoPreviousReference(void) {
+    mock();
+}

@@ -2,8 +2,11 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include <limits.h>
 
 #include "commons.h"
+#include "filetable.h"
+#include "globals.h"
 #include "head.h"
 #include "log.h"
 #include "misc.h"
@@ -138,4 +141,176 @@ void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference *r) {
           r = r->next;
       refs->current = r;
   }
+}
+
+/*
+ * Staleness handling for NEXT/PREVIOUS:
+ *
+ * The Emacs client sends preload (modified buffer content) only for the CURRENT file
+ * (where the cursor is when the command is issued). We leverage this in two ways:
+ *
+ * 1. Source file refresh: When user navigates (NEXT/PREVIOUS), they're usually at a
+ *    reference they previously navigated to. If they edited that file, we refresh it
+ *    first, keeping current position.
+ *
+ * 2. Target file refresh: If navigating within the same file, the target reference's
+ *    file also has preload, so we can refresh and find the correct next/previous.
+ *
+ * For cross-file navigation (target != source), the target won't have a preload,
+ * so we can't detect its staleness. The user can recover by doing any operation
+ * from the target file, which will then send its preload.
+ */
+
+static bool fileNumberIsStale(int fileNumber) {
+    if (fileNumber == NO_FILE_NUMBER)
+        return false;
+
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
+
+    // No preload = not stale
+    if (buffer == NULL || buffer->preLoadedFromFile == NULL)
+        return false;
+
+    // Already refreshed? (lastParsedMtime updated to buffer's mtime after refresh)
+    if (fileItem->lastParsedMtime >= buffer->modificationTime)
+        return false;
+
+    return true;
+}
+
+extern void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber);
+
+/* Restore current reference to the reference matching savedPos (for "stay put" after refresh).
+ *
+ * Note: The reference list is sorted by filename, but Position comparison uses file numbers.
+ * These orderings can differ, so we find an exact match by file number rather than using
+ * position ordering for "nearest" lookup.
+ *
+ * If exact match not found (e.g., lines shifted due to edits), find nearest in same file.
+ */
+void restoreToNearestReference(SessionStackEntry *sessionEntry, Position savedPos, int filterLevel) {
+  Reference *exactMatch = NULL;
+  Reference *nearestInSameFile = NULL;
+  int nearestDistance = INT_MAX;
+  Reference *firstVisible = NULL;
+
+  for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
+      if (!isMoreImportantUsageThan(r->usage, filterLevel))
+          continue;
+      if (firstVisible == NULL)
+          firstVisible = r;
+
+      if (r->position.file == savedPos.file) {
+          if (r->position.line == savedPos.line && r->position.col == savedPos.col) {
+              exactMatch = r;
+              break;
+          }
+          int distance = abs(r->position.line - savedPos.line);
+          if (distance < nearestDistance) {
+              nearestDistance = distance;
+              nearestInSameFile = r;
+          }
+      }
+  }
+
+  sessionEntry->current = exactMatch ? exactMatch : nearestInSameFile ? nearestInSameFile : firstVisible;
+}
+
+extern bool sessionHasReferencesValidForOperation(SessionData *session, SessionStackEntry **entryP,
+                                                  CheckNull checkNull);
+
+static void gotoCurrentReference(SessionStackEntry *sessionEntry) {
+    if (sessionEntry->current != NULL) {
+        ppcGotoPosition(sessionEntry->current->position);
+    } else {
+        ppcIndicateNoReference();
+    }
+}
+
+void gotoNextReference(void) {
+  ENTER();
+
+  SessionStackEntry *sessionEntry;
+  if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES)) {
+      LEAVE();
+      return;
+  }
+
+  int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
+
+  if (fileNumberIsStale(requestFileNumber)) {
+      Position savedPos = getCurrentPosition(sessionEntry);
+      log_debug("Refreshing stale source file %d: %s", requestFileNumber,
+                getFileItemWithFileNumber(requestFileNumber)->name);
+      refreshStaleReferencesInSession(sessionEntry, requestFileNumber);
+      restoreToNearestReference(sessionEntry, savedPos, filterLevel);
+  }
+
+  // Determine the next reference we would navigate to
+  Reference *nextReference =
+      (sessionEntry->current == NULL) ? sessionEntry->references : sessionEntry->current->next;
+
+  // Save position and refresh if stale - position saved BEFORE refresh since
+  // current pointer becomes dangling after refresh
+  if (nextReference != NULL && fileNumberIsStale(nextReference->position.file)) {
+      int fileNumber = nextReference->position.file;
+      Position savedPos = getCurrentPosition(sessionEntry);
+      log_debug("Refreshing stale file %d: %s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
+      refreshStaleReferencesInSession(sessionEntry, fileNumber);
+      restoreToNextReferenceAfterRefresh(sessionEntry, savedPos, filterLevel);
+  } else {
+      // Normal navigation - advance to next reference
+      if (sessionEntry->current == NULL)
+          sessionEntry->current = sessionEntry->references;
+      else {
+          setCurrentReferenceToFirstVisible(sessionEntry, nextReference);
+      }
+  }
+
+  gotoCurrentReference(sessionEntry);
+  LEAVE();
+}
+
+void gotoPreviousReference(void) {
+  ENTER();
+
+  SessionStackEntry *sessionEntry;
+  if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES)) {
+      LEAVE();
+      return;
+  }
+
+  int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
+
+  if (fileNumberIsStale(requestFileNumber)) {
+      Position savedPos = getCurrentPosition(sessionEntry);
+      log_debug("Refreshing stale source file %d: %s", requestFileNumber,
+                getFileItemWithFileNumber(requestFileNumber)->name);
+      refreshStaleReferencesInSession(sessionEntry, requestFileNumber);
+      restoreToNearestReference(sessionEntry, savedPos, filterLevel);
+  }
+
+  // Determine the previous reference we would navigate to
+  Reference *previousReference = findPreviousReference(sessionEntry, filterLevel);
+
+  // Save position and refresh if stale - position saved BEFORE refresh since
+  // current pointer becomes dangling after refresh
+  if (previousReference != NULL && fileNumberIsStale(previousReference->position.file)) {
+      Position savedPos = getCurrentPosition(sessionEntry);
+      int fileNumber = previousReference->position.file;
+      log_debug("Refreshing stale file %d: %s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
+      refreshStaleReferencesInSession(sessionEntry, fileNumber);
+      restoreToPreviousReferenceAfterRefresh(sessionEntry, savedPos, filterLevel);
+  } else {
+      // Normal navigation
+      if (sessionEntry->current == NULL)
+          sessionEntry->current = sessionEntry->references;
+      else {
+          setCurrentReferenceToPreviousOrLast(sessionEntry, previousReference, filterLevel);
+      }
+  }
+
+  gotoCurrentReference(sessionEntry);
+  LEAVE();
 }
