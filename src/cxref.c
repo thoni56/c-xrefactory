@@ -1044,16 +1044,6 @@ static void restoreToNearestReference(SessionStackEntry *sessionEntry, Position 
                           : firstVisible;
 }
 
-static void refreshCurrentFile(SessionStackEntry *sessionEntry, int filterLevel) {
-    Position savedPos1 = getCurrentPosition(sessionEntry);
-    log_debug("Refreshing stale source file %d: %s", requestFileNumber,
-              getFileItemWithFileNumber(requestFileNumber)->name);
-    refreshStaleReferencesInSession(sessionEntry, requestFileNumber);
-
-    // References may have moved
-    restoreToNearestReference(sessionEntry, savedPos1, filterLevel);
-}
-
 static void gotoNextReference(void) {
     ENTER();
 
@@ -1065,8 +1055,13 @@ static void gotoNextReference(void) {
 
     int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
 
-    if (isFileNumberStale(requestFileNumber))
-        refreshCurrentFile(sessionEntry, filterLevel);
+    if (isFileNumberStale(requestFileNumber)) {
+        Position savedPos1 = getCurrentPosition(sessionEntry);
+        log_debug("Refreshing stale source file %d: %s", requestFileNumber,
+                  getFileItemWithFileNumber(requestFileNumber)->name);
+        refreshStaleReferencesInSession(sessionEntry, requestFileNumber);
+        restoreToNearestReference(sessionEntry, savedPos1, filterLevel);
+    }
 
     // Determine the next reference we would navigate to
     Reference *next = (sessionEntry->current == NULL)
@@ -1104,8 +1099,13 @@ static void gotoPreviousReference(void) {
 
     int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
 
-    if (isFileNumberStale(requestFileNumber))
-        refreshCurrentFile(sessionEntry, filterLevel);
+    if (isFileNumberStale(requestFileNumber)) {
+        Position savedPos1 = getCurrentPosition(sessionEntry);
+        log_debug("Refreshing stale source file %d: %s", requestFileNumber,
+                  getFileItemWithFileNumber(requestFileNumber)->name);
+        refreshStaleReferencesInSession(sessionEntry, requestFileNumber);
+        restoreToNearestReference(sessionEntry, savedPos1, filterLevel);
+    }
 
     // Determine the previous reference we would navigate to
     Reference *previous = findPreviousReference(sessionEntry, filterLevel);
