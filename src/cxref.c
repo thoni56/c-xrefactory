@@ -973,21 +973,6 @@ static bool fileNumberIsStale(int fileNumber) {
     return true;
 }
 
-static bool refreshFileIfStale(SessionStackEntry *sessionEntry, Reference *ref) {
-    if (ref == NULL)
-        return false;
-
-    int fileNumber = ref->position.file;
-    if (!fileNumberIsStale(fileNumber))
-        return false;
-
-    log_debug("Refreshing stale file %d: %s", fileNumber,
-              getFileItemWithFileNumber(fileNumber)->name);
-    refreshStaleReferencesInSession(sessionEntry, fileNumber);
-    return true;
-}
-
-
 /*
  * Staleness handling for NEXT/PREVIOUS:
  *
@@ -1056,11 +1041,11 @@ static void gotoNextReference(void) {
     int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
 
     if (fileNumberIsStale(requestFileNumber)) {
-        Position savedPos1 = getCurrentPosition(sessionEntry);
+        Position savedPos = getCurrentPosition(sessionEntry);
         log_debug("Refreshing stale source file %d: %s", requestFileNumber,
                   getFileItemWithFileNumber(requestFileNumber)->name);
         refreshStaleReferencesInSession(sessionEntry, requestFileNumber);
-        restoreToNearestReference(sessionEntry, savedPos1, filterLevel);
+        restoreToNearestReference(sessionEntry, savedPos, filterLevel);
     }
 
     // Determine the next reference we would navigate to
@@ -1070,9 +1055,13 @@ static void gotoNextReference(void) {
 
     // Save position and refresh if stale - position saved BEFORE refresh since
     // current pointer becomes dangling after refresh
-    Position savedPos2 = getCurrentPosition(sessionEntry);
-    if (refreshFileIfStale(sessionEntry, nextReference)) {
-        restoreToNextReferenceAfterRefresh(sessionEntry, savedPos2, filterLevel);
+    if (nextReference != NULL && fileNumberIsStale(nextReference->position.file)) {
+        int fileNumber = nextReference->position.file;
+        Position savedPos = getCurrentPosition(sessionEntry);
+        log_debug("Refreshing stale file %d: %s", fileNumber,
+                  getFileItemWithFileNumber(fileNumber)->name);
+        refreshStaleReferencesInSession(sessionEntry, fileNumber);
+        restoreToNextReferenceAfterRefresh(sessionEntry, savedPos, filterLevel);
     } else {
         // Normal navigation - advance to next reference
         if (sessionEntry->current == NULL)
@@ -1086,8 +1075,6 @@ static void gotoNextReference(void) {
     LEAVE();
 }
 
-
-
 static void gotoPreviousReference(void) {
     ENTER();
 
@@ -1100,11 +1087,11 @@ static void gotoPreviousReference(void) {
     int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
 
     if (fileNumberIsStale(requestFileNumber)) {
-        Position savedPos1 = getCurrentPosition(sessionEntry);
+        Position savedPos = getCurrentPosition(sessionEntry);
         log_debug("Refreshing stale source file %d: %s", requestFileNumber,
                   getFileItemWithFileNumber(requestFileNumber)->name);
         refreshStaleReferencesInSession(sessionEntry, requestFileNumber);
-        restoreToNearestReference(sessionEntry, savedPos1, filterLevel);
+        restoreToNearestReference(sessionEntry, savedPos, filterLevel);
     }
 
     // Determine the previous reference we would navigate to
@@ -1112,9 +1099,13 @@ static void gotoPreviousReference(void) {
 
     // Save position and refresh if stale - position saved BEFORE refresh since
     // current pointer becomes dangling after refresh
-    Position savedPos2 = getCurrentPosition(sessionEntry);
-    if (refreshFileIfStale(sessionEntry, previousReference)) {
-        restoreToPreviousReferenceAfterRefresh(sessionEntry, savedPos2, filterLevel);
+    if (previousReference != NULL && fileNumberIsStale(previousReference->position.file)) {
+        Position savedPos = getCurrentPosition(sessionEntry);
+        int fileNumber = previousReference->position.file;
+        log_debug("Refreshing stale file %d: %s", fileNumber,
+                  getFileItemWithFileNumber(fileNumber)->name);
+        refreshStaleReferencesInSession(sessionEntry, fileNumber);
+        restoreToPreviousReferenceAfterRefresh(sessionEntry, savedPos, filterLevel);
         if (sessionEntry->current == NULL) {
             // Wrap to last reference
             ppcBottomInformation("Moving to the last reference");
