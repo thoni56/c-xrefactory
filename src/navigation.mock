@@ -41,3 +41,8 @@ void setCurrentToFirstReferenceAfterCallerPosition(SessionStackEntry *sessionSta
 void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference *r) {
     mock(refs, r);
 }
+
+void setCurrentReferenceToPreviousOrLast(SessionStackEntry *refs, Reference *previousReference,
+                                         int filterLevel) {
+    mock(refs, previousReference, filterLevel);
+}

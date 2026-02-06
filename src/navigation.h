@@ -15,6 +15,8 @@ extern Position getCurrentPosition(SessionStackEntry *sessionEntry);
 extern Reference *findPreviousReference(SessionStackEntry *sessionEntry, int filterLevel);
 extern Reference *findLastReference(SessionStackEntry *sessionEntry, int filterLevel);
 extern void setCurrentToFirstReferenceAfterCallerPosition(SessionStackEntry *sessionStackEntry);
+extern void setCurrentReferenceToPreviousOrLast(SessionStackEntry *refs, Reference *previousReference,
+                                                int filterLevel);
 extern void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference *r);
 
 #endif

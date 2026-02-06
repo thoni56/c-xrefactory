@@ -60,6 +60,12 @@ void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Pos
       if (isMoreImportantUsageThan(r->usage, filterLevel))
           sessionEntry->current = r;
   }
+
+  // If no reference found before savedPos, wrap to last reference
+  if (sessionEntry->current == NULL) {
+      ppcBottomInformation("Moving to the last reference");
+      sessionEntry->current = findLastReference(sessionEntry, filterLevel);
+  }
   LEAVE();
 }
 
@@ -104,6 +110,16 @@ void setCurrentToFirstReferenceAfterCallerPosition(SessionStackEntry *sessionSta
   } else {
       sessionStackEntry->current = r;
   }
+}
+
+void setCurrentReferenceToPreviousOrLast(SessionStackEntry *refs, Reference *previousReference,
+                                         int filterLevel) {
+    if (previousReference != NULL) {
+        refs->current = previousReference;
+    } else {
+        ppcBottomInformation("Moving to the last reference");
+        refs->current = findLastReference(refs, filterLevel);
+    }
 }
 
 void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference *r) {

@@ -1106,21 +1106,12 @@ static void gotoPreviousReference(void) {
                   getFileItemWithFileNumber(fileNumber)->name);
         refreshStaleReferencesInSession(sessionEntry, fileNumber);
         restoreToPreviousReferenceAfterRefresh(sessionEntry, savedPos, filterLevel);
-        if (sessionEntry->current == NULL) {
-            // Wrap to last reference
-            ppcBottomInformation("Moving to the last reference");
-            sessionEntry->current = findLastReference(sessionEntry, filterLevel);
-        }
     } else {
         // Normal navigation
-        if (sessionEntry->current == NULL) {
+        if (sessionEntry->current == NULL)
             sessionEntry->current = sessionEntry->references;
-        } else if (previousReference != NULL) {
-            sessionEntry->current = previousReference;
-        } else {
-            // Wrap to last reference
-            ppcBottomInformation("Moving to the last reference");
-            sessionEntry->current = findLastReference(sessionEntry, filterLevel);
+        else {
+            setCurrentReferenceToPreviousOrLast(sessionEntry, previousReference, filterLevel);
         }
     }
 
