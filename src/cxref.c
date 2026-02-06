@@ -1064,21 +1064,21 @@ static void gotoNextReference(void) {
     }
 
     // Determine the next reference we would navigate to
-    Reference *next = (sessionEntry->current == NULL)
+    Reference *nextReference = (sessionEntry->current == NULL)
         ? sessionEntry->references
         : sessionEntry->current->next;
 
     // Save position and refresh if stale - position saved BEFORE refresh since
     // current pointer becomes dangling after refresh
     Position savedPos2 = getCurrentPosition(sessionEntry);
-    if (refreshFileIfStale(sessionEntry, next)) {
+    if (refreshFileIfStale(sessionEntry, nextReference)) {
         restoreToNextReferenceAfterRefresh(sessionEntry, savedPos2, filterLevel);
     } else {
         // Normal navigation - advance to next reference
         if (sessionEntry->current == NULL)
             sessionEntry->current = sessionEntry->references;
         else {
-            setCurrentReferenceToFirstVisible(sessionEntry, next);
+            setCurrentReferenceToFirstVisible(sessionEntry, nextReference);
         }
     }
 
@@ -1108,12 +1108,12 @@ static void gotoPreviousReference(void) {
     }
 
     // Determine the previous reference we would navigate to
-    Reference *previous = findPreviousReference(sessionEntry, filterLevel);
+    Reference *previousReference = findPreviousReference(sessionEntry, filterLevel);
 
     // Save position and refresh if stale - position saved BEFORE refresh since
     // current pointer becomes dangling after refresh
     Position savedPos2 = getCurrentPosition(sessionEntry);
-    if (refreshFileIfStale(sessionEntry, previous)) {
+    if (refreshFileIfStale(sessionEntry, previousReference)) {
         restoreToPreviousReferenceAfterRefresh(sessionEntry, savedPos2, filterLevel);
         if (sessionEntry->current == NULL) {
             // Wrap to last reference
@@ -1124,8 +1124,8 @@ static void gotoPreviousReference(void) {
         // Normal navigation
         if (sessionEntry->current == NULL) {
             sessionEntry->current = sessionEntry->references;
-        } else if (previous != NULL) {
-            sessionEntry->current = previous;
+        } else if (previousReference != NULL) {
+            sessionEntry->current = previousReference;
         } else {
             // Wrap to last reference
             ppcBottomInformation("Moving to the last reference");
