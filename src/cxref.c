@@ -1044,32 +1044,6 @@ static void restoreToNearestReference(SessionStackEntry *sessionEntry, Position 
                           : firstVisible;
 }
 
-
-/* Refresh the source file (where cursor is) if stale.
- *
- * When user does NEXT/PREVIOUS, they're usually at a reference in the session.
- * If that file was modified, refresh it first and restore current position.
- *
- * Returns true if refresh happened.
- */
-static bool refreshSourceFileIfStale(SessionStackEntry *sessionEntry) {
-    if (!isFileNumberStale(requestFileNumber))
-        return false;
-
-    // Save position before refresh
-    Position savedPos = getCurrentPosition(sessionEntry);
-
-    log_debug("Refreshing stale source file %d: %s", requestFileNumber,
-              getFileItemWithFileNumber(requestFileNumber)->name);
-    refreshStaleReferencesInSession(sessionEntry, requestFileNumber);
-
-    // Restore to nearest reference (stay put, don't advance)
-    int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
-    restoreToNearestReference(sessionEntry, savedPos, filterLevel);
-
-    return true;
-}
-
 static void gotoNextReference(void) {
     ENTER();
 
@@ -1079,10 +1053,15 @@ static void gotoNextReference(void) {
         return;
     }
 
-    // First, refresh the source file (where cursor is) if stale
-    refreshSourceFileIfStale(sessionEntry);
-
     int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
+
+    Position savedPos1 = getCurrentPosition(sessionEntry);
+    if (isFileNumberStale(requestFileNumber)) {
+        log_debug("Refreshing stale source file %d: %s", requestFileNumber,
+                  getFileItemWithFileNumber(requestFileNumber)->name);
+        refreshStaleReferencesInSession(sessionEntry, requestFileNumber);
+        restoreToNearestReference(sessionEntry, savedPos1, filterLevel);
+    }
 
     // Determine the next reference we would navigate to
     Reference *next = (sessionEntry->current == NULL)
@@ -1091,9 +1070,9 @@ static void gotoNextReference(void) {
 
     // Save position and refresh if stale - position saved BEFORE refresh since
     // current pointer becomes dangling after refresh
-    Position savedPos = getCurrentPosition(sessionEntry);
+    Position savedPos2 = getCurrentPosition(sessionEntry);
     if (refreshFileIfStale(sessionEntry, next)) {
-        restoreToNextReferenceAfterRefresh(sessionEntry, savedPos, filterLevel);
+        restoreToNextReferenceAfterRefresh(sessionEntry, savedPos2, filterLevel);
     } else {
         // Normal navigation - advance to next reference
         if (sessionEntry->current == NULL)
@@ -1118,19 +1097,24 @@ static void gotoPreviousReference(void) {
         return;
     }
 
-    // First, refresh the source file (where cursor is) if stale
-    refreshSourceFileIfStale(sessionEntry);
-
     int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
+
+    Position savedPos1 = getCurrentPosition(sessionEntry);
+    if (isFileNumberStale(requestFileNumber)) {
+        log_debug("Refreshing stale source file %d: %s", requestFileNumber,
+                  getFileItemWithFileNumber(requestFileNumber)->name);
+        refreshStaleReferencesInSession(sessionEntry, requestFileNumber);
+        restoreToNearestReference(sessionEntry, savedPos1, filterLevel);
+    }
 
     // Determine the previous reference we would navigate to
     Reference *previous = findPreviousReference(sessionEntry, filterLevel);
 
     // Save position and refresh if stale - position saved BEFORE refresh since
     // current pointer becomes dangling after refresh
-    Position savedPos = getCurrentPosition(sessionEntry);
+    Position savedPos2 = getCurrentPosition(sessionEntry);
     if (refreshFileIfStale(sessionEntry, previous)) {
-        restoreToPreviousReferenceAfterRefresh(sessionEntry, savedPos, filterLevel);
+        restoreToPreviousReferenceAfterRefresh(sessionEntry, savedPos2, filterLevel);
         if (sessionEntry->current == NULL) {
             // Wrap to last reference
             ppcBottomInformation("Moving to the last reference");
