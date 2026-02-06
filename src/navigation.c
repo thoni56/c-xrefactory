@@ -14,7 +14,7 @@
 #include "ppc.h"
 
 
-bool positionIsLessThanByFilename(Position p1, Position p2) {
+static bool positionIsLessThanByFilename(Position p1, Position p2) {
     char fn1[MAX_FILE_NAME_SIZE];
     strcpy(fn1, simpleFileNameFromFileNum(p1.file));
     char *fn2 = simpleFileNameFromFileNum(p2.file);
@@ -28,8 +28,8 @@ bool positionIsLessThanByFilename(Position p1, Position p2) {
     return p1.col < p2.col;
 }
 
-void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
-                                        int filterLevel) {
+static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
+                                               int filterLevel) {
     ENTER();
 
     // After a refresh for "next", find the first reference AFTER savedPos
@@ -52,8 +52,30 @@ void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Positio
     LEAVE();
 }
 
-void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
-                                            int filterLevel) {
+static Reference *findLastReference(SessionStackEntry *sessionEntry, int filterLevel) {
+    Reference *last = NULL;
+    for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
+        if (isMoreImportantUsageThan(r->usage, filterLevel))
+            last = r;
+    }
+    return last;
+}
+
+static Reference *findPreviousReference(SessionStackEntry *sessionEntry, int filterLevel) {
+    // Find the reference before current that passes the filter
+    Reference *previous = NULL;
+    if (sessionEntry->current != NULL) {
+        for (Reference *r = sessionEntry->references; r != sessionEntry->current && r != NULL;
+             r = r->next) {
+            if (isMoreImportantUsageThan(r->usage, filterLevel))
+                previous = r;
+        }
+    }
+    return previous;
+}
+
+static void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
+                                                   int filterLevel) {
     ENTER();
     // After a refresh for "previous", find the last reference BEFORE savedPos
     sessionEntry->current = NULL;
@@ -72,74 +94,52 @@ void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Pos
     LEAVE();
 }
 
-Position getCurrentPosition(SessionStackEntry *sessionEntry) {
+static Position getCurrentPosition(SessionStackEntry *sessionEntry) {
     return sessionEntry->current ? sessionEntry->current->position : makePosition(NO_FILE_NUMBER, 0, 0);
 }
 
-Reference *findPreviousReference(SessionStackEntry *sessionEntry, int filterLevel) {
-    // Find the reference before current that passes the filter
-    Reference *previous = NULL;
-    if (sessionEntry->current != NULL) {
-        for (Reference *r = sessionEntry->references; r != sessionEntry->current && r != NULL;
-             r = r->next) {
-            if (isMoreImportantUsageThan(r->usage, filterLevel))
-                previous = r;
-        }
+static void setCurrentReferenceToPreviousOrLast(SessionStackEntry *sessionEntry, Reference *previousReference,
+                                                int filterLevel) {
+    if (previousReference != NULL) {
+        sessionEntry->current = previousReference;
+    } else {
+        ppcBottomInformation("Moving to the last reference");
+        sessionEntry->current = findLastReference(sessionEntry, filterLevel);
     }
-    return previous;
 }
 
-Reference *findLastReference(SessionStackEntry *sessionEntry, int filterLevel) {
-    Reference *last = NULL;
-    for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
-        if (isMoreImportantUsageThan(r->usage, filterLevel))
-            last = r;
-    }
-    return last;
-}
-
-void setCurrentToFirstReferenceAfterCallerPosition(SessionStackEntry *sessionStackEntry) {
-    Reference *r;
-    for (r = sessionStackEntry->references; r != NULL; r = r->next) {
-        log_debug("checking %d:%d:%d to %d:%d:%d", r->position.file, r->position.line, r->position.col,
-                  sessionStackEntry->callerPosition.file, sessionStackEntry->callerPosition.line,
-                  sessionStackEntry->callerPosition.col);
-        if (!positionIsLessThanByFilename(r->position, sessionStackEntry->callerPosition))
+void setCurrentToFirstReferenceAfterCallerPosition(SessionStackEntry *sessionEntry) {
+    Reference *reference;
+    for (reference = sessionEntry->references; reference != NULL; reference = reference->next) {
+        log_debug("checking %d:%d:%d to %d:%d:%d", reference->position.file, reference->position.line, reference->position.col,
+                  sessionEntry->callerPosition.file, sessionEntry->callerPosition.line,
+                  sessionEntry->callerPosition.col);
+        if (!positionIsLessThanByFilename(reference->position, sessionEntry->callerPosition))
             break;
     }
     // it should never be NULL, but one never knows - DUH! We have coverage to show that you are wrong
-    if (r == NULL) {
-        sessionStackEntry->current = sessionStackEntry->references;
+    if (reference == NULL) {
+        sessionEntry->current = sessionEntry->references;
     } else {
-        sessionStackEntry->current = r;
+        sessionEntry->current = reference;
     }
 }
 
-void setCurrentReferenceToPreviousOrLast(SessionStackEntry *refs, Reference *previousReference,
-                                         int filterLevel) {
-    if (previousReference != NULL) {
-        refs->current = previousReference;
-    } else {
-        ppcBottomInformation("Moving to the last reference");
-        refs->current = findLastReference(refs, filterLevel);
-    }
-}
+void setCurrentReferenceToFirstVisible(SessionStackEntry *sessionEntry, Reference *reference) {
+    int rlevel = usageFilterLevels[sessionEntry->refsFilterLevel];
 
-void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference *r) {
-    int rlevel = usageFilterLevels[refs->refsFilterLevel];
+    while (reference != NULL && isAtMostAsImportantAs(reference->usage, rlevel))
+        reference = reference->next;
 
-    while (r != NULL && isAtMostAsImportantAs(r->usage, rlevel))
-        r = r->next;
-
-    if (r != NULL) {
-        refs->current = r;
+    if (reference != NULL) {
+        sessionEntry->current = reference;
     } else {
         assert(options.xref2);
         ppcBottomInformation("Moving to the first reference");
-        r = refs->references;
-        while (r != NULL && isAtMostAsImportantAs(r->usage, rlevel))
-            r = r->next;
-        refs->current = r;
+        reference = sessionEntry->references;
+        while (reference != NULL && isAtMostAsImportantAs(reference->usage, rlevel))
+            reference = reference->next;
+        sessionEntry->current = reference;
     }
 }
 

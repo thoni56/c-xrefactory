@@ -1,25 +1,13 @@
 #ifndef _NAVIGATION_H_INCLUDED
 #define _NAVIGATION_H_INCLUDED
 
-#include "position.h"
 #include "session.h"
 #include "reference.h"
 
 
-extern bool positionIsLessThanByFilename(Position p1, Position p2);
-extern void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
-                                               int filterLevel);
-extern void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
-                                                   int filterLevel);
-extern Position getCurrentPosition(SessionStackEntry *sessionEntry);
-extern Reference *findPreviousReference(SessionStackEntry *sessionEntry, int filterLevel);
-extern Reference *findLastReference(SessionStackEntry *sessionEntry, int filterLevel);
-extern void setCurrentToFirstReferenceAfterCallerPosition(SessionStackEntry *sessionStackEntry);
-extern void setCurrentReferenceToPreviousOrLast(SessionStackEntry *refs, Reference *previousReference,
-                                                int filterLevel);
-extern void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference *r);
+extern void setCurrentToFirstReferenceAfterCallerPosition(SessionStackEntry *sessionEntry);
+extern void setCurrentReferenceToFirstVisible(SessionStackEntry *sessionEntry, Reference *reference);
 extern void gotoNextReference(void);
 extern void gotoPreviousReference(void);
-extern void restoreToNearestReference(SessionStackEntry *sessionEntry, Position savedPos, int filterLevel);
 
 #endif
