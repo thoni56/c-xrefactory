@@ -7,7 +7,7 @@
 
 extern void setCurrentReferenceToFirstAfterCallerPosition(SessionStackEntry *sessionEntry);
 extern void setCurrentReferenceToFirstVisible(SessionStackEntry *sessionEntry, Reference *reference);
-extern void gotoNextReference(void);
-extern void gotoPreviousReference(void);
+extern void gotoNextReference(SessionStackEntry *sessionEntry);
+extern void gotoPreviousReference(SessionStackEntry *sessionEntry);
 
 #endif

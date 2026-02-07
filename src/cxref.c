@@ -1989,12 +1989,24 @@ void answerEditorAction(void) {
     case OLO_GET_ENV_VALUE:
         olcxProcessGetRequest();
         break;
-    case OLO_NEXT:
-        gotoNextReference();
+    case OLO_NEXT: {
+        SessionStackEntry *entry = getSessionEntryForOperation(OLO_NEXT);
+        if (entry == NULL) {
+            ppcBottomWarning("Empty stack");
+            break;
+        }
+        gotoNextReference(entry);
         break;
-    case OLO_PREVIOUS:
-        gotoPreviousReference();
+    }
+    case OLO_PREVIOUS: {
+        SessionStackEntry *entry = getSessionEntryForOperation(OLO_PREVIOUS);
+        if (entry == NULL) {
+            ppcBottomWarning("Empty stack");
+            break;
+        }
+        gotoPreviousReference(entry);
         break;
+    }
     case OLO_GOTO_DEF:
         olcxReferenceGotoDef();
         break;

@@ -13,10 +13,10 @@ void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference *r) {
     mock(refs, r);
 }
 
-void gotoNextReference(void) {
-    mock();
+void gotoNextReference(SessionStackEntry *sessionEntry) {
+    mock(sessionEntry);
 }
 
-void gotoPreviousReference(void) {
-    mock();
+void gotoPreviousReference(SessionStackEntry *sessionEntry) {
+    mock(sessionEntry);
 }

@@ -217,9 +217,6 @@ void restoreToNearestReference(SessionStackEntry *sessionEntry, Position savedPo
     sessionEntry->current = exactMatch ? exactMatch : nearestInSameFile ? nearestInSameFile : firstVisible;
 }
 
-extern bool sessionHasReferencesValidForOperation(SessionData *session, SessionStackEntry **entryP,
-                                                  CheckNull checkNull);
-
 static void gotoCurrentReference(SessionStackEntry *sessionEntry) {
     if (sessionEntry->current != NULL) {
         ppcGotoPosition(sessionEntry->current->position);
@@ -228,14 +225,8 @@ static void gotoCurrentReference(SessionStackEntry *sessionEntry) {
     }
 }
 
-void gotoNextReference(void) {
+void gotoNextReference(SessionStackEntry *sessionEntry) {
     ENTER();
-
-    SessionStackEntry *sessionEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES)) {
-        LEAVE();
-        return;
-    }
 
     int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
 
@@ -272,14 +263,8 @@ void gotoNextReference(void) {
     LEAVE();
 }
 
-void gotoPreviousReference(void) {
+void gotoPreviousReference(SessionStackEntry *sessionEntry) {
     ENTER();
-
-    SessionStackEntry *sessionEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES)) {
-        LEAVE();
-        return;
-    }
 
     int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
 
