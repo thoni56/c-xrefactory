@@ -25,3 +25,7 @@ void freeOldCompletionStackEntries(SessionStack *stack) {
 void pushEmptySession(SessionStack *stack) {
     mock(stack);
 }
+
+SessionStackEntry *getSessionEntryForOperation(ServerOperation operation) {
+    return (SessionStackEntry *)mock(operation);
+}

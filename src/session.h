@@ -58,10 +58,12 @@ extern SessionData sessionData;
 
 
 /* Generic stack operations */
-extern void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **referencesP);
+extern void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **sessionEntryP);
 extern void freePoppedSessionStackEntries(SessionStack *stack);
 extern SessionStackEntry *getNextTopStackItem(SessionStack *stack);
 extern void freeOldCompletionStackEntries(SessionStack *stack);
 extern void pushEmptySession(SessionStack *stack);
+
+extern SessionStackEntry *getSessionEntryForOperation(ServerOperation operation);
 
 #endif

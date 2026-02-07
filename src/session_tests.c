@@ -24,3 +24,29 @@ AfterEach(Session) {}
 
 Ensure(Session, can_run_an_empty_test) {
 }
+
+Ensure(Session, getSessionEntryForOperation_returns_completionStack_top_for_OLO_COMPLETION) {
+    SessionStackEntry entry;
+    sessionData.completionStack.top = &entry;
+
+    SessionStackEntry *result = getSessionEntryForOperation(OLO_COMPLETION);
+
+    assert_that(result, is_equal_to(&entry));
+}
+
+Ensure(Session, getSessionEntryForOperation_returns_NULL_when_completionStack_top_is_NULL) {
+    sessionData.completionStack.top = NULL;
+
+    SessionStackEntry *result = getSessionEntryForOperation(OLO_COMPLETION);
+
+    assert_that(result, is_null);
+}
+
+Ensure(Session, getSessionEntryForOperation_returns_browsingStack_top_for_browsing_operation) {
+    SessionStackEntry entry;
+    sessionData.browsingStack.top = &entry;
+
+    SessionStackEntry *result = getSessionEntryForOperation(OLO_PUSH);
+
+    assert_that(result, is_equal_to(&entry));
+}

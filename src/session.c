@@ -109,3 +109,12 @@ SessionStackEntry *getNextTopStackItem(SessionStack *stack) {
     assert(this==stack->top);
     return next;
 }
+
+SessionStackEntry *getSessionEntryForOperation(ServerOperation operation) {
+    if (operation == OLO_COMPLETION
+        || operation == OLO_COMPLETION_SELECT
+        || operation == OLO_COMPLETION_GOTO
+        || operation == OLO_TAG_SEARCH)
+        return sessionData.completionStack.top;
+    return sessionData.browsingStack.top;
+}
