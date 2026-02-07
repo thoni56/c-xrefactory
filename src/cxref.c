@@ -1869,6 +1869,70 @@ static void printSearchResults(void) {
         ppcEnd(PPC_SYMBOL_LIST);
 }
 
+static void handleProject() {
+    if (options.project != NULL) {
+        ppcGenRecord(PPC_SET_INFO, options.project);
+    } else {
+        if (requestFileNumber == NO_FILE_NUMBER) {
+            ppcGenRecord(PPC_ERROR, "No source file to identify project");
+        } else {
+            char *fileName = getFileItemWithFileNumber(requestFileNumber)->name;
+            log_debug("inputFileName = %s", fileName);
+
+            if (lockedProject != NULL) {
+                /* Server is locked - check if this file belongs to the locked project */
+                if (lockedProjectRoot != NULL) {
+                    /* Auto-detected project - check file path against project root */
+                    if (strncmp(fileName, lockedProjectRoot, strlen(lockedProjectRoot)) == 0) {
+                        ppcGenRecord(PPC_SET_INFO, lockedProject);
+                    } else {
+                        ppcGenRecord(PPC_PROJECT_MISMATCH, lockedProject);
+                    }
+                } else {
+                    /* Legacy project - search for project and compare names */
+                    char projectOptionsFileName[MAX_FILE_NAME_SIZE];
+                    char projectOptionsSectionName[MAX_FILE_NAME_SIZE];
+                    searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName,
+                                                                 projectOptionsSectionName);
+                    if (projectOptionsSectionName[0] != '\0'
+                        && strcmp(projectOptionsSectionName, lockedProject) == 0) {
+                        ppcGenRecord(PPC_SET_INFO, lockedProject);
+                    } else {
+                        ppcGenRecord(PPC_PROJECT_MISMATCH, lockedProject);
+                    }
+                }
+            } else {
+                /* Not locked yet - search for project and lock to it */
+                char projectOptionsFileName[MAX_FILE_NAME_SIZE];
+                char projectOptionsSectionName[MAX_FILE_NAME_SIZE];
+                searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName,
+                                                             projectOptionsSectionName);
+                /* Populate options.detectedProjectRoot from autoDetectedProjectRoot (if auto-detected)
+                 */
+                applyConventionBasedDatabasePath();
+                if (projectOptionsFileName[0] == 0 || projectOptionsSectionName[0] == 0) {
+                    if (!options.noErrors) {
+                        ppcGenRecord(PPC_NO_PROJECT, fileName);
+                    }
+                } else {
+                    /* Lock to this project */
+                    lockedProject = strdup(projectOptionsSectionName);
+                    if (options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
+                        /* Auto-detected project - also lock to the root path */
+                        lockedProjectRoot = strdup(options.detectedProjectRoot);
+                        log_debug("Server locked to project: %s (root: %s)", lockedProject,
+                                  lockedProjectRoot);
+                    } else {
+                        /* Legacy project - lock by name only */
+                        log_debug("Server locked to project: %s (legacy, no root)", lockedProject);
+                    }
+                    ppcGenRecord(PPC_SET_INFO, projectOptionsSectionName);
+                }
+            }
+        }
+    }
+}
+
 void answerEditorAction(void) {
     ENTER();
     assert(outputFile);
@@ -1920,63 +1984,7 @@ void answerEditorAction(void) {
         break;
     }
     case OLO_ACTIVE_PROJECT:
-        if (options.project != NULL) {
-            ppcGenRecord(PPC_SET_INFO, options.project);
-        } else {
-            if (requestFileNumber == NO_FILE_NUMBER) {
-                ppcGenRecord(PPC_ERROR, "No source file to identify project");
-            } else {
-                char *fileName = getFileItemWithFileNumber(requestFileNumber)->name;
-                log_debug("inputFileName = %s", fileName);
-
-                if (lockedProject != NULL) {
-                    /* Server is locked - check if this file belongs to the locked project */
-                    if (lockedProjectRoot != NULL) {
-                        /* Auto-detected project - check file path against project root */
-                        if (strncmp(fileName, lockedProjectRoot, strlen(lockedProjectRoot)) == 0) {
-                            ppcGenRecord(PPC_SET_INFO, lockedProject);
-                        } else {
-                            ppcGenRecord(PPC_PROJECT_MISMATCH, lockedProject);
-                        }
-                    } else {
-                        /* Legacy project - search for project and compare names */
-                        char projectOptionsFileName[MAX_FILE_NAME_SIZE];
-                        char projectOptionsSectionName[MAX_FILE_NAME_SIZE];
-                        searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName, projectOptionsSectionName);
-                        if (projectOptionsSectionName[0] != '\0' &&
-                            strcmp(projectOptionsSectionName, lockedProject) == 0) {
-                            ppcGenRecord(PPC_SET_INFO, lockedProject);
-                        } else {
-                            ppcGenRecord(PPC_PROJECT_MISMATCH, lockedProject);
-                        }
-                    }
-                } else {
-                    /* Not locked yet - search for project and lock to it */
-                    char projectOptionsFileName[MAX_FILE_NAME_SIZE];
-                    char projectOptionsSectionName[MAX_FILE_NAME_SIZE];
-                    searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName, projectOptionsSectionName);
-                    /* Populate options.detectedProjectRoot from autoDetectedProjectRoot (if auto-detected) */
-                    applyConventionBasedDatabasePath();
-                    if (projectOptionsFileName[0]==0 || projectOptionsSectionName[0]==0) {
-                        if (!options.noErrors) {
-                            ppcGenRecord(PPC_NO_PROJECT, fileName);
-                        }
-                    } else {
-                        /* Lock to this project */
-                        lockedProject = strdup(projectOptionsSectionName);
-                        if (options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
-                            /* Auto-detected project - also lock to the root path */
-                            lockedProjectRoot = strdup(options.detectedProjectRoot);
-                            log_debug("Server locked to project: %s (root: %s)", lockedProject, lockedProjectRoot);
-                        } else {
-                            /* Legacy project - lock by name only */
-                            log_debug("Server locked to project: %s (legacy, no root)", lockedProject);
-                        }
-                        ppcGenRecord(PPC_SET_INFO, projectOptionsSectionName);
-                    }
-                }
-            }
-        }
+        handleProject();
         break;
     case OLO_GET_ENV_VALUE:
         olcxProcessGetRequest();
