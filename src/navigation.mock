@@ -5,7 +5,7 @@
 #include <cgreen/mocks.h>
 
 
-void setCurrentToFirstReferenceAfterCallerPosition(SessionStackEntry *sessionStackEntry) {
+void setCurrentReferenceToFirstAfterCallerPosition(SessionStackEntry *sessionStackEntry) {
     mock(sessionStackEntry);
 }
 

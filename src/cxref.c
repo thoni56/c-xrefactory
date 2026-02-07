@@ -1079,7 +1079,7 @@ void processSelectedReferences(SessionStackEntry *sessionStackEntry,
     for (BrowserMenu *m = sessionStackEntry->menu; m != NULL; m = m->next) {
         referencesMapFun(sessionStackEntry, m);
     }
-    setCurrentToFirstReferenceAfterCallerPosition(sessionStackEntry);
+    setCurrentReferenceToFirstAfterCallerPosition(sessionStackEntry);
     LIST_MERGE_SORT(Reference, sessionStackEntry->references, referenceIsLessThan);
 }
 

@@ -108,7 +108,7 @@ static void setCurrentReferenceToPreviousOrLast(SessionStackEntry *sessionEntry,
     }
 }
 
-void setCurrentToFirstReferenceAfterCallerPosition(SessionStackEntry *sessionEntry) {
+void setCurrentReferenceToFirstAfterCallerPosition(SessionStackEntry *sessionEntry) {
     Reference *reference;
     for (reference = sessionEntry->references; reference != NULL; reference = reference->next) {
         log_debug("checking %d:%d:%d to %d:%d:%d", reference->position.file, reference->position.line, reference->position.col,
