@@ -41,5 +41,6 @@ extern BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, Reference
                                                   SymbolRelation relation, int olusage, Position defpos,
                                                   int defusage);
 extern void splitBrowserMenuAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *, void *), void *p1);
+extern void extendBrowserMenuWithReferences(BrowserMenu *menuItem, Reference *references);
 
 #endif

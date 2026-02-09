@@ -9,5 +9,6 @@ extern void setCurrentReferenceToFirstAfterCallerPosition(SessionStackEntry *ses
 extern void setCurrentReferenceToFirstVisible(SessionStackEntry *sessionEntry, Reference *reference);
 extern void gotoNextReference(SessionStackEntry *sessionEntry);
 extern void gotoPreviousReference(SessionStackEntry *sessionEntry);
+extern void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber);
 
 #endif

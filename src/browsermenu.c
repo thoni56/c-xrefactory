@@ -78,6 +78,12 @@ void addReferenceToBrowserMenu(BrowserMenu *menu, Reference *reference) {
     }
 }
 
+void extendBrowserMenuWithReferences(BrowserMenu *menuItem, Reference *references) {
+    for (Reference *r = references; r != NULL; r = r->next) {
+        addReferenceToBrowserMenu(menuItem, r);
+    }
+}
+
 static void printGlobalReferenceLists(BrowserMenu *menu, FILE *file);
 
 void printSelectionMenu(BrowserMenu *menu) {

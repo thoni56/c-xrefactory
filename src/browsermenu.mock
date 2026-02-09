@@ -55,3 +55,7 @@ BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableIte
 void splitBrowserMenuAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *, void *), void *p1) {
   mock(menu, fun, p1);
 }
+
+void extendBrowserMenuWithReferences(BrowserMenu *menuItem, Reference *references) {
+    mock(menuItem, references);
+}

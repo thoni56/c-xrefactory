@@ -115,11 +115,6 @@ void saveReferences(void) {
     mock();
 }
 
-// Temporary externs, not API
-void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber) {
-    mock(sessionEntry, fileNumber);
-}
-
 bool sessionHasReferencesValidForOperation(SessionData *session, SessionStackEntry **entryP,
                                            int checkNull) {
     return (bool)mock(session, entryP, checkNull);

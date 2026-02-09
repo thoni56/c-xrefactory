@@ -32,13 +32,11 @@
 #include "server.h"
 #include "session.h"
 #include "session.h"
-#include "startup.h"
 #include "storage.h"
 #include "symbol.h"
 #include "type.h"
 #include "usage.h"
 #include "visibility.h"
-#include "yylex.h"
 #include "navigation.h"
 
 
@@ -449,11 +447,6 @@ static void addReferencesFromFileToList(Reference *references, int fileNumber, R
     references = revlist;
 }
 
-static void extendBrowserMenuWithReferences(BrowserMenu *menuItem, Reference *references) {
-    for (Reference *r = references; r != NULL; r = r->next) {
-        addReferenceToBrowserMenu(menuItem, r);
-    }
-}
 
 bool sessionHasReferencesValidForOperation(SessionData *session, SessionStackEntry **entryP,
                                                   CheckNull checkNull) {
@@ -902,63 +895,6 @@ static void gotoMatch(int referenceIndex) {
     }
 }
 
-void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber) {
-    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-
-    // Update in-memory table: remove old, parse fresh
-    removeReferenceableItemsForFile(fileNumber);
-
-    // Reset macro state before re-parsing to clear header guards from previous parse.
-    // Without this, #ifndef guards would prevent parsing the file body.
-    restoreMemoryCheckPoint();
-    initAllInputs();
-
-    parseToCreateReferences(fileItem->name);
-
-    // Remove refs for the stale file from menu - the menu already has cross-file refs
-    // from the original PUSH operation. We only need to remove the stale file's refs
-    // (which have old positions) and replace them with fresh refs from in-memory table.
-    // NOTE: We do NOT clear all refs and scan from disk because the scan creates new
-    // menu items (with selected=false) due to differing includeFileNumber, which
-    // breaks the session's reference list (only selected items contribute refs).
-    for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
-        Reference **refP = &menu->referenceable.references;
-        while (*refP != NULL) {
-            if ((*refP)->position.file == fileNumber) {
-                Reference *toFree = *refP;
-                *refP = (*refP)->next;
-                free(toFree);
-            } else {
-                refP = &(*refP)->next;
-            }
-        }
-    }
-
-    // Merge fresh refs from in-memory table. This adds refs for the stale file
-    // with updated positions (from preloaded content).
-    // NOTE: We match by linkName only, not by all ReferenceableItem fields, because
-    // the menu's item may have different includeFileNumber/type/etc. than what the
-    // parser creates. The hash table lookup requires exact match of all fields, so
-    // we iterate over the table and match by linkName.
-    for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
-        for (int i = getNextExistingReferenceableItem(0); i >= 0;
-             i = getNextExistingReferenceableItem(i + 1)) {
-            ReferenceableItem *item = getReferenceableItem(i);
-            if (strcmp(item->linkName, menu->referenceable.linkName) == 0) {
-                extendBrowserMenuWithReferences(menu, item->references);
-            }
-        }
-    }
-
-    // Mark file as freshly parsed so we don't re-refresh in this request
-    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
-    if (buffer != NULL) {
-        fileItem->lastParsedMtime = buffer->modificationTime;
-    }
-
-    // Rebuild session's reference list from updated menu
-    recomputeSelectedReferenceable(sessionEntry);
-}
 
 static void olcxReferenceGotoDef(void) {
     SessionStackEntry *sessionEntry;
