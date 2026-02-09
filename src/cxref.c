@@ -863,9 +863,16 @@ static void findAndGotoDefinition(ReferenceableItem *referenceable) {
     SessionStackEntry *top = sessionData.browsingStack.top;
     BrowserMenu menu = makeBrowserMenu(*referenceable, true, true, 0, UsageUsed, UsageNone,
                                        NO_POSITION);
+    top->hkSelectedSym = &menu;  // Needed for createSelectionMenu to find matching symbols
     top->menu = &menu;
-    ensureReferencesAreLoadedFor(referenceable->linkName);
+
+    // Load references from disk and associate with menu
+    scanReferencesToCreateMenu(referenceable->linkName);
+    mapOverReferenceableItemTable(putOnLineLoadedReferences);
+    recomputeSelectedReferenceable(top);
+
     orderRefsAndGotoDefinition(top);
+    top->hkSelectedSym = NULL;
     top->menu = NULL;
 
     // recover stack

@@ -1,0 +1,22 @@
+CXREF -xrefrc CURDIR/.c-xrefrc src/main.c -xrefactory-II -server -log=log.log -commandlog=commands.log -o server-buffer
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/src/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-olcxcomplet CURDIR/src/main.c -olcursor=243 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<all-completions nofocus=0 len=<n>>my_global_first    :void my_global_first(int arg)
+my_global_second   :void my_global_second(void )</all-completions>
+-olcxcgoto1 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=4 col=5 len=<n>>CURDIR/src/main.c</position-lc>
+</goto>
+-exit
+end-of-options
+

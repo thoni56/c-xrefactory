@@ -1,0 +1,8 @@
+CXREF -xrefrc CURDIR/.c-xrefrc src/main.c -xrefactory-II -server -log=log.log -commandlog=commands.log
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/src/main.c
+<sync>
+-olcxcomplet CURDIR/src/main.c -olcursor=243 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+-olcxcgoto1 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+<exit>
