@@ -31,7 +31,9 @@ See the https://github.com/thoni56/c-xrefactory/blob/main/README.md[README] for 
 
 === Projects
 
-C-xrefactory auto-detects projects based on the file you're editing. The first time you use any c-xref function, you'll be prompted to create a project. The active project is shown in the modeline after each action.
+C-xrefactory auto-detects projects based on the file you're editing when you do you initial C-xrefactory operation. The path of the file is investigated upwards until a `.c-xrefrc` (C-xrefactory project config) file is found.
+
+If no config file could be found, you'll be prompted to create a project. The active project is shown in the modeline after each action.
 
 == Browsing
 
@@ -50,14 +52,14 @@ Place cursor on a symbol, push it, then step through references. When done, pop 
 
 === The Browser Stack
 
-You can browse multiple symbols simultaneously. Each push adds to a stack:
+You can browse multiple symbols simultaneously. Each push adds to a stack level:
 
 1. While browsing `variable`, you see it passed to `function`
-2. Push `function` to see its definition
-3. Next/Previous now navigate `function`'s references
-4. Pop to return to browsing `variable`
+2. Place cursor on `function` and Push to see its definition
+3. Use Next/Previous to navigate all occurrences of `function`
+4. Pop to return and continue browsing `variable`
 
-Use *Forward* to re-push a symbol you popped by mistake.
+You can Re-Push a symbol you popped.
 
 === Push by Name
 
