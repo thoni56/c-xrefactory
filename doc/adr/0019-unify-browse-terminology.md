@@ -48,6 +48,19 @@ Adopt "Browse" as the umbrella term for reference navigation. Unify user command
 - `BROWSE_*` = navigation within browsing mode
 - `*_BROWSE` = entry point that starts browsing
 
+=======
+## Architectural Insight
+
+Browsing, Completion, and Search share the same navigation sub-operations but operate on different stacks:
+
+| Domain | Stack | Entry Point | Navigation |
+|--------|-------|-------------|------------|
+| Browsing | browsingStack | PUSH | NEXT, PREVIOUS, POP, FILTER |
+| Completion | completionStack | COMPLETION | FORWARD, BACK, GOTO |
+| Search | searchingStack | TAG_SEARCH | FORWARD, BACK, GOTO |
+
+This suggests a common "exploration mode" abstraction with domain-specific entry points but shared navigation semantics. The terminology unification should reflect this pattern - each domain has its entry operation, then uses common navigation verbs.
+
 ## Consequences
 
 **Benefits:**
