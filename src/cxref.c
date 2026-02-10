@@ -1840,14 +1840,46 @@ void answerEditorAction(void) {
 
     log_debug("Server operation = %s(%d)", operationNamesTable[options.serverOperation], options.serverOperation);
     switch (options.serverOperation) {
+
+        /* Unknown: */
+    case OLO_GOTO:
+        gotoReferenceWithIndex(options.olcxGotoVal);
+        break;
+
+    case OLO_REF_FILTER_SET:
+        olcxReferenceFilterSet(options.filterValue);
+        break;
+
+        /* MISC */
+    case OLO_NOOP:
+        break;
+
+    case OLO_ACTIVE_PROJECT:
+        handleProject();
+        break;
+
+    case OLO_GET_ENV_VALUE:
+        olcxProcessGetRequest();
+        break;
+
+        /* COMPLETION */
     case OLO_COMPLETION:
         printCompletions(&collectedCompletions);
         break;
-    case OLO_EXTRACT:
-        if (! parsedInfo.extractProcessedFlag) {
-            fprintf(outputFile,"*** No function/method enclosing selected block found **");
-        }
+    case OLO_COMPLETION_SELECT:
+        selectCompletion();
         break;
+    case OLO_COMPLETION_BACK:
+        completionBackward();
+        break;
+    case OLO_COMPLETION_FORWARD:
+        completionForward();
+        break;
+    case OLO_COMPLETION_GOTO:
+        gotoMatch(options.olcxGotoVal);
+        break;
+
+        /* TAG SEARCH */
     case OLO_TAG_SEARCH: {
         Position givenPosition = getCallerPositionFromCommandLineOption();
         if (!options.xref2)
@@ -1875,11 +1907,31 @@ void answerEditorAction(void) {
         }
         break;
     }
-    case OLO_ACTIVE_PROJECT:
-        handleProject();
+    case OLO_TAGGOTO:
+        gotoSearchItem(options.olcxGotoVal);
         break;
-    case OLO_GET_ENV_VALUE:
-        olcxProcessGetRequest();
+    case OLO_TAGSELECT:
+        selectSearchItem(options.olcxGotoVal);
+        break;
+
+        /* BROWSING */
+    case OLO_PUSH:
+    case OLO_PUSH_ONLY:
+    case OLO_PUSH_AND_CALL_MACRO:
+        mainAnswerReferencePushingAction(options.serverOperation);
+        break;
+    case OLO_PUSH_NAME:
+        pushSymbolByName(options.pushName);
+        mainAnswerReferencePushingAction(options.serverOperation);
+        break;
+    case OLO_REPUSH:
+        olcxReferenceRePush();
+        break;
+    case OLO_POP:
+        olcxReferencePop();
+        break;
+    case OLO_POP_ONLY:
+        popFromSession();
         break;
     case OLO_NEXT: {
         SessionStackEntry *entry = getSessionEntryForOperation(OLO_NEXT);
@@ -1899,39 +1951,8 @@ void answerEditorAction(void) {
         gotoPreviousReference(entry);
         break;
     }
-    case OLO_COMPLETION_SELECT:
-        selectCompletion();
-        break;
-    case OLO_COMPLETION_BACK:
-        completionBackward();
-        break;
-    case OLO_COMPLETION_FORWARD:
-        completionForward();
-        break;
-    case OLO_GOTO:
-        gotoReferenceWithIndex(options.olcxGotoVal);
-        break;
-    case OLO_COMPLETION_GOTO:
-        gotoMatch(options.olcxGotoVal);
-        break;
-    case OLO_TAGGOTO:
-        gotoSearchItem(options.olcxGotoVal);
-        break;
-    case OLO_TAGSELECT:
-        selectSearchItem(options.olcxGotoVal);
-        break;
-    case OLO_REF_FILTER_SET:
-        olcxReferenceFilterSet(options.filterValue);
-        break;
-    case OLO_REPUSH:
-        olcxReferenceRePush();
-        break;
-    case OLO_POP:
-        olcxReferencePop();
-        break;
-    case OLO_POP_ONLY:
-        popFromSession();
-        break;
+
+        /* MENU */
     case OLO_MENU_SELECT_THIS_AND_GOTO_DEFINITION:
         toggleMenuSelect();
         break;
@@ -1947,12 +1968,26 @@ void answerEditorAction(void) {
     case OLO_MENU_FILTER_SET:
         olcxMenuSelectPlusolcxMenuSelectFilterSet(options.filterValue);
         break;
+
+        /* REFACTORINGS */
+    case OLO_GET_AVAILABLE_REFACTORINGS:
+        printAvailableRefactorings();
+        deleteEntryFromSessionStack(sessionData.browsingStack.top);
+        break;
+
+    case OLO_EXTRACT:
+        if (!parsedInfo.extractProcessedFlag) {
+            fprintf(outputFile,"*** No function/method enclosing selected block found **");
+        }
+        break;
+
     case OLO_SET_MOVE_TARGET:
         assert(options.xref2);
         if (!parsedInfo.moveTargetAccepted) {
             ppcGenRecord(PPC_ERROR, "Invalid target place");
         }
         break;
+
     case OLO_GET_METHOD_COORD:
         if (parsedInfo.methodCoordEndLine!=0) {
             fprintf(outputFile,"*%d", parsedInfo.methodCoordEndLine);
@@ -1973,20 +2008,6 @@ void answerEditorAction(void) {
             errorMessage(ERR_ST, tmpBuff);
         }
         break;
-    case OLO_GET_AVAILABLE_REFACTORINGS:
-        printAvailableRefactorings();
-        deleteEntryFromSessionStack(sessionData.browsingStack.top);
-        break;
-    case OLO_PUSH_NAME:
-        pushSymbolByName(options.pushName);
-        mainAnswerReferencePushingAction(options.serverOperation);
-        break;
-    case OLO_GLOBAL_UNUSED:
-        answerPushGlobalUnusedSymbolsAction();
-        break;
-    case OLO_LOCAL_UNUSED:
-        answerPushLocalUnusedSymbolsAction();
-        break;
     case OLO_ARGUMENT_MANIPULATION: {
         SessionStackEntry *stack = sessionData.browsingStack.top;
         assert(stack!=NULL);
@@ -1999,13 +2020,15 @@ void answerEditorAction(void) {
         }
         break;
     }
-    case OLO_PUSH:
-    case OLO_PUSH_ONLY:
-    case OLO_PUSH_AND_CALL_MACRO:
-        mainAnswerReferencePushingAction(options.serverOperation);
+
+        /* UNUSED */
+    case OLO_GLOBAL_UNUSED:
+        answerPushGlobalUnusedSymbolsAction();
         break;
-    case OLO_NOOP:
+    case OLO_LOCAL_UNUSED:
+        answerPushLocalUnusedSymbolsAction();
         break;
+
     default:
         log_fatal("unexpected default case for server operation %s", operationNamesTable[options.serverOperation]);
     } // switch
