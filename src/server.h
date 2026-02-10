@@ -20,9 +20,7 @@
     ENUM(OLO_COMPLETION_SELECT)                 \
     ENUM(OLO_EXTRACT)                           \
     ENUM(OLO_GET_AVAILABLE_REFACTORINGS)        \
-    ENUM(OLO_GET_CURRENT_REFNUM)                \
     ENUM(OLO_GET_ENV_VALUE)                     \
-    ENUM(OLO_GET_LAST_IMPORT_LINE)              \
     ENUM(OLO_GET_METHOD_COORD)                  \
     ENUM(OLO_GET_PARAM_COORDINATES)             \
     ENUM(OLO_GLOBAL_UNUSED)                     \

@@ -27,7 +27,6 @@ PROTOCOL_ITEM(String, PPC_SYMBOL,                       "symbol")
 
 PROTOCOL_ITEM(String, PPC_REFERENCE_LIST,               "reference-list")
 PROTOCOL_ITEM(String, PPC_SRC_LINE,                     "src-line")
-PROTOCOL_ITEM(String, PPC_UPDATE_CURRENT_REFERENCE,     "update-current-refn")
 
 PROTOCOL_ITEM(String, PPC_NO_PROJECT,                   "no-project-found")
 PROTOCOL_ITEM(String, PPC_PROJECT_MISMATCH,             "project-mismatch")

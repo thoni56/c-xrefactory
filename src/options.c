@@ -1327,10 +1327,6 @@ static bool processOOption(int *argi, ArgumentsVector args) {
         options.serverOperation = OLO_GOTO_CALLER;
     else if (strcmp(args.argv[i], "-olcxgotocurrent")==0)
         options.serverOperation = OLO_GOTO_CURRENT;
-    else if (strcmp(args.argv[i], "-olcxgetcurrentrefn")==0)
-        options.serverOperation=OLO_GET_CURRENT_REFNUM;
-    else if (strcmp(args.argv[i], "-olcxgetlastimportline")==0)
-        options.serverOperation=OLO_GET_LAST_IMPORT_LINE;
     else if (strncmp(args.argv[i], "-olcxgotoparname",16)==0) {
         options.serverOperation = OLO_GOTO_PARAM_NAME;
         options.olcxGotoVal = 0;

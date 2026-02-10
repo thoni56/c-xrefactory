@@ -918,16 +918,6 @@ static void olcxReferenceGotoCurrent(void) {
     gotoCurrentReference(sessionEntry);
 }
 
-static void olcxReferenceGetCurrentRefn(void) {
-    SessionStackEntry *sessionEntry;
-
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry,CHECK_NULL_YES))
-        return;
-    int n = getCurrentRefPosition(sessionEntry);
-    assert(options.xref2);
-    ppcValueRecord(PPC_UPDATE_CURRENT_REFERENCE, n, "");
-}
-
 static void olcxReferenceGotoCaller(void) {
     SessionStackEntry *sessionEntry;
     if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry,CHECK_NULL_YES))
@@ -1952,9 +1942,6 @@ void answerEditorAction(void) {
     case OLO_GOTO_CURRENT:
         olcxReferenceGotoCurrent();
         break;
-    case OLO_GET_CURRENT_REFNUM:
-        olcxReferenceGetCurrentRefn();
-        break;
     case OLO_COMPLETION_SELECT:
         selectCompletion();
         break;
@@ -2060,13 +2047,6 @@ void answerEditorAction(void) {
     case OLO_PUSH_AND_CALL_MACRO:
         mainAnswerReferencePushingAction(options.serverOperation);
         break;
-    case OLO_GET_LAST_IMPORT_LINE: {
-        assert(options.xref2);
-        char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "%d", parsedInfo.lastImportLine);
-        ppcGenRecord(PPC_SET_INFO, tmpBuff);
-        break;
-    }
     case OLO_NOOP:
         break;
     default:

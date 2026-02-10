@@ -36,7 +36,6 @@ static bool needsReferenceDatabase(ServerOperation operation) {
         ||  operation==OLO_GET_AVAILABLE_REFACTORINGS
         ||  operation==OLO_PUSH_NAME
         ||  operation==OLO_PUSH_FOR_LOCAL_MOTION
-        ||  operation==OLO_GET_LAST_IMPORT_LINE
         ||  operation==OLO_GLOBAL_UNUSED
         ||  operation==OLO_LOCAL_UNUSED
         ||  operation==OLO_LIST
