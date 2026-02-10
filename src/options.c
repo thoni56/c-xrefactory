@@ -1321,12 +1321,6 @@ static bool processOOption(int *argi, ArgumentsVector args) {
         options.serverOperation = OLO_ARGUMENT_MANIPULATION;
     else if (strcmp(args.argv[i], "-olcxsafetycheck")==0)
         options.serverOperation = OLO_SAFETY_CHECK;
-    else if (strcmp(args.argv[i], "-olcxgotodef")==0)
-        options.serverOperation = OLO_GOTO_DEF;
-    else if (strcmp(args.argv[i], "-olcxgotocaller")==0)
-        options.serverOperation = OLO_GOTO_CALLER;
-    else if (strcmp(args.argv[i], "-olcxgotocurrent")==0)
-        options.serverOperation = OLO_GOTO_CURRENT;
     else if (strncmp(args.argv[i], "-olcxgotoparname",16)==0) {
         options.serverOperation = OLO_GOTO_PARAM_NAME;
         options.olcxGotoVal = 0;

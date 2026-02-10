@@ -25,9 +25,6 @@
     ENUM(OLO_GET_PARAM_COORDINATES)             \
     ENUM(OLO_GLOBAL_UNUSED)                     \
     ENUM(OLO_GOTO)                              \
-    ENUM(OLO_GOTO_CALLER)                       \
-    ENUM(OLO_GOTO_CURRENT)                      \
-    ENUM(OLO_GOTO_DEF)                          \
     ENUM(OLO_GOTO_PARAM_NAME)                   \
     ENUM(OLO_LIST)                              \
     ENUM(OLO_LOCAL_UNUSED)                      \

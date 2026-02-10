@@ -896,40 +896,6 @@ static void gotoMatch(int referenceIndex) {
 }
 
 
-static void olcxReferenceGotoDef(void) {
-    SessionStackEntry *sessionEntry;
-    Reference *definitionReference;
-
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry,CHECK_NULL_YES))
-        return;
-    definitionReference = getDefinitionReference(sessionEntry->references);
-    if (definitionReference != NULL)
-        sessionEntry->current = definitionReference;
-    else
-        sessionEntry->current = sessionEntry->references;
-    //&fprintf(dumpOut,"goto ref %d %d\n", sessionEntry->current->position.line, sessionEntry->current->position.col);
-    gotoCurrentReference(sessionEntry);
-}
-
-static void olcxReferenceGotoCurrent(void) {
-    SessionStackEntry    *sessionEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry,CHECK_NULL_YES))
-        return;
-    gotoCurrentReference(sessionEntry);
-}
-
-static void olcxReferenceGotoCaller(void) {
-    SessionStackEntry *sessionEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry,CHECK_NULL_YES))
-        return;
-    if (sessionEntry->callerPosition.file != NO_FILE_NUMBER) {
-        ppcGotoPosition(sessionEntry->callerPosition);
-
-    } else {
-        ppcIndicateNoReference();
-    }
-}
-
 #define MAX_SYMBOL_MESSAGE_LEN 50
 
 static void olcxPrintSymbolName(SessionStackEntry *sessionEntry) {
@@ -1933,15 +1899,6 @@ void answerEditorAction(void) {
         gotoPreviousReference(entry);
         break;
     }
-    case OLO_GOTO_DEF:
-        olcxReferenceGotoDef();
-        break;
-    case OLO_GOTO_CALLER:
-        olcxReferenceGotoCaller();
-        break;
-    case OLO_GOTO_CURRENT:
-        olcxReferenceGotoCurrent();
-        break;
     case OLO_COMPLETION_SELECT:
         selectCompletion();
         break;
