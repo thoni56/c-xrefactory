@@ -14,11 +14,8 @@ _C_ & _Yacc_.
 - navigate to definition and all usages of any type of referenceable,
   including variables, types, fields, enums, and also `#include`s and
   Yacc non-terminals and semantic attributes
-
 - search and browse for all symbols
-
 - semantics-aware completion
-
 - rename any type of symbol - variable, field, type, macro, parameter, or Yacc grammar
   non-terminal
 - add, delete or re-order function and macro parameter
@@ -30,7 +27,7 @@ _C_ & _Yacc_.
 
 - _more to come!_
 
-## LSP progress
+### LSP progress
 
 `c-xrefactory` have an experimental LSP implementation. One feature has been rudimentary
 implemented:
@@ -61,9 +58,10 @@ emacs -l c-xrefactory/load.el
 
 ## Example Use
 
-Place cursor on an identifier and `go to definition` (<kbd>F6</kbd>),
-navigate between occurrences (<kbd>F3</kbd>, <kbd>F4</kbd>), refactor
-(<kbd>F11</kbd>) with `rename`, mark some code and `extract function`.
+Place cursor on an identifier and `Go To Definition` (<kbd>F6</kbd>),
+navigate using `Next Reference` or `Previous Reference` to move
+between occurrences (<kbd>F3</kbd>, <kbd>F4</kbd>), refactor
+(<kbd>F11</kbd>) with `Rename`, mark some code and `Extract Function`.
 
 Your C programming and code will never be the same.
 
