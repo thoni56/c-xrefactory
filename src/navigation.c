@@ -228,9 +228,10 @@ void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNu
     for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
         for (int i = getNextExistingReferenceableItem(0); i >= 0;
              i = getNextExistingReferenceableItem(i + 1)) {
-            ReferenceableItem *item = getReferenceableItem(i);
-            if (strcmp(item->linkName, menu->referenceable.linkName) == 0) {
-                extendBrowserMenuWithReferences(menu, item->references);
+            for (ReferenceableItem *item = getReferenceableItem(i); item != NULL; item = item->next) {
+                if (strcmp(item->linkName, menu->referenceable.linkName) == 0) {
+                    extendBrowserMenuWithReferences(menu, item->references);
+                }
             }
         }
     }
@@ -243,6 +244,10 @@ void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNu
 
     // Rebuild session's reference list from updated menu
     recomputeSelectedReferenceable(sessionEntry);
+    log_debug("After recompute: sessionEntry->references=%p", (void*)sessionEntry->references);
+    for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
+        log_debug("  ref: %d:%d:%d", r->position.file, r->position.line, r->position.col);
+    }
 }
 
 /* Restore current reference to the reference matching savedPos (for "stay put" after refresh).
@@ -254,6 +259,8 @@ void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNu
  * If exact match not found (e.g., lines shifted due to edits), find nearest in same file.
  */
 void restoreToNearestReference(SessionStackEntry *sessionEntry, Position savedPos, int filterLevel) {
+    log_debug("restoreToNearestReference: savedPos=%d:%d:%d, references=%p",
+              savedPos.file, savedPos.line, savedPos.col, (void*)sessionEntry->references);
     Reference *exactMatch = NULL;
     Reference *nearestInSameFile = NULL;
     int nearestDistance = INT_MAX;

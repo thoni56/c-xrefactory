@@ -1,0 +1,1 @@
+[test_navigation_stale_preserves_other_refs]

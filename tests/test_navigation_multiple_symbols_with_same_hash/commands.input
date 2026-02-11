@@ -1,0 +1,14 @@
+CXREF -xrefactory-II -server
+-olcxgetprojectname CURDIR/server.h
+<sync>
+-olcxpush -preload CURDIR/server.h CURDIR/server.preload1 -olcursor=486 CURDIR/server.h -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/server.h CURDIR/server.preload1 -olcursor=486 CURDIR/server.h -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/cxref.c CURDIR/cxref.preload -olcursor=66670 CURDIR/cxref.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/options.c CURDIR/options.preload -olcursor=51631 CURDIR/options.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/server.h CURDIR/server.preload2 -olcursor=486 CURDIR/server.h -p CURDIR
+<sync>
+<exit>

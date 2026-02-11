@@ -1,0 +1,45 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/server.h
+end-of-options
+
+<sync>
+<set-info len=<n>>test_navigation_stale_preserves_other_refs</set-info>
+-olcxpush -preload CURDIR/server.h CURDIR/server.preload1 -olcursor=486 CURDIR/server.h -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=17 col=9 len=<n>>CURDIR/server.h</position-lc>
+</goto>
+-olcxnext -preload CURDIR/server.h CURDIR/server.preload1 -olcursor=486 CURDIR/server.h -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1875 col=9 len=<n>>CURDIR/cxref.c</position-lc>
+</goto>
+-olcxnext -preload CURDIR/cxref.c CURDIR/cxref.preload -olcursor=66670 CURDIR/cxref.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1405 col=32 len=<n>>CURDIR/options.c</position-lc>
+</goto>
+-olcxnext -preload CURDIR/options.c CURDIR/options.preload -olcursor=51631 CURDIR/options.c -p CURDIR
+end-of-options
+
+<sync>
+<bottom-information len=<n>>Moving to the first reference</bottom-information>
+<goto>
+ <position-lc line=17 col=9 len=<n>>CURDIR/server.h</position-lc>
+</goto>
+-olcxnext -preload CURDIR/server.h CURDIR/server.preload2 -olcursor=486 CURDIR/server.h -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1875 col=9 len=<n>>CURDIR/cxref.c</position-lc>
+</goto>
+-exit
+end-of-options
+
