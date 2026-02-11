@@ -39,7 +39,7 @@ implemented:
 ### From repo:
 
 ```
-git clone https://github.com/thoni56/c-xrefactory
+git clone -b stable https://github.com/thoni56/c-xrefactory
 emacs -l c-xrefactory/load.el
 ```
 
