@@ -1369,7 +1369,7 @@ void refactory(void) {
     // MAGIC, set the server operation to anything that just refreshes
     // or generates xrefs since we will be calling the "main task"
     // below
-    refactoringOptions.serverOperation = OLO_LIST;
+    refactoringOptions.serverOperation = OP_INTERNAL_LIST;
 
     openOutputFile(refactoringOptions.outputFileName);
     loadAllOpenedEditorBuffers();

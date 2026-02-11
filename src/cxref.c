@@ -224,15 +224,15 @@ static void printAvailableRefactorings(void) {
 
 
 static bool operationRequiresOnlyParsingNoPushing(int operation) {
-    return operation==OLO_GLOBAL_UNUSED || operation==OLO_LOCAL_UNUSED;
+    return operation==OP_UNUSED_GLOBAL || operation==OP_UNUSED_LOCAL;
 }
 
 static bool operationShouldUpdateCallerPosition(int operation) {
-    return operation == OLO_PUSH
-        || operation == OLO_PUSH_AND_CALL_MACRO
-        || operation == OLO_PUSH_FOR_LOCAL_MOTION
-        || operation == OLO_PUSH_NAME
-        || operation == OLO_PUSH_ONLY;
+    return operation == OP_BROWSE_PUSH
+        || operation == OP_BROWSE_PUSH_AND_CALL_MACRO
+        || operation == OP_INTERNAL_PUSH_FOR_LOCAL_MOTION
+        || operation == OP_BROWSE_PUSH_NAME
+        || operation == OP_BROWSE_PUSH_ONLY;
 }
 
 
@@ -287,7 +287,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
     assert(options.mode);
     switch (options.mode) {
     case ServerMode:
-        if (options.serverOperation == OLO_EXTRACT) {
+        if (options.serverOperation == OP_INTERNAL_PARSE_TO_EXTRACT) {
             if (currentFileNumber != currentFile.characterBuffer.fileNumber) {
                 LEAVE();
                 return NULL;
@@ -312,7 +312,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
     ReferenceableItem referenceableItem = makeReferenceableItem(symbol->linkName, symbol->type, storage, scope,
                                                                 visibility, includedFileNumber);
 
-    if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH) {
+    if (options.mode==ServerMode && options.serverOperation==OP_SEARCH) {
         if (options.searchKind==SEARCH_FULL) {
             Reference reference = makeReference(position, UsageNone, NULL);
             searchSymbolCheckReference(&referenceableItem, &reference);
@@ -342,7 +342,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
     ) {
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!
             if (strcmp(symbol->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
-                if (options.serverOperation == OLO_GET_AVAILABLE_REFACTORINGS) {
+                if (options.serverOperation == OP_GET_AVAILABLE_REFACTORINGS) {
                     setAvailableRefactorings(symbol, usage);
                 }
             }
@@ -378,7 +378,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
                     menu->defaultPosition = position;
                     menu->defaultUsage = usage;
                 }
-                if (options.serverOperation == OLO_GET_AVAILABLE_REFACTORINGS) {
+                if (options.serverOperation == OP_GET_AVAILABLE_REFACTORINGS) {
                     setAvailableRefactorings(symbol, usage);
                 }
             }
@@ -451,8 +451,8 @@ static void addReferencesFromFileToList(Reference *references, int fileNumber, R
 bool sessionHasReferencesValidForOperation(SessionData *session, SessionStackEntry **entryP,
                                                   CheckNull checkNull) {
     assert(session);
-    if (options.serverOperation==OLO_COMPLETION || options.serverOperation==OLO_COMPLETION_SELECT
-        ||  options.serverOperation==OLO_COMPLETION_GOTO || options.serverOperation==OLO_TAG_SEARCH) {
+    if (options.serverOperation==OP_COMPLETION || options.serverOperation==OP_COMPLETION_SELECT
+        ||  options.serverOperation==OP_COMPLETION_GOTO_N || options.serverOperation==OP_SEARCH) {
         *entryP = session->completionStack.top;
     } else {
         *entryP = session->browsingStack.top;
@@ -1080,7 +1080,7 @@ static void olcxMenuSelectAll(bool selected) {
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
         return;
-    if (sessionEntry->operation == OLO_GLOBAL_UNUSED) {
+    if (sessionEntry->operation == OP_UNUSED_GLOBAL) {
         ppcGenRecord(PPC_WARNING, "The browser does not display project unused symbols anymore");
     }
     for (BrowserMenu *menu=sessionEntry->menu; menu!=NULL; menu=menu->next) {
@@ -1109,22 +1109,22 @@ static void setDefaultSelectedVisibleItems(BrowserMenu *menu,
 }
 
 static bool isRenameMenuSelection(int command) {
-    return command == OLO_RENAME
-        || command == OLO_ARGUMENT_MANIPULATION
-        || command == OLO_PUSH_FOR_LOCAL_MOTION
-        || command == OLO_SAFETY_CHECK
+    return command == OP_INTERNAL_PUSH_FOR_RENAME
+        || command == OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION
+        || command == OP_INTERNAL_PUSH_FOR_LOCAL_MOTION
+        || command == OP_INTERNAL_SAFETY_CHECK
         || options.manualResolve == RESOLVE_DIALOG_NEVER
         ;
 }
 
 static void setSelectedVisibleItems(BrowserMenu *menu, ServerOperation command, int filterLevel) {
     unsigned selected, visible;
-    if (command == OLO_GLOBAL_UNUSED) {
+    if (command == OP_UNUSED_GLOBAL) {
         splitBrowserMenuAndMap(menu, selectUnusedSymbols, &filterLevel);
         return;
     }
 
-    if (command == OLO_PUSH_NAME) {
+    if (command == OP_BROWSE_PUSH_NAME) {
         visible = 0;
         selected = 0;
     } else if (isRenameMenuSelection(command)) {
@@ -1387,7 +1387,7 @@ static void completionForward(void) {
 }
 
 static void olcxNoSymbolFoundErrorMessage(void) {
-    if (options.serverOperation == OLO_PUSH_NAME) {
+    if (options.serverOperation == OP_BROWSE_PUSH_NAME) {
         ppcGenRecord(PPC_ERROR,"No symbol found.");
     } else {
         ppcGenRecord(PPC_ERROR,"No symbol found, please position the cursor on a program symbol.");
@@ -1420,11 +1420,11 @@ static BrowserMenu *firstVisibleSymbol(BrowserMenu *menu) {
 bool olcxShowSelectionMenu(void) {
     // decide whether to show manual resolution menu
     assert(sessionData.browsingStack.top);
-    if (options.serverOperation == OLO_PUSH_FOR_LOCAL_MOTION) {
+    if (options.serverOperation == OP_INTERNAL_PUSH_FOR_LOCAL_MOTION) {
         // never ask for resolution for local motion symbols
         return false;
     }
-    if (options.serverOperation == OLO_SAFETY_CHECK) {
+    if (options.serverOperation == OP_INTERNAL_SAFETY_CHECK) {
         // safety check showing of menu is resolved by safetyCheck2ShouldWarn
         return false;
     }
@@ -1441,11 +1441,11 @@ bool olcxShowSelectionMenu(void) {
         return false; // no visible
     }
     first = NULL;
-    if (   options.serverOperation==OLO_PUSH
-        || options.serverOperation==OLO_PUSH_ONLY
-        || options.serverOperation==OLO_PUSH_AND_CALL_MACRO
-        || options.serverOperation==OLO_RENAME
-        || options.serverOperation==OLO_ARGUMENT_MANIPULATION
+    if (   options.serverOperation==OP_BROWSE_PUSH
+        || options.serverOperation==OP_BROWSE_PUSH_ONLY
+        || options.serverOperation==OP_BROWSE_PUSH_AND_CALL_MACRO
+        || options.serverOperation==OP_INTERNAL_PUSH_FOR_RENAME
+        || options.serverOperation==OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION
     ) {
         // manually only if different
         for (BrowserMenu *ss=sessionData.browsingStack.top->menu; ss!=NULL; ss=ss->next) {
@@ -1555,7 +1555,7 @@ static void olcxProcessGetRequest(void) {
 
 static void olcxPrintPushingAction(ServerOperation operation) {
     switch (operation) {
-    case OLO_PUSH:
+    case OP_BROWSE_PUSH:
         if (haveBrowsingMenu()) {
             olcxOrderRefsAndGotoDefinition();
         } else {
@@ -1566,7 +1566,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
             deleteEntryFromSessionStack(sessionData.browsingStack.top);
         }
         break;
-    case OLO_PUSH_NAME:
+    case OP_BROWSE_PUSH_NAME:
         if (haveBrowsingMenu()) {
             olcxOrderRefsAndGotoDefinition();
         } else {
@@ -1574,11 +1574,11 @@ static void olcxPrintPushingAction(ServerOperation operation) {
             deleteEntryFromSessionStack(sessionData.browsingStack.top);
         }
         break;
-    case OLO_GLOBAL_UNUSED:
-    case OLO_LOCAL_UNUSED:
+    case OP_UNUSED_GLOBAL:
+    case OP_UNUSED_LOCAL:
         // no output for dead code detection ???
         break;
-    case OLO_LIST:
+    case OP_INTERNAL_LIST:
         if (haveBrowsingMenu()) {
             olcxReferenceList(";");
         } else {
@@ -1586,7 +1586,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
             deleteEntryFromSessionStack(sessionData.browsingStack.top);
         }
         break;
-    case OLO_PUSH_ONLY:
+    case OP_BROWSE_PUSH_ONLY:
         if (haveBrowsingMenu()) {
             olcxPushOnly();
         } else {
@@ -1594,7 +1594,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
             deleteEntryFromSessionStack(sessionData.browsingStack.top);
         }
         break;
-    case OLO_PUSH_AND_CALL_MACRO:
+    case OP_BROWSE_PUSH_AND_CALL_MACRO:
         if (haveBrowsingMenu()) {
             olcxPushAndCallMacro();
         } else {
@@ -1602,20 +1602,20 @@ static void olcxPrintPushingAction(ServerOperation operation) {
             deleteEntryFromSessionStack(sessionData.browsingStack.top);
         }
         break;
-    case OLO_PUSH_FOR_LOCAL_MOTION:
+    case OP_INTERNAL_PUSH_FOR_LOCAL_MOTION:
         if (haveBrowsingMenu())
             olcxPushOnly();
         else
             olcxNoSymbolFoundErrorMessage();
         break;
-    case OLO_RENAME:
-    case OLO_ARGUMENT_MANIPULATION:
+    case OP_INTERNAL_PUSH_FOR_RENAME:
+    case OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION:
         if (haveBrowsingMenu())
             initializeRename();
         else
             olcxNoSymbolFoundErrorMessage();
         break;
-    case OLO_SAFETY_CHECK:
+    case OP_INTERNAL_SAFETY_CHECK:
         if (haveBrowsingMenu())
             olcxSafetyCheck();
         else
@@ -1833,7 +1833,7 @@ void answerEditorAction(void) {
        Only enforced in auto-discovery mode (no explicit -xrefrc).
        Legacy mode (with -p option) is also allowed - client sends project with each request. */
     if (options.xrefrc == NULL && lockedProject == NULL && options.project == NULL &&
-        options.serverOperation != OLO_ACTIVE_PROJECT) {
+        options.serverOperation != OP_ACTIVE_PROJECT) {
         FATAL_ERROR(ERR_ST, "Server operation without locked project - client must call -getprojectname first",
                     EXIT_FAILURE);
     }
@@ -1841,42 +1841,94 @@ void answerEditorAction(void) {
     log_debug("Server operation = %s(%d)", operationNamesTable[options.serverOperation], options.serverOperation);
     switch (options.serverOperation) {
 
-        /* Unknown: */
-    case OLO_GOTO:
-        gotoReferenceWithIndex(options.olcxGotoVal);
-        break;
-
-    case OLO_REF_FILTER_SET:
-        olcxReferenceFilterSet(options.filterValue);
-        break;
-
-    case OLO_ACTIVE_PROJECT:
+    case OP_ACTIVE_PROJECT:
         handleProject();
         break;
 
-    case OLO_GET_ENV_VALUE:
+    case OP_GET_ENV_VALUE:
         olcxProcessGetRequest();
         break;
 
         /* COMPLETION */
-    case OLO_COMPLETION:
+    case OP_COMPLETION:
         printCompletions(&collectedCompletions);
         break;
-    case OLO_COMPLETION_SELECT:
+    case OP_COMPLETION_SELECT:
         selectCompletion();
         break;
-    case OLO_COMPLETION_BACK:
-        completionBackward();
-        break;
-    case OLO_COMPLETION_FORWARD:
+    case OP_COMPLETION_NEXT:
         completionForward();
         break;
-    case OLO_COMPLETION_GOTO:
+    case OP_COMPLETION_PREVIOUS:
+        completionBackward();
+        break;
+    case OP_COMPLETION_GOTO_N:
         gotoMatch(options.olcxGotoVal);
         break;
 
-        /* TAG SEARCH */
-    case OLO_TAG_SEARCH: {
+        /* BROWSING */
+    case OP_BROWSE_PUSH:
+    case OP_BROWSE_PUSH_ONLY:
+    case OP_BROWSE_PUSH_AND_CALL_MACRO:
+        mainAnswerReferencePushingAction(options.serverOperation);
+        break;
+    case OP_BROWSE_PUSH_NAME:
+        pushSymbolByName(options.pushName);
+        mainAnswerReferencePushingAction(options.serverOperation);
+        break;
+    case OP_BROWSE_REPUSH:
+        olcxReferenceRePush();
+        break;
+    case OP_FILTER_SET:
+        olcxReferenceFilterSet(options.filterValue);
+        break;
+    case OP_BROWSE_POP:
+        olcxReferencePop();
+        break;
+    case OP_BROWSE_POP_ONLY:
+        popFromSession();
+        break;
+    case OP_BROWSE_NEXT: {
+        SessionStackEntry *entry = getSessionEntryForOperation(OP_BROWSE_NEXT);
+        if (entry == NULL) {
+            ppcBottomWarning("Empty stack");
+            break;
+        }
+        gotoNextReference(entry);
+        break;
+    }
+    case OP_BROWSE_PREVIOUS: {
+        SessionStackEntry *entry = getSessionEntryForOperation(OP_BROWSE_PREVIOUS);
+        if (entry == NULL) {
+            ppcBottomWarning("Empty stack");
+            break;
+        }
+        gotoPreviousReference(entry);
+        break;
+    }
+    case OP_BROWSE_GOTO_N:
+        gotoReferenceWithIndex(options.olcxGotoVal);
+        break;
+
+        /* MENU */
+    case OP_MENU_TOGGLE_SELECT:
+        toggleMenuSelect();
+        break;
+    case OP_MENU_SELECT_ONLY:
+        olcxMenuSelectOnly();
+        break;
+    case OP_MENU_SELECT_ALL:
+        olcxMenuSelectAll(true);
+        break;
+    case OP_MENU_SELECT_NONE:
+        olcxMenuSelectAll(false);
+        break;
+    case OP_MENU_FILTER_SET:
+        olcxMenuSelectPlusolcxMenuSelectFilterSet(options.filterValue);
+        break;
+
+        /* SEARCH */
+    case OP_SEARCH: {
         Position givenPosition = getCallerPositionFromCommandLineOption();
         if (!options.xref2)
             fprintf(outputFile,";");
@@ -1887,14 +1939,14 @@ void answerEditorAction(void) {
         printSearchResults();
         break;
     }
-    case OLO_TAG_SEARCH_BACK:
+    case OP_SEARCH_PREVIOUS:
         if (sessionData.searchingStack.top!=NULL && sessionData.searchingStack.top->previous!=NULL) {
             sessionData.searchingStack.top = sessionData.searchingStack.top->previous;
             ppcGotoPosition(sessionData.searchingStack.top->callerPosition);
             printSearchResults();
         }
         break;
-    case OLO_TAG_SEARCH_FORWARD: {
+    case OP_SEARCH_NEXT: {
         SessionStackEntry *next = getNextTopStackItem(&sessionData.searchingStack);
         if (next != NULL) {
             sessionData.searchingStack.top = next;
@@ -1903,95 +1955,34 @@ void answerEditorAction(void) {
         }
         break;
     }
-    case OLO_TAGGOTO:
+    case OP_SEARCH_GOTO_N:
         gotoSearchItem(options.olcxGotoVal);
         break;
-    case OLO_TAGSELECT:
+    case OP_SEARCH_SELECT:
         selectSearchItem(options.olcxGotoVal);
         break;
 
-        /* BROWSING */
-    case OLO_PUSH:
-    case OLO_PUSH_ONLY:
-    case OLO_PUSH_AND_CALL_MACRO:
-        mainAnswerReferencePushingAction(options.serverOperation);
-        break;
-    case OLO_PUSH_NAME:
-        pushSymbolByName(options.pushName);
-        mainAnswerReferencePushingAction(options.serverOperation);
-        break;
-    case OLO_REPUSH:
-        olcxReferenceRePush();
-        break;
-    case OLO_POP:
-        olcxReferencePop();
-        break;
-    case OLO_POP_ONLY:
-        popFromSession();
-        break;
-    case OLO_NEXT: {
-        SessionStackEntry *entry = getSessionEntryForOperation(OLO_NEXT);
-        if (entry == NULL) {
-            ppcBottomWarning("Empty stack");
-            break;
-        }
-        gotoNextReference(entry);
-        break;
-    }
-    case OLO_PREVIOUS: {
-        SessionStackEntry *entry = getSessionEntryForOperation(OLO_PREVIOUS);
-        if (entry == NULL) {
-            ppcBottomWarning("Empty stack");
-            break;
-        }
-        gotoPreviousReference(entry);
-        break;
-    }
-
-        /* MENU */
-    case OLO_MENU_SELECT_THIS_AND_GOTO_DEFINITION:
-        toggleMenuSelect();
-        break;
-    case OLO_MENU_SELECT_ONLY:
-        olcxMenuSelectOnly();
-        break;
-    case OLO_MENU_SELECT_ALL:
-        olcxMenuSelectAll(true);
-        break;
-    case OLO_MENU_SELECT_NONE:
-        olcxMenuSelectAll(false);
-        break;
-    case OLO_MENU_FILTER_SET:
-        olcxMenuSelectPlusolcxMenuSelectFilterSet(options.filterValue);
-        break;
-
         /* REFACTORINGS */
-    case OLO_GET_AVAILABLE_REFACTORINGS:
+    case OP_GET_AVAILABLE_REFACTORINGS:
         printAvailableRefactorings();
         deleteEntryFromSessionStack(sessionData.browsingStack.top);
         break;
 
-    case OLO_EXTRACT:
+        /* INTERNAL */
+    case OP_INTERNAL_PARSE_TO_EXTRACT:
         if (!parsedInfo.extractProcessedFlag) {
             fprintf(outputFile,"*** No function/method enclosing selected block found **");
         }
         break;
 
-    case OLO_SET_MOVE_TARGET:
+    case OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET:
         assert(options.xref2);
         if (!parsedInfo.moveTargetAccepted) {
             ppcGenRecord(PPC_ERROR, "Invalid target place");
         }
         break;
 
-    case OLO_GET_METHOD_COORD:
-        if (parsedInfo.methodCoordEndLine!=0) {
-            fprintf(outputFile,"*%d", parsedInfo.methodCoordEndLine);
-        } else {
-            errorMessage(ERR_ST, "No method found.");
-        }
-        break;
-    case OLO_GOTO_PARAM_NAME:
+    case OP_INTERNAL_PARSE_TO_GOTO_PARAM_NAME:
         // I hope this is not used anymore, put there assert(0); Well,
         // it is used from refactory, but that probably only executes
         // the parsers and server and not cxref...
@@ -2004,7 +1995,7 @@ void answerEditorAction(void) {
             errorMessage(ERR_ST, tmpBuff);
         }
         break;
-    case OLO_ARGUMENT_MANIPULATION: {
+    case OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION: {
         SessionStackEntry *stack = sessionData.browsingStack.top;
         assert(stack!=NULL);
         if (stack->hkSelectedSym == NULL) {
@@ -2018,10 +2009,10 @@ void answerEditorAction(void) {
     }
 
         /* UNUSED */
-    case OLO_GLOBAL_UNUSED:
+    case OP_UNUSED_GLOBAL:
         answerPushGlobalUnusedSymbolsAction();
         break;
-    case OLO_LOCAL_UNUSED:
+    case OP_UNUSED_LOCAL:
         answerPushLocalUnusedSymbolsAction();
         break;
 

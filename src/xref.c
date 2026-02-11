@@ -334,7 +334,7 @@ finish:
             }
             saveReferences();
         }
-    } else if (options.serverOperation == OLO_ABOUT) {
+    } else if (options.serverOperation == OP_ABOUT) {
         aboutMessage();
     } else if (config->updateType == UPDATE_DEFAULT) {
         char tmpBuff[TMP_BUFF_SIZE];

@@ -28,7 +28,7 @@
 
 Describe(Xref);
 BeforeEach(Xref) {
-    options.serverOperation = OLO_NONE;
+    options.serverOperation = OP_NONE;
     log_set_level(LOG_ERROR);
 }
 AfterEach(Xref) {}

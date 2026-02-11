@@ -856,7 +856,7 @@ static void scanFunction_SymbolName(int size,
             } else {
                 lastIncomingData.symbolToCheckForDeadness = -1;
             }
-        } else if (options.serverOperation!=OLO_TAG_SEARCH) {
+        } else if (options.serverOperation!=OP_SEARCH) {
             int ols = 0;
             BrowserMenu *menu = NULL;
             if (scanOperation == CXSF_MENU_CREATION || scanOperation == CXSF_FIND_MACRO_EXPANSION_FILE) {
@@ -967,7 +967,7 @@ static void scanFunction_Reference(int size,
                 fileToParseForMacroExpansion = reference.position.file;
             }
         } else {
-            if (options.serverOperation == OLO_TAG_SEARCH) {
+            if (options.serverOperation == OP_SEARCH) {
                 if (reference.usage==UsageDefined
                     || ((options.searchKind==SEARCH_FULL
                          || options.searchKind==SEARCH_FULL_SHORT)
@@ -1071,8 +1071,8 @@ static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable) {
 
     /* TODO: This should be done outside this function... */
     if (options.mode==ServerMode
-        && (options.serverOperation==OLO_LOCAL_UNUSED
-            || options.serverOperation==OLO_GLOBAL_UNUSED)) {
+        && (options.serverOperation==OP_UNUSED_LOCAL
+            || options.serverOperation==OP_UNUSED_GLOBAL)) {
         // check if last symbol was dead
         cxfileCheckLastSymbolDeadness();
     }

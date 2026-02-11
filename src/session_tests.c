@@ -29,7 +29,7 @@ Ensure(Session, getSessionEntryForOperation_returns_completionStack_top_for_OLO_
     SessionStackEntry entry;
     sessionData.completionStack.top = &entry;
 
-    SessionStackEntry *result = getSessionEntryForOperation(OLO_COMPLETION);
+    SessionStackEntry *result = getSessionEntryForOperation(OP_COMPLETION);
 
     assert_that(result, is_equal_to(&entry));
 }
@@ -37,7 +37,7 @@ Ensure(Session, getSessionEntryForOperation_returns_completionStack_top_for_OLO_
 Ensure(Session, getSessionEntryForOperation_returns_NULL_when_completionStack_top_is_NULL) {
     sessionData.completionStack.top = NULL;
 
-    SessionStackEntry *result = getSessionEntryForOperation(OLO_COMPLETION);
+    SessionStackEntry *result = getSessionEntryForOperation(OP_COMPLETION);
 
     assert_that(result, is_null);
 }
@@ -46,7 +46,7 @@ Ensure(Session, getSessionEntryForOperation_returns_browsingStack_top_for_browsi
     SessionStackEntry entry;
     sessionData.browsingStack.top = &entry;
 
-    SessionStackEntry *result = getSessionEntryForOperation(OLO_PUSH);
+    SessionStackEntry *result = getSessionEntryForOperation(OP_BROWSE_PUSH);
 
     assert_that(result, is_equal_to(&entry));
 }

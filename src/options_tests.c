@@ -146,7 +146,7 @@ Ensure(Options, can_parse_about_command_line_option) {
     ArgumentsVector args = {2, argv};
 
     processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
-    assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
+    assert_that(options.serverOperation, is_equal_to(OP_ABOUT));
 }
 
 Ensure(Options, can_parse_version_command_line_option) {
@@ -154,7 +154,7 @@ Ensure(Options, can_parse_version_command_line_option) {
     ArgumentsVector args = {2, argv};
 
     processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
-    assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
+    assert_that(options.serverOperation, is_equal_to(OP_ABOUT));
 }
 
 Ensure(Options, can_parse_double_dash_version_command_line_option) {
@@ -162,7 +162,7 @@ Ensure(Options, can_parse_double_dash_version_command_line_option) {
     ArgumentsVector args = {2, argv};
 
     processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
-    assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
+    assert_that(options.serverOperation, is_equal_to(OP_ABOUT));
 }
 
 Ensure(Options, can_parse_xrefrc_option_with_equals) {

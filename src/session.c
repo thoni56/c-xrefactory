@@ -111,10 +111,10 @@ SessionStackEntry *getNextTopStackItem(SessionStack *stack) {
 }
 
 SessionStackEntry *getSessionEntryForOperation(ServerOperation operation) {
-    if (operation == OLO_COMPLETION
-        || operation == OLO_COMPLETION_SELECT
-        || operation == OLO_COMPLETION_GOTO
-        || operation == OLO_TAG_SEARCH)
+    if (operation == OP_COMPLETION
+        || operation == OP_COMPLETION_SELECT
+        || operation == OP_COMPLETION_GOTO_N
+        || operation == OP_SEARCH)
         return sessionData.completionStack.top;
     return sessionData.browsingStack.top;
 }

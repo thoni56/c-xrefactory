@@ -101,7 +101,7 @@ Options presetOptions = {
     false,                      /* trace */
     false,                      /* lexemTrace */
     false,                      /* fileTrace */
-    OLO_NONE,                   /* serverOperation */
+    OP_NONE,                   /* serverOperation */
     0,                          /* olcxGotoVal */
 
     /* CXREF options  */
@@ -1055,7 +1055,7 @@ static bool processAOption(int *argi, ArgumentsVector args) {
     int i = *argi;
     if (0) {}
     else if (strcmp(args.argv[i], "-about")==0) {
-        options.serverOperation = OLO_ABOUT;
+        options.serverOperation = OP_ABOUT;
     }
     else return false;
     *argi = i;
@@ -1180,7 +1180,7 @@ static bool processGOption(int *argi, ArgumentsVector args) {
     else if (strcmp(args.argv[i], "-get")==0) {
         ensureThereIsAnotherArgument(&i, args);
         options.variableToGet = allocateStringForOption(&options.variableToGet, args.argv[i]);
-        options.serverOperation = OLO_GET_ENV_VALUE;
+        options.serverOperation = OP_GET_ENV_VALUE;
     }
     else return false;
     *argi = i;
@@ -1303,7 +1303,7 @@ static bool processOOption(int *argi, ArgumentsVector args) {
         sscanf(args.argv[i]+8, "%d",&options.markOffset);
     }
     else if (strcmp(args.argv[i], "-olcxextract")==0) {
-        options.serverOperation = OLO_EXTRACT;
+        options.serverOperation = OP_INTERNAL_PARSE_TO_EXTRACT;
     }
     else if (strcmp(args.argv[i], "-olmanualresolve")==0) {
         options.manualResolve = RESOLVE_DIALOG_ALWAYS;
@@ -1316,18 +1316,18 @@ static bool processOOption(int *argi, ArgumentsVector args) {
     else if (strcmp(args.argv[i], "-olexvariable")==0)
         options.extractMode=EXTRACT_VARIABLE;
     else if (strcmp(args.argv[i], "-olcxrename")==0)
-        options.serverOperation = OLO_RENAME;
+        options.serverOperation = OP_INTERNAL_PUSH_FOR_RENAME;
     else if (strcmp(args.argv[i], "-olcxargmanip")==0)
-        options.serverOperation = OLO_ARGUMENT_MANIPULATION;
+        options.serverOperation = OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION;
     else if (strcmp(args.argv[i], "-olcxsafetycheck")==0)
-        options.serverOperation = OLO_SAFETY_CHECK;
+        options.serverOperation = OP_INTERNAL_SAFETY_CHECK;
     else if (strncmp(args.argv[i], "-olcxgotoparname",16)==0) {
-        options.serverOperation = OLO_GOTO_PARAM_NAME;
+        options.serverOperation = OP_INTERNAL_PARSE_TO_GOTO_PARAM_NAME;
         options.olcxGotoVal = 0;
         sscanf(args.argv[i]+16, "%d", &options.olcxGotoVal);
     }
     else if (strncmp(args.argv[i], "-olcxgetparamcoord",18)==0) {
-        options.serverOperation = OLO_GET_PARAM_COORDINATES;
+        options.serverOperation = OP_INTERNAL_PARSE_TO_GET_PARAM_COORDINATES;
         options.olcxGotoVal = 0;
         sscanf(args.argv[i]+18, "%d", &options.olcxGotoVal);
     }
@@ -1340,112 +1340,112 @@ static bool processOOption(int *argi, ArgumentsVector args) {
         sscanf(args.argv[i]+13, "%d", &options.parnum2);
     }
     else if (strcmp(args.argv[i], "-olcxgetrefactorings")==0)     {
-        options.serverOperation = OLO_GET_AVAILABLE_REFACTORINGS;
+        options.serverOperation = OP_GET_AVAILABLE_REFACTORINGS;
     }
     else if (strcmp(args.argv[i], "-olcxpush")==0)
-        options.serverOperation = OLO_PUSH;
+        options.serverOperation = OP_BROWSE_PUSH;
     else if (strcmp(args.argv[i], "-olcxrepush")==0)
-        options.serverOperation = OLO_REPUSH;
+        options.serverOperation = OP_BROWSE_REPUSH;
     else if (strcmp(args.argv[i], "-olcxpushonly")==0)
-        options.serverOperation = OLO_PUSH_ONLY;
+        options.serverOperation = OP_BROWSE_PUSH_ONLY;
     else if (strcmp(args.argv[i], "-olcxpushandcallmacro")==0)
-        options.serverOperation = OLO_PUSH_AND_CALL_MACRO;
+        options.serverOperation = OP_BROWSE_PUSH_AND_CALL_MACRO;
     else if (strcmp(args.argv[i], "-olcxpushforlm")==0) {
-        options.serverOperation = OLO_PUSH_FOR_LOCAL_MOTION;
+        options.serverOperation = OP_INTERNAL_PUSH_FOR_LOCAL_MOTION;
         options.manualResolve = RESOLVE_DIALOG_NEVER;
     }
     else if (strcmp(args.argv[i], "-olcxpushglobalunused")==0)
-        options.serverOperation = OLO_GLOBAL_UNUSED;
+        options.serverOperation = OP_UNUSED_GLOBAL;
     else if (strcmp(args.argv[i], "-olcxpushfileunused")==0)
-        options.serverOperation = OLO_LOCAL_UNUSED;
+        options.serverOperation = OP_UNUSED_LOCAL;
     else if (strcmp(args.argv[i], "-olcxpop")==0)
-        options.serverOperation = OLO_POP;
+        options.serverOperation = OP_BROWSE_POP;
     else if (strcmp(args.argv[i], "-olcxpoponly")==0)
-        options.serverOperation =OLO_POP_ONLY;
+        options.serverOperation =OP_BROWSE_POP_ONLY;
     else if (strcmp(args.argv[i], "-olcxnext")==0)
-        options.serverOperation = OLO_NEXT;
+        options.serverOperation = OP_BROWSE_NEXT;
     else if (strcmp(args.argv[i], "-olcxprevious")==0)
-        options.serverOperation = OLO_PREVIOUS;
+        options.serverOperation = OP_BROWSE_PREVIOUS;
     else if (strcmp(args.argv[i], "-olcxcomplet")==0)
-        options.serverOperation=OLO_COMPLETION;
+        options.serverOperation=OP_COMPLETION;
     else if (strcmp(args.argv[i], "-olcxmovetarget")==0)
-        options.serverOperation=OLO_SET_MOVE_TARGET;
+        options.serverOperation=OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET;
     else if (strcmp(args.argv[i], "-olcxgetfunctionbounds")==0)
-        options.serverOperation=OLO_GET_FUNCTION_BOUNDS;
+        options.serverOperation=OP_INTERNAL_GET_FUNCTION_BOUNDS;
     else if (strcmp(args.argv[i], "-olcxgetprojectname")==0) {
-        options.serverOperation=OLO_ACTIVE_PROJECT;
+        options.serverOperation=OP_ACTIVE_PROJECT;
     }
     else if (strncmp(args.argv[i], "-olcxlccursor=",14)==0) {
         // position of the cursor in line:column format
         options.olcxlccursor = allocateStringForOption(&options.olcxlccursor, args.argv[i]+14);
     }
     else if (strncmp(args.argv[i], "-olcxtagsearch=",15)==0) {
-        options.serverOperation=OLO_TAG_SEARCH;
+        options.serverOperation=OP_SEARCH;
         options.olcxSearchString = allocateStringForOption(&options.olcxSearchString, args.argv[i]+15);
     }
     else if (strcmp(args.argv[i], "-olcxtagsearchforward")==0) {
-        options.serverOperation=OLO_TAG_SEARCH_FORWARD;
+        options.serverOperation=OP_SEARCH_NEXT;
     }
     else if (strcmp(args.argv[i], "-olcxtagsearchback")==0) {
-        options.serverOperation=OLO_TAG_SEARCH_BACK;
+        options.serverOperation=OP_SEARCH_PREVIOUS;
     }
     else if (strncmp(args.argv[i], "-olcxpushname=",14)==0)   {
-        options.serverOperation = OLO_PUSH_NAME;
+        options.serverOperation = OP_BROWSE_PUSH_NAME;
         options.pushName = allocateStringForOption(&options.pushName, args.argv[i]+14);
     }
     else if (strncmp(args.argv[i], "-olcomplselect",14)==0) {
-        options.serverOperation=OLO_COMPLETION_SELECT;
+        options.serverOperation=OP_COMPLETION_SELECT;
         options.olcxGotoVal = 0;
         sscanf(args.argv[i]+14, "%d",&options.olcxGotoVal);
     }
     else if (strcmp(args.argv[i], "-olcomplback")==0) {
-        options.serverOperation=OLO_COMPLETION_BACK;
+        options.serverOperation=OP_COMPLETION_PREVIOUS;
     }
     else if (strcmp(args.argv[i], "-olcomplforward")==0) {
-        options.serverOperation=OLO_COMPLETION_FORWARD;
+        options.serverOperation=OP_COMPLETION_NEXT;
     }
     else if (strncmp(args.argv[i], "-olcxcgoto",10)==0) {
-        options.serverOperation = OLO_COMPLETION_GOTO;
+        options.serverOperation = OP_COMPLETION_GOTO_N;
         options.olcxGotoVal = 0;
         sscanf(args.argv[i]+10, "%d",&options.olcxGotoVal);
     }
     else if (strncmp(args.argv[i], "-olcxtaggoto",12)==0) {
-        options.serverOperation = OLO_TAGGOTO;
+        options.serverOperation = OP_SEARCH_GOTO_N;
         options.olcxGotoVal = 0;
         sscanf(args.argv[i]+12, "%d",&options.olcxGotoVal);
     }
     else if (strncmp(args.argv[i], "-olcxtagselect",14)==0) {
-        options.serverOperation = OLO_TAGSELECT;
+        options.serverOperation = OP_SEARCH_SELECT;
         options.olcxGotoVal = 0;
         sscanf(args.argv[i]+14, "%d",&options.olcxGotoVal);
     }
     else if (strncmp(args.argv[i], "-olcxgoto",9)==0) {
-        options.serverOperation = OLO_GOTO;
+        options.serverOperation = OP_BROWSE_GOTO_N;
         options.olcxGotoVal = 0;
         sscanf(args.argv[i]+9, "%d",&options.olcxGotoVal);
     }
     else if (strncmp(args.argv[i], "-olcxfilter=",12)==0) {
-        options.serverOperation = OLO_REF_FILTER_SET;
+        options.serverOperation = OP_FILTER_SET;
         sscanf(args.argv[i]+12, "%d",&options.filterValue);
     }
     else if (strncmp(args.argv[i], "-olcxmenusingleselect",21)==0) {
-        options.serverOperation = OLO_MENU_SELECT_ONLY;
+        options.serverOperation = OP_MENU_SELECT_ONLY;
         options.lineNumberOfMenuSelection = 0;
         sscanf(args.argv[i]+21, "%d",&options.lineNumberOfMenuSelection);
     }
     else if (strncmp(args.argv[i], "-olcxmenuselect",15)==0) {
-        options.serverOperation = OLO_MENU_SELECT_THIS_AND_GOTO_DEFINITION;
+        options.serverOperation = OP_MENU_TOGGLE_SELECT;
         options.lineNumberOfMenuSelection = 0;
         sscanf(args.argv[i]+15, "%d",&options.lineNumberOfMenuSelection);
     }
     else if (strcmp(args.argv[i], "-olcxmenuall")==0) {
-        options.serverOperation = OLO_MENU_SELECT_ALL;
+        options.serverOperation = OP_MENU_SELECT_ALL;
     }
     else if (strcmp(args.argv[i], "-olcxmenunone")==0) {
-        options.serverOperation = OLO_MENU_SELECT_NONE;
+        options.serverOperation = OP_MENU_SELECT_NONE;
     }
     else if (strncmp(args.argv[i], "-olcxmenufilter=",16)==0) {
-        options.serverOperation = OLO_MENU_FILTER_SET;
+        options.serverOperation = OP_MENU_FILTER_SET;
         sscanf(args.argv[i]+16, "%d",&options.filterValue);
     }
     else if (strcmp(args.argv[i], "-optinclude")==0) {
@@ -1632,7 +1632,7 @@ static bool processVOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
     else if (strcmp(args.argv[i], "-version")==0) {
-        options.serverOperation = OLO_ABOUT;
+        options.serverOperation = OP_ABOUT;
     }
     else return false;
     *argi = i;
@@ -1686,7 +1686,7 @@ static bool processDoubleDashOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
     else if (strcmp(args.argv[i], "--version") == 0) {
-        options.serverOperation = OLO_ABOUT;
+        options.serverOperation = OP_ABOUT;
     }
     else return false;
     *argi = i;

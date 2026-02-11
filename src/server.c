@@ -28,31 +28,31 @@ const char *operationNamesTable[] = {
 
 
 static bool needsReferenceDatabase(ServerOperation operation) {
-    return operation==OLO_PUSH
-        ||  operation==OLO_PUSH_ONLY
-        ||  operation==OLO_PUSH_AND_CALL_MACRO
-        ||  operation==OLO_GOTO_PARAM_NAME
-        ||  operation==OLO_GET_PARAM_COORDINATES
-        ||  operation==OLO_GET_AVAILABLE_REFACTORINGS
-        ||  operation==OLO_PUSH_NAME
-        ||  operation==OLO_PUSH_FOR_LOCAL_MOTION
-        ||  operation==OLO_GLOBAL_UNUSED
-        ||  operation==OLO_LOCAL_UNUSED
-        ||  operation==OLO_LIST
-        ||  operation==OLO_RENAME
-        ||  operation==OLO_ARGUMENT_MANIPULATION
-        ||  operation==OLO_SAFETY_CHECK
-        ||  operation==OLO_GET_FUNCTION_BOUNDS
+    return operation==OP_BROWSE_PUSH
+        ||  operation==OP_BROWSE_PUSH_ONLY
+        ||  operation==OP_BROWSE_PUSH_AND_CALL_MACRO
+        ||  operation==OP_INTERNAL_PARSE_TO_GOTO_PARAM_NAME
+        ||  operation==OP_INTERNAL_PARSE_TO_GET_PARAM_COORDINATES
+        ||  operation==OP_GET_AVAILABLE_REFACTORINGS
+        ||  operation==OP_BROWSE_PUSH_NAME
+        ||  operation==OP_INTERNAL_PUSH_FOR_LOCAL_MOTION
+        ||  operation==OP_UNUSED_GLOBAL
+        ||  operation==OP_UNUSED_LOCAL
+        ||  operation==OP_INTERNAL_LIST
+        ||  operation==OP_INTERNAL_PUSH_FOR_RENAME
+        ||  operation==OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION
+        ||  operation==OP_INTERNAL_SAFETY_CHECK
+        ||  operation==OP_INTERNAL_GET_FUNCTION_BOUNDS
         ;
 }
 
 static bool requiresProcessingInputFile(ServerOperation operation) {
-    return operation==OLO_COMPLETION
-           || operation==OLO_EXTRACT
-           || operation==OLO_TAG_SEARCH
-           || operation==OLO_SET_MOVE_TARGET
-           || operation==OLO_GET_FUNCTION_BOUNDS
-           || operation==OLO_GET_ENV_VALUE
+    return operation==OP_COMPLETION
+           || operation==OP_INTERNAL_PARSE_TO_EXTRACT
+           || operation==OP_SEARCH
+           || operation==OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET
+           || operation==OP_INTERNAL_GET_FUNCTION_BOUNDS
+           || operation==OP_GET_ENV_VALUE
            || needsReferenceDatabase(operation)
         ;
 }
@@ -132,7 +132,7 @@ static void parseInputFile(void) {
     /* Bridge: Sync parsingConfig for all operations using this entry point */
     setupParsingConfig(requestFileNumber);
 
-    if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
+    if (options.serverOperation != OP_SEARCH && options.serverOperation != OP_BROWSE_PUSH_NAME) {
         log_debug("parse start");
         callParser(parsingConfig.fileNumber, parsingConfig.language);
         log_debug("parse end");
@@ -174,9 +174,9 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
          * whether to re-index - and xref reads from disk, not the preload buffer.
          */
         if (buffer != NULL && buffer->preLoadedFromFile != NULL
-            && options.serverOperation != OLO_RENAME
-            && options.serverOperation != OLO_ARGUMENT_MANIPULATION
-            && options.serverOperation != OLO_SAFETY_CHECK) {
+            && options.serverOperation != OP_INTERNAL_PUSH_FOR_RENAME
+            && options.serverOperation != OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION
+            && options.serverOperation != OP_INTERNAL_SAFETY_CHECK) {
             FileItem *fileItem = getFileItemWithFileNumber(parsingConfig.fileNumber);
             fileItem->lastParsedMtime = buffer->modificationTime;
         }
@@ -213,7 +213,7 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         inputFileName = fileItem->name;
         assert(inputFileName!=NULL);
         singlePass(baseArgs, requestArgs);
-        if (options.serverOperation==OLO_EXTRACT || (completionStringServed && !needsReferenceDatabase(options.serverOperation)))
+        if (options.serverOperation==OP_INTERNAL_PARSE_TO_EXTRACT || (completionStringServed && !needsReferenceDatabase(options.serverOperation)))
             break;
     }
     fileItem->isScheduled = false;
@@ -264,7 +264,7 @@ void server(ArgumentsVector args) {
             openOutputFile(options.outputFileName);
         }
         callServer(args, pipedOptions);
-        if (options.serverOperation == OLO_ABOUT) {
+        if (options.serverOperation == OP_ABOUT) {
             aboutMessage();
         } else {
             answerEditorAction();
