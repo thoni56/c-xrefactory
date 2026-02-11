@@ -101,7 +101,7 @@ Options presetOptions = {
     false,                      /* trace */
     false,                      /* lexemTrace */
     false,                      /* fileTrace */
-    OLO_NOOP,                   /* serverOperation */
+    OLO_NONE,                   /* serverOperation */
     0,                          /* olcxGotoVal */
 
     /* CXREF options  */

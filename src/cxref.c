@@ -1850,10 +1850,6 @@ void answerEditorAction(void) {
         olcxReferenceFilterSet(options.filterValue);
         break;
 
-        /* MISC */
-    case OLO_NOOP:
-        break;
-
     case OLO_ACTIVE_PROJECT:
         handleProject();
         break;
