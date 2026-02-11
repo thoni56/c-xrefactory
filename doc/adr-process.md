@@ -38,6 +38,7 @@ Each ADR has a status indicating its current state:
 
 | Status | Meaning | Usage |
 |--------|---------|-------|
+| **Draft** | Exploratory, capturing ideas and direction | Early thinking, not yet a concrete proposal |
 | **Proposed** | Under discussion, not yet decided | Decision documented, seeking feedback/approval |
 | **Accepted** | Decision approved, implementation in progress or planned | Commitment made but work not complete |
 | **Implemented** | Fully completed and deployed | Decision executed, feature/change live in codebase |
@@ -83,46 +84,6 @@ cd ..
 git add adr/0015-my-decision.md
 git commit -m "[adr] Add ADR-0015: My Decision"
 ```
-
-## ADR Index
-
-### Active Decisions
-
-- [ADR-0001](0001-store-reference-data-in-text-files-with-encoding.md) - Store reference data in text files with encoding
-- [ADR-0002](0002-remove-enum-and-struct-fill-macro-generation.md) - Remove enum and struct fill macro generation
-- [ADR-0003](0003-use-markdown-architectural-decision-records.md) - Use Markdown architectural decision records
-- [ADR-0004](0004-remove-html-generation.md) - Remove HTML generation
-- [ADR-0005](0005-automatically-find-config-files.md) - Automatically find config files
-- [ADR-0006](0006-remove-prechecks.md) - Remove prechecks
-- [ADR-0007](0007-use-classic-adr-s-for-architecture-decisions.md) - Use classic ADRs for architecture decisions
-- [ADR-0008](0008-remove-no-stdoptions.md) - Remove no-stdoptions
-- [ADR-0009](0009-remove-alignment.md) - Remove alignment *(Implemented)*
-- [ADR-0010](0010-remove-support-for-javadoc.md) - Remove support for Javadoc
-- [ADR-0011](0011-remove-support-for-java.md) - Remove support for Java
-- [ADR-0012](0012-remove-lexem-stream-caching.md) - Remove lexem stream caching mechanism *(Implemented)*
-- [ADR-0013](0013-limited-extern-detection-in-c-files.md) - Limited detection of archaic extern declarations in C source files *(Proposed)*
-- [ADR-0014](0014-adopt-on-demand-parsing-architecture.md) - Adopt on-demand parsing architecture *(Proposed)*
-
-### By Status
-
-**Implemented:**
-- [ADR-0009](0009-remove-alignment.md) - Remove alignment
-- [ADR-0012](0012-remove-lexem-stream-caching.md) - Remove lexem stream caching
-
-**Proposed:**
-- [ADR-0013](0013-limited-extern-detection-in-c-files.md) - Extern detection limitations
-- [ADR-0014](0014-adopt-on-demand-parsing-architecture.md) - On-demand parsing
-
-**Accepted:** (implementation ongoing or planned)
-- [ADR-0001](0001-store-reference-data-in-text-files-with-encoding.md) through [ADR-0011](0011-remove-support-for-java.md)
-
-### By Topic
-
-**Feature Removal / Simplification:**
-- ADR-0002, 0004, 0006, 0008, 0009, 0010, 0011, 0012
-
-**Architecture & Design:**
-- ADR-0001, 0003, 0005, 0007, 0013, 0014
 
 ## ADR References
 
