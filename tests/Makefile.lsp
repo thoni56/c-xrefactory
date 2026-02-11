@@ -5,6 +5,9 @@
 
 include $(dir $(lastword $(MAKEFILE_LIST)))/Makefile.boilerplate
 
+# Extend NORMALIZE to split joined LSP frames and ensure trailing newline
+NORMALIZE += -e 's/\(.\)Content-Length/\1\nContent-Length/g' -e '$$a\'
+
 # Platform detection
 UNAME_S := $(shell uname -s)
 
