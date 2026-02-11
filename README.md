@@ -32,7 +32,9 @@ _C_ & _Yacc_.
 `c-xrefactory` have an experimental LSP implementation. One feature has been rudimentary
 implemented:
 
-- `textDocument/definition` - translates to Goto Definition or something like that in editors
+- `textDocument/definition` - translates to Goto Definition or similar command in editors
+
+Experimental configs for Emacs/LSP and VSCode/LSP exist but might not work. YMMV.
 
 ## Install
 

@@ -1,0 +1,29 @@
+{
+    "name": "c-xrefactory-lsp",
+    "displayName": "c-xrefactory",
+    "description": "LSP client for the c-xrefactory C refactoring tool",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.75.0"
+    },
+    "categories": ["Programming Languages"],
+    "activationEvents": [
+        "onLanguage:c"
+    ],
+    "main": "./extension.js",
+    "contributes": {
+        "configuration": {
+            "title": "c-xrefactory",
+            "properties": {
+                "c-xrefactory.executablePath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Path to the c-xref executable. Leave empty to use the one bundled with the extension."
+                }
+            }
+        }
+    },
+    "dependencies": {
+        "vscode-languageclient": "^9.0.0"
+    }
+}
