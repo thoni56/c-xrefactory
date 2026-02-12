@@ -39,7 +39,7 @@
     ENUM(OP_INTERNAL_PARSE_TO_GOTO_PARAM_NAME)          \
     ENUM(OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET)          \
     ENUM(OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION)    \
-    ENUM(OP_INTERNAL_PUSH_FOR_LOCAL_MOTION)             \
+    ENUM(OP_INTERNAL_PUSH_FOR_PEEK)             \
     ENUM(OP_INTERNAL_PUSH_FOR_RENAME)                   \
     ENUM(OP_INTERNAL_SAFETY_CHECK)                      \
     ENUM(OP_MENU_FILTER_MINUS)                          \
@@ -59,8 +59,8 @@
     ENUM(OP_UNUSED_LOCAL)                               \
 
 
-#if OLO_NONE != 0
-#error OLO_NONE != 0
+#if OP_NONE != 0
+#error OP_NONE != 0
 #endif
 
 typedef enum {

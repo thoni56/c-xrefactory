@@ -1351,7 +1351,7 @@ static bool processOOption(int *argi, ArgumentsVector args) {
     else if (strcmp(args.argv[i], "-olcxpushandcallmacro")==0)
         options.serverOperation = OP_BROWSE_PUSH_AND_CALL_MACRO;
     else if (strcmp(args.argv[i], "-olcxpushforlm")==0) {
-        options.serverOperation = OP_INTERNAL_PUSH_FOR_LOCAL_MOTION;
+        options.serverOperation = OP_INTERNAL_PUSH_FOR_PEEK;
         options.manualResolve = RESOLVE_DIALOG_NEVER;
     }
     else if (strcmp(args.argv[i], "-olcxpushglobalunused")==0)

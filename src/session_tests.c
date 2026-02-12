@@ -25,7 +25,7 @@ AfterEach(Session) {}
 Ensure(Session, can_run_an_empty_test) {
 }
 
-Ensure(Session, getSessionEntryForOperation_returns_completionStack_top_for_OLO_COMPLETION) {
+Ensure(Session, getSessionEntryForOperation_returns_completionStack_top_for_OP_COMPLETION) {
     SessionStackEntry entry;
     sessionData.completionStack.top = &entry;
 

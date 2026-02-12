@@ -575,11 +575,11 @@ faces and highlighting in buffers created by C-xrefactory.
 (define-key c-xref-ide-menu [c-xref-ide-cdir] '("Compile Directory" . c-xref-ide-compile-dir))
 (define-key c-xref-ide-menu [c-xref-ide-cfile] '("Compile File" . c-xref-ide-compile-file))
 
-;; local browse menu
-(defvar c-xref-lm-menu (make-sparse-keymap "Local Motion"))
-(fset 'c-xref-lm-menu (symbol-value 'c-xref-lm-menu))
-(define-key c-xref-lm-menu [c-xref-lm-next] '("Next Reference to This Symbol (or Alternatives)" . c-xref-alternative-next-reference))
-(define-key c-xref-lm-menu [c-xref-lm-previous] '("Previous Reference to This Symbol (or Alternatives)" . c-xref-alternative-previous-reference))
+;; peek menu
+(defvar c-xref-peek-menu (make-sparse-keymap "Peek"))
+(fset 'c-xref-peek-menu (symbol-value 'c-xref-peek-menu))
+(define-key c-xref-peek-menu [c-xref-peek-next] '("Next Reference to This Symbol (or Alternatives)" . c-xref-alternative-next-reference))
+(define-key c-xref-peek-menu [c-xref-peek-previous] '("Previous Reference to This Symbol (or Alternatives)" . c-xref-alternative-previous-reference))
 
 (defvar c-xref-sb-menu (make-sparse-keymap "Browsing with Symbol Stack"))
 (fset 'c-xref-sb-menu (symbol-value 'c-xref-sb-menu))
@@ -642,7 +642,7 @@ faces and highlighting in buffers created by C-xrefactory.
 (define-key c-xref-menu [c-xref-search-def] '("Search Definition in Tags" . c-xref-search-definition))
 (define-key c-xref-menu [c-xref-dm-menu] '("Unused Symbols Detection" . c-xref-unused-menu))
 (define-key c-xref-menu [c-xref-sb-menu] '("Browsing with Symbol Stack" . c-xref-sb-menu))
-(define-key c-xref-menu [c-xref-lm-menu] '("Local Motion" . c-xref-lm-menu))
+(define-key c-xref-menu [c-xref-peek-menu] '("Peek" . c-xref-peek-menu))
 (define-key c-xref-menu [separator-buffers3] '("--"))
 (define-key c-xref-menu [c-xref-create-refs] '("Rebuild References DB" . c-xref-create-refs))
 (define-key c-xref-menu [c-xref-update-refs] '("Update References - Full" . c-xref-update-refs))

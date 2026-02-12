@@ -5223,7 +5223,7 @@ refactoring, changes made by this function can be undone with the
     (c-xref-update-browser-if-displayed oldwins))
   )
 
-(defun c-xref-local-motion (opt)
+(defun c-xref-peek (opt)
   (c-xref-entry-point-make-initialisations)
   (c-xref-call-process-with-basic-file-data-all-saves "-olcxpushforlm -olnodialog")
   (c-xref-call-process-with-basic-file-data-no-saves opt)
@@ -5278,7 +5278,7 @@ previous reference in this browser instead.
       (if (and c-xref-inspect-errors-if-compilation-window
                    (get-buffer-window c-xref-compilation-buffer))
               (c-xref-ide-previous-error)
-            (c-xref-local-motion "-olcxprevious")
+            (c-xref-peek "-olcxprevious")
             ))
     ))
 
@@ -5305,7 +5305,7 @@ this browser instead.
       (if (and c-xref-inspect-errors-if-compilation-window
                    (get-buffer-window c-xref-compilation-buffer))
               (c-xref-ide-next-error)
-            (c-xref-local-motion "-olcxnext")
+            (c-xref-peek "-olcxnext")
             ))
     ))
 

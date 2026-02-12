@@ -20,15 +20,6 @@ Some useful commands:
 
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
-* DOING FEATURE: LSP Find Definition
-** DOING Initiate server so it can handle OLO_PUSH
-** TODO Create an answer from gathered information
-** DONE Initial Communication
-* DOING FEATURE: Basic LSP-mode support
-** DOING 'didOpen'
-** TODO Handle protocol errors etc. using longjump
-** DONE LSP communication structure
-** DONE LSP 'initialize', 'exit', 'not found'
 * DOING Extract variable
 ** TRY Figure out variable type (hard, none of the other extracts seems to do this...)
    or ask...
@@ -62,20 +53,6 @@ rescanned. I'm not sure how that works, but we need tests for it.
 ** DONE Fill ParsedInfo begin/end for requested function
 ** DONE Fixup the preliminary version of the actual move
 ** DONE Move any declaration in source.h file to target.h
-* DONE Project local .c-xrefrc with convention-based database location
-   New projects use project-local .c-xrefrc with database at .c-xref/db (v1.9).
-   Legacy ~/.c-xrefrc projects continue to work via fallback.
-** DONE Reference database stored in project tree at .c-xref/db
-   Convention-based path applied automatically when using project-local config.
-** DONE Make "get project" lookup the directory tree for closest .c-xrefrc
-   Upward search from source file, stops at HOME to avoid finding ~/.c-xrefrc.
-** TODO Make all filenames relative in the options file
-   Would allow .c-xrefrc to be checked into version control.
-** DONE Simplified project creation wizard in Emacs
-   Detects git root, creates minimal .c-xrefrc, offers to generate database.
-** TODO Migrate legacy config to project-local
-   Feature to move a section from ~/.c-xrefrc to project-local .c-xrefrc.
-** DONE Function to lookup the closest .c-xrefrc and potentially use its directory path as project name
 * TODO Still problems with UTF-8 positioning
   Example: try to rename something in lexer_tests below the multi-byte strings.
   We should probably use character positions as the interface and adjusting indices into the
@@ -152,9 +129,6 @@ rescanned. I'm not sure how that works, but we need tests for it.
 *** TODO Restructure option handling into -refactory, -server, -generate(?)
     those are main options, you can only have one, and selecting one
     will allow a set of separate options valid for that "mode"
-* DONE Store Xrefs in .c-xref/db parallel to the .c-xrefrc used (v1.9)
-  Convention-based database path for project-local configs. Legacy -refs option still works for
-  backward compatibility with existing ~/.c-xrefrc configurations.
 * TODO Header files. There are a number of sections in the proto.h that
   indicates which file/module it declares an externa interface for. We
   should move that to a <module>.h file instead.
@@ -165,7 +139,7 @@ rescanned. I'm not sure how that works, but we need tests for it.
 * TODO NEW FEATURES:
 ** TODO FEATURE: Completion of filenames in #include, currently suggests all symbols, not files
 ** TODO FEATURE: Rename parameter - rename a parameter in all instances of the function (decl/def/mock)
-** TODO FEATURE: Organize includes - first own .h, then system <>, then local, each group alphabetically
+** DONE FEATURE: Organize includes - first own .h, then system <>, then local, each group alphabetically
 ** TODO FEATURE: New refactoring: change return type of function
 ** TODO FEATURE: Extract function should extract a boolean function inside an if() correctly
 ** TODO FEATURE: Extract function should extract a boolean function in an expression correctly
@@ -174,7 +148,7 @@ rescanned. I'm not sure how that works, but we need tests for it.
 ** TODO FEATURE: New refactoring: Inline variable ("a=f(); b(a);" => "b(f());")
 ** TODO FEATURE: Replace variable with value ("inline")
 ** TODO FEATURE: Remove indirection in parameter ("remove *") and vice versa
-** TODO FEATURE: Move function to other module
+** DONE FEATURE: Move function to other module
    The function the point is on (actual implementation, forward declaration, extern
    declaration or an invocation, is moved to another module. If it is static it must
    first be made extern, then the implementation can be moved to "module.c" and the
@@ -224,6 +198,32 @@ There are both "-opt=value" and "-opt value" format options
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Why does -refactory read the users default .c-xrefrc? And why does -no-stdoptions
   prevent reading explicit -xrefrc options?
+* DONE FEATURE: Basic LSP-mode support
+** DONE 'didOpen'
+** DONE Handle protocol errors etc. using longjump
+** DONE LSP communication structure
+** DONE LSP 'initialize', 'exit', 'not found'
+* DONE Project local .c-xrefrc with convention-based database location
+   New projects use project-local .c-xrefrc with database at .c-xref/db (v1.9).
+   Legacy ~/.c-xrefrc projects continue to work via fallback.
+** DONE Reference database stored in project tree at .c-xref/db
+   Convention-based path applied automatically when using project-local config.
+** DONE Make "get project" lookup the directory tree for closest .c-xrefrc
+   Upward search from source file, stops at HOME to avoid finding ~/.c-xrefrc.
+** TODO Make all filenames relative in the options file
+   Would allow .c-xrefrc to be checked into version control.
+** DONE Simplified project creation wizard in Emacs
+   Detects git root, creates minimal .c-xrefrc, offers to generate database.
+** TODO Migrate legacy config to project-local
+   Feature to move a section from ~/.c-xrefrc to project-local .c-xrefrc.
+** DONE Function to lookup the closest .c-xrefrc and potentially use its directory path as project name
+* DONE Store Xrefs in .c-xref/db parallel to the .c-xrefrc used (v1.9)
+  Convention-based database path for project-local configs. Legacy -refs option still works for
+  backward compatibility with existing ~/.c-xrefrc configurations.
+* DONE FEATURE: LSP Find Definition
+** DONE Initiate server so it can handle OP_PUSH
+** DONE Create an answer from gathered information
+** DONE Initial Communication
 * DONE BUG: sometimes cxref data gets out of sync with actual code (in Emacs)
   E.g. when removing a line in a enum list, enums get extra references where they "used
   to be".  Unknown if it has to do with buffer management, it is not possible to

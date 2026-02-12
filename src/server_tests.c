@@ -48,5 +48,5 @@ AfterEach(Server) {}
 
 Ensure(Server, has_a_none_operation) {
     assert_that(OP_NONE, is_equal_to(0));
-    assert_that(operationNamesTable[OP_NONE], is_equal_to_string("OLO_NONE"));
+    assert_that(operationNamesTable[OP_NONE], is_equal_to_string("OP_NONE"));
 }

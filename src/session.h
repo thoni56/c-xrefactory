@@ -9,7 +9,7 @@ typedef struct SessionStackEntry {
     /* ===== Generic stack fields (used by all stack types) ===== */
     struct SessionStackEntry *previous;      /* linked-list for stack mechanics */
     struct position        callerPosition; /* where the operation was initiated */
-    ServerOperation        operation;      /* OLO_PUSH/OLO_LIST/OLO_COMPLETION/etc */
+    ServerOperation        operation;      /* OP_PUSH/OP_LIST/OP_COMPLETION/etc */
 
     /* ===== Browser-specific fields (browserStack only) ===== */
     struct reference      *references;     /* list of references for browsing */
