@@ -5225,7 +5225,7 @@ refactoring, changes made by this function can be undone with the
 
 (defun c-xref-peek (opt)
   (c-xref-entry-point-make-initialisations)
-  (c-xref-call-process-with-basic-file-data-all-saves "-olcxpushforlm -olnodialog")
+  (c-xref-call-process-with-basic-file-data-all-saves "-olcxpushonly -olnodialog")
   (c-xref-call-process-with-basic-file-data-no-saves opt)
   (c-xref-call-process-with-basic-file-data-no-saves "-olcxpoponly -olnodialog")
   )

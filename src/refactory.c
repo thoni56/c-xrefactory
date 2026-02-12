@@ -1044,7 +1044,7 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
 
 static int isThisSymbolUsed(EditorMarker *marker) {
     int refn;
-    pushReferences(marker, "-olcxpushforlm", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+    pushReferences(marker, "-olcxpushforusagecheck", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     LIST_LEN(refn, Reference, sessionData.browsingStack.top->references);
     popFromSession();
     return refn > 1;

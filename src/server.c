@@ -34,7 +34,7 @@ static bool needsReferenceDatabase(ServerOperation operation) {
         ||  operation==OP_INTERNAL_PARSE_TO_GET_PARAM_COORDINATES
         ||  operation==OP_GET_AVAILABLE_REFACTORINGS
         ||  operation==OP_BROWSE_PUSH_NAME
-        ||  operation==OP_INTERNAL_PUSH_FOR_PEEK
+        ||  operation==OP_INTERNAL_PUSH_FOR_USAGE_CHECK
         ||  operation==OP_UNUSED_GLOBAL
         ||  operation==OP_UNUSED_LOCAL
         ||  operation==OP_INTERNAL_LIST

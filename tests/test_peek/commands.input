@@ -1,0 +1,16 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server
+-olcxgetprojectname source.c
+<sync>
+-olcxpush -olcursor=4 source.c
+<sync>
+-olcxnext source.c
+<sync>
+-olcxpushonly -olnodialog -olcursor=56 source.c
+<sync>
+-olcxnext source.c
+<sync>
+-olcxpoponly -olnodialog source.c
+<sync>
+-olcxnext source.c
+<sync>
+<exit>

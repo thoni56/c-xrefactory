@@ -230,7 +230,7 @@ static bool operationRequiresOnlyParsingNoPushing(int operation) {
 static bool operationShouldUpdateCallerPosition(int operation) {
     return operation == OP_BROWSE_PUSH
         || operation == OP_BROWSE_PUSH_AND_CALL_MACRO
-        || operation == OP_INTERNAL_PUSH_FOR_PEEK
+        || operation == OP_INTERNAL_PUSH_FOR_USAGE_CHECK
         || operation == OP_BROWSE_PUSH_NAME
         || operation == OP_BROWSE_PUSH_ONLY;
 }
@@ -1111,7 +1111,7 @@ static void setDefaultSelectedVisibleItems(BrowserMenu *menu,
 static bool isRenameMenuSelection(int command) {
     return command == OP_INTERNAL_PUSH_FOR_RENAME
         || command == OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION
-        || command == OP_INTERNAL_PUSH_FOR_PEEK
+        || command == OP_INTERNAL_PUSH_FOR_USAGE_CHECK
         || command == OP_INTERNAL_SAFETY_CHECK
         || options.manualResolve == RESOLVE_DIALOG_NEVER
         ;
@@ -1420,7 +1420,7 @@ static BrowserMenu *firstVisibleSymbol(BrowserMenu *menu) {
 bool olcxShowSelectionMenu(void) {
     // decide whether to show manual resolution menu
     assert(sessionData.browsingStack.top);
-    if (options.serverOperation == OP_INTERNAL_PUSH_FOR_PEEK) {
+    if (options.serverOperation == OP_INTERNAL_PUSH_FOR_USAGE_CHECK) {
         // never ask for resolution for PEEK symbols
         return false;
     }
@@ -1602,7 +1602,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
             deleteEntryFromSessionStack(sessionData.browsingStack.top);
         }
         break;
-    case OP_INTERNAL_PUSH_FOR_PEEK:
+    case OP_INTERNAL_PUSH_FOR_USAGE_CHECK:
         if (haveBrowsingMenu())
             olcxPushOnly();
         else
@@ -1870,6 +1870,7 @@ void answerEditorAction(void) {
     case OP_BROWSE_PUSH:
     case OP_BROWSE_PUSH_ONLY:
     case OP_BROWSE_PUSH_AND_CALL_MACRO:
+    case OP_INTERNAL_PUSH_FOR_USAGE_CHECK:
         mainAnswerReferencePushingAction(options.serverOperation);
         break;
     case OP_BROWSE_PUSH_NAME:
