@@ -8,6 +8,7 @@
 
 /* High-level initialization functions called by various entry points */
 
+extern void initializeCoreSubsystems(void);
 extern void totalTaskEntryInitialisations(void);
 extern void mainTaskEntryInitialisations(ArgumentsVector args);
 

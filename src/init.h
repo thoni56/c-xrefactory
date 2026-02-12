@@ -8,4 +8,6 @@ extern void initBuiltinTypes(void);
 extern void initStorageNames(void);
 extern void initTypeNames(void);
 
+extern void initLanguageTables(void);
+
 #endif

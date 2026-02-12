@@ -375,3 +375,11 @@ void initBuiltinTypes(void) {
         builtinPtr2Ptr2TypeTable[t] = newTypeModifier(TypePointer, NULL, builtinPtr2TypeTable[t]);
     }
 }
+
+void initLanguageTables(void) {
+    initBuiltinTypes();
+    initArchaicTypes();
+    initTypeNames();
+    initStorageNames();
+    initTokenNamesTables();
+}

@@ -16,6 +16,7 @@
 #include "position.h"
 #include "referenceableitemtable.h"
 #include "stackmemory.h"
+#include "startup.h"
 #include "symboltable.h"
 #include "yylex.h"
 
@@ -134,18 +135,7 @@ FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
 }
 
 void initializeParsingSubsystem(void) {
-    /* Initialize stack memory FIRST - everything else may allocate from it */
-    initOuterCodeBlock();
-
-    /* Initialize cx memory pool for cross-reference data */
-    initCxMemory(CX_MEMORY_INITIAL_SIZE);
-
-    /* Initialize preprocessor memory - needed for #include processing */
-    memoryInit(&ppmMemory, "pre-processor macros", NULL, PreprocessorMemorySize);
-    allocateMacroArgumentTable(MAX_MACRO_ARGS);
-
-    /* Initialize lexer input state */
-    initAllInputs();
+    initializeCoreSubsystems();
 
     /* Copy preset options as baseline (file suffixes, defaults, etc.)
      * This gives us the same baseline as XRef mode without the expensive
@@ -158,16 +148,6 @@ void initializeParsingSubsystem(void) {
     /* Prevent lowercasing of filenames on case-sensitive filesystems.
      * This ensures buffer lookups match how files were stored during didOpen. */
     options.fileNamesCaseSensitive = true;
-
-    /* Initialize type system - required before parsing */
-    initBuiltinTypes();
-    initArchaicTypes();
-
-    /* Initialize symbol table for parsing */
-    initSymbolTable(MAX_SYMBOLS_HASHTABLE_ENTRIES);
-
-    /* Initialize referenceable item table for storing parsed symbols */
-    initReferenceableItemTable(MAX_REFS_HASHTABLE_ENTRIES);
 }
 
 void parseToCreateReferences(const char *fileName) {

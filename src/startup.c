@@ -643,6 +643,17 @@ static int power(int x, int y) {
     return res;
 }
 
+void initializeCoreSubsystems(void) {
+    initCxMemory(CX_MEMORY_INITIAL_SIZE);
+    initOuterCodeBlock();
+    memoryInit(&ppmMemory, "pre-processor macros", NULL, PreprocessorMemorySize);
+    allocateMacroArgumentTable(MAX_MACRO_ARGS);
+    initSymbolTable(MAX_SYMBOLS_HASHTABLE_ENTRIES);
+    initReferenceableItemTable(MAX_REFS_HASHTABLE_ENTRIES);
+    initAllInputs();
+    initLanguageTables();
+}
+
 void totalTaskEntryInitialisations(void) {
     ENTER();
 
@@ -661,8 +672,6 @@ void totalTaskEntryInitialisations(void) {
     initLexemEnumNames();
 
     // Memory
-    initCxMemory(CX_MEMORY_INITIAL_SIZE);
-
     memoryInit(&presetOptions.memory, "preset options memory", NULL, OptionsMemorySize);
 
     // Inject error handling functions
@@ -696,30 +705,17 @@ static void clearFileItem(FileItem *fileItem) {
 void mainTaskEntryInitialisations(ArgumentsVector args) {
     ENTER();
 
+    initializeCoreSubsystems();
+
     fileAbortEnabled = false;
 
     // supposing that file table is still here, but reinit it
     mapOverFileTable(clearFileItem);
 
-    initReferenceableItemTable(MAX_REFS_HASHTABLE_ENTRIES);
-
-    memoryInit(&ppmMemory, "pre-processor macros", NULL, PreprocessorMemorySize);
-    allocateMacroArgumentTable(MAX_MACRO_ARGS);
-    initOuterCodeBlock();
-
     // init options as soon as possible! for exampl initCwd needs them
     initOptions();
 
-    initBuiltinTypes();
-    initArchaicTypes();
-
-    initSymbolTable(MAX_SYMBOLS_HASHTABLE_ENTRIES);
-
-    initAllInputs();
     initCwd();
-
-    initTypeNames();
-    initStorageNames();
 
     previousStandardOptionsFile[0] = 0;
     previousStandardOptionsSection[0] = 0;
@@ -753,9 +749,6 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
         tempAllocated = (char *)cxAlloc(options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
         cxFreeUntil(tempAllocated);
     }
-
-    /* Initialize token names table with all C and Yacc keywords. */
-    initTokenNamesTables();
 
     int argcount = 0;
     inputFileName = getNextArgumentFile(&argcount);
