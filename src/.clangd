@@ -1,5 +1,5 @@
 CompileFlags:
-    Add: [-DGIT_HASH="1"]
+    Add: [-DGIT_HASH="1", -I./3pp]
 Diagnostics:
     UnusedIncludes: Strict
     

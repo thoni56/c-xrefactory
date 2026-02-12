@@ -6,7 +6,7 @@
 #include <cgreen/constraint_syntax_helpers.h>
 #include <cgreen/mocks.h>
 
-#include "cJSON.h"
+#include "cJSON/cJSON.h"
 
 #include "log.h"
 

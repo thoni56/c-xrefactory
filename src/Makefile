@@ -154,9 +154,9 @@ ROOT_DIR=..
 YACC_DIR=$(ROOT_DIR)/byacc-1.9/
 YACC=$(YACC_DIR)/yacc
 
-# cJSON as submodule
-CJSON_DIR=3pp/cJSON
-CFLAGS += -I$(CJSON_DIR)
+# 3pp components
+PPP_DIR=3pp
+CFLAGS += -I$(PPP_DIR)
 
 
 # On Darwin we can use gcc-14 if available

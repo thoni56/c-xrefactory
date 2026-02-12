@@ -15,7 +15,7 @@ modules:
 
 OBJDIR = .objects
 
-CJSON_SRC := $(CJSON_DIR)/cJSON.c
+CJSON_SRC := $(PPP_DIR)/cJSON/cJSON.c
 CJSON_OBJ := $(OBJDIR)/cJSON.o
 CJSON_DEP := $(OBJDIR)/cJSON.d
 
