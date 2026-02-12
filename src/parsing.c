@@ -8,6 +8,7 @@
 #include "globals.h"
 #include "init.h"
 #include "log.h"
+#include "macroargumenttable.h"
 #include "memory.h"
 #include "misc.h"
 #include "options.h"
@@ -138,6 +139,13 @@ void initializeParsingSubsystem(void) {
 
     /* Initialize cx memory pool for cross-reference data */
     initCxMemory(CX_MEMORY_INITIAL_SIZE);
+
+    /* Initialize preprocessor memory - needed for #include processing */
+    memoryInit(&ppmMemory, "pre-processor macros", NULL, PreprocessorMemorySize);
+    allocateMacroArgumentTable(MAX_MACRO_ARGS);
+
+    /* Initialize lexer input state */
+    initAllInputs();
 
     /* Copy preset options as baseline (file suffixes, defaults, etc.)
      * This gives us the same baseline as XRef mode without the expensive
