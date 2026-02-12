@@ -4460,13 +4460,13 @@ break;
 case 444:
 #line 1614 "yacc_parser.y"
 {/*6*/
-        yyval.symbol = addContinueBreakLabelSymbol(1000*yyvsp[0].ast_integer.data, SWITCH_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(1000*yyvsp[0].ast_integer.data);
     }
 break;
 case 445:
 #line 1616 "yacc_parser.y"
 {/*7*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data, BREAK_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data);
         generateInternalLabelReference(yyvsp[-1].ast_integer.data, UsageFork);
     }
 break;
@@ -4486,13 +4486,13 @@ break;
 case 450:
 #line 1638 "yacc_parser.y"
 {/*7*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-4].ast_integer.data, CONTINUE_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-4].ast_integer.data);
     }
 break;
 case 451:
 #line 1640 "yacc_parser.y"
 {/*8*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data, BREAK_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data);
     }
 break;
 case 452:
@@ -4507,13 +4507,13 @@ break;
 case 453:
 #line 1649 "yacc_parser.y"
 { /*5*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data, CONTINUE_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data);
     }
 break;
 case 454:
 #line 1651 "yacc_parser.y"
 {/*6*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data, BREAK_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data);
     }
 break;
 case 455:
@@ -4536,13 +4536,13 @@ case 457:
 { /*13*/
             generateInternalLabelReference(yyvsp[-7].ast_integer.data, UsageUsed);
             generateInternalLabelReference(yyvsp[-4].ast_integer.data, UsageDefined);
-            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-3].ast_integer.data, CONTINUE_LABEL_NAME);
+            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-3].ast_integer.data);
         }
 break;
 case 458:
 #line 1670 "yacc_parser.y"
 { /*14*/
-            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data, BREAK_LABEL_NAME);
+            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data);
         }
 break;
 case 459:
@@ -4559,13 +4559,13 @@ case 460:
 { /*13*/
             generateInternalLabelReference(yyvsp[-7].ast_integer.data, UsageUsed);
             generateInternalLabelReference(yyvsp[-4].ast_integer.data, UsageDefined);
-            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-3].ast_integer.data, CONTINUE_LABEL_NAME);
+            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-3].ast_integer.data);
         }
 break;
 case 461:
 #line 1689 "yacc_parser.y"
 { /*14*/
-            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data, BREAK_LABEL_NAME);
+            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.data);
         }
 break;
 case 462:
@@ -4580,13 +4580,13 @@ break;
 case 468:
 #line 1708 "yacc_parser.y"
 {
-        generateContinueBreakReference(CONTINUE_LABEL_NAME);
+        generateContinueBreakReference();
     }
 break;
 case 469:
 #line 1711 "yacc_parser.y"
 {
-        generateContinueBreakReference(BREAK_LABEL_NAME);
+        generateContinueBreakReference();
     }
 break;
 case 470:

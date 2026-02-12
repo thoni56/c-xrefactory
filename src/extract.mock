@@ -2,8 +2,8 @@
 #include "extract.h"
 #include <cgreen/mocks.h>
 
-Symbol *addContinueBreakLabelSymbol(int labelNumber, char *name) {
-    return (Symbol *) mock(labelNumber, name);
+Symbol *addContinueBreakLabelSymbol(int labelNumber) {
+    return (Symbol *) mock(labelNumber);
 }
 
 void actionsBeforeAfterExternalDefinition(void) {
@@ -14,12 +14,12 @@ void extractActionOnBlockMarker(void) {
     mock();
 }
 
-void deleteContinueBreakLabelSymbol(char *name) {
-    mock(name);
+void deleteContinueBreakLabelSymbol(void) {
+    mock();
 }
 
-void generateContinueBreakReference(char *name) {
-    mock(name);
+void generateContinueBreakReference(void) {
+    mock();
 }
 
 void generateSwitchCaseFork(bool isLast) {

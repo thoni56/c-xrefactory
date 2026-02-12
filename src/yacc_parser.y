@@ -1612,9 +1612,9 @@ selection_statement
         generateInternalLabelReference($8.data, UsageDefined);
     }
     | SWITCH '(' expr ')' /*5*/ _ncounter_  {/*6*/
-        $<symbol>$ = addContinueBreakLabelSymbol(1000*$5.data, SWITCH_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol(1000*$5.data);
     } {/*7*/
-        $<symbol>$ = addContinueBreakLabelSymbol($5.data, BREAK_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol($5.data);
         generateInternalLabelReference($5.data, UsageFork);
     } statement                 {
         generateSwitchCaseFork(true);
@@ -1636,9 +1636,9 @@ optional_semicolon
 iteration_statement
     : WHILE _nlabel_ '(' expr ')' /*6*/ _nfork_
     {/*7*/
-        $<symbol>$ = addContinueBreakLabelSymbol($2.data, CONTINUE_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol($2.data);
     } {/*8*/
-        $<symbol>$ = addContinueBreakLabelSymbol($6.data, BREAK_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol($6.data);
     } statement                 {
         deleteContinueBreakSymbol($<symbol>8);
         deleteContinueBreakSymbol($<symbol>7);
@@ -1647,9 +1647,9 @@ iteration_statement
     }
 
     | DO _nlabel_ _ncounter_ _ncounter_ { /*5*/
-        $<symbol>$ = addContinueBreakLabelSymbol($3.data, CONTINUE_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol($3.data);
     } {/*6*/
-        $<symbol>$ = addContinueBreakLabelSymbol($4.data, BREAK_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol($4.data);
     } statement WHILE {
         deleteContinueBreakSymbol($<symbol>6);
         deleteContinueBreakSymbol($<symbol>5);
@@ -1665,10 +1665,10 @@ iteration_statement
         { /*13*/
             generateInternalLabelReference($5.data, UsageUsed);
             generateInternalLabelReference($8.data, UsageDefined);
-            $<symbol>$ = addContinueBreakLabelSymbol($9.data, CONTINUE_LABEL_NAME);
+            $<symbol>$ = addContinueBreakLabelSymbol($9.data);
         }
         { /*14*/
-            $<symbol>$ = addContinueBreakLabelSymbol($12.data, BREAK_LABEL_NAME);
+            $<symbol>$ = addContinueBreakLabelSymbol($12.data);
         }
             statement
         {
@@ -1684,10 +1684,10 @@ iteration_statement
         { /*13*/
             generateInternalLabelReference($5.data, UsageUsed);
             generateInternalLabelReference($8.data, UsageDefined);
-            $<symbol>$ = addContinueBreakLabelSymbol($9.data, CONTINUE_LABEL_NAME);
+            $<symbol>$ = addContinueBreakLabelSymbol($9.data);
         }
         { /*14*/
-            $<symbol>$ = addContinueBreakLabelSymbol($12.data, BREAK_LABEL_NAME);
+            $<symbol>$ = addContinueBreakLabelSymbol($12.data);
         }
             statement
         {
@@ -1706,10 +1706,10 @@ iteration_statement
 jump_statement
     : GOTO label_name ';'
     | CONTINUE ';'          {
-        generateContinueBreakReference(CONTINUE_LABEL_NAME);
+        generateContinueBreakReference();
     }
     | BREAK ';'             {
-        generateContinueBreakReference(BREAK_LABEL_NAME);
+        generateContinueBreakReference();
     }
     | RETURN ';'            {
         generateInternalLabelReference(-1, UsageUsed);

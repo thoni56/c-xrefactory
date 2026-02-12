@@ -20,15 +20,9 @@ typedef enum language {
 #define CR_LF_EOL_CONVERSION	1
 #define CR_EOL_CONVERSION		2
 
-/* ****************** X-files hashing method****************************** */
+/* ****************** X-files hashing method ****************************** */
 
-#define XFILE_HASH_DEFAULT 0
-#define XFILE_HASH_ALPHA1 1
-#define XFILE_HASH_ALPHA2 2
 #define XFILE_HASH_MAX 3
-
-#define XFILE_HASH_ALPHA1_REFNUM ('z'-'a'+2)
-#define XFILE_HASH_ALPHA2_REFNUM (XFILE_HASH_ALPHA1_REFNUM*XFILE_HASH_ALPHA1_REFNUM)
 
 /* *********************************************************************** */
 
@@ -37,10 +31,6 @@ typedef enum language {
 #define NO_PASS  0       // sentinel to skip all pass-specific options
 
 /* *********************************************************************** */
-
-#define CONTINUE_LABEL_NAME " %cntl%"
-#define BREAK_LABEL_NAME " %brkl%"
-#define SWITCH_LABEL_NAME " %swtl%"
 
 // special link names starts by one space character
 // special local link names starts by two spaces

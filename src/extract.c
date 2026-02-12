@@ -23,6 +23,10 @@
 #define EXTRACT_REFERENCE_ARG_STRING "&"
 #define EXTRACT_OUTPUT_PARAM_PREFIX "*_"
 
+#define CONTINUE_LABEL_NAME " %cntl%"
+#define BREAK_LABEL_NAME " %brkl%"
+#define SWITCH_LABEL_NAME " %swtl%"
+
 
 /* ********************** Data Flow analysis bits ********************* */
 
@@ -88,13 +92,13 @@ void dumpProgram(ProgramGraphNode *program) {
     printf("[ProgramDump end]\n");
 }
 
-Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
+Symbol *addContinueBreakLabelSymbol(int labn) {
     Symbol *symbol;
 
     if (parsingConfig.operation != PARSE_TO_EXTRACT)
         return NULL;
 
-    symbol = newSymbolAsLabel(name, name, NO_POSITION, labn);
+    symbol = newSymbolAsLabel(CONTINUE_LABEL_NAME, CONTINUE_LABEL_NAME, NO_POSITION, labn);
     symbol->type = TypeLabel;
     symbol->storage = StorageAuto;
 
@@ -104,13 +108,13 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
 }
 
 
-void deleteContinueBreakLabelSymbol(char *name) {
+void deleteContinueBreakLabelSymbol(void) {
     Symbol symbol, *foundSymbol;
 
     if (parsingConfig.operation != PARSE_TO_EXTRACT)
         return;
 
-    fillSymbolWithLabel(&symbol, name, name, NO_POSITION, 0);
+    fillSymbolWithLabel(&symbol, CONTINUE_LABEL_NAME, CONTINUE_LABEL_NAME, NO_POSITION, 0);
     symbol.type = TypeLabel;
     symbol.storage = StorageAuto;
 
@@ -121,13 +125,13 @@ void deleteContinueBreakLabelSymbol(char *name) {
     }
 }
 
-void generateContinueBreakReference(char *name) {
+void generateContinueBreakReference(void) {
     Symbol symbol, *foundSymbol;
 
     if (parsingConfig.operation != PARSE_TO_EXTRACT)
         return;
 
-    fillSymbolWithLabel(&symbol, name, name, NO_POSITION, 0);
+    fillSymbolWithLabel(&symbol, CONTINUE_LABEL_NAME, CONTINUE_LABEL_NAME, NO_POSITION, 0);
     symbol.type = TypeLabel;
     symbol.storage = StorageAuto;
 
