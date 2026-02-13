@@ -5234,7 +5234,7 @@ refactoring, changes made by this function can be undone with the
   (let ((sw))
     (setq sw (selected-window))
     (c-xref-entry-point-make-initialisations-no-project-required)
-    (c-xref-call-process-with-basic-file-data-no-saves option)
+    (c-xref-call-process-with-basic-file-data-all-saves option)
     (c-xref-move-current-reference-list-pointer-if-browser-displayed direction)
     (sit-for .5)
     (select-window sw)
