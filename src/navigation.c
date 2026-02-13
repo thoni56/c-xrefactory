@@ -10,7 +10,6 @@
 #include "globals.h"
 #include "head.h"
 #include "log.h"
-#include "misc.h"
 #include "options.h"
 #include "parsing.h"
 #include "ppc.h"
@@ -18,20 +17,20 @@
 #include "startup.h"
 #include "yylex.h"
 
-
-static bool positionIsLessThanByFilename(Position p1, Position p2) {
-    char fn1[MAX_FILE_NAME_SIZE];
-    strcpy(fn1, simpleFileNameFromFileNum(p1.file));
-    char *fn2 = simpleFileNameFromFileNum(p2.file);
-    int fc = strcmp(fn1, fn2);
-    if (fc < 0) return true;
-    if (fc > 0) return false;
-    if (p1.file < p2.file) return true;
-    if (p1.file > p2.file) return false;
-    if (p1.line < p2.line) return true;
-    if (p1.line > p2.line) return false;
-    return p1.col < p2.col;
-}
+/*
+ * Navigation ordering:
+ *
+ * References are sorted by referenceIsLessThanOrderImportant (in cxref.c):
+ * definition/declaration first, then by simple filename, file number, line, col.
+ * This means NEXT walks: definition → usages in filename order.
+ *
+ * Initial positioning (PUSH): a linear scan finds the reference nearest the
+ * cursor in the caller's file — no dependency on sort order.
+ *
+ * After stale-file refresh: restore to nearest match of the saved position,
+ * then advance (NEXT) or retreat (PREVIOUS) in list order. This avoids
+ * assumptions about sort order that broke with definition-first ordering.
+ */
 
 static Reference *findLastReference(SessionStackEntry *sessionEntry, int filterLevel) {
     Reference *last = NULL;
@@ -70,20 +69,37 @@ static void setCurrentReferenceToPreviousOrLast(SessionStackEntry *sessionEntry,
 }
 
 void setCurrentReferenceToFirstAfterCallerPosition(SessionStackEntry *sessionEntry) {
-    Reference *reference;
-    for (reference = sessionEntry->references; reference != NULL; reference = reference->next) {
-        log_debug("checking %d:%d:%d to %d:%d:%d", reference->position.file, reference->position.line, reference->position.col,
-                  sessionEntry->callerPosition.file, sessionEntry->callerPosition.line,
-                  sessionEntry->callerPosition.col);
-        if (!positionIsLessThanByFilename(reference->position, sessionEntry->callerPosition))
-            break;
+    Position caller = sessionEntry->callerPosition;
+    Reference *bestAfter = NULL;   /* closest reference at or after caller */
+    Reference *bestBefore = NULL;  /* closest reference before caller */
+    int bestAfterDistance = INT_MAX;
+    int bestBeforeDistance = INT_MAX;
+
+    for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
+        if (r->position.file != caller.file)
+            continue;
+        log_debug("checking %d:%d:%d to %d:%d:%d", r->position.file, r->position.line, r->position.col,
+                  caller.file, caller.line, caller.col);
+
+        if (r->position.line > caller.line ||
+            (r->position.line == caller.line && r->position.col >= caller.col)) {
+            /* At or after caller */
+            int distance = r->position.line - caller.line;
+            if (distance < bestAfterDistance) {
+                bestAfterDistance = distance;
+                bestAfter = r;
+            }
+        } else {
+            /* Before caller */
+            int distance = caller.line - r->position.line;
+            if (distance < bestBeforeDistance) {
+                bestBeforeDistance = distance;
+                bestBefore = r;
+            }
+        }
     }
-    // it should never be NULL, but one never knows - DUH! We have coverage to show that you are wrong
-    if (reference == NULL) {
-        sessionEntry->current = sessionEntry->references;
-    } else {
-        sessionEntry->current = reference;
-    }
+
+    sessionEntry->current = bestAfter ? bestAfter : bestBefore ? bestBefore : sessionEntry->references;
 }
 
 void setCurrentReferenceToNextOrFirst(SessionStackEntry *sessionEntry, Reference *reference) {

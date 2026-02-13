@@ -967,12 +967,11 @@ void processSelectedReferences(SessionStackEntry *sessionStackEntry,
     if (sessionStackEntry->menu == NULL)
         return;
 
-    LIST_MERGE_SORT(Reference, sessionStackEntry->references, referencePositionIsLess);
     for (BrowserMenu *m = sessionStackEntry->menu; m != NULL; m = m->next) {
         referencesMapFun(sessionStackEntry, m);
     }
-    setCurrentReferenceToFirstAfterCallerPosition(sessionStackEntry);
     LIST_MERGE_SORT(Reference, sessionStackEntry->references, referenceIsLessThan);
+    setCurrentReferenceToFirstAfterCallerPosition(sessionStackEntry);
 }
 
 static void genOnLineReferences(SessionStackEntry *sessionStackEntry, BrowserMenu *menu) {
