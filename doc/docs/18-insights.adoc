@@ -39,9 +39,9 @@ Position position
 ....
 
 
-=== Navigation Architecture and the Preloading Limitation
+=== Navigation Architecture and Preloading
 
-Date: 2025-12-22
+Date: 2025-12-22, updated 2026-02
 
 ==== How Symbol Navigation Works
 
@@ -50,7 +50,7 @@ Symbol navigation (PUSH/NEXT/PREVIOUS/POP) merges references from **two sources*
 1. **Disk CXrefs Database** - Reflects saved files on disk
 2. **In-Memory ReferenceableItem Table** - Reflects current server state including preloaded editor buffers
 
-When you PUSH on a symbol, the navigation menu creation (function `createSelectionMenuForOperation`) does:
+When you PUSH on a symbol, the navigation menu creation (`createSelectionMenuForOperation`) does:
 
 1. **Load from disk** - Scans CXrefs files for the symbol (via `scanReferencesToCreateMenu`)
    * Creates menu items with disk-based line numbers
@@ -63,39 +63,21 @@ When you PUSH on a symbol, the navigation menu creation (function `createSelecti
 
 This dual-source approach allows navigation without full project parse while providing updated positions for modified files.
 
-==== The Fundamental Limitation
+==== Client Preloading
 
-**The Emacs client only preloads the currently active file**, not all modified editor buffers.
+The Emacs client sends `-preload <file> <tmpfile>` for modified editor buffers, giving the server access to unsaved content. The current buffer is always preloaded (even if unmodified). On PUSH, NEXT, and PREVIOUS, all other modified buffers are also preloaded.
 
-This creates incorrect navigation after editing non-current files:
+==== Stale File Detection During Navigation
 
-```
-1. PUSH on symbol in common.h → session has refs with disk line numbers
-2. NEXT to usage in source1.c (becomes current, gets preloaded)
-3. User adds line in source1.c → server knows via preload
-4. NEXT to source2.c → source1.c NO LONGER preloaded
-   - Server has no knowledge of source1.c modification
-   - Session still has old line number from step 1
-5. NEXT wraps to source1.c → WRONG LINE
-   - Points to line before actual usage
-```
+When NEXT or PREVIOUS is invoked, the server detects if a file has been modified via its preload (comparing `lastParsedMtime` against the editor buffer's modification time). If stale, it reparses the file from the preloaded content before navigating, updating reference positions to match the modified buffer.
 
-==== Why Our Fix Attempt Didn't Work
+After a stale-file refresh, the reference list is rebuilt. The server restores its position by finding the nearest reference to where it was, then advances (NEXT) or retreats (PREVIOUS) in list order. This respects the definition-first navigation ordering without assuming any particular sort order.
 
-We attempted to fix this (commit 8052518a4) by detecting modified files via timestamp comparison and reparsing them in `processModifiedFilesForNavigation`. **This failed because:**
+==== Remaining Limitation: PUSH Target Positions
 
-* Can only detect modifications in **preloaded** files (current file)
-* Cannot know about changes in non-preloaded modified buffers
-* Client protocol doesn't support sending multiple preloaded buffers
+PUSH returns the definition position from the reference database, which reflects the last time each file was parsed. If the target file (not the current file) has been modified, PUSH navigates to the old position. The preloaded content is available but not used for the PUSH result.
 
-==== Potential Solutions
-
-* **Client preloads all modified buffers** - Requires Emacs client changes
-* **LSP-style protocol** (did_open/did_change) - Major architectural change
-* **Accept the limitation** - Document current behavior
-* **Force save before cross-file navigation** - Intrusive UX
-
-As of 2025-12-22, the limitation remains documented but unfixed. The attempted fix was reverted to preserve the original working architecture.
+This resolves naturally with link:/workspace/decisions#20[ADR-0020] (separate sync from dispatch): once all modified buffers are reparsed at server entry, PUSH will see current positions.
 
 ==== Architectural Invariants
 
@@ -103,9 +85,7 @@ As of 2025-12-22, the limitation remains documented but unfixed. The attempted f
 
 * Disk CXrefs = State of files on disk (from last tags generation)
 * ReferenceableItem Table = Disk state + preloaded editor buffers
-* Session references = Snapshot at PUSH time
-
-The table can NEVER reflect non-preloaded modified files because the server doesn't receive that information from the client.
+* Session references = Snapshot at PUSH time, refreshed on stale detection during NEXT/PREVIOUS
 
 === RefactoryMode Internally Calls XrefMode
 

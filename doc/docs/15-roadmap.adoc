@@ -39,12 +39,9 @@ The following diagram shows how the remaining architectural pieces depend on eac
         operations assume fresh data)
                        |
                        v
-        Client sends all modified buffers
-               (Emacs change)
-                       |
-                       v
     ┌───────────────────────────────────┐
     │          FOUNDATION (done)        │
+    │  Client sends all modified buffers│
     │  Single-project server (ADR-0021) │
     │  Project-local config (ADR-0005)  │
     │  Unified startup (shared init)    │
@@ -56,9 +53,6 @@ The following diagram shows how the remaining architectural pieces depend on eac
 [cols="1,3"]
 |===
 |Component |Description
-
-|**Client sends all modified buffers**
-|Emacs client sends `-preload` for all modified buffers, not just the current file. Without this, the server is blind to modifications in non-current files. See link:18-insights.adoc[Chapter 18: Navigation Architecture and the Preloading Limitation] for why this matters.
 
 |**Separate sync from dispatch**
 |Server-side restructuring (link:/workspace/decisions#20[ADR-0020]): hoist all buffer refresh to the server entry point so that operations can assume the in-memory table is current. This eliminates mid-operation re-parse issues and is valuable even before the full "memory is truth" goal is reached.
