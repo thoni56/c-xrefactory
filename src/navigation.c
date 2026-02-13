@@ -33,30 +33,6 @@ static bool positionIsLessThanByFilename(Position p1, Position p2) {
     return p1.col < p2.col;
 }
 
-static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
-                                               int filterLevel) {
-    ENTER();
-
-    // After a refresh for "next", find the first reference AFTER savedPos
-    sessionEntry->current = sessionEntry->references;
-    while (sessionEntry->current != NULL) {
-        if (positionIsLessThanByFilename(savedPos, sessionEntry->current->position)
-            && isMoreImportantUsageThan(sessionEntry->current->usage, filterLevel))
-            break; // Found first reference after where we were
-        sessionEntry->current = sessionEntry->current->next;
-    }
-
-    // If no reference found after savedPos, wrap to first reference
-    if (sessionEntry->current == NULL) {
-        ppcBottomInformation("Moving to the first reference");
-        sessionEntry->current = sessionEntry->references;
-        while (sessionEntry->current != NULL
-               && isAtMostAsImportantAs(sessionEntry->current->usage, filterLevel))
-            sessionEntry->current = sessionEntry->current->next;
-    }
-    LEAVE();
-}
-
 static Reference *findLastReference(SessionStackEntry *sessionEntry, int filterLevel) {
     Reference *last = NULL;
     for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
@@ -77,26 +53,6 @@ static Reference *findPreviousReference(SessionStackEntry *sessionEntry, int fil
         }
     }
     return previous;
-}
-
-static void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
-                                                   int filterLevel) {
-    ENTER();
-    // After a refresh for "previous", find the last reference BEFORE savedPos
-    sessionEntry->current = NULL;
-    for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
-        if (!positionIsLessThanByFilename(r->position, savedPos))
-            break; // At or past saved position
-        if (isMoreImportantUsageThan(r->usage, filterLevel))
-            sessionEntry->current = r;
-    }
-
-    // If no reference found before savedPos, wrap to last reference
-    if (sessionEntry->current == NULL) {
-        ppcBottomInformation("Moving to the last reference");
-        sessionEntry->current = findLastReference(sessionEntry, filterLevel);
-    }
-    LEAVE();
 }
 
 static Position getCurrentPosition(SessionStackEntry *sessionEntry) {
@@ -286,6 +242,30 @@ void restoreToNearestReference(SessionStackEntry *sessionEntry, Position savedPo
     }
 
     sessionEntry->current = exactMatch ? exactMatch : nearestInSameFile ? nearestInSameFile : firstVisible;
+}
+
+static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
+                                               int filterLevel) {
+    ENTER();
+
+    // First restore to where we were, then advance to next
+    restoreToNearestReference(sessionEntry, savedPos, filterLevel);
+    if (sessionEntry->current != NULL)
+        setCurrentReferenceToFirstVisible(sessionEntry, sessionEntry->current->next);
+
+    LEAVE();
+}
+
+static void restoreToPreviousReferenceAfterRefresh(SessionStackEntry *sessionEntry, Position savedPos,
+                                                   int filterLevel) {
+    ENTER();
+
+    // First restore to where we were, then step back to previous
+    restoreToNearestReference(sessionEntry, savedPos, filterLevel);
+    setCurrentReferenceToPreviousOrLast(sessionEntry, findPreviousReference(sessionEntry, filterLevel),
+                                        filterLevel);
+
+    LEAVE();
 }
 
 static void gotoCurrentReference(SessionStackEntry *sessionEntry) {
