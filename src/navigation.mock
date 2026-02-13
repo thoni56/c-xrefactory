@@ -9,7 +9,7 @@ void setCurrentReferenceToFirstAfterCallerPosition(SessionStackEntry *sessionSta
     mock(sessionStackEntry);
 }
 
-void setCurrentReferenceToFirstVisible(SessionStackEntry *refs, Reference *r) {
+void setCurrentReferenceToNextOrFirst(SessionStackEntry *refs, Reference *r) {
     mock(refs, r);
 }
 

@@ -86,7 +86,7 @@ void setCurrentReferenceToFirstAfterCallerPosition(SessionStackEntry *sessionEnt
     }
 }
 
-void setCurrentReferenceToFirstVisible(SessionStackEntry *sessionEntry, Reference *reference) {
+void setCurrentReferenceToNextOrFirst(SessionStackEntry *sessionEntry, Reference *reference) {
     int rlevel = usageFilterLevels[sessionEntry->refsFilterLevel];
 
     while (reference != NULL && isAtMostAsImportantAs(reference->usage, rlevel))
@@ -251,7 +251,7 @@ static void restoreToNextReferenceAfterRefresh(SessionStackEntry *sessionEntry, 
     // First restore to where we were, then advance to next
     restoreToNearestReference(sessionEntry, savedPos, filterLevel);
     if (sessionEntry->current != NULL)
-        setCurrentReferenceToFirstVisible(sessionEntry, sessionEntry->current->next);
+        setCurrentReferenceToNextOrFirst(sessionEntry, sessionEntry->current->next);
 
     LEAVE();
 }
@@ -306,7 +306,7 @@ void gotoNextReference(SessionStackEntry *sessionEntry) {
         if (sessionEntry->current == NULL)
             sessionEntry->current = sessionEntry->references;
         else {
-            setCurrentReferenceToFirstVisible(sessionEntry, nextReference);
+            setCurrentReferenceToNextOrFirst(sessionEntry, nextReference);
         }
     }
 

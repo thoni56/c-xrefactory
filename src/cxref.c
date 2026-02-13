@@ -1169,7 +1169,7 @@ static void olcxReferenceFilterSet(int filterLevel) {
     }
     // move to the visible reference
     if (sessionEntry!=NULL)
-        setCurrentReferenceToFirstVisible(sessionEntry, sessionEntry->current);
+        setCurrentReferenceToNextOrFirst(sessionEntry, sessionEntry->current);
     olcxPrintRefList(";", sessionEntry);
 }
 
