@@ -13,7 +13,7 @@ The `cxfile` module currently mixes multiple responsibilities that should be sep
 * **Persistence implementation** (reading/writing .cx files) ✓ Correct level
 * **Search and filter operations** (matching search strings) ✗ Wrong level
 * **Operation-specific loading** (menu creation, macro completion, unused detection) ✗ Too specific
-* **Treated as source of truth** (when it should be just a cache) ✗ Architectural confusion
+* **Treated as source of truth** (when it should be just a startup snapshot) ✗ Architectural confusion
 
 This mixing creates tight coupling, makes testing difficult, and prevents future architectural improvements (like LSP integration or alternative storage backends).
 
@@ -30,15 +30,16 @@ The current code conflates two distinct concepts:
 - Manages invalidation and staleness
 - **This is the actual database**
 
-*Persistence Store* (Dumb Layer - Durable Cache)::
+*Persistence Store* (Dumb Layer - Startup Snapshot)::
 
-- **Always on disk/database**: The `.cx` files (or future SQLite, etc.)
+- **Always on disk**: The `.cx` files (or future SQLite, etc.)
 - Just knows how to save/load a specific format
 - Has NO in-memory state of its own
 - No business logic, no searching, no filtering
 - **This is just the storage mechanism**
+- Only consulted at startup; never read during normal operation
 
-IMPORTANT: The persistence layer is **always about durable storage** that survives restarts. "In-memory persistence" is a contradiction - persistence means surviving across sessions.
+IMPORTANT: The persistence layer stores a **startup snapshot** of disk-file-derived references. It exists to avoid a full project parse on server start. See link:15-roadmap.adoc[Chapter 15: Roadmap] for the target snapshot semantics.
 
 ==== Current Architecture Problems
 
@@ -121,7 +122,7 @@ The disk is just a **cache** of the last saved state, not the current truth.
                       ↓
 ┌──────────────────────────────────────────────────┐
 │  Persistence Store (Dumb Layer)                  │
-│  Durable Cache: .cx files on disk                │
+│  Startup snapshot: .cx files on disk              │
 │                                                  │
 │  - Just save/load binary format                  │
 │  - No business logic                             │
@@ -379,7 +380,7 @@ Both Emacs and LSP clients want the same thing: **up-to-date symbol and referenc
 
 1. **Always ensures information is current** using existing dependency tracking
 2. **Scans incrementally** only what's needed, when needed  
-3. **Uses `.cx` files as persistent cache** for optimization
+3. **Uses `.cx` files as startup snapshot** for fast server start
 4. **Eliminates cold start problems** by avoiding upfront full-project scanning
 
 *_Simplified Interface Design_*
@@ -404,34 +405,7 @@ typedef struct {
 
 *_Implementation Strategy: Smart On-Demand_*
 
-IMPORTANT: This refactoring builds on the *Clean Persistence Store* foundation (previous section). The smart logic lives in the **in-memory reference database layer**, while `.cx` files remain a **durable cache** for persistence.
-
-*_Core Principle: In-Memory Is Always Authoritative_*
-
-The fundamental architectural shift is that **in-memory references are the single source of truth** once a file is parsed:
-
-----
-┌─────────────────────────────────────────────────────────────┐
-│                   In-memory references                       │
-│                   (single source of truth)                   │
-└─────────────────────────────────────────────────────────────┘
-        ▲                    │                    ▲
-        │ parse              │ persist            │ parse on demand
-        │ on demand          │ (background)       │
-        │                    ▼                    │
-┌───────┴───────┐   ┌────────────────┐   ┌───────┴───────┐
-│    server     │   │  .cx cache     │   │   refactory   │
-│  (navigation) │   │  (startup      │   │ (finds files, │
-│               │   │   speedup)     │   │  parses them) │
-└───────────────┘   └────────────────┘   └───────────────┘
-----
-
-**Key changes from current architecture:**
-
-1. **In-memory is authoritative** - once a file is parsed, that's the truth
-2. **.cx becomes a cache** - only for faster startup, never consulted during operations
-3. **Refactoring parses on demand** - no `callXref()`, just parse the files it needs
-4. **Navigation and refactoring use same code path** - unified architecture
+IMPORTANT: This refactoring builds on the *Clean Persistence Store* foundation (previous section). The smart logic lives in the **in-memory reference database layer**, while `.cx` files become a startup snapshot (see link:15-roadmap.adoc[Chapter 15: Roadmap] for the architectural vision and dependency chain).
 
 The implementation leverages **existing sophisticated logic**:
 
@@ -478,54 +452,32 @@ Query → Reference Database (in-memory, smart) → Persistence Store (disk, dum
 * **No cold start** - first lookup triggers minimal necessary scanning
 * **Incremental by design** - only scans files that need updating
 * **In-memory speed** - all queries answered from RAM (referenceableItemTable)
-* **Durable cache** - `.cx` files persist state across sessions
+* **Startup snapshot** - `.cx` files avoid full project parse on restart
 * **Existing logic reuse** - leverages proven dependency tracking system
 
-[[cache-miss-detection]]
-*_Cache Miss Detection Algorithm_*
+[[snapshot-loading]]
+*_Startup Snapshot Loading_*
 
-The `.cx` file follows standard cache semantics. For any file access, this algorithm determines whether to use cached references or re-parse:
+At startup, the `.cx` snapshot is used to populate the in-memory table without a full project parse. The algorithm for each file entry in the snapshot:
 
 [source]
 ----
-For file F:
+For file F in snapshot:
 
-1. Is there an active preload for F?
-   YES → Preload is authoritative. Use/parse preload content.
-         (Preload = "editor says this is current content")
-   NO  → Continue to step 2
-
-2. Do we have references for F in memory?
-   NO  → Cache miss. Parse from disk.
-   YES → Continue to step 3
-
-3. Does stored lastParsedMtime match current disk mtime?
-   NO  → Cache miss. Re-parse from disk.
-   YES → Cache hit. Use existing references.
+1. Does stored lastParsedMtime match current disk mtime?
+   NO  → Snapshot is stale for F. Re-parse from disk.
+   YES → Use snapshot references for F.
 ----
 
-**Key insight**: Two authoritative sources exist, with clear priority:
+After startup, the client connects and sends preloaded buffers for modified files. Those are parsed into memory, overriding any snapshot-loaded references for those files.
 
-[cols="1,2,2"]
-|===
-|Source |Detection |When used
+During normal operation, the `.cx` file is never consulted. All queries are answered from the in-memory table.
 
-|**Editor preload**
-|Preload exists for file
-|Editor has unsaved changes; preload content is truth
+**Cold start** (no `.cx` file): All project source files are parsed. Slower but self-healing — no manual action needed.
 
-|**Disk file**
-|mtime comparison
-|No preload; disk content is truth
-|===
+**Snapshot persistence constraint**: Only disk-file-derived references are written to the snapshot. References parsed from preloaded editor buffers (unsaved content) are never persisted, so that mtime-based validation at next startup remains correct.
 
-**Self-healing behavior**:
-
-* **Missing .cx** (cold start): Step 2 triggers parse on demand
-* **Stale .cx** (crash, external changes): Step 3 mtime check catches it
-* **Preload override**: Step 1 ensures editor content always wins
-
-**Persistence constraint**: Only disk-sourced references are written to `.cx`. References parsed from preloaded buffers (unsaved editor content) are never persisted, preventing stale data from surviving across sessions.
+See link:15-roadmap.adoc[Chapter 15: Roadmap] for the full startup snapshot semantics.
 
 *_Legacy Architecture Recognition_*
 
@@ -543,7 +495,7 @@ c-xref -server               # Start server, scan on-demand as needed
 c-xref -lsp                  # Same logic, different protocol
 ----
 
-IMPORTANT: The `.cx` files are a **durable cache** that persists the in-memory `referenceableItemTable` between sessions. They are an optimization, not the database itself. The actual database is always in RAM.
+IMPORTANT: With this architecture, the `.cx` files become a **startup snapshot** of the in-memory `referenceableItemTable`. They exist to avoid a full project parse on server start. The actual database is always in RAM, and `.cx` is not consulted during normal operation.
 
 ==== Implementation Plan
 
@@ -574,7 +526,7 @@ IMPORTANT: The `.cx` files are a **durable cache** that persists the in-memory `
 
 * **Zero configuration** - works immediately on any C project without setup
 * **No cold start delay** - first symbol lookup triggers minimal necessary scanning
-* **Transparent caching** - `.cx` files automatically maintained as performance optimization
+* **Transparent snapshots** - `.cx` files automatically maintained for fast startup
 * **Consistent behavior** - same results whether using Emacs or modern IDE with LSP
 
 *_Performance Characteristics_*
@@ -582,7 +534,7 @@ IMPORTANT: The `.cx` files are a **durable cache** that persists the in-memory `
 * **Minimal initial cost** - avoids expensive upfront full-project scanning
 * **Smart incremental updates** - only rescans files that have actually changed
 * **Automatic dependency tracking** - includes files affected by changes get updated
-* **Persistent optimization** - analysis results cached across sessions
+* **Fast restart** - analysis results snapshotted across sessions
 
 *_Development Benefits_*
 
@@ -674,7 +626,7 @@ void performRefactoring(Symbol *symbol) {
 }
 ----
 
-**Key simplification**: By limiting support to "include file patterns" only (see ADR-0013), we don't need to scan the entire project for archaic `extern` declarations in `.c` files. The include graph provides a complete and correct dependency closure.
+**Key simplification**: By limiting support to "include file patterns" only (see link:/workspace/decisions#13[ADR-0013]), we don't need to scan the entire project for archaic `extern` declarations in `.c` files. The include graph provides a complete and correct dependency closure.
 
 **Benefits:**
 
@@ -1039,6 +991,7 @@ Adding new operations becomes straightforward:
 **Value**: Proof of concept, enables gradual migration
 
 **Approach**:
+
 1. `parseWithConfig()` becomes primary entry point
 2. `parseBufferUsingServer()` internally bridges legacy magic strings to new `ParsingConfig`
 3. Both code paths work identically (verified with tests)
@@ -1053,6 +1006,7 @@ Adding new operations becomes straightforward:
 **Value**: Significant improvement to codebase clarity
 
 **Priority callsites**:
+
 1. LSP handlers - Already partially using new API
 2. Definition finding - Multi-file lookup
 3. Extract refactoring - Complex logic, multiple operations
@@ -1067,6 +1021,7 @@ Adding new operations becomes straightforward:
 **Value**: Long-term maintainability and extensibility
 
 **Scope**:
+
 * Remove all magic string command routing
 * Consolidate parsing entry points
 * Eliminate scattered global flags
@@ -1127,6 +1082,7 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */
 **Needed**: Efficient "parse files needed for definition lookup" operation
 
 **Approach**:
+
 1. Use include graph to find "definition file candidates"
 2. Parse only those files (typically 1-5 for most projects)
 3. Store symbols in special "definition lookup" arena
@@ -1139,11 +1095,13 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */
 ==== Code Locations
 
 **New Parser API**:
+
 * `src/parsing.h` - Public interface (167 lines)
 * `src/parsing.c` - Implementation with bridges (187 lines)
 * Functions: `getParserOperation()`, `needsReferenceAtCursor()`, `parseToCreateReferences()`
 
 **Legacy code currently using magic strings**:
+
 * `src/cxref.c` - 20+ `parseBufferUsingServer()` calls
 * `src/refactory.c` - 10+ operations
 * `src/extract.c` - Multiple parsing passes
@@ -1151,6 +1109,7 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */
 * `src/server.c` - Operation dispatch
 
 **Files for multi-file support**:
+
 * `src/reference_database.h/c` - Add symbol type info
 * `src/yylex.c` - Build include graph
 * `src/filetable.h/c` - Persist include relationships
@@ -1158,19 +1117,22 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */
 ==== Success Metrics
 
 **Phase 1**:
-* ✓ New `ParsingConfig` API works alongside legacy strings
-* ✓ No performance regression
-* ✓ Both code paths tested and working
+
+* New `ParsingConfig` API works alongside legacy strings
+* No performance regression
+* Both code paths tested and working
 
 **Phase 2**:
-* ✓ 50%+ of parsing callsites use new API
-* ✓ Multi-file definition lookup works
-* ✓ All existing tests still pass
+
+* 50%+ of parsing callsites use new API
+* Multi-file definition lookup works
+* All existing tests still pass
 
 **Phase 3** (if pursued):
-* ✓ All parsing driven by enum operations
-* ✓ Magic strings completely removed
-* ✓ New developers understand control flow
+
+* All parsing driven by enum operations
+* Magic strings completely removed
+* New developers understand control flow
 
 ==== Risks and Mitigation
 
@@ -1198,7 +1160,8 @@ int *getIncludingFiles(int fileNumber);  /* Files that include this one */
 ==== Related Work
 
 This refactoring supports:
-* **ADR-0014** (On-Demand Parsing) - Single code path for all operations
+
+* **link:/workspace/decisions#14[ADR-0014]** (On-Demand Parsing) - Single code path for all operations
 * **Unified Symbol Database** (next major refactoring) - Requires clean parsing API
 * **LSP Multi-File Support** - Immediately enables cross-file definition lookup
 

@@ -18,81 +18,37 @@ This chapter outlines the high-level architectural and feature goals for c-xrefa
 
 ==== Dependency Chain
 
-The following diagram shows how the architectural pieces depend on each other. Work proceeds from bottom to top.
+The following diagram shows how the remaining architectural pieces depend on each other. Work proceeds from bottom to top. Items at the base (single-project server, project-local configuration, unified startup) are already implemented.
 
 ----
-┌─────────────────────────────────────────────────────────────────────┐
-│                    ARCHITECTURAL GOAL                                │
-│         "In-memory references are the single source of truth"        │
-└─────────────────────────────────────────────────────────────────────┘
-                                  │
-                                  ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                         REQUIRES                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│  A. Refactoring uses in-memory table (no callXref)                  │
-│  B. Navigation uses in-memory table (no .cx lookups mid-session)    │
-│  C. In-memory table is always current for all modified files        │
-└─────────────────────────────────────────────────────────────────────┘
-         │                    │                         │
-         ▼                    ▼                         ▼
-┌─────────────────┐  ┌─────────────────┐  ┌─────────────────────────┐
-│ A. No callXref  │  │ B. Index-based  │  │ C. Table always current │
-│ in refactoring  │  │    sessions     │  │                         │
-└────────┬────────┘  └────────┬────────┘  └────────────┬────────────┘
-         │                    │                         │
-         │                    │                         ▼
-         │                    │           ┌─────────────────────────┐
-         │                    │           │ C1. All modified files  │
-         │                    │           │     are preloaded       │
-         │                    │           │ (Emacs client change)   │
-         │                    │           └────────────┬────────────┘
-         │                    │                        │
-         │                    │                        ▼
-         │                    │           ┌─────────────────────────┐
-         │                    │           │ C2. Preloaded files     │
-         │                    │           │     parsed upfront      │
-         │                    │           │ (before any operation)  │
-         │                    │           └────────────┬────────────┘
-         │                    │                        │
-         │                    ▼                        │
-         │           ┌─────────────────┐               │
-         │           │ B1. Session     │               │
-         │           │ stores key +    │◄──────────────┘
-         │           │ position, not   │  (upfront refresh works
-         │           │ copies          │   because navigation reads
-         │           └────────┬────────┘   from current table)
-         │                    │
-         │                    ▼
-         │           ┌─────────────────┐
-         │           │ B2. Table not   │
-         │           │ corrupted by    │
-         │           │ project mixing  │
-         │           └────────┬────────┘
-         │                    │
-         ▼                    ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                    SINGLE-PROJECT SERVER POLICY                      │
-│         (Server handles one project, client manages switching)       │
-└─────────────────────────────────────────────────────────────────────┘
-                                  │
-                                  ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                    ENABLED BY (makes it natural)                     │
-├─────────────────────────────────────────────────────────────────────┤
-│  Project-local .c-xrefrc with automatic upward discovery            │
-│  (See section: Foundational Change: Project-Local Configuration)    │
-└─────────────────────────────────────────────────────────────────────┘
-                                  │
-                                  ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                       ALSO ENABLES                                   │
-├─────────────────────────────────────────────────────────────────────┤
-│  • .cx becomes startup cache only (not consulted during ops)        │
-│  • Include closure sufficient for finding affected files (ADR-13)   │
-│  • LSP mode can use same architecture                               │
-│  • Simpler mental model for debugging                               │
-└─────────────────────────────────────────────────────────────────────┘
+                  Memory is truth
+                  (convergence point)
+                   /              \
+                  v                v
+    No callXref in           .cx becomes
+    refactoring           startup snapshot
+                  \              /
+                   \            /
+                    v          v
+              Index-based sessions
+          (keys + positions, not copies)
+                       |
+                       v
+         ADR 20: Separate sync from dispatch
+       (hoist buffer refresh to server entry;
+        operations assume fresh data)
+                       |
+                       v
+        Client sends all modified buffers
+               (Emacs change)
+                       |
+                       v
+    ┌───────────────────────────────────┐
+    │          FOUNDATION (done)        │
+    │  Single-project server (ADR-0021) │
+    │  Project-local config (ADR-0005)  │
+    │  Unified startup (shared init)    │
+    └───────────────────────────────────┘
 ----
 
 ==== Component Summary
@@ -101,201 +57,56 @@ The following diagram shows how the architectural pieces depend on each other. W
 |===
 |Component |Description
 
-|**Single-project server**
-|Foundation: Server handles one project at a time. Client (Emacs) manages project switching by restarting server or using separate server instances. Eliminates table corruption from project mixing and enables index-based sessions.
+|**Client sends all modified buffers**
+|Emacs client sends `-preload` for all modified buffers, not just the current file. Without this, the server is blind to modifications in non-current files. See link:18-insights.adoc[Chapter 18: Navigation Architecture and the Preloading Limitation] for why this matters.
+
+|**Separate sync from dispatch**
+|Server-side restructuring (link:/workspace/decisions#20[ADR-0020]): hoist all buffer refresh to the server entry point so that operations can assume the in-memory table is current. This eliminates mid-operation re-parse issues and is valuable even before the full "memory is truth" goal is reached.
 
 |**Index-based sessions**
-|Session stores symbol key + current position instead of copying all references. Navigation reads directly from in-memory table, eliminating the "stale session copies" problem.
-
-|**Upfront preload refresh**
-|All preloaded files are parsed at start of each request, before any operation runs. Ensures in-memory table is always current. Requires index-based sessions to work (otherwise session copies would still be stale).
-
-|**Emacs preloads all modified buffers**
-|Client-side change: Send `-preload` for all modified buffers, not just current file. Without this, server is blind to modifications in non-current files.
+|Session stores symbol key + current position instead of copying all references. Navigation reads directly from in-memory table, eliminating the "stale session copies" problem. Depends on upfront refresh (ADR 20) so that the table is always current when sessions read from it.
 
 |**No callXref in refactoring**
-|Refactoring uses same in-memory table as navigation. Include closure (already implemented) finds affected files; parse on demand. Eliminates the architectural split between navigation and refactoring code paths.
+|Refactoring uses same in-memory table as navigation. Include closure (already implemented, link:/workspace/decisions#13[ADR-0013]) finds affected files; parse on demand. Eliminates the architectural split between navigation and refactoring code paths. See link:18-insights.adoc[Chapter 18: RefactoryMode Internally Calls XrefMode] for the current architecture this replaces.
+
+|**Disk snapshot strategy**
+|The `.cx` file transitions from a live database to a startup snapshot. This requires a strategy for initial creation from disk files and incremental updates — taking care that modified-buffer data is never persisted to the snapshot (it reflects disk state only). See below for target semantics.
 |===
 
-==== .cx File: Standard Cache Semantics
+==== Incremental Implementation Path
 
-The `.cx` file is a **startup cache**, not a database. It follows standard cache semantics:
+Both navigation and refactoring already use the same in-memory `ReferenceableItemTable` (see link:18-insights.adoc[Chapter 18: Unified In-Memory Table Discovery] for details). The disk scan operations merge with this table. This means the path to memory-is-truth is incremental:
 
-* **Cache miss**: No entry, or entry is stale → parse from authoritative source
-* **Cache hit**: Entry exists and is current → use cached references
+1. **Parse all project files at startup** — populates the in-memory table completely
+2. **Existing code continues to work** — scan operations find symbols already in memory, becoming effective no-ops
+3. **Remove scan operations** — once step 1 is proven, scan code is dead and can be removed
 
-**Authoritative sources** (in priority order):
+==== .cx File: Startup Snapshot
 
-1. **Editor preload buffer** - if Emacs sends `-preload` for a file, that content is authoritative
-2. **Disk file** - verified by mtime comparison against stored `lastParsedMtime`
+Once memory is truth, the `.cx` file is a **startup snapshot** — a serialized copy of previously-computed references that avoids a full project parse on server start.
 
-The cache self-heals: missing `.cx` (cold start) or stale `.cx` (crash, external changes) are detected and corrected on access. See link:17-major-codebase-improvements.adoc#cache-miss-detection[Chapter 17: Cache Miss Detection] for the precise algorithm.
+**Startup sequence:**
+
+1. Load snapshot from `.cx` (if it exists)
+2. Compare each entry's stored mtime against the current disk file
+3. Re-parse any files that changed since the snapshot was written
+4. Client connects, sends preloaded buffers — those are parsed into memory, overriding disk state
+
+After startup, the `.cx` file is not consulted. All operations read from the in-memory table.
+
+**Writing the snapshot:**
+
+The snapshot is written from disk-file-derived references only. Modified-buffer data must never be persisted — the snapshot reflects disk state, so that startup validation (step 2) remains correct.
+
+**Cold start** (no `.cx` file): All project source files are parsed. This is slower but self-healing — no manual action needed to recover from a missing or corrupt snapshot.
 
 ==== Related Decisions and Details
 
-* **ADR-13**: No archaic extern patterns - limits symbol visibility to include-based, making include closure complete
-* **ADR-14**: Adopt on-demand parsing architecture - formalizes this direction
+* **link:/workspace/decisions#5[ADR-0005]**: Automatically find config files — enables project discovery by upward search
+* **link:/workspace/decisions#13[ADR-0013]**: No archaic extern patterns — limits symbol visibility to include-based, making include closure complete
+* **link:/workspace/decisions#14[ADR-0014]**: Adopt on-demand parsing architecture — formalizes this direction
+* **link:/workspace/decisions#21[ADR-0021]**: Single-project server policy — foundation for index-based sessions
 * **Chapter 17**: Implementation details for Clean Persistence Store and Unified Symbol Database
-
-==== Current State (January 2025)
-
-The foundation work is **not yet started**. Current workarounds (like excluding refactoring operations from `lastParsedMtime` updates) paper over the architectural tension but don't resolve it.
-
-See link:18-insights.adoc[Chapter 18: Insights] section "The lastParsedMtime Optimization and Refactoring Conflict" for a concrete example of the current complexity.
-
-==== Key Finding: Unified In-Memory Table (January 2025)
-
-Investigation revealed that **both XrefMode and ServerMode use the same in-memory `ReferenceableItemTable`**. This is the key to an incremental implementation path.
-
-**How it works:**
-
-* `handleFoundSymbolReference()` in `cxref.c` handles references found during parsing
-* It calls `isMemberInReferenceableItemTable()` to check if symbol exists
-* If not found, creates new entry; if found, adds reference to existing entry
-* This same table is used by both modes - there's no separate "server table" vs "xref table"
-
-**The disk scan operations** (`ensureReferencesAreLoadedFor`, `scanReferencesToCreateMenu`, etc.):
-
-* Read from `.cx` files on disk
-* Also call `isMemberInReferenceableItemTable()` to check/merge with existing entries
-* If parsing has already populated the table, these operations find data already present
-
-**Incremental implementation path:**
-
-[cols="1,3"]
-|===
-|Step |Description
-
-|**1. Parse all files at startup**
-|When server starts with no disk cache, enumerate all project source files and parse them. This populates `ReferenceableItemTable` completely.
-
-|**2. Existing code continues to work**
-|Scan operations like `ensureReferencesAreLoadedFor` find symbols already in memory. They effectively become no-ops (or fast merges of identical data).
-
-|**3. Remove scan operations**
-|Once step 1 is proven, scan operations are dead code and can be removed, simplifying the architecture.
-|===
-
-This path allows incremental progress: step 1 makes the system work correctly, step 3 cleans up the code. The existing navigation and refactoring code doesn't need immediate changes.
-
-=== Foundational Change: Project-Local Configuration
-
-==== The Goal
-
-Enable project-local `.c-xrefrc` files with automatic discovery, replacing the current `$HOME/.c-xrefrc` multi-project architecture. This makes single-project server operation **natural** rather than restrictive.
-
-==== Current Architecture
-
-* Single `$HOME/.c-xrefrc` contains sections for all projects
-* All paths must be absolute (not portable across machines)
-* Client asks server "which project covers this file?"
-* Server searches through all project sections to find a match
-
-==== Target Architecture
-
-**Automatic project discovery:**
-
-----
-Operation on /foo/bar/src/file.c
-         ↓
-Search upward: /foo/bar/src/.c-xrefrc? No
-               /foo/bar/.c-xrefrc? Yes → project root is /foo/bar/
-         ↓
-Server locks to this single project
-----
-
-**Two-file configuration split:**
-
-[cols="1,2,1"]
-|===
-|File |Purpose |Version control
-
-|`.c-xrefrc`
-|Project settings: compiler flags, `-D` defines, relative source paths
-|Committed
-
-|`.c-xrefrc.local`
-|Machine-specific: external library paths, personal preferences
-|Gitignored
-
-|`$HOME/.c-xrefrc`
-|Global defaults, backward compatibility
-|N/A
-|===
-
-**Settings cascade** (priority low→high):
-
-1. Built-in defaults
-2. `$HOME/.c-xrefrc` (global, backward compat)
-3. `.c-xrefrc` (project, committed)
-4. `.c-xrefrc.local` (project, local overrides)
-5. Command-line options
-
-==== How This Enables Single-Project Server
-
-With automatic project discovery:
-
-* Project determined by file location, not explicit `-p` parameter
-* Server "locks" to discovered project root on first request
-* Request for file outside project → reject or prompt "add to project?"
-* Multi-project operation becomes impossible by design
-
-This makes single-project server a **natural consequence**, not an artificial restriction.
-
-==== Protocol Evolution
-
-The existing `-getproject <file>` command becomes the lock point:
-
-----
-First -getproject <file>:
-  1. Upward search for .c-xrefrc from <file>
-  2. If found: LOCK to that directory as project root
-  3. Return project root (or name)
-
-Subsequent -getproject <file>:
-  1. Is <file> under locked project root?
-  2. Yes → return same project
-  3. No  → error "file not in current project"
-----
-
-**Key insight**: The client's existing pattern of sending `-getproject` before each operation requires no change. The server simply adds locking behavior.
-
-==== Implementation Phases
-
-**Phase 1: Upward search with locking** (minimal, unblocks single-project server)
-
-* Add upward search for `.c-xrefrc` in `-getproject` handler
-* First successful discovery locks server to that project root
-* Subsequent requests for files outside root return error
-* If no `.c-xrefrc` found: fall back to `$HOME/.c-xrefrc` (backward compat)
-* Paths still absolute (no change to path handling yet)
-
-**Phase 2: Relative paths**
-
-* Paths in project-local `.c-xrefrc` resolved relative to project root
-* Enables version-controllable project settings
-* `$HOME/.c-xrefrc` continues using absolute paths
-
-**Phase 3: Local overrides**
-
-* Add `.c-xrefrc.local` support
-* External library paths, personal preferences
-* Document: add `.c-xrefrc.local` to `.gitignore`
-
-**Phase 4: Migration tooling** (optional)
-
-* Tool to extract `$HOME/.c-xrefrc` sections into project-local files
-* Deprecation warnings for multi-project `$HOME/.c-xrefrc` usage
-
-==== Relationship to Memory as Truth
-
-This work directly enables the **Single-Project Server Policy** at the base of the Memory as Truth dependency chain. Without a natural way to scope to a single project, enforcing single-project operation would feel like an artificial limitation to users.
-
-==== Open Questions
-
-* Projects with sources in multiple unrelated directories - multiple `-I` paths but single root?
-* Environment variable expansion in `.c-xrefrc.local` (e.g., `${MYLIB_PATH}/include`)?
-* Migration path for users with complex multi-project `$HOME/.c-xrefrc`?
 
 === Feature Vision: Full LSP Support
 
@@ -305,8 +116,8 @@ Enable VS Code, Neovim, and other LSP-capable editors to use c-xrefactory's refa
 
 ==== Current State
 
-* ✓ Go-to-definition for functions, global variables, types (single file only)
-* ✓ Files parsed as opened, immediate symbol availability
+* Go-to-definition for functions, global variables, types (single file only)
+* Files parsed as opened, immediate symbol availability
 
 ==== Planned Capabilities
 
@@ -349,10 +160,10 @@ Provide refactoring capabilities that understand C semantics, going beyond what 
 
 ==== Current Capabilities
 
-* ✓ Rename (symbols, parameters, macros)
-* ✓ Extract function/macro/variable
-* ✓ Add/delete/reorder parameters
-* ✓ Move function between files (Phase 1 MVP)
+* Rename (symbols, parameters, macros)
+* Extract function/macro/variable
+* Add/delete/reorder parameters
+* Move function between files (Phase 1 MVP)
 
 ==== Planned Improvements
 

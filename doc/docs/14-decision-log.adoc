@@ -1,6 +1,4 @@
-== Decision Log
-
-This chapter provides a historical record of significant design and architectural decisions made during the evolution of c-xrefactory.
+== About the Decision Log
 
 === Overview
 

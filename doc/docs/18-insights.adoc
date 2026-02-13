@@ -111,7 +111,7 @@ The table can NEVER reflect non-preloaded modified files because the server does
 
 Date: 2025-01-10
 
-NOTE: This section describes the **current architecture** as of January 2025. ADR-0014 (Adopt On-Demand Parsing Architecture) proposes eliminating this `callXref()` pattern in favor of unified on-demand parsing. See section 17.2 (Unified Symbol Database Architecture) for the planned future architecture where refactoring uses the same in-memory references as navigation.
+NOTE: This section describes the **current architecture** as of January 2025. link:/workspace/decisions#14[ADR-0014] (Adopt On-Demand Parsing Architecture) proposes eliminating this `callXref()` pattern in favor of unified on-demand parsing. See section 17.2 (Unified Symbol Database Architecture) for the planned future architecture where refactoring uses the same in-memory references as navigation.
 
 ==== The Key Architectural Insight (Current Architecture)
 
@@ -274,11 +274,11 @@ This allows:
 
 ==== Architectural Lesson
 
-This workaround highlights the fundamental tension: **navigation and refactoring use different sources of truth**. The proper fix is ADR-0014's unified on-demand architecture where both use the same in-memory reference database, eliminating the need for `callXref()` entirely.
+This workaround highlights the fundamental tension: **navigation and refactoring use different sources of truth**. The proper fix is link:/workspace/decisions#14[ADR-0014]'s unified on-demand architecture where both use the same in-memory reference database, eliminating the need for `callXref()` entirely.
 
 ==== Related
 
-* ADR-0014: Adopt On-Demand Parsing Architecture
+* link:/workspace/decisions#14[ADR-0014]: Adopt On-Demand Parsing Architecture
 * Section 17.2: Unified Symbol Database Architecture
 * Section 18.3: RefactoryMode Internally Calls XrefMode (describes current architecture)
 
@@ -337,3 +337,13 @@ navigation loses most of its references.
 ==== Architectural Note
 
 This is a manifestation of the "two sources of truth" architecture. The long-term fix (per roadmap) is to parse all project files at startup, keeping complete references in memory. Then stale refresh would just re-parse the single file and the in-memory table would already have all cross-file references.
+
+=== Unified In-Memory Table Discovery
+
+Date: 2025-01-25
+
+Investigation revealed that **both XrefMode and ServerMode use the same in-memory `ReferenceableItemTable`**. This is the key enabler for the incremental path to "Memory as Truth" (see link:15-roadmap.adoc[Chapter 15: Roadmap]).
+
+`handleFoundSymbolReference()` in `cxref.c` handles references found during parsing. It calls `isMemberInReferenceableItemTable()` to check if a symbol exists; if not found, creates a new entry; if found, adds a reference to the existing entry. This same table is used by both modes — there is no separate "server table" vs "xref table".
+
+The disk scan operations (`ensureReferencesAreLoadedFor`, `scanReferencesToCreateMenu`, etc.) read from `.cx` files on disk and also call `isMemberInReferenceableItemTable()` to check/merge with existing entries. If parsing has already populated the table, these operations find data already present — making them effective no-ops once all files are parsed.
