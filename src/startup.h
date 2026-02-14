@@ -12,6 +12,7 @@ extern void initializeCoreSubsystems(void);
 extern void totalTaskEntryInitialisations(void);
 extern void mainTaskEntryInitialisations(ArgumentsVector args);
 
+extern void initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs);
 extern bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs);
 
 /* Restore to checkpoint after compiler discovery (clearing file-local macros).

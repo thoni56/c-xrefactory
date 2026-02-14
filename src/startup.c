@@ -488,6 +488,78 @@ void restoreMemoryCheckPoint(void) {
 }
 
 
+/* Initialize project context: discover project, load options, interrogate compiler,
+ * and save memory checkpoint. Called during first GetProject so that the checkpoint
+ * is available for stale-file reparsing on subsequent requests.
+ *
+ * This duplicates phases 1-4 of initializeFileProcessing intentionally —
+ * initializeFileProcessing will detect "same project" and take its fast path.
+ */
+void initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+    char projectOptionsFileName[MAX_FILE_NAME_SIZE];
+    char projectSectionName[MAX_FILE_NAME_SIZE];
+    time_t modifiedTime;
+    StringList *tmpIncludeDirs;
+
+    /* === PHASE 1: Project Discovery === */
+    searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName, projectSectionName);
+    handlePathologicProjectCases(fileName, projectOptionsFileName, projectSectionName, true);
+
+    initAllInputs();
+
+    if (projectOptionsFileName[0] != 0)
+        modifiedTime = fileModificationTime(projectOptionsFileName);
+    else
+        modifiedTime = previousStandardOptionsFileModificationTime;
+
+    /* === PHASE 2: Options File Processing === */
+    if (checkpoint0.saved)
+        restoreCheckpoint(&checkpoint0);
+    else
+        saveCheckpoint(&checkpoint0);
+
+    initCwd();
+    initOptions();
+    initStandardCxrefFileName(fileName);
+
+    processOptions(baseArgs, PROCESS_FILE_ARGUMENTS_NO);
+    processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO);
+    reInitCwd(projectOptionsFileName, projectSectionName);
+
+    tmpIncludeDirs = options.includeDirs;
+    options.includeDirs = NULL;
+
+    int savedPass = currentPass;
+    currentPass = NO_PASS;
+    getAndProcessXrefrcOptions(projectOptionsFileName, projectSectionName);
+
+    /* === PHASE 3: Compiler Interrogation === */
+    discoverBuiltinIncludePaths();
+    discoverStandardDefines();
+
+    /* === PHASE 4: Memory Checkpoint === */
+    saveMemoryCheckPoint(&checkpoint1);
+
+    currentPass = savedPass;
+    getAndProcessXrefrcOptions(projectOptionsFileName, projectSectionName);
+
+    LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
+
+    processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO);
+    applyConventionBasedDatabasePath();
+
+    /* Save options and project tracking state */
+    char *currentRequestProject = options.project;
+    options.project = NULL;
+    deepCopyOptionsFromTo(&options, &savedOptions);
+    options.project = currentRequestProject;
+
+    strcpy(previousStandardOptionsFile, projectOptionsFileName);
+    strcpy(previousStandardOptionsSection, projectSectionName);
+    previousStandardOptionsFileModificationTime = modifiedTime;
+    previousPass = currentPass;
+}
+
 /* Heavy orchestration-level initialization for legacy Server/Xref modes.
  * Handles multi-project server architecture where project settings can change per file.
  *

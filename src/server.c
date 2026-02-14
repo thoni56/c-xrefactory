@@ -221,9 +221,28 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 }
 
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+    static bool projectContextInitialized = false;
+
     ENTER();
 
     loadAllOpenedEditorBuffers();
+
+    /* Reparse any stale preloaded files before dispatching the operation,
+     * so all operations see fresh in-memory references.
+     * Clear cursorOffset so the lexer doesn't set positionOfSelectedReference
+     * during the reparse — that would trigger on-line action handling
+     * (browsing stack assertions) before the operation has set things up. */
+    if (projectContextInitialized) {
+        int savedCursorOffset = options.cursorOffset;
+        options.cursorOffset = -1;
+        for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
+            for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
+                if (fileNumberIsStale(l->buffer->fileNumber))
+                    reparseStaleFile(l->buffer->fileNumber);
+            }
+        }
+        options.cursorOffset = savedCursorOffset;
+    }
 
     if (needsReferenceDatabase(options.serverOperation))
         pushEmptySession(&sessionData.browsingStack);
@@ -236,6 +255,10 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         }
     } else {
         if (prepareInputFileForRequest()) {
+            if (options.serverOperation == OP_ACTIVE_PROJECT && !projectContextInitialized) {
+                initializeProjectContext(getFileItemWithFileNumber(requestFileNumber)->name, baseArgs, requestArgs);
+                projectContextInitialized = true;
+            }
             getFileItemWithFileNumber(requestFileNumber)->isScheduled = false;
             inputFileName = NULL;
         }

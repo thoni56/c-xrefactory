@@ -171,16 +171,16 @@ void reparseStaleFile(int fileNumber) {
     initAllInputs();
 
     parseToCreateReferences(fileItem->name);
-
-    // Mark file as freshly parsed so we don't re-refresh in this request
-    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
-    if (buffer != NULL) {
-        fileItem->lastParsedMtime = buffer->modificationTime;
-    }
 }
 
 void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber) {
     reparseStaleFile(fileNumber);
+
+    // Mark file as freshly parsed so we don't re-refresh later in this request
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
+    if (buffer != NULL)
+        fileItem->lastParsedMtime = buffer->modificationTime;
 
     // Remove refs for the stale file from menu - the menu already has cross-file refs
     // from the original PUSH operation. We only need to remove the stale file's refs
