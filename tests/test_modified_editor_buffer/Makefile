@@ -10,7 +10,7 @@ $(TEST):
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: EXTRA = --extra "-debug -log=log"
+trace: EXTRA = --extra "-debug -log=trace"
 trace: $(TEST)
 
 GDB_COMMANDS =

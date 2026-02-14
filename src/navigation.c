@@ -138,7 +138,7 @@ void setCurrentReferenceToNextOrFirst(SessionStackEntry *sessionEntry, Reference
  * from the target file, which will then send its preload.
  */
 
-static bool fileNumberIsStale(int fileNumber) {
+bool fileNumberIsStale(int fileNumber) {
     if (fileNumber == NO_FILE_NUMBER)
         return false;
 
@@ -159,7 +159,7 @@ static bool fileNumberIsStale(int fileNumber) {
 /* TODO: Technical Debt from extracting `navigation` */
 extern void recomputeSelectedReferenceable(SessionStackEntry *entry);
 
-void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber) {
+void reparseStaleFile(int fileNumber) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
 
     // Update in-memory table: remove old, parse fresh
@@ -171,6 +171,16 @@ void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNu
     initAllInputs();
 
     parseToCreateReferences(fileItem->name);
+
+    // Mark file as freshly parsed so we don't re-refresh in this request
+    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
+    if (buffer != NULL) {
+        fileItem->lastParsedMtime = buffer->modificationTime;
+    }
+}
+
+void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber) {
+    reparseStaleFile(fileNumber);
 
     // Remove refs for the stale file from menu - the menu already has cross-file refs
     // from the original PUSH operation. We only need to remove the stale file's refs
@@ -206,12 +216,6 @@ void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNu
                 }
             }
         }
-    }
-
-    // Mark file as freshly parsed so we don't re-refresh in this request
-    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
-    if (buffer != NULL) {
-        fileItem->lastParsedMtime = buffer->modificationTime;
     }
 
     // Rebuild session's reference list from updated menu

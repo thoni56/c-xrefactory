@@ -6,6 +6,7 @@
 #include "cxref.h"
 #include "editor.h"
 #include "editorbuffer.h"
+#include "editorbuffertable.h"
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
@@ -17,6 +18,7 @@
 #include "ppc.h"
 #include "referenceableitemtable.h"
 #include "session.h"
+#include "navigation.h"
 #include "startup.h"
 #include "yylex.h"
 

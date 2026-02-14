@@ -10,7 +10,5 @@ $(TEST):
 	@$(NORMALIZE) output2.tmp >> output
 	$(VERIFY)
 
-trace: EXTRA = \'-debug\'
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
-
-GDB_COMMANDS = -ex 'br refactory' -ex 'continue'
