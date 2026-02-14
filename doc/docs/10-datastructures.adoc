@@ -265,7 +265,7 @@ The browser stack is a linked list of `OlcxReferences` entries, where each entry
 ==== Lifecycle
 
 1. **Push**: When user requests symbol references (e.g., `-olcxpush`), a new empty entry is created on the stack
-2. **Population**: After parsing, the entry is filled with `BrowserMenu` structures containing references
+2. **Population**: After parsing, the entry is filled with `BrowsingMenu` structures containing references
 3. **Navigation**: Commands like `-olcxnext` and `-olcxprevious` move through references in the current entry
 4. **Pop**: User can pop back to previous entries to return to earlier symbol lookups
 
@@ -274,7 +274,7 @@ The browser stack is a linked list of `OlcxReferences` entries, where each entry
 The browser stack is populated in two stages:
 
 1. **Parse-time**: References are collected in the referenceableItemTable during file parsing
-2. **Menu Creation**: ReferenceableItems are wrapped in BrowserMenu structures and added to the browser stack entry via `putOnLineLoadedReferences()`
+2. **Menu Creation**: ReferenceableItems are wrapped in BrowsingMenu structures and added to the browser stack entry via `putOnLineLoadedReferences()`
 
 This separation means that browser stack entries can become stale if files are reparsed (e.g., with preloaded content) without refreshing the stack. Users typically need to pop and re-push to get fresh reference lists after edits.
 
@@ -282,9 +282,9 @@ This separation means that browser stack entries can become stale if files are r
 
 A browser menu is a navigable list of referenceable items with their occurrences, organized for presentation to the user in Emacs. Multiple items may appear in a single menu when name resolution finds several candidates (e.g., symbols with the same name in different scopes).
 
-==== BrowserMenu Structure
+==== BrowsingMenu Structure
 
-Each `BrowserMenu` entry is a menu item wrapping a `ReferenceableItem` with UI presentation state:
+Each `BrowsingMenu` entry is a menu item wrapping a `ReferenceableItem` with UI presentation state:
 
 * **referenceable**: The embedded `ReferenceableItem` (the entity being browsed)
   ** Contains `linkName`, `type`, `storage`, `scope`, `visibility`
@@ -297,11 +297,11 @@ Each `BrowserMenu` entry is a menu item wrapping a `ReferenceableItem` with UI p
 * **markers**: Editor markers for refactoring operations
 * **next**: Pointer to next menu item in the list
 
-**Key insight:** `BrowserMenu` is not just a menu - it's a **menu item**. A collection of `BrowserMenu` items forms the actual menu shown to the user.
+**Key insight:** `BrowsingMenu` is not just a menu - it's a **menu item**. A collection of `BrowserMenu` items forms the actual menu shown to the user.
 
 ==== Multiple Menu Items in One Session
 
-A single browser stack entry (`OlcxReferences`) can contain multiple `BrowserMenu` items:
+A single browser stack entry (`OlcxReferences`) can contain multiple `BrowsingMenu` items:
 
 * **hkSelectedSym**: Menu items that matched at the cursor position (after disambiguation)
 * **symbolsMenu**: Complete menu including related items (same name, similar signatures)
@@ -317,7 +317,7 @@ This allows users to:
 Browser menus are populated by scanning the referenceableItemTable:
 
 1. **Symbol lookup**: Find all `ReferenceableItem` entries matching the requested symbol
-2. **Menu item creation**: Wrap each matching item in a `BrowserMenu` structure
+2. **Menu item creation**: Wrap each matching item in a `BrowsingMenu` structure
 3. **Reference collection**: References are already in the ReferenceableItem
 4. **Sorting and filtering**: Order items by relevance and apply visibility filters
 5. **Selection**: Mark items that best match the cursor context (e.g., same file)
@@ -343,10 +343,10 @@ Understanding the complete flow from parsing to browsing:
 
 1. **User requests symbol info**: User places cursor on a symbol and invokes a command (e.g., "push to symbol")
 2. **Symbol lookup**: Server finds matching ReferenceableItem(s) in `referenceableItemTable`
-3. **BrowserMenu creation**: Each matching ReferenceableItem is wrapped in a `BrowserMenu` structure
+3. **BrowsingMenu creation**: Each matching ReferenceableItem is wrapped in a `BrowserMenu` structure
    * Adds UI state (selected, visible, display position)
    * Marks best-fit match (e.g., same file as cursor)
-4. **Stack push**: BrowserMenu items are added to the browser stack (`OlcxReferences` entry)
+4. **Stack push**: BrowsingMenu items are added to the browser stack (`OlcxReferences` entry)
 5. **Display to user**: Menu sent to Emacs showing all matching items and their occurrences
 6. **Navigation**: User can browse through references, select items, invoke refactorings
 
@@ -362,7 +362,7 @@ ReferenceableItem (persistent entity)
     ├─→ references: Reference* (list of occurrences)
     └─→ stored in: referenceableItemTable
          ↓ (wrapped for browsing)
-      BrowserMenu (UI wrapper)
+      BrowsingMenu (UI wrapper)
          └─→ stored in: OlcxReferences.symbolsMenu (browser stack)
 ----
 

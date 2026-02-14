@@ -1,4 +1,4 @@
-#include "browsermenu.h"
+#include "browsingmenu.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -15,9 +15,9 @@
 #include "referenceableitem.h"
 
 
-BrowserMenu makeBrowserMenu(ReferenceableItem referenceable, bool selected, bool visible, unsigned filterLevel,
+BrowsingMenu makeBrowsingMenu(ReferenceableItem referenceable, bool selected, bool visible, unsigned filterLevel,
                             char olUsage, char defaultUsage, Position defaultPosition) {
-    BrowserMenu menu;
+    BrowsingMenu menu;
 
     menu.referenceable = referenceable;
     menu.selected = selected;
@@ -38,29 +38,29 @@ BrowserMenu makeBrowserMenu(ReferenceableItem referenceable, bool selected, bool
     return menu;
 }
 
-static BrowserMenu *freeBrowserMenu(BrowserMenu *menu) {
+static BrowsingMenu *freeBrowsingMenu(BrowsingMenu *menu) {
     free(menu->referenceable.linkName);
     freeReferences(menu->referenceable.references);
-    BrowserMenu *next = menu->next;
+    BrowsingMenu *next = menu->next;
     free(menu);
     return next;
 }
 
 
-void freeBrowserMenuList(BrowserMenu *menuList) {
-    BrowserMenu *l;
+void freeBrowsingMenuList(BrowsingMenu *menuList) {
+    BrowsingMenu *l;
 
     l = menuList;
     while (l != NULL) {
-        l = freeBrowserMenu(l);
+        l = freeBrowsingMenu(l);
     }
 }
 
-bool isBestFitMatch(BrowserMenu *menu) {
+bool isBestFitMatch(BrowsingMenu *menu) {
     return menu->relation.sameFile;
 }
 
-void addReferenceToBrowserMenu(BrowserMenu *menu, Reference *reference) {
+void addReferenceToBrowsingMenu(BrowsingMenu *menu, Reference *reference) {
     Reference *added = addReferenceToList(reference, &menu->referenceable.references);
     if (added!=NULL) {
         if (isDefinitionOrDeclarationUsage(reference->usage)) {
@@ -78,15 +78,15 @@ void addReferenceToBrowserMenu(BrowserMenu *menu, Reference *reference) {
     }
 }
 
-void extendBrowserMenuWithReferences(BrowserMenu *menuItem, Reference *references) {
+void extendBrowsingMenuWithReferences(BrowsingMenu *menuItem, Reference *references) {
     for (Reference *r = references; r != NULL; r = r->next) {
-        addReferenceToBrowserMenu(menuItem, r);
+        addReferenceToBrowsingMenu(menuItem, r);
     }
 }
 
-static void printGlobalReferenceLists(BrowserMenu *menu, FILE *file);
+static void printGlobalReferenceLists(BrowsingMenu *menu, FILE *file);
 
-void printSelectionMenu(BrowserMenu *menu) {
+void printSelectionMenu(BrowsingMenu *menu) {
     assert(options.xref2);
 
     ppcBegin(PPC_SYMBOL_RESOLUTION);
@@ -96,10 +96,10 @@ void printSelectionMenu(BrowserMenu *menu) {
     ppcEnd(PPC_SYMBOL_RESOLUTION);
 }
 
-BrowserMenu *createNewMenuItem(ReferenceableItem *referenceable, int includedFileNumber, Position defpos,
+BrowsingMenu *createNewMenuItem(ReferenceableItem *referenceable, int includedFileNumber, Position defpos,
                                Usage defusage, bool selected, bool visible, unsigned filterLevel,
                                SymbolRelation relation, Usage olusage) {
-    BrowserMenu   *menu;
+    BrowsingMenu   *menu;
     char          *allocatedNameCopy;
 
     allocatedNameCopy = strdup(referenceable->linkName);
@@ -107,8 +107,8 @@ BrowserMenu *createNewMenuItem(ReferenceableItem *referenceable, int includedFil
     ReferenceableItem item = makeReferenceableItem(allocatedNameCopy, referenceable->type, referenceable->storage, referenceable->scope,
                                                       referenceable->visibility, includedFileNumber);
 
-    menu = malloc(sizeof(BrowserMenu));
-    *menu = makeBrowserMenu(item, selected, visible, filterLevel, olusage, defusage, defpos);
+    menu = malloc(sizeof(BrowsingMenu));
+    *menu = makeBrowsingMenu(item, selected, visible, filterLevel, olusage, defusage, defpos);
     menu->relation = relation;
     return menu;
 }
@@ -140,22 +140,22 @@ static bool referenceableItemIsLess(ReferenceableItem *item1, ReferenceableItem 
     return false;
 }
 
-static bool browserMenuIsLess(BrowserMenu *s1, BrowserMenu *s2) {
+static bool browsingMenuIsLess(BrowsingMenu *s1, BrowsingMenu *s2) {
     return referenceableItemIsLess(&s1->referenceable, &s2->referenceable);
 }
 
-BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableItem *referenceable, bool selected,
+BrowsingMenu *addReferenceableToBrowsingMenu(BrowsingMenu **menuP, ReferenceableItem *referenceable, bool selected,
                                            bool visible, unsigned filterLevel,
                                            SymbolRelation relation, int olusage, Position defpos,
                                            int defusage) {
-    BrowserMenu **place;
+    BrowsingMenu **place;
 
-    BrowserMenu dummyMenu = makeBrowserMenu(*referenceable, 0, false, 0, olusage, UsageNone,
+    BrowsingMenu dummyMenu = makeBrowsingMenu(*referenceable, 0, false, 0, olusage, UsageNone,
                                             NO_POSITION);
-    SORTED_LIST_PLACE3(place, BrowserMenu, &dummyMenu, menuP, browserMenuIsLess);
+    SORTED_LIST_PLACE3(place, BrowsingMenu, &dummyMenu, menuP, browsingMenuIsLess);
 
-    BrowserMenu *new = *place;
-    if (*place==NULL || browserMenuIsLess(&dummyMenu, *place)) {
+    BrowsingMenu *new = *place;
+    if (*place==NULL || browsingMenuIsLess(&dummyMenu, *place)) {
         assert(referenceable);
         new = createNewMenuItem(referenceable, referenceable->includeFileNumber, defpos, defusage,
                                 selected, visible, filterLevel, relation, olusage);
@@ -168,7 +168,7 @@ BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableIte
 static int currentOutputLineInSymbolList =0;
 
 
-static void printMenuItemPrefix(FILE *file, BrowserMenu *menu, bool selectable) {
+static void printMenuItemPrefix(FILE *file, BrowsingMenu *menu, bool selectable) {
     if (! selectable) {
         fprintf(file, " %s=2", PPCA_SELECTED);
     } else if (menu!=NULL && menu->selected) {
@@ -190,7 +190,7 @@ static void printMenuItemPrefix(FILE *file, BrowserMenu *menu, bool selectable) 
     }
 }
 
-static void printMenuEntry(FILE *file, BrowserMenu *menu) {
+static void printMenuEntry(FILE *file, BrowsingMenu *menu) {
 
     if (currentOutputLineInSymbolList == 1)
         currentOutputLineInSymbolList++; // first line irregularity
@@ -209,17 +209,17 @@ static void printMenuEntry(FILE *file, BrowserMenu *menu) {
 }
 
 /* Mapped through 'splitMenuPerSymbolsAndMap()' */
-static void printReferenceListsForMenuEntries(BrowserMenu *menu, void *p1) {
+static void printReferenceListsForMenuEntries(BrowsingMenu *menu, void *p1) {
     FILE *file = (FILE *)p1;
 
     // Are there are any visible references at all
-    BrowserMenu *m;
+    BrowsingMenu *m;
     for (m=menu; m!=NULL && !m->visible; m=m->next)
         ;
     if (m == NULL)
         return;
 
-    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowsingMenu *m=menu; m!=NULL; m=m->next) {
         printMenuEntry(file, m);
     }
 }
@@ -227,8 +227,8 @@ static void printReferenceListsForMenuEntries(BrowserMenu *menu, void *p1) {
 /* Groups menu items by symbol (ReferenceableItem), applies function to each group,
  * then reconstructs the original list with the original head preserved.
  * This allows processing all variants of the same symbol together. */
-void splitBrowserMenuAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *, void *), void *p1) {
-    BrowserMenu *current, *group, **listPtr, *candidate, *reconstructedList;
+void splitBrowsingMenuAndMap(BrowsingMenu *menu, void (*fun)(BrowsingMenu *, void *), void *p1) {
+    BrowsingMenu *current, *group, **listPtr, *candidate, *reconstructedList;
     ReferenceableItem *currentItem;
 
     reconstructedList = NULL;
@@ -258,7 +258,7 @@ void splitBrowserMenuAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *, void *
         (*fun)(group, p1);
 
         /* Append the processed group to the reconstructed list */
-        LIST_APPEND(BrowserMenu, group, reconstructedList);
+        LIST_APPEND(BrowsingMenu, group, reconstructedList);
         reconstructedList = group;
     }
 
@@ -274,9 +274,9 @@ void splitBrowserMenuAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *, void *
     }
 }
 
-static void printGlobalReferenceLists(BrowserMenu *menu, FILE *file) {
-    for (BrowserMenu *m=menu; m!=NULL; m=m->next)
+static void printGlobalReferenceLists(BrowsingMenu *menu, FILE *file) {
+    for (BrowsingMenu *m=menu; m!=NULL; m=m->next)
         m->outOnLine = 0;
     currentOutputLineInSymbolList = 1;
-    splitBrowserMenuAndMap(menu, printReferenceListsForMenuEntries, file);
+    splitBrowsingMenuAndMap(menu, printReferenceListsForMenuEntries, file);
 }

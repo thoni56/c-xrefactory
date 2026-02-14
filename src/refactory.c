@@ -576,7 +576,7 @@ static void pushMarkersAsReferences(EditorMarkerList **markers, SessionStackEntr
     Reference *rr;
 
     rr = convertEditorMarkersToReferences(markers);
-    for (BrowserMenu *mm = refs->menu; mm != NULL; mm = mm->next) {
+    for (BrowsingMenu *mm = refs->menu; mm != NULL; mm = mm->next) {
         if (strcmp(mm->referenceable.linkName, name) == 0) {
             for (Reference *r = rr; r != NULL; r = r->next) {
                 addReferenceToList(r, &mm->referenceable.references);
@@ -598,7 +598,7 @@ static void askForReallyContinueConfirmation(void) {
 static bool handleSafetyCheckDifferenceLists(EditorMarkerList *diff1, EditorMarkerList *diff2,
                                              SessionStackEntry *diffrefs) {
     if (diff1 != NULL || diff2 != NULL) {
-        for (BrowserMenu *mm = diffrefs->menu; mm != NULL; mm = mm->next) {
+        for (BrowsingMenu *mm = diffrefs->menu; mm != NULL; mm = mm->next) {
             mm->selected = true;
             mm->visible  = true;
             mm->filterLevel   = 07777777;
@@ -787,9 +787,9 @@ static void multipleReferencesInSamePlaceMessage(Reference *r) {
     ppcAskConfirmation(tmpBuff);
 }
 
-static void checkForMultipleReferencesInSamePlace(SessionStackEntry *rstack, BrowserMenu *ccms) {
+static void checkForMultipleReferencesInSamePlace(SessionStackEntry *rstack, BrowsingMenu *ccms) {
     ReferenceableItem *p, *sss;
-    BrowserMenu    *cms;
+    BrowsingMenu    *cms;
     bool            pushed;
 
     p = &ccms->referenceable;
@@ -1267,7 +1267,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     bool hasHeaderReferences = false;
     bool isMultiFileReferences = false;
     EditorMarkerList *markerList = getReferences(point, NULL, PPCV_BROWSER_TYPE_WARNING);
-    BrowserMenu *menu = sessionData.browsingStack.top->hkSelectedSym;
+    BrowsingMenu *menu = sessionData.browsingStack.top->hkSelectedSym;
     Scope scope = menu->referenceable.scope;
     Visibility visibility = menu->referenceable.visibility;
 

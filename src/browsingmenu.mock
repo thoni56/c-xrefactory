@@ -1,10 +1,10 @@
 /* -*- c -*-*/
-#include "browsermenu.h"
+#include "browsingmenu.h"
 #include <cgreen/mocks.h>
 
-BrowserMenu makeBrowserMenu(ReferenceableItem references, bool selected, bool visible, unsigned ooBits,
+BrowsingMenu makeBrowsingMenu(ReferenceableItem references, bool selected, bool visible, unsigned ooBits,
                             char olUsage, char defautlUsage, Position defaultPosition) {
-    BrowserMenu menu;
+    BrowsingMenu menu;
     menu.referenceable = references;
     menu.selected = selected;
     menu.visible = visible;
@@ -22,40 +22,40 @@ BrowserMenu makeBrowserMenu(ReferenceableItem references, bool selected, bool vi
     return menu;
 }
 
-void freeBrowserMenuList(BrowserMenu *menu) {
+void freeBrowsingMenuList(BrowsingMenu *menu) {
     mock(menu);
 }
 
-bool isBestFitMatch(BrowserMenu *menu) {
+bool isBestFitMatch(BrowsingMenu *menu) {
     return (bool)mock(menu);
 }
 
-void addReferenceToBrowserMenu(BrowserMenu *menu, Reference *reference) {
+void addReferenceToBrowsingMenu(BrowsingMenu *menu, Reference *reference) {
     mock(menu, reference);
 }
 
-void printSelectionMenu(BrowserMenu *menu) {
+void printSelectionMenu(BrowsingMenu *menu) {
     mock(menu);
 }
 
-BrowserMenu *createNewMenuItem(ReferenceableItem *sym, int includedFileNumber, Position defpos,
+BrowsingMenu *createNewMenuItem(ReferenceableItem *sym, int includedFileNumber, Position defpos,
                                Usage defusage, bool selected, bool visible, unsigned ooBits,
                                SymbolRelation relation, Usage olusage) {
     Position *defaultPosition = &defpos;
-    return (BrowserMenu *) mock(sym, includedFileNumber, defaultPosition, defusage, selected, visible, ooBits, olusage);
+    return (BrowsingMenu *) mock(sym, includedFileNumber, defaultPosition, defusage, selected, visible, ooBits, olusage);
 }
 
-BrowserMenu *addReferenceableToBrowserMenu(BrowserMenu **menuP, ReferenceableItem *reference,
+BrowsingMenu *addReferenceableToBrowsingMenu(BrowsingMenu **menuP, ReferenceableItem *reference,
                                       bool selected, bool visible, unsigned ooBits, SymbolRelation relation,
                                       int olusage, Position defpos, int defusage) {
     Position *defaultPosition = &defpos;
-    return (BrowserMenu *)mock(menuP, reference, selected, visible, ooBits, olusage, defaultPosition, defusage);
+    return (BrowsingMenu *)mock(menuP, reference, selected, visible, ooBits, olusage, defaultPosition, defusage);
 }
 
-void splitBrowserMenuAndMap(BrowserMenu *menu, void (*fun)(BrowserMenu *, void *), void *p1) {
+void splitBrowsingMenuAndMap(BrowsingMenu *menu, void (*fun)(BrowsingMenu *, void *), void *p1) {
   mock(menu, fun, p1);
 }
 
-void extendBrowserMenuWithReferences(BrowserMenu *menuItem, Reference *references) {
+void extendBrowsingMenuWithReferences(BrowsingMenu *menuItem, Reference *references) {
     mock(menuItem, references);
 }

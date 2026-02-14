@@ -5,7 +5,7 @@
 #include <cgreen/cgreen.h>
 #include <cgreen/mocks.h>
 
-#include "browsermenu.mock"
+#include "browsingmenu.mock"
 #include "commons.mock"
 #include "cxref.mock"           /* Just for refreshStaleReferencesInSession */
 #include "editorbuffer.mock"

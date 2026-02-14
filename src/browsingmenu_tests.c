@@ -1,6 +1,8 @@
-#include <cgreen/cgreen.h>
+#include "browsingmenu.h"
 
-#include "browsermenu.h"
+/* Unittests */
+
+#include <cgreen/cgreen.h>
 
 #include "log.h"
 
@@ -15,11 +17,11 @@
 #include "reference.mock"
 
 
-Describe(BrowserMenu);
-BeforeEach(BrowserMenu) {
+Describe(BrowsingMenu);
+BeforeEach(BrowsingMenu) {
     log_set_level(LOG_ERROR);
 }
-AfterEach(BrowserMenu) {}
+AfterEach(BrowsingMenu) {}
 
-Ensure(BrowserMenu, can_run_empty_test) {
+Ensure(BrowsingMenu, can_run_empty_test) {
 }

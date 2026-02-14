@@ -692,7 +692,7 @@ $(1)_tests.$(UNITTEST_EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS
 endef
 
 
-$(eval $(call UNITTEST,browsermenu,log protocol type position memory stackmemory usage))
+$(eval $(call UNITTEST,browsingmenu,log protocol type position memory stackmemory usage))
 $(eval $(call UNITTEST,characterreader,log))
 $(eval $(call UNITTEST,commandlogger))
 $(eval $(call UNITTEST,commons,log protocol stringlist))

@@ -95,7 +95,7 @@ char *simpleFileNameFromFileNum(int fnum) {
   return (char *) mock(fnum);
 }
 
-void prettyPrintLinkNameForSymbolInMenu(char *ttt, BrowserMenu *ss) {
+void prettyPrintLinkNameForSymbolInMenu(char *ttt, BrowsingMenu *ss) {
   mock(ttt, ss);
 }
 

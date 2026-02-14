@@ -282,7 +282,7 @@ If `buffer->modificationTime > lastParsedMtime`, the file is considered stale an
 1. `removeReferenceableItemsForFile()` - remove old refs from in-memory table
 2. `parseToCreateReferences()` - re-parse with preload, add fresh refs to in-memory table
 3. Remove stale-file refs from menu - preserves cross-file refs, removes outdated positions
-4. `extendBrowserMenuWithReferences()` - merge fresh refs from in-memory table
+4. `extendBrowsingMenuWithReferences()` - merge fresh refs from in-memory table
 5. Mark file as freshly parsed (`lastParsedMtime = buffer->modificationTime`)
 6. `recomputeSelectedReferenceable()` - rebuild session's reference list from updated menu
 
@@ -290,7 +290,7 @@ If `buffer->modificationTime > lastParsedMtime`, the file is considered stale an
 
 * The menu already has cross-file refs from the original PUSH operation (which scanned disk)
 * We do NOT clear menu refs and re-scan from disk during refresh
-* Scanning from disk creates problems: `addReferenceableToBrowserMenu` creates NEW menu items
+* Scanning from disk creates problems: `addReferenceableToBrowsingMenu` creates NEW menu items
   when `includeFileNumber` differs, and these new items have `selected=false`
 * Only SELECTED menu items contribute refs to the session's reference list
 * So scanning would add refs to new (unselected) items, leaving the original (selected) item empty
@@ -305,7 +305,7 @@ If during refresh we:
 1. Clear menu refs
 2. Scan from disk
 
-The scan calls `createSelectionMenu` which in turn calls `addReferenceableToBrowserMenu`.
+The scan calls `createSelectionMenu` which in turn calls `addReferenceableToBrowsingMenu`.
 This function compares incoming items by `(linkName, includeFileNumber, type)`. If the
 `includeFileNumber` from the disk scan differs from the existing menu item's value,
 a **new** menu item is created with `selected=false`.

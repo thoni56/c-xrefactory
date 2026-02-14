@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#include "browsermenu.h"
+#include "browsingmenu.h"
 #include "commons.h"
 #include "cxref.h"
 #include "globals.h"
@@ -31,8 +31,8 @@ void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **entryP) {
 
     freeReferences(entry->references);
     freeMatches(entry->matches);
-    freeBrowserMenuList(entry->hkSelectedSym);
-    freeBrowserMenuList(entry->menu);
+    freeBrowsingMenuList(entry->hkSelectedSym);
+    freeBrowsingMenuList(entry->menu);
 
     // if deleting second entry point, update it
     if (entry==stack->top) {

@@ -6,7 +6,7 @@
 
 #include "log.h"
 
-#include "browsermenu.mock"
+#include "browsingmenu.mock"
 #include "commons.mock"
 #include "completion.mock"
 #include "filetable.mock"

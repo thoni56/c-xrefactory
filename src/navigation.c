@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "browsermenu.h"
+#include "browsingmenu.h"
 #include "commons.h"
 #include "filetable.h"
 #include "globals.h"
@@ -188,7 +188,7 @@ void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNu
     // NOTE: We do NOT clear all refs and scan from disk because the scan creates new
     // menu items (with selected=false) due to differing includeFileNumber, which
     // breaks the session's reference list (only selected items contribute refs).
-    for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
+    for (BrowsingMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
         Reference **refP = &menu->referenceable.references;
         while (*refP != NULL) {
             if ((*refP)->position.file == fileNumber) {
@@ -207,12 +207,12 @@ void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNu
     // the menu's item may have different includeFileNumber/type/etc. than what the
     // parser creates. The hash table lookup requires exact match of all fields, so
     // we iterate over the table and match by linkName.
-    for (BrowserMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
+    for (BrowsingMenu *menu = sessionEntry->menu; menu != NULL; menu = menu->next) {
         for (int i = getNextExistingReferenceableItem(0); i >= 0;
              i = getNextExistingReferenceableItem(i + 1)) {
             for (ReferenceableItem *item = getReferenceableItem(i); item != NULL; item = item->next) {
                 if (strcmp(item->linkName, menu->referenceable.linkName) == 0) {
-                    extendBrowserMenuWithReferences(menu, item->references);
+                    extendBrowsingMenuWithReferences(menu, item->references);
                 }
             }
         }

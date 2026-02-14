@@ -6,7 +6,7 @@
 
 #include "log.h"
 #include "protocol.h"
-#include "browsermenu.mock"
+#include "browsingmenu.mock"
 #include "characterreader.mock"
 #include "commons.mock"
 #include "complete.mock"

@@ -1,4 +1,4 @@
-MODULES = browsermenu c_parser.tab cppexp_parser.tab characterreader commandlogger	\
+MODULES = browsingmenu c_parser.tab cppexp_parser.tab characterreader commandlogger	\
 commons complete counters cxfile cxref editor editorbuffer editorbuffertable		\
 editormarker encoding extract filedescriptor fileio filetable globals hash id init	\
 lexemstream json_utils lexem lexembuffer lexer log lsp lsp_adapter lsp_dispatcher	\

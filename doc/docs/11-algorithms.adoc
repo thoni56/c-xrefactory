@@ -357,7 +357,7 @@ When a user performs a PUSH operation (browsing a symbol), a session is created:
 [source,c]
 ----
 SessionStackEntry {
-    BrowserMenu *menu;       // Selected symbols
+    BrowsingMenu *menu;      // Selected symbols
     Reference *references;   // COPY of references for navigation
     Reference *current;      // Current position in navigation
     ...
@@ -422,7 +422,7 @@ while (ref != NULL && ref != session->current) {
 // Free old list and rebuild from table
 freeReferences(session->references);
 session->references = NULL;
-for (BrowserMenu *menu = session->menu; menu != NULL; menu = menu->next) {
+for (BrowsingMenu *menu = session->menu; menu != NULL; menu = menu->next) {
     if (menu->selected) {
         ReferenceableItem *updatedItem = lookupInTable(&menu->referenceable);
         addReferencesFromFileToList(updatedItem->references, ANY_FILE,

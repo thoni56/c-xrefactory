@@ -2,7 +2,7 @@
 #define CXREF_H_INCLUDED
 
 
-#include "browsermenu.h"
+#include "browsingmenu.h"
 #include "session.h"
 #include "server.h"
 #include "symbol.h"
@@ -30,7 +30,7 @@ extern bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2);
 extern void recomputeSelectedReferenceable(SessionStackEntry *refs );
 extern void processSelectedReferences(SessionStackEntry *rstack,
                                         void (*referencesMapFun)(SessionStackEntry *rstack,
-                                                                 BrowserMenu *ss));
+                                                                 BrowsingMenu *ss));
 extern void popFromSession(void);
 extern void deleteEntryFromSessionStack(SessionStackEntry *refs);
 extern int getFileNumberFromName(char *name);
@@ -39,9 +39,9 @@ extern void addTrivialCxReference (char *name, Type type, Storage storage,
                                    Position position, Usage usage);
 extern void olSetCallerPosition(Position position);
 extern int itIsSymbolToPushOlReferences(ReferenceableItem *p, SessionStackEntry *rstack,
-                                        BrowserMenu **rss, int checkSelFlag);
+                                        BrowsingMenu **rss, int checkSelFlag);
 extern void putOnLineLoadedReferences(ReferenceableItem *p);
-extern BrowserMenu *createSelectionMenu(ReferenceableItem *dd);
+extern BrowsingMenu *createSelectionMenu(ReferenceableItem *dd);
 
 extern void createSelectionMenuForOperation(ServerOperation command);
 extern bool olcxShowSelectionMenu(void);

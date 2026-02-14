@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "browsermenu.h"
+#include "browsingmenu.h"
 #include "characterreader.h"
 #include "commons.h"
 #include "cxref.h"
@@ -107,7 +107,7 @@ static int generatedFieldKeyList[] = {
 
 typedef struct lastCxFileData {
     int                 onLineReferencedSym;
-    BrowserMenu        *onLineRefMenuItem;
+    BrowsingMenu        *onLineRefMenuItem;
     ReferenceableItem      *referenceableItem;
     bool                symbolIsWritten;
     bool                macroBaseFileGeneratedForSymbol;
@@ -788,7 +788,7 @@ static void cxfileCheckLastSymbolDeadness(void) {
     if (lastIncomingData.symbolToCheckForDeadness != -1
         && lastIncomingData.deadSymbolIsDefined
     ) {
-        addReferenceableToBrowserMenu(&sessionData.browsingStack.top->hkSelectedSym,
+        addReferenceableToBrowsingMenu(&sessionData.browsingStack.top->hkSelectedSym,
                                       lastIncomingData.referenceableItem,
                                       true, true, 0, (SymbolRelation){.sameFile = false},
                                       UsageDefined, NO_POSITION, UsageDefined);
@@ -858,7 +858,7 @@ static void scanFunction_SymbolName(int size,
             }
         } else if (options.serverOperation!=OP_SEARCH) {
             int ols = 0;
-            BrowserMenu *menu = NULL;
+            BrowsingMenu *menu = NULL;
             if (scanOperation == CXSF_MENU_CREATION || scanOperation == CXSF_FIND_MACRO_EXPANSION_FILE) {
                 menu = createSelectionMenu(referenceableItem);
                 if (menu == NULL) {
@@ -980,7 +980,7 @@ static void scanFunction_Reference(int size,
                     if (scanOperation == CXSF_MENU_CREATION) {
                         assert(lastIncomingData.onLineRefMenuItem);
                         log_trace (":adding reference %s:%d", cxFileItem->name, reference.position.line);
-                        addReferenceToBrowserMenu(lastIncomingData.onLineRefMenuItem, &reference);
+                        addReferenceToBrowsingMenu(lastIncomingData.onLineRefMenuItem, &reference);
                     } else {
                         addReferenceToList(&reference, &sessionData.browsingStack.top->references);
                     }

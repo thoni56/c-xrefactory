@@ -9,7 +9,7 @@
 #include "cxfile.h"
 #include "log.h"
 
-#include "browsermenu.mock"
+#include "browsingmenu.mock"
 #include "characterreader.mock"
 #include "commons.mock"
 #include "completion.mock"

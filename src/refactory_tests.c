@@ -4,7 +4,7 @@
 
 #include "log.h"
 
-#include "browsermenu.mock"
+#include "browsingmenu.mock"
 #include "commons.mock"
 #include "complete.mock"
 #include "completion.mock"

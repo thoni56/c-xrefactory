@@ -67,14 +67,14 @@ static int scheduleFileUsingTheMacro(void) {
     ReferenceableItem references = makeReferenceableItem(completionStringInMacroBody, TypeMacro, StorageExtern,
                                                          GlobalScope, VisibilityGlobal, NO_FILE_NUMBER);
 
-    BrowserMenu menu = makeBrowserMenu(references, 1, true, 0, UsageUsed, UsageNone, NO_POSITION);
+    BrowsingMenu menu = makeBrowsingMenu(references, 1, true, 0, UsageUsed, UsageNone, NO_POSITION);
     if (sessionData.browsingStack.top==NULL) {
         pushEmptySession(&sessionData.browsingStack);
         tmpc = sessionData.browsingStack.top;
     }
 
     assert(sessionData.browsingStack.top);
-    BrowserMenu *oldMenu = sessionData.browsingStack.top->hkSelectedSym;
+    BrowsingMenu *oldMenu = sessionData.browsingStack.top->hkSelectedSym;
     sessionData.browsingStack.top->hkSelectedSym = &menu;
     fileToParseForMacroExpansion = NO_FILE_NUMBER;
     scanForMacroUsage(completionStringInMacroBody);

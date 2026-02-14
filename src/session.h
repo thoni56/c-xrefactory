@@ -14,8 +14,8 @@ typedef struct SessionStackEntry {
     /* ===== Browser-specific fields (browserStack only) ===== */
     struct reference      *references;     /* list of references for browsing */
     struct reference      *current;        /* current reference position */
-    struct BrowserMenu    *hkSelectedSym;  /* resolved symbols under the cursor */
-    struct BrowserMenu    *menu;    /* hkSelectedSyms plus same name */
+    struct BrowsingMenu    *hkSelectedSym;  /* resolved symbols under the cursor */
+    struct BrowsingMenu    *menu;    /* hkSelectedSyms plus same name */
     // following two lists should be probably split into hashed tables of lists
     // because of bad performances for class tree and global unused symbols
     int                    menuFilterLevel; /* filter level for menu display */

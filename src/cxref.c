@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "browsermenu.h"
+#include "browsingmenu.h"
 #include "characterreader.h"
 #include "commons.h"
 #include "complete.h"
@@ -68,9 +68,9 @@ static int referencePositionIsLess(Reference *r1, Reference *r2) {
    Note: simpleFileNameFromFileNum uses a static buffer, so we must
    copy the first result before calling it again. */
 
-static void renameCollationSymbols(BrowserMenu *menu) {
+static void renameCollationSymbols(BrowsingMenu *menu) {
     assert(menu);
-    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowsingMenu *m=menu; m!=NULL; m=m->next) {
         char *cs = strchr(m->referenceable.linkName, LINK_NAME_COLLATE_SYMBOL);
         if (cs!=NULL && m->referenceable.type==TypeCppCollate) {
             char *newName;
@@ -368,7 +368,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
             if (defaultPosition.file!=NO_FILE_NUMBER)
                 log_debug("getting definition position of %s at line %d", symbol->name, defaultPosition.line);
             if (! operationRequiresOnlyParsingNoPushing(options.serverOperation)) {
-                BrowserMenu *menu = addReferenceableToBrowserMenu(&sessionData.browsingStack.top->hkSelectedSym,
+                BrowsingMenu *menu = addReferenceableToBrowsingMenu(&sessionData.browsingStack.top->hkSelectedSym,
                                                                   foundMember, true, true, 0,
                                                                   (SymbolRelation){.sameFile = false}, usage,
                                                                   defaultPosition, defaultUsage);
@@ -699,7 +699,7 @@ bool filterLevelAtLeast(unsigned level, unsigned atLeast) {
 }
 
 /* Check if menu item's match quality meets the filter requirement */
-static bool matchQualityMeetsRequirement(BrowserMenu *menu, unsigned requiredFilterLevel) {
+static bool matchQualityMeetsRequirement(BrowsingMenu *menu, unsigned requiredFilterLevel) {
     return filterLevelAtLeast(menu->filterLevel, requiredFilterLevel);
 }
 
@@ -719,7 +719,7 @@ static int getCurrentRefPosition(SessionStackEntry *entry) {
     return position;
 }
 
-static void symbolHighlightNameSprint(char *output, BrowserMenu *menu) {
+static void symbolHighlightNameSprint(char *output, BrowsingMenu *menu) {
     char *bb, *cc;
     int len, llen;
 
@@ -854,7 +854,7 @@ static void findAndGotoDefinition(ReferenceableItem *referenceable) {
     SessionStackEntry *oldtop = pushSession();
 
     SessionStackEntry *top = sessionData.browsingStack.top;
-    BrowserMenu menu = makeBrowserMenu(*referenceable, true, true, 0, UsageUsed, UsageNone,
+    BrowsingMenu menu = makeBrowsingMenu(*referenceable, true, true, 0, UsageUsed, UsageNone,
                                        NO_POSITION);
     top->hkSelectedSym = &menu;  // Needed for createSelectionMenu to find matching symbols
     top->menu = &menu;
@@ -905,7 +905,7 @@ static void olcxPrintSymbolName(SessionStackEntry *sessionEntry) {
     } else if (sessionEntry->hkSelectedSym==NULL) {
         ppcBottomInformation("Current top symbol: <empty>");
     } else {
-        BrowserMenu *menu = sessionEntry->hkSelectedSym;
+        BrowsingMenu *menu = sessionEntry->hkSelectedSym;
         char tempString[MAX_CX_SYMBOL_SIZE+MAX_SYMBOL_MESSAGE_LEN];
         sprintf(tempString, "Current top symbol: ");
         assert(strlen(tempString) < MAX_SYMBOL_MESSAGE_LEN);
@@ -914,8 +914,8 @@ static void olcxPrintSymbolName(SessionStackEntry *sessionEntry) {
     }
 }
 
-static BrowserMenu *createSpecialMenuItem(char *fieldName, int includedFileNumber, Storage storage) {
-    BrowserMenu *menu;
+static BrowsingMenu *createSpecialMenuItem(char *fieldName, int includedFileNumber, Storage storage) {
+    BrowsingMenu *menu;
     ReferenceableItem r = makeReferenceableItem(fieldName, TypeDefault, storage, GlobalScope, VisibilityGlobal,
                                                 includedFileNumber);
     menu = createNewMenuItem(&r, r.includeFileNumber, NO_POSITION, UsageNone,
@@ -963,18 +963,18 @@ void deleteEntryFromSessionStack(SessionStackEntry *entry) {
 }
 
 void processSelectedReferences(SessionStackEntry *sessionStackEntry,
-                               void (*referencesMapFun)(SessionStackEntry *, BrowserMenu *)) {
+                               void (*referencesMapFun)(SessionStackEntry *, BrowsingMenu *)) {
     if (sessionStackEntry->menu == NULL)
         return;
 
-    for (BrowserMenu *m = sessionStackEntry->menu; m != NULL; m = m->next) {
+    for (BrowsingMenu *m = sessionStackEntry->menu; m != NULL; m = m->next) {
         referencesMapFun(sessionStackEntry, m);
     }
     LIST_MERGE_SORT(Reference, sessionStackEntry->references, referenceIsLessThan);
     setCurrentReferenceToFirstAfterCallerPosition(sessionStackEntry);
 }
 
-static void genOnLineReferences(SessionStackEntry *sessionStackEntry, BrowserMenu *menu) {
+static void genOnLineReferences(SessionStackEntry *sessionStackEntry, BrowsingMenu *menu) {
     assert(menu);
     if (menu->selected) {
         addReferencesFromFileToList(menu->referenceable.references, ANY_FILE, &sessionStackEntry->references);
@@ -993,7 +993,7 @@ static void toggleMenuSelect(void) {
     if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
         return;
 
-    BrowserMenu *menu;
+    BrowsingMenu *menu;
     for (menu=sessionEntry->menu; menu!=NULL; menu=menu->next) {
         int line = SYMBOL_MENU_FIRST_LINE + menu->outOnLine;
         if (line == options.lineNumberOfMenuSelection) {
@@ -1012,8 +1012,8 @@ static void olcxMenuSelectOnly(void) {
     if (!sessionHasReferencesValidForOperation(&sessionData, &stackEntry, CHECK_NULL_YES))
         return;
 
-    BrowserMenu *selection = NULL;
-    for (BrowserMenu *menu=stackEntry->menu; menu!=NULL; menu=menu->next) {
+    BrowsingMenu *selection = NULL;
+    for (BrowsingMenu *menu=stackEntry->menu; menu!=NULL; menu=menu->next) {
         menu->selected = false;
         int line = SYMBOL_MENU_FIRST_LINE + menu->outOnLine;
         if (line == options.lineNumberOfMenuSelection) {
@@ -1039,31 +1039,31 @@ static void olcxMenuSelectOnly(void) {
 
 
 /* Mapped though 'splitMenuPerSymbolsAndMap()' */
-static void selectUnusedSymbols(BrowserMenu *menu, void *mapParameter1) {
+static void selectUnusedSymbols(BrowsingMenu *menu, void *mapParameter1) {
     int filter;
     int *filterPointer;
 
     filterPointer = (int *)mapParameter1;
     filter = *filterPointer;
-    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowsingMenu *m=menu; m!=NULL; m=m->next) {
         m->visible = true; m->selected = false;
     }
-    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowsingMenu *m=menu; m!=NULL; m=m->next) {
         if (m->defaultRefn!=0 && m->refn==0)
             m->selected = true;
     }
-    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowsingMenu *m=menu; m!=NULL; m=m->next) {
         if (m->selected)
             goto fini2;
     }
     // Nothing selected, make the symbol unvisible
-    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowsingMenu *m=menu; m!=NULL; m=m->next) {
         m->visible = false;
     }
  fini2:
     if (filter>0) {
         // make all unselected unvisible
-        for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
+        for (BrowsingMenu *m=menu; m!=NULL; m=m->next) {
             if (!m->selected)
                 m->visible = false;
         }
@@ -1082,7 +1082,7 @@ static void olcxMenuSelectAll(bool selected) {
     if (sessionEntry->operation == OP_UNUSED_GLOBAL) {
         ppcGenRecord(PPC_WARNING, "The browser does not display project unused symbols anymore");
     }
-    for (BrowserMenu *menu=sessionEntry->menu; menu!=NULL; menu=menu->next) {
+    for (BrowsingMenu *menu=sessionEntry->menu; menu!=NULL; menu=menu->next) {
         if (menu->visible)
             menu->selected = selected;
     }
@@ -1090,11 +1090,11 @@ static void olcxMenuSelectAll(bool selected) {
     olcxPrintRefList(";", sessionEntry);
 }
 
-static void setDefaultSelectedVisibleItems(BrowserMenu *menu,
+static void setDefaultSelectedVisibleItems(BrowsingMenu *menu,
                                            unsigned visibleLevel,
                                            unsigned selectedLevel
 ) {
-    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowsingMenu *m=menu; m!=NULL; m=m->next) {
         bool visible = matchQualityMeetsRequirement(m, visibleLevel);
         bool selected = false;
         if (visible) {
@@ -1116,10 +1116,10 @@ static bool isRenameMenuSelection(int command) {
         ;
 }
 
-static void setSelectedVisibleItems(BrowserMenu *menu, ServerOperation command, int filterLevel) {
+static void setSelectedVisibleItems(BrowsingMenu *menu, ServerOperation command, int filterLevel) {
     unsigned selected, visible;
     if (command == OP_UNUSED_GLOBAL) {
-        splitBrowserMenuAndMap(menu, selectUnusedSymbols, &filterLevel);
+        splitBrowsingMenuAndMap(menu, selectUnusedSymbols, &filterLevel);
         return;
     }
 
@@ -1271,7 +1271,7 @@ static void safetyCheckDiff(Reference **anr1,
     diffrefs->current = diffrefs->references;
     if (diffrefs->references!=NULL) {
         assert(diffrefs->menu);
-        extendBrowserMenuWithReferences(diffrefs->menu, diffrefs->references);
+        extendBrowsingMenuWithReferences(diffrefs->menu, diffrefs->references);
     }
 }
 
@@ -1403,10 +1403,10 @@ static bool haveBrowsingMenu(void) {
     return true;
 }
 
-static BrowserMenu *firstVisibleSymbol(BrowserMenu *menu) {
-    BrowserMenu *firstVisible = NULL;
+static BrowsingMenu *firstVisibleSymbol(BrowsingMenu *menu) {
+    BrowsingMenu *firstVisible = NULL;
 
-    for (BrowserMenu *m=menu; m!=NULL; m=m->next) {
+    for (BrowsingMenu *m=menu; m!=NULL; m=m->next) {
         if (m->visible) {
             firstVisible = m;
             break;
@@ -1428,13 +1428,13 @@ bool olcxShowSelectionMenu(void) {
         return false;
     }
     // first if just zero or one symbol, no resolution
-    BrowserMenu *first = sessionData.browsingStack.top->menu;
+    BrowsingMenu *first = sessionData.browsingStack.top->menu;
     if (first == NULL) {
         //&fprintf(dumpOut,"no resolve, no symbol\n"); fflush(dumpOut);
         return false; // no symbol
     }
 
-    BrowserMenu *firstVisible = firstVisibleSymbol(first);
+    BrowsingMenu *firstVisible = firstVisibleSymbol(first);
     if (firstVisible==NULL) {
         //&fprintf(dumpOut,"no resolve, no visible\n"); fflush(dumpOut);
         return false; // no visible
@@ -1447,7 +1447,7 @@ bool olcxShowSelectionMenu(void) {
         || options.serverOperation==OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION
     ) {
         // manually only if different
-        for (BrowserMenu *ss=sessionData.browsingStack.top->menu; ss!=NULL; ss=ss->next) {
+        for (BrowsingMenu *ss=sessionData.browsingStack.top->menu; ss!=NULL; ss=ss->next) {
             if (ss->selected) {
                 if (first == NULL) {
                     first = ss;
@@ -1457,7 +1457,7 @@ bool olcxShowSelectionMenu(void) {
             }
         }
     } else {
-        for (BrowserMenu *menu=sessionData.browsingStack.top->menu; menu!=NULL; menu=menu->next) {
+        for (BrowsingMenu *menu=sessionData.browsingStack.top->menu; menu!=NULL; menu=menu->next) {
             if (menu->visible) {
                 if (first!=NULL) {
                     return true;
@@ -1469,7 +1469,7 @@ bool olcxShowSelectionMenu(void) {
     return false;
 }
 
-static bool olMenuHashFileNumLess(BrowserMenu *menu1, BrowserMenu *menu2) {
+static bool olMenuHashFileNumLess(BrowsingMenu *menu1, BrowsingMenu *menu2) {
     int hash1 = cxFileHashNumberForSymbol(menu1->referenceable.linkName);
     int hash2 = cxFileHashNumberForSymbol(menu2->referenceable.linkName);
     if (hash1 < hash2) return true;
@@ -1499,7 +1499,7 @@ static void mapCreateSelectionMenu(ReferenceableItem *p) {
 
 void createSelectionMenuForOperation(ServerOperation command) {
     SessionStackEntry  *rstack;
-    BrowserMenu     *menu;
+    BrowsingMenu     *menu;
 
     assert(sessionData.browsingStack.top);
     rstack = sessionData.browsingStack.top;
@@ -1508,7 +1508,7 @@ void createSelectionMenuForOperation(ServerOperation command) {
         return;
 
     renameCollationSymbols(menu);
-    LIST_SORT(BrowserMenu, rstack->hkSelectedSym, olMenuHashFileNumLess);
+    LIST_SORT(BrowsingMenu, rstack->hkSelectedSym, olMenuHashFileNumLess);
 
     menu = rstack->hkSelectedSym;
     while (menu!=NULL) {
@@ -1626,8 +1626,8 @@ static void olcxPrintPushingAction(ServerOperation operation) {
 }
 
 #ifdef DUMP_SELECTION_MENU
-static void dumpSelectionMenu(BrowserMenu *menu) {
-    for (BrowserMenu *s=menu; s!=NULL; s=s->next) {
+static void dumpSelectionMenu(BrowsingMenu *menu) {
+    for (BrowsingMenu *s=menu; s!=NULL; s=s->next) {
         log_debug(">> %d/%d %s %s %d", s->defaultRefn, s->refn, s->referenceable.linkName,
             simpleFileName(getFileItemWithFileNumber(s->referenceable.includeFileNumber)->name),
             s->outOnLine);
@@ -1674,7 +1674,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceableItem *referenceab
         }
     }
     if (!used && definitionReference!=NULL) {
-        addReferenceableToBrowserMenu(&sessionData.browsingStack.top->hkSelectedSym, referenceableItem, true, true,
+        addReferenceableToBrowsingMenu(&sessionData.browsingStack.top->hkSelectedSym, referenceableItem, true, true,
                                0, (SymbolRelation){.sameFile = false}, UsageDefined,
                                definitionReference->position, definitionReference->usage);
     }
@@ -1682,7 +1682,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceableItem *referenceab
 
 static void pushLocalUnusedSymbolsAction(void) {
     SessionStackEntry    *rstack;
-    BrowserMenu     *ss;
+    BrowsingMenu     *ss;
 
     assert(sessionData.browsingStack.top);
     rstack = sessionData.browsingStack.top;
@@ -1700,7 +1700,7 @@ static void answerPushLocalUnusedSymbolsAction(void) {
 
 static void answerPushGlobalUnusedSymbolsAction(void) {
     SessionStackEntry    *rstack;
-    BrowserMenu     *ss;
+    BrowsingMenu     *ss;
 
     assert(sessionData.browsingStack.top);
     rstack = sessionData.browsingStack.top;
@@ -2026,9 +2026,9 @@ void answerEditorAction(void) {
 
 int itIsSymbolToPushOlReferences(ReferenceableItem *referenceableItem,
                                  SessionStackEntry *rstack,
-                                 BrowserMenu **menu,
+                                 BrowsingMenu **menu,
                                  int checkSelectedFlag) {
-    for (BrowserMenu *m=rstack->menu; m!=NULL; m=m->next) {
+    for (BrowsingMenu *m=rstack->menu; m!=NULL; m=m->next) {
         if ((m->selected || checkSelectedFlag==DO_NOT_CHECK_IF_SELECTED)
             && isSameReferenceableItem(referenceableItem, &m->referenceable))
         {
@@ -2047,19 +2047,19 @@ int itIsSymbolToPushOlReferences(ReferenceableItem *referenceableItem,
 
 void putOnLineLoadedReferences(ReferenceableItem *referenceableItem) {
     int ols;
-    BrowserMenu *cms;
+    BrowsingMenu *cms;
 
     ols = itIsSymbolToPushOlReferences(referenceableItem, sessionData.browsingStack.top,
                                        &cms, DO_NOT_CHECK_IF_SELECTED);
     if (ols > 0) {
         assert(cms);
         for (Reference *r=referenceableItem->references; r!=NULL; r=r->next) {
-            addReferenceToBrowserMenu(cms, r);
+            addReferenceToBrowsingMenu(cms, r);
         }
     }
 }
 
-static unsigned filterLevelFromMenu(BrowserMenu *menu, ReferenceableItem *referenceableItem) {
+static unsigned filterLevelFromMenu(BrowsingMenu *menu, ReferenceableItem *referenceableItem) {
     assert(haveSameBareName(&menu->referenceable, referenceableItem));
     unsigned level = 0;
 
@@ -2092,7 +2092,7 @@ static unsigned filterLevelFromMenu(BrowserMenu *menu, ReferenceableItem *refere
     return level;
 }
 
-static SymbolRelation computeSymbolRelation(BrowserMenu *menu, ReferenceableItem *referenceableItem) {
+static SymbolRelation computeSymbolRelation(BrowsingMenu *menu, ReferenceableItem *referenceableItem) {
     assert(haveSameBareName(&menu->referenceable, referenceableItem));
     SymbolRelation relation = {.sameFile = false};
 
@@ -2132,8 +2132,8 @@ static SymbolRelation accumulateSymbolRelation(SymbolRelation a, SymbolRelation 
     return result;
 }
 
-BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
-    BrowserMenu *result = NULL;
+BrowsingMenu *createSelectionMenu(ReferenceableItem *reference) {
+    BrowsingMenu *result = NULL;
 
     SessionStackEntry *rstack = sessionData.browsingStack.top;
     unsigned level = 0;
@@ -2142,7 +2142,7 @@ BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
     Usage defaultUsage = UsageNone;
 
     bool found = false;
-    for (BrowserMenu *menu=rstack->hkSelectedSym; menu!=NULL; menu=menu->next) {
+    for (BrowsingMenu *menu=rstack->hkSelectedSym; menu!=NULL; menu=menu->next) {
         if (haveSameBareName(reference, &menu->referenceable)) {
             found = true;
 
@@ -2163,7 +2163,7 @@ BrowserMenu *createSelectionMenu(ReferenceableItem *reference) {
         }
     }
     if (found) {
-        result = addReferenceableToBrowserMenu(&rstack->menu, reference, false, false,
+        result = addReferenceableToBrowsingMenu(&rstack->menu, reference, false, false,
                                                level, relation, USAGE_ANY, defaultPosition, defaultUsage);
     }
     return result;
