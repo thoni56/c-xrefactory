@@ -173,17 +173,12 @@ void reparseStaleFile(int fileNumber) {
     parseToCreateReferences(fileItem->name);
 }
 
-void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber) {
-    reparseStaleFile(fileNumber);
-
-    // Mark file as freshly parsed so we don't re-refresh later in this request
-    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
-    if (buffer != NULL)
-        fileItem->lastParsedMtime = buffer->modificationTime;
-
-    // Remove refs for the stale file from menu - the menu already has cross-file refs
-    // from the original PUSH operation. We only need to remove the stale file's refs
+/* Update the browsing stack's references for a file using the current in-memory
+ * reference table. Called after the file has already been reparsed (by the
+ * entry-point or by refreshStaleReferencesInSession). */
+static void updateSessionReferencesForFile(SessionStackEntry *sessionEntry, int fileNumber) {
+    // Remove refs for the file from menu - the menu already has cross-file refs
+    // from the original PUSH operation. We only need to remove this file's refs
     // (which have old positions) and replace them with fresh refs from in-memory table.
     // NOTE: We do NOT clear all refs and scan from disk because the scan creates new
     // menu items (with selected=false) due to differing includeFileNumber, which
@@ -201,7 +196,7 @@ void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNu
         }
     }
 
-    // Merge fresh refs from in-memory table. This adds refs for the stale file
+    // Merge fresh refs from in-memory table. This adds refs for the file
     // with updated positions (from preloaded content).
     // NOTE: We match by linkName only, not by all ReferenceableItem fields, because
     // the menu's item may have different includeFileNumber/type/etc. than what the
@@ -224,6 +219,18 @@ void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNu
     for (Reference *r = sessionEntry->references; r != NULL; r = r->next) {
         log_debug("  ref: %d:%d:%d", r->position.file, r->position.line, r->position.col);
     }
+}
+
+void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber) {
+    reparseStaleFile(fileNumber);
+
+    // Mark file as freshly parsed so we don't re-refresh later in this request
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
+    if (buffer != NULL)
+        fileItem->lastParsedMtime = buffer->modificationTime;
+
+    updateSessionReferencesForFile(sessionEntry, fileNumber);
 }
 
 /* Restore current reference to the reference matching savedPos (for "stay put" after refresh).
@@ -301,11 +308,12 @@ void gotoNextReference(SessionStackEntry *sessionEntry) {
 
     int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
 
-    if (fileNumberIsStale(requestFileNumber)) {
+    if (getFileItemWithFileNumber(requestFileNumber)->needsBrowsingStackRefresh) {
         Position savedPos = getCurrentPosition(sessionEntry);
-        log_debug("Refreshing stale source file %d: %s", requestFileNumber,
+        log_debug("Updating browsing stack for reparsed source file %d: %s", requestFileNumber,
                   getFileItemWithFileNumber(requestFileNumber)->name);
-        refreshStaleReferencesInSession(sessionEntry, requestFileNumber);
+        updateSessionReferencesForFile(sessionEntry, requestFileNumber);
+        getFileItemWithFileNumber(requestFileNumber)->needsBrowsingStackRefresh = false;
         restoreToNearestReference(sessionEntry, savedPos, filterLevel);
     }
 
@@ -313,13 +321,14 @@ void gotoNextReference(SessionStackEntry *sessionEntry) {
     Reference *nextReference =
         (sessionEntry->current == NULL) ? sessionEntry->references : sessionEntry->current->next;
 
-    // Save position and refresh if stale - position saved BEFORE refresh since
-    // current pointer becomes dangling after refresh
-    if (nextReference != NULL && fileNumberIsStale(nextReference->position.file)) {
+    // Save position and update stack if reparsed - position saved BEFORE update since
+    // current pointer becomes dangling after update
+    if (nextReference != NULL && getFileItemWithFileNumber(nextReference->position.file)->needsBrowsingStackRefresh) {
         int fileNumber = nextReference->position.file;
         Position savedPos = getCurrentPosition(sessionEntry);
-        log_debug("Refreshing stale file %d: %s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
-        refreshStaleReferencesInSession(sessionEntry, fileNumber);
+        log_debug("Updating browsing stack for reparsed file %d: %s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
+        updateSessionReferencesForFile(sessionEntry, fileNumber);
+        getFileItemWithFileNumber(fileNumber)->needsBrowsingStackRefresh = false;
         restoreToNextReferenceAfterRefresh(sessionEntry, savedPos, filterLevel);
     } else {
         // Normal navigation - advance to next reference
@@ -339,24 +348,26 @@ void gotoPreviousReference(SessionStackEntry *sessionEntry) {
 
     int filterLevel = usageFilterLevels[sessionEntry->refsFilterLevel];
 
-    if (fileNumberIsStale(requestFileNumber)) {
+    if (getFileItemWithFileNumber(requestFileNumber)->needsBrowsingStackRefresh) {
         Position savedPos = getCurrentPosition(sessionEntry);
-        log_debug("Refreshing stale source file %d: %s", requestFileNumber,
+        log_debug("Updating browsing stack for reparsed source file %d: %s", requestFileNumber,
                   getFileItemWithFileNumber(requestFileNumber)->name);
-        refreshStaleReferencesInSession(sessionEntry, requestFileNumber);
+        updateSessionReferencesForFile(sessionEntry, requestFileNumber);
+        getFileItemWithFileNumber(requestFileNumber)->needsBrowsingStackRefresh = false;
         restoreToNearestReference(sessionEntry, savedPos, filterLevel);
     }
 
     // Determine the previous reference we would navigate to
     Reference *previousReference = findPreviousReference(sessionEntry, filterLevel);
 
-    // Save position and refresh if stale - position saved BEFORE refresh since
-    // current pointer becomes dangling after refresh
-    if (previousReference != NULL && fileNumberIsStale(previousReference->position.file)) {
+    // Save position and update stack if reparsed - position saved BEFORE update since
+    // current pointer becomes dangling after update
+    if (previousReference != NULL && getFileItemWithFileNumber(previousReference->position.file)->needsBrowsingStackRefresh) {
         Position savedPos = getCurrentPosition(sessionEntry);
         int fileNumber = previousReference->position.file;
-        log_debug("Refreshing stale file %d: %s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
-        refreshStaleReferencesInSession(sessionEntry, fileNumber);
+        log_debug("Updating browsing stack for reparsed file %d: %s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
+        updateSessionReferencesForFile(sessionEntry, fileNumber);
+        getFileItemWithFileNumber(fileNumber)->needsBrowsingStackRefresh = false;
         restoreToPreviousReferenceAfterRefresh(sessionEntry, savedPos, filterLevel);
     } else {
         // Normal navigation

@@ -237,8 +237,15 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         options.cursorOffset = -1;
         for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
             for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
-                if (fileNumberIsStale(l->buffer->fileNumber))
-                    reparseStaleFile(l->buffer->fileNumber);
+                int fileNumber = l->buffer->fileNumber;
+                if (fileNumberIsStale(fileNumber)) {
+                    reparseStaleFile(fileNumber);
+                    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+                    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
+                    if (buffer != NULL)
+                        fileItem->lastParsedMtime = buffer->modificationTime;
+                    fileItem->needsBrowsingStackRefresh = true;
+                }
             }
         }
         options.cursorOffset = savedCursorOffset;

@@ -772,6 +772,7 @@ static void clearFileItem(FileItem *fileItem) {
     fileItem->cxLoaded = false;
     fileItem->cxLoading = false;
     fileItem->cxSaved = false;
+    fileItem->needsBrowsingStackRefresh = false;
 }
 
 void mainTaskEntryInitialisations(ArgumentsVector args) {
