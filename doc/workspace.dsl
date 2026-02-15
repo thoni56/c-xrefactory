@@ -24,13 +24,13 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 				xref = Component xref "Cross-referencer" C
 				server = Component server "Editor Server" C
 				refactory = Component refactory "Refactory" C
-                lsp = Component lsp "LSP Server" "Language Server Protocol implementation for IDE integration - currently limited by symbol database architecture" C
-                lspAdapter = Component lspAdapter "LSP Adapter" "Converts LSP requests to c-xrefactory operations - needs symbol database abstraction" C
+                lspAdapter = Component lspAdapter "LSP Adapter" "Language Server Protocol interface — message loop, dispatcher, handlers, and adapter bridging LSP to c-xrefactory operations" C
+				parsing = Component parsing "Parsing" "Lexer, integrated preprocessor, grammar parsers (C, Yacc, CPP expressions), semantic actions, and orchestration" C
 
 				main -> xref "dispatches to" call
 				main -> server "dispatches to" call
 				main -> refactory "dispatches to" call
-				main -> lsp "dispatches to" call
+				main -> lspAdapter "dispatches to" call
 				refactory -> server "uses" call
 
 				// Symbol Database and Resolution Components
@@ -39,7 +39,7 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 				browserStack = Component browserStack "Browser Stack" "Runtime symbol context stack for navigation, containing current references and symbol menus" C
 				symbolResolver = Component symbolResolver "Symbol Resolution Pipeline" "Converts cursor positions to symbols, loads references, and finds definitions" C
 				referenceTable = Component referenceTable "In-Memory Reference Table" "Runtime symbol cache loaded from .cx files for active session" C
-				
+
 				// Symbol resolution flow
 				cxref -> symbolResolver "delegates symbol lookup to" call
 				symbolResolver -> cxfile "loads symbol data via" call
@@ -47,7 +47,7 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 				symbolResolver -> browserStack "builds navigation context in" call
 				cxfile -> referenceTable "loads symbols into" "batch loading"
 
-                lsp -> lspAdapter "delegates to" call
+                lspAdapter -> parsing "parses opened files using" call
                 lspAdapter -> refactory "uses for refactoring" call
                 lspAdapter -> cxref "uses for navigation" call
                 lspAdapter -> symbolResolver "attempts symbol lookup via" call
@@ -56,14 +56,10 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 				server -> cxref "handles references using" call
 				refactory -> cxref "handles references using" call
 
-				lexer = Component yylex "Lexical Analyser" C
-				parser = Component parser "Parser" C
-				parser -> lexer "reads tokenized source using" buffering
+				xref -> parsing "parses source code using" call
+				server -> parsing "parses source code using" call
 
-				xref -> parser "parses source code using" call
-				server -> parser "parses source code using" call
-
-				lexer -> source "reads source code from" "file I/O"
+				parsing -> source "reads source code from" "file I/O"
 			}
 
 			settingsStore = container settingsStore "Non-standard format settings file" "Configuration file for project settings" DB

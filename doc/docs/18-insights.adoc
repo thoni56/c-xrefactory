@@ -241,9 +241,9 @@ Exclude refactoring operations from the optimization:
 [source,c]
 ----
 if (buffer != NULL && buffer->preLoadedFromFile != NULL
-    && options.serverOperation != OLO_RENAME
-    && options.serverOperation != OLO_ARGUMENT_MANIPULATION
-    && options.serverOperation != OLO_SAFETY_CHECK) {
+    && options.serverOperation != OP_RENAME
+    && options.serverOperation != OP_ARGUMENT_MANIPULATION
+    && options.serverOperation != OP_SAFETY_CHECK) {
     fileItem->lastParsedMtime = buffer->modificationTime;
 }
 ----

@@ -210,7 +210,7 @@ This constraint is enforced by guards in `memory.c` (see Development Environment
 
 ==== Memory Arena Types
 
-c-xrefactory uses specialized arenas for different purposes (see Modules chapter for details):
+c-xrefactory uses specialized arenas for different purposes (see Components chapter for details):
 
 * `cxMemory` - Cross-reference database and symbol tables
 * `ppmMemory` - Preprocessor macro expansion (temporary)

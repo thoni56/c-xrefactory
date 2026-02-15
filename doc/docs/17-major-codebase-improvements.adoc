@@ -654,7 +654,7 @@ void performRefactoring(Symbol *symbol) {
 * Current implementation: `src/cxfile.c`, `src/xref.c`
 * File tracking: `src/filetable.h`, `src/filetable.c`
 * Dependency tracking: `src/xref.c` lines 81-108
-* Current database description: See chapter 08 (Code) - Reference Database section
+* Current database description: See Cxref and Cxfile components in chapter 08 (Components)
 
 [[macro-expansion-module]]
 === Extract Macro Expansion Module

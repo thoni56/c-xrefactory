@@ -1,0 +1,501 @@
+== Components
+
+This chapter describes the components of the `cxrefProgram` container, as defined in the C4 component diagram. Each section documents a component's responsibilities, architecture, and interface.
+
+Some components have clear boundaries and well-defined interfaces; others are still being separated from the legacy monolithic structure. The descriptions reflect the current state — what each component actually does today.
+
+=== Parsing
+
+==== Responsibilities
+
+Parse C and Yacc source files, producing symbol references and semantic information for the reference database and for feature-specific operations (completion, extraction, refactoring).
+
+==== Internal Structure
+
+The parsing component consists of several internal modules:
+
+* **Lexer and integrated preprocessor** (`lexer.c`, `yylex.c`) — transforms source text into lexem sequences, handles C preprocessor directives (macro definition and expansion, conditional compilation, `#include` processing), and manages include file contexts by pushing and popping read states
+* **Grammar parsers** — three yacc-generated parsers: C (`c_parser.y`), Yacc (`yacc_parser.y`), and C preprocessor expressions (`cppexp_parser.y`)
+* **Semantic actions** — modules that hook into grammar rules during parsing:
+** `semact.c` — core semantic actions: symbol tables, type checking, reference creation
+** `extract.c` — feature semantic actions for extract refactoring (if `PARSE_TO_EXTRACT`)
+** `complete.c` — feature semantic actions for completion (if `PARSE_TO_COMPLETE`)
+* **Dispatch layer** (`parsers.c`) — selects the parser based on file language
+* **Configuration and orchestration** (`parsing.c`, `parsing.h`) — sets up parsing state and provides the external entry points
+
+The integrated preprocessor is a key architectural choice: by implementing its own preprocessor rather than using the system's, c-xrefactory can navigate to macro definitions, show macro usage, refactor macro names, and complete macro identifiers. The trade-off is imperfect compatibility with all compiler-specific preprocessor extensions.
+
+==== Parser Operations
+
+The parser's behavior is configured through `ParserOperation`, decoupling parsing from server-level concerns:
+
+[cols="1,2",options="header"]
+|===
+|Operation |Purpose
+
+|`PARSE_TO_CREATE_REFERENCES`
+|Standard parse: create symbol references in the in-memory reference table
+
+|`PARSE_TO_COMPLETE`
+|Build completion candidates at cursor position
+
+|`PARSE_TO_EXTRACT`
+|Track blocks, variables, and control flow for extract refactoring
+
+|`PARSE_TO_GET_FUNCTION_BOUNDS`
+|Record function start/end positions
+
+|`PARSE_TO_VALIDATE_MOVE_TARGET`
+|Check if a position is a valid move-function target
+
+|`PARSE_TO_TRACK_PARAMETERS`
+|Track parameter positions for argument manipulation
+|===
+
+The server maps its `ServerOperation` to a `ParserOperation` via `getParserOperation()`, so the parser never needs to know about server-level operation enums.
+
+==== Parser Generation
+
+The parsers are generated using a patched Berkeley yacc (`byacc-1.9`). The patch modifies the skeleton to support error recovery and a recursive parsing feature (originally for Java). CPP macros rename parser data structures so that multiple parsers can coexist in the same executable. The Makefile generates and renames the parser output files.
+
+==== Interface
+
+Key entry points (see `parsing.h`):
+
+[source,c]
+----
+// Parse a file and create references in the in-memory table
+void parseToCreateReferences(const char *fileName);
+
+// Configure parsing for a specific file (sets language, includes, etc.)
+void setupParsingConfig(int fileNumber);
+
+// Dispatch to the appropriate parser
+void callParser(int fileNumber, Language language);
+----
+
+`parseToCreateReferences()` is the clean entry point used by LSP mode, the entry-point reparse loop, and navigation refresh. It takes a filename, determines the language, sets up configuration, and parses.
+
+`callParser()` is the lower-level dispatch used by server mode's `parseInputFile()`, where configuration is set up separately with cursor position and operation-specific state.
+
+=== Xref
+
+=== Server
+
+==== Responsibilities
+
+Serve the editor extension by processing requests in an infinite loop. Each request is a set of command-line-style options received over stdin. The server:
+
+* Dispatches operations (navigation, completion, refactoring support, project management)
+* Ensures all operations see fresh in-memory references by reparsing stale files at the entry point
+* Manages the browsing session stack for navigation operations
+* Coordinates with the parser subsystem to process input files
+
+==== Request Lifecycle
+
+The server runs as a long-lived process started by the editor (`c-xref -server`). Communication is over stdin/stdout using a text protocol where commands look like command-line options.
+
+[source]
+----
+server() — infinite request loop [server.c]
+  │
+  └─> FOR EACH REQUEST:
+       ├─> Read options from pipe
+       ├─> initServer() — process options, schedule input file
+       ├─> callServer() — main dispatch
+       │    ├─> loadAllOpenedEditorBuffers()
+       │    ├─> Entry-point reparse loop (stale compilation units)
+       │    ├─> Dispatch based on operation:
+       │    │    ├─ Operations needing input file → processFile() → parse
+       │    │    └─ Other operations (project, filter, pop, etc.)
+       │    └─> Navigation operations use browsing stack
+       ├─> answerEditorAction() — send response to editor
+       └─> Cleanup (close buffers, close output)
+----
+
+==== Entry-Point Reparse (ADR 20)
+
+Before dispatching any operation, the server reparses stale preloaded files so that all operations see fresh in-memory references. This separates the concern of "keeping data fresh" from individual operation logic.
+
+The entry-point reparse loop:
+
+1. Iterates all editor buffers (files preloaded from the editor)
+2. For each stale **compilation unit** (`.c`, `.y` — determined by `isCompilationUnit()`): reparses the file, updates `lastParsedMtime`, and sets `needsBrowsingStackRefresh` on the `FileItem`
+3. Skips non-compilation-unit files (headers, unknown extensions) — these will be handled by include-closure reparsing (not yet implemented)
+4. Sets `options.cursorOffset = -1` during reparse to prevent the lexer from triggering on-line action handling
+
+The `needsBrowsingStackRefresh` flag bridges the entry-point (which handles parsing) and the navigation module (which handles browsing stack updates). Navigation checks this flag instead of `fileNumberIsStale()` and calls `updateSessionReferencesForFile()` to update only the browsing stack without re-parsing.
+
+==== Operation Classification
+
+Operations are classified by what they need:
+
+* **Needs reference database** (`needsReferenceDatabase`): navigation, refactoring support, unused symbol detection — these push a browsing session
+* **Requires input file processing** (`requiresProcessingInputFile`): completion, search, extraction, and all reference-database operations — these parse the request's input file
+* **Neither**: project management, filter changes, browsing stack manipulation — these operate on existing session state
+
+==== Interface
+
+[source,c]
+----
+void server(ArgumentsVector args);       // Infinite request loop
+void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs);  // Single request dispatch
+void initServer(ArgumentsVector args);   // Per-request initialization
+----
+
+=== LSP Adapter
+
+==== Responsibilities
+
+Implement the Language Server Protocol interface, allowing LSP-capable editors (VS Code, Emacs lsp-mode, etc.) to use c-xrefactory's parsing and navigation capabilities. Currently at proof-of-concept stage with partial `textDocument/definition` support.
+
+==== Internal Structure
+
+The LSP adapter is a self-contained subsystem with clear internal layering:
+
+* **Message loop** (`lsp.c`) — reads LSP framed messages (Content-Length headers + JSON body) from stdin, delegates to the dispatcher, and runs until shutdown/exit
+* **Dispatcher** (`lsp_dispatcher.c`) — maps LSP method strings (`"textDocument/definition"`, `"initialize"`, etc.) to handler functions via a static dispatch table
+* **Handlers** (`lsp_handler.c`) — implement individual LSP requests and notifications: `initialize` (sets up file table, editor buffers, parsing subsystem, and reference database), `textDocument/didOpen` (loads file content and parses it), `textDocument/definition` (delegates to adapter), `shutdown`/`exit` (cleanup)
+* **Adapter** (`lsp_adapter.c`) — bridges LSP concepts to c-xrefactory internals. `findDefinition()` converts LSP URI and position to an internal `Position`, queries the `ReferenceDatabase`, and returns an LSP location JSON object
+* **Sender** (`lsp_sender.c`) — formats and sends JSON responses with Content-Length framing
+* **Utilities** (`lsp_utils.c`) — coordinate conversions: URI to file path, LSP line/character to byte offset and back
+
+==== Architectural Differences from Server Mode
+
+The LSP adapter takes a fundamentally different approach from the legacy editor server:
+
+[cols="1,1,1",options="header"]
+|===
+|Aspect |Server Mode |LSP Mode
+
+|**Protocol**
+|Custom text protocol (command-line options over pipe)
+|Standard LSP (JSON-RPC over Content-Length framing)
+
+|**Initialization**
+|Relies on pre-existing `.cx` database files
+|Builds in-memory reference database from scratch via parsing
+
+|**File handling**
+|Editor sends preloads; server uses file table scheduling
+|`textDocument/didOpen` loads content and parses immediately
+
+|**Entry point**
+|`parseInputFile()` via server dispatch
+|`parseToCreateReferences()` — the clean parsing entry point
+|===
+
+==== Current Limitations
+
+The LSP adapter is a proof-of-concept. Key gaps:
+
+* Only `textDocument/definition` partially works — and only for files that have been opened (parsed) in the current session
+* No incremental updates: modifying a file after opening does not re-parse
+* No project-wide indexing: symbols from unopened files are invisible
+* The `ReferenceDatabase` abstraction is minimal and separate from the legacy in-memory reference table
+
+==== Interface
+
+[source,c]
+----
+// Top-level entry: detect -lsp flag and run the LSP message loop
+bool want_lsp_server(ArgumentsVector args);
+int lsp_server(FILE *input);
+
+// Adapter: bridge LSP requests to c-xrefactory operations
+JSON *findDefinition(const char *uri, JSON *position);
+----
+
+=== Refactory
+
+==== Responsibilities
+
+Coordinate refactoring operations: rename, move, extract, and argument manipulation. The refactory component receives a refactoring request, uses the parser and reference database to analyze the code, performs safety checks, and produces a sequence of edits for the editor to apply.
+
+==== Invocation Model
+
+Refactoring operations run as a **separate `c-xref` invocation**, not through the long-lived editor server. The editor starts a new `c-xref` process with `-refactory` and the specific refactoring flag (e.g. `-rfct-rename`, `-rfct-extract-function`). This separate process communicates results back via the protocol and exits when done.
+
+This design means the refactoring process has its own option state (`refactoringOptions`), separate from the server's. The check `options.refactoringRegime == RegimeRefactory` gates refactoring-specific code paths.
+
+==== Operation Flow
+
+A typical refactoring (e.g. rename):
+
+1. Editor invokes `c-xref -refactory -rfct-rename -renameto=NEW_NAME -olcursor=POSITION FILE`
+2. Refactory parses the file to identify the symbol at the cursor
+3. Safety checks verify the rename is valid (no collisions, scope analysis)
+4. For each occurrence: sends `<goto>` + `<precheck>` to verify the editor's file matches
+5. Sends `<replacement>` instructions for each occurrence
+6. Editor applies the edits
+
+==== Safety Checks
+
+Before applying a refactoring, the refactory performs safety checks (`OP_INTERNAL_SAFETY_CHECK`). These use the reference database to verify that the transformation is semantically valid — for example, that a rename won't collide with an existing symbol in scope.
+
+=== Extract
+
+==== Responsibilities
+
+Analyze control flow for extract-function/macro/variable refactoring. The extract component operates in two phases: collection during parsing (registers synthetic labels, gathers references) and analysis after parsing (classifies variables, generates output).
+
+==== Operation
+
+Extraction uses a specialized parse operation (`PARSE_TO_EXTRACT`) that tracks:
+
+* Block structure and nesting
+* Variable definitions and uses within the selection
+* Control flow (return, break, continue) crossing the extraction boundary
+
+After parsing, it classifies variables as inputs (passed as parameters), outputs (returned), or local (moved into the extracted function), and generates the function signature, call site, and body.
+
+=== Cxref
+
+==== Responsibilities
+
+Manage the in-memory symbol reference tables and the browsing session stack. The cxref component is the runtime engine for symbol lookup: it loads references from the on-disk database (via cxfile), merges them with freshly parsed references, and provides the data structures that navigation and refactoring operations query.
+
+NOTE: The component boundary is not yet clean. Parts of this functionality are spread across `cxref.c`, `session.c`, `navigation.c`, and `referenceableitemtable.c`. The description below reflects the logical responsibilities, not a single module.
+
+==== Architecture Overview
+
+c-xrefactory's core functionality relies on a symbol database that stores cross-references, definitions, and usage information for all symbols in a project. The database has two forms:
+
+* **On-disk** (`.cx` files) — persistent, hash-partitioned symbol records managed by the Cxfile component
+* **In-memory** (reference tables) — runtime tables populated by parsing and by loading from `.cx` files
+
+==== Key Data Structures
+
+*_Browsing Stack (`sessionData.browsingStack`)_*
+
+The browsing stack is the runtime data structure for symbol navigation. Each push operation (triggered by a navigation request) creates a new session entry containing the references for the symbol under the cursor.
+
+*_Referenceable Items_*
+
+A `ReferenceableItem` represents a symbol (function, variable, macro, type, etc.) with its attributes: link name, type, storage class, scope, and visibility. Each referenceable item has a linked list of `Reference` entries recording every usage position.
+
+*_References_*
+
+A `Reference` records a single occurrence of a symbol: file, line, column, and usage kind (defined, declared, used, etc.). References are the fundamental unit that navigation, unused-symbol detection, and refactoring operate on.
+
+==== Symbol Resolution Flow
+
+When the user requests "go to definition" for a symbol:
+
+1. Parse the current file to identify the symbol at cursor position
+2. Load symbol data from `.cx` files (via cxfile) into the browsing stack
+3. Merge with any in-memory references from recently parsed files
+4. Order references by usage priority (definition > declaration > usage)
+5. Navigate to the best definition position
+
+==== Database Operations
+
+* **Create** (`-create`): Parse all project files, generate reference items, write to `.cx` files
+* **Update** (`-update`): Re-parse modified files (with include-closure expansion for full updates), merge into existing database
+* **Query** (server operations): Load symbol data from `.cx` files into the browsing stack for navigation
+
+=== Main
+
+=== Memory
+
+==== Responsibilities
+
+The Memory module provides arena-based allocation for performance-critical and request-scoped operations:
+
+* Fast allocation for macro expansion and lexical analysis
+* Bulk deallocation for request-scoped cleanup
+* Multiple specialized arenas for different data lifetimes
+* Overflow detection and optional dynamic resizing
+
+==== Design Rationale
+
+*_Historical Context_*
+
+In the 1990s when c-xrefactory originated, memory was scarce. The design had to:
+
+1. Minimize allocation overhead (no malloc/free per token)
+2. Support large projects despite limited RAM
+3. Allow overflow recovery via flushing and reuse
+4. Enable efficient bulk cleanup
+
+Most memory arenas use statically allocated areas. Only `cxMemory` supports dynamic resizing to handle out-of-memory situations by discarding, flushing and reusing memory. This forced implementation of a complex caching strategy since overflow could happen mid-file.
+
+*_Modern Benefits_*
+
+Even with abundant modern memory, arena allocators provide:
+
+* **Performance**: Bump pointer allocation is ~10x faster than malloc
+* **Cache locality**: Related data allocated contiguously
+* **Automatic cleanup**: Bulk deallocation prevents leaks
+* **Request scoping**: Natural fit for parsing/expansion operations
+
+==== Arena Types and Lifetimes
+
+[cols="1,2,1",options="header"]
+|===
+|Arena |Purpose |Lifetime
+
+|**cxMemory**
+|Symbol database, reference tables, cross-reference data
+|File or session
+
+|**ppmMemory**
+|Preprocessor macro expansion buffers (temporary allocations)
+|Per macro expansion
+
+|**macroBodyMemory**
+|Macro definition storage
+|Session
+
+|**macroArgumentsMemory**
+|Macro argument expansion
+|Per macro invocation
+
+|**fileTableMemory**
+|File metadata and paths
+|Session
+
+|**optMemory**
+|Command-line and config option strings (with special pointer adjustment)
+|Session
+|===
+
+==== Key Design Patterns
+
+*_Marker-Based Cleanup_*
+
+Functions save a marker before temporary allocations:
+
+[source,c]
+----
+char *marker = ppmAllocc(0);   // Save current index
+// ... temporary allocations ...
+ppmFreeUntil(marker);          // Bulk cleanup
+----
+
+*_Buffer Growth Pattern_*
+
+Long-lived buffers that may need to grow:
+
+[source,c]
+----
+// Allocate initial buffer
+bufferDesc.buffer = ppmAllocc(initialSize);
+
+// ... use buffer, may need growth ...
+
+// Free temporaries FIRST
+ppmFreeUntil(marker);
+
+// NOW buffer can grow (it's at top-of-stack)
+expandPreprocessorBufferIfOverflow(&bufferDesc, writePointer);
+----
+
+*_Overflow Handling_*
+
+The `cxMemory` arena supports dynamic resizing:
+
+[source,c]
+----
+bool cxMemoryOverflowHandler(int n) {
+    // Attempt to resize arena
+    // Return true if successful
+}
+
+memoryInit(&cxMemory, "cxMemory", cxMemoryOverflowHandler, initialSize);
+----
+
+When overflow occurs, handler can:
+
+1. Resize the arena (if within limits)
+2. Flush old data and reset
+3. Signal failure (fatal error)
+
+==== Interface
+
+Key functions (see `memory.h`):
+
+[source,c]
+----
+// Initialization
+void memoryInit(Memory *memory, char *name,
+                bool (*overflowHandler)(int n), int size);
+
+// Allocation
+void *memoryAlloc(Memory *memory, size_t size);
+void *memoryAllocc(Memory *memory, int count, size_t size);
+
+// Reallocation (only for most recent allocation)
+void *memoryRealloc(Memory *memory, void *pointer,
+                    size_t oldSize, size_t newSize);
+
+// Bulk deallocation
+size_t memoryFreeUntil(Memory *memory, void *marker);
+
+// Guards
+bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);
+----
+
+==== Common Pitfalls
+
+See the "Arena Allocator Lifetime Violations" section in the Development Environment chapter for:
+
+* Attempting to resize buffers not at top-of-stack
+* Calling `FreeUntil()` too late
+* Mixing arena lifetimes
+
+==== Future Directions
+
+Modern systems have abundant virtual memory. Possible improvements:
+
+1. **Simplify overflow handling** - Allocate larger initial arenas
+2. **Separate lifetime management** - Don't mix temporary and long-lived allocations
+3. **Consider alternatives** - Linear allocators for some use cases
+4. **Add debug modes** - Track allocation patterns and detect violations
+
+The experimental `FlushableMemory` type explores some of these ideas but hasn't replaced current implementation.
+
+=== Cxfile
+
+==== Responsibilities
+
+Read and write the CXref database (`.cx` files) in a compact text format. Cxfile is the persistence layer: it serializes symbol references to disk after parsing and loads them back during navigation and refactoring operations.
+
+==== Database Structure
+
+The database uses a hash-partitioned file structure:
+
+[source]
+----
+cxrefs/
+├── files        # File metadata and paths
+├── 0000         # Symbol data for hash bucket 0
+├── 0001         # Symbol data for hash bucket 1
+└── ...          # Additional hash buckets (count set by -refnum)
+----
+
+All information about a symbol is stored in exactly one file, determined by hashing its link name. This means a single file read suffices to look up any symbol.
+
+==== File Format
+
+Records use the general format `<number><key>[<value>]`. The encoding uses single-character markers listed at the top of `cxfile.c`.
+
+The coding often starts with a number followed by a character key: `4l` means line 4, `23c` means column 23. References are optimized to avoid repeating fields that haven't changed — so `15l3cr7cr` means two references on line 15, one at column 3, the other at column 7 (using `fsulc` fields: file, symbol index, usage, line, column).
+
+Some fields carry a length prefix: filenames use `<length>:<path>` (e.g. `84:/home/.../file.c`), version strings use `<length>v`.
+
+Example file information line:
+
+    32571f  1715027668m 21:/usr/include/ctype.h
+
+* `32571f` — file number 32571
+* `1715027668m` — modification time (to detect stale entries)
+* `21:/usr/include/ctype.h` — filename (21 characters)
+
+==== Reading
+
+Reading is controlled by `scanFunctionTable` arrays. Each entry maps a record key to a handler function. As the reader encounters a key in the file, it looks up the handler and calls it. This table-driven approach allows different consumers to register for different record types — for example, loading only symbol names vs. loading full reference lists.
+
+=== c-xref.el
+
+=== c-xrefactory.el

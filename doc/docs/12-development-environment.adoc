@@ -102,13 +102,6 @@ released a "C only" version in 2009 most of all the "xref" references
 and names was changed to "c-xref". So, as most software, there is a
 history and a naming legacy to remember.
 
-Here are some of the conventions in naming that are being used:
-
-olcx::
-"On-line CX" (Cross-reference) ?
-
-OLO::
-"On-line option" - some kind of option for the server
 
 ==== Modules and Include Files ====
 

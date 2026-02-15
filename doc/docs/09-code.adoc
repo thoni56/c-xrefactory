@@ -1,10 +1,12 @@
-== Code
+== Implementation Notes
+
+This chapter collects cross-cutting implementation details that don't belong to a single component: editor-server protocol, file processing orchestration, multi-pass configuration, and other observations about how the subsystems interact.
 
 === Commands
 
 The _editorExtension_ calls the server using command line
 options. These are then converted to first a command enum starting in
-`OLO` ("on-line operation") or `AVR` ("available refactoring").
+`OP` ("operation") or `AVR` ("available refactoring").
 
 Some times the server needs to call the crossreferencer which is
 performed in the same manner, command line options, but this call is
@@ -320,74 +322,11 @@ The paths are intertwined but different, making it hard to keep in your head whi
 
 === Parsers
 
-_C-xref_ uses a patched version of Berkley yacc to generate
-parsers. There are a number of parsers
-
-- C
-- Yacc
-- C pre-processor expressions
-
-There might also exist small traces of the Java parser, which was
-previously a part of the free `c-xref`, and the C++ parser that
-existed but was proprietary.
-
-The patch to byacc is mainly to the skeleton and seems to relate
-mostly to handling of errors and adding a recursive parsing feature
-that is required for Java, which was supported previously. It is not
-impossible that this patch might not be necessary now that Java parsing
-is not necessary, but this has not been tried.
-
-Some changes are also made to be able to accomodate multiple parsers
-in the same executable, mostly solved by CPP macros renaming the
-parsing datastructures so that they can be accessed using the standard
-names in the parsing skeleton. The Makefile generates the parsers and
-renames the generated files as appropriate.
+See the **Parsing** component in the <<08-components.adoc#,Components>> chapter.
 
 === Integrated Preprocessor
 
-_C-xrefactory_ includes its own integrated C preprocessor implementation rather than using the system's preprocessor (cpp, clang preprocessor, etc.). This is a crucial architectural decision that enables core functionality.
-
-==== Why Not Use the System Preprocessor?
-
-Using an external preprocessor would mean that all macros would be expanded before c-xrefactory sees the code. This would make it impossible to:
-
-* Navigate to macro definitions
-* Show macro usage and references
-* Refactor macro names and parameters
-* Complete macro identifiers
-* See macro arguments as distinct symbols
-* Understand the code structure as the programmer wrote it
-
-By parsing the source at the macro level, c-xrefactory operates as a **source-level tool** rather than a post-preprocessed tool. This allows it to work with the code as developers see and write it, preserving all macro information for navigation and refactoring.
-
-==== Implementation Details
-
-The integrated preprocessor is implemented in `yylex.c` and includes:
-
-* Macro definition handling (`processDefineDirective()`)
-* Macro expansion with argument substitution
-* Conditional compilation (`#if`, `#ifdef`, `#ifndef`, `#elif`, `#else`, `#endif`)
-* Include file processing (`#include`, `#include_next`)
-* Pragma directives (limited support)
-* Expression evaluation for `#if` directives (`cppexp_parser.y`)
-
-==== Limitations
-
-The integrated preprocessor does not support all modern preprocessor features:
-
-* Platform-specific predefined macros (like `__arm64__`, `__x86_64__`) are not automatically defined
-* Some compiler-specific extensions may not be recognized (e.g. `__has_feature()`, `__building_module()`)
-
-These limitations mean that c-xrefactory may report syntax errors when encountering modern platform headers that use these features, even though the code compiles correctly with standard compilers.
-
-==== Trade-offs
-
-This design choice represents a fundamental trade-off:
-
-* **Gained**: Full macro-level navigation and refactoring capabilities
-* **Lost**: Perfect compatibility with all preprocessor extensions and platform-specific features
-
-The benefit of macro-level refactoring is considered more valuable than perfect preprocessor compatibility, as it is a key differentiator for c-xrefactory.
+See the **Parsing** component's Internal Structure section in the <<08-components.adoc#,Components>> chapter.
 
 === Refactoring and the parsers
 
@@ -493,249 +432,9 @@ function structure. This structure is, at the point of writing, called
 
 === Reference Database
 
-`c-xref` run in "xref" mode creates, or updates, a database of
-references for all externally visible symbols it encounters.
-
-A good design should have a clean and generic interface to the
-reference database, but this is still a work in progress to chisel
-this out.
-
-==== Architecture Overview
-
-c-xrefactory's core functionality relies on a sophisticated symbol database that stores cross-references, definitions, and usage information for all symbols in a project. The database is implemented as a collection of binary `.cx` files and supports:
-
-* **Creation** via `-create` operations that parse all project files
-* **Updates** via `-update` operations (incremental or full)
-* **Queries** during symbol lookup operations
-
-==== Database Structure and Format
-
-The symbol database uses a hash-partitioned file structure:
-
-```
-cxrefs/
-├── files        # File metadata and paths  
-├── 0000         # Symbol data for hash bucket 0
-├── 0001         # Symbol data for hash bucket 1
-└── ...          # Additional hash buckets based on referenceFileCount
-```
-
-Each `.cx` file contains structured records with specific keys:
-
-* `CXFI_FILE_NAME`: File paths and metadata
-* `CXFI_SYMBOL_NAME`: Symbol names, types, and attributes  
-* `CXFI_REFERENCE`: Individual symbol references with positions and usage types
-
-==== Symbol Resolution Pipeline
-
-The symbol lookup process follows this pipeline:
-
-```
-1. Cursor Position Input
-   ↓
-2. Parse current file to identify symbol at position
-   ↓  
-3. scanReferencesToCreateMenu(symbolName)
-   ↓
-4. Load symbol data from .cx files
-   ↓
-5. Populate sessionData.browserStack
-   ↓
-6. Find best definition via olcxOrderRefsAndGotoDefinition()
-   ↓
-7. Navigate to definition position
-```
-
-==== Key Data Structures
-
-*_Browser Stack (`sessionData.browserStack`)_*
-
-The browser stack is the runtime data structure for symbol navigation:
-
-[source,c]
-----
-typedef struct {
-    OlcxReferences *top;           // Current symbol being browsed
-    OlcxReferences *root;          // Stack base
-} OlcxReferencesStack;
-
-typedef struct {
-    Reference *current;            // Current reference
-    Reference *references;         // All references for symbol
-    SymbolsMenu *symbolsMenu;      // Available symbols for selection
-    Position callerPosition;       // Where lookup was initiated
-    ServerOperation operation;     // Type of operation (OLO_PUSH, etc.)
-} OlcxReferences;
-----
-
-*_Reference Information_*
-
-[source,c]
-----
-typedef struct {
-    Position position;             // File, line, column
-    Usage usage;                   // UsageDefined, UsageDeclared, UsageUsed
-    struct Reference *next;        // Linked list of references
-} Reference;
-
-typedef struct {
-    char *linkName;               // Symbol name with scope information
-    Type type;                    // Symbol type (function, variable, etc.)
-    Storage storage;              // Storage class
-    Scope scope;                  // Visibility scope
-    int includedFileNumber;       // File containing symbol
-    Reference *references;        // All references to this symbol
-} ReferenceItem;
-----
-
-==== Database Operations
-
-*_Database Creation (-create)_*
-
-1. Parse all project files using C/Yacc parsers
-2. Generate `ReferenceItem` entries for each symbol
-3. Create `Reference` entries for each symbol usage
-4. Write structured records to `.cx` files
-5. Build hash-based index for fast lookup
-
-*_Database Updates (-update)_*
-
-* **Full Update**: Rebuild entire database
-* **Fast Update**: Only process modified files based on timestamps
-* **Incremental**: Smart detection of changed dependencies
-
-*_Symbol Lookup (OLO_PUSH operations)_*
-
-1. `scanReferencesToCreateMenu(symbolName)` loads symbol data
-2. `createSelectionMenu()` builds navigation menus
-3. `olProcessSelectedReferences()` populates browser stack
-4. `olcxOrderRefsAndGotoDefinition()` finds best definition
-
-==== LSP Integration Challenges
-
-*_Architectural Mismatch_*
-
-The current architecture was designed for **batch processing** and **persistent databases**, while LSP requires **on-demand processing** and **responsive queries**.
-
-**Current LSP Problems:**
-
-1. **Persistent File Dependency**: LSP `findDefinition()` calls `scanReferencesToCreateMenu()` which expects pre-existing `.cx` files
-2. **Project-Wide Requirement**: Full project analysis required before individual file operations
-3. **Batch Processing Model**: No support for incremental, per-request symbol resolution
-4. **Cold Start Problem**: New projects have no `.cx` files, causing all LSP operations to fail
-
-**Error Flow in LSP Mode:**
-
-```
-LSP textDocument/definition request
-↓
-findDefinition() called
-↓
-scanReferencesToCreateMenu() called
-↓
-No .cx files exist → empty results
-↓
-browserStack remains empty
-↓
-All definition requests return same default position
-```
-
-*_Performance Characteristics_*
-
-[cols="1,1,1",options="header"]
-|===
-|Operation |File-Based (.cx) |On-Demand Parsing
-
-|**Cold Start**
-|Requires `-create` first
-|Parse file immediately
-
-|**Warm Queries**
-|O(1) hash lookup
-|O(file_size) parsing
-
-|**Memory Usage**
-|Low (streaming)
-|High (in-memory cache)
-
-|**Incremental Updates**
-|Smart file tracking
-|Per-file invalidation
-
-|**Multi-project**
-|Separate databases
-|Workspace-scoped
-|===
+See the **Cxref** component (in-memory reference tables and symbol resolution) and the **Cxfile** component (on-disk database format and reading) in the <<08-components.adoc#,Components>> chapter.
 
 NOTE: A proposal for a unified symbol database architecture has been documented. See <<16-proposed-refactorings.adoc#unified-symbol-database,Proposed Unified Symbol Database>> in the Proposed Refactorings chapter.
-
-==== CXFILE
-
-The current implementation of the reference database is file based,
-with an optimized storage format.
-
-There is limited support to automatically keep these updated during an
-edit-compile cycle, you might have to update manually now and then.
-
-The project settings (or command line options) indicate where the
-file(s) are created and one option controls the number of files to be
-used, `-refnum`.
-
-This file (or files) contains compact, but textual representations of
-the cross-reference information. Format is somewhat complex, but here
-are somethings that I think I have found out:
-
-- the encoding has single character markers which are listed at the top
-  of cxfile.c
-
-- the coding seems to often start with a number and then a character,
-  such as '4l' (4 ell) means line 4, 23c mean column 23
-
-- references seems to be optimized to not repeat information if it
-  would be a repetition, such as '15l3cr7cr' means that there are two
-  references on line 15, one in column 3 the other in column 7
-
-- so there is a notion of "current" for all values which need not be
-  repeated
-
-- e.g. references all use 'fsulc' fields, i.e. file, symbol index,
-  usage, line and column, but do not repeat a 'fsulc' as long as it is
-  the same
-
-- some "fields" have a length indicator before, such as filenames
-  ('6:/abc.c') indicated by ':' and version information ('34v file
-  format: C-xrefactory 1.6.0 ') indicated by 'v'.
-
-So a line might say
-
-    12205f 1522108169p m1ia 84:/home/...
-
-The line identifies the file with id 12205. The file was last included
-in an update of refs at sometime which is identified by 1522108169
-(mtime), has not been part of a full update of xrefs, was mentioned on
-the command line. (I don't know what the 'a' means...) Finally, the
-file name itself is 84 characters long.
-
-NOTE: TODO: Build a tool to decipher this so that tests can query the
-generated data for expected data. This is now partly ongoing in the
-'utils' directory.
-
-==== Reference Database Reading
-
-All information about an externally visible symbol is stored in one,
-and only one reference file, determined by hashing the linkname of the
-symbol. So it will always suffice to read one reference file when
-consulting the reference database (in the form of CXFILE) for a
-symbol.
-
-The reading of the CXFILE format is controlled by
-`scanFunctionTable`s. These consists of a list of entries, one for
-each key/tag/recordCode (see format description above) that the scan
-will process.
-
-As the reference file reading encounters a key/tag/recordCode it will
-consult the table and see if there is an entry pointing to a handler
-function for that key/tag/recordCode. If so, it will be called. 
 
 === Editor Plugin
 
@@ -933,109 +632,24 @@ prefix, "On-Line C-Xrefactory", maybe...
 
 === Refactoring
 
-This is of course, the core in why I want to restore this, to get at its refactoring capabilities. So far, much is not understood, but here are some bits and pieces.
+See the **Refactory** and **Extract** components in the <<08-components.adoc#,Components>> chapter for the architecture and operation flow.
 
-==== Editor interface
+==== Refactoring Protocol Details
 
-One thing that really confused me in the beginning was that the editor, primarily Emacs, don't use the actual server that it has started for refactoring operations (and perhaps for other things also?). Instead it creates a separate instance with which it talks to about one refactoring.
+The refactoring protocol messages exchanged between the refactory process and the editor:
 
-I've just managed to create the first automatic test for refactorings, `olcx_refactory_rename`. It was created by running the sandboxed emacs to record the communication and thus finding the commands to use.
-
-Based on this learning it seems that a refactoring typically is a single invocation of `c-xref` with appropriate arguments (start & stop markers, the operation, and so on) and the server then answers with a sequence of operations, like
-
-```
-<goto>
- <position-off off=3 len=<n>>CURDIR/test_source/single_int1.c</position-off>
-</goto>
-<precheck len=<n>> single_int_on_line_1_col_4;</precheck>
-<replacement>
- <str len=<n>>single_int_on_line_1_col_4</str>  <str len=<n>>single_int_on_line_1_col_44</str>
-</replacement>
-```
-
-==== Interactions
-
-I haven't investigated the internal flow of such a sequence, but it is starting to look like `c-xref` is internally re-reading the initialization, I'm not at this point sure what this means, I hope it's not internal recursion...
-
-
-==== Extraction
-
-Each type of refactoring has it's own little "language". E.g. extracting a method/function using `-refactory -rfct-extract-function` will return something like
-
-```
-<extraction-dialog type=newFunction_> <str len=20>	newFunction_(str);
-</str>
- <str len=39>static void newFunction_(char str[]) {
-</str>
- <str len=3>}
-
-</str>
-  <int val=2 len=0></int>
-</extraction-dialog>
-```
-
-So there is much logic in the editor for this. I suspect that the three `<str>` parts are
-
-- what to replace the current region with
-- what to place before the current region
-- what to place after the current region
-
-If this is correct then all extractions copy the region verbatim and then the server only have to figure out how to "glue" that to a semantically correct call/argument list.
-
-As a side note the editor asks for a new name for the function and then calls the edit server with a rename request (having preloaded the new source file(s) of course).
-
-==== Protocol
-
-Dechiffrering the interaction between an editor and the edit server in
-`c-xrefactory` isn't easy. The protocol isn't very clear or
-concise. Here I'm starting to collect the important bits of the
-invocation, the required and relevant options and the returned
-information.
-
-The test cases for various refactoring operations should give you some
-more details.
-
-All of these require a `-p` (project) option to know which c-xref
-project options to read.
-
-*_General Principles_*
-
-Refactorings are done using a separate invocation, the edit server
-mode cannot handle refactorings. At least that is how the Emacs client
-does it (haven't looked at the Jedit version).
-
-I suspect that it once was a single server that did both the symbol
-management and the refactoring as there are remnants of a separate
-instance of the option structure named "refactoringOptions". Also the
-check for the refactoring mode is done using
-`options.refactoringRegime == RegimeRefactory` which seems strange.
-
-Anyway, if the refactoring succeeds the suggested edits is as per usual
-in the communications buffer.
-
-However, there are a couple of cases where the communcation does not
-end there. Possibly because the client needs to communicate some
-information back before the refactoring server can finish the job,
-like presenting some menu selection.
-
-My guess at this point is that it is the refactoring
-server that closes the connection when it is done...
-
-*_Rename_*
+*_Rename Example_*
 
 *Invocation:* `-rfct-rename -renameto=NEW_NAME -olcursor=POSITION FILE`
 
-*Semantics:* The symbol under the cursor (at POSITION in FILE) should
-be renamed (replaced at all occurrences) by NEW_NAME.
-
-*Result:* sequence of
+*Result:* A sequence of precheck/replacement pairs:
 ```
 <goto>
  <position-off off=POSITION len=N>FILE</position-off>
 </goto>
 <precheck len=N>STRING</precheck>
 ```
-followed by sequence of
+followed by:
 ```
 <goto>
  <position-off off=POSITION len=N>FILE</position-off>
@@ -1045,25 +659,22 @@ followed by sequence of
 </replacement>
 ```
 
+*_Extraction Example_*
+
+Extraction (`-rfct-extract-function`) returns an `<extraction-dialog>` with three `<str>` parts: the call site replacement, the text to insert before the region (function header), and the text to insert after (closing brace). The editor applies these and then initiates a rename for the new function name.
+
 *_Protocol Messages_*
 
-<goto>{position-off}</goto> -> editor;;
-Request the editor to move cursor to the indicated position (file, position).
-
-<precheck len={int}>{string}</precheck> -> editor;;
-Requests that the editor verifies that the text under the cursor matches the string.
-
-<replacement>{str}{str}</replacement>;;
-Requests that the editor replaces the string under the cursor, which should be 'string1', with 'string2'.
-
-<position-off off={int} len={int}>{absolute path to file}</position-off>;;
-Indicates a position in the given file. 'off' is the character position in the file.
+`<goto>{position-off}</goto>`:: Move cursor to the indicated position.
+`<precheck len={int}>{string}</precheck>`:: Verify that the text under the cursor matches the string.
+`<replacement>{str}{str}</replacement>`:: Replace string1 under cursor with string2.
+`<position-off off={int} len={int}>{path}</position-off>`:: Position in file ('off' is character offset).
 
 === Memory handling
 
 c-xrefactory uses custom memory management via arena allocators rather than malloc/free for performance-critical operations.
 
-See the **Modules** chapter for the design and architecture of the Memory module, and the **Data Structures** chapter for details on the arena allocator data structure and allocation model.
+See the **Components** chapter for the design and architecture of the Memory module, and the **Data Structures** chapter for details on the arena allocator data structure and allocation model.
 
 For debugging memory issues, especially arena lifetime violations, see the **Development Environment** chapter.
 
@@ -1077,7 +688,7 @@ Memory allocation is managed through the `Memory` structure, which implements an
 * `macroArgumentsMemory` - Macro argument expansion
 * `fileTableMemory` - File table entries
 
-See **Modules** chapter for detailed description of each arena's purpose and lifetime.
+See **Components** chapter for detailed description of each arena's purpose and lifetime.
 
 ==== Option Memory
 
