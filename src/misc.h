@@ -74,6 +74,7 @@ extern char *lastOccurenceInString(char *ss, int ch);
 #define log_with_explicit_file_and_line(level, file, line, ...) log_log(level, file, line, __VA_ARGS__)
 
 extern void formatOutputLine(char *tt, int startingColumn);
+extern bool isCompilationUnit(char *fileName);
 extern Language getLanguageFor(char *inFileName);
 
 #endif

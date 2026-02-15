@@ -461,7 +461,7 @@ static bool fileNameShouldBePruned(char *fn) {
 }
 
 void dirInputFile(MAP_FUN_SIGNATURE) {
-    char            *dir,*fname, *suff;
+    char            *dir,*fname;
     void            *recurseFlag;
     void            *nrecurseFlag;
     char            dirName[MAX_FILE_NAME_SIZE];
@@ -489,7 +489,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         sprintf(tmpBuff, "file name %s is too long", dirName);
         FATAL_ERROR(ERR_ST, tmpBuff, EXIT_FAILURE);
     }
-    suff = getFileSuffix(fname);
+
     // Directories are never in editor buffers...
     if (isDirectory(dirName)) {
         if (recurseFlag!=NULL) {
@@ -501,10 +501,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
                                         dirName, NULL, NULL, nrecurseFlag, &isTopDirectory);
         }
     } else if (editorFileExists(dirName)) {
-        if (isTopDirectory==0
-            && !fileNameHasOneOfSuffixes(fname, options.cFilesSuffixes)
-            && compareFileNames(suff, ".y")!=0
-        ) {
+        if (isTopDirectory==0 && !isCompilationUnit(fname)) {
             return;
         }
         scheduleCommandLineEnteredFileToProcess(dirName);

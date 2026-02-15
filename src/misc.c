@@ -778,6 +778,11 @@ void formatOutputLine(char *line, int startingColumn) {
     }
 }
 
+bool isCompilationUnit(char *fileName) {
+    return fileNameHasOneOfSuffixes(fileName, options.cFilesSuffixes)
+        || compareFileNames(getFileSuffix(fileName), ".y") == 0;
+}
+
 Language getLanguageFor(char *fileName) {
     char *suffix;
     Language language = LANG_C;

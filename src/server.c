@@ -10,6 +10,7 @@
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
+#include "misc.h"
 #include "head.h"
 #include "log.h"
 #include "options.h"
@@ -238,9 +239,9 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
             for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
                 int fileNumber = l->buffer->fileNumber;
-                if (fileNumberIsStale(fileNumber)) {
+                FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+                if (fileNumberIsStale(fileNumber) && isCompilationUnit(fileItem->name)) {
                     reparseStaleFile(fileNumber);
-                    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
                     EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
                     if (buffer != NULL)
                         fileItem->lastParsedMtime = buffer->modificationTime;

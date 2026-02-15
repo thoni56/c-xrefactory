@@ -103,6 +103,10 @@ void formatOutputLine(char *tt, int startingColumn) {
   mock(tt, startingColumn);
 }
 
+bool isCompilationUnit(char *fileName) {
+    return (bool)mock(fileName);
+}
+
 Language getLanguageFor(char *inFileName) {
     return (Language)mock(inFileName);
 }
