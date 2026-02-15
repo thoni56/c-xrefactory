@@ -1,0 +1,36 @@
+[
+  {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "initialize",
+    "params": {
+      "rootUri": "file://CURDIR",
+      "capabilities": {}
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "method": "initialized"
+  },
+  {
+    "jsonrpc": "2.0",
+    "method": "textDocument/didOpen",
+    "params": {
+      "textDocument": {
+        "uri": "file://CURDIR/source.c",
+        "languageId": "c",
+        "version": 1,
+        "text": "#include <stdbool.h>\n#include <stdlib.h>\n#include <string.h>\n\n#include \"argumentsvector.h\"\n#include \"commandlogger.h\"\n#include \"commons.h\"\n#include \"fileio.h\"\n#include \"filetable.h\"\n#include \"globals.h\"\n#include \"log.h\"\n#include \"lsp.h\"\n#include \"memory.h\"\n#include \"proto.h\"\n#include \"refactory.h\"\n#include \"server.h\"\n#include \"stackmemory.h\"\n#include \"startup.h\"\n#include \"options.h\"\n#include \"xref.h\"\n#include \"yylex.h\"\n\n\n/* initLogging() is called as the first thing in main() so we look for log command line options here */\nstatic void initLogging(ArgumentsVector args) {\n    char fileName[MAX_FILE_NAME_SIZE+1] = \"\";\n    LogLevel log_level = LOG_ERROR;\n    LogLevel console_level = LOG_FATAL;\n\n    for (int i=0; i<args.argc; i++) {\n        /* Levels in the log file, if enabled */\n        if (strncmp(args.argv[i], \"-log=\", 5)==0)\n            strcpy(fileName, &args.argv[i][5]);\n        if (strcmp(args.argv[i], \"-debug\") == 0)\n            log_level = LOG_DEBUG;\n        if (strcmp(args.argv[i], \"-trace\") == 0)\n            log_level = LOG_TRACE;\n        /* Levels on the console */\n        if (strcmp(args.argv[i], \"-errors\") == 0)\n            console_level = LOG_ERROR;\n        if (strcmp(args.argv[i], \"-warnings\") == 0)\n            console_level = LOG_WARN;\n        if (strcmp(args.argv[i], \"-infos\") == 0)\n            console_level = LOG_INFO;\n    }\n\n    /* Was there a filename, -log given? */\n    if (fileName[0] != '\\0') {\n        FILE *logFile = openFile(fileName, \"w\");\n        if (logFile != NULL)\n            log_add_fp(logFile, log_level);\n    }\n\n    /* Always log errors and above to console */\n    log_set_level(console_level);\n\n    /* Should we log the arguments? */\n    if (true)\n        logCommands(args);\n}\n\nstatic void checkForStartupDelay(int argc, char *argv[]) {\n    for (int i=0; i<argc; i++) {\n        if (strncmp(argv[i], \"-delay=\", 7)==0) {\n            sleep(atoi(&argv[i][7]));\n            return;\n        }\n    }\n}\n\n/* *********************************************************************** */\n/* **************************       MAIN      **************************** */\n/* *********************************************************************** */\n\nint main(int argc, char *argv[]) {\n    checkForStartupDelay(argc, argv);\n\n    ArgumentsVector args = {.argc = argc, .argv = argv};\n\n    /* Options are read very late down below, so we need to setup logging before then */\n    initLogging(args);\n    ENTER();\n\n    /* And if we want to run the experimental LSP server, ignore anything else */\n    if (want_lsp_server(args))\n        return lsp_server(stdin);\n\n    /* else continue with legacy implementation */\n    if (setjmp(memoryResizeJumpTarget) != 0) {\n        /* CX_ALLOCC always makes one longjmp back to here before we can\n           start processing for real ... Allocating initial CX memory */\n        if (cxResizingBlocked) {\n            FATAL_ERROR(ERR_ST, \"cx_memory resizing required, see file TROUBLES\",\n                       EXIT_FAILURE);\n        }\n    }\n\n    currentPass = ANY_PASS;\n    totalTaskEntryInitialisations();\n    mainTaskEntryInitialisations(args);\n\n    if (options.mode == RefactoryMode)\n        refactory();\n    if (options.mode == XrefMode)\n        xref(args);\n    if (options.mode == ServerMode)\n        server(args);\n\n    if (options.statistics) {\n        printMemoryStatistics();\n        printOptionsMemoryStatistics();\n        yylexMemoryStatistics();\n        fileTableMemoryStatistics();\n        stackMemoryStatistics();\n    }\n\n    LEAVE();\n    return 0;\n}\n"
+      }
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "shutdown"
+  },
+  {
+    "jsonrpc": "2.0",
+    "method": "exit"
+  }
+]
