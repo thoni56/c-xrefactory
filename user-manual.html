@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-02-12">
+<meta name="author" content="v{VERSION} - Generated 2026-02-16">
 <title>C-xrefactory User Manual</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory User Manual</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-02-12</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-02-16</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -482,7 +482,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_quick_reference">7. Quick Reference</a>
 <ul class="sectlevel2">
-<li><a href="#_recommended_key_bindings">7.1. Recommended Key Bindings</a></li>
+<li><a href="#_default_key_bindings">7.1. Default Key Bindings</a></li>
 <li><a href="#_common_workflows">7.2. Common Workflows</a></li>
 </ul>
 </li>
@@ -526,7 +526,7 @@ emacs -l c-xrefactory/load.el</code></pre>
 <div class="sect2">
 <h3 id="_projects">2.2. Projects</h3>
 <div class="paragraph">
-<p>C-xrefactory auto-detects projects based on the file you&#8217;re editing when you do you initial C-xrefactory operation. The path of the file is investigated upwards until a <code>.c-xrefrc</code> (C-xrefactory project config) file is found.</p>
+<p>C-xrefactory is "project-based", meaning that it handles files within one project. C-xrefactory auto-detects projects based on the file you&#8217;re editing when you do you initial C-xrefactory operation. The path of the file is investigated upwards until a <code>.c-xrefrc</code> (C-xrefactory project config) file is found.</p>
 </div>
 <div class="paragraph">
 <p>If no config file could be found, you&#8217;ll be prompted to create a project. The active project is shown in the modeline after each action.</p>
@@ -538,7 +538,7 @@ emacs -l c-xrefactory/load.el</code></pre>
 <h2 id="_browsing">3. Browsing</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Browsing lets you navigate to definitions and find all usages of any symbol.</p>
+<p>Browsing uses a list of references (occurrencies of a symbol), including definition, declarations and usages, which allows you to navigate that list.</p>
 </div>
 <div class="sect2">
 <h3 id="_basic_navigation">3.1. Basic Navigation</h3>
@@ -548,16 +548,16 @@ emacs -l c-xrefactory/load.el</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Push Symbol and Goto Definition</strong> — resolve the symbol at cursor, jump to its definition</p>
+<p><strong>Push Symbol and Goto Definition</strong> — resolve the symbol at cursor, create the list of references and jump to its definition</p>
 </li>
 <li>
-<p><strong>Pop Symbol</strong> — return to where you were before pushing</p>
+<p><strong>Pop Symbol</strong> — return to where you were before pushing discarding the current list and picking up the previous list of references</p>
 </li>
 <li>
-<p><strong>Next Reference</strong> — step to the next usage of the current symbol</p>
+<p><strong>Next Reference</strong> — step to the next occurence of the current symbol</p>
 </li>
 <li>
-<p><strong>Previous Reference</strong> — step to the previous usage</p>
+<p><strong>Previous Reference</strong> — step to the previous occurance</p>
 </li>
 </ul>
 </div>
@@ -568,7 +568,7 @@ emacs -l c-xrefactory/load.el</code></pre>
 <div class="sect2">
 <h3 id="_the_browser_stack">3.2. The Browser Stack</h3>
 <div class="paragraph">
-<p>You can browse multiple symbols simultaneously. Each push adds to a stack level:</p>
+<p>You can browse multiple symbols simultaneously. Each push adds to a stack level. Each stack level holds the references for that symbol or referenceable item.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -587,7 +587,7 @@ emacs -l c-xrefactory/load.el</code></pre>
 </ol>
 </div>
 <div class="paragraph">
-<p>You can Re-Push a symbol you popped.</p>
+<p>You can Re-Push the symbol you just popped.</p>
 </div>
 </div>
 <div class="sect2">
@@ -607,12 +607,12 @@ emacs -l c-xrefactory/load.el</code></pre>
 <p><strong>Symbol Pane</strong> — shows matched symbols and where they&#8217;re defined</p>
 </li>
 <li>
-<p><strong>References Pane</strong> — lists all usages with source context</p>
+<p><strong>References Pane</strong> — lists all occurencies with source context</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Click a reference to jump to it. Multi-select symbols to combine their references.</p>
+<p>Click a reference to jump to it. Multi-select symbols to combine their references into a navigable list of references.</p>
 </div>
 </div>
 </div>
@@ -692,7 +692,7 @@ emacs -l c-xrefactory/load.el</code></pre>
 <p>Press the completion key (default kbd:[F8]) to complete the identifier at cursor.</p>
 </div>
 <div class="paragraph">
-<p>C-xrefactory understands context—it offers appropriate completions for function parameters, variable definitions, struct members, etc.</p>
+<p>C-xrefactory understands context - it offers appropriate completions for function parameters, variable definitions, struct members, etc.</p>
 </div>
 <div class="sect2">
 <h3 id="_completion_dialog">5.1. Completion Dialog</h3>
@@ -769,7 +769,7 @@ emacs -l c-xrefactory/load.el</code></pre>
 <h2 id="_quick_reference">7. Quick Reference</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_recommended_key_bindings">7.1. Recommended Key Bindings</h3>
+<h3 id="_default_key_bindings">7.1. Default Key Bindings</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 40%;">
@@ -841,7 +841,7 @@ Symbol Retriever → enter <code>config*</code> → browse results</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-02-12 23:49:20 UTC
+Last updated 2026-02-16 07:59:08 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
