@@ -31,35 +31,35 @@ See the https://github.com/thoni56/c-xrefactory/blob/main/README.md[README] for 
 
 === Projects
 
-C-xrefactory auto-detects projects based on the file you're editing when you do you initial C-xrefactory operation. The path of the file is investigated upwards until a `.c-xrefrc` (C-xrefactory project config) file is found.
+C-xrefactory is "project-based", meaning that it handles files within one project. C-xrefactory auto-detects projects based on the file you're editing when you do you initial C-xrefactory operation. The path of the file is investigated upwards until a `.c-xrefrc` (C-xrefactory project config) file is found.
 
 If no config file could be found, you'll be prompted to create a project. The active project is shown in the modeline after each action.
 
 == Browsing
 
-Browsing lets you navigate to definitions and find all usages of any symbol.
+Browsing uses a list of references (occurrences of a symbol), including definition, declarations and usages, which allows you to navigate that list.
 
 === Basic Navigation
 
 The core workflow uses four actions:
 
-* *Push Symbol and Goto Definition* — resolve the symbol at cursor, jump to its definition
-* *Pop Symbol* — return to where you were before pushing
-* *Next Reference* — step to the next usage of the current symbol
-* *Previous Reference* — step to the previous usage
+* *Push Symbol and Goto Definition* — resolve the symbol at cursor, create the list of references and jump to its definition
+* *Pop Symbol* — return to where you were before pushing discarding the current list and picking up the previous list of references
+* *Next Reference* — step to the next occurence of the current symbol
+* *Previous Reference* — step to the previous occurance
 
 Place cursor on a symbol, push it, then step through references. When done, pop to return.
 
 === The Browser Stack
 
-You can browse multiple symbols simultaneously. Each push adds to a stack level:
+You can browse multiple symbols simultaneously. Each push adds to a stack level. Each stack level holds the references for that symbol or referenceable item.
 
 1. While browsing `variable`, you see it passed to `function`
 2. Place cursor on `function` and Push to see its definition
 3. Use Next/Previous to navigate all occurrences of `function`
 4. Pop to return and continue browsing `variable`
 
-You can Re-Push a symbol you popped.
+You can Re-Push the symbol you just popped.
 
 === Push by Name
 
@@ -70,9 +70,9 @@ You can Re-Push a symbol you popped.
 Opens a visual representation of the browser stack with two panes:
 
 * *Symbol Pane* — shows matched symbols and where they're defined
-* *References Pane* — lists all usages with source context
+* *References Pane* — lists all occurences with source context
 
-Click a reference to jump to it. Multi-select symbols to combine their references.
+Click a reference to jump to it. Multi-select symbols to combine their references into a navigable list of references.
 
 == Searching
 
@@ -106,7 +106,7 @@ Searching is case-insensitive except within `[]`.
 
 Press the completion key (default kbd:[F8]) to complete the identifier at cursor.
 
-C-xrefactory understands context—it offers appropriate completions for function parameters, variable definitions, struct members, etc.
+C-xrefactory understands context - it offers appropriate completions for function parameters, variable definitions, struct members, etc.
 
 === Completion Dialog
 
@@ -149,7 +149,7 @@ These work on functions and macros:
 
 == Quick Reference
 
-=== Recommended Key Bindings
+=== Default Key Bindings
 
 [cols="2,3"]
 |===
