@@ -1,14 +1,11 @@
 include ../Makefile.server
 
-# Test that PREVIOUS correctly handles when the SOURCE file (where cursor is) is stale.
-# This triggers the source file refresh path in gotoPreviousReference() (lines 1089-1094).
+# Scenario: PREVIOUS when source file (where cursor is) is stale
 #
-# Scenario:
-# - PUSH on 'counter' in source.c -> goes to header.h (definition)
-# - NEXT to header.h:7 (usage in reset)
-# - NEXT to source.c:4 (usage in increment)
-# - PREVIOUS with source.c modified (stale) -> should refresh source.c first,
-#   restore to nearest reference, then navigate to previous
+# Given the cursor is in source.c which has been modified (stale)
+# And the browsing stack has references in both source.c and header.h
+# When the user does PREVIOUS
+# Then source.c is reparsed first, cursor restored, then navigation proceeds
 
 $(TEST):
 	$(CXREF_PROGRAM) -p $(CURDIR) -create . > /dev/null

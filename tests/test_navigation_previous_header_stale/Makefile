@@ -1,15 +1,13 @@
 include ../Makefile.server
 
-# Test that PREVIOUS correctly handles navigating to a file that was modified.
-# This triggers restoreToPreviousReferenceAfterRefresh() which is called when the
-# TARGET file of navigation is stale.
+# Scenario: PREVIOUS to directly included stale header
 #
-# Scenario:
-# - PUSH on 'counter' in source.c -> goes to header.h (definition)
-# - NEXT to header.h:7 (usage in reset)
-# - NEXT to source.c:4 (usage in increment)
-# - PREVIOUS with header.h modified (stale) -> should refresh and go to header.h:10
-#   (shifted by 3 lines in modified version)
+# Given header.h is in an editor buffer and has been modified (+3 lines)
+# And source.c includes header.h directly
+# When the user does PREVIOUS targeting header.h
+# Then the system finds source.c includes header.h via include references
+# And reparses source.c (which pulls in fresh header.h)
+# And positions in header.h reflect the modified file
 
 $(TEST):
 	$(CXREF_PROGRAM) -p $(CURDIR) -create . > /dev/null

@@ -1,16 +1,11 @@
 include ../Makefile.server
 
-# Test that NEXT correctly handles navigating to a file that was modified.
-# This triggers restoreToNextReferenceAfterRefresh() which is called when the
-# TARGET file of navigation is stale.
+# Scenario: NEXT to a stale CU (short navigation path variant)
 #
-# Scenario:
-# - PUSH on 'counter' in source.c
-# - NEXT navigates to header.h (definition)
-# - NEXT again, now source.c has a newer preload (source.modified with shifted lines)
-# - Cursor stays in header.h but we send modified preload for source.c
-# - Navigation targets source.c which is stale, triggering refresh
-# - Reference positions should be from the MODIFIED file (line 7, not line 4)
+# Given source.c is in an editor buffer and has been modified (shifted lines)
+# And the browsing stack cursor is in header.h
+# When the user does NEXT and the target is in source.c
+# Then source.c is reparsed and positions reflect the modified file
 
 $(TEST):
 	$(CXREF_PROGRAM) -p $(CURDIR) -create . > /dev/null

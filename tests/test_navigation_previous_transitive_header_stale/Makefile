@@ -1,15 +1,13 @@
 include ../Makefile.server
 
-# Test that PREVIOUS correctly handles navigating to a transitively included
-# header that was modified. The stale header (inner.h) is NOT directly included
-# by the CU (source.c) — it's included via middle.h.
+# Scenario: PREVIOUS to transitively included stale header
 #
-# Scenario:
-# - PUSH on 'counter' in source.c -> goes to inner.h:4 (definition)
-# - NEXT to inner.h:7 (usage in reset)
-# - NEXT to source.c:4 (usage in increment)
-# - PREVIOUS with inner.h modified (stale, +3 lines) -> should refresh and
-#   go to inner.h:10 (shifted from line 7)
+# Given inner.h is in an editor buffer and has been modified (+3 lines)
+# And source.c includes middle.h which includes inner.h (transitive)
+# When the user does PREVIOUS targeting inner.h
+# Then the system finds the transitive include chain via include references
+# And reparses source.c (which pulls in middle.h which pulls in fresh inner.h)
+# And positions in inner.h reflect the modified file
 
 $(TEST):
 	$(CXREF_PROGRAM) -p $(CURDIR) -create . > /dev/null
