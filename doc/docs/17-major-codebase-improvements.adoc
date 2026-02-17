@@ -600,6 +600,8 @@ IMPORTANT: This dependency tracking infrastructure is **already production-ready
 
 The current architecture has RefactoryMode internally calling XrefMode (`callXref()`) to update the persistent `.cx` database before performing refactorings (see Insights chapter, section "RefactoryMode Internally Calls XrefMode").
 
+Importantly, the **graduated update scope decision already exists**: `computeUpdateOptionForSymbol()` in `refactory.c` inspects the symbol's visibility, scope, and file span to choose between no update (local symbols), fast update (multi-file globals), or full update (symbols in headers). This logic is sound and maps directly onto the replacement mechanism — only the update _implementation_ changes (lightweight scan + incremental reparse instead of `callXref()`).
+
 With the unified on-demand architecture, refactoring uses the **same in-memory reference database** as navigation:
 
 [source,c]
@@ -1055,26 +1057,9 @@ struct ReferenceableItem {
 
 *_Include Graph Construction_*
 
-**Current**: Include relationships processed during lexing, not persisted
-**Needed**: Map of which files include which headers
+**Current**: Include relationships are already tracked as `TypeCppInclude` references in the `referenceableItemTable` (link name `"%%%i"`). Each reference encodes: `ReferenceableItem.includeFileNumber` = included file, `Reference.position.file` = including file. These are created by full parsing and persisted in the `.cx` database. The entry-point reparse (ADR 20) already walks this graph transitively to find CUs including stale headers.
 
-**Lightweight approach**:
-
-[source,c]
-----
-typedef struct {
-    int   sourceFile;         /* File with #include directive */
-    int   includedFile;       /* File being included */
-    bool  isSystemInclude;    /* <> vs \"\" */
-} IncludeEdge;
-
-/* Stored in file's metadata, retrievable by file number */
-int getIncludedFileCount(int fileNumber);
-int getIncludedFile(int fileNumber, int index);
-int *getIncludingFiles(int fileNumber);  /* Files that include this one */
-----
-
-**Scope**: Moderate effort, moderate complexity
+**Remaining gap**: These references are only populated by full parsing or loaded from the disk db. Lightweight file structure scanning (link:/workspace/decisions#22[ADR-0022]) would populate them from `#include` line scanning, without full parsing — making the include graph available even without a `.cx` file or prior full parse.
 
 *_Incremental Multi-File Parsing_*
 

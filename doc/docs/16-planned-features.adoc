@@ -46,20 +46,26 @@ Reorganize code by moving function definitions between source files while mainta
 
 ==== Use Case
 
+```plantuml
+@startuml
+Bob -> Alice : hello
+@enduml
+```
+
 Language Server Protocol (LSP) integration enables c-xrefactory to work with modern editors and IDEs (VS Code, vim/neovim with LSP plugins, etc.) beyond Emacs. This opens c-xrefactory's refactoring and navigation capabilities to a much wider audience.
 
 ==== What Works
 
 **Go to Definition** (`textDocument/definition`):
 
-* ✓ Functions - Jump to function definition from any call site
-* ✓ Global variables - Navigate to variable declarations
-* ✓ Types - Find typedef and struct definitions
+* Functions - Jump to function definition from any call site
+* Global variables - Navigate to variable declarations
+* Types - Find typedef and struct definitions
 
 **File Parsing**:
 
-* ✓ Files are parsed as they're opened in the editor
-* ✓ Symbols become available for navigation immediately
+* Files are parsed as they're opened in the editor
+* Symbols become available for navigation immediately
 
 ==== Current Limitations
 

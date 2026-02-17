@@ -93,7 +93,7 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 	}
 
   views {
-		systemContext cxrefactory SystemContext {
+	systemContext cxrefactory SystemContext {
 	    include *
 	    autolayout lr
 		}

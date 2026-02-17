@@ -18,7 +18,7 @@ This chapter outlines the high-level architectural and feature goals for c-xrefa
 
 ==== Dependency Chain
 
-The following diagram shows how the remaining architectural pieces depend on each other. Work proceeds from bottom to top. Items at the base (single-project server, project-local configuration, unified startup) are already implemented.
+The following diagram shows how the remaining architectural pieces depend on each other. Work proceeds from bottom to top.
 
 ----
                   Memory is truth
@@ -27,20 +27,17 @@ The following diagram shows how the remaining architectural pieces depend on eac
                   v                v
     No callXref in           .cx becomes
     refactoring           startup snapshot
-                  \              /
-                   \            /
-                    v          v
-              Index-based sessions
-          (keys + positions, not copies)
-                       |
-                       v
-         ADR 20: Separate sync from dispatch
-       (hoist buffer refresh to server entry;
-        operations assume fresh data)
-                       |
-                       v
+           |                      |
+           v                      v
+    ADR 22: Lightweight     Index-based sessions
+    file structure scan    (keys + positions,
+    (replaces -create        not copies)
+     and callXref)                |
+           |                      |
+           v                      v
     ┌───────────────────────────────────┐
     │          FOUNDATION (done)        │
+    │  ADR 20: Sync before dispatch    │
     │  Client sends all modified buffers│
     │  Single-project server (ADR-0021) │
     │  Project-local config (ADR-0005)  │
@@ -54,14 +51,17 @@ The following diagram shows how the remaining architectural pieces depend on eac
 |===
 |Component |Description
 
-|**Separate sync from dispatch**
-|Server-side restructuring (link:/workspace/decisions#20[ADR-0020]): hoist all buffer refresh to the server entry point so that operations can assume the in-memory table is current. This eliminates mid-operation re-parse issues and is valuable even before the full "memory is truth" goal is reached.
+|**Separate sync from dispatch (done)**
+|Server-side restructuring (link:/workspace/decisions#20[ADR-0020]): the server entry point reparses stale files before dispatching any operation. Pass 1 reparses stale CUs, Pass 2 walks the reverse-include graph (via `TypeCppInclude` references) to find and reparse CUs that include stale headers. Operations can assume the in-memory table is current.
+
+|**Lightweight file structure scanning**
+|Replace the expensive full-project `-create` and `callXref()` with lightweight scanning (link:/workspace/decisions#22[ADR-0022]): discover CUs by globbing the project directory, extract include structure from `#include` lines, populate the same `TypeCppInclude` references that full parsing creates. The scan/mtime-check/incremental-reparse pipeline built for ADR 20 is the same pipeline needed here — just triggered at a different point (server startup or before refactoring, instead of per-request).
 
 |**Index-based sessions**
 |Session stores symbol key + current position instead of copying all references. Navigation reads directly from in-memory table, eliminating the "stale session copies" problem. Depends on upfront refresh (ADR 20) so that the table is always current when sessions read from it.
 
 |**No callXref in refactoring**
-|Refactoring uses same in-memory table as navigation. Include closure (already implemented, link:/workspace/decisions#13[ADR-0013]) finds affected files; parse on demand. Eliminates the architectural split between navigation and refactoring code paths. See link:18-insights.adoc[Chapter 18: RefactoryMode Internally Calls XrefMode] for the current architecture this replaces.
+|Refactoring uses same in-memory table as navigation, with lightweight scanning replacing `callXref()`. The existing graduated update strategy in `computeUpdateOptionForSymbol()` already decides the right scope per refactoring: no update for local symbols, fast update for multi-file globals, full update for symbols in headers. This logic maps directly onto the lightweight scan approach — only the update mechanism changes (scan + incremental reparse instead of `callXref()`). Include closure (link:/workspace/decisions#13[ADR-0013]) finds affected files; parse on demand. See link:18-insights.adoc[Chapter 18: RefactoryMode Internally Calls XrefMode] for the current architecture this replaces.
 
 |**Disk snapshot strategy**
 |The `.cx` file transitions from a live database to a startup snapshot. This requires a strategy for initial creation from disk files and incremental updates — taking care that modified-buffer data is never persisted to the snapshot (it reflects disk state only). See below for target semantics.
@@ -69,11 +69,17 @@ The following diagram shows how the remaining architectural pieces depend on eac
 
 ==== Incremental Implementation Path
 
-Both navigation and refactoring already use the same in-memory `ReferenceableItemTable` (see link:18-insights.adoc[Chapter 18: Unified In-Memory Table Discovery] for details). The disk scan operations merge with this table. This means the path to memory-is-truth is incremental:
+Both navigation and refactoring already use the same in-memory `ReferenceableItemTable` (see link:18-insights.adoc[Chapter 18: Unified In-Memory Table Discovery] for details). The infrastructure for memory-as-truth is largely already in place:
 
-1. **Parse all project files at startup** — populates the in-memory table completely
-2. **Existing code continues to work** — scan operations find symbols already in memory, becoming effective no-ops
-3. **Remove scan operations** — once step 1 is proven, scan code is dead and can be removed
+* **Include structure** is already tracked via `TypeCppInclude` references in the reference table — the same mechanism that full parsing creates. Lightweight scanning (ADR 22) would populate these without full parsing.
+* **Staleness detection** is already working: mtime checks on editor buffers, entry-point reparse with transitive include-graph walking (ADR 20).
+* **Graduated update scope** already exists: `computeUpdateOptionForSymbol()` decides per-refactoring whether no update, fast update, or full update is needed based on symbol visibility and scope.
+
+The path forward is:
+
+1. **Lightweight scanning replaces `-create`** — discover CUs and include structure without full parsing. Populate the same `TypeCppInclude` references. No disk db write needed.
+2. **Same scanning replaces `callXref()` before refactoring** — scan + mtime check + reparse stale files in the include closure. The graduated scope decision (`computeUpdateOptionForSymbol`) stays the same.
+3. **`.cx` becomes startup snapshot** — loaded once at startup for fast warm start, never consulted during operation. The in-memory table is authoritative.
 
 ==== .cx File: Startup Snapshot
 
@@ -99,7 +105,9 @@ The snapshot is written from disk-file-derived references only. Modified-buffer 
 * **link:/workspace/decisions#5[ADR-0005]**: Automatically find config files — enables project discovery by upward search
 * **link:/workspace/decisions#13[ADR-0013]**: No archaic extern patterns — limits symbol visibility to include-based, making include closure complete
 * **link:/workspace/decisions#14[ADR-0014]**: Adopt on-demand parsing architecture — formalizes this direction
+* **link:/workspace/decisions#20[ADR-0020]**: Separate sync from dispatch — implemented, entry-point reparse with include-graph walking
 * **link:/workspace/decisions#21[ADR-0021]**: Single-project server policy — foundation for index-based sessions
+* **link:/workspace/decisions#22[ADR-0022]**: Lightweight file structure scanning — replaces `-create` and `callXref()`
 * **Chapter 17**: Implementation details for Clean Persistence Store and Unified Symbol Database
 
 === Feature Vision: Full LSP Support
@@ -180,4 +188,4 @@ Provide refactoring capabilities that understand C semantics, going beyond what 
 
 ==== Details
 
-See link:17-major-codebase-improvements.adoc#move-function-refactoring[Chapter 17: Move Function Between Files] for implementation details and phase breakdown.
+See link:#move-function-refactoring[Chapter 16: Move Function Between Files] for implementation details and phase breakdown.
