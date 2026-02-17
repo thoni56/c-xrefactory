@@ -1,7 +1,5 @@
 /* -*- mode: text -*- */
 workspace "C-xrefactory" "A C/Yacc refactoring browser" {
-	!adrs adr
-	!docs docs
 	model {
 		developer = Person "Developer" "Edits source code using an editor" Ext
 
@@ -10,7 +8,8 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 		source = Element "Source Code" "a set of files stored on disk" "" DB
 
 		cxrefactory = SoftwareSystem "C-xrefactory" "Analyses source code, receives and processes requests for navigation and refactoring" Cxrefactory {
-
+                        !adrs adr
+                        !docs docs
 			editorExtension = container editorExtension "Extends the Editor with c-xref operations and interfaces to the c-xrefactory API" "Plugin" {
 				cxref_el = Component cxref.el "" elisp
 				cxrefactory_el = Component cxrefactory.el "" elisp
@@ -24,7 +23,7 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 				xref = Component xref "Cross-referencer" C
 				server = Component server "Editor Server" C
 				refactory = Component refactory "Refactory" C
-                lspAdapter = Component lspAdapter "LSP Adapter" "Language Server Protocol interface — message loop, dispatcher, handlers, and adapter bridging LSP to c-xrefactory operations" C
+                                lspAdapter = Component lspAdapter "LSP Adapter" "Language Server Protocol interface — message loop, dispatcher, handlers, and adapter bridging LSP to c-xrefactory operations" C
 				parsing = Component parsing "Parsing" "Lexer, integrated preprocessor, grammar parsers (C, Yacc, CPP expressions), semantic actions, and orchestration" C
 
 				main -> xref "dispatches to" call
@@ -47,10 +46,10 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 				symbolResolver -> browserStack "builds navigation context in" call
 				cxfile -> referenceTable "loads symbols into" "batch loading"
 
-                lspAdapter -> parsing "parses opened files using" call
-                lspAdapter -> refactory "uses for refactoring" call
-                lspAdapter -> cxref "uses for navigation" call
-                lspAdapter -> symbolResolver "attempts symbol lookup via" call
+                                lspAdapter -> parsing "parses opened files using" call
+                                lspAdapter -> refactory "uses for refactoring" call
+                                lspAdapter -> cxref "uses for navigation" call
+                                lspAdapter -> symbolResolver "attempts symbol lookup via" call
 
 				xref -> cxref "handles references using" call
 				server -> cxref "handles references using" call
@@ -59,7 +58,7 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 				xref -> parsing "parses source code using" call
 				server -> parsing "parses source code using" call
 
-				parsing -> source "reads source code from" "file I/O"
+				parsing -> source "reads source code from" "File I/O"
 			}
 
 			settingsStore = container settingsStore "Non-standard format settings file" "Configuration file for project settings" DB
@@ -76,21 +75,21 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 			cxfile -> fileMetadata "tracks file changes for" "incremental updates"
 
 			editorExtension -> settingsStore "writes" "new project wizard"
-			cxrefProgram -> settingsStore "read"
+			cxrefProgram -> settingsStore "read" "File I/O"
 			editorExtension -> cxrefProgram "API" "requests information and gets commands to modify source code"
-			cxrefProgram -> referencesDb "read/write"
-			cxrefProgram -> source "read/analyze"
+			cxrefProgram -> referencesDb "read/write" "File I/O"
+			cxrefProgram -> source "read/analyze" "File I/O"
 		}
 
-		developer -> editor "usual editor/IDE operations"
-		developer -> cxrefactory "configuration and command line invocations"
-		editor -> source "normal editing operations"
-		editor -> cxrefactory "navigation and refactoring requests"
-		cxrefactory -> editor "positioning and editing responses"
-		cxrefactory -> source "read/analyze"
-		editor -> editorExtension "extends" "Editor extension protocol"
-		developer -> settingsStore "edit"
-		editorExtension -> source "extended c-xrefactory operations"
+		developer -> editor "usual editor/IDE operations" UI
+		developer -> cxrefactory "configuration and command line invocations" UI
+		editor -> source "normal editing operations" "File I/O"
+		editor -> cxrefactory "navigation and refactoring requests" Protocol
+		cxrefactory -> editor "positioning and editing responses" Protocol
+		cxrefactory -> source "read/analyze" "File I/O"
+		editor -> editorExtension "extends" "Editor extension protocol" Plugin
+		developer -> settingsStore "edit" UI
+		editorExtension -> source "extended c-xrefactory operations" "File I/O"
 	}
 
   views {
