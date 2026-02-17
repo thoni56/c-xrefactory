@@ -1,0 +1,14 @@
+CXREF -xrefactory-II -server
+-olcxgetprojectname CURDIR/a.c
+<sync>
+-olcxpush -preload CURDIR/a.c CURDIR/a.preload -preload CURDIR/common.h CURDIR/common.preload -olcursor=44 CURDIR/a.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/a.c CURDIR/a.preload -preload CURDIR/common.h CURDIR/common.preload -olcursor=39 CURDIR/common.h -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/a.c CURDIR/a.preload -preload CURDIR/common.h CURDIR/common.preload -olcursor=44 CURDIR/a.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/a.c CURDIR/a.preload -preload CURDIR/common.h CURDIR/common.modified -olcursor=44 CURDIR/b.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/a.c CURDIR/a.preload -preload CURDIR/common.h CURDIR/common.modified -olcursor=44 CURDIR/c.c -p CURDIR
+<sync>
+<exit>

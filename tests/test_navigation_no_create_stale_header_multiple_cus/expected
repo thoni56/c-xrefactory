@@ -1,0 +1,44 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/a.c
+end-of-options
+
+<sync>
+<set-info len=<n>>test_navigation_stale_header_multiple_cus</set-info>
+-olcxpush -preload CURDIR/a.c CURDIR/a.preload -preload CURDIR/common.h CURDIR/common.preload -olcursor=44 CURDIR/a.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=4 col=4 len=<n>>CURDIR/common.h</position-lc>
+</goto>
+-olcxnext -preload CURDIR/a.c CURDIR/a.preload -preload CURDIR/common.h CURDIR/common.preload -olcursor=39 CURDIR/common.h -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=4 col=4 len=<n>>CURDIR/a.c</position-lc>
+</goto>
+-olcxnext -preload CURDIR/a.c CURDIR/a.preload -preload CURDIR/common.h CURDIR/common.preload -olcursor=44 CURDIR/a.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=4 col=4 len=<n>>CURDIR/b.c</position-lc>
+</goto>
+-olcxnext -preload CURDIR/a.c CURDIR/a.preload -preload CURDIR/common.h CURDIR/common.modified -olcursor=44 CURDIR/b.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=4 col=4 len=<n>>CURDIR/c.c</position-lc>
+</goto>
+-olcxnext -preload CURDIR/a.c CURDIR/a.preload -preload CURDIR/common.h CURDIR/common.modified -olcursor=44 CURDIR/c.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=10 col=4 len=<n>>CURDIR/common.h</position-lc>
+</goto>
+-exit
+end-of-options
+
