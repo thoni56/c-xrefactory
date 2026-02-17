@@ -1,0 +1,6 @@
+*.preload
+output*
+CXrefs/
+.c-xref/
+.cov/
+trace

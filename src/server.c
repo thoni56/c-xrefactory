@@ -221,6 +221,76 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     fileItem->isScheduled = false;
 }
 
+/* Walk the reverse-include graph from a stale header up to compilation units,
+ * using TypeCppInclude references in the reference table (populated by prior
+ * parsing or loaded from disk db). Reparse those CUs so they pick up the
+ * modified header content. */
+static void reparseStaleHeaderIncluders(int headerFileNumber) {
+    FileItem *headerItem = getFileItemWithFileNumber(headerFileNumber);
+    log_debug("Looking for CUs that include stale header '%s'", headerItem->name);
+
+    ensureReferencesAreLoadedFor(LINK_NAME_INCLUDE_REFS);
+
+    /* Walk reverse-include graph transitively: starting from the stale header,
+     * find all files that include it, then files that include those, etc.
+     * Collect any CUs encountered along the way. */
+    int filesToWalk[256];
+    int walkCount = 1;
+    filesToWalk[0] = headerFileNumber;
+
+    int cuFileNumbers[128];
+    int cuCount = 0;
+
+    for (int i = 0; i < walkCount; i++) {
+        ReferenceableItem searchItem = makeReferenceableItem(
+            LINK_NAME_INCLUDE_REFS, TypeCppInclude, StorageExtern,
+            GlobalScope, VisibilityGlobal, filesToWalk[i]);
+
+        ReferenceableItem *found;
+        if (!isMemberInReferenceableItemTable(&searchItem, NULL, &found))
+            continue;
+
+        for (Reference *r = found->references; r != NULL; r = r->next) {
+            int includerFileNum = r->position.file;
+
+            /* Already in our walk list? */
+            bool alreadySeen = false;
+            for (int j = 0; j < walkCount; j++) {
+                if (filesToWalk[j] == includerFileNum) {
+                    alreadySeen = true;
+                    break;
+                }
+            }
+            if (alreadySeen)
+                continue;
+
+            if (walkCount < 256)
+                filesToWalk[walkCount++] = includerFileNum;
+
+            FileItem *includer = getFileItemWithFileNumber(includerFileNum);
+            if (isCompilationUnit(includer->name) && cuCount < 128) {
+                cuFileNumbers[cuCount++] = includerFileNum;
+                log_debug("CU '%s' (transitively) includes stale header '%s'",
+                          includer->name, headerItem->name);
+            }
+        }
+    }
+
+    if (cuCount == 0) {
+        log_debug("No CUs found that include '%s'", headerItem->name);
+        return;
+    }
+
+    removeReferenceableItemsForFile(headerFileNumber);
+
+    for (int i = 0; i < cuCount; i++) {
+        log_debug("Reparsing CU file number %d because of stale header '%s'",
+                  cuFileNumbers[i], headerItem->name);
+        reparseStaleFile(cuFileNumbers[i]);
+        getFileItemWithFileNumber(cuFileNumbers[i])->needsBrowsingStackRefresh = true;
+    }
+}
+
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     static bool projectContextInitialized = false;
 
@@ -249,6 +319,25 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
                 }
             }
         }
+
+        /* Pass 2: For stale headers, find CUs that include them and reparse.
+         * Must come after Pass 1: Pass 1 reparses stale CUs, refreshing their
+         * TypeCppInclude references. Pass 2 queries those references to find
+         * which CUs include the stale header (transitively). */
+        for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
+            for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
+                int fileNumber = l->buffer->fileNumber;
+                FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+                if (fileNumberIsStale(fileNumber) && !isCompilationUnit(fileItem->name)) {
+                    reparseStaleHeaderIncluders(fileNumber);
+                    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
+                    if (buffer != NULL)
+                        fileItem->lastParsedMtime = buffer->modificationTime;
+                    fileItem->needsBrowsingStackRefresh = true;
+                }
+            }
+        }
+
         options.cursorOffset = savedCursorOffset;
     }
 

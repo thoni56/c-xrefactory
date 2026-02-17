@@ -1,0 +1,37 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>test_navigation_previous_transitive_header_stale</set-info>
+-olcxpush -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/inner.h CURDIR/inner.preload -olcursor=48 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=4 col=4 len=<n>>CURDIR/inner.h</position-lc>
+</goto>
+-olcxnext -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/inner.h CURDIR/inner.preload -olcursor=37 CURDIR/inner.h -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=7 col=4 len=<n>>CURDIR/inner.h</position-lc>
+</goto>
+-olcxnext -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/inner.h CURDIR/inner.preload -olcursor=88 CURDIR/inner.h -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=4 col=4 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+-olcxprevious -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/inner.h CURDIR/inner.modified -olcursor=48 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=10 col=4 len=<n>>CURDIR/inner.h</position-lc>
+</goto>
+-exit
+end-of-options
+
