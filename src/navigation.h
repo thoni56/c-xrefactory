@@ -11,6 +11,5 @@ extern void gotoNextReference(SessionStackEntry *sessionEntry);
 extern void gotoPreviousReference(SessionStackEntry *sessionEntry);
 extern bool fileNumberIsStale(int fileNumber);
 extern void reparseStaleFile(int fileNumber);
-extern void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber);
 
 #endif

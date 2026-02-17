@@ -221,6 +221,9 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     fileItem->isScheduled = false;
 }
 
+#define MAX_INCLUDE_WALK_FILES 256
+#define MAX_CUS_TO_REPARSE 128
+
 /* Walk the reverse-include graph from a stale header up to compilation units,
  * using TypeCppInclude references in the reference table (populated by prior
  * parsing or loaded from disk db). Reparse those CUs so they pick up the
@@ -234,11 +237,11 @@ static void reparseStaleHeaderIncluders(int headerFileNumber) {
     /* Walk reverse-include graph transitively: starting from the stale header,
      * find all files that include it, then files that include those, etc.
      * Collect any CUs encountered along the way. */
-    int filesToWalk[256];
+    int filesToWalk[MAX_INCLUDE_WALK_FILES];
     int walkCount = 1;
     filesToWalk[0] = headerFileNumber;
 
-    int cuFileNumbers[128];
+    int cuFileNumbers[MAX_CUS_TO_REPARSE];
     int cuCount = 0;
 
     for (int i = 0; i < walkCount; i++) {
@@ -264,11 +267,11 @@ static void reparseStaleHeaderIncluders(int headerFileNumber) {
             if (alreadySeen)
                 continue;
 
-            if (walkCount < 256)
+            if (walkCount < MAX_INCLUDE_WALK_FILES)
                 filesToWalk[walkCount++] = includerFileNum;
 
             FileItem *includer = getFileItemWithFileNumber(includerFileNum);
-            if (isCompilationUnit(includer->name) && cuCount < 128) {
+            if (isCompilationUnit(includer->name) && cuCount < MAX_CUS_TO_REPARSE) {
                 cuFileNumbers[cuCount++] = includerFileNum;
                 log_debug("CU '%s' (transitively) includes stale header '%s'",
                           includer->name, headerItem->name);

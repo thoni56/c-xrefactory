@@ -7,7 +7,7 @@
 
 #include "browsingmenu.mock"
 #include "commons.mock"
-#include "cxref.mock"           /* Just for refreshStaleReferencesInSession */
+#include "cxref.mock"           /* For recomputeSelectedReferenceable */
 #include "editorbuffer.mock"
 #include "filetable.mock"
 #include "globals.mock"

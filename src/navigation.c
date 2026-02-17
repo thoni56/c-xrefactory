@@ -121,21 +121,15 @@ void setCurrentReferenceToNextOrFirst(SessionStackEntry *sessionEntry, Reference
 }
 
 /*
- * Staleness handling for NEXT/PREVIOUS:
+ * Staleness is handled in two phases (ADR 20):
  *
- * The Emacs client sends preload (modified buffer content) only for the CURRENT file
- * (where the cursor is when the command is issued). We leverage this in two ways:
+ * 1. Entry-point reparse (server.c callServer): Before dispatching any operation,
+ *    the server reparses stale CUs and headers, updating the in-memory reference
+ *    table. Sets needsBrowsingStackRefresh on affected FileItems.
  *
- * 1. Source file refresh: When user navigates (NEXT/PREVIOUS), they're usually at a
- *    reference they previously navigated to. If they edited that file, we refresh it
- *    first, keeping current position.
- *
- * 2. Target file refresh: If navigating within the same file, the target reference's
- *    file also has preload, so we can refresh and find the correct next/previous.
- *
- * For cross-file navigation (target != source), the target won't have a preload,
- * so we can't detect its staleness. The user can recover by doing any operation
- * from the target file, which will then send its preload.
+ * 2. Browsing stack update (here): NEXT/PREVIOUS check the flag and update the
+ *    browsing stack's reference list from the refreshed reference table. This is
+ *    a stack update only — no reparsing happens here.
  */
 
 bool fileNumberIsStale(int fileNumber) {
@@ -221,17 +215,6 @@ static void updateSessionReferencesForFile(SessionStackEntry *sessionEntry, int 
     }
 }
 
-void refreshStaleReferencesInSession(SessionStackEntry *sessionEntry, int fileNumber) {
-    reparseStaleFile(fileNumber);
-
-    // Mark file as freshly parsed so we don't re-refresh later in this request
-    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
-    if (buffer != NULL)
-        fileItem->lastParsedMtime = buffer->modificationTime;
-
-    updateSessionReferencesForFile(sessionEntry, fileNumber);
-}
 
 /* Restore current reference to the reference matching savedPos (for "stay put" after refresh).
  *
