@@ -357,6 +357,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         if (prepareInputFileForRequest()) {
             if (options.serverOperation == OP_ACTIVE_PROJECT && !projectContextInitialized) {
                 initializeProjectContext(getFileItemWithFileNumber(requestFileNumber)->name, baseArgs, requestArgs);
+                processFileArguments();
                 projectContextInitialized = true;
             }
             getFileItemWithFileNumber(requestFileNumber)->isScheduled = false;
