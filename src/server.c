@@ -357,7 +357,26 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         if (prepareInputFileForRequest()) {
             if (options.serverOperation == OP_ACTIVE_PROJECT && !projectContextInitialized) {
                 initializeProjectContext(getFileItemWithFileNumber(requestFileNumber)->name, baseArgs, requestArgs);
+                if (options.inputFiles == NULL)
+                    addToStringListOption(&options.inputFiles, ".");
                 processFileArguments();
+
+                /* Parse all discovered CUs to populate in-memory references.
+                 * Without a .cx snapshot this is the only way to get cross-file
+                 * references (cold start path). */
+                int savedCursorOffset = options.cursorOffset;
+                options.cursorOffset = -1;
+                for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+                    FileItem *fileItem = getFileItemWithFileNumber(i);
+                    if (fileItem->isScheduled && isCompilationUnit(fileItem->name)) {
+                        restoreMemoryCheckPoint();
+                        initAllInputs();
+                        parseToCreateReferences(fileItem->name);
+                        fileItem->isScheduled = false;
+                    }
+                }
+                options.cursorOffset = savedCursorOffset;
+
                 projectContextInitialized = true;
             }
             getFileItemWithFileNumber(requestFileNumber)->isScheduled = false;
