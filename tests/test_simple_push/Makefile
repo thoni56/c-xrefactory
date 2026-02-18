@@ -6,7 +6,7 @@ $(TEST): .c-xrefrc
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: EXTRA = \'-debug\'
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
 
 GDB_COMMANDS = -ex 'br initLogging' -ex continue
