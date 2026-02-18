@@ -37,87 +37,86 @@
 Options options;               // current options
 Options savedOptions;
 Options presetOptions = {
-    /* GENERAL */
-    false,                       // command log to /tmp file
-    false,                       // exit
-    "gcc",                       // path to compiler to use for auto-discovering compiler and defines
-    NULL,                        // strings for commandline entered definitions (-D)
-    0,                           // comment moving level
-    NULL,                        // prune name
-    NULL,                        // input files
-    RC_NONE,                     // continue refactoring
-    0,                           // completion case sensitive
-    NULL,                        // xrefrc
-    NO_EOL_CONVERSION,           // crlfConversion
-    NULL,                        // pushName
-    0,                           // parnum
-    0,                           // parnum2
-    "",                          // refactoring parameter name
-    "",                          // refactoring parameter value
-    "",                          // refactoring target line
-    AVR_NO_REFACTORING,          // refactoring
-    NULL,                        // renameTo
-    false,                       // xrefactory-II
-    NULL,                        // moveTargetFile
+    /* --- SESSION --- */
+    .mode = XrefMode,
+    .exit = false,
+    .xref2 = false,
+    .xrefrc = NULL,
+    .commandlog = NULL,
+    .outputFileName = NULL,
+    .errors = false,
+    .debug = false,
+    .trace = false,
+    .lexemTrace = false,
+    .fileTrace = false,
+    .statistics = false,
+    .update = UPDATE_DEFAULT,
+
+    /* --- PROJECT --- */
+    .compiler = "gcc",
+    .definitionStrings = NULL,
+    .pruneNames = NULL,
+    .inputFiles = NULL,
+    .includeDirs = NULL,
+    .cxFileLocation = DEFAULT_CXREF_FILENAME,
 #if defined (__WIN32__)
-    "c;C",                       // cFilesSuffixes
+    .cFilesSuffixes = "c;C",
 #else
-    "c:C",                       // cFilesSuffixes
+    .cFilesSuffixes = "c:C",
 #endif
-    true,                        // fileNamesCaseSensitive
-    SEARCH_FULL,                 // search Tag file specifics
-    false,                       // noerrors
-    false,                       // exact position
-    NULL,                        // -o outputFileName
-    NULL,                        // -I include dirs
-    DEFAULT_CXREF_FILENAME,      // -refs
+    .eolConversion = NO_EOL_CONVERSION,
+    .fileNamesCaseSensitive = true,
+    .cxMemoryFactor = 1,
+    .updateOnlyModifiedFiles = false,
+    .cxFileCount = 0,
+    .tabulator = 4,
 
-    NULL,                       // file move for safety check
-    NULL,
-    0,                          // first moved line
-    MAXIMAL_INT,                // safety check number of lines moved
-    0,                          // new line number of the first line
+    /* --- REQUEST --- */
+    .serverOperation = OP_NONE,
+    .project = NULL,
+    .pushName = NULL,
+    .browsedName = NULL,
+    .variableToGet = "",
+    .olcxlccursor = "0:3",
+    .olcxSearchString = "",
+    .searchKind = SEARCH_FULL,
+    .completionCaseSensitive = false,
+    .noErrors = false,
+    .exactPositionResolve = false,
+    .cursorOffset = -1,
+    .markOffset = -1,
+    .filterValue = 0,
+    .manualResolve = RESOLVE_DIALOG_DEFAULT,
+    .lineNumberOfMenuSelection = 0,
+    .olineLen = 79,
+    .maxCompletions = MAX_COMPLETIONS,
+    .olcxGotoVal = 0,
 
-    "",                         // getValue
+    /* --- REFACTORING --- */
+    .theRefactoring = AVR_NO_REFACTORING,
+    .continueRefactoring = RC_NONE,
+    .commentMovingMode = 0,
+    .extractMode = 0,
+    .renameTo = NULL,
+    .moveTargetFile = NULL,
+    .refactor_parameter_name = "",
+    .refactor_parameter_value = "",
+    .refactor_target_line = "",
+    .parnum = 0,
+    .parnum2 = 0,
+    .checkFileMovedFrom = NULL,
+    .checkFileMovedTo = NULL,
+    .checkFirstMovedLine = 0,
+    .checkLinesMoved = MAXIMAL_INT,
+    .checkNewLineNumber = 0,
 
-    /* MIXED THINGS... */
-    0,
-    RESOLVE_DIALOG_DEFAULT,     // manual symbol resolution TODO: This is different from any of the RESOLVE values above, why?
-    NULL,                       // browsed symbol name
-    0,
-    1,                          // cxMemoryFactor
-    NULL,                       /* project */
-    "",                         /* detected project root */
-    "0:3",                      // olcxlccursor
-    "",                         /* olcxSearchString */
-    79,                         /* olineLen */
-    0,                          // extractMode, must be zero TODO Why?
-    MAX_COMPLETIONS,            /* maxCompletions */
-    4,                          /* tabulator */
-    -1,                         /* cursorOffset */
-    -1,                         /* markOffset */
-    XrefMode,                   /* operating mode */
-    false,                      /* debug */
-    false,                      /* trace */
-    false,                      /* lexemTrace */
-    false,                      /* fileTrace */
-    OP_NONE,                   /* serverOperation */
-    0,                          /* olcxGotoVal */
-
-    /* CXREF options  */
-    false,                      /* errors */
-    UPDATE_DEFAULT,             /* type of update */
-    false,                      // updateOnlyModifiedFiles
-    0,                          /* referenceFileCount */
-
-    0,                          // variablesCount
-    {},                         // variables
-
-    NULL,                       /* allUsedStringOptions */
-    NULL,                       /* allUsedStringListOptions */
-
-    {.area = NULL, .size = 0},  /* memory - options string storage */
-    false,                      /* memory statistics print out on exit */
+    /* --- INTERNAL --- */
+    .detectedProjectRoot = "",
+    .variablesCount = 0,
+    .variables = {},
+    .allUsedStringOptions = NULL,
+    .allUsedStringListOptions = NULL,
+    .memory = {.area = NULL, .size = 0},
 };
 
 /* Auto-detected project root (survives initOptions() which overwrites options struct) */

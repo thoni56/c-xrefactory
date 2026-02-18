@@ -58,86 +58,95 @@ extern LocationList *nextPointerLocationList(LocationList *list);
 extern bool containsPointerLocation(LocationList *list, void **location);
 
 
+/*
+ * Option source categories:
+ *
+ * SESSION     - Command line only, fixed for the server's lifetime.
+ * PROJECT     - From .c-xrefrc config file. Cached across requests via
+ *               checkpoint. Re-read when config file mtime changes.
+ * REQUEST     - Piped from editor client, per-request. Never persisted
+ *               across requests.
+ * REFACTORING - Set internally by refactoring engine. Only meaningful
+ *               during a refactoring operation.
+ * INTERNAL    - Bookkeeping, not a user-facing option.
+ */
 typedef struct options {
-    /* GENERAL */
-    bool exit;
-    char *commandlog;
-    char *compiler;
-    char *definitionStrings;
-    CommentMovingMode commentMovingMode;
-    StringList *pruneNames;
-    StringList *inputFiles;
-    ContinueRefactoringKind continueRefactoring;
-    bool completionCaseSensitive;
-    char *xrefrc;
-    int eolConversion;
-    char *pushName;
-    int parnum;
-    int parnum2;
-    char *refactor_parameter_name;
-    char *refactor_parameter_value;
-    char *refactor_target_line;
-    Refactoring theRefactoring;
-    char *renameTo;
-    bool xref2;
-    char *moveTargetFile;
-    char *cFilesSuffixes;
-    bool fileNamesCaseSensitive;
-    SearchKind searchKind;
-    bool noErrors;
-    bool exactPositionResolve;
-    char *outputFileName;
-    StringList *includeDirs;
-    char *cxFileLocation;
+    /* --- SESSION: Command line only, fixed for the server's lifetime --- */
+    Mode mode;                                  /* SESSION */
+    bool exit;                                  /* SESSION */
+    bool xref2;                                 /* SESSION */
+    char *xrefrc;                               /* SESSION */
+    char *commandlog;                           /* SESSION */
+    char *outputFileName;                       /* SESSION */
+    bool errors;                                /* SESSION */
+    bool debug;                                 /* SESSION */
+    bool trace;                                 /* SESSION */
+    bool lexemTrace;                            /* SESSION */
+    bool fileTrace;                             /* SESSION */
+    bool statistics;                            /* SESSION */
+    UpdateType update;                          /* SESSION/REFACTORING */
 
-    char *checkFileMovedFrom;
-    char *checkFileMovedTo;
-    int checkFirstMovedLine;
-    int checkLinesMoved;
-    int checkNewLineNumber;
+    /* --- PROJECT: From .c-xrefrc config file, cached via checkpoint --- */
+    char *compiler;                             /* PROJECT */
+    char *definitionStrings;                    /* PROJECT */
+    StringList *pruneNames;                     /* PROJECT */
+    StringList *inputFiles;                     /* PROJECT */
+    StringList *includeDirs;                    /* PROJECT */
+    char *cxFileLocation;                       /* PROJECT */
+    char *cFilesSuffixes;                       /* PROJECT */
+    int eolConversion;                          /* PROJECT */
+    bool fileNamesCaseSensitive;                /* PROJECT */
+    int cxMemoryFactor;                         /* PROJECT */
+    bool updateOnlyModifiedFiles;               /* PROJECT */
+    int cxFileCount;                            /* PROJECT */
+    int tabulator;                              /* PROJECT */
 
-    char *variableToGet;
+    /* --- REQUEST: Piped from editor client, per-request --- */
+    ServerOperation serverOperation;            /* REQUEST */
+    char *project;                              /* REQUEST */
+    char *pushName;                             /* REQUEST */
+    char *browsedName;                          /* REQUEST */
+    char *variableToGet;                        /* REQUEST */
+    char *olcxlccursor;                         /* REQUEST */
+    char *olcxSearchString;                     /* REQUEST */
+    SearchKind searchKind;                      /* REQUEST */
+    bool completionCaseSensitive;               /* REQUEST */
+    bool noErrors;                              /* REQUEST */
+    bool exactPositionResolve;                  /* REQUEST */
+    int cursorOffset;                           /* REQUEST */
+    int markOffset;                             /* REQUEST */
+    int filterValue;                            /* REQUEST */
+    ResolveDialog manualResolve;                /* REQUEST */
+    int lineNumberOfMenuSelection;              /* REQUEST */
+    int olineLen;                               /* REQUEST */
+    int maxCompletions;                         /* REQUEST */
+    int olcxGotoVal;                            /* REQUEST */
 
-    /* MIXED THINGS... */
-    int filterValue;
-    ResolveDialog manualResolve;
-    char *browsedName;
-    int lineNumberOfMenuSelection;
-    int cxMemoryFactor;
-    char *project;
-    char *detectedProjectRoot;  /* Directory where .c-xrefrc was found via auto-detection */
-    char *olcxlccursor;
-    char *olcxSearchString;
-    int olineLen;
-    ExtractMode extractMode;
-    int maxCompletions;
-    int tabulator;
-    int cursorOffset;
-    int markOffset;
-    Mode mode;
-    bool debug;
-    bool trace;
-    bool lexemTrace;
-    bool fileTrace;
-    ServerOperation serverOperation;
-    int olcxGotoVal;
+    /* --- REFACTORING: Set internally by refactoring engine --- */
+    Refactoring theRefactoring;                 /* REFACTORING */
+    ContinueRefactoringKind continueRefactoring; /* REFACTORING */
+    CommentMovingMode commentMovingMode;        /* REFACTORING */
+    ExtractMode extractMode;                    /* REFACTORING */
+    char *renameTo;                             /* REFACTORING */
+    char *moveTargetFile;                       /* REFACTORING */
+    char *refactor_parameter_name;              /* REFACTORING */
+    char *refactor_parameter_value;             /* REFACTORING */
+    char *refactor_target_line;                 /* REFACTORING */
+    int parnum;                                 /* REFACTORING */
+    int parnum2;                                /* REFACTORING */
+    char *checkFileMovedFrom;                   /* REFACTORING */
+    char *checkFileMovedTo;                     /* REFACTORING */
+    int checkFirstMovedLine;                    /* REFACTORING */
+    int checkLinesMoved;                        /* REFACTORING */
+    int checkNewLineNumber;                     /* REFACTORING */
 
-    /* CXREF options  */
-    bool errors;
-    UpdateType update;
-    bool updateOnlyModifiedFiles;
-    int cxFileCount;
-
-    int variablesCount;
-    Variable variables[MAX_SET_GET_OPTIONS];
-
-    // list of strings - well actually allocated areas
-    LocationList *allUsedStringOptions;
-    LocationList *allUsedStringListOptions;
-
-    // Memory for allocated option strings and lists
-    Memory memory;
-    bool statistics;
+    /* --- INTERNAL: Bookkeeping, not user-facing --- */
+    char *detectedProjectRoot;                  /* INTERNAL */
+    int variablesCount;                         /* INTERNAL */
+    Variable variables[MAX_SET_GET_OPTIONS];     /* INTERNAL */
+    LocationList *allUsedStringOptions;          /* INTERNAL */
+    LocationList *allUsedStringListOptions;      /* INTERNAL */
+    Memory memory;                              /* INTERNAL */
 } Options;
 
 
