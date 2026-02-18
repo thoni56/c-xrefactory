@@ -145,10 +145,26 @@ The entry-point reparse loop:
 
 1. Iterates all editor buffers (files preloaded from the editor)
 2. For each stale **compilation unit** (`.c`, `.y` — determined by `isCompilationUnit()`): reparses the file, updates `lastParsedMtime`, and sets `needsBrowsingStackRefresh` on the `FileItem`
-3. Skips non-compilation-unit files (headers, unknown extensions) — these will be handled by include-closure reparsing (not yet implemented)
+3. For each stale **header**: walks the reverse-include graph (via `TypeCppInclude` references) to find compilation units that transitively include it, and reparses those CUs
 4. Sets `options.cursorOffset = -1` during reparse to prevent the lexer from triggering on-line action handling
 
 The `needsBrowsingStackRefresh` flag bridges the entry-point (which handles parsing) and the navigation module (which handles browsing stack updates). Navigation checks this flag instead of `fileNumberIsStale()` and calls `updateSessionReferencesForFile()` to update only the browsing stack without re-parsing.
+
+==== File Discovery and the File Table
+
+The server can only reparse and navigate files it knows about. "Knowing" a file means it has an entry in the **file table** — a file number and metadata (`FileItem`). But being known does not mean being parsed: a file in the table may have no references in the `referenceableItemTable` yet. This distinction matters because the entry-point reparse loop, the reverse-include graph walk, and navigation all operate only on known files.
+
+Files enter the file table through three mechanisms:
+
+**Disk database** (`loadFileNumbersFromStore()`). On the first request that triggers project initialization, the server loads file numbers from the `.cx` database. This is why `-create` was historically required before any interactive use: it populated the persistent database that seeds the file table. Without it, the server would only know about the single file in the current request.
+
+**Editor preloads**. When the editor sends `-preload <file> <tmpfile>`, the file enters the file table via the editor buffer mechanism. Files created during a session — new source files the user opens — are discovered this way without any explicit rescan.
+
+**Project directory glob** (`processFileArguments()`). At startup, after project context initialization, the server walks `options.inputFiles` (typically `.`, the project root) recursively, filtering by known source suffixes (`.c`, `.y`, etc.) and honoring `-prune` paths. This discovers all compilation units in the project directory without requiring a prior `-create` invocation.
+
+The three mechanisms are complementary: the disk database provides historical knowledge, preloads provide real-time updates during the session, and the project directory glob provides a fresh scan of what actually exists on disk at startup.
+
+**Design boundary:** Files that appear on disk but are not in the file table — because they weren't in the disk database, weren't opened in the editor, and weren't present at startup — are invisible to the server until the next session. The startup glob combined with editor preloads covers the primary use cases: all project files are discovered at startup, and new files created during the session enter through the editor.
 
 ==== Operation Classification
 
