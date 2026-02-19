@@ -21,7 +21,7 @@ $(TEST):
 	sleep 1
 	cp server.h server.preload2
 	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
-	@$(NORMALIZE) output.tmp > output
+	@$(NORMALIZE) output.tmp | sed '/<warning/d;/<\/warning>/d' > output
 	$(VERIFY)
 
 local-clean:

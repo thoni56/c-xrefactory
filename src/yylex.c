@@ -707,11 +707,10 @@ static void processInclude2(Position includePosition, char includeType, char *in
         return;
 
     if (!openInclude(includeType, includedName, is_include_next)) {
-        assert(options.mode);
-        if (options.mode!=ServerMode)
+        if (options.mode != ServerMode)
             warningMessage(ERR_CANT_OPEN, includedName);
         else
-            log_error("Can't open file '%s'", includedName);
+            log_warn("Can't open file '%s'", includedName);
     } else {
         addIncludeReferences(currentFile.characterBuffer.fileNumber, includePosition);
     }

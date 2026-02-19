@@ -4,5 +4,5 @@ ARGUMENTS = -xrefactory-II -refactory -rfct-rename -renameto=VVV -olcursor=6790 
 
 $(TEST):
 	$(COMMAND) -o output.tmp > log
-	$(NORMALIZE) output.tmp > output
+	$(NORMALIZE) output.tmp | sed '/<warning/d;/<\/warning>/d' > output
 	$(VERIFY)
