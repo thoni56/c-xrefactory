@@ -373,7 +373,9 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
                 }
 
                 int savedCursorOffset = options.cursorOffset;
+                bool savedNoErrors = options.noErrors;
                 options.cursorOffset = -1;
+                options.noErrors = true;  /* Suppress warnings during background indexing */
                 int parsed = 0;
                 for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
                     FileItem *fileItem = getFileItemWithFileNumber(i);
@@ -392,6 +394,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
                 if (options.xref2)
                     writeRelativeProgress(100);
                 options.cursorOffset = savedCursorOffset;
+                options.noErrors = savedNoErrors;
                 log_info("Cold start: parsed %d compilation units", parsed);
 
                 projectContextInitialized = true;
