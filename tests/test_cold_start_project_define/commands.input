@@ -1,0 +1,6 @@
+CXREF -xrefactory-II -server
+-olcxgetprojectname CURDIR/main.c
+<sync>
+-olcxpush -preload CURDIR/main.c CURDIR/main.preload -olcursor=167 CURDIR/main.c -p CURDIR
+<sync>
+<exit>

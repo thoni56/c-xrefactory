@@ -1,0 +1,16 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-olcxpush -preload CURDIR/main.c CURDIR/main.preload -olcursor=167 CURDIR/main.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=4 len=<n>>CURDIR/main.c</position-lc>
+</goto>
+-exit
+end-of-options
+

@@ -1,0 +1,4 @@
+[CURDIR]
+  CURDIR
+  -refs CURDIR/CXrefs
+  -DFEATURE_ENABLED
