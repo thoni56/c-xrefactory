@@ -27,6 +27,7 @@
 #include "parsers.mock"
 #include "parsing.mock"
 #include "ppc.mock"
+#include "progress.mock"
 #include "refactorings.mock"
 #include "refactory.mock"
 #include "reference.mock"
