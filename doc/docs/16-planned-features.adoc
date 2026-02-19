@@ -127,3 +127,27 @@ not contain absolute file paths.
 Legacy project configs will continue to work, but a user might want to migrate a
 project. It's fairly easy to do by hande, but as polishing touch, providing a client
 operation to do that would be nice.
+
+=== Indexing Log Buffer
+
+**Status**: Planned
+
+==== Background
+
+When the server does a cold start (no disk database), it parses all discovered compilation units to populate in-memory references. During this parsing, warnings and errors may occur (e.g., missing include files, syntax errors from missing `-D` defines). These are expected and harmless — c-xrefactory continues best-effort — but users benefit from seeing them to tune their `.c-xrefrc` (adding `-I` paths, `-D` defines, etc.).
+
+The legacy `-create` command in Emacs offered "View log file?" after completion, showing a file with all parsing messages. The cold start server path needs an equivalent.
+
+There are also other situations when a re-parse or re-discovery might throw the same kind of errors.
+
+==== Problem
+
+The current protocol has no non-modal message channel. Every message type either shows a modal dialog (`PPC_WARNING`, `PPC_ERROR`, `PPC_INFORMATION`) requiring "Press a key to continue", or writes a transient line to the minibuffer (`PPC_BOTTOM_INFORMATION`). Sending per-file warnings during cold start floods the user with one modal per warning, effectively locking up the editor.
+
+==== Design Options
+
+**Option A: New protocol record type** (recommended) — Add a `PPC_LOG` record that the Emacs client silently appends to a `*c-xref-log*` buffer. After cold start completes, send a `PPC_BOTTOM_INFORMATION` saying "Indexing done: N warnings (see *c-xref-log*)". Clean separation, no modals, inspectable at leisure. Touches protocol definition, C server code, and Emacs client.
+
+**Option B: Server-side batching** — Collect all warnings during cold start into a single string, send as one `PPC_INFORMATION` after parsing completes. One modal instead of many. Simpler but still modal.
+
+**Option C: Summary only** — Send a `PPC_BOTTOM_WARNING` summary to the minibuffer (e.g., "3 files could not be opened during indexing"). Details go only to the log file. Minimal change but no inspectable buffer in Emacs.
