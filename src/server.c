@@ -365,18 +365,34 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
                 /* Parse all discovered CUs to populate in-memory references.
                  * Without a .cx snapshot this is the only way to get cross-file
                  * references (cold start path). */
+                int cuCount = 0;
+                for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+                    FileItem *fileItem = getFileItemWithFileNumber(i);
+                    if (fileItem->isScheduled && isCompilationUnit(fileItem->name))
+                        cuCount++;
+                }
+
                 int savedCursorOffset = options.cursorOffset;
                 options.cursorOffset = -1;
+                int parsed = 0;
                 for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
                     FileItem *fileItem = getFileItemWithFileNumber(i);
                     if (fileItem->isScheduled && isCompilationUnit(fileItem->name)) {
+                        if (options.fileTrace)
+                            fprintf(stderr, "Processing input file: '%s\n", fileItem->name);
                         restoreMemoryCheckPoint();
                         initAllInputs();
                         parseToCreateReferences(fileItem->name);
                         fileItem->isScheduled = false;
+                        parsed++;
+                        if (options.xref2)
+                            writeRelativeProgress((100 * parsed) / cuCount);
                     }
                 }
+                if (options.xref2)
+                    writeRelativeProgress(100);
                 options.cursorOffset = savedCursorOffset;
+                log_info("Cold start: parsed %d compilation units", parsed);
 
                 projectContextInitialized = true;
             }

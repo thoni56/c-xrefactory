@@ -16,7 +16,7 @@
 - Run tests unless asked (watch commands are running in background)
 - Give time estimates
 
-**The directory is "Utveckling" (Swedish), not "Entwickling" or "Entwicking" (German).**
+**The directory is "Utveckling" (Swedish), not anything else. You should always verify the path by looking at the working directorys path.**
 
 ## Project Principles
 
