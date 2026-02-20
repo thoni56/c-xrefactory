@@ -374,17 +374,24 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
                 int savedCursorOffset = options.cursorOffset;
                 bool savedNoErrors = options.noErrors;
-                options.cursorOffset = -1;
-                options.noErrors = true;  /* Suppress warnings during background indexing */
+                ServerOperation savedServerOperation = options.serverOperation;
                 int parsed = 0;
                 for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
                     FileItem *fileItem = getFileItemWithFileNumber(i);
                     if (fileItem->isScheduled && isCompilationUnit(fileItem->name)) {
-                        if (options.fileTrace)
-                            fprintf(stderr, "Processing input file: '%s\n", fileItem->name);
-                        restoreMemoryCheckPoint();
-                        initAllInputs();
-                        parseToCreateReferences(fileItem->name);
+                        inputFileName = fileItem->name;
+                        ArgumentsVector emptyArgs = {.argc = 0, .argv = NULL};
+                        maxPasses = 1;
+                        for (currentPass = 1; currentPass <= maxPasses; currentPass++) {
+                            if (initializeFileProcessing(baseArgs, emptyArgs)) {
+                                options.cursorOffset = -1;
+                                options.noErrors = true;
+                                parseToCreateReferences(inputFileName);
+                                closeCharacterBuffer(&currentFile.characterBuffer);
+                                currentFile.characterBuffer.file = stdin;
+                            }
+                            currentFile.characterBuffer.isAtEOF = false;
+                        }
                         fileItem->isScheduled = false;
                         parsed++;
                         if (options.xref2)
@@ -395,7 +402,8 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
                     writeRelativeProgress(100);
                 options.cursorOffset = savedCursorOffset;
                 options.noErrors = savedNoErrors;
-                log_info("Cold start: parsed %d compilation units", parsed);
+                options.serverOperation = savedServerOperation;
+                log_info("Startup: parsed %d compilation units", parsed);
 
                 projectContextInitialized = true;
             }

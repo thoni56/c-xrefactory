@@ -614,7 +614,9 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         log_debug("initializeFileProcessing - if-branch, checkpoint0.saved=%d", checkpoint0.saved);
 
         initCwd();
-        initOptions();
+        initOptions();  /* TODO: should be initProjectOptions() — only PROJECT fields need
+                         * resetting here. Resetting SESSION/REQUEST fields forces callers to
+                         * save/restore them (see startup loop in server.c). */
         initStandardCxrefFileName(fileName);
 
         /* Process options in specific order: command line, request args, .c-xrefrc */
