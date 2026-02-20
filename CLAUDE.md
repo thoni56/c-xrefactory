@@ -65,6 +65,10 @@ make -C src watch-for-unittests
 make -C src watch-for-systemtests
 ```
 
+### Debugging System Tests
+
+Most test Makefiles have a `trace` target that runs with `-debug -log=trace`. The trace log goes to the file specified in that target (usually `trace.log` or similar — check the Makefile). Use `make trace` then read the trace file.
+
 ## Architecture Overview
 
 **Client-Server Model:**
