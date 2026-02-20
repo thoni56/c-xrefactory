@@ -6,6 +6,7 @@
 
 #include "browsingmenu.h"
 #include "commons.h"
+#include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
 #include "head.h"
@@ -153,18 +154,37 @@ bool fileNumberIsStale(int fileNumber) {
 /* TODO: Technical Debt from extracting `navigation` */
 extern void recomputeSelectedReferenceable(SessionStackEntry *entry);
 
-void reparseStaleFile(int fileNumber) {
-    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+/* Parse a file using the full initializeFileProcessing machinery (project
+ * discovery, options, checkpoint) with multi-pass support.  Saves and
+ * restores REQUEST-level option fields that initOptions() inside
+ * initializeFileProcessing would otherwise wipe. */
+void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
+    int savedCursorOffset = options.cursorOffset;
+    bool savedNoErrors = options.noErrors;
+    ServerOperation savedServerOperation = options.serverOperation;
 
-    // Update in-memory table: remove old, parse fresh
+    inputFileName = fileName;
+    ArgumentsVector emptyArgs = {.argc = 0, .argv = NULL};
+    maxPasses = 1;
+    for (currentPass = 1; currentPass <= maxPasses; currentPass++) {
+        if (initializeFileProcessing(baseArgs, emptyArgs)) {
+            options.cursorOffset = -1;
+            options.noErrors = true;
+            parseToCreateReferences(inputFileName);
+            closeCharacterBuffer(&currentFile.characterBuffer);
+            currentFile.characterBuffer.file = stdin;
+        }
+        currentFile.characterBuffer.isAtEOF = false;
+    }
+
+    options.cursorOffset = savedCursorOffset;
+    options.noErrors = savedNoErrors;
+    options.serverOperation = savedServerOperation;
+}
+
+void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs) {
     removeReferenceableItemsForFile(fileNumber);
-
-    // Reset macro state before re-parsing to clear header guards from previous parse.
-    // Without this, #ifndef guards would prevent parsing the file body.
-    restoreMemoryCheckPoint();
-    initAllInputs();
-
-    parseToCreateReferences(fileItem->name);
+    parseFileWithFullInit(getFileItemWithFileNumber(fileNumber)->name, baseArgs);
 }
 
 /* Update the browsing stack's references for a file using the current in-memory

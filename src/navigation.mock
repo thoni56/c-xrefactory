@@ -9,7 +9,11 @@ bool fileNumberIsStale(int fileNumber) {
     return (bool)mock(fileNumber);
 }
 
-void reparseStaleFile(int fileNumber) {
+void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
+    mock(fileName);
+}
+
+void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs) {
     mock(fileNumber);
 }
 

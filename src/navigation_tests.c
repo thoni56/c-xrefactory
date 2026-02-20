@@ -6,9 +6,11 @@
 #include <cgreen/mocks.h>
 
 #include "browsingmenu.mock"
+#include "characterreader.mock"
 #include "commons.mock"
 #include "cxref.mock"           /* For recomputeSelectedReferenceable */
 #include "editorbuffer.mock"
+#include "filedescriptor.mock"
 #include "filetable.mock"
 #include "globals.mock"
 #include "misc.mock"

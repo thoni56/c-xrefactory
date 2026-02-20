@@ -229,7 +229,7 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
  * using TypeCppInclude references in the reference table (populated by prior
  * parsing or loaded from disk db). Reparse those CUs so they pick up the
  * modified header content. */
-static void reparseStaleHeaderIncluders(int headerFileNumber) {
+static void reparseStaleHeaderIncluders(int headerFileNumber, ArgumentsVector baseArgs) {
     FileItem *headerItem = getFileItemWithFileNumber(headerFileNumber);
     log_debug("Looking for CUs that include stale header '%s'", headerItem->name);
 
@@ -290,7 +290,7 @@ static void reparseStaleHeaderIncluders(int headerFileNumber) {
     for (int i = 0; i < cuCount; i++) {
         log_debug("Reparsing CU file number %d because of stale header '%s'",
                   cuFileNumbers[i], headerItem->name);
-        reparseStaleFile(cuFileNumbers[i]);
+        reparseStaleFile(cuFileNumbers[i], baseArgs);
         getFileItemWithFileNumber(cuFileNumbers[i])->needsBrowsingStackRefresh = true;
     }
 }
@@ -315,7 +315,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
                 int fileNumber = l->buffer->fileNumber;
                 FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
                 if (fileNumberIsStale(fileNumber) && isCompilationUnit(fileItem->name)) {
-                    reparseStaleFile(fileNumber);
+                    reparseStaleFile(fileNumber, baseArgs);
                     EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
                     if (buffer != NULL)
                         fileItem->lastParsedMtime = buffer->modificationTime;
@@ -333,7 +333,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
                 int fileNumber = l->buffer->fileNumber;
                 FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
                 if (fileNumberIsStale(fileNumber) && !isCompilationUnit(fileItem->name)) {
-                    reparseStaleHeaderIncluders(fileNumber);
+                    reparseStaleHeaderIncluders(fileNumber, baseArgs);
                     EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
                     if (buffer != NULL)
                         fileItem->lastParsedMtime = buffer->modificationTime;
@@ -372,26 +372,11 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
                         cuCount++;
                 }
 
-                int savedCursorOffset = options.cursorOffset;
-                bool savedNoErrors = options.noErrors;
-                ServerOperation savedServerOperation = options.serverOperation;
                 int parsed = 0;
                 for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
                     FileItem *fileItem = getFileItemWithFileNumber(i);
                     if (fileItem->isScheduled && isCompilationUnit(fileItem->name)) {
-                        inputFileName = fileItem->name;
-                        ArgumentsVector emptyArgs = {.argc = 0, .argv = NULL};
-                        maxPasses = 1;
-                        for (currentPass = 1; currentPass <= maxPasses; currentPass++) {
-                            if (initializeFileProcessing(baseArgs, emptyArgs)) {
-                                options.cursorOffset = -1;
-                                options.noErrors = true;
-                                parseToCreateReferences(inputFileName);
-                                closeCharacterBuffer(&currentFile.characterBuffer);
-                                currentFile.characterBuffer.file = stdin;
-                            }
-                            currentFile.characterBuffer.isAtEOF = false;
-                        }
+                        parseFileWithFullInit(fileItem->name, baseArgs);
                         fileItem->isScheduled = false;
                         parsed++;
                         if (options.xref2)
@@ -400,9 +385,6 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
                 }
                 if (options.xref2)
                     writeRelativeProgress(100);
-                options.cursorOffset = savedCursorOffset;
-                options.noErrors = savedNoErrors;
-                options.serverOperation = savedServerOperation;
                 log_info("Startup: parsed %d compilation units", parsed);
 
                 projectContextInitialized = true;
