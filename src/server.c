@@ -345,54 +345,66 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         options.cursorOffset = savedCursorOffset;
     }
 
+    bool hasInputFile = prepareInputFileForRequest();
+
+    if (!projectContextInitialized && hasInputFile) {
+        if (options.serverOperation == OP_ACTIVE_PROJECT) {
+            initializeProjectContext(getFileItemWithFileNumber(requestFileNumber)->name, baseArgs, requestArgs);
+            if (options.inputFiles == NULL)
+                addToStringListOption(&options.inputFiles, ".");
+            processFileArguments();
+
+            /* Parse all discovered CUs to populate in-memory references.
+             * Skip the request file — it will be handled by the dispatch below
+             * (processFile for input-processing operations, or just unscheduled). */
+            int cuCount = 0;
+            for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+                FileItem *fileItem = getFileItemWithFileNumber(i);
+                if (fileItem->isScheduled && isCompilationUnit(fileItem->name) && i != requestFileNumber)
+                    cuCount++;
+            }
+
+            int parsed = 0;
+            for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+                FileItem *fileItem = getFileItemWithFileNumber(i);
+                if (fileItem->isScheduled && isCompilationUnit(fileItem->name) && i != requestFileNumber) {
+                    parseFileWithFullInit(fileItem->name, baseArgs);
+                    fileItem->isScheduled = false;
+                    parsed++;
+                    if (options.xref2)
+                        writeRelativeProgress((100 * parsed) / cuCount);
+                }
+            }
+            if (options.xref2)
+                writeRelativeProgress(100);
+            log_info("Startup: parsed %d compilation units", parsed);
+
+            projectContextInitialized = true;
+        } else if (!requiresProcessingInputFile(options.serverOperation)) {
+            errorMessage(ERR_ST, "Project not initialized - client must send getprojectname first");
+            goto done;
+        }
+        /* requiresProcessingInputFile operations proceed to processFile below,
+         * which handles its own context via initializeFileProcessing (legacy path). */
+    }
+
     if (needsReferenceDatabase(options.serverOperation))
         pushEmptySession(&sessionData.browsingStack);
 
     if (requiresProcessingInputFile(options.serverOperation)) {
-        if (prepareInputFileForRequest()) {
+        if (hasInputFile) {
             processFile(baseArgs, requestArgs);
+            projectContextInitialized = true;
         } else {
             errorMessage(ERR_ST, "No input file");
         }
     } else {
-        if (prepareInputFileForRequest()) {
-            if (options.serverOperation == OP_ACTIVE_PROJECT && !projectContextInitialized) {
-                initializeProjectContext(getFileItemWithFileNumber(requestFileNumber)->name, baseArgs, requestArgs);
-                if (options.inputFiles == NULL)
-                    addToStringListOption(&options.inputFiles, ".");
-                processFileArguments();
-
-                /* Parse all discovered CUs to populate in-memory references.
-                 * Without a .cx snapshot this is the only way to get cross-file
-                 * references (cold start path). */
-                int cuCount = 0;
-                for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-                    FileItem *fileItem = getFileItemWithFileNumber(i);
-                    if (fileItem->isScheduled && isCompilationUnit(fileItem->name))
-                        cuCount++;
-                }
-
-                int parsed = 0;
-                for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-                    FileItem *fileItem = getFileItemWithFileNumber(i);
-                    if (fileItem->isScheduled && isCompilationUnit(fileItem->name)) {
-                        parseFileWithFullInit(fileItem->name, baseArgs);
-                        fileItem->isScheduled = false;
-                        parsed++;
-                        if (options.xref2)
-                            writeRelativeProgress((100 * parsed) / cuCount);
-                    }
-                }
-                if (options.xref2)
-                    writeRelativeProgress(100);
-                log_info("Startup: parsed %d compilation units", parsed);
-
-                projectContextInitialized = true;
-            }
+        if (hasInputFile) {
             getFileItemWithFileNumber(requestFileNumber)->isScheduled = false;
             inputFileName = NULL;
         }
     }
+done:
     LEAVE();
 }
 
