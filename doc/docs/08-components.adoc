@@ -128,10 +128,16 @@ server() — infinite request loop [server.c]
        ├─> initServer() — process options, schedule input file
        ├─> callServer() — main dispatch
        │    ├─> loadAllOpenedEditorBuffers()
-       │    ├─> Entry-point reparse loop (stale compilation units)
+       │    ├─> Reparse stale preloaded files (Pass 1: CUs, Pass 2: header includers)
+       │    ├─> prepareInputFileForRequest()
+       │    ├─> FIRST REQUEST (GetProject):
+       │    │    ├─ initializeProjectContext()
+       │    │    ├─ processFileArguments() — discover CUs by globbing project dir
+       │    │    ├─ loadFileNumbersFromStore() — load .cx snapshot into file table
+       │    │    └─ parseDiscoveredCompilationUnits() — parse stale CUs, skip fresh
        │    ├─> Dispatch based on operation:
        │    │    ├─ Operations needing input file → processFile() → parse
-       │    │    └─ Other operations (project, filter, pop, etc.)
+       │    │    └─ Other operations (filter, pop, etc.)
        │    └─> Navigation operations use browsing stack
        ├─> answerEditorAction() — send response to editor
        └─> Cleanup (close buffers, close output)
@@ -149,6 +155,8 @@ The entry-point reparse loop:
 4. Sets `options.cursorOffset = -1` during reparse to prevent the lexer from triggering on-line action handling
 
 The `needsBrowsingStackRefresh` flag bridges the entry-point (which handles parsing) and the navigation module (which handles browsing stack updates). Navigation checks this flag instead of `fileNumberIsStale()` and calls `updateSessionReferencesForFile()` to update only the browsing stack without re-parsing.
+
+After a browsing stack refresh, the server restores its position by finding the nearest reference to where it was, then advances (NEXT) or retreats (PREVIOUS) in list order. This respects the definition-first navigation ordering without assuming any particular sort order.
 
 ==== File Discovery and the File Table
 
@@ -536,6 +544,20 @@ Example file information line:
 
 Reading is controlled by `scanFunctionTable` arrays. Each entry maps a record key to a handler function. As the reader encounters a key in the file, it looks up the handler and calls it. This table-driven approach allows different consumers to register for different record types — for example, loading only symbol names vs. loading full reference lists.
 
-=== c-xref.el
+=== Editor Extension
 
-=== c-xrefactory.el
+The Emacs editor extension is implemented in these components/files:
+
+- c-xref.el
+- c-xrefactory.el
+- c-xrefprotocol.el (auto-generated)
+
+==== Responsibilities
+
+The Emacs client extension provides the user-facing interface for navigation, refactoring, and completion. It starts the `c-xref` process on the first user interaction and communicates with the server process over stdin/stdout using a text protocol.
+
+==== Preloading
+
+To give the server access to unsaved content the client sends `-preload <file> <tmpfile>` for modified editor. On PUSH, NEXT, and PREVIOUS, all modified buffers (including the current one if modified) are preloaded. Unmodified buffers are not preloaded — the server reads the disk file directly.
+
+The preload mechanism writes the buffer content to a temporary file and passes both the original filename and the temp file path. The server creates an `EditorBuffer` with the content and the temp file's modification time. After each request, all editor buffers are closed (`closeAllEditorBuffers`), so preloads are re-sent on every request.

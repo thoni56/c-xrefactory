@@ -41,7 +41,7 @@ Position position
 
 === Navigation Architecture and Preloading
 
-Date: 2025-12-22, updated 2026-02
+Date: 2025-12-22, updated 2026-02-21
 
 ==== How Symbol Navigation Works
 
@@ -63,21 +63,7 @@ When you PUSH on a symbol, the navigation menu creation (`createSelectionMenuFor
 
 This dual-source approach allows navigation without full project parse while providing updated positions for modified files.
 
-==== Client Preloading
-
-The Emacs client sends `-preload <file> <tmpfile>` for modified editor buffers, giving the server access to unsaved content. The current buffer is always preloaded (even if unmodified). On PUSH, NEXT, and PREVIOUS, all other modified buffers are also preloaded.
-
-==== Stale File Detection During Navigation
-
-When NEXT or PREVIOUS is invoked, the server detects if a file has been modified via its preload (comparing `lastParsedMtime` against the editor buffer's modification time). If stale, it reparses the file from the preloaded content before navigating, updating reference positions to match the modified buffer.
-
-After a stale-file refresh, the reference list is rebuilt. The server restores its position by finding the nearest reference to where it was, then advances (NEXT) or retreats (PREVIOUS) in list order. This respects the definition-first navigation ordering without assuming any particular sort order.
-
-==== Remaining Limitation: PUSH Target Positions
-
-PUSH returns the definition position from the reference database, which reflects the last time each file was parsed. If the target file (not the current file) has been modified, PUSH navigates to the old position. The preloaded content is available but not used for the PUSH result.
-
-This resolves naturally with link:/workspace/decisions#20[ADR-0020] (separate sync from dispatch): once all modified buffers are reparsed at server entry, PUSH will see current positions.
+NOTE: Client preloading behavior and stale file detection are now documented in link:08-components.adoc[Chapter 8: Components] under Server (Entry-Point Reparse) and Editor Extension (Preloading).
 
 ==== Architectural Invariants
 
@@ -91,7 +77,7 @@ This resolves naturally with link:/workspace/decisions#20[ADR-0020] (separate sy
 
 Date: 2025-01-10
 
-NOTE: This section describes the **current architecture** as of January 2025. link:/workspace/decisions#14[ADR-0014] (Adopt On-Demand Parsing Architecture) proposes eliminating this `callXref()` pattern in favor of unified on-demand parsing. See section 17.2 (Unified Symbol Database Architecture) for the planned future architecture where refactoring uses the same in-memory references as navigation.
+NOTE: This section describes the refactoring architecture. The `callXref()` pattern described here is still used by refactoring operations. However, the server mode description below is partially outdated — the server now reparses stale preloaded files at entry and parses discovered CUs at startup (link:/workspace/decisions#20[ADR-0020]). See link:15-roadmap.adoc[Chapter 15: Roadmap] for the path toward eliminating `callXref()` from refactoring as well.
 
 ==== The Key Architectural Insight (Current Architecture)
 
@@ -142,8 +128,8 @@ The Emacs client spawns a **separate RefactoryMode process** rather than using t
 [source]
 ----
 ServerMode (c-xref -server)
-  - Never creates/updates references
-  - Serves queries from existing .cx files
+  - Loads .cx snapshot at startup, parses stale CUs
+  - Reparses stale preloaded files before each request (ADR 20)
   - Long-running interactive process
   - Handles: completion, goto-definition, push/pop navigation
 

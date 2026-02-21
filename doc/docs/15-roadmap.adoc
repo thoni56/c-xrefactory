@@ -35,14 +35,15 @@ The following diagram shows how the remaining architectural pieces depend on eac
      and callXref)                |
            |                      |
            v                      v
-    ┌───────────────────────────────────┐
-    │          FOUNDATION (done)        │
-    │  ADR 20: Sync before dispatch    │
-    │  Client sends all modified buffers│
-    │  Single-project server (ADR-0021) │
-    │  Project-local config (ADR-0005)  │
-    │  Unified startup (shared init)    │
-    └───────────────────────────────────┘
+    ┌─────────────────────────────────────┐
+    │          FOUNDATION (done)          │
+    │  - ADR-0020: Sync before dispatch   │
+    │  - .cx loaded as startup snapshot   │
+    │  - Client sends only dirty buffers  │
+    │  - Single-project server (ADR-0021) │
+    │  - Project-local config (ADR-0005)  │
+    │  - Unified startup (shared init)    │
+    └─────────────────────────────────────┘
 ----
 
 ==== Component Summary
@@ -52,7 +53,7 @@ The following diagram shows how the remaining architectural pieces depend on eac
 |Component |Description
 
 |**Separate sync from dispatch (done)**
-|Server-side restructuring (link:/workspace/decisions#20[ADR-0020]): the server entry point reparses stale files before dispatching any operation. Pass 1 reparses stale CUs, Pass 2 walks the reverse-include graph (via `TypeCppInclude` references) to find and reparse CUs that include stale headers. Operations can assume the in-memory table is current.
+|Server-side restructuring (link:/workspace/decisions#20[ADR-0020]): the server entry point reparses stale files before dispatching any operation. Pass 1 reparses stale CUs, Pass 2 walks the reverse-include graph (via `TypeCppInclude` references) to find and reparse CUs that include stale headers. At startup, the server loads the `.cx` snapshot (`loadFileNumbersFromStore`), discovers CUs by globbing the project directory, and parses only stale CUs (mtime changed since snapshot). The Emacs client only preloads modified buffers, so unmodified files don't trigger unnecessary reparsing. Operations can assume the in-memory table is current.
 
 |**Lightweight file structure scanning**
 |Replace the expensive full-project `-create` and `callXref()` with lightweight scanning (link:/workspace/decisions#22[ADR-0022]): discover CUs by globbing the project directory, extract include structure from `#include` lines, populate the same `TypeCppInclude` references that full parsing creates. The scan/mtime-check/incremental-reparse pipeline built for ADR 20 is the same pipeline needed here — just triggered at a different point (server startup or before refactoring, instead of per-request).
@@ -63,8 +64,8 @@ The following diagram shows how the remaining architectural pieces depend on eac
 |**No callXref in refactoring**
 |Refactoring uses same in-memory table as navigation, with lightweight scanning replacing `callXref()`. The existing graduated update strategy in `computeUpdateOptionForSymbol()` already decides the right scope per refactoring: no update for local symbols, fast update for multi-file globals, full update for symbols in headers. This logic maps directly onto the lightweight scan approach — only the update mechanism changes (scan + incremental reparse instead of `callXref()`). Include closure (link:/workspace/decisions#13[ADR-0013]) finds affected files; parse on demand. See link:18-insights.adoc[Chapter 18: RefactoryMode Internally Calls XrefMode] for the current architecture this replaces.
 
-|**Disk snapshot strategy**
-|The `.cx` file transitions from a live database to a startup snapshot. This requires a strategy for initial creation from disk files and incremental updates — taking care that modified-buffer data is never persisted to the snapshot (it reflects disk state only). See below for target semantics.
+|**Disk snapshot strategy (read side operational)**
+|The `.cx` file transitions from a live database to a startup snapshot. The read side is operational: at startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. Remaining work: snapshot write strategy (ensuring modified-buffer data is never persisted — the snapshot reflects disk state only) and initial creation without a prior `-create`. See below for target semantics.
 |===
 
 ==== Incremental Implementation Path
