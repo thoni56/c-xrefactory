@@ -1915,8 +1915,10 @@ tries to delete C-xrefactory windows first.
 
 (defun c-xref-server-call-on-current-buffer (options dispatch-data obl)
   (let ((res) (bl) (data) (topt) (blo))
-    (setq bl (c-xref-server-add-buffer-to-tmp-files-list
-                  (current-buffer) obl))
+    (setq bl (if (buffer-modified-p (current-buffer))
+                  (c-xref-server-add-buffer-to-tmp-files-list
+                   (current-buffer) obl)
+                obl))
     (setq blo (c-xref-server-save-buffers-to-tmp-files bl))
     (setq blo (append blo (c-xref-server-get-point-and-mark-options )))
     (setq topt "")
