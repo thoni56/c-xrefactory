@@ -227,9 +227,10 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
 /* Walk the reverse-include graph from a stale header up to compilation units,
  * using TypeCppInclude references in the reference table (populated by prior
- * parsing or loaded from disk db). Reparse those CUs so they pick up the
- * modified header content. */
-static void reparseStaleHeaderIncluders(int headerFileNumber, ArgumentsVector baseArgs) {
+ * parsing or loaded from disk db). Collect CU file numbers into the provided
+ * array, deduplicating against entries already present. */
+static int collectIncludersOfStaleHeader(int headerFileNumber,
+                                         int cuFileNumbers[], int cuCount, int maxCUs) {
     FileItem *headerItem = getFileItemWithFileNumber(headerFileNumber);
     log_debug("Looking for CUs that include stale header '%s'", headerItem->name);
 
@@ -241,9 +242,6 @@ static void reparseStaleHeaderIncluders(int headerFileNumber, ArgumentsVector ba
     int filesToWalk[MAX_INCLUDE_WALK_FILES];
     int walkCount = 1;
     filesToWalk[0] = headerFileNumber;
-
-    int cuFileNumbers[MAX_CUS_TO_REPARSE];
-    int cuCount = 0;
 
     for (int i = 0; i < walkCount; i++) {
         ReferenceableItem searchItem = makeReferenceableItem(
@@ -272,27 +270,30 @@ static void reparseStaleHeaderIncluders(int headerFileNumber, ArgumentsVector ba
                 filesToWalk[walkCount++] = includerFileNum;
 
             FileItem *includer = getFileItemWithFileNumber(includerFileNum);
-            if (isCompilationUnit(includer->name) && cuCount < MAX_CUS_TO_REPARSE) {
-                cuFileNumbers[cuCount++] = includerFileNum;
-                log_debug("CU '%s' (transitively) includes stale header '%s'",
-                          includer->name, headerItem->name);
+            if (isCompilationUnit(includer->name)) {
+                /* Deduplicate against CUs already collected (from other stale headers) */
+                bool alreadyCollected = false;
+                for (int j = 0; j < cuCount; j++) {
+                    if (cuFileNumbers[j] == includerFileNum) {
+                        alreadyCollected = true;
+                        break;
+                    }
+                }
+                if (!alreadyCollected && cuCount < maxCUs) {
+                    cuFileNumbers[cuCount++] = includerFileNum;
+                    log_debug("CU '%s' (transitively) includes stale header '%s'",
+                              includer->name, headerItem->name);
+                }
             }
         }
     }
 
-    if (cuCount == 0) {
+    if (cuCount == 0)
         log_debug("No CUs found that include '%s'", headerItem->name);
-        return;
-    }
 
     removeReferenceableItemsForFile(headerFileNumber);
 
-    for (int i = 0; i < cuCount; i++) {
-        log_debug("Reparsing CU file number %d because of stale header '%s'",
-                  cuFileNumbers[i], headerItem->name);
-        reparseStaleFile(cuFileNumbers[i], baseArgs);
-        getFileItemWithFileNumber(cuFileNumbers[i])->needsBrowsingStackRefresh = true;
-    }
+    return cuCount;
 }
 
 static int countStalePreloadedFiles(void) {
@@ -310,10 +311,16 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
         return;
 
     log_info("Refreshing %d stale preloaded file(s)", staleCount);
-    int reparsed = 0;
+
+    /* Reset progress state so values aren't suppressed by the static
+     * lastprogress left over from previous requests (e.g. cold start). */
+    if (options.xref2)
+        writeRelativeProgress(0);
 
     /* Pass 1: Reparse stale CUs directly. This also refreshes their
-     * TypeCppInclude references, which Pass 2 depends on. */
+     * TypeCppInclude references, which Pass 2 depends on.
+     * No progress reporting here — Pass 1 is fast (only directly
+     * preloaded CUs, typically 1-2 files). */
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             int fileNumber = l->buffer->fileNumber;
@@ -325,9 +332,6 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
                 if (buffer != NULL)
                     fileItem->lastParsedMtime = buffer->modificationTime;
                 fileItem->needsBrowsingStackRefresh = true;
-                reparsed++;
-                if (options.xref2)
-                    writeRelativeProgress((100 * reparsed) / staleCount);
             }
         }
     }
@@ -335,26 +339,39 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
     /* Pass 2: For stale headers, find CUs that include them and reparse.
      * Must come after Pass 1: Pass 1 reparses stale CUs, refreshing their
      * TypeCppInclude references. Pass 2 queries those references to find
-     * which CUs include the stale header (transitively). */
+     * which CUs include the stale header (transitively).
+     *
+     * First collect all CUs across all stale headers (deduplicated),
+     * then reparse with per-CU progress reporting. */
+    int cuFileNumbers[MAX_CUS_TO_REPARSE];
+    int cuCount = 0;
+
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             int fileNumber = l->buffer->fileNumber;
             FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
             if (fileNumberIsStale(fileNumber) && !isCompilationUnit(fileItem->name)) {
-                log_debug("Reparsing includers of stale header '%s'", fileItem->name);
-                reparseStaleHeaderIncluders(fileNumber, baseArgs);
+                cuCount = collectIncludersOfStaleHeader(fileNumber, cuFileNumbers, cuCount,
+                                                       MAX_CUS_TO_REPARSE);
                 EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
                 if (buffer != NULL)
                     fileItem->lastParsedMtime = buffer->modificationTime;
                 fileItem->needsBrowsingStackRefresh = true;
-                reparsed++;
-                if (options.xref2)
-                    writeRelativeProgress((100 * reparsed) / staleCount);
             }
         }
     }
-    if (options.xref2)
-        writeRelativeProgress(100);
+
+    if (cuCount > 0) {
+        log_info("Reparsing %d CU(s) for stale header includers", cuCount);
+        for (int i = 0; i < cuCount; i++) {
+            reparseStaleFile(cuFileNumbers[i], baseArgs);
+            getFileItemWithFileNumber(cuFileNumbers[i])->needsBrowsingStackRefresh = true;
+            if (options.xref2)
+                writeRelativeProgress((100 * (i + 1)) / cuCount);
+        }
+    }
+    /* No trailing writeRelativeProgress(100) — the loop's last
+     * iteration already outputs 100 and closes the progress range. */
 }
 
 static bool fileNeedsParsing(FileItem *fileItem) {
@@ -387,8 +404,6 @@ static void parseDiscoveredCompilationUnits(ArgumentsVector baseArgs) {
             fileItem->isScheduled = false;
         }
     }
-    if (options.xref2)
-        writeRelativeProgress(100);
     log_info("Startup: parsed %d compilation units", parsed);
 }
 
