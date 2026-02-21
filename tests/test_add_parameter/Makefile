@@ -8,5 +8,5 @@ $(TEST):
 	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
 
-trace: EXTRA=-debug -log=log
+trace: EXTRA=-debug -log=trace
 trace: $(TEST)

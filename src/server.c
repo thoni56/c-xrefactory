@@ -295,7 +295,23 @@ static void reparseStaleHeaderIncluders(int headerFileNumber, ArgumentsVector ba
     }
 }
 
+static int countStalePreloadedFiles(void) {
+    int count = 0;
+    for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1))
+        for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next)
+            if (fileNumberIsStale(l->buffer->fileNumber))
+                count++;
+    return count;
+}
+
 static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
+    int staleCount = countStalePreloadedFiles();
+    if (staleCount == 0)
+        return;
+
+    log_info("Refreshing %d stale preloaded file(s)", staleCount);
+    int reparsed = 0;
+
     /* Pass 1: Reparse stale CUs directly. This also refreshes their
      * TypeCppInclude references, which Pass 2 depends on. */
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
@@ -303,11 +319,15 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
             int fileNumber = l->buffer->fileNumber;
             FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
             if (fileNumberIsStale(fileNumber) && isCompilationUnit(fileItem->name)) {
+                log_debug("Reparsing stale CU '%s'", fileItem->name);
                 reparseStaleFile(fileNumber, baseArgs);
                 EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
                 if (buffer != NULL)
                     fileItem->lastParsedMtime = buffer->modificationTime;
                 fileItem->needsBrowsingStackRefresh = true;
+                reparsed++;
+                if (options.xref2)
+                    writeRelativeProgress((100 * reparsed) / staleCount);
             }
         }
     }
@@ -321,14 +341,20 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
             int fileNumber = l->buffer->fileNumber;
             FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
             if (fileNumberIsStale(fileNumber) && !isCompilationUnit(fileItem->name)) {
+                log_debug("Reparsing includers of stale header '%s'", fileItem->name);
                 reparseStaleHeaderIncluders(fileNumber, baseArgs);
                 EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
                 if (buffer != NULL)
                     fileItem->lastParsedMtime = buffer->modificationTime;
                 fileItem->needsBrowsingStackRefresh = true;
+                reparsed++;
+                if (options.xref2)
+                    writeRelativeProgress((100 * reparsed) / staleCount);
             }
         }
     }
+    if (options.xref2)
+        writeRelativeProgress(100);
 }
 
 static bool fileNeedsParsing(FileItem *fileItem) {
@@ -441,6 +467,9 @@ void server(ArgumentsVector args) {
         // TODO -o option on command line should catch also file not found
         openOutputFile(options.outputFileName);
         //&dumpArguments(nargc, nargv);
+
+        progressOffset = 0;
+        progressFactor = 1;
 
         log_trace("Server: Getting request");
         initServer(pipedOptions);
