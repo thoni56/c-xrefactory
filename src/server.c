@@ -295,6 +295,69 @@ static void reparseStaleHeaderIncluders(int headerFileNumber, ArgumentsVector ba
     }
 }
 
+static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
+    /* Pass 1: Reparse stale CUs directly. This also refreshes their
+     * TypeCppInclude references, which Pass 2 depends on. */
+    for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
+        for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
+            int fileNumber = l->buffer->fileNumber;
+            FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+            if (fileNumberIsStale(fileNumber) && isCompilationUnit(fileItem->name)) {
+                reparseStaleFile(fileNumber, baseArgs);
+                EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
+                if (buffer != NULL)
+                    fileItem->lastParsedMtime = buffer->modificationTime;
+                fileItem->needsBrowsingStackRefresh = true;
+            }
+        }
+    }
+
+    /* Pass 2: For stale headers, find CUs that include them and reparse.
+     * Must come after Pass 1: Pass 1 reparses stale CUs, refreshing their
+     * TypeCppInclude references. Pass 2 queries those references to find
+     * which CUs include the stale header (transitively). */
+    for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
+        for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
+            int fileNumber = l->buffer->fileNumber;
+            FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+            if (fileNumberIsStale(fileNumber) && !isCompilationUnit(fileItem->name)) {
+                reparseStaleHeaderIncluders(fileNumber, baseArgs);
+                EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
+                if (buffer != NULL)
+                    fileItem->lastParsedMtime = buffer->modificationTime;
+                fileItem->needsBrowsingStackRefresh = true;
+            }
+        }
+    }
+}
+
+static void parseDiscoveredCompilationUnits(ArgumentsVector baseArgs) {
+    /* Parse all discovered CUs to populate in-memory references.
+     * Skip the request file — it will be handled by the dispatch below
+     * (processFile for input-processing operations, or just unscheduled). */
+    int cuCount = 0;
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+        FileItem *fileItem = getFileItemWithFileNumber(i);
+        if (fileItem->isScheduled && isCompilationUnit(fileItem->name) && i != requestFileNumber)
+            cuCount++;
+    }
+
+    int parsed = 0;
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+        FileItem *fileItem = getFileItemWithFileNumber(i);
+        if (fileItem->isScheduled && isCompilationUnit(fileItem->name) && i != requestFileNumber) {
+            parseFileWithFullInit(fileItem->name, baseArgs);
+            fileItem->isScheduled = false;
+            parsed++;
+            if (options.xref2)
+                writeRelativeProgress((100 * parsed) / cuCount);
+        }
+    }
+    if (options.xref2)
+        writeRelativeProgress(100);
+    log_info("Startup: parsed %d compilation units", parsed);
+}
+
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     static bool projectContextInitialized = false;
 
@@ -303,45 +366,14 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     loadAllOpenedEditorBuffers();
 
     /* Reparse any stale preloaded files before dispatching the operation,
-     * so all operations see fresh in-memory references.
-     * Clear cursorOffset so the lexer doesn't set positionOfSelectedReference
-     * during the reparse — that would trigger on-line action handling
-     * (browsing stack assertions) before the operation has set things up. */
+     * so all operations see fresh in-memory references. */
     if (projectContextInitialized) {
+        /* Clear cursorOffset so the lexer doesn't set positionOfSelectedReference
+         * during the reparse — that would trigger on-line action handling (browsing stack
+         * assertions) before the operation has set things up. */
         int savedCursorOffset = options.cursorOffset;
-        options.cursorOffset = -1;
-        for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
-            for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
-                int fileNumber = l->buffer->fileNumber;
-                FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-                if (fileNumberIsStale(fileNumber) && isCompilationUnit(fileItem->name)) {
-                    reparseStaleFile(fileNumber, baseArgs);
-                    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
-                    if (buffer != NULL)
-                        fileItem->lastParsedMtime = buffer->modificationTime;
-                    fileItem->needsBrowsingStackRefresh = true;
-                }
-            }
-        }
-
-        /* Pass 2: For stale headers, find CUs that include them and reparse.
-         * Must come after Pass 1: Pass 1 reparses stale CUs, refreshing their
-         * TypeCppInclude references. Pass 2 queries those references to find
-         * which CUs include the stale header (transitively). */
-        for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
-            for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
-                int fileNumber = l->buffer->fileNumber;
-                FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-                if (fileNumberIsStale(fileNumber) && !isCompilationUnit(fileItem->name)) {
-                    reparseStaleHeaderIncluders(fileNumber, baseArgs);
-                    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
-                    if (buffer != NULL)
-                        fileItem->lastParsedMtime = buffer->modificationTime;
-                    fileItem->needsBrowsingStackRefresh = true;
-                }
-            }
-        }
-
+        options.cursorOffset = NO_CURSOR_OFFSET;
+        reparseStalePreloadedFiles(baseArgs);
         options.cursorOffset = savedCursorOffset;
     }
 
@@ -354,30 +386,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
                 addToStringListOption(&options.inputFiles, ".");
             processFileArguments();
 
-            /* Parse all discovered CUs to populate in-memory references.
-             * Skip the request file — it will be handled by the dispatch below
-             * (processFile for input-processing operations, or just unscheduled). */
-            int cuCount = 0;
-            for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-                FileItem *fileItem = getFileItemWithFileNumber(i);
-                if (fileItem->isScheduled && isCompilationUnit(fileItem->name) && i != requestFileNumber)
-                    cuCount++;
-            }
-
-            int parsed = 0;
-            for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-                FileItem *fileItem = getFileItemWithFileNumber(i);
-                if (fileItem->isScheduled && isCompilationUnit(fileItem->name) && i != requestFileNumber) {
-                    parseFileWithFullInit(fileItem->name, baseArgs);
-                    fileItem->isScheduled = false;
-                    parsed++;
-                    if (options.xref2)
-                        writeRelativeProgress((100 * parsed) / cuCount);
-                }
-            }
-            if (options.xref2)
-                writeRelativeProgress(100);
-            log_info("Startup: parsed %d compilation units", parsed);
+            parseDiscoveredCompilationUnits(baseArgs);
 
             projectContextInitialized = true;
         } else if (!requiresProcessingInputFile(options.serverOperation)) {

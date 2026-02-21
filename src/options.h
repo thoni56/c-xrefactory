@@ -48,6 +48,7 @@ typedef enum commentMovingMode {
     CM_ALL_SLASHED_AND_STARRED,
 } CommentMovingMode;
 
+#define NO_CURSOR_OFFSET -1
 
 
 /* protected data type */

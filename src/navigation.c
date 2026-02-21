@@ -168,7 +168,7 @@ void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     maxPasses = 1;
     for (currentPass = 1; currentPass <= maxPasses; currentPass++) {
         if (initializeFileProcessing(baseArgs, emptyArgs)) {
-            options.cursorOffset = -1;
+            options.cursorOffset = NO_CURSOR_OFFSET;
             options.noErrors = true;
             parseToCreateReferences(inputFileName);
             closeCharacterBuffer(&currentFile.characterBuffer);
