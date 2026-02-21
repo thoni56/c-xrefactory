@@ -184,7 +184,7 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
             fileItem->lastParsedMtime = buffer->modificationTime;
         }
     }
-    if (options.cursorOffset==0) {
+    if (options.cursorOffset == 0) {
         // special case, push the file as include reference
         if (needsReferenceDatabase(options.serverOperation)) {
             Position position = makePosition(parsingConfig.fileNumber, 1, 0);
@@ -331,6 +331,11 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
     }
 }
 
+static bool fileNeedsParsing(FileItem *fileItem) {
+    return fileItem->lastParsedMtime == 0
+        || editorFileModificationTime(fileItem->name) != fileItem->lastParsedMtime;
+}
+
 static void parseDiscoveredCompilationUnits(ArgumentsVector baseArgs) {
     /* Parse all discovered CUs to populate in-memory references.
      * Skip the request file — it will be handled by the dispatch below
@@ -338,7 +343,8 @@ static void parseDiscoveredCompilationUnits(ArgumentsVector baseArgs) {
     int cuCount = 0;
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
-        if (fileItem->isScheduled && isCompilationUnit(fileItem->name) && i != requestFileNumber)
+        if (fileItem->isScheduled && isCompilationUnit(fileItem->name) && i != requestFileNumber
+            && fileNeedsParsing(fileItem))
             cuCount++;
     }
 
@@ -346,11 +352,13 @@ static void parseDiscoveredCompilationUnits(ArgumentsVector baseArgs) {
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
         if (fileItem->isScheduled && isCompilationUnit(fileItem->name) && i != requestFileNumber) {
-            parseFileWithFullInit(fileItem->name, baseArgs);
+            if (fileNeedsParsing(fileItem)) {
+                parseFileWithFullInit(fileItem->name, baseArgs);
+                parsed++;
+                if (options.xref2)
+                    writeRelativeProgress((100 * parsed) / cuCount);
+            }
             fileItem->isScheduled = false;
-            parsed++;
-            if (options.xref2)
-                writeRelativeProgress((100 * parsed) / cuCount);
         }
     }
     if (options.xref2)
@@ -385,6 +393,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
             if (options.inputFiles == NULL)
                 addToStringListOption(&options.inputFiles, ".");
             processFileArguments();
+            loadFileNumbersFromStore();
 
             parseDiscoveredCompilationUnits(baseArgs);
 

@@ -207,7 +207,7 @@ static void printAvailableRefactorings(void) {
 
     makeRefactoringAvailable(PPC_AVR_UNDO, "");
 
-    if (options.markOffset != -1 && options.cursorOffset != options.markOffset) {
+    if (options.markOffset != NO_CURSOR_OFFSET && options.cursorOffset != options.markOffset) {
         // region selected, TODO!!! some more prechecks for extract - Duh! Which ones!?!?!?!
         makeRefactoringAvailable(PPC_AVR_EXTRACT_VARIABLE, "");
         makeRefactoringAvailable(PPC_AVR_EXTRACT_FUNCTION, "");
