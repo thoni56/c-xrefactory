@@ -487,42 +487,31 @@ void restoreMemoryCheckPoint(void) {
     restoreCheckpoint(&checkpoint1);
 }
 
-
-/* Initialize project context: discover project, load options, interrogate compiler,
- * and save memory checkpoint. Called during first GetProject so that the checkpoint
- * is available for stale-file reparsing on subsequent requests.
- *
- * This duplicates phases 1-4 of initializeFileProcessing intentionally —
- * initializeFileProcessing will detect "same project" and take its fast path.
- */
-void initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
-    char projectOptionsFileName[MAX_FILE_NAME_SIZE];
-    char projectSectionName[MAX_FILE_NAME_SIZE];
-    time_t modifiedTime;
+static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector requestArgs,
+                                char projectOptionsFileName[], char projectSectionName[], char *fileName) {
     StringList *tmpIncludeDirs;
-
-    /* === PHASE 1: Project Discovery === */
-    searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName, projectSectionName);
-    handlePathologicProjectCases(fileName, projectOptionsFileName, projectSectionName, true);
-
-    initAllInputs();
-
-    if (projectOptionsFileName[0] != 0)
-        modifiedTime = fileModificationTime(projectOptionsFileName);
-    else
-        modifiedTime = previousStandardOptionsFileModificationTime;
-
     /* === PHASE 2: Options File Processing === */
     if (checkpoint0.saved)
         restoreCheckpoint(&checkpoint0);
     else
         saveCheckpoint(&checkpoint0);
 
+    /* Load and process project settings from .c-xrefrc */
+    log_debug("initializeFileProcessing - if-branch, checkpoint0.saved=%d", checkpoint0.saved);
+
     initCwd();
-    initOptions();
+    initOptions();  /* TODO: should be initProjectOptions() — only PROJECT fields need
+                     * resetting here. Resetting SESSION/REQUEST fields forces callers to
+                     * save/restore them (see startup loop in server.c). */
     initStandardCxrefFileName(fileName);
 
-    processOptions(baseArgs, PROCESS_FILE_ARGUMENTS_NO);
+    /* Process options in specific order: command line, request args, .c-xrefrc */
+    processOptions(baseArgs, PROCESS_FILE_ARGUMENTS_NO);   /* command line opts */
+    /* piped options (no include or define options)
+       must be before .xrefrc file options, but, the s_cachedOptions
+       must be set after .c-xrefrc file, but s_cachedOptions can't contain
+       piped options, !!! berk.
+    */
     processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO);
     reInitCwd(projectOptionsFileName, projectSectionName);
 
@@ -534,31 +523,69 @@ void initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
     getAndProcessXrefrcOptions(projectOptionsFileName, projectSectionName);
 
     /* === PHASE 3: Compiler Interrogation === */
-    discoverBuiltinIncludePaths();
+    /* Run compiler to discover system includes and predefined macros (expensive!) */
+    discoverBuiltinIncludePaths();  /* Sets compiler_identification, must be before discoverStandardDefines */
+
     discoverStandardDefines();
 
     /* === PHASE 4: Memory Checkpoint === */
+    /* Save memory state so subsequent files in same project can skip phases 2-3 */
     saveMemoryCheckPoint(&checkpoint1);
 
+    /* Then for the particular pass */
     currentPass = savedPass;
     getAndProcessXrefrcOptions(projectOptionsFileName, projectSectionName);
 
     LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 
     processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO);
+
+    /* Apply convention-based db path for auto-detected projects (after all options processed) */
     applyConventionBasedDatabasePath();
 
-    /* Save options and project tracking state */
+    /* Clear per-request options before saving - these shouldn't persist across requests.
+     * The -p option specifies project for the current request only (needed for legacy
+     * ~/.c-xrefrc with multiple projects), but shouldn't leak to future requests.
+     * We restore it after saving so it remains available for the current request. */
     char *currentRequestProject = options.project;
     options.project = NULL;
     deepCopyOptionsFromTo(&options, &savedOptions);
     options.project = currentRequestProject;
+}
+
+/* Initialize project context: discover project, load options, interrogate compiler,
+ * and save memory checkpoint. Called during first GetProject so that the checkpoint
+ * is available for stale-file reparsing on subsequent requests.
+ *
+ * Phase 1 (project discovery) is done inline, phases 2-4 delegate to
+ * loadProjectSettings() which is shared with initializeFileProcessing.
+ */
+void initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+    char projectOptionsFileName[MAX_FILE_NAME_SIZE];
+    char projectSectionName[MAX_FILE_NAME_SIZE];
+    time_t modifiedTime;
+
+    /* === PHASE 1: Project Discovery === */
+    /* TODO: Duplicated in `intializeProjectContext` */
+    searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName, projectSectionName);
+    handlePathologicProjectCases(fileName, projectOptionsFileName, projectSectionName, true);
+
+    initAllInputs();
+
+    if (projectOptionsFileName[0] != 0)
+        modifiedTime = fileModificationTime(projectOptionsFileName);
+    else
+        modifiedTime = previousStandardOptionsFileModificationTime;
+
+    /* === PHASES 2-4: Options, compiler interrogation, checkpoint === */
+    loadProjectSettings(baseArgs, requestArgs, projectOptionsFileName, projectSectionName, fileName);
 
     strcpy(previousStandardOptionsFile, projectOptionsFileName);
     strcpy(previousStandardOptionsSection, projectSectionName);
     previousStandardOptionsFileModificationTime = modifiedTime;
     previousPass = currentPass;
 }
+
 
 /* Heavy orchestration-level initialization for legacy Server/Xref modes.
  * Handles multi-project server architecture where project settings can change per file.
@@ -577,13 +604,13 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
     char projectOptionsFileName[MAX_FILE_NAME_SIZE];
     char projectSectionName[MAX_FILE_NAME_SIZE];
     time_t modifiedTime;
-    char *fileName;
-    StringList *tmpIncludeDirs;
+    char *fileName = NULL;
     bool inputOpened;
 
     ENTER();
 
     /* === PHASE 1: Project Discovery === */
+    /* TODO: Duplicated in `intializeProjectContext` */
     /* Find which .c-xrefrc file and project section applies to this file */
     fileName = inputFileName;
     searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName, projectSectionName);
@@ -604,73 +631,14 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         || strcmp(previousStandardOptionsSection, projectSectionName) != 0 /* or a different project */
         || previousStandardOptionsFileModificationTime != modifiedTime       /* or the options file has changed */
     ) {
-        /* === PHASE 2: Options File Processing === */
-        if (checkpoint0.saved)
-            restoreCheckpoint(&checkpoint0);
-        else
-            saveCheckpoint(&checkpoint0);
-
-        /* Load and process project settings from .c-xrefrc */
-        log_debug("initializeFileProcessing - if-branch, checkpoint0.saved=%d", checkpoint0.saved);
-
-        initCwd();
-        initOptions();  /* TODO: should be initProjectOptions() — only PROJECT fields need
-                         * resetting here. Resetting SESSION/REQUEST fields forces callers to
-                         * save/restore them (see startup loop in server.c). */
-        initStandardCxrefFileName(fileName);
-
-        /* Process options in specific order: command line, request args, .c-xrefrc */
-        processOptions(baseArgs, PROCESS_FILE_ARGUMENTS_NO);   /* command line opts */
-        /* piped options (no include or define options)
-           must be before .xrefrc file options, but, the s_cachedOptions
-           must be set after .c-xrefrc file, but s_cachedOptions can't contain
-           piped options, !!! berk.
-        */
-        processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO);
-        reInitCwd(projectOptionsFileName, projectSectionName);
-
-        tmpIncludeDirs = options.includeDirs;
-        options.includeDirs = NULL;
-
-        int savedPass = currentPass;
-        currentPass = NO_PASS;
-        getAndProcessXrefrcOptions(projectOptionsFileName, projectSectionName);
-
-        /* === PHASE 3: Compiler Interrogation === */
-        /* Run compiler to discover system includes and predefined macros (expensive!) */
-        discoverBuiltinIncludePaths();  /* Sets compiler_identification, must be before discoverStandardDefines */
-
-        discoverStandardDefines();
-
-        /* === PHASE 4: Memory Checkpoint === */
-        /* Save memory state so subsequent files in same project can skip phases 2-3 */
-        saveMemoryCheckPoint(&checkpoint1);
-
-        /* Then for the particular pass */
-        currentPass = savedPass;
-        getAndProcessXrefrcOptions(projectOptionsFileName, projectSectionName);
-
-        LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
+        /* === PHASE 2-4: Options reading, compiler discovery, memory checkpointing === */
+        loadProjectSettings(baseArgs, requestArgs, projectOptionsFileName, projectSectionName, fileName);
 
         if (options.mode != ServerMode && inputFileName == NULL) {
             /* TODO Create a test that covers this */
             inputOpened = false;
             goto fini;
         }
-
-        processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO);
-
-        /* Apply convention-based db path for auto-detected projects (after all options processed) */
-        applyConventionBasedDatabasePath();
-
-        /* Clear per-request options before saving - these shouldn't persist across requests.
-         * The -p option specifies project for the current request only (needed for legacy
-         * ~/.c-xrefrc with multiple projects), but shouldn't leak to future requests.
-         * We restore it after saving so it remains available for the current request. */
-        char *currentRequestProject = options.project;
-        options.project = NULL;
-        deepCopyOptionsFromTo(&options, &savedOptions);
-        options.project = currentRequestProject;
 
         /* === PHASE 5: Input Setup === */
         inputOpened = computeAndOpenInputFile(inputFileName);  /* Finally calls initInput() */
