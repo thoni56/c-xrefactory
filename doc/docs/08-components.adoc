@@ -503,6 +503,76 @@ Modern systems have abundant virtual memory. Possible improvements:
 
 The experimental `FlushableMemory` type explores some of these ideas but hasn't replaced current implementation.
 
+=== Content Buffers (EditorBuffer)
+
+==== Responsibilities
+
+Content buffers provide an in-memory cache of file content that transparently overrides disk file reading during parsing. When a content buffer exists for a file, the parser uses its in-memory content instead of reading from disk.
+
+==== Three Roles
+
+Content buffers (the `EditorBuffer` struct) serve three distinct roles:
+
+[cols="1,1,2"]
+|===
+|Role |`preLoadedFromFile` |How content arrives
+
+|**Editor content**
+|Non-NULL (tmp file path)
+|Client writes unsaved buffer to a tmp file; server reads the tmp file. Content represents the editor's in-memory state, which may differ from the original file on disk.
+
+|**Disk file cache**
+|NULL
+|Created on demand by `findOrCreateAndLoadEditorBufferForFile()` when the lexer encounters an `#include` or other code needs file content. Avoids re-reading the same file from disk during a single parse or across multiple parses.
+
+|**LSP document state**
+|NULL
+|Content arrives in a `textDocument/didOpen` JSON message. No tmp file, no disk read. Lives from `didOpen` to `didClose`.
+|===
+
+==== How Parsing Uses Buffers
+
+The lexer reads from a **character buffer** (`currentFile.characterBuffer`), which is the common layer regardless of content source. Where the character buffer gets its data depends on whether a content buffer exists:
+
+* **Content buffer path**: `initInputFromEditorBuffer()` points the character buffer directly into the content buffer's text memory. All content is available immediately — no file I/O.
+* **File path**: `initInputFromFile()` uses `currentFile.characterBuffer.chars` — a separate fixed-size buffer. Data is read from the FILE handle incrementally as the lexer consumes characters.
+
+When the lexer processes an `#include`, it calls `findOrCreateAndLoadEditorBufferForFile()` for the included file. This function:
+
+1. Checks if a content buffer already exists (preloaded or cached) — if so, returns it
+2. Otherwise reads the file from disk into a new content buffer
+
+If a content buffer is found, the character buffer is set up to read from it. If not (file doesn't exist or is a directory), the fallback `openFile()` path reads from disk via a FILE handle. This means **preloaded editor content transparently overrides disk content** — the parser doesn't know or care where the content came from.
+
+==== Lifetime
+
+Buffer lifetime depends on the server mode and buffer role:
+
+[cols="1,2"]
+|===
+|Context |Behavior
+
+|**Server mode, editor content**
+|Currently destroyed after each request (`closeAllEditorBuffers`). link:/workspace/decisions#23[ADR-0023] proposes making these persistent across requests.
+
+|**Server mode, disk cache**
+|Destroyed after each request. Appropriate since different requests may parse different files.
+
+|**Xref mode, disk cache**
+|Preserved across file processing (`closeAllEditorBuffersIfClosable`). A header like `commons.h` included by many CUs is read once and reused.
+
+|**LSP mode, document state**
+|Persistent from `didOpen` to `didClose`. Not affected by request boundaries.
+|===
+
+The existing `bufferIsCloseable()` predicate distinguishes these cases: it returns `false` for preloaded buffers (preserving editor content) and `true` for loaded, unmodified, marker-free buffers (allowing cache cleanup).
+
+==== Staleness Detection
+
+For preloaded buffers, staleness is detected by comparing `fileItem->lastParsedMtime` with `buffer->modificationTime`. After parsing a preloaded buffer, `lastParsedMtime` is set to the buffer's modification time. If the buffer is re-sent with a new tmp file (new mtime), the file appears stale and is reparsed.
+
+See the Server component's Entry-Point Reparse section for how staleness drives the sync phase.
+
 === Cxfile
 
 ==== Responsibilities
