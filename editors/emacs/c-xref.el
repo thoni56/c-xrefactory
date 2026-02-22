@@ -3875,7 +3875,8 @@ will be deleted.
 
 (defun c-xref-find-project-root ()
   "Find project root by looking for .git directory.
-Returns the directory containing .git, or the current file's directory if not found."
+Returns the directory containing .git, or the current file's directory
+if not found."
   (let ((git-root (locate-dominating-file (buffer-file-name) ".git")))
     (if git-root
         (expand-file-name git-root)

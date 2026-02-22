@@ -38,7 +38,7 @@ If no config file could be found, you'll be prompted to create a project. The ac
 
 == Browsing
 
-Browsing uses a list of references (occurrences of a symbol), including definition, declarations and usages, which allows you to navigate that list.
+Browsing uses a list of references (occurrences of a symbol), including definition, declarations and usages, which allows you to navigate that list. `c-xrefactory` handles not only normal C variables, types etc. but also labels and include file references. In addition Yacc non-terminals can be browsed.
 
 === Basic Navigation
 
