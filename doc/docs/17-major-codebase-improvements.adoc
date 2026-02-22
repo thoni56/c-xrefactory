@@ -1157,3 +1157,71 @@ The key insight is that we can **backport this gradually without breaking anythi
 Phase 1 proves the approach works with minimal risk. Phases 2-3 build on proven foundation, so failure to complete them doesn't harm existing functionality.
 
 Multi-file definitions are one motivating use case, but the real long-term benefit is a codebase where parsing behavior is **discoverable and type-safe** instead of driven by magic strings scattered throughout 25-year-old code.
+
+[[split-editor-module]]
+=== Split the Editor Module
+
+==== Problem Statement
+
+The `editor.c` module (630+ lines) bundles at least four unrelated responsibilities under the misleading name "editor". The name suggests it's about the external editor (Emacs), but most of the code has nothing to do with editor integration -- it's internal text manipulation infrastructure used by refactoring.
+
+==== Current Responsibilities
+
+**1. Text memory allocator** (`editorMemory[]`, `allocateNewEditorBufferTextSpace`, `freeTextSpace`)
+
+A power-of-2 block allocator for buffer text content. Custom malloc pool with free lists indexed by size class. No relationship to "editing" -- this is a memory management concern.
+
+**2. In-buffer text editing** (`replaceStringInEditorBuffer`, `moveBlockInEditorBuffer`, `removeBlanksAtEditorMarker`)
+
+The refactoring engine's hands -- insert, delete, replace, and move text within buffers, with undo tracking and marker adjustment. This is the actual "editing" code, but it operates on the server's internal buffers, not the external editor.
+
+**3. Reference/marker coordinate conversion** (`convertReferencesToEditorMarkers`, `convertEditorMarkersToReferences`)
+
+Bridges two coordinate systems: the reference world (file number, line, column) and the buffer world (buffer pointer, byte offset). Walks buffer text to convert line/col to offset and vice versa. Used by refactoring to go from "where are the references" to "where do I edit".
+
+**4. Content buffer lifecycle** (`loadFileIntoEditorBuffer`, `loadAllOpenedEditorBuffers`, `closeAllEditorBuffers`, `quasiSaveModifiedEditorBuffers`, `editorFileModificationTime`)
+
+Buffer loading, closing, quasi-save (mtime bookkeeping for refactoring), and file-stat wrappers that check buffers before falling back to filesystem. This is the content buffer management that belongs with the `ContentBuffer` type.
+
+==== The Naming Problem
+
+The "Editor" prefix pervades the codebase beyond just this module:
+
+* `EditorMarker` / `EditorMarkerList` -- positional bookmarks into mutable buffer text
+* `EditorRegion` -- a span between two markers
+* `EditorUndo` -- undo records for text operations
+
+None of these are about the external editor. They're the server's internal text manipulation primitives. `TextMarker`, `TextRegion`, `TextUndo` would be more accurate names, but renaming has cascading effects throughout the codebase.
+
+==== Proposed Split
+
+[cols="1,2,1"]
+|===
+|New module |Responsibility |Current functions
+
+|`textalloc.c`
+|Power-of-2 block allocator for buffer text
+|`allocateNewEditorBufferTextSpace`, `freeTextSpace`, `editorMemory[]`
+
+|`textedit.c`
+|In-buffer text manipulation with undo and marker tracking
+|`replaceStringInEditorBuffer`, `moveBlockInEditorBuffer`, `removeBlanksAtEditorMarker`
+
+|`markerconvert.c`
+|Reference ↔ marker coordinate conversion
+|`convertReferencesToEditorMarkers`, `convertEditorMarkersToReferences`
+
+|`contentbuffer.c` (existing)
+|Buffer lifecycle, loading, closing, quasi-save
+|`loadFileIntoEditorBuffer`, `loadAllOpenedEditorBuffers`, `closeAll*`, `quasiSave*`, `editorFile*`
+|===
+
+`editorInit()` would move to wherever initialization belongs (it currently just calls `initEditorBufferTable()`).
+
+`editorMapOnNonExistantFiles` is a completion helper that iterates all buffers to find files existing in buffers but not on disk. It belongs with completion or content buffer management.
+
+==== Notes
+
+* The split is purely mechanical -- no behavior change, no renaming. Each group of functions has minimal coupling to the others.
+* The misleading "Editor" prefix on types (`EditorMarker`, `EditorUndo`, etc.) is a separate concern. Renaming those types has large cascading effects and is not worth doing until the refactoring performance issue is resolved (currently each rename requires two full project parses via `callXref`).
+* `editor.h` currently re-exports headers for `contentbuffer.h`, `editormarker.h`, `undo.h` -- after the split, callers would include the specific headers they need.
