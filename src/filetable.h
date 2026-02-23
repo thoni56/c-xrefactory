@@ -37,6 +37,7 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     bool fullUpdateIncludesProcessed : 1;
     bool isFromCxfile : 1;      // is this file indexed in XFiles
     bool needsBrowsingStackRefresh : 1;  // entry-point reparsed this file, stack needs update
+    bool isDeleted : 1;                 // file no longer exists on disk
     unsigned sourceFileNumber : 20; // file number containing the class definition
     struct fileItem *next;
 } FileItem;
@@ -73,6 +74,8 @@ extern void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *p
 
 extern char *getNextScheduledFile(int *indexP);
 extern char *getNextArgumentFile(int *indexP);
+
+extern void markFileAsDeleted(int fileNumber);
 
 extern void recoverMemoryFromFileTable(void);
 

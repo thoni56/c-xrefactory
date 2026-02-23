@@ -7,7 +7,7 @@ typedef struct stringList {
 } StringList;
 
 
-/* TODO: Use only for unittests since it does not allocate in dedicated memory */
 extern StringList *newStringList(char *string, StringList *next);
+extern void freeStringList(StringList *list);
 
 #endif

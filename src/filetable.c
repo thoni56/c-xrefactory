@@ -70,6 +70,11 @@ FileItem *getFileItemWithFileNumber(int fileNumber) {
     return fileTable.tab[fileNumber];
 }
 
+void markFileAsDeleted(int fileNumber) {
+    FileItem *item = getFileItemWithFileNumber(fileNumber);
+    item->isDeleted = true;
+}
+
 int getNextExistingFileNumber(int index) {
     for (int i=index; i < fileTable.size; i++)
         if (fileTable.tab[i] != NULL)

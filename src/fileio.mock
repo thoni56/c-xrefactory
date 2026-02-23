@@ -70,3 +70,7 @@ char *getEnv(const char *variable) {
 char *getCwd(char *buffer, size_t size) {
     return (char *)mock(buffer, size);
 }
+
+StringList *listFilesInDirectory(const char *dirPath) {
+    return (StringList *)mock(dirPath);
+}

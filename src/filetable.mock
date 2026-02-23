@@ -34,6 +34,10 @@ FileItem *getFileItemWithFileNumber(int fileNumber) {
     return (FileItem *)mock(fileNumber);
 }
 
+void markFileAsDeleted(int fileNumber) {
+    mock(fileNumber);
+}
+
 int getNextExistingFileNumber(int fileNumber) {
     return (int)mock(fileNumber);
 }

@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <sys/stat.h>
 
+#include "stringlist.h"
+
 
 extern bool exists(char *path);
 extern time_t fileModificationTime(char *path);
@@ -25,5 +27,7 @@ extern int readChar(FILE *file);
 
 extern char *getEnv(const char *variable);
 extern char *getCwd(char *buf, size_t size);
+
+extern StringList *listFilesInDirectory(const char *dirPath);
 
 #endif
