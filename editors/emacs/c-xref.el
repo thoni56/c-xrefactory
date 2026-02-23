@@ -64,6 +64,13 @@
 (defvar c-xref-ide-last-compile-commands nil)
 (defvar c-xref-ide-last-run-commands nil)
 
+;; Per-buffer persistent preload state (ADR 23)
+;; These are buffer-local in buffers that have been preloaded to the server
+(defvar-local c-xref-preload-tmp-file nil
+  "Persistent tmp file path for this buffer's preload, or nil.")
+(defvar-local c-xref-preload-modified-tick nil
+  "Value of `buffer-modified-tick' when tmp file was last written.")
+
 
 (defun c-xref-server-get-new-tmp-file-name ()
   (let ((res))
@@ -1771,45 +1778,77 @@ tries to delete C-xrefactory windows first.
   )
 
 (defun c-xref-server-add-buffer-to-tmp-files-list (buffer lst)
-  (let ((res))
-    (setq res (cons (list buffer (c-xref-server-get-new-tmp-file-name)) lst))
-    res
-    ))
+  "Add BUFFER to the preload list.
+If BUFFER has a persistent tmp file and hasn't changed since it was
+last written, reuse it (mark as not needing rewrite).  Otherwise
+assign a new or existing tmp file path for writing."
+  (with-current-buffer buffer
+    (let ((tick (buffer-modified-tick))
+          (tmp-file c-xref-preload-tmp-file)
+          (needs-write t))
+      (when (and tmp-file
+                 c-xref-preload-modified-tick
+                 (= tick c-xref-preload-modified-tick)
+                 (file-exists-p tmp-file))
+        ;; Content unchanged since last write and file still exists
+        (setq needs-write nil)
+        (if c-xref-debug-mode
+            (message "c-xref preload: reusing tmp file %s for %s (tick %d)"
+                     tmp-file (buffer-file-name) tick)))
+      (when (not tmp-file)
+        ;; First preload for this buffer — allocate a persistent tmp file path
+        (setq tmp-file (c-xref-server-get-new-tmp-file-name))
+        (setq c-xref-preload-tmp-file tmp-file))
+      (when (and needs-write c-xref-debug-mode)
+        (message "c-xref preload: will write tmp file %s for %s (tick %d)"
+                 tmp-file (buffer-file-name) tick))
+      (cons (list buffer tmp-file needs-write) lst))))
 
 (defun c-xref-server-save-buffers-to-tmp-files (lst)
-  (let ((bb) (tt) (bbt) (cb) (res) (coding))
-    (setq cb (current-buffer))
-    (setq res nil)
-    (while lst
-      (setq bbt (car lst))
-      (setq bb (car bbt))
-      (setq tt (car (cdr bbt)))
-      (set-buffer bb)
-      (if (boundp 'buffer-file-coding-system)
-              (setq coding buffer-file-coding-system)
-            (setq coding nil)
-            )
-      (c-xref-write-tmp-buff tt 1 (+ (buffer-size) 1) coding)
-      (setq res (append (list "-preload" (buffer-file-name bb) tt) res))
-      (setq lst (cdr lst))
-      )
+  "Write buffer contents to tmp files and return -preload arguments.
+Only writes buffers whose `needs-write' flag is set (content changed
+since last preload).  Updates the buffer's modified-tick tracker."
+  (let ((cb (current-buffer))
+        (res nil))
+    (dolist (entry lst)
+      (let ((bb (nth 0 entry))
+            (tt (nth 1 entry))
+            (needs-write (nth 2 entry)))
+        (set-buffer bb)
+        (when needs-write
+          (let ((coding (if (boundp 'buffer-file-coding-system)
+                            buffer-file-coding-system
+                          nil)))
+            (c-xref-write-tmp-buff tt 1 (+ (buffer-size) 1) coding))
+          (setq c-xref-preload-modified-tick (buffer-modified-tick))
+          (if c-xref-debug-mode
+              (message "c-xref preload: wrote %s for %s (tick %d)"
+                       tt (buffer-file-name) (buffer-modified-tick))))
+        (setq res (append (list "-preload" (buffer-file-name bb) tt) res))))
     (set-buffer cb)
-    res
-    ))
+    res))
 
 (defun c-xref-server-remove-tmp-files (lst)
-  (let ((bb) (tt) (bbt))
-    (while lst
-      (setq bbt (car lst))
-      (setq bb (car bbt))
-      (setq tt (car (cdr bbt)))
-      (if (and c-xref-debug-mode c-xref-debug-preserve-tmp-files)
-              (message "keeping tmp file %s" tt)
-            (delete-file tt)
-            )
-      (setq lst (cdr lst))
-      )
-    ))
+  "Clean up tmp files.  Persistent preload files are kept (they will
+be cleaned up when the buffer is saved or killed)."
+  ;; With persistent preload tmp files (ADR 23), we no longer delete
+  ;; after each request.  The files are cleaned up by c-xref-preload-cleanup.
+  (if c-xref-debug-mode
+      (message "c-xref preload: keeping %d persistent tmp files" (length lst))))
+
+(defun c-xref-preload-cleanup ()
+  "Delete the persistent preload tmp file for the current buffer, if any."
+  (when c-xref-preload-tmp-file
+    (when (file-exists-p c-xref-preload-tmp-file)
+      (if c-xref-debug-mode
+          (message "c-xref preload: cleaning up %s for %s"
+                   c-xref-preload-tmp-file (buffer-file-name)))
+      (delete-file c-xref-preload-tmp-file))
+    (setq c-xref-preload-tmp-file nil)
+    (setq c-xref-preload-modified-tick nil)))
+
+(add-hook 'after-save-hook #'c-xref-preload-cleanup)
+(add-hook 'kill-buffer-hook #'c-xref-preload-cleanup)
 
 (defun c-xref-server-get-list-of-buffers-to-save-to-tmp-files (can-add-current-buffer)
   (let ((bl) (bb) (res) (cb))

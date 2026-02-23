@@ -4,7 +4,7 @@ Date: 2026-02-22
 
 ## Status
 
-Accepted
+Implemented (2026-02-23 in cdb9fa87)
 
 ## Deciders
 
