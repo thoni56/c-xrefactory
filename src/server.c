@@ -498,7 +498,7 @@ void server(ArgumentsVector args) {
             answerEditorAction();
         }
 
-        closeAllEditorBuffers();
+        closeAllEditorBuffersIfClosable();
         closeOutputFile();
         if (options.xref2)
             ppcSynchronize();

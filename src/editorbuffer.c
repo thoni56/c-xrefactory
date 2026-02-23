@@ -122,10 +122,18 @@ EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName) {
 
 // Only used from Options for preload
 EditorBuffer *openEditorBufferFromPreload(char *fileName, char *preLoadedFromFile) {
-    EditorBuffer  *buffer;
-
-    buffer = getEditorBufferForFile(fileName);
+    EditorBuffer *buffer = getEditorBufferForFile(fileName);
     if (buffer != NULL) {
+        time_t incomingMtime = fileModificationTime(preLoadedFromFile);
+        if (incomingMtime == buffer->modificationTime) {
+            log_debug("Preload '%s': unchanged (mtime %ld), keeping existing buffer", fileName, (long)incomingMtime);
+            return buffer;
+        }
+        log_debug("Preload '%s': content changed (mtime %ld -> %ld), reloading", fileName,
+                  (long)buffer->modificationTime, (long)incomingMtime);
+        free(buffer->preLoadedFromFile);
+        buffer->preLoadedFromFile = strdup(normalizeFileName_static(preLoadedFromFile, cwd));
+        loadFileIntoEditorBuffer(buffer, incomingMtime, fileSize(preLoadedFromFile));
         return buffer;
     }
     buffer = createNewEditorBuffer(fileName, preLoadedFromFile, fileModificationTime(preLoadedFromFile),
