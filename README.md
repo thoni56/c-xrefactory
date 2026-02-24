@@ -42,6 +42,7 @@ Experimental configs for Emacs/LSP and VSCode/LSP exist but might not work. YMMV
 
 ```
 git clone -b stable https://github.com/thoni56/c-xrefactory
+make -j -C c-xrefactory
 emacs -l c-xrefactory/load.el
 ```
 

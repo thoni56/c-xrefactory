@@ -22,6 +22,7 @@ Clone and load in Emacs:
 [source,bash]
 ----
 git clone -b stable https://github.com/thoni56/c-xrefactory
+make -j -C c-xrefactory
 emacs -l c-xrefactory/load.el
 ----
 
