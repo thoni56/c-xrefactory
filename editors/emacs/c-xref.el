@@ -1,4 +1,4 @@
-;;; c-xref.el - (X)Emacs interface to C-xrefactory (autoloaded functions)
+;;; c-xref.el - (X)Emacs interface to C-xrefactory (autoloaded functions) -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 1997-2004 Marian Vittek, Xref-Tech
 ;; Put under GPL in 2009 by Marián Vittek

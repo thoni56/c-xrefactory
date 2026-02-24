@@ -1,4 +1,4 @@
-;;; c-xrefdoc.el - (X)Emacs interface to C-xrefactory (documentation)
+;;; c-xrefdoc.el - (X)Emacs interface to C-xrefactory (documentation) -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 1997-2004 Marian Vittek, Xref-Tech
 ;; Put under GPL in 2009 by Marián Vittek
