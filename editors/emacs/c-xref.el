@@ -4360,8 +4360,9 @@ compilation is successful.  See also `c-xref-ide-compile' and
     (c-xref-ide-compile)
     (setq cproc (get-buffer-process c-xref-compilation-buffer))
     (if cproc
-            (set-process-sentinel cproc (list 'lambda '(cc message)
-                                              (list 'c-xref-ide-compile-run-sentinel 'cc 'message owin opc)))
+            (set-process-sentinel cproc
+              (lambda (cc message)
+                (c-xref-ide-compile-run-sentinel cc message owin opc)))
       )
     (sit-for .5)
     (setq cwin (get-buffer-window c-xref-compilation-buffer))

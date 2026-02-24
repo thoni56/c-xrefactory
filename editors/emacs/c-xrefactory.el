@@ -669,8 +669,9 @@ faces and highlighting in buffers created by C-xrefactory.
 
 (defun c-xref-emacs-add-menu-item (menu text expression)
   ;; first create a new function with expression as body
-  (defalias (intern (format "c-xref-custom-menu-fun-%d" c-xref-custom-menu-symbol-count))
-    (append '(lambda () "C-xrefactory menu custom function" (interactive "")) (list expression)))
+  (let ((expr expression))
+    (defalias (intern (format "c-xref-custom-menu-fun-%d" c-xref-custom-menu-symbol-count))
+      (lambda () "C-xrefactory menu custom function" (interactive) (eval expr))))
 
   ;; now put new menu item for this function
   (define-key menu
