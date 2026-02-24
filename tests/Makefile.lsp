@@ -5,11 +5,16 @@
 
 include $(dir $(lastword $(MAKEFILE_LIST)))/Makefile.boilerplate
 
-# Extend NORMALIZE to split joined LSP frames and ensure trailing newline
-NORMALIZE += -e 's/\(.\)Content-Length/\1\nContent-Length/g' -e '$$a\'
-
 # Platform detection
 UNAME_S := $(shell uname -s)
+
+# Extend NORMALIZE to split joined LSP frames and ensure trailing newline
+# (LSP protocol has no trailing newline, so we always add one for readability)
+ifeq ($(UNAME_S),Darwin)
+NORMALIZE += -e 's/\(.\)Content-Length/\1\nContent-Length/g' -e '$$G'
+else
+NORMALIZE += -e 's/\(.\)Content-Length/\1\nContent-Length/g' -e '$$a\'
+endif
 
 # Default breaking point
 DEBUG_BREAK = lsp_server
