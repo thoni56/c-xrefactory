@@ -1,4 +1,4 @@
-[![Build Status][travis badge]][travis link]&nbsp;
+![Build Status][travis badge]][travis link]&nbsp;
 [![Coverage Status][coveralls badge]][coveralls link]&nbsp;
 [![codecov][codecov badge]][codecov link]
 
@@ -27,10 +27,13 @@ _C_ & _Yacc_.
 
 - _more to come!_
 
-### LSP progress
+### LSP
 
-`c-xrefactory` have an experimental LSP implementation. One feature has been rudimentary
-implemented:
+`c-xrefactory` have an experimental LSP ([Language Server Protocol])
+implementation. A full implementation would mean that `c-xrefactory`
+could be slot-in into all LSP-compliant editors/IDEs like VSCode.
+
+One feature has so far been rudimentary implemented as a proof of concept:
 
 - `textDocument/definition` - translates to Goto Definition or similar command in editors
 
@@ -122,9 +125,10 @@ refactorings you want from inside the C code in the semantic actions.
 ### LSP
 
 As noted in one issue, a natural development would be to support LSP
-(The [Language Server Protocol]), but that is still far out of reach.
-A lot of refactoring needs to be done to clean up the current modules
-and protocol to get closer to that point.
+(The [Language Server Protocol]), a Proof of Concept has been made but
+a full implementation is still out of reach.  A lot of refactoring
+needs to be done to clean up the current modules and API to get
+closer to that point.
 
 Experimental work has been started and it is possible to hook up
 the `c-xrefactory` server to an LSP client. The basic communication
@@ -132,7 +136,7 @@ works and `textDocument/definition` (go-to-definition) is implemented
 for file global symbols (functions, global variables, types). Symbols
 outside the current document and local variables are not yet handled
 due to architectural differences in how the LSP mode indexes symbols
-compared to the legacy Emacs client.
+compared to the native Emacs client.
 
 > [!CAUTION]
 > `c-xrefactory` is still under constant radical refactorings and restructuring, and
