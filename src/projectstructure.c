@@ -11,9 +11,29 @@
 
 #define SCAN_BUFFER_SIZE 4096
 
+/* Resolve an include path: try includer's directory first, then walk
+   includeDirs. Returns the resolved path (pointer to static buffer). */
+static char *resolveIncludePath(const char *includedFile, const char *includerPath,
+                                StringList *includeDirs) {
+    char *dir = directoryName_static((char *)includerPath);
+    char *resolved = normalizeFileName_static((char *)includedFile, dir);
+    if (fileExists(resolved))
+        return resolved;
+
+    for (StringList *d = includeDirs; d != NULL; d = d->next) {
+        resolved = normalizeFileName_static((char *)includedFile, d->string);
+        if (fileExists(resolved))
+            return resolved;
+    }
+
+    /* Not found anywhere — return includer-relative path (will fail to open) */
+    return normalizeFileName_static((char *)includedFile,
+                                    directoryName_static((char *)includerPath));
+}
+
 /* Scan a single file for #include "..." lines. Returns a list of newly
    discovered resolved paths (caller must free). */
-static StringList *scanFileForIncludes(const char *filePath) {
+static StringList *scanFileForIncludes(const char *filePath, StringList *includeDirs) {
     StringList *discovered = NULL;
     FILE *file = openFile((char *)filePath, "r");
     if (file == NULL)
@@ -40,8 +60,7 @@ static StringList *scanFileForIncludes(const char *filePath) {
 
             char includedFile[256];
             if (sscanf(line, " # include \"%255[^\"]\"", includedFile) == 1) {
-                char *dir = directoryName_static((char *)filePath);
-                char *resolved = normalizeFileName_static(includedFile, dir);
+                char *resolved = resolveIncludePath(includedFile, filePath, includeDirs);
                 bool alreadyKnown = existsInFileTable(resolved);
                 int fileNumber = addFileNameToFileTable(resolved);
                 addFileAsIncludeReference(fileNumber);
@@ -56,7 +75,7 @@ static StringList *scanFileForIncludes(const char *filePath) {
     return discovered;
 }
 
-void scanProjectForFilesAndIncludes(const char *projectDir) {
+void scanProjectForFilesAndIncludes(const char *projectDir, StringList *includeDirs) {
     StringList *worklist = NULL;
 
     /* Phase 1: discover CUs and scan them */
@@ -65,7 +84,7 @@ void scanProjectForFilesAndIncludes(const char *projectDir) {
         if (!isCompilationUnit(f->string))
             continue;
         addFileNameToFileTable(f->string);
-        StringList *newHeaders = scanFileForIncludes(f->string);
+        StringList *newHeaders = scanFileForIncludes(f->string, includeDirs);
         /* Prepend discovered headers to worklist */
         if (newHeaders != NULL) {
             StringList *tail = newHeaders;
@@ -83,7 +102,7 @@ void scanProjectForFilesAndIncludes(const char *projectDir) {
         worklist = worklist->next;
         current->next = NULL;
 
-        StringList *newHeaders = scanFileForIncludes(current->string);
+        StringList *newHeaders = scanFileForIncludes(current->string, includeDirs);
         if (newHeaders != NULL) {
             StringList *tail = newHeaders;
             while (tail->next != NULL)

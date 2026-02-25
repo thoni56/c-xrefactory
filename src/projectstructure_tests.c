@@ -42,6 +42,8 @@ static void given_include_resolves(char *includeName, char *dir, char *resolvedP
     expect(directoryName_static, will_return(dir));
     expect(normalizeFileName_static, when(name, is_equal_to_string(includeName)),
            will_return(resolvedPath));
+    expect(fileExists, when(fullPath, is_equal_to_string(resolvedPath)),
+           will_return(true));
     expect(existsInFileTable, when(fileName, is_equal_to_string(resolvedPath)),
            will_return(false));
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string(resolvedPath)),
@@ -77,7 +79,7 @@ Ensure(ProjectStructure, adds_nothing_for_empty_project_directory) {
     never_expect(addFileNameToFileTable);
     never_expect(addFileAsIncludeReference);
 
-    scanProjectForFilesAndIncludes("/empty/dir");
+    scanProjectForFilesAndIncludes("/empty/dir", NULL);
 }
 
 Ensure(ProjectStructure, adds_only_file_for_cu_without_includes) {
@@ -85,7 +87,7 @@ Ensure(ProjectStructure, adds_only_file_for_cu_without_includes) {
     given_cu_without_includes("/project/source.c");
     never_expect(addFileAsIncludeReference);
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
 }
 
 Ensure(ProjectStructure, adds_file_and_reference_for_single_include) {
@@ -94,7 +96,7 @@ Ensure(ProjectStructure, adds_file_and_reference_for_single_include) {
     given_include_resolves("header.h", "/project", "/project/header.h", 2);
     given_header_without_includes("/project/header.h");
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
 }
 
 Ensure(ProjectStructure, adds_references_for_multiple_includes) {
@@ -108,7 +110,7 @@ Ensure(ProjectStructure, adds_references_for_multiple_includes) {
     given_header_without_includes("/project/beta.h");
     given_header_without_includes("/project/gamma.h");
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
 }
 
 Ensure(ProjectStructure, scans_multiple_cus_independently) {
@@ -121,7 +123,7 @@ Ensure(ProjectStructure, scans_multiple_cus_independently) {
     given_header_without_includes("/project/main.h");
     given_header_without_includes("/project/util.h");
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
 }
 
 Ensure(ProjectStructure, handles_include_split_across_buffer_boundary) {
@@ -143,7 +145,7 @@ Ensure(ProjectStructure, handles_include_split_across_buffer_boundary) {
     given_include_resolves("header.h", "/project", "/project/header.h", 2);
     given_header_without_includes("/project/header.h");
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
 }
 
 Ensure(ProjectStructure, ignores_angle_bracket_includes) {
@@ -151,7 +153,7 @@ Ensure(ProjectStructure, ignores_angle_bracket_includes) {
     given_cu_with_content("/project/source.c", 1, "#include <stdio.h>\n");
     never_expect(addFileAsIncludeReference);
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
 }
 
 Ensure(ProjectStructure, recognises_indented_include) {
@@ -160,7 +162,7 @@ Ensure(ProjectStructure, recognises_indented_include) {
     given_include_resolves("header.h", "/project", "/project/header.h", 2);
     given_header_without_includes("/project/header.h");
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
 }
 
 Ensure(ProjectStructure, recognises_space_between_hash_and_include) {
@@ -169,7 +171,7 @@ Ensure(ProjectStructure, recognises_space_between_hash_and_include) {
     given_include_resolves("header.h", "/project", "/project/header.h", 2);
     given_header_without_includes("/project/header.h");
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
 }
 
 Ensure(ProjectStructure, scans_only_compilation_units) {
@@ -183,7 +185,7 @@ Ensure(ProjectStructure, scans_only_compilation_units) {
     expect(isCompilationUnit, will_return(false)); /* header.h */
     expect(isCompilationUnit, will_return(false)); /* readme.txt */
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
 }
 
 /* Transitive include scanning tests */
@@ -201,7 +203,7 @@ Ensure(ProjectStructure, scans_header_includes_transitively) {
     /* deep.h has no includes — but it should still be opened and scanned */
     given_header_with_content("/project/deep.h", "/* no includes */\n");
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
 }
 
 Ensure(ProjectStructure, scans_transitive_includes_to_full_depth) {
@@ -218,7 +220,7 @@ Ensure(ProjectStructure, scans_transitive_includes_to_full_depth) {
 
     given_header_without_includes("/project/c.h");
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
 }
 
 Ensure(ProjectStructure, skips_already_known_header_in_transitive_scan) {
@@ -242,6 +244,8 @@ Ensure(ProjectStructure, skips_already_known_header_in_transitive_scan) {
     expect(directoryName_static, will_return("/project"));
     expect(normalizeFileName_static, when(name, is_equal_to_string("shared.h")),
            will_return("/project/shared.h"));
+    expect(fileExists, when(fullPath, is_equal_to_string("/project/shared.h")),
+           will_return(true));
     expect(existsInFileTable, when(fileName, is_equal_to_string("/project/shared.h")),
            will_return(true));
     /* Still records the include reference, but does NOT add to worklist */
@@ -249,20 +253,37 @@ Ensure(ProjectStructure, skips_already_known_header_in_transitive_scan) {
            will_return(4));
     expect(addFileAsIncludeReference, when(filenum, is_equal_to(4)));
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
 }
 
 Ensure(ProjectStructure, records_include_but_skips_scanning_missing_file) {
     /* source.c → missing.h, but missing.h doesn't exist on disk */
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "#include \"missing.h\"\n");
-    given_include_resolves("missing.h", "/project", "/project/missing.h", 2);
+
+    /* Include resolution: try includer's dir — not found, no includeDirs, fallback */
+    expect(directoryName_static, will_return("/project"));
+    expect(normalizeFileName_static, when(name, is_equal_to_string("missing.h")),
+           will_return("/project/missing.h"));
+    expect(fileExists, when(fullPath, is_equal_to_string("/project/missing.h")),
+           will_return(false));
+    /* Fallback: return includer-relative path */
+    expect(normalizeFileName_static, when(name, is_equal_to_string("missing.h")),
+           will_return("/project/missing.h"));
+    expect(directoryName_static, will_return("/project"));
+
+    /* File gets registered despite not existing */
+    expect(existsInFileTable, when(fileName, is_equal_to_string("/project/missing.h")),
+           will_return(false));
+    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/missing.h")),
+           will_return(2));
+    expect(addFileAsIncludeReference, when(filenum, is_equal_to(2)));
 
     /* Worklist tries to scan missing.h but openFile fails */
     expect(openFile, will_return(NULL));
     /* No readFile or closeFile — file couldn't be opened */
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
 }
 
 Ensure(ProjectStructure, handles_circular_includes_without_infinite_loop) {
@@ -279,6 +300,8 @@ Ensure(ProjectStructure, handles_circular_includes_without_infinite_loop) {
     expect(directoryName_static, will_return("/project"));
     expect(normalizeFileName_static, when(name, is_equal_to_string("a.h")),
            will_return("/project/a.h"));
+    expect(fileExists, when(fullPath, is_equal_to_string("/project/a.h")),
+           will_return(true));
     expect(existsInFileTable, when(fileName, is_equal_to_string("/project/a.h")),
            will_return(true));
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/a.h")),
@@ -286,7 +309,7 @@ Ensure(ProjectStructure, handles_circular_includes_without_infinite_loop) {
     expect(addFileAsIncludeReference, when(filenum, is_equal_to(2)));
     /* No further scanning — worklist is empty */
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
 }
 
 Ensure(ProjectStructure, follows_includes_regardless_of_file_extension) {
@@ -300,7 +323,81 @@ Ensure(ProjectStructure, follows_includes_regardless_of_file_extension) {
 
     given_header_without_includes("/project/table.th");
 
-    scanProjectForFilesAndIncludes("/project");
+    scanProjectForFilesAndIncludes("/project", NULL);
+}
+
+/* Include path resolution tests */
+
+Ensure(ProjectStructure, prefers_includer_dir_over_includeDirs) {
+    /* source.c includes "util.h", found in both /project/ and /project/lib/
+       — includer's directory should win */
+    StringList *includeDirs = newStringList("/project/lib", NULL);
+
+    given_project_files(newStringList("/project/source.c", NULL));
+    given_cu_with_content("/project/source.c", 1, "#include \"util.h\"\n");
+
+    /* Include resolution: try includer's dir first — found */
+    expect(directoryName_static, will_return("/project"));
+    expect(normalizeFileName_static, when(name, is_equal_to_string("util.h")),
+           will_return("/project/util.h"));
+    expect(fileExists, when(fullPath, is_equal_to_string("/project/util.h")),
+           will_return(true));
+
+    /* Resolved to includer's dir, NOT /project/lib/util.h */
+    expect(existsInFileTable, when(fileName, is_equal_to_string("/project/util.h")),
+           will_return(false));
+    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/util.h")),
+           will_return(2));
+    expect(addFileAsIncludeReference, when(filenum, is_equal_to(2)));
+
+    /* Transitive scan of the discovered header */
+    given_header_without_includes("/project/util.h");
+
+    scanProjectForFilesAndIncludes("/project", includeDirs);
+}
+
+Ensure(ProjectStructure, resolves_include_via_includeDirs_when_not_in_includer_dir) {
+    /* source.c includes "util.h", not found in /project/, found in /project/lib/ */
+    StringList *includeDirs = newStringList("/project/lib", NULL);
+
+    given_project_files(newStringList("/project/source.c", NULL));
+
+    /* CU setup */
+    expect(isCompilationUnit, will_return(true));
+    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/source.c")),
+           will_return(1));
+    expect(openFile, when(fileName, is_equal_to_string("/project/source.c")),
+           will_return((FILE *)1));
+    char *content = "#include \"util.h\"\n";
+    expect(readFile, will_set_contents_of_parameter(buffer, content, strlen(content)),
+           will_return(strlen(content)));
+    expect(readFile, will_return(0));
+    expect(closeFile);
+
+    /* Include resolution: try includer's dir first — not found */
+    expect(directoryName_static, will_return("/project"));
+    expect(normalizeFileName_static, when(name, is_equal_to_string("util.h")),
+           will_return("/project/util.h"));
+    expect(fileExists, when(fullPath, is_equal_to_string("/project/util.h")),
+           will_return(false));
+
+    /* Try first includeDirs entry — found */
+    expect(normalizeFileName_static, when(name, is_equal_to_string("util.h")),
+           will_return("/project/lib/util.h"));
+    expect(fileExists, when(fullPath, is_equal_to_string("/project/lib/util.h")),
+           will_return(true));
+
+    /* File added with the resolved path */
+    expect(existsInFileTable, when(fileName, is_equal_to_string("/project/lib/util.h")),
+           will_return(false));
+    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/lib/util.h")),
+           will_return(2));
+    expect(addFileAsIncludeReference, when(filenum, is_equal_to(2)));
+
+    /* Transitive scan of the discovered header */
+    given_header_without_includes("/project/lib/util.h");
+
+    scanProjectForFilesAndIncludes("/project", includeDirs);
 }
 
 /* markMissingFilesAsDeleted tests */
