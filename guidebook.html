@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-02-24">
+<meta name="author" content="v{VERSION} - Generated 2026-02-25">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-02-24</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-02-25</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -466,7 +466,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_principles">6. Principles</a>
 <ul class="sectlevel2">
 <li><a href="#_reference_database_and_parsing">6.1. Reference Database and Parsing</a></li>
-<li><a href="#_tbd">6.2. TBD.</a></li>
+<li><a href="#_terminology">6.2. Terminology</a></li>
 </ul>
 </li>
 <li><a href="#_software_architecture">7. Software Architecture</a>
@@ -475,7 +475,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_containers">7.2. Containers</a></li>
 </ul>
 </li>
-<li><a href="#_components">8. Components</a>
+<li><a href="#components">8. Components</a>
 <ul class="sectlevel2">
 <li><a href="#_parsing">8.1. Parsing</a></li>
 <li><a href="#_xref">8.2. Xref</a></li>
@@ -486,21 +486,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_cxref">8.7. Cxref</a></li>
 <li><a href="#_main">8.8. Main</a></li>
 <li><a href="#_memory">8.9. Memory</a></li>
-<li><a href="#_cxfile">8.10. Cxfile</a></li>
-<li><a href="#_editor_extension">8.11. Editor Extension</a></li>
-<li><a href="#_commands">8.12. Commands</a></li>
-<li><a href="#_passes">8.13. Passes</a></li>
-<li><a href="#_file_processing_orchestration">8.14. File Processing Orchestration</a></li>
-<li><a href="#_parsers">8.15. Parsers</a></li>
-<li><a href="#_integrated_preprocessor">8.16. Integrated Preprocessor</a></li>
-<li><a href="#_refactoring_and_the_parsers">8.17. Refactoring and the parsers</a></li>
-<li><a href="#_reading_files">8.18. Reading Files</a></li>
-<li><a href="#_reference_database">8.19. Reference Database</a></li>
-<li><a href="#_editor_plugin">8.20. Editor Plugin</a></li>
-<li><a href="#_editor_server">8.21. Editor Server</a></li>
-<li><a href="#_refactoring">8.22. Refactoring</a></li>
-<li><a href="#_memory_handling">8.23. Memory handling</a></li>
-<li><a href="#_configuration">8.24. Configuration</a></li>
+<li><a href="#_content_buffers_editorbuffer">8.10. Content Buffers (EditorBuffer)</a></li>
+<li><a href="#_cxfile">8.11. Cxfile</a></li>
+<li><a href="#_editor_extension">8.12. Editor Extension</a></li>
+<li><a href="#_commands">8.13. Commands</a></li>
+<li><a href="#_passes">8.14. Passes</a></li>
+<li><a href="#_file_processing_orchestration">8.15. File Processing Orchestration</a></li>
+<li><a href="#_parsers">8.16. Parsers</a></li>
+<li><a href="#_integrated_preprocessor">8.17. Integrated Preprocessor</a></li>
+<li><a href="#_refactoring_and_the_parsers">8.18. Refactoring and the parsers</a></li>
+<li><a href="#_reading_files">8.19. Reading Files</a></li>
+<li><a href="#_reference_database">8.20. Reference Database</a></li>
+<li><a href="#_editor_plugin">8.21. Editor Plugin</a></li>
+<li><a href="#_editor_server">8.22. Editor Server</a></li>
+<li><a href="#_refactoring">8.23. Refactoring</a></li>
+<li><a href="#_memory_handling">8.24. Memory handling</a></li>
+<li><a href="#_configuration">8.25. Configuration</a></li>
 </ul>
 </li>
 <li><a href="#_data_structures">9. Data Structures</a>
@@ -525,7 +526,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_how_does">10.4. How does &#8230;&#8203;</a></li>
 </ul>
 </li>
-<li><a href="#_development_environment">11. Development Environment</a>
+<li><a href="#development-environment">11. Development Environment</a>
 <ul class="sectlevel2">
 <li><a href="#_developing_here_be_dragons">11.1. Developing, here be dragons&#8230;&#8203;</a></li>
 <li><a href="#_setup">11.2. Setup</a></li>
@@ -570,6 +571,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#unified-symbol-database">16.2. Unified Symbol Database Architecture</a></li>
 <li><a href="#macro-expansion-module">16.3. Extract Macro Expansion Module</a></li>
 <li><a href="#clean-parser-api">16.4. Clean Parser API and Multi-File Definition Support</a></li>
+<li><a href="#remove-hashtab">16.5. Remove Hashtab by Migrating to Hashlist</a></li>
+<li><a href="#split-editor-module">16.6. Split the Editor Module</a></li>
 </ul>
 </li>
 <li><a href="#_insights">17. Insights</a>
@@ -1010,10 +1013,125 @@ across all files in the used source.</p>
 <p>All symbols that are only visible inside a unit is handled by
 reparsing the file of interest.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This describes the semantics of the <em>persisted snapshot</em> (<code>.cx</code> files), not the
+<em>reference table</em> in memory. The in-memory reference table holds all symbols encountered
+during parsing, including file-local ones. Only externally visible symbols are persisted
+to the snapshot because file-local symbols can always be reconstructed by reparsing. As
+the architecture moves toward "memory as truth" (see <a href="15-roadmap.adoc">Roadmap</a>), the
+distinction between "persisted" and "in-memory" symbols may evolve.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_tbd">6.2. TBD.</h3>
-
+<h3 id="_terminology">6.2. Terminology</h3>
+<div class="paragraph">
+<p>The following terms are used throughout the documentation and codebase. Preferred terms
+are listed alphabetically; terms to avoid are noted to reduce ambiguity.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Cold start</dt>
+<dd>
+<p>Server startup with no persisted snapshot available. All compilation units must be
+fully parsed to populate the reference table. Same code path as warm start, just more
+work.</p>
+</dd>
+<dt class="hdlist1">Compilation unit (CU)</dt>
+<dd>
+<p>A source file that is directly compiled (<code>.c</code>, <code>.y</code>). Discovered by globbing the
+project directory. Distinguished from header files, which are included transitively
+and not compiled independently.</p>
+</dd>
+<dt class="hdlist1">Include structure</dt>
+<dd>
+<p>The graph of <code>#include</code> relationships between files, represented in the reference table
+as <code>TypeCppInclude</code> references. Cheap to build (text scanning for <code>#include</code> lines).
+Separate from symbol references, which require full parsing.</p>
+</dd>
+<dt class="hdlist1">Initialization</dt>
+<dd>
+<p>The first-request setup: discover project, load options, interrogate compiler, restore
+snapshot, scan project structure. Happens once per session. Not the same as cold start
+— initialization happens on every session, cold start describes the <em>absence</em> of a
+snapshot.</p>
+</dd>
+<dt class="hdlist1">Lightweight scan</dt>
+<dd>
+<p>Discovery of project structure by globbing for compilation units and text-scanning
+<code>#include</code> lines, without full parsing. Populates the file table and include structure.
+Replaces <code>-create</code> and the <code>callXref()</code> pre-refactoring pattern (ADR 22).</p>
+</dd>
+<dt class="hdlist1">Persisted snapshot</dt>
+<dd>
+<p>The <code>.cx</code> files on disk. A point-in-time copy of the reference table from a previous
+session, loaded at startup to avoid a full parse. May be stale — reconciled against
+the filesystem via mtime comparison.<br>
+<em>Avoid "disk db", "cache", "reference database"</em> when referring to the <code>.cx</code> files.
+A snapshot is not queryable (no search operations on disk), has no invalidation
+semantics (unlike a cache), and is not the source of truth (unlike a database).</p>
+</dd>
+<dt class="hdlist1">Reference table</dt>
+<dd>
+<p>The authoritative in-memory state during a running session. Comprises the
+<code>referenceableItemTable</code> (symbol references), the file table (file entries with
+modification tracking), and <code>TypeCppInclude</code> references (include structure). Populated
+by parsing, snapshot restoration, and lightweight scanning.<br>
+<em>Avoid "in-memory db", "memory db".</em> It is the live working set, not a database in
+the traditional sense.</p>
+</dd>
+<dt class="hdlist1">Restoring</dt>
+<dd>
+<p>Loading a persisted snapshot into the reference table at startup. After restoration,
+mtime comparison determines which entries are fresh and which need reparsing.<br>
+<em>Avoid "loading the database".</em></p>
+</dd>
+<dt class="hdlist1">Saving / persisting</dt>
+<dd>
+<p>Writing the current reference table state to <code>.cx</code> files. Only disk-file-derived
+references are persisted; references from unsaved editor buffers are excluded so that
+mtime-based validation remains correct at next startup.<br>
+<em>Avoid "writing the database".</em></p>
+</dd>
+<dt class="hdlist1">Staleness</dt>
+<dd>
+<p>A file is stale when its content has changed since it was last parsed. Detected by
+comparing <code>lastParsedMtime</code> against the current file modification time (from disk or
+editor buffer). Stale files trigger reparsing in the two-pass reparse phase (ADR 20).</p>
+</dd>
+<dt class="hdlist1">Steady state</dt>
+<dd>
+<p>The server is initialized and processing requests. Staleness detection and incremental
+reparsing happen per-request. The reference table is authoritative.<br>
+<em>Avoid "hot start"</em> — ambiguous.</p>
+</dd>
+<dt class="hdlist1">Symbol references</dt>
+<dd>
+<p>The detailed reference information (positions, usage types) for identifiers, created by
+full parsing. Expensive to produce. Distinguished from include structure, which is cheap.</p>
+</dd>
+<dt class="hdlist1">Two-pass reparse</dt>
+<dd>
+<p>The per-request staleness refresh mechanism (ADR 20). Pass 1 reparses stale compilation
+units directly, updating their include refs. Pass 2 queries the freshened include refs
+to find CUs that include stale headers, and reparses those. Pass ordering is critical.</p>
+</dd>
+<dt class="hdlist1">Warm start</dt>
+<dd>
+<p>Server startup with an existing persisted snapshot. Most compilation units are fresh
+(snapshot mtime matches disk mtime); only stale ones need reparsing. Same code path as
+cold start, less work.</p>
+</dd>
+</dl>
+</div>
 </div>
 </div>
 </div>
@@ -1042,22 +1160,21 @@ files can and do include much every other module.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-One focus area for the ongoing work is to try to pry out modules/components
-from the code mess by moving functions around, renaming and hiding
-functions, where possible.
+There is still ongoing work is to try to identify modules/components, which are
+not always directly mapped to source files, but based on higher level responsibilites.
 </td>
 </tr>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_cxrefcore">7.2.1. CxrefCore</h4>
+<h4 id="_cxrefprogram">7.2.1. CxrefProgram</h4>
 <div class="imageblock">
 <div class="content">
-<img src="CxrefCore.png" alt="CxrefCore" width="4096" height="1103">
+<img src="CxrefProgram.png" alt="CxrefProgram" width="4096" height="1103">
 </div>
 </div>
 <div class="paragraph">
-<p><code>cxrefCore</code> is the core container. It does all the work when it comes
+<p><code>cxrefProgram</code> is the core container. It does all the work when it comes
 to finding and reporting references to symbols, communicating
 refactoring requests as well as storing reference information for
 longer term storage and caching.</p>
@@ -1066,11 +1183,11 @@ longer term storage and caching.</p>
 <p>Although <code>c-xref</code> can be used as a command line tool, which can be
 handy when debugging or exploring, it is normally used in "server"
 mode. In server mode the communication between the editor extension
-and the cxrefCore container is a back-and-forth communication using a
+and the 'cxrefProgram` container is a back-and-forth communication using a
 non-standard protocol over standard pipes.</p>
 </div>
 <div class="paragraph">
-<p>The responsibilities of <code>cxrefCore</code> can largely be divided into</p>
+<p>The responsibilities of <code>cxrefProgram</code> can largely be divided into</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1117,6 +1234,20 @@ although there existed code, still available in the repo history, for
 an extension for <code>jEdit</code> which hasn&#8217;t been updated, modified or checked
 for a long time and no longer is a part of this project.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+There is a proof of concept implementation of a rudimentary LSP adapter which
+would make it possible to use <code>c-xrefactory</code> from a wide range of editors and IDEs, at
+least for many operations.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_referencesdb">7.2.3. ReferencesDB</h4>
@@ -1142,7 +1273,7 @@ when a symbol is looked up.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_components">8. Components</h2>
+<h2 id="components">8. Components</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This chapter describes the components of the <code>cxrefProgram</code> container, as defined in the C4 component diagram. Each section documents a component&#8217;s responsibilities, architecture, and interface.</p>
@@ -2023,15 +2154,141 @@ bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_cxfile">8.10. Cxfile</h3>
+<h3 id="_content_buffers_editorbuffer">8.10. Content Buffers (EditorBuffer)</h3>
 <div class="sect3">
 <h4 id="_responsibilities_9">8.10.1. Responsibilities</h4>
+<div class="paragraph">
+<p>Content buffers provide an in-memory cache of file content that transparently overrides disk file reading during parsing. When a content buffer exists for a file, the parser uses its in-memory content instead of reading from disk.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_three_roles">8.10.2. Three Roles</h4>
+<div class="paragraph">
+<p>Content buffers (the <code>EditorBuffer</code> struct) serve three distinct roles:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Role</th>
+<th class="tableblock halign-left valign-top"><code>preLoadedFromFile</code></th>
+<th class="tableblock halign-left valign-top">How content arrives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Editor content</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Non-NULL (tmp file path)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Client writes unsaved buffer to a tmp file; server reads the tmp file. Content represents the editor&#8217;s in-memory state, which may differ from the original file on disk.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Disk file cache</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NULL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Created on demand by <code>findOrCreateAndLoadEditorBufferForFile()</code> when the lexer encounters an <code>#include</code> or other code needs file content. Avoids re-reading the same file from disk during a single parse or across multiple parses.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>LSP document state</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NULL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Content arrives in a <code>textDocument/didOpen</code> JSON message. No tmp file, no disk read. Lives from <code>didOpen</code> to <code>didClose</code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_how_parsing_uses_buffers">8.10.3. How Parsing Uses Buffers</h4>
+<div class="paragraph">
+<p>The lexer reads from a <strong>character buffer</strong> (<code>currentFile.characterBuffer</code>), which is the common layer regardless of content source. Where the character buffer gets its data depends on whether a content buffer exists:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Content buffer path</strong>: <code>initInputFromEditorBuffer()</code> points the character buffer directly into the content buffer&#8217;s text memory. All content is available immediately — no file I/O.</p>
+</li>
+<li>
+<p><strong>File path</strong>: <code>initInputFromFile()</code> uses <code>currentFile.characterBuffer.chars</code> — a separate fixed-size buffer. Data is read from the FILE handle incrementally as the lexer consumes characters.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When the lexer processes an <code>#include</code>, it calls <code>findOrCreateAndLoadEditorBufferForFile()</code> for the included file. This function:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Checks if a content buffer already exists (preloaded or cached) — if so, returns it</p>
+</li>
+<li>
+<p>Otherwise reads the file from disk into a new content buffer</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>If a content buffer is found, the character buffer is set up to read from it. If not (file doesn&#8217;t exist or is a directory), the fallback <code>openFile()</code> path reads from disk via a FILE handle. This means <strong>preloaded editor content transparently overrides disk content</strong> — the parser doesn&#8217;t know or care where the content came from.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_lifetime">8.10.4. Lifetime</h4>
+<div class="paragraph">
+<p>Buffer lifetime depends on the server mode and buffer role:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Context</th>
+<th class="tableblock halign-left valign-top">Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Server mode, editor content</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Currently destroyed after each request (<code>closeAllEditorBuffers</code>). <a href="/workspace/decisions#23">ADR-0023</a> proposes making these persistent across requests.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Server mode, disk cache</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Destroyed after each request. Appropriate since different requests may parse different files.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Xref mode, disk cache</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Preserved across file processing (<code>closeAllEditorBuffersIfClosable</code>). A header like <code>commons.h</code> included by many CUs is read once and reused.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>LSP mode, document state</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Persistent from <code>didOpen</code> to <code>didClose</code>. Not affected by request boundaries.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The existing <code>bufferIsCloseable()</code> predicate distinguishes these cases: it returns <code>false</code> for preloaded buffers (preserving editor content) and <code>true</code> for loaded, unmodified, marker-free buffers (allowing cache cleanup).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_staleness_detection">8.10.5. Staleness Detection</h4>
+<div class="paragraph">
+<p>For preloaded buffers, staleness is detected by comparing <code>fileItem&#8594;lastParsedMtime</code> with <code>buffer&#8594;modificationTime</code>. After parsing a preloaded buffer, <code>lastParsedMtime</code> is set to the buffer&#8217;s modification time. If the buffer is re-sent with a new tmp file (new mtime), the file appears stale and is reparsed.</p>
+</div>
+<div class="paragraph">
+<p>See the Server component&#8217;s Entry-Point Reparse section for how staleness drives the sync phase.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cxfile">8.11. Cxfile</h3>
+<div class="sect3">
+<h4 id="_responsibilities_10">8.11.1. Responsibilities</h4>
 <div class="paragraph">
 <p>Read and write the CXref database (<code>.cx</code> files) in a compact text format. Cxfile is the persistence layer: it serializes symbol references to disk after parsing and loads them back during navigation and refactoring operations.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_database_structure">8.10.2. Database Structure</h4>
+<h4 id="_database_structure">8.11.2. Database Structure</h4>
 <div class="paragraph">
 <p>The database uses a hash-partitioned file structure:</p>
 </div>
@@ -2049,7 +2306,7 @@ bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_file_format">8.10.3. File Format</h4>
+<h4 id="_file_format">8.11.3. File Format</h4>
 <div class="paragraph">
 <p>Records use the general format <code>&lt;number&gt;&lt;key&gt;[&lt;value&gt;]</code>. The encoding uses single-character markers listed at the top of <code>cxfile.c</code>.</p>
 </div>
@@ -2082,14 +2339,14 @@ bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_reading">8.10.4. Reading</h4>
+<h4 id="_reading">8.11.4. Reading</h4>
 <div class="paragraph">
 <p>Reading is controlled by <code>scanFunctionTable</code> arrays. Each entry maps a record key to a handler function. As the reader encounters a key in the file, it looks up the handler and calls it. This table-driven approach allows different consumers to register for different record types — for example, loading only symbol names vs. loading full reference lists.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_extension">8.11. Editor Extension</h3>
+<h3 id="_editor_extension">8.12. Editor Extension</h3>
 <div class="paragraph">
 <p>The Emacs editor extension is implemented in these components/files:</p>
 </div>
@@ -2107,13 +2364,13 @@ bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);</code></pre>
 </ul>
 </div>
 <div class="sect3">
-<h4 id="_responsibilities_10">8.11.1. Responsibilities</h4>
+<h4 id="_responsibilities_11">8.12.1. Responsibilities</h4>
 <div class="paragraph">
 <p>The Emacs client extension provides the user-facing interface for navigation, refactoring, and completion. It starts the <code>c-xref</code> process on the first user interaction and communicates with the server process over stdin/stdout using a text protocol.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_preloading">8.11.2. Preloading</h4>
+<h4 id="_preloading">8.12.2. Preloading</h4>
 <div class="paragraph">
 <p>To give the server access to unsaved content the client sends <code>-preload &lt;file&gt; &lt;tmpfile&gt;</code> for modified editor. On PUSH, NEXT, and PREVIOUS, all modified buffers (including the current one if modified) are preloaded. Unmodified buffers are not preloaded — the server reads the disk file directly.</p>
 </div>
@@ -2127,7 +2384,7 @@ bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_commands">8.12. Commands</h3>
+<h3 id="_commands">8.13. Commands</h3>
 <div class="paragraph">
 <p>The <em>editorExtension</em> calls the server using command line
 options. These are then converted to first a command enum starting in
@@ -2175,7 +2432,7 @@ mean that we need to:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_passes">8.13. Passes</h3>
+<h3 id="_passes">8.14. Passes</h3>
 <div class="paragraph">
 <p><code>c-xrefactory</code> makes it possible to parse the analyzed source multiple passes in case
 you compile the project sources with different C defines. In the project configuration
@@ -2184,14 +2441,29 @@ that are to be applied for this pass over the sources.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_file_processing_orchestration">8.14. File Processing Orchestration</h3>
+<h3 id="_file_processing_orchestration">8.15. File Processing Orchestration</h3>
 <div class="paragraph">
 <p>The file processing architecture differs significantly between Server mode, Xref mode,
 and LSP mode, with confusing global state and naming inconsistencies that make the code
 hard to follow.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The current architecture is being restructured toward a unified server flow where
+lightweight file structure scanning replaces the legacy <code>-create</code>/<code>callXref()</code> pattern.
+See <a href="#target-unified-flow">Target: Unified Server Flow (ADR 22)</a> below and ADR 22 for the target design. Annotations marked
+[TARGET] indicate planned changes.
+</td>
+</tr>
+</table>
+</div>
 <div class="sect3">
-<h4 id="_file_scheduling_how_files_get_marked_for_processing">8.14.1. File Scheduling - How Files Get Marked for Processing</h4>
+<h4 id="_file_scheduling_how_files_get_marked_for_processing">8.15.1. File Scheduling - How Files Get Marked for Processing</h4>
 <div class="paragraph">
 <p>All modes begin by marking files for processing using the <code>isScheduled</code> flag in the file table.</p>
 </div>
@@ -2233,6 +2505,12 @@ hard to follow.</p>
 <p><strong>Result:</strong> All command-line files (and directory contents if <code>-r</code> flag) are marked with <code>isScheduled = true</code>.</p>
 </div>
 <div class="paragraph">
+<p>[TARGET] <code>processFileArguments()</code> will be replaced by <code>scanProjectForFilesAndIncludes()</code>,
+which discovers CUs by globbing the project directory rather than relying on command-line
+file lists. This also builds the include graph transitively by text-scanning <code>#include</code>
+lines and resolving paths via <code>options.includeDirs</code>. See <a href="#target-unified-flow">Target: Unified Server Flow (ADR 22)</a>.</p>
+</div>
+<div class="paragraph">
 <p><strong><em>Additional Update Scheduling (Xref Mode Only)</em></strong></p>
 </div>
 <div class="paragraph">
@@ -2261,9 +2539,14 @@ hard to follow.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_server_mode_flow">8.14.2. Server Mode Flow</h4>
+<h4 id="_server_mode_flow">8.15.2. Server Mode Flow</h4>
 <div class="paragraph">
 <p><strong>SINGLE FILE PER REQUEST</strong> - Server processes one file per request, but all files are initially scheduled by <code>processFileArguments()</code> in <code>initServer()</code>.</p>
+</div>
+<div class="paragraph">
+<p>Since ADR 20, <code>callServer()</code> performs a staleness reparse phase before dispatching each
+request. This is not shown in the legacy flow diagram below but is now the first action
+in every request after initialization.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2278,12 +2561,43 @@ server() [server.c:237] - Infinite request loop
        │
        └─&gt; callServer(baseArgs, requestArgs, &amp;firstPass) [server.c:214]
             │
+            ├─&gt; loadAllOpenedEditorBuffers()
+            │
+            ├─&gt; IF projectContextInitialized:              ← ADR 20
+            │    └─&gt; reparseStalePreloadedFiles()
+            │         ├─ Pass 1: reparse stale CUs directly
+            │         └─ Pass 2: find CUs that include stale headers
+            │                    (via TypeCppInclude refs), reparse those
+            │
             ├─&gt; prepareInputFileForRequest() [server.c:95]
             │    ├─ Gets first scheduled file (local check only)
-            │    ├─ SETS: requestFileNumber = NO_FILE_NUMBER [line 104] (if no file)
-            │    └─ SETS: requestFileNumber = fileNumber [line 121] (if file found)
+            │    └─ SETS: requestFileNumber
             │
-            └─&gt; processFile(baseArgs, requestArgs, &amp;firstPass) [server.c:199]
+            ├─&gt; IF NOT projectContextInitialized:
+            │    ├─ OP_ACTIVE_PROJECT: initializeProjectContext()
+            │    │   → processFileArguments() → loadFileNumbersFromStore()
+            │    │   → parseDiscoveredCompilationUnits()
+            │    ├─ requiresProcessingInputFile: processFile() (legacy)
+            │    └─ other: error
+            │    └─ SETS: projectContextInitialized = true
+            │
+            └─&gt; Dispatch operation
+                 ├─ requiresProcessingInputFile: processFile()
+                 └─ other: unschedule file</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The two-pass reparse (ADR 20) is critical for correctness: Pass 1 reparses stale CUs,
+which updates their <code>TypeCppInclude</code> references. Pass 2 then queries those freshened
+references to find which CUs include stale headers. A user cannot create a new include
+edge without editing the includer, so the includer is always stale when the edge is new.</p>
+</div>
+<div class="paragraph">
+<p>The per-request dispatch still follows the legacy pattern:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">            └─&gt; processFile(baseArgs, requestArgs, &amp;firstPass) [server.c:199]
                  ├─ SETS: inputFileName = fileItem-&gt;name [line 205]
                  │
                  └─&gt; singlePass(args, nargs, &amp;firstPass) [server.c:155]
@@ -2312,7 +2626,7 @@ server() [server.c:237] - Infinite request loop
 </div>
 </div>
 <div class="sect3">
-<h4 id="_xref_mode_flow">8.14.3. Xref Mode Flow</h4>
+<h4 id="_xref_mode_flow">8.15.3. Xref Mode Flow</h4>
 <div class="paragraph">
 <p><strong>PROCESSES ALL SCHEDULED FILES</strong> - Xref creates a list of all scheduled files and processes them in a loop.</p>
 </div>
@@ -2359,7 +2673,7 @@ server() [server.c:237] - Infinite request loop
 </div>
 </div>
 <div class="sect3">
-<h4 id="_lsp_mode_flow_new_simplified">8.14.4. LSP Mode Flow (New, Simplified)</h4>
+<h4 id="_lsp_mode_flow_new_simplified">8.15.4. LSP Mode Flow (New, Simplified)</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">parseToCreateReferences(fileName) [parsing.c:165]
@@ -2376,7 +2690,7 @@ server() [server.c:237] - Infinite request loop
 </div>
 </div>
 <div class="sect3">
-<h4 id="_key_observations">8.14.5. Key Observations</h4>
+<h4 id="_key_observations">8.15.5. Key Observations</h4>
 <div class="paragraph">
 <p><strong><em>Assignments to `inputFileName`</em></strong></p>
 </div>
@@ -2496,6 +2810,13 @@ currentFileNumber       // Xref: file number after parsing starts (parsing.c:26)
 <p>The <code>firstPass</code> parameter gates Phase 4&#8217;s memory checkpoint save/restore.</p>
 </div>
 <div class="paragraph">
+<p>[TARGET] <code>initializeProjectContext</code> will be eliminated — it duplicates phases 1-4 of
+<code>initializeFileProcessing</code>. With the unified flow, all initialization goes through
+<code>loadProjectSettings()</code> once at startup. The multi-project fast-path optimization
+(checkpoint restore when same project) becomes dead code with single-project servers
+(ADR 21).</p>
+</div>
+<div class="paragraph">
 <p><strong><em>Naming Inconsistency</em></strong></p>
 </div>
 <div class="ulist">
@@ -2516,7 +2837,7 @@ currentFileNumber       // Xref: file number after parsing starts (parsing.c:26)
 </div>
 </div>
 <div class="sect3">
-<h4 id="_summary_multi_file_vs_single_file_processing">8.14.6. Summary: Multi-File vs Single-File Processing</h4>
+<h4 id="_summary_multi_file_vs_single_file_processing">8.15.6. Summary: Multi-File vs Single-File Processing</h4>
 <div class="paragraph">
 <p><strong><em>Server Mode - Single File Per Request</em></strong></p>
 </div>
@@ -2602,7 +2923,84 @@ currentFileNumber       // Xref: file number after parsing starts (parsing.c:26)
 </div>
 </div>
 <div class="sect3">
-<h4 id="_opportunities_for_alignment">8.14.7. Opportunities for Alignment</h4>
+<h4 id="target-unified-flow">8.15.7. Target: Unified Server Flow (ADR 22)</h4>
+<div class="paragraph">
+<p>The current architecture has two initialization paths (<code>initializeProjectContext</code> for
+<code>OP_ACTIVE_PROJECT</code>, <code>initializeFileProcessing</code> for legacy per-file) and relies on the
+disk database as the source of truth for project structure. The target design unifies
+these into a single path where the in-memory database is authoritative.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">server() loop:
+  │
+  FOR EACH REQUEST:
+  │
+  ├─ 1. IF NOT initialized:
+  │     ├─ Find project (.c-xrefrc), read options, discover compiler
+  │     │  → loadProjectSettings(): options + compiler interrogation
+  │     │  → Provides include paths (options.includeDirs)
+  │     │
+  │     ├─ Load disk db into memory
+  │     │  → loadFileNumbersFromStore(): CU entries + lastParsedMtime
+  │     │  → Cache/optimization, not source of truth
+  │     │
+  │     ├─ Scan project structure
+  │     │  → scanProjectForFilesAndIncludes(): glob CUs (.c, .y),
+  │     │    text-scan #include lines, resolve paths transitively
+  │     │    (CU dir + options.includeDirs), populate file table +
+  │     │    TypeCppInclude refs
+  │     │  → Catches new files disk db doesn't know about
+  │     │
+  │     ├─ Reconcile: mark missing CUs as deleted
+  │     │  → markMissingFilesAsDeleted(): CUs only (glob-discoverable)
+  │     │  → Header disappearance detected naturally on reparse
+  │     │
+  │     └─ projectContextInitialized = true
+  │
+  ├─ 2. Update what changed (same two-pass as ADR 20)
+  │     ├─ Pass 1: reparse stale CUs
+  │     └─ Pass 2: reparse CUs that include stale headers
+  │     Also: if config changed → re-run loadProjectSettings + scan
+  │
+  ├─ 3. Execute operation
+  │
+  └─ 4. Repeat from 2</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Key principles:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>"Cold start" is not a separate path.</strong> Same code, different amount of work. With disk
+db: most CUs are fresh, few need reparsing. Without disk db: all CUs are unknown, all
+get parsed.</p>
+</li>
+<li>
+<p><strong>Include structure and symbol references are separate layers.</strong> Include structure is
+cheap (text scanning for <code>#include</code>). Symbol references are expensive (full parsing).
+The lightweight scan provides the first; full parsing adds the second incrementally,
+on demand.</p>
+</li>
+<li>
+<p><strong>Conditional includes are conservative.</strong> Text scanning sees all <code>#include</code> lines
+regardless of <code>#ifdef</code> guards — a superset of the true include graph. This matches
+the multi-pass philosophy and is correct: a false include edge only causes one extra
+reparse on staleness.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This design eliminates the need for <code>-create</code> (replaced by the scan) and for
+<code>callXref()</code> before refactoring (replaced by scan + incremental reparse of stale files).
+It also makes the server viable for LSP, where blocking on a full project parse at
+startup is not acceptable.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_opportunities_for_alignment">8.15.8. Opportunities for Alignment</h4>
 <div class="paragraph">
 <p>The Server and Xref paths do similar things but with different names and structures, creating cognitive overhead. Potential improvements:</p>
 </div>
@@ -2638,19 +3036,19 @@ currentFileNumber       // Xref: file number after parsing starts (parsing.c:26)
 </div>
 </div>
 <div class="sect2">
-<h3 id="_parsers">8.15. Parsers</h3>
+<h3 id="_parsers">8.16. Parsers</h3>
 <div class="paragraph">
-<p>See the <strong>Parsing</strong> component in the <a href="08-components.html">Components</a> chapter.</p>
+<p>See the <strong>Parsing</strong> component in the <a href="#components">Components</a> chapter.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_integrated_preprocessor">8.16. Integrated Preprocessor</h3>
+<h3 id="_integrated_preprocessor">8.17. Integrated Preprocessor</h3>
 <div class="paragraph">
 <p>See the <strong>Parsing</strong> component&#8217;s Internal Structure section in the <a href="08-components.html">Components</a> chapter.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_refactoring_and_the_parsers">8.17. Refactoring and the parsers</h3>
+<h3 id="_refactoring_and_the_parsers">8.18. Refactoring and the parsers</h3>
 <div class="paragraph">
 <p>Some refactorings need more detailed information about the code, maybe all do?</p>
 </div>
@@ -2719,7 +3117,7 @@ global variables.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_reading_files">8.18. Reading Files</h3>
+<h3 id="_reading_files">8.19. Reading Files</h3>
 <div class="paragraph">
 <p>Here are some speculations about how the complex file reading is structured.</p>
 </div>
@@ -2746,7 +3144,7 @@ wonder why this function does some initial reading, this should be
 pushed down to the buffers in the file descriptor.</p>
 </div>
 <div class="sect3">
-<h4 id="_lexingscanning">8.18.1. Lexing/scanning</h4>
+<h4 id="_lexingscanning">8.19.1. Lexing/scanning</h4>
 <div class="paragraph">
 <p>Lexing/scanning is performed in two layers, one in <code>lexer.c</code> which
 seems to be doing the actual lexing into lexems which are put in a
@@ -2791,7 +3189,7 @@ sequence.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_semantic_information">8.18.2. Semantic information</h4>
+<h4 id="_semantic_information">8.19.2. Semantic information</h4>
 <div class="paragraph">
 <p>As the refactoring functions need some amount of semantic information,
 in the sense of information gathered during parsing, this information
@@ -2808,7 +3206,7 @@ function structure. This structure is, at the point of writing, called
 </div>
 </div>
 <div class="sect2">
-<h3 id="_reference_database">8.19. Reference Database</h3>
+<h3 id="_reference_database">8.20. Reference Database</h3>
 <div class="paragraph">
 <p>See the <strong>Cxref</strong> component (in-memory reference tables and symbol resolution) and the <strong>Cxfile</strong> component (on-disk database format and reading) in the <a href="08-components.html">Components</a> chapter.</p>
 </div>
@@ -2826,7 +3224,7 @@ A proposal for a unified symbol database architecture has been documented. See <
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_plugin">8.20. Editor Plugin</h3>
+<h3 id="_editor_plugin">8.21. Editor Plugin</h3>
 <div class="paragraph">
 <p>The editor plugin has three different responsibilities:</p>
 </div>
@@ -2875,7 +3273,7 @@ output in the output file it sends a <code>&lt;sync&gt;</code> reply.</p>
 what it needs to do with it ("dispatching:").</p>
 </div>
 <div class="sect3">
-<h4 id="_invocations">8.20.1. Invocations</h4>
+<h4 id="_invocations">8.21.1. Invocations</h4>
 <div class="paragraph">
 <p>The editor invokes a new <code>c-xref</code> process for the following cases:</p>
 </div>
@@ -2899,7 +3297,7 @@ started, which is run by a separate <code>c-xref</code> process.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_buffers">8.20.2. Buffers</h4>
+<h4 id="_buffers">8.21.2. Buffers</h4>
 <div class="paragraph">
 <p>There is some magical editor buffer management happening inside of
 <code>c-xref</code> which is not clear to me at this point. Basically it looks
@@ -2920,7 +3318,7 @@ server the current content somehow, this is the <code>-preload</code> option.</p
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_server">8.21. Editor Server</h3>
+<h3 id="_editor_server">8.22. Editor Server</h3>
 <div class="paragraph">
 <p>When serving an editor the c-xrefactory application is divided into
 the server, <em>c-xref</em> and the editor part, at this point only Emacs:en
@@ -2928,7 +3326,7 @@ are supported so that&#8217;s implemented in the
 <code>editor/Emacs</code>-packages.</p>
 </div>
 <div class="sect3">
-<h4 id="_interaction">8.21.1. Interaction</h4>
+<h4 id="_interaction">8.22.1. Interaction</h4>
 <div class="paragraph">
 <p>The initial invocation of the edit server creates a process with which
 communication is over stdin/stdout using a protocol which from the editor
@@ -2983,7 +3381,7 @@ the options structure used only when refactoring.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_protocol">8.21.2. Protocol</h4>
+<h4 id="_protocol">8.22.2. Protocol</h4>
 <div class="paragraph">
 <p>Communication between the editor and the server is performed using
 text through standard input/output to/from <em>c-xref</em>. The protocol is
@@ -3014,7 +3412,7 @@ utf-8. This means that lengths need to indicate <em>characters</em> not bytes.</
 </div>
 </div>
 <div class="sect3">
-<h4 id="_invocation_of_server">8.21.3. Invocation of server</h4>
+<h4 id="_invocation_of_server">8.22.3. Invocation of server</h4>
 <div class="paragraph">
 <p>The editor fires up a server and keeps talking over the established
 channel (elisp function 'c-xref-start-server-process'). This probably
@@ -3057,7 +3455,7 @@ elisp-sources.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_communication_protocol">8.21.4. Communication Protocol</h4>
+<h4 id="_communication_protocol">8.22.4. Communication Protocol</h4>
 <div class="paragraph">
 <p>The editor server is started using the appropriate command line option
 and then it keeps the communication over stdin/stdout open.</p>
@@ -3100,21 +3498,14 @@ operation, which is what a user would do with the command line
 options.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_olcx_naming">8.21.5. OLCX Naming</h4>
-<div class="paragraph">
-<p>It seems that all on-line editing server functions have an <code>olcx</code>
-prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
-</div>
-</div>
 </div>
 <div class="sect2">
-<h3 id="_refactoring">8.22. Refactoring</h3>
+<h3 id="_refactoring">8.23. Refactoring</h3>
 <div class="paragraph">
 <p>See the <strong>Refactory</strong> and <strong>Extract</strong> components in the <a href="08-components.html">Components</a> chapter for the architecture and operation flow.</p>
 </div>
 <div class="sect3">
-<h4 id="_refactoring_protocol_details">8.22.1. Refactoring Protocol Details</h4>
+<h4 id="_refactoring_protocol_details">8.23.1. Refactoring Protocol Details</h4>
 <div class="paragraph">
 <p>The refactoring protocol messages exchanged between the refactory process and the editor:</p>
 </div>
@@ -3180,7 +3571,7 @@ prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_memory_handling">8.23. Memory handling</h3>
+<h3 id="_memory_handling">8.24. Memory handling</h3>
 <div class="paragraph">
 <p>c-xrefactory uses custom memory management via arena allocators rather than malloc/free for performance-critical operations.</p>
 </div>
@@ -3188,10 +3579,10 @@ prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
 <p>See the <strong>Components</strong> chapter for the design and architecture of the Memory module, and the <strong>Data Structures</strong> chapter for details on the arena allocator data structure and allocation model.</p>
 </div>
 <div class="paragraph">
-<p>For debugging memory issues, especially arena lifetime violations, see the <strong>Development Environment</strong> chapter.</p>
+<p>For debugging memory issues, especially arena lifetime violations, see the <a href="#development-environment">Development Environment</a> chapter.</p>
 </div>
 <div class="sect3">
-<h4 id="_the_memory_type">8.23.1. The Memory Type</h4>
+<h4 id="_the_memory_type">8.24.1. The Memory Type</h4>
 <div class="paragraph">
 <p>Memory allocation is managed through the <code>Memory</code> structure, which implements an arena/bump allocator. Different memory arenas serve different purposes:</p>
 </div>
@@ -3219,7 +3610,7 @@ prefix, "On-Line C-Xrefactory", maybe&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_option_memory">8.23.2. Option Memory</h4>
+<h4 id="_option_memory">8.24.2. Option Memory</h4>
 <div class="paragraph">
 <p>The <code>optMemory</code> arena requires special handling because <code>Options</code> structures are copied during operation. When copying, all pointers into option memory must be adjusted to point into the target structure&#8217;s memory area, not the source&#8217;s.</p>
 </div>
@@ -3241,7 +3632,7 @@ The linked list nodes themselves are allocated in the Options structure&#8217;s 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration">8.24. Configuration</h3>
+<h3 id="_configuration">8.25. Configuration</h3>
 <div class="paragraph">
 <p>The legacy <code>c-xref</code> normally, in "production", uses a common configuration file in the
 users home directory, <code>.c-xrefrc</code>. When a new project is defined its options will be
@@ -3259,7 +3650,7 @@ line each. These are always read, unless <code>-no-stdop</code> is used, before 
 allows for different "default" options for each project.</p>
 </div>
 <div class="sect3">
-<h4 id="_options">8.24.1. Options</h4>
+<h4 id="_options">8.25.1. Options</h4>
 <div class="paragraph">
 <p>There are three possible sources for options.</p>
 </div>
@@ -3284,7 +3675,7 @@ allows for different "default" options for each project.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_logic">8.24.2. Logic</h4>
+<h4 id="_logic">8.25.2. Logic</h4>
 <div class="paragraph">
 <p>When the editor has a file open it needs to "belong" to a project. The
 logic for finding which is very intricate and complicated.</p>
@@ -4912,7 +5303,7 @@ session-&gt;current = ref;</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_development_environment">11. Development Environment</h2>
+<h2 id="development-environment">11. Development Environment</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_developing_here_be_dragons">11.1. Developing, here be dragons&#8230;&#8203;</h3>
@@ -8369,6 +8760,306 @@ struct ReferenceableItem {
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="remove-hashtab">16.5. Remove Hashtab by Migrating to Hashlist</h3>
+<div class="sect3">
+<h4 id="_problem_statement_5">16.5.1. Problem Statement</h4>
+<div class="paragraph">
+<p>The codebase has two hash table implementations generated by C macro templates:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>hashtab</strong> (<code>hashtab.th</code>/<code>hashtab.tc</code>): Open addressing with linear probing (<code>HASH_SHIFT = 211</code>). No deletion support. Overflow at ~89% fill triggers a fatal error.</p>
+</li>
+<li>
+<p><strong>hashlist</strong> (<code>hashlist.th</code>/<code>hashlist.tc</code>): Chaining with linked lists. Supports deletion (<code>Delete</code>, <code>DeleteExact</code>). No overflow risk.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Only two tables still use hashtab:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Table</th>
+<th class="tableblock halign-left valign-top">Module</th>
+<th class="tableblock halign-left valign-top">Element Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>fileTable</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>filetable.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FileItem</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>macroArgumentTable</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>macroargumenttable.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MacroArgumentTableElement</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>All other tables (<code>editorBufferTable</code>, <code>symbolTable</code>, <code>referenceableItemTable</code>) already use hashlist.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_why_this_matters_now">16.5.2. Why This Matters Now</h4>
+<div class="paragraph">
+<p>The lightweight file structure scanning work (ADR 22) exposed hashtab&#8217;s limitations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>No deletion</strong>: We added an <code>isDeleted</code> bitfield to <code>FileItem</code> and a <code>markFileAsDeleted()</code> function as a workaround because hashtab cannot remove entries. With hashlist, actual deletion would be possible.</p>
+</li>
+<li>
+<p><strong>Overflow risk</strong>: <code>fileTable</code> is initialized with a fixed size. As projects grow or the lightweight scan discovers more files, the open-addressing table can overflow. Hashlist&#8217;s chaining has no such limit.</p>
+</li>
+<li>
+<p><strong><code>FileItem</code> already has <code>next</code></strong>: The <code>FileItem</code> struct already declares <code>struct fileItem *next</code> — currently ignored by hashtab but exactly what hashlist requires for chaining.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_change">16.5.3. Proposed Change</h4>
+<div class="paragraph">
+<p>Migrate <code>fileTable</code> and <code>macroArgumentTable</code> from hashtab to hashlist, then remove hashtab entirely.</p>
+</div>
+<div class="paragraph">
+<p><strong>fileTable migration:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Change <code>#include "hashtab.th"</code> / <code>#include "hashtab.tc"</code> to hashlist equivalents in <code>filetable.c</code></p>
+</li>
+<li>
+<p><code>FileItem.next</code> is already present — no struct change needed</p>
+</li>
+<li>
+<p>Replace <code>isDeleted</code> workaround with actual <code>Delete()</code> where appropriate</p>
+</li>
+<li>
+<p>The file number concept (index into array) changes semantics — hashlist doesn&#8217;t provide stable array indices. This needs careful thought: file numbers are used pervasively as compact identifiers. Options include maintaining a separate index array alongside the hash, or keeping the array and using hashlist only for lookup.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>macroArgumentTable migration:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>MacroArgumentTableElement</code> currently has no <code>next</code> field — one must be added</p>
+</li>
+<li>
+<p>Simpler table with straightforward usage, lower risk</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Remove hashtab:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Delete <code>hashtab.th</code> and <code>hashtab.tc</code></p>
+</li>
+<li>
+<p>One fewer template pattern to understand and maintain</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_file_number_semantics_the_key_challenge">16.5.4. File Number Semantics — The Key Challenge</h4>
+<div class="paragraph">
+<p>The file table serves a dual purpose: hash lookup by name AND array indexing by file number. File numbers are used throughout the codebase as compact identifiers (stored in references, positions, sessions, etc.).</p>
+</div>
+<div class="paragraph">
+<p>Hashtab provides both naturally — the hash slot index <em>is</em> the file number. Hashlist doesn&#8217;t — elements live in chains, not at stable array positions.</p>
+</div>
+<div class="paragraph">
+<p>Possible approaches:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Parallel array</strong>: Keep a <code>FileItem *filesByNumber[]</code> array for O(1) index lookup, use hashlist for name-based lookup. Two data structures, but each is simple.</p>
+</li>
+<li>
+<p><strong>Sequence number on FileItem</strong>: Add an <code>int fileNumber</code> field, allocate sequentially. Hashlist for lookup, linear scan or secondary array for index access.</p>
+</li>
+<li>
+<p><strong>Keep current array, add chaining</strong>: Use the existing array as the primary storage, but add chain pointers for collision resolution instead of open-addressing probing. Essentially a custom hybrid.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The parallel array approach is likely cleanest — it separates the two concerns (name lookup vs number lookup) explicitly.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_benefits_4">16.5.5. Benefits</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>One hash pattern instead of two</strong>: Reduces cognitive load and maintenance surface</p>
+</li>
+<li>
+<p><strong>Real deletion</strong>: No more <code>isDeleted</code> workarounds — entries can be properly removed</p>
+</li>
+<li>
+<p><strong>No overflow risk</strong>: Chaining grows naturally; no fatal error on high fill</p>
+</li>
+<li>
+<p><strong>Consistent codebase</strong>: All hash tables use the same pattern</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_notes_2">16.5.6. Notes</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>isDeleted</code> field and <code>markFileAsDeleted()</code> function were added during TDD of <code>projectstructure.c</code>. They work as an interim solution but add complexity to every iteration over the file table (must check <code>isDeleted</code>).</p>
+</li>
+<li>
+<p>Migration should be done after the lightweight scanning integration is complete, since it touches the same code.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="split-editor-module">16.6. Split the Editor Module</h3>
+<div class="sect3">
+<h4 id="_problem_statement_6">16.6.1. Problem Statement</h4>
+<div class="paragraph">
+<p>The <code>editor.c</code> module (630+ lines) bundles at least four unrelated responsibilities under the misleading name "editor". The name suggests it&#8217;s about the external editor (Emacs), but most of the code has nothing to do with editor integration&#8201;&#8212;&#8201;it&#8217;s internal text manipulation infrastructure used by refactoring.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_current_responsibilities">16.6.2. Current Responsibilities</h4>
+<div class="paragraph">
+<p><strong>1. Text memory allocator</strong> (<code>editorMemory[]</code>, <code>allocateNewEditorBufferTextSpace</code>, <code>freeTextSpace</code>)</p>
+</div>
+<div class="paragraph">
+<p>A power-of-2 block allocator for buffer text content. Custom malloc pool with free lists indexed by size class. No relationship to "editing"&#8201;&#8212;&#8201;this is a memory management concern.</p>
+</div>
+<div class="paragraph">
+<p><strong>2. In-buffer text editing</strong> (<code>replaceStringInEditorBuffer</code>, <code>moveBlockInEditorBuffer</code>, <code>removeBlanksAtEditorMarker</code>)</p>
+</div>
+<div class="paragraph">
+<p>The refactoring engine&#8217;s hands&#8201;&#8212;&#8201;insert, delete, replace, and move text within buffers, with undo tracking and marker adjustment. This is the actual "editing" code, but it operates on the server&#8217;s internal buffers, not the external editor.</p>
+</div>
+<div class="paragraph">
+<p><strong>3. Reference/marker coordinate conversion</strong> (<code>convertReferencesToEditorMarkers</code>, <code>convertEditorMarkersToReferences</code>)</p>
+</div>
+<div class="paragraph">
+<p>Bridges two coordinate systems: the reference world (file number, line, column) and the buffer world (buffer pointer, byte offset). Walks buffer text to convert line/col to offset and vice versa. Used by refactoring to go from "where are the references" to "where do I edit".</p>
+</div>
+<div class="paragraph">
+<p><strong>4. Content buffer lifecycle</strong> (<code>loadFileIntoEditorBuffer</code>, <code>loadAllOpenedEditorBuffers</code>, <code>closeAllEditorBuffers</code>, <code>quasiSaveModifiedEditorBuffers</code>, <code>editorFileModificationTime</code>)</p>
+</div>
+<div class="paragraph">
+<p>Buffer loading, closing, quasi-save (mtime bookkeeping for refactoring), and file-stat wrappers that check buffers before falling back to filesystem. This is the content buffer management that belongs with the <code>ContentBuffer</code> type.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_naming_problem">16.6.3. The Naming Problem</h4>
+<div class="paragraph">
+<p>The "Editor" prefix pervades the codebase beyond just this module:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>EditorMarker</code> / <code>EditorMarkerList</code>&#8201;&#8212;&#8201;positional bookmarks into mutable buffer text</p>
+</li>
+<li>
+<p><code>EditorRegion</code>&#8201;&#8212;&#8201;a span between two markers</p>
+</li>
+<li>
+<p><code>EditorUndo</code>&#8201;&#8212;&#8201;undo records for text operations</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>None of these are about the external editor. They&#8217;re the server&#8217;s internal text manipulation primitives. <code>TextMarker</code>, <code>TextRegion</code>, <code>TextUndo</code> would be more accurate names, but renaming has cascading effects throughout the codebase.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_split">16.6.4. Proposed Split</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">New module</th>
+<th class="tableblock halign-left valign-top">Responsibility</th>
+<th class="tableblock halign-left valign-top">Current functions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textalloc.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Power-of-2 block allocator for buffer text</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>allocateNewEditorBufferTextSpace</code>, <code>freeTextSpace</code>, <code>editorMemory[]</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textedit.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">In-buffer text manipulation with undo and marker tracking</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>replaceStringInEditorBuffer</code>, <code>moveBlockInEditorBuffer</code>, <code>removeBlanksAtEditorMarker</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>markerconvert.c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reference ↔ marker coordinate conversion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>convertReferencesToEditorMarkers</code>, <code>convertEditorMarkersToReferences</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contentbuffer.c</code> (existing)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Buffer lifecycle, loading, closing, quasi-save</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>loadFileIntoEditorBuffer</code>, <code>loadAllOpenedEditorBuffers</code>, <code>closeAll*</code>, <code>quasiSave*</code>, <code>editorFile*</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>editorInit()</code> would move to wherever initialization belongs (it currently just calls <code>initEditorBufferTable()</code>).</p>
+</div>
+<div class="paragraph">
+<p><code>editorMapOnNonExistantFiles</code> is a completion helper that iterates all buffers to find files existing in buffers but not on disk. It belongs with completion or content buffer management.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_notes_3">16.6.5. Notes</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>The split is purely mechanical&#8201;&#8212;&#8201;no behavior change, no renaming. Each group of functions has minimal coupling to the others.</p>
+</li>
+<li>
+<p>The misleading "Editor" prefix on types (<code>EditorMarker</code>, <code>EditorUndo</code>, etc.) is a separate concern. Renaming those types has large cascading effects and is not worth doing until the refactoring performance issue is resolved (currently each rename requires two full project parses via <code>callXref</code>).</p>
+</li>
+<li>
+<p><code>editor.h</code> currently re-exports headers for <code>contentbuffer.h</code>, <code>editormarker.h</code>, <code>undo.h</code>&#8201;&#8212;&#8201;after the split, callers would include the specific headers they need.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -10353,7 +11044,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-02-24 13:34:37 UTC
+Last updated 2026-02-25 14:25:36 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
