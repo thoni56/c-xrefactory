@@ -16,6 +16,7 @@
 #include "navigation.h"
 #include "options.h"
 #include "parsers.h"
+#include "projectstructure.h"
 #include "parsing.h"
 #include "ppc.h"
 #include "progress.h"
@@ -431,12 +432,20 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     if (!projectContextInitialized && hasInputFile) {
         if (options.serverOperation == OP_ACTIVE_PROJECT) {
             initializeProjectContext(getFileItemWithFileNumber(requestFileNumber)->name, baseArgs, requestArgs);
-            if (options.inputFiles == NULL)
-                addToStringListOption(&options.inputFiles, ".");
-            processFileArguments();
             loadFileNumbersFromStore();
 
-            parseDiscoveredCompilationUnits(baseArgs);
+            if (options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
+                StringList *discoveredCUs = scanProjectForFilesAndIncludes(options.detectedProjectRoot,
+                                                                          options.includeDirs);
+                markMissingFilesAsDeleted(discoveredCUs);
+                freeStringList(discoveredCUs);
+            } else {
+                /* Legacy path: no detected project root, fall back to old flow */
+                if (options.inputFiles == NULL)
+                    addToStringListOption(&options.inputFiles, ".");
+                processFileArguments();
+                parseDiscoveredCompilationUnits(baseArgs);
+            }
 
             projectContextInitialized = true;
         } else if (!requiresProcessingInputFile(options.serverOperation)) {

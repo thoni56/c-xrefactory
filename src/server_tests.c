@@ -31,6 +31,7 @@
 #include "parsing.mock"
 #include "ppc.mock"
 #include "progress.mock"
+#include "projectstructure.mock"
 #include "refactorings.mock"
 #include "refactory.mock"
 #include "reference.mock"

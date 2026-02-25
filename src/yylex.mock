@@ -24,6 +24,10 @@ void addFileAsIncludeReference(int filenum) {
     mock(filenum);
 }
 
+void addIncludeReference(int includedFileNumber, Position includerPosition) {
+    mock(includedFileNumber, includerPosition.file);
+}
+
 void pushInclude(FILE *file, EditorBuffer *buff, char *name, char *prepend) {
     mock(file, buff, name, prepend);
 }

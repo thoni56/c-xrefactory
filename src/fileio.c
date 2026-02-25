@@ -106,6 +106,41 @@ void recursivelyDeleteDirectory(char *dirName) {
     rmdir(dirName);
 }
 
+StringList *listFilesInDirectory(const char *dirPath) {
+    DIR *dir;
+    struct dirent *entry;
+    StringList *result = NULL;
+    char filePath[MAX_FILE_NAME_SIZE];
+
+    dir = opendir(dirPath);
+    if (dir == NULL)
+        return NULL;
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            continue;
+
+        snprintf(filePath, sizeof(filePath), "%s/%s", dirPath, entry->d_name);
+
+        struct stat st;
+        if (stat(filePath, &st) == 0 && S_ISDIR(st.st_mode)) {
+            StringList *subList = listFilesInDirectory(filePath);
+            if (subList != NULL) {
+                StringList *tail = subList;
+                while (tail->next != NULL)
+                    tail = tail->next;
+                tail->next = result;
+                result = subList;
+            }
+        } else {
+            result = newStringList(filePath, result);
+        }
+    }
+
+    closedir(dir);
+    return result;
+}
+
 int fileStatus(char *path, struct stat *statP) {
     struct stat st;
     int return_value;

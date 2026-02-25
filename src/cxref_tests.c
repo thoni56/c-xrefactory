@@ -34,6 +34,7 @@
 #include "referenceableitemtable.mock"
 #include "search.mock"
 #include "session.mock"
+#include "server.mock"
 #include "startup.mock"
 #include "symbol.mock"
 #include "yylex.mock"

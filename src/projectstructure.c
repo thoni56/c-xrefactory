@@ -33,11 +33,13 @@ static char *resolveIncludePath(const char *includedFile, const char *includerPa
 
 /* Scan a single file for #include "..." lines. Returns a list of newly
    discovered resolved paths (caller must free). */
-static StringList *scanFileForIncludes(const char *filePath, StringList *includeDirs) {
+static StringList *scanFileForIncludes(const char *filePath, int includerFileNumber,
+                                       StringList *includeDirs) {
     StringList *discovered = NULL;
     FILE *file = openFile((char *)filePath, "r");
     if (file == NULL)
         return NULL;
+    Position includerPosition = makePosition(includerFileNumber, 1, 0);
     char buf[SCAN_BUFFER_SIZE];
     size_t leftover = 0;
     size_t bytesRead;
@@ -62,8 +64,8 @@ static StringList *scanFileForIncludes(const char *filePath, StringList *include
             if (sscanf(line, " # include \"%255[^\"]\"", includedFile) == 1) {
                 char *resolved = resolveIncludePath(includedFile, filePath, includeDirs);
                 bool alreadyKnown = existsInFileTable(resolved);
-                int fileNumber = addFileNameToFileTable(resolved);
-                addFileAsIncludeReference(fileNumber);
+                int includedFileNumber = addFileNameToFileTable(resolved);
+                addIncludeReference(includedFileNumber, includerPosition);
                 if (!alreadyKnown)
                     discovered = newStringList(strdup(resolved), discovered);
             }
@@ -84,9 +86,9 @@ StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *i
     for (StringList *f = files; f != NULL; f = f->next) {
         if (!isCompilationUnit(f->string))
             continue;
-        addFileNameToFileTable(f->string);
+        int cuFileNumber = addFileNameToFileTable(f->string);
         discoveredCUs = newStringList(f->string, discoveredCUs);
-        StringList *newHeaders = scanFileForIncludes(f->string, includeDirs);
+        StringList *newHeaders = scanFileForIncludes(f->string, cuFileNumber, includeDirs);
         /* Prepend discovered headers to worklist */
         if (newHeaders != NULL) {
             StringList *tail = newHeaders;
@@ -104,7 +106,8 @@ StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *i
         worklist = worklist->next;
         current->next = NULL;
 
-        StringList *newHeaders = scanFileForIncludes(current->string, includeDirs);
+        int headerFileNumber = addFileNameToFileTable(current->string);
+        StringList *newHeaders = scanFileForIncludes(current->string, headerFileNumber, includeDirs);
         if (newHeaders != NULL) {
             StringList *tail = newHeaders;
             while (tail->next != NULL)

@@ -456,7 +456,6 @@ static Symbol makeIncludeSymbolItem(Position position) {
     return symbol;
 }
 
-
 void addFileAsIncludeReference(int fileNumber) {
     Position position = makePosition(fileNumber, 1, 0);
     Symbol symbol = makeIncludeSymbolItem(position);
@@ -464,7 +463,7 @@ void addFileAsIncludeReference(int fileNumber) {
     handleFoundSymbolReference(&symbol, position, UsageDefined, fileNumber);
 }
 
-static void addIncludeReference(int fileNumber, Position position) {
+void addIncludeReference(int fileNumber, Position position) {
     log_debug("adding reference on file %d==%s", fileNumber, getFileItemWithFileNumber(fileNumber)->name);
     Symbol symbol = makeIncludeSymbolItem(position);
     handleFoundSymbolReference(&symbol, position, UsageUsed, fileNumber);

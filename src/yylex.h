@@ -40,7 +40,8 @@ extern void initAllInputs(void);
 /* Expose helper to mask a macro as undefined (mbody == NULL) */
 void undefineMacroByName(const char *name);
 extern void initInput(FILE *file, EditorBuffer *buffer, char *prepend, char *fileName);
-extern void addFileAsIncludeReference(int filenum);
+extern void addIncludeReference(int includedFileNumber, Position includerPosition);
+extern void addFileAsIncludeReference(int includedFileNumber);
 extern void pushInclude(FILE *file, EditorBuffer *buff, char *name, char *prepend);
 extern void popInclude(void);
 extern void addMacroDefinedByOption(char *option);
