@@ -1,0 +1,30 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/ins.c
+end-of-options
+
+<sync>
+<set-info len=<n>>test_navigation_cold_start_shared_header</set-info>
+-olcxpush -olcursor=66 CURDIR/ins.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=8 col=12 len=<n>>CURDIR/atr_x.h</position-lc>
+</goto>
+-olcxnext -olcursor=138 CURDIR/atr_x.h -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=4 col=4 len=<n>>CURDIR/cla.c</position-lc>
+</goto>
+-olcxnext -olcursor=63 CURDIR/cla.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=4 col=4 len=<n>>CURDIR/ins.c</position-lc>
+</goto>
+-exit
+end-of-options
+
