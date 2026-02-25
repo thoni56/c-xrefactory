@@ -9,4 +9,91 @@ across all files in the used source.
 All symbols that are only visible inside a unit is handled by
 reparsing the file of interest.
 
-=== TBD.
+NOTE: This describes the semantics of the _persisted snapshot_ (`.cx` files), not the
+_reference table_ in memory. The in-memory reference table holds all symbols encountered
+during parsing, including file-local ones. Only externally visible symbols are persisted
+to the snapshot because file-local symbols can always be reconstructed by reparsing. As
+the architecture moves toward "memory as truth" (see link:15-roadmap.adoc[Roadmap]), the
+distinction between "persisted" and "in-memory" symbols may evolve.
+
+=== Terminology
+
+The following terms are used throughout the documentation and codebase. Preferred terms
+are listed alphabetically; terms to avoid are noted to reduce ambiguity.
+
+Cold start::
+  Server startup with no persisted snapshot available. All compilation units must be
+  fully parsed to populate the reference table. Same code path as warm start, just more
+  work.
+
+Compilation unit (CU)::
+  A source file that is directly compiled (`.c`, `.y`). Discovered by globbing the
+  project directory. Distinguished from header files, which are included transitively
+  and not compiled independently.
+
+Include structure::
+  The graph of `#include` relationships between files, represented in the reference table
+  as `TypeCppInclude` references. Cheap to build (text scanning for `#include` lines).
+  Separate from symbol references, which require full parsing.
+
+Initialization::
+  The first-request setup: discover project, load options, interrogate compiler, restore
+  snapshot, scan project structure. Happens once per session. Not the same as cold start
+  — initialization happens on every session, cold start describes the _absence_ of a
+  snapshot.
+
+Lightweight scan::
+  Discovery of project structure by globbing for compilation units and text-scanning
+  `#include` lines, without full parsing. Populates the file table and include structure.
+  Replaces `-create` and the `callXref()` pre-refactoring pattern (ADR 22).
+
+Persisted snapshot::
+  The `.cx` files on disk. A point-in-time copy of the reference table from a previous
+  session, loaded at startup to avoid a full parse. May be stale — reconciled against
+  the filesystem via mtime comparison. +
+  _Avoid "disk db", "cache", "reference database"_ when referring to the `.cx` files.
+  A snapshot is not queryable (no search operations on disk), has no invalidation
+  semantics (unlike a cache), and is not the source of truth (unlike a database).
+
+Reference table::
+  The authoritative in-memory state during a running session. Comprises the
+  `referenceableItemTable` (symbol references), the file table (file entries with
+  modification tracking), and `TypeCppInclude` references (include structure). Populated
+  by parsing, snapshot restoration, and lightweight scanning. +
+  _Avoid "in-memory db", "memory db"._ It is the live working set, not a database in
+  the traditional sense.
+
+Restoring::
+  Loading a persisted snapshot into the reference table at startup. After restoration,
+  mtime comparison determines which entries are fresh and which need reparsing. +
+  _Avoid "loading the database"._
+
+Saving / persisting::
+  Writing the current reference table state to `.cx` files. Only disk-file-derived
+  references are persisted; references from unsaved editor buffers are excluded so that
+  mtime-based validation remains correct at next startup. +
+  _Avoid "writing the database"._
+
+Staleness::
+  A file is stale when its content has changed since it was last parsed. Detected by
+  comparing `lastParsedMtime` against the current file modification time (from disk or
+  editor buffer). Stale files trigger reparsing in the two-pass reparse phase (ADR 20).
+
+Steady state::
+  The server is initialized and processing requests. Staleness detection and incremental
+  reparsing happen per-request. The reference table is authoritative. +
+  _Avoid "hot start"_ — ambiguous.
+
+Symbol references::
+  The detailed reference information (positions, usage types) for identifiers, created by
+  full parsing. Expensive to produce. Distinguished from include structure, which is cheap.
+
+Two-pass reparse::
+  The per-request staleness refresh mechanism (ADR 20). Pass 1 reparses stale compilation
+  units directly, updating their include refs. Pass 2 queries the freshened include refs
+  to find CUs that include stale headers, and reparses those. Pass ordering is critical.
+
+Warm start::
+  Server startup with an existing persisted snapshot. Most compilation units are fresh
+  (snapshot mtime matches disk mtime); only stale ones need reparsing. Same code path as
+  cold start, less work.
