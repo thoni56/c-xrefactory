@@ -400,6 +400,45 @@ Ensure(ProjectStructure, resolves_include_via_includeDirs_when_not_in_includer_d
     scanProjectForFilesAndIncludes("/project", includeDirs);
 }
 
+/* Return value tests */
+
+static bool listContains(StringList *list, const char *name) {
+    for (StringList *s = list; s != NULL; s = s->next)
+        if (strcmp(s->string, name) == 0)
+            return true;
+    return false;
+}
+
+Ensure(ProjectStructure, returns_discovered_compilation_units) {
+    given_project_files(newStringList("/project/main.c",
+                        newStringList("/project/util.c",
+                        newStringList("/project/header.h",
+                        newStringList("/project/readme.txt", NULL)))));
+
+    given_cu_without_includes("/project/main.c");
+    given_cu_without_includes("/project/util.c");
+    expect(isCompilationUnit, will_return(false)); /* header.h */
+    expect(isCompilationUnit, will_return(false)); /* readme.txt */
+
+    StringList *discovered = scanProjectForFilesAndIncludes("/project", NULL);
+
+    assert_that(discovered, is_non_null);
+    assert_that(listContains(discovered, "/project/main.c"), is_true);
+    assert_that(listContains(discovered, "/project/util.c"), is_true);
+    assert_that(listContains(discovered, "/project/header.h"), is_false);
+    assert_that(listContains(discovered, "/project/readme.txt"), is_false);
+    freeStringList(discovered);
+}
+
+Ensure(ProjectStructure, returns_null_for_empty_project) {
+    given_project_files(NULL);
+    never_expect(addFileNameToFileTable);
+
+    StringList *discovered = scanProjectForFilesAndIncludes("/empty/dir", NULL);
+
+    assert_that(discovered, is_null);
+}
+
 /* markMissingFilesAsDeleted tests */
 
 Ensure(ProjectStructure, marks_nothing_when_no_files_and_empty_table) {

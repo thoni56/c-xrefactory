@@ -75,8 +75,9 @@ static StringList *scanFileForIncludes(const char *filePath, StringList *include
     return discovered;
 }
 
-void scanProjectForFilesAndIncludes(const char *projectDir, StringList *includeDirs) {
+StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *includeDirs) {
     StringList *worklist = NULL;
+    StringList *discoveredCUs = NULL;
 
     /* Phase 1: discover CUs and scan them */
     StringList *files = listFilesInDirectory(projectDir);
@@ -84,6 +85,7 @@ void scanProjectForFilesAndIncludes(const char *projectDir, StringList *includeD
         if (!isCompilationUnit(f->string))
             continue;
         addFileNameToFileTable(f->string);
+        discoveredCUs = newStringList(f->string, discoveredCUs);
         StringList *newHeaders = scanFileForIncludes(f->string, includeDirs);
         /* Prepend discovered headers to worklist */
         if (newHeaders != NULL) {
@@ -112,6 +114,7 @@ void scanProjectForFilesAndIncludes(const char *projectDir, StringList *includeD
         }
         freeStringList(current);
     }
+    return discoveredCUs;
 }
 
 static bool isInList(const char *name, StringList *list) {
