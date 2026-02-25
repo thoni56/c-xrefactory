@@ -151,3 +151,19 @@ The current protocol has no non-modal message channel. Every message type either
 **Option B: Server-side batching** — Collect all warnings during cold start into a single string, send as one `PPC_INFORMATION` after parsing completes. One modal instead of many. Simpler but still modal.
 
 **Option C: Summary only** — Send a `PPC_BOTTOM_WARNING` summary to the minibuffer (e.g., "3 files could not be opened during indexing"). Details go only to the log file. Minimal change but no inspectable buffer in Emacs.
+
+=== Browsing includes
+
+==== Background
+
+The `#include` preprocessor statments are referenceable items just like typenames and
+variables. That means it is logical to expect that placing the cursor on an `#include`
+line and navigation would follow the same UX as for a variable: PUSH moves cursor to the
+definition (in this case the file itself) and NEXT to the next "reference", which in
+this case would be the next #include statement for that file.
+
+This does not happen.
+
+==== Design
+
+This needs to be investigated and understood before an attempt to design a solution can be made.
