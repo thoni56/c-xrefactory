@@ -109,54 +109,49 @@ scheduleModifiedFilesToUpdate(isRefactoring) [xref.c:207]
 
 ==== Server Mode Flow
 
-*SINGLE FILE PER REQUEST* - Server processes one file per request, but all files are initially scheduled by `processFileArguments()` in `initServer()`.
-
-Since ADR 20, `callServer()` performs a staleness reparse phase before dispatching each
-request. This is not shown in the legacy flow diagram below but is now the first action
-in every request after initialization.
+*SINGLE FILE PER REQUEST* - Server processes one file per request.
 
 [source]
 ----
-initServer(args) [server.c:148]
-  ├─> processOptions(args, ...)
-  ├─> processFileArguments()  ← SCHEDULES ALL FILES
-  └─ Sets up completions
-
-server() [server.c:237] - Infinite request loop
+server() - Infinite request loop
   │
   └─> FOR EACH REQUEST:
        │
-       └─> callServer(baseArgs, requestArgs, &firstPass) [server.c:214]
+       └─> callServer(baseArgs, requestArgs, &firstPass)
             │
             ├─> loadAllOpenedEditorBuffers()
             │
-            ├─> IF projectContextInitialized:              ← ADR 20
-            │    └─> reparseStalePreloadedFiles()
-            │         ├─ Pass 1: reparse stale CUs directly
-            │         └─ Pass 2: find CUs that include stale headers
-            │                    (via TypeCppInclude refs), reparse those
-            │
-            ├─> prepareInputFileForRequest() [server.c:95]
-            │    ├─ Gets first scheduled file (local check only)
+            ├─> prepareInputFileForRequest()
             │    └─ SETS: requestFileNumber
             │
             ├─> IF NOT projectContextInitialized:
             │    ├─ OP_ACTIVE_PROJECT: initializeProjectContext()
-            │    │   → processFileArguments() → loadFileNumbersFromStore()
-            │    │   → parseDiscoveredCompilationUnits()
-            │    ├─ requiresProcessingInputFile: processFile() (legacy)
-            │    └─ other: error
+            │    │   → loadFileNumbersFromStore()
+            │    │   → Auto-detect: scanProjectForFilesAndIncludes()
+            │    │                  + markMissingFilesAsDeleted()
+            │    │   → Legacy: processFileArguments()
+            │    │             + parseDiscoveredCompilationUnits()
             │    └─ SETS: projectContextInitialized = true
+            │
+            ├─> Entry refresh (if projectContextInitialized):
+            │    ├─ Pass 1: reparse stale CUs directly
+            │    ├─ Pass 2: find CUs that include stale headers
+            │    │           (via TypeCppInclude refs), reparse those
+            │    └─ Pass 3: find unparsed CUs that share headers with
+            │               the request file, parse those (TODO)
             │
             └─> Dispatch operation
                  ├─ requiresProcessingInputFile: processFile()
                  └─ other: unschedule file
 ----
 
-The two-pass reparse (ADR 20) is critical for correctness: Pass 1 reparses stale CUs,
-which updates their `TypeCppInclude` references. Pass 2 then queries those freshened
-references to find which CUs include stale headers. A user cannot create a new include
-edge without editing the includer, so the includer is always stale when the edge is new.
+The entry refresh (see Terminology in <<06-principles.adoc#,Principles>>) ensures
+the reference table is up-to-date before each operation. Pass ordering is critical:
+Pass 1 reparses stale CUs, which updates their `TypeCppInclude` references. Pass 2
+then queries those freshened references to find which CUs include stale headers. Pass 3
+uses the include structure from the lightweight scan to find CUs sharing headers with
+the request file that have never been parsed. A user cannot create a new include edge
+without editing the includer, so the includer is always stale when the edge is new.
 
 The per-request dispatch still follows the legacy pattern:
 

@@ -77,7 +77,7 @@ Saving / persisting::
 Staleness::
   A file is stale when its content has changed since it was last parsed. Detected by
   comparing `lastParsedMtime` against the current file modification time (from disk or
-  editor buffer). Stale files trigger reparsing in the two-pass reparse phase (ADR 20).
+  editor buffer). Stale files trigger reparsing during the entry refresh (ADR 20).
 
 Steady state::
   The server is initialized and processing requests. Staleness detection and incremental
@@ -88,10 +88,12 @@ Symbol references::
   The detailed reference information (positions, usage types) for identifiers, created by
   full parsing. Expensive to produce. Distinguished from include structure, which is cheap.
 
-Two-pass reparse::
-  The per-request staleness refresh mechanism (ADR 20). Pass 1 reparses stale compilation
-  units directly, updating their include refs. Pass 2 queries the freshened include refs
-  to find CUs that include stale headers, and reparses those. Pass ordering is critical.
+Entry refresh::
+  The per-request mechanism that ensures the reference table is up-to-date before executing
+  an operation. Covers both _staleness_ (content was known but is now outdated) and
+  _unknown content_ (file discovered by scan but never parsed). Uses the include structure
+  to determine what needs reparsing. Runs on every request in `callServer()`. +
+  See Server Mode Flow in <<09-code.adoc#,Code>> for implementation details.
 
 Warm start::
   Server startup with an existing persisted snapshot. Most compilation units are fresh
