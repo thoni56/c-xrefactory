@@ -10,15 +10,15 @@ At this point the description of the internal structure of the containers are
 tentative. The actual interfaces are not particularly clean, most code
 files can and do include much every other module.
 
-NOTE: One focus area for the ongoing work is to try to pry out modules/components
-from the code mess by moving functions around, renaming and hiding
-functions, where possible.
+NOTE: There is still ongoing work is to try to identify modules/components, which are
+not always directly mapped to source files, but based on higher level responsibilites.
 
-==== CxrefCore
 
-image::embed:CxrefCore[]
+==== CxrefProgram
 
-`cxrefCore` is the core container. It does all the work when it comes
+image::embed:CxrefProgram[]
+
+`cxrefProgram` is the core container. It does all the work when it comes
 to finding and reporting references to symbols, communicating
 refactoring requests as well as storing reference information for
 longer term storage and caching.
@@ -26,10 +26,10 @@ longer term storage and caching.
 Although `c-xref` can be used as a command line tool, which can be
 handy when debugging or exploring, it is normally used in "server"
 mode. In server mode the communication between the editor extension
-and the cxrefCore container is a back-and-forth communication using a
+and the 'cxrefProgram` container is a back-and-forth communication using a
 non-standard protocol over standard pipes.
 
-The responsibilities of `cxrefCore` can largely be divided into
+The responsibilities of `cxrefProgram` can largely be divided into
 
 * parsing source files to create, maintain the references database which stores all inter-module references
 * parsing source files to get important information such as positions for a functions begin and end
@@ -53,6 +53,10 @@ Currently there is only one such extension supported, for `Emacs`,
 although there existed code, still available in the repo history, for
 an extension for `jEdit` which hasn't been updated, modified or checked
 for a long time and no longer is a part of this project.
+
+NOTE: There is a proof of concept implementation of a rudimentary LSP adapter which
+would make it possible to use `c-xrefactory` from a wide range of editors and IDEs, at
+least for many operations.
 
 ==== ReferencesDB
 

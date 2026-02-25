@@ -108,15 +108,15 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 	    autolayout lr
 		}
 
-		component cxrefProgram CxrefCore {
+		component cxrefProgram CxrefProgram {
 	    include *
 	    autolayout lr
 		}
 		
-		component referencesDb SymbolDatabase {
+		component referencesDb RefrenceDatabase {
 	    include *
 	    autolayout lr
-	    title "Symbol Database Architecture"
+	    title "Reference Database Architecture"
 	    description "Cross-reference database components and symbol resolution pipeline"
 		}
 

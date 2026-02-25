@@ -44,6 +44,11 @@ The file processing architecture differs significantly between Server mode, Xref
 and LSP mode, with confusing global state and naming inconsistencies that make the code
 hard to follow.
 
+NOTE: The current architecture is being restructured toward a unified server flow where
+lightweight file structure scanning replaces the legacy `-create`/`callXref()` pattern.
+See <<target-unified-flow>> below and ADR 22 for the target design. Annotations marked
+[TARGET] indicate planned changes.
+
 ==== File Scheduling - How Files Get Marked for Processing
 
 All modes begin by marking files for processing using the `isScheduled` flag in the file table.
@@ -74,6 +79,11 @@ processFileArguments() [options.c:1893]
 
 *Result:* All command-line files (and directory contents if `-r` flag) are marked with `isScheduled = true`.
 
+[TARGET] `processFileArguments()` will be replaced by `scanProjectForFilesAndIncludes()`,
+which discovers CUs by globbing the project directory rather than relying on command-line
+file lists. This also builds the include graph transitively by text-scanning `#include`
+lines and resolving paths via `options.includeDirs`. See <<target-unified-flow>>.
+
 *_Additional Update Scheduling (Xref Mode Only)_*
 
 *Called from:* `callXref()` → `scheduleModifiedFilesToUpdate()` [`xref.c:296`]
@@ -101,6 +111,10 @@ scheduleModifiedFilesToUpdate(isRefactoring) [xref.c:207]
 
 *SINGLE FILE PER REQUEST* - Server processes one file per request, but all files are initially scheduled by `processFileArguments()` in `initServer()`.
 
+Since ADR 20, `callServer()` performs a staleness reparse phase before dispatching each
+request. This is not shown in the legacy flow diagram below but is now the first action
+in every request after initialization.
+
 [source]
 ----
 initServer(args) [server.c:148]
@@ -114,11 +128,40 @@ server() [server.c:237] - Infinite request loop
        │
        └─> callServer(baseArgs, requestArgs, &firstPass) [server.c:214]
             │
+            ├─> loadAllOpenedEditorBuffers()
+            │
+            ├─> IF projectContextInitialized:              ← ADR 20
+            │    └─> reparseStalePreloadedFiles()
+            │         ├─ Pass 1: reparse stale CUs directly
+            │         └─ Pass 2: find CUs that include stale headers
+            │                    (via TypeCppInclude refs), reparse those
+            │
             ├─> prepareInputFileForRequest() [server.c:95]
             │    ├─ Gets first scheduled file (local check only)
-            │    ├─ SETS: requestFileNumber = NO_FILE_NUMBER [line 104] (if no file)
-            │    └─ SETS: requestFileNumber = fileNumber [line 121] (if file found)
+            │    └─ SETS: requestFileNumber
             │
+            ├─> IF NOT projectContextInitialized:
+            │    ├─ OP_ACTIVE_PROJECT: initializeProjectContext()
+            │    │   → processFileArguments() → loadFileNumbersFromStore()
+            │    │   → parseDiscoveredCompilationUnits()
+            │    ├─ requiresProcessingInputFile: processFile() (legacy)
+            │    └─ other: error
+            │    └─ SETS: projectContextInitialized = true
+            │
+            └─> Dispatch operation
+                 ├─ requiresProcessingInputFile: processFile()
+                 └─ other: unschedule file
+----
+
+The two-pass reparse (ADR 20) is critical for correctness: Pass 1 reparses stale CUs,
+which updates their `TypeCppInclude` references. Pass 2 then queries those freshened
+references to find which CUs include stale headers. A user cannot create a new include
+edge without editing the includer, so the includer is always stale when the edge is new.
+
+The per-request dispatch still follows the legacy pattern:
+
+[source]
+----
             └─> processFile(baseArgs, requestArgs, &firstPass) [server.c:199]
                  ├─ SETS: inputFileName = fileItem->name [line 205]
                  │
@@ -270,6 +313,12 @@ This 500-line function does five major phases:
 
 The `firstPass` parameter gates Phase 4's memory checkpoint save/restore.
 
+[TARGET] `initializeProjectContext` will be eliminated — it duplicates phases 1-4 of
+`initializeFileProcessing`. With the unified flow, all initialization goes through
+`loadProjectSettings()` once at startup. The multi-project fast-path optimization
+(checkpoint restore when same project) becomes dead code with single-project servers
+(ADR 21).
+
 *_Naming Inconsistency_*
 
 * `inputFileName` - used in both Server and Xref modes, but set in different places
@@ -307,6 +356,71 @@ If they represent the same concept (the file being processed), they should have 
 * *Processing*: Direct call, no file table lookup needed
 * *Modern design*: Avoids the legacy scheduling/global state complexity
 
+[[target-unified-flow]]
+==== Target: Unified Server Flow (ADR 22)
+
+The current architecture has two initialization paths (`initializeProjectContext` for
+`OP_ACTIVE_PROJECT`, `initializeFileProcessing` for legacy per-file) and relies on the
+disk database as the source of truth for project structure. The target design unifies
+these into a single path where the in-memory database is authoritative.
+
+[source]
+----
+server() loop:
+  │
+  FOR EACH REQUEST:
+  │
+  ├─ 1. IF NOT initialized:
+  │     ├─ Find project (.c-xrefrc), read options, discover compiler
+  │     │  → loadProjectSettings(): options + compiler interrogation
+  │     │  → Provides include paths (options.includeDirs)
+  │     │
+  │     ├─ Load disk db into memory
+  │     │  → loadFileNumbersFromStore(): CU entries + lastParsedMtime
+  │     │  → Cache/optimization, not source of truth
+  │     │
+  │     ├─ Scan project structure
+  │     │  → scanProjectForFilesAndIncludes(): glob CUs (.c, .y),
+  │     │    text-scan #include lines, resolve paths transitively
+  │     │    (CU dir + options.includeDirs), populate file table +
+  │     │    TypeCppInclude refs
+  │     │  → Catches new files disk db doesn't know about
+  │     │
+  │     ├─ Reconcile: mark missing CUs as deleted
+  │     │  → markMissingFilesAsDeleted(): CUs only (glob-discoverable)
+  │     │  → Header disappearance detected naturally on reparse
+  │     │
+  │     └─ projectContextInitialized = true
+  │
+  ├─ 2. Update what changed (same two-pass as ADR 20)
+  │     ├─ Pass 1: reparse stale CUs
+  │     └─ Pass 2: reparse CUs that include stale headers
+  │     Also: if config changed → re-run loadProjectSettings + scan
+  │
+  ├─ 3. Execute operation
+  │
+  └─ 4. Repeat from 2
+----
+
+Key principles:
+
+* *"Cold start" is not a separate path.* Same code, different amount of work. With disk
+  db: most CUs are fresh, few need reparsing. Without disk db: all CUs are unknown, all
+  get parsed.
+* *Include structure and symbol references are separate layers.* Include structure is
+  cheap (text scanning for `#include`). Symbol references are expensive (full parsing).
+  The lightweight scan provides the first; full parsing adds the second incrementally,
+  on demand.
+* *Conditional includes are conservative.* Text scanning sees all `#include` lines
+  regardless of `#ifdef` guards — a superset of the true include graph. This matches
+  the multi-pass philosophy and is correct: a false include edge only causes one extra
+  reparse on staleness.
+
+This design eliminates the need for `-create` (replaced by the scan) and for
+`callXref()` before refactoring (replaced by scan + incremental reparse of stale files).
+It also makes the server viable for LSP, where blocking on a full project parse at
+startup is not acceptable.
+
 ==== Opportunities for Alignment
 
 The Server and Xref paths do similar things but with different names and structures, creating cognitive overhead. Potential improvements:
@@ -322,7 +436,7 @@ The paths are intertwined but different, making it hard to keep in your head whi
 
 === Parsers
 
-See the **Parsing** component in the <<08-components.adoc#,Components>> chapter.
+See the **Parsing** component in the <<components,Components>> chapter.
 
 === Integrated Preprocessor
 
@@ -623,13 +737,6 @@ operation, which is what a user would do with the command line
 options.
 
 
-==== OLCX Naming
-
-It seems that all on-line editing server functions have an `olcx`
-prefix, "On-Line C-Xrefactory", maybe...
-
-
-
 === Refactoring
 
 See the **Refactory** and **Extract** components in the <<08-components.adoc#,Components>> chapter for the architecture and operation flow.
@@ -676,7 +783,7 @@ c-xrefactory uses custom memory management via arena allocators rather than mall
 
 See the **Components** chapter for the design and architecture of the Memory module, and the **Data Structures** chapter for details on the arena allocator data structure and allocation model.
 
-For debugging memory issues, especially arena lifetime violations, see the **Development Environment** chapter.
+For debugging memory issues, especially arena lifetime violations, see the <<development-environment,Development Environment>> chapter.
 
 ==== The Memory Type
 

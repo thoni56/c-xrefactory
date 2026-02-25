@@ -1,3 +1,4 @@
+[[components]]
 == Components
 
 This chapter describes the components of the `cxrefProgram` container, as defined in the C4 component diagram. Each section documents a component's responsibilities, architecture, and interface.
