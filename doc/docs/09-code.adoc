@@ -138,7 +138,7 @@ server() - Infinite request loop
             │    ├─ Pass 2: find CUs that include stale headers
             │    │           (via TypeCppInclude refs), reparse those
             │    └─ Pass 3: find unparsed CUs that share headers with
-            │               the request file, parse those (TODO)
+            │               the request file, parse those
             │
             └─> Dispatch operation
                  ├─ requiresProcessingInputFile: processFile()

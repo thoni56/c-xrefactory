@@ -297,6 +297,87 @@ static int collectIncludersOfStaleHeader(int headerFileNumber,
     return cuCount;
 }
 
+static bool fileNeedsParsing(FileItem *fileItem);
+
+/* Entry refresh Pass 3: Find CUs that share headers with the request file
+ * but haven't been parsed yet. On cold start without preloads, only the
+ * request file gets parsed (by processFile). This pass ensures sibling CUs
+ * are also parsed so their symbol references are available for navigation.
+ *
+ * Uses brute-force forward-include lookup: iterates all headers in the
+ * file table and checks if the request file is among their includers. */
+static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseArgs) {
+    int cuFileNumbers[MAX_CUS_TO_REPARSE];
+    int cuCount = 0;
+
+    ensureReferencesAreLoadedFor(LINK_NAME_INCLUDE_REFS);
+
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+        FileItem *fi = getFileItemWithFileNumber(i);
+        if (isCompilationUnit(fi->name))
+            continue;  /* Skip CUs, only look at headers */
+
+        ReferenceableItem searchItem = makeReferenceableItem(
+            LINK_NAME_INCLUDE_REFS, TypeCppInclude, StorageExtern,
+            GlobalScope, VisibilityGlobal, i);
+
+        ReferenceableItem *found;
+        if (!isMemberInReferenceableItemTable(&searchItem, NULL, &found))
+            continue;
+
+        /* Is this header included by the request file? */
+        bool requestIncludesThis = false;
+        for (Reference *r = found->references; r != NULL; r = r->next) {
+            if (r->position.file == requestFileNumber) {
+                requestIncludesThis = true;
+                break;
+            }
+        }
+
+        if (!requestIncludesThis)
+            continue;
+
+        /* Collect sibling CUs that include this header and need parsing */
+        for (Reference *r = found->references; r != NULL; r = r->next) {
+            int siblingFileNum = r->position.file;
+            if (siblingFileNum == requestFileNumber)
+                continue;
+
+            FileItem *siblingItem = getFileItemWithFileNumber(siblingFileNum);
+            if (!isCompilationUnit(siblingItem->name))
+                continue;
+            if (!fileNeedsParsing(siblingItem))
+                continue;
+
+            /* Deduplicate */
+            bool alreadyCollected = false;
+            for (int j = 0; j < cuCount; j++) {
+                if (cuFileNumbers[j] == siblingFileNum) {
+                    alreadyCollected = true;
+                    break;
+                }
+            }
+            if (!alreadyCollected && cuCount < MAX_CUS_TO_REPARSE) {
+                cuFileNumbers[cuCount++] = siblingFileNum;
+                log_debug("Sibling CU '%s' shares header with request file",
+                          siblingItem->name);
+            }
+        }
+    }
+
+    if (cuCount > 0) {
+        log_info("Entry refresh pass 3: parsing %d sibling CU(s)", cuCount);
+        int savedCursorOffset = options.cursorOffset;
+        options.cursorOffset = NO_CURSOR_OFFSET;
+        for (int i = 0; i < cuCount; i++) {
+            reparseStaleFile(cuFileNumbers[i], baseArgs);
+            FileItem *fi = getFileItemWithFileNumber(cuFileNumbers[i]);
+            fi->lastParsedMtime = editorFileModificationTime(fi->name);
+        }
+        options.cursorOffset = savedCursorOffset;
+    }
+}
+
 static int countStalePreloadedFiles(void) {
     int count = 0;
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1))
@@ -454,6 +535,13 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         }
         /* requiresProcessingInputFile operations proceed to processFile below,
          * which handles its own context via initializeFileProcessing (legacy path). */
+    }
+
+    /* Entry refresh pass 3: parse sibling CUs that share headers with
+     * the request file but haven't been parsed yet (e.g. cold start). */
+    if (projectContextInitialized && hasInputFile
+        && options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
+        parseUnparsedSiblingCUs(requestFileNumber, baseArgs);
     }
 
     if (needsReferenceDatabase(options.serverOperation))
