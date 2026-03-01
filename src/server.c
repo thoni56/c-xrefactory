@@ -367,12 +367,16 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
 
     if (cuCount > 0) {
         log_info("Entry refresh pass 3: parsing %d sibling CU(s)", cuCount);
+        if (options.xref2)
+            writeRelativeProgress(0);
         int savedCursorOffset = options.cursorOffset;
         options.cursorOffset = NO_CURSOR_OFFSET;
         for (int i = 0; i < cuCount; i++) {
             reparseStaleFile(cuFileNumbers[i], baseArgs);
             FileItem *fi = getFileItemWithFileNumber(cuFileNumbers[i]);
             fi->lastParsedMtime = editorFileModificationTime(fi->name);
+            if (options.xref2)
+                writeRelativeProgress((100 * (i + 1)) / cuCount);
         }
         options.cursorOffset = savedCursorOffset;
     }
