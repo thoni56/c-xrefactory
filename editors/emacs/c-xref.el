@@ -1642,7 +1642,7 @@ tries to delete C-xrefactory windows first.
 
     (setq opts (append opts initopts))
 
-    (if c-xref-debug-mode (message "calling: %S" opts))
+    (if c-xref-debug-mode (message "[%s] calling: %S" (format-time-string "%T.%3N") opts))
     (set proc (cons
                    (apply 'start-process
                               (concat c-xref-exec-directory "c-xref")
@@ -1714,7 +1714,7 @@ tries to delete C-xrefactory windows first.
                 (delete-process (car (eval proc)))
                 (c-xref-start-server-process '("-server") c-xref-server-tasks-ofile proc 'c-xref-server-filter)
                 )))
-    (if c-xref-debug-mode (message "sending: %s" data))
+    (if c-xref-debug-mode (message "[%s] sending: %s" (format-time-string "%T.%3N") data))
     (get-buffer-create " *c-xref-server-options*")
     (set-buffer " *c-xref-server-options*")
     (c-xref-erase-buffer)
@@ -1732,7 +1732,7 @@ tries to delete C-xrefactory windows first.
 
 (defun c-xref-processes-filter (process output proc)
   (let ((pn) (ss) (i) (j) (len))
-    (if c-xref-debug-mode (message "got: %s" output))
+    (if c-xref-debug-mode (message "[%s] got: %s" (format-time-string "%T.%3N") output))
     (setq ss (format "%s%s" (car (cdr (eval proc))) output))
     (setq len (length ss))
     (setq i 0)
@@ -3246,7 +3246,7 @@ Special hotkeys available:
 (defun c-xref-server-dispatch (ss i len dispatch-data)
   (let ((x) (j))
     (setq j 0)
-    (if c-xref-debug-mode (message "dispatching: %s" ss))
+    (if c-xref-debug-mode (message "[%s] dispatching: %s" (format-time-string "%T.%3N") ss))
     (setq i (c-xref-server-dispatch-skip-blank ss i len))
     (while (and (< i len))  ;; (eq (elt ss i) ?<))
       (setq i (c-xref-server-parse-xml-tag ss i len))
