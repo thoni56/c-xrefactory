@@ -111,6 +111,24 @@ The snapshot is written from disk-file-derived references only. Modified-buffer 
 * **link:/workspace/decisions#22[ADR-0022]**: Lightweight file structure scanning — replaces `-create` and `callXref()`
 * **Chapter 17**: Implementation details for Clean Persistence Store and Unified Symbol Database
 
+=== Optimization
+
+Once the core architectural path (lightweight scan, entry refresh, memory-as-truth) is functional, targeted optimizations can reduce cold-start latency and improve responsiveness on large projects.
+
+[cols="1,3"]
+|===
+|Optimization |Description
+
+|**Header-filtered sibling parsing**
+|Entry refresh pass 3 currently parses all CUs sharing _any_ header with the request file. On large projects this pulls in a large fraction of all CUs (e.g. on ffmpeg, navigating in `aac_ac3_parser.c` triggers 978 sibling CUs because of widely-shared utility headers like `avutil.h`). When the operation is navigation, only CUs sharing the header that _defines the navigated symbol_ are relevant. Filtering to that header reduces the scope dramatically (e.g. 978 → 7 for `aac_ac3_parser.h`). Challenge: pass 3 runs during sync (before dispatch), but the symbol is only known during the operation. The solution must bridge this gap — e.g. by triggering targeted sibling parsing from the operation after the symbol's defining header is identified. Measured cold-start PUSH on ffmpeg `af_afir.c`: scan 2.7s, pass 3 round 1 19s, pass 3 round 2 19s (from `<...>` includes discovered by full parse), total 42s. Parsing dominates — the scan is not the bottleneck.
+
+|**Extend scan to capture `<...>` includes**
+|The lightweight scan currently only matches `#include "..."`. Projects like ffmpeg use angle-bracket includes for internal headers (with `-I` paths), so the scan misses roughly half the include structure. Extending to `<...>` requires header-filtered sibling parsing first — without that filter, ubiquitous system headers (`string.h`, `stdlib.h`) would cause pass 3 to pull in nearly every CU in the project. Also needs care to avoid recursively scanning system headers outside the project tree.
+
+|**Lexing cache re-introduction**
+|The lexing cache (pre-tokenized file content) was present in the original codebase but lost during restructuring. Re-enabling it avoids repeated lexing of the same file across multiple parse passes.
+|===
+
 === Feature Vision: Full LSP Support
 
 ==== The Goal
