@@ -124,14 +124,20 @@ server() - Infinite request loop
             ├─> prepareInputFileForRequest()
             │    └─ SETS: requestFileNumber
             │
-            ├─> IF NOT projectContextInitialized:
+            ├─> IF NOT projectContextInitialized (one-time):
             │    ├─ OP_ACTIVE_PROJECT: initializeProjectContext()
             │    │   → loadFileNumbersFromStore()
-            │    │   → Auto-detect: scanProjectForFilesAndIncludes()
-            │    │                  + markMissingFilesAsDeleted()
             │    │   → Legacy: processFileArguments()
             │    │             + parseDiscoveredCompilationUnits()
             │    └─ SETS: projectContextInitialized = true
+            │
+            ├─> Config-change-aware scan (auto-detect only):
+            │    ├─ IF config changed: reloadProjectConfig()
+            │    │   → re-reads .c-xrefrc, updates options.includeDirs
+            │    └─ IF !scanDone OR config changed:
+            │         scanProjectForFilesAndIncludes()
+            │         + markMissingFilesAsDeleted()
+            │         SETS: scanDone = true
             │
             ├─> Entry refresh (if projectContextInitialized):
             │    ├─ Pass 1: reparse stale CUs directly
@@ -374,27 +380,26 @@ server() loop:
   │     │  → loadFileNumbersFromStore(): CU entries + lastParsedMtime
   │     │  → Cache/optimization, not source of truth
   │     │
-  │     ├─ Scan project structure
-  │     │  → scanProjectForFilesAndIncludes(): glob CUs (.c, .y),
-  │     │    text-scan #include lines, resolve paths transitively
-  │     │    (CU dir + options.includeDirs), populate file table +
-  │     │    TypeCppInclude refs
-  │     │  → Catches new files disk db doesn't know about
-  │     │
-  │     ├─ Reconcile: mark missing CUs as deleted
-  │     │  → markMissingFilesAsDeleted(): CUs only (glob-discoverable)
-  │     │  → Header disappearance detected naturally on reparse
-  │     │
   │     └─ projectContextInitialized = true
   │
-  ├─ 2. Update what changed (same two-pass as ADR 20)
+  ├─ 2. Config-change-aware scan (re-runs when .c-xrefrc changes)
+  │     ├─ IF config changed: reloadProjectConfig()
+  │     │  → re-reads .c-xrefrc, updates options.includeDirs + savedOptions
+  │     └─ IF !scanDone OR config changed:
+  │        → scanProjectForFilesAndIncludes(): glob CUs (.c, .y),
+  │          text-scan #include lines, resolve paths transitively
+  │          (CU dir + options.includeDirs), populate file table +
+  │          TypeCppInclude refs
+  │        → markMissingFilesAsDeleted(): CUs only (glob-discoverable)
+  │        → scanDone = true
+  │
+  ├─ 3. Update what changed (same two-pass as ADR 20)
   │     ├─ Pass 1: reparse stale CUs
   │     └─ Pass 2: reparse CUs that include stale headers
-  │     Also: if config changed → re-run loadProjectSettings + scan
   │
-  ├─ 3. Execute operation
+  ├─ 4. Execute operation
   │
-  └─ 4. Repeat from 2
+  └─ 5. Repeat from 2
 ----
 
 Key principles:

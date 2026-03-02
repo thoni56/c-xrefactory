@@ -19,4 +19,8 @@ extern bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs
  * Used by staleness refresh to reset macro state before re-parsing. */
 extern void restoreMemoryCheckPoint(void);
 
+/* Config-change detection: re-run scan when .c-xrefrc is edited mid-session */
+extern bool isProjectConfigChanged(void);
+extern void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs);
+
 #endif

@@ -21,3 +21,11 @@ bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs) {
 void restoreMemoryCheckPoint(void) {
   mock();
 }
+
+bool isProjectConfigChanged(void) {
+    return (bool)mock();
+}
+
+void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+    mock();
+}

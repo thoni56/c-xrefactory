@@ -509,6 +509,7 @@ static void parseDiscoveredCompilationUnits(ArgumentsVector baseArgs) {
 
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     static bool projectContextInitialized = false;
+    static bool scanDone = false;
 
     ENTER();
 
@@ -528,17 +529,13 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     bool hasInputFile = prepareInputFileForRequest();
 
+    /* ONE-TIME: project identity + disk db load */
     if (!projectContextInitialized && hasInputFile) {
         if (options.serverOperation == OP_ACTIVE_PROJECT) {
             initializeProjectContext(getFileItemWithFileNumber(requestFileNumber)->name, baseArgs, requestArgs);
             loadFileNumbersFromStore();
 
-            if (options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
-                StringList *discoveredCUs = scanProjectForFilesAndIncludes(options.detectedProjectRoot,
-                                                                          options.includeDirs);
-                markMissingFilesAsDeleted(discoveredCUs);
-                freeStringList(discoveredCUs);
-            } else {
+            if (options.detectedProjectRoot == NULL || options.detectedProjectRoot[0] == '\0') {
                 /* Legacy path: no detected project root, fall back to old flow */
                 if (options.inputFiles == NULL)
                     addToStringListOption(&options.inputFiles, ".");
@@ -553,6 +550,25 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         }
         /* requiresProcessingInputFile operations proceed to processFile below,
          * which handles its own context via initializeFileProcessing (legacy path). */
+    }
+
+    /* CONFIG-CHANGE-AWARE SCAN (auto-detect path only).
+     * First request: !scanDone triggers the scan.
+     * Config change: re-reads .c-xrefrc (updates options.includeDirs and
+     * savedOptions), then re-runs scan with new include dirs. */
+    if (projectContextInitialized
+        && options.detectedProjectRoot != NULL
+        && options.detectedProjectRoot[0] != '\0') {
+        bool configChanged = isProjectConfigChanged();
+        if (configChanged)
+            reloadProjectConfig(baseArgs, requestArgs);
+        if (!scanDone || configChanged) {
+            StringList *discoveredCUs = scanProjectForFilesAndIncludes(
+                options.detectedProjectRoot, options.includeDirs);
+            markMissingFilesAsDeleted(discoveredCUs);
+            freeStringList(discoveredCUs);
+            scanDone = true;
+        }
     }
 
     /* Entry refresh pass 3: parse sibling CUs that share headers with

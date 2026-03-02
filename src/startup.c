@@ -553,6 +553,27 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
     options.project = currentRequestProject;
 }
 
+/* Pure predicate: has the .c-xrefrc file been modified since we last read it?
+ * No side effects — only stats the file and compares mtime. */
+bool isProjectConfigChanged(void) {
+    if (previousStandardOptionsFile[0] == '\0')
+        return false;
+    time_t currentMtime = fileModificationTime(previousStandardOptionsFile);
+    return currentMtime != previousStandardOptionsFileModificationTime;
+}
+
+/* Re-read project config after detecting a change. Updates options.includeDirs
+ * and savedOptions so subsequent requests and reparsing see the new settings.
+ * Safe to call mid-request: file table, requestFileNumber, inputFileName, and
+ * detectedProjectRoot are not affected by loadProjectSettings(). */
+void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+    log_info("Config file '%s' changed, reloading project settings", previousStandardOptionsFile);
+    loadProjectSettings(baseArgs, requestArgs,
+                        previousStandardOptionsFile, previousStandardOptionsSection,
+                        inputFileName != NULL ? inputFileName : ".");
+    previousStandardOptionsFileModificationTime = fileModificationTime(previousStandardOptionsFile);
+}
+
 /* Initialize project context: discover project, load options, interrogate compiler,
  * and save memory checkpoint. Called during first GetProject so that the checkpoint
  * is available for stale-file reparsing on subsequent requests.
