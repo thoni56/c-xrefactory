@@ -200,6 +200,7 @@ static void usage() {
     fprintf(stdout, "\t-warnings                 - also report warning messages on the console\n");
     fprintf(stdout, "\t-infos                    - also report informational & warning messages on the console\n");
     fprintf(stdout, "\t-log=<file>               - log all fatal/error/warnings/informational messages to <file>\n");
+    fprintf(stdout, "\t-info                     - also log info messages in log\n");
     fprintf(stdout, "\t-debug                    - also log debug messages in log\n");
     fprintf(stdout, "\t-trace                    - also log trace & debug messages in log\n");
     fprintf(stdout, "\t-commandlog               - write all commands to /tmp/c-xref-command-log (experimental)\n");
@@ -1214,6 +1215,9 @@ static bool processIOption(int *argi, ArgumentsVector args) {
     }
     else if (strcmp(args.argv[i], "-infos")==0) {
         logging_selected.infos = true;
+    }
+    else if (strcmp(args.argv[i], "-info")==0) {
+        /* Log level handled in main.c initLogging() */;
     }
     else return false;
     *argi = i;

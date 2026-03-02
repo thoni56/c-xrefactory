@@ -309,6 +309,11 @@ static bool fileNeedsParsing(FileItem *fileItem);
 static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseArgs) {
     int cuFileNumbers[MAX_CUS_TO_REPARSE];
     int cuCount = 0;
+    int skippedAlreadyParsed = 0;
+    int skippedCapped = 0;
+
+    log_info("Pass 3: request file '%s' (fileNumber=%d)",
+             getFileItemWithFileNumber(requestFileNumber)->name, requestFileNumber);
 
     ensureReferencesAreLoadedFor(LINK_NAME_INCLUDE_REFS);
 
@@ -346,8 +351,10 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
             FileItem *siblingItem = getFileItemWithFileNumber(siblingFileNum);
             if (!isCompilationUnit(siblingItem->name))
                 continue;
-            if (!fileNeedsParsing(siblingItem))
+            if (!fileNeedsParsing(siblingItem)) {
+                skippedAlreadyParsed++;
                 continue;
+            }
 
             /* Deduplicate */
             bool alreadyCollected = false;
@@ -357,13 +364,20 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
                     break;
                 }
             }
-            if (!alreadyCollected && cuCount < MAX_CUS_TO_REPARSE) {
-                cuFileNumbers[cuCount++] = siblingFileNum;
-                log_debug("Sibling CU '%s' shares header with request file",
-                          siblingItem->name);
+            if (!alreadyCollected) {
+                if (cuCount < MAX_CUS_TO_REPARSE) {
+                    cuFileNumbers[cuCount++] = siblingFileNum;
+                    log_debug("Sibling CU '%s' shares header with request file",
+                              siblingItem->name);
+                } else {
+                    skippedCapped++;
+                }
             }
         }
     }
+
+    log_info("Pass 3: %d to parse, %d skipped (already parsed), %d skipped (cap %d)",
+             cuCount, skippedAlreadyParsed, skippedCapped, MAX_CUS_TO_REPARSE);
 
     if (cuCount > 0) {
         log_info("Entry refresh pass 3: parsing %d sibling CU(s)", cuCount);

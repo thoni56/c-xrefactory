@@ -35,6 +35,8 @@ static void initLogging(ArgumentsVector args) {
             log_level = LOG_DEBUG;
         if (strcmp(args.argv[i], "-trace") == 0)
             log_level = LOG_TRACE;
+        if (strcmp(args.argv[i], "-info") == 0)
+            log_level = LOG_INFO;
         /* Levels on the console */
         if (strcmp(args.argv[i], "-errors") == 0)
             console_level = LOG_ERROR;
