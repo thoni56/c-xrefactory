@@ -898,6 +898,14 @@ static void generateLineNumber(int lineNumber) {
     ppcValueRecord(PPC_INT_VALUE, lineNumber, "");
 }
 
+static unsigned extractionInsertionPosition(void) {
+    if (parsedInfo.blockBeginLine > 0
+        && parsedInfo.functionBeginPosition >= (unsigned)parsedInfo.blockBeginLine) {
+        return parsedInfo.previousFunctionBeginPosition;
+    }
+    return parsedInfo.functionBeginPosition;
+}
+
 static void makeExtraction(void) {
     ProgramGraphNode *program;
 
@@ -940,7 +948,7 @@ static void makeExtraction(void) {
         generateNewMacroCall(program, extractionName);
         generateNewMacroHead(program, extractionName);
         generateNewMacroTail();
-        generateLineNumber(parsedInfo.functionBeginPosition);
+        generateLineNumber(extractionInsertionPosition());
     } else if (parsingConfig.extractMode == EXTRACT_VARIABLE) {
         generateNewVariableAccess(program, extractionName);
         generateNewVariableDeclaration(program, extractionName);
@@ -950,7 +958,7 @@ static void makeExtraction(void) {
         generateNewFunctionCall(program, extractionName);
         generateNewFunctionHead(program, extractionName);
         generateNewFunctionTail(program);
-        generateLineNumber(parsedInfo.functionBeginPosition);
+        generateLineNumber(extractionInsertionPosition());
     }
 
     ppcEnd(PPC_EXTRACTION_DIALOG);
@@ -975,11 +983,20 @@ void actionsBeforeAfterExternalDefinition(void) {
         /* No, all this extraction should be after parsing ! */
     }
     parsedInfo.cxMemoryIndexAtFunctionBegin = cxMemory.index;
+
+    int currentLine;
     if (includeStack.pointer > 0) {
-        parsedInfo.functionBeginPosition = includeStack.stack[0].lineNumber+1;
+        currentLine = includeStack.stack[0].lineNumber;
     } else {
-        parsedInfo.functionBeginPosition = currentFile.lineNumber+1;
+        currentLine = currentFile.lineNumber;
     }
+
+    static int previousBefLineNumber = -1;
+    if (currentLine != previousBefLineNumber) {
+        parsedInfo.previousFunctionBeginPosition = parsedInfo.functionBeginPosition;
+        parsedInfo.functionBeginPosition = currentLine + 1;
+    }
+    previousBefLineNumber = currentLine;
 }
 
 
@@ -987,6 +1004,7 @@ void extractActionOnBlockMarker(void) {
     if (parsedInfo.cxMemoryIndexAtBlockBegin == 0) {
         parsedInfo.cxMemoryIndexAtBlockBegin = cxMemory.index;
         parsedInfo.blockAtBegin = currentBlock->outerBlock;
+        parsedInfo.blockBeginLine = currentFile.lineNumber;
     } else {
         assert(parsedInfo.cxMemoryIndexAtBlockEnd == 0);
         parsedInfo.cxMemoryIndexAtBlockEnd = cxMemory.index;

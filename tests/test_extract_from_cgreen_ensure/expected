@@ -1,0 +1,11 @@
+CXREF -xrefactory-II -refactory -p test_extract_from_cgreen_ensure -rfct-extract-function -olmark=173 -olcursor=157 CURDIR/source.c -o server-buffer
+<sync>
+<extraction-dialog type=newFunction_> <str len=<n>>	newFunction_();
+</str>
+ <str len=<n>>static void newFunction_() {
+</str>
+ <str len=<n>>}
+
+</str>
+  <int val=7 len=<n>></int>
+</extraction-dialog>

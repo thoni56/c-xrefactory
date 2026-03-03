@@ -146,6 +146,8 @@ typedef struct parsedInfo {
     struct codeBlock *blockAtEnd;
     struct symbol    *function;
     unsigned          functionBeginPosition;
+    unsigned          previousFunctionBeginPosition;
+    int               blockBeginLine;
     int               cxMemoryIndexAtFunctionBegin;
     int               cxMemoryIndexAtFunctionEnd;
     int               cxMemoryIndexAtBlockBegin;

@@ -1,0 +1,2 @@
+CXREF -xrefactory-II -refactory -p test_extract_from_cgreen_ensure -rfct-extract-function -olmark=173 -olcursor=157 CURDIR/source.c
+
