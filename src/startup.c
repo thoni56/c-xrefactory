@@ -33,9 +33,9 @@
 #include "xref.h"
 #include "yylex.h"
 
-static char previousStandardOptionsFile[MAX_FILE_NAME_SIZE];
-static char previousStandardOptionsSection[MAX_FILE_NAME_SIZE];
-static time_t previousStandardOptionsFileModificationTime;
+static char previousProjectConfigurationFile[MAX_FILE_NAME_SIZE];
+static char previousProjectConfigurationSection[MAX_FILE_NAME_SIZE];
+static time_t previousProjectConfigurationFileModificationTime;
 static int previousPass;
 
 
@@ -80,7 +80,7 @@ static void handlePathologicProjectCases(char *fileName, char *outFName, char *s
             writeOptionsFileMessage(fileName, outFName, section);
         }
     } else {
-        if (*previousStandardOptionsFile == 0) {
+        if (*previousProjectConfigurationFile == 0) {
             static bool messageWritten = false;
             if (showErrorMessage && messageWritten == 0) {
                 messageWritten = true;
@@ -91,12 +91,12 @@ static void handlePathologicProjectCases(char *fileName, char *outFName, char *s
                 warningMessage(ERR_ST, "no project name covers this file");
             }
             if (outFName[0]==0 && section[0]==0) {
-                strcpy(section, previousStandardOptionsSection);
+                strcpy(section, previousProjectConfigurationSection);
             }
             if (outFName[0]==0) {
-                strcpy(outFName, previousStandardOptionsFile);
+                strcpy(outFName, previousProjectConfigurationFile);
             }
-            if (strcmp(previousStandardOptionsFile,outFName) != 0 || strcmp(previousStandardOptionsSection,section) != 0) {
+            if (strcmp(previousProjectConfigurationFile,outFName) != 0 || strcmp(previousProjectConfigurationSection,section) != 0) {
                 if (options.xref2) {
                     char tmpBuff[TMP_BUFF_SIZE];                        \
                     sprintf(tmpBuff, "[C-xref] new project: '%s'", section);
@@ -556,10 +556,10 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
 /* Pure predicate: has the .c-xrefrc file been modified since we last read it?
  * No side effects — only stats the file and compares mtime. */
 bool isProjectConfigChanged(void) {
-    if (previousStandardOptionsFile[0] == '\0')
+    if (previousProjectConfigurationFile[0] == '\0')
         return false;
-    time_t currentMtime = fileModificationTime(previousStandardOptionsFile);
-    return currentMtime != previousStandardOptionsFileModificationTime;
+    time_t currentMtime = fileModificationTime(previousProjectConfigurationFile);
+    return currentMtime != previousProjectConfigurationFileModificationTime;
 }
 
 /* Re-read project config after detecting a change. Updates options.includeDirs
@@ -567,11 +567,11 @@ bool isProjectConfigChanged(void) {
  * Safe to call mid-request: file table, requestFileNumber, inputFileName, and
  * detectedProjectRoot are not affected by loadProjectSettings(). */
 void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
-    log_info("Config file '%s' changed, reloading project settings", previousStandardOptionsFile);
+    log_info("Config file '%s' changed, reloading project settings", previousProjectConfigurationFile);
     loadProjectSettings(baseArgs, requestArgs,
-                        previousStandardOptionsFile, previousStandardOptionsSection,
+                        previousProjectConfigurationFile, previousProjectConfigurationSection,
                         inputFileName != NULL ? inputFileName : ".");
-    previousStandardOptionsFileModificationTime = fileModificationTime(previousStandardOptionsFile);
+    previousProjectConfigurationFileModificationTime = fileModificationTime(previousProjectConfigurationFile);
 }
 
 /* Initialize project context: discover project, load options, interrogate compiler,
@@ -596,14 +596,14 @@ void initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
     if (projectOptionsFileName[0] != 0)
         modifiedTime = fileModificationTime(projectOptionsFileName);
     else
-        modifiedTime = previousStandardOptionsFileModificationTime;
+        modifiedTime = previousProjectConfigurationFileModificationTime;
 
     /* === PHASES 2-4: Options, compiler interrogation, checkpoint === */
     loadProjectSettings(baseArgs, requestArgs, projectOptionsFileName, projectSectionName, fileName);
 
-    strcpy(previousStandardOptionsFile, projectOptionsFileName);
-    strcpy(previousStandardOptionsSection, projectSectionName);
-    previousStandardOptionsFileModificationTime = modifiedTime;
+    strcpy(previousProjectConfigurationFile, projectOptionsFileName);
+    strcpy(previousProjectConfigurationSection, projectSectionName);
+    previousProjectConfigurationFileModificationTime = modifiedTime;
     previousPass = currentPass;
 }
 
@@ -642,15 +642,15 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
     if (projectOptionsFileName[0] != 0 )
         modifiedTime = fileModificationTime(projectOptionsFileName);
     else
-        modifiedTime = previousStandardOptionsFileModificationTime;               // !!! just for now
+        modifiedTime = previousProjectConfigurationFileModificationTime;               // !!! just for now
 
     /* Determine if we need full initialization or can restore from checkpoint.
      * Full init required when: first pass, different pass, different project,
      * or the current options file changed. */
     if (previousPass != currentPass                                       /* We are in a different pass */
-        || strcmp(previousStandardOptionsFile, projectOptionsFileName) != 0 /* or we are using a different options file */
-        || strcmp(previousStandardOptionsSection, projectSectionName) != 0 /* or a different project */
-        || previousStandardOptionsFileModificationTime != modifiedTime       /* or the options file has changed */
+        || strcmp(previousProjectConfigurationFile, projectOptionsFileName) != 0 /* or we are using a different options file */
+        || strcmp(previousProjectConfigurationSection, projectSectionName) != 0 /* or a different project */
+        || previousProjectConfigurationFileModificationTime != modifiedTime       /* or the options file has changed */
     ) {
         /* === PHASE 2-4: Options reading, compiler discovery, memory checkpointing === */
         loadProjectSettings(baseArgs, requestArgs, projectOptionsFileName, projectSectionName, fileName);
@@ -665,9 +665,9 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         inputOpened = computeAndOpenInputFile(inputFileName);  /* Finally calls initInput() */
 
         /* Save these values as previous */
-        strcpy(previousStandardOptionsFile,projectOptionsFileName);
-        strcpy(previousStandardOptionsSection,projectSectionName);
-        previousStandardOptionsFileModificationTime = modifiedTime;
+        strcpy(previousProjectConfigurationFile,projectOptionsFileName);
+        strcpy(previousProjectConfigurationSection,projectSectionName);
+        previousProjectConfigurationFileModificationTime = modifiedTime;
         previousPass = currentPass;
 
     } else {
@@ -781,8 +781,8 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
 
     initCwd();
 
-    previousStandardOptionsFile[0] = 0;
-    previousStandardOptionsSection[0] = 0;
+    previousProjectConfigurationFile[0] = 0;
+    previousProjectConfigurationSection[0] = 0;
 
     /* now pre-read the option file */
     processOptions(args, PROCESS_FILE_ARGUMENTS_YES);
@@ -827,14 +827,14 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
         strcpy(fileName, inputFileName);
     }
 
-    char standardOptionsFileName[MAX_FILE_NAME_SIZE];
-    char standardOptionsSection[MAX_FILE_NAME_SIZE];
-    searchForProjectOptionsFileAndProjectForFile(fileName, standardOptionsFileName, standardOptionsSection);
-    handlePathologicProjectCases(fileName, standardOptionsFileName, standardOptionsSection, false);
+    char projectConfigurationFileName[MAX_FILE_NAME_SIZE];
+    char projectConfigurationSection[MAX_FILE_NAME_SIZE];
+    searchForProjectOptionsFileAndProjectForFile(fileName, projectConfigurationFileName, projectConfigurationSection);
+    handlePathologicProjectCases(fileName, projectConfigurationFileName, projectConfigurationSection, false);
 
-    reInitCwd(standardOptionsFileName, standardOptionsSection);
+    reInitCwd(projectConfigurationFileName, projectConfigurationSection);
 
-    if (standardOptionsFileName[0]!=0) {
+    if (projectConfigurationFileName[0]!=0) {
         ArgumentsVector dfargs;
         ProcessFileArguments inmode;
 
@@ -842,7 +842,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
          * per-pass in initializeFileProcessing. Setting NO_PASS skips all -passN sections. */
         int savedPass = currentPass;
         currentPass = NO_PASS;
-        dfargs = readOptionsFromFile(standardOptionsFileName, standardOptionsSection, standardOptionsSection);
+        dfargs = readOptionsFromFile(projectConfigurationFileName, projectConfigurationSection, projectConfigurationSection);
         currentPass = savedPass;
         if (options.mode == RefactoryMode) {
             inmode = PROCESS_FILE_ARGUMENTS_NO;

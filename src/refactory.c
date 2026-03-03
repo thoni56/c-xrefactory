@@ -52,7 +52,7 @@ typedef enum {
 
 static EditorUndo *refactoringStartingPoint;
 
-static char *serverStandardOptions[] = {
+static char *serverDefaultOptions[] = {
     "xref",
     "-xrefactory-II",
     //& "-debug",
@@ -192,7 +192,7 @@ void ensureReferencesAreUpdated(char *project) {
     deepCopyOptionsFromTo(&savedOptions, &options);
     ppcEnd(PPC_UPDATE_REPORT);
 
-    args = (ArgumentsVector){.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
+    args = (ArgumentsVector){.argc = argument_count(serverDefaultOptions), .argv = serverDefaultOptions};
     mainTaskEntryInitialisations(args);
 }
 
@@ -219,7 +219,7 @@ void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *ma
     if (pushOption2 != NULL) {
         argumentVector[argumentCount++] = pushOption2;
     }
-    ArgumentsVector args = {.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
+    ArgumentsVector args = {.argc = argument_count(serverDefaultOptions), .argv = serverDefaultOptions};
     ArgumentsVector nargs = {.argc = argumentCount, .argv = argumentVector};
     initServer(nargs);
 
@@ -251,7 +251,7 @@ static void beInteractive(void) {
         ppcSynchronize();
         deepCopyOptionsFromTo(&savedOptions, &options);
 
-        ArgumentsVector args = {.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
+        ArgumentsVector args = {.argc = argument_count(serverDefaultOptions), .argv = serverDefaultOptions};
         processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
 
         ArgumentsVector pipedOptions = readOptionsFromPipe();
@@ -1394,7 +1394,7 @@ void refactory(void) {
     refactoringStartingPoint = editorUndo;
 
     // init subtask
-    ArgumentsVector args = {.argc = argument_count(serverStandardOptions), .argv = serverStandardOptions};
+    ArgumentsVector args = {.argc = argument_count(serverDefaultOptions), .argv = serverDefaultOptions};
     mainTaskEntryInitialisations(args);
 
     progressFactor = 1;
