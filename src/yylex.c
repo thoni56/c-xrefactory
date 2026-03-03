@@ -697,13 +697,52 @@ static Symbol *findMacroSymbol(char *name) {
         return NULL;
 }
 
+/* Resolve an include path to a file number already in the file table.
+ * Same resolution order as openInclude: includer's dir first, then include dirs.
+ * Returns -1 if not found. */
+static int resolveIncludeFileNumber(char includeType, char *name) {
+    char normalizedName[MAX_FILE_NAME_SIZE];
+    char path[MAX_FILE_NAME_SIZE];
+
+    extractPathInto(currentFile.fileName, path);
+
+    if (includeType != '<') {
+        strcpy(normalizedName, normalizeFileName_static(name, path));
+        int fileNumber = getFileNumberFromFileName(normalizedName);
+        if (fileNumber != -1)
+            return fileNumber;
+    }
+
+    for (StringList *dir = parsingConfig.includeDirs; dir != NULL; dir = dir->next) {
+        char dirPath[MAX_FILE_NAME_SIZE];
+        strcpy(dirPath, normalizeFileName_static(dir->string, cwd));
+        int len = strlen(dirPath);
+        if (len > 0 && dirPath[len - 1] != FILE_PATH_SEPARATOR) {
+            dirPath[len] = FILE_PATH_SEPARATOR;
+            dirPath[len + 1] = '\0';
+        }
+        strcpy(normalizedName, normalizeFileName_static(name, dirPath));
+        int fileNumber = getFileNumberFromFileName(normalizedName);
+        if (fileNumber != -1)
+            return fileNumber;
+    }
+
+    return -1;
+}
+
 static void processInclude2(Position includePosition, char includeType, char *includedName,
                             bool is_include_next) {
     char tmpBuff[TMP_BUFF_SIZE];
 
     sprintf(tmpBuff, "PragmaOnce-%s", includedName);
-    if (findMacroSymbol(tmpBuff) != NULL)
+    if (findMacroSymbol(tmpBuff) != NULL) {
+        /* File already included — skip content but still create the include
+         * reference so PUSH navigation works on this #include line. */
+        int fileNumber = resolveIncludeFileNumber(includeType, includedName);
+        if (fileNumber != -1)
+            addIncludeReferences(fileNumber, includePosition);
         return;
+    }
 
     if (!openInclude(includeType, includedName, is_include_next)) {
         if (options.mode != ServerMode)

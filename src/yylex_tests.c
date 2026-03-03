@@ -276,6 +276,61 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
 }
 
 
+static void given_an_include_file() {
+    /* Set up lexem stream for #include "already_included.h" */
+    char lexem_stream[100];
+    lexem_stream[0] = (unsigned)STRING_LITERAL % 256;
+    lexem_stream[1] = STRING_LITERAL / 256;
+    strcpy(&lexem_stream[2], "\"already_included.h");
+
+    strcpy(currentFile.lexemBuffer.lexemStream, lexem_stream);
+    currentFile.lexemBuffer.read = currentFile.lexemBuffer.lexemStream;
+    currentFile.lexemBuffer.write = currentFile.lexemBuffer.lexemStream + strlen(lexem_stream);
+
+    initInput(NULL, NULL, "", NULL);
+    currentInput.write = currentInput.begin + strlen(lexem_stream);
+}
+
+static void which_has_already_been_included() {
+    /* Simulate that the file was already included and has #pragma once:
+     * add PragmaOnce-<filename> macro to symbol table */
+    char *mname = ppmAllocc(strlen("PragmaOnce-already_included.h") + 1, sizeof(char));
+    strcpy(mname, "PragmaOnce-already_included.h");
+    Symbol *pragmaSymbol = ppmAlloc(sizeof(Symbol));
+    *pragmaSymbol = makeMacroSymbol(mname, NO_POSITION);
+    symbolTableAdd(symbolTable, pragmaSymbol);
+}
+
+static void and_is_already_in_the_filetable() {
+    /* The file is already in the file table (was included earlier) */
+    always_expect(normalizeFileName_static, will_return("some/path/already_included.h"));
+    always_expect(updateFileModificationTracking);
+    addFileNameToFileTable("already_included.h");
+}
+
+static void when_encountered_again_still_creates_reference() {
+    /* Set up current file for path resolution */
+    currentFile.fileName = "some/path/main.c";
+    always_expect(extractPathInto, will_set_contents_of_parameter(dest, "some/path/", 11));
+
+    /* The key assertion: include references must still be created
+     * even though #pragma once causes the file content to be skipped */
+    expect(handleFoundSymbolReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
+           times(2));
+}
+
+Ensure(Yylex, creates_include_reference_even_when_pragma_once_skips_file) {
+    Position position = (Position){1, 2, 3};
+
+    given_an_include_file();
+    which_has_already_been_included();
+    and_is_already_in_the_filetable();
+
+    when_encountered_again_still_creates_reference();
+
+    processIncludeDirective(position, false);
+}
+
 extern void swapPositions(Position *inOutPosition1, Position *inOutPosition2);
 
 Ensure(Yylex, can_swap_two_positions) {
