@@ -132,6 +132,31 @@ Once the core architectural path (lightweight scan, entry refresh, memory-as-tru
 |Even with header-filtered sibling parsing, core API headers in large projects can fan out to hundreds of CUs (e.g. `avcodec.h` in ffmpeg is directly included by 614 CUs, `internal.h` by 1171). Parallel parsing of independent CUs could reduce wall-clock time roughly linearly with core count. The main challenges are: the global mutable state throughout the parser and symbol table (would require per-thread working sets with merge), CX memory allocation (currently a single arena), and the file table (shared, needs synchronization or partitioning). This is a significant engineering effort but may be the only way to achieve acceptable latency for navigation targets in widely-included headers.
 |===
 
+=== Known Limitations
+
+The following are known consequences of the current entry refresh implementation. Each is deliberately deferred because it either has low practical impact or dissolves naturally with planned architectural changes.
+
+[cols="1,2,1"]
+|===
+|Limitation |Impact and reasoning |Dissolves with
+
+|**Re-scan doesn't clear old include refs**
+|When a config change triggers a re-scan, new `TypeCppInclude` / `UsageUsed` refs are created but old ones are not removed. For the common case — _adding_ `-I` flags — this is harmless: old refs are still valid, the scan just adds missing ones. The problematic case is _removing_ or _changing_ flags, where phantom include edges could cause Pass 2 or Pass 3 to chase stale headers, resulting in unnecessary (but not incorrect) reparsing. Low practical impact since mid-session config edits are almost always additive.
+|Could be fixed independently by clearing outgoing include refs per CU before re-scanning. Not urgent enough to justify the API addition.
+
+|**Double progress bar on cold start**
+|The lightweight scan only captures `#include "..."`, not `#include <...>`. On the first request, Pass 3 finds siblings via `"..."` edges. On the second request, Pass 1 reparses the request CU with the full parser, which discovers `<...>` edges too — Pass 3 then finds additional siblings, producing a second progress bar. Both rounds are roughly equal (ffmpeg: ~40s total, ~20s each). Functionally correct — all siblings get parsed, just in two steps.
+|Extending scan to `<...>` (requires header-filtered sibling parsing first, otherwise system headers cause near-full-project explosion)
+
+|**Pass 3 parses too many siblings**
+|Pass 3 parses all CUs sharing _any_ header with the request file. On large projects with widely-shared utility headers this pulls in a large fraction of all CUs (e.g. ffmpeg `aac_ac3_parser.c`: 978 siblings via shared headers, but only 7 share the relevant `aac_ac3_parser.h`). This is correct but wasteful — cold-start latency is dominated by this over-parsing.
+|Header-filtered sibling parsing: identify the navigated symbol's defining header during dispatch, then parse only CUs sharing that header. Challenge: Pass 3 runs during sync (before dispatch), so this requires bridging the sync/dispatch boundary.
+
+|**Stale sessions after POP**
+|Sessions hold copies of references at the time the session was created. Only the top session is refreshed by entry refresh. After editing a header and navigating back (POP), the previous session may show stale positions — e.g. an old location kept in parallel with the new one. Functionally annoying but not data-corrupting.
+|Index-based sessions (keys + positions instead of copies) — sessions would read directly from the in-memory table, which is always current after entry refresh.
+|===
+
 === Feature Vision: Full LSP Support
 
 ==== The Goal
