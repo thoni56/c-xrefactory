@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-02-25">
+<meta name="author" content="v{VERSION} - Generated 2026-03-03">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-02-25</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-03-03</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -552,8 +552,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_guiding_principles">14.1. Guiding Principles</a></li>
 <li><a href="#_architectural_vision_memory_as_truth">14.2. Architectural Vision: Memory as Truth</a></li>
-<li><a href="#_feature_vision_full_lsp_support">14.3. Feature Vision: Full LSP Support</a></li>
-<li><a href="#_feature_vision_modern_refactorings">14.4. Feature Vision: Modern Refactorings</a></li>
+<li><a href="#_optimization">14.3. Optimization</a></li>
+<li><a href="#_known_limitations">14.4. Known Limitations</a></li>
+<li><a href="#_feature_vision_full_lsp_support">14.5. Feature Vision: Full LSP Support</a></li>
+<li><a href="#_feature_vision_modern_refactorings">14.6. Feature Vision: Modern Refactorings</a></li>
 </ul>
 </li>
 <li><a href="#_planned_features">15. Planned Features</a>
@@ -563,6 +565,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_rename_function_handles_expect">15.3. Rename function handles <code>expect</code></a></li>
 <li><a href="#_migrate_to_project_local_config">15.4. Migrate to project local config</a></li>
 <li><a href="#_indexing_log_buffer">15.5. Indexing Log Buffer</a></li>
+<li><a href="#_browsing_includes">15.6. Browsing includes</a></li>
 </ul>
 </li>
 <li><a href="#_major_codebase_improvements">16. Major Codebase Improvements</a>
@@ -1105,7 +1108,7 @@ mtime-based validation remains correct at next startup.<br>
 <dd>
 <p>A file is stale when its content has changed since it was last parsed. Detected by
 comparing <code>lastParsedMtime</code> against the current file modification time (from disk or
-editor buffer). Stale files trigger reparsing in the two-pass reparse phase (ADR 20).</p>
+editor buffer). Stale files trigger reparsing during the entry refresh (ADR 20).</p>
 </dd>
 <dt class="hdlist1">Steady state</dt>
 <dd>
@@ -1118,11 +1121,13 @@ reparsing happen per-request. The reference table is authoritative.<br>
 <p>The detailed reference information (positions, usage types) for identifiers, created by
 full parsing. Expensive to produce. Distinguished from include structure, which is cheap.</p>
 </dd>
-<dt class="hdlist1">Two-pass reparse</dt>
+<dt class="hdlist1">Entry refresh</dt>
 <dd>
-<p>The per-request staleness refresh mechanism (ADR 20). Pass 1 reparses stale compilation
-units directly, updating their include refs. Pass 2 queries the freshened include refs
-to find CUs that include stale headers, and reparses those. Pass ordering is critical.</p>
+<p>The per-request mechanism that ensures the reference table is up-to-date before executing
+an operation. Covers both <em>staleness</em> (content was known but is now outdated) and
+<em>unknown content</em> (file discovered by scan but never parsed). Uses the include structure
+to determine what needs reparsing. Runs on every request in <code>callServer()</code>.<br>
+See Server Mode Flow in <a href="09-code.html">Code</a> for implementation details.</p>
 </dd>
 <dt class="hdlist1">Warm start</dt>
 <dd>
@@ -2541,45 +2546,42 @@ lines and resolving paths via <code>options.includeDirs</code>. See <a href="#ta
 <div class="sect3">
 <h4 id="_server_mode_flow">8.15.2. Server Mode Flow</h4>
 <div class="paragraph">
-<p><strong>SINGLE FILE PER REQUEST</strong> - Server processes one file per request, but all files are initially scheduled by <code>processFileArguments()</code> in <code>initServer()</code>.</p>
-</div>
-<div class="paragraph">
-<p>Since ADR 20, <code>callServer()</code> performs a staleness reparse phase before dispatching each
-request. This is not shown in the legacy flow diagram below but is now the first action
-in every request after initialization.</p>
+<p><strong>SINGLE FILE PER REQUEST</strong> - Server processes one file per request.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">initServer(args) [server.c:148]
-  ├─&gt; processOptions(args, ...)
-  ├─&gt; processFileArguments()  ← SCHEDULES ALL FILES
-  └─ Sets up completions
-
-server() [server.c:237] - Infinite request loop
+<pre class="highlightjs highlight"><code class="language-none hljs">server() - Infinite request loop
   │
   └─&gt; FOR EACH REQUEST:
        │
-       └─&gt; callServer(baseArgs, requestArgs, &amp;firstPass) [server.c:214]
+       └─&gt; callServer(baseArgs, requestArgs, &amp;firstPass)
             │
             ├─&gt; loadAllOpenedEditorBuffers()
             │
-            ├─&gt; IF projectContextInitialized:              ← ADR 20
-            │    └─&gt; reparseStalePreloadedFiles()
-            │         ├─ Pass 1: reparse stale CUs directly
-            │         └─ Pass 2: find CUs that include stale headers
-            │                    (via TypeCppInclude refs), reparse those
-            │
-            ├─&gt; prepareInputFileForRequest() [server.c:95]
-            │    ├─ Gets first scheduled file (local check only)
+            ├─&gt; prepareInputFileForRequest()
             │    └─ SETS: requestFileNumber
             │
-            ├─&gt; IF NOT projectContextInitialized:
+            ├─&gt; IF NOT projectContextInitialized (one-time):
             │    ├─ OP_ACTIVE_PROJECT: initializeProjectContext()
-            │    │   → processFileArguments() → loadFileNumbersFromStore()
-            │    │   → parseDiscoveredCompilationUnits()
-            │    ├─ requiresProcessingInputFile: processFile() (legacy)
-            │    └─ other: error
+            │    │   → loadFileNumbersFromStore()
+            │    │   → Legacy: processFileArguments()
+            │    │             + parseDiscoveredCompilationUnits()
             │    └─ SETS: projectContextInitialized = true
+            │
+            ├─&gt; Config-change-aware scan (auto-detect only):
+            │    ├─ IF config changed: reloadProjectConfig()
+            │    │   → re-reads .c-xrefrc, updates options.includeDirs
+            │    └─ IF !scanDone OR config changed:
+            │         scanProjectForFilesAndIncludes()
+            │         + markMissingFilesAsDeleted()
+            │         SETS: scanDone = true
+            │
+            ├─&gt; Entry refresh (if projectContextInitialized):
+            │    ├─ Pass 1: reparse stale CUs directly
+            │    ├─ Pass 2: find CUs that include stale headers
+            │    │           (via TypeCppInclude refs), reparse those
+            │    └─ Pass 3: find unparsed CUs that share headers with
+            │               the request file, parse those
             │
             └─&gt; Dispatch operation
                  ├─ requiresProcessingInputFile: processFile()
@@ -2587,10 +2589,13 @@ server() [server.c:237] - Infinite request loop
 </div>
 </div>
 <div class="paragraph">
-<p>The two-pass reparse (ADR 20) is critical for correctness: Pass 1 reparses stale CUs,
-which updates their <code>TypeCppInclude</code> references. Pass 2 then queries those freshened
-references to find which CUs include stale headers. A user cannot create a new include
-edge without editing the includer, so the includer is always stale when the edge is new.</p>
+<p>The entry refresh (see Terminology in <a href="06-principles.html">Principles</a>) ensures
+the reference table is up-to-date before each operation. Pass ordering is critical:
+Pass 1 reparses stale CUs, which updates their <code>TypeCppInclude</code> references. Pass 2
+then queries those freshened references to find which CUs include stale headers. Pass 3
+uses the include structure from the lightweight scan to find CUs sharing headers with
+the request file that have never been parsed. A user cannot create a new include edge
+without editing the includer, so the includer is always stale when the edge is new.</p>
 </div>
 <div class="paragraph">
 <p>The per-request dispatch still follows the legacy pattern:</p>
@@ -2945,27 +2950,26 @@ these into a single path where the in-memory database is authoritative.</p>
   │     │  → loadFileNumbersFromStore(): CU entries + lastParsedMtime
   │     │  → Cache/optimization, not source of truth
   │     │
-  │     ├─ Scan project structure
-  │     │  → scanProjectForFilesAndIncludes(): glob CUs (.c, .y),
-  │     │    text-scan #include lines, resolve paths transitively
-  │     │    (CU dir + options.includeDirs), populate file table +
-  │     │    TypeCppInclude refs
-  │     │  → Catches new files disk db doesn't know about
-  │     │
-  │     ├─ Reconcile: mark missing CUs as deleted
-  │     │  → markMissingFilesAsDeleted(): CUs only (glob-discoverable)
-  │     │  → Header disappearance detected naturally on reparse
-  │     │
   │     └─ projectContextInitialized = true
   │
-  ├─ 2. Update what changed (same two-pass as ADR 20)
+  ├─ 2. Config-change-aware scan (re-runs when .c-xrefrc changes)
+  │     ├─ IF config changed: reloadProjectConfig()
+  │     │  → re-reads .c-xrefrc, updates options.includeDirs + savedOptions
+  │     └─ IF !scanDone OR config changed:
+  │        → scanProjectForFilesAndIncludes(): glob CUs (.c, .y),
+  │          text-scan #include lines, resolve paths transitively
+  │          (CU dir + options.includeDirs), populate file table +
+  │          TypeCppInclude refs
+  │        → markMissingFilesAsDeleted(): CUs only (glob-discoverable)
+  │        → scanDone = true
+  │
+  ├─ 3. Update what changed (same two-pass as ADR 20)
   │     ├─ Pass 1: reparse stale CUs
   │     └─ Pass 2: reparse CUs that include stale headers
-  │     Also: if config changed → re-run loadProjectSettings + scan
   │
-  ├─ 3. Execute operation
+  ├─ 4. Execute operation
   │
-  └─ 4. Repeat from 2</code></pre>
+  └─ 5. Repeat from 2</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6189,15 +6193,93 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_feature_vision_full_lsp_support">14.3. Feature Vision: Full LSP Support</h3>
+<h3 id="_optimization">14.3. Optimization</h3>
+<div class="paragraph">
+<p>Once the core architectural path (lightweight scan, entry refresh, memory-as-truth) is functional, targeted optimizations can reduce cold-start latency and improve responsiveness on large projects.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Optimization</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Header-filtered sibling parsing</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Entry refresh pass 3 currently parses all CUs sharing <em>any</em> header with the request file. On large projects this pulls in a large fraction of all CUs (e.g. on ffmpeg, navigating <code>AudioFIRContext</code> from <code>af_afir.c</code> triggers 2481 sibling CUs because of widely-shared utility headers). When the operation is navigation, only CUs sharing the header that <em>defines the navigated symbol</em> are relevant. Filtering to that header reduces the scope dramatically: <code>AudioFIRContext</code> is defined in <code>af_afir.h</code>, which only 3 CUs include — so 2481 → 2 sibling CUs to parse. Challenge: pass 3 runs during sync (before dispatch), but the symbol is only known during the operation. The solution must bridge this gap — e.g. by triggering targeted sibling parsing from the operation after the symbol&#8217;s defining header is identified. Measured cold-start PUSH on ffmpeg <code>af_afir.c</code>: scan 2.7s, pass 3 round 1 19s, pass 3 round 2 19s (from <code>&lt;&#8230;&#8203;&gt;</code> includes discovered by full parse), total 42s. Parsing dominates — the scan is not the bottleneck. Worst case: core API headers like <code>avcodec.h</code> (614 CUs) or <code>internal.h</code> (1171 CUs) — parallel parsing may be needed for these.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Extend scan to capture <code>&lt;&#8230;&#8203;&gt;</code> includes</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The lightweight scan currently only matches <code>#include "&#8230;&#8203;"</code>. Projects like ffmpeg use angle-bracket includes for internal headers (with <code>-I</code> paths), so the scan misses roughly half the include structure. Extending to <code>&lt;&#8230;&#8203;&gt;</code> requires header-filtered sibling parsing first — without that filter, ubiquitous system headers (<code>string.h</code>, <code>stdlib.h</code>) would cause pass 3 to pull in nearly every CU in the project. Also needs care to avoid recursively scanning system headers outside the project tree.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Lexing cache re-introduction</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The lexing cache (pre-tokenized file content) was present in the original codebase but lost during restructuring. Re-enabling it avoids repeated lexing of the same file across multiple parse passes.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Parallel parsing</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Even with header-filtered sibling parsing, core API headers in large projects can fan out to hundreds of CUs (e.g. <code>avcodec.h</code> in ffmpeg is directly included by 614 CUs, <code>internal.h</code> by 1171). Parallel parsing of independent CUs could reduce wall-clock time roughly linearly with core count. The main challenges are: the global mutable state throughout the parser and symbol table (would require per-thread working sets with merge), CX memory allocation (currently a single arena), and the file table (shared, needs synchronization or partitioning). This is a significant engineering effort but may be the only way to achieve acceptable latency for navigation targets in widely-included headers.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_known_limitations">14.4. Known Limitations</h3>
+<div class="paragraph">
+<p>The following are known consequences of the current entry refresh implementation. Each is deliberately deferred because it either has low practical impact or dissolves naturally with planned architectural changes.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Limitation</th>
+<th class="tableblock halign-left valign-top">Impact and reasoning</th>
+<th class="tableblock halign-left valign-top">Dissolves with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Re-scan doesn&#8217;t clear old include refs</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">When a config change triggers a re-scan, new <code>TypeCppInclude</code> / <code>UsageUsed</code> refs are created but old ones are not removed. For the common case — <em>adding</em> <code>-I</code> flags — this is harmless: old refs are still valid, the scan just adds missing ones. The problematic case is <em>removing</em> or <em>changing</em> flags, where phantom include edges could cause Pass 2 or Pass 3 to chase stale headers, resulting in unnecessary (but not incorrect) reparsing. Low practical impact since mid-session config edits are almost always additive.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Could be fixed independently by clearing outgoing include refs per CU before re-scanning. Not urgent enough to justify the API addition.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Double progress bar on cold start</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The lightweight scan only captures <code>#include "&#8230;&#8203;"</code>, not <code>#include &lt;&#8230;&#8203;&gt;</code>. On the first request, Pass 3 finds siblings via <code>"&#8230;&#8203;"</code> edges. On the second request, Pass 1 reparses the request CU with the full parser, which discovers <code>&lt;&#8230;&#8203;&gt;</code> edges too — Pass 3 then finds additional siblings, producing a second progress bar. Both rounds are roughly equal (ffmpeg: ~40s total, ~20s each). Functionally correct — all siblings get parsed, just in two steps.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Extending scan to <code>&lt;&#8230;&#8203;&gt;</code> (requires header-filtered sibling parsing first, otherwise system headers cause near-full-project explosion)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Pass 3 parses too many siblings</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pass 3 parses all CUs sharing <em>any</em> header with the request file. On large projects with widely-shared utility headers this pulls in a large fraction of all CUs (e.g. ffmpeg <code>aac_ac3_parser.c</code>: 978 siblings via shared headers, but only 7 share the relevant <code>aac_ac3_parser.h</code>). This is correct but wasteful — cold-start latency is dominated by this over-parsing.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Header-filtered sibling parsing: identify the navigated symbol&#8217;s defining header during dispatch, then parse only CUs sharing that header. Challenge: Pass 3 runs during sync (before dispatch), so this requires bridging the sync/dispatch boundary.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Stale sessions after POP</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sessions hold copies of references at the time the session was created. Only the top session is refreshed by entry refresh. After editing a header and navigating back (POP), the previous session may show stale positions — e.g. an old location kept in parallel with the new one. Functionally annoying but not data-corrupting.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Index-based sessions (keys + positions instead of copies) — sessions would read directly from the in-memory table, which is always current after entry refresh.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_feature_vision_full_lsp_support">14.5. Feature Vision: Full LSP Support</h3>
 <div class="sect3">
-<h4 id="_the_goal_2">14.3.1. The Goal</h4>
+<h4 id="_the_goal_2">14.5.1. The Goal</h4>
 <div class="paragraph">
 <p>Enable VS Code, Neovim, and other LSP-capable editors to use c-xrefactory&#8217;s refactoring and navigation features with full feature parity to the Emacs integration.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_state">14.3.2. Current State</h4>
+<h4 id="_current_state">14.5.2. Current State</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -6210,7 +6292,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_planned_capabilities">14.3.3. Planned Capabilities</h4>
+<h4 id="_planned_capabilities">14.5.3. Planned Capabilities</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -6251,7 +6333,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_dependencies">14.3.4. Dependencies</h4>
+<h4 id="_dependencies">14.5.4. Dependencies</h4>
 <div class="paragraph">
 <p>Full LSP support depends on the "Memory as Truth" architecture:</p>
 </div>
@@ -6271,15 +6353,15 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_feature_vision_modern_refactorings">14.4. Feature Vision: Modern Refactorings</h3>
+<h3 id="_feature_vision_modern_refactorings">14.6. Feature Vision: Modern Refactorings</h3>
 <div class="sect3">
-<h4 id="_the_goal_3">14.4.1. The Goal</h4>
+<h4 id="_the_goal_3">14.6.1. The Goal</h4>
 <div class="paragraph">
 <p>Provide refactoring capabilities that understand C semantics, going beyond what generic text-based tools can offer.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_capabilities">14.4.2. Current Capabilities</h4>
+<h4 id="_current_capabilities">14.6.2. Current Capabilities</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -6298,7 +6380,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_planned_improvements">14.4.3. Planned Improvements</h4>
+<h4 id="_planned_improvements">14.6.3. Planned Improvements</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -6331,7 +6413,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_details">14.4.4. Details</h4>
+<h4 id="_details">14.6.4. Details</h4>
 <div class="paragraph">
 <p>See <a href="#move-function-refactoring">Chapter 16: Move Function Between Files</a> for implementation details and phase breakdown.</p>
 </div>
@@ -6601,6 +6683,28 @@ operation to do that would be nice.</p>
 </div>
 <div class="paragraph">
 <p><strong>Option C: Summary only</strong> — Send a <code>PPC_BOTTOM_WARNING</code> summary to the minibuffer (e.g., "3 files could not be opened during indexing"). Details go only to the log file. Minimal change but no inspectable buffer in Emacs.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_browsing_includes">15.6. Browsing includes</h3>
+<div class="sect3">
+<h4 id="_background_3">15.6.1. Background</h4>
+<div class="paragraph">
+<p>The <code>#include</code> preprocessor statments are referenceable items just like typenames and
+variables. That means it is logical to expect that placing the cursor on an <code>#include</code>
+line and navigation would follow the same UX as for a variable: PUSH moves cursor to the
+definition (in this case the file itself) and NEXT to the next "reference", which in
+this case would be the next #include statement for that file.</p>
+</div>
+<div class="paragraph">
+<p>This does not happen.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_design">15.6.2. Design</h4>
+<div class="paragraph">
+<p>This needs to be investigated and understood before an attempt to design a solution can be made.</p>
 </div>
 </div>
 </div>
@@ -11044,7 +11148,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-02-25 14:25:36 UTC
+Last updated 2026-03-03 22:22:01 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
