@@ -425,11 +425,6 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
 
     log_info("Refreshing %d stale preloaded file(s)", staleCount);
 
-    /* Reset progress state so values aren't suppressed by the static
-     * lastprogress left over from previous requests (e.g. cold start). */
-    if (options.xref2)
-        writeRelativeProgress(0);
-
     /* Pass 1: Reparse stale CUs directly. This also refreshes their
      * TypeCppInclude references, which Pass 2 depends on.
      * No progress reporting here — Pass 1 is fast (only directly
@@ -476,15 +471,19 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
 
     if (cuCount > 0) {
         log_info("Reparsing %d CU(s) for stale header includers", cuCount);
+        if (options.xref2) {
+            static char progressFormat[128];
+            snprintf(progressFormat, sizeof(progressFormat),
+                     "Updating %d header includers... %%d remaining", cuCount);
+            initProgress(progressFormat);
+        }
         for (int i = 0; i < cuCount; i++) {
             reparseStaleFile(cuFileNumbers[i], baseArgs);
             getFileItemWithFileNumber(cuFileNumbers[i])->needsBrowsingStackRefresh = true;
             if (options.xref2)
-                writeRelativeProgress((100 * (i + 1)) / cuCount);
+                writeProgressInformation(cuCount - i - 1);
         }
     }
-    /* No trailing writeRelativeProgress(100) — the loop's last
-     * iteration already outputs 100 and closes the progress range. */
 }
 
 static bool fileNeedsParsing(FileItem *fileItem) {
