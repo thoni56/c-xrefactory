@@ -1,7 +1,7 @@
 include ../Makefile.cli
 
 
-ARGUMENTS = -xrefactory-II -create -errors $(TRACE) source.c -log=log -o output.tmp
+ARGUMENTS = -xrefactory-II -create -errors $(TRACE) source.c -log=log
 
 $(TEST): .c-xrefrc
 	$(COMMAND) > output.tmp
