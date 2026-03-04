@@ -1128,6 +1128,7 @@ static bool processEOption(int *argi, ArgumentsVector args) {
         options.errors = true;
         logging_selected.errors = true;
     } else if (strcmp(args.argv[i], "-exit")==0) {
+        /* TODO: save snapshot (saveReferences) before exiting */
         log_debug("Exiting");
         exit(EXIT_SUCCESS);
     }

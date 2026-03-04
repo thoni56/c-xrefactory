@@ -65,7 +65,18 @@ The following diagram shows how the remaining architectural pieces depend on eac
 |Refactoring uses same in-memory table as navigation, with lightweight scanning replacing `callXref()`. The existing graduated update strategy in `computeUpdateOptionForSymbol()` already decides the right scope per refactoring: no update for local symbols, fast update for multi-file globals, full update for symbols in headers. This logic maps directly onto the lightweight scan approach — only the update mechanism changes (scan + incremental reparse instead of `callXref()`). Include closure (link:/workspace/decisions#13[ADR-0013]) finds affected files; parse on demand. See link:18-insights.adoc[Chapter 18: RefactoryMode Internally Calls XrefMode] for the current architecture this replaces.
 
 |**Disk snapshot strategy (read side operational)**
-|The `.cx` file transitions from a live database to a startup snapshot. The read side is operational: at startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. Remaining work: snapshot write strategy (ensuring modified-buffer data is never persisted — the snapshot reflects disk state only) and initial creation without a prior `-create`. See below for target semantics.
+|The `.cx` file transitions from a live database to a startup snapshot. The read side is operational: at startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. Remaining work: snapshot write strategy (see below) and initial creation without a prior `-create`. See below for target semantics.
+
+|**Snapshot write triggers**
+|The save mechanism exists (`saveReferences()` in xref.c) but is only called from the legacy `-create`/`callXref()` path. It needs to be wired to triggers during normal server operation. Three triggers identified:
+
+*All buffers saved*: when no editor buffers are modified, the in-memory state is consistent with disk — a clean moment to snapshot. The snapshot must only persist disk-file-derived references (not modified-buffer data), so "all saved" is the natural condition. This is the primary trigger during normal workflow.
+
+*Clean exit*: the `-exit` option exists server-side but just calls `exit()` — no snapshot save. The Emacs client currently never sends `-exit` on `kill-emacs` (it sets `set-process-query-on-exit-flag nil` so the process is just killed). A `kill-emacs-hook` should send `-exit`, and the server's exit handling should save the snapshot.
+
+*Project change*: `c-xref-server-dispatch-project-mismatch` (c-xref.el:2414) kills the server process via `c-xref-kill-xref-process` when the user switches projects. Currently this is an abrupt `delete-process` — the server gets no chance to save. Should send `-exit` before killing, or handle SIGHUP.
+
+Dirty kills (crash, `kill -9`, terminal closed) lose in-memory state — the next cold start reparses from scratch. Acceptable if triggers 1-3 fire during normal workflow.
 |===
 
 ==== Incremental Implementation Path

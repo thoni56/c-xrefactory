@@ -1654,7 +1654,7 @@ tries to delete C-xrefactory windows first.
                    (cons "" nil)))
     (set-process-filter (car (eval proc)) filter)
     (setq process-connection-type oldpct)
-    (set-process-query-on-exit-flag (car (eval proc)) nil)
+    (set-process-query-on-exit-flag (car (eval proc)) nil) ;; TODO: add kill-emacs-hook to send -exit for snapshot save
     ))
 
 (defvar c-xref-interrupt-dialog-map (make-sparse-keymap "C-xref interrupt dialog"))
@@ -2425,6 +2425,7 @@ on active project selection).
          t dispatch-data)
         (progn
           ;; Kill the server process to release the lock
+          ;; TODO: send -exit first so server can save snapshot
           (c-xref-kill-xref-process nil)
           ;; Signal that we should retry - caller should handle this
           (error "Server restarted, please retry operation.")
