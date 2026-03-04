@@ -1,0 +1,11 @@
+/* -*- c -*-*/
+#include "projectstructure.h"
+#include <cgreen/mocks.h>
+
+StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *includeDirs) {
+    return (StringList *)mock(projectDir, includeDirs);
+}
+
+void markMissingFilesAsDeleted(StringList *discoveredFiles) {
+    mock(discoveredFiles);
+}
