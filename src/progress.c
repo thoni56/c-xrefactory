@@ -33,10 +33,10 @@ static void writeProgressInformation(int progress) {
         ) {
         if (!dialogDisplayed) {
             // display progress bar
-            fprintf(stdout, "<%s>0 \n", PPC_PROGRESS);
+            fprintf(stdout, "<%s>progress 0%%</%s>\n", PPC_PROGRESS, PPC_PROGRESS);
             dialogDisplayed = true;
         }
-        fprintf(stdout, "<%s>%d \n", PPC_PROGRESS, progress);
+        fprintf(stdout, "<%s>progress %d%%</%s>\n", PPC_PROGRESS, progress, PPC_PROGRESS);
         fflush(stdout);
         lastprogress = progress;
     }

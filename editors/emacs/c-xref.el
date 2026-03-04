@@ -98,6 +98,7 @@
 (defvar c-xref-ppc-synchro-record-len (length c-xref-ppc-synchro-record))
 (defvar c-xref-ppc-progress (format "<%s>" c-xref_PPC_PROGRESS))
 (defvar c-xref-ppc-progress-len (length c-xref-ppc-progress))
+(defvar c-xref-ppc-progress-end (format "</%s>" c-xref_PPC_PROGRESS))
 
 (defvar c-xref-run-buffer-no-stars "run")
 (defvar c-xref-run-buffer (format "*%s*" c-xref-run-buffer-no-stars))
@@ -1731,7 +1732,7 @@ tries to delete C-xrefactory windows first.
   )
 
 (defun c-xref-processes-filter (process output proc)
-  (let ((pn) (ss) (i) (j) (len))
+  (let ((ss) (i) (j) (len))
     (if c-xref-debug-mode (message "[%s] got: %s" (format-time-string "%T.%3N") output))
     (setq ss (format "%s%s" (car (cdr (eval proc))) output))
     (setq len (length ss))
@@ -1742,15 +1743,13 @@ tries to delete C-xrefactory windows first.
                         )
       (progn
             (setq i (+ i c-xref-ppc-progress-len))
-            (setq j i)
-            (while (and (< i len)
-                            (>= (elt ss i) ?0)
-                            (<= (elt ss i) ?9)
-                            )
-              (setq i (+ i 1))
-              )
-            (setq pn (string-to-number (substring ss j i)))
-            (message "progress %s%%" pn)
+            (setq j (string-search c-xref-ppc-progress-end ss i))
+            (if j
+                (progn
+                  (message "%s" (substring ss i j))
+                  (setq i (+ j (length c-xref-ppc-progress-end)))
+                  )
+              (setq i len))
             (setq i (c-xref-server-dispatch-skip-blank ss i len))
             ))
     (if (< (+ i c-xref-ppc-synchro-record-len) len)
