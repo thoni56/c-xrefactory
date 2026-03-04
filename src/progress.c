@@ -9,40 +9,47 @@
 int progressOffset=0;
 int progressFactor=1;
 
-static void writeProgressInformation(int progress) {
-    static int      lastprogress;
-    static time_t   timeZero;
-    static bool     dialogDisplayed = false;
-    static bool     initialCall = true;
-    time_t          currentTime;
+static const char *messageFormat = NULL;
+static bool        dialogDisplayed = false;
+static struct timespec timeZero;
+static struct timespec lastEmitTime;
 
-    if (progress == 0 || initialCall) {
-        initialCall = false;
-        dialogDisplayed = false;
-        lastprogress = 0;
-        timeZero = time(NULL);
+static double elapsedSeconds(struct timespec *from, struct timespec *to) {
+    return (to->tv_sec - from->tv_sec) + (to->tv_nsec - from->tv_nsec) / 1e9;
+}
+
+void initProgress(const char *format) {
+    messageFormat = format;
+    dialogDisplayed = false;
+    clock_gettime(CLOCK_MONOTONIC, &timeZero);
+    lastEmitTime = timeZero;
+}
+
+void writeProgressInformation(int value) {
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+
+    const char *format = messageFormat ? messageFormat : "progress %d%%";
+
+    if (!dialogDisplayed) {
+        if (elapsedSeconds(&timeZero, &now) <= 1.0)
+            return;
+        dialogDisplayed = true;
     } else {
-        if (progress <= lastprogress)
+        if (elapsedSeconds(&lastEmitTime, &now) < 0.2)
             return;
     }
-    currentTime = time(NULL);
-    // write progress only if it seems to be longer than 3 sec
-    if (dialogDisplayed
-        || (progress == 0 && currentTime-timeZero > 1)
-        || (progress != 0 && currentTime-timeZero >= 1 && 100*((double)currentTime-timeZero)/progress > 3)
-        ) {
-        if (!dialogDisplayed) {
-            // display progress bar
-            fprintf(stdout, "<%s>progress 0%%</%s>\n", PPC_PROGRESS, PPC_PROGRESS);
-            dialogDisplayed = true;
-        }
-        fprintf(stdout, "<%s>progress %d%%</%s>\n", PPC_PROGRESS, progress, PPC_PROGRESS);
-        fflush(stdout);
-        lastprogress = progress;
-    }
+
+    fprintf(stdout, "<%s>", PPC_PROGRESS);
+    fprintf(stdout, format, value);
+    fprintf(stdout, "</%s>\n", PPC_PROGRESS);
+    fflush(stdout);
+    lastEmitTime = now;
 }
 
 void writeRelativeProgress(int progress) {
+    if (progress == 0)
+        initProgress(NULL);
     writeProgressInformation((100*progressOffset + progress)/progressFactor);
     if (progress==100)
         progressOffset++;

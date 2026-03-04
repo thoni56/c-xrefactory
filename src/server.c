@@ -299,6 +299,18 @@ static int collectIncludersOfStaleHeader(int headerFileNumber,
 
 static bool fileNeedsParsing(FileItem *fileItem);
 
+static void setupProgress(int cuCount, int skippedCapped) {
+    static char progressFormat[128];
+    int totalFound = cuCount + skippedCapped;
+    if (skippedCapped > 0)
+        snprintf(progressFormat, sizeof(progressFormat),
+                 "%d unparsed siblings, parsing %d... %%d remaining", totalFound, cuCount);
+    else
+        snprintf(progressFormat, sizeof(progressFormat), "Parsing %d sibling files... %%d remaining",
+                 cuCount);
+    initProgress(progressFormat);
+}
+
 /* Entry refresh Pass 3: Find CUs that share headers with the request file
  * but haven't been parsed yet. On cold start without preloads, only the
  * request file gets parsed (by processFile). This pass ensures sibling CUs
@@ -381,8 +393,9 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
 
     if (cuCount > 0) {
         log_info("Entry refresh pass 3: parsing %d sibling CU(s)", cuCount);
-        if (options.xref2)
-            writeRelativeProgress(0);
+        if (options.xref2) {
+            setupProgress(cuCount, skippedCapped);
+        }
         int savedCursorOffset = options.cursorOffset;
         options.cursorOffset = NO_CURSOR_OFFSET;
         for (int i = 0; i < cuCount; i++) {
@@ -390,7 +403,7 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
             FileItem *fi = getFileItemWithFileNumber(cuFileNumbers[i]);
             fi->lastParsedMtime = editorFileModificationTime(fi->name);
             if (options.xref2)
-                writeRelativeProgress((100 * (i + 1)) / cuCount);
+                writeProgressInformation(cuCount - i - 1);
         }
         options.cursorOffset = savedCursorOffset;
     }

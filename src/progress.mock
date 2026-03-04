@@ -3,6 +3,14 @@
 int progressOffset=0;
 int progressFactor=1;
 
+void initProgress(const char *format) {
+    mock(format);
+}
+
+void writeProgressInformation(int value) {
+    mock(value);
+}
+
 void writeRelativeProgress(int progress) {
     mock(progress);
 }
