@@ -545,7 +545,8 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     /* ONE-TIME: project identity + disk db load */
     if (!projectContextInitialized && hasInputFile) {
         if (options.serverOperation == OP_ACTIVE_PROJECT) {
-            initializeProjectContext(getFileItemWithFileNumber(requestFileNumber)->name, baseArgs, requestArgs);
+            if (!initializeProjectContext(getFileItemWithFileNumber(requestFileNumber)->name, baseArgs, requestArgs))
+                goto done;
             loadFileNumbersFromStore();
 
             if (options.detectedProjectRoot == NULL || options.detectedProjectRoot[0] == '\0') {

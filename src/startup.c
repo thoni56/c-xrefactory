@@ -428,7 +428,8 @@ static void discoverStandardDefines(void) {
  }
 
 static void getAndProcessXrefrcOptions(char *optionsFileName, char *project) {
-    assert(*optionsFileName != 0);
+    if (*optionsFileName == 0)
+        return;
 
     ArgumentsVector args;
 
@@ -581,7 +582,7 @@ void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) 
  * Phase 1 (project discovery) is done inline, phases 2-4 delegate to
  * loadProjectSettings() which is shared with initializeFileProcessing.
  */
-void initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     char projectOptionsFileName[MAX_FILE_NAME_SIZE];
     char projectSectionName[MAX_FILE_NAME_SIZE];
     time_t modifiedTime;
@@ -591,12 +592,12 @@ void initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
     searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName, projectSectionName);
     handlePathologicProjectCases(fileName, projectOptionsFileName, projectSectionName, true);
 
+    if (projectOptionsFileName[0] == 0)
+        return false;
+
     initAllInputs();
 
-    if (projectOptionsFileName[0] != 0)
-        modifiedTime = fileModificationTime(projectOptionsFileName);
-    else
-        modifiedTime = previousProjectConfigurationFileModificationTime;
+    modifiedTime = fileModificationTime(projectOptionsFileName);
 
     /* === PHASES 2-4: Options, compiler interrogation, checkpoint === */
     loadProjectSettings(baseArgs, requestArgs, projectOptionsFileName, projectSectionName, fileName);
@@ -605,6 +606,7 @@ void initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
     strcpy(previousProjectConfigurationSection, projectSectionName);
     previousProjectConfigurationFileModificationTime = modifiedTime;
     previousPass = currentPass;
+    return true;
 }
 
 

@@ -10,8 +10,8 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
   mock(args.argc, args.argv);
 }
 
-void initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
-  mock(fileName, baseArgs.argc, baseArgs.argv, requestArgs.argc, requestArgs.argv);
+bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+  return (bool)mock(fileName, baseArgs.argc, baseArgs.argv, requestArgs.argc, requestArgs.argv);
 }
 
 bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs) {
