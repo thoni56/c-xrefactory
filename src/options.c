@@ -1849,23 +1849,23 @@ void processFileArguments(void) {
  * Used in auto-detection mode where file coverage is implicit.
  * Returns true if a section was found, false otherwise.
  */
-static bool getProjectNameFromOptionsFile(FILE *optionsFile, /* out */ char *projectName) {
+static bool getProjectNameFromConfigFile(FILE *configFile, /* out */ char *projectName) {
     int ch = ' ';
 
     while (ch != EOF) {
         while (ch == ' ' || ch == '\t' || ch == '\n')
-            ch = readChar(optionsFile);
+            ch = readChar(configFile);
         if (ch == '[') {
             int i = 0;
             while (ch != ']' && ch != EOF) {
-                ch = readChar(optionsFile);
+                ch = readChar(configFile);
                 projectName[i++] = ch;
             }
             projectName[i-1] = '\0';
             return true;
         } else {
             while (ch != '\n' && ch != EOF)
-                ch = readChar(optionsFile);
+                ch = readChar(configFile);
         }
     }
     return false;
@@ -1874,17 +1874,17 @@ static bool getProjectNameFromOptionsFile(FILE *optionsFile, /* out */ char *pro
 
 /* LEGACY: Return a project name if found, else NULL. Only handles cases where the file
  * path is included in the project name/section. */
-protected bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFile, /* out */ char *projectName) {
+protected bool projectCoveringFileInConfigFile(char *fileName, FILE *configFile, /* out */ char *projectName) {
     int ch = ' ';              /* Something to get started */
 
     while (ch != EOF) {
         while (ch == ' ' || ch == '\t' || ch == '\n')
-            ch = readChar(optionsFile);
+            ch = readChar(configFile);
         if (ch == '[') {
             char buffer[TMP_BUFF_SIZE];
             int i=0;
             while (ch != ']' && ch != EOF) {
-                ch = readChar(optionsFile);
+                ch = readChar(configFile);
                 buffer[i++] = ch;
             }
             buffer[i-1] = '\0';
@@ -1894,7 +1894,7 @@ protected bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFil
             }
         } else
             while (ch != '\n' && ch != EOF)
-                ch = readChar(optionsFile);
+                ch = readChar(configFile);
     }
     return false;
 }
@@ -1928,11 +1928,11 @@ void applyConventionBasedDatabasePath(void) {
 
 /* Search upward from sourceFilename for a project-local .c-xrefrc file.
  * Returns true if found and the config covers the source file.
- * Sets foundOptionsFilename to the path of the .c-xrefrc file.
+ * Sets foundConfigFilename to the path of the .c-xrefrc file.
  * Sets foundProjectName to the project name from the matching section.
  * Stops at HOME directory to avoid finding ~/.c-xrefrc (which is the global config).
  */
-static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundOptionsFilename,
+static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundConfigFilename,
                                                char *foundProjectName) {
     char searchDir[MAX_FILE_NAME_SIZE];
     char candidatePath[MAX_FILE_NAME_SIZE + 16];  /* Extra space for "/.c-xrefrc" suffix */
@@ -1958,19 +1958,19 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundO
         log_trace("Checking for project-local config: %s", candidatePath);
 
         if (fileExists(candidatePath)) {
-            FILE *optionsFile = openFile(candidatePath, "r");
-            if (optionsFile != NULL) {
+            FILE *configFile = openFile(candidatePath, "r");
+            if (configFile != NULL) {
                 char projectName[MAX_FILE_NAME_SIZE+16];
                 /* In auto-detection mode, file coverage is implicit (file is under config dir).
                  * Just extract the project name from the first section header. */
-                bool found = getProjectNameFromOptionsFile(optionsFile, projectName);
-                closeFile(optionsFile);
+                bool found = getProjectNameFromConfigFile(configFile, projectName);
+                closeFile(configFile);
                 if (!found) {
                     /* Empty config or no section - use directory basename as project name */
                     strcpy(projectName, simpleFileName(searchDir));
                     log_debug("Empty config, using directory basename as project name: %s", projectName);
                 }
-                strcpy(foundOptionsFilename, candidatePath);
+                strcpy(foundConfigFilename, candidatePath);
                 strcpy(foundProjectName, projectName);
                 /* Store project root in module-static variable (survives initOptions()) */
                 strcpy(autoDetectedProjectRoot, searchDir);
@@ -1994,13 +1994,13 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundO
     return false;
 }
 
-void searchForProjectOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename,
+void searchForProjectConfigFileAndProjectForFile(char *sourceFilename, char *foundConfigFilename,
                                                   char *foundProjectName) {
     int    fileno;
     bool   found = false;
-    FILE  *optionsFile;
+    FILE  *configFile;
 
-    foundOptionsFilename[0] = 0;
+    foundConfigFilename[0] = 0;
     foundProjectName[0] = 0;
     autoDetectedProjectRoot[0] = '\0';  /* Reset for each invocation */
 
@@ -2009,22 +2009,22 @@ void searchForProjectOptionsFileAndProjectForFile(char *sourceFilename, char *fo
 
     /* If no explicit -xrefrc was provided, try to find a project-local .c-xrefrc by searching upward */
     if (options.xrefrc == NULL) {
-        if (searchUpwardForProjectLocalConfig(sourceFilename, foundOptionsFilename, foundProjectName)) {
+        if (searchUpwardForProjectLocalConfig(sourceFilename, foundConfigFilename, foundProjectName)) {
             return;
         }
     }
 
     /* Fall back: try to find section in explicit -xrefrc or HOME config. */
-    putXrefrcFileNameInto(foundOptionsFilename);
-    optionsFile = openFile(foundOptionsFilename, "r");
-    if (optionsFile != NULL) {
+    putXrefrcFileNameInto(foundConfigFilename);
+    configFile = openFile(foundConfigFilename, "r");
+    if (configFile != NULL) {
         ArgumentsVector nargs;
-        found = readOptionsIntoArgs(optionsFile, &nargs, NULL, sourceFilename,
+        found = readOptionsIntoArgs(configFile, &nargs, NULL, sourceFilename,
                                     options.project, foundProjectName);
         if (found) {
-            log_debug("options file '%s', project '%s' found", foundOptionsFilename, foundProjectName);
+            log_debug("options file '%s', project '%s' found", foundConfigFilename, foundProjectName);
         }
-        closeFile(optionsFile);
+        closeFile(configFile);
     }
     if (found)
         return;
@@ -2043,7 +2043,7 @@ void searchForProjectOptionsFileAndProjectForFile(char *sourceFilename, char *fo
             return;
         }
     }
-    foundOptionsFilename[0] = 0;
+    foundConfigFilename[0] = 0;
 }
 
 void printOptionsMemoryStatistics(void) {

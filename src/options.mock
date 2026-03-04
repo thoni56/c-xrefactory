@@ -79,9 +79,9 @@ bool currentCxFileCountMatches(int foundReferenceFileCount) {
   return (bool)mock(foundReferenceFileCount);
 }
 
-void searchForProjectOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename,
-                                                  char *foundProjectName) {
-  mock(sourceFilename, foundOptionsFilename, foundProjectName);
+void searchForProjectConfigFileAndProjectForFile(char *sourceFilename, char *foundConfigFilename,
+                                                 char *foundProjectName) {
+  mock(sourceFilename, foundConfigFilename, foundProjectName);
 }
 
 void applyConventionBasedDatabasePath(void) {

@@ -185,7 +185,7 @@ extern ArgumentsVector readOptionsFromPipe(void);
 
 extern bool currentCxFileCountMatches(int newRefNum);
 
-extern void searchForProjectOptionsFileAndProjectForFile(char *filename, char *optionsFilename,
+extern void searchForProjectConfigFileAndProjectForFile(char *filename, char *optionsFilename,
                                                          char *foundProjectName);
 extern void applyConventionBasedDatabasePath(void);
 

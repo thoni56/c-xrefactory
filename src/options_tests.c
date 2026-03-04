@@ -204,23 +204,23 @@ static void expect_characters(char string[], bool eof) {
         expect(readChar, will_return(EOF));
 }
 
-xEnsure(Options, can_find_project_options_file_from_sourcefile_path) {
-    FILE optionsFile;
-    char optionsFilename[1000];
+xEnsure(Options, can_find_project_config_file_from_sourcefile_path) {
+    FILE configFile;
+    char configFilename[1000];
     char section[1000] = "/home/project";
 
     expect(getEnv, when(variable, is_equal_to_string("HOME")),
            will_return("HOME"));
-    expect(openFile, will_return(&optionsFile));
+    expect(openFile, will_return(&configFile));
     expect_characters("[/home/project]\n", false);
     expect_characters("  /home/project\n", true);
     expect(pathncmp, when(path1, is_equal_to_string("/home/project")),
            will_return(0));
     expect(closeFile);
 
-    searchForProjectOptionsFileAndProjectForFile("/home/project/sourcefile.c", optionsFilename, section);
+    searchForProjectConfigFileAndProjectForFile("/home/project/sourcefile.c", configFilename, section);
 
-    assert_that(optionsFilename, is_equal_to_string("HOME/.c-xrefrc"));
+    assert_that(configFilename, is_equal_to_string("HOME/.c-xrefrc"));
     assert_that(section, is_equal_to_string("/home/project"));
 }
 
@@ -253,8 +253,8 @@ Ensure(Options, should_get_back_stored_option_variable_value) {
     assert_that(getOptionVariable(name), is_equal_to_string(value));
 }
 
-xEnsure(Options, can_get_options_file_from_filename_using_searchProjectOptionsFileAndSectionForFile) {
-    char optionsFilename[100];
+xEnsure(Options, can_get_options_file_from_filename_using_searchProjectConfigFileAndSectionForFile) {
+    char configFilename[100];
     char sectionName[100];
     FILE file;
 
@@ -272,53 +272,53 @@ xEnsure(Options, can_get_options_file_from_filename_using_searchProjectOptionsFi
 
     expect(closeFile, when(file, is_equal_to(&file)));
 
-    searchForProjectOptionsFileAndProjectForFile("/path/filename.c", optionsFilename, sectionName);
+    searchForProjectConfigFileAndProjectForFile("/path/filename.c", configFilename, sectionName);
 
-    assert_that(optionsFilename, is_equal_to_string("HOME/.c-xrefrc"));
+    assert_that(configFilename, is_equal_to_string("HOME/.c-xrefrc"));
     assert_that(sectionName, is_equal_to_string("/path"));
 }
 
 
-extern bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFile, /* out */ char *projectName);
+extern bool projectCoveringFileInConfigFile(char *fileName, FILE *configFile, /* out */ char *projectName);
 
 Ensure(Options, can_see_if_a_project_doesnt_cover_file) {
     FILE file;
-    FILE *optionsFile = &file;
+    FILE *configFile = &file;
     char projectName[MAX_SOURCE_PATH_SIZE];
 
     expect(readChar, will_return(EOF));
 
-    assert_that(!projectCoveringFileInOptionsFile("/usr/user/project/file.c", optionsFile, projectName));
+    assert_that(!projectCoveringFileInConfigFile("/usr/user/project/file.c", configFile, projectName));
 }
 
 Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_a_single_project_on_first_line_covers_file) {
     FILE file;
-    FILE *optionsFile = &file;
+    FILE *configFile = &file;
     char projectName[MAX_SOURCE_PATH_SIZE];
 
     expect_characters("[/usr/user/project", false);
     expect(readChar, will_return(']'));
     expect(pathncmp, will_return(0));
 
-    assert_that(projectCoveringFileInOptionsFile("/usr/user/project/file.c", optionsFile, projectName));
+    assert_that(projectCoveringFileInConfigFile("/usr/user/project/file.c", configFile, projectName));
     assert_that(projectName, is_equal_to_string("/usr/user/project"));
 }
 
 Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_a_single_project_preceeded_by_whitespace_covers_file) {
     FILE file;
-    FILE *optionsFile = &file;
+    FILE *configFile = &file;
     char projectName[MAX_SOURCE_PATH_SIZE];
 
     expect_characters("\n        [/usr/user/project", false);
     expect(readChar, will_return(']'));
     expect(pathncmp, will_return(0));
 
-    assert_that(projectCoveringFileInOptionsFile("/usr/user/project/file.c", optionsFile, projectName));
+    assert_that(projectCoveringFileInConfigFile("/usr/user/project/file.c", configFile, projectName));
 }
 
 Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_other_project_before_covers_file) {
     FILE file;
-    FILE *optionsFile = &file;
+    FILE *configFile = &file;
     char projectName[MAX_SOURCE_PATH_SIZE];
 
     expect_characters("[/usr/user/otherproject]\n", false);
@@ -330,13 +330,13 @@ Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_other_project_
     expect(pathncmp, will_return(1)); /* Not a match */
     expect(pathncmp, will_return(0)); /* A match */
 
-    assert_that(projectCoveringFileInOptionsFile("/usr/user/project/file.c",
-                                                 optionsFile, projectName));
+    assert_that(projectCoveringFileInConfigFile("/usr/user/project/file.c",
+                                                 configFile, projectName));
 }
 
 
 Ensure(Options, can_return_project_options_filename_and_section_in_legacy_mode) {
-    char optionsFilename[1000];
+    char configFilename[1000];
     char sectionName[1000];
     FILE file;
 
@@ -354,14 +354,14 @@ Ensure(Options, can_return_project_options_filename_and_section_in_legacy_mode) 
     expect(closeFile);
 
     options.project = "ffmpeg";
-    searchForProjectOptionsFileAndProjectForFile("/home/thoni/Utveckling/c-xrefactory/tests/ffmpeg",
-                                                 optionsFilename, sectionName);
+    searchForProjectConfigFileAndProjectForFile("/home/thoni/Utveckling/c-xrefactory/tests/ffmpeg",
+                                                 configFilename, sectionName);
 
     assert_that(sectionName, is_equal_to_string("ffmpeg"));
 }
 
 Ensure(Options, can_return_project_name_from_autodetected_config) {
-    char optionsFilename[1000];
+    char configFilename[1000];
     char sectionName[1000];
     FILE file;
 
@@ -374,20 +374,20 @@ Ensure(Options, can_return_project_name_from_autodetected_config) {
     expect(openFile, when(fileName, is_equal_to_string("HOME/projectdir/.c-xrefrc")),
            will_return(&file));
 
-    /* getProjectNameFromOptionsFile only reads up to the ']' */
+    /* getProjectNameFromConfigFile only reads up to the ']' */
     expect_characters("[myproject", false);
     expect(readChar, will_return(']'));
 
     expect(closeFile);
 
-    searchForProjectOptionsFileAndProjectForFile("/home/thoni/Utveckling/c-xrefactory/tests/myproject",
-                                               optionsFilename, sectionName);
+    searchForProjectConfigFileAndProjectForFile("/home/thoni/Utveckling/c-xrefactory/tests/myproject",
+                                               configFilename, sectionName);
 
     assert_that(sectionName, is_equal_to_string("myproject"));
 }
 
 Ensure(Options, sets_convention_based_database_path_when_autodetecting) {
-    char optionsFilename[1000];
+    char configFilename[1000];
     char sectionName[1000];
     FILE file;
 
@@ -406,8 +406,8 @@ Ensure(Options, sets_convention_based_database_path_when_autodetecting) {
 
     expect(closeFile);
 
-    searchForProjectOptionsFileAndProjectForFile("/home/user/myproject/source.c",
-                                               optionsFilename, sectionName);
+    searchForProjectConfigFileAndProjectForFile("/home/user/myproject/source.c",
+                                               configFilename, sectionName);
 
     /* Simulate that initStandardCxrefFileName set the default path */
     options.cxFileLocation = "CXrefs";
@@ -420,7 +420,7 @@ Ensure(Options, sets_convention_based_database_path_when_autodetecting) {
 }
 
 Ensure(Options, uses_directory_basename_as_project_name_for_empty_config) {
-    char optionsFilename[1000];
+    char configFilename[1000];
     char sectionName[1000];
     FILE file;
 
@@ -441,8 +441,8 @@ Ensure(Options, uses_directory_basename_as_project_name_for_empty_config) {
     /* simpleFileName extracts basename from directory path */
     expect(simpleFileName, will_return("myproject"));
 
-    searchForProjectOptionsFileAndProjectForFile("/home/user/myproject/source.c",
-                                               optionsFilename, sectionName);
+    searchForProjectConfigFileAndProjectForFile("/home/user/myproject/source.c",
+                                               configFilename, sectionName);
 
     /* Project name should be basename of the directory */
     assert_that(sectionName, is_equal_to_string("myproject"));

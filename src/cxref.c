@@ -1781,12 +1781,12 @@ static void handleProject() {
                     }
                 } else {
                     /* Legacy project - search for project and compare names */
-                    char projectOptionsFileName[MAX_FILE_NAME_SIZE];
-                    char projectOptionsSectionName[MAX_FILE_NAME_SIZE];
-                    searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName,
-                                                                 projectOptionsSectionName);
-                    if (projectOptionsSectionName[0] != '\0'
-                        && strcmp(projectOptionsSectionName, lockedProject) == 0) {
+                    char projectConfigFileName[MAX_FILE_NAME_SIZE];
+                    char projectConfigSectionName[MAX_FILE_NAME_SIZE];
+                    searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName,
+                                                                 projectConfigSectionName);
+                    if (projectConfigSectionName[0] != '\0'
+                        && strcmp(projectConfigSectionName, lockedProject) == 0) {
                         ppcGenRecord(PPC_SET_INFO, lockedProject);
                     } else {
                         ppcGenRecord(PPC_PROJECT_MISMATCH, lockedProject);
@@ -1794,14 +1794,14 @@ static void handleProject() {
                 }
             } else {
                 /* Not locked yet - search for project and lock to it */
-                char projectOptionsFileName[MAX_FILE_NAME_SIZE];
+                char projectConfigFileName[MAX_FILE_NAME_SIZE];
                 char projectOptionsSectionName[MAX_FILE_NAME_SIZE];
-                searchForProjectOptionsFileAndProjectForFile(fileName, projectOptionsFileName,
+                searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName,
                                                              projectOptionsSectionName);
                 /* Populate options.detectedProjectRoot from autoDetectedProjectRoot (if auto-detected)
                  */
                 applyConventionBasedDatabasePath();
-                if (projectOptionsFileName[0] == 0 || projectOptionsSectionName[0] == 0) {
+                if (projectConfigFileName[0] == 0 || projectOptionsSectionName[0] == 0) {
                     if (!options.noErrors) {
                         ppcGenRecord(PPC_NO_PROJECT, fileName);
                     }
