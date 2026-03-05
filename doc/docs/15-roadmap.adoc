@@ -120,7 +120,7 @@ The snapshot is written from disk-file-derived references only. Modified-buffer 
 * **link:/workspace/decisions#20[ADR-0020]**: Separate sync from dispatch — implemented, entry-point reparse with include-graph walking
 * **link:/workspace/decisions#21[ADR-0021]**: Single-project server policy — foundation for index-based sessions
 * **link:/workspace/decisions#22[ADR-0022]**: Lightweight file structure scanning — replaces `-create` and `callXref()`
-* **Chapter 17**: Implementation details for Clean Persistence Store and Unified Symbol Database
+* **Chapter 17**: Incremental `cxfile.c` cleanup, `parseBufferUsingServer` bridge removal
 
 === Optimization
 

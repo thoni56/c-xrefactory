@@ -548,7 +548,7 @@ function structure. This structure is, at the point of writing, called
 
 See the **Cxref** component (in-memory reference tables and symbol resolution) and the **Cxfile** component (on-disk database format and reading) in the <<08-components.adoc#,Components>> chapter.
 
-NOTE: A proposal for a unified symbol database architecture has been documented. See <<16-proposed-refactorings.adoc#unified-symbol-database,Proposed Unified Symbol Database>> in the Proposed Refactorings chapter.
+NOTE: The architectural direction for `cxfile.c` is documented in link:17-major-codebase-improvements.adoc[Chapter 17: Incremental cxfile.c Cleanup]. The high-level "Memory as Truth" vision is in link:15-roadmap.adoc[Chapter 15: Roadmap].
 
 === Editor Plugin
 
