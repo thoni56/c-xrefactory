@@ -177,7 +177,7 @@ Enable VS Code, Neovim, and other LSP-capable editors to use c-xrefactory's refa
 ==== Current State
 
 * Go-to-definition for functions, global variables, types (single file only)
-* Files parsed on `didOpen` only, populating a separate `referenceDatabase`
+* Files parsed on `didOpen` only, populating the global `referenceableItemTable`
 * No project initialization — no `.c-xrefrc`, no compiler discovery, no disk db
 * No `didChange` or `didSave` handlers
 * Known bug: file table size changes cause wrong positions (hash distribution)
@@ -197,7 +197,7 @@ This means the LSP path does not need its own architecture. It can reuse the sam
                       |
                       v
           Use referenceableItemTable
-          instead of separate db
+          instead of separate db (done)
              /                \
             v                  v
     Reparse on              Project init
@@ -225,8 +225,8 @@ This means the LSP path does not need its own architecture. It can reuse the sam
 |===
 |Component |Description
 
-|**Use `referenceableItemTable` (step 1)**
-|Replace the separate `referenceDatabase` (reference_database.h/c) with the global `referenceableItemTable` that the native path uses. The LSP `didOpen` handler already calls `parseToCreateReferences()`, which populates `referenceableItemTable` — the separate db is redundant. `findDefinition()` in lsp_adapter.c switches to querying `referenceableItemTable` directly. Small, isolated change.
+|**Use `referenceableItemTable` (step 1, done)**
+|The separate `referenceDatabase` (reference_database.h/c) has been removed. `findDefinition()` in lsp_adapter.c now queries `referenceableItemTable` directly via `mapOverReferenceableItemTableWithPointer`. The LSP `didOpen` handler calls `parseToCreateReferences()`, which populates the same global table used by the native path.
 
 |**Project initialization on LSP startup (step 2)**
 |On `initialize` or first `didOpen`, run the same project setup as the native path: `initializeProjectContext(fileName, emptyArgs, emptyArgs)` → `loadFileNumbersFromStore()` → `scanProjectForFilesAndIncludes()`. This gives the LSP server: project config from `.c-xrefrc`, compiler-discovered include paths and predefined macros, the disk db snapshot (references from all previously-parsed files), and include structure from the lightweight scan. The `ArgumentsVector` parameters accept empty vectors — command-line and piped options are a native-path concern. Care needed: `initializeParsingSubsystem()` and `initializeProjectContext()` initialize overlapping state (options, file table); the LSP init sequence must be reconciled so they don't conflict.

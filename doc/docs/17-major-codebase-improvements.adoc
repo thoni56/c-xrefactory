@@ -180,6 +180,9 @@ This layer provides the "smart" operations that clients actually need:
 [source,c]
 ----
 // reference_database.h - Smart operations (initially thin wrapper)
+// NOTE: A previous PoC file with this name (LSP wrapper around
+// referenceableItemTable) has been removed. This is a different,
+// future interface over the persistence layer.
 #ifndef REFERENCE_DATABASE_H_INCLUDED
 #define REFERENCE_DATABASE_H_INCLUDED
 

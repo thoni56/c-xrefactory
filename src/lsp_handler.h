@@ -4,7 +4,6 @@
 #include "json_utils.h"
 
 #include "position.h"
-#include "reference_database.h"
 
 typedef struct lspPosition {
     int line;
@@ -30,9 +29,5 @@ extern void handle_cancel(JSON *notification);
 extern void handle_shutdown(JSON *request);
 extern void handle_exit(JSON *request);
 extern void handle_method_not_found(JSON *request);
-
-/* Reference database accessors for testing */
-extern ReferenceDatabase *getReferenceDatabase(void);
-extern void setReferenceDatabase(ReferenceDatabase *db);
 
 #endif

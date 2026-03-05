@@ -8,9 +8,64 @@
 #include "json_utils.h"
 #include "log.h"
 #include "lsp_utils.h"
-#include "lsp_handler.h"
 #include "position.h"
-#include "reference_database.h"
+#include "referenceableitem.h"
+#include "referenceableitemtable.h"
+#include "usage.h"
+
+
+/* Context for searching the ReferenceableItemTable by position */
+typedef struct {
+    Position targetPosition;
+    ReferenceableItem *found;
+} FindReferenceableContext;
+
+/* Check if target position is within the reference identifier */
+static bool positionIsWithinReference(Position refStart, Position target, const char *linkName) {
+    if (refStart.file != target.file || refStart.line != target.line)
+        return false;
+
+    int length = strlen(linkName);
+    return target.col >= refStart.col && target.col < refStart.col + length;
+}
+
+/* Callback for mapOverReferenceableItemTableWithPointer */
+static void checkReferenceableItemAtPosition(ReferenceableItem *item, void *contextPtr) {
+    FindReferenceableContext *context = (FindReferenceableContext *)contextPtr;
+
+    if (context->found != NULL)
+        return;
+
+    for (Reference *ref = item->references; ref != NULL; ref = ref->next) {
+        if (positionIsWithinReference(ref->position, context->targetPosition, item->linkName)) {
+            log_trace("Found referenceable '%s' at %d:%d (target was %d:%d, length %zu)",
+                     item->linkName, ref->position.line, ref->position.col,
+                     context->targetPosition.line, context->targetPosition.col,
+                     strlen(item->linkName));
+            context->found = item;
+            return;
+        }
+    }
+}
+
+static ReferenceableItem *findReferenceableItemWithReferenceAt(Position position) {
+    FindReferenceableContext context = {
+        .targetPosition = position,
+        .found = NULL
+    };
+
+    mapOverReferenceableItemTableWithPointer(checkReferenceableItemAtPosition, &context);
+
+    return context.found;
+}
+
+static Position extractDefinitionPosition(ReferenceableItem *item) {
+    for (Reference *ref = item->references; ref != NULL; ref = ref->next) {
+        if (isDefinitionUsage(ref->usage))
+            return ref->position;
+    }
+    return NO_POSITION;
+}
 
 
 JSON *findDefinition(const char *uri, JSON *positionJson) {
@@ -46,31 +101,25 @@ JSON *findDefinition(const char *uri, JSON *positionJson) {
         .col = lspCharacter      // Both use 0-based columns
     };
 
-    /* Query the reference database */
-    ReferenceDatabase *db = getReferenceDatabase();
-    if (db == NULL) {
-        log_trace("findDefinition: No reference database available");
-        return NULL;
-    }
-    ReferenceableResult result = findReferenceableAt(db, filePath, position);
-
-    /* If not found, return NULL */
-    if (!result.found || result.referenceable == NULL) {
+    /* Find the referenceable at cursor position */
+    ReferenceableItem *item = findReferenceableItemWithReferenceAt(position);
+    if (item == NULL) {
         log_trace("findDefinition: No referenceable found at position %d:%d:%d", position.file, position.line, position.col);
         LEAVE();
         return NULL;
     }
 
-    /* Get filename from file number */
-    if (result.definition.file == NO_FILE_NUMBER) {
+    /* Find the definition */
+    Position definition = extractDefinitionPosition(item);
+    if (definition.file == NO_FILE_NUMBER) {
         log_trace("findDefinition: Definition has invalid file number");
         LEAVE();
         return NULL;
     }
 
-    FileItem *fileItem = getFileItemWithFileNumber(result.definition.file);
+    FileItem *fileItem = getFileItemWithFileNumber(definition.file);
     if (fileItem == NULL) {
-        log_trace("findDefinition: Could not get file item for file number %d", result.definition.file);
+        log_trace("findDefinition: Could not get file item for file number %d", definition.file);
         LEAVE();
         return NULL;
     }
@@ -87,9 +136,9 @@ JSON *findDefinition(const char *uri, JSON *positionJson) {
 
     /* Add range spanning the entire identifier */
     /* Convert c-xrefactory line (1-based) to LSP line (0-based) */
-    int lspDefLine = result.definition.line - 1;
-    int lspDefStartCol = result.definition.col;
-    int identifierLength = strlen(result.referenceable->linkName);
+    int lspDefLine = definition.line - 1;
+    int lspDefStartCol = definition.col;
+    int identifierLength = strlen(item->linkName);
     int lspDefEndCol = lspDefStartCol + identifierLength;
 
     add_lsp_range(location, lspDefLine, lspDefStartCol, lspDefLine, lspDefEndCol);

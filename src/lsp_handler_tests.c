@@ -19,7 +19,6 @@
 #include "lsp_adapter.mock"
 #include "lsp_sender.mock"
 #include "parsing.mock"
-#include "reference_database.mock"
 
 
 Describe(LspHandler);
@@ -65,7 +64,6 @@ Ensure(LspHandler, sends_correct_initialize_response) {
     expect(initFileTable);
     expect(initEditorBufferTable);
     expect(initializeParsingSubsystem);
-    expect(createReferenceDatabase);
 
     expect(send_response_and_delete, will_capture_parameter(response, captured_response));
 

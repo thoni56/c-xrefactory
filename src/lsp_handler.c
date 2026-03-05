@@ -12,19 +12,6 @@
 #include "lsp_adapter.h"
 #include "lsp_sender.h"
 #include "parsing.h"
-#include "reference_database.h"
-
-
-/* Global reference database for the LSP session */
-static ReferenceDatabase *referenceDatabase = NULL;
-
-ReferenceDatabase *getReferenceDatabase(void) {
-    return referenceDatabase;
-}
-
-void setReferenceDatabase(ReferenceDatabase *db) {
-    referenceDatabase = db;
-}
 
 static char *filename_from_uri(const char *uri) {
     char *uri_prefix = "file://";
@@ -50,10 +37,6 @@ void handle_initialize(JSON *request) {
 
     /* Initialize parsing subsystem */
     initializeParsingSubsystem();
-
-    /* Create the reference database for this LSP session */
-    referenceDatabase = createReferenceDatabase();
-    log_trace("LSP: Reference database created");
 
     send_response_and_delete(response);
 }
@@ -156,13 +139,6 @@ void handle_cancel(JSON *notification) {
 
 void handle_shutdown(JSON *request) {
     log_trace("LSP: Handling 'shutdown'");
-
-    /* Destroy the reference database */
-    if (referenceDatabase != NULL) {
-        destroyReferenceDatabase(referenceDatabase);
-        referenceDatabase = NULL;
-        log_trace("LSP: Reference database destroyed");
-    }
 
     JSON *response = create_lsp_message_with_id(id_of_request(request));
     cJSON_AddNullToObject(response, "result");
