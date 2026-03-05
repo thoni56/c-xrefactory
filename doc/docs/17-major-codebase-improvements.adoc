@@ -875,288 +875,117 @@ NOTE: This refactoring is independent of the LexemStream API improvements but wo
 
 
 [[clean-parser-api]]
-=== Clean Parser API and Multi-File Definition Support
+=== Remove `parseBufferUsingServer` Bridge
 
-==== Current State: Recent LSP Definition Finding Success
+==== Problem
 
-The recent implementation of `textDocument/definition` for LSP created a **clean, operation-based parser API** in `parsing.h/c` that successfully decouples high-level operations from low-level parsing details. This API discovery presents an opportunity to gradually modernize legacy parsing infrastructure.
-
-**What works**:
-
-* Single-file definition lookup via clean `parsing.h` interface
-* Operation-based configuration (ParserOperation enum)
-* No reliance on `.cx` files for immediate queries
-
-**What doesn't work yet**:
-
-* Multi-file definitions (symbol defined in different file than reference)
-* Cross-file type resolution
-* Include graph persistence
-
-==== Problem Statement
-
-The LSP definition finding currently fails when a symbol's **definition is in a different file** from the reference. This requires:
-
-1. **Symbol type information** - Current reference database only stores name and position, not types needed for resolution
-2. **Include graph** - Don't know which files include which headers to find definition files
-3. **Multi-file parsing** - Ability to efficiently reparse relevant files without loading entire project
-
-More broadly, the legacy codebase still relies on **magic string command routing** to drive parsing behavior:
+Refactoring operations that need structural information from parsing (function boundaries, move target validation, parameter positions, etc.) do not call the parser directly. Instead, they go through `parseBufferUsingServer()` — a function that constructs magic string arguments (like `"-olcxmovetarget"`, `"-olcxgetfunctionbounds"`) and runs a full `initServer()` + `callServer()` cycle. This is the internal equivalent of the editor sending a command over the protocol.
 
 [source,c]
 ----
-// Scattered throughout codebase (cxref.c, refactory.c, server.c, etc.)
-parseBufferUsingServer(project, point, mark, "-olcxpush", NULL);
-parseBufferUsingServer(project, point, mark, "-olcxmovetarget", NULL);
-parseBufferUsingServer(project, point, mark, "-olcxmodemenu", NULL);
-// ... 20+ more magic strings, each with unclear semantics
-----
+// refactory.c — 7 calls like this:
+parseBufferUsingServer(refactoringOptions.project, point, NULL, "-olcxpush", NULL);
+parseBufferUsingServer(refactoringOptions.project, point, NULL, "-olcxsafetycheck", NULL);
+parseBufferUsingServer(refactoringOptions.project, point, mark, "-olcxextract", "-olexmacro");
 
-This makes the codebase fragile, hard to understand, and difficult to extend with new operations.
-
-==== The Parser API Innovation
-
-The new `parsing.h` interface provides operation-based configuration (see `src/parsing.h` for details):
-
-**Key innovations**:
-* Enum-based operations - Discoverable list (IDE autocomplete shows all options)
-* Configuration struct - Single point of setup, no scattered global flags
-* Operation predicates - Self-documenting behavior (`needsReferenceAtCursor`, `allowsDuplicateReferences`)
-* Type-safe - Compile-time checking replaces runtime magic string matching
-
-==== Benefits of Backporting This API
-
-*_Code Clarity and Safety_*
-
-Replace magic strings with discoverable enums:
-
-[source,c]
-----
-/* Before: What does this do? Need to search for documentation */
+// parsing.c — 2 bridge calls:
 parseBufferUsingServer(options.project, target, NULL, "-olcxmovetarget", NULL);
+parseBufferUsingServer(options.project, marker, NULL, "-olcxgetfunctionbounds", NULL);
+----
 
-/* After: Type-safe and self-documenting via ParserOperation enum */
+This makes the control flow circular and hard to follow: a refactoring operation (already running inside the server) constructs fake arguments, re-enters the server, which dispatches the operation, which calls the parser, which produces a side-effect in global state, which the original caller then reads.
+
+==== What's Done
+
+A clean parser API in `parsing.h/c` already exists and handles all call sites in `server.c`:
+
+* **`ParserOperation` enum** — type-safe operations (`PARSE_TO_CREATE_REFERENCES`, `PARSE_TO_GET_FUNCTION_BOUNDS`, `PARSE_TO_VALIDATE_MOVE_TARGET`, `PARSE_TO_EXTRACT`, `PARSE_TO_TRACK_PARAMETERS`, `PARSE_TO_COMPLETE`)
+* **`ParsingConfig` struct** — centralizes what was scattered across global flags (`cursorOffset`, `markOffset`, `extractMode`, `targetParameterIndex`, etc.)
+* **Operation predicates** — `needsReferenceAtCursor()`, `allowsDuplicateReferences()` replace implicit per-operation behavior
+* **`parseToCreateReferences(fileName)`** — the completed pattern: direct parsing without any bridge, used by entry refresh (ADR 20) and LSP
+
+Two convenience functions have clean APIs but still bridge internally:
+
+* **`isValidMoveTarget(target)`** — sets up `ParsingConfig`, then calls `parseBufferUsingServer` with `"-olcxmovetarget"`
+* **`getFunctionBoundaries(marker)`** — sets up `ParsingConfig`, then calls `parseBufferUsingServer` with `"-olcxgetfunctionbounds"`
+
+These demonstrate the migration pattern: the public API is already clean, only the implementation still bridges.
+
+==== What Remains
+
+**9 bridge calls** to eliminate (2 in `parsing.c`, 7 in `refactory.c`):
+
+[cols="1,2,2"]
+|===
+|Location |Magic string |Purpose
+
+|`parsing.c:99`
+|`-olcxmovetarget`
+|Validate move target position
+
+|`parsing.c:124`
+|`-olcxgetfunctionbounds`
+|Find function boundaries around cursor
+
+|`refactory.c:294`
+|`-olcxpush` (with rename/safety flags)
+|Push reference for rename safety check
+
+|`refactory.c:309`
+|`-olcxsafetycheck`
+|Verify rename safety
+
+|`refactory.c:909`
+|`-olcxpush` (with parameter flags)
+|Navigate to parameter for add/delete
+
+|`refactory.c:934`
+|`-olcxpush` (with parameter flags)
+|Get parameter coordinates
+
+|`refactory.c:1252`
+|`-olcxextract`
+|Extract function
+
+|`refactory.c:1256`
+|`-olcxextract -olexmacro`
+|Extract macro
+
+|`refactory.c:1260`
+|`-olcxextract -olexvariable`
+|Extract variable
+|===
+
+Each call follows the same pattern: set global flags → call `parseBufferUsingServer` → read results from global state. The migration for each is: set `ParsingConfig` fields → call parser directly → read results from the same global state.
+
+==== Migration Pattern
+
+The two `parsing.c` bridges show the pattern clearly. Today:
+
+[source,c]
+----
+/* isValidMoveTarget — bridge still present */
+syncParsingConfigFromOptions(options);
 parsingConfig.operation = PARSE_TO_VALIDATE_MOVE_TARGET;
-parsingConfig.positionOfSelectedReference = makePositionFromMarker(target);
-parseCurrentInputFile(LANG_C);
+parsingConfig.positionOfSelectedReference = makePositionFromEditorMarker(target);
+parsedInfo.moveTargetAccepted = false;
+parseBufferUsingServer(options.project, target, NULL, "-olcxmovetarget", NULL);
+result.valid = parsedInfo.moveTargetAccepted;
 ----
 
-Replace scattered global flags with structured configuration:
+The `ParsingConfig` is already set up — the bridge call is redundant, it just re-enters the server which re-reads the same config. Replacing it with a direct `callParser()` (similar to `parseToCreateReferences`) is the straightforward next step.
 
-[source,c]
-----
-/* Before: Scattered throughout, unclear semantics */
-options.olcxPushButton = 1;
-options.olcxRenameOption = 1;
-s_noParametersToExpand = 0;
-originalFileNumber = someValue;
+The `refactory.c` calls are slightly more involved because they also need buffer preloading (the editor marker's buffer must be set as input for parsing) and some set additional global flags. But the mechanism is the same.
 
-/* After: All configuration in one place, clear purpose */
-parsingConfig.operation = PARSE_TO_COMPLETE;
-parsingConfig.targetParameterIndex = 5;
-parsingConfig.extractMode = EXTRACT_VARIABLE;
-----
+==== Independence
 
-*_Foundation for Multi-File Definition Lookup_*
-
-The clean API makes it easier to implement required enhancements:
-
-[source,c]
-----
-/* New operation for multi-file definition lookup */
-typedef enum {
-    /* ... existing operations ... */
-    PARSE_TO_RESOLVE_DEFINITION,  /* NEW: Find definition across files */
-} ParserOperation;
-
-/* Simpler to add new parsing modes when API is clean */
-parsingConfig.operation = PARSE_TO_RESOLVE_DEFINITION;
-parsingConfig.symbolName = "findReferenceableAt";
-parsingConfig.startFile = fileNumber;
-----
-
-*_Easier Feature Development_*
-
-Adding new operations becomes straightforward:
-
-1. Add to `ParserOperation` enum
-2. Implement predicate functions if needed
-3. Add semantic actions in grammar
-4. Done - no magic strings to maintain
-
-==== Implementation Plan: Three Non-Blocking Phases
-
-*_Phase 1: Expose New API Alongside Legacy Code_*
-
-**Scope**: Purely additive - new API works alongside legacy code
-**Risk**: LOW (no changes to existing code paths)
-**Value**: Proof of concept, enables gradual migration
-
-**Approach**:
-
-1. `parseWithConfig()` becomes primary entry point
-2. `parseBufferUsingServer()` internally bridges legacy magic strings to new `ParsingConfig`
-3. Both code paths work identically (verified with tests)
-4. No changes needed to existing functionality
-
-**Benefit**: Can merge this without affecting legacy code at all
-
-*_Phase 2: Migrate High-Value Callsites_*
-
-**Scope**: Refactor 50%+ of parsing infrastructure
-**Risk**: MEDIUM (refactoring, but with tests)
-**Value**: Significant improvement to codebase clarity
-
-**Priority callsites**:
-
-1. LSP handlers - Already partially using new API
-2. Definition finding - Multi-file lookup
-3. Extract refactoring - Complex logic, multiple operations
-4. Move function - Multiple parsing passes
-
-**Benefit**: 50%+ of parsing infrastructure modernized, multi-file definitions enabled
-
-*_Phase 3: Complete Legacy Code Cleanup_*
-
-**Scope**: Remove all magic string command routing, consolidate parsing
-**Risk**: MEDIUM (larger refactoring)
-**Value**: Long-term maintainability and extensibility
-
-**Scope**:
-
-* Remove all magic string command routing
-* Consolidate parsing entry points
-* Eliminate scattered global flags
-* Document parser behavior in code
-
-**Benefit**: Codebase future-proof for new operations
-
-**Important**: Phase 3 is **optional** - Phases 1-2 already provide most value
-
-==== Multi-File Definition: Requirements
-
-*_Symbol Type Information Persistence_*
-
-**Current**: ReferenceableItemTable only stores name, position, kind
-**Needed**: Minimal type info for cross-file resolution
-
-**Lightweight approach** (preferred over full type serialization):
-
-[source,c]
-----
-/* Extend ReferenceableItem with minimal type data */
-struct ReferenceableItem {
-    /* ... existing fields ... */
-    char *returnType;      /* For functions: return type string */
-    int   parameterCount;  /* For functions: number of parameters */
-    bool  isDefinition;    /* True if this is the function/variable definition */
-};
-----
-
-**Scope**: Extend ReferenceableItem, careful memory management
-
-*_Include Graph Construction_*
-
-**Current**: Include relationships are already tracked as `TypeCppInclude` references in the `referenceableItemTable` (link name `"%%%i"`). Each reference encodes: `ReferenceableItem.includeFileNumber` = included file, `Reference.position.file` = including file. These are created by full parsing and persisted in the `.cx` database. The entry-point reparse (ADR 20) already walks this graph transitively to find CUs including stale headers.
-
-**Remaining gap**: These references are only populated by full parsing or loaded from the disk db. Lightweight file structure scanning (link:/workspace/decisions#22[ADR-0022]) would populate them from `#include` line scanning, without full parsing — making the include graph available even without a `.cx` file or prior full parse.
-
-*_Incremental Multi-File Parsing_*
-
-**Current**: Full project parse or single-file parse
-**Needed**: Efficient "parse files needed for definition lookup" operation
-
-**Approach**:
-
-1. Use include graph to find "definition file candidates"
-2. Parse only those files (typically 1-5 for most projects)
-3. Store symbols in special "definition lookup" arena
-4. Return to in-memory reference table when done
-
-**Scope**: Parse relevant files, update reference table
-
-**Total for full multi-file support**: Larger foundational work combining above three components
+This refactoring is **independent of the memory-as-truth architecture**. The bridge removal is about how refactoring operations invoke parsing internally — not about where references come from or how they're stored. It can proceed at any time, one call site at a time.
 
 ==== Code Locations
 
-**New Parser API**:
-
-* `src/parsing.h` - Public interface (167 lines)
-* `src/parsing.c` - Implementation with bridges (187 lines)
-* Functions: `getParserOperation()`, `needsReferenceAtCursor()`, `parseToCreateReferences()`
-
-**Legacy code currently using magic strings**:
-
-* `src/cxref.c` - 20+ `parseBufferUsingServer()` calls
-* `src/refactory.c` - 10+ operations
-* `src/extract.c` - Multiple parsing passes
-* `src/complete.c` - Completion-specific parsing
-* `src/server.c` - Operation dispatch
-
-**Files for multi-file support**:
-
-* `src/reference_database.h/c` - Add symbol type info
-* `src/yylex.c` - Build include graph
-* `src/filetable.h/c` - Persist include relationships
-
-==== Success Metrics
-
-**Phase 1**:
-
-* New `ParsingConfig` API works alongside legacy strings
-* No performance regression
-* Both code paths tested and working
-
-**Phase 2**:
-
-* 50%+ of parsing callsites use new API
-* Multi-file definition lookup works
-* All existing tests still pass
-
-**Phase 3** (if pursued):
-
-* All parsing driven by enum operations
-* Magic strings completely removed
-* New developers understand control flow
-
-==== Risks and Mitigation
-
-[cols="1,1,2"]
-|===
-|Risk |Likelihood |Mitigation
-
-|Breaking existing workflows
-|Medium
-|Phase 1 keeps old API working, extensive testing, clear migration timeline
-
-|Incomplete refactoring
-|Medium
-|Phase 1-2 provide value even if Phase 3 never completes
-
-|Performance regression
-|Low
-|New API does same work, just different control flow; profile before/after
-
-|Memory overhead from type info
-|Medium
-|Use lightweight approach, store only essential fields, consider lazy loading
-|===
-
-==== Related Work
-
-This refactoring supports:
-
-* **link:/workspace/decisions#14[ADR-0014]** (On-Demand Parsing) - Single code path for all operations
-* **Unified Symbol Database** (next major refactoring) - Requires clean parsing API
-* **LSP Multi-File Support** - Immediately enables cross-file definition lookup
-
-==== Notes
-
-The key insight is that we can **backport this gradually without breaking anything**. The bridge pattern (new API calls old code for now) lets us improve incrementally, retiring magic strings and globals one section at a time.
-
-Phase 1 proves the approach works with minimal risk. Phases 2-3 build on proven foundation, so failure to complete them doesn't harm existing functionality.
-
-Multi-file definitions are one motivating use case, but the real long-term benefit is a codebase where parsing behavior is **discoverable and type-safe** instead of driven by magic strings scattered throughout 25-year-old code.
+* `src/parsing.h` — public API (ParserOperation, ParsingConfig, convenience functions)
+* `src/parsing.c` — implementation, 2 remaining bridges
+* `src/refactory.c` — `parseBufferUsingServer` definition (line 199) and 7 call sites
 
 [[remove-hashtab]]
 === Remove Hashtab by Migrating to Hashlist
