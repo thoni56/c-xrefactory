@@ -97,8 +97,10 @@ if not args:
 
 with open(args[0], "r") as messages:
     for line in messages:
-        if line.startswith("calling:"):
-            fixup_calling(line)
-        if line.startswith("sending:"):
-            fixup_sending(line)
+        # Strip optional timestamp prefix: [HH:MM:SS.mmm]
+        stripped = re.sub(r'^\[\d{2}:\d{2}:\d{2}\.\d{3}\] ', '', line)
+        if stripped.startswith("calling:"):
+            fixup_calling(stripped)
+        if stripped.startswith("sending:"):
+            fixup_sending(stripped)
 print("<exit>")
