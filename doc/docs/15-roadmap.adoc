@@ -177,9 +177,70 @@ Enable VS Code, Neovim, and other LSP-capable editors to use c-xrefactory's refa
 ==== Current State
 
 * Go-to-definition for functions, global variables, types (single file only)
-* Files parsed as opened, immediate symbol availability
+* Files parsed on `didOpen` only, populating a separate `referenceDatabase`
+* No project initialization — no `.c-xrefrc`, no compiler discovery, no disk db
+* No `didChange` or `didSave` handlers
+* Known bug: file table size changes cause wrong positions (hash distribution)
+
+==== Architectural Insight: LSP Document Events as Entry Refresh
+
+The native Emacs path has a mature sync/execute separation (ADR 20): before each operation, reparse stale files in three passes, then execute with a current in-memory table. The LSP protocol provides the same separation naturally — document lifecycle events (`didOpen`, `didChange`, `didSave`) are sync points, and requests (`definition`, `references`) are operations that assume the table is current.
+
+This means the LSP path does not need its own architecture. It can reuse the same initialization and reparsing infrastructure as the native path, triggered by different events.
+
+==== Dependency Chain
+
+----
+              Multi-file navigation
+              (definition, references,
+               rename across files)
+                      |
+                      v
+          Use referenceableItemTable
+          instead of separate db
+             /                \
+            v                  v
+    Reparse on              Project init
+    document events         on LSP startup
+    (didOpen/didChange      (find project,
+     → parse file,           load .c-xrefrc,
+     didSave → pass 2       compiler discovery,
+     includer reparse)      disk db + scan)
+            |                      |
+            v                      v
+    ┌─────────────────────────────────────┐
+    │          FOUNDATION (done)          │
+    │  - parseToCreateReferences()        │
+    │  - referenceableItemTable           │
+    │  - Lightweight scan (ADR 22)        │
+    │  - Entry refresh passes 1-3         │
+    │  - initializeProjectContext()       │
+    │  - loadFileNumbersFromStore()       │
+    └─────────────────────────────────────┘
+----
+
+==== Component Summary
+
+[cols="1,3"]
+|===
+|Component |Description
+
+|**Use `referenceableItemTable` (step 1)**
+|Replace the separate `referenceDatabase` (reference_database.h/c) with the global `referenceableItemTable` that the native path uses. The LSP `didOpen` handler already calls `parseToCreateReferences()`, which populates `referenceableItemTable` — the separate db is redundant. `findDefinition()` in lsp_adapter.c switches to querying `referenceableItemTable` directly. Small, isolated change.
+
+|**Project initialization on LSP startup (step 2)**
+|On `initialize` or first `didOpen`, run the same project setup as the native path: `initializeProjectContext(fileName, emptyArgs, emptyArgs)` → `loadFileNumbersFromStore()` → `scanProjectForFilesAndIncludes()`. This gives the LSP server: project config from `.c-xrefrc`, compiler-discovered include paths and predefined macros, the disk db snapshot (references from all previously-parsed files), and include structure from the lightweight scan. The `ArgumentsVector` parameters accept empty vectors — command-line and piped options are a native-path concern. Care needed: `initializeParsingSubsystem()` and `initializeProjectContext()` initialize overlapping state (options, file table); the LSP init sequence must be reconciled so they don't conflict.
+
+|**Reparse on document events (step 3)**
+|`didOpen` and `didChange`: reparse the changed file via `parseToCreateReferences()` (already done for `didOpen`). `didSave`: trigger pass 2 — walk the reverse-include graph (`TypeCppInclude` refs) to find and reparse CUs that include the saved file as a header. This is the same `reparseStalePreloadedFiles()` logic from the native path. The LSP path is strictly better here: changes arrive in real-time instead of being discovered at request time.
+
+|**Multi-file navigation (step 4)**
+|With steps 1-3, the `referenceableItemTable` contains references from all project files (disk db snapshot + freshly parsed opens/changes). `definition` requests query this table — multi-file lookup works without any new query mechanism. Pass 3 (sibling CU parsing) can trigger lazily on the first `didOpen` in a cold area, or on a `definition` request that finds no result.
+|===
 
 ==== Planned Capabilities
+
+Once the foundation above is in place, the following LSP features become possible:
 
 [cols="1,1"]
 |===
@@ -206,11 +267,10 @@ Enable VS Code, Neovim, and other LSP-capable editors to use c-xrefactory's refa
 
 ==== Dependencies
 
-Full LSP support depends on the "Memory as Truth" architecture:
+Steps 1-3 above are independent of the "Memory as Truth" convergence — they reuse existing infrastructure as-is. Full feature parity (rename, extract) additionally depends on:
 
-* Multi-file navigation requires the unified symbol database
 * Rename refactoring requires the "no callXref" path
-* All features benefit from single-project server simplicity
+* All features benefit from single-project server simplicity (ADR 21)
 
 === Feature Vision: Modern Refactorings
 
