@@ -1128,14 +1128,8 @@ static bool processEOption(int *argi, ArgumentsVector args) {
         options.errors = true;
         logging_selected.errors = true;
     } else if (strcmp(args.argv[i], "-exit")==0) {
-        /* Only save snapshot for auto-detect projects where the server
-         * owns the in-memory references. Legacy -refs projects have a
-         * db built by -create — saving would overwrite it with the
-         * server's partial in-memory state. */
-        if (options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
-            markPreloadedFilesAsAncient();
-            saveReferences();
-        }
+        markPreloadedFilesAsAncient();
+        saveReferences();
         log_debug("Exiting");
         exit(EXIT_SUCCESS);
     }
