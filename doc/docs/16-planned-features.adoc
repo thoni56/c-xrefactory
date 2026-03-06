@@ -125,8 +125,14 @@ of the project tree. The main advantage is that it can be checked in to repo and
 not contain absolute file paths.
 
 Legacy project configs will continue to work, but a user might want to migrate a
-project. It's fairly easy to do by hande, but as polishing touch, providing a client
+project. It's fairly easy to do by hand, but as a polishing touch, providing a client
 operation to do that would be nice.
+
+There is a natural trigger for this: since the Emacs client no longer sends `-xrefrc` and
+the server's upward search for `.c-xrefrc` stops before the home directory, a legacy user
+with only `~/.c-xrefrc` will get a "No project found" prompt. Instead of only offering
+"Create new project?", the client could check `~/.c-xrefrc` for a section matching the
+current file, and if found, offer to migrate that section to a project-local `.c-xrefrc`.
 
 === Indexing Log Buffer
 
