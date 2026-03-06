@@ -1209,7 +1209,16 @@ bool loadSnapshotFromStore(void) {
     }
     if (editorFileExists(cxFileName)) {
         log_info("Loading full snapshot from '%s'", cxFileName);
-        scanCxFile(cxFileName, "", "", snapshotLoadScanDispatchTable);
+        if (options.cxFileCount <= 1) {
+            scanCxFile(cxFileName, "", "", snapshotLoadScanDispatchTable);
+        } else {
+            scanCxFile(options.cxFileLocation, CXFILENAME_FILES, "", snapshotLoadScanDispatchTable);
+            for (int i = 0; i < options.cxFileCount; i++) {
+                char partitionNumber[MAX_FILE_NAME_SIZE];
+                sprintf(partitionNumber, "%04d", i);
+                scanCxFile(options.cxFileLocation, CXFILENAME_PREFIX, partitionNumber, snapshotLoadScanDispatchTable);
+            }
+        }
         return true;
     }
     return false;
