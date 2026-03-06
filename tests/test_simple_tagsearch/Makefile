@@ -9,5 +9,5 @@ $(TEST): CXrefs
 trace: EXTRA = \'-debug\'
 trace: $(TEST)
 
-CXrefs:
+CXrefs: .c-xrefrc
 	@$(CXREF) -create test_source -o $(TEST).log
