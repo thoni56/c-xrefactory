@@ -43,3 +43,7 @@ void saveReferencesToStore(bool updating, char *filename) {
 bool loadFileNumbersFromStore(void) {
   return (bool) mock();
 }
+
+bool loadSnapshotFromStore(void) {
+  return (bool) mock();
+}

@@ -51,6 +51,7 @@ extern void olcxPushSpecialCheckMenuSym(char *name);
 
 extern void answerEditorAction(void);
 
+extern void markPreloadedFilesAsAncient(void);
 extern void saveReferences(void);
 
 #endif

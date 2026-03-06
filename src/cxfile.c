@@ -147,6 +147,7 @@ typedef struct cxFileScanStep {
 
 
 static CxFileScanDispatchEntry normalScanDispatchTable[];
+static CxFileScanDispatchEntry snapshotLoadScanDispatchTable[];
 static CxFileScanDispatchEntry fullScanDispatchTable[];
 static CxFileScanDispatchEntry fullUpdateScanDispatchTable[];
 static CxFileScanDispatchEntry symbolMenuCreationScanDispatchTable[];
@@ -908,6 +909,57 @@ static void scanFunction_Reference_ForFullUpdateSchedule(int size,
     }
 }
 
+static void scanFunction_SymbolNameForSnapshotLoad(int size,
+                                                    int key,
+                                                    CharacterBuffer *cb,
+                                                    CxFileScanOperation scanOperation
+) {
+    assert(key == CXFI_SYMBOL_NAME);
+    Storage storage = lastIncomingData.data[CXFI_STORAGE];
+
+    char *id = lastIncomingData.cachedSymbolName;
+    int len = scanSymbolName(cb, id, size);
+
+    Type symbolType = getSymbolType();
+
+    ReferenceableItem *referenceableItem = &lastIncomingData.cachedReferenceableItem;
+    lastIncomingData.referenceableItem = referenceableItem;
+
+    int includedFileNumber;
+    getIncludedFileNumber(&includedFileNumber);
+    *referenceableItem = makeReferenceableItem(id, symbolType, storage, GlobalScope, VisibilityGlobal, includedFileNumber);
+
+    ReferenceableItem *foundReferenceableItem;
+    if (!isMemberInReferenceableItemTable(referenceableItem, NULL, &foundReferenceableItem)) {
+        char *ss = cxAlloc(len+1);
+        strcpy(ss,id);
+        foundReferenceableItem = cxAlloc(sizeof(ReferenceableItem));
+        *foundReferenceableItem = makeReferenceableItem(ss, symbolType, storage,
+                                                    GlobalScope, VisibilityGlobal, includedFileNumber);
+        addToReferenceableItemTable(foundReferenceableItem);
+    }
+    lastIncomingData.referenceableItem = foundReferenceableItem;
+}
+
+static void scanFunction_ReferenceForSnapshotLoad(int size,
+                                                   int key,
+                                                   CharacterBuffer *cb,
+                                                   CxFileScanOperation scanOperation
+) {
+    assert(key == CXFI_REFERENCE);
+
+    Usage usage = lastIncomingData.data[CXFI_USAGE];
+
+    int unmapped_file = lastIncomingData.data[CXFI_FILE_NUMBER];
+    int file = fileNumberMapping[unmapped_file];
+
+    int line = lastIncomingData.data[CXFI_LINE_INDEX];
+    int col = lastIncomingData.data[CXFI_COLUMN_INDEX];
+
+    Position pos = makePosition(file, line, col);
+    addToReferenceList(&lastIncomingData.referenceableItem->references, pos, usage);
+}
+
 static bool isInReferenceList(Reference *list, Usage usage, Position position) {
     Reference *foundReference;
     Reference reference = makeReference(position, usage, NULL);
@@ -1146,6 +1198,23 @@ bool loadFileNumbersFromStore(void) {
     return false;
 }
 
+bool loadSnapshotFromStore(void) {
+    if (options.cxFileLocation == NULL)
+        return false;
+    char cxFileName[MAX_FILE_NAME_SIZE];
+    if (options.cxFileCount <= 1) {
+        sprintf(cxFileName, "%s", options.cxFileLocation);
+    } else {
+        sprintf(cxFileName, "%s%s", options.cxFileLocation, CXFILENAME_FILES);
+    }
+    if (editorFileExists(cxFileName)) {
+        log_info("Loading full snapshot from '%s'", cxFileName);
+        scanCxFile(cxFileName, "", "", snapshotLoadScanDispatchTable);
+        return true;
+    }
+    return false;
+}
+
 // symbolName can be NULL !!!!!!
 static void readOneAppropiateCxFile(char *symbolName, CxFileScanDispatchEntry *scanDispatchTable) {
     if (options.cxFileLocation == NULL)
@@ -1217,6 +1286,18 @@ static CxFileScanDispatchEntry normalScanDispatchTable[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
+    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
+    {-1,NULL, 0},
+};
+
+/* Load all symbols and references into referenceableItemTable */
+static CxFileScanDispatchEntry snapshotLoadScanDispatchTable[]={
+    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
+    {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
+    {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
+    {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
+    {CXFI_SYMBOL_NAME, scanFunction_SymbolNameForSnapshotLoad, CXSF_NOP},
+    {CXFI_REFERENCE, scanFunction_ReferenceForSnapshotLoad, CXSF_NOP},
     {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };

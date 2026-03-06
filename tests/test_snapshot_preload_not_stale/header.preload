@@ -1,0 +1,3 @@
+// Function declaration
+// Extra comment from unsaved edit
+int compute(int x);

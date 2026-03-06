@@ -546,7 +546,12 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         if (options.serverOperation == OP_ACTIVE_PROJECT) {
             if (!initializeProjectContext(getFileItemWithFileNumber(requestFileNumber)->name, baseArgs, requestArgs))
                 goto done;
-            loadFileNumbersFromStore();
+
+            if (options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
+                loadSnapshotFromStore();
+            } else {
+                loadFileNumbersFromStore();
+            }
 
             if (options.detectedProjectRoot == NULL || options.detectedProjectRoot[0] == '\0') {
                 /* Legacy path: no detected project root, fall back to old flow */

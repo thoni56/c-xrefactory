@@ -10,6 +10,7 @@
 #include "complete.h"
 #include "constants.h"
 #include "cxfile.h"
+#include "editorbuffertable.h"
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
@@ -2177,6 +2178,17 @@ void olSetCallerPosition(Position position) {
     sessionData.browsingStack.top->callerPosition = position;
 }
 
+
+void markPreloadedFilesAsAncient(void) {
+    for (int i = getNextExistingEditorBufferIndex(0); i != -1; i = getNextExistingEditorBufferIndex(i+1)) {
+        for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
+            if (l->buffer->preLoadedFromFile != NULL) {
+                FileItem *fileItem = getFileItemWithFileNumber(l->buffer->fileNumber);
+                fileItem->lastParsedMtime = 0;
+            }
+        }
+    }
+}
 
 void saveReferences(void) {
     static bool everUpdated = false;

@@ -1,0 +1,46 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>test_snapshot_preload_not_stale</set-info>
+-olcxpush -preload CURDIR/header.h CURDIR/header.preload -olcursor=77 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=2 col=4 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+-olcxnext -olcursor=77 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=4 len=<n>>CURDIR/header.h</position-lc>
+</goto>
+-exit
+end-of-options
+
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>test_snapshot_preload_not_stale</set-info>
+-olcxpush -olcursor=77 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=2 col=4 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+-olcxnext -olcursor=77 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=2 col=4 len=<n>>CURDIR/header.h</position-lc>
+</goto>
+-exit
+end-of-options
+
