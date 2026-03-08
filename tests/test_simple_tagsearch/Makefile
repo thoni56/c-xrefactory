@@ -2,12 +2,12 @@ include ../Makefile.server
 
 
 $(TEST): CXrefs
-	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
 
-trace: EXTRA = \'-debug\'
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
 
 CXrefs: .c-xrefrc
-	@$(CXREF) -create test_source -o $(TEST).log
+	@$(CXREF_PROGRAM) -create . -o $(TEST).log
