@@ -30,7 +30,7 @@ ALL_TESTS = $(QUICK_TESTS) $(SLOW_TESTS)
 
 .PHONY: verbose
 verbose:
-	$(foreach dir,$(TESTS),\
+	$(foreach dir,$(QUICK_TESTS),\
 		/bin/echo -n "$(dir): "; \
 		./run_test $(dir); \
 		/bin/echo; \

@@ -5,8 +5,8 @@ ARGUMENTS =
 
 $(TEST):
 	$(COMMAND) > output.tmp 2>&1
+	../../utils/cxref_reader >> output.tmp
 	$(NORMALIZE) output.tmp > output
-	../../utils/cxref_reader >> output
 	$(VERIFY)
 
 trace: ARGUMENTS += -debug
