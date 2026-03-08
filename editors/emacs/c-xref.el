@@ -1822,6 +1822,8 @@ since last preload).  Updates the buffer's modified-tick tracker."
             (needs-write (nth 2 entry)))
         (set-buffer bb)
         (when needs-write
+          (when (file-exists-p tt)
+            (delete-file tt))
           (let ((coding (if (boundp 'buffer-file-coding-system)
                             buffer-file-coding-system
                           nil)))
