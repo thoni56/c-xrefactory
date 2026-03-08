@@ -1654,7 +1654,14 @@ tries to delete C-xrefactory windows first.
                    (cons "" nil)))
     (set-process-filter (car (eval proc)) filter)
     (setq process-connection-type oldpct)
-    (set-process-query-on-exit-flag (car (eval proc)) nil) ;; TODO: add kill-emacs-hook to send -exit for snapshot save
+    (set-process-query-on-exit-flag (car (eval proc)) nil)
+    (let ((server-proc proc))
+      (add-hook 'kill-emacs-hook
+                (lambda ()
+                  (when (and (eval server-proc)
+                             (eq (process-status (car (eval server-proc))) 'run))
+                    (process-send-string (car (eval server-proc)) "-exit\nend-of-options\n\n")
+                    (accept-process-output (car (eval server-proc)) 1)))))
     ))
 
 (defvar c-xref-interrupt-dialog-map (make-sparse-keymap "C-xref interrupt dialog"))
@@ -6206,7 +6213,8 @@ its functions.
                   (progn
                         (shell-command (format "kill -3 %d && echo Core dumped into this buffer directory." (process-id (car c-xref-server-process))))
                         )
-                (delete-process (car c-xref-server-process))
+                (process-send-string (car c-xref-server-process) "-exit\nend-of-options\n\n")
+                (accept-process-output (car c-xref-server-process) 1)
                 (setq c-xref-server-process nil)
                 (message "Emacs c-xref server process killed.")
                 ))

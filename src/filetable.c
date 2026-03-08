@@ -5,6 +5,7 @@
 #include "hash.h"
 #include "memory.h"
 #include "globals.h"            /* For cwd */
+#include "referenceableitemtable.h"
 
 
 /* Define the hashtab: */
@@ -73,6 +74,7 @@ FileItem *getFileItemWithFileNumber(int fileNumber) {
 void markFileAsDeleted(int fileNumber) {
     FileItem *item = getFileItemWithFileNumber(fileNumber);
     item->isDeleted = true;
+    removeReferenceableItemsForFile(fileNumber);
 }
 
 int getNextExistingFileNumber(int index) {

@@ -10,6 +10,7 @@
 #include "globals.mock"
 #include "misc.mock"
 #include "stackmemory.h"
+#include "referenceableitemtable.mock"
 
 
 Describe(FileTable);
