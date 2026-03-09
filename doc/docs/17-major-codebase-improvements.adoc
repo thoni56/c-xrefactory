@@ -547,3 +547,43 @@ None of these are about the external editor. They're the server's internal text 
 * The split is purely mechanical -- no behavior change, no renaming. Each group of functions has minimal coupling to the others.
 * The misleading "Editor" prefix on types (`EditorMarker`, `EditorUndo`, etc.) is a separate concern. Renaming those types has large cascading effects and is not worth doing until the refactoring performance issue is resolved (currently each rename requires two full project parses via `callXref`).
 * `editor.h` currently re-exports headers for `contentbuffer.h`, `editormarker.h`, `undo.h` -- after the split, callers would include the specific headers they need.
+
+[[rename-operations]]
+=== Rename Server Operations
+
+==== Problem Statement
+
+Server operations use the prefix `olcx` (likely "on-line cross-references"), a legacy abbreviation that conveys no meaning to anyone reading the code or protocol today. Option names like `-olcxpush`, `-olcxtagsearch`, `-olcxgetprojectname` are opaque compared to what they could be: `-push`, `-search`, `-get-project-name`.
+
+The word "tag" in search-related names (`-olcxtagsearch`, `c-xref-search-in-tag-file`, `c-xref-tag-results-buffer`) is a leftover from `ctags` and friends. There is no ctags compatibility — the term is purely misleading. The two menu entries "Search Definition in Tags" and "Search Symbol" both trigger the same `OP_SEARCH` operation, differing only in a filter flag (`-searchdef`). The word "tag" suggests they are fundamentally different, when they are not.
+
+==== Scope
+
+The rename touches three layers:
+
+**Protocol options** (server C code + Emacs client): ~60 operations prefixed with `-olcx*` in `options.c`. These become plain descriptive names: `-push`, `-pop`, `-goto`, `-complete`, `-search`, `-rename`, `-extract`, `-filter`, `-get-project-name`, etc.
+
+**Emacs function and variable names**: Functions like `c-xref-search-in-tag-file`, `c-xref-get-tags`, `c-xref-interactive-tag-search-*` and variables like `c-xref-tag-results-buffer`, `c-xref-tag-search-mode-map`.
+
+**System tests**: Every `commands.input` file uses these option names. Mechanical update.
+
+==== Design Decisions
+
+**Shortest clear name**: Prefer `-push` over `-browse-push`. Stack operations (push, pop) are domain concepts — without understanding them you can't understand browsing anyway. No grouping prefix needed.
+
+**Two kinds of filter**: The browsing UI has two filter concepts that should remain distinct:
+
+* **Reference filter** (`-filter`): narrows the reference list for the selected symbol by usage kind (all → exclude reads → definitions only)
+* **Menu filter** (`-menu-filter`): narrows the symbol menu when a name is ambiguous (all with name → exact match → exact match same file)
+
+These could become `-reference-filter` and `-symbol-filter` for extra clarity, but `-filter` and `-menu-filter` are adequate.
+
+**No compatibility shim needed**: Distribution is via git repo updates, and the Emacs `upgrade` menu entry kills the server, reloads elisp, and starts a new server on the next operation. Old and new never need to coexist.
+
+==== Implementation
+
+Support both old and new names in the option parser temporarily (two `strcmp` entries per option). Rename everywhere else (client, tests, docs). Remove the old names in a later commit. This eliminates any breakage window.
+
+==== Priority
+
+Low urgency, high value for readability. Can be done incrementally — start with the "tag" removal (search-related names only), then expand to the full `olcx` rename later.
