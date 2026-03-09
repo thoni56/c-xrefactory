@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-03-05">
+<meta name="author" content="v{VERSION} - Generated 2026-03-09">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-03-05</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-03-09</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -570,12 +570,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_major_codebase_improvements">16. Major Codebase Improvements</a>
 <ul class="sectlevel2">
-<li><a href="#_clean_persistence_store_abstraction">16.1. Clean Persistence Store Abstraction</a></li>
-<li><a href="#unified-symbol-database">16.2. Unified Symbol Database Architecture</a></li>
-<li><a href="#macro-expansion-module">16.3. Extract Macro Expansion Module</a></li>
-<li><a href="#clean-parser-api">16.4. Remove <code>parseBufferUsingServer</code> Bridge</a></li>
-<li><a href="#remove-hashtab">16.5. Remove Hashtab by Migrating to Hashlist</a></li>
-<li><a href="#split-editor-module">16.6. Split the Editor Module</a></li>
+<li><a href="#_incremental_cxfile_c_cleanup">16.1. Incremental <code>cxfile.c</code> Cleanup</a></li>
+<li><a href="#macro-expansion-module">16.2. Extract Macro Expansion Module</a></li>
+<li><a href="#clean-parser-api">16.3. Remove <code>parseBufferUsingServer</code> Bridge</a></li>
+<li><a href="#remove-hashtab">16.4. Remove Hashtab by Migrating to Hashlist</a></li>
+<li><a href="#split-editor-module">16.5. Split the Editor Module</a></li>
+<li><a href="#rename-operations">16.6. Rename Server Operations</a></li>
 </ul>
 </li>
 <li><a href="#_insights">17. Insights</a>
@@ -818,12 +818,58 @@ Yacc grammars!
 </div>
 </div>
 <div class="sect3">
-<h4 id="_browsing">3.1.2. Browsing</h4>
+<h4 id="_searching">3.1.2. Searching</h4>
 <div class="paragraph">
-<p>It is also possible to search for definitions or symbols containing a
-string, including possible wildcards. This will present various forms
-of "menues" where filters can be applied and a found symbol be
-inspected.</p>
+<p>A user can search for symbols by name using two operations:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Search Symbol</strong></dt>
+<dd>
+<p>Finds all symbols whose name matches the search
+pattern. This includes functions, variables, types, macros — any
+symbol known to <code>c-xrefactory</code>, whether or not it is defined in the
+project.</p>
+</dd>
+<dt class="hdlist1"><strong>Search Definition</strong></dt>
+<dd>
+<p>Finds only symbols that have a definition
+within the project. Symbols that are merely used (e.g. called from an
+external library) are excluded.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Both operations accept wildcard patterns: <code><strong></code> matches any sequence of
+characters and <code>?</code> matches a single character. For example, <code>parse</strong></code>
+finds all symbols starting with "parse", while <code>get_?</code> finds
+three-letter symbols starting with "get_".</p>
+</div>
+<div class="paragraph">
+<p>The search results are presented in a list. Use the up/down arrow keys
+to move between entries. Press RET to inspect a symbol — this
+navigates to its definition and enters the reference browser where
+Next/Previous Reference can be used to visit all references.</p>
+</div>
+<div class="paragraph">
+<p>Pressing <code>p</code> and <code>n</code> in the search results navigates the <em>search
+history</em> — returning to the results of a previous or next search, not
+moving between entries in the current list.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Search currently reads from the on-disk references database, not
+from the live in-memory state. The database is saved automatically
+when Emacs exits or when the server is restarted. If the database has
+never been saved, search will return no results.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect3">
@@ -3221,7 +3267,7 @@ function structure. This structure is, at the point of writing, called
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-A proposal for a unified symbol database architecture has been documented. See <a href="16-proposed-refactorings.html#unified-symbol-database">Proposed Unified Symbol Database</a> in the Proposed Refactorings chapter.
+The architectural direction for <code>cxfile.c</code> is documented in <a href="17-major-codebase-improvements.adoc">Chapter 17: Incremental cxfile.c Cleanup</a>. The high-level "Memory as Truth" vision is in <a href="15-roadmap.adoc">Chapter 15: Roadmap</a>.
 </td>
 </tr>
 </table>
@@ -6089,6 +6135,10 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The <code>.cx</code> file transitions from a live database to a startup snapshot. The read side is operational: at startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. Remaining work: snapshot write strategy (see below) and initial creation without a prior <code>-create</code>. See below for target semantics.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Search reads from in-memory table</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_SEARCH</code> currently bypasses the in-memory <code>referenceableItemTable</code> entirely — <code>scanForSearch()</code> reads directly from disk <code>.cx</code> files. This is the last operation that treats the disk database as a live query target rather than a startup snapshot. Once memory is truth, search should query the in-memory table with the same pattern matching (<code>shellMatch</code>, substring fitness). This aligns with the <a href="17-major-codebase-improvements.adoc">Chapter 17</a> goal of converting <code>scanForSearch</code> to a visitor over in-memory data. No new infrastructure needed — the data is already there after entry refresh.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Snapshot write triggers</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The save mechanism exists (<code>saveReferences()</code> in xref.c) but is only called from the legacy <code>-create</code>/<code>callXref()</code> path. It needs to be wired to triggers during normal server operation. Three triggers identified:</p>
 <p class="tableblock"><strong>All buffers saved</strong>: when no editor buffers are modified, the in-memory state is consistent with disk — a clean moment to snapshot. The snapshot must only persist disk-file-derived references (not modified-buffer data), so "all saved" is the natural condition. This is the primary trigger during normal workflow.</p>
@@ -6194,7 +6244,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <p><strong><a href="/workspace/decisions#22">ADR-0022</a></strong>: Lightweight file structure scanning — replaces <code>-create</code> and <code>callXref()</code></p>
 </li>
 <li>
-<p><strong>Chapter 17</strong>: Implementation details for Clean Persistence Store and Unified Symbol Database</p>
+<p><strong>Chapter 17</strong>: Incremental <code>cxfile.c</code> cleanup, <code>parseBufferUsingServer</code> bridge removal</p>
 </li>
 </ul>
 </div>
@@ -6294,7 +6344,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <p>Go-to-definition for functions, global variables, types (single file only)</p>
 </li>
 <li>
-<p>Files parsed on <code>didOpen</code> only, populating a separate <code>referenceDatabase</code></p>
+<p>Files parsed on <code>didOpen</code> only, populating the global <code>referenceableItemTable</code></p>
 </li>
 <li>
 <p>No project initialization — no <code>.c-xrefrc</code>, no compiler discovery, no disk db</p>
@@ -6327,7 +6377,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
                       |
                       v
           Use referenceableItemTable
-          instead of separate db
+          instead of separate db (done)
              /                \
             v                  v
     Reparse on              Project init
@@ -6365,8 +6415,8 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Use <code>referenceableItemTable</code> (step 1)</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Replace the separate <code>referenceDatabase</code> (reference_database.h/c) with the global <code>referenceableItemTable</code> that the native path uses. The LSP <code>didOpen</code> handler already calls <code>parseToCreateReferences()</code>, which populates <code>referenceableItemTable</code> — the separate db is redundant. <code>findDefinition()</code> in lsp_adapter.c switches to querying <code>referenceableItemTable</code> directly. Small, isolated change.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Use <code>referenceableItemTable</code> (step 1, done)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The separate <code>referenceDatabase</code> (reference_database.h/c) has been removed. <code>findDefinition()</code> in lsp_adapter.c now queries <code>referenceableItemTable</code> directly via <code>mapOverReferenceableItemTableWithPointer</code>. The LSP <code>didOpen</code> handler calls <code>parseToCreateReferences()</code>, which populates the same global table used by the native path.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Project initialization on LSP startup (step 2)</strong></p></td>
@@ -6738,8 +6788,15 @@ not contain absolute file paths.</p>
 </div>
 <div class="paragraph">
 <p>Legacy project configs will continue to work, but a user might want to migrate a
-project. It&#8217;s fairly easy to do by hande, but as polishing touch, providing a client
+project. It&#8217;s fairly easy to do by hand, but as a polishing touch, providing a client
 operation to do that would be nice.</p>
+</div>
+<div class="paragraph">
+<p>There is a natural trigger for this: since the Emacs client no longer sends <code>-xrefrc</code> and
+the server&#8217;s upward search for <code>.c-xrefrc</code> stops before the home directory, a legacy user
+with only <code>~/.c-xrefrc</code> will get a "No project found" prompt. Instead of only offering
+"Create new project?", the client could check <code>~/.c-xrefrc</code> for a section matching the
+current file, and if found, offer to migrate that section to a project-local <code>.c-xrefrc</code>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -6812,1160 +6869,119 @@ this case would be the next #include statement for that file.</p>
 <p>For planned user-facing features, see <a href="16-planned-features.adoc">Chapter 16: Planned Features</a>.</p>
 </div>
 <div class="sect2">
-<h3 id="_clean_persistence_store_abstraction">16.1. Clean Persistence Store Abstraction</h3>
+<h3 id="_incremental_cxfile_c_cleanup">16.1. Incremental <code>cxfile.c</code> Cleanup</h3>
 <div class="sect3">
-<h4 id="_problem_statement">16.1.1. Problem Statement</h4>
+<h4 id="_background_4">16.1.1. Background</h4>
 <div class="paragraph">
-<p>The <code>cxfile</code> module currently mixes multiple responsibilities that should be separated:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Persistence implementation</strong> (reading/writing .cx files) ✓ Correct level</p>
-</li>
-<li>
-<p><strong>Search and filter operations</strong> (matching search strings) ✗ Wrong level</p>
-</li>
-<li>
-<p><strong>Operation-specific loading</strong> (menu creation, macro completion, unused detection) ✗ Too specific</p>
-</li>
-<li>
-<p><strong>Treated as source of truth</strong> (when it should be just a startup snapshot) ✗ Architectural confusion</p>
-</li>
-</ul>
+<p>The <code>cxfile</code> module was designed when the disk database was the source of truth. The <code>.cx</code> files were not just a cache — they <em>were</em> the reference database. Operations like "show all references to symbol X" or "find unused symbols" were implemented as table-driven scans over the <code>.cx</code> file format: hash the symbol name to find the right partition, stream through it, apply a per-operation filter callback. This was efficient for the batch cross-referencer that c-xrefactory evolved from, where the workflow was <code>c-xref -create</code> → <code>c-xref -update</code> → query the on-disk database.</p>
 </div>
 <div class="paragraph">
-<p>This mixing creates tight coupling, makes testing difficult, and prevents future architectural improvements (like LSP integration or alternative storage backends).</p>
+<p>With the shift toward memory-as-truth (<a href="15-roadmap.adoc">Chapter 15: Roadmap</a>), the in-memory <code>referenceableItemTable</code> is becoming the authoritative source, and <code>.cx</code> files are becoming a startup snapshot. But <code>cxfile.c</code> still carries the old design: it combines disk I/O with operation-specific filtering logic, and several operations still bypass the in-memory table to read from disk directly.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_architectural_confusion_in_memory_vs_persistence">16.1.2. Architectural Confusion: In-Memory vs Persistence</h4>
+<h4 id="_current_interface">16.1.2. Current Interface</h4>
 <div class="paragraph">
-<p>The current code conflates two distinct concepts:</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><strong>Reference Database</strong> (Smart Layer - Source of Truth)</dt>
-<dd>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Always in-memory</strong>: The <code>referenceableItemTable</code> hash table</p>
-</li>
-<li>
-<p>Answers queries fast from RAM</p>
-</li>
-<li>
-<p>Decides when to load from persistence</p>
-</li>
-<li>
-<p>Decides when to save to persistence</p>
-</li>
-<li>
-<p>Manages invalidation and staleness</p>
-</li>
-<li>
-<p><strong>This is the actual database</strong></p>
-</li>
-</ul>
-</div>
-</dd>
-<dt class="hdlist1"><strong>Persistence Store</strong> (Dumb Layer - Startup Snapshot)</dt>
-<dd>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Always on disk</strong>: The <code>.cx</code> files (or future SQLite, etc.)</p>
-</li>
-<li>
-<p>Just knows how to save/load a specific format</p>
-</li>
-<li>
-<p>Has NO in-memory state of its own</p>
-</li>
-<li>
-<p>No business logic, no searching, no filtering</p>
-</li>
-<li>
-<p><strong>This is just the storage mechanism</strong></p>
-</li>
-<li>
-<p>Only consulted at startup; never read during normal operation</p>
-</li>
-</ul>
-</div>
-</dd>
-</dl>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-The persistence layer stores a <strong>startup snapshot</strong> of disk-file-derived references. It exists to avoid a full project parse on server start. See <a href="15-roadmap.adoc">Chapter 15: Roadmap</a> for the target snapshot semantics.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_current_architecture_problems">16.1.3. Current Architecture Problems</h4>
-<div class="paragraph">
-<p><strong>Mixed Abstraction Levels</strong></p>
-</div>
-<div class="paragraph">
-<p>The current <code>cxfile.h</code> public interface exposes:</p>
+<p>The public interface (<code>cxfile.h</code>) reflects this mixed heritage:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Operation-specific scanning (too high-level for storage)
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Generic persistence — correct level
+extern bool loadFileNumbersFromStore(void);
+extern void ensureReferencesAreLoadedFor(char *symbolName);
+extern void saveReferencesToStore(bool updating, char *name);
+
+// Operation-specific scanning — wrong level
 extern void scanReferencesToCreateMenu(char *symbolName);
 extern void scanForMacroUsage(char *symbolName);
 extern void scanForGlobalUnused(char *cxrefFileName);
 extern void scanForSearch(char *cxrefFileName);
 
-// Implementation details leaked (partitioning is internal)
+// Implementation details leaked
 extern int cxFileHashNumberForSymbol(char *symbol);
-extern void searchSymbolCheckReference(ReferenceableItem *item, Reference *ref);
-
-// Generic API (already identified as "Abstract API")
-extern bool loadFileNumbersFromStore(void);
-extern void ensureReferencesAreLoadedFor(char *symbolName);
-extern void saveReferencesToStore(bool updating, char *name);</code></pre>
+extern void searchSymbolCheckReference(ReferenceableItem *item, Reference *ref);</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Problems:</p>
+<p>The four <code>scan*</code> functions read directly from disk <code>.cx</code> files and merge results into the in-memory <code>referenceableItemTable</code>. Each encodes a specific use case (menu creation, macro completion, unused detection, symbol search) that a storage module shouldn&#8217;t know about.</p>
+</div>
+<div class="paragraph">
+<p>The <code>ensureReferencesAreLoadedFor</code> function is the right pattern: load from disk into memory, then let the caller query memory. The <code>scan*</code> functions bypass this by combining load + filter in one step.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_whats_already_changing">16.1.3. What&#8217;s Already Changing</h4>
+<div class="paragraph">
+<p>With the memory-as-truth direction (<a href="15-roadmap.adoc">Chapter 15</a>), <code>cxfile.c</code> is already shrinking in importance:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Four <code>scan*</code> functions</strong>: Encode specific use cases (menu, macro, unused, search) instead of providing generic operations</p>
+<p><strong><code>loadFileNumbersFromStore()</code></strong> — used at startup, stays as-is</p>
 </li>
 <li>
-<p><strong>Implementation details exposed</strong>: <code>cxFileHashNumberForSymbol()</code> is a partitioning optimization that shouldn&#8217;t be public</p>
+<p><strong><code>saveReferencesToStore()</code></strong> — needed for snapshot writes, stays as-is</p>
 </li>
 <li>
-<p><strong>Search logic in storage</strong>: <code>searchSymbolCheckReference()</code> mixes filtering with persistence</p>
+<p><strong><code>ensureReferencesAreLoadedFor()</code></strong> — called 4 times (server.c, xref.c, move_function.c) to load include refs from disk db; becomes unnecessary once all include refs come from lightweight scan + full parse</p>
 </li>
 <li>
-<p><strong>Side-effect heavy</strong>: All functions mutate global <code>referenceableItemTable</code> implicitly</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong><em>Tight Coupling to Use Cases</em></strong></p>
-</div>
-<div class="paragraph">
-<p>Currently <code>cxfile.c</code> knows about:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Browser menus (<code>scanReferencesToCreateMenu</code>)</p>
+<p><strong><code>scanReferencesToCreateMenu()</code></strong> — called from cxref.c for browsing menus; currently reads from disk, should read from in-memory table instead</p>
 </li>
 <li>
-<p>Macro completion (<code>scanForMacroUsage</code>)</p>
+<p><strong><code>scanForMacroUsage()</code></strong> — called from server.c for macro completion; same issue</p>
 </li>
 <li>
-<p>Unused symbol detection (<code>scanForGlobalUnused</code>)</p>
+<p><strong><code>scanForGlobalUnused()</code></strong> — called from cxref.c; bulk scan, reasonable to keep in cxfile but should use visitor pattern</p>
 </li>
 <li>
-<p>Symbol search (<code>scanForSearch</code>)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>A persistence layer shouldn&#8217;t know about any of these! These are <strong>clients</strong> of storage, not responsibilities of storage.</p>
-</div>
-<div class="paragraph">
-<p><strong><em>Wrong Source of Truth</em></strong></p>
-</div>
-<div class="paragraph">
-<p>From the navigation debugging (see Insights chapter), we discovered:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// In cxref.c - loads FROM DISK directly
-scanReferencesToCreateMenu(symbolName);  // Treats .cx files as truth</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This bypasses the in-memory <code>referenceableItemTable</code>, treating disk as authoritative. But the <strong>actual truth</strong> is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>referenceableItemTable = Disk state (.cx files) + Preloaded editor buffers</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The disk is just a <strong>cache</strong> of the last saved state, not the current truth.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_proposed_architecture">16.1.4. Proposed Architecture</h4>
-<div class="paragraph">
-<p><strong><em>Two-Layer Design</em></strong></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">┌──────────────────────────────────────────────────┐
-│  Reference Database (Smart Layer)                │
-│  Source of Truth: referenceableItemTable (RAM)   │
-│                                                  │
-│  - Fast in-memory queries                        │
-│  - Knows what's current vs stale                 │
-│  - Handles invalidation/refresh                  │
-│  - Decides when to load/save                     │
-│  - Unified interface for all clients             │
-└──────────────────────────────────────────────────┘
-                      ↓
-        (only when loading/saving needed)
-                      ↓
-┌──────────────────────────────────────────────────┐
-│  Persistence Store (Dumb Layer)                  │
-│  Startup snapshot: .cx files on disk              │
-│                                                  │
-│  - Just save/load binary format                  │
-│  - No business logic                             │
-│  - No in-memory state                            │
-│  - Can be swapped (SQLite, Protobuf, etc.)       │
-└──────────────────────────────────────────────────┘</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong><em>Clean Persistence Store Interface</em></strong></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// persistence_store.h - Pure storage operations
-#ifndef PERSISTENCE_STORE_H_INCLUDED
-#define PERSISTENCE_STORE_H_INCLUDED
-
-#include "referenceableitem.h"
-
-/* ============================================
- * Store Lifecycle
- * ============================================ */
-
-// Load metadata (file numbers, timestamps)
-extern bool persistenceLoadMetadata(void);
-
-// Persist all references to durable storage
-extern void persistenceSaveAll(bool updating, char *location);
-
-/* ============================================
- * Reference Loading (into referenceableItemTable)
- * ============================================ */
-
-// Load references for specific symbol into memory table
-// Returns true if symbol found in storage
-extern bool persistenceLoadSymbol(char *symbolName);
-
-/* ============================================
- * Bulk Scanning
- * ============================================ */
-
-// Scan entire storage, calling visitor for each reference
-// Visitor decides what to do with each reference
-typedef void (*PersistenceVisitor)(ReferenceableItem *item,
-                                    Reference *ref,
-                                    void *context);
-extern void persistenceScanAll(PersistenceVisitor visitor, void *context);
-
-#endif</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong><em>Reference Database Interface</em></strong></p>
-</div>
-<div class="paragraph">
-<p>This layer provides the "smart" operations that clients actually need:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// reference_database.h - Smart operations (initially thin wrapper)
-#ifndef REFERENCE_DATABASE_H_INCLUDED
-#define REFERENCE_DATABASE_H_INCLUDED
-
-#include "referenceableitem.h"
-#include "position.h"
-
-// Initialize the in-memory reference database
-extern bool refDbInitialize(void);
-
-// Lookup symbol in the in-memory table
-// Automatically loads from persistence if not in memory
-extern ReferenceableItem* refDbLookupSymbol(char *name);
-
-// Get all references for a symbol
-// Ensures data is loaded and current
-extern Reference* refDbGetReferences(char *symbolName);
-
-// Mark a file's references as stale (needs reload)
-extern void refDbInvalidateFile(int fileNumber);
-
-// Persist the current in-memory state
-extern void refDbSave(bool updating, char *location);
-
-#endif</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-This interface starts simple but is where the <strong>Unified Symbol Database</strong> refactoring (next section) will add smart on-demand loading, dependency tracking, and invalidation logic.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_migration_strategy">16.1.5. Migration Strategy</h4>
-<div class="paragraph">
-<p><strong><em>Phase 1: Create Clean Boundaries (No Behavior Change)</em></strong></p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Rename <code>cxfile.h</code> → <code>cxfile_internal.h</code> (implementation detail)</p>
-</li>
-<li>
-<p>Create <code>persistence_store.h</code> with clean interface</p>
-</li>
-<li>
-<p>Create <code>persistence_store.c</code> that delegates to <code>cxfile_*</code> functions</p>
-</li>
-<li>
-<p>Update all callers to use <code>persistence_store.h</code> instead of <code>cxfile.h</code></p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>Result: Same behavior, cleaner names, clear intent.</p>
-</div>
-<div class="paragraph">
-<p><strong><em>Phase 2: Extract Operation Logic</em></strong></p>
-</div>
-<div class="paragraph">
-<p>Move operation-specific logic OUT of persistence layer:</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><strong>Search Logic</strong></dt>
-<dd>
-<p><code>searchSymbolCheckReference()</code> → new <code>search.c</code> module</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Before: In cxfile.c (WRONG LEVEL)
-void searchSymbolCheckReference(ReferenceableItem *item, Reference *ref) {
-    if (searchStringMatch(...)) {
-        reportMatch(item, ref);
-    }
-}
-
-// After: In search.c (RIGHT LEVEL)
-void searchForSymbol(char *pattern) {
-    persistenceScanAll(checkSearchMatch, pattern);
-}
-
-static void checkSearchMatch(ReferenceableItem *item, Reference *ref, void *ctx) {
-    if (searchStringMatch(item-&gt;linkName, (char *)ctx)) {
-        reportMatch(item, ref);
-    }
-}</code></pre>
-</div>
-</div>
-</dd>
-<dt class="hdlist1"><strong>Unused Detection</strong></dt>
-<dd>
-<p>Extract from <code>cxfile.c</code> to <code>refactorings.c</code> or new <code>analysis.c</code></p>
-</dd>
-<dt class="hdlist1"><strong>Menu Creation</strong></dt>
-<dd>
-<p>Keep in <code>cxref.c</code> but use clean <code>refDbGetReferences()</code> instead of direct disk scanning</p>
-</dd>
-</dl>
-</div>
-<div class="paragraph">
-<p><strong><em>Phase 3: Hide Implementation Details</em></strong></p>
-</div>
-<div class="paragraph">
-<p>Make these functions <code>static</code> (internal to cxfile.c):</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>cxFileHashNumberForSymbol()</code> - partitioning is implementation detail</p>
-</li>
-<li>
-<p><code>searchSymbolCheckReference()</code> - moved to search module</p>
-</li>
-<li>
-<p>All internal scanning logic</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong><em>Phase 4: Consolidate Scanning Functions</em></strong></p>
-</div>
-<div class="paragraph">
-<p>Replace four specific scanners with generic visitor pattern:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Old (Use-Case Specific)</th>
-<th class="tableblock halign-left valign-top">New (Generic)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>scanReferencesToCreateMenu(name)</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refDbGetReferences(name)</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>scanForMacroUsage(name)</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refDbGetReferences(name)</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>scanForGlobalUnused(location)</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>persistenceScanAll(checkUnused, ctx)</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>scanForSearch(location)</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>persistenceScanAll(checkMatch, pattern)</code></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_benefits">16.1.6. Benefits</h4>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><strong>Testability</strong></dt>
-<dd>
-<p>Can mock <code>persistence_store.h</code> for testing navigation without .cx files</p>
-</dd>
-<dt class="hdlist1"><strong>Future Storage Backends</strong></dt>
-<dd>
-<p>Could implement with SQLite, in-memory testing mock, or different binary format</p>
-</dd>
-<dt class="hdlist1"><strong>Clear Boundaries</strong></dt>
-<dd>
-<p>Storage vs search vs navigation clearly separated</p>
-</dd>
-<dt class="hdlist1"><strong>Simpler Interface</strong></dt>
-<dd>
-<p>4 functions instead of 9, clearer responsibilities</p>
-</dd>
-<dt class="hdlist1"><strong>Less Coupling</strong></dt>
-<dd>
-<p>Parsing code doesn&#8217;t call storage directly, goes through reference database</p>
-</dd>
-<dt class="hdlist1"><strong>LSP Readiness</strong></dt>
-<dd>
-<p>Reference database layer is where LSP <code>textDocument/didChange</code> integration will live</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_relationship_to_unified_symbol_database">16.1.7. Relationship to Unified Symbol Database</h4>
-<div class="paragraph">
-<p>This refactoring is the <strong>foundation</strong> for the larger <strong>Unified Symbol Database Architecture</strong> (next section):</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Clean persistence layer</strong> enables swapping storage backends without affecting clients</p>
-</li>
-<li>
-<p><strong>Reference database layer</strong> is where smart on-demand loading logic will live</p>
-</li>
-<li>
-<p><strong>Separation of concerns</strong> makes the unified architecture clearer</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Migration path:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>First: Clean up persistence (this refactoring)</p>
-</li>
-<li>
-<p>Then: Add smart on-demand logic to reference database (next refactoring)</p>
-</li>
-<li>
-<p>Finally: Both Emacs and LSP use same unified code path</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_implementation_checklist">16.1.8. Implementation Checklist</h4>
-<div class="ulist checklist">
-<ul class="checklist">
-<li>
-<p><i class="fa fa-square-o"></i> Create <code>persistence_store.h</code> with proposed interface</p>
-</li>
-<li>
-<p><i class="fa fa-square-o"></i> Create <code>persistence_store.c</code> delegating to cxfile</p>
-</li>
-<li>
-<p><i class="fa fa-square-o"></i> Rename <code>cxfile.h</code> → <code>cxfile_internal.h</code></p>
-</li>
-<li>
-<p><i class="fa fa-square-o"></i> Create <code>reference_database.h</code> (thin wrapper initially)</p>
-</li>
-<li>
-<p><i class="fa fa-square-o"></i> Create <code>reference_database.c</code> delegating to persistence</p>
-</li>
-<li>
-<p><i class="fa fa-square-o"></i> Update all callers to use new interfaces</p>
-</li>
-<li>
-<p><i class="fa fa-square-o"></i> Move search logic from cxfile to search module</p>
-</li>
-<li>
-<p><i class="fa fa-square-o"></i> Move unused detection logic to appropriate module</p>
-</li>
-<li>
-<p><i class="fa fa-square-o"></i> Make <code>cxFileHashNumberForSymbol</code> static</p>
-</li>
-<li>
-<p><i class="fa fa-square-o"></i> Make <code>searchSymbolCheckReference</code> static or remove</p>
-</li>
-<li>
-<p><i class="fa fa-square-o"></i> Add unit tests for both interfaces</p>
-</li>
-<li>
-<p><i class="fa fa-square-o"></i> Update documentation</p>
+<p><strong><code>scanForSearch()</code></strong> — called from cxref.c; same as above</p>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_references">16.1.9. References</h4>
+<h4 id="_incremental_steps">16.1.4. Incremental Steps</h4>
+<div class="paragraph">
+<p>These are independent improvements, not a phased plan:</p>
+</div>
+<div class="paragraph">
+<p><strong>Make <code>cxFileHashNumberForSymbol</code> static.</strong> It&#8217;s a partitioning implementation detail. Only called internally and from one external site that can be rerouted.</p>
+</div>
+<div class="paragraph">
+<p><strong>Make <code>searchSymbolCheckReference</code> static.</strong> Move the search matching logic to the caller (<code>search.c</code> already exists). The storage layer shouldn&#8217;t know about search string matching.</p>
+</div>
+<div class="paragraph">
+<p><strong>Replace <code>scanReferencesToCreateMenu</code> and <code>scanForMacroUsage</code> with in-memory queries.</strong> Both load a symbol&#8217;s references from disk and then filter them. With entry refresh populating the in-memory table, these should query <code>referenceableItemTable</code> directly — the data is already there. <code>ensureReferencesAreLoadedFor</code> can serve as the fallback if the symbol hasn&#8217;t been loaded yet.</p>
+</div>
+<div class="paragraph">
+<p><strong>Convert <code>scanForGlobalUnused</code> and <code>scanForSearch</code> to visitor pattern.</strong> These need to scan all symbols, not just one — a bulk operation that makes sense as a generic <code>scanAllReferences(visitor, context)</code> function. The visitor decides what to do with each item (check for unused, match search pattern). The operation-specific logic moves to the callers.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_references">16.1.5. References</h4>
 <div class="ulist">
 <ul>
 <li>
-<p>Current implementation: <code>src/cxfile.c</code>, <code>src/cxfile.h</code></p>
+<p><code>src/cxfile.h</code>, <code>src/cxfile.c</code> — current implementation</p>
 </li>
 <li>
-<p>In-memory table: <code>src/reftab.c</code> (referenceableItemTable)</p>
+<p><code>src/search.c</code> — already exists, natural home for search matching logic</p>
 </li>
 <li>
-<p>Navigation architecture: Chapter 17 (Insights) - Navigation Architecture section</p>
+<p><code>src/cxref.c</code> — main caller of scan functions (lines 863, 1515, 1709, 1938)</p>
+</li>
+<li>
+<p><code>src/server.c</code> — calls <code>scanForMacroUsage</code> (line 83) and <code>ensureReferencesAreLoadedFor</code> (lines 238, 330)</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="unified-symbol-database">16.2. Unified Symbol Database Architecture</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-This section describes the implementation details for the "Memory as Truth" architectural vision. See <a href="15-roadmap.adoc">Chapter 15: Roadmap</a> for the high-level dependency chain showing how this work relates to other architectural goals.
-</td>
-</tr>
-</table>
-</div>
+<h3 id="macro-expansion-module">16.2. Extract Macro Expansion Module</h3>
 <div class="sect3">
-<h4 id="_problem_statement_2">16.2.1. Problem Statement</h4>
-<div class="paragraph">
-<p>The current symbol database has evolved from a batch cross-referencer (like <code>ctags</code>) with artificial distinctions between "file-based" and "on-demand" modes. This creates:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Mode complexity</strong>: Different code paths for Emacs vs LSP clients</p>
-</li>
-<li>
-<p><strong>Cold start problems</strong>: Requires upfront <code>-create</code> operation before use</p>
-</li>
-<li>
-<p><strong>Manual updates</strong>: Users must remember to run <code>-update</code> after changes</p>
-</li>
-<li>
-<p><strong>Inconsistent behavior</strong>: Different modes provide different guarantees</p>
-</li>
-<li>
-<p><strong>Maintenance overhead</strong>: Multiple implementations to maintain and test</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_current_architecture_limitations">16.2.2. Current Architecture Limitations</h4>
-<div class="paragraph">
-<p>The existing system distinguishes between:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Aspect</th>
-<th class="tableblock halign-left valign-top">File-Based Mode</th>
-<th class="tableblock halign-left valign-top">On-Demand Mode</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Cold Start</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Requires <code>-create</code> first</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Parse file immediately</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Warm Queries</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O(1) hash lookup</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O(file_size) parsing</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Memory Usage</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Low (streaming)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">High (in-memory cache)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Incremental Updates</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Smart file tracking</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Per-file invalidation</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Multi-project</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Separate databases</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Workspace-scoped</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_proposed_solution">16.2.3. Proposed Solution</h4>
-<div class="paragraph">
-<p><strong><em>Core Insight: Unified On-Demand Architecture</em></strong></p>
-</div>
-<div class="paragraph">
-<p>Both Emacs and LSP clients want the same thing: <strong>up-to-date symbol and reference information</strong>. The distinction between "file-based" and "on-demand" modes is artificial complexity. Instead, c-xrefactory should provide a unified interface that:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Always ensures information is current</strong> using existing dependency tracking</p>
-</li>
-<li>
-<p><strong>Scans incrementally</strong> only what&#8217;s needed, when needed</p>
-</li>
-<li>
-<p><strong>Uses <code>.cx</code> files as startup snapshot</strong> for fast server start</p>
-</li>
-<li>
-<p><strong>Eliminates cold start problems</strong> by avoiding upfront full-project scanning</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong><em>Simplified Interface Design</em></strong></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef struct SymbolDatabase SymbolDatabase;
-
-typedef struct {
-    // Unified operations for any client (Emacs or LSP)
-    Symbol* (*lookupSymbol)(SymbolDatabase* db, const char* name, Position pos);
-    ReferenceList* (*getReferences)(SymbolDatabase* db, const char* name, Position pos);
-    ReferenceList* (*getOccurrences)(SymbolDatabase* db, const char* name, Position pos);
-
-    // All complexity hidden in implementation:
-    // - File modification checking (existing: checkFileModifiedTime)
-    // - Include dependency tracking (existing: cachedIncludedFilePass)
-    // - Incremental scanning (existing: makeIncludeClosureOfFilesToUpdate)
-    // - Persistent caching (existing: .cx file system)
-} SymbolDatabaseOperations;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong><em>Implementation Strategy: Smart On-Demand</em></strong></p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-This refactoring builds on the <strong>Clean Persistence Store</strong> foundation (previous section). The smart logic lives in the <strong>in-memory reference database layer</strong>, while <code>.cx</code> files become a startup snapshot (see <a href="15-roadmap.adoc">Chapter 15: Roadmap</a> for the architectural vision and dependency chain).
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The implementation leverages <strong>existing sophisticated logic</strong>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">Symbol* lookupSymbol(const char* name, Position pos) {
-    // 1. Check if in-memory table has current information
-    if (refTableHasCurrent(name, pos)) {
-        return lookupInMemoryTable(name, pos);  // Answer from RAM
-    }
-
-    // 2. Load from persistence if not in memory
-    if (!refTableHasSymbol(name)) {
-        persistenceLoadSymbol(name);  // Load .cx into referenceableItemTable
-    }
-
-    // 3. Check if loaded data is stale (file modified since load)
-    if (refTableDataIsStale(name, pos)) {
-        // Use existing dependency tracking to scan minimal set
-        FileList* filesToScan = calculateDependencyClosure(pos.file);
-        for (FileItem* file : filesToScan) {
-            if (checkFileModifiedTime(file-&gt;fileNumber)) {
-                parseFileAndUpdateTable(file);  // Reparse into memory
-            }
-        }
-    }
-
-    // 4. Answer from in-memory table (now guaranteed current)
-    return lookupInMemoryTable(name, pos);
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Architectural Layers:</strong></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>Query → Reference Database (in-memory, smart) → Persistence Store (disk, dumb)
-        ↑                                         ↑
-        Always answers from RAM                   Only for load/save</pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Key Benefits:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>No artificial modes</strong> - same code path for all clients</p>
-</li>
-<li>
-<p><strong>No cold start</strong> - first lookup triggers minimal necessary scanning</p>
-</li>
-<li>
-<p><strong>Incremental by design</strong> - only scans files that need updating</p>
-</li>
-<li>
-<p><strong>In-memory speed</strong> - all queries answered from RAM (referenceableItemTable)</p>
-</li>
-<li>
-<p><strong>Startup snapshot</strong> - <code>.cx</code> files avoid full project parse on restart</p>
-</li>
-<li>
-<p><strong>Existing logic reuse</strong> - leverages proven dependency tracking system</p>
-</li>
-</ul>
-</div>
-<div id="snapshot-loading" class="paragraph">
-<p><strong><em>Startup Snapshot Loading</em></strong></p>
-</div>
-<div class="paragraph">
-<p>At startup, the <code>.cx</code> snapshot is used to populate the in-memory table without a full project parse. The algorithm for each file entry in the snapshot:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">For file F in snapshot:
-
-1. Does stored lastParsedMtime match current disk mtime?
-   NO  → Snapshot is stale for F. Re-parse from disk.
-   YES → Use snapshot references for F.</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>After startup, the client connects and sends preloaded buffers for modified files. Those are parsed into memory, overriding any snapshot-loaded references for those files.</p>
-</div>
-<div class="paragraph">
-<p>During normal operation, the <code>.cx</code> file is never consulted. All queries are answered from the in-memory table.</p>
-</div>
-<div class="paragraph">
-<p><strong>Cold start</strong> (no <code>.cx</code> file): All project source files are parsed. Slower but self-healing — no manual action needed.</p>
-</div>
-<div class="paragraph">
-<p><strong>Snapshot persistence constraint</strong>: Only disk-file-derived references are written to the snapshot. References parsed from preloaded editor buffers (unsaved content) are never persisted, so that mtime-based validation at next startup remains correct.</p>
-</div>
-<div class="paragraph">
-<p>See <a href="15-roadmap.adoc">Chapter 15: Roadmap</a> for the full startup snapshot semantics.</p>
-</div>
-<div class="paragraph">
-<p><strong><em>Legacy Architecture Recognition</em></strong></p>
-</div>
-<div class="paragraph">
-<p>c-xrefactory evolved from a <strong>batch cross-referencer</strong> (like <code>ctags</code>) and was enhanced for real-time use:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Legacy batch workflow:
-c-xref -create project.c     # Full scan, build .cx database
-c-xref -update modified.c    # Incremental update
-c-xref -olcxpush symbol      # Query pre-built database
-
-# Unified approach:
-c-xref -server               # Start server, scan on-demand as needed
-c-xref -lsp                  # Same logic, different protocol</code></pre>
-</div>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-With this architecture, the <code>.cx</code> files become a <strong>startup snapshot</strong> of the in-memory <code>referenceableItemTable</code>. They exist to avoid a full project parse on server start. The actual database is always in RAM, and <code>.cx</code> is not consulted during normal operation.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_implementation_plan">16.2.4. Implementation Plan</h4>
-<div class="paragraph">
-<p><strong><em>Phase 1: Interface Unification</em></strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Create unified <code>SymbolDatabase</code> interface</p>
-</li>
-<li>
-<p>Wrap existing logic in smart on-demand implementation</p>
-</li>
-<li>
-<p>Replace explicit <code>-create</code>/<code>-update</code> commands with automatic dependency checking</p>
-</li>
-<li>
-<p>Both Emacs and LSP use same code path</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong><em>Phase 2: Optimization</em></strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Enhance existing dependency tracking for finer-grained invalidation</p>
-</li>
-<li>
-<p>Optimize in-memory caching strategies</p>
-</li>
-<li>
-<p>Background <code>.cx</code> file maintenance for long-running sessions</p>
-</li>
-<li>
-<p>Performance tuning for large codebases</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_benefits_2">16.2.5. Benefits</h4>
-<div class="paragraph">
-<p><strong><em>Architectural Simplification</em></strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Single code path</strong> for both Emacs and LSP clients - eliminates maintenance overhead</p>
-</li>
-<li>
-<p><strong>No mode distinctions</strong> - same smart logic serves all use cases optimally</p>
-</li>
-<li>
-<p><strong>Leverages existing logic</strong> - reuses proven dependency tracking and caching systems</p>
-</li>
-<li>
-<p><strong>Reduced complexity</strong> - eliminates artificial FILE_BASED/ON_DEMAND/HYBRID modes</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong><em>User Experience Improvements</em></strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Zero configuration</strong> - works immediately on any C project without setup</p>
-</li>
-<li>
-<p><strong>No cold start delay</strong> - first symbol lookup triggers minimal necessary scanning</p>
-</li>
-<li>
-<p><strong>Transparent snapshots</strong> - <code>.cx</code> files automatically maintained for fast startup</p>
-</li>
-<li>
-<p><strong>Consistent behavior</strong> - same results whether using Emacs or modern IDE with LSP</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong><em>Performance Characteristics</em></strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Minimal initial cost</strong> - avoids expensive upfront full-project scanning</p>
-</li>
-<li>
-<p><strong>Smart incremental updates</strong> - only rescans files that have actually changed</p>
-</li>
-<li>
-<p><strong>Automatic dependency tracking</strong> - includes files affected by changes get updated</p>
-</li>
-<li>
-<p><strong>Fast restart</strong> - analysis results snapshotted across sessions</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong><em>Development Benefits</em></strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Backward compatibility</strong> - existing Emacs workflows continue unchanged</p>
-</li>
-<li>
-<p><strong>Forward compatibility</strong> - natural path to modern LSP integration</p>
-</li>
-<li>
-<p><strong>Reduced maintenance</strong> - single implementation instead of multiple modes</p>
-</li>
-<li>
-<p><strong>Enhanced testability</strong> - unified logic easier to test comprehensively</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_existing_infrastructure">16.2.6. Existing Infrastructure</h4>
-<div class="paragraph">
-<p><strong><em>Sophisticated Dependency Tracking</em></strong></p>
-</div>
-<div class="paragraph">
-<p>The unified approach leverages c-xrefactory&#8217;s <strong>existing sophisticated dependency management</strong> that handles include file relationships automatically:</p>
-</div>
-<div class="paragraph">
-<p><strong>File Modification Tracking</strong> (<code>filetable.h</code>):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef struct fileItem {
-    char *name;
-    time_t lastModified;        // Last known modification time
-    time_t lastInspected;       // Last time we checked
-    time_t lastUpdateMtime;     // Last update cycle time
-    time_t lastFullUpdateMtime; // Last full update time
-    // ... scheduling and state flags
-} FileItem;
-
-bool checkFileModifiedTime(int fileNumber);</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Include Dependency Tracking</strong> (<code>yylex.c</code>):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
-    // ... setup include stack
-    includeStack.stack[includeStack.pointer++] = currentFile;
-    // Track include relationships for dependency analysis
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Automatic Include Closure</strong> (<code>xref.c:81-108</code>):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">static void makeIncludeClosureOfFilesToUpdate(void) {
-    // If file A includes file B, and B is modified, A gets scheduled for update
-    // This uses the reference database to track include relationships
-    bool fileAddedFlag = true;
-    while (fileAddedFlag) {
-        // Iterative closure: keeps adding dependent files until stable
-        for (all scheduled files) {
-            find_all_files_that_include_this_file();
-            schedule_them_for_update();
-        }
-    }
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-This dependency tracking infrastructure is <strong>already production-ready</strong> and handles the complex cases (transitive dependencies, modification time checking, include stack management). The unified symbol database can leverage this existing logic instead of reimplementing dependency management.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p><strong><em>Refactoring Without callXref()</em></strong></p>
-</div>
-<div class="paragraph">
-<p>The current architecture has RefactoryMode internally calling XrefMode (<code>callXref()</code>) to update the persistent <code>.cx</code> database before performing refactorings (see Insights chapter, section "RefactoryMode Internally Calls XrefMode").</p>
-</div>
-<div class="paragraph">
-<p>Importantly, the <strong>graduated update scope decision already exists</strong>: <code>computeUpdateOptionForSymbol()</code> in <code>refactory.c</code> inspects the symbol&#8217;s visibility, scope, and file span to choose between no update (local symbols), fast update (multi-file globals), or full update (symbols in headers). This logic is sound and maps directly onto the replacement mechanism — only the update <em>implementation</em> changes (lightweight scan + incremental reparse instead of <code>callXref()</code>).</p>
-</div>
-<div class="paragraph">
-<p>With the unified on-demand architecture, refactoring uses the <strong>same in-memory reference database</strong> as navigation:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">void performRefactoring(Symbol *symbol) {
-    // 1. Find files where symbol is referenced (from in-memory refs)
-    FileList *referencingFiles = getFilesWithReferencesTo(symbol-&gt;name);
-
-    // 2. Compute include closure of those files
-    //    Uses existing makeIncludeClosureOfFilesToUpdate() infrastructure
-    FileList *potentialReferences = computeIncludeClosure(referencingFiles);
-
-    // 3. Filter to only stale files (mtime &gt; lastParsedMtime)
-    for (FileItem *f : potentialReferences) {
-        if (f-&gt;lastModified &gt; f-&gt;lastParsedMtime) {
-            parseFileIntoMemory(f);  // Uses preload if available
-        }
-    }
-    // Files already parsed with current content are NOT reparsed
-
-    // 4. Perform refactoring using in-memory references
-    // Same reference list used by navigation is now used by refactoring
-    applyRefactoring(symbol, potentialReferences);
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Key simplification</strong>: By limiting support to "include file patterns" only (see <a href="/workspace/decisions#13">ADR-0013</a>), we don&#8217;t need to scan the entire project for archaic <code>extern</code> declarations in <code>.c</code> files. The include graph provides a complete and correct dependency closure.</p>
-</div>
-<div class="paragraph">
-<p><strong>Benefits:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Single code path</strong> - Navigation and refactoring use the same reference database</p>
-</li>
-<li>
-<p><strong>No xref subprocess</strong> - Eliminates process isolation complexity</p>
-</li>
-<li>
-<p><strong>Preloads work correctly</strong> - Modified editor buffers are used directly</p>
-</li>
-<li>
-<p><strong>Faster refactoring</strong> - Only stale files are reparsed, not entire project</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_open_questions">16.2.7. Open Questions</h4>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Should we maintain backward compatibility with explicit <code>-create</code>/<code>-update</code> commands?</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Probably yes, at least as no-ops or aliases to make transition easier</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>How to handle very large projects (&gt;1M LOC)?</p>
-<div class="ulist">
-<ul>
-<li>
-<p>May need workspace-level configuration for incremental scanning thresholds</p>
-</li>
-<li>
-<p>Consider lazy loading of symbol data</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>What&#8217;s the migration path for existing users?</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Existing <code>.cx</code> files should continue to work</p>
-</li>
-<li>
-<p>Auto-migrate on first run with new version</p>
-</li>
-<li>
-<p>Provide clear documentation on new behavior</p>
-</li>
-</ul>
-</div>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_references_2">16.2.8. References</h4>
-<div class="ulist">
-<ul>
-<li>
-<p>Current implementation: <code>src/cxfile.c</code>, <code>src/xref.c</code></p>
-</li>
-<li>
-<p>File tracking: <code>src/filetable.h</code>, <code>src/filetable.c</code></p>
-</li>
-<li>
-<p>Dependency tracking: <code>src/xref.c</code> lines 81-108</p>
-</li>
-<li>
-<p>Current database description: See Cxref and Cxfile components in chapter 08 (Components)</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="macro-expansion-module">16.3. Extract Macro Expansion Module</h3>
-<div class="sect3">
-<h4 id="_problem_statement_3">16.3.1. Problem Statement</h4>
+<h4 id="_problem_statement">16.2.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The <code>yylex.c</code> file is <strong>2353 lines</strong> and combines multiple responsibilities:</p>
 </div>
@@ -7990,7 +7006,7 @@ This dependency tracking infrastructure is <strong>already production-ready</str
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_architecture">16.3.2. Current Architecture</h4>
+<h4 id="_current_architecture">16.2.2. Current Architecture</h4>
 <div class="paragraph">
 <p>The macro expansion system in <code>yylex.c</code> comprises:</p>
 </div>
@@ -8051,7 +7067,7 @@ static Memory macroArgumentsMemory; // Short-lived: expansion temporaries</code>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_solution_2">16.3.3. Proposed Solution</h4>
+<h4 id="_proposed_solution">16.2.3. Proposed Solution</h4>
 <div class="paragraph">
 <p>Extract macro expansion into a new module: <code>macroexpansion.c/h</code></p>
 </div>
@@ -8153,7 +7169,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_benefits_3">16.3.4. Benefits</h4>
+<h4 id="_benefits">16.2.4. Benefits</h4>
 <div class="paragraph">
 <p><strong><em>Architectural</em></strong></p>
 </div>
@@ -8207,7 +7223,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation_strategy">16.3.5. Implementation Strategy</h4>
+<h4 id="_implementation_strategy">16.2.5. Implementation Strategy</h4>
 <div class="paragraph">
 <p><strong><em>Phase 1: Preparation (Already Complete)</em></strong></p>
 </div>
@@ -8284,7 +7300,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_risks_and_mitigation">16.3.6. Risks and Mitigation</h4>
+<h4 id="_risks_and_mitigation">16.2.6. Risks and Mitigation</h4>
 <div class="paragraph">
 <p><strong><em>Risk: Complex dependencies</em></strong></p>
 </div>
@@ -8347,7 +7363,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_success_metrics">16.3.7. Success Metrics</h4>
+<h4 id="_success_metrics">16.2.7. Success Metrics</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8369,7 +7385,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_open_questions_2">16.3.8. Open Questions</h4>
+<h4 id="_open_questions">16.2.8. Open Questions</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -8415,7 +7431,7 @@ void *macroArgumentAlloc(size_t size);</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_references_3">16.3.9. References</h4>
+<h4 id="_references_2">16.2.9. References</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8448,9 +7464,9 @@ This refactoring is independent of the LexemStream API improvements but would be
 </div>
 </div>
 <div class="sect2">
-<h3 id="clean-parser-api">16.4. Remove <code>parseBufferUsingServer</code> Bridge</h3>
+<h3 id="clean-parser-api">16.3. Remove <code>parseBufferUsingServer</code> Bridge</h3>
 <div class="sect3">
-<h4 id="_problem_2">16.4.1. Problem</h4>
+<h4 id="_problem_2">16.3.1. Problem</h4>
 <div class="paragraph">
 <p>Refactoring operations that need structural information from parsing (function boundaries, move target validation, parameter positions, etc.) do not call the parser directly. Instead, they go through <code>parseBufferUsingServer()</code> — a function that constructs magic string arguments (like <code>"-olcxmovetarget"</code>, <code>"-olcxgetfunctionbounds"</code>) and runs a full <code>initServer()</code> + <code>callServer()</code> cycle. This is the internal equivalent of the editor sending a command over the protocol.</p>
 </div>
@@ -8471,7 +7487,7 @@ parseBufferUsingServer(options.project, marker, NULL, "-olcxgetfunctionbounds", 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_whats_done">16.4.2. What&#8217;s Done</h4>
+<h4 id="_whats_done">16.3.2. What&#8217;s Done</h4>
 <div class="paragraph">
 <p>A clean parser API in <code>parsing.h/c</code> already exists and handles all call sites in <code>server.c</code>:</p>
 </div>
@@ -8509,7 +7525,7 @@ parseBufferUsingServer(options.project, marker, NULL, "-olcxgetfunctionbounds", 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_what_remains">16.4.3. What Remains</h4>
+<h4 id="_what_remains">16.3.3. What Remains</h4>
 <div class="paragraph">
 <p><strong>9 bridge calls</strong> to eliminate (2 in <code>parsing.c</code>, 7 in <code>refactory.c</code>):</p>
 </div>
@@ -8579,7 +7595,7 @@ parseBufferUsingServer(options.project, marker, NULL, "-olcxgetfunctionbounds", 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_migration_pattern">16.4.4. Migration Pattern</h4>
+<h4 id="_migration_pattern">16.3.4. Migration Pattern</h4>
 <div class="paragraph">
 <p>The two <code>parsing.c</code> bridges show the pattern clearly. Today:</p>
 </div>
@@ -8602,13 +7618,13 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_independence">16.4.5. Independence</h4>
+<h4 id="_independence">16.3.5. Independence</h4>
 <div class="paragraph">
 <p>This refactoring is <strong>independent of the memory-as-truth architecture</strong>. The bridge removal is about how refactoring operations invoke parsing internally — not about where references come from or how they&#8217;re stored. It can proceed at any time, one call site at a time.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_code_locations">16.4.6. Code Locations</h4>
+<h4 id="_code_locations">16.3.6. Code Locations</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8625,9 +7641,9 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="remove-hashtab">16.5. Remove Hashtab by Migrating to Hashlist</h3>
+<h3 id="remove-hashtab">16.4. Remove Hashtab by Migrating to Hashlist</h3>
 <div class="sect3">
-<h4 id="_problem_statement_4">16.5.1. Problem Statement</h4>
+<h4 id="_problem_statement_2">16.4.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The codebase has two hash table implementations generated by C macro templates:</p>
 </div>
@@ -8675,7 +7691,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_why_this_matters_now">16.5.2. Why This Matters Now</h4>
+<h4 id="_why_this_matters_now">16.4.2. Why This Matters Now</h4>
 <div class="paragraph">
 <p>The lightweight file structure scanning work (ADR 22) exposed hashtab&#8217;s limitations:</p>
 </div>
@@ -8694,7 +7710,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_change">16.5.3. Proposed Change</h4>
+<h4 id="_proposed_change">16.4.3. Proposed Change</h4>
 <div class="paragraph">
 <p>Migrate <code>fileTable</code> and <code>macroArgumentTable</code> from hashtab to hashlist, then remove hashtab entirely.</p>
 </div>
@@ -8745,7 +7761,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_file_number_semantics_the_key_challenge">16.5.4. File Number Semantics — The Key Challenge</h4>
+<h4 id="_file_number_semantics_the_key_challenge">16.4.4. File Number Semantics — The Key Challenge</h4>
 <div class="paragraph">
 <p>The file table serves a dual purpose: hash lookup by name AND array indexing by file number. File numbers are used throughout the codebase as compact identifiers (stored in references, positions, sessions, etc.).</p>
 </div>
@@ -8773,7 +7789,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_benefits_4">16.5.5. Benefits</h4>
+<h4 id="_benefits_2">16.4.5. Benefits</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8792,7 +7808,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_notes">16.5.6. Notes</h4>
+<h4 id="_notes">16.4.6. Notes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8806,15 +7822,15 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="split-editor-module">16.6. Split the Editor Module</h3>
+<h3 id="split-editor-module">16.5. Split the Editor Module</h3>
 <div class="sect3">
-<h4 id="_problem_statement_5">16.6.1. Problem Statement</h4>
+<h4 id="_problem_statement_3">16.5.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The <code>editor.c</code> module (630+ lines) bundles at least four unrelated responsibilities under the misleading name "editor". The name suggests it&#8217;s about the external editor (Emacs), but most of the code has nothing to do with editor integration&#8201;&#8212;&#8201;it&#8217;s internal text manipulation infrastructure used by refactoring.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_responsibilities">16.6.2. Current Responsibilities</h4>
+<h4 id="_current_responsibilities">16.5.2. Current Responsibilities</h4>
 <div class="paragraph">
 <p><strong>1. Text memory allocator</strong> (<code>editorMemory[]</code>, <code>allocateNewEditorBufferTextSpace</code>, <code>freeTextSpace</code>)</p>
 </div>
@@ -8841,7 +7857,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_naming_problem">16.6.3. The Naming Problem</h4>
+<h4 id="_the_naming_problem">16.5.3. The Naming Problem</h4>
 <div class="paragraph">
 <p>The "Editor" prefix pervades the codebase beyond just this module:</p>
 </div>
@@ -8863,7 +7879,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_split">16.6.4. Proposed Split</h4>
+<h4 id="_proposed_split">16.5.4. Proposed Split</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -8908,7 +7924,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_notes_2">16.6.5. Notes</h4>
+<h4 id="_notes_2">16.5.5. Notes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8921,6 +7937,70 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 <p><code>editor.h</code> currently re-exports headers for <code>contentbuffer.h</code>, <code>editormarker.h</code>, <code>undo.h</code>&#8201;&#8212;&#8201;after the split, callers would include the specific headers they need.</p>
 </li>
 </ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="rename-operations">16.6. Rename Server Operations</h3>
+<div class="sect3">
+<h4 id="_problem_statement_4">16.6.1. Problem Statement</h4>
+<div class="paragraph">
+<p>Server operations use the prefix <code>olcx</code> (likely "on-line cross-references"), a legacy abbreviation that conveys no meaning to anyone reading the code or protocol today. Option names like <code>-olcxpush</code>, <code>-olcxtagsearch</code>, <code>-olcxgetprojectname</code> are opaque compared to what they could be: <code>-push</code>, <code>-search</code>, <code>-get-project-name</code>.</p>
+</div>
+<div class="paragraph">
+<p>The word "tag" in search-related names (<code>-olcxtagsearch</code>, <code>c-xref-search-in-tag-file</code>, <code>c-xref-tag-results-buffer</code>) is a leftover from <code>ctags</code> and friends. There is no ctags compatibility — the term is purely misleading. The two menu entries "Search Definition in Tags" and "Search Symbol" both trigger the same <code>OP_SEARCH</code> operation, differing only in a filter flag (<code>-searchdef</code>). The word "tag" suggests they are fundamentally different, when they are not.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_scope">16.6.2. Scope</h4>
+<div class="paragraph">
+<p>The rename touches three layers:</p>
+</div>
+<div class="paragraph">
+<p><strong>Protocol options</strong> (server C code + Emacs client): ~60 operations prefixed with <code>-olcx*</code> in <code>options.c</code>. These become plain descriptive names: <code>-push</code>, <code>-pop</code>, <code>-goto</code>, <code>-complete</code>, <code>-search</code>, <code>-rename</code>, <code>-extract</code>, <code>-filter</code>, <code>-get-project-name</code>, etc.</p>
+</div>
+<div class="paragraph">
+<p><strong>Emacs function and variable names</strong>: Functions like <code>c-xref-search-in-tag-file</code>, <code>c-xref-get-tags</code>, <code>c-xref-interactive-tag-search-*</code> and variables like <code>c-xref-tag-results-buffer</code>, <code>c-xref-tag-search-mode-map</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>System tests</strong>: Every <code>commands.input</code> file uses these option names. Mechanical update.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_design_decisions">16.6.3. Design Decisions</h4>
+<div class="paragraph">
+<p><strong>Shortest clear name</strong>: Prefer <code>-push</code> over <code>-browse-push</code>. Stack operations (push, pop) are domain concepts — without understanding them you can&#8217;t understand browsing anyway. No grouping prefix needed.</p>
+</div>
+<div class="paragraph">
+<p><strong>Two kinds of filter</strong>: The browsing UI has two filter concepts that should remain distinct:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Reference filter</strong> (<code>-filter</code>): narrows the reference list for the selected symbol by usage kind (all → exclude reads → definitions only)</p>
+</li>
+<li>
+<p><strong>Menu filter</strong> (<code>-menu-filter</code>): narrows the symbol menu when a name is ambiguous (all with name → exact match → exact match same file)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These could become <code>-reference-filter</code> and <code>-symbol-filter</code> for extra clarity, but <code>-filter</code> and <code>-menu-filter</code> are adequate.</p>
+</div>
+<div class="paragraph">
+<p><strong>No compatibility shim needed</strong>: Distribution is via git repo updates, and the Emacs <code>upgrade</code> menu entry kills the server, reloads elisp, and starts a new server on the next operation. Old and new never need to coexist.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_implementation">16.6.4. Implementation</h4>
+<div class="paragraph">
+<p>Support both old and new names in the option parser temporarily (two <code>strcmp</code> entries per option). Rename everywhere else (client, tests, docs). Remove the old names in a later commit. This eliminates any breakage window.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_priority">16.6.5. Priority</h4>
+<div class="paragraph">
+<p>Low urgency, high value for readability. Can be done incrementally — start with the "tag" removal (search-related names only), then expand to the full <code>olcx</code> rename later.</p>
 </div>
 </div>
 </div>
@@ -10908,7 +9988,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-05 10:00:35 UTC
+Last updated 2026-03-09 13:53:26 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
