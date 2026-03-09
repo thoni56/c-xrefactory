@@ -1,6 +1,6 @@
 CXREF -xrefactory-II -server
 -olcxgetprojectname CURDIR/source.c
 <sync>
--olcxtagsearch=int* -olcxlccursor=1:5 -olcursor=5 CURDIR/source.c -olcursor=85 -p CURDIR
+-olcxsearch=int* -olcxlccursor=1:5 -olcursor=5 CURDIR/source.c -olcursor=85 -p CURDIR
 <sync>
 <exit>

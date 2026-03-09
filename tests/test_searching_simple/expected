@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxtagsearch=int* -olcxlccursor=1:5 -olcursor=5 CURDIR/source.c -olcursor=85 -p CURDIR
+-olcxsearch=int* -olcxlccursor=1:5 -olcursor=5 CURDIR/source.c -olcursor=85 -p CURDIR
 end-of-options
 
 <sync>

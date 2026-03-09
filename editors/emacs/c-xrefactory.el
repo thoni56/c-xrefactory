@@ -638,8 +638,8 @@ faces and highlighting in buffers created by C-xrefactory.
 ;;(define-key c-xref-menu [c-xref-set-target] '("Set Target for Next Move" . c-xref-set-moving-target-position))
 (define-key c-xref-menu [c-xref-refactor] '("Refactor" . c-xref-refactor))
 (define-key c-xref-menu [separator-buffers4] '("--"))
-(define-key c-xref-menu [c-xref-search-tag] '("Search Symbol" . c-xref-search-in-tag-file))
-(define-key c-xref-menu [c-xref-search-def] '("Search Definition in Tags" . c-xref-search-definition))
+(define-key c-xref-menu [c-xref-search-symbol] '("Search Symbol" . c-xref-search-symbol))
+(define-key c-xref-menu [c-xref-search-def] '("Search Definition" . c-xref-search-definition))
 (define-key c-xref-menu [c-xref-dm-menu] '("Unused Symbols Detection" . c-xref-unused-menu))
 (define-key c-xref-menu [c-xref-sb-menu] '("Browsing with Symbol Stack" . c-xref-sb-menu))
 (define-key c-xref-menu [c-xref-peek-menu] '("Peek" . c-xref-peek-menu))
@@ -753,7 +753,7 @@ your .c-xrefrc file.
 (autoload 'c-xref-show-browser "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-re-push "c-xref" c-xref-default-documentation-string t)
 
-(autoload 'c-xref-search-in-tag-file "c-xref" c-xref-default-documentation-string t)
+(autoload 'c-xref-search-symbol "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-search-definition "c-xref" c-xref-default-documentation-string t)
 
 (autoload 'c-xref-push-this-file-unused-symbols "c-xref" c-xref-default-documentation-string t)

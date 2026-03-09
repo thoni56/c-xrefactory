@@ -1381,14 +1381,14 @@ static bool processOOption(int *argi, ArgumentsVector args) {
         // position of the cursor in line:column format
         options.olcxlccursor = allocateStringForOption(&options.olcxlccursor, args.argv[i]+14);
     }
-    else if (strncmp(args.argv[i], "-olcxtagsearch=",15)==0) {
+    else if (strncmp(args.argv[i], "-olcxsearch=",12)==0) {
         options.serverOperation=OP_SEARCH;
-        options.olcxSearchString = allocateStringForOption(&options.olcxSearchString, args.argv[i]+15);
+        options.olcxSearchString = allocateStringForOption(&options.olcxSearchString, args.argv[i]+12);
     }
-    else if (strcmp(args.argv[i], "-olcxtagsearchforward")==0) {
+    else if (strcmp(args.argv[i], "-olcxsearchforward")==0) {
         options.serverOperation=OP_SEARCH_NEXT;
     }
-    else if (strcmp(args.argv[i], "-olcxtagsearchback")==0) {
+    else if (strcmp(args.argv[i], "-olcxsearchback")==0) {
         options.serverOperation=OP_SEARCH_PREVIOUS;
     }
     else if (strncmp(args.argv[i], "-olcxpushname=",14)==0)   {
@@ -1411,15 +1411,15 @@ static bool processOOption(int *argi, ArgumentsVector args) {
         options.olcxGotoVal = 0;
         sscanf(args.argv[i]+10, "%d",&options.olcxGotoVal);
     }
-    else if (strncmp(args.argv[i], "-olcxtaggoto",12)==0) {
+    else if (strncmp(args.argv[i], "-olcxsearchgoto",15)==0) {
         options.serverOperation = OP_SEARCH_GOTO_N;
         options.olcxGotoVal = 0;
-        sscanf(args.argv[i]+12, "%d",&options.olcxGotoVal);
+        sscanf(args.argv[i]+15, "%d",&options.olcxGotoVal);
     }
-    else if (strncmp(args.argv[i], "-olcxtagselect",14)==0) {
+    else if (strncmp(args.argv[i], "-olcxsearchselect",17)==0) {
         options.serverOperation = OP_SEARCH_SELECT;
         options.olcxGotoVal = 0;
-        sscanf(args.argv[i]+14, "%d",&options.olcxGotoVal);
+        sscanf(args.argv[i]+17, "%d",&options.olcxGotoVal);
     }
     else if (strncmp(args.argv[i], "-olcxgoto",9)==0) {
         options.serverOperation = OP_BROWSE_GOTO_N;
