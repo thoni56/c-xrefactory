@@ -67,6 +67,9 @@ The following diagram shows how the remaining architectural pieces depend on eac
 |**Disk snapshot strategy (read side operational)**
 |The `.cx` file transitions from a live database to a startup snapshot. The read side is operational: at startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. Remaining work: snapshot write strategy (see below) and initial creation without a prior `-create`. See below for target semantics.
 
+|**Search reads from in-memory table**
+|`OP_SEARCH` currently bypasses the in-memory `referenceableItemTable` entirely — `scanForSearch()` reads directly from disk `.cx` files. This is the last operation that treats the disk database as a live query target rather than a startup snapshot. Once memory is truth, search should query the in-memory table with the same pattern matching (`shellMatch`, substring fitness). This aligns with the link:17-major-codebase-improvements.adoc[Chapter 17] goal of converting `scanForSearch` to a visitor over in-memory data. No new infrastructure needed — the data is already there after entry refresh.
+
 |**Snapshot write triggers**
 |The save mechanism exists (`saveReferences()` in xref.c) but is only called from the legacy `-create`/`callXref()` path. It needs to be wired to triggers during normal server operation. Three triggers identified:
 
