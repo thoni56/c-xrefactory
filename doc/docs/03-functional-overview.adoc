@@ -54,12 +54,37 @@ symbol is used.
 NOTE: This also applies to non-terminals and semantic attributes in
 Yacc grammars!
 
-==== Browsing
+==== Searching
 
-It is also possible to search for definitions or symbols containing a
-string, including possible wildcards. This will present various forms
-of "menues" where filters can be applied and a found symbol be
-inspected.
+A user can search for symbols by name using two operations:
+
+**Search Symbol**:: Finds all symbols whose name matches the search
+pattern. This includes functions, variables, types, macros — any
+symbol known to `c-xrefactory`, whether or not it is defined in the
+project.
+
+**Search Definition**:: Finds only symbols that have a definition
+within the project. Symbols that are merely used (e.g. called from an
+external library) are excluded.
+
+Both operations accept wildcard patterns: `*` matches any sequence of
+characters and `?` matches a single character. For example, `parse*`
+finds all symbols starting with "parse", while `get_?` finds
+three-letter symbols starting with "get_".
+
+The search results are presented in a list. Use the up/down arrow keys
+to move between entries. Press RET to inspect a symbol — this
+navigates to its definition and enters the reference browser where
+Next/Previous Reference can be used to visit all references.
+
+Pressing `p` and `n` in the search results navigates the _search
+history_ — returning to the results of a previous or next search, not
+moving between entries in the current list.
+
+NOTE: Search currently reads from the on-disk references database, not
+from the live in-memory state. The database is saved automatically
+when Emacs exits or when the server is restarted. If the database has
+never been saved, search will return no results.
 
 ==== Completion
 
