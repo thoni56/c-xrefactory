@@ -23,6 +23,7 @@
 #include "match.mock"
 #include "misc.mock"
 #include "navigation.mock"
+#include "referencerefresh.mock"
 #include "options.mock"
 #include "parsers.mock"
 #include "parsing.mock"

@@ -1,0 +1,13 @@
+#include "referencerefresh.h"
+
+/* Mocks */
+
+#include <cgreen/mocks.h>
+
+void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
+    mock(fileName);
+}
+
+void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs) {
+    mock(fileNumber);
+}
