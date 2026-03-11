@@ -61,7 +61,7 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 				parsing -> source "reads source code from" "File I/O"
 			}
 
-			settingsStore = container settingsStore "Non-standard format settings file" "Configuration file for project settings" DB
+			projectConfiguration = container projectConfiguration "Non-standard format settings file" "Configuration file for project settings" DB
 
 			referencesDb = container referencesDb "Cross-Reference Database (.cx files)" "Persistent symbol database storing references, definitions, and metadata for all project symbols. Created via -create/-update operations, indexed by symbol hash for fast lookup" DB {
 				symbolIndex = Component symbolIndex "Symbol Hash Index" "Hash-based lookup table mapping symbol names to file locations for O(1) symbol resolution" C
@@ -74,8 +74,8 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 			cxfile -> referenceRecords "stores and retrieves" "symbol references"
 			cxfile -> fileMetadata "tracks file changes for" "incremental updates"
 
-			editorExtension -> settingsStore "writes" "new project wizard"
-			cxrefProgram -> settingsStore "read" "File I/O"
+			editorExtension -> projectConfiguration "writes" "new project wizard"
+			cxrefProgram -> projectConfiguration "read" "File I/O"
 			editorExtension -> cxrefProgram "API" "requests information and gets commands to modify source code"
 			cxrefProgram -> referencesDb "read/write" "File I/O"
 			cxrefProgram -> source "read/analyze" "File I/O"
@@ -88,7 +88,7 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 		cxrefactory -> editor "positioning and editing responses" Protocol
 		cxrefactory -> source "read/analyze" "File I/O"
 		editor -> editorExtension "extends" "Editor extension protocol" Plugin
-		developer -> settingsStore "edit" UI
+		developer -> projectConfiguration "edit" UI
 		editorExtension -> source "extended c-xrefactory operations" "File I/O"
 	}
 
