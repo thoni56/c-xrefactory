@@ -1,5 +1,7 @@
 #include "referencerefresh.h"
 
+#include "commons.h"
+#include "editor.h"
 #include "filetable.h"
 #include "navigation.h"
 #include "referenceableitemtable.h"
@@ -37,6 +39,34 @@ void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     options.noErrors = savedNoErrors;
     options.serverOperation = savedServerOperation;
 }
+
+/* Ensure all files containing references to the given symbol have fresh
+ * references. Finds which files have references, checks staleness, and
+ * reparses stale ones. */
+void ensureFreshReferences(ReferenceableItem *item, ArgumentsVector baseArgs) {
+    /* Walk references, dedup by file number, check staleness, reparse */
+    for (Reference *r = item->references; r != NULL; r = r->next) {
+        int fileNumber = r->position.file;
+        assert(fileNumber != NO_FILE_NUMBER);
+
+        /* Skip if we already processed this file (earlier in the list) */
+        bool alreadySeen = false;
+        for (Reference *prev = item->references; prev != r; prev = prev->next) {
+            if (prev->position.file == fileNumber) {
+                alreadySeen = true;
+                break;
+            }
+        }
+        if (alreadySeen)
+            continue;
+
+        FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+        if (editorFileModificationTime(fileItem->name) != fileItem->lastParsedMtime) {
+            reparseStaleFile(fileNumber, baseArgs);
+        }
+    }
+}
+
 
 void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs) {
     removeReferenceableItemsForFile(fileNumber);

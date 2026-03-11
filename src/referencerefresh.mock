@@ -4,6 +4,10 @@
 
 #include <cgreen/mocks.h>
 
+void ensureFreshReferences(ReferenceableItem *item, ArgumentsVector baseArgs) {
+    mock(item);
+}
+
 void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     mock(fileName);
 }
