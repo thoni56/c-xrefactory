@@ -1,0 +1,15 @@
+%%%i:header.h
+    @header.h:1:0
+    @other.c:1:0
+    @source.c:1:0
+HEADER_H
+    @header.h:2:8
+main
+    @source.c:5:4
+other_func
+    @other.c:3:4
+target
+    @header.h:4:11
+    @other.c:4:11
+    @source.c:3:4
+    @source.c:6:11

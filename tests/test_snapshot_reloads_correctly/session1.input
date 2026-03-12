@@ -1,0 +1,6 @@
+CXREF -xrefactory-II -server -xrefrc CURDIR/.c-xrefrc
+-olcxgetprojectname CURDIR/source.c
+<sync>
+-olcxpush -olcursor=67 CURDIR/source.c -p CURDIR
+<sync>
+<exit>
