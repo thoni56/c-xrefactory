@@ -6319,6 +6319,10 @@ the reset was performed, nil if the reset was cancelled."
                 (unless (zerop (shell-command "make"))
                   (error "Build failed"))
                 (message "Built 'c-xref' in %s" c-xref-install-directory)
+                ;; Clear menu keymaps so defvar reinitializes them on reload,
+                ;; preventing stale entries from renamed/removed menu items
+                (makunbound 'c-xref-menu)
+                (makunbound 'c-xref-misc-menu)
                 (c-xref-reload-directory c-xref-elisp-directory)
                 (message "Reloaded compiled elisp files")
                 )
