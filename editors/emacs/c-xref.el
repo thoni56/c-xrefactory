@@ -475,7 +475,7 @@ C-xrefactory. This  may happen if c-xref  task was killed, or  a macro was
 interrupted by C-g. If there are such files, delete them.
 "
   (interactive "")
-  (let ((fl) (flist) (ff) (ffl) (modif) (ctime) (ctimecar) (loop) (modifcar))
+  (let ((fl) (flist) (ff) (ctimecar) (loop) (modifcar))
     (setq ctimecar (car (current-time)))
     (setq flist (directory-files
                          c-xref-tmp-dir t
@@ -805,7 +805,7 @@ tries to delete C-xrefactory windows first.
     ))
 
 (defun c-xref-exact-string-match (regexp str)
-  (let ((res) (si) (ei) (rr))
+  (let ((res) (rr))
     (setq rr (string-match (concat ">>>>>" regexp "<<<<<")
                                        (concat ">>>>>" str    "<<<<<")))
     (setq res (eq rr 0))
@@ -836,7 +836,7 @@ tries to delete C-xrefactory windows first.
     ))
 
 (defun c-xref-get-identifier-on-point ()
-  (let ((sym) (poin) (cc))
+  (let ((sym) (poin))
     (setq poin (point))
     (search-backward-regexp c-xref-backward-pass-identifier-regexp)
     (if (not (c-xref-is-letter (char-after (point)))) (forward-char 1))
@@ -1144,7 +1144,7 @@ tries to delete C-xrefactory windows first.
     ))
 
 (defun c-xref-find-file-on-point ()
-  (let ((b) (e) (p) (file) (line 0) (ne) (c1) (c2))
+  (let ((b) (e) (p) (file) (line 0) (ne))
     (setq p (point))
     (search-backward-regexp c-xref-find-file-on-mouse-delimit (point-min) 0)
     (forward-char 1)
