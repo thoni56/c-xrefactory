@@ -509,7 +509,7 @@ static void parseDiscoveredCompilationUnits(ArgumentsVector baseArgs) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
         if (fileItem->isScheduled && isCompilationUnit(fileItem->name) && i != requestFileNumber) {
             if (fileNeedsParsing(fileItem)) {
-                parseFileWithFullInit(fileItem->name, baseArgs);
+                reparseStaleFile(i, baseArgs);
                 parsed++;
                 if (options.xref2)
                     writeRelativeProgress((100 * parsed) / cuCount);

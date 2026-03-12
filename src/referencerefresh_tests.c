@@ -133,36 +133,3 @@ Ensure(ReferenceRefresh, reparseStaleFile_should_remove_old_refs_then_parses) {
     ArgumentsVector baseArgs = {.argc = 0, .argv = NULL};
     reparseStaleFile(42, baseArgs);
 }
-
-Ensure(ReferenceRefresh, parseFileWithFullInit_should_save_and_restore_request_options) {
-    options.cursorOffset = 100;
-    options.noErrors = false;
-    options.serverOperation = OP_BROWSE_PUSH;
-
-    /* initializeFileProcessing returns false → no parse, but options should still be restored */
-    expect(initializeFileProcessing, will_return(false));
-
-    ArgumentsVector baseArgs = {.argc = 0, .argv = NULL};
-    parseFileWithFullInit("test.c", baseArgs);
-
-    assert_that(options.cursorOffset, is_equal_to(100));
-    assert_that(options.noErrors, is_equal_to(false));
-    assert_that(options.serverOperation, is_equal_to(OP_BROWSE_PUSH));
-}
-
-Ensure(ReferenceRefresh, parseFileWithFullInit_should_call_parse_when_init_succeeds) {
-    options.cursorOffset = 50;
-    options.noErrors = false;
-    options.serverOperation = OP_BROWSE_PUSH;
-
-    expect(initializeFileProcessing, will_return(true));
-    expect(parseToCreateReferences);
-    expect(closeCharacterBuffer);
-
-    ArgumentsVector baseArgs = {.argc = 0, .argv = NULL};
-    parseFileWithFullInit("test.c", baseArgs);
-
-    /* Options restored after parse */
-    assert_that(options.cursorOffset, is_equal_to(50));
-    assert_that(options.serverOperation, is_equal_to(OP_BROWSE_PUSH));
-}

@@ -3,7 +3,6 @@
 #include "commons.h"
 #include "editor.h"
 #include "filetable.h"
-#include "navigation.h"
 #include "referenceableitemtable.h"
 #include "filedescriptor.h"
 #include "parsing.h"
@@ -16,7 +15,7 @@
  * discovery, options, checkpoint) with multi-pass support.  Saves and
  * restores REQUEST-level option fields that initOptions() inside
  * initializeFileProcessing would otherwise wipe. */
-void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
+static void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     int savedCursorOffset = options.cursorOffset;
     bool savedNoErrors = options.noErrors;
     ServerOperation savedServerOperation = options.serverOperation;
