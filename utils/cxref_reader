@@ -133,10 +133,15 @@ def unpack_xfiles(lines):
                             pass  # for now
                         else:
                             # Remove trailing 'f' and turn fileid into an int
+                            # Writer stores strlen+1, so subtract 1.  Use length
+                            # to bound extraction (same issue as unpack_file_lines).
+                            name_field = segments[3].split(':', 1)
+                            name_length = int(name_field[0]) - 1
+                            filename = name_field[1][:name_length]
                             filerefs.append(FileReference(int(segments[0][:-1]),
                                                           segments[1],
                                                           segments[2],
-                                                          segments[3].split(':', 1)[-1]))
+                                                          filename))
                     except IndexError:
                         eprint("Error in XFiles line %d: '%s'" % (linenumber+6, line))
                 else:
@@ -155,10 +160,16 @@ def unpack_file_lines(lines):
                         pass  # for now
                     else:
                         # Remove trailing 'f' and turn fileid into an int
+                        # Writer stores strlen+1, so subtract 1.  Use length
+                        # to bound extraction since the compact format may
+                        # append marker chars after the name without separator.
+                        name_field = segments[3].split(':', 1)
+                        name_length = int(name_field[0]) - 1
+                        filename = name_field[1][:name_length]
                         filerefs.append(FileReference(int(segments[0][:-1]),
                                                       segments[1],
                                                       segments[2],
-                                                      segments[3].split(':', 1)[-1]))
+                                                      filename))
                 else:
                     return (filerefs, lines[index:])
     return (filerefs, [])
@@ -302,6 +313,11 @@ if __name__ == "__main__":
         lines = read_lines_from("", args.path)
         lines = skip_header(lines)
         (files, lines) = unpack_file_lines(lines)
+        # In single-file format, the compact record state flows from file
+        # entries into symbol records.  Initialize marker_value['f'] so
+        # references that omit the 'f' marker inherit the last file entry.
+        if files:
+            marker_value['f'] = files[-1].fileid
         symbols = unpack_symbols(lines)
 
     symbols.sort(key=lambda s: s.symbolname)
