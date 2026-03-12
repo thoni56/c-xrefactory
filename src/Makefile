@@ -590,7 +590,7 @@ watch-for-systemtests-only:
 
 .PHONY: watch-for-systemtests
 watch-for-systemtests:
-	watchexec --no-vcs-ignore -f '*/.unittests.done' -- make -j system-tests
+	watchexec --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Systemtests make -j$(JOBS) system-tests
 
 .PHONY: watch-for-systemtests-silent
 watch-for-systemtests-silent:
