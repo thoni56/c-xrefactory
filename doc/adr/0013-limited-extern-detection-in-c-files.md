@@ -4,7 +4,7 @@ Date: 2025-12-04
 
 ## Status
 
-Proposed
+Accepted (2026-03-10)
 
 ## Deciders
 
