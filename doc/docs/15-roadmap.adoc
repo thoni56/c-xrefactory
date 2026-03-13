@@ -25,9 +25,14 @@ The following diagram shows how the remaining architectural pieces depend on eac
                   (convergence point)
                    /              \
                   v                v
-    References refresh      Index-based sessions
-    module (replaces       (keys + positions,
-    callXref)                not copies)
+    Refactoring as        Index-based sessions
+    server operation      (keys + positions,
+    (strangler fig)         not copies)
+           |                      |
+           v                      |
+    References refresh            |
+    module (replaces              |
+    callXref)                     |
            |                      |
            v                      v
     ┌─────────────────────────────────────┐
@@ -65,6 +70,9 @@ Entry refresh (sync phase) calls it with broad staleness-based selection (same a
 
 The header-filtered sibling parsing optimization (see Optimization section) becomes another file selection strategy within this module. See link:18-insights.adoc[Chapter 18: RefactoryMode Internally Calls XrefMode] for the current architecture this replaces.
 
+|**Refactoring as server operation (strangler fig)**
+|Refactoring moves from a separate process (`RefactoryMode`) into the running server as `OP_REFACTORY`. Migrated one refactoring at a time — old path stays alive until all are proven. Rename is operational (test: `test_rename_via_server`, Emacs debug-mode toggle). Removing the old path also removes `callXref`, `parseBufferUsingServer`, and the `cxMemory` wipe that currently destroys the entire reference table during refactoring.
+
 |**Disk snapshot strategy (operational)**
 |The `.cx` file functions as a startup snapshot. At startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. On `-exit`, the server saves the current in-memory state back to disk. No prior `-create` needed — the first session builds references from scratch, subsequent sessions load the snapshot. See below for target semantics.
 
@@ -95,7 +103,7 @@ The path forward is:
 
 1. **Lightweight scanning replaces `-create`** (done) — discover CUs and include structure without full parsing. Populate the same `TypeCppInclude` references.
 2. **Snapshot save/load** (done) — `.cx` loaded at startup, saved on `-exit`. No manual `-create` needed after first session.
-3. **References refresh module** — extract reparse logic into a shared module callable from both entry refresh (broad staleness) and operations (symbol-targeted). Replaces `callXref()` in refactoring with precise, on-demand reparsing.
+3. **Refactoring moves into server (strangler fig)** — refactoring becomes a server operation (`OP_REFACTORY`), reusing the server's in-memory references instead of rebuilding from scratch. Rename is migrated first, remaining refactorings follow one at a time. Inside each migrated refactoring, `ensureReferencesAreUpdated`/`callXref` is replaced by `ensureFreshReferences` — symbol-directed, precise reparsing that preserves the reference table instead of destroying it. Once all refactorings are migrated, `RefactoryMode` and `parseBufferUsingServer` are removed.
 4. **`.cx` becomes startup snapshot only** — never consulted during operation. The in-memory table is authoritative. Search reads from memory.
 
 ==== .cx File: Startup Snapshot
