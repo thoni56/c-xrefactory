@@ -1465,3 +1465,53 @@ void refactory(void) {
 
     LEAVE();
 }
+
+void serverPerformRefactoring(void) {
+    ENTER();
+
+    if (options.project == NULL) {
+        errorMessage(ERR_ST, "Refactoring requires -p option");
+        LEAVE();
+        return;
+    }
+
+    deepCopyOptionsFromTo(&options, &refactoringOptions);
+    refactoringOptions.serverOperation = OP_INTERNAL_LIST;
+
+    loadAllOpenedEditorBuffers();
+    quasiSaveModifiedEditorBuffers();
+
+    if (inputFileName == NULL) {
+        errorMessage(ERR_ST, "No input file for refactoring");
+        LEAVE();
+        return;
+    }
+
+    EditorBuffer *buf = findOrCreateAndLoadEditorBufferForFile(inputFileName);
+
+    EditorMarker *point = getPointFromOptions(buf);
+    //EditorMarker *mark  = getMarkFromOptions(buf);
+
+    refactoringStartingPoint = editorUndo;
+
+    /* Server is already initialized — no mainTaskEntryInitialisations needed */
+
+    progressFactor = 1;
+
+    switch (refactoringOptions.theRefactoring) {
+    case AVR_RENAME_SYMBOL:
+        progressFactor = 3;
+        renameAtPoint(point);
+        break;
+    default:
+        errorMessage(ERR_ST, "This refactoring is not yet supported via server");
+        break;
+    }
+
+    writeRelativeProgress(0);
+    writeRelativeProgress(100);
+
+    quasiSaveModifiedEditorBuffers();
+
+    LEAVE();
+}

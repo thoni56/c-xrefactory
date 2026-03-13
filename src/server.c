@@ -48,6 +48,7 @@ static bool needsReferenceDatabase(ServerOperation operation) {
         ||  operation==OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION
         ||  operation==OP_INTERNAL_SAFETY_CHECK
         ||  operation==OP_INTERNAL_GET_FUNCTION_BOUNDS
+        ||  operation==OP_REFACTORY
         ;
 }
 

@@ -1638,8 +1638,8 @@ tries to delete C-xrefactory windows first.
                      "-crconversion"
                      "-o" ofile))
 
-;;    (when c-xref-debug-mode
-;;      (setq opts (append opts (list "-debug" "-log=log"))))
+    (when c-xref-debug-mode
+      (setq opts (append opts (list "-debug" "-log=log"))))
 
     (setq opts (append opts initopts))
 
@@ -6919,7 +6919,10 @@ refactoring.
 
 (defun c-xref-non-interactive-renaming (opt old-name new-name)
   (c-xref-refactoring-init-actions (format "renaming of %s to %s" old-name new-name))
-  (c-xref-server-call-refactoring-task (list opt (format "-renameto=%s" new-name)))
+  (if c-xref-debug-mode
+      (c-xref-call-process-with-basic-file-data-all-saves
+       (format "%s -renameto=%s" opt new-name))
+    (c-xref-server-call-refactoring-task (list opt (format "-renameto=%s" new-name))))
   (c-xref-refactoring-finish-actions)
   )
 

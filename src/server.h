@@ -50,6 +50,7 @@
     ENUM(OP_MENU_SELECT_ONLY)                           \
     ENUM(OP_MENU_TOGGLE_SELECT)                         \
     ENUM(OP_ORGANIZE_INCLUDES)                          \
+    ENUM(OP_REFACTORY)                                  \
     ENUM(OP_SEARCH)                                     \
     ENUM(OP_SEARCH_GOTO_N)                              \
     ENUM(OP_SEARCH_NEXT)                                \

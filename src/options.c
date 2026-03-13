@@ -1534,36 +1534,47 @@ static bool processROption(int *argi, ArgumentsVector args) {
     }
     else if (strcmp(args.argv[i], "-rfct-rename")==0) {
         options.theRefactoring = AVR_RENAME_SYMBOL;
+        options.serverOperation = OP_REFACTORY;
     }
     else if (strcmp(args.argv[i], "-rfct-rename-module")==0) {
         options.theRefactoring = AVR_RENAME_MODULE;
+        options.serverOperation = OP_REFACTORY;
     }
     else if (strcmp(args.argv[i], "-rfct-rename-included-file")==0) {
         options.theRefactoring = AVR_RENAME_INCLUDED_FILE;
+        options.serverOperation = OP_REFACTORY;
     }
     else if (strcmp(args.argv[i], "-rfct-add-param")==0)  {
         options.theRefactoring = AVR_ADD_PARAMETER;
+        options.serverOperation = OP_REFACTORY;
     }
     else if (strcmp(args.argv[i], "-rfct-del-param")==0)  {
         options.theRefactoring = AVR_DEL_PARAMETER;
+        options.serverOperation = OP_REFACTORY;
     }
     else if (strcmp(args.argv[i], "-rfct-move-param")==0) {
         options.theRefactoring = AVR_MOVE_PARAMETER;
+        options.serverOperation = OP_REFACTORY;
     }
     else if (strcmp(args.argv[i], "-rfct-move-function")==0) {
         options.theRefactoring = AVR_MOVE_FUNCTION;
+        options.serverOperation = OP_REFACTORY;
     }
     else if (strcmp(args.argv[i], "-rfct-organize-includes")==0) {
         options.theRefactoring = AVR_ORGANIZE_INCLUDES;
+        options.serverOperation = OP_REFACTORY;
     }
     else if (strcmp(args.argv[i], "-rfct-extract-function")==0) {
         options.theRefactoring = AVR_EXTRACT_FUNCTION;
+        options.serverOperation = OP_REFACTORY;
     }
     else if (strcmp(args.argv[i], "-rfct-extract-macro")==0)  {
         options.theRefactoring = AVR_EXTRACT_MACRO;
+        options.serverOperation = OP_REFACTORY;
     }
     else if (strcmp(args.argv[i], "-rfct-extract-variable")==0)  {
         options.theRefactoring = AVR_EXTRACT_VARIABLE;
+        options.serverOperation = OP_REFACTORY;
     }
     else if (strncmp(args.argv[i], "-rfct-parameter-name=", 21)==0)  {
         options.refactor_parameter_name = allocateStringForOption(&options.refactor_parameter_name, args.argv[i]+21);

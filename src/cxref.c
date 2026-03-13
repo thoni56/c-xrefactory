@@ -26,6 +26,7 @@
 #include "proto.h"
 #include "protocol.h"
 #include "refactorings.h"
+#include "refactory.h"
 #include "referenceableitem.h"
 #include "referenceableitemtable.h"
 #include "scope.h"
@@ -1967,6 +1968,10 @@ void answerEditorAction(void) {
     case OP_GET_AVAILABLE_REFACTORINGS:
         printAvailableRefactorings();
         deleteEntryFromSessionStack(sessionData.browsingStack.top);
+        break;
+
+    case OP_REFACTORY:
+        serverPerformRefactoring();
         break;
 
         /* INTERNAL */
