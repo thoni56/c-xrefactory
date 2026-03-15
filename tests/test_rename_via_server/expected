@@ -1,0 +1,49 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-rename -renameto=total -olmark=4 -olcursor=4 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=3 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<precheck len=<n>> counter;</precheck>
+<goto>
+ <position-off off=30 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<precheck len=<n>> counter </precheck>
+<goto>
+ <position-off off=55 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<precheck len=<n>> counter;</precheck>
+<goto>
+ <position-off off=4 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<goto>
+ <position-off off=4 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>counter</str>  <str len=<n>>total</str>
+</replacement>
+<goto>
+ <position-off off=29 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>counter</str>  <str len=<n>>total</str>
+</replacement>
+<goto>
+ <position-off off=52 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>counter</str>  <str len=<n>>total</str>
+</replacement>
+<goto>
+ <position-off off=4 len=<n>>CURDIR/source.c</position-off>
+</goto>
+-exit
+end-of-options
+

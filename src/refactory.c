@@ -305,7 +305,8 @@ static void pushReferences(EditorMarker *point, char *pushOption, char *resolveM
 
 static void safetyCheck(char *project, EditorMarker *point) {
     // !!!!update references MUST be followed by a pushing action, to refresh options
-    ensureReferencesAreUpdated(refactoringOptions.project);
+    if (refactoringOptions.mode == RefactoryMode)
+        ensureReferencesAreUpdated(refactoringOptions.project);
     parseBufferUsingServer(project, point, NULL, "-olcxsafetycheck", NULL);
 
     assert(sessionData.browsingStack.top != NULL);
@@ -823,7 +824,11 @@ static void renameAtPoint(EditorMarker *point) {
         errorMessage(ERR_ST, "this refactoring requires -renameto=<new name> option");
     }
 
-    ensureReferencesAreUpdated(refactoringOptions.project);
+    /* In RefactoryMode (separate process), we need to rebuild references from
+     * scratch since the process started cold. In ServerMode, entry refresh
+     * already ran before we got here — skip the expensive callXref. */
+    if (refactoringOptions.mode == RefactoryMode)
+        ensureReferencesAreUpdated(refactoringOptions.project);
 
     char *message = STANDARD_C_SELECT_SYMBOLS_MESSAGE;
 
@@ -860,7 +865,8 @@ static void renameAtInclude(EditorMarker *point) {
         return;
     }
 
-    ensureReferencesAreUpdated(refactoringOptions.project);
+    if (refactoringOptions.mode == RefactoryMode)
+        ensureReferencesAreUpdated(refactoringOptions.project);
 
     char *message = STANDARD_C_SELECT_SYMBOLS_MESSAGE;
 

@@ -1638,8 +1638,8 @@ tries to delete C-xrefactory windows first.
                      "-crconversion"
                      "-o" ofile))
 
-    (when c-xref-debug-mode
-      (setq opts (append opts (list "-debug" "-log=log"))))
+;;    (when c-xref-debug-mode
+;;      (setq opts (append opts (list "-debug" "-log=log"))))
 
     (setq opts (append opts initopts))
 
