@@ -1,0 +1,3 @@
+struct Data {
+    int counter;
+};

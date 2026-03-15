@@ -1,0 +1,6 @@
+CXREF -xrefactory-II -server
+-olcxgetprojectname CURDIR/source.c
+<sync>
+-rfct-rename -renameto=total -olmark=56 -olcursor=56 CURDIR/source.c -p CURDIR
+<sync>
+<exit>

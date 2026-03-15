@@ -754,6 +754,13 @@ static void renameIncludes(EditorMarkerList *markers, char *currentIncludeFileNa
     renameFile(markerForTheFile, newName);
 }
 
+static void markOccurrenceFilesAsStale(EditorMarkerList *occurrences) {
+    for (EditorMarkerList *l = occurrences; l != NULL; l = l->next) {
+        FileItem *fi = getFileItemWithFileNumber(l->marker->buffer->fileNumber);
+        fi->lastParsedMtime = 0;
+    }
+}
+
 static void simpleRename(EditorMarkerList *markerList, EditorMarker *marker, char *symbolName) {
     assert(refactoringOptions.theRefactoring != AVR_RENAME_INCLUDED_FILE);
     for (EditorMarkerList *l = markerList; l != NULL; l = l->next) {
@@ -844,12 +851,16 @@ static void renameAtPoint(EditorMarker *point) {
 
     simpleRename(occurrences, point, nameOnPoint);
     //&dumpEditorBuffers();
+    if (refactoringOptions.mode != RefactoryMode)
+        markOccurrenceFilesAsStale(occurrences);
     EditorUndo *redoTrack = NULL;
     if (!makeSafetyCheckAndUndo(point, &occurrences, undoStartPoint, &redoTrack)) {
         askForReallyContinueConfirmation();
     }
 
     editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
+    if (refactoringOptions.mode != RefactoryMode)
+        markOccurrenceFilesAsStale(occurrences);
 
     ppcGotoMarker(point);
 
