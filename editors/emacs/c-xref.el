@@ -551,8 +551,8 @@ interrupted by C-g. If there are such files, delete them.
       )
     ))
 
-(defun c-xref-interactive-completion-help (event)
-  (interactive "i")
+(defun c-xref-interactive-completion-help ()
+  (interactive)
   (c-xref-interactive-help
    "Special hotkeys available:
 
@@ -571,8 +571,8 @@ A-Za-z0-9.\t-- incremental search, insert character
 " nil nil)
   )
 
-(defun c-xref-interactive-search-help (event)
-  (interactive "i")
+(defun c-xref-interactive-search-help ()
+  (interactive)
   (c-xref-interactive-help
    "Special hotkeys available:
 
@@ -694,29 +694,12 @@ A-Za-z0-9.\t-- incremental search, insert character
     res
     ))
 
-(defun c-xref-get-single-yes-no-event (cursor-in-echo prompt)
-  (let ((key) (res nil) (ce))
+(defun c-xref-get-single-yes-no-event (prompt)
+  (let ((res nil))
     (if (y-or-n-p prompt)
             (setq res 'answer-yes)
       (setq res 'answer-no)
       )
-    ;;  (setq ce cursor-in-echo-area)
-    ;;  (if cursor-in-echo
-    ;;          (setq cursor-in-echo-area t)
-    ;;    (setq cursor-in-echo-area nil)
-    ;;    )
-    ;;  (while (eq res nil)
-    ;;    (setq key (c-xref-read-key-sequence nil))
-;;;;      (setq key (read-key-sequence-vector "")
-    ;;    (setq res (lookup-key c-xref-query-replace-map key))
-    ;;    (if (eq res nil)
-    ;;        (message "Invalid key, please answer [y/n].")
-    ;;          )
-    ;;    )
-    ;;  (setq cursor-in-echo-area ce)
-    ;;  (if (eq res 'answer-abort)
-    ;;          (error "quit")
-    ;;    )
     res
     ))
 
@@ -1189,7 +1172,7 @@ tries to delete C-xrefactory windows first.
 
 (defun c-xref-find-file-on-mouse (event)
   (interactive "e")
-  (let ((b) (e) (p) (file) (line 0) (ne) (c1) (c2))
+  (let ()
     (mouse-set-point event)
     (c-xref-find-file-on-point)
     ))
@@ -6585,7 +6568,7 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
       (undo-more 1)
       (if iinteract
               (progn
-                (setq aa (c-xref-get-single-yes-no-event nil "Continue undoing "))
+                (setq aa (c-xref-get-single-yes-no-event "Continue undoing "))
                 )
             (setq aa 'answer-yes)
             )
