@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-03-11">
+<meta name="author" content="v{VERSION} - Generated 2026-03-16">
 <title>C-xrefactory User Manual</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory User Manual</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-03-11</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-03-16</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -463,8 +463,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_searching">4. Searching</a>
 <ul class="sectlevel2">
-<li><a href="#_patterns">4.1. Patterns</a></li>
-<li><a href="#_examples">4.2. Examples</a></li>
+<li><a href="#_navigating_results">4.1. Navigating Results</a></li>
+<li><a href="#_patterns">4.2. Patterns</a></li>
+<li><a href="#_examples">4.3. Examples</a></li>
 </ul>
 </li>
 <li><a href="#_completion">5. Completion</a>
@@ -635,13 +636,43 @@ emacs -l c-xrefactory/load.el</code></pre>
 <li>
 <p>Want to find symbols from libraries</p>
 </li>
-<li>
-<p>Need to search by signature pattern</p>
-</li>
 </ul>
 </div>
+<div class="paragraph">
+<p>There are two search operations available from the menu:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Search Symbol</strong></dt>
+<dd>
+<p>Finds all symbols whose name matches the pattern —
+functions, variables, types, macros, and any other symbol known to
+c-xrefactory.</p>
+</dd>
+<dt class="hdlist1"><strong>Search Definition</strong></dt>
+<dd>
+<p>Finds only symbols that have a definition within
+the project. Symbols that are merely used but not defined (e.g. called
+from an external library) are excluded.</p>
+</dd>
+</dl>
+</div>
 <div class="sect2">
-<h3 id="_patterns">4.1. Patterns</h3>
+<h3 id="_navigating_results">4.1. Navigating Results</h3>
+<div class="paragraph">
+<p>The search results are presented in a list. Use up/down arrow keys to
+move between entries. Press RET to inspect a symbol — this navigates
+to its definition and enters the reference browser where Next/Previous
+Reference can be used to visit all references.</p>
+</div>
+<div class="paragraph">
+<p>Pressing <code>p</code> and <code>n</code> navigates the <em>search history</em> — returning to
+the results of a previous or next search, not moving between entries
+in the current list.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_patterns">4.2. Patterns</h3>
 <div class="paragraph">
 <p>Patterns use shell-style wildcards:</p>
 </div>
@@ -669,17 +700,17 @@ emacs -l c-xrefactory/load.el</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_examples">4.2. Examples</h3>
+<h3 id="_examples">4.3. Examples</h3>
 <div class="ulist">
 <ul>
 <li>
-<p><code>get</code> or <code><strong>get</strong></code> — symbols containing "get"</p>
+<p><code>get</code> or <code>*get*</code> — symbols containing "get"</p>
 </li>
 <li>
 <p><code>init*</code> — symbols starting with "init"</p>
 </li>
 <li>
-<p><code><strong>(*int</strong>)</code> — functions taking an int parameter</p>
+<p><code>get_?</code> — five-letter symbols starting with "get_"</p>
 </li>
 </ul>
 </div>
@@ -842,7 +873,7 @@ Symbol Retriever → enter <code>config*</code> → browse results</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-11 13:53:37 UTC
+Last updated 2026-03-16 08:37:17 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

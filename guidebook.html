@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-03-11">
+<meta name="author" content="v{VERSION} - Generated 2026-03-16">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-03-11</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-03-16</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -818,58 +818,12 @@ Yacc grammars!
 </div>
 </div>
 <div class="sect3">
-<h4 id="_searching">3.1.2. Searching</h4>
+<h4 id="_browsing">3.1.2. Browsing</h4>
 <div class="paragraph">
-<p>A user can search for symbols by name using two operations:</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><strong>Search Symbol</strong></dt>
-<dd>
-<p>Finds all symbols whose name matches the search
-pattern. This includes functions, variables, types, macros — any
-symbol known to <code>c-xrefactory</code>, whether or not it is defined in the
-project.</p>
-</dd>
-<dt class="hdlist1"><strong>Search Definition</strong></dt>
-<dd>
-<p>Finds only symbols that have a definition
-within the project. Symbols that are merely used (e.g. called from an
-external library) are excluded.</p>
-</dd>
-</dl>
-</div>
-<div class="paragraph">
-<p>Both operations accept wildcard patterns: <code><strong></code> matches any sequence of
-characters and <code>?</code> matches a single character. For example, <code>parse</strong></code>
-finds all symbols starting with "parse", while <code>get_?</code> finds
-three-letter symbols starting with "get_".</p>
-</div>
-<div class="paragraph">
-<p>The search results are presented in a list. Use the up/down arrow keys
-to move between entries. Press RET to inspect a symbol — this
-navigates to its definition and enters the reference browser where
-Next/Previous Reference can be used to visit all references.</p>
-</div>
-<div class="paragraph">
-<p>Pressing <code>p</code> and <code>n</code> in the search results navigates the <em>search
-history</em> — returning to the results of a previous or next search, not
-moving between entries in the current list.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Search currently reads from the on-disk references database, not
-from the live in-memory state. The database is saved automatically
-when Emacs exits or when the server is restarted. If the database has
-never been saved, search will return no results.
-</td>
-</tr>
-</table>
+<p>It is also possible to search for definitions or symbols containing a
+string, including possible wildcards. This will present various forms
+of "menues" where filters can be applied and a found symbol be
+inspected.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6074,29 +6028,31 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>                  Memory is truth
-                  (convergence point)
-                   /              \
-                  v                v
-    No callXref in           .cx becomes
-    refactoring           startup snapshot
-           |                      |
-           v                      v
-    ADR 22: Lightweight     Index-based sessions
-    file structure scan    (keys + positions,
-    (replaces -create        not copies)
-     and callXref)                |
-           |                      |
-           v                      v
-    ┌─────────────────────────────────────┐
-    │          FOUNDATION (done)          │
-    │  - ADR-0020: Sync before dispatch   │
-    │  - .cx loaded as startup snapshot   │
-    │  - Client sends only dirty buffers  │
-    │  - Single-project server (ADR-0021) │
-    │  - Project-local config (ADR-0005)  │
-    │  - Unified startup (shared init)    │
-    └─────────────────────────────────────┘</pre>
+<pre>                     Memory is truth
+                     (convergence point)
+                  /         |         \
+                 v          v          v
+    Refactoring as     Index-based    Search reads
+    server operation   sessions       from in-memory
+    (strangler fig)    (keys +        table
+            |          positions,        |
+            v          not copies)       |
+    References refresh      |            |
+    module (done for        |            |
+    refactoring path)       |            |
+            |               |            |
+            v               v            v
+    ┌──────────────────────────────────────────┐
+    │           FOUNDATION (done)              │
+    │  - ADR-0020: Sync before dispatch        │
+    │  - ADR-0022: Lightweight scan            │
+    │  - .cx loaded as startup snapshot        │
+    │  - Snapshot save on -exit                │
+    │  - Client sends only dirty buffers       │
+    │  - Single-project server (ADR-0021)      │
+    │  - Project-local config (ADR-0005)       │
+    │  - Unified startup (shared init)         │
+    └──────────────────────────────────────────┘</pre>
 </div>
 </div>
 </div>
@@ -6119,32 +6075,38 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Server-side restructuring (<a href="/workspace/decisions#20">ADR-0020</a>): the server entry point reparses stale files before dispatching any operation. Pass 1 reparses stale CUs, Pass 2 walks the reverse-include graph (via <code>TypeCppInclude</code> references) to find and reparse CUs that include stale headers. At startup, the server loads the <code>.cx</code> snapshot (<code>loadFileNumbersFromStore</code>), discovers CUs by globbing the project directory, and parses only stale CUs (mtime changed since snapshot). The Emacs client only preloads modified buffers, so unmodified files don&#8217;t trigger unnecessary reparsing. Operations can assume the in-memory table is current.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Lightweight file structure scanning</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Replace the expensive full-project <code>-create</code> and <code>callXref()</code> with lightweight scanning (<a href="/workspace/decisions#22">ADR-0022</a>): discover CUs by globbing the project directory, extract include structure from <code>#include</code> lines, populate the same <code>TypeCppInclude</code> references that full parsing creates. The scan/mtime-check/incremental-reparse pipeline built for ADR 20 is the same pipeline needed here — just triggered at a different point (server startup or before refactoring, instead of per-request).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Lightweight file structure scanning (done)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CU discovery by globbing the project directory, include structure extraction from <code>#include</code> lines, populating the same <code>TypeCppInclude</code> references that full parsing creates. Operational on the auto-detect path. See <a href="/workspace/decisions#22">ADR-0022</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Index-based sessions</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Session stores symbol key + current position instead of copying all references. Navigation reads directly from in-memory table, eliminating the "stale session copies" problem. Depends on upfront refresh (ADR 20) so that the table is always current when sessions read from it.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>No callXref in refactoring</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Refactoring uses same in-memory table as navigation, with lightweight scanning replacing <code>callXref()</code>. The existing graduated update strategy in <code>computeUpdateOptionForSymbol()</code> already decides the right scope per refactoring: no update for local symbols, fast update for multi-file globals, full update for symbols in headers. This logic maps directly onto the lightweight scan approach — only the update mechanism changes (scan + incremental reparse instead of <code>callXref()</code>). Include closure (<a href="/workspace/decisions#13">ADR-0013</a>) finds affected files; parse on demand. See <a href="18-insights.adoc">Chapter 18: RefactoryMode Internally Calls XrefMode</a> for the current architecture this replaces.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>References refresh module (done for refactoring path)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Extract the reparse logic (currently split between <code>callXref</code> in xref.c and the three-pass entry refresh in server.c) into a shared <code>referencesrefresh</code> module with a unified interface: "ensure these files have fresh references". The module supports different <em>file selection strategies</em> — the caller decides which files need freshness, the module handles the reparsing.</p>
+<p class="tableblock">Operational for the refactoring path: <code>ensureFreshReferences</code> replaces <code>callXref</code> in the server refactoring path. Entry refresh&#8217;s three-pass strategy handles broad staleness-based selection (same as current three passes). Symbol-targeted selection (resolve the symbol, look up which files contain its references in <code>referenceableItemTable</code>, ensure those files are fresh) is not yet extracted as a separate strategy — refactoring currently relies on entry refresh having already run.</p>
+<p class="tableblock">The header-filtered sibling parsing optimization (see Optimization section) becomes another file selection strategy within this module. See <a href="18-insights.adoc">Chapter 18: RefactoryMode Internally Calls XrefMode</a> for the current architecture this replaces.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Disk snapshot strategy (read side operational)</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The <code>.cx</code> file transitions from a live database to a startup snapshot. The read side is operational: at startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. Remaining work: snapshot write strategy (see below) and initial creation without a prior <code>-create</code>. See below for target semantics.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Refactoring as server operation (strangler fig)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Refactoring moves from a separate process (<code>RefactoryMode</code>) into the running server as <code>OP_REFACTORY</code>. Migrated one refactoring at a time — old path stays alive until all are proven. Rename is operational end-to-end, validated on real project (tests: <code>test_rename_via_server</code>, <code>test_rename_via_server_multi_file</code>, Emacs debug-mode toggle). Mark-stale-after-rename ensures safety check sees fresh references in sibling files. Remaining refactorings to be migrated one at a time. Once all refactorings work in-server, <code>parseBufferUsingServer</code> (the bridge — see <a href="17-major-codebase-improvements.adoc">17.3</a>) dissolves: symbol resolution and reference lookup become direct queries against <code>referenceableItemTable</code>, eliminating the round-trip through <code>callServer</code>. Removing the old path also removes <code>callXref</code> and the <code>cxMemory</code> wipe that currently destroys the entire reference table during refactoring.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Disk snapshot strategy (operational)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The <code>.cx</code> file functions as a startup snapshot. At startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. On <code>-exit</code>, the server saves the current in-memory state back to disk. No prior <code>-create</code> needed — the first session builds references from scratch, subsequent sessions load the snapshot. See below for target semantics.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Search reads from in-memory table</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_SEARCH</code> currently bypasses the in-memory <code>referenceableItemTable</code> entirely — <code>scanForSearch()</code> reads directly from disk <code>.cx</code> files. This is the last operation that treats the disk database as a live query target rather than a startup snapshot. Once memory is truth, search should query the in-memory table with the same pattern matching (<code>shellMatch</code>, substring fitness). This aligns with the <a href="17-major-codebase-improvements.adoc">Chapter 17</a> goal of converting <code>scanForSearch</code> to a visitor over in-memory data. No new infrastructure needed — the data is already there after entry refresh.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_SEARCH</code> currently bypasses the in-memory <code>referenceableItemTable</code> entirely — <code>scanForSearch()</code> reads directly from disk <code>.cx</code> files. Once memory is truth, search should query the in-memory table with the same pattern matching (<code>shellMatch</code>, substring fitness). No new infrastructure needed — the data is already there after entry refresh. Depends on the references refresh module being in place so the in-memory table is reliably complete.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Snapshot write triggers</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The save mechanism exists (<code>saveReferences()</code> in xref.c) but is only called from the legacy <code>-create</code>/<code>callXref()</code> path. It needs to be wired to triggers during normal server operation. Three triggers identified:</p>
-<p class="tableblock"><strong>All buffers saved</strong>: when no editor buffers are modified, the in-memory state is consistent with disk — a clean moment to snapshot. The snapshot must only persist disk-file-derived references (not modified-buffer data), so "all saved" is the natural condition. This is the primary trigger during normal workflow.</p>
-<p class="tableblock"><strong>Clean exit</strong>: the <code>-exit</code> option exists server-side but just calls <code>exit()</code> — no snapshot save. The Emacs client currently never sends <code>-exit</code> on <code>kill-emacs</code> (it sets <code>set-process-query-on-exit-flag nil</code> so the process is just killed). A <code>kill-emacs-hook</code> should send <code>-exit</code>, and the server&#8217;s exit handling should save the snapshot.</p>
-<p class="tableblock"><strong>Project change</strong>: <code>c-xref-server-dispatch-project-mismatch</code> (c-xref.el:2414) kills the server process via <code>c-xref-kill-xref-process</code> when the user switches projects. Currently this is an abrupt <code>delete-process</code> — the server gets no chance to save. Should send <code>-exit</code> before killing, or handle SIGHUP.</p>
-<p class="tableblock">Dirty kills (crash, <code>kill -9</code>, terminal closed) lose in-memory state — the next cold start reparses from scratch. Acceptable if triggers 1-3 fire during normal workflow.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Snapshot write triggers (partially done)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The <code>-exit</code> handler calls <code>markPreloadedFilesAsAncient()</code> + <code>saveReferences()</code>. The Emacs client sends <code>-exit</code> via <code>kill-emacs-hook</code> on quit, and <code>c-xref-kill-xref-process</code> sends <code>-exit</code> before killing (project change gets save for free). Two of three triggers are operational:</p>
+<p class="tableblock"><strong>Clean exit</strong> (done): <code>-exit</code> handler saves snapshot. <code>kill-emacs-hook</code> sends <code>-exit</code>.</p>
+<p class="tableblock"><strong>Project change</strong> (done): <code>c-xref-kill-xref-process</code> sends <code>-exit</code> before killing the process.</p>
+<p class="tableblock"><strong>All buffers saved</strong> (not yet): when no editor buffers are modified, the in-memory state is consistent with disk — a clean moment to snapshot. This would be the primary trigger during normal workflow.</p>
+<p class="tableblock">Dirty kills (crash, <code>kill -9</code>, terminal closed) lose in-memory state — the next cold start reparses from scratch. Acceptable since clean exit and project change cover normal workflow.</p></td>
 </tr>
 </tbody>
 </table>
@@ -6173,13 +6135,16 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><strong>Lightweight scanning replaces <code>-create</code></strong> — discover CUs and include structure without full parsing. Populate the same <code>TypeCppInclude</code> references. No disk db write needed.</p>
+<p><strong>Lightweight scanning replaces <code>-create</code></strong> (done) — discover CUs and include structure without full parsing. Populate the same <code>TypeCppInclude</code> references.</p>
 </li>
 <li>
-<p><strong>Same scanning replaces <code>callXref()</code> before refactoring</strong> — scan + mtime check + reparse stale files in the include closure. The graduated scope decision (<code>computeUpdateOptionForSymbol</code>) stays the same.</p>
+<p><strong>Snapshot save/load</strong> (done) — <code>.cx</code> loaded at startup, saved on <code>-exit</code>. No manual <code>-create</code> needed after first session.</p>
 </li>
 <li>
-<p><strong><code>.cx</code> becomes startup snapshot</strong> — loaded once at startup for fast warm start, never consulted during operation. The in-memory table is authoritative.</p>
+<p><strong>Refactoring moves into server (strangler fig)</strong> — refactoring becomes a server operation (<code>OP_REFACTORY</code>), reusing the server&#8217;s in-memory references instead of rebuilding from scratch. Rename is migrated: <code>ensureReferencesAreUpdated</code>/<code>callXref</code> skipped in server path, mark-stale ensures safety check correctness across files. Remaining refactorings follow the same pattern. Final step: replace <code>parseBufferUsingServer</code> with direct table queries (see <a href="17-major-codebase-improvements.adoc">17.3</a>), then remove <code>RefactoryMode</code>.</p>
+</li>
+<li>
+<p><strong><code>.cx</code> becomes startup snapshot only</strong> — never consulted during operation. The in-memory table is authoritative. Search reads from memory.</p>
 </li>
 </ol>
 </div>
@@ -9988,7 +9953,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-11 13:54:28 UTC
+Last updated 2026-03-16 08:38:02 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
