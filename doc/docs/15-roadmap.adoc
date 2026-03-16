@@ -21,31 +21,31 @@ This chapter outlines the high-level architectural and feature goals for c-xrefa
 The following diagram shows how the remaining architectural pieces depend on each other. Work proceeds from bottom to top.
 
 ----
-                  Memory is truth
-                  (convergence point)
-                   /              \
-                  v                v
-    Refactoring as        Index-based sessions
-    server operation      (keys + positions,
-    (strangler fig)         not copies)
-           |                      |
-           v                      |
-    References refresh            |
-    module (replaces              |
-    callXref)                     |
-           |                      |
-           v                      v
-    ┌─────────────────────────────────────┐
-    │          FOUNDATION (done)          │
-    │  - ADR-0020: Sync before dispatch   │
-    │  - ADR-0022: Lightweight scan       │
-    │  - .cx loaded as startup snapshot   │
-    │  - Snapshot save on -exit           │
-    │  - Client sends only dirty buffers  │
-    │  - Single-project server (ADR-0021) │
-    │  - Project-local config (ADR-0005)  │
-    │  - Unified startup (shared init)    │
-    └─────────────────────────────────────┘
+                     Memory is truth
+                     (convergence point)
+                  /         |         \
+                 v          v          v
+    Refactoring as     Index-based    Search reads
+    server operation   sessions       from in-memory
+    (strangler fig)    (keys +        table
+            |          positions,        |
+            v          not copies)       |
+    References refresh      |            |
+    module (done for        |            |
+    refactoring path)       |            |
+            |               |            |
+            v               v            v
+    ┌──────────────────────────────────────────┐
+    │           FOUNDATION (done)              │
+    │  - ADR-0020: Sync before dispatch        │
+    │  - ADR-0022: Lightweight scan            │
+    │  - .cx loaded as startup snapshot        │
+    │  - Snapshot save on -exit                │
+    │  - Client sends only dirty buffers       │
+    │  - Single-project server (ADR-0021)      │
+    │  - Project-local config (ADR-0005)       │
+    │  - Unified startup (shared init)         │
+    └──────────────────────────────────────────┘
 ----
 
 ==== Component Summary
@@ -63,15 +63,15 @@ The following diagram shows how the remaining architectural pieces depend on eac
 |**Index-based sessions**
 |Session stores symbol key + current position instead of copying all references. Navigation reads directly from in-memory table, eliminating the "stale session copies" problem. Depends on upfront refresh (ADR 20) so that the table is always current when sessions read from it.
 
-|**References refresh module (replaces callXref)**
+|**References refresh module (done for refactoring path)**
 |Extract the reparse logic (currently split between `callXref` in xref.c and the three-pass entry refresh in server.c) into a shared `referencesrefresh` module with a unified interface: "ensure these files have fresh references". The module supports different _file selection strategies_ — the caller decides which files need freshness, the module handles the reparsing.
 
-Entry refresh (sync phase) calls it with broad staleness-based selection (same as current three passes). Refactoring operations call it with symbol-targeted selection: resolve the symbol, look up which files contain its references in `referenceableItemTable`, ensure those files are fresh, then proceed. This replaces the coarse `UPDATE_DEFAULT/FAST/FULL` levels with precise, data-driven selection — a local variable naturally has references in one file, a header-defined function naturally has references in many. No scope categorization needed.
+Operational for the refactoring path: `ensureFreshReferences` replaces `callXref` in the server refactoring path. Entry refresh's three-pass strategy handles broad staleness-based selection (same as current three passes). Symbol-targeted selection (resolve the symbol, look up which files contain its references in `referenceableItemTable`, ensure those files are fresh) is not yet extracted as a separate strategy — refactoring currently relies on entry refresh having already run.
 
 The header-filtered sibling parsing optimization (see Optimization section) becomes another file selection strategy within this module. See link:18-insights.adoc[Chapter 18: RefactoryMode Internally Calls XrefMode] for the current architecture this replaces.
 
 |**Refactoring as server operation (strangler fig)**
-|Refactoring moves from a separate process (`RefactoryMode`) into the running server as `OP_REFACTORY`. Migrated one refactoring at a time — old path stays alive until all are proven. Rename is operational (test: `test_rename_via_server`, Emacs debug-mode toggle). Removing the old path also removes `callXref`, `parseBufferUsingServer`, and the `cxMemory` wipe that currently destroys the entire reference table during refactoring.
+|Refactoring moves from a separate process (`RefactoryMode`) into the running server as `OP_REFACTORY`. Migrated one refactoring at a time — old path stays alive until all are proven. Rename is operational end-to-end, validated on real project (tests: `test_rename_via_server`, `test_rename_via_server_multi_file`, Emacs debug-mode toggle). Mark-stale-after-rename ensures safety check sees fresh references in sibling files. Remaining refactorings to be migrated one at a time. Once all refactorings work in-server, `parseBufferUsingServer` (the bridge — see link:17-major-codebase-improvements.adoc[17.3]) dissolves: symbol resolution and reference lookup become direct queries against `referenceableItemTable`, eliminating the round-trip through `callServer`. Removing the old path also removes `callXref` and the `cxMemory` wipe that currently destroys the entire reference table during refactoring.
 
 |**Disk snapshot strategy (operational)**
 |The `.cx` file functions as a startup snapshot. At startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. On `-exit`, the server saves the current in-memory state back to disk. No prior `-create` needed — the first session builds references from scratch, subsequent sessions load the snapshot. See below for target semantics.
@@ -103,7 +103,7 @@ The path forward is:
 
 1. **Lightweight scanning replaces `-create`** (done) — discover CUs and include structure without full parsing. Populate the same `TypeCppInclude` references.
 2. **Snapshot save/load** (done) — `.cx` loaded at startup, saved on `-exit`. No manual `-create` needed after first session.
-3. **Refactoring moves into server (strangler fig)** — refactoring becomes a server operation (`OP_REFACTORY`), reusing the server's in-memory references instead of rebuilding from scratch. Rename is migrated first, remaining refactorings follow one at a time. Inside each migrated refactoring, `ensureReferencesAreUpdated`/`callXref` is replaced by `ensureFreshReferences` — symbol-directed, precise reparsing that preserves the reference table instead of destroying it. Once all refactorings are migrated, `RefactoryMode` and `parseBufferUsingServer` are removed.
+3. **Refactoring moves into server (strangler fig)** — refactoring becomes a server operation (`OP_REFACTORY`), reusing the server's in-memory references instead of rebuilding from scratch. Rename is migrated: `ensureReferencesAreUpdated`/`callXref` skipped in server path, mark-stale ensures safety check correctness across files. Remaining refactorings follow the same pattern. Final step: replace `parseBufferUsingServer` with direct table queries (see link:17-major-codebase-improvements.adoc[17.3]), then remove `RefactoryMode`.
 4. **`.cx` becomes startup snapshot only** — never consulted during operation. The in-memory table is authoritative. Search reads from memory.
 
 ==== .cx File: Startup Snapshot
