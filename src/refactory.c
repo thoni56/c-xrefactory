@@ -1507,7 +1507,7 @@ void serverPerformRefactoring(void) {
     EditorBuffer *buf = findOrCreateAndLoadEditorBufferForFile(inputFileName);
 
     EditorMarker *point = getPointFromOptions(buf);
-    //EditorMarker *mark  = getMarkFromOptions(buf);
+    EditorMarker *mark  = getMarkFromOptions(buf);
 
     refactoringStartingPoint = editorUndo;
 
@@ -1519,6 +1519,15 @@ void serverPerformRefactoring(void) {
     case AVR_RENAME_SYMBOL:
         progressFactor = 3;
         renameAtPoint(point);
+        break;
+    case AVR_EXTRACT_FUNCTION:
+        extractFunction(point, mark);
+        break;
+    case AVR_EXTRACT_MACRO:
+        extractMacro(point, mark);
+        break;
+    case AVR_EXTRACT_VARIABLE:
+        extractVariable(point, mark);
         break;
     default:
         errorMessage(ERR_ST, "This refactoring is not yet supported via server");
