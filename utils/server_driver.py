@@ -31,6 +31,12 @@
 # If the line (probably the last) is '<exit>', the driver will send '-exit',
 # 'end-of-options' and exit. This allows the server to shut down nicely.
 #
+# Lines starting with '!' are executed as shell commands (with CURDIR
+# substitution). This allows modifying files on disk between server
+# requests, e.g.:
+#
+#     !sed -i 's/old/new/' CURDIR/source.c
+#
 # A very special case is if the invocation contains '-refactory'. Then
 # it is a refactoring "command" which actually sends output even on
 # the first command, without "end-of-options". So then we need to
@@ -154,7 +160,13 @@ if __name__ == "__main__":
         command = read_command(file)
         while command != '':
             while command != '<sync>' and command != '<exit>' and command != '': #and not "-refactory" in command:
-                if command.startswith('CXREF'):
+                if command.startswith('!'):
+                    # Shell command - execute locally, CURDIR substituted
+                    shell_cmd = command[1:].replace("CURDIR", args.CURDIR)
+                    print(f"shell: {shell_cmd}")
+                    subprocess.run(shell_cmd, shell=True, check=True)
+                    command = read_command(file)
+                elif command.startswith('CXREF'):
                     # External command - run as separate process
                     execute_command(command, cxref_program, args.CURDIR)
                     command = read_command(file)
