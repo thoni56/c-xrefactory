@@ -245,11 +245,13 @@ void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *ma
  */
 static void beInteractive(void) {
     ENTER();
-    deepCopyOptionsFromTo(&options, &savedOptions);
+    // Use a local copy so we don't clobber the server loop's global savedOptions
+    static Options localSavedOptions;
+    deepCopyOptionsFromTo(&options, &localSavedOptions);
     for (;;) {
         closeOutputFile();
         ppcSynchronize();
-        deepCopyOptionsFromTo(&savedOptions, &options);
+        deepCopyOptionsFromTo(&localSavedOptions, &options);
 
         ArgumentsVector args = {.argc = argument_count(serverDefaultOptions), .argv = serverDefaultOptions};
         processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
