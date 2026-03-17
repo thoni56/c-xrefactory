@@ -324,6 +324,17 @@ cont:
     lastQuasiSaveTime = time(NULL);
 }
 
+void markModifiedEditorBuffersAsStale(void) {
+    for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
+        for (EditorBufferList *ll = getEditorBufferListElementAt(i); ll != NULL; ll = ll->next) {
+            if (ll->buffer->modifiedSinceLastQuasiSave) {
+                FileItem *fi = getFileItemWithFileNumber(ll->buffer->fileNumber);
+                fi->lastParsedMtime = 0;
+            }
+        }
+    }
+}
+
 void loadAllOpenedEditorBuffers(void) {
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {

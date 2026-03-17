@@ -1,0 +1,32 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/source_b.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-move-function -commentmovinglevel=0 -movetargetfile=CURDIR/source_a.c -rfct-target-line=7 -olcursor=5 CURDIR/source_a.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=0 len=<n>>CURDIR/source_a.c</position-off>
+</goto>
+<cut-block val=33 len=<n>></cut-block>
+<goto>
+ <position-off off=18 len=<n>>CURDIR/source_a.c</position-off>
+</goto>
+<paste-block len=<n>></paste-block>
+<goto>
+ <position-off off=23 len=<n>>CURDIR/source_a.c</position-off>
+</goto>
+<indent-block val=3 len=<n>></indent-block>
+-olcxpush -olcursor=39 CURDIR/source_b.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=4 col=5 len=<n>>CURDIR/source_a.c</position-lc>
+</goto>
+-exit
+end-of-options
+

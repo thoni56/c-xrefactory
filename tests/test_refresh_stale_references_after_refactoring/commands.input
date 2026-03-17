@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -server
+-olcxgetprojectname CURDIR/source_b.c
+<sync>
+-rfct-move-function -commentmovinglevel=0 -movetargetfile=CURDIR/source_a.c -rfct-target-line=7 -olcursor=5 CURDIR/source_a.c -p CURDIR
+<sync>
+-olcxpush -olcursor=39 CURDIR/source_b.c -p CURDIR
+<sync>
+<exit>

@@ -137,6 +137,10 @@ bool fileNumberIsStale(int fileNumber) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
 
+    // Explicitly marked stale (e.g. after refactoring modified the buffer)
+    if (fileItem->lastParsedMtime == 0)
+        return true;
+
     // No preload = not stale
     if (buffer == NULL || buffer->preLoadedFromFile == NULL)
         return false;

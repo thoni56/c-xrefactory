@@ -1559,6 +1559,7 @@ void serverPerformRefactoring(void) {
     writeRelativeProgress(0);
     writeRelativeProgress(100);
 
+    markModifiedEditorBuffersAsStale();
     quasiSaveModifiedEditorBuffers();
 
     LEAVE();

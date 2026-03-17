@@ -22,6 +22,7 @@ extern void replaceStringInEditorBuffer(EditorBuffer *buff, int position, int de
                                         int strlength, EditorUndo **undo);
 extern void moveBlockInEditorBuffer(EditorMarker *src, EditorMarker *dest, int size, EditorUndo **undo);
 extern void quasiSaveModifiedEditorBuffers(void);
+extern void markModifiedEditorBuffersAsStale(void);
 extern void loadAllOpenedEditorBuffers(void);
 extern void closeEditorBufferIfCloseable(char *name);
 extern void closeAllEditorBuffersIfClosable(void);
