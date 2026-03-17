@@ -439,7 +439,8 @@ void moveFunction(EditorMarker *point) {
         return;
     }
 
-    ensureReferencesAreUpdated(refactoringOptions.project);
+    if (refactoringOptions.mode == RefactoryMode)
+        ensureReferencesAreUpdated(refactoringOptions.project);
 
     FunctionBoundariesResult bounds = getFunctionBoundaries(point);
 

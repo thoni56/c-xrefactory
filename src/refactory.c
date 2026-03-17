@@ -1539,6 +1539,18 @@ void serverPerformRefactoring(void) {
         parameterManipulation(point, refactoringOptions.theRefactoring, refactoringOptions.parnum,
                               refactoringOptions.parnum2);
         break;
+    case AVR_RENAME_MODULE:
+    case AVR_RENAME_INCLUDED_FILE:
+        progressFactor = 2;
+        renameAtInclude(point);
+        break;
+    case AVR_MOVE_FUNCTION:
+        progressFactor = 2;
+        moveFunction(point);
+        break;
+    case AVR_ORGANIZE_INCLUDES:
+        organizeIncludes(point);
+        break;
     default:
         errorMessage(ERR_ST, "This refactoring is not yet supported via server");
         break;
