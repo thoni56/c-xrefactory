@@ -313,3 +313,19 @@ Investigation revealed that **both XrefMode and ServerMode use the same in-memor
 `handleFoundSymbolReference()` in `cxref.c` handles references found during parsing. It calls `isMemberInReferenceableItemTable()` to check if a symbol exists; if not found, creates a new entry; if found, adds a reference to the existing entry. This same table is used by both modes — there is no separate "server table" vs "xref table".
 
 The disk scan operations (`ensureReferencesAreLoadedFor`, `scanReferencesToCreateMenu`, etc.) read from `.cx` files on disk and also call `isMemberInReferenceableItemTable()` to check/merge with existing entries. If parsing has already populated the table, these operations find data already present — making them effective no-ops once all files are parsed.
+
+=== Editor Buffer Lifecycle in the Server
+
+Date: 2026-03-17
+
+Editor buffers created by the server during parsing (e.g., entry refresh pass 3 parsing sibling CUs, or refactoring loading files) have `preLoadedFromFile == NULL` — they were loaded from disk, not preloaded by the client. After each request, `closeAllEditorBuffersIfClosable()` in `editor.c` frees all buffers that are closeable: `textLoaded && markers == NULL && preLoadedFromFile == NULL && !modified`.
+
+This means **server-created editor buffers do not linger between requests**. On the next request, files are reloaded from disk with fresh content. This is important because:
+
+* A user may edit and save a file between operations without triggering any c-xref action. The server must see the new disk content, not a stale buffer.
+* After a refactoring modifies editor buffers, markers are freed by the refactoring cleanup (e.g., `freeEditorMarkerListAndMarkers` at the end of `renameAtPoint`), making the buffers closeable.
+* `parseToCreateReferences` prefers an existing editor buffer over disk — so if a stale buffer lingered, it would parse old content even when the disk file had changed.
+
+Client-preloaded buffers (`preLoadedFromFile != NULL`) are NOT freed — they represent the editor's view of the file and survive until the client sends updated content or (eventually) a close notification.
+
+**Implication for `didClose`**: A `didClose` protocol message (analogous to LSP `textDocument/didClose`) is not urgently needed for correctness — the existing cleanup handles server-created buffers. It would primarily benefit client-preloaded buffers that the user has closed in the editor, allowing the server to fall back to disk content. This is an architectural nicety, not a bug fix.
