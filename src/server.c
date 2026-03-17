@@ -529,6 +529,12 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     loadAllOpenedEditorBuffers();
 
+    /* Close preloaded buffers that the client no longer sends — the user
+     * has saved and/or closed the file in the editor. Without this, the
+     * server would keep parsing from the stale preloaded content instead
+     * of reading the current disk file. */
+    closeEditorBuffersNoLongerPreloaded();
+
     /* Reparse any stale preloaded files before dispatching the operation,
      * so all operations see fresh in-memory references. */
     if (projectContextInitialized) {
@@ -634,6 +640,7 @@ void server(ArgumentsVector args) {
         progressFactor = 1;
 
         log_trace("Server: Getting request");
+        clearPreloadedThisRequestFlags();
         initServer(pipedOptions);
         if (outputFile==stdout && options.outputFileName!=NULL) {
             openOutputFile(options.outputFileName);

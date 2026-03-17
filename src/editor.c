@@ -13,6 +13,7 @@
 #include "log.h"
 #include "misc.h"
 #include "proto.h"
+#include "referenceableitemtable.h"
 #include "undo.h"
 #include "usage.h"
 
@@ -626,6 +627,27 @@ void closeAllEditorBuffers(void) {
     for (EditorBufferList *l = allEditorBuffers; l!=NULL; l=l->next) {
         EditorBuffer *buffer = deregisterEditorBuffer(l->buffer->fileName);
         freeEditorBuffer(buffer);
+    }
+    freeEditorBufferListButNotBuffers(allEditorBuffers);
+}
+
+void clearPreloadedThisRequestFlags(void) {
+    EditorBufferList *allEditorBuffers = computeListOfAllEditorBuffers();
+    for (EditorBufferList *l = allEditorBuffers; l != NULL; l = l->next) {
+        l->buffer->preloadedThisRequest = false;
+    }
+    freeEditorBufferListButNotBuffers(allEditorBuffers);
+}
+
+void closeEditorBuffersNoLongerPreloaded(void) {
+    EditorBufferList *allEditorBuffers = computeListOfAllEditorBuffers();
+    for (EditorBufferList *l = allEditorBuffers; l != NULL; l = l->next) {
+        if (l->buffer->preLoadedFromFile != NULL && !l->buffer->preloadedThisRequest) {
+            log_trace("Closing ghost preloaded buffer '%s' (fileNumber=%d)", l->buffer->fileName, l->buffer->fileNumber);
+            removeReferenceableItemsForFile(l->buffer->fileNumber);
+            EditorBuffer *buffer = deregisterEditorBuffer(l->buffer->fileName);
+            freeEditorBuffer(buffer);
+        }
     }
     freeEditorBufferListButNotBuffers(allEditorBuffers);
 }

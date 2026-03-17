@@ -1,0 +1,7 @@
+
+
+int counter;
+
+void use(void) {
+    counter = 1;
+}

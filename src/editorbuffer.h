@@ -25,6 +25,7 @@ typedef struct editorBuffer {
     bool                       textLoaded : 1;
     bool                       modified : 1;
     bool                       modifiedSinceLastQuasiSave : 1;
+    bool                       preloadedThisRequest : 1;
     size_t                     size;
     struct editorMarker       *markers;
     EditorBufferAllocationData allocation;

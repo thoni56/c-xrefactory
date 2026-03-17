@@ -1,0 +1,24 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname -preload CURDIR/source.c CURDIR/source.preload CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-olcxpush -olcursor=35 -preload CURDIR/source.c CURDIR/source.preload CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=4 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+shell: cp CURDIR/source_modified.c CURDIR/source.c && sleep 1
+-olcxpush -olcursor=37 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=4 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+-exit
+end-of-options
+

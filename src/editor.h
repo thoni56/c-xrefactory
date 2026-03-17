@@ -26,6 +26,8 @@ extern void loadAllOpenedEditorBuffers(void);
 extern void closeEditorBufferIfCloseable(char *name);
 extern void closeAllEditorBuffersIfClosable(void);
 extern void closeAllEditorBuffers(void);
+extern void clearPreloadedThisRequestFlags(void);
+extern void closeEditorBuffersNoLongerPreloaded(void);
 
 extern void freeTextSpace(char *space, int index);
 extern void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize);
