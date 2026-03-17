@@ -1242,7 +1242,8 @@ static void applyParameterManipulation(EditorMarker *point, int manipulation, in
     char              nameOnPoint[TMP_STRING_SIZE];
     EditorMarkerList *occurrences;
 
-    ensureReferencesAreUpdated(refactoringOptions.project);
+    if (refactoringOptions.mode == RefactoryMode)
+        ensureReferencesAreUpdated(refactoringOptions.project);
 
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     pushReferences(point, "-olcxargmanip", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
@@ -1528,6 +1529,13 @@ void serverPerformRefactoring(void) {
         break;
     case AVR_EXTRACT_VARIABLE:
         extractVariable(point, mark);
+        break;
+    case AVR_ADD_PARAMETER:
+    case AVR_DEL_PARAMETER:
+    case AVR_MOVE_PARAMETER:
+        progressFactor = 3;
+        parameterManipulation(point, refactoringOptions.theRefactoring, refactoringOptions.parnum,
+                              refactoringOptions.parnum2);
         break;
     default:
         errorMessage(ERR_ST, "This refactoring is not yet supported via server");
