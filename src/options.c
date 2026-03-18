@@ -1913,8 +1913,9 @@ protected bool projectCoveringFileInConfigFile(char *fileName, FILE *configFile,
 }
 
 /* Apply convention-based database path for auto-detected projects.
- * Called after options processing to set cxFileLocation to <projectRoot>/.c-xref/db
- * if auto-detection was used and no explicit -refs was specified in the config.
+ * Called after options processing to set cxFileLocation to <projectRoot>/.c-xref/db.
+ * Any -refs from .c-xrefrc is ignored — the snapshot location is a convention,
+ * not a configuration option.
  */
 void applyConventionBasedDatabasePath(void) {
     if (autoDetectedProjectRoot[0] == '\0') {
@@ -1927,16 +1928,11 @@ void applyConventionBasedDatabasePath(void) {
         return;
     }
 
-    /* Check if an explicit -refs was set in the config by comparing with the default.
-     * If cxFileLocation still contains the default "CXrefs" pattern, replace it. */
-    if (options.cxFileLocation != NULL &&
-        strstr(options.cxFileLocation, "CXrefs") != NULL) {
-        char dbPath[MAX_FILE_NAME_SIZE + 16];
-        sprintf(dbPath, "%s/.c-xref/db", autoDetectedProjectRoot);
-        options.cxFileLocation = allocateStringForOption(&options.cxFileLocation, dbPath);
-        options.detectedProjectRoot = allocateStringForOption(&options.detectedProjectRoot, autoDetectedProjectRoot);
-        log_debug("Applied convention-based database path: %s", options.cxFileLocation);
-    }
+    char dbPath[MAX_FILE_NAME_SIZE + 16];
+    sprintf(dbPath, "%s/.c-xref/db", autoDetectedProjectRoot);
+    options.cxFileLocation = allocateStringForOption(&options.cxFileLocation, dbPath);
+    options.detectedProjectRoot = allocateStringForOption(&options.detectedProjectRoot, autoDetectedProjectRoot);
+    log_debug("Applied convention-based database path: %s", options.cxFileLocation);
 }
 
 /* Search upward from sourceFilename for a project-local .c-xrefrc file.
