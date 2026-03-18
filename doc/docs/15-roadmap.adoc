@@ -76,8 +76,8 @@ The header-filtered sibling parsing optimization (see Optimization section) beco
 |**Disk snapshot strategy (operational)**
 |The `.cx` file functions as a startup snapshot. At startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. On `-exit`, the server saves the current in-memory state back to disk. No prior `-create` needed — the first session builds references from scratch, subsequent sessions load the snapshot. See below for target semantics.
 
-|**Search reads from in-memory table**
-|`OP_SEARCH` currently bypasses the in-memory `referenceableItemTable` entirely — `scanForSearch()` reads directly from disk `.cx` files. Once memory is truth, search should query the in-memory table with the same pattern matching (`shellMatch`, substring fitness). No new infrastructure needed — the data is already there after entry refresh. Depends on the references refresh module being in place so the in-memory table is reliably complete.
+|**Search reads from in-memory table (done)**
+|`OP_SEARCH` now queries the in-memory `referenceableItemTable` via `searchInMemoryTable()` in cxref.c, replacing the disk-based `scanForSearch()`. Same matching logic (`searchSymbolCheckReference`, `searchStringMatch`), same reference filtering (`UsageDefined`/`UsageDeclared`), same result printing. Skips `VisibilityLocal` (block-local) symbols, matching the snapshot's write filter. This was the last operation that read from disk `.cx` files as truth — **all operations now use the in-memory table**.
 
 |**Snapshot write triggers (partially done)**
 |The `-exit` handler calls `markPreloadedFilesAsAncient()` + `saveReferences()`. The Emacs client sends `-exit` via `kill-emacs-hook` on quit, and `c-xref-kill-xref-process` sends `-exit` before killing (project change gets save for free). Two of three triggers are operational:
@@ -104,7 +104,7 @@ The path forward is:
 1. **Lightweight scanning replaces `-create`** (done) — discover CUs and include structure without full parsing. Populate the same `TypeCppInclude` references.
 2. **Snapshot save/load** (done) — `.cx` loaded at startup, saved on `-exit`. No manual `-create` needed after first session.
 3. **Refactoring moves into server (strangler fig)** (done) — all refactorings run as server operations via `OP_REFACTORY`. Legacy `-refactory` path remains for fallback; Emacs menu toggle enables battle-testing. Final cleanup: remove `RefactoryMode`, `callXref`, `parseBufferUsingServer` bridge.
-4. **`.cx` becomes startup snapshot only** — never consulted during operation. The in-memory table is authoritative. Search reads from memory. This is the current focus.
+4. **`.cx` becomes startup snapshot only** (done) — never consulted during operation. The in-memory table is authoritative. Search reads from memory. All operations now use the in-memory `referenceableItemTable`. The disk scan tables in `cxfile.c` (all except `snapshotLoadScanDispatchTable`) are candidates for removal.
 
 ==== .cx File: Startup Snapshot
 
