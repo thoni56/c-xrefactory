@@ -6709,8 +6709,8 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The <code>.cx</code> file functions as a startup snapshot. At startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. On <code>-exit</code>, the server saves the current in-memory state back to disk. No prior <code>-create</code> needed — the first session builds references from scratch, subsequent sessions load the snapshot. See below for target semantics.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Search reads from in-memory table</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_SEARCH</code> currently bypasses the in-memory <code>referenceableItemTable</code> entirely — <code>scanForSearch()</code> reads directly from disk <code>.cx</code> files. Once memory is truth, search should query the in-memory table with the same pattern matching (<code>shellMatch</code>, substring fitness). No new infrastructure needed — the data is already there after entry refresh. Depends on the references refresh module being in place so the in-memory table is reliably complete.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Search reads from in-memory table (done)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_SEARCH</code> now queries the in-memory <code>referenceableItemTable</code> via <code>searchInMemoryTable()</code> in cxref.c, replacing the disk-based <code>scanForSearch()</code>. Same matching logic (<code>searchSymbolCheckReference</code>, <code>searchStringMatch</code>), same reference filtering (<code>UsageDefined</code>/<code>UsageDeclared</code>), same result printing. Skips <code>VisibilityLocal</code> (block-local) symbols, matching the snapshot&#8217;s write filter. This was the last operation that read from disk <code>.cx</code> files as truth — <strong>all operations now use the in-memory table</strong>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Snapshot write triggers (partially done)</strong></p></td>
@@ -6756,7 +6756,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <p><strong>Refactoring moves into server (strangler fig)</strong> (done) — all refactorings run as server operations via <code>OP_REFACTORY</code>. Legacy <code>-refactory</code> path remains for fallback; Emacs menu toggle enables battle-testing. Final cleanup: remove <code>RefactoryMode</code>, <code>callXref</code>, <code>parseBufferUsingServer</code> bridge.</p>
 </li>
 <li>
-<p><strong><code>.cx</code> becomes startup snapshot only</strong> — never consulted during operation. The in-memory table is authoritative. Search reads from memory. This is the current focus.</p>
+<p><strong><code>.cx</code> becomes startup snapshot only</strong> (done) — never consulted during operation. The in-memory table is authoritative. Search reads from memory. All operations now use the in-memory <code>referenceableItemTable</code>. The disk scan tables in <code>cxfile.c</code> (all except <code>snapshotLoadScanDispatchTable</code>) are candidates for removal.</p>
 </li>
 </ol>
 </div>
@@ -10596,7 +10596,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-18 22:36:40 UTC
+Last updated 2026-03-18 23:51:03 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
