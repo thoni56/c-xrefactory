@@ -70,8 +70,8 @@ Operational for the refactoring path: `ensureFreshReferences` replaces `callXref
 
 The header-filtered sibling parsing optimization (see Optimization section) becomes another file selection strategy within this module. See link:18-insights.adoc[Chapter 18: RefactoryMode Internally Calls XrefMode] for the current architecture this replaces.
 
-|**Refactoring as server operation (strangler fig)**
-|Refactoring moves from a separate process (`RefactoryMode`) into the running server as `OP_REFACTORY`. Migrated one refactoring at a time — old path stays alive until all are proven. Rename is operational end-to-end, validated on real project (tests: `test_rename_via_server`, `test_rename_via_server_multi_file`, Emacs debug-mode toggle). Mark-stale-after-rename ensures safety check sees fresh references in sibling files. Remaining refactorings to be migrated one at a time. Once all refactorings work in-server, `parseBufferUsingServer` (the bridge — see link:17-major-codebase-improvements.adoc[17.3]) dissolves: symbol resolution and reference lookup become direct queries against `referenceableItemTable`, eliminating the round-trip through `callServer`. Removing the old path also removes `callXref` and the `cxMemory` wipe that currently destroys the entire reference table during refactoring.
+|**Refactoring as server operation (strangler fig — operational)**
+|All refactorings run as server operations via `OP_REFACTORY` in `serverPerformRefactoring()`: rename, extract (function/macro/variable), parameter manipulation (add/del/move), move function, organize includes, rename include/module. Validated on real projects via Emacs. `markModifiedEditorBuffersAsStale()` ensures entry refresh detects refactoring-modified buffers. Emacs client has a "Server-side Refactoring" toggle in the Misc menu (`c-xref-server-refactoring`) for battle-testing before removing the legacy path. The legacy `-refactory` process path remains alive but unused when the toggle is on. Final cleanup: remove `RefactoryMode`, `callXref`, `parseBufferUsingServer` bridge (see link:17-major-codebase-improvements.adoc[17.3]), and the `cxMemory` wipe.
 
 |**Disk snapshot strategy (operational)**
 |The `.cx` file functions as a startup snapshot. At startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. On `-exit`, the server saves the current in-memory state back to disk. No prior `-create` needed — the first session builds references from scratch, subsequent sessions load the snapshot. See below for target semantics.
@@ -103,8 +103,8 @@ The path forward is:
 
 1. **Lightweight scanning replaces `-create`** (done) — discover CUs and include structure without full parsing. Populate the same `TypeCppInclude` references.
 2. **Snapshot save/load** (done) — `.cx` loaded at startup, saved on `-exit`. No manual `-create` needed after first session.
-3. **Refactoring moves into server (strangler fig)** — refactoring becomes a server operation (`OP_REFACTORY`), reusing the server's in-memory references instead of rebuilding from scratch. Rename is migrated: `ensureReferencesAreUpdated`/`callXref` skipped in server path, mark-stale ensures safety check correctness across files. Remaining refactorings follow the same pattern. Final step: replace `parseBufferUsingServer` with direct table queries (see link:17-major-codebase-improvements.adoc[17.3]), then remove `RefactoryMode`.
-4. **`.cx` becomes startup snapshot only** — never consulted during operation. The in-memory table is authoritative. Search reads from memory.
+3. **Refactoring moves into server (strangler fig)** (done) — all refactorings run as server operations via `OP_REFACTORY`. Legacy `-refactory` path remains for fallback; Emacs menu toggle enables battle-testing. Final cleanup: remove `RefactoryMode`, `callXref`, `parseBufferUsingServer` bridge.
+4. **`.cx` becomes startup snapshot only** — never consulted during operation. The in-memory table is authoritative. Search reads from memory. This is the current focus.
 
 ==== .cx File: Startup Snapshot
 
