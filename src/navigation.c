@@ -5,7 +5,8 @@
 #include <string.h>
 
 #include "browsingmenu.h"
-#include "commons.h"
+#include "commons.h"            /* For assert() */
+#include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
 #include "head.h"
@@ -13,6 +14,7 @@
 #include "options.h"
 #include "ppc.h"
 #include "referenceableitemtable.h"
+#include "startup.h"
 
 
 /*
