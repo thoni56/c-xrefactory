@@ -1720,6 +1720,25 @@ static void pushSymbolByName(char *name) {
     rstack->callerPosition = getCallerPositionFromCommandLineOption();
 }
 
+static void searchInMemoryTable(void) {
+    for (int i = getNextExistingReferenceableItem(0); i != -1;
+         i = getNextExistingReferenceableItem(i + 1)) {
+        for (ReferenceableItem *item = getReferenceableItem(i);
+             item != NULL; item = item->next) {
+            if (item->visibility == VisibilityLocal)
+                continue;
+            for (Reference *ref = item->references; ref != NULL; ref = ref->next) {
+                if (ref->usage == UsageDefined
+                    || ((options.searchKind == SEARCH_FULL
+                         || options.searchKind == SEARCH_FULL_SHORT)
+                        && ref->usage == UsageDeclared)) {
+                    searchSymbolCheckReference(item, ref);
+                }
+            }
+        }
+    }
+}
+
 static void printSearchResults(void) {
     int len1, len2, len;
     char *ls;
@@ -1937,7 +1956,7 @@ void answerEditorAction(void) {
         pushEmptySession(&sessionData.searchingStack);
         sessionData.searchingStack.top->callerPosition = givenPosition;
 
-        scanForSearch(options.cxFileLocation);
+        searchInMemoryTable();
         printSearchResults();
         break;
     }
