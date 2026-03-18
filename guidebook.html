@@ -466,7 +466,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_principles">6. Principles</a>
 <ul class="sectlevel2">
 <li><a href="#_reference_database_and_parsing">6.1. Reference Database and Parsing</a></li>
-<li><a href="#_terminology">6.2. Terminology</a></li>
+<li><a href="#_continuously_fresh_references">6.2. Continuously Fresh References</a></li>
+<li><a href="#_minimal_reparse_set">6.3. Minimal Reparse Set</a></li>
+<li><a href="#_terminology">6.4. Terminology</a></li>
 </ul>
 </li>
 <li><a href="#_software_architecture">7. Software Architecture</a>
@@ -520,10 +522,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_algorithms">10. Algorithms</a>
 <ul class="sectlevel2">
-<li><a href="#_how_is_an_extract_refactoring_performed">10.1. How is an Extract refactoring performed?</a></li>
-<li><a href="#_how_does_lexem_stream_management_work">10.2. How does lexem stream management work?</a></li>
+<li><a href="#_lightweight_include_structure_scanning">10.1. Lightweight Include Structure Scanning</a></li>
+<li><a href="#entry-refresh">10.2. Entry Refresh</a></li>
 <li><a href="#_editor_buffers_and_incremental_updates">10.3. Editor Buffers and Incremental Updates</a></li>
-<li><a href="#_how_does">10.4. How does &#8230;&#8203;</a></li>
+<li><a href="#_server_side_refactoring">10.4. Server-Side Refactoring</a></li>
+<li><a href="#_how_is_an_extract_refactoring_performed">10.5. How is an Extract refactoring performed?</a></li>
+<li><a href="#_how_does_lexem_stream_management_work">10.6. How does lexem stream management work?</a></li>
 </ul>
 </li>
 <li><a href="#development-environment">11. Development Environment</a>
@@ -542,7 +546,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_deployment">12. Deployment</a></li>
 <li><a href="#_about_the_decision_log">13. About the Decision Log</a>
 <ul class="sectlevel2">
-<li><a href="#_overview">13.1. Overview</a></li>
+<li><a href="#_overview_2">13.1. Overview</a></li>
 <li><a href="#_viewing_decision_records">13.2. Viewing Decision Records</a></li>
 <li><a href="#_decision_categories">13.3. Decision Categories</a></li>
 <li><a href="#_creating_new_adrs">13.4. Creating New ADRs</a></li>
@@ -586,6 +590,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_the_lastparsedmtime_optimization_and_refactoring_conflict">17.4. The lastParsedMtime Optimization and Refactoring Conflict</a></li>
 <li><a href="#_stale_file_refresh_and_cross_file_references">17.5. Stale File Refresh and Cross-File References</a></li>
 <li><a href="#_unified_in_memory_table_discovery">17.6. Unified In-Memory Table Discovery</a></li>
+<li><a href="#_editor_buffer_lifecycle_in_the_server">17.7. Editor Buffer Lifecycle in the Server</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">18. Refactoring Recipes</a>
@@ -1008,13 +1013,14 @@ probably will remain the gateway to its complete refactoring power.</p>
 <div class="sect2">
 <h3 id="_reference_database_and_parsing">6.1. Reference Database and Parsing</h3>
 <div class="paragraph">
-<p>The reference database is used only to hold externally visible
-identifiers to ensure that references to an identifier can be found
-across all files in the used source.</p>
+<p>The persisted snapshot (<code>.cx</code> files) stores all file-scope and wider symbols — including
+<code>static</code> functions and variables. Only block-local symbols (variables inside function
+bodies, labels) are excluded. The visibility boundary is <code>VisibilityLocal</code> in
+<code>getSymbolCxrefProperties()</code>: block-locals get <code>VisibilityLocal</code>, everything else
+(including file-scope statics) gets <code>VisibilityGlobal</code>.</p>
 </div>
 <div class="paragraph">
-<p>All symbols that are only visible inside a unit is handled by
-reparsing the file of interest.</p>
+<p>Block-local symbols are reconstructed by reparsing the file of interest.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1023,19 +1029,134 @@ reparsing the file of interest.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-This describes the semantics of the <em>persisted snapshot</em> (<code>.cx</code> files), not the
-<em>reference table</em> in memory. The in-memory reference table holds all symbols encountered
-during parsing, including file-local ones. Only externally visible symbols are persisted
-to the snapshot because file-local symbols can always be reconstructed by reparsing. As
-the architecture moves toward "memory as truth" (see <a href="15-roadmap.adoc">Roadmap</a>), the
-distinction between "persisted" and "in-memory" symbols may evolve.
+The in-memory reference table holds all symbols encountered during parsing,
+including block-local ones. The snapshot excludes only block-locals because they can
+always be reconstructed by reparsing. As the architecture moves toward "memory as truth"
+(see <a href="15-roadmap.adoc">Roadmap</a>), the distinction between "persisted" and "in-memory"
+symbols may evolve.
 </td>
 </tr>
 </table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_terminology">6.2. Terminology</h3>
+<h3 id="_continuously_fresh_references">6.2. Continuously Fresh References</h3>
+<div class="paragraph">
+<p>The reference table must be kept fresh on every request. This is the central design
+challenge in a request/response architecture where:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The server is long-lived, holding state across many requests</p>
+</li>
+<li>
+<p>Source files change between requests (user edits, saves, closes buffers)</p>
+</li>
+<li>
+<p>Each operation (navigation, refactoring, completion) depends on accurate references</p>
+</li>
+<li>
+<p>The server cannot know <em>when</em> changes happen — it only discovers them at request time</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The principle is: <strong>detect all sources of staleness before dispatching each operation.</strong>
+There is no single mechanism for this; instead, multiple complementary strategies
+cooperate:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">File modification</dt>
+<dd>
+<p>Disk files change when the user saves. Detected by comparing <code>lastParsedMtime</code>
+against the file&#8217;s current mtime.</p>
+</dd>
+<dt class="hdlist1">Editor buffer divergence</dt>
+<dd>
+<p>The user&#8217;s editor may hold unsaved changes. The client transmits these via
+<code>-preload</code>, and their modification time is tracked separately from the disk file.</p>
+</dd>
+<dt class="hdlist1">Editor buffer disappearance</dt>
+<dd>
+<p>The user saves or closes a buffer. The client stops sending <code>-preload</code> for it.
+The server must detect this absence and discard the stale in-memory copy ("ghost
+buffer pruning"), falling back to the disk file.</p>
+</dd>
+<dt class="hdlist1">New files and deleted files</dt>
+<dd>
+<p>Files may be added to or removed from the project between requests. The lightweight
+scan discovers new compilation units; <code>markMissingFilesAsDeleted()</code> handles removals.</p>
+</dd>
+<dt class="hdlist1">Refactoring side effects</dt>
+<dd>
+<p>A refactoring modifies editor buffers in memory, but the disk files and mtimes
+are unchanged. Modified buffers must be explicitly marked stale so that subsequent
+operations see fresh references.</p>
+</dd>
+<dt class="hdlist1">Include graph changes</dt>
+<dd>
+<p>A stale header affects all compilation units that include it, transitively. Reparsing
+a stale CU refreshes its include references, which then allows discovering other CUs
+affected by the same header change.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Each of these is handled by a specific mechanism in the entry refresh algorithm
+(see <a href="11-algorithms.html#entry-refresh">Entry Refresh</a> in the Algorithms chapter).
+The key insight is that all of them must run <em>before</em> the operation dispatches — there is
+no lazy or deferred refresh. The cost is paid up front so that every operation sees a
+consistent view of the codebase.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_minimal_reparse_set">6.3. Minimal Reparse Set</h3>
+<div class="paragraph">
+<p>Full freshness does not require full reparsing. Parsing is the most expensive operation
+the server performs, so the system must determine the <strong>minimal set of compilation units</strong>
+that need reparsing to make the reference table consistent.</p>
+</div>
+<div class="paragraph">
+<p>The strategies, in order of increasing scope:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Only stale files</dt>
+<dd>
+<p>If a <code>.c</code> file changed, only that file needs reparsing. No other CU is affected
+unless they share headers.</p>
+</dd>
+<dt class="hdlist1">Include-graph-directed propagation</dt>
+<dd>
+<p>If a header changed, only CUs that include it (transitively) need reparsing — not
+all CUs in the project. The include structure (<code>TypeCppInclude</code> references) provides
+the reverse lookup.</p>
+</dd>
+<dt class="hdlist1">Sibling CU discovery</dt>
+<dd>
+<p>On cold start, not all CUs have been parsed. Rather than parsing the entire project
+up front (which can take tens of seconds on large codebases), the server discovers
+which unparsed CUs share headers with the request file and parses only those. CUs
+unrelated to the current request remain unparsed until needed.</p>
+</dd>
+<dt class="hdlist1">Skip already-fresh files</dt>
+<dd>
+<p>Mtime comparison avoids reparsing files that haven&#8217;t changed since their last parse,
+even if they were discovered as potential candidates.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The goal is <strong>interactive-speed response times</strong>: the user should not wait for the
+entire project to reparse when they changed one file. On a large codebase (e.g. ffmpeg
+with 2600+ CUs), the difference between "reparse everything" and "reparse the 7 CUs
+that share the edited header" is the difference between minutes and milliseconds.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_terminology">6.4. Terminology</h3>
 <div class="paragraph">
 <p>The following terms are used throughout the documentation and codebase. Preferred terms
 are listed alphabetically; terms to avoid are noted to reduce ambiguity.</p>
@@ -4476,189 +4597,299 @@ ReferenceableItem (persistent entity)
 <h2 id="_algorithms">10. Algorithms</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The code does not always explain the algorithms that it
-implements. This chapter will ultimately be a description of various
-algorithms used by <em>c-xrefactory</em>.</p>
+<p>The code does not always explain the algorithms that it implements. This chapter tries
+to describe essential algorithms used by <em>c-xrefactory</em>.</p>
 </div>
 <div class="sect2">
-<h3 id="_how_is_an_extract_refactoring_performed">10.1. How is an Extract refactoring performed?</h3>
+<h3 id="_lightweight_include_structure_scanning">10.1. Lightweight Include Structure Scanning</h3>
 <div class="paragraph">
-<p>The region (mark and point/cursor positions) is sent to the <em>c-xref</em>
-server in a <code>-refactory -rfct-extract</code> command.</p>
-</div>
-<div class="paragraph">
-<p>The server parses the relevant file and sets some information that can
-be used in some prechecks that are then performed, such as structure
-check, and then the server answers with</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">&lt;extraction-dialog&gt;
-    &lt;str .... /str&gt;
-    &lt;str .... /str&gt;
-    &lt;str .... /str&gt;
-&lt;/extraction-dialog&gt;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The first string is the code that will replace the extracted code,
-such as a call to the extracted function. The second string is the header
-part that will preceed the extracted code ("preamble"), and the third is then of
-course any code that needs to go after the extracted code ("postamble").</p>
-</div>
-<div class="paragraph">
-<p>The actual code in the region is never sent to, or returned from, the
-server. This is handled completely by the editor extension, and used
-verbatim (except if it is a macro that is extracted, in which case
-each line is terminated by the backslash) so no changes to that code
-can be made.</p>
-</div>
-<div class="paragraph">
-<p>The pre- and post-ambles might be of varying complexity. E.g. when
-extracting a macro, the postamble can be completely empty. When
-extracting a function both may contain code to transfer and restore
-parameters into local variables to propagate in/out variables as
-required.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>The editor then requests a name from the user that it will use in a
-rename operation that renames the default named
-function/macro/variable.</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong><em>Two-Phase Architecture</em></strong></p>
-</div>
-<div class="paragraph">
-<p>Extraction operates in two phases:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Collection Phase (during parsing)</strong>: Parser semantic hooks track control flow by registering synthetic labels and collecting references within the marked region.</p>
-</li>
-<li>
-<p><strong>Analysis Phase (after parsing)</strong>: The extraction module analyzes the collected control flow data, classifies variables by usage patterns, and generates the refactored code (call site, function definition, postamble).</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>This separation keeps the parser clean and makes extraction logic independently testable.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_how_does_lexem_stream_management_work">10.2. How does lexem stream management work?</h3>
-<div class="paragraph">
-<p>Lexical analysis uses a stack of <code>LexemStream</code> structures to handle nested macro expansions. The key insight is that the stream type acts as a <strong>discriminator</strong> for buffer ownership and cleanup strategy.</p>
+<p>Before the server can keep references fresh, it needs to know the project&#8217;s structure:
+which files are compilation units, and how they relate through <code>#include</code> directives.
+The lightweight scan (<code>scanProjectForFilesAndIncludes</code>) discovers this without full
+parsing.</p>
 </div>
 <div class="sect3">
-<h4 id="_the_stream_types">10.2.1. The Stream Types</h4>
+<h4 id="_why_not_full_parsing">10.1.1. Why Not Full Parsing?</h4>
+<div class="paragraph">
+<p>Full parsing (running the C parser with preprocessor, semantic actions, and reference
+creation) is expensive — seconds per file on complex codebases. On a cold start with
+thousands of CUs, parsing everything up front would block the user for minutes.</p>
+</div>
+<div class="paragraph">
+<p>The include structure, however, can be determined by simple text scanning: find lines
+matching <code>#include "&#8230;&#8203;"</code> and resolve the paths. This is orders of magnitude faster
+(e.g. ffmpeg: 2619 CUs scanned in under 1 second vs. minutes for full parsing).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_algorithm">10.1.2. The Algorithm</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef enum {
-    NORMAL_STREAM,              // File or local buffer
-    MACRO_STREAM,               // Macro expansion
-    MACRO_ARGUMENT_STREAM,      // Macro argument expansion
-} LexemStreamType;</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">scanProjectForFilesAndIncludes(projectDir, includeDirs):
+  │
+  ├─ 1. Glob for compilation units
+  │     listFilesInDirectory(projectDir, recursive)
+  │     Filter to CU extensions (.c, .y)
+  │     → discoveredCUs (StringList)
+  │
+  ├─ 2. For each CU, scan for includes
+  │     scanFileForIncludes(cuPath):
+  │       Read file line by line
+  │       Match #include "filename" (quoted includes only)
+  │       For each match:
+  │         resolveIncludePath(filename, includerDir, includeDirs)
+  │         addIncludeReference(includedFileNum, includerPosition)
+  │         Recurse into the included file (transitive)
+  │
+  └─ 3. Return discoveredCUs for deletion detection</code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Historically, there was also a <code>CACHED_STREAM</code> type when the caching mechanism was still active. This confirms that stream types are fundamentally about <strong>buffer ownership and refill strategy</strong> - each type encodes where the buffer came from and how to handle it when exhausted.
-</td>
-</tr>
-</table>
+</div>
+<div class="sect3">
+<h4 id="_include_path_resolution">10.1.3. Include Path Resolution</h4>
+<div class="paragraph">
+<p><code>resolveIncludePath()</code> tries directories in order:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Includer&#8217;s directory</strong> — <code>#include "foo.h"</code> in <code>/project/src/bar.c</code> looks for
+<code>/project/src/foo.h</code> first</p>
+</li>
+<li>
+<p><strong>Include directories</strong> — walks <code>options.includeDirs</code> (from compiler interrogation
+or <code>.c-xrefrc</code>)</p>
+</li>
+<li>
+<p><strong>Fallback</strong> — includer-relative (same as step 1, for robustness)</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This matches standard C compiler behavior for quoted includes.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_what_it_produces">10.1.4. What It Produces</h4>
+<div class="paragraph">
+<p>The scan populates the same data structures that full parsing would:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><strong>NORMAL_STREAM</strong></dt>
+<dt class="hdlist1"><code>TypeCppInclude</code> references with <code>UsageUsed</code></dt>
 <dd>
-<p>Buffer from file&#8217;s <code>lexemBuffer</code> or a local temporary. Not allocated from arena memory, so no cleanup needed when stream exhausted.</p>
+<p>Created by <code>addIncludeReference()</code>. Each reference records which file includes which,
+with the includer&#8217;s position. These are the edges that Entry Refresh Pass 2 queries
+to find includers of stale headers.</p>
 </dd>
-<dt class="hdlist1"><strong>MACRO_STREAM</strong></dt>
+<dt class="hdlist1"><code>TypeCppInclude</code> references with <code>UsageDefined</code></dt>
 <dd>
-<p>Buffer allocated from <code>macroBodyMemory</code> arena during macro expansion. Must call <code>mbmFreeUntil(stream.begin)</code> when popping from stack to free the arena allocation.</p>
+<p>Identity references (a file "defines" itself as an includable entity). Created by
+<code>addFileAsIncludeReference()</code>.</p>
 </dd>
-<dt class="hdlist1"><strong>MACRO_ARGUMENT_STREAM</strong></dt>
+<dt class="hdlist1">File table entries</dt>
 <dd>
-<p>Buffer allocated from <code>ppmMemory</code> arena during macro argument expansion. Signals <code>END_OF_MACRO_ARGUMENT_EXCEPTION</code> when exhausted (cleanup handled by caller).</p>
+<p>New files discovered during include resolution are added to the file table.</p>
 </dd>
 </dl>
 </div>
+<div class="paragraph">
+<p>The key insight is that the scan produces <strong>the same <code>TypeCppInclude</code> references</strong> that
+full parsing creates. Code that queries the include graph (like
+<code>collectIncludersOfStaleHeader()</code> in Entry Refresh) doesn&#8217;t care whether the references
+came from scanning or parsing.</p>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_the_refill_algorithm">10.2.2. The Refill Algorithm</h4>
+<h4 id="_current_limitation_angle_bracket_includes">10.1.5. Current Limitation: Angle-Bracket Includes</h4>
 <div class="paragraph">
-<p>When <code>currentInput</code> runs out of lexems (<code>read &gt;= write</code>), <code>refillInputIfEmpty()</code> uses the stream type to decide what to do:</p>
+<p>The scan only captures <code>#include "&#8230;&#8203;"</code> (quoted includes), not <code>#include &lt;&#8230;&#8203;&gt;</code> (angle-bracket
+includes). This is deliberate: without the header-filtered sibling optimization (see
+Entry Refresh Pass 3 limitations), scanning <code>&lt;string.h&gt;</code> and similar ubiquitous system
+headers would cause near-full-project sibling explosions.</p>
+</div>
+<div class="paragraph">
+<p>Full parsing does discover <code>&lt;&#8230;&#8203;&gt;</code> includes. On the first request after cold start, Pass 1
+reparses the request CU with the full parser, which finds the <code>&lt;&#8230;&#8203;&gt;</code> edges. Pass 3 may
+then discover additional siblings via those edges — this is the cause of the "double
+progress bar" on cold start.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_deletion_detection">10.1.6. Deletion Detection</h4>
+<div class="paragraph">
+<p>After scanning, <code>markMissingFilesAsDeleted()</code> iterates the file table and marks entries
+whose files no longer exist on disk. This handles the case where a user deletes a source
+file between sessions. Marked files have their references purged via
+<code>removeReferenceableItemsForFile()</code> so that navigation doesn&#8217;t point to deleted files.</p>
+</div>
+<div class="paragraph">
+<p>Only CUs are checked (they are glob-discoverable). Header files are not checked because
+they might legitimately be absent if they&#8217;re generated or live outside the project tree.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="entry-refresh">10.2. Entry Refresh</h3>
+<div class="paragraph">
+<p>Entry refresh is the per-request mechanism that ensures the reference table is
+up-to-date before any operation executes. It runs at the top of <code>callServer()</code>, before
+the operation dispatches. See <a href="06-principles.html">Principles</a> for why this is
+necessary.</p>
+</div>
+<div class="sect3">
+<h4 id="_overview">10.2.1. Overview</h4>
+<div class="paragraph">
+<p>The refresh has three passes, each addressing a different source of staleness.
+Pass ordering is critical — later passes depend on data refreshed by earlier ones.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">while (currentInput.read &gt;= currentInput.write) {
-    LexemStreamType inputType = currentInput.streamType;
-
-    if (insideMacro()) {  // Stack not empty
-        if (inputType == MACRO_ARGUMENT_STREAM) {
-            return END_OF_MACRO_ARGUMENT_EXCEPTION;
-        }
-        // Only free MACRO_STREAM buffers (allocated from macroBodyMemory)
-        if (inputType == MACRO_STREAM) {
-            mbmFreeUntil(currentInput.begin);
-        }
-        currentInput = macroInputStack[--macroStackIndex];  // Pop
-    }
-    else if (inputType == NORMAL_STREAM) {
-        // Refill from file
-        buildLexemFromCharacters(&amp;currentFile.characterBuffer, ...);
-    }
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">callServer():
+  │
+  ├─ loadAllOpenedEditorBuffers()
+  ├─ closeEditorBuffersNoLongerPreloaded()   ← ghost buffer pruning
+  │
+  ├─ IF projectContextInitialized:
+  │   reparseStalePreloadedFiles(baseArgs)
+  │   │
+  │   ├─ Pass 1: reparse stale CUs
+  │   │   FOR each editor buffer WHERE fileNumberIsStale():
+  │   │     IF isCompilationUnit: reparseStaleFile()
+  │   │
+  │   ├─ Pass 2: reparse includers of stale headers
+  │   │   FOR each editor buffer WHERE fileNumberIsStale():
+  │   │     IF NOT isCompilationUnit (i.e. header):
+  │   │       collectIncludersOfStaleHeader() → list of CU file numbers
+  │   │   FOR each collected CU: reparseStaleFile()
+  │   │
+  │   └─ Pass 3: parse unparsed sibling CUs (cold start)
+  │       Find CUs sharing headers with request file but never parsed
+  │       FOR each: reparseStaleFile()
+  │
+  └─ dispatch operation</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_key_invariant">10.2.3. Key Invariant</h4>
+<h4 id="_pass_1_reparse_stale_cus">10.2.2. Pass 1: Reparse Stale CUs</h4>
 <div class="paragraph">
-<p><strong>Stream type must match buffer allocation:</strong></p>
+<p>The simplest case: the user edited and saved a <code>.c</code> file, or the client sent a
+<code>-preload</code> with newer content. The CU itself is stale.</p>
+</div>
+<div class="paragraph">
+<p><strong>Detection:</strong> <code>fileNumberIsStale()</code> returns true when:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>MACRO_STREAM</code> → buffer allocated from <code>macroBodyMemory</code></p>
+<p><code>lastParsedMtime == 0</code> — explicitly marked stale (e.g. after refactoring), OR</p>
 </li>
 <li>
-<p><code>NORMAL_STREAM</code> → buffer NOT from macro arenas</p>
-</li>
-<li>
-<p><code>MACRO_ARGUMENT_STREAM</code> → buffer from <code>ppmMemory</code></p>
+<p>The file has a preloaded editor buffer whose <code>modificationTime</code> exceeds
+<code>lastParsedMtime</code></p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Violating this invariant causes fatal errors when trying to free buffers from the wrong arena.</p>
+<p><strong>Action:</strong> <code>reparseStaleFile()</code> removes all existing references for the file
+(<code>removeReferenceableItemsForFile</code>), then parses it fresh (<code>parseFileWithFullInit</code>).</p>
+</div>
+<div class="paragraph">
+<p><strong>Side effect:</strong> Reparsing a CU also refreshes its <code>TypeCppInclude</code> references (the
+include edges). This is essential for Pass 2.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_common_bug_pattern">10.2.4. Common Bug Pattern</h4>
+<h4 id="_pass_2_reparse_includers_of_stale_headers">10.2.3. Pass 2: Reparse Includers of Stale Headers</h4>
 <div class="paragraph">
-<p>Pushing a <code>NORMAL_STREAM</code> onto the macro stack, then trying to free it as if it were <code>MACRO_STREAM</code>:</p>
+<p>If the user edited a header file, all CUs that include it (transitively) have stale
+references — even though those CUs themselves haven&#8217;t changed.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// WRONG: Blindly freeing without checking type
-mbmFreeUntil(currentInput.begin);  // Fails if currentInput is NORMAL_STREAM!
-
-// CORRECT: Check type first
-if (inputType == MACRO_STREAM) {
-    mbmFreeUntil(currentInput.begin);
-}</code></pre>
+<div class="paragraph">
+<p><strong>Detection:</strong> Same <code>fileNumberIsStale()</code> check, but filtered to non-CU files (headers).</p>
 </div>
+<div class="paragraph">
+<p><strong>Discovery:</strong> <code>collectIncludersOfStaleHeader()</code> walks the reverse include graph:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Find all <code>TypeCppInclude</code> references where <code>usage == UsageUsed</code> and
+<code>position.file == includerFileNumber</code> — these are include edges</p>
+</li>
+<li>
+<p>For each includer, if it&#8217;s a CU, add it to the reparse list</p>
+</li>
+<li>
+<p>If it&#8217;s another header, recurse (transitive closure)</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Why Pass 1 must come first:</strong> When a user adds a new <code>#include "foo.h"</code> to <code>bar.c</code>,
+both <code>bar.c</code> (the includer) and <code>foo.h</code> (the includee) may be stale. Pass 1 reparses
+<code>bar.c</code>, which creates the new <code>TypeCppInclude</code> reference for the <code>bar.c → foo.h</code> edge.
+Pass 2 can then find this edge when looking for includers of <code>foo.h</code>. Without Pass 1
+first, the edge wouldn&#8217;t exist yet.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_pass_3_parse_unparsed_sibling_cus">10.2.4. Pass 3: Parse Unparsed Sibling CUs</h4>
+<div class="paragraph">
+<p>On cold start (no snapshot, or snapshot doesn&#8217;t cover everything), many CUs have never
+been parsed. If the user navigates to a symbol defined in a header, the server needs
+references from <em>other</em> CUs that include that header — otherwise navigation only shows
+the definition, not all usage sites.</p>
+</div>
+<div class="paragraph">
+<p><strong>Discovery:</strong> <code>parseUnparsedSiblingCUs()</code> uses a forward-include lookup:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Iterate all files in the file table that have <code>TypeCppInclude</code> references</p>
+</li>
+<li>
+<p>For each, check if the request file is among its includers</p>
+</li>
+<li>
+<p>If so, collect CUs that also include the same headers ("siblings")</p>
+</li>
+<li>
+<p>Filter to CUs with <code>lastParsedMtime == 0</code> (never parsed)</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Scope control:</strong> Only CUs sharing headers with the <em>request file</em> are parsed — not
+the entire project. This keeps cold-start latency proportional to the local
+neighborhood of the file being worked on.</p>
+</div>
+<div class="paragraph">
+<p><strong>Current limitation:</strong> The sibling lookup is based on all shared headers, not just
+the header containing the navigated symbol. This can over-parse on projects with
+widely-shared utility headers (e.g. <code>avutil.h</code> in ffmpeg pulls in ~978 siblings).
+A future optimization would filter to sibling CUs sharing the <em>specific</em> header that
+defines the symbol being navigated to.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_staleness_after_refactoring">10.2.5. Staleness After Refactoring</h4>
+<div class="paragraph">
+<p>Refactoring operations (rename, move-function, etc.) modify editor buffers in memory.
+The disk files and their mtimes are unchanged, so the normal mtime-based staleness
+detection doesn&#8217;t trigger.</p>
+</div>
+<div class="paragraph">
+<p>After <code>serverPerformRefactoring()</code> completes, <code>markModifiedEditorBuffersAsStale()</code>
+iterates all editor buffers with <code>modifiedSinceLastQuasiSave == true</code> and sets their
+file&#8217;s <code>lastParsedMtime = 0</code>. This causes <code>fileNumberIsStale()</code> to return true on
+the next request, triggering a reparse via Pass 1.</p>
+</div>
+<div class="paragraph">
+<p>This is called <em>before</em> <code>quasiSaveModifiedEditorBuffers()</code>, which clears the
+<code>modifiedSinceLastQuasiSave</code> flag and updates the buffer&#8217;s <code>modificationTime</code>.</p>
 </div>
 </div>
 </div>
@@ -4739,29 +4970,97 @@ the <code>-preload</code> option to transmit modified buffers:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">EditorBuffer {
-    char *name;              // Original filename
-    char *preLoadedFromFile; // Path to temp file with buffer content
-    time_t modificationTime; // When buffer was last modified
+    char *name;                    // Original filename
+    char *preLoadedFromFile;       // Path to temp file with buffer content
+    time_t modificationTime;       // When buffer was last modified
+    bool modified;                 // Content changed (by refactoring)
+    bool modifiedSinceLastQuasiSave;  // Dirty flag for quasi-save
+    bool preloadedThisRequest;     // Was this buffer preloaded on this request?
     ...
 }</code></pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Created by <code>loadAllOpenedEditorBuffers()</code> at the start of each server operation</p>
-</li>
-<li>
-<p>Lives only for the duration of that operation</p>
-</li>
-<li>
-<p>Destroyed by <code>closeAllEditorBuffers()</code> at operation end</p>
-</li>
-</ul>
+<div class="paragraph">
+<p>Editor buffers have different origins and lifetimes:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Preloaded buffers</dt>
+<dd>
+<p>Created by <code>openEditorBufferFromPreload()</code> when the client sends <code>-preload</code>. These
+have <code>preLoadedFromFile</code> set to the temp file path. They persist across requests as
+long as the client keeps sending the preload.</p>
+</dd>
+<dt class="hdlist1">Refactoring buffers</dt>
+<dd>
+<p>Created by editor operations during refactoring (e.g. <code>findOrCreateAndLoadEditorBufferForFile</code>).
+These have <code>preLoadedFromFile == NULL</code> and <code>modified == true</code>. They persist because
+<code>bufferIsCloseable()</code> returns false for modified buffers.</p>
+</dd>
+<dt class="hdlist1">Transient buffers</dt>
+<dd>
+<p>Created during normal request processing (parsing). These have <code>preLoadedFromFile == NULL</code>
+and <code>modified == false</code>. They are destroyed by <code>closeAllEditorBuffersIfClosable()</code> at the
+end of each request.</p>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_modification_time_tracking">10.3.2. Modification Time Tracking</h4>
+<h4 id="_preload_protocol_and_ghost_buffer_pruning">10.3.2. Preload Protocol and Ghost Buffer Pruning</h4>
+<div class="paragraph">
+<p>The Emacs client sends <code>-preload</code> for <strong>all modified buffers</strong> on <strong>every request</strong>. This
+is not an optimization — it is a protocol invariant that the server depends on:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Presence of <code>-preload</code>:</strong> "This buffer is modified in the editor; use this content."</p>
+</li>
+<li>
+<p><strong>Absence of <code>-preload</code>:</strong> "This buffer is no longer modified; the disk file is current."</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The server uses this to detect when a user saves or closes a file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">server() request loop:
+  │
+  ├─ clearPreloadedThisRequestFlags()     ← reset all flags to false
+  ├─ initServer(pipedOptions)             ← parses options, sets flags on preloaded buffers
+  │   └─ openEditorBufferFromPreload()
+  │       └─ buffer-&gt;preloadedThisRequest = true
+  │
+  └─ callServer()
+      └─ closeEditorBuffersNoLongerPreloaded()
+          FOR each editor buffer:
+            IF preLoadedFromFile != NULL AND NOT preloadedThisRequest:
+              removeReferenceableItemsForFile(buffer-&gt;fileNumber)  ← purge stale refs
+              deregisterEditorBuffer + freeEditorBuffer             ← close buffer</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Without ghost buffer pruning, a stale preloaded buffer would persist indefinitely. The
+server would keep parsing from the old content even though the user saved the file and
+the disk version is newer.</p>
+</div>
+<div class="paragraph">
+<p><strong>Reference cleanup is essential:</strong> Simply closing the buffer is not enough. The reference
+table still contains entries from the stale parse. <code>removeReferenceableItemsForFile()</code> must
+be called before closing the buffer, so that the next parse (from the disk file) populates
+the table with fresh references without duplicates.</p>
+</div>
+<div class="paragraph">
+<p><strong>Navigation sessions are safe:</strong> Sessions store <code>Reference</code> structs (position-based), not
+<code>EditorMarker</code> pointers. Closing a buffer does not create dangling pointers in the
+browsing stack.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_modification_time_tracking">10.3.3. Modification Time Tracking</h4>
 <div class="paragraph">
 <p>To implement incremental updates, c-xrefactory tracks when each file/buffer was last parsed.</p>
 </div>
@@ -4848,7 +5147,7 @@ the <code>-preload</code> option to transmit modified buffers:</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_update_strategies">10.3.3. Update Strategies</h4>
+<h4 id="_update_strategies">10.3.4. Update Strategies</h4>
 <div class="paragraph">
 <p><code>C-xrefactory</code> has two update strategies that trade off speed against completeness.</p>
 </div>
@@ -5003,7 +5302,7 @@ changes don&#8217;t propagate. Full update is generally safer and more correct.<
 </div>
 </div>
 <div class="sect3">
-<h4 id="_reference_lifecycle">10.3.4. Reference Lifecycle</h4>
+<h4 id="_reference_lifecycle">10.3.5. Reference Lifecycle</h4>
 <div class="paragraph">
 <p>References flow through multiple stages in c-xrefactory, with different storage
 locations and ownership models at each stage.</p>
@@ -5270,7 +5569,7 @@ session-&gt;current = ref;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_summary">10.3.5. Summary</h4>
+<h4 id="_summary">10.3.6. Summary</h4>
 <div class="paragraph">
 <p>The key insights:</p>
 </div>
@@ -5283,10 +5582,7 @@ session-&gt;current = ref;</code></pre>
 <p><strong>Modification times</strong> are tracked uniformly for files and buffers</p>
 </li>
 <li>
-<p><strong>Fast update</strong> trades completeness for speed (doesn&#8217;t chase headers)</p>
-</li>
-<li>
-<p><strong>Full update</strong> is more thorough but can reparse many files</p>
+<p><strong>Ghost buffer pruning</strong> detects when the client stops preloading a buffer and discards the stale copy</p>
 </li>
 <li>
 <p><strong>References live in two places</strong>: canonical table (arena memory) and session copies (malloc)</p>
@@ -5296,12 +5592,328 @@ session-&gt;current = ref;</code></pre>
 </li>
 </ol>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The Fast Update and Full Update strategies described above are the <strong>legacy</strong>
+<code>-update</code>/<code>-fastupdate</code> path used by the Xref mode and the old <code>-refactory</code> mode. In the
+current server mode, these are replaced by the <a href="#entry-refresh">Entry Refresh</a> algorithm,
+which runs automatically on every request and combines the thoroughness of full update
+(header propagation via Pass 2) with the speed of fast update (only reparsing what&#8217;s
+actually stale).
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_does">10.4. How does &#8230;&#8203;</h3>
+<h3 id="_server_side_refactoring">10.4. Server-Side Refactoring</h3>
 <div class="paragraph">
-<p>TBD.</p>
+<p>Refactoring was originally implemented as a separate process (<code>RefactoryMode</code>): the
+editor spawned a fresh <code>c-xref -refactory</code> process for each refactoring operation.
+This process started cold — it called <code>callXref()</code> to rebuild references, performed
+the refactoring, and exited.</p>
+</div>
+<div class="paragraph">
+<p>With the "memory as truth" architecture, this approach doesn&#8217;t work: the separate
+process has no access to the running server&#8217;s reference table. The solution is to
+perform refactoring as a server operation, where the refactoring code runs inside
+the already-initialized server with its populated reference table.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The legacy <code>-refactory</code> path still exists and is exercised by some tests and
+the default Emacs client path. It will be removed once all refactorings are validated
+in the server path. The <code>ensureReferencesAreUpdated</code> calls in the refactoring code are
+guarded with <code>if (refactoringOptions.mode == RefactoryMode)</code> — they are only needed in
+the legacy path, where the server&#8217;s entry refresh has not run.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_how_server_side_refactoring_works">10.4.1. How Server-Side Refactoring Works</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">answerEditorAction():
+  case OP_REFACTORY:
+    serverPerformRefactoring()
+      │
+      ├─ deepCopyOptionsFromTo(&amp;options, &amp;refactoringOptions)
+      ├─ loadAllOpenedEditorBuffers()
+      ├─ quasiSaveModifiedEditorBuffers()
+      │
+      ├─ Create point/mark EditorMarkers from cursor/mark offsets
+      │
+      ├─ Dispatch on refactoringOptions.theRefactoring:
+      │   ├─ AVR_RENAME_SYMBOL    → renameAtPoint(point)
+      │   ├─ AVR_EXTRACT_*        → extractFunction/Macro/Variable(point, mark)
+      │   ├─ AVR_ADD/DEL/MOVE_PARAMETER → parameterManipulation(point, ...)
+      │   ├─ AVR_MOVE_FUNCTION    → moveFunction(point)
+      │   ├─ AVR_ORGANIZE_INCLUDES → organizeIncludes(point)
+      │   └─ AVR_RENAME_MODULE/INCLUDED_FILE → renameAtInclude(point)
+      │
+      ├─ markModifiedEditorBuffersAsStale()   ← mark for entry refresh
+      └─ quasiSaveModifiedEditorBuffers()     ← update buffer mtimes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Key differences from the legacy <code>-refactory</code> path:</strong></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">No <code>callXref()</code> or <code>mainTaskEntryInitialisations()</code></dt>
+<dd>
+<p>The server is already initialized. The reference table is populated by the entry
+refresh that ran before this request. The refactoring code can directly use the
+references.</p>
+</dd>
+<dt class="hdlist1">No <code>ensureReferencesAreUpdated()</code></dt>
+<dd>
+<p>In the legacy path, this function ran a mini-<code>callXref()</code> to populate references
+for the specific symbol being refactored. In the server path, references are already
+fresh from entry refresh. The calls are guarded by <code>if (refactoringOptions.mode == RefactoryMode)</code>.</p>
+</dd>
+<dt class="hdlist1">Mark stale on completion</dt>
+<dd>
+<p>After the refactoring, <code>markModifiedEditorBuffersAsStale()</code> sets <code>lastParsedMtime = 0</code>
+on all files whose editor buffers were modified. This ensures the next request&#8217;s entry
+refresh reparses them, picking up the post-refactoring state. Without this, the
+reference table would remain stale for files modified by the refactoring (particularly
+files other than the next request&#8217;s target file).</p>
+</dd>
+<dt class="hdlist1"><code>parseBufferUsingServer()</code> calls remain</dt>
+<dd>
+<p>Some refactoring functions call <code>parseBufferUsingServer()</code> internally (e.g. to gather
+semantic information for safety checks). In the server path, these calls are harmless
+— they parse into the existing reference table without wiping <code>cxMemory</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_interactive_dialogs">10.4.2. Interactive Dialogs</h4>
+<div class="paragraph">
+<p>Some refactorings involve interactive dialogs with the client:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Symbol disambiguation (<code>beInteractive</code>)</dt>
+<dd>
+<p>When multiple symbols match the cursor position, <code>displayResolutionDialog()</code> sends
+an <code>&lt;olcx-list&gt;</code> to the client and calls <code>beInteractive()</code>. This works in the server
+path because the server loop is blocked on the call stack — <code>beInteractive()</code> reads
+from the pipe via <code>readOptionsFromPipe()</code> without conflicting with the outer server
+loop. A local copy of <code>savedOptions</code> prevents the inner <code>callServer()</code> from clobbering
+the refactoring&#8217;s option state.</p>
+</dd>
+<dt class="hdlist1">Confirmation (<code>ppcAskConfirmation</code>)</dt>
+<dd>
+<p>The server writes <code>&lt;ask-confirmation&gt;</code> to the output and continues. The client shows a
+yes/no dialog; if the user says "no", the client aborts output processing. No server
+pause is needed — this is entirely client-side.</p>
+</dd>
+<dt class="hdlist1">Extraction dialog</dt>
+<dd>
+<p>The server computes the extraction and sends <code>&lt;extraction-dialog&gt;</code> with the replacement
+strings. The client applies the changes to its buffer. The server&#8217;s buffer is not
+modified by extraction — the client sends the modified content as a <code>-preload</code> on the
+next request.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_is_an_extract_refactoring_performed">10.5. How is an Extract refactoring performed?</h3>
+<div class="paragraph">
+<p>The region (mark and point/cursor positions) is sent to the <em>c-xref</em>
+server in a <code>-refactory -rfct-extract</code> command.</p>
+</div>
+<div class="paragraph">
+<p>The server parses the relevant file and sets some information that can
+be used in some prechecks that are then performed, such as structure
+check, and then the server answers with</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">&lt;extraction-dialog&gt;
+    &lt;str .... /str&gt;
+    &lt;str .... /str&gt;
+    &lt;str .... /str&gt;
+&lt;/extraction-dialog&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The first string is the code that will replace the extracted code,
+such as a call to the extracted function. The second string is the header
+part that will preceed the extracted code ("preamble"), and the third is then of
+course any code that needs to go after the extracted code ("postamble").</p>
+</div>
+<div class="paragraph">
+<p>The actual code in the region is never sent to, or returned from, the
+server. This is handled completely by the editor extension, and used
+verbatim (except if it is a macro that is extracted, in which case
+each line is terminated by the backslash) so no changes to that code
+can be made.</p>
+</div>
+<div class="paragraph">
+<p>The pre- and post-ambles might be of varying complexity. E.g. when
+extracting a macro, the postamble can be completely empty. When
+extracting a function both may contain code to transfer and restore
+parameters into local variables to propagate in/out variables as
+required.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The editor then requests a name from the user that it will use in a
+rename operation that renames the default named
+function/macro/variable.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong><em>Two-Phase Architecture</em></strong></p>
+</div>
+<div class="paragraph">
+<p>Extraction operates in two phases:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Collection Phase (during parsing)</strong>: Parser semantic hooks track control flow by registering synthetic labels and collecting references within the marked region.</p>
+</li>
+<li>
+<p><strong>Analysis Phase (after parsing)</strong>: The extraction module analyzes the collected control flow data, classifies variables by usage patterns, and generates the refactored code (call site, function definition, postamble).</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This separation keeps the parser clean and makes extraction logic independently testable.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_does_lexem_stream_management_work">10.6. How does lexem stream management work?</h3>
+<div class="paragraph">
+<p>Lexical analysis uses a stack of <code>LexemStream</code> structures to handle nested macro expansions. The key insight is that the stream type acts as a <strong>discriminator</strong> for buffer ownership and cleanup strategy.</p>
+</div>
+<div class="sect3">
+<h4 id="_the_stream_types">10.6.1. The Stream Types</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef enum {
+    NORMAL_STREAM,              // File or local buffer
+    MACRO_STREAM,               // Macro expansion
+    MACRO_ARGUMENT_STREAM,      // Macro argument expansion
+} LexemStreamType;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Historically, there was also a <code>CACHED_STREAM</code> type when the caching mechanism was still active. This confirms that stream types are fundamentally about <strong>buffer ownership and refill strategy</strong> - each type encodes where the buffer came from and how to handle it when exhausted.
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>NORMAL_STREAM</strong></dt>
+<dd>
+<p>Buffer from file&#8217;s <code>lexemBuffer</code> or a local temporary. Not allocated from arena memory, so no cleanup needed when stream exhausted.</p>
+</dd>
+<dt class="hdlist1"><strong>MACRO_STREAM</strong></dt>
+<dd>
+<p>Buffer allocated from <code>macroBodyMemory</code> arena during macro expansion. Must call <code>mbmFreeUntil(stream.begin)</code> when popping from stack to free the arena allocation.</p>
+</dd>
+<dt class="hdlist1"><strong>MACRO_ARGUMENT_STREAM</strong></dt>
+<dd>
+<p>Buffer allocated from <code>ppmMemory</code> arena during macro argument expansion. Signals <code>END_OF_MACRO_ARGUMENT_EXCEPTION</code> when exhausted (cleanup handled by caller).</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_refill_algorithm">10.6.2. The Refill Algorithm</h4>
+<div class="paragraph">
+<p>When <code>currentInput</code> runs out of lexems (<code>read &gt;= write</code>), <code>refillInputIfEmpty()</code> uses the stream type to decide what to do:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">while (currentInput.read &gt;= currentInput.write) {
+    LexemStreamType inputType = currentInput.streamType;
+
+    if (insideMacro()) {  // Stack not empty
+        if (inputType == MACRO_ARGUMENT_STREAM) {
+            return END_OF_MACRO_ARGUMENT_EXCEPTION;
+        }
+        // Only free MACRO_STREAM buffers (allocated from macroBodyMemory)
+        if (inputType == MACRO_STREAM) {
+            mbmFreeUntil(currentInput.begin);
+        }
+        currentInput = macroInputStack[--macroStackIndex];  // Pop
+    }
+    else if (inputType == NORMAL_STREAM) {
+        // Refill from file
+        buildLexemFromCharacters(&amp;currentFile.characterBuffer, ...);
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_key_invariant">10.6.3. Key Invariant</h4>
+<div class="paragraph">
+<p><strong>Stream type must match buffer allocation:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>MACRO_STREAM</code> → buffer allocated from <code>macroBodyMemory</code></p>
+</li>
+<li>
+<p><code>NORMAL_STREAM</code> → buffer NOT from macro arenas</p>
+</li>
+<li>
+<p><code>MACRO_ARGUMENT_STREAM</code> → buffer from <code>ppmMemory</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Violating this invariant causes fatal errors when trying to free buffers from the wrong arena.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_common_bug_pattern">10.6.4. Common Bug Pattern</h4>
+<div class="paragraph">
+<p>Pushing a <code>NORMAL_STREAM</code> onto the macro stack, then trying to free it as if it were <code>MACRO_STREAM</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// WRONG: Blindly freeing without checking type
+mbmFreeUntil(currentInput.begin);  // Fails if currentInput is NORMAL_STREAM!
+
+// CORRECT: Check type first
+if (inputType == MACRO_STREAM) {
+    mbmFreeUntil(currentInput.begin);
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -5903,7 +6515,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <h2 id="_about_the_decision_log">13. About the Decision Log</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_overview">13.1. Overview</h3>
+<h3 id="_overview_2">13.1. Overview</h3>
 <div class="paragraph">
 <p>The decision log documents choices that have shaped the architecture, implementation, and direction of c-xrefactory. Most decisions from the original 1990s development are lost to history, but as they can be deduced from the codebase and commit history, they are being retroactively documented.</p>
 </div>
@@ -6089,8 +6701,8 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <p class="tableblock">The header-filtered sibling parsing optimization (see Optimization section) becomes another file selection strategy within this module. See <a href="18-insights.adoc">Chapter 18: RefactoryMode Internally Calls XrefMode</a> for the current architecture this replaces.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Refactoring as server operation (strangler fig)</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Refactoring moves from a separate process (<code>RefactoryMode</code>) into the running server as <code>OP_REFACTORY</code>. Migrated one refactoring at a time — old path stays alive until all are proven. Rename is operational end-to-end, validated on real project (tests: <code>test_rename_via_server</code>, <code>test_rename_via_server_multi_file</code>, Emacs debug-mode toggle). Mark-stale-after-rename ensures safety check sees fresh references in sibling files. Remaining refactorings to be migrated one at a time. Once all refactorings work in-server, <code>parseBufferUsingServer</code> (the bridge — see <a href="17-major-codebase-improvements.adoc">17.3</a>) dissolves: symbol resolution and reference lookup become direct queries against <code>referenceableItemTable</code>, eliminating the round-trip through <code>callServer</code>. Removing the old path also removes <code>callXref</code> and the <code>cxMemory</code> wipe that currently destroys the entire reference table during refactoring.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Refactoring as server operation (strangler fig — operational)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All refactorings run as server operations via <code>OP_REFACTORY</code> in <code>serverPerformRefactoring()</code>: rename, extract (function/macro/variable), parameter manipulation (add/del/move), move function, organize includes, rename include/module. Validated on real projects via Emacs. <code>markModifiedEditorBuffersAsStale()</code> ensures entry refresh detects refactoring-modified buffers. Emacs client has a "Server-side Refactoring" toggle in the Misc menu (<code>c-xref-server-refactoring</code>) for battle-testing before removing the legacy path. The legacy <code>-refactory</code> process path remains alive but unused when the toggle is on. Final cleanup: remove <code>RefactoryMode</code>, <code>callXref</code>, <code>parseBufferUsingServer</code> bridge (see <a href="17-major-codebase-improvements.adoc">17.3</a>), and the <code>cxMemory</code> wipe.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Disk snapshot strategy (operational)</strong></p></td>
@@ -6141,10 +6753,10 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <p><strong>Snapshot save/load</strong> (done) — <code>.cx</code> loaded at startup, saved on <code>-exit</code>. No manual <code>-create</code> needed after first session.</p>
 </li>
 <li>
-<p><strong>Refactoring moves into server (strangler fig)</strong> — refactoring becomes a server operation (<code>OP_REFACTORY</code>), reusing the server&#8217;s in-memory references instead of rebuilding from scratch. Rename is migrated: <code>ensureReferencesAreUpdated</code>/<code>callXref</code> skipped in server path, mark-stale ensures safety check correctness across files. Remaining refactorings follow the same pattern. Final step: replace <code>parseBufferUsingServer</code> with direct table queries (see <a href="17-major-codebase-improvements.adoc">17.3</a>), then remove <code>RefactoryMode</code>.</p>
+<p><strong>Refactoring moves into server (strangler fig)</strong> (done) — all refactorings run as server operations via <code>OP_REFACTORY</code>. Legacy <code>-refactory</code> path remains for fallback; Emacs menu toggle enables battle-testing. Final cleanup: remove <code>RefactoryMode</code>, <code>callXref</code>, <code>parseBufferUsingServer</code> bridge.</p>
 </li>
 <li>
-<p><strong><code>.cx</code> becomes startup snapshot only</strong> — never consulted during operation. The in-memory table is authoritative. Search reads from memory.</p>
+<p><strong><code>.cx</code> becomes startup snapshot only</strong> — never consulted during operation. The in-memory table is authoritative. Search reads from memory. This is the current focus.</p>
 </li>
 </ol>
 </div>
@@ -8489,6 +9101,37 @@ navigation loses most of its references.</p>
 <p>The disk scan operations (<code>ensureReferencesAreLoadedFor</code>, <code>scanReferencesToCreateMenu</code>, etc.) read from <code>.cx</code> files on disk and also call <code>isMemberInReferenceableItemTable()</code> to check/merge with existing entries. If parsing has already populated the table, these operations find data already present — making them effective no-ops once all files are parsed.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_editor_buffer_lifecycle_in_the_server">17.7. Editor Buffer Lifecycle in the Server</h3>
+<div class="paragraph">
+<p>Date: 2026-03-17</p>
+</div>
+<div class="paragraph">
+<p>Editor buffers created by the server during parsing (e.g., entry refresh pass 3 parsing sibling CUs, or refactoring loading files) have <code>preLoadedFromFile == NULL</code> — they were loaded from disk, not preloaded by the client. After each request, <code>closeAllEditorBuffersIfClosable()</code> in <code>editor.c</code> frees all buffers that are closeable: <code>textLoaded &amp;&amp; markers == NULL &amp;&amp; preLoadedFromFile == NULL &amp;&amp; !modified</code>.</p>
+</div>
+<div class="paragraph">
+<p>This means <strong>server-created editor buffers do not linger between requests</strong>. On the next request, files are reloaded from disk with fresh content. This is important because:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A user may edit and save a file between operations without triggering any c-xref action. The server must see the new disk content, not a stale buffer.</p>
+</li>
+<li>
+<p>After a refactoring modifies editor buffers, markers are freed by the refactoring cleanup (e.g., <code>freeEditorMarkerListAndMarkers</code> at the end of <code>renameAtPoint</code>), making the buffers closeable.</p>
+</li>
+<li>
+<p><code>parseToCreateReferences</code> prefers an existing editor buffer over disk — so if a stale buffer lingered, it would parse old content even when the disk file had changed.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Client-preloaded buffers (<code>preLoadedFromFile != NULL</code>) are NOT freed — they represent the editor&#8217;s view of the file and survive until the client sends updated content or (eventually) a close notification.</p>
+</div>
+<div class="paragraph">
+<p><strong>Implication for <code>didClose</code></strong>: A <code>didClose</code> protocol message (analogous to LSP <code>textDocument/didClose</code>) is not urgently needed for correctness — the existing cleanup handles server-created buffers. It would primarily benefit client-preloaded buffers that the user has closed in the editor, allowing the server to fall back to disk content. This is an architectural nicety, not a bug fix.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -9953,7 +10596,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-18 13:53:36 UTC
+Last updated 2026-03-18 22:36:40 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
