@@ -9,7 +9,7 @@ include ../Makefile.server
 # Then the server should read from disk, not the stale preloaded buffer
 
 $(TEST):
-	@-rm -r .c-xref/db
+	@-rm -rf .c-xref/db
 	@cp source.c.orig source.c
 	@cp source.c.orig source.preload
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
