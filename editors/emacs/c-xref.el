@@ -19,7 +19,6 @@
 
 (defvar c-xref-debug-mode nil)          ;; Set to t to debug communication
 (defvar c-xref-debug-preserve-tmp-files nil)
-
 ;;(toggle-debug-on-error)
 
 (defvar c-xref-tmp-dir nil "Temporary directory for c-xref.")
@@ -6897,15 +6896,21 @@ refactoring.
   (message "Done.")
   )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;; REFACTORING DISPATCH ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun c-xref-do-refactoring (opts)
+  "Execute a refactoring via server or legacy path based on c-xref-server-refactoring."
+  (if (or c-xref-debug-mode c-xref-server-refactoring)
+      (c-xref-call-process-with-basic-file-data-all-saves
+       (mapconcat 'identity opts " "))
+    (c-xref-server-call-refactoring-task opts)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; RENAMING ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 (defun c-xref-non-interactive-renaming (opt old-name new-name)
   (c-xref-refactoring-init-actions (format "renaming of %s to %s" old-name new-name))
-  (if c-xref-debug-mode
-      (c-xref-call-process-with-basic-file-data-all-saves
-       (format "%s -renameto=%s" opt new-name))
-    (c-xref-server-call-refactoring-task (list opt (format "-renameto=%s" new-name))))
+  (c-xref-do-refactoring (list opt (format "-renameto=%s" new-name)))
   (c-xref-refactoring-finish-actions)
   )
 
@@ -6946,7 +6951,7 @@ refactoring.
 (defun c-xref-non-interactive-add-parameter (name arg textdef textval)
   (c-xref-refactoring-init-actions
    (format "insertion of %s's parameter" name))
-  (c-xref-server-call-refactoring-task
+  (c-xref-do-refactoring
    (list "-rfct-add-param"
              (format "-olcxparnum=%s" arg)
              (format "-rfct-parameter-name=%s" textdef);
@@ -6981,7 +6986,7 @@ refactoring.
 (defun c-xref-non-interactive-del-parameter (name arg)
   (c-xref-refactoring-init-actions
    (format "deletion of %s's parameter" name))
-  (c-xref-server-call-refactoring-task
+  (c-xref-do-refactoring
    (list "-rfct-del-param" (format "-olcxparnum=%s" arg)))
   (c-xref-refactoring-finish-actions)
   )
@@ -7002,7 +7007,7 @@ refactoring.
 (defun c-xref-non-interactive-move-parameter (name arg1 arg2)
   (c-xref-refactoring-init-actions
    (format "move of %s's parameter" name))
-  (c-xref-server-call-refactoring-task
+  (c-xref-do-refactoring
    (list "-rfct-move-param"
              (format "-olcxparnum=%s" arg1)
              (format "-olcxparnum2=%s" arg2)))
@@ -7063,7 +7068,7 @@ refactoring.
       )
 
     ;; move
-    (c-xref-server-call-refactoring-task
+    (c-xref-do-refactoring
      (append moveopt (list
                               (format "-commentmovinglevel=%d" c-xref-comments-moving-level)
                               (format "-movetargetfile=%s" tf)
@@ -7086,7 +7091,7 @@ refactoring.
 
 (defun c-xref-organize-includes (rd)
   (c-xref-refactoring-init-actions "organizing includes")
-  (c-xref-server-call-refactoring-task (list "-rfct-organize-includes"))
+  (c-xref-do-refactoring (list "-rfct-organize-includes"))
   (c-xref-refactoring-finish-actions)
 )
 
@@ -7206,26 +7211,26 @@ refactoring.
                   (error "[c-xref] internal error, can't find identifier")
                 )
               (backward-char 2)
-              (c-xref-server-call-refactoring-task
+              (c-xref-do-refactoring
                (list "-rfct-rename" (format "-renameto=%s" name)))
               ))
     ))
 
 (defun c-xref-extract-function (rd)
   (c-xref-refactoring-init-actions (format "extract function"))
-  (c-xref-server-call-refactoring-task (list "-rfct-extract-function"))
+  (c-xref-do-refactoring (list "-rfct-extract-function"))
   (c-xref-refactoring-finish-actions)
   )
 
 (defun c-xref-extract-macro (rd)
   (c-xref-refactoring-init-actions (format "extract macro"))
-  (c-xref-server-call-refactoring-task (list "-rfct-extract-macro"))
+  (c-xref-do-refactoring (list "-rfct-extract-macro"))
   (c-xref-refactoring-finish-actions)
   )
 
 (defun c-xref-extract-variable (rd)
   (c-xref-refactoring-init-actions (format "extract variable"))
-  (c-xref-server-call-refactoring-task (list "-rfct-extract-variable"))
+  (c-xref-do-refactoring (list "-rfct-extract-variable"))
   (c-xref-refactoring-finish-actions)
   )
 
