@@ -2,19 +2,19 @@
 
 === Reference Database and Parsing
 
-The reference database is used only to hold externally visible
-identifiers to ensure that references to an identifier can be found
-across all files in the used source.
+The persisted snapshot (`.cx` files) stores all file-scope and wider symbols — including
+`static` functions and variables. Only block-local symbols (variables inside function
+bodies, labels) are excluded. The visibility boundary is `VisibilityLocal` in
+`getSymbolCxrefProperties()`: block-locals get `VisibilityLocal`, everything else
+(including file-scope statics) gets `VisibilityGlobal`.
 
-All symbols that are only visible inside a unit is handled by
-reparsing the file of interest.
+Block-local symbols are reconstructed by reparsing the file of interest.
 
-NOTE: This describes the semantics of the _persisted snapshot_ (`.cx` files), not the
-_reference table_ in memory. The in-memory reference table holds all symbols encountered
-during parsing, including file-local ones. Only externally visible symbols are persisted
-to the snapshot because file-local symbols can always be reconstructed by reparsing. As
-the architecture moves toward "memory as truth" (see link:15-roadmap.adoc[Roadmap]), the
-distinction between "persisted" and "in-memory" symbols may evolve.
+NOTE: The in-memory reference table holds all symbols encountered during parsing,
+including block-local ones. The snapshot excludes only block-locals because they can
+always be reconstructed by reparsing. As the architecture moves toward "memory as truth"
+(see link:15-roadmap.adoc[Roadmap]), the distinction between "persisted" and "in-memory"
+symbols may evolve.
 
 === Continuously Fresh References
 
