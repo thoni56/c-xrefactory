@@ -16,6 +16,85 @@ to the snapshot because file-local symbols can always be reconstructed by repars
 the architecture moves toward "memory as truth" (see link:15-roadmap.adoc[Roadmap]), the
 distinction between "persisted" and "in-memory" symbols may evolve.
 
+=== Continuously Fresh References
+
+The reference table must be kept fresh on every request. This is the central design
+challenge in a request/response architecture where:
+
+* The server is long-lived, holding state across many requests
+* Source files change between requests (user edits, saves, closes buffers)
+* Each operation (navigation, refactoring, completion) depends on accurate references
+* The server cannot know _when_ changes happen — it only discovers them at request time
+
+The principle is: **detect all sources of staleness before dispatching each operation.**
+There is no single mechanism for this; instead, multiple complementary strategies
+cooperate:
+
+File modification::
+  Disk files change when the user saves. Detected by comparing `lastParsedMtime`
+  against the file's current mtime.
+
+Editor buffer divergence::
+  The user's editor may hold unsaved changes. The client transmits these via
+  `-preload`, and their modification time is tracked separately from the disk file.
+
+Editor buffer disappearance::
+  The user saves or closes a buffer. The client stops sending `-preload` for it.
+  The server must detect this absence and discard the stale in-memory copy ("ghost
+  buffer pruning"), falling back to the disk file.
+
+New files and deleted files::
+  Files may be added to or removed from the project between requests. The lightweight
+  scan discovers new compilation units; `markMissingFilesAsDeleted()` handles removals.
+
+Refactoring side effects::
+  A refactoring modifies editor buffers in memory, but the disk files and mtimes
+  are unchanged. Modified buffers must be explicitly marked stale so that subsequent
+  operations see fresh references.
+
+Include graph changes::
+  A stale header affects all compilation units that include it, transitively. Reparsing
+  a stale CU refreshes its include references, which then allows discovering other CUs
+  affected by the same header change.
+
+Each of these is handled by a specific mechanism in the entry refresh algorithm
+(see <<11-algorithms.adoc#entry-refresh,Entry Refresh>> in the Algorithms chapter).
+The key insight is that all of them must run _before_ the operation dispatches — there is
+no lazy or deferred refresh. The cost is paid up front so that every operation sees a
+consistent view of the codebase.
+
+=== Minimal Reparse Set
+
+Full freshness does not require full reparsing. Parsing is the most expensive operation
+the server performs, so the system must determine the **minimal set of compilation units**
+that need reparsing to make the reference table consistent.
+
+The strategies, in order of increasing scope:
+
+Only stale files::
+  If a `.c` file changed, only that file needs reparsing. No other CU is affected
+  unless they share headers.
+
+Include-graph-directed propagation::
+  If a header changed, only CUs that include it (transitively) need reparsing — not
+  all CUs in the project. The include structure (`TypeCppInclude` references) provides
+  the reverse lookup.
+
+Sibling CU discovery::
+  On cold start, not all CUs have been parsed. Rather than parsing the entire project
+  up front (which can take tens of seconds on large codebases), the server discovers
+  which unparsed CUs share headers with the request file and parses only those. CUs
+  unrelated to the current request remain unparsed until needed.
+
+Skip already-fresh files::
+  Mtime comparison avoids reparsing files that haven't changed since their last parse,
+  even if they were discovered as potential candidates.
+
+The goal is **interactive-speed response times**: the user should not wait for the
+entire project to reparse when they changed one file. On a large codebase (e.g. ffmpeg
+with 2600+ CUs), the difference between "reparse everything" and "reparse the 7 CUs
+that share the edited header" is the difference between minutes and milliseconds.
+
 === Terminology
 
 The following terms are used throughout the documentation and codebase. Preferred terms

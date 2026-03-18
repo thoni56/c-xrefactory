@@ -1,133 +1,217 @@
 == Algorithms
 
-The code does not always explain the algorithms that it
-implements. This chapter will ultimately be a description of various
-algorithms used by _c-xrefactory_.
+The code does not always explain the algorithms that it implements. This chapter tries
+to describe essential algorithms used by _c-xrefactory_.
 
-=== How is an Extract refactoring performed?
+=== Lightweight Include Structure Scanning
 
-The region (mark and point/cursor positions) is sent to the _c-xref_
-server in a `-refactory -rfct-extract` command.
+Before the server can keep references fresh, it needs to know the project's structure:
+which files are compilation units, and how they relate through `#include` directives.
+The lightweight scan (`scanProjectForFilesAndIncludes`) discovers this without full
+parsing.
 
-The server parses the relevant file and sets some information that can
-be used in some prechecks that are then performed, such as structure
-check, and then the server answers with
+==== Why Not Full Parsing?
 
-```
-<extraction-dialog>
-    <str .... /str>
-    <str .... /str>
-    <str .... /str>
-</extraction-dialog>
-```
+Full parsing (running the C parser with preprocessor, semantic actions, and reference
+creation) is expensive — seconds per file on complex codebases. On a cold start with
+thousands of CUs, parsing everything up front would block the user for minutes.
 
-The first string is the code that will replace the extracted code,
-such as a call to the extracted function. The second string is the header
-part that will preceed the extracted code ("preamble"), and the third is then of
-course any code that needs to go after the extracted code ("postamble").
+The include structure, however, can be determined by simple text scanning: find lines
+matching `#include "..."` and resolve the paths. This is orders of magnitude faster
+(e.g. ffmpeg: 2619 CUs scanned in under 1 second vs. minutes for full parsing).
 
-The actual code in the region is never sent to, or returned from, the
-server. This is handled completely by the editor extension, and used
-verbatim (except if it is a macro that is extracted, in which case
-each line is terminated by the backslash) so no changes to that code
-can be made.
+==== The Algorithm
 
-The pre- and post-ambles might be of varying complexity. E.g. when
-extracting a macro, the postamble can be completely empty. When
-extracting a function both may contain code to transfer and restore
-parameters into local variables to propagate in/out variables as
-required.
-
-1. The editor then requests a name from the user that it will use in a
-rename operation that renames the default named
-function/macro/variable.
-
-*_Two-Phase Architecture_*
-
-Extraction operates in two phases:
-
-1. **Collection Phase (during parsing)**: Parser semantic hooks track control flow by registering synthetic labels and collecting references within the marked region.
-
-2. **Analysis Phase (after parsing)**: The extraction module analyzes the collected control flow data, classifies variables by usage patterns, and generates the refactored code (call site, function definition, postamble).
-
-This separation keeps the parser clean and makes extraction logic independently testable.
-
-=== How does lexem stream management work?
-
-Lexical analysis uses a stack of `LexemStream` structures to handle nested macro expansions. The key insight is that the stream type acts as a **discriminator** for buffer ownership and cleanup strategy.
-
-==== The Stream Types
-
-[source,c]
+[source]
 ----
-typedef enum {
-    NORMAL_STREAM,              // File or local buffer
-    MACRO_STREAM,               // Macro expansion
-    MACRO_ARGUMENT_STREAM,      // Macro argument expansion
-} LexemStreamType;
+scanProjectForFilesAndIncludes(projectDir, includeDirs):
+  │
+  ├─ 1. Glob for compilation units
+  │     listFilesInDirectory(projectDir, recursive)
+  │     Filter to CU extensions (.c, .y)
+  │     → discoveredCUs (StringList)
+  │
+  ├─ 2. For each CU, scan for includes
+  │     scanFileForIncludes(cuPath):
+  │       Read file line by line
+  │       Match #include "filename" (quoted includes only)
+  │       For each match:
+  │         resolveIncludePath(filename, includerDir, includeDirs)
+  │         addIncludeReference(includedFileNum, includerPosition)
+  │         Recurse into the included file (transitive)
+  │
+  └─ 3. Return discoveredCUs for deletion detection
 ----
 
-NOTE: Historically, there was also a `CACHED_STREAM` type when the caching mechanism was still active. This confirms that stream types are fundamentally about **buffer ownership and refill strategy** - each type encodes where the buffer came from and how to handle it when exhausted.
+==== Include Path Resolution
 
-**NORMAL_STREAM**::
-Buffer from file's `lexemBuffer` or a local temporary. Not allocated from arena memory, so no cleanup needed when stream exhausted.
+`resolveIncludePath()` tries directories in order:
 
-**MACRO_STREAM**::
-Buffer allocated from `macroBodyMemory` arena during macro expansion. Must call `mbmFreeUntil(stream.begin)` when popping from stack to free the arena allocation.
+1. **Includer's directory** — `#include "foo.h"` in `/project/src/bar.c` looks for
+   `/project/src/foo.h` first
+2. **Include directories** — walks `options.includeDirs` (from compiler interrogation
+   or `.c-xrefrc`)
+3. **Fallback** — includer-relative (same as step 1, for robustness)
 
-**MACRO_ARGUMENT_STREAM**::
-Buffer allocated from `ppmMemory` arena during macro argument expansion. Signals `END_OF_MACRO_ARGUMENT_EXCEPTION` when exhausted (cleanup handled by caller).
+This matches standard C compiler behavior for quoted includes.
 
-==== The Refill Algorithm
+==== What It Produces
 
-When `currentInput` runs out of lexems (`read >= write`), `refillInputIfEmpty()` uses the stream type to decide what to do:
+The scan populates the same data structures that full parsing would:
 
-[source,c]
+`TypeCppInclude` references with `UsageUsed`::
+  Created by `addIncludeReference()`. Each reference records which file includes which,
+  with the includer's position. These are the edges that Entry Refresh Pass 2 queries
+  to find includers of stale headers.
+
+`TypeCppInclude` references with `UsageDefined`::
+  Identity references (a file "defines" itself as an includable entity). Created by
+  `addFileAsIncludeReference()`.
+
+File table entries::
+  New files discovered during include resolution are added to the file table.
+
+The key insight is that the scan produces **the same `TypeCppInclude` references** that
+full parsing creates. Code that queries the include graph (like
+`collectIncludersOfStaleHeader()` in Entry Refresh) doesn't care whether the references
+came from scanning or parsing.
+
+==== Current Limitation: Angle-Bracket Includes
+
+The scan only captures `#include "..."` (quoted includes), not `#include <...>` (angle-bracket
+includes). This is deliberate: without the header-filtered sibling optimization (see
+Entry Refresh Pass 3 limitations), scanning `<string.h>` and similar ubiquitous system
+headers would cause near-full-project sibling explosions.
+
+Full parsing does discover `<...>` includes. On the first request after cold start, Pass 1
+reparses the request CU with the full parser, which finds the `<...>` edges. Pass 3 may
+then discover additional siblings via those edges — this is the cause of the "double
+progress bar" on cold start.
+
+==== Deletion Detection
+
+After scanning, `markMissingFilesAsDeleted()` iterates the file table and marks entries
+whose files no longer exist on disk. This handles the case where a user deletes a source
+file between sessions. Marked files have their references purged via
+`removeReferenceableItemsForFile()` so that navigation doesn't point to deleted files.
+
+Only CUs are checked (they are glob-discoverable). Header files are not checked because
+they might legitimately be absent if they're generated or live outside the project tree.
+
+[[entry-refresh]]
+=== Entry Refresh
+
+Entry refresh is the per-request mechanism that ensures the reference table is
+up-to-date before any operation executes. It runs at the top of `callServer()`, before
+the operation dispatches. See <<06-principles.adoc#,Principles>> for why this is
+necessary.
+
+==== Overview
+
+The refresh has three passes, each addressing a different source of staleness.
+Pass ordering is critical — later passes depend on data refreshed by earlier ones.
+
+[source]
 ----
-while (currentInput.read >= currentInput.write) {
-    LexemStreamType inputType = currentInput.streamType;
-
-    if (insideMacro()) {  // Stack not empty
-        if (inputType == MACRO_ARGUMENT_STREAM) {
-            return END_OF_MACRO_ARGUMENT_EXCEPTION;
-        }
-        // Only free MACRO_STREAM buffers (allocated from macroBodyMemory)
-        if (inputType == MACRO_STREAM) {
-            mbmFreeUntil(currentInput.begin);
-        }
-        currentInput = macroInputStack[--macroStackIndex];  // Pop
-    }
-    else if (inputType == NORMAL_STREAM) {
-        // Refill from file
-        buildLexemFromCharacters(&currentFile.characterBuffer, ...);
-    }
-}
+callServer():
+  │
+  ├─ loadAllOpenedEditorBuffers()
+  ├─ closeEditorBuffersNoLongerPreloaded()   ← ghost buffer pruning
+  │
+  ├─ IF projectContextInitialized:
+  │   reparseStalePreloadedFiles(baseArgs)
+  │   │
+  │   ├─ Pass 1: reparse stale CUs
+  │   │   FOR each editor buffer WHERE fileNumberIsStale():
+  │   │     IF isCompilationUnit: reparseStaleFile()
+  │   │
+  │   ├─ Pass 2: reparse includers of stale headers
+  │   │   FOR each editor buffer WHERE fileNumberIsStale():
+  │   │     IF NOT isCompilationUnit (i.e. header):
+  │   │       collectIncludersOfStaleHeader() → list of CU file numbers
+  │   │   FOR each collected CU: reparseStaleFile()
+  │   │
+  │   └─ Pass 3: parse unparsed sibling CUs (cold start)
+  │       Find CUs sharing headers with request file but never parsed
+  │       FOR each: reparseStaleFile()
+  │
+  └─ dispatch operation
 ----
 
-==== Key Invariant
+==== Pass 1: Reparse Stale CUs
 
-**Stream type must match buffer allocation:**
+The simplest case: the user edited and saved a `.c` file, or the client sent a
+`-preload` with newer content. The CU itself is stale.
 
-* `MACRO_STREAM` → buffer allocated from `macroBodyMemory`
-* `NORMAL_STREAM` → buffer NOT from macro arenas
-* `MACRO_ARGUMENT_STREAM` → buffer from `ppmMemory`
+**Detection:** `fileNumberIsStale()` returns true when:
 
-Violating this invariant causes fatal errors when trying to free buffers from the wrong arena.
+* `lastParsedMtime == 0` — explicitly marked stale (e.g. after refactoring), OR
+* The file has a preloaded editor buffer whose `modificationTime` exceeds
+  `lastParsedMtime`
 
-==== Common Bug Pattern
+**Action:** `reparseStaleFile()` removes all existing references for the file
+(`removeReferenceableItemsForFile`), then parses it fresh (`parseFileWithFullInit`).
 
-Pushing a `NORMAL_STREAM` onto the macro stack, then trying to free it as if it were `MACRO_STREAM`:
+**Side effect:** Reparsing a CU also refreshes its `TypeCppInclude` references (the
+include edges). This is essential for Pass 2.
 
-[source,c]
-----
-// WRONG: Blindly freeing without checking type
-mbmFreeUntil(currentInput.begin);  // Fails if currentInput is NORMAL_STREAM!
+==== Pass 2: Reparse Includers of Stale Headers
 
-// CORRECT: Check type first
-if (inputType == MACRO_STREAM) {
-    mbmFreeUntil(currentInput.begin);
-}
-----
+If the user edited a header file, all CUs that include it (transitively) have stale
+references — even though those CUs themselves haven't changed.
+
+**Detection:** Same `fileNumberIsStale()` check, but filtered to non-CU files (headers).
+
+**Discovery:** `collectIncludersOfStaleHeader()` walks the reverse include graph:
+
+1. Find all `TypeCppInclude` references where `usage == UsageUsed` and
+   `position.file == includerFileNumber` — these are include edges
+2. For each includer, if it's a CU, add it to the reparse list
+3. If it's another header, recurse (transitive closure)
+
+**Why Pass 1 must come first:** When a user adds a new `#include "foo.h"` to `bar.c`,
+both `bar.c` (the includer) and `foo.h` (the includee) may be stale. Pass 1 reparses
+`bar.c`, which creates the new `TypeCppInclude` reference for the `bar.c → foo.h` edge.
+Pass 2 can then find this edge when looking for includers of `foo.h`. Without Pass 1
+first, the edge wouldn't exist yet.
+
+==== Pass 3: Parse Unparsed Sibling CUs
+
+On cold start (no snapshot, or snapshot doesn't cover everything), many CUs have never
+been parsed. If the user navigates to a symbol defined in a header, the server needs
+references from _other_ CUs that include that header — otherwise navigation only shows
+the definition, not all usage sites.
+
+**Discovery:** `parseUnparsedSiblingCUs()` uses a forward-include lookup:
+
+1. Iterate all files in the file table that have `TypeCppInclude` references
+2. For each, check if the request file is among its includers
+3. If so, collect CUs that also include the same headers ("siblings")
+4. Filter to CUs with `lastParsedMtime == 0` (never parsed)
+
+**Scope control:** Only CUs sharing headers with the _request file_ are parsed — not
+the entire project. This keeps cold-start latency proportional to the local
+neighborhood of the file being worked on.
+
+**Current limitation:** The sibling lookup is based on all shared headers, not just
+the header containing the navigated symbol. This can over-parse on projects with
+widely-shared utility headers (e.g. `avutil.h` in ffmpeg pulls in ~978 siblings).
+A future optimization would filter to sibling CUs sharing the _specific_ header that
+defines the symbol being navigated to.
+
+==== Staleness After Refactoring
+
+Refactoring operations (rename, move-function, etc.) modify editor buffers in memory.
+The disk files and their mtimes are unchanged, so the normal mtime-based staleness
+detection doesn't trigger.
+
+After `serverPerformRefactoring()` completes, `markModifiedEditorBuffersAsStale()`
+iterates all editor buffers with `modifiedSinceLastQuasiSave == true` and sets their
+file's `lastParsedMtime = 0`. This causes `fileNumberIsStale()` to return true on
+the next request, triggering a reparse via Pass 1.
+
+This is called _before_ `quasiSaveModifiedEditorBuffers()`, which clears the
+`modifiedSinceLastQuasiSave` flag and updates the buffer's `modificationTime`.
 
 === Editor Buffers and Incremental Updates
 
@@ -175,16 +259,72 @@ This ensures that the server analyzes what the user sees in the editor, not the 
 [source,c]
 ----
 EditorBuffer {
-    char *name;              // Original filename
-    char *preLoadedFromFile; // Path to temp file with buffer content
-    time_t modificationTime; // When buffer was last modified
+    char *name;                    // Original filename
+    char *preLoadedFromFile;       // Path to temp file with buffer content
+    time_t modificationTime;       // When buffer was last modified
+    bool modified;                 // Content changed (by refactoring)
+    bool modifiedSinceLastQuasiSave;  // Dirty flag for quasi-save
+    bool preloadedThisRequest;     // Was this buffer preloaded on this request?
     ...
 }
 ----
 
-* Created by `loadAllOpenedEditorBuffers()` at the start of each server operation
-* Lives only for the duration of that operation
-* Destroyed by `closeAllEditorBuffers()` at operation end
+Editor buffers have different origins and lifetimes:
+
+Preloaded buffers::
+  Created by `openEditorBufferFromPreload()` when the client sends `-preload`. These
+  have `preLoadedFromFile` set to the temp file path. They persist across requests as
+  long as the client keeps sending the preload.
+
+Refactoring buffers::
+  Created by editor operations during refactoring (e.g. `findOrCreateAndLoadEditorBufferForFile`).
+  These have `preLoadedFromFile == NULL` and `modified == true`. They persist because
+  `bufferIsCloseable()` returns false for modified buffers.
+
+Transient buffers::
+  Created during normal request processing (parsing). These have `preLoadedFromFile == NULL`
+  and `modified == false`. They are destroyed by `closeAllEditorBuffersIfClosable()` at the
+  end of each request.
+
+==== Preload Protocol and Ghost Buffer Pruning
+
+The Emacs client sends `-preload` for **all modified buffers** on **every request**. This
+is not an optimization — it is a protocol invariant that the server depends on:
+
+* **Presence of `-preload`:** "This buffer is modified in the editor; use this content."
+* **Absence of `-preload`:** "This buffer is no longer modified; the disk file is current."
+
+The server uses this to detect when a user saves or closes a file:
+
+[source]
+----
+server() request loop:
+  │
+  ├─ clearPreloadedThisRequestFlags()     ← reset all flags to false
+  ├─ initServer(pipedOptions)             ← parses options, sets flags on preloaded buffers
+  │   └─ openEditorBufferFromPreload()
+  │       └─ buffer->preloadedThisRequest = true
+  │
+  └─ callServer()
+      └─ closeEditorBuffersNoLongerPreloaded()
+          FOR each editor buffer:
+            IF preLoadedFromFile != NULL AND NOT preloadedThisRequest:
+              removeReferenceableItemsForFile(buffer->fileNumber)  ← purge stale refs
+              deregisterEditorBuffer + freeEditorBuffer             ← close buffer
+----
+
+Without ghost buffer pruning, a stale preloaded buffer would persist indefinitely. The
+server would keep parsing from the old content even though the user saved the file and
+the disk version is newer.
+
+**Reference cleanup is essential:** Simply closing the buffer is not enough. The reference
+table still contains entries from the stale parse. `removeReferenceableItemsForFile()` must
+be called before closing the buffer, so that the next parse (from the disk file) populates
+the table with fresh references without duplicates.
+
+**Navigation sessions are safe:** Sessions store `Reference` structs (position-based), not
+`EditorMarker` pointers. Closing a buffer does not create dangling pointers in the
+browsing stack.
 
 ==== Modification Time Tracking
 
@@ -462,11 +602,229 @@ The key insights:
 
 1. **Editor buffers are the source of truth** when they exist (via preloading)
 2. **Modification times** are tracked uniformly for files and buffers
-3. **Fast update** trades completeness for speed (doesn't chase headers)
-4. **Full update** is more thorough but can reparse many files
-5. **References live in two places**: canonical table (arena memory) and session copies (malloc)
-6. **Sessions are snapshots** that can become stale, requiring incremental rebuilding during navigation
+3. **Ghost buffer pruning** detects when the client stops preloading a buffer and discards the stale copy
+4. **References live in two places**: canonical table (arena memory) and session copies (malloc)
+5. **Sessions are snapshots** that can become stale, requiring incremental rebuilding during navigation
 
-=== How does ...
+NOTE: The Fast Update and Full Update strategies described above are the **legacy**
+`-update`/`-fastupdate` path used by the Xref mode and the old `-refactory` mode. In the
+current server mode, these are replaced by the <<entry-refresh,Entry Refresh>> algorithm,
+which runs automatically on every request and combines the thoroughness of full update
+(header propagation via Pass 2) with the speed of fast update (only reparsing what's
+actually stale).
 
-TBD.
+=== Server-Side Refactoring
+
+Refactoring was originally implemented as a separate process (`RefactoryMode`): the
+editor spawned a fresh `c-xref -refactory` process for each refactoring operation.
+This process started cold — it called `callXref()` to rebuild references, performed
+the refactoring, and exited.
+
+With the "memory as truth" architecture, this approach doesn't work: the separate
+process has no access to the running server's reference table. The solution is to
+perform refactoring as a server operation, where the refactoring code runs inside
+the already-initialized server with its populated reference table.
+
+NOTE: The legacy `-refactory` path still exists and is exercised by some tests and
+the default Emacs client path. It will be removed once all refactorings are validated
+in the server path. The `ensureReferencesAreUpdated` calls in the refactoring code are
+guarded with `if (refactoringOptions.mode == RefactoryMode)` — they are only needed in
+the legacy path, where the server's entry refresh has not run.
+
+==== How Server-Side Refactoring Works
+
+[source]
+----
+answerEditorAction():
+  case OP_REFACTORY:
+    serverPerformRefactoring()
+      │
+      ├─ deepCopyOptionsFromTo(&options, &refactoringOptions)
+      ├─ loadAllOpenedEditorBuffers()
+      ├─ quasiSaveModifiedEditorBuffers()
+      │
+      ├─ Create point/mark EditorMarkers from cursor/mark offsets
+      │
+      ├─ Dispatch on refactoringOptions.theRefactoring:
+      │   ├─ AVR_RENAME_SYMBOL    → renameAtPoint(point)
+      │   ├─ AVR_EXTRACT_*        → extractFunction/Macro/Variable(point, mark)
+      │   ├─ AVR_ADD/DEL/MOVE_PARAMETER → parameterManipulation(point, ...)
+      │   ├─ AVR_MOVE_FUNCTION    → moveFunction(point)
+      │   ├─ AVR_ORGANIZE_INCLUDES → organizeIncludes(point)
+      │   └─ AVR_RENAME_MODULE/INCLUDED_FILE → renameAtInclude(point)
+      │
+      ├─ markModifiedEditorBuffersAsStale()   ← mark for entry refresh
+      └─ quasiSaveModifiedEditorBuffers()     ← update buffer mtimes
+----
+
+**Key differences from the legacy `-refactory` path:**
+
+No `callXref()` or `mainTaskEntryInitialisations()`::
+  The server is already initialized. The reference table is populated by the entry
+  refresh that ran before this request. The refactoring code can directly use the
+  references.
+
+No `ensureReferencesAreUpdated()`::
+  In the legacy path, this function ran a mini-`callXref()` to populate references
+  for the specific symbol being refactored. In the server path, references are already
+  fresh from entry refresh. The calls are guarded by `if (refactoringOptions.mode == RefactoryMode)`.
+
+Mark stale on completion::
+  After the refactoring, `markModifiedEditorBuffersAsStale()` sets `lastParsedMtime = 0`
+  on all files whose editor buffers were modified. This ensures the next request's entry
+  refresh reparses them, picking up the post-refactoring state. Without this, the
+  reference table would remain stale for files modified by the refactoring (particularly
+  files other than the next request's target file).
+
+`parseBufferUsingServer()` calls remain::
+  Some refactoring functions call `parseBufferUsingServer()` internally (e.g. to gather
+  semantic information for safety checks). In the server path, these calls are harmless
+  — they parse into the existing reference table without wiping `cxMemory`.
+
+==== Interactive Dialogs
+
+Some refactorings involve interactive dialogs with the client:
+
+Symbol disambiguation (`beInteractive`)::
+  When multiple symbols match the cursor position, `displayResolutionDialog()` sends
+  an `<olcx-list>` to the client and calls `beInteractive()`. This works in the server
+  path because the server loop is blocked on the call stack — `beInteractive()` reads
+  from the pipe via `readOptionsFromPipe()` without conflicting with the outer server
+  loop. A local copy of `savedOptions` prevents the inner `callServer()` from clobbering
+  the refactoring's option state.
+
+Confirmation (`ppcAskConfirmation`)::
+  The server writes `<ask-confirmation>` to the output and continues. The client shows a
+  yes/no dialog; if the user says "no", the client aborts output processing. No server
+  pause is needed — this is entirely client-side.
+
+Extraction dialog::
+  The server computes the extraction and sends `<extraction-dialog>` with the replacement
+  strings. The client applies the changes to its buffer. The server's buffer is not
+  modified by extraction — the client sends the modified content as a `-preload` on the
+  next request.
+
+=== How is an Extract refactoring performed?
+
+The region (mark and point/cursor positions) is sent to the _c-xref_
+server in a `-refactory -rfct-extract` command.
+
+The server parses the relevant file and sets some information that can
+be used in some prechecks that are then performed, such as structure
+check, and then the server answers with
+
+```
+<extraction-dialog>
+    <str .... /str>
+    <str .... /str>
+    <str .... /str>
+</extraction-dialog>
+```
+
+The first string is the code that will replace the extracted code,
+such as a call to the extracted function. The second string is the header
+part that will preceed the extracted code ("preamble"), and the third is then of
+course any code that needs to go after the extracted code ("postamble").
+
+The actual code in the region is never sent to, or returned from, the
+server. This is handled completely by the editor extension, and used
+verbatim (except if it is a macro that is extracted, in which case
+each line is terminated by the backslash) so no changes to that code
+can be made.
+
+The pre- and post-ambles might be of varying complexity. E.g. when
+extracting a macro, the postamble can be completely empty. When
+extracting a function both may contain code to transfer and restore
+parameters into local variables to propagate in/out variables as
+required.
+
+1. The editor then requests a name from the user that it will use in a
+rename operation that renames the default named
+function/macro/variable.
+
+*_Two-Phase Architecture_*
+
+Extraction operates in two phases:
+
+1. **Collection Phase (during parsing)**: Parser semantic hooks track control flow by registering synthetic labels and collecting references within the marked region.
+
+2. **Analysis Phase (after parsing)**: The extraction module analyzes the collected control flow data, classifies variables by usage patterns, and generates the refactored code (call site, function definition, postamble).
+
+This separation keeps the parser clean and makes extraction logic independently testable.
+
+=== How does lexem stream management work?
+
+Lexical analysis uses a stack of `LexemStream` structures to handle nested macro expansions. The key insight is that the stream type acts as a **discriminator** for buffer ownership and cleanup strategy.
+
+==== The Stream Types
+
+[source,c]
+----
+typedef enum {
+    NORMAL_STREAM,              // File or local buffer
+    MACRO_STREAM,               // Macro expansion
+    MACRO_ARGUMENT_STREAM,      // Macro argument expansion
+} LexemStreamType;
+----
+
+NOTE: Historically, there was also a `CACHED_STREAM` type when the caching mechanism was still active. This confirms that stream types are fundamentally about **buffer ownership and refill strategy** - each type encodes where the buffer came from and how to handle it when exhausted.
+
+**NORMAL_STREAM**::
+Buffer from file's `lexemBuffer` or a local temporary. Not allocated from arena memory, so no cleanup needed when stream exhausted.
+
+**MACRO_STREAM**::
+Buffer allocated from `macroBodyMemory` arena during macro expansion. Must call `mbmFreeUntil(stream.begin)` when popping from stack to free the arena allocation.
+
+**MACRO_ARGUMENT_STREAM**::
+Buffer allocated from `ppmMemory` arena during macro argument expansion. Signals `END_OF_MACRO_ARGUMENT_EXCEPTION` when exhausted (cleanup handled by caller).
+
+==== The Refill Algorithm
+
+When `currentInput` runs out of lexems (`read >= write`), `refillInputIfEmpty()` uses the stream type to decide what to do:
+
+[source,c]
+----
+while (currentInput.read >= currentInput.write) {
+    LexemStreamType inputType = currentInput.streamType;
+
+    if (insideMacro()) {  // Stack not empty
+        if (inputType == MACRO_ARGUMENT_STREAM) {
+            return END_OF_MACRO_ARGUMENT_EXCEPTION;
+        }
+        // Only free MACRO_STREAM buffers (allocated from macroBodyMemory)
+        if (inputType == MACRO_STREAM) {
+            mbmFreeUntil(currentInput.begin);
+        }
+        currentInput = macroInputStack[--macroStackIndex];  // Pop
+    }
+    else if (inputType == NORMAL_STREAM) {
+        // Refill from file
+        buildLexemFromCharacters(&currentFile.characterBuffer, ...);
+    }
+}
+----
+
+==== Key Invariant
+
+**Stream type must match buffer allocation:**
+
+* `MACRO_STREAM` → buffer allocated from `macroBodyMemory`
+* `NORMAL_STREAM` → buffer NOT from macro arenas
+* `MACRO_ARGUMENT_STREAM` → buffer from `ppmMemory`
+
+Violating this invariant causes fatal errors when trying to free buffers from the wrong arena.
+
+==== Common Bug Pattern
+
+Pushing a `NORMAL_STREAM` onto the macro stack, then trying to free it as if it were `MACRO_STREAM`:
+
+[source,c]
+----
+// WRONG: Blindly freeing without checking type
+mbmFreeUntil(currentInput.begin);  // Fails if currentInput is NORMAL_STREAM!
+
+// CORRECT: Check type first
+if (inputType == MACRO_STREAM) {
+    mbmFreeUntil(currentInput.begin);
+}
+----
