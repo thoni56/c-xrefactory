@@ -653,13 +653,16 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
                     unparsedCUs, totalCUs);
             if (waitForUserConfirmation(msg)) {
                 int parsed = 0;
-                initProgress("Parsing for search...");
+                char progressFormat[128];
+                snprintf(progressFormat, sizeof(progressFormat),
+                         "Parsing %d CUs for search... %%d remaining", unparsedCUs);
+                initProgress(progressFormat);
                 for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
                     FileItem *fi = getFileItemWithFileNumber(i);
                     if (isCompilationUnit(fi->name) && fi->lastParsedMtime == 0) {
                         reparseStaleFile(i, baseArgs);
                         parsed++;
-                        writeRelativeProgress((100 * parsed) / unparsedCUs);
+                        writeProgressInformation(unparsedCUs - parsed);
                     }
                 }
                 log_info("Search: parsed %d CUs", parsed);

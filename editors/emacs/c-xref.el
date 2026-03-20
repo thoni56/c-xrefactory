@@ -2482,12 +2482,13 @@ No.
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-end-ctag tag)
     (setq conf (c-xref-yes-or-no-window cc t dispatch-data))
-    (if (not conf)
-            (progn
-              (if c-xref-debug-mode (message "exiting: %s" tag))
-              (error "exiting")
-              )
-      )
+    (sit-for 0) ;; Force redisplay to close dialog window before waiting
+    ;; Send bare response — no extra options, waitForUserConfirmation
+    ;; reads lines with fgets and expects exact match
+    (let ((proc (cdr (assoc 'process dispatch-data))))
+      (c-xref-send-data-to-running-process (if conf "-continue" "-cancel") proc)
+      (c-xref-wait-until-task-sync proc nil)
+      (c-xref-server-read-answer-file-and-dispatch dispatch-data nil))
     i
     ))
 
