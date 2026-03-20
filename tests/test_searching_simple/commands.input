@@ -3,4 +3,6 @@ CXREF -xrefactory-II -server
 <sync>
 -olcxsearch=int* -olcxlccursor=1:5 -olcursor=5 CURDIR/source.c -olcursor=85 -p CURDIR
 <sync>
+-continue
+<sync>
 <exit>

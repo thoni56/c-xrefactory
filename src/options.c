@@ -28,7 +28,6 @@
 #include "options_config.h"
 
 
-#define END_OF_OPTIONS_STRING "end-of-options"
 #define MAX_STD_ARGS (MAX_FILES+20)
 
 

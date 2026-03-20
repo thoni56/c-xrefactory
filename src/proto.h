@@ -77,11 +77,12 @@ typedef enum {
 } SearchDepth;
 
 
-/* *******************      refactoring continuations      *************** */
+/* *******************      confirmation responses      *************** */
 
 typedef enum {
-    RC_NONE,     // do not continue, keep interactive
-    RC_CONTINUE, // continue, no special info
+    RC_NONE,     // no response yet
+    RC_CONTINUE, // user confirmed, continue
+    RC_CANCEL,   // user declined, cancel
 } ContinueRefactoringKind;
 
 /* *******************      error messages type      *************** */

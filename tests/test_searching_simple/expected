@@ -8,6 +8,11 @@ end-of-options
 end-of-options
 
 <sync>
+<ask-confirmation len=<n>>1 of 1 CUs not yet parsed. Parse all before searching?</ask-confirmation>
+-continue
+end-of-options
+
+<sync>
 <symbol-list>
  <str len=<n>>int_which_is_public :source.c :CURDIR/source.c</str>
  <str len=<n>>int_which_is_static :source.c :CURDIR/source.c</str>

@@ -1,5 +1,7 @@
 #include "server.h"
 
+#include <string.h>
+
 #include "commons.h"
 #include "complete.h"
 #include "cxfile.h"
@@ -521,6 +523,40 @@ static void parseDiscoveredCompilationUnits(ArgumentsVector baseArgs) {
     log_info("Startup: parsed %d compilation units", parsed);
 }
 
+static bool waitForUserConfirmation(char *message) {
+    ppcAskConfirmation(message);
+    closeOutputFile();
+    ppcSynchronize();
+
+    /* Read the response directly from stdin without using readOptionsFromPipe,
+     * which would overwrite the static optMemory buffer and clobber requestArgs. */
+    char line[MAX_OPTION_LEN];
+    bool confirmed = false;
+
+    while (fgets(line, sizeof(line), stdin) != NULL) {
+        int len = strlen(line);
+        if (len > 0 && line[len - 1] == '\n')
+            line[len - 1] = '\0';
+
+        if (strcmp(line, END_OF_OPTIONS_STRING) == 0)
+            break;
+        if (strcmp(line, "-continue") == 0)
+            confirmed = true;
+        if (strcmp(line, "-cancel") == 0)
+            confirmed = false;
+    }
+
+    /* Consume the trailing empty line (protocol separator) */
+    int c = getc(stdin);
+    if (c == EOF) {
+        log_error("Broken pipe in waitForUserConfirmation");
+        exit(EXIT_FAILURE);
+    }
+
+    openOutputFile(options.outputFileName);
+    return confirmed;
+}
+
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     static bool projectContextInitialized = false;
     static bool scanDone = false;
@@ -598,6 +634,37 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     if (projectContextInitialized && hasInputFile
         && options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
         parseUnparsedSiblingCUs(requestFileNumber, baseArgs);
+    }
+
+    /* Search completeness: if unparsed CUs exist, ask user before searching */
+    if (projectContextInitialized && options.serverOperation == OP_SEARCH) {
+        int totalCUs = 0, unparsedCUs = 0;
+        for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+            FileItem *fi = getFileItemWithFileNumber(i);
+            if (isCompilationUnit(fi->name)) {
+                totalCUs++;
+                if (fi->lastParsedMtime == 0)
+                    unparsedCUs++;
+            }
+        }
+        if (unparsedCUs > 0) {
+            char msg[TMP_STRING_SIZE];
+            sprintf(msg, "%d of %d CUs not yet parsed. Parse all before searching?",
+                    unparsedCUs, totalCUs);
+            if (waitForUserConfirmation(msg)) {
+                int parsed = 0;
+                initProgress("Parsing for search...");
+                for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+                    FileItem *fi = getFileItemWithFileNumber(i);
+                    if (isCompilationUnit(fi->name) && fi->lastParsedMtime == 0) {
+                        reparseStaleFile(i, baseArgs);
+                        parsed++;
+                        writeRelativeProgress((100 * parsed) / unparsedCUs);
+                    }
+                }
+                log_info("Search: parsed %d CUs", parsed);
+            }
+        }
     }
 
     if (needsReferenceDatabase(options.serverOperation))

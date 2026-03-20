@@ -16,6 +16,8 @@
 #include "stringlist.h"
 
 
+#define END_OF_OPTIONS_STRING "end-of-options"
+
 /* Working mode in which the task is invoked */
 typedef enum {
     UndefinedMode = 0, /* Explicitly zero so we can assert(mode) */
