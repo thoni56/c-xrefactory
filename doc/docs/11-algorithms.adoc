@@ -693,10 +693,15 @@ Symbol disambiguation (`beInteractive`)::
   loop. A local copy of `savedOptions` prevents the inner `callServer()` from clobbering
   the refactoring's option state.
 
-Confirmation (`ppcAskConfirmation`)::
-  The server writes `<ask-confirmation>` to the output and continues. The client shows a
-  yes/no dialog; if the user says "no", the client aborts output processing. No server
-  pause is needed — this is entirely client-side.
+Confirmation (`ppcAskConfirmation` / `waitForUserConfirmation`)::
+  The server writes `<ask-confirmation>` followed by `<sync>` and waits for a response.
+  The client shows a yes/no dialog and sends `-continue` or `-cancel` back through
+  the pipe. The server reads the response directly from stdin (bypassing
+  `readOptionsFromPipe` to avoid clobbering the request's option buffer), then continues
+  with the operation. Both responses produce output — "yes" may trigger additional work
+  (e.g. parsing), while "no" proceeds with what is available. +
+  Used by search completeness detection: when unparsed CUs exist, the server asks the
+  user whether to parse them all before searching.
 
 Extraction dialog::
   The server computes the extraction and sends `<extraction-dialog>` with the replacement

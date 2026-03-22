@@ -570,7 +570,9 @@ static void writeCxFiles(int updating, char *fileName) {
 }
 
 void saveReferencesToStore(bool updating, char *fileName) {
+    ENTER();
     writeCxFiles(updating, fileName);
+    LEAVE();
 }
 
 static void writeCxFileCompatibilityError(char *message) {

@@ -95,6 +95,29 @@ entire project to reparse when they changed one file. On a large codebase (e.g. 
 with 2600+ CUs), the difference between "reparse everything" and "reparse the 7 CUs
 that share the edited header" is the difference between minutes and milliseconds.
 
+=== Preserve Parsed Work
+
+Parsing is the most expensive operation the server performs. On large codebases, a full
+parse can take tens of minutes. Some operations — like a project-wide search on cold
+start — may require parsing thousands of CUs. The user may abort (Ctrl-g) or the
+server may crash during such long-running operations.
+
+The principle is: **parsed work is valuable — save it incrementally so that progress
+survives interruption.**
+
+During long-running parse operations, the server periodically saves the reference table
+to the persisted snapshot. If the operation is interrupted, the next startup restores
+the snapshot and only the remaining unparsed CUs need processing.
+
+The snapshot save is safe at any point because the `staleify` mechanism
+(`markPreloadedFilesAsAncient`) ensures that editor buffer state is not persisted — only
+disk-file-derived references are saved, and mtime-based validation remains correct at
+next startup.
+
+**Measured cost:** On ffmpeg (2600+ CUs), a full snapshot save takes approximately
+1 second. This is acceptable at intervals (e.g. every 100 CUs) within a long-running
+parse loop — a ~1% overhead that prevents losing minutes of work on interruption.
+
 === Terminology
 
 The following terms are used throughout the documentation and codebase. Preferred terms

@@ -308,9 +308,9 @@ static void setupProgress(int cuCount, int skippedCapped) {
     int totalFound = cuCount + skippedCapped;
     if (skippedCapped > 0)
         snprintf(progressFormat, sizeof(progressFormat),
-                 "%d unparsed siblings, parsing %d... %%d remaining", totalFound, cuCount);
+                 "%d unparsed sibling compilation units, parsing %d... %%d remaining", totalFound, cuCount);
     else
-        snprintf(progressFormat, sizeof(progressFormat), "Parsing %d sibling files... %%d remaining",
+        snprintf(progressFormat, sizeof(progressFormat), "Parsing %d sibling compilation units... %%d remaining",
                  cuCount);
     initProgress(progressFormat);
 }
@@ -649,13 +649,13 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         }
         if (unparsedCUs > 0) {
             char msg[TMP_STRING_SIZE];
-            sprintf(msg, "%d of %d CUs not yet parsed. Parse all before searching?",
+            sprintf(msg, "%d of %d compilation units not yet parsed. Parse all before searching?",
                     unparsedCUs, totalCUs);
             if (waitForUserConfirmation(msg)) {
                 int parsed = 0;
                 char progressFormat[128];
                 snprintf(progressFormat, sizeof(progressFormat),
-                         "Parsing %d CUs for search... %%d remaining", unparsedCUs);
+                         "Parsing %d compilation units for search... %%d remaining", unparsedCUs);
                 initProgress(progressFormat);
                 for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
                     FileItem *fi = getFileItemWithFileNumber(i);
@@ -663,6 +663,9 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
                         reparseStaleFile(i, baseArgs);
                         parsed++;
                         writeProgressInformation(unparsedCUs - parsed);
+                        /* Save snapshot periodically so progress survives Ctrl-g/crash */
+                        if (parsed % 100 == 0)
+                            saveReferences();
                     }
                 }
                 log_info("Search: parsed %d CUs", parsed);
