@@ -1,3 +1,13 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-rename -renameto=VVV -olcursor=6790 CURDIR/main.c -p CURDIR
+end-of-options
+
+<sync>
 <goto>
  <position-off off=6785 len=<n>>CURDIR/main.c</position-off>
 </goto>
@@ -124,3 +134,6 @@
 <goto>
  <position-off off=6788 len=<n>>CURDIR/main.c</position-off>
 </goto>
+-exit
+end-of-options
+

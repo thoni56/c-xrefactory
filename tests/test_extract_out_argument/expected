@@ -1,3 +1,13 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-extract-function -olmark=50 -olcursor=80 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
 <extraction-dialog type=newFunction_> <str len=<n>>	newFunction_(&a, &b);
 </str>
  <str len=<n>>static void newFunction_(int *_a, int *_b) {
@@ -10,4 +20,6 @@
 </str>
   <int val=1 len=<n>></int>
 </extraction-dialog>
-<sync>
+-exit
+end-of-options
+

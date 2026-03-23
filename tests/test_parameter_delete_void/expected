@@ -1,3 +1,13 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/hello.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-del-param -olcxparnum=1 -olcursor=17 CURDIR/hello.c -p CURDIR
+end-of-options
+
+<sync>
 <goto>
  <position-off off=17 len=<n>>CURDIR/hello.c</position-off>
 </goto>
@@ -13,4 +23,6 @@
 <goto>
  <position-off off=17 len=<n>>CURDIR/hello.c</position-off>
 </goto>
-<sync>
+-exit
+end-of-options
+

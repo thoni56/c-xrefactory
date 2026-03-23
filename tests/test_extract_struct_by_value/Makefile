@@ -1,12 +1,11 @@
-include ../Makefile.cli
-
-
-ARGUMENTS = -xrefactory-II -refactory -rfct-extract-function -olmark=93 -olcursor=114 $(CURDIR)/source.c
+include ../Makefile.server
 
 $(TEST):
-	$(COMMAND) -log=log $(EXTRA) > output.tmp
+	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
-	@$(VERIFY)
+	$(VERIFY)
 
-trace: EXTRA=-debug
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
+
+GDB_COMMANDS =

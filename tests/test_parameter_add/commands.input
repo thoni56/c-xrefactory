@@ -1,0 +1,6 @@
+CXREF -xrefactory-II -server
+-olcxgetprojectname CURDIR/source.c
+<sync>
+-rfct-add-param -olcxparnum=2 "-rfct-parameter-name=int arg" -rfct-parameter-value=42 -olcursor=17 CURDIR/source.c -p CURDIR
+<sync>
+<exit>

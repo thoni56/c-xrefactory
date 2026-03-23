@@ -1,11 +1,23 @@
-<goto>
- <position-off off=70 len=<n>>CURDIR/source.c</position-off>
-</goto>
-<error len=<n>>Parameter number out of limits
-</error>
-<error len=<n>>Parameter number out of limits
-</error>
-<goto>
- <position-off off=70 len=<n>>CURDIR/source.c</position-off>
-</goto>
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/source.c
+end-of-options
+
 <sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-add-param -olcxparnum=14 "-rfct-parameter-name=int arg" -rfct-parameter-value=42 -olcursor=70 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=70 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<error len=<n>>Parameter number out of limits
+</error>
+<error len=<n>>Parameter number out of limits
+</error>
+<goto>
+ <position-off off=70 len=<n>>CURDIR/source.c</position-off>
+</goto>
+-exit
+end-of-options
+

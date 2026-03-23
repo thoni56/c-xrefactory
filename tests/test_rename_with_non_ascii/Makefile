@@ -1,12 +1,11 @@
-include ../Makefile.cli
-
-
-ARGUMENTS = -xrefactory-II -refactory -rfct-rename -renameto=f22 -olcursor=131 source.c
+include ../Makefile.server
 
 $(TEST):
-	$(COMMAND) > output.tmp
-	$(NORMALIZE) output.tmp > output
+	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: ARGUMENTS += -debug
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
+
+GDB_COMMANDS =

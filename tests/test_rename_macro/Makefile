@@ -1,8 +1,11 @@
-include ../Makefile.cli
-
-ARGUMENTS = -xrefactory-II -refactory -rfct-rename -renameto=VVV -olcursor=6790 main.c
+include ../Makefile.server
 
 $(TEST):
-	$(COMMAND) -o output.tmp > log
-	$(NORMALIZE) output.tmp | sed '/<warning/d;/<\/warning>/d' > output
+	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
+
+trace: EXTRA = --extra '-debug -log=trace'
+trace: $(TEST)
+
+GDB_COMMANDS =

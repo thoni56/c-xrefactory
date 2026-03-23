@@ -1,6 +1,18 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-extract-variable -olmark=49 -olcursor=44 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
 <extraction-dialog type=newVariable_> <str len=<n>>newVariable_</str>
  <str len=<n>>int newVariable_ = </str>
  <str len=<n>>;</str>
   <int val=3 len=<n>></int>
 </extraction-dialog>
-<sync>
+-exit
+end-of-options
+
