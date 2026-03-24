@@ -66,7 +66,8 @@ Ensure(CxRef, will_return_no_active_project_if_no_optionfile_found) {
     expect(applyConventionBasedDatabasePath);
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(0)),
            will_return(&fileItem));
-    expect(searchForProjectConfigFileAndProjectForFile, when(sourceFilename, is_equal_to_string("file.c")),
+    expect(searchForProjectConfigFileAndProjectForFile,
+           when(sourceFilename, is_equal_to_string("file.c")),
            will_set_contents_of_parameter(foundConfigFilename, "", 1),
            will_set_contents_of_parameter(foundProjectName, "", 1));
     expect(ppcGenRecord,

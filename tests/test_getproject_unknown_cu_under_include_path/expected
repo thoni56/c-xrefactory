@@ -1,0 +1,19 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/project/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR/project</set-info>
+-olcxgetprojectname CURDIR/external/external.h
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR/project</set-info>
+-olcxgetprojectname CURDIR/external/external.c
+end-of-options
+
+<sync>
+<project-mismatch len=<n>>CURDIR/project</project-mismatch>
+-exit
+end-of-options
+

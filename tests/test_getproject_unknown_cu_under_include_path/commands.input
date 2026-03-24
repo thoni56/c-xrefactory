@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -server
+-olcxgetprojectname CURDIR/project/source.c
+<sync>
+-olcxgetprojectname CURDIR/external/external.h
+<sync>
+-olcxgetprojectname CURDIR/external/external.c
+<sync>
+<exit>

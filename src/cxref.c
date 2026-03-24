@@ -58,6 +58,16 @@ static unsigned menuFilterLevels[MAX_MENU_FILTER_LEVEL] = {
 static char *lockedProject = NULL;
 static char *lockedProjectRoot = NULL;
 
+static bool fileIsUnderIncludePaths(char *fileName) {
+    for (StringList *dir = options.includeDirs; dir != NULL; dir = dir->next) {
+        int len = strlen(dir->string);
+        if (strncmp(fileName, dir->string, len) == 0
+            && (fileName[len] == '/' || fileName[len] == '\0')) {
+            return true;
+        }
+    }
+    return false;
+}
 
 /* *********************************************************************** */
 
@@ -1794,8 +1804,10 @@ static void handleProject() {
             if (lockedProject != NULL) {
                 /* Server is locked - check if this file belongs to the locked project */
                 if (lockedProjectRoot != NULL) {
-                    /* Auto-detected project - check file path against project root */
-                    if (strncmp(fileName, lockedProjectRoot, strlen(lockedProjectRoot)) == 0) {
+                    /* Auto-detected project - file is in scope if under project root
+                     * or under a configured include path */
+                    if (strncmp(fileName, lockedProjectRoot, strlen(lockedProjectRoot)) == 0
+                        || fileIsUnderIncludePaths(fileName)) {
                         ppcGenRecord(PPC_SET_INFO, lockedProject);
                     } else {
                         ppcGenRecord(PPC_PROJECT_MISMATCH, lockedProject);
