@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-03-18">
+<meta name="author" content="v{VERSION} - Generated 2026-03-24">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-03-18</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-03-24</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -468,7 +468,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_reference_database_and_parsing">6.1. Reference Database and Parsing</a></li>
 <li><a href="#_continuously_fresh_references">6.2. Continuously Fresh References</a></li>
 <li><a href="#_minimal_reparse_set">6.3. Minimal Reparse Set</a></li>
-<li><a href="#_terminology">6.4. Terminology</a></li>
+<li><a href="#_preserve_parsed_work">6.4. Preserve Parsed Work</a></li>
+<li><a href="#_terminology">6.5. Terminology</a></li>
 </ul>
 </li>
 <li><a href="#_software_architecture">7. Software Architecture</a>
@@ -717,9 +718,16 @@ edit, inspect, read and improve the code they are working on.</p>
 code. <code>C-xrefactory</code> interacts with the editor to provide navigation
 and automated edits, refactorings, through the editor.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="SystemContext.png" alt="SystemContext" width="2905" height="473">
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in guidebook.adoc - include::diagrams/structurizr-SystemContext.puml[]
+^^^^^
+ Syntax Error?
+
+Unresolved directive in guidebook.adoc - include::diagrams/structurizr-SystemContext.puml[]</pre>
 </div>
 </div>
 </div>
@@ -1156,7 +1164,36 @@ that share the edited header" is the difference between minutes and milliseconds
 </div>
 </div>
 <div class="sect2">
-<h3 id="_terminology">6.4. Terminology</h3>
+<h3 id="_preserve_parsed_work">6.4. Preserve Parsed Work</h3>
+<div class="paragraph">
+<p>Parsing is the most expensive operation the server performs. On large codebases, a full
+parse can take tens of minutes. Some operations — like a project-wide search on cold
+start — may require parsing thousands of CUs. The user may abort (Ctrl-g) or the
+server may crash during such long-running operations.</p>
+</div>
+<div class="paragraph">
+<p>The principle is: <strong>parsed work is valuable — save it incrementally so that progress
+survives interruption.</strong></p>
+</div>
+<div class="paragraph">
+<p>During long-running parse operations, the server periodically saves the reference table
+to the persisted snapshot. If the operation is interrupted, the next startup restores
+the snapshot and only the remaining unparsed CUs need processing.</p>
+</div>
+<div class="paragraph">
+<p>The snapshot save is safe at any point because the <code>staleify</code> mechanism
+(<code>markPreloadedFilesAsAncient</code>) ensures that editor buffer state is not persisted — only
+disk-file-derived references are saved, and mtime-based validation remains correct at
+next startup.</p>
+</div>
+<div class="paragraph">
+<p><strong>Measured cost:</strong> On ffmpeg (2600+ CUs), a full snapshot save takes approximately
+1 second. This is acceptable at intervals (e.g. every 100 CUs) within a long-running
+parse loop — a ~1% overhead that prevents losing minutes of work on interruption.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_terminology">6.5. Terminology</h3>
 <div class="paragraph">
 <p>The following terms are used throughout the documentation and codebase. Preferred terms
 are listed alphabetically; terms to avoid are noted to reduce ambiguity.</p>
@@ -1266,9 +1303,16 @@ cold start, less work.</p>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_container_view">7.1. Container View</h3>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="ContainerView.png" alt="ContainerView" width="3869" height="743">
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in guidebook.adoc - include::diagrams/structurizr-ContainerView.puml[]
+^^^^^
+ Syntax Error?
+
+Unresolved directive in guidebook.adoc - include::diagrams/structurizr-ContainerView.puml[]</pre>
 </div>
 </div>
 </div>
@@ -1294,9 +1338,16 @@ not always directly mapped to source files, but based on higher level responsibi
 </div>
 <div class="sect3">
 <h4 id="_cxrefprogram">7.2.1. CxrefProgram</h4>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="CxrefProgram.png" alt="CxrefProgram" width="4096" height="1103">
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in guidebook.adoc - include::diagrams/structurizr-CxrefProgram.puml[]
+^^^^^
+ Syntax Error?
+
+Unresolved directive in guidebook.adoc - include::diagrams/structurizr-CxrefProgram.puml[]</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1344,9 +1395,16 @@ invocations of <code>c-xref</code> rather than through the server interface.</p>
 </div>
 <div class="sect3">
 <h4 id="_editorextension">7.2.2. EditorExtension</h4>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="EditorExtension.png" alt="EditorExtension" width="1154" height="508">
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in guidebook.adoc - include::diagrams/structurizr-EditorExtension.puml[]
+^^^^^
+ Syntax Error?
+
+Unresolved directive in guidebook.adoc - include::diagrams/structurizr-EditorExtension.puml[]</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5717,11 +5775,16 @@ from the pipe via <code>readOptionsFromPipe()</code> without conflicting with th
 loop. A local copy of <code>savedOptions</code> prevents the inner <code>callServer()</code> from clobbering
 the refactoring&#8217;s option state.</p>
 </dd>
-<dt class="hdlist1">Confirmation (<code>ppcAskConfirmation</code>)</dt>
+<dt class="hdlist1">Confirmation (<code>ppcAskConfirmation</code> / <code>waitForUserConfirmation</code>)</dt>
 <dd>
-<p>The server writes <code>&lt;ask-confirmation&gt;</code> to the output and continues. The client shows a
-yes/no dialog; if the user says "no", the client aborts output processing. No server
-pause is needed — this is entirely client-side.</p>
+<p>The server writes <code>&lt;ask-confirmation&gt;</code> followed by <code>&lt;sync&gt;</code> and waits for a response.
+The client shows a yes/no dialog and sends <code>-continue</code> or <code>-cancel</code> back through
+the pipe. The server reads the response directly from stdin (bypassing
+<code>readOptionsFromPipe</code> to avoid clobbering the request&#8217;s option buffer), then continues
+with the operation. Both responses produce output — "yes" may trigger additional work
+(e.g. parsing), while "no" proceeds with what is available.<br>
+Used by search completeness detection: when unparsed CUs exist, the server asks the
+user whether to parse them all before searching.</p>
 </dd>
 <dt class="hdlist1">Extraction dialog</dt>
 <dd>
@@ -10596,7 +10659,7 @@ removed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-18 23:51:03 UTC
+Last updated 2026-03-24 20:07:04 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
