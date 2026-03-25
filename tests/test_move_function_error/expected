@@ -1,9 +1,13 @@
-<update-report>
- <information len=<n>>C-xrefactory project: CURDIR</information>
- <information len=<n>>CURDIR/parsing.c</information>
- <information len=<n>>CURDIR/server.c</information>
- <information len=<n>>Generating 'CURDIR/CXrefs'</information>
-</update-report>
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/server.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-move-function -commentmovinglevel=0 -movetargetfile=parsing.c -rfct-target-line=47 -olcursor=4419 CURDIR/server.c -p CURDIR
+end-of-options
+
+<sync>
 <goto>
  <position-off off=4407 len=<n>>CURDIR/server.c</position-off>
 </goto>
@@ -29,4 +33,6 @@ extern void setupParsingConfig();</str>
  <position-off off=1176 len=<n>>CURDIR/parsing.c</position-off>
 </goto>
 <indent-block val=4 len=<n>></indent-block>
-<sync>
+-exit
+end-of-options
+

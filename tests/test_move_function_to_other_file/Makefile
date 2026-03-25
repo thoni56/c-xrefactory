@@ -1,13 +1,11 @@
-include ../Makefile.cli
+include ../Makefile.server
 
-
-ARGUMENTS = -xrefactory-II -refactory -rfct-move-function -commentmovinglevel=0 -movetargetfile=target.c -rfct-target-line=3 -olcursor=12 source.c
-
-$(TEST): .c-xrefrc
-	touch *.c
-	-@$(COMMAND) > output.tmp
+$(TEST):
+	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: EXTRA = \'-debug\'
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
+
+GDB_COMMANDS =

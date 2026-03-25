@@ -1,16 +1,11 @@
-include ../Makefile.cli
-
-
-ARGUMENTS = -refactory -rfct-move-function -commentmovinglevel=0 -movetargetfile=parsing.c -rfct-target-line=47 -olcursor=4419 server.c
-
+include ../Makefile.server
 
 $(TEST):
-	rm -rf CXrefs
-	$(COMMAND) | grep -v warning > output.tmp 2>&1
-	$(NORMALIZE) output.tmp > output
+	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: ARGUMENTS += -trace -log=trace
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
 
-EXTRA_DEBUG =
+GDB_COMMANDS =
