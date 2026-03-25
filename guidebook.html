@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-03-24">
+<meta name="author" content="v{VERSION} - Generated 2026-03-25">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-03-24</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-03-25</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -469,7 +469,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_continuously_fresh_references">6.2. Continuously Fresh References</a></li>
 <li><a href="#_minimal_reparse_set">6.3. Minimal Reparse Set</a></li>
 <li><a href="#_preserve_parsed_work">6.4. Preserve Parsed Work</a></li>
-<li><a href="#_terminology">6.5. Terminology</a></li>
+<li><a href="#_project_scope">6.5. Project Scope</a></li>
+<li><a href="#_terminology">6.6. Terminology</a></li>
 </ul>
 </li>
 <li><a href="#_software_architecture">7. Software Architecture</a>
@@ -571,6 +572,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_migrate_to_project_local_config">15.4. Migrate to project local config</a></li>
 <li><a href="#_indexing_log_buffer">15.5. Indexing Log Buffer</a></li>
 <li><a href="#_browsing_includes">15.6. Browsing includes</a></li>
+<li><a href="#_semantic_read_only_files_include_path_ownership">15.7. Semantic Read-only Files (Include Path Ownership)</a></li>
 </ul>
 </li>
 <li><a href="#_major_codebase_improvements">16. Major Codebase Improvements</a>
@@ -587,11 +589,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_yacc_semantic_data">17.1. Yacc semantic data</a></li>
 <li><a href="#_navigation_architecture_and_preloading">17.2. Navigation Architecture and Preloading</a></li>
-<li><a href="#_refactorymode_internally_calls_xrefmode">17.3. RefactoryMode Internally Calls XrefMode</a></li>
-<li><a href="#_the_lastparsedmtime_optimization_and_refactoring_conflict">17.4. The lastParsedMtime Optimization and Refactoring Conflict</a></li>
-<li><a href="#_stale_file_refresh_and_cross_file_references">17.5. Stale File Refresh and Cross-File References</a></li>
-<li><a href="#_unified_in_memory_table_discovery">17.6. Unified In-Memory Table Discovery</a></li>
-<li><a href="#_editor_buffer_lifecycle_in_the_server">17.7. Editor Buffer Lifecycle in the Server</a></li>
+<li><a href="#_the_lastparsedmtime_optimization_and_refactoring_conflict">17.3. The lastParsedMtime Optimization and Refactoring Conflict</a></li>
+<li><a href="#_stale_file_refresh_and_cross_file_references">17.4. Stale File Refresh and Cross-File References</a></li>
+<li><a href="#_unified_in_memory_table_discovery">17.5. Unified In-Memory Table Discovery</a></li>
+<li><a href="#_editor_buffer_lifecycle_in_the_server">17.6. Editor Buffer Lifecycle in the Server</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">18. Refactoring Recipes</a>
@@ -610,6 +611,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_bootstrapping">19.5. Bootstrapping</a></li>
 <li><a href="#_fill_macros">19.6. FILL macros</a></li>
 <li><a href="#_users">19.7. Users</a></li>
+<li><a href="#_architectural_invariants_historical">19.8. Architectural Invariants (Historical)</a></li>
+<li><a href="#_refactorymode_internally_calls_xrefmode">19.9. RefactoryMode Internally Calls XrefMode</a></li>
 </ul>
 </li>
 </ul>
@@ -1193,7 +1196,58 @@ parse loop — a ~1% overhead that prevents losing minutes of work on interrupti
 </div>
 </div>
 <div class="sect2">
-<h3 id="_terminology">6.5. Terminology</h3>
+<h3 id="_project_scope">6.5. Project Scope</h3>
+<div class="paragraph">
+<p>A <strong>project</strong> is defined by a <code>.c-xrefrc</code> configuration file. The directory containing
+this file is the <strong>project root</strong>. On auto-detection, the server walks upward from the
+request file to locate the nearest <code>.c-xrefrc</code>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Source coverage</dt>
+<dd>
+<p>All compilation units under the project root are discovered by the lightweight scan.
+Headers are discovered transitively through <code>#include</code> directives in those compilation
+units. Additional source directories can be listed in the configuration file to include
+files outside the root (e.g. shared libraries, multi-repo layouts).</p>
+</dd>
+<dt class="hdlist1">Include paths</dt>
+<dd>
+<p>The <code>-I</code> option in the configuration file adds directories that the preprocessor
+searches for <code>#include</code> directives — the same semantics as the compiler flag. Files
+resolved through include paths are parsed as part of the project and available for
+navigation.</p>
+</dd>
+<dt class="hdlist1">Project identity during navigation</dt>
+<dd>
+<p>When the user navigates to a file outside the project root, the server must determine
+whether the file belongs to the current project. A file is considered in-scope if it
+resides under the project root, an additional source directory, or a configured include
+path. Without this, navigating into an included header outside the project tree would
+be misinterpreted as leaving the project.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The include-path check is broad: <em>any</em> file under an <code>-I</code> directory is accepted,
+not only files that were actually included. A compilation unit that happens to reside
+next to included headers will be treated as in-scope even if the project never references
+it. This is a known simplification; a precise check would require distinguishing
+"encountered during parsing" from "registered by a transient request," which the current
+file table does not support.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_terminology">6.6. Terminology</h3>
 <div class="paragraph">
 <p>The following terms are used throughout the documentation and codebase. Preferred terms
 are listed alphabetically; terms to avoid are noted to reduce ambiguity.</p>
@@ -1239,6 +1293,19 @@ the filesystem via mtime comparison.<br>
 <em>Avoid "disk db", "cache", "reference database"</em> when referring to the <code>.cx</code> files.
 A snapshot is not queryable (no search operations on disk), has no invalidation
 semantics (unlike a cache), and is not the source of truth (unlike a database).</p>
+</dd>
+<dt class="hdlist1">Project</dt>
+<dd>
+<p>A set of source files governed by a single <code>.c-xrefrc</code> configuration file. Defines
+which files are parsed, which include paths are searched, and where the persisted
+snapshot is stored. Identified by the section name in the configuration file.</p>
+</dd>
+<dt class="hdlist1">Project root</dt>
+<dd>
+<p>The directory containing the <code>.c-xrefrc</code> configuration file. All compilation units
+under this directory are discovered by the lightweight scan; headers are discovered
+transitively through <code>#include</code> directives. On auto-detection, the project root is
+found by walking upward from the request file.</p>
 </dd>
 <dt class="hdlist1">Reference table</dt>
 <dd>
@@ -1630,8 +1697,19 @@ void callParser(int fileNumber, Language language);</code></pre>
 void callXref(ArgumentsVector args, XrefConfig *config);  // Core loop: schedule files, parse all, save references</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p><code>callXref()</code> is also called by the refactory to re-index files after refactoring operations.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Historically, <code>callXref()</code> was also called by the refactory to re-index files
+after refactoring operations. Refactorings now run as server operations (<code>OP_REFACTORY</code>),
+using the server&#8217;s own entry refresh mechanism instead.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -1799,7 +1877,7 @@ void initServer(ArgumentsVector args);   // Per-request initialization</code></p
 <p><strong>Handlers</strong> (<code>lsp_handler.c</code>) — implement individual LSP requests and notifications: <code>initialize</code> (sets up file table, editor buffers, parsing subsystem, and reference database), <code>textDocument/didOpen</code> (loads file content and parses it), <code>textDocument/definition</code> (delegates to adapter), <code>shutdown</code>/<code>exit</code> (cleanup)</p>
 </li>
 <li>
-<p><strong>Adapter</strong> (<code>lsp_adapter.c</code>) — bridges LSP concepts to c-xrefactory internals. <code>findDefinition()</code> converts LSP URI and position to an internal <code>Position</code>, queries the <code>ReferenceDatabase</code>, and returns an LSP location JSON object</p>
+<p><strong>Adapter</strong> (<code>lsp_adapter.c</code>) — bridges LSP concepts to c-xrefactory internals. <code>findDefinition()</code> converts LSP URI and position to an internal <code>Position</code>, queries the <code>referenceableItemTable</code> directly, and returns an LSP location JSON object</p>
 </li>
 <li>
 <p><strong>Sender</strong> (<code>lsp_sender.c</code>) — formats and sends JSON responses with Content-Length framing</p>
@@ -1869,7 +1947,7 @@ void initServer(ArgumentsVector args);   // Per-request initialization</code></p
 <p>No project-wide indexing: symbols from unopened files are invisible</p>
 </li>
 <li>
-<p>The <code>ReferenceDatabase</code> abstraction is minimal and separate from the legacy in-memory reference table</p>
+<p>The LSP adapter queries <code>referenceableItemTable</code> directly</p>
 </li>
 </ul>
 </div>
@@ -2638,10 +2716,9 @@ hard to follow.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The current architecture is being restructured toward a unified server flow where
-lightweight file structure scanning replaces the legacy <code>-create</code>/<code>callXref()</code> pattern.
-See <a href="#target-unified-flow">Target: Unified Server Flow (ADR 22)</a> below and ADR 22 for the target design. Annotations marked
-[TARGET] indicate planned changes.
+The auto-detect server path uses a unified flow where lightweight file structure
+scanning replaces the legacy <code>-create</code>/<code>callXref()</code> pattern (ADR 22). The legacy path
+(explicit <code>-xrefrc</code>) retains the older flow. See <a href="#unified-flow">Unified Server Flow (ADR 22)</a> below.
 </td>
 </tr>
 </table>
@@ -2689,10 +2766,11 @@ See <a href="#target-unified-flow">Target: Unified Server Flow (ADR 22)</a> belo
 <p><strong>Result:</strong> All command-line files (and directory contents if <code>-r</code> flag) are marked with <code>isScheduled = true</code>.</p>
 </div>
 <div class="paragraph">
-<p>[TARGET] <code>processFileArguments()</code> will be replaced by <code>scanProjectForFilesAndIncludes()</code>,
-which discovers CUs by globbing the project directory rather than relying on command-line
-file lists. This also builds the include graph transitively by text-scanning <code>#include</code>
-lines and resolving paths via <code>options.includeDirs</code>. See <a href="#target-unified-flow">Target: Unified Server Flow (ADR 22)</a>.</p>
+<p>On the auto-detect path, <code>processFileArguments()</code> has been replaced by
+<code>scanProjectForFilesAndIncludes()</code>, which discovers CUs by globbing the project directory
+and builds the include graph transitively by text-scanning <code>#include</code> lines and resolving
+paths via <code>options.includeDirs</code>. The legacy path still uses <code>processFileArguments()</code>.
+See <a href="#unified-flow">Unified Server Flow (ADR 22)</a>.</p>
 </div>
 <div class="paragraph">
 <p><strong><em>Additional Update Scheduling (Xref Mode Only)</em></strong></p>
@@ -2993,12 +3071,20 @@ currentFileNumber       // Xref: file number after parsing starts (parsing.c:26)
 <div class="paragraph">
 <p>The <code>firstPass</code> parameter gates Phase 4&#8217;s memory checkpoint save/restore.</p>
 </div>
-<div class="paragraph">
-<p>[TARGET] <code>initializeProjectContext</code> will be eliminated — it duplicates phases 1-4 of
-<code>initializeFileProcessing</code>. With the unified flow, all initialization goes through
-<code>loadProjectSettings()</code> once at startup. The multi-project fast-path optimization
-(checkpoint restore when same project) becomes dead code with single-project servers
-(ADR 21).</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>initializeProjectContext</code> duplicates phases 1-4 of <code>initializeFileProcessing</code>.
+With single-project servers (ADR 21), the multi-project fast-path optimization
+(checkpoint restore when same project) is dead code. Merging these remains a cleanup
+target.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p><strong><em>Naming Inconsistency</em></strong></p>
@@ -3107,12 +3193,12 @@ currentFileNumber       // Xref: file number after parsing starts (parsing.c:26)
 </div>
 </div>
 <div class="sect3">
-<h4 id="target-unified-flow">8.15.7. Target: Unified Server Flow (ADR 22)</h4>
+<h4 id="unified-flow">8.15.7. Unified Server Flow (ADR 22)</h4>
 <div class="paragraph">
-<p>The current architecture has two initialization paths (<code>initializeProjectContext</code> for
-<code>OP_ACTIVE_PROJECT</code>, <code>initializeFileProcessing</code> for legacy per-file) and relies on the
-disk database as the source of truth for project structure. The target design unifies
-these into a single path where the in-memory database is authoritative.</p>
+<p>The auto-detect path uses a single initialization via <code>initializeProjectContext</code> and
+treats the in-memory reference table as authoritative. The legacy path
+(<code>initializeFileProcessing</code>) is retained for explicit <code>-xrefrc</code> configurations. The flow
+below describes the auto-detect path.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -7497,6 +7583,64 @@ this case would be the next #include statement for that file.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_semantic_read_only_files_include_path_ownership">15.7. Semantic Read-only Files (Include Path Ownership)</h3>
+<div class="sect3">
+<h4 id="_background_4">15.7.1. Background</h4>
+<div class="paragraph">
+<p>Files discovered through <code>-I</code> include paths are currently treated the same as project-owned
+files for navigation purposes. However, these files typically belong to external libraries
+or shared code that the user should browse but not modify through refactoring operations.</p>
+</div>
+<div class="paragraph">
+<p>For example, when a project uses <code>-I /shared/lib/include</code>, the user can navigate into
+headers from that library. If a rename refactoring is performed on a symbol defined in the
+project but also referenced in those external headers, the refactoring should not propagate
+changes into the external files.</p>
+</div>
+<div class="paragraph">
+<p>The legacy <code>c-xrefactory</code> treated all parsed files equally — there was no distinction
+between "my code" and "code I depend on." This was acceptable when projects were
+self-contained, but with the modern include-path-based project scope (see
+<a href="06-principles.adoc">Principles, Project Scope</a>) the distinction matters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_behaviour">15.7.2. Proposed Behaviour</h4>
+<div class="paragraph">
+<p>Files discovered through <code>-I</code> paths (but not listed as source directories in the
+configuration file) would be marked as <strong>read-only for refactoring purposes</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Navigation</strong>: fully supported — PUSH, POP, search results all work as today</p>
+</li>
+<li>
+<p><strong>Refactoring propagation</strong>: changes stop at the ownership boundary. A rename in
+project code does not modify files in <code>-I</code> directories. The user is informed that
+external references exist but were not updated.</p>
+</li>
+<li>
+<p><strong>Explicit override</strong>: an advanced option could allow the user to opt in to
+cross-boundary refactoring for specific operations</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_design_2">15.7.3. Design</h4>
+<div class="paragraph">
+<p>This requires a per-file or per-directory ownership flag in the file table, checked by
+the refactoring engine before applying edits. The flag would be set during the lightweight
+scan based on whether the file was discovered under a source directory (owned) or an
+include path (read-only).</p>
+</div>
+<div class="paragraph">
+<p>The exact mechanism and UX (warning, confirmation, or silent skip) need further design.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -7511,7 +7655,7 @@ this case would be the next #include statement for that file.</p>
 <div class="sect2">
 <h3 id="_incremental_cxfile_c_cleanup">16.1. Incremental <code>cxfile.c</code> Cleanup</h3>
 <div class="sect3">
-<h4 id="_background_4">16.1.1. Background</h4>
+<h4 id="_background_5">16.1.1. Background</h4>
 <div class="paragraph">
 <p>The <code>cxfile</code> module was designed when the disk database was the source of truth. The <code>.cx</code> files were not just a cache — they <em>were</em> the reference database. Operations like "show all references to symbol X" or "find unused symbols" were implemented as table-driven scans over the <code>.cx</code> file format: hash the symbol name to find the right partition, stream through it, apply a per-operation filter callback. This was efficient for the batch cross-referencer that c-xrefactory evolved from, where the workflow was <code>c-xref -create</code> → <code>c-xref -update</code> → query the on-disk database.</p>
 </div>
@@ -8747,32 +8891,6 @@ Client preloading behavior and stale file detection are now documented in <a hre
 </tr>
 </table>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_architectural_invariants">17.2.2. Architectural Invariants</h4>
-<div class="paragraph">
-<p><strong>MUST be maintained:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Disk CXrefs = State of files on disk (from last tags generation)</p>
-</li>
-<li>
-<p>ReferenceableItem Table = Disk state + preloaded editor buffers</p>
-</li>
-<li>
-<p>Session references = Snapshot at PUSH time, refreshed on stale detection during NEXT/PREVIOUS</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_refactorymode_internally_calls_xrefmode">17.3. RefactoryMode Internally Calls XrefMode</h3>
-<div class="paragraph">
-<p>Date: 2025-01-10</p>
-</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -8780,160 +8898,23 @@ Client preloading behavior and stale file detection are now documented in <a hre
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-This section describes the refactoring architecture. The <code>callXref()</code> pattern described here is still used by refactoring operations. However, the server mode description below is partially outdated — the server now reparses stale preloaded files at entry and parses discovered CUs at startup (<a href="/workspace/decisions#20">ADR-0020</a>). See <a href="15-roadmap.adoc">Chapter 15: Roadmap</a> for the path toward eliminating <code>callXref()</code> from refactoring as well.
+The "Architectural Invariants" and "RefactoryMode Internally Calls XrefMode"
+sections have been moved to <a href="20-archive.adoc">Archive</a>. The invariants described a
+model where the disk database was the source of truth; as of 2026-03, the in-memory
+reference table is authoritative (see <a href="06-principles.adoc">Principles</a>).
 </td>
 </tr>
 </table>
 </div>
-<div class="sect3">
-<h4 id="_the_key_architectural_insight_current_architecture">17.3.1. The Key Architectural Insight (Current Architecture)</h4>
-<div class="paragraph">
-<p><strong>RefactoryMode runs XrefMode as an internal sub-task to update the reference database before performing refactorings.</strong></p>
-</div>
-<div class="paragraph">
-<p>This is critical to understand because:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Refactorings need current cross-reference data to find all symbol occurrences</p>
-</li>
-<li>
-<p>Server mode never creates/updates references (it only serves queries)</p>
-</li>
-<li>
-<p>RefactoryMode is a separate process invocation, not part of the interactive server</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_how_it_works_2">17.3.2. How It Works</h4>
-<div class="paragraph">
-<p>When a refactoring is invoked:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">refactory() [refactory.c:1337]
-  │
-  ├─ 1. Compute update strategy based on symbol scope/visibility
-  │    updateOption = computeUpdateOptionForSymbol(point)
-  │      • Local symbols: "" (no update - not in database)
-  │      • Header symbols: "-update" (full update required)
-  │      • Multi-file global: "-fastupdate" (incremental)
-  │      • Single-file global: "" (no update needed)
-  │
-  ├─ 2. Perform the refactoring operation
-  │    renameAtPoint() / parameterManipulation() / etc.
-  │
-  └─ 3. Update references via internal XrefMode call
-       ensureReferencesAreUpdated(project) [line 146]
-         ├─ Save current options
-         ├─ Build argument vector with updateOption
-         ├─ mainTaskEntryInitialisations(args)
-         └─ callXref(args, true)  ← NESTS XREF MODE!</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_why_refactorings_are_separate_processes">17.3.3. Why Refactorings Are Separate Processes</h4>
-<div class="paragraph">
-<p>The Emacs client spawns a <strong>separate RefactoryMode process</strong> rather than using the interactive server because:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Xref update can be slow</strong> - Would block the interactive server for user operations</p>
-</li>
-<li>
-<p><strong>Options isolation</strong> - The nested <code>callXref()</code> "messes all static variables including options" (code comment, line 143-145)</p>
-</li>
-<li>
-<p><strong>Memory requirements</strong> - Refactorings need more memory than interactive operations (see <code>mainTaskEntryInitialisations</code> allocation logic)</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_the_three_modes_relationship">17.3.4. The Three Modes Relationship</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">ServerMode (c-xref -server)
-  - Loads .cx snapshot at startup, parses stale CUs
-  - Reparses stale preloaded files before each request (ADR 20)
-  - Long-running interactive process
-  - Handles: completion, goto-definition, push/pop navigation
-
-XrefMode (c-xref -create / -update)
-  - Creates and updates .cx reference files
-  - Batch operation over all scheduled files
-  - Exits when complete
-
-RefactoryMode (c-xref -refactory ...)
-  - Separate one-shot process per refactoring
-  - INTERNALLY calls XrefMode (via callXref) to update references
-  - Applies source code edits
-  - Exits when complete</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_code_evidence">17.3.5. Code Evidence</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// From refactory.c:143-145
-// be very careful when calling this function as it is messing all static variables
-// including options, ...
-// call to this function MUST be followed by a pushing action, to refresh options
-void ensureReferencesAreUpdated(char *project) {
-    // ...
-    deepCopyOptionsFromTo(&amp;options, &amp;savedOptions);
-
-    // Build xref arguments including update option
-    argumentVector[argumentCount++] = updateOption;
-
-    // Re-initialize as if starting fresh xref task
-    mainTaskEntryInitialisations(args);
-
-    // THE KEY CALL: Run XrefMode nested inside RefactoryMode
-    callXref(args, true);
-
-    // Restore options after the nested task
-    deepCopyOptionsFromTo(&amp;savedOptions, &amp;options);
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_implications">17.3.6. Implications</h4>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>You cannot do refactorings in ServerMode</strong> - the architecture doesn&#8217;t support it</p>
-</li>
-<li>
-<p><strong>ServerMode never receives <code>-update</code> or <code>-create</code></strong> - those are XrefMode/RefactoryMode only</p>
-</li>
-<li>
-<p><strong>Refactorings are always consistent</strong> - they get fresh reference data before executing</p>
-</li>
-<li>
-<p><strong>Performance trade-off</strong> - Smart update strategies (local vs header vs multi-file) minimize update cost</p>
-</li>
-<li>
-<p><strong>Process isolation</strong> - Separate RefactoryMode process prevents server state corruption</p>
-</li>
-</ul>
-</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_the_lastparsedmtime_optimization_and_refactoring_conflict">17.4. The lastParsedMtime Optimization and Refactoring Conflict</h3>
+<h3 id="_the_lastparsedmtime_optimization_and_refactoring_conflict">17.3. The lastParsedMtime Optimization and Refactoring Conflict</h3>
 <div class="paragraph">
 <p>Date: 2025-01-21</p>
 </div>
 <div class="sect3">
-<h4 id="_problem_discovery">17.4.1. Problem Discovery</h4>
+<h4 id="_problem_discovery">17.3.1. Problem Discovery</h4>
 <div class="paragraph">
 <p>When implementing staleness detection for navigation (refreshing references when files are modified), we added an optimization to <code>server.c</code>:</p>
 </div>
@@ -8951,7 +8932,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_conflict">17.4.2. The Conflict</h4>
+<h4 id="_the_conflict">17.3.2. The Conflict</h4>
 <div class="paragraph">
 <p>This broke refactoring operations (<code>test_delete_parameter_with_preload</code>). The problem:</p>
 </div>
@@ -8979,7 +8960,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_root_cause_two_sources_of_truth">17.4.3. Root Cause: Two Sources of Truth</h4>
+<h4 id="_root_cause_two_sources_of_truth">17.3.3. Root Cause: Two Sources of Truth</h4>
 <div class="paragraph">
 <p>The architecture has two sources of references:</p>
 </div>
@@ -9000,7 +8981,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_workaround">17.4.4. The Workaround</h4>
+<h4 id="_the_workaround">17.3.4. The Workaround</h4>
 <div class="paragraph">
 <p>Exclude refactoring operations from the optimization:</p>
 </div>
@@ -9021,13 +9002,13 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_architectural_lesson">17.4.5. Architectural Lesson</h4>
+<h4 id="_architectural_lesson">17.3.5. Architectural Lesson</h4>
 <div class="paragraph">
 <p>This workaround highlights the fundamental tension: <strong>navigation and refactoring use different sources of truth</strong>. The proper fix is <a href="/workspace/decisions#14">ADR-0014</a>'s unified on-demand architecture where both use the same in-memory reference database, eliminating the need for <code>callXref()</code> entirely.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_related">17.4.6. Related</h4>
+<h4 id="_related">17.3.6. Related</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -9044,12 +9025,12 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_stale_file_refresh_and_cross_file_references">17.5. Stale File Refresh and Cross-File References</h3>
+<h3 id="_stale_file_refresh_and_cross_file_references">17.4. Stale File Refresh and Cross-File References</h3>
 <div class="paragraph">
 <p>Date: 2025-01-29 (Updated: 2026-01-29)</p>
 </div>
 <div class="sect3">
-<h4 id="_stale_detection">17.5.1. Stale Detection</h4>
+<h4 id="_stale_detection">17.4.1. Stale Detection</h4>
 <div class="paragraph">
 <p>When navigating (PUSH/NEXT), the server detects if the current file is "stale" by comparing:</p>
 </div>
@@ -9068,7 +9049,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_refresh_algorithm">17.5.2. The Refresh Algorithm</h4>
+<h4 id="_the_refresh_algorithm">17.4.2. The Refresh Algorithm</h4>
 <div class="paragraph">
 <p><code>refreshStaleReferencesInSession()</code> in <code>cxref.c</code> must preserve cross-file references while updating references from the modified file:</p>
 </div>
@@ -9119,7 +9100,7 @@ when <code>includeFileNumber</code> differs, and these new items have <code>sele
 </div>
 </div>
 <div class="sect3">
-<h4 id="_why_scanning_from_disk_fails">17.5.3. Why Scanning From Disk Fails</h4>
+<h4 id="_why_scanning_from_disk_fails">17.4.3. Why Scanning From Disk Fails</h4>
 <div class="paragraph">
 <p>During PUSH, <code>createSelectionMenu</code> creates menu items and adds them to <code>sessionEntry&#8594;menu</code>.
 These items are marked as selected. When you NEXT, the menu&#8217;s reference list is what gets
@@ -9143,14 +9124,14 @@ navigation loses most of its references.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_architectural_note">17.5.4. Architectural Note</h4>
+<h4 id="_architectural_note">17.4.4. Architectural Note</h4>
 <div class="paragraph">
 <p>This is a manifestation of the "two sources of truth" architecture. The long-term fix (per roadmap) is to parse all project files at startup, keeping complete references in memory. Then stale refresh would just re-parse the single file and the in-memory table would already have all cross-file references.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_unified_in_memory_table_discovery">17.6. Unified In-Memory Table Discovery</h3>
+<h3 id="_unified_in_memory_table_discovery">17.5. Unified In-Memory Table Discovery</h3>
 <div class="paragraph">
 <p>Date: 2025-01-25</p>
 </div>
@@ -9165,7 +9146,7 @@ navigation loses most of its references.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_buffer_lifecycle_in_the_server">17.7. Editor Buffer Lifecycle in the Server</h3>
+<h3 id="_editor_buffer_lifecycle_in_the_server">17.6. Editor Buffer Lifecycle in the Server</h3>
 <div class="paragraph">
 <p>Date: 2026-03-17</p>
 </div>
@@ -10654,12 +10635,189 @@ like the model in the language server protocol, this could really be
 removed.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_architectural_invariants_historical">19.8. Architectural Invariants (Historical)</h3>
+<div class="paragraph">
+<p><em>Moved from Insights chapter, 2026-03. These invariants described the model where the
+disk database was the source of truth. With "memory as truth" (2026-03), the in-memory
+reference table is authoritative and the disk snapshot is just a startup cache.</em></p>
+</div>
+<div class="paragraph">
+<p><strong>Original invariants:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Disk CXrefs = State of files on disk (from last tags generation)</p>
+</li>
+<li>
+<p>ReferenceableItem Table = Disk state + preloaded editor buffers</p>
+</li>
+<li>
+<p>Session references = Snapshot at PUSH time, refreshed on stale detection during NEXT/PREVIOUS</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_refactorymode_internally_calls_xrefmode">19.9. RefactoryMode Internally Calls XrefMode</h3>
+<div class="paragraph">
+<p><em>Moved from Insights chapter, 2026-03. As of 2026-03, all refactorings run as server
+operations (<code>OP_REFACTORY</code>). This section describes the original architecture.</em></p>
+</div>
+<div class="paragraph">
+<p>Date: 2025-01-10</p>
+</div>
+<div class="sect3">
+<h4 id="_the_key_architectural_insight_original_architecture">19.9.1. The Key Architectural Insight (Original Architecture)</h4>
+<div class="paragraph">
+<p><strong>RefactoryMode ran XrefMode as an internal sub-task to update the reference database before performing refactorings.</strong></p>
+</div>
+<div class="paragraph">
+<p>This was critical because:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Refactorings needed current cross-reference data to find all symbol occurrences</p>
+</li>
+<li>
+<p>Server mode never created/updated references (it only served queries)</p>
+</li>
+<li>
+<p>RefactoryMode was a separate process invocation, not part of the interactive server</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_how_it_worked">19.9.2. How It Worked</h4>
+<div class="paragraph">
+<p>When a refactoring was invoked:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">refactory() [refactory.c:1337]
+  │
+  ├─ 1. Compute update strategy based on symbol scope/visibility
+  │    updateOption = computeUpdateOptionForSymbol(point)
+  │      • Local symbols: "" (no update - not in database)
+  │      • Header symbols: "-update" (full update required)
+  │      • Multi-file global: "-fastupdate" (incremental)
+  │      • Single-file global: "" (no update needed)
+  │
+  ├─ 2. Perform the refactoring operation
+  │    renameAtPoint() / parameterManipulation() / etc.
+  │
+  └─ 3. Update references via internal XrefMode call
+       ensureReferencesAreUpdated(project) [line 146]
+         ├─ Save current options
+         ├─ Build argument vector with updateOption
+         ├─ mainTaskEntryInitialisations(args)
+         └─ callXref(args, true)  ← NESTS XREF MODE!</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_why_refactorings_were_separate_processes">19.9.3. Why Refactorings Were Separate Processes</h4>
+<div class="paragraph">
+<p>The Emacs client spawned a <strong>separate RefactoryMode process</strong> rather than using the interactive server because:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Xref update can be slow</strong> - Would block the interactive server for user operations</p>
+</li>
+<li>
+<p><strong>Options isolation</strong> - The nested <code>callXref()</code> "messes all static variables including options" (code comment, line 143-145)</p>
+</li>
+<li>
+<p><strong>Memory requirements</strong> - Refactorings need more memory than interactive operations (see <code>mainTaskEntryInitialisations</code> allocation logic)</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_three_modes_relationship">19.9.4. The Three Modes Relationship</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">ServerMode (c-xref -server)
+  - Loads .cx snapshot at startup, parses stale CUs
+  - Reparses stale preloaded files before each request (ADR 20)
+  - Long-running interactive process
+  - Handles: completion, goto-definition, push/pop navigation
+
+XrefMode (c-xref -create / -update)
+  - Creates and updates .cx reference files
+  - Batch operation over all scheduled files
+  - Exits when complete
+
+RefactoryMode (c-xref -refactory ...)
+  - Separate one-shot process per refactoring
+  - INTERNALLY calls XrefMode (via callXref) to update references
+  - Applies source code edits
+  - Exits when complete</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_code_evidence">19.9.5. Code Evidence</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// From refactory.c:143-145
+// be very careful when calling this function as it is messing all static variables
+// including options, ...
+// call to this function MUST be followed by a pushing action, to refresh options
+void ensureReferencesAreUpdated(char *project) {
+    // ...
+    deepCopyOptionsFromTo(&amp;options, &amp;savedOptions);
+
+    // Build xref arguments including update option
+    argumentVector[argumentCount++] = updateOption;
+
+    // Re-initialize as if starting fresh xref task
+    mainTaskEntryInitialisations(args);
+
+    // THE KEY CALL: Run XrefMode nested inside RefactoryMode
+    callXref(args, true);
+
+    // Restore options after the nested task
+    deepCopyOptionsFromTo(&amp;savedOptions, &amp;options);
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_implications_historical">19.9.6. Implications (Historical)</h4>
+<div class="paragraph">
+<p>These constraints applied under the original architecture:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>RefactoryMode was a separate process — server mode could not perform refactorings</p>
+</li>
+<li>
+<p>The nested <code>callXref()</code> call corrupted global state, requiring process isolation</p>
+</li>
+<li>
+<p>Smart update strategies (local vs header vs multi-file) minimized the re-indexing cost</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>With server-side refactoring (2026-03), these constraints no longer apply. The server&#8217;s
+entry refresh mechanism keeps references fresh, and refactorings execute within the
+server process without a separate <code>callXref()</code> step.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-24 20:07:04 UTC
+Last updated 2026-03-25 10:18:51 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

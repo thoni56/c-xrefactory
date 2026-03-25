@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-03-24">
+<meta name="author" content="v{VERSION} - Generated 2026-03-25">
 <title>C-xrefactory User Manual</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory User Manual</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-03-24</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-03-25</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -451,6 +451,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_installation">2.1. Installation</a></li>
 <li><a href="#_projects">2.2. Projects</a></li>
+<li><a href="#_project_configuration">2.3. Project Configuration</a></li>
 </ul>
 </li>
 <li><a href="#_browsing">3. Browsing</a>
@@ -532,6 +533,70 @@ emacs -l c-xrefactory/load.el</code></pre>
 </div>
 <div class="paragraph">
 <p>If no config file could be found, you&#8217;ll be prompted to create a project. The active project is shown in the modeline after each action.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_project_configuration">2.3. Project Configuration</h3>
+<div class="paragraph">
+<p>The <code>.c-xrefrc</code> file defines which files belong to the project. A minimal config
+looks like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[/path/to/project]
+  /path/to/project</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The section header <code>[&#8230;&#8203;]</code> names the project (typically the project root path).
+Lines below it configure the project:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Source directories</dt>
+<dd>
+<p>Bare path lines list directories to scan for compilation units.
+The project root is always scanned. Additional directories can be listed for
+multi-directory or multi-repo projects:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[/path/to/project]
+  /path/to/project
+  /path/to/shared/library</code></pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Include paths</dt>
+<dd>
+<p><code>-I</code> options tell c-xrefactory where to find header files, just
+like the compiler flag:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[/path/to/project]
+  /path/to/project
+  -I /path/to/external/headers</code></pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Preprocessor defines</dt>
+<dd>
+<p><code>-D</code> options define macros, equivalent to the compiler flag.
+Useful when the project uses conditional compilation.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+For projects that use auto-detection (project-local <code>.c-xrefrc</code>), absolute paths
+are not required — the configuration is resolved relative to the file&#8217;s location.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -873,7 +938,7 @@ Symbol Retriever → enter <code>config*</code> → browse results</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-24 20:06:17 UTC
+Last updated 2026-03-25 10:18:11 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
