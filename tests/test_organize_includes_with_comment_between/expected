@@ -1,3 +1,13 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-organize-includes -olcursor=0 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
 <goto>
  <position-off off=0 len=<n>>CURDIR/source.c</position-off>
 </goto>
@@ -9,9 +19,12 @@
 #include "memory.h"
 </str>
 </replacement>
+-rfct-organize-includes -olcursor=78 CURDIR/source.c -p CURDIR
+end-of-options
+
 <sync>
 <goto>
- <position-off off=78 len=<n>>CURDIR/source.c</position-off>
+ <position-off off=79 len=<n>>CURDIR/source.c</position-off>
 </goto>
 <replacement>
  <str len=<n>>#include "source.h"
@@ -24,4 +37,6 @@
 #include "commons.h"
 </str>
 </replacement>
-<sync>
+-exit
+end-of-options
+
