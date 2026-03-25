@@ -44,10 +44,9 @@ The file processing architecture differs significantly between Server mode, Xref
 and LSP mode, with confusing global state and naming inconsistencies that make the code
 hard to follow.
 
-NOTE: The current architecture is being restructured toward a unified server flow where
-lightweight file structure scanning replaces the legacy `-create`/`callXref()` pattern.
-See <<target-unified-flow>> below and ADR 22 for the target design. Annotations marked
-[TARGET] indicate planned changes.
+NOTE: The auto-detect server path uses a unified flow where lightweight file structure
+scanning replaces the legacy `-create`/`callXref()` pattern (ADR 22). The legacy path
+(explicit `-xrefrc`) retains the older flow. See <<unified-flow>> below.
 
 ==== File Scheduling - How Files Get Marked for Processing
 
@@ -79,10 +78,11 @@ processFileArguments() [options.c:1893]
 
 *Result:* All command-line files (and directory contents if `-r` flag) are marked with `isScheduled = true`.
 
-[TARGET] `processFileArguments()` will be replaced by `scanProjectForFilesAndIncludes()`,
-which discovers CUs by globbing the project directory rather than relying on command-line
-file lists. This also builds the include graph transitively by text-scanning `#include`
-lines and resolving paths via `options.includeDirs`. See <<target-unified-flow>>.
+On the auto-detect path, `processFileArguments()` has been replaced by
+`scanProjectForFilesAndIncludes()`, which discovers CUs by globbing the project directory
+and builds the include graph transitively by text-scanning `#include` lines and resolving
+paths via `options.includeDirs`. The legacy path still uses `processFileArguments()`.
+See <<unified-flow>>.
 
 *_Additional Update Scheduling (Xref Mode Only)_*
 
@@ -314,11 +314,10 @@ This 500-line function does five major phases:
 
 The `firstPass` parameter gates Phase 4's memory checkpoint save/restore.
 
-[TARGET] `initializeProjectContext` will be eliminated — it duplicates phases 1-4 of
-`initializeFileProcessing`. With the unified flow, all initialization goes through
-`loadProjectSettings()` once at startup. The multi-project fast-path optimization
-(checkpoint restore when same project) becomes dead code with single-project servers
-(ADR 21).
+NOTE: `initializeProjectContext` duplicates phases 1-4 of `initializeFileProcessing`.
+With single-project servers (ADR 21), the multi-project fast-path optimization
+(checkpoint restore when same project) is dead code. Merging these remains a cleanup
+target.
 
 *_Naming Inconsistency_*
 
@@ -357,13 +356,13 @@ If they represent the same concept (the file being processed), they should have 
 * *Processing*: Direct call, no file table lookup needed
 * *Modern design*: Avoids the legacy scheduling/global state complexity
 
-[[target-unified-flow]]
-==== Target: Unified Server Flow (ADR 22)
+[[unified-flow]]
+==== Unified Server Flow (ADR 22)
 
-The current architecture has two initialization paths (`initializeProjectContext` for
-`OP_ACTIVE_PROJECT`, `initializeFileProcessing` for legacy per-file) and relies on the
-disk database as the source of truth for project structure. The target design unifies
-these into a single path where the in-memory database is authoritative.
+The auto-detect path uses a single initialization via `initializeProjectContext` and
+treats the in-memory reference table as authoritative. The legacy path
+(`initializeFileProcessing`) is retained for explicit `-xrefrc` configurations. The flow
+below describes the auto-detect path.
 
 [source]
 ----

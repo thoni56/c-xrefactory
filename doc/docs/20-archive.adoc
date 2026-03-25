@@ -412,3 +412,126 @@ This leaves just a few use cases for multiple "users", and I think it
 adds unnecessary complexity. Going for a more "one user" approach,
 like the model in the language server protocol, this could really be
 removed.
+
+=== Architectural Invariants (Historical)
+
+_Moved from Insights chapter, 2026-03. These invariants described the model where the
+disk database was the source of truth. With "memory as truth" (2026-03), the in-memory
+reference table is authoritative and the disk snapshot is just a startup cache._
+
+**Original invariants:**
+
+* Disk CXrefs = State of files on disk (from last tags generation)
+* ReferenceableItem Table = Disk state + preloaded editor buffers
+* Session references = Snapshot at PUSH time, refreshed on stale detection during NEXT/PREVIOUS
+
+=== RefactoryMode Internally Calls XrefMode
+
+_Moved from Insights chapter, 2026-03. As of 2026-03, all refactorings run as server
+operations (`OP_REFACTORY`). This section describes the original architecture._
+
+Date: 2025-01-10
+
+==== The Key Architectural Insight (Original Architecture)
+
+**RefactoryMode ran XrefMode as an internal sub-task to update the reference database before performing refactorings.**
+
+This was critical because:
+
+* Refactorings needed current cross-reference data to find all symbol occurrences
+* Server mode never created/updated references (it only served queries)
+* RefactoryMode was a separate process invocation, not part of the interactive server
+
+==== How It Worked
+
+When a refactoring was invoked:
+
+[source,c]
+----
+refactory() [refactory.c:1337]
+  │
+  ├─ 1. Compute update strategy based on symbol scope/visibility
+  │    updateOption = computeUpdateOptionForSymbol(point)
+  │      • Local symbols: "" (no update - not in database)
+  │      • Header symbols: "-update" (full update required)
+  │      • Multi-file global: "-fastupdate" (incremental)
+  │      • Single-file global: "" (no update needed)
+  │
+  ├─ 2. Perform the refactoring operation
+  │    renameAtPoint() / parameterManipulation() / etc.
+  │
+  └─ 3. Update references via internal XrefMode call
+       ensureReferencesAreUpdated(project) [line 146]
+         ├─ Save current options
+         ├─ Build argument vector with updateOption
+         ├─ mainTaskEntryInitialisations(args)
+         └─ callXref(args, true)  ← NESTS XREF MODE!
+----
+
+==== Why Refactorings Were Separate Processes
+
+The Emacs client spawned a **separate RefactoryMode process** rather than using the interactive server because:
+
+1. **Xref update can be slow** - Would block the interactive server for user operations
+2. **Options isolation** - The nested `callXref()` "messes all static variables including options" (code comment, line 143-145)
+3. **Memory requirements** - Refactorings need more memory than interactive operations (see `mainTaskEntryInitialisations` allocation logic)
+
+==== The Three Modes Relationship
+
+[source]
+----
+ServerMode (c-xref -server)
+  - Loads .cx snapshot at startup, parses stale CUs
+  - Reparses stale preloaded files before each request (ADR 20)
+  - Long-running interactive process
+  - Handles: completion, goto-definition, push/pop navigation
+
+XrefMode (c-xref -create / -update)
+  - Creates and updates .cx reference files
+  - Batch operation over all scheduled files
+  - Exits when complete
+
+RefactoryMode (c-xref -refactory ...)
+  - Separate one-shot process per refactoring
+  - INTERNALLY calls XrefMode (via callXref) to update references
+  - Applies source code edits
+  - Exits when complete
+----
+
+==== Code Evidence
+
+[source,c]
+----
+// From refactory.c:143-145
+// be very careful when calling this function as it is messing all static variables
+// including options, ...
+// call to this function MUST be followed by a pushing action, to refresh options
+void ensureReferencesAreUpdated(char *project) {
+    // ...
+    deepCopyOptionsFromTo(&options, &savedOptions);
+
+    // Build xref arguments including update option
+    argumentVector[argumentCount++] = updateOption;
+
+    // Re-initialize as if starting fresh xref task
+    mainTaskEntryInitialisations(args);
+
+    // THE KEY CALL: Run XrefMode nested inside RefactoryMode
+    callXref(args, true);
+
+    // Restore options after the nested task
+    deepCopyOptionsFromTo(&savedOptions, &options);
+}
+----
+
+==== Implications (Historical)
+
+These constraints applied under the original architecture:
+
+* RefactoryMode was a separate process — server mode could not perform refactorings
+* The nested `callXref()` call corrupted global state, requiring process isolation
+* Smart update strategies (local vs header vs multi-file) minimized the re-indexing cost
+
+With server-side refactoring (2026-03), these constraints no longer apply. The server's
+entry refresh mechanism keeps references fresh, and refactorings execute within the
+server process without a separate `callXref()` step.

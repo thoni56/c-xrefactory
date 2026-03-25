@@ -103,7 +103,9 @@ void xref(ArgumentsVector args);                    // Top-level entry: open out
 void callXref(ArgumentsVector args, XrefConfig *config);  // Core loop: schedule files, parse all, save references
 ----
 
-`callXref()` is also called by the refactory to re-index files after refactoring operations.
+NOTE: Historically, `callXref()` was also called by the refactory to re-index files
+after refactoring operations. Refactorings now run as server operations (`OP_REFACTORY`),
+using the server's own entry refresh mechanism instead.
 
 === Server
 
@@ -205,7 +207,7 @@ The LSP adapter is a self-contained subsystem with clear internal layering:
 * **Message loop** (`lsp.c`) — reads LSP framed messages (Content-Length headers + JSON body) from stdin, delegates to the dispatcher, and runs until shutdown/exit
 * **Dispatcher** (`lsp_dispatcher.c`) — maps LSP method strings (`"textDocument/definition"`, `"initialize"`, etc.) to handler functions via a static dispatch table
 * **Handlers** (`lsp_handler.c`) — implement individual LSP requests and notifications: `initialize` (sets up file table, editor buffers, parsing subsystem, and reference database), `textDocument/didOpen` (loads file content and parses it), `textDocument/definition` (delegates to adapter), `shutdown`/`exit` (cleanup)
-* **Adapter** (`lsp_adapter.c`) — bridges LSP concepts to c-xrefactory internals. `findDefinition()` converts LSP URI and position to an internal `Position`, queries the `ReferenceDatabase`, and returns an LSP location JSON object
+* **Adapter** (`lsp_adapter.c`) — bridges LSP concepts to c-xrefactory internals. `findDefinition()` converts LSP URI and position to an internal `Position`, queries the `referenceableItemTable` directly, and returns an LSP location JSON object
 * **Sender** (`lsp_sender.c`) — formats and sends JSON responses with Content-Length framing
 * **Utilities** (`lsp_utils.c`) — coordinate conversions: URI to file path, LSP line/character to byte offset and back
 
@@ -241,7 +243,7 @@ The LSP adapter is a proof-of-concept. Key gaps:
 * Only `textDocument/definition` partially works — and only for files that have been opened (parsed) in the current session
 * No incremental updates: modifying a file after opening does not re-parse
 * No project-wide indexing: symbols from unopened files are invisible
-* The `ReferenceDatabase` abstraction is minimal and separate from the legacy in-memory reference table
+* The LSP adapter queries `referenceableItemTable` directly
 
 ==== Interface
 
