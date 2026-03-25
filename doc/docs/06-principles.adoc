@@ -118,6 +118,42 @@ next startup.
 1 second. This is acceptable at intervals (e.g. every 100 CUs) within a long-running
 parse loop — a ~1% overhead that prevents losing minutes of work on interruption.
 
+=== Project Scope
+
+A **project** is defined by a `.c-xrefrc` configuration file. The directory containing
+this file is the **project root**. On auto-detection, the server walks upward from the
+request file to locate the nearest `.c-xrefrc`.
+
+Source coverage::
+  All compilation units under the project root are discovered by the lightweight scan.
+  Headers are discovered transitively through `#include` directives in those compilation
+  units. Additional source directories can be listed in the configuration file to include
+  files outside the root (e.g. shared libraries, multi-repo layouts).
+
+NOTE: The auto-detect path does not yet scan additional source directories listed in the
+configuration file. Only the project root is scanned. This is a known gap — see
+link:15-roadmap.adoc[Roadmap].
+
+Include paths::
+  The `-I` option in the configuration file adds directories that the preprocessor
+  searches for `#include` directives — the same semantics as the compiler flag. Files
+  resolved through include paths are parsed as part of the project and available for
+  navigation.
+
+Project identity during navigation::
+  When the user navigates to a file outside the project root, the server must determine
+  whether the file belongs to the current project. A file is considered in-scope if it
+  resides under the project root, an additional source directory, or a configured include
+  path. Without this, navigating into an included header outside the project tree would
+  be misinterpreted as leaving the project.
+
+NOTE: The include-path check is broad: _any_ file under an `-I` directory is accepted,
+not only files that were actually included. A compilation unit that happens to reside
+next to included headers will be treated as in-scope even if the project never references
+it. This is a known simplification; a precise check would require distinguishing
+"encountered during parsing" from "registered by a transient request," which the current
+file table does not support.
+
 === Terminology
 
 The following terms are used throughout the documentation and codebase. Preferred terms
@@ -156,6 +192,17 @@ Persisted snapshot::
   _Avoid "disk db", "cache", "reference database"_ when referring to the `.cx` files.
   A snapshot is not queryable (no search operations on disk), has no invalidation
   semantics (unlike a cache), and is not the source of truth (unlike a database).
+
+Project::
+  A set of source files governed by a single `.c-xrefrc` configuration file. Defines
+  which files are parsed, which include paths are searched, and where the persisted
+  snapshot is stored. Identified by the section name in the configuration file.
+
+Project root::
+  The directory containing the `.c-xrefrc` configuration file. All compilation units
+  under this directory are discovered by the lightweight scan; headers are discovered
+  transitively through `#include` directives. On auto-detection, the project root is
+  found by walking upward from the request file.
 
 Reference table::
   The authoritative in-memory state during a running session. Comprises the
