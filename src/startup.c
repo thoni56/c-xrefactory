@@ -38,6 +38,12 @@ static char previousProjectConfigurationSection[MAX_FILE_NAME_SIZE];
 static time_t previousProjectConfigurationFileModificationTime;
 static int previousPass;
 
+static ProjectConfig projectConfig = {0};
+
+ProjectConfig *getProjectConfig(void) {
+    return &projectConfig;
+}
+
 
 /* *************************************************************************** */
 
@@ -536,6 +542,22 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
     /* Then for the particular pass */
     currentPass = savedPass;
     getAndProcessProjectConfig(projectConfigFileName, projectSectionName);
+
+    /* Collect source directories from the config into ProjectConfig.
+     * These are the bare path arguments (non-option lines) in the .c-xrefrc section.
+     * Done after the second getAndProcessProjectConfig to avoid double-collection. */
+    freeStringList(projectConfig.sourceDirs);
+    projectConfig.sourceDirs = NULL;
+    {
+        ArgumentsVector configArgs = readOptionsFromFile(projectConfigFileName,
+                                                          projectSectionName, projectSectionName);
+        for (int i = 1; i < configArgs.argc; i++) {
+            if (configArgs.argv[i][0] != '-') {
+                projectConfig.sourceDirs = newStringList(configArgs.argv[i],
+                                                          projectConfig.sourceDirs);
+            }
+        }
+    }
 
     LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 

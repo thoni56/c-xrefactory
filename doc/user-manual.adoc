@@ -36,6 +36,47 @@ C-xrefactory is "project-based", meaning that it handles files within one projec
 
 If no config file could be found, you'll be prompted to create a project. The active project is shown in the modeline after each action.
 
+=== Project Configuration
+
+The `.c-xrefrc` file defines which files belong to the project. A minimal config
+looks like:
+
+[source]
+----
+[/path/to/project]
+  /path/to/project
+----
+
+The section header `[...]` names the project (typically the project root path).
+Lines below it configure the project:
+
+Source directories:: Bare path lines list directories to scan for compilation units.
+  The project root is always scanned. Additional directories can be listed for
+  multi-directory or multi-repo projects:
++
+[source]
+----
+[/path/to/project]
+  /path/to/project
+  /path/to/shared/library
+----
+
+Include paths:: `-I` options tell c-xrefactory where to find header files, just
+  like the compiler flag:
++
+[source]
+----
+[/path/to/project]
+  /path/to/project
+  -I /path/to/external/headers
+----
+
+Preprocessor defines:: `-D` options define macros, equivalent to the compiler flag.
+  Useful when the project uses conditional compilation.
+
+TIP: For projects that use auto-detection (project-local `.c-xrefrc`), absolute paths
+are not required — the configuration is resolved relative to the file's location.
+
 == Browsing
 
 Browsing uses a list of references (occurrences of a symbol), including definition, declarations and usages, which allows you to navigate that list. `c-xrefactory` handles not only normal C variables, types etc. but also labels and include file references. In addition Yacc non-terminals can be browsed.

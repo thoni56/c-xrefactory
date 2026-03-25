@@ -4,7 +4,14 @@
 #include <stdbool.h>
 
 #include "argumentsvector.h"
+#include "stringlist.h"
 
+/* Project-level configuration, separate from per-request options */
+typedef struct {
+    StringList *sourceDirs;
+} ProjectConfig;
+
+extern ProjectConfig *getProjectConfig(void);
 
 /* High-level initialization functions called by various entry points */
 

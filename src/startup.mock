@@ -29,3 +29,9 @@ bool isProjectConfigChanged(void) {
 void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     mock();
 }
+
+static ProjectConfig mockProjectConfig = {0};
+
+ProjectConfig *getProjectConfig(void) {
+    return &mockProjectConfig;
+}

@@ -130,10 +130,6 @@ Source coverage::
   units. Additional source directories can be listed in the configuration file to include
   files outside the root (e.g. shared libraries, multi-repo layouts).
 
-NOTE: The auto-detect path does not yet scan additional source directories listed in the
-configuration file. Only the project root is scanned. This is a known gap — see
-link:15-roadmap.adoc[Roadmap].
-
 Include paths::
   The `-I` option in the configuration file adds directories that the preprocessor
   searches for `#include` directives — the same semantics as the compiler flag. Files

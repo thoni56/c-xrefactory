@@ -10,6 +10,7 @@
 #include "editorbuffer.h"
 #include "editorbuffertable.h"
 #include "filedescriptor.h"
+#include "fileio.h"
 #include "filetable.h"
 #include "globals.h"
 #include "head.h"
@@ -623,6 +624,22 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         if (!scanDone || configChanged) {
             StringList *discoveredCUs = scanProjectForFilesAndIncludes(
                 options.detectedProjectRoot, options.includeDirs);
+            /* Also scan extra source directories from the project config */
+            for (StringList *dir = getProjectConfig()->sourceDirs; dir != NULL; dir = dir->next) {
+                if (isDirectory(dir->string)
+                    && strcmp(dir->string, options.detectedProjectRoot) != 0) {
+                    StringList *extraCUs = scanProjectForFilesAndIncludes(
+                        dir->string, options.includeDirs);
+                    /* Prepend to discoveredCUs */
+                    if (extraCUs != NULL) {
+                        StringList *tail = extraCUs;
+                        while (tail->next != NULL)
+                            tail = tail->next;
+                        tail->next = discoveredCUs;
+                        discoveredCUs = extraCUs;
+                    }
+                }
+            }
             markMissingFilesAsDeleted(discoveredCUs);
             freeStringList(discoveredCUs);
             scanDone = true;
