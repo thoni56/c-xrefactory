@@ -173,3 +173,42 @@ This does not happen.
 ==== Design
 
 This needs to be investigated and understood before an attempt to design a solution can be made.
+
+=== Semantic Read-only Files (Include Path Ownership)
+
+==== Background
+
+Files discovered through `-I` include paths are currently treated the same as project-owned
+files for navigation purposes. However, these files typically belong to external libraries
+or shared code that the user should browse but not modify through refactoring operations.
+
+For example, when a project uses `-I /shared/lib/include`, the user can navigate into
+headers from that library. If a rename refactoring is performed on a symbol defined in the
+project but also referenced in those external headers, the refactoring should not propagate
+changes into the external files.
+
+The legacy `c-xrefactory` treated all parsed files equally — there was no distinction
+between "my code" and "code I depend on." This was acceptable when projects were
+self-contained, but with the modern include-path-based project scope (see
+link:06-principles.adoc[Principles, Project Scope]) the distinction matters.
+
+==== Proposed Behaviour
+
+Files discovered through `-I` paths (but not listed as source directories in the
+configuration file) would be marked as **read-only for refactoring purposes**:
+
+* **Navigation**: fully supported — PUSH, POP, search results all work as today
+* **Refactoring propagation**: changes stop at the ownership boundary. A rename in
+  project code does not modify files in `-I` directories. The user is informed that
+  external references exist but were not updated.
+* **Explicit override**: an advanced option could allow the user to opt in to
+  cross-boundary refactoring for specific operations
+
+==== Design
+
+This requires a per-file or per-directory ownership flag in the file table, checked by
+the refactoring engine before applying edits. The flag would be set during the lightweight
+scan based on whether the file was discovered under a source directory (owned) or an
+include path (read-only).
+
+The exact mechanism and UX (warning, confirmation, or silent skip) need further design.
