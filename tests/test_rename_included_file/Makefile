@@ -1,17 +1,16 @@
-include ../Makefile.cli
-
-
-ARGUMENTS = -refactory -rfct-rename-included-file -renameto=include2.h -olcursor=6 include.c $(EXTRA)
+include ../Makefile.server
 
 $(TEST): include.h
-	$(CXREF) -create > output.tmp
-	$(COMMAND) > output.tmp
-	$(NORMALIZE) output.tmp > output
+	@-rm -f include2.h*
+	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
 include.h:
 	-rm include2.h*
 	touch include.h
 
-trace: EXTRA = -debug -log=trace
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
+
+GDB_COMMANDS =

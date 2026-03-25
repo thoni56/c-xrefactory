@@ -1,5 +1,13 @@
-<update-report>
-</update-report>
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/include.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-rename-included-file -renameto=include2.h -olcursor=6 CURDIR/include.c -p CURDIR
+end-of-options
+
+<sync>
 <goto>
  <position-off off=10 len=<n>>CURDIR/include.c</position-off>
 </goto>
@@ -19,4 +27,6 @@
 <goto>
  <position-off off=6 len=<n>>CURDIR/include.c</position-off>
 </goto>
-<sync>
+-exit
+end-of-options
+

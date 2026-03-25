@@ -1,16 +1,11 @@
-include ../Makefile.cli
-
-
-ARGUMENTS = -refactory -rfct-del-param -olcxparnum=2 -olcursor=75 source.c -preload source.c source.preload
+include ../Makefile.server
 
 $(TEST):
-	$(CXREF) -create > output.tmp
-	touch source.preload                 # ensure this is newer than db
-	$(COMMAND) >> output.tmp 2>&1
-	$(NORMALIZE) output.tmp > output
+	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: ARGUMENTS += -trace -log=log
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
 
-EXTRA_DEBUG =
+GDB_COMMANDS =

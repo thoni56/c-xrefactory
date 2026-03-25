@@ -1,5 +1,15 @@
-<update-report>
-</update-report>
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-rename-included-file -renameto=include2.h -olcursor=6 CURDIR/main.c -p CURDIR
+end-of-options
+
+<sync>
 <error len=<n>>You cannot rename files from the standard library
 </error>
-<sync>
+-exit
+end-of-options
+
