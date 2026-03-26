@@ -1,17 +1,15 @@
 #include "startup.h"
 
 #include <stdbool.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "argumentsvector.h"
-#include "characterreader.h"
 #include "commons.h"
 #include "constants.h"
 #include "counters.h"
 #include "cxfile.h"
 #include "editor.h"
-#include "filedescriptor.h"
 #include "fileio.h"
 #include "filetable.h"
 #include "globals.h"
@@ -32,6 +30,7 @@
 #include "symboltable.h"
 #include "xref.h"
 #include "yylex.h"
+
 
 static char previousProjectConfigurationFile[MAX_FILE_NAME_SIZE];
 static char previousProjectConfigurationSection[MAX_FILE_NAME_SIZE];
@@ -817,14 +816,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
      * reallocated empty when resizing is necessary? And the various
      * modes need some initial amount of memory? */
     char *tempAllocated;
-    if (options.mode == RefactoryMode) {
-        // some more memory for refactoring task
-        assert(options.cxMemoryFactor>=1);
-        tempAllocated = (char *)cxAlloc(6*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
-        cxFreeUntil(tempAllocated);
-    } else {
-        log_debug("");
-    }
+
     if (options.mode==XrefMode) {
         // get some memory if cross referencing
         assert(options.cxMemoryFactor>=1);
@@ -868,9 +860,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
         currentPass = NO_PASS;
         dfargs = readOptionsFromFile(projectConfigurationFileName, projectConfigurationSection, projectConfigurationSection);
         currentPass = savedPass;
-        if (options.mode == RefactoryMode) {
-            inmode = PROCESS_FILE_ARGUMENTS_NO;
-        } else if (options.mode==ServerMode) {
+        if (options.mode==ServerMode) {
             inmode = PROCESS_FILE_ARGUMENTS_NO;
         } else if (options.project!=NULL || options.update != UPDATE_DEFAULT) {
             inmode = PROCESS_FILE_ARGUMENTS_YES;

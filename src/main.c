@@ -101,8 +101,6 @@ int main(int argc, char *argv[]) {
     totalTaskEntryInitialisations();
     mainTaskEntryInitialisations(args);
 
-    if (options.mode == RefactoryMode)
-        refactory();
     if (options.mode == XrefMode)
         xref(args);
     if (options.mode == ServerMode)

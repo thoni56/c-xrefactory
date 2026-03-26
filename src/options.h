@@ -22,8 +22,7 @@
 typedef enum {
     UndefinedMode = 0, /* Explicitly zero so we can assert(mode) */
     XrefMode,          /* Cross referencer called by user from command line */
-    ServerMode,        /* editor server, called by on-line editing action */
-    RefactoryMode      /* refactoring server, called by on-line editing */
+    ServerMode         /* editor server, called by on-line editing action */
 } Mode;
 
 typedef struct variable {

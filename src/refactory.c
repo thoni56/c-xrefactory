@@ -1,45 +1,37 @@
 #include "refactory.h"
 
-#include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
 
-/* Main is currently needed for:
-   mainTaskEntryInitialisations
-   mainOpenOutputFile
- */
 #include "argumentsvector.h"
 #include "commons.h"
-#include "cxfile.h"
 #include "cxref.h"
 #include "editor.h"
 #include "editorbuffer.h"
 #include "editormarker.h"
-#include "fileio.h"
 #include "filetable.h"
 #include "globals.h"
 #include "head.h"
 #include "list.h"
+#include "log.h"
+#include "misc.h"
+#include "move_function.h"
+#include "options.h"
+#include "organize_includes.h"
 #include "parsing.h"
 #include "position.h"
-#include "referenceableitemtable.h"
-#include "startup.h"
-#include "misc.h"
-#include "options.h"
 #include "ppc.h"
 #include "progress.h"
 #include "proto.h"
 #include "protocol.h"
 #include "refactorings.h"
-#include "scope.h"
 #include "server.h"
 #include "session.h"
+#include "startup.h"
 #include "undo.h"
 #include "xref.h"
 
-#include "log.h"
-#include "move_function.h"
-#include "organize_includes.h"
 
 #define RRF_CHARS_TO_PRE_CHECK_AROUND 1
 #define MAX_NARGV_OPTIONS_COUNT 50
@@ -306,9 +298,6 @@ static void pushReferences(EditorMarker *point, char *pushOption, char *resolveM
 }
 
 static void safetyCheck(char *project, EditorMarker *point) {
-    // !!!!update references MUST be followed by a pushing action, to refresh options
-    if (refactoringOptions.mode == RefactoryMode)
-        ensureReferencesAreUpdated(refactoringOptions.project);
     parseBufferUsingServer(project, point, NULL, "-olcxsafetycheck", NULL);
 
     assert(sessionData.browsingStack.top != NULL);
@@ -833,12 +822,6 @@ static void renameAtPoint(EditorMarker *point) {
         errorMessage(ERR_ST, "this refactoring requires -renameto=<new name> option");
     }
 
-    /* In RefactoryMode (separate process), we need to rebuild references from
-     * scratch since the process started cold. In ServerMode, entry refresh
-     * already ran before we got here — skip the expensive callXref. */
-    if (refactoringOptions.mode == RefactoryMode)
-        ensureReferencesAreUpdated(refactoringOptions.project);
-
     char *message = STANDARD_C_SELECT_SYMBOLS_MESSAGE;
 
     char nameOnPoint[TMP_STRING_SIZE];
@@ -853,16 +836,15 @@ static void renameAtPoint(EditorMarker *point) {
 
     simpleRename(occurrences, point, nameOnPoint);
     //&dumpEditorBuffers();
-    if (refactoringOptions.mode != RefactoryMode)
-        markOccurrenceFilesAsStale(occurrences);
+
+    markOccurrenceFilesAsStale(occurrences);
     EditorUndo *redoTrack = NULL;
     if (!makeSafetyCheckAndUndo(point, &occurrences, undoStartPoint, &redoTrack)) {
         askForReallyContinueConfirmation();
     }
 
     editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
-    if (refactoringOptions.mode != RefactoryMode)
-        markOccurrenceFilesAsStale(occurrences);
+    markOccurrenceFilesAsStale(occurrences);
 
     ppcGotoMarker(point);
 
@@ -877,9 +859,6 @@ static void renameAtInclude(EditorMarker *point) {
         errorMessage(ERR_ST, "this refactoring requires -renameto=<new name> option");
         return;
     }
-
-    if (refactoringOptions.mode == RefactoryMode)
-        ensureReferencesAreUpdated(refactoringOptions.project);
 
     char *message = STANDARD_C_SELECT_SYMBOLS_MESSAGE;
 
@@ -1244,9 +1223,6 @@ static void applyParameterManipulation(EditorMarker *point, int manipulation, in
     char              nameOnPoint[TMP_STRING_SIZE];
     EditorMarkerList *occurrences;
 
-    if (refactoringOptions.mode == RefactoryMode)
-        ensureReferencesAreUpdated(refactoringOptions.project);
-
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     pushReferences(point, "-olcxargmanip", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     occurrences = convertReferencesToEditorMarkers(sessionData.browsingStack.top->references);
@@ -1264,9 +1240,8 @@ static void parameterManipulation(EditorMarker *point, int manip, int argn1, int
     ppcGotoMarker(point);
 }
 
-//------------------------------------------------------------
 
-// ------------------------------------------------------ Extract
+// -------------------  Extract
 
 static void extractFunction(EditorMarker *point, EditorMarker *mark) {
     parseBufferUsingServer(refactoringOptions.project, point, mark, "-olcxextract", NULL);
@@ -1280,220 +1255,10 @@ static void extractVariable(EditorMarker *point, EditorMarker *mark) {
     parseBufferUsingServer(refactoringOptions.project, point, mark, "-olcxextract", "-olexvariable");
 }
 
-static char *computeUpdateOptionForSymbol(EditorMarker *point) {
-
-    assert(point != NULL && point->buffer != NULL);
-
-    bool hasHeaderReferences = false;
-    bool isMultiFileReferences = false;
-    EditorMarkerList *markerList = getReferences(point, NULL, PPCV_BROWSER_TYPE_WARNING);
-    BrowsingMenu *menu = sessionData.browsingStack.top->hkSelectedSym;
-    Scope scope = menu->referenceable.scope;
-    Visibility visibility = menu->referenceable.visibility;
-
-    int fileNumber;
-    if (markerList == NULL) {
-        fileNumber = NO_FILE_NUMBER;
-    } else {
-        assert(markerList->marker != NULL && markerList->marker->buffer != NULL);
-        fileNumber = markerList->marker->buffer->fileNumber;
-    }
-    for (EditorMarkerList *l = markerList; l != NULL; l = l->next) {
-        assert(l->marker != NULL && l->marker->buffer != NULL);
-        FileItem *fileItem = getFileItemWithFileNumber(l->marker->buffer->fileNumber);
-        if (fileNumber != l->marker->buffer->fileNumber) {
-            isMultiFileReferences = true;
-        }
-        if (!fileItem->isArgument) {
-            hasHeaderReferences = true;
-        }
-    }
-
-    // Check if the buffer containing the symbol has been modified
-    if (point->buffer->preLoadedFromFile != NULL) {
-        // Buffer is modified - we MUST update to get correct positions
-        return "-fastupdate";  // or "-update" to be safe
-    }
-
-    char *selectedUpdateOption;
-    if (visibility == VisibilityLocal) {
-        // useless to update when there is nothing about the symbol in Tags
-        selectedUpdateOption = "";
-    } else if (hasHeaderReferences) {
-        // once it is in a header, full update is required
-        selectedUpdateOption = "-update";
-    } else if (scope == AutoScope || scope == FileScope) {
-        // for example a local var or a static function not used in any header
-        if (isMultiFileReferences) {
-            errorMessage(ERR_INTERNAL, "something went wrong, a local symbol is used in several files");
-            selectedUpdateOption = "-update";
-        } else {
-            selectedUpdateOption = "";
-        }
-    } else if (!isMultiFileReferences) {
-        // this is a little bit tricky. It may provoke a bug when
-        // a new external function is not yet indexed, but used in another file.
-        // But it is so practical, so take the risk.
-        selectedUpdateOption = "";
-    } else {
-        // may seems too strong, but implicitly linked global functions
-        // requires this (for example).
-        selectedUpdateOption = "-fastupdate";
-    }
-
-    freeEditorMarkerListAndMarkers(markerList);
-    markerList = NULL;
-    popFromSession();
-
-    return selectedUpdateOption;
-}
-
-// --------------------------------------------------------------------
-
-/* Main entry point for refactoring operations (-refactory mode).
- *
- * This function is called when c-xref is invoked with the -refactory option.
- * It runs as a separate process from the main editor server and handles the
- * complete lifecycle of a refactoring operation.
- *
- * PROCESS LIFECYCLE:
- * 1. Performs initial refactoring operation (rename, extract, parameter manipulation, etc.)
- * 2. If user interaction is needed (e.g., name collisions, symbol selection), enters
- *    beInteractive() which waits for piped commands from the editor
- * 3. When -continuerefactoring is received, exits interactive mode
- * 4. Completes the refactoring and THE PROCESS EXITS AUTOMATICALLY
- *
- * IMPORTANT: The refactory process always exits when this function returns. Tests and
- * editor clients should NOT send an explicit <exit> command after -continuerefactoring,
- * as the process will have already terminated (causing a race condition in tests).
- *
- * The function never returns to a command loop - it's a one-shot operation that either:
- * - Completes immediately (for simple refactorings)
- * - Enters beInteractive() for user decisions, then completes
- * - Errors out via FATAL_ERROR
- */
-void refactory(void) {
-
-    ENTER();
-
-    if (options.project == NULL) {
-        FATAL_ERROR(ERR_ST, "You have to specify active project with -p option", EXIT_FAILURE);
-    }
-
-    deepCopyOptionsFromTo(&options, &refactoringOptions); // save command line options !!!!
-    // in general in this file:
-    //   'refactoringOptions' are options passed to c-xrefactory
-    //   'options' are options valid for interactive edit-server 'sub-task'
-    deepCopyOptionsFromTo(&options, &savedOptions);
-
-    // MAGIC, set the server operation to anything that just refreshes
-    // or generates xrefs since we will be calling the "main task"
-    // below
-    refactoringOptions.serverOperation = OP_INTERNAL_LIST;
-
-    openOutputFile(refactoringOptions.outputFileName);
-    loadAllOpenedEditorBuffers();
-    // initialise lastQuasySaveTime
-    quasiSaveModifiedEditorBuffers();
-
-
-    int argCount = 0;
-    char *argumentFile = getNextScheduledFile(&argCount);
-
-    if (argumentFile == NULL)
-        FATAL_ERROR(ERR_ST, "no input file", EXIT_FAILURE);
-
-    char fileName[MAX_FILE_NAME_SIZE];
-    strcpy(fileName, argumentFile);
-    char *file = fileName;
-    EditorBuffer *buf = findOrCreateAndLoadEditorBufferForFile(file);
-
-    EditorMarker *point = getPointFromOptions(buf);
-    EditorMarker *mark  = getMarkFromOptions(buf);
-
-    refactoringStartingPoint = editorUndo;
-
-    // init subtask
-    ArgumentsVector args = {.argc = argument_count(serverDefaultOptions), .argv = serverDefaultOptions};
-    mainTaskEntryInitialisations(args);
-
-    progressFactor = 1;
-
-    switch (refactoringOptions.theRefactoring) {
-    case AVR_RENAME_SYMBOL:
-        progressFactor = 3;
-        updateOption   = computeUpdateOptionForSymbol(point);
-        renameAtPoint(point);
-        break;
-    case AVR_RENAME_MODULE:
-    case AVR_RENAME_INCLUDED_FILE:
-        progressFactor = 2;
-        updateOption = computeUpdateOptionForSymbol(point);
-        renameAtInclude(point);
-        break;
-    case AVR_ADD_PARAMETER:
-    case AVR_DEL_PARAMETER:
-    case AVR_MOVE_PARAMETER:
-        progressFactor = 3;
-        updateOption = computeUpdateOptionForSymbol(point);
-        parameterManipulation(point, refactoringOptions.theRefactoring, refactoringOptions.parnum,
-                              refactoringOptions.parnum2);
-        break;
-    case AVR_MOVE_FUNCTION:
-        progressFactor = 2;  /* Simple move without multi-step progress */
-        moveFunction(point);
-        break;
-    case AVR_EXTRACT_FUNCTION:
-        progressFactor = 1;
-        extractFunction(point, mark);
-        break;
-    case AVR_EXTRACT_MACRO:
-        progressFactor = 1;
-        extractMacro(point, mark);
-        break;
-    case AVR_EXTRACT_VARIABLE:
-        progressFactor = 1;
-        extractVariable(point, mark);
-        break;
-    case AVR_ORGANIZE_INCLUDES:
-        progressFactor = 1;
-        organizeIncludes(point);
-        break;
-    default:
-        errorMessage(ERR_INTERNAL, "unknown refactoring");
-        break;
-    }
-
-    // always finish once more time
-    writeRelativeProgress(0);
-    writeRelativeProgress(100);
-
-    if (progressOffset != progressFactor) {
-        char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "progressOffset (%d) != progressFactor (%d)", progressOffset, progressFactor);
-        ppcGenRecord(PPC_DEBUG_INFORMATION, tmpBuff);
-    }
-
-    // synchronisation, wait so files won't be saved with the same time
-    quasiSaveModifiedEditorBuffers();
-
-    closeOutputFile();
-    ppcSynchronize();
-
-    // exiting, put undefined, so that main will finish
-    options.mode = UndefinedMode;
-
-    LEAVE();
-}
-
 void serverPerformRefactoring(void) {
     ENTER();
 
-    if (options.project == NULL) {
-        errorMessage(ERR_ST, "Refactoring requires -p option");
-        LEAVE();
-        return;
-    }
+    assert(options.project != NULL);
 
     deepCopyOptionsFromTo(&options, &refactoringOptions);
     refactoringOptions.serverOperation = OP_INTERNAL_LIST;

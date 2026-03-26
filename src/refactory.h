@@ -7,7 +7,6 @@
 
 extern Options refactoringOptions;
 
-extern void refactory(void);
 extern void applyWholeRefactoringFromUndo(void);
 extern void removeNonCommentCode(EditorMarker *marker, int length);
 extern void ensureReferencesAreUpdated(char *project);

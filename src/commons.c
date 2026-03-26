@@ -404,7 +404,7 @@ void internalCheckFail(char *expr, char *file, int line) {
     log_with_explicit_file_and_line(LOG_FATAL, file, line, "'%s' is not true",  expr);
     writeErrorMessage(ERR_INTERNAL_CHECK,msg);
 
-    if (options.mode == ServerMode || options.mode == RefactoryMode) {
+    if (options.mode == ServerMode) {
         if (options.xref2) {
             ppcGenRecord(PPC_FATAL_ERROR, msg);
             ppcGenRecord(PPC_INFORMATION, "Exiting");
@@ -415,10 +415,7 @@ void internalCheckFail(char *expr, char *file, int line) {
             fflush(errOut);
         }
     }
-    if (options.mode == ServerMode
-        || options.mode == RefactoryMode
-        || !fileAbortEnabled
-    ) {
+    if (options.mode == ServerMode || !fileAbortEnabled) {
         emergencyExit(EXIT_FAILURE);
     }
 

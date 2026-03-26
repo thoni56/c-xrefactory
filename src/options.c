@@ -1529,7 +1529,7 @@ static bool processROption(int *argi, ArgumentsVector args) {
         setXrefsLocation(args.argv[i]+6);
     }
     else if (strcmp(args.argv[i], "-refactory")==0)   {
-        options.mode = RefactoryMode;
+        FATAL_ERROR(ERR_ST, "-refactory is no longer supported. Use -server and the server protocol", -1);
     }
     else if (strcmp(args.argv[i], "-rfct-rename")==0) {
         options.theRefactoring = AVR_RENAME_SYMBOL;
