@@ -1976,38 +1976,6 @@ be cleaned up when the buffer is saved or killed)."
   (setq c-xref-refactorer-process nil)
   )
 
-(defun c-xref-server-call-refactoring-task (opts)
-  (let ((bl) (frame-id))
-    (if (and (not (eq c-xref-refactorer-process nil))
-                 (eq (process-status (car c-xref-refactorer-process)) 'run))
-            ;;(if (c-xref-yes-or-no-window "A refactoring process is running, can I kill it? " t nil)
-            (progn
-              (c-xref-kill-refactorer-process-if-any)
-              )
-          ;;  (error "Cannot run two refactoring processes")
-          ;;  )
-      )
-    (setq c-xref-refactorer-process nil)
-    (setq c-xref-refactorer-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-refactorer-process))
-    (setq bl (c-xref-server-get-list-of-buffers-to-save-to-tmp-files nil))
-    (setq bl (c-xref-server-add-buffer-to-tmp-files-list
-                  (current-buffer) bl))
-    (setq frame-id (cdr (assoc 'frame-id c-xref-refactorer-dispatch-data)))
-    (setq opts (append opts (c-xref-server-save-buffers-to-tmp-files bl)))
-    (setq opts (append opts (c-xref-server-get-point-and-mark-options )))
-    (setq opts (append (list "-refactory"
-                                         "-p" c-xref-active-project
-                                         )
-                               opts))
-    (setq opts (append opts (cons
-                             (format "%s" (buffer-file-name))
-                             nil)))
-
-    (c-xref-start-server-process opts c-xref-server-tasks-ofile 'c-xref-refactorer-process 'c-xref-refactorer-filter)
-    (c-xref-wait-until-task-sync 'c-xref-refactorer-process bl)
-    (c-xref-server-read-answer-file-and-dispatch c-xref-refactorer-dispatch-data bl)
-    (c-xref-kill-refactorer-process-if-any)
-    ))
 
 (defun c-xref-server-maintenance-process (opts)
   (let ((bl))
@@ -6900,11 +6868,9 @@ refactoring.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;; REFACTORING DISPATCH ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun c-xref-do-refactoring (opts)
-  "Execute a refactoring via server or legacy path based on c-xref-server-refactoring."
-  (if (or c-xref-debug-mode c-xref-server-refactoring)
-      (c-xref-call-process-with-basic-file-data-all-saves
-       (mapconcat 'identity opts " "))
-    (c-xref-server-call-refactoring-task opts)))
+  "Execute a refactoring via the running server."
+  (c-xref-call-process-with-basic-file-data-all-saves
+   (mapconcat 'identity opts " ")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; RENAMING ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

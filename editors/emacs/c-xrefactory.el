@@ -617,14 +617,6 @@ faces and highlighting in buffers created by C-xrefactory.
 (define-key c-xref-unused-menu [c-xref-dm-globals] '("Browse Unused Symbols in Project" . c-xref-push-global-unused-symbols))
 (define-key c-xref-unused-menu [c-xref-dm-locals] '("Browse Unused Symbols in File" . c-xref-push-this-file-unused-symbols))
 
-(defvar c-xref-server-refactoring nil
-  "When non-nil, perform refactoring via the running server instead of spawning a separate -refactory process.")
-
-(defun c-xref-toggle-server-refactoring ()
-  "Toggle between server-side and legacy (-refactory) refactoring."
-  (interactive)
-  (setq c-xref-server-refactoring (not c-xref-server-refactoring))
-  (message "Server-side refactoring %s" (if c-xref-server-refactoring "enabled" "disabled")))
 
 (defvar c-xref-misc-menu (make-sparse-keymap "Misc Menu"))
 (fset 'c-xref-misc-menu (symbol-value 'c-xref-misc-menu))
@@ -633,9 +625,6 @@ faces and highlighting in buffers created by C-xrefactory.
 (define-key c-xref-misc-menu [c-xref-upgrade] '("Upgrade" . c-xref-upgrade))
 (define-key c-xref-misc-menu [c-xref-help] '("C-xref Help" . c-xref-help))
 (define-key c-xref-misc-menu [c-xref-kill] '("Kill C-xref Process" . c-xref-kill-xref-process))
-(define-key c-xref-misc-menu [c-xref-server-refactoring-toggle]
-  '(menu-item "Server-side Refactoring" c-xref-toggle-server-refactoring
-              :button (:toggle . c-xref-server-refactoring)))
 
 
 (defvar c-xref-menu (make-sparse-keymap "C-xref"))
