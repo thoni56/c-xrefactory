@@ -1,4 +1,12 @@
-CXREF -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract-function -olmark=316 -olcursor=424 CURDIR/test_sources/extract.c -log=log -o server-buffer
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/test_sources/extract.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-extract-function -olmark=316 -olcursor=424 CURDIR/test_sources/extract.c -p CURDIR
+end-of-options
+
 <sync>
 <extraction-dialog type=newFunction_> <str len=<n>>	x = newFunction_(n);
 </str>
@@ -12,3 +20,6 @@ CXREF -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract
 </str>
   <int val=2 len=<n>></int>
 </extraction-dialog>
+-exit
+end-of-options
+

@@ -1,4 +1,12 @@
-CXREF -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract-macro -olmark=54 -olcursor=125 CURDIR/test_source/hello.c -log=log1 -o server-buffer
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/test_source/hello.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-extract-macro -olmark=54 -olcursor=125 CURDIR/test_source/hello.c -p CURDIR
+end-of-options
+
 <sync>
 <extraction-dialog type=NEW_MACRO_> <str len=<n>>	NEW_MACRO_();
 </str>
@@ -9,35 +17,6 @@ CXREF -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract
 </str>
   <int val=2 len=<n>></int>
 </extraction-dialog>
-CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=extracted -olcursor=179 -preload CURDIR/test_source/hello.c CURDIR/test_source/hello-extracted.c CURDIR/test_source/hello.c -log=log2 -o server-buffer
-<sync>
-<update-report>
-</update-report>
-<goto>
- <position-off off=31 len=<n>>CURDIR/test_source/hello.c</position-off>
-</goto>
-<precheck len=<n>> newFunction_(</precheck>
-<goto>
- <position-off off=171 len=<n>>CURDIR/test_source/hello.c</position-off>
-</goto>
-<precheck len=<n>> newFunction_(</precheck>
-<goto>
- <position-off off=176 len=<n>>CURDIR/test_source/hello.c</position-off>
-</goto>
-<update-report>
-</update-report>
-<goto>
- <position-off off=32 len=<n>>CURDIR/test_source/hello.c</position-off>
-</goto>
-<replacement>
- <str len=<n>>newFunction_</str>  <str len=<n>>extracted</str>
-</replacement>
-<goto>
- <position-off off=169 len=<n>>CURDIR/test_source/hello.c</position-off>
-</goto>
-<replacement>
- <str len=<n>>newFunction_</str>  <str len=<n>>extracted</str>
-</replacement>
-<goto>
- <position-off off=176 len=<n>>CURDIR/test_source/hello.c</position-off>
-</goto>
+-exit
+end-of-options
+

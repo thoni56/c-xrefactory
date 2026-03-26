@@ -1,7 +1,12 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=x -olcursor=792 CURDIR/cexercise/refactorings/rename.c
--olcxmenufilter=2 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+CXREF -xrefactory-II -server
+-olcxgetprojectname CURDIR/cexercise/refactorings/rename.c
 <sync>
--olcxfilter=0  -olmark=0 -olcursor=1 nil -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-rfct-rename -renameto=x -olcursor=792 CURDIR/cexercise/refactorings/rename.c -p CURDIR
 <sync>
--continuerefactoring -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenufilter=2 -p CURDIR
 <sync>
+-olcxfilter=0 -olmark=0 -olcursor=1 nil -p CURDIR
+<sync>
+-continuerefactoring -p CURDIR
+<sync>
+<exit>

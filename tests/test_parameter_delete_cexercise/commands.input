@@ -1,1 +1,6 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-del-param -olcxparnum=1 -olmark=0 -olcursor=386 CURDIR/cexercise/refactorings/parameter.c
+CXREF -xrefactory-II -server
+-olcxgetprojectname CURDIR/cexercise/refactorings/parameter.c
+<sync>
+-rfct-del-param -olcxparnum=1 -olmark=0 -olcursor=386 CURDIR/cexercise/refactorings/parameter.c -p CURDIR
+<sync>
+<exit>

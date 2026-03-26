@@ -1,1 +1,6 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract-macro -olmark=315 -olcursor=423 CURDIR/cexercise/refactorings/extract.c
+CXREF -xrefactory-II -server
+-olcxgetprojectname CURDIR/cexercise/refactorings/extract.c
+<sync>
+-rfct-extract-macro -olmark=315 -olcursor=423 CURDIR/cexercise/refactorings/extract.c -p CURDIR
+<sync>
+<exit>

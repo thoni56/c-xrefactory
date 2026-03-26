@@ -1,4 +1,12 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=x -olcursor=792 CURDIR/cexercise/refactorings/rename.c -o server-buffer
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/cexercise/refactorings/rename.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-rename -renameto=x -olcursor=792 CURDIR/cexercise/refactorings/rename.c -p CURDIR
+end-of-options
+
 <sync>
 <goto>
  <position-off off=328 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
@@ -16,21 +24,21 @@ CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-
  <position-off off=792 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
 </goto>
 <display-resolution len=<n> mtype=1 continue=1>These references may be misinterpreted after refactoring</display-resolution>
--olcxmenufilter=2 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenufilter=2 -p CURDIR
 end-of-options
 
 <sync>
 <resolution>
  <symbol line=2 selected=1 base=0 drefn=0 refn=0 len=<n>>  Conflicting References</symbol>
 </resolution>
--olcxfilter=0  -olmark=0 -olcursor=1 nil -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=0 -olmark=0 -olcursor=1 nil -p CURDIR
 end-of-options
 
 <sync>
 <reference-list val=0 symbol="  Conflicting References">
 <src-line refn=1 len=<n>>rename.c:33:        int x; x = k; printf("x==%d\n", x);</src-line>
 </reference-list>
--continuerefactoring -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-continuerefactoring -p CURDIR
 end-of-options
 
 <sync>
@@ -56,3 +64,6 @@ end-of-options
 <goto>
 <position-off off=792 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
 </goto>
+-exit
+end-of-options
+

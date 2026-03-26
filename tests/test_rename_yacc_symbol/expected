@@ -1,22 +1,22 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/source.y
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/source.y
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxpush  -olcursor=301 CURDIR/source.y  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxpush -olcursor=301 CURDIR/source.y -p CURDIR
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=26 col=0 len=<n>>CURDIR/source.y</position-lc>
 </goto>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/source.y
+-olcxgetprojectname CURDIR/source.y
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxgetrefactorings  -olcursor=362 CURDIR/source.y  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=362 CURDIR/source.y -p CURDIR
 end-of-options
 
 <sync>
@@ -24,7 +24,10 @@ end-of-options
   <int val=10 len=<n>></int>
   <int val=300 len=<n>></int>
 </available-refactorings>
-CXREF -xrefactory-II -crlfconversion -crconversion -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=e1 -olcursor=362 CURDIR/source.y
+-rfct-rename -renameto=e1 -olcursor=362 CURDIR/source.y -p CURDIR
+end-of-options
+
+<sync>
 <goto>
  <position-off off=300 len=<n>>CURDIR/source.y</position-off>
 </goto>
@@ -502,7 +505,6 @@ e:</precheck>
 <goto>
  <position-off off=363 len=<n>>CURDIR/source.y</position-off>
 </goto>
-<sync>
 -exit
 end-of-options
 

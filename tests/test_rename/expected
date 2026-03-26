@@ -1,4 +1,12 @@
-CXREF -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=single_int_on_line_1_col_44 -olmark=66 -olcursor=66 CURDIR/test_source/single_int1.c -log=log -o server-buffer
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/test_source/single_int1.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-rename -renameto=single_int_on_line_1_col_44 -olmark=66 -olcursor=66 CURDIR/test_source/single_int1.c -p CURDIR
+end-of-options
+
 <sync>
 <goto>
  <position-off off=3 len=<n>>CURDIR/test_source/single_int1.c</position-off>
@@ -27,3 +35,6 @@ single_int_on_line_1_col_4 </precheck>
 <goto>
  <position-off off=67 len=<n>>CURDIR/test_source/single_int1.c</position-off>
 </goto>
+-exit
+end-of-options
+
