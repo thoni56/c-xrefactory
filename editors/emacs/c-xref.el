@@ -87,7 +87,6 @@
 
 ;; process descriptions are cons (process . (pending-output . synced-flag))
 (defvar c-xref-server-process nil)
-(defvar c-xref-refactorer-process nil)
 (defvar c-xref-maintenance-process nil)
 
 (defvar c-xref-server-tasks-ofile (c-xref-server-get-new-tmp-file-name))
@@ -121,7 +120,6 @@
 
 (defvar c-xref-completions-windows-counter 0)
 (defvar c-xref-completions-dispatch-data nil)
-(defvar c-xref-refactorer-dispatch-data nil)
 (defvar c-xref-global-dispatch-data nil)
 (defvar c-xref-active-project nil)
 
@@ -1757,10 +1755,6 @@ tries to delete C-xrefactory windows first.
   (c-xref-processes-filter process output 'c-xref-server-process)
   )
 
-(defun c-xref-refactorer-filter (process output)
-  (c-xref-processes-filter process output 'c-xref-refactorer-process)
-  )
-
 (defun c-xref-maintenance-filter (process output)
   (c-xref-processes-filter process output 'c-xref-maintenance-process)
   )
@@ -1969,12 +1963,6 @@ be cleaned up when the buffer is saved or killed)."
     (c-xref-server-call-on-current-buffer options dispatch-data bl)
     ))
 
-(defun c-xref-kill-refactorer-process-if-any ()
-  (if (not (eq c-xref-refactorer-process nil))
-      (delete-process (car c-xref-refactorer-process))
-    )
-  (setq c-xref-refactorer-process nil)
-  )
 
 
 (defun c-xref-server-maintenance-process (opts)
@@ -2290,7 +2278,6 @@ on active project selection).
     (c-xref-read-key-sequence "Press a key to continue")
     (c-xref-delete-window-in-any-frame (current-buffer) nil)
     (select-window cw)
-    (c-xref-kill-refactorer-process-if-any)
     (error "exiting")
     i
     ))
@@ -4915,13 +4902,6 @@ separate window.
     res
     ))
 
-(defun c-xref-is-this-refactorer-process-dispatch-data (dispatch-data)
-  (let ((proc) (res))
-    (setq proc (cdr (assoc 'process dispatch-data)))
-    (setq res (eq proc 'c-xref-refactorer-process))
-    res
-    ))
-
 (defun c-xref-is-browser-window-displayed ()
   (let ((res) (resolvewin))
     (setq res nil)
@@ -4959,20 +4939,9 @@ separate window.
     ))
 
 (defun c-xref-browser-of-failed-refactoring-is-displayed ()
-  (let ((rw) (sw) (res))
-    (setq res nil)
-    (setq sw (selected-window))
-    (setq rw (c-xref-is-failed-refactoring-window-displayed))
-    (if rw
-            (progn
-              (select-window rw)
-              (if (c-xref-is-this-refactorer-process-dispatch-data c-xref-this-buffer-dispatch-data)
-                  (setq res rw)
-                )
-              (select-window sw)
-              ))
-    res
-    ))
+  ;; Previously checked for a separate refactorer process — now always nil
+  ;; since refactoring runs in the server process.
+  nil)
 
 (defun c-xref-update-browser-if-displayed (oldwins)
   (let ((bw) (rw) (sw) (dispatch-data))
@@ -5695,14 +5664,6 @@ given string(s).
   (let ((dispatch-data))
     (setq dispatch-data c-xref-this-buffer-dispatch-data)
     (c-xref-close-resolution-dialog-windows dispatch-data)
-
-    ;; kill refactorer process if refactoring
-    (if (eq (cdr (assoc 'process dispatch-data)) 'c-xref-refactorer-process)
-            (progn
-              (delete-process (car c-xref-refactorer-process))
-              (setq c-xref-refactorer-process nil)
-              (error "Canceled")
-              ))
     ))
 
 (defun c-xref-browser-dialog-break (event)
