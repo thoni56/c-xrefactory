@@ -1,5 +1,7 @@
-# Ensure protocol is in sync
+all: c-xrefprotocol.el compile
+	-rm *.elc # Remove the compiled elisp since we want to load source in emacs-devel (utils)
 
+# Ensure protocol is in sync
 c-xrefprotocol.el: ../../src/protocol.th ../../src/refactorings.def c-xrefprotocol.elt
 	# Convert protocol.th into Elisp defvar's
 	cpp c-xrefprotocol.elt | grep -v \# | sed '/./,$$!d' > c-xrefprotocol.el
@@ -9,4 +11,4 @@ compile:
 	emacs -Q --batch -l compileCxrefactory.el
 
 clean:
-	rm *.elc
+	-rm *.elc
