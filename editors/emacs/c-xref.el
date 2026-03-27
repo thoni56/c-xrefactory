@@ -1348,7 +1348,7 @@ tries to delete C-xrefactory windows first.
     ))
 
 (defun c-xref-appropriate-window-height (aplus aminus)
-  (let ((pp) (lnnum) (wsize) (sw))
+  (let ((pp) (lnnum) (wsize))
     (setq sw (selected-window))
     (setq pp (point))
     (setq lnnum (count-lines 1 (point-max)))
@@ -1922,7 +1922,7 @@ be cleaned up when the buffer is saved or killed)."
     ))
 
 (defun c-xref-send-data-to-process-and-dispatch (commands dispatch-data tmp-files)
-  (let ((proc) (frame-id) (opts))
+  (let ((proc) (opts))
     (setq proc (cdr (assoc 'process dispatch-data)))
     (setq frame-id (cdr (assoc 'frame-id dispatch-data)))
     (setq opts (format "%s %s -p \"%s\""
@@ -2307,7 +2307,7 @@ on active project selection).
     ))
 
 (defun c-xref-server-dispatch-call-macro (ss i len _dispatch-data)
-  (let ((tlen) (cc))
+  (let ((tlen))
     (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
     (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
     (setq i (+ i tlen))
@@ -2539,7 +2539,7 @@ No.
 
 (defun c-xref-refactorings-dialog-help (_event)
   (interactive "i")
-  (let ((crf) (rr) (r) (doc))
+  (let ((crf) (rr) (r))
     (setq crf (c-xref-get-line-content))
     ;;(message "looking for %s" crf)
     (setq rr c-xref-refactorings-assoc-list)
@@ -2689,7 +2689,7 @@ Special hotkeys available:
     ))
 
 (defun c-xref-server-dispatch-update-report (ss i len dispatch-data)
-  (let ((tlen) (cc))
+  (let ((tlen))
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (while (and (< i len) (not (equal c-xref-server-ctag (format "/%s" c-xref_PPC_UPDATE_REPORT))))
       (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
@@ -5077,7 +5077,7 @@ definition.
     ))
 
 (defun c-xref-push-and-browse (push-option)
-  (let ((sw) (oldwins))
+  (let ((oldwins))
     (c-xref-before-push-optional-update)
     (setq sw (selected-window))
     (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data
@@ -6489,7 +6489,7 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
     ))
 
 (defun undo-changes-until (bundo interact-flag)
-  (let ((cc) (aa) (iinteract) (loop))
+  (let ((aa) (iinteract))
     (setq iinteract interact-flag)
     (setq loop t)
     (while (and pending-undo-list (not (eq pending-undo-list bundo)))
