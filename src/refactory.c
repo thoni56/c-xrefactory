@@ -769,7 +769,7 @@ static EditorMarkerList *getReferences(EditorMarker *point, char *resolveMessage
     return occs;
 }
 
-static EditorMarkerList *pushGetAndPreCheckReferences(EditorMarker *point, char *nameOnPoint,
+static EditorMarkerList *getAndPreCheckReferences(EditorMarker *point, char *nameOnPoint,
                                                       char *resolveMessage, int messageType) {
     EditorMarkerList *occs;
     occs = getReferences(point, resolveMessage, messageType);
@@ -828,7 +828,7 @@ static void renameAtPoint(EditorMarker *point) {
     EditorMarkerList *occurrences;
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
-    occurrences = pushGetAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
+    occurrences = getAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
 
     EditorUndo *undoStartPoint = editorUndo;
 
