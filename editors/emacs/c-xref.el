@@ -1349,7 +1349,6 @@ tries to delete C-xrefactory windows first.
 
 (defun c-xref-appropriate-window-height (aplus aminus)
   (let ((pp) (lnnum) (wsize))
-    (setq sw (selected-window))
     (setq pp (point))
     (setq lnnum (count-lines 1 (point-max)))
     (setq wsize (window-height (selected-window)))
@@ -1924,7 +1923,6 @@ be cleaned up when the buffer is saved or killed)."
 (defun c-xref-send-data-to-process-and-dispatch (commands dispatch-data tmp-files)
   (let ((proc) (opts))
     (setq proc (cdr (assoc 'process dispatch-data)))
-    (setq frame-id (cdr (assoc 'frame-id dispatch-data)))
     (setq opts (format "%s %s -p \"%s\""
                                commands
                                (if c-xref-browser-lists-source-lines "" "-rlistwithoutsrc ")
@@ -2309,7 +2307,6 @@ on active project selection).
 (defun c-xref-server-dispatch-call-macro (ss i len _dispatch-data)
   (let ((tlen))
     (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
     (setq i (+ i tlen))
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-end-ctag c-xref_PPC_CALL_MACRO)
@@ -2539,21 +2536,8 @@ No.
 
 (defun c-xref-refactorings-dialog-help (_event)
   (interactive "i")
-  (let ((crf) (rr) (r))
-    (setq crf (c-xref-get-line-content))
-    ;;(message "looking for %s" crf)
-    (setq rr c-xref-refactorings-assoc-list)
-    (setq r nil)
-    (while rr
-      (setq r (car rr))
-      (if (equal (car (cdr r)) crf)
-              (progn
-                (setq doc r)
-                ))
-      (setq rr (cdr rr))
-      )
-    (c-xref-interactive-help (format
-                              "Select a refactoring to perform.
+  (c-xref-interactive-help (format
+                            "Select a refactoring to perform.
 Special hotkeys available:
 
 \\[c-xref-modal-dialog-continue] \t-- select
@@ -2561,15 +2545,15 @@ Special hotkeys available:
 \\[c-xref-refactorings-dialog-help] \t-- this help
 %s
 " (c-xref-refactoring-documentation))
-                                         (format "%s:" crf)
-                                         (list
-                                          (list "^\\*[a-zA-Z0-9 ]*:" 'bold)
-                                          (list "^[a-zA-Z0-9 ]*:" 'bold-italic)
-                                          (list "--*-" 'c-xref-list-symbol-face)
-                                          ;;(list (c-xref-keywords-regexp) 'c-xref-keyword-face)
-                                          )
-                                         )
-    ))
+                           (format "%s:" (c-xref-get-line-content))
+                           (list
+                            (list "^\\*[a-zA-Z0-9 ]*:" 'bold)
+                            (list "^[a-zA-Z0-9 ]*:" 'bold-italic)
+                            (list "--*-" 'c-xref-list-symbol-face)
+                            ;;(list (c-xref-keywords-regexp) 'c-xref-keyword-face)
+                            )
+                           )
+  )
 
 
 (defun c-xref-server-dispatch-available-refactorings (ss i len dispatch-data)
@@ -2816,7 +2800,7 @@ Special hotkeys available:
     ))
 
 (defun c-xref-cr-new-references-window (force-bottom-position)
-  (let ((res) (sw))
+  (let ((res))
     (if force-bottom-position
             (setq res (c-xref-display-and-set-new-dialog-window (c-xref-new-references-buffer)
                                                                                         t t))
@@ -2867,7 +2851,7 @@ Special hotkeys available:
     ))
 
 (defun c-xref-create-browser-windows (refactoring-resolution-flag dispatch-data)
-  (let ((resolvewin) (listwin) (oldwins) (frame-id) (_new-dispatch-data) (frw))
+  (let ((resolvewin) (listwin) (frame-id) (_new-dispatch-data) (frw))
     (if (c-xref-get-this-frame-dispatch-data)
             (progn
               (setq resolvewin (cdr (assoc 'linked-resolution-window (c-xref-get-this-frame-dispatch-data))))
@@ -2936,7 +2920,7 @@ Special hotkeys available:
                    ))
               (c-xref-set-this-frame-dispatch-data dispatch-data)
           ))
-    oldwins
+    nil
     ))
 
 (defun c-xref-appropriate-other-window-height (win _aplus _aminus)
@@ -3757,7 +3741,7 @@ will be deleted.
 
 
 (defun c-xref-path-completionfun (cstr _filter type)
-  (let ((res) (cc) (fname) (dir) (sep) (str) (prefix))
+  (let ((res) (fname) (dir) (sep) (str) (prefix))
     (setq str cstr)
     (setq sep (string-match (format "\\%c" c-xref-path-separator) str))
     (setq prefix "")
@@ -4135,9 +4119,8 @@ This  function actually calls `next-error' with argument 1. See also
     ))
 
 (defun c-xref-escape-dq (ss)
-  (let ((res) (mp) (lmp))
+  (let ((res) (mp))
     (setq res ss)
-    (setq lmp 0)
     (setq mp (string-match "\"" res))
     (while mp
       (setq res (format "%s\\%s" (substring res 0 mp) (substring res mp)))
@@ -4195,7 +4178,7 @@ This  function actually calls `next-error' with argument 1. See also
 ;; this function can be used to run a C-xref user-defined interactive
 ;; command; the value of 'name' argument has to be set in .c-xrefrc file.
 (defun c-xref-run-function (name _skip-one-win)
-  (let ((_bb) (rc) (args) (_ww) (bdir) (cc)
+  (let ((_bb) (rc) (args) (_ww) (bdir)
             (bfile) (command) (dispatch-data) (owin) (cwin))
     (setq dispatch-data (c-xref-get-basic-server-dispatch-data nil))
     (setq bdir default-directory)
@@ -4393,8 +4376,7 @@ compilation is successful.  See also `c-xref-ide-compile' and
 
 
 (defun c-xref-tags-dispatch-error (ss i len tag)
-  (let ((tlen) (cc) (cw) (_link) (j) (cclen) (_ccc) (bp) (tlink))
-    (setq cw (selected-window))
+  (let ((tlen) (cc) (_link) (j) (cclen) (_ccc) (bp) (tlink))
     (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
     (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
     (setq i (+ i tlen))
@@ -4427,8 +4409,7 @@ compilation is successful.  See also `c-xref-ide-compile' and
     ))
 
 (defun c-xref-tags-dispatch-information (ss i len tag)
-  (let ((tlen) (cc) (cw) (_dw))
-    (setq cw (selected-window))
+  (let ((tlen) (cc))
     (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
     (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
     (setq i (+ i tlen))
@@ -4622,12 +4603,9 @@ browser and refactorer) are updated.  The behavior of the
 (defun c-xref-interactive-completion-select (&optional _argp)
   "Go to the reference corresponding to this line."
   (interactive "P")
-  (let ((lineno 1) (replace-flag) (cw) (_offset))
-    (if (eq (point) (point-max))
-            (setq replace-flag nil)
-      (setq replace-flag t)
-      (setq lineno (count-lines 1 (+ (point) 1)))
-      )
+  (let ((lineno 1) (cw) (_offset))
+    (unless (eq (point) (point-max))
+      (setq lineno (count-lines 1 (+ (point) 1))))
     (c-xref-send-data-to-process-and-dispatch (format "-olcomplselect%d" lineno) c-xref-completions-dispatch-data nil)
     (if (equal c-xref-completions-windows-counter  0)
             (c-xref-delete-completion-window)
@@ -4833,13 +4811,11 @@ browser and refactorer) are updated.  The behavior of the
 
 (defun c-xref-completion-auto-search-back ()
   (interactive "")
-  (let ((op) (cstr) (pstr))
+  (let ((op))
     (if (not (c-xref-completion-auto-search-list-empty))
         (progn
-              (setq pstr (car c-xref-completion-auto-search-list))
               (setq c-xref-completion-auto-search-list
                     (cdr (cdr c-xref-completion-auto-search-list )))
-              (setq cstr (car c-xref-completion-auto-search-list))
               (setq op (car (cdr c-xref-completion-auto-search-list)))
               (goto-char op)
               (c-xref-completion-source-mod)
@@ -4848,12 +4824,11 @@ browser and refactorer) are updated.  The behavior of the
 
 (defun c-xref-completion-auto-search ()
   (interactive "")
-  (let ((ns) (os) (nns))
+  (let ((ns) (os))
     (setq os (car c-xref-completion-auto-search-list))
     (setq ns (format "%s%c" os last-command-event))
     (beginning-of-line)
     (c-xref-auto-search-search ns)
-    (setq nns (car c-xref-completion-auto-search-list))
     (c-xref-completion-source-mod)
     ))
 
@@ -5079,7 +5054,6 @@ definition.
 (defun c-xref-push-and-browse (push-option)
   (let ((oldwins))
     (c-xref-before-push-optional-update)
-    (setq sw (selected-window))
     (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data
                                                        'c-xref-server-process))
     (setq oldwins (c-xref-create-browser-windows nil c-xref-global-dispatch-data))
@@ -6260,8 +6234,8 @@ the reset was performed, nil if the reset was cancelled."
 (defun c-xref-help ()
   "Show basic help informations for use of C-xrefactory."
   (interactive "")
-  (let ((iw))
-    (setq iw (c-xref-display-and-set-new-dialog-window c-xref-info-buffer nil t))
+  (let ()
+    (c-xref-display-and-set-new-dialog-window c-xref-info-buffer nil t)
     (insert " C-xref Help.
 
 C-xrefactory is a refactoring development environment for C (and
@@ -6491,7 +6465,6 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
 (defun undo-changes-until (bundo interact-flag)
   (let ((aa) (iinteract))
     (setq iinteract interact-flag)
-    (setq loop t)
     (while (and pending-undo-list (not (eq pending-undo-list bundo)))
       (c-xref-make-buffer-writable)
       (undo-more 1)
@@ -6977,11 +6950,10 @@ refactoring.
   )
 
 (defun c-xref-moving (moveopt)
-  (let ((name) (tf))
+  (let ((tf))
     (if (eq c-xref-moving-refactoring-line 0)
             (error "No target position. Use 'Set target position' first.")
       )
-    (setq name (c-xref-get-identifier-on-point))
 
     ;; check target place
     (save-excursion
@@ -7041,7 +7013,7 @@ refactoring.
 (defun c-xref-extraction-dialog (minvocation mhead mtail mline dname)
   ;; dname - name of the extracted entity, need to contain one of the strings
   (let ((mbody) (name) (saved-case-fold-search-mode) (mbuff) (kind) (sw)
-            (mm) (pp) (bb) (ee) (ilen) (sr))
+            (mm) (pp) (bb) (ilen) (sr))
     (setq sw (selected-window))
     (setq mbuff (current-buffer))
     (setq mm (min (mark) (point)))
@@ -7127,7 +7099,6 @@ refactoring.
               (insert mtail)
               (if (string= kind "variable")
                   (newline))
-              (setq ee (point))
               (if (fboundp 'indent-region)
                   (indent-region bb (point) nil)
                 )

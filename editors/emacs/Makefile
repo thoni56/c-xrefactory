@@ -7,8 +7,8 @@ c-xrefprotocol.el: ../../src/protocol.th ../../src/refactorings.def c-xrefprotoc
 	cpp c-xrefprotocol.elt | grep -v \# | sed '/./,$$!d' > c-xrefprotocol.el
 
 compile:
-	-rm *.elc
-	emacs -Q --batch -l compileCxrefactory.el
+	-rm -f *.elc
+	-emacs -Q --batch -l compileCxrefactory.el
 
 clean:
-	-rm *.elc
+	-rm -f *.elc
