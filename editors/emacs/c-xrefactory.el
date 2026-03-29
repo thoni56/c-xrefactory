@@ -644,10 +644,6 @@ faces and highlighting in buffers created by C-xrefactory.
 (define-key c-xref-menu [c-xref-dm-menu] '("Unused Symbols Detection" . c-xref-unused-menu))
 (define-key c-xref-menu [c-xref-sb-menu] '("Browsing with Symbol Stack" . c-xref-sb-menu))
 (define-key c-xref-menu [c-xref-peek-menu] '("Peek" . c-xref-peek-menu))
-(define-key c-xref-menu [separator-buffers3] '("--"))
-(define-key c-xref-menu [c-xref-create-refs] '("Rebuild References DB" . c-xref-create-refs))
-(define-key c-xref-menu [c-xref-update-refs] '("Update References - Full" . c-xref-update-refs))
-(define-key c-xref-menu [c-xref-fast-update-refs] '("Update References - Fast" . c-xref-fast-update-refs))
 (define-key c-xref-menu [separator-buffers6] '("--"))
 (define-key c-xref-menu [(f8)] '("Complete Identifier" . c-xref-completion))
 (define-key c-xref-menu [c-xref-ide-menu] '("Emacs IDE" . c-xref-ide-menu))
@@ -735,9 +731,6 @@ your .c-xrefrc file.
 (autoload 'c-xref-ide-run5 "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-ide-compile-run "c-xref" c-xref-default-documentation-string t)
 
-(autoload 'c-xref-create-refs "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-fast-update-refs "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-update-refs "c-xref" c-xref-default-documentation-string t)
 
 (autoload 'c-xref-alternative-previous-reference "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-alternative-next-reference "c-xref" c-xref-default-documentation-string t)

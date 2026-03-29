@@ -2346,8 +2346,8 @@ on active project selection).
              t dispatch-data)
             (progn
               (c-xref-project-new)
-              ;; a non local exit
-              (error "Done.")
+              ;; TODO: using error for flow control — should use throw/catch instead
+              (error "Project created")
               )
       (error "Exiting")
       )
@@ -3864,7 +3864,7 @@ source directory. You can edit it later to add include paths (-I)
 or macro definitions (-D) if needed.
 "
   (interactive "")
-  (let ((project-root) (project-name) (config-file) (create-tags))
+  (let ((project-root) (project-name) (config-file))
     (c-xref-soft-select-dispach-data-caller-window c-xref-this-buffer-dispatch-data)
     (c-xref-entry-point-make-initialisations-no-project-required)
 
@@ -3889,16 +3889,7 @@ or macro definitions (-D) if needed.
       (insert "  .\n"))
 
     (message "Created %s" config-file)
-
-    ;; Ask to create tags
-    (setq create-tags (y-or-n-p "Create reference database now? "))
-    (if create-tags
-        (progn
-          (setq c-xref-current-project project-name)
-          (c-xref-create-refs)
-          (setq c-xref-current-project nil)))
-
-    (message "Project '%s' created. Database at %s.c-xref/db" project-name project-root)
+    (message "Project '%s' created with root at %s" project-name project-root)
     ))
 
 
