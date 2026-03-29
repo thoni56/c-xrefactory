@@ -265,16 +265,20 @@ Coordinate refactoring operations: rename, move, extract, and argument manipulat
 
 ==== Invocation Model
 
-Refactoring operations run as a **separate `c-xref` invocation**, not through the long-lived editor server. The editor starts a new `c-xref` process with `-refactory` and the specific refactoring flag (e.g. `-rfct-rename`, `-rfct-extract-function`). This separate process communicates results back via the protocol and exits when done.
+Refactoring operations run as server operations (`OP_REFACTORY`) within the long-lived
+editor server process. The editor sends the refactoring request (e.g. `-rfct-rename`,
+`-rfct-extract-function`) as a server command, and the server responds with edit
+instructions via the protocol.
 
-This design means the refactoring process has its own option state (`refactoringOptions`), separate from the server's. The check `options.refactoringRegime == RegimeRefactory` gates refactoring-specific code paths.
+The refactoring code saves options into `refactoringOptions` to preserve the refactoring
+intent while the server's entry refresh and parsing machinery runs with its own options.
 
 ==== Operation Flow
 
 A typical refactoring (e.g. rename):
 
-1. Editor invokes `c-xref -refactory -rfct-rename -renameto=NEW_NAME -olcursor=POSITION FILE`
-2. Refactory parses the file to identify the symbol at the cursor
+1. Editor sends `-rfct-rename -renameto=NEW_NAME -olcursor=POSITION FILE`
+2. Server parses the file to identify the symbol at the cursor
 3. Safety checks verify the rename is valid (no collisions, scope analysis)
 4. For each occurrence: sends `<goto>` + `<precheck>` to verify the editor's file matches
 5. Sends `<replacement>` instructions for each occurrence

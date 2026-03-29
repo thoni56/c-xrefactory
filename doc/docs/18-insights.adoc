@@ -137,7 +137,7 @@ This workaround highlights the fundamental tension: **navigation and refactoring
 
 * link:/workspace/decisions#14[ADR-0014]: Adopt On-Demand Parsing Architecture
 * Section 17.2: Unified Symbol Database Architecture
-* Section 18.3: RefactoryMode Internally Calls XrefMode (describes current architecture)
+* Section 11: Server-Side Refactoring (in Algorithms chapter)
 
 === Stale File Refresh and Cross-File References
 

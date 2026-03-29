@@ -607,29 +607,16 @@ The key insights:
 5. **Sessions are snapshots** that can become stale, requiring incremental rebuilding during navigation
 
 NOTE: The Fast Update and Full Update strategies described above are the **legacy**
-`-update`/`-fastupdate` path used by the Xref mode and the old `-refactory` mode. In the
-current server mode, these are replaced by the <<entry-refresh,Entry Refresh>> algorithm,
-which runs automatically on every request and combines the thoroughness of full update
-(header propagation via Pass 2) with the speed of fast update (only reparsing what's
-actually stale).
+`-update`/`-fastupdate` path used by Xref mode. In server mode, these are replaced by
+the <<entry-refresh,Entry Refresh>> algorithm, which runs automatically on every request
+and combines the thoroughness of full update (header propagation via Pass 2) with the
+speed of fast update (only reparsing what's actually stale).
 
 === Server-Side Refactoring
 
-Refactoring was originally implemented as a separate process (`RefactoryMode`): the
-editor spawned a fresh `c-xref -refactory` process for each refactoring operation.
-This process started cold — it called `callXref()` to rebuild references, performed
-the refactoring, and exited.
-
-With the "memory as truth" architecture, this approach doesn't work: the separate
-process has no access to the running server's reference table. The solution is to
-perform refactoring as a server operation, where the refactoring code runs inside
-the already-initialized server with its populated reference table.
-
-NOTE: The legacy `-refactory` path still exists and is exercised by some tests and
-the default Emacs client path. It will be removed once all refactorings are validated
-in the server path. The `ensureReferencesAreUpdated` calls in the refactoring code are
-guarded with `if (refactoringOptions.mode == RefactoryMode)` — they are only needed in
-the legacy path, where the server's entry refresh has not run.
+Refactoring runs as a server operation (`OP_REFACTORY`): the editor sends a refactoring
+command to the running server, which performs the operation using its already-populated
+reference table.
 
 ==== How Server-Side Refactoring Works
 
@@ -657,29 +644,20 @@ answerEditorAction():
       └─ quasiSaveModifiedEditorBuffers()     ← update buffer mtimes
 ----
 
-**Key differences from the legacy `-refactory` path:**
-
-No `callXref()` or `mainTaskEntryInitialisations()`::
+No separate initialization::
   The server is already initialized. The reference table is populated by the entry
-  refresh that ran before this request. The refactoring code can directly use the
+  refresh that ran before this request. The refactoring code directly uses the
   references.
-
-No `ensureReferencesAreUpdated()`::
-  In the legacy path, this function ran a mini-`callXref()` to populate references
-  for the specific symbol being refactored. In the server path, references are already
-  fresh from entry refresh. The calls are guarded by `if (refactoringOptions.mode == RefactoryMode)`.
 
 Mark stale on completion::
   After the refactoring, `markModifiedEditorBuffersAsStale()` sets `lastParsedMtime = 0`
   on all files whose editor buffers were modified. This ensures the next request's entry
-  refresh reparses them, picking up the post-refactoring state. Without this, the
-  reference table would remain stale for files modified by the refactoring (particularly
-  files other than the next request's target file).
+  refresh reparses them, picking up the post-refactoring state.
 
 `parseBufferUsingServer()` calls remain::
   Some refactoring functions call `parseBufferUsingServer()` internally (e.g. to gather
-  semantic information for safety checks). In the server path, these calls are harmless
-  — they parse into the existing reference table without wiping `cxMemory`.
+  semantic information for safety checks). These calls parse into the existing reference
+  table without wiping `cxMemory`.
 
 ==== Interactive Dialogs
 
@@ -712,7 +690,7 @@ Extraction dialog::
 === How is an Extract refactoring performed?
 
 The region (mark and point/cursor positions) is sent to the _c-xref_
-server in a `-refactory -rfct-extract` command.
+server in a `-rfct-extract` command.
 
 The server parses the relevant file and sets some information that can
 be used in some prechecks that are then performed, such as structure

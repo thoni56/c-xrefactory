@@ -68,10 +68,10 @@ The following diagram shows how the remaining architectural pieces depend on eac
 
 Operational for the refactoring path: `ensureFreshReferences` replaces `callXref` in the server refactoring path. Entry refresh's three-pass strategy handles broad staleness-based selection (same as current three passes). Symbol-targeted selection (resolve the symbol, look up which files contain its references in `referenceableItemTable`, ensure those files are fresh) is not yet extracted as a separate strategy — refactoring currently relies on entry refresh having already run.
 
-The header-filtered sibling parsing optimization (see Optimization section) becomes another file selection strategy within this module. See link:18-insights.adoc[Chapter 18: RefactoryMode Internally Calls XrefMode] for the current architecture this replaces.
+The header-filtered sibling parsing optimization (see Optimization section) becomes another file selection strategy within this module.
 
-|**Refactoring as server operation (strangler fig — operational)**
-|All refactorings run as server operations via `OP_REFACTORY` in `serverPerformRefactoring()`: rename, extract (function/macro/variable), parameter manipulation (add/del/move), move function, organize includes, rename include/module. Validated on real projects via Emacs. `markModifiedEditorBuffersAsStale()` ensures entry refresh detects refactoring-modified buffers. Emacs client has a "Server-side Refactoring" toggle in the Misc menu (`c-xref-server-refactoring`) for battle-testing before removing the legacy path. The legacy `-refactory` process path remains alive but unused when the toggle is on. Final cleanup: remove `RefactoryMode`, `callXref`, `parseBufferUsingServer` bridge (see link:17-major-codebase-improvements.adoc[17.3]), and the `cxMemory` wipe.
+|**Refactoring as server operation (strangler fig — done)**
+|All refactorings run as server operations via `OP_REFACTORY` in `serverPerformRefactoring()`: rename, extract (function/macro/variable), parameter manipulation (add/del/move), move function, organize includes, rename include/module. `markModifiedEditorBuffersAsStale()` ensures entry refresh detects refactoring-modified buffers. `RefactoryMode` and the legacy `-refactory` process path have been removed. The Emacs client always uses the server path. Remaining cleanup: remove `parseBufferUsingServer` bridge (see link:17-major-codebase-improvements.adoc[17.3]).
 
 |**Disk snapshot strategy (operational)**
 |The `.cx` file functions as a startup snapshot. At startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. On `-exit`, the server saves the current in-memory state back to disk. No prior `-create` needed — the first session builds references from scratch, subsequent sessions load the snapshot. See below for target semantics.
@@ -79,16 +79,16 @@ The header-filtered sibling parsing optimization (see Optimization section) beco
 |**Search reads from in-memory table (done)**
 |`OP_SEARCH` now queries the in-memory `referenceableItemTable` via `searchInMemoryTable()` in cxref.c, replacing the disk-based `scanForSearch()`. Same matching logic (`searchSymbolCheckReference`, `searchStringMatch`), same reference filtering (`UsageDefined`/`UsageDeclared`), same result printing. Skips `VisibilityLocal` (block-local) symbols, matching the snapshot's write filter. This was the last operation that read from disk `.cx` files as truth — **all operations now use the in-memory table**.
 
-|**Snapshot write triggers (partially done)**
-|The `-exit` handler calls `markPreloadedFilesAsAncient()` + `saveReferences()`. The Emacs client sends `-exit` via `kill-emacs-hook` on quit, and `c-xref-kill-xref-process` sends `-exit` before killing (project change gets save for free). Two of three triggers are operational:
+|**Snapshot write triggers (done)**
+|The `markPreloadedFilesAsAncient()` + `saveReferences()` pattern allows saving the snapshot at any time — staleification ensures only disk-file-derived references are persisted, so mtime-based validation remains correct at next startup. Three triggers are operational:
 
-*Clean exit* (done): `-exit` handler saves snapshot. `kill-emacs-hook` sends `-exit`.
+*Clean exit* (done): `-exit` handler saves snapshot. Emacs `kill-emacs-hook` sends `-exit`.
 
 *Project change* (done): `c-xref-kill-xref-process` sends `-exit` before killing the process.
 
-*All buffers saved* (not yet): when no editor buffers are modified, the in-memory state is consistent with disk — a clean moment to snapshot. This would be the primary trigger during normal workflow.
+*Periodic save* (done): during long-running parse operations (e.g. parse-for-search), the server saves the snapshot every 100 CUs. Parsed work survives interruption (Ctrl-g, crash).
 
-Dirty kills (crash, `kill -9`, terminal closed) lose in-memory state — the next cold start reparses from scratch. Acceptable since clean exit and project change cover normal workflow.
+Dirty kills (crash, `kill -9`, terminal closed) lose in-memory state accumulated since the last periodic or exit save. The next cold start reparses from the last snapshot.
 |===
 
 ==== Incremental Implementation Path
@@ -97,13 +97,13 @@ Both navigation and refactoring already use the same in-memory `ReferenceableIte
 
 * **Include structure** is already tracked via `TypeCppInclude` references in the reference table — the same mechanism that full parsing creates. Lightweight scanning (ADR 22) would populate these without full parsing.
 * **Staleness detection** is already working: mtime checks on editor buffers, entry-point reparse with transitive include-graph walking (ADR 20).
-* **Graduated update scope** already exists: `computeUpdateOptionForSymbol()` decides per-refactoring whether no update, fast update, or full update is needed based on symbol visibility and scope.
+* **Entry refresh** ensures fresh references before every operation, replacing the graduated update scope that the legacy refactoring path used.
 
 The path forward is:
 
 1. **Lightweight scanning replaces `-create`** (done) — discover CUs and include structure without full parsing. Populate the same `TypeCppInclude` references.
 2. **Snapshot save/load** (done) — `.cx` loaded at startup, saved on `-exit`. No manual `-create` needed after first session.
-3. **Refactoring moves into server (strangler fig)** (done) — all refactorings run as server operations via `OP_REFACTORY`. Legacy `-refactory` path remains for fallback; Emacs menu toggle enables battle-testing. Final cleanup: remove `RefactoryMode`, `callXref`, `parseBufferUsingServer` bridge.
+3. **Refactoring moves into server (strangler fig)** (done) — all refactorings run as server operations via `OP_REFACTORY`. `RefactoryMode` and the legacy `-refactory` process have been removed. Remaining cleanup: remove `callXref` usage from `parseBufferUsingServer` bridge.
 4. **`.cx` becomes startup snapshot only** (done) — never consulted during operation. The in-memory table is authoritative. Search reads from memory. All operations now use the in-memory `referenceableItemTable`. The disk scan tables in `cxfile.c` (all except `snapshotLoadScanDispatchTable`) are candidates for removal.
 
 ==== .cx File: Startup Snapshot

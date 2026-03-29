@@ -93,23 +93,13 @@ that has a LexemBuffer as a component (if they use it).
 
 - xref - batch mode reference generation
 - server - editor server
-- refactory - refactory browser
 
-The default mode is "xref". The command line options `-server` and `-refactory`
-selects one of the other modes. Branching is done in the final lines in
-`main()`.
+The default mode is "xref". The command line option `-server` selects server mode.
+Branching is done in the final lines in `main()`.
 
-The code for the modes are intertwined, probably through re-use of
-already existing functionality when extending to a refactoring
-browser.
-
-One evidence for this is that the refactory module calls the "main
-task" as a "sub-task".  This forces some intricate fiddling with the
-options data structure, like copying it.  Which I don't
-fully understand yet.
-
-TODO?: Strip away the various "regimes" into more separated concerns
-and handle options differently.
+Refactoring operations run within the server process (via `OP_REFACTORY`), not as a
+separate mode. The refactoring code saves and restores options via `refactoringOptions`
+to preserve its intent while the server's parsing machinery operates.
 
 === Options
 
