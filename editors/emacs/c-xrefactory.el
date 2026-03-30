@@ -236,8 +236,6 @@
 
 (defvar c-xref-detailed-refactoring-confirmations nil)
 
-(defvar c-xref-auto-update-tags-before-push nil)
-
 (defvar c-xref-browser-lists-source-lines t)
 
 (defvar c-xref-close-windows-on-pop nil)
@@ -413,11 +411,6 @@ C-xrefactory's source browsing functions.
 
       (defcustom c-xref-browser-lists-source-lines t
             "If on, the C-xrefactory browser will display one line of source code for each reference in the browser window. This may slow down the display when there are large numbers of references."
-            :type '(boolean)
-            :group 'c-xrefactory-source-browser)
-
-      (defcustom c-xref-auto-update-tags-before-push nil
-            "If on, C-xrefactory will update the references database before pushing references on to browser stack. If you are working on a small project and you have a fast computer, then it may be convenient to turn this option on."
             :type '(boolean)
             :group 'c-xrefactory-source-browser)
 

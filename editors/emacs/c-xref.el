@@ -87,10 +87,8 @@
 
 ;; process descriptions are cons (process . (pending-output . synced-flag))
 (defvar c-xref-server-process nil)
-(defvar c-xref-maintenance-process nil)
 
 (defvar c-xref-server-tasks-ofile (c-xref-server-get-new-tmp-file-name))
-(defvar c-xref-maintenance-tasks-ofile (format "%s/c-xref%s-%d.log" c-xref-tmp-dir c-xref-user-identification (emacs-pid)))
 
 (defvar c-xref-ppc-synchro-record (format "<%s>" c-xref_PPC_SYNCHRO_RECORD))
 (defvar c-xref-ppc-synchro-record-len (length c-xref-ppc-synchro-record))
@@ -1754,10 +1752,6 @@ tries to delete C-xrefactory windows first.
   (c-xref-processes-filter process output 'c-xref-server-process)
   )
 
-(defun c-xref-maintenance-filter (process output)
-  (c-xref-processes-filter process output 'c-xref-maintenance-process)
-  )
-
 (defun c-xref-server-add-buffer-to-tmp-files-list (buffer lst)
   "Add BUFFER to the preload list.
 If BUFFER has a persistent tmp file and hasn't changed since it was
@@ -1962,32 +1956,6 @@ be cleaned up when the buffer is saved or killed)."
     ))
 
 
-
-(defun c-xref-server-maintenance-process (opts)
-  (let ((bl))
-    (if (and (not (eq c-xref-maintenance-process nil))
-                 (eq (process-status (car c-xref-maintenance-process)) 'run))
-            (if (c-xref-yes-or-no-window "maintenance process is running, can I kill it? " t nil)
-                (progn
-                  (delete-process (car c-xref-maintenance-process))
-                  (setq c-xref-maintenance-process nil)
-                  )
-              (error "Cannot run two maintenance processes.")
-              ))
-    (setq bl (c-xref-server-get-list-of-buffers-to-save-to-tmp-files t))
-    (setq opts (append opts (list "-errors"
-                                                  "-p" c-xref-active-project
-                                                  (expand-file-name default-directory)
-                                                  )))
-    (setq opts (append opts (c-xref-server-save-buffers-to-tmp-files bl)))
-    ;;  (setq c-xref-maintenance-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-maintenance-process))
-    (c-xref-start-server-process opts c-xref-maintenance-tasks-ofile 'c-xref-maintenance-process 'c-xref-maintenance-filter)
-    (c-xref-wait-until-task-sync 'c-xref-maintenance-process bl)
-    ;;  (c-xref-server-read-answer-file-and-dispatch c-xref-maintenance-dispatch-data nil)
-    (delete-process (car c-xref-maintenance-process))
-    (setq c-xref-maintenance-process nil)
-    (c-xref-server-remove-tmp-files bl)
-    ))
 
 (defun c-xref-get-basic-server-dispatch-data (proc)
   (let ((res))
@@ -4497,92 +4465,6 @@ compilation is successful.  See also `c-xref-ide-compile' and
 (define-key c-xref-tags-log-key-map "\C-m" 'c-xref-tags-log-browse)
 (c-xref-bind-default-button c-xref-tags-log-key-map 'c-xref-tags-log-mouse-button)
 
-(defun c-xref-maintenance-process-show-log ()
-  (let ((ss) (len) (dispatch-data) (conf))
-    (setq dispatch-data (c-xref-get-basic-server-dispatch-data 'nil))
-    (get-buffer-create c-xref-server-answer-buffer)
-    (set-buffer c-xref-server-answer-buffer)
-    (setq buffer-read-only nil)
-    ;; (c-xref-erase-buffer)
-    (insert-file-contents c-xref-maintenance-tasks-ofile  nil nil nil t)
-    (setq ss (buffer-string))
-    (setq len (length ss))
-    (kill-buffer c-xref-server-answer-buffer)
-    (if (> len 0)
-            (progn
-              (setq conf (read-from-minibuffer
-                              "View log file [yn]? " "n"))
-              (if (or (equal conf "y") (equal conf "Y"))
-                  (progn
-                        (c-xref-delete-window-in-any-frame c-xref-log-view-buffer nil)
-                        (c-xref-display-and-set-new-dialog-window c-xref-log-view-buffer nil t)
-                        (setq c-xref-this-buffer-dispatch-data dispatch-data)
-                        (c-xref-tags-dispatch ss 0 len)
-                        (setq buffer-read-only t)
-                        (c-xref-use-local-map c-xref-tags-log-key-map)
-                        ))
-              ))
-    ))
-
-(defun c-xref-update-tags (option log)
-  (c-xref-server-maintenance-process (cons option nil))
-  (if log (c-xref-maintenance-process-show-log))
-  )
-
-(defun c-xref-before-push-optional-update ()
-  (if c-xref-auto-update-tags-before-push
-      (progn
-            (c-xref-update-tags "-fastupdate" nil)
-            ;; clear the 100% message
-            (message "")
-            ))
-  )
-
-(defun c-xref-create-refs ()
-  "Create tags.
-
-This function executes `c-xref -create'.  The effect of the
-invocation is that the C-xrefactory references database (used by
-the source browser and refactorer) are created.  The behavior of
-the `c-xref' command is controlled by options read from the
-`.c-xrefrc' file.
-"
-  (interactive "")
-  (c-xref-entry-point-make-initialisations)
-  (c-xref-server-maintenance-process (cons "-create" nil))
-  (c-xref-maintenance-process-show-log)
-  )
-
-(defun c-xref-fast-update-refs ()
-  "Fast update of tags.
-
-This function executes `c-xref -fastupdate'.  The effect of the
-invocation is that C-xrefactory references database (used by the
-source browser and refactorer) is updated.  The behavior of the
-`c-xref' command is controlled by options read from the
-`.c-xrefrc' file.
-"
-  (interactive "")
-  (c-xref-entry-point-make-initialisations)
-  (c-xref-update-tags "-fastupdate" t)
-  )
-
-(defun c-xref-update-refs (_log)
-  "Full update of tags.
-
-This function executes `c-xref -update'.  The effect of the
-invocation is that C-xrefactory references database (used by the source
-browser and refactorer) are updated.  The behavior of the
-`c-xref' command is controlled by options read from the
-`.c-xrefrc' file.
-"
-  (interactive "P")
-  (c-xref-entry-point-make-initialisations)
-  (c-xref-server-maintenance-process (cons "-update" nil))
-  (c-xref-maintenance-process-show-log)
-  )
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;; COMPLETION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -5018,7 +4900,7 @@ on the browser stack.
   (interactive "")
   (let ((oldwins))
     (c-xref-entry-point-make-initialisations)
-    (c-xref-before-push-optional-update)
+
     (setq oldwins (c-xref-is-browser-window-displayed))
     (c-xref-call-process-with-basic-file-data-all-saves "-olcxpushonly")
     (c-xref-update-browser-if-displayed oldwins)
@@ -5035,7 +4917,7 @@ definition.
   (interactive "")
   (let ((oldwins))
     (c-xref-entry-point-make-initialisations)
-    (c-xref-before-push-optional-update)
+
     (setq oldwins (c-xref-is-browser-window-displayed))
     (c-xref-call-process-with-basic-file-data-all-saves
      (concat "-olcxpush"))
@@ -5044,7 +4926,7 @@ definition.
 
 (defun c-xref-push-and-browse (push-option)
   (let ((oldwins))
-    (c-xref-before-push-optional-update)
+
     (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data
                                                        'c-xref-server-process))
     (setq oldwins (c-xref-create-browser-windows nil c-xref-global-dispatch-data))
@@ -5115,7 +4997,7 @@ other browsing functions.
     (setq sym (c-xref-get-identifier-on-point))
     (setq sstr (completing-read "Symbol to browse: "
                                                 'c-xref-symbols-completionfun nil nil sym))
-    (c-xref-before-push-optional-update)
+
     (c-xref-call-process-with-basic-file-data-all-saves
      (format "\"-olcxpushname=%s\" -olcxlccursor=%d:%d" sstr line col))
     (c-xref-update-browser-if-displayed oldwins)
@@ -5145,7 +5027,7 @@ refactoring, changes made by this function can be undone with the
   (let ((oldwins))
     (c-xref-entry-point-make-initialisations)
     (c-xref-multifile-undo-set-buffer-switch-point "mapping of a macro on all occurences")
-    (c-xref-before-push-optional-update)
+
     (setq oldwins (c-xref-is-browser-window-displayed))
     (c-xref-call-process-with-basic-file-data-all-saves "-olcxpushandcallmacro")
     (c-xref-update-browser-if-displayed oldwins)
@@ -6068,38 +5950,22 @@ given string(s).
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun c-xref-kill-xref-process (_coredump)
-  "Kill currently running  c-xref process.
+  "Kill the c-xref server process.
 
-If there is an c-xref process creating/updating a reference
-database it is killed.  If there is no such process this function
-kills the c-xref server process.  This function can be used if
-the c-xref task enters an inconsistent state.  The c-xref process
-is then restarted automatically at the next invocation of any of
-its functions.
+This function can be used if the c-xref task enters an inconsistent
+state.  The c-xref process is then restarted automatically at the
+next invocation of any of its functions.
 "
   (interactive "P")
-  (if (and (not (eq c-xref-maintenance-process nil))
-               (eq (process-status (car c-xref-maintenance-process)) 'run))
+  (if (not (eq c-xref-server-process nil))
       (progn
-            (delete-process (car c-xref-maintenance-process))
-            (setq c-xref-maintenance-process nil)
-            (message "Extern c-xref process killed.")
-            )
-    (setq c-xref-maintenance-process nil)
-    (if (not (eq c-xref-server-process nil))
-            (progn
-              (if current-prefix-arg
-                  (progn
-                        (shell-command (format "kill -3 %d && echo Core dumped into this buffer directory." (process-id (car c-xref-server-process))))
-                        )
-                (process-send-string (car c-xref-server-process) "-exit\nend-of-options\n\n")
-                (accept-process-output (car c-xref-server-process) 1)
-                (setq c-xref-server-process nil)
-                (message "Emacs c-xref server process killed.")
-                ))
-      (message "** No process to kill. **")
-      ))
-  )
+        (if current-prefix-arg
+            (shell-command (format "kill -3 %d && echo Core dumped into this buffer directory." (process-id (car c-xref-server-process))))
+          (process-send-string (car c-xref-server-process) "-exit\nend-of-options\n\n")
+          (accept-process-output (car c-xref-server-process) 1)
+          (setq c-xref-server-process nil)
+          (message "Emacs c-xref server process killed.")))
+    (message "** No process to kill. **")))
 
 (defvar c-xref-tutorial-directory (format "%s/../../doc/cexercise" (file-name-directory load-file-name))
   "*Directory for tutorial files belonging to package \`c-xrefactory'.")
@@ -6768,18 +6634,12 @@ refactoring.
   (setq c-xref-refactoring-beginning-offset (point))
   (c-xref-multifile-undo-set-buffer-switch-point description)
   (if c-xref-save-files-and-update-tags-before-refactoring
-      (progn
-            (c-xref-save-some-buffers nil)
-            (c-xref-update-tags "-update" nil)
-            ))
+      (c-xref-save-some-buffers nil))
   )
 
 (defun c-xref-refactoring-finish-actions ()
   (if c-xref-save-files-and-update-tags-after-refactoring
-      (progn
-            (c-xref-save-some-buffers t)
-            (c-xref-update-tags "-update" nil)
-            ))
+      (c-xref-save-some-buffers t))
   (if c-xref-move-point-back-after-refactoring
       (progn
             (c-xref-switch-to-marker c-xref-refactoring-beginning-marker)
