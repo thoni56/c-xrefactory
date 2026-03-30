@@ -1931,6 +1931,7 @@ void applyConventionBasedDatabasePath(void) {
     sprintf(dbPath, "%s/.c-xref/db", autoDetectedProjectRoot);
     options.cxFileLocation = allocateStringForOption(&options.cxFileLocation, dbPath);
     options.detectedProjectRoot = allocateStringForOption(&options.detectedProjectRoot, autoDetectedProjectRoot);
+    setOptionVariable("__PROJECT_ROOT", autoDetectedProjectRoot);
     log_debug("Applied convention-based database path: %s", options.cxFileLocation);
 }
 

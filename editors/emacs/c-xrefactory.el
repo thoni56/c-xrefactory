@@ -523,7 +523,7 @@ faces and highlighting in buffers created by C-xrefactory.
 
 (defvar c-xref-project-menu (make-sparse-keymap "Project"))
 (fset 'c-xref-project-menu (symbol-value 'c-xref-project-menu))
-(define-key c-xref-project-menu [c-xref-prj-edit] '("Edit Options" .
+(define-key c-xref-project-menu [c-xref-prj-edit] '("Edit Config" .
                                                                                             c-xref-project-edit-options))
 (define-key c-xref-project-menu [c-xref-prj-show-active] '("Show Active" .
                                                                                                            c-xref-project-active))

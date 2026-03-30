@@ -2011,19 +2011,17 @@ be cleaned up when the buffer is saved or killed)."
     ))
 
 (defun c-xref-get-env (name)
-  "Get value of an C-xrefactory environment variable.
+  "Get value of a c-xrefactory environment variable.
 
-This  function  gets a  value  associated  with  the C-xref  environment
-variable set by the -set option in the .c-xrefrc file (its value depends
-on active project selection).
+Gets the value associated with NAME, set by -set in the .c-xrefrc file.
 "
   (let ((res))
     (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-server-process))
-    (c-xref-server-call-on-current-buffer-no-saves (format "-get \"%s\"" name)
-                                                                           c-xref-global-dispatch-data)
+    (c-xref-send-data-to-process-and-dispatch
+     (format "-get \"%s\"" name)
+     c-xref-global-dispatch-data nil)
     (setq res (cdr (assoc 'info c-xref-global-dispatch-data)))
-    res
-    ))
+    res))
 
 (defvar c-xref-frame-id-counter 0)
 (defun c-xref-get-this-frame-id ()
@@ -3872,30 +3870,15 @@ section applies to the currently edited file.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun c-xref-project-edit-options ()
-  "Edit manually .c-xrefrc file.
-
-This function just loads the .c-xrefrc file and goes to the
-active project section.  You need to edit this text file
-manually. For more info about the .c-xrefrc file format, read
-`c-xrefrc' manual page. For more info about available options,
-read the `c-xref' manual page.
-"
+  "Edit the project's .c-xrefrc configuration file."
   (interactive "")
   (c-xref-entry-point-make-initialisations)
-  (find-file c-xref-options-file)
-  (goto-char (point-min))
-  (if c-xref-active-project
-      (progn
-            (if (not (search-forward (concat "[" c-xref-active-project "]") nil t))
-                (if (not (search-forward (concat "[" c-xref-active-project ":") nil t))
-                        (if (not (search-forward (concat ":" c-xref-active-project "]") nil t))
-                            (if (not (search-forward (concat ":" c-xref-active-project ":") nil t))
-                                    (message "Options for %s found" c-xref-active-project)
-                              ))))
-            (beginning-of-line)
-            (forward-line)
-            ))
-  )
+  (let* ((project-root (c-xref-get-env "__PROJECT_ROOT"))
+         (config-file (if (and project-root (not (equal project-root ""))
+                               (file-exists-p (concat project-root "/.c-xrefrc")))
+                          (concat project-root "/.c-xrefrc")
+                        c-xref-options-file)))
+    (find-file config-file)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;; TAGS maintenance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
