@@ -31,7 +31,6 @@
   (define-key keymap [(f11)] 'c-xref-refactor)
 
   (define-key keymap [(f8)] 'c-xref-completion)
-  (define-key keymap [(control f8)] 'c-xref-ide-compile-run)
   (define-key keymap [(f7)] 'c-xref-delete-window)
 
   (define-key keymap [(f6)] 'c-xref-push-and-goto-definition)
@@ -179,8 +178,6 @@
     (setq c-xref-escape-key-sequence "\e\e")
   )
 
-(defvar c-xref-inspect-errors-if-compilation-window t)
-
 ;; by default xrefactory does binds left button to its functions
 (defvar c-xref-bind-left-mouse-button t)
 
@@ -216,21 +213,8 @@
 
 (defvar c-xref-multifile-undo-deep 50)
 
-(defvar c-xref-ide-last-run-command "run")
-
-;; the default variable executed by first c-xref-ide-compile command
-(defvar c-xref-ide-last-compile-command 'compiledir)
-
-;; can be also 'compilefile or 'compileproject
-
 ;; the default limit for number of completions
 (defvar c-xref-max-completions 500)
-
-;; shell to interpret multi-line compile and run commands
-(defvar c-xref-shell "sh")
-
-;; generate batch file also when compiling with single line command
-(defvar c-xref-always-batch-file t)
 
 (defvar c-xref-move-point-back-after-refactoring nil)
 
@@ -325,33 +309,6 @@ C-xrefactory functions.
             :type '(boolean)
             :group 'c-xrefactory-general)
 
-
-
-;;;;;;;;;;;;;;;; IDE ;;;;;;;;;
-
-      (defgroup c-xrefactory-compile-run nil
-            "
-
-Here you can set variables controlling the Emacs IDE interface.
-
-"
-            :group 'c-xrefactory
-        )
-
-      (defcustom c-xref-ide-last-compile-command 'compiledir
-            "Can be either 'compilefile, 'compiledir or 'compileproject. This variable indicates which compilations will be invoked by 'Emacs IDE -> Last Compile' command. You can preset it to your preferred default value."
-            :type '(symbol)
-            :group 'c-xrefactory-compile-run)
-
-      (defcustom c-xref-always-batch-file t
-            "If on, C-xrefactory will generate and then execute a batch file when executing an Emacs IDE compile function. If off, C-xrefactory will generate a batch file only when the compile command exceeds one line."
-            :type '(boolean)
-            :group 'c-xrefactory-compile-run)
-
-      (defcustom c-xref-shell "sh"
-            "This option determines which shell is used for interpreting batch files generated for Emacs IDE compile and run commands. This variable applies only on Unix like platforms."
-            :type '(string)
-            :group 'c-xrefactory-compile-run)
 
 
 ;;;;;;;;;;;;;;;; c-xrefactory-completion ;;;;;;;;;
@@ -454,11 +411,6 @@ C-xrefactory's source browsing functions.
             :type '(integer)
             :group 'c-xrefactory-source-browser)
 
-      (defcustom c-xref-inspect-errors-if-compilation-window t
-            "If on, and if a compilation buffer is displayed in the current frame, then c-xref-alternative-previous-reference and c-xref-alternative-next-reference will inspect the previous/next error rather than the previous/next reference. In this way shortcuts (usually C-F3, C-F4) can be used to browse errors after an unsuccessful compilation."
-            :type '(boolean)
-            :group 'c-xrefactory-source-browser)
-
       )
 
 
@@ -545,29 +497,6 @@ faces and highlighting in buffers created by C-xrefactory.
 ;; C-xref menu definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; IDE menu
-(defvar c-xref-ide-menu (make-sparse-keymap "C-xref interface to Emacs IDE functions"))
-(fset 'c-xref-ide-menu (symbol-value 'c-xref-ide-menu))
-(define-key c-xref-ide-menu [c-xref-ide-compile-run] '("(Last) Compile & Run" . c-xref-ide-compile-run))
-(define-key c-xref-ide-menu [c-xref-ide-sep1] '("--"))
-(define-key c-xref-ide-menu [c-xref-ide-run] '("(Last) Run" . c-xref-ide-run))
-(define-key c-xref-ide-menu [c-xref-ide-runthis] '("Run This" . c-xref-ide-run-this))
-(define-key c-xref-ide-menu [c-xref-ide-run5] '("Run5" . c-xref-ide-run5))
-(define-key c-xref-ide-menu [c-xref-ide-run4] '("Run4" . c-xref-ide-run4))
-(define-key c-xref-ide-menu [c-xref-ide-run3] '("Run3" . c-xref-ide-run3))
-(define-key c-xref-ide-menu [c-xref-ide-run2] '("Run2" . c-xref-ide-run2))
-(define-key c-xref-ide-menu [c-xref-ide-run1] '("Run1" . c-xref-ide-run1))
-(define-key c-xref-ide-menu [c-xref-ide-sep2] '("--"))
-(define-key c-xref-ide-menu [c-xref-ide-next-err] '("Next Error (or Alternative Reference)" . c-xref-alternative-next-reference))
-(define-key c-xref-ide-menu [c-xref-ide-previous-err] '("Previous Error (or Alternative Reference)" . c-xref-alternative-previous-reference))
-;;(define-key c-xref-ide-menu [c-xref-ide-preverror] '("Previous Error" . c-xref-ide-previous-error))
-;;(define-key c-xref-ide-menu [c-xref-ide-nexterror] '("Next Error" . c-xref-ide-next-error))
-(define-key c-xref-ide-menu [c-xref-ide-sep3] '("--"))
-(define-key c-xref-ide-menu [c-xref-ide-cmpl] '("(Last) Compile" . c-xref-ide-compile))
-(define-key c-xref-ide-menu [c-xref-ide-cprj] '("Compile Project" . c-xref-ide-compile-project))
-(define-key c-xref-ide-menu [c-xref-ide-cdir] '("Compile Directory" . c-xref-ide-compile-dir))
-(define-key c-xref-ide-menu [c-xref-ide-cfile] '("Compile File" . c-xref-ide-compile-file))
-
 ;; peek menu
 (defvar c-xref-peek-menu (make-sparse-keymap "Peek"))
 (fset 'c-xref-peek-menu (symbol-value 'c-xref-peek-menu))
@@ -639,7 +568,6 @@ faces and highlighting in buffers created by C-xrefactory.
 (define-key c-xref-menu [c-xref-peek-menu] '("Peek" . c-xref-peek-menu))
 (define-key c-xref-menu [separator-buffers6] '("--"))
 (define-key c-xref-menu [(f8)] '("Complete Identifier" . c-xref-completion))
-(define-key c-xref-menu [c-xref-ide-menu] '("Emacs IDE" . c-xref-ide-menu))
 (define-key c-xref-menu [c-xref-project-menu] '("Project" . c-xref-project-menu))
 
 
@@ -710,19 +638,6 @@ your .c-xrefrc file.
 (autoload 'c-xref-project-active "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-project-edit-options "c-xref" c-xref-default-documentation-string t)
 
-(autoload 'c-xref-ide-compile-file "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-ide-compile-dir "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-ide-compile-project "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-ide-compile "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-ide-previous-error "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-ide-run "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-ide-run-this "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-ide-run1 "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-ide-run2 "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-ide-run3 "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-ide-run4 "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-ide-run5 "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-ide-compile-run "c-xref" c-xref-default-documentation-string t)
 
 
 (autoload 'c-xref-alternative-previous-reference "c-xref" c-xref-default-documentation-string t)
