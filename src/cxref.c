@@ -1710,15 +1710,53 @@ static void answerPushLocalUnusedSymbolsAction(void) {
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
 }
 
-static void answerPushGlobalUnusedSymbolsAction(void) {
-    SessionStackEntry    *rstack;
-    BrowsingMenu     *ss;
+static bool isReportableAsGloballyUnused(ReferenceableItem *item) {
+    if (item == NULL || item->linkName[0] == ' ')
+        return false;
+    if (item->type == TypeStruct)
+        return false;
+    if (item->type == TypeMacro)
+        return false;
+    return true;
+}
 
+static void mapAddGlobalUnusedSymbolsToHkSelection(ReferenceableItem *item) {
+    if (item->visibility != VisibilityGlobal)
+        return;
+    if (!isReportableAsGloballyUnused(item))
+        return;
+
+    bool isDefined = false;
+    bool hasUsage = false;
+    Reference *definitionReference = NULL;
+
+    for (Reference *ref = item->references; ref != NULL; ref = ref->next) {
+        if (!isVisibleUsage(ref->usage))
+            continue;
+        if (isDefinitionUsage(ref->usage)
+            && isCompilationUnit(getFileItemWithFileNumber(ref->position.file)->name)) {
+            isDefined = true;
+            definitionReference = ref;
+        } else if (!isDefinitionOrDeclarationUsage(ref->usage)) {
+            hasUsage = true;
+            break;
+        }
+    }
+
+    if (isDefined && !hasUsage) {
+        addReferenceableToBrowsingMenu(&sessionData.browsingStack.top->hkSelectedSym,
+                                       item, true, true, 0,
+                                       (SymbolRelation){.sameFile = false},
+                                       UsageDefined,
+                                       definitionReference->position,
+                                       definitionReference->usage);
+    }
+}
+
+static void answerPushGlobalUnusedSymbolsAction(void) {
     assert(sessionData.browsingStack.top);
-    rstack = sessionData.browsingStack.top;
-    ss = rstack->hkSelectedSym;
-    assert(ss == NULL);
-    scanForGlobalUnused(options.cxFileLocation);
+    assert(sessionData.browsingStack.top->hkSelectedSym == NULL);
+    mapOverReferenceableItemTable(mapAddGlobalUnusedSymbolsToHkSelection);
     createSelectionMenuForOperation(options.serverOperation);
     assert(options.xref2);
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");

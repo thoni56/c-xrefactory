@@ -14,38 +14,35 @@ This chapter outlines the high-level architectural and feature goals for c-xrefa
 
 ==== The Goal
 
-**In-memory references become the single source of truth.** Currently, the system has two sources (in-memory `referenceableItemTable` and `.cx` files on disk) with different code paths for navigation vs. refactoring. This creates complexity, bugs, and makes preloaded editor buffers work inconsistently.
+**In-memory references are the single source of truth.** All operations — navigation, refactoring, search, completion — read from the in-memory `referenceableItemTable`. The `.cx` files on disk serve only as a startup snapshot to avoid full-project reparsing on server start.
 
 ==== Dependency Chain
 
-The following diagram shows how the remaining architectural pieces depend on each other. Work proceeds from bottom to top.
-
 ----
-                     Memory is truth
-                     (convergence point)
-                  /         |         \
-                 v          v          v
-    Refactoring as     Index-based    Search reads
-    server operation   sessions       from in-memory
-    (strangler fig)    (keys +        table
-            |          positions,        |
-            v          not copies)       |
-    References refresh      |            |
-    module (done for        |            |
-    refactoring path)       |            |
-            |               |            |
-            v               v            v
     ┌──────────────────────────────────────────┐
-    │           FOUNDATION (done)              │
-    │  - ADR-0020: Sync before dispatch        │
-    │  - ADR-0022: Lightweight scan            │
-    │  - .cx loaded as startup snapshot        │
-    │  - Snapshot save on -exit                │
-    │  - Client sends only dirty buffers       │
-    │  - Single-project server (ADR-0021)      │
-    │  - Project-local config (ADR-0005)       │
-    │  - Unified startup (shared init)         │
+    │          MEMORY IS TRUTH (done)          │
+    │  All operations use in-memory table      │
+    │  - Navigation, completion, search        │
+    │  - Refactoring (server-side, OP_REFACTORY│
+    │  - .cx files = startup snapshot only     │
     └──────────────────────────────────────────┘
+                        |
+                        v
+              ┌─────────────────┐
+              │ REMAINING WORK  │
+              │                 │
+              │ Index-based     │
+              │ sessions        │
+              │ (keys+positions │
+              │ not copies)     │
+              │                 │
+              │ parseBuffer     │
+              │ UsingServer     │
+              │ bridge removal  │
+              │                 │
+              │ XrefMode        │
+              │ removal         │
+              └─────────────────┘
 ----
 
 ==== Component Summary
@@ -104,7 +101,7 @@ The path forward is:
 1. **Lightweight scanning replaces `-create`** (done) — discover CUs and include structure without full parsing. Populate the same `TypeCppInclude` references.
 2. **Snapshot save/load** (done) — `.cx` loaded at startup, saved on `-exit`. No manual `-create` needed after first session.
 3. **Refactoring moves into server (strangler fig)** (done) — all refactorings run as server operations via `OP_REFACTORY`. `RefactoryMode` and the legacy `-refactory` process have been removed. Remaining cleanup: remove `callXref` usage from `parseBufferUsingServer` bridge.
-4. **`.cx` becomes startup snapshot only** (done) — never consulted during operation. The in-memory table is authoritative. Search reads from memory. All operations now use the in-memory `referenceableItemTable`. The disk scan tables in `cxfile.c` (all except `snapshotLoadScanDispatchTable`) are candidates for removal.
+4. **`.cx` becomes startup snapshot only** (done) — never consulted during operation. The in-memory table is authoritative. All operations use the in-memory `referenceableItemTable`: navigation, completion, search, refactoring, and unused detection (both local and global). The disk scan tables in `cxfile.c` (all except `snapshotLoadScanDispatchTable`) are candidates for removal.
 
 ==== .cx File: Startup Snapshot
 
