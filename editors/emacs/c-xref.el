@@ -1719,7 +1719,7 @@ tries to delete C-xrefactory windows first.
                         )
       (progn
             (setq i (+ i c-xref-ppc-progress-len))
-            (setq j (string-search c-xref-ppc-progress-end ss i))
+            (setq j (string-match-p (regexp-quote c-xref-ppc-progress-end) ss i))
             (if j
                 (progn
                   (message "%s" (substring ss i j))
