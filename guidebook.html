@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-03-27">
+<meta name="author" content="v{VERSION} - Generated 2026-03-31">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-03-27</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-03-31</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -1977,10 +1977,14 @@ JSON *findDefinition(const char *uri, JSON *position);</code></pre>
 <div class="sect3">
 <h4 id="_invocation_model">8.5.2. Invocation Model</h4>
 <div class="paragraph">
-<p>Refactoring operations run as a <strong>separate <code>c-xref</code> invocation</strong>, not through the long-lived editor server. The editor starts a new <code>c-xref</code> process with <code>-refactory</code> and the specific refactoring flag (e.g. <code>-rfct-rename</code>, <code>-rfct-extract-function</code>). This separate process communicates results back via the protocol and exits when done.</p>
+<p>Refactoring operations run as server operations (<code>OP_REFACTORY</code>) within the long-lived
+editor server process. The editor sends the refactoring request (e.g. <code>-rfct-rename</code>,
+<code>-rfct-extract-function</code>) as a server command, and the server responds with edit
+instructions via the protocol.</p>
 </div>
 <div class="paragraph">
-<p>This design means the refactoring process has its own option state (<code>refactoringOptions</code>), separate from the server&#8217;s. The check <code>options.refactoringRegime == RegimeRefactory</code> gates refactoring-specific code paths.</p>
+<p>The refactoring code saves options into <code>refactoringOptions</code> to preserve the refactoring
+intent while the server&#8217;s entry refresh and parsing machinery runs with its own options.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1991,10 +1995,10 @@ JSON *findDefinition(const char *uri, JSON *position);</code></pre>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Editor invokes <code>c-xref -refactory -rfct-rename -renameto=NEW_NAME -olcursor=POSITION FILE</code></p>
+<p>Editor sends <code>-rfct-rename -renameto=NEW_NAME -olcursor=POSITION FILE</code></p>
 </li>
 <li>
-<p>Refactory parses the file to identify the symbol at the cursor</p>
+<p>Server parses the file to identify the symbol at the cursor</p>
 </li>
 <li>
 <p>Safety checks verify the rename is valid (no collisions, scope analysis)</p>
@@ -4177,30 +4181,16 @@ that has a LexemBuffer as a component (if they use it).
 <li>
 <p>server - editor server</p>
 </li>
-<li>
-<p>refactory - refactory browser</p>
-</li>
 </ul>
 </div>
 <div class="paragraph">
-<p>The default mode is "xref". The command line options <code>-server</code> and <code>-refactory</code>
-selects one of the other modes. Branching is done in the final lines in
-<code>main()</code>.</p>
+<p>The default mode is "xref". The command line option <code>-server</code> selects server mode.
+Branching is done in the final lines in <code>main()</code>.</p>
 </div>
 <div class="paragraph">
-<p>The code for the modes are intertwined, probably through re-use of
-already existing functionality when extending to a refactoring
-browser.</p>
-</div>
-<div class="paragraph">
-<p>One evidence for this is that the refactory module calls the "main
-task" as a "sub-task".  This forces some intricate fiddling with the
-options data structure, like copying it.  Which I don&#8217;t
-fully understand yet.</p>
-</div>
-<div class="paragraph">
-<p>TODO?: Strip away the various "regimes" into more separated concerns
-and handle options differently.</p>
+<p>Refactoring operations run within the server process (via <code>OP_REFACTORY</code>), not as a
+separate mode. The refactoring code saves and restores options via <code>refactoringOptions</code>
+to preserve its intent while the server&#8217;s parsing machinery operates.</p>
 </div>
 </div>
 <div class="sect2">
@@ -5744,11 +5734,10 @@ session-&gt;current = ref;</code></pre>
 </td>
 <td class="content">
 The Fast Update and Full Update strategies described above are the <strong>legacy</strong>
-<code>-update</code>/<code>-fastupdate</code> path used by the Xref mode and the old <code>-refactory</code> mode. In the
-current server mode, these are replaced by the <a href="#entry-refresh">Entry Refresh</a> algorithm,
-which runs automatically on every request and combines the thoroughness of full update
-(header propagation via Pass 2) with the speed of fast update (only reparsing what&#8217;s
-actually stale).
+<code>-update</code>/<code>-fastupdate</code> path used by Xref mode. In server mode, these are replaced by
+the <a href="#entry-refresh">Entry Refresh</a> algorithm, which runs automatically on every request
+and combines the thoroughness of full update (header propagation via Pass 2) with the
+speed of fast update (only reparsing what&#8217;s actually stale).
 </td>
 </tr>
 </table>
@@ -5758,32 +5747,9 @@ actually stale).
 <div class="sect2">
 <h3 id="_server_side_refactoring">10.4. Server-Side Refactoring</h3>
 <div class="paragraph">
-<p>Refactoring was originally implemented as a separate process (<code>RefactoryMode</code>): the
-editor spawned a fresh <code>c-xref -refactory</code> process for each refactoring operation.
-This process started cold — it called <code>callXref()</code> to rebuild references, performed
-the refactoring, and exited.</p>
-</div>
-<div class="paragraph">
-<p>With the "memory as truth" architecture, this approach doesn&#8217;t work: the separate
-process has no access to the running server&#8217;s reference table. The solution is to
-perform refactoring as a server operation, where the refactoring code runs inside
-the already-initialized server with its populated reference table.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The legacy <code>-refactory</code> path still exists and is exercised by some tests and
-the default Emacs client path. It will be removed once all refactorings are validated
-in the server path. The <code>ensureReferencesAreUpdated</code> calls in the refactoring code are
-guarded with <code>if (refactoringOptions.mode == RefactoryMode)</code> — they are only needed in
-the legacy path, where the server&#8217;s entry refresh has not run.
-</td>
-</tr>
-</table>
+<p>Refactoring runs as a server operation (<code>OP_REFACTORY</code>): the editor sends a refactoring
+command to the running server, which performs the operation using its already-populated
+reference table.</p>
 </div>
 <div class="sect3">
 <h4 id="_how_server_side_refactoring_works">10.4.1. How Server-Side Refactoring Works</h4>
@@ -5811,36 +5777,25 @@ the legacy path, where the server&#8217;s entry refresh has not run.
       └─ quasiSaveModifiedEditorBuffers()     ← update buffer mtimes</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>Key differences from the legacy <code>-refactory</code> path:</strong></p>
-</div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">No <code>callXref()</code> or <code>mainTaskEntryInitialisations()</code></dt>
+<dt class="hdlist1">No separate initialization</dt>
 <dd>
 <p>The server is already initialized. The reference table is populated by the entry
-refresh that ran before this request. The refactoring code can directly use the
+refresh that ran before this request. The refactoring code directly uses the
 references.</p>
-</dd>
-<dt class="hdlist1">No <code>ensureReferencesAreUpdated()</code></dt>
-<dd>
-<p>In the legacy path, this function ran a mini-<code>callXref()</code> to populate references
-for the specific symbol being refactored. In the server path, references are already
-fresh from entry refresh. The calls are guarded by <code>if (refactoringOptions.mode == RefactoryMode)</code>.</p>
 </dd>
 <dt class="hdlist1">Mark stale on completion</dt>
 <dd>
 <p>After the refactoring, <code>markModifiedEditorBuffersAsStale()</code> sets <code>lastParsedMtime = 0</code>
 on all files whose editor buffers were modified. This ensures the next request&#8217;s entry
-refresh reparses them, picking up the post-refactoring state. Without this, the
-reference table would remain stale for files modified by the refactoring (particularly
-files other than the next request&#8217;s target file).</p>
+refresh reparses them, picking up the post-refactoring state.</p>
 </dd>
 <dt class="hdlist1"><code>parseBufferUsingServer()</code> calls remain</dt>
 <dd>
 <p>Some refactoring functions call <code>parseBufferUsingServer()</code> internally (e.g. to gather
-semantic information for safety checks). In the server path, these calls are harmless
-— they parse into the existing reference table without wiping <code>cxMemory</code>.</p>
+semantic information for safety checks). These calls parse into the existing reference
+table without wiping <code>cxMemory</code>.</p>
 </dd>
 </dl>
 </div>
@@ -5887,7 +5842,7 @@ next request.</p>
 <h3 id="_how_is_an_extract_refactoring_performed">10.5. How is an Extract refactoring performed?</h3>
 <div class="paragraph">
 <p>The region (mark and point/cursor positions) is sent to the <em>c-xref</em>
-server in a <code>-refactory -rfct-extract</code> command.</p>
+server in a <code>-rfct-extract</code> command.</p>
 </div>
 <div class="paragraph">
 <p>The server parses the relevant file and sets some information that can
@@ -6847,11 +6802,11 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>References refresh module (done for refactoring path)</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Extract the reparse logic (currently split between <code>callXref</code> in xref.c and the three-pass entry refresh in server.c) into a shared <code>referencesrefresh</code> module with a unified interface: "ensure these files have fresh references". The module supports different <em>file selection strategies</em> — the caller decides which files need freshness, the module handles the reparsing.</p>
 <p class="tableblock">Operational for the refactoring path: <code>ensureFreshReferences</code> replaces <code>callXref</code> in the server refactoring path. Entry refresh&#8217;s three-pass strategy handles broad staleness-based selection (same as current three passes). Symbol-targeted selection (resolve the symbol, look up which files contain its references in <code>referenceableItemTable</code>, ensure those files are fresh) is not yet extracted as a separate strategy — refactoring currently relies on entry refresh having already run.</p>
-<p class="tableblock">The header-filtered sibling parsing optimization (see Optimization section) becomes another file selection strategy within this module. See <a href="18-insights.adoc">Chapter 18: RefactoryMode Internally Calls XrefMode</a> for the current architecture this replaces.</p></td>
+<p class="tableblock">The header-filtered sibling parsing optimization (see Optimization section) becomes another file selection strategy within this module.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Refactoring as server operation (strangler fig — operational)</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">All refactorings run as server operations via <code>OP_REFACTORY</code> in <code>serverPerformRefactoring()</code>: rename, extract (function/macro/variable), parameter manipulation (add/del/move), move function, organize includes, rename include/module. Validated on real projects via Emacs. <code>markModifiedEditorBuffersAsStale()</code> ensures entry refresh detects refactoring-modified buffers. Emacs client has a "Server-side Refactoring" toggle in the Misc menu (<code>c-xref-server-refactoring</code>) for battle-testing before removing the legacy path. The legacy <code>-refactory</code> process path remains alive but unused when the toggle is on. Final cleanup: remove <code>RefactoryMode</code>, <code>callXref</code>, <code>parseBufferUsingServer</code> bridge (see <a href="17-major-codebase-improvements.adoc">17.3</a>), and the <code>cxMemory</code> wipe.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Refactoring as server operation (strangler fig — done)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All refactorings run as server operations via <code>OP_REFACTORY</code> in <code>serverPerformRefactoring()</code>: rename, extract (function/macro/variable), parameter manipulation (add/del/move), move function, organize includes, rename include/module. <code>markModifiedEditorBuffersAsStale()</code> ensures entry refresh detects refactoring-modified buffers. <code>RefactoryMode</code> and the legacy <code>-refactory</code> process path have been removed. The Emacs client always uses the server path. Remaining cleanup: remove <code>parseBufferUsingServer</code> bridge (see <a href="17-major-codebase-improvements.adoc">17.3</a>).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Disk snapshot strategy (operational)</strong></p></td>
@@ -6862,12 +6817,12 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_SEARCH</code> now queries the in-memory <code>referenceableItemTable</code> via <code>searchInMemoryTable()</code> in cxref.c, replacing the disk-based <code>scanForSearch()</code>. Same matching logic (<code>searchSymbolCheckReference</code>, <code>searchStringMatch</code>), same reference filtering (<code>UsageDefined</code>/<code>UsageDeclared</code>), same result printing. Skips <code>VisibilityLocal</code> (block-local) symbols, matching the snapshot&#8217;s write filter. This was the last operation that read from disk <code>.cx</code> files as truth — <strong>all operations now use the in-memory table</strong>.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Snapshot write triggers (partially done)</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The <code>-exit</code> handler calls <code>markPreloadedFilesAsAncient()</code> + <code>saveReferences()</code>. The Emacs client sends <code>-exit</code> via <code>kill-emacs-hook</code> on quit, and <code>c-xref-kill-xref-process</code> sends <code>-exit</code> before killing (project change gets save for free). Two of three triggers are operational:</p>
-<p class="tableblock"><strong>Clean exit</strong> (done): <code>-exit</code> handler saves snapshot. <code>kill-emacs-hook</code> sends <code>-exit</code>.</p>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Snapshot write triggers (done)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The <code>markPreloadedFilesAsAncient()</code> + <code>saveReferences()</code> pattern allows saving the snapshot at any time — staleification ensures only disk-file-derived references are persisted, so mtime-based validation remains correct at next startup. Three triggers are operational:</p>
+<p class="tableblock"><strong>Clean exit</strong> (done): <code>-exit</code> handler saves snapshot. Emacs <code>kill-emacs-hook</code> sends <code>-exit</code>.</p>
 <p class="tableblock"><strong>Project change</strong> (done): <code>c-xref-kill-xref-process</code> sends <code>-exit</code> before killing the process.</p>
-<p class="tableblock"><strong>All buffers saved</strong> (not yet): when no editor buffers are modified, the in-memory state is consistent with disk — a clean moment to snapshot. This would be the primary trigger during normal workflow.</p>
-<p class="tableblock">Dirty kills (crash, <code>kill -9</code>, terminal closed) lose in-memory state — the next cold start reparses from scratch. Acceptable since clean exit and project change cover normal workflow.</p></td>
+<p class="tableblock"><strong>Periodic save</strong> (done): during long-running parse operations (e.g. parse-for-search), the server saves the snapshot every 100 CUs. Parsed work survives interruption (Ctrl-g, crash).</p>
+<p class="tableblock">Dirty kills (crash, <code>kill -9</code>, terminal closed) lose in-memory state accumulated since the last periodic or exit save. The next cold start reparses from the last snapshot.</p></td>
 </tr>
 </tbody>
 </table>
@@ -6886,7 +6841,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <p><strong>Staleness detection</strong> is already working: mtime checks on editor buffers, entry-point reparse with transitive include-graph walking (ADR 20).</p>
 </li>
 <li>
-<p><strong>Graduated update scope</strong> already exists: <code>computeUpdateOptionForSymbol()</code> decides per-refactoring whether no update, fast update, or full update is needed based on symbol visibility and scope.</p>
+<p><strong>Entry refresh</strong> ensures fresh references before every operation, replacing the graduated update scope that the legacy refactoring path used.</p>
 </li>
 </ul>
 </div>
@@ -6902,7 +6857,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <p><strong>Snapshot save/load</strong> (done) — <code>.cx</code> loaded at startup, saved on <code>-exit</code>. No manual <code>-create</code> needed after first session.</p>
 </li>
 <li>
-<p><strong>Refactoring moves into server (strangler fig)</strong> (done) — all refactorings run as server operations via <code>OP_REFACTORY</code>. Legacy <code>-refactory</code> path remains for fallback; Emacs menu toggle enables battle-testing. Final cleanup: remove <code>RefactoryMode</code>, <code>callXref</code>, <code>parseBufferUsingServer</code> bridge.</p>
+<p><strong>Refactoring moves into server (strangler fig)</strong> (done) — all refactorings run as server operations via <code>OP_REFACTORY</code>. <code>RefactoryMode</code> and the legacy <code>-refactory</code> process have been removed. Remaining cleanup: remove <code>callXref</code> usage from <code>parseBufferUsingServer</code> bridge.</p>
 </li>
 <li>
 <p><strong><code>.cx</code> becomes startup snapshot only</strong> (done) — never consulted during operation. The in-memory table is authoritative. Search reads from memory. All operations now use the in-memory <code>referenceableItemTable</code>. The disk scan tables in <code>cxfile.c</code> (all except <code>snapshotLoadScanDispatchTable</code>) are candidates for removal.</p>
@@ -9018,7 +8973,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 <p>Section 17.2: Unified Symbol Database Architecture</p>
 </li>
 <li>
-<p>Section 18.3: RefactoryMode Internally Calls XrefMode (describes current architecture)</p>
+<p>Section 11: Server-Side Refactoring (in Algorithms chapter)</p>
 </li>
 </ul>
 </div>
@@ -10817,7 +10772,7 @@ server process without a separate <code>callXref()</code> step.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-27 13:00:51 UTC
+Last updated 2026-03-31 06:29:51 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
