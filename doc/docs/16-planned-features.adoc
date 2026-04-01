@@ -40,6 +40,15 @@ Reorganize code by moving function definitions between source files while mainta
 
 **Preview**: Show what will be changed before applying the refactoring.
 
+**Delete Function**: Remove a function definition and its declaration. Safety check warns
+  if callers exist. Reuses the function boundary detection from Move Function and the
+  unused detection logic to verify no references remain.
+
+**Comment handling customization**: The server supports `-commentmovinglevel=N` controlling
+  how comments adjacent to a moved function are handled (none, single slashed/starred,
+  all). This is implemented but not exposed as an Emacs customization variable — currently
+  hardcoded to 0 (no comments moved). Should be added as a `defcustom`.
+
 === LSP Integration
 
 **Status**: EXPERIMENTAL (January 2026)
