@@ -9,7 +9,7 @@ ARGUMENTS = -errors -create .
 $(TEST): .c-xrefrc
 	$(COMMAND) > output.tmp 2>&1 || true
 	../../utils/cxref_reader >> output.tmp
-	$(NORMALIZE) output.tmp > output
+	$(NORMALIZE) output.tmp | sed -e 's/commons\.c:[0-9]*/commons.c:N/g' > output
 	$(VERIFY)
 
 trace: ARGUMENTS = -debug -log=trace -filetrace
