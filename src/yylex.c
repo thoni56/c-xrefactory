@@ -120,10 +120,6 @@ int getMacroBodyMemoryIndex(void) {
     return macroBodyMemory.index;
 }
 
-void setMacroBodyMemoryIndex(int index) {
-    macroBodyMemory.index = index;
-}
-
 
 typedef struct {
     char *buffer;

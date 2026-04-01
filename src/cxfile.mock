@@ -20,10 +20,6 @@ void scanForGlobalUnused(char *cxrefFileName) {
     mock(cxrefFileName);
 }
 
-void scanForSearch(char *cxrefFileName) {
-    mock(cxrefFileName);
-}
-
 bool searchStringMatch(char *cxtag, int slen) {
   return (int) mock(cxtag, slen);
 }

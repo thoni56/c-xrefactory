@@ -13,10 +13,6 @@ PositionList *newPositionList(Position position, PositionList *next) {
     return new;
 }
 
-bool onSameLine(Position pos1, Position pos2) {
-    return pos1.file == pos2.file && pos1.line == pos2.line;
-}
-
 Position addPositions(Position p1, Position p2) {
     return makePosition(p1.file+p2.file, p1.line+p2.line, p1.col+p2.col);
 }

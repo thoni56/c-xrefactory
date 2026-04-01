@@ -16,11 +16,6 @@ CodeBlock *currentBlock;
 static bool memoryTrace = false;
 #define mem_trace(...)  { if (memoryTrace) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__); }
 
-/* Inject the function to call for error() */
-static void (*error)(int code, char *message);
-void setErrorHandlerForStackMemory(void (*function)(int code, char *message)) {
-    error = function;
-}
 
 /* Stack memory - in this we allocate blocks which have separate free indices */
 char stackMemory[StackMemorySize];   /* Allocation using stackMemoryAlloc() et.al */
@@ -52,9 +47,7 @@ void removeFromFrameUntil(FrameAllocation *untilP) {
         assert(f!=NULL);
         (*(f->action))(f->argument);
     }
-    if (f!=untilP) {
-        error(ERR_INTERNAL, "block structure mismatch?");
-    }
+    assert(f == untilP && "block structure mismatch");
     currentBlock->frameAllocations = f;
     if (memoryTrace)
         frameDump();

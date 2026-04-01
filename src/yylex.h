@@ -33,7 +33,6 @@ extern char *yytext;
 extern int macroStackIndex;
 
 extern int getMacroBodyMemoryIndex(void);
-extern void setMacroBodyMemoryIndex(int index);
 
 extern void initAllInputs(void);
 

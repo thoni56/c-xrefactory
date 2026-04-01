@@ -54,10 +54,6 @@ void pushReferenceableItem(ReferenceableItem *element, int offset) {
     referenceableItemTablePush(&referenceableItemTable, element, offset);
 }
 
-void setReferenceableItem(int index, ReferenceableItem *item) {
-    referenceableItemTable.tab[index] = item;
-}
-
 bool isMemberInReferenceableItemTable(ReferenceableItem *element, int *offsetP,
                                       ReferenceableItem **foundMemberPointer) {
     return referenceableItemTableIsMember(&referenceableItemTable, element, offsetP,

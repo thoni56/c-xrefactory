@@ -32,10 +32,6 @@ int getNextExistingEditorBufferIndex(int index) {
     return (int)mock(index);
 }
 
-void setEditorBuffer(int index, EditorBufferList *elementP) {
-    mock(index, elementP);
-}
-
 void editorBufferTableEntryPop(int index) {
     mock(index);
 }

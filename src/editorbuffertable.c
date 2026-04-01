@@ -62,10 +62,6 @@ int getNextExistingEditorBufferIndex(int index) {
     return -1;
 }
 
-void setEditorBuffer(int index, EditorBufferList *elementP) {
-    editorBufferTable.tab[index] = elementP;
-}
-
 void clearEditorBuffer(int index) {
     editorBufferTable.tab[index] = NULL;
 }

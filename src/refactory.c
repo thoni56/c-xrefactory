@@ -37,11 +37,6 @@
 #define MAX_NARGV_OPTIONS_COUNT 50
 
 
-typedef enum {
-    APPLY_CHECKS,
-    NO_CHECKS
-} ToCheckOrNot;
-
 static EditorUndo *refactoringStartingPoint;
 
 static char *serverDefaultOptions[] = {
@@ -466,75 +461,6 @@ void applyWholeRefactoringFromUndo(void) {
     editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
 }
 
-void removeNonCommentCode(EditorMarker *marker, int length) {
-    assert(marker->buffer && marker->buffer->allocation.text);
-    char *s  = marker->buffer->allocation.text + marker->offset;
-    int l = length;
-    EditorMarker *mm = newEditorMarker(marker->buffer, marker->offset);
-    if (marker->offset + l > marker->buffer->allocation.bufferSize) {
-        l = marker->buffer->allocation.bufferSize - marker->offset;
-    }
-
-    int n = 0;
-    while (l > 0) {
-        int c = *s;
-        if (c == '/' && l > 1 && *(s + 1) == '*' && (l <= 2 || *(s + 2) != '&')) {
-            // /**/ comment
-            replaceString(mm, n, "");
-            s = mm->buffer->allocation.text + mm->offset;
-            s += 2;
-            l -= 2;
-            while (!(*s == '*' && *(s + 1) == '/')) {
-                s++;
-                l--;
-            }
-            s += 2;
-            l -= 2;
-            mm->offset = s - mm->buffer->allocation.text;
-            n          = 0;
-        } else if (c == '/' && l > 1 && *(s + 1) == '/' && (l <= 2 || *(s + 2) != '&')) {
-            // // comment
-            replaceString(mm, n, "");
-            s = mm->buffer->allocation.text + mm->offset;
-            s += 2;
-            l -= 2;
-            while (*s != '\n') {
-                s++;
-                l--;
-            }
-            s += 1;
-            l -= 1;
-            mm->offset = s - mm->buffer->allocation.text;
-            n          = 0;
-        } else if (c == '"') {
-            // string, pass it removing all inside (also /**/ comments)
-            s++;
-            l--;
-            n++;
-            while (*s != '"' && l > 0) {
-                s++;
-                l--;
-                n++;
-                if (*s == '\\') {
-                    s++;
-                    l--;
-                    n++;
-                    s++;
-                    l--;
-                    n++;
-                }
-            }
-        } else {
-            s++;
-            l--;
-            n++;
-        }
-    }
-    if (n > 0) {
-        replaceString(mm, n, "");
-    }
-    freeEditorMarker(mm);
-}
 
 static void renameFromTo(EditorMarker *pos, char *oldName, char *newName) {
     char *actName;

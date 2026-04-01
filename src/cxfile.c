@@ -153,7 +153,6 @@ static CxFileScanDispatchEntry fullUpdateScanDispatchTable[];
 static CxFileScanDispatchEntry symbolMenuCreationScanDispatchTable[];
 static CxFileScanDispatchEntry macroExpansionScanDispatchTable[];
 static CxFileScanDispatchEntry globalUnusedDetectionScanDispatchTable[];
-static CxFileScanDispatchEntry symbolSearchScanDispatchTable[];
 
 static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable);
 
@@ -1270,9 +1269,6 @@ void scanForGlobalUnused(char *cxrefLocation) {
     scanCxFiles(cxrefLocation, globalUnusedDetectionScanDispatchTable);
 }
 
-void scanForSearch(char *cxrefLocation) {
-    scanCxFiles(cxrefLocation, symbolSearchScanDispatchTable);
-}
 
 
 /* ***************************************************************************************
@@ -1352,15 +1348,6 @@ static CxFileScanDispatchEntry macroExpansionScanDispatchTable[]={
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_FIND_MACRO_EXPANSION_FILE},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIND_MACRO_EXPANSION_FILE},
     {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
-    {-1,NULL, 0},
-};
-
-static CxFileScanDispatchEntry symbolSearchScanDispatchTable[]={
-    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
-    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
-    {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_SYMBOL_NAME, scanFunction_SymbolName, SEARCH_SYMBOL},
-    {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIRST_PASS},
     {-1,NULL, 0},
 };
 

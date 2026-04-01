@@ -21,7 +21,6 @@ extern int  addToReferenceableItemTable(ReferenceableItem *referencesItem);
 extern void pushReferenceableItem(ReferenceableItem *element, int position);
 extern ReferenceableItem *getReferenceableItem(int index);
 extern int getNextExistingReferenceableItem(int index);
-extern void setReferenceableItem(int index, ReferenceableItem *item);
 
 extern bool isMemberInReferenceableItemTable(ReferenceableItem *item, int *indexP, ReferenceableItem **originP);
 extern void mapOverReferenceableItemTable(void (*fun)(ReferenceableItem *));

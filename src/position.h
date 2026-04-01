@@ -23,7 +23,6 @@ typedef struct positionList {
 extern PositionList *newPositionList(Position position, PositionList *next);
 
 extern Position makePosition(int file, int line, int col);
-extern bool onSameLine(Position pos1, Position pos2);
 
 extern Position addPositions(Position p1, Position p2);
 extern Position subtractPositions(Position minuend, Position subtrahend);

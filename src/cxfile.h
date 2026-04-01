@@ -7,7 +7,6 @@
 extern void scanReferencesToCreateMenu(char *symbolName);
 extern void scanForMacroUsage(char *symbolName);
 extern void scanForGlobalUnused(char *cxrefFileName);
-extern void scanForSearch(char *cxrefFileName);
 
 extern int cxFileHashNumberForSymbol(char *symbol);
 extern void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Reference *reference);
