@@ -62,12 +62,13 @@ static StringList *scanFileForIncludes(const char *filePath, int includerFileNum
 
             char includedFile[256];
             if (sscanf(line, " # include \"%255[^\"]\"", includedFile) == 1) {
-                char *resolved = resolveIncludePath(includedFile, filePath, includeDirs);
-                bool alreadyKnown = existsInFileTable(resolved);
-                int includedFileNumber = addFileNameToFileTable(resolved);
+                char resolvedPath[MAX_FILE_NAME_SIZE];
+                strcpy(resolvedPath, resolveIncludePath(includedFile, filePath, includeDirs));
+                bool alreadyKnown = existsInFileTable(resolvedPath);
+                int includedFileNumber = addFileNameToFileTable(resolvedPath);
                 addIncludeReference(includedFileNumber, includerPosition);
                 if (!alreadyKnown)
-                    discovered = newStringList(strdup(resolved), discovered);
+                    discovered = newStringList(strdup(resolvedPath), discovered);
             }
 
             line = eol + 1;

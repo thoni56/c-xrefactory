@@ -103,6 +103,9 @@ char *normalizeFileName_static(char *name, char *relative_to) {
     int l1,l2,i,j,s1;
     char *ss;
 
+    /* Catch re-entrant misuse: caller must copy the result before calling again */
+    assert(name != normalizedFileName && relative_to != normalizedFileName);
+
     log_trace("normalizing %s relative to %s (cwd=%s)", name, relative_to, cwd);
     l1 = strlen(relative_to);
     l2 = strlen(name);
