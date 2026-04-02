@@ -176,9 +176,10 @@ static EditorMarker *getTargetFromOptions(void) {
     EditorMarker *target;
     EditorBuffer *targetBuffer;
     int           targetLine;
+    char         *targetFileName = strdup(normalizeFileName_static(refactoringOptions.moveTargetFile, cwd));
 
-    targetBuffer = findOrCreateAndLoadEditorBufferForFile(
-        normalizeFileName_static(refactoringOptions.moveTargetFile, cwd));
+    targetBuffer = findOrCreateAndLoadEditorBufferForFile(targetFileName);
+
     if (targetBuffer == NULL)
         FATAL_ERROR(ERR_ST, "Could not find a buffer for target position", EXIT_FAILURE);
     target = newEditorMarker(targetBuffer, 0);
