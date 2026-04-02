@@ -5556,30 +5556,32 @@ the reset was performed, nil if the reset was cancelled."
   (interactive)
   (if (yes-or-no-p (format "Really upgrade c-xref installation in %s ? "
                            c-xref-install-directory))
-      (progn
-        (let ((default-directory c-xref-install-directory))
-          (if (c-xref-ok-to-upgrade)
-              (progn
-                (shell-command "git fetch origin") ;; Ensure remote is updated
-                (shell-command "git checkout stable") ;; Switch to branch `stable`
-                (shell-command "git reset --hard origin/stable") ;; Sync with remote
-                (message "Pulled latest stable")
-                (c-xref-kill-xref-process nil)
-                (delete-file "src/options_config.h") ;; Trigger regeneration of version info
-                (unless (zerop (shell-command "make"))
-                  (error "Build failed"))
-                (message "Built 'c-xref' in %s" c-xref-install-directory)
-                ;; Clear menu keymaps so defvar reinitializes them on reload,
-                ;; preventing stale entries from renamed/removed menu items
-                (makunbound 'c-xref-menu)
-                (makunbound 'c-xref-misc-menu)
-                (c-xref-reload-directory c-xref-elisp-directory)
-                (message "Reloaded compiled elisp files")
-                )
-            )
-          ))
-    )
-  )
+      (let ((default-directory c-xref-install-directory)
+            (output-buffer (get-buffer-create "*c-xref-upgrade*")))
+        (with-current-buffer output-buffer (erase-buffer))
+        (when (c-xref-ok-to-upgrade)
+          (message "Upgrading c-xref...")
+          (unless (zerop (call-process "git" nil output-buffer nil "fetch" "origin"))
+            (pop-to-buffer output-buffer)
+            (error "git fetch failed"))
+          (unless (zerop (call-process "git" nil output-buffer nil "checkout" "stable"))
+            (pop-to-buffer output-buffer)
+            (error "git checkout stable failed"))
+          (unless (zerop (call-process "git" nil output-buffer nil "reset" "--hard" "origin/stable"))
+            (pop-to-buffer output-buffer)
+            (error "git reset failed"))
+          (c-xref-kill-xref-process nil)
+          (delete-file "src/options_config.h") ;; Trigger regeneration of version info
+          (unless (zerop (call-process "make" nil output-buffer nil))
+            (pop-to-buffer output-buffer)
+            (error "Build failed"))
+          ;; Clear menu keymaps so defvar reinitializes them on reload,
+          ;; preventing stale entries from renamed/removed menu items
+          (makunbound 'c-xref-menu)
+          (makunbound 'c-xref-misc-menu)
+          (c-xref-reload-directory c-xref-elisp-directory)
+          (kill-buffer output-buffer)
+          (message "C-xref upgraded successfully")))))
 
 (defun c-xref-interactive-help-escape ()
   (interactive "")
