@@ -9,6 +9,7 @@
 #include "stringlist.h"
 #include "yylex.h"
 
+
 #define SCAN_BUFFER_SIZE 4096
 
 /* Resolve an include path: try includer's directory first, then walk

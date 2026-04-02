@@ -12,6 +12,7 @@
 #include "lsp.h"
 #include "memory.h"
 #include "proto.h"
+#include "refactory.h"
 #include "server.h"
 #include "stackmemory.h"
 #include "startup.h"

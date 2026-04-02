@@ -38,27 +38,27 @@ If no config file could be found, you'll be prompted to create a project. The ac
 
 === Project Configuration
 
-The `.c-xrefrc` file defines which files belong to the project. A minimal config
-looks like:
+The `.c-xrefrc` file marks the root of a source tree. The directory containing
+`.c-xrefrc` and its subdirectories are always scanned for compilation units. A
+minimal config only needs a section header naming the project:
 
 [source]
 ----
-[/path/to/project]
-  /path/to/project
+[my-project]
 ----
 
-The section header `[...]` names the project (typically the project root path).
+The section header `[...]` names the project.
 Lines below it configure the project:
 
-Source directories:: Bare path lines list directories to scan for compilation units.
-  The project root is always scanned. Additional directories can be listed for
-  multi-directory or multi-repo projects:
+Source directories:: The project root (where `.c-xrefrc` lives) and its
+  subdirectories are always scanned automatically. Additional source directories
+  only need to be listed for multi-directory projects, e.g. when source files
+  live outside the project root:
 +
 [source]
 ----
-[/path/to/project]
-  /path/to/project
-  /path/to/shared/library
+[my-project]
+  ../shared/library
 ----
 
 Include paths:: `-I` options tell c-xrefactory where to find header files, just
@@ -66,16 +66,15 @@ Include paths:: `-I` options tell c-xrefactory where to find header files, just
 +
 [source]
 ----
-[/path/to/project]
-  /path/to/project
-  -I /path/to/external/headers
+[my-project]
+  -I ../external/headers
 ----
 
 Preprocessor defines:: `-D` options define macros, equivalent to the compiler flag.
   Useful when the project uses conditional compilation.
 
-TIP: For projects that use auto-detection (project-local `.c-xrefrc`), absolute paths
-are not required — the configuration is resolved relative to the file's location.
+TIP: Paths in `.c-xrefrc` are resolved relative to the config file's directory,
+so the configuration is portable and can be checked into version control.
 
 == Browsing
 

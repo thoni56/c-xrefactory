@@ -39,9 +39,7 @@ EditorBuffer *newEditorBuffer(char *realFileName, int fileNumber, char *preLoade
 
 EditorBuffer *createNewEditorBuffer(char *realFileName, char *preLoadedFromFile, time_t modificationTime,
                                     size_t size) {
-    char safeFileName[MAX_FILE_NAME_SIZE];
-    strcpy(safeFileName, realFileName);
-    char *normalizedRealFileName = strdup(normalizeFileName_static(safeFileName, cwd));
+    char *normalizedRealFileName = strdup(normalizeFileName_static(realFileName, cwd));
 
     assert(preLoadedFromFile == NULL || strcmp(realFileName, preLoadedFromFile) != 0);
     char *normalizedLoadedFromFile = NULL;
