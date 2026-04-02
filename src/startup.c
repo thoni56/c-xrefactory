@@ -547,17 +547,16 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
      * Done after the second getAndProcessProjectConfig to avoid double-collection. */
     freeStringList(projectConfig.sourceDirs);
     projectConfig.sourceDirs = NULL;
-    {
-        ArgumentsVector configArgs = readOptionsFromFile(projectConfigFileName,
-                                                          projectSectionName, projectSectionName);
-        char *configDir = directoryName_static(projectConfigFileName);
-        for (int i = 1; i < configArgs.argc; i++) {
-            if (configArgs.argv[i][0] != '-') {
-                char absolutePath[MAX_FILE_NAME_SIZE];
-                strcpy(absolutePath, normalizeFileName_static(configArgs.argv[i], configDir));
-                projectConfig.sourceDirs = newStringList(absolutePath,
-                                                          projectConfig.sourceDirs);
-            }
+
+    ArgumentsVector configArgs = readOptionsFromFile(projectConfigFileName,
+                                                     projectSectionName, projectSectionName);
+    char *configDir = directoryName_static(projectConfigFileName);
+    for (int i = 1; i < configArgs.argc; i++) {
+        if (configArgs.argv[i][0] != '-') {
+            char absolutePath[MAX_FILE_NAME_SIZE];
+            strcpy(absolutePath, normalizeFileName_static(configArgs.argv[i], configDir));
+            projectConfig.sourceDirs = newStringList(absolutePath,
+                                                     projectConfig.sourceDirs);
         }
     }
 

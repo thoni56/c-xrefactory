@@ -138,9 +138,9 @@ char *normalizeFileName_static(char *name, char *relative_to) {
         }
     }
     for(i=s1, j=l1+1; i<l2+1; ) {
-        if (name[i]=='.' && (name[i+1]==FILE_PATH_SEPARATOR||name[i+1]=='/')) {
+        if (name[i]=='.' && (name[i+1]==FILE_PATH_SEPARATOR||name[i+1]=='/'||name[i+1]=='\0')) {
             i+=2;
-        } else if (name[i]=='.' && name[i+1]=='.' && (name[i+2]==FILE_PATH_SEPARATOR||name[i+2]=='/')) {
+        } else if (name[i]=='.' && name[i+1]=='.' && (name[i+2]==FILE_PATH_SEPARATOR||name[i+2]=='/'||name[i+2]=='\0')) {
             for(j-=2; j>=0 && normalizedFileName[j]!=FILE_PATH_SEPARATOR && normalizedFileName[j]!='/'; j--)
                 ;
             i+=3;
@@ -163,9 +163,13 @@ char *normalizeFileName_static(char *name, char *relative_to) {
                 i++;
         }
     }
+    normalizedFileName[j] = '\0';
     log_trace("returning %s", normalizedFileName);
-    if (j>=2 && normalizedFileName[j-2]==FILE_PATH_SEPARATOR)
-        normalizedFileName[j-2]=0;
+    {
+        int len = strlen(normalizedFileName);
+        if (len>=2 && normalizedFileName[len-1]==FILE_PATH_SEPARATOR)
+            normalizedFileName[len-1]=0;
+    }
     if (strlen(normalizedFileName) >= MAX_FILE_NAME_SIZE) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "file name %s is too long", normalizedFileName);
