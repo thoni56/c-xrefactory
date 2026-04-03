@@ -165,11 +165,11 @@ char *normalizeFileName_static(char *name, char *relative_to) {
     }
     normalizedFileName[j] = '\0';
     log_trace("returning %s", normalizedFileName);
-    {
-        int len = strlen(normalizedFileName);
-        if (len>=2 && normalizedFileName[len-1]==FILE_PATH_SEPARATOR)
-            normalizedFileName[len-1]=0;
-    }
+
+    int len = strlen(normalizedFileName);
+    if (len>=2 && normalizedFileName[len-1]==FILE_PATH_SEPARATOR)
+        normalizedFileName[len-1]=0;
+
     if (strlen(normalizedFileName) >= MAX_FILE_NAME_SIZE) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "file name %s is too long", normalizedFileName);

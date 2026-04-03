@@ -16,10 +16,6 @@ void scanReferencesToCreateMenu(char *symbolName) { mock(symbolName); }
 
 void scanForMacroUsage(char *symbolName) { mock(symbolName); }
 
-void scanForGlobalUnused(char *cxrefFileName) {
-    mock(cxrefFileName);
-}
-
 bool searchStringMatch(char *cxtag, int slen) {
   return (int) mock(cxtag, slen);
 }

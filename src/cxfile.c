@@ -152,7 +152,6 @@ static CxFileScanDispatchEntry fullScanDispatchTable[];
 static CxFileScanDispatchEntry fullUpdateScanDispatchTable[];
 static CxFileScanDispatchEntry symbolMenuCreationScanDispatchTable[];
 static CxFileScanDispatchEntry macroExpansionScanDispatchTable[];
-static CxFileScanDispatchEntry globalUnusedDetectionScanDispatchTable[];
 
 static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable);
 
@@ -1153,20 +1152,6 @@ static bool scanCxFile(char *cxFileLocation, char *element1, char *element2,
     }
 }
 
-static void scanCxFiles(char *cxFileLocation, CxFileScanDispatchEntry *scanDispatchTable) {
-
-    if (options.cxFileCount <= 1) {
-        scanCxFile(cxFileLocation, "", "", scanDispatchTable);
-    } else {
-        scanCxFile(cxFileLocation,CXFILENAME_FILES,"",scanDispatchTable);
-        for (int i=0; i<options.cxFileCount; i++) {
-            char partitionNumber[MAX_FILE_NAME_SIZE];
-            sprintf(partitionNumber, "%04d", i);
-            scanCxFile(cxFileLocation, CXFILENAME_PREFIX, partitionNumber, scanDispatchTable);
-        }
-    }
-}
-
 bool loadFileNumbersFromStore(void) {
     static time_t savedModificationTime = 0; /* Cache previously read file data... */
     static off_t savedFileSize = 0;
@@ -1265,10 +1250,6 @@ void scanForMacroUsage(char *symbolName) {
     readOneAppropiateCxFile(symbolName, macroExpansionScanDispatchTable);
 }
 
-void scanForGlobalUnused(char *cxrefLocation) {
-    scanCxFiles(cxrefLocation, globalUnusedDetectionScanDispatchTable);
-}
-
 
 
 /* ***************************************************************************************
@@ -1349,13 +1330,4 @@ static CxFileScanDispatchEntry macroExpansionScanDispatchTable[]={
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIND_MACRO_EXPANSION_FILE},
     {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
-};
-
-static CxFileScanDispatchEntry globalUnusedDetectionScanDispatchTable[] = {
-    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
-    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
-    {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEAD_CODE_DETECTION},
-    {CXFI_REFERENCE, scanFunction_Reference, CXSF_DEAD_CODE_DETECTION},
-    {-1, NULL, 0},
 };
