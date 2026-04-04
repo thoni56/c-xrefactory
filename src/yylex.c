@@ -116,10 +116,6 @@ static void mbmFreeUntil(void *pointer) {
     memoryFreeUntil(&macroBodyMemory, pointer);
 }
 
-int getMacroBodyMemoryIndex(void) {
-    return macroBodyMemory.index;
-}
-
 
 typedef struct {
     char *buffer;

@@ -1,6 +1,7 @@
 include ../Makefile.server
 
 $(TEST): .c-xrefrc
+	@-rm -rf .c-xref/db
 	@ln -sf user@host.12345:1234567890 .#source.c
 	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	@grep '\.#' .c-xref/db/XFiles > output || true

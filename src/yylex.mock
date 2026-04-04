@@ -12,10 +12,6 @@ void initInput(FILE *file, EditorBuffer *buffer, char *prefix, char *fileName) {
     mock(file, buffer, prefix, fileName);
 }
 
-int getMacroBodyMemoryIndex(void) {
-    return (int)mock();
-}
-
 void addFileAsIncludeReference(int filenum) {
     mock(filenum);
 }

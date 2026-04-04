@@ -32,8 +32,6 @@ typedef struct {
 extern char *yytext;
 extern int macroStackIndex;
 
-extern int getMacroBodyMemoryIndex(void);
-
 extern void initAllInputs(void);
 
 /* Expose helper to mask a macro as undefined (mbody == NULL) */
