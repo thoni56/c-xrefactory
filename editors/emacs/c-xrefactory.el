@@ -547,6 +547,7 @@ faces and highlighting in buffers created by C-xrefactory.
 (define-key c-xref-misc-menu [c-xref-upgrade] '("Upgrade" . c-xref-upgrade))
 (define-key c-xref-misc-menu [c-xref-help] '("C-xref Help" . c-xref-help))
 (define-key c-xref-misc-menu [c-xref-kill] '("Kill C-xref Process" . c-xref-kill-xref-process))
+(define-key c-xref-misc-menu [c-xref-show-server-pid] '("Show Server PID" . c-xref-show-server-pid))
 
 
 (defvar c-xref-menu (make-sparse-keymap "C-xref"))
@@ -674,6 +675,7 @@ your .c-xrefrc file.
 (autoload 'c-xref-upgrade "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-tutorial "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-kill-xref-process "c-xref" c-xref-default-documentation-string t)
+(autoload 'c-xref-show-server-pid "c-xref" c-xref-default-documentation-string t)
 
 (autoload 'c-xref-find-file-on-mouse "c-xref" c-xref-default-documentation-string t)
 
