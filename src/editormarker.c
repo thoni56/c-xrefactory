@@ -216,11 +216,6 @@ int        moveEditorMarkerToNonBlankOrNewline(EditorMarker *m, int direction) {
     return runWithEditorMarkerUntil(m, isNonBlankOrNewline, direction);
 }
 
-static int isNotIdentPart(int c) {return !isalnum(c) && c!='_' && c!='$';}
-int        moveEditorMarkerBeyondIdentifier(EditorMarker *m, int direction) {
-    return runWithEditorMarkerUntil(m, isNotIdentPart, direction);
-}
-
 int countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2) {
     // this can happen after an error in moving, just pass in this case
     if (m1 == NULL || m2 == NULL)
@@ -298,58 +293,6 @@ static void editorDumpRegionList(EditorRegionList *mml) {
     log_trace("[dumpend] of editor regions]");
 }
 #endif
-
-static void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
-                                                   EditorRegionList **inRegions,
-                                                   EditorMarkerList **outInsiders,
-                                                   EditorMarkerList **outOutsiders) {
-    EditorMarkerList *markers1, *markers2;
-    EditorRegionList *regions;
-
-    *outInsiders = NULL;
-    *outOutsiders = NULL;
-
-    LIST_MERGE_SORT(EditorMarkerList, *inMarkers, editorMarkerListBefore);
-    sortEditorRegionsAndRemoveOverlaps(inRegions);
-
-    LIST_REVERSE(EditorRegionList, *inRegions);
-    LIST_REVERSE(EditorMarkerList, *inMarkers);
-
-    //& editorDumpRegionList(*inRegions);
-    //& editorDumpMarkerList(*inMarkers);
-
-    regions = *inRegions;
-    markers1= *inMarkers;
-    while (markers1!=NULL) {
-        markers2 = markers1->next;
-        while (regions!=NULL && editorMarkerAfter(regions->region.begin, markers1->marker))
-            regions = regions->next;
-        if (regions!=NULL && editorMarkerAfter(regions->region.end, markers1->marker)) {
-            // is inside
-            markers1->next = *outInsiders;
-            *outInsiders = markers1;
-        } else {
-            // is outside
-            markers1->next = *outOutsiders;
-            *outOutsiders = markers1;
-        }
-        markers1 = markers2;
-    }
-
-    *inMarkers = NULL;
-    LIST_REVERSE(EditorRegionList, *inRegions);
-    LIST_REVERSE(EditorMarkerList, *outInsiders);
-    LIST_REVERSE(EditorMarkerList, *outOutsiders);
-    //&editorDumpMarkerList(*outInsiders);
-    //&editorDumpMarkerList(*outOutsiders);
-}
-
-void restrictEditorMarkersToRegions(EditorMarkerList **mm, EditorRegionList **regions) {
-    EditorMarkerList *ins, *outs;
-    splitEditorMarkersWithRespectToRegions(mm, regions, &ins, &outs);
-    *mm = ins;
-    freeEditorMarkerListAndMarkers(outs);
-}
 
 static EditorMarkerList *combineEditorMarkerLists(EditorMarkerList **diff, EditorMarkerList *list) {
     EditorMarker     *marker = newEditorMarker(list->marker->buffer, list->marker->offset);

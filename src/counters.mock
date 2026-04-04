@@ -10,10 +10,6 @@ void resetAllCounters() {
     (void)mock();
 }
 
-void resetLocalSymbolCounter(void) {
-    (void)mock();
-}
-
 int nextGeneratedLocalSymbol(void) {
     return mock();
 }

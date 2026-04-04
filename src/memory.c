@@ -124,11 +124,6 @@ static bool memoryPointerIsFreed(Memory *memory, void *pointer) {
     return memoryIsBetween(memory, pointer, memory->index, memory->size);
 }
 
-/* Check if a buffer is at the top-of-stack (most recent allocation) */
-bool memoryIsAtTop(Memory *memory, void *pointer, size_t size) {
-    return pointer == &memory->area[memory->index - size];
-}
-
 /* Reallocates the most recently allocated area in 'memory' to be different size */
 void *memoryRealloc(Memory *memory, void *pointer, size_t oldSize, size_t newSize) {
     /* Arena allocators can only resize the most recent allocation (top-of-stack).

@@ -77,8 +77,6 @@ extern char *getNextArgumentFile(int *indexP);
 
 extern void markFileAsDeleted(int fileNumber);
 
-extern void recoverMemoryFromFileTable(void);
-
 extern void fileTableMemoryStatistics(void);
 
 #endif

@@ -51,11 +51,9 @@ extern bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2);
 
 extern int moveEditorMarkerToNewline(EditorMarker *m, int direction);
 extern int moveEditorMarkerToNonBlank(EditorMarker *m, int direction);
-extern int moveEditorMarkerBeyondIdentifier(EditorMarker *m, int direction);
 extern int moveEditorMarkerToNonBlankOrNewline(EditorMarker *m, int direction);
 extern int countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2);
 
-extern void restrictEditorMarkersToRegions(EditorMarkerList **mm, EditorRegionList **regions);
 extern void sortEditorRegionsAndRemoveOverlaps(EditorRegionList **regions);
 extern void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2, EditorMarkerList **diff1,
                                      EditorMarkerList **diff2);

@@ -100,11 +100,6 @@ void ppcBeginWithNumericValueAndAttribute(char *kind, int value, char *attr, cha
     fprintf(outputFile, "<%s %s=%d %s=%s>\n", kind, PPCA_VALUE, value, attr, attrVal);
 }
 
-void ppcBeginWithTwoNumericAttributes(char *kind, char *attr1, int val1, char *attr2, int val2) {
-    ppcIndent();
-    fprintf(outputFile, "<%s %s=%d %s=%d>\n", kind, attr1, val1, attr2, val2);
-}
-
 void ppcBeginAllCompletions(int nofocus, int len) {
     ppcIndent();
     fprintf(outputFile, "<%s %s=%d %s=%d>", PPC_ALL_COMPLETIONS, PPCA_NO_FOCUS, nofocus, PPCA_LEN, len);

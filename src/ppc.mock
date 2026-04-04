@@ -31,10 +31,6 @@ void ppcBeginWithNumericValue(char *kind, int val) {
   mock(kind, val);
 }
 
-void ppcBeginWithTwoNumericAttributes(char *kind, char *attr1, int val1, char *attr2, int val2) {
-  mock(kind, attr1, val1, attr2, val2);
-}
-
 void ppcBeginWithNumericValueAndAttribute(char *kind, int val, char *attr, char *attrVal) {
   mock(kind, val, attr, attrVal);
 }

@@ -68,10 +68,6 @@ int moveEditorMarkerToNonBlank(EditorMarker *m, int direction) {
   return (int) mock(m, direction);
 }
 
-int moveEditorMarkerBeyondIdentifier(EditorMarker *m, int direction) {
-  return (int) mock(m, direction);
-}
-
 int moveEditorMarkerToNonBlankOrNewline(EditorMarker *m, int direction) {
   return (int) mock(m, direction);
 }

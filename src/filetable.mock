@@ -70,10 +70,6 @@ int getFileNumberFromFileName(char *fileName) {
     return (int)mock(fileName);
 }
 
-void recoverMemoryFromFileTable(void) {
-    (void)mock();
-}
-
 void fileTableMemoryStatistics(void) {
     mock();
 }
