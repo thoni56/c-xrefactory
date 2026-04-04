@@ -118,11 +118,18 @@ StringList *listFilesInDirectory(const char *dirPath) {
 
     while ((entry = readdir(dir)) != NULL) {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            /* Ignore special files */
+            continue;
+        if (strncmp(entry->d_name, ".#", 2) == 0)
+            /* Ignore Emacs lock-files */
             continue;
 
         snprintf(filePath, sizeof(filePath), "%s/%s", dirPath, entry->d_name);
 
         struct stat st;
+        if (lstat(filePath, &st) == 0 && S_ISLNK(st.st_mode))
+            /* Ignore symlinks */
+            continue;
         if (stat(filePath, &st) == 0 && S_ISDIR(st.st_mode)) {
             StringList *subList = listFilesInDirectory(filePath);
             if (subList != NULL) {
