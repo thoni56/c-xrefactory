@@ -44,10 +44,6 @@ void initTypeModifierAsPointer(TypeModifier *typeModifier, TypeModifier *next) {
   mock(typeModifier, next);
 }
 
-void initTypeModifierAsArray(TypeModifier *typeModifier, Symbol *typedefSymbol, TypeModifier *next) {
-  mock(typeModifier, typedefSymbol, next);
-}
-
 void initFunctionTypeModifier(TypeModifier *modifier, Symbol *args) {
   mock(modifier, args);
 }

@@ -71,10 +71,6 @@ void mapOverReferenceableItemTableWithPointer(void (*fun)(ReferenceableItem *, v
     referenceableItemTableMapWithPointer(&referenceableItemTable, fun, pointer);
 }
 
-void mapOverReferenceableItemTableWithIndex(void (*fun)(int index)) {
-    referenceableItemTableMapWithIndex(&referenceableItemTable, fun);
-}
-
 void removeReferenceableItemsForFile(int fileNumber) {
     log_trace("removing all references for file number %d", fileNumber);
 

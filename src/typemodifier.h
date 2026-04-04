@@ -33,8 +33,6 @@ extern void initTypeModifier(TypeModifier *typeModifier, Type kind);
 extern void initTypeModifierAsStructUnionOrEnum(TypeModifier *typeModifier, Type kind, Symbol *symbol,
                                                 Symbol *typedefSymbol, TypeModifier *next);
 extern void initTypeModifierAsPointer(TypeModifier *typeModifier, TypeModifier *next);
-extern void initTypeModifierAsArray(TypeModifier *typeModifier,Symbol *typedefSymbol, TypeModifier *next);
-
 extern void initFunctionTypeModifier(TypeModifier *modifier, Symbol *args);
 
 #endif

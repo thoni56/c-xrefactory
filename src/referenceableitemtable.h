@@ -24,7 +24,6 @@ extern int getNextExistingReferenceableItem(int index);
 
 extern bool isMemberInReferenceableItemTable(ReferenceableItem *item, int *indexP, ReferenceableItem **originP);
 extern void mapOverReferenceableItemTable(void (*fun)(ReferenceableItem *));
-extern void mapOverReferenceableItemTableWithIndex(void (*fun)(int));
 extern void mapOverReferenceableItemTableWithPointer(void (*fun)(ReferenceableItem *, void *), void *pointer);
 extern void removeReferenceableItemsForFile(int fileNumber);
 

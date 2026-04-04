@@ -35,11 +35,6 @@ void initTypeModifierAsPointer(TypeModifier *typeModifier, TypeModifier *next) {
     fillTypeModifier(typeModifier, TypePointer, NULL, next);
 }
 
-void initTypeModifierAsArray(TypeModifier *typeModifier, Symbol *typedefSymbol, TypeModifier *next) {
-    fillTypeModifier(typeModifier, TypeArray, typedefSymbol, next);
-}
-
-
 void initFunctionTypeModifier(TypeModifier *modifier, Symbol *args) {
     modifier->args = args;
 }

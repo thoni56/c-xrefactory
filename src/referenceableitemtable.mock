@@ -41,10 +41,6 @@ void mapOverReferenceableItemTableWithPointer(void (*fun)(ReferenceableItem *, v
     mock(fun, pointer);
 }
 
-void mapOverReferenceableItemTableWithIndex(void (*fun)(int)) {
-    mock(fun);
-}
-
 int getNextExistingReferenceableItem(int index) {
     return (int)mock(index);
 }
