@@ -90,7 +90,7 @@ Dirty kills (crash, `kill -9`, terminal closed) lose in-memory state accumulated
 
 ==== Incremental Implementation Path
 
-Both navigation and refactoring already use the same in-memory `ReferenceableItemTable` (see link:18-insights.adoc[Chapter 18: Unified In-Memory Table Discovery] for details). The infrastructure for memory-as-truth is largely already in place:
+Both navigation and refactoring already use the same in-memory `ReferenceableItemTable` (see link:20-insights.adoc[Chapter 20: Unified In-Memory Table Discovery] for details). The infrastructure for memory-as-truth is largely already in place:
 
 * **Include structure** is already tracked via `TypeCppInclude` references in the reference table — the same mechanism that full parsing creates. Lightweight scanning (ADR 22) would populate these without full parsing.
 * **Staleness detection** is already working: mtime checks on editor buffers, entry-point reparse with transitive include-graph walking (ADR 20).

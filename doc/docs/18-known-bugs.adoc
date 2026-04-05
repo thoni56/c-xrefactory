@@ -1,0 +1,36 @@
+== Known Bugs
+
+This chapter collects known bugs that are not yet fixed.
+Each entry describes symptoms, analysis (when available), and suspected root cause.
+
+=== GlobalUnused false positive for static functions in .y files
+
+*Symptom:* `addRuleLocalVariable` (and likely other static functions in `yacc_parser.y`) is flagged as globally unused, despite being called in several yacc action blocks.
+
+*Observed behaviour:*
+
+- Positioning on a _usage_ in an action block and doing GotoDefinition correctly navigates to the definition in the `.y` file. Browsing from there shows all usages within the `.y` file.
+- Positioning on the _definition_ and doing PUSH does _not_ find the usages in action blocks.
+
+*Analysis:*
+
+The symbol has two separate entries in the reference table for the same `.y` file:
+
+1. One entry contains only the definition (line 1914, in the C code section after `%%`)
+2. Another entry contains the declaration (line 52, in `%{ %}`) and all usages from action blocks (lines 279, 284, 306, 319)
+
+GlobalUnused sees entry 1 (definition, no usages) and reports it as unused.
+
+*Suspected root cause:*
+
+The yacc parser creates a different scope or symbol context when parsing C code inside action blocks `{ ... }` vs. the top-level C sections (`%{ %}` and after `%%`). This causes the references to be stored under different keys in the reference table, splitting what should be a single symbol into two entries.
+
+*Workaround:* None currently. The false positive can be ignored.
+
+=== Duplicate references during navigation
+
+Intermittent. When observed, check whether the snapshot contains duplicate entries.
+
+=== Stale sessions after POP
+
+Sessions hold reference copies; only the top session is refreshed on reparse. After editing a header, old locations may persist in parallel with new ones in lower stack entries. This will dissolve when sessions become index-based rather than holding copies.

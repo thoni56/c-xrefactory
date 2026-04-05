@@ -66,7 +66,7 @@ This dual-source approach allows navigation without full project parse while pro
 NOTE: Client preloading behavior and stale file detection are now documented in link:08-components.adoc[Chapter 8: Components] under Server (Entry-Point Reparse) and Editor Extension (Preloading).
 
 NOTE: The "Architectural Invariants" and "RefactoryMode Internally Calls XrefMode"
-sections have been moved to link:20-archive.adoc[Archive]. The invariants described a
+sections have been moved to link:21-archive.adoc[Archive]. The invariants described a
 model where the disk database was the source of truth; as of 2026-03, the in-memory
 reference table is authoritative (see link:06-principles.adoc[Principles]).
 
