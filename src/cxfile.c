@@ -380,6 +380,8 @@ static void writeCxReference(Reference *reference) {
 }
 
 static void writeFileNumberItem(FileItem *fileItem, int number) {
+    if (fileItem->isDeleted)
+        return;
     // keys = fpmia:
     writeOptionalCompactRecord(CXFI_FILE_NUMBER, number, "\n");
     writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileItem->lastParsedMtime, " ");

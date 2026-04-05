@@ -134,7 +134,7 @@ void markMissingFilesAsDeleted(StringList *discoveredFiles) {
     int fileNumber = getNextExistingFileNumber(0);
     while (fileNumber != -1) {
         FileItem *item = getFileItemWithFileNumber(fileNumber);
-        if (!isInList(item->name, discoveredFiles)) {
+        if (isCompilationUnit(item->name) && !isInList(item->name, discoveredFiles)) {
             markFileAsDeleted(fileNumber);
         }
         fileNumber = getNextExistingFileNumber(fileNumber + 1);

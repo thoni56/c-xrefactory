@@ -506,6 +506,7 @@ Ensure(ProjectStructure, marks_nothing_when_no_files_and_empty_table) {
 Ensure(ProjectStructure, marks_undiscovered_file_as_deleted) {
     FileItem oldFile = { .name = "/project/gone.c" };
 
+    always_expect(isCompilationUnit, will_return(true));
     expect(getNextExistingFileNumber, will_return(1));
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(1)),
            will_return(&oldFile));
@@ -527,6 +528,8 @@ Ensure(ProjectStructure, marks_only_missing_files_in_mixed_table) {
     FileItem goneFile = { .name = "/project/gone.c" };
     FileItem oldFile  = { .name = "/project/old.c" };
 
+    always_expect(isCompilationUnit, will_return(true));
+
     expect(getNextExistingFileNumber, will_return(1));
     expect(getFileItemWithFileNumber, will_return(&mainFile));
 
@@ -544,4 +547,16 @@ Ensure(ProjectStructure, marks_only_missing_files_in_mixed_table) {
     expect(getNextExistingFileNumber, will_return(-1));
 
     markMissingFilesAsDeleted(discovered);
+}
+
+Ensure(ProjectStructure, does_not_mark_header_as_deleted) {
+    FileItem headerFile = { .name = "/project/header.h" };
+
+    expect(getNextExistingFileNumber, will_return(1));
+    expect(getFileItemWithFileNumber, will_return(&headerFile));
+    expect(isCompilationUnit, will_return(false));
+    never_expect(markFileAsDeleted);
+    expect(getNextExistingFileNumber, will_return(-1));
+
+    markMissingFilesAsDeleted(NULL);
 }
