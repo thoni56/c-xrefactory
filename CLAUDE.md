@@ -30,7 +30,12 @@ Use relative effort only: "smaller", "larger", "foundational"
 
 ### Test-Driven Development
 
-- Create a failing test FIRST before fixing bugs
+**MANDATORY: No fix or feature without a failing test first.**
+1. Before proposing or making a fix, ensure a test exists that demonstrates the bug
+2. The test must fail **for the right reason** (the actual defect, not mock setup or compilation)
+3. Only then apply the simplest fix that makes it pass
+4. Update other affected tests only after the fix is proven
+
 - Unittests are using Cgreen and are always run on build
 - Systemtests are in `tests/test_<name>/` directories
 
