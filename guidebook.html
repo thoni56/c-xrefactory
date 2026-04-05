@@ -586,14 +586,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#rename-operations">16.6. Rename Server Operations</a></li>
 </ul>
 </li>
-<li><a href="#_insights">17. Insights</a>
+<li><a href="#_known_bugs">17. Known Bugs</a>
 <ul class="sectlevel2">
-<li><a href="#_yacc_semantic_data">17.1. Yacc semantic data</a></li>
-<li><a href="#_navigation_architecture_and_preloading">17.2. Navigation Architecture and Preloading</a></li>
-<li><a href="#_the_lastparsedmtime_optimization_and_refactoring_conflict">17.3. The lastParsedMtime Optimization and Refactoring Conflict</a></li>
-<li><a href="#_stale_file_refresh_and_cross_file_references">17.4. Stale File Refresh and Cross-File References</a></li>
-<li><a href="#_unified_in_memory_table_discovery">17.5. Unified In-Memory Table Discovery</a></li>
-<li><a href="#_editor_buffer_lifecycle_in_the_server">17.6. Editor Buffer Lifecycle in the Server</a></li>
+<li><a href="#_globalunused_false_positive_for_static_functions_in_y_files">17.1. GlobalUnused false positive for static functions in .y files</a></li>
+<li><a href="#_duplicate_references_during_navigation">17.2. Duplicate references during navigation</a></li>
+<li><a href="#_stale_sessions_after_pop">17.3. Stale sessions after POP</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">18. Refactoring Recipes</a>
@@ -603,17 +600,27 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_introduce_semantic_type_aliases">18.3. Introduce Semantic Type Aliases</a></li>
 </ul>
 </li>
-<li><a href="#_archive">19. Archive</a>
+<li><a href="#_insights">19. Insights</a>
 <ul class="sectlevel2">
-<li><a href="#_memory_strategies">19.1. Memory strategies</a></li>
-<li><a href="#_trivial_prechecks">19.2. Trivial Prechecks</a></li>
-<li><a href="#_caching_system">19.3. Caching System</a></li>
-<li><a href="#_huge_memory">19.4. HUGE Memory</a></li>
-<li><a href="#_bootstrapping">19.5. Bootstrapping</a></li>
-<li><a href="#_fill_macros">19.6. FILL macros</a></li>
-<li><a href="#_users">19.7. Users</a></li>
-<li><a href="#_architectural_invariants_historical">19.8. Architectural Invariants (Historical)</a></li>
-<li><a href="#_refactorymode_internally_calls_xrefmode">19.9. RefactoryMode Internally Calls XrefMode</a></li>
+<li><a href="#_yacc_semantic_data">19.1. Yacc semantic data</a></li>
+<li><a href="#_navigation_architecture_and_preloading">19.2. Navigation Architecture and Preloading</a></li>
+<li><a href="#_the_lastparsedmtime_optimization_and_refactoring_conflict">19.3. The lastParsedMtime Optimization and Refactoring Conflict</a></li>
+<li><a href="#_stale_file_refresh_and_cross_file_references">19.4. Stale File Refresh and Cross-File References</a></li>
+<li><a href="#_unified_in_memory_table_discovery">19.5. Unified In-Memory Table Discovery</a></li>
+<li><a href="#_editor_buffer_lifecycle_in_the_server">19.6. Editor Buffer Lifecycle in the Server</a></li>
+</ul>
+</li>
+<li><a href="#_archive">20. Archive</a>
+<ul class="sectlevel2">
+<li><a href="#_memory_strategies">20.1. Memory strategies</a></li>
+<li><a href="#_trivial_prechecks">20.2. Trivial Prechecks</a></li>
+<li><a href="#_caching_system">20.3. Caching System</a></li>
+<li><a href="#_huge_memory">20.4. HUGE Memory</a></li>
+<li><a href="#_bootstrapping">20.5. Bootstrapping</a></li>
+<li><a href="#_fill_macros">20.6. FILL macros</a></li>
+<li><a href="#_users">20.7. Users</a></li>
+<li><a href="#_architectural_invariants_historical">20.8. Architectural Invariants (Historical)</a></li>
+<li><a href="#_refactorymode_internally_calls_xrefmode">20.9. RefactoryMode Internally Calls XrefMode</a></li>
 </ul>
 </li>
 </ul>
@@ -6827,7 +6834,7 @@ the real <code>c-xref</code> so there will be several log files to inspect.</p>
 <div class="sect3">
 <h4 id="_incremental_implementation_path">14.2.4. Incremental Implementation Path</h4>
 <div class="paragraph">
-<p>Both navigation and refactoring already use the same in-memory <code>ReferenceableItemTable</code> (see <a href="18-insights.adoc">Chapter 18: Unified In-Memory Table Discovery</a> for details). The infrastructure for memory-as-truth is largely already in place:</p>
+<p>Both navigation and refactoring already use the same in-memory <code>ReferenceableItemTable</code> (see <a href="20-insights.adoc">Chapter 20: Unified In-Memory Table Discovery</a> for details). The infrastructure for memory-as-truth is largely already in place:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -8804,389 +8811,69 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_insights">17. Insights</h2>
+<h2 id="_known_bugs">17. Known Bugs</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This chapter contains notes of all insights, large and small, that I make as I work on this project.
-These insights should at some point be moved to some other, more structured, part of this document.
-But rather than trying to find a structure where each new finding fits, I&#8217;m making it easy to just dump them here.
-We can refactor these into a better and better structure as we go.</p>
+<p>This chapter collects known bugs that are not yet fixed.
+Each entry describes symptoms, analysis (when available), and suspected root cause.</p>
 </div>
 <div class="sect2">
-<h3 id="_yacc_semantic_data">17.1. Yacc semantic data</h3>
+<h3 id="_globalunused_false_positive_for_static_functions_in_y_files">17.1. GlobalUnused false positive for static functions in .y files</h3>
 <div class="paragraph">
-<p>As per usual a Yacc grammar requires each non-terminal to have a type.
-Those types are named after which types of data they collect and
-propagate.  The names always starts with <code>ast_</code> and then comes the
-data type.  For example if some non-terminal needs to propagate a
-Symbol and a Position that structure would be called
-<code>ast_symbolParameterPair</code> ("Pair" being thrown in there for good
-measure&#8230;&#8203;).</p>
+<p><strong>Symptom:</strong> <code>addRuleLocalVariable</code> (and likely other static functions in <code>yacc_parser.y</code>) is flagged as globally unused, despite being called in several yacc action blocks.</p>
 </div>
 <div class="paragraph">
-<p>Each of those structures also always carries a begin and end position
-for that structure.  That means that any "ast" struct has three
-fields, <code>begin</code>, <code>end</code> and the data.  The data are sometimes a struct,
-like in this case, but can also be a single value, like an <code>int</code> or a
-pointer to a <code>Symbol</code>.</p>
+<p><strong>Observed behaviour:</strong></p>
 </div>
-<div class="imageblock">
-<div class="content">
-<img src="ast.png" alt="ast" width="205" height="251">
+<div class="ulist">
+<ul>
+<li>
+<p>Positioning on a <em>usage</em> in an action block and doing GotoDefinition correctly navigates to the definition in the <code>.y</code> file. Browsing from there shows all usages within the <code>.y</code> file.</p>
+</li>
+<li>
+<p>Positioning on the <em>definition</em> and doing PUSH does <em>not</em> find the usages in action blocks.</p>
+</li>
+</ul>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_navigation_architecture_and_preloading">17.2. Navigation Architecture and Preloading</h3>
 <div class="paragraph">
-<p>Date: 2025-12-22, updated 2026-02-21</p>
+<p><strong>Analysis:</strong></p>
 </div>
-<div class="sect3">
-<h4 id="_how_symbol_navigation_works">17.2.1. How Symbol Navigation Works</h4>
 <div class="paragraph">
-<p>Symbol navigation (PUSH/NEXT/PREVIOUS/POP) merges references from <strong>two sources</strong>:</p>
+<p>The symbol has two separate entries in the reference table for the same <code>.y</code> file:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><strong>Disk CXrefs Database</strong> - Reflects saved files on disk</p>
+<p>One entry contains only the definition (line 1914, in the C code section after <code>%%</code>)</p>
 </li>
 <li>
-<p><strong>In-Memory ReferenceableItem Table</strong> - Reflects current server state including preloaded editor buffers</p>
+<p>Another entry contains the declaration (line 52, in <code>%{ %}</code>) and all usages from action blocks (lines 279, 284, 306, 319)</p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>When you PUSH on a symbol, the navigation menu creation (<code>createSelectionMenuForOperation</code>) does:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Load from disk</strong> - Scans CXrefs files for the symbol (via <code>scanReferencesToCreateMenu</code>)</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Creates menu items with disk-based line numbers</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p><strong>Merge from memory</strong> - Maps over the in-memory table (via <code>putOnLineLoadedReferences</code>)</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Adds references from parsed/preloaded buffers with current line numbers</p>
-</li>
-<li>
-<p>Duplicate detection prevents the same reference appearing twice</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p><strong>Build session</strong> - Copies merged references to the navigation session</p>
-</li>
-</ol>
+<p>GlobalUnused sees entry 1 (definition, no usages) and reports it as unused.</p>
 </div>
 <div class="paragraph">
-<p>This dual-source approach allows navigation without full project parse while providing updated positions for modified files.</p>
+<p><strong>Suspected root cause:</strong></p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Client preloading behavior and stale file detection are now documented in <a href="08-components.adoc">Chapter 8: Components</a> under Server (Entry-Point Reparse) and Editor Extension (Preloading).
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>The yacc parser creates a different scope or symbol context when parsing C code inside action blocks <code>{ &#8230;&#8203; }</code> vs. the top-level C sections (<code>%{ %}</code> and after <code>%%</code>). This causes the references to be stored under different keys in the reference table, splitting what should be a single symbol into two entries.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The "Architectural Invariants" and "RefactoryMode Internally Calls XrefMode"
-sections have been moved to <a href="20-archive.adoc">Archive</a>. The invariants described a
-model where the disk database was the source of truth; as of 2026-03, the in-memory
-reference table is authoritative (see <a href="06-principles.adoc">Principles</a>).
-</td>
-</tr>
-</table>
-</div>
+<div class="paragraph">
+<p><strong>Workaround:</strong> None currently. The false positive can be ignored.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_the_lastparsedmtime_optimization_and_refactoring_conflict">17.3. The lastParsedMtime Optimization and Refactoring Conflict</h3>
+<h3 id="_duplicate_references_during_navigation">17.2. Duplicate references during navigation</h3>
 <div class="paragraph">
-<p>Date: 2025-01-21</p>
-</div>
-<div class="sect3">
-<h4 id="_problem_discovery">17.3.1. Problem Discovery</h4>
-<div class="paragraph">
-<p>When implementing staleness detection for navigation (refreshing references when files are modified), we added an optimization to <code>server.c</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// After parsing with preload, update lastParsedMtime
-if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
-    FileItem *fileItem = getFileItemWithFileNumber(parsingConfig.fileNumber);
-    fileItem-&gt;lastParsedMtime = buffer-&gt;modificationTime;
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This optimization prevents navigation from thinking a file is "stale" immediately after parsing it with preloaded content.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_the_conflict">17.3.2. The Conflict</h4>
-<div class="paragraph">
-<p>This broke refactoring operations (<code>test_delete_parameter_with_preload</code>). The problem:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Server parses with preload</strong> → In-memory references have correct positions (e.g., line 3)</p>
-</li>
-<li>
-<p><strong><code>lastParsedMtime</code> updated</strong> → File marked as "freshly parsed"</p>
-</li>
-<li>
-<p><strong>Refactoring triggers <code>callXref()</code></strong> → xref checks timestamps</p>
-</li>
-<li>
-<p><strong>xref sees <code>editorFileModificationTime() == lastParsedMtime</code></strong> → Concludes "file already indexed"</p>
-</li>
-<li>
-<p><strong>xref skips re-indexing</strong> → Persistent <code>.cx</code> keeps old positions (e.g., line 2)</p>
-</li>
-<li>
-<p><strong>Refactoring uses stale <code>.cx</code> data</strong> → Wrong positions, operation fails</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_root_cause_two_sources_of_truth">17.3.3. Root Cause: Two Sources of Truth</h4>
-<div class="paragraph">
-<p>The architecture has two sources of references:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>In-memory references</strong> (ReferenceableItemTable) - populated by parsing, used by navigation</p>
-</li>
-<li>
-<p><strong>Persistent .cx database</strong> - populated by xref, used by refactoring</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>The <code>lastParsedMtime</code> optimization conflated these:
-* It correctly told navigation "in-memory is current"
-* But incorrectly told xref "persistent database is current" (when it wasn&#8217;t)</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_the_workaround">17.3.4. The Workaround</h4>
-<div class="paragraph">
-<p>Exclude refactoring operations from the optimization:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL
-    &amp;&amp; options.serverOperation != OP_RENAME
-    &amp;&amp; options.serverOperation != OP_ARGUMENT_MANIPULATION
-    &amp;&amp; options.serverOperation != OP_SAFETY_CHECK) {
-    fileItem-&gt;lastParsedMtime = buffer-&gt;modificationTime;
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This allows:
-* Navigation to use the optimization (in-memory is sufficient)
-* Refactoring to trigger xref re-indexing (reads preload, updates .cx correctly)</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_architectural_lesson">17.3.5. Architectural Lesson</h4>
-<div class="paragraph">
-<p>This workaround highlights the fundamental tension: <strong>navigation and refactoring use different sources of truth</strong>. The proper fix is <a href="/workspace/decisions#14">ADR-0014</a>'s unified on-demand architecture where both use the same in-memory reference database, eliminating the need for <code>callXref()</code> entirely.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_related">17.3.6. Related</h4>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="/workspace/decisions#14">ADR-0014</a>: Adopt On-Demand Parsing Architecture</p>
-</li>
-<li>
-<p>Section 17.2: Unified Symbol Database Architecture</p>
-</li>
-<li>
-<p>Section 11: Server-Side Refactoring (in Algorithms chapter)</p>
-</li>
-</ul>
-</div>
+<p>Intermittent. When observed, check whether the snapshot contains duplicate entries.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_stale_file_refresh_and_cross_file_references">17.4. Stale File Refresh and Cross-File References</h3>
+<h3 id="_stale_sessions_after_pop">17.3. Stale sessions after POP</h3>
 <div class="paragraph">
-<p>Date: 2025-01-29 (Updated: 2026-01-29)</p>
-</div>
-<div class="sect3">
-<h4 id="_stale_detection">17.4.1. Stale Detection</h4>
-<div class="paragraph">
-<p>When navigating (PUSH/NEXT), the server detects if the current file is "stale" by comparing:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>fileItem&#8594;lastParsedMtime</code> (from disk database or last parse)</p>
-</li>
-<li>
-<p><code>buffer&#8594;modificationTime</code> (from preloaded editor buffer)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If <code>buffer&#8594;modificationTime &gt; lastParsedMtime</code>, the file is considered stale and <code>refreshStaleReferencesInSession()</code> is called.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_the_refresh_algorithm">17.4.2. The Refresh Algorithm</h4>
-<div class="paragraph">
-<p><code>refreshStaleReferencesInSession()</code> in <code>cxref.c</code> must preserve cross-file references while updating references from the modified file:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><code>removeReferenceableItemsForFile()</code> - remove old refs from in-memory table</p>
-</li>
-<li>
-<p><code>parseToCreateReferences()</code> - re-parse with preload, add fresh refs to in-memory table</p>
-</li>
-<li>
-<p>Remove stale-file refs from menu - preserves cross-file refs, removes outdated positions</p>
-</li>
-<li>
-<p><code>extendBrowsingMenuWithReferences()</code> - merge fresh refs from in-memory table</p>
-</li>
-<li>
-<p>Mark file as freshly parsed (<code>lastParsedMtime = buffer&#8594;modificationTime</code>)</p>
-</li>
-<li>
-<p><code>recomputeSelectedReferenceable()</code> - rebuild session&#8217;s reference list from updated menu</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong>Key insights:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The menu already has cross-file refs from the original PUSH operation (which scanned disk)</p>
-</li>
-<li>
-<p>We do NOT clear menu refs and re-scan from disk during refresh</p>
-</li>
-<li>
-<p>Scanning from disk creates problems: <code>addReferenceableToBrowsingMenu</code> creates NEW menu items
-when <code>includeFileNumber</code> differs, and these new items have <code>selected=false</code></p>
-</li>
-<li>
-<p>Only SELECTED menu items contribute refs to the session&#8217;s reference list</p>
-</li>
-<li>
-<p>So scanning would add refs to new (unselected) items, leaving the original (selected) item empty</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_why_scanning_from_disk_fails">17.4.3. Why Scanning From Disk Fails</h4>
-<div class="paragraph">
-<p>During PUSH, <code>createSelectionMenu</code> creates menu items and adds them to <code>sessionEntry&#8594;menu</code>.
-These items are marked as selected. When you NEXT, the menu&#8217;s reference list is what gets
-used for navigation (via <code>recomputeSelectedReferenceable</code>).</p>
-</div>
-<div class="paragraph">
-<p>If during refresh we:
-1. Clear menu refs
-2. Scan from disk</p>
-</div>
-<div class="paragraph">
-<p>The scan calls <code>createSelectionMenu</code> which in turn calls <code>addReferenceableToBrowsingMenu</code>.
-This function compares incoming items by <code>(linkName, includeFileNumber, type)</code>. If the
-<code>includeFileNumber</code> from the disk scan differs from the existing menu item&#8217;s value,
-a <strong>new</strong> menu item is created with <code>selected=false</code>.</p>
-</div>
-<div class="paragraph">
-<p>The refs are then added to this new unselected item, while the original selected item
-has empty refs. <code>recomputeSelectedReferenceable</code> only processes selected items, so
-navigation loses most of its references.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_architectural_note">17.4.4. Architectural Note</h4>
-<div class="paragraph">
-<p>This is a manifestation of the "two sources of truth" architecture. The long-term fix (per roadmap) is to parse all project files at startup, keeping complete references in memory. Then stale refresh would just re-parse the single file and the in-memory table would already have all cross-file references.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_unified_in_memory_table_discovery">17.5. Unified In-Memory Table Discovery</h3>
-<div class="paragraph">
-<p>Date: 2025-01-25</p>
-</div>
-<div class="paragraph">
-<p>Investigation revealed that <strong>both XrefMode and ServerMode use the same in-memory <code>ReferenceableItemTable</code></strong>. This is the key enabler for the incremental path to "Memory as Truth" (see <a href="15-roadmap.adoc">Chapter 15: Roadmap</a>).</p>
-</div>
-<div class="paragraph">
-<p><code>handleFoundSymbolReference()</code> in <code>cxref.c</code> handles references found during parsing. It calls <code>isMemberInReferenceableItemTable()</code> to check if a symbol exists; if not found, creates a new entry; if found, adds a reference to the existing entry. This same table is used by both modes — there is no separate "server table" vs "xref table".</p>
-</div>
-<div class="paragraph">
-<p>The disk scan operations (<code>ensureReferencesAreLoadedFor</code>, <code>scanReferencesToCreateMenu</code>, etc.) read from <code>.cx</code> files on disk and also call <code>isMemberInReferenceableItemTable()</code> to check/merge with existing entries. If parsing has already populated the table, these operations find data already present — making them effective no-ops once all files are parsed.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_editor_buffer_lifecycle_in_the_server">17.6. Editor Buffer Lifecycle in the Server</h3>
-<div class="paragraph">
-<p>Date: 2026-03-17</p>
-</div>
-<div class="paragraph">
-<p>Editor buffers created by the server during parsing (e.g., entry refresh pass 3 parsing sibling CUs, or refactoring loading files) have <code>preLoadedFromFile == NULL</code> — they were loaded from disk, not preloaded by the client. After each request, <code>closeAllEditorBuffersIfClosable()</code> in <code>editor.c</code> frees all buffers that are closeable: <code>textLoaded &amp;&amp; markers == NULL &amp;&amp; preLoadedFromFile == NULL &amp;&amp; !modified</code>.</p>
-</div>
-<div class="paragraph">
-<p>This means <strong>server-created editor buffers do not linger between requests</strong>. On the next request, files are reloaded from disk with fresh content. This is important because:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>A user may edit and save a file between operations without triggering any c-xref action. The server must see the new disk content, not a stale buffer.</p>
-</li>
-<li>
-<p>After a refactoring modifies editor buffers, markers are freed by the refactoring cleanup (e.g., <code>freeEditorMarkerListAndMarkers</code> at the end of <code>renameAtPoint</code>), making the buffers closeable.</p>
-</li>
-<li>
-<p><code>parseToCreateReferences</code> prefers an existing editor buffer over disk — so if a stale buffer lingered, it would parse old content even when the disk file had changed.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Client-preloaded buffers (<code>preLoadedFromFile != NULL</code>) are NOT freed — they represent the editor&#8217;s view of the file and survive until the client sends updated content or (eventually) a close notification.</p>
-</div>
-<div class="paragraph">
-<p><strong>Implication for <code>didClose</code></strong>: A <code>didClose</code> protocol message (analogous to LSP <code>textDocument/didClose</code>) is not urgently needed for correctness — the existing cleanup handles server-created buffers. It would primarily benefit client-preloaded buffers that the user has closed in the editor, allowing the server to fall back to disk content. This is an architectural nicety, not a bug fix.</p>
+<p>Sessions hold reference copies; only the top session is refreshed on reparse. After editing a header, old locations may persist in parallel with new ones in lower stack entries. This will dissolve when sessions become index-based rather than holding copies.</p>
 </div>
 </div>
 </div>
@@ -9198,7 +8885,7 @@ navigation loses most of its references.</p>
 <p>This chapter documents mechanical steps for refactoring operations. Each recipe describes the algorithmic steps that an automated refactoring tool would perform.</p>
 </div>
 <div class="paragraph">
-<p>For detailed discussions of refactoring feature architecture and implementation phases, see <a href="16a-planned-refactorings.adoc">Chapter 16a: Planned Refactoring Features</a>.</p>
+<p>For detailed discussions of refactoring feature architecture and implementation phases, see <a href="16-planned-features.adoc">Chapter 16: Planned Features</a>.</p>
 </div>
 <div class="sect2">
 <h3 id="_existing_refactorings">18.1. Existing Refactorings</h3>
@@ -9394,6 +9081,88 @@ void publicSort(int *array, size_t n) {
 </li>
 </ul>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_rename_included_file">18.1.5. Rename Included File</h4>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Rename a file appearing in an include and update all the include directives</p>
+</div>
+<div class="paragraph">
+<p><strong>When to use:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A (header) file is inappropriately named</p>
+</li>
+<li>
+<p>In the process of renaming a complete C "module" this is one step (until <code>c-xrefactory</code> can do all of that)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Input:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The old and new file names</p>
+</li>
+<li>
+<p>All <code>#include</code> locations for the old file</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Availability</strong></p>
+</div>
+<div class="paragraph">
+<p>When the cursor is on an <code>#include</code> directive. The file it references will be the "source".</p>
+</div>
+<div class="paragraph">
+<p><strong>Algorithm:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Rename the source file to the destination</strong></p>
+</li>
+<li>
+<p><strong>Update all include locations</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>This will often include multiple locations</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Output:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>New header file</p>
+</li>
+<li>
+<p>All <code>#include</code> directives updated</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="_move_function_to_different_file">18.1.6. Move Function to Different File</h4>
+<div class="paragraph">
+<p><strong>Status</strong>: Phase 1 complete. See <a href="16-planned-features.adoc">Planned Features: Move Function Between Files</a> for detailed design, what works now, and next steps.</p>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Move a function definition from one C source file to another while automatically managing visibility (static vs extern) and adding necessary declarations and includes.</p>
+</div>
+<hr>
 </div>
 </div>
 <div class="sect2">
@@ -9737,280 +9506,411 @@ void pushEmptySession(ReferencesStack *stack);  // Generic operation</code></pre
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_rename_included_file">18.3.1. Rename Included File</h4>
-<div class="paragraph">
-<p><strong>Purpose:</strong> Rename a file appearing in an include and update all the include directives</p>
-</div>
-<div class="paragraph">
-<p><strong>When to use:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>A (header) file is inappropriately named</p>
-</li>
-<li>
-<p>In the process of renaming a complete C "module" this is one step (until <code>c-xrefactory</code> can do all of that)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Input:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The old and new file names</p>
-</li>
-<li>
-<p>All <code>#include</code> locations for the old file</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Availability</strong></p>
-</div>
-<div class="paragraph">
-<p>When the cursor is on an <code>#include</code> directive. The file it references will be the "source".</p>
-</div>
-<div class="paragraph">
-<p><strong>Algorithm:</strong></p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Rename the source file to the destination</strong></p>
-</li>
-<li>
-<p><strong>Update all include locations</strong></p>
-<div class="ulist">
-<ul>
-<li>
-<p>This will often include multiple locations</p>
-</li>
-</ul>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong>Output:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>New header file</p>
-</li>
-<li>
-<p>All <code>#include</code> directives updated</p>
-</li>
-</ul>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="_move_function_to_different_file">18.3.2. Move Function to Different File</h4>
-<div class="paragraph">
-<p>See <a href="16a-planned-refactorings.adoc">Chapter 16a: Planned Refactoring Features</a> for detailed design and implementation status.</p>
-</div>
-<div class="paragraph">
-<p>Proposed refactoring to move a function definition from one C source file to another while automatically managing visibility (static vs extern) and potentially adding necessary declarations and includes.</p>
-</div>
-<div class="paragraph">
-<p><strong>Status</strong>: Phase 1 MVP complete.</p>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="_turn_include_guard_into_pragma_once">18.3.3. Turn include guard into pragma once</h4>
+<h4 id="_turn_include_guard_into_pragma_once">18.3.1. Turn include guard into pragma once</h4>
 <div class="paragraph">
 <p>Tentative.</p>
 </div>
 <hr>
 </div>
 <div class="sect3">
-<h4 id="_change_return_type">18.3.4. Change return type</h4>
+<h4 id="_change_return_type">18.3.2. Change Return Type</h4>
 <div class="paragraph">
-<p>Tentative.</p>
-</div>
-<div class="paragraph">
-<p><strong>Purpose:</strong> Convert functions that are only used within their compilation unit to <code>static</code> storage class for better encapsulation and compiler optimization.</p>
-</div>
-<div class="paragraph">
-<p><strong>When to use:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Function has external linkage but no external callers</p>
-</li>
-<li>
-<p>Want to make implementation details explicit</p>
-</li>
-<li>
-<p>Enable compiler optimizations and reduce global namespace pollution</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Input:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Non-static function definition</p>
-</li>
-<li>
-<p>All references to that function</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Availability:</strong></p>
-</div>
-<div class="paragraph">
-<p>When cursor is on a non-static function definition where all callers are in the same file.</p>
-</div>
-<div class="paragraph">
-<p><strong>Algorithm:</strong></p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Check current storage class</strong> - Skip if already <code>static</code></p>
-</li>
-<li>
-<p><strong>Find definition and all references</strong></p>
-<div class="ulist">
-<ul>
-<li>
-<p>Locate function definition (not declarations)</p>
-</li>
-<li>
-<p>Collect all call sites across project</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p><strong>Verify all references are local</strong></p>
-<div class="ulist">
-<ul>
-<li>
-<p>For each reference (excluding definition itself):</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Check if in same file as definition</p>
-</li>
-<li>
-<p>If any reference is in different file, abort</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Check if declared in header files (public API), abort if yes</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p><strong>Apply transformation</strong></p>
-<div class="ulist">
-<ul>
-<li>
-<p>Find beginning of function definition</p>
-</li>
-<li>
-<p>Insert "static " before return type</p>
-</li>
-</ul>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong>Output:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Function marked as <code>static</code></p>
-</li>
-<li>
-<p>Compiler can optimize more aggressively</p>
-</li>
-<li>
-<p>Clear signal that function is internal</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Example:</strong></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Before - helper function with external linkage
-int helperCompare(const void *a, const void *b) {
-    return *(int*)a - *(int*)b;
-}
-
-void publicSort(int *array, size_t n) {
-    qsort(array, n, sizeof(int), helperCompare);
-}
-
-// After - explicitly internal
-static int helperCompare(const void *a, const void *b) {
-    return *(int*)a - *(int*)b;
-}
-
-void publicSort(int *array, size_t n) {
-    qsort(array, n, sizeof(int), helperCompare);
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Benefits:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Better encapsulation and code clarity</p>
-</li>
-<li>
-<p>Enables inlining and other compiler optimizations</p>
-</li>
-<li>
-<p>Smaller symbol tables, no name collisions</p>
-</li>
-<li>
-<p>Safe to refactor (can&#8217;t break external code)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Notes:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Similar to "Unused Symbols" detection but finds LOCAL-ONLY usage instead of NO usage</p>
-</li>
-<li>
-<p>Cannot handle functions used via function pointers passed externally (requires manual verification)</p>
-</li>
-<li>
-<p>Estimated complexity: ~0.3× Move Function Phase 1</p>
-</li>
-</ul>
+<p>Tentative. Change the return type across all declarations and definitions in one operation.</p>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_archive">19. Archive</h2>
+<h2 id="_insights">19. Insights</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter contains notes of all insights, large and small, that I make as I work on this project.
+These insights should at some point be moved to some other, more structured, part of this document.
+But rather than trying to find a structure where each new finding fits, I&#8217;m making it easy to just dump them here.
+We can refactor these into a better and better structure as we go.</p>
+</div>
+<div class="sect2">
+<h3 id="_yacc_semantic_data">19.1. Yacc semantic data</h3>
+<div class="paragraph">
+<p>As per usual a Yacc grammar requires each non-terminal to have a type.
+Those types are named after which types of data they collect and
+propagate.  The names always starts with <code>ast_</code> and then comes the
+data type.  For example if some non-terminal needs to propagate a
+Symbol and a Position that structure would be called
+<code>ast_symbolParameterPair</code> ("Pair" being thrown in there for good
+measure&#8230;&#8203;).</p>
+</div>
+<div class="paragraph">
+<p>Each of those structures also always carries a begin and end position
+for that structure.  That means that any "ast" struct has three
+fields, <code>begin</code>, <code>end</code> and the data.  The data are sometimes a struct,
+like in this case, but can also be a single value, like an <code>int</code> or a
+pointer to a <code>Symbol</code>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="ast.png" alt="ast" width="205" height="251">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_navigation_architecture_and_preloading">19.2. Navigation Architecture and Preloading</h3>
+<div class="paragraph">
+<p>Date: 2025-12-22, updated 2026-02-21</p>
+</div>
+<div class="sect3">
+<h4 id="_how_symbol_navigation_works">19.2.1. How Symbol Navigation Works</h4>
+<div class="paragraph">
+<p>Symbol navigation (PUSH/NEXT/PREVIOUS/POP) merges references from <strong>two sources</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Disk CXrefs Database</strong> - Reflects saved files on disk</p>
+</li>
+<li>
+<p><strong>In-Memory ReferenceableItem Table</strong> - Reflects current server state including preloaded editor buffers</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>When you PUSH on a symbol, the navigation menu creation (<code>createSelectionMenuForOperation</code>) does:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Load from disk</strong> - Scans CXrefs files for the symbol (via <code>scanReferencesToCreateMenu</code>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Creates menu items with disk-based line numbers</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Merge from memory</strong> - Maps over the in-memory table (via <code>putOnLineLoadedReferences</code>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Adds references from parsed/preloaded buffers with current line numbers</p>
+</li>
+<li>
+<p>Duplicate detection prevents the same reference appearing twice</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Build session</strong> - Copies merged references to the navigation session</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This dual-source approach allows navigation without full project parse while providing updated positions for modified files.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Client preloading behavior and stale file detection are now documented in <a href="08-components.adoc">Chapter 8: Components</a> under Server (Entry-Point Reparse) and Editor Extension (Preloading).
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The "Architectural Invariants" and "RefactoryMode Internally Calls XrefMode"
+sections have been moved to <a href="21-archive.adoc">Archive</a>. The invariants described a
+model where the disk database was the source of truth; as of 2026-03, the in-memory
+reference table is authoritative (see <a href="06-principles.adoc">Principles</a>).
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_lastparsedmtime_optimization_and_refactoring_conflict">19.3. The lastParsedMtime Optimization and Refactoring Conflict</h3>
+<div class="paragraph">
+<p>Date: 2025-01-21</p>
+</div>
+<div class="sect3">
+<h4 id="_problem_discovery">19.3.1. Problem Discovery</h4>
+<div class="paragraph">
+<p>When implementing staleness detection for navigation (refreshing references when files are modified), we added an optimization to <code>server.c</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// After parsing with preload, update lastParsedMtime
+if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
+    FileItem *fileItem = getFileItemWithFileNumber(parsingConfig.fileNumber);
+    fileItem-&gt;lastParsedMtime = buffer-&gt;modificationTime;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This optimization prevents navigation from thinking a file is "stale" immediately after parsing it with preloaded content.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_conflict">19.3.2. The Conflict</h4>
+<div class="paragraph">
+<p>This broke refactoring operations (<code>test_delete_parameter_with_preload</code>). The problem:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Server parses with preload</strong> → In-memory references have correct positions (e.g., line 3)</p>
+</li>
+<li>
+<p><strong><code>lastParsedMtime</code> updated</strong> → File marked as "freshly parsed"</p>
+</li>
+<li>
+<p><strong>Refactoring triggers <code>callXref()</code></strong> → xref checks timestamps</p>
+</li>
+<li>
+<p><strong>xref sees <code>editorFileModificationTime() == lastParsedMtime</code></strong> → Concludes "file already indexed"</p>
+</li>
+<li>
+<p><strong>xref skips re-indexing</strong> → Persistent <code>.cx</code> keeps old positions (e.g., line 2)</p>
+</li>
+<li>
+<p><strong>Refactoring uses stale <code>.cx</code> data</strong> → Wrong positions, operation fails</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_root_cause_two_sources_of_truth">19.3.3. Root Cause: Two Sources of Truth</h4>
+<div class="paragraph">
+<p>The architecture has two sources of references:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>In-memory references</strong> (ReferenceableItemTable) - populated by parsing, used by navigation</p>
+</li>
+<li>
+<p><strong>Persistent .cx database</strong> - populated by xref, used by refactoring</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The <code>lastParsedMtime</code> optimization conflated these:
+* It correctly told navigation "in-memory is current"
+* But incorrectly told xref "persistent database is current" (when it wasn&#8217;t)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_workaround">19.3.4. The Workaround</h4>
+<div class="paragraph">
+<p>Exclude refactoring operations from the optimization:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL
+    &amp;&amp; options.serverOperation != OP_RENAME
+    &amp;&amp; options.serverOperation != OP_ARGUMENT_MANIPULATION
+    &amp;&amp; options.serverOperation != OP_SAFETY_CHECK) {
+    fileItem-&gt;lastParsedMtime = buffer-&gt;modificationTime;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This allows:
+* Navigation to use the optimization (in-memory is sufficient)
+* Refactoring to trigger xref re-indexing (reads preload, updates .cx correctly)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_architectural_lesson">19.3.5. Architectural Lesson</h4>
+<div class="paragraph">
+<p>This workaround highlights the fundamental tension: <strong>navigation and refactoring use different sources of truth</strong>. The proper fix is <a href="/workspace/decisions#14">ADR-0014</a>'s unified on-demand architecture where both use the same in-memory reference database, eliminating the need for <code>callXref()</code> entirely.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_related">19.3.6. Related</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="/workspace/decisions#14">ADR-0014</a>: Adopt On-Demand Parsing Architecture</p>
+</li>
+<li>
+<p>Section 17.2: Unified Symbol Database Architecture</p>
+</li>
+<li>
+<p>Section 11: Server-Side Refactoring (in Algorithms chapter)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_stale_file_refresh_and_cross_file_references">19.4. Stale File Refresh and Cross-File References</h3>
+<div class="paragraph">
+<p>Date: 2025-01-29 (Updated: 2026-01-29)</p>
+</div>
+<div class="sect3">
+<h4 id="_stale_detection">19.4.1. Stale Detection</h4>
+<div class="paragraph">
+<p>When navigating (PUSH/NEXT), the server detects if the current file is "stale" by comparing:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>fileItem&#8594;lastParsedMtime</code> (from disk database or last parse)</p>
+</li>
+<li>
+<p><code>buffer&#8594;modificationTime</code> (from preloaded editor buffer)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If <code>buffer&#8594;modificationTime &gt; lastParsedMtime</code>, the file is considered stale and <code>refreshStaleReferencesInSession()</code> is called.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_refresh_algorithm">19.4.2. The Refresh Algorithm</h4>
+<div class="paragraph">
+<p><code>refreshStaleReferencesInSession()</code> in <code>cxref.c</code> must preserve cross-file references while updating references from the modified file:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>removeReferenceableItemsForFile()</code> - remove old refs from in-memory table</p>
+</li>
+<li>
+<p><code>parseToCreateReferences()</code> - re-parse with preload, add fresh refs to in-memory table</p>
+</li>
+<li>
+<p>Remove stale-file refs from menu - preserves cross-file refs, removes outdated positions</p>
+</li>
+<li>
+<p><code>extendBrowsingMenuWithReferences()</code> - merge fresh refs from in-memory table</p>
+</li>
+<li>
+<p>Mark file as freshly parsed (<code>lastParsedMtime = buffer&#8594;modificationTime</code>)</p>
+</li>
+<li>
+<p><code>recomputeSelectedReferenceable()</code> - rebuild session&#8217;s reference list from updated menu</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Key insights:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The menu already has cross-file refs from the original PUSH operation (which scanned disk)</p>
+</li>
+<li>
+<p>We do NOT clear menu refs and re-scan from disk during refresh</p>
+</li>
+<li>
+<p>Scanning from disk creates problems: <code>addReferenceableToBrowsingMenu</code> creates NEW menu items
+when <code>includeFileNumber</code> differs, and these new items have <code>selected=false</code></p>
+</li>
+<li>
+<p>Only SELECTED menu items contribute refs to the session&#8217;s reference list</p>
+</li>
+<li>
+<p>So scanning would add refs to new (unselected) items, leaving the original (selected) item empty</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_why_scanning_from_disk_fails">19.4.3. Why Scanning From Disk Fails</h4>
+<div class="paragraph">
+<p>During PUSH, <code>createSelectionMenu</code> creates menu items and adds them to <code>sessionEntry&#8594;menu</code>.
+These items are marked as selected. When you NEXT, the menu&#8217;s reference list is what gets
+used for navigation (via <code>recomputeSelectedReferenceable</code>).</p>
+</div>
+<div class="paragraph">
+<p>If during refresh we:
+1. Clear menu refs
+2. Scan from disk</p>
+</div>
+<div class="paragraph">
+<p>The scan calls <code>createSelectionMenu</code> which in turn calls <code>addReferenceableToBrowsingMenu</code>.
+This function compares incoming items by <code>(linkName, includeFileNumber, type)</code>. If the
+<code>includeFileNumber</code> from the disk scan differs from the existing menu item&#8217;s value,
+a <strong>new</strong> menu item is created with <code>selected=false</code>.</p>
+</div>
+<div class="paragraph">
+<p>The refs are then added to this new unselected item, while the original selected item
+has empty refs. <code>recomputeSelectedReferenceable</code> only processes selected items, so
+navigation loses most of its references.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_architectural_note">19.4.4. Architectural Note</h4>
+<div class="paragraph">
+<p>This is a manifestation of the "two sources of truth" architecture. The long-term fix (per roadmap) is to parse all project files at startup, keeping complete references in memory. Then stale refresh would just re-parse the single file and the in-memory table would already have all cross-file references.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_unified_in_memory_table_discovery">19.5. Unified In-Memory Table Discovery</h3>
+<div class="paragraph">
+<p>Date: 2025-01-25</p>
+</div>
+<div class="paragraph">
+<p>Investigation revealed that <strong>both XrefMode and ServerMode use the same in-memory <code>ReferenceableItemTable</code></strong>. This is the key enabler for the incremental path to "Memory as Truth" (see <a href="15-roadmap.adoc">Chapter 15: Roadmap</a>).</p>
+</div>
+<div class="paragraph">
+<p><code>handleFoundSymbolReference()</code> in <code>cxref.c</code> handles references found during parsing. It calls <code>isMemberInReferenceableItemTable()</code> to check if a symbol exists; if not found, creates a new entry; if found, adds a reference to the existing entry. This same table is used by both modes — there is no separate "server table" vs "xref table".</p>
+</div>
+<div class="paragraph">
+<p>The disk scan operations (<code>ensureReferencesAreLoadedFor</code>, <code>scanReferencesToCreateMenu</code>, etc.) read from <code>.cx</code> files on disk and also call <code>isMemberInReferenceableItemTable()</code> to check/merge with existing entries. If parsing has already populated the table, these operations find data already present — making them effective no-ops once all files are parsed.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_editor_buffer_lifecycle_in_the_server">19.6. Editor Buffer Lifecycle in the Server</h3>
+<div class="paragraph">
+<p>Date: 2026-03-17</p>
+</div>
+<div class="paragraph">
+<p>Editor buffers created by the server during parsing (e.g., entry refresh pass 3 parsing sibling CUs, or refactoring loading files) have <code>preLoadedFromFile == NULL</code> — they were loaded from disk, not preloaded by the client. After each request, <code>closeAllEditorBuffersIfClosable()</code> in <code>editor.c</code> frees all buffers that are closeable: <code>textLoaded &amp;&amp; markers == NULL &amp;&amp; preLoadedFromFile == NULL &amp;&amp; !modified</code>.</p>
+</div>
+<div class="paragraph">
+<p>This means <strong>server-created editor buffers do not linger between requests</strong>. On the next request, files are reloaded from disk with fresh content. This is important because:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A user may edit and save a file between operations without triggering any c-xref action. The server must see the new disk content, not a stale buffer.</p>
+</li>
+<li>
+<p>After a refactoring modifies editor buffers, markers are freed by the refactoring cleanup (e.g., <code>freeEditorMarkerListAndMarkers</code> at the end of <code>renameAtPoint</code>), making the buffers closeable.</p>
+</li>
+<li>
+<p><code>parseToCreateReferences</code> prefers an existing editor buffer over disk — so if a stale buffer lingered, it would parse old content even when the disk file had changed.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Client-preloaded buffers (<code>preLoadedFromFile != NULL</code>) are NOT freed — they represent the editor&#8217;s view of the file and survive until the client sends updated content or (eventually) a close notification.</p>
+</div>
+<div class="paragraph">
+<p><strong>Implication for <code>didClose</code></strong>: A <code>didClose</code> protocol message (analogous to LSP <code>textDocument/didClose</code>) is not urgently needed for correctness — the existing cleanup handles server-created buffers. It would primarily benefit client-preloaded buffers that the user has closed in the editor, allowing the server to fall back to disk content. This is an architectural nicety, not a bug fix.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_archive">20. Archive</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>In this section you can find some descriptions and saved texts that
@@ -10019,7 +9919,7 @@ quirk, magic or bad coding is gone. But it is kept here as an archive
 for those wanting to do backtracking to original sources.</p>
 </div>
 <div class="sect2">
-<h3 id="_memory_strategies">19.1. Memory strategies</h3>
+<h3 id="_memory_strategies">20.1. Memory strategies</h3>
 <div class="paragraph">
 <p>There were a multitude of specialized memory allocation functions. In
 principle there where two types, static and dynamic. The dynamic could
@@ -10030,7 +9930,7 @@ be exteded using a overflow handler.</p>
 the actual struct. This was very confusing&#8230;&#8203;</p>
 </div>
 <div class="sect3">
-<h4 id="_static_memory_allocation">19.1.1. Static memory allocation</h4>
+<h4 id="_static_memory_allocation">20.1.1. Static memory allocation</h4>
 <div class="paragraph">
 <p>Static memory (SM_ prefix) are static areas allocated by the compiler
 which is then indexed using a similarly named index variable
@@ -10068,7 +9968,7 @@ the outermost CodeBlock</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_trivial_prechecks">19.2. Trivial Prechecks</h3>
+<h3 id="_trivial_prechecks">20.2. Trivial Prechecks</h3>
 <div class="paragraph">
 <p>The refactorer can call the server using <code>parseBufferUsingServer()</code> and add some extra options (in text form).
 One example is <code>setMovingPrecheckStandardEnvironment()</code> where it calls the server with <code>-olcxtrivialprecheck</code>.</p>
@@ -10096,7 +9996,7 @@ This theory should be checked by looking at the original source of the precheck 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_caching_system">19.3. Caching System</h3>
+<h3 id="_caching_system">20.3. Caching System</h3>
 <div class="paragraph">
 <p><strong>The caching system described below has been archived as it is no longer part of the current architecture.</strong></p>
 </div>
@@ -10109,7 +10009,7 @@ allowed the system to detect out-of-memory situations, discard, flush
 and re-use memory during file processing.</p>
 </div>
 <div class="sect3">
-<h4 id="_core_design_principles">19.3.1. Core Design Principles</h4>
+<h4 id="_core_design_principles">20.3.1. Core Design Principles</h4>
 <div class="paragraph">
 <p><strong>Cache Point Model</strong>: The system placed strategic snapshots of parser state at external definition boundaries (functions, global variables, etc.). When files were re-processed, the system could validate cache integrity, recover from cache points, and resume parsing only from the first changed definition onward.</p>
 </div>
@@ -10128,7 +10028,7 @@ and re-use memory during file processing.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_key_components">19.3.2. Key Components</h4>
+<h4 id="_key_components">20.3.2. Key Components</h4>
 <div class="paragraph">
 <p><strong>Cache Point Management</strong> (<code>caching.c</code>):</p>
 </div>
@@ -10178,7 +10078,7 @@ and re-use memory during file processing.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_parser_integration">19.3.3. Parser Integration</h4>
+<h4 id="_parser_integration">20.3.3. Parser Integration</h4>
 <div class="paragraph">
 <p><strong>C Parser Integration</strong>: Both C and Yacc parsers placed cache points after each <code>external_definition</code>, but only when not processing include files (<code>includeStack.pointer == 0</code>).</p>
 </div>
@@ -10200,7 +10100,7 @@ and re-use memory during file processing.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_system_dependencies">19.3.4. System Dependencies</h4>
+<h4 id="_system_dependencies">20.3.4. System Dependencies</h4>
 <div class="paragraph">
 <p>The caching system was deeply integrated throughout the parsing pipeline:</p>
 </div>
@@ -10257,7 +10157,7 @@ and re-use memory during file processing.</p>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_performance_characteristics">19.3.5. Performance Characteristics</h4>
+<h4 id="_performance_characteristics">20.3.5. Performance Characteristics</h4>
 <div class="paragraph">
 <p><strong>Cache Hit Scenarios</strong>:</p>
 </div>
@@ -10296,7 +10196,7 @@ and re-use memory during file processing.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_huge_memory">19.4. HUGE Memory</h3>
+<h3 id="_huge_memory">20.4. HUGE Memory</h3>
 <div class="paragraph">
 <p>Previously a HUGE model was also available (by re-compilation) to
 reach file numbers, lines and columns above 22 bits. But if you have
@@ -10305,9 +10205,9 @@ something radical before attempting cross referencing and refactoring.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_bootstrapping">19.5. Bootstrapping</h3>
+<h3 id="_bootstrapping">20.5. Bootstrapping</h3>
 <div class="sect3">
-<h4 id="_bootstrap_removed">19.5.1. BOOTSTRAP REMOVED!</h4>
+<h4 id="_bootstrap_removed">20.5.1. BOOTSTRAP REMOVED!</h4>
 <div class="paragraph">
 <p>Once the FILL-macros was removed, we could move the enum-generation to
 use the actual <code>c-xref</code>. So from now on we build <code>c-xref</code> directly
@@ -10319,7 +10219,7 @@ update. This is a big improvement over the previous situation!</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_fills_removed">19.5.2. FILLs REMOVED!</h4>
+<h4 id="_fills_removed">20.5.2. FILLs REMOVED!</h4>
 <div class="paragraph">
 <p>As indicated in <a href="#_fill_macros">FILL macros</a> the bootstrapping of FILL-macros has
 finally and fully been removed.</p>
@@ -10335,7 +10235,7 @@ text below is kept for historical reasons.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_rationale">19.5.3. Rationale</h4>
+<h4 id="_rationale">20.5.3. Rationale</h4>
 <div class="paragraph">
 <p><em>c-xref</em> uses a load of structures, and lists of them, that need to be
 created and initialized in a lot of places (such as the parsers). To
@@ -10358,7 +10258,7 @@ building and maintaining and to the structure of <em>c-xref</em>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_mechanism">19.5.4. Mechanism</h4>
+<h4 id="_mechanism">20.5.4. Mechanism</h4>
 <div class="paragraph">
 <p>The bootstrapping uses <em>c-xref</em>'s own capability to parse C-code and
 parse those structures and spit out filling macros, and some other
@@ -10409,7 +10309,7 @@ functions for each "class" instead of macros.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_compiler_defines">19.5.5. Compiler defines</h4>
+<h4 id="_compiler_defines">20.5.5. Compiler defines</h4>
 <div class="paragraph">
 <p>In <em>options.h</em> there are a number of definitions which somehow are
 sent to the compiler/preprocessor or used so that standard settings
@@ -10434,7 +10334,7 @@ completely replace the "programmed" ones in <code>options.c</code>?</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_enumtxt_generation_removed">19.5.6. EnumTxt generation REMOVED!</h4>
+<h4 id="_enumtxt_generation_removed">20.5.6. EnumTxt generation REMOVED!</h4>
 <div class="paragraph">
 <p>To be able to print the string values of enums the module generate.c
 (called when regime was RegimeGenerate) could also generate string
@@ -10447,7 +10347,7 @@ could do away with that whole "generate" functionality too.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_enumtxt">19.5.7. enumTxt</h4>
+<h4 id="_enumtxt">20.5.7. enumTxt</h4>
 <div class="paragraph">
 <p>For some cases the string representing the value of an Enum is needed.
 <code>c-xref</code> handles this using the "usual" 'parse code and generate' method.
@@ -10455,7 +10355,7 @@ The module <code>generate.c</code> does this generation too.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_include_paths">19.5.8. Include paths</h4>
+<h4 id="_include_paths">20.5.8. Include paths</h4>
 <div class="paragraph">
 <p>Also in <em>options.h</em> some standard-like include paths are added, but
 there is a better attempt in <em>getAndProcessGccOptions()</em> which uses
@@ -10466,7 +10366,7 @@ the compiler/preprocessor itself to figure out those paths.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_problems">19.5.9. Problems</h4>
+<h4 id="_problems">20.5.9. Problems</h4>
 <div class="paragraph">
 <p>Since at bootstrap there must exist FILL-macros with the correct field
 names this strategy is an obstacle to cleaning up the code since every
@@ -10482,7 +10382,7 @@ pass with BOOTSTRAP set, which it does.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_removing">19.5.10. Removing</h4>
+<h4 id="_removing">20.5.10. Removing</h4>
 <div class="paragraph">
 <p>I&#8217;ve started removing this step. In TODO.org I keep a hierarchical list
 of the actions to take (in a Mikado kind of style).</p>
@@ -10511,7 +10411,7 @@ CSV-file from that, and compare all rows.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_strtdef_h">19.5.11. strTdef.h</h4>
+<h4 id="_strtdef_h">20.5.11. strTdef.h</h4>
 <div class="paragraph">
 <p>The <code>strTdef.h</code> was generated using the option <code>-typedefs</code> as a part
 of the old <code>-task_regime_generate</code> strategy and generated typedef
@@ -10563,7 +10463,7 @@ included before the structs:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_fill_macros">19.6. FILL macros</h3>
+<h3 id="_fill_macros">20.6. FILL macros</h3>
 <div class="paragraph">
 <p><em><strong>The FILL macros are now fully replaced by native functions or some other,</strong></em>
 <em><strong>more refactoring-friendly, mechanism. Yeah!</strong></em></p>
@@ -10608,7 +10508,7 @@ which fields are actually necessary to set.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_users">19.7. Users</h3>
+<h3 id="_users">20.7. Users</h3>
 <div class="paragraph">
 <p><strong>The <code>-user</code> option has now been removed, both in the tool and the
   editor adaptors, and with it one instance of a hashlist, the
@@ -10649,7 +10549,7 @@ removed.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_architectural_invariants_historical">19.8. Architectural Invariants (Historical)</h3>
+<h3 id="_architectural_invariants_historical">20.8. Architectural Invariants (Historical)</h3>
 <div class="paragraph">
 <p><em>Moved from Insights chapter, 2026-03. These invariants described the model where the
 disk database was the source of truth. With "memory as truth" (2026-03), the in-memory
@@ -10673,7 +10573,7 @@ reference table is authoritative and the disk snapshot is just a startup cache.<
 </div>
 </div>
 <div class="sect2">
-<h3 id="_refactorymode_internally_calls_xrefmode">19.9. RefactoryMode Internally Calls XrefMode</h3>
+<h3 id="_refactorymode_internally_calls_xrefmode">20.9. RefactoryMode Internally Calls XrefMode</h3>
 <div class="paragraph">
 <p><em>Moved from Insights chapter, 2026-03. As of 2026-03, all refactorings run as server
 operations (<code>OP_REFACTORY</code>). This section describes the original architecture.</em></p>
@@ -10682,7 +10582,7 @@ operations (<code>OP_REFACTORY</code>). This section describes the original arch
 <p>Date: 2025-01-10</p>
 </div>
 <div class="sect3">
-<h4 id="_the_key_architectural_insight_original_architecture">19.9.1. The Key Architectural Insight (Original Architecture)</h4>
+<h4 id="_the_key_architectural_insight_original_architecture">20.9.1. The Key Architectural Insight (Original Architecture)</h4>
 <div class="paragraph">
 <p><strong>RefactoryMode ran XrefMode as an internal sub-task to update the reference database before performing refactorings.</strong></p>
 </div>
@@ -10704,7 +10604,7 @@ operations (<code>OP_REFACTORY</code>). This section describes the original arch
 </div>
 </div>
 <div class="sect3">
-<h4 id="_how_it_worked">19.9.2. How It Worked</h4>
+<h4 id="_how_it_worked">20.9.2. How It Worked</h4>
 <div class="paragraph">
 <p>When a refactoring was invoked:</p>
 </div>
@@ -10732,7 +10632,7 @@ operations (<code>OP_REFACTORY</code>). This section describes the original arch
 </div>
 </div>
 <div class="sect3">
-<h4 id="_why_refactorings_were_separate_processes">19.9.3. Why Refactorings Were Separate Processes</h4>
+<h4 id="_why_refactorings_were_separate_processes">20.9.3. Why Refactorings Were Separate Processes</h4>
 <div class="paragraph">
 <p>The Emacs client spawned a <strong>separate RefactoryMode process</strong> rather than using the interactive server because:</p>
 </div>
@@ -10751,7 +10651,7 @@ operations (<code>OP_REFACTORY</code>). This section describes the original arch
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_three_modes_relationship">19.9.4. The Three Modes Relationship</h4>
+<h4 id="_the_three_modes_relationship">20.9.4. The Three Modes Relationship</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">ServerMode (c-xref -server)
@@ -10774,7 +10674,7 @@ RefactoryMode (c-xref -refactory ...)
 </div>
 </div>
 <div class="sect3">
-<h4 id="_code_evidence">19.9.5. Code Evidence</h4>
+<h4 id="_code_evidence">20.9.5. Code Evidence</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// From refactory.c:143-145
@@ -10801,7 +10701,7 @@ void ensureReferencesAreUpdated(char *project) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implications_historical">19.9.6. Implications (Historical)</h4>
+<h4 id="_implications_historical">20.9.6. Implications (Historical)</h4>
 <div class="paragraph">
 <p>These constraints applied under the original architecture:</p>
 </div>
@@ -10830,7 +10730,7 @@ server process without a separate <code>callXref()</code> step.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-05 15:17:35 UTC
+Last updated 2026-04-05 20:06:02 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
