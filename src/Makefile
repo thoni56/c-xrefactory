@@ -402,15 +402,13 @@ lexem.h: lexem.h.head lexem.h.tail c_parser.tab.h character_lexems.txt Makefile
 		rm lexem.h.tmp ; \
 	fi
 
-lexem.c: lexem.h Makefile
+lexem.c: lexem.h lexem.c.head Makefile
 	# Generate an init function for lexem names from lexem.h
-	@echo "#include \"lexem.h\"" > lexem.c.tmp
-	@echo >> lexem.c.tmp
-	@echo "char *lexemEnumNames[LAST_TOKEN];" >> lexem.c.tmp
-	@echo >> lexem.c.tmp
+	@cp lexem.c.head lexem.c.tmp
 	@echo "void initLexemEnumNames(void) {" >> lexem.c.tmp
 	@grep = lexem.h | grep -v LAST_TOKEN | awk '{ printf "    lexemEnumNames[%s] = \"%s\";\n", $$3, $$1}' | sed 's/,]/]/g' >> lexem.c.tmp
 	@echo "}" >> lexem.c.tmp
+	# If new content is identical keep old file to prevent triggering a new build
 	@if ! cmp lexem.c lexem.c.tmp ; then \
 		mv lexem.c.tmp lexem.c ; \
 	else \

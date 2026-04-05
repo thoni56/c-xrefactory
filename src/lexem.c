@@ -1,5 +1,7 @@
 #include "lexem.h"
 
+/**** DO NOT EDIT - generated from lexem.h by Makefile ****/
+
 char *lexemEnumNames[LAST_TOKEN];
 
 void initLexemEnumNames(void) {
