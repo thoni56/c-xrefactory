@@ -47,28 +47,8 @@ static char *serverDefaultOptions[] = {
     NULL,
 };
 
-// Refactory will always use xref2 protocol when generating/updating xrefs
-static char *xrefUpdateOptions[] = {
-    "xref",
-    "-xrefactory-II",
-    NULL,
-};
 
 Options refactoringOptions;
-
-static char *updateOption = "-fastupdate";
-
-static UpdateType updateOptionToUpdateType(char *updateOption) {
-    if (updateOption == NULL || *updateOption == '\0') {
-        return UPDATE_DEFAULT;
-    } else if (strcmp(updateOption, "-fastupdate") == 0) {
-        return UPDATE_FAST;
-    } else if (strcmp(updateOption, "-update") == 0) {
-        return UPDATE_FULL;
-    } else {
-        return UPDATE_DEFAULT;  /* Unknown option, default to no update */
-    }
-}
 
 
 static int argument_count(char **argv) {
@@ -131,56 +111,6 @@ static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], char *project,
     argv[i] = NULL;
     i++;
     assert(i < MAX_NARGV_OPTIONS_COUNT);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-// ----------------------- interface to refactory sub-task --------------------------
-
-// be very careful when calling this function as it is messing all static variables
-// including options, ...
-// call to this function MUST be followed by a pushing action, to refresh options
-void ensureReferencesAreUpdated(char *project) {
-    int argumentCount;
-    char *argumentVector[MAX_NARGV_OPTIONS_COUNT];
-
-    // following would be too long to be allocated on stack
-    static Options savedOptions;
-
-    if (updateOption == NULL || *updateOption == 0) {
-        writeRelativeProgress(100);
-        return;
-    }
-
-    ppcBegin(PPC_UPDATE_REPORT);
-
-    quasiSaveModifiedEditorBuffers();
-
-    deepCopyOptionsFromTo(&options, &savedOptions);
-
-    setArguments(argumentVector, project, NULL, NULL);
-    argumentCount = argument_count(argumentVector);
-    int xrefUpdateOptionsCount = argument_count(xrefUpdateOptions);
-    for (int i = 1; i < xrefUpdateOptionsCount; i++) {
-        argumentVector[argumentCount++] = xrefUpdateOptions[i];
-    }
-    argumentVector[argumentCount++] = updateOption;
-
-    currentPass = ANY_PASS;
-    ArgumentsVector args = {.argc = argumentCount, .argv = argumentVector};
-    mainTaskEntryInitialisations(args);
-
-    XrefConfig config = {
-        .projectName = project,
-        .updateType = updateOptionToUpdateType(updateOption),
-        .isRefactoring = true
-    };
-    callXref(args, &config);
-
-    deepCopyOptionsFromTo(&savedOptions, &options);
-    ppcEnd(PPC_UPDATE_REPORT);
-
-    args = (ArgumentsVector){.argc = argument_count(serverDefaultOptions), .argv = serverDefaultOptions};
-    mainTaskEntryInitialisations(args);
 }
 
 void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *mark,

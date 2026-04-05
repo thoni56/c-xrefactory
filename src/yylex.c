@@ -1185,13 +1185,6 @@ endOfFile:
 
 static void processIfDirective();
 
-enum deleteUntilReturn {
-    UNTIL_NOTHING,
-    UNTIL_ENDIF,
-    UNTIL_ELIF,
-    UNTIL_ELSE,
-};
-
 static void genCppIfElseReference(int level, Position position, int usage) {
     char                ttt[TMP_STRING_SIZE];
     Position			dp;
@@ -1210,7 +1203,15 @@ static void genCppIfElseReference(int level, Position position, int usage) {
     }
 }
 
-static int cppDeleteUntilEndElse(bool untilEnd) {
+
+typedef enum {
+    UNTIL_NOTHING,
+    UNTIL_ENDIF,
+    UNTIL_ELIF,
+    UNTIL_ELSE,
+} DeleteUntil;
+
+static DeleteUntil cppDeleteUntilEndElse(bool untilEnd) {
     LexemCode lexem;
     int depth;
     Position position;
@@ -1255,7 +1256,7 @@ endOfFile:;
 }
 
 static void execCppIf(bool deleteSource) {
-    int onElse;
+    DeleteUntil onElse;
     if (!deleteSource)
         currentFile.ifDepth ++;
     else {

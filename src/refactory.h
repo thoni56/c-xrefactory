@@ -7,7 +7,6 @@
 extern Options refactoringOptions;
 
 extern void applyWholeRefactoringFromUndo(void);
-extern void ensureReferencesAreUpdated(char *project);
 extern void serverPerformRefactoring(void);
 
 #endif

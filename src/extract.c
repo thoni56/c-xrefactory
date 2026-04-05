@@ -38,7 +38,7 @@ typedef enum {
     DATAFLOW_INSIDE_PASSING = 16		/* a non-modified values pass via block */
 } DataFlowBits;
 
-typedef enum extractClassification {
+typedef enum {
     CLASSIFIED_AS_LOCAL_VAR,
     CLASSIFIED_AS_VALUE_ARGUMENT,
     CLASSIFIED_AS_LOCAL_OUT_ARGUMENT,

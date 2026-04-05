@@ -38,15 +38,12 @@ extern EditorMarker *createEditorMarkerForBufferBegin(EditorBuffer *buffer);
 extern EditorMarker *createEditorMarkerForBufferEnd(EditorBuffer *buffer);
 extern EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer);
 
-extern EditorMarker *duplicateEditorMarker(EditorMarker *marker);
-
 extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next);
 
 extern void attachMarkerToBuffer(EditorMarker *marker, EditorBuffer *buffer);
 extern void moveEditorMarkerToLineAndColumn(EditorMarker *marker, int line, int col);
 
 extern bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2);
-extern bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2);
 
 extern int moveEditorMarkerToNewline(EditorMarker *m, int direction);
@@ -62,7 +59,6 @@ extern void removeEditorMarkerFromBufferWithoutFreeing(EditorMarker *marker);
 extern void freeEditorMarker(EditorMarker *marker);
 extern void freeEditorMarkerListButNotMarkers(EditorMarkerList *list);
 extern void freeEditorMarkerListAndMarkers(EditorMarkerList *list);
-extern void freeEditorMarkersAndRegionList(EditorRegionList *occs);
 
 extern void editorDumpMarker(EditorMarker *marker);
 extern void editorDumpMarkerList(EditorMarkerList *markerList);

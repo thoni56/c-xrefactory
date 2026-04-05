@@ -47,10 +47,6 @@ bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, EditorBuff
     return editorBufferTableIsMember(&editorBufferTable, elementP, positionP, foundMemberP);
 }
 
-bool deleteEditorBuffer(EditorBufferList *elementP) {
-    return editorBufferTableDeleteExact(&editorBufferTable, elementP);
-}
-
 EditorBufferList *getEditorBufferListElementAt(int index) {
     return editorBufferTable.tab[index];
 }

@@ -112,10 +112,6 @@ EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer) {
     return theBufferRegionList;
 }
 
-EditorMarker *duplicateEditorMarker(EditorMarker *marker) {
-    return newEditorMarker(marker->buffer, marker->offset);
-}
-
 EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next) {
     EditorRegionList *regionList;
 
@@ -169,10 +165,6 @@ bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2) {
     if (m1->offset > m2->offset)
         return false;
     return false;
-}
-
-bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2) {
-    return editorMarkerBefore(m2, m1);
 }
 
 bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2) {
@@ -368,16 +360,6 @@ void freeEditorMarkerListAndMarkers(EditorMarkerList *occs) {
     for (EditorMarkerList *o = occs; o != NULL;) {
         EditorMarkerList *next = o->next; /* Save next as we are freeing 'o' */
         freeEditorMarker(o->marker);
-        free(o);
-        o = next;
-    }
-}
-
-void freeEditorMarkersAndRegionList(EditorRegionList *occs) {
-    for (EditorRegionList *o = occs; o != NULL;) {
-        EditorRegionList *next = o->next; /* Save next as we are freeing 'o' */
-        freeEditorMarker(o->region.begin);
-        freeEditorMarker(o->region.end);
         free(o);
         o = next;
     }

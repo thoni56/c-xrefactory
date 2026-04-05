@@ -20,10 +20,6 @@ bool editorBufferIsMember(EditorBufferList *editorBuffer, int *positionP, Editor
     return (bool)mock(editorBuffer, editorBuffer_name, positionP, foundMemberP);
 }
 
-bool deleteEditorBuffer(EditorBufferList *elementP) {
-    return (bool)mock(elementP);
-}
-
 EditorBufferList *getEditorBufferListElementAt(int index) {
     return (EditorBufferList *)mock(index);
 }

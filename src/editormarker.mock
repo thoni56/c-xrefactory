@@ -42,10 +42,6 @@ void moveEditorMarkerToLineAndColumn(EditorMarker *marker, int line, int col) {
     mock(marker, line, col);
 }
 
-EditorMarker *duplicateEditorMarker(EditorMarker *mm) {
-  return (EditorMarker *) mock(mm);
-}
-
 int countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
@@ -53,9 +49,7 @@ int countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2) {
 bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2) {
     return (bool)mock(m1, m2);
 }
-bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2) {
-    return (bool)mock(m1, m2);
-}
+
 bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2) {
     return (bool)mock(l1, l2);
 }
