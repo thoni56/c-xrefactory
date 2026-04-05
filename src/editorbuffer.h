@@ -51,5 +51,6 @@ extern size_t getSizeOfEditorBuffer(EditorBuffer *buffer);
 extern void setSizeOfEditorBuffer(EditorBuffer *buffer, size_t size);
 
 extern void setEditorBufferModified(EditorBuffer *buffer);
+extern bool isPreloaded(EditorBuffer *buffer);
 
 #endif

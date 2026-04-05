@@ -158,6 +158,7 @@ void initServer(ArgumentsVector args) {
     initCompletions(&collectedCompletions, 0, NO_POSITION);
 }
 
+
 static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
     bool inputOpened = false;
 
@@ -169,7 +170,7 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
     if (inputOpened) {
         /* If the file has preloaded content, remove old references before parsing */
         EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(inputFileName);
-        if (buffer != NULL && buffer->preLoadedFromFile != NULL) {
+        if (isPreloaded(buffer)) {
             log_debug("file has preloaded content, removing old references for file %d",
                       parsingConfig.fileNumber);
             removeReferenceableItemsForFile(parsingConfig.fileNumber);
@@ -182,7 +183,7 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
          * because those trigger xref updates that use lastParsedMtime to decide
          * whether to re-index - and xref reads from disk, not the preload buffer.
          */
-        if (buffer != NULL && buffer->preLoadedFromFile != NULL
+        if (isPreloaded(buffer)
             && options.serverOperation != OP_INTERNAL_PUSH_FOR_RENAME
             && options.serverOperation != OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION
             && options.serverOperation != OP_INTERNAL_SAFETY_CHECK) {

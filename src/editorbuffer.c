@@ -72,11 +72,15 @@ static void freeMarkersInEditorBuffer(EditorBuffer *buffer) {
     }
 }
 
+bool isPreloaded(EditorBuffer *buffer) {
+    return buffer != NULL && buffer->preLoadedFromFile != NULL;
+}
+
 void freeEditorBuffer(EditorBuffer *buffer) {
     if (buffer == NULL)
         return;
     log_trace("freeing buffer %s==%s", buffer->fileName, buffer->preLoadedFromFile?buffer->preLoadedFromFile:"(null)");
-    if (buffer->preLoadedFromFile != NULL) {
+    if (isPreloaded(buffer)) {
         free(buffer->preLoadedFromFile);
     }
     free(buffer->fileName);

@@ -59,6 +59,9 @@ void setSizeOfEditorBuffer(EditorBuffer *buffer, size_t size) {
     mock(buffer, size);
 }
 
+bool isPreloaded(EditorBuffer *buffer) {
+    return (bool)mock(buffer);
+}
 
 // Hopefully temporary
 void setEditorBufferModified(EditorBuffer *buffer) {
