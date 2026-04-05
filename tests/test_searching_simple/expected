@@ -8,7 +8,7 @@ end-of-options
 end-of-options
 
 <sync>
-<ask-confirmation len=<n>>1 of 1 compilation units not yet parsed. Parse all before searching?</ask-confirmation>
+<ask-confirmation len=<n>>1 of 1 compilation units need reparsing. Parse all before searching?</ask-confirmation>
 -continue
 end-of-options
 

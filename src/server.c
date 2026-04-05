@@ -653,40 +653,43 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         parseUnparsedSiblingCUs(requestFileNumber, baseArgs);
     }
 
-    /* Search/unused completeness: if unparsed CUs exist, ask user before proceeding */
+    /* Search/unused completeness: if stale CUs exist, ask user before proceeding */
     if (projectContextInitialized && (options.serverOperation == OP_SEARCH
                                       || options.serverOperation == OP_UNUSED_GLOBAL)) {
-        int totalCUs = 0, unparsedCUs = 0;
+        int totalCUs = 0, staleCUs = 0;
         for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
             FileItem *fi = getFileItemWithFileNumber(i);
             if (isCompilationUnit(fi->name)) {
                 totalCUs++;
                 if (fi->lastParsedMtime == 0)
-                    unparsedCUs++;
+                    staleCUs++;
             }
         }
-        if (unparsedCUs > 0) {
+        if (staleCUs > 0) {
             char msg[TMP_STRING_SIZE];
-            sprintf(msg, "%d of %d compilation units not yet parsed. Parse all before searching?",
-                    unparsedCUs, totalCUs);
+            const char *operationName = options.serverOperation == OP_SEARCH
+                ? "searching" : "checking for unused";
+            sprintf(msg, "%d of %d compilation units need reparsing. Parse all before %s?",
+                    staleCUs, totalCUs, operationName);
             if (waitForUserConfirmation(msg)) {
                 int parsed = 0;
                 char progressFormat[128];
                 snprintf(progressFormat, sizeof(progressFormat),
-                         "Parsing %d compilation units for search... %%d remaining", unparsedCUs);
+                         "Parsing %d compilation units... %%d remaining", staleCUs);
                 initProgress(progressFormat);
                 for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
                     FileItem *fi = getFileItemWithFileNumber(i);
                     if (isCompilationUnit(fi->name) && fi->lastParsedMtime == 0) {
                         reparseStaleFile(i, baseArgs);
+                        fi->lastParsedMtime = editorFileModificationTime(fi->name);
                         parsed++;
-                        writeProgressInformation(unparsedCUs - parsed);
+                        writeProgressInformation(staleCUs - parsed);
                         /* Save snapshot periodically so progress survives Ctrl-g/crash */
                         if (parsed % 100 == 0)
                             saveReferences();
                     }
                 }
-                log_info("Search: parsed %d CUs", parsed);
+                log_info("Completeness parse: parsed %d CUs", parsed);
             }
         }
     }
