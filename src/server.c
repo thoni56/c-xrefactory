@@ -653,8 +653,9 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         parseUnparsedSiblingCUs(requestFileNumber, baseArgs);
     }
 
-    /* Search completeness: if unparsed CUs exist, ask user before searching */
-    if (projectContextInitialized && options.serverOperation == OP_SEARCH) {
+    /* Search/unused completeness: if unparsed CUs exist, ask user before proceeding */
+    if (projectContextInitialized && (options.serverOperation == OP_SEARCH
+                                      || options.serverOperation == OP_UNUSED_GLOBAL)) {
         int totalCUs = 0, unparsedCUs = 0;
         for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
             FileItem *fi = getFileItemWithFileNumber(i);

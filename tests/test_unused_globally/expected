@@ -1,17 +1,19 @@
-CXREF -xrefactory-II -xrefrc CURDIR/.c-xrefrc -p CURDIR -server -o server-buffer
--olcxpushglobalunused  CURDIR/hello.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-olcxgetprojectname CURDIR/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-olcxpushglobalunused CURDIR/main.c
+end-of-options
+
+<sync>
+<ask-confirmation len=<n>>1 of 2 compilation units not yet parsed. Parse all before searching?</ask-confirmation>
+-cancel
 end-of-options
 
 <sync>
 <display-or-update-browser len=<n>></display-or-update-browser>
--olcxmenufilter=2 -xrefrc CURDIR/.c-xrefrc -p CURDIR
-end-of-options
-
-<sync>
-<resolution>
- <symbol line=2 selected=1 base=0 drefn=1 refn=0 len=<n>>unused_integer</symbol>
- <symbol line=3 selected=1 base=0 drefn=1 refn=0 len=<n>>main</symbol>
-</resolution>
 -exit
 end-of-options
 

@@ -1,17 +1,10 @@
 include ../Makefile.server
 
-
-$(TEST): CXrefs
-	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+$(TEST): .c-xrefrc
+	@-rm -rf .c-xref/db
+	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-trace: EXTRA=--extra "-debug"
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
-
-ARGUMENTS = -create
-
-CXrefs: .c-xrefrc
-	@$(CXREF) -create -o $(TEST).log
-
-GDB_COMMANDS = -ex 'br scanForGlobalUnused' -ex 'br setSelectedVisibleItems' -ex 'continue'
