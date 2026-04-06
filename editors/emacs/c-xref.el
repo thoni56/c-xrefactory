@@ -5557,7 +5557,6 @@ the reset was performed, nil if the reset was cancelled."
 (defun c-xref-reload-directory (dir)
   "Load all compiled Emacs Lisp files in DIR."
   (dolist (file (directory-files dir t "\\.elc$"))
-    (message (format "file = %s" file))
     (load file nil t))
   )
 
