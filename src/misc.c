@@ -21,7 +21,6 @@
 #include "ppc.h"
 #include "proto.h"
 #include "protocol.h"
-#include "server.h"
 
 
 typedef struct integerList {

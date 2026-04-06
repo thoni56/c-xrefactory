@@ -58,10 +58,6 @@ int getNextExistingEditorBufferIndex(int index) {
     return -1;
 }
 
-void clearEditorBuffer(int index) {
-    editorBufferTable.tab[index] = NULL;
-}
-
 /**
  * @brief Registers an EditorBuffer in the editor buffer table
  *

@@ -32,10 +32,6 @@ void editorBufferTableEntryPop(int index) {
     mock(index);
 }
 
-void clearEditorBuffer(int index) {
-    mock(index);
-}
-
 int registerEditorBuffer(EditorBuffer *buffer) {
     return mock(buffer);
 }

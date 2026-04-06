@@ -98,20 +98,6 @@ EditorMarker *createEditorMarkerForBufferEnd(EditorBuffer *buffer) {
     return newEditorMarker(buffer, buffer->allocation.bufferSize);
 }
 
-EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer) {
-    EditorMarker *bufferBegin, *bufferEnd;
-    EditorRegion theBufferRegion;
-    EditorRegionList *theBufferRegionList;
-
-    bufferBegin     = createEditorMarkerForBufferBegin(buffer);
-    bufferEnd       = createEditorMarkerForBufferEnd(buffer);
-    theBufferRegion = (EditorRegion){.begin = bufferBegin, .end = bufferEnd};
-    theBufferRegionList = malloc(sizeof(EditorRegionList));
-    *theBufferRegionList = (EditorRegionList){.region = theBufferRegion, .next = NULL};
-
-    return theBufferRegionList;
-}
-
 EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next) {
     EditorRegionList *regionList;
 
