@@ -534,10 +534,10 @@ faces and highlighting in buffers created by C-xrefactory.
 (define-key c-xref-project-menu [c-xref-prj-new] '("New" .
                                                                                            c-xref-project-new))
 
-(defvar c-xref-unused-menu (make-sparse-keymap "Unused Symbols Detection"))
+(defvar c-xref-unused-menu (make-sparse-keymap "Unused Symbols Menu"))
 (fset 'c-xref-unused-menu (symbol-value 'c-xref-unused-menu))
-(define-key c-xref-unused-menu [c-xref-dm-globals] '("Browse Unused Symbols in Project" . c-xref-push-global-unused-symbols))
-(define-key c-xref-unused-menu [c-xref-dm-locals] '("Browse Unused Symbols in File" . c-xref-push-this-file-unused-symbols))
+(define-key c-xref-unused-menu [c-xref-dm-globals] '("... in Project" . c-xref-push-global-unused-symbols))
+(define-key c-xref-unused-menu [c-xref-dm-locals] '("... in File" . c-xref-push-this-file-unused-symbols))
 
 
 (defvar c-xref-misc-menu (make-sparse-keymap "Misc Menu"))
@@ -564,8 +564,8 @@ faces and highlighting in buffers created by C-xrefactory.
 (define-key c-xref-menu [separator-buffers4] '("--"))
 (define-key c-xref-menu [c-xref-search-symbol] '("Search Symbol" . c-xref-search-symbol))
 (define-key c-xref-menu [c-xref-search-def] '("Search Definition" . c-xref-search-definition))
-(define-key c-xref-menu [c-xref-dm-menu] '("Unused Symbols Detection" . c-xref-unused-menu))
-(define-key c-xref-menu [c-xref-sb-menu] '("Browsing with Symbol Stack" . c-xref-sb-menu))
+(define-key c-xref-menu [c-xref-dm-menu] '("Unused Symbols" . c-xref-unused-menu))
+(define-key c-xref-menu [c-xref-sb-menu] '("Browsing" . c-xref-sb-menu))
 (define-key c-xref-menu [c-xref-peek-menu] '("Peek" . c-xref-peek-menu))
 (define-key c-xref-menu [separator-buffers6] '("--"))
 (define-key c-xref-menu [(f8)] '("Complete Identifier" . c-xref-completion))
