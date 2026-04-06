@@ -210,10 +210,6 @@ bool cxMemoryPointerIsBetween(void *pointer, int low, int high) {
     return memoryIsBetween(&cxMemory, pointer, low, high);
 }
 
-bool cxMemoryIsFreed(void *pointer) {
-    return memoryIsBetween(&cxMemory, pointer, cxMemory.index, cxMemory.size);
-}
-
 void cxFreeUntil(void *pointer) {
     (void)memoryFreeUntil(&cxMemory, pointer);
 }

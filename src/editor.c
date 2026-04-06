@@ -633,15 +633,6 @@ void closeAllEditorBuffersIfClosable(void) {
     freeEditorBufferListButNotBuffers(allEditorBuffers);
 }
 
-void closeAllEditorBuffers(void) {
-    EditorBufferList *allEditorBuffers = computeListOfAllEditorBuffers();
-    for (EditorBufferList *l = allEditorBuffers; l!=NULL; l=l->next) {
-        EditorBuffer *buffer = deregisterEditorBuffer(l->buffer->fileName);
-        freeEditorBuffer(buffer);
-    }
-    freeEditorBufferListButNotBuffers(allEditorBuffers);
-}
-
 void clearPreloadedThisRequestFlags(void) {
     EditorBufferList *allEditorBuffers = computeListOfAllEditorBuffers();
     for (EditorBufferList *l = allEditorBuffers; l != NULL; l = l->next) {

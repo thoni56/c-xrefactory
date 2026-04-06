@@ -108,23 +108,6 @@ Symbol *addContinueBreakLabelSymbol(int labn) {
 }
 
 
-void deleteContinueBreakLabelSymbol(void) {
-    Symbol symbol, *foundSymbol;
-
-    if (parsingConfig.operation != PARSE_TO_EXTRACT)
-        return;
-
-    fillSymbolWithLabel(&symbol, CONTINUE_LABEL_NAME, CONTINUE_LABEL_NAME, NO_POSITION, 0);
-    symbol.type = TypeLabel;
-    symbol.storage = StorageAuto;
-
-    if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
-        deleteContinueBreakSymbol(foundSymbol);
-    } else {
-        assert(0);
-    }
-}
-
 void generateContinueBreakReference(void) {
     Symbol symbol, *foundSymbol;
 

@@ -71,10 +71,6 @@ void closeAllEditorBuffersIfClosable(void) {
   mock();
 }
 
-void closeAllEditorBuffers(void) {
-  mock();
-}
-
 void clearPreloadedThisRequestFlags(void) {
   mock();
 }

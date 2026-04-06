@@ -1205,7 +1205,6 @@ static void genCppIfElseReference(int level, Position position, int usage) {
 
 
 typedef enum {
-    UNTIL_NOTHING,
     UNTIL_ENDIF,
     UNTIL_ELIF,
     UNTIL_ELSE,

@@ -26,7 +26,6 @@ extern void markModifiedEditorBuffersAsStale(void);
 extern void loadAllOpenedEditorBuffers(void);
 extern void closeEditorBufferIfCloseable(char *name);
 extern void closeAllEditorBuffersIfClosable(void);
-extern void closeAllEditorBuffers(void);
 extern void clearPreloadedThisRequestFlags(void);
 extern void closeEditorBuffersNoLongerPreloaded(void);
 

@@ -41,7 +41,6 @@ typedef enum extractModes {
 extern Symbol *addContinueBreakLabelSymbol(int labn);
 extern void actionsBeforeAfterExternalDefinition(void);
 extern void extractActionOnBlockMarker(void);
-extern void deleteContinueBreakLabelSymbol(void);
 extern void generateContinueBreakReference(void);
 extern void generateSwitchCaseFork(bool isLast);
 extern void deleteContinueBreakSymbol(Symbol *symbol);
