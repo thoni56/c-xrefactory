@@ -75,19 +75,17 @@ void removeReferenceableItemsForFile(int fileNumber) {
     log_trace("removing all references for file number %d", fileNumber);
 
     for (int i = 0; i < referenceableItemTable.size; i++) {
-        ReferenceableItem *item = referenceableItemTable.tab[i];
-        if (item == NULL)
-            continue;
-
-        /* Remove references matching fileNumber from this item's reference list */
-        Reference **refP = &(item->references);
-        while (*refP != NULL) {
-            if ((*refP)->position.file == fileNumber) {
-                log_trace("removing reference to %s at %d:%d", item->linkName,
-                         (*refP)->position.line, (*refP)->position.col);
-                *refP = (*refP)->next;  /* Unlink this reference */
-            } else {
-                refP = &((*refP)->next);  /* Move to next */
+        for (ReferenceableItem *item = referenceableItemTable.tab[i]; item != NULL; item = item->next) {
+            /* Remove references matching fileNumber from this item's reference list */
+            Reference **refP = &(item->references);
+            while (*refP != NULL) {
+                if ((*refP)->position.file == fileNumber) {
+                    log_trace("removing reference to %s at %d:%d", item->linkName,
+                             (*refP)->position.line, (*refP)->position.col);
+                    *refP = (*refP)->next;  /* Unlink this reference */
+                } else {
+                    refP = &((*refP)->next);  /* Move to next */
+                }
             }
         }
     }

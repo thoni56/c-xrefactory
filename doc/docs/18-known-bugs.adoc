@@ -27,9 +27,6 @@ The yacc parser creates a different scope or symbol context when parsing C code 
 
 *Workaround:* None currently. The false positive can be ignored.
 
-=== Duplicate references during navigation
-
-Intermittent. When observed, check whether the snapshot contains duplicate entries.
 
 === Stale sessions after POP
 
