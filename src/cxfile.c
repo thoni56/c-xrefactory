@@ -86,7 +86,7 @@ typedef enum {
 } CxFileScanOperation;
 
 
-static int generatedFieldKeyList[] = {
+static CxFieldTag generatedFieldKeyList[] = {
     CXFI_FILE_FUMTIME,
     CXFI_FILE_UMTIME,
     CXFI_FILE_NUMBER,
@@ -310,7 +310,7 @@ static void writeCompactRecord(char tag, int data, char *blankPrefix) {
     lastOutgoingData.data[tag] = data;
 }
 
-static void writeOptionalCompactRecord(char tag, int data, char *blankPrefix) {
+static void writeOptionalCompactRecord(CxFieldTag tag, int data, char *blankPrefix) {
     assert(tag >= 0 && tag < MAX_CHARS);
     if (*blankPrefix!=0)
         fputs(blankPrefix, cxFile);
