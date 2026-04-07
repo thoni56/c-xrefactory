@@ -35,10 +35,9 @@ extern void loadTextIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTi
 extern void allocateNewEditorBufferTextSpace(EditorBuffer *buffer, int size);
 
 extern EditorMarkerList *convertReferencesToEditorMarkers(Reference *references);
-extern Reference        *convertEditorMarkersToReferences(EditorMarkerList **markerList);
+extern Reference *convertEditorMarkersToReferences(EditorMarkerList **markerList);
 
-extern void removeBlanksAtEditorMarker(EditorMarker *mm, int direction, EditorUndo **undo);
-extern void          editorDumpUndoList(EditorUndo *uu);
+extern void editorDumpUndoList(EditorUndo *uu);
 
 extern bool editorMapOnNonExistantFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), SearchDepth depth, char *a1,
                                         char *a2, Completions *a3, void *a4, int *a5);

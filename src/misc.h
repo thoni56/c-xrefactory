@@ -4,7 +4,6 @@
 #include "head.h"
 #include "typemodifier.h"
 #include "constants.h"
-#include "server.h"
 #include "browsingmenu.h"
 #include "completion.h"
 

@@ -350,27 +350,6 @@ void loadAllOpenedEditorBuffers(void) {
     }
 }
 
-void removeBlanksAtEditorMarker(EditorMarker *marker, int direction, EditorUndo **undo) {
-    int offset = marker->offset;
-    if (direction < 0) {
-        marker->offset--;
-        moveEditorMarkerToNonBlank(marker, -1);
-        marker->offset++;
-        replaceStringInEditorBuffer(marker->buffer, marker->offset, offset - marker->offset, "", 0, undo);
-    } else if (direction > 0) {
-        moveEditorMarkerToNonBlank(marker, 1);
-        replaceStringInEditorBuffer(marker->buffer, offset, marker->offset - offset, "", 0, undo);
-    } else {
-        // both directions
-        marker->offset --;
-        moveEditorMarkerToNonBlank(marker, -1);
-        marker->offset++;
-        offset = marker->offset;
-        moveEditorMarkerToNonBlank(marker, 1);
-        replaceStringInEditorBuffer(marker->buffer, offset, marker->offset - offset, "", 0, undo);
-    }
-}
-
 EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
     EditorMarkerList *markerList = NULL;
     Reference        *reference = references;
