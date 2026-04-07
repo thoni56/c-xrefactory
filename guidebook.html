@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-04-06">
+<meta name="author" content="v{VERSION} - Generated 2026-04-07">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-04-06</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-04-07</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -589,8 +589,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_known_bugs">17. Known Bugs</a>
 <ul class="sectlevel2">
 <li><a href="#_globalunused_false_positive_for_static_functions_in_y_files">17.1. GlobalUnused false positive for static functions in .y files</a></li>
-<li><a href="#_duplicate_references_during_navigation">17.2. Duplicate references during navigation</a></li>
-<li><a href="#_stale_sessions_after_pop">17.3. Stale sessions after POP</a></li>
+<li><a href="#_stale_sessions_after_pop">17.2. Stale sessions after POP</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">18. Refactoring Recipes</a>
@@ -8865,13 +8864,7 @@ Each entry describes symptoms, analysis (when available), and suspected root cau
 </div>
 </div>
 <div class="sect2">
-<h3 id="_duplicate_references_during_navigation">17.2. Duplicate references during navigation</h3>
-<div class="paragraph">
-<p>Intermittent. When observed, check whether the snapshot contains duplicate entries.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_stale_sessions_after_pop">17.3. Stale sessions after POP</h3>
+<h3 id="_stale_sessions_after_pop">17.2. Stale sessions after POP</h3>
 <div class="paragraph">
 <p>Sessions hold reference copies; only the top session is refreshed on reparse. After editing a header, old locations may persist in parallel with new ones in lower stack entries. This will dissolve when sessions become index-based rather than holding copies.</p>
 </div>
@@ -10730,7 +10723,7 @@ server process without a separate <code>callXref()</code> step.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-06 08:57:02 UTC
+Last updated 2026-04-07 18:58:19 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
