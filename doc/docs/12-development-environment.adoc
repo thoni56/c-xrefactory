@@ -230,8 +230,8 @@ executed.
 
 There are two basic strategies for the tests:
 
-- run a `c-xref` command, catch its output and verify
-- run a series of command using the EDIT_SERVER_DRIVER, collect output and results and verify
+- run `c-xref` from the command line, catch its output and verify
+- run a series of command using the SERVER_DRIVER, collect output and verify
 
 Some tests do not even test its output in any meaningful way and only provide coverage.
 
@@ -245,7 +245,8 @@ grows.
 
 ==== Test Structure
 
-Tests live in the `tests` directory and are auto-discovered by name: any directory starting with `test_` will be recognized as a test case.
+Tests live in the `tests` directory and are auto-discovered by name: any directory
+starting with `test_` will be recognized as a test case.
 
 Each test typically includes:
 
@@ -253,25 +254,29 @@ Each test typically includes:
 - `expected` - the expected output
 - `Makefile` - test runner that uses the boilerplate
 
-Most tests use `tests/Makefile.boilerplate` which provides common macros:
+Most tests should use `tests/Makefile.server`, but `tests/Makefile.cli` is also
+available, which provides common macros:
 
 [source,makefile]
 ----
-include ../Makefile.boilerplate
+include ../Makefile.server
 
 $(TEST):
-	$(COMMAND) source.c -o output.tmp
+	$(SERVER_DRIVER) commands.input > output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 ----
 
 The key macros are:
 
+`$(SERVER_DRIVER)`:: Runs `c-xref -server` with the specified commands file as input
 `$(COMMAND)`:: Runs `c-xref` with standard options and the test's `.c-xrefrc`
 `$(NORMALIZE)`:: Removes timestamps and other variable output
 `$(VERIFY)`:: Compares `output` with `expected`, removes `output` on success
 
-When `$(VERIFY)` passes, the `output` file is removed. This means you can easily identify failing tests by looking for test directories that still contain an `output` file. The `utils/failing` script lists these.
+When `$(VERIFY)` passes, the `output` file is removed. This means you can easily
+identify failing tests by looking for test directories that still contain an `output`
+file. The `utils/failing` script lists these.
 
 To suspend a test (skip it during test runs), create a `.suspended` file in the test directory.
 
@@ -306,20 +311,12 @@ with commands in the same fashion as an editor would do. The script
 also handles the communication through the buffer file (see [Editor
 Interface](./Design:-Editor-Interface)).
 
+NOTE: A server driver-based test should include `../Makefile.server`.
+
 ==== Creating More Edit Server Tests
 
-You can relatively easy re-create a sequence of interactions by using the
-sandboxed Emacs in `tests/sandboxed_emacs`.
-
-There are two ways to use it, "make spy" or "make pure". With the
-"spy" an intermediate spy is injected between the editor and the edit
-server, capturing the interaction to a file.
-
-With "pure" you just get the editor setup with `c-xref-debug-mode` and
-`c-xref-debug-preserve-tmp-files` on. This means that you can do what
-ever editor interactions you want and see the communication in the
-`\*Messages*` buffer. See [Editor Interface](./Design:-Editor-Interface)
-for details.
+You can relatively easy re-create a sequence of interactions by using Emacs with all the
+latest source using `utils/emacs-devel`.
 
 Once you have figure out which part of the `\*Messages*` buffer are
 interesting you can copy that out to a file and run
@@ -330,14 +327,12 @@ NOTE: the `messages2commands` script converts all occurrences of the
 current directory to CURDIR so it is handy to be in the same directory
 as the sources when you run the conversion.
 
-NOTE: the `messages2commands` script removes any `-preload` so you
-need to take care that the positions inside the buffers are not
-changed between interactions lest the `-olcursor` and `-olmark` will
-be wrong. (You can just undo the change after a refactoring or
-rename). Of course this also applies if you want to mimic a sequence
-of refactorings, like the `jexercise` move method example. Sources will
-then change so the next refactoring works from content of buffers, so you
-have to handle this specifically.
+NOTE: unless you use `--preserve-preloads` the `messages2commands` script removes any
+`-preload` so you need to take care that the positions inside the buffers are not
+changed between interactions lest the `-olcursor` and `-olmark` will be wrong. (You can
+just undo the change after a refactoring or rename). Of course this also applies if you
+want to mimic a sequence of refactorings. Sources will then change so the next
+refactoring works from content of buffers, so you have to handle this specifically.
 
 NOTE: `-preload` is the mechanism where the editor can send modified
 buffers to `c-xref` so thay you don't have to save between
@@ -359,34 +354,12 @@ Synopsis:
 
     covers.py <file> <line>
 
-==== Sandboxed
+==== emacs-devel
 
-`utils/sandboxed` starts a sandboxed Emacs that uses the current elisp code and the `c-xref` from src.
-This allows you to run a test changes without having to polute your own setup.
-
-This actually runs the `tests/sandboxed_emacs` pure version, which also sets up a completely isolated Emacs environment with its own packages loaded, configuration etc.
-See below.
+`utils/emacs-devel` starts an Emacs that uses the current elisp code and the `c-xref`
+from src.  This allows you to run a test changes without having to polute your own
+setup.
 
 Synopsis:
 
-    sandboxed
-    
-=== Debugging the protocol
-
-There is a "pipe spy" in `tests/sandboxed_emacs`. You can build the
-spy using
-
-    make spy
-
-and then start a sandboxed Emacs which invokes the spy using
-
-    make
-
-This Emacs will be sandboxed to use its own .emacs-files and have HOME
-set to this directory.
-
-The spy will log the communication between Emacs and the *real*
-`c-xref` (`src/c-xref`) in log files in `/tmp`.
-
-NOTE that Emacs will invoke several instanced of what it believes is
-the real `c-xref` so there will be several log files to inspect.
+    emacs-devel
