@@ -540,43 +540,16 @@ The separation causes a problem: session references can become stale.
 2. User edits a file, adding lines
 3. User navigates with NEXT → Session still points to lines 10, 50, 100 (wrong!)
 
-**Solution:** `processModifiedFilesForNavigation()`
+**Solution:** `needsBrowsingStackRefresh` flag + `updateSessionReferencesForFile()`
 
-When NEXT/PREVIOUS operations occur, the server:
+When entry refresh reparses a file, it sets `needsBrowsingStackRefresh = true` on that
+file's `FileItem`. When NEXT/PREVIOUS operations occur, `gotoNextReference()` checks this
+flag on the current and next reference's file:
 
-1. Detects which editor buffers have changed (modification time check)
-2. Reparses those buffers (updates referenceableItemTable)
-3. **Rebuilds** the current session's reference list from the updated table
-4. Preserves the user's navigation position by index
-
-[source,c]
-----
-// Find user's position in old list
-int currentIndex = 0;
-Reference *ref = session->references;
-while (ref != NULL && ref != session->current) {
-    currentIndex++;
-    ref = ref->next;
-}
-
-// Free old list and rebuild from table
-freeReferences(session->references);
-session->references = NULL;
-for (BrowsingMenu *menu = session->menu; menu != NULL; menu = menu->next) {
-    if (menu->selected) {
-        ReferenceableItem *updatedItem = lookupInTable(&menu->referenceable);
-        addReferencesFromFileToList(updatedItem->references, ANY_FILE,
-                                    &session->references);
-    }
-}
-
-// Restore position by index
-ref = session->references;
-for (int i = 0; i < currentIndex && ref->next != NULL; i++) {
-    ref = ref->next;
-}
-session->current = ref;
-----
+1. Saves the current navigation position
+2. Calls `updateSessionReferencesForFile()` to rebuild the session's reference list from the updated table
+3. Clears the flag
+4. Restores the navigation position to the nearest reference
 
 This keeps navigation working correctly with live-edited code.
 
@@ -590,7 +563,6 @@ This keeps navigation working correctly with live-edited code.
 
 **Limitations:**
 
-* Like fast update: doesn't reparse includers of changed headers
 * Only updates the current session (other sessions on the stack remain stale)
 * Only happens during NEXT/PREVIOUS (not other operations)
 
@@ -734,6 +706,101 @@ Extraction operates in two phases:
 2. **Analysis Phase (after parsing)**: The extraction module analyzes the collected control flow data, classifies variables by usage patterns, and generates the refactored code (call site, function definition, postamble).
 
 This separation keeps the parser clean and makes extraction logic independently testable.
+
+=== Refactoring Undo
+
+Undo for refactorings operates at two levels: the server uses an undo mechanism
+internally during refactoring execution, and the client maintains a separate mechanism
+for letting the user revert completed refactorings.
+
+==== Server-Side Undo (Internal)
+
+The server maintains a global `editorUndo` linked list. Every `replaceStringInEditorBuffer`
+call pushes an undo entry recording the buffer, offset, and original text. This is used
+internally during refactoring — not for user-facing undo.
+
+The core pattern is **silent apply, then replay with output**:
+
+[source]
+----
+serverPerformRefactoring():
+  │
+  ├─ refactoringStartingPoint = editorUndo   ← bookmark
+  │
+  ├─ Perform refactoring silently
+  │   (edits accumulate on editorUndo list)
+  │
+  │   Safety checks may:
+  │     ├─ Save sub-checkpoint
+  │     ├─ Apply tentative edits
+  │     ├─ Verify safety (reparse, compare references)
+  │     └─ Undo back to sub-checkpoint
+  │
+  └─ applyWholeRefactoringFromUndo():
+      ├─ Undo all edits back to refactoringStartingPoint (silent)
+      └─ Replay them with GEN_FULL_OUTPUT (generates protocol
+         output so the client applies the same edits)
+----
+
+The replay is necessary because the server edits its in-memory editor buffers directly,
+but the client needs protocol commands to apply the same edits to the Emacs buffers.
+By undoing and replaying, the server generates output for exactly the edits that survived
+safety checks.
+
+==== Client-Side Undo (User-Facing)
+
+The Emacs client layers multi-buffer undo on top of Emacs' native per-buffer
+`buffer-undo-list`. This lets the user revert a completed refactoring that touched
+multiple files.
+
+**Checkpointing (before refactoring):**
+
+`c-xref-multifile-undo-set-buffer-switch-point` snapshots every open buffer's undo
+position:
+
+[source]
+----
+For each open Emacs buffer:
+  Record (buffer . undo-position) pair
+  where undo-position = current tail of buffer-undo-list
+
+Push snapshot onto c-xref-multifile-undo-state stack
+----
+
+This bookmark captures where each buffer's undo history was _before_ the refactoring.
+
+**During the refactoring:**
+
+The server sends edit commands via the protocol (the `GEN_FULL_OUTPUT` replay from
+above). The client applies them to the appropriate Emacs buffers. Emacs automatically
+records each edit in the buffer's `buffer-undo-list`. Files not yet open are opened
+by the client to apply the edits.
+
+**Undo last refactoring:**
+
+`c-xref-undo-last-refactoring` pops the most recent snapshot and undoes each buffer
+back to its bookmarked position:
+
+[source]
+----
+c-xref-undo-last-refactoring:
+  │
+  ├─ Pop most recent snapshot from c-xref-multifile-undo-state
+  │
+  ├─ First pass: buffers WITHOUT a bookmark
+  │   (files opened during the refactoring, not open before)
+  │   For each: undo all changes in that buffer
+  │
+  └─ Second pass: buffers WITH a bookmark
+      For each: call Emacs undo-more repeatedly until
+      buffer-undo-list reaches the bookmarked position
+----
+
+The two-pass ordering processes buffers without bookmarks first — these were opened
+by the refactoring and should be fully reverted.
+
+**Known limitation:** There is a known issue where undo of files that were not open
+before the refactoring does not always work correctly — under investigation.
 
 === How does lexem stream management work?
 
