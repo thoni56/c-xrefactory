@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-04-07">
+<meta name="author" content="v{VERSION} - Generated 2026-04-12">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-04-07</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-04-12</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -529,7 +529,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_editor_buffers_and_incremental_updates">10.3. Editor Buffers and Incremental Updates</a></li>
 <li><a href="#_server_side_refactoring">10.4. Server-Side Refactoring</a></li>
 <li><a href="#_how_is_an_extract_refactoring_performed">10.5. How is an Extract refactoring performed?</a></li>
-<li><a href="#_how_does_lexem_stream_management_work">10.6. How does lexem stream management work?</a></li>
+<li><a href="#_refactoring_undo">10.6. Refactoring Undo</a></li>
+<li><a href="#_how_does_lexem_stream_management_work">10.7. How does lexem stream management work?</a></li>
 </ul>
 </li>
 <li><a href="#development-environment">11. Development Environment</a>
@@ -542,7 +543,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_debugging">11.6. Debugging</a></li>
 <li><a href="#_testing">11.7. Testing</a></li>
 <li><a href="#_utilities">11.8. Utilities</a></li>
-<li><a href="#_debugging_the_protocol">11.9. Debugging the protocol</a></li>
 </ul>
 </li>
 <li><a href="#_deployment">12. Deployment</a></li>
@@ -5617,55 +5617,28 @@ locations and ownership models at each stage.</p>
 </ol>
 </div>
 <div class="paragraph">
-<p><strong>Solution:</strong> <code>processModifiedFilesForNavigation()</code></p>
+<p><strong>Solution:</strong> <code>needsBrowsingStackRefresh</code> flag + <code>updateSessionReferencesForFile()</code></p>
 </div>
 <div class="paragraph">
-<p>When NEXT/PREVIOUS operations occur, the server:</p>
+<p>When entry refresh reparses a file, it sets <code>needsBrowsingStackRefresh = true</code> on that
+file&#8217;s <code>FileItem</code>. When NEXT/PREVIOUS operations occur, <code>gotoNextReference()</code> checks this
+flag on the current and next reference&#8217;s file:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Detects which editor buffers have changed (modification time check)</p>
+<p>Saves the current navigation position</p>
 </li>
 <li>
-<p>Reparses those buffers (updates referenceableItemTable)</p>
+<p>Calls <code>updateSessionReferencesForFile()</code> to rebuild the session&#8217;s reference list from the updated table</p>
 </li>
 <li>
-<p><strong>Rebuilds</strong> the current session&#8217;s reference list from the updated table</p>
+<p>Clears the flag</p>
 </li>
 <li>
-<p>Preserves the user&#8217;s navigation position by index</p>
+<p>Restores the navigation position to the nearest reference</p>
 </li>
 </ol>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Find user's position in old list
-int currentIndex = 0;
-Reference *ref = session-&gt;references;
-while (ref != NULL &amp;&amp; ref != session-&gt;current) {
-    currentIndex++;
-    ref = ref-&gt;next;
-}
-
-// Free old list and rebuild from table
-freeReferences(session-&gt;references);
-session-&gt;references = NULL;
-for (BrowsingMenu *menu = session-&gt;menu; menu != NULL; menu = menu-&gt;next) {
-    if (menu-&gt;selected) {
-        ReferenceableItem *updatedItem = lookupInTable(&amp;menu-&gt;referenceable);
-        addReferencesFromFileToList(updatedItem-&gt;references, ANY_FILE,
-                                    &amp;session-&gt;references);
-    }
-}
-
-// Restore position by index
-ref = session-&gt;references;
-for (int i = 0; i &lt; currentIndex &amp;&amp; ref-&gt;next != NULL; i++) {
-    ref = ref-&gt;next;
-}
-session-&gt;current = ref;</code></pre>
-</div>
 </div>
 <div class="paragraph">
 <p>This keeps navigation working correctly with live-edited code.</p>
@@ -5694,9 +5667,6 @@ session-&gt;current = ref;</code></pre>
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p>Like fast update: doesn&#8217;t reparse includers of changed headers</p>
-</li>
 <li>
 <p>Only updates the current session (other sessions on the stack remain stale)</p>
 </li>
@@ -5915,12 +5885,124 @@ function/macro/variable.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_does_lexem_stream_management_work">10.6. How does lexem stream management work?</h3>
+<h3 id="_refactoring_undo">10.6. Refactoring Undo</h3>
+<div class="paragraph">
+<p>Undo for refactorings operates at two levels: the server uses an undo mechanism
+internally during refactoring execution, and the client maintains a separate mechanism
+for letting the user revert completed refactorings.</p>
+</div>
+<div class="sect3">
+<h4 id="_server_side_undo_internal">10.6.1. Server-Side Undo (Internal)</h4>
+<div class="paragraph">
+<p>The server maintains a global <code>editorUndo</code> linked list. Every <code>replaceStringInEditorBuffer</code>
+call pushes an undo entry recording the buffer, offset, and original text. This is used
+internally during refactoring — not for user-facing undo.</p>
+</div>
+<div class="paragraph">
+<p>The core pattern is <strong>silent apply, then replay with output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">serverPerformRefactoring():
+  │
+  ├─ refactoringStartingPoint = editorUndo   ← bookmark
+  │
+  ├─ Perform refactoring silently
+  │   (edits accumulate on editorUndo list)
+  │
+  │   Safety checks may:
+  │     ├─ Save sub-checkpoint
+  │     ├─ Apply tentative edits
+  │     ├─ Verify safety (reparse, compare references)
+  │     └─ Undo back to sub-checkpoint
+  │
+  └─ applyWholeRefactoringFromUndo():
+      ├─ Undo all edits back to refactoringStartingPoint (silent)
+      └─ Replay them with GEN_FULL_OUTPUT (generates protocol
+         output so the client applies the same edits)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The replay is necessary because the server edits its in-memory editor buffers directly,
+but the client needs protocol commands to apply the same edits to the Emacs buffers.
+By undoing and replaying, the server generates output for exactly the edits that survived
+safety checks.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_client_side_undo_user_facing">10.6.2. Client-Side Undo (User-Facing)</h4>
+<div class="paragraph">
+<p>The Emacs client layers multi-buffer undo on top of Emacs' native per-buffer
+<code>buffer-undo-list</code>. This lets the user revert a completed refactoring that touched
+multiple files.</p>
+</div>
+<div class="paragraph">
+<p><strong>Checkpointing (before refactoring):</strong></p>
+</div>
+<div class="paragraph">
+<p><code>c-xref-multifile-undo-set-buffer-switch-point</code> snapshots every open buffer&#8217;s undo
+position:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">For each open Emacs buffer:
+  Record (buffer . undo-position) pair
+  where undo-position = current tail of buffer-undo-list
+
+Push snapshot onto c-xref-multifile-undo-state stack</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This bookmark captures where each buffer&#8217;s undo history was <em>before</em> the refactoring.</p>
+</div>
+<div class="paragraph">
+<p><strong>During the refactoring:</strong></p>
+</div>
+<div class="paragraph">
+<p>The server sends edit commands via the protocol (the <code>GEN_FULL_OUTPUT</code> replay from
+above). The client applies them to the appropriate Emacs buffers. Emacs automatically
+records each edit in the buffer&#8217;s <code>buffer-undo-list</code>. Files not yet open are opened
+by the client to apply the edits.</p>
+</div>
+<div class="paragraph">
+<p><strong>Undo last refactoring:</strong></p>
+</div>
+<div class="paragraph">
+<p><code>c-xref-undo-last-refactoring</code> pops the most recent snapshot and undoes each buffer
+back to its bookmarked position:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">c-xref-undo-last-refactoring:
+  │
+  ├─ Pop most recent snapshot from c-xref-multifile-undo-state
+  │
+  ├─ First pass: buffers WITHOUT a bookmark
+  │   (files opened during the refactoring, not open before)
+  │   For each: undo all changes in that buffer
+  │
+  └─ Second pass: buffers WITH a bookmark
+      For each: call Emacs undo-more repeatedly until
+      buffer-undo-list reaches the bookmarked position</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The two-pass ordering processes buffers without bookmarks first — these were opened
+by the refactoring and should be fully reverted.</p>
+</div>
+<div class="paragraph">
+<p><strong>Known limitation:</strong> There is a known issue where undo of files that were not open
+before the refactoring does not always work correctly — under investigation.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_does_lexem_stream_management_work">10.7. How does lexem stream management work?</h3>
 <div class="paragraph">
 <p>Lexical analysis uses a stack of <code>LexemStream</code> structures to handle nested macro expansions. The key insight is that the stream type acts as a <strong>discriminator</strong> for buffer ownership and cleanup strategy.</p>
 </div>
 <div class="sect3">
-<h4 id="_the_stream_types">10.6.1. The Stream Types</h4>
+<h4 id="_the_stream_types">10.7.1. The Stream Types</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef enum {
@@ -5960,7 +6042,7 @@ Historically, there was also a <code>CACHED_STREAM</code> type when the caching 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_refill_algorithm">10.6.2. The Refill Algorithm</h4>
+<h4 id="_the_refill_algorithm">10.7.2. The Refill Algorithm</h4>
 <div class="paragraph">
 <p>When <code>currentInput</code> runs out of lexems (<code>read &gt;= write</code>), <code>refillInputIfEmpty()</code> uses the stream type to decide what to do:</p>
 </div>
@@ -5988,7 +6070,7 @@ Historically, there was also a <code>CACHED_STREAM</code> type when the caching 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_key_invariant">10.6.3. Key Invariant</h4>
+<h4 id="_key_invariant">10.7.3. Key Invariant</h4>
 <div class="paragraph">
 <p><strong>Stream type must match buffer allocation:</strong></p>
 </div>
@@ -6010,7 +6092,7 @@ Historically, there was also a <code>CACHED_STREAM</code> type when the caching 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_common_bug_pattern">10.6.4. Common Bug Pattern</h4>
+<h4 id="_common_bug_pattern">10.7.4. Common Bug Pattern</h4>
 <div class="paragraph">
 <p>Pushing a <code>NORMAL_STREAM</code> onto the macro stack, then trying to free it as if it were <code>MACRO_STREAM</code>:</p>
 </div>
@@ -6345,10 +6427,10 @@ executed.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>run a <code>c-xref</code> command, catch its output and verify</p>
+<p>run <code>c-xref</code> from the command line, catch its output and verify</p>
 </li>
 <li>
-<p>run a series of command using the EDIT_SERVER_DRIVER, collect output and results and verify</p>
+<p>run a series of command using the SERVER_DRIVER, collect output and verify</p>
 </li>
 </ul>
 </div>
@@ -6369,7 +6451,8 @@ grows.</p>
 <div class="sect3">
 <h4 id="_test_structure">11.7.3. Test Structure</h4>
 <div class="paragraph">
-<p>Tests live in the <code>tests</code> directory and are auto-discovered by name: any directory starting with <code>test_</code> will be recognized as a test case.</p>
+<p>Tests live in the <code>tests</code> directory and are auto-discovered by name: any directory
+starting with <code>test_</code> will be recognized as a test case.</p>
 </div>
 <div class="paragraph">
 <p>Each test typically includes:</p>
@@ -6388,14 +6471,15 @@ grows.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>Most tests use <code>tests/Makefile.boilerplate</code> which provides common macros:</p>
+<p>Most tests should use <code>tests/Makefile.server</code>, but <code>tests/Makefile.cli</code> is also
+available, which provides common macros:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-makefile hljs" data-lang="makefile">include ../Makefile.boilerplate
+<pre class="highlightjs highlight"><code class="language-makefile hljs" data-lang="makefile">include ../Makefile.server
 
 $(TEST):
-	$(COMMAND) source.c -o output.tmp
+	$(SERVER_DRIVER) commands.input &gt; output.tmp
 	$(NORMALIZE) output.tmp &gt; output
 	$(VERIFY)</code></pre>
 </div>
@@ -6405,6 +6489,10 @@ $(TEST):
 </div>
 <div class="dlist">
 <dl>
+<dt class="hdlist1"><code>$(SERVER_DRIVER)</code></dt>
+<dd>
+<p>Runs <code>c-xref -server</code> with the specified commands file as input</p>
+</dd>
 <dt class="hdlist1"><code>$(COMMAND)</code></dt>
 <dd>
 <p>Runs <code>c-xref</code> with standard options and the test&#8217;s <code>.c-xrefrc</code></p>
@@ -6420,7 +6508,9 @@ $(TEST):
 </dl>
 </div>
 <div class="paragraph">
-<p>When <code>$(VERIFY)</code> passes, the <code>output</code> file is removed. This means you can easily identify failing tests by looking for test directories that still contain an <code>output</code> file. The <code>utils/failing</code> script lists these.</p>
+<p>When <code>$(VERIFY)</code> passes, the <code>output</code> file is removed. This means you can easily
+identify failing tests by looking for test directories that still contain an <code>output</code>
+file. The <code>utils/failing</code> script lists these.</p>
 </div>
 <div class="paragraph">
 <p>To suspend a test (skip it during test runs), create a <code>.suspended</code> file in the test directory.</p>
@@ -6464,24 +6554,24 @@ with commands in the same fashion as an editor would do. The script
 also handles the communication through the buffer file (see [Editor
 Interface](./Design:-Editor-Interface)).</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+A server driver-based test should include <code>../Makefile.server</code>.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_creating_more_edit_server_tests">11.7.6. Creating More Edit Server Tests</h4>
 <div class="paragraph">
-<p>You can relatively easy re-create a sequence of interactions by using the
-sandboxed Emacs in <code>tests/sandboxed_emacs</code>.</p>
-</div>
-<div class="paragraph">
-<p>There are two ways to use it, "make spy" or "make pure". With the
-"spy" an intermediate spy is injected between the editor and the edit
-server, capturing the interaction to a file.</p>
-</div>
-<div class="paragraph">
-<p>With "pure" you just get the editor setup with <code>c-xref-debug-mode</code> and
-<code>c-xref-debug-preserve-tmp-files</code> on. This means that you can do what
-ever editor interactions you want and see the communication in the
-<code>*Messages*</code> buffer. See [Editor Interface](./Design:-Editor-Interface)
-for details.</p>
+<p>You can relatively easy re-create a sequence of interactions by using Emacs with all the
+latest source using <code>utils/emacs-devel</code>.</p>
 </div>
 <div class="paragraph">
 <p>Once you have figure out which part of the <code>*Messages*</code> buffer are
@@ -6510,14 +6600,12 @@ as the sources when you run the conversion.
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-the <code>messages2commands</code> script removes any <code>-preload</code> so you
-need to take care that the positions inside the buffers are not
-changed between interactions lest the <code>-olcursor</code> and <code>-olmark</code> will
-be wrong. (You can just undo the change after a refactoring or
-rename). Of course this also applies if you want to mimic a sequence
-of refactorings, like the <code>jexercise</code> move method example. Sources will
-then change so the next refactoring works from content of buffers, so you
-have to handle this specifically.
+unless you use <code>--preserve-preloads</code> the <code>messages2commands</code> script removes any
+<code>-preload</code> so you need to take care that the positions inside the buffers are not
+changed between interactions lest the <code>-olcursor</code> and <code>-olmark</code> will be wrong. (You can
+just undo the change after a refactoring or rename). Of course this also applies if you
+want to mimic a sequence of refactorings. Sources will then change so the next
+refactoring works from content of buffers, so you have to handle this specifically.
 </td>
 </tr>
 </table>
@@ -6561,55 +6649,20 @@ Find a test that covers that particular line and run it using the debugger (usua
 </div>
 </div>
 <div class="sect3">
-<h4 id="_sandboxed">11.8.2. Sandboxed</h4>
+<h4 id="_emacs_devel">11.8.2. emacs-devel</h4>
 <div class="paragraph">
-<p><code>utils/sandboxed</code> starts a sandboxed Emacs that uses the current elisp code and the <code>c-xref</code> from src.
-This allows you to run a test changes without having to polute your own setup.</p>
-</div>
-<div class="paragraph">
-<p>This actually runs the <code>tests/sandboxed_emacs</code> pure version, which also sets up a completely isolated Emacs environment with its own packages loaded, configuration etc.
-See below.</p>
+<p><code>utils/emacs-devel</code> starts an Emacs that uses the current elisp code and the <code>c-xref</code>
+from src.  This allows you to run a test changes without having to polute your own
+setup.</p>
 </div>
 <div class="paragraph">
 <p>Synopsis:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>sandboxed</pre>
+<pre>emacs-devel</pre>
 </div>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_debugging_the_protocol">11.9. Debugging the protocol</h3>
-<div class="paragraph">
-<p>There is a "pipe spy" in <code>tests/sandboxed_emacs</code>. You can build the
-spy using</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>make spy</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>and then start a sandboxed Emacs which invokes the spy using</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>make</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This Emacs will be sandboxed to use its own .emacs-files and have HOME
-set to this directory.</p>
-</div>
-<div class="paragraph">
-<p>The spy will log the communication between Emacs and the <strong>real</strong>
-<code>c-xref</code> (<code>src/c-xref</code>) in log files in <code>/tmp</code>.</p>
-</div>
-<div class="paragraph">
-<p>NOTE that Emacs will invoke several instanced of what it believes is
-the real <code>c-xref</code> so there will be several log files to inspect.</p>
 </div>
 </div>
 </div>
@@ -10723,7 +10776,7 @@ server process without a separate <code>callXref()</code> step.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-07 18:58:19 UTC
+Last updated 2026-04-12 09:25:58 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
