@@ -5838,11 +5838,23 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
     ))
 
 (defun undo-changes-until (bundo interact-flag)
+  "Undo changes in the current buffer until `pending-undo-list' reaches BUNDO.
+BUNDO is a tail pointer into `buffer-undo-list' captured at checkpoint time.
+When BUNDO is nil, it means the buffer's undo history was empty at the
+checkpoint (e.g. freshly opened file).  In that case we undo everything.
+Since `undo-more' signals an error when undo is exhausted rather than
+returning gracefully, we catch that error to allow processing to continue
+for remaining buffers."
   (let ((aa) (iinteract))
     (setq iinteract interact-flag)
     (while (and pending-undo-list (not (eq pending-undo-list bundo)))
       (c-xref-make-buffer-writable)
-      (undo-more 1)
+      ;; undo-more signals "No further undo information" when exhausted.
+      ;; This happens when bundo is nil (empty checkpoint) and we've undone
+      ;; everything.  Catch it so the multi-buffer undo loop can continue.
+      (condition-case nil
+          (undo-more 1)
+        (error (setq pending-undo-list nil)))
       (if iinteract
               (progn
                 (setq aa (c-xref-get-single-yes-no-event "Continue undoing "))
@@ -5865,6 +5877,11 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
     ))
 
 (defun c-xref-undo-single-buffer (buf ustate cont-ustate interact-flag)
+  "Undo changes in BUF back to the checkpoint in USTATE.
+The checkpoint (bookmark) is a tail pointer into the buffer's undo list,
+captured before the refactoring.  A nil bookmark means the undo list was
+empty at checkpoint time — `undo-changes-until' handles this by undoing
+everything added since."
   (let ((_bnamestart) (bufundo) (iinteract))
     (setq iinteract interact-flag)
     (if (not (buffer-name buf))
@@ -5893,8 +5910,15 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
 (defun c-xref-undo-until-undo-state (ustate cont-ustate interact)
   (let ((buffs) (buf) (buffs2) (bufundo) (iinteract))
     (setq iinteract interact)
+    ;; Two passes: first undo buffers that were NOT open at checkpoint time
+    ;; (no entry in ustate — these were opened during the refactoring and
+    ;; need everything undone).  Then undo buffers that WERE open (have a
+    ;; bookmark to undo back to).
+    ;;
+    ;; Note: get-corresponding-undo returns nil for BOTH "not in state"
+    ;; and "in state with empty undo history" (nil bookmark).  Both cases
+    ;; are handled correctly — undo-changes-until with nil undoes everything.
     (setq buffs (buffer-list))
-    ;; first process bufferes without undo-state
     (while buffs
       (setq buf (car buffs))
       (setq buffs (cdr buffs))
@@ -5903,7 +5927,7 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
               (setq iinteract (c-xref-undo-single-buffer buf ustate cont-ustate iinteract))
             )
       )
-    ;; than those from list
+    ;; Second pass: buffers with a non-nil bookmark
     (setq buffs2 ustate)
     (while buffs2
       (setq buf (car (car buffs2)))
