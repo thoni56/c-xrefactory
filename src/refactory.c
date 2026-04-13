@@ -294,17 +294,18 @@ static void replaceString(EditorMarker *marker, int len, char *newString) {
                                 strlen(newString), &editorUndo);
 }
 
-static void checkedReplaceString(EditorMarker *marker, int len, char *oldString, char *newString) {
-    char *bVal  = marker->buffer->allocation.text + marker->offset;
-    bool check = (strlen(oldString) == len && strncmp(oldString, bVal, len) == 0);
-    if (check) {
+static void checkedReplaceString(EditorMarker *marker, char *oldString, char *newString) {
+    char *stringInBuffer  = marker->buffer->allocation.text + marker->offset;
+    int len = strlen(oldString);
+    bool match = strncmp(oldString, stringInBuffer, len) == 0;
+    if (match) {
         replaceString(marker, len, newString);
     } else {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "checked replacement of '%s' to '%s' failed on '", oldString, newString);
         int d = strlen(tmpBuff);
         for (int i = 0; i < len; i++)
-            tmpBuff[d++] = bVal[i];
+            tmpBuff[d++] = stringInBuffer[i];
         tmpBuff[d++] = '\'';
         tmpBuff[d++] = 0;
         errorMessage(ERR_INTERNAL, tmpBuff);
@@ -392,22 +393,19 @@ void applyWholeRefactoringFromUndo(void) {
 }
 
 
-static void renameFromTo(EditorMarker *pos, char *oldName, char *newName) {
-    char *actName;
-    int   nlen;
-    nlen    = strlen(oldName);
-    actName = getIdentifierOnMarker_static(pos);
-    assert(strcmp(actName, oldName) == 0);
-    checkedReplaceString(pos, nlen, oldName, newName);
+static void renameFromTo(EditorMarker *marker, char *originalName, char *newName) {
+    char *actualName = getIdentifierOnMarker_static(marker);
+    log_debug("renameFromTo: oldName='%s' actName='%s' offset=%d file='%s'",
+              originalName, actualName, marker->offset, marker->buffer->fileName);
+    assert(strcmp(actualName, originalName) == 0);
+    checkedReplaceString(marker, originalName, newName);
 }
 
 static EditorMarker *createMarkerAt(EditorBuffer *buf, int offset) {
-    EditorMarker *point;
-    point = NULL;
-    if (offset >= 0) {
-        point = newEditorMarker(buf, offset);
-    }
-    return point;
+    if (offset >= 0)
+        return newEditorMarker(buf, offset);
+    else
+        return NULL;
 }
 
 static EditorMarker *getPointFromOptions(EditorBuffer *buf) {
@@ -572,7 +570,7 @@ static void renameFile(EditorMarker *marker, char *newName) {
     checkedRenameBuffer(marker->buffer, newName, &editorUndo);
 }
 
-static void renameIncludes(EditorMarkerList *markers, char *currentIncludeFileName) {
+static void updateIncludeDirectives(EditorMarkerList *markers, char *currentIncludeFileName) {
     char newName[MAX_FILE_NAME_SIZE];
     char newPath[MAX_FILE_NAME_SIZE];
     char currentIncludeFilePath[MAX_FILE_NAME_SIZE];
@@ -592,8 +590,7 @@ static void renameIncludes(EditorMarkerList *markers, char *currentIncludeFileNa
         } else {
             EditorMarker *adjustedMarker = adjustMarkerForInclude(l->marker);
             if (adjustedMarker != NULL) {
-                checkedReplaceString(adjustedMarker, strlen(currentIncludeFileName), currentIncludeFileName,
-                                     newName);
+                checkedReplaceString(adjustedMarker, currentIncludeFileName, newName);
             }
             freeEditorMarker(adjustedMarker);
         }
@@ -642,28 +639,27 @@ static void multipleReferencesInSamePlaceMessage(Reference *r) {
     ppcAskConfirmation(tmpBuff);
 }
 
-static void checkForMultipleReferencesInSamePlace(SessionStackEntry *rstack, BrowsingMenu *ccms) {
-    ReferenceableItem *p, *sss;
-    BrowsingMenu    *cms;
-    bool            pushed;
+static void checkForMultipleReferencesInSamePlace(SessionStackEntry *stackEntry, BrowsingMenu *menu) {
+    ReferenceableItem *this = &menu->referenceable;
 
-    p = &ccms->referenceable;
-    assert(rstack && rstack->menu);
-    sss    = &rstack->menu->referenceable;
-    pushed = itIsSymbolToPushOlReferences(p, rstack, &cms, DEFAULT_VALUE);
-    // TODO, this can be simplified, as ccms == cms.
-    log_debug(":checking %s to %s (%d)", p->linkName, sss->linkName, pushed);
-    if (!pushed && haveSameBareName(p, sss)) {
-        log_debug("checking %s references", p->linkName);
-        for (Reference *r = p->references; r != NULL; r = r->next) {
-            if (isReferenceInList(r, rstack->references)) {
+    assert(stackEntry && stackEntry->menu);
+    ReferenceableItem *other = &stackEntry->menu->referenceable;
+
+    BrowsingMenu *cms;
+    bool matched = findMatchingBrowsingMenuItem(this, stackEntry, &cms, DEFAULT_VALUE);
+
+    log_debug(":checking %s to %s (%d)", this->linkName, other->linkName, matched);
+    if (!matched && haveSameBareName(this, other)) {
+        log_debug("checking %s references", this->linkName);
+        for (Reference *r = this->references; r != NULL; r = r->next) {
+            if (isReferenceInList(r, stackEntry->references)) {
                 multipleReferencesInSamePlaceMessage(r);
             }
         }
     }
 }
 
-static void multipleOccurrenciesSafetyCheck(void) {
+static void multipleOccurrencesSafetyCheck(void) {
     SessionStackEntry *rstack;
 
     rstack = sessionData.browsingStack.top;
@@ -688,7 +684,7 @@ static void renameAtPoint(EditorMarker *point) {
 
     EditorUndo *undoStartPoint = editorUndo;
 
-    multipleOccurrenciesSafetyCheck();
+    multipleOccurrencesSafetyCheck();
 
     simpleRename(occurrences, point, nameOnPoint);
     //&dumpEditorBuffers();
@@ -725,7 +721,7 @@ static void renameAtInclude(EditorMarker *point) {
 
     EditorUndo *undoStartPoint = editorUndo;
 
-    multipleOccurrenciesSafetyCheck();
+    multipleOccurrencesSafetyCheck();
 
     if (stringInInclude[0] != '"') {
         errorMessage(ERR_ST, "You cannot rename files from the standard library");
@@ -812,8 +808,8 @@ static void renameAtInclude(EditorMarker *point) {
                          * correctness.  This order matches the replay output. */
                         EditorMarker *m1 = newEditorMarker(headerBuf, ifndefPos);
                         EditorMarker *m2 = newEditorMarker(headerBuf, definePos);
-                        checkedReplaceString(m1, guardLen, oldGuard, newGuard);
-                        checkedReplaceString(m2, guardLen, oldGuard, newGuard);
+                        checkedReplaceString(m1, oldGuard, newGuard);
+                        checkedReplaceString(m2, oldGuard, newGuard);
                         freeEditorMarker(m1);
                         freeEditorMarker(m2);
                     }
@@ -822,7 +818,7 @@ static void renameAtInclude(EditorMarker *point) {
         }
     }
 
-    renameIncludes(occurrences, includedFileName);
+    updateIncludeDirectives(occurrences, includedFileName);
 
     /* For module rename, also rename the companion .c file */
     if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {

@@ -2100,11 +2100,11 @@ void answerEditorAction(void) {
     LEAVE();
 }
 
-int itIsSymbolToPushOlReferences(ReferenceableItem *referenceableItem,
-                                 SessionStackEntry *rstack,
+int findMatchingBrowsingMenuItem(ReferenceableItem *referenceableItem,
+                                 SessionStackEntry *stackEntry,
                                  BrowsingMenu **menu,
                                  int checkSelectedFlag) {
-    for (BrowsingMenu *m=rstack->menu; m!=NULL; m=m->next) {
+    for (BrowsingMenu *m=stackEntry->menu; m!=NULL; m=m->next) {
         if ((m->selected || checkSelectedFlag==DO_NOT_CHECK_IF_SELECTED)
             && isSameReferenceableItem(referenceableItem, &m->referenceable))
         {
@@ -2125,7 +2125,7 @@ void putOnLineLoadedReferences(ReferenceableItem *referenceableItem) {
     int ols;
     BrowsingMenu *cms;
 
-    ols = itIsSymbolToPushOlReferences(referenceableItem, sessionData.browsingStack.top,
+    ols = findMatchingBrowsingMenuItem(referenceableItem, sessionData.browsingStack.top,
                                        &cms, DO_NOT_CHECK_IF_SELECTED);
     if (ols > 0) {
         assert(cms);

@@ -38,7 +38,7 @@ extern Reference *handleFoundSymbolReference(Symbol *symbol, Position position, 
 extern void addTrivialCxReference (char *name, Type type, Storage storage,
                                    Position position, Usage usage);
 extern void olSetCallerPosition(Position position);
-extern int itIsSymbolToPushOlReferences(ReferenceableItem *p, SessionStackEntry *rstack,
+extern int findMatchingBrowsingMenuItem(ReferenceableItem *p, SessionStackEntry *rstack,
                                         BrowsingMenu **rss, int checkSelFlag);
 extern void putOnLineLoadedReferences(ReferenceableItem *p);
 extern BrowsingMenu *createSelectionMenu(ReferenceableItem *dd);

@@ -70,7 +70,7 @@ void olCompletionListReverse(void) {
     mock();
 }
 
-int itIsSymbolToPushOlReferences(ReferenceableItem *p, SessionStackEntry *rstack, BrowsingMenu **rss,
+int findMatchingBrowsingMenuItem(ReferenceableItem *p, SessionStackEntry *rstack, BrowsingMenu **rss,
                                int checkSelFlag) {
     return (int) mock(p, rstack, rss, checkSelFlag);
 }
