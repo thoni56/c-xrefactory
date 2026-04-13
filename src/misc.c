@@ -132,9 +132,10 @@ void prettyPrintType(char *buffer, int *bufferSize, TypeModifier *typeModifier, 
                     sprintf(postString + j, "%s", ttm);
                     j += strlen(postString + j);
                 }
-                if (symbol->next != NULL && j < COMPLETION_STRING_SIZE)
+                if (symbol->next != NULL && j < COMPLETION_STRING_SIZE) {
                     sprintf(postString + j, ", ");
-                j += strlen(postString + j);
+                    j += strlen(postString + j);
+                }
             }
             postString[j++] = ')';
             break;

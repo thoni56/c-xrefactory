@@ -7,6 +7,8 @@
 
 #include "log.h"
 #include "lsp_utils.h"
+#include "misc.h"
+
 
 Describe(LspUtils);
 BeforeEach(LspUtils) {
@@ -29,16 +31,17 @@ Ensure(LspUtils, lspPositionToByteOffset_converts_coordinates) {
     char testFile[] = "/tmp/lsp_test_XXXXXX";
     int fd = mkstemp(testFile);
     assert_that(fd, is_not_equal_to(-1));
-    
+
     const char *content = "line 0\nline 1\nline 2\n";
-    write(fd, content, strlen(content));
+    int rc = write(fd, content, strlen(content));
+    UNUSED rc;
     close(fd);
-    
-    /* Test conversion: line 1, character 3 should be at byte offset 10 
+
+    /* Test conversion: line 1, character 3 should be at byte offset 10
        (6 chars in line 0 + 1 newline + 3 chars in line 1) */
     int offset = lspPositionToByteOffset(testFile, 1, 3);
     assert_that(offset, is_equal_to(10));
-    
+
     /* Clean up */
     unlink(testFile);
 }
@@ -48,17 +51,18 @@ Ensure(LspUtils, byteOffsetToLspPosition_converts_coordinates) {
     char testFile[] = "/tmp/lsp_test_XXXXXX";
     int fd = mkstemp(testFile);
     assert_that(fd, is_not_equal_to(-1));
-    
+
     const char *content = "line 0\nline 1\nline 2\n";
-    write(fd, content, strlen(content));
+    int rc = write(fd, content, strlen(content));
+    UNUSED rc;
     close(fd);
-    
+
     /* Test conversion: byte offset 10 should be line 1, character 3 */
     int line, character;
     byteOffsetToLspPosition(testFile, 10, &line, &character);
     assert_that(line, is_equal_to(1));
     assert_that(character, is_equal_to(3));
-    
+
     /* Clean up */
     unlink(testFile);
 }

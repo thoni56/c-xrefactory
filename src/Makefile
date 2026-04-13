@@ -130,9 +130,9 @@ export CC = cc
 
 MAKEFLAGS += --no-print-directory
 
-WARNINGS = -Wall -Wno-char-subscripts -Werror -Wimplicit-fallthrough
+WARNINGS = -Wall -Wno-char-subscripts -Werror -Wimplicit-fallthrough -D_FORTIFY_SOURCE=2
 
-OPTIMIZATION = -O0
+OPTIMIZATION = -O1
 
 YYDEBUG = -DYYDEBUG
 
