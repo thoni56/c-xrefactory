@@ -1,15 +1,28 @@
 # Makefile for server driver-based tests
 #
 # Include this instead of Makefile.boilerplate for tests that use the edit server driver.
-# Provides server-specific debug target that starts the driver and attaches gdb
+# Provides server-specific debug target that starts the driver and attaches debugger to the c-xref process
 
 include $(dir $(lastword $(MAKEFILE_LIST)))/Makefile.boilerplate
 
-# Override debug target for server driver tests
-# Starts the server driver with a delay, then attaches gdb to the c-xref process
-# Usage: make debug
-# Set GDB_COMMANDS to add extra gdb commands (e.g., GDB_COMMANDS="-ex 'br someFunction'")
+# Platform detection
+UNAME_S := $(shell uname -s)
 
+# Override debug target for server driver tests
+# Starts the server driver with a delay, then attaches debugger to the c-xref process
+# Usage: make debug
+# Set EXTRA_DEBUG to add extra debugger commands
+
+ifeq ($(UNAME_S),Darwin)
+debug:
+	@{ \
+		$(SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp & \
+		pid=$$! ; \
+		sleep 1 ; \
+		cxref_pid=$$(pgrep -P $$pid c-xref) ; \
+		lldb -p $$cxref_pid -o 'breakpoint set --name internalCheckFail' $(EXTRA_DEBUG) ; \
+	}
+else
 debug:
 	@{ \
 		$(SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp & \
@@ -18,3 +31,4 @@ debug:
 		cxref_pid=$$(pgrep -P $$pid c-xref) ; \
 		sudo gdb -pid $$cxref_pid -ex 'br internalCheckFail' $(GDB_COMMANDS) ; \
 	}
+endif

@@ -20,17 +20,21 @@ endif
 DEBUG_BREAK = lsp_server
 
 # Debug target - starts c-xref with stdin from input.lsp, then attaches debugger
-# Requires ptrace permissions (sets ptrace_scope on Linux)
+ifeq ($(UNAME_S),Darwin)
 debug: input.lsp
-ifeq ($(UNAME_S),Linux)
+	@$(COMMAND) -delay=1 < input.lsp & echo $$! > .c-xref.pid
+	@lldb -p `cat .c-xref.pid` -o 'breakpoint set --name internalCheckFail' -o 'breakpoint set --name $(DEBUG_BREAK)' $(EXTRA_DEBUG) -o 'continue'
+	@rm -f .c-xref.pid
+else
+debug: input.lsp
 	@echo "Setting ptrace_scope to allow attach..."
 	@echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope > /dev/null
-endif
 	@$(COMMAND) -delay=1 < input.lsp & echo $$! > .c-xref.pid
 	@gdb -q -p `cat .c-xref.pid` -ex "break internalCheckFail" -ex "break $(DEBUG_BREAK)" $(EXTRA_DEBUG) -ex "continue"
 	@rm -f .c-xref.pid
+endif
 
-# Variant with cgdb
+# Variant with cgdb (Linux only)
 cgdb: input.lsp
 ifeq ($(UNAME_S),Linux)
 	@echo "Setting ptrace_scope to allow attach..."
@@ -41,6 +45,12 @@ endif
 	@rm -f .c-xref.pid
 
 # Quick crash dump for segfaults (non-interactive)
+ifeq ($(UNAME_S),Darwin)
+crash: input.lsp
+	lldb -b -o "run" -o "bt" -o "frame variable" \
+	-- $(COMMAND) < input.lsp
+else
 crash: input.lsp
 	gdb -batch -ex "run" -ex "bt" -ex "info locals" \
 	--args $(COMMAND) < input.lsp
+endif

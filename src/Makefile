@@ -661,7 +661,7 @@ unittests: parsers
 else
 unittests: parsers $(OBJS) $(UNITTESTS)
 	$(MAKE) -e clean-coverage
-ifeq ("$(HAVE_APPLE_COV)", yes)
+ifeq ($(HAVE_APPLE_COV), yes)
 		# Darwin: Set LLVM_PROFILE_FILE to enable coverage data collection
 		LLVM_PROFILE_FILE="unittests-%p.profraw" $(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $(UNITTESTS)
 		# Darwin: Merge coverage data from unit tests, then generate gcov files
