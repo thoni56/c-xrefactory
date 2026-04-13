@@ -735,7 +735,115 @@ static void renameAtInclude(EditorMarker *point) {
     char *includedFileName = &stringInInclude[1];
     stringInInclude[strlen(stringInInclude)-1] = '\0';
 
+    /* For module rename, the user provides the module name ("target"), not the
+     * full filename ("target.h").  Append the original suffix so that
+     * renameIncludes gets the correct header filename.
+     * newHeaderName must outlive renameAtInclude since renameTo points to it. */
+    char newHeaderName[MAX_FILE_NAME_SIZE];
+    if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
+        char *suffix = getFileSuffix(includedFileName);
+        sprintf(newHeaderName, "%s%s", refactoringOptions.renameTo, suffix);
+        refactoringOptions.renameTo = newHeaderName;
+    }
+
+    /* For module rename, update include guard before renameIncludes renames
+     * the file.  The undo/replay mechanism replays edits in forward order,
+     * so guard edits must come before the file rename. */
+    char headerPath[MAX_FILE_NAME_SIZE];
+    strcpy(headerPath, normalizeFileName_static(includedFileName, cwd));
+    if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
+        EditorBuffer *headerBuf = findOrCreateAndLoadEditorBufferForFile(headerPath);
+        if (headerBuf != NULL) {
+            char *text = headerBuf->allocation.text;
+            int textSize = headerBuf->allocation.bufferSize;
+
+            /* Find the first non-blank character */
+            int pos = 0;
+            while (pos < textSize && (text[pos] == ' ' || text[pos] == '\t' || text[pos] == '\n'))
+                pos++;
+
+            /* Check for #ifndef GUARD pattern */
+            if (pos < textSize && strncmp(text + pos, "#ifndef ", 8) == 0) {
+                int ifndefPos = pos + 8; /* position of the guard macro */
+                /* Extract the guard macro name */
+                int guardEnd = ifndefPos;
+                while (guardEnd < textSize && text[guardEnd] != '\n' && text[guardEnd] != ' ')
+                    guardEnd++;
+                int guardLen = guardEnd - ifndefPos;
+
+                char oldGuard[MAX_FILE_NAME_SIZE];
+                strncpy(oldGuard, text + ifndefPos, guardLen);
+                oldGuard[guardLen] = '\0';
+
+                /* Verify next non-blank line is #define with the same macro */
+                int nextLine = guardEnd;
+                while (nextLine < textSize && text[nextLine] == '\n')
+                    nextLine++;
+                bool hasMatchingDefine = (nextLine < textSize
+                    && strncmp(text + nextLine, "#define ", 8) == 0
+                    && strncmp(text + nextLine + 8, oldGuard, guardLen) == 0);
+
+                if (hasMatchingDefine) {
+                    int definePos = nextLine + 8; /* position of macro in #define */
+
+                    /* Build new guard: replace the old module prefix with new.
+                     * Old prefix: uppercase filename "source.h" → "SOURCE_H"
+                     * Preserves any suffix like "_INCLUDED" */
+                    char oldPrefix[MAX_FILE_NAME_SIZE], newPrefix[MAX_FILE_NAME_SIZE];
+                    strcpy(oldPrefix, includedFileName);
+                    for (char *p = oldPrefix; *p; p++) {
+                        if (*p == '.') *p = '_';
+                        else *p = toupper(*p);
+                    }
+                    strcpy(newPrefix, refactoringOptions.renameTo);
+                    for (char *p = newPrefix; *p; p++) {
+                        if (*p == '.') *p = '_';
+                        else *p = toupper(*p);
+                    }
+
+                    int oldPrefixLen = strlen(oldPrefix);
+                    /* Only replace if the guard starts with our expected prefix */
+                    if (strncmp(oldGuard, oldPrefix, oldPrefixLen) == 0) {
+                        char newGuard[MAX_FILE_NAME_SIZE];
+                        sprintf(newGuard, "%s%s", newPrefix, oldGuard + oldPrefixLen);
+
+                        /* Replace #ifndef first, then #define.  EditorMarkers
+                         * track position shifts, so order doesn't affect
+                         * correctness.  This order matches the replay output. */
+                        EditorMarker *m1 = newEditorMarker(headerBuf, ifndefPos);
+                        EditorMarker *m2 = newEditorMarker(headerBuf, definePos);
+                        checkedReplaceString(m1, guardLen, oldGuard, newGuard);
+                        checkedReplaceString(m2, guardLen, oldGuard, newGuard);
+                        freeEditorMarker(m1);
+                        freeEditorMarker(m2);
+                    }
+                }
+            }
+        }
+    }
+
     renameIncludes(occurrences, includedFileName);
+
+    /* For module rename, also rename the companion .c file */
+    if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
+        char companionPath[MAX_FILE_NAME_SIZE];
+        char newCompanionName[MAX_FILE_NAME_SIZE];
+
+        /* Build current companion path: same as header but with .c suffix */
+        strcpy(companionPath, headerPath);
+        strcpy(getFileSuffix(companionPath), ".c");
+
+        if (editorFileExists(companionPath)) {
+            /* Build new name: renameTo already has .h, replace with .c */
+            strcpy(newCompanionName, refactoringOptions.renameTo);
+            strcpy(getFileSuffix(newCompanionName), ".c");
+
+            EditorBuffer *buf = findOrCreateAndLoadEditorBufferForFile(companionPath);
+            EditorMarker *marker = newEditorMarker(buf, 0);
+            renameFile(marker, newCompanionName);
+            freeEditorMarker(marker);
+        }
+    }
 
     EditorUndo *redoTrack = NULL;
     editorUndoUntil(undoStartPoint, &redoTrack);
