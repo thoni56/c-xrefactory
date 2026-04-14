@@ -267,8 +267,9 @@ static void addStringListOptionToUsedList(StringList **location) {
 
 char *allocateStringForOption(char **pointerToOption, char *string) {
     addStringOptionToUsedList(pointerToOption);
-    char *allocated = optAlloc(strlen(string)+1);
-    strcpy(allocated, string);
+    size_t len = strlen(string)+1;
+    char *allocated = optAlloc(len);
+    memmove(allocated, string, len);
     *pointerToOption = allocated;
     return allocated;
 }
@@ -286,10 +287,11 @@ static StringList *concatStringList(StringList *list, char *string) {
         l->next = optAlloc(sizeof(StringList));
         l = l->next;
     }
-    l->string = optAlloc(strlen(string)+1);
+    size_t len = strlen(string)+1;
+    l->string = optAlloc(len);
     l->next = NULL;
 
-    strcpy(l->string, string);
+    memmove(l->string, string, len);
     return l;
 }
 
