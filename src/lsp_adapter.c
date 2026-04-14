@@ -20,12 +20,22 @@ typedef struct {
     ReferenceableItem *found;
 } FindReferenceableContext;
 
+/* Get the bare (source-level) name from a possibly qualified linkName */
+static const char *bareNameOf(const char *linkName) {
+    const char *bare = linkName;
+    for (const char *p = linkName; *p != '\0'; p++) {
+        if (*p == LINK_NAME_SEPARATOR || *p == LINK_NAME_COLLATE_SYMBOL)
+            bare = p + 1;
+    }
+    return bare;
+}
+
 /* Check if target position is within the reference identifier */
 static bool positionIsWithinReference(Position refStart, Position target, const char *linkName) {
     if (refStart.file != target.file || refStart.line != target.line)
         return false;
 
-    int length = strlen(linkName);
+    int length = strlen(bareNameOf(linkName));
     return target.col >= refStart.col && target.col < refStart.col + length;
 }
 
@@ -138,7 +148,7 @@ JSON *findDefinition(const char *uri, JSON *positionJson) {
     /* Convert c-xrefactory line (1-based) to LSP line (0-based) */
     int lspDefLine = definition.line - 1;
     int lspDefStartCol = definition.col;
-    int identifierLength = strlen(item->linkName);
+    int identifierLength = strlen(bareNameOf(item->linkName));
     int lspDefEndCol = lspDefStartCol + identifierLength;
 
     add_lsp_range(location, lspDefLine, lspDefStartCol, lspDefLine, lspDefEndCol);
