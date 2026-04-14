@@ -6224,8 +6224,20 @@ refactoring.
   )
 
 (defun c-xref-rename-module (_rd)
-  (c-xref-renaming "-rfct-rename-module" nil)
-  )
+  "Find the module name from a C #include statement and rename the module."
+  (save-excursion
+    (let (filename module-name)
+      (beginning-of-line)
+      (if (looking-at "#\\s-*include\\s-*\\(.*\\)")
+        (progn
+          (setq filename (match-string 1))
+          (setq filename (substring filename 1 -1))
+          ;; Position cursor on the filename so the server finds the right symbol
+          (goto-char (+ (match-beginning 1) 1))
+          ;; Strip suffix to get module name: "undo.h" → "undo"
+          (setq module-name (file-name-sans-extension filename))
+          (c-xref-renaming "-rfct-rename-module" module-name))
+        (message "No valid #include statement found at point")))))
 
 (defun c-xref-rename-included-file (_rd)
   "Find the filename in a C #include statement and pass it to c-xref-renaming."
@@ -6237,6 +6249,8 @@ refactoring.
         (progn
           (setq filename (match-string 1))
           (setq filename (substring filename 1 -1))
+          ;; Position cursor on the filename so the server finds the right symbol
+          (goto-char (+ (match-beginning 1) 1))
           (c-xref-renaming "-rfct-rename-included-file" filename))
         (message "No valid #include statement found at point")))))
 

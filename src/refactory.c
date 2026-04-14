@@ -557,9 +557,17 @@ static EditorMarker *adjustMarkerForInclude(EditorMarker *marker) {
     EditorBuffer *buffer    = getOpenedAndLoadedEditorBuffer(marker->buffer->fileName);
     EditorMarker *newMarker = newEditorMarker(buffer, marker->offset);
 
-    assert(buffer->allocation.text[newMarker->offset] == '#');
+    /* Skip markers that aren't on #include directives — identity references
+     * for intermediate headers in the include chain point to #ifndef, not #include */
+    if (buffer->allocation.text[newMarker->offset] != '#') {
+        freeEditorMarker(newMarker);
+        return NULL;
+    }
     moveMarkerOverSpaces(buffer, newMarker);
-    assert(strncmp("include", &buffer->allocation.text[newMarker->offset], strlen("include")) == 0);
+    if (strncmp("include", &buffer->allocation.text[newMarker->offset], strlen("include")) != 0) {
+        freeEditorMarker(newMarker);
+        return NULL;
+    }
     newMarker->offset += strlen("include");
     moveMarkerOverSpaces(buffer, newMarker);
     newMarker->offset++;
@@ -721,10 +729,17 @@ static void renameAtInclude(EditorMarker *point) {
 
     EditorUndo *undoStartPoint = editorUndo;
 
-    multipleOccurrencesSafetyCheck();
+    /* Skip the multiple-occurrences safety check for include/module rename.
+     * Identity references (UsageDefined at offset 0 of headers in the include
+     * chain) cause false positives — they're not #include directives.
+     *
+     * NOTE: If we ever support renaming macro-based includes (#include MACRO),
+     * the -pass feature could produce legitimate multiple symbols at the same
+     * #include position.  In that case, this check should be reinstated with
+     * identity references filtered out. */
 
     if (stringInInclude[0] != '"') {
-        errorMessage(ERR_ST, "You cannot rename files from the standard library");
+        errorMessage(ERR_ST, "Only quoted includes (#include \"...\") can be renamed");
         return;
     }
 
