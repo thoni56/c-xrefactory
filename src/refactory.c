@@ -733,7 +733,7 @@ static void updateIncludeGuard(char *includedFileName, char headerPath[]) {
             int guardLen = guardEnd - ifndefPos;
 
             char oldGuard[MAX_FILE_NAME_SIZE];
-            strncpy(oldGuard, text + ifndefPos, guardLen);
+            memcpy(oldGuard, text + ifndefPos, guardLen);
             oldGuard[guardLen] = '\0';
 
             /* Verify next non-blank line is #define with the same macro */
