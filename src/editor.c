@@ -14,6 +14,7 @@
 #include "misc.h"
 #include "proto.h"
 #include "referenceableitemtable.h"
+#include "timestamp.h"
 #include "undo.h"
 #include "usage.h"
 
@@ -292,7 +293,7 @@ static void quasiSaveEditorBuffer(EditorBuffer *buffer) {
 
 void quasiSaveModifiedEditorBuffers(void) {
     bool          saving            = false;
-    static time_t lastQuasiSaveTime = 0;
+    static FileTimestamp lastQuasiSaveTime = 0;
 
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *ll = getEditorBufferListElementAt(i); ll != NULL; ll = ll->next) {
@@ -306,7 +307,7 @@ cont:
     if (saving) {
         // sychronization, since last quazi save, there must
         // be at least one second, otherwise times will be wrong
-        time_t currentTime = time(NULL);
+        FileTimestamp currentTime = time(NULL);
         if (lastQuasiSaveTime > currentTime + 5) {
             FATAL_ERROR(ERR_INTERNAL, "last save in the future, travelling in time?",
                         EXIT_FAILURE);

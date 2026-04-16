@@ -124,7 +124,7 @@ bool existsInFileTable(char *fileName) {
 }
 
 void updateFileModificationTracking(int fileNumber) {
-    time_t now = time(NULL);
+    FileTimestamp now = fileTimestampNow();
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
 
     fileItem->lastInspected = now;

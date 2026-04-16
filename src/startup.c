@@ -34,7 +34,7 @@
 
 static char previousProjectConfigurationFile[MAX_FILE_NAME_SIZE];
 static char previousProjectConfigurationSection[MAX_FILE_NAME_SIZE];
-static time_t previousProjectConfigurationFileModificationTime;
+static FileTimestamp previousProjectConfigurationFileModificationTime;
 static int previousPass;
 
 static ProjectConfig projectConfig = {0};
@@ -582,8 +582,8 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
 bool isProjectConfigChanged(void) {
     if (previousProjectConfigurationFile[0] == '\0')
         return false;
-    time_t currentMtime = fileModificationTime(previousProjectConfigurationFile);
-    return currentMtime != previousProjectConfigurationFileModificationTime;
+    FileTimestamp currentMtime = fileModificationTime(previousProjectConfigurationFile);
+    return !fileTimestampsEqual(currentMtime, previousProjectConfigurationFileModificationTime);
 }
 
 /* Re-read project config after detecting a change. Updates options.includeDirs
@@ -608,7 +608,7 @@ void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) 
 bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     char projectConfigFileName[MAX_FILE_NAME_SIZE];
     char projectSectionName[MAX_FILE_NAME_SIZE];
-    time_t modifiedTime;
+    FileTimestamp modifiedTime;
 
     /* === PHASE 1: Project Discovery === */
     /* TODO: Duplicated in `intializeProjectContext` */
@@ -649,7 +649,7 @@ bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
 bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     char projectConfigFileName[MAX_FILE_NAME_SIZE];
     char projectSectionName[MAX_FILE_NAME_SIZE];
-    time_t modifiedTime;
+    FileTimestamp modifiedTime;
     char *fileName = NULL;
     bool inputOpened;
 

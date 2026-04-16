@@ -1,14 +1,14 @@
 #ifndef GLOBALS_H_INCLUDED
 #define GLOBALS_H_INCLUDED
 
-#include <stdio.h>
 #include <setjmp.h>
-#include "constants.h"
-#include "completion.h"
+#include <stdio.h>
 
-#include "head.h"
+#include "completion.h"
+#include "constants.h"
 #include "id.h"
 #include "proto.h"
+#include "timestamp.h"
 #include "usage.h"
 
 
@@ -72,7 +72,7 @@ extern jmp_buf errorLongJumpBuffer;
 
 extern char *inputFileName;
 
-extern time_t fileProcessingStartTime;
+extern FileTimestamp fileProcessingStartTime;
 
 
 extern int currentPass;
