@@ -1,0 +1,58 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-rename-module -renameto=target -olcursor=10 CURDIR/main.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=8 len=<n>>CURDIR/source.h</position-off>
+</goto>
+<replacement>
+ <str len=<n>>SOURCE_H_INCLUDED</str>  <str len=<n>>TARGET_H_INCLUDED</str>
+</replacement>
+<goto>
+ <position-off off=34 len=<n>>CURDIR/source.h</position-off>
+</goto>
+<replacement>
+ <str len=<n>>SOURCE_H_INCLUDED</str>  <str len=<n>>TARGET_H_INCLUDED</str>
+</replacement>
+<goto>
+ <position-off off=10 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>source.h</str>  <str len=<n>>target.h</str>
+</replacement>
+<goto>
+ <position-off off=10 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>source.h</str>  <str len=<n>>target.h</str>
+</replacement>
+<goto>
+ <position-off off=0 len=<n>>CURDIR/source.h</position-off>
+</goto>
+<file-move-as len=<n>>CURDIR/target.h</file-move-as>
+<goto>
+ <position-off off=0 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<file-move-as len=<n>>CURDIR/target.c</file-move-as>
+<goto>
+ <position-off off=10 len=<n>>CURDIR/main.c</position-off>
+</goto>
+shell: sleep 2
+shell: cp CURDIR/main.c.original CURDIR/main.c
+shell: cp CURDIR/source.c.original CURDIR/source.c
+shell: cp CURDIR/source.h.original CURDIR/source.h
+shell: rm -f CURDIR/target.c CURDIR/target.h
+-olcxpush -olcursor=0 -preload CURDIR/main.c CURDIR/main.c -preload CURDIR/source.c CURDIR/source.c -preload CURDIR/source.h CURDIR/source.h CURDIR/main.c -p CURDIR
+end-of-options
+
+<sync>
+<display-or-update-browser len=<n>></display-or-update-browser>
+-exit
+end-of-options
+

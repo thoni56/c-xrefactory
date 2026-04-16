@@ -1,0 +1,13 @@
+CXREF -xrefactory-II -server
+-olcxgetprojectname CURDIR/main.c
+<sync>
+-rfct-rename-module -renameto=target -olcursor=10 CURDIR/main.c -p CURDIR
+<sync>
+!sleep 2
+!cp CURDIR/main.c.original CURDIR/main.c
+!cp CURDIR/source.c.original CURDIR/source.c
+!cp CURDIR/source.h.original CURDIR/source.h
+!rm -f CURDIR/target.c CURDIR/target.h
+-olcxpush -olcursor=0 -preload CURDIR/main.c CURDIR/main.c -preload CURDIR/source.c CURDIR/source.c -preload CURDIR/source.h CURDIR/source.h CURDIR/main.c -p CURDIR
+<sync>
+<exit>
