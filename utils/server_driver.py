@@ -126,6 +126,7 @@ if __name__ == "__main__":
     parser.add_argument('--delay', type=int, dest='delay', help="How many seconds to sleep before starting the c-xref server process", default=0)
     parser.add_argument('--buffer', dest='server_buffer_filename', help="Name of file to use as communication buffer, default 'server-buffer'", default="server-buffer")
     parser.add_argument('--extra', dest='extra_options', help="Extra options to the c-xref startup command", default="")
+    parser.add_argument('--timeout', type=int, dest='timeout', help="Seconds to wait for server shutdown, 0 for no timeout, default 5", default=5)
     parser.add_argument('--cxref', dest='cxref_program', help="Which c-xref program to use, default is to use the one in PATH. Only applies if the command file starts with 'CXREF'", default="c-xref")
     args = parser.parse_args()
 
@@ -174,7 +175,8 @@ if __name__ == "__main__":
                     end_of_options(p)
                 sys.stdout.flush()
                 try:
-                    p.wait(timeout=5)  # Wait up to 5 seconds for clean shutdown
+                    timeout = args.timeout if args.timeout > 0 else None
+                    p.wait(timeout=timeout)
                 except subprocess.TimeoutExpired:
                     eprint("Warning: Server did not exit cleanly within 5 seconds, killing...")
                     p.kill()            # Force kill if it doesn't exit cleanly

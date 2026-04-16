@@ -16,7 +16,7 @@ UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
 debug:
 	@{ \
-		$(SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp & \
+		$(SERVER_DRIVER) commands.input $(EXTRA) --delay 5 --timeout=0 > output.tmp & \
 		pid=$$! ; \
 		sleep 1 ; \
 		cxref_pid=$$(pgrep -P $$pid c-xref) ; \
@@ -25,7 +25,7 @@ debug:
 else
 debug:
 	@{ \
-		$(SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp & \
+		$(SERVER_DRIVER) commands.input $(EXTRA) --delay 5 --timeout=0 > output.tmp & \
 		pid=$$! ; \
 		sleep 1 ; \
 		cxref_pid=$$(pgrep -P $$pid c-xref) ; \
