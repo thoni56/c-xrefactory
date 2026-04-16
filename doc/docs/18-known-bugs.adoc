@@ -28,25 +28,6 @@ The yacc parser creates a different scope or symbol context when parsing C code 
 *Workaround:* None currently. The false positive can be ignored.
 
 
-=== Stale references after rapid edit-save-navigate
-
-*Symptom:* After editing a file, saving, and immediately performing a PUSH or rename,
-references point to wrong positions (typically off by the number of lines added or
-removed). Navigation jumps to incorrect locations. Rename may fail with
-"expected '...' instead of '...'".
-
-*Workaround:* Wait a second after saving before navigating or refactoring. Alternatively,
-make a trivial edit, save again, then retry — the second save will have a different
-timestamp.
-
-*Root cause:* Staleness detection uses `time_t` (one-second resolution) to compare
-`lastParsedMtime` against the file's modification time. If the file is edited and saved
-within the same second as the last parse, the mtime doesn't change and the file appears
-"not stale." The server skips reparsing and uses outdated references.
-
-*Proper fix:* Use `struct timespec` (nanosecond resolution from `stat`) instead of
-`time_t` for modification time tracking. This would require changes to `FileItem`,
-`EditorBuffer`, and all staleness comparison code.
 
 === Stale sessions after POP
 

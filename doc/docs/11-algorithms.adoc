@@ -261,7 +261,7 @@ This ensures that the server analyzes what the user sees in the editor, not the 
 EditorBuffer {
     char *name;                    // Original filename
     char *preLoadedFromFile;       // Path to temp file with buffer content
-    time_t modificationTime;       // When buffer was last modified
+    FileTimestamp modificationTime; // When buffer was last modified
     bool modified;                 // Content changed (by refactoring)
     bool modifiedSinceLastQuasiSave;  // Dirty flag for quasi-save
     bool preloadedThisRequest;     // Was this buffer preloaded on this request?
@@ -337,7 +337,7 @@ Each `FileItem` in the file table has:
 * `lastParsedMtime` - The modification time when we last parsed this file (any update mode)
 * `lastFullUpdateMtime` - The modification time when we last did a FULL update (including header propagation)
 
-These are `time_t` values (seconds since epoch).
+These are `FileTimestamp` values (`struct timespec` with nanosecond precision).
 
 *_Dual Semantics_*
 
@@ -350,7 +350,7 @@ This works because `editorFileModificationTime()` abstracts over both:
 
 [source,c]
 ----
-time_t editorFileModificationTime(char *filename) {
+FileTimestamp editorFileModificationTime(char *filename) {
     EditorBuffer *buffer = getEditorBuffer(filename);
     if (buffer != NULL && buffer->preLoadedFromFile != NULL) {
         return buffer->modificationTime;  // Buffer time
@@ -368,88 +368,12 @@ To determine if a file/buffer needs reparsing:
 
 [source,c]
 ----
-if (editorFileModificationTime(fileItem->name) != fileItem->lastParsedMtime) {
+if (!fileTimestampsEqual(editorFileModificationTime(fileItem->name), fileItem->lastParsedMtime)) {
     // File/buffer has changed since we last parsed it
     reparse(fileItem);
     fileItem->lastParsedMtime = editorFileModificationTime(fileItem->name);
 }
 ----
-
-This pattern appears in:
-
-* `schedulingToUpdate()` - Marks files needing update before batch processing
-* `processModifiedFilesForNavigation()` - Detects modified buffers during navigation
-
-==== Update Strategies
-
-`C-xrefactory` has two update strategies that trade off speed against completeness.
-
-*_Fast Update (Default)_*
-
-**When used:**
-
-* Automatic updates before PUSH operations (if enabled)
-* Explicit `-fastupdate` command
-
-**What it does:**
-
-1. Checks which source files (.c) have changed (compares modification times)
-2. Reparses only those changed source files
-3. Updates the references database
-
-**Trade-off:**
-
-* ✅ **Fast**: Only reparses files that actually changed
-* ❌ **Incomplete**: Doesn't detect when header files change
-
-**Example:**
-
-----
-foo.h modified → fast update → foo.h not reparsed
-foo.c unchanged → foo.c not reparsed
-Result: foo.c still has stale information about symbols from foo.h
-----
-
-*_Full Update_*
-
-**When used:**
-
-* Explicit `-update` command
-* When `-exactpositionresolve` is enabled (forces full update)
-
-**What it does:**
-
-1. Checks which files (source OR headers) have changed
-2. If a header changed, finds all source files that include it (transitively)
-3. Reparses all affected source files
-4. Updates the references database
-
-**The algorithm** (`makeIncludeClosureOfFilesToUpdate`):
-
-1. Mark all changed files as `scheduledToUpdate`
-2. For each marked file:
-   - Find all files that `#include` it (by looking up include references)
-   - Mark those files as `scheduledToUpdate` too
-3. Repeat until no new files are added (transitive closure)
-4. Reparse all marked source files
-
-**Trade-off:**
-
-* ✅ **Complete**: Catches header changes and propagates to all users
-* ❌ **Slower**: Can trigger reparsing of many source files if a common header changes
-
-**Example:**
-
-----
-common.h modified → full update → finds 50 files that include it
-Result: Reparses all 50 source files to pick up header changes
-----
-
-*_When Does the Difference Matter?_*
-
-With modern CPUs and SSDs, the performance difference is often negligible for small to
-medium projects. The fast update's header-blindness can lead to subtle bugs where
-changes don't propagate. Full update is generally safer and more correct.
 
 ==== Reference Lifecycle
 
@@ -578,11 +502,6 @@ The key insights:
 4. **References live in two places**: canonical table (arena memory) and session copies (malloc)
 5. **Sessions are snapshots** that can become stale, requiring incremental rebuilding during navigation
 
-NOTE: The Fast Update and Full Update strategies described above are the **legacy**
-`-update`/`-fastupdate` path used by Xref mode. In server mode, these are replaced by
-the <<entry-refresh,Entry Refresh>> algorithm, which runs automatically on every request
-and combines the thoroughness of full update (header propagation via Pass 2) with the
-speed of fast update (only reparsing what's actually stale).
 
 === Server-Side Refactoring
 

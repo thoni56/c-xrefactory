@@ -5,6 +5,27 @@ described how things were before. They are no longer true, since that
 quirk, magic or bad coding is gone. But it is kept here as an archive
 for those wanting to do backtracking to original sources.
 
+=== Legacy Update Strategies (XrefMode)
+
+Before server mode, c-xrefactory used two explicit update strategies triggered by
+command-line options. These are now replaced by the Entry Refresh algorithm which runs
+automatically on every server request.
+
+==== Fast Update
+
+Used with `-fastupdate`. Checked which source files (.c) had changed (by comparing
+modification times) and reparsed only those. Did not detect header file changes — if
+`foo.h` changed but `foo.c` didn't, `foo.c` would not be reparsed.
+
+==== Full Update
+
+Used with `-update`. Checked all files (source and headers) for changes. If a header
+changed, used `makeIncludeClosureOfFilesToUpdate` to find all source files that included
+it (transitively) and reparsed them all.
+
+Both strategies used `time_t` (one-second resolution) for change detection, which caused
+intermittent staleness when edits happened within the same second as the last parse.
+
 === Memory strategies ===
 
 There were a multitude of specialized memory allocation functions. In
