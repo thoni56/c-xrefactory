@@ -142,9 +142,12 @@ int addFileNameToFileTable(char *fileName) {
     /* Create a fileItem on the stack, with a static normalizedFileName, returned by normalizeFileName() */
     normalizedFileName = normalizeFileName_static(fileName, cwd);
 
-    /* Does it already exist? */
-    if (existsInFileTable(normalizedFileName))
-        return fileTableLookup(&fileTable, normalizedFileName);
+    /* Does it already exist? If so, resurrect if it was deleted */
+    if (existsInFileTable(normalizedFileName)) {
+        int fileNumber = fileTableLookup(&fileTable, normalizedFileName);
+        getFileItemWithFileNumber(fileNumber)->isDeleted = false;
+        return fileNumber;
+    }
 
     /* If not, add it, but then we need a filename and a fileitem in FT-memory  */
     createdFileItem = newFileItem(normalizedFileName);
