@@ -589,8 +589,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_known_bugs">17. Known Bugs</a>
 <ul class="sectlevel2">
 <li><a href="#_globalunused_false_positive_for_static_functions_in_y_files">17.1. GlobalUnused false positive for static functions in .y files</a></li>
-<li><a href="#_stale_references_after_rapid_edit_save_navigate">17.2. Stale references after rapid edit-save-navigate</a></li>
-<li><a href="#_stale_sessions_after_pop">17.3. Stale sessions after POP</a></li>
+<li><a href="#_stale_sessions_after_pop">17.2. Stale sessions after POP</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">18. Refactoring Recipes</a>
@@ -612,15 +611,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_archive">20. Archive</a>
 <ul class="sectlevel2">
-<li><a href="#_memory_strategies">20.1. Memory strategies</a></li>
-<li><a href="#_trivial_prechecks">20.2. Trivial Prechecks</a></li>
-<li><a href="#_caching_system">20.3. Caching System</a></li>
-<li><a href="#_huge_memory">20.4. HUGE Memory</a></li>
-<li><a href="#_bootstrapping">20.5. Bootstrapping</a></li>
-<li><a href="#_fill_macros">20.6. FILL macros</a></li>
-<li><a href="#_users">20.7. Users</a></li>
-<li><a href="#_architectural_invariants_historical">20.8. Architectural Invariants (Historical)</a></li>
-<li><a href="#_refactorymode_internally_calls_xrefmode">20.9. RefactoryMode Internally Calls XrefMode</a></li>
+<li><a href="#_legacy_update_strategies_xrefmode">20.1. Legacy Update Strategies (XrefMode)</a></li>
+<li><a href="#_memory_strategies">20.2. Memory strategies</a></li>
+<li><a href="#_trivial_prechecks">20.3. Trivial Prechecks</a></li>
+<li><a href="#_caching_system">20.4. Caching System</a></li>
+<li><a href="#_huge_memory">20.5. HUGE Memory</a></li>
+<li><a href="#_bootstrapping">20.6. Bootstrapping</a></li>
+<li><a href="#_fill_macros">20.7. FILL macros</a></li>
+<li><a href="#_users">20.8. Users</a></li>
+<li><a href="#_architectural_invariants_historical">20.9. Architectural Invariants (Historical)</a></li>
+<li><a href="#_refactorymode_internally_calls_xrefmode">20.10. RefactoryMode Internally Calls XrefMode</a></li>
 </ul>
 </li>
 </ul>
@@ -5114,7 +5114,7 @@ the <code>-preload</code> option to transmit modified buffers:</p>
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">EditorBuffer {
     char *name;                    // Original filename
     char *preLoadedFromFile;       // Path to temp file with buffer content
-    time_t modificationTime;       // When buffer was last modified
+    FileTimestamp modificationTime; // When buffer was last modified
     bool modified;                 // Content changed (by refactoring)
     bool modifiedSinceLastQuasiSave;  // Dirty flag for quasi-save
     bool preloadedThisRequest;     // Was this buffer preloaded on this request?
@@ -5223,7 +5223,7 @@ browsing stack.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>These are <code>time_t</code> values (seconds since epoch).</p>
+<p>These are <code>FileTimestamp</code> values (<code>struct timespec</code> with nanosecond precision).</p>
 </div>
 <div class="paragraph">
 <p><strong><em>Dual Semantics</em></strong></p>
@@ -5246,7 +5246,7 @@ browsing stack.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">time_t editorFileModificationTime(char *filename) {
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FileTimestamp editorFileModificationTime(char *filename) {
     EditorBuffer *buffer = getEditorBuffer(filename);
     if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
         return buffer-&gt;modificationTime;  // Buffer time
@@ -5267,184 +5267,16 @@ browsing stack.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">if (editorFileModificationTime(fileItem-&gt;name) != fileItem-&gt;lastParsedMtime) {
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">if (!fileTimestampsEqual(editorFileModificationTime(fileItem-&gt;name), fileItem-&gt;lastParsedMtime)) {
     // File/buffer has changed since we last parsed it
     reparse(fileItem);
     fileItem-&gt;lastParsedMtime = editorFileModificationTime(fileItem-&gt;name);
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>This pattern appears in:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>schedulingToUpdate()</code> - Marks files needing update before batch processing</p>
-</li>
-<li>
-<p><code>processModifiedFilesForNavigation()</code> - Detects modified buffers during navigation</p>
-</li>
-</ul>
-</div>
 </div>
 <div class="sect3">
-<h4 id="_update_strategies">10.3.4. Update Strategies</h4>
-<div class="paragraph">
-<p><code>C-xrefactory</code> has two update strategies that trade off speed against completeness.</p>
-</div>
-<div class="paragraph">
-<p><strong><em>Fast Update (Default)</em></strong></p>
-</div>
-<div class="paragraph">
-<p><strong>When used:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Automatic updates before PUSH operations (if enabled)</p>
-</li>
-<li>
-<p>Explicit <code>-fastupdate</code> command</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>What it does:</strong></p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Checks which source files (.c) have changed (compares modification times)</p>
-</li>
-<li>
-<p>Reparses only those changed source files</p>
-</li>
-<li>
-<p>Updates the references database</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong>Trade-off:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>✅ <strong>Fast</strong>: Only reparses files that actually changed</p>
-</li>
-<li>
-<p>❌ <strong>Incomplete</strong>: Doesn&#8217;t detect when header files change</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Example:</strong></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>foo.h modified → fast update → foo.h not reparsed
-foo.c unchanged → foo.c not reparsed
-Result: foo.c still has stale information about symbols from foo.h</pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong><em>Full Update</em></strong></p>
-</div>
-<div class="paragraph">
-<p><strong>When used:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Explicit <code>-update</code> command</p>
-</li>
-<li>
-<p>When <code>-exactpositionresolve</code> is enabled (forces full update)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>What it does:</strong></p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Checks which files (source OR headers) have changed</p>
-</li>
-<li>
-<p>If a header changed, finds all source files that include it (transitively)</p>
-</li>
-<li>
-<p>Reparses all affected source files</p>
-</li>
-<li>
-<p>Updates the references database</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong>The algorithm</strong> (<code>makeIncludeClosureOfFilesToUpdate</code>):</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Mark all changed files as <code>scheduledToUpdate</code></p>
-</li>
-<li>
-<p>For each marked file:</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Find all files that <code>#include</code> it (by looking up include references)</p>
-</li>
-<li>
-<p>Mark those files as <code>scheduledToUpdate</code> too</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Repeat until no new files are added (transitive closure)</p>
-</li>
-<li>
-<p>Reparse all marked source files</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong>Trade-off:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>✅ <strong>Complete</strong>: Catches header changes and propagates to all users</p>
-</li>
-<li>
-<p>❌ <strong>Slower</strong>: Can trigger reparsing of many source files if a common header changes</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Example:</strong></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>common.h modified → full update → finds 50 files that include it
-Result: Reparses all 50 source files to pick up header changes</pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong><em>When Does the Difference Matter?</em></strong></p>
-</div>
-<div class="paragraph">
-<p>With modern CPUs and SSDs, the performance difference is often negligible for small to
-medium projects. The fast update&#8217;s header-blindness can lead to subtle bugs where
-changes don&#8217;t propagate. Full update is generally safer and more correct.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_reference_lifecycle">10.3.5. Reference Lifecycle</h4>
+<h4 id="_reference_lifecycle">10.3.4. Reference Lifecycle</h4>
 <div class="paragraph">
 <p>References flow through multiple stages in c-xrefactory, with different storage
 locations and ownership models at each stage.</p>
@@ -5681,7 +5513,7 @@ flag on the current and next reference&#8217;s file:</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_summary">10.3.6. Summary</h4>
+<h4 id="_summary">10.3.5. Summary</h4>
 <div class="paragraph">
 <p>The key insights:</p>
 </div>
@@ -5703,22 +5535,6 @@ flag on the current and next reference&#8217;s file:</p>
 <p><strong>Sessions are snapshots</strong> that can become stale, requiring incremental rebuilding during navigation</p>
 </li>
 </ol>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The Fast Update and Full Update strategies described above are the <strong>legacy</strong>
-<code>-update</code>/<code>-fastupdate</code> path used by Xref mode. In server mode, these are replaced by
-the <a href="#entry-refresh">Entry Refresh</a> algorithm, which runs automatically on every request
-and combines the thoroughness of full update (header propagation via Pass 2) with the
-speed of fast update (only reparsing what&#8217;s actually stale).
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -8918,32 +8734,7 @@ Each entry describes symptoms, analysis (when available), and suspected root cau
 </div>
 </div>
 <div class="sect2">
-<h3 id="_stale_references_after_rapid_edit_save_navigate">17.2. Stale references after rapid edit-save-navigate</h3>
-<div class="paragraph">
-<p><strong>Symptom:</strong> After editing a file, saving, and immediately performing a PUSH or rename,
-references point to wrong positions (typically off by the number of lines added or
-removed). Navigation jumps to incorrect locations. Rename may fail with
-"expected '&#8230;&#8203;' instead of '&#8230;&#8203;'".</p>
-</div>
-<div class="paragraph">
-<p><strong>Workaround:</strong> Wait a second after saving before navigating or refactoring. Alternatively,
-make a trivial edit, save again, then retry — the second save will have a different
-timestamp.</p>
-</div>
-<div class="paragraph">
-<p><strong>Root cause:</strong> Staleness detection uses <code>time_t</code> (one-second resolution) to compare
-<code>lastParsedMtime</code> against the file&#8217;s modification time. If the file is edited and saved
-within the same second as the last parse, the mtime doesn&#8217;t change and the file appears
-"not stale." The server skips reparsing and uses outdated references.</p>
-</div>
-<div class="paragraph">
-<p><strong>Proper fix:</strong> Use <code>struct timespec</code> (nanosecond resolution from <code>stat</code>) instead of
-<code>time_t</code> for modification time tracking. This would require changes to <code>FileItem</code>,
-<code>EditorBuffer</code>, and all staleness comparison code.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_stale_sessions_after_pop">17.3. Stale sessions after POP</h3>
+<h3 id="_stale_sessions_after_pop">17.2. Stale sessions after POP</h3>
 <div class="paragraph">
 <p>Sessions hold reference copies; only the top session is refreshed on reparse. After editing a header, old locations may persist in parallel with new ones in lower stack entries. This will dissolve when sessions become index-based rather than holding copies.</p>
 </div>
@@ -9991,7 +9782,35 @@ quirk, magic or bad coding is gone. But it is kept here as an archive
 for those wanting to do backtracking to original sources.</p>
 </div>
 <div class="sect2">
-<h3 id="_memory_strategies">20.1. Memory strategies</h3>
+<h3 id="_legacy_update_strategies_xrefmode">20.1. Legacy Update Strategies (XrefMode)</h3>
+<div class="paragraph">
+<p>Before server mode, c-xrefactory used two explicit update strategies triggered by
+command-line options. These are now replaced by the Entry Refresh algorithm which runs
+automatically on every server request.</p>
+</div>
+<div class="sect3">
+<h4 id="_fast_update">20.1.1. Fast Update</h4>
+<div class="paragraph">
+<p>Used with <code>-fastupdate</code>. Checked which source files (.c) had changed (by comparing
+modification times) and reparsed only those. Did not detect header file changes — if
+<code>foo.h</code> changed but <code>foo.c</code> didn&#8217;t, <code>foo.c</code> would not be reparsed.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_full_update">20.1.2. Full Update</h4>
+<div class="paragraph">
+<p>Used with <code>-update</code>. Checked all files (source and headers) for changes. If a header
+changed, used <code>makeIncludeClosureOfFilesToUpdate</code> to find all source files that included
+it (transitively) and reparsed them all.</p>
+</div>
+<div class="paragraph">
+<p>Both strategies used <code>time_t</code> (one-second resolution) for change detection, which caused
+intermittent staleness when edits happened within the same second as the last parse.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_memory_strategies">20.2. Memory strategies</h3>
 <div class="paragraph">
 <p>There were a multitude of specialized memory allocation functions. In
 principle there where two types, static and dynamic. The dynamic could
@@ -10002,7 +9821,7 @@ be exteded using a overflow handler.</p>
 the actual struct. This was very confusing&#8230;&#8203;</p>
 </div>
 <div class="sect3">
-<h4 id="_static_memory_allocation">20.1.1. Static memory allocation</h4>
+<h4 id="_static_memory_allocation">20.2.1. Static memory allocation</h4>
 <div class="paragraph">
 <p>Static memory (SM_ prefix) are static areas allocated by the compiler
 which is then indexed using a similarly named index variable
@@ -10040,7 +9859,7 @@ the outermost CodeBlock</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_trivial_prechecks">20.2. Trivial Prechecks</h3>
+<h3 id="_trivial_prechecks">20.3. Trivial Prechecks</h3>
 <div class="paragraph">
 <p>The refactorer can call the server using <code>parseBufferUsingServer()</code> and add some extra options (in text form).
 One example is <code>setMovingPrecheckStandardEnvironment()</code> where it calls the server with <code>-olcxtrivialprecheck</code>.</p>
@@ -10068,7 +9887,7 @@ This theory should be checked by looking at the original source of the precheck 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_caching_system">20.3. Caching System</h3>
+<h3 id="_caching_system">20.4. Caching System</h3>
 <div class="paragraph">
 <p><strong>The caching system described below has been archived as it is no longer part of the current architecture.</strong></p>
 </div>
@@ -10081,7 +9900,7 @@ allowed the system to detect out-of-memory situations, discard, flush
 and re-use memory during file processing.</p>
 </div>
 <div class="sect3">
-<h4 id="_core_design_principles">20.3.1. Core Design Principles</h4>
+<h4 id="_core_design_principles">20.4.1. Core Design Principles</h4>
 <div class="paragraph">
 <p><strong>Cache Point Model</strong>: The system placed strategic snapshots of parser state at external definition boundaries (functions, global variables, etc.). When files were re-processed, the system could validate cache integrity, recover from cache points, and resume parsing only from the first changed definition onward.</p>
 </div>
@@ -10100,7 +9919,7 @@ and re-use memory during file processing.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_key_components">20.3.2. Key Components</h4>
+<h4 id="_key_components">20.4.2. Key Components</h4>
 <div class="paragraph">
 <p><strong>Cache Point Management</strong> (<code>caching.c</code>):</p>
 </div>
@@ -10150,7 +9969,7 @@ and re-use memory during file processing.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_parser_integration">20.3.3. Parser Integration</h4>
+<h4 id="_parser_integration">20.4.3. Parser Integration</h4>
 <div class="paragraph">
 <p><strong>C Parser Integration</strong>: Both C and Yacc parsers placed cache points after each <code>external_definition</code>, but only when not processing include files (<code>includeStack.pointer == 0</code>).</p>
 </div>
@@ -10172,7 +9991,7 @@ and re-use memory during file processing.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_system_dependencies">20.3.4. System Dependencies</h4>
+<h4 id="_system_dependencies">20.4.4. System Dependencies</h4>
 <div class="paragraph">
 <p>The caching system was deeply integrated throughout the parsing pipeline:</p>
 </div>
@@ -10229,7 +10048,7 @@ and re-use memory during file processing.</p>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_performance_characteristics">20.3.5. Performance Characteristics</h4>
+<h4 id="_performance_characteristics">20.4.5. Performance Characteristics</h4>
 <div class="paragraph">
 <p><strong>Cache Hit Scenarios</strong>:</p>
 </div>
@@ -10268,7 +10087,7 @@ and re-use memory during file processing.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_huge_memory">20.4. HUGE Memory</h3>
+<h3 id="_huge_memory">20.5. HUGE Memory</h3>
 <div class="paragraph">
 <p>Previously a HUGE model was also available (by re-compilation) to
 reach file numbers, lines and columns above 22 bits. But if you have
@@ -10277,9 +10096,9 @@ something radical before attempting cross referencing and refactoring.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_bootstrapping">20.5. Bootstrapping</h3>
+<h3 id="_bootstrapping">20.6. Bootstrapping</h3>
 <div class="sect3">
-<h4 id="_bootstrap_removed">20.5.1. BOOTSTRAP REMOVED!</h4>
+<h4 id="_bootstrap_removed">20.6.1. BOOTSTRAP REMOVED!</h4>
 <div class="paragraph">
 <p>Once the FILL-macros was removed, we could move the enum-generation to
 use the actual <code>c-xref</code>. So from now on we build <code>c-xref</code> directly
@@ -10291,7 +10110,7 @@ update. This is a big improvement over the previous situation!</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_fills_removed">20.5.2. FILLs REMOVED!</h4>
+<h4 id="_fills_removed">20.6.2. FILLs REMOVED!</h4>
 <div class="paragraph">
 <p>As indicated in <a href="#_fill_macros">FILL macros</a> the bootstrapping of FILL-macros has
 finally and fully been removed.</p>
@@ -10307,7 +10126,7 @@ text below is kept for historical reasons.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_rationale">20.5.3. Rationale</h4>
+<h4 id="_rationale">20.6.3. Rationale</h4>
 <div class="paragraph">
 <p><em>c-xref</em> uses a load of structures, and lists of them, that need to be
 created and initialized in a lot of places (such as the parsers). To
@@ -10330,7 +10149,7 @@ building and maintaining and to the structure of <em>c-xref</em>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_mechanism">20.5.4. Mechanism</h4>
+<h4 id="_mechanism">20.6.4. Mechanism</h4>
 <div class="paragraph">
 <p>The bootstrapping uses <em>c-xref</em>'s own capability to parse C-code and
 parse those structures and spit out filling macros, and some other
@@ -10381,7 +10200,7 @@ functions for each "class" instead of macros.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_compiler_defines">20.5.5. Compiler defines</h4>
+<h4 id="_compiler_defines">20.6.5. Compiler defines</h4>
 <div class="paragraph">
 <p>In <em>options.h</em> there are a number of definitions which somehow are
 sent to the compiler/preprocessor or used so that standard settings
@@ -10406,7 +10225,7 @@ completely replace the "programmed" ones in <code>options.c</code>?</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_enumtxt_generation_removed">20.5.6. EnumTxt generation REMOVED!</h4>
+<h4 id="_enumtxt_generation_removed">20.6.6. EnumTxt generation REMOVED!</h4>
 <div class="paragraph">
 <p>To be able to print the string values of enums the module generate.c
 (called when regime was RegimeGenerate) could also generate string
@@ -10419,7 +10238,7 @@ could do away with that whole "generate" functionality too.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_enumtxt">20.5.7. enumTxt</h4>
+<h4 id="_enumtxt">20.6.7. enumTxt</h4>
 <div class="paragraph">
 <p>For some cases the string representing the value of an Enum is needed.
 <code>c-xref</code> handles this using the "usual" 'parse code and generate' method.
@@ -10427,7 +10246,7 @@ The module <code>generate.c</code> does this generation too.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_include_paths">20.5.8. Include paths</h4>
+<h4 id="_include_paths">20.6.8. Include paths</h4>
 <div class="paragraph">
 <p>Also in <em>options.h</em> some standard-like include paths are added, but
 there is a better attempt in <em>getAndProcessGccOptions()</em> which uses
@@ -10438,7 +10257,7 @@ the compiler/preprocessor itself to figure out those paths.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_problems">20.5.9. Problems</h4>
+<h4 id="_problems">20.6.9. Problems</h4>
 <div class="paragraph">
 <p>Since at bootstrap there must exist FILL-macros with the correct field
 names this strategy is an obstacle to cleaning up the code since every
@@ -10454,7 +10273,7 @@ pass with BOOTSTRAP set, which it does.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_removing">20.5.10. Removing</h4>
+<h4 id="_removing">20.6.10. Removing</h4>
 <div class="paragraph">
 <p>I&#8217;ve started removing this step. In TODO.org I keep a hierarchical list
 of the actions to take (in a Mikado kind of style).</p>
@@ -10483,7 +10302,7 @@ CSV-file from that, and compare all rows.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_strtdef_h">20.5.11. strTdef.h</h4>
+<h4 id="_strtdef_h">20.6.11. strTdef.h</h4>
 <div class="paragraph">
 <p>The <code>strTdef.h</code> was generated using the option <code>-typedefs</code> as a part
 of the old <code>-task_regime_generate</code> strategy and generated typedef
@@ -10535,7 +10354,7 @@ included before the structs:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_fill_macros">20.6. FILL macros</h3>
+<h3 id="_fill_macros">20.7. FILL macros</h3>
 <div class="paragraph">
 <p><em><strong>The FILL macros are now fully replaced by native functions or some other,</strong></em>
 <em><strong>more refactoring-friendly, mechanism. Yeah!</strong></em></p>
@@ -10580,7 +10399,7 @@ which fields are actually necessary to set.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_users">20.7. Users</h3>
+<h3 id="_users">20.8. Users</h3>
 <div class="paragraph">
 <p><strong>The <code>-user</code> option has now been removed, both in the tool and the
   editor adaptors, and with it one instance of a hashlist, the
@@ -10621,7 +10440,7 @@ removed.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_architectural_invariants_historical">20.8. Architectural Invariants (Historical)</h3>
+<h3 id="_architectural_invariants_historical">20.9. Architectural Invariants (Historical)</h3>
 <div class="paragraph">
 <p><em>Moved from Insights chapter, 2026-03. These invariants described the model where the
 disk database was the source of truth. With "memory as truth" (2026-03), the in-memory
@@ -10645,7 +10464,7 @@ reference table is authoritative and the disk snapshot is just a startup cache.<
 </div>
 </div>
 <div class="sect2">
-<h3 id="_refactorymode_internally_calls_xrefmode">20.9. RefactoryMode Internally Calls XrefMode</h3>
+<h3 id="_refactorymode_internally_calls_xrefmode">20.10. RefactoryMode Internally Calls XrefMode</h3>
 <div class="paragraph">
 <p><em>Moved from Insights chapter, 2026-03. As of 2026-03, all refactorings run as server
 operations (<code>OP_REFACTORY</code>). This section describes the original architecture.</em></p>
@@ -10654,7 +10473,7 @@ operations (<code>OP_REFACTORY</code>). This section describes the original arch
 <p>Date: 2025-01-10</p>
 </div>
 <div class="sect3">
-<h4 id="_the_key_architectural_insight_original_architecture">20.9.1. The Key Architectural Insight (Original Architecture)</h4>
+<h4 id="_the_key_architectural_insight_original_architecture">20.10.1. The Key Architectural Insight (Original Architecture)</h4>
 <div class="paragraph">
 <p><strong>RefactoryMode ran XrefMode as an internal sub-task to update the reference database before performing refactorings.</strong></p>
 </div>
@@ -10676,7 +10495,7 @@ operations (<code>OP_REFACTORY</code>). This section describes the original arch
 </div>
 </div>
 <div class="sect3">
-<h4 id="_how_it_worked">20.9.2. How It Worked</h4>
+<h4 id="_how_it_worked">20.10.2. How It Worked</h4>
 <div class="paragraph">
 <p>When a refactoring was invoked:</p>
 </div>
@@ -10704,7 +10523,7 @@ operations (<code>OP_REFACTORY</code>). This section describes the original arch
 </div>
 </div>
 <div class="sect3">
-<h4 id="_why_refactorings_were_separate_processes">20.9.3. Why Refactorings Were Separate Processes</h4>
+<h4 id="_why_refactorings_were_separate_processes">20.10.3. Why Refactorings Were Separate Processes</h4>
 <div class="paragraph">
 <p>The Emacs client spawned a <strong>separate RefactoryMode process</strong> rather than using the interactive server because:</p>
 </div>
@@ -10723,7 +10542,7 @@ operations (<code>OP_REFACTORY</code>). This section describes the original arch
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_three_modes_relationship">20.9.4. The Three Modes Relationship</h4>
+<h4 id="_the_three_modes_relationship">20.10.4. The Three Modes Relationship</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">ServerMode (c-xref -server)
@@ -10746,7 +10565,7 @@ RefactoryMode (c-xref -refactory ...)
 </div>
 </div>
 <div class="sect3">
-<h4 id="_code_evidence">20.9.5. Code Evidence</h4>
+<h4 id="_code_evidence">20.10.5. Code Evidence</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// From refactory.c:143-145
@@ -10773,7 +10592,7 @@ void ensureReferencesAreUpdated(char *project) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implications_historical">20.9.6. Implications (Historical)</h4>
+<h4 id="_implications_historical">20.10.6. Implications (Historical)</h4>
 <div class="paragraph">
 <p>These constraints applied under the original architecture:</p>
 </div>
@@ -10802,7 +10621,7 @@ server process without a separate <code>callXref()</code> step.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-16 14:55:22 UTC
+Last updated 2026-04-16 16:44:17 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
