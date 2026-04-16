@@ -24,3 +24,19 @@ Ensure(Timestamp, now_returns_non_zero) {
     FileTimestamp now = fileTimestampNow();
     assert_that(now, is_not_equal_to(0));
 }
+
+Ensure(Timestamp, can_get_seconds) {
+    FileTimestamp ts = 1000;
+    assert_that(fileTimestampSeconds(ts), is_equal_to(1000));
+}
+
+Ensure(Timestamp, can_get_nanoseconds) {
+    FileTimestamp ts = 1000;
+    assert_that(fileTimestampNanoseconds(ts), is_equal_to(0));
+}
+
+Ensure(Timestamp, can_create_from_seconds_and_nanoseconds) {
+    FileTimestamp ts = makeFileTimestamp(1000, 0);
+    assert_that(fileTimestampSeconds(ts), is_equal_to(1000));
+    assert_that(fileTimestampNanoseconds(ts), is_equal_to(0));
+}

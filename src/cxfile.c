@@ -44,11 +44,12 @@
 
 /* *********************** INPUT/OUTPUT FIELD MARKERS ************************** */
 
-#define C_XREF_FILE_FORMAT_VERSION "1.8.0"
+#define C_XREF_FILE_FORMAT_VERSION "1.9.0"
 
 typedef enum {
-    CXFI_FILE_FUMTIME          = 'm',     /* last full update mtime for file item */
-    CXFI_FILE_UMTIME           = 'p',     /* last update mtime for file item */
+    CXFI_FILE_FUMTIME          = 'm',     /* last full update mtime for file item (seconds) */
+    CXFI_FILE_UMTIME           = 'p',     /* last update mtime for file item (seconds) */
+    CXFI_FILE_UMTIME_NSEC      = 'q',     /* last update mtime nanoseconds */
     CXFI_COMMAND_LINE_ARGUMENT = 'i',     /* file was introduced from command line */
 
     CXFI_FILE_NUMBER           = 'f',
@@ -89,6 +90,7 @@ typedef enum {
 static CxFieldTag generatedFieldKeyList[] = {
     CXFI_FILE_FUMTIME,
     CXFI_FILE_UMTIME,
+    CXFI_FILE_UMTIME_NSEC,
     CXFI_FILE_NUMBER,
     CXFI_SYMBOL_TYPE,
     CXFI_USAGE,
@@ -384,8 +386,9 @@ static void writeFileNumberItem(FileItem *fileItem, int number) {
         return;
     // keys = fpmia:
     writeOptionalCompactRecord(CXFI_FILE_NUMBER, number, "\n");
-    writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileItem->lastParsedMtime, " ");
-    writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fileItem->lastFullUpdateMtime, " ");
+    writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileTimestampSeconds(fileItem->lastParsedMtime), " ");
+    writeOptionalCompactRecord(CXFI_FILE_UMTIME_NSEC, fileTimestampNanoseconds(fileItem->lastParsedMtime), "");
+    writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fileTimestampSeconds(fileItem->lastFullUpdateMtime), " ");
     writeOptionalCompactRecord(CXFI_COMMAND_LINE_ARGUMENT, fileItem->isArgument, "");
     writeStringRecord(CXFI_FILE_NAME, fileItem->name, " ");
 }
@@ -686,11 +689,12 @@ static void scanFunction_ReadFileName(int fileNameLength,
     FileItem *fileItem;
     int fileNumber;
     bool isArgument;
-    time_t fumtime, umtime;
+    FileTimestamp fumtime, umtime;
 
     assert(key == CXFI_FILE_NAME);
-    fumtime = (time_t) lastIncomingData.data[CXFI_FILE_FUMTIME];
-    umtime = (time_t) lastIncomingData.data[CXFI_FILE_UMTIME];
+    fumtime = makeFileTimestamp(lastIncomingData.data[CXFI_FILE_FUMTIME], 0);
+    umtime = makeFileTimestamp(lastIncomingData.data[CXFI_FILE_UMTIME],
+                               lastIncomingData.data[CXFI_FILE_UMTIME_NSEC]);
     isArgument = lastIncomingData.data[CXFI_COMMAND_LINE_ARGUMENT];
 
     assert(fileNameLength < MAX_FILE_NAME_SIZE);
