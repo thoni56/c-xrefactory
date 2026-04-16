@@ -21,16 +21,6 @@
 (defvar c-xref-debug-preserve-tmp-files nil)
 ;;(toggle-debug-on-error)
 
-(defun c-xref-show-server-pid ()
-  "Show the PID of the running c-xref server process.
-Starts the server if not already running."
-  (interactive)
-  (unless (and c-xref-server-process (car c-xref-server-process)
-               (eq (process-status (car c-xref-server-process)) 'run))
-    (c-xref-start-server-process '("-server") c-xref-server-tasks-ofile
-                                 'c-xref-server-process 'c-xref-server-filter))
-  (message "C-xref server PID: %d" (process-id (car c-xref-server-process))))
-
 (defvar c-xref-tmp-dir nil "Temporary directory for c-xref.")
 (defvar c-xref-slash nil "Directory separator for c-xref.")
 (defvar c-xref-user-identification nil "User identification for c-xref.")
@@ -96,6 +86,16 @@ Starts the server if not already running."
 (defvar c-xref-server-process nil)
 
 (defvar c-xref-server-tasks-ofile (c-xref-server-get-new-tmp-file-name))
+
+(defun c-xref-show-server-pid ()
+  "Show the PID of the running c-xref server process.
+Starts the server if not already running."
+  (interactive)
+  (unless (and c-xref-server-process (car c-xref-server-process)
+               (eq (process-status (car c-xref-server-process)) 'run))
+    (c-xref-start-server-process '("-server") c-xref-server-tasks-ofile
+                                 'c-xref-server-process 'c-xref-server-filter))
+  (message "C-xref server PID: %d" (process-id (car c-xref-server-process))))
 
 (defvar c-xref-ppc-synchro-record (format "<%s>" c-xref_PPC_SYNCHRO_RECORD))
 (defvar c-xref-ppc-synchro-record-len (length c-xref-ppc-synchro-record))
