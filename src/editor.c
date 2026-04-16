@@ -40,7 +40,7 @@ void editorInit(void) {
     initEditorBufferTable();
 }
 
-time_t editorFileModificationTime(char *path) {
+FileTimestamp editorFileModificationTime(char *path) {
     EditorBuffer *buffer;
 
     buffer = getEditorBufferForFile(path);
@@ -78,12 +78,12 @@ void freeTextSpace(char *space, int index) {
     editorMemory[index] = sp;
 }
 
-void loadTextIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, const char *text) {
+void loadTextIntoEditorBuffer(EditorBuffer *buffer, FileTimestamp modificationTime, const char *text) {
     allocateNewEditorBufferTextSpace(buffer, strlen(text));
     strcpy(buffer->allocation.text, text);
 }
 
-void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize) {
+void loadFileIntoEditorBuffer(EditorBuffer *buffer, FileTimestamp modificationTime, size_t fileSize) {
     allocateNewEditorBufferTextSpace(buffer, fileSize);
 
     char *text = buffer->allocation.text;

@@ -6,10 +6,11 @@
 #include <sys/stat.h>
 
 #include "stringlist.h"
+#include "timestamp.h"
 
 
 extern bool exists(char *path);
-extern time_t fileModificationTime(char *path);
+extern FileTimestamp fileModificationTime(char *path);
 extern size_t fileSize(char *path);
 extern FILE *openFile(char *fileName, char *modes);
 extern int closeFile(FILE *file);

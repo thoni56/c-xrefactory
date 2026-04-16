@@ -16,7 +16,7 @@ extern void editorInit(void);
 
 extern bool   editorFileExists(char *path);
 extern size_t editorFileSize(char *path);
-extern time_t editorFileModificationTime(char *path);
+extern FileTimestamp editorFileModificationTime(char *path);
 
 extern void replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize, char *str,
                                         int strlength, EditorUndo **undo);
@@ -30,8 +30,8 @@ extern void clearPreloadedThisRequestFlags(void);
 extern void closeEditorBuffersNoLongerPreloaded(void);
 
 extern void freeTextSpace(char *space, int index);
-extern void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize);
-extern void loadTextIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, const char *text);
+extern void loadFileIntoEditorBuffer(EditorBuffer *buffer, FileTimestamp modificationTime, size_t fileSize);
+extern void loadTextIntoEditorBuffer(EditorBuffer *buffer, FileTimestamp modificationTime, const char *text);
 extern void allocateNewEditorBufferTextSpace(EditorBuffer *buffer, int size);
 
 extern EditorMarkerList *convertReferencesToEditorMarkers(Reference *references);

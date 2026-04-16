@@ -1,6 +1,8 @@
 #ifndef EDITORBUFFER_H_INCLUDED
 #define EDITORBUFFER_H_INCLUDED
 
+#include "timestamp.h"
+
 #include <time.h>
 #include <stdbool.h>
 
@@ -21,7 +23,7 @@ typedef struct editorBuffer {
     char                      *preLoadedFromFile;   /* If the content was preloaded this is
                                                the name on disc for the content else
                                                NULL. */
-    time_t                     modificationTime;
+    FileTimestamp              modificationTime;
     bool                       textLoaded : 1;
     bool                       modified : 1;
     bool                       modifiedSinceLastQuasiSave : 1;
@@ -39,8 +41,8 @@ typedef struct editorBufferList {
 
 extern void freeEditorBuffer(EditorBuffer *buffer);
 extern EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *preLoadedFromFile,
-                                     time_t modificationTime, size_t size);
-extern EditorBuffer *createNewEditorBuffer(char *fileName, char *preLoadedFromFile, time_t modificationTime,
+                                     FileTimestamp modificationTime, size_t size);
+extern EditorBuffer *createNewEditorBuffer(char *fileName, char *preLoadedFromFile, FileTimestamp modificationTime,
                                            size_t size);
 extern EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName);
 extern EditorBuffer *openEditorBufferFromPreload(char *fileName, char *preLoadedFromFile);

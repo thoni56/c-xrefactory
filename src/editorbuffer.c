@@ -28,7 +28,7 @@ static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *realFileName, int 
     assert(buffer->preLoadedFromFile == NULL || buffer->preLoadedFromFile != buffer->fileName);
 }
 
-EditorBuffer *newEditorBuffer(char *realFileName, int fileNumber, char *preLoadedFromFile, time_t modificationTime,
+EditorBuffer *newEditorBuffer(char *realFileName, int fileNumber, char *preLoadedFromFile, FileTimestamp modificationTime,
                               size_t size) {
     EditorBuffer *editorBuffer = malloc(sizeof(EditorBuffer));
     fillEmptyEditorBuffer(editorBuffer, realFileName, fileNumber, preLoadedFromFile);
@@ -37,7 +37,7 @@ EditorBuffer *newEditorBuffer(char *realFileName, int fileNumber, char *preLoade
     return editorBuffer;
 }
 
-EditorBuffer *createNewEditorBuffer(char *realFileName, char *preLoadedFromFile, time_t modificationTime,
+EditorBuffer *createNewEditorBuffer(char *realFileName, char *preLoadedFromFile, FileTimestamp modificationTime,
                                     size_t size) {
     char *normalizedRealFileName = strdup(normalizeFileName_static(realFileName, cwd));
 
@@ -128,7 +128,7 @@ EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName) {
 EditorBuffer *openEditorBufferFromPreload(char *fileName, char *preLoadedFromFile) {
     EditorBuffer *buffer = getEditorBufferForFile(fileName);
     if (buffer != NULL) {
-        time_t incomingMtime = fileModificationTime(preLoadedFromFile);
+        FileTimestamp incomingMtime = fileModificationTime(preLoadedFromFile);
         if (incomingMtime == buffer->modificationTime) {
             log_debug("Preload '%s': unchanged (mtime %ld), keeping existing buffer", fileName, (long)incomingMtime);
             buffer->preloadedThisRequest = true;

@@ -158,7 +158,7 @@ int fileStatus(char *path, struct stat *statP) {
     return return_value;
 }
 
-time_t fileModificationTime(char *path) {
+FileTimestamp fileModificationTime(char *path) {
     struct stat st;
     if (fileStatus(path, &st) !=0)
         return 0;               /* File not found? */

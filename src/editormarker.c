@@ -1,8 +1,8 @@
 #include "editormarker.h"
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "commons.h"
 #include "filetable.h"
@@ -10,6 +10,7 @@
 #include "log.h"
 #include "misc.h"
 #include "ppc.h"
+#include "proto.h"
 
 
 EditorMarkerList *newEditorMarkerList(EditorMarker *marker, Usage usage, EditorMarkerList *next) {
