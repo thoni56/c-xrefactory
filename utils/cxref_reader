@@ -176,10 +176,9 @@ def unpack_file_lines(lines):
 
 
 def get_filename_from_id(fileid, file_references):
-    # Return FileReference or None if no or multiple matches
     filerefs = [
         fileref for fileref in file_references if fileref.fileid == fileid]
-    return filerefs[0].filename if len(filerefs) == 1 else None
+    return filerefs[0].filename if len(filerefs) == 1 else f"<unknown-file:{fileid}>"
 
 def get_relative_filename_from_id(fileid, file_references):
     filename = get_filename_from_id(fileid, file_references)
