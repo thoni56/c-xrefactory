@@ -46,6 +46,7 @@ Ensure(EditorBuffer, can_rename_a_buffer_to_non_existing_buffer) {
     FileItem dummy_fileitem;
     FileItem *dummy_fileitemP = &dummy_fileitem;
     expect(getFileItemWithFileNumber, will_return(dummy_fileitemP), times(2));
+    expect(markFileAsDeleted);
 
     expect(getEditorBufferForFile, when(fileName, is_equal_to_string(renamed_filename)),
            will_return(NULL)); /* The new does not exist */

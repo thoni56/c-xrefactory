@@ -185,9 +185,11 @@ void renameEditorBuffer(EditorBuffer *buffer, char *newName, EditorUndo **undo) 
     char *oldName = buffer->fileName;
     buffer->fileName = strdup(newFileName);
 
-    // Update fileNumber
+    // Update fileNumber — mark old entry as deleted since the file is being renamed
+    int oldFileNumber = buffer->fileNumber;
     int newFileNumber = addFileNameToFileTable(newFileName);
-    getFileItemWithFileNumber(newFileNumber)->isArgument = getFileItemWithFileNumber(buffer->fileNumber)->isArgument;
+    getFileItemWithFileNumber(newFileNumber)->isArgument = getFileItemWithFileNumber(oldFileNumber)->isArgument;
+    markFileAsDeleted(oldFileNumber);
     buffer->fileNumber = newFileNumber;
 
     EditorBuffer *existing_buffer_with_the_new_name = getEditorBufferForFile(newFileName);
