@@ -428,12 +428,17 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
             int fileNumber = l->buffer->fileNumber;
             FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
             if (fileNumberIsStale(fileNumber) && isCompilationUnit(fileItem->name)) {
-                log_debug("Reparsing stale CU '%s'", fileItem->name);
-                reparseStaleFile(fileNumber, baseArgs);
-                EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
-                if (buffer != NULL)
-                    fileItem->lastParsedMtime = buffer->modificationTime;
-                fileItem->needsBrowsingStackRefresh = true;
+                if (!editorFileExists(fileItem->name)) {
+                    log_debug("Stale CU '%s' no longer exists, marking as deleted", fileItem->name);
+                    markFileAsDeleted(fileNumber);
+                } else {
+                    log_debug("Reparsing stale CU '%s'", fileItem->name);
+                    reparseStaleFile(fileNumber, baseArgs);
+                    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
+                    if (buffer != NULL)
+                        fileItem->lastParsedMtime = buffer->modificationTime;
+                    fileItem->needsBrowsingStackRefresh = true;
+                }
             }
         }
     }
@@ -453,12 +458,17 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
             int fileNumber = l->buffer->fileNumber;
             FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
             if (fileNumberIsStale(fileNumber) && !isCompilationUnit(fileItem->name)) {
-                cuCount = collectIncludersOfStaleHeader(fileNumber, cuFileNumbers, cuCount,
-                                                       MAX_CUS_TO_REPARSE);
-                EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
-                if (buffer != NULL)
-                    fileItem->lastParsedMtime = buffer->modificationTime;
-                fileItem->needsBrowsingStackRefresh = true;
+                if (!editorFileExists(fileItem->name)) {
+                    log_debug("Stale header '%s' no longer exists, marking as deleted", fileItem->name);
+                    markFileAsDeleted(fileNumber);
+                } else {
+                    cuCount = collectIncludersOfStaleHeader(fileNumber, cuFileNumbers, cuCount,
+                                                           MAX_CUS_TO_REPARSE);
+                    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
+                    if (buffer != NULL)
+                        fileItem->lastParsedMtime = buffer->modificationTime;
+                    fileItem->needsBrowsingStackRefresh = true;
+                }
             }
         }
     }

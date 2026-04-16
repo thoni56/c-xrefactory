@@ -62,7 +62,7 @@ bool editorFileExists(char *path) {
     EditorBuffer *buffer;
 
     buffer = getEditorBufferForFile(path);
-    if (buffer != NULL)
+    if (buffer != NULL && buffer->preLoadedFromFile != NULL)
         return true;
     return fileExists(path);
 }

@@ -135,6 +135,11 @@ bool fileNumberIsStale(int fileNumber) {
         return false;
 
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+
+    // Deleted files should not be reparsed
+    if (fileItem->isDeleted)
+        return false;
+
     EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
 
     // Explicitly marked stale (e.g. after refactoring modified the buffer)
