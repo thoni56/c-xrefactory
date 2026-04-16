@@ -19,3 +19,8 @@ Ensure(Timestamp, different_timestamps_are_not_equal) {
     FileTimestamp b = 1001;
     assert_that(fileTimestampsEqual(a, b), is_false);
 }
+
+Ensure(Timestamp, now_returns_non_zero) {
+    FileTimestamp now = fileTimestampNow();
+    assert_that(now, is_not_equal_to(0));
+}

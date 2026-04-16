@@ -3,3 +3,7 @@
 bool fileTimestampsEqual(FileTimestamp a, FileTimestamp b) {
     return a == b;
 }
+
+FileTimestamp fileTimestampNow(void) {
+    return time(NULL);
+}

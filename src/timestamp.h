@@ -7,5 +7,6 @@
 typedef time_t FileTimestamp;
 
 extern bool fileTimestampsEqual(FileTimestamp a, FileTimestamp b);
+extern FileTimestamp fileTimestampNow(void);
 
 #endif

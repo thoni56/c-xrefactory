@@ -6,8 +6,8 @@ lsp_handler lsp_utils lsp_sender macroargumenttable main match memory misc navig
 options move_function organize_includes parsing parsers position ppc progress		\
 projectstructure protocol refactorings refactory reference referenceableitem		\
 referenceableitemtable referencerefresh search semact server session stackmemory	\
-startup storage stringlist symbol symboltable type typemodifier undo usage xref		\
-yacc_parser.tab yylex
+startup storage stringlist symbol symboltable timestamp type typemodifier undo usage	\
+xref yacc_parser.tab yylex
 
 modules:
 	@echo MODULES=$(MODULES)
