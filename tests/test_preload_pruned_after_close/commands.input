@@ -3,7 +3,7 @@ CXREF -xrefactory-II -server
 <sync>
 -olcxpush -olcursor=35 -preload CURDIR/source.c CURDIR/source.preload CURDIR/source.c -p CURDIR
 <sync>
-!cp CURDIR/source_modified.c CURDIR/source.c && sleep 1
+!cp CURDIR/source_modified.c CURDIR/source.c
 -olcxpush -olcursor=37 CURDIR/source.c -p CURDIR
 <sync>
 <exit>

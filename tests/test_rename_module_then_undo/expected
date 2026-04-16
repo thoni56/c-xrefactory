@@ -43,7 +43,6 @@ end-of-options
 <goto>
  <position-off off=10 len=<n>>CURDIR/main.c</position-off>
 </goto>
-shell: sleep 2
 shell: cp CURDIR/main.c.original CURDIR/main.c
 shell: cp CURDIR/source.c.original CURDIR/source.c
 shell: cp CURDIR/source.h.original CURDIR/source.h

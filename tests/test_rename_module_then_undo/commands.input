@@ -3,7 +3,6 @@ CXREF -xrefactory-II -server
 <sync>
 -rfct-rename-module -renameto=target -olcursor=10 CURDIR/main.c -p CURDIR
 <sync>
-!sleep 2
 !cp CURDIR/main.c.original CURDIR/main.c
 !cp CURDIR/source.c.original CURDIR/source.c
 !cp CURDIR/source.h.original CURDIR/source.h
