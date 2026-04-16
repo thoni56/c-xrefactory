@@ -579,17 +579,6 @@ void saveReferencesToStore(bool updating, char *fileName) {
     LEAVE();
 }
 
-static void writeCxFileCompatibilityError(char *message) {
-    static FileTimestamp lastMessageTime;
-    if (options.mode == ServerMode) {
-        if (fileTimestampIsLessThan(lastMessageTime, fileProcessingStartTime)) {
-            errorMessage(ERR_ST, message);
-            lastMessageTime = fileTimestampNow();
-        }
-    } else {
-        FATAL_ERROR(ERR_ST, message, EXIT_FAILURE);
-    }
-}
 
 /* ************************* READ **************************** */
 
@@ -632,7 +621,6 @@ static void scanFunction_CheckNumber(int size,
 ) {
     int magicNumber, fileCount;
     bool exactPositionLinkFlag;
-    char tmpBuff[TMP_BUFF_SIZE];
 
     assert(key == CXFI_CHECK_NUMBER);
     if (options.update == UPDATE_CREATE)
@@ -642,17 +630,10 @@ static void scanFunction_CheckNumber(int size,
 
     decomposeCxfiCheckNum(magicNumber, &fileCount, &exactPositionLinkFlag);
     if (fileCount != MAX_FILES) {
-        sprintf(tmpBuff,"The reference database was generated with different MAX_FILES, recreate it");
-        writeCxFileCompatibilityError(tmpBuff);
+        log_info("Snapshot MAX_FILES mismatch (%d vs %d), ignoring", fileCount, MAX_FILES);
     }
-    log_trace("checking exactPositionResolve: %d <-> %d", exactPositionLinkFlag, options.exactPositionResolve);
     if (exactPositionLinkFlag != options.exactPositionResolve) {
-        if (exactPositionLinkFlag) {
-            sprintf(tmpBuff,"The reference database was generated with '-exactpositionresolve' flag, recreate it");
-        } else {
-            sprintf(tmpBuff,"The reference database was generated without '-exactpositionresolve' flag, recreate it");
-        }
-        writeCxFileCompatibilityError(tmpBuff);
+        log_info("Snapshot exactPositionResolve mismatch, ignoring");
     }
 }
 
