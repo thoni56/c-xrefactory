@@ -12,6 +12,7 @@
 #include "lsp_adapter.h"
 #include "lsp_sender.h"
 #include "parsing.h"
+#include "timestamp.h"
 
 static char *filename_from_uri(const char *uri) {
     char *uri_prefix = "file://";
@@ -103,8 +104,8 @@ void handle_did_open(JSON *notification) {
     log_trace("LSP: Opened file '%s', text = '%s'", uri, text);
 
     char *fileName = filename_from_uri(uri);
-    EditorBuffer *buffer = createNewEditorBuffer(fileName, NULL, time(NULL), strlen(text));
-    loadTextIntoEditorBuffer(buffer, time(NULL), text);
+    EditorBuffer *buffer = createNewEditorBuffer(fileName, NULL, fileTimestampNow(), strlen(text));
+    loadTextIntoEditorBuffer(buffer, fileTimestampNow(), text);
     buffer->textLoaded = true;  /* Mark text as loaded for getOpenedAndLoadedEditorBuffer() */
 
     /* Parse the file to populate the reference database.

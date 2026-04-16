@@ -37,6 +37,7 @@
 #include "session.h"
 #include "storage.h"
 #include "symbol.h"
+#include "timestamp.h"
 #include "type.h"
 #include "usage.h"
 #include "visibility.h"
@@ -2259,7 +2260,7 @@ void markPreloadedFilesAsAncient(void) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             if (isPreloaded(l->buffer)) {
                 FileItem *fileItem = getFileItemWithFileNumber(l->buffer->fileNumber);
-                fileItem->lastParsedMtime = 0;
+                fileItem->lastParsedMtime = ZERO_TIMESTAMP;
             }
         }
     }

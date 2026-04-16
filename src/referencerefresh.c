@@ -60,7 +60,7 @@ void ensureFreshReferences(ReferenceableItem *item, ArgumentsVector baseArgs) {
             continue;
 
         FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-        if (editorFileModificationTime(fileItem->name) != fileItem->lastParsedMtime) {
+        if (!fileTimestampsEqual(editorFileModificationTime(fileItem->name), fileItem->lastParsedMtime)) {
             reparseStaleFile(fileNumber, baseArgs);
         }
     }

@@ -24,6 +24,7 @@
 #include "protocol.h"
 #include "referenceableitemtable.h"
 #include "startup.h"
+#include "timestamp.h"
 #include "yylex.h"
 
 
@@ -134,11 +135,11 @@ static void schedulingToUpdate(FileItem *fileItem, bool calledDuringRefactoring)
         fileItem->scheduledToUpdate = false;
         fileItem->cxLoading = true;
     } else if (options.update == UPDATE_FULL) {
-        if (editorFileModificationTime(fileItem->name) != fileItem->lastFullUpdateMtime) {
+        if (!fileTimestampsEqual(editorFileModificationTime(fileItem->name), fileItem->lastFullUpdateMtime)) {
             fileItem->scheduledToUpdate = true;
         }
     } else {
-        if (editorFileModificationTime(fileItem->name) != fileItem->lastParsedMtime) {
+        if (!fileTimestampsEqual(editorFileModificationTime(fileItem->name), fileItem->lastParsedMtime)) {
             fileItem->scheduledToUpdate = true;
         }
     }
@@ -174,7 +175,7 @@ static void processInputFile(ArgumentsVector args, bool *atLeastOneProcessedP) {
 static void oneWholeFileProcessing(ArgumentsVector args, FileItem *fileItem, XrefConfig *config,
                                    bool *atLeastOneProcessed) {
     inputFileName           = fileItem->name;
-    fileProcessingStartTime = time(NULL);
+    fileProcessingStartTime = fileTimestampNow();
     // O.K. but this is missing all header files
     fileItem->lastParsedMtime = fileItem->lastModified;
     if (config->updateType == UPDATE_FULL || config->updateType == UPDATE_CREATE) {

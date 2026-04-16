@@ -286,14 +286,14 @@ void moveBlockInEditorBuffer(EditorMarker *sourceMarker, EditorMarker *destinati
 
 static void quasiSaveEditorBuffer(EditorBuffer *buffer) {
     buffer->modifiedSinceLastQuasiSave = false;
-    buffer->modificationTime = time(NULL);
+    buffer->modificationTime = fileTimestampNow();
     FileItem *fileItem = getFileItemWithFileNumber(buffer->fileNumber);
     fileItem->lastModified = buffer->modificationTime;
 }
 
 void quasiSaveModifiedEditorBuffers(void) {
     bool          saving            = false;
-    static FileTimestamp lastQuasiSaveTime = 0;
+    static FileTimestamp lastQuasiSaveTime = ZERO_TIMESTAMP;
 
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *ll = getEditorBufferListElementAt(i); ll != NULL; ll = ll->next) {
@@ -307,12 +307,14 @@ cont:
     if (saving) {
         // sychronization, since last quazi save, there must
         // be at least one second, otherwise times will be wrong
-        FileTimestamp currentTime = time(NULL);
-        if (lastQuasiSaveTime > currentTime + 5) {
+        FileTimestamp currentTime = fileTimestampNow();
+        long currentSeconds = fileTimestampSeconds(currentTime);
+        long lastSaveSeconds = fileTimestampSeconds(lastQuasiSaveTime);
+        if (lastSaveSeconds > currentSeconds + 5) {
             FATAL_ERROR(ERR_INTERNAL, "last save in the future, travelling in time?",
                         EXIT_FAILURE);
-        } else if (lastQuasiSaveTime >= currentTime) {
-            sleep(1 + lastQuasiSaveTime - currentTime);
+        } else if (lastSaveSeconds >= currentSeconds) {
+            sleep(1 + lastSaveSeconds - currentSeconds);
         }
     }
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
@@ -322,7 +324,7 @@ cont:
             }
         }
     }
-    lastQuasiSaveTime = time(NULL);
+    lastQuasiSaveTime = fileTimestampNow();
 }
 
 void markModifiedEditorBuffersAsStale(void) {
@@ -330,7 +332,7 @@ void markModifiedEditorBuffersAsStale(void) {
         for (EditorBufferList *ll = getEditorBufferListElementAt(i); ll != NULL; ll = ll->next) {
             if (ll->buffer->modifiedSinceLastQuasiSave) {
                 FileItem *fi = getFileItemWithFileNumber(ll->buffer->fileNumber);
-                fi->lastParsedMtime = 0;
+                fi->lastParsedMtime = ZERO_TIMESTAMP;
             }
         }
     }

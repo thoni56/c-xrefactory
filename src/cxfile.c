@@ -22,6 +22,7 @@
 #include "referenceableitemtable.h"
 #include "search.h"
 #include "session.h"
+#include "timestamp.h"
 #include "usage.h"
 
 
@@ -579,11 +580,11 @@ void saveReferencesToStore(bool updating, char *fileName) {
 }
 
 static void writeCxFileCompatibilityError(char *message) {
-    static time_t lastMessageTime;
+    static FileTimestamp lastMessageTime;
     if (options.mode == ServerMode) {
-        if (lastMessageTime < fileProcessingStartTime) {
+        if (fileTimestampIsLessThan(lastMessageTime, fileProcessingStartTime)) {
             errorMessage(ERR_ST, message);
-            lastMessageTime = time(NULL);
+            lastMessageTime = fileTimestampNow();
         }
     } else {
         FATAL_ERROR(ERR_ST, message, EXIT_FAILURE);
@@ -668,7 +669,7 @@ static int fileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
     }
     if (options.mode == ServerMode) {
         log_trace("last inspected == %d, start at %d\n", fileItem->lastInspected, fileProcessingStartTime);
-        if (fileItem->lastInspected < fileProcessingStartTime) {
+        if (fileTimestampIsLessThan(fileItem->lastInspected, fileProcessingStartTime)) {
             updateFromCxFile = true;
         } else {
             updateFromCxFile = false;
@@ -707,9 +708,9 @@ static void scanFunction_ReadFileName(int fileNameLength,
         fileNumber = addFileNameToFileTable(fileName);
         fileItem = getFileItemWithFileNumber(fileNumber);
         fileItem->isArgument = isArgument;
-        if (fileItem->lastFullUpdateMtime == 0)
+        if (fileTimestampIsZero(fileItem->lastFullUpdateMtime))
             fileItem->lastFullUpdateMtime=fumtime;
-        if (fileItem->lastParsedMtime == 0)
+        if (fileTimestampIsZero(fileItem->lastParsedMtime))
             fileItem->lastParsedMtime=umtime;
         assert(options.mode);
         if (options.mode == XrefMode) {
@@ -727,9 +728,9 @@ static void scanFunction_ReadFileName(int fileNameLength,
         if (options.mode == ServerMode) {
             fileItem->isArgument = isArgument;
         }
-        if (fileItem->lastFullUpdateMtime == 0)
+        if (fileTimestampIsZero(fileItem->lastFullUpdateMtime))
             fileItem->lastFullUpdateMtime=fumtime;
-        if (fileItem->lastParsedMtime == 0)
+        if (fileTimestampIsZero(fileItem->lastParsedMtime))
             fileItem->lastParsedMtime=umtime;
     }
     fileItem->isFromCxfile = true;
@@ -1162,7 +1163,7 @@ static bool scanCxFile(char *cxFileLocation, char *element1, char *element2,
 }
 
 bool loadFileNumbersFromStore(void) {
-    static time_t savedModificationTime = 0; /* Cache previously read file data... */
+    static FileTimestamp savedModificationTime; /* Cache previously read file data... */
     static off_t savedFileSize = 0;
     static char previouslyReadFileName[MAX_FILE_NAME_SIZE] = ""; /* ... and name */
     char cxFileName[MAX_FILE_NAME_SIZE];
@@ -1174,9 +1175,9 @@ bool loadFileNumbersFromStore(void) {
     }
     if (editorFileExists(cxFileName)) {
         size_t currentSize = editorFileSize(cxFileName);
-        time_t currentModificationTime = editorFileModificationTime(cxFileName);
+        FileTimestamp currentModificationTime = editorFileModificationTime(cxFileName);
         if (strcmp(previouslyReadFileName, cxFileName) != 0
-            || savedModificationTime != currentModificationTime
+            || !fileTimestampsEqual(savedModificationTime, currentModificationTime)
             || savedFileSize != currentSize)
         {
             log_trace(":(re)reading reference file '%s'", cxFileName);

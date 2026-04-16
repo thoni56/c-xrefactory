@@ -29,6 +29,7 @@
 #include "server.h"
 #include "session.h"
 #include "startup.h"
+#include "timestamp.h"
 #include "undo.h"
 #include "xref.h"
 
@@ -609,7 +610,7 @@ static void updateIncludeDirectives(EditorMarkerList *markers, char *currentIncl
 static void markOccurrenceFilesAsStale(EditorMarkerList *occurrences) {
     for (EditorMarkerList *l = occurrences; l != NULL; l = l->next) {
         FileItem *fi = getFileItemWithFileNumber(l->marker->buffer->fileNumber);
-        fi->lastParsedMtime = 0;
+        fi->lastParsedMtime = ZERO_TIMESTAMP;
     }
 }
 

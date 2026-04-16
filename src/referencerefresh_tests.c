@@ -41,11 +41,12 @@ Ensure(ReferenceRefresh, ensureFreshReferences_should_not_reparse_when_file_is_f
                                                    GlobalScope, VisibilityGlobal, NO_FILE_NUMBER);
     item.references = &ref;
 
-    FileItem fileItem = {.name = "foo.c", .lastParsedMtime = 100};
+    FileTimestamp mtime100 = {100, 0};
+    FileItem fileItem = {.name = "foo.c", .lastParsedMtime = {100, 0}};
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(1)),
            will_return(&fileItem));
     expect(editorFileModificationTime, when(path, is_equal_to_string("foo.c")),
-           will_return(100));
+           will_return(&mtime100));
     never_expect(parseToCreateReferences);
 
     ArgumentsVector baseArgs = {.argc = 0, .argv = NULL};
@@ -58,11 +59,12 @@ Ensure(ReferenceRefresh, ensureFreshReferences_should_reparse_when_file_is_stale
                                                    GlobalScope, VisibilityGlobal, NO_FILE_NUMBER);
     item.references = &ref;
 
-    FileItem fileItem = {.name = "foo.c", .lastParsedMtime = 100};
+    FileTimestamp mtime200 = {200, 0};
+    FileItem fileItem = {.name = "foo.c", .lastParsedMtime = {100, 0}};
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(1)),
            will_return(&fileItem));
     expect(editorFileModificationTime, when(path, is_equal_to_string("foo.c")),
-           will_return(200));
+           will_return(&mtime200));
     /* Stale: mtime 200 != lastParsedMtime 100 → should reparse */
     expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(1)));
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(1)),
@@ -82,12 +84,13 @@ Ensure(ReferenceRefresh, ensureFreshReferences_should_reparse_stale_file_only_on
                                                    GlobalScope, VisibilityGlobal, NO_FILE_NUMBER);
     item.references = &ref1;
 
-    FileItem fileItem = {.name = "foo.c", .lastParsedMtime = 100};
+    FileTimestamp mtime200 = {200, 0};
+    FileItem fileItem = {.name = "foo.c", .lastParsedMtime = {100, 0}};
     /* Should only be called once despite two references in the same file */
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(1)),
            will_return(&fileItem));
     expect(editorFileModificationTime, when(path, is_equal_to_string("foo.c")),
-           will_return(200));
+           will_return(&mtime200));
     expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(1)));
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(1)),
            will_return(&fileItem));
@@ -105,11 +108,12 @@ Ensure(ReferenceRefresh, ensureFreshReferences_should_reparse_when_file_was_neve
                                                    GlobalScope, VisibilityGlobal, NO_FILE_NUMBER);
     item.references = &ref;
 
-    FileItem fileItem = {.name = "foo.c", .lastParsedMtime = 0};
+    FileTimestamp mtime100 = {100, 0};
+    FileItem fileItem = {.name = "foo.c", .lastParsedMtime = {0, 0}};
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(1)),
            will_return(&fileItem));
     expect(editorFileModificationTime, when(path, is_equal_to_string("foo.c")),
-           will_return(100));
+           will_return(&mtime100));
     expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(1)));
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(1)),
            will_return(&fileItem));

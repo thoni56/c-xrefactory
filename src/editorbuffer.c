@@ -11,6 +11,7 @@
 #include "globals.h"
 #include "log.h"
 #include "memory.h"
+#include "timestamp.h"
 #include "undo.h"
 
 
@@ -22,7 +23,7 @@ static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *realFileName, int 
     *buffer = (EditorBuffer){
         .fileName = realFileName, .fileNumber = fileNumber, .preLoadedFromFile = preLoadedFromFile,
         .markers = NULL, .allocation = buffer->allocation};
-    buffer->modificationTime = 0;
+    buffer->modificationTime = ZERO_TIMESTAMP;
     buffer->size = 0;
     buffer->textLoaded = false;
     assert(buffer->preLoadedFromFile == NULL || buffer->preLoadedFromFile != buffer->fileName);
@@ -129,13 +130,13 @@ EditorBuffer *openEditorBufferFromPreload(char *fileName, char *preLoadedFromFil
     EditorBuffer *buffer = getEditorBufferForFile(fileName);
     if (buffer != NULL) {
         FileTimestamp incomingMtime = fileModificationTime(preLoadedFromFile);
-        if (incomingMtime == buffer->modificationTime) {
-            log_debug("Preload '%s': unchanged (mtime %ld), keeping existing buffer", fileName, (long)incomingMtime);
+        if (fileTimestampsEqual(incomingMtime, buffer->modificationTime)) {
+            log_debug("Preload '%s': unchanged (mtime %ld), keeping existing buffer", fileName, fileTimestampSeconds(incomingMtime));
             buffer->preloadedThisRequest = true;
             return buffer;
         }
         log_debug("Preload '%s': content changed (mtime %ld -> %ld), reloading", fileName,
-                  (long)buffer->modificationTime, (long)incomingMtime);
+                  fileTimestampSeconds(buffer->modificationTime), fileTimestampSeconds(incomingMtime));
         free(buffer->preLoadedFromFile);
         buffer->preLoadedFromFile = strdup(normalizeFileName_static(preLoadedFromFile, cwd));
         loadFileIntoEditorBuffer(buffer, incomingMtime, fileSize(preLoadedFromFile));

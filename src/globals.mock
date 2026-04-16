@@ -64,7 +64,7 @@ Position parameterBeginPosition;
 Position parameterEndPosition;
 
 char *inputFileName;
-time_t fileProcessingStartTime;
+FileTimestamp fileProcessingStartTime;
 
 char cwd[MAX_FILE_NAME_SIZE];
 

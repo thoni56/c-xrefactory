@@ -28,6 +28,7 @@
 #include "referenceableitemtable.h"
 #include "stackmemory.h"
 #include "symboltable.h"
+#include "timestamp.h"
 #include "xref.h"
 #include "yylex.h"
 
@@ -675,7 +676,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
     if (previousPass != currentPass                                       /* We are in a different pass */
         || strcmp(previousProjectConfigurationFile, projectConfigFileName) != 0 /* or we are using a different options file */
         || strcmp(previousProjectConfigurationSection, projectSectionName) != 0 /* or a different project */
-        || previousProjectConfigurationFileModificationTime != modifiedTime       /* or the options file has changed */
+        || !fileTimestampsEqual(previousProjectConfigurationFileModificationTime, modifiedTime) /* or the options file has changed */
     ) {
         /* === PHASE 2-4: Options reading, compiler discovery, memory checkpointing === */
         loadProjectSettings(baseArgs, requestArgs, projectConfigFileName, projectSectionName, fileName);
@@ -768,7 +769,7 @@ void totalTaskEntryInitialisations(void) {
 
     // Start time
     // just for very beginning
-    fileProcessingStartTime = time(NULL);
+    fileProcessingStartTime = fileTimestampNow();
 
     // Data structures
     resetAllCounters();

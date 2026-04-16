@@ -19,8 +19,9 @@ int fileStatus(char *path, struct stat *statbuf) {
     return (int)mock(path, statbuf);
 }
 
-time_t fileModificationTime(char *path) {
-    return (time_t)mock(path);
+FileTimestamp fileModificationTime(char *path) {
+    FileTimestamp *ts = (FileTimestamp *)mock(path);
+    return *ts;
 }
 
 size_t fileSize(char *path) {

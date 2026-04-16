@@ -10,7 +10,7 @@ static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *fileName, int file
                                                       .allocatedSize = 0};
     *buffer = (EditorBuffer){.fileName = fileName, .fileNumber = fileNumber, .preLoadedFromFile = preLoadedFromFile, .markers = NULL,
                              .allocation = buffer->allocation};
-    buffer->modificationTime = 0;
+    buffer->modificationTime = ZERO_TIMESTAMP;
     buffer->size = 0;
 }
 
@@ -23,8 +23,11 @@ extern EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *preLo
     return editorBuffer;
 }
 
-EditorBuffer *createNewEditorBuffer(char *fileName, char *preLoadedFromFile, FileTimestamp modificationTime, size_t size) {
-    return (EditorBuffer *)mock(fileName, preLoadedFromFile, modificationTime, size);
+EditorBuffer *createNewEditorBuffer(char *fileName, char *preLoadedFromFile,
+                                    FileTimestamp modificationTime, size_t size)
+{
+    FileTimestamp *modificationTimeP = &modificationTime;
+    return (EditorBuffer *)mock(fileName, preLoadedFromFile, modificationTimeP, size);
 }
 
 void freeEditorBuffer(EditorBuffer *buffer) {

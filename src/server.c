@@ -27,6 +27,7 @@
 #include "referencerefresh.h"
 #include "session.h"
 #include "startup.h"
+#include "timestamp.h"
 #include "yylex.h"
 
 
@@ -100,7 +101,7 @@ static int scheduleFileUsingTheMacro(void) {
  * impossible to improve further until that mystery is sorted.
  */
 static bool prepareInputFileForRequest(void) {
-    fileProcessingStartTime = time(NULL);
+    fileProcessingStartTime = fileTimestampNow();
 
     // Server mode: get a single scheduled file for this request
     // TODO: why is it picking the first scheduled in fileNumber order?
@@ -491,8 +492,8 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
 }
 
 static bool fileNeedsParsing(FileItem *fileItem) {
-    return fileItem->lastParsedMtime == 0
-        || editorFileModificationTime(fileItem->name) != fileItem->lastParsedMtime;
+    return fileTimestampIsZero(fileItem->lastParsedMtime)
+        || !fileTimestampsEqual(editorFileModificationTime(fileItem->name), fileItem->lastParsedMtime);
 }
 
 static void parseDiscoveredCompilationUnits(ArgumentsVector baseArgs) {
@@ -660,7 +661,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
             FileItem *fi = getFileItemWithFileNumber(i);
             if (isCompilationUnit(fi->name)) {
                 totalCUs++;
-                if (fi->lastParsedMtime == 0)
+                if (fileTimestampIsZero(fi->lastParsedMtime))
                     staleCUs++;
             }
         }
@@ -678,7 +679,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
                 initProgress(progressFormat);
                 for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
                     FileItem *fi = getFileItemWithFileNumber(i);
-                    if (isCompilationUnit(fi->name) && fi->lastParsedMtime == 0) {
+                    if (isCompilationUnit(fi->name) && fileTimestampIsZero(fi->lastParsedMtime)) {
                         reparseStaleFile(i, baseArgs);
                         fi->lastParsedMtime = editorFileModificationTime(fi->name);
                         parsed++;

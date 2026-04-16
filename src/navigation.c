@@ -13,6 +13,7 @@
 #include "options.h"
 #include "ppc.h"
 #include "referenceableitemtable.h"
+#include "timestamp.h"
 
 
 /*
@@ -143,7 +144,7 @@ bool fileNumberIsStale(int fileNumber) {
     EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
 
     // Explicitly marked stale (e.g. after refactoring modified the buffer)
-    if (fileItem->lastParsedMtime == 0)
+    if (fileTimestampIsZero(fileItem->lastParsedMtime))
         return true;
 
     // No preload = not stale
@@ -151,7 +152,7 @@ bool fileNumberIsStale(int fileNumber) {
         return false;
 
     // Already refreshed? (lastParsedMtime updated to buffer's mtime after refresh)
-    if (fileItem->lastParsedMtime >= buffer->modificationTime)
+    if (!fileTimestampIsLessThan(fileItem->lastParsedMtime, buffer->modificationTime))
         return false;
 
     return true;

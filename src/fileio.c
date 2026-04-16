@@ -161,8 +161,8 @@ int fileStatus(char *path, struct stat *statP) {
 FileTimestamp fileModificationTime(char *path) {
     struct stat st;
     if (fileStatus(path, &st) !=0)
-        return 0;               /* File not found? */
-    return st.st_mtime;
+        return ZERO_TIMESTAMP;               /* File not found? */
+    return st.st_mtim;
 }
 
 size_t fileSize(char *path) {
