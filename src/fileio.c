@@ -165,7 +165,7 @@ FileTimestamp fileModificationTime(char *path) {
 #ifdef __APPLE__
     return st.st_mtimespec;
 #else
-    return st.st_mtime;
+    return st.st_mtim;
 #endif
 }
 
