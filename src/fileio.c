@@ -162,7 +162,11 @@ FileTimestamp fileModificationTime(char *path) {
     struct stat st;
     if (fileStatus(path, &st) !=0)
         return ZERO_TIMESTAMP;               /* File not found? */
-    return st.st_mtim;
+#ifdef __APPLE__
+    return st.st_mtimespec;
+#else
+    return st.st_mtime;
+#endif
 }
 
 size_t fileSize(char *path) {
