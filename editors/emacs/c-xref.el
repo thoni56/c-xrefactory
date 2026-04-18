@@ -6197,7 +6197,10 @@ refactoring.
 (defun c-xref-do-refactoring (opts)
   "Execute a refactoring via the running server."
   (c-xref-call-process-with-basic-file-data-all-saves
-   (mapconcat 'identity opts " ")))
+   (mapconcat (lambda (opt) (if (string-match-p " " opt)
+                                (format "\"%s\"" opt)
+                              opt))
+              opts " ")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; RENAMING ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
