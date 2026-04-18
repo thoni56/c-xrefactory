@@ -28,10 +28,8 @@
 #include "refactorings.h"
 #include "server.h"
 #include "session.h"
-#include "startup.h"
 #include "timestamp.h"
 #include "undo.h"
-#include "xref.h"
 
 
 #define RRF_CHARS_TO_PRE_CHECK_AROUND 1
@@ -579,7 +577,7 @@ static void renameFile(EditorMarker *marker, char *newName) {
     checkedRenameBuffer(marker->buffer, newName, &editorUndo);
 }
 
-static void updateIncludeDirectives(EditorMarkerList *markers, char *currentIncludeFileName) {
+static void updateAllIncludeDirectives(EditorMarkerList *markers, char *currentIncludeFileName) {
     char newName[MAX_FILE_NAME_SIZE];
     char newPath[MAX_FILE_NAME_SIZE];
     char currentIncludeFilePath[MAX_FILE_NAME_SIZE];
@@ -713,10 +711,10 @@ static void renameAtPoint(EditorMarker *point) {
 }
 
 static void updateIncludeGuard(char *includedFileName, char headerPath[]) {
-    EditorBuffer *headerBuf = findOrCreateAndLoadEditorBufferForFile(headerPath);
-    if (headerBuf != NULL) {
-        char *text = headerBuf->allocation.text;
-        int textSize = headerBuf->allocation.bufferSize;
+    EditorBuffer *bufferForHeaderFile = findOrCreateAndLoadEditorBufferForFile(headerPath);
+    if (bufferForHeaderFile != NULL) {
+        char *text = bufferForHeaderFile->allocation.text;
+        int textSize = bufferForHeaderFile->allocation.bufferSize;
 
         /* Find the first non-blank character */
         int pos = 0;
@@ -774,8 +772,8 @@ static void updateIncludeGuard(char *includedFileName, char headerPath[]) {
                     /* Replace #ifndef first, then #define.  EditorMarkers
                      * track position shifts, so order doesn't affect
                      * correctness.  This order matches the replay output. */
-                    EditorMarker *m1 = newEditorMarker(headerBuf, ifndefPos);
-                    EditorMarker *m2 = newEditorMarker(headerBuf, definePos);
+                    EditorMarker *m1 = newEditorMarker(bufferForHeaderFile, ifndefPos);
+                    EditorMarker *m2 = newEditorMarker(bufferForHeaderFile, definePos);
                     checkedReplaceString(m1, oldGuard, newGuard);
                     checkedReplaceString(m2, oldGuard, newGuard);
                     freeEditorMarker(m1);
@@ -806,11 +804,9 @@ static void renameCompanionFile(char headerPath[]) {
     }
 }
 
-static void appendSuffixToModuleName(char *includeFileName) {
-    char newHeaderName[MAX_FILE_NAME_SIZE];
+static void appendSuffixToModuleName(char *moduleName, char *includeFileName, char *result) {
     char *suffix = getFileSuffix(includeFileName);
-    sprintf(newHeaderName, "%s%s", refactoringOptions.renameTo, suffix);
-    allocateStringForOption(&refactoringOptions.renameTo, newHeaderName);
+    sprintf(result, "%s%s", moduleName, suffix);
 }
 
 static void renameAtInclude(EditorMarker *point) {
@@ -824,10 +820,10 @@ static void renameAtInclude(EditorMarker *point) {
 
     char *message = STANDARD_C_SELECT_SYMBOLS_MESSAGE;
 
-    char stringInInclude[TMP_STRING_SIZE];
+    char includedFileName[TMP_STRING_SIZE];
     EditorMarkerList *occurrences;
     occurrences = getReferences(point, message, PPCV_BROWSER_TYPE_INFO);
-    strcpy(stringInInclude, getStringInInclude_static(point));
+    strcpy(includedFileName, getStringInInclude_static(point));
 
     EditorUndo *undoStartPoint = editorUndo;
 
@@ -840,19 +836,22 @@ static void renameAtInclude(EditorMarker *point) {
      * #include position.  In that case, this check should be reinstated with
      * identity references filtered out. */
 
-    if (stringInInclude[0] != '"') {
+    if (includedFileName[0] != '"') {
         errorMessage(ERR_ST, "Only quoted includes (#include \"...\") can be renamed");
         return;
     }
 
-    char *includeFileName = &stringInInclude[1];
-    stringInInclude[strlen(stringInInclude)-1] = '\0';
+    char *includeFileName = &includedFileName[1];
+    includedFileName[strlen(includedFileName)-1] = '\0';
 
     /* For module rename, the user provides the module name ("target"), not the
      * full filename ("target.h").  Append the original suffix so that
      * renameIncludes gets the correct header filename. */
     if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
-        appendSuffixToModuleName(includeFileName);
+        char headerFileName[MAX_FILE_NAME_SIZE];
+        appendSuffixToModuleName(refactoringOptions.renameTo, includeFileName, headerFileName);
+        allocateStringForOption(&refactoringOptions.renameTo, headerFileName);
+
     }
 
     /* For module rename, update include guard before renameIncludes renames
@@ -865,7 +864,7 @@ static void renameAtInclude(EditorMarker *point) {
         updateIncludeGuard(includeFileName, headerPath);
     }
 
-    updateIncludeDirectives(occurrences, includeFileName);
+    updateAllIncludeDirectives(occurrences, includeFileName);
 
     /* For module rename, also rename the companion .c file */
     if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
