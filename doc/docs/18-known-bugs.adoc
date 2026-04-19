@@ -32,3 +32,47 @@ The yacc parser creates a different scope or symbol context when parsing C code 
 === Stale sessions after POP
 
 Sessions hold reference copies; only the top session is refreshed on reparse. After editing a header, old locations may persist in parallel with new ones in lower stack entries. This will dissolve when sessions become index-based rather than holding copies.
+
+
+=== Extract Function loses variables declared inside the region
+
+*Symptom:* When a local variable is declared _inside_ the selected extraction region and used _after_ the region, the Extract Function refactoring does not return it or pass it back. The extracted function has return type `void`, and the call site does not capture the value, leaving the outer code using an undeclared identifier.
+
+*Example:*
+
+[source,c]
+----
+void foo(char *text, int textSize) {
+    // region begin
+    int pos = 0;
+    while (pos < textSize && text[pos] == ' ')
+        pos++;
+    // region end
+    printf("%d\n", pos);   // <-- pos is live after the region
+}
+----
+
+Expected: the extracted function returns `int` and the call site reads `int pos = newFunction_(text, textSize);`.
+Actual: the extracted function is `void`, the call is `newFunction_(text, textSize);`, and `pos` in `printf` becomes an unresolved identifier.
+
+*Analysis:*
+
+Region boundaries are established by `putRegionMarker` in `lexer.c`, which injects the synthetic token sequence `parChar ; OL_MARKER_TOKEN parChar` (`{ ; OL_MARKER {` at begin, `} ; OL_MARKER }` at end). This wraps the region in two nested yacc scopes. Consequences:
+
+1. Any variable declared inside the region is added to the innermost synthetic scope. When the region ends, `endBlock()` pops that scope and `deleteSymDef` removes the symbol from `symbolTable`.
+2. When parsing continues past the region, subsequent uses of the region-declared name hit the fallthrough path in `lookupIdentifier` (the hash bucket no longer contains the symbol) and reduce via `primary_expr`'s implicit-function-declaration branch. The outer use is recorded as an `extern int pos()`, not as a use of the local `pos`.
+3. In `classifyVariableUsingDataFlow`, the extract-format local `pos` has its `UsageDefined` _and_ all inside-region uses in its reference list, but no outside use. `collectVariableUsages` therefore reports `outUsages == 0`, the variable is classified as `CLASSIFIED_AS_NONE` (not `CLASSIFIED_AS_LOCAL_OUT_ARGUMENT`), and the "return this variable" promotion never fires.
+
+*Why the synthesis exists:*
+
+The synthetic `{` and `}` are not only for scoping. They also establish a structural invariant checked in `programStructureMismatch` (`extract.c:862`): `blockAtBegin == blockAtEnd`, where both are captured as `currentBlock->outerBlock` at the OL markers. An empirical probe that removed the synthesis caused 6 of 12 existing extract tests to fail with `Region / program structure mismatch`, because a `beginBlock` fires inside the region's content (grammar rule origin not yet pinpointed) and the `outerBlock` at the two markers no longer matches.
+
+*Suspected root cause:*
+
+The synthesis correctly enforces the structural invariant but as a side effect confines region-local declarations to a throwaway scope. The reference-based data-flow analysis in `extract.c` cannot recover the outside use because the symbol has already been removed from the symbol table by the time that use is parsed.
+
+*Related:* `TODO.org` lines 176-178 describe this from the opposite angle: "declarations required by code left outside the extraction [get] moved to the extracted function; this should probably trigger structure error". The documented workaround is to error out; a proper fix would return the variable.
+
+*Test:* `tests/test_extract_local_declared_in_region_used_after` captures the minimal case.
+
+*Workaround:* Declare the variable _before_ the selected region. Variables declared outside the region and assigned inside it are handled correctly (classified as `CLASSIFIED_AS_OUT_ARGUMENT`, promoted to `CLASSIFIED_AS_RESULT_VALUE`).
