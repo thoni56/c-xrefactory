@@ -473,67 +473,52 @@ static bool handleSafetyCheckDifferenceLists(EditorMarkerList *diff1, EditorMark
 
 static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs, EditorUndo *startPoint,
                                    EditorUndo **redoTrack) {
-    bool              result;
-    EditorMarkerList *chks;
-    EditorMarker     *defin;
-    EditorMarkerList *diff1, *diff2;
-    SessionStackEntry   *refs, *origrefs, *newrefs, *diffrefs;
-    int               pbflag;
-    UNUSED            pbflag;
-
-    // safety check
-
-    defin = point;
-    // find definition reference? why this was there?
-    //&for(dd= *occs; dd!=NULL; dd=dd->next) {
-    //& if (isDefinitionUsage(dd->usg.base)) break;
-    //&}
-    //&if (dd != NULL) defin = dd->d;
+    EditorMarker *defin = point;
 
     olcxPushSpecialCheckMenuSym(LINK_NAME_SAFETY_CHECK_MISSED);
     safetyCheck(refactoringOptions.project, defin);
 
-    chks = convertReferencesToEditorMarkers(sessionData.browsingStack.top->references);
+    EditorMarkerList *chks = convertReferencesToEditorMarkers(sessionData.browsingStack.top->references);
 
+    EditorMarkerList *diff1, *diff2;
     editorMarkersDifferences(occs, &chks, &diff1, &diff2);
 
     freeEditorMarkerListAndMarkers(chks);
 
     editorUndoUntil(startPoint, redoTrack);
 
+    SessionStackEntry *refs, *origrefs, *newrefs, *diffrefs;
     origrefs = newrefs = diffrefs = NULL;
+    int pbflag; UNUSED pbflag;
     SAFETY_CHECK_GET_SYM_LISTS(refs, origrefs, newrefs, diffrefs, pbflag);
     assert(origrefs != NULL && newrefs != NULL && diffrefs != NULL);
-    result = handleSafetyCheckDifferenceLists(diff1, diff2, diffrefs);
-    return result;
+
+    return handleSafetyCheckDifferenceLists(diff1, diff2, diffrefs);
 }
 
-static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *occs) {
-    char         *cid;
-    int           off1, off2;
-    EditorMarker *pos, *pp;
-
-    for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
-        pos = ll->marker;
-        // first check that I have updated reference
-        cid = getIdentifierOnMarker_static(pos);
-        if (strcmp(cid, oldName) != 0) {
+static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *occurrences) {
+    for (EditorMarkerList *ll = occurrences; ll != NULL; ll = ll->next) {
+        EditorMarker *marker = ll->marker;
+        // first check if we have updated reference
+        char *id = getIdentifierOnMarker_static(marker);
+        if (strcmp(id, oldName) != 0) {
             char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff, "something goes wrong: expecting %s instead of %s at %s, offset:%d", oldName, cid,
-                    simpleFileName(getRealFileName_static(pos->buffer->fileName)), pos->offset);
+            sprintf(tmpBuff, "something goes wrong: expecting %s instead of %s at %s, offset:%d", oldName, id,
+                    simpleFileName(getRealFileName_static(marker->buffer->fileName)), marker->offset);
             errorMessage(ERR_INTERNAL, tmpBuff);
             return;
         }
         // O.K. check also few characters around
-        off1 = pos->offset - RRF_CHARS_TO_PRE_CHECK_AROUND;
-        off2 = pos->offset + strlen(oldName) + RRF_CHARS_TO_PRE_CHECK_AROUND;
-        if (off1 < 0)
-            off1 = 0;
-        if (off2 >= pos->buffer->allocation.bufferSize)
-            off2 = pos->buffer->allocation.bufferSize - 1;
-        pp = newEditorMarker(pos->buffer, off1);
-        ppcPreCheck(pp, off2 - off1);
-        freeEditorMarker(pp);
+        int offset1, offset2;
+        offset1 = marker->offset - RRF_CHARS_TO_PRE_CHECK_AROUND;
+        offset2 = marker->offset + strlen(oldName) + RRF_CHARS_TO_PRE_CHECK_AROUND;
+        if (offset1 < 0)
+            offset1 = 0;
+        if (offset2 >= marker->buffer->allocation.bufferSize)
+            offset2 = marker->buffer->allocation.bufferSize - 1;
+        EditorMarker *newMarker = newEditorMarker(marker->buffer, offset1);
+        ppcPreCheck(newMarker, offset2 - offset1);
+        freeEditorMarker(newMarker);
     }
 }
 
