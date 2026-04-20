@@ -113,7 +113,6 @@ rescanned. I'm not sure how that works, but we need tests for it.
   non-terminal (as with '$3'). That field is defined in the YYSTYPE
   but not used in any '%type' declaration meaning all non-terminals
   have it.
-* TODO Bug: test_c_extract_function_with_out_variables should actually find the declaration and handle it
 * TODO Make Emacs client verify arguments better (e.g. Add Parameter - position should be number)
 * TODO Available refactorings should not show Delete Parameter if there are none
 * TODO Available refactorings should not show Move Parameter if there are less than two
@@ -173,9 +172,6 @@ There are both "-opt=value" and "-opt value" format options
 ** TODO Test case for filtering menues
 * TODO BUGS:
 ** TODO Bug; when deleting the last argument of a function it should replace with 'void'
-** TODO Bug: when extracting C function including declarations that are required
-   by code left outside the extraction, that declaration is moved to the
-   extracted function. This should probably trigger "structure error".
 ** TODO Bug: translates a bool to int when completing arguments (probably elsewhere also)
 * TODO Separate the options into sections and move them to separate structures
   The options structure is used to save or possibly create new sets, when
@@ -198,6 +194,17 @@ There are both "-opt=value" and "-opt value" format options
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Why does -refactory read the users default .c-xrefrc? And why does -no-stdoptions
   prevent reading explicit -xrefrc options?
+* DONE Bug: Extract function handles variables declared inside the region used after it
+  The declaration is no longer moved into the extracted function; the variable
+  is returned (or passed back via out-parameter) so post-region code keeps
+  working. Fix detects implicit-decl `extern int <name>()` shadows left in the
+  reference table — the forensic trail of the synthetic `{}` region-scope
+  popping region-locals before post-region parsing — and splices them into the
+  program graph as outside-block nodes pointing at the region-local's
+  referenceableItem. Existing dataflow classification handles the rest.
+  Test: tests/test_extract_local_declared_in_region_used_after/.
+  (Was previously two TODOs: test_c_extract_function_with_out_variables and
+  the BUGS entry "declaration moved to extracted function".)
 * DONE FEATURE: Basic LSP-mode support
 ** DONE 'didOpen'
 ** DONE Handle protocol errors etc. using longjump

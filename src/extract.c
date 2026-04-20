@@ -91,6 +91,17 @@ protected void spliceShadowIfMatches(ProgramGraphNode **program, ReferenceableIt
 /* ********************** Data Flow analysis bits ********************* */
 
 
+static bool linearOrder(ProgramGraphNode *n1, ProgramGraphNode *n2);
+
+static void spliceShadowCallback(ReferenceableItem *item, void *programPtr) {
+    spliceShadowIfMatches((ProgramGraphNode **) programPtr, item);
+}
+
+static void spliceImplicitShadowsIntoGraph(ProgramGraphNode **program) {
+    mapOverReferenceableItemTableWithPointer(spliceShadowCallback, program);
+    LIST_SORT(ProgramGraphNode, *program, linearOrder);
+}
+
 static void dumpProgramToLog(ProgramGraphNode *program) {
     log_trace("[ProgramDump begin]");
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
@@ -936,6 +947,7 @@ static void makeExtraction(void) {
 
     program = makeProgramGraph();
     setInOutBlockFields(program);
+    spliceImplicitShadowsIntoGraph(&program);
     dumpProgramToLog(program);
 
     if (parsingConfig.extractMode!=EXTRACT_MACRO && areThereJumpsInOrOutOfBlock(program)) {
