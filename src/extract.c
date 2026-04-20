@@ -1,7 +1,9 @@
 #include "extract.h"
+#include "extract_internal.h"
 
 #include <string.h>
 
+#include "head.h"
 #include "commons.h"
 #include "cxref.h"
 #include "filedescriptor.h"
@@ -28,39 +30,65 @@
 #define SWITCH_LABEL_NAME " %swtl%"
 
 
+protected bool isImplicitFunctionShadowLinkName(char *linkName) {
+    /* Extract-mode encodes an implicit-decl symbol as
+     *     " extern int! !<name>!()!<file>-<line>-<col>-<counter>"
+     * so " extern int! !" is the fixed flag + storage ("extern") + base type
+     * ("int") + separator/space/separator opening the nnn name wrapper, and
+     * "()!" marks the function-type suffix ending just before the position. */
+    return strncmp(linkName, " extern int! !", 14) == 0
+        && strstr(linkName, "()!") != NULL;
+}
+
+protected char *extractNameFromLinkName(char *linkName) {
+    char *p1 = strchr(linkName, '!');
+    if (p1 == NULL) return NULL;
+    char *p2 = strchr(p1 + 1, '!');
+    if (p2 == NULL) return NULL;
+    char *nameStart = p2 + 1;
+    char *nameEnd = strchr(nameStart, '!');
+    if (nameEnd == NULL) return NULL;
+    size_t len = nameEnd - nameStart;
+    char *result = stackMemoryAlloc(len + 1);
+    memcpy(result, nameStart, len);
+    result[len] = '\0';
+    return result;
+}
+
+protected void spliceShadowIfMatches(ProgramGraphNode **program, ReferenceableItem *shadowItem) {
+    if (!isImplicitFunctionShadowLinkName(shadowItem->linkName))
+        return;
+    char *shadowName = extractNameFromLinkName(shadowItem->linkName);
+    if (shadowName == NULL)
+        return;
+
+    for (ProgramGraphNode *p = *program; p != NULL; p = p->next) {
+        if (p->reference->usage != UsageDefined)
+            continue;
+        if (p->regionSide != DATAFLOW_INSIDE_BLOCK)
+            continue;
+        char *localName = extractNameFromLinkName(p->referenceableItem->linkName);
+        if (localName == NULL || strcmp(localName, shadowName) != 0)
+            continue;
+
+        for (Reference *r = shadowItem->references; r != NULL; r = r->next) {
+            ProgramGraphNode *newNode = cxAlloc(sizeof(ProgramGraphNode));
+            newNode->reference = r;
+            newNode->referenceableItem = p->referenceableItem;
+            newNode->jump = NULL;
+            newNode->regionSide = DATAFLOW_OUTSIDE_BLOCK;
+            newNode->state = 0;
+            newNode->visited = false;
+            newNode->classification = CLASSIFIED_AS_NONE;
+            newNode->next = *program;
+            *program = newNode;
+        }
+        return;
+    }
+}
+
+
 /* ********************** Data Flow analysis bits ********************* */
-
-typedef enum {
-    DATAFLOW_ANALYZED = 1,
-    DATAFLOW_INSIDE_BLOCK = 2,
-    DATAFLOW_OUTSIDE_BLOCK = 4,
-    DATAFLOW_INSIDE_REENTER = 8,		/* value reenters the block             */
-    DATAFLOW_INSIDE_PASSING = 16		/* a non-modified values pass via block */
-} DataFlowBits;
-
-typedef enum {
-    CLASSIFIED_AS_LOCAL_VAR,
-    CLASSIFIED_AS_VALUE_ARGUMENT,
-    CLASSIFIED_AS_LOCAL_OUT_ARGUMENT,
-    CLASSIFIED_AS_OUT_ARGUMENT,
-    CLASSIFIED_AS_IN_OUT_ARGUMENT,
-    CLASSIFIED_AS_ADDRESS_ARGUMENT,
-    CLASSIFIED_AS_RESULT_VALUE,
-    CLASSIFIED_AS_IN_RESULT_VALUE,
-    CLASSIFIED_AS_LOCAL_RESULT_VALUE,
-    CLASSIFIED_AS_NONE
-} ExtractClassification;
-
-typedef struct programGraphNode {
-    struct reference *reference;          /* original reference of node */
-    struct referenceableItem *referenceableItem;
-    struct programGraphNode *jump;
-    DataFlowBits regionSide;              /* INSIDE/OUTSIDE block */
-    DataFlowBits state;                   /* where value comes from + flow flags */
-    bool visited;                         /* visited during dataflow traversal */
-    ExtractClassification classification; /* resulting classification */
-    struct programGraphNode *next;
-} ProgramGraphNode;
 
 
 static void dumpProgramToLog(ProgramGraphNode *program) {
