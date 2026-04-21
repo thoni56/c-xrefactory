@@ -162,9 +162,9 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
 }
 
 static void completionListInit(Position originalPos) {
-    freeOldCompletionStackEntries(&sessionData.completionStack);
-    pushEmptySession(&sessionData.completionStack);
-    sessionData.completionStack.top->callerPosition = originalPos;
+    freeOldCompletionStackEntries(&completionStack);
+    pushEmptySession(&completionStack);
+    completionStack.top->callerPosition = originalPos;
 }
 
 
@@ -202,7 +202,7 @@ static void printCompletionsEnding(Match *match) {
 }
 
 void printCompletionsList(bool noFocus) {
-    Match *completions = sessionData.completionStack.top->matches;
+    Match *completions = completionStack.top->matches;
 
     printCompletionsBeginning(completions, noFocus);
     for(Match *c=completions; c!=NULL; c=c->next) {
@@ -214,7 +214,7 @@ void printCompletionsList(bool noFocus) {
 }
 
 static void reverseCompletionList(void) {
-    LIST_REVERSE(Match, sessionData.completionStack.top->matches);
+    LIST_REVERSE(Match, completionStack.top->matches);
 }
 
 void printCompletions(Completions *completions) {
@@ -227,12 +227,12 @@ void printCompletions(Completions *completions) {
         goto finishWithoutMenu;
     }
     if (!completions->fullMatchFlag && completions->alternativeCount==1) {
-        ppcGotoPosition(sessionData.completionStack.top->callerPosition);
+        ppcGotoPosition(completionStack.top->callerPosition);
         ppcGenRecord(PPC_SINGLE_COMPLETION, completions->alternatives[0].string);
         goto finishWithoutMenu;
     }
     if (!completions->fullMatchFlag && strlen(completions->prefix) > completions->idToProcessLength) {
-        ppcGotoPosition(sessionData.completionStack.top->callerPosition);
+        ppcGotoPosition(completionStack.top->callerPosition);
         ppcGenRecord(PPC_SINGLE_COMPLETION, completions->prefix);
         ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions");
         goto finishWithoutMenu;
@@ -252,8 +252,8 @@ void printCompletions(Completions *completions) {
     for(int i=0; i<max; i++) {
         sprintFullCompletionInfo(completions, i, indent);
         Reference r;
-        sessionData.completionStack.top->matches = prependToMatches(
-            sessionData.completionStack.top->matches, completions->alternatives[i].string, ppcTmpBuff,
+        completionStack.top->matches = prependToMatches(
+            completionStack.top->matches, completions->alternatives[i].string, ppcTmpBuff,
             completions->alternatives[i].symbol, NULL, &r, NO_FILE_NUMBER);
     }
     reverseCompletionList();
@@ -261,7 +261,7 @@ void printCompletions(Completions *completions) {
     fflush(outputFile);
     return;
  finishWithoutMenu:
-    sessionData.completionStack.top = sessionData.completionStack.top->previous;
+    completionStack.top = completionStack.top->previous;
     fflush(outputFile);
 }
 

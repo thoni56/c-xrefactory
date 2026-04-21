@@ -6,6 +6,7 @@
 SessionData sessionData;
 
 SearchingStack searchingStack;
+CompletionStack completionStack;
 
 
 void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **entryP) {

@@ -27,7 +27,7 @@ Ensure(Session, can_run_an_empty_test) {
 
 Ensure(Session, getSessionEntryForOperation_returns_completionStack_top_for_OP_COMPLETION) {
     SessionStackEntry entry;
-    sessionData.completionStack.top = &entry;
+    completionStack.top = &entry;
 
     SessionStackEntry *result = getSessionEntryForOperation(OP_COMPLETION);
 
@@ -35,7 +35,7 @@ Ensure(Session, getSessionEntryForOperation_returns_completionStack_top_for_OP_C
 }
 
 Ensure(Session, getSessionEntryForOperation_returns_NULL_when_completionStack_top_is_NULL) {
-    sessionData.completionStack.top = NULL;
+    completionStack.top = NULL;
 
     SessionStackEntry *result = getSessionEntryForOperation(OP_COMPLETION);
 

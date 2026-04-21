@@ -463,11 +463,11 @@ static void addReferencesFromFileToList(Reference *references, int fileNumber, R
 
 
 bool sessionHasReferencesValidForOperation(SessionData *session, SessionStackEntry **entryP,
-                                                  CheckNull checkNull) {
+                                           CheckNull checkNull) {
     assert(session);
     if (options.serverOperation==OP_COMPLETION || options.serverOperation==OP_COMPLETION_SELECT
         ||  options.serverOperation==OP_COMPLETION_GOTO_N || options.serverOperation==OP_SEARCH) {
-        *entryP = session->completionStack.top;
+        *entryP = completionStack.top;
     } else {
         *entryP = session->browsingStack.top;
     }
@@ -1371,8 +1371,8 @@ static void selectCompletion(void) {
         errorMessage(ERR_ST, "selection out of range.");
         return;
     }
-    assert(sessionData.completionStack.root!=NULL);
-    ppcGotoPosition(sessionData.completionStack.root->callerPosition);
+    assert(completionStack.root!=NULL);
+    ppcGotoPosition(completionStack.root->callerPosition);
     ppcGenRecord(PPC_SINGLE_COMPLETION, match->name);
 }
 
@@ -1380,10 +1380,10 @@ static void selectCompletion(void) {
 static void completionBackward(void) {
     SessionStackEntry    *top;
 
-    top = sessionData.completionStack.top;
+    top = completionStack.top;
     if (top != NULL && top->previous != NULL) {
-        sessionData.completionStack.top = sessionData.completionStack.top->previous;
-        ppcGotoPosition(sessionData.completionStack.top->callerPosition);
+        completionStack.top = completionStack.top->previous;
+        ppcGotoPosition(completionStack.top->callerPosition);
         printCompletionsList(false);
     }
 }
@@ -1391,10 +1391,10 @@ static void completionBackward(void) {
 static void completionForward(void) {
     SessionStackEntry    *top;
 
-    top = getNextTopStackItem(&sessionData.completionStack);
+    top = getNextTopStackItem(&completionStack);
     if (top != NULL) {
-        sessionData.completionStack.top = top;
-        ppcGotoPosition(sessionData.completionStack.top->callerPosition);
+        completionStack.top = top;
+        ppcGotoPosition(completionStack.top->callerPosition);
         printCompletionsList(false);
     }
 }
