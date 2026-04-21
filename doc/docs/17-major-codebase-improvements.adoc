@@ -398,6 +398,87 @@ This refactoring is **independent of the memory-as-truth architecture**. The bri
 * `src/parsing.c` — implementation, 2 remaining bridges
 * `src/refactory.c` — `parseBufferUsingServer` definition (line 199) and 7 call sites
 
+[[typed-requests]]
+=== Replace Global `options` with Typed Requests
+
+==== Problem
+
+The `Options` struct is one global blob serving four distinct lifetimes:
+
+* **Session** — set once at server startup: xrefrc path, debug/log config, compiler discovery, default options.
+* **Project** — discovered on project load: project root, include paths, source dirs, compiler include closure.
+* **Request** — per-operation: `serverOperation`, cursor/mark offsets, input/output filenames, filter strings.
+* **Refactoring** — spans multiple internal requests: `theRefactoring`, `renameTo`, `parnum`/`parnum2`, `moveTargetFile`, refactoring-level `cursorOffset`/`markOffset`.
+
+These lifetimes are held together by a save/restore discipline scattered across five call sites:
+
+* `server.c:723-726` — outer server loop snapshots `options` into `savedOptions` at startup, restores per iteration.
+* `startup.c:143,577,705` — legacy startup paths with the same pattern.
+* `refactory.c:166,170` — `beInteractive` snapshots into `localSavedOptions` because the outer loop's snapshot would otherwise be clobbered mid-dialog.
+* `refactory.c:1238` — `serverPerformRefactoring` snapshots `options` into a parallel `refactoringOptions` global because sub-tasks re-enter option parsing and trample intent fields.
+
+The `refactoringOptions` parallel global is the clearest symptom. Refactoring sub-tasks (extract, rename, parameter manipulation) synthesize argv like `"-olcxextract"` and re-enter `processOptions`, which overwrites `options`. Reading the refactoring intent (`refactoringOptions.theRefactoring`, `refactoringOptions.renameTo`, etc.) from a shadow copy is how that survives.
+
+Compounding the problem, `processOptions` is not a pure parser — it also opens the output file, mutates `currentPass`, and triggers file-processing initialization. Those side effects are why the global-mutation pattern is load-bearing today: parsing and its consequences are entangled.
+
+==== Target Shape
+
+Three tiers with explicit owners and binding moments:
+
+* **Session** — bound once at server startup from the initial argv. Owned by a session object (currently process globals). Never touched during operation dispatch.
+* **Project** — bound on the first project-defining operation, frozen thereafter. Owned by `ProjectConfig` (already partially extracted for `sourceDirs`).
+* **Request** — constructed fresh from argv for each incoming operation, lives only for the dispatch of that operation, then discarded.
+
+Option parsing becomes a pure function:
+
+[source,c]
+----
+Request *parseCommandLine(ArgumentsVector args);
+----
+
+No globals mutated, no output files opened, no pass flags flipped. The dispatcher decides what side effects to run based on the returned `Request`. Each operation gets a typed struct — a tagged union or base struct with per-operation extensions — so the dispatch switch reads typed fields instead of guessing which `Options` fields are meaningful for which operation.
+
+The refactoring coordinator holds its own long-lived `RefactoringRequest` (the current `refactoringOptions` content, but owned by the coordinator, not a shadow global). Sub-operations construct their own fresh `Request` structs via normal parsing; the coordinator's state is safe because it lives elsewhere. `refactoringOptions` disappears. The save/restore sites disappear — each tier has one owner, and nothing trampled means nothing to restore.
+
+==== Why One-Project-Per-Server Makes This Clean
+
+The client already forces server restart on project switch ("Do you want to switch project? Server will be restarted."). Project-tier state therefore genuinely locks in after the first project-defining operation — there is no mid-session project change to invalidate, no need for a `ProjectChanged` event kind, no cache-invalidation logic. The tier model matches the runtime commitment: one server, one project, immutable after bind.
+
+==== What's Already There
+
+* **`ProjectConfig.sourceDirs`** — first project-scoped field migrated off `Options`. The extraction pattern is proven; more fields can follow the same shape.
+* **`ParsingConfig` struct** — in `parsing.h`, already a typed struct carrying parser parameters instead of relying on globals. A working prototype of the same pattern one layer up.
+* **Bridge removal** (see <<clean-parser-api>>) — the precondition that eliminates sub-task option trampling. Once sub-tasks call parsing directly instead of re-entering the server via synthetic argv, `options` stops being clobbered mid-refactoring, which makes the refactoring-coordinator migration trivial.
+
+==== Incremental Steps
+
+Each step is independently shippable. No grand rewrite.
+
+**1. Continue growing `ProjectConfig`.** Move project-scoped fields off `Options` one at a time (include paths, project name, compiler discovery results, detected project root). Field-by-field migration; each field is a self-contained change.
+
+**2. Extract side effects from option parsing.** Move the output-file opening, pass flag mutation, and file-processing initialization out of `processOptions` into the dispatcher. Parsing becomes pure; side effects remain where they belong but with a clear trigger point. This is the load-bearing step — without it, typed requests still have to round-trip through global state.
+
+**3. Introduce typed `Request` per operation.** Pilot with one small, self-contained operation (candidates: `OP_SEARCH`, `OP_ABOUT`). Define the per-operation request struct, have the parser produce it, have the dispatcher consume it. Prove the shape end-to-end on one operation before spreading to the rest.
+
+**4. Migrate refactoring to own its `Request`.** The coordinator (currently the refactoring call graph in `refactory.c`) holds a typed `RefactoringRequest` as first-class state. Sub-operations parse their own fresh requests. `refactoringOptions`, `deepCopyOptionsFromTo(&options, &refactoringOptions)`, and `beInteractive`'s `localSavedOptions` all die together.
+
+The `inputFileName` global (already flagged as a cleanup target) becomes a `Request` field naturally in step 3 — same disease, same cure.
+
+==== Notes
+
+* Preloaded editor buffers arrive in the request payload but mutate session state (the editor buffer table). That is fine — the dispatcher updates session state from the request before running the operation — but it should be explicit in the dispatcher code rather than a side effect of parsing.
+* Runtime reconfiguration commands (debug toggle, log level change, project re-init) become first-class session-reconfiguration events, not request options. Small surface, worth distinguishing from operation requests.
+* `beInteractive`'s resolution dialog stops being a nested sub-loop with its own save/restore. It becomes a coordinator state that waits for a specific follow-up event (resolution selection, continue, cancel).
+
+==== References
+
+* `src/options.h`, `src/options.c` — current `Options` struct and parser with side effects
+* `src/refactory.c:1238` — `deepCopyOptionsFromTo(&options, &refactoringOptions)`, the parallel-global snapshot
+* `src/refactory.c:166,170` — `beInteractive` save/restore via `localSavedOptions`
+* `src/server.c:723-726` — outer server loop save/restore
+* `src/parsing.h` — `ParsingConfig` as a prototype of the typed-struct pattern
+* <<clean-parser-api>> — prerequisite that eliminates sub-task option trampling
+
 [[remove-hashtab]]
 === Remove Hashtab by Migrating to Hashlist
 
