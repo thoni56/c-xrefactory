@@ -5,6 +5,8 @@
 
 SessionData sessionData;
 
+SearchingStack searchingStack;
+
 
 void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **entryP) {
     mock(stack, entryP);

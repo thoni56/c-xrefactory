@@ -36,7 +36,7 @@ static Match *newMatch(char *name) {
 
 Ensure(Search, can_compact_empty_search_results) {
     options.searchKind = SEARCH_DEFINITIONS_SHORT;
-    sessionData.searchingStack.top = newEmptySessionStackEntry();
+    searchingStack.top = newEmptySessionStackEntry();
 
     never_expect(freeMatch);    /* No match should be freed, no matches */
 
@@ -45,8 +45,8 @@ Ensure(Search, can_compact_empty_search_results) {
 
 Ensure(Search, can_compact_search_results_with_single_match) {
     options.searchKind = SEARCH_DEFINITIONS_SHORT;
-    sessionData.searchingStack.top = newEmptySessionStackEntry();
-    sessionData.searchingStack.top->matches = newMatch("a");
+    searchingStack.top = newEmptySessionStackEntry();
+    searchingStack.top->matches = newMatch("a");
 
     never_expect(freeMatch);    /* No match should be freed, no duplicates */
 
@@ -55,10 +55,10 @@ Ensure(Search, can_compact_search_results_with_single_match) {
 
 Ensure(Search, can_compact_search_results_with_many_equal_matches) {
     options.searchKind = SEARCH_DEFINITIONS_SHORT;
-    sessionData.searchingStack.top = newEmptySessionStackEntry();
-    sessionData.searchingStack.top->matches = newMatch("a");
-    sessionData.searchingStack.top->matches->next = newMatch("a");
-    sessionData.searchingStack.top->matches->next->next = newMatch("a");
+    searchingStack.top = newEmptySessionStackEntry();
+    searchingStack.top->matches = newMatch("a");
+    searchingStack.top->matches->next = newMatch("a");
+    searchingStack.top->matches->next->next = newMatch("a");
 
     expect(freeMatch, times(2)); /* Two duplicated matches should be freed */
 

@@ -140,7 +140,7 @@ Ensure(CxFile, can_check_references_for_referenceable_in_search) {
     SessionStackEntry *stackEntry = newEmptySessionStackEntry();
 
     options.olcxSearchString = "Sym";
-    sessionData.searchingStack.top = stackEntry;
+    searchingStack.top = stackEntry;
 
     expect(prettyPrintLinkName, will_set_contents_of_output_parameter_to_string(buffer, "SymbolName"));
     expect(containsWildcard, will_return(false));

@@ -41,15 +41,15 @@ void selectSearchItem(int refn) {
     char buffer[MAX_FUNCTION_NAME_LENGTH];
 
     assert(refn > 0);
-    assert(sessionData.searchingStack.top);
-    SessionStackEntry *entry = sessionData.searchingStack.top;
+    assert(searchingStack.top);
+    SessionStackEntry *entry = searchingStack.top;
     Match *match = getMatchOnNthLine(entry->matches, refn);
     if (match == NULL) {
         errorMessage(ERR_ST, "selection out of range.");
         return;
     }
-    assert(sessionData.searchingStack.root != NULL);
-    ppcGotoPosition(sessionData.searchingStack.root->callerPosition);
+    assert(searchingStack.root != NULL);
+    ppcGotoPosition(searchingStack.root->callerPosition);
     sprintf(buffer, " %s", match->name);
     ppcGenRecord(PPC_SINGLE_COMPLETION, buffer);
 }
@@ -59,8 +59,8 @@ void gotoSearchItem(int refn) {
     Match *match;
 
     assert(refn > 0);
-    assert(sessionData.searchingStack.top);
-    match = getMatchOnNthLine(sessionData.searchingStack.top->matches, refn);
+    assert(searchingStack.top);
+    match = getMatchOnNthLine(searchingStack.top->matches, refn);
     if (match != NULL) {
         if (positionsAreNotEqual(match->reference.position, NO_POSITION)) {
             ppcGotoPosition(match->reference.position);
@@ -104,8 +104,8 @@ char *createSearchLine_static(char *name, int fileNumber, int *len1, int *len2) 
 }
 
 void compactSearchResultsShort(void) {
-    sortMatchList(&sessionData.searchingStack.top->matches, matchNameIsLessThan);
+    sortMatchList(&searchingStack.top->matches, matchNameIsLessThan);
     if (options.searchKind == SEARCH_DEFINITIONS_SHORT || options.searchKind == SEARCH_FULL_SHORT) {
-        removeMatchesWithSameName(sessionData.searchingStack.top->matches);
+        removeMatchesWithSameName(searchingStack.top->matches);
     }
 }

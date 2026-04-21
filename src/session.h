@@ -50,11 +50,12 @@ typedef SessionStack SearchingStack;
 typedef struct SessionData {
     BrowsingStack	browsingStack;
     CompletionStack	completionStack;
-    SearchingStack	searchingStack;
 } SessionData;
 
 
 extern SessionData sessionData;
+
+extern SearchingStack searchingStack;
 
 
 /* Generic stack operations */

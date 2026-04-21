@@ -280,15 +280,15 @@ void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Reference 
     } while (s!=NULL);
 
     if (searchStringMatch(name, strlen(name))) {
-        sessionData.searchingStack.top->matches = prependToMatches(
-            sessionData.searchingStack.top->matches, name, NULL, NULL, referenceableItem,
+        searchingStack.top->matches = prependToMatches(
+            searchingStack.top->matches, name, NULL, NULL, referenceableItem,
             reference, referenceableItem->includeFileNumber);
 
         // compact completions from time to time
         static int count = 0;
         count ++;
         if (count > COMPACT_TAGS_AFTER_SEARCH_COUNT) {
-            sortMatchListByName(&sessionData.searchingStack.top->matches);
+            sortMatchListByName(&searchingStack.top->matches);
             compactSearchResultsShort();
             count = 0;
         }

@@ -5,13 +5,14 @@
 #include "browsingmenu.h"
 #include "commons.h"
 #include "cxref.h"
-#include "globals.h"
 #include "match.h"
 #include "options.h"
 #include "reference.h"
 
 
 SessionData sessionData;
+
+SearchingStack searchingStack;
 
 
 #define MAX_COMPLETIONS_HISTORY 10   /* maximal length of completion history */

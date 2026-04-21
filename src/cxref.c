@@ -1794,11 +1794,11 @@ static void printSearchResults(void) {
     char *ls;
 
     len1 = len2 = 0;
-    sortMatchListByName(&sessionData.searchingStack.top->matches);
+    sortMatchListByName(&searchingStack.top->matches);
 
     // the first loop is counting the length of fields
-    assert(sessionData.searchingStack.top);
-    for (Match *m=sessionData.searchingStack.top->matches; m!=NULL; m=m->next) {
+    assert(searchingStack.top);
+    for (Match *m=searchingStack.top->matches; m!=NULL; m=m->next) {
         ls = createSearchLine_static(m->name, fileNumberOfReference(m->reference),
                                    &len1, &len2);
     }
@@ -1816,8 +1816,8 @@ static void printSearchResults(void) {
     // the second is writing
     if (options.xref2)
         ppcBegin(PPC_SYMBOL_LIST);
-    assert(sessionData.searchingStack.top);
-    for (Match *m=sessionData.searchingStack.top->matches; m!=NULL; m=m->next) {
+    assert(searchingStack.top);
+    for (Match *m=searchingStack.top->matches; m!=NULL; m=m->next) {
         ls = createSearchLine_static(m->name, fileNumberOfReference(m->reference),
                                    &len1, &len2);
         if (options.xref2) {
@@ -2005,25 +2005,25 @@ void answerEditorAction(void) {
         Position givenPosition = getCallerPositionFromCommandLineOption();
         if (!options.xref2)
             fprintf(outputFile,";");
-        pushEmptySession(&sessionData.searchingStack);
-        sessionData.searchingStack.top->callerPosition = givenPosition;
+        pushEmptySession(&searchingStack);
+        searchingStack.top->callerPosition = givenPosition;
 
         searchInMemoryTable();
         printSearchResults();
         break;
     }
     case OP_SEARCH_PREVIOUS:
-        if (sessionData.searchingStack.top!=NULL && sessionData.searchingStack.top->previous!=NULL) {
-            sessionData.searchingStack.top = sessionData.searchingStack.top->previous;
-            ppcGotoPosition(sessionData.searchingStack.top->callerPosition);
+        if (searchingStack.top!=NULL && searchingStack.top->previous!=NULL) {
+            searchingStack.top = searchingStack.top->previous;
+            ppcGotoPosition(searchingStack.top->callerPosition);
             printSearchResults();
         }
         break;
     case OP_SEARCH_NEXT: {
-        SessionStackEntry *next = getNextTopStackItem(&sessionData.searchingStack);
+        SessionStackEntry *next = getNextTopStackItem(&searchingStack);
         if (next != NULL) {
-            sessionData.searchingStack.top = next;
-            ppcGotoPosition(sessionData.searchingStack.top->callerPosition);
+            searchingStack.top = next;
+            ppcGotoPosition(searchingStack.top->callerPosition);
             printSearchResults();
         }
         break;
