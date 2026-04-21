@@ -578,7 +578,7 @@ Extraction dialog::
   modified by extraction — the client sends the modified content as a `-preload` on the
   next request.
 
-=== How is an Extract refactoring performed?
+=== Extract Refactoring: Editor ↔ Server Protocol
 
 The region (mark and point/cursor positions) is sent to the _c-xref_
 server in a `-rfct-extract` command.
@@ -612,19 +612,145 @@ extracting a function both may contain code to transfer and restore
 parameters into local variables to propagate in/out variables as
 required.
 
-1. The editor then requests a name from the user that it will use in a
-rename operation that renames the default named
+Finally, the editor requests a name from the user that it will use in
+a rename operation that renames the default named
 function/macro/variable.
 
-*_Two-Phase Architecture_*
+For the internal mechanism that produces the three strings — region
+delineation, program graph construction, variable classification and
+output generation — see the next section.
 
-Extraction operates in two phases:
+=== Extract Function
 
-1. **Collection Phase (during parsing)**: Parser semantic hooks track control flow by registering synthetic labels and collecting references within the marked region.
+This section describes the internal mechanism so that maintainers can
+orient themselves before reading `extract.c`.
 
-2. **Analysis Phase (after parsing)**: The extraction module analyzes the collected control flow data, classifies variables by usage patterns, and generates the refactored code (call site, function definition, postamble).
+==== What the Implementation Must Do
 
-This separation keeps the parser clean and makes extraction logic independently testable.
+Given a region of C source inside a function body, the tool must:
+
+1. Isolate the region from the surrounding parse so that it can be
+   reasoned about as a self-contained block.
+2. Determine for each variable referenced in or around the region
+   whether it is an input to the extracted code, an output from it,
+   both, or internal.
+3. Synthesise a new function whose signature matches those roles, and
+   a call site that replaces the original region.
+
+All three happen during a single parse pass in `PARSE_TO_EXTRACT` mode.
+
+==== Delineating the Region
+
+The editor tells the server two byte offsets (mark and cursor). When
+the lexer reads past those offsets it injects synthetic tokens that
+turn the selection into a nested compound statement: an opening
+boundary before the region and a closing boundary after. An
+`OL_MARKER_TOKEN` sits inside each boundary — it is consumed by the
+lexer, invisible to the parser, and triggers the extract code to
+remember where the region begins and ends.
+
+The synthetic braces serve two roles: they make the region parse as a
+proper block (so declarations at its top are legal), and they give the
+extract code a structural invariant to verify — the block boundaries
+must live inside the same enclosing function body. Violating it aborts
+extraction with `Region / program structure mismatch`.
+
+A side effect of the synthetic block is discussed under _Subtlety_
+below.
+
+==== The Program Graph
+
+Every reference emitted during the parse — variable uses, control
+labels, the synthetic block boundaries — becomes a node in a linked
+list ordered by source position. Each node carries:
+
+- A pointer back to its `ReferenceableItem` (so nodes for the same
+  variable can be found together).
+- The reference's usage kind (read, assignment, address-of, define,
+  goto target, ...).
+- An _inside/outside_ flag, assigned by walking the list and toggling
+  at each block-boundary node.
+
+This is the substrate for classification. The graph is *not* a
+syntactic AST; it is a flat sequence capturing the order in which the
+compiler would touch each reference.
+
+==== Classifying Variables
+
+For each local variable the extract code performs a small dataflow
+analysis over the graph, tracking whether the variable holds a value
+coming from outside the region, inside it, or both. From the resulting
+state at each of the variable's references it assigns one role:
+
+[cols="1,3"]
+|===
+| Role | Meaning
+
+| _local_
+| Read and written only inside the region. Lives as a local in the
+extracted function.
+
+| _value argument_
+| Read inside but never assigned there. Passed in by value.
+
+| _out argument_
+| Assigned inside and the value is consumed outside afterwards. Passed
+back as a pointer.
+
+| _in-out argument_
+| Both read inside and the inside-written value is used outside (or
+the value flow re-enters the region). Passed back as a pointer and
+initialised inside the function from the dereferenced input.
+
+| _result value_
+| A promotion of _out argument_ when there is exactly one. Returned by
+the function instead of taking a pointer.
+|===
+
+A second role, _local result value_, covers variables declared inside
+the region and returned from the function — see _Subtlety_ below.
+
+==== Generating the Output
+
+Classification in hand, the generator walks the program graph three
+times to emit:
+
+- The _call site_: captures the return value (if any) and passes
+  address-of for each out-argument.
+- The _function signature_: parameters for value and pointer
+  arguments, plus the return type.
+- The _function body_: a declaration block for anything classified as
+  _local_, followed by the original region's text, ending with the
+  return statement or the pointer-writes for out-arguments.
+
+==== Subtlety: Region-Locals Used After the Region
+
+The synthetic braces carry a side effect that matters for one
+specific case.
+
+If a variable is declared *inside* the region and read *after* it, the
+synthetic closing brace pops the symbol from the parser's scope before
+the post-region code is parsed. The later use then fails to resolve
+and the C parser falls back to K&R implicit declaration — treating the
+name as an `extern int` function call. The reference for the outside
+use is recorded against that implicit-function symbol, not against the
+region-local.
+
+Without intervention, the classifier sees the region-local with only
+inside uses and drops it from the extracted function's signature,
+leaving the call site broken.
+
+The extract pass handles this by scanning the reference table after
+graph construction for the implicit-function shadows, matching them by
+name to region-locals, and splicing the shadow's references back into
+the graph as outside-block nodes pointing at the region-local's
+`ReferenceableItem`. The existing classifier then sees the true
+outside uses and classifies the variable correctly.
+
+This is a deliberate post-parse reconstruction: the synthetic scope is
+structurally necessary for the parse to work, so the information lost
+by scope-popping is recovered from the forensic trail the parser
+leaves behind.
 
 === Refactoring Undo
 
@@ -797,3 +923,4 @@ if (inputType == MACRO_STREAM) {
     mbmFreeUntil(currentInput.begin);
 }
 ----
+
