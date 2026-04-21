@@ -14,6 +14,7 @@ SessionData sessionData;
 
 SearchingStack searchingStack;
 CompletionStack completionStack;
+BrowsingStack browsingStack;
 
 
 #define MAX_COMPLETIONS_HISTORY 10   /* maximal length of completion history */
@@ -118,5 +119,5 @@ SessionStackEntry *getSessionEntryForOperation(ServerOperation operation) {
         || operation == OP_COMPLETION_GOTO_N
         || operation == OP_SEARCH)
         return completionStack.top;
-    return sessionData.browsingStack.top;
+    return browsingStack.top;
 }

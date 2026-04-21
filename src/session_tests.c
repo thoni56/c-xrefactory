@@ -44,7 +44,7 @@ Ensure(Session, getSessionEntryForOperation_returns_NULL_when_completionStack_to
 
 Ensure(Session, getSessionEntryForOperation_returns_browsingStack_top_for_browsing_operation) {
     SessionStackEntry entry;
-    sessionData.browsingStack.top = &entry;
+    browsingStack.top = &entry;
 
     SessionStackEntry *result = getSessionEntryForOperation(OP_BROWSE_PUSH);
 

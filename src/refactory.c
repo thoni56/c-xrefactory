@@ -211,11 +211,11 @@ static void pushReferences(EditorMarker *point, char *pushOption, char *resolveM
     /* now remake task initialisation as for edit server */
     parseBufferUsingServer(refactoringOptions.project, point, NULL, pushOption, NULL);
 
-    assert(sessionData.browsingStack.top != NULL);
-    if (sessionData.browsingStack.top->hkSelectedSym == NULL) {
+    assert(browsingStack.top != NULL);
+    if (browsingStack.top->hkSelectedSym == NULL) {
         errorMessage(ERR_INTERNAL, "no symbol found for refactoring push");
     }
-    createSelectionMenuForOperation(sessionData.browsingStack.top->operation);
+    createSelectionMenuForOperation(browsingStack.top->operation);
     if (resolveMessage != NULL && olcxShowSelectionMenu()) {
         displayResolutionDialog(resolveMessage, messageType);
     }
@@ -224,11 +224,11 @@ static void pushReferences(EditorMarker *point, char *pushOption, char *resolveM
 static void safetyCheck(char *project, EditorMarker *point) {
     parseBufferUsingServer(project, point, NULL, "-olcxsafetycheck", NULL);
 
-    assert(sessionData.browsingStack.top != NULL);
-    if (sessionData.browsingStack.top->hkSelectedSym == NULL) {
+    assert(browsingStack.top != NULL);
+    if (browsingStack.top->hkSelectedSym == NULL) {
         errorMessage(ERR_ST, "No symbol found for refactoring safety check");
     }
-    createSelectionMenuForOperation(sessionData.browsingStack.top->operation);
+    createSelectionMenuForOperation(browsingStack.top->operation);
 }
 
 static char *getIdentifierOnMarker_static(EditorMarker *marker) {
@@ -478,7 +478,7 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
     olcxPushSpecialCheckMenuSym(LINK_NAME_SAFETY_CHECK_MISSED);
     safetyCheck(refactoringOptions.project, defin);
 
-    EditorMarkerList *chks = convertReferencesToEditorMarkers(sessionData.browsingStack.top->references);
+    EditorMarkerList *chks = convertReferencesToEditorMarkers(browsingStack.top->references);
 
     EditorMarkerList *diff1, *diff2;
     editorMarkersDifferences(occs, &chks, &diff1, &diff2);
@@ -609,8 +609,8 @@ static EditorMarkerList *getReferences(EditorMarker *point, char *resolveMessage
                                        int messageType) {
     EditorMarkerList *occs;
     pushReferences(point, "-olcxrename", resolveMessage, messageType); /* TODO: WTF do we use "rename"?!? */
-    assert(sessionData.browsingStack.top && sessionData.browsingStack.top->hkSelectedSym);
-    occs = convertReferencesToEditorMarkers(sessionData.browsingStack.top->references);
+    assert(browsingStack.top && browsingStack.top->hkSelectedSym);
+    occs = convertReferencesToEditorMarkers(browsingStack.top->references);
     return occs;
 }
 
@@ -654,7 +654,7 @@ static void checkForMultipleReferencesInSamePlace(SessionStackEntry *stackEntry,
 static void multipleOccurrencesSafetyCheck(void) {
     SessionStackEntry *rstack;
 
-    rstack = sessionData.browsingStack.top;
+    rstack = browsingStack.top;
     processSelectedReferences(rstack, checkForMultipleReferencesInSamePlace);
 }
 
@@ -1018,7 +1018,7 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
 static int isThisSymbolUsed(EditorMarker *marker) {
     int refn;
     pushReferences(marker, "-olcxpushforusagecheck", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
-    LIST_LEN(refn, Reference, sessionData.browsingStack.top->references);
+    LIST_LEN(refn, Reference, browsingStack.top->references);
     popFromSession();
     return refn > 1;
 }
@@ -1200,7 +1200,7 @@ static void applyParameterManipulation(EditorMarker *point, int manipulation, in
 
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     pushReferences(point, "-olcxargmanip", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
-    occurrences = convertReferencesToEditorMarkers(sessionData.browsingStack.top->references);
+    occurrences = convertReferencesToEditorMarkers(browsingStack.top->references);
 
     ppcGotoMarker(point);
 

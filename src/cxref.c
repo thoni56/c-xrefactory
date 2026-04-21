@@ -364,7 +364,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
             /* an on - line cxref action ?*/
             completionStringServed = true;
             olstringUsage = usage;
-            assert(sessionData.browsingStack.top);
+            assert(browsingStack.top);
             /* Only update callerPosition during PUSH operations.
              * During NEXT/PREVIOUS with staleness refresh, we parse files
              * but should NOT update callerPosition - it should remain as
@@ -382,7 +382,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
             if (defaultPosition.file!=NO_FILE_NUMBER)
                 log_debug("getting definition position of %s at line %d", symbol->name, defaultPosition.line);
             if (! operationRequiresOnlyParsingNoPushing(options.serverOperation)) {
-                BrowsingMenu *menu = addReferenceableToBrowsingMenu(&sessionData.browsingStack.top->hkSelectedSym,
+                BrowsingMenu *menu = addReferenceableToBrowsingMenu(&browsingStack.top->hkSelectedSym,
                                                                   foundMember, true, true, 0,
                                                                   (SymbolRelation){.sameFile = false}, usage,
                                                                   defaultPosition, defaultUsage);
@@ -464,12 +464,11 @@ static void addReferencesFromFileToList(Reference *references, int fileNumber, R
 
 bool sessionHasReferencesValidForOperation(SessionData *session, SessionStackEntry **entryP,
                                            CheckNull checkNull) {
-    assert(session);
     if (options.serverOperation==OP_COMPLETION || options.serverOperation==OP_COMPLETION_SELECT
         ||  options.serverOperation==OP_COMPLETION_GOTO_N || options.serverOperation==OP_SEARCH) {
         *entryP = completionStack.top;
     } else {
-        *entryP = session->browsingStack.top;
+        *entryP = browsingStack.top;
     }
     if (checkNull==CHECK_NULL_YES && *entryP == NULL) {
         assert(options.xref2);
@@ -839,26 +838,26 @@ static void gotoReferenceWithIndex(int referenceIndex) {
 }
 
 static void popSession(void) {
-    sessionData.browsingStack.top = sessionData.browsingStack.top->previous;
+    browsingStack.top = browsingStack.top->previous;
 }
 
 static void popAndFreeSession(void) {
     popSession();
-    freePoppedSessionStackEntries(&sessionData.browsingStack);
+    freePoppedSessionStackEntries(&browsingStack);
 }
 
 static SessionStackEntry *pushSession(void) {
     SessionStackEntry *oldtop;
-    oldtop = sessionData.browsingStack.top;
-    sessionData.browsingStack.top = sessionData.browsingStack.root;
-    pushEmptySession(&sessionData.browsingStack);
+    oldtop = browsingStack.top;
+    browsingStack.top = browsingStack.root;
+    pushEmptySession(&browsingStack);
     return oldtop;
 }
 
 static void popAndFreeSessionsUntil(SessionStackEntry *oldtop) {
     popAndFreeSession();
     // recover old top, but what if it was freed, hmm
-    while (sessionData.browsingStack.top!=NULL && sessionData.browsingStack.top!=oldtop) {
+    while (browsingStack.top!=NULL && browsingStack.top!=oldtop) {
         popSession();
     }
 }
@@ -867,7 +866,7 @@ static void findAndGotoDefinition(ReferenceableItem *referenceable) {
     // preserve popped items from browser first
     SessionStackEntry *oldtop = pushSession();
 
-    SessionStackEntry *top = sessionData.browsingStack.top;
+    SessionStackEntry *top = browsingStack.top;
     BrowsingMenu menu = makeBrowsingMenu(*referenceable, true, true, 0, UsageUsed, UsageNone,
                                        NO_POSITION);
     top->hkSelectedSym = &menu;  // Needed for createSelectionMenu to find matching symbols
@@ -970,10 +969,10 @@ bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2) {
 
 void deleteEntryFromSessionStack(SessionStackEntry *entry) {
     SessionStackEntry **entryP;
-    for (entryP= &sessionData.browsingStack.root; *entryP!=NULL&&*entryP!=entry; entryP= &(*entryP)->previous)
+    for (entryP= &browsingStack.root; *entryP!=NULL&&*entryP!=entry; entryP= &(*entryP)->previous)
         ;
     assert(*entryP != NULL);
-    deleteSessionStackEntry(&sessionData.browsingStack, entryP);
+    deleteSessionStackEntry(&browsingStack, entryP);
 }
 
 void processSelectedReferences(SessionStackEntry *sessionStackEntry,
@@ -1193,13 +1192,13 @@ static void olcxReferenceRePush(void) {
     assert(options.xref2);
     if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_NO))
         return;
-    next = getNextTopStackItem(&sessionData.browsingStack);
+    next = getNextTopStackItem(&browsingStack);
     if (next != NULL) {
-        sessionData.browsingStack.top = next;
-        gotoCurrentReference(sessionData.browsingStack.top);
+        browsingStack.top = next;
+        gotoCurrentReference(browsingStack.top);
         // TODO, replace this by follwoing since 1.6.1
         //& ppcGotoPosition(&sessionData->browserStack.top->callerPosition);
-        olcxPrintSymbolName(sessionData.browsingStack.top);
+        olcxPrintSymbolName(browsingStack.top);
     } else {
         ppcBottomWarning("You are on the top of browser stack.");
     }
@@ -1215,8 +1214,8 @@ static void olcxReferencePop(void) {
         ppcIndicateNoReference();
     }
     //& deleteEntryFromSessionStack(sessionEntry);  // this was before non deleting pop
-    sessionData.browsingStack.top = sessionEntry->previous;
-    olcxPrintSymbolName(sessionData.browsingStack.top);
+    browsingStack.top = sessionEntry->previous;
+    olcxPrintSymbolName(browsingStack.top);
 }
 
 void popFromSession(void) {
@@ -1225,7 +1224,7 @@ void popFromSession(void) {
     /* Why this check? */
     if (!sessionHasReferencesValidForOperation(&sessionData, &entry, CHECK_NULL_YES))
         return;
-    sessionData.browsingStack.top = entry->previous;
+    browsingStack.top = entry->previous;
 }
 
 static void safetyCheckAddDiffRef(Reference *r, SessionStackEntry *diffrefs,
@@ -1347,13 +1346,13 @@ static void olcxSafetyCheck(void) {
     }
     if (diffrefs->references == NULL) {
         // no need to free here, as popings are not freed
-        sessionData.browsingStack.top = sessionData.browsingStack.top->previous;
-        sessionData.browsingStack.top = sessionData.browsingStack.top->previous;
-        sessionData.browsingStack.top = sessionData.browsingStack.top->previous;
+        browsingStack.top = browsingStack.top->previous;
+        browsingStack.top = browsingStack.top->previous;
+        browsingStack.top = browsingStack.top->previous;
         fprintf(outputFile, "*Done. No conflicts detected.");
     } else {
         assert(diffrefs->menu);
-        sessionData.browsingStack.top = sessionData.browsingStack.top->previous;
+        browsingStack.top = browsingStack.top->previous;
         fprintf(outputFile, " ** Some misinterpreted references detected. Please, undo last refactoring.");
     }
     fflush(outputFile);
@@ -1409,11 +1408,11 @@ static void olcxNoSymbolFoundErrorMessage(void) {
 
 
 static bool haveBrowsingMenu(void) {
-    if (sessionData.browsingStack.top!=NULL
-        && sessionData.browsingStack.top->menu==NULL) {
+    if (browsingStack.top!=NULL
+        && browsingStack.top->menu==NULL) {
         return false;
     }
-    assert(sessionData.browsingStack.top != NULL);
+    assert(browsingStack.top != NULL);
     return true;
 }
 
@@ -1432,7 +1431,7 @@ static BrowsingMenu *firstVisibleSymbol(BrowsingMenu *menu) {
 
 bool olcxShowSelectionMenu(void) {
     // decide whether to show manual resolution menu
-    assert(sessionData.browsingStack.top);
+    assert(browsingStack.top);
     if (options.serverOperation == OP_INTERNAL_PUSH_FOR_USAGE_CHECK) {
         // never ask for resolution for PEEK symbols
         return false;
@@ -1442,7 +1441,7 @@ bool olcxShowSelectionMenu(void) {
         return false;
     }
     // first if just zero or one symbol, no resolution
-    BrowsingMenu *first = sessionData.browsingStack.top->menu;
+    BrowsingMenu *first = browsingStack.top->menu;
     if (first == NULL) {
         //&fprintf(dumpOut,"no resolve, no symbol\n"); fflush(dumpOut);
         return false; // no symbol
@@ -1461,7 +1460,7 @@ bool olcxShowSelectionMenu(void) {
         || options.serverOperation==OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION
     ) {
         // manually only if different
-        for (BrowsingMenu *ss=sessionData.browsingStack.top->menu; ss!=NULL; ss=ss->next) {
+        for (BrowsingMenu *ss=browsingStack.top->menu; ss!=NULL; ss=ss->next) {
             if (ss->selected) {
                 if (first == NULL) {
                     first = ss;
@@ -1471,7 +1470,7 @@ bool olcxShowSelectionMenu(void) {
             }
         }
     } else {
-        for (BrowsingMenu *menu=sessionData.browsingStack.top->menu; menu!=NULL; menu=menu->next) {
+        for (BrowsingMenu *menu=browsingStack.top->menu; menu!=NULL; menu=menu->next) {
             if (menu->visible) {
                 if (first!=NULL) {
                     return true;
@@ -1515,8 +1514,8 @@ void createSelectionMenuForOperation(ServerOperation command) {
     SessionStackEntry  *rstack;
     BrowsingMenu     *menu;
 
-    assert(sessionData.browsingStack.top);
-    rstack = sessionData.browsingStack.top;
+    assert(browsingStack.top);
+    rstack = browsingStack.top;
     menu = rstack->hkSelectedSym;
     if (menu == NULL)
         return;
@@ -1542,9 +1541,9 @@ void createSelectionMenuForOperation(ServerOperation command) {
 void olcxPushSpecialCheckMenuSym(char *symname) {
     SessionStackEntry *rstack;
 
-    pushEmptySession(&sessionData.browsingStack);
-    assert(sessionData.browsingStack.top);
-    rstack = sessionData.browsingStack.top;
+    pushEmptySession(&browsingStack);
+    assert(browsingStack.top);
+    rstack = browsingStack.top;
     rstack->hkSelectedSym = createSpecialMenuItem(symname, NO_FILE_NUMBER, StorageDefault);
     rstack->menu = createSpecialMenuItem(symname, NO_FILE_NUMBER, StorageDefault);
 }
@@ -1576,7 +1575,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
             //& if (options.xref2) ppcGenRecord(PPC_NO_SYMBOL, "");
             //& else
             olcxNoSymbolFoundErrorMessage();
-            deleteEntryFromSessionStack(sessionData.browsingStack.top);
+            deleteEntryFromSessionStack(browsingStack.top);
         }
         break;
     case OP_BROWSE_PUSH_NAME:
@@ -1584,7 +1583,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
             olcxOrderRefsAndGotoDefinition();
         } else {
             olcxNoSymbolFoundErrorMessage();
-            deleteEntryFromSessionStack(sessionData.browsingStack.top);
+            deleteEntryFromSessionStack(browsingStack.top);
         }
         break;
     case OP_UNUSED_GLOBAL:
@@ -1596,7 +1595,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
             olcxReferenceList(";");
         } else {
             olcxNoSymbolFoundErrorMessage();
-            deleteEntryFromSessionStack(sessionData.browsingStack.top);
+            deleteEntryFromSessionStack(browsingStack.top);
         }
         break;
     case OP_BROWSE_PUSH_ONLY:
@@ -1604,7 +1603,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
             olcxPushOnly();
         } else {
             olcxNoSymbolFoundErrorMessage();
-            deleteEntryFromSessionStack(sessionData.browsingStack.top);
+            deleteEntryFromSessionStack(browsingStack.top);
         }
         break;
     case OP_BROWSE_PUSH_AND_CALL_MACRO:
@@ -1612,7 +1611,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
             olcxPushAndCallMacro();
         } else {
             olcxNoSymbolFoundErrorMessage();
-            deleteEntryFromSessionStack(sessionData.browsingStack.top);
+            deleteEntryFromSessionStack(browsingStack.top);
         }
         break;
     case OP_INTERNAL_PUSH_FOR_USAGE_CHECK:
@@ -1661,7 +1660,7 @@ static void mainAnswerReferencePushingAction(ServerOperation operation) {
             && options.manualResolve != RESOLVE_DIALOG_NEVER)) {
         ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
     } else {
-        assert(sessionData.browsingStack.top);
+        assert(browsingStack.top);
         //&processSelectedReferences(sessionData->browserStack.top, genOnLineReferences);
         olcxPrintPushingAction(options.serverOperation);
     }
@@ -1688,7 +1687,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceableItem *referenceab
         }
     }
     if (!used && definitionReference!=NULL) {
-        addReferenceableToBrowsingMenu(&sessionData.browsingStack.top->hkSelectedSym, referenceableItem, true, true,
+        addReferenceableToBrowsingMenu(&browsingStack.top->hkSelectedSym, referenceableItem, true, true,
                                0, (SymbolRelation){.sameFile = false}, UsageDefined,
                                definitionReference->position, definitionReference->usage);
     }
@@ -1698,8 +1697,8 @@ static void pushLocalUnusedSymbolsAction(void) {
     SessionStackEntry    *rstack;
     BrowsingMenu     *ss;
 
-    assert(sessionData.browsingStack.top);
-    rstack = sessionData.browsingStack.top;
+    assert(browsingStack.top);
+    rstack = browsingStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss == NULL);
     mapOverReferenceableItemTable(mapAddLocalUnusedSymbolsToHkSelection);
@@ -1746,7 +1745,7 @@ static void mapAddGlobalUnusedSymbolsToHkSelection(ReferenceableItem *item) {
     }
 
     if (isDefined && !hasUsage) {
-        addReferenceableToBrowsingMenu(&sessionData.browsingStack.top->hkSelectedSym,
+        addReferenceableToBrowsingMenu(&browsingStack.top->hkSelectedSym,
                                        item, true, true, 0,
                                        (SymbolRelation){.sameFile = false},
                                        UsageDefined,
@@ -1756,8 +1755,8 @@ static void mapAddGlobalUnusedSymbolsToHkSelection(ReferenceableItem *item) {
 }
 
 static void answerPushGlobalUnusedSymbolsAction(void) {
-    assert(sessionData.browsingStack.top);
-    assert(sessionData.browsingStack.top->hkSelectedSym == NULL);
+    assert(browsingStack.top);
+    assert(browsingStack.top->hkSelectedSym == NULL);
     mapOverReferenceableItemTable(mapAddGlobalUnusedSymbolsToHkSelection);
     createSelectionMenuForOperation(options.serverOperation);
     assert(options.xref2);
@@ -1765,7 +1764,7 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
 }
 
 static void pushSymbolByName(char *name) {
-    SessionStackEntry *rstack = sessionData.browsingStack.top;
+    SessionStackEntry *rstack = browsingStack.top;
     rstack->hkSelectedSym = createSpecialMenuItem(name, NO_FILE_NUMBER, StorageDefault);
     rstack->callerPosition = getCallerPositionFromCommandLineOption();
 }
@@ -2038,7 +2037,7 @@ void answerEditorAction(void) {
         /* REFACTORINGS */
     case OP_GET_AVAILABLE_REFACTORINGS:
         printAvailableRefactorings();
-        deleteEntryFromSessionStack(sessionData.browsingStack.top);
+        deleteEntryFromSessionStack(browsingStack.top);
         break;
 
     case OP_REFACTORY:
@@ -2065,7 +2064,7 @@ void answerEditorAction(void) {
         // the parsers and server and not cxref...
         if (completionStringServed && parameterPosition.file != NO_FILE_NUMBER) {
             ppcGotoPosition(parameterPosition);
-            deleteEntryFromSessionStack(sessionData.browsingStack.top);
+            deleteEntryFromSessionStack(browsingStack.top);
         } else {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "Parameter %d not found.", options.olcxGotoVal);
@@ -2073,7 +2072,7 @@ void answerEditorAction(void) {
         }
         break;
     case OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION: {
-        SessionStackEntry *stack = sessionData.browsingStack.top;
+        SessionStackEntry *stack = browsingStack.top;
         assert(stack!=NULL);
         if (stack->hkSelectedSym == NULL) {
             char tmpBuff[TMP_BUFF_SIZE];
@@ -2126,7 +2125,7 @@ void putOnLineLoadedReferences(ReferenceableItem *referenceableItem) {
     int ols;
     BrowsingMenu *cms;
 
-    ols = findMatchingBrowsingMenuItem(referenceableItem, sessionData.browsingStack.top,
+    ols = findMatchingBrowsingMenuItem(referenceableItem, browsingStack.top,
                                        &cms, DO_NOT_CHECK_IF_SELECTED);
     if (ols > 0) {
         assert(cms);
@@ -2212,7 +2211,7 @@ static SymbolRelation accumulateSymbolRelation(SymbolRelation a, SymbolRelation 
 BrowsingMenu *createSelectionMenu(ReferenceableItem *reference) {
     BrowsingMenu *result = NULL;
 
-    SessionStackEntry *rstack = sessionData.browsingStack.top;
+    SessionStackEntry *rstack = browsingStack.top;
     unsigned level = 0;
     SymbolRelation relation = {.sameFile = false};
     Position defaultPosition = NO_POSITION;
@@ -2250,8 +2249,8 @@ BrowsingMenu *createSelectionMenu(ReferenceableItem *reference) {
 /* ********************************************************************** */
 
 void olSetCallerPosition(Position position) {
-    assert(sessionData.browsingStack.top);
-    sessionData.browsingStack.top->callerPosition = position;
+    assert(browsingStack.top);
+    browsingStack.top->callerPosition = position;
 }
 
 

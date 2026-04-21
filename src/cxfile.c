@@ -780,7 +780,7 @@ static void cxfileCheckLastSymbolDeadness(void) {
     if (lastIncomingData.symbolToCheckForDeadness != -1
         && lastIncomingData.deadSymbolIsDefined
     ) {
-        addReferenceableToBrowsingMenu(&sessionData.browsingStack.top->hkSelectedSym,
+        addReferenceableToBrowsingMenu(&browsingStack.top->hkSelectedSym,
                                       lastIncomingData.referenceableItem,
                                       true, true, 0, (SymbolRelation){.sameFile = false},
                                       UsageDefined, NO_POSITION, UsageDefined);
@@ -1025,7 +1025,7 @@ static void scanFunction_Reference(int size,
                         log_trace (":adding reference %s:%d", cxFileItem->name, reference.position.line);
                         addReferenceToBrowsingMenu(lastIncomingData.onLineRefMenuItem, &reference);
                     } else {
-                        addReferenceToList(&reference, &sessionData.browsingStack.top->references);
+                        addReferenceToList(&reference, &browsingStack.top->references);
                     }
                 }
             }

@@ -77,17 +77,17 @@ static int scheduleFileUsingTheMacro(void) {
                                                          GlobalScope, VisibilityGlobal, NO_FILE_NUMBER);
 
     BrowsingMenu menu = makeBrowsingMenu(references, 1, true, 0, UsageUsed, UsageNone, NO_POSITION);
-    if (sessionData.browsingStack.top==NULL) {
-        pushEmptySession(&sessionData.browsingStack);
-        tmpc = sessionData.browsingStack.top;
+    if (browsingStack.top==NULL) {
+        pushEmptySession(&browsingStack);
+        tmpc = browsingStack.top;
     }
 
-    assert(sessionData.browsingStack.top);
-    BrowsingMenu *oldMenu = sessionData.browsingStack.top->hkSelectedSym;
-    sessionData.browsingStack.top->hkSelectedSym = &menu;
+    assert(browsingStack.top);
+    BrowsingMenu *oldMenu = browsingStack.top->hkSelectedSym;
+    browsingStack.top->hkSelectedSym = &menu;
     fileToParseForMacroExpansion = NO_FILE_NUMBER;
     scanForMacroUsage(completionStringInMacroBody);
-    sessionData.browsingStack.top->hkSelectedSym = oldMenu;
+    browsingStack.top->hkSelectedSym = oldMenu;
     if (tmpc!=NULL) {
         deleteEntryFromSessionStack(tmpc);
     }
@@ -695,7 +695,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     }
 
     if (needsReferenceDatabase(options.serverOperation))
-        pushEmptySession(&sessionData.browsingStack);
+        pushEmptySession(&browsingStack);
 
     if (requiresProcessingInputFile(options.serverOperation)) {
         if (hasInputFile) {
