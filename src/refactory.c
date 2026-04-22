@@ -900,6 +900,7 @@ static Result getParameterPosition(EditorMarker *point, char *functionOrMacroNam
                          "Sorry, do not know how to handle this case.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
+        return RESULT_ERR;
     }
 
     clearParameterPositions();

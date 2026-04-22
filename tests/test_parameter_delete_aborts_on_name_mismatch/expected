@@ -1,0 +1,38 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-del-param -olcxparnum=1 -olcursor=4 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=4 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<ask-confirmation len=<n>>parameter 'a' is used, delete it anyway?</ask-confirmation>
+<goto>
+ <position-off off=40 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<error len=<n>>This reference is not pointing to the function/method name. Maybe a
+composed symbol. Sorry, do not know how to handle this case.
+</error>
+<goto>
+ <position-off off=6 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>int a, </str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=66 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>1, </str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=4 len=<n>>CURDIR/source.c</position-off>
+</goto>
+-exit
+end-of-options
+
