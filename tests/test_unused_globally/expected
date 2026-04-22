@@ -8,7 +8,7 @@ end-of-options
 end-of-options
 
 <sync>
-<ask-confirmation len=<n>>1 of 2 compilation units need reparsing. Parse all before checking for unused?</ask-confirmation>
+<wait-confirmation len=<n>>1 of 2 compilation units need reparsing. Parse all before checking for unused?</wait-confirmation>
 -cancel
 end-of-options
 

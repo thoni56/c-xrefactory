@@ -18,6 +18,7 @@ PROTOCOL_ITEM(String, PPC_REFACTORING_PASTE_BLOCK,      "paste-block")
 
 
 PROTOCOL_ITEM(String, PPC_ASK_CONFIRMATION,             "ask-confirmation")
+PROTOCOL_ITEM(String, PPC_WAIT_CONFIRMATION,            "wait-confirmation")
 PROTOCOL_ITEM(String, PPC_EXTRACTION_DIALOG,            "extraction-dialog")
 
 PROTOCOL_ITEM(String, PPC_DISPLAY_RESOLUTION,           "display-resolution")

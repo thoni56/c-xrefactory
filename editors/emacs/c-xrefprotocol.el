@@ -22,6 +22,7 @@
 
 
 (defconst c-xref_PPC_ASK_CONFIRMATION "ask-confirmation")
+(defconst c-xref_PPC_WAIT_CONFIRMATION "wait-confirmation")
 (defconst c-xref_PPC_EXTRACTION_DIALOG "extraction-dialog")
 
 (defconst c-xref_PPC_DISPLAY_RESOLUTION "display-resolution")

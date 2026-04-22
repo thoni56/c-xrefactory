@@ -525,7 +525,7 @@ static void parseDiscoveredCompilationUnits(ArgumentsVector baseArgs) {
 }
 
 static bool waitForUserConfirmation(char *message) {
-    ppcAskConfirmation(message);
+    ppcWaitConfirmation(message);
     closeOutputFile();
     ppcSynchronize();
 

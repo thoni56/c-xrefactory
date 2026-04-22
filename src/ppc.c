@@ -187,3 +187,7 @@ void ppcIndicateNoReference(void) {
 void ppcAskConfirmation(char *message) {
     ppcGenRecord(PPC_ASK_CONFIRMATION, message);
 }
+
+void ppcWaitConfirmation(char *message) {
+    ppcGenRecord(PPC_WAIT_CONFIRMATION, message);
+}

@@ -2395,6 +2395,29 @@ No.
     ))
 
 (defun c-xref-server-dispatch-ask-confirmation (ss i len dispatch-data tag)
+  ;; Advisory confirmation: the server has already sent any follow-up
+  ;; edits in the same batch. If the user answers Yes, the dispatch
+  ;; continues and the pending edits apply. If the user answers No,
+  ;; we raise an Emacs error which aborts the dispatch loop, throwing
+  ;; the pending edits away.
+  (let ((tlen) (cc) (conf))
+    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
+    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
+    (setq i (+ i tlen))
+    (setq i (c-xref-server-parse-xml-tag ss i len))
+    (c-xref-server-dispatch-require-end-ctag tag)
+    (setq conf (c-xref-yes-or-no-window cc t dispatch-data))
+    (if (not conf)
+        (progn
+          (if c-xref-debug-mode (message "exiting: %s" tag))
+          (error "exiting")))
+    i
+    ))
+
+(defun c-xref-server-dispatch-wait-confirmation (ss i len dispatch-data tag)
+  ;; Blocking confirmation: the server is waiting on stdin for
+  ;; -continue or -cancel before deciding what to send next.
+  ;; Consumed by waitForUserConfirmation in server.c.
   (let ((tlen) (cc) (conf))
     (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
     (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
@@ -3220,6 +3243,9 @@ Special hotkeys available:
        (
             (equal c-xref-server-ctag c-xref_PPC_ASK_CONFIRMATION)
             (setq i (c-xref-server-dispatch-ask-confirmation ss i len dispatch-data c-xref-server-ctag)))
+       (
+            (equal c-xref-server-ctag c-xref_PPC_WAIT_CONFIRMATION)
+            (setq i (c-xref-server-dispatch-wait-confirmation ss i len dispatch-data c-xref-server-ctag)))
        (
             (equal c-xref-server-ctag c-xref_PPC_INFORMATION)
             (setq i (c-xref-server-dispatch-information ss i len dispatch-data c-xref-server-ctag)))
