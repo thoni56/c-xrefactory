@@ -1,0 +1,19 @@
+CXREF -xrefactory-II -server -o server-buffer
+-olcxgetprojectname CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-rename -renameto=G -olcursor=4 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=47 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<error len=<n>>This reference does not point to 'F' (found 'main'). The stored
+position may be stale - try re-saving the file.
+</error>
+-exit
+end-of-options
+

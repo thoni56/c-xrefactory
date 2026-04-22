@@ -496,22 +496,29 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
     return handleSafetyCheckDifferenceLists(diff1, diff2, diffrefs);
 }
 
-static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *occurrences) {
+static Result precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *occurrences) {
+    /* Pass 1: validate every occurrence resolves to the expected identifier.
+     * A mismatch means the stored position is stale - renaming any subset would
+     * leave the program in a partially-edited state. Abort before emitting any
+     * client-side precheck so the client never sees a partial stream. */
     for (EditorMarkerList *ll = occurrences; ll != NULL; ll = ll->next) {
         EditorMarker *marker = ll->marker;
-        // first check if we have updated reference
         char *id = getIdentifierOnMarker_static(marker);
         if (strcmp(id, oldName) != 0) {
             char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff, "something goes wrong: expecting %s instead of %s at %s, offset:%d", oldName, id,
-                    simpleFileName(getRealFileName_static(marker->buffer->fileName)), marker->offset);
-            errorMessage(ERR_INTERNAL, tmpBuff);
-            return;
+            ppcGotoMarker(marker);
+            sprintf(tmpBuff, "This reference does not point to '%s' (found '%s'). "
+                             "The stored position may be stale - try re-saving the file.", oldName, id);
+            formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
+            errorMessage(ERR_ST, tmpBuff);
+            return RESULT_ERR;
         }
-        // O.K. check also few characters around
-        int offset1, offset2;
-        offset1 = marker->offset - RRF_CHARS_TO_PRE_CHECK_AROUND;
-        offset2 = marker->offset + strlen(oldName) + RRF_CHARS_TO_PRE_CHECK_AROUND;
+    }
+    /* Pass 2: emit client-side precheck for each occurrence. */
+    for (EditorMarkerList *ll = occurrences; ll != NULL; ll = ll->next) {
+        EditorMarker *marker = ll->marker;
+        int offset1 = marker->offset - RRF_CHARS_TO_PRE_CHECK_AROUND;
+        int offset2 = marker->offset + strlen(oldName) + RRF_CHARS_TO_PRE_CHECK_AROUND;
         if (offset1 < 0)
             offset1 = 0;
         if (offset2 >= marker->buffer->allocation.bufferSize)
@@ -520,6 +527,7 @@ static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *o
         ppcPreCheck(newMarker, offset2 - offset1);
         freeEditorMarker(newMarker);
     }
+    return RESULT_OK;
 }
 
 static void checkedRenameBuffer(EditorBuffer *buffer, char *newName, EditorUndo **undo) {
@@ -618,7 +626,10 @@ static EditorMarkerList *getAndPreCheckReferences(EditorMarker *point, char *nam
                                                       char *resolveMessage, int messageType) {
     EditorMarkerList *occs;
     occs = getReferences(point, resolveMessage, messageType);
-    precheckThatSymbolRefsCorresponds(nameOnPoint, occs);
+    if (precheckThatSymbolRefsCorresponds(nameOnPoint, occs) != RESULT_OK) {
+        freeEditorMarkerListAndMarkers(occs);
+        return NULL;
+    }
     return occs;
 }
 
@@ -673,6 +684,8 @@ static void renameAtPoint(EditorMarker *point) {
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
     occurrences = getAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
+    if (occurrences == NULL)
+        return;
 
     EditorUndo *undoStartPoint = editorUndo;
 
