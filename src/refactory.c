@@ -888,6 +888,20 @@ static Result getParameterNamePosition(EditorMarker *point, char *fileName, int 
     }
 }
 
+static Result validateReferencePointsToFunction(EditorMarker *marker, char *functionName) {
+    char *nameAtMarker = getIdentifierOnMarker_static(marker);
+    if (strcmp(nameAtMarker, functionName) != 0) {
+        char tmpBuff[TMP_BUFF_SIZE];
+        ppcGotoMarker(marker);
+        sprintf(tmpBuff, "This reference is not pointing to the function/method name. Maybe a composed symbol. "
+                         "Sorry, do not know how to handle this case.");
+        formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
+        errorMessage(ERR_ST, tmpBuff);
+        return RESULT_ERR;
+    }
+    return RESULT_OK;
+}
+
 static Result getParameterPosition(EditorMarker *point, char *functionOrMacroName, int argn) {
     char  pushOptions[TMP_STRING_SIZE];
     char *nameOnPoint;
@@ -1170,12 +1184,22 @@ static void applyParameterManipulationToFunction(char *functionName, EditorMarke
                                                  int manipulation, int argn1, int argn2) {
     int progress, count;
 
+    /* Pass 1: validate every occurrence resolves to the expected function name.
+     * A mismatch means the reference position is stale or composed — refactoring
+     * any subset would leave the program in a partially-edited state. Abort early
+     * so no undo records get queued. */
+    for (EditorMarkerList *l = occurrences; l != NULL; l = l->next) {
+        if (l->usage == UsageUndefinedMacro)
+            continue;
+        if (validateReferencePointsToFunction(l->marker, functionName) != RESULT_OK)
+            return;
+    }
+
     /* TODO Is it guaranteed that the occurrences always starts with Defined/Declared? */
     LIST_LEN(count, EditorMarkerList, occurrences);
     progress = 0;
     for (EditorMarkerList *l = occurrences; l != NULL; l = l->next) {
         if (l->usage != UsageUndefinedMacro) {
-            /* TODO: Should we not abort if any of the occurrences fail? */
             if (manipulation == PPC_AVR_ADD_PARAMETER) {
                 addParameter(l->marker, functionName, argn1, l->usage);
             } else if (manipulation == PPC_AVR_DEL_PARAMETER) {
