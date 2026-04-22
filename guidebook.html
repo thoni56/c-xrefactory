@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-04-18">
+<meta name="author" content="v{VERSION} - Generated 2026-04-22">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-04-18</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-04-22</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -528,9 +528,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#entry-refresh">10.2. Entry Refresh</a></li>
 <li><a href="#_editor_buffers_and_incremental_updates">10.3. Editor Buffers and Incremental Updates</a></li>
 <li><a href="#_server_side_refactoring">10.4. Server-Side Refactoring</a></li>
-<li><a href="#_how_is_an_extract_refactoring_performed">10.5. How is an Extract refactoring performed?</a></li>
-<li><a href="#_refactoring_undo">10.6. Refactoring Undo</a></li>
-<li><a href="#_how_does_lexem_stream_management_work">10.7. How does lexem stream management work?</a></li>
+<li><a href="#_extract_refactoring_editor_server_protocol">10.5. Extract Refactoring: Editor ↔ Server Protocol</a></li>
+<li><a href="#_extract_function">10.6. Extract Function</a></li>
+<li><a href="#_refactoring_undo">10.7. Refactoring Undo</a></li>
+<li><a href="#_how_does_lexem_stream_management_work">10.8. How does lexem stream management work?</a></li>
 </ul>
 </li>
 <li><a href="#development-environment">11. Development Environment</a>
@@ -581,9 +582,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_incremental_cxfile_c_cleanup">16.1. Incremental <code>cxfile.c</code> Cleanup</a></li>
 <li><a href="#macro-expansion-module">16.2. Extract Macro Expansion Module</a></li>
 <li><a href="#clean-parser-api">16.3. Remove <code>parseBufferUsingServer</code> Bridge</a></li>
-<li><a href="#remove-hashtab">16.4. Remove Hashtab by Migrating to Hashlist</a></li>
-<li><a href="#split-editor-module">16.5. Split the Editor Module</a></li>
-<li><a href="#rename-operations">16.6. Rename Server Operations</a></li>
+<li><a href="#typed-requests">16.4. Replace Global <code>options</code> with Typed Requests</a></li>
+<li><a href="#remove-hashtab">16.5. Remove Hashtab by Migrating to Hashlist</a></li>
+<li><a href="#split-editor-module">16.6. Split the Editor Module</a></li>
+<li><a href="#rename-operations">16.7. Rename Server Operations</a></li>
 </ul>
 </li>
 <li><a href="#_known_bugs">17. Known Bugs</a>
@@ -5633,7 +5635,7 @@ next request.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_is_an_extract_refactoring_performed">10.5. How is an Extract refactoring performed?</h3>
+<h3 id="_extract_refactoring_editor_server_protocol">10.5. Extract Refactoring: Editor ↔ Server Protocol</h3>
 <div class="paragraph">
 <p>The region (mark and point/cursor positions) is sent to the <em>c-xref</em>
 server in a <code>-rfct-extract</code> command.</p>
@@ -5672,44 +5674,222 @@ extracting a function both may contain code to transfer and restore
 parameters into local variables to propagate in/out variables as
 required.</p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>The editor then requests a name from the user that it will use in a
-rename operation that renames the default named
+<div class="paragraph">
+<p>Finally, the editor requests a name from the user that it will use in
+a rename operation that renames the default named
 function/macro/variable.</p>
-</li>
-</ol>
 </div>
 <div class="paragraph">
-<p><strong><em>Two-Phase Architecture</em></strong></p>
-</div>
-<div class="paragraph">
-<p>Extraction operates in two phases:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Collection Phase (during parsing)</strong>: Parser semantic hooks track control flow by registering synthetic labels and collecting references within the marked region.</p>
-</li>
-<li>
-<p><strong>Analysis Phase (after parsing)</strong>: The extraction module analyzes the collected control flow data, classifies variables by usage patterns, and generates the refactored code (call site, function definition, postamble).</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>This separation keeps the parser clean and makes extraction logic independently testable.</p>
+<p>For the internal mechanism that produces the three strings — region
+delineation, program graph construction, variable classification and
+output generation — see the next section.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_refactoring_undo">10.6. Refactoring Undo</h3>
+<h3 id="_extract_function">10.6. Extract Function</h3>
+<div class="paragraph">
+<p>This section describes the internal mechanism so that maintainers can
+orient themselves before reading <code>extract.c</code>.</p>
+</div>
+<div class="sect3">
+<h4 id="_what_the_implementation_must_do">10.6.1. What the Implementation Must Do</h4>
+<div class="paragraph">
+<p>Given a region of C source inside a function body, the tool must:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Isolate the region from the surrounding parse so that it can be
+reasoned about as a self-contained block.</p>
+</li>
+<li>
+<p>Determine for each variable referenced in or around the region
+whether it is an input to the extracted code, an output from it,
+both, or internal.</p>
+</li>
+<li>
+<p>Synthesise a new function whose signature matches those roles, and
+a call site that replaces the original region.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>All three happen during a single parse pass in <code>PARSE_TO_EXTRACT</code> mode.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_delineating_the_region">10.6.2. Delineating the Region</h4>
+<div class="paragraph">
+<p>The editor tells the server two byte offsets (mark and cursor). When
+the lexer reads past those offsets it injects synthetic tokens that
+turn the selection into a nested compound statement: an opening
+boundary before the region and a closing boundary after. An
+<code>OL_MARKER_TOKEN</code> sits inside each boundary — it is consumed by the
+lexer, invisible to the parser, and triggers the extract code to
+remember where the region begins and ends.</p>
+</div>
+<div class="paragraph">
+<p>The synthetic braces serve two roles: they make the region parse as a
+proper block (so declarations at its top are legal), and they give the
+extract code a structural invariant to verify — the block boundaries
+must live inside the same enclosing function body. Violating it aborts
+extraction with <code>Region / program structure mismatch</code>.</p>
+</div>
+<div class="paragraph">
+<p>A side effect of the synthetic block is discussed under <em>Subtlety</em>
+below.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_program_graph">10.6.3. The Program Graph</h4>
+<div class="paragraph">
+<p>Every reference emitted during the parse — variable uses, control
+labels, the synthetic block boundaries — becomes a node in a linked
+list ordered by source position. Each node carries:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A pointer back to its <code>ReferenceableItem</code> (so nodes for the same
+variable can be found together).</p>
+</li>
+<li>
+<p>The reference&#8217;s usage kind (read, assignment, address-of, define,
+goto target, &#8230;&#8203;).</p>
+</li>
+<li>
+<p>An <em>inside/outside</em> flag, assigned by walking the list and toggling
+at each block-boundary node.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This is the substrate for classification. The graph is <strong>not</strong> a
+syntactic AST; it is a flat sequence capturing the order in which the
+compiler would touch each reference.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_classifying_variables">10.6.4. Classifying Variables</h4>
+<div class="paragraph">
+<p>For each local variable the extract code performs a small dataflow
+analysis over the graph, tracking whether the variable holds a value
+coming from outside the region, inside it, or both. From the resulting
+state at each of the variable&#8217;s references it assigns one role:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Role</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>local</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Read and written only inside the region. Lives as a local in the
+extracted function.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>value argument</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Read inside but never assigned there. Passed in by value.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>out argument</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assigned inside and the value is consumed outside afterwards. Passed
+back as a pointer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>in-out argument</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Both read inside and the inside-written value is used outside (or
+the value flow re-enters the region). Passed back as a pointer and
+initialised inside the function from the dereferenced input.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>result value</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A promotion of <em>out argument</em> when there is exactly one. Returned by
+the function instead of taking a pointer.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>A second role, <em>local result value</em>, covers variables declared inside
+the region and returned from the function — see <em>Subtlety</em> below.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_generating_the_output">10.6.5. Generating the Output</h4>
+<div class="paragraph">
+<p>Classification in hand, the generator walks the program graph three
+times to emit:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <em>call site</em>: captures the return value (if any) and passes
+address-of for each out-argument.</p>
+</li>
+<li>
+<p>The <em>function signature</em>: parameters for value and pointer
+arguments, plus the return type.</p>
+</li>
+<li>
+<p>The <em>function body</em>: a declaration block for anything classified as
+<em>local</em>, followed by the original region&#8217;s text, ending with the
+return statement or the pointer-writes for out-arguments.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_subtlety_region_locals_used_after_the_region">10.6.6. Subtlety: Region-Locals Used After the Region</h4>
+<div class="paragraph">
+<p>The synthetic braces carry a side effect that matters for one
+specific case.</p>
+</div>
+<div class="paragraph">
+<p>If a variable is declared <strong>inside</strong> the region and read <strong>after</strong> it, the
+synthetic closing brace pops the symbol from the parser&#8217;s scope before
+the post-region code is parsed. The later use then fails to resolve
+and the C parser falls back to K&amp;R implicit declaration — treating the
+name as an <code>extern int</code> function call. The reference for the outside
+use is recorded against that implicit-function symbol, not against the
+region-local.</p>
+</div>
+<div class="paragraph">
+<p>Without intervention, the classifier sees the region-local with only
+inside uses and drops it from the extracted function&#8217;s signature,
+leaving the call site broken.</p>
+</div>
+<div class="paragraph">
+<p>The extract pass handles this by scanning the reference table after
+graph construction for the implicit-function shadows, matching them by
+name to region-locals, and splicing the shadow&#8217;s references back into
+the graph as outside-block nodes pointing at the region-local&#8217;s
+<code>ReferenceableItem</code>. The existing classifier then sees the true
+outside uses and classifies the variable correctly.</p>
+</div>
+<div class="paragraph">
+<p>This is a deliberate post-parse reconstruction: the synthetic scope is
+structurally necessary for the parse to work, so the information lost
+by scope-popping is recovered from the forensic trail the parser
+leaves behind.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_refactoring_undo">10.7. Refactoring Undo</h3>
 <div class="paragraph">
 <p>Undo for refactorings operates at two levels: the server uses an undo mechanism
 internally during refactoring execution, and the client maintains a separate mechanism
 for letting the user revert completed refactorings.</p>
 </div>
 <div class="sect3">
-<h4 id="_server_side_undo_internal">10.6.1. Server-Side Undo (Internal)</h4>
+<h4 id="_server_side_undo_internal">10.7.1. Server-Side Undo (Internal)</h4>
 <div class="paragraph">
 <p>The server maintains a global <code>editorUndo</code> linked list. Every <code>replaceStringInEditorBuffer</code>
 call pushes an undo entry recording the buffer, offset, and original text. This is used
@@ -5747,7 +5927,7 @@ safety checks.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_client_side_undo_user_facing">10.6.2. Client-Side Undo (User-Facing)</h4>
+<h4 id="_client_side_undo_user_facing">10.7.2. Client-Side Undo (User-Facing)</h4>
 <div class="paragraph">
 <p>The Emacs client layers multi-buffer undo on top of Emacs' native per-buffer
 <code>buffer-undo-list</code>. This lets the user revert a completed refactoring that touched
@@ -5814,12 +5994,12 @@ before the refactoring does not always work correctly — under investigation.</
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_does_lexem_stream_management_work">10.7. How does lexem stream management work?</h3>
+<h3 id="_how_does_lexem_stream_management_work">10.8. How does lexem stream management work?</h3>
 <div class="paragraph">
 <p>Lexical analysis uses a stack of <code>LexemStream</code> structures to handle nested macro expansions. The key insight is that the stream type acts as a <strong>discriminator</strong> for buffer ownership and cleanup strategy.</p>
 </div>
 <div class="sect3">
-<h4 id="_the_stream_types">10.7.1. The Stream Types</h4>
+<h4 id="_the_stream_types">10.8.1. The Stream Types</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">typedef enum {
@@ -5859,7 +6039,7 @@ Historically, there was also a <code>CACHED_STREAM</code> type when the caching 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_refill_algorithm">10.7.2. The Refill Algorithm</h4>
+<h4 id="_the_refill_algorithm">10.8.2. The Refill Algorithm</h4>
 <div class="paragraph">
 <p>When <code>currentInput</code> runs out of lexems (<code>read &gt;= write</code>), <code>refillInputIfEmpty()</code> uses the stream type to decide what to do:</p>
 </div>
@@ -5887,7 +6067,7 @@ Historically, there was also a <code>CACHED_STREAM</code> type when the caching 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_key_invariant">10.7.3. Key Invariant</h4>
+<h4 id="_key_invariant">10.8.3. Key Invariant</h4>
 <div class="paragraph">
 <p><strong>Stream type must match buffer allocation:</strong></p>
 </div>
@@ -5909,7 +6089,7 @@ Historically, there was also a <code>CACHED_STREAM</code> type when the caching 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_common_bug_pattern">10.7.4. Common Bug Pattern</h4>
+<h4 id="_common_bug_pattern">10.8.4. Common Bug Pattern</h4>
 <div class="paragraph">
 <p>Pushing a <code>NORMAL_STREAM</code> onto the macro stack, then trying to free it as if it were <code>MACRO_STREAM</code>:</p>
 </div>
@@ -8314,9 +8494,176 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="remove-hashtab">16.4. Remove Hashtab by Migrating to Hashlist</h3>
+<h3 id="typed-requests">16.4. Replace Global <code>options</code> with Typed Requests</h3>
 <div class="sect3">
-<h4 id="_problem_statement_2">16.4.1. Problem Statement</h4>
+<h4 id="_problem_3">16.4.1. Problem</h4>
+<div class="paragraph">
+<p>The <code>Options</code> struct is one global blob serving four distinct lifetimes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Session</strong> — set once at server startup: xrefrc path, debug/log config, compiler discovery, default options.</p>
+</li>
+<li>
+<p><strong>Project</strong> — discovered on project load: project root, include paths, source dirs, compiler include closure.</p>
+</li>
+<li>
+<p><strong>Request</strong> — per-operation: <code>serverOperation</code>, cursor/mark offsets, input/output filenames, filter strings.</p>
+</li>
+<li>
+<p><strong>Refactoring</strong> — spans multiple internal requests: <code>theRefactoring</code>, <code>renameTo</code>, <code>parnum</code>/<code>parnum2</code>, <code>moveTargetFile</code>, refactoring-level <code>cursorOffset</code>/<code>markOffset</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These lifetimes are held together by a save/restore discipline scattered across five call sites:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>server.c:723-726</code> — outer server loop snapshots <code>options</code> into <code>savedOptions</code> at startup, restores per iteration.</p>
+</li>
+<li>
+<p><code>startup.c:143,577,705</code> — legacy startup paths with the same pattern.</p>
+</li>
+<li>
+<p><code>refactory.c:166,170</code> — <code>beInteractive</code> snapshots into <code>localSavedOptions</code> because the outer loop&#8217;s snapshot would otherwise be clobbered mid-dialog.</p>
+</li>
+<li>
+<p><code>refactory.c:1238</code> — <code>serverPerformRefactoring</code> snapshots <code>options</code> into a parallel <code>refactoringOptions</code> global because sub-tasks re-enter option parsing and trample intent fields.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The <code>refactoringOptions</code> parallel global is the clearest symptom. Refactoring sub-tasks (extract, rename, parameter manipulation) synthesize argv like <code>"-olcxextract"</code> and re-enter <code>processOptions</code>, which overwrites <code>options</code>. Reading the refactoring intent (<code>refactoringOptions.theRefactoring</code>, <code>refactoringOptions.renameTo</code>, etc.) from a shadow copy is how that survives.</p>
+</div>
+<div class="paragraph">
+<p>Compounding the problem, <code>processOptions</code> is not a pure parser — it also opens the output file, mutates <code>currentPass</code>, and triggers file-processing initialization. Those side effects are why the global-mutation pattern is load-bearing today: parsing and its consequences are entangled.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_target_shape">16.4.2. Target Shape</h4>
+<div class="paragraph">
+<p>Three tiers with explicit owners and binding moments:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Session</strong> — bound once at server startup from the initial argv. Owned by a session object (currently process globals). Never touched during operation dispatch.</p>
+</li>
+<li>
+<p><strong>Project</strong> — bound on the first project-defining operation, frozen thereafter. Owned by <code>ProjectConfig</code> (already partially extracted for <code>sourceDirs</code>).</p>
+</li>
+<li>
+<p><strong>Request</strong> — constructed fresh from argv for each incoming operation, lives only for the dispatch of that operation, then discarded.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Option parsing becomes a pure function:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">Request *parseCommandLine(ArgumentsVector args);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>No globals mutated, no output files opened, no pass flags flipped. The dispatcher decides what side effects to run based on the returned <code>Request</code>. Each operation gets a typed struct — a tagged union or base struct with per-operation extensions — so the dispatch switch reads typed fields instead of guessing which <code>Options</code> fields are meaningful for which operation.</p>
+</div>
+<div class="paragraph">
+<p>The refactoring coordinator holds its own long-lived <code>RefactoringRequest</code> (the current <code>refactoringOptions</code> content, but owned by the coordinator, not a shadow global). Sub-operations construct their own fresh <code>Request</code> structs via normal parsing; the coordinator&#8217;s state is safe because it lives elsewhere. <code>refactoringOptions</code> disappears. The save/restore sites disappear — each tier has one owner, and nothing trampled means nothing to restore.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_why_one_project_per_server_makes_this_clean">16.4.3. Why One-Project-Per-Server Makes This Clean</h4>
+<div class="paragraph">
+<p>The client already forces server restart on project switch ("Do you want to switch project? Server will be restarted."). Project-tier state therefore genuinely locks in after the first project-defining operation — there is no mid-session project change to invalidate, no need for a <code>ProjectChanged</code> event kind, no cache-invalidation logic. The tier model matches the runtime commitment: one server, one project, immutable after bind.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_whats_already_there">16.4.4. What&#8217;s Already There</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong><code>ProjectConfig.sourceDirs</code></strong> — first project-scoped field migrated off <code>Options</code>. The extraction pattern is proven; more fields can follow the same shape.</p>
+</li>
+<li>
+<p><strong><code>ParsingConfig</code> struct</strong> — in <code>parsing.h</code>, already a typed struct carrying parser parameters instead of relying on globals. A working prototype of the same pattern one layer up.</p>
+</li>
+<li>
+<p><strong>Bridge removal</strong> (see <a href="#clean-parser-api">Remove <code>parseBufferUsingServer</code> Bridge</a>) — the precondition that eliminates sub-task option trampling. Once sub-tasks call parsing directly instead of re-entering the server via synthetic argv, <code>options</code> stops being clobbered mid-refactoring, which makes the refactoring-coordinator migration trivial.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_incremental_steps_2">16.4.5. Incremental Steps</h4>
+<div class="paragraph">
+<p>Each step is independently shippable. No grand rewrite.</p>
+</div>
+<div class="paragraph">
+<p><strong>1. Continue growing <code>ProjectConfig</code>.</strong> Move project-scoped fields off <code>Options</code> one at a time (include paths, project name, compiler discovery results, detected project root). Field-by-field migration; each field is a self-contained change.</p>
+</div>
+<div class="paragraph">
+<p><strong>2. Extract side effects from option parsing.</strong> Move the output-file opening, pass flag mutation, and file-processing initialization out of <code>processOptions</code> into the dispatcher. Parsing becomes pure; side effects remain where they belong but with a clear trigger point. This is the load-bearing step — without it, typed requests still have to round-trip through global state.</p>
+</div>
+<div class="paragraph">
+<p><strong>3. Introduce typed <code>Request</code> per operation.</strong> Pilot with one small, self-contained operation (candidates: <code>OP_SEARCH</code>, <code>OP_ABOUT</code>). Define the per-operation request struct, have the parser produce it, have the dispatcher consume it. Prove the shape end-to-end on one operation before spreading to the rest.</p>
+</div>
+<div class="paragraph">
+<p><strong>4. Migrate refactoring to own its <code>Request</code>.</strong> The coordinator (currently the refactoring call graph in <code>refactory.c</code>) holds a typed <code>RefactoringRequest</code> as first-class state. Sub-operations parse their own fresh requests. <code>refactoringOptions</code>, <code>deepCopyOptionsFromTo(&amp;options, &amp;refactoringOptions)</code>, and <code>beInteractive&#8217;s `localSavedOptions</code> all die together.</p>
+</div>
+<div class="paragraph">
+<p>The <code>inputFileName</code> global (already flagged as a cleanup target) becomes a <code>Request</code> field naturally in step 3 — same disease, same cure.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_notes">16.4.6. Notes</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Preloaded editor buffers arrive in the request payload but mutate session state (the editor buffer table). That is fine — the dispatcher updates session state from the request before running the operation — but it should be explicit in the dispatcher code rather than a side effect of parsing.</p>
+</li>
+<li>
+<p>Runtime reconfiguration commands (debug toggle, log level change, project re-init) become first-class session-reconfiguration events, not request options. Small surface, worth distinguishing from operation requests.</p>
+</li>
+<li>
+<p>`beInteractive&#8217;s resolution dialog stops being a nested sub-loop with its own save/restore. It becomes a coordinator state that waits for a specific follow-up event (resolution selection, continue, cancel).</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_references_3">16.4.7. References</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>src/options.h</code>, <code>src/options.c</code> — current <code>Options</code> struct and parser with side effects</p>
+</li>
+<li>
+<p><code>src/refactory.c:1238</code> — <code>deepCopyOptionsFromTo(&amp;options, &amp;refactoringOptions)</code>, the parallel-global snapshot</p>
+</li>
+<li>
+<p><code>src/refactory.c:166,170</code> — <code>beInteractive</code> save/restore via <code>localSavedOptions</code></p>
+</li>
+<li>
+<p><code>src/server.c:723-726</code> — outer server loop save/restore</p>
+</li>
+<li>
+<p><code>src/parsing.h</code> — <code>ParsingConfig</code> as a prototype of the typed-struct pattern</p>
+</li>
+<li>
+<p><a href="#clean-parser-api">Remove <code>parseBufferUsingServer</code> Bridge</a> — prerequisite that eliminates sub-task option trampling</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="remove-hashtab">16.5. Remove Hashtab by Migrating to Hashlist</h3>
+<div class="sect3">
+<h4 id="_problem_statement_2">16.5.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The codebase has two hash table implementations generated by C macro templates:</p>
 </div>
@@ -8364,7 +8711,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_why_this_matters_now">16.4.2. Why This Matters Now</h4>
+<h4 id="_why_this_matters_now">16.5.2. Why This Matters Now</h4>
 <div class="paragraph">
 <p>The lightweight file structure scanning work (ADR 22) exposed hashtab&#8217;s limitations:</p>
 </div>
@@ -8383,7 +8730,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_change">16.4.3. Proposed Change</h4>
+<h4 id="_proposed_change">16.5.3. Proposed Change</h4>
 <div class="paragraph">
 <p>Migrate <code>fileTable</code> and <code>macroArgumentTable</code> from hashtab to hashlist, then remove hashtab entirely.</p>
 </div>
@@ -8434,7 +8781,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_file_number_semantics_the_key_challenge">16.4.4. File Number Semantics — The Key Challenge</h4>
+<h4 id="_file_number_semantics_the_key_challenge">16.5.4. File Number Semantics — The Key Challenge</h4>
 <div class="paragraph">
 <p>The file table serves a dual purpose: hash lookup by name AND array indexing by file number. File numbers are used throughout the codebase as compact identifiers (stored in references, positions, sessions, etc.).</p>
 </div>
@@ -8462,7 +8809,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_benefits_2">16.4.5. Benefits</h4>
+<h4 id="_benefits_2">16.5.5. Benefits</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8481,7 +8828,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_notes">16.4.6. Notes</h4>
+<h4 id="_notes_2">16.5.6. Notes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8495,15 +8842,15 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="split-editor-module">16.5. Split the Editor Module</h3>
+<h3 id="split-editor-module">16.6. Split the Editor Module</h3>
 <div class="sect3">
-<h4 id="_problem_statement_3">16.5.1. Problem Statement</h4>
+<h4 id="_problem_statement_3">16.6.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The <code>editor.c</code> module (630+ lines) bundles at least four unrelated responsibilities under the misleading name "editor". The name suggests it&#8217;s about the external editor (Emacs), but most of the code has nothing to do with editor integration&#8201;&#8212;&#8201;it&#8217;s internal text manipulation infrastructure used by refactoring.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_responsibilities">16.5.2. Current Responsibilities</h4>
+<h4 id="_current_responsibilities">16.6.2. Current Responsibilities</h4>
 <div class="paragraph">
 <p><strong>1. Text memory allocator</strong> (<code>editorMemory[]</code>, <code>allocateNewEditorBufferTextSpace</code>, <code>freeTextSpace</code>)</p>
 </div>
@@ -8530,7 +8877,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_naming_problem">16.5.3. The Naming Problem</h4>
+<h4 id="_the_naming_problem">16.6.3. The Naming Problem</h4>
 <div class="paragraph">
 <p>The "Editor" prefix pervades the codebase beyond just this module:</p>
 </div>
@@ -8552,7 +8899,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_split">16.5.4. Proposed Split</h4>
+<h4 id="_proposed_split">16.6.4. Proposed Split</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -8597,7 +8944,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_notes_2">16.5.5. Notes</h4>
+<h4 id="_notes_3">16.6.5. Notes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8614,9 +8961,9 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="rename-operations">16.6. Rename Server Operations</h3>
+<h3 id="rename-operations">16.7. Rename Server Operations</h3>
 <div class="sect3">
-<h4 id="_problem_statement_4">16.6.1. Problem Statement</h4>
+<h4 id="_problem_statement_4">16.7.1. Problem Statement</h4>
 <div class="paragraph">
 <p>Server operations use the prefix <code>olcx</code> (likely "on-line cross-references"), a legacy abbreviation that conveys no meaning to anyone reading the code or protocol today. Option names like <code>-olcxpush</code>, <code>-olcxtagsearch</code>, <code>-olcxgetprojectname</code> are opaque compared to what they could be: <code>-push</code>, <code>-search</code>, <code>-get-project-name</code>.</p>
 </div>
@@ -8625,7 +8972,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_scope">16.6.2. Scope</h4>
+<h4 id="_scope">16.7.2. Scope</h4>
 <div class="paragraph">
 <p>The rename touches three layers:</p>
 </div>
@@ -8640,7 +8987,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_decisions">16.6.3. Design Decisions</h4>
+<h4 id="_design_decisions">16.7.3. Design Decisions</h4>
 <div class="paragraph">
 <p><strong>Shortest clear name</strong>: Prefer <code>-push</code> over <code>-browse-push</code>. Stack operations (push, pop) are domain concepts — without understanding them you can&#8217;t understand browsing anyway. No grouping prefix needed.</p>
 </div>
@@ -8665,13 +9012,13 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation">16.6.4. Implementation</h4>
+<h4 id="_implementation">16.7.4. Implementation</h4>
 <div class="paragraph">
 <p>Support both old and new names in the option parser temporarily (two <code>strcmp</code> entries per option). Rename everywhere else (client, tests, docs). Remove the old names in a later commit. This eliminates any breakage window.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_priority">16.6.5. Priority</h4>
+<h4 id="_priority">16.7.5. Priority</h4>
 <div class="paragraph">
 <p>Low urgency, high value for readability. Can be done incrementally — start with the "tag" removal (search-related names only), then expand to the full <code>olcx</code> rename later.</p>
 </div>
@@ -8762,7 +9109,7 @@ Each entry describes symptoms, analysis (when available), and suspected root cau
 </div>
 </div>
 <div class="sect3">
-<h4 id="_extract_function">18.1.2. Extract Function</h4>
+<h4 id="_extract_function_2">18.1.2. Extract Function</h4>
 <div class="paragraph">
 <p>Implemented. TBD.</p>
 </div>
@@ -10621,7 +10968,7 @@ server process without a separate <code>callXref()</code> step.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-18 12:34:13 UTC
+Last updated 2026-04-22 10:40:50 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
