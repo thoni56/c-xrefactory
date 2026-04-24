@@ -586,15 +586,16 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     bool hasInputFile = prepareInputFileForRequest();
 
-    /* ONE-TIME: project identity + disk db load */
+    /* ONE-TIME: project identity + snapshot load */
     if (!projectContextInitialized && hasInputFile) {
-        if (options.serverOperation == OP_ACTIVE_PROJECT) {
-            if (!initializeProjectContext(getFileItemWithFileNumber(requestFileNumber)->name, baseArgs, requestArgs))
-                goto done;
+        bool initialized = initializeProjectContext(
+            getFileItemWithFileNumber(requestFileNumber)->name, baseArgs, requestArgs);
 
+        if (initialized) {
             loadSnapshotFromStore();
 
-            if (options.detectedProjectRoot == NULL || options.detectedProjectRoot[0] == '\0') {
+            if (options.serverOperation == OP_ACTIVE_PROJECT
+                && (options.detectedProjectRoot == NULL || options.detectedProjectRoot[0] == '\0')) {
                 /* Legacy path: no detected project root, fall back to old flow */
                 if (options.inputFiles == NULL)
                     addToStringListOption(&options.inputFiles, ".");
@@ -603,12 +604,15 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
             }
 
             projectContextInitialized = true;
-        } else if (!requiresProcessingInputFile(options.serverOperation)) {
-            errorMessage(ERR_ST, "Project not initialized - client must send getprojectname first");
+        } else {
+            /* No project configuration found — c-xrefactory cannot operate.
+             * For OP_ACTIVE_PROJECT the discovery code (handlePathologicProjectCases)
+             * already reported the specifics to the client; other operations need
+             * an explicit message. */
+            if (options.serverOperation != OP_ACTIVE_PROJECT)
+                errorMessage(ERR_ST, "No project configuration (.c-xrefrc) found for this file");
             goto done;
         }
-        /* requiresProcessingInputFile operations proceed to processFile below,
-         * which handles its own context via initializeFileProcessing (legacy path). */
     }
 
     /* CONFIG-CHANGE-AWARE SCAN (auto-detect path only).
