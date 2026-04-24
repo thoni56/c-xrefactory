@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-rename -renameto=G -olcursor=4 CURDIR/source.c -p CURDIR
+-rfct-rename -renameto=G -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c -p CURDIR
 end-of-options
 
 <sync>

@@ -1523,14 +1523,6 @@ void createSelectionMenuForOperation(ServerOperation command) {
     renameCollationSymbols(menu);
     LIST_SORT(BrowsingMenu, rstack->hkSelectedSym, olMenuHashFileNumLess);
 
-    menu = rstack->hkSelectedSym;
-    while (menu!=NULL) {
-        scanReferencesToCreateMenu(menu->referenceable.linkName);
-        int fnum = cxFileHashNumberForSymbol(menu->referenceable.linkName);
-        while (menu!=NULL && fnum==cxFileHashNumberForSymbol(menu->referenceable.linkName))
-            menu = menu->next;
-    }
-
     mapOverReferenceableItemTable(mapCreateSelectionMenu);
     mapOverReferenceableItemTable(putOnLineLoadedReferences);
     setSelectedVisibleItems(rstack->menu, command, rstack->menuFilterLevel);
