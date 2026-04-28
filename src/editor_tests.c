@@ -148,6 +148,26 @@ Ensure(Editor, can_convert_single_reference_to_editor_marker) {
     assert_that(markers->next, is_null);
 }
 
+Ensure(Editor, walker_does_not_clamp_subsequent_refs_after_unreachable_col) {
+    Reference ref3 = makeReference((Position){.file=42, .line=2, .col=0}, UsageDefined, NULL);
+    Reference ref2 = makeReference((Position){.file=42, .line=1, .col=10}, UsageDefined, &ref3);
+    Reference ref1 = makeReference((Position){.file=42, .line=1, .col=0}, UsageDefined, &ref2);
+    FileItem fileItem = (FileItem){.name = "name"};
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)),
+           will_return(&fileItem));
+    char *text = strdup("foo\nbar\n");
+    EditorBuffer buffer = (EditorBuffer){
+        .fileName = "name",
+        .preLoadedFromFile = NULL,
+        .markers = NULL,
+        .allocation = { .text = text, .bufferSize = 8 },
+    };
+    expect(findOrCreateAndLoadEditorBufferForFile, when(fileName, is_equal_to_string("name")),
+           will_return(&buffer));
+    EditorMarkerList *markers = convertReferencesToEditorMarkers(&ref1);
+    assert_that(markers->next->next->marker->offset, is_equal_to(4));
+}
+
 Ensure(Editor, can_allocate_text_space_in_buffer) {
     EditorBuffer *buffer = newEditorBuffer("file", 12, "file", ZERO_TIMESTAMP, 0);
 

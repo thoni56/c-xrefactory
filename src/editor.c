@@ -353,57 +353,65 @@ void loadAllOpenedEditorBuffers(void) {
     }
 }
 
+static Reference *skipInvisibleReferences(Reference *reference) {
+    while (reference != NULL && !isVisibleUsage(reference->usage))
+        reference = reference->next;
+    return reference;
+}
+
+static void addMarkerAndAdvance(EditorBuffer *buffer, int maxoffset, EditorMarkerList **markerList,
+                                Reference **reference) {
+    EditorMarker *m = newEditorMarker(buffer, maxoffset);
+    *markerList = newEditorMarkerList(m, (*reference)->usage, *markerList);
+    *reference = skipInvisibleReferences((*reference)->next);
+}
+
 EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
     EditorMarkerList *markerList = NULL;
     Reference        *reference = references;
 
     while (reference != NULL) {
-        while (reference != NULL && !isVisibleUsage(reference->usage))
-            reference = reference->next;
+        reference = skipInvisibleReferences(reference);
         if (reference != NULL) {
             int           file     = reference->position.file;
-            int           line     = reference->position.line;
-            int           col      = reference->position.col;
             FileItem     *fileItem = getFileItemWithFileNumber(file);
-            EditorBuffer *buff     = findOrCreateAndLoadEditorBufferForFile(fileItem->name);
-            if (buff == NULL) {
+            EditorBuffer *buffer   = findOrCreateAndLoadEditorBufferForFile(fileItem->name);
+            if (buffer == NULL) {
                 errorMessage(ERR_CANT_OPEN, fileItem->name);
                 while (reference != NULL && file == reference->position.file)
                     reference = reference->next;
             } else {
-                char *text      = buff->allocation.text;
-                char *smax      = text + buff->allocation.bufferSize;
-                int   maxoffset = buff->allocation.bufferSize - 1;
+                char *text      = buffer->allocation.text;
+                char *smax      = text + buffer->allocation.bufferSize;
+                int   maxoffset = buffer->allocation.bufferSize - 1;
                 if (maxoffset < 0)
                     maxoffset = 0;
-                int l = 1;
-                int c  = 0;
-                for (; text < smax; text++, c++) {
-                    if (l == line && c == col) {
-                        EditorMarker *m    = newEditorMarker(buff, text - buff->allocation.text);
-                        EditorMarkerList *rrr  = newEditorMarkerList(m, reference->usage, markerList);
-                        markerList  = rrr;
-                        reference    = reference->next;
-                        while (reference != NULL && !isVisibleUsage(reference->usage))
-                            reference = reference->next;
-                        if (reference == NULL || file != reference->position.file)
-                            break;
-                        line = reference->position.line;
-                        col  = reference->position.col;
+                int line = 1;
+                int col  = 0;
+                for (; text < smax; text++, col++) {
+                    if (reference == NULL || file != reference->position.file)
+                        break;
+                    if (line == reference->position.line && col == reference->position.col) {
+                        addMarkerAndAdvance(buffer, text - buffer->allocation.text, &markerList, &reference);
                     }
                     if (*text == '\n') {
-                        l++;
-                        c = -1;
+                        if (reference != NULL && file == reference->position.file
+                            && line == reference->position.line) {
+                            /* col unreachable on this line — clamp marker to
+                             * current (end-of-line) position and advance to
+                             * the next reference. Mirrors the past-EOF
+                             * fallback below, but caught at line scope to
+                             * avoid the cascade where one stuck ref dooms
+                             * every subsequent ref to maxoffset. */
+                            addMarkerAndAdvance(buffer, text - buffer->allocation.text, &markerList, &reference);
+                        }
+                        line++;
+                        col = -1;
                     }
                 }
                 // references beyond end of buffer
                 while (reference != NULL && file == reference->position.file) {
-                    EditorMarker *m    = newEditorMarker(buff, maxoffset);
-                    EditorMarkerList *rrr  = newEditorMarkerList(m, reference->usage, markerList);
-                    markerList  = rrr;
-                    reference    = reference->next;
-                    while (reference != NULL && !isVisibleUsage(reference->usage))
-                        reference = reference->next;
+                    addMarkerAndAdvance(buffer, maxoffset, &markerList, &reference);
                 }
             }
         }
