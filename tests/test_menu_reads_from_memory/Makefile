@@ -13,7 +13,7 @@ $(TEST):
 	# Populate a real snapshot with F's references
 	@$(SERVER_DRIVER) setup.input > /dev/null
 	# Corrupt the call-site ref: line 6 col 11 -> line 5 col 4
-	@sed -i '/2\/F/s/5u6l11cr/5u5l4cr/' .c-xref/db
+	@sed -i.bak '/2\/F/s/5u6l11cr/5u5l4cr/' .c-xref/db
 	# Ensure preload mtime > source.c mtime so Pass 1 considers it stale
 	@touch source.preload
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp

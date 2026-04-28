@@ -11,7 +11,7 @@ $(TEST):
 	@$(SERVER_DRIVER) setup.input > /dev/null
 	# Corrupt the call-site ref: line 6 col 11 -> line 5 col 4
 	# (a position that in source.c resolves to 'main', not 'F')
-	@sed -i '/2\/F/s/5u6l11cr/5u5l4cr/' .c-xref/db
+	@sed -i.bak '/2\/F/s/5u6l11cr/5u5l4cr/' .c-xref/db
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
