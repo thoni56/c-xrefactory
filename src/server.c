@@ -230,8 +230,6 @@ static int collectIncludersOfStaleHeader(int headerFileNumber,
     FileItem *headerItem = getFileItemWithFileNumber(headerFileNumber);
     log_debug("Looking for CUs that include stale header '%s'", headerItem->name);
 
-    ensureReferencesAreLoadedFor(LINK_NAME_INCLUDE_REFS);
-
     /* Walk reverse-include graph transitively: starting from the stale header,
      * find all files that include it, then files that include those, etc.
      * Collect any CUs encountered along the way. */

@@ -328,9 +328,6 @@ static bool sourceAlreadyIncludesHeader(EditorBuffer *sourceBuffer, char *header
         return false;  /* Header file not in file table yet */
     }
 
-    /* Ensure include references are loaded from database */
-    ensureReferencesAreLoadedFor(LINK_NAME_INCLUDE_REFS);
-
     /* Create search item for the header file */
     ReferenceableItem searchItem = makeReferenceableItem(LINK_NAME_INCLUDE_REFS, TypeCppInclude,
                                                          StorageExtern, GlobalScope, VisibilityGlobal,
