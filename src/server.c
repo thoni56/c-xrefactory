@@ -230,6 +230,15 @@ static int collectIncludersOfStaleHeader(int headerFileNumber,
     FileItem *headerItem = getFileItemWithFileNumber(headerFileNumber);
     log_debug("Looking for CUs that include stale header '%s'", headerItem->name);
 
+    /* Re-merge include refs from the snapshot. Load-bearing despite the
+     * memory-is-truth direction: the parser doesn't fully re-emit include
+     * refs after `removeReferenceableItemsForFile` strips them on reparse,
+     * so memory drifts away from snapshot reality across operations. This
+     * disk-load restores the missing edges so the reverse-include walk
+     * below sees a complete graph. Remove only after the parser-emit gap
+     * is fixed; see memory note `bug_parser_misses_include_refs_on_reparse`. */
+    ensureReferencesAreLoadedFor(LINK_NAME_INCLUDE_REFS);
+
     /* Walk reverse-include graph transitively: starting from the stale header,
      * find all files that include it, then files that include those, etc.
      * Collect any CUs encountered along the way. */
@@ -319,8 +328,6 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
 
     log_info("Pass 3: request file '%s' (fileNumber=%d)",
              getFileItemWithFileNumber(requestFileNumber)->name, requestFileNumber);
-
-    ensureReferencesAreLoadedFor(LINK_NAME_INCLUDE_REFS);
 
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fi = getFileItemWithFileNumber(i);
