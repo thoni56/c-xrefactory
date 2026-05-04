@@ -24,8 +24,7 @@ view: diagrams
 	@echo "Starting Structurizr Lite on http://localhost:8080"
 	@echo "Press Ctrl+C when done, then run 'make stop' to clean up"
 	docker pull structurizr/structurizr
-	#docker run -it --rm -p 8080:8080 -v /path/to/workspace:/usr/local/structurizr structurizr/structurizr local
-	docker run --rm -d -p 8080:8080 -v $(CURDIR):/usr/local/structurizr structurizr/structurizr local
+	docker run --rm -d -p 8080:8080 --user "$(id -u):$(id -g)" -v $(CURDIR):/usr/local/structurizr structurizr/structurizr local
 	@echo ""
 	@echo "Structurizr Lite is running at http://localhost:8080"
 	@echo "Run 'make stop' to stop the container"
@@ -36,7 +35,7 @@ start: view
 # Stop the Structurizr container
 stop:
 	@echo "Stopping Structurizr Lite container..."
-	@docker ps -q --filter ancestor=structurizr/lite | xargs -r docker stop
+	@docker ps -q --filter ancestor=structurizr/structurizr | xargs -r docker stop
 	@echo "Container stopped"
 
 #==============================================================================

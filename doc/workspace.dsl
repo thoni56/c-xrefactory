@@ -113,7 +113,7 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 	    autolayout lr
 		}
 		
-		component referencesDb RefrenceDatabase {
+		component referencesDb ReferenceDatabase {
 	    include *
 	    autolayout lr
 	    title "Reference Database Architecture"
