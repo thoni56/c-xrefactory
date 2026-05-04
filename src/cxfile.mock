@@ -6,8 +6,6 @@ void normalScanCxFile(char *name) {
     mock(name);
 }
 
-void ensureReferencesAreLoadedFor(char *symbolName) { mock(symbolName); }
-
 void scanForBypass(char *symbolName) {
     mock(symbolName);
 }

@@ -13,7 +13,6 @@ extern void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Ref
 // Abstract API
 extern bool loadFileNumbersFromStore(void);
 extern bool loadSnapshotFromStore(void);
-extern void ensureReferencesAreLoadedFor(char *symbolName);
 extern void saveReferencesToStore(bool updating, char *name);
 
 #endif

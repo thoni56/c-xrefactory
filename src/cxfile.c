@@ -152,7 +152,6 @@ typedef struct cxFileScanStep {
 static CxFileScanDispatchEntry normalScanDispatchTable[];
 static CxFileScanDispatchEntry snapshotLoadScanDispatchTable[];
 static CxFileScanDispatchEntry fullScanDispatchTable[];
-static CxFileScanDispatchEntry fullUpdateScanDispatchTable[];
 static CxFileScanDispatchEntry symbolMenuCreationScanDispatchTable[];
 static CxFileScanDispatchEntry macroExpansionScanDispatchTable[];
 
@@ -738,44 +737,6 @@ static void getIncludedFileNumber(int *includedFileNumber) {
 }
 
 
-static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
-                                                         int key,
-                                                         CharacterBuffer *cb,
-                                                         CxFileScanOperation scanOperation
-) {
-    assert(key == CXFI_SYMBOL_NAME);
-    Storage storage = lastIncomingData.data[CXFI_STORAGE];
-
-    char *id = lastIncomingData.cachedSymbolName;
-    int len = scanSymbolName(cb, id, size);
-
-    Type symbolType = getSymbolType();
-    if (symbolType!=TypeCppInclude || strcmp(id, LINK_NAME_INCLUDE_REFS)!=0) {
-        lastIncomingData.onLineReferencedSym = -1;
-        return;
-    }
-
-    ReferenceableItem *referenceableItem = &lastIncomingData.cachedReferenceableItem;
-    lastIncomingData.referenceableItem = referenceableItem;
-
-    int includedFileNumber;
-    getIncludedFileNumber(&includedFileNumber);
-    *referenceableItem = makeReferenceableItem(id, symbolType, storage, GlobalScope, VisibilityGlobal, includedFileNumber);
-
-    ReferenceableItem *foundReferenceableItem;
-    if (!isMemberInReferenceableItemTable(referenceableItem, NULL, &foundReferenceableItem)) {
-        // TODO: This is more or less the body of a newReferenceableItem()
-        char *ss = cxAlloc(len+1);
-        strcpy(ss,id);
-        foundReferenceableItem = cxAlloc(sizeof(ReferenceableItem));
-        *foundReferenceableItem = makeReferenceableItem(ss, symbolType, storage,
-                                                    GlobalScope, VisibilityGlobal, includedFileNumber);
-        addToReferenceableItemTable(foundReferenceableItem);
-    }
-    lastIncomingData.referenceableItem = foundReferenceableItem;
-    lastIncomingData.onLineReferencedSym = 0;
-}
-
 static void cxfileCheckLastSymbolDeadness(void) {
     if (lastIncomingData.symbolToCheckForDeadness != -1
         && lastIncomingData.deadSymbolIsDefined
@@ -872,31 +833,6 @@ static void scanFunction_SymbolName(int size,
                 }
             }
         }
-    }
-}
-
-static void scanFunction_Reference_ForFullUpdateSchedule(int size,
-                                                        int key,
-                                                        CharacterBuffer *cb,
-                                                        CxFileScanOperation scanOperation
-) {
-
-    assert(key == CXFI_REFERENCE);
-
-    Usage usage = lastIncomingData.data[CXFI_USAGE];
-
-    int unmapped_file = lastIncomingData.data[CXFI_FILE_NUMBER];
-    int file = fileNumberMapping[unmapped_file];
-
-    int line = lastIncomingData.data[CXFI_LINE_INDEX];
-    int col = lastIncomingData.data[CXFI_COLUMN_INDEX];
-
-    log_trace("Read reference with %s in file %d->%d at %d,%d", usageKindEnumName[usage],
-              unmapped_file, file, line, col);
-
-    Position pos = makePosition(file, line, col);
-    if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]) {
-        addToReferenceList(&lastIncomingData.referenceableItem->references, pos, usage);
     }
 }
 
@@ -1229,10 +1165,6 @@ protected void normalScanCxFile(char *name) {
     scanCxFile(options.cxFileLocation, name, "", normalScanDispatchTable);
 }
 
-void ensureReferencesAreLoadedFor(char *symbolName) {
-    readOneAppropiateCxFile(symbolName, fullUpdateScanDispatchTable);
-}
-
 void scanReferencesToCreateMenu(char *symbolName){
     readOneAppropiateCxFile(symbolName, symbolMenuCreationScanDispatchTable);
 }
@@ -1299,17 +1231,6 @@ static CxFileScanDispatchEntry symbolMenuCreationScanDispatchTable[]={
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_MENU_CREATION},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_MENU_CREATION},
-    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
-    {-1,NULL, 0},
-};
-
-static CxFileScanDispatchEntry fullUpdateScanDispatchTable[]={
-    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
-    {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
-    {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
-    {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_SYMBOL_NAME, scanFunction_SymbolNameForFullUpdateSchedule, CXSF_NOP},
-    {CXFI_REFERENCE, scanFunction_Reference_ForFullUpdateSchedule, CXSF_NOP},
     {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
