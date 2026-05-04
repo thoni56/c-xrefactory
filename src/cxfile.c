@@ -83,7 +83,6 @@ typedef enum {
     CXSF_GENERATE_OUTPUT,
     CXSF_FIRST_PASS,
     CXSF_MENU_CREATION,
-    CXSF_DEAD_CODE_DETECTION,
     CXSF_FIND_MACRO_EXPANSION_FILE,
 } CxFileScanOperation;
 
@@ -749,31 +748,13 @@ static void cxfileCheckLastSymbolDeadness(void) {
 }
 
 
-static bool referenceableIsReportableAsUnused(ReferenceableItem *referenceableItem) {
-    if (referenceableItem==NULL || referenceableItem->linkName[0]==' ')
-        return false;
-
-    // you need to be strong here, in fact struct record can be used
-    // without using struct explicitly
-    if (referenceableItem->type == TypeStruct)
-        return false;
-
-    // in this first approach restrict this to variables and functions
-    if (referenceableItem->type == TypeMacro)
-        return false;
-    return true;
-}
-
 static void scanFunction_SymbolName(int size,
                                     int key,
                                     CharacterBuffer *cb,
                                     CxFileScanOperation scanOperation
 ) {
     assert(key == CXFI_SYMBOL_NAME);
-    if (options.mode==ServerMode && scanOperation==CXSF_DEAD_CODE_DETECTION) {
-        // check if previous symbol was dead
-        cxfileCheckLastSymbolDeadness();
-    }
+
     Storage storage = lastIncomingData.data[CXFI_STORAGE];
 
     char *id = lastIncomingData.cachedSymbolName;
@@ -802,14 +783,7 @@ static void scanFunction_SymbolName(int size,
         foundMemberP->references = NULL;      // HACK, remove them, to not be regenerated
     }
     if (options.mode == ServerMode) {
-        if (scanOperation == CXSF_DEAD_CODE_DETECTION) {
-            if (referenceableIsReportableAsUnused(lastIncomingData.referenceableItem)) {
-                lastIncomingData.symbolToCheckForDeadness = 0;
-                lastIncomingData.deadSymbolIsDefined = 0;
-            } else {
-                lastIncomingData.symbolToCheckForDeadness = -1;
-            }
-        } else if (options.serverOperation!=OP_SEARCH) {
+        if (options.serverOperation!=OP_SEARCH) {
             int ols = 0;
             BrowsingMenu *menu = NULL;
             if (scanOperation == CXSF_MENU_CREATION || scanOperation == CXSF_FIND_MACRO_EXPANSION_FILE) {
@@ -928,18 +902,7 @@ static void scanFunction_Reference(int size,
     } else if (options.mode == ServerMode) {
         Reference reference = makeReference(makePosition(file, line, col), usage, NULL);
         FileItem *cxFileItem = getFileItemWithFileNumber(reference.position.file);
-        if (scanOperation == CXSF_DEAD_CODE_DETECTION) {
-            if (isVisibleUsage(reference.usage)) {
-                // restrict reported symbols to those defined in project input file
-                if (isDefinitionUsage(reference.usage)
-                    && cxFileItem->isArgument
-                ) {
-                    lastIncomingData.deadSymbolIsDefined = 1;
-                } else if (! isDefinitionOrDeclarationUsage(reference.usage)) {
-                    lastIncomingData.symbolToCheckForDeadness = -1;
-                }
-            }
-        } else if (scanOperation == CXSF_FIND_MACRO_EXPANSION_FILE) {
+        if (scanOperation == CXSF_FIND_MACRO_EXPANSION_FILE) {
             if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]
                 && reference.usage == UsageMacroBaseFileUsage
             ) {
