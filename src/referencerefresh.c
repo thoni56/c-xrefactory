@@ -9,6 +9,7 @@
 #include "startup.h"
 #include "referencerefresh.h"
 #include "globals.h"
+#include "misc.h"
 
 
 /* Parse a file using the full initializeFileProcessing machinery (project
@@ -70,4 +71,18 @@ void ensureFreshReferences(ReferenceableItem *item, ArgumentsVector baseArgs) {
 void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs) {
     removeReferenceableItemsForFile(fileNumber);
     parseFileWithFullInit(getFileItemWithFileNumber(fileNumber)->name, baseArgs);
+}
+
+/* Refresh references for a file. For a compilation unit, parse the
+ * file directly. For a header, just strip its refs — the includer
+ * CU's reparse (in Pass 1 or Pass 2) will re-emit them in proper CU
+ * context. Standalone header parse would lose preprocessor context
+ * and produce wrong refs. */
+void reparseFile(int fileNumber, ArgumentsVector baseArgs) {
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+    if (isCompilationUnit(fileItem->name)) {
+        reparseStaleFile(fileNumber, baseArgs);
+    } else {
+        removeReferenceableItemsForFile(fileNumber);
+    }
 }

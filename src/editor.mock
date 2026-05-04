@@ -76,7 +76,8 @@ void clearPreloadedThisRequestFlags(void) {
   mock();
 }
 
-void closeEditorBuffersNoLongerPreloaded(void) {
+void closeEditorBuffersNoLongerPreloaded(ArgumentsVector baseArgs) {
+  (void)baseArgs;
   mock();
 }
 

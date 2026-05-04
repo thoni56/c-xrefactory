@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 
 #include "head.h"
+#include "argumentsvector.h"
 #include "completion.h"
 #include "editorbuffer.h"
 #include "editormarker.h"
@@ -27,7 +28,7 @@ extern void loadAllOpenedEditorBuffers(void);
 extern void closeEditorBufferIfCloseable(char *name);
 extern void closeAllEditorBuffersIfClosable(void);
 extern void clearPreloadedThisRequestFlags(void);
-extern void closeEditorBuffersNoLongerPreloaded(void);
+extern void closeEditorBuffersNoLongerPreloaded(ArgumentsVector baseArgs);
 
 extern void freeTextSpace(char *space, int index);
 extern void loadFileIntoEditorBuffer(EditorBuffer *buffer, FileTimestamp modificationTime, size_t fileSize);

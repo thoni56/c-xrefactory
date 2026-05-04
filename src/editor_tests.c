@@ -20,6 +20,7 @@
 #include "options.mock"
 #include "ppc.mock"
 #include "reference.mock"
+#include "referencerefresh.mock"
 #include "referenceableitemtable.mock"
 #include "undo.mock"
 #include "yylex.mock"

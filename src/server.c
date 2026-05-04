@@ -230,15 +230,6 @@ static int collectIncludersOfStaleHeader(int headerFileNumber,
     FileItem *headerItem = getFileItemWithFileNumber(headerFileNumber);
     log_debug("Looking for CUs that include stale header '%s'", headerItem->name);
 
-    /* Re-merge include refs from the snapshot. Load-bearing despite the
-     * memory-is-truth direction: the parser doesn't fully re-emit include
-     * refs after `removeReferenceableItemsForFile` strips them on reparse,
-     * so memory drifts away from snapshot reality across operations. This
-     * disk-load restores the missing edges so the reverse-include walk
-     * below sees a complete graph. Remove only after the parser-emit gap
-     * is fixed; see memory note `bug_parser_misses_include_refs_on_reparse`. */
-    ensureReferencesAreLoadedFor(LINK_NAME_INCLUDE_REFS);
-
     /* Walk reverse-include graph transitively: starting from the stale header,
      * find all files that include it, then files that include those, etc.
      * Collect any CUs encountered along the way. */
@@ -575,7 +566,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
      * has saved and/or closed the file in the editor. Without this, the
      * server would keep parsing from the stale preloaded content instead
      * of reading the current disk file. */
-    closeEditorBuffersNoLongerPreloaded();
+    closeEditorBuffersNoLongerPreloaded(baseArgs);
 
     /* Reparse any stale preloaded files before dispatching the operation,
      * so all operations see fresh in-memory references. */

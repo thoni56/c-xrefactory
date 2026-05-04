@@ -14,6 +14,7 @@
 #include "misc.h"
 #include "proto.h"
 #include "referenceableitemtable.h"
+#include "referencerefresh.h"
 #include "timestamp.h"
 #include "undo.h"
 #include "usage.h"
@@ -631,14 +632,19 @@ void clearPreloadedThisRequestFlags(void) {
     freeEditorBufferListButNotBuffers(allEditorBuffers);
 }
 
-void closeEditorBuffersNoLongerPreloaded(void) {
+void closeEditorBuffersNoLongerPreloaded(ArgumentsVector baseArgs) {
     EditorBufferList *allEditorBuffers = computeListOfAllEditorBuffers();
     for (EditorBufferList *l = allEditorBuffers; l != NULL; l = l->next) {
         if (isPreloaded(l->buffer) && !l->buffer->preloadedThisRequest) {
             log_trace("Closing ghost preloaded buffer '%s' (fileNumber=%d)", l->buffer->fileName, l->buffer->fileNumber);
-            removeReferenceableItemsForFile(l->buffer->fileNumber);
+            int fileNumber = l->buffer->fileNumber;
             EditorBuffer *buffer = deregisterEditorBuffer(l->buffer->fileName);
             freeEditorBuffer(buffer);
+            /* Refresh the file's references from disk content, since
+             * the editor's view is no longer authoritative. For a CU
+             * this re-parses the file; for a header it strips refs and
+             * relies on a CU includer's reparse to re-emit them. */
+            reparseFile(fileNumber, baseArgs);
         }
     }
     freeEditorBufferListButNotBuffers(allEditorBuffers);

@@ -15,3 +15,7 @@ void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
 void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs) {
     mock(fileNumber);
 }
+
+void reparseFile(int fileNumber, ArgumentsVector baseArgs) {
+    mock(fileNumber);
+}

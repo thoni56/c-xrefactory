@@ -13,6 +13,7 @@
 #include "filedescriptor.mock"
 #include "filetable.mock"
 #include "globals.mock"
+#include "misc.mock"
 #include "options.mock"
 #include "parsing.mock"
 #include "referenceableitemtable.mock"
