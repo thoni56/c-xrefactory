@@ -872,8 +872,6 @@ static void findAndGotoDefinition(ReferenceableItem *referenceable) {
     top->hkSelectedSym = &menu;  // Needed for createSelectionMenu to find matching symbols
     top->menu = &menu;
 
-    // Load references from disk and associate with menu
-    scanReferencesToCreateMenu(referenceable->linkName);
     mapOverReferenceableItemTable(putOnLineLoadedReferences);
     recomputeSelectedReferenceable(top);
 
