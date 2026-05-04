@@ -862,6 +862,20 @@ static void popAndFreeSessionsUntil(SessionStackEntry *oldtop) {
     }
 }
 
+void addReferencesToMatchingMenuItem(ReferenceableItem *referenceableItem) {
+    int ols;
+    BrowsingMenu *cms;
+
+    ols = findMatchingBrowsingMenuItem(referenceableItem, browsingStack.top,
+                                       &cms, DO_NOT_CHECK_IF_SELECTED);
+    if (ols > 0) {
+        assert(cms);
+        for (Reference *r=referenceableItem->references; r!=NULL; r=r->next) {
+            addReferenceToBrowsingMenu(cms, r);
+        }
+    }
+}
+
 static void findAndGotoDefinition(ReferenceableItem *referenceable) {
     // preserve popped items from browser first
     SessionStackEntry *oldtop = pushSession();
@@ -872,7 +886,7 @@ static void findAndGotoDefinition(ReferenceableItem *referenceable) {
     top->hkSelectedSym = &menu;  // Needed for createSelectionMenu to find matching symbols
     top->menu = &menu;
 
-    mapOverReferenceableItemTable(putOnLineLoadedReferences);
+    mapOverReferenceableItemTable(addReferencesToMatchingMenuItem);
     recomputeSelectedReferenceable(top);
 
     orderRefsAndGotoDefinition(top);
@@ -1504,11 +1518,11 @@ static Position getCallerPositionFromCommandLineOption(void) {
     return makePosition(file, line, col);
 }
 
-static void mapCreateSelectionMenu(ReferenceableItem *p) {
-    createSelectionMenu(p);
+static void addMatchingCandidateAsMenuEntry(ReferenceableItem *r) {
+    createSelectionMenu(r);
 }
 
-void createSelectionMenuForOperation(ServerOperation command) {
+void createSelectionMenuForOperation(ServerOperation operation) {
     SessionStackEntry  *rstack;
     BrowsingMenu     *menu;
 
@@ -1521,9 +1535,14 @@ void createSelectionMenuForOperation(ServerOperation command) {
     renameCollationSymbols(menu);
     LIST_SORT(BrowsingMenu, rstack->hkSelectedSym, olMenuHashFileNumLess);
 
-    mapOverReferenceableItemTable(mapCreateSelectionMenu);
-    mapOverReferenceableItemTable(putOnLineLoadedReferences);
-    setSelectedVisibleItems(rstack->menu, command, rstack->menuFilterLevel);
+    /* Build the selection menu in two passes: first add a menu entry for
+     * each table item that matches a candidate symbol; then walk the table
+     * again to populate each menu entry's references. The second pass needs
+     * the menu structure to be complete before its lookups can succeed. */
+    mapOverReferenceableItemTable(addMatchingCandidateAsMenuEntry);
+    mapOverReferenceableItemTable(addReferencesToMatchingMenuItem);
+
+    setSelectedVisibleItems(rstack->menu, operation, rstack->menuFilterLevel);
     assert(rstack->references==NULL);
     processSelectedReferences(rstack, genOnLineReferences);
 }
@@ -2110,20 +2129,6 @@ int findMatchingBrowsingMenuItem(ReferenceableItem *referenceableItem,
     return 0;
 }
 
-
-void putOnLineLoadedReferences(ReferenceableItem *referenceableItem) {
-    int ols;
-    BrowsingMenu *cms;
-
-    ols = findMatchingBrowsingMenuItem(referenceableItem, browsingStack.top,
-                                       &cms, DO_NOT_CHECK_IF_SELECTED);
-    if (ols > 0) {
-        assert(cms);
-        for (Reference *r=referenceableItem->references; r!=NULL; r=r->next) {
-            addReferenceToBrowsingMenu(cms, r);
-        }
-    }
-}
 
 static unsigned filterLevelFromMenu(BrowsingMenu *menu, ReferenceableItem *referenceableItem) {
     assert(haveSameBareName(&menu->referenceable, referenceableItem));

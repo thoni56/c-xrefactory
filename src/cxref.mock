@@ -75,10 +75,6 @@ int findMatchingBrowsingMenuItem(ReferenceableItem *p, SessionStackEntry *rstack
     return (int) mock(p, rstack, rss, checkSelFlag);
 }
 
-void putOnLineLoadedReferences(ReferenceableItem *p) {
-    mock(p);
-}
-
 BrowsingMenu *createSelectionMenu(ReferenceableItem *dd) {
     return (BrowsingMenu *) mock(dd);
 }

@@ -40,7 +40,6 @@ extern void addTrivialCxReference (char *name, Type type, Storage storage,
 extern void olSetCallerPosition(Position position);
 extern int findMatchingBrowsingMenuItem(ReferenceableItem *p, SessionStackEntry *rstack,
                                         BrowsingMenu **rss, int checkSelFlag);
-extern void putOnLineLoadedReferences(ReferenceableItem *p);
 extern BrowsingMenu *createSelectionMenu(ReferenceableItem *dd);
 
 extern void createSelectionMenuForOperation(ServerOperation command);
