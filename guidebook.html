@@ -466,11 +466,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_principles">6. Principles</a>
 <ul class="sectlevel2">
 <li><a href="#_reference_database_and_parsing">6.1. Reference Database and Parsing</a></li>
-<li><a href="#_continuously_fresh_references">6.2. Continuously Fresh References</a></li>
-<li><a href="#_minimal_reparse_set">6.3. Minimal Reparse Set</a></li>
-<li><a href="#_preserve_parsed_work">6.4. Preserve Parsed Work</a></li>
-<li><a href="#_project_scope">6.5. Project Scope</a></li>
-<li><a href="#_terminology">6.6. Terminology</a></li>
+<li><a href="#_memory_as_truth">6.2. Memory As Truth</a></li>
+<li><a href="#_continuously_fresh_references">6.3. Continuously Fresh References</a></li>
+<li><a href="#_minimal_reparse_set">6.4. Minimal Reparse Set</a></li>
+<li><a href="#_preserve_parsed_work">6.5. Preserve Parsed Work</a></li>
+<li><a href="#_project_scope">6.6. Project Scope</a></li>
+<li><a href="#_terminology">6.7. Terminology</a></li>
 </ul>
 </li>
 <li><a href="#_software_architecture">7. Software Architecture</a>
@@ -1051,17 +1052,44 @@ bodies, labels) are excluded. The visibility boundary is <code>VisibilityLocal</
 </td>
 <td class="content">
 The in-memory reference table holds all symbols encountered during parsing,
-including block-local ones. The snapshot excludes only block-locals because they can
-always be reconstructed by reparsing. As the architecture moves toward "memory as truth"
-(see <a href="15-roadmap.adoc">Roadmap</a>), the distinction between "persisted" and "in-memory"
-symbols may evolve.
+including block-local ones. The snapshot excludes only block-locals because they
+can always be reconstructed by reparsing.
 </td>
 </tr>
 </table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_continuously_fresh_references">6.2. Continuously Fresh References</h3>
+<h3 id="_memory_as_truth">6.2. Memory As Truth</h3>
+<div class="paragraph">
+<p>After startup, the in-memory <code>referenceableItemTable</code> is authoritative. The <code>.cx</code>
+files are a snapshot for surviving process restarts, not a tiebreaker. No operation
+reads from <code>.cx</code> after <code>loadSnapshotFromStore()</code> returns.</p>
+</div>
+<div class="paragraph">
+<p>The server is long-lived and the only writer of its <code>.cx</code> files. A disk read
+post-startup means either re-reading our own output or preferring a stale snapshot
+over fresh in-memory state — neither is correct. Earlier in the project several
+disk-as-truth code paths silently produced <em>some</em> answer, just not the right one;
+those bugs were hard to find precisely because the disk read succeeded.</p>
+</div>
+<div class="sect3">
+<h4 id="_enforcement_the_disk_read_tripwire">6.2.1. Enforcement: the disk-read tripwire</h4>
+<div class="paragraph">
+<p><code>scanCxFile()</code> is the only entry point that opens a <code>.cx</code> file for reading. It
+asserts that <code>snapshotLoadComplete</code> (a static flag in <code>cxfile.c</code> set at the end of
+<code>loadSnapshotFromStore()</code>) is still false. Any later call aborts with a message
+pointing here.</p>
+</div>
+<div class="paragraph">
+<p>Writes — periodic save, save on exit — are not affected; the tripwire is on the
+read path only. A future feature that requires post-startup disk access means this
+principle has to be revisited.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_continuously_fresh_references">6.3. Continuously Fresh References</h3>
 <div class="paragraph">
 <p>The reference table must be kept fresh on every request. This is the central design
 challenge in a request/response architecture where:</p>
@@ -1133,7 +1161,7 @@ consistent view of the codebase.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_minimal_reparse_set">6.3. Minimal Reparse Set</h3>
+<h3 id="_minimal_reparse_set">6.4. Minimal Reparse Set</h3>
 <div class="paragraph">
 <p>Full freshness does not require full reparsing. Parsing is the most expensive operation
 the server performs, so the system must determine the <strong>minimal set of compilation units</strong>
@@ -1177,7 +1205,7 @@ that share the edited header" is the difference between minutes and milliseconds
 </div>
 </div>
 <div class="sect2">
-<h3 id="_preserve_parsed_work">6.4. Preserve Parsed Work</h3>
+<h3 id="_preserve_parsed_work">6.5. Preserve Parsed Work</h3>
 <div class="paragraph">
 <p>Parsing is the most expensive operation the server performs. On large codebases, a full
 parse can take tens of minutes. Some operations — like a project-wide search on cold
@@ -1206,7 +1234,7 @@ parse loop — a ~1% overhead that prevents losing minutes of work on interrupti
 </div>
 </div>
 <div class="sect2">
-<h3 id="_project_scope">6.5. Project Scope</h3>
+<h3 id="_project_scope">6.6. Project Scope</h3>
 <div class="paragraph">
 <p>A <strong>project</strong> is defined by a <code>.c-xrefrc</code> configuration file. The directory containing
 this file is the <strong>project root</strong>. On auto-detection, the server walks upward from the
@@ -1257,7 +1285,7 @@ file table does not support.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_terminology">6.6. Terminology</h3>
+<h3 id="_terminology">6.7. Terminology</h3>
 <div class="paragraph">
 <p>The following terms are used throughout the documentation and codebase. Preferred terms
 are listed alphabetically; terms to avoid are noted to reduce ambiguity.</p>
@@ -10968,7 +10996,7 @@ server process without a separate <code>callXref()</code> step.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 13:03:41 UTC
+Last updated 2026-05-05 20:09:28 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
