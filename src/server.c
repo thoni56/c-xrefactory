@@ -165,7 +165,6 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
 
     inputOpened = initializeFileProcessing(args, nargs);
 
-    loadFileNumbersFromStore();
     parsingConfig.fileNumber = currentFile.characterBuffer.fileNumber;
 
     if (inputOpened) {
