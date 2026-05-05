@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-05-04">
+<meta name="author" content="v{VERSION} - Generated 2026-05-05">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-05-04</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-05-05</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -8965,7 +8965,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 <div class="sect3">
 <h4 id="_problem_statement_4">16.7.1. Problem Statement</h4>
 <div class="paragraph">
-<p>Server operations use the prefix <code>olcx</code> (likely "on-line cross-references"), a legacy abbreviation that conveys no meaning to anyone reading the code or protocol today. Option names like <code>-olcxpush</code>, <code>-olcxtagsearch</code>, <code>-olcxgetprojectname</code> are opaque compared to what they could be: <code>-push</code>, <code>-search</code>, <code>-get-project-name</code>.</p>
+<p>Server operations use the prefix <code>olcx</code> (likely "on-line cross-references"), a legacy abbreviation that conveys no meaning to anyone reading the code or protocol today. Option names like <code>-olcxpush</code>, <code>-olcxtagsearch</code>, <code>-getproject are opaque compared to what they could be: `-push</code>, <code>-search</code>, <code>-get-project-name</code>.</p>
 </div>
 <div class="paragraph">
 <p>The word "tag" in search-related names (<code>-olcxtagsearch</code>, <code>c-xref-search-in-tag-file</code>, <code>c-xref-tag-results-buffer</code>) is a leftover from <code>ctags</code> and friends. There is no ctags compatibility — the term is purely misleading. The two menu entries "Search Definition in Tags" and "Search Symbol" both trigger the same <code>OP_SEARCH</code> operation, differing only in a filter flag (<code>-searchdef</code>). The word "tag" suggests they are fundamentally different, when they are not.</p>
@@ -10968,7 +10968,7 @@ server process without a separate <code>callXref()</code> step.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-04 19:16:05 UTC
+Last updated 2026-05-05 13:03:41 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
