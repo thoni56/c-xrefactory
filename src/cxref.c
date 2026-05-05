@@ -20,6 +20,7 @@
 #include "log.h"
 #include "match.h"
 #include "misc.h"
+#include "navigation.h"
 #include "options.h"
 #include "parsing.h"
 #include "position.h"
@@ -34,14 +35,12 @@
 #include "search.h"
 #include "server.h"
 #include "session.h"
-#include "session.h"
 #include "storage.h"
 #include "symbol.h"
 #include "timestamp.h"
 #include "type.h"
 #include "usage.h"
 #include "visibility.h"
-#include "navigation.h"
 
 
 #define MAX_TAG_SEARCH_INDENT 80          /* maximal tag search indentation with scroll */
