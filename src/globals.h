@@ -87,6 +87,5 @@ extern bool completionPositionFound;
 extern bool completionStringServed;
 extern Usage olstringUsage;
 extern char *completionStringInMacroBody;
-extern int fileToParseForMacroExpansion;
 
 #endif

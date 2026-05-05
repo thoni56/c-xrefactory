@@ -907,30 +907,22 @@ static void scanFunction_Reference(int size,
     } else if (options.mode == ServerMode) {
         Reference reference = makeReference(makePosition(file, line, col), usage, NULL);
         FileItem *cxFileItem = getFileItemWithFileNumber(reference.position.file);
-        if (scanOperation == CXSF_FIND_MACRO_EXPANSION_FILE) {
-            if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]
-                && reference.usage == UsageMacroBaseFileUsage
-            ) {
-                fileToParseForMacroExpansion = reference.position.file;
+        if (options.serverOperation == OP_SEARCH) {
+            if (reference.usage==UsageDefined
+                || ((options.searchKind==SEARCH_FULL
+                     || options.searchKind==SEARCH_FULL_SHORT)
+                    && reference.usage==UsageDeclared)
+                ) {
+                searchSymbolCheckReference(lastIncomingData.referenceableItem, &reference);
             }
         } else {
-            if (options.serverOperation == OP_SEARCH) {
-                if (reference.usage==UsageDefined
-                    || ((options.searchKind==SEARCH_FULL
-                         || options.searchKind==SEARCH_FULL_SHORT)
-                        && reference.usage==UsageDeclared)
-                    ) {
-                    searchSymbolCheckReference(lastIncomingData.referenceableItem, &reference);
-                }
-            } else {
-                if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]) {
-                    if (scanOperation == CXSF_MENU_CREATION) {
-                        assert(lastIncomingData.onLineRefMenuItem);
-                        log_trace (":adding reference %s:%d", cxFileItem->name, reference.position.line);
-                        addReferenceToBrowsingMenu(lastIncomingData.onLineRefMenuItem, &reference);
-                    } else {
-                        addReferenceToList(&reference, &browsingStack.top->references);
-                    }
+            if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]) {
+                if (scanOperation == CXSF_MENU_CREATION) {
+                    assert(lastIncomingData.onLineRefMenuItem);
+                    log_trace (":adding reference %s:%d", cxFileItem->name, reference.position.line);
+                    addReferenceToBrowsingMenu(lastIncomingData.onLineRefMenuItem, &reference);
+                } else {
+                    addReferenceToList(&reference, &browsingStack.top->references);
                 }
             }
         }
@@ -1031,8 +1023,7 @@ static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable) {
 /* suffix contains '/' at the beginning !!! */
 static bool scanCxFile(char *cxFileLocation, char *element1, char *element2,
                        CxFileScanDispatchEntry *scanDispatchTable) {
-    /* TRIPWIRE DEACTIVATED for experiment — re-enable when investigating disk reads.
-     * assert(!snapshotLoadComplete && "post-startup disk read — see ideas_disk_read_tripwire"); */
+    assert(!snapshotLoadComplete && "post-startup disk read — see ideas_disk_read_tripwire");
     char fn[MAX_FILE_NAME_SIZE];
 
     sprintf(fn, "%s%s%s", cxFileLocation, element1, element2);

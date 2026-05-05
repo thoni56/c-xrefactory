@@ -85,14 +85,13 @@ static int scheduleFileUsingTheMacro(void) {
     assert(browsingStack.top);
     BrowsingMenu *oldMenu = browsingStack.top->hkSelectedSym;
     browsingStack.top->hkSelectedSym = &menu;
-    fileToParseForMacroExpansion = NO_FILE_NUMBER;
-    scanForMacroUsage(completionStringInMacroBody);
+    int fileToParse = findMacroExpansionFile();
     browsingStack.top->hkSelectedSym = oldMenu;
     if (tmpc!=NULL) {
         deleteEntryFromSessionStack(tmpc);
     }
-    log_debug(":scheduling file '%s'", getFileItemWithFileNumber(fileToParseForMacroExpansion)->name);
-    return fileToParseForMacroExpansion;
+    log_debug(":scheduling file '%s'", getFileItemWithFileNumber(fileToParse)->name);
+    return fileToParse;
 }
 
 /* Prepare a single input file for this request, maybe?

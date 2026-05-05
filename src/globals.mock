@@ -50,7 +50,6 @@ Usage olstringUsage = 0;
 Usage olstringUsage;
 int requestFileNumber;
 Position olcxByPassPos;
-int fileToParseForMacroExpansion;
 
 TypeModifier *structMemberCompletionType;
 Completions collectedCompletions;

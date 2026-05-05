@@ -48,7 +48,6 @@ bool completionPositionFound = false;
 bool completionStringServed = false;
 Usage olstringUsage = 0;
 char *completionStringInMacroBody;
-int fileToParseForMacroExpansion;
 
 /* ******************* yytext for yacc ****************** */
 char *yytext;

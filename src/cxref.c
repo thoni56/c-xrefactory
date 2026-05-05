@@ -1796,6 +1796,24 @@ static void searchInMemoryTable(void) {
     }
 }
 
+int findMacroExpansionFile(void) {
+    int file = NO_FILE_NUMBER;
+    for (int i = getNextExistingReferenceableItem(0); i != -1;
+         i = getNextExistingReferenceableItem(i + 1)) {
+        for (ReferenceableItem *item = getReferenceableItem(i);
+             item != NULL; item = item->next) {
+            BrowsingMenu *menu = createSelectionMenu(item);
+            if (menu == NULL)
+                continue;
+            for (Reference *ref = item->references; ref != NULL; ref = ref->next) {
+                if (ref->usage == UsageMacroBaseFileUsage)
+                    file = ref->position.file;
+            }
+        }
+    }
+    return file;
+}
+
 static void printSearchResults(void) {
     int len1, len2, len;
     char *ls;
