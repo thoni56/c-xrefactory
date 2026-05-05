@@ -1,6 +1,6 @@
 [C-xref] active project: 'CURDIR'
 CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/macro.h
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/macro.h
 end-of-options
 
 <sync>

@@ -1,5 +1,5 @@
  CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
--olcxgetprojectname -xrefrc .c-xrefrc test_source/single_int1.c
+-getproject -xrefrc .c-xrefrc test_source/single_int1.c
 end-of-options
 
 <sync>

@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -server
--olcxgetprojectname CURDIR/cexercise/refactorings/parameter.c
+-getproject CURDIR/cexercise/refactorings/parameter.c
 <sync>
 -rfct-add-param -olcxparnum=1 "-rfct-parameter-name=int arg" -rfct-parameter-value=0 -olmark=0 -olcursor=289 CURDIR/cexercise/refactorings/parameter.c -p CURDIR
 <sync>

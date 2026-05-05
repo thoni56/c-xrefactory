@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <goto>
- <position-lc line=2214 col=4 len=<n>>CURDIR/src/proto.h</position-lc>
+ <position-lc line=1668 col=7 len=<n>>CURDIR/src/proto.h</position-lc>
 </goto>
 -exit
 end-of-options

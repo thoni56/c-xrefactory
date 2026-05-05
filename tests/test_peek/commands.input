@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server
--olcxgetprojectname source.c
+-getproject source.c
 <sync>
 -olcxpush -olcursor=4 source.c
 <sync>

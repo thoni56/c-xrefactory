@@ -23,9 +23,9 @@
 # seen. Example commands file
 #
 #     ../../src/c-xref -xrefrc CURDIR/.c-xrefrc -xrefactory-II -server
-#     -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/single_int1.c
+#     -getproject CURDIR/source.c
 #     <sync>
-#     -olcxcomplet CURDIR/single_int1.c -olcursor=85 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+#     -olcxcomplet CURDIR/source.c -olcursor=85
 #     <sync>
 #
 # If the line (probably the last) is '<exit>', the driver will send '-exit',

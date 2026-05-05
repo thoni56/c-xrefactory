@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
 end-of-options
 
 <sync>

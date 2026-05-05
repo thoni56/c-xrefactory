@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
--olcxgetprojectname source.c
+-getproject source.c
 end-of-options
 
 <sync>

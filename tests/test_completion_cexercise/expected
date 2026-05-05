@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -log=log -server -o server-buffer
--olcxgetprojectname CURDIR/cexercise/completions.c
+-getproject CURDIR/cexercise/completions.c
 end-of-options
 
 <sync>

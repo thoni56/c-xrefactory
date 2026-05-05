@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -server -o server-buffer
--olcxgetprojectname CURDIR/cexercise/refactorings/extract.c
+-getproject CURDIR/cexercise/refactorings/extract.c
 end-of-options
 
 <sync>

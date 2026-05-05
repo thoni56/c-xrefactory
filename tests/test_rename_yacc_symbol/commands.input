@@ -1,9 +1,9 @@
 CXREF -xrefactory-II -server
--olcxgetprojectname CURDIR/source.y
+-getproject CURDIR/source.y
 <sync>
 -olcxpush -olcursor=301 CURDIR/source.y -p CURDIR
 <sync>
--olcxgetprojectname CURDIR/source.y
+-getproject CURDIR/source.y
 <sync>
 -olcxgetrefactorings -olcursor=362 CURDIR/source.y -p CURDIR
 <sync>

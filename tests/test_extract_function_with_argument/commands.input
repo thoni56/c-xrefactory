@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -server
--olcxgetprojectname CURDIR/test_source/hello.c
+-getproject CURDIR/test_source/hello.c
 <sync>
 -rfct-extract-function -olmark=73 -olcursor=107 CURDIR/test_source/hello.c -p CURDIR
 <sync>

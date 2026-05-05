@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -server -o server-buffer
--olcxgetprojectname CURDIR/cexercise/refactorings/rename.c
+-getproject CURDIR/cexercise/refactorings/rename.c
 end-of-options
 
 <sync>

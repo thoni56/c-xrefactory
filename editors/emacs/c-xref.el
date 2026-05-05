@@ -1998,7 +1998,7 @@ be cleaned up when the buffer is saved or killed)."
       (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data
                                                          proc))
       (c-xref-send-data-to-running-process
-       (format "-olcxgetprojectname \"%s\"" (buffer-file-name))
+       (format "-getproject \"%s\"" (buffer-file-name))
        proc)
       (c-xref-wait-until-task-sync proc nil)
       (c-xref-server-read-answer-file-and-dispatch c-xref-global-dispatch-data nil)
@@ -2015,7 +2015,7 @@ be cleaned up when the buffer is saved or killed)."
     ;; is passed to c-xref (be careful on which buffer you call it)
     ;; but c-xref needs to parse something to softsetup project, maybe
     ;; I should implement special option '-softprojectset'?
-    (c-xref-call-process-with-basic-file-data-no-saves "-olcxgetprojectname")
+    (c-xref-call-process-with-basic-file-data-no-saves "-getproject")
     ;; Hmm. this is also dispatching, hope it is no problem.
     (setq c-xref-active-project actp)
     ))

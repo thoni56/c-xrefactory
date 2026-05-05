@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -server
--olcxgetprojectname CURDIR/server.h
+-getproject CURDIR/server.h
 <sync>
 -olcxpush -preload CURDIR/server.h CURDIR/server.preload1 -olcursor=486 CURDIR/server.h -p CURDIR
 <sync>

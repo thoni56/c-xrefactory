@@ -6,17 +6,17 @@ end-of-options
 <goto>
  <position-lc line=21 col=5 len=<n>>CURDIR/index.c</position-lc>
 </goto>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/browsing.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/browsing.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/main.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/main.c
 end-of-options
 
 <sync>

@@ -1182,6 +1182,9 @@ static bool processGOption(int *argi, ArgumentsVector args) {
         options.variableToGet = allocateStringForOption(&options.variableToGet, args.argv[i]);
         options.serverOperation = OP_GET_ENV_VALUE;
     }
+    else if (strcmp(args.argv[i], "-getproject")==0) {
+        options.serverOperation=OP_ACTIVE_PROJECT;
+    }
     else return false;
     *argi = i;
     return true;
@@ -1375,9 +1378,6 @@ static bool processOOption(int *argi, ArgumentsVector args) {
         options.serverOperation=OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET;
     else if (strcmp(args.argv[i], "-olcxgetfunctionbounds")==0)
         options.serverOperation=OP_INTERNAL_GET_FUNCTION_BOUNDS;
-    else if (strcmp(args.argv[i], "-olcxgetprojectname")==0) {
-        options.serverOperation=OP_ACTIVE_PROJECT;
-    }
     else if (strncmp(args.argv[i], "-olcxlccursor=",14)==0) {
         // position of the cursor in line:column format
         options.olcxlccursor = allocateStringForOption(&options.olcxlccursor, args.argv[i]+14);

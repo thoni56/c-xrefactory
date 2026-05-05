@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 end-of-options
 
 <sync>
@@ -11,7 +11,7 @@ end-of-options
 <goto>
  <position-lc line=9 col=5 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 end-of-options
 
 <sync>
@@ -96,7 +96,7 @@ end-of-options
  <position-lc line=18 col=8 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
 <bottom-information len=<n>>Current top symbol: browsing</bottom-information>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 end-of-options
 
 <sync>
@@ -123,7 +123,7 @@ end-of-options
  <position-lc line=23 col=10 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
 <bottom-information len=<n>>Current top symbol: browsing</bottom-information>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 end-of-options
 
 <sync>
@@ -150,7 +150,7 @@ end-of-options
  <position-lc line=29 col=14 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
 <bottom-information len=<n>>Current top symbol: browsing</bottom-information>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 end-of-options
 
 <sync>
@@ -177,7 +177,7 @@ end-of-options
  <position-lc line=31 col=9 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
 <bottom-information len=<n>>Current top symbol: browsing</bottom-information>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 end-of-options
 
 <sync>
@@ -248,7 +248,7 @@ end-of-options
 <goto>
 <position-lc line=35 col=4 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 end-of-options
 
 <sync>
@@ -286,7 +286,7 @@ end-of-options
 <src-line refn=4 len=<n>>browsing.c:18:    for(i=0; i<10; i++) printf("i == %d\n", i );</src-line>
 <src-line refn=1 len=<n>>browsing.c:35:    i = 0;</src-line>
 </reference-list>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 end-of-options
 
 <sync>
@@ -391,7 +391,7 @@ end-of-options
 <position-lc line=54 col=53 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
 <bottom-information len=<n>>Current top symbol: i</bottom-information>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 end-of-options
 
 <sync>

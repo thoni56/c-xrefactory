@@ -1058,7 +1058,7 @@ static int processOOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-olcxmethodlines")==0)	s_opt.cxrefs=OLO_GET_METHOD_COORD;
     else if (strcmp(argv[i],"-olcxclasslines")==0)	s_opt.cxrefs=OLO_GET_CLASS_COORD;
     else if (strcmp(argv[i],"-olcxgetsymboltype")==0) s_opt.cxrefs=OLO_GET_SYMBOL_TYPE;
-    else if (strcmp(argv[i],"-olcxgetprojectname")==0) {
+    else if (strcmp(argv[i],"-getproject {
         s_opt.cxrefs=OLO_ACTIVE_PROJECT;
     }
     else if (strcmp(argv[i],"-olcxgetjavahome")==0) {

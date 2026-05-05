@@ -634,7 +634,7 @@ None of these are about the external editor. They're the server's internal text 
 
 ==== Problem Statement
 
-Server operations use the prefix `olcx` (likely "on-line cross-references"), a legacy abbreviation that conveys no meaning to anyone reading the code or protocol today. Option names like `-olcxpush`, `-olcxtagsearch`, `-olcxgetprojectname` are opaque compared to what they could be: `-push`, `-search`, `-get-project-name`.
+Server operations use the prefix `olcx` (likely "on-line cross-references"), a legacy abbreviation that conveys no meaning to anyone reading the code or protocol today. Option names like `-olcxpush`, `-olcxtagsearch`, `-getproject are opaque compared to what they could be: `-push`, `-search`, `-get-project-name`.
 
 The word "tag" in search-related names (`-olcxtagsearch`, `c-xref-search-in-tag-file`, `c-xref-tag-results-buffer`) is a leftover from `ctags` and friends. There is no ctags compatibility — the term is purely misleading. The two menu entries "Search Definition in Tags" and "Search Symbol" both trigger the same `OP_SEARCH` operation, differing only in a filter flag (`-searchdef`). The word "tag" suggests they are fundamentally different, when they are not.
 

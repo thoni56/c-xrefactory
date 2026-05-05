@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -server
--olcxgetprojectname CURDIR/source1.c
+-getproject CURDIR/source1.c
 <sync>
 -olcxpush -olcursor=35 CURDIR/common.h -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>

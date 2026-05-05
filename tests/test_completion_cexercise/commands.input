@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -log=log -server
--olcxgetprojectname CURDIR/cexercise/completions.c
+-getproject CURDIR/cexercise/completions.c
 <sync>
 -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=927 CURDIR/cexercise/completions.c
 <sync>

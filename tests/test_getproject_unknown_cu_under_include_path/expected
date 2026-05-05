@@ -1,15 +1,15 @@
 CXREF -xrefactory-II -server -o server-buffer
--olcxgetprojectname CURDIR/project/source.c
+-getproject CURDIR/project/source.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR/project</set-info>
--olcxgetprojectname CURDIR/external/external.h
+-getproject CURDIR/external/external.h
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR/project</set-info>
--olcxgetprojectname CURDIR/external/external.c
+-getproject CURDIR/external/external.c
 end-of-options
 
 <sync>

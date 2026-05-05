@@ -19,7 +19,7 @@ No coverage data found for /home/thoni/Utveckling/c-xrefactory/tests/test_change
 Package cl is deprecated
 Package autoload is deprecated
 calling: ("-xrefactory-II" "-crlfconversion" "-crconversion" "-o" "/tmp/c-xrefthoni-8091-99.tmp" "-server")
-sending: -olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"
+sending: -getproject -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"
 got: <sync>
 
 Wrote /tmp/c-xrefthoni-8091-107.tmp
@@ -106,7 +106,7 @@ keeping tmp file /tmp/c-xrefthoni-8091-227.tmp
 dispatching: <bottom-warning beep=1 len=11>Empty stack</bottom-warning>
 
 Empty stack
-sending: -olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"
+sending: -getproject -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/test_changed_source_updates_references/source.c"
 got: <sync>
 
 Wrote /tmp/c-xrefthoni-8091-243.tmp

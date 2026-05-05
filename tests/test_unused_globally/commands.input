@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server
--olcxgetprojectname CURDIR/main.c
+-getproject CURDIR/main.c
 <sync>
 -olcxpushglobalunused CURDIR/main.c
 <sync>

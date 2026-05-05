@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -xrefrc CURDIR/.c-xrefrc -p CURDIR -server -o server-buffer
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/completions.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/completions.c
 end-of-options
 
 <sync>
@@ -12,7 +12,7 @@ end-of-options
  <position-lc line=18 col=4 len=<n>>CURDIR/cexercise/completions.c</position-lc>
 </goto>
 <single-completion len=<n>>completions()</single-completion>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/completions.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/completions.c
 end-of-options
 
 <sync>
@@ -35,7 +35,7 @@ end-of-options
 <position-lc line=22 col=4 len=<n>>CURDIR/cexercise/completions.c</position-lc>
 </goto>
 <single-completion len=<n>>zprint(</single-completion>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/completions.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/completions.c
 end-of-options
 
 <sync>
@@ -54,7 +54,7 @@ end-of-options
 <position-lc line=39 col=8 len=<n>>CURDIR/cexercise/completions.c</position-lc>
 </goto>
 <single-completion len=<n>>next</single-completion>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/completions.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/completions.c
 end-of-options
 
 <sync>
@@ -76,7 +76,7 @@ end-of-options
 <position-lc line=43 col=4 len=<n>>CURDIR/cexercise/completions.c</position-lc>
 </goto>
 <single-completion len=<n>>next</single-completion>
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/completions.c
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/completions.c
 end-of-options
 
 <sync>

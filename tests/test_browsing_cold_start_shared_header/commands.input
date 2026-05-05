@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -server
--olcxgetprojectname CURDIR/ins.c
+-getproject CURDIR/ins.c
 <sync>
 -olcxpush -olcursor=66 CURDIR/ins.c -p CURDIR
 <sync>

@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
--olcxgetprojectname -xrefrc .c-xrefrc include.c
+-getproject -xrefrc .c-xrefrc include.c
 end-of-options
 
 <sync>

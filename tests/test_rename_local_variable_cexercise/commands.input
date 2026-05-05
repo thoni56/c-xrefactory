@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -server
--olcxgetprojectname CURDIR/cexercise/refactorings/rename.c
+-getproject CURDIR/cexercise/refactorings/rename.c
 <sync>
 -rfct-rename -renameto=p -olcursor=374 CURDIR/cexercise/refactorings/rename.c -p CURDIR
 <sync>

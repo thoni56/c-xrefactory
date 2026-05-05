@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -server
--olcxgetprojectname CURDIR/macroArgs.c
+-getproject CURDIR/macroArgs.c
 <sync>
 -rfct-del-param -olcxparnum=3 -olmark=10 -olcursor=10 CURDIR/macroArgs.c -p CURDIR
 <sync>

@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -server -o server-buffer
--olcxgetprojectname CURDIR/source.y
+-getproject CURDIR/source.y
 end-of-options
 
 <sync>
@@ -11,7 +11,7 @@ end-of-options
 <goto>
  <position-lc line=26 col=0 len=<n>>CURDIR/source.y</position-lc>
 </goto>
--olcxgetprojectname CURDIR/source.y
+-getproject CURDIR/source.y
 end-of-options
 
 <sync>

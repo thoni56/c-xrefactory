@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -server -o server-buffer
--olcxgetprojectname CURDIR/test_source/hello.c
+-getproject CURDIR/test_source/hello.c
 end-of-options
 
 <sync>

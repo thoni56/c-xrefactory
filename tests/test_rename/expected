@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -server -o server-buffer
--olcxgetprojectname CURDIR/test_source/single_int1.c
+-getproject CURDIR/test_source/single_int1.c
 end-of-options
 
 <sync>

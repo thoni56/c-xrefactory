@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -server
--olcxgetprojectname CURDIR/source.c
+-getproject CURDIR/source.c
 <sync>
 -rfct-organize-includes -olcursor=0 CURDIR/source.c -p CURDIR
 <sync>
