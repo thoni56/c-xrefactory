@@ -1023,7 +1023,7 @@ static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable) {
 /* suffix contains '/' at the beginning !!! */
 static bool scanCxFile(char *cxFileLocation, char *element1, char *element2,
                        CxFileScanDispatchEntry *scanDispatchTable) {
-    assert(!snapshotLoadComplete && "post-startup disk read — see ideas_disk_read_tripwire");
+    assert(!snapshotLoadComplete && "post-startup disk read — see Principles: Memory As Truth");
     char fn[MAX_FILE_NAME_SIZE];
 
     sprintf(fn, "%s%s%s", cxFileLocation, element1, element2);

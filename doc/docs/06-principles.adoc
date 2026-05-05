@@ -11,10 +11,31 @@ bodies, labels) are excluded. The visibility boundary is `VisibilityLocal` in
 Block-local symbols are reconstructed by reparsing the file of interest.
 
 NOTE: The in-memory reference table holds all symbols encountered during parsing,
-including block-local ones. The snapshot excludes only block-locals because they can
-always be reconstructed by reparsing. As the architecture moves toward "memory as truth"
-(see link:15-roadmap.adoc[Roadmap]), the distinction between "persisted" and "in-memory"
-symbols may evolve.
+including block-local ones. The snapshot excludes only block-locals because they
+can always be reconstructed by reparsing.
+
+=== Memory As Truth
+
+After startup, the in-memory `referenceableItemTable` is authoritative. The `.cx`
+files are a snapshot for surviving process restarts, not a tiebreaker. No operation
+reads from `.cx` after `loadSnapshotFromStore()` returns.
+
+The server is long-lived and the only writer of its `.cx` files. A disk read
+post-startup means either re-reading our own output or preferring a stale snapshot
+over fresh in-memory state — neither is correct. Earlier in the project several
+disk-as-truth code paths silently produced _some_ answer, just not the right one;
+those bugs were hard to find precisely because the disk read succeeded.
+
+==== Enforcement: the disk-read tripwire
+
+`scanCxFile()` is the only entry point that opens a `.cx` file for reading. It
+asserts that `snapshotLoadComplete` (a static flag in `cxfile.c` set at the end of
+`loadSnapshotFromStore()`) is still false. Any later call aborts with a message
+pointing here.
+
+Writes — periodic save, save on exit — are not affected; the tripwire is on the
+read path only. A future feature that requires post-startup disk access means this
+principle has to be revisited.
 
 === Continuously Fresh References
 
