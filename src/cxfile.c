@@ -141,6 +141,11 @@ static FILE *cxFile = NULL;
 
 static FILE *currentCxFile;
 
+/* Tripwire: once the initial snapshot load has completed, no further
+ * disk reads should occur — memory is truth. Any scanCxFile call after
+ * this flag flips trips an assert. See ideas_disk_read_tripwire. */
+static bool snapshotLoadComplete = false;
+
 typedef struct cxFileScanStep {
     int		recordCode;
     void    (*handlerFunction)(int size, int ri, CharacterBuffer *cb, CxFileScanOperation operation); /* TODO: Break out a type */
@@ -1026,6 +1031,8 @@ static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable) {
 /* suffix contains '/' at the beginning !!! */
 static bool scanCxFile(char *cxFileLocation, char *element1, char *element2,
                        CxFileScanDispatchEntry *scanDispatchTable) {
+    /* TRIPWIRE DEACTIVATED for experiment — re-enable when investigating disk reads.
+     * assert(!snapshotLoadComplete && "post-startup disk read — see ideas_disk_read_tripwire"); */
     char fn[MAX_FILE_NAME_SIZE];
 
     sprintf(fn, "%s%s%s", cxFileLocation, element1, element2);
@@ -1075,8 +1082,10 @@ bool loadFileNumbersFromStore(void) {
 }
 
 bool loadSnapshotFromStore(void) {
-    if (options.cxFileLocation == NULL)
+    if (options.cxFileLocation == NULL) {
+        snapshotLoadComplete = true;
         return false;
+    }
     char cxFileName[MAX_FILE_NAME_SIZE];
     if (options.cxFileCount <= 1) {
         sprintf(cxFileName, "%s", options.cxFileLocation);
@@ -1095,8 +1104,10 @@ bool loadSnapshotFromStore(void) {
                 scanCxFile(options.cxFileLocation, CXFILENAME_PREFIX, partitionNumber, snapshotLoadScanDispatchTable);
             }
         }
+        snapshotLoadComplete = true;
         return true;
     }
+    snapshotLoadComplete = true;
     return false;
 }
 
