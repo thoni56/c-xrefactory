@@ -10,8 +10,6 @@
 #include "reference.h"
 
 
-SessionData sessionData;
-
 SearchingStack searchingStack;
 CompletionStack completionStack;
 BrowsingStack browsingStack;

@@ -461,7 +461,7 @@ static void addReferencesFromFileToList(Reference *references, int fileNumber, R
 }
 
 
-bool sessionHasReferencesValidForOperation(SessionData *session, SessionStackEntry **entryP,
+bool sessionHasReferencesValidForOperation(SessionStackEntry **entryP,
                                            CheckNull checkNull) {
     if (options.serverOperation==OP_COMPLETION || options.serverOperation==OP_COMPLETION_SELECT
         ||  options.serverOperation==OP_COMPLETION_GOTO_N || options.serverOperation==OP_SEARCH) {
@@ -481,7 +481,7 @@ bool sessionHasReferencesValidForOperation(SessionData *session, SessionStackEnt
 static void initializeRename(void) {
     SessionStackEntry *sessionStackEntry;
 
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionStackEntry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&sessionStackEntry, CHECK_NULL_YES))
         return;
     sessionStackEntry->current = sessionStackEntry->references;
     ppcGotoPosition(sessionStackEntry->current->position);
@@ -550,7 +550,7 @@ static void orderRefsAndGotoDefinition(SessionStackEntry *sessionEntry) {
 static void olcxOrderRefsAndGotoDefinition(void) {
     SessionStackEntry *sessionEntry;
 
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_YES))
         return;
     orderRefsAndGotoDefinition(sessionEntry);
 }
@@ -780,7 +780,7 @@ static void olcxPrintRefList(char *commandString, SessionStackEntry *sessionEntr
 
 static void olcxReferenceList(char *commandString) {
     SessionStackEntry    *sessionEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_YES))
         return;
     olcxPrintRefList(commandString, sessionEntry);
 }
@@ -795,7 +795,7 @@ static void gotoCurrentReference(SessionStackEntry *sessionEntry) {
 
 static void olcxPushOnly(void) {
     SessionStackEntry    *sessionEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_YES))
         return;
     //&LIST_MERGE_SORT(Reference, sessionEntry->references, referenceIsLessThan);
     gotoCurrentReference(sessionEntry);
@@ -805,7 +805,7 @@ static void olcxPushAndCallMacro(void) {
     SessionStackEntry    *sessionEntry;
     char                symbol[MAX_CX_SYMBOL_SIZE];
 
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_YES))
         return;
     LIST_MERGE_SORT(Reference, sessionEntry->references, referenceIsLessThan);
     LIST_REVERSE(Reference, sessionEntry->references);
@@ -824,7 +824,7 @@ static void olcxPushAndCallMacro(void) {
 
 static void gotoReferenceWithIndex(int referenceIndex) {
     SessionStackEntry *sessionStackEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionStackEntry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&sessionStackEntry, CHECK_NULL_YES))
         return;
 
     int filterLevel = usageFilterLevels[sessionStackEntry->refsFilterLevel];
@@ -900,7 +900,7 @@ static void gotoMatch(int referenceIndex) {
     assert(referenceIndex > 0);
 
     SessionStackEntry *sessionStackEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionStackEntry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&sessionStackEntry, CHECK_NULL_YES))
         return;
 
     Match *match = getMatchOnNthLine(sessionStackEntry->matches, referenceIndex);
@@ -1014,7 +1014,7 @@ void recomputeSelectedReferenceable(SessionStackEntry *entry) {
 
 static void toggleMenuSelect(void) {
     SessionStackEntry *sessionEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_YES))
         return;
 
     BrowsingMenu *menu;
@@ -1033,7 +1033,7 @@ static void toggleMenuSelect(void) {
 
 static void olcxMenuSelectOnly(void) {
     SessionStackEntry *stackEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &stackEntry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&stackEntry, CHECK_NULL_YES))
         return;
 
     BrowsingMenu *selection = NULL;
@@ -1101,7 +1101,7 @@ static void olcxMenuSelectAll(bool selected) {
 
     assert(options.xref2);
 
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_YES))
         return;
     if (sessionEntry->operation == OP_UNUSED_GLOBAL) {
         ppcGenRecord(PPC_WARNING, "The browser does not display project unused symbols anymore");
@@ -1164,7 +1164,7 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
     SessionStackEntry    *sessionEntry;
 
     assert(options.xref2);
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_NO))
+    if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_NO))
         return;
     if (sessionEntry!=NULL && flevel < MAX_MENU_FILTER_LEVEL && flevel >= 0) {
         if (sessionEntry->menuFilterLevel != flevel) {
@@ -1185,7 +1185,7 @@ static void olcxReferenceFilterSet(int filterLevel) {
     SessionStackEntry *sessionEntry;
 
     assert(options.xref2);
-    if (!sessionHasReferencesValidForOperation(&sessionData,  &sessionEntry, CHECK_NULL_NO))
+    if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_NO))
         return;
     if (sessionEntry!=NULL && filterLevel < MAX_REF_LIST_FILTER_LEVEL && filterLevel >= 0) {
         sessionEntry->refsFilterLevel = filterLevel;
@@ -1201,14 +1201,12 @@ static void olcxReferenceRePush(void) {
     SessionStackEntry *sessionEntry, *next;
 
     assert(options.xref2);
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_NO))
+    if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_NO))
         return;
     next = getNextTopStackItem(&browsingStack);
     if (next != NULL) {
         browsingStack.top = next;
         gotoCurrentReference(browsingStack.top);
-        // TODO, replace this by follwoing since 1.6.1
-        //& ppcGotoPosition(&sessionData->browserStack.top->callerPosition);
         olcxPrintSymbolName(browsingStack.top);
     } else {
         ppcBottomWarning("You are on the top of browser stack.");
@@ -1217,7 +1215,7 @@ static void olcxReferenceRePush(void) {
 
 static void olcxReferencePop(void) {
     SessionStackEntry *sessionEntry;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &sessionEntry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_YES))
         return;
     if (sessionEntry->callerPosition.file != NO_FILE_NUMBER) {
         ppcGotoPosition(sessionEntry->callerPosition);
@@ -1233,7 +1231,7 @@ void popFromSession(void) {
     SessionStackEntry *entry;
 
     /* Why this check? */
-    if (!sessionHasReferencesValidForOperation(&sessionData, &entry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&entry, CHECK_NULL_YES))
         return;
     browsingStack.top = entry->previous;
 }
@@ -1374,7 +1372,7 @@ static void selectCompletion(void) {
     Match *match;
 
     assert(options.xref2);
-    if (!sessionHasReferencesValidForOperation(&sessionData, &entry, CHECK_NULL_YES))
+    if (!sessionHasReferencesValidForOperation(&entry, CHECK_NULL_YES))
         return;
     match = getMatchOnNthLine(entry->matches, options.olcxGotoVal);
     if (match==NULL) {
@@ -1668,7 +1666,6 @@ static void mainAnswerReferencePushingAction(ServerOperation operation) {
         ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
     } else {
         assert(browsingStack.top);
-        //&processSelectedReferences(sessionData->browserStack.top, genOnLineReferences);
         olcxPrintPushingAction(options.serverOperation);
     }
 }

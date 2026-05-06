@@ -3,8 +3,6 @@
 #include "session.h"
 
 
-SessionData sessionData;
-
 SearchingStack searchingStack;
 CompletionStack completionStack;
 BrowsingStack browsingStack;

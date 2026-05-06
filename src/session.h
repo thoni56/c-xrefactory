@@ -47,16 +47,9 @@ typedef SessionStack BrowsingStack;
 typedef SessionStack CompletionStack;
 typedef SessionStack SearchingStack;
 
-typedef struct SessionData {
-} SessionData;
-
-
-extern SessionData sessionData;
-
 extern SearchingStack searchingStack;
 extern CompletionStack completionStack;
 extern BrowsingStack browsingStack;
-
 
 
 /* Generic stack operations */
