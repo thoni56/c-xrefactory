@@ -1,0 +1,14 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/unused_macro.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-olcxcomplet -maxcompls=500 -olinelen=120 -olcursor=28 CURDIR/unused_macro.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<bottom-information beep=0 len=<n>>** No completion possible **</bottom-information>
+-exit
+end-of-options
+

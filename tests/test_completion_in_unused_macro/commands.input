@@ -1,0 +1,6 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server
+-getproject -xrefrc CURDIR/.c-xrefrc CURDIR/unused_macro.c
+<sync>
+-olcxcomplet -maxcompls=500 -olinelen=120 -olcursor=28 CURDIR/unused_macro.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
+<exit>
