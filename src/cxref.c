@@ -1646,23 +1646,22 @@ static void olcxPrintPushingAction(ServerOperation operation) {
     }
 }
 
-#ifdef DUMP_SELECTION_MENU
+static bool DUMP_SELECTION_MENU = false;
 static void dumpSelectionMenu(BrowsingMenu *menu) {
-    for (BrowsingMenu *s=menu; s!=NULL; s=s->next) {
-        log_debug(">> %d/%d %s %s %d", s->defaultRefn, s->refn, s->referenceable.linkName,
-            simpleFileName(getFileItemWithFileNumber(s->referenceable.includeFileNumber)->name),
-            s->outOnLine);
+    for (BrowsingMenu *m=menu; m!=NULL; m=m->next) {
+        log_debug(">> %d/%d %s %s %d", m->defaultRefn, m->refn, m->referenceable.linkName,
+            simpleFileName(getFileItemWithFileNumber(m->referenceable.includeFileNumber)->name),
+            m->outOnLine);
     }
 }
-#endif
 
 static void mainAnswerReferencePushingAction(ServerOperation operation) {
     createSelectionMenuForOperation(operation);
 
     assert(options.xref2);
-#ifdef DUMP_SELECTION_MENU
-    dumpSelectionMenu(sessionData->browserStack.top->menuSym);
-#endif
+    if (DUMP_SELECTION_MENU)
+        dumpSelectionMenu(browsingStack.top->menu);
+
     if (options.manualResolve == RESOLVE_DIALOG_ALWAYS
         || (olcxShowSelectionMenu()
             && options.manualResolve != RESOLVE_DIALOG_NEVER)) {
