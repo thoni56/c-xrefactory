@@ -34,9 +34,6 @@ extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset);
 extern EditorMarker *newEditorMarkerForPosition(Position position);
 extern Position makePositionFromEditorMarker(EditorMarker *marker);
 
-extern EditorMarker *createEditorMarkerForBufferBegin(EditorBuffer *buffer);
-extern EditorMarker *createEditorMarkerForBufferEnd(EditorBuffer *buffer);
-
 extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next);
 
 extern void attachMarkerToBuffer(EditorMarker *marker, EditorBuffer *buffer);

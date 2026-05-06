@@ -91,14 +91,6 @@ Position makePositionFromEditorMarker(EditorMarker *marker) {
     return position;
 }
 
-EditorMarker *createEditorMarkerForBufferBegin(EditorBuffer *buffer) {
-    return newEditorMarker(buffer, 0);
-}
-
-EditorMarker *createEditorMarkerForBufferEnd(EditorBuffer *buffer) {
-    return newEditorMarker(buffer, buffer->allocation.bufferSize);
-}
-
 EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next) {
     EditorRegionList *regionList;
 
