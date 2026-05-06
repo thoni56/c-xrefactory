@@ -77,7 +77,7 @@ Options presetOptions = {
     .browsedName = NULL,
     .variableToGet = "",
     .olcxlccursor = "0:3",
-    .olcxSearchString = "",
+    .searchString = "",
     .searchKind = SEARCH_FULL,
     .completionCaseSensitive = false,
     .noErrors = false,
@@ -1594,7 +1594,7 @@ static bool processSOption(int *argi, ArgumentsVector args) {
     }
     else if (strncmp(args.argv[i], "-search=",8)==0) {
         options.serverOperation=OP_SEARCH;
-        options.olcxSearchString = allocateStringForOption(&options.olcxSearchString, args.argv[i]+8);
+        options.searchString = allocateStringForOption(&options.searchString, args.argv[i]+8);
     }
     else if (strcmp(args.argv[i], "-searchdef")==0) {
         options.searchKind = SEARCH_DEFINITIONS;

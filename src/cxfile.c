@@ -236,7 +236,7 @@ static bool searchStringNonWildcardFitness(char *cxtag, int len) {
     char    *ss;
     int     r;
 
-    ss = options.olcxSearchString;
+    ss = options.searchString;
     while (*ss) {
         while (*ss==' ' || *ss=='\t') ss++;
         if (*ss == 0) goto fini1;
@@ -251,8 +251,8 @@ static bool searchStringNonWildcardFitness(char *cxtag, int len) {
 }
 
 static bool searchStringMatch(char *cxtag, int len) {
-    if (containsWildcard(options.olcxSearchString))
-        return shellMatch(cxtag, len, options.olcxSearchString, false);
+    if (containsWildcard(options.searchString))
+        return shellMatch(cxtag, len, options.searchString, false);
     else
         return searchStringNonWildcardFitness(cxtag, len);
 }

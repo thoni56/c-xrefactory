@@ -110,7 +110,7 @@ typedef struct options {
     char *browsedName;                          /* REQUEST */
     char *variableToGet;                        /* REQUEST */
     char *olcxlccursor;                         /* REQUEST */
-    char *olcxSearchString;                     /* REQUEST */
+    char *searchString;                         /* REQUEST */
     SearchKind searchKind;                      /* REQUEST */
     bool completionCaseSensitive;               /* REQUEST */
     bool noErrors;                              /* REQUEST */
