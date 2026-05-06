@@ -2027,11 +2027,8 @@ void answerEditorAction(void) {
 
         /* SEARCH */
     case OP_SEARCH: {
-        Position givenPosition = getCallerPositionFromCommandLineOption();
-        if (!options.xref2)
-            fprintf(outputFile,";");
         pushEmptySession(&searchingStack);
-        searchingStack.top->callerPosition = givenPosition;
+        searchingStack.top->callerPosition = getCallerPositionFromCommandLineOption();
 
         searchInMemoryTable();
         printSearchResults();
