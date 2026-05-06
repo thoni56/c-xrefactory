@@ -162,9 +162,7 @@ static void usage() {
 #if 0
     fprintf(stdout, "Usage:\n\tc-xref <mode> <option>+ <input files>\n\n");
     fprintf(stdout, "mode (one of):\n");
-    fprintf(stdout, "\t-xref                     - generate cross-reference data in batch mode\n");
     fprintf(stdout, "\t-server                   - enter edit server mode with c-xref protocol\n");
-    fprintf(stdout, "\t-refactor                 - make an automated refactoring\n");
     fprintf(stdout, "\t-lsp                      - enter edit server mode with Language Server Protocol (LSP)\n");
     fprintf(stdout, "\n");
 #else
@@ -180,7 +178,7 @@ static void usage() {
     fprintf(stdout, "\t-xrefrc <file>            - read options from <file> instead of ~/.c-xrefrc\n");
 #if 0
     fprintf(stdout, "\t-olinelen=<n>             - length of lines for on-line output\n");
-    fprintf(stdout, "\t-olcxsearch               - search info about identifier\n");
+    fprintf(stdout, "\t-search                   - search info about identifier\n");
     fprintf(stdout, "\t-olcxpush                 - generate and push on-line cxrefs\n");
     fprintf(stdout, "\t-olcxrename               - generate and push xrfs for rename\n");
     fprintf(stdout, "\t-olcxpop                  - pop on-line cxrefs\n");
@@ -1382,10 +1380,6 @@ static bool processOOption(int *argi, ArgumentsVector args) {
         // position of the cursor in line:column format
         options.olcxlccursor = allocateStringForOption(&options.olcxlccursor, args.argv[i]+14);
     }
-    else if (strncmp(args.argv[i], "-olcxsearch=",12)==0) {
-        options.serverOperation=OP_SEARCH;
-        options.olcxSearchString = allocateStringForOption(&options.olcxSearchString, args.argv[i]+12);
-    }
     else if (strcmp(args.argv[i], "-olcxsearchforward")==0) {
         options.serverOperation=OP_SEARCH_NEXT;
     }
@@ -1597,6 +1591,10 @@ static bool processSOption(int *argi, ArgumentsVector args) {
     if (0) {}
     else if (strcmp(args.argv[i], "-set")==0) {
         i = handleSetOption(i, args);
+    }
+    else if (strncmp(args.argv[i], "-search=",8)==0) {
+        options.serverOperation=OP_SEARCH;
+        options.olcxSearchString = allocateStringForOption(&options.olcxSearchString, args.argv[i]+8);
     }
     else if (strcmp(args.argv[i], "-searchdef")==0) {
         options.searchKind = SEARCH_DEFINITIONS;

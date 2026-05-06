@@ -1,6 +1,6 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/browsing.c
 <sync>
--olcxsearch=ilist -searchdef -olinelen=159 -olcxlccursor=1:0 -olcursor=0 CURDIR/browsing.c -p CURDIR
+-search=ilist -searchdef -olinelen=159 -olcxlccursor=1:0 -olcursor=0 CURDIR/browsing.c -p CURDIR
 <sync>
 <exit>

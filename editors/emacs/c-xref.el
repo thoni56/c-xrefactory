@@ -4771,7 +4771,7 @@ This function also moves to the current reference.
 (defun c-xref-get-search-results (str searchopt)
   (let ((res))
     (c-xref-call-process-with-basic-file-data-no-saves
-     (format "\"-olcxsearch=%s\" %s" str searchopt))
+     (format "\"-search=%s\" %s" str searchopt))
     (setq res (cdr (assoc 'symbol-list c-xref-global-dispatch-data)))
     res
     ))
