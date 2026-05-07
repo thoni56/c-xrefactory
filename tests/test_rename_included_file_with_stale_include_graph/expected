@@ -1,0 +1,34 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/b.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-olcxpush -olcursor=25 CURDIR/b.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=2 col=5 len=<n>>CURDIR/b.c</position-lc>
+</goto>
+shell: cp CURDIR/a.modified CURDIR/a.c
+-rfct-rename-included-file -renameto=common2.h -olcursor=6 CURDIR/b.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=10 len=<n>>CURDIR/b.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>common.h</str>  <str len=<n>>common2.h</str>
+</replacement>
+<goto>
+ <position-off off=0 len=<n>>CURDIR/common.h</position-off>
+</goto>
+<file-move-as len=<n>>CURDIR/common2.h</file-move-as>
+<goto>
+ <position-off off=6 len=<n>>CURDIR/b.c</position-off>
+</goto>
+-exit
+end-of-options
+

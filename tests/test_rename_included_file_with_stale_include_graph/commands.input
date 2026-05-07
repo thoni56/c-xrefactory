@@ -1,0 +1,9 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/b.c
+<sync>
+-olcxpush -olcursor=25 CURDIR/b.c -p CURDIR
+<sync>
+!cp CURDIR/a.modified CURDIR/a.c
+-rfct-rename-included-file -renameto=common2.h -olcursor=6 CURDIR/b.c -p CURDIR
+<sync>
+<exit>
