@@ -344,14 +344,14 @@ void freeEditorMarkerListAndMarkers(EditorMarkerList *occs) {
     }
 }
 
-void editorDumpMarker(EditorMarker *mm) {
+void dumpEditorMarker(EditorMarker *mm) {
     char tmpBuff[TMP_BUFF_SIZE];
 
     sprintf(tmpBuff, "[%s:%d] --> %c", simpleFileName(mm->buffer->fileName), mm->offset, CHAR_ON_MARKER(mm));
     ppcBottomInformation(tmpBuff);
 }
 
-void editorDumpMarkerList(EditorMarkerList *mml) {
+void dumpEditorMarkerList(EditorMarkerList *mml) {
     log_trace("[dumping editor markers]");
     for (EditorMarkerList *mm=mml; mm!=NULL; mm=mm->next) {
         if (mm->marker == NULL) {

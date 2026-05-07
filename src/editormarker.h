@@ -56,7 +56,7 @@ extern void freeEditorMarker(EditorMarker *marker);
 extern void freeEditorMarkerListButNotMarkers(EditorMarkerList *list);
 extern void freeEditorMarkerListAndMarkers(EditorMarkerList *list);
 
-extern void editorDumpMarker(EditorMarker *marker);
-extern void editorDumpMarkerList(EditorMarkerList *markerList);
+extern void dumpEditorMarker(EditorMarker *marker);
+extern void dumpEditorMarkerList(EditorMarkerList *markerList);
 
 #endif
