@@ -777,40 +777,12 @@ static void scanFunction_SymbolName(int size,
     while (isMember && foundMemberP->visibility!=VisibilityGlobal)
         isMember = referenceableItemTableNextMember(referenceableItem, &foundMemberP);
 
-    assert(options.mode);
-    if (options.mode == XrefMode) {
-        if (foundMemberP==NULL)
-            foundMemberP=referenceableItem;
-        writeReferenceableItem(foundMemberP);
-        referenceableItem->references = foundMemberP->references; // note references to not generate multiple
-        foundMemberP->references = NULL;      // HACK, remove them, to not be regenerated
-    }
-    if (options.mode == ServerMode) {
-        if (options.serverOperation!=OP_SEARCH) {
-            int ols = 0;
-            BrowsingMenu *menu = NULL;
-            if (scanOperation == CXSF_MENU_CREATION || scanOperation == CXSF_FIND_MACRO_EXPANSION_FILE) {
-                menu = createSelectionMenu(referenceableItem);
-                if (menu == NULL) {
-                    ols = 0;
-                } else {
-                    if (isBestFitMatch(menu))
-                        ols = 2;
-                    else
-                        ols = 1;
-                }
-            }
-            lastIncomingData.onLineRefMenuItem = menu;
-            if (ols) {
-                lastIncomingData.onLineReferencedSym = 0;
-                log_trace("symbol %s is O.K. for %s (ols==%d)", referenceableItem->linkName, options.browsedName, ols);
-            } else {
-                if (lastIncomingData.onLineReferencedSym == 0) {
-                    lastIncomingData.onLineReferencedSym = -1;
-                }
-            }
-        }
-    }
+    assert(options.mode == XrefMode);
+    if (foundMemberP==NULL)
+        foundMemberP=referenceableItem;
+    writeReferenceableItem(foundMemberP);
+    referenceableItem->references = foundMemberP->references; // note references to not generate multiple
+    foundMemberP->references = NULL;      // HACK, remove them, to not be regenerated
 }
 
 static void scanFunction_SymbolNameForSnapshotLoad(int size,
@@ -890,41 +862,17 @@ static void scanFunction_Reference(int size,
     int line = lastIncomingData.data[CXFI_LINE_INDEX];
     int col = lastIncomingData.data[CXFI_COLUMN_INDEX];
 
-    assert(options.mode);
-    if (options.mode == XrefMode) {
-        int copyrefFl;
-        if (fileItem->cxLoading && fileItem->cxSaved) {
-            /* if we repass refs after overflow */
-            copyrefFl = !isInReferenceList(lastIncomingData.referenceableItem->references,
-                                     usage, makePosition(file, line, col));
-        } else {
-            copyrefFl = !fileItem->cxLoading;
-        }
-        if (copyrefFl)
-            writeCxReferenceBase(usage, file, line, col);
-    } else if (options.mode == ServerMode) {
-        Reference reference = makeReference(makePosition(file, line, col), usage, NULL);
-        FileItem *cxFileItem = getFileItemWithFileNumber(reference.position.file);
-        if (options.serverOperation == OP_SEARCH) {
-            if (reference.usage==UsageDefined
-                || ((options.searchKind==SEARCH_FULL
-                     || options.searchKind==SEARCH_FULL_SHORT)
-                    && reference.usage==UsageDeclared)
-                ) {
-                searchSymbolCheckReference(lastIncomingData.referenceableItem, &reference);
-            }
-        } else {
-            if (lastIncomingData.onLineReferencedSym == lastIncomingData.data[CXFI_SYMBOL_INDEX]) {
-                if (scanOperation == CXSF_MENU_CREATION) {
-                    assert(lastIncomingData.onLineRefMenuItem);
-                    log_trace (":adding reference %s:%d", cxFileItem->name, reference.position.line);
-                    addReferenceToBrowsingMenu(lastIncomingData.onLineRefMenuItem, &reference);
-                } else {
-                    addReferenceToList(&reference, &browsingStack.top->references);
-                }
-            }
-        }
+    assert(options.mode == XrefMode);
+    int copyrefFl;
+    if (fileItem->cxLoading && fileItem->cxSaved) {
+        /* if we repass refs after overflow */
+        copyrefFl = !isInReferenceList(lastIncomingData.referenceableItem->references,
+                                 usage, makePosition(file, line, col));
+    } else {
+        copyrefFl = !fileItem->cxLoading;
     }
+    if (copyrefFl)
+        writeCxReferenceBase(usage, file, line, col);
 }
 
 
