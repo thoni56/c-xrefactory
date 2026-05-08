@@ -156,7 +156,6 @@ typedef struct cxFileScanStep {
 static CxFileScanDispatchEntry normalScanDispatchTable[];
 static CxFileScanDispatchEntry snapshotLoadScanDispatchTable[];
 static CxFileScanDispatchEntry fullScanDispatchTable[];
-static CxFileScanDispatchEntry macroExpansionScanDispatchTable[];
 
 static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable);
 
@@ -1101,39 +1100,9 @@ bool loadSnapshotFromStore(void) {
     return false;
 }
 
-// symbolName can be NULL !!!!!!
-static void readOneAppropiateCxFile(char *symbolName, CxFileScanDispatchEntry *scanDispatchTable) {
-    if (options.cxFileLocation == NULL)
-        return;
-    cxFile = stdout;
-    if (options.cxFileCount <= 1) {
-        scanCxFile(options.cxFileLocation, "", "", scanDispatchTable);
-    } else {
-        if (!loadFileNumbersFromStore())
-            return;
-        if (symbolName == NULL)
-            return;
-
-        /* following must be after reading XFiles*/
-        char partitionNumber[MAX_FILE_NAME_SIZE];
-        int i = cxFileHashNumberForSymbol(symbolName);
-
-        sprintf(partitionNumber, "%04d", i);
-        assert(strlen(partitionNumber) < MAX_FILE_NAME_SIZE-1);
-        scanCxFile(options.cxFileLocation, CXFILENAME_PREFIX, partitionNumber, scanDispatchTable);
-    }
-}
-
-
 protected void normalScanCxFile(char *name) {
     scanCxFile(options.cxFileLocation, name, "", normalScanDispatchTable);
 }
-
-void scanForMacroUsage(char *symbolName) {
-    readOneAppropiateCxFile(symbolName, macroExpansionScanDispatchTable);
-}
-
-
 
 /* ***************************************************************************************
 
@@ -1180,15 +1149,6 @@ static CxFileScanDispatchEntry fullScanDispatchTable[]={
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_GENERATE_OUTPUT},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEFAULT},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIRST_PASS},
-    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
-    {-1,NULL, 0},
-};
-
-static CxFileScanDispatchEntry macroExpansionScanDispatchTable[]={
-    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
-    {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_FIND_MACRO_EXPANSION_FILE},
-    {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIND_MACRO_EXPANSION_FILE},
     {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };

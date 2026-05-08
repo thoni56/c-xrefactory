@@ -4,8 +4,6 @@
 #include "referenceableitem.h"
 
 
-extern void scanForMacroUsage(char *symbolName);
-
 extern int cxFileHashNumberForSymbol(char *symbol);
 extern void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Reference *reference);
 
