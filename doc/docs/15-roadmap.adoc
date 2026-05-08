@@ -41,7 +41,7 @@ This chapter outlines the high-level architectural and feature goals for c-xrefa
               │ bridge removal  │
               │                 │
               │ XrefMode        │
-              │ removal         │
+              │ removal(?)      │
               └─────────────────┘
 ----
 
@@ -60,10 +60,10 @@ This chapter outlines the high-level architectural and feature goals for c-xrefa
 |**Index-based sessions**
 |Session stores symbol key + current position instead of copying all references. Navigation reads directly from in-memory table, eliminating the "stale session copies" problem. Depends on upfront refresh (ADR 20) so that the table is always current when sessions read from it.
 
-|**References refresh module (done for refactoring path)**
-|Extract the reparse logic (currently split between `callXref` in xref.c and the three-pass entry refresh in server.c) into a shared `referencesrefresh` module with a unified interface: "ensure these files have fresh references". The module supports different _file selection strategies_ — the caller decides which files need freshness, the module handles the reparsing.
+|**References refresh module (function exists, wiring deferred)**
+|A shared module with a unified interface: "ensure these files have fresh references", supporting different _file selection strategies_ — the caller decides which files need freshness, the module handles the reparsing.
 
-Operational for the refactoring path: `ensureFreshReferences` replaces `callXref` in the server refactoring path. Entry refresh's three-pass strategy handles broad staleness-based selection (same as current three passes). Symbol-targeted selection (resolve the symbol, look up which files contain its references in `referenceableItemTable`, ensure those files are fresh) is not yet extracted as a separate strategy — refactoring currently relies on entry refresh having already run.
+Current state: the `ensureFreshReferences` function exists with a unit test, but has no production callers. The refactoring path still depends on entry refresh having already run before the operation begins. Wiring the module into the refactoring entry path is deferred.
 
 The header-filtered sibling parsing optimization (see Optimization section) becomes another file selection strategy within this module.
 

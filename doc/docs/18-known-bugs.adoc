@@ -31,4 +31,4 @@ The yacc parser creates a different scope or symbol context when parsing C code 
 
 === Stale sessions after POP
 
-Sessions hold reference copies; only the top session is refreshed on reparse. After editing a header, old locations may persist in parallel with new ones in lower stack entries. This will dissolve when sessions become index-based rather than holding copies.
+Tracked under "Known Limitations" in link:15-roadmap.adoc[Chapter 15: Roadmap], with the proposed dissolve (index-based sessions).

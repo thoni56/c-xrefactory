@@ -560,13 +560,13 @@ Buffer lifetime depends on the server mode and buffer role:
 |Context |Behavior
 
 |**Server mode, editor content**
-|Currently destroyed after each request (`closeAllEditorBuffers`). link:/workspace/decisions#23[ADR-0023] proposes making these persistent across requests.
+|Reaped after each request unless held (markers, preload). The reaping pass is `closeAllEditorBuffersIfClosable`, governed by `bufferIsCloseable()`. link:/workspace/decisions#23[ADR-0023] proposes a more uniformly persistent model.
 
 |**Server mode, disk cache**
-|Destroyed after each request. Appropriate since different requests may parse different files.
+|Subject to the same closeable-check; the disk-cache role typically allows reaping, but a buffer held by markers (mid-refactoring) is preserved.
 
 |**Xref mode, disk cache**
-|Preserved across file processing (`closeAllEditorBuffersIfClosable`). A header like `commons.h` included by many CUs is read once and reused.
+|Preserved across file processing under the same predicate. A header like `commons.h` included by many CUs is read once and reused.
 
 |**LSP mode, document state**
 |Persistent from `didOpen` to `didClose`. Not affected by request boundaries.
@@ -637,4 +637,4 @@ The Emacs client extension provides the user-facing interface for navigation, re
 
 To give the server access to unsaved content the client sends `-preload <file> <tmpfile>` for modified editor. On PUSH, NEXT, and PREVIOUS, all modified buffers (including the current one if modified) are preloaded. Unmodified buffers are not preloaded — the server reads the disk file directly.
 
-The preload mechanism writes the buffer content to a temporary file and passes both the original filename and the temp file path. The server creates an `EditorBuffer` with the content and the temp file's modification time. After each request, all editor buffers are closed (`closeAllEditorBuffers`), so preloads are re-sent on every request.
+The preload mechanism writes the buffer content to a temporary file and passes both the original filename and the temp file path. The server creates an `EditorBuffer` with the content and the temp file's modification time. Preloaded buffers persist across requests as long as the client keeps sending them. On each preload, the server compares the new temp file's mtime against the existing buffer's; if advanced, the buffer is reloaded with the new content, and the per-request entry refresh reparses it before the operation runs. When the client stops sending a preload (because the user saved or closed the file), the server detects this and prunes the now-stale buffer (ghost-buffer cleanup).
