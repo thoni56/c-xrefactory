@@ -254,6 +254,15 @@ Persisted snapshot::
   A snapshot is not queryable (no search operations on disk), has no invalidation
   semantics (unlike a cache), and is not the source of truth (unlike a database).
 
+Preload::
+  Editor-buffer content the client sends for files the user has modified but not yet
+  saved, via `-preload <filename> <tmpfile>` arguments. The server reads the temp file
+  into an `EditorBuffer` with its modification time. Preloaded buffers persist across
+  requests; on each preload the server compares the new temp file's mtime against the
+  existing buffer's to decide whether to reload content. Entry refresh then reparses
+  any buffer whose mtime has advanced past `lastParsedMtime`. Unmodified files are not
+  preloaded — the server reads disk directly.
+
 Project::
   A set of source files governed by a single `.c-xrefrc` configuration file. Defines
   which files are parsed, which include paths are searched, and where the persisted

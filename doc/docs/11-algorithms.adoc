@@ -108,8 +108,21 @@ necessary.
 
 ==== Overview
 
-The refresh has three passes, each addressing a different source of staleness.
-Pass ordering is critical — later passes depend on data refreshed by earlier ones.
+The refresh covers two distinct concerns:
+
+* **Buffer-driven refresh** (Passes 1 and 2) handles modifications the client has
+  signaled via preload — any preloaded editor buffer whose `modificationTime` has
+  advanced past `lastParsedMtime`. It iterates the editor-buffer table. Pass 1
+  reparses stale CU buffers; Pass 2 cascades from stale header buffers to their
+  includer CUs.
+
+* **Request-relative coverage** (Pass 3) handles what the request needs to see.
+  It iterates the file table to find sibling CUs of the request file that need
+  parsing — either never parsed yet, or stale on disk.
+
+Both run before the operation dispatches, but they're answering different questions
+and live in separate calls. Within buffer-driven refresh, Pass 1 must precede Pass 2;
+see Pass 2 for the rationale.
 
 [source]
 ----
@@ -119,20 +132,23 @@ callServer():
   ├─ closeEditorBuffersNoLongerPreloaded()   ← ghost buffer pruning
   │
   ├─ IF projectContextInitialized:
-  │   reparseStalePreloadedFiles(baseArgs)
+  │   reparseStalePreloadedFiles(baseArgs)            ← buffer-driven
   │   │
   │   ├─ Pass 1: reparse stale CUs
   │   │   FOR each editor buffer WHERE fileNumberIsStale():
   │   │     IF isCompilationUnit: reparseStaleFile()
   │   │
-  │   ├─ Pass 2: reparse includers of stale headers
-  │   │   FOR each editor buffer WHERE fileNumberIsStale():
-  │   │     IF NOT isCompilationUnit (i.e. header):
-  │   │       collectIncludersOfStaleHeader() → list of CU file numbers
-  │   │   FOR each collected CU: reparseStaleFile()
+  │   └─ Pass 2: reparse includers of stale headers
+  │       FOR each editor buffer WHERE fileNumberIsStale():
+  │         IF NOT isCompilationUnit (i.e. header):
+  │           collectIncludersOfStaleHeader() → list of CU file numbers
+  │       FOR each collected CU: reparseStaleFile()
+  │
+  ├─ IF projectContextInitialized AND hasInputFile AND auto-detect path:
+  │   parseUnparsedSiblingCUs(requestFileNumber, baseArgs)   ← request-relative (Pass 3)
   │   │
-  │   └─ Pass 3: parse unparsed sibling CUs (cold start)
-  │       Find CUs sharing headers with request file but never parsed
+  │   └─ Find CUs sharing headers with the request file that need parsing
+  │       (never parsed, or mtime past lastParsedMtime)
   │       FOR each: reparseStaleFile()
   │
   └─ dispatch operation
