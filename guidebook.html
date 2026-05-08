@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-05-06">
+<meta name="author" content="v{VERSION} - Generated 2026-05-08">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-05-06</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-05-08</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -469,9 +469,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_memory_as_truth">6.2. Memory As Truth</a></li>
 <li><a href="#_continuously_fresh_references">6.3. Continuously Fresh References</a></li>
 <li><a href="#_minimal_reparse_set">6.4. Minimal Reparse Set</a></li>
-<li><a href="#_preserve_parsed_work">6.5. Preserve Parsed Work</a></li>
-<li><a href="#_project_scope">6.6. Project Scope</a></li>
-<li><a href="#_terminology">6.7. Terminology</a></li>
+<li><a href="#_what_reparse_cleans">6.5. What Reparse Cleans</a></li>
+<li><a href="#_preserve_parsed_work">6.6. Preserve Parsed Work</a></li>
+<li><a href="#_project_scope">6.7. Project Scope</a></li>
+<li><a href="#_terminology">6.8. Terminology</a></li>
 </ul>
 </li>
 <li><a href="#_software_architecture">7. Software Architecture</a>
@@ -1205,7 +1206,59 @@ that share the edited header" is the difference between minutes and milliseconds
 </div>
 </div>
 <div class="sect2">
-<h3 id="_preserve_parsed_work">6.5. Preserve Parsed Work</h3>
+<h3 id="_what_reparse_cleans">6.5. What Reparse Cleans</h3>
+<div class="paragraph">
+<p>There is a known gap here: CU reparse does not strip references that the CU&#8217;s previous
+parse contributed at <strong>included-file</strong> positions. The dedup mechanism hides this most of
+the time, but it surfaces when an included file&#8217;s content shifts between parses. The
+current pass machinery covers most shapes self-healingly; this section describes the
+mechanism, the residual gap, and the direction for closing it.</p>
+</div>
+<div class="paragraph">
+<p>The strip on reparse is scoped to the CU&#8217;s own positions. References that the CU&#8217;s
+previous parse contributed at included-file positions — declarations, inline
+definitions, type definitions seen through <code>#include</code> — are <strong>not</strong> touched. The reparse
+then adds fresh references; if the included file&#8217;s content has not shifted, the new
+references land at the same positions as the old and dedup collapses them.</p>
+</div>
+<div class="paragraph">
+<p>The dedup key is <code>(linkName, includedFileNumber, type)</code>, not <code>(line, col)</code>. Two
+<code>UsageDeclared</code> references for the same symbol in the same included file but at
+different lines are <strong>distinct entries</strong> — dedup does not merge them. So the gap is
+invisible while included files are stable, and becomes visible the moment one shifts.</p>
+</div>
+<div class="paragraph">
+<p>When an included file&#8217;s content shifts between two parses of an includer CU — a
+declaration moves to a new line, a type gains a comment above it — the reparse adds
+references at the new positions while the old references survive at the old, now-stale
+positions. Anything that walks references at concrete positions (rename precheck,
+marker conversion) sees both, and the stale one fails or misleads.</p>
+</div>
+<div class="paragraph">
+<p>The current pass machinery covers most shapes of this self-healingly: when the included
+file is itself detected as stale, the cascading reparses re-emit references at correct
+positions and strip old ones along the way. The case that escapes is a stale reference
+at an included-file position whose owning CU is not visited by any pass during the
+operation — typically a CU that contributed the reference in a previous session, is
+neither preloaded nor a current sibling of the request file, and whose included file
+has since shifted on disk. Snapshot reload across sessions can also bring such
+references back.</p>
+</div>
+<div class="paragraph">
+<p>The candidate direction for closing this is to strip the transitive include closure of
+the CU being reparsed <strong>before</strong> the parse runs, so the reparse re-establishes references
+at all included-file positions from current content. Macro expansions defined and
+expanded entirely within included files, and preprocessor conditionals processed across
+multiple parser passes, need verification before this change lands.</p>
+</div>
+<div class="paragraph">
+<p>This concern is scoped to the in-memory reference table. Sessions on the browsing
+stack converge separately, lazily, on the next NEXT/PREVIOUS via the session-refresh
+mechanism.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_preserve_parsed_work">6.6. Preserve Parsed Work</h3>
 <div class="paragraph">
 <p>Parsing is the most expensive operation the server performs. On large codebases, a full
 parse can take tens of minutes. Some operations — like a project-wide search on cold
@@ -1234,7 +1287,7 @@ parse loop — a ~1% overhead that prevents losing minutes of work on interrupti
 </div>
 </div>
 <div class="sect2">
-<h3 id="_project_scope">6.6. Project Scope</h3>
+<h3 id="_project_scope">6.7. Project Scope</h3>
 <div class="paragraph">
 <p>A <strong>project</strong> is defined by a <code>.c-xrefrc</code> configuration file. The directory containing
 this file is the <strong>project root</strong>. On auto-detection, the server walks upward from the
@@ -1285,7 +1338,7 @@ file table does not support.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_terminology">6.7. Terminology</h3>
+<h3 id="_terminology">6.8. Terminology</h3>
 <div class="paragraph">
 <p>The following terms are used throughout the documentation and codebase. Preferred terms
 are listed alphabetically; terms to avoid are noted to reduce ambiguity.</p>
@@ -2553,15 +2606,15 @@ bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);</code></pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Server mode, editor content</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Currently destroyed after each request (<code>closeAllEditorBuffers</code>). <a href="/workspace/decisions#23">ADR-0023</a> proposes making these persistent across requests.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reaped after each request unless held (markers, preload). The reaping pass is <code>closeAllEditorBuffersIfClosable</code>, governed by <code>bufferIsCloseable()</code>. <a href="/workspace/decisions#23">ADR-0023</a> proposes a more uniformly persistent model.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Server mode, disk cache</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Destroyed after each request. Appropriate since different requests may parse different files.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Subject to the same closeable-check; the disk-cache role typically allows reaping, but a buffer held by markers (mid-refactoring) is preserved.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Xref mode, disk cache</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Preserved across file processing (<code>closeAllEditorBuffersIfClosable</code>). A header like <code>commons.h</code> included by many CUs is read once and reused.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Preserved across file processing under the same predicate. A header like <code>commons.h</code> included by many CUs is read once and reused.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>LSP mode, document state</strong></p></td>
@@ -2679,7 +2732,7 @@ bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);</code></pre>
 <p>To give the server access to unsaved content the client sends <code>-preload &lt;file&gt; &lt;tmpfile&gt;</code> for modified editor. On PUSH, NEXT, and PREVIOUS, all modified buffers (including the current one if modified) are preloaded. Unmodified buffers are not preloaded — the server reads the disk file directly.</p>
 </div>
 <div class="paragraph">
-<p>The preload mechanism writes the buffer content to a temporary file and passes both the original filename and the temp file path. The server creates an <code>EditorBuffer</code> with the content and the temp file&#8217;s modification time. After each request, all editor buffers are closed (<code>closeAllEditorBuffers</code>), so preloads are re-sent on every request.
+<p>The preload mechanism writes the buffer content to a temporary file and passes both the original filename and the temp file path. The server creates an <code>EditorBuffer</code> with the content and the temp file&#8217;s modification time. Preloaded buffers persist across requests as long as the client keeps sending them. On each preload, the server compares the new temp file&#8217;s mtime against the existing buffer&#8217;s; if advanced, the buffer is reloaded with the new content, and the per-request entry refresh reparses it before the operation runs. When the client stops sending a preload (because the user saved or closed the file), the server detects this and prunes the now-stale buffer (ghost-buffer cleanup).
 == Implementation Notes</p>
 </div>
 <div class="paragraph">
@@ -6848,7 +6901,7 @@ setup.</p>
               │ bridge removal  │
               │                 │
               │ XrefMode        │
-              │ removal         │
+              │ removal(?)      │
               └─────────────────┘</pre>
 </div>
 </div>
@@ -6880,9 +6933,9 @@ setup.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Session stores symbol key + current position instead of copying all references. Navigation reads directly from in-memory table, eliminating the "stale session copies" problem. Depends on upfront refresh (ADR 20) so that the table is always current when sessions read from it.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>References refresh module (done for refactoring path)</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Extract the reparse logic (currently split between <code>callXref</code> in xref.c and the three-pass entry refresh in server.c) into a shared <code>referencesrefresh</code> module with a unified interface: "ensure these files have fresh references". The module supports different <em>file selection strategies</em> — the caller decides which files need freshness, the module handles the reparsing.</p>
-<p class="tableblock">Operational for the refactoring path: <code>ensureFreshReferences</code> replaces <code>callXref</code> in the server refactoring path. Entry refresh&#8217;s three-pass strategy handles broad staleness-based selection (same as current three passes). Symbol-targeted selection (resolve the symbol, look up which files contain its references in <code>referenceableItemTable</code>, ensure those files are fresh) is not yet extracted as a separate strategy — refactoring currently relies on entry refresh having already run.</p>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>References refresh module (function exists, wiring deferred)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A shared module with a unified interface: "ensure these files have fresh references", supporting different <em>file selection strategies</em> — the caller decides which files need freshness, the module handles the reparsing.</p>
+<p class="tableblock">Current state: the <code>ensureFreshReferences</code> function exists with a unit test, but has no production callers. The refactoring path still depends on entry refresh having already run before the operation begins. Wiring the module into the refactoring entry path is deferred.</p>
 <p class="tableblock">The header-filtered sibling parsing optimization (see Optimization section) becomes another file selection strategy within this module.</p></td>
 </tr>
 <tr>
@@ -9111,7 +9164,7 @@ Each entry describes symptoms, analysis (when available), and suspected root cau
 <div class="sect2">
 <h3 id="_stale_sessions_after_pop">17.2. Stale sessions after POP</h3>
 <div class="paragraph">
-<p>Sessions hold reference copies; only the top session is refreshed on reparse. After editing a header, old locations may persist in parallel with new ones in lower stack entries. This will dissolve when sessions become index-based rather than holding copies.</p>
+<p>Tracked under "Known Limitations" in <a href="15-roadmap.adoc">Chapter 15: Roadmap</a>, with the proposed dissolve (index-based sessions).</p>
 </div>
 </div>
 </div>
@@ -10996,7 +11049,7 @@ server process without a separate <code>callXref()</code> step.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-06 15:11:13 UTC
+Last updated 2026-05-08 12:11:03 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
