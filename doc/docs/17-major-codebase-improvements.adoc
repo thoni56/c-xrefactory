@@ -8,66 +8,43 @@ For planned user-facing features, see link:16-planned-features.adoc[Chapter 16: 
 
 ==== Background
 
-The `cxfile` module was designed when the disk database was the source of truth. The `.cx` files were not just a cache — they _were_ the reference database. Operations like "show all references to symbol X" or "find unused symbols" were implemented as table-driven scans over the `.cx` file format: hash the symbol name to find the right partition, stream through it, apply a per-operation filter callback. This was efficient for the batch cross-referencer that c-xrefactory evolved from, where the workflow was `c-xref -create` → `c-xref -update` → query the on-disk database.
+The `cxfile` module was designed when the `.cx` files on disk were the reference database. Operations like "show all references to symbol X" or "find unused symbols" were table-driven scans over the disk format — hash the symbol name, stream the right partition, apply a per-operation filter. This was efficient for the batch cross-referencer that c-xrefactory evolved from, where the workflow was `c-xref -create` → `c-xref -update` → query the on-disk database.
 
-With the shift toward memory-as-truth (link:15-roadmap.adoc[Chapter 15: Roadmap]), the in-memory `referenceableItemTable` is becoming the authoritative source, and `.cx` files are becoming a startup snapshot. But `cxfile.c` still carries the old design: it combines disk I/O with operation-specific filtering logic, and several operations still bypass the in-memory table to read from disk directly.
+Under memory-as-truth (link:15-roadmap.adoc[Chapter 15]), all operations now read from the in-memory `referenceableItemTable`; the `.cx` files serve only as a startup snapshot.
 
-==== Current Interface
+==== Status
 
-The public interface (`cxfile.h`) reflects this mixed heritage:
+The major cleanup is complete. The operation-specific disk scanners have been removed, replaced by in-memory walks:
 
-[source,c]
-----
-// Generic persistence — correct level
-extern bool loadFileNumbersFromStore(void);
-extern void ensureReferencesAreLoadedFor(char *symbolName);
-extern void saveReferencesToStore(bool updating, char *name);
+* `scanForGlobalUnused` — unused-symbol detection
+* `scanForSearch` — project-wide search
+* `scanReferencesToCreateMenu` — browsing menu construction
+* `scanForMacroUsage` — macro expansion file lookup
 
-// Operation-specific scanning — wrong level
-extern void scanReferencesToCreateMenu(char *symbolName);
-extern void scanForMacroUsage(char *symbolName);
-extern void scanForGlobalUnused(char *cxrefFileName);
-extern void scanForSearch(char *cxrefFileName);
+The disk-load helper that fed several of them has also been removed:
 
-// Implementation details leaked
-extern int cxFileHashNumberForSymbol(char *symbol);
-extern void searchSymbolCheckReference(ReferenceableItem *item, Reference *ref);
-----
+* `ensureReferencesAreLoadedFor` — include-refs disk load; obsolete once include refs come from the lightweight scan and full parsing
 
-The four `scan*` functions read directly from disk `.cx` files and merge results into the in-memory `referenceableItemTable`. Each encodes a specific use case (menu creation, macro completion, unused detection, symbol search) that a storage module shouldn't know about.
+A disk-read tripwire in `scanCxFile` asserts that no `.cx` read happens after the initial snapshot load. See "Memory As Truth" in link:06-principles.adoc[Principles].
 
-The `ensureReferencesAreLoadedFor` function is the right pattern: load from disk into memory, then let the caller query memory. The `scan*` functions bypass this by combining load + filter in one step.
+The current public interface in `cxfile.h` is:
 
-==== What's Already Changing
+* `loadSnapshotFromStore`, `loadFileNumbersFromStore` — startup loaders
+* `saveReferencesToStore` — snapshot writer
+* `cxFileHashNumberForSymbol` — partition-hash helper
+* `searchSymbolCheckReference` — per-reference search matcher
 
-With the memory-as-truth direction (link:15-roadmap.adoc[Chapter 15]), `cxfile.c` is already shrinking in importance:
+==== Remaining
 
-* **`loadFileNumbersFromStore()`** — used at startup, stays as-is
-* **`saveReferencesToStore()`** — needed for snapshot writes, stays as-is
-* **`ensureReferencesAreLoadedFor()`** — called 4 times (server.c, xref.c, move_function.c) to load include refs from disk db; becomes unnecessary once all include refs come from lightweight scan + full parse
-* **`scanReferencesToCreateMenu()`** — called from cxref.c for browsing menus; currently reads from disk, should read from in-memory table instead
-* **`scanForMacroUsage()`** — called from server.c for macro completion; same issue
-* **`scanForGlobalUnused()`** — called from cxref.c; bulk scan, reasonable to keep in cxfile but should use visitor pattern
-* **`scanForSearch()`** — called from cxref.c; same as above
+Two small interface tightenings — not major improvements, but worth listing as known loose ends:
 
-==== Incremental Steps
-
-These are independent improvements, not a phased plan:
-
-**Make `cxFileHashNumberForSymbol` static.** It's a partitioning implementation detail. Only called internally and from one external site that can be rerouted.
-
-**Make `searchSymbolCheckReference` static.** Move the search matching logic to the caller (`search.c` already exists). The storage layer shouldn't know about search string matching.
-
-**Replace `scanReferencesToCreateMenu` and `scanForMacroUsage` with in-memory queries.** Both load a symbol's references from disk and then filter them. With entry refresh populating the in-memory table, these should query `referenceableItemTable` directly — the data is already there. `ensureReferencesAreLoadedFor` can serve as the fallback if the symbol hasn't been loaded yet.
-
-**Convert `scanForGlobalUnused` and `scanForSearch` to visitor pattern.** These need to scan all symbols, not just one — a bulk operation that makes sense as a generic `scanAllReferences(visitor, context)` function. The visitor decides what to do with each item (check for unused, match search pattern). The operation-specific logic moves to the callers.
+* **Make `cxFileHashNumberForSymbol` static.** It's a partitioning implementation detail; the single external use (menu sorting in cxref.c) can be rerouted.
+* **Make `searchSymbolCheckReference` static.** The per-reference search matcher belongs in `search.c`. Moving it removes the last reason the storage module needs to know about search string matching.
 
 ==== References
 
 * `src/cxfile.h`, `src/cxfile.c` — current implementation
-* `src/search.c` — already exists, natural home for search matching logic
-* `src/cxref.c` — main caller of scan functions (lines 863, 1515, 1709, 1938)
-* `src/server.c` — calls `scanForMacroUsage` (line 83) and `ensureReferencesAreLoadedFor` (lines 238, 330)
+* `src/search.c` — natural home for search matching logic
 
 [[macro-expansion-module]]
 === Extract Macro Expansion Module
