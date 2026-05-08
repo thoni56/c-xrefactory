@@ -65,135 +65,23 @@ This dual-source approach allows navigation without full project parse while pro
 
 NOTE: Client preloading behavior and stale file detection are now documented in link:08-components.adoc[Chapter 8: Components] under Server (Entry-Point Reparse) and Editor Extension (Preloading).
 
-NOTE: The "Architectural Invariants" and "RefactoryMode Internally Calls XrefMode"
-sections have been moved to link:21-archive.adoc[Archive]. The invariants described a
-model where the disk database was the source of truth; as of 2026-03, the in-memory
-reference table is authoritative (see link:06-principles.adoc[Principles]).
+NOTE: Several sections describing pre-memory-as-truth behaviour have been moved to
+link:21-archive.adoc[Archive]:
 
-=== The lastParsedMtime Optimization and Refactoring Conflict
+* "Architectural Invariants" and "RefactoryMode Internally Calls XrefMode" — the
+  invariants described a model where the disk database was the source of truth.
+* "The lastParsedMtime Optimization and Refactoring Conflict" — the workaround it
+  describes is no longer needed; under server-side refactoring, `callXref()` is not
+  in the refactoring path and entry refresh keeps both navigation and refactoring on
+  the same in-memory table.
+* "Stale File Refresh and Cross-File References" — describes
+  `refreshStaleReferencesInSession()`, no longer in the source. Current refresh is
+  lazy via `needsBrowsingStackRefresh` and `updateSessionReferencesForFile` (see
+  link:11-algorithms.adoc[Chapter 11]). The dedup-key insight from that section is
+  preserved in "What Reparse Cleans" in link:06-principles.adoc[Principles].
 
-Date: 2025-01-21
-
-==== Problem Discovery
-
-When implementing staleness detection for navigation (refreshing references when files are modified), we added an optimization to `server.c`:
-
-[source,c]
-----
-// After parsing with preload, update lastParsedMtime
-if (buffer != NULL && buffer->preLoadedFromFile != NULL) {
-    FileItem *fileItem = getFileItemWithFileNumber(parsingConfig.fileNumber);
-    fileItem->lastParsedMtime = buffer->modificationTime;
-}
-----
-
-This optimization prevents navigation from thinking a file is "stale" immediately after parsing it with preloaded content.
-
-==== The Conflict
-
-This broke refactoring operations (`test_delete_parameter_with_preload`). The problem:
-
-1. **Server parses with preload** → In-memory references have correct positions (e.g., line 3)
-2. **`lastParsedMtime` updated** → File marked as "freshly parsed"
-3. **Refactoring triggers `callXref()`** → xref checks timestamps
-4. **xref sees `editorFileModificationTime() == lastParsedMtime`** → Concludes "file already indexed"
-5. **xref skips re-indexing** → Persistent `.cx` keeps old positions (e.g., line 2)
-6. **Refactoring uses stale `.cx` data** → Wrong positions, operation fails
-
-==== Root Cause: Two Sources of Truth
-
-The architecture has two sources of references:
-
-1. **In-memory references** (ReferenceableItemTable) - populated by parsing, used by navigation
-2. **Persistent .cx database** - populated by xref, used by refactoring
-
-The `lastParsedMtime` optimization conflated these:
-* It correctly told navigation "in-memory is current"
-* But incorrectly told xref "persistent database is current" (when it wasn't)
-
-==== The Workaround
-
-Exclude refactoring operations from the optimization:
-
-[source,c]
-----
-if (buffer != NULL && buffer->preLoadedFromFile != NULL
-    && options.serverOperation != OP_RENAME
-    && options.serverOperation != OP_ARGUMENT_MANIPULATION
-    && options.serverOperation != OP_SAFETY_CHECK) {
-    fileItem->lastParsedMtime = buffer->modificationTime;
-}
-----
-
-This allows:
-* Navigation to use the optimization (in-memory is sufficient)
-* Refactoring to trigger xref re-indexing (reads preload, updates .cx correctly)
-
-==== Architectural Lesson
-
-This workaround highlights the fundamental tension: **navigation and refactoring use different sources of truth**. The proper fix is link:/workspace/decisions#14[ADR-0014]'s unified on-demand architecture where both use the same in-memory reference database, eliminating the need for `callXref()` entirely.
-
-==== Related
-
-* link:/workspace/decisions#14[ADR-0014]: Adopt On-Demand Parsing Architecture
-* Section 17.2: Unified Symbol Database Architecture
-* Section 11: Server-Side Refactoring (in Algorithms chapter)
-
-=== Stale File Refresh and Cross-File References
-
-Date: 2025-01-29 (Updated: 2026-01-29)
-
-==== Stale Detection
-
-When navigating (PUSH/NEXT), the server detects if the current file is "stale" by comparing:
-
-* `fileItem->lastParsedMtime` (from disk database or last parse)
-* `buffer->modificationTime` (from preloaded editor buffer)
-
-If `buffer->modificationTime > lastParsedMtime`, the file is considered stale and `refreshStaleReferencesInSession()` is called.
-
-==== The Refresh Algorithm
-
-`refreshStaleReferencesInSession()` in `cxref.c` must preserve cross-file references while updating references from the modified file:
-
-1. `removeReferenceableItemsForFile()` - remove old refs from in-memory table
-2. `parseToCreateReferences()` - re-parse with preload, add fresh refs to in-memory table
-3. Remove stale-file refs from menu - preserves cross-file refs, removes outdated positions
-4. `extendBrowsingMenuWithReferences()` - merge fresh refs from in-memory table
-5. Mark file as freshly parsed (`lastParsedMtime = buffer->modificationTime`)
-6. `recomputeSelectedReferenceable()` - rebuild session's reference list from updated menu
-
-**Key insights:**
-
-* The menu already has cross-file refs from the original PUSH operation (which scanned disk)
-* We do NOT clear menu refs and re-scan from disk during refresh
-* Scanning from disk creates problems: `addReferenceableToBrowsingMenu` creates NEW menu items
-  when `includeFileNumber` differs, and these new items have `selected=false`
-* Only SELECTED menu items contribute refs to the session's reference list
-* So scanning would add refs to new (unselected) items, leaving the original (selected) item empty
-
-==== Why Scanning From Disk Fails
-
-During PUSH, `createSelectionMenu` creates menu items and adds them to `sessionEntry->menu`.
-These items are marked as selected. When you NEXT, the menu's reference list is what gets
-used for navigation (via `recomputeSelectedReferenceable`).
-
-If during refresh we:
-1. Clear menu refs
-2. Scan from disk
-
-The scan calls `createSelectionMenu` which in turn calls `addReferenceableToBrowsingMenu`.
-This function compares incoming items by `(linkName, includeFileNumber, type)`. If the
-`includeFileNumber` from the disk scan differs from the existing menu item's value,
-a **new** menu item is created with `selected=false`.
-
-The refs are then added to this new unselected item, while the original selected item
-has empty refs. `recomputeSelectedReferenceable` only processes selected items, so
-navigation loses most of its references.
-
-==== Architectural Note
-
-This is a manifestation of the "two sources of truth" architecture. The long-term fix (per roadmap) is to parse all project files at startup, keeping complete references in memory. Then stale refresh would just re-parse the single file and the in-memory table would already have all cross-file references.
+As of 2026-03, the in-memory reference table is authoritative — see
+link:06-principles.adoc[Principles].
 
 === Unified In-Memory Table Discovery
 
