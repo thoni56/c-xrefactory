@@ -156,7 +156,6 @@ typedef struct cxFileScanStep {
 static CxFileScanDispatchEntry normalScanDispatchTable[];
 static CxFileScanDispatchEntry snapshotLoadScanDispatchTable[];
 static CxFileScanDispatchEntry fullScanDispatchTable[];
-static CxFileScanDispatchEntry symbolMenuCreationScanDispatchTable[];
 static CxFileScanDispatchEntry macroExpansionScanDispatchTable[];
 
 static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable);
@@ -1130,10 +1129,6 @@ protected void normalScanCxFile(char *name) {
     scanCxFile(options.cxFileLocation, name, "", normalScanDispatchTable);
 }
 
-void scanReferencesToCreateMenu(char *symbolName){
-    readOneAppropiateCxFile(symbolName, symbolMenuCreationScanDispatchTable);
-}
-
 void scanForMacroUsage(char *symbolName) {
     readOneAppropiateCxFile(symbolName, macroExpansionScanDispatchTable);
 }
@@ -1185,17 +1180,6 @@ static CxFileScanDispatchEntry fullScanDispatchTable[]={
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_GENERATE_OUTPUT},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEFAULT},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIRST_PASS},
-    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
-    {-1,NULL, 0},
-};
-
-static CxFileScanDispatchEntry symbolMenuCreationScanDispatchTable[]={
-    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
-    {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
-    {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
-    {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_MENU_CREATION},
-    {CXFI_REFERENCE, scanFunction_Reference, CXSF_MENU_CREATION},
     {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };

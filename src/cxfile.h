@@ -4,7 +4,6 @@
 #include "referenceableitem.h"
 
 
-extern void scanReferencesToCreateMenu(char *symbolName);
 extern void scanForMacroUsage(char *symbolName);
 
 extern int cxFileHashNumberForSymbol(char *symbol);

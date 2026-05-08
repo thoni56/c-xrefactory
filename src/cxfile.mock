@@ -10,8 +10,6 @@ void scanForBypass(char *symbolName) {
     mock(symbolName);
 }
 
-void scanReferencesToCreateMenu(char *symbolName) { mock(symbolName); }
-
 void scanForMacroUsage(char *symbolName) { mock(symbolName); }
 
 bool searchStringMatch(char *cxtag, int slen) {
