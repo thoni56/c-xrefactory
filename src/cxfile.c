@@ -82,8 +82,6 @@ typedef enum {
     CXSF_JUST_READ,
     CXSF_GENERATE_OUTPUT,
     CXSF_FIRST_PASS,
-    CXSF_MENU_CREATION,
-    CXSF_FIND_MACRO_EXPANSION_FILE,
 } CxFileScanOperation;
 
 
