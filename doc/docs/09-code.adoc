@@ -28,8 +28,8 @@ mean that we need to:
 * List all "events" that `c-xref` need to handle
 * Define the parameters/extra info that each of them need
 * Clean up the command line options to follow this
-* Create event structures to match each event and pass this to `server`, `xref` and `refactory`
-* Rebuild the main command loop to parse command line options into event structures
+* Create event/request/operation structures to match each event and pass this to `server`, `xref` and `refactory`
+* Rebuild the main command loop to parse command line options into these structures
 
 === Passes
 
@@ -46,7 +46,9 @@ hard to follow.
 
 NOTE: The auto-detect server path uses a unified flow where lightweight file structure
 scanning replaces the legacy `-create`/`callXref()` pattern (ADR 22). The legacy path
-(explicit `-xrefrc`) retains the older flow. See <<unified-flow>> below.
+runs when no project root was auto-detected — either because the `-xrefrc <file>`
+option was used, or because no `.c-xrefrc` was found near the request file. See
+<<unified-flow>> below.
 
 ==== File Scheduling - How Files Get Marked for Processing
 
@@ -431,7 +433,9 @@ The Server and Xref paths do similar things but with different names and structu
 ** Server: `for (each request) { process one file }`
 ** Xref: `for (each scheduled file) { process one file }`
 
-The paths are intertwined but different, making it hard to keep in your head which one you're modifying. Making them more similar where possible would reduce cognitive load during refactoring work.
+The paths are intertwined but different, making it hard to keep in your head which one
+you're modifying. Making them more similar were possible would reduce cognitive load
+during refactoring work.
 
 === Parsers
 
@@ -443,20 +447,18 @@ See the **Parsing** component's Internal Structure section in the <<08-component
 
 === Refactoring and the parsers
 
-Some refactorings need more detailed information about the code, maybe all do?
+Some refactorings need detailed information about the code beyond what the in-memory
+reference table provides — for example, parameter manipulation needs the exact byte
+offsets of parameter declarations. The refactorer calls the parser via
+`parseBufferUsingServer()` to collect this information through the corresponding
+semantic actions. The collected information is stored in various global variables (for
+example, `parameterBeginPosition`) and in the `ParsedInfo` structure for use by
+extract operations and similar.
 
-One example, at least, is parameter manipulation.  Then the refactorer
-calls the appropriate parser (`serverEditParseBuffer()`) which
-collects information in the corresponding semantic actions.  This
-information is stored in various global variables, like
-`parameterBeginPosition`.
-
-The parser is filling out a ParsedInfo structure which conveys
-information that can be used e.g. when extracting functions etc.
-
-NOTE: At this point I don't understand exactly how this interaction is
-performed, there seems to be no way to parse only appropriate parts,
-so the whole file need to be re-parsed.
+NOTE: This `parseBufferUsingServer` bridge — and the global-variable communication
+channel — is targeted for removal; see "Remove `parseBufferUsingServer` Bridge" in
+link:17-major-codebase-improvements.adoc[Chapter 17] and "Replace Global `options`
+with Typed Requests" in the same chapter.
 
 Findings:
 
@@ -467,81 +469,45 @@ acting on
 - the semantic rules in the parser(s) contains code that matches these
   global variables and then inserts special lexems in the lexem stream
 
-One example is how a Java 'move static method' was performed. It
-requires a target position. That position is transferred from command
-line options to global variables. When the Java parser was parsing a
-class or similar it (or rather the lexer) looks at that "ddtarget
-position information" and inserts a `OL_MARKER_TOKEN` in the stream.
-
-NOTE: TODO: What extra "operation" the parsing should perform and return
-data for should be packaged into some type of "command" or parameter
-object that should be passed to the parser, rather than relying on
-global variables.
-
-=== Reading Files
-
-Here are some speculations about how the complex file reading is structured.
-
-Each file is identified by a filenumber, which is an index into the
-file table, and seems to have a `lexBuffer` tied to it so that you can
-just continue from where ever you were. That in turn contains a
-`CharacterBuffer` that handles the actual character reading.
-
-And there is also an "editorBuffer"...
-
-The intricate interactions between these are hard to follow as the code
-here are littered with short character names which are copies of fields
-in the structures, and infested with many macros, probably in an ignorant
-attempt at optimizing. ("The root of all evil is premature optimization" and
-"Make it work, make it right, make it fast".)
-
-It seems that everything start in `initInput()` in `yylex.c` where the
-only existing call to `fillFileDescriptor()` is made. But you might
-wonder why this function does some initial reading, this should be
-pushed down to the buffers in the file descriptor.
+One example is how a 'Move Function' is performed. It requires a target position. That
+position is transferred from specific command line options to global variables. When a
+function is parsed it (or rather the lexer) looks at that "target position information"
+and inserts a `OL_MARKER_TOKEN` in the stream.
 
 ==== Lexing/scanning
 
-Lexing/scanning is performed in two layers, one in `lexer.c` which
-seems to be doing the actual lexing into lexems which are put in a
-lexembuffer. This contains a sequence of encoded and compressed
-symbols which first has a `LexemCode` which is followed by extra data,
-like `Position`. These seems to always be added but not always necessary.
+Lexing/scanning is performed in two layers. `lexer.c` does the actual lexing into
+lexems, which are written into a lexembuffer — a sequence of encoded and compressed
+symbols, each starting with a `LexemCode` followed by a fixed set of attributes (e.g.
+`Position`).
 
-The higher level "scanning" is performed, as per ususal,
-by `yylex.c`. `lexembuffer` defines some functions to put and get
-lexems, chars (identifiers and file names?) as well as integers and
-positions.
+The higher-level "scanning" is performed, as usual, by `yylex.c`. `lexembuffer` defines
+functions to put and get lexems, chars, identifiers, integers, and positions.
 
-At this point the put/get lexem functions take a pointer to a pointer
-to chars (which presumably is the lexem stream in the lexembuffer)
-which it also advances. This requires the caller to manage the
-LexemBuffer's internal pointers outside and finally set them right
-when done.
+The put/get lexem functions currently take a pointer to a pointer to chars — the lexem
+stream inside the lexembuffer — which they also advance. This requires the caller to
+manage the LexemBuffer's internal pointers and finally set them right when done. The
+direction is to pass a `LexemBuffer` directly; macro and define handling are the
+remaining cases where lexems are not put in a LexemBuffer.
 
-It would be much better to call the "putLexem()"-functions with a
-lexemBuffer but there seems to be a few cases where the destination
-(often `dd`) is not a lexem stream inside a lexemBuffer. These might
-be related to macro handling.
-
-NOTE: This is a work-in-progress.  Currently most of the "normal"
-usages are prepared to use the LexemBuffer's pointers.  But the
-handling of macros and defines are cases where the lexems are not put
-in a LexemBuffer.  See the TODO.org for current status of this Mikado
-sequence.
+NOTE: This conversion is work-in-progress. Most "normal" usages are prepared to use the
+LexemBuffer's pointers; macro/define handling is the holdout. See `TODO.org` for
+current status.
 
 ==== Semantic information
 
-As the refactoring functions need some amount of semantic information,
-in the sense of information gathered during parsing, this information
-is collected in various ways when `c-xref` calls the "sub-task" to do
-the parsing required.
+Refactorings need semantic information beyond what the in-memory reference table holds
+— for example, byte offsets of block and function boundaries needed to verify that an
+editor region selected for "Extract Function" does not cross a block break. This
+information is collected when the refactoring entry calls `parseBufferUsingServer()` to
+drive a full parse over the buffer of interest; the parser's semantic actions populate
+dedicated structures.
 
-Two structures hold information about various things, among which are
-the memory index at certain points of the parsing. Thus it is possible
-to verify e.g. that a editor region does not cover a break in block or
-function structure. This structure is, at the point of writing, called
-`parsedInfo` and definitely need to be tidied up.
+Two structures currently hold this information; the main one is `parsedInfo`.
+
+NOTE: `parsedInfo` is one of the structures targeted for unification under
+"Replace Global `options` with Typed Requests" in
+link:17-major-codebase-improvements.adoc[Chapter 17].
 
 === Reference Database
 
@@ -551,34 +517,27 @@ NOTE: The architectural direction for `cxfile.c` is documented in link:17-major-
 
 === Editor Plugin
 
-The editor plugin has three different responsibilities:
+The editor plugin serve as the UI for the user when interacting with the `c-xref` server.
 
-- serve as the UI for the user when interacting with certain `c-xref`
-  related functions
-
-- query `c-xref server` for symbol references and support navigating
+- query for symbol references and support navigating
   these in the source
 
 - initiate source code operations ("refactorings") and execute the
   resulting edits
 
-Basically Emacs (and probably other editors) starts `c-xref` in
-"server-mode" using `-server` which connects the editor
-with `c-xref` through stdout/stdin. If you have `(setq
-c-xref-debug-mode t)` this command is logged in the `\*Messages*` buffer
-with the prefix "calling:".
+Emacs (and other clients) starts `c-xref` in "server-mode" using `-server` which
+connects the editor with `c-xref` through stdout/stdin. If you have `(setq
+c-xref-debug-mode t)` this command is logged in the `\*Messages*` buffer with the prefix
+"calling:".
 
-Commands are sent from the editor to the server on its standard input.
-They looks very much like normal command line options, and in fact
-`c-xref` will parse that input in the same way using the same
-code. When the editor sends an `end-of-options` line, the server will
-start executing whatever was sent, and return some information in the
-file given as an `-o` option when the editor starts the `c-xref`
-server process. The file is named and created by the editor and
-usually resides in `/tmp`. With `c-xref-debug-mode` set to on this is
-logged as "sending:". If you `(setq c-xref-debug-preserve-tmp-files
-t)` Emacs will also not delete the temporary files it creates so that
-you can inspect them afterwards.
+Commands are sent from the editor to the server on its standard input.  They are normal
+command line options, and in fact `c-xref` will parse that input in the same way using
+the same code. When the editor sends an `end-of-options` line, the server will start
+executing whatever was sent, and return some information in the file given as an `-o`
+option when the editor starts the `c-xref` server process. The file is named and created
+by the editor and usually resides in `/tmp`. With `c-xref-debug-mode` set to on this is
+logged as "sending:". If you `(setq c-xref-debug-preserve-tmp-files t)` Emacs will also
+not delete the temporary files it creates so that you can inspect them afterwards.
 
 When the server has finished processing the command and placed the
 output in the output file it sends a ``<sync>`` reply.
@@ -586,42 +545,32 @@ output in the output file it sends a ``<sync>`` reply.
 The editor can then pick up the result from the output file and do
 what it needs to do with it ("dispatching:").
 
-==== Invocations
-
-The editor invokes a new `c-xref` process for the following cases:
-
-- Refactoring
-+
-Each refactoring operation calls a new instance of `c-xref`?
-
-- Create Project
-+
-When a `c-xref` function is executed in the editor and there is no
-project covering that file, an interactive "create project" session is
-started, which is run by a separate `c-xref` process.
-
 ==== Buffers
 
-There is some magical editor buffer management happening inside of
-`c-xref` which is not clear to me at this point. Basically it looks
-like the editor-side tries to keep the server in sync with which
-buffers are opened with what file...
+The server tracks editor-buffer state via the `-preload <filename> <tmpfile>` option:
+the editor writes the in-memory buffer content to `<tmpfile>` and tells the server to
+treat that file's content (and modification time) as the authoritative version of
+`<filename>`. The server creates an `EditorBuffer` accordingly and uses it in place of
+the on-disk file for parsing and reference creation.
 
-At this point I suspect that `-preload <file1> <file2>` means that the
-editor has saved a copy of `<file1>` in `<file2>` and requests the server
-to set up a "buffer" describing that file and use it instead of the
-`<file1>` that recides on disk.
+This is essential during refactoring: the buffer the user is editing typically
+diverges from disk content, and the server must work against the buffer to produce
+edits that match what the user sees.
 
-This is essential when doing refactoring since the version of the file
-most likely only exists in the editor, so the editor has to tell the
-server the current content somehow, this is the `-preload` option.
+The client only preloads modified buffers — unmodified files are not preloaded even if
+they are open in the editor. The server then instead reads the files directly from
+disk. Preloaded buffers, meaning modified files open in the editor, are persisted in the
+server across requests until the client stops sending them.  See "Preload" in
+link:06-principles.adoc[Principles] for the full lifecycle, including the per-preload
+mtime check and the connection to entry refresh.
 
 === Editor Server
 
-When serving an editor the c-xrefactory application is divided into
-the server, _c-xref_ and the editor part, at this point only Emacs:en
-are supported so that's implemented in the
-`editor/Emacs`-packages.
+When serving an editor the c-xrefactory application is divided into the server, _c-xref_
+and the editor part, at this point only Emacs:en are fully supported implemented in the
+`editor/emacs`-packages.
+
+NOTE: An experimental LSP (Language Server Protocol) implementation exists.
 
 
 ==== Interaction
@@ -645,14 +594,20 @@ Setting the emacs variable `c-xref-debug-mode` forces the editor to
 copy the content of such an output file to a separate temporary file
 before re-using it.
 
-For some interactions the editor starts a completely new and fresh
-`c-xref` process, see below. And actually you can't do refactorings
-using the server, they have to be separate calls. (Yes?) I have yet to
-discover why this design choice was made.
+The c-xref server is long-lived: the same process persists across requests for a
+project. The editor starts a new process on first contact with a project, and on
+project switch (`c-xref-kill-xref-process` sends `-exit` before killing the old
+process).
 
-NOTE: There are many things in the sources that handles refactorings
-separately, such as `refactoring_options`, which is a separate copy of
-the options structure used only when refactoring.
+NOTE: Refactorings used to spawn a separate `-refactory` process per operation;
+that mechanism was removed in 2026-03 — all refactorings now run as server
+operations. See link:21-archive.adoc[Archive] for the historical two-process model.
+
+NOTE: Some refactoring state still lives in dedicated structures inherited from the
+two-process era — e.g. `refactoring_options`, a separate copy of the options struct
+used only during refactoring. Folding these into a unified options model is covered
+in "Replace Global `options` with Typed Requests" in
+link:17-major-codebase-improvements.adoc[Chapter 17].
 
 
 ==== Protocol
@@ -722,19 +677,11 @@ the following output
      <position-lc line=1 col=4 len=66>CURDIR/single_int1.c</position-lc>
     </goto>
 
-As we can see from this interaction, the server will handle (all?)
-input as a command line and manage the options as if it was a command
-line invocation.
+As we can see from this interaction, the server will handle input as command lines and
+manage the options as if it was a command line invocation.
 
 This explains the intricate interactions between the main program and
 the option handling.
-
-The reason behind this might be that a user of the editor might be
-editing files on multiple projects at once, so every
-interrogation/operation needs to clearly set the context of that
-operation, which is what a user would do with the command line
-options.
-
 
 === Refactoring
 
@@ -824,22 +771,25 @@ allows for different "default" options for each project.
 
 There are three possible sources for options.
 
-- Configuration files (~/.c-xrefrc)
-- Command line options at invocation, including server
-- Piped options sent to the server in commands
+- Command line options at invocation
+- Configuration files (the projects `.c-xrefrc` or `~/.c-xrefrc`)
+- "Piped" options sent to the server in commands/requests
 
 Not all options are relevant in all cases.
 
 All options sources uses exactly the same format so that the same code for decoding them can be used.
 
-==== Logic
+When the client first operates on a file, the server determines which project it belongs
+to. On the auto-detect path the server walks upward from the file's path looking for a
+project-local `.c-xrefrc`, and the directory containing it becomes the project root
+(`detectedProjectRoot`). If no project-local `.c-xrefrc` is found, the legacy path takes
+over: the user's home `~/.c-xrefrc` is consulted (or a file given by `-xrefrc <file>`),
+and `-p <name>` selects which project section within it applies. `-p` is required in
+either form because both files can hold multiple project sections. The `-getproject`
+operation drives discovery and reports the result back to the editor.
 
-When the editor has a file open it needs to "belong" to a project. The
-logic for finding which is very intricate and complicated.
-
-In this code there is also checks for things like if the file is
-already in the index, if the configuration file has changed since last
-time, indicating there are scenarios that are more complicated (the
-server, obviously).
-
-But I also think this code should be simplified a lot.
+The configuration is re-checked on each request: the `.c-xrefrc` modification time is
+compared against the loaded version, and if it has changed, `reloadProjectConfig()`
+re-reads the file and the project scan re-runs with the updated `includeDirs`. This
+keeps the in-memory project description aligned with on-disk config without requiring
+a server restart.
