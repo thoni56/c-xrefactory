@@ -118,47 +118,34 @@ that share the edited header" is the difference between minutes and milliseconds
 
 === What Reparse Cleans
 
-There is a known gap here: CU reparse does not strip references that the CU's previous
-parse contributed at *included-file* positions. The dedup mechanism hides this most of
-the time, but it surfaces when an included file's content shifts between parses. The
-current pass machinery covers most shapes self-healingly; this section describes the
-mechanism, the residual gap, and the direction for closing it.
+When a compilation unit is reparsed, `removeReferenceableItemsForFile(CU)` strips
+references whose `position.file` is the CU. The reparse then re-emits those references
+from fresh parsing. References at *other* files' positions — typically header positions
+for declarations seen through `#include` — are not touched by this strip.
 
-The strip on reparse is scoped to the CU's own positions. References that the CU's
-previous parse contributed at included-file positions — declarations, inline
-definitions, type definitions seen through `#include` — are *not* touched. The reparse
-then adds fresh references; if the included file's content has not shifted, the new
-references land at the same positions as the old and dedup collapses them.
+In principle this leaves a gap: each parse of an includer adds references at the
+header's positions, but those positions aren't cleared when the includer is reparsed.
+If a header's content shifts, references at the *previous* header positions could
+linger alongside fresh ones at the new positions.
 
-The dedup key is `(linkName, includedFileNumber, type)`, not `(line, col)`. Two
-`UsageDeclared` references for the same symbol in the same included file but at
-different lines are *distinct entries* — dedup does not merge them. So the gap is
-invisible while included files are stable, and becomes visible the moment one shifts.
-
-When an included file's content shifts between two parses of an includer CU — a
-declaration moves to a new line, a type gains a comment above it — the reparse adds
-references at the new positions while the old references survive at the old, now-stale
-positions. Anything that walks references at concrete positions (rename precheck,
-marker conversion) sees both, and the stale one fails or misleads.
-
-The current pass machinery covers most shapes of this self-healingly: when the included
-file is itself detected as stale, the cascading reparses re-emit references at correct
-positions and strip old ones along the way. The case that escapes is a stale reference
-at an included-file position whose owning CU is not visited by any pass during the
-operation — typically a CU that contributed the reference in a previous session, is
-neither preloaded nor a current sibling of the request file, and whose included file
-has since shifted on disk. Snapshot reload across sessions can also bring such
-references back.
-
-The candidate direction for closing this is to strip the transitive include closure of
-the CU being reparsed *before* the parse runs, so the reparse re-establishes references
-at all included-file positions from current content. Macro expansions defined and
-expanded entirely within included files, and preprocessor conditionals processed across
-multiple parser passes, need verification before this change lands.
+The dedup key in `addReferenceableToBrowsingMenu` is `(linkName, includedFileNumber,
+type)`, not `(line, col)`. Two `UsageDeclared` references for the same symbol in the
+same included file but at different lines would be *distinct entries* — dedup does not
+merge them.
 
 This concern is scoped to the in-memory reference table. Sessions on the browsing
 stack converge separately, lazily, on the next NEXT/PREVIOUS via the session-refresh
 mechanism.
+
+NOTE: An investigation in May 2026 tried to reproduce the lingering-header-position
+scenario via a two-CU rename with the shared header swapped between parses. It did not
+reproduce: traces showed `UsageDeclared` entries did not accumulate at the v1 header
+position across the includer reparses leading up to the swap. An earlier write-up of
+this section attributed that to a "lexem cache" that replayed cached header tokens
+without driving yylex's identifier branch — that attribution was wrong. There is no
+such cache today (`lexemstream.h` records `CACHED_STREAM` as removed). The mechanism
+that *actually* governs when and where header-position references get registered
+during includer reparses is still incompletely understood.
 
 === Preserve Parsed Work
 
