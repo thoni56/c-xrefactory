@@ -59,6 +59,26 @@ void dumpReferenceableItem(ReferenceableItem *r) {
               r->visibility);
 }
 
+/* For gdb-driven inspection: prints item identity + every Reference on its
+ * list. Uses fprintf(stderr) so output is visible regardless of log level.
+ * \r\n because gdb-attached inferior tty doesn't do LF->CRLF translation. */
+void dumpReferenceableItemWithReferences(ReferenceableItem *r) {
+    fprintf(stderr, "ITEM %s @%s type=%d storage=%d scope=%d visibility=%d\r\n",
+            r->linkName,
+            getFileItemWithFileNumber(r->includeFileNumber)->name,
+            r->type, r->storage, r->scope, r->visibility);
+    int n = 0;
+    for (Reference *ref = r->references; ref != NULL; ref = ref->next) {
+        fprintf(stderr, "  [%d] %s @%s:%d:%d\r\n",
+                n++,
+                usageKindEnumName[ref->usage],
+                getFileItemWithFileNumber(ref->position.file)->name,
+                ref->position.line,
+                ref->position.col);
+    }
+    fprintf(stderr, "  (%d references)\r\n", n);
+}
+
 /* *********************************************************************** */
 
 void prettyPrintType(char *buffer, int *bufferSize, TypeModifier *typeModifier, char *name, int separator,

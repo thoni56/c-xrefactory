@@ -42,6 +42,7 @@ extern void dumpArguments(int nargc, char **nargv);
 
 extern void typeDump(TypeModifier *typeModifiers);
 extern void dumpReferenceableItem(ReferenceableItem *ss);
+extern void dumpReferenceableItemWithReferences(ReferenceableItem *r);
 extern void prettyPrintType(char *buff,int *size,TypeModifier *t,char*name,
                        int dclSepChar, bool typedefexp);
 extern void prettyPrintMacroDefinition(char *buffer, int *bufferSize, char *macroName, int argc, char **argv);
