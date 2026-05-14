@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_navigation_stale_header_multiple_cus</set-info>
--olcxpush -preload CURDIR/a.c CURDIR/a.preload -preload CURDIR/common.h CURDIR/common.preload -olcursor=44 CURDIR/a.c -p CURDIR
+-push -preload CURDIR/a.c CURDIR/a.preload -preload CURDIR/common.h CURDIR/common.preload -olcursor=44 CURDIR/a.c -p CURDIR
 end-of-options
 
 <sync>

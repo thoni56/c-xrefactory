@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_navigation_finds_shifted_reference</set-info>
--olcxpush -olcursor=29 CURDIR/source.c -p CURDIR
+-push -olcursor=29 CURDIR/source.c -p CURDIR
 end-of-options
 
 <sync>

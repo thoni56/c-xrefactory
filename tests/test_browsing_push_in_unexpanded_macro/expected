@@ -5,7 +5,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxpush  -olcursor=69 CURDIR/macro.h  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push  -olcursor=69 CURDIR/macro.h  -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>

@@ -1,7 +1,7 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server
 -getproject source.c
 <sync>
--olcxpush -olcursor=4 source.c
+-push -olcursor=4 source.c
 <sync>
 -olcxnext source.c
 <sync>

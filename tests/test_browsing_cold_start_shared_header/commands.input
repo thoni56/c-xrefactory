@@ -1,7 +1,7 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/ins.c
 <sync>
--olcxpush -olcursor=66 CURDIR/ins.c -p CURDIR
+-push -olcursor=66 CURDIR/ins.c -p CURDIR
 <sync>
 -olcxnext -olcursor=138 CURDIR/atr_x.h -p CURDIR
 <sync>

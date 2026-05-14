@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>project_a</set-info>
--olcxpush -olcursor=4 CURDIR/project_a/source.c -p project_a
+-push -olcursor=4 CURDIR/project_a/source.c -p project_a
 end-of-options
 
 <sync>

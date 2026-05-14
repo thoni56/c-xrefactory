@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_peek</set-info>
--olcxpush -olcursor=4 source.c
+-push -olcursor=4 source.c
 end-of-options
 
 <sync>

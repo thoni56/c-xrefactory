@@ -1,7 +1,7 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/aaa_usage.c
 <sync>
--olcxpush -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h -p CURDIR
+-push -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h -p CURDIR
 <sync>
 -olcxnext -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h -p CURDIR
 <sync>

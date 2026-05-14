@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_snapshot_preload_not_stale</set-info>
--olcxpush -preload CURDIR/header.h CURDIR/header.preload -olcursor=77 CURDIR/source.c -p CURDIR
+-push -preload CURDIR/header.h CURDIR/header.preload -olcursor=77 CURDIR/source.c -p CURDIR
 end-of-options
 
 <sync>
@@ -27,7 +27,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_snapshot_preload_not_stale</set-info>
--olcxpush -olcursor=77 CURDIR/source.c -p CURDIR
+-push -olcursor=77 CURDIR/source.c -p CURDIR
 end-of-options
 
 <sync>

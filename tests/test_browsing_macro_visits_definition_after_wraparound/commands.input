@@ -1,7 +1,7 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/source1.c
 <sync>
--olcxpush -preload CURDIR/common.h CURDIR/common.preload -olcursor=8 CURDIR/common.h -p CURDIR
+-push -preload CURDIR/common.h CURDIR/common.preload -olcursor=8 CURDIR/common.h -p CURDIR
 <sync>
 -olcxnext -preload CURDIR/common.h CURDIR/common.preload -olcursor=8 CURDIR/common.h -p CURDIR
 <sync>

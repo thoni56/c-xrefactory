@@ -20,7 +20,7 @@ end-of-options
  <position-off off=23 len=<n>>CURDIR/source_a.c</position-off>
 </goto>
 <indent-block val=3 len=<n>></indent-block>
--olcxpush -olcursor=39 CURDIR/source_b.c -p CURDIR
+-push -olcursor=39 CURDIR/source_b.c -p CURDIR
 end-of-options
 
 <sync>

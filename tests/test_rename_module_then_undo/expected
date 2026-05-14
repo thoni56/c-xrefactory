@@ -47,7 +47,7 @@ shell: cp CURDIR/main.c.original CURDIR/main.c
 shell: cp CURDIR/source.c.original CURDIR/source.c
 shell: cp CURDIR/source.h.original CURDIR/source.h
 shell: rm -f CURDIR/target.c CURDIR/target.h
--olcxpush -olcursor=0 -preload CURDIR/main.c CURDIR/main.c -preload CURDIR/source.c CURDIR/source.c -preload CURDIR/source.h CURDIR/source.h CURDIR/main.c -p CURDIR
+-push -olcursor=0 -preload CURDIR/main.c CURDIR/main.c -preload CURDIR/source.c CURDIR/source.c -preload CURDIR/source.h CURDIR/source.h CURDIR/main.c -p CURDIR
 end-of-options
 
 <sync>

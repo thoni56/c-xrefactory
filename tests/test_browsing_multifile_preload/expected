@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_navigation_multifile_preload</set-info>
--olcxpush -preload CURDIR/source1.c CURDIR/source1.preload -olcursor=25 CURDIR/source1.c -p CURDIR
+-push -preload CURDIR/source1.c CURDIR/source1.preload -olcursor=25 CURDIR/source1.c -p CURDIR
 end-of-options
 
 <sync>

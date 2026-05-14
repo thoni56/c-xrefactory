@@ -9,7 +9,7 @@ CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -xrefrc C
 <information len=<n>>CURDIR/source.c</information>
 <information len=<n>>Generating 'CURDIR/CXrefs'</information>
 <sync>
--olcxpush  -olcursor=68 CURDIR/source.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push  -olcursor=68 CURDIR/source.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>

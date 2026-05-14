@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxpush -olcursor=6 include.c -xrefrc .c-xrefrc -p CURDIR
+-push -olcursor=6 include.c -xrefrc .c-xrefrc -p CURDIR
 end-of-options
 
 <sync>

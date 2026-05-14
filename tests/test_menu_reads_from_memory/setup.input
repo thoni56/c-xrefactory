@@ -1,6 +1,6 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/source.c
 <sync>
--olcxpush -olcursor=4 CURDIR/source.c -p CURDIR
+-push -olcursor=4 CURDIR/source.c -p CURDIR
 <sync>
 <exit>

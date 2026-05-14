@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxpush -olmark=0 -olcursor=6 test_source/single_int1.c -xrefrc .c-xrefrc -p CURDIR
+-push -olmark=0 -olcursor=6 test_source/single_int1.c -xrefrc .c-xrefrc -p CURDIR
 end-of-options
 
 <sync>

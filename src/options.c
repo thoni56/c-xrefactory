@@ -179,7 +179,7 @@ static void usage() {
 #if 0
     fprintf(stdout, "\t-olinelen=<n>             - length of lines for on-line output\n");
     fprintf(stdout, "\t-search                   - search info about identifier\n");
-    fprintf(stdout, "\t-olcxpush                 - generate and push on-line cxrefs\n");
+    fprintf(stdout, "\t-push                     - generate and push references for browsing\n");
     fprintf(stdout, "\t-olcxrename               - generate and push xrfs for rename\n");
     fprintf(stdout, "\t-olcxpop                  - pop on-line cxrefs\n");
     fprintf(stdout, "\t-olcxnext                 - next on-line reference\n");
@@ -1346,8 +1346,6 @@ static bool processOOption(int *argi, ArgumentsVector args) {
     else if (strcmp(args.argv[i], "-olcxgetrefactorings")==0)     {
         options.serverOperation = OP_GET_AVAILABLE_REFACTORINGS;
     }
-    else if (strcmp(args.argv[i], "-olcxpush")==0)
-        options.serverOperation = OP_BROWSE_PUSH;
     else if (strcmp(args.argv[i], "-olcxrepush")==0)
         options.serverOperation = OP_BROWSE_REPUSH;
     else if (strcmp(args.argv[i], "-olcxpushonly")==0)
@@ -1468,6 +1466,9 @@ static bool processPOption(int *argi, ArgumentsVector args) {
         ensureNextArgumentIsAFileName(&i, args);
         log_debug("Current project '%s'", args.argv[i]);
         options.project = allocateStringForOption(&options.project, args.argv[i]);
+    }
+    else if (strcmp(args.argv[i], "-push")==0) {
+        options.serverOperation = OP_BROWSE_PUSH;
     }
     else if (strcmp(args.argv[i], "-preload")==0) {
         ensureNextArgumentIsAFileName(&i, args);

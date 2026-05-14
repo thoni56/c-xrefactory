@@ -4507,7 +4507,7 @@ definition.
 
     (setq oldwins (c-xref-is-browser-window-displayed))
     (c-xref-call-process-with-basic-file-data-all-saves
-     (concat "-olcxpush"))
+     (concat "-push"))
     (c-xref-update-browser-if-displayed oldwins)
     ))
 

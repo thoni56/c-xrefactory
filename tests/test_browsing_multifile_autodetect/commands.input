@@ -1,7 +1,7 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/source1.c
 <sync>
--olcxpush -olcursor=35 CURDIR/common.h -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -olcursor=35 CURDIR/common.h -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -olcxnext -olcursor=32 CURDIR/common.h -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
@@ -11,7 +11,7 @@ CXREF -xrefactory-II -server
 <sync>
 -olcxpop -olcursor=22 CURDIR/source2.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
--olcxpush -preload CURDIR/common.h CURDIR/common.preload -olcursor=35 CURDIR/common.h -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -preload CURDIR/common.h CURDIR/common.preload -olcursor=35 CURDIR/common.h -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -olcxnext -preload CURDIR/common.h CURDIR/common.preload -olcursor=32 CURDIR/common.h -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>

@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_navigation_stale_preserves_other_refs</set-info>
--olcxpush -preload CURDIR/server.h CURDIR/server.preload1 -olcursor=486 CURDIR/server.h -p CURDIR
+-push -preload CURDIR/server.h CURDIR/server.preload1 -olcursor=486 CURDIR/server.h -p CURDIR
 end-of-options
 
 <sync>

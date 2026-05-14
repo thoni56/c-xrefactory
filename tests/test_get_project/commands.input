@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -server
--olcxpush -olcursor=641 CURDIR/index.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -olcursor=641 CURDIR/index.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -getproject -xrefrc CURDIR/.c-xrefrc CURDIR/browsing.c
 <sync>

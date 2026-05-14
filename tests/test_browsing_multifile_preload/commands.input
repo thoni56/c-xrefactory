@@ -1,7 +1,7 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/source1.c
 <sync>
--olcxpush -preload CURDIR/source1.c CURDIR/source1.preload -olcursor=25 CURDIR/source1.c -p CURDIR
+-push -preload CURDIR/source1.c CURDIR/source1.preload -olcursor=25 CURDIR/source1.c -p CURDIR
 <sync>
 -olcxnext -preload CURDIR/source1.c CURDIR/source1.preload -olcursor=25 CURDIR/source1.c -p CURDIR
 <sync>

@@ -1,11 +1,11 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server
 -getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 <sync>
--olcxpush -olcursor=112 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -olcursor=112 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 <sync>
--olcxpush -olmark=0 -olcursor=418 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -olmark=0 -olcursor=418 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -olcxnext -olmark=418 -olcursor=241 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
@@ -29,7 +29,7 @@ CXREF -xrefactory-II -crlfconversion -crconversion -server
 <sync>
 -getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 <sync>
--olcxpush -olmark=429 -olcursor=601 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -olmark=429 -olcursor=601 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -olcxnext -olmark=601 -olcursor=588 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
@@ -37,7 +37,7 @@ CXREF -xrefactory-II -crlfconversion -crconversion -server
 <sync>
 -getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 <sync>
--olcxpush -olmark=597 -olcursor=744 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -olmark=597 -olcursor=744 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -olcxnext -olmark=744 -olcursor=166 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
@@ -45,7 +45,7 @@ CXREF -xrefactory-II -crlfconversion -crconversion -server
 <sync>
 -getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 <sync>
--olcxpush -olmark=744 -olcursor=761 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -olmark=744 -olcursor=761 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -olcxnext -olmark=761 -olcursor=146 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
@@ -73,7 +73,7 @@ CXREF -xrefactory-II -crlfconversion -crconversion -server
 <sync>
 -getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 <sync>
--olcxpush -olmark=454 -olcursor=1310 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -olmark=454 -olcursor=1310 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -olcxfilter=0 -olmark=1310 -olcursor=220 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
@@ -111,7 +111,7 @@ CXREF -xrefactory-II -crlfconversion -crconversion -server
 <sync>
 -getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 <sync>
--olcxpush -olmark=220 -olcursor=1975 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -olmark=220 -olcursor=1975 CURDIR/cexercise/browsing.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -olcxpop -olmark=0 -olcursor=0 /usr/include/stdlib.h -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
