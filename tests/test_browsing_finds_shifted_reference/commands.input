@@ -3,10 +3,10 @@ CXREF -xrefactory-II -server
 <sync>
 -push -olcursor=29 CURDIR/source.c -p CURDIR
 <sync>
--olcxnext -olcursor=29 CURDIR/source.c -p CURDIR
+-browse-next -olcursor=29 CURDIR/source.c -p CURDIR
 <sync>
--olcxnext -olcursor=29 CURDIR/source.c -p CURDIR
+-browse-next -olcursor=29 CURDIR/source.c -p CURDIR
 <sync>
--olcxnext -preload CURDIR/source.c CURDIR/source.preload -olcursor=29 CURDIR/source.c -p CURDIR
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=29 CURDIR/source.c -p CURDIR
 <sync>
 <exit>

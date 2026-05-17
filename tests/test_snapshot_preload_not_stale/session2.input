@@ -3,6 +3,6 @@ CXREF -xrefactory-II -server
 <sync>
 -push -olcursor=77 CURDIR/source.c -p CURDIR
 <sync>
--olcxnext -olcursor=77 CURDIR/source.c -p CURDIR
+-browse-next -olcursor=77 CURDIR/source.c -p CURDIR
 <sync>
 <exit>

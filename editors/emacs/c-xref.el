@@ -4650,7 +4650,7 @@ refactoring, changes made by this function can be undone with the
   "Move to the next reference stored on the top of the browser stack.
 "
   (interactive "")
-  (c-xref-previous-next-reference "-olcxnext" 1)
+  (c-xref-previous-next-reference "-browse-next" 1)
   )
 
 
@@ -4658,18 +4658,18 @@ refactoring, changes made by this function can be undone with the
   "Move to the previous reference stored on the top of the browser stack.
 "
   (interactive "")
-  (c-xref-previous-next-reference "-olcxprevious" -1)
+  (c-xref-previous-next-reference "-browse-previous" -1)
   )
 
 (defun c-xref-alternative-previous-reference ()
   "Move to the previous reference of the symbol under point."
   (interactive "")
-  (c-xref-peek "-olcxprevious"))
+  (c-xref-peek "-browse-previous"))
 
 (defun c-xref-alternative-next-reference ()
   "Move to the next reference of the symbol under point."
   (interactive "")
-  (c-xref-peek "-olcxnext"))
+  (c-xref-peek "-browse-next"))
 
 (defun c-xref-pop-and-return ()
   "Pop references from the top of the browser stack.

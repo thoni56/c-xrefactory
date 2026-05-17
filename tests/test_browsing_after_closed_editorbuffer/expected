@@ -11,7 +11,7 @@ end-of-options
 <goto>
  <position-lc line=1 col=4 len=<n>>CURDIR/header.h</position-lc>
 </goto>
--olcxnext -preload CURDIR/header.h CURDIR/header.preload -olcursor=6 CURDIR/header.h -p CURDIR
+-browse-next -preload CURDIR/header.h CURDIR/header.preload -olcursor=6 CURDIR/header.h -p CURDIR
 end-of-options
 
 <sync>

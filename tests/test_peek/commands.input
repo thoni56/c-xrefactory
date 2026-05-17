@@ -3,14 +3,14 @@ CXREF -xrefactory-II -crlfconversion -crconversion -server
 <sync>
 -push -olcursor=4 source.c
 <sync>
--olcxnext source.c
+-browse-next source.c
 <sync>
 -olcxpushonly -olnodialog -olcursor=56 source.c
 <sync>
--olcxnext source.c
+-browse-next source.c
 <sync>
 -olcxpoponly -olnodialog source.c
 <sync>
--olcxnext source.c
+-browse-next source.c
 <sync>
 <exit>

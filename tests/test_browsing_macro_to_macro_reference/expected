@@ -11,7 +11,7 @@ end-of-options
 <goto>
  <position-lc line=5 col=8 len=<n>>CURDIR/macros.h</position-lc>
 </goto>
--olcxnext -preload CURDIR/macros.h CURDIR/macros.preload -olcursor=79 CURDIR/macros.h -p CURDIR
+-browse-next -preload CURDIR/macros.h CURDIR/macros.preload -olcursor=79 CURDIR/macros.h -p CURDIR
 end-of-options
 
 <sync>

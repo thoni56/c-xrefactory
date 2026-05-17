@@ -13,14 +13,14 @@ end-of-options
 <goto>
  <position-lc line=10 col=22 len=<n>>CURDIR/browsing.c</position-lc>
 </goto>
--olcxnext  -olcursor=146 CURDIR/browsing.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-browse-next  -olcursor=146 CURDIR/browsing.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=31 col=9 len=<n>>CURDIR/browsing.c</position-lc>
 </goto>
--olcxnext  -olcursor=761 CURDIR/browsing.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-browse-next  -olcursor=761 CURDIR/browsing.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>

@@ -3,10 +3,10 @@ CXREF -xrefactory-II -server
 <sync>
 -push -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/header.h CURDIR/header.preload -olcursor=50 CURDIR/source.c -p CURDIR
 <sync>
--olcxnext -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/header.h CURDIR/header.preload -olcursor=39 CURDIR/header.h -p CURDIR
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/header.h CURDIR/header.preload -olcursor=39 CURDIR/header.h -p CURDIR
 <sync>
--olcxnext -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/header.h CURDIR/header.preload -olcursor=90 CURDIR/header.h -p CURDIR
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/header.h CURDIR/header.preload -olcursor=90 CURDIR/header.h -p CURDIR
 <sync>
--olcxprevious -preload CURDIR/source.c CURDIR/source.modified -preload CURDIR/header.h CURDIR/header.preload -olcursor=50 CURDIR/source.c -p CURDIR
+-browse-previous -preload CURDIR/source.c CURDIR/source.modified -preload CURDIR/header.h CURDIR/header.preload -olcursor=50 CURDIR/source.c -p CURDIR
 <sync>
 <exit>

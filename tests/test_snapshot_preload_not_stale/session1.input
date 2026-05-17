@@ -3,6 +3,6 @@ CXREF -xrefactory-II -server
 <sync>
 -push -preload CURDIR/header.h CURDIR/header.preload -olcursor=77 CURDIR/source.c -p CURDIR
 <sync>
--olcxnext -preload CURDIR/header.h CURDIR/header.preload -olcursor=77 CURDIR/source.c -p CURDIR
+-browse-next -preload CURDIR/header.h CURDIR/header.preload -olcursor=77 CURDIR/source.c -p CURDIR
 <sync>
 <exit>

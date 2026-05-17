@@ -3,12 +3,12 @@ CXREF -xrefactory-II -server
 <sync>
 -push -preload CURDIR/common.h CURDIR/common.preload1 -olcursor=35 CURDIR/common.h -p CURDIR
 <sync>
--olcxnext -preload CURDIR/common.h CURDIR/common.preload2 -olcursor=32 CURDIR/common.h -p CURDIR
+-browse-next -preload CURDIR/common.h CURDIR/common.preload2 -olcursor=32 CURDIR/common.h -p CURDIR
 <sync>
--olcxnext -olcursor=22 CURDIR/source1.c -p CURDIR
+-browse-next -olcursor=22 CURDIR/source1.c -p CURDIR
 <sync>
--olcxnext -olcursor=22 CURDIR/source2.c -p CURDIR
+-browse-next -olcursor=22 CURDIR/source2.c -p CURDIR
 <sync>
--olcxnext -olcursor=22 CURDIR/source3.c -p CURDIR
+-browse-next -olcursor=22 CURDIR/source3.c -p CURDIR
 <sync>
 <exit>

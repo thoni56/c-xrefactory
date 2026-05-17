@@ -3,6 +3,6 @@ CXREF -xrefactory-II -server
 <sync>
 -push -preload CURDIR/macros.h CURDIR/macros.preload -olcursor=79 CURDIR/macros.h -p CURDIR
 <sync>
--olcxnext -preload CURDIR/macros.h CURDIR/macros.preload -olcursor=79 CURDIR/macros.h -p CURDIR
+-browse-next -preload CURDIR/macros.h CURDIR/macros.preload -olcursor=79 CURDIR/macros.h -p CURDIR
 <sync>
 <exit>

@@ -182,8 +182,8 @@ static void usage() {
     fprintf(stdout, "\t-push                     - generate and push references for browsing\n");
     fprintf(stdout, "\t-olcxrename               - generate and push xrfs for rename\n");
     fprintf(stdout, "\t-olcxpop                  - pop on-line cxrefs\n");
-    fprintf(stdout, "\t-olcxnext                 - next on-line reference\n");
-    fprintf(stdout, "\t-olcxprevious             - previous on-line reference\n");
+    fprintf(stdout, "\t-browse-next              - browse to next reference\n");
+    fprintf(stdout, "\t-browse-previous          - browse to previous reference\n");
     fprintf(stdout, "\t-olcxgoto<n>              - go to the n-th on-line reference\n");
     fprintf(stdout, "\t-file <file>              - name of the file given to stdin\n");
 #endif
@@ -1064,6 +1064,10 @@ static bool processBOption(int *argi, ArgumentsVector args) {
     else if (strncmp(args.argv[i], "-browsedsym=",12)==0)     {
         options.browsedName = allocateStringForOption(&options.browsedName, args.argv[i]+12);
     }
+    else if (strcmp(args.argv[i], "-browse-next")==0)
+        options.serverOperation = OP_BROWSE_NEXT;
+    else if (strcmp(args.argv[i], "-browse-previous")==0)
+        options.serverOperation = OP_BROWSE_PREVIOUS;
     else return false;
     *argi = i;
     return true;
@@ -1364,10 +1368,6 @@ static bool processOOption(int *argi, ArgumentsVector args) {
         options.serverOperation = OP_BROWSE_POP;
     else if (strcmp(args.argv[i], "-olcxpoponly")==0)
         options.serverOperation =OP_BROWSE_POP_ONLY;
-    else if (strcmp(args.argv[i], "-olcxnext")==0)
-        options.serverOperation = OP_BROWSE_NEXT;
-    else if (strcmp(args.argv[i], "-olcxprevious")==0)
-        options.serverOperation = OP_BROWSE_PREVIOUS;
     else if (strcmp(args.argv[i], "-olcxcomplet")==0)
         options.serverOperation=OP_COMPLETION;
     else if (strcmp(args.argv[i], "-olcxmovetarget")==0)
