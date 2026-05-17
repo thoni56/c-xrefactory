@@ -20,5 +20,5 @@ Describe(Navigation);
 BeforeEach(Navigation) {}
 AfterEach(Navigation) {}
 
-Ensure(Navigation, can_run_empty_test) {
+Ensure(Navigation, neverparsed_should_be_stale) {
 }

@@ -164,6 +164,7 @@ void setSizeOfEditorBuffer(EditorBuffer *buffer, size_t size) {
 void setEditorBufferModified(EditorBuffer *buffer) {
     buffer->modified = true;
     buffer->modifiedSinceLastQuasiSave = true;
+    buffer->modificationTime = fileTimestampNow();
 }
 
 void renameEditorBuffer(EditorBuffer *buffer, char *newName, EditorUndo **undo) {

@@ -43,10 +43,6 @@ void quasiSaveModifiedEditorBuffers(void) {
   mock();
 }
 
-void markModifiedEditorBuffersAsStale(void) {
-  mock();
-}
-
 void loadAllOpenedEditorBuffers(void) {
   mock();
 }

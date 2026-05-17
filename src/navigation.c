@@ -143,13 +143,18 @@ bool fileNumberIsStale(int fileNumber) {
 
     EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
 
-    // Explicitly marked stale (e.g. after refactoring modified the buffer)
+    // No authoritative in-memory content = not stale.
+    // Preload buffers carry client-supplied content; modified buffers carry
+    // server-side changes (refactoring). Auto-created buffers from a parse
+    // (e.g. headers being read while parsing a CU) are neither, so changes
+    // to those files don't make this file stale.
+    if (buffer == NULL || (buffer->preLoadedFromFile == NULL && !buffer->modified))
+        return false;
+
+    // Explicitly marked stale via NEVER_PARSED_TIMESTAMP (see
+    // markPreloadedFilesAsAncient for the snapshot-save case).
     if (fileTimestampIsZero(fileItem->lastParsedMtime))
         return true;
-
-    // No preload = not stale
-    if (buffer == NULL || buffer->preLoadedFromFile == NULL)
-        return false;
 
     // Already refreshed? (lastParsedMtime updated to buffer's mtime after refresh)
     if (!fileTimestampIsLessThan(fileItem->lastParsedMtime, buffer->modificationTime))
