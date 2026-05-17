@@ -1,3 +1,5 @@
+PREPARE = prepare
+
 include ../Makefile.server
 
 # Scenario: Navigation finds correct position after move-function
@@ -9,10 +11,12 @@ include ../Makefile.server
 # Then we should land on target()'s new position, not the old one
 
 $(TEST):
-	@-rm -rf .c-xref/db
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
+
+prepare:
+	@-rm -rf .c-xref/db
 
 trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)

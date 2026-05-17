@@ -1,14 +1,17 @@
+PREPARE = prepare
+
 include ../Makefile.server
 
-$(TEST): include.h
-	@-rm -f include2.h*
+
+$(TEST): prepare
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
-include.h:
-	-rm include2.h*
-	touch include.h
+prepare:
+	@-rm -rf include2.h* .c-xref
+	@test -f include.h || git checkout include.h
+	@touch include.h
 
 trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
