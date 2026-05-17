@@ -48,13 +48,13 @@ Ensure(Timestamp, can_create_from_seconds_and_nanoseconds) {
 }
 
 Ensure(Timestamp, zero_timestamp_has_zero_seconds_and_nanoseconds) {
-    FileTimestamp ts = ZERO_TIMESTAMP;
+    FileTimestamp ts = NULL_TIMESTAMP;
     assert_that(fileTimestampSeconds(ts), is_equal_to(0));
     assert_that(fileTimestampNanoseconds(ts), is_equal_to(0));
 }
 
 Ensure(Timestamp, zero_timestamp_is_zero) {
-    assert_that(fileTimestampIsZero(ZERO_TIMESTAMP), is_true);
+    assert_that(fileTimestampIsZero(NULL_TIMESTAMP), is_true);
 }
 
 Ensure(Timestamp, non_zero_timestamp_is_not_zero) {

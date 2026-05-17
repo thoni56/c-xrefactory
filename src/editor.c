@@ -293,8 +293,8 @@ static void quasiSaveEditorBuffer(EditorBuffer *buffer) {
 }
 
 void quasiSaveModifiedEditorBuffers(void) {
-    bool          saving            = false;
-    static FileTimestamp lastQuasiSaveTime = ZERO_TIMESTAMP;
+    bool saving = false;
+    static FileTimestamp lastQuasiSaveTime = NULL_TIMESTAMP;
 
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *ll = getEditorBufferListElementAt(i); ll != NULL; ll = ll->next) {
@@ -333,7 +333,7 @@ void markModifiedEditorBuffersAsStale(void) {
         for (EditorBufferList *ll = getEditorBufferListElementAt(i); ll != NULL; ll = ll->next) {
             if (ll->buffer->modifiedSinceLastQuasiSave) {
                 FileItem *fi = getFileItemWithFileNumber(ll->buffer->fileNumber);
-                fi->lastParsedMtime = ZERO_TIMESTAMP;
+                fi->lastParsedMtime = NULL_TIMESTAMP;
             }
         }
     }

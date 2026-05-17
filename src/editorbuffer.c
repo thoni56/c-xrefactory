@@ -23,7 +23,7 @@ static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *realFileName, int 
     *buffer = (EditorBuffer){
         .fileName = realFileName, .fileNumber = fileNumber, .preLoadedFromFile = preLoadedFromFile,
         .markers = NULL, .allocation = buffer->allocation};
-    buffer->modificationTime = ZERO_TIMESTAMP;
+    buffer->modificationTime = NULL_TIMESTAMP;
     buffer->size = 0;
     buffer->textLoaded = false;
     assert(buffer->preLoadedFromFile == NULL || buffer->preLoadedFromFile != buffer->fileName);

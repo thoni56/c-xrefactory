@@ -72,7 +72,7 @@ static EditorRegionList *createEditorRegionList(EditorBuffer *buffer, int begin,
 }
 
 Ensure(Editor, can_sort_two_regions) {
-    EditorBuffer *buffer = newEditorBuffer("", 1, "", ZERO_TIMESTAMP, 0);
+    EditorBuffer *buffer = newEditorBuffer("", 1, "", NULL_TIMESTAMP, 0);
     EditorRegionList *regionList1 = createEditorRegionList(buffer, 1, 2, NULL);
     EditorRegionList *regionList2 = createEditorRegionList(buffer, 3, 4, regionList1);
     EditorRegionList *list = regionList2;
@@ -83,7 +83,7 @@ Ensure(Editor, can_sort_two_regions) {
 }
 
 Ensure(Editor, can_sort_three_regions) {
-    EditorBuffer *buffer = newEditorBuffer("", 1, "", ZERO_TIMESTAMP, 0);
+    EditorBuffer *buffer = newEditorBuffer("", 1, "", NULL_TIMESTAMP, 0);
     EditorRegionList *regionList1 = createEditorRegionList(buffer, 1, 2, NULL);
     EditorRegionList *regionList2 = createEditorRegionList(buffer, 3, 4, regionList1);
     EditorRegionList *regionList3 = createEditorRegionList(buffer, 5, 6, regionList2);
@@ -95,7 +95,7 @@ Ensure(Editor, can_sort_three_regions) {
 }
 
 Ensure(Editor, can_sort_enclosing_regions) {
-    EditorBuffer *buffer = newEditorBuffer("", 1, "", ZERO_TIMESTAMP, 0);
+    EditorBuffer *buffer = newEditorBuffer("", 1, "", NULL_TIMESTAMP, 0);
     EditorRegionList *regionList1 = createEditorRegionList(buffer, 1, 4, NULL);
     EditorRegionList *regionList2 = createEditorRegionList(buffer, 2, 3, regionList1);
     EditorRegionList *list = regionList2;
@@ -106,7 +106,7 @@ Ensure(Editor, can_sort_enclosing_regions) {
 }
 
 Ensure(Editor, can_sort_overlapping_regions) {
-    EditorBuffer *buffer = newEditorBuffer("", 1, "", ZERO_TIMESTAMP, 0);
+    EditorBuffer *buffer = newEditorBuffer("", 1, "", NULL_TIMESTAMP, 0);
     EditorRegionList *regionList1 = createEditorRegionList(buffer, 1, 3, NULL);
     EditorRegionList *regionList2 = createEditorRegionList(buffer, 2, 4, regionList1);
     EditorRegionList *list = regionList2;
@@ -170,7 +170,7 @@ Ensure(Editor, walker_does_not_clamp_subsequent_refs_after_unreachable_col) {
 }
 
 Ensure(Editor, can_allocate_text_space_in_buffer) {
-    EditorBuffer *buffer = newEditorBuffer("file", 12, "file", ZERO_TIMESTAMP, 0);
+    EditorBuffer *buffer = newEditorBuffer("file", 12, "file", NULL_TIMESTAMP, 0);
 
     allocateNewEditorBufferTextSpace(buffer, 10);
 
@@ -180,7 +180,7 @@ Ensure(Editor, can_allocate_text_space_in_buffer) {
 Ensure(Editor, can_move_block_in_editor_buffer) {
     char *text = strdup("this is some text");
     int size = strlen(text)+1;
-    EditorBuffer *buffer = newEditorBuffer("file", 12, "file", ZERO_TIMESTAMP, size);
+    EditorBuffer *buffer = newEditorBuffer("file", 12, "file", NULL_TIMESTAMP, size);
     allocateNewEditorBufferTextSpace(buffer, size);
     strcpy(buffer->allocation.text, text);
 
@@ -200,7 +200,7 @@ Ensure(Editor, can_move_block_in_editor_buffer) {
 Ensure(Editor, can_replace_string_in_editor_buffer) {
     char *text = strdup("this is some text");
     int size = strlen(text)+1;
-    EditorBuffer *buffer = newEditorBuffer("file", 12, "file", ZERO_TIMESTAMP, size);
+    EditorBuffer *buffer = newEditorBuffer("file", 12, "file", NULL_TIMESTAMP, size);
     allocateNewEditorBufferTextSpace(buffer, size);
     strcpy(buffer->allocation.text, text);
 
@@ -216,7 +216,7 @@ Ensure(Editor, can_replace_string_in_editor_buffer) {
 Ensure(Editor, can_replace_string_in_editor_buffer_causing_expansion) {
     char *text = strdup("this is some text");
     int size = strlen(text)+1;
-    EditorBuffer *buffer = newEditorBuffer("file", 12, "file", ZERO_TIMESTAMP, size);
+    EditorBuffer *buffer = newEditorBuffer("file", 12, "file", NULL_TIMESTAMP, size);
     allocateNewEditorBufferTextSpace(buffer, size);
     strcpy(buffer->allocation.text, text);
 

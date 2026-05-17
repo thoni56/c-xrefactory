@@ -601,7 +601,7 @@ static void updateAllIncludeDirectives(EditorMarkerList *markers, char *currentI
 static void markOccurrenceFilesAsStale(EditorMarkerList *occurrences) {
     for (EditorMarkerList *l = occurrences; l != NULL; l = l->next) {
         FileItem *fi = getFileItemWithFileNumber(l->marker->buffer->fileNumber);
-        fi->lastParsedMtime = ZERO_TIMESTAMP;
+        fi->lastParsedMtime = NULL_TIMESTAMP;
     }
 }
 

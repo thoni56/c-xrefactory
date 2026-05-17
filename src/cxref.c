@@ -2264,7 +2264,7 @@ void markPreloadedFilesAsAncient(void) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             if (isPreloaded(l->buffer)) {
                 FileItem *fileItem = getFileItemWithFileNumber(l->buffer->fileNumber);
-                fileItem->lastParsedMtime = ZERO_TIMESTAMP;
+                fileItem->lastParsedMtime = NULL_TIMESTAMP;
             }
         }
     }

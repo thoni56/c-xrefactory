@@ -10,7 +10,7 @@ static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *fileName, int file
                                                       .allocatedSize = 0};
     *buffer = (EditorBuffer){.fileName = fileName, .fileNumber = fileNumber, .preLoadedFromFile = preLoadedFromFile, .markers = NULL,
                              .allocation = buffer->allocation};
-    buffer->modificationTime = ZERO_TIMESTAMP;
+    buffer->modificationTime = NULL_TIMESTAMP;
     buffer->size = 0;
 }
 

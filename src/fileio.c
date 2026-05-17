@@ -161,7 +161,7 @@ int fileStatus(char *path, struct stat *statP) {
 FileTimestamp fileModificationTime(char *path) {
     struct stat st;
     if (fileStatus(path, &st) !=0)
-        return ZERO_TIMESTAMP;               /* File not found? */
+        return NULL_TIMESTAMP;               /* File not found? */
 #ifdef __APPLE__
     return st.st_mtimespec;
 #else

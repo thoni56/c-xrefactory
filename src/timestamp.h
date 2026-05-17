@@ -6,7 +6,7 @@
 
 typedef struct timespec FileTimestamp;
 
-#define ZERO_TIMESTAMP ((FileTimestamp){0, 0})
+#define NULL_TIMESTAMP ((FileTimestamp){0, 0})
 
 extern bool fileTimestampsEqual(FileTimestamp a, FileTimestamp b);
 extern bool fileTimestampIsZero(FileTimestamp ts);
