@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-05-08">
+<meta name="author" content="v{VERSION} - Generated 2026-05-17">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-05-08</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-05-17</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -501,13 +501,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_parsers">8.16. Parsers</a></li>
 <li><a href="#_integrated_preprocessor">8.17. Integrated Preprocessor</a></li>
 <li><a href="#_refactoring_and_the_parsers">8.18. Refactoring and the parsers</a></li>
-<li><a href="#_reading_files">8.19. Reading Files</a></li>
-<li><a href="#_reference_database">8.20. Reference Database</a></li>
-<li><a href="#_editor_plugin">8.21. Editor Plugin</a></li>
-<li><a href="#_editor_server">8.22. Editor Server</a></li>
-<li><a href="#_refactoring">8.23. Refactoring</a></li>
-<li><a href="#_memory_handling">8.24. Memory handling</a></li>
-<li><a href="#_configuration">8.25. Configuration</a></li>
+<li><a href="#_reference_database">8.19. Reference Database</a></li>
+<li><a href="#_editor_plugin">8.20. Editor Plugin</a></li>
+<li><a href="#_editor_server">8.21. Editor Server</a></li>
+<li><a href="#_refactoring">8.22. Refactoring</a></li>
+<li><a href="#_memory_handling">8.23. Memory handling</a></li>
+<li><a href="#_configuration">8.24. Configuration</a></li>
 </ul>
 </li>
 <li><a href="#_data_structures">9. Data Structures</a>
@@ -607,10 +606,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_yacc_semantic_data">19.1. Yacc semantic data</a></li>
 <li><a href="#_navigation_architecture_and_preloading">19.2. Navigation Architecture and Preloading</a></li>
-<li><a href="#_the_lastparsedmtime_optimization_and_refactoring_conflict">19.3. The lastParsedMtime Optimization and Refactoring Conflict</a></li>
-<li><a href="#_stale_file_refresh_and_cross_file_references">19.4. Stale File Refresh and Cross-File References</a></li>
-<li><a href="#_unified_in_memory_table_discovery">19.5. Unified In-Memory Table Discovery</a></li>
-<li><a href="#_editor_buffer_lifecycle_in_the_server">19.6. Editor Buffer Lifecycle in the Server</a></li>
+<li><a href="#_unified_in_memory_table_discovery">19.3. Unified In-Memory Table Discovery</a></li>
+<li><a href="#_editor_buffer_lifecycle_in_the_server">19.4. Editor Buffer Lifecycle in the Server</a></li>
 </ul>
 </li>
 <li><a href="#_archive">20. Archive</a>
@@ -625,6 +622,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_users">20.8. Users</a></li>
 <li><a href="#_architectural_invariants_historical">20.9. Architectural Invariants (Historical)</a></li>
 <li><a href="#_refactorymode_internally_calls_xrefmode">20.10. RefactoryMode Internally Calls XrefMode</a></li>
+<li><a href="#_the_lastparsedmtime_optimization_and_refactoring_conflict_historical">20.11. The lastParsedMtime Optimization and Refactoring Conflict (Historical)</a></li>
+<li><a href="#_stale_file_refresh_and_cross_file_references_historical">20.12. Stale File Refresh and Cross-File References (Historical)</a></li>
 </ul>
 </li>
 </ul>
@@ -1208,53 +1207,47 @@ that share the edited header" is the difference between minutes and milliseconds
 <div class="sect2">
 <h3 id="_what_reparse_cleans">6.5. What Reparse Cleans</h3>
 <div class="paragraph">
-<p>There is a known gap here: CU reparse does not strip references that the CU&#8217;s previous
-parse contributed at <strong>included-file</strong> positions. The dedup mechanism hides this most of
-the time, but it surfaces when an included file&#8217;s content shifts between parses. The
-current pass machinery covers most shapes self-healingly; this section describes the
-mechanism, the residual gap, and the direction for closing it.</p>
+<p>When a compilation unit is reparsed, <code>removeReferenceableItemsForFile(CU)</code> strips
+references whose <code>position.file</code> is the CU. The reparse then re-emits those references
+from fresh parsing. References at <strong>other</strong> files' positions — typically header positions
+for declarations seen through <code>#include</code> — are not touched by this strip.</p>
 </div>
 <div class="paragraph">
-<p>The strip on reparse is scoped to the CU&#8217;s own positions. References that the CU&#8217;s
-previous parse contributed at included-file positions — declarations, inline
-definitions, type definitions seen through <code>#include</code> — are <strong>not</strong> touched. The reparse
-then adds fresh references; if the included file&#8217;s content has not shifted, the new
-references land at the same positions as the old and dedup collapses them.</p>
+<p>In principle this leaves a gap: each parse of an includer adds references at the
+header&#8217;s positions, but those positions aren&#8217;t cleared when the includer is reparsed.
+If a header&#8217;s content shifts, references at the <strong>previous</strong> header positions could
+linger alongside fresh ones at the new positions.</p>
 </div>
 <div class="paragraph">
-<p>The dedup key is <code>(linkName, includedFileNumber, type)</code>, not <code>(line, col)</code>. Two
-<code>UsageDeclared</code> references for the same symbol in the same included file but at
-different lines are <strong>distinct entries</strong> — dedup does not merge them. So the gap is
-invisible while included files are stable, and becomes visible the moment one shifts.</p>
-</div>
-<div class="paragraph">
-<p>When an included file&#8217;s content shifts between two parses of an includer CU — a
-declaration moves to a new line, a type gains a comment above it — the reparse adds
-references at the new positions while the old references survive at the old, now-stale
-positions. Anything that walks references at concrete positions (rename precheck,
-marker conversion) sees both, and the stale one fails or misleads.</p>
-</div>
-<div class="paragraph">
-<p>The current pass machinery covers most shapes of this self-healingly: when the included
-file is itself detected as stale, the cascading reparses re-emit references at correct
-positions and strip old ones along the way. The case that escapes is a stale reference
-at an included-file position whose owning CU is not visited by any pass during the
-operation — typically a CU that contributed the reference in a previous session, is
-neither preloaded nor a current sibling of the request file, and whose included file
-has since shifted on disk. Snapshot reload across sessions can also bring such
-references back.</p>
-</div>
-<div class="paragraph">
-<p>The candidate direction for closing this is to strip the transitive include closure of
-the CU being reparsed <strong>before</strong> the parse runs, so the reparse re-establishes references
-at all included-file positions from current content. Macro expansions defined and
-expanded entirely within included files, and preprocessor conditionals processed across
-multiple parser passes, need verification before this change lands.</p>
+<p>The dedup key in <code>addReferenceableToBrowsingMenu</code> is <code>(linkName, includedFileNumber,
+type)</code>, not <code>(line, col)</code>. Two <code>UsageDeclared</code> references for the same symbol in the
+same included file but at different lines would be <strong>distinct entries</strong> — dedup does not
+merge them.</p>
 </div>
 <div class="paragraph">
 <p>This concern is scoped to the in-memory reference table. Sessions on the browsing
 stack converge separately, lazily, on the next NEXT/PREVIOUS via the session-refresh
 mechanism.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+An investigation in May 2026 tried to reproduce the lingering-header-position
+scenario via a two-CU rename with the shared header swapped between parses. It did not
+reproduce: traces showed <code>UsageDeclared</code> entries did not accumulate at the v1 header
+position across the includer reparses leading up to the swap. An earlier write-up of
+this section attributed that to a "lexem cache" that replayed cached header tokens
+without driving yylex&#8217;s identifier branch — that attribution was wrong. There is no
+such cache today (<code>lexemstream.h</code> records <code>CACHED_STREAM</code> as removed). The mechanism
+that <strong>actually</strong> governs when and where header-position references get registered
+during includer reparses is still incompletely understood.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -1384,6 +1377,16 @@ the filesystem via mtime comparison.<br>
 <em>Avoid "disk db", "cache", "reference database"</em> when referring to the <code>.cx</code> files.
 A snapshot is not queryable (no search operations on disk), has no invalidation
 semantics (unlike a cache), and is not the source of truth (unlike a database).</p>
+</dd>
+<dt class="hdlist1">Preload</dt>
+<dd>
+<p>Editor-buffer content the client sends for files the user has modified but not yet
+saved, via <code>-preload &lt;filename&gt; &lt;tmpfile&gt;</code> arguments. The server reads the temp file
+into an <code>EditorBuffer</code> with its modification time. Preloaded buffers persist across
+requests; on each preload the server compares the new temp file&#8217;s mtime against the
+existing buffer&#8217;s to decide whether to reload content. Entry refresh then reparses
+any buffer whose mtime has advanced past <code>lastParsedMtime</code>. Unmodified files are not
+preloaded — the server reads disk directly.</p>
 </dd>
 <dt class="hdlist1">Project</dt>
 <dd>
@@ -2780,10 +2783,10 @@ mean that we need to:</p>
 <p>Clean up the command line options to follow this</p>
 </li>
 <li>
-<p>Create event structures to match each event and pass this to <code>server</code>, <code>xref</code> and <code>refactory</code></p>
+<p>Create event/request/operation structures to match each event and pass this to <code>server</code>, <code>xref</code> and <code>refactory</code></p>
 </li>
 <li>
-<p>Rebuild the main command loop to parse command line options into event structures</p>
+<p>Rebuild the main command loop to parse command line options into these structures</p>
 </li>
 </ul>
 </div>
@@ -2813,7 +2816,9 @@ hard to follow.</p>
 <td class="content">
 The auto-detect server path uses a unified flow where lightweight file structure
 scanning replaces the legacy <code>-create</code>/<code>callXref()</code> pattern (ADR 22). The legacy path
-(explicit <code>-xrefrc</code>) retains the older flow. See <a href="#unified-flow">Unified Server Flow (ADR 22)</a> below.
+runs when no project root was auto-detected — either because the <code>-xrefrc &lt;file&gt;</code>
+option was used, or because no <code>.c-xrefrc</code> was found near the request file. See
+<a href="#unified-flow">Unified Server Flow (ADR 22)</a> below.
 </td>
 </tr>
 </table>
@@ -3395,7 +3400,9 @@ startup is not acceptable.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>The paths are intertwined but different, making it hard to keep in your head which one you&#8217;re modifying. Making them more similar where possible would reduce cognitive load during refactoring work.</p>
+<p>The paths are intertwined but different, making it hard to keep in your head which one
+you&#8217;re modifying. Making them more similar were possible would reduce cognitive load
+during refactoring work.</p>
 </div>
 </div>
 </div>
@@ -3414,18 +3421,13 @@ startup is not acceptable.</p>
 <div class="sect2">
 <h3 id="_refactoring_and_the_parsers">8.18. Refactoring and the parsers</h3>
 <div class="paragraph">
-<p>Some refactorings need more detailed information about the code, maybe all do?</p>
-</div>
-<div class="paragraph">
-<p>One example, at least, is parameter manipulation.  Then the refactorer
-calls the appropriate parser (<code>serverEditParseBuffer()</code>) which
-collects information in the corresponding semantic actions.  This
-information is stored in various global variables, like
-<code>parameterBeginPosition</code>.</p>
-</div>
-<div class="paragraph">
-<p>The parser is filling out a ParsedInfo structure which conveys
-information that can be used e.g. when extracting functions etc.</p>
+<p>Some refactorings need detailed information about the code beyond what the in-memory
+reference table provides — for example, parameter manipulation needs the exact byte
+offsets of parameter declarations. The refactorer calls the parser via
+<code>parseBufferUsingServer()</code> to collect this information through the corresponding
+semantic actions. The collected information is stored in various global variables (for
+example, <code>parameterBeginPosition</code>) and in the <code>ParsedInfo</code> structure for use by
+extract operations and similar.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -3434,9 +3436,10 @@ information that can be used e.g. when extracting functions etc.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-At this point I don&#8217;t understand exactly how this interaction is
-performed, there seems to be no way to parse only appropriate parts,
-so the whole file need to be re-parsed.
+This <code>parseBufferUsingServer</code> bridge — and the global-variable communication
+channel — is targeted for removal; see "Remove <code>parseBufferUsingServer</code> Bridge" in
+<a href="17-major-codebase-improvements.adoc">Chapter 17</a> and "Replace Global <code>options</code>
+with Typed Requests" in the same chapter.
 </td>
 </tr>
 </table>
@@ -3458,11 +3461,29 @@ global variables and then inserts special lexems in the lexem stream</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>One example is how a Java 'move static method' was performed. It
-requires a target position. That position is transferred from command
-line options to global variables. When the Java parser was parsing a
-class or similar it (or rather the lexer) looks at that "ddtarget
-position information" and inserts a <code>OL_MARKER_TOKEN</code> in the stream.</p>
+<p>One example is how a 'Move Function' is performed. It requires a target position. That
+position is transferred from specific command line options to global variables. When a
+function is parsed it (or rather the lexer) looks at that "target position information"
+and inserts a <code>OL_MARKER_TOKEN</code> in the stream.</p>
+</div>
+<div class="sect3">
+<h4 id="_lexingscanning">8.18.1. Lexing/scanning</h4>
+<div class="paragraph">
+<p>Lexing/scanning is performed in two layers. <code>lexer.c</code> does the actual lexing into
+lexems, which are written into a lexembuffer — a sequence of encoded and compressed
+symbols, each starting with a <code>LexemCode</code> followed by a fixed set of attributes (e.g.
+<code>Position</code>).</p>
+</div>
+<div class="paragraph">
+<p>The higher-level "scanning" is performed, as usual, by <code>yylex.c</code>. <code>lexembuffer</code> defines
+functions to put and get lexems, chars, identifiers, integers, and positions.</p>
+</div>
+<div class="paragraph">
+<p>The put/get lexem functions currently take a pointer to a pointer to chars — the lexem
+stream inside the lexembuffer — which they also advance. This requires the caller to
+manage the LexemBuffer&#8217;s internal pointers and finally set them right when done. The
+direction is to pass a <code>LexemBuffer</code> directly; macro and define handling are the
+remaining cases where lexems are not put in a LexemBuffer.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -3471,69 +3492,26 @@ position information" and inserts a <code>OL_MARKER_TOKEN</code> in the stream.<
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-TODO: What extra "operation" the parsing should perform and return
-data for should be packaged into some type of "command" or parameter
-object that should be passed to the parser, rather than relying on
-global variables.
+This conversion is work-in-progress. Most "normal" usages are prepared to use the
+LexemBuffer&#8217;s pointers; macro/define handling is the holdout. See <code>TODO.org</code> for
+current status.
 </td>
 </tr>
 </table>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_reading_files">8.19. Reading Files</h3>
-<div class="paragraph">
-<p>Here are some speculations about how the complex file reading is structured.</p>
-</div>
-<div class="paragraph">
-<p>Each file is identified by a filenumber, which is an index into the
-file table, and seems to have a <code>lexBuffer</code> tied to it so that you can
-just continue from where ever you were. That in turn contains a
-<code>CharacterBuffer</code> that handles the actual character reading.</p>
-</div>
-<div class="paragraph">
-<p>And there is also an "editorBuffer"&#8230;&#8203;</p>
-</div>
-<div class="paragraph">
-<p>The intricate interactions between these are hard to follow as the code
-here are littered with short character names which are copies of fields
-in the structures, and infested with many macros, probably in an ignorant
-attempt at optimizing. ("The root of all evil is premature optimization" and
-"Make it work, make it right, make it fast".)</p>
-</div>
-<div class="paragraph">
-<p>It seems that everything start in <code>initInput()</code> in <code>yylex.c</code> where the
-only existing call to <code>fillFileDescriptor()</code> is made. But you might
-wonder why this function does some initial reading, this should be
-pushed down to the buffers in the file descriptor.</p>
-</div>
 <div class="sect3">
-<h4 id="_lexingscanning">8.19.1. Lexing/scanning</h4>
+<h4 id="_semantic_information">8.18.2. Semantic information</h4>
 <div class="paragraph">
-<p>Lexing/scanning is performed in two layers, one in <code>lexer.c</code> which
-seems to be doing the actual lexing into lexems which are put in a
-lexembuffer. This contains a sequence of encoded and compressed
-symbols which first has a <code>LexemCode</code> which is followed by extra data,
-like <code>Position</code>. These seems to always be added but not always necessary.</p>
+<p>Refactorings need semantic information beyond what the in-memory reference table holds
+— for example, byte offsets of block and function boundaries needed to verify that an
+editor region selected for "Extract Function" does not cross a block break. This
+information is collected when the refactoring entry calls <code>parseBufferUsingServer()</code> to
+drive a full parse over the buffer of interest; the parser&#8217;s semantic actions populate
+dedicated structures.</p>
 </div>
 <div class="paragraph">
-<p>The higher level "scanning" is performed, as per ususal,
-by <code>yylex.c</code>. <code>lexembuffer</code> defines some functions to put and get
-lexems, chars (identifiers and file names?) as well as integers and
-positions.</p>
-</div>
-<div class="paragraph">
-<p>At this point the put/get lexem functions take a pointer to a pointer
-to chars (which presumably is the lexem stream in the lexembuffer)
-which it also advances. This requires the caller to manage the
-LexemBuffer&#8217;s internal pointers outside and finally set them right
-when done.</p>
-</div>
-<div class="paragraph">
-<p>It would be much better to call the "putLexem()"-functions with a
-lexemBuffer but there seems to be a few cases where the destination
-(often <code>dd</code>) is not a lexem stream inside a lexemBuffer. These might
-be related to macro handling.</p>
+<p>Two structures currently hold this information; the main one is <code>parsedInfo</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -3542,35 +3520,17 @@ be related to macro handling.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-This is a work-in-progress.  Currently most of the "normal"
-usages are prepared to use the LexemBuffer&#8217;s pointers.  But the
-handling of macros and defines are cases where the lexems are not put
-in a LexemBuffer.  See the TODO.org for current status of this Mikado
-sequence.
+<code>parsedInfo</code> is one of the structures targeted for unification under
+"Replace Global <code>options</code> with Typed Requests" in
+<a href="17-major-codebase-improvements.adoc">Chapter 17</a>.
 </td>
 </tr>
 </table>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_semantic_information">8.19.2. Semantic information</h4>
-<div class="paragraph">
-<p>As the refactoring functions need some amount of semantic information,
-in the sense of information gathered during parsing, this information
-is collected in various ways when <code>c-xref</code> calls the "sub-task" to do
-the parsing required.</p>
-</div>
-<div class="paragraph">
-<p>Two structures hold information about various things, among which are
-the memory index at certain points of the parsing. Thus it is possible
-to verify e.g. that a editor region does not cover a break in block or
-function structure. This structure is, at the point of writing, called
-<code>parsedInfo</code> and definitely need to be tidied up.</p>
-</div>
-</div>
 </div>
 <div class="sect2">
-<h3 id="_reference_database">8.20. Reference Database</h3>
+<h3 id="_reference_database">8.19. Reference Database</h3>
 <div class="paragraph">
 <p>See the <strong>Cxref</strong> component (in-memory reference tables and symbol resolution) and the <strong>Cxfile</strong> component (on-disk database format and reading) in the <a href="08-components.html">Components</a> chapter.</p>
 </div>
@@ -3588,18 +3548,14 @@ The architectural direction for <code>cxfile.c</code> is documented in <a href="
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_plugin">8.21. Editor Plugin</h3>
+<h3 id="_editor_plugin">8.20. Editor Plugin</h3>
 <div class="paragraph">
-<p>The editor plugin has three different responsibilities:</p>
+<p>The editor plugin serve as the UI for the user when interacting with the <code>c-xref</code> server.</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>serve as the UI for the user when interacting with certain <code>c-xref</code>
-related functions</p>
-</li>
-<li>
-<p>query <code>c-xref server</code> for symbol references and support navigating
+<p>query for symbol references and support navigating
 these in the source</p>
 </li>
 <li>
@@ -3609,24 +3565,20 @@ resulting edits</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>Basically Emacs (and probably other editors) starts <code>c-xref</code> in
-"server-mode" using <code>-server</code> which connects the editor
-with <code>c-xref</code> through stdout/stdin. If you have <code>(setq
-c-xref-debug-mode t)</code> this command is logged in the <code>*Messages*</code> buffer
-with the prefix "calling:".</p>
+<p>Emacs (and other clients) starts <code>c-xref</code> in "server-mode" using <code>-server</code> which
+connects the editor with <code>c-xref</code> through stdout/stdin. If you have <code>(setq
+c-xref-debug-mode t)</code> this command is logged in the <code>*Messages*</code> buffer with the prefix
+"calling:".</p>
 </div>
 <div class="paragraph">
-<p>Commands are sent from the editor to the server on its standard input.
-They looks very much like normal command line options, and in fact
-<code>c-xref</code> will parse that input in the same way using the same
-code. When the editor sends an <code>end-of-options</code> line, the server will
-start executing whatever was sent, and return some information in the
-file given as an <code>-o</code> option when the editor starts the <code>c-xref</code>
-server process. The file is named and created by the editor and
-usually resides in <code>/tmp</code>. With <code>c-xref-debug-mode</code> set to on this is
-logged as "sending:". If you <code>(setq c-xref-debug-preserve-tmp-files
-t)</code> Emacs will also not delete the temporary files it creates so that
-you can inspect them afterwards.</p>
+<p>Commands are sent from the editor to the server on its standard input.  They are normal
+command line options, and in fact <code>c-xref</code> will parse that input in the same way using
+the same code. When the editor sends an <code>end-of-options</code> line, the server will start
+executing whatever was sent, and return some information in the file given as an <code>-o</code>
+option when the editor starts the <code>c-xref</code> server process. The file is named and created
+by the editor and usually resides in <code>/tmp</code>. With <code>c-xref-debug-mode</code> set to on this is
+logged as "sending:". If you <code>(setq c-xref-debug-preserve-tmp-files t)</code> Emacs will also
+not delete the temporary files it creates so that you can inspect them afterwards.</p>
 </div>
 <div class="paragraph">
 <p>When the server has finished processing the command and placed the
@@ -3637,60 +3589,50 @@ output in the output file it sends a <code>&lt;sync&gt;</code> reply.</p>
 what it needs to do with it ("dispatching:").</p>
 </div>
 <div class="sect3">
-<h4 id="_invocations">8.21.1. Invocations</h4>
+<h4 id="_buffers">8.20.1. Buffers</h4>
 <div class="paragraph">
-<p>The editor invokes a new <code>c-xref</code> process for the following cases:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Refactoring</p>
-<div class="paragraph">
-<p>Each refactoring operation calls a new instance of <code>c-xref</code>?</p>
-</div>
-</li>
-<li>
-<p>Create Project</p>
-<div class="paragraph">
-<p>When a <code>c-xref</code> function is executed in the editor and there is no
-project covering that file, an interactive "create project" session is
-started, which is run by a separate <code>c-xref</code> process.</p>
-</div>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_buffers">8.21.2. Buffers</h4>
-<div class="paragraph">
-<p>There is some magical editor buffer management happening inside of
-<code>c-xref</code> which is not clear to me at this point. Basically it looks
-like the editor-side tries to keep the server in sync with which
-buffers are opened with what file&#8230;&#8203;</p>
+<p>The server tracks editor-buffer state via the <code>-preload &lt;filename&gt; &lt;tmpfile&gt;</code> option:
+the editor writes the in-memory buffer content to <code>&lt;tmpfile&gt;</code> and tells the server to
+treat that file&#8217;s content (and modification time) as the authoritative version of
+<code>&lt;filename&gt;</code>. The server creates an <code>EditorBuffer</code> accordingly and uses it in place of
+the on-disk file for parsing and reference creation.</p>
 </div>
 <div class="paragraph">
-<p>At this point I suspect that <code>-preload &lt;file1&gt; &lt;file2&gt;</code> means that the
-editor has saved a copy of <code>&lt;file1&gt;</code> in <code>&lt;file2&gt;</code> and requests the server
-to set up a "buffer" describing that file and use it instead of the
-<code>&lt;file1&gt;</code> that recides on disk.</p>
+<p>This is essential during refactoring: the buffer the user is editing typically
+diverges from disk content, and the server must work against the buffer to produce
+edits that match what the user sees.</p>
 </div>
 <div class="paragraph">
-<p>This is essential when doing refactoring since the version of the file
-most likely only exists in the editor, so the editor has to tell the
-server the current content somehow, this is the <code>-preload</code> option.</p>
+<p>The client only preloads modified buffers — unmodified files are not preloaded even if
+they are open in the editor. The server then instead reads the files directly from
+disk. Preloaded buffers, meaning modified files open in the editor, are persisted in the
+server across requests until the client stops sending them.  See "Preload" in
+<a href="06-principles.adoc">Principles</a> for the full lifecycle, including the per-preload
+mtime check and the connection to entry refresh.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_server">8.22. Editor Server</h3>
+<h3 id="_editor_server">8.21. Editor Server</h3>
 <div class="paragraph">
-<p>When serving an editor the c-xrefactory application is divided into
-the server, <em>c-xref</em> and the editor part, at this point only Emacs:en
-are supported so that&#8217;s implemented in the
-<code>editor/Emacs</code>-packages.</p>
+<p>When serving an editor the c-xrefactory application is divided into the server, <em>c-xref</em>
+and the editor part, at this point only Emacs:en are fully supported implemented in the
+<code>editor/emacs</code>-packages.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+An experimental LSP (Language Server Protocol) implementation exists.
+</td>
+</tr>
+</table>
 </div>
 <div class="sect3">
-<h4 id="_interaction">8.22.1. Interaction</h4>
+<h4 id="_interaction">8.21.1. Interaction</h4>
 <div class="paragraph">
 <p>The initial invocation of the edit server creates a process with which
 communication is over stdin/stdout using a protocol which from the editor
@@ -3724,10 +3666,10 @@ copy the content of such an output file to a separate temporary file
 before re-using it.</p>
 </div>
 <div class="paragraph">
-<p>For some interactions the editor starts a completely new and fresh
-<code>c-xref</code> process, see below. And actually you can&#8217;t do refactorings
-using the server, they have to be separate calls. (Yes?) I have yet to
-discover why this design choice was made.</p>
+<p>The c-xref server is long-lived: the same process persists across requests for a
+project. The editor starts a new process on first contact with a project, and on
+project switch (<code>c-xref-kill-xref-process</code> sends <code>-exit</code> before killing the old
+process).</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -3736,16 +3678,32 @@ discover why this design choice was made.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-There are many things in the sources that handles refactorings
-separately, such as <code>refactoring_options</code>, which is a separate copy of
-the options structure used only when refactoring.
+Refactorings used to spawn a separate <code>-refactory</code> process per operation;
+that mechanism was removed in 2026-03 — all refactorings now run as server
+operations. See <a href="21-archive.adoc">Archive</a> for the historical two-process model.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Some refactoring state still lives in dedicated structures inherited from the
+two-process era — e.g. <code>refactoring_options</code>, a separate copy of the options struct
+used only during refactoring. Folding these into a unified options model is covered
+in "Replace Global <code>options</code> with Typed Requests" in
+<a href="17-major-codebase-improvements.adoc">Chapter 17</a>.
 </td>
 </tr>
 </table>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_protocol">8.22.2. Protocol</h4>
+<h4 id="_protocol">8.21.2. Protocol</h4>
 <div class="paragraph">
 <p>Communication between the editor and the server is performed using
 text through standard input/output to/from <em>c-xref</em>. The protocol is
@@ -3776,7 +3734,7 @@ utf-8. This means that lengths need to indicate <em>characters</em> not bytes.</
 </div>
 </div>
 <div class="sect3">
-<h4 id="_invocation_of_server">8.22.3. Invocation of server</h4>
+<h4 id="_invocation_of_server">8.21.3. Invocation of server</h4>
 <div class="paragraph">
 <p>The editor fires up a server and keeps talking over the established
 channel (elisp function 'c-xref-start-server-process'). This probably
@@ -3819,7 +3777,7 @@ elisp-sources.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_communication_protocol">8.22.4. Communication Protocol</h4>
+<h4 id="_communication_protocol">8.21.4. Communication Protocol</h4>
 <div class="paragraph">
 <p>The editor server is started using the appropriate command line option
 and then it keeps the communication over stdin/stdout open.</p>
@@ -3846,30 +3804,22 @@ the following output</p>
 </div>
 </div>
 <div class="paragraph">
-<p>As we can see from this interaction, the server will handle (all?)
-input as a command line and manage the options as if it was a command
-line invocation.</p>
+<p>As we can see from this interaction, the server will handle input as command lines and
+manage the options as if it was a command line invocation.</p>
 </div>
 <div class="paragraph">
 <p>This explains the intricate interactions between the main program and
 the option handling.</p>
 </div>
-<div class="paragraph">
-<p>The reason behind this might be that a user of the editor might be
-editing files on multiple projects at once, so every
-interrogation/operation needs to clearly set the context of that
-operation, which is what a user would do with the command line
-options.</p>
-</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_refactoring">8.23. Refactoring</h3>
+<h3 id="_refactoring">8.22. Refactoring</h3>
 <div class="paragraph">
 <p>See the <strong>Refactory</strong> and <strong>Extract</strong> components in the <a href="08-components.html">Components</a> chapter for the architecture and operation flow.</p>
 </div>
 <div class="sect3">
-<h4 id="_refactoring_protocol_details">8.23.1. Refactoring Protocol Details</h4>
+<h4 id="_refactoring_protocol_details">8.22.1. Refactoring Protocol Details</h4>
 <div class="paragraph">
 <p>The refactoring protocol messages exchanged between the refactory process and the editor:</p>
 </div>
@@ -3935,7 +3885,7 @@ options.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_memory_handling">8.24. Memory handling</h3>
+<h3 id="_memory_handling">8.23. Memory handling</h3>
 <div class="paragraph">
 <p>c-xrefactory uses custom memory management via arena allocators rather than malloc/free for performance-critical operations.</p>
 </div>
@@ -3946,7 +3896,7 @@ options.</p>
 <p>For debugging memory issues, especially arena lifetime violations, see the <a href="#development-environment">Development Environment</a> chapter.</p>
 </div>
 <div class="sect3">
-<h4 id="_the_memory_type">8.24.1. The Memory Type</h4>
+<h4 id="_the_memory_type">8.23.1. The Memory Type</h4>
 <div class="paragraph">
 <p>Memory allocation is managed through the <code>Memory</code> structure, which implements an arena/bump allocator. Different memory arenas serve different purposes:</p>
 </div>
@@ -3974,7 +3924,7 @@ options.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_option_memory">8.24.2. Option Memory</h4>
+<h4 id="_option_memory">8.23.2. Option Memory</h4>
 <div class="paragraph">
 <p>The <code>optMemory</code> arena requires special handling because <code>Options</code> structures are copied during operation. When copying, all pointers into option memory must be adjusted to point into the target structure&#8217;s memory area, not the source&#8217;s.</p>
 </div>
@@ -3996,7 +3946,7 @@ The linked list nodes themselves are allocated in the Options structure&#8217;s 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration">8.25. Configuration</h3>
+<h3 id="_configuration">8.24. Configuration</h3>
 <div class="paragraph">
 <p>The legacy <code>c-xref</code> normally, in "production", uses a common configuration file in the
 users home directory, <code>.c-xrefrc</code>. When a new project is defined its options will be
@@ -4014,20 +3964,20 @@ line each. These are always read, unless <code>-no-stdop</code> is used, before 
 allows for different "default" options for each project.</p>
 </div>
 <div class="sect3">
-<h4 id="_options">8.25.1. Options</h4>
+<h4 id="_options">8.24.1. Options</h4>
 <div class="paragraph">
 <p>There are three possible sources for options.</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Configuration files (~/.c-xrefrc)</p>
+<p>Command line options at invocation</p>
 </li>
 <li>
-<p>Command line options at invocation, including server</p>
+<p>Configuration files (the projects <code>.c-xrefrc</code> or <code>~/.c-xrefrc</code>)</p>
 </li>
 <li>
-<p>Piped options sent to the server in commands</p>
+<p>"Piped" options sent to the server in commands/requests</p>
 </li>
 </ul>
 </div>
@@ -4037,21 +3987,22 @@ allows for different "default" options for each project.</p>
 <div class="paragraph">
 <p>All options sources uses exactly the same format so that the same code for decoding them can be used.</p>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_logic">8.25.2. Logic</h4>
 <div class="paragraph">
-<p>When the editor has a file open it needs to "belong" to a project. The
-logic for finding which is very intricate and complicated.</p>
-</div>
-<div class="paragraph">
-<p>In this code there is also checks for things like if the file is
-already in the index, if the configuration file has changed since last
-time, indicating there are scenarios that are more complicated (the
-server, obviously).</p>
+<p>When the client first operates on a file, the server determines which project it belongs
+to. On the auto-detect path the server walks upward from the file&#8217;s path looking for a
+project-local <code>.c-xrefrc</code>, and the directory containing it becomes the project root
+(<code>detectedProjectRoot</code>). If no project-local <code>.c-xrefrc</code> is found, the legacy path takes
+over: the user&#8217;s home <code>~/.c-xrefrc</code> is consulted (or a file given by <code>-xrefrc &lt;file&gt;</code>),
+and <code>-p &lt;name&gt;</code> selects which project section within it applies. <code>-p</code> is required in
+either form because both files can hold multiple project sections. The <code>-getproject</code>
+operation drives discovery and reports the result back to the editor.</p>
 </div>
 <div class="paragraph">
-<p>But I also think this code should be simplified a lot.</p>
+<p>The configuration is re-checked on each request: the <code>.c-xrefrc</code> modification time is
+compared against the loaded version, and if it has changed, <code>reloadProjectConfig()</code>
+re-reads the file and the project scan re-runs with the updated <code>includeDirs</code>. This
+keeps the in-memory project description aligned with on-disk config without requiring
+a server restart.</p>
 </div>
 </div>
 </div>
@@ -4965,8 +4916,28 @@ necessary.</p>
 <div class="sect3">
 <h4 id="_overview">10.2.1. Overview</h4>
 <div class="paragraph">
-<p>The refresh has three passes, each addressing a different source of staleness.
-Pass ordering is critical — later passes depend on data refreshed by earlier ones.</p>
+<p>The refresh covers two distinct concerns:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Buffer-driven refresh</strong> (Passes 1 and 2) handles modifications the client has
+signaled via preload — any preloaded editor buffer whose <code>modificationTime</code> has
+advanced past <code>lastParsedMtime</code>. It iterates the editor-buffer table. Pass 1
+reparses stale CU buffers; Pass 2 cascades from stale header buffers to their
+includer CUs.</p>
+</li>
+<li>
+<p><strong>Request-relative coverage</strong> (Pass 3) handles what the request needs to see.
+It iterates the file table to find sibling CUs of the request file that need
+parsing — either never parsed yet, or stale on disk.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Both run before the operation dispatches, but they&#8217;re answering different questions
+and live in separate calls. Within buffer-driven refresh, Pass 1 must precede Pass 2;
+see Pass 2 for the rationale.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4976,20 +4947,23 @@ Pass ordering is critical — later passes depend on data refreshed by earlier o
   ├─ closeEditorBuffersNoLongerPreloaded()   ← ghost buffer pruning
   │
   ├─ IF projectContextInitialized:
-  │   reparseStalePreloadedFiles(baseArgs)
+  │   reparseStalePreloadedFiles(baseArgs)            ← buffer-driven
   │   │
   │   ├─ Pass 1: reparse stale CUs
   │   │   FOR each editor buffer WHERE fileNumberIsStale():
   │   │     IF isCompilationUnit: reparseStaleFile()
   │   │
-  │   ├─ Pass 2: reparse includers of stale headers
-  │   │   FOR each editor buffer WHERE fileNumberIsStale():
-  │   │     IF NOT isCompilationUnit (i.e. header):
-  │   │       collectIncludersOfStaleHeader() → list of CU file numbers
-  │   │   FOR each collected CU: reparseStaleFile()
+  │   └─ Pass 2: reparse includers of stale headers
+  │       FOR each editor buffer WHERE fileNumberIsStale():
+  │         IF NOT isCompilationUnit (i.e. header):
+  │           collectIncludersOfStaleHeader() → list of CU file numbers
+  │       FOR each collected CU: reparseStaleFile()
+  │
+  ├─ IF projectContextInitialized AND hasInputFile AND auto-detect path:
+  │   parseUnparsedSiblingCUs(requestFileNumber, baseArgs)   ← request-relative (Pass 3)
   │   │
-  │   └─ Pass 3: parse unparsed sibling CUs (cold start)
-  │       Find CUs sharing headers with request file but never parsed
+  │   └─ Find CUs sharing headers with the request file that need parsing
+  │       (never parsed, or mtime past lastParsedMtime)
   │       FOR each: reparseStaleFile()
   │
   └─ dispatch operation</code></pre>
@@ -7807,106 +7781,91 @@ include path (read-only).</p>
 <div class="sect3">
 <h4 id="_background_6">16.1.1. Background</h4>
 <div class="paragraph">
-<p>The <code>cxfile</code> module was designed when the disk database was the source of truth. The <code>.cx</code> files were not just a cache — they <em>were</em> the reference database. Operations like "show all references to symbol X" or "find unused symbols" were implemented as table-driven scans over the <code>.cx</code> file format: hash the symbol name to find the right partition, stream through it, apply a per-operation filter callback. This was efficient for the batch cross-referencer that c-xrefactory evolved from, where the workflow was <code>c-xref -create</code> → <code>c-xref -update</code> → query the on-disk database.</p>
+<p>The <code>cxfile</code> module was designed when the <code>.cx</code> files on disk were the reference database. Operations like "show all references to symbol X" or "find unused symbols" were table-driven scans over the disk format — hash the symbol name, stream the right partition, apply a per-operation filter. This was efficient for the batch cross-referencer that c-xrefactory evolved from, where the workflow was <code>c-xref -create</code> → <code>c-xref -update</code> → query the on-disk database.</p>
 </div>
 <div class="paragraph">
-<p>With the shift toward memory-as-truth (<a href="15-roadmap.adoc">Chapter 15: Roadmap</a>), the in-memory <code>referenceableItemTable</code> is becoming the authoritative source, and <code>.cx</code> files are becoming a startup snapshot. But <code>cxfile.c</code> still carries the old design: it combines disk I/O with operation-specific filtering logic, and several operations still bypass the in-memory table to read from disk directly.</p>
+<p>Under memory-as-truth (<a href="15-roadmap.adoc">Chapter 15</a>), all operations now read from the in-memory <code>referenceableItemTable</code>; the <code>.cx</code> files serve only as a startup snapshot.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_interface">16.1.2. Current Interface</h4>
+<h4 id="_status">16.1.2. Status</h4>
 <div class="paragraph">
-<p>The public interface (<code>cxfile.h</code>) reflects this mixed heritage:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Generic persistence — correct level
-extern bool loadFileNumbersFromStore(void);
-extern void ensureReferencesAreLoadedFor(char *symbolName);
-extern void saveReferencesToStore(bool updating, char *name);
-
-// Operation-specific scanning — wrong level
-extern void scanReferencesToCreateMenu(char *symbolName);
-extern void scanForMacroUsage(char *symbolName);
-extern void scanForGlobalUnused(char *cxrefFileName);
-extern void scanForSearch(char *cxrefFileName);
-
-// Implementation details leaked
-extern int cxFileHashNumberForSymbol(char *symbol);
-extern void searchSymbolCheckReference(ReferenceableItem *item, Reference *ref);</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The four <code>scan*</code> functions read directly from disk <code>.cx</code> files and merge results into the in-memory <code>referenceableItemTable</code>. Each encodes a specific use case (menu creation, macro completion, unused detection, symbol search) that a storage module shouldn&#8217;t know about.</p>
-</div>
-<div class="paragraph">
-<p>The <code>ensureReferencesAreLoadedFor</code> function is the right pattern: load from disk into memory, then let the caller query memory. The <code>scan*</code> functions bypass this by combining load + filter in one step.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_whats_already_changing">16.1.3. What&#8217;s Already Changing</h4>
-<div class="paragraph">
-<p>With the memory-as-truth direction (<a href="15-roadmap.adoc">Chapter 15</a>), <code>cxfile.c</code> is already shrinking in importance:</p>
+<p>The major cleanup is complete. The operation-specific disk scanners have been removed, replaced by in-memory walks:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><strong><code>loadFileNumbersFromStore()</code></strong> — used at startup, stays as-is</p>
+<p><code>scanForGlobalUnused</code> — unused-symbol detection</p>
 </li>
 <li>
-<p><strong><code>saveReferencesToStore()</code></strong> — needed for snapshot writes, stays as-is</p>
+<p><code>scanForSearch</code> — project-wide search</p>
 </li>
 <li>
-<p><strong><code>ensureReferencesAreLoadedFor()</code></strong> — called 4 times (server.c, xref.c, move_function.c) to load include refs from disk db; becomes unnecessary once all include refs come from lightweight scan + full parse</p>
+<p><code>scanReferencesToCreateMenu</code> — browsing menu construction</p>
 </li>
 <li>
-<p><strong><code>scanReferencesToCreateMenu()</code></strong> — called from cxref.c for browsing menus; currently reads from disk, should read from in-memory table instead</p>
+<p><code>scanForMacroUsage</code> — macro expansion file lookup</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The disk-load helper that fed several of them has also been removed:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ensureReferencesAreLoadedFor</code> — include-refs disk load; obsolete once include refs come from the lightweight scan and full parsing</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A disk-read tripwire in <code>scanCxFile</code> asserts that no <code>.cx</code> read happens after the initial snapshot load. See "Memory As Truth" in <a href="06-principles.adoc">Principles</a>.</p>
+</div>
+<div class="paragraph">
+<p>The current public interface in <code>cxfile.h</code> is:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>loadSnapshotFromStore</code>, <code>loadFileNumbersFromStore</code> — startup loaders</p>
 </li>
 <li>
-<p><strong><code>scanForMacroUsage()</code></strong> — called from server.c for macro completion; same issue</p>
+<p><code>saveReferencesToStore</code> — snapshot writer</p>
 </li>
 <li>
-<p><strong><code>scanForGlobalUnused()</code></strong> — called from cxref.c; bulk scan, reasonable to keep in cxfile but should use visitor pattern</p>
+<p><code>cxFileHashNumberForSymbol</code> — partition-hash helper</p>
 </li>
 <li>
-<p><strong><code>scanForSearch()</code></strong> — called from cxref.c; same as above</p>
+<p><code>searchSymbolCheckReference</code> — per-reference search matcher</p>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_incremental_steps">16.1.4. Incremental Steps</h4>
+<h4 id="_remaining">16.1.3. Remaining</h4>
 <div class="paragraph">
-<p>These are independent improvements, not a phased plan:</p>
+<p>Two small interface tightenings — not major improvements, but worth listing as known loose ends:</p>
 </div>
-<div class="paragraph">
-<p><strong>Make <code>cxFileHashNumberForSymbol</code> static.</strong> It&#8217;s a partitioning implementation detail. Only called internally and from one external site that can be rerouted.</p>
-</div>
-<div class="paragraph">
-<p><strong>Make <code>searchSymbolCheckReference</code> static.</strong> Move the search matching logic to the caller (<code>search.c</code> already exists). The storage layer shouldn&#8217;t know about search string matching.</p>
-</div>
-<div class="paragraph">
-<p><strong>Replace <code>scanReferencesToCreateMenu</code> and <code>scanForMacroUsage</code> with in-memory queries.</strong> Both load a symbol&#8217;s references from disk and then filter them. With entry refresh populating the in-memory table, these should query <code>referenceableItemTable</code> directly — the data is already there. <code>ensureReferencesAreLoadedFor</code> can serve as the fallback if the symbol hasn&#8217;t been loaded yet.</p>
-</div>
-<div class="paragraph">
-<p><strong>Convert <code>scanForGlobalUnused</code> and <code>scanForSearch</code> to visitor pattern.</strong> These need to scan all symbols, not just one — a bulk operation that makes sense as a generic <code>scanAllReferences(visitor, context)</code> function. The visitor decides what to do with each item (check for unused, match search pattern). The operation-specific logic moves to the callers.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Make <code>cxFileHashNumberForSymbol</code> static.</strong> It&#8217;s a partitioning implementation detail; the single external use (menu sorting in cxref.c) can be rerouted.</p>
+</li>
+<li>
+<p><strong>Make <code>searchSymbolCheckReference</code> static.</strong> The per-reference search matcher belongs in <code>search.c</code>. Moving it removes the last reason the storage module needs to know about search string matching.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_references">16.1.5. References</h4>
+<h4 id="_references">16.1.4. References</h4>
 <div class="ulist">
 <ul>
 <li>
 <p><code>src/cxfile.h</code>, <code>src/cxfile.c</code> — current implementation</p>
 </li>
 <li>
-<p><code>src/search.c</code> — already exists, natural home for search matching logic</p>
-</li>
-<li>
-<p><code>src/cxref.c</code> — main caller of scan functions (lines 863, 1515, 1709, 1938)</p>
-</li>
-<li>
-<p><code>src/server.c</code> — calls <code>scanForMacroUsage</code> (line 83) and <code>ensureReferencesAreLoadedFor</code> (lines 238, 330)</p>
+<p><code>src/search.c</code> — natural home for search matching logic</p>
 </li>
 </ul>
 </div>
@@ -8679,7 +8638,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_incremental_steps_2">16.4.5. Incremental Steps</h4>
+<h4 id="_incremental_steps">16.4.5. Incremental Steps</h4>
 <div class="paragraph">
 <p>Each step is independently shippable. No grand rewrite.</p>
 </div>
@@ -9920,240 +9879,41 @@ Client preloading behavior and stale file detection are now documented in <a hre
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The "Architectural Invariants" and "RefactoryMode Internally Calls XrefMode"
-sections have been moved to <a href="21-archive.adoc">Archive</a>. The invariants described a
-model where the disk database was the source of truth; as of 2026-03, the in-memory
-reference table is authoritative (see <a href="06-principles.adoc">Principles</a>).
+Several sections describing pre-memory-as-truth behaviour have been moved to
+<a href="21-archive.adoc">Archive</a>:
 </td>
 </tr>
 </table>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_the_lastparsedmtime_optimization_and_refactoring_conflict">19.3. The lastParsedMtime Optimization and Refactoring Conflict</h3>
-<div class="paragraph">
-<p>Date: 2025-01-21</p>
-</div>
-<div class="sect3">
-<h4 id="_problem_discovery">19.3.1. Problem Discovery</h4>
-<div class="paragraph">
-<p>When implementing staleness detection for navigation (refreshing references when files are modified), we added an optimization to <code>server.c</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// After parsing with preload, update lastParsedMtime
-if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
-    FileItem *fileItem = getFileItemWithFileNumber(parsingConfig.fileNumber);
-    fileItem-&gt;lastParsedMtime = buffer-&gt;modificationTime;
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This optimization prevents navigation from thinking a file is "stale" immediately after parsing it with preloaded content.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_the_conflict">19.3.2. The Conflict</h4>
-<div class="paragraph">
-<p>This broke refactoring operations (<code>test_delete_parameter_with_preload</code>). The problem:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Server parses with preload</strong> → In-memory references have correct positions (e.g., line 3)</p>
-</li>
-<li>
-<p><strong><code>lastParsedMtime</code> updated</strong> → File marked as "freshly parsed"</p>
-</li>
-<li>
-<p><strong>Refactoring triggers <code>callXref()</code></strong> → xref checks timestamps</p>
-</li>
-<li>
-<p><strong>xref sees <code>editorFileModificationTime() == lastParsedMtime</code></strong> → Concludes "file already indexed"</p>
-</li>
-<li>
-<p><strong>xref skips re-indexing</strong> → Persistent <code>.cx</code> keeps old positions (e.g., line 2)</p>
-</li>
-<li>
-<p><strong>Refactoring uses stale <code>.cx</code> data</strong> → Wrong positions, operation fails</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_root_cause_two_sources_of_truth">19.3.3. Root Cause: Two Sources of Truth</h4>
-<div class="paragraph">
-<p>The architecture has two sources of references:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>In-memory references</strong> (ReferenceableItemTable) - populated by parsing, used by navigation</p>
-</li>
-<li>
-<p><strong>Persistent .cx database</strong> - populated by xref, used by refactoring</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>The <code>lastParsedMtime</code> optimization conflated these:
-* It correctly told navigation "in-memory is current"
-* But incorrectly told xref "persistent database is current" (when it wasn&#8217;t)</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_the_workaround">19.3.4. The Workaround</h4>
-<div class="paragraph">
-<p>Exclude refactoring operations from the optimization:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL
-    &amp;&amp; options.serverOperation != OP_RENAME
-    &amp;&amp; options.serverOperation != OP_ARGUMENT_MANIPULATION
-    &amp;&amp; options.serverOperation != OP_SAFETY_CHECK) {
-    fileItem-&gt;lastParsedMtime = buffer-&gt;modificationTime;
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This allows:
-* Navigation to use the optimization (in-memory is sufficient)
-* Refactoring to trigger xref re-indexing (reads preload, updates .cx correctly)</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_architectural_lesson">19.3.5. Architectural Lesson</h4>
-<div class="paragraph">
-<p>This workaround highlights the fundamental tension: <strong>navigation and refactoring use different sources of truth</strong>. The proper fix is <a href="/workspace/decisions#14">ADR-0014</a>'s unified on-demand architecture where both use the same in-memory reference database, eliminating the need for <code>callXref()</code> entirely.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_related">19.3.6. Related</h4>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="/workspace/decisions#14">ADR-0014</a>: Adopt On-Demand Parsing Architecture</p>
+<p>"Architectural Invariants" and "RefactoryMode Internally Calls XrefMode" — the
+invariants described a model where the disk database was the source of truth.</p>
 </li>
 <li>
-<p>Section 17.2: Unified Symbol Database Architecture</p>
+<p>"The lastParsedMtime Optimization and Refactoring Conflict" — the workaround it
+describes is no longer needed; under server-side refactoring, <code>callXref()</code> is not
+in the refactoring path and entry refresh keeps both navigation and refactoring on
+the same in-memory table.</p>
 </li>
 <li>
-<p>Section 11: Server-Side Refactoring (in Algorithms chapter)</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_stale_file_refresh_and_cross_file_references">19.4. Stale File Refresh and Cross-File References</h3>
-<div class="paragraph">
-<p>Date: 2025-01-29 (Updated: 2026-01-29)</p>
-</div>
-<div class="sect3">
-<h4 id="_stale_detection">19.4.1. Stale Detection</h4>
-<div class="paragraph">
-<p>When navigating (PUSH/NEXT), the server detects if the current file is "stale" by comparing:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>fileItem&#8594;lastParsedMtime</code> (from disk database or last parse)</p>
-</li>
-<li>
-<p><code>buffer&#8594;modificationTime</code> (from preloaded editor buffer)</p>
+<p>"Stale File Refresh and Cross-File References" — describes
+<code>refreshStaleReferencesInSession()</code>, no longer in the source. Current refresh is
+lazy via <code>needsBrowsingStackRefresh</code> and <code>updateSessionReferencesForFile</code> (see
+<a href="11-algorithms.adoc">Chapter 11</a>). The dedup-key insight from that section is
+preserved in "What Reparse Cleans" in <a href="06-principles.adoc">Principles</a>.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>If <code>buffer&#8594;modificationTime &gt; lastParsedMtime</code>, the file is considered stale and <code>refreshStaleReferencesInSession()</code> is called.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_the_refresh_algorithm">19.4.2. The Refresh Algorithm</h4>
-<div class="paragraph">
-<p><code>refreshStaleReferencesInSession()</code> in <code>cxref.c</code> must preserve cross-file references while updating references from the modified file:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><code>removeReferenceableItemsForFile()</code> - remove old refs from in-memory table</p>
-</li>
-<li>
-<p><code>parseToCreateReferences()</code> - re-parse with preload, add fresh refs to in-memory table</p>
-</li>
-<li>
-<p>Remove stale-file refs from menu - preserves cross-file refs, removes outdated positions</p>
-</li>
-<li>
-<p><code>extendBrowsingMenuWithReferences()</code> - merge fresh refs from in-memory table</p>
-</li>
-<li>
-<p>Mark file as freshly parsed (<code>lastParsedMtime = buffer&#8594;modificationTime</code>)</p>
-</li>
-<li>
-<p><code>recomputeSelectedReferenceable()</code> - rebuild session&#8217;s reference list from updated menu</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong>Key insights:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The menu already has cross-file refs from the original PUSH operation (which scanned disk)</p>
-</li>
-<li>
-<p>We do NOT clear menu refs and re-scan from disk during refresh</p>
-</li>
-<li>
-<p>Scanning from disk creates problems: <code>addReferenceableToBrowsingMenu</code> creates NEW menu items
-when <code>includeFileNumber</code> differs, and these new items have <code>selected=false</code></p>
-</li>
-<li>
-<p>Only SELECTED menu items contribute refs to the session&#8217;s reference list</p>
-</li>
-<li>
-<p>So scanning would add refs to new (unselected) items, leaving the original (selected) item empty</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_why_scanning_from_disk_fails">19.4.3. Why Scanning From Disk Fails</h4>
-<div class="paragraph">
-<p>During PUSH, <code>createSelectionMenu</code> creates menu items and adds them to <code>sessionEntry&#8594;menu</code>.
-These items are marked as selected. When you NEXT, the menu&#8217;s reference list is what gets
-used for navigation (via <code>recomputeSelectedReferenceable</code>).</p>
-</div>
-<div class="paragraph">
-<p>If during refresh we:
-1. Clear menu refs
-2. Scan from disk</p>
-</div>
-<div class="paragraph">
-<p>The scan calls <code>createSelectionMenu</code> which in turn calls <code>addReferenceableToBrowsingMenu</code>.
-This function compares incoming items by <code>(linkName, includeFileNumber, type)</code>. If the
-<code>includeFileNumber</code> from the disk scan differs from the existing menu item&#8217;s value,
-a <strong>new</strong> menu item is created with <code>selected=false</code>.</p>
-</div>
-<div class="paragraph">
-<p>The refs are then added to this new unselected item, while the original selected item
-has empty refs. <code>recomputeSelectedReferenceable</code> only processes selected items, so
-navigation loses most of its references.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_architectural_note">19.4.4. Architectural Note</h4>
-<div class="paragraph">
-<p>This is a manifestation of the "two sources of truth" architecture. The long-term fix (per roadmap) is to parse all project files at startup, keeping complete references in memory. Then stale refresh would just re-parse the single file and the in-memory table would already have all cross-file references.</p>
+<p>As of 2026-03, the in-memory reference table is authoritative — see
+<a href="06-principles.adoc">Principles</a>.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_unified_in_memory_table_discovery">19.5. Unified In-Memory Table Discovery</h3>
+<h3 id="_unified_in_memory_table_discovery">19.3. Unified In-Memory Table Discovery</h3>
 <div class="paragraph">
 <p>Date: 2025-01-25</p>
 </div>
@@ -10168,7 +9928,7 @@ navigation loses most of its references.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_buffer_lifecycle_in_the_server">19.6. Editor Buffer Lifecycle in the Server</h3>
+<h3 id="_editor_buffer_lifecycle_in_the_server">19.4. Editor Buffer Lifecycle in the Server</h3>
 <div class="paragraph">
 <p>Date: 2026-03-17</p>
 </div>
@@ -11044,12 +10804,269 @@ server process without a separate <code>callXref()</code> step.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_the_lastparsedmtime_optimization_and_refactoring_conflict_historical">20.11. The lastParsedMtime Optimization and Refactoring Conflict (Historical)</h3>
+<div class="paragraph">
+<p>This section captures a conflict diagnosed in 2025-01 between navigation&#8217;s
+<code>lastParsedMtime</code> optimization and refactoring&#8217;s <code>callXref()</code> reindexing path. The
+workaround it describes (excluding <code>OP_RENAME</code>, <code>OP_ARGUMENT_MANIPULATION</code>,
+<code>OP_SAFETY_CHECK</code> from the optimization) is <strong>no longer needed</strong>: under server-side
+refactoring (2026-03), <code>callXref()</code> is not in the refactoring path, and entry refresh
+keeps both navigation and refactoring reading from the same in-memory table. The two
+sources of truth that the conflict arose from have been collapsed into one. The
+material is preserved here because the diagnosis remains a useful illustration of how
+shared-state optimizations can leak across operation boundaries.</p>
+</div>
+<div class="paragraph">
+<p>Date: 2025-01-21</p>
+</div>
+<div class="sect3">
+<h4 id="_problem_discovery">20.11.1. Problem Discovery</h4>
+<div class="paragraph">
+<p>When implementing staleness detection for navigation (refreshing references when files are modified), an optimization was added to <code>server.c</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// After parsing with preload, update lastParsedMtime
+if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
+    FileItem *fileItem = getFileItemWithFileNumber(parsingConfig.fileNumber);
+    fileItem-&gt;lastParsedMtime = buffer-&gt;modificationTime;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This optimization prevents navigation from thinking a file is "stale" immediately after parsing it with preloaded content.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_conflict">20.11.2. The Conflict</h4>
+<div class="paragraph">
+<p>This broke refactoring operations (<code>test_delete_parameter_with_preload</code>). The problem:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Server parses with preload</strong> → In-memory references have correct positions (e.g., line 3)</p>
+</li>
+<li>
+<p><strong><code>lastParsedMtime</code> updated</strong> → File marked as "freshly parsed"</p>
+</li>
+<li>
+<p><strong>Refactoring triggers <code>callXref()</code></strong> → xref checks timestamps</p>
+</li>
+<li>
+<p><strong>xref sees <code>editorFileModificationTime() == lastParsedMtime</code></strong> → Concludes "file already indexed"</p>
+</li>
+<li>
+<p><strong>xref skips re-indexing</strong> → Persistent <code>.cx</code> keeps old positions (e.g., line 2)</p>
+</li>
+<li>
+<p><strong>Refactoring uses stale <code>.cx</code> data</strong> → Wrong positions, operation fails</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_root_cause_two_sources_of_truth">20.11.3. Root Cause: Two Sources of Truth</h4>
+<div class="paragraph">
+<p>The architecture had two sources of references:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>In-memory references</strong> (ReferenceableItemTable) — populated by parsing, used by navigation</p>
+</li>
+<li>
+<p><strong>Persistent .cx database</strong> — populated by xref, used by refactoring</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The <code>lastParsedMtime</code> optimization conflated these:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>It correctly told navigation "in-memory is current"</p>
+</li>
+<li>
+<p>But incorrectly told xref "persistent database is current" (when it wasn&#8217;t)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_workaround">20.11.4. The Workaround</h4>
+<div class="paragraph">
+<p>Refactoring operations were excluded from the optimization:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL
+    &amp;&amp; options.serverOperation != OP_RENAME
+    &amp;&amp; options.serverOperation != OP_ARGUMENT_MANIPULATION
+    &amp;&amp; options.serverOperation != OP_SAFETY_CHECK) {
+    fileItem-&gt;lastParsedMtime = buffer-&gt;modificationTime;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This allowed:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Navigation to use the optimization (in-memory was sufficient)</p>
+</li>
+<li>
+<p>Refactoring to trigger xref re-indexing (read preload, update .cx correctly)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_architectural_lesson">20.11.5. Architectural Lesson</h4>
+<div class="paragraph">
+<p>The workaround highlighted the underlying tension: <strong>navigation and refactoring used different sources of truth</strong>. The proper fix — eliminating <code>callXref()</code> from the refactoring path entirely — landed with server-side refactoring (<a href="15-roadmap.adoc">Chapter 15: Roadmap</a>).</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_stale_file_refresh_and_cross_file_references_historical">20.12. Stale File Refresh and Cross-File References (Historical)</h3>
+<div class="paragraph">
+<p>This section describes a refresh algorithm built around a function named
+<code>refreshStaleReferencesInSession()</code> that no longer exists in the source. The current
+refresh path is lazy session refresh via <code>needsBrowsingStackRefresh</code> and
+<code>updateSessionReferencesForFile</code>, described in <a href="11-algorithms.adoc">Chapter 11</a>.
+The material is preserved here because its core insight — that
+<code>addReferenceableToBrowsingMenu</code> deduplicates by <code>(linkName, includeFileNumber, type)</code>
+and so cannot safely re-scan from disk during refresh — is still relevant. That
+deduplication is the same mechanism that hides the "what reparse cleans" gap discussed
+in <a href="06-principles.adoc">Principles</a>.</p>
+</div>
+<div class="paragraph">
+<p>Date: 2025-01-29</p>
+</div>
+<div class="sect3">
+<h4 id="_stale_detection">20.12.1. Stale Detection</h4>
+<div class="paragraph">
+<p>When navigating (PUSH/NEXT), the server detected if the current file was "stale" by comparing:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>fileItem&#8594;lastParsedMtime</code> (from disk database or last parse)</p>
+</li>
+<li>
+<p><code>buffer&#8594;modificationTime</code> (from preloaded editor buffer)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If <code>buffer&#8594;modificationTime &gt; lastParsedMtime</code>, the file was considered stale and <code>refreshStaleReferencesInSession()</code> was called.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_the_refresh_algorithm">20.12.2. The Refresh Algorithm</h4>
+<div class="paragraph">
+<p><code>refreshStaleReferencesInSession()</code> in <code>cxref.c</code> had to preserve cross-file references while updating references from the modified file:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>removeReferenceableItemsForFile()</code> — remove old refs from in-memory table</p>
+</li>
+<li>
+<p><code>parseToCreateReferences()</code> — re-parse with preload, add fresh refs to in-memory table</p>
+</li>
+<li>
+<p>Remove stale-file refs from menu — preserves cross-file refs, removes outdated positions</p>
+</li>
+<li>
+<p><code>extendBrowsingMenuWithReferences()</code> — merge fresh refs from in-memory table</p>
+</li>
+<li>
+<p>Mark file as freshly parsed (<code>lastParsedMtime = buffer&#8594;modificationTime</code>)</p>
+</li>
+<li>
+<p><code>recomputeSelectedReferenceable()</code> — rebuild session&#8217;s reference list from updated menu</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Key insights:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The menu already had cross-file refs from the original PUSH operation (which scanned disk)</p>
+</li>
+<li>
+<p>The refresh did NOT clear menu refs and re-scan from disk</p>
+</li>
+<li>
+<p>Scanning from disk created problems: <code>addReferenceableToBrowsingMenu</code> creates NEW menu items
+when <code>includeFileNumber</code> differs, and these new items have <code>selected=false</code></p>
+</li>
+<li>
+<p>Only SELECTED menu items contribute refs to the session&#8217;s reference list</p>
+</li>
+<li>
+<p>So scanning would have added refs to new (unselected) items, leaving the original (selected) item empty</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_why_scanning_from_disk_failed">20.12.3. Why Scanning From Disk Failed</h4>
+<div class="paragraph">
+<p>During PUSH, <code>createSelectionMenu</code> created menu items and added them to <code>sessionEntry&#8594;menu</code>.
+These items were marked as selected. On NEXT, the menu&#8217;s reference list was what got
+used for navigation (via <code>recomputeSelectedReferenceable</code>).</p>
+</div>
+<div class="paragraph">
+<p>If during refresh we:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Cleared menu refs</p>
+</li>
+<li>
+<p>Scanned from disk</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The scan called <code>createSelectionMenu</code> which in turn called <code>addReferenceableToBrowsingMenu</code>.
+This function compares incoming items by <code>(linkName, includeFileNumber, type)</code>. If the
+<code>includeFileNumber</code> from the disk scan differed from the existing menu item&#8217;s value,
+a <strong>new</strong> menu item was created with <code>selected=false</code>.</p>
+</div>
+<div class="paragraph">
+<p>The refs were then added to this new unselected item, while the original selected item
+had empty refs. <code>recomputeSelectedReferenceable</code> only processed selected items, so
+navigation lost most of its references.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_architectural_note_historical">20.12.4. Architectural Note (Historical)</h4>
+<div class="paragraph">
+<p>This was a manifestation of the "two sources of truth" architecture. The long-term fix
+landed with memory-as-truth: all project files have references in the in-memory table,
+so the refresh just re-parses the single file and the table already holds the cross-file
+references. The dedup behaviour described above still applies — see "What Reparse
+Cleans" in <a href="06-principles.adoc">Principles</a> for how it interacts with the
+header-position freshness gap.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-08 12:11:03 UTC
+Last updated 2026-05-17 21:18:56 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
