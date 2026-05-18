@@ -237,7 +237,6 @@ prod:
 # For development - various ways to build
 .PHONY:devel
 devel: check-tokens
-	$(MAKE) -C ../editors/emacs
 	$(MAKE) -e clean-coverage
 	$(MAKE) -e devel-proper
 	$(MAKE) -e system-tests
@@ -294,6 +293,7 @@ build-proper: c-xref
 
 c-xref: check-tokens $(OBJS) editor-defs
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
+	$(MAKE) -C ../editors/emacs
 	@touch .build.done
 
 editor-defs: refactorings.def
