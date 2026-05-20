@@ -65,7 +65,6 @@ Options presetOptions = {
 #endif
     .eolConversion = NO_EOL_CONVERSION,
     .fileNamesCaseSensitive = true,
-    .cxMemoryFactor = 1,
     .updateOnlyModifiedFiles = false,
     .cxFileCount = 0,
     .tabulator = 4,
@@ -191,7 +190,6 @@ static void usage() {
     fprintf(stdout, "\t-refs <file>              - name of file with cxrefs, or directory if refnum > 1\n");
     fprintf(stdout, "\t-refnum=<n>               - number of cxref files\n");
     fprintf(stdout, "\t-exactpositionresolve     - resolve symbols by def. position\n");
-    fprintf(stdout, "\t-mf<n>                    - factor increasing cxMemory\n");
     fprintf(stdout, "\t-errors                   - report all error messages on the console\n");
     fprintf(stdout, "\t                            (by default only fatal errors are shown)\n");
     fprintf(stdout, "\t-warnings                 - also report warning messages on the console\n");
@@ -1265,14 +1263,6 @@ static bool processLOption(int *argi, ArgumentsVector args) {
 static bool processMOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
-    else if (strncmp(args.argv[i], "-mf=", 4)==0) {
-        int mf;
-        sscanf(args.argv[i]+4, "%d", &mf);
-        if (mf<0 || mf>=255) {
-            FATAL_ERROR(ERR_ST, "memory factor out of range <1,255>", EXIT_FAILURE);
-        }
-        options.cxMemoryFactor = mf;
-    }
     else if (strncmp(args.argv[i], "-maxcompls=",11)==0)  {
         sscanf(args.argv[i]+11, "%d", &options.maxCompletions);
     }

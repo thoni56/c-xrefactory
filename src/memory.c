@@ -174,7 +174,6 @@ static int calculateNewSize(int n, int oldsize) {
     int oldfactor, factor, newsize;
     oldfactor = oldsize / CX_MEMORY_CHUNK_SIZE;
     factor = ((n > 1) ? (n - 1) : 0) / CX_MEMORY_CHUNK_SIZE + 1; // 1 no patience to wait // TODO: WTF?
-    //& if (options.cxMemoryFactor>=1) factor *= options.cxMemoryFactor;
     factor += oldfactor;
     if (oldfactor * 2 > factor)
         factor = oldfactor * 2;

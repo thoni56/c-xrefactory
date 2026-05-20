@@ -814,25 +814,6 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
     processOptions(args, PROCESS_FILE_ARGUMENTS_YES);
     processFileArguments();
 
-    /* Ensure CX-memory has room enough for things by invoking memory resize if not */
-    /* TODO Is this because CX-memory is just discarded and
-     * reallocated empty when resizing is necessary? And the various
-     * modes need some initial amount of memory? */
-    char *tempAllocated;
-
-    if (options.mode==XrefMode) {
-        // get some memory if cross referencing
-        assert(options.cxMemoryFactor>=1);
-        tempAllocated = (char *)cxAlloc(3*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
-        cxFreeUntil(tempAllocated);
-    }
-    if (options.cxMemoryFactor > 1) {
-        // reinit cxmemory taking into account -mf
-        // just make an allocation provoking resizing
-        tempAllocated = (char *)cxAlloc(options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
-        cxFreeUntil(tempAllocated);
-    }
-
     int argcount = 0;
     inputFileName = getNextArgumentFile(&argcount);
     char fileName[MAX_FILE_NAME_SIZE];

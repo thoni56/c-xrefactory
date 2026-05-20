@@ -15,7 +15,6 @@ options:
 	-refs <file>              - name of file with cxrefs, or directory if refnum > 1
 	-refnum=<n>               - number of cxref files
 	-exactpositionresolve     - resolve symbols by def. position
-	-mf<n>                    - factor increasing cxMemory
 	-errors                   - report all error messages on the console
 	                            (by default only fatal errors are shown)
 	-warnings                 - also report warning messages on the console

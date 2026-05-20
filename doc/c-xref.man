@@ -254,18 +254,6 @@ characters. If your files contain, for example, 8-bit european characters, then 
 should include -encoding=european into your project setting.
 
 .TP
-.B -mf=<n>
-This option sets the memory factor for cross-references. The larger is the
-memory factor, the larger is the memory reserved to store cross-references
-and so c-xref does not need to swap references on disk so frequently. The default
-value of
-.I n
-is 1. For example the '-mf=10' option causes that the memory used for
-cross-references will be increased by the factor of 10. This option can be
-used only as command line option. If you use it inside the ~/.c-xrefrc file
-it has no effect.
-
-.TP
 .B "\-pass<n>"
 Strictly speaking this is not c-xref option. It is used in the .c-xrefrc
 configuration file to describe how to process source files in multiple passes.

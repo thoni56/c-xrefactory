@@ -98,7 +98,6 @@ typedef struct options {
     char *cFilesSuffixes;                       /* PROJECT */
     int eolConversion;                          /* PROJECT */
     bool fileNamesCaseSensitive;                /* PROJECT */
-    int cxMemoryFactor;                         /* PROJECT */
     bool updateOnlyModifiedFiles;               /* PROJECT */
     int cxFileCount;                            /* PROJECT */
     int tabulator;                              /* PROJECT */
