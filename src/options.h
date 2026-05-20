@@ -109,12 +109,12 @@ typedef struct options {
     char *pushName;                             /* REQUEST */
     char *browsedName;                          /* REQUEST */
     char *variableToGet;                        /* REQUEST */
-    char *olcxlccursor;                         /* REQUEST */
     char *searchString;                         /* REQUEST */
     SearchKind searchKind;                      /* REQUEST */
     bool completionCaseSensitive;               /* REQUEST */
     bool noErrors;                              /* REQUEST */
     bool exactPositionResolve;                  /* REQUEST */
+    char *cursorLineColumn;                     /* REQUEST */
     int cursorOffset;                           /* REQUEST */
     int markOffset;                             /* REQUEST */
     int filterValue;                            /* REQUEST */

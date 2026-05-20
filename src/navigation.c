@@ -2,15 +2,14 @@
 
 #include <limits.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "browsingmenu.h"
-#include "commons.h"            /* For assert() */
 #include "filetable.h"
 #include "globals.h"
 #include "head.h"
 #include "log.h"
-#include "options.h"
 #include "ppc.h"
 #include "referenceableitemtable.h"
 #include "timestamp.h"
@@ -110,7 +109,6 @@ void setCurrentReferenceToNextOrFirst(SessionStackEntry *sessionEntry, Reference
     if (reference != NULL) {
         sessionEntry->current = reference;
     } else {
-        assert(options.xref2);
         ppcBottomInformation("Moving to the first reference");
         reference = sessionEntry->references;
         while (reference != NULL && isAtMostAsImportantAs(reference->usage, rlevel))

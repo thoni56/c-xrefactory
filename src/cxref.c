@@ -1503,8 +1503,8 @@ static bool olMenuHashFileNumLess(BrowsingMenu *menu1, BrowsingMenu *menu2) {
 }
 
 void getLineAndColumnCursorPositionFromCommandLineOptions(int *l, int *c) {
-    assert(options.olcxlccursor!=NULL);
-    sscanf(options.olcxlccursor,"%d:%d", l, c);
+    assert(options.cursorLineColumn!=NULL);
+    sscanf(options.cursorLineColumn,"%d:%d", l, c);
 }
 
 static Position getCallerPositionFromCommandLineOption(void) {

@@ -50,7 +50,7 @@ AfterEach(CxRef) {}
 
 Ensure(CxRef, can_parse_line_and_col_from_command_line_option) {
     int line, column;
-    options.olcxlccursor = "54:33";
+    options.cursorLineColumn = "54:33";
     getLineAndColumnCursorPositionFromCommandLineOptions(&line, &column);
     assert_that(line, is_equal_to(54));
     assert_that(column, is_equal_to(33));

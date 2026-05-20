@@ -76,12 +76,12 @@ Options presetOptions = {
     .pushName = NULL,
     .browsedName = NULL,
     .variableToGet = "",
-    .olcxlccursor = "0:3",
     .searchString = "",
     .searchKind = SEARCH_FULL,
     .completionCaseSensitive = false,
     .noErrors = false,
     .exactPositionResolve = false,
+    .cursorLineColumn = "0:3",
     .cursorOffset = NO_CURSOR_OFFSET,
     .markOffset = NO_CURSOR_OFFSET,
     .filterValue = 0,
@@ -1376,7 +1376,7 @@ static bool processOOption(int *argi, ArgumentsVector args) {
         options.serverOperation=OP_INTERNAL_GET_FUNCTION_BOUNDS;
     else if (strncmp(args.argv[i], "-olcxlccursor=",14)==0) {
         // position of the cursor in line:column format
-        options.olcxlccursor = allocateStringForOption(&options.olcxlccursor, args.argv[i]+14);
+        options.cursorLineColumn = allocateStringForOption(&options.cursorLineColumn, args.argv[i]+14);
     }
     else if (strcmp(args.argv[i], "-olcxsearchforward")==0) {
         options.serverOperation=OP_SEARCH_NEXT;
