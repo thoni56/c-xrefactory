@@ -35,7 +35,7 @@ static void myInternalCheckFailed(char *expr, char *file, int line) {
 Describe(Memory);
 BeforeEach(Memory) {
     log_set_level(LOG_ERROR);
-    setFatalErrorHandlerForMemory(myFatalError);
+    setOutOfMemoryErrorHandlerForMemory(myFatalError);
     setInternalCheckFailHandlerForMemory(myInternalCheckFailed);
 }
 AfterEach(Memory) {}

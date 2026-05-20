@@ -27,7 +27,7 @@ BeforeEach(StackMemory) {
     log_set_level(LOG_ERROR);
     initOuterCodeBlock();
     fatalErrorAllowed = true;
-    setFatalErrorHandlerForMemory(myFatalError);
+    setOutOfMemoryErrorHandlerForMemory(myFatalError);
 }
 AfterEach(StackMemory) {}
 

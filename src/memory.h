@@ -27,7 +27,7 @@ extern bool ppmIsFreedPointer(void *pointer);
 
 
 
-extern void memoryInit(Memory *memory, char *name, int size);
+extern void memoryInit(Memory *memory, char *name, size_t size);
 extern void *memoryAllocc(Memory *memory, int count, size_t size);
 extern void *memoryAlloc(Memory *memory, size_t size);
 
@@ -38,14 +38,11 @@ extern size_t memoryFreeUntil(Memory *memory, void *pointer);
 
 /***********************************************************************/
 
-extern jmp_buf memoryResizeJumpTarget;
-
-
 extern Memory ppmMemory;
 
 
 /* Inject some error functions to remove linkage dependency */
-extern void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *mess, int exitStatus,
+extern void setOutOfMemoryErrorHandlerForMemory(void (*function)(int errCode, char *mess, int exitStatus,
                                char *file, int line));
 extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *file, int line));
 

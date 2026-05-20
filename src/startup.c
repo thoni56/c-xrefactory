@@ -764,7 +764,7 @@ void totalTaskEntryInitialisations(void) {
     memoryInit(&presetOptions.memory, "preset options memory", OptionsMemorySize);
 
     // Inject error handling functions
-    setFatalErrorHandlerForMemory(fatalError);
+    setOutOfMemoryErrorHandlerForMemory(fatalError);
     setInternalCheckFailHandlerForMemory(internalCheckFail);
 
     // Start time

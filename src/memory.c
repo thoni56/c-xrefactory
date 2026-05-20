@@ -8,27 +8,24 @@
 #include "proto.h"
 
 
-jmp_buf memoryResizeJumpTarget;
-
 
 /* Dynamic memory for cross-references and similar stuff */
 Memory cxMemory={};
 
-/* Static memory areas */
+/* Preprocessor memory */
 Memory ppmMemory;
 
 
-/* This is used unless the fatalError function is set */
-static void defaultFatalMemoryErrorHandler(int errorCode, char *message, int exitStatus, char *file, int line) {
+/* This is used unless outOfMemoryErrorHandler is set */
+static void defaultOutOfMemoryErrorHandler(int errorCode, char *message, int exitStatus, char *file, int line) {
     log_fatal("Error code: %d, Message: '%s' in file %s", errorCode, message, file);
     exit(exitStatus);
 }
 
 /* Inject the function to call when fatalErrors occur */
-static void (*fatalMemoryError)(int errCode, char *mess, int exitStatus, char *file, int line) = defaultFatalMemoryErrorHandler;
-void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *mess, int exitStatus, char *file,
-                                                    int line)) {
-    fatalMemoryError = function;
+static void (*outOfMemoryErrorHandler)(int errCode, char *mess, int exitStatus, char *file, int line) = defaultOutOfMemoryErrorHandler;
+void setOutOfMemoryErrorHandlerForMemory(void (*function)(int errCode, char *mess, int exitStatus, char *file, int line)) {
+    outOfMemoryErrorHandler = function;
 }
 
 /* Copy of a few defines from commons.h to avoid dependency on other stuff... */
@@ -51,7 +48,7 @@ void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *fil
 
  */
 
-void memoryInit(Memory *memory, char *name, int size) {
+void memoryInit(Memory *memory, char *name, size_t size) {
     ENTER();
     log_debug("Init %s with new name '%s' and size %d", memory->name, name, size);
     memory->name = name;
@@ -69,7 +66,7 @@ void *memoryAllocc(Memory *memory, int count, size_t size) {
     assert(count >= 0);
 
     if (memory->index+count*size > memory->size) {
-        fatalMemoryError(ERR_NO_MEMORY, memory->name, EXIT_FAILURE, __FILE__, __LINE__);
+        outOfMemoryErrorHandler(ERR_NO_MEMORY, memory->name, EXIT_FAILURE, __FILE__, __LINE__);
     }
     memory->index += count*size;
     if (memory->index > memory->max)
