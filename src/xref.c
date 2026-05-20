@@ -211,73 +211,8 @@ static void scheduleModifiedFilesToUpdate(XrefConfig *config) {
 }
 
 
-static void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
-    // This was some intricate recovery of various memories mixed with the caching.
-    // When the caching was removed piece by piece those functions were also removed.
-    // If "out of cxMemory" is ever to be handled they can be recovered from history
-    // beyond this point.
-    // static void deleteReferencesOutOfMemory(Reference **referenceP) { ...
-    // static void recoverMemoryFromReferenceTableEntry(int index) { ...
-    // static void recoverMemoryFromReferenceTable(void) { ...
-    // static void recoverCxMemory(void *cxMemoryFlushPoint) { ...
-}
-
-static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
-    ENTER();
-    log_trace("swapping references to disk");
-    if (options.xref2) {
-        ppcGenRecord(PPC_INFORMATION, "swapping references to disk");
-        ppcGenRecord(PPC_INFORMATION, "");
-    } else {
-        fprintf(errOut, "swapping references to disk (please wait)\n");
-        fflush(errOut);
-    }
-    if (options.cxFileLocation == NULL) {
-        FATAL_ERROR(ERR_ST, "sorry no file for cxrefs, use -refs option", EXIT_FAILURE);
-    }
-    for (int i=0; i < includeStack.pointer; i++) {
-        log_debug("inspecting include %d, fileNumber: %d", i,
-                  includeStack.stack[i].characterBuffer.fileNumber);
-        if (includeStack.stack[i].characterBuffer.file != stdin) {
-            int fileNumber = includeStack.stack[i].characterBuffer.fileNumber;
-            getFileItemWithFileNumber(fileNumber)->cxLoading = false;
-            if (includeStack.stack[i].characterBuffer.file != NULL)
-                closeCharacterBuffer(&includeStack.stack[i].characterBuffer);
-        }
-    }
-    if (currentFile.characterBuffer.file != stdin) {
-        log_debug("inspecting current file, fileNumber: %d", currentFile.characterBuffer.fileNumber);
-        int fileNumber                     = currentFile.characterBuffer.fileNumber;
-        getFileItemWithFileNumber(fileNumber)->cxLoading = false;
-        if (currentFile.characterBuffer.file != NULL)
-            closeCharacterBuffer(&currentFile.characterBuffer);
-    }
-    if (options.mode==XrefMode)
-        saveReferences();
-    recoverMemoriesAfterOverflow(cxMemFreeBase);
-
-    /* ************ start with CXREFS and memories clean ************ */
-    bool savingFlag = false;
-    for (int i=getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i+1)) {
-        FileItem *fileItem = getFileItemWithFileNumber(i);
-        if (fileItem->cxLoading) {
-            fileItem->cxLoading = false;
-            fileItem->cxSaved = true;
-            if (fileItem->isArgument)
-                savingFlag = true;
-            log_debug(" -># '%s'",fileItem->name);
-        }
-    }
-    if (!savingFlag && reason!=LONGJMP_REASON_FILE_ABORT) {
-        /* references overflowed, but no whole file readed */
-        FATAL_ERROR(ERR_NO_MEMORY, "cxMemory", EXIT_FAILURE);
-    }
-    LEAVE();
-}
-
 void callXref(ArgumentsVector args, XrefConfig *config) {
     // These are static because of the longjmp() maybe happening
-    static char     *cxFreeBase;
     static bool      atLeastOneProcessed;
     static FileItem *fileItem;
     static int       numberOfInputs;
@@ -285,7 +220,6 @@ void callXref(ArgumentsVector args, XrefConfig *config) {
     LongjmpReason reason = LONGJMP_REASON_NONE;
 
     currentPass = ANY_PASS;
-    cxFreeBase = cxAlloc(0);
     cxResizingBlocked = true;
     if (config->updateType)
         scheduleModifiedFilesToUpdate(config);
@@ -298,8 +232,6 @@ void callXref(ArgumentsVector args, XrefConfig *config) {
             if (reason == LONGJMP_REASON_FILE_ABORT) {
                 if (fileItem != NULL)
                     fileItem = fileItem->next;
-            } else if (reason == LONGJMP_REASON_REFERENCES_OVERFLOW) {
-                referencesOverflowed(cxFreeBase, reason);
             }
         } else {
             int inputCounter = 0;

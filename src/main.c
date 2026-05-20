@@ -86,12 +86,12 @@ int main(int argc, char *argv[]) {
     if (want_lsp_server(args))
         return lsp_server(stdin);
 
-    /* else continue with legacy implementation */
+    /* else continue with native server */
     if (setjmp(memoryResizeJumpTarget) != 0) {
         /* CX_ALLOCC always makes one longjmp back to here before we can
            start processing for real ... Allocating initial CX memory */
         if (cxResizingBlocked) {
-            FATAL_ERROR(ERR_ST, "cx_memory resizing required, see file TROUBLES",
+            FATAL_ERROR(ERR_ST, "cxMemory exceeded : bump CX_MEMORY_INITIAL_SIZE and recompile (or implement on-demand memory growth)",
                        EXIT_FAILURE);
         }
     }

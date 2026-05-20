@@ -398,14 +398,6 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
         }
     }
 
-    /* Test for available space */
-    assert(options.mode);
-    if (options.mode==XrefMode) {
-        if (!cxMemoryHasEnoughSpaceFor(CX_SPACE_RESERVE)) {
-            longjmp(errorLongJumpBuffer, LONGJMP_REASON_REFERENCES_OVERFLOW);
-        }
-    }
-
     assert(place);
     log_debug("returning %x == %s %s:%d", *place, usageKindEnumName[(*place)->usage],
               getFileItemWithFileNumber((*place)->position.file)->name, (*place)->position.line);

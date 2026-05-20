@@ -21,7 +21,6 @@ typedef unsigned char uchar;
 
 typedef enum longjmpReason {
     LONGJMP_REASON_NONE = 0,    /* Make sure it's zero */
-    LONGJMP_REASON_REFERENCES_OVERFLOW,
     LONGJMP_REASON_FILE_ABORT
 } LongjmpReason;
 

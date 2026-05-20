@@ -93,10 +93,6 @@ void *memoryAlloc(Memory *memory, size_t size) {
     return memoryAllocc(memory, 1, size);
 }
 
-static bool memoryHasEnoughSpaceFor(Memory *memory, size_t bytes) {
-    return memory->index + bytes < memory->size;
-}
-
 bool memoryIsBetween(Memory *memory, void *pointer, int low, int high) {
     return pointer >= (void *)&memory->area[low] && pointer <= (void *)&memory->area[high];
 }
@@ -170,35 +166,8 @@ bool ppmIsFreedPointer(void *pointer) {
 
 
 /* CX */
-static int calculateNewSize(int n, int oldsize) {
-    int oldfactor, factor, newsize;
-    oldfactor = oldsize / CX_MEMORY_CHUNK_SIZE;
-    factor = ((n > 1) ? (n - 1) : 0) / CX_MEMORY_CHUNK_SIZE + 1; // 1 no patience to wait // TODO: WTF?
-    factor += oldfactor;
-    if (oldfactor * 2 > factor)
-        factor = oldfactor * 2;
-    newsize = factor * CX_MEMORY_CHUNK_SIZE;
-
-    return newsize;
-}
-
-bool cxMemoryHasEnoughSpaceFor(size_t bytes) {
-    return memoryHasEnoughSpaceFor(&cxMemory, bytes);
-}
-
-bool cxMemoryOverflowHandler(int n) {
-    log_debug("Handling CX memory overflow with n=%d", n);
-    int oldsize = cxMemory.size;
-    int newsize = calculateNewSize(n, oldsize);
-
-    memoryInit(&cxMemory, "cxMemory", cxMemoryOverflowHandler, newsize);
-    log_debug("Reallocating cxMemory: %d -> %d", oldsize, newsize);
-
-    return cxMemory.area != NULL;
-}
-
 void initCxMemory(size_t size) {
-    memoryInit(&cxMemory, "cxMemory", cxMemoryOverflowHandler, size);
+    memoryInit(&cxMemory, "cxMemory", NULL, size);
 }
 
 void *cxAlloc(size_t size) {
