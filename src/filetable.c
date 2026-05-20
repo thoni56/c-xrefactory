@@ -26,7 +26,7 @@
 static Memory fileTableMemory;
 
 static void ftInit(void) {
-    memoryInit(&fileTableMemory, "filetable", NULL, FileTableMemorySize);
+    memoryInit(&fileTableMemory, "filetable", FileTableMemorySize);
 }
 
 static void *ftAlloc(size_t size) {

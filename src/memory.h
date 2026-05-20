@@ -11,7 +11,6 @@
 
 typedef struct memory {
     char   *name;              /* String representing the name of the memory */
-    bool  (*overflowHandler)(int n); /* Should return true if more memory was possible to acquire */
     int     index;
     int     max;
     size_t  size;
@@ -28,14 +27,13 @@ extern bool ppmIsFreedPointer(void *pointer);
 
 
 
-extern void memoryInit(Memory *memory, char *name, bool (*overflowHandler)(int n), int size);
+extern void memoryInit(Memory *memory, char *name, int size);
 extern void *memoryAllocc(Memory *memory, int count, size_t size);
 extern void *memoryAlloc(Memory *memory, size_t size);
 
 extern void *memoryRealloc(Memory *memory, void *pointer, size_t oldSize, size_t newSize);
 extern bool memoryIsBetween(Memory *memory, void *pointer, int low, int high);
 extern size_t memoryFreeUntil(Memory *memory, void *pointer);
-extern void memoryResized(Memory *memory);
 
 
 /***********************************************************************/

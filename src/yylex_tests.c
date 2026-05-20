@@ -58,7 +58,7 @@ BeforeEach(Yylex) {
 
     initSymbolTable(100);
 
-    memoryInit(&ppmMemory, "", NULL, PreprocessorMemorySize);
+    memoryInit(&ppmMemory, "", PreprocessorMemorySize);
 
     always_expect(initCharacterBuffer);
     always_expect(editorFileExists, will_return(false));

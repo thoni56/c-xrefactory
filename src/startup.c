@@ -735,7 +735,7 @@ static int power(int x, int y) {
 void initializeCoreSubsystems(void) {
     initCxMemory(CX_MEMORY_INITIAL_SIZE);
     initOuterCodeBlock();
-    memoryInit(&ppmMemory, "pre-processor macros", NULL, PreprocessorMemorySize);
+    memoryInit(&ppmMemory, "pre-processor macros", PreprocessorMemorySize);
     allocateMacroArgumentTable(MAX_MACRO_ARGS);
     initSymbolTable(MAX_SYMBOLS_HASHTABLE_ENTRIES);
     initReferenceableItemTable(MAX_REFS_HASHTABLE_ENTRIES);
@@ -761,7 +761,7 @@ void totalTaskEntryInitialisations(void) {
     initLexemEnumNames();
 
     // Memory
-    memoryInit(&presetOptions.memory, "preset options memory", NULL, OptionsMemorySize);
+    memoryInit(&presetOptions.memory, "preset options memory", OptionsMemorySize);
 
     // Inject error handling functions
     setFatalErrorHandlerForMemory(fatalError);

@@ -28,7 +28,7 @@
 Describe(Options);
 BeforeEach(Options) {
     log_set_level(LOG_ERROR);
-    memoryInit(&options.memory, "", NULL, OptionsMemorySize);
+    memoryInit(&options.memory, "", OptionsMemorySize);
 }
 AfterEach(Options) {}
 

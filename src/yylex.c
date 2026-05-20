@@ -88,7 +88,7 @@ static LexemStream macroInputStack[MACRO_INPUT_STACK_SIZE];
 static Memory macroArgumentsMemory;
 
 static void initMacroArgumentsMemory(void) {
-    memoryInit(&macroArgumentsMemory, "macro arguments", NULL, MacroArgumentsMemorySize);
+    memoryInit(&macroArgumentsMemory, "macro arguments", MacroArgumentsMemorySize);
 }
 
 static void *mamAlloc(size_t size) {
@@ -101,7 +101,7 @@ static void *mamAlloc(size_t size) {
 static Memory macroBodyMemory;
 
 static void mbmInit(void) {
-    memoryInit(&macroBodyMemory, "macro body", NULL, MacroBodyMemorySize);
+    memoryInit(&macroBodyMemory, "macro body", MacroBodyMemorySize);
 }
 
 static void *mbmAlloc(size_t size) {

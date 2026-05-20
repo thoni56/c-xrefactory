@@ -857,7 +857,7 @@ bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, Memory *memory, c
     foundProjectName[0]=0;
 
     if (memory == &optMemory)
-        memoryInit(&optMemory, "argument options", NULL, OptionsMemorySize);
+        memoryInit(&optMemory, "argument options", OptionsMemorySize);
 
     bool found = false;
 

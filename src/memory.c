@@ -43,12 +43,6 @@ void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *fil
     internalCheckFailForMemory = function;
 }
 
-/* With this as a separate function it is possible to catch memory resize longjmps */
-void memoryResized(Memory *memory) {
-    log_info("Memory '%s' has been resized too %d", memory->name, memory->size);
-    longjmp(memoryResizeJumpTarget,1);
-}
-
 
 /* *****************************************************************
 
@@ -57,11 +51,9 @@ void memoryResized(Memory *memory) {
 
  */
 
-void memoryInit(Memory *memory, char *name, bool (*overflowHandler)(int n), int size) {
+void memoryInit(Memory *memory, char *name, int size) {
     ENTER();
     log_debug("Init %s with new name '%s' and size %d", memory->name, name, size);
-    memory->name = name;
-    memory->overflowHandler = overflowHandler;
     memory->name = name;
     if (size > memory->size) {
         memory->area = realloc(memory->area, size);
@@ -77,10 +69,7 @@ void *memoryAllocc(Memory *memory, int count, size_t size) {
     assert(count >= 0);
 
     if (memory->index+count*size > memory->size) {
-        if (memory->overflowHandler != NULL && memory->overflowHandler(count))
-            memoryResized(memory);
-        else
-            fatalMemoryError(ERR_NO_MEMORY, memory->name, EXIT_FAILURE, __FILE__, __LINE__);
+        fatalMemoryError(ERR_NO_MEMORY, memory->name, EXIT_FAILURE, __FILE__, __LINE__);
     }
     memory->index += count*size;
     if (memory->index > memory->max)
@@ -167,7 +156,7 @@ bool ppmIsFreedPointer(void *pointer) {
 
 /* CX */
 void initCxMemory(size_t size) {
-    memoryInit(&cxMemory, "cxMemory", NULL, size);
+    memoryInit(&cxMemory, "cxMemory", size);
 }
 
 void *cxAlloc(size_t size) {
