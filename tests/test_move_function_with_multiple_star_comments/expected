@@ -1,0 +1,25 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-move-function -commentmovinglevel=6 -movetargetfile=target.c -rfct-target-line=3 -olcursor=32 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=0 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<cut-block val=42 len=<n>></cut-block>
+<goto>
+ <position-off off=19 len=<n>>CURDIR/target.c</position-off>
+</goto>
+<paste-block len=<n>></paste-block>
+<goto>
+ <position-off off=51 len=<n>>CURDIR/target.c</position-off>
+</goto>
+<indent-block val=4 len=<n>></indent-block>
+-exit
+end-of-options
+
