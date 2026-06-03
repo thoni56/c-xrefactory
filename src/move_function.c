@@ -8,7 +8,6 @@
 #include <string.h>
 
 #include "commons.h"
-#include "cxfile.h"
 #include "cxref.h"
 #include "editor.h"
 #include "editormarker.h"

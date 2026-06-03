@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
 
 #include "list.h"
 #include "match.h"
@@ -12,7 +11,6 @@
 #include "filetable.h"
 #include "commons.h"
 #include "misc.h"
-#include "globals.h"
 #include "ppc.h"
 #include "protocol.h"
 
