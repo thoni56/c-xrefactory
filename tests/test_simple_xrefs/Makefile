@@ -1,10 +1,13 @@
-include ../Makefile.cli
+include ../Makefile.server
 
-
-ARGUMENTS = single_int*.c -o log
 
 $(TEST):
-	@rm -rf output $@.log CXrefs Xrefs
-	@$(COMMAND)
-	@../../utils/cxref_reader > output
-	@$(VERIFY)
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@../../utils/cxref_reader .c-xref/db > output
+	$(VERIFY)
+
+trace: EXTRA = --extra '-debug -log=trace'
+trace: $(TEST)
+
+GDB_COMMANDS =

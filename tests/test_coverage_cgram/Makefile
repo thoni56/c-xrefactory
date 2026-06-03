@@ -1,10 +1,15 @@
-include ../Makefile.cli
+include ../Makefile.server
 
-
-ARGUMENTS = cgram_coverage.c -o $(TEST).log
+# Smoke test: succeeds unless c-xref crashes. Exists to drive cgram.y
+# coverage; source intentionally minimal.
 
 $(TEST):
-	rm -rf output $@.log CXrefs
-	$(COMMAND)
-	$(NO_TESTS)
-	exit 0
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@: > output
+	$(VERIFY)
+
+trace: EXTRA = --extra '-debug -log=trace'
+trace: $(TEST)
+
+GDB_COMMANDS =
