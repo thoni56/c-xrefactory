@@ -1,8 +1,14 @@
-include ../Makefile.cli
+include ../Makefile.server
 
-ARGUMENTS = -errors
+# Smoke test: succeeds unless c-xref crashes.
 
-$(TEST): .c-xrefrc
-	$(COMMAND) > output.tmp
-	$(NORMALIZE) output.tmp > output
+$(TEST):
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@: > output
 	$(VERIFY)
+
+trace: EXTRA = --extra '-debug -log=trace'
+trace: $(TEST)
+
+GDB_COMMANDS =

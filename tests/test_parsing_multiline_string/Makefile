@@ -1,9 +1,14 @@
-include ../Makefile.cli
+include ../Makefile.server
 
-ARGUMENTS = source.c
+# Smoke test: succeeds unless c-xref crashes. Used to hang on unterminated macro.
 
-# This test will always succeed unless c-xref fails, it used to hang on unterminated macro
 $(TEST):
-	@$(COMMAND) -o output.tmp
-	@$(NORMALIZE) output.tmp > output
-	@$(VERIFY)
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@: > output
+	$(VERIFY)
+
+trace: EXTRA = --extra '-debug -log=trace'
+trace: $(TEST)
+
+GDB_COMMANDS =
