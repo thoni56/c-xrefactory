@@ -1,15 +1,13 @@
-include ../Makefile.cli
+include ../Makefile.server
 
-
-ARGUMENTS =
 
 $(TEST):
-	$(COMMAND) > output.tmp 2>&1
-	../../utils/cxref_reader >> output.tmp
-	$(NORMALIZE) output.tmp > output
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@../../utils/cxref_reader .c-xref/db > output
 	$(VERIFY)
 
-trace: ARGUMENTS += -debug
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
 
-EXTRA_DEBUG =
+GDB_COMMANDS =

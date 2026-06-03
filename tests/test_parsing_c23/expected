@@ -1,6 +1,4 @@
-[C-xref] active project: 'CURDIR'
 MAX
-    @source.c:0:0
     @source.c:19:8
     @source.c:25:16
 S
@@ -13,7 +11,6 @@ S.g
     @source.c:7:18
     @source.c:8:30
 _BitInt
-    @source.c:0:0
     @source.c:1:0
     @source.c:2:9
 another_p
@@ -48,7 +45,6 @@ square
 squareing
     @source.c:46:4
 typeof
-    @source.c:0:0
     @source.c:17:0
     @source.c:20:4
     @source.c:21:4
