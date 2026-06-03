@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/source.c
+<sync>
+-search=number -olcursor=46 CURDIR/source.c -p CURDIR
+<sync>
+-continue
+<sync>
+<exit>
