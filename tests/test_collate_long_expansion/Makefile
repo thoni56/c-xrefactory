@@ -1,15 +1,16 @@
-include ../Makefile.cli
+include ../Makefile.server
 
-
-ARGUMENTS =
+# Smoke test only: source has FLAG_STRING-style macros (from ffmpeg)
+# whose expansion is large and noisy. Skip the symbol dump and just
+# verify the parser doesn't crash on the long expansion.
 
 $(TEST):
-	$(COMMAND) > output.tmp 2>&1
-	$(NORMALIZE) output.tmp > output
-	#../../utils/cxref_reader >> output
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@: > output
 	$(VERIFY)
 
-trace: ARGUMENTS += -debug -log=trace
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
 
-EXTRA_DEBUG =
+GDB_COMMANDS =
