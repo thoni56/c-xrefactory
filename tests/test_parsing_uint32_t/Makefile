@@ -1,4 +1,4 @@
-include ../Makefile.cli
+include ../Makefile.server
 
 # Test to see if uint32 is defined
 #
@@ -17,15 +17,13 @@ include ../Makefile.cli
 # And this should be what c-xrefactory actually sees
 # gcc -E source.c
 
-
-ARGUMENTS = -create $(TRACE) uint32.c -errors -log=log
-
 $(TEST):
-	$(COMMAND) > output.tmp 2>&1
-	$(NORMALIZE) output.tmp > output
-	../../utils/cxref_reader | grep uint32_t >> output
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@../../utils/cxref_reader .c-xref/db | grep uint32_t > output
 	$(VERIFY)
 
-.PHONY: trace
-trace: TRACE=-debug
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
+
+GDB_COMMANDS =
