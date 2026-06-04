@@ -1,4 +1,4 @@
-include ../Makefile.cli
+include ../Makefile.boilerplate
 
 .SILENT:
 
