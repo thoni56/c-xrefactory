@@ -1,10 +1,14 @@
-include ../Makefile.cli
+include ../Makefile.server
 
+# Smoke test: yacc parser succeeds on a substantive grammar.
 
-ARGUMENTS = simple_grammar.y -o $(TEST).log
+$(TEST):
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@: > output
+	$(VERIFY)
 
-$(TEST): .c-xrefrc
-	@rm -rf output $@.log CXrefs
-	@$(COMMAND)
-	@echo "Tests in '$(TEST)': $(shell tput setaf 3)No tests, just executing$(shell tput sgr0)"
-	@exit 0
+trace: EXTRA = --extra '-debug -log=trace'
+trace: $(TEST)
+
+GDB_COMMANDS =

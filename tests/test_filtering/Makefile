@@ -1,6 +1,6 @@
 include ../Makefile.server
 
-# Smoke test: c-xref parses cgreen-style code without syntax errors.
+# Smoke test: succeeds unless c-xref crashes.
 
 $(TEST):
 	@rm -rf CXrefs .c-xref output output.tmp server-buffer

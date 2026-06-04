@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/simple_grammar.y
+<sync>
+-search=x -olcursor=1 CURDIR/simple_grammar.y -p CURDIR
+<sync>
+-continue
+<sync>
+<exit>
