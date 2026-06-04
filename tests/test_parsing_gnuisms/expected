@@ -1,53 +1,37 @@
-<information len=<n>>C-xrefactory project: CURDIR</information>
-<information len=<n>>CURDIR/source.c</information>
-<information len=<n>>Generating 'CURDIR/CXrefs'</information>
-<sync>
 Empty
     @source.c:57:7
 SQUARE
-    @source.c:0:0
     @source.c:60:8
     @source.c:62:12
 _Bool
-    @source.c:0:0
     @source.c:31:4
 __alignof__
-    @source.c:0:0
     @source.c:5:16
 __attribute__
-    @source.c:0:0
     @source.c:2:0
 __builtin_assume
-    @source.c:0:0
     @source.c:47:4
 __builtin_expect
-    @source.c:0:0
     @source.c:28:8
 __builtin_memcpy
     @source.c:43:4
 __builtin_memset
     @source.c:44:4
 __builtin_offsetof
-    @source.c:0:0
     @source.c:34:18
 __builtin_types_compatible_p
-    @source.c:0:0
     @source.c:31:23
 __builtin_unreachable
     @source.c:38:8
 __builtin_va_list
-    @source.c:0:0
     @source.c:11:0
 __extension__
-    @source.c:0:0
     @source.c:20:0
 __leaf__
-    @source.c:0:0
     @source.c:17:0
 __sync_fetch_and_add
     @source.c:51:21
 __typeof__
-    @source.c:0:0
     @source.c:8:0
 alignment
     @source.c:5:4

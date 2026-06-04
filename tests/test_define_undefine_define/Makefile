@@ -1,13 +1,13 @@
-# Running c-xref on itself to ensure that it doesn't crash and can show progress
+include ../Makefile.server
 
-include ../Makefile.cli
 
-ARGUMENTS = -create -errors $(TRACE) -o c-xref.log -log=log
-
-$(TEST): .c-xrefrc
-	@$(COMMAND)
-	@../../utils/cxref_reader > output
+$(TEST):
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@../../utils/cxref_reader .c-xref/db > output
 	$(VERIFY)
 
-trace: TRACE=-debug -log=trace
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
+
+GDB_COMMANDS =

@@ -1,13 +1,13 @@
-include ../Makefile.cli
+include ../Makefile.server
 
 
-ARGUMENTS = -xrefactory-II -create -errors $(TRACE) source.c -log=log
-
-$(TEST): .c-xrefrc
-	$(COMMAND) > output.tmp 2>&1
-	$(NORMALIZE) output.tmp > output
-	../../utils/cxref_reader >> output
+$(TEST):
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@../../utils/cxref_reader .c-xref/db > output
 	$(VERIFY)
 
-trace: TRACE = -debug
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
+
+GDB_COMMANDS =

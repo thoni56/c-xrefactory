@@ -1,4 +1,4 @@
-include ../Makefile.cli
+include ../Makefile.server
 
 # How c-xrefactory gets include paths:
 #     LANG=C gcc -v -x c -o /dev/null /dev/null >out 2>&1
@@ -20,9 +20,15 @@ include ../Makefile.cli
 # So here we add the subdirectory "next" where there also is a "include.h". In the one in the top
 # directory we want to include that one using "#include_next stdint.h".
 
-ARGUMENTS = -create -I path1 -I path2 source.c -xrefactory-II -errors
+# Smoke test: succeeds unless c-xref crashes resolving #include_next against -I path1/path2.
 
-$(TEST): .c-xrefrc
-	$(COMMAND) > output.tmp
-	$(NORMALIZE) output.tmp > output
+$(TEST):
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@: > output
 	$(VERIFY)
+
+trace: EXTRA = --extra '-debug -log=trace'
+trace: $(TEST)
+
+GDB_COMMANDS =

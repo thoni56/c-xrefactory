@@ -1,14 +1,14 @@
-include ../Makefile.cli
+include ../Makefile.server
 
-
-ARGUMENTS = -errors -create
+# Smoke test: succeeds unless c-xref crashes parsing typed yacc references.
 
 $(TEST):
-	$(COMMAND) > output.tmp 2>&1
-	$(NORMALIZE) output.tmp > output
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@: > output
 	$(VERIFY)
 
-trace: ARGUMENTS += -trace -log=trace
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
 
-EXTRA_DEBUG =
+GDB_COMMANDS =

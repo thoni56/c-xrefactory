@@ -1,10 +1,14 @@
-include ../Makefile.cli
+include ../Makefile.server
 
-
-ARGUMENTS = -create operators.c -o log
+# Smoke test: succeeds unless c-xref crashes parsing operators.
 
 $(TEST):
-	@rm -rf output $@.log CXrefs Xrefs
-	@$(COMMAND)
-	@$(OK)
-	@exit 0
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@: > output
+	$(VERIFY)
+
+trace: EXTRA = --extra '-debug -log=trace'
+trace: $(TEST)
+
+GDB_COMMANDS =

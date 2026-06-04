@@ -1,14 +1,14 @@
-include ../Makefile.cli
+include ../Makefile.server
 
-
-ARGUMENTS = -create -errors source.c
+# Smoke test: succeeds unless c-xref crashes parsing C11 features.
 
 $(TEST):
-	-$(COMMAND) 2>&1 | grep ERROR > output.tmp
-	cat output.tmp | wc -l | tr -d ' ' > output
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@: > output
 	$(VERIFY)
 
-trace: ARGUMENTS += -debug -log=log
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
 
-EXTRA_DEBUG =
+GDB_COMMANDS =
