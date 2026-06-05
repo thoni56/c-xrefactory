@@ -2267,7 +2267,14 @@ void saveReferences(void) {
 
     if (options.cxFileLocation == NULL)
         return;
-    if (options.update == UPDATE_CREATE || (!everUpdated && options.update == UPDATE_DEFAULT)) {
+    /* ServerMode always uses the pure-dump path (updating=false): memory is truth,
+     * the in-memory referenceableItemTable already holds everything the snapshot
+     * should contain, so there is nothing to merge from disk. The updating=true
+     * branch below runs the XrefMode-only stream-merge protocol in cxfile.c which
+     * asserts options.mode==XrefMode (see scanFunction_SymbolName/Reference) —
+     * letting ServerMode reach it would trigger that assert on the second save
+     * (e.g. periodic save during parse-all followed by save-on-exit). */
+    if (options.mode == ServerMode || options.update == UPDATE_CREATE || (!everUpdated && options.update == UPDATE_DEFAULT)) {
         /* Generate from scratch - don't preserve old data */
         saveReferencesToStore(false, options.cxFileLocation);
         everUpdated = true;
