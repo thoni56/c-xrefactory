@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -server -errors
+-getproject CURDIR/dummy.c
+<sync>
+-search=text -olcursor=1 CURDIR/dummy.c
+<sync>
+-continue
+<sync>
+<exit>

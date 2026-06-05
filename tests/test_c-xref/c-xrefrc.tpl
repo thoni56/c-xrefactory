@@ -1,6 +1,6 @@
-[CURDIR/../../src]
+[test_c-xref]
   //  input files and directories (processed recursively)
-  CURDIR/../../src
-  -ICURDIR/../../src/3pp/
-  //  directory where tag files are stored
-  -refs CURDIR/CXrefs
+  .
+  ../../src
+  //  3pp/ holds cJSON sources; need its dir on the include path
+  -I../../src/3pp/
