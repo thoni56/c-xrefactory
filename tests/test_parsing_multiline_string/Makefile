@@ -3,9 +3,9 @@ include ../Makefile.server
 # Smoke test: succeeds unless c-xref crashes. Used to hang on unterminated macro.
 
 $(TEST):
-	@rm -rf CXrefs .c-xref output output.tmp server-buffer
-	@$(SERVER_DRIVER) commands.input > /dev/null
-	@: > output
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer run.stdout run.stderr
+	-@$(SERVER_DRIVER) commands.input > run.stdout 2> run.stderr
+	@((grep -E "ERROR|FATAL" run.stderr 2>/dev/null; grep -E "<error|<warning|<fatalError" run.stdout 2>/dev/null) || true) > output
 	$(VERIFY)
 
 trace: EXTRA = --extra '-debug -log=trace'
