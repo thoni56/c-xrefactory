@@ -7,6 +7,9 @@
 #include "lexem.h"
 
 
+char *lockedProject = NULL;
+char *lockedProjectRoot = NULL;
+
 bool fileAbortEnabled;
 
 Symbol errorSymbol;

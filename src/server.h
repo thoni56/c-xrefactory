@@ -73,5 +73,6 @@ extern const char* operationNamesTable[];
 extern void initServer(ArgumentsVector args);
 extern void callServer(ArgumentsVector args, ArgumentsVector nargs);
 extern void server(ArgumentsVector args);
+extern void markProjectContextInitialized(void);
 
 #endif

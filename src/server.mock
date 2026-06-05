@@ -17,3 +17,7 @@ void callServer(ArgumentsVector args, ArgumentsVector nargs) {
 void server(ArgumentsVector args) {
     mock(args.argc, args.argv);
 }
+
+void markProjectContextInitialized(void) {
+    mock();
+}

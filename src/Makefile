@@ -241,6 +241,7 @@ devel: check-tokens
 	$(MAKE) -e devel-proper
 	$(MAKE) -e system-tests
 	@$(MAKE) cloc
+	date
 
 .PHONY:devel-proper
 devel-proper: unit build

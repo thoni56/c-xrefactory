@@ -36,6 +36,19 @@ const char *operationNamesTable[] = {
 };
 
 
+/* Once-per-process flag: true after the first request's project context
+ * has been fully initialized (savedOptions synced, snapshot loaded).
+ * Promoted from function-local static to module scope so cxref.c's
+ * handleProject can mark it true after locking via the GetProject path
+ * — otherwise the next request's gate would re-detect from a different
+ * file and clobber the lock. See markProjectContextInitialized() below. */
+static bool projectContextInitialized = false;
+
+void markProjectContextInitialized(void) {
+    projectContextInitialized = true;
+}
+
+
 static bool needsReferenceDatabase(ServerOperation operation) {
     return operation==OP_BROWSE_PUSH
         ||  operation==OP_BROWSE_PUSH_ONLY
@@ -553,7 +566,6 @@ static bool waitForUserConfirmation(char *message) {
 }
 
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
-    static bool projectContextInitialized = false;
     static bool scanDone = false;
 
     ENTER();

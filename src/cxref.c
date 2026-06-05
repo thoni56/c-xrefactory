@@ -55,9 +55,10 @@ static unsigned menuFilterLevels[MAX_MENU_FILTER_LEVEL] = {
 
 #define RENAME_FILTER_LEVEL (FILE_MATCH_RELATED | NAME_MATCH_APPLICABLE)
 
-/* Single-project policy: server locks to first project discovered */
-static char *lockedProject = NULL;
-static char *lockedProjectRoot = NULL;
+/* Single-project policy: server locks to first project discovered.
+ * lockedProject / lockedProjectRoot now live in globals.c — also read
+ * by startup.c initializeFileProcessing to skip re-discovery on
+ * subsequent requests whose files live in different subtrees. */
 
 static bool fileIsUnderIncludePaths(char *fileName) {
     for (StringList *dir = options.includeDirs; dir != NULL; dir = dir->next) {
@@ -1904,6 +1905,16 @@ static void handleProject() {
                         log_debug("Server locked to project: %s (legacy, no root)", lockedProject);
                     }
                     ppcGenRecord(PPC_SET_INFO, projectOptionsSectionName);
+                    /* Persist the lock across requests: sync into savedOptions so
+                     * cxFileLocation survives the next request's options reset,
+                     * and mark project context initialized so server.c's
+                     * next-request init gate doesn't re-detect a different
+                     * project root from a file in another tree. Snapshot is
+                     * already loaded by server.c's initializeProjectContext
+                     * path that ran earlier in this request — don't load again
+                     * (tripwire snapshotLoadComplete forbids it). */
+                    deepCopyOptionsFromTo(&options, &savedOptions);
+                    markProjectContextInitialized();
                 }
             }
         }

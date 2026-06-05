@@ -660,8 +660,19 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
     /* TODO: Duplicated in `intializeProjectContext` */
     /* Find which .c-xrefrc file and project section applies to this file */
     fileName = inputFileName;
-    searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName, projectSectionName);
-    handlePathologicProjectCases(fileName, projectConfigFileName, projectSectionName, true);
+    if (lockedProjectRoot != NULL) {
+        /* Project is already locked from a prior request (set by handleProject
+         * during -getproject, or by initializeProjectContext on first request).
+         * Reuse the cached config rather than re-discovering: discovery from a
+         * file in a different subtree would change autoDetectedProjectRoot and
+         * cause loadProjectSettings below to overwrite cxFileLocation, breaking
+         * the project lock and routing snapshot writes to the wrong directory. */
+        strcpy(projectConfigFileName, previousProjectConfigurationFile);
+        strcpy(projectSectionName, previousProjectConfigurationSection);
+    } else {
+        searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName, projectSectionName);
+        handlePathologicProjectCases(fileName, projectConfigFileName, projectSectionName, true);
+    }
 
     initAllInputs();
 

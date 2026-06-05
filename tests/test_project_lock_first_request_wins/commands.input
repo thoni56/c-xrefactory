@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/dir_a/source.c
+<sync>
+-search=x -olcursor=1 CURDIR/dir_b/source.c
+<sync>
+-continue
+<sync>
+<exit>
