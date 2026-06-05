@@ -91,8 +91,18 @@ def wait_for_sync(p):
             eprint("Waiting for <sync>, got: '{0}'".format(line))
         line = p.stdout.readline().decode()[:-1]
     if line == '':
-        eprint("server-driver.py: Broken input")
-        sys.exit(-1)
+        # Empty read = subprocess closed its stdout. Usually means c-xref crashed
+        # or exited unexpectedly. Surface the exit code so the cause is visible;
+        # use ERROR: prefix so test recipes that grep for ERROR/FATAL pick it up.
+        p.poll()
+        if p.returncode is not None and p.returncode != 0:
+            eprint(f"ERROR: target c-xref process exited with code {p.returncode}")
+            # Convert subprocess returncode to shell exit code: signals (negative)
+            # become 128 + signal number (SIGSEGV -11 → 139), positives propagate.
+            sys.exit(128 - p.returncode if p.returncode < 0 else p.returncode)
+        else:
+            eprint("ERROR: server-driver.py: subprocess pipe closed unexpectedly")
+            sys.exit(-1)
     print(line)
 
 
@@ -183,8 +193,14 @@ if __name__ == "__main__":
                     sys.exit(1)  # Timeout is an error
                 # c-xref uses exit code 64 (XREF_EXIT_BASE) as normal exit in server mode
                 # Only propagate actual errors (>= 65: XREF_EXIT_ERR, XREF_EXIT_NO_PROJECT, etc.)
-                if p.returncode is not None and p.returncode >= 65:
-                    sys.exit(p.returncode)
+                # Negative returncode is Popen's convention for signal exits (e.g., -11 = SIGSEGV).
+                # In either case, emit a visible ERROR line to stderr so test recipes that grep
+                # for ERROR/FATAL can catch and report the failure with diagnostic context.
+                if p.returncode is not None and (p.returncode >= 65 or p.returncode < 0):
+                    eprint(f"ERROR: target c-xref process exited with code {p.returncode}")
+                    # Convert subprocess returncode to shell exit code: signals (negative)
+                    # become 128 + signal number (SIGSEGV -11 → 139), positives propagate.
+                    sys.exit(128 - p.returncode if p.returncode < 0 else p.returncode)
                 sys.exit(0)  # Success for 0, 64, or None
 
             if command == '<sync>':
