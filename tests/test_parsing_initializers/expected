@@ -1,13 +1,12 @@
-[C-xref] active project: 'CURDIR'
 
 Symbol: E0
   References: 9
-    CURDIR/initializer_parsing.c:2:2
-    CURDIR/initializer_parsing.c:16:7
-    CURDIR/initializer_parsing.c:18:5
-    CURDIR/initializer_parsing.c:18:13
-    CURDIR/initializer_parsing.c:23:3
-    CURDIR/initializer_parsing.c:23:7
-    CURDIR/initializer_parsing.c:23:13
-    CURDIR/initializer_parsing.c:24:3
-    CURDIR/initializer_parsing.c:25:7
+    CURDIR/source.c:2:2
+    CURDIR/source.c:16:7
+    CURDIR/source.c:18:5
+    CURDIR/source.c:18:13
+    CURDIR/source.c:23:3
+    CURDIR/source.c:23:7
+    CURDIR/source.c:23:13
+    CURDIR/source.c:24:3
+    CURDIR/source.c:25:7
