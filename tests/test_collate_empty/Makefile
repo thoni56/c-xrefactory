@@ -1,8 +1,13 @@
-include ../Makefile.cli
+include ../Makefile.server
 
-ARGUMENTS = -create . -o test.log
 
-all:
-	$(COMMAND)
-	../../utils/cxref_reader | grep -v :0:0 > output
+$(TEST):
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input > /dev/null
+	@../../utils/cxref_reader .c-xref/db > output
 	$(VERIFY)
+
+trace: EXTRA = --extra '-debug -log=trace'
+trace: $(TEST)
+
+GDB_COMMANDS =
