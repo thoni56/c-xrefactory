@@ -16,7 +16,7 @@
 #define FileTableMemorySize     8000000	/* memory for file table */
 
 #define PreprocessorMemorySize 30000000	/* macro definitions */
-#define CX_MEMORY_INITIAL_SIZE 80000000
+#define CX_MEMORY_INITIAL_SIZE 500000000
 #define CX_MEMORY_CHUNK_SIZE	2000000
 
 
