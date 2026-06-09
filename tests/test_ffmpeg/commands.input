@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -server -statistics
+-getproject CURDIR/ffmpeg/fftools/ffmpeg.c
+<sync>
+-search=x -olcursor=1 CURDIR/ffmpeg/fftools/ffmpeg.c -p CURDIR
+<sync>
+-continue
+<sync>
+<exit>
