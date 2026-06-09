@@ -294,34 +294,25 @@ Ensure(ProjectStructure, skips_already_known_header_in_transitive_scan) {
     scanProjectForFilesAndIncludes("/project", NULL);
 }
 
-Ensure(ProjectStructure, records_include_but_skips_scanning_missing_file) {
-    /* source.c → missing.h, but missing.h doesn't exist on disk */
+Ensure(ProjectStructure, does_not_record_unresolved_include) {
+    /* source.c → missing.h, but missing.h doesn't exist on disk.
+     * The scan should attempt resolution, see fileExists fail, and
+     * skip entirely — no file-table entry, no include reference, no
+     * later scan attempt. Phantom entries would pollute the snapshot
+     * with non-existent files (the "doubled-path" pattern we saw in
+     * ffmpeg). */
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "#include \"missing.h\"\n");
 
-    /* Include resolution: try includer's dir — not found, no includeDirs, fallback */
+    /* Include resolution: try includer's dir — not found, no includeDirs */
     expect(directoryName_static, will_return("/project"));
     expect(normalizeFileName_static, when(name, is_equal_to_string("missing.h")),
            will_return("/project/missing.h"));
     expect(fileExists, when(fullPath, is_equal_to_string("/project/missing.h")),
            will_return(false));
-    /* Fallback: return includer-relative path */
-    expect(normalizeFileName_static, when(name, is_equal_to_string("missing.h")),
-           will_return("/project/missing.h"));
-    expect(directoryName_static, will_return("/project"));
 
-    /* File gets registered despite not existing */
-    expect(existsInFileTable, when(fileName, is_equal_to_string("/project/missing.h")),
-           will_return(false));
-    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/missing.h")),
-           will_return(2));
-    expect(addIncludeReference, when(includedFileNumber, is_equal_to(2)));
-
-    /* Phase 2: missing.h popped — openFile fails */
-    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/missing.h")),
-           will_return(2));
-    expect(openFile, will_return(NULL));
-    /* No readFile or closeFile — file couldn't be opened */
+    /* No fallback, no addFileNameToFileTable, no addIncludeReference,
+     * no Phase 2 attempt — resolver returns NULL, caller skips. */
 
     scanProjectForFilesAndIncludes("/project", NULL);
 }
