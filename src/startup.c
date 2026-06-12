@@ -440,7 +440,10 @@ static void getAndProcessProjectConfig(char *configFileName, char *project) {
     ArgumentsVector args;
 
     args = readOptionsFromFile(configFileName, project, project);
-    processOptions(args, PROCESS_FILE_ARGUMENTS_NO); /* .c-xrefrc opts*/
+    /* YES so bare (non-option) config arguments are collected into
+     * options.inputFiles with correct option/value classification. Both callers
+     * want this; the caller clears inputFiles between passes to collect once. */
+    processOptions(args, PROCESS_FILE_ARGUMENTS_YES); /* .c-xrefrc opts*/
 }
 
 /* Memory checkpoint structure */
@@ -539,27 +542,30 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
     /* Save memory state so subsequent files in same project can skip phases 2-3 */
     saveMemoryCheckPoint(&checkpoint1);
 
-    /* Then for the particular pass */
+    /* Then for the particular pass. Discard the NO_PASS pass's file-argument
+     * collection so only this pass's bare config paths land in inputFiles. */
     currentPass = savedPass;
+    options.inputFiles = NULL;
     getAndProcessProjectConfig(projectConfigFileName, projectSectionName);
 
     /* Collect source directories from the config into ProjectConfig.
-     * These are the bare path arguments (non-option lines) in the .c-xrefrc section.
-     * Done after the second getAndProcessProjectConfig to avoid double-collection. */
+     * These are the bare path arguments (non-option lines) of the .c-xrefrc
+     * section, which getAndProcessProjectConfig routed into options.inputFiles —
+     * with correct option/value classification (e.g. -prune's value is a prune
+     * name, not a path). Normalize each to an absolute path relative to the
+     * config dir, then clear inputFiles: it has no further use in the
+     * auto-detect server flow, and the legacy path expects it NULL (server.c
+     * adds "." when empty). */
     freeStringList(projectConfig.sourceDirs);
     projectConfig.sourceDirs = NULL;
 
-    ArgumentsVector configArgs = readOptionsFromFile(projectConfigFileName,
-                                                     projectSectionName, projectSectionName);
     char *configDir = directoryName_static(projectConfigFileName);
-    for (int i = 1; i < configArgs.argc; i++) {
-        if (configArgs.argv[i][0] != '-') {
-            char absolutePath[MAX_FILE_NAME_SIZE];
-            strcpy(absolutePath, normalizeFileName_static(configArgs.argv[i], configDir));
-            projectConfig.sourceDirs = newStringList(absolutePath,
-                                                     projectConfig.sourceDirs);
-        }
+    for (StringList *f = options.inputFiles; f != NULL; f = f->next) {
+        char absolutePath[MAX_FILE_NAME_SIZE];
+        strcpy(absolutePath, normalizeFileName_static(f->string, configDir));
+        projectConfig.sourceDirs = newStringList(absolutePath, projectConfig.sourceDirs);
     }
+    options.inputFiles = NULL;
 
     LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 

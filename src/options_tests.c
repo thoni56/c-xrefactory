@@ -587,3 +587,36 @@ Ensure(Options, can_parse_target_line_option) {
     processOptions(args, false);
     assert_that(options.refactor_target_line, is_equal_to_string("99"));
 }
+
+Ensure(Options, prunes_relative_path_resolved_against_detected_project_root) {
+    options.detectedProjectRoot = "/project";
+    addToStringListOption(&options.pruneNames, "subdir");
+
+    expect(compareFileNames,
+           when(ss1, is_equal_to_string("/project/subdir")),
+           when(ss2, is_equal_to_string("/project/subdir")),
+           will_return(0));
+
+    assert_that(fileNameShouldBePruned("/project/subdir"), is_true);
+}
+
+/* When asked to collect file arguments, the parser must route bare path tokens
+ * into options.inputFiles while NOT mistaking a separate-token option VALUE
+ * (here, -prune's argument) for a path. This is the classification that
+ * server-mode source-dir collection should rely on, instead of the
+ * leading-dash heuristic currently hand-rolled in startup.c. */
+Ensure(Options, collects_bare_paths_as_input_files_not_option_values) {
+    char *arguments[] = {"", "-prune", "NAME", "/abs/path"};
+    ArgumentsVector args = {4, arguments};
+
+    processOptions(args, PROCESS_FILE_ARGUMENTS_YES);
+
+    /* -prune's value is classified as a prune name, not a path */
+    assert_that(options.pruneNames, is_not_null);
+    assert_that(options.pruneNames->string, is_equal_to_string("NAME"));
+
+    /* the lone bare path is the only input file; "NAME" never leaks in */
+    assert_that(options.inputFiles, is_not_null);
+    assert_that(options.inputFiles->string, is_equal_to_string("/abs/path"));
+    assert_that(options.inputFiles->next, is_null);
+}

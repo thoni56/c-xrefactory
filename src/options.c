@@ -447,12 +447,13 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     LEAVE();
 }
 
-static bool fileNameShouldBePruned(char *fn) {
-    for (StringList *s=options.pruneNames; s!=NULL; s=s->next) {
-        MAP_OVER_PATHS(s->string, {
-            if (compareFileNames(currentPath, fn) == 0)
-                return true;
-        });
+bool fileNameShouldBePruned(char *fn) {
+    for (StringList *s = options.pruneNames; s != NULL; s = s->next) {
+        char resolved[MAX_FILE_NAME_SIZE];
+        snprintf(resolved, sizeof(resolved), "%s%c%s",
+                 options.detectedProjectRoot, FILE_PATH_SEPARATOR, s->string);
+        if (compareFileNames(resolved, fn) == 0)
+            return true;
     }
     return false;
 }

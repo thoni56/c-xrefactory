@@ -8,6 +8,7 @@
 
 #include "log.h"
 #include "constants.h"
+#include "options.h"
 
 
 /* Do any type of file entry exist at path? */
@@ -125,6 +126,9 @@ StringList *listFilesInDirectory(const char *dirPath) {
             continue;
 
         snprintf(filePath, sizeof(filePath), "%s/%s", dirPath, entry->d_name);
+
+        if (fileNameShouldBePruned(filePath))
+            continue;
 
         struct stat st;
         if (lstat(filePath, &st) == 0 && S_ISLNK(st.st_mode))

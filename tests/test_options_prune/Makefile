@@ -1,13 +1,22 @@
-include ../Makefile.cli
+PREPARE = prepare
 
-# Verify that pruned directories are not included
+include ../Makefile.server
 
-ARGUMENTS = -xrefactory-II -create -errors $(TRACE) -log=log -o output.tmp -prune pruned
+# Verify that -prune directives are honored by the lightweight scan
+# in ServerMode: the snapshot must NOT contain entries for files
+# under 'pruned/'. The directory is registered as -prune in the
+# generated .c-xrefrc, and we count .c-file entries the snapshot
+# recorded under this test directory (expected: 1 == source.c only).
 
-$(TEST): .c-xrefrc
-	$(COMMAND) > output.tmp
-	grep $(PWD) CXrefs/XFiles | wc -l | tr -d ' ' > output
+$(TEST):
+	@$(SERVER_DRIVER) commands.input > output.tmp
+	@grep "$(CURDIR)" .c-xref/db | grep "\\.c" | wc -l | tr -d ' ' > output
 	$(VERIFY)
 
-trace: TRACE = -debug
+prepare:
+	@rm -rf .c-xref
+
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
+
+GDB_COMMANDS =

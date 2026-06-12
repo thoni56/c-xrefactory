@@ -165,6 +165,7 @@ extern void setOptionVariable(char *name, char *val);
 extern char *getOptionVariable(char *name);
 
 extern void dirInputFile(MAP_FUN_SIGNATURE);
+extern bool fileNameShouldBePruned(char *fn);
 extern void recoverMemoryFromIncludeList(void);
 
 extern void processFileArguments(void);

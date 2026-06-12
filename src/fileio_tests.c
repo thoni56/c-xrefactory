@@ -2,6 +2,7 @@
 
 #include "fileio.h"
 #include "log.h"
+#include "options.mock"
 
 Describe(Fileio);
 BeforeEach(Fileio) {
