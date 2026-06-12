@@ -73,6 +73,24 @@ Include paths:: `-I` options tell c-xrefactory where to find header files, just
 Preprocessor defines:: `-D` options define macros, equivalent to the compiler flag.
   Useful when the project uses conditional compilation.
 
+Excluding subtrees:: `-prune` keeps a directory subtree out of the scan. The
+  argument is a path *relative to the project root* (the directory holding
+  `.c-xrefrc`), matched exactly; the named directory and everything beneath it
+  are skipped. Useful for build outputs or vendored third-party code:
++
+[source]
+----
+[my-project]
+  -prune build
+  -prune third_party/vendored
+----
++
+NOTE: The path is anchored to the project root, not matched by name. `-prune
+build` skips `<root>/build` but not a nested `src/build`. (Earlier versions
+matched a bare directory name anywhere in the tree, so a config using e.g.
+`-prune build` to skip every `build/` directory must be changed to the
+root-relative path.)
+
 TIP: Paths in `.c-xrefrc` are resolved relative to the config file's directory,
 so the configuration is portable and can be checked into version control.
 

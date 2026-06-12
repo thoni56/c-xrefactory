@@ -171,7 +171,7 @@ Files enter the file table through three mechanisms:
 
 **Editor preloads**. When the editor sends `-preload <file> <tmpfile>`, the file enters the file table via the editor buffer mechanism. Files created during a session — new source files the user opens — are discovered this way without any explicit rescan.
 
-**Project directory glob** (`processFileArguments()`). At startup, after project context initialization, the server walks `options.inputFiles` (typically `.`, the project root) recursively, filtering by known source suffixes (`.c`, `.y`, etc.) and honoring `-prune` paths. This discovers all compilation units in the project directory without requiring a prior `-create` invocation.
+**Project directory glob** (`scanProjectForFilesAndIncludes()` → `listFilesInDirectory()`). At startup, after project context initialization, the server walks the project root recursively, filtering by known source suffixes (`.c`, `.y`, etc.) and honoring `-prune` paths (applied in `listFilesInDirectory` against the project-root-relative `-prune` entries). This discovers all compilation units in the project directory without requiring a prior `-create` invocation. (The legacy `processFileArguments()` path over `options.inputFiles` remains only as a fallback when no project root is auto-detected.)
 
 The three mechanisms are complementary: the disk database provides historical knowledge, preloads provide real-time updates during the session, and the project directory glob provides a fresh scan of what actually exists on disk at startup.
 
