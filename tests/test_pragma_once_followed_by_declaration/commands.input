@@ -1,0 +1,6 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/source.c
+<sync>
+-rfct-rename -renameto=bar -olmark=83 -olcursor=83 CURDIR/source.c -p CURDIR
+<sync>
+<exit>

@@ -1594,6 +1594,13 @@ static void processPragmaDirective(void) {
         Symbol *symbol = ppmAlloc(sizeof(Symbol));
         *symbol = makeMacroSymbol(mname, position);
         symbolTableAdd(symbolTable, symbol);
+
+        /* 'once' has already had its extra lexem information consumed above, so
+         * advance to the next lexem. Without this the loop below re-consumes
+         * 'once', desyncing the lexem stream and swallowing a declaration that
+         * sits on the line immediately after '#pragma once'. */
+        lexem = getLexem();
+        ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
     }
     while (lexem != '\n') {
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL,
