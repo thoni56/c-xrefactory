@@ -52,10 +52,10 @@ This chapter outlines the high-level architectural and feature goals for c-xrefa
 |Component |Description
 
 |**Separate sync from dispatch (done)**
-|Server-side restructuring (link:/workspace/decisions#20[ADR-0020]): the server entry point reparses stale files before dispatching any operation. Pass 1 reparses stale CUs, Pass 2 walks the reverse-include graph (via `TypeCppInclude` references) to find and reparse CUs that include stale headers. At startup, the server loads the `.cx` snapshot (`loadFileNumbersFromStore`), discovers CUs by globbing the project directory, and parses only stale CUs (mtime changed since snapshot). The Emacs client only preloads modified buffers, so unmodified files don't trigger unnecessary reparsing. Operations can assume the in-memory table is current.
+|Server-side restructuring (link:/workspace/1/decisions/C-xrefactory#20[ADR-0020]): the server entry point reparses stale files before dispatching any operation. Pass 1 reparses stale CUs, Pass 2 walks the reverse-include graph (via `TypeCppInclude` references) to find and reparse CUs that include stale headers. At startup, the server loads the `.cx` snapshot (`loadFileNumbersFromStore`), discovers CUs by globbing the project directory, and parses only stale CUs (mtime changed since snapshot). The Emacs client only preloads modified buffers, so unmodified files don't trigger unnecessary reparsing. Operations can assume the in-memory table is current.
 
 |**Lightweight file structure scanning (done)**
-|CU discovery by globbing the project directory, include structure extraction from `#include` lines, populating the same `TypeCppInclude` references that full parsing creates. Operational on the auto-detect path. See link:/workspace/decisions#22[ADR-0022].
+|CU discovery by globbing the project directory, include structure extraction from `#include` lines, populating the same `TypeCppInclude` references that full parsing creates. Operational on the auto-detect path. See link:/workspace/1/decisions/C-xrefactory#22[ADR-0022].
 
 |**Index-based sessions**
 |Session stores symbol key + current position instead of copying all references. Navigation reads directly from in-memory table, eliminating the "stale session copies" problem. Depends on upfront refresh (ADR 20) so that the table is always current when sessions read from it.
@@ -124,12 +124,12 @@ The snapshot is written from disk-file-derived references only. Modified-buffer 
 
 ==== Related Decisions and Details
 
-* **link:/workspace/decisions#5[ADR-0005]**: Automatically find config files — enables project discovery by upward search
-* **link:/workspace/decisions#13[ADR-0013]**: No archaic extern patterns — limits symbol visibility to include-based, making include closure complete
-* **link:/workspace/decisions#14[ADR-0014]**: Adopt on-demand parsing architecture — formalizes this direction
-* **link:/workspace/decisions#20[ADR-0020]**: Separate sync from dispatch — implemented, entry-point reparse with include-graph walking
-* **link:/workspace/decisions#21[ADR-0021]**: Single-project server policy — foundation for index-based sessions
-* **link:/workspace/decisions#22[ADR-0022]**: Lightweight file structure scanning — replaces `-create` and `callXref()`
+* **link:/workspace/1/decisions/C-xrefactory#5[ADR-0005]**: Automatically find config files — enables project discovery by upward search
+* **link:/workspace/1/decisions/C-xrefactory#13[ADR-0013]**: No archaic extern patterns — limits symbol visibility to include-based, making include closure complete
+* **link:/workspace/1/decisions/C-xrefactory#14[ADR-0014]**: Adopt on-demand parsing architecture — formalizes this direction
+* **link:/workspace/1/decisions/C-xrefactory#20[ADR-0020]**: Separate sync from dispatch — implemented, entry-point reparse with include-graph walking
+* **link:/workspace/1/decisions/C-xrefactory#21[ADR-0021]**: Single-project server policy — foundation for index-based sessions
+* **link:/workspace/1/decisions/C-xrefactory#22[ADR-0022]**: Lightweight file structure scanning — replaces `-create` and `callXref()`
 * **Chapter 17**: Incremental `cxfile.c` cleanup, `parseBufferUsingServer` bridge removal
 
 === Optimization

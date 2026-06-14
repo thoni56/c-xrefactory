@@ -560,7 +560,7 @@ Buffer lifetime depends on the server mode and buffer role:
 |Context |Behavior
 
 |**Server mode, editor content**
-|Reaped after each request unless held (markers, preload). The reaping pass is `closeAllEditorBuffersIfClosable`, governed by `bufferIsCloseable()`. link:/workspace/decisions#23[ADR-0023] proposes a more uniformly persistent model.
+|Reaped after each request unless held (markers, preload). The reaping pass is `closeAllEditorBuffersIfClosable`, governed by `bufferIsCloseable()`. link:/workspace/1/decisions/C-xrefactory#23[ADR-0023] proposes a more uniformly persistent model.
 
 |**Server mode, disk cache**
 |Subject to the same closeable-check; the disk-cache role typically allows reaping, but a buffer held by markers (mid-refactoring) is preserved.
