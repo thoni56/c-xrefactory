@@ -41,7 +41,7 @@ This chapter outlines the high-level architectural and feature goals for c-xrefa
               │ bridge removal  │
               │                 │
               │ XrefMode        │
-              │ removal(?)      │
+              │ removal         │
               └─────────────────┘
 ----
 
@@ -73,6 +73,9 @@ The header-filtered sibling parsing optimization (see Optimization section) beco
 |**Disk snapshot strategy (operational)**
 |The `.cx` file functions as a startup snapshot. At startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. On `-exit`, the server saves the current in-memory state back to disk. No prior `-create` needed — the first session builds references from scratch, subsequent sessions load the snapshot. See below for target semantics.
 
+|**CreateMode — batch prime & config validation (proposed)**
+|A standalone `c-xref -create [path]` batch mode that starts exactly like `-server` (auto-discovery, snapshot load), then eagerly parses the whole project, reports parse errors on stderr (exiting non-zero on failure), writes the snapshot, and exits. No command-line options — the discovered `.c-xrefrc` is authoritative. Create and update are unified: the snapshot is a disposable cache, always loaded and reconciled, so there is no separate `-update`. Built as a thin reuse of the server parse path, it gives `-create` a server-path home — the move that unblocks removing XrefMode. See link:/workspace/1/decisions/C-xrefactory#24[ADR-0024].
+
 |**Search reads from in-memory table (done)**
 |`OP_SEARCH` now queries the in-memory `referenceableItemTable` via `searchInMemoryTable()` in cxref.c, replacing the disk-based `scanForSearch()`. Same matching logic (`searchSymbolCheckReference`, `searchStringMatch`), same reference filtering (`UsageDefined`/`UsageDeclared`), same result printing. Skips `VisibilityLocal` (block-local) symbols, matching the snapshot's write filter. This was the last operation that read from disk `.cx` files as truth — **all operations now use the in-memory table**.
 
@@ -98,7 +101,7 @@ Both navigation and refactoring already use the same in-memory `ReferenceableIte
 
 The path forward is:
 
-1. **Lightweight scanning replaces `-create`** (done) — discover CUs and include structure without full parsing. Populate the same `TypeCppInclude` references.
+1. **Lightweight scanning replaces the mandatory `-create`** (done) — discover CUs and include structure without full parsing. Populate the same `TypeCppInclude` references. (An *optional* `-create` returns as a deliberate batch prime — see CreateMode, link:/workspace/1/decisions/C-xrefactory#24[ADR-0024].)
 2. **Snapshot save/load** (done) — `.cx` loaded at startup, saved on `-exit`. No manual `-create` needed after first session.
 3. **Refactoring moves into server (strangler fig)** (done) — all refactorings run as server operations via `OP_REFACTORY`. `RefactoryMode` and the legacy `-refactory` process have been removed. Remaining cleanup: remove `callXref` usage from `parseBufferUsingServer` bridge.
 4. **`.cx` becomes startup snapshot only** (done) — never consulted during operation. The in-memory table is authoritative. All operations use the in-memory `referenceableItemTable`: navigation, completion, search, refactoring, and unused detection (both local and global). The disk scan tables in `cxfile.c` (all except `snapshotLoadScanDispatchTable`) are candidates for removal.
@@ -121,6 +124,8 @@ After startup, the `.cx` file is not consulted. All operations read from the in-
 The snapshot is written from disk-file-derived references only. Modified-buffer data must never be persisted — the snapshot reflects disk state, so that startup validation (step 2) remains correct.
 
 **Cold start** (no `.cx` file): All project source files are parsed. This is slower but self-healing — no manual action needed to recover from a missing or corrupt snapshot.
+
+An optional **CreateMode** (`c-xref -create`, link:/workspace/1/decisions/C-xrefactory#24[ADR-0024]) performs this whole-project parse deliberately and up front — for priming a large project or validating the project config — without reintroducing a _required_ create step.
 
 ==== Related Decisions and Details
 
