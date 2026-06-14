@@ -620,3 +620,17 @@ Ensure(Options, collects_bare_paths_as_input_files_not_option_values) {
     assert_that(options.inputFiles->string, is_equal_to_string("/abs/path"));
     assert_that(options.inputFiles->next, is_null);
 }
+
+/* resolvePrunePaths materialises each -prune entry as an absolute path anchored
+ * at the detected project root — what the lightweight scan gates descent on. */
+Ensure(Options, resolves_prune_path_against_detected_project_root) {
+    options.detectedProjectRoot = "/project";
+    addToStringListOption(&options.pruneNames, "build");
+
+    StringList *resolved = resolvePrunePaths();
+
+    assert_that(resolved, is_not_null);
+    assert_that(resolved->string, is_equal_to_string("/project/build"));
+    assert_that(resolved->next, is_null);
+    freeStringList(resolved);
+}

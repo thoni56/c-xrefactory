@@ -8,7 +8,6 @@
 
 #include "log.h"
 #include "constants.h"
-#include "options.h"
 
 
 /* Do any type of file entry exist at path? */
@@ -107,6 +106,11 @@ void recursivelyDeleteDirectory(char *dirName) {
     rmdir(dirName);
 }
 
+/* List a single directory level: every reasonable entry (files and
+ * subdirectories alike) as a full path. This is a pure fileio primitive — it
+ * does NOT recurse, and applies no project policy (no -prune). The recursive,
+ * prune-aware walk lives in the layer above (projectstructure), which stats
+ * each returned entry and decides whether to descend. */
 StringList *listFilesInDirectory(const char *dirPath) {
     DIR *dir;
     struct dirent *entry;
@@ -127,25 +131,12 @@ StringList *listFilesInDirectory(const char *dirPath) {
 
         snprintf(filePath, sizeof(filePath), "%s/%s", dirPath, entry->d_name);
 
-        if (fileNameShouldBePruned(filePath))
-            continue;
-
         struct stat st;
         if (lstat(filePath, &st) == 0 && S_ISLNK(st.st_mode))
             /* Ignore symlinks */
             continue;
-        if (stat(filePath, &st) == 0 && S_ISDIR(st.st_mode)) {
-            StringList *subList = listFilesInDirectory(filePath);
-            if (subList != NULL) {
-                StringList *tail = subList;
-                while (tail->next != NULL)
-                    tail = tail->next;
-                tail->next = result;
-                result = subList;
-            }
-        } else {
-            result = newStringList(filePath, result);
-        }
+
+        result = newStringList(filePath, result);
     }
 
     closedir(dir);

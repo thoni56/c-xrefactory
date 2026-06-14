@@ -85,28 +85,45 @@ static StringList *scanFileForIncludes(const char *filePath, int includerFileNum
     return discovered;
 }
 
-StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *includeDirs) {
+static bool isInList(const char *name, StringList *list);
+
+/* Recursively walk a directory tree, one level at a time via the fileio
+ * primitive listFilesInDirectory(). Compilation units are added to
+ * *discoveredCUs and the headers they include to *worklist. A directory whose
+ * path is in prunePaths is neither descended into nor considered. Depth-first,
+ * in listing order. */
+static void walkForCompilationUnits(const char *dir, StringList *includeDirs,
+                                    StringList *prunePaths,
+                                    StringList **discoveredCUs, StringList **worklist) {
+    StringList *entries = listFilesInDirectory(dir);
+    for (StringList *e = entries; e != NULL; e = e->next) {
+        if (isInList(e->string, prunePaths))
+            continue;                       /* pruned: don't descend, don't consider */
+        if (isDirectory(e->string)) {
+            walkForCompilationUnits(e->string, includeDirs, prunePaths, discoveredCUs, worklist);
+        } else if (isCompilationUnit(e->string)) {
+            int cuFileNumber = addFileNameToFileTable(e->string);
+            *discoveredCUs = newStringList(e->string, *discoveredCUs);
+            StringList *newHeaders = scanFileForIncludes(e->string, cuFileNumber, includeDirs);
+            /* Prepend discovered headers to the worklist */
+            if (newHeaders != NULL) {
+                StringList *tail = newHeaders;
+                while (tail->next != NULL)
+                    tail = tail->next;
+                tail->next = *worklist;
+                *worklist = newHeaders;
+            }
+        }
+    }
+    freeStringList(entries);
+}
+
+StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *includeDirs, StringList *prunePaths) {
     StringList *worklist = NULL;
     StringList *discoveredCUs = NULL;
 
-    /* Phase 1: discover CUs and scan them */
-    StringList *files = listFilesInDirectory(projectDir);
-    for (StringList *f = files; f != NULL; f = f->next) {
-        if (!isCompilationUnit(f->string))
-            continue;
-        int cuFileNumber = addFileNameToFileTable(f->string);
-        discoveredCUs = newStringList(f->string, discoveredCUs);
-        StringList *newHeaders = scanFileForIncludes(f->string, cuFileNumber, includeDirs);
-        /* Prepend discovered headers to worklist */
-        if (newHeaders != NULL) {
-            StringList *tail = newHeaders;
-            while (tail->next != NULL)
-                tail = tail->next;
-            tail->next = worklist;
-            worklist = newHeaders;
-        }
-    }
-    freeStringList(files);
+    /* Phase 1: recursively discover CUs and scan them for includes */
+    walkForCompilationUnits(projectDir, includeDirs, prunePaths, &discoveredCUs, &worklist);
 
     /* Phase 2: transitively scan discovered headers */
     while (worklist != NULL) {

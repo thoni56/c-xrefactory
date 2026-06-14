@@ -632,14 +632,15 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         if (configChanged)
             reloadProjectConfig(baseArgs, requestArgs);
         if (!scanDone || configChanged) {
+            StringList *prunePaths = resolvePrunePaths();
             StringList *discoveredCUs = scanProjectForFilesAndIncludes(
-                options.detectedProjectRoot, options.includeDirs);
+                options.detectedProjectRoot, options.includeDirs, prunePaths);
             /* Also scan extra source directories from the project config */
             for (StringList *dir = getProjectConfig()->sourceDirs; dir != NULL; dir = dir->next) {
                 if (isDirectory(dir->string)
                     && strcmp(dir->string, options.detectedProjectRoot) != 0) {
                     StringList *extraCUs = scanProjectForFilesAndIncludes(
-                        dir->string, options.includeDirs);
+                        dir->string, options.includeDirs, prunePaths);
                     /* Prepend to discoveredCUs */
                     if (extraCUs != NULL) {
                         StringList *tail = extraCUs;
@@ -650,6 +651,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
                     }
                 }
             }
+            freeStringList(prunePaths);
             markMissingFilesAsDeleted(discoveredCUs);
             freeStringList(discoveredCUs);
             scanDone = true;

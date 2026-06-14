@@ -2,7 +2,7 @@
 #include "projectstructure.h"
 #include <cgreen/mocks.h>
 
-StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *includeDirs) {
+StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *includeDirs, StringList *prunePaths) {
     return (StringList *)mock(projectDir, includeDirs);
 }
 

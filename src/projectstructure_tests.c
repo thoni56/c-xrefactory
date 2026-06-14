@@ -16,6 +16,26 @@
 
 static void given_project_files(StringList *files) {
     expect(listFilesInDirectory, will_return(files));
+    /* the walker classifies each entry; given_project_files entries are all
+     * plain files (a subtree test uses given_directory instead) */
+    for (StringList *f = files; f != NULL; f = f->next)
+        expect(isDirectory, when(fullPath, is_equal_to_string(f->string)), will_return(false));
+}
+
+/* Single-level lister contract (Option A): describe one directory level.
+ * Ordered expects — cgreen matches each mocked function's calls FIFO — so the
+ * given_directory / given_is_directory calls in a test must be declared in the
+ * order the walker visits (depth-first, listing order, prune-check first). A
+ * pruned dir is expressed by simply NOT declaring it: any descent into it then
+ * surfaces as an unexpected listFilesInDirectory call. Pure filesystem — knows
+ * nothing about prune policy; that arrives via the prunePaths argument. */
+static void given_directory(char *dir, StringList *entries) {
+    expect(listFilesInDirectory, when(dirPath, is_equal_to_string(dir)),
+           will_return(entries));
+}
+static void given_is_directory(char *path, bool isDir) {
+    expect(isDirectory, when(fullPath, is_equal_to_string(path)),
+           will_return(isDir));
 }
 
 static void given_cu_with_content(char *path, int fileNum, char *content) {
@@ -75,23 +95,23 @@ BeforeEach(ProjectStructure) {
 }
 AfterEach(ProjectStructure) {}
 
-Ensure(ProjectStructure, adds_nothing_for_empty_project_directory) {
+Ensure(ProjectStructure, lightweight_scan_adds_nothing_for_empty_project_directory) {
     given_project_files(NULL);
     never_expect(addFileNameToFileTable);
     never_expect(addIncludeReference);
 
-    scanProjectForFilesAndIncludes("/empty/dir", NULL);
+    scanProjectForFilesAndIncludes("/empty/dir", NULL, NULL);
 }
 
-Ensure(ProjectStructure, adds_only_file_for_cu_without_includes) {
+Ensure(ProjectStructure, lightweight_scan_adds_only_file_for_cu_without_includes) {
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_without_includes("/project/source.c");
     never_expect(addIncludeReference);
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, adds_file_and_reference_for_single_include) {
+Ensure(ProjectStructure, lightweight_scan_adds_file_and_reference_for_single_include) {
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "#include \"header.h\"\n");
     given_include_resolves("header.h", "/project", "/project/header.h", 2, 1);
@@ -99,10 +119,10 @@ Ensure(ProjectStructure, adds_file_and_reference_for_single_include) {
            will_return(2));
     given_header_without_includes("/project/header.h");
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, adds_references_for_multiple_includes) {
+Ensure(ProjectStructure, lightweight_scan_adds_references_for_multiple_includes) {
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1,
                           "#include \"alpha.h\"\n#include \"beta.h\"\n#include \"gamma.h\"\n");
@@ -120,10 +140,10 @@ Ensure(ProjectStructure, adds_references_for_multiple_includes) {
            will_return(2));
     given_header_without_includes("/project/alpha.h");
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, scans_multiple_cus_independently) {
+Ensure(ProjectStructure, lightweight_scan_scans_multiple_cus_independently) {
     given_project_files(newStringList("/project/main.c",
                         newStringList("/project/util.c", NULL)));
     given_cu_with_content("/project/main.c", 1, "#include \"main.h\"\n");
@@ -138,10 +158,10 @@ Ensure(ProjectStructure, scans_multiple_cus_independently) {
            will_return(2));
     given_header_without_includes("/project/main.h");
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, handles_include_split_across_buffer_boundary) {
+Ensure(ProjectStructure, lightweight_scan_handles_include_split_across_buffer_boundary) {
     /* First read ends mid-line: "#include \"hea", second read has: "der.h"\n" */
     char *chunk1 = "#include \"hea";
     char *chunk2 = "der.h\"\n";
@@ -162,18 +182,18 @@ Ensure(ProjectStructure, handles_include_split_across_buffer_boundary) {
            will_return(2));
     given_header_without_includes("/project/header.h");
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, ignores_angle_bracket_includes) {
+Ensure(ProjectStructure, lightweight_scan_ignores_angle_bracket_includes) {
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "#include <stdio.h>\n");
     never_expect(addIncludeReference);
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, recognises_indented_include) {
+Ensure(ProjectStructure, lightweight_scan_recognises_indented_include) {
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "  #include \"header.h\"\n");
     given_include_resolves("header.h", "/project", "/project/header.h", 2, 1);
@@ -181,10 +201,10 @@ Ensure(ProjectStructure, recognises_indented_include) {
            will_return(2));
     given_header_without_includes("/project/header.h");
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, recognises_space_between_hash_and_include) {
+Ensure(ProjectStructure, lightweight_scan_recognises_space_between_hash_and_include) {
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "#  include \"header.h\"\n");
     given_include_resolves("header.h", "/project", "/project/header.h", 2, 1);
@@ -192,10 +212,10 @@ Ensure(ProjectStructure, recognises_space_between_hash_and_include) {
            will_return(2));
     given_header_without_includes("/project/header.h");
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, scans_only_compilation_units) {
+Ensure(ProjectStructure, lightweight_scan_scans_only_compilation_units) {
     given_project_files(newStringList("/project/main.c",
                         newStringList("/project/parser.y",
                         newStringList("/project/header.h",
@@ -206,12 +226,12 @@ Ensure(ProjectStructure, scans_only_compilation_units) {
     expect(isCompilationUnit, will_return(false)); /* header.h */
     expect(isCompilationUnit, will_return(false)); /* readme.txt */
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
 /* Transitive include scanning tests */
 
-Ensure(ProjectStructure, scans_header_includes_transitively) {
+Ensure(ProjectStructure, lightweight_scan_scans_header_includes_transitively) {
     /* source.c → header.h → deep.h */
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "#include \"header.h\"\n");
@@ -228,10 +248,10 @@ Ensure(ProjectStructure, scans_header_includes_transitively) {
            will_return(3));
     given_header_with_content("/project/deep.h", "/* no includes */\n");
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, scans_transitive_includes_to_full_depth) {
+Ensure(ProjectStructure, lightweight_scan_scans_transitive_includes_to_full_depth) {
     /* source.c → a.h → b.h → c.h */
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "#include \"a.h\"\n");
@@ -254,10 +274,10 @@ Ensure(ProjectStructure, scans_transitive_includes_to_full_depth) {
            will_return(4));
     given_header_without_includes("/project/c.h");
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, skips_already_known_header_in_transitive_scan) {
+Ensure(ProjectStructure, lightweight_scan_skips_already_known_header_in_transitive_scan) {
     /* CU1 → h1 → shared.h, CU2 → shared.h
        shared.h should be scanned only once.
        Worklist order after CU phase: shared.h (from b.c, prepended last), h1.h */
@@ -291,10 +311,10 @@ Ensure(ProjectStructure, skips_already_known_header_in_transitive_scan) {
            will_return(4));
     expect(addIncludeReference, when(includedFileNumber, is_equal_to(4)));
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, does_not_record_unresolved_include) {
+Ensure(ProjectStructure, lightweight_scan_does_not_record_unresolved_include) {
     /* source.c → missing.h, but missing.h doesn't exist on disk.
      * The scan should attempt resolution, see fileExists fail, and
      * skip entirely — no file-table entry, no include reference, no
@@ -314,10 +334,10 @@ Ensure(ProjectStructure, does_not_record_unresolved_include) {
     /* No fallback, no addFileNameToFileTable, no addIncludeReference,
      * no Phase 2 attempt — resolver returns NULL, caller skips. */
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, handles_circular_includes_without_infinite_loop) {
+Ensure(ProjectStructure, lightweight_scan_handles_circular_includes_without_infinite_loop) {
     /* source.c → a.h → b.h → a.h (cycle) */
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "#include \"a.h\"\n");
@@ -345,10 +365,10 @@ Ensure(ProjectStructure, handles_circular_includes_without_infinite_loop) {
     expect(addIncludeReference, when(includedFileNumber, is_equal_to(2)));
     /* No further scanning — worklist is empty */
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, follows_includes_regardless_of_file_extension) {
+Ensure(ProjectStructure, lightweight_scan_follows_includes_regardless_of_file_extension) {
     /* source.c → table.tc → table.th — scanner follows any quoted include */
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "#include \"table.tc\"\n");
@@ -365,12 +385,12 @@ Ensure(ProjectStructure, follows_includes_regardless_of_file_extension) {
            will_return(3));
     given_header_without_includes("/project/table.th");
 
-    scanProjectForFilesAndIncludes("/project", NULL);
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
 /* Include path resolution tests */
 
-Ensure(ProjectStructure, prefers_includer_dir_over_includeDirs) {
+Ensure(ProjectStructure, lightweight_scan_prefers_includer_dir_over_includeDirs) {
     /* source.c includes "util.h", found in both /project/ and /project/lib/
        — includer's directory should win */
     StringList *includeDirs = newStringList("/project/lib", NULL);
@@ -397,10 +417,10 @@ Ensure(ProjectStructure, prefers_includer_dir_over_includeDirs) {
            will_return(2));
     given_header_without_includes("/project/util.h");
 
-    scanProjectForFilesAndIncludes("/project", includeDirs);
+    scanProjectForFilesAndIncludes("/project", includeDirs, NULL);
 }
 
-Ensure(ProjectStructure, resolves_include_via_includeDirs_when_not_in_includer_dir) {
+Ensure(ProjectStructure, lightweight_scan_resolves_include_via_includeDirs_when_not_in_includer_dir) {
     /* source.c includes "util.h", not found in /project/, found in /project/lib/ */
     StringList *includeDirs = newStringList("/project/lib", NULL);
 
@@ -443,7 +463,7 @@ Ensure(ProjectStructure, resolves_include_via_includeDirs_when_not_in_includer_d
            will_return(2));
     given_header_without_includes("/project/lib/util.h");
 
-    scanProjectForFilesAndIncludes("/project", includeDirs);
+    scanProjectForFilesAndIncludes("/project", includeDirs, NULL);
 }
 
 /* Return value tests */
@@ -455,7 +475,7 @@ static bool listContains(StringList *list, const char *name) {
     return false;
 }
 
-Ensure(ProjectStructure, returns_discovered_compilation_units) {
+Ensure(ProjectStructure, lightweight_scan_returns_discovered_compilation_units) {
     given_project_files(newStringList("/project/main.c",
                         newStringList("/project/util.c",
                         newStringList("/project/header.h",
@@ -466,7 +486,7 @@ Ensure(ProjectStructure, returns_discovered_compilation_units) {
     expect(isCompilationUnit, will_return(false)); /* header.h */
     expect(isCompilationUnit, will_return(false)); /* readme.txt */
 
-    StringList *discovered = scanProjectForFilesAndIncludes("/project", NULL);
+    StringList *discovered = scanProjectForFilesAndIncludes("/project", NULL, NULL);
 
     assert_that(discovered, is_non_null);
     assert_that(listContains(discovered, "/project/main.c"), is_true);
@@ -476,14 +496,58 @@ Ensure(ProjectStructure, returns_discovered_compilation_units) {
     freeStringList(discovered);
 }
 
-Ensure(ProjectStructure, returns_null_for_empty_project) {
+Ensure(ProjectStructure, lightweight_scan_returns_null_for_empty_project) {
     given_project_files(NULL);
     never_expect(addFileNameToFileTable);
 
-    StringList *discovered = scanProjectForFilesAndIncludes("/empty/dir", NULL);
+    StringList *discovered = scanProjectForFilesAndIncludes("/empty/dir", NULL, NULL);
 
     assert_that(discovered, is_null);
 }
+
+Ensure(ProjectStructure, lightweight_scan_prunes_directories) {
+    /* on-disk tree (single-level lister contract):
+     *   /project/        main.c  sub/  pruned/  header.h  readme.txt
+     *   /project/sub/    util.c
+     *   /project/pruned/ pruned.c   <- must never be listed or descended
+     *
+     * Mocks are ordered (cgreen FIFO per function): declared below in the
+     * walker's call order — depth-first, listing order, prune-check first. */
+    given_directory("/project",
+                    newStringList("/project/main.c",
+                    newStringList("/project/sub",
+                    newStringList("/project/pruned",
+                    newStringList("/project/header.h",
+                    newStringList("/project/readme.txt", NULL))))));
+    given_directory("/project/sub", newStringList("/project/sub/util.c", NULL));
+    /* deliberately NO given_directory("/project/pruned", ...): descending into a
+       pruned dir would surface as an unexpected listFilesInDirectory call. */
+
+    given_is_directory("/project/main.c",     false);
+    given_is_directory("/project/sub",        true);
+    given_is_directory("/project/sub/util.c", false);
+    given_is_directory("/project/header.h",   false);
+    given_is_directory("/project/readme.txt", false);
+    /* no isDirectory for /project/pruned: prune-check fires before classification */
+
+    given_cu_without_includes("/project/main.c");
+    given_cu_without_includes("/project/sub/util.c");
+    expect(isCompilationUnit, will_return(false)); /* header.h */
+    expect(isCompilationUnit, will_return(false)); /* readme.txt */
+
+    /* prune policy is a PARAMETER to the production call, not the tree */
+    StringList *skip = newStringList("/project/pruned", NULL);
+
+    StringList *discovered = scanProjectForFilesAndIncludes("/project", NULL, skip);
+
+    assert_that(listContains(discovered, "/project/main.c"),     is_true);
+    assert_that(listContains(discovered, "/project/sub/util.c"), is_true);  /* recursed into sub */
+    assert_that(listContains(discovered, "/project/header.h"),   is_false);
+    assert_that(listContains(discovered, "/project/readme.txt"), is_false);
+    /* pruned/pruned.c never appears: /project/pruned is gated, never listed */
+    freeStringList(discovered);
+}
+
 
 /* markMissingFilesAsDeleted tests */
 

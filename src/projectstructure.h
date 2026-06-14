@@ -3,7 +3,7 @@
 
 #include "stringlist.h"
 
-extern StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *includeDirs);
+extern StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *includeDirs, StringList *prunePaths);
 extern void markMissingFilesAsDeleted(StringList *discoveredFiles);
 
 #endif

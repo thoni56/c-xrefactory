@@ -458,6 +458,21 @@ bool fileNameShouldBePruned(char *fn) {
     return false;
 }
 
+/* Resolve each -prune entry into an absolute path anchored at the detected
+ * project root (same resolution as fileNameShouldBePruned, but materialised as
+ * a list). The lightweight scan compares discovered directory entries against
+ * these to gate descent. Caller owns the returned list (freeStringList). */
+StringList *resolvePrunePaths(void) {
+    StringList *result = NULL;
+    for (StringList *p = options.pruneNames; p != NULL; p = p->next) {
+        char resolved[MAX_FILE_NAME_SIZE];
+        snprintf(resolved, sizeof(resolved), "%s%c%s",
+                 options.detectedProjectRoot, FILE_PATH_SEPARATOR, p->string);
+        result = newStringList(resolved, result);
+    }
+    return result;
+}
+
 void dirInputFile(MAP_FUN_SIGNATURE) {
     char            *dir,*fname;
     void            *recurseFlag;

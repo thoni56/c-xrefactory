@@ -50,6 +50,10 @@ bool fileNameShouldBePruned(char *fn) {
     return (bool) mock(fn);
 }
 
+StringList *resolvePrunePaths(void) {
+    return (StringList *) mock();
+}
+
 void recoverMemoryFromIncludeList(void) {
     (void)mock();
 }
