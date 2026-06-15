@@ -641,8 +641,8 @@ refresh path is lazy session refresh via `needsBrowsingStackRefresh` and
 The material is preserved here because its core insight — that
 `addReferenceableToBrowsingMenu` deduplicates by `(linkName, includeFileNumber, type)`
 and so cannot safely re-scan from disk during refresh — is still relevant. That
-deduplication is the same mechanism that hides the "what reparse cleans" gap discussed
-in link:06-principles.adoc[Principles].
+deduplication is the same mechanism that would mask the header-position freshness gap
+examined in <<cu-reparse-header-staleness>>.
 
 Date: 2025-01-29
 
@@ -700,6 +700,51 @@ navigation lost most of its references.
 This was a manifestation of the "two sources of truth" architecture. The long-term fix
 landed with memory-as-truth: all project files have references in the in-memory table,
 so the refresh just re-parses the single file and the table already holds the cross-file
-references. The dedup behaviour described above still applies — see "What Reparse
-Cleans" in link:06-principles.adoc[Principles] for how it interacts with the
-header-position freshness gap.
+references. The dedup behaviour described above still applies — see
+<<cu-reparse-header-staleness>> for how it interacts with the header-position freshness
+gap.
+
+[#cu-reparse-header-staleness]
+=== Investigation: Does CU Reparse Leave Header-Position References Stale?
+
+Date: 2026-05-12
+
+A hypothesised correctness gap, investigated across May 2026 and parked rather than
+fixed — recorded so the question isn't re-opened from scratch.
+
+==== The structural fact
+
+`removeReferenceableItemsForFile(fileNumber)` strips only references whose
+`position.file == fileNumber`. A declaration that a compilation unit emits _into a
+header_ sits at `position.file == header`, so reparsing the CU never strips it. This
+scoping is real and still holds. Whether it can leave a _ghost_ — an old reference
+lingering beside the current one — depends on what makes the header's emission change,
+and there are two distinct triggers.
+
+==== Variant A — header edited (probed, did not reproduce)
+
+The header's own text changes (a declaration shifts line). Under the editor-buffer
+content model an edit reaches the server as a `-preload` of the header, which strips the
+header's own references before any includer reparse re-emits them — so the old position
+is cleaned by the _header's_ strip, not the CU's, and the structural gap never bites. A
+May 2026 probe (`test_rename_ghost_from_unstale_sibling`) confirmed nothing accumulates:
+header identifiers aren't even re-emitted on a stable-header reparse of an includer. The
+dedup key in `addReferenceableToBrowsingMenu` — `(linkName, includeFileNumber, type)`,
+not `(line, col)` — _would_ have masked parallel entries had any formed, but none did.
+
+==== Variant B — includer preprocessor state changes (never probed)
+
+The header text is unchanged, but the includer toggles a macro that gates a header
+declaration (`#define FOO` guarding `#ifdef FOO … int bar; #endif`). The CU is edited,
+so it is stripped and reparsed; the header is not, so nothing strips its references. If
+the CU reparse re-walks the header under the new macro state and emits a different set,
+the old conditionally-emitted reference could linger at a header position. This is the
+one place the structural gap could still produce a true ghost — and it was never tested.
+It is also entangled with an unresolved lexer question: whether a stable-content header
+is re-walked at all when only the includer's macros changed.
+
+==== Status
+
+Variant A cleared; variant B open and unprobed. The candidate fix — strip a CU's
+transitive include closure before reparsing it — addresses variant B's mechanism but was
+not pursued, since the manifestation it targets is unconfirmed.

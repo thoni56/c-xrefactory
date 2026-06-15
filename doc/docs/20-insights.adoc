@@ -78,7 +78,7 @@ link:21-archive.adoc[Archive]:
   `refreshStaleReferencesInSession()`, no longer in the source. Current refresh is
   lazy via `needsBrowsingStackRefresh` and `updateSessionReferencesForFile` (see
   link:11-algorithms.adoc[Chapter 11]). The dedup-key insight from that section is
-  preserved in "What Reparse Cleans" in link:06-principles.adoc[Principles].
+  carried forward in link:21-archive.adoc#cu-reparse-header-staleness[a later investigation].
 
 As of 2026-03, the in-memory reference table is authoritative — see
 link:06-principles.adoc[Principles].

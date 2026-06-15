@@ -37,6 +37,49 @@ Writes — periodic save, save on exit — are not affected; the tripwire is on 
 read path only. A future feature that requires post-startup disk access means this
 principle has to be revisited.
 
+=== Editor Buffers Are the Content Source
+
+In server mode the parser never reads a source file from disk more than once.
+Every file the server parses is backed by an in-memory `EditorBuffer`. Its text
+is loaded from disk exactly once — lazily, the first time the file is parsed
+(`findOrCreateAndLoadEditorBufferForFile` creates the buffer and calls
+`loadFileIntoEditorBuffer`). After that the buffer's `textLoaded` flag is set and
+the parser always reads the buffer; the disk file is never consulted again.
+"Reparsing" a file re-parses its _buffer_ content, not the current contents of the
+file on disk.
+
+The only thing that refreshes an existing buffer is the client. When the editor
+sends `-preload <file> <tmpfile>`, `openEditorBufferFromPreload` compares the temp
+file's modification time against the buffer's and reloads the buffer from the temp
+file if they differ. There is no disk polling and no background filesystem sync:
+**the editor is the source of truth for file content, and the server mirrors it
+through preloads.**
+
+Consequences:
+
+Editor-open files stay current::
+  Files the user is editing are sent as preloads, so their buffers track the
+  editor in real time. This is the case the design optimizes for.
+
+Saved or closed files re-sync from disk::
+  When the user saves or closes a file the editor stops preloading it; ghost-buffer
+  cleanup (`closeEditorBuffersNoLongerPreloaded`) frees the now-stale buffer and
+  re-reads the file from disk, so the saved content is picked up.
+
+Behind-the-back changes are not detected (known limitation)::
+  A file the server has buffered but the editor does not have open — a header
+  reached through `#include`, or a file visited by an earlier browse — is never
+  re-preloaded, so a change to it _on disk alone_ is invisible. This bites real
+  workflows: `git switch`, regenerated files (`*.tab.[ch]`, `lexem.c`), scripts
+  that write sources. It is a limitation of the current model, not a deliberate
+  exclusion; the likely fix is a per-request disk-mtime recheck for non-preloaded
+  buffers (extending the re-sync above to fire on mtime, not only on un-preloading).
+  Deferred.
+
+NOTE: A test that changes a file's content on disk between requests _without_
+sending a matching `-preload` is exercising this behind-the-back case, not a real
+editing scenario. To simulate an edit, send the new content as a preload.
+
 === Continuously Fresh References
 
 The reference table must be kept fresh on every request. This is the central design
@@ -47,13 +90,17 @@ challenge in a request/response architecture where:
 * Each operation (navigation, refactoring, completion) depends on accurate references
 * The server cannot know _when_ changes happen — it only discovers them at request time
 
-The principle is: **detect all sources of staleness before dispatching each operation.**
+The principle is: **before each operation, detect the staleness the editor reports
+and the structural changes the scan discovers.** Changes the editor never reports —
+a buffered file altered behind its back — are a known blind spot (see _Editor Buffers
+Are the Content Source_).
 There is no single mechanism for this; instead, multiple complementary strategies
 cooperate:
 
-File modification::
-  Disk files change when the user saves. Detected by comparing `lastParsedMtime`
-  against the file's current mtime.
+Editor edits and saves::
+  Unsaved changes arrive as preloads; on save the editor stops preloading and
+  ghost-buffer cleanup re-reads the file from disk. Detection is editor-driven — the
+  preload and un-preload transitions — not a disk poll.
 
 Editor buffer divergence::
   The user's editor may hold unsaved changes. The client transmits these via
@@ -111,41 +158,20 @@ Skip already-fresh files::
   Mtime comparison avoids reparsing files that haven't changed since their last parse,
   even if they were discovered as potential candidates.
 
+Reparsing only a subset is safe because **an edit clears the edited file's
+references**. When a file arrives as a preload, `removeReferenceableItemsForFile`
+strips _that file's_ references, whatever its type. Re-creating them is a separate
+step whose target depends on the file: a compilation unit is reparsed directly; a
+header is only stripped, and its including CUs (found through the reverse-include
+graph) are reparsed to re-emit its declarations. So a header-position reference is
+cleared by the header's own edit and rebuilt by an includer's reparse — it can't be
+left stale by some includer's partial reparse. The edit invalidates; the reparse
+rebuilds.
+
 The goal is **interactive-speed response times**: the user should not wait for the
 entire project to reparse when they changed one file. On a large codebase (e.g. ffmpeg
 with 2600+ CUs), the difference between "reparse everything" and "reparse the 7 CUs
 that share the edited header" is the difference between minutes and milliseconds.
-
-=== What Reparse Cleans
-
-When a compilation unit is reparsed, `removeReferenceableItemsForFile(CU)` strips
-references whose `position.file` is the CU. The reparse then re-emits those references
-from fresh parsing. References at *other* files' positions — typically header positions
-for declarations seen through `#include` — are not touched by this strip.
-
-In principle this leaves a gap: each parse of an includer adds references at the
-header's positions, but those positions aren't cleared when the includer is reparsed.
-If a header's content shifts, references at the *previous* header positions could
-linger alongside fresh ones at the new positions.
-
-The dedup key in `addReferenceableToBrowsingMenu` is `(linkName, includedFileNumber,
-type)`, not `(line, col)`. Two `UsageDeclared` references for the same symbol in the
-same included file but at different lines would be *distinct entries* — dedup does not
-merge them.
-
-This concern is scoped to the in-memory reference table. Sessions on the browsing
-stack converge separately, lazily, on the next NEXT/PREVIOUS via the session-refresh
-mechanism.
-
-NOTE: An investigation in May 2026 tried to reproduce the lingering-header-position
-scenario via a two-CU rename with the shared header swapped between parses. It did not
-reproduce: traces showed `UsageDeclared` entries did not accumulate at the v1 header
-position across the includer reparses leading up to the swap. An earlier write-up of
-this section attributed that to a "lexem cache" that replayed cached header tokens
-without driving yylex's identifier branch — that attribution was wrong. There is no
-such cache today (`lexemstream.h` records `CACHED_STREAM` as removed). The mechanism
-that *actually* governs when and where header-position references get registered
-during includer reparses is still incompletely understood.
 
 === Preserve Parsed Work
 
