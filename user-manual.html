@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-06-02">
+<meta name="author" content="v{VERSION} - Generated 2026-06-16">
 <title>C-xrefactory User Manual</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory User Manual</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-06-02</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-06-16</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -581,6 +581,36 @@ like the compiler flag:</p>
 <dd>
 <p><code>-D</code> options define macros, equivalent to the compiler flag.
 Useful when the project uses conditional compilation.</p>
+</dd>
+<dt class="hdlist1">Excluding subtrees</dt>
+<dd>
+<p><code>-prune</code> keeps a directory subtree out of the scan. The
+argument is a path <strong>relative to the project root</strong> (the directory holding
+<code>.c-xrefrc</code>), matched exactly; the named directory and everything beneath it
+are skipped. Useful for build outputs or vendored third-party code:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[my-project]
+  -prune build
+  -prune third_party/vendored</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The path is anchored to the project root, not matched by name. <code>-prune
+build</code> skips <code>&lt;root&gt;/build</code> but not a nested <code>src/build</code>. (Earlier versions
+matched a bare directory name anywhere in the tree, so a config using e.g.
+<code>-prune build</code> to skip every <code>build/</code> directory must be changed to the
+root-relative path.)
+</td>
+</tr>
+</table>
+</div>
 </dd>
 </dl>
 </div>
@@ -937,7 +967,7 @@ Symbol Retriever → enter <code>config*</code> → browse results</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-06-02 15:57:00 UTC
+Last updated 2026-06-16 07:00:18 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
