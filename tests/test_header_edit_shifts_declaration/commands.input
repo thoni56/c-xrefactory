@@ -1,0 +1,9 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/source.c
+<sync>
+-push -olcursor=83 CURDIR/source.c -p CURDIR
+<sync>
+!sleep 1 && touch CURDIR/header_v2.h
+-rfct-rename -renameto=bar -preload CURDIR/header.h CURDIR/header_v2.h -olmark=83 -olcursor=83 CURDIR/source.c -p CURDIR
+<sync>
+<exit>
