@@ -175,27 +175,11 @@ static void setCurrentFileInfoFor(char *fileName) {
         number = NO_FILE_NUMBER;
         name = getFileItemWithFileNumber(number)->name;
     } else {
-        bool existed = existsInFileTable(fileName);
         number = addFileNameToFileTable(fileName);
         FileItem *fileItem = getFileItemWithFileNumber(number);
         name = fileItem->name;
         updateFileModificationTracking(number);
-        bool cxloading = fileItem->cxLoading;
-        if (!existed) {
-            cxloading = true;
-        } else if (options.update==UPDATE_FAST) {
-            if (fileItem->isScheduled) {
-                // references from headers are not loaded on fast update !
-                cxloading = true;
-            }
-        } else if (options.update==UPDATE_FULL) {
-            if (fileItem->scheduledToUpdate) {
-                cxloading = true;
-            }
-        } else {
-            cxloading = true;
-        }
-        fileItem->cxLoading = cxloading;
+        fileItem->cxLoading = true;
     }
     currentFile.characterBuffer.fileNumber = number;
     currentFile.fileName = name;
