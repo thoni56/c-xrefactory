@@ -16,15 +16,21 @@
 # old header position is cleaned. A regression that left foo@3 would make the
 # rename precheck hit the comment text now at line 3 -> abort or mis-edit, and
 # this pinned output would change.
+
+PREPARE = prepare
 include ../Makefile.server
+
 ORIGINAL = header_v1.h
 HEADER = header.h
+
 $(TEST):
-	@cp $(ORIGINAL) $(HEADER)
-	@-rm -rf .c-xref
 	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
+
+prepare:
+	@cp $(ORIGINAL) $(HEADER)
+	@-rm -rf .c-xref
 
 trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
