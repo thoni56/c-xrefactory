@@ -803,9 +803,7 @@ static void clearFileItem(FileItem *fileItem) {
     fileItem->isScheduled = false;
     fileItem->scheduledToUpdate = false;
     fileItem->fullUpdateIncludesProcessed = false;
-    fileItem->cxLoaded = false;
     fileItem->cxLoading = false;
-    fileItem->cxSaved = false;
     fileItem->needsBrowsingStackRefresh = false;
 }
 

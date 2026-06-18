@@ -635,7 +635,7 @@ static int fileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
 
     log_trace("re-read info from '%s' for '%s'?", options.cxFileLocation, fileItem->name);
     if (options.mode == XrefMode) {
-        if (fileItem->cxLoading && !fileItem->cxSaved) {
+        if (fileItem->cxLoading) {
             updateFromCxFile = false;
         } else {
             updateFromCxFile = true;
@@ -828,17 +828,6 @@ static void scanFunction_ReferenceForSnapshotLoad(int size,
     addToReferenceList(&lastIncomingData.referenceableItem->references, pos, usage);
 }
 
-static bool isInReferenceList(Reference *list, Usage usage, Position position) {
-    Reference *foundReference;
-    Reference reference = makeReference(position, usage, NULL);
-
-    SORTED_LIST_FIND2(foundReference, Reference, reference, list);
-    if (foundReference==NULL || SORTED_LIST_NEQ(foundReference,reference))
-        return false;
-    return true;
-}
-
-
 static void scanFunction_Reference(int size,
                                    int key,
                                    CharacterBuffer *cb,
@@ -855,14 +844,7 @@ static void scanFunction_Reference(int size,
     int col = lastIncomingData.data[CXFI_COLUMN_INDEX];
 
     assert(options.mode == XrefMode);
-    int copyrefFl;
-    if (fileItem->cxLoading && fileItem->cxSaved) {
-        /* if we repass refs after overflow */
-        copyrefFl = !isInReferenceList(lastIncomingData.referenceableItem->references,
-                                 usage, makePosition(file, line, col));
-    } else {
-        copyrefFl = !fileItem->cxLoading;
-    }
+    int copyrefFl = !fileItem->cxLoading;
     if (copyrefFl)
         writeCxReferenceBase(usage, file, line, col);
 }

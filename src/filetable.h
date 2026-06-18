@@ -30,8 +30,6 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     FileTimestamp lastParsedMtime;
     FileTimestamp lastFullUpdateMtime;
     bool cxLoading : 1;
-    bool cxLoaded : 1;
-    bool cxSaved : 1;
     bool isArgument : 1;
     bool isScheduled : 1;
     bool scheduledToUpdate : 1;

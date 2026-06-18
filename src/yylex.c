@@ -195,9 +195,6 @@ static void setCurrentFileInfoFor(char *fileName) {
         } else {
             cxloading = true;
         }
-        if (fileItem->cxSaved) {
-            cxloading = false;
-        }
         fileItem->cxLoading = cxloading;
     }
     currentFile.characterBuffer.fileNumber = number;
@@ -476,10 +473,6 @@ void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
 }
 
 void popInclude(void) {
-    FileItem *fileItem = getFileItemWithFileNumber(currentFile.characterBuffer.fileNumber);
-    if (fileItem->cxLoading) {
-        fileItem->cxLoaded = true;
-    }
     closeCharacterBuffer(&currentFile.characterBuffer);
     if (includeStack.pointer != 0) {
         currentFile = includeStack.stack[--includeStack.pointer];	/* buffers are copied !!!!!!, burk */
