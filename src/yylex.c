@@ -179,7 +179,6 @@ static void setCurrentFileInfoFor(char *fileName) {
         FileItem *fileItem = getFileItemWithFileNumber(number);
         name = fileItem->name;
         updateFileModificationTracking(number);
-        fileItem->cxLoading = true;
     }
     currentFile.characterBuffer.fileNumber = number;
     currentFile.fileName = name;

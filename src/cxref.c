@@ -289,8 +289,6 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
     ENTER();
     assert(position.file<MAX_FILES);
 
-    FileItem *fileItem = getFileItemWithFileNumber(position.file);
-
     getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
 
     log_debug("adding reference on %s(%d) at %d,%d,%d (%s) (%s) (%s)",
@@ -312,10 +310,6 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
         if (visibility == VisibilityLocal) {
             LEAVE();
             return NULL; /* dont cxref local symbols */
-        }
-        if (!fileItem->cxLoading) {
-            LEAVE();
-            return NULL;
         }
         break;
     default:

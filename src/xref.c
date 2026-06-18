@@ -132,7 +132,6 @@ static void schedulingToUpdate(FileItem *fileItem, bool calledDuringRefactoring)
         fileItem->isArgument = false;
         fileItem->isScheduled = false;
         fileItem->scheduledToUpdate = false;
-        fileItem->cxLoading = true;
     } else if (options.update == UPDATE_FULL) {
         if (!fileTimestampsEqual(editorFileModificationTime(fileItem->name), fileItem->lastFullUpdateMtime)) {
             fileItem->scheduledToUpdate = true;

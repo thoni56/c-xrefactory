@@ -413,8 +413,7 @@ static void writeReferenceableItem(ReferenceableItem *referenceableItem) {
 
     for (Reference *reference = referenceableItem->references; reference != NULL; reference = reference->next) {
         FileItem *fileItem = getFileItemWithFileNumber(reference->position.file);
-        log_trace("checking ref: loading=%d --< %s:%d", fileItem->cxLoading,
-                  fileItem->name, reference->position.line);
+        log_trace("checking ref: %s:%d", fileItem->name, reference->position.line);
         writeCxReference(reference);
     }
 }
@@ -635,11 +634,7 @@ static int fileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
 
     log_trace("re-read info from '%s' for '%s'?", options.cxFileLocation, fileItem->name);
     if (options.mode == XrefMode) {
-        if (fileItem->cxLoading) {
-            updateFromCxFile = false;
-        } else {
-            updateFromCxFile = true;
-        }
+        updateFromCxFile = false;
     }
     if (options.mode == ServerMode) {
         log_trace("last inspected == %d, start at %d\n", fileItem->lastInspected, fileProcessingStartTime);
@@ -828,28 +823,6 @@ static void scanFunction_ReferenceForSnapshotLoad(int size,
     addToReferenceList(&lastIncomingData.referenceableItem->references, pos, usage);
 }
 
-static void scanFunction_Reference(int size,
-                                   int key,
-                                   CharacterBuffer *cb,
-                                   CxFileScanOperation scanOperation
-) {
-    assert(key == CXFI_REFERENCE);
-    Usage usage = lastIncomingData.data[CXFI_USAGE];
-
-    int file = lastIncomingData.data[CXFI_FILE_NUMBER];
-    file = fileNumberMapping[file];
-    FileItem *fileItem = getFileItemWithFileNumber(file);
-
-    int line = lastIncomingData.data[CXFI_LINE_INDEX];
-    int col = lastIncomingData.data[CXFI_COLUMN_INDEX];
-
-    assert(options.mode == XrefMode);
-    int copyrefFl = !fileItem->cxLoading;
-    if (copyrefFl)
-        writeCxReferenceBase(usage, file, line, col);
-}
-
-
 static void scanFunction_CxFileCountCheck(int fileCountInCxFile,
                                           int key,
                                           CharacterBuffer *cb,
@@ -858,6 +831,8 @@ static void scanFunction_CxFileCountCheck(int fileCountInCxFile,
     if (!currentCxFileCountMatches(fileCountInCxFile)) {
         assert(options.mode);
         FATAL_ERROR(ERR_ST,"The reference database was generated with different '-refnum' options, recreate it!", EXIT_FAILURE);
+        /* TODO: Not a FATAL, this should automatically ignore reading the current
+         * snapshot. A new one will be written from memory */
     }
 }
 
@@ -1070,7 +1045,6 @@ static CxFileScanDispatchEntry fullScanDispatchTable[]={
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_GENERATE_OUTPUT},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEFAULT},
-    {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIRST_PASS},
     {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
