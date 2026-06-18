@@ -1,0 +1,9 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/source.c
+<sync>
+-search=feature_only -olcursor=1 -preload CURDIR/source.c CURDIR/with_feature.preload CURDIR/source.c -p CURDIR
+<sync>
+!cp CURDIR/edited_feature.preload CURDIR/source.c
+-search=feature_only -olcursor=1 CURDIR/source.c -p CURDIR
+<sync>
+<exit>

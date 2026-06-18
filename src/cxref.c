@@ -320,15 +320,6 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
     ReferenceableItem referenceableItem = makeReferenceableItem(symbol->linkName, symbol->type, storage, scope,
                                                                 visibility, includedFileNumber);
 
-    if (options.mode==ServerMode && options.serverOperation==OP_SEARCH) {
-        if (options.searchKind==SEARCH_FULL) {
-            Reference reference = makeReference(position, UsageNone, NULL);
-            searchSymbolCheckReference(&referenceableItem, &reference);
-            LEAVE();
-            return NULL;
-        }
-    }
-
     int index;
     ReferenceableItem *foundMember;
     if (!isMemberInReferenceableItemTable(&referenceableItem, &index, &foundMember)) {

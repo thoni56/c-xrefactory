@@ -1,0 +1,30 @@
+=== phase 1: source.c defines FEATURE ===
+%%%i:header.h
+    @header.h:1:0
+    @source.c:2:0
+FEATURE
+    @header.h:1:7
+    @source.c:1:8
+always_there
+    @header.h:4:4
+    @source.c:5:28
+feature_only
+    @header.h:2:4
+    @source.c:5:11
+main
+    @source.c:4:4
+=== phase 2: edited (FEATURE kept), saved+closed (un-preload reparse) ===
+%%%i:header.h
+    @header.h:1:0
+    @source.c:2:0
+FEATURE
+    @header.h:1:7
+    @source.c:1:8
+always_there
+    @header.h:4:4
+    @source.c:6:28
+feature_only
+    @header.h:2:4
+    @source.c:6:11
+main
+    @source.c:5:4
