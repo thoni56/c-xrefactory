@@ -1,0 +1,8 @@
+%%%i:header.h
+    @header.h:1:0
+    @source.c:1:0
+always_there
+    @header.h:4:4
+    @source.c:4:11
+main
+    @source.c:3:4

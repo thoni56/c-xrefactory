@@ -1,0 +1,17 @@
+%%%i:header.h
+    @a.c:2:0
+    @b.c:1:0
+    @header.h:1:0
+FEATURE
+    @a.c:1:8
+    @header.h:1:7
+always_there
+    @b.c:4:11
+    @header.h:4:4
+feature_only
+    @a.c:5:11
+    @header.h:2:4
+from_a
+    @a.c:4:4
+from_b
+    @b.c:3:4
