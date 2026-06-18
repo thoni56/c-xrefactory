@@ -498,7 +498,7 @@ static void closeCurrentCxFile(void) {
 
 /* suffix contains '/' at the beginning */
 static void writePartialCxFile(bool updateFlag, char *dirname, char *suffix,
-                               void mapfun(FileItem *, int), void mapfun2(FileItem *, int)) {
+                               void mapfun(FileItem *, int)) {
     char cxFileName[MAX_FILE_NAME_SIZE];
 
     sprintf(cxFileName, "%s%s", dirname, suffix);
@@ -506,8 +506,6 @@ static void writePartialCxFile(bool updateFlag, char *dirname, char *suffix,
     openInOutCxFile(updateFlag, cxFileName);
     writeCxFileHead();
     mapOverFileTableWithIndex(mapfun);
-    if (mapfun2!=NULL)
-        mapOverFileTableWithIndex(mapfun2);
     scanCxFileUsing(fullScanDispatchTable);
     closeCurrentCxFile();
 }
@@ -540,7 +538,7 @@ static void writeMultipeCxFiles(bool updating, char *dirName) {
     char  cxFileName[MAX_FILE_NAME_SIZE];
 
     createDirectory(dirName);
-    writePartialCxFile(updating, dirName, CXFILENAME_FILES, writeFileNumberItem, NULL);
+    writePartialCxFile(updating, dirName, CXFILENAME_FILES, writeFileNumberItem);
     for (int i = 0; i < options.cxFileCount; i++) {
         sprintf(cxFileName, "%s%s%04d", dirName, CXFILENAME_PREFIX, i);
         assert(strlen(cxFileName) < MAX_FILE_NAME_SIZE - 1);
