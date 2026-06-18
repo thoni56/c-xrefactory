@@ -153,7 +153,6 @@ typedef struct cxFileScanStep {
 
 static CxFileScanDispatchEntry normalScanDispatchTable[];
 static CxFileScanDispatchEntry snapshotLoadScanDispatchTable[];
-static CxFileScanDispatchEntry fullScanDispatchTable[];
 
 static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable);
 
@@ -506,7 +505,6 @@ static void writePartialCxFile(bool updateFlag, char *dirname, char *suffix,
     openInOutCxFile(updateFlag, cxFileName);
     writeCxFileHead();
     mapOverFileTableWithIndex(mapfun);
-    scanCxFileUsing(fullScanDispatchTable);
     closeCurrentCxFile();
 }
 
@@ -529,12 +527,11 @@ static void writeSingleCxFile(bool updating, char *filename) {
     openInOutCxFile(updating, filename);
     writeCxFileHead();
     mapOverFileTableWithIndex(writeFileNumberItem);
-    scanCxFileUsing(fullScanDispatchTable);
     mapOverReferenceableItemTable(writeReferenceableItem);
     closeCurrentCxFile();
 }
 
-static void writeMultipeCxFiles(bool updating, char *dirName) {
+static void writeMultipleCxFiles(bool updating, char *dirName) {
     char  cxFileName[MAX_FILE_NAME_SIZE];
 
     createDirectory(dirName);
@@ -544,7 +541,6 @@ static void writeMultipeCxFiles(bool updating, char *dirName) {
         assert(strlen(cxFileName) < MAX_FILE_NAME_SIZE - 1);
         openInOutCxFile(updating, cxFileName);
         writeCxFileHead();
-        scanCxFileUsing(fullScanDispatchTable);
         writeReferencesFromMemoryIntoCxFile(i);
         closeCurrentCxFile();
     }
@@ -559,7 +555,7 @@ static void writeCxFiles(int updating, char *fileName) {
     if (options.cxFileCount <= 1) {
         writeSingleCxFile(updating, fileName);
     } else {
-        writeMultipeCxFiles(updating, fileName);
+        writeMultipleCxFiles(updating, fileName);
     }
 }
 
@@ -733,41 +729,6 @@ static void cxfileCheckLastSymbolDeadness(void) {
                                       true, true, 0, (SymbolRelation){.sameFile = false},
                                       UsageDefined, NO_POSITION, UsageDefined);
     }
-}
-
-
-static void scanFunction_SymbolName(int size,
-                                    int key,
-                                    CharacterBuffer *cb,
-                                    CxFileScanOperation scanOperation
-) {
-    assert(key == CXFI_SYMBOL_NAME);
-
-    Storage storage = lastIncomingData.data[CXFI_STORAGE];
-
-    char *id = lastIncomingData.cachedSymbolName;
-    scanSymbolName(cb, id, size);
-
-    Type symbolType = getSymbolType();
-
-    ReferenceableItem *referenceableItem = &lastIncomingData.cachedReferenceableItem;
-    lastIncomingData.referenceableItem = referenceableItem;
-
-    int includedFileNumber;
-    getIncludedFileNumber(&includedFileNumber);
-    *referenceableItem = makeReferenceableItem(id, symbolType, storage, GlobalScope, VisibilityGlobal, includedFileNumber);
-
-    ReferenceableItem *foundMemberP;
-    bool isMember = isMemberInReferenceableItemTable(referenceableItem, NULL, &foundMemberP);
-    while (isMember && foundMemberP->visibility!=VisibilityGlobal)
-        isMember = referenceableItemTableNextMember(referenceableItem, &foundMemberP);
-
-    assert(options.mode == XrefMode);
-    if (foundMemberP==NULL)
-        foundMemberP=referenceableItem;
-    writeReferenceableItem(foundMemberP);
-    referenceableItem->references = foundMemberP->references; // note references to not generate multiple
-    foundMemberP->references = NULL;      // HACK, remove them, to not be regenerated
 }
 
 static void scanFunction_SymbolNameForSnapshotLoad(int size,
@@ -1033,16 +994,6 @@ static CxFileScanDispatchEntry snapshotLoadScanDispatchTable[]={
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolNameForSnapshotLoad, CXSF_NOP},
     {CXFI_REFERENCE, scanFunction_ReferenceForSnapshotLoad, CXSF_NOP},
-    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
-    {-1,NULL, 0},
-};
-
-static CxFileScanDispatchEntry fullScanDispatchTable[]={
-    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
-    {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
-    {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
-    {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_GENERATE_OUTPUT},
-    {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEFAULT},
     {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
