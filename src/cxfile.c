@@ -415,13 +415,7 @@ static void writeReferenceableItem(ReferenceableItem *referenceableItem) {
         FileItem *fileItem = getFileItemWithFileNumber(reference->position.file);
         log_trace("checking ref: loading=%d --< %s:%d", fileItem->cxLoading,
                   fileItem->name, reference->position.line);
-        if (options.update==UPDATE_DEFAULT || fileItem->cxLoading) {
-            writeCxReference(reference);
-        } else {
-            log_trace("Update mode (%d) and file not loading (%d), skipping (will be copied from old CXrefs)",
-                      options.update, fileItem->cxLoading);
-            /* During updates, references for unchanged files will be copied from the old CXrefs file */
-        }
+        writeCxReference(reference);
     }
 }
 
