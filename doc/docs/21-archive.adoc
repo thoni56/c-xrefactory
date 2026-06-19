@@ -630,14 +630,14 @@ This allowed:
 
 ==== Architectural Lesson
 
-The workaround highlighted the underlying tension: **navigation and refactoring used different sources of truth**. The proper fix — eliminating `callXref()` from the refactoring path entirely — landed with server-side refactoring (link:15-roadmap.adoc[Chapter 15: Roadmap]).
+The workaround highlighted the underlying tension: **navigation and refactoring used different sources of truth**. The proper fix — eliminating `callXref()` from the refactoring path entirely — landed with server-side refactoring (link:10-roadmap.adoc[Chapter 10: Roadmap]).
 
 === Stale File Refresh and Cross-File References (Historical)
 
 This section describes a refresh algorithm built around a function named
 `refreshStaleReferencesInSession()` that no longer exists in the source. The current
 refresh path is lazy session refresh via `needsBrowsingStackRefresh` and
-`updateSessionReferencesForFile`, described in link:11-algorithms.adoc[Chapter 11].
+`updateSessionReferencesForFile`, described in link:08-algorithms.adoc[Chapter 8].
 The material is preserved here because its core insight — that
 `addReferenceableToBrowsingMenu` deduplicates by `(linkName, includeFileNumber, type)`
 and so cannot safely re-scan from disk during refresh — is still relevant. That

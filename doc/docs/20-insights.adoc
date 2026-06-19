@@ -63,7 +63,7 @@ When you PUSH on a symbol, the navigation menu creation (`createSelectionMenuFor
 
 This dual-source approach allows navigation without full project parse while providing updated positions for modified files.
 
-NOTE: Client preloading behavior and stale file detection are now documented in link:08-components.adoc[Chapter 8: Components] under Server (Entry-Point Reparse) and Editor Extension (Preloading).
+NOTE: Client preloading behavior and stale file detection are now documented in link:12-components.adoc[Chapter 12: Components] under Server (Entry-Point Reparse) and Editor Extension (Preloading).
 
 NOTE: Several sections describing pre-memory-as-truth behaviour have been moved to
 link:21-archive.adoc[Archive]:
@@ -77,7 +77,7 @@ link:21-archive.adoc[Archive]:
 * "Stale File Refresh and Cross-File References" — describes
   `refreshStaleReferencesInSession()`, no longer in the source. Current refresh is
   lazy via `needsBrowsingStackRefresh` and `updateSessionReferencesForFile` (see
-  link:11-algorithms.adoc[Chapter 11]). The dedup-key insight from that section is
+  link:08-algorithms.adoc[Chapter 8]). The dedup-key insight from that section is
   carried forward in link:21-archive.adoc#cu-reparse-header-staleness[a later investigation].
 
 As of 2026-03, the in-memory reference table is authoritative — see
@@ -87,7 +87,7 @@ link:06-principles.adoc[Principles].
 
 Date: 2025-01-25
 
-Investigation revealed that **both XrefMode and ServerMode use the same in-memory `ReferenceableItemTable`**. This is the key enabler for the incremental path to "Memory as Truth" (see link:15-roadmap.adoc[Chapter 15: Roadmap]).
+Investigation revealed that **both XrefMode and ServerMode use the same in-memory `ReferenceableItemTable`**. This is the key enabler for the incremental path to "Memory as Truth" (see link:10-roadmap.adoc[Chapter 10: Roadmap]).
 
 `handleFoundSymbolReference()` in `cxref.c` handles references found during parsing. It calls `isMemberInReferenceableItemTable()` to check if a symbol exists; if not found, creates a new entry; if found, adds a reference to the existing entry. This same table is used by both modes — there is no separate "server table" vs "xref table".
 

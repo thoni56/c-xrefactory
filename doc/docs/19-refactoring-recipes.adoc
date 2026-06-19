@@ -2,7 +2,7 @@
 
 This chapter documents mechanical steps for refactoring operations. Each recipe describes the algorithmic steps that an automated refactoring tool would perform.
 
-For detailed discussions of refactoring feature architecture and implementation phases, see link:16-planned-features.adoc[Chapter 16: Planned Features].
+For detailed discussions of refactoring feature architecture and implementation phases, see link:11-planned-features.adoc[Chapter 11: Planned Features].
 
 === Existing Refactorings
 
@@ -131,7 +131,7 @@ When the cursor is on an `#include` directive. The file it references will be th
 
 ==== Move Function to Different File
 
-**Status**: Phase 1 complete. See link:16-planned-features.adoc[Planned Features: Move Function Between Files] for detailed design, what works now, and next steps.
+**Status**: Phase 1 complete. See link:11-planned-features.adoc[Planned Features: Move Function Between Files] for detailed design, what works now, and next steps.
 
 **Purpose:** Move a function definition from one C source file to another while automatically managing visibility (static vs extern) and adding necessary declarations and includes.
 

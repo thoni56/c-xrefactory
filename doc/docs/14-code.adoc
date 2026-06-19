@@ -443,7 +443,7 @@ See the **Parsing** component in the <<components,Components>> chapter.
 
 === Integrated Preprocessor
 
-See the **Parsing** component's Internal Structure section in the <<08-components.adoc#,Components>> chapter.
+See the **Parsing** component's Internal Structure section in the <<12-components.adoc#,Components>> chapter.
 
 === Refactoring and the parsers
 
@@ -511,9 +511,9 @@ link:17-major-codebase-improvements.adoc[Chapter 17].
 
 === Reference Database
 
-See the **Cxref** component (in-memory reference tables and symbol resolution) and the **Cxfile** component (on-disk database format and reading) in the <<08-components.adoc#,Components>> chapter.
+See the **Cxref** component (in-memory reference tables and symbol resolution) and the **Cxfile** component (on-disk database format and reading) in the <<12-components.adoc#,Components>> chapter.
 
-NOTE: The architectural direction for `cxfile.c` is documented in link:17-major-codebase-improvements.adoc[Chapter 17: Incremental cxfile.c Cleanup]. The high-level "Memory as Truth" vision is in link:15-roadmap.adoc[Chapter 15: Roadmap].
+NOTE: The architectural direction for `cxfile.c` is documented in link:17-major-codebase-improvements.adoc[Chapter 17: Incremental cxfile.c Cleanup]. The high-level "Memory as Truth" vision is in link:10-roadmap.adoc[Chapter 10: Roadmap].
 
 === Editor Plugin
 
@@ -685,7 +685,7 @@ the option handling.
 
 === Refactoring
 
-See the **Refactory** and **Extract** components in the <<08-components.adoc#,Components>> chapter for the architecture and operation flow.
+See the **Refactory** and **Extract** components in the <<12-components.adoc#,Components>> chapter for the architecture and operation flow.
 
 ==== Refactoring Protocol Details
 

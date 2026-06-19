@@ -2,7 +2,7 @@
 
 This chapter documents internal architectural changes and technical debt reduction efforts that improve code quality, maintainability, and performance. These are improvements to c-xrefactory's own implementation, not features users interact with directly.
 
-For planned user-facing features, see link:16-planned-features.adoc[Chapter 16: Planned Features].
+For planned user-facing features, see link:11-planned-features.adoc[Chapter 11: Planned Features].
 
 === Incremental `cxfile.c` Cleanup
 
@@ -10,7 +10,7 @@ For planned user-facing features, see link:16-planned-features.adoc[Chapter 16: 
 
 The `cxfile` module was designed when the `.cx` files on disk were the reference database. Operations like "show all references to symbol X" or "find unused symbols" were table-driven scans over the disk format — hash the symbol name, stream the right partition, apply a per-operation filter. This was efficient for the batch cross-referencer that c-xrefactory evolved from, where the workflow was `c-xref -create` → `c-xref -update` → query the on-disk database.
 
-Under memory-as-truth (link:15-roadmap.adoc[Chapter 15]), all operations now read from the in-memory `referenceableItemTable`; the `.cx` files serve only as a startup snapshot.
+Under memory-as-truth (link:10-roadmap.adoc[Chapter 10]), all operations now read from the in-memory `referenceableItemTable`; the `.cx` files serve only as a startup snapshot.
 
 ==== Status
 

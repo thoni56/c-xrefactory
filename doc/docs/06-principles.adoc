@@ -126,7 +126,7 @@ Include graph changes::
   affected by the same header change.
 
 Each of these is handled by a specific mechanism in the entry refresh algorithm
-(see <<11-algorithms.adoc#entry-refresh,Entry Refresh>> in the Algorithms chapter).
+(see <<08-algorithms.adoc#entry-refresh,Entry Refresh>> in the Algorithms chapter).
 The key insight is that all of them must run _before_ the operation dispatches — there is
 no lazy or deferred refresh. The cost is paid up front so that every operation sees a
 consistent view of the codebase.
@@ -341,7 +341,7 @@ Entry refresh::
   an operation. Covers both _staleness_ (content was known but is now outdated) and
   _unknown content_ (file discovered by scan but never parsed). Uses the include structure
   to determine what needs reparsing. Runs on every request in `callServer()`. +
-  See Server Mode Flow in <<09-code.adoc#,Code>> for implementation details.
+  See Server Mode Flow in <<14-code.adoc#,Code>> for implementation details.
 
 Warm start::
   Server startup with an existing persisted snapshot. Most compilation units are fresh

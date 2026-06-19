@@ -31,4 +31,4 @@ The yacc parser creates a different scope or symbol context when parsing C code 
 
 === Stale sessions after POP
 
-Tracked under "Known Limitations" in link:15-roadmap.adoc[Chapter 15: Roadmap], with the proposed dissolve (index-based sessions).
+Tracked under "Known Limitations" in link:10-roadmap.adoc[Chapter 10: Roadmap], with the proposed dissolve (index-based sessions).

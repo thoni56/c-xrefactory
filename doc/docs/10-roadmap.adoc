@@ -321,4 +321,4 @@ Provide refactoring capabilities that understand C semantics, going beyond what 
 
 ==== Details
 
-See link:#move-function-refactoring[Chapter 16: Move Function Between Files] for implementation details and phase breakdown.
+See link:#move-function-refactoring[Chapter 11: Move Function Between Files] for implementation details and phase breakdown.
