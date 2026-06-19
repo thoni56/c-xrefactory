@@ -743,8 +743,17 @@ one place the structural gap could still produce a true ghost — and it was nev
 It is also entangled with an unresolved lexer question: whether a stable-content header
 is re-walked at all when only the includer's macros changed.
 
-==== Status
+==== Status (updated 2026-06-19)
 
-Variant A cleared; variant B open and unprobed. The candidate fix — strip a CU's
-transitive include closure before reparsing it — addresses variant B's mechanism but was
-not pursued, since the manifestation it targets is unconfirmed.
+Variant A cleared. *Variant B is confirmed* — reproduced 2026-06-17 in
+`test_preprocess_edit_removes_ifdef_define`: a CU that drops a `#define` orphans the
+header declaration it had emitted under that macro. The "unresolved lexer question"
+above is answered — the header _is_ re-walked, as part of the reparsed CU's own
+translation unit, and the gated-out declaration is simply not re-emitted. The gap stayed
+invisible so long because a separate bug — a search over a preloaded file discarded the
+reparsed references — masked it; that was fixed 2026-06-18.
+
+The live treatment is now in <<08-algorithms.adoc#entry-refresh,Entry Refresh>>
+(_Cleaning Stale Emissions_); the fix direction and the provenance-vs-reparse decision
+are in the <<09-decision-log.adoc#,Decision Log>>. This entry is retained for the
+investigation trail and superseded by those.

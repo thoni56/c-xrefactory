@@ -154,6 +154,39 @@ callServer():
   └─ dispatch operation
 ----
 
+==== What Refresh Covers
+
+Between them, the passes and the cleaning concern below cover the ways the codebase
+can change from one request to the next:
+
+[cols="3,2,2",options="header"]
+|===
+|Change since last request |Detected by |Stale references cleaned by
+
+|Edited CU body (no preprocessor change)
+|Pass 1 — mtime stale
+|the CU's own strip + rebuild
+
+|Edited header (declaration added / changed / removed)
+|Pass 2 — reverse-include graph
+|header strip, then includer re-emit
+
+|New `#include` edge, or a new / cold CU
+|Pass 1 (includer is stale) · scan / Pass 3
+|n/a — additive
+
+|CU deleted from the project
+|`markMissingFilesAsDeleted()`
+|`removeReferenceableItemsForFile`
+
+|*Includer toggles a macro gating a header declaration*
+|Pass 1 — the CU is stale
+|*not covered — see Cleaning Stale Emissions*
+|===
+
+Every row but the last fits the invalidate-then-rebuild model cleanly. The last is the
+gap the next section addresses.
+
 ==== Pass 1: Reparse Stale CUs
 
 The simplest case: the user edited and saved a `.c` file, or the client sent a
@@ -228,6 +261,33 @@ the next request, triggering a reparse via Pass 1.
 
 This is called _before_ `quasiSaveModifiedEditorBuffers()`, which clears the
 `modifiedSinceLastQuasiSave` flag and updates the buffer's `modificationTime`.
+
+==== Cleaning Stale Emissions
+
+Reparsing a CU strips its old references and adds its current ones — but "old" means
+only references at `position.file == CU`. `removeReferenceableItemsForFile` is
+position-scoped. For everything a CU emits _into itself_ that is complete: stripped,
+then rebuilt.
+
+A CU also emits references _into the headers it includes_ — the declarations it records
+at header positions while walking the included text — and _which_ declarations it emits
+can depend on the CU's own preprocessor state. The position-scoped strip does not reach
+those.
+
+For example, a header declares a function under `#ifdef FEATURE`. A CU that defines
+`FEATURE` records that declaration at the header's position. If the CU later removes the
+`#define` and is reparsed, the strip clears only the CU's own positions; the header was
+never edited, so nothing clears the now-orphaned declaration, and the reparse gates it
+out rather than re-emitting it. The reference lingers.
+
+This gap is real and confirmed (`test_preprocess_edit_removes_ifdef_define`), and at
+present open: the orphan survives until the header is reparsed for some other reason.
+The chosen fix — not yet implemented — is to reparse by include structure, stripping and
+rebuilding the affected header's contributions, gated on a cheap per-CU fingerprint of
+the CU's header emissions so the cost is paid only when an edit actually changes what a
+CU emits. Per-CU provenance (recording which CU emitted each header-position reference)
+was considered and rejected as too costly at scale; see the
+<<09-decision-log.adoc#,Decision Log>>.
 
 === Editor Buffers and Incremental Updates
 
