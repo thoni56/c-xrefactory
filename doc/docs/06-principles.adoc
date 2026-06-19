@@ -163,10 +163,26 @@ references**. When a file arrives as a preload, `removeReferenceableItemsForFile
 strips _that file's_ references, whatever its type. Re-creating them is a separate
 step whose target depends on the file: a compilation unit is reparsed directly; a
 header is only stripped, and its including CUs (found through the reverse-include
-graph) are reparsed to re-emit its declarations. So a header-position reference is
-cleared by the header's own edit and rebuilt by an includer's reparse — it can't be
-left stale by some includer's partial reparse. The edit invalidates; the reparse
-rebuilds.
+graph) are reparsed to re-emit its declarations. In both ordinary cases the edit
+invalidates and the reparse rebuilds: an edited compilation unit strips and rebuilds
+its own references; an edited header is stripped and its including CUs reparse to
+re-emit them.
+
+There is one case the strip does **not** cover. Which declarations a compilation unit
+emits into an included header can depend on the CU's _own_ preprocessor state, so a
+header-position reference can be left stale by an includer's edit alone — even though
+the header itself was never touched.
+
+For example, a header declares a function under `#ifdef FEATURE`. A CU that defines
+`FEATURE` and includes the header records that declaration at the header's position.
+If the CU later removes the `#define` and is reparsed, `removeReferenceableItemsForFile`
+strips only the CU's _own_ positions — not the header position it emitted into. The
+header was never edited, so nothing strips the orphaned declaration, and the reparse
+gates it out rather than re-emitting it. The reference lingers.
+
+Closing this gap requires reparsing by include structure — stripping and rebuilding the
+affected header's contributions — gated so the cost is paid only when an edit actually
+changes what a CU emits, not on every edit.
 
 The goal is **interactive-speed response times**: the user should not wait for the
 entire project to reparse when they changed one file. On a large codebase (e.g. ffmpeg
