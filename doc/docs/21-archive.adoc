@@ -755,5 +755,5 @@ reparsed references — masked it; that was fixed 2026-06-18.
 
 The live treatment is now in <<08-algorithms.adoc#entry-refresh,Entry Refresh>>
 (_Cleaning Stale Emissions_); the fix direction and the provenance-vs-reparse decision
-are in the <<09-decision-log.adoc#,Decision Log>>. This entry is retained for the
+are in link:/workspace/1/decisions/C-xrefactory#25[ADR-0025]. This entry is retained for the
 investigation trail and superseded by those.

@@ -286,8 +286,8 @@ The chosen fix — not yet implemented — is to reparse by include structure, s
 rebuilding the affected header's contributions, gated on a cheap per-CU fingerprint of
 the CU's header emissions so the cost is paid only when an edit actually changes what a
 CU emits. Per-CU provenance (recording which CU emitted each header-position reference)
-was considered and rejected as too costly at scale; see the
-<<09-decision-log.adoc#,Decision Log>>.
+was considered and rejected as too costly at scale; see
+link:/workspace/1/decisions/C-xrefactory#25[ADR-0025].
 
 === Editor Buffers and Incremental Updates
 
