@@ -28,23 +28,21 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 
 				main -> xref "dispatches to" call
 				main -> server "dispatches to" call
-				main -> refactory "dispatches to" call
 				main -> lspAdapter "dispatches to" call
 				refactory -> server "uses" call
 
 				// Symbol Database and Resolution Components
 				cxref = Component cxref "Reference handler" C
-				cxfile = Component cxfile "Reference Storage (.cx files)" "Manages persistent cross-reference database with symbol indexing and file-based storage" C
+				cxfile = Component cxfile "Snapshot I/O (.cx files)" "Reads and writes the .cx startup snapshot: serialises the in-memory references and loads them back when the server starts" C
 				browserStack = Component browserStack "Browser Stack" "Runtime symbol context stack for navigation, containing current references and symbol menus" C
 				symbolResolver = Component symbolResolver "Symbol Resolution Pipeline" "Converts cursor positions to symbols, loads references, and finds definitions" C
-				referenceTable = Component referenceTable "In-Memory Reference Table" "Runtime symbol cache loaded from .cx files for active session" C
+				referenceTable = Component referenceTable "In-Memory Reference Table" "The referenceableItemTable: the authoritative in-memory store of all references and the single source of truth every operation reads" C
 
 				// Symbol resolution flow
 				cxref -> symbolResolver "delegates symbol lookup to" call
-				symbolResolver -> cxfile "loads symbol data via" call
-				symbolResolver -> referenceTable "populates and queries" call
+				symbolResolver -> referenceTable "queries" call
 				symbolResolver -> browserStack "builds navigation context in" call
-				cxfile -> referenceTable "loads symbols into" "batch loading"
+				cxfile -> referenceTable "loads the snapshot into, at startup" "batch loading"
 
                                 lspAdapter -> parsing "parses opened files using" call
                                 lspAdapter -> refactory "uses for refactoring" call
@@ -52,32 +50,25 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
                                 lspAdapter -> symbolResolver "attempts symbol lookup via" call
 
 				xref -> cxref "handles references using" call
-				server -> cxref "handles references using" call
-				refactory -> cxref "handles references using" call
-
 				xref -> parsing "parses source code using" call
+
 				server -> parsing "parses source code using" call
+                                server -> cxref "handles references using" call
+                                server -> refactory "performs refactoring using" call
+
+                                refactory -> cxref "handles references using" call
 
 				parsing -> source "reads source code from" "File I/O"
 			}
 
 			projectConfiguration = container projectConfiguration "Non-standard format settings file" "Configuration file for project settings" DB
 
-			referencesDb = container referencesDb "Cross-Reference Database (.cx files)" "Persistent symbol database storing references, definitions, and metadata for all project symbols. Created via -create/-update operations, indexed by symbol hash for fast lookup" DB {
-				symbolIndex = Component symbolIndex "Symbol Hash Index" "Hash-based lookup table mapping symbol names to file locations for O(1) symbol resolution" C
-				referenceRecords = Component referenceRecords "Reference Records" "Individual symbol references with position, usage type (defined/declared/used), and metadata" C
-				fileMetadata = Component fileMetadata "File Metadata" "File modification times, paths, and inclusion relationships for incremental updates" C
-			}
-
-			// Cross-reference database interactions
-			cxfile -> symbolIndex "builds and queries" "hash-based lookup"
-			cxfile -> referenceRecords "stores and retrieves" "symbol references"
-			cxfile -> fileMetadata "tracks file changes for" "incremental updates"
+			referencesSnapshot = container referencesSnapshot "Reference Snapshot (.cx files)" "Disposable serialised snapshot of the in-memory references. Loaded once at startup to warm the in-memory table, written on exit and periodically; never queried during operation." DB
 
 			editorExtension -> projectConfiguration "writes" "new project wizard"
 			cxrefProgram -> projectConfiguration "read" "File I/O"
 			editorExtension -> cxrefProgram "API" "requests information and gets commands to modify source code"
-			cxrefProgram -> referencesDb "read/write" "File I/O"
+			cxrefProgram -> referencesSnapshot "loads at startup, writes snapshot" "File I/O"
 			cxrefProgram -> source "read/analyze" "File I/O"
 		}
 
@@ -113,13 +104,6 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 	    autolayout lr
 		}
 		
-		component referencesDb ReferenceDatabase {
-	    include *
-	    autolayout lr
-	    title "Reference Database Architecture"
-	    description "Cross-reference database components and symbol resolution pipeline"
-		}
-
 		theme default
 
 		styles {
