@@ -49,8 +49,11 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
 |The last divergent parse path; also retires `callXref` in the refactoring path. See
  Chapter 17.3.
 
-|Wire `ensureFreshReferences` into refactoring
-|The module exists with a unit test but no production caller.
+|Behind-the-back disk-change detection
+|Entry refresh is editor-buffer-driven, so a file changed on disk without a preload
+ (`git switch`, regenerated source) is not picked up. A general per-request disk-mtime
+ recheck for non-preloaded buffers would close it — see
+ <<06-principles.adoc#,Principles>> (Editor Buffers Are the Content Source).
 
 |CreateMode
 |Standalone `c-xref -create` batch prime and config validator; the move that unblocks

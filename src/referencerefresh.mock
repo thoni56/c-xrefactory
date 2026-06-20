@@ -4,13 +4,6 @@
 
 #include <cgreen/mocks.h>
 
-void ensureFreshReferences(ReferenceableItem *item, ArgumentsVector baseArgs) {
-    mock(item);
-}
-
-void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
-    mock(fileName);
-}
 
 void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs) {
     mock(fileNumber);
