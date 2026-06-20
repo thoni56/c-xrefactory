@@ -7,7 +7,6 @@
 #include "browsingmenu.h"
 #include "characterreader.h"
 #include "commons.h"
-#include "cxref.h"
 #include "editor.h"
 #include "fileio.h"
 #include "filetable.h"

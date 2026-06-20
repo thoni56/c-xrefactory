@@ -5,7 +5,6 @@
 
 #include "argumentsvector.h"
 #include "commons.h"
-#include "cxfile.h"
 #include "cxref.h"
 #include "editor.h"
 #include "filedescriptor.h"
@@ -14,7 +13,6 @@
 #include "head.h"
 #include "list.h"
 #include "log.h"
-#include "memory.h"
 #include "misc.h"
 #include "options.h"
 #include "parsing.h"
