@@ -104,6 +104,25 @@ See the README for LSP client configuration examples. Basic setup:
 * link:17-major-codebase-improvements.adoc[Chapter 17: Major Codebase Improvements] discusses the technical architecture
 * Multi-file support requires include graph and on-demand parsing (foundational work described in Chapter 17)
 
+==== Implementation Path
+
+The LSP path reuses the native architecture rather than inventing its own — document
+events are entry-refresh sync points (<<08-algorithms.adoc#,Algorithms>>). The steps:
+
+1. *Use `referenceableItemTable`* (done) — the separate `referenceDatabase` was removed;
+   `findDefinition()` queries the shared table, and `didOpen` calls
+   `parseToCreateReferences()` to populate it.
+2. *Project initialization on startup* — on `initialize` / first `didOpen`, run the native
+   setup (`initializeProjectContext` → `loadFileNumbersFromStore` →
+   `scanProjectForFilesAndIncludes`) for config, compiler include paths, the snapshot, and
+   include structure. Care: reconcile the overlapping init with `initializeParsingSubsystem`.
+3. *Reparse on document events* — `didOpen` / `didChange` reparse the file; `didSave`
+   triggers Pass 2 (reverse-include reparse). Same `reparseStalePreloadedFiles` logic, but
+   changes arrive in real time.
+4. *Multi-file navigation* — with 1–3 the table holds references from all project files,
+   so `definition` works across files with no new query mechanism; Pass 3 sibling parsing
+   triggers lazily.
+
 === Rename function handles `expect`
 
 Many unittest frameworks have a feature for isolating a unit, often referred to as

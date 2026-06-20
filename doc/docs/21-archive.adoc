@@ -757,3 +757,25 @@ The live treatment is now in <<08-algorithms.adoc#entry-refresh,Entry Refresh>>
 (_Cleaning Stale Emissions_); the fix direction and the provenance-vs-reparse decision
 are in link:/workspace/1/decisions/C-xrefactory#25[ADR-0025]. This entry is retained for the
 investigation trail and superseded by those.
+
+=== Memory-as-Truth Convergence: Implementation Path (Historical)
+
+The path by which c-xrefactory reached "memory is truth" — now complete; see the
+<<10-roadmap.adoc#,Roadmap>> Convergence section for the current state. Preserved for the
+sequencing and dependencies.
+
+Navigation and refactoring already shared the in-memory `ReferenceableItemTable`
+(<<20-insights.adoc#,Insights>>), so the infrastructure was largely in place: include
+structure tracked via `TypeCppInclude` references, mtime-based staleness detection, and
+entry refresh before every operation. The steps taken:
+
+1. *Lightweight scanning replaced the mandatory `-create`* — discover CUs and include
+   structure without full parsing (ADR-0022). An optional `-create` returns as a deliberate
+   batch prime (CreateMode, ADR-0024).
+2. *Snapshot save/load* — `.cx` loaded at startup, saved on `-exit`; no manual `-create`
+   after the first session.
+3. *Refactoring moved into the server (strangler fig)* — all refactorings run as
+   `OP_REFACTORY`; `RefactoryMode` and the `-refactory` process removed. Remaining: remove
+   the `parseBufferUsingServer` bridge.
+4. *`.cx` became a startup snapshot only* — never consulted during operation; every
+   operation reads the in-memory table.

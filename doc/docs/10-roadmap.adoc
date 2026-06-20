@@ -1,6 +1,9 @@
 == Roadmap
 
-This chapter outlines the high-level architectural and feature goals for c-xrefactory. For implementation details, see link:17-major-codebase-improvements.adoc[Chapter 17: Major Codebase Improvements].
+This chapter records where c-xrefactory is going — the architectural direction and the
+feature vision. The mechanisms behind the "done" items live in their home chapters
+(<<06-principles.adoc#,Principles>>, <<08-algorithms.adoc#,Algorithms>>); implementation
+detail is in <<17-major-codebase-improvements.adoc#,Major Codebase Improvements>>.
 
 === Guiding Principles
 
@@ -10,132 +13,68 @@ This chapter outlines the high-level architectural and feature goals for c-xrefa
 * **Architectural simplification**: Replace artificial mode distinctions with unified, smart on-demand behavior
 * **Legacy code respect**: Work with the existing 1990s codebase thoughtfully, not against it
 
-=== Architectural Vision: Memory as Truth
+=== Convergence: Memory as Truth
 
-==== The Goal
+In-memory references are the single source of truth — every operation (navigation,
+search, completion, refactoring, unused detection) reads the in-memory
+`referenceableItemTable`, and the `.cx` files are a disposable startup snapshot. This
+convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Principles>>
+(Memory As Truth, Continuously Fresh References) and <<08-algorithms.adoc#,Algorithms>>
+(Entry Refresh, Lightweight Scanning). What follows is status and what remains.
 
-**In-memory references are the single source of truth.** All operations — navigation, refactoring, search, completion — read from the in-memory `referenceableItemTable`. The `.cx` files on disk serve only as a startup snapshot to avoid full-project reparsing on server start.
+==== Done
 
-==== Dependency Chain
+* *Separate sync from dispatch* — entry refresh reparses stale files before every
+  operation (link:/workspace/1/decisions/C-xrefactory#20[ADR-0020]).
+* *Lightweight file-structure scanning* — CU and include discovery without full parsing
+  (link:/workspace/1/decisions/C-xrefactory#22[ADR-0022]).
+* *Refactoring as a server operation* — all refactorings run via `OP_REFACTORY`;
+  `RefactoryMode` and the `-refactory` process removed.
+* *Search from the in-memory table* — `searchInMemoryTable()` replaced the disk scan;
+  the last disk-as-truth read is gone.
+* *Disk snapshot* — `.cx` loaded and mtime-validated at startup, saved on exit and
+  periodically; no mandatory `-create`.
 
-----
-    ┌──────────────────────────────────────────┐
-    │          MEMORY IS TRUTH (done)          │
-    │  All operations use in-memory table      │
-    │  - Navigation, completion, search        │
-    │  - Refactoring (server-side, OP_REFACTORY│
-    │  - .cx files = startup snapshot only     │
-    └──────────────────────────────────────────┘
-                        |
-                        v
-              ┌─────────────────┐
-              │ REMAINING WORK  │
-              │                 │
-              │ Index-based     │
-              │ sessions        │
-              │ (keys+positions │
-              │ not copies)     │
-              │                 │
-              │ parseBuffer     │
-              │ UsingServer     │
-              │ bridge removal  │
-              │                 │
-              │ XrefMode        │
-              │ removal         │
-              └─────────────────┘
-----
+==== Remaining
 
-==== Component Summary
-
-[cols="1,3"]
+[cols="1,2",options="header"]
 |===
-|Component |Description
+|Work |Notes / dependency
 
-|**Separate sync from dispatch (done)**
-|Server-side restructuring (link:/workspace/1/decisions/C-xrefactory#20[ADR-0020]): the server entry point reparses stale files before dispatching any operation. Pass 1 reparses stale CUs, Pass 2 walks the reverse-include graph (via `TypeCppInclude` references) to find and reparse CUs that include stale headers. At startup, the server loads the `.cx` snapshot (`loadFileNumbersFromStore`), discovers CUs by globbing the project directory, and parses only stale CUs (mtime changed since snapshot). The Emacs client only preloads modified buffers, so unmodified files don't trigger unnecessary reparsing. Operations can assume the in-memory table is current.
+|Index-based sessions
+|Store symbol key + position instead of copying references; dissolves "stale sessions
+ after POP". Depends on entry refresh (ADR-0020).
 
-|**Lightweight file structure scanning (done)**
-|CU discovery by globbing the project directory, include structure extraction from `#include` lines, populating the same `TypeCppInclude` references that full parsing creates. Operational on the auto-detect path. See link:/workspace/1/decisions/C-xrefactory#22[ADR-0022].
+|Remove `parseBufferUsingServer` bridge
+|The last divergent parse path; also retires `callXref` in the refactoring path. See
+ Chapter 17.3.
 
-|**Index-based sessions**
-|Session stores symbol key + current position instead of copying all references. Navigation reads directly from in-memory table, eliminating the "stale session copies" problem. Depends on upfront refresh (ADR 20) so that the table is always current when sessions read from it.
+|Wire `ensureFreshReferences` into refactoring
+|The module exists with a unit test but no production caller.
 
-|**References refresh module (function exists, wiring deferred)**
-|A shared module with a unified interface: "ensure these files have fresh references", supporting different _file selection strategies_ — the caller decides which files need freshness, the module handles the reparsing.
+|CreateMode
+|Standalone `c-xref -create` batch prime and config validator; the move that unblocks
+ XrefMode removal (link:/workspace/1/decisions/C-xrefactory#24[ADR-0024]).
 
-Current state: the `ensureFreshReferences` function exists with a unit test, but has no production callers. The refactoring path still depends on entry refresh having already run before the operation begins. Wiring the module into the refactoring entry path is deferred.
+|XrefMode removal
+|Unblocked by CreateMode; deletes the `-create`/`-update` legacy engine.
 
-The header-filtered sibling parsing optimization (see Optimization section) becomes another file selection strategy within this module.
-
-|**Refactoring as server operation (strangler fig — done)**
-|All refactorings run as server operations via `OP_REFACTORY` in `serverPerformRefactoring()`: rename, extract (function/macro/variable), parameter manipulation (add/del/move), move function, organize includes, rename include/module. `markModifiedEditorBuffersAsStale()` ensures entry refresh detects refactoring-modified buffers. `RefactoryMode` and the legacy `-refactory` process path have been removed. The Emacs client always uses the server path. Remaining cleanup: remove `parseBufferUsingServer` bridge (see link:17-major-codebase-improvements.adoc[17.3]).
-
-|**Disk snapshot strategy (operational)**
-|The `.cx` file functions as a startup snapshot. At startup, the server loads the snapshot into the file table and skips CUs whose disk mtime matches the stored mtime. On `-exit`, the server saves the current in-memory state back to disk. No prior `-create` needed — the first session builds references from scratch, subsequent sessions load the snapshot. See below for target semantics.
-
-|**CreateMode — batch prime & config validation (proposed)**
-|A standalone `c-xref -create [path]` batch mode that starts exactly like `-server` (auto-discovery, snapshot load), then eagerly parses the whole project, reports parse errors on stderr (exiting non-zero on failure), writes the snapshot, and exits. No command-line options — the discovered `.c-xrefrc` is authoritative. Create and update are unified: the snapshot is a disposable cache, always loaded and reconciled, so there is no separate `-update`. Built as a thin reuse of the server parse path, it gives `-create` a server-path home — the move that unblocks removing XrefMode. See link:/workspace/1/decisions/C-xrefactory#24[ADR-0024].
-
-|**Search reads from in-memory table (done)**
-|`OP_SEARCH` now queries the in-memory `referenceableItemTable` via `searchInMemoryTable()` in cxref.c, replacing the disk-based `scanForSearch()`. Same matching logic (`searchSymbolCheckReference`, `searchStringMatch`), same reference filtering (`UsageDefined`/`UsageDeclared`), same result printing. Skips `VisibilityLocal` (block-local) symbols, matching the snapshot's write filter. This was the last operation that read from disk `.cx` files as truth — **all operations now use the in-memory table**.
-
-|**Snapshot write triggers (done)**
-|The `markPreloadedFilesAsAncient()` + `saveReferences()` pattern allows saving the snapshot at any time — staleification ensures only disk-file-derived references are persisted, so mtime-based validation remains correct at next startup. Three triggers are operational:
-
-*Clean exit* (done): `-exit` handler saves snapshot. Emacs `kill-emacs-hook` sends `-exit`.
-
-*Project change* (done): `c-xref-kill-xref-process` sends `-exit` before killing the process.
-
-*Periodic save* (done): during long-running parse operations (e.g. parse-for-search), the server saves the snapshot every 100 CUs. Parsed work survives interruption (Ctrl-g, crash).
-
-Dirty kills (crash, `kill -9`, terminal closed) lose in-memory state accumulated since the last periodic or exit save. The next cold start reparses from the last snapshot.
+|Clean stale header emissions
+|Variant-B orphan fix — reparse by include structure gated on a per-CU fingerprint,
+ provenance rejected (link:/workspace/1/decisions/C-xrefactory#25[ADR-0025]; mechanism in
+ <<08-algorithms.adoc#,Algorithms>>, Cleaning Stale Emissions).
 |===
 
-==== Incremental Implementation Path
+==== Decisions that shaped this direction
 
-Both navigation and refactoring already use the same in-memory `ReferenceableItemTable` (see link:20-insights.adoc[Chapter 20: Unified In-Memory Table Discovery] for details). The infrastructure for memory-as-truth is largely already in place:
-
-* **Include structure** is already tracked via `TypeCppInclude` references in the reference table — the same mechanism that full parsing creates. Lightweight scanning (ADR 22) would populate these without full parsing.
-* **Staleness detection** is already working: mtime checks on editor buffers, entry-point reparse with transitive include-graph walking (ADR 20).
-* **Entry refresh** ensures fresh references before every operation, replacing the graduated update scope that the legacy refactoring path used.
-
-The path forward is:
-
-1. **Lightweight scanning replaces the mandatory `-create`** (done) — discover CUs and include structure without full parsing. Populate the same `TypeCppInclude` references. (An *optional* `-create` returns as a deliberate batch prime — see CreateMode, link:/workspace/1/decisions/C-xrefactory#24[ADR-0024].)
-2. **Snapshot save/load** (done) — `.cx` loaded at startup, saved on `-exit`. No manual `-create` needed after first session.
-3. **Refactoring moves into server (strangler fig)** (done) — all refactorings run as server operations via `OP_REFACTORY`. `RefactoryMode` and the legacy `-refactory` process have been removed. Remaining cleanup: remove `callXref` usage from `parseBufferUsingServer` bridge.
-4. **`.cx` becomes startup snapshot only** (done) — never consulted during operation. The in-memory table is authoritative. All operations use the in-memory `referenceableItemTable`: navigation, completion, search, refactoring, and unused detection (both local and global). The disk scan tables in `cxfile.c` (all except `snapshotLoadScanDispatchTable`) are candidates for removal.
-
-==== .cx File: Startup Snapshot
-
-Once memory is truth, the `.cx` file is a **startup snapshot** — a serialized copy of previously-computed references that avoids a full project parse on server start.
-
-**Startup sequence:**
-
-1. Load snapshot from `.cx` (if it exists)
-2. Compare each entry's stored mtime against the current disk file
-3. Re-parse any files that changed since the snapshot was written
-4. Client connects, sends preloaded buffers — those are parsed into memory, overriding disk state
-
-After startup, the `.cx` file is not consulted. All operations read from the in-memory table.
-
-**Writing the snapshot:**
-
-The snapshot is written from disk-file-derived references only. Modified-buffer data must never be persisted — the snapshot reflects disk state, so that startup validation (step 2) remains correct.
-
-**Cold start** (no `.cx` file): All project source files are parsed. This is slower but self-healing — no manual action needed to recover from a missing or corrupt snapshot.
-
-An optional **CreateMode** (`c-xref -create`, link:/workspace/1/decisions/C-xrefactory#24[ADR-0024]) performs this whole-project parse deliberately and up front — for priming a large project or validating the project config — without reintroducing a _required_ create step.
-
-==== Related Decisions and Details
-
-* **link:/workspace/1/decisions/C-xrefactory#5[ADR-0005]**: Automatically find config files — enables project discovery by upward search
-* **link:/workspace/1/decisions/C-xrefactory#13[ADR-0013]**: No archaic extern patterns — limits symbol visibility to include-based, making include closure complete
-* **link:/workspace/1/decisions/C-xrefactory#14[ADR-0014]**: Adopt on-demand parsing architecture — formalizes this direction
-* **link:/workspace/1/decisions/C-xrefactory#20[ADR-0020]**: Separate sync from dispatch — implemented, entry-point reparse with include-graph walking
-* **link:/workspace/1/decisions/C-xrefactory#21[ADR-0021]**: Single-project server policy — foundation for index-based sessions
-* **link:/workspace/1/decisions/C-xrefactory#22[ADR-0022]**: Lightweight file structure scanning — replaces `-create` and `callXref()`
-* **Chapter 17**: Incremental `cxfile.c` cleanup, `parseBufferUsingServer` bridge removal
+* link:/workspace/1/decisions/C-xrefactory#5[ADR-0005] — automatic config-file discovery
+* link:/workspace/1/decisions/C-xrefactory#13[ADR-0013] — no archaic extern patterns
+* link:/workspace/1/decisions/C-xrefactory#14[ADR-0014] — on-demand parsing architecture
+* link:/workspace/1/decisions/C-xrefactory#20[ADR-0020] — separate sync from dispatch
+* link:/workspace/1/decisions/C-xrefactory#21[ADR-0021] — single-project server policy
+* link:/workspace/1/decisions/C-xrefactory#22[ADR-0022] — lightweight file-structure scanning
+* link:/workspace/1/decisions/C-xrefactory#24[ADR-0024] — CreateMode
+* link:/workspace/1/decisions/C-xrefactory#25[ADR-0025] — clean stale header emissions by reparse
 
 === Optimization
 
@@ -160,165 +99,54 @@ Once the core architectural path (lightweight scan, entry refresh, memory-as-tru
 
 === Known Limitations
 
-The following are known consequences of the current entry refresh implementation. Each is deliberately deferred because it either has low practical impact or dissolves naturally with planned architectural changes.
+Consequences of the current entry refresh implementation, each deferred because it has low
+practical impact or dissolves with planned work. Mechanics are in
+<<08-algorithms.adoc#entry-refresh,Algorithms>> (Entry Refresh).
 
-[cols="1,2,1"]
+[cols="1,1",options="header"]
 |===
-|Limitation |Impact and reasoning |Dissolves with
+|Limitation |Dissolves with
 
-|**Re-scan doesn't clear old include refs**
-|When a config change triggers a re-scan, new `TypeCppInclude` / `UsageUsed` refs are created but old ones are not removed. For the common case — _adding_ `-I` flags — this is harmless: old refs are still valid, the scan just adds missing ones. The problematic case is _removing_ or _changing_ flags, where phantom include edges could cause Pass 2 or Pass 3 to chase stale headers, resulting in unnecessary (but not incorrect) reparsing. Low practical impact since mid-session config edits are almost always additive.
-|Could be fixed independently by clearing outgoing include refs per CU before re-scanning. Not urgent enough to justify the API addition.
+|Re-scan doesn't clear old include refs — harmless for additive `-I` changes; phantom
+ edges on removal cause extra (not incorrect) reparsing
+|Clearing a CU's outgoing include refs before re-scan
 
-|**Double progress bar on cold start**
-|The lightweight scan only captures `#include "..."`, not `#include <...>`. On the first request, Pass 3 finds siblings via `"..."` edges. On the second request, Pass 1 reparses the request CU with the full parser, which discovers `<...>` edges too — Pass 3 then finds additional siblings, producing a second progress bar. Both rounds are roughly equal (ffmpeg: ~40s total, ~20s each). Functionally correct — all siblings get parsed, just in two steps.
-|Extending scan to `<...>` (requires header-filtered sibling parsing first, otherwise system headers cause near-full-project explosion)
+|Cold-start double progress bar — scan finds `"..."` siblings, the later full parse finds
+ `<...>` siblings
+|Extending the scan to `<...>` includes (see Optimization)
 
-|**Pass 3 parses too many siblings**
-|Pass 3 parses all CUs sharing _any_ header with the request file. On large projects with widely-shared utility headers this pulls in a large fraction of all CUs (e.g. ffmpeg `aac_ac3_parser.c`: 978 siblings via shared headers, but only 7 share the relevant `aac_ac3_parser.h`). This is correct but wasteful — cold-start latency is dominated by this over-parsing.
-|Header-filtered sibling parsing: identify the navigated symbol's defining header during dispatch, then parse only CUs sharing that header. Challenge: Pass 3 runs during sync (before dispatch), so this requires bridging the sync/dispatch boundary.
+|Pass 3 parses too many siblings — all CUs sharing _any_ header, not just the symbol's
+ defining header
+|Header-filtered sibling parsing (see Optimization)
 
-|**Stale sessions after POP**
-|Sessions hold copies of references at the time the session was created. Only the top session is refreshed by entry refresh. After editing a header and navigating back (POP), the previous session may show stale positions — e.g. an old location kept in parallel with the new one. Functionally annoying but not data-corrupting.
-|Index-based sessions (keys + positions instead of copies) — sessions would read directly from the in-memory table, which is always current after entry refresh.
-|===
-
-=== Feature Vision: Full LSP Support
-
-==== The Goal
-
-Enable VS Code, Neovim, and other LSP-capable editors to use c-xrefactory's refactoring and navigation features with full feature parity to the Emacs integration.
-
-==== Current State
-
-* Go-to-definition for functions, global variables, types (single file only)
-* Files parsed on `didOpen` only, populating the global `referenceableItemTable`
-* No project initialization — no `.c-xrefrc`, no compiler discovery, no disk db
-* No `didChange` or `didSave` handlers
-* Known bug: file table size changes cause wrong positions (hash distribution)
-
-==== Architectural Insight: LSP Document Events as Entry Refresh
-
-The native Emacs path has a mature sync/execute separation (ADR 20): before each operation, reparse stale files in three passes, then execute with a current in-memory table. The LSP protocol provides the same separation naturally — document lifecycle events (`didOpen`, `didChange`, `didSave`) are sync points, and requests (`definition`, `references`) are operations that assume the table is current.
-
-This means the LSP path does not need its own architecture. It can reuse the same initialization and reparsing infrastructure as the native path, triggered by different events.
-
-==== Dependency Chain
-
-----
-              Multi-file navigation
-              (definition, references,
-               rename across files)
-                      |
-                      v
-          Use referenceableItemTable
-          instead of separate db (done)
-             /                \
-            v                  v
-    Reparse on              Project init
-    document events         on LSP startup
-    (didOpen/didChange      (find project,
-     → parse file,           load .c-xrefrc,
-     didSave → pass 2       compiler discovery,
-     includer reparse)      disk db + scan)
-            |                      |
-            v                      v
-    ┌─────────────────────────────────────┐
-    │          FOUNDATION (done)          │
-    │  - parseToCreateReferences()        │
-    │  - referenceableItemTable           │
-    │  - Lightweight scan (ADR 22)        │
-    │  - Entry refresh passes 1-3         │
-    │  - initializeProjectContext()       │
-    │  - loadFileNumbersFromStore()       │
-    └─────────────────────────────────────┘
-----
-
-==== Component Summary
-
-[cols="1,3"]
-|===
-|Component |Description
-
-|**Use `referenceableItemTable` (step 1, done)**
-|The separate `referenceDatabase` (reference_database.h/c) has been removed. `findDefinition()` in lsp_adapter.c now queries `referenceableItemTable` directly via `mapOverReferenceableItemTableWithPointer`. The LSP `didOpen` handler calls `parseToCreateReferences()`, which populates the same global table used by the native path.
-
-|**Project initialization on LSP startup (step 2)**
-|On `initialize` or first `didOpen`, run the same project setup as the native path: `initializeProjectContext(fileName, emptyArgs, emptyArgs)` → `loadFileNumbersFromStore()` → `scanProjectForFilesAndIncludes()`. This gives the LSP server: project config from `.c-xrefrc`, compiler-discovered include paths and predefined macros, the disk db snapshot (references from all previously-parsed files), and include structure from the lightweight scan. The `ArgumentsVector` parameters accept empty vectors — command-line and piped options are a native-path concern. Care needed: `initializeParsingSubsystem()` and `initializeProjectContext()` initialize overlapping state (options, file table); the LSP init sequence must be reconciled so they don't conflict.
-
-|**Reparse on document events (step 3)**
-|`didOpen` and `didChange`: reparse the changed file via `parseToCreateReferences()` (already done for `didOpen`). `didSave`: trigger pass 2 — walk the reverse-include graph (`TypeCppInclude` refs) to find and reparse CUs that include the saved file as a header. This is the same `reparseStalePreloadedFiles()` logic from the native path. The LSP path is strictly better here: changes arrive in real-time instead of being discovered at request time.
-
-|**Multi-file navigation (step 4)**
-|With steps 1-3, the `referenceableItemTable` contains references from all project files (disk db snapshot + freshly parsed opens/changes). `definition` requests query this table — multi-file lookup works without any new query mechanism. Pass 3 (sibling CU parsing) can trigger lazily on the first `didOpen` in a cold area, or on a `definition` request that finds no result.
+|Stale sessions after POP — only the top session is refreshed
+|Index-based sessions (see Convergence → Remaining)
 |===
 
-==== Planned Capabilities
+=== Feature Vision: LSP Support (explorative)
 
-Once the foundation above is in place, the following LSP features become possible:
+The last and least-defined direction: expose c-xrefactory through the Language Server
+Protocol so VS Code, Neovim, and other LSP editors can use its navigation and — as far as
+the protocol allows — its refactorings. How far that reaches is genuinely open. Basic
+features (definition, references, completion) map cleanly, but c-xrefactory's interactive
+refactorings and symbol browsers have no natural LSP equivalent, so the Emacs client will
+likely remain the gateway to its full refactoring power. Surfacing even some refactorings
+in an LSP environment is the prize worth chasing; the reach is unknown until we get there.
 
-[cols="1,1"]
-|===
-|Feature |Enables
+See <<03-functional-overview.adoc#,Functional Overview>> for the current LSP state and
+protocol limits, and <<11-planned-features.adoc#,Planned Features>> for the implementation
+steps.
 
-|**Multi-file navigation**
-|Jump to definitions in other files without opening them first
+The one durable design point: *LSP document events are entry-refresh sync points.*
+`didOpen` / `didChange` / `didSave` correspond exactly to the native path's preload and
+un-preload staleness signals, and `definition` / `references` are operations over a table
+those events have already made current. So the LSP path needs no architecture of its own —
+it reuses entry refresh (<<08-algorithms.adoc#,Algorithms>>), triggered by different events.
 
-|**Find all references**
-|Show all usages of a symbol across the project
+=== Further refactorings
 
-|**Hover information**
-|Display type and documentation on mouse hover
-
-|**Code completion**
-|Context-aware symbol completion
-
-|**Rename refactoring**
-|Safe rename across all files
-
-|**Workspace search**
-|Find symbols by name across project
-|===
-
-==== Dependencies
-
-Steps 1-3 above are independent of the "Memory as Truth" convergence — they reuse existing infrastructure as-is. Full feature parity (rename, extract) additionally depends on:
-
-* Rename refactoring requires the "no callXref" path
-* All features benefit from single-project server simplicity (ADR 21)
-
-=== Feature Vision: Modern Refactorings
-
-==== The Goal
-
-Provide refactoring capabilities that understand C semantics, going beyond what generic text-based tools can offer.
-
-==== Current Capabilities
-
-* Rename (symbols, parameters, macros)
-* Extract function/macro/variable
-* Add/delete/reorder parameters
-* Move function between files (Phase 1 MVP)
-
-==== Planned Improvements
-
-[cols="1,2"]
-|===
-|Feature |Value
-
-|**Move function Phase 2**
-|Automatically add function declaration to target header file
-
-|**Move function Phase 3**
-|Detect and optionally move tightly-coupled static helper functions
-
-|**Smart include management**
-|Automatically add/remove `#include` directives based on dependencies
-
-|**Refactoring preview**
-|Show what will be changed before applying
-|===
-
-==== Details
-
-See link:#move-function-refactoring[Chapter 11: Move Function Between Files] for implementation details and phase breakdown.
+c-xrefactory crossed the "Refactoring Rubicon" early, but only a fraction of the
+refactorings that apply to C are automated today. Extending the catalogue — both deeper
+versions of what exists (move-function follow-ups, delete-function) and new operations —
+is a standing source of value. Several candidates are specified in
+<<11-planned-features.adoc#,Planned Features>>.
