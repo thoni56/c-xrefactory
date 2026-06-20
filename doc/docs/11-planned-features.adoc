@@ -117,7 +117,7 @@ events are entry-refresh sync points (<<08-algorithms.adoc#,Algorithms>>). The s
    `scanProjectForFilesAndIncludes`) for config, compiler include paths, the snapshot, and
    include structure. Care: reconcile the overlapping init with `initializeParsingSubsystem`.
 3. *Reparse on document events* — `didOpen` / `didChange` reparse the file; `didSave`
-   triggers Pass 2 (reverse-include reparse). Same `reparseStalePreloadedFiles` logic, but
+   triggers <<08-algorithms.adoc#entry-refresh-pass-2,Pass 2>> (reverse-include reparse). Same `reparseStalePreloadedFiles` logic, but
    changes arrive in real time.
 4. *Multi-file navigation* — with 1–3 the table holds references from all project files,
    so `definition` works across files with no new query mechanism; Pass 3 sibling parsing

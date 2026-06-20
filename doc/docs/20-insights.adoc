@@ -97,7 +97,7 @@ The disk scan operations (`ensureReferencesAreLoadedFor`, `scanReferencesToCreat
 
 Date: 2026-03-17
 
-Editor buffers created by the server during parsing (e.g., entry refresh pass 3 parsing sibling CUs, or refactoring loading files) have `preLoadedFromFile == NULL` — they were loaded from disk, not preloaded by the client. After each request, `closeAllEditorBuffersIfClosable()` in `editor.c` frees all buffers that are closeable: `textLoaded && markers == NULL && preLoadedFromFile == NULL && !modified`.
+Editor buffers created by the server during parsing (e.g., entry refresh <<08-algorithms.adoc#entry-refresh-pass-3,Pass 3>> parsing sibling CUs, or refactoring loading files) have `preLoadedFromFile == NULL` — they were loaded from disk, not preloaded by the client. After each request, `closeAllEditorBuffersIfClosable()` in `editor.c` frees all buffers that are closeable: `textLoaded && markers == NULL && preLoadedFromFile == NULL && !modified`.
 
 This means **server-created editor buffers do not linger between requests**. On the next request, files are reloaded from disk with fresh content. This is important because:
 

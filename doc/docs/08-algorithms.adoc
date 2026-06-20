@@ -61,7 +61,7 @@ The scan populates the same data structures that full parsing would:
 
 `TypeCppInclude` references with `UsageUsed`::
   Created by `addIncludeReference()`. Each reference records which file includes which,
-  with the includer's position. These are the edges that Entry Refresh Pass 2 queries
+  with the includer's position. These are the edges that Entry Refresh <<entry-refresh-pass-2,Pass 2>> queries
   to find includers of stale headers.
 
 `TypeCppInclude` references with `UsageDefined`::
@@ -80,10 +80,10 @@ came from scanning or parsing.
 
 The scan only captures `#include "..."` (quoted includes), not `#include <...>` (angle-bracket
 includes). This is deliberate: without the header-filtered sibling optimization (see
-Entry Refresh Pass 3 limitations), scanning `<string.h>` and similar ubiquitous system
+Entry Refresh <<entry-refresh-pass-3,Pass 3>> limitations), scanning `<string.h>` and similar ubiquitous system
 headers would cause near-full-project sibling explosions.
 
-Full parsing does discover `<...>` includes. On the first request after cold start, Pass 1
+Full parsing does discover `<...>` includes. On the first request after cold start, <<entry-refresh-pass-1,Pass 1>>
 reparses the request CU with the full parser, which finds the `<...>` edges. Pass 3 may
 then discover additional siblings via those edges — this is the cause of the "double
 progress bar" on cold start.
@@ -187,6 +187,7 @@ can change from one request to the next:
 Every row but the last fits the invalidate-then-rebuild model cleanly. The last is the
 gap the next section addresses.
 
+[[entry-refresh-pass-1]]
 ==== Pass 1: Reparse Stale CUs
 
 The simplest case: the user edited and saved a `.c` file, or the client sent a
@@ -204,6 +205,7 @@ The simplest case: the user edited and saved a `.c` file, or the client sent a
 **Side effect:** Reparsing a CU also refreshes its `TypeCppInclude` references (the
 include edges). This is essential for Pass 2.
 
+[[entry-refresh-pass-2]]
 ==== Pass 2: Reparse Includers of Stale Headers
 
 If the user edited a header file, all CUs that include it (transitively) have stale
@@ -224,6 +226,7 @@ both `bar.c` (the includer) and `foo.h` (the includee) may be stale. Pass 1 repa
 Pass 2 can then find this edge when looking for includers of `foo.h`. Without Pass 1
 first, the edge wouldn't exist yet.
 
+[[entry-refresh-pass-3]]
 ==== Pass 3: Parse Unparsed Sibling CUs
 
 On cold start (no snapshot, or snapshot doesn't cover everything), many CUs have never

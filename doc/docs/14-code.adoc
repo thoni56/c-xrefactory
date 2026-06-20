@@ -155,7 +155,7 @@ server() - Infinite request loop
 
 The entry refresh (see Terminology in <<06-principles.adoc#,Principles>>) ensures
 the reference table is up-to-date before each operation. Pass ordering is critical:
-Pass 1 reparses stale CUs, which updates their `TypeCppInclude` references. Pass 2
+<<08-algorithms.adoc#entry-refresh-pass-1,Pass 1>> reparses stale CUs, which updates their `TypeCppInclude` references. Pass 2
 then queries those freshened references to find which CUs include stale headers. Pass 3
 uses the include structure from the lightweight scan to find CUs sharing headers with
 the request file that have never been parsed. A user cannot create a new include edge
