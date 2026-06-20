@@ -1,34 +1,8 @@
 == Functional Overview
 
-The _c-xref_ program is, or rather was, a mish-mash of a multitude of
-features baked into one program. This is the major cause of the mess
-that it is source-wise.
-
-It was
-
-- a generator for persistent cross-reference data
-- a reference server for editors, serving cross-reference, navigational and completion data over a protocol
-- a refactoring server (the worlds first to cross the Refactoring Rubicon)
-- [.line-through]#an HTML cross-reference generator (probably the root of the project)# (REMOVED)
-- [.line-through]#a C macro generator for structure fill (and other) functions# (REMOVED)
-
-It is the first three that are unique and constitutes the great value
-of this project. The last two have been removed from the source, the
-last one because it was a hack and prevented modern, tidy, building,
-coding and refactoring. The HTML cross-reference generator has been
-superseeded by modern alternatives like Doxygen and is not at the core
-of the goal of this project.
-
-One might surmise that it was the HTML-crossreference generator that
-was the initial purpose of what the original `Xrefactory` was based
-upon. Once that was in place the other followed, and were basically
-only bolted on top without much re-architecting the C sources.
-
-What we'd like to do is partition the project into separate parts,
-each having a clear usage.
-
-The following sections are aimed at describing various features of
-`c-xrefactory`.
+`c-xrefactory` helps a programmer navigate, understand, and safely improve C and Yacc
+source from within the editor. This chapter catalogues that functionality and sketches how
+the server serves a request; the project's origins are in <<history,History>> at the end.
 
 === Main functionality
 
@@ -96,24 +70,40 @@ them. More are considered for implementation.
 Using these automated refactorings it is much easier and safer to
 continuously maintain and improve the quality of any code base.
 
-=== Options, option files and configuration
+=== Configuration
 
-The current version of C-xrefactory allows only two possible sets of
-configuration/options.
+A project is configured by a `.c-xrefrc` file in the project root, found by upward search
+from the file being worked on; it records the source roots, include paths, and defines.
+(The older user-central `~/.c-xrefrc` with per-project sections still works.) See
+<<06-principles.adoc#,Principles>> (Project Scope) for how project boundaries are
+determined.
 
-The primary storage is (currently) the file `$HOME/.c-xrefrc`
-which stores the "standard" options for all projects. Each project has
-a separate section which is started with a section marker, the project
-name surrounded by square brackets, `[project1]`.
+=== Operational model at a glance
 
-When you start `c-xref` you can use the command line option `-xrefrc`
-to request that a particular option file should be used instead of the
-"standard options".
+`c-xrefactory` runs as a long-lived server that the editor drives one request at a time.
+Per request:
 
-NOTE: When running the edit server there seems to be no way to
-indicate a different options files for different
-projects/files. Although you can start the server with `-xrefrc` you
-will be stuck with that in the whole session and for all projects.
+1. The editor sends the operation (navigation, search, completion, or refactoring) along
+   with the contents of any buffers it has open, as preloads.
+2. Before anything else, the server *refreshes* the in-memory reference table — reparsing
+   whatever changed since the last request, so the table reflects current reality.
+3. The operation runs against that table, and the server replies — positions to jump to, a
+   menu, or edits to apply.
+
+Two design points to carry forward:
+
+*The table is refreshed whole, before every operation.* Each operation simply trusts that
+the references it reads are current; it never decides what to refresh. (One could argue an
+extract, say, strictly needs only the edited unit's references fresh — but that is a latent
+optimization, not how the system is wired: the refresh layer owns correctness, and
+operations stay ignorant of it.) The mechanism is
+<<08-algorithms.adoc#entry-refresh,Entry Refresh>>; the principle is in
+<<06-principles.adoc#,Principles>>.
+
+*Parsing serves two masters.* The parser both populates the reference table and collects
+information specific to the current operation — the symbol under the cursor, the region to
+extract, the context for a completion. Keeping those roles distinct matters: an
+operation-specific parse must still leave the table correct.
 
 === LSP
 
@@ -132,13 +122,13 @@ Code or any other editor that supports the LSP protocol.
 ==== LSP Protocol Limitations
 
 The LSP protocol was designed for single-shot, non-interactive operations.
-This creates constraints for c-xrefactory's advanced refactorings:
+This creates constraints for `c-xrefactory`'s advanced refactorings:
 
-**Interactive Refactorings**: C-xrefactory's extract/parameter operations
+**Interactive Refactorings**: `c-xrefactory`'s extract/parameter operations
 require multi-step user input (names, positions, declarations). LSP's
 `textDocument/codeAction` doesn't support interactive dialogs.
 
-**Symbol Browsing**: C-xrefactory provides interactive symbol browsers
+**Symbol Browsing**: `c-xrefactory` provides interactive symbol browsers
 with filtering and keyboard navigation. LSP returns flat reference lists
 with no standard for interactive UI.
 
@@ -146,9 +136,27 @@ with no standard for interactive UI.
 
 - Provide basic IDE features (definition, completion, simple refactorings)
   to modern editors
-- Expose c-xrefactory's advanced refactoring capabilities where possible
+- Expose `c-xrefactory`'s advanced refactoring capabilities where possible
 - Keep the Emacs client as the primary interface for full interactive features
 
-LSP serves to make c-xrefactory more accessible while the Emacs client
+LSP serves to make `c-xrefactory` more accessible while the Emacs client
 probably will remain the gateway to its complete refactoring power.
+
+[[history]]
+=== History
+
+The _c-xref_ program was, historically, a mish-mash of features in one program — a major
+cause of the source-level mess being untangled (see <<10-roadmap.adoc#,Roadmap>>). It was:
+
+- a generator for persistent cross-reference data
+- a reference server for editors (cross-reference, navigation, completion)
+- a refactoring server — the first tool to cross the "Refactoring Rubicon"
+- [.line-through]#an HTML cross-reference generator# (removed)
+- [.line-through]#a C macro generator for structure-fill and similar functions# (removed)
+
+The first three are the unique value of the project. The HTML generator — likely the
+original purpose, the root of the ancestor `Xrefactory` — was superseded by tools like
+Doxygen and removed; the macro generator was a hack that obstructed modern building and
+refactoring and was removed. The other capabilities were originally bolted on without
+re-architecting the C sources, which is the tail this project is still grooming.
 
