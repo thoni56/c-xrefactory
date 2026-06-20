@@ -495,6 +495,8 @@ static void closeCurrentCxFile(void) {
     cxFile = NULL;
 }
 
+
+// TODO: Remove the updateFlag
 /* suffix contains '/' at the beginning */
 static void writePartialCxFile(bool updateFlag, char *dirname, char *suffix,
                                void mapfun(FileItem *, int)) {
