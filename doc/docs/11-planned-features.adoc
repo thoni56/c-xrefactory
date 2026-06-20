@@ -61,7 +61,7 @@ Bob -> Alice : hello
 @enduml
 ```
 
-Language Server Protocol (LSP) integration enables c-xrefactory to work with modern editors and IDEs (VS Code, vim/neovim with LSP plugins, etc.) beyond Emacs. This opens c-xrefactory's refactoring and navigation capabilities to a much wider audience.
+Language Server Protocol (LSP) integration enables `c-xrefactory` to work with modern editors and IDEs (VS Code, vim/neovim with LSP plugins, etc.) beyond Emacs. This opens c-xrefactory's refactoring and navigation capabilities to a much wider audience.
 
 ==== What Works
 
@@ -94,7 +94,7 @@ Language Server Protocol (LSP) integration enables c-xrefactory to work with mod
 
 See the README for LSP client configuration examples. Basic setup:
 
-1. Build c-xrefactory with `make`
+1. Build `c-xrefactory` with `make`
 2. Configure your editor's LSP client to use `c-xref -lsp` as the server command
 3. Open C or Yacc files
 4. Use your editor's "go to definition" command
@@ -168,7 +168,7 @@ current file, and if found, offer to migrate that section to a project-local `.c
 
 ==== Background
 
-When the server does a cold start (no disk database), it parses all discovered compilation units to populate in-memory references. During this parsing, warnings and errors may occur (e.g., missing include files, syntax errors from missing `-D` defines). These are expected and harmless — c-xrefactory continues best-effort — but users benefit from seeing them to tune their `.c-xrefrc` (adding `-I` paths, `-D` defines, etc.).
+When the server does a cold start (no disk database), it parses all discovered compilation units to populate in-memory references. During this parsing, warnings and errors may occur (e.g., missing include files, syntax errors from missing `-D` defines). These are expected and harmless — `c-xrefactory` continues best-effort — but users benefit from seeing them to tune their `.c-xrefrc` (adding `-I` paths, `-D` defines, etc.).
 
 The legacy `-create` command in Emacs offered "View log file?" after completion, showing a file with all parsing messages. The cold start server path needs an equivalent.
 

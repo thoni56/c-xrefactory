@@ -1,6 +1,6 @@
 == Roadmap
 
-This chapter records where c-xrefactory is going — the architectural direction and the
+This chapter records where `c-xrefactory` is going — the architectural direction and the
 feature vision. The mechanisms behind the "done" items live in their home chapters
 (<<06-principles.adoc#,Principles>>, <<08-algorithms.adoc#,Algorithms>>); implementation
 detail is in <<17-major-codebase-improvements.adoc#,Major Codebase Improvements>>.
@@ -125,10 +125,10 @@ practical impact or dissolves with planned work. Mechanics are in
 
 === Feature Vision: LSP Support (explorative)
 
-The last and least-defined direction: expose c-xrefactory through the Language Server
+The last and least-defined direction: expose `c-xrefactory` through the Language Server
 Protocol so VS Code, Neovim, and other LSP editors can use its navigation and — as far as
 the protocol allows — its refactorings. How far that reaches is genuinely open. Basic
-features (definition, references, completion) map cleanly, but c-xrefactory's interactive
+features (definition, references, completion) map cleanly, but `c-xrefactory`'s interactive
 refactorings and symbol browsers have no natural LSP equivalent, so the Emacs client will
 likely remain the gateway to its full refactoring power. Surfacing even some refactorings
 in an LSP environment is the prize worth chasing; the reach is unknown until we get there.
@@ -145,7 +145,7 @@ it reuses entry refresh (<<08-algorithms.adoc#,Algorithms>>), triggered by diffe
 
 === Further refactorings
 
-c-xrefactory crossed the "Refactoring Rubicon" early, but only a fraction of the
+`c-xrefactory` crossed the "Refactoring Rubicon" early, but only a fraction of the
 refactorings that apply to C are automated today. Extending the catalogue — both deeper
 versions of what exists (move-function follow-ups, delete-function) and new operations —
 is a standing source of value. Several candidates are specified in

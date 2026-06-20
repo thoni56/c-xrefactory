@@ -2,7 +2,7 @@
 
 === Overview
 
-The decision log documents choices that have shaped the architecture, implementation, and direction of c-xrefactory. Most decisions from the original 1990s development are lost to history, but as they can be deduced from the codebase and commit history, they are being retroactively documented.
+The decision log documents choices that have shaped the architecture, implementation, and direction of `c-xrefactory`. Most decisions from the original 1990s development are lost to history, but as they can be deduced from the codebase and commit history, they are being retroactively documented.
 
 All architectural decisions are recorded using the https://adr.github.io/[Architecture Decision Record (ADR)] format and stored in the `adr/` directory. These ADRs are automatically integrated into the Structurizr documentation system.
 

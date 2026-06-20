@@ -566,7 +566,7 @@ mtime check and the connection to entry refresh.
 
 === Editor Server
 
-When serving an editor the c-xrefactory application is divided into the server, _c-xref_
+When serving an editor the `c-xrefactory` application is divided into the server, _c-xref_
 and the editor part, at this point only Emacs:en are fully supported implemented in the
 `editor/emacs`-packages.
 
@@ -725,7 +725,7 @@ Extraction (`-rfct-extract-function`) returns an `<extraction-dialog>` with thre
 
 === Memory handling
 
-c-xrefactory uses custom memory management via arena allocators rather than malloc/free for performance-critical operations.
+`c-xrefactory` uses custom memory management via arena allocators rather than malloc/free for performance-critical operations.
 
 See the **Components** chapter for the design and architecture of the Memory module, and the **Data Structures** chapter for details on the arena allocator data structure and allocation model.
 

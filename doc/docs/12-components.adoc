@@ -24,7 +24,7 @@ The parsing component consists of several internal modules:
 * **Dispatch layer** (`parsers.c`) — selects the parser based on file language
 * **Configuration and orchestration** (`parsing.c`, `parsing.h`) — sets up parsing state and provides the external entry points
 
-The integrated preprocessor is a key architectural choice: by implementing its own preprocessor rather than using the system's, c-xrefactory can navigate to macro definitions, show macro usage, refactor macro names, and complete macro identifiers. The trade-off is imperfect compatibility with all compiler-specific preprocessor extensions.
+The integrated preprocessor is a key architectural choice: by implementing its own preprocessor rather than using the system's, `c-xrefactory` can navigate to macro definitions, show macro usage, refactor macro names, and complete macro identifiers. The trade-off is imperfect compatibility with all compiler-specific preprocessor extensions.
 
 ==== Parser Operations
 
@@ -198,7 +198,7 @@ void initServer(ArgumentsVector args);   // Per-request initialization
 
 ==== Responsibilities
 
-Implement the Language Server Protocol interface, allowing LSP-capable editors (VS Code, Emacs lsp-mode, etc.) to use c-xrefactory's parsing and navigation capabilities. Currently at proof-of-concept stage with partial `textDocument/definition` support.
+Implement the Language Server Protocol interface, allowing LSP-capable editors (VS Code, Emacs lsp-mode, etc.) to use `c-xrefactory`'s parsing and navigation capabilities. Currently at proof-of-concept stage with partial `textDocument/definition` support.
 
 ==== Internal Structure
 
@@ -207,7 +207,7 @@ The LSP adapter is a self-contained subsystem with clear internal layering:
 * **Message loop** (`lsp.c`) — reads LSP framed messages (Content-Length headers + JSON body) from stdin, delegates to the dispatcher, and runs until shutdown/exit
 * **Dispatcher** (`lsp_dispatcher.c`) — maps LSP method strings (`"textDocument/definition"`, `"initialize"`, etc.) to handler functions via a static dispatch table
 * **Handlers** (`lsp_handler.c`) — implement individual LSP requests and notifications: `initialize` (sets up file table, editor buffers, parsing subsystem, and reference database), `textDocument/didOpen` (loads file content and parses it), `textDocument/definition` (delegates to adapter), `shutdown`/`exit` (cleanup)
-* **Adapter** (`lsp_adapter.c`) — bridges LSP concepts to c-xrefactory internals. `findDefinition()` converts LSP URI and position to an internal `Position`, queries the `referenceableItemTable` directly, and returns an LSP location JSON object
+* **Adapter** (`lsp_adapter.c`) — bridges LSP concepts to `c-xrefactory` internals. `findDefinition()` converts LSP URI and position to an internal `Position`, queries the `referenceableItemTable` directly, and returns an LSP location JSON object
 * **Sender** (`lsp_sender.c`) — formats and sends JSON responses with Content-Length framing
 * **Utilities** (`lsp_utils.c`) — coordinate conversions: URI to file path, LSP line/character to byte offset and back
 
@@ -253,7 +253,7 @@ The LSP adapter is a proof-of-concept. Key gaps:
 bool want_lsp_server(ArgumentsVector args);
 int lsp_server(FILE *input);
 
-// Adapter: bridge LSP requests to c-xrefactory operations
+// Adapter: bridge LSP requests to `c-xrefactory` operations
 JSON *findDefinition(const char *uri, JSON *position);
 ----
 
@@ -314,7 +314,7 @@ NOTE: The component boundary is not yet clean. Parts of this functionality are s
 
 ==== Architecture Overview
 
-c-xrefactory's core functionality relies on a symbol database that stores cross-references, definitions, and usage information for all symbols in a project. The database has two forms:
+`c-xrefactory`'s core functionality relies on a symbol database that stores cross-references, definitions, and usage information for all symbols in a project. The database has two forms:
 
 * **On-disk** (`.cx` files) — persistent, hash-partitioned symbol records managed by the Cxfile component
 * **In-memory** (reference tables) — runtime tables populated by parsing and by loading from `.cx` files
@@ -366,7 +366,7 @@ The Memory module provides arena-based allocation for performance-critical and r
 
 *_Historical Context_*
 
-In the 1990s when c-xrefactory originated, memory was scarce. The design had to:
+In the 1990s when `c-xrefactory` originated, memory was scarce. The design had to:
 
 1. Minimize allocation overhead (no malloc/free per token)
 2. Support large projects despite limited RAM

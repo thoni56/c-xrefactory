@@ -304,7 +304,7 @@ When a user edits code in Emacs, the source code exists in two forms:
 * **Disk files**: The saved state on the filesystem
 * **Editor buffers**: The current (possibly unsaved) state in the editor
 
-For code analysis to be useful during active editing, c-xrefactory must treat **editor
+For code analysis to be useful during active editing, `c-xrefactory` must treat **editor
 buffers as the source of truth** when they exist.
 
 *_The Preloading Mechanism_*
@@ -404,7 +404,7 @@ browsing stack.
 
 ==== Modification Time Tracking
 
-To implement incremental updates, c-xrefactory tracks when each file/buffer was last parsed.
+To implement incremental updates, `c-xrefactory` tracks when each file/buffer was last parsed.
 
 *_The Fields_*
 
@@ -453,7 +453,7 @@ if (!fileTimestampsEqual(editorFileModificationTime(fileItem->name), fileItem->l
 
 ==== Reference Lifecycle
 
-References flow through multiple stages in c-xrefactory, with different storage
+References flow through multiple stages in `c-xrefactory`, with different storage
 locations and ownership models at each stage.
 
 *_Stage 1: Parsing_*

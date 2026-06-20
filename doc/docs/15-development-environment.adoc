@@ -55,7 +55,7 @@ very dependent on the system you are running this on. This has now moved
 into functions inside `c-xref` itself, like finding DEFINEs and include
 paths.
 
-The initial recovered c-xrefactory relied on having a working _c-xref_
+The initial recovered `c-xrefactory` relied on having a working _c-xref_
 for the current system. I don't really know how they managed to do
 that for all the various systems they were supporting.
 

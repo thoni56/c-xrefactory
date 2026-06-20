@@ -7,7 +7,7 @@ for those wanting to do backtracking to original sources.
 
 === Legacy Update Strategies (XrefMode)
 
-Before server mode, c-xrefactory used two explicit update strategies triggered by
+Before server mode, `c-xrefactory` used two explicit update strategies triggered by
 command-line options. These are now replaced by the Entry Refresh algorithm which runs
 automatically on every server request.
 
@@ -73,7 +73,7 @@ NOTE: This theory should be checked by looking at the original source of the pre
 
 **The caching system described below has been archived as it is no longer part of the current architecture.**
 
-The c-xrefactory included a sophisticated caching system that enabled
+The `c-xrefactory` included a sophisticated caching system that enabled
 incremental parsing by caching parsed input streams, parser state, and
 file modification tracking. This optimization allowed for faster
 re-analysis when only portions of source files had changed. It also
@@ -760,7 +760,7 @@ investigation trail and superseded by those.
 
 === Memory-as-Truth Convergence: Implementation Path (Historical)
 
-The path by which c-xrefactory reached "memory is truth" — now complete; see the
+The path by which `c-xrefactory` reached "memory is truth" — now complete; see the
 <<10-roadmap.adoc#,Roadmap>> Convergence section for the current state. Preserved for the
 sequencing and dependencies.
 
