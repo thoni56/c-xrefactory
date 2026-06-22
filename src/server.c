@@ -112,7 +112,7 @@ static int scheduleFileUsingTheMacro(void) {
  * TODO This function does something but the logic is seriously broken so it is
  * impossible to improve further until that mystery is sorted.
  */
-static bool prepareInputFileForRequest(void) {
+protected bool prepareInputFileForRequest(void) {
     fileProcessingStartTime = fileTimestampNow();
 
     // Server mode: get a single scheduled file for this request
