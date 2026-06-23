@@ -1,0 +1,22 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>test_extract_requiring_inout</set-info>
+-rfct-extract-function  -olmark=137 -olcursor=241 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<extraction-dialog type=newFunction_> <str len=<n>>	newFunction_(call_out, player2score);
+</str>
+ <str len=<n>>static void newFunction_(char *call_out, int player2score) {
+</str>
+ <str len=<n>>}
+
+</str>
+  <int val=4 len=<n>></int>
+</extraction-dialog>
+-exit
+end-of-options
+
