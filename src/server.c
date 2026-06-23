@@ -565,6 +565,30 @@ static bool waitForUserConfirmation(char *message) {
     return confirmed;
 }
 
+static void scanProjectStructure() {
+    StringList *prunePaths = resolvePrunePaths();
+    StringList *discoveredCUs =
+        scanProjectForFilesAndIncludes(options.detectedProjectRoot, options.includeDirs, prunePaths);
+    /* Also scan extra source directories from the project config */
+    for (StringList *dir = getProjectConfig()->sourceDirs; dir != NULL; dir = dir->next) {
+        if (isDirectory(dir->string) && strcmp(dir->string, options.detectedProjectRoot) != 0) {
+            StringList *extraCUs =
+                scanProjectForFilesAndIncludes(dir->string, options.includeDirs, prunePaths);
+            /* Prepend to discoveredCUs */
+            if (extraCUs != NULL) {
+                StringList *tail = extraCUs;
+                while (tail->next != NULL)
+                    tail = tail->next;
+                tail->next = discoveredCUs;
+                discoveredCUs = extraCUs;
+            }
+        }
+    }
+    freeStringList(prunePaths);
+    markMissingFilesAsDeleted(discoveredCUs);
+    freeStringList(discoveredCUs);
+}
+
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     static bool scanDone = false;
 
@@ -632,28 +656,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         if (configChanged)
             reloadProjectConfig(baseArgs, requestArgs);
         if (!scanDone || configChanged) {
-            StringList *prunePaths = resolvePrunePaths();
-            StringList *discoveredCUs = scanProjectForFilesAndIncludes(
-                options.detectedProjectRoot, options.includeDirs, prunePaths);
-            /* Also scan extra source directories from the project config */
-            for (StringList *dir = getProjectConfig()->sourceDirs; dir != NULL; dir = dir->next) {
-                if (isDirectory(dir->string)
-                    && strcmp(dir->string, options.detectedProjectRoot) != 0) {
-                    StringList *extraCUs = scanProjectForFilesAndIncludes(
-                        dir->string, options.includeDirs, prunePaths);
-                    /* Prepend to discoveredCUs */
-                    if (extraCUs != NULL) {
-                        StringList *tail = extraCUs;
-                        while (tail->next != NULL)
-                            tail = tail->next;
-                        tail->next = discoveredCUs;
-                        discoveredCUs = extraCUs;
-                    }
-                }
-            }
-            freeStringList(prunePaths);
-            markMissingFilesAsDeleted(discoveredCUs);
-            freeStringList(discoveredCUs);
+            scanProjectStructure();
             scanDone = true;
         }
     }
