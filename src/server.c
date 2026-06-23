@@ -624,7 +624,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         if (initialized) {
             loadSnapshotFromStore();
 
-            if (options.serverOperation == OP_ACTIVE_PROJECT
+            if (options.serverOperation == OP_GET_PROJECT
                 && (options.detectedProjectRoot == NULL || options.detectedProjectRoot[0] == '\0')) {
                 /* Legacy path: no detected project root, fall back to old flow */
                 if (options.inputFiles == NULL)
@@ -636,10 +636,10 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
             projectContextInitialized = true;
         } else {
             /* No project configuration found — c-xrefactory cannot operate.
-             * For OP_ACTIVE_PROJECT the discovery code (handlePathologicProjectCases)
+             * For OP_GET_PROJECT the discovery code (handlePathologicProjectCases)
              * already reported the specifics to the client; other operations need
              * an explicit message. */
-            if (options.serverOperation != OP_ACTIVE_PROJECT)
+            if (options.serverOperation != OP_GET_PROJECT)
                 errorMessage(ERR_ST, "No project configuration (.c-xrefrc) found for this file");
             goto done;
         }

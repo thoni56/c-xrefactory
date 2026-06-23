@@ -8,10 +8,10 @@
 
 
 /* ************** on-line (browsing) operations for c-xref server  ********** */
-#define ALL_OPERATION_ENUMS(ENUM)               \
-    ENUM(OP_NONE)                              \
+#define ALL_OPERATION_ENUMS(ENUM)                       \
+    ENUM(OP_NONE)                                       \
     ENUM(OP_ABOUT)                                      \
-    ENUM(OP_ACTIVE_PROJECT)                             \
+    ENUM(OP_GET_PROJECT)                                \
     ENUM(OP_BROWSE_GOTO_N)                              \
     ENUM(OP_BROWSE_NEXT)                                \
     ENUM(OP_BROWSE_POP)                                 \
@@ -39,7 +39,7 @@
     ENUM(OP_INTERNAL_PARSE_TO_GOTO_PARAM_NAME)          \
     ENUM(OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET)          \
     ENUM(OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION)    \
-    ENUM(OP_INTERNAL_PUSH_FOR_USAGE_CHECK)             \
+    ENUM(OP_INTERNAL_PUSH_FOR_USAGE_CHECK)              \
     ENUM(OP_INTERNAL_PUSH_FOR_RENAME)                   \
     ENUM(OP_INTERNAL_SAFETY_CHECK)                      \
     ENUM(OP_MENU_FILTER_MINUS)                          \

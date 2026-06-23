@@ -1199,7 +1199,7 @@ static bool processGOption(int *argi, ArgumentsVector args) {
         options.serverOperation = OP_GET_ENV_VALUE;
     }
     else if (strcmp(args.argv[i], "-getproject")==0) {
-        options.serverOperation=OP_ACTIVE_PROJECT;
+        options.serverOperation=OP_GET_PROJECT;
     }
     else return false;
     *argi = i;

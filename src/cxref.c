@@ -1914,7 +1914,7 @@ void answerEditorAction(void) {
        Only enforced in auto-discovery mode (no explicit -xrefrc).
        Legacy mode (with -p option) is also allowed - client sends project with each request. */
     if (options.xrefrc == NULL && lockedProject == NULL && options.project == NULL &&
-        options.serverOperation != OP_ACTIVE_PROJECT) {
+        options.serverOperation != OP_GET_PROJECT) {
         FATAL_ERROR(ERR_ST, "Server operation without locked project - client must call -getprojectname first",
                     EXIT_FAILURE);
     }
@@ -1922,7 +1922,7 @@ void answerEditorAction(void) {
     log_debug("Server operation = %s(%d)", operationNamesTable[options.serverOperation], options.serverOperation);
     switch (options.serverOperation) {
 
-    case OP_ACTIVE_PROJECT:
+    case OP_GET_PROJECT:
         handleProject();
         break;
 
