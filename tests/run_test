@@ -10,7 +10,11 @@
 # TODO check for gcov-tool compatible with compiler used:
 
 if [ -f $1/.suspended ] ; then
-    echo "Tests in '$1': `tput setaf 6`SUSPENDED`tput sgr0`"
+    reason="`head -1 $1/.suspended`"
+    if [ -n "$reason" ] ; then
+        reason=" ($reason)"
+    fi
+    echo "Tests in '$1': `tput setaf 6`SUSPENDED$reason`tput sgr0`"
 else
     mkdir -p $1/.cov
     
