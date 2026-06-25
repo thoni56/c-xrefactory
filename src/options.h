@@ -186,8 +186,9 @@ extern void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char
 extern ArgumentsVector readOptionsFromFile(char *name, char *project, char *foundProjectName);
 extern ArgumentsVector readOptionsFromPipe(void);
 
-extern void readPassDeltas(FILE *file, PassDeltas *resultingDeltas);
 extern PassDeltas makePassDeltas(void);
+extern void readPassDeltas(FILE *file, PassDeltas *resultingDeltas);
+extern void readPassDeltasFromFile(char *fileName, PassDeltas *resultingDeltas);
 
 extern bool currentCxFileCountMatches(int newRefNum);
 

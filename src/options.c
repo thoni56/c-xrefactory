@@ -7,6 +7,7 @@
 #include "argumentsvector.h"
 #include "commandlogger.h"
 #include "commons.h"
+#include "constants.h"
 #include "globals.h"
 #include "head.h"
 #include "memory.h"
@@ -998,7 +999,7 @@ PassDeltas makePassDeltas(void) {
 
 void readPassDeltas(FILE *file, PassDeltas *resultingDeltas) {
     int charsRead;
-    char optionsText[100];
+    char optionsText[MAX_OPTION_LEN];
 
     int passN = 0;
     int ch = getOptionFromFile(file, optionsText, &charsRead);
@@ -1012,6 +1013,14 @@ void readPassDeltas(FILE *file, PassDeltas *resultingDeltas) {
         }
         ch = getOptionFromFile(file, optionsText, &charsRead);
     }
+}
+
+void readPassDeltasFromFile(char *fileName, PassDeltas *resultingDeltas) {
+    FILE *file = openFile(fileName, "r");
+    if (file == NULL)
+        return;
+    readPassDeltas(file, resultingDeltas);
+    closeFile(file);
 }
 
 bool currentCxFileCountMatches(int foundCxFileCount) {

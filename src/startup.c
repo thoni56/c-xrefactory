@@ -631,6 +631,7 @@ bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
 
     /* === PHASES 2-4: Options, compiler interrogation, checkpoint === */
     loadProjectSettings(baseArgs, requestArgs, projectConfigFileName, projectSectionName, fileName);
+    readPassDeltasFromFile(projectConfigFileName, &projectConfig.passDeltas);
 
     strcpy(previousProjectConfigurationFile, projectConfigFileName);
     strcpy(previousProjectConfigurationSection, projectSectionName);
