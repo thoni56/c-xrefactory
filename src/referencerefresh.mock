@@ -12,3 +12,7 @@ void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs) {
 void reparseFile(int fileNumber, ArgumentsVector baseArgs) {
     mock(fileNumber);
 }
+
+void markAllCompilationUnitsStale(void) {
+    mock();
+}

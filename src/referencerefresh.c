@@ -43,6 +43,19 @@ void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs) {
     parseFileWithFullInit(getFileItemWithFileNumber(fileNumber)->name, baseArgs);
 }
 
+/* Mark every compilation unit unparsed so the next entry refresh reparses it.
+ * Called after a project-config change, which can invalidate any file's parse
+ * (defines flip #ifdefs, -I re-resolves includes) with no cheap way to know
+ * which — so treat it as a logical cold restart. Old refs are left in place
+ * until reparseStaleFile clears and rebuilds each file as it is touched. */
+void markAllCompilationUnitsStale(void) {
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+        FileItem *fileItem = getFileItemWithFileNumber(i);
+        if (isCompilationUnit(fileItem->name))
+            fileItem->lastParsedMtime = NULL_TIMESTAMP;
+    }
+}
+
 /* Refresh references for a file. For a compilation unit, parse the
  * file directly. For a header, just strip its refs — the includer
  * CU's reparse (in Pass 1 or Pass 2) will re-emit them in proper CU

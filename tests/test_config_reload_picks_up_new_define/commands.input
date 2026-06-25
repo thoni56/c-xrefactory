@@ -1,0 +1,13 @@
+CXREF -server
+-getproject source.c
+<sync>
+-search=feature_only source.c
+<sync>
+-continue
+<sync>
+!cp c-xrefrc.with_feature .c-xrefrc
+-search=feature_only source.c
+<sync>
+-continue
+<sync>
+<exit>

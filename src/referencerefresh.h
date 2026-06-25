@@ -6,3 +6,5 @@
 extern void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs);
 
 extern void reparseFile(int fileNumber, ArgumentsVector baseArgs);
+
+extern void markAllCompilationUnitsStale(void);

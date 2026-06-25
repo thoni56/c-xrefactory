@@ -1,0 +1,33 @@
+CXREF -server -o server-buffer
+-getproject source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>project</set-info>
+-search=feature_only source.c
+end-of-options
+
+<sync>
+<wait-confirmation len=<n>>1 of 1 compilation units need reparsing. Parse all before searching?</wait-confirmation>
+-continue
+end-of-options
+
+<sync>
+<symbol-list>
+</symbol-list>
+shell: cp c-xrefrc.with_feature .c-xrefrc
+-search=feature_only source.c
+end-of-options
+
+<sync>
+<wait-confirmation len=<n>>1 of 1 compilation units need reparsing. Parse all before searching?</wait-confirmation>
+-continue
+end-of-options
+
+<sync>
+<symbol-list>
+ <str len=<n>>feature_only :source.c :CURDIR/source.c</str>
+</symbol-list>
+-exit
+end-of-options
+

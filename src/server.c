@@ -653,8 +653,10 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         && options.detectedProjectRoot != NULL
         && options.detectedProjectRoot[0] != '\0') {
         bool configChanged = isProjectConfigChanged();
-        if (configChanged)
+        if (configChanged) {
             reloadProjectConfig(baseArgs, requestArgs);
+            markAllCompilationUnitsStale();   /* config change = logical cold restart */
+        }
         if (!scanDone || configChanged) {
             scanProjectStructure();
             scanDone = true;
