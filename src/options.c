@@ -17,9 +17,7 @@
 #include "editor.h"
 #include "fileio.h"
 #include "filetable.h"
-#ifdef YYDEBUG
 #include "parsers.h"
-#endif
 #include "ppc.h"
 #include "protocol.h"
 
@@ -663,7 +661,7 @@ static void expandEnvironmentVariables(char *original, int availableSize, int *l
 /* Return EOF if at EOF, but can still return option text, return
    something else if not.  TODO: hide this fact from caller, return
    either text or EOF (probably as a bool return value instead) */
-protected int getOptionFromFile(FILE *file, char *text, int *chars_read) {
+protected int getOptionFromFile(FILE *file, char *foundText, int *chars_read) {
     int count, ch;
     int lastCharacter;
     bool inComment;
@@ -691,69 +689,69 @@ protected int getOptionFromFile(FILE *file, char *text, int *chars_read) {
             // when someone finished a section name by \ reverse slash
             while (ch!=EOF && ch!='\"') {
                 if (count < MAX_OPTION_LEN-1)
-                    text[count++]=ch;
+                    foundText[count++]=ch;
                 ch=readChar(file);
             }
             if (ch!='\"' && options.mode!=ServerMode) {
                 FATAL_ERROR(ERR_ST, "option string through end of file", EXIT_FAILURE);
             }
         } else if (ch=='`') {
-            text[count++]=ch;
+            foundText[count++]=ch;
             ch=readChar(file);
             while (ch!=EOF && ch!='\n' && ch!='`') {
                 if (count < MAX_OPTION_LEN-1)
-                    text[count++]=ch;
+                    foundText[count++]=ch;
                 ch=readChar(file);
             }
             if (count < MAX_OPTION_LEN-1)
-                text[count++]=ch;
+                foundText[count++]=ch;
             if (ch!='`'  && options.mode!=ServerMode) {
                 errorMessage(ERR_ST, "option string through end of line");
             }
         } else if (ch=='[') {
-            text[count++] = ch;
+            foundText[count++] = ch;
             ch=readChar(file);
             while (ch!=EOF && ch!='\n' && ch!=']') {
                 if (count < MAX_OPTION_LEN-1)
-                    text[count++]=ch;
+                    foundText[count++]=ch;
                 ch=readChar(file);
             }
             if (ch==']')
-                text[count++]=ch;
+                foundText[count++]=ch;
         } else {
             while (ch!=EOF && ch>' ') {
                 if (ch=='\"')
                     quoteInOption = true;
                 if (count < MAX_OPTION_LEN-1)
-                    text[count++]=ch;
+                    foundText[count++]=ch;
                 ch=readChar(file);
             }
         }
-        text[count]=0;
+        foundText[count]=0;
         if (quoteInOption && options.mode!=ServerMode) {
             static bool messageWritten = false;
             if (! messageWritten) {
                 char tmpBuff[TMP_BUFF_SIZE];
                 messageWritten = true;
-                sprintf(tmpBuff,"option '%s' contains quotes.", text);
+                sprintf(tmpBuff,"option '%s' contains quotes.", foundText);
                 warningMessage(ERR_ST, tmpBuff);
             }
         }
         /* because QNX paths can start with // */
-        if (count>=2 && text[0]=='/' && text[1]=='/') {
+        if (count>=2 && foundText[0]=='/' && foundText[1]=='/') {
             while (ch!=EOF && ch!='\n')
                 ch=readChar(file);
             inComment = true;
         }
     } while (inComment);
-    if (strcmp(text, END_OF_OPTIONS_STRING)==0) {
+    if (strcmp(foundText, END_OF_OPTIONS_STRING)==0) {
         count = 0; lastCharacter = EOF;
     } else {
         lastCharacter = 'A';
     }
 
  fini:
-    text[count] = 0;
+    foundText[count] = 0;
     *chars_read = count;
 
     return lastCharacter;
@@ -988,6 +986,32 @@ ArgumentsVector readOptionsFromPipe(void) {
         }
     }
     return args;
+}
+
+PassDeltas makePassDeltas(void) {
+    PassDeltas d;
+
+    for (int i=0; i > sizeof(d.delta)/sizeof(d.delta[0]); i++)
+        d.delta[i] = NULL;
+    return d;
+}
+
+void readPassDeltas(FILE *file, PassDeltas *resultingDeltas) {
+    int charsRead;
+    char optionsText[100];
+
+    int passN = 0;
+    int ch = getOptionFromFile(file, optionsText, &charsRead);
+    while (ch != EOF) {
+        if (optionsText[0] == '[')
+            ;                   /* Skip section/project markers */
+        else if (strncmp(optionsText, "-pass", 5) == 0 && isdigit(optionsText[5])) {
+            passN = atoi(&optionsText[5]);
+        } else {
+            resultingDeltas->delta[passN] = newStringList(optionsText, resultingDeltas->delta[passN]);
+        }
+        ch = getOptionFromFile(file, optionsText, &charsRead);
+    }
 }
 
 bool currentCxFileCountMatches(int foundCxFileCount) {

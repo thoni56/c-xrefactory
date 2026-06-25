@@ -264,6 +264,7 @@ xEnsure(Options, can_get_options_file_from_filename_using_searchProjectConfigFil
            will_return(&file));
 
     expect_characters("[/path]\n", false);
+
     expect_characters("-set X Y\n", true); /* WTF: a -set is needed for the project section to be found...
                                             see readOptionsFromFileIntoArgs() */
 
@@ -633,4 +634,84 @@ Ensure(Options, resolves_prune_path_against_detected_project_root) {
     assert_that(resolved->string, is_equal_to_string("/project/build"));
     assert_that(resolved->next, is_null);
     freeStringList(resolved);
+}
+
+Ensure(Options, readPassDeltas_returns_no_passes_for_empty_config) {
+    PassDeltas d = makePassDeltas();
+
+    expect_characters("", true); // read empty options string
+
+    readPassDeltas(NULL, &d);
+
+    assert_that(d.delta[0], is_null);
+}
+
+Ensure(Options, readPassDeltas_counts_one_pass) {
+    PassDeltas d = makePassDeltas();
+
+    expect_characters("-pass1\n", true);   // feed "-pass1" then EOF
+
+    readPassDeltas(NULL, &d);
+
+    assert_that(d.delta[0], is_null);
+    assert_that(d.delta[1], is_null);
+}
+
+Ensure(Options, readPassDeltas_collects_base_option_in_delta_zero) {
+    PassDeltas d = makePassDeltas();
+
+    expect_characters("-DBASE\n", true);
+
+    readPassDeltas(NULL, &d);   // memory param returns, mirroring readOptionsIntoArgs' (out, memory) order
+
+    assert_that(d.delta[0]->string, is_equal_to_string("-DBASE"));
+}
+
+Ensure(Options, readPassDeltas_routes_option_after_marker_into_that_pass) {
+    PassDeltas d = makePassDeltas();
+
+    expect_characters("-pass1\n", false);
+    expect_characters("-DPASS1\n", true);
+
+    readPassDeltas(NULL, &d);
+
+    assert_that(d.delta[1]->string, is_equal_to_string("-DPASS1"));
+}
+
+Ensure(Options, readPassDeltas_merges_sections_with_same_pass_number) {
+    PassDeltas d = makePassDeltas();
+
+    expect_characters("-pass1\n",  false);
+    expect_characters("-DPASS1\n", false);
+    expect_characters("-pass1\n",  false);
+    expect_characters("-DPASS2\n", true);
+
+    readPassDeltas(NULL, &d);
+
+    assert_that(d.delta[1], is_non_null);        // both defines live here — membership, not order
+    /* assert delta[1] contains -DPASS1 AND -DPASS2 (walk the list, order-agnostic) */
+    bool foundP1 = false;
+    bool foundP2 = false;
+    for (StringList *s = d.delta[1]; s != NULL; s = s->next) {
+        if (strcmp(s->string, "-DPASS1") == 0) foundP1 = true;
+        if (strcmp(s->string, "-DPASS2") == 0) foundP2 = true;
+    }
+    assert_that(foundP1);
+    assert_that(foundP2);
+    assert_that(d.delta[2], is_null);            // THE point: same N merged, did not split
+}
+
+Ensure(Options, readPassDeltas_skips_section_markers) {
+    PassDeltas d = makePassDeltas();
+
+    expect_characters("[CURDIR]\n", false);
+    expect_characters("-DBASE\n",   true);
+
+    readPassDeltas(NULL, &d);
+
+    assert_that(d.delta[0]->string, is_equal_to_string("-DBASE"));   // the marker is
+    assert_that(d.delta[0]->next, is_null);                          // gone, only the
+                                                                     // real option
+                                                                     // remains
+
 }

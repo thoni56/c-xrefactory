@@ -1,16 +1,17 @@
 #ifndef OPTIONS_H_INCLUDED
 #define OPTIONS_H_INCLUDED
 
-#include "argumentsvector.h"
-#include "proto.h"
-#include "head.h"
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "constants.h"
+#include "argumentsvector.h"
 #include "completion.h"
+#include "constants.h"
 #include "extract.h"
+#include "head.h"
 #include "memory.h"
+#include "passdeltas.h"
+#include "proto.h"
 #include "refactorings.h"
 #include "server.h"
 #include "stringlist.h"
@@ -184,6 +185,9 @@ extern bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, Memory *me
 extern void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *sectionFile);
 extern ArgumentsVector readOptionsFromFile(char *name, char *project, char *foundProjectName);
 extern ArgumentsVector readOptionsFromPipe(void);
+
+extern void readPassDeltas(FILE *file, PassDeltas *resultingDeltas);
+extern PassDeltas makePassDeltas(void);
 
 extern bool currentCxFileCountMatches(int newRefNum);
 
