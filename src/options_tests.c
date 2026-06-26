@@ -678,6 +678,14 @@ Ensure(Options, readPassDeltas_routes_option_after_marker_into_that_pass) {
     assert_that(d.delta[1]->string, is_equal_to_string("-DPASS1"));
 }
 
+static bool stringListContains(StringList *d, char *wantedString) {
+    for (StringList *s = d; s != NULL; s = s->next) {
+        if (strcmp(s->string, wantedString) == 0)
+            return true;
+    }
+    return false;
+}
+
 Ensure(Options, readPassDeltas_merges_sections_with_same_pass_number) {
     PassDeltas d = makePassDeltas();
 
@@ -690,14 +698,8 @@ Ensure(Options, readPassDeltas_merges_sections_with_same_pass_number) {
 
     assert_that(d.delta[1], is_non_null);        // both defines live here — membership, not order
     /* assert delta[1] contains -DPASS1 AND -DPASS2 (walk the list, order-agnostic) */
-    bool foundP1 = false;
-    bool foundP2 = false;
-    for (StringList *s = d.delta[1]; s != NULL; s = s->next) {
-        if (strcmp(s->string, "-DPASS1") == 0) foundP1 = true;
-        if (strcmp(s->string, "-DPASS2") == 0) foundP2 = true;
-    }
-    assert_that(foundP1);
-    assert_that(foundP2);
+    assert_that(stringListContains(d.delta[1], "-DPASS1"));
+    assert_that(stringListContains(d.delta[1], "-DPASS2"));
     assert_that(d.delta[2], is_null);            // THE point: same N merged, did not split
 }
 
@@ -713,7 +715,61 @@ Ensure(Options, readPassDeltas_skips_section_markers) {
     assert_that(d.delta[0]->next, is_null);                          // gone, only the
                                                                      // real option
                                                                      // remains
+}
 
+Ensure(Options, readPassDeltas_can_handle_consequtive_options_after_one_pass) {
+    PassDeltas d = makePassDeltas();
+
+    expect_characters("-pass1\n", false);
+    expect_characters("-DDEFINE1\n", false);
+    expect_characters("-DDEFINE2\n", true);
+
+    readPassDeltas(NULL, &d);
+
+    assert_that(stringListContains(d.delta[1], "-DDEFINE1"));
+    assert_that(stringListContains(d.delta[1], "-DDEFINE2"));
+}
+
+Ensure(Options, readPassDeltas_can_handle_consequtive_options_for_two_passes) {
+    PassDeltas d = makePassDeltas();
+
+    expect_characters("-pass1\n", false);
+    expect_characters("-DDEFINE1\n", false);
+    expect_characters("-DDEFINE2\n", false);
+    expect_characters("-pass2\n", false);
+    expect_characters("-DDEFINE3\n", false);
+    expect_characters("-DDEFINE4\n", true);
+
+    readPassDeltas(NULL, &d);
+
+    assert_that(stringListContains(d.delta[1], "-DDEFINE1"));
+    assert_that(stringListContains(d.delta[1], "-DDEFINE2"));
+    assert_that(stringListContains(d.delta[2], "-DDEFINE3"));
+    assert_that(stringListContains(d.delta[2], "-DDEFINE4"));
+}
+
+Ensure(Options, readPassDeltas_collects_options_in_source_order) {
+    PassDeltas d = makePassDeltas();
+
+    expect_characters("-pass1\n", false);
+    expect_characters("-DDEFINE1\n", false);
+    expect_characters("-DDEFINE2\n", true);
+
+    readPassDeltas(NULL, &d);
+
+    assert_that(d.delta[1]->string, is_equal_to_string("-DDEFINE1"));
+    assert_that(d.delta[1]->next->string, is_equal_to_string("-DDEFINE2"));
+}
+
+Ensure(Options, readPassDeltas_collects_multitoken_options_as_multiple_strings) {
+    PassDeltas d = makePassDeltas();
+
+    expect_characters("-o output\n", true);
+
+    readPassDeltas(NULL, &d);
+
+    assert_that(stringListContains(d.delta[0], "-o"));
+    assert_that(stringListContains(d.delta[0], "output"));
 }
 
 /* A pass number beyond MAX_PASS_COUNT would index past delta[], so it is a

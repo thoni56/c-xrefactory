@@ -1,30 +1,29 @@
 #include "options.h"
 
-#include <string.h>
-#include <stdlib.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "argumentsvector.h"
 #include "commandlogger.h"
 #include "commons.h"
 #include "constants.h"
-#include "globals.h"
-#include "head.h"
-#include "memory.h"
-#include "misc.h"
 #include "cxref.h"
-#include "refactorings.h"
-#include "yylex.h"
 #include "editor.h"
 #include "fileio.h"
 #include "filetable.h"
+#include "globals.h"
+#include "head.h"
+#include "list.h"
+#include "log.h"
+#include "memory.h"
+#include "misc.h"
+#include "options_config.h"
 #include "parsers.h"
 #include "ppc.h"
 #include "protocol.h"
-
-#include "log.h"
-
-#include "options_config.h"
+#include "refactorings.h"
+#include "yylex.h"
 
 
 #define MAX_STD_ARGS (MAX_FILES+20)
@@ -1020,7 +1019,7 @@ void readPassDeltas(FILE *file, PassDeltas *resultingDeltas) {
             }
         } else if (passN != PASS_IGNORED) {
             assert(passN >= 0 && passN <= MAX_PASS_COUNT);
-            resultingDeltas->delta[passN] = newStringList(optionsText, resultingDeltas->delta[passN]);
+            LIST_APPEND(StringList, resultingDeltas->delta[passN], newStringList(optionsText, NULL));
         }
         ch = getOptionFromFile(file, optionsText, &charsRead);
     }
