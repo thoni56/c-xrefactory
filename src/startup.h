@@ -4,14 +4,14 @@
 #include <stdbool.h>
 
 #include "argumentsvector.h"
-#include "passdeltas.h"
+#include "optionsets.h"
 #include "stringlist.h"
 
 
 /* Project-level configuration, separate from per-request options */
 typedef struct {
     StringList *sourceDirs;
-    PassDeltas passDeltas;
+    OptionSets optionSets;
 } ProjectConfig;
 
 extern ProjectConfig *getProjectConfig(void);

@@ -988,18 +988,18 @@ ArgumentsVector readOptionsFromPipe(void) {
     return args;
 }
 
-PassDeltas makePassDeltas(void) {
-    PassDeltas d;
+OptionSets makeOptionSets(void) {
+    OptionSets d;
 
-    for (size_t i=0; i < sizeof(d.delta)/sizeof(d.delta[0]); i++)
-        d.delta[i] = NULL;
+    for (size_t i=0; i < sizeof(d.set)/sizeof(d.set[0]); i++)
+        d.set[i] = NULL;
     return d;
 }
 
 /* Pass number for a section we refuse to collect options from */
 #define PASS_IGNORED (-1)
 
-void readPassDeltas(FILE *file, PassDeltas *resultingDeltas) {
+void readOptionSets(FILE *file, OptionSets *resultingDeltas) {
     int charsRead;
     char optionsText[MAX_OPTION_LEN];
 
@@ -1019,21 +1019,21 @@ void readPassDeltas(FILE *file, PassDeltas *resultingDeltas) {
             }
         } else if (passN != PASS_IGNORED) {
             assert(passN >= 0 && passN <= MAX_PASS_COUNT);
-            LIST_APPEND(StringList, resultingDeltas->delta[passN], newStringList(optionsText, NULL));
+            LIST_APPEND(StringList, resultingDeltas->set[passN], newStringList(optionsText, NULL));
         }
         ch = getOptionFromFile(file, optionsText, &charsRead);
     }
 }
 
-void readPassDeltasFromFile(char *fileName, PassDeltas *resultingDeltas) {
+void readOptionSetsFromFile(char *fileName, OptionSets *resultingOptionSets) {
     FILE *file = openFile(fileName, "r");
     if (file == NULL)
         return;
-    readPassDeltas(file, resultingDeltas);
+    readOptionSets(file, resultingOptionSets);
     closeFile(file);
 }
 
-ArgumentsVector argsFromPassDelta(StringList *delta, Memory *memory) {
+ArgumentsVector argsFromOptionList(StringList *delta, Memory *memory) {
     ArgumentsVector args = {.argc = 1, .argv = NULL};
 
     int argCount;

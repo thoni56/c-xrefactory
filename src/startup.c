@@ -22,7 +22,7 @@
 #include "memory.h"
 #include "misc.h"
 #include "options.h"
-#include "passdeltas.h"
+#include "optionsets.h"
 #include "ppc.h"
 #include "proto.h"
 #include "protocol.h"
@@ -605,10 +605,10 @@ void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) 
                         inputFileName != NULL ? inputFileName : ".");
 
     for (int i=0; i < MAX_PASS_COUNT; i++) {
-        freeStringList(projectConfig.passDeltas.delta[i]);
-        projectConfig.passDeltas.delta[i] = NULL;
+        freeStringList(projectConfig.optionSets.set[i]);
+        projectConfig.optionSets.set[i] = NULL;
     }
-    readPassDeltasFromFile(previousProjectConfigurationFile, &projectConfig.passDeltas);
+    readOptionSetsFromFile(previousProjectConfigurationFile, &projectConfig.optionSets);
 
     previousProjectConfigurationFileModificationTime = fileModificationTime(previousProjectConfigurationFile);
 }
@@ -639,7 +639,7 @@ bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
 
     /* === PHASES 2-4: Options, compiler interrogation, checkpoint === */
     loadProjectSettings(baseArgs, requestArgs, projectConfigFileName, projectSectionName, fileName);
-    readPassDeltasFromFile(projectConfigFileName, &projectConfig.passDeltas);
+    readOptionSetsFromFile(projectConfigFileName, &projectConfig.optionSets);
 
     strcpy(previousProjectConfigurationFile, projectConfigFileName);
     strcpy(previousProjectConfigurationSection, projectSectionName);

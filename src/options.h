@@ -10,7 +10,7 @@
 #include "extract.h"
 #include "head.h"
 #include "memory.h"
-#include "passdeltas.h"
+#include "optionsets.h"
 #include "proto.h"
 #include "refactorings.h"
 #include "server.h"
@@ -186,10 +186,10 @@ extern void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char
 extern ArgumentsVector readOptionsFromFile(char *fileName, char *project, char *foundProjectName);
 extern ArgumentsVector readOptionsFromPipe(void);
 
-extern PassDeltas makePassDeltas(void);
-extern void readPassDeltas(FILE *file, PassDeltas *resultingDeltas);
-extern void readPassDeltasFromFile(char *fileName, PassDeltas *resultingDeltas);
-extern ArgumentsVector argsFromPassDelta(StringList *delta, Memory *memory);
+extern OptionSets makeOptionSets(void);
+extern void readOptionSets(FILE *file, OptionSets *resultingOptionsSets);
+extern void readOptionSetsFromFile(char *fileName, OptionSets *resultingDeltas);
+extern ArgumentsVector argsFromOptionList(StringList *delta, Memory *memory);
 
 extern bool currentCxFileCountMatches(int newRefNum);
 

@@ -636,46 +636,46 @@ Ensure(Options, resolves_prune_path_against_detected_project_root) {
     freeStringList(resolved);
 }
 
-Ensure(Options, readPassDeltas_returns_no_passes_for_empty_config) {
-    PassDeltas d = makePassDeltas();
+Ensure(Options, readPassOptions_returns_no_passes_for_empty_config) {
+    OptionSets d = makeOptionSets();
 
     expect_characters("", true); // read empty options string
 
-    readPassDeltas(NULL, &d);
+    readOptionSets(NULL, &d);
 
-    assert_that(d.delta[0], is_null);
+    assert_that(d.set[0], is_null);
 }
 
-Ensure(Options, readPassDeltas_counts_one_pass) {
-    PassDeltas d = makePassDeltas();
+Ensure(Options, readPassOptions_counts_one_pass) {
+    OptionSets d = makeOptionSets();
 
     expect_characters("-pass1\n", true);   // feed "-pass1" then EOF
 
-    readPassDeltas(NULL, &d);
+    readOptionSets(NULL, &d);
 
-    assert_that(d.delta[0], is_null);
-    assert_that(d.delta[1], is_null);
+    assert_that(d.set[0], is_null);
+    assert_that(d.set[1], is_null);
 }
 
-Ensure(Options, readPassDeltas_collects_base_option_in_delta_zero) {
-    PassDeltas d = makePassDeltas();
+Ensure(Options, readPassOptions_collects_base_option_in_delta_zero) {
+    OptionSets d = makeOptionSets();
 
     expect_characters("-DBASE\n", true);
 
-    readPassDeltas(NULL, &d);   // memory param returns, mirroring readOptionsIntoArgs' (out, memory) order
+    readOptionSets(NULL, &d);   // memory param returns, mirroring readOptionsIntoArgs' (out, memory) order
 
-    assert_that(d.delta[0]->string, is_equal_to_string("-DBASE"));
+    assert_that(d.set[0]->string, is_equal_to_string("-DBASE"));
 }
 
-Ensure(Options, readPassDeltas_routes_option_after_marker_into_that_pass) {
-    PassDeltas d = makePassDeltas();
+Ensure(Options, readPassOptions_routes_option_after_marker_into_that_pass) {
+    OptionSets d = makeOptionSets();
 
     expect_characters("-pass1\n", false);
     expect_characters("-DPASS1\n", true);
 
-    readPassDeltas(NULL, &d);
+    readOptionSets(NULL, &d);
 
-    assert_that(d.delta[1]->string, is_equal_to_string("-DPASS1"));
+    assert_that(d.set[1]->string, is_equal_to_string("-DPASS1"));
 }
 
 static bool stringListContains(StringList *d, char *wantedString) {
@@ -686,52 +686,52 @@ static bool stringListContains(StringList *d, char *wantedString) {
     return false;
 }
 
-Ensure(Options, readPassDeltas_merges_sections_with_same_pass_number) {
-    PassDeltas d = makePassDeltas();
+Ensure(Options, readPassOptions_merges_sections_with_same_pass_number) {
+    OptionSets d = makeOptionSets();
 
     expect_characters("-pass1\n",  false);
     expect_characters("-DPASS1\n", false);
     expect_characters("-pass1\n",  false);
     expect_characters("-DPASS2\n", true);
 
-    readPassDeltas(NULL, &d);
+    readOptionSets(NULL, &d);
 
-    assert_that(d.delta[1], is_non_null);        // both defines live here — membership, not order
+    assert_that(d.set[1], is_non_null);        // both defines live here — membership, not order
     /* assert delta[1] contains -DPASS1 AND -DPASS2 (walk the list, order-agnostic) */
-    assert_that(stringListContains(d.delta[1], "-DPASS1"));
-    assert_that(stringListContains(d.delta[1], "-DPASS2"));
-    assert_that(d.delta[2], is_null);            // THE point: same N merged, did not split
+    assert_that(stringListContains(d.set[1], "-DPASS1"));
+    assert_that(stringListContains(d.set[1], "-DPASS2"));
+    assert_that(d.set[2], is_null);            // THE point: same N merged, did not split
 }
 
-Ensure(Options, readPassDeltas_skips_section_markers) {
-    PassDeltas d = makePassDeltas();
+Ensure(Options, readPassOptions_skips_section_markers) {
+    OptionSets d = makeOptionSets();
 
     expect_characters("[CURDIR]\n", false);
     expect_characters("-DBASE\n",   true);
 
-    readPassDeltas(NULL, &d);
+    readOptionSets(NULL, &d);
 
-    assert_that(d.delta[0]->string, is_equal_to_string("-DBASE"));   // the marker is
-    assert_that(d.delta[0]->next, is_null);                          // gone, only the
+    assert_that(d.set[0]->string, is_equal_to_string("-DBASE"));   // the marker is
+    assert_that(d.set[0]->next, is_null);                          // gone, only the
                                                                      // real option
                                                                      // remains
 }
 
-Ensure(Options, readPassDeltas_can_handle_consequtive_options_after_one_pass) {
-    PassDeltas d = makePassDeltas();
+Ensure(Options, readPassOptions_can_handle_consequtive_options_after_one_pass) {
+    OptionSets d = makeOptionSets();
 
     expect_characters("-pass1\n", false);
     expect_characters("-DDEFINE1\n", false);
     expect_characters("-DDEFINE2\n", true);
 
-    readPassDeltas(NULL, &d);
+    readOptionSets(NULL, &d);
 
-    assert_that(stringListContains(d.delta[1], "-DDEFINE1"));
-    assert_that(stringListContains(d.delta[1], "-DDEFINE2"));
+    assert_that(stringListContains(d.set[1], "-DDEFINE1"));
+    assert_that(stringListContains(d.set[1], "-DDEFINE2"));
 }
 
-Ensure(Options, readPassDeltas_can_handle_consequtive_options_for_two_passes) {
-    PassDeltas d = makePassDeltas();
+Ensure(Options, readPassOptions_can_handle_consequtive_options_for_two_passes) {
+    OptionSets d = makeOptionSets();
 
     expect_characters("-pass1\n", false);
     expect_characters("-DDEFINE1\n", false);
@@ -740,60 +740,60 @@ Ensure(Options, readPassDeltas_can_handle_consequtive_options_for_two_passes) {
     expect_characters("-DDEFINE3\n", false);
     expect_characters("-DDEFINE4\n", true);
 
-    readPassDeltas(NULL, &d);
+    readOptionSets(NULL, &d);
 
-    assert_that(stringListContains(d.delta[1], "-DDEFINE1"));
-    assert_that(stringListContains(d.delta[1], "-DDEFINE2"));
-    assert_that(stringListContains(d.delta[2], "-DDEFINE3"));
-    assert_that(stringListContains(d.delta[2], "-DDEFINE4"));
+    assert_that(stringListContains(d.set[1], "-DDEFINE1"));
+    assert_that(stringListContains(d.set[1], "-DDEFINE2"));
+    assert_that(stringListContains(d.set[2], "-DDEFINE3"));
+    assert_that(stringListContains(d.set[2], "-DDEFINE4"));
 }
 
-Ensure(Options, readPassDeltas_collects_options_in_source_order) {
-    PassDeltas d = makePassDeltas();
+Ensure(Options, readPassOptions_collects_options_in_source_order) {
+    OptionSets d = makeOptionSets();
 
     expect_characters("-pass1\n", false);
     expect_characters("-DDEFINE1\n", false);
     expect_characters("-DDEFINE2\n", true);
 
-    readPassDeltas(NULL, &d);
+    readOptionSets(NULL, &d);
 
-    assert_that(d.delta[1]->string, is_equal_to_string("-DDEFINE1"));
-    assert_that(d.delta[1]->next->string, is_equal_to_string("-DDEFINE2"));
+    assert_that(d.set[1]->string, is_equal_to_string("-DDEFINE1"));
+    assert_that(d.set[1]->next->string, is_equal_to_string("-DDEFINE2"));
 }
 
-Ensure(Options, readPassDeltas_collects_multitoken_options_as_multiple_strings) {
-    PassDeltas d = makePassDeltas();
+Ensure(Options, readPassOptions_collects_multitoken_options_as_multiple_strings) {
+    OptionSets d = makeOptionSets();
 
     expect_characters("-o output\n", true);
 
-    readPassDeltas(NULL, &d);
+    readOptionSets(NULL, &d);
 
-    assert_that(stringListContains(d.delta[0], "-o"));
-    assert_that(stringListContains(d.delta[0], "output"));
+    assert_that(stringListContains(d.set[0], "-o"));
+    assert_that(stringListContains(d.set[0], "output"));
 }
 
-/* A pass number beyond MAX_PASS_COUNT would index past delta[], so it is a
+/* A pass number beyond MAX_PASS_COUNT would index past set[], so it is a
  * reported config error, not an assert: a typo in .c-xrefrc must not take the
  * server down. The offending section is dropped rather than attributed to the
  * previous pass, which would silently apply options where they weren't asked
  * for. */
-Ensure(Options, readPassDeltas_reports_and_drops_out_of_range_pass) {
-    PassDeltas d = makePassDeltas();
+Ensure(Options, readPassOptions_reports_and_drops_out_of_range_pass) {
+    OptionSets d = makeOptionSets();
 
     expect_characters("-pass12\n", false);
     expect_characters("-DBOGUS\n", true);
     expect(errorMessage);
 
-    readPassDeltas(NULL, &d);
+    readOptionSets(NULL, &d);
 
     for (int i = 0; i <= MAX_PASS_COUNT; i++)
-        assert_that(d.delta[i], is_null);
+        assert_that(d.set[i], is_null);
 }
 
-Ensure(Options, argsFromPassDelta_empty_delta_yields_only_reserved_slot) {
+Ensure(Options, argsFromOptionList_empty_delta_yields_only_reserved_slot) {
     ArgumentsVector args;
 
-    args = argsFromPassDelta(NULL, &options.memory);
+    args = argsFromOptionList(NULL, &options.memory);
 
     assert_that(args.argc, is_equal_to(1));
 }
@@ -802,7 +802,7 @@ Ensure(Options, argsFromPassDelta_puts_single_option_after_reserved_slot) {
     ArgumentsVector args;
     StringList *delta = newStringList("-DPASS1", NULL);
 
-    args = argsFromPassDelta(delta, &options.memory);
+    args = argsFromOptionList(delta, &options.memory);
 
     assert_that(args.argc, is_equal_to(2));
     assert_that(args.argv[1], is_equal_to_string("-DPASS1"));
@@ -812,7 +812,7 @@ Ensure(Options, argsFromPassDelta_preserves_source_order) {
     ArgumentsVector args;
     StringList *delta = newStringList("-DPASS1", newStringList("-DPASS2", NULL));
 
-    args = argsFromPassDelta(delta, &options.memory);
+    args = argsFromOptionList(delta, &options.memory);
 
     assert_that(args.argc, is_equal_to(3));
     assert_that(args.argv[1], is_equal_to_string("-DPASS1"));
