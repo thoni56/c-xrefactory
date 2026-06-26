@@ -789,3 +789,32 @@ Ensure(Options, readPassDeltas_reports_and_drops_out_of_range_pass) {
     for (int i = 0; i <= MAX_PASS_COUNT; i++)
         assert_that(d.delta[i], is_null);
 }
+
+Ensure(Options, argsFromPassDelta_empty_delta_yields_only_reserved_slot) {
+    ArgumentsVector args;
+
+    args = argsFromPassDelta(NULL, &options.memory);
+
+    assert_that(args.argc, is_equal_to(1));
+}
+
+Ensure(Options, argsFromPassDelta_puts_single_option_after_reserved_slot) {
+    ArgumentsVector args;
+    StringList *delta = newStringList("-DPASS1", NULL);
+
+    args = argsFromPassDelta(delta, &options.memory);
+
+    assert_that(args.argc, is_equal_to(2));
+    assert_that(args.argv[1], is_equal_to_string("-DPASS1"));
+}
+
+Ensure(Options, argsFromPassDelta_preserves_source_order) {
+    ArgumentsVector args;
+    StringList *delta = newStringList("-DPASS1", newStringList("-DPASS2", NULL));
+
+    args = argsFromPassDelta(delta, &options.memory);
+
+    assert_that(args.argc, is_equal_to(3));
+    assert_that(args.argv[1], is_equal_to_string("-DPASS1"));
+    assert_that(args.argv[2], is_equal_to_string("-DPASS2"));
+}

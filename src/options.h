@@ -183,12 +183,13 @@ extern char *expandPredefinedSpecialVariables_static(char *output, char *inputFi
 extern bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, Memory *memory,
                                         char *sectionFile, char *project, char *section);
 extern void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *sectionFile);
-extern ArgumentsVector readOptionsFromFile(char *name, char *project, char *foundProjectName);
+extern ArgumentsVector readOptionsFromFile(char *fileName, char *project, char *foundProjectName);
 extern ArgumentsVector readOptionsFromPipe(void);
 
 extern PassDeltas makePassDeltas(void);
 extern void readPassDeltas(FILE *file, PassDeltas *resultingDeltas);
 extern void readPassDeltasFromFile(char *fileName, PassDeltas *resultingDeltas);
+extern ArgumentsVector argsFromPassDelta(StringList *delta, Memory *memory);
 
 extern bool currentCxFileCountMatches(int newRefNum);
 

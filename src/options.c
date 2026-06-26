@@ -1033,6 +1033,22 @@ void readPassDeltasFromFile(char *fileName, PassDeltas *resultingDeltas) {
     closeFile(file);
 }
 
+ArgumentsVector argsFromPassDelta(StringList *delta, Memory *memory) {
+    ArgumentsVector args = {.argc = 1, .argv = NULL};
+
+    int argCount;
+    LIST_LEN(argCount, StringList, delta);
+
+    args.argv = memoryAlloc(memory, (argCount+1)*sizeof(args.argv[0]));
+    for (StringList *d = delta; d != NULL; d = d->next) {
+        args.argv[args.argc] = memoryAlloc(memory, strlen(d->string)+1);
+        strcpy(args.argv[args.argc], d->string);
+        args.argc++;
+    }
+
+    return args;
+}
+
 bool currentCxFileCountMatches(int foundCxFileCount) {
     bool check;
 
