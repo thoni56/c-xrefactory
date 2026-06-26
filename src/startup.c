@@ -22,6 +22,7 @@
 #include "memory.h"
 #include "misc.h"
 #include "options.h"
+#include "passdeltas.h"
 #include "ppc.h"
 #include "proto.h"
 #include "protocol.h"
@@ -602,6 +603,13 @@ void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) 
     loadProjectSettings(baseArgs, requestArgs,
                         previousProjectConfigurationFile, previousProjectConfigurationSection,
                         inputFileName != NULL ? inputFileName : ".");
+
+    for (int i=0; i < MAX_PASS_COUNT; i++) {
+        freeStringList(projectConfig.passDeltas.delta[i]);
+        projectConfig.passDeltas.delta[i] = NULL;
+    }
+    readPassDeltasFromFile(previousProjectConfigurationFile, &projectConfig.passDeltas);
+
     previousProjectConfigurationFileModificationTime = fileModificationTime(previousProjectConfigurationFile);
 }
 
