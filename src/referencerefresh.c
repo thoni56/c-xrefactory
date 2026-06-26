@@ -1,5 +1,4 @@
 #include "referencerefresh.h"
-#include "referencerefresh.h"
 
 #include "filedescriptor.h"
 #include "filetable.h"

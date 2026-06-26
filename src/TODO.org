@@ -27,6 +27,7 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 ** DONE Basic extract variable
 * TODO More Yacc syntactic sugar constructs that might be supported:
 named references: "$name" or "$<tag>name"
+* TODO Client menu Project->Delete still works with the $HOME/.c-xrefrc
 * TODO BUG? Forward declarations
 It seems that all references to `expandMacroCall` in yylex.c is found, more importantly,
 the actual definition is not.
