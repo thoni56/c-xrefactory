@@ -38,7 +38,7 @@ static char previousProjectConfigurationFile[MAX_FILE_NAME_SIZE];
 static char previousProjectConfigurationSection[MAX_FILE_NAME_SIZE];
 static FileTimestamp previousProjectConfigurationFileModificationTime;
 static int previousPass;
-
+static bool optionSetsLoaded = false;
 static ProjectConfig projectConfig = {0};
 
 ProjectConfig *getProjectConfig(void) {
@@ -545,9 +545,9 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
 
     /* Then for the particular pass. Discard the NO_PASS pass's file-argument
      * collection so only this pass's bare config paths land in inputFiles. */
-    currentPass = savedPass;
     options.inputFiles = NULL;
     getAndProcessProjectConfig(projectConfigFileName, projectSectionName);
+    currentPass = savedPass;
 
     /* Collect source directories from the config into ProjectConfig.
      * These are the bare path arguments (non-option lines) of the .c-xrefrc
@@ -567,6 +567,16 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
         projectConfig.sourceDirs = newStringList(absolutePath, projectConfig.sourceDirs);
     }
     options.inputFiles = NULL;
+
+    if (!optionSetsLoaded) {
+        for (int i = 0; i <= MAX_PASS_COUNT; i++) {
+            freeStringList(projectConfig.optionSets.set[i]);
+            projectConfig.optionSets.set[i] = NULL;
+        }
+        readOptionSetsFromFile(projectConfigFileName, &projectConfig.optionSets);
+        optionSetsLoaded = true;
+    }
+
 
     LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 
@@ -733,6 +743,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         inputOpened = computeAndOpenInputFile(inputFileName);  /* Phase 5 only */
     }
 
+    applyOptionSet(getProjectConfig()->optionSets.set[currentPass]);
     assert(options.mode);
     if (options.mode==XrefMode) {
         if (options.xref2) {

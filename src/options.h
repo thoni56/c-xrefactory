@@ -190,6 +190,7 @@ extern OptionSets makeOptionSets(void);
 extern void readOptionSets(FILE *file, OptionSets *resultingOptionsSets);
 extern void readOptionSetsFromFile(char *fileName, OptionSets *resultingDeltas);
 extern ArgumentsVector argsFromOptionList(StringList *delta, Memory *memory);
+extern void applyOptionSet(StringList *optionList);
 
 extern bool currentCxFileCountMatches(int newRefNum);
 

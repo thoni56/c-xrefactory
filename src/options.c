@@ -1033,21 +1033,29 @@ void readOptionSetsFromFile(char *fileName, OptionSets *resultingOptionSets) {
     closeFile(file);
 }
 
-ArgumentsVector argsFromOptionList(StringList *delta, Memory *memory) {
+ArgumentsVector argsFromOptionList(StringList *options, Memory *memory) {
     ArgumentsVector args = {.argc = 1, .argv = NULL};
 
     int argCount;
-    LIST_LEN(argCount, StringList, delta);
+    LIST_LEN(argCount, StringList, options);
 
     args.argv = memoryAlloc(memory, (argCount+1)*sizeof(args.argv[0]));
-    for (StringList *d = delta; d != NULL; d = d->next) {
-        args.argv[args.argc] = memoryAlloc(memory, strlen(d->string)+1);
-        strcpy(args.argv[args.argc], d->string);
+    for (StringList *o = options; o != NULL; o = o->next) {
+        args.argv[args.argc] = memoryAlloc(memory, strlen(o->string)+1);
+        strcpy(args.argv[args.argc], o->string);
         args.argc++;
     }
 
     return args;
 }
+
+void applyOptionSet(StringList *optionList) {
+    if (optionList == NULL)
+        return;
+    ArgumentsVector args = argsFromOptionList(optionList, &options.memory);
+    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
+}
+
 
 bool currentCxFileCountMatches(int foundCxFileCount) {
     bool check;
