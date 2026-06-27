@@ -1,4 +1,5 @@
 #include <cgreen/cgreen.h>
+#include <cgreen/constraint_syntax_helpers.h>
 
 #include "options.h"
 
@@ -769,4 +770,44 @@ Ensure(Options, argsFromPassDelta_preserves_source_order) {
     assert_that(args.argc, is_equal_to(3));
     assert_that(args.argv[1], is_equal_to_string("-DPASS1"));
     assert_that(args.argv[2], is_equal_to_string("-DPASS2"));
+}
+
+Ensure(Options, getOptionFromFile_returns_eof_when_readChar_returns_eof) {
+    char foundText[100];
+    int charsRead;
+
+    expect(readChar, will_return(EOF));
+
+    assert_that(getOptionFromFile(NULL, foundText, &charsRead), is_equal_to(EOF));
+}
+
+Ensure(Options, getOptionFromFile_returns_text_without_eof_if_delimited_by_whitespace) {
+    char foundText[100];
+    int charsRead;
+
+    expect_characters("text\n", true);
+
+    assert_that(getOptionFromFile(NULL, foundText, &charsRead), is_not_equal_to(EOF));
+    assert_that(foundText, is_equal_to_string("text"));
+    assert_that(getOptionFromFile(NULL, foundText, &charsRead), is_equal_to(EOF));
+}
+
+Ensure(Options, getOptionFromFile_does_not_return_eof_if_there_is_text) {
+    char foundText[100];
+    int charsRead;
+
+    expect_characters("text", true);
+    expect(readChar, will_return(EOF));
+
+    int ch = getOptionFromFile(NULL, foundText, &charsRead);
+    assert_that(ch, is_not_equal_to(EOF));
+    assert_that(foundText, is_equal_to_string("text"));
+    assert_that(charsRead, is_equal_to(4));
+
+
+    foundText[0] = '\0';
+    ch = getOptionFromFile(NULL, foundText, &charsRead);
+    assert_that(ch, is_equal_to(EOF));
+    assert_that(foundText, is_equal_to_string(""));
+    assert_that(charsRead, is_equal_to(0));
 }
