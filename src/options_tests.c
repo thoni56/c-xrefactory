@@ -1,14 +1,14 @@
 #include <cgreen/cgreen.h>
-#include <cgreen/constraint_syntax_helpers.h>
-#include <cgreen/mocks.h>
+
+#include "options.h"
+
+/* Unittests */
 
 #include "argumentsvector.h"
 #include "constants.h"
 
-#include "globals.h"
 #include "log.h"
 #include "memory.h"
-#include "options.h"
 
 #include "commandlogger.mock"
 #include "commons.mock"
@@ -33,7 +33,7 @@ BeforeEach(Options) {
 AfterEach(Options) {}
 
 
-extern int getOptionFromFile(FILE *file, char *text, int *chars_read);
+extern int getOptionFromFile(FILE *file, char *foundText, int *chars_read);
 
 Ensure(Options, will_return_eof_when_end_of_file_and_nothing_read) {
     FILE *someFile = NULL;
@@ -711,10 +711,8 @@ Ensure(Options, readPassOptions_skips_section_markers) {
 
     readOptionSets(NULL, &d);
 
-    assert_that(d.set[0]->string, is_equal_to_string("-DBASE"));   // the marker is
-    assert_that(d.set[0]->next, is_null);                          // gone, only the
-                                                                     // real option
-                                                                     // remains
+    assert_that(d.set[0]->string, is_equal_to_string("-DBASE"));   // the marker is gone, only
+    assert_that(d.set[0]->next, is_null);                          // real option remains
 }
 
 Ensure(Options, readPassOptions_can_handle_consequtive_options_after_one_pass) {

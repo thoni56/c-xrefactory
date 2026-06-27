@@ -66,6 +66,10 @@ char *expandPredefinedSpecialVariables_static(char *variable, char *inputFilenam
   return (char *) mock(variable);
 }
 
+int getOptionFromFile(FILE *file, char *foundText, int *chars_read) {
+    return (int)mock(file, foundText, chars_read);
+}
+
 bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, Memory *memory, char *fileName, char *project,
                          char *section) {
     return (bool) mock(file, outArgs->argc, outArgs->argv, fileName, project, section);
