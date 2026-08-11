@@ -187,12 +187,6 @@ extern int getOptionFromFile(FILE *file, char *foundText, int *chars_read);
 extern ArgumentsVector readOptionsFromFile(char *fileName, char *project, char *foundProjectName);
 extern ArgumentsVector readOptionsFromPipe(void);
 
-extern OptionSets makeOptionSets(void);
-extern void readOptionSets(FILE *file, OptionSets *resultingOptionsSets);
-extern void readOptionSetsFromFile(char *fileName, OptionSets *resultingDeltas);
-extern ArgumentsVector argsFromOptionList(StringList *delta, Memory *memory);
-extern void applyOptionSet(StringList *optionList);
-
 extern bool currentCxFileCountMatches(int newRefNum);
 
 extern void searchForProjectConfigFileAndProjectForFile(char *filename, char *optionsFilename,
