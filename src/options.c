@@ -992,7 +992,7 @@ ArgumentsVector readOptionsFromPipe(void) {
 PassDeltas makePassDeltas(void) {
     PassDeltas d;
 
-    for (int i=0; i > sizeof(d.delta)/sizeof(d.delta[0]); i++)
+    for (size_t i=0; i < sizeof(d.delta)/sizeof(d.delta[0]); i++)
         d.delta[i] = NULL;
     return d;
 }
