@@ -32,20 +32,24 @@
 
 protected bool isImplicitFunctionShadowLinkName(char *linkName) {
     /* Extract-mode encodes an implicit-decl symbol as
-     *     " extern int! !<name>!()!<file>-<line>-<col>-<counter>"
-     * so " extern int! !" is the fixed flag + storage ("extern") + base type
-     * ("int") + separator/space/separator opening the nnn name wrapper, and
-     * "()!" marks the function-type suffix ending just before the position. */
-    return strncmp(linkName, " extern int! !", 14) == 0
+     *     " extern !int! !<name>!()!<file>-<line>-<col>-<counter>"
+     * so " extern !int! !" is the fixed flag + storage ("extern") in its own
+     * field + base type ("int") + separator/space/separator opening the nnn
+     * name wrapper, and "()!" marks the function-type suffix ending just
+     * before the position. */
+    return strncmp(linkName, " extern !int! !", 15) == 0
         && strstr(linkName, "()!") != NULL;
 }
 
 protected char *extractNameFromLinkName(char *linkName) {
+    /* Skip storage, type-prefix and declarator fields; the name is the fourth */
     char *p1 = strchr(linkName, '!');
     if (p1 == NULL) return NULL;
     char *p2 = strchr(p1 + 1, '!');
     if (p2 == NULL) return NULL;
-    char *nameStart = p2 + 1;
+    char *p3 = strchr(p2 + 1, '!');
+    if (p3 == NULL) return NULL;
+    char *nameStart = p3 + 1;
     char *nameEnd = strchr(nameStart, '!');
     if (nameEnd == NULL) return NULL;
     size_t len = nameEnd - nameStart;
@@ -497,15 +501,23 @@ static void getLocalVarStringFromLinkName(char *linkName, char *name, char *decl
     log_trace("%s '%s'", __FUNCTION__, linkName);
 
     // linkName always starts with a space?
+    // Storage: kept here, this is a redeclaration in the extracted function
     for (src=linkName+1, declarationP=declaration, declaratorP=declarator;
          *src!=0 && *src!=LINK_NAME_SEPARATOR;
          src++, declarationP++, declaratorP++
     ) {
         *declarationP = *declaratorP = *src;
     }
+
+    assert(*src);
+    // Type:
+    for (src++; *src!=0 && *src!=LINK_NAME_SEPARATOR; src++, declarationP++, declaratorP++) {
+        *declarationP = *declaratorP = *src;
+    }
     *declaratorP = 0;
 
     assert(*src);
+    // Declarator:
     for (src++; *src!=0 && *src!=LINK_NAME_SEPARATOR; src++, declarationP++) {
         *declarationP = *src;
     }
@@ -528,18 +540,29 @@ static void getLocalVarStringFromLinkName(char *linkName, char *name, char *decl
     *declarationP = 0;
 }
 
+/* withStorage=false drops the storage class, which is what a parameter needs:
+ * it can never be 'static' or 'register'. A declaration generated in the
+ * enclosing scope keeps it. */
 static void getLocalVariableDeclarationFromLinkName(char *linkName, char *declaration,
-                                                   char *declarationPrefix, bool shouldCopyName) {
+                                                   char *declarationPrefix, bool shouldCopyName,
+                                                   bool withStorage) {
     char *src, *declarationP;
 
     log_trace("%s '%s'", __FUNCTION__, linkName);
 
     // linkName always starts with a space?
-    // Type/Declarator:
+    // Storage:
     for (src=linkName+1, declarationP=declaration;
          *src!=0 && *src!=LINK_NAME_SEPARATOR;
-         src++, declarationP++
+         src++
     ) {
+        if (withStorage)
+            *declarationP++ = *src;
+    }
+    assert(*src);
+
+    // Type/Declarator:
+    for (src++; *src!=0 && *src!=LINK_NAME_SEPARATOR; src++, declarationP++) {
         *declarationP = *src;
     }
     assert(*src);
@@ -571,13 +594,19 @@ static void getLocalVariableNameFromLinkName(char *linkName, char *name) {
 
     log_trace("%s '%s'", __FUNCTION__, linkName);
 
-    // linkName always starts with a space? Skip first part
+    // linkName always starts with a space? Skip storage
     src = linkName+1;
     src = strchr(src, LINK_NAME_SEPARATOR);
     assert(src);
     assert(*src);
 
-    // skip also second part
+    // skip also type
+    src++;
+    src = strchr(src, LINK_NAME_SEPARATOR);
+    assert(src);
+    assert(*src);
+
+    // and declarator
     src++;
     src = strchr(src, LINK_NAME_SEPARATOR);
     assert(src);
@@ -737,7 +766,8 @@ static void generateNewFunctionCall(ProgramGraphNode *program, char *extractionN
         char name[TMP_STRING_SIZE];
         char declaration[TMP_STRING_SIZE];
         getLocalVariableNameFromLinkName(p->referenceableItem->linkName, name);
-        getLocalVariableDeclarationFromLinkName(p->referenceableItem->linkName, declaration, "", true);
+        /* Declared in the caller's scope, so it keeps its storage class */
+        getLocalVariableDeclarationFromLinkName(p->referenceableItem->linkName, declaration, "", true, true);
         if (p->classification == CLASSIFIED_AS_LOCAL_RESULT_VALUE) {
             strcatf(resultingString, "\t%s = ", declaration);
         } else {
@@ -800,7 +830,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
         if (p->classification == CLASSIFIED_AS_VALUE_ARGUMENT
             || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
         ) {
-            getLocalVariableDeclarationFromLinkName(p->referenceableItem->linkName, declaration, "", true);
+            getLocalVariableDeclarationFromLinkName(p->referenceableItem->linkName, declaration, "", true, false);
             sprintf(nhead+nhi, "%s%s", isFirstArgument?"(":", " , declaration);
             nhi += strlen(nhead+nhi);
             isFirstArgument = false;
@@ -812,7 +842,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
             ||  p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
         ) {
             getLocalVariableDeclarationFromLinkName(p->referenceableItem->linkName, declaration, EXTRACT_OUTPUT_PARAM_PREFIX,
-                                                    true);
+                                                    true, false);
             sprintf(nhead+nhi, "%s%s", isFirstArgument?"(":", " , declaration);
             nhi += strlen(nhead+nhi);
             isFirstArgument = false;
@@ -820,7 +850,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
     }
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == CLASSIFIED_AS_ADDRESS_ARGUMENT) {
-            getLocalVariableDeclarationFromLinkName(p->referenceableItem->linkName, declaration, EXTRACT_REFERENCE_ARG_STRING, true);
+            getLocalVariableDeclarationFromLinkName(p->referenceableItem->linkName, declaration, EXTRACT_REFERENCE_ARG_STRING, true, false);
             sprintf(nhead+nhi, "%s%s", isFirstArgument?"(":", " , declaration);
             nhi += strlen(nhead+nhi);
             isFirstArgument = false;
@@ -840,7 +870,8 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
     if (p==NULL) {
         strcatf(resultingString,"void %s",nhead);
     } else {
-        getLocalVariableDeclarationFromLinkName(p->referenceableItem->linkName, declaration, nhead, false);
+        /* The new function is already emitted as 'static', so never repeat it here */
+        getLocalVariableDeclarationFromLinkName(p->referenceableItem->linkName, declaration, nhead, false, false);
         strcatf(resultingString, "%s", declaration);
     }
 

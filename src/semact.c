@@ -283,9 +283,15 @@ void setLocalVariableLinkName(Symbol *p) {
     if (parsingConfig.operation == PARSE_TO_EXTRACT) {
         char nnn[TMP_STRING_SIZE];
         // extract variable, must pass all needed informations in linkname
+        // Fields, separated by LINK_NAME_SEPARATOR:
+        //   flag+storage ! type-prefix ! declarator ! name ! type-suffix ! position
+        // Storage has a field of its own so that the generator can drop it when
+        // the variable becomes a parameter (which can't be static or register)
+        // while keeping it when the variable is redeclared inside the extracted
+        // function.
         sprintf(nnn, "%c%s%c", LINK_NAME_SEPARATOR, p->name, LINK_NAME_SEPARATOR);
         name[0] = LINK_NAME_EXTRACT_DEFAULT_FLAG;
-        sprintf(name+1,"%s", storageNamesTable[p->storage]);
+        sprintf(name+1,"%s%c", storageNamesTable[p->storage], LINK_NAME_SEPARATOR);
         int tti = strlen(name);
         int len = TMP_STRING_SIZE - tti;
         prettyPrintType(name+tti, &len, p->typeModifier, nnn, LINK_NAME_SEPARATOR, true);
