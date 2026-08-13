@@ -997,6 +997,9 @@ PassDeltas makePassDeltas(void) {
     return d;
 }
 
+/* Pass number for a section we refuse to collect options from */
+#define PASS_IGNORED (-1)
+
 void readPassDeltas(FILE *file, PassDeltas *resultingDeltas) {
     int charsRead;
     char optionsText[MAX_OPTION_LEN];
@@ -1008,7 +1011,15 @@ void readPassDeltas(FILE *file, PassDeltas *resultingDeltas) {
             ;                   /* Skip section/project markers */
         else if (strncmp(optionsText, "-pass", 5) == 0 && isdigit(optionsText[5])) {
             passN = atoi(&optionsText[5]);
-        } else {
+            if (passN > MAX_PASS_COUNT) {
+                char tmpBuff[TMP_BUFF_SIZE];
+                sprintf(tmpBuff, "pass number in '%s' is higher than the maximum of %d, section ignored",
+                        optionsText, MAX_PASS_COUNT);
+                errorMessage(ERR_ST, tmpBuff);
+                passN = PASS_IGNORED;
+            }
+        } else if (passN != PASS_IGNORED) {
+            assert(passN >= 0 && passN <= MAX_PASS_COUNT);
             resultingDeltas->delta[passN] = newStringList(optionsText, resultingDeltas->delta[passN]);
         }
         ch = getOptionFromFile(file, optionsText, &charsRead);

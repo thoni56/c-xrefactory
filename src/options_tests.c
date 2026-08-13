@@ -715,3 +715,21 @@ Ensure(Options, readPassDeltas_skips_section_markers) {
                                                                      // remains
 
 }
+
+/* A pass number beyond MAX_PASS_COUNT would index past delta[], so it is a
+ * reported config error, not an assert: a typo in .c-xrefrc must not take the
+ * server down. The offending section is dropped rather than attributed to the
+ * previous pass, which would silently apply options where they weren't asked
+ * for. */
+Ensure(Options, readPassDeltas_reports_and_drops_out_of_range_pass) {
+    PassDeltas d = makePassDeltas();
+
+    expect_characters("-pass12\n", false);
+    expect_characters("-DBOGUS\n", true);
+    expect(errorMessage);
+
+    readPassDeltas(NULL, &d);
+
+    for (int i = 0; i <= MAX_PASS_COUNT; i++)
+        assert_that(d.delta[i], is_null);
+}
