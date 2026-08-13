@@ -455,10 +455,28 @@ static bool areThereJumpsInOrOutOfBlock(ProgramGraphNode *program) {
     return false;
 }
 
+/* Storage classes an extractable block-local can have. 'extern' and 'typedef'
+ * are excluded on purpose: an 'extern' declared inside the block, and the
+ * implicit-declaration shadows spliced in by spliceShadowIfMatches(), name
+ * things the extracted function still reaches by name, so they must not become
+ * parameters. */
+static bool hasBlockLocalStorage(Storage storage) {
+    return storage == StorageAuto
+        || storage == StorageRegister
+        || storage == StorageStatic
+        || storage == StorageThreadLocal;
+}
+
+/* A block-local is recognised by its link name, not by scope: everything
+ * declared at nesting level > 0 goes through setLocalVariableLinkName(), which
+ * prefixes the extract flag. Scope cannot be used because it is derived from
+ * storage, so a block-local 'static' is indistinguishable there from a
+ * file-scope one. */
 static bool isLocalVariable(ProgramGraphNode *node) {
     return node->reference->usage==UsageDefined
         &&  node->referenceableItem->type==TypeDefault
-        &&  node->referenceableItem->scope==AutoScope;
+        &&  node->referenceableItem->linkName[0]==LINK_NAME_EXTRACT_DEFAULT_FLAG
+        &&  hasBlockLocalStorage(node->referenceableItem->storage);
 }
 
 static void classifyLocalVariables(ProgramGraphNode *program) {
