@@ -1,5 +1,3 @@
-#include "tennis.h"
-
 #include <strings.h>
 
 
