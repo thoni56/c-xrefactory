@@ -8,8 +8,12 @@ if [[ -z "$PROJECT_ROOT" || "$(basename "$PROJECT_ROOT")" != "c-xrefactory" ]]; 
   exit 1
 fi
 
+# A test_* directory without a Makefile is not a test: it is an orphan left
+# behind when a test was deleted from git but its generated files kept the
+# directory alive. Its stale 'output' would otherwise be reported as a failure
+# forever. Same rule as tests/Makefile uses to discover tests.
 for dir in "$PROJECT_ROOT/tests/test_"*; do
-    if [ -d "$dir" ] && [ -f "$dir/output" ] && [ ! -f "$dir/.suspended" ]; then
+    if [ -d "$dir" ] && [ -f "$dir/Makefile" ] && [ -f "$dir/output" ] && [ ! -f "$dir/.suspended" ]; then
         basename "$dir"
     fi
 done
