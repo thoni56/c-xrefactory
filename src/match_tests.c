@@ -24,7 +24,7 @@ protected Match *newMatch(char *name, char *fullName, int lineCount, Visibility 
 
 Ensure(Match, can_allocate_and_free_a_match) {
     Reference ref = makeReference((Position){0,0,0}, UsageNone, NULL);
-    ReferenceableItem item = makeReferenceableItem("", TypeInt, StorageDefault, AutoScope, VisibilityLocal, 0);
+    ReferenceableItem item = makeReferenceableItem("", TypeInt, StorageDefault, VisibilityLocal, 0);
     Match *c = newMatch("", "", 0, VisibilityLocal, ref, item);
     freeMatch(c);
 }

@@ -4,7 +4,6 @@
 /* Dependencies: */
 #include "visibility.h"
 #include "position.h"
-#include "scope.h"
 #include "storage.h"
 #include "type.h"
 
@@ -61,7 +60,7 @@ extern void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName,
 extern Symbol makeSymbol(char *name, Type type, Position pos);
 extern Symbol makeMacroSymbol(char *name, Position pos);
 
-extern void getSymbolCxrefProperties(Symbol *symbol, Visibility *categoryP, Scope *scopeP,
+extern void getSymbolCxrefProperties(Symbol *symbol, Visibility *categoryP,
                                      Storage *storageP);
 
 #endif

@@ -104,7 +104,7 @@ BrowsingMenu *createNewMenuItem(ReferenceableItem *referenceable, int includedFi
 
     allocatedNameCopy = strdup(referenceable->linkName);
 
-    ReferenceableItem item = makeReferenceableItem(allocatedNameCopy, referenceable->type, referenceable->storage, referenceable->scope,
+    ReferenceableItem item = makeReferenceableItem(allocatedNameCopy, referenceable->type, referenceable->storage,
                                                       referenceable->visibility, includedFileNumber);
 
     menu = malloc(sizeof(BrowsingMenu));

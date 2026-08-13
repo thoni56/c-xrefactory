@@ -773,7 +773,6 @@ void totalTaskEntryInitialisations(void) {
     // Limits
     assert(MAX_TYPE < power(2,TYPE_BITS));
     assert(STORAGE_ENUMS_MAX < power(2,STORAGES_BITS));
-    assert(MAX_SCOPES < power(2,SCOPES_BITS));
 
     // Strings
     initLexemEnumNames();

@@ -400,7 +400,7 @@ static void writeReferenceableItem(ReferenceableItem *referenceableItem) {
     strcpy(lastOutgoingData.cachedSymbolName, referenceableItem->linkName);
     lastOutgoingData.cachedReferenceableItem = makeReferenceableItem(lastOutgoingData.cachedSymbolName,
                                                                  referenceableItem->type, referenceableItem->storage,
-                                                                 referenceableItem->scope, referenceableItem->visibility,
+                                                                 referenceableItem->visibility,
                                                                  referenceableItem->includeFileNumber);
     lastOutgoingData.referenceableItem   = &lastOutgoingData.cachedReferenceableItem;
     lastOutgoingData.referenceableItem   = &lastOutgoingData.cachedReferenceableItem;
@@ -750,7 +750,7 @@ static void scanFunction_SymbolNameForSnapshotLoad(int size,
 
     int includedFileNumber;
     getIncludedFileNumber(&includedFileNumber);
-    *referenceableItem = makeReferenceableItem(id, symbolType, storage, GlobalScope, VisibilityGlobal, includedFileNumber);
+    *referenceableItem = makeReferenceableItem(id, symbolType, storage, VisibilityGlobal, includedFileNumber);
 
     ReferenceableItem *foundReferenceableItem;
     if (!isMemberInReferenceableItemTable(referenceableItem, NULL, &foundReferenceableItem)) {
@@ -758,7 +758,7 @@ static void scanFunction_SymbolNameForSnapshotLoad(int size,
         strcpy(ss,id);
         foundReferenceableItem = cxAlloc(sizeof(ReferenceableItem));
         *foundReferenceableItem = makeReferenceableItem(ss, symbolType, storage,
-                                                    GlobalScope, VisibilityGlobal, includedFileNumber);
+                                                    VisibilityGlobal, includedFileNumber);
         addToReferenceableItemTable(foundReferenceableItem);
     }
     lastIncomingData.referenceableItem = foundReferenceableItem;

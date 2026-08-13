@@ -87,7 +87,7 @@ static int scheduleFileUsingTheMacro(void) {
     assert(completionStringInMacroBody);
     tmpc = NULL;
     ReferenceableItem references = makeReferenceableItem(completionStringInMacroBody, TypeMacro, StorageExtern,
-                                                         GlobalScope, VisibilityGlobal, NO_FILE_NUMBER);
+                                                         VisibilityGlobal, NO_FILE_NUMBER);
 
     BrowsingMenu menu = makeBrowsingMenu(references, 1, true, 0, UsageUsed, UsageNone, NO_POSITION);
     if (browsingStack.top==NULL) {
@@ -251,7 +251,7 @@ static int collectIncludersOfStaleHeader(int headerFileNumber,
     for (int i = 0; i < walkCount; i++) {
         ReferenceableItem searchItem = makeReferenceableItem(
             LINK_NAME_INCLUDE_REFS, TypeCppInclude, StorageExtern,
-            GlobalScope, VisibilityGlobal, filesToWalk[i]);
+            VisibilityGlobal, filesToWalk[i]);
 
         ReferenceableItem *found;
         if (!isMemberInReferenceableItemTable(&searchItem, NULL, &found))
@@ -338,7 +338,7 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
 
         ReferenceableItem searchItem = makeReferenceableItem(
             LINK_NAME_INCLUDE_REFS, TypeCppInclude, StorageExtern,
-            GlobalScope, VisibilityGlobal, i);
+            VisibilityGlobal, i);
 
         ReferenceableItem *found;
         if (!isMemberInReferenceableItemTable(&searchItem, NULL, &found))

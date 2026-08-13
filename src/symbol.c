@@ -4,7 +4,6 @@
 
 #include "visibility.h"
 #include "stackmemory.h"
-#include "scope.h"
 #include "storage.h"
 #include "type.h"
 
@@ -85,11 +84,11 @@ Symbol *newSymbolAsLabel(char *name, char *linkName, Position position, int labe
     return s;
 }
 
-void getSymbolCxrefProperties(Symbol *symbol, Visibility *visibilityP, Scope *scopeP,
+void getSymbolCxrefProperties(Symbol *symbol, Visibility *visibilityP,
                               Storage *storageP) {
-    int visibility, scope, storage;
+    int visibility, storage;
 
-    visibility = VisibilityLocal; scope = AutoScope; storage=StorageAuto;
+    visibility = VisibilityLocal; storage=StorageAuto;
     /* default */
     if (symbol->type==TypeDefault) {
         storage = symbol->storage;
@@ -105,38 +104,36 @@ void getSymbolCxrefProperties(Symbol *symbol, Visibility *visibilityP, Scope *sc
             } else {
                 visibility = VisibilityGlobal;
             }
-            scope = GlobalScope;
         }
     }
     /* enumeration constants */
     if (symbol->type==TypeDefault && symbol->storage==StorageConstant) {
-        visibility = VisibilityGlobal;  scope = GlobalScope; storage=StorageExtern;
+        visibility = VisibilityGlobal;  storage=StorageExtern;
     }
     /* struct, union, enum */
     if ((symbol->type==TypeStruct||symbol->type==TypeUnion||symbol->type==TypeEnum)){
-        visibility = VisibilityGlobal;  scope = GlobalScope; storage=StorageExtern;
+        visibility = VisibilityGlobal;  storage=StorageExtern;
     }
     /* macros */
     if (symbol->type == TypeMacro) {
-        visibility = VisibilityGlobal;  scope = GlobalScope; storage=StorageExtern;
+        visibility = VisibilityGlobal;  storage=StorageExtern;
     }
     if (symbol->type == TypeLabel) {
-        visibility = VisibilityLocal; scope = FileScope; storage=StorageStatic;
+        visibility = VisibilityLocal; storage=StorageStatic;
     }
     if (symbol->type == TypeCppIfElse) {
-        visibility = VisibilityLocal; scope = FileScope; storage=StorageStatic;
+        visibility = VisibilityLocal; storage=StorageStatic;
     }
     if (symbol->type == TypeCppInclude) {
-        visibility = VisibilityGlobal; scope = GlobalScope; storage=StorageExtern;
+        visibility = VisibilityGlobal; storage=StorageExtern;
     }
     if (symbol->type == TypeCppCollate) {
-        visibility = VisibilityGlobal; scope = GlobalScope; storage=StorageExtern;
+        visibility = VisibilityGlobal; storage=StorageExtern;
     }
     if (symbol->type == TypeYaccSymbol) {
-        visibility = VisibilityLocal; scope = FileScope; storage=StorageStatic;
+        visibility = VisibilityLocal; storage=StorageStatic;
     }
 
     *visibilityP = visibility;
-    *scopeP = scope;
     *storageP = storage;
 }

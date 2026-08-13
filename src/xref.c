@@ -76,7 +76,7 @@ static FileItem *createListOfInputFileItems(void) {
 
 static ReferenceableItem makeReferenceableItemForIncludeFile(int fileNumber) {
     return makeReferenceableItem(LINK_NAME_INCLUDE_REFS, TypeCppInclude, StorageExtern,
-                                 GlobalScope, VisibilityGlobal, fileNumber);
+                                 VisibilityGlobal, fileNumber);
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {

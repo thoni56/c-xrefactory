@@ -49,7 +49,7 @@ Match *prependToMatches(Match *matches, char *name, char *fullName, Symbol *symb
         char *linkName = strdup(referenceableItem->linkName);
 
         ReferenceableItem item = makeReferenceableItem(linkName, referenceableItem->type,
-                                                       referenceableItem->storage, referenceableItem->scope,
+                                                       referenceableItem->storage,
                                                        referenceableItem->visibility, referenceableItem->includeFileNumber);
 
         match = newMatch(name, fullName, 1, referenceableItem->visibility, *reference, item);
@@ -58,19 +58,18 @@ Match *prependToMatches(Match *matches, char *name, char *fullName, Symbol *symb
         r.next = NULL;
 
         ReferenceableItem item = makeReferenceableItem("", TypeUnknown, StorageDefault,
-                                                       AutoScope, VisibilityLocal, NO_FILE_NUMBER);
+                                                       VisibilityLocal, NO_FILE_NUMBER);
 
         match = newMatch(name, fullName, 1, VisibilityLocal, r, item);
     } else {
         Reference r = makeReference(symbol->position, UsageNone, NULL);
         Visibility visibility;
-        Scope scope;
         Storage storage;
-        getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
+        getSymbolCxrefProperties(symbol, &visibility, &storage);
         char *linkName = strdup(symbol->linkName);
 
         ReferenceableItem item = makeReferenceableItem(linkName, symbol->type, storage,
-                                                       scope, visibility, includedFileNumber);
+                                                       visibility, includedFileNumber);
         match = newMatch(name, fullName, 1, visibility, r, item);
     }
     if (fullName!=NULL) {

@@ -7,14 +7,13 @@
 #include "filetable.h"
 
 
-ReferenceableItem makeReferenceableItem(char *name, Type type, Storage storage, Scope scope,
+ReferenceableItem makeReferenceableItem(char *name, Type type, Storage storage,
                                         Visibility visibility, int includeFile) {
     ReferenceableItem item;
 
     item.linkName = name;
     item.type = type;
     item.storage = storage;
-    item.scope = scope;
     item.visibility = visibility;
     if (includeFile != NO_FILE_NUMBER) /* Only '#include' can have a file number */
         assert(type == TypeCppInclude);

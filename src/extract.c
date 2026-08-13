@@ -471,11 +471,11 @@ static bool hasBlockLocalStorage(Storage storage) {
         || storage == StorageThreadLocal;
 }
 
-/* A block-local is recognised by its link name, not by scope: everything
- * declared at nesting level > 0 goes through setLocalVariableLinkName(), which
- * prefixes the extract flag. Scope cannot be used because it is derived from
- * storage, so a block-local 'static' is indistinguishable there from a
- * file-scope one. */
+/* A block-local is recognised by its link name: everything declared at nesting
+ * level > 0 goes through setLocalVariableLinkName(), which prefixes the extract
+ * flag, while a file-scope symbol gets "file!name". The link name is the only
+ * place the lexical nesting survives -- storage alone cannot tell a
+ * block-local 'static' from a file-scope one. */
 static bool isLocalVariable(ProgramGraphNode *node) {
     return node->reference->usage==UsageDefined
         &&  node->referenceableItem->type==TypeDefault

@@ -31,7 +31,6 @@
 #include "refactory.h"
 #include "referenceableitem.h"
 #include "referenceableitemtable.h"
-#include "scope.h"
 #include "search.h"
 #include "server.h"
 #include "session.h"
@@ -268,7 +267,6 @@ static void getBareName(char *name, char **start, int *len) {
 Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage usage,
                                       int includedFileNumber) {
     Visibility        visibility;
-    Scope             scope;
     Storage           storage;
     Usage             defaultUsage;
     Reference       **place;
@@ -289,7 +287,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
     ENTER();
     assert(position.file<MAX_FILES);
 
-    getSymbolCxrefProperties(symbol, &visibility, &scope, &storage);
+    getSymbolCxrefProperties(symbol, &visibility, &storage);
 
     log_debug("adding reference on %s(%d) at %d,%d,%d (%s) (%s) (%s)",
               symbol->linkName, includedFileNumber, position.file, position.line,
@@ -317,7 +315,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
         break;
     }
 
-    ReferenceableItem referenceableItem = makeReferenceableItem(symbol->linkName, symbol->type, storage, scope,
+    ReferenceableItem referenceableItem = makeReferenceableItem(symbol->linkName, symbol->type, storage,
                                                                 visibility, includedFileNumber);
 
     int index;
@@ -328,7 +326,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
         strcpy(linkName, symbol->linkName);
         ReferenceableItem *r = cxAlloc(sizeof(ReferenceableItem));
         *r = makeReferenceableItem(linkName, symbol->type,
-                                   storage, scope, visibility, includedFileNumber);
+                                   storage, visibility, includedFileNumber);
         pushReferenceableItem(r, index);
         foundMember = r;
     }
@@ -918,7 +916,7 @@ static void olcxPrintSymbolName(SessionStackEntry *sessionEntry) {
 
 static BrowsingMenu *createSpecialMenuItem(char *fieldName, int includedFileNumber, Storage storage) {
     BrowsingMenu *menu;
-    ReferenceableItem r = makeReferenceableItem(fieldName, TypeDefault, storage, GlobalScope, VisibilityGlobal,
+    ReferenceableItem r = makeReferenceableItem(fieldName, TypeDefault, storage, VisibilityGlobal,
                                                 includedFileNumber);
     menu = createNewMenuItem(&r, r.includeFileNumber, NO_POSITION, UsageNone,
                              true, true, FILE_MATCH_SAME, (SymbolRelation){.sameFile = true},

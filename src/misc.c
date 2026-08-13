@@ -52,10 +52,10 @@ void typeDump(TypeModifier *t) {
 }
 
 void dumpReferenceableItem(ReferenceableItem *r) {
-    log_debug("%s\t%s %s %d %d %d %d",
+    log_debug("%s\t%s %s %d %d %d",
               r->linkName,
               getFileItemWithFileNumber(r->includeFileNumber)->name,
-              r->type, r->storage, r->scope,
+              r->type, r->storage,
               r->visibility);
 }
 
@@ -63,10 +63,10 @@ void dumpReferenceableItem(ReferenceableItem *r) {
  * list. Uses fprintf(stderr) so output is visible regardless of log level.
  * \r\n because gdb-attached inferior tty doesn't do LF->CRLF translation. */
 void dumpReferenceableItemWithReferences(ReferenceableItem *r) {
-    fprintf(stderr, "ITEM %s @%s type=%d storage=%d scope=%d visibility=%d\r\n",
+    fprintf(stderr, "ITEM %s @%s type=%d storage=%d visibility=%d\r\n",
             r->linkName,
             getFileItemWithFileNumber(r->includeFileNumber)->name,
-            r->type, r->storage, r->scope, r->visibility);
+            r->type, r->storage, r->visibility);
     int n = 0;
     for (Reference *ref = r->references; ref != NULL; ref = ref->next) {
         fprintf(stderr, "  [%d] %s @%s:%d:%d\r\n",

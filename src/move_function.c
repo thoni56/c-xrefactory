@@ -329,7 +329,7 @@ static bool sourceAlreadyIncludesHeader(EditorBuffer *sourceBuffer, char *header
 
     /* Create search item for the header file */
     ReferenceableItem searchItem = makeReferenceableItem(LINK_NAME_INCLUDE_REFS, TypeCppInclude,
-                                                         StorageExtern, GlobalScope, VisibilityGlobal,
+                                                         StorageExtern, VisibilityGlobal,
                                                          headerFileNumber);
 
     /* Look it up in the reference table */

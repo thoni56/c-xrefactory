@@ -20,21 +20,20 @@ Reference makeReference(Position position, Usage usage, Reference *next) {
 }
 
 void fillReferenceItem(ReferenceableItem *referencesItem, char *name, int includedFileNumber, Type symType,
-                       Storage storage, Scope scope, Visibility visibility) {
+                       Storage storage, Visibility visibility) {
     referencesItem->linkName = name;
     referencesItem->includeFileNumber = includedFileNumber;
     referencesItem->references = NULL;
     referencesItem->next = NULL;
     referencesItem->type = symType;
     referencesItem->storage = storage;
-    referencesItem->scope = scope;
     referencesItem->visibility = visibility;
 }
 
-ReferenceableItem makeReferenceableItem(char *name, Type type, Storage storage, Scope scope, Visibility visibility,
+ReferenceableItem makeReferenceableItem(char *name, Type type, Storage storage, Visibility visibility,
                                         int includedFileNumber) {
     ReferenceableItem item;
-    fillReferenceItem(&item, name, includedFileNumber, type, storage, scope, visibility);
+    fillReferenceItem(&item, name, includedFileNumber, type, storage, visibility);
     return item;
 }
 
