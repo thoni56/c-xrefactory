@@ -86,6 +86,13 @@ def unpack_references(string):
     return refs
 
 
+def string_record_value(field):
+    """Get the string from a '<length>:<string>' record, the length counts one extra."""
+    (length, string) = field.split(':', 1)
+    # Whatever follows the string belongs to the next record
+    return string[:int(length) - 1]
+
+
 def unpack_xfiles(lines):
     """Parse the XFiles file table."""
     filerefs = []
@@ -103,7 +110,7 @@ def unpack_xfiles(lines):
                                 int(segments[0][:-1]),
                                 segments[1],
                                 segments[2],
-                                segments[3].split(':', 1)[-1]
+                                string_record_value(segments[3])
                             ))
                     except IndexError:
                         pass  # Skip malformed lines
@@ -125,7 +132,7 @@ def unpack_file_lines(lines):
                             int(segments[0][:-1]),
                             segments[1],
                             segments[2],
-                            segments[3].split(':', 1)[-1]
+                            string_record_value(segments[3])
                         ))
                 else:
                     return (filerefs, lines[index:])
