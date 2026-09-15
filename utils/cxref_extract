@@ -93,6 +93,17 @@ def string_record_value(field):
     return string[:int(length) - 1]
 
 
+def file_reference_from(segments):
+    """Build a FileReference from the space separated fields of a file record."""
+    # Remove trailing 'f' and turn fileid into an int
+    return FileReference(
+        int(segments[0][:-1]),
+        segments[1],
+        segments[2],
+        string_record_value(segments[3])
+    )
+
+
 def unpack_xfiles(lines):
     """Parse the XFiles file table."""
     filerefs = []
@@ -105,13 +116,7 @@ def unpack_xfiles(lines):
                         if segments[1] != '' and segments[1][-1] == 'o':
                             pass  # Java source index, skip for now
                         else:
-                            # Remove trailing 'f' and turn fileid into an int
-                            filerefs.append(FileReference(
-                                int(segments[0][:-1]),
-                                segments[1],
-                                segments[2],
-                                string_record_value(segments[3])
-                            ))
+                            filerefs.append(file_reference_from(segments))
                     except IndexError:
                         pass  # Skip malformed lines
     return filerefs
@@ -128,12 +133,7 @@ def unpack_file_lines(lines):
                     if segments[1] != '' and segments[1][-1] == 'o':
                         pass  # Java source index
                     else:
-                        filerefs.append(FileReference(
-                            int(segments[0][:-1]),
-                            segments[1],
-                            segments[2],
-                            string_record_value(segments[3])
-                        ))
+                        filerefs.append(file_reference_from(segments))
                 else:
                     return (filerefs, lines[index:])
     return (filerefs, [])
