@@ -3438,7 +3438,7 @@ case 228:
 #line 1100 "c_parser.y"
 {
         Symbol *symbol = newSymbol("", NO_POSITION);
-        symbol->type = TypeElipsis;
+        symbol->type = TypeEllipsis;
         yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
 
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.data.symbol, symbol);
@@ -3473,7 +3473,7 @@ case 233:
 #line 1126 "c_parser.y"
 {
         Symbol *symbol = newSymbol("", NO_POSITION);
-        symbol->type = TypeElipsis;
+        symbol->type = TypeEllipsis;
         yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
 
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.data.symbol, symbol);
@@ -3968,7 +3968,7 @@ case 352:
 
         int i = 1;
         for (Symbol *symbol=yyvsp[0].ast_symbol.data->typeModifier->args; symbol!=NULL; symbol=symbol->next) {
-            if (symbol->type == TypeElipsis)
+            if (symbol->type == TypeEllipsis)
                 continue;
             if (symbol->typeModifier == NULL)
                 symbol->typeModifier = &defaultIntModifier;

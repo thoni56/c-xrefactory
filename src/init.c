@@ -215,7 +215,7 @@ static Int2StringDictionary typeNamesInitTable[] = {
     {TypeCppIfElse,         "#if-else-fi"},
     {TypeCppInclude,        "#include"},
 
-    {TypeElipsis,           "ellipsis"},
+    {TypeEllipsis,          "ellipsis"},
     {TypeNull,              "null"},
 
     {TypeLabel,             "label"},

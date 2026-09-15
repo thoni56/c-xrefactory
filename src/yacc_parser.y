@@ -1305,7 +1305,7 @@ parameter_identifier_list
     : identifier_list                            { $$.data = $1.data; }
     | identifier_list ',' ELLIPSIS               {
         Symbol *symbol = newSymbol("", NO_POSITION);
-        symbol->type = TypeElipsis;
+        symbol->type = TypeEllipsis;
         $$.data = $1.data;
 
         LIST_APPEND(Symbol, $$.data.symbol, symbol);
@@ -1331,7 +1331,7 @@ parameter_type_list
     : parameter_list                             { $$.data = $1.data; }
     | parameter_list ',' ELLIPSIS                {
         Symbol *symbol = newSymbol("", NO_POSITION);
-        symbol->type = TypeElipsis;
+        symbol->type = TypeEllipsis;
         $$.data = $1.data;
 
         LIST_APPEND(Symbol, $$.data.symbol, symbol);
@@ -1787,7 +1787,7 @@ external_definition
 
         int i = 1;
         for (Symbol *symbol=$1.data->typeModifier->args; symbol!=NULL; symbol=symbol->next) {
-            if (symbol->type == TypeElipsis)
+            if (symbol->type == TypeEllipsis)
                 continue;
             if (symbol->typeModifier == NULL)
                 symbol->typeModifier = &defaultIntModifier;

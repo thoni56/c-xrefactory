@@ -137,7 +137,7 @@ void prettyPrintType(char *buffer, int *bufferSize, TypeModifier *typeModifier, 
             j += strlen(postString + j);
             for (Symbol *symbol = typeModifier->args; symbol != NULL; symbol = symbol->next) {
                 char *ttm;
-                if (symbol->type == TypeElipsis)
+                if (symbol->type == TypeEllipsis)
                     ttm = "...";
                 else if (symbol->name == NULL)
                     ttm = "";

@@ -146,7 +146,7 @@ static void setAvailableRefactorings(Symbol *symbol, Usage usage) {
     case TypeCppIfElse:
     case TypeCppUndefinedMacro:
     case TypeDouble:
-    case TypeElipsis:
+    case TypeEllipsis:
     case TypeEnum:
     case TypeError:
     case TypeExpression:
