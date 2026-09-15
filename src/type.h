@@ -105,4 +105,6 @@ typedef enum type {
 
 extern const char *typeNamesTable[];
 
+extern const char *cTypeSpelling(Type type);
+
 #endif /* _TYPES_H_ */

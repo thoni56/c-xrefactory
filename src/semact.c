@@ -447,11 +447,11 @@ static TypeModifier *createSimpleTypeModifier(Type type) {
     assert(type>=0 && type<MAX_TYPE);
     if (builtinTypesTable[type] == NULL) {
         log_debug("creating simple type %d (='%s'), *not* found in pre-created types", type,
-                  typeNamesTable[type]);
+                  cTypeSpelling(type));
         p = newSimpleTypeModifier(type);
     } else {
         log_debug("creating simple type %d (='%s'), found in pre-created types", type,
-                  typeNamesTable[type]);
+                  cTypeSpelling(type));
         p = builtinTypesTable[type];
     }
     assert(p->type == type);

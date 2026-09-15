@@ -181,8 +181,8 @@ void prettyPrintType(char *buffer, int *bufferSize, TypeModifier *typeModifier, 
             break;
         default:
             assert(typeModifier->type >= 0 && typeModifier->type < MAX_TYPE);
-            assert(strlen(typeNamesTable[typeModifier->type]) < COMPLETION_STRING_SIZE);
-            strcpy(typeString, typeNamesTable[typeModifier->type]);
+            assert(strlen(cTypeSpelling(typeModifier->type)) < COMPLETION_STRING_SIZE);
+            strcpy(typeString, cTypeSpelling(typeModifier->type));
             l = strlen(typeString);
             break;
         }
