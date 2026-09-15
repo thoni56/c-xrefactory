@@ -14,25 +14,12 @@ Examples:
     cxref_extract2 ./CXrefs symbol1 symbol2
 """
 
-import sys
 import os
-import re
-from collections import namedtuple
+import sys
 
-
-# Structures
-SymbolPosition = namedtuple('SymbolPosition', ['fileid', 'lineno', 'colno'])
-FileReference = namedtuple('FileReference', ['fileid', 'update', 'access', 'filename'])
-Symbol = namedtuple('Symbol', ['symbolname', 'references'])
-
-
-# Global state for parsing
-fileid = None
-lineno = None
-colno = None
-marker_value = dict.fromkeys('uAsflcrpmiao', 0)
-legacy_format = None
-files = []
+import cxref_db
+from cxref_db import (skip_header, unpack_xfiles, unpack_file_lines, unpack_symbols,
+                      get_filename_from_id, read_lines_from)
 
 
 def eprint(*args, **kwargs):
@@ -41,167 +28,8 @@ def eprint(*args, **kwargs):
     sys.exit(1)
 
 
-def read_marker(marker, string):
-    """Read a marker from the encoded reference string."""
-    global marker_value
-    rest = string
-    f = re.match(r"(\d*)" + marker, string)
-    if f is None:
-        value = marker_value[marker]
-    else:
-        if string[f.start():f.end()-1] != '':
-            value = int(string[f.start():f.end()-1])
-        else:
-            value = 0
-        rest = string[f.end():]
-    marker_value[marker] = value
-    return (value, rest)
-
-
-def unpack_references(string):
-    """Unpack a reference string into a list of SymbolPositions."""
-    global fileid, lineno, colno
-
-    refs = []
-    while string != "":
-        # Usage marker
-        (usage, string) = read_marker('u', string)
-        # Required Access marker
-        (accessibility, string) = read_marker('A', string)
-        # File marker
-        (fileid, string) = read_marker('f', string)
-        # Line marker
-        (lineno, string) = read_marker('l', string)
-        # Column marker
-        (colno, string) = read_marker('c', string)
-
-        if string and string[0] == 'r':
-            string = string[1:]  # Skip 'r' marker
-        else:
-            break
-
-        if fileid is not None and lineno is not None and colno is not None:
-            refs.append(SymbolPosition(fileid, lineno, colno))
-
-    return refs
-
-
-def string_record_value(field):
-    """Get the string from a '<length>:<string>' record, the length counts one extra."""
-    (length, string) = field.split(':', 1)
-    # Whatever follows the string belongs to the next record
-    return string[:int(length) - 1]
-
-
-def file_reference_from(segments):
-    """Build a FileReference from the space separated fields of a file record."""
-    # Remove trailing 'f' and turn fileid into an int
-    return FileReference(
-        int(segments[0][:-1]),
-        segments[1],
-        segments[2],
-        string_record_value(segments[3])
-    )
-
-
-def unpack_xfiles(lines):
-    """Parse the XFiles file table."""
-    filerefs = []
-    for line in lines:
-        if len(line) > 0:
-            segments = line.split(' ')
-            if len(segments) > 0 and segments[0] != '':
-                if segments[0][-1] == 'f':
-                    try:
-                        if segments[1] != '' and segments[1][-1] == 'o':
-                            pass  # Java source index, skip for now
-                        else:
-                            filerefs.append(file_reference_from(segments))
-                    except IndexError:
-                        pass  # Skip malformed lines
-    return filerefs
-
-
-def unpack_file_lines(lines):
-    """Parse file references embedded in single CXref file."""
-    filerefs = []
-    for index, line in enumerate(lines):
-        if len(line) > 0:
-            segments = line.split(' ')
-            if len(segments) > 0 and segments[0] != '':
-                if segments[0][-1] == 'f':
-                    if segments[1] != '' and segments[1][-1] == 'o':
-                        pass  # Java source index
-                    else:
-                        filerefs.append(file_reference_from(segments))
-                else:
-                    return (filerefs, lines[index:])
-    return (filerefs, [])
-
-
-def skip_header(lines):
-    """Skip the header and detect format version."""
-    global legacy_format
-    if len(lines) < 3:
-        return []
-
-    version_line = lines[2].strip()
-    if not version_line.startswith("34v file format: C-xrefactory"):
-        return []
-
-    try:
-        version = version_line.split()[-1]
-        legacy_format = version == "1.6.0"
-    except IndexError:
-        pass
-
-    return lines[6:] if len(lines) > 6 else []
-
-
-def unpack_symbols(lines):
-    """Parse symbol records from CXref file."""
-    symbols = []
-    for line in lines:
-        if line != "":
-            segments = line.split('\t')
-            if len(segments) < 3:
-                continue
-
-            classification = segments[0]
-            (t, classification) = read_marker('t', classification)
-            (d, classification) = read_marker('d', classification)
-            if legacy_format:
-                (h, classification) = read_marker('h', classification)
-                (a, classification) = read_marker('a', classification)
-            (g, classification) = read_marker('g', classification)
-
-            symbolname = segments[1].split('/', 1)[-1]
-            references = unpack_references(segments[2])
-
-            symbols.append(Symbol(symbolname, references))
-
-    return symbols
-
-
-def get_filename_from_id(fileid, file_references):
-    """Get filename for a given file ID."""
-    filerefs = [ref for ref in file_references if ref.fileid == fileid]
-    return filerefs[0].filename if len(filerefs) == 1 else f"<unknown:{fileid}>"
-
-
-def read_lines_from(directory_name, file_name):
-    """Read lines from a file."""
-    try:
-        with open(os.path.join(directory_name, file_name)) as f:
-            return f.read().splitlines()
-    except Exception as e:
-        eprint(f"Error reading {file_name}: {e}")
-
-
 def extract_symbols(cxref_path, symbol_names):
     """Extract specified symbols from CXref database."""
-    global files
-
     target_symbols = set(symbol_names)
     found_any = False
     collected_symbols = []
@@ -219,6 +47,7 @@ def extract_symbols(cxref_path, symbol_names):
         lines = read_lines_from(cxref_path, "XFiles")
         lines = skip_header(lines)
         files = unpack_xfiles(lines)
+        cxref_db.files = files
 
         # Read all CXref files (X0000, X0001, etc.)
         for filename in sorted(os.listdir(cxref_path)):
@@ -253,6 +82,12 @@ def extract_symbols(cxref_path, symbol_names):
         lines = read_lines_from("", cxref_path)
         lines = skip_header(lines)
         (files, lines) = unpack_file_lines(lines)
+        cxref_db.files = files
+        # In single-file format, the compact record state flows from file
+        # entries into symbol records.  Initialize marker_value['f'] so
+        # references that omit the 'f' marker inherit the last file entry.
+        if files:
+            cxref_db.marker_value['f'] = files[-1].fileid
         symbols = unpack_symbols(lines)
 
         # Collect and sort matching symbols
