@@ -243,7 +243,7 @@ static Int2StringDictionary typeNamesInitTable[] = {
     {TypeElipsis,           "elipsis"},
 
     {TypeLong,              "long"},
-    {TypeBool,              "boolean"},
+    {TypeBool,              "bool"},
     {TypeNull,              "null"},
 
     {TypeLabel,             "label"},
