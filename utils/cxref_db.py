@@ -197,7 +197,7 @@ def is_valid_hex(s):
         return False
 
 def convert_local_identifier(identifier):
-    source, name = identifier.split('!')
+    source, name = identifier.split('!', 1)
 
     parts = source.split('-')
     if len(parts) != 3:
