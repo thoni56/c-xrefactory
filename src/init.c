@@ -229,7 +229,6 @@ static Int2StringDictionary typeNamesInitTable[] = {
     {TypeError,             "Error"},
     {TypeCppIfElse,         "#if-else-fi"},
     {TypeCppInclude,        "#include"},
-    {TypeCppCollate,        "##"},
 
     {TmodLong,              "long"},
     {TmodShort,             "short"},
