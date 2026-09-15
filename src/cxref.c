@@ -153,14 +153,12 @@ static void setAvailableRefactorings(Symbol *symbol, Usage usage) {
     case TypeFloat:
     case TypeFunction:
     case TypeInducedError:
-    case TypeInheritedFullMethod:
     case TypeInt:
     case TypeKeyword:
     case TypeLong:
     case TypeLongInt:
     case TypeLongSignedInt:
     case TypeLongUnsignedInt:
-    case TypeNonImportedClass:
     case TypeNull:
     case TypePackedType:
     case TypePointer:

@@ -254,8 +254,6 @@ static Int2StringDictionary typeNamesInitTable[] = {
     {TypeYaccSymbol,        "yacc symbol"},
     {TypeCppCollate,        "Cpp##sym"},
     {TypeSpecialComplete,    "(Completion Wizard)"},
-    {TypeInheritedFullMethod,   "(Override Wizard)"},
-    {TypeNonImportedClass,  "fully qualified name"},
     {-1,					NULL}
 };
 

@@ -24,9 +24,7 @@
   TypeExpression - an ambig. name evaluated to expression in java
   TypePackedType - typemodif, when type is in linkname
   TypeSpecialComplet - special completion string (for(;xx!=NULL ..
-  TypeNonImportedClass - for completion
   TypeInducedError - dummy in general
-  TypeInheritedFullMethod - dummy for completion, complete whole definition
   TypeSpecialConstructorCompletion - dummy completion of constructor 'super'
   TypeUnknown - dummy for completion
 
@@ -91,9 +89,7 @@
         ENUM(TypeExpression)                                            \
         ENUM(TypePackedType)                                            \
         ENUM(TypeSpecialComplete)                                       \
-        ENUM(TypeNonImportedClass)                                      \
         ENUM(TypeInducedError)                                          \
-        ENUM(TypeInheritedFullMethod)                                   \
         ENUM(TypeSpecialConstructorCompletion)                          \
         ENUM(TypeUnknown)                                               \
         ENUM(MAX_TYPE)                                                  \

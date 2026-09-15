@@ -117,7 +117,7 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
     // remove parenthesis (if any)
     strcpy(tempString, completions->alternatives[index].string);
     tempLength = strlen(tempString);
-    if (tempLength>0 && tempString[tempLength-1]==')' && completions->alternatives[index].type!=TypeInheritedFullMethod) {
+    if (tempLength>0 && tempString[tempLength-1]==')') {
         tempLength--;
         tempString[tempLength]=0;
     }
