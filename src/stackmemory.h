@@ -20,6 +20,9 @@ typedef struct codeBlock {
     int              firstFreeIndex;
     struct stackFrame *frameAllocations;
     struct codeBlock *outerBlock;
+    /* A file scope block holds declarations that live for the whole file
+       without being global. It is not a nesting level. */
+    bool             isFileScope;
 } CodeBlock;
 
 
@@ -34,6 +37,7 @@ extern void *stackMemoryAlloc(int size);
 extern char *stackMemoryPushString(char *s);
 
 extern void beginBlock(void);
+extern void beginFileScopeBlock(void);
 extern void endBlock(void);
 extern int nestingLevel(void);
 

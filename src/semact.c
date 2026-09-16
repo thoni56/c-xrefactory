@@ -355,8 +355,9 @@ Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbo
         symbol->typeModifier = tt;
         tt->typedefSymbol      = symbol;
     }
-    if (nestingLevel() != 0) {
-        // local scope symbol
+    if (nestingLevel() != 0 || symbol->storage == StorageAuto) {
+        // local scope symbol; StorageAuto at file scope comes from a yacc
+        // %type declaration, which is not global either
         setLocalVariableLinkName(symbol);
     } else if (symbol->type == TypeDefault && symbol->storage == StorageStatic) {
         setStaticFunctionLinkName(symbol, fileName, usage);

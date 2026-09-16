@@ -198,12 +198,18 @@ static void addYaccSymbolReference(Id *name, int usage);
 %%
 
 yaccfile
-    : Start_block {
+    : Start_file_scope {
             // initialize locals
             l_yaccUnion = NULL;
             l_currentType = NULL;
         }
         before_rules '%' '%' rules '%' '%' file
+    ;
+
+/* The %type declarations live for the whole file, so a frame has to stay
+   open across it. It is not a nesting level, so it must not make everything
+   the file declares look local. */
+Start_file_scope:   { beginFileScopeBlock(); }
     ;
 
 before_rules

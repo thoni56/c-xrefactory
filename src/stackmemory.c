@@ -57,6 +57,7 @@ static void fillCodeBlock(CodeBlock *block, int firstFreeIndex, FrameAllocation 
     block->firstFreeIndex = firstFreeIndex;
     block->frameAllocations = allocation;
     block->outerBlock = outerBlock;
+    block->isFileScope = false;
 }
 
 void initOuterCodeBlock(void) {
@@ -106,6 +107,11 @@ void beginBlock(void) {
     fillCodeBlock(currentBlock, currentBlock->firstFreeIndex, currentBlock->frameAllocations, pushed);
 }
 
+void beginFileScopeBlock(void) {
+    beginBlock();
+    currentBlock->isFileScope = true;
+}
+
 void endBlock(void) {
     log_debug("End block");
     //&removeFromFrameUntil(NULL);
@@ -117,10 +123,9 @@ void endBlock(void) {
 
 int nestingLevel(void) {
     int level = 0;
-    CodeBlock *block = currentBlock;
-    while (block->outerBlock != NULL) {
-        block = block->outerBlock;
-        level++;
+    for (CodeBlock *block = currentBlock; block->outerBlock != NULL; block = block->outerBlock) {
+        if (!block->isFileScope)
+            level++;
     }
     return level;
 }

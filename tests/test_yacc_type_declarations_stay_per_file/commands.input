@@ -1,0 +1,10 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/one.y
+<sync>
+-push -olcursor=59 CURDIR/two.y -p CURDIR
+<sync>
+-push -olcursor=59 CURDIR/one.y -p CURDIR
+<sync>
+-olcxmenufilter=2 -p CURDIR
+<sync>
+<exit>
