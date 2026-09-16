@@ -1,0 +1,16 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>test_snapshot_version_mismatch_ignores_db</set-info>
+-push -olcursor=47 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=4 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+-exit
+end-of-options
+

@@ -143,6 +143,11 @@ static FILE *currentCxFile;
  * this flag flips trips an assert. See ideas_disk_read_tripwire. */
 static bool snapshotLoadComplete = false;
 
+/* Set when a scanned file says it was written by another format version.
+   The version record comes first, so the scan can stop before anything has
+   been applied. */
+static bool wrongFormatVersion = false;
+
 typedef struct cxFileScanStep {
     int		recordCode;
     void    (*handlerFunction)(int size, int ri, CharacterBuffer *cb, CxFileScanOperation operation); /* TODO: Break out a type */
@@ -594,10 +599,12 @@ static void scanFunction_VersionCheck(int size,
     getString(cb, versionString, size-1);
     get_version_string(thisVersionString);
     if (strcmp(versionString, thisVersionString) != 0) {
-        /* Silently ignore — the snapshot will be overwritten with the
-         * current format on exit.  A one-time cold start is acceptable. */
-        log_info("Snapshot version mismatch (got '%s', expected '%s'), ignoring",
+        /* Stop the scan. Nothing has been applied yet, so this is the same as
+           having no snapshot at all. It is overwritten in the current format
+           on exit. */
+        log_info("Snapshot version mismatch (got '%s', expected '%s'), ignoring the snapshot",
                  versionString, thisVersionString);
+        wrongFormatVersion = true;
     }
 }
 
@@ -841,8 +848,9 @@ static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable) {
     setupRecordKeyHandlersFromTable(scanDispatchTable);
 
     initCharacterBufferFromFile(&cxFileCharacterBuffer, currentCxFile);
+    wrongFormatVersion = false;
     int ch = ' ';
-    while (!cxFileCharacterBuffer.isAtEOF) {
+    while (!cxFileCharacterBuffer.isAtEOF && !wrongFormatVersion) {
         int scannedInt = scanInteger(&cxFileCharacterBuffer, &ch);
 
         if (cxFileCharacterBuffer.isAtEOF)
