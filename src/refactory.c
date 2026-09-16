@@ -835,7 +835,7 @@ static void renameAtInclude(EditorMarker *point) {
 
     /* For module rename, the user provides the module name ("target"), not the
      * full filename ("target.h").  Append the original suffix so that
-     * renameIncludes gets the correct header filename. */
+     * updateAllIncludeDirectives gets the correct header filename. */
     if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
         char headerFileName[MAX_FILE_NAME_SIZE];
         appendSuffixToModuleName(refactoringOptions.renameTo, includeFileName, headerFileName);
@@ -843,9 +843,9 @@ static void renameAtInclude(EditorMarker *point) {
 
     }
 
-    /* For module rename, update include guard before renameIncludes renames
-     * the file.  The undo/replay mechanism replays edits in forward order,
-     * so guard edits must come before the file rename. */
+    /* For module rename, update include guard before updateAllIncludeDirectives
+     * renames the file.  The undo/replay mechanism replays edits in forward
+     * order, so guard edits must come before the file rename. */
     char headerPath[MAX_FILE_NAME_SIZE];
     strcpy(headerPath, normalizeFileName_static(includeFileName, cwd));
 
