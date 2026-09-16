@@ -309,8 +309,30 @@ void setLocalVariableLinkName(Symbol *p) {
     strcpy(p->linkName,name);
 }
 
+/* A static is private to its file, so its link name has to say which file. A
+   path relative to the project root says that the same way on every machine,
+   which matters because link names are persisted in the snapshot. A file
+   outside the project gets the "/.../<name>" spelling the readers already use
+   for one (see get_relative_filename_from_id in utils/cxref_db.py). */
+static char *projectRelativeFileName(char *fileName) {
+    static char result[MAX_FILE_NAME_SIZE];
+    char       *root = options.detectedProjectRoot;
+    size_t      rootLength = root == NULL ? 0 : strlen(root);
+
+    if (rootLength > 0 && root[rootLength-1] == FILE_PATH_SEPARATOR)
+        rootLength--;
+
+    if (rootLength != 0 && strncmp(fileName, root, rootLength) == 0
+        && fileName[rootLength] == FILE_PATH_SEPARATOR)
+        sprintf(result, "%s", fileName + rootLength + 1);
+    else
+        sprintf(result, "/.../%s", simpleFileName(fileName));
+
+    return result;
+}
+
 static void setStaticFunctionLinkName(Symbol *p, char *fileName, int usage) {
-    char        ttt[TMP_STRING_SIZE];
+    char        ttt[MAX_CX_SYMBOL_SIZE]; /* a file name and a symbol name */
     int         len;
     char        *ss, *basefname;
 
@@ -325,9 +347,9 @@ static void setStaticFunctionLinkName(Symbol *p, char *fileName, int usage) {
     } else {
         basefname=fileName;
     }
-    sprintf(ttt,"%s!%s", simpleFileName(basefname), p->name);
+    snprintf(ttt, sizeof(ttt), "%s!%s", projectRelativeFileName(basefname), p->name);
     len = strlen(ttt);
-    assert(len < TMP_STRING_SIZE-2);
+    assert(len < (int)sizeof(ttt)-2);
     ss = stackMemoryAlloc(len+1);
     strcpy(ss, ttt);
     p->linkName = ss;

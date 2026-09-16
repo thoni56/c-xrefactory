@@ -36,14 +36,13 @@ files = []
 def skip_header(lines):
     global legacy_format
     version_line = lines[2].strip()
-    if not version_line.startswith("34v file format: C-xrefactory"):
+    # The leading number is the record size, so it changes with the
+    # length of the version string
+    match = re.match(r"\d+v file format: C-xrefactory (\S+)", version_line)
+    if not match:
         raise ValueError(f"Error in file version line: {version_line}")
 
-    try:
-        version = version_line.split()[-1]
-        legacy_format = version == "1.6.0"
-    except IndexError:
-        raise ValueError("Could not extract version marking from header.")
+    legacy_format = match.group(1) == "1.6.0"
     return lines[6:]
 
 def read_marker(marker, string):
