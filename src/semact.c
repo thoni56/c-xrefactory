@@ -322,10 +322,14 @@ static char *projectRelativeFileName(char *fileName) {
     if (rootLength > 0 && root[rootLength-1] == FILE_PATH_SEPARATOR)
         rootLength--;
 
-    if (rootLength != 0 && strncmp(fileName, root, rootLength) == 0
-        && fileName[rootLength] == FILE_PATH_SEPARATOR)
+    if (rootLength == 0)
+        /* No project root, so there is nothing to be relative to */
+        sprintf(result, "/.../%s", simpleFileName(fileName));
+    else if (strncmp(fileName, root, rootLength) == 0
+             && fileName[rootLength] == FILE_PATH_SEPARATOR)
         sprintf(result, "%s", fileName + rootLength + 1);
     else
+        /* Outside the project root */
         sprintf(result, "/.../%s", simpleFileName(fileName));
 
     return result;
