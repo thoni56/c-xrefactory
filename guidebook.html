@@ -3493,6 +3493,53 @@ un-preload staleness signals, and <code>definition</code> / <code>references</co
 those events have already made current. So the LSP path needs no architecture of its own —
 it reuses entry refresh (<a href="08-algorithms.html">Algorithms</a>), triggered by different events.</p>
 </div>
+<div class="sect3">
+<h4 id="lsp-refactoring-reach">10.5.1. Reaching refactorings: three tiers</h4>
+<div class="paragraph">
+<p>The Emacs protocol is interactive and LSP is not, but most of that gap can be closed in
+the server rather than in each editor. Every LSP editor gets what the server exposes
+through standard requests. Anything beyond that needs client code, written once per
+editor. So each operation should live in the lowest tier that can carry it:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Standard requests.</strong> Operations with a direct LSP counterpart: rename
+(<code>textDocument/rename</code>), references, definition, and unused symbols as diagnostics.
+These cost nothing per editor.</p>
+</li>
+<li>
+<p><strong>Code actions and <code>workspace/executeCommand</code>.</strong> The portable home for most
+refactorings: extract, move function, add, delete and reorder parameters. The server
+offers the actions that apply at the cursor or selection. Choosing one either carries
+a ready <code>WorkspaceEdit</code>, or runs a command where the server computes the edits and
+applies them with <code>workspace/applyEdit</code>. Editors show these in their refactoring
+menus with no client code.</p>
+</li>
+<li>
+<p><strong>Custom methods plus editor extension code.</strong> Only for real interactivity: asking for a
+name or parameter position, resolving ambiguities, the symbol browser, and yes/no
+questions during an operation. There are two shapes:
+the extension collects the answers up front and passes them as <code>executeCommand</code>
+arguments, or the server asks in the middle of an operation with a custom request
+(e.g. <code>cxref/askUser</code>) that the extension answers. The second is closest to the Emacs
+protocol, but every editor has to implement it. The standard
+<code>window/showMessageRequest</code> covers choices between buttons, not free text.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The aim is to keep tier 3 small. The more an operation&#8217;s questions can be settled before
+it starts, or turned into a choice between buttons, the more editors get it for free.</p>
+</div>
+<div class="paragraph">
+<p>This also shapes how the server is packaged. The server itself is editor-neutral. Each
+editor gets a thin extension that launches it and implements tier 3: a Node extension in
+VS Code, a Lua plugin in Neovim, eglot or lsp-mode in Emacs, a Python plugin in Sublime,
+a plugin (native LSP API or LSP4IJ) in JetBrains IDEs. Editors with little or no
+extension API, such as Zed and Helix, get tiers 1 and 2 only.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_further_refactorings">10.6. Further refactorings</h3>
@@ -3733,6 +3780,13 @@ so <code>definition</code> works across files with no new query mechanism; Pass 
 triggers lazily.</p>
 </li>
 </ol>
+</div>
+<div class="paragraph">
+<p>Exposing refactorings follows the three tiers in
+<a href="10-roadmap.html#lsp-refactoring-reach">Roadmap: Reaching refactorings</a>: standard requests
+first, then code actions and <code>workspace/executeCommand</code> (stubs exist, with
+<code>codeActionProvider</code> still disabled in <code>src/lsp_handler.c</code>), and custom methods only where
+an operation needs interaction during the operation itself.</p>
 </div>
 </div>
 </div>
@@ -11069,7 +11123,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-17 08:24:13 UTC
+Last updated 2026-09-17 08:48:08 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
