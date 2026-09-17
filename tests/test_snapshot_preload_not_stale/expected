@@ -4,14 +4,14 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_snapshot_preload_not_stale</set-info>
--push -preload CURDIR/header.h CURDIR/header.preload -olcursor=77 CURDIR/source.c -p CURDIR
+-push -preload CURDIR/header.h CURDIR/header.preload -olcursor=77 CURDIR/source.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=2 col=4 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--browse-next -preload CURDIR/header.h CURDIR/header.preload -olcursor=77 CURDIR/source.c -p CURDIR
+-browse-next -preload CURDIR/header.h CURDIR/header.preload -olcursor=77 CURDIR/source.c
 end-of-options
 
 <sync>
@@ -27,14 +27,14 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_snapshot_preload_not_stale</set-info>
--push -olcursor=77 CURDIR/source.c -p CURDIR
+-push -olcursor=77 CURDIR/source.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=2 col=4 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--browse-next -olcursor=77 CURDIR/source.c -p CURDIR
+-browse-next -olcursor=77 CURDIR/source.c
 end-of-options
 
 <sync>

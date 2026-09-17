@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server -xrefrc CURDIR/.c-xrefrc
+CXREF -xrefactory-II -server
 -getproject CURDIR/source.c
 <sync>
 <exit>

@@ -1,14 +1,14 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server
--getproject -xrefrc CURDIR/.c-xrefrc CURDIR/parameter.c
+-getproject  CURDIR/parameter.c
 <sync>
--olcxgetrefactorings -olcursor=217 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=217 CURDIR/parameter.c
 <sync>
--olcxgetrefactorings -olcursor=294 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=294 CURDIR/parameter.c
 <sync>
--olcxgetrefactorings -olcursor=382 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=382 CURDIR/parameter.c
 <sync>
--olcxgetrefactorings -olcursor=612 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=612 CURDIR/parameter.c
 <sync>
--olcxgetrefactorings -olcursor=665 CURDIR/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olcursor=665 CURDIR/parameter.c
 <sync>
 <exit>

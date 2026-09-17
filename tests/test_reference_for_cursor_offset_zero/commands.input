@@ -1,4 +1,4 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server
--olcxgetrefactorings -olcursor=0 -xrefrc CURDIR/.c-xrefrc CURDIR/test.c
+-olcxgetrefactorings -olcursor=0  CURDIR/test.c
 <sync>
 <exit>

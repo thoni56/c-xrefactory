@@ -4,28 +4,28 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_navigation_previous_transitive_header_stale</set-info>
--push -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/inner.h CURDIR/inner.preload -olcursor=48 CURDIR/source.c -p CURDIR
+-push -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/inner.h CURDIR/inner.preload -olcursor=48 CURDIR/source.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=4 col=4 len=<n>>CURDIR/inner.h</position-lc>
 </goto>
--browse-next -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/inner.h CURDIR/inner.preload -olcursor=37 CURDIR/inner.h -p CURDIR
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/inner.h CURDIR/inner.preload -olcursor=37 CURDIR/inner.h
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=7 col=4 len=<n>>CURDIR/inner.h</position-lc>
 </goto>
--browse-next -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/inner.h CURDIR/inner.preload -olcursor=88 CURDIR/inner.h -p CURDIR
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/inner.h CURDIR/inner.preload -olcursor=88 CURDIR/inner.h
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=4 col=4 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--browse-previous -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/inner.h CURDIR/inner.modified -olcursor=48 CURDIR/source.c -p CURDIR
+-browse-previous -preload CURDIR/source.c CURDIR/source.preload -preload CURDIR/inner.h CURDIR/inner.modified -olcursor=48 CURDIR/source.c
 end-of-options
 
 <sync>

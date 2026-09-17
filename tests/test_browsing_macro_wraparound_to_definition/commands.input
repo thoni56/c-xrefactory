@@ -1,16 +1,16 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/aaa_usage.c
 <sync>
--push -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h -p CURDIR
+-push -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h
 <sync>
--browse-next -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h -p CURDIR
+-browse-next -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h
 <sync>
--browse-next -preload CURDIR/aaa_usage.c CURDIR/aaa_usage.preload -olcursor=32 CURDIR/aaa_usage.c -p CURDIR
+-browse-next -preload CURDIR/aaa_usage.c CURDIR/aaa_usage.preload -olcursor=32 CURDIR/aaa_usage.c
 <sync>
--browse-next -preload CURDIR/bbb_usage.c CURDIR/bbb_usage.preload -olcursor=32 CURDIR/bbb_usage.c -p CURDIR
+-browse-next -preload CURDIR/bbb_usage.c CURDIR/bbb_usage.preload -olcursor=32 CURDIR/bbb_usage.c
 <sync>
--browse-next -preload CURDIR/ccc_usage.c CURDIR/ccc_usage.preload -olcursor=32 CURDIR/ccc_usage.c -p CURDIR
+-browse-next -preload CURDIR/ccc_usage.c CURDIR/ccc_usage.preload -olcursor=32 CURDIR/ccc_usage.c
 <sync>
--browse-next -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h -p CURDIR
+-browse-next -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h
 <sync>
 <exit>

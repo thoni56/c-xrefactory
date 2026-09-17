@@ -1,22 +1,22 @@
 CXREF -xrefactory-II -server -o server-buffer
--push -olcursor=641 CURDIR/index.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -olcursor=641 CURDIR/index.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=21 col=5 len=<n>>CURDIR/index.c</position-lc>
 </goto>
--getproject -xrefrc CURDIR/.c-xrefrc CURDIR/browsing.c
+-getproject  CURDIR/browsing.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--getproject -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
+-getproject  CURDIR/source.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--getproject -xrefrc CURDIR/.c-xrefrc CURDIR/main.c
+-getproject  CURDIR/main.c
 end-of-options
 
 <sync>

@@ -1,6 +1,6 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server
--getproject -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/index.c
+-getproject  CURDIR/cexercise/index.c
 <sync>
--olcxgetrefactorings -olmark=0 -olcursor=292 CURDIR/cexercise/refactorings/parameter.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgetrefactorings -olmark=0 -olcursor=292 CURDIR/cexercise/refactorings/parameter.c
 <sync>
 <exit>

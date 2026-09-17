@@ -1,8 +1,8 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/source.c
 <sync>
--push -olcursor=4 CURDIR/other.c -p CURDIR
+-push -olcursor=4 CURDIR/other.c
 <sync>
--push -olcursor=47 CURDIR/source.c -p CURDIR
+-push -olcursor=47 CURDIR/source.c
 <sync>
 <exit>

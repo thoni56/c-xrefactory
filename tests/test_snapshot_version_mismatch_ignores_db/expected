@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_snapshot_version_mismatch_ignores_db</set-info>
--push -olcursor=47 CURDIR/source.c -p CURDIR
+-push -olcursor=47 CURDIR/source.c
 end-of-options
 
 <sync>

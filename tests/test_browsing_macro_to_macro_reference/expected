@@ -4,14 +4,14 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_navigation_macro_to_macro_reference</set-info>
--push -preload CURDIR/macros.h CURDIR/macros.preload -olcursor=79 CURDIR/macros.h -p CURDIR
+-push -preload CURDIR/macros.h CURDIR/macros.preload -olcursor=79 CURDIR/macros.h
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=5 col=8 len=<n>>CURDIR/macros.h</position-lc>
 </goto>
--browse-next -preload CURDIR/macros.h CURDIR/macros.preload -olcursor=79 CURDIR/macros.h -p CURDIR
+-browse-next -preload CURDIR/macros.h CURDIR/macros.preload -olcursor=79 CURDIR/macros.h
 end-of-options
 
 <sync>

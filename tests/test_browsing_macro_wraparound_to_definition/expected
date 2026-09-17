@@ -4,35 +4,35 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_navigation_macro_wraparound_to_definition</set-info>
--push -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h -p CURDIR
+-push -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=1 col=8 len=<n>>CURDIR/zzz_define.h</position-lc>
 </goto>
--browse-next -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h -p CURDIR
+-browse-next -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=3 col=9 len=<n>>CURDIR/aaa_usage.c</position-lc>
 </goto>
--browse-next -preload CURDIR/aaa_usage.c CURDIR/aaa_usage.preload -olcursor=32 CURDIR/aaa_usage.c -p CURDIR
+-browse-next -preload CURDIR/aaa_usage.c CURDIR/aaa_usage.preload -olcursor=32 CURDIR/aaa_usage.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=3 col=9 len=<n>>CURDIR/bbb_usage.c</position-lc>
 </goto>
--browse-next -preload CURDIR/bbb_usage.c CURDIR/bbb_usage.preload -olcursor=32 CURDIR/bbb_usage.c -p CURDIR
+-browse-next -preload CURDIR/bbb_usage.c CURDIR/bbb_usage.preload -olcursor=32 CURDIR/bbb_usage.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=3 col=9 len=<n>>CURDIR/ccc_usage.c</position-lc>
 </goto>
--browse-next -preload CURDIR/ccc_usage.c CURDIR/ccc_usage.preload -olcursor=32 CURDIR/ccc_usage.c -p CURDIR
+-browse-next -preload CURDIR/ccc_usage.c CURDIR/ccc_usage.preload -olcursor=32 CURDIR/ccc_usage.c
 end-of-options
 
 <sync>
@@ -40,7 +40,7 @@ end-of-options
 <goto>
  <position-lc line=1 col=8 len=<n>>CURDIR/zzz_define.h</position-lc>
 </goto>
--browse-next -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h -p CURDIR
+-browse-next -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h
 end-of-options
 
 <sync>

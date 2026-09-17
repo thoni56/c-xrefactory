@@ -4,21 +4,21 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_navigation_multifile_preload</set-info>
--push -preload CURDIR/source1.c CURDIR/source1.preload -olcursor=25 CURDIR/source1.c -p CURDIR
+-push -preload CURDIR/source1.c CURDIR/source1.preload -olcursor=25 CURDIR/source1.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=2 col=4 len=<n>>CURDIR/source1.c</position-lc>
 </goto>
--browse-next -preload CURDIR/source1.c CURDIR/source1.preload -olcursor=25 CURDIR/source1.c -p CURDIR
+-browse-next -preload CURDIR/source1.c CURDIR/source1.preload -olcursor=25 CURDIR/source1.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=1 col=11 len=<n>>CURDIR/common.h</position-lc>
 </goto>
--browse-next -preload CURDIR/common.h CURDIR/common.preload -preload CURDIR/source2.c CURDIR/source2.preload -olcursor=11 CURDIR/common.h -p CURDIR
+-browse-next -preload CURDIR/common.h CURDIR/common.preload -preload CURDIR/source2.c CURDIR/source2.preload -olcursor=11 CURDIR/common.h
 end-of-options
 
 <sync>

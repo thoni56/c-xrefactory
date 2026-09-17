@@ -1,12 +1,12 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/source.c
 <sync>
--push -olcursor=29 CURDIR/source.c -p CURDIR
+-push -olcursor=29 CURDIR/source.c
 <sync>
--browse-next -olcursor=29 CURDIR/source.c -p CURDIR
+-browse-next -olcursor=29 CURDIR/source.c
 <sync>
--browse-next -olcursor=29 CURDIR/source.c -p CURDIR
+-browse-next -olcursor=29 CURDIR/source.c
 <sync>
--browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=29 CURDIR/source.c -p CURDIR
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=29 CURDIR/source.c
 <sync>
 <exit>
