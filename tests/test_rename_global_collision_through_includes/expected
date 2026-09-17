@@ -1,0 +1,78 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-rename -renameto=total -olmark=70 -olcursor=70 CURDIR/main.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=25 len=<n>>CURDIR/counter.c</position-off>
+</goto>
+<precheck len=<n>> counter </precheck>
+<goto>
+ <position-off off=10 len=<n>>CURDIR/counter.h</position-off>
+</goto>
+<precheck len=<n>> counter;</precheck>
+<goto>
+ <position-off off=68 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> counter </precheck>
+<goto>
+ <position-off off=70 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<display-resolution len=<n> mtype=1 continue=1>These references may be misinterpreted after refactoring</display-resolution>
+-exit
+end-of-options
+
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-rename -renameto=elsewhere -olmark=70 -olcursor=70 CURDIR/main.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=25 len=<n>>CURDIR/counter.c</position-off>
+</goto>
+<precheck len=<n>> counter </precheck>
+<goto>
+ <position-off off=10 len=<n>>CURDIR/counter.h</position-off>
+</goto>
+<precheck len=<n>> counter;</precheck>
+<goto>
+ <position-off off=68 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> counter </precheck>
+<goto>
+ <position-off off=70 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<goto>
+ <position-off off=26 len=<n>>CURDIR/counter.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>counter</str>  <str len=<n>>elsewhere</str>
+</replacement>
+<goto>
+ <position-off off=11 len=<n>>CURDIR/counter.h</position-off>
+</goto>
+<replacement>
+ <str len=<n>>counter</str>  <str len=<n>>elsewhere</str>
+</replacement>
+<goto>
+ <position-off off=69 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>counter</str>  <str len=<n>>elsewhere</str>
+</replacement>
+<goto>
+ <position-off off=70 len=<n>>CURDIR/main.c</position-off>
+</goto>
+-exit
+end-of-options
+
