@@ -663,7 +663,7 @@ Mark stale on completion::
 
 ==== Interactive Dialogs
 
-Some refactorings involve interactive dialogs with the client:
+Some operations involve interactive dialogs with the client:
 
 Symbol disambiguation (`beInteractive`)::
   When multiple symbols match the cursor position, `displayResolutionDialog()` sends
