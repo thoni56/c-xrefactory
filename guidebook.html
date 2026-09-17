@@ -946,7 +946,8 @@ This creates constraints for `c-xrefactory&#8217;s advanced refactorings:</p>
 <div class="paragraph">
 <p><strong>Interactive Refactorings</strong>: <code>c-xrefactory&#8217;s extract/parameter operations
 require multi-step user input (names, positions, declarations). LSP&#8217;s
-`textDocument/codeAction</code> doesn&#8217;t support interactive dialogs.</p>
+`textDocument/codeAction</code> can offer a refactoring, but has no standard way
+to ask the user for input while it runs.</p>
 </div>
 <div class="paragraph">
 <p><strong>Symbol Browsing</strong>: <code>c-xrefactory</code> provides interactive symbol browsers
@@ -954,25 +955,9 @@ with filtering and keyboard navigation. LSP returns flat reference lists
 with no standard for interactive UI.</p>
 </div>
 <div class="paragraph">
-<p><strong>Strategy</strong>: The LSP implementation aims to:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Provide basic IDE features (definition, completion, simple refactorings)
-to modern editors</p>
-</li>
-<li>
-<p>Expose `c-xrefactory&#8217;s advanced refactoring capabilities where possible</p>
-</li>
-<li>
-<p>Keep the Emacs client as the primary interface for full interactive features</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>LSP serves to make <code>c-xrefactory</code> more accessible while the Emacs client
-probably will remain the gateway to its complete refactoring power.</p>
+<p>How much of this can still reach LSP editors, and what each editor would need
+in its own extension, is covered in
+<a href="10-roadmap.html#lsp-refactoring-reach">Roadmap: Reaching refactorings</a>.</p>
 </div>
 </div>
 </div>
@@ -11123,7 +11108,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-17 08:48:08 UTC
+Last updated 2026-09-17 08:50:37 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
