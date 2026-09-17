@@ -2034,7 +2034,7 @@ defines the symbol being navigated to.</p>
 from, or are about the whole project by definition, so no include-based subset can make
 their answer complete. For those, after Pass 3, the server counts the CUs that have
 never been parsed and, if there are any, asks "N of M compilation units need reparsing.
-Parse all before &#8230;&#8203;?" (see Confirmation in the editor protocol below). Answering yes
+Parse all before &#8230;&#8203;?" (see Blocking confirmation under Interactive Dialogs below). Answering yes
 parses every one of them, saving the snapshot after every 100 CUs so that progress
 survives an interrupt or a crash. That is a save interval, not a limit.</p>
 </div>
@@ -2697,16 +2697,27 @@ from the pipe via <code>readOptionsFromPipe()</code> without conflicting with th
 loop. A local copy of <code>savedOptions</code> prevents the inner <code>callServer()</code> from clobbering
 the refactoring&#8217;s option state.</p>
 </dd>
-<dt class="hdlist1">Confirmation (<code>ppcAskConfirmation</code> / <code>waitForUserConfirmation</code>)</dt>
+<dt class="hdlist1">Advisory confirmation (<code>ppcAskConfirmation</code>, <code>&lt;ask-confirmation&gt;</code>)</dt>
 <dd>
-<p>The server writes <code>&lt;ask-confirmation&gt;</code> followed by <code>&lt;sync&gt;</code> and waits for a response.
-The client shows a yes/no dialog and sends <code>-continue</code> or <code>-cancel</code> back through
-the pipe. The server reads the response directly from stdin (bypassing
-<code>readOptionsFromPipe</code> to avoid clobbering the request&#8217;s option buffer), then continues
-with the operation. Both responses produce output — "yes" may trigger additional work
-(e.g. parsing), while "no" proceeds with what is available.<br>
-Used by search completeness detection: when unparsed CUs exist, the server asks the
-user whether to parse them all before searching.</p>
+<p>The server does not wait. It writes <code>&lt;ask-confirmation&gt;</code> and then the rest of its
+answer in the same batch, including any buffer edits. The client shows a yes/no
+dialog: on yes it goes on processing what follows, on no it aborts the dispatch and
+discards the edits it has already received. The server never learns the answer.<br>
+Use it when the server can compute everything first and the user only decides whether
+to apply it. Used by refactorings (<code>src/refactory.c</code>), e.g. "The refactoring may change
+program behaviour, really continue?".</p>
+</dd>
+<dt class="hdlist1">Blocking confirmation (<code>waitForUserConfirmation</code>, <code>&lt;wait-confirmation&gt;</code>)</dt>
+<dd>
+<p>The server writes <code>&lt;wait-confirmation&gt;</code> followed by <code>&lt;sync&gt;</code> and blocks until the
+client answers. The client shows a yes/no dialog and sends a bare <code>-continue</code> or
+<code>-cancel</code> line back through the pipe. The server reads it directly from stdin
+(bypassing <code>readOptionsFromPipe</code> to avoid clobbering the request&#8217;s option buffer), then
+continues with the operation. Both answers produce output: yes may trigger additional
+work (e.g. parsing), while no proceeds with what is available.<br>
+Use it when the answer changes what the server computes. Used by the parse-all check
+for <a href="#project-wide-operations">project-wide operations</a>: when unparsed CUs exist, the
+server asks whether to parse them all before searching or checking for unused globals.</p>
 </dd>
 <dt class="hdlist1">Extraction dialog</dt>
 <dd>
@@ -11278,7 +11289,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-17 11:42:11 UTC
+Last updated 2026-09-17 12:24:03 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
