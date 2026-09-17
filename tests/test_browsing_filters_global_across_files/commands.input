@@ -1,0 +1,22 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/main.c
+<sync>
+-push -olcursor=52 CURDIR/a.c
+<sync>
+-olcxpop
+<sync>
+-push -olcursor=45 CURDIR/main.c
+<sync>
+-olcxmenufilter=0
+<sync>
+-olcxmenufilter=1
+<sync>
+-olcxfilter=0 -olcursor=0 nil
+<sync>
+-olcxfilter=1 -olcursor=0 nil
+<sync>
+-olcxfilter=2 -olcursor=0 nil
+<sync>
+-olcxfilter=3 -olcursor=0 nil
+<sync>
+<exit>

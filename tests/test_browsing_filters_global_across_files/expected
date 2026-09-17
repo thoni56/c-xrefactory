@@ -1,0 +1,85 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-push -olcursor=52 CURDIR/a.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=11 len=<n>>CURDIR/a.c</position-lc>
+</goto>
+-olcxpop
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=4 col=11 len=<n>>CURDIR/a.c</position-lc>
+</goto>
+<bottom-information len=<n>>stack is now empty</bottom-information>
+-push -olcursor=45 CURDIR/main.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=4 len=<n>>CURDIR/globals.c</position-lc>
+</goto>
+-olcxmenufilter=0
+end-of-options
+
+<sync>
+<resolution>
+ <symbol line=2 selected=0 base=0 drefn=1 refn=1 len=<n>>counter</symbol>
+ <symbol line=3 selected=1 base=0 drefn=2 refn=3 len=<n>>counter</symbol>
+</resolution>
+-olcxmenufilter=1
+end-of-options
+
+<sync>
+<resolution>
+ <symbol line=2 selected=1 base=0 drefn=2 refn=3 len=<n>>counter</symbol>
+</resolution>
+-olcxfilter=0 -olcursor=0 nil
+end-of-options
+
+<sync>
+<reference-list val=2 symbol="counter">
+<src-line refn=1 len=<n>>globals.c:3:int counter = 0;      // definition</src-line>
+<src-line refn=1 len=<n>>globals.h:4:extern int counter;  // declaration</src-line>
+<src-line refn=1 len=<n>>main.c:4:    counter = 1;</src-line>
+<src-line refn=1 len=<n>>main.c:5:    int *p = &counter;</src-line>
+<src-line refn=1 len=<n>>main.c:6:    return counter;</src-line>
+</reference-list>
+-olcxfilter=1 -olcursor=0 nil
+end-of-options
+
+<sync>
+<reference-list val=2 symbol="counter">
+<src-line refn=1 len=<n>>globals.c:3:int counter = 0;      // definition</src-line>
+<src-line refn=1 len=<n>>globals.h:4:extern int counter;  // declaration</src-line>
+<src-line refn=1 len=<n>>main.c:4:    counter = 1;</src-line>
+<src-line refn=1 len=<n>>main.c:5:    int *p = &counter;</src-line>
+</reference-list>
+-olcxfilter=2 -olcursor=0 nil
+end-of-options
+
+<sync>
+<reference-list val=2 symbol="counter">
+<src-line refn=1 len=<n>>globals.c:3:int counter = 0;      // definition</src-line>
+<src-line refn=1 len=<n>>globals.h:4:extern int counter;  // declaration</src-line>
+<src-line refn=1 len=<n>>main.c:4:    counter = 1;</src-line>
+</reference-list>
+-olcxfilter=3 -olcursor=0 nil
+end-of-options
+
+<sync>
+<bottom-information len=<n>>Moving to the first reference</bottom-information>
+<reference-list val=0 symbol="counter">
+<src-line refn=1 len=<n>>globals.c:3:int counter = 0;      // definition</src-line>
+<src-line refn=1 len=<n>>globals.h:4:extern int counter;  // declaration</src-line>
+</reference-list>
+-exit
+end-of-options
+
