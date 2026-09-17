@@ -1,0 +1,30 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-olcxpushname=helper -olcxlccursor=1:0 -olcursor=0 CURDIR/main.c
+end-of-options
+
+<sync>
+<wait-confirmation len=<n>>3 of 3 compilation units need reparsing. Parse all before browsing?</wait-confirmation>
+-continue
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=4 len=<n>>CURDIR/helper.c</position-lc>
+</goto>
+-olcxfilter=0 -olcursor=0 nil
+end-of-options
+
+<sync>
+<reference-list val=0 symbol="helper">
+<src-line refn=1 len=<n>>helper.c:3:int helper(void) {</src-line>
+<src-line refn=1 len=<n>>helper.h:1:int helper(void);</src-line>
+<src-line refn=1 len=<n>>other.c:4:    return helper();</src-line>
+</reference-list>
+-exit
+end-of-options
+
