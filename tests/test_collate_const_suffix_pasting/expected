@@ -1,11 +1,11 @@
 123##L
     @source.c:5:17
 123L
-    @source.c:5:18
+    @source.c:5:17
 42##UL
     @source.c:4:27
 42UL
-    @source.c:4:28
+    @source.c:4:27
 MAKE_L
     @source.c:2:8
     @source.c:5:10

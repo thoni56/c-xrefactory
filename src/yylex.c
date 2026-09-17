@@ -2013,7 +2013,6 @@ static void collate_const_id(char **writeBufferWriteP, char **lhsP, char **rhsP,
 
     assert(position.col >= 0);
     cxAddCollateReference(*writeBufferWriteP, *writeBufferWriteP + leftPartLength, position);
-    position.col++;
 
     finishLexemWithPosition(writeBufferWriteP, position);
 
