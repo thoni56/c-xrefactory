@@ -69,6 +69,24 @@ static bool needsReferenceDatabase(ServerOperation operation) {
         ;
 }
 
+/* Name-based operations: the request names a symbol, not a position, so the
+   name can live in any compilation unit and all of them must be parsed. */
+static bool needsWholeProjectParsed(ServerOperation operation) {
+    return operation==OP_SEARCH
+        ||  operation==OP_UNUSED_GLOBAL
+        ||  operation==OP_BROWSE_PUSH_NAME
+        ;
+}
+
+static const char *parseAllPromptFor(ServerOperation operation) {
+    switch (operation) {
+    case OP_SEARCH:           return "searching";
+    case OP_UNUSED_GLOBAL:    return "checking for unused";
+    case OP_BROWSE_PUSH_NAME: return "browsing";
+    default:                  assert(0); return "";
+    }
+}
+
 static bool requiresProcessingInputFile(ServerOperation operation) {
     return operation==OP_COMPLETION
            || operation==OP_INTERNAL_PARSE_TO_EXTRACT
@@ -670,9 +688,8 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         parseUnparsedSiblingCUs(requestFileNumber, baseArgs);
     }
 
-    /* Search/unused completeness: if stale CUs exist, ask user before proceeding */
-    if (projectContextInitialized && (options.serverOperation == OP_SEARCH
-                                      || options.serverOperation == OP_UNUSED_GLOBAL)) {
+    /* Completeness for name-based operations: if stale CUs exist, ask user before proceeding */
+    if (projectContextInitialized && needsWholeProjectParsed(options.serverOperation)) {
         int totalCUs = 0, staleCUs = 0;
         for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
             FileItem *fi = getFileItemWithFileNumber(i);
@@ -684,8 +701,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         }
         if (staleCUs > 0) {
             char msg[TMP_STRING_SIZE];
-            const char *operationName = options.serverOperation == OP_SEARCH
-                ? "searching" : "checking for unused";
+            const char *operationName = parseAllPromptFor(options.serverOperation);
             sprintf(msg, "%d of %d compilation units need reparsing. Parse all before %s?",
                     staleCUs, totalCUs, operationName);
             if (waitForUserConfirmation(msg)) {
