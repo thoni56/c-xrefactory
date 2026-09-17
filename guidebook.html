@@ -2068,7 +2068,29 @@ survives an interrupt or a crash. That is a save interval, not a limit.</p>
 <div class="paragraph">
 <p>A related consequence: on a cold start the symbol menu at filter level 0 (all symbols
 with the name) only lists symbols from CUs parsed so far. A same-named static in a file
-not connected through includes appears only once that file has been parsed.</p>
+not connected through includes appears only once that file has been parsed. This is
+left as is: the menu offers <em>other</em> symbols with the same name, so a missing entry does
+not make the selected symbol&#8217;s references wrong, and a menu filter change is too cheap
+an operation to put a parse-all dialog behind.</p>
+</div>
+<div class="paragraph">
+<p>Operations that do <strong>not</strong> need every CU, and why:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Rename&#8217;s safety check</dt>
+<dd>
+<p>Rename does not look up whether the new name exists somewhere. It renames in the
+buffers, reparses, pushes on the new name at the definition and compares the references
+with the renamed occurrences; any difference means some reference would bind to a
+different symbol. Collisions that matter at compile time happen only in a CU that sees
+both declarations. Such a CU includes the renamed symbol&#8217;s header, so include-based
+discovery parses it. What escapes is a clash with a global defined in a module that
+shares no header, which only appears when linking. That is the same trade-off as
+<a href="/workspace/1/decisions/C-xrefactory#13">ADR-0013</a>, and the linker reports it.
+<code>test_rename_global_collision_through_includes</code> pins both cases.</p>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect3">
@@ -11289,7 +11311,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-17 12:28:13 UTC
+Last updated 2026-09-17 12:45:44 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
