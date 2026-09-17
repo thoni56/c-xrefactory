@@ -8,6 +8,11 @@ end-of-options
 end-of-options
 
 <sync>
+<wait-confirmation len=<n>>1 of 1 compilation units need reparsing. Parse all before browsing?</wait-confirmation>
+-continue
+end-of-options
+
+<sync>
 <goto>
  <position-lc line=9 col=5 len=<n>>CURDIR/browsing.c</position-lc>
 </goto>

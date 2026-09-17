@@ -3,6 +3,8 @@ CXREF -xrefactory-II -crlfconversion -crconversion -server
 <sync>
 -olcxpushname=browsing -olcxlccursor=2:0  -olcursor=19 CURDIR/browsing.c
 <sync>
+-continue
+<sync>
 -olcxpushname=i -olcxlccursor=9:5  -olcursor=111 CURDIR/browsing.c
 <sync>
 -browse-next  -olcursor=146 CURDIR/browsing.c

@@ -1,13 +1,16 @@
-Bug: push by name finds nothing when only -getproject has run
+Missing: decided behaviour for push by name when the name has several bindings
 
--olcxpushname is not in the "N of M compilation units need reparsing" check in
-src/server.c, so with the project merely locked by -getproject nothing is
-parsed. The first push answers "No symbol found" and the following -browse-next
-calls then report an empty stack. The -p option used to mask this by getting
-the project scanned before any request.
+browsing.c has three bindings of 'i': the struct field at 10:22, the local at
+13:8 and another in the inner block at line 22. -olcxpushname=i answers
+<display-or-update-browser> and browses the local.
 
-Same defect as test_browsing_push_name_parses_whole_project, and the fix is the
-same: add OP_BROWSE_PUSH_NAME to that check. Warming the file with another
-request first was tried and abandoned, because push by name then resolves 'i'
-to whichever symbol was looked at last instead of the struct field at 10:22
-that expected records. Remove this file when the check is fixed.
+The expected here says it jumps to the struct field. That was recorded when
+this Makefile ran XrefMode -create first, and the on-disk database holds only
+externals, so the locals did not exist and the jump was unique by accident.
+The -create is gone now and the database is cleared on every run, so this is a
+real cold start.
+
+Decide what an ambiguous name should do, then rewrite expected from the second
+push onward. Everything before it is verified, including the "1 of 1
+compilation units need reparsing. Parse all before browsing?" prompt that
+arrives now that push by name is in the parse-all gate in src/server.c.

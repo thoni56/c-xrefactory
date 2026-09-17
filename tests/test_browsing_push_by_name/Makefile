@@ -1,7 +1,10 @@
 include ../Makefile.server
 
+# Scenario: push by name on a cold start. No -create, so nothing is indexed
+# and the server has to parse the project itself before it can find the name.
+
 $(TEST):
-	$(CXREF) -create -o out
+	@rm -rf CXrefs .c-xref out output output.tmp server-buffer
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
