@@ -253,6 +253,36 @@ widely-shared utility headers (e.g. `avutil.h` in ffmpeg pulls in ~978 siblings)
 A future optimization would filter to sibling CUs sharing the _specific_ header that
 defines the symbol being navigated to.
 
+[[project-wide-operations]]
+==== Project-wide Operations: Parse All
+
+Pass 3 follows includes from a position. Some operations have no position to start
+from, or are about the whole project by definition, so no include-based subset can make
+their answer complete. For those, after Pass 3, the server counts the CUs that have
+never been parsed and, if there are any, asks "N of M compilation units need reparsing.
+Parse all before ...?" (see Confirmation in the editor protocol below). Answering yes
+parses every one of them, saving the snapshot after every 100 CUs so that progress
+survives an interrupt or a crash. That is a save interval, not a limit.
+
+[cols="2,3"]
+|===
+|Operation |Status
+
+|Search (`OP_SEARCH`)
+|Asks
+
+|Unused globals (`OP_UNUSED_GLOBAL`)
+|Asks
+
+|Push by name (`OP_BROWSE_PUSH_NAME`)
+|Does not ask yet, so on a cold start it answers "No symbol found." Pinned by the
+ suspended `test_browsing_push_name_parses_whole_project`.
+|===
+
+A related consequence: on a cold start the symbol menu at filter level 0 (all symbols
+with the name) only lists symbols from CUs parsed so far. A same-named static in a file
+not connected through includes appears only once that file has been parsed.
+
 ==== Staleness After Refactoring
 
 Refactoring operations (rename, move-function, etc.) modify editor buffers in memory.
