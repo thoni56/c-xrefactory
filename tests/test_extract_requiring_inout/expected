@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_extract_requiring_inout</set-info>
--rfct-extract-function  -olmark=116 -olcursor=220 CURDIR/source.c -p CURDIR
+-rfct-extract-function  -olmark=116 -olcursor=220 CURDIR/source.c
 end-of-options
 
 <sync>

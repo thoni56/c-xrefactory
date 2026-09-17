@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-rename -renameto=total -olmark=56 -olcursor=56 CURDIR/source.c -p CURDIR
+-rfct-rename -renameto=total -olmark=56 -olcursor=56 CURDIR/source.c
 end-of-options
 
 <sync>

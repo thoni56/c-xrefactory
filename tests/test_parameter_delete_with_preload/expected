@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-del-param -olcxparnum=2 -olcursor=75 CURDIR/source.c -preload CURDIR/source.c CURDIR/source.preload -p CURDIR
+-rfct-del-param -olcxparnum=2 -olcursor=75 CURDIR/source.c -preload CURDIR/source.c CURDIR/source.preload
 end-of-options
 
 <sync>

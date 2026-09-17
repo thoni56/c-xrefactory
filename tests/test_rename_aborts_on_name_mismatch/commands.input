@@ -1,6 +1,6 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/source.c
 <sync>
--rfct-rename -renameto=G -olcursor=4 CURDIR/source.c -p CURDIR
+-rfct-rename -renameto=G -olcursor=4 CURDIR/source.c
 <sync>
 <exit>

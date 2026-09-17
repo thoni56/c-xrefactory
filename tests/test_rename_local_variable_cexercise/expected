@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-rename -renameto=p -olcursor=374 CURDIR/cexercise/refactorings/rename.c -p CURDIR
+-rfct-rename -renameto=p -olcursor=374 CURDIR/cexercise/refactorings/rename.c
 end-of-options
 
 <sync>

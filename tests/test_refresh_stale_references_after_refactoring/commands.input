@@ -1,8 +1,8 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/source_b.c
 <sync>
--rfct-move-function -commentmovinglevel=0 -movetargetfile=CURDIR/source_a.c -rfct-target-line=7 -olcursor=5 CURDIR/source_a.c -p CURDIR
+-rfct-move-function -commentmovinglevel=0 -movetargetfile=CURDIR/source_a.c -rfct-target-line=7 -olcursor=5 CURDIR/source_a.c
 <sync>
--push -olcursor=39 CURDIR/source_b.c -p CURDIR
+-push -olcursor=39 CURDIR/source_b.c
 <sync>
 <exit>

@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-rename-included-file -renameto=include2.h -olcursor=6 CURDIR/include.c -p CURDIR
+-rfct-rename-included-file -renameto=include2.h -olcursor=6 CURDIR/include.c
 end-of-options
 
 <sync>

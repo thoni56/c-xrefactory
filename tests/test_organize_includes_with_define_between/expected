@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-organize-includes -olcursor=0 CURDIR/source.c -p CURDIR
+-rfct-organize-includes -olcursor=0 CURDIR/source.c
 end-of-options
 
 <sync>
@@ -19,7 +19,7 @@ end-of-options
 #include "memory.h"
 </str>
 </replacement>
--rfct-organize-includes -olcursor=67 CURDIR/source.c -p CURDIR
+-rfct-organize-includes -olcursor=67 CURDIR/source.c
 end-of-options
 
 <sync>

@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-del-param -olcxparnum=1 -olmark=0 -olcursor=482 CURDIR/cexercise/refactorings/parameter.c -p CURDIR
+-rfct-del-param -olcxparnum=1 -olmark=0 -olcursor=482 CURDIR/cexercise/refactorings/parameter.c
 end-of-options
 
 <sync>

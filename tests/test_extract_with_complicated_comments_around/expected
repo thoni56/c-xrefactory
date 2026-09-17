@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-extract-function -olmark=5350 -olcursor=5440 CURDIR/test_sources/yylex.c -p CURDIR
+-rfct-extract-function -olmark=5350 -olcursor=5440 CURDIR/test_sources/yylex.c
 end-of-options
 
 <sync>

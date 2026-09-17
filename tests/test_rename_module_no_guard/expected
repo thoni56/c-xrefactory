@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-rename-module -renameto=target -olcursor=10 CURDIR/main.c -p CURDIR
+-rfct-rename-module -renameto=target -olcursor=10 CURDIR/main.c
 end-of-options
 
 <sync>

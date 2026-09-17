@@ -1,6 +1,6 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/test_source/hello.c
 <sync>
--rfct-extract-macro -olmark=54 -olcursor=125 CURDIR/test_source/hello.c -p CURDIR
+-rfct-extract-macro -olmark=54 -olcursor=125 CURDIR/test_source/hello.c
 <sync>
 <exit>

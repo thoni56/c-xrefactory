@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_extract_from_cgreen_ensure</set-info>
--rfct-extract-function -olmark=173 -olcursor=157 CURDIR/source.c -p CURDIR
+-rfct-extract-function -olmark=173 -olcursor=157 CURDIR/source.c
 end-of-options
 
 <sync>

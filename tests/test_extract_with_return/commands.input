@@ -1,6 +1,6 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/test_sources/extract.c
 <sync>
--rfct-extract-function -olmark=316 -olcursor=424 CURDIR/test_sources/extract.c -p CURDIR
+-rfct-extract-function -olmark=316 -olcursor=424 CURDIR/test_sources/extract.c
 <sync>
 <exit>

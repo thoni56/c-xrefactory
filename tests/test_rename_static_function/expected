@@ -4,14 +4,14 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push -olcursor=11 CURDIR/b/util.c -p CURDIR
+-push -olcursor=11 CURDIR/b/util.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=1 col=11 len=<n>>CURDIR/b/util.c</position-lc>
 </goto>
--rfct-rename -renameto=helper2 -olcursor=11 CURDIR/a/util.c -p CURDIR
+-rfct-rename -renameto=helper2 -olcursor=11 CURDIR/a/util.c
 end-of-options
 
 <sync>

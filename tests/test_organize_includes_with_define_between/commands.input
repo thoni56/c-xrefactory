@@ -1,8 +1,8 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/source.c
 <sync>
--rfct-organize-includes -olcursor=0 CURDIR/source.c -p CURDIR
+-rfct-organize-includes -olcursor=0 CURDIR/source.c
 <sync>
--rfct-organize-includes -olcursor=67 CURDIR/source.c -p CURDIR
+-rfct-organize-includes -olcursor=67 CURDIR/source.c
 <sync>
 <exit>

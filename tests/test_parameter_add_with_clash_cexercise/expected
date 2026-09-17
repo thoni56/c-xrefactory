@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-add-param -olcxparnum=1 "-rfct-parameter-name=int arg" -rfct-parameter-value=0 -olmark=0 -olcursor=608 CURDIR/cexercise/refactorings/parameter.c -p CURDIR
+-rfct-add-param -olcxparnum=1 "-rfct-parameter-name=int arg" -rfct-parameter-value=0 -olmark=0 -olcursor=608 CURDIR/cexercise/refactorings/parameter.c
 end-of-options
 
 <sync>

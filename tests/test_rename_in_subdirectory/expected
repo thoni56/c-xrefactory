@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-rename -renameto=single_int_on_line_1_col_44 -olmark=58 -olcursor=58 CURDIR/test_source/single_int2.c -p CURDIR
+-rfct-rename -renameto=single_int_on_line_1_col_44 -olmark=58 -olcursor=58 CURDIR/test_source/single_int2.c
 end-of-options
 
 <sync>

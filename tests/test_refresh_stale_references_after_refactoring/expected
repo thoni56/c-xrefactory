@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-move-function -commentmovinglevel=0 -movetargetfile=CURDIR/source_a.c -rfct-target-line=7 -olcursor=5 CURDIR/source_a.c -p CURDIR
+-rfct-move-function -commentmovinglevel=0 -movetargetfile=CURDIR/source_a.c -rfct-target-line=7 -olcursor=5 CURDIR/source_a.c
 end-of-options
 
 <sync>
@@ -20,7 +20,7 @@ end-of-options
  <position-off off=23 len=<n>>CURDIR/source_a.c</position-off>
 </goto>
 <indent-block val=3 len=<n>></indent-block>
--push -olcursor=39 CURDIR/source_b.c -p CURDIR
+-push -olcursor=39 CURDIR/source_b.c
 end-of-options
 
 <sync>

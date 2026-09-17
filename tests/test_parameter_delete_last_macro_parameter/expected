@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-del-param -olcxparnum=3 -olmark=10 -olcursor=10 CURDIR/macroArgs.c -p CURDIR
+-rfct-del-param -olcxparnum=3 -olmark=10 -olcursor=10 CURDIR/macroArgs.c
 end-of-options
 
 <sync>

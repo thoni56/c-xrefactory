@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push -olcursor=25 CURDIR/b.c -p CURDIR
+-push -olcursor=25 CURDIR/b.c
 end-of-options
 
 <sync>
@@ -12,7 +12,7 @@ end-of-options
  <position-lc line=2 col=5 len=<n>>CURDIR/b.c</position-lc>
 </goto>
 shell: cp CURDIR/a.modified CURDIR/a.c
--rfct-rename-included-file -renameto=common2.h -olcursor=6 CURDIR/b.c -p CURDIR
+-rfct-rename-included-file -renameto=common2.h -olcursor=6 CURDIR/b.c
 end-of-options
 
 <sync>

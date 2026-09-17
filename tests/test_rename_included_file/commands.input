@@ -1,6 +1,6 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/include.c
 <sync>
--rfct-rename-included-file -renameto=include2.h -olcursor=6 CURDIR/include.c -p CURDIR
+-rfct-rename-included-file -renameto=include2.h -olcursor=6 CURDIR/include.c
 <sync>
 <exit>

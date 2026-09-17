@@ -1,12 +1,12 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/cexercise/refactorings/rename.c
 <sync>
--rfct-rename -renameto=x -olcursor=792 CURDIR/cexercise/refactorings/rename.c -p CURDIR
+-rfct-rename -renameto=x -olcursor=792 CURDIR/cexercise/refactorings/rename.c
 <sync>
--olcxmenufilter=2 -p CURDIR
+-olcxmenufilter=2
 <sync>
--olcxfilter=0 -olmark=0 -olcursor=1 nil -p CURDIR
+-olcxfilter=0 -olmark=0 -olcursor=1 nil
 <sync>
--continuerefactoring -p CURDIR
+-continuerefactoring
 <sync>
 <exit>

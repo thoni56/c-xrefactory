@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-extract-function -olmark=93 -olcursor=114 CURDIR/source.c -p CURDIR
+-rfct-extract-function -olmark=93 -olcursor=114 CURDIR/source.c
 end-of-options
 
 <sync>
