@@ -1987,14 +1987,13 @@ static void collate_id_const(char **writeBufferWriteP, char *lhs, char **rhsP) {
  * right, the numeric text (including suffix where applicable) precedes the
  * identifier text.
  */
-static void collate_const_id(char **writeBufferWriteP, char **lhsP, char **rhsP, LexemCode leftHandLexem) {
-    char *lhs = *lhsP;
+static void collate_const_id(char **writeBufferWriteP, char *lhs, char **rhsP) {
     /* Retrieve text and position from the LHS CONSTANT */
     char *leftHandLexemStart = lhs;
 
     char *leftText;
     Position position;
-    getLexemCodeAndAdvance(&lhs);
+    LexemCode leftHandLexem = getLexemCodeAndAdvance(&lhs);
     getExtraLexemInformationFor(leftHandLexem, &lhs, NULL, NULL, &position, NULL, &leftText, false);
 
     /* Re-write to an IDENTIFIER */
@@ -2149,7 +2148,7 @@ static char *collate(LexemBufferDescriptor *writeBufferDesc, // Buffer descripto
                 break;
 
             case PAIR(LEX_CONST, LEX_ID):
-                collate_const_id(writeBufferWriteP, &lhs, &rhs, leftHandLexem);
+                collate_const_id(writeBufferWriteP, lhs, &rhs);
                 break;
 
             case PAIR(LEX_CONST, LEX_CONST):
