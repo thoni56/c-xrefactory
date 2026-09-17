@@ -4,7 +4,7 @@ EXPAND
 a
     @source.c:2:11
 b##c
-    @source.c:2:17
+    @source.c:2:18
 bc
     @source.c:2:18
 d

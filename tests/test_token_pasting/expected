@@ -8,14 +8,14 @@ TXT
     @source.c:4:8
     @source.c:5:4
 b##z
-    @source.c:5:7
+    @source.c:5:8
 bz
     @source.c:5:8
 my##Var
-    @source.c:2:14
+    @source.c:2:15
 myVar
     @source.c:2:15
 source.c!j
     @source.c:8:19
 sta##tic
-    @source.c:8:9
+    @source.c:8:10

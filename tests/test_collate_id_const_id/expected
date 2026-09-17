@@ -4,7 +4,7 @@ PASTE3
 foo##123
     @source.c:4:15
 foo123##bar
-    @source.c:4:24
+    @source.c:4:25
 foo123bar
     @source.c:3:4
     @source.c:4:25

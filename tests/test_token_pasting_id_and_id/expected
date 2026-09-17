@@ -2,6 +2,6 @@ EXPAND
     @source.c:1:8
     @source.c:2:4
 variable_##answer
-    @source.c:2:10
+    @source.c:2:11
 variable_answer
     @source.c:2:11

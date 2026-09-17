@@ -1,0 +1,7 @@
+JOIN
+    @source.c:1:8
+    @source.c:2:4
+my##Var
+    @source.c:3:0
+myVar
+    @source.c:3:0

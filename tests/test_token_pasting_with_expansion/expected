@@ -7,6 +7,6 @@ NUM
     @source.c:2:32
     @source.c:4:15
 NUM##NUM
-    @source.c:2:31
+    @source.c:2:32
 NUMNUM
     @source.c:2:32

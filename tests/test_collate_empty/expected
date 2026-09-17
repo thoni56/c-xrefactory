@@ -3,7 +3,7 @@ EMPTY
     @source.c:6:10
     @source.c:7:15
 EMPTY##foo
-    @source.c:6:16
+    @source.c:6:17
 EMPTYfoo
     @source.c:6:17
 PASTE
@@ -16,7 +16,7 @@ a
 foo
     @source.c:8:12
 foo##EMPTY
-    @source.c:7:14
+    @source.c:7:15
 fooEMPTY
     @source.c:7:15
 paste_empty

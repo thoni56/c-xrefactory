@@ -1921,10 +1921,7 @@ static void collate_id_id(char **writeBufferWriteP, char *lhs, char **rhsP) {
 
     memmove(*writeBufferWriteP, rightHandLexemString, strlen(rightHandLexemString) + 1);
 
-    position.col--;
-    assert(position.col >= 0);
     cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
-    position.col++;
 
     *writeBufferWriteP += strlen(*writeBufferWriteP);
     assert(**writeBufferWriteP == 0);
