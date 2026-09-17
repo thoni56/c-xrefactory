@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/source.c
+<sync>
+-olcxcomplet -olcursor=123 CURDIR/source.c
+<sync>
+-olcxcomplet -olcursor=149 CURDIR/source.c
+<sync>
+<exit>

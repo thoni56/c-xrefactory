@@ -1,0 +1,15 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-olcxcomplet -olcursor=89 CURDIR/source.c
+end-of-options
+
+<sync>
+<all-completions nofocus=0 len=<n>>x  :int x
+y  :int y</all-completions>
+-exit
+end-of-options
+
