@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
--olcxcomplet -maxcompls=500 -olinelen=120  -olcursor=53 CURDIR/completions.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxcomplet -maxcompls=500 -olinelen=120  -olcursor=53 CURDIR/completions.c
 end-of-options
 
 <sync>

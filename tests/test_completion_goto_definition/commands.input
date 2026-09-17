@@ -1,8 +1,8 @@
-CXREF -xrefrc CURDIR/.c-xrefrc src/main.c -xrefactory-II -server -log=log.log -commandlog=commands.log
--getproject -xrefrc CURDIR/.c-xrefrc CURDIR/src/main.c
+CXREF  src/main.c -xrefactory-II -server -log=log.log -commandlog=commands.log
+-getproject  CURDIR/src/main.c
 <sync>
--olcxcomplet CURDIR/src/main.c -olcursor=243 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxcomplet CURDIR/src/main.c -olcursor=243
 <sync>
--olcxcgoto1 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxcgoto1
 <sync>
 <exit>
