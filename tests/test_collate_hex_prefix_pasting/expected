@@ -3,7 +3,7 @@
 0x##FF
     @source.c:1:22
 0xFF##U
-    @source.c:1:28
+    @source.c:1:29
 MAKE_HEX
     @source.c:2:8
     @source.c:5:9

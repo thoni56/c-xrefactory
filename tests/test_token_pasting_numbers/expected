@@ -3,7 +3,7 @@
 2##e
     @source.c:5:17
 2e##10
-    @source.c:5:18
+    @source.c:5:17
 EXP
     @source.c:4:8
     @source.c:5:13
