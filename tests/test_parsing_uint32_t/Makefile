@@ -7,6 +7,9 @@ include ../Makefile.server
 # introduced a possibility to discover which compiler is used, it is
 # possible to inject the predefined symbols that C99 and later defines
 # (like _Bool).  For now this only works for GCC, not for clang
+#
+# Only the symbol uint32_t itself is matched: how it is defined differs between
+# libraries (glibc's __uint32_t, clang's __uint32_t_defined guard on macOS).
 
 # How c-xrefactory gets include paths:
 #     LANG=C gcc -v -x c -o /dev/null /dev/null >out 2>&1
@@ -20,7 +23,7 @@ include ../Makefile.server
 $(TEST):
 	@rm -rf CXrefs .c-xref output output.tmp server-buffer
 	@$(SERVER_DRIVER) commands.input > /dev/null
-	@../../utils/cxref_reader .c-xref/db | grep uint32_t > output
+	@../../utils/cxref_reader .c-xref/db | grep '^uint32_t$$' > output
 	$(VERIFY)
 
 trace: EXTRA = --extra '-debug -log=trace'
