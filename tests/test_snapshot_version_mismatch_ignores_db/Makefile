@@ -18,7 +18,7 @@ $(TEST): .c-xrefrc
 	@$(NORMALIZE) no-snapshot.tmp > no-snapshot.output
 	@rm -rf .c-xref
 	@$(SERVER_DRIVER) build.input > build.output
-	@sed -i -e 's/\(C-xrefactory \)[0-9]/\19/' -e 's/1u\([0-9]*\)f1l4cr/1u\1f9l4cr/' .c-xref/db
+	@sed -i.bak -e 's/\(C-xrefactory \)[0-9]/\19/' -e 's/1u\([0-9]*\)f1l4cr/1u\1f9l4cr/' .c-xref/db
 	@grep -aq 'C-xrefactory 9' .c-xref/db || { echo "version was not corrupted (has it reached 9.x?)"; exit 1; }
 	@grep -aq 'f9l4cr' .c-xref/db || { echo "definition position was not corrupted (snapshot encoding changed?)"; exit 1; }
 	@$(SERVER_DRIVER) query.input > output.tmp
