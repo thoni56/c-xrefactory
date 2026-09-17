@@ -1902,6 +1902,13 @@ static LexemTypeFlag classify_lexem(LexemCode code) {
     return LEX_OTHER;
 }
 
+static void finishLexemWithPosition(char **writeBufferWriteP, Position leftPosition) {
+    *writeBufferWriteP += strlen(*writeBufferWriteP);
+    assert(**writeBufferWriteP == 0);
+    (*writeBufferWriteP)++;
+    putLexemPositionAndAdvance(leftPosition, writeBufferWriteP);
+}
+
 /* Collate IDENTIFIER ## IDENTIFIER -> concatenated identifier
  * C99 §6.10.3.3p3: "The resulting token is available for further macro
  * replacement." Therefore, the result must be a regular IDENTIFIER (not
@@ -1923,10 +1930,7 @@ static void collate_id_id(char **writeBufferWriteP, char *lhs, char **rhsP) {
 
     cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, position);
 
-    *writeBufferWriteP += strlen(*writeBufferWriteP);
-    assert(**writeBufferWriteP == 0);
-    (*writeBufferWriteP)++;
-    putLexemPositionAndAdvance(position, writeBufferWriteP);
+    finishLexemWithPosition(writeBufferWriteP, position);
 
     *rhsP = rhs; /* Update rhs position after consuming */
 }
@@ -1971,10 +1975,7 @@ static void collate_id_const(char **writeBufferWriteP, char *lhs, char **rhsP) {
 
     cxAddCollateReference(leftHandLexemString, *writeBufferWriteP, idPos);
 
-    *writeBufferWriteP += strlen(*writeBufferWriteP);
-    assert(**writeBufferWriteP == 0);
-    (*writeBufferWriteP)++;
-    putLexemPositionAndAdvance(idPos, writeBufferWriteP);
+    finishLexemWithPosition(writeBufferWriteP, idPos);
 
     *rhsP = rhs; /* Update rhs position after consuming */
 }
@@ -2014,11 +2015,7 @@ static void collate_const_id(char **writeBufferWriteP, char **lhsP, char **rhsP,
     cxAddCollateReference(*writeBufferWriteP, *writeBufferWriteP + leftPartLength, position);
     position.col++;
 
-    *writeBufferWriteP += strlen(*writeBufferWriteP);
-    assert(**writeBufferWriteP == 0);
-    (*writeBufferWriteP)++;
-
-    putLexemPositionAndAdvance(position, writeBufferWriteP);
+    finishLexemWithPosition(writeBufferWriteP, position);
 
     *rhsP = rhs; /* Update rhs position after consuming */
 }
@@ -2060,10 +2057,7 @@ static void collate_const_const(char **writeBufferWriteP, char *lhs, char **rhsP
         /* Use left position for reference tracking */
         cxAddCollateReference(*writeBufferWriteP, *writeBufferWriteP + leftPartLength, leftPosition);
 
-        *writeBufferWriteP += strlen(*writeBufferWriteP);
-        assert(**writeBufferWriteP == 0);
-        (*writeBufferWriteP)++;
-        putLexemPositionAndAdvance(leftPosition, writeBufferWriteP);
+        finishLexemWithPosition(writeBufferWriteP, leftPosition);
     }
     *rhsP = rhs; /* Update rhs position after consuming */
 }
