@@ -68,6 +68,9 @@ Use relative effort only: "smaller", "larger", "foundational"
 - Output is usually collected in an `output.tmp` that can be normalized to not fail on paths, lengths, dates etc.
 - `output` is removed when it matches `expected`, so a remaining `output` means the test failed
 - the test diff is designed to say "remove (`<`) this and insert (`>`) that to get the expected output"
+- A `.suspended` file is a handover note. Its first line is the only one shown in test runs, so make it a headline starting with `Bug:` (wrong behaviour in something that exists) or `Missing:` (not implemented). After a blank line, explain the defect, its cause, the likely fix and anything to decide first, so someone without the conversation can pick it up. Remove it in the same commit as the fix.
+- In a small test, a result missing references that should be there is a bug until proven otherwise. Before calling it one, check ADR-0013: references reachable only through an `extern` written in a `.c` file, without a shared header, are deliberately not followed.
+- Use `sed -i.bak` in test Makefiles, not `sed -i`, which BSD/macOS sed reads differently.
 
 ## Build & Test Commands
 
