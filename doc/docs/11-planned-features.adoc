@@ -281,3 +281,40 @@ scan based on whether the file was discovered under a source directory (owned) o
 include path (read-only).
 
 The exact mechanism and UX (warning, confirmation, or silent skip) need further design.
+
+[[generic-selection]]
+=== C11 `_Generic`
+
+**Status**: Not implemented. Pinned by the suspended `test_parsing_generics`.
+
+==== Use Case
+
+`_Generic` selects an expression by the type of a controlling expression, most often to
+pick one of several functions, as in `<tgmath.h>`:
+
+[source,c]
+----
+#define cbrt(x) _Generic((x), float: cbrtf, long double: cbrtl, default: cbrt)(x)
+----
+
+Today `_Generic` is neither a keyword nor defined away, so it parses as an identifier and
+every association is a syntax error. Error recovery keeps some references by chance but
+loses others, such as the `default:` branch and a typedef used as an association type.
+
+==== Design
+
+Parse every association and record the references in all of them. Do *not* select the
+branch the controlling expression's type would pick.
+
+* Selecting needs the type of the controlling expression and C's type compatibility
+  rules — compiler work that a cross-referencer does not otherwise need.
+* Recording every branch is also what users want: renaming `cbrtf` must update the macro
+  above even where every call site happens to use `double`.
+* Defining `_Generic` away, the way `_Alignas` is in the fallback defines, would avoid
+  the syntax errors cheaply but drop exactly the function references `_Generic` exists
+  to choose between.
+
+The grammar needs a `_Generic` keyword and a generic-selection rule with associations of
+the form `type-name : assignment-expression` and `default : assignment-expression`.
+Branch selection would only matter for navigation or completion on the type of the
+result (`_Generic(...).field`), which is rare.
