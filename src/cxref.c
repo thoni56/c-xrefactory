@@ -1906,12 +1906,12 @@ void answerEditorAction(void) {
     ENTER();
     assert(outputFile);
 
-    /* Single-project policy: require project lock before any operation except getprojectname.
+    /* Single-project policy: require project lock before any operation except getproject.
        Only enforced in auto-discovery mode (no explicit -xrefrc).
        Legacy mode (with -p option) is also allowed - client sends project with each request. */
     if (options.xrefrc == NULL && lockedProject == NULL && options.project == NULL &&
         options.serverOperation != OP_GET_PROJECT) {
-        FATAL_ERROR(ERR_ST, "Server operation without locked project - client must call -getprojectname first",
+        FATAL_ERROR(ERR_ST, "Server operation without locked project - client must call -getproject first",
                     EXIT_FAILURE);
     }
 
