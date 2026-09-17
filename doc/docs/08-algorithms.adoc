@@ -243,7 +243,9 @@ the definition, not all usage sites.
 
 **Scope control:** Only CUs sharing headers with the _request file_ are parsed — not
 the entire project. This keeps cold-start latency proportional to the local
-neighborhood of the file being worked on.
+neighborhood of the file being worked on. That relies on every file that references a
+symbol including the header that declares it; an `extern` written directly in a `.c` file
+is deliberately not followed (link:/workspace/1/decisions/C-xrefactory#13[ADR-0013]).
 
 **Current limitation:** The sibling lookup is based on all shared headers, not just
 the header containing the navigated symbol. This can over-parse on projects with
