@@ -1,0 +1,4 @@
+Browsing sessions hold copies of references, not indexes into the live table.
+After a reparse only the session that consumes the per-file
+needsBrowsingStackRefresh flag is refreshed, so POP returns to a session with
+stale positions. Needs index-based sessions (roadmap). Details in the Makefile.
