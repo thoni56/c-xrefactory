@@ -32,3 +32,49 @@ The yacc parser creates a different scope or symbol context when parsing C code 
 === Stale sessions after POP
 
 Tracked under "Known Limitations" in link:10-roadmap.adoc[Chapter 10: Roadmap], with the proposed dissolve (index-based sessions).
+
+=== Header static: prototype and definition are two symbols
+
+*Symptom:* For a `static` function declared and then defined in a header, renaming it
+from a file that includes the header renames the definition and the calls but leaves the
+prototype unchanged, so the code no longer compiles.
+
+*Suspected root cause:* `setStaticFunctionLinkName` (`src/semact.c`) names a static after
+the file it is in only for its definition. Other usages, like the prototype, are named
+after the compilation unit being parsed, so the prototype becomes `main.c!helper` while
+the definition is `helper.h!helper`.
+
+*Test:* `test_static_declared_and_defined_in_header` (suspended; the note covers the
+`exactPositionResolve` question to settle before fixing).
+
+=== Push by name finds nothing on a cold start
+
+*Symptom:* Pushing a symbol by name answers "No symbol found." unless some file
+containing it has already been parsed.
+
+*Suspected root cause:* Push by name is project-wide, but is not among the operations
+that ask to parse all unparsed CUs first (see
+<<08-algorithms.adoc#project-wide-operations,Project-wide Operations>>).
+
+*Test:* `test_browsing_push_name_parses_whole_project` (suspended).
+
+=== Token pasting that forms numbers
+
+*Symptom:* Macros that paste numbers produce wrong symbols in the reference table.
+
+*Analysis:* Three separate faults, each with its own suspended test. Fix them in this
+order, because the other two tests assume the first is fixed:
+
+. *Pasted numbers are recorded as symbols* (`1##0` gives the symbol `10`), because the
+  result of pasting is always treated as an identifier. Test:
+  `test_token_pasting_numbers`. Fixing it changes the passing
+  `test_collate_const_suffix_pasting`, whose `expected` records `42UL` as a symbol.
+. *Pasting with `.` drops the `.`* (`3##.##14` becomes `314`). Test:
+  `test_token_pasting_float`.
+. *`0x` in a macro body is not one token*: the lexer reads `0` and then `x`, which becomes
+  the macro parameter, so `HEX(FF)` gives `0FF`. The fix is in the lexer's handling of
+  preprocessing numbers and affects how every number is read. Test:
+  `test_collate_hex_prefix_pasting`.
+
+Whether numbers need the intermediate `a##b` entries that identifier pasting records is
+left for the fix to decide.
