@@ -1,0 +1,13 @@
+Bug: refactoring without -p asserts instead of using the discovered project
+
+serverPerformRefactoring (src/refactory.c) asserts options.project != NULL and
+copies it into refactoringOptions.project for the inner parseBufferUsingServer
+calls. -p is per request (startup.c clears it), and every other operation works
+from options.detectedProjectRoot, so a client relying on discovery kills the
+server on its first refactoring. Emacs is not affected: it always sends
+-p <active project>.
+
+setArguments already leaves out -p when the project is NULL, so the assert may
+be all that stands in the way. Check that before choosing between falling back to
+the discovered project and reporting an error with errorMessage when there is
+neither. An assert is wrong either way: a missing request option is user input.
