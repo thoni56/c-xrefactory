@@ -1,3 +1,5 @@
+Bug: any file under an -I directory counts as part of the project
+
 Any file under an -I directory is accepted as part of the project, even a CU the
 project never includes or parses. A proper fix needs either -getproject not to
 register the file in the file table, or file table support for transient

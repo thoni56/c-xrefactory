@@ -1,4 +1,4 @@
-Defect: a static's prototype and definition in a header get different link names.
+Bug: header static's prototype and definition get different link names
 
 setStaticFunctionLinkName (src/semact.c) names a static after the file it is in
 only for UsageDefined. The prototype is UsageDeclared and is named after

@@ -1,3 +1,5 @@
+Bug: request file loses to another scheduled file (macOS only)
+
 prepareInputFileForRequest (src/server.c) prepares the first scheduled file by
 fileNumber, which is a hash of the absolute path. When another file is also
 scheduled, the wrong one can win, so this fails on macOS and passes on Linux.

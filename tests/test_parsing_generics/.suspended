@@ -1,3 +1,5 @@
+Missing: _Generic is not parsed
+
 _Generic is not supported: it is neither a keyword (src/init.c) nor swallowed in
 fallback_defines (src/startup.c), so it parses as an identifier and every
 association is a syntax error. Recovery happens to keep some references but
