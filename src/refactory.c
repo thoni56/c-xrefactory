@@ -26,6 +26,7 @@
 #include "proto.h"
 #include "protocol.h"
 #include "refactorings.h"
+#include "referenceableitemtable.h"
 #include "server.h"
 #include "session.h"
 #include "timestamp.h"
@@ -496,19 +497,54 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
     return handleSafetyCheckDifferenceLists(diff1, diff2, diffrefs);
 }
 
+typedef struct collateSearch {
+    Position position;
+    char    *linkName;          /* out */
+} CollateSearch;
+
+static void findCollateSymbolAtPosition(ReferenceableItem *item, void *searchP) {
+    CollateSearch *search = searchP;
+
+    if (search->linkName != NULL || item->type != TypeCppCollate)
+        return;
+    for (Reference *r = item->references; r != NULL; r = r->next) {
+        if (positionsAreEqual(r->position, search->position)) {
+            search->linkName = item->linkName;
+            return;
+        }
+    }
+}
+
+/* A name can be formed by ## instead of written out. The paste records a
+   TypeCppCollate item, named with the ## still in it, at the position of the
+   pasted token. Returns that name, or NULL. */
+static char *pastedNameAtMarker(EditorMarker *marker) {
+    CollateSearch search = {.position = makePositionFromEditorMarker(marker), .linkName = NULL};
+
+    mapOverReferenceableItemTableWithPointer(findCollateSymbolAtPosition, &search);
+    return search.linkName;
+}
+
 static Result precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *occurrences) {
     /* Pass 1: validate every occurrence resolves to the expected identifier.
-     * A mismatch means the stored position is stale - renaming any subset would
-     * leave the program in a partially-edited state. Abort before emitting any
-     * client-side precheck so the client never sees a partial stream. */
+     * A mismatch means the name was pasted together by ##, or the stored
+     * position is stale - renaming any subset would leave the program in a
+     * partially-edited state. Abort before emitting any client-side precheck
+     * so the client never sees a partial stream. */
     for (EditorMarkerList *ll = occurrences; ll != NULL; ll = ll->next) {
         EditorMarker *marker = ll->marker;
         char *id = getIdentifierOnMarker_static(marker);
         if (strcmp(id, oldName) != 0) {
             char tmpBuff[TMP_BUFF_SIZE];
+            char *pastedName = pastedNameAtMarker(marker);
             ppcGotoMarker(marker);
-            sprintf(tmpBuff, "This reference does not point to '%s' (found '%s'). "
-                             "The stored position may be stale - try re-saving the file.", oldName, id);
+            if (pastedName != NULL) {
+                sprintf(tmpBuff, "This '%s' is made by token pasting (%s). "
+                                 "There is no text here to change.", oldName, pastedName);
+            } else {
+                sprintf(tmpBuff, "This reference does not point to '%s' (found '%s'). "
+                                 "The stored position may be stale - try re-saving the file.", oldName, id);
+            }
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             errorMessage(ERR_ST, tmpBuff);
             return RESULT_ERR;

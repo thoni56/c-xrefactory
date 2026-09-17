@@ -1,0 +1,27 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-olcxgetrefactorings -olcursor=17 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<available-refactorings>
+  <int val=10 len=<n>></int>
+  <int val=300 len=<n>></int>
+</available-refactorings>
+-rfct-rename -renameto=b1 -olcursor=63 CURDIR/source.c -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=81 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<error len=<n>>This 'ab' is made by token pasting (a##b). There is no text here to
+change.
+</error>
+-exit
+end-of-options
+
