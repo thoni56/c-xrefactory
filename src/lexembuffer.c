@@ -24,7 +24,7 @@ void putLexemChar(LexemBuffer *lb, char ch) {
 }
 
 /* Short */
-protected void putLexShortAndAdvance(int shortValue, char **writePointerP) {
+protected void putLexShortAndAdvance(char **writePointerP, int shortValue) {
     assert(shortValue <= 65535);
     **writePointerP = ((unsigned)shortValue)%256;
     (*writePointerP)++;
@@ -83,7 +83,7 @@ int getLexemIntAndAdvance(char **readPointerP) {
 }
 
 /* Compacted */
-protected void putLexCompactedAndAdvance(int value, char **writePointerP) {
+protected void putLexCompactedAndAdvance(char **writePointerP, int value) {
     assert(((unsigned) value)<4194304);
     if (((unsigned)value) < 128) {
         **writePointerP = ((unsigned char)value);
@@ -149,7 +149,7 @@ void *getLexemStreamWrite(LexemBuffer *lb) {
 /* For backpatching */
 void backpatchLexemCodeAndAdvance(LexemCode lexem, void *writePointer) {
     char *pointer = (char *)writePointer;
-    putLexShortAndAdvance(lexem, &pointer);
+    putLexShortAndAdvance(&pointer, lexem);
 }
 
 void saveBackpatchPosition(LexemBuffer *lb) {
@@ -158,7 +158,7 @@ void saveBackpatchPosition(LexemBuffer *lb) {
 
 void backpatchLexemCode(LexemBuffer *lb, LexemCode lexem) {
     /* Write, and advance, using backpatchPointer */
-    putLexemCodeAndAdvance(lexem, &lb->backpatchPointer);
+    putLexemCodeAndAdvance(&lb->backpatchPointer, lexem);
 }
 
 void moveLexemStreamWriteToBackpatchPositonWithOffset(LexemBuffer *lb, int offset) {
@@ -176,7 +176,7 @@ int strlenOfBackpatchedIdentifier(LexemBuffer *lb) {
 //
 
 protected void putLexemCode(LexemBuffer *lb, LexemCode lexem) {
-    putLexShortAndAdvance(lexem, &(lb->write));
+    putLexShortAndAdvance(&(lb->write), lexem);
 }
 
 void putLexemLines(LexemBuffer *lb, int lines) {
@@ -186,16 +186,16 @@ void putLexemLines(LexemBuffer *lb, int lines) {
 
 void putLexemPositionFields(LexemBuffer *lb, int file, int line, int column) {
     assert(file>=0 && file<MAX_FILES);
-    putLexCompactedAndAdvance(file, &(lb->write));
-    putLexCompactedAndAdvance(line, &(lb->write));
-    putLexCompactedAndAdvance(column, &(lb->write));
+    putLexCompactedAndAdvance(&(lb->write), file);
+    putLexCompactedAndAdvance(&(lb->write), line);
+    putLexCompactedAndAdvance(&(lb->write), column);
 }
 
 void putLexemPosition(LexemBuffer *lb, Position position) {
     assert(position.file>=0 && position.file<MAX_FILES);
-    putLexCompactedAndAdvance(position.file, &(lb->write));
-    putLexCompactedAndAdvance(position.line, &(lb->write));
-    putLexCompactedAndAdvance(position.col, &(lb->write));
+    putLexCompactedAndAdvance(&(lb->write), position.file);
+    putLexCompactedAndAdvance(&(lb->write), position.line);
+    putLexCompactedAndAdvance(&(lb->write), position.col);
 }
 
 void putLexemCodeWithPosition(LexemBuffer *lb, LexemCode lexem, Position position) {
@@ -393,17 +393,17 @@ Position peekLexemPositionAt(char *readPointer) {
 
 /* DEPRECATED - writing with pointer to pointer that it advances, a
  * lot of code in yylex.c still uses this bad interface */
-void putLexemCodeAndAdvance(LexemCode lexem, char **writePointerP) {
-    putLexShortAndAdvance(lexem, writePointerP);
+void putLexemCodeAndAdvance(char **writePointerP, LexemCode lexem) {
+    putLexShortAndAdvance(writePointerP, lexem);
 }
 
-void putLexemPositionAndAdvance(Position position, char **writePointerP) {
-    putLexCompactedAndAdvance(position.file, writePointerP);
-    putLexCompactedAndAdvance(position.line, writePointerP);
-    putLexCompactedAndAdvance(position.col, writePointerP);
+void putLexemPositionAndAdvance(char **writePointerP, Position position) {
+    putLexCompactedAndAdvance(writePointerP, position.file);
+    putLexCompactedAndAdvance(writePointerP, position.line);
+    putLexCompactedAndAdvance(writePointerP, position.col);
 }
 
-void putLexemIntAndAdvance(int integer, char **writePointerP) {
+void putLexemIntAndAdvance(char **writePointerP, int integer) {
     unsigned tmp;
     tmp = integer;
     *(*writePointerP)++ = tmp%256; tmp /= 256;

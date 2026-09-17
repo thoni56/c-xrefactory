@@ -58,9 +58,9 @@ extern void putCharLiteralLexem(LexemBuffer *lb, CharacterBuffer *cb, int lexemS
 extern void terminateLexemString(LexemBuffer *lb);
 
 /* DEPRECATED? - Writes at where writePointer points to and advances it */
-extern void putLexemCodeAndAdvance(LexemCode lexem, char **writePointerP);
-extern void putLexemPositionAndAdvance(Position position, char **writePointerP);
-extern void putLexemIntAndAdvance(int integer, char **writePointerP);
+extern void putLexemCodeAndAdvance(char **writePointerP, LexemCode lexem);
+extern void putLexemPositionAndAdvance(char **writePointerP, Position position);
+extern void putLexemIntAndAdvance(char **writePointerP, int integer);
 
 /* Get elementary types */
 extern LexemCode getLexemCode(LexemBuffer *lb);

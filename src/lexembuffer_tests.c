@@ -72,7 +72,7 @@ Ensure(LexemBuffer, can_put_and_get_two_lexem_codes) {
     assert_that(getLexemCode(&lb), is_equal_to(STRING_LITERAL));
 }
 
-extern void putLexCompactedAndAdvance(int value, char **writePointer);
+extern void putLexCompactedAndAdvance(char **writePointer, int value);
 extern int getLexCompactedAndAdvance(char **readPointer);
 Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
     int         integer;
@@ -80,7 +80,7 @@ Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
 
     /* Test values across the 128 boundry, 1 or 2 "slots" */
     for (int i = 0; i < 150; i++) {
-        putLexCompactedAndAdvance(i, &lb.write);
+        putLexCompactedAndAdvance(&lb.write, i);
         expected_next_after_get = lb.write;
 
         integer     = getLexCompactedAndAdvance(&lb.read);
@@ -91,7 +91,7 @@ Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
 
     /* Test values across the 16384 boundry, 2 or 3 "slots" */
     for (int i = 16300; i < 16500; i++) {
-        putLexCompactedAndAdvance(i, &lb.write);
+        putLexCompactedAndAdvance(&lb.write, i);
         expected_next_after_get = lb.write;
 
         integer     = getLexCompactedAndAdvance(&lb.read);
@@ -204,7 +204,7 @@ Ensure(LexemBuffer, can_save_batchpatch_position_and_put_there) {
 Ensure(LexemBuffer, can_write_position_with_pointer) {
     Position position = { .file = 1, .line = 2, .col = 3 };
 
-    putLexemPositionAndAdvance(position, &(lb.write));
+    putLexemPositionAndAdvance(&(lb.write), position);
 
     Position expected_position = getLexemPositionAndAdvance(&(lb.read));
 

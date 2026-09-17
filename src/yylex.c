@@ -1033,9 +1033,9 @@ protected void processDefineDirective(bool hasArguments) {
                 /* macro argument */
                 addTrivialCxReference(getMacroArgument(foundIndex)->linkName, TypeMacroArg,
                                       StorageDefault, position, UsageUsed);
-                putLexemCodeAndAdvance(CPP_MACRO_ARGUMENT, &lexemDestination);
-                putLexemIntAndAdvance(getMacroArgument(foundIndex)->order, &lexemDestination);
-                putLexemPositionAndAdvance(position, &lexemDestination);
+                putLexemCodeAndAdvance(&lexemDestination, CPP_MACRO_ARGUMENT);
+                putLexemIntAndAdvance(&lexemDestination, getMacroArgument(foundIndex)->order);
+                putLexemPositionAndAdvance(&lexemDestination, position);
             } else {
                 if (lexem==IDENT_TO_COMPLETE
                     || (lexem == IDENTIFIER && positionsAreEqual(position, parsingConfig.positionOfSelectedReference))) {
@@ -1049,7 +1049,7 @@ protected void processDefineDirective(bool hasArguments) {
                         handleFoundSymbolReference(referencedMacro, position, UsageUsed, NO_FILE_NUMBER);
                     }
                 }
-                putLexemCodeAndAdvance(lexem, &lexemDestination);
+                putLexemCodeAndAdvance(&lexemDestination, lexem);
                 /* Copy from input to destination (which is in the body buffer...) */
                 for (; currentLexemStart<currentInput.read; lexemDestination++,currentLexemStart++)
                     *lexemDestination = *currentLexemStart;
@@ -1798,7 +1798,7 @@ static void expandMacroArgument(LexemStream *argumentInput) {
                     if (macroSymbol->mbody != NULL && cyclicCall(macroSymbol->mbody)) {
                         /* C99 §6.10.3.4p2: Mark this identifier to prevent replacement
                          * during rescanning, as it would cause cyclic expansion. */
-                        putLexemCodeAndAdvance(IDENT_NO_CPP_EXPAND, &savedBufferP);
+                        putLexemCodeAndAdvance(&savedBufferP, IDENT_NO_CPP_EXPAND);
                     }
                 }
             }
@@ -1902,11 +1902,11 @@ static LexemTypeFlag classify_lexem(LexemCode code) {
     return LEX_OTHER;
 }
 
-static void finishLexemWithPosition(char **writeBufferWriteP, Position leftPosition) {
+static void finishLexemWithPosition(char **writeBufferWriteP, Position position) {
     *writeBufferWriteP += strlen(*writeBufferWriteP);
     assert(**writeBufferWriteP == 0);
     (*writeBufferWriteP)++;
-    putLexemPositionAndAdvance(leftPosition, writeBufferWriteP);
+    putLexemPositionAndAdvance(writeBufferWriteP, position);
 }
 
 /* Collate IDENTIFIER ## IDENTIFIER -> concatenated identifier
@@ -1915,7 +1915,7 @@ static void finishLexemWithPosition(char **writeBufferWriteP, Position leftPosit
  * IDENT_NO_CPP_EXPAND) so it can be expanded during the rescan phase. */
 static void collate_id_id(char **writeBufferWriteP, char *lhs, char **rhsP) {
     /* Convert to IDENTIFIER to make result eligible for macro expansion */
-    putLexemCodeAndAdvance(IDENTIFIER, &lhs);
+    putLexemCodeAndAdvance(&lhs, IDENTIFIER);
     char *leftHandLexemString = lhs;
     *writeBufferWriteP = leftHandLexemString + strlen(leftHandLexemString);
     assert(**writeBufferWriteP == 0); /* Ensure at end of string */
@@ -1998,7 +1998,7 @@ static void collate_const_id(char **writeBufferWriteP, char **lhsP, char **rhsP,
     getExtraLexemInformationFor(leftHandLexem, &lhs, NULL, NULL, &position, NULL, &leftText, false);
 
     /* Re-write to an IDENTIFIER */
-    putLexemCodeAndAdvance(IDENTIFIER, &leftHandLexemStart);
+    putLexemCodeAndAdvance(&leftHandLexemStart, IDENTIFIER);
     *writeBufferWriteP = leftHandLexemStart; /* We want to write the id next */
 
     char *rhs = *rhsP;
@@ -2039,7 +2039,7 @@ static void collate_const_const(char **writeBufferWriteP, char *lhs, char **rhsP
                                     false);
 
         /* Re-write as IDENTIFIER at the start position */
-        putLexemCodeAndAdvance(IDENTIFIER, &leftHandLexemStart);
+        putLexemCodeAndAdvance(&leftHandLexemStart, IDENTIFIER);
         *writeBufferWriteP = leftHandLexemStart;
 
         /* Get right operand */
@@ -2237,7 +2237,7 @@ static LexemStream replaceMacroArguments(LexemStream *actualArgumentsInput, char
             assert(lexem == CPP_MACRO_ARGUMENT);
             getExtraLexemInformationFor(lexem, &inputStream.read, NULL, &argumentIndex, NULL, NULL, NULL, false);
 
-            putLexemCodeAndAdvance(STRING_LITERAL, &outputStream.write);
+            putLexemCodeAndAdvance(&outputStream.write, STRING_LITERAL);
             expandMacroBodyBufferIfOverflow(&bufferDesc, outputStream.write, MACRO_BODY_BUFFER_SIZE);
 
             macroArgumentsToString(outputStream.write, &actualArgumentsInput[argumentIndex]);
@@ -2246,7 +2246,7 @@ static LexemStream replaceMacroArguments(LexemStream *actualArgumentsInput, char
             outputStream.write += len;
 
             /* TODO: This should really be putLexPosition() but that takes a LexemBuffer... */
-            putLexemPositionAndAdvance(position, &outputStream.write);
+            putLexemPositionAndAdvance(&outputStream.write, position);
             if (len >= MACRO_BODY_BUFFER_SIZE - 15) {
                 char tmpBuffer[TMP_BUFF_SIZE];
                 sprintf(tmpBuffer, "size of #macro_argument exceeded MACRO_BODY_BUFFER_SIZE @%s:%d:%d",
