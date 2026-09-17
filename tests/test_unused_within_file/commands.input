@@ -1,10 +1,12 @@
-CXREF -xrefactory-II -xrefrc CURDIR/.c-xrefrc -p CURDIR -server
--olcxpushfileunused  CURDIR/source1.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+CXREF -xrefactory-II -server
+-getproject CURDIR/source1.c
 <sync>
--olcxmenufilter=2 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxpushfileunused  CURDIR/source1.c
 <sync>
--olcxpushfileunused  CURDIR/source2.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenufilter=2
 <sync>
--olcxmenufilter=2 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxpushfileunused  CURDIR/source2.c
+<sync>
+-olcxmenufilter=2
 <sync>
 <exit>
