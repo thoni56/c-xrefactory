@@ -1,0 +1,9 @@
+%%%i:helper.h
+    @helper.h:1:0
+    @main.c:1:0
+helper.h!helper
+    @helper.h:1:11
+    @helper.h:3:11
+    @main.c:4:11
+main
+    @main.c:3:4

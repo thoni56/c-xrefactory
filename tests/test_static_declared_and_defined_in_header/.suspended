@@ -1,0 +1,13 @@
+Defect: a static's prototype and definition in a header get different link names.
+
+setStaticFunctionLinkName (src/semact.c) names a static after the file it is in
+only for UsageDefined. The prototype is UsageDeclared and is named after
+parsingConfig.fileName, the compilation unit, so it becomes main.c!helper while
+the definition and the call are helper.h!helper. Renaming helper from main.c
+would leave the prototype in helper.h unchanged.
+
+The //& lines in that function are a pre-2016 symbol-table lookup that would have
+reused the prototype's link name; it no longer compiles. The obvious fix is to
+name every usage after p->position.file, but the exactPositionResolve branch
+deliberately uses the compilation unit, so decide what that setting should mean
+first. Follows on from the project-relative link name fix (b3d5949d).
