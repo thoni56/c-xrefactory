@@ -523,6 +523,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_unused_detection_exclude_patterns">11.6. Unused Detection: Exclude Patterns</a></li>
 <li><a href="#_browsing_includes">11.7. Browsing includes</a></li>
 <li><a href="#_semantic_read_only_files_include_path_ownership">11.8. Semantic Read-only Files (Include Path Ownership)</a></li>
+<li><a href="#generic-selection">11.9. C11 <code>_Generic</code></a></li>
 </ul>
 </li>
 <li><a href="#components">12. Components</a>
@@ -595,6 +596,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_globalunused_false_positive_for_static_functions_in_y_files">17.1. GlobalUnused false positive for static functions in .y files</a></li>
 <li><a href="#_stale_sessions_after_pop">17.2. Stale sessions after POP</a></li>
+<li><a href="#_header_static_prototype_and_definition_are_two_symbols">17.3. Header static: prototype and definition are two symbols</a></li>
+<li><a href="#_push_by_name_finds_nothing_on_a_cold_start">17.4. Push by name finds nothing on a cold start</a></li>
+<li><a href="#_token_pasting_that_forms_numbers">17.5. Token pasting that forms numbers</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">18. Refactoring Recipes</a>
@@ -2024,7 +2028,51 @@ defines the symbol being navigated to.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_staleness_after_refactoring">8.2.6. Staleness After Refactoring</h4>
+<h4 id="project-wide-operations">8.2.6. Project-wide Operations: Parse All</h4>
+<div class="paragraph">
+<p>Pass 3 follows includes from a position. Some operations have no position to start
+from, or are about the whole project by definition, so no include-based subset can make
+their answer complete. For those, after Pass 3, the server counts the CUs that have
+never been parsed and, if there are any, asks "N of M compilation units need reparsing.
+Parse all before &#8230;&#8203;?" (see Confirmation in the editor protocol below). Answering yes
+parses every one of them, saving the snapshot after every 100 CUs so that progress
+survives an interrupt or a crash. That is a save interval, not a limit.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Operation</th>
+<th class="tableblock halign-left valign-top">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Search (<code>OP_SEARCH</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Asks</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unused globals (<code>OP_UNUSED_GLOBAL</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Asks</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Push by name (<code>OP_BROWSE_PUSH_NAME</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Does not ask yet, so on a cold start it answers "No symbol found." Pinned by the
+ suspended <code>test_browsing_push_name_parses_whole_project</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>A related consequence: on a cold start the symbol menu at filter level 0 (all symbols
+with the name) only lists symbols from CUs parsed so far. A same-named static in a file
+not connected through includes appears only once that file has been parsed.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_staleness_after_refactoring">8.2.7. Staleness After Refactoring</h4>
 <div class="paragraph">
 <p>Refactoring operations (rename, move-function, etc.) modify editor buffers in memory.
 The disk files and their mtimes are unchanged, so the normal mtime-based staleness
@@ -2042,7 +2090,7 @@ the next request, triggering a reparse via Pass 1.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_cleaning_stale_emissions">8.2.7. Cleaning Stale Emissions</h4>
+<h4 id="_cleaning_stale_emissions">8.2.8. Cleaning Stale Emissions</h4>
 <div class="paragraph">
 <p>Reparsing a CU strips its old references and adds its current ones — but "old" means
 only references at <code>position.file == CU</code>. <code>removeReferenceableItemsForFile</code> is
@@ -3989,6 +4037,59 @@ include path (read-only).</p>
 </div>
 <div class="paragraph">
 <p>The exact mechanism and UX (warning, confirmation, or silent skip) need further design.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="generic-selection">11.9. C11 <code>_Generic</code></h3>
+<div class="paragraph">
+<p><strong>Status</strong>: Not implemented. Pinned by the suspended <code>test_parsing_generics</code>.</p>
+</div>
+<div class="sect3">
+<h4 id="_use_case_3">11.9.1. Use Case</h4>
+<div class="paragraph">
+<p><code>_Generic</code> selects an expression by the type of a controlling expression, most often to
+pick one of several functions, as in <code>&lt;tgmath.h&gt;</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">#define cbrt(x) _Generic((x), float: cbrtf, long double: cbrtl, default: cbrt)(x)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Today <code>_Generic</code> is neither a keyword nor defined away, so it parses as an identifier and
+every association is a syntax error. Error recovery keeps some references by chance but
+loses others, such as the <code>default:</code> branch and a typedef used as an association type.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_design_4">11.9.2. Design</h4>
+<div class="paragraph">
+<p>Parse every association and record the references in all of them. Do <strong>not</strong> select the
+branch the controlling expression&#8217;s type would pick.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Selecting needs the type of the controlling expression and C&#8217;s type compatibility
+rules — compiler work that a cross-referencer does not otherwise need.</p>
+</li>
+<li>
+<p>Recording every branch is also what users want: renaming <code>cbrtf</code> must update the macro
+above even where every call site happens to use <code>double</code>.</p>
+</li>
+<li>
+<p>Defining <code>_Generic</code> away, the way <code>_Alignas</code> is in the fallback defines, would avoid
+the syntax errors cheaply but drop exactly the function references <code>_Generic</code> exists
+to choose between.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The grammar needs a <code>_Generic</code> keyword and a generic-selection rule with associations of
+the form <code>type-name : assignment-expression</code> and <code>default : assignment-expression</code>.
+Branch selection would only matter for navigation or completion on the type of the
+result (<code>_Generic(&#8230;&#8203;).field</code>), which is rare.</p>
 </div>
 </div>
 </div>
@@ -9069,6 +9170,73 @@ Each entry describes symptoms, analysis (when available), and suspected root cau
 <p>Tracked under "Known Limitations" in <a href="10-roadmap.adoc">Chapter 10: Roadmap</a>, with the proposed dissolve (index-based sessions).</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_header_static_prototype_and_definition_are_two_symbols">17.3. Header static: prototype and definition are two symbols</h3>
+<div class="paragraph">
+<p><strong>Symptom:</strong> For a <code>static</code> function declared and then defined in a header, renaming it
+from a file that includes the header renames the definition and the calls but leaves the
+prototype unchanged, so the code no longer compiles.</p>
+</div>
+<div class="paragraph">
+<p><strong>Suspected root cause:</strong> <code>setStaticFunctionLinkName</code> (<code>src/semact.c</code>) names a static after
+the file it is in only for its definition. Other usages, like the prototype, are named
+after the compilation unit being parsed, so the prototype becomes <code>main.c!helper</code> while
+the definition is <code>helper.h!helper</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Test:</strong> <code>test_static_declared_and_defined_in_header</code> (suspended; the note covers the
+<code>exactPositionResolve</code> question to settle before fixing).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_push_by_name_finds_nothing_on_a_cold_start">17.4. Push by name finds nothing on a cold start</h3>
+<div class="paragraph">
+<p><strong>Symptom:</strong> Pushing a symbol by name answers "No symbol found." unless some file
+containing it has already been parsed.</p>
+</div>
+<div class="paragraph">
+<p><strong>Suspected root cause:</strong> Push by name is project-wide, but is not among the operations
+that ask to parse all unparsed CUs first (see
+<a href="08-algorithms.html#project-wide-operations">Project-wide Operations</a>).</p>
+</div>
+<div class="paragraph">
+<p><strong>Test:</strong> <code>test_browsing_push_name_parses_whole_project</code> (suspended).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_token_pasting_that_forms_numbers">17.5. Token pasting that forms numbers</h3>
+<div class="paragraph">
+<p><strong>Symptom:</strong> Macros that paste numbers produce wrong symbols in the reference table.</p>
+</div>
+<div class="paragraph">
+<p><strong>Analysis:</strong> Three separate faults, each with its own suspended test. Fix them in this
+order, because the other two tests assume the first is fixed:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Pasted numbers are recorded as symbols</strong> (<code>1##0</code> gives the symbol <code>10</code>), because the
+result of pasting is always treated as an identifier. Test:
+<code>test_token_pasting_numbers</code>. Fixing it changes the passing
+<code>test_collate_const_suffix_pasting</code>, whose <code>expected</code> records <code>42UL</code> as a symbol.</p>
+</li>
+<li>
+<p><strong>Pasting with <code>.</code> drops the <code>.</code></strong> (<code>3<mark>.</mark>14</code> becomes <code>314</code>). Test:
+<code>test_token_pasting_float</code>.</p>
+</li>
+<li>
+<p><strong><code>0x</code> in a macro body is not one token</strong>: the lexer reads <code>0</code> and then <code>x</code>, which becomes
+the macro parameter, so <code>HEX(FF)</code> gives <code>0FF</code>. The fix is in the lexer&#8217;s handling of
+preprocessing numbers and affects how every number is read. Test:
+<code>test_collate_hex_prefix_pasting</code>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Whether numbers need the intermediate <code>a##b</code> entries that identifier pasting records is
+left for the fix to decide.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -11110,7 +11278,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-17 11:21:55 UTC
+Last updated 2026-09-17 11:42:11 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
