@@ -1262,8 +1262,6 @@ static void extractVariable(EditorMarker *point, EditorMarker *mark) {
 void serverPerformRefactoring(void) {
     ENTER();
 
-    assert(options.project != NULL);
-
     deepCopyOptionsFromTo(&options, &refactoringOptions);
     refactoringOptions.serverOperation = OP_INTERNAL_LIST;
 
