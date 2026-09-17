@@ -126,21 +126,16 @@ This creates constraints for `c-xrefactory`'s advanced refactorings:
 
 **Interactive Refactorings**: `c-xrefactory`'s extract/parameter operations
 require multi-step user input (names, positions, declarations). LSP's
-`textDocument/codeAction` doesn't support interactive dialogs.
+`textDocument/codeAction` can offer a refactoring, but has no standard way
+to ask the user for input while it runs.
 
 **Symbol Browsing**: `c-xrefactory` provides interactive symbol browsers
 with filtering and keyboard navigation. LSP returns flat reference lists
 with no standard for interactive UI.
 
-**Strategy**: The LSP implementation aims to:
-
-- Provide basic IDE features (definition, completion, simple refactorings)
-  to modern editors
-- Expose `c-xrefactory`'s advanced refactoring capabilities where possible
-- Keep the Emacs client as the primary interface for full interactive features
-
-LSP serves to make `c-xrefactory` more accessible while the Emacs client
-probably will remain the gateway to its complete refactoring power.
+How much of this can still reach LSP editors, and what each editor would need
+in its own extension, is covered in
+<<10-roadmap.adoc#lsp-refactoring-reach,Roadmap: Reaching refactorings>>.
 
 [[history]]
 === History
