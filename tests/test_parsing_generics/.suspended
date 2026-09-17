@@ -1,0 +1,11 @@
+_Generic is not supported: it is neither a keyword (src/init.c) nor swallowed in
+fallback_defines (src/startup.c), so it parses as an identifier and every
+association is a syntax error. Recovery happens to keep some references but
+loses the default: branch and the typedef used as an association type, and
+_Generic itself is recorded as a symbol.
+
+Only parsing is needed, not branch selection (the controlling expression's type
+and type compatibility): a keyword and a generic-selection rule with
+type-name : assignment-expression and default : assignment-expression
+associations. Swallowing it with a define would avoid the errors but drop the
+function references, which is usually what _Generic selects between.

@@ -1,12 +1,14 @@
-#define EXPROF(x, y) _Generic((x), \
-    int: (y + x), \
-    float: (y * x), \
-    double: (y - x), \
-    default: (y) \
-)
+typedef long number;
 
-int test_generic(int a, float b, double c) {
-    int result1 = EXPROF(a, b);  // Expected: Tracks `b` and `a` inside `TYPEOF`
-    float result2 = EXPROF(b, c);  // Expected: Tracks `c` and `b`
-    double result3 = EXPROF(c, a);  // Expected: Tracks `a` and `c`
+int int_value(int x) { return x; }
+long number_value(number x) { return x; }
+double default_value(double x) { return x; }
+
+int selector;
+
+double pick(void) {
+    return _Generic(selector,
+                    int: int_value,
+                    number: number_value,
+                    default: default_value)(selector);
 }

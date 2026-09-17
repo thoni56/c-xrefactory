@@ -1,9 +1,19 @@
-TYPEOF
-    @source.c:1:8
-    @source.c:9:18
+default_value
+    @source.c:5:7
+    @source.c:13:29
+int_value
+    @source.c:3:4
+    @source.c:11:25
+number
+    @source.c:1:13
+    @source.c:4:18
+    @source.c:12:20
+number_value
+    @source.c:4:5
+    @source.c:12:28
+pick
+    @source.c:9:7
+selector
+    @source.c:7:4
     @source.c:10:20
-    @source.c:11:21
-_Generic
-    @source.c:1:21
-test_generic
-    @source.c:8:5
+    @source.c:13:44
