@@ -281,7 +281,23 @@ survives an interrupt or a crash. That is a save interval, not a limit.
 
 A related consequence: on a cold start the symbol menu at filter level 0 (all symbols
 with the name) only lists symbols from CUs parsed so far. A same-named static in a file
-not connected through includes appears only once that file has been parsed.
+not connected through includes appears only once that file has been parsed. This is
+left as is: the menu offers _other_ symbols with the same name, so a missing entry does
+not make the selected symbol's references wrong, and a menu filter change is too cheap
+an operation to put a parse-all dialog behind.
+
+Operations that do *not* need every CU, and why:
+
+Rename's safety check::
+  Rename does not look up whether the new name exists somewhere. It renames in the
+  buffers, reparses, pushes on the new name at the definition and compares the references
+  with the renamed occurrences; any difference means some reference would bind to a
+  different symbol. Collisions that matter at compile time happen only in a CU that sees
+  both declarations. Such a CU includes the renamed symbol's header, so include-based
+  discovery parses it. What escapes is a clash with a global defined in a module that
+  shares no header, which only appears when linking. That is the same trade-off as
+  link:/workspace/1/decisions/C-xrefactory#13[ADR-0013], and the linker reports it.
+  `test_rename_global_collision_through_includes` pins both cases.
 
 ==== Staleness After Refactoring
 
