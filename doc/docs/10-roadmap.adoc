@@ -146,6 +146,41 @@ un-preload staleness signals, and `definition` / `references` are operations ove
 those events have already made current. So the LSP path needs no architecture of its own —
 it reuses entry refresh (<<08-algorithms.adoc#,Algorithms>>), triggered by different events.
 
+[[lsp-refactoring-reach]]
+==== Reaching refactorings: three tiers
+
+The Emacs protocol is interactive and LSP is not, but most of that gap can be closed in
+the server rather than in each editor. Every LSP editor gets what the server exposes
+through standard requests. Anything beyond that needs client code, written once per
+editor. So each operation should live in the lowest tier that can carry it:
+
+1. *Standard requests.* Operations with a direct LSP counterpart: rename
+   (`textDocument/rename`), references, definition, and unused symbols as diagnostics.
+   These cost nothing per editor.
+2. *Code actions and `workspace/executeCommand`.* The portable home for most
+   refactorings: extract, move function, add, delete and reorder parameters. The server
+   offers the actions that apply at the cursor or selection. Choosing one either carries
+   a ready `WorkspaceEdit`, or runs a command where the server computes the edits and
+   applies them with `workspace/applyEdit`. Editors show these in their refactoring
+   menus with no client code.
+3. *Custom methods plus editor extension code.* Only for real interactivity: asking for a
+   name or parameter position, resolving ambiguities, the symbol browser, and yes/no
+   questions during an operation. There are two shapes:
+   the extension collects the answers up front and passes them as `executeCommand`
+   arguments, or the server asks in the middle of an operation with a custom request
+   (e.g. `cxref/askUser`) that the extension answers. The second is closest to the Emacs
+   protocol, but every editor has to implement it. The standard
+   `window/showMessageRequest` covers choices between buttons, not free text.
+
+The aim is to keep tier 3 small. The more an operation's questions can be settled before
+it starts, or turned into a choice between buttons, the more editors get it for free.
+
+This also shapes how the server is packaged. The server itself is editor-neutral. Each
+editor gets a thin extension that launches it and implements tier 3: a Node extension in
+VS Code, a Lua plugin in Neovim, eglot or lsp-mode in Emacs, a Python plugin in Sublime,
+a plugin (native LSP API or LSP4IJ) in JetBrains IDEs. Editors with little or no
+extension API, such as Zed and Helix, get tiers 1 and 2 only.
+
 === Further refactorings
 
 `c-xrefactory` crossed the "Refactoring Rubicon" early, but only a fraction of the

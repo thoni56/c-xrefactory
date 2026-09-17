@@ -123,6 +123,12 @@ events are entry-refresh sync points (<<08-algorithms.adoc#,Algorithms>>). The s
    so `definition` works across files with no new query mechanism; Pass 3 sibling parsing
    triggers lazily.
 
+Exposing refactorings follows the three tiers in
+<<10-roadmap.adoc#lsp-refactoring-reach,Roadmap: Reaching refactorings>>: standard requests
+first, then code actions and `workspace/executeCommand` (stubs exist, with
+`codeActionProvider` still disabled in `src/lsp_handler.c`), and custom methods only where
+an operation needs interaction during the operation itself.
+
 === Rename function handles `expect`
 
 Many unittest frameworks have a feature for isolating a unit, often referred to as
