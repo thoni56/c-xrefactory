@@ -2011,7 +2011,9 @@ the definition, not all usage sites.</p>
 <div class="paragraph">
 <p><strong>Scope control:</strong> Only CUs sharing headers with the <em>request file</em> are parsed — not
 the entire project. This keeps cold-start latency proportional to the local
-neighborhood of the file being worked on.</p>
+neighborhood of the file being worked on. That relies on every file that references a
+symbol including the header that declares it; an <code>extern</code> written directly in a <code>.c</code> file
+is deliberately not followed (<a href="/workspace/1/decisions/C-xrefactory#13">ADR-0013</a>).</p>
 </div>
 <div class="paragraph">
 <p><strong>Current limitation:</strong> The sibling lookup is based on all shared headers, not just
@@ -11108,7 +11110,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-17 11:21:05 UTC
+Last updated 2026-09-17 11:21:55 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
