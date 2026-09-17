@@ -1,0 +1,8 @@
+Bug: numbers formed by ## are recorded as symbols
+
+The result of pasting is always classified as an identifier, so 1##0 gives the
+symbol 10, and 2##e##10 gives 2e10. Fixing this breaks the passing
+test_collate_const_suffix_pasting, whose expected records 42UL and 123L as
+symbols; update it in the same commit. The other pasting tests (float, hex
+prefix) assume this is fixed. Intermediate entries like 1##0 are kept in
+expected for now; decide whether numbers need them when fixing.

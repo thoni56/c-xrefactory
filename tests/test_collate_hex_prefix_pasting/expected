@@ -1,0 +1,16 @@
+0x##BEEF
+    @source.c:2:22
+0x##FF
+    @source.c:1:22
+0xFF##U
+    @source.c:1:28
+MAKE_HEX
+    @source.c:2:8
+    @source.c:5:9
+MAKE_HEXU
+    @source.c:1:8
+    @source.c:4:18
+v1
+    @source.c:4:13
+v2
+    @source.c:5:4

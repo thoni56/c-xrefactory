@@ -1,0 +1,6 @@
+Bug: pasting with '.' drops the '.'
+
+FLOAT(3, 14) with x##.##y becomes 314 instead of 3.14. The '.' stands alone in
+the source, so this is about pasting with a punctuator, not number lexing.
+Assumes test_token_pasting_numbers is fixed first (3.14 must not be a symbol).
+The intermediate entries 3##. and 3.##14 in expected are a guess.

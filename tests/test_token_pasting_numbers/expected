@@ -1,29 +1,16 @@
+1##0
+    @source.c:2:14
+2##e
+    @source.c:5:17
+2e##10
+    @source.c:5:18
 EXP
-    @source.c:12:8
-    @source.c:13:11
-FLOAT
-    @source.c:9:8
-    @source.c:10:11
-HEX
-    @source.c:1:8
-    @source.c:2:8
+    @source.c:4:8
+    @source.c:5:13
 NUM
-    @source.c:5:8
-    @source.c:7:13
-TXT
-    @source.c:6:8
-    @source.c:7:4
-b##z
-    @source.c:7:7
-bz
-    @source.c:7:8
-d
-    @source.c:10:7
-e
-    @source.c:13:7
-e##10
-    @source.c:12:21
-h
+    @source.c:1:8
+    @source.c:2:10
+big
+    @source.c:5:7
+ten
     @source.c:2:4
-i
-    @source.c:3:4

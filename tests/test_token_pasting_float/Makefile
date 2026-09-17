@@ -1,8 +1,11 @@
+# Pasting with '.' keeps the '.'
+#
+# x##.##y with 3 and 14 must form 3.14, not 314. The intermediate entries
+# follow the pattern of identifier pasting; their exact spelling and positions
+# are a best guess, since the current code never produces them.
+
 include ../Makefile.server
 
-# This test token pasting which mostly works. It does not include token pasting into
-# numbers, which doesn't. The suspended test_token_pasting_numbers,
-# test_token_pasting_float and test_collate_hex_prefix_pasting cover that.
 
 $(TEST):
 	@rm -rf CXrefs .c-xref output output.tmp server-buffer

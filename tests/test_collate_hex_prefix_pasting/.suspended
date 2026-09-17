@@ -1,0 +1,7 @@
+Bug: 0x in a macro body is not one token
+
+0x is a C preprocessing number, but the lexer reads it as 0 followed by the
+identifier x. In 0x##x that x is then taken as the macro parameter, so HEX(FF)
+becomes 0FF. The fix is in the lexer (pp-number rules), not in pasting, and
+changes how every number is read (0x1p-3, 1e+5, 1.2.3), so it is riskier than
+it looks. Assumes test_token_pasting_numbers is fixed first (the U suffix).

@@ -1,0 +1,9 @@
+3##.
+    @source.c:2:18
+3.##14
+    @source.c:2:19
+FLOAT
+    @source.c:1:8
+    @source.c:2:12
+pi
+    @source.c:2:7
