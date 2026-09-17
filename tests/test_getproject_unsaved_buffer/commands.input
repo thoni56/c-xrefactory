@@ -1,0 +1,6 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/source.c
+<sync>
+-getproject CURDIR/newbuffer.c
+<sync>
+<exit>

@@ -1,0 +1,14 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-getproject CURDIR/newbuffer.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-exit
+end-of-options
+
