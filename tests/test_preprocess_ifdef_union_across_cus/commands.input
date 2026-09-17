@@ -1,7 +1,7 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/a.c
 <sync>
--search=always_there -olcursor=1 CURDIR/a.c -p CURDIR
+-search=always_there -olcursor=1 CURDIR/a.c
 <sync>
 -continue
 <sync>
