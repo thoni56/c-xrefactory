@@ -1,4 +1,9 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-getproject CURDIR/browsing.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
 -olcxpushname=browsing -olcxlccursor=2:0  -olcursor=19 CURDIR/browsing.c
 end-of-options
 

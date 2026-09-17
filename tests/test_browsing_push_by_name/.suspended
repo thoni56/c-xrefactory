@@ -1,0 +1,13 @@
+Bug: push by name finds nothing when only -getproject has run
+
+-olcxpushname is not in the "N of M compilation units need reparsing" check in
+src/server.c, so with the project merely locked by -getproject nothing is
+parsed. The first push answers "No symbol found" and the following -browse-next
+calls then report an empty stack. The -p option used to mask this by getting
+the project scanned before any request.
+
+Same defect as test_browsing_push_name_parses_whole_project, and the fix is the
+same: add OP_BROWSE_PUSH_NAME to that check. Warming the file with another
+request first was tried and abandoned, because push by name then resolves 'i'
+to whichever symbol was looked at last instead of the struct field at 10:22
+that expected records. Remove this file when the check is fixed.
