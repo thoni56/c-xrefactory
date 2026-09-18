@@ -1,14 +1,34 @@
 Bug: browsing from inside a macro body needs a batch -create
 
-The server alone answers "No reference" where the same navigation works once
--create has run. findMacroExpansionFile (src/cxref.c) picks a CU by looking for
-a UsageMacroBaseFileUsage reference; expandMacroCall adds one only in XrefMode
-(src/yylex.c:2530), so in a server-only session no CU is ever found.
+Cold, with no snapshot, this answers "No reference" where the same navigation
+works once -create has run. Two causes were found (2026-09-18); the first is
+fixed, the second is what still fails here.
 
-Removing the XrefMode condition is not enough: the reference is then created
-(verified 2026-09-18) but the answer stays "No reference", so something else on
-that path is missing too. Start by finding what consumes the reference after
-the expansion file is parsed.
+1. FIXED in 3a67dc91. Entry refresh Pass 3 never parsed the compilation units
+   that include the request file when the request file is a header, so nothing
+   that expands the macro was ever parsed. A -create snapshot hid it, because it
+   carries an identity include reference (the header "defines" itself) that made
+   Pass 3's test pass by accident.
 
-expected is the answer test_browsing_push_in_unexpanded_macro gets with -create;
-only the first two lines differ, since this test runs no create step.
+2. OPEN. findMacroExpansionFile (src/cxref.c) looks for a
+   UsageMacroBaseFileUsage reference to pick a CU that expands the macro, and
+   expandMacroCall records one only in XrefMode (src/yylex.c, "if (options.mode
+   == XrefMode) addMacroBaseUsageRef(...)"). XrefMode is what -create runs, so a
+   server-only session never records it.
+
+Removing that condition makes this test pass - verified 2026-09-18, the answer
+becomes the <display-or-update-browser> in expected. The cost is that every
+macro then gets a reference at line 0, column 0 in the snapshot, which shows up
+in the tests that dump the database: 23 of them fail, all in the collation and
+token-pasting family (test_token_pasting*, test_collate_*, test_parsing_c23,
+test_parsing_gnuisms, test_parsing_stringification, test_parsing_va_args_empty,
+test_parse_expand_stdc_version, test_define_undefine_define).
+
+So the fix is one line plus a decision:
+- accept the reference in the dumps and add the "@file:0:0" line to those 23
+  expected files, in the same commit; or
+- keep it out of the snapshot or out of the dump (utils/cxref_reader), and say
+  why a reference the server needs in memory should not be persisted.
+
+Coordinate before doing it: that test family is where the other machine has been
+working (four collation commits on 2026-09-18).
