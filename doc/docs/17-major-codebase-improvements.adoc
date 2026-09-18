@@ -645,3 +645,46 @@ Support both old and new names in the option parser temporarily (two `strcmp` en
 ==== Priority
 
 Low urgency, high value for readability. Can be done incrementally — start with the "tag" removal (search-related names only), then expand to the full `olcx` rename later.
+
+=== Elisp Compiled and Deleted on Every Build
+
+==== Problem Statement
+
+Building `c-xref` runs `$(MAKE) -C ../editors/emacs` from the `c-xref` recipe, and
+that Makefile's `all` target does this:
+
+[source,make]
+----
+all: c-xrefprotocol.el compile
+	-rm *.elc # Remove the compiled elisp since we want to load source in emacs-devel (utils)
+
+compile:
+	-rm -f *.elc
+	-emacs -Q --batch -l compileCxrefactory.el
+----
+
+So every build deletes any `.elc` files, byte-compiles all the elisp, then deletes
+the result again. `compile` is a phony target with no prerequisites, so this happens
+whether or not any `.el` file changed. It costs roughly two seconds per build here,
+which is most of the time an otherwise up-to-date `make c-xref` takes, and it makes
+`make test` (which now depends on `c-xref`) pay the same on every run.
+
+The comment says why the output is thrown away: `utils/emacs-devel` loads the
+sources, not the compiled files. So the compilation is not for using the result —
+it is a *check* that the elisp still compiles, and byte-compiler warnings are the
+real product.
+
+==== Scope
+
+Decide what the step is for and make it say so:
+
+* If it is a syntax and warning check, it belongs with the tests rather than in
+  every link of `c-xref`, and it should fail the build when the compiler reports
+  an error (today both commands are prefixed with `-`, so failures are ignored).
+* If the compiled files are wanted for people who load them, they should not be
+  deleted, and `emacs-devel` should be the one choosing sources.
+* Either way it should be incremental: `%.elc: %.el`, so an unchanged tree costs
+  nothing.
+
+The protocol generation (`c-xrefprotocol.el` from `protocol.th`) is already a
+proper rule with prerequisites and should stay as it is.
