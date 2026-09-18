@@ -306,7 +306,14 @@ refactorings.def: refactorings.h
 
 
 #########################################################################
-test: c-xref
+# Byte-compiling the elisp is a check, not a build step: it keeps no .elc
+# (see ../editors/emacs/check-elisp.el) and fails if anything stops compiling.
+.PHONY: check-elisp
+check-elisp:
+	$(MAKE) -C ../editors/emacs check
+
+#########################################################################
+test: c-xref check-elisp
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
 	$(MAKE) -e -C ../tests -k quick
 
