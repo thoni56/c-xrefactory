@@ -11,7 +11,6 @@ include ../Makefile.server
 # - NEXT -> should reach options.c
 
 $(TEST):
-	$(CXREF_PROGRAM) -p $(CURDIR) -create . > /dev/null
 # Create preloads with progressively newer timestamps to trigger staleness on each visit
 # (simulates emacs creating fresh preloads each time a buffer is visited)
 	sleep 1

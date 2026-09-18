@@ -4,7 +4,6 @@ include ../Makefile.server
 # each file is preloaded (triggering stale refresh) as we navigate.
 
 $(TEST):
-	$(CXREF_PROGRAM) -p $(CURDIR) -create > /dev/null
 	sleep 2
 # Create preload files for all source files (simulating Emacs buffers)
 	cp common.h common.preload

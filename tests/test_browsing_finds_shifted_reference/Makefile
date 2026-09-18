@@ -7,7 +7,6 @@ include ../Makefile.server
 
 prepare:
 	@-rm -rf .c-xref server-buffer output.tmp output trace.log
-	@$(CXREF_PROGRAM) -p $(CURDIR) -create . > /dev/null
 	@touch source.preload
 
 $(TEST): prepare

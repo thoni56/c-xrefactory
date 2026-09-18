@@ -6,7 +6,6 @@ include ../Makefile.server
 # inside OUTER_MACRO's body.
 
 $(TEST):
-	$(CXREF_PROGRAM) -p $(CURDIR) -create > /dev/null
 	sleep 2
 # Create preload files for source files (simulating Emacs buffers)
 	cp macros.h macros.preload

@@ -10,7 +10,6 @@ include ../Makefile.server
 # And navigation wraps to common.h with shifted positions
 
 $(TEST):
-	$(CXREF_PROGRAM) -p $(CURDIR) -create . > /dev/null
 # Create preloads for original content
 	cp a.c a.preload
 	cp common.h common.preload

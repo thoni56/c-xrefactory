@@ -5,7 +5,6 @@ include ../Makefile.server
 # LAST alphabetically, so wrap-around should skip to it, not aaa_usage.c.
 
 $(TEST):
-	$(CXREF_PROGRAM) -p $(CURDIR) -create > /dev/null
 	sleep 2
 # Create preload files for all source files (simulating Emacs buffers)
 	cp zzz_define.h zzz_define.preload

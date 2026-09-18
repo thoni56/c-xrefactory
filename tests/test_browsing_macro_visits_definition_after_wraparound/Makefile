@@ -4,7 +4,6 @@ include ../Makefile.server
 # even when each file is preloaded (triggering stale refresh) as we navigate.
 
 $(TEST):
-	$(CXREF_PROGRAM) -p $(CURDIR) -create . > /dev/null
 	sleep 2
 	cp common.h common.preload
 	cp source1.c source1.preload

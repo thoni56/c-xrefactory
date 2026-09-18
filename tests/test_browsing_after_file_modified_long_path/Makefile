@@ -8,7 +8,6 @@ include ../Makefile.server
 # Then source.c is reparsed and positions reflect the modified file
 
 $(TEST):
-	$(CXREF_PROGRAM) -p $(CURDIR) -create . > /dev/null
 # Create preloads for original content
 	cp header.h header.preload
 	cp source.c source.preload1

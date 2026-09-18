@@ -10,7 +10,6 @@ include ../Makefile.server
 # And positions in header.h reflect the modified file
 
 $(TEST):
-	$(CXREF_PROGRAM) -p $(CURDIR) -create . > /dev/null
 # Create preloads for original content
 	cp header.h header.preload
 	cp source.c source.preload

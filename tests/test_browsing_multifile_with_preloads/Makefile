@@ -1,7 +1,6 @@
 include ../Makefile.server
 
 $(TEST):
-	$(CXREF_PROGRAM) -p $(CURDIR) -create > /dev/null
 	sleep 2
 	touch common.preload1
 	sleep 2
