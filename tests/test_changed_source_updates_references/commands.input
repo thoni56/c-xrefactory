@@ -1,26 +1,26 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server
--getproject -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
+-getproject CURDIR/source.c
 <sync>
-CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -xrefrc CURDIR/.c-xrefrc -p CURDIR
--push -olcursor=6 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors
+-push -olcursor=6 CURDIR/source.c
 <sync>
--browse-next -olcursor=4 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-browse-next -olcursor=4 CURDIR/source.c
 <sync>
--browse-next -olcursor=62 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-browse-next -olcursor=62 CURDIR/source.c
 <sync>
--getproject -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
+-getproject CURDIR/source.c
 <sync>
-CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -xrefrc CURDIR/.c-xrefrc -p CURDIR -preload CURDIR/source.c CURDIR/source.preload
--push -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -preload CURDIR/source.c CURDIR/source.preload
+-push -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c
 <sync>
--browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c
 <sync>
--browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=45 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=45 CURDIR/source.c
 <sync>
--olcxpop -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxpop -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c
 <sync>
--push -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c
 <sync>
--browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c
 <sync>
 <exit>

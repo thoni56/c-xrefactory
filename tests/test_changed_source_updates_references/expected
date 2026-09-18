@@ -1,26 +1,29 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
--getproject -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
+-getproject CURDIR/source.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -xrefrc CURDIR/.c-xrefrc -p CURDIR
+CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors
+<information len=<n>>C-xrefactory project: CURDIR</information>
+<information len=<n>>CURDIR/source.c</information>
+<information len=<n>>Generating 'CURDIR/.c-xref/db'</information>
 <sync>
--push -olcursor=6 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -olcursor=6 CURDIR/source.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=1 col=4 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--browse-next -olcursor=4 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-browse-next -olcursor=4 CURDIR/source.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=6 col=11 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--browse-next -olcursor=62 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-browse-next -olcursor=62 CURDIR/source.c
 end-of-options
 
 <sync>
@@ -28,31 +31,31 @@ end-of-options
 <goto>
  <position-lc line=1 col=4 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--getproject -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
+-getproject CURDIR/source.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -xrefrc CURDIR/.c-xrefrc -p CURDIR -preload CURDIR/source.c CURDIR/source.preload
+CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -preload CURDIR/source.c CURDIR/source.preload
 <information len=<n>>C-xrefactory project: CURDIR</information>
 <information len=<n>>CURDIR/source.c</information>
-<information len=<n>>Generating 'CURDIR/CXrefs'</information>
+<information len=<n>>Generating 'CURDIR/.c-xref/db'</information>
 <sync>
--push -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=2 col=4 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=9 col=11 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=45 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=45 CURDIR/source.c
 end-of-options
 
 <sync>
@@ -60,7 +63,7 @@ end-of-options
 <goto>
  <position-lc line=2 col=4 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--olcxpop -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxpop -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c
 end-of-options
 
 <sync>
@@ -68,14 +71,14 @@ end-of-options
  <position-lc line=2 col=4 len=<n>>CURDIR/source.c</position-lc>
 </goto>
 <bottom-information len=<n>>Current top symbol: foo</bottom-information>
--push -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=2 col=4 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c
 end-of-options
 
 <sync>
