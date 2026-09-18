@@ -1403,6 +1403,17 @@ work.</p>
 project directory. Distinguished from header files, which are included transitively
 and not compiled independently.</p>
 </dd>
+<dt class="hdlist1">Expanding CU</dt>
+<dd>
+<p>A compilation unit that expands a given macro. When a macro is expanded while parsing,
+the server records an <em>expanding-CU marker</em> on it: a reference naming the CU being
+parsed, at line 0, column 0 — a marker, not a location, which is why it shows up oddly
+in database dumps. Browsing from inside a macro body uses it to find a CU to parse, so
+that the identifiers in the macro body become real symbols
+(<code>findMacroExpansionFile()</code>, <code>UsageMacroBaseFileUsage</code>).<br>
+Recorded only in XrefMode (what <code>-create</code> runs), so a server-only session has none —
+see the suspended <code>test_browsing_push_in_unexpanded_macro_without_create</code>.</p>
+</dd>
 <dt class="hdlist1">Include structure</dt>
 <dd>
 <p>The graph of <code>#include</code> relationships between files, represented in the reference table
@@ -11372,7 +11383,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 11:48:57 UTC
+Last updated 2026-09-18 11:54:26 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
