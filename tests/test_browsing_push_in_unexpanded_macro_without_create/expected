@@ -1,0 +1,14 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-getproject CURDIR/macro.h
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-push  -olcursor=69 CURDIR/macro.h
+end-of-options
+
+<sync>
+<display-or-update-browser len=<n>></display-or-update-browser>
+-exit
+end-of-options
+

@@ -1,0 +1,14 @@
+Bug: browsing from inside a macro body needs a batch -create
+
+The server alone answers "No reference" where the same navigation works once
+-create has run. findMacroExpansionFile (src/cxref.c) picks a CU by looking for
+a UsageMacroBaseFileUsage reference; expandMacroCall adds one only in XrefMode
+(src/yylex.c:2530), so in a server-only session no CU is ever found.
+
+Removing the XrefMode condition is not enough: the reference is then created
+(verified 2026-09-18) but the answer stays "No reference", so something else on
+that path is missing too. Start by finding what consumes the reference after
+the expansion file is parsed.
+
+expected is the answer test_browsing_push_in_unexpanded_macro gets with -create;
+only the first two lines differ, since this test runs no create step.
