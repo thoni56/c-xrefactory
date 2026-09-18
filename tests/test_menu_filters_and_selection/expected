@@ -7,7 +7,7 @@ end-of-options
 CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors
 <information len=<n>>C-xrefactory project: CURDIR</information>
 <information len=<n>>CURDIR/source.c</information>
-<information len=<n>>Generating 'CURDIR/CXrefs'</information>
+<information len=<n>>Generating 'CURDIR/.c-xref/db'</information>
 <sync>
 -olcxpushonly  -olcursor=25 CURDIR/source.c
 end-of-options
