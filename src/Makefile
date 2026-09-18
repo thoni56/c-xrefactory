@@ -306,7 +306,7 @@ refactorings.def: refactorings.h
 
 
 #########################################################################
-test:
+test: c-xref
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
 	$(MAKE) -e -C ../tests -k quick
 
