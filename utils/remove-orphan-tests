@@ -1,0 +1,31 @@
+#!/bin/bash
+# Remove orphan test directories.
+#
+# An orphan is a test_* directory left behind when a test was deleted from git
+# but its generated files kept the directory alive. It has no tracked files, no
+# Makefile and no .suspended, which is the same rule tests/Makefile and
+# utils/failing use to tell a test from a leftover.
+#
+# Pass -n to only list what would be removed.
+
+PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo "")
+if [[ -z "$PROJECT_ROOT" || "$(basename "$PROJECT_ROOT")" != "c-xrefactory" ]]; then
+  echo "Error: Script must be run from within the c-xrefactory project tree." >&2
+  exit 1
+fi
+
+dry_run=false
+[[ "$1" == "-n" ]] && dry_run=true
+
+cd "$PROJECT_ROOT/tests" || exit 1
+
+for dir in test_*; do
+    if [ -d "$dir" ] && [ -z "$(git ls-files "$dir")" ] && [ ! -f "$dir/Makefile" ] && [ ! -f "$dir/.suspended" ]; then
+        if $dry_run; then
+            echo "Would remove $dir"
+        else
+            rm -rf "$dir"
+            echo "Removed $dir"
+        fi
+    fi
+done
