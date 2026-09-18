@@ -596,7 +596,15 @@ watch-for-systemtests-only:
 
 .PHONY: watch-for-systemtests
 watch-for-systemtests:
-	watchexec --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Systemtests make -j$(JOBS) system-tests
+	watchexec --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Systemtests make system-tests-logged
+
+# Same as system-tests, and keeps the output in systemtests.log so the result of
+# the last watcher run can be read by someone who was not watching the terminal.
+# pipefail makes the status the make's, not tee's, which is what execnotify reports on.
+.PHONY: system-tests-logged
+system-tests-logged: SHELL := /bin/bash
+system-tests-logged:
+	@set -o pipefail; $(MAKE) -j$(JOBS) system-tests 2>&1 | tee systemtests.log
 
 .PHONY: watch-for-systemtests-silent
 watch-for-systemtests-silent:

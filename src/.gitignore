@@ -18,6 +18,7 @@ yacc_parser.head
 yacc_parser.tail
 .unittests.done
 .build.done
+systemtests.log
 options_config.h
 .cache
 latex
