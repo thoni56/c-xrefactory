@@ -1422,10 +1422,14 @@ Separate from symbol references, which require full parsing.</p>
 </dd>
 <dt class="hdlist1">Initialization</dt>
 <dd>
-<p>The first-request setup: discover project, load options, interrogate compiler, restore
-snapshot, scan project structure. Happens once per session. Not the same as cold start
-— initialization happens on every session, cold start describes the <em>absence</em> of a
-snapshot.</p>
+<p>Discovering the project, loading options, interrogating the compiler, restoring the
+snapshot and scanning project structure. Happens once per session. Not the same as cold
+start — initialization happens on every session, cold start describes the <em>absence</em> of a
+snapshot.<br>
+Today it is split in two. <code>mainTaskEntryInitialisations()</code> discovers a project at
+process start, from <code>cwd</code> when the command line names no file, and reads that project&#8217;s
+options. The first request that names a file does the rest. The direction is to move all
+of it into <code>-getproject</code>, so that process start knows nothing about any project.</p>
 </dd>
 <dt class="hdlist1">Lightweight scan</dt>
 <dd>
@@ -8646,6 +8650,9 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </ul>
 </div>
 <div class="paragraph">
+<p>Session and Project are tangled in time as well as in the struct. <code>mainTaskEntryInitialisations()</code> (<code>startup.c:827</code>) runs project discovery at process start, using <code>cwd</code> when the command line names no file, and reads that project&#8217;s options before any request has arrived. So "set once at server startup" already includes project-scoped work.</p>
+</div>
+<div class="paragraph">
 <p>These lifetimes are held together by a save/restore discipline scattered across five call sites:</p>
 </div>
 <div class="ulist">
@@ -11383,7 +11390,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 11:54:26 UTC
+Last updated 2026-09-18 16:32:30 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
