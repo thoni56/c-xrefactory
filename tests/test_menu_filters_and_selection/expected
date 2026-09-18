@@ -1,29 +1,29 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
--getproject -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
+-getproject CURDIR/source.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -xrefrc CURDIR/.c-xrefrc -p CURDIR
+CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors
 <information len=<n>>C-xrefactory project: CURDIR</information>
 <information len=<n>>CURDIR/source.c</information>
 <information len=<n>>Generating 'CURDIR/CXrefs'</information>
 <sync>
--olcxpushonly  -olcursor=25 CURDIR/source.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxpushonly  -olcursor=25 CURDIR/source.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=2 col=8 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--olcxmenufilter=2  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenufilter=2
 end-of-options
 
 <sync>
 <resolution>
  <symbol line=2 selected=1 base=0 drefn=1 refn=2 len=<n>>i</symbol>
 </resolution>
--olcxfilter=0  -olcursor=1 nil  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=0  -olcursor=1 nil
 end-of-options
 
 <sync>
@@ -32,7 +32,7 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:3:    i = 1;</src-line>
 <src-line refn=1 len=<n>>source.c:4:    int j = i;</src-line>
 </reference-list>
--olcxmenuall  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenuall
 end-of-options
 
 <sync>
@@ -41,14 +41,14 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:3:    i = 1;</src-line>
 <src-line refn=1 len=<n>>source.c:4:    int j = i;</src-line>
 </reference-list>
--olcxmenufilter=1  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenufilter=1
 end-of-options
 
 <sync>
 <resolution>
 <symbol line=2 selected=1 base=0 drefn=1 refn=2 len=<n>>i</symbol>
 </resolution>
--olcxfilter=0  -olcursor=1 nil  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=0  -olcursor=1 nil
 end-of-options
 
 <sync>
@@ -57,7 +57,7 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:3:    i = 1;</src-line>
 <src-line refn=1 len=<n>>source.c:4:    int j = i;</src-line>
 </reference-list>
--olcxmenufilter=0  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenufilter=0
 end-of-options
 
 <sync>
@@ -65,7 +65,7 @@ end-of-options
 <symbol line=2 selected=1 base=0 drefn=1 refn=2 len=<n>>i</symbol>
 <symbol line=3 selected=0 base=0 drefn=1 refn=2 len=<n>>i</symbol>
 </resolution>
--olcxfilter=0  -olcursor=1 nil  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=0  -olcursor=1 nil
 end-of-options
 
 <sync>
@@ -74,13 +74,13 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:3:    i = 1;</src-line>
 <src-line refn=1 len=<n>>source.c:4:    int j = i;</src-line>
 </reference-list>
--olcxmenunone  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenunone
 end-of-options
 
 <sync>
 <reference-list val=0 symbol="i">
 </reference-list>
--olcxmenuall  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenuall
 end-of-options
 
 <sync>
@@ -92,7 +92,7 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:9:    i = 2;</src-line>
 <src-line refn=1 len=<n>>source.c:10:    int j = i;</src-line>
 </reference-list>
--olcxmenusingleselect3  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenusingleselect3
 end-of-options
 
 <sync>
@@ -104,7 +104,7 @@ end-of-options
 <goto>
 <position-lc line=8 col=8 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--olcxmenuall  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenuall
 end-of-options
 
 <sync>
@@ -116,14 +116,14 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:9:    i = 2;</src-line>
 <src-line refn=1 len=<n>>source.c:10:    int j = i;</src-line>
 </reference-list>
--olcxgoto2  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgoto2
 end-of-options
 
 <sync>
 <goto>
 <position-lc line=8 col=8 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--olcxfilter=0  -olcursor=23 nil  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=0  -olcursor=23 nil
 end-of-options
 
 <sync>
@@ -135,7 +135,7 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:9:    i = 2;</src-line>
 <src-line refn=1 len=<n>>source.c:10:    int j = i;</src-line>
 </reference-list>
--olcxfilter=1  -olcursor=0 nil  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=1  -olcursor=0 nil
 end-of-options
 
 <sync>
@@ -145,7 +145,7 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:3:    i = 1;</src-line>
 <src-line refn=1 len=<n>>source.c:9:    i = 2;</src-line>
 </reference-list>
--olcxfilter=2  -olcursor=0 nil  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=2  -olcursor=0 nil
 end-of-options
 
 <sync>
@@ -155,7 +155,7 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:3:    i = 1;</src-line>
 <src-line refn=1 len=<n>>source.c:9:    i = 2;</src-line>
 </reference-list>
--olcxfilter=3  -olcursor=0 nil  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=3  -olcursor=0 nil
 end-of-options
 
 <sync>
@@ -163,18 +163,18 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:2:    int i;</src-line>
 <src-line refn=1 len=<n>>source.c:8:    int i;</src-line>
 </reference-list>
--olcxmenunone  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenunone
 end-of-options
 
 <sync>
 <reference-list val=0 symbol="i">
 </reference-list>
--olcxgoto0  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgoto0
 end-of-options
 
 <sync>
 <bottom-information len=<n>>No reference</bottom-information>
--olcxmenusingleselect3  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenusingleselect3
 end-of-options
 
 <sync>
@@ -184,12 +184,12 @@ end-of-options
 <goto>
 <position-lc line=8 col=8 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--olcxgoto2  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgoto2
 end-of-options
 
 <sync>
 <bottom-information len=<n>>No reference</bottom-information>
--olcxgoto1  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgoto1
 end-of-options
 
 <sync>

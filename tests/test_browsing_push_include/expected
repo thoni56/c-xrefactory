@@ -1,10 +1,10 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
--getproject -xrefrc .c-xrefrc include.c
+-getproject include.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push -olcursor=6 include.c -xrefrc .c-xrefrc -p CURDIR
+-push -olcursor=6 include.c
 end-of-options
 
 <sync>

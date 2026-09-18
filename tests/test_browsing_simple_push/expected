@@ -1,10 +1,10 @@
  CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
--getproject -xrefrc .c-xrefrc test_source/single_int1.c
+-getproject test_source/single_int1.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push -olmark=0 -olcursor=6 test_source/single_int1.c -xrefrc .c-xrefrc -p CURDIR
+-push -olmark=0 -olcursor=6 test_source/single_int1.c
 end-of-options
 
 <sync>

@@ -1,49 +1,49 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server
--getproject -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
+-getproject CURDIR/source.c
 <sync>
-CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -xrefrc CURDIR/.c-xrefrc -p CURDIR
--olcxpushonly  -olcursor=25 CURDIR/source.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors
+-olcxpushonly  -olcursor=25 CURDIR/source.c
 <sync>
--olcxmenufilter=2  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenufilter=2
 <sync>
--olcxfilter=0  -olcursor=1 nil  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=0  -olcursor=1 nil
 <sync>
--olcxmenuall  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenuall
 <sync>
--olcxmenufilter=1  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenufilter=1
 <sync>
--olcxfilter=0  -olcursor=1 nil  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=0  -olcursor=1 nil
 <sync>
--olcxmenufilter=0  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenufilter=0
 <sync>
--olcxfilter=0  -olcursor=1 nil  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=0  -olcursor=1 nil
 <sync>
--olcxmenunone  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenunone
 <sync>
--olcxmenuall  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenuall
 <sync>
--olcxmenusingleselect3  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenusingleselect3
 <sync>
--olcxmenuall  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenuall
 <sync>
--olcxgoto2  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgoto2
 <sync>
--olcxfilter=0  -olcursor=23 nil  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=0  -olcursor=23 nil
 <sync>
--olcxfilter=1  -olcursor=0 nil  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=1  -olcursor=0 nil
 <sync>
--olcxfilter=2  -olcursor=0 nil  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=2  -olcursor=0 nil
 <sync>
--olcxfilter=3  -olcursor=0 nil  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxfilter=3  -olcursor=0 nil
 <sync>
--olcxmenunone  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenunone
 <sync>
--olcxgoto0  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgoto0
 <sync>
--olcxmenusingleselect3  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxmenusingleselect3
 <sync>
--olcxgoto2  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgoto2
 <sync>
--olcxgoto1  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxgoto1
 <sync>
 <exit>

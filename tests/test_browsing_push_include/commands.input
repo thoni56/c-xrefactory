@@ -1,6 +1,6 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server
--getproject -xrefrc .c-xrefrc include.c
+-getproject include.c
 <sync>
--push -olcursor=6 include.c -xrefrc .c-xrefrc -p CURDIR
+-push -olcursor=6 include.c
 <sync>
 <exit>

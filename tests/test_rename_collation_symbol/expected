@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxgetrefactorings -olcursor=17 CURDIR/source.c -p CURDIR
+-olcxgetrefactorings -olcursor=17 CURDIR/source.c
 end-of-options
 
 <sync>
@@ -12,7 +12,7 @@ end-of-options
   <int val=10 len=<n>></int>
   <int val=300 len=<n>></int>
 </available-refactorings>
--rfct-rename -renameto=b1 -olcursor=63 CURDIR/source.c -p CURDIR
+-rfct-rename -renameto=b1 -olcursor=63 CURDIR/source.c
 end-of-options
 
 <sync>
