@@ -3,4 +3,6 @@ CXREF -xrefactory-II -server
 <sync>
 -search=ilist -searchdef -olinelen=159 -olcxlccursor=1:0 -olcursor=0 CURDIR/browsing.c
 <sync>
+-continue
+<sync>
 <exit>
