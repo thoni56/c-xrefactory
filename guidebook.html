@@ -590,6 +590,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#remove-hashtab">16.5. Remove Hashtab by Migrating to Hashlist</a></li>
 <li><a href="#split-editor-module">16.6. Split the Editor Module</a></li>
 <li><a href="#rename-operations">16.7. Rename Server Operations</a></li>
+<li><a href="#_elisp_compiled_and_deleted_on_every_build">16.8. Elisp Compiled and Deleted on Every Build</a></li>
 </ul>
 </li>
 <li><a href="#_known_bugs">17. Known Bugs</a>
@@ -9141,6 +9142,66 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_elisp_compiled_and_deleted_on_every_build">16.8. Elisp Compiled and Deleted on Every Build</h3>
+<div class="sect3">
+<h4 id="_problem_statement_5">16.8.1. Problem Statement</h4>
+<div class="paragraph">
+<p>Building <code>c-xref</code> runs <code>$(MAKE) -C ../editors/emacs</code> from the <code>c-xref</code> recipe, and
+that Makefile&#8217;s <code>all</code> target does this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-make hljs" data-lang="make">all: c-xrefprotocol.el compile
+	-rm *.elc # Remove the compiled elisp since we want to load source in emacs-devel (utils)
+
+compile:
+	-rm -f *.elc
+	-emacs -Q --batch -l compileCxrefactory.el</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So every build deletes any <code>.elc</code> files, byte-compiles all the elisp, then deletes
+the result again. <code>compile</code> is a phony target with no prerequisites, so this happens
+whether or not any <code>.el</code> file changed. It costs roughly two seconds per build here,
+which is most of the time an otherwise up-to-date <code>make c-xref</code> takes, and it makes
+<code>make test</code> (which now depends on <code>c-xref</code>) pay the same on every run.</p>
+</div>
+<div class="paragraph">
+<p>The comment says why the output is thrown away: <code>utils/emacs-devel</code> loads the
+sources, not the compiled files. So the compilation is not for using the result —
+it is a <strong>check</strong> that the elisp still compiles, and byte-compiler warnings are the
+real product.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_scope_2">16.8.2. Scope</h4>
+<div class="paragraph">
+<p>Decide what the step is for and make it say so:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If it is a syntax and warning check, it belongs with the tests rather than in
+every link of <code>c-xref</code>, and it should fail the build when the compiler reports
+an error (today both commands are prefixed with <code>-</code>, so failures are ignored).</p>
+</li>
+<li>
+<p>If the compiled files are wanted for people who load them, they should not be
+deleted, and <code>emacs-devel</code> should be the one choosing sources.</p>
+</li>
+<li>
+<p>Either way it should be incremental: <code>%.elc: %.el</code>, so an unchanged tree costs
+nothing.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The protocol generation (<code>c-xrefprotocol.el</code> from <code>protocol.th</code>) is already a
+proper rule with prerequisites and should stay as it is.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -11311,7 +11372,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 09:56:54 UTC
+Last updated 2026-09-18 09:57:23 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
