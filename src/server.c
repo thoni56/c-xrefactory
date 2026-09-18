@@ -125,34 +125,46 @@ static int scheduleFileUsingTheMacro(void) {
     return fileToParse;
 }
 
-/* Prepare a single input file for this request, maybe?
+/* The file this request named, as a bare argument on the request's own command
+ * line, or NO_FILE_NUMBER when the request named none (menu and filter
+ * operations). Other files can be scheduled alongside it - a legacy project
+ * config expands its source directories into every file it finds - so the
+ * request has to say which one it is about. */
+static int requestFileArgument = -1;
+
+protected void setRequestFileArgument(int fileNumber) {
+    requestFileArgument = fileNumber;
+}
+
+/* Prepare the single input file this request is about.
  *
- * TODO This function does something but the logic is seriously broken so it is
- * impossible to improve further until that mystery is sorted.
+ * The request names it, but other files can be scheduled alongside: a legacy
+ * project config expands its source directories into every file it finds. So
+ * prepare the file the request named, and leave it as the only scheduled one.
+ * When the request names no file - menu and filter operations work on the
+ * session, not on a file - fall back to whatever happens to be scheduled.
  */
 protected bool prepareInputFileForRequest(void) {
     fileProcessingStartTime = fileTimestampNow();
 
-    // Server mode: get a single scheduled file for this request
-    // TODO: why is it picking the first scheduled in fileNumber order?
-    int fileNumber = 0;
-    if (getNextScheduledFile(&fileNumber) == NULL) { /* No more input files... */
-        // No file scheduled - likely the operation doesn't need one, or error
-        requestFileNumber = NO_FILE_NUMBER;
-        return false;
+    int fileNumber = requestFileArgument;
+    if (fileNumber == NO_FILE_NUMBER || !getFileItemWithFileNumber(fileNumber)->isScheduled) {
+        fileNumber = 0;
+        if (getNextScheduledFile(&fileNumber) == NULL) {
+            /* Nothing scheduled - the operation does not need a file, or the
+             * one it named does not exist. */
+            requestFileNumber = NO_FILE_NUMBER;
+            return false;
+        }
     }
 
-    assert(getFileItemWithFileNumber(fileNumber)->isScheduled);
-
     /* Ensure only this file is processed during this request */
-    /* TODO: this is clearing all fileItems with a fileNumber above the one found
-     * above. That just doesn't make sense... */
-    for (int i=getNextExistingFileNumber(fileNumber+1); i != -1; i = getNextExistingFileNumber(i+1)) {
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
-        if (fileItem->isScheduled) {
-            log_trace("Found unexpected scheduled file, '%s', unscheduling it.", fileItem->name);
+        if (i != fileNumber && fileItem->isScheduled) {
+            log_trace("Unscheduling '%s', it is not the file this request named.", fileItem->name);
+            fileItem->isScheduled = false;
         }
-        fileItem->isScheduled = false;
     }
 
     requestFileNumber = fileNumber;
@@ -184,8 +196,10 @@ static void parseInputFile(void) {
 
 void initServer(ArgumentsVector args) {
     clearAvailableRefactorings();
+    clearRequestFileArgument();
     processOptions(args, PROCESS_FILE_ARGUMENTS_YES); /* no include or define options */
     processFileArguments();
+    setRequestFileArgument(scheduleRequestFileArgument());
     initCompletions(&collectedCompletions, 0, NO_POSITION);
 }
 

@@ -14,6 +14,14 @@ void processFileArguments(void) {
     mock();
 }
 
+void clearRequestFileArgument(void) {
+    mock();
+}
+
+int scheduleRequestFileArgument(void) {
+    return (int)mock();
+}
+
 void processOptions(ArgumentsVector args, ProcessFileArguments infilesFlag) {
   mock(args.argc, args.argv, infilesFlag);
 }

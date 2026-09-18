@@ -430,6 +430,13 @@ char *getOptionVariable(char *name) {
     return value;
 }
 
+/* The bare file argument of the command line being processed. Only the request's
+ * own arguments are of interest, so the server clears this before processing a
+ * request and reads it right after. */
+static char *requestFileArgumentName = NULL;
+static bool  recordingRequestFile = false;
+static int   recordedRequestFileNumber = -1;
+
 static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     ENTER();
     int fileNumber = addFileNameToFileTable(fn);
@@ -442,6 +449,8 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     if (!options.updateOnlyModifiedFiles) {
         fileItem->isScheduled = true;
     }
+    if (recordingRequestFile)
+        recordedRequestFileNumber = fileNumber;
     LEAVE();
 }
 
@@ -1803,6 +1812,7 @@ void processOptions(ArgumentsVector args, ProcessFileArguments doProcessFiles) {
             matched = true;
             if (doProcessFiles == PROCESS_FILE_ARGUMENTS_YES) {
                 addToStringListOption(&options.inputFiles, args.argv[i]);
+                requestFileArgumentName = args.argv[i];
             }
         }
         if (!matched) {
@@ -1857,6 +1867,26 @@ void processFileArguments(void) {
     for (StringList *l = options.inputFiles; l != NULL; l = l->next) {
         processFileArgument(l->string);
     }
+}
+
+void clearRequestFileArgument(void) {
+    requestFileArgumentName = NULL;
+}
+
+/* Schedule the file the request named and return its file number, or
+ * NO_FILE_NUMBER if the request named none. Scheduling it again is harmless -
+ * processFileArguments() has already done so - and going through the same path
+ * is what gives us the file number under the name the file table knows. */
+int scheduleRequestFileArgument(void) {
+    if (requestFileArgumentName == NULL)
+        return NO_FILE_NUMBER;
+
+    recordedRequestFileNumber = NO_FILE_NUMBER;
+    recordingRequestFile = true;
+    processFileArgument(requestFileArgumentName);
+    recordingRequestFile = false;
+
+    return recordedRequestFileNumber;
 }
 
 

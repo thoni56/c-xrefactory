@@ -53,41 +53,34 @@ AfterEach(Server) {}
 
 /* Protected */
 extern bool prepareInputFileForRequest(void);
+extern void setRequestFileArgument(int fileNumber);
 
 Ensure(Server, has_a_none_operation) {
     assert_that(OP_NONE, is_equal_to(0));
     assert_that(operationNamesTable[OP_NONE], is_equal_to_string("OP_NONE"));
 }
 
-/* Suspended: describes the bug we still need to fix.
- *
- * prepareInputFileForRequest() currently picks the first scheduled file by
- * fileNumber order. fileNumber is hash(absolute path), so when an unrelated
- * file ends up scheduled alongside the request file (observed via .c-xrefrc
- * re-expansion), the wrong file can win the tie-break depending on which
- * path hashes lower. On macOS this caused test_browsing_push_in_unexpanded_macro
- * to fail; on Linux the same code passed by accident of path-prefix hashing.
- *
- * The desired behaviour is: prepare the request file regardless of what else
- * happens to be scheduled. A naive attempt using options.inputFiles broke ~50
- * other tests, so the right resolution path is still open. */
-xEnsure(Server, prepares_the_request_file_when_others_are_also_scheduled) {
-    int otherFile = 99;
-    int requestFile = 100;
-    FileItem fileItem = { .isScheduled = true };
+/* The request names a file; other files can be scheduled alongside it when a
+ * legacy project config expands its source directories. The request's file is
+ * the one to prepare, and it must end up the only one scheduled. */
+Ensure(Server, prepares_the_file_the_request_named_when_others_are_also_scheduled) {
+    int      otherFile = 99;
+    int      requestFile = 100;
+    FileItem otherItem = {.isScheduled = true};
+    FileItem requestItem = {.isScheduled = true};
 
-    expect(getNextScheduledFile,
-           will_set_contents_of_parameter(beginNumber, &otherFile, sizeof(int)),
-           will_return("other_file.c"));
-    expect(getFileItemWithFileNumber,
-           when(fileNumber, is_equal_to(otherFile)),
-           will_return(&fileItem));
+    setRequestFileArgument(requestFile);
+
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(requestFile)), will_return(&requestItem));
+    /* everything else scheduled is unscheduled */
+    expect(getNextExistingFileNumber, will_return(otherFile));
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(otherFile)), will_return(&otherItem));
     expect(getNextExistingFileNumber, will_return(requestFile));
-    expect(getFileItemWithFileNumber,
-           when(fileNumber, is_equal_to(requestFile)),
-           will_return(&fileItem));
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(requestFile)), will_return(&requestItem));
     expect(getNextExistingFileNumber, will_return(-1));
 
     assert_that(prepareInputFileForRequest(), is_true);
     assert_that(requestFileNumber, is_equal_to(requestFile));
+    assert_that(otherItem.isScheduled, is_false);
+    assert_that(requestItem.isScheduled, is_true);
 }
