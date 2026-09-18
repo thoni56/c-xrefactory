@@ -38,6 +38,32 @@ and the ahead/behind counts.
 Fetch again before starting each new piece of work in a long session, not only
 once at the beginning. The other machine keeps pushing while this one thinks.
 
+## Build and run the tests before pushing
+
+Use the build system, not hand-written command lines, whenever the result is
+something to conclude from:
+
+```bash
+cd src && make          # build, and run the unittests
+cd src && make test     # run all quick system tests (does not build first)
+make -C tests/test_<name>   # run one system test
+```
+
+Both are needed before a push: `make test` does not rebuild, and a stale
+`c-xref` makes a green suite meaningless. That happened here: a reverted
+experiment stayed in the binary and 25 collation tests looked broken until a
+rebuild. The slow tests (`.slow`) are left out; run them when the change could
+touch them.
+
+Running the server driver or `c-xref` directly is fine for *diagnosis* — tracing,
+logging, trying a scenario. It is not evidence that anything passes, because it
+skips the rebuild and whatever else the Makefile arranges: config templates,
+`-create` steps, normalization, coverage directories. Get the conclusion from
+`make`.
+
+Never push a test or source change without having run the affected tests. Both
+machines push to the same trunk, and a red commit blocks the other one and CI.
+
 ## Smell pass after medium and large changes
 
 After a change bigger than a one-liner, re-read what was touched and report what
