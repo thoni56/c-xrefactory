@@ -38,31 +38,52 @@ and the ahead/behind counts.
 Fetch again before starting each new piece of work in a long session, not only
 once at the beginning. The other machine keeps pushing while this one thinks.
 
-## Build and run the tests before pushing
+## Ensure a fresh build passes all tests before pushing
 
-Use the build system, not hand-written command lines, whenever the result is
-something to conclude from:
+The obligation is on the evidence, not on who produces it. A stale `c-xref` makes
+a green suite meaningless: a reverted experiment once stayed in the binary and 25
+collation tests looked broken until a rebuild.
+
+**Check for watchers first, with `pgrep -a watchexec`.**
+
+If they are running, they produce the evidence. Trigger them and read the result:
+
+```bash
+touch src/.unittests.done   # runs the system tests
+touch src/main.c            # full build, unit tests, then system tests
+utils/failing               # the test directories that failed
+cat src/systemtests.log     # the watcher's own output
+```
+
+Do not run a build yourself while they are up. A build regenerates
+`options_config.h`, the unittest watcher sees a changed header and runs, that
+touches `.unittests.done`, and the system-test watcher then relinks `c-xref` and
+runs the whole suite beside yours. Tests fail with `Permission denied` on the
+binary, in a different place every time, and it looks like flakiness.
+
+If no watchers are running, produce the evidence yourself:
 
 ```bash
 cd src && make          # build, and run the unittests
-cd src && make test     # run all quick system tests (does not build first)
-make -C tests/test_<name>   # run one system test
+cd src && make test     # all quick system tests, does not build first
+make -C tests/test_<name>   # one system test
 ```
 
-Both are needed before a push: `make test` does not rebuild, and a stale
-`c-xref` makes a green suite meaningless. That happened here: a reverted
-experiment stayed in the binary and 25 collation tests looked broken until a
-rebuild. The slow tests (`.slow`) are left out; run them when the change could
-touch them.
+Both, because `make test` does not rebuild. The slow tests (`.slow`) are left
+out; run them when the change could touch them.
+
+Judge a system test by `make`'s exit status. A leftover `output` file means it
+failed, but a test that dies before writing one leaves nothing behind, so absence
+is not a pass.
 
 Running the server driver or `c-xref` directly is fine for *diagnosis* — tracing,
 logging, trying a scenario. It is not evidence that anything passes, because it
 skips the rebuild and whatever else the Makefile arranges: config templates,
-`-create` steps, normalization, coverage directories. Get the conclusion from
-`make`.
+`-create` steps, normalization, coverage directories.
 
-Never push a test or source change without having run the affected tests. Both
-machines push to the same trunk, and a red commit blocks the other one and CI.
+Never push a test or source change without evidence that the affected tests pass.
+Both machines push to the same trunk, and a red commit blocks the other one and
+CI.
 
 ## Smell pass after medium and large changes
 
