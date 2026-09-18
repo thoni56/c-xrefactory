@@ -1,8 +1,0 @@
-Bug: request file loses to another scheduled file (macOS only)
-
-prepareInputFileForRequest (src/server.c) prepares the first scheduled file by
-fileNumber, which is a hash of the absolute path. When another file is also
-scheduled, the wrong one can win, so this fails on macOS and passes on Linux.
-The extra file is scheduled only when a header is the request file, so the open
-question is what schedules it. Also pinned by the suspended Cgreen test
-Server -> prepares_the_request_file_when_others_are_also_scheduled (00a8ded3).
