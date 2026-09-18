@@ -382,8 +382,10 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
         if (!isMemberInReferenceableItemTable(&searchItem, NULL, &found))
             continue;
 
-        /* Is this header included by the request file? */
-        bool requestIncludesThis = false;
+        /* Is this header the request file, or included by it? Browsing can start
+         * in a header, and then the CUs that include it are the siblings that
+         * need parsing - on a cold start none of them has been parsed. */
+        bool requestIncludesThis = (i == requestFileNumber);
         for (Reference *r = found->references; r != NULL; r = r->next) {
             if (r->position.file == requestFileNumber) {
                 requestIncludesThis = true;

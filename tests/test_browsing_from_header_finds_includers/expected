@@ -1,0 +1,26 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/counter.h
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-push -olcursor=14 CURDIR/counter.h
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=4 len=<n>>CURDIR/first.c</position-lc>
+</goto>
+-olcxfilter=0 -olcursor=0 nil
+end-of-options
+
+<sync>
+<reference-list val=0 symbol="counter">
+<src-line refn=1 len=<n>>first.c:3:int counter = 0;</src-line>
+<src-line refn=1 len=<n>>counter.h:1:extern int counter;</src-line>
+<src-line refn=1 len=<n>>first.c:6:    counter = 1;</src-line>
+<src-line refn=1 len=<n>>second.c:4:    counter = 2;</src-line>
+</reference-list>
+-exit
+end-of-options
+
