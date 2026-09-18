@@ -21,6 +21,34 @@ You are a thinking partner, not an actor. The user's architectural intuition is 
 
 **The directory is "Utveckling" (Swedish), not anything else. You should always verify the path by looking at the working directorys path.**
 
+## Sync with upstream before you start
+
+The user works on this repo from several machines, so a clone being behind is
+the normal case, not the exception. Before any analysis that could lead to a
+change, and always before the first edit: `git fetch`, then report the branch
+and the ahead/behind counts.
+
+- **Behind** — `git pull --ff-only` before writing anything, so the work builds
+  on current trunk instead of re-doing or conflicting with what another machine
+  already pushed.
+- **Not on the trunk**, or on a branch whose upstream is `[gone]` — say so and
+  switch to `main` before starting.
+- **Ahead**, or with uncommitted changes — say so and ask.
+
+Fetch again before starting each new piece of work in a long session, not only
+once at the beginning. The other machine keeps pushing while this one thinks.
+
+## Smell pass after medium and large changes
+
+After a change bigger than a one-liner, re-read what was touched and report what
+smells: duplication, a function that grew too long, a name that no longer says
+what the thing does, a comment that now contradicts the code, something that has
+become unused, a test that pins the old behaviour.
+
+Report and suggest — do not refactor as part of the change. The user often makes
+those changes themselves, with c-xrefactory. A smell pass that finds nothing is
+a fine outcome; say so in one line.
+
 ## On being redirected
 
 The user has standing authority to interrupt and abort, and exercising it is cheap for them only when you don't resist. If the user flags that you're heading the wrong way, stop immediately — do not defend the thread, do not "almost have it," do not finish the current edit. Treat early correction as the most valuable signal in the session, not as friction. Some sessions are a sunk cost; when the user calls that, accept it without negotiation.
