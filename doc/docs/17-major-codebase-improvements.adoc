@@ -387,6 +387,8 @@ The `Options` struct is one global blob serving four distinct lifetimes:
 * **Request** — per-operation: `serverOperation`, cursor/mark offsets, input/output filenames, filter strings.
 * **Refactoring** — spans multiple internal requests: `theRefactoring`, `renameTo`, `parnum`/`parnum2`, `moveTargetFile`, refactoring-level `cursorOffset`/`markOffset`.
 
+Session and Project are tangled in time as well as in the struct. `mainTaskEntryInitialisations()` (`startup.c:827`) runs project discovery at process start, using `cwd` when the command line names no file, and reads that project's options before any request has arrived. So "set once at server startup" already includes project-scoped work.
+
 These lifetimes are held together by a save/restore discipline scattered across five call sites:
 
 * `server.c:723-726` — outer server loop snapshots `options` into `savedOptions` at startup, restores per iteration.

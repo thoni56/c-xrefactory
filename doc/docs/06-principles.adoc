@@ -275,10 +275,14 @@ Include structure::
   Separate from symbol references, which require full parsing.
 
 Initialization::
-  The first-request setup: discover project, load options, interrogate compiler, restore
-  snapshot, scan project structure. Happens once per session. Not the same as cold start
-  — initialization happens on every session, cold start describes the _absence_ of a
-  snapshot.
+  Discovering the project, loading options, interrogating the compiler, restoring the
+  snapshot and scanning project structure. Happens once per session. Not the same as cold
+  start — initialization happens on every session, cold start describes the _absence_ of a
+  snapshot. +
+  Today it is split in two. `mainTaskEntryInitialisations()` discovers a project at
+  process start, from `cwd` when the command line names no file, and reads that project's
+  options. The first request that names a file does the rest. The direction is to move all
+  of it into `-getproject`, so that process start knows nothing about any project.
 
 Lightweight scan::
   Discovery of project structure by globbing for compilation units and text-scanning
