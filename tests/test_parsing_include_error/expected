@@ -1,1 +1,1 @@
-00:00:00 WARN Can't open file 'somefile'
+<warning len=<n>>Can't open file somefile
