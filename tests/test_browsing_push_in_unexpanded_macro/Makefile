@@ -22,7 +22,7 @@
 include ../Makefile.server
 
 $(TEST):
-	$(CXREF_PROGRAM) -create > output.tmp
+	$(CXREF_PROGRAM) -xref -create > output.tmp
 	@$(SERVER_DRIVER) commands.input $(EXTRA) >> output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

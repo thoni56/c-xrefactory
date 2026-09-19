@@ -846,6 +846,12 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
     processOptions(args, PROCESS_FILE_ARGUMENTS_YES);
     processFileArguments();
 
+    /* Everything below assumes a mode. main() reports that none was given. */
+    if (options.mode == UndefinedMode) {
+        LEAVE();
+        return;
+    }
+
     int argcount = 0;
     inputFileName = getNextArgumentFile(&argcount);
     char fileName[MAX_FILE_NAME_SIZE];

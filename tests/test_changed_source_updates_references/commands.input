@@ -1,7 +1,7 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server
 -getproject CURDIR/source.c
 <sync>
-CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors
+CXREF -xref -xrefactory-II -crlfconversion -crconversion -fastupdate -errors
 -push -olcursor=6 CURDIR/source.c
 <sync>
 -browse-next -olcursor=4 CURDIR/source.c
@@ -10,7 +10,7 @@ CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors
 <sync>
 -getproject CURDIR/source.c
 <sync>
-CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -preload CURDIR/source.c CURDIR/source.preload
+CXREF -xref -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -preload CURDIR/source.c CURDIR/source.preload
 -push -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c
 <sync>
 -browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c

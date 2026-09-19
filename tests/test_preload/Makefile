@@ -1,11 +1,11 @@
 include ../Makefile.cli
 
 
-ARGUMENTS = -fastupdate -errors -preload source.c source.preload
+ARGUMENTS = -xref -fastupdate -errors -preload source.c source.preload
 
 $(TEST):
 	rm -rf CXrefs
-	$(CXREF) -create . > output.tmp
+	$(CXREF) -xref -create . > output.tmp
 	../../utils/cxref_reader >> output.tmp
 	touch source.preload
 	$(COMMAND) >> output.tmp

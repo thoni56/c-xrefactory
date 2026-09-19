@@ -1,7 +1,7 @@
 include ../Makefile.cli
 
 
-ARGUMENTS = -fullupdate
+ARGUMENTS = -xref -fullupdate
 
 $(TEST): CXrefs
 	$(COMMAND) > output.tmp
@@ -15,4 +15,4 @@ CXrefs: .c-xrefrc
 	# Sources in subdir:
 	sed -e s:$(CURDIR)$$:$(CURDIR)/cexercise: .c-xrefrc > .c-xrefrc.tmp
 	mv .c-xrefrc.tmp .c-xrefrc
-	$(CXREF) -create -o $(TEST).log
+	$(CXREF) -xref -create -o $(TEST).log

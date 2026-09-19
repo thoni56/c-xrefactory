@@ -1,7 +1,7 @@
 include ../Makefile.cli
 
 
-ARGUMENTS = -update -errors source.c
+ARGUMENTS = -xref -update -errors source.c
 
 $(TEST):
 	-rm -rf CXrefs

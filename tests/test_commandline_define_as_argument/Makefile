@@ -4,7 +4,7 @@ include ../Makefile.cli
 # and b to become references in the expansion of line 3, but obviously not ...
 # But it executes the code for adding command line definitions using '-D...'
 
-ARGUMENTS = -DA=a -DB=b source.c
+ARGUMENTS = -xref -DA=a -DB=b source.c
 
 $(TEST):
 	$(COMMAND) > output.tmp

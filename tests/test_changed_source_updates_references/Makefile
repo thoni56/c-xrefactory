@@ -22,14 +22,14 @@ trace: SERVER_EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
 
 db:
-	$(CXREF) -create
+	$(CXREF) -xref -create
 	../../utils/cxref_reader
 
 fresh:
 	-rm -rf CXrefs
-	$(CXREF) -create
+	$(CXREF) -xref -create
 	../../utils/cxref_reader
 
 fastupdate:
-	$(CXREF) -fastupdate -preload source.c source.preload
+	$(CXREF) -xref -fastupdate -preload source.c source.preload
 	../../utils/cxref_reader

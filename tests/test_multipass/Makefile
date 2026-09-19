@@ -4,7 +4,7 @@ include ../Makefile.cli
 # PASS1 should define `pass1`
 # PASS2 should generate syntax errors
 
-ARGUMENTS = -errors -create .
+ARGUMENTS = -xref -errors -create .
 
 $(TEST): .c-xrefrc
 	$(COMMAND) > output.tmp 2>&1 || true

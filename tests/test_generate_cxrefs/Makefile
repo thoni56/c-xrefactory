@@ -1,7 +1,7 @@
 include ../Makefile.cli
 
 
-ARGUMENTS = -xrefactory-II -create -errors -o output.tmp src
+ARGUMENTS = -xref -xrefactory-II -create -errors -o output.tmp src
 
 $(TEST):
 	$(COMMAND) > log

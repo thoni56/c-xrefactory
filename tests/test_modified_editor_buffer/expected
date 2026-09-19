@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors
+CXREF -xref -xrefactory-II -crlfconversion -crconversion -fastupdate -errors
 <information len=<n>>C-xrefactory project: CURDIR</information>
 <information len=<n>>CURDIR/source.c</information>
 <information len=<n>>Generating 'CURDIR/.c-xref/db'</information>

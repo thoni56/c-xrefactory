@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -89,10 +90,17 @@ int main(int argc, char *argv[]) {
     totalTaskEntryInitialisations();
     mainTaskEntryInitialisations(args);
 
+    int exitCode = 0;
     if (options.mode == XrefMode)
         xref(args);
-    if (options.mode == ServerMode)
+    else if (options.mode == ServerMode)
         server(args);
+    else if (options.serverOperation == OP_ABOUT)
+        aboutMessage();          /* asking what this is needs no mode */
+    else {
+        fprintf(stderr, "No mode given, use -server or -xref\n");
+        exitCode = EXIT_FAILURE;
+    }
 
     if (options.statistics) {
         printMemoryStatistics();
@@ -103,5 +111,5 @@ int main(int argc, char *argv[]) {
     }
 
     LEAVE();
-    return 0;
+    return exitCode;
 }

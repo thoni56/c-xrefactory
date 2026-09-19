@@ -2,7 +2,7 @@ include ../Makefile.cli
 
 $(TEST):
 	-rm -rf .c-xref
-	$(CXREF_PROGRAM) $(EXTRA) -create . > /dev/null
+	$(CXREF_PROGRAM) -xref $(EXTRA) -create . > /dev/null
 	../../utils/cxref_reader .c-xref/db > output
 	$(VERIFY)
 

@@ -6,7 +6,7 @@
 
 include ../Makefile.cli
 
-ARGUMENTS = file2.c file.y
+ARGUMENTS = -xref file2.c file.y
 DUMP = ../../utils/cxref_reader
 
 $(TEST): .c-xrefrc

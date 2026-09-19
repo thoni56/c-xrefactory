@@ -1,7 +1,7 @@
 include ../Makefile.cli
 
 
-ARGUMENTS = -create .
+ARGUMENTS = -xref -create .
 
 $(TEST):
 	echo "-optinclude more_options" >> .c-xrefrc
