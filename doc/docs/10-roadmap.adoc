@@ -46,8 +46,9 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
  after POP". Depends on entry refresh (ADR-0020).
 
 |Remove `parseBufferUsingServer` bridge
-|The last divergent parse path; also retires `callXref` in the refactoring path. See
- Chapter 17.3.
+|The last divergent parse path, re-entering `callServer` from 9 refactoring call sites.
+ It asserts `ServerMode`, so it is not part of XrefMode and does not block its removal.
+ See Chapter 17.3.
 
 |Behind-the-back disk-change detection
 |Entry refresh is editor-buffer-driven, so a file changed on disk without a preload
@@ -55,12 +56,25 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
  recheck for non-preloaded buffers would close it — see
  <<06-principles.adoc#,Principles>> (Editor Buffers Are the Content Source).
 
-|CreateMode
-|Standalone `c-xref -create` batch prime and config validator; the move that unblocks
- XrefMode removal (link:/workspace/1/decisions/C-xrefactory#24[ADR-0024]).
+|Report what did not parse
+|Server mode stays quiet through 19 `options.mode != ServerMode` guards in `yylex.c`, so
+ an unresolved `#include` — a misconfigured `-I` — is invisible and navigation just misses
+ references. Re-key the guards onto a report-errors flag, then give the client an operation
+ that parses the project and reports. The include-not-found case is the one that matters;
+ the Emacs `<A HREF>` error buffer is the renderer to revive.
 
 |XrefMode removal
-|Unblocked by CreateMode; deletes the `-create`/`-update` legacy engine.
+|Deletes the `-create`/`-update` legacy engine. Needs the expanding-CU marker replaced
+ (link:/workspace/1/decisions/C-xrefactory#27[ADR-0027]) and the error guards re-keyed,
+ since XrefMode is the only mode that lets them speak. Three tests observe server
+ behaviour only through it — standard defines, per-pass `-D`, `-optinclude` — and need a
+ server-mode home first. It is also the default mode, so a bare `c-xref file.c` needs an
+ answer.
+
+|CreateMode
+|Optional `c-xref -create` batch prime on the server path
+ (link:/workspace/1/decisions/C-xrefactory#24[ADR-0024]): priming a large project up
+ front, and an entry point for CI. Not a dependency of XrefMode removal.
 
 |Clean stale header emissions
 |Variant-B orphan fix — reparse by include structure gated on a per-CU fingerprint,
