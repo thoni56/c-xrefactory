@@ -1,15 +1,15 @@
-include ../Makefile.cli
+include ../Makefile.server
 
-
-ARGUMENTS = -create
+# The compiler's standard defines are discovered, so `#ifdef __STDC_VERSION__`
+# takes the true branch: `a` is in the dump and `b` is not.
 
 $(TEST):
-	$(COMMAND) > output.tmp 2>&1
-	$(NORMALIZE) output.tmp > output
-	../../utils/cxref_reader >> output
+	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input $(EXTRA) > /dev/null
+	@../../utils/cxref_reader .c-xref/db > output
 	$(VERIFY)
 
-trace: ARGUMENTS += -debug -log=trace
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
 
-EXTRA_DEBUG =
+GDB_COMMANDS =
