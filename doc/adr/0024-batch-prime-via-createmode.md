@@ -97,3 +97,24 @@ cannot be loaded is discarded and rebuilt.
   parses over.
 - **Roadmap, "Memory as Truth"**: CreateMode is the enabler for the
   XrefMode-removal step.
+
+## Update 2026-09-19
+
+The unblock rationale did not survive. Removing the `-create` primes from the
+system tests showed that the server builds the state those tests were verified
+against on demand, and 21 of 23 primes are gone without any batch mode. XrefMode
+removal does not wait for CreateMode.
+
+What still carries this decision is the parse-error bullet above. Server mode
+stays quiet, and it does so through mode tests at each call site: `yylex.c` alone
+has 19 `options.mode != ServerMode` guards, most of them around a
+`warningMessage()`. The include-not-found case is one of them (`yylex.c:715`),
+which is why a misconfigured `-I` is invisible. XrefMode is the only mode where
+those warnings come out at all, so deleting it turns all of them into permanently
+quiet code.
+
+Open question: that reporting could be a server operation the client invokes,
+rather than a mode. Then the guards key off a "report errors" flag instead of the
+mode, the client renders the result, and CreateMode is left as an upfront priming
+optimization and a CI entry point. This ADR should be narrowed to that if we go
+there.
