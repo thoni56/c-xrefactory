@@ -1,7 +1,7 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/single_int1.c
 <sync>
--search=x -olcursor=1 CURDIR/single_int1.c
+-search=non_existant_to_force_parse_all -olcursor=1 CURDIR/single_int1.c
 <sync>
 -continue
 <sync>

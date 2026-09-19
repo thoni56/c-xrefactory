@@ -1,7 +1,7 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/simple_grammar.y
 <sync>
--search=x -olcursor=1 CURDIR/simple_grammar.y
+-search=non_existant_to_force_parse_all -olcursor=1 CURDIR/simple_grammar.y
 <sync>
 -continue
 <sync>

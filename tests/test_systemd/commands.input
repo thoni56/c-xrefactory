@@ -1,7 +1,7 @@
 CXREF -xrefactory-II -server
 -getproject CURDIR/systemd/src/core/main.c
 <sync>
--search=x -olcursor=1 CURDIR/systemd/src/core/main.c -p CURDIR
+-search=non_existant_to_force_parse_all -olcursor=1 CURDIR/systemd/src/core/main.c -p CURDIR
 <sync>
 -continue
 <sync>
