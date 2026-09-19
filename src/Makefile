@@ -579,8 +579,16 @@ watch:
 
 .PHONY: watch-for-unittests
 watch-for-unittests:
-	watchexec --no-vcs-ignore -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.\[ch\] -e c,h,y,mock,tc,th -- execnotify -t Unittests make -j$(JOBS) unit
+	watchexec --no-vcs-ignore -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.\[ch\] -e c,h,y,mock,tc,th -- execnotify -t Unittests make unit-logged
 
+
+# Same as unit, and keeps the output in unittests.log so the result of the last
+# watcher run can be read by someone who was not watching the terminal.
+# pipefail makes the status the make's, not tee's, which is what execnotify reports on.
+.PHONY: unit-logged
+unit-logged: SHELL := /bin/bash
+unit-logged:
+	@set -o pipefail; $(MAKE) -j$(JOBS) unit 2>&1 | tee unittests.log
 
 .PHONY: watch-for-unittests-silent
 watch-for-unittests-silent:
