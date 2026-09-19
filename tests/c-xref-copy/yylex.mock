@@ -1,0 +1,53 @@
+/* -*- c -*-*/
+#include "yylex.h"
+#include <cgreen/mocks.h>
+
+int macroStackIndex = 0;
+
+void initAllInputs(void) {
+    mock();
+}
+
+void initInput(FILE *file, EditorBuffer *buffer, char *prefix, char *fileName) {
+    mock(file, buffer, prefix, fileName);
+}
+
+int getMacroBodyMemoryIndex(void) {
+    return (int)mock();
+}
+
+void setMacroBodyMemoryIndex(int index) {
+    mock(index);
+}
+
+void addFileAsIncludeReference(int filenum) {
+    mock(filenum);
+}
+
+void pushInclude(FILE *file, EditorBuffer *buff, char *name, char *prepend) {
+    mock(file, buff, name, prepend);
+}
+
+void popInclude(void) {
+    mock();
+}
+
+void undefineMacroByName(const char *name) {
+    mock(name);
+}
+
+void addMacroDefinedByOption(char *opt) {
+    mock(opt);
+}
+
+LexemCode cppexp_yylex(void) {
+    return (int)mock();
+}
+
+LexemCode yylex(void) {
+    return (int)mock();
+}
+
+void yylexMemoryStatistics(void) {
+    mock();
+}

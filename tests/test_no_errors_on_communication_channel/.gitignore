@@ -2,5 +2,4 @@ output
 output.tmp
 *buffer
 cxrefs.log
-CXrefs
 .c-xrefrc

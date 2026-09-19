@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -server
+-olcxgetprojectname CURDIR/cxfile.c
+<sync>
+-olcxsearch=restrictEditorMarkersToRegions -searchdef -olinelen=236 -olcxlccursor=1265:73  -olcursor=46028 CURDIR/cxfile.c  -p c-xrefactory
+<sync>
+-continue
+<sync>
+<exit>

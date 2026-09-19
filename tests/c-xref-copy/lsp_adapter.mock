@@ -1,0 +1,8 @@
+#include <cgreen/mocks.h>
+
+#include "lsp_adapter.h"
+
+extern JSON *findDefinition(const char *uri, JSON *original_position) {
+    JSON *position = cJSON_Duplicate(original_position, true);
+    return (JSON *)mock(uri, position);
+}

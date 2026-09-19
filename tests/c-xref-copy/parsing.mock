@@ -1,0 +1,51 @@
+#include "parsing.h"
+
+#include <cgreen/mocks.h>
+
+#include "editormarker.h"
+#include "options.h"
+#include "parsing.h"
+#include "server.h"
+
+
+ParsingConfig parsingConfig;
+
+int currentFileNumber = -1;
+
+
+void syncParsingConfigFromOptions(Options options) {
+    mock();
+}
+
+void setupParsingConfig(int fileNumber) {
+    mock();
+}
+
+ParserOperation getParserOperation(ServerOperation serverOp) {
+    return (ParserOperation)mock(serverOp);
+}
+
+bool needsReferenceAtCursor(ParserOperation op) {
+    return (bool)mock(op);
+}
+
+bool allowsDuplicateReferences(ParserOperation op) {
+    return (bool)mock(op);
+}
+
+bool isValidMoveTarget(EditorMarker *target) {
+    return (bool)mock(target);
+}
+
+FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
+    FunctionBoundariesResult *result = (FunctionBoundariesResult *)mock(marker);
+    return *result;
+}
+
+void initializeParsingSubsystem(void) {
+    mock();
+}
+
+void parseToCreateReferences(const char *fileName) {
+    mock(fileName);
+}

@@ -1,0 +1,45 @@
+/* -*- c -*-*/
+#include "cxfile.h"
+#include <cgreen/mocks.h>
+
+void normalScanCxFile(char *name) {
+    mock(name);
+}
+
+void ensureReferencesAreLoadedFor(char *symbolName) { mock(symbolName); }
+
+void scanForBypass(char *symbolName) {
+    mock(symbolName);
+}
+
+void scanReferencesToCreateMenu(char *symbolName) { mock(symbolName); }
+
+void scanForMacroUsage(char *symbolName) { mock(symbolName); }
+
+void scanForGlobalUnused(char *cxrefFileName) {
+    mock(cxrefFileName);
+}
+
+void scanForSearch(char *cxrefFileName) {
+    mock(cxrefFileName);
+}
+
+bool searchStringMatch(char *cxtag, int slen) {
+  return (int) mock(cxtag, slen);
+}
+
+void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Reference *reference) {
+  mock(referenceableItem, reference);
+}
+
+int cxFileHashNumberForSymbol(char *sym) {
+  return (int) mock(sym);
+}
+
+void saveReferencesToStore(bool updating, char *filename) {
+  mock(updating, filename);
+}
+
+bool loadFileNumbersFromStore(void) {
+  return (bool) mock();
+}

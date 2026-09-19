@@ -1,0 +1,89 @@
+/* -*- c -*-*/
+#include "editor.h"
+#include <cgreen/mocks.h>
+
+
+EditorUndo *editorUndo;
+
+
+void editorInit(void) {
+  mock();
+}
+
+bool editorFileExists(char *path) {
+    return (bool)mock(path);
+}
+
+time_t editorFileModificationTime(char *path) {
+    return (time_t)mock(path);
+}
+
+size_t editorFileSize(char *path) {
+    return (time_t)mock(path);
+}
+
+EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs) {
+  return (EditorMarkerList *) mock(refs);
+}
+
+Reference *convertEditorMarkersToReferences(EditorMarkerList **mms) {
+  return (Reference *) mock(mms);
+}
+
+void replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize, char *str, int strlength, EditorUndo **undo) {
+  mock(buff, position, delsize, str, strlength, undo);
+}
+
+void moveBlockInEditorBuffer(EditorMarker *src, EditorMarker *dest, int size, EditorUndo **undo) {
+  mock(dest, src, size, undo);
+}
+
+void quasiSaveModifiedEditorBuffers(void) {
+  mock();
+}
+
+void loadAllOpenedEditorBuffers(void) {
+  mock();
+}
+
+void removeBlanksAtEditorMarker(EditorMarker *mm, int direction, EditorUndo **undo) {
+  mock(mm, direction, undo);
+}
+
+void editorDumpUndoList(EditorUndo *uu) {
+  mock(uu);
+}
+
+bool editorMapOnNonExistantFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), SearchDepth depth,
+                                char *a1, char *a2, Completions *a3, void *a4, int *a5) {
+  return (int) mock(dirname, fun, depth, a1, a2, a3, a4, a5);
+}
+
+void closeEditorBufferIfCloseable(char *name) {
+  mock(name);
+}
+
+void closeAllEditorBuffersIfClosable(void) {
+  mock();
+}
+
+void closeAllEditorBuffers(void) {
+  mock();
+}
+
+// Hopefully temporary while extracting EditorBuffer module
+void freeTextSpace(char *space, int index) {
+    mock(space, index);
+}
+
+void loadTextIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, const char *text) {
+    mock(buffer, modificationTime, text);
+}
+
+void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize) {
+    mock(buffer, modificationTime, fileSize);
+}
+
+void allocateNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
+    mock(buffer, size);
+}

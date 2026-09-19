@@ -10,7 +10,7 @@ include ../Makefile.server
 # The greppable proof: the snapshot should not mention nonexistent.h.
 
 $(TEST):
-	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@rm -rf .c-xref output output.tmp server-buffer
 	@$(SERVER_DRIVER) commands.input > /dev/null
 	@(grep "nonexistent.h" .c-xref/db; true) > output
 	$(VERIFY)

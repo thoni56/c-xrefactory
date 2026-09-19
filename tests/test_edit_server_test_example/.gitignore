@@ -3,4 +3,3 @@ output
 output.tmp
 *.log
 .c-xrefrc
-CXrefs

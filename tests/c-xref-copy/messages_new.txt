@@ -1,0 +1,56 @@
+calling: ("-xrefactory-II" "-crlfconversion" "-crconversion" "-o" "/tmp/c-xrefthoni-1581219-205.tmp" "-server")
+sending: -olcxgetprojectname "/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/commons.h"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-1581219-209.tmp
+dispatching: <set-info len=11>c-xref-copy</set-info>
+
+Project: c-xref-copy
+sending: -olcxpush  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/commons.h" "/tmp/c-xrefthoni-1581219-213.tmp" "-olcursor=471" "/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/commons.h"  -p "c-xref-copy"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-1581219-217.tmp
+keeping tmp file /tmp/c-xrefthoni-1581219-213.tmp
+dispatching: <goto>
+ <position-lc line=20 col=8 len=63>/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/commons.h</position-lc>
+</goto>
+
+sending: -olcxnext  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/commons.h" "/tmp/c-xrefthoni-1581219-221.tmp" "-olcursor=465" "/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/commons.h"  -p "c-xref-copy"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-1581219-225.tmp
+keeping tmp file /tmp/c-xrefthoni-1581219-221.tmp
+dispatching: <goto>
+ <position-lc line=218 col=8 len=63>/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/commons.c</position-lc>
+</goto>
+
+File local-variables error: (void-function cov-mode)
+sending: -olcxprevious  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/commons.c" "/tmp/c-xrefthoni-1581219-229.tmp" "-olcursor=6838" "/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/commons.c"  -p "c-xref-copy"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-1581219-233.tmp
+keeping tmp file /tmp/c-xrefthoni-1581219-229.tmp
+dispatching: <goto>
+ <position-lc line=169 col=8 len=63>/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/commons.c</position-lc>
+</goto>
+
+sending: -olcxprevious  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/commons.c" "/tmp/c-xrefthoni-1581219-237.tmp" "-olcursor=5215" "/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/commons.c"  -p "c-xref-copy"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-1581219-241.tmp
+keeping tmp file /tmp/c-xrefthoni-1581219-237.tmp
+dispatching: <bottom-information len=28>Moving to the last reference</bottom-information>
+<goto>
+ <position-lc line=482 col=8 len=61>/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/yylex.c</position-lc>
+</goto>
+
+Moving to the last reference
+File local-variables error: (void-function cov-mode)
+sending: -olcxprevious  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/yylex.c" "/tmp/c-xrefthoni-1581219-245.tmp" "-olcursor=18191" "/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/yylex.c"  -p "c-xref-copy"
+got: <sync>
+
+Wrote /tmp/c-xrefthoni-1581219-249.tmp
+keeping tmp file /tmp/c-xrefthoni-1581219-245.tmp
+dispatching: <goto>
+ <position-lc line=273 col=8 len=60>/home/thoni/Utveckling/c-xrefactory/tests/c-xref-copy/xref.c</position-lc>
+</goto>

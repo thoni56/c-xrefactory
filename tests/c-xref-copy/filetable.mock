@@ -1,0 +1,75 @@
+/* -*- c -*-*/
+#include "filetable.h"
+#include <cgreen/mocks.h>
+
+
+int NO_FILE_NUMBER = -1;
+
+
+void initFileTable(int size) {
+    mock(size);
+}
+
+void initNoFileNumber(void) {
+    mock();
+}
+
+int addFileNameToFileTable(char *fileName) {
+  return (int) mock(fileName);
+}
+
+int addFileItemToFileTable(FileItem *fileItem) {
+    return (int)mock(fileItem);
+}
+
+bool existsInFileTable(char *fileName) {
+    return mock(fileName);
+}
+
+void updateFileModificationTracking(int fileNumber) {
+  mock(fileNumber);
+}
+
+FileItem *getFileItemWithFileNumber(int fileNumber) {
+    return (FileItem *)mock(fileNumber);
+}
+
+int getNextExistingFileNumber(int fileNumber) {
+    return (int)mock(fileNumber);
+}
+
+char *getNextScheduledFile(int *beginNumber) {
+  return (char *) mock(beginNumber);
+}
+
+char *getNextArgumentFile(int *fArgCount) {
+  return (char *) mock(fArgCount);
+}
+
+void mapOverFileTable(void (*fun)(FileItem *)) {
+    mock(fun);
+}
+
+void mapOverFileTableWithIndex(void (*fun)(FileItem *, int)) {
+    mock(fun);
+}
+
+void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *pointer) {
+    mock(fun, pointer);
+}
+
+extern void mapOverFileTableWithBool(void (*fun)(FileItem *, bool), bool boolean) {
+    mock(fun, boolean);
+}
+
+int getFileNumberFromFileName(char *fileName) {
+    return (int)mock(fileName);
+}
+
+void recoverMemoryFromFileTable(void) {
+    (void)mock();
+}
+
+void fileTableMemoryStatistics(void) {
+    mock();
+}

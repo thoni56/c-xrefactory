@@ -1,0 +1,72 @@
+CXREF -xrefactory-II -server
+-olcxgetprojectname CURDIR/commons.h
+<sync>
+-olcxpush -preload CURDIR/commons.h CURDIR/commons.h.preload -olcursor=469 CURDIR/commons.h -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/commons.h CURDIR/commons.h.preload -olcursor=465 CURDIR/commons.h -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/commons.c CURDIR/commons.c.preload -olcursor=6836 CURDIR/commons.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/cxfile.c CURDIR/cxfile.c.preload -olcursor=15671 CURDIR/cxfile.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/cxfile.c CURDIR/cxfile.c.preload -olcursor=19188 CURDIR/cxfile.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/cxfile.c CURDIR/cxfile.c.preload -olcursor=36091 CURDIR/cxfile.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/cxref.c CURDIR/cxref.c.preload -olcursor=5897 CURDIR/cxref.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/cxref.c CURDIR/cxref.c.preload -olcursor=73616 CURDIR/cxref.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/editor.c CURDIR/editor.c.preload -olcursor=2738 CURDIR/editor.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/editor.c CURDIR/editor.c.preload -olcursor=4102 CURDIR/editor.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/editor.c CURDIR/editor.c.preload -olcursor=11041 CURDIR/editor.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/hashtab.tc CURDIR/hashtab.tc.preload -olcursor=3460 CURDIR/hashtab.tc -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/lexer.c CURDIR/lexer.c.preload -olcursor=11098 CURDIR/lexer.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/lexer.c CURDIR/lexer.c.preload -olcursor=11293 CURDIR/lexer.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/main.c CURDIR/main.c.preload -olcursor=2881 CURDIR/main.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/misc.c CURDIR/misc.c.preload -olcursor=18507 CURDIR/misc.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/move_function.c CURDIR/move_function.c.preload -olcursor=6234 CURDIR/move_function.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/move_function.c CURDIR/move_function.c.preload -olcursor=16738 CURDIR/move_function.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/options.c CURDIR/options.c.preload -olcursor=19429 CURDIR/options.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/options.c CURDIR/options.c.preload -olcursor=26560 CURDIR/options.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/options.c CURDIR/options.c.preload -olcursor=35808 CURDIR/options.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/options.c CURDIR/options.c.preload -olcursor=36177 CURDIR/options.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/options.c CURDIR/options.c.preload -olcursor=36998 CURDIR/options.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/options.c CURDIR/options.c.preload -olcursor=45588 CURDIR/options.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/options.c CURDIR/options.c.preload -olcursor=65692 CURDIR/options.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/refactory.c CURDIR/refactory.c.preload -olcursor=36486 CURDIR/refactory.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/refactory.c CURDIR/refactory.c.preload -olcursor=40575 CURDIR/refactory.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/refactory.c CURDIR/refactory.c.preload -olcursor=42344 CURDIR/refactory.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/refactory.c CURDIR/refactory.c.preload -olcursor=50056 CURDIR/refactory.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/refactory.c CURDIR/refactory.c.preload -olcursor=50956 CURDIR/refactory.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/startup.c CURDIR/startup.c.preload -olcursor=1406 CURDIR/startup.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/xref.c CURDIR/xref.c.preload -olcursor=8692 CURDIR/xref.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/xref.c CURDIR/xref.c.preload -olcursor=10514 CURDIR/xref.c -p CURDIR
+<sync>
+-olcxnext -preload CURDIR/yylex.c CURDIR/yylex.c.preload -olcursor=17957 CURDIR/yylex.c -p CURDIR
+<sync>
+<exit>

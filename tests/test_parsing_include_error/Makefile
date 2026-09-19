@@ -9,7 +9,7 @@ include ../Makefile.server
 # its own (referencerefresh.c), so asking per session is enough.
 
 $(TEST):
-	@rm -rf CXrefs .c-xref output output.tmp server-buffer run.stdout run.stderr
+	@rm -rf .c-xref output output.tmp server-buffer run.stdout run.stderr
 	-@$(SERVER_DRIVER) commands.input > run.stdout 2> run.stderr
 	@(grep -o "<warning [^>]*>Can't open file somefile" run.stdout; true) \
 	    | $(NORMALIZE) > output

@@ -5,7 +5,7 @@ include ../Makefile.server
 # test_token_pasting_float and test_collate_hex_prefix_pasting cover that.
 
 $(TEST):
-	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@rm -rf .c-xref output output.tmp server-buffer
 	@$(SERVER_DRIVER) commands.input > /dev/null
 	@../../utils/cxref_reader .c-xref/db > output
 	$(VERIFY)

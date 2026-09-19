@@ -1,0 +1,12 @@
+CXREF -xrefactory-II -server
+-olcxgetprojectname /home/thoni/Utveckling/c-xrefactory/src/cxfile.c
+<sync>
+-olcxpush  -olcursor=46043 /home/thoni/Utveckling/c-xrefactory/src/cxfile.c  -p c-xrefactory
+<sync>
+-olcxgetprojectname /home/thoni/Utveckling/c-xrefactory/src/cxfile.c
+<sync>
+-olcxsearch=restrictEditorMarkersToRegions -searchdef -olinelen=236 -olcxlccursor=1265:73  -olcursor=46028 /home/thoni/Utveckling/c-xrefactory/src/cxfile.c  -p c-xrefactory
+<sync>
+-continue
+<sync>
+<exit>

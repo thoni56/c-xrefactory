@@ -22,7 +22,7 @@ include ../Makefile.server
 # line — keeps the project config in one place.
 
 $(TEST):
-	@rm -rf CXrefs .c-xref output output.tmp server-buffer run.stdout run.stderr
+	@rm -rf .c-xref output output.tmp server-buffer run.stdout run.stderr
 	-@../run-with-progress $(SERVER_DRIVER) commands.input
 	@((grep -E "ERROR|FATAL" run.stderr 2>/dev/null; grep -E "<error|<warning|<fatalError" run.stdout 2>/dev/null) || true) > output
 	$(VERIFY)

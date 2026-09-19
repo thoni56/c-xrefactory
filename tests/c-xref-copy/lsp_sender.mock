@@ -1,0 +1,10 @@
+#include <cgreen/cgreen.h>
+#include <cgreen/mocks.h>
+
+#include "lsp_sender.h"
+
+
+int send_response_and_delete(JSON *original_response) {
+    JSON *response = cJSON_Duplicate(original_response, true);
+    return mock(response);
+}

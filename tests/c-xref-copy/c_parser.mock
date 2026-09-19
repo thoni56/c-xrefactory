@@ -1,0 +1,18 @@
+/* -*- c -*-*/
+#include "c_parser.h"
+#include <cgreen/mocks.h>
+
+#include "parsers.h"
+
+
+YYSTYPE c_yylval;
+
+
+int c_yyparse() {
+  return (int) mock();
+}
+
+void makeCCompletions(char *s, int len, Position pos) {
+    Position *position = &pos;
+    (void)mock(s, len, position);
+}

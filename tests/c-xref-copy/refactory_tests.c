@@ -1,0 +1,40 @@
+#include <cgreen/cgreen.h>
+
+#include "refactory.h"
+
+#include "log.h"
+
+#include "browsermenu.mock"
+#include "commons.mock"
+#include "complete.mock"
+#include "completion.mock"
+#include "cxfile.mock"
+#include "cxref.mock"
+#include "editor.mock"
+#include "editormarker.mock"
+#include "editorbuffer.mock"
+#include "filetable.mock"
+#include "fileio.mock"
+#include "globals.mock"
+#include "misc.mock"
+#include "move_function.mock"
+#include "options.mock"
+#include "organize_includes.mock"
+#include "parsing.mock"
+#include "ppc.mock"
+#include "progress.mock"
+#include "reference.mock"
+#include "referenceableitemtable.mock"
+#include "session.mock"
+#include "server.mock"
+#include "startup.mock"
+#include "xref.mock"
+
+
+Describe(Refactory);
+BeforeEach(Refactory) {
+    log_set_level(LOG_ERROR);
+}
+AfterEach(Refactory) {}
+
+Ensure(Refactory, can_run_empty_test) {}

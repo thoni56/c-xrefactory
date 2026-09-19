@@ -1,0 +1,27 @@
+#include <cgreen/mocks.h>
+
+#include "session.h"
+
+
+SessionData sessionData;
+
+
+void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **entryP) {
+    mock(stack, entryP);
+}
+
+void freePoppedSessionStackEntries(SessionStack *stack) {
+    mock(stack);
+}
+
+SessionStackEntry *getNextTopStackItem(SessionStack *stack) {
+    return (SessionStackEntry *) mock(stack);
+}
+
+void freeOldCompletionStackEntries(SessionStack *stack) {
+    mock(stack);
+}
+
+void pushEmptySession(SessionStack *stack) {
+    mock(stack);
+}

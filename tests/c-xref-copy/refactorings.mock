@@ -1,0 +1,21 @@
+#include <cgreen/mocks.h>
+
+void clearAvailableRefactorings(void) {
+    mock();
+}
+
+void makeRefactoringAvailable(Refactoring refactoring, char *option) {
+    mock(refactoring, option);
+}
+
+bool isRefactoringAvailable(Refactoring refactoring) {
+    return (bool)mock(refactoring);
+}
+
+int availableRefactoringsCount(void) {
+    return (int)mock();
+}
+
+char *availableRefactoringOptionFor(Refactoring refactoring) {
+    return (char *)mock(refactoring);
+}

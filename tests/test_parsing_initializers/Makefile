@@ -6,7 +6,7 @@ include ../Makefile.server
 # the references of E0 from the snapshot.
 
 $(TEST):
-	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@rm -rf .c-xref output output.tmp server-buffer
 	@$(SERVER_DRIVER) commands.input > /dev/null
 	@../../utils/cxref_extract .c-xref/db E0 | $(NORMALIZE) > output
 	$(VERIFY)

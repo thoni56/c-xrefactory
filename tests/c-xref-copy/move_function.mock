@@ -1,0 +1,11 @@
+/* -*- c -*-*/
+#include "move_function.h"
+#include <cgreen/mocks.h>
+
+void moveFunction(EditorMarker *point) {
+    mock(point);
+}
+
+EditorMarker *removeStaticPrefix(EditorMarker *marker) {
+    return (EditorMarker *) mock(marker);
+}

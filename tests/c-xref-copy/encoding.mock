@@ -1,0 +1,9 @@
+/* -*- c -*-*/
+#include "encoding.h"
+#include <cgreen/mocks.h>
+
+#include "encoding.h"
+
+void performEncodingAdjustments(EditorBuffer *buffer) {
+    mock(buffer);
+}

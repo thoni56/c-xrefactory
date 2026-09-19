@@ -1,0 +1,7 @@
+/* -*- c -*-*/
+#include "refactory.h"
+#include <cgreen/mocks.h>
+
+void refactory() {
+  mock();
+}

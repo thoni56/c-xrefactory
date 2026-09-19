@@ -11,7 +11,7 @@ include ../Makefile.server
 
 
 $(TEST):
-	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@rm -rf .c-xref output output.tmp server-buffer
 	@cp with_feature.preload source.c
 	@$(SERVER_DRIVER) $(EXTRA1) commands_phase1.input > /dev/null
 	@{ echo "=== phase 1: source.c defines FEATURE ==="; ../../utils/cxref_reader .c-xref/db; } > output

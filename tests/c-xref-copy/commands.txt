@@ -1,0 +1,13 @@
+-olcxgetprojectname commons.h
+end-of-options
+
+-olcxpush -olcursor=468 commons.h
+end-of-options
+
+-olcxnext -preload commons.h commons.h.preload -olcursor=466 commons.h
+end-of-options
+
+-olcxprevious -preload CURDIR/commons.c CURDIR/commons.c.preload -olcursor=5215 commons.c
+end-of-options
+
+-exit

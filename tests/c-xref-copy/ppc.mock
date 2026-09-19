@@ -1,0 +1,105 @@
+#include <cgreen/mocks.h>
+
+#include "ppc.h"
+
+
+void ppcSynchronize(void) {
+  mock();
+}
+
+void ppcIndent(void) {
+  mock();
+}
+
+void ppcGotoOffsetPosition(char *fname, int offset) {
+  mock(fname, offset);
+}
+
+void ppcBegin(char *kind) {
+  mock(kind);
+}
+
+void ppcBeginWithStringAttribute(char *kind, char *attr, char *val) {
+  mock(kind, attr, val);
+}
+
+void ppcEnd(char *kind) {
+  mock(kind);
+}
+
+void ppcBeginWithNumericValue(char *kind, int val) {
+  mock(kind, val);
+}
+
+void ppcBeginWithTwoNumericAttributes(char *kind, char *attr1, int val1, char *attr2, int val2) {
+  mock(kind, attr1, val1, attr2, val2);
+}
+
+void ppcBeginWithNumericValueAndAttribute(char *kind, int val, char *attr, char *attrVal) {
+  mock(kind, val, attr, attrVal);
+}
+
+void ppcBeginAllCompletions(int nofocus, int len) {
+  mock(nofocus, len);
+}
+
+void ppcGenRecordWithNumeric(char *kind, char *attr, int val, char *message) {
+  mock(kind, attr, val, message);
+}
+
+void ppcValueRecord(char *kind, int val, char *message) {
+  mock(kind, val, message);
+}
+
+void ppcGenRecord(char *kind, char *message) {
+  mock(kind, message);
+}
+
+void ppcBottomInformation(char *string) {
+  mock(string);
+}
+
+void ppcDisplaySelection(char *message, int messageType) {
+  mock(message, messageType);
+}
+
+void ppcGotoMarker(EditorMarker *pos) {
+  mock(pos);
+}
+
+void ppcWarning(char *message) {
+  mock();
+}
+
+void ppcBottomWarning(char *message) {
+  mock();
+}
+
+void ppcReplace(char *file, int offset, char *oldName, int oldNameLen, char *newName) {
+  mock(file, offset, oldName, oldNameLen, newName);
+}
+
+void ppcPreCheck(EditorMarker *pos, int oldLen) {
+  mock(pos, oldLen);
+}
+
+void ppcReferencePreCheck(Reference *r, char *text) {
+  mock(r, text);
+}
+
+void ppcGotoPosition(Position p) {
+    Position *position = &p;
+    mock(position);
+}
+
+void ppcGenOffsetPosition(char *fn, int offset) {
+  mock(fn, offset);
+}
+
+void ppcAskConfirmation(char *message) {
+    mock(message);
+}
+
+void indicateNoReference(void) {
+    mock();
+}

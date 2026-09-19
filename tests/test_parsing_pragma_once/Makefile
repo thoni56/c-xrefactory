@@ -4,7 +4,7 @@ include ../Makefile.server
 # Pragma once should prevent the second parse — only var_1 should appear, not var_2.
 
 $(TEST):
-	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@rm -rf .c-xref output output.tmp server-buffer
 	@$(SERVER_DRIVER) commands.input > /dev/null
 	@../../utils/cxref_reader .c-xref/db | grep "var_" > output
 	$(VERIFY)

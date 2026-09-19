@@ -1,0 +1,13 @@
+/* -*- c -*-*/
+#include <cgreen/mocks.h>
+
+#include "macroargumenttable.h"
+
+
+void allocateMacroArgumentTable(int count) {
+    mock();
+}
+
+void resetMacroArgumentTable(void) {
+    mock();
+}

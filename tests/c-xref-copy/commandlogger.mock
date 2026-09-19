@@ -1,0 +1,10 @@
+/* -*- c -*-*/
+#include "commandlogger.h"
+#include <cgreen/mocks.h>
+
+#include "argumentsvector.h"
+
+
+void logCommands(ArgumentsVector args) {
+    mock(args.argc, args.argv);
+}

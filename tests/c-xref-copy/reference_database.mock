@@ -1,0 +1,45 @@
+/* -*- c -*-*/
+#include "reference_database.h"
+
+/* ReferenceDatabase mock functions */
+
+#include <cgreen/mocks.h>
+#include "referenceableitem.h"
+
+
+ReferenceDatabase *createReferenceDatabase(void) {
+    return (ReferenceDatabase *) mock();
+}
+
+ReferenceableResult findReferenceableAt(ReferenceDatabase *db, const char *fileName,
+                                        Position position) {
+    Position *positionP = &position;
+    return *(ReferenceableResult *)mock(db, fileName, positionP);
+}
+
+ReferencesResult getReferencesTo(ReferenceDatabase *db, const char *fileName, Position position) {
+    Position *positionP = &position;
+    return *(ReferencesResult *) mock(db, fileName, positionP);
+}
+
+void destroyReferenceDatabase(ReferenceDatabase *db) {
+    mock(db);
+}
+
+ReferenceableResult makeReferenceableResult(ReferenceableItem *referenceable, Position definition,
+                                            bool found) {
+    Position *definitionP = &definition;
+    return *(ReferenceableResult *) mock(referenceable, definitionP, found);
+}
+
+ReferencesResult makeReferencesResult(Reference *references, int count, bool found) {
+    return *(ReferencesResult *) mock(references, count, found);
+}
+
+ReferenceableResult makeReferenceableFailure(void) {
+    return *(ReferenceableResult *) mock();
+}
+
+ReferencesResult makeReferencesFailure(void) {
+    return *(ReferencesResult *) mock();
+}

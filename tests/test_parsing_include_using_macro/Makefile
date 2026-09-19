@@ -13,7 +13,7 @@ include ../Makefile.server
 # stays robust to other protocol changes.
 
 $(TEST):
-	@rm -rf CXrefs .c-xref output output.tmp server-buffer run.stdout run.stderr
+	@rm -rf .c-xref output output.tmp server-buffer run.stdout run.stderr
 	-@$(SERVER_DRIVER) commands.input > run.stdout 2> run.stderr
 	@(grep -F "Include <> after macro expansion" run.stdout; \
 	  grep -F "Syntax error on: ." run.stdout; \

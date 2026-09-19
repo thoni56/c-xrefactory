@@ -1,0 +1,858 @@
+C-xrefactory project: /home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/browsermenu.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/browsermenu_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/browsermenu_tests.c#7"browsermenu_tests.c:7 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/browsermenu_tests.c#8"browsermenu_tests.c:8 Can't open file cxfile.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/browsermenu_tests.c#9"browsermenu_tests.c:9 Can't open file cxref.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/browsermenu_tests.c#10"browsermenu_tests.c:10 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/browsermenu_tests.c#12"browsermenu_tests.c:12 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/browsermenu_tests.c#13"browsermenu_tests.c:13 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/browsermenu_tests.c#14"browsermenu_tests.c:14 Can't open file ppc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/browsermenu_tests.c#15"browsermenu_tests.c:15 Can't open file reference.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/c_parser.tab.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cgreen_capture_parameter.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cgreen_equal_to_json.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/characterreader.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/characterreader_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/characterreader_tests.c#6"characterreader_tests.c:6 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/characterreader_tests.c#7"characterreader_tests.c:7 Can't open file fileio.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/commandlogger.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/commandlogger_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/commandlogger_tests.c#7"commandlogger_tests.c:7 Can't open file fileio.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/commandlogger_tests.c#8"commandlogger_tests.c:8 Can't open file options.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/commons.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/commons_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/commons_tests.c#6"commons_tests.c:6 Can't open file filedescriptor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/commons_tests.c#7"commons_tests.c:7 Can't open file fileio.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/commons_tests.c#9"commons_tests.c:9 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/commons_tests.c#10"commons_tests.c:10 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/commons_tests.c#11"commons_tests.c:11 Can't open file ppc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/commons_tests.c#12"commons_tests.c:12 Can't open file semact.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/commons_tests.c#13"commons_tests.c:13 Can't open file yylex.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#7"complete_tests.c:7 Can't open file completion.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#8"complete_tests.c:8 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#9"complete_tests.c:9 Can't open file cxfile.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#10"complete_tests.c:10 Can't open file cxref.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#11"complete_tests.c:11 Can't open file editor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#12"complete_tests.c:12 Can't open file fileio.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#13"complete_tests.c:13 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#15"complete_tests.c:15 Can't open file match.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#16"complete_tests.c:16 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#17"complete_tests.c:17 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#18"complete_tests.c:18 Can't open file parsing.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#19"complete_tests.c:19 Can't open file ppc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#20"complete_tests.c:20 Can't open file session.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#21"complete_tests.c:21 Can't open file referenceableitemtable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#22"complete_tests.c:22 Can't open file semact.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#23"complete_tests.c:23 Can't open file symbol.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/complete_tests.c#24"complete_tests.c:24 Can't open file symboltable.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/counters.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/counters_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/counters_tests.c#6"counters_tests.c:6 Can't open file semact.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cppexp_parser.tab.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#12"cxfile_tests.c:12 Can't open file browsermenu.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#13"cxfile_tests.c:13 Can't open file characterreader.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#14"cxfile_tests.c:14 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#15"cxfile_tests.c:15 Can't open file completion.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#16"cxfile_tests.c:16 Can't open file cxref.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#17"cxfile_tests.c:17 Can't open file editor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#18"cxfile_tests.c:18 Can't open file fileio.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#19"cxfile_tests.c:19 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#21"cxfile_tests.c:21 Can't open file match.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#22"cxfile_tests.c:22 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#23"cxfile_tests.c:23 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#24"cxfile_tests.c:24 Can't open file parsing.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#25"cxfile_tests.c:25 Can't open file reference.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#27"cxfile_tests.c:27 Can't open file referenceableitemtable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#28"cxfile_tests.c:28 Can't open file search.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#30"cxfile_tests.c:30 Can't open file session.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#31"cxfile_tests.c:31 Can't open file startup.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#82"cxfile_tests.c:82 Syntax error on: fileItem1
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#82"cxfile_tests.c:82 DEBUG: error parsing declaration, near 'fileItem1'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#82"cxfile_tests.c:82 Syntax error on: {
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#82"cxfile_tests.c:82 DEBUG: error parsing declaration, near '{'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#82"cxfile_tests.c:82 Syntax error on: .
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#82"cxfile_tests.c:82 DEBUG: error parsing declaration, near 'name'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#82"cxfile_tests.c:82 Syntax error on: }
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#82"cxfile_tests.c:82 DEBUG: error parsing declaration, near '}'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#86"cxfile_tests.c:86 Syntax error on: .
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#87"cxfile_tests.c:87 Syntax error on: .
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#89"cxfile_tests.c:89 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#89"cxfile_tests.c:89 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#89"cxfile_tests.c:89 Syntax error on: currentCxFileCountMatches
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#89"cxfile_tests.c:89 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#89"cxfile_tests.c:89 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#89"cxfile_tests.c:89 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#89"cxfile_tests.c:89 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#89"cxfile_tests.c:89 Syntax error on: 1
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#89"cxfile_tests.c:89 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#89"cxfile_tests.c:89 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 Syntax error on: openFile
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 Syntax error on: fileName
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 DEBUG: error parsing parameter_declaration near 'fileName'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 Syntax error on: create_equal_to_string_constraint
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 DEBUG: error parsing parameter_declaration near 'create_equal_to_string_constraint'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 Syntax error on: "./CXrefs/XFiles"
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 DEBUG: error parsing parameter_declaration near '"./CXrefs/XFiles"'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 Syntax error on: xfilesFilePointer
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#91"cxfile_tests.c:91 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#94"cxfile_tests.c:94 Syntax error on: 34v
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#94"cxfile_tests.c:94 DEBUG: error parsing parameter_declaration near '34v'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#94"cxfile_tests.c:94 Syntax error on: 0
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#94"cxfile_tests.c:94 DEBUG: error parsing parameter_declaration near '0'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#95"cxfile_tests.c:95 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#95"cxfile_tests.c:95 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#95"cxfile_tests.c:95 Syntax error on: skipCharacters
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#95"cxfile_tests.c:95 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#95"cxfile_tests.c:95 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#95"cxfile_tests.c:95 Syntax error on: count
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#95"cxfile_tests.c:95 DEBUG: error parsing parameter_declaration near 'count'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#95"cxfile_tests.c:95 Syntax error on: create_equal_to_value_constraint
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#95"cxfile_tests.c:95 DEBUG: error parsing parameter_declaration near 'create_equal_to_value_constraint'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#95"cxfile_tests.c:95 Syntax error on: 33
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#95"cxfile_tests.c:95 Syntax error on: 33
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#95"cxfile_tests.c:95 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#95"cxfile_tests.c:95 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#96"cxfile_tests.c:96 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#96"cxfile_tests.c:96 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#96"cxfile_tests.c:96 Syntax error on: getChar
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#96"cxfile_tests.c:96 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#96"cxfile_tests.c:96 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#96"cxfile_tests.c:96 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#96"cxfile_tests.c:96 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#96"cxfile_tests.c:96 Syntax error on: ' '
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#96"cxfile_tests.c:96 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#96"cxfile_tests.c:96 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#99"cxfile_tests.c:99 Syntax error on: 21@mpfotulcsrhdeibnaAgk 10n 300000k 
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#99"cxfile_tests.c:99 DEBUG: error parsing parameter_declaration near '21@mpfotulcsrhdeibnaAgk 10n 300000k '
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#99"cxfile_tests.c:99 Syntax error on: 0
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#99"cxfile_tests.c:99 DEBUG: error parsing parameter_declaration near '0'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#102"cxfile_tests.c:102 Syntax error on: 49976f 1646087914m 10: 
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#102"cxfile_tests.c:102 DEBUG: error parsing parameter_declaration near '49976f 1646087914m 10: '
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#102"cxfile_tests.c:102 Syntax error on: 1
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#102"cxfile_tests.c:102 DEBUG: error parsing parameter_declaration near '1'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#103"cxfile_tests.c:103 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#103"cxfile_tests.c:103 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#103"cxfile_tests.c:103 Syntax error on: getString
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#103"cxfile_tests.c:103 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#103"cxfile_tests.c:103 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#103"cxfile_tests.c:103 Syntax error on: string
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#103"cxfile_tests.c:103 DEBUG: error parsing parameter_declaration near 'string'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#103"cxfile_tests.c:103 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#103"cxfile_tests.c:103 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#103"cxfile_tests.c:103 Syntax error on: sourceFileName1
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#103"cxfile_tests.c:103 Syntax error on: strlen
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#103"cxfile_tests.c:103 Syntax error on: +
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#103"cxfile_tests.c:103 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#103"cxfile_tests.c:103 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 Syntax error on: existsInFileTable
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 Syntax error on: fileName
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 DEBUG: error parsing parameter_declaration near 'fileName'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 Syntax error on: create_equal_to_string_constraint
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 DEBUG: error parsing parameter_declaration near 'create_equal_to_string_constraint'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 Syntax error on: sourceFileName1
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 DEBUG: error parsing parameter_declaration near 'sourceFileName1'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 Syntax error on: 0
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#105"cxfile_tests.c:105 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 Syntax error on: addFileNameToFileTable
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 Syntax error on: fileName
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 DEBUG: error parsing parameter_declaration near 'fileName'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 Syntax error on: create_equal_to_string_constraint
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 DEBUG: error parsing parameter_declaration near 'create_equal_to_string_constraint'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 Syntax error on: sourceFileName1
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 DEBUG: error parsing parameter_declaration near 'sourceFileName1'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 Syntax error on: sourceFileNumber1
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#107"cxfile_tests.c:107 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 Syntax error on: getFileItemWithFileNumber
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 Syntax error on: fileNumber
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 DEBUG: error parsing parameter_declaration near 'fileNumber'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 Syntax error on: create_equal_to_value_constraint
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 DEBUG: error parsing parameter_declaration near 'create_equal_to_value_constraint'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 Syntax error on: sourceFileNumber1
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 Syntax error on: sourceFileNumber1
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 Syntax error on: &
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#109"cxfile_tests.c:109 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#111"cxfile_tests.c:111 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#111"cxfile_tests.c:111 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#111"cxfile_tests.c:111 Syntax error on: closeFile
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#111"cxfile_tests.c:111 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#111"cxfile_tests.c:111 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#111"cxfile_tests.c:111 Syntax error on: file
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#111"cxfile_tests.c:111 DEBUG: error parsing parameter_declaration near 'file'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#111"cxfile_tests.c:111 Syntax error on: create_equal_to_value_constraint
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#111"cxfile_tests.c:111 DEBUG: error parsing parameter_declaration near 'create_equal_to_value_constraint'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#111"cxfile_tests.c:111 Syntax error on: xfilesFilePointer
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#111"cxfile_tests.c:111 Syntax error on: xfilesFilePointer
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#111"cxfile_tests.c:111 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#111"cxfile_tests.c:111 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#113"cxfile_tests.c:113 Syntax error on: /XFiles
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#113"cxfile_tests.c:113 DEBUG: error parsing parameter_declaration near '/XFiles'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxfile_tests.c#114"cxfile_tests.c:114 Syntax error on: }
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#9"cxref_tests.c:9 Can't open file browsermenu.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#10"cxref_tests.c:10 Can't open file characterreader.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#11"cxref_tests.c:11 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#12"cxref_tests.c:12 Can't open file complete.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#13"cxref_tests.c:13 Can't open file completion.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#14"cxref_tests.c:14 Can't open file cxfile.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#15"cxref_tests.c:15 Can't open file editor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#16"cxref_tests.c:16 Can't open file editorbuffer.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#17"cxref_tests.c:17 Can't open file filedescriptor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#18"cxref_tests.c:18 Can't open file fileio.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#19"cxref_tests.c:19 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#21"cxref_tests.c:21 Can't open file lexer.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#22"cxref_tests.c:22 Can't open file match.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#23"cxref_tests.c:23 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#24"cxref_tests.c:24 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#25"cxref_tests.c:25 Can't open file parsers.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#26"cxref_tests.c:26 Can't open file parsing.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#27"cxref_tests.c:27 Can't open file ppc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#28"cxref_tests.c:28 Can't open file refactorings.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#29"cxref_tests.c:29 Can't open file refactory.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#30"cxref_tests.c:30 Can't open file reference.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#31"cxref_tests.c:31 Can't open file referenceableitemtable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#32"cxref_tests.c:32 Can't open file search.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#33"cxref_tests.c:33 Can't open file session.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#34"cxref_tests.c:34 Can't open file startup.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#35"cxref_tests.c:35 Can't open file symbol.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#36"cxref_tests.c:36 Can't open file yylex.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#55"cxref_tests.c:55 Syntax error on: fileItem
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#55"cxref_tests.c:55 DEBUG: error parsing declaration, near 'fileItem'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#55"cxref_tests.c:55 Syntax error on: {
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#55"cxref_tests.c:55 DEBUG: error parsing declaration, near '{'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#55"cxref_tests.c:55 Syntax error on: .
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#55"cxref_tests.c:55 DEBUG: error parsing declaration, near 'name'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#55"cxref_tests.c:55 Syntax error on: }
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#55"cxref_tests.c:55 DEBUG: error parsing declaration, near '}'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#57"cxref_tests.c:57 Syntax error on: .
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#59"cxref_tests.c:59 Syntax error on: .
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 Syntax error on: getFileItemWithFileNumber
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 Syntax error on: fileNumber
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 DEBUG: error parsing parameter_declaration near 'fileNumber'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 Syntax error on: create_equal_to_value_constraint
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 DEBUG: error parsing parameter_declaration near 'create_equal_to_value_constraint'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 Syntax error on: 0
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 Syntax error on: 0
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 Syntax error on: &
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#62"cxref_tests.c:62 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: searchStandardOptionsFileAndProjectForFile
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: sourceFilename
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 DEBUG: error parsing parameter_declaration near 'sourceFilename'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: create_equal_to_string_constraint
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 DEBUG: error parsing parameter_declaration near 'create_equal_to_string_constraint'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: "file.c"
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 DEBUG: error parsing parameter_declaration near '"file.c"'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: foundOptionsFilename
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 DEBUG: error parsing parameter_declaration near 'foundOptionsFilename'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: 
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: 1
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: foundProjectName
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 DEBUG: error parsing parameter_declaration near 'foundProjectName'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: 
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: 1
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#65"cxref_tests.c:65 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 Syntax error on: ppcGenRecord
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 Syntax error on: kind
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 DEBUG: error parsing parameter_declaration near 'kind'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 Syntax error on: create_equal_to_value_constraint
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 DEBUG: error parsing parameter_declaration near 'create_equal_to_value_constraint'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 Syntax error on: PPC_NO_PROJECT
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 Syntax error on: PPC_NO_PROJECT
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 Syntax error on: message
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 DEBUG: error parsing parameter_declaration near 'message'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 Syntax error on: create_contains_string_constraint
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 DEBUG: error parsing parameter_declaration near 'create_contains_string_constraint'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 Syntax error on: "file.c"
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 DEBUG: error parsing parameter_declaration near '"file.c"'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#68"cxref_tests.c:68 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/cxref_tests.c#71"cxref_tests.c:71 Syntax error on: }
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#10"editor_tests.c:10 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#11"editor_tests.c:11 Can't open file cxref.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#12"editor_tests.c:12 Can't open file editorbuffer.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#13"editor_tests.c:13 Can't open file editorbuffertable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#14"editor_tests.c:14 Can't open file encoding.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#15"editor_tests.c:15 Can't open file fileio.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#16"editor_tests.c:16 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#19"editor_tests.c:19 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#20"editor_tests.c:20 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#21"editor_tests.c:21 Can't open file ppc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#22"editor_tests.c:22 Can't open file reference.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#23"editor_tests.c:23 Can't open file undo.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#24"editor_tests.c:24 Can't open file yylex.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#133"editor_tests.c:133 Syntax error on: fileItem
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#133"editor_tests.c:133 DEBUG: error parsing declaration, near 'fileItem'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#133"editor_tests.c:133 Syntax error on: {
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#133"editor_tests.c:133 DEBUG: error parsing declaration, near '{'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#133"editor_tests.c:133 Syntax error on: .
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#133"editor_tests.c:133 DEBUG: error parsing declaration, near 'name'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#133"editor_tests.c:133 Syntax error on: }
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#133"editor_tests.c:133 DEBUG: error parsing declaration, near '}'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 Syntax error on: getFileItemWithFileNumber
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 Syntax error on: fileNumber
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 DEBUG: error parsing parameter_declaration near 'fileNumber'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 Syntax error on: create_equal_to_value_constraint
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 DEBUG: error parsing parameter_declaration near 'create_equal_to_value_constraint'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 Syntax error on: SOME_FILE_NUMBER
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 Syntax error on: SOME_FILE_NUMBER
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 Syntax error on: &
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#136"editor_tests.c:136 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 Syntax error on: findOrCreateAndLoadEditorBufferForFile
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 Syntax error on: fileName
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 DEBUG: error parsing parameter_declaration near 'fileName'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 Syntax error on: create_equal_to_string_constraint
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 DEBUG: error parsing parameter_declaration near 'create_equal_to_string_constraint'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 Syntax error on: "name"
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 DEBUG: error parsing parameter_declaration near '"name"'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 Syntax error on: &
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#142"editor_tests.c:142 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#146"editor_tests.c:146 Syntax error on: markers
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#146"editor_tests.c:146 DEBUG: error parsing parameter_declaration near 'markers'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#146"editor_tests.c:146 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#146"editor_tests.c:146 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#146"editor_tests.c:146 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#147"editor_tests.c:147 Syntax error on: markersnext
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#147"editor_tests.c:147 DEBUG: error parsing parameter_declaration near 'markersnext'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#147"editor_tests.c:147 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#147"editor_tests.c:147 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#147"editor_tests.c:147 Syntax error on: ->
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#147"editor_tests.c:147 DEBUG: error parsing parameter_declaration near '->'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#147"editor_tests.c:147 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editor_tests.c#148"editor_tests.c:148 Syntax error on: }
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffer.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffer_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffer_tests.c#10"editorbuffer_tests.c:10 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffer_tests.c#11"editorbuffer_tests.c:11 Can't open file editor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffer_tests.c#12"editorbuffer_tests.c:12 Can't open file editorbuffertable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffer_tests.c#13"editorbuffer_tests.c:13 Can't open file fileio.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffer_tests.c#14"editorbuffer_tests.c:14 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffer_tests.c#16"editorbuffer_tests.c:16 Can't open file undo.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffer_tests.c#46"editorbuffer_tests.c:46 Syntax error on: dummy_fileitem
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffer_tests.c#46"editorbuffer_tests.c:46 DEBUG: error parsing declaration, near 'dummy_fileitem'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffer_tests.c#47"editorbuffer_tests.c:47 Syntax error on: =
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffer_tests.c#47"editorbuffer_tests.c:47 DEBUG: error parsing declaration, near '&'
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffertable.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffertable_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffertable_tests.c#9"editorbuffertable_tests.c:9 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editorbuffertable_tests.c#10"editorbuffertable_tests.c:10 Can't open file stackmemory.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editormarker.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editormarker_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editormarker_tests.c#6"editormarker_tests.c:6 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editormarker_tests.c#7"editormarker_tests.c:7 Can't open file editorbuffer.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editormarker_tests.c#8"editormarker_tests.c:8 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editormarker_tests.c#9"editormarker_tests.c:9 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/editormarker_tests.c#10"editormarker_tests.c:10 Can't open file ppc.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/encoding.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/encoding_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/encoding_tests.c#7"encoding_tests.c:7 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/encoding_tests.c#8"encoding_tests.c:8 Can't open file editorbuffer.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/encoding_tests.c#9"encoding_tests.c:9 Can't open file options.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/extract.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/extract_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/extract_tests.c#9"extract_tests.c:9 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/extract_tests.c#10"extract_tests.c:10 Can't open file cxref.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/extract_tests.c#11"extract_tests.c:11 Can't open file filedescriptor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/extract_tests.c#12"extract_tests.c:12 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/extract_tests.c#14"extract_tests.c:14 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/extract_tests.c#15"extract_tests.c:15 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/extract_tests.c#16"extract_tests.c:16 Can't open file parsing.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/extract_tests.c#17"extract_tests.c:17 Can't open file ppc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/extract_tests.c#18"extract_tests.c:18 Can't open file referenceableitemtable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/extract_tests.c#19"extract_tests.c:19 Can't open file semact.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/extract_tests.c#20"extract_tests.c:20 Can't open file symbol.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/extract_tests.c#21"extract_tests.c:21 Can't open file symboltable.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/filedescriptor.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/fileio.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/fileio_tests.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/filetable.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/filetable_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/filetable_tests.c#7"filetable_tests.c:7 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/filetable_tests.c#8"filetable_tests.c:8 Can't open file cxref.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/filetable_tests.c#9"filetable_tests.c:9 Can't open file editor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/filetable_tests.c#11"filetable_tests.c:11 Can't open file misc.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/globals.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/hash.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/id.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/id_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/id_tests.c#6"id_tests.c:6 Can't open file cxref.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/id_tests.c#8"id_tests.c:8 Can't open file commons.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/init.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/init_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/init_tests.c#7"init_tests.c:7 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/init_tests.c#9"init_tests.c:9 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/init_tests.c#10"init_tests.c:10 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/init_tests.c#11"init_tests.c:11 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/init_tests.c#12"init_tests.c:12 Can't open file symbol.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/init_tests.c#13"init_tests.c:13 Can't open file symboltable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/init_tests.c#14"init_tests.c:14 Can't open file type.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/init_tests.c#15"init_tests.c:15 Can't open file typemodifier.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/json_utils.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexem.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexembuffer.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexembuffer_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexembuffer_tests.c#8"lexembuffer_tests.c:8 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexembuffer_tests.c#9"lexembuffer_tests.c:9 Can't open file fileio.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexembuffer_tests.c#11"lexembuffer_tests.c:11 Can't open file lexem.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexembuffer_tests.c#12"lexembuffer_tests.c:12 Can't open file options.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexemstream.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexemstream_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexemstream_tests.c#6"lexemstream_tests.c:6 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexemstream_tests.c#7"lexemstream_tests.c:7 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexemstream_tests.c#8"lexemstream_tests.c:8 Can't open file characterreader.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexer.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexer_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexer_tests.c#8"lexer_tests.c:8 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexer_tests.c#9"lexer_tests.c:9 Can't open file filedescriptor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexer_tests.c#10"lexer_tests.c:10 Can't open file fileio.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexer_tests.c#11"lexer_tests.c:11 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexer_tests.c#13"lexer_tests.c:13 Can't open file lexem.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexer_tests.c#14"lexer_tests.c:14 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexer_tests.c#15"lexer_tests.c:15 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexer_tests.c#16"lexer_tests.c:16 Can't open file parsing.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lexer_tests.c#17"lexer_tests.c:17 Can't open file yylex.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#7"list_tests.c:7 Can't open file reference.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#16"list_tests.c:16 Syntax error on: =
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#16"list_tests.c:16 DEBUG: error parsing declaration, near 'newReference'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#16"list_tests.c:16 Syntax error on: {
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#16"list_tests.c:16 DEBUG: error parsing declaration, near '{'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#16"list_tests.c:16 Syntax error on: }
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#16"list_tests.c:16 DEBUG: error parsing declaration, near '}'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#16"list_tests.c:16 Syntax error on: ,
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#16"list_tests.c:16 DEBUG: error parsing init_declarations, near ','
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#16"list_tests.c:16 Syntax error on: void
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#16"list_tests.c:16 DEBUG: error parsing declaration, near 'void'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#16"list_tests.c:16 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#16"list_tests.c:16 DEBUG: error parsing declaration, near '0'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#16"list_tests.c:16 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#16"list_tests.c:16 DEBUG: error parsing declaration, near ';'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#17"list_tests.c:17 Syntax error on: =
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#17"list_tests.c:17 DEBUG: error parsing declaration, near 'newReference'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#17"list_tests.c:17 Syntax error on: {
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#17"list_tests.c:17 DEBUG: error parsing declaration, near '{'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#17"list_tests.c:17 Syntax error on: }
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#17"list_tests.c:17 DEBUG: error parsing declaration, near '}'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#17"list_tests.c:17 Syntax error on: ,
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#17"list_tests.c:17 DEBUG: error parsing init_declarations, near ','
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#17"list_tests.c:17 Syntax error on: void
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#17"list_tests.c:17 DEBUG: error parsing declaration, near 'void'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#17"list_tests.c:17 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#17"list_tests.c:17 DEBUG: error parsing declaration, near '0'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#17"list_tests.c:17 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#17"list_tests.c:17 DEBUG: error parsing declaration, near ';'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#18"list_tests.c:18 Syntax error on: =
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/list_tests.c#18"list_tests.c:18 DEBUG: error parsing declaration, near 'list'
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/log.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#12"lsp_adapter_tests.c:12 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#13"lsp_adapter_tests.c:13 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#14"lsp_adapter_tests.c:14 Can't open file lsp_handler.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#16"lsp_adapter_tests.c:16 Can't open file reference_database.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#23"lsp_adapter_tests.c:23 Syntax error on: =
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#23"lsp_adapter_tests.c:23 DEBUG: error parsing declaration, near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#23"lsp_adapter_tests.c:23 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#23"lsp_adapter_tests.c:23 DEBUG: error parsing declaration, near '4660'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#41"lsp_adapter_tests.c:41 Syntax error on: mockResult
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#41"lsp_adapter_tests.c:41 DEBUG: error parsing declaration, near 'mockResult'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#41"lsp_adapter_tests.c:41 Syntax error on: {
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#41"lsp_adapter_tests.c:41 DEBUG: error parsing declaration, near '{'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#41"lsp_adapter_tests.c:41 Syntax error on: .
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#41"lsp_adapter_tests.c:41 DEBUG: error parsing declaration, near 'referenceable'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#42"lsp_adapter_tests.c:42 Syntax error on: .
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#42"lsp_adapter_tests.c:42 DEBUG: error parsing declaration, near 'definition'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#42"lsp_adapter_tests.c:42 Syntax error on: {
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#42"lsp_adapter_tests.c:42 DEBUG: error parsing declaration, near '{'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#42"lsp_adapter_tests.c:42 Syntax error on: .
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#42"lsp_adapter_tests.c:42 DEBUG: error parsing declaration, near 'file'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#42"lsp_adapter_tests.c:42 Syntax error on: .
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#42"lsp_adapter_tests.c:42 DEBUG: error parsing declaration, near 'line'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#42"lsp_adapter_tests.c:42 Syntax error on: .
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#42"lsp_adapter_tests.c:42 DEBUG: error parsing declaration, near 'col'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#42"lsp_adapter_tests.c:42 Syntax error on: }
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#42"lsp_adapter_tests.c:42 DEBUG: error parsing declaration, near '}'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#42"lsp_adapter_tests.c:42 Syntax error on: ,
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#43"lsp_adapter_tests.c:43 Syntax error on: .
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#43"lsp_adapter_tests.c:43 Syntax error on: }
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#44"lsp_adapter_tests.c:44 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#44"lsp_adapter_tests.c:44 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#44"lsp_adapter_tests.c:44 Syntax error on: findReferenceableAt
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#44"lsp_adapter_tests.c:44 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#44"lsp_adapter_tests.c:44 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#44"lsp_adapter_tests.c:44 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#44"lsp_adapter_tests.c:44 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#44"lsp_adapter_tests.c:44 Syntax error on: &
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#44"lsp_adapter_tests.c:44 Syntax error on: sizeof
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#44"lsp_adapter_tests.c:44 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#44"lsp_adapter_tests.c:44 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#44"lsp_adapter_tests.c:44 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#46"lsp_adapter_tests.c:46 Syntax error on: mockedFileItem
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 Syntax error on: getFileItemWithFileNumber
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 Syntax error on: fileNumber
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 DEBUG: error parsing parameter_declaration near 'fileNumber'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 Syntax error on: create_equal_to_value_constraint
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 DEBUG: error parsing parameter_declaration near 'create_equal_to_value_constraint'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 Syntax error on: 42
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 Syntax error on: 42
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 Syntax error on: &
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 Syntax error on: sizeof
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#48"lsp_adapter_tests.c:48 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#50"lsp_adapter_tests.c:50 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#50"lsp_adapter_tests.c:50 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#50"lsp_adapter_tests.c:50 Syntax error on: getFileNumberFromFileName
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#50"lsp_adapter_tests.c:50 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#50"lsp_adapter_tests.c:50 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#50"lsp_adapter_tests.c:50 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#50"lsp_adapter_tests.c:50 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#50"lsp_adapter_tests.c:50 Syntax error on: 42
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#50"lsp_adapter_tests.c:50 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#50"lsp_adapter_tests.c:50 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#54"lsp_adapter_tests.c:54 Syntax error on: result
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#54"lsp_adapter_tests.c:54 DEBUG: error parsing parameter_declaration near 'result'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#54"lsp_adapter_tests.c:54 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#54"lsp_adapter_tests.c:54 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#54"lsp_adapter_tests.c:54 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#55"lsp_adapter_tests.c:55 Syntax error on: cJSON_GetObjectItem(result,"uri")
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#55"lsp_adapter_tests.c:55 DEBUG: error parsing parameter_declaration near 'cJSON_GetObjectItem(result,"uri")'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#55"lsp_adapter_tests.c:55 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#55"lsp_adapter_tests.c:55 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#55"lsp_adapter_tests.c:55 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#55"lsp_adapter_tests.c:55 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#55"lsp_adapter_tests.c:55 Syntax error on: uri
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#55"lsp_adapter_tests.c:55 DEBUG: error parsing parameter_declaration near 'uri'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#55"lsp_adapter_tests.c:55 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#55"lsp_adapter_tests.c:55 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#56"lsp_adapter_tests.c:56 Syntax error on: cJSON_GetObjectItem(result,"range")
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#56"lsp_adapter_tests.c:56 DEBUG: error parsing parameter_declaration near 'cJSON_GetObjectItem(result,"range")'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#56"lsp_adapter_tests.c:56 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#56"lsp_adapter_tests.c:56 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#56"lsp_adapter_tests.c:56 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#56"lsp_adapter_tests.c:56 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#56"lsp_adapter_tests.c:56 Syntax error on: range
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#56"lsp_adapter_tests.c:56 DEBUG: error parsing parameter_declaration near 'range'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#56"lsp_adapter_tests.c:56 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#56"lsp_adapter_tests.c:56 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#62"lsp_adapter_tests.c:62 Syntax error on: start
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#62"lsp_adapter_tests.c:62 DEBUG: error parsing parameter_declaration near 'start'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#62"lsp_adapter_tests.c:62 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#62"lsp_adapter_tests.c:62 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#62"lsp_adapter_tests.c:62 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#63"lsp_adapter_tests.c:63 Syntax error on: end
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#63"lsp_adapter_tests.c:63 DEBUG: error parsing parameter_declaration near 'end'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#63"lsp_adapter_tests.c:63 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#63"lsp_adapter_tests.c:63 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#63"lsp_adapter_tests.c:63 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#64"lsp_adapter_tests.c:64 Syntax error on: cJSON_GetObjectItem(start,"line")
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#64"lsp_adapter_tests.c:64 DEBUG: error parsing parameter_declaration near 'cJSON_GetObjectItem(start,"line")'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#64"lsp_adapter_tests.c:64 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#64"lsp_adapter_tests.c:64 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#64"lsp_adapter_tests.c:64 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#64"lsp_adapter_tests.c:64 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#64"lsp_adapter_tests.c:64 Syntax error on: line
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#64"lsp_adapter_tests.c:64 DEBUG: error parsing parameter_declaration near 'line'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#64"lsp_adapter_tests.c:64 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#64"lsp_adapter_tests.c:64 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#65"lsp_adapter_tests.c:65 Syntax error on: cJSON_GetObjectItem(start,"character")
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#65"lsp_adapter_tests.c:65 DEBUG: error parsing parameter_declaration near 'cJSON_GetObjectItem(start,"character")'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#65"lsp_adapter_tests.c:65 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#65"lsp_adapter_tests.c:65 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#65"lsp_adapter_tests.c:65 Syntax error on: (
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#65"lsp_adapter_tests.c:65 DEBUG: error parsing parameter_declaration near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#65"lsp_adapter_tests.c:65 Syntax error on: character
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#65"lsp_adapter_tests.c:65 DEBUG: error parsing parameter_declaration near 'character'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#65"lsp_adapter_tests.c:65 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#65"lsp_adapter_tests.c:65 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_adapter_tests.c#69"lsp_adapter_tests.c:69 Syntax error on: }
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_dispatcher.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_dispatcher_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_dispatcher_tests.c#8"lsp_dispatcher_tests.c:8 Can't open file lsp_handler.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_handler.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_handler_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_handler_tests.c#16"lsp_handler_tests.c:16 Can't open file editor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_handler_tests.c#17"lsp_handler_tests.c:17 Can't open file editorbuffer.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_handler_tests.c#18"lsp_handler_tests.c:18 Can't open file editorbuffertable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_handler_tests.c#19"lsp_handler_tests.c:19 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_handler_tests.c#20"lsp_handler_tests.c:20 Can't open file lsp_adapter.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_handler_tests.c#21"lsp_handler_tests.c:21 Can't open file lsp_sender.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_handler_tests.c#22"lsp_handler_tests.c:22 Can't open file parsing.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_handler_tests.c#23"lsp_handler_tests.c:23 Can't open file reference_database.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_handler_tests.c#147"lsp_handler_tests.c:147 Syntax error on: buffer
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_handler_tests.c#147"lsp_handler_tests.c:147 DEBUG: error parsing declaration, near 'buffer'
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_sender.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_tests.c#9"lsp_tests.c:9 Can't open file lsp_dispatcher.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_utils.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/lsp_utils_tests.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/macroargumenttable.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/macroargumenttable_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/macroargumenttable_tests.c#9"macroargumenttable_tests.c:9 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/macroargumenttable_tests.c#10"macroargumenttable_tests.c:10 Can't open file stackmemory.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/main.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/match.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/match_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/match_tests.c#10"match_tests.c:10 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/match_tests.c#11"match_tests.c:11 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/match_tests.c#12"match_tests.c:12 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/match_tests.c#13"match_tests.c:13 Can't open file reference.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/match_tests.c#14"match_tests.c:14 Can't open file session.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/match_tests.c#15"match_tests.c:15 Can't open file symbol.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/memory.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/memory_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/memory_tests.c#11"memory_tests.c:11 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/memory_tests.c#12"memory_tests.c:12 Can't open file cxref.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/memory_tests.c#14"memory_tests.c:14 Can't open file log.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/misc.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/misc_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/misc_tests.c#9"misc_tests.c:9 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/misc_tests.c#10"misc_tests.c:10 Can't open file cxfile.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/misc_tests.c#11"misc_tests.c:11 Can't open file cxref.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/misc_tests.c#12"misc_tests.c:12 Can't open file editor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/misc_tests.c#13"misc_tests.c:13 Can't open file fileio.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/misc_tests.c#14"misc_tests.c:14 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/misc_tests.c#16"misc_tests.c:16 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/misc_tests.c#17"misc_tests.c:17 Can't open file ppc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/misc_tests.c#19"misc_tests.c:19 Can't open file yylex.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/move_function.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/options.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/options_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/options_tests.c#13"options_tests.c:13 Can't open file commandlogger.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/options_tests.c#14"options_tests.c:14 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/options_tests.c#15"options_tests.c:15 Can't open file cxref.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/options_tests.c#16"options_tests.c:16 Can't open file editor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/options_tests.c#17"options_tests.c:17 Can't open file editorbuffer.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/options_tests.c#18"options_tests.c:18 Can't open file fileio.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/options_tests.c#19"options_tests.c:19 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/options_tests.c#21"options_tests.c:21 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/options_tests.c#22"options_tests.c:22 Can't open file parsers.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/options_tests.c#23"options_tests.c:23 Can't open file ppc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/options_tests.c#25"options_tests.c:25 Can't open file yylex.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/organize_includes.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/parsers.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/parsers_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/parsers_tests.c#10"parsers_tests.c:10 Can't open file c_parser.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/parsers_tests.c#11"parsers_tests.c:11 Can't open file yacc_parser.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/parsers_tests.c#12"parsers_tests.c:12 Can't open file parsing.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/parsing.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/position.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/position_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/position_tests.c#5"position_tests.c:5 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/position_tests.c#6"position_tests.c:6 Can't open file stackmemory.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/ppc.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/progress.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/progress_tests.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/protocol.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactorings.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactorings_tests.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#7"refactory_tests.c:7 Can't open file browsermenu.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#8"refactory_tests.c:8 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#9"refactory_tests.c:9 Can't open file complete.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#10"refactory_tests.c:10 Can't open file completion.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#11"refactory_tests.c:11 Can't open file cxfile.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#12"refactory_tests.c:12 Can't open file cxref.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#13"refactory_tests.c:13 Can't open file editor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#14"refactory_tests.c:14 Can't open file editormarker.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#15"refactory_tests.c:15 Can't open file editorbuffer.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#16"refactory_tests.c:16 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#17"refactory_tests.c:17 Can't open file fileio.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#19"refactory_tests.c:19 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#20"refactory_tests.c:20 Can't open file move_function.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#21"refactory_tests.c:21 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#22"refactory_tests.c:22 Can't open file organize_includes.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#23"refactory_tests.c:23 Can't open file parsing.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#24"refactory_tests.c:24 Can't open file ppc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#25"refactory_tests.c:25 Can't open file progress.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#26"refactory_tests.c:26 Can't open file reference.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#27"refactory_tests.c:27 Can't open file referenceableitemtable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#28"refactory_tests.c:28 Can't open file session.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#29"refactory_tests.c:29 Can't open file server.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#30"refactory_tests.c:30 Can't open file startup.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/refactory_tests.c#31"refactory_tests.c:31 Can't open file xref.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/reference.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/reference_database.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/reference_database_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/reference_database_tests.c#7"reference_database_tests.c:7 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/reference_database_tests.c#9"reference_database_tests.c:9 Can't open file referenceableitemtable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/reference_database_tests.c#10"reference_database_tests.c:10 Can't open file filetable.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/reference_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/reference_tests.c#6"reference_tests.c:6 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/reference_tests.c#7"reference_tests.c:7 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/reference_tests.c#8"reference_tests.c:8 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/reference_tests.c#9"reference_tests.c:9 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/reference_tests.c#10"reference_tests.c:10 Can't open file parsing.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/referenceableitem.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/referenceableitem_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/referenceableitem_tests.c#6"referenceableitem_tests.c:6 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/referenceableitem_tests.c#7"referenceableitem_tests.c:7 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/referenceableitem_tests.c#8"referenceableitem_tests.c:8 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/referenceableitem_tests.c#9"referenceableitem_tests.c:9 Can't open file filetable.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/referenceableitemtable.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/referenceableitemtable_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/referenceableitemtable_tests.c#9"referenceableitemtable_tests.c:9 Can't open file cxref.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/referenceableitemtable_tests.c#10"referenceableitemtable_tests.c:10 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/referenceableitemtable_tests.c#11"referenceableitemtable_tests.c:11 Can't open file stackmemory.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#10"search_tests.c:10 Can't open file browsermenu.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#11"search_tests.c:11 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#12"search_tests.c:12 Can't open file completion.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#14"search_tests.c:14 Can't open file match.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#15"search_tests.c:15 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#16"search_tests.c:16 Can't open file reference.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#17"search_tests.c:17 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#18"search_tests.c:18 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#19"search_tests.c:19 Can't open file ppc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#30"search_tests.c:30 Syntax error on: *
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#31"search_tests.c:31 Syntax error on: =
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#31"search_tests.c:31 DEBUG: error parsing declaration, near '('
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#31"search_tests.c:31 Syntax error on: )
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#31"search_tests.c:31 DEBUG: error parsing declaration, near 'malloc'
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#60"search_tests.c:60 Field/member 'next' not found
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/search_tests.c#61"search_tests.c:61 Field/member 'next' not found
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c#10"semact_tests.c:10 Can't open file counters.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c#11"semact_tests.c:11 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c#12"semact_tests.c:12 Can't open file cxfile.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c#13"semact_tests.c:13 Can't open file cxref.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c#14"semact_tests.c:14 Can't open file editor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c#15"semact_tests.c:15 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c#16"semact_tests.c:16 Can't open file filedescriptor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c#18"semact_tests.c:18 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c#19"semact_tests.c:19 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c#20"semact_tests.c:20 Can't open file parsing.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c#22"semact_tests.c:22 Can't open file symbol.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c#23"semact_tests.c:23 Can't open file symboltable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c#24"semact_tests.c:24 Can't open file typemodifier.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/semact_tests.c#25"semact_tests.c:25 Can't open file yylex.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#10"server_tests.c:10 Can't open file browsermenu.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#11"server_tests.c:11 Can't open file characterreader.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#12"server_tests.c:12 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#13"server_tests.c:13 Can't open file complete.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#14"server_tests.c:14 Can't open file completion.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#15"server_tests.c:15 Can't open file cxfile.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#16"server_tests.c:16 Can't open file cxref.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#17"server_tests.c:17 Can't open file editor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#18"server_tests.c:18 Can't open file editorbuffer.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#19"server_tests.c:19 Can't open file filedescriptor.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#20"server_tests.c:20 Can't open file fileio.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#21"server_tests.c:21 Can't open file filetable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#23"server_tests.c:23 Can't open file init.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#24"server_tests.c:24 Can't open file lexer.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#25"server_tests.c:25 Can't open file macroargumenttable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#26"server_tests.c:26 Can't open file misc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#27"server_tests.c:27 Can't open file options.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#28"server_tests.c:28 Can't open file parsers.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#29"server_tests.c:29 Can't open file parsing.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#30"server_tests.c:30 Can't open file ppc.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#31"server_tests.c:31 Can't open file refactorings.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#32"server_tests.c:32 Can't open file refactory.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#33"server_tests.c:33 Can't open file reference.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#34"server_tests.c:34 Can't open file referenceableitemtable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#35"server_tests.c:35 Can't open file session.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#36"server_tests.c:36 Can't open file startup.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#37"server_tests.c:37 Can't open file symboltable.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#38"server_tests.c:38 Can't open file type.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#39"server_tests.c:39 Can't open file yacc_parser.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/server_tests.c#40"server_tests.c:40 Can't open file yylex.mock : No such file or directory
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/session.c
+/home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/session_tests.c
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/session_tests.c#9"session_tests.c:9 Can't open file browsermenu.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/session_tests.c#10"session_tests.c:10 Can't open file commons.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/session_tests.c#11"session_tests.c:11 Can't open file completion.mock : No such file or directory
+HREF="file:///home/thoni/Utveckling/c-xrefactory/tests/c-xref-mini/session_tests.c#12"session_tests.c:12 Can't open file filetable.mock : No such file or directory
+HREF="file:///usr/include/x86_64-linux-gnu/bits/getopt_posix.h#27"getopt_posix.h:27 Internal check 'prefixLength < editorBuffer->allocation.allocatedFreePrefixSize' is not true in 'yylex.c:218' failed
