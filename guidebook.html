@@ -4084,10 +4084,10 @@ current file, and if found, offer to migrate that section to a project-local <co
 <div class="sect3">
 <h4 id="_background_2">11.5.1. Background</h4>
 <div class="paragraph">
-<p>When the server does a cold start (no disk database), it parses all discovered compilation units to populate in-memory references. During this parsing, warnings and errors may occur (e.g., missing include files, syntax errors from missing <code>-D</code> defines). These are expected and harmless — <code>c-xrefactory</code> continues best-effort — but users benefit from seeing them to tune their <code>.c-xrefrc</code> (adding <code>-I</code> paths, <code>-D</code> defines, etc.).</p>
+<p>The server parses a compilation unit when a request needs it. An operation that is project-wide asks before parsing the rest, and entry refresh reparses what has changed before every operation. Parsing is therefore spread through a session instead of happening once. During this parsing, warnings and errors may occur (e.g., missing include files, syntax errors from missing <code>-D</code> defines). These are expected and harmless — <code>c-xrefactory</code> continues best-effort — but users benefit from seeing them to tune their <code>.c-xrefrc</code> (adding <code>-I</code> paths, <code>-D</code> defines, etc.).</p>
 </div>
 <div class="paragraph">
-<p>The legacy <code>-create</code> command in Emacs offered "View log file?" after completion, showing a file with all parsing messages. The cold start server path needs an equivalent.</p>
+<p>The legacy <code>-create</code> command in Emacs offered "View log file?" after completion, showing a file with all parsing messages. The server path needs an equivalent.</p>
 </div>
 <div class="paragraph">
 <p>There are also other situations when a re-parse or re-discovery might throw the same kind of errors.</p>
@@ -4133,7 +4133,7 @@ a user asks whether the project is configured correctly.</p>
 <div class="sect3">
 <h4 id="_design_options">11.5.5. Design Options</h4>
 <div class="paragraph">
-<p><strong>Option A: New protocol record type</strong> (recommended) — Add a <code>PPC_LOG</code> record that the Emacs client silently appends to a <code><strong>c-xref-log</strong></code> buffer. After cold start completes, send a <code>PPC_BOTTOM_INFORMATION</code> saying "Indexing done: N warnings (see <strong>c-xref-log</strong>)". Clean separation, no modals, inspectable at leisure. Touches protocol definition, C server code, and Emacs client.</p>
+<p><strong>Option A: New protocol record type</strong> (recommended) — Add a <code>PPC_LOG</code> record that the Emacs client silently appends to a <code><strong>c-xref-log</strong></code> buffer. The count accumulates over the session, and a <code>PPC_BOTTOM_INFORMATION</code> reports it — "N warnings (see <strong>c-xref-log</strong>)" — after a parse-all, or when asked. Clean separation, no modals, inspectable at leisure. Touches protocol definition, C server code, and Emacs client.</p>
 </div>
 <div class="paragraph">
 <p><strong>Option B: Server-side batching</strong> — Collect all warnings during cold start into a single string, send as one <code>PPC_INFORMATION</code> after parsing completes. One modal instead of many. Simpler but still modal.</p>
@@ -11574,7 +11574,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-19 12:41:31 UTC
+Last updated 2026-09-19 20:31:27 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
