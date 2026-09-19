@@ -174,9 +174,9 @@ current file, and if found, offer to migrate that section to a project-local `.c
 
 ==== Background
 
-When the server does a cold start (no disk database), it parses all discovered compilation units to populate in-memory references. During this parsing, warnings and errors may occur (e.g., missing include files, syntax errors from missing `-D` defines). These are expected and harmless — `c-xrefactory` continues best-effort — but users benefit from seeing them to tune their `.c-xrefrc` (adding `-I` paths, `-D` defines, etc.).
+The server parses a compilation unit when a request needs it. An operation that is project-wide asks before parsing the rest, and entry refresh reparses what has changed before every operation. Parsing is therefore spread through a session instead of happening once. During this parsing, warnings and errors may occur (e.g., missing include files, syntax errors from missing `-D` defines). These are expected and harmless — `c-xrefactory` continues best-effort — but users benefit from seeing them to tune their `.c-xrefrc` (adding `-I` paths, `-D` defines, etc.).
 
-The legacy `-create` command in Emacs offered "View log file?" after completion, showing a file with all parsing messages. The cold start server path needs an equivalent.
+The legacy `-create` command in Emacs offered "View log file?" after completion, showing a file with all parsing messages. The server path needs an equivalent.
 
 There are also other situations when a re-parse or re-discovery might throw the same kind of errors.
 
@@ -211,7 +211,7 @@ a user asks whether the project is configured correctly.
 
 ==== Design Options
 
-**Option A: New protocol record type** (recommended) — Add a `PPC_LOG` record that the Emacs client silently appends to a `*c-xref-log*` buffer. After cold start completes, send a `PPC_BOTTOM_INFORMATION` saying "Indexing done: N warnings (see *c-xref-log*)". Clean separation, no modals, inspectable at leisure. Touches protocol definition, C server code, and Emacs client.
+**Option A: New protocol record type** (recommended) — Add a `PPC_LOG` record that the Emacs client silently appends to a `*c-xref-log*` buffer. The count accumulates over the session, and a `PPC_BOTTOM_INFORMATION` reports it — "N warnings (see *c-xref-log*)" — after a parse-all, or when asked. Clean separation, no modals, inspectable at leisure. Touches protocol definition, C server code, and Emacs client.
 
 **Option B: Server-side batching** — Collect all warnings during cold start into a single string, send as one `PPC_INFORMATION` after parsing completes. One modal instead of many. Simpler but still modal.
 
