@@ -55,7 +55,7 @@
 # 10: watch for unittests completion and run the build (use in a separate
 #     terminal):
 #
-#	make watch-for-build
+#	make watch-for-build-only
 #
 # 11: watch for build completion and run all systemtests (use in a separate
 #     terminal):
