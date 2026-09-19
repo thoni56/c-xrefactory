@@ -93,6 +93,86 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
 * link:/workspace/1/decisions/C-xrefactory#24[ADR-0024] — CreateMode
 * link:/workspace/1/decisions/C-xrefactory#25[ADR-0025] — clean stale header emissions by reparse
 
+=== Convergence: The Setup Ladder
+
+Memory as Truth settled what is authoritative. This convergence settles _when_ each
+thing is bound. Setup to full operation is a ladder of three steps, and the rule is
+**nothing before it's known**: a thing is bound at the step where it first becomes
+known, and no step guesses at what a later one settles.
+
+. *Process start* — parsing setup only. Command-line options are process-scoped, so they
+  are read here. No project, no config, no project settings.
+. *`-getproject`* — discovery, the config, include paths, compiler interrogation, the
+  snapshot load. No parsing.
+. *Every request after* — uniform. Entry refresh, then parse what the request needs.
+
+The ladder is climbed out of order today. `mainTaskEntryInitialisations()`
+(`startup.c:827`) discovers a project at process start, from `cwd` when the command line
+names no file, and reads that project's options before any request has arrived — see
+<<06-principles.adoc#,Principles>> (Initialization). The lifetime partition that fixes it
+is in <<17-major-codebase-improvements.adoc#,Major Codebase Improvements>> (Replace
+Global `options` with Typed Requests).
+
+==== Done
+
+* *Single project per server* — the client restarts the server on a project switch, so
+  the project tier can freeze once it is bound
+  (link:/workspace/1/decisions/C-xrefactory#21[ADR-0021]).
+* *Automatic config discovery* — `-getproject` finds the project from a file name, so
+  naming a project on the command line is no longer how it is done
+  (link:/workspace/1/decisions/C-xrefactory#5[ADR-0005]).
+* *Uniform requests* — entry refresh reparses stale files before every operation, so
+  step three needs no special cases
+  (link:/workspace/1/decisions/C-xrefactory#20[ADR-0020]).
+* *Structure without parsing* — the lightweight scan lets step two bind include
+  structure without a parse (link:/workspace/1/decisions/C-xrefactory#22[ADR-0022]).
+* *First fields off the blob* — `ProjectConfig.sourceDirs` is project-scoped state with
+  an owner, and `ParsingConfig` is the same pattern one layer down.
+
+==== Remaining
+
+[cols="1,2",options="header"]
+|===
+|Work |Notes / dependency
+
+|Partition `options` by lifetime
+|Session, Project and Request with one owner each, and a pure `parseCommandLine()` that
+ opens no files and flips no flags. Chapter 17.4. It gates the three rows below, so it
+ comes first even though it reads last.
+
+|The client stops sending `-p`
+|`c-xref-send-data-to-process-and-dispatch` (`editors/emacs/c-xref.el:1925`) appends `-p`
+ to every request, so the project is re-named on each one and the tier can never freeze.
+ The server tests that still pass `-p` or `-xrefrc` convert to `-getproject`.
+
+|Project setup moves into `-getproject`
+|Discovery, the config read, compiler interrogation and the snapshot load all belong to
+ step two. Process start does the first two today, and the first request that names a
+ file does the rest.
+
+|Process start strips to parsing setup
+|What is left knows nothing about any project. Depends on the two rows above.
+
+|Assert that nothing before `-getproject` reads a project-scoped option
+|The ladder's tripwire, the way the disk-read assert made Memory as Truth checkable
+ instead of aspirational.
+
+|Globally scoped, locally triggered operations
+|Search, push by name, and an identifier inside a macro body need more than the request
+ file, so they ask before parsing everything
+ (link:/workspace/1/decisions/C-xrefactory#27[ADR-0027]). Naming the class is what keeps
+ step three uniform.
+|===
+
+==== Decisions that shaped this direction
+
+* link:/workspace/1/decisions/C-xrefactory#5[ADR-0005] — automatic config-file discovery
+* link:/workspace/1/decisions/C-xrefactory#14[ADR-0014] — on-demand parsing architecture
+* link:/workspace/1/decisions/C-xrefactory#20[ADR-0020] — separate sync from dispatch
+* link:/workspace/1/decisions/C-xrefactory#21[ADR-0021] — single-project server policy
+* link:/workspace/1/decisions/C-xrefactory#22[ADR-0022] — lightweight file-structure scanning
+* link:/workspace/1/decisions/C-xrefactory#27[ADR-0027] — identifiers in a macro body
+
 === Optimization
 
 Once the core architectural path (lightweight scan, entry refresh, memory-as-truth) is functional, targeted optimizations can reduce cold-start latency and improve responsiveness on large projects.
