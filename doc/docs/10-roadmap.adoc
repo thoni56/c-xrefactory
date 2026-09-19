@@ -57,11 +57,10 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
  <<06-principles.adoc#,Principles>> (Editor Buffers Are the Content Source).
 
 |Report what did not parse
-|Server mode stays quiet through 19 `options.mode != ServerMode` guards in `yylex.c`, so
- an unresolved `#include` — a misconfigured `-I` — is invisible and navigation just misses
- references. Re-key the guards onto a report-errors flag, then give the client an operation
- that parses the project and reports. The include-not-found case is the one that matters;
- the Emacs `<A HREF>` error buffer is the renderer to revive.
+|Server mode stays quiet through 19 `options.mode != ServerMode` guards in `yylex.c`, so a
+ misconfigured `-I` is invisible and navigation silently misses references. Re-key them onto
+ a report-errors flag; the include guard is done. The user-facing half is
+ <<11-planned-features.adoc#,Planned Features>> (Indexing Log Buffer).
 
 |XrefMode removal
 |Deletes the `-create`/`-update` legacy engine. Needs the expanding-CU marker replaced

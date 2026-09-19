@@ -184,6 +184,31 @@ There are also other situations when a re-parse or re-discovery might throw the 
 
 The current protocol has no non-modal message channel. Every message type either shows a modal dialog (`PPC_WARNING`, `PPC_ERROR`, `PPC_INFORMATION`) requiring "Press a key to continue", or writes a transient line to the minibuffer (`PPC_BOTTOM_INFORMATION`). Sending per-file warnings during cold start floods the user with one modal per warning, effectively locking up the editor.
 
+The log channel is not an alternative. A server's stdout and stderr are the
+synchronisation stream: the Emacs filter accepts `<progress>` and `<sync>` records there
+and calls `(error "SYNCHRO PROBLEM: %s" ss)` on anything else (`c-xref.el:1748`). That is
+why `console_level` defaults to `LOG_FATAL` (`main.c:25`), and why `-warnings` or
+`-infos` must not be passed to a server. A `-log=<file>` file is still fine. Everything a
+user should see is a protocol record, which settles the choice below.
+
+==== What works now
+
+An unresolved `#include` reaches the client as a `<warning>` record when reporting is
+asked for. `test_parsing_include_error` holds it. Two pieces are missing: `formatMessage()`
+(`commons.c`) still drops the position in server mode, so an entry cannot be made
+navigable, and the switch is `-errors`, which is session-scoped. The operation should turn
+reporting on for the duration of its own parse instead.
+
+==== What the report should contain
+
+Distinct unresolved include names, each with a count of how many places wanted it. The
+same missing header is reported once per compilation unit that includes it, so a generated
+`config.h` included by two hundred files is two hundred identical messages and one fact.
+The set of names is short even in a badly configured project.
+
+Two triggers for the same report: after a whole-project parse, and on demand, which is how
+a user asks whether the project is configured correctly.
+
 ==== Design Options
 
 **Option A: New protocol record type** (recommended) — Add a `PPC_LOG` record that the Emacs client silently appends to a `*c-xref-log*` buffer. After cold start completes, send a `PPC_BOTTOM_INFORMATION` saying "Indexing done: N warnings (see *c-xref-log*)". Clean separation, no modals, inspectable at leisure. Touches protocol definition, C server code, and Emacs client.
