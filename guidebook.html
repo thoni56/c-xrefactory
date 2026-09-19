@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-09-18">
+<meta name="author" content="v{VERSION} - Generated 2026-09-19">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-09-18</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-09-19</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -507,10 +507,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_guiding_principles">10.1. Guiding Principles</a></li>
 <li><a href="#_convergence_memory_as_truth">10.2. Convergence: Memory as Truth</a></li>
-<li><a href="#_optimization">10.3. Optimization</a></li>
-<li><a href="#_known_limitations">10.4. Known Limitations</a></li>
-<li><a href="#_feature_vision_lsp_support_explorative">10.5. Feature Vision: LSP Support (explorative)</a></li>
-<li><a href="#_further_refactorings">10.6. Further refactorings</a></li>
+<li><a href="#_convergence_the_setup_ladder">10.3. Convergence: The Setup Ladder</a></li>
+<li><a href="#_optimization">10.4. Optimization</a></li>
+<li><a href="#_known_limitations">10.5. Known Limitations</a></li>
+<li><a href="#_feature_vision_lsp_support_explorative">10.6. Feature Vision: LSP Support (explorative)</a></li>
+<li><a href="#_further_refactorings">10.7. Further refactorings</a></li>
 </ul>
 </li>
 <li><a href="#_planned_features">11. Planned Features</a>
@@ -3417,8 +3418,9 @@ periodically; no mandatory <code>-create</code>.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Remove <code>parseBufferUsingServer</code> bridge</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The last divergent parse path; also retires <code>callXref</code> in the refactoring path. See
- Chapter 17.3.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The last divergent parse path, re-entering <code>callServer</code> from 9 refactoring call sites.
+ It asserts <code>ServerMode</code>, so it is not part of XrefMode and does not block its removal.
+ See Chapter 17.3.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Behind-the-back disk-change detection</p></td>
@@ -3428,13 +3430,26 @@ periodically; no mandatory <code>-create</code>.</p>
  <a href="06-principles.html">Principles</a> (Editor Buffers Are the Content Source).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CreateMode</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Standalone <code>c-xref -create</code> batch prime and config validator; the move that unblocks
- XrefMode removal (<a href="/workspace/1/decisions/C-xrefactory#24">ADR-0024</a>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Report what did not parse</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Server mode stays quiet through 19 <code>options.mode != ServerMode</code> guards in <code>yylex.c</code>, so a
+ misconfigured <code>-I</code> is invisible and navigation silently misses references. Re-key them onto
+ a report-errors flag; the include guard is done. The user-facing half is
+ <a href="11-planned-features.html">Planned Features</a> (Indexing Log Buffer).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">XrefMode removal</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Unblocked by CreateMode; deletes the <code>-create</code>/<code>-update</code> legacy engine.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deletes the <code>-create</code>/<code>-update</code> legacy engine. Needs the expanding-CU marker replaced
+ (<a href="/workspace/1/decisions/C-xrefactory#27">ADR-0027</a>) and the error guards re-keyed,
+ since XrefMode is the only mode that lets them speak. Three tests observe server
+ behaviour only through it — standard defines, per-pass <code>-D</code>, <code>-optinclude</code> — and need a
+ server-mode home first. It is also the default mode, so a bare <code>c-xref file.c</code> needs an
+ answer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CreateMode</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional <code>c-xref -create</code> batch prime on the server path
+ (<a href="/workspace/1/decisions/C-xrefactory#24">ADR-0024</a>): priming a large project up
+ front, and an entry point for CI. Not a dependency of XrefMode removal.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Clean stale header emissions</p></td>
@@ -3478,7 +3493,145 @@ periodically; no mandatory <code>-create</code>.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_optimization">10.3. Optimization</h3>
+<h3 id="_convergence_the_setup_ladder">10.3. Convergence: The Setup Ladder</h3>
+<div class="paragraph">
+<p>Memory as Truth settled what is authoritative. This convergence settles <em>when</em> each
+thing is bound. Setup to full operation is a ladder of three steps, and the rule is
+<strong>nothing before it&#8217;s known</strong>: a thing is bound at the step where it first becomes
+known, and no step guesses at what a later one settles.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Process start</strong> — parsing setup only. Command-line options are process-scoped, so they
+are read here. No project, no config, no project settings.</p>
+</li>
+<li>
+<p><strong><code>-getproject</code></strong> — discovery, the config, include paths, compiler interrogation, the
+snapshot load. No parsing.</p>
+</li>
+<li>
+<p><strong>Every request after</strong> — uniform. Entry refresh, then parse what the request needs.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The ladder is climbed out of order today. <code>mainTaskEntryInitialisations()</code>
+(<code>startup.c:827</code>) discovers a project at process start, from <code>cwd</code> when the command line
+names no file, and reads that project&#8217;s options before any request has arrived — see
+<a href="06-principles.html">Principles</a> (Initialization). The lifetime partition that fixes it
+is in <a href="17-major-codebase-improvements.html">Major Codebase Improvements</a> (Replace
+Global <code>options</code> with Typed Requests).</p>
+</div>
+<div class="sect3">
+<h4 id="_done_2">10.3.1. Done</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Single project per server</strong> — the client restarts the server on a project switch, so
+the project tier can freeze once it is bound
+(<a href="/workspace/1/decisions/C-xrefactory#21">ADR-0021</a>).</p>
+</li>
+<li>
+<p><strong>Automatic config discovery</strong> — <code>-getproject</code> finds the project from a file name, so
+naming a project on the command line is no longer how it is done
+(<a href="/workspace/1/decisions/C-xrefactory#5">ADR-0005</a>).</p>
+</li>
+<li>
+<p><strong>Uniform requests</strong> — entry refresh reparses stale files before every operation, so
+step three needs no special cases
+(<a href="/workspace/1/decisions/C-xrefactory#20">ADR-0020</a>).</p>
+</li>
+<li>
+<p><strong>Structure without parsing</strong> — the lightweight scan lets step two bind include
+structure without a parse (<a href="/workspace/1/decisions/C-xrefactory#22">ADR-0022</a>).</p>
+</li>
+<li>
+<p><strong>First fields off the blob</strong> — <code>ProjectConfig.sourceDirs</code> is project-scoped state with
+an owner, and <code>ParsingConfig</code> is the same pattern one layer down.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_remaining_2">10.3.2. Remaining</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Work</th>
+<th class="tableblock halign-left valign-top">Notes / dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Partition <code>options</code> by lifetime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Session, Project and Request with one owner each, and a pure <code>parseCommandLine()</code> that
+ opens no files and flips no flags. Chapter 17.4. It gates the three rows below, so it
+ comes first even though it reads last.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The client stops sending <code>-p</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>c-xref-send-data-to-process-and-dispatch</code> (<code>editors/emacs/c-xref.el:1925</code>) appends <code>-p</code>
+ to every request, so the project is re-named on each one and the tier can never freeze.
+ The server tests that still pass <code>-p</code> or <code>-xrefrc</code> convert to <code>-getproject</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project setup moves into <code>-getproject</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Discovery, the config read, compiler interrogation and the snapshot load all belong to
+ step two. Process start does the first two today, and the first request that names a
+ file does the rest.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Process start strips to parsing setup</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">What is left knows nothing about any project. Depends on the two rows above.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assert that nothing before <code>-getproject</code> reads a project-scoped option</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The ladder&#8217;s tripwire, the way the disk-read assert made Memory as Truth checkable
+ instead of aspirational.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Globally scoped, locally triggered operations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Search, push by name, and an identifier inside a macro body need more than the request
+ file, so they ask before parsing everything
+ (<a href="/workspace/1/decisions/C-xrefactory#27">ADR-0027</a>). Naming the class is what keeps
+ step three uniform.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_decisions_that_shaped_this_direction_2">10.3.3. Decisions that shaped this direction</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="/workspace/1/decisions/C-xrefactory#5">ADR-0005</a> — automatic config-file discovery</p>
+</li>
+<li>
+<p><a href="/workspace/1/decisions/C-xrefactory#14">ADR-0014</a> — on-demand parsing architecture</p>
+</li>
+<li>
+<p><a href="/workspace/1/decisions/C-xrefactory#20">ADR-0020</a> — separate sync from dispatch</p>
+</li>
+<li>
+<p><a href="/workspace/1/decisions/C-xrefactory#21">ADR-0021</a> — single-project server policy</p>
+</li>
+<li>
+<p><a href="/workspace/1/decisions/C-xrefactory#22">ADR-0022</a> — lightweight file-structure scanning</p>
+</li>
+<li>
+<p><a href="/workspace/1/decisions/C-xrefactory#27">ADR-0027</a> — identifiers in a macro body</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_optimization">10.4. Optimization</h3>
 <div class="paragraph">
 <p>Once the core architectural path (lightweight scan, entry refresh, memory-as-truth) is functional, targeted optimizations can reduce cold-start latency and improve responsiveness on large projects.</p>
 </div>
@@ -3514,7 +3667,7 @@ periodically; no mandatory <code>-create</code>.</p>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_known_limitations">10.4. Known Limitations</h3>
+<h3 id="_known_limitations">10.5. Known Limitations</h3>
 <div class="paragraph">
 <p>Consequences of the current entry refresh implementation, each deferred because it has low
 practical impact or dissolves with planned work. Mechanics are in
@@ -3555,7 +3708,7 @@ practical impact or dissolves with planned work. Mechanics are in
 </table>
 </div>
 <div class="sect2">
-<h3 id="_feature_vision_lsp_support_explorative">10.5. Feature Vision: LSP Support (explorative)</h3>
+<h3 id="_feature_vision_lsp_support_explorative">10.6. Feature Vision: LSP Support (explorative)</h3>
 <div class="paragraph">
 <p>The last and least-defined direction: expose <code>c-xrefactory</code> through the Language Server
 Protocol so VS Code, Neovim, and other LSP editors can use its navigation and — as far as
@@ -3578,7 +3731,7 @@ those events have already made current. So the LSP path needs no architecture of
 it reuses entry refresh (<a href="08-algorithms.html">Algorithms</a>), triggered by different events.</p>
 </div>
 <div class="sect3">
-<h4 id="lsp-refactoring-reach">10.5.1. Reaching refactorings: three tiers</h4>
+<h4 id="lsp-refactoring-reach">10.6.1. Reaching refactorings: three tiers</h4>
 <div class="paragraph">
 <p>The Emacs protocol is interactive and LSP is not, but most of that gap can be closed in
 the server rather than in each editor. Every LSP editor gets what the server exposes
@@ -3626,7 +3779,7 @@ extension API, such as Zed and Helix, get tiers 1 and 2 only.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_further_refactorings">10.6. Further refactorings</h3>
+<h3 id="_further_refactorings">10.7. Further refactorings</h3>
 <div class="paragraph">
 <p><code>c-xrefactory</code> crossed the "Refactoring Rubicon" early, but only a fraction of the
 refactorings that apply to C are automated today. Extending the catalogue — both deeper
@@ -3945,9 +4098,40 @@ current file, and if found, offer to migrate that section to a project-local <co
 <div class="paragraph">
 <p>The current protocol has no non-modal message channel. Every message type either shows a modal dialog (<code>PPC_WARNING</code>, <code>PPC_ERROR</code>, <code>PPC_INFORMATION</code>) requiring "Press a key to continue", or writes a transient line to the minibuffer (<code>PPC_BOTTOM_INFORMATION</code>). Sending per-file warnings during cold start floods the user with one modal per warning, effectively locking up the editor.</p>
 </div>
+<div class="paragraph">
+<p>The log channel is not an alternative. A server&#8217;s stdout and stderr are the
+synchronisation stream: the Emacs filter accepts <code>&lt;progress&gt;</code> and <code>&lt;sync&gt;</code> records there
+and calls <code>(error "SYNCHRO PROBLEM: %s" ss)</code> on anything else (<code>c-xref.el:1748</code>). That is
+why <code>console_level</code> defaults to <code>LOG_FATAL</code> (<code>main.c:25</code>), and why <code>-warnings</code> or
+<code>-infos</code> must not be passed to a server. A <code>-log=&lt;file&gt;</code> file is still fine. Everything a
+user should see is a protocol record, which settles the choice below.</p>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_design_options">11.5.3. Design Options</h4>
+<h4 id="_what_works_now_2">11.5.3. What works now</h4>
+<div class="paragraph">
+<p>An unresolved <code>#include</code> reaches the client as a <code>&lt;warning&gt;</code> record when reporting is
+asked for. <code>test_parsing_include_error</code> holds it. Two pieces are missing: <code>formatMessage()</code>
+(<code>commons.c</code>) still drops the position in server mode, so an entry cannot be made
+navigable, and the switch is <code>-errors</code>, which is session-scoped. The operation should turn
+reporting on for the duration of its own parse instead.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_what_the_report_should_contain">11.5.4. What the report should contain</h4>
+<div class="paragraph">
+<p>Distinct unresolved include names, each with a count of how many places wanted it. The
+same missing header is reported once per compilation unit that includes it, so a generated
+<code>config.h</code> included by two hundred files is two hundred identical messages and one fact.
+The set of names is short even in a badly configured project.</p>
+</div>
+<div class="paragraph">
+<p>Two triggers for the same report: after a whole-project parse, and on demand, which is how
+a user asks whether the project is configured correctly.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_design_options">11.5.5. Design Options</h4>
 <div class="paragraph">
 <p><strong>Option A: New protocol record type</strong> (recommended) — Add a <code>PPC_LOG</code> record that the Emacs client silently appends to a <code><strong>c-xref-log</strong></code> buffer. After cold start completes, send a <code>PPC_BOTTOM_INFORMATION</code> saying "Indexing done: N warnings (see <strong>c-xref-log</strong>)". Clean separation, no modals, inspectable at leisure. Touches protocol definition, C server code, and Emacs client.</p>
 </div>
@@ -7935,7 +8119,7 @@ setup.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_remaining_2">16.1.3. Remaining</h4>
+<h4 id="_remaining_3">16.1.3. Remaining</h4>
 <div class="paragraph">
 <p>Two small interface tightenings — not major improvements, but worth listing as known loose ends:</p>
 </div>
@@ -11390,7 +11574,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 21:50:05 UTC
+Last updated 2026-09-19 12:41:31 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
