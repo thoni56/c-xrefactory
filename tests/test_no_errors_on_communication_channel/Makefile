@@ -14,6 +14,6 @@ trace: EXTRA = \'-debug\'
 trace: $(TEST)
 
 CXrefs: .c-xrefrc
-	@$(CXREF) test_source -o cxrefs.log
+	@$(CXREF) -xref test_source -o cxrefs.log
 
 GDB_COMMANDS = -ex 'br main' -ex 'continue'
