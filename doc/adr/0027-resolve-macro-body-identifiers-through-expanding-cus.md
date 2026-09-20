@@ -4,7 +4,7 @@ Date: 2026-09-18
 
 ## Status
 
-Proposed
+Accepted (2026-09-20)
 
 ## Deciders
 
@@ -142,15 +142,24 @@ been parsed, so it is not reproducible.
 past, so which expanding CU comes back is arbitrary even among the ones the
 snapshot recorded.
 
+**Rejected because** the user cannot tell a chosen destination from the only one,
+and the same keypress can answer differently in two sessions.
+
 ### Option 2: Record the expanding-CU marker in server mode as well
 
 Remove the XrefMode guard in `expandMacroCall()` so a cold server records
 markers too. Verified to make the suspended test pass. It costs a reference at
-line 0, column 0 for every macro, which appears in the database dumps and breaks
-23 tests in the collation and token-pasting family.
+line 0, column 0 for every macro, a marker in a position field, which appears in
+the database dumps.
 
 It also completes an index whose shape is wrong. The marker answers "one file
-that expands this macro", and the decision above needs all of them.
+that expands this macro", and the decision above needs all of them. One marker
+per macro is not incidental: `addMacroBaseUsageRef` skips when one already exists
+(`yylex.c:2481`), and `writeCxReferenceBase` writes at most one per symbol
+(`cxfile.c:366`).
+
+**Rejected because** the marker holds one file per macro by construction, so
+recording it everywhere still cannot say which CUs expand a macro.
 
 ### Option 3: Show every distinct referent in the browser menu
 
@@ -158,11 +167,15 @@ As described above. The user chooses, the answer is reproducible, and the menu
 is the mechanism the tool already uses when a name has several bindings. It
 costs a bounded search where the current code stops at the first hit.
 
+**Chosen because** the identifier has more than one meaning, and the menu is
+where the tool already puts a choice.
+
 ### Option 4: Refuse to resolve inside a macro body
 
 Answer "not available here" and let the user navigate from an expansion instead.
-Honest and cheap, and it throws away a case that works today whenever the macro
-has only one meaning, which is the common one.
+Honest and cheap.
+
+**Rejected because** a macro with one meaning is the common case and works today.
 
 ## References
 
