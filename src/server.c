@@ -105,13 +105,13 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
  * include graph knows them without parsing anything (ADR-0027). */
 #define MAX_CUS_TO_REPARSE 128
 
-static int collectIncludersOfStaleHeader(int headerFileNumber, int cuFileNumbers[], int cuCount,
+static int collectCUsIncluding(int headerFileNumber, int cuFileNumbers[], int cuCount,
                                          int maxCUs);
 
 static int findCompilationUnitExpandingTheMacro(void) {
     int cuFileNumbers[MAX_CUS_TO_REPARSE];
 
-    int cuCount = collectIncludersOfStaleHeader(requestFileNumber, cuFileNumbers, 0, MAX_CUS_TO_REPARSE);
+    int cuCount = collectCUsIncluding(requestFileNumber, cuFileNumbers, 0, MAX_CUS_TO_REPARSE);
     if (cuCount == 0) {
         log_debug(":no compilation unit includes '%s', so nothing expands the macro",
                   getFileItemWithFileNumber(requestFileNumber)->name);
@@ -262,7 +262,7 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
  * using TypeCppInclude references in the reference table (populated by prior
  * parsing or loaded from disk db). Collect CU file numbers into the provided
  * array, deduplicating against entries already present. */
-static int collectIncludersOfStaleHeader(int headerFileNumber,
+static int collectCUsIncluding(int headerFileNumber,
                                          int cuFileNumbers[], int cuCount, int maxCUs) {
     FileItem *headerItem = getFileItemWithFileNumber(headerFileNumber);
     log_debug("Looking for CUs that include stale header '%s'", headerItem->name);
@@ -496,8 +496,7 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
                     log_debug("Stale header '%s' no longer exists, marking as deleted", fileItem->name);
                     markFileAsDeleted(fileNumber);
                 } else {
-                    cuCount = collectIncludersOfStaleHeader(fileNumber, cuFileNumbers, cuCount,
-                                                           MAX_CUS_TO_REPARSE);
+                    cuCount = collectCUsIncluding(fileNumber, cuFileNumbers, cuCount, MAX_CUS_TO_REPARSE);
                     /* The stale header's own references go now; reparsing the CUs
                      * above re-emits them. */
                     removeReferenceableItemsForFile(fileNumber);
