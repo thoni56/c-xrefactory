@@ -13,6 +13,10 @@
 # Linux. The server now prepares the file the request named
 # (Server -> prepares_the_file_the_request_named_when_others_are_also_scheduled).
 #
+# The identifier has one referent, so the answer is a goto. Several would give
+# the browser menu instead - olcxShowSelectionMenu() decides on the number of
+# distinct referents, and a macro body is no exception to that.
+#
 # This is a legacy test: it needs the batch -create, because only XrefMode
 # records the macro's base-file reference that findMacroExpansionFile looks for.
 # The server alone answers "No reference" - see the suspended

@@ -9,7 +9,9 @@ end-of-options
 end-of-options
 
 <sync>
-<display-or-update-browser len=<n>></display-or-update-browser>
+<goto>
+ <position-lc line=1 col=4 len=<n>>CURDIR/macro.h</position-lc>
+</goto>
 -exit
 end-of-options
 

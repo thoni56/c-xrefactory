@@ -113,12 +113,11 @@ static int scheduleFileUsingTheMacro(void) {
         tmpc = browsingStack.top;
     }
 
-    /* findMacroExpansionFile() does not only search: through
-     * createSelectionMenu() it also adds every item with this name to the
-     * session's browsing menu, which is what the answer to the request is built
-     * from. Hence the menu installed as hkSelectedSym here - it decides which
-     * items match - and hence this cannot be reduced to a plain lookup without
-     * moving that side effect somewhere explicit. */
+    /* findMacroExpansionFile() filters on the menu installed as hkSelectedSym
+     * here - it decides which items match by bare name. It no longer adds
+     * anything to the session's browsing menu, so a macro body answers through
+     * the ordinary cardinality rule: one referent is a goto, several are the
+     * menu (ADR-0027). */
     assert(browsingStack.top);
     BrowsingMenu *oldMenu = browsingStack.top->hkSelectedSym;
     browsingStack.top->hkSelectedSym = &menu;

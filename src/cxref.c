@@ -1766,14 +1766,24 @@ static void searchInMemoryTable(void) {
     }
 }
 
+/* Does this item share its bare name with what the request selected? This is
+   the filter half of createSelectionMenu(), without adding to the session menu. */
+static bool matchesSelectedSymbolName(ReferenceableItem *item) {
+    assert(browsingStack.top);
+    for (BrowsingMenu *menu = browsingStack.top->hkSelectedSym; menu != NULL; menu = menu->next) {
+        if (haveSameBareName(item, &menu->referenceable))
+            return true;
+    }
+    return false;
+}
+
 int findMacroExpansionFile(void) {
     int file = NO_FILE_NUMBER;
     for (int i = getNextExistingReferenceableItem(0); i != -1;
          i = getNextExistingReferenceableItem(i + 1)) {
         for (ReferenceableItem *item = getReferenceableItem(i);
              item != NULL; item = item->next) {
-            BrowsingMenu *menu = createSelectionMenu(item);
-            if (menu == NULL)
+            if (!matchesSelectedSymbolName(item))
                 continue;
             for (Reference *ref = item->references; ref != NULL; ref = ref->next) {
                 if (ref->usage == UsageMacroBaseFileUsage)
