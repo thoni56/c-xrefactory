@@ -53,6 +53,5 @@ extern void answerEditorAction(void);
 extern void markPreloadedFilesAsAncient(void);
 extern void saveReferences(void);
 
-extern int findMacroExpansionFile(void);
 
 #endif

@@ -99,35 +99,26 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
 }
 
 
+/* The identifiers in a macro body are only code once some compilation unit
+ * expands the macro. A CU can only expand it if it includes the file defining
+ * it, so the includers of the request file bound the candidates - and the
+ * include graph knows them without parsing anything (ADR-0027). */
+#define MAX_CUS_TO_REPARSE 128
+
+static int collectIncludersOfStaleHeader(int headerFileNumber, int cuFileNumbers[], int cuCount,
+                                         int maxCUs);
+
 static int scheduleFileUsingTheMacro(void) {
-    SessionStackEntry *tmpc;
+    int cuFileNumbers[MAX_CUS_TO_REPARSE];
 
-    assert(completionStringInMacroBody);
-    tmpc = NULL;
-    ReferenceableItem references = makeReferenceableItem(completionStringInMacroBody, TypeMacro, StorageExtern,
-                                                         VisibilityGlobal, NO_FILE_NUMBER);
-
-    BrowsingMenu menu = makeBrowsingMenu(references, 1, true, 0, UsageUsed, UsageNone, NO_POSITION);
-    if (browsingStack.top==NULL) {
-        pushEmptySession(&browsingStack);
-        tmpc = browsingStack.top;
+    int cuCount = collectIncludersOfStaleHeader(requestFileNumber, cuFileNumbers, 0, MAX_CUS_TO_REPARSE);
+    if (cuCount == 0) {
+        log_debug(":no compilation unit includes '%s', so nothing expands the macro",
+                  getFileItemWithFileNumber(requestFileNumber)->name);
+        return NO_FILE_NUMBER;
     }
-
-    /* findMacroExpansionFile() filters on the menu installed as hkSelectedSym
-     * here - it decides which items match by bare name. It no longer adds
-     * anything to the session's browsing menu, so a macro body answers through
-     * the ordinary cardinality rule: one referent is a goto, several are the
-     * menu (ADR-0027). */
-    assert(browsingStack.top);
-    BrowsingMenu *oldMenu = browsingStack.top->hkSelectedSym;
-    browsingStack.top->hkSelectedSym = &menu;
-    int fileToParse = findMacroExpansionFile();
-    browsingStack.top->hkSelectedSym = oldMenu;
-    if (tmpc!=NULL) {
-        deleteEntryFromSessionStack(tmpc);
-    }
-    log_debug(":scheduling file '%s'", getFileItemWithFileNumber(fileToParse)->name);
-    return fileToParse;
+    log_debug(":scheduling file '%s'", getFileItemWithFileNumber(cuFileNumbers[0])->name);
+    return cuFileNumbers[0];
 }
 
 /* The file this request named, as a bare argument on the request's own command
@@ -267,8 +258,6 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 }
 
 #define MAX_INCLUDE_WALK_FILES 256
-#define MAX_CUS_TO_REPARSE 128
-
 /* Walk the reverse-include graph from a stale header up to compilation units,
  * using TypeCppInclude references in the reference table (populated by prior
  * parsing or loaded from disk db). Collect CU file numbers into the provided

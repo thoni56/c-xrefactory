@@ -2472,26 +2472,6 @@ endOfFile:
 
 /* **************************************************************** */
 
-static void addMacroBaseUsageRef(Symbol *macroSymbol) {
-    Position basePos = makePosition(currentFileNumber, 0, 0);
-    ReferenceableItem ppp = makeReferenceableItem(macroSymbol->linkName, TypeMacro, StorageDefault,
-                                                  VisibilityGlobal, NO_FILE_NUMBER);
-    ReferenceableItem *memb;
-    bool isMember = isMemberInReferenceableItemTable(&ppp, NULL, &memb);
-    Reference *r = NULL;
-    if (isMember) {
-        // this is optimization to avoid multiple base references
-        for (r=memb->references; r!=NULL; r=r->next) {
-            if (r->usage == UsageMacroBaseFileUsage)
-                break;
-        }
-    }
-    if (!isMember || r==NULL) {
-        handleFoundSymbolReference(macroSymbol, basePos, UsageMacroBaseFileUsage, NO_FILE_NUMBER);
-    }
-}
-
-
 static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
 
     MacroBody *macroBody = macroSymbol->mbody;
@@ -2527,8 +2507,6 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
     }
     assert(options.mode);
     handleFoundSymbolReference(macroSymbol, macroPosition, UsageUsed, NO_FILE_NUMBER);
-    if (options.mode == XrefMode)
-        addMacroBaseUsageRef(macroSymbol);
     log_debug("create macro body '%s' as new input", macroBody->name);
 
     LexemStream macroBodyInput = createMacroBodyAsNewStream(macroBody, actualArgumentsInput);
