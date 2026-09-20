@@ -322,8 +322,6 @@ static int collectIncludersOfStaleHeader(int headerFileNumber,
     if (cuCount == 0)
         log_debug("No CUs found that include '%s'", headerItem->name);
 
-    removeReferenceableItemsForFile(headerFileNumber);
-
     return cuCount;
 }
 
@@ -500,6 +498,9 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
                 } else {
                     cuCount = collectIncludersOfStaleHeader(fileNumber, cuFileNumbers, cuCount,
                                                            MAX_CUS_TO_REPARSE);
+                    /* The stale header's own references go now; reparsing the CUs
+                     * above re-emits them. */
+                    removeReferenceableItemsForFile(fileNumber);
                     EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
                     if (buffer != NULL)
                         fileItem->lastParsedMtime = buffer->modificationTime;

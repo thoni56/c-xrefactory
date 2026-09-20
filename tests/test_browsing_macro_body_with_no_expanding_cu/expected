@@ -1,0 +1,18 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-getproject CURDIR/only.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-push  -olcursor=30 CURDIR/only.c
+end-of-options
+
+<sync>
+<error len=<n>>No symbol found, please position the cursor on a program symbol.</error>
+-exit
+end-of-options
+
+DOUBLE
+    @only.c:3:8
+value
+    @only.c:1:4
