@@ -1,0 +1,22 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-getproject CURDIR/node.h
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-push  -olcursor=24 CURDIR/node.h
+end-of-options
+
+<sync>
+<display-or-update-browser len=<n>></display-or-update-browser>
+-olcxmenufilter=0
+end-of-options
+
+<sync>
+<resolution>
+<symbol line=2 selected=1 base=0 drefn=1 refn=1 len=<n>>list_node.next</symbol>
+<symbol line=3 selected=1 base=0 drefn=1 refn=1 len=<n>>tree_node.next</symbol>
+</resolution>
+-exit
+end-of-options
+

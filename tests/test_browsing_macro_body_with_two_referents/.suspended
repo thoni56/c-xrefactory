@@ -1,0 +1,49 @@
+Missing: the menu of distinct referents for an identifier in a macro body
+
+ADR-0027 (accepted 2026-09-20) says an identifier inside a macro body resolves to
+every meaning its expanding CUs give it, and that the browser menu shows them all,
+deduped by referent. Nothing implements that yet; this test is the specification.
+
+`next` in node.h is a field of struct list_node in list.c and of struct tree_node
+in tree.c. Both are true. What happens today, cold:
+
+    <bottom-information len=<n>>No reference</bottom-information>
+     <symbol line=2 type=macro selected=1 base=0 drefn=0 refn=0 len=<n>>NEXT</symbol>
+
+So the push finds nothing, and the one menu row is the MACRO, not either field.
+Two separate causes:
+
+1. findMacroExpansionFile (src/cxref.c) reads a UsageMacroBaseFileUsage marker,
+   which expandMacroCall records only when options.mode == XrefMode (src/yylex.c),
+   so a cold server has none. Hence "No reference".
+2. That marker holds ONE file per macro by construction - addMacroBaseUsageRef
+   skips an existing one (src/yylex.c:2481) and writeCxReferenceBase writes at
+   most one per symbol (src/cxfile.c:366) - so even completing it cannot answer
+   which CUs expand a macro.
+
+The menu row for NEXT comes from findMacroExpansionFile's side effect: it filters
+through createSelectionMenu (src/cxref.c:2200), which also adds each matching item
+to the session menu. That is what makes a macro body answer with the browser
+instead of going through the ordinary cardinality rule.
+
+The fix, three steps, one test each:
+
+1. findMacroExpansionFile stops adding to the session menu, so a macro body falls
+   through to olcxShowSelectionMenu() like every other push: one referent is a
+   goto, several are the menu. Pinned by test_browsing_push_in_unexpanded_macro.
+2. The marker lookup becomes a walk over the includers of the file defining the
+   macro. collectIncludersOfStaleHeader (src/server.c:277) already walks that
+   graph for entry refresh Pass 3. This removes the XrefMode dependency and
+   un-suspends test_browsing_push_in_unexpanded_macro_without_create.
+3. The walk runs to the bound and collects EVERY expanding CU, deduped by
+   referent. That is what this test asks for. Remove this .suspended in that
+   commit.
+
+To verify when it goes green, because these are guesses:
+- The <symbol> attribute values in `expected` are invented. Take drefn/refn and the
+  row indentation from a real run; test_browsing_cexercise:303 is the model, where
+  two struct fields named `next` render as `<struct>.<field>` with no leading space,
+  while the macro row above has one.
+- `-olcxmenufilter=0` is MenuFilterAllWithName. Whether 0 or 1 is right here is
+  unchecked.
+- Rename must refuse from inside a macro body (ADR-0027). Not covered by this test.

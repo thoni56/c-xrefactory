@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server
+-getproject CURDIR/node.h
+<sync>
+-push  -olcursor=24 CURDIR/node.h
+<sync>
+-olcxmenufilter=0
+<sync>
+<exit>
