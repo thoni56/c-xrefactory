@@ -99,15 +99,14 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
 }
 
 
+#define MAX_CUS_TO_REPARSE 128
+
+static int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int maxCUs);
+
 /* The identifiers in a macro body are only code once some compilation unit
  * expands the macro. A CU can only expand it if it includes the file defining
  * it, so the includers of the request file bound the candidates - and the
  * include graph knows them without parsing anything (ADR-0027). */
-#define MAX_CUS_TO_REPARSE 128
-
-static int collectCUsIncluding(int headerFileNumber, int cuFileNumbers[], int cuCount,
-                                         int maxCUs);
-
 static int findCompilationUnitExpandingTheMacro(void) {
     int cuFileNumbers[MAX_CUS_TO_REPARSE];
 
@@ -258,21 +257,20 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 }
 
 #define MAX_INCLUDE_WALK_FILES 256
-/* Walk the reverse-include graph from a stale header up to compilation units,
+/* Walk the reverse-include graph from a file up to compilation units,
  * using TypeCppInclude references in the reference table (populated by prior
  * parsing or loaded from disk db). Collect CU file numbers into the provided
  * array, deduplicating against entries already present. */
-static int collectCUsIncluding(int headerFileNumber,
-                                         int cuFileNumbers[], int cuCount, int maxCUs) {
-    FileItem *headerItem = getFileItemWithFileNumber(headerFileNumber);
-    log_debug("Looking for CUs that include stale header '%s'", headerItem->name);
+static int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int maxCUs) {
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+    log_debug("Looking for CUs that include '%s'", fileItem->name);
 
-    /* Walk reverse-include graph transitively: starting from the stale header,
+    /* Walk reverse-include graph transitively: starting from the file,
      * find all files that include it, then files that include those, etc.
      * Collect any CUs encountered along the way. */
     int filesToWalk[MAX_INCLUDE_WALK_FILES];
     int walkCount = 1;
-    filesToWalk[0] = headerFileNumber;
+    filesToWalk[0] = fileNumber;
 
     for (int i = 0; i < walkCount; i++) {
         ReferenceableItem searchItem = makeReferenceableItem(
@@ -302,7 +300,7 @@ static int collectCUsIncluding(int headerFileNumber,
 
             FileItem *includer = getFileItemWithFileNumber(includerFileNum);
             if (isCompilationUnit(includer->name)) {
-                /* Deduplicate against CUs already collected (from other stale headers) */
+                /* Deduplicate against CUs already collected (from other files) */
                 bool alreadyCollected = false;
                 for (int j = 0; j < cuCount; j++) {
                     if (cuFileNumbers[j] == includerFileNum) {
@@ -312,15 +310,15 @@ static int collectCUsIncluding(int headerFileNumber,
                 }
                 if (!alreadyCollected && cuCount < maxCUs) {
                     cuFileNumbers[cuCount++] = includerFileNum;
-                    log_debug("CU '%s' (transitively) includes stale header '%s'",
-                              includer->name, headerItem->name);
+                    log_debug("CU '%s' (transitively) includes '%s'",
+                              includer->name, fileItem->name);
                 }
             }
         }
     }
 
     if (cuCount == 0)
-        log_debug("No CUs found that include '%s'", headerItem->name);
+        log_debug("No CUs found that include '%s'", fileItem->name);
 
     return cuCount;
 }
