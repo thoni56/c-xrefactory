@@ -108,7 +108,7 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
 static int collectIncludersOfStaleHeader(int headerFileNumber, int cuFileNumbers[], int cuCount,
                                          int maxCUs);
 
-static int scheduleFileUsingTheMacro(void) {
+static int findCompilationUnitExpandingTheMacro(void) {
     int cuFileNumbers[MAX_CUS_TO_REPARSE];
 
     int cuCount = collectIncludersOfStaleHeader(requestFileNumber, cuFileNumbers, 0, MAX_CUS_TO_REPARSE);
@@ -231,7 +231,7 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
         // Cursor is on an identifier inside a macro body definition, which hasn't been
         // processed as a symbol yet. Find and parse a file where the macro is invoked
         // so the macro expansion will resolve the identifier as an actual symbol.
-        int fileWithMacroExpansion = scheduleFileUsingTheMacro();
+        int fileWithMacroExpansion = findCompilationUnitExpandingTheMacro();
         if (fileWithMacroExpansion!=NO_FILE_NUMBER) {
             inputFileName = getFileItemWithFileNumber(fileWithMacroExpansion)->name;
             inputOpened = initializeFileProcessing(args, nargs);
