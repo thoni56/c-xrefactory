@@ -168,6 +168,24 @@ with only `~/.c-xrefrc` will get a "No project found" prompt. Instead of only of
 "Create new project?", the client could check `~/.c-xrefrc` for a section matching the
 current file, and if found, offer to migrate that section to a project-local `.c-xrefrc`.
 
+=== Retry the request that created the project
+
+**Status**: Planned
+
+==== Background
+
+When no `.c-xrefrc` covers the file, the server answers `PPC_NO_PROJECT` and the client asks "No project covers <file>, create new project?". Answering yes runs `c-xref-project-new`, which writes a `.c-xrefrc` in the project root, auto-detected from `.git`.
+
+==== Problem
+
+The operation that asked the question is then thrown away. `c-xref-server-dispatch-no-project` ends with `(error "Project created")` — flow control by error, as the comment there says — so the goto-definition or completion the user asked for never happens, and they have to repeat it.
+
+It is a small annoyance today. It becomes the normal first contact with a new project once auto-discovery is the only way in, so it is worth fixing then.
+
+==== Design
+
+Keep the dialog and re-send the original request once the config is written, rather than unwinding. The request's dispatch data is still in hand at that point, so this should not need new plumbing — worth confirming before committing to it.
+
 === Indexing Log Buffer
 
 **Status**: Planned
