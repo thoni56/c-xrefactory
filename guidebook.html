@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-09-20">
+<meta name="author" content="v{VERSION} - Generated 2026-09-21">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-09-20</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-09-21</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -520,11 +520,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_lsp_integration">11.2. LSP Integration</a></li>
 <li><a href="#_rename_function_handles_expect">11.3. Rename function handles <code>expect</code></a></li>
 <li><a href="#_migrate_to_project_local_config">11.4. Migrate to project local config</a></li>
-<li><a href="#_indexing_log_buffer">11.5. Indexing Log Buffer</a></li>
-<li><a href="#_unused_detection_exclude_patterns">11.6. Unused Detection: Exclude Patterns</a></li>
-<li><a href="#_browsing_includes">11.7. Browsing includes</a></li>
-<li><a href="#_semantic_read_only_files_include_path_ownership">11.8. Semantic Read-only Files (Include Path Ownership)</a></li>
-<li><a href="#generic-selection">11.9. C11 <code>_Generic</code></a></li>
+<li><a href="#_retry_the_request_that_created_the_project">11.5. Retry the request that created the project</a></li>
+<li><a href="#_indexing_log_buffer">11.6. Indexing Log Buffer</a></li>
+<li><a href="#_unused_detection_exclude_patterns">11.7. Unused Detection: Exclude Patterns</a></li>
+<li><a href="#_browsing_includes">11.8. Browsing includes</a></li>
+<li><a href="#_semantic_read_only_files_include_path_ownership">11.9. Semantic Read-only Files (Include Path Ownership)</a></li>
+<li><a href="#generic-selection">11.10. C11 <code>_Generic</code></a></li>
 </ul>
 </li>
 <li><a href="#components">12. Components</a>
@@ -4077,12 +4078,39 @@ current file, and if found, offer to migrate that section to a project-local <co
 </div>
 </div>
 <div class="sect2">
-<h3 id="_indexing_log_buffer">11.5. Indexing Log Buffer</h3>
+<h3 id="_retry_the_request_that_created_the_project">11.5. Retry the request that created the project</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Planned</p>
 </div>
 <div class="sect3">
 <h4 id="_background_2">11.5.1. Background</h4>
+<div class="paragraph">
+<p>When no <code>.c-xrefrc</code> covers the file, the server answers <code>PPC_NO_PROJECT</code> and the client asks "No project covers &lt;file&gt;, create new project?". Answering yes runs <code>c-xref-project-new</code>, which writes a <code>.c-xrefrc</code> in the project root, auto-detected from <code>.git</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_problem">11.5.2. Problem</h4>
+<div class="paragraph">
+<p>The operation that asked the question is then thrown away. <code>c-xref-server-dispatch-no-project</code> ends with <code>(error "Project created")</code> — flow control by error, as the comment there says — so the goto-definition or completion the user asked for never happens, and they have to repeat it.</p>
+</div>
+<div class="paragraph">
+<p>It is a small annoyance today. It becomes the normal first contact with a new project once auto-discovery is the only way in, so it is worth fixing then.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_design">11.5.3. Design</h4>
+<div class="paragraph">
+<p>Keep the dialog and re-send the original request once the config is written, rather than unwinding. The request&#8217;s dispatch data is still in hand at that point, so this should not need new plumbing — worth confirming before committing to it.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_indexing_log_buffer">11.6. Indexing Log Buffer</h3>
+<div class="paragraph">
+<p><strong>Status</strong>: Planned</p>
+</div>
+<div class="sect3">
+<h4 id="_background_3">11.6.1. Background</h4>
 <div class="paragraph">
 <p>The server parses a compilation unit when a request needs it. An operation that is project-wide asks before parsing the rest, and entry refresh reparses what has changed before every operation. Parsing is therefore spread through a session instead of happening once. During this parsing, warnings and errors may occur (e.g., missing include files, syntax errors from missing <code>-D</code> defines). These are expected and harmless — <code>c-xrefactory</code> continues best-effort — but users benefit from seeing them to tune their <code>.c-xrefrc</code> (adding <code>-I</code> paths, <code>-D</code> defines, etc.).</p>
 </div>
@@ -4094,7 +4122,7 @@ current file, and if found, offer to migrate that section to a project-local <co
 </div>
 </div>
 <div class="sect3">
-<h4 id="_problem">11.5.2. Problem</h4>
+<h4 id="_problem_2">11.6.2. Problem</h4>
 <div class="paragraph">
 <p>The current protocol has no non-modal message channel. Every message type either shows a modal dialog (<code>PPC_WARNING</code>, <code>PPC_ERROR</code>, <code>PPC_INFORMATION</code>) requiring "Press a key to continue", or writes a transient line to the minibuffer (<code>PPC_BOTTOM_INFORMATION</code>). Sending per-file warnings during cold start floods the user with one modal per warning, effectively locking up the editor.</p>
 </div>
@@ -4108,7 +4136,7 @@ user should see is a protocol record, which settles the choice below.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_what_works_now_2">11.5.3. What works now</h4>
+<h4 id="_what_works_now_2">11.6.3. What works now</h4>
 <div class="paragraph">
 <p>An unresolved <code>#include</code> reaches the client as a <code>&lt;warning&gt;</code> record when reporting is
 asked for. <code>test_parsing_include_error</code> holds it. Two pieces are missing: <code>formatMessage()</code>
@@ -4118,7 +4146,7 @@ reporting on for the duration of its own parse instead.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_what_the_report_should_contain">11.5.4. What the report should contain</h4>
+<h4 id="_what_the_report_should_contain">11.6.4. What the report should contain</h4>
 <div class="paragraph">
 <p>Distinct unresolved include names, each with a count of how many places wanted it. The
 same missing header is reported once per compilation unit that includes it, so a generated
@@ -4131,7 +4159,7 @@ a user asks whether the project is configured correctly.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_options">11.5.5. Design Options</h4>
+<h4 id="_design_options">11.6.5. Design Options</h4>
 <div class="paragraph">
 <p><strong>Option A: New protocol record type</strong> (recommended) — Add a <code>PPC_LOG</code> record that the Emacs client silently appends to a <code><strong>c-xref-log</strong></code> buffer. The count accumulates over the session, and a <code>PPC_BOTTOM_INFORMATION</code> reports it — "N warnings (see <strong>c-xref-log</strong>)" — after a parse-all, or when asked. Clean separation, no modals, inspectable at leisure. Touches protocol definition, C server code, and Emacs client.</p>
 </div>
@@ -4144,9 +4172,9 @@ a user asks whether the project is configured correctly.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_unused_detection_exclude_patterns">11.6. Unused Detection: Exclude Patterns</h3>
+<h3 id="_unused_detection_exclude_patterns">11.7. Unused Detection: Exclude Patterns</h3>
 <div class="sect3">
-<h4 id="_background_3">11.6.1. Background</h4>
+<h4 id="_background_4">11.7.1. Background</h4>
 <div class="paragraph">
 <p>The "Browse Global Unused" feature reports symbols that are defined but never used. In
 practice, certain files produce noise that hides genuinely unused symbols:</p>
@@ -4165,7 +4193,7 @@ preprocessor show up as defined-but-unused.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour">11.6.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour">11.7.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>Support exclude patterns in the project configuration to suppress unused detection for
 matching files:</p>
@@ -4184,7 +4212,7 @@ and refactoring would be unaffected — only the unused detection filter applies
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design">11.6.3. Design</h4>
+<h4 id="_design_2">11.7.3. Design</h4>
 <div class="paragraph">
 <p>The exclude patterns would be stored as a <code>StringList</code> in <code>ProjectConfig</code> (or <code>options</code>)
 and checked during the <code>mapAddGlobalUnusedSymbolsToHkSelection</code> iteration. The check
@@ -4194,9 +4222,9 @@ the existing shell-glob matching logic.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_browsing_includes">11.7. Browsing includes</h3>
+<h3 id="_browsing_includes">11.8. Browsing includes</h3>
 <div class="sect3">
-<h4 id="_background_4">11.7.1. Background</h4>
+<h4 id="_background_5">11.8.1. Background</h4>
 <div class="paragraph">
 <p>The <code>#include</code> preprocessor statments are referenceable items just like typenames and
 variables. That means it is logical to expect that placing the cursor on an <code>#include</code>
@@ -4209,16 +4237,16 @@ this case would be the next #include statement for that file.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_2">11.7.2. Design</h4>
+<h4 id="_design_3">11.8.2. Design</h4>
 <div class="paragraph">
 <p>This needs to be investigated and understood before an attempt to design a solution can be made.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_semantic_read_only_files_include_path_ownership">11.8. Semantic Read-only Files (Include Path Ownership)</h3>
+<h3 id="_semantic_read_only_files_include_path_ownership">11.9. Semantic Read-only Files (Include Path Ownership)</h3>
 <div class="sect3">
-<h4 id="_background_5">11.8.1. Background</h4>
+<h4 id="_background_6">11.9.1. Background</h4>
 <div class="paragraph">
 <p>Files discovered through <code>-I</code> include paths are currently treated the same as project-owned
 files for navigation purposes. However, these files typically belong to external libraries
@@ -4238,7 +4266,7 @@ self-contained, but with the modern include-path-based project scope (see
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_2">11.8.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_2">11.9.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>Files discovered through <code>-I</code> paths (but not listed as source directories in the
 configuration file) would be marked as <strong>read-only for refactoring purposes</strong>:</p>
@@ -4261,7 +4289,7 @@ cross-boundary refactoring for specific operations</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_3">11.8.3. Design</h4>
+<h4 id="_design_4">11.9.3. Design</h4>
 <div class="paragraph">
 <p>This requires a per-file or per-directory ownership flag in the file table, checked by
 the refactoring engine before applying edits. The flag would be set during the lightweight
@@ -4274,12 +4302,12 @@ include path (read-only).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="generic-selection">11.9. C11 <code>_Generic</code></h3>
+<h3 id="generic-selection">11.10. C11 <code>_Generic</code></h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented. Pinned by the suspended <code>test_parsing_generics</code>.</p>
 </div>
 <div class="sect3">
-<h4 id="_use_case_3">11.9.1. Use Case</h4>
+<h4 id="_use_case_3">11.10.1. Use Case</h4>
 <div class="paragraph">
 <p><code>_Generic</code> selects an expression by the type of a controlling expression, most often to
 pick one of several functions, as in <code>&lt;tgmath.h&gt;</code>:</p>
@@ -4296,7 +4324,7 @@ loses others, such as the <code>default:</code> branch and a typedef used as an 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_4">11.9.2. Design</h4>
+<h4 id="_design_5">11.10.2. Design</h4>
 <div class="paragraph">
 <p>Parse every association and record the references in all of them. Do <strong>not</strong> select the
 branch the controlling expression&#8217;s type would pick.</p>
@@ -8056,7 +8084,7 @@ setup.</p>
 <div class="sect2">
 <h3 id="_incremental_cxfile_c_cleanup">16.1. Incremental <code>cxfile.c</code> Cleanup</h3>
 <div class="sect3">
-<h4 id="_background_6">16.1.1. Background</h4>
+<h4 id="_background_7">16.1.1. Background</h4>
 <div class="paragraph">
 <p>The <code>cxfile</code> module was designed when the <code>.cx</code> files on disk were the reference database. Operations like "show all references to symbol X" or "find unused symbols" were table-driven scans over the disk format — hash the symbol name, stream the right partition, apply a per-operation filter. This was efficient for the batch cross-referencer that <code>c-xrefactory</code> evolved from, where the workflow was <code>c-xref -create</code> → <code>c-xref -update</code> → query the on-disk database.</p>
 </div>
@@ -8636,7 +8664,7 @@ This refactoring is independent of the LexemStream API improvements but would be
 <div class="sect2">
 <h3 id="clean-parser-api">16.3. Remove <code>parseBufferUsingServer</code> Bridge</h3>
 <div class="sect3">
-<h4 id="_problem_2">16.3.1. Problem</h4>
+<h4 id="_problem_3">16.3.1. Problem</h4>
 <div class="paragraph">
 <p>Refactoring operations that need structural information from parsing (function boundaries, move target validation, parameter positions, etc.) do not call the parser directly. Instead, they go through <code>parseBufferUsingServer()</code> — a function that constructs magic string arguments (like <code>"-olcxmovetarget"</code>, <code>"-olcxgetfunctionbounds"</code>) and runs a full <code>initServer()</code> + <code>callServer()</code> cycle. This is the internal equivalent of the editor sending a command over the protocol.</p>
 </div>
@@ -8813,7 +8841,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 <div class="sect2">
 <h3 id="typed-requests">16.4. Replace Global <code>options</code> with Typed Requests</h3>
 <div class="sect3">
-<h4 id="_problem_3">16.4.1. Problem</h4>
+<h4 id="_problem_4">16.4.1. Problem</h4>
 <div class="paragraph">
 <p>The <code>Options</code> struct is one global blob serving four distinct lifetimes:</p>
 </div>
@@ -11574,7 +11602,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-20 20:14:10 UTC
+Last updated 2026-09-21 15:27:59 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
