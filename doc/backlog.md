@@ -25,15 +25,18 @@ features. Relative effort only — no dates (#noestimates).
    Start at `parseUnparsedSiblingCUs` (`src/server.c`) and compare with the completeness
    parse in `callServer`, which sets `fi->lastParsedMtime` explicitly. Verify with a
    two-request test before calling it a bug. Upstream of everything in §4.
-2. **The option sets are cleared before two of their three reads** — *no repo home.*
-   `readOptionSetsFromFile` appends (`LIST_APPEND` per option), and
-   `projectConfig.optionSets` is a `static` field, so a read without a preceding clear
-   accumulates the previous project's options. `src/startup.c:575` and `:620` open-code a
-   clear first; `:651` does not. The two clear loops also disagree: one runs
-   `i <= MAX_PASS_COUNT`, the other `i < MAX_PASS_COUNT`, so pass 9's list survives the
-   second one. `makeOptionSets()` is exactly that clear and is still called only from
-   `options_tests.c`. A server test establishing two projects in one session pins it.
-   (`PassDeltas` was renamed to `OptionSets` in `1da42633`.)
+2. **Two `-pass` parsers that disagree** — *no repo home.* `readOptionsIntoArgs`
+   (`src/options.c:900`) matches `strncmp(optionText, "-pass", 5)` with no digit check,
+   then `sscanf`s the number; on a malformed marker like `-passfoo` the scan fails and the
+   pass number silently keeps the **previous section's** value, so the options that follow
+   are attributed to the wrong pass. It also raises `maxPasses` to whatever it reads, with
+   no bound, and that drives the pass loop. `readOptionSets` (`src/optionsets.c`) got both
+   checks in `700ef8fc`. The fix is one shared predicate used by both, but it changes how
+   `-passfoo` behaves in the hot config-reading path, so it wants its own commit and a full
+   system-test run. Report it per the errorMessage convention, not with an assert.
+   *(The sibling item — the three reads of `projectConfig.optionSets` clearing
+   inconsistently — was fixed by `resetOptionSets`; `optionSetsLoaded` in `src/startup.c`
+   is the leftover worth a second look.)*
 3. **Expanding-CU rename** — `UsageMacroBaseFileUsage` → `UsageMacroExpandingCU`,
    `addMacroBaseUsageRef` → `addExpandingCUMarker`, `findMacroExpansionFile` →
    `findExpandingCU`. Terminology in `doc/docs/06-principles.adoc` already uses the new

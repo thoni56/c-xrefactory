@@ -14,6 +14,8 @@ typedef struct {
 } OptionSets;
 
 extern OptionSets makeOptionSets(void);
+/* For a set that already owns its lists; makeOptionSets() is for a fresh one. */
+extern void resetOptionSets(OptionSets *sets);
 extern void readOptionSets(FILE *file, OptionSets *resultingDeltas);
 
 extern void applyOptionSet(StringList *optionList);

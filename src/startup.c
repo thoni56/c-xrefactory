@@ -568,10 +568,7 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
     options.inputFiles = NULL;
 
     if (!optionSetsLoaded) {
-        for (int i = 0; i <= MAX_PASS_COUNT; i++) {
-            freeStringList(projectConfig.optionSets.set[i]);
-            projectConfig.optionSets.set[i] = NULL;
-        }
+        resetOptionSets(&projectConfig.optionSets);
         readOptionSetsFromFile(projectConfigFileName, &projectConfig.optionSets);
         optionSetsLoaded = true;
     }
@@ -613,10 +610,7 @@ void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) 
                         previousProjectConfigurationFile, previousProjectConfigurationSection,
                         inputFileName != NULL ? inputFileName : ".");
 
-    for (int i=0; i < MAX_PASS_COUNT; i++) {
-        freeStringList(projectConfig.optionSets.set[i]);
-        projectConfig.optionSets.set[i] = NULL;
-    }
+    resetOptionSets(&projectConfig.optionSets);
     readOptionSetsFromFile(previousProjectConfigurationFile, &projectConfig.optionSets);
 
     previousProjectConfigurationFileModificationTime = fileModificationTime(previousProjectConfigurationFile);
@@ -648,6 +642,7 @@ bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
 
     /* === PHASES 2-4: Options, compiler interrogation, checkpoint === */
     loadProjectSettings(baseArgs, requestArgs, projectConfigFileName, projectSectionName, fileName);
+    resetOptionSets(&projectConfig.optionSets);
     readOptionSetsFromFile(projectConfigFileName, &projectConfig.optionSets);
 
     strcpy(previousProjectConfigurationFile, projectConfigFileName);

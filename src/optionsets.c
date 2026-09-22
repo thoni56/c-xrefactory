@@ -20,6 +20,12 @@ OptionSets makeOptionSets(void) {
     return d;
 }
 
+void resetOptionSets(OptionSets *sets) {
+    for (size_t i = 0; i < sizeof(sets->set) / sizeof(sets->set[0]); i++)
+        freeStringList(sets->set[i]);
+    *sets = makeOptionSets();
+}
+
 /* Pass number for a section we refuse to collect options from */
 #define PASS_IGNORED (-1)
 
