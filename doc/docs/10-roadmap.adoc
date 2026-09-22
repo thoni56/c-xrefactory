@@ -43,7 +43,12 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
 
 |Index-based sessions
 |Store symbol key + position instead of copying references; dissolves "stale sessions
- after POP". Depends on entry refresh (ADR-0020).
+ after POP". Depends on entry refresh (ADR-0020). +
+ It would also let an answer grow while you work. `OP_BROWSE_NEXT` walks the list copied
+ at the push, so today it neither sees nor causes new parsing, and an answer truncated by
+ the collection caps stays truncated for as long as the session lives. A session reading
+ the live table, with those caps gone, would show what is known now instead of what was
+ known at the push.
 
 |Remove `parseBufferUsingServer` bridge
 |The last divergent parse path, re-entering `callServer` from 9 refactoring call sites.
