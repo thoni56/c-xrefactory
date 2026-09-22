@@ -598,10 +598,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_known_bugs">17. Known Bugs</a>
 <ul class="sectlevel2">
 <li><a href="#_globalunused_false_positive_for_static_functions_in_y_files">17.1. GlobalUnused false positive for static functions in .y files</a></li>
-<li><a href="#_stale_sessions_after_pop">17.2. Stale sessions after POP</a></li>
-<li><a href="#_header_static_prototype_and_definition_are_two_symbols">17.3. Header static: prototype and definition are two symbols</a></li>
-<li><a href="#_push_by_name_finds_nothing_on_a_cold_start">17.4. Push by name finds nothing on a cold start</a></li>
-<li><a href="#_token_pasting_that_forms_numbers">17.5. Token pasting that forms numbers</a></li>
+<li><a href="#_a_refactoring_can_see_a_truncated_reference_set">17.2. A refactoring can see a truncated reference set</a></li>
+<li><a href="#_stale_sessions_after_pop">17.3. Stale sessions after POP</a></li>
+<li><a href="#_header_static_prototype_and_definition_are_two_symbols">17.4. Header static: prototype and definition are two symbols</a></li>
+<li><a href="#_push_by_name_finds_nothing_on_a_cold_start">17.5. Push by name finds nothing on a cold start</a></li>
+<li><a href="#_token_pasting_that_forms_numbers">17.6. Token pasting that forms numbers</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">18. Refactoring Recipes</a>
@@ -9494,13 +9495,76 @@ Each entry describes symptoms, analysis (when available), and suspected root cau
 </div>
 </div>
 <div class="sect2">
-<h3 id="_stale_sessions_after_pop">17.2. Stale sessions after POP</h3>
+<h3 id="_a_refactoring_can_see_a_truncated_reference_set">17.2. A refactoring can see a truncated reference set</h3>
+<div class="paragraph">
+<p><strong>Symptom:</strong> on a large project, a rename rewrites some occurrences and leaves the rest, with no warning. The definition is found correctly, so nothing looks wrong.</p>
+</div>
+<div class="paragraph">
+<p><strong>Cause:</strong> <code>collectCUsIncluding()</code> (<code>src/server.c</code>) stops collecting at <code>MAX_CUS_TO_REPARSE</code> (128) and stops widening the reverse-include frontier at <code>MAX_INCLUDE_WALK_FILES</code> (256). A refactoring push is in <code>needsReferenceDatabase</code> but not in <code>needsWholeProjectParsed</code>, so it takes whatever entry refresh has parsed. Past the cap that is a subset.</p>
+</div>
+<div class="paragraph">
+<p><strong>Measured 2026-09-22</strong> on <code>tests/test_ffmpeg</code>, one cold <code>-push</code> on <code>avcodec_open2</code> where it is declared in <code>avcodec.h</code>, which 713 <code>.c</code> files include:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-top">caps 128 / 256</th>
+<th class="tableblock halign-left valign-top">caps 4096 / 8192</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">references found</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>13</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>25</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wall clock</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">23.3 s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">256 s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">peak RSS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">28.5 MB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">91.6 MB</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">goto answer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>utils.c:542</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">identical</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>So a rename there rewrites 13 of 25 occurrences. Browsing survives a truncated set; rewriting does not.</p>
+</div>
+<div class="paragraph">
+<p><strong>When it bites:</strong> only when more than 128 CUs (transitively) include one header, so a project needs at least ~130 CUs. c-xrefactory itself cannot reach it — 79 CUs in <code>src</code>, worst header fan-in <code>log.h</code> at 39. systemd (642 CUs) and ffmpeg (2616) can.</p>
+</div>
+<div class="paragraph">
+<p><strong>Why the caps exist:</strong> removing the lexem-stream cache (ADR-0012) took a full ffmpeg parse from 1-2 minutes to 25, and the caps bound that.</p>
+</div>
+<div class="paragraph">
+<p><strong>Direction:</strong> put the refactoring pushes in <code>needsWholeProjectParsed</code> so they ask like search does — the parse-all there is uncapped and counts only never-parsed CUs, so a warm project is asked for little. Two things that needs: declining must <strong>abort</strong> the refactoring, where today <code>if (waitForUserConfirmation(msg)) { &#8230;&#8203;parse&#8230;&#8203; }</code> has no else and simply proceeds; and <code>parseAllPromptFor()</code> ends in <code>default: assert(0)</code>, so each added operation needs its own prompt word. It applies to parameter manipulation as much as to rename.</p>
+</div>
+<div class="paragraph">
+<p><strong>Workaround, if the caps stay:</strong> re-issue the push. Pass 3 filters <code>fileNeedsParsing</code> before applying the cap, so each request parses 128 fresh CUs and they stay parsed — six rounds for <code>avcodec.h</code>. Next does not help: <code>OP_BROWSE_NEXT</code> is in none of the gates and walks the list copied at the push.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_stale_sessions_after_pop">17.3. Stale sessions after POP</h3>
 <div class="paragraph">
 <p>Tracked under "Known Limitations" in <a href="10-roadmap.adoc">Chapter 10: Roadmap</a>, with the proposed dissolve (index-based sessions).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_header_static_prototype_and_definition_are_two_symbols">17.3. Header static: prototype and definition are two symbols</h3>
+<h3 id="_header_static_prototype_and_definition_are_two_symbols">17.4. Header static: prototype and definition are two symbols</h3>
 <div class="paragraph">
 <p><strong>Symptom:</strong> For a <code>static</code> function declared and then defined in a header, renaming it
 from a file that includes the header renames the definition and the calls but leaves the
@@ -9518,7 +9582,7 @@ the definition is <code>helper.h!helper</code>.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_push_by_name_finds_nothing_on_a_cold_start">17.4. Push by name finds nothing on a cold start</h3>
+<h3 id="_push_by_name_finds_nothing_on_a_cold_start">17.5. Push by name finds nothing on a cold start</h3>
 <div class="paragraph">
 <p><strong>Symptom:</strong> Pushing a symbol by name answers "No symbol found." unless some file
 containing it has already been parsed.</p>
@@ -9533,7 +9597,7 @@ that ask to parse all unparsed CUs first (see
 </div>
 </div>
 <div class="sect2">
-<h3 id="_token_pasting_that_forms_numbers">17.5. Token pasting that forms numbers</h3>
+<h3 id="_token_pasting_that_forms_numbers">17.6. Token pasting that forms numbers</h3>
 <div class="paragraph">
 <p><strong>Symptom:</strong> Macros that paste numbers produce wrong symbols in the reference table.</p>
 </div>
@@ -11607,7 +11671,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-22 15:59:43 UTC
+Last updated 2026-09-22 16:04:49 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
