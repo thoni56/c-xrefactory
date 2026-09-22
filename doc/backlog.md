@@ -90,11 +90,13 @@ features. Relative effort only — no dates (#noestimates).
    - `tests/test_discover_standard_includes` — asserts the compiler's include directories
      were found, negatively: it greps the run's log for "can't open file stdbool.h" and
      requires it absent. A server version can assert it positively, from the dump.
-   - `tests/test_multipass` — per-pass `-D` (`-pass1 -DPASS1`, `-pass2 -DPASS2`) putting
-     symbols from both `#ifdef` branches in one table. Its *other* half, that the syntax
-     error in the PASS2 branch is reported with file and line, runs into
-     `formatMessage()` dropping the position in server mode, so item 6 first turns this
-     into one conversion instead of a compromise.
+   - `tests/test_multipass` — DONE for the symbol half. Multi-pass does fire in server
+     mode: `maxPasses` starts at 1 and the per-pass config read raises it, and the
+     converted test gets `pass1` and `pass2` from mutually exclusive `#ifdef` branches in
+     one table, byte-identical to the XrefMode output. What is still missing is its
+     *other* half, that the syntax error planted in the PASS2 branch is reported with
+     file and line: `formatMessage()` drops the position in server mode. Restore that
+     assertion when item 6 lands.
    - `tests/test_options_optinclude` — not convertible, rewrite it. It asserts
      `-optinclude` indirectly through `-refnum=1` and `ls CXrefs | wc -l`, and both the
      option and that layout die with XrefMode. Put something in `more_options` that

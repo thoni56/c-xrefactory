@@ -1,16 +1,20 @@
-include ../Makefile.cli
+include ../Makefile.server
 
-# Test multi-pass parsing with pass-specific defines
-# PASS1 should define `pass1`
-# PASS2 should generate syntax errors
-
-ARGUMENTS = -xref -errors -create .
+# Multi-pass parsing with pass-specific defines: the config gives -pass1 -DPASS1
+# and -pass2 -DPASS2, and symbols from both #ifdef branches must end up in one
+# table, without spillover.
+#
+# The other half of the original XrefMode test, that the syntax error planted in
+# the PASS2 branch is reported with file and line, is not here: formatMessage()
+# drops the position in server mode.
 
 $(TEST): .c-xrefrc
-	$(COMMAND) > output.tmp 2>&1 || true
-	../../utils/cxref_reader >> output.tmp
-	$(NORMALIZE) output.tmp | sed -e 's/commons\.c:[0-9]*/commons.c:N/g' > output
+	@rm -rf .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input $(EXTRA) > /dev/null
+	@../../utils/cxref_reader .c-xref/db > output
 	$(VERIFY)
 
-trace: ARGUMENTS = -debug -log=trace -filetrace
+trace: EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
+
+GDB_COMMANDS =
