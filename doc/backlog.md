@@ -45,12 +45,11 @@ features. Relative effort only — no dates (#noestimates).
    `loadProjectSettings` re-reading the config, but `initializeProjectContext` now resets
    and reads for itself, so what the flag actually prevents is worth re-deciding. Small,
    and it wants the lifetime partition's answer to "who owns this" more than a patch.
-3. **Expanding-CU rename** — down to one identifier: `UsageMacroBaseFileUsage` →
-   `UsageMacroExpandingCU`. `addMacroBaseUsageRef` and `findMacroExpansionFile` were
-   deleted with the marker (`3a17bf78`), so only the enum member survives, kept so an
-   existing `.cx` still loads. No snapshot format bump — the usage is stored numerically,
-   and the name is not. Terminology in `doc/docs/06-principles.adoc` already uses the new
-   words and cites the old identifiers; update the parenthesised names afterwards.
+3. **Expanding-CU rename** — one identifier left: `UsageMacroBaseFileUsage` →
+   `UsageMacroExpandingCU`. The member is kept so an existing `.cx` still loads, and
+   renaming it is free because the usage is stored numerically, not by name. Terminology
+   in `doc/docs/06-principles.adoc` already uses the new words and cites the old
+   identifier; update the parenthesised name afterwards.
 
 ## 1. The foundational one
 
@@ -84,31 +83,18 @@ features. Relative effort only — no dates (#noestimates).
    report-errors flag**, and stop `formatMessage()` (`src/commons.c`) dropping the position
    in server mode. Roadmap, "Report what did not parse". Doubles as the server half of
    the Indexing Log Buffer item. Scope reporting to the operation's own parse, not the
-   session-wide `-errors`.
-7. **Give the remaining XrefMode-only tests a server-mode home.** Only `-optinclude` is
-   left; the other three are done (`9e357408`, `4dc4ac3d`, and the includes one below):
-   - `tests/test_discover_standard_includes` — DONE. It now asserts positively, from the
-     snapshot: `bool`, `true` and `false` are defined nowhere but `stdbool.h`, so their
-     presence proves the header was found and parsed. Their positions are deliberately
-     not asserted, being the compiler's own line numbers.
-   - `tests/test_multipass` — DONE for the symbol half. Multi-pass does fire in server
-     mode: `maxPasses` starts at 1 and the per-pass config read raises it, and the
-     converted test gets `pass1` and `pass2` from mutually exclusive `#ifdef` branches in
-     one table, byte-identical to the XrefMode output. What is still missing is its
-     *other* half, that the syntax error planted in the PASS2 branch is reported with
-     file and line: `formatMessage()` drops the position in server mode. Restore that
-     assertion when item 6 lands.
-   - `tests/test_options_optinclude` — not convertible, rewrite it. It asserts
-     `-optinclude` indirectly through `-refnum=1` and `ls CXrefs | wc -l`, and both the
-     option and that layout die with XrefMode. Put something in `more_options` that
-     changes parsing — a `-D` that flips an `#ifdef`, or an `-I` that resolves an
-     include — and assert it from the dump.
+   session-wide `-errors`. Restore `tests/test_multipass`'s error-position assertion in
+   the same change: it was dropped when that test moved to the server, because the
+   position is what server mode throws away.
+7. **Rewrite `tests/test_options_optinclude` for the server**, the last XrefMode-only
+   test. It asserts `-optinclude` indirectly, through `-refnum=1` and `ls CXrefs | wc -l`,
+   and both that option and that layout die with XrefMode. Put something in
+   `more_options` that changes parsing — a `-D` that flips an `#ifdef`, or an `-I` that
+   resolves an include — and assert it from the dump.
 8. **Decide what a bare `c-xref file.c` does** once XrefMode is no longer the default
    mode. A decision, not code.
-9. **Remove XrefMode** — deletes the `-create`/`-update` legacy engine. Needs the three
-   items above. ADR-0027's expanding-CU dependency is discharged: the include-graph walk
-   replaced the marker rather than recording it (`3a17bf78`), so nothing writes or reads
-   it any more.
+9. **Remove XrefMode** — deletes the `-create`/`-update` legacy engine. Needs items 6 to
+   8; nothing else holds it up.
 10. **Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
     re-entering `callServer`. Independent of the rest of this chain (it asserts
     `ServerMode`), but it is the last divergent parse path.
@@ -194,12 +180,12 @@ PUSH on ffmpeg `af_afir.c`: scan 2.7s, two Pass 3 rounds 19s each, 42s total).
 
 ## Open questions that would reorder this
 
-* **ADR-0027's expanding-CU dependency is discharged** (answered 2026-09-22). The walk
-  replaced the marker: `addMacroBaseUsageRef` and its call site are gone, so nothing
-  writes or reads it. §2 has lost its hardest precondition and could move ahead of §1 —
-  that reordering is still a choice, not a conclusion. What ADR-0027 still lacks is rename
-  refusing from inside a macro body, and completeness above the collection caps; it stays
-  `Accepted`, not `Implemented`.
+* **Should §2 move ahead of §1?** Its hardest precondition is gone — the include-graph
+  walk replaced ADR-0027's expanding-CU marker — so the XrefMode chain no longer waits on
+  anything but its own items. Whether it goes before the lifetime partition is a choice
+  nobody has made.
+* **ADR-0027 stays `Accepted`, not `Implemented`:** rename does not yet refuse from inside
+  a macro body, and the menu is complete only up to the collection caps.
 * **The Pass 3 item is an observation, not a confirmed bug.** If it is false, §4's ordering stands
   but its baseline does not.
 * **`18-known-bugs.adoc` cites `test_browsing_push_name_parses_whole_project`**, which
