@@ -1,6 +1,0 @@
-/* -*- c -*-*/
-#include "filedescriptor.h"
-
-FileDescriptor currentFile = {0};
-
-IncludeStack includeStack;

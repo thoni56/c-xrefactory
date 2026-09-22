@@ -10,3 +10,5 @@ out
 *.cov*
 server-buffer
 run.std???
+c-xref-copy/
+systemd-copy/

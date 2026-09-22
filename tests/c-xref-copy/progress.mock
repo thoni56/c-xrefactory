@@ -1,8 +1,0 @@
-#include <cgreen/mocks.h>
-
-int progressOffset=0;
-int progressFactor=1;
-
-void writeRelativeProgress(int progress) {
-    mock(progress);
-}

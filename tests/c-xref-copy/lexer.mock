@@ -1,9 +1,0 @@
-/* -*- c -*-*/
-#include <cgreen/mocks.h>
-
-#include "lexer.h"
-
-
-bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *buffer, bool inServerMode) {
-  return (bool) mock(buffer);
-}
