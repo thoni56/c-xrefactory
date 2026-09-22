@@ -12,6 +12,31 @@
 #include "options.h"
 
 
+PassMarker readPassMarker(char *optionText, int *passNumber) {
+    char tmpBuff[TMP_BUFF_SIZE];
+
+    if (strncmp(optionText, "-pass", 5) != 0)
+        return NotAPassMarker;
+
+    char *digits = &optionText[5];
+    if (digits[0] == '\0' || strspn(digits, "0123456789") != strlen(digits)) {
+        sprintf(tmpBuff, "'%s' is not a pass marker of the form -passN, section ignored", optionText);
+        errorMessage(ERR_ST, tmpBuff);
+        return IllFormedPassMarker;
+    }
+
+    int passN = atoi(digits);
+    if (passN > MAX_PASS_COUNT) {
+        sprintf(tmpBuff, "pass number in '%s' is higher than the maximum of %d, section ignored",
+                optionText, MAX_PASS_COUNT);
+        errorMessage(ERR_ST, tmpBuff);
+        return IllFormedPassMarker;
+    }
+
+    *passNumber = passN;
+    return WellFormedPassMarker;
+}
+
 OptionSets makeOptionSets(void) {
     OptionSets d;
 
@@ -36,18 +61,16 @@ void readOptionSets(FILE *file, OptionSets *resultingDeltas) {
     int passN = 0;
     int ch = getOptionFromFile(file, optionsText, &charsRead);
     while (ch != EOF) {
+        int markerPass;
+        PassMarker marker = readPassMarker(optionsText, &markerPass);
+
         if (optionsText[0] == '[')
             ; /* Skip section/project markers */
-        else if (strncmp(optionsText, "-pass", 5) == 0 && isdigit(optionsText[5])) {
-            passN = atoi(&optionsText[5]);
-            if (passN > MAX_PASS_COUNT) {
-                char tmpBuff[TMP_BUFF_SIZE];
-                sprintf(tmpBuff, "pass number in '%s' is higher than the maximum of %d, section ignored",
-                        optionsText, MAX_PASS_COUNT);
-                errorMessage(ERR_ST, tmpBuff);
-                passN = PASS_IGNORED;
-            }
-        } else if (passN != PASS_IGNORED) {
+        else if (marker == WellFormedPassMarker)
+            passN = markerPass;
+        else if (marker == IllFormedPassMarker)
+            passN = PASS_IGNORED; /* readPassMarker has told the user why */
+        else if (passN != PASS_IGNORED) {
             assert(passN >= 0 && passN <= MAX_PASS_COUNT);
             LIST_APPEND(StringList, resultingDeltas->set[passN], newStringList(optionsText, NULL));
         }

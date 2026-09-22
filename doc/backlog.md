@@ -25,18 +25,11 @@ features. Relative effort only — no dates (#noestimates).
    Start at `parseUnparsedSiblingCUs` (`src/server.c`) and compare with the completeness
    parse in `callServer`, which sets `fi->lastParsedMtime` explicitly. Verify with a
    two-request test before calling it a bug. Upstream of everything in §4.
-2. **Two `-pass` parsers that disagree** — *no repo home.* `readOptionsIntoArgs`
-   (`src/options.c:900`) matches `strncmp(optionText, "-pass", 5)` with no digit check,
-   then `sscanf`s the number; on a malformed marker like `-passfoo` the scan fails and the
-   pass number silently keeps the **previous section's** value, so the options that follow
-   are attributed to the wrong pass. It also raises `maxPasses` to whatever it reads, with
-   no bound, and that drives the pass loop. `readOptionSets` (`src/optionsets.c`) got both
-   checks in `700ef8fc`. The fix is one shared predicate used by both, but it changes how
-   `-passfoo` behaves in the hot config-reading path, so it wants its own commit and a full
-   system-test run. Report it per the errorMessage convention, not with an assert.
-   *(The sibling item — the three reads of `projectConfig.optionSets` clearing
-   inconsistently — was fixed by `resetOptionSets`; `optionSetsLoaded` in `src/startup.c`
-   is the leftover worth a second look.)*
+2. **`optionSetsLoaded` guards less than it looks like it does** — *no repo home.* The
+   file-static in `src/startup.c` is set once and never reset; its job was to stop
+   `loadProjectSettings` re-reading the config, but `initializeProjectContext` now resets
+   and reads for itself, so what the flag actually prevents is worth re-deciding. Small,
+   and it wants the lifetime partition's answer to "who owns this" more than a patch.
 3. **Expanding-CU rename** — `UsageMacroBaseFileUsage` → `UsageMacroExpandingCU`,
    `addMacroBaseUsageRef` → `addExpandingCUMarker`, `findMacroExpansionFile` →
    `findExpandingCU`. Terminology in `doc/docs/06-principles.adoc` already uses the new
@@ -56,7 +49,7 @@ features. Relative effort only — no dates (#noestimates).
    automatic `ProjectConfig` declared without `= {0}` would free garbage. A constructor
    makes "born empty" one expression instead of every declaration site remembering, and
    gives `makeOptionSets()` its first production caller.
-5. **The Setup Ladder, in this sequence**, each small once 4 lands
+5. **The Setup Ladder, in this sequence**, each small once the partition lands
    (`doc/docs/10-roadmap.adoc`, Convergence: The Setup Ladder → Remaining):
    a. the client stops sending `-p` on every request
       (`c-xref-send-data-to-process-and-dispatch`, `editors/emacs/c-xref.el:1922` — the
@@ -74,13 +67,14 @@ features. Relative effort only — no dates (#noestimates).
 6. **Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c` onto a
    report-errors flag**, and stop `formatMessage()` (`src/commons.c`) dropping the position
    in server mode. Roadmap, "Report what did not parse". Doubles as the server half of
-   item 22. Scope reporting to the operation's own parse, not the session-wide `-errors`.
+   the Indexing Log Buffer item. Scope reporting to the operation's own parse, not the
+   session-wide `-errors`.
 7. **Give the three XrefMode-only tests a server-mode home** — standard defines, per-pass
    `-D`, `-optinclude`.
 8. **Decide what a bare `c-xref file.c` does** once XrefMode is no longer the default
    mode. A decision, not code.
-9. **Remove XrefMode** — deletes the `-create`/`-update` legacy engine. Needs 6, 7, 8 and
-   ADR-0027's expanding-CU marker.
+9. **Remove XrefMode** — deletes the `-create`/`-update` legacy engine. Needs the three items
+   above and ADR-0027's expanding-CU marker.
 10. **Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
     re-entering `callServer`. Independent of the rest of this chain (it asserts
     `ServerMode`), but it is the last divergent parse path.
@@ -116,18 +110,18 @@ features. Relative effort only — no dates (#noestimates).
 
 ## 4. Performance, in strict dependency order
 
-Roadmap → Optimization. Do item 1 first; it may change the measured baseline (cold-start
+Roadmap → Optimization. Do the Pass 3 item first; it may change the measured baseline (cold-start
 PUSH on ffmpeg `af_afir.c`: scan 2.7s, two Pass 3 rounds 19s each, 42s total).
 
 16. **Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
     design problem is that Pass 3 runs during sync and the symbol is only known during
     dispatch.
-17. **Extend the lightweight scan to `<...>` includes** — blocked on 16, or ubiquitous
-    system headers drag in nearly every CU. Also removes the cold-start double progress
-    bar.
+17. **Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
+    sibling parsing, or ubiquitous system headers drag in nearly every CU. Also removes
+    the cold-start double progress bar.
 18. **Lexing cache re-introduction** — present in the original codebase, lost in
     restructuring.
-19. **Parallel parsing** — last, and only if 16–18 leave `avcodec.h` (614 CUs) or
+19. **Parallel parsing** — last, and only if the three above leave `avcodec.h` (614 CUs) or
     `internal.h` (1171 CUs) unacceptable. Global mutable parser state, a single CX arena
     and a shared file table are the obstacles.
 
@@ -144,7 +138,7 @@ PUSH on ffmpeg `af_afir.c`: scan 2.7s, two Pass 3 rounds 19s each, 42s total).
     work. Roadmap → Memory as Truth → Remaining. Depends only on entry refresh, which is
     done.
 22. **Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
-    `doc/docs/11-planned-features.adoc`. Follows item 6.
+    `doc/docs/11-planned-features.adoc`. Follows the report-errors item.
 23. **Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
 24. **LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
@@ -166,11 +160,11 @@ PUSH on ffmpeg `af_afir.c`: scan 2.7s, two Pass 3 rounds 19s each, 42s total).
   `092db313` landed exactly that work. If the include-graph walk *replaces* the marker
   rather than still recording it, §2 loses its hardest precondition and could move ahead
   of §1.
-* **Item 1 is an observation, not a confirmed bug.** If it is false, §4's ordering stands
+* **The Pass 3 item is an observation, not a confirmed bug.** If it is false, §4's ordering stands
   but its baseline does not.
 * **`18-known-bugs.adoc` cites `test_browsing_push_name_parses_whole_project`**, which
   does not exist; the suspended directory is `tests/test_browsing_push_by_name`. Fix the
-  reference when touching item 15.
+  reference when touching the remaining-bugs item.
 * **Outside this repo:** the external regression scripts still lack the orphan-test-dir
   filter that `utils/failing` got in `cadb4cb5` — a `tests/test_*/` with an `output` but
   no `Makefile` reads as a failure.

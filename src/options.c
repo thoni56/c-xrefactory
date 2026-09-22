@@ -19,6 +19,7 @@
 #include "memory.h"
 #include "misc.h"
 #include "options_config.h"
+#include "optionsets.h"
 #include "parsers.h"            /* For yydebug #ifdef YYDEBUG */
 #include "ppc.h"
 #include "protocol.h"
@@ -868,6 +869,7 @@ bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, Memory *memory, c
     char optionText[MAX_OPTION_LEN];
     int len, ch, passNumber=0;
     bool projectUpdated, isActivePass;
+    PassMarker passMarker;
 
     ENTER();
 
@@ -897,10 +899,12 @@ bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, Memory *memory, c
             expandEnvironmentVariables(optionText+1, MAX_OPTION_LEN, &len, true);
             log_debug("expanded '%s'", optionText);
             processProjectMarker(optionText, project, fileName, &projectUpdated, foundProjectName);
-        } else if (projectUpdated && strncmp(optionText, "-pass", 5) == 0) {
-            sscanf(optionText+5, "%d", &passNumber);
-            isActivePass = passNumber==currentPass || currentPass==ANY_PASS;
-            if (passNumber > maxPasses)
+        } else if (projectUpdated && (passMarker = readPassMarker(optionText, &passNumber)) != NotAPassMarker) {
+            /* An unusable marker leaves the section it introduces unread, rather
+             * than silently attributing it to the pass before it. */
+            isActivePass = passMarker == WellFormedPassMarker
+                && (passNumber == currentPass || currentPass == ANY_PASS);
+            if (passMarker == WellFormedPassMarker && passNumber > maxPasses)
                 maxPasses = passNumber;
         } else if (strcmp(optionText,"-set")==0 && (projectUpdated && isActivePass) && memory != NULL) {
             // pre-evaluation of -set

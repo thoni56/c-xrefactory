@@ -218,6 +218,60 @@ static void expect_characters(char string[], bool eof) {
         expect(readChar, will_return(EOF));
 }
 
+static bool argsContain(ArgumentsVector args, char *wantedOption) {
+    for (int i = 1; i < args.argc; i++) {
+        if (strcmp(args.argv[i], wantedOption) == 0)
+            return true;
+    }
+    return false;
+}
+
+Ensure(Options, collects_the_options_of_a_well_formed_pass_marker) {
+    memoryInit(&ppmMemory, "", PreprocessorMemorySize);
+    char project[1000], unused[1000];
+    ArgumentsVector nargs;
+
+    currentPass = 2;
+    maxPasses = 1;
+    expect_characters("-pass2\n-DSECONDPASS\n", true);
+
+    readOptionsIntoArgs(NULL, &nargs, &ppmMemory, "", project, unused);
+
+    assert_that(argsContain(nargs, "-DSECONDPASS"), is_true);
+    assert_that(maxPasses, is_equal_to(2));
+}
+
+Ensure(Options, drops_the_section_of_a_pass_marker_without_a_number) {
+    memoryInit(&ppmMemory, "", PreprocessorMemorySize);
+    char project[1000], unused[1000];
+    ArgumentsVector nargs;
+
+    currentPass = 1;
+    maxPasses = 1;
+    expect_characters("-pass1\n-DWANTED\n-passfoo\n-DUNWANTED\n", true);
+    expect(errorMessage);
+
+    readOptionsIntoArgs(NULL, &nargs, &ppmMemory, "", project, unused);
+
+    assert_that(argsContain(nargs, "-DWANTED"), is_true);
+    assert_that(argsContain(nargs, "-DUNWANTED"), is_false);
+}
+
+Ensure(Options, does_not_raise_maxPasses_above_the_maximum) {
+    memoryInit(&ppmMemory, "", PreprocessorMemorySize);
+    char project[1000], unused[1000];
+    ArgumentsVector nargs;
+
+    currentPass = 1;
+    maxPasses = 1;
+    expect_characters("-pass12\n", true);
+    expect(errorMessage);
+
+    readOptionsIntoArgs(NULL, &nargs, &ppmMemory, "", project, unused);
+
+    assert_that(maxPasses, is_equal_to(1));
+}
+
 static bool errorMessageCalled;
 static void errorMessageCallback(void *ignored) {
     errorMessageCalled = true;
