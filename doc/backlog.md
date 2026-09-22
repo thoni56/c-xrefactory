@@ -92,8 +92,8 @@ features. Relative effort only — no dates (#noestimates).
    parser serves both phases, so the question becomes which options are process-scoped at
    all. The Setup Ladder's step 1 answers it in principle; this makes it concrete.
    - Genuinely startup, on the evidence of what the client sends and what `main()` reads
-     before anything else: the mode; the transport (`-xrefactory-II`, `-crlfconversion`,
-     `-crconversion`, `-o <answerfile>` — `editors/emacs/c-xref.el:1615`); logging
+     before anything else: the mode; the transport (`-crlfconversion`, `-crconversion`,
+     `-o <answerfile>` — `editors/emacs/c-xref.el:1615`); logging
      (`-log=`, `-debug`, `-trace`, `-info`, `-errors`, `-warnings`, `-infos`, scanned in
      `main()` before the mode is even known); and `-statistics`.
    - Everything project-scoped — `-p`, `-xrefrc`, `-I`, `-D`, `-refs`, `-refnum`,
@@ -108,11 +108,20 @@ features. Relative effort only — no dates (#noestimates).
      true` sits outside the `if` in `options.c`, so a bare word vanishes without a word.
      Rejecting it means reporting there. `c-xref file.c` already answers "No mode given",
      pinned by `tests/test_options_mode_required`.
-   - `.c-xrefrc` is also read with `YES` (`startup.c:446`), because the legacy project
-     model lists source directories in the config. That one dies with `-p` and the ladder,
-     not with XrefMode — same shape, different item.
+   - `.c-xrefrc` is also read with `YES` (`startup.c:446`), for the source directories
+     listed in it. Do not assume that list is legacy. What dies with `-p` is the
+     *registry*: several `[project]` sections, each covering directories, one selected by
+     name. Saying "these directories are also part of my project" is a different need and
+     it survives — a project using a library you have the source for, which you want to
+     navigate into, is not covered by `-I`, which only tells the preprocessor where to
+     look. Auto-discovery gives you the tree under the config; anything outside it still
+     has to be named. Likely home: the config, or the machine-specific sibling, since an
+     external source tree is usually a local path.
 8. **Remove XrefMode** — deletes the `-create`/`-update` legacy engine. Needs items 6 and
-   7; nothing else holds it up.
+   7; nothing else holds it up. `-xrefactory-II` goes with it: it selects the protocol
+   output over XrefMode's plain text, and with only the server left there is nothing to
+   select. Make `options.xref2` the default, then drop the flag and the client's use of
+   it (`editors/emacs/c-xref.el:1615`).
 9. **Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this chain (it asserts
    `ServerMode`), but it is the last divergent parse path.
