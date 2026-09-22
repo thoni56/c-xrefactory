@@ -201,7 +201,21 @@ PUSH on ffmpeg `af_afir.c`: scan 2.7s, two Pass 3 rounds 19s each, 42s total).
     **Delete Function**. Also **CreateMode** (ADR-0024), **unused-detection exclude
     patterns**, **browsing includes**, **semantic read-only files**, **rename handles
     `expect`**, **project-local config**. All in `11-planned-features.adoc`.
-25. **Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
+25. **Local config fragments — the need, not a solution** — *no repo home yet.*
+    `.c-xrefrc` travels with the project and is checked in, which is why
+    `11-planned-features.adoc` argues for it: "it will not contain absolute file paths".
+    Some things are machine-specific and still have to be said somewhere — where the
+    source of a library you want to navigate into actually lives, an `-I` into a local
+    toolchain — and today there is nowhere to say them.
+    Two directions, neither chosen, and the point of this entry is the need rather than
+    either of them. `-optinclude` already reads another options file, but it processes it
+    with `PROCESS_FILE_ARGUMENTS_NO` (`handleIncludeOption`, `src/options.c`), so an
+    included file cannot contribute source directories — the main thing this need wants —
+    and `readOptionsFromFile` makes a missing file fatal, where absent is the normal case
+    for a machine-specific fragment. The other direction is a sibling file picked up
+    automatically, where absent is normal by construction and nothing checked in refers
+    to it. Either way, decide whether a fragment extends or replaces the project config.
+26. **Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
     the macro expansion module, hashtab → hashlist, split the editor module, rename server
     operations, elisp recompiled and deleted on every build.
 
