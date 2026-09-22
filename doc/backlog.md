@@ -17,14 +17,29 @@ features. Relative effort only — no dates (#noestimates).
 
 ## 0. Verify first — cheap, and changes the cost of the rest
 
-1. **Pass 3 sets no `lastParsedMtime`** — if real, every request reparses the neighbourhood
-   Pass 3 exists to bound, and the parse-all check for project-wide operations miscounts
-   the same way. *No repo home.* Observed while tracing
-   `tests/test_browsing_push_in_unexpanded_macro`: `source.c` parsed during `-getproject`
-   and again during the following `-push`, both logging "0 skipped (already parsed)".
-   Start at `parseUnparsedSiblingCUs` (`src/server.c`) and compare with the completeness
-   parse in `callServer`, which sets `fi->lastParsedMtime` explicitly. Verify with a
-   two-request test before calling it a bug. Upstream of everything in §4.
+1. **The same CUs are reparsed on every request — cause unknown** — *no repo home.*
+   Observed 2026-09-18 while tracing `tests/test_browsing_push_in_unexpanded_macro`:
+   `source.c` parsed during `-getproject` and again during the following `-push`, both
+   logging "0 skipped (already parsed)". If it still reproduces, every request pays to
+   reparse the same neighbourhood — the cold-start cost Pass 3 exists to bound — and the
+   parse-all check for project-wide operations counts never-parsed CUs the same way, so it
+   would keep asking too.
+
+   **Not the obvious cause.** Checked 2026-09-22: `parseUnparsedSiblingCUs`
+   (`src/server.c`) *does* set `fi->lastParsedMtime = editorFileModificationTime(...)`
+   after each `reparseStaleFile`, and `git log -S` dates that line to `a6020c82`
+   (2026-02-27, the commit that added Pass 3) — so it was already there when the double
+   parse was seen. Do not re-walk that path.
+
+   **Where to look instead**, both being the other end — who *clears* the field:
+   `markAllCompilationUnitsStale()` (`src/referencerefresh.c`), called at `src/server.c`
+   when `isProjectConfigChanged()` says the config changed, deliberately as a cold
+   restart; and `markPreloadedFilesAsAncient()` (`src/cxref.c`), which looked like the
+   culprit for a preloading driver but is reached only from the `-exit` handler in
+   `src/options.c`. The first is the live suspect: a config-change test that keeps
+   answering yes would mark *every* CU stale on *every* request, which is a bigger cost
+   than the one originally suspected. Reproduce with `make trace` in that test directory
+   and see which branch fires, before changing anything. Upstream of everything in §4.
 2. **`optionSetsLoaded` guards less than it looks like it does** — *no repo home.* The
    file-static in `src/startup.c` is set once and never reset; its job was to stop
    `loadProjectSettings` re-reading the config, but `initializeProjectContext` now resets
