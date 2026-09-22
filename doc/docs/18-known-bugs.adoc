@@ -29,6 +29,34 @@ The yacc parser creates a different scope or symbol context when parsing C code 
 
 
 
+=== A refactoring can see a truncated reference set
+
+*Symptom:* on a large project, a rename rewrites some occurrences and leaves the rest, with no warning. The definition is found correctly, so nothing looks wrong.
+
+*Cause:* `collectCUsIncluding()` (`src/server.c`) stops collecting at `MAX_CUS_TO_REPARSE` (128) and stops widening the reverse-include frontier at `MAX_INCLUDE_WALK_FILES` (256). A refactoring push is in `needsReferenceDatabase` but not in `needsWholeProjectParsed`, so it takes whatever entry refresh has parsed. Past the cap that is a subset.
+
+*Measured 2026-09-22* on `tests/test_ffmpeg`, one cold `-push` on `avcodec_open2` where it is declared in `avcodec.h`, which 713 `.c` files include:
+
+[cols="1,1,1",options="header"]
+|===
+|  |caps 128 / 256 |caps 4096 / 8192
+
+|references found |*13* |*25*
+|wall clock |23.3 s |256 s
+|peak RSS |28.5 MB |91.6 MB
+|goto answer |`utils.c:542` |identical
+|===
+
+So a rename there rewrites 13 of 25 occurrences. Browsing survives a truncated set; rewriting does not.
+
+*When it bites:* only when more than 128 CUs (transitively) include one header, so a project needs at least ~130 CUs. c-xrefactory itself cannot reach it — 79 CUs in `src`, worst header fan-in `log.h` at 39. systemd (642 CUs) and ffmpeg (2616) can.
+
+*Why the caps exist:* removing the lexem-stream cache (ADR-0012) took a full ffmpeg parse from 1-2 minutes to 25, and the caps bound that.
+
+*Direction:* put the refactoring pushes in `needsWholeProjectParsed` so they ask like search does — the parse-all there is uncapped and counts only never-parsed CUs, so a warm project is asked for little. Two things that needs: declining must *abort* the refactoring, where today `if (waitForUserConfirmation(msg)) { ...parse... }` has no else and simply proceeds; and `parseAllPromptFor()` ends in `default: assert(0)`, so each added operation needs its own prompt word. It applies to parameter manipulation as much as to rename.
+
+*Workaround, if the caps stay:* re-issue the push. Pass 3 filters `fileNeedsParsing` before applying the cap, so each request parses 128 fresh CUs and they stay parsed — six rounds for `avcodec.h`. Next does not help: `OP_BROWSE_NEXT` is in none of the gates and walks the list copied at the push.
+
 === Stale sessions after POP
 
 Tracked under "Known Limitations" in link:10-roadmap.adoc[Chapter 10: Roadmap], with the proposed dissolve (index-based sessions).

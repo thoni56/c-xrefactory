@@ -121,7 +121,11 @@ features. Relative effort only — no dates (#noestimates).
     reparse leaves a header declaration it no longer emits — ADR-0025 variant B) ·
     `tests/test_browsing_push_by_name` (needs decided behaviour when a name has several
     bindings) · GlobalUnused false positive for statics in `.y` files ·
-    `tests/test_parsing_generics` (`_Generic` not parsed).
+    `tests/test_parsing_generics` (`_Generic` not parsed) · **a refactoring can see a
+    truncated reference set** (`18-known-bugs.adoc`) — severe where it bites, rewriting 13
+    of 25 occurrences on ffmpeg, but it needs a header included by more than ~130 CUs, and
+    c-xrefactory has 79 with a worst fan-in of 39, so it cannot happen here. That, and
+    not its severity, is why it sits in this bucket.
 
 ## 4. Performance, in strict dependency order
 
