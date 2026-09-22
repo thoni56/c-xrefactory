@@ -48,6 +48,14 @@ features. Relative effort only — no dates (#noestimates).
 4. **Partition `options` by lifetime** — Session / Project / Request, one owner each, and
    a pure `parseCommandLine()`. `doc/docs/17-major-codebase-improvements.adoc` §17.4. The
    roadmap's Setup Ladder says it gates the rows below it. Largest single item here.
+   When it moves `ProjectConfig` off being a file-static singleton (`src/startup.c:42`,
+   `static ProjectConfig projectConfig = {0};`), give it a `makeProjectConfig()` that
+   returns `{.sourceDirs = NULL, .optionSets = makeOptionSets()}`. Today both fields are
+   emptied by code that frees first — `freeStringList(projectConfig.sourceDirs)` and
+   `resetOptionSets()` — which is only safe because static storage zeroes them; an
+   automatic `ProjectConfig` declared without `= {0}` would free garbage. A constructor
+   makes "born empty" one expression instead of every declaration site remembering, and
+   gives `makeOptionSets()` its first production caller.
 5. **The Setup Ladder, in this sequence**, each small once 4 lands
    (`doc/docs/10-roadmap.adoc`, Convergence: The Setup Ladder → Remaining):
    a. the client stops sending `-p` on every request
