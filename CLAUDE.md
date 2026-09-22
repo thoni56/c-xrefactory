@@ -44,16 +44,36 @@ The obligation is on the evidence, not on who produces it. A stale `c-xref` make
 a green suite meaningless: a reverted experiment once stayed in the binary and 25
 collation tests looked broken until a rebuild.
 
-**Check for watchers first, with `pgrep -a watchexec`.**
+**Check for watchers first, with `pgrep -fl watchexec`.** (`-a` is Linux-only; macOS
+ignores it and prints a bare PID with no command line, which tells you nothing.)
 
-If they are running, they produce the evidence. Trigger them and read the result:
+If they are running, they produce the evidence. Both watch targets run the logged
+wrappers, so a watcher that is up always leaves its output in a file a session can read:
+
+- `watch-for-unittests` runs `make unit-logged` and writes `src/unittests.log`
+- `watch-for-systemtests` runs `make system-tests-logged` and writes `src/systemtests.log`
+
+They chain. The `unittests` target ends with `touch .unittests.done`, which is what the
+system-test watcher watches, so one source edit cascades into build, unit tests, system
+tests, and leaves both logs fresh.
+
+Trigger them and read the result:
 
 ```bash
-touch src/.unittests.done   # runs the system tests
+touch src/.unittests.done   # system tests only - builds c-xref first
 touch src/main.c            # full build, unit tests, then system tests
-utils/failing               # the test directories that failed
-cat src/systemtests.log     # the watcher's own output
+utils/failing               # the test directories that failed - silence means none
+cat src/systemtests.log     # the watcher's own output, build included
+cat src/unittests.log       # the same for the unit tests
 ```
+
+Check each log is newer than the change before believing it, and judge the run by
+`utils/failing` and the log rather than by rerunning anything.
+
+**If the channel is not live - no watcher, only one of the two, or a watcher started
+before the logging targets existed - say so and ask.** Do not quietly run the build
+yourself instead: that is the clash the watchers exist to prevent, and restarting a
+watcher takes a second.
 
 Do not run a build yourself while they are up. A build regenerates
 `options_config.h`, the unittest watcher sees a changed header and runs, that
@@ -155,10 +175,11 @@ make -C src test            # Run quick tests
 cd tests/test_<name> && make  # Run single test
 ```
 
-Watch commands (usually already running):
+Watch commands (usually already running), each logging to a file that a session
+can read instead of building anything itself:
 ```bash
-make -C src watch-for-unittests
-make -C src watch-for-systemtests
+make -C src watch-for-unittests     # -> src/unittests.log
+make -C src watch-for-systemtests   # -> src/systemtests.log
 ```
 
 ### Debugging System Tests
