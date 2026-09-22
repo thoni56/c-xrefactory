@@ -85,8 +85,21 @@ features. Relative effort only — no dates (#noestimates).
    in server mode. Roadmap, "Report what did not parse". Doubles as the server half of
    the Indexing Log Buffer item. Scope reporting to the operation's own parse, not the
    session-wide `-errors`.
-7. **Give the three XrefMode-only tests a server-mode home** — standard defines, per-pass
-   `-D`, `-optinclude`.
+7. **Give the remaining XrefMode-only tests a server-mode home.** Standard *defines* is
+   already done (`9e357408`); three are left, and only one is a straight conversion:
+   - `tests/test_discover_standard_includes` — asserts the compiler's include directories
+     were found, negatively: it greps the run's log for "can't open file stdbool.h" and
+     requires it absent. A server version can assert it positively, from the dump.
+   - `tests/test_multipass` — per-pass `-D` (`-pass1 -DPASS1`, `-pass2 -DPASS2`) putting
+     symbols from both `#ifdef` branches in one table. Its *other* half, that the syntax
+     error in the PASS2 branch is reported with file and line, runs into
+     `formatMessage()` dropping the position in server mode, so item 6 first turns this
+     into one conversion instead of a compromise.
+   - `tests/test_options_optinclude` — not convertible, rewrite it. It asserts
+     `-optinclude` indirectly through `-refnum=1` and `ls CXrefs | wc -l`, and both the
+     option and that layout die with XrefMode. Put something in `more_options` that
+     changes parsing — a `-D` that flips an `#ifdef`, or an `-I` that resolves an
+     include — and assert it from the dump.
 8. **Decide what a bare `c-xref file.c` does** once XrefMode is no longer the default
    mode. A decision, not code.
 9. **Remove XrefMode** — deletes the `-create`/`-update` legacy engine. Needs the three
