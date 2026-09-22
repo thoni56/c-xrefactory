@@ -192,3 +192,9 @@ Topics: `[fix]`, `[feat]`, `[refactor]`, `[test]`, `[docs]`, `[build]`
 ## Documentation
 
 The term **'docs'** refers to Structurizr-based Asciidoc in `doc/docs/`, not markdown files.
+
+`doc/backlog.md` is the exception, and it is not docs: it carries the *order* of the open
+work and what each item waits for, with a pointer to the chapter, `.suspended` note or ADR
+that describes it. Keep it thin, and update it when work lands or the order changes. It
+sits outside `doc/docs/` on purpose — `!docs docs` in `doc/workspace.dsl` globs that
+directory into the published guidebook.
