@@ -612,7 +612,8 @@ watch-for-systemtests:
 .PHONY: system-tests-logged
 system-tests-logged: SHELL := /bin/bash
 system-tests-logged:
-	@set -o pipefail; $(MAKE) -j$(JOBS) system-tests 2>&1 | tee systemtests.log
+	@set -o pipefail; $(MAKE) -j$(JOBS) system-tests 2>&1 | tee systemtests.log; \
+	status=$$?; date "+Finished %F %T" | tee -a systemtests.log; exit $$status
 
 .PHONY: watch-for-systemtests-silent
 watch-for-systemtests-silent:
