@@ -1,1 +1,4 @@
-1
+FROM_OPTINCLUDE
+    @source.c:1:7
+the_included_options_were_read
+    @source.c:2:4

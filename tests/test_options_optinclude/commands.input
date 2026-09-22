@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/source.c
+<sync>
+-search=non_existant_to_force_parse_all -olcursor=1 CURDIR/source.c
+<sync>
+-continue
+<sync>
+<exit>

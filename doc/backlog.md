@@ -86,41 +86,36 @@ features. Relative effort only — no dates (#noestimates).
    session-wide `-errors`. Restore `tests/test_multipass`'s error-position assertion in
    the same change: it was dropped when that test moved to the server, because the
    position is what server mode throws away.
-7. **Rewrite `tests/test_options_optinclude` for the server**, the last XrefMode-only
-   test. It asserts `-optinclude` indirectly, through `-refnum=1` and `ls CXrefs | wc -l`,
-   and both that option and that layout die with XrefMode. Put something in
-   `more_options` that changes parsing — a `-D` that flips an `#ifdef`, or an `-I` that
-   resolves an include — and assert it from the dump.
-8. **Decide what a bare `c-xref file.c` does** once XrefMode is no longer the default
+7. **Decide what a bare `c-xref file.c` does** once XrefMode is no longer the default
    mode. A decision, not code.
-9. **Remove XrefMode** — deletes the `-create`/`-update` legacy engine. Needs items 6 to
-   8; nothing else holds it up.
-10. **Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
-    re-entering `callServer`. Independent of the rest of this chain (it asserts
-    `ServerMode`), but it is the last divergent parse path.
+8. **Remove XrefMode** — deletes the `-create`/`-update` legacy engine. Needs items 6 and
+   7; nothing else holds it up.
+9. **Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
+   re-entering `callServer`. Independent of the rest of this chain (it asserts
+   `ServerMode`), but it is the last divergent parse path.
 
 ## 3. Correctness, by (quiet × cheap)
 
-11. **Extract passes statics by value** — *no test pins it.* Since the gate fix this
+10. **Extract passes statics by value** — *no test pins it.* Since the gate fix this
     compiles and silently does the wrong thing, where before it failed to compile.
     Liveness-after-the-region is the wrong question for static storage: treat
     static/thread-local as live after the region in `classifyVariableUsingDataFlow`
     (`src/extract.c`), which pushes it to `CLASSIFIED_AS_IN_OUT_ARGUMENT`. Failing system
     test first. Quietest bug on this list.
-12. **Token pasting trio**, in this order — the later two assume the first
+11. **Token pasting trio**, in this order — the later two assume the first
     (`doc/docs/18-known-bugs.adoc`): `tests/test_token_pasting_numbers` (changes the
     passing `test_collate_const_suffix_pasting`) → `tests/test_token_pasting_float` →
     `tests/test_collate_hex_prefix_pasting` (touches how every number is lexed).
-13. **Header static: prototype and definition get different link names** —
+12. **Header static: prototype and definition get different link names** —
     `setStaticFunctionLinkName` (`src/semact.c`); renames break the build today.
     `tests/test_static_declared_and_defined_in_header/.suspended` has the
     `exactPositionResolve` question to settle first, so it starts as a decision.
-14. **`prepareInputFileForRequest`** (`src/server.c`) — resume from the clue, not the
+13. **`prepareInputFileForRequest`** (`src/server.c`) — resume from the clue, not the
     symptom: the extra scheduled file appears *only* when a header is the request file, so
     the question is what schedules it, not why the `fileNumber` tie-break loses. Pinned by
     `tests/test_browsing_push_in_unexpanded_macro/.suspended` and a suspended Cgreen test.
     A naive `options.inputFiles` fix broke ~50 tests once (`00a8ded3`).
-15. Then, roughly by cost — each has a `.suspended` note or a `18-known-bugs.adoc` entry:
+14. Then, roughly by cost — each has a `.suspended` note or a `18-known-bugs.adoc` entry:
     `tests/test_getproject_unknown_cu_under_include_path` (any file under an `-I`
     directory counts as project) · `tests/test_preprocess_edit_removes_ifdef_define` (CU
     reparse leaves a header declaration it no longer emits — ADR-0025 variant B) ·
@@ -137,44 +132,44 @@ features. Relative effort only — no dates (#noestimates).
 Roadmap → Optimization. Do the Pass 3 item first; it may change the measured baseline (cold-start
 PUSH on ffmpeg `af_afir.c`: scan 2.7s, two Pass 3 rounds 19s each, 42s total).
 
-16. **Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
+15. **Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
     design problem is that Pass 3 runs during sync and the symbol is only known during
     dispatch.
-17. **Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
+16. **Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
     sibling parsing, or ubiquitous system headers drag in nearly every CU. Also removes
     the cold-start double progress bar.
-18. **Lexing cache re-introduction** — present in the original codebase, lost in
+17. **Lexing cache re-introduction** — present in the original codebase, lost in
     restructuring.
-19. **Parallel parsing** — last, and only if the three above leave `avcodec.h` (614 CUs) or
+18. **Parallel parsing** — last, and only if the three above leave `avcodec.h` (614 CUs) or
     `internal.h` (1171 CUs) unacceptable. Global mutable parser state, a single CX arena
     and a shared file table are the obstacles.
 
 ## 5. Features, by readiness
 
-20. **Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
+19. **Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
     customization; collapse `CommentMovingMode` to a bool and stop the backward walk at a
     blank line (`src/options.h`, `src/move_function.c`). The TDD scaffolding already
     landed: four `tests/test_move_function_*comment*` tests; sweep
     `-commentmovinglevel=6` → `=1` in the three "with…" `commands.input` files and add
     `test_move_function_stops_at_blank_line` in the same change. Most shovel-ready item
     here.
-21. **Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
+20. **Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
     work. Roadmap → Memory as Truth → Remaining. Depends only on entry refresh, which is
     done.
-22. **Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
+21. **Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
     `doc/docs/11-planned-features.adoc`. Follows the report-errors item.
-23. **Retry the request that created the project** — small, and it becomes first contact
+22. **Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
-24. **LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
+23. **LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
     function and the parameter refactorings. Stubs exist: `handle_code_action`,
     `handle_execute_command`, with `codeActionProvider` commented out in
     `src/lsp_handler.c`. Keep tier 3 (custom methods + per-editor extension code) small.
-25. **Move Function next steps** — remove the source header's extern declaration, include
+24. **Move Function next steps** — remove the source header's extern declaration, include
     management, helper-function detection, smarter header placement, preview — then
     **Delete Function**. Also **CreateMode** (ADR-0024), **unused-detection exclude
     patterns**, **browsing includes**, **semantic read-only files**, **rename handles
     `expect`**, **project-local config**. All in `11-planned-features.adoc`.
-26. **Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
+25. **Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
     the macro expansion module, hashtab → hashlist, split the editor module, rename server
     operations, elisp recompiled and deleted on every build.
 
