@@ -3415,7 +3415,12 @@ periodically; no mandatory <code>-create</code>.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Index-based sessions</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Store symbol key + position instead of copying references; dissolves "stale sessions
- after POP". Depends on entry refresh (ADR-0020).</p></td>
+ after POP". Depends on entry refresh (ADR-0020).<br>
+ It would also let an answer grow while you work. <code>OP_BROWSE_NEXT</code> walks the list copied
+ at the push, so today it neither sees nor causes new parsing, and an answer truncated by
+ the collection caps stays truncated for as long as the session lives. A session reading
+ the live table, with those caps gone, would show what is known now instead of what was
+ known at the push.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Remove <code>parseBufferUsingServer</code> bridge</p></td>
@@ -11602,7 +11607,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-22 07:17:57 UTC
+Last updated 2026-09-22 07:20:56 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
