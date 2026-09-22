@@ -86,8 +86,31 @@ features. Relative effort only — no dates (#noestimates).
    session-wide `-errors`. Restore `tests/test_multipass`'s error-position assertion in
    the same change: it was dropped when that test moved to the server, because the
    position is what server mode throws away.
-7. **Decide what a bare `c-xref file.c` does** once XrefMode is no longer the default
-   mode. A decision, not code.
+7. **Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
+   Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
+   gone the server takes no file at startup: every request names its own, and the same
+   parser serves both phases, so the question becomes which options are process-scoped at
+   all. The Setup Ladder's step 1 answers it in principle; this makes it concrete.
+   - Genuinely startup, on the evidence of what the client sends and what `main()` reads
+     before anything else: the mode; the transport (`-xrefactory-II`, `-crlfconversion`,
+     `-crconversion`, `-o <answerfile>` — `editors/emacs/c-xref.el:1615`); logging
+     (`-log=`, `-debug`, `-trace`, `-info`, `-errors`, `-warnings`, `-infos`, scanned in
+     `main()` before the mode is even known); and `-statistics`.
+   - Everything project-scoped — `-p`, `-xrefrc`, `-I`, `-D`, `-refs`, `-refnum`,
+     `-optinclude` — belongs to the config and binds at `-getproject`, not here.
+   - **`-lsp` is a third mode and should be one.** `want_lsp_server()` (`src/lsp.c`) scans
+     argv in `main()` and returns before `mainTaskEntryInitialisations()`, so it is a mode
+     in behaviour but not in `options.mode`. If "state a mode" is the rule, it should say
+     so the same way `-server` does.
+   - The code: `startup.c:841` processes the command line with
+     `PROCESS_FILE_ARGUMENTS_YES`, which is why `c-xref -server file.c` silently schedules
+     that file. Flip it to `NO` when XrefMode goes. But `NO` only *ignores*: `matched =
+     true` sits outside the `if` in `options.c`, so a bare word vanishes without a word.
+     Rejecting it means reporting there. `c-xref file.c` already answers "No mode given",
+     pinned by `tests/test_options_mode_required`.
+   - `.c-xrefrc` is also read with `YES` (`startup.c:446`), because the legacy project
+     model lists source directories in the config. That one dies with `-p` and the ladder,
+     not with XrefMode — same shape, different item.
 8. **Remove XrefMode** — deletes the `-create`/`-update` legacy engine. Needs items 6 and
    7; nothing else holds it up.
 9. **Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
