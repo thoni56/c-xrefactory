@@ -45,11 +45,12 @@ features. Relative effort only — no dates (#noestimates).
    `loadProjectSettings` re-reading the config, but `initializeProjectContext` now resets
    and reads for itself, so what the flag actually prevents is worth re-deciding. Small,
    and it wants the lifetime partition's answer to "who owns this" more than a patch.
-3. **Expanding-CU rename** — `UsageMacroBaseFileUsage` → `UsageMacroExpandingCU`,
-   `addMacroBaseUsageRef` → `addExpandingCUMarker`, `findMacroExpansionFile` →
-   `findExpandingCU`. Terminology in `doc/docs/06-principles.adoc` already uses the new
-   words and cites the old identifiers; update the parenthesised names afterwards. No
-   snapshot format bump — the usage is stored numerically.
+3. **Expanding-CU rename** — down to one identifier: `UsageMacroBaseFileUsage` →
+   `UsageMacroExpandingCU`. `addMacroBaseUsageRef` and `findMacroExpansionFile` were
+   deleted with the marker (`3a17bf78`), so only the enum member survives, kept so an
+   existing `.cx` still loads. No snapshot format bump — the usage is stored numerically,
+   and the name is not. Terminology in `doc/docs/06-principles.adoc` already uses the new
+   words and cites the old identifiers; update the parenthesised names afterwards.
 
 ## 1. The foundational one
 
@@ -88,8 +89,10 @@ features. Relative effort only — no dates (#noestimates).
    `-D`, `-optinclude`.
 8. **Decide what a bare `c-xref file.c` does** once XrefMode is no longer the default
    mode. A decision, not code.
-9. **Remove XrefMode** — deletes the `-create`/`-update` legacy engine. Needs the three items
-   above and ADR-0027's expanding-CU marker.
+9. **Remove XrefMode** — deletes the `-create`/`-update` legacy engine. Needs the three
+   items above. ADR-0027's expanding-CU dependency is discharged: the include-graph walk
+   replaced the marker rather than recording it (`3a17bf78`), so nothing writes or reads
+   it any more.
 10. **Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
     re-entering `callServer`. Independent of the rest of this chain (it asserts
     `ServerMode`), but it is the last divergent parse path.
@@ -175,10 +178,12 @@ PUSH on ffmpeg `af_afir.c`: scan 2.7s, two Pass 3 rounds 19s each, 42s total).
 
 ## Open questions that would reorder this
 
-* **Is ADR-0027's expanding-CU marker dependency discharged?** `0b029fc2`, `3a17bf78` and
-  `092db313` landed exactly that work. If the include-graph walk *replaces* the marker
-  rather than still recording it, §2 loses its hardest precondition and could move ahead
-  of §1.
+* **ADR-0027's expanding-CU dependency is discharged** (answered 2026-09-22). The walk
+  replaced the marker: `addMacroBaseUsageRef` and its call site are gone, so nothing
+  writes or reads it. §2 has lost its hardest precondition and could move ahead of §1 —
+  that reordering is still a choice, not a conclusion. What ADR-0027 still lacks is rename
+  refusing from inside a macro body, and completeness above the collection caps; it stays
+  `Accepted`, not `Implemented`.
 * **The Pass 3 item is an observation, not a confirmed bug.** If it is false, §4's ordering stands
   but its baseline does not.
 * **`18-known-bugs.adoc` cites `test_browsing_push_name_parses_whole_project`**, which
