@@ -10,7 +10,7 @@ out
 *.cov*
 server-buffer
 run.std???
-c-xref-copy/
-systemd-copy/
+# Copies of other source trees, kept for bisecting; never part of the repo
+*-copy/
 # A stable runner for bisecting: it must stay untracked so 'git reset --hard' leaves it alone
 Makefile.robust
