@@ -85,11 +85,12 @@ features. Relative effort only — no dates (#noestimates).
    in server mode. Roadmap, "Report what did not parse". Doubles as the server half of
    the Indexing Log Buffer item. Scope reporting to the operation's own parse, not the
    session-wide `-errors`.
-7. **Give the remaining XrefMode-only tests a server-mode home.** Standard *defines* is
-   already done (`9e357408`); three are left, and only one is a straight conversion:
-   - `tests/test_discover_standard_includes` — asserts the compiler's include directories
-     were found, negatively: it greps the run's log for "can't open file stdbool.h" and
-     requires it absent. A server version can assert it positively, from the dump.
+7. **Give the remaining XrefMode-only tests a server-mode home.** Only `-optinclude` is
+   left; the other three are done (`9e357408`, `4dc4ac3d`, and the includes one below):
+   - `tests/test_discover_standard_includes` — DONE. It now asserts positively, from the
+     snapshot: `bool`, `true` and `false` are defined nowhere but `stdbool.h`, so their
+     presence proves the header was found and parsed. Their positions are deliberately
+     not asserted, being the compiler's own line numbers.
    - `tests/test_multipass` — DONE for the symbol half. Multi-pass does fire in server
      mode: `maxPasses` starts at 1 and the per-pass config read raises it, and the
      converted test gets `pass1` and `pass2` from mutually exclusive `#ifdef` branches in
