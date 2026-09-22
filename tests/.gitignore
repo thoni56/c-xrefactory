@@ -12,3 +12,5 @@ server-buffer
 run.std???
 c-xref-copy/
 systemd-copy/
+# A stable runner for bisecting: it must stay untracked so 'git reset --hard' leaves it alone
+Makefile.robust
