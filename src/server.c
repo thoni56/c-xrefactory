@@ -107,17 +107,13 @@ static int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount,
  * expands the macro. A CU can only expand it if it includes the file defining
  * it, so the includers of the request file bound the candidates - and the
  * include graph knows them without parsing anything (ADR-0027). */
-static int findCompilationUnitExpandingTheMacro(void) {
-    int cuFileNumbers[MAX_CUS_TO_REPARSE];
+static int collectCompilationUnitsExpandingTheMacro(int cuFileNumbers[], int maxCUs) {
+    int cuCount = collectCUsIncluding(requestFileNumber, cuFileNumbers, 0, maxCUs);
 
-    int cuCount = collectCUsIncluding(requestFileNumber, cuFileNumbers, 0, MAX_CUS_TO_REPARSE);
-    if (cuCount == 0) {
+    if (cuCount == 0)
         log_debug(":no compilation unit includes '%s', so nothing expands the macro",
                   getFileItemWithFileNumber(requestFileNumber)->name);
-        return NO_FILE_NUMBER;
-    }
-    log_debug(":scheduling file '%s'", getFileItemWithFileNumber(cuFileNumbers[0])->name);
-    return cuFileNumbers[0];
+    return cuCount;
 }
 
 /* The file this request named, as a bare argument on the request's own command
@@ -227,12 +223,16 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
         }
     }
     if (completionPositionFound && !completionStringServed) {
-        // Cursor is on an identifier inside a macro body definition, which hasn't been
-        // processed as a symbol yet. Find and parse a file where the macro is invoked
-        // so the macro expansion will resolve the identifier as an actual symbol.
-        int fileWithMacroExpansion = findCompilationUnitExpandingTheMacro();
-        if (fileWithMacroExpansion!=NO_FILE_NUMBER) {
-            inputFileName = getFileItemWithFileNumber(fileWithMacroExpansion)->name;
+        /* Cursor is on an identifier inside a macro body, which is not a symbol until
+         * some compilation unit expands the macro. Parse every CU that can, so each
+         * meaning the identifier has becomes a referent of its own and the answer is
+         * the whole set (ADR-0027) - one of them is a goto, several are the menu. */
+        int cuFileNumbers[MAX_CUS_TO_REPARSE];
+        int cuCount = collectCompilationUnitsExpandingTheMacro(cuFileNumbers, MAX_CUS_TO_REPARSE);
+        for (int i = 0; i < cuCount; i++) {
+            log_debug(":parsing '%s' to expand the macro",
+                      getFileItemWithFileNumber(cuFileNumbers[i])->name);
+            inputFileName = getFileItemWithFileNumber(cuFileNumbers[i])->name;
             inputOpened = initializeFileProcessing(args, nargs);
             if (inputOpened) {
                 parseInputFile();
