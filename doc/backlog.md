@@ -190,5 +190,5 @@ PUSH on ffmpeg `af_afir.c`: scan 2.7s, two Pass 3 rounds 19s each, 42s total).
   does not exist; the suspended directory is `tests/test_browsing_push_by_name`. Fix the
   reference when touching the remaining-bugs item.
 * **Outside this repo:** the external regression scripts still lack the orphan-test-dir
-  filter that `utils/failing` got in `cadb4cb5` — a `tests/test_*/` with an `output` but
+  filter that `utils/failing` got in `db064a2a` — a `tests/test_*/` with an `output` but
   no `Makefile` reads as a failure.
