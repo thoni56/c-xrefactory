@@ -30,6 +30,7 @@ Describe(Options);
 BeforeEach(Options) {
     log_set_level(LOG_ERROR);
     memoryInit(&options.memory, "", OptionsMemorySize);
+    memoryInit(&ppmMemory, "", PreprocessorMemorySize);
 }
 AfterEach(Options) {}
 
@@ -227,7 +228,6 @@ static bool argsContain(ArgumentsVector args, char *wantedOption) {
 }
 
 Ensure(Options, collects_the_options_of_a_well_formed_pass_marker) {
-    memoryInit(&ppmMemory, "", PreprocessorMemorySize);
     char project[1000], unused[1000];
     ArgumentsVector nargs;
 
@@ -242,7 +242,6 @@ Ensure(Options, collects_the_options_of_a_well_formed_pass_marker) {
 }
 
 Ensure(Options, drops_the_section_of_a_pass_marker_without_a_number) {
-    memoryInit(&ppmMemory, "", PreprocessorMemorySize);
     char project[1000], unused[1000];
     ArgumentsVector nargs;
 
@@ -258,7 +257,6 @@ Ensure(Options, drops_the_section_of_a_pass_marker_without_a_number) {
 }
 
 Ensure(Options, does_not_raise_maxPasses_above_the_maximum) {
-    memoryInit(&ppmMemory, "", PreprocessorMemorySize);
     char project[1000], unused[1000];
     ArgumentsVector nargs;
 
