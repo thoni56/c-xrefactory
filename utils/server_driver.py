@@ -42,6 +42,7 @@ import os
 import subprocess
 import io
 import time
+import select
 import shlex
 import shutil
 import argparse
@@ -215,7 +216,30 @@ if __name__ == "__main__":
                     command = read_command(file)
                     eprint(command)
 
-        line = p.stdout.readline()[:-1].decode()
-        while line != '':
+        # The command file ended without <exit>, so the client is gone. Closing
+        # stdin is what a dead editor looks like to the server: it finishes
+        # whatever it is doing, writes its answer, and finds the channel closed
+        # at its next read. We keep draining its stdout until then, because
+        # leaving first would send it SIGPIPE on that write instead.
+        p.stdin.close()
+        timeout = args.timeout if args.timeout > 0 else None
+        deadline = None if timeout is None else time.monotonic() + timeout
+        server_gone = False
+        while True:
+            remaining = None if deadline is None else deadline - time.monotonic()
+            if remaining is not None and remaining <= 0:
+                break
+            if not select.select([p.stdout], [], [], remaining)[0]:
+                break
+            line = p.stdout.readline()[:-1].decode()
+            if line == '':
+                server_gone = True      # stdout closed: the server has gone
+                break
             eprint("Waiting for end of communication, got: '{0}'".format(line))
-            line = p.stdout.readline().decode()[:-1]
+        if not server_gone:
+            try:
+                p.wait(timeout=1)
+            except subprocess.TimeoutExpired:
+                eprint("ERROR: server still running after the client closed the channel")
+                p.kill()
+                sys.exit(1)
