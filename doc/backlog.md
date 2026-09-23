@@ -146,11 +146,6 @@ features. Relative effort only — no dates (#noestimates).
     `setStaticFunctionLinkName` (`src/semact.c`); renames break the build today.
     `tests/test_static_declared_and_defined_in_header/.suspended` has the
     `exactPositionResolve` question to settle first, so it starts as a decision.
-13. **`prepareInputFileForRequest`** (`src/server.c`) — resume from the clue, not the
-    symptom: the extra scheduled file appears *only* when a header is the request file, so
-    the question is what schedules it, not why the `fileNumber` tie-break loses. Pinned by
-    `tests/test_browsing_push_in_unexpanded_macro/.suspended` and a suspended Cgreen test.
-    A naive `options.inputFiles` fix broke ~50 tests once (`00a8ded3`).
 14. Then, roughly by cost — each has a `.suspended` note or a `18-known-bugs.adoc` entry:
     `tests/test_getproject_unknown_cu_under_include_path` (any file under an `-I`
     directory counts as project) · `tests/test_preprocess_edit_removes_ifdef_define` (CU
