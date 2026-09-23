@@ -194,9 +194,10 @@ units, 1.38M lines of `.c` and `.h`, on the maintainer's Mac:
 
 * *Whole-tree parse* — 8m07s wall clock (user 7m47s), writing a 17.96MB snapshot. That is
   about 186ms per compilation unit, or ~2800 lines a second counting each CU's headers
-  every time it sees them. The `test_ffmpeg` Makefile still says "~25 minutes" from an
-  older measurement; the file count is unchanged and the snapshot is 3% *larger* than the
-  13 August one, so the work is not smaller, it is faster.
+  every time it sees them. The file count is unchanged from the 13 August run and the
+  snapshot is 3% *larger*, so the work is not smaller, it is faster. A "~25 minutes"
+  figure had been carried in the fixture's Makefile since `ad546ff2` with no measurement
+  recorded anywhere, which is worth remembering before quoting it back.
 * *Cold-start PUSH* — 42s for `AudioFIRContext` from `af_afir.c`: scan 2.7s, Pass 3 round
   one 19s, round two 19s (the second round from `<...>` includes the full parse
   discovers). This is the number the two rows below are about, and it has not been
@@ -204,6 +205,11 @@ units, 1.38M lines of `.c` and `.h`, on the maintainer's Mac:
 
 The first is what a batch prime costs and what a progress estimate would divide; the
 second is what a user waits for before anything appears.
+
+CI cannot supply either number. Travis times script lines, not tests, and `make ci` runs
+the suite as `make -j` with no limit, so its total is build plus the longest test with
+everything else overlapped — an upper bound, not a measurement. Getting a series out of
+CI would mean printing elapsed time per test in `tests/Makefile`.
 
 [cols="1,3"]
 |===

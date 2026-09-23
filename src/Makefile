@@ -247,7 +247,6 @@ devel: check-tokens
 devel-proper: unit build
 
 .PHONY:ci
-ci: OPTIMIZATION=-O3
 ci:
 	$(MAKE) -e -j unit
 	$(MAKE) -e -j build

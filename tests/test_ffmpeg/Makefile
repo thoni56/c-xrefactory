@@ -29,7 +29,8 @@ ffmpeg:
 	tar zxf ffmpeg.tgz
 
 # Re-run just the verification step against the existing .c-xref/db,
-# without re-parsing ffmpeg (which takes ~25 minutes). Useful for
+# without re-parsing ffmpeg, which takes minutes - 8m07s measured
+# 2026-09-23, see the roadmap's Optimization section. Useful for
 # iterating on the grep when the snapshot is already populated.
 verify-only:
 	@grep "$(PWD)" .c-xref/db | grep "\\.c" | wc -l | tr -d ' ' > output
