@@ -1101,8 +1101,6 @@ static bool processCOption(int *argi, ArgumentsVector args) {
     else if (strncmp(args.argv[i], "-csuffixes=",11)==0) {
         options.cFilesSuffixes = allocateStringForOption(&options.cFilesSuffixes, args.argv[i]+11);
     }
-    else if (strcmp(args.argv[i], "-create")==0)
-        options.update = UPDATE_CREATE;
     else if (strncmp(args.argv[i], "-compiler=", 10)==0) {
         options.compiler = allocateStringForOption(&options.compiler, &args.argv[i][10]);
     } else
@@ -1170,14 +1168,6 @@ static bool processFOption(int *argi, ArgumentsVector args) {
     }
     else if (strcmp(args.argv[i], "-filescaseunsensitive")==0) {
         options.fileNamesCaseSensitive = false;
-    }
-    else if (strcmp(args.argv[i], "-fastupdate")==0)  {
-        options.update = UPDATE_FAST;
-        options.updateOnlyModifiedFiles = true;
-    }
-    else if (strcmp(args.argv[i], "-fullupdate")==0) {
-        options.update = UPDATE_FULL;
-        options.updateOnlyModifiedFiles = false;
     }
     else return false;
     *argi = i;
@@ -1622,10 +1612,6 @@ static bool processTOption(int *argi, ArgumentsVector args) {
 static bool processUOption(int *argi, ArgumentsVector args) {
     int i = *argi;
     if (0) {}
-    else if (strcmp(args.argv[i], "-update")==0)  {
-        options.update = UPDATE_FULL;
-        options.updateOnlyModifiedFiles = true;
-    }
     else
         return false;
     *argi = i;

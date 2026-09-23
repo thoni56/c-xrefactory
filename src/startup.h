@@ -34,6 +34,4 @@ extern void restoreMemoryCheckPoint(void);
 extern bool isProjectConfigChanged(void);
 extern void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs);
 
-extern UpdateType updateType;
-
 #endif

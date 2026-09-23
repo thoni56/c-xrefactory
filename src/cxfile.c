@@ -79,7 +79,6 @@ typedef enum {
     CXSF_NOP,
     CXSF_DEFAULT,
     CXSF_JUST_READ,
-    CXSF_GENERATE_OUTPUT,
     CXSF_FIRST_PASS,
 } CxFileScanOperation;
 
@@ -609,8 +608,6 @@ static void scanFunction_CheckNumber(int size,
     bool exactPositionLinkFlag;
 
     assert(key == CXFI_CHECK_NUMBER);
-    if (options.update == UPDATE_CREATE)
-        return; // no check when creating new file
 
     magicNumber = lastIncomingData.data[CXFI_CHECK_NUMBER];
 

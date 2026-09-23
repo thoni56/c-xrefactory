@@ -632,15 +632,6 @@ bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
     return true;
 }
 
-static void checkExactPositionUpdate(UpdateType *updateType, bool printMessage) {
-    if (*updateType == UPDATE_FAST && options.exactPositionResolve) {
-        *updateType = UPDATE_FULL;
-        if (printMessage) {
-            warningMessage(ERR_ST, "-exactpositionresolve implies full update");
-        }
-    }
-}
-
 /* Heavy orchestration-level initialization for legacy Server/Xref modes.
  * Handles multi-project server architecture where project settings can change per file.
  *
@@ -734,8 +725,6 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
  fini:
     initializationsPerInvocation();
-
-    checkExactPositionUpdate(&options.update, false);
 
     LEAVE();
     return inputOpened;
@@ -854,45 +843,19 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
 
     if (projectConfigurationFileName[0]!=0) {
         ArgumentsVector dfargs;
-        ProcessFileArguments inmode;
 
         /* Don't read pass-specific options during initialization - those are handled
-         * per-pass in initializeFileProcessing. Setting NO_PASS skips all -passN sections. */
+         * per-pass in initializeFileProcessing. */
         int savedPass = currentPass;
-        currentPass = NO_PASS;
+        currentPass = NO_PASS;  /* Skip all -passN sections */
         dfargs = readOptionsFromFile(projectConfigurationFileName, projectConfigurationSection, projectConfigurationSection);
         currentPass = savedPass;
-        if (options.mode==ServerMode) {
-            inmode = PROCESS_FILE_ARGUMENTS_NO;
-        } else if (options.project!=NULL || options.update != UPDATE_DEFAULT) {
-            inmode = PROCESS_FILE_ARGUMENTS_YES;
-        } else {
-            inmode = PROCESS_FILE_ARGUMENTS_NO;
-        }
-        // disable error reporting on xref task on this pre-reading of .c-xrefrc
+
+        // disable error reporting on this pre-reading of .c-xrefrc
         bool previousNoErrorsOption = options.noErrors;
-        if (options.mode==ServerMode) {
-            options.noErrors = true;
-        }
-        // there is a problem with INFILES_ENABLED (update for safetycheck),
-        // It should first load cxref file, in order to protect file numbers.
-        if (inmode==PROCESS_FILE_ARGUMENTS_YES && options.update && options.update != UPDATE_CREATE) {
-            //&fprintf(dumpOut, "PREREADING !!!!!!!!!!!!!!!!\n");
-            // this makes a problem: I need to preread cxref file before
-            // reading input files in order to preserve hash numbers, but
-            // I need to read options first in order to have the name
-            // of cxref file.
-            // I need to read fstab also to remove removed files on update
-            processOptions(dfargs, PROCESS_FILE_ARGUMENTS_NO);
-            loadFileNumbersFromStore();
-        }
-        processOptions(dfargs, inmode);
-        // recover value of errors messages
-        if (options.mode==ServerMode)
-            options.noErrors = previousNoErrorsOption;
-        checkExactPositionUpdate(&options.update, false);
-        if (inmode == PROCESS_FILE_ARGUMENTS_YES)
-            processFileArguments();
+        options.noErrors = true;
+        processOptions(dfargs, PROCESS_FILE_ARGUMENTS_NO);
+        options.noErrors = previousNoErrorsOption;
     }
 
     LEAVE();
