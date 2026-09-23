@@ -54,11 +54,6 @@ features. Relative effort only — no dates (#noestimates).
    Seen 2026-09-23 in a trace of `tests/test_browsing_from_header_finds_includers`.
    Probably `previousPass != currentPass`, since `initializeProjectContext` records
    `previousPass` before any pass is set. Not verified, so a test that notices it comes first.
-3. **Expanding-CU rename** — one identifier left: `UsageMacroBaseFileUsage` →
-   `UsageMacroExpandingCU`. The member is kept so an existing `.cx` still loads, and
-   renaming it is free because the usage is stored numerically, not by name. Terminology
-   in `doc/docs/06-principles.adoc` already uses the new words and cites the old
-   identifier; update the parenthesised name afterwards.
 
 ## 1. The foundational one
 

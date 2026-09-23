@@ -365,7 +365,7 @@ static void writeSymbolItemIfNotWritten(void) {
 
 static void writeCxReferenceBase(Usage usage, int file, int line, int col) {
     writeSymbolItemIfNotWritten();
-    if (usage == UsageMacroBaseFileUsage) {
+    if (usage == UsageMacroExpandingCU) {
         /* optimize the number of those references to 1 */
         if (lastOutgoingData.macroBaseFileGeneratedForSymbol)
             return;
