@@ -182,7 +182,14 @@ Pass 3 rounds 19s each, 42s total.
     unit the scan found and has not parsed** — what ADR-0024's CreateMode reduces to
     once the priming is a request rather than a mode; `test_ffmpeg` and
     `test_systemd` ask for it today by searching a name nobody defines and answering
-    `-continue`. Also **unused-detection exclude patterns**, **browsing includes**,
+    `-continue`. If it becomes something a user asks for, it needs to say how long
+    it will take: `src/progress.c` already keeps `timeZero` and a monotonic clock,
+    and the parse loops already count down, so the missing part is the division and
+    a format that says "4 min left" rather than a remaining count. Decide the unit
+    first — CUs are uneven enough (`avcodec.h`'s consumers against a 40-line `.c`)
+    that a mean over them swings early and settles late, where lines or bytes are
+    steadier and both are known before parsing starts.
+    Also **unused-detection exclude patterns**, **browsing includes**,
     **semantic read-only files**, **rename handles `expect`**, **project-local
     config**. All in `11-planned-features.adoc`.
 25. **Local config fragments — the need, not a solution** — *no repo home yet.*
