@@ -693,6 +693,10 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
     /* Determine if we need full initialization or can restore from checkpoint.
      * Full init required when: first pass, different pass, different project,
      * or the current options file changed. */
+    log_debug("initializeFileProcessing - pass %d (previous %d), config '%s' (previous '%s'), section '%s' (previous '%s'), config mtime %s",
+              currentPass, previousPass, projectConfigFileName, previousProjectConfigurationFile,
+              projectSectionName, previousProjectConfigurationSection,
+              fileTimestampsEqual(previousProjectConfigurationFileModificationTime, modifiedTime) ? "unchanged" : "changed");
     if (previousPass != currentPass                                       /* We are in a different pass */
         || strcmp(previousProjectConfigurationFile, projectConfigFileName) != 0 /* or we are using a different options file */
         || strcmp(previousProjectConfigurationSection, projectSectionName) != 0 /* or a different project */

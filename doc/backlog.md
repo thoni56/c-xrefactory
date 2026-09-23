@@ -24,12 +24,9 @@ features. Relative effort only — no dates (#noestimates).
    the cursor, as `-push` always does with the request file. The open question is whether an
    operation's cursor parse should reuse a CU's references instead of re-parsing it.
 
-2. **A cold start interrogates the compiler twice** — *no repo home.* `-getproject`
-   runs `discoverBuiltinIncludePaths`, and the first `initializeFileProcessing` after it
-   takes the full branch and runs gcc again. Later requests restore the checkpoint.
-   Seen 2026-09-23 in a trace of `tests/test_browsing_from_header_finds_includers`.
-   Probably `previousPass != currentPass`, since `initializeProjectContext` records
-   `previousPass` before any pass is set. Not verified, so a test that notices it comes first.
+2. **A cold start interrogates the compiler twice** —
+   `tests/test_cold_start_interrogates_compiler_once/.suspended`. Removing it first needs
+   the pass count bound without re-reading the config.
 
 ## 1. The foundational one
 

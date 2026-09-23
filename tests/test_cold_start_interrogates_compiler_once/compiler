@@ -1,0 +1,4 @@
+#!/bin/sh
+# Stands in for the compiler: log the arguments, then run the real one
+echo "$*" >> "$(dirname "$0")/compiler.log"
+exec gcc "$@"

@@ -1,0 +1,24 @@
+Bug: A cold start interrogates the compiler twice
+
+-getproject runs discoverBuiltinIncludePaths and discoverStandardDefines and saves a
+checkpoint. The -push that follows runs them again, because initializeFileProcessing
+takes its full branch instead of restoring the checkpoint. The debug line in front of
+that branch says why: "pass 1 (previous -1)". server() starts every request in
+ANY_PASS (-1), so that is what initializeProjectContext records, and every parse
+starts in pass 1.
+
+Recording pass 1 is not enough on its own. In ANY_PASS the config reader treats every
+-passN section as active, so the settings -getproject saves merge all passes.
+
+Loading the settings for pass 1 in initializeProjectContext makes this test pass, but
+breaks four others (tried 2026-09-23 on the WSL machine, session a3efe465):
+
+- test_multipass loses pass 2. processFile resets maxPasses to 1 before each parse
+  loop (src/server.c), and only reading the config raises it again (-passN marker,
+  src/options.c). The full reload is how a parse learns there is a pass 2.
+- test_move_function_with_preceding_star_comment, _with_preceding_slash_comment and
+  _with_multiple_star_comments move the function without its comment. Not understood.
+
+So the second interrogation is a side effect of the config read. Before removing it,
+the pass count has to be bound some other way, probably once with the project since
+it is a property of the config, and the move function difference has to be explained.
