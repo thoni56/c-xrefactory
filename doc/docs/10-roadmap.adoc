@@ -74,10 +74,17 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
  server-mode home first. It is also the default mode, so a bare `c-xref file.c` needs an
  answer.
 
-|CreateMode
-|Optional `c-xref -create` batch prime on the server path
- (link:/workspace/1/decisions/C-xrefactory#24[ADR-0024]): priming a large project up
- front, and an entry point for CI. Not a dependency of XrefMode removal.
+|Batch prime
+|An explicit request — `-parse-all` — that parses every compilation unit the scan
+ found and has not parsed yet. Whatever wants a whole-project parse then asks for it:
+ a user before a long session, a test fixture, a CI check. `test_ffmpeg` and
+ `test_systemd` ask for it today by searching for a name nobody defines and answering
+ the parse-all question with `-continue`, which is the shape of a missing request.
+ CreateMode (link:/workspace/1/decisions/C-xrefactory#24[ADR-0024]) is then whatever
+ remains once the request exists — a command that starts, gets the project, sends it
+ and exits — a convenience for a shell rather than the primitive. That ADR's own
+ update of 2026-09-19 already narrows it this far. Not a dependency of XrefMode
+ removal.
 
 |Clean stale header emissions
 |Variant-B orphan fix — reparse by include structure gated on a per-CU fingerprint,

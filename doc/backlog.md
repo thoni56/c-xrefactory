@@ -178,9 +178,13 @@ Pass 3 rounds 19s each, 42s total.
     `src/lsp_handler.c`. Keep tier 3 (custom methods + per-editor extension code) small.
 24. **Move Function next steps** — remove the source header's extern declaration, include
     management, helper-function detection, smarter header placement, preview — then
-    **Delete Function**. Also **CreateMode** (ADR-0024), **unused-detection exclude
-    patterns**, **browsing includes**, **semantic read-only files**, **rename handles
-    `expect`**, **project-local config**. All in `11-planned-features.adoc`.
+    **Delete Function**. Also **`-parse-all`, a request that parses every compilation
+    unit the scan found and has not parsed** — what ADR-0024's CreateMode reduces to
+    once the priming is a request rather than a mode; `test_ffmpeg` and
+    `test_systemd` ask for it today by searching a name nobody defines and answering
+    `-continue`. Also **unused-detection exclude patterns**, **browsing includes**,
+    **semantic read-only files**, **rename handles `expect`**, **project-local
+    config**. All in `11-planned-features.adoc`.
 25. **Local config fragments — the need, not a solution** — *no repo home yet.*
     `.c-xrefrc` travels with the project and is checked in, which is why
     `11-planned-features.adoc` argues for it: "it will not contain absolute file paths".

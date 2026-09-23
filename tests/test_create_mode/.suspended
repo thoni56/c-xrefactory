@@ -1,3 +1,21 @@
-Missing: new create mode
+Missing: a request that parses the whole project
 
-new create not implemented yet, should it be?
+The test drives `c-xref -create2`, which does not exist. What it waits for is not a
+mode but a request - call it `-parse-all` - that parses every compilation unit the
+project scan found and has not parsed yet.
+
+test_ffmpeg and test_systemd need exactly that and fake it today: they search for
+`non_existant_to_force_parse_all` and answer the parse-all question with
+`-continue`. A search designed to match nothing is the shape of a missing request.
+
+ADR-0024 proposed CreateMode as a standalone batch mode, and its own update of
+2026-09-19 already narrows it: the XrefMode-unblock rationale is gone, and what is
+left is priming and a CI entry point. With the request in place, a batch command is
+a shell around it - start, -getproject, -parse-all, save, exit - which is a
+convenience for a command line, not a second engine. The ADR is still Proposed, so
+it can be narrowed rather than superseded.
+
+Settle the spelling before implementing. This directory's Makefile still says
+-create2 and describes driving `options.serverOperation = OP_CREATE`, which is
+already an operation rather than a mode - the plan was closer to this than the name
+suggested. Remove this file in the same commit as the fix.
