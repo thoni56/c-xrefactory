@@ -48,7 +48,6 @@ Options presetOptions = {
     .lexemTrace = false,
     .fileTrace = false,
     .statistics = false,
-    .update = UPDATE_DEFAULT,
 
     /* --- PROJECT --- */
     .compiler = "gcc",

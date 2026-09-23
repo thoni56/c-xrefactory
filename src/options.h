@@ -29,12 +29,6 @@ typedef struct variable {
     char *value;
 } Variable;
 
-typedef enum updateType {
-    UPDATE_DEFAULT = 0,              // must be zero because of tests like 'if (options.update)...'
-    UPDATE_FAST,
-    UPDATE_FULL,
-    UPDATE_CREATE,                   // create from scratch, skip compatibility checks
-} UpdateType;
 
 /* *******************      comment moving levels for refactoring      *************** */
 
@@ -85,7 +79,6 @@ typedef struct options {
     bool lexemTrace;                            /* SESSION */
     bool fileTrace;                             /* SESSION */
     bool statistics;                            /* SESSION */
-    UpdateType update;                          /* SESSION/REFACTORING */
 
     /* --- PROJECT: From .c-xrefrc config file, cached via checkpoint --- */
     char *compiler;                             /* PROJECT */
