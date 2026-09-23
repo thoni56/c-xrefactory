@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3  # Checks out your repository under $GITHUB_WORKSPACE
+        uses: actions/checkout@v7  # Checks out your repository under $GITHUB_WORKSPACE
 
       - name: Set up Python 3.x
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v7
         with:
           python-version: '3.x'  # Ensures Python 3.x is installed, adjust as needed for your project
 
@@ -32,7 +32,7 @@ jobs:
         run: make -C doc ci
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./doc/dist  # Adjusts the path to the build output directory
