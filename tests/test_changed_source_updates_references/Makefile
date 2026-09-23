@@ -20,16 +20,3 @@ $(TEST):
 
 trace: SERVER_EXTRA = --extra '-debug -log=trace'
 trace: $(TEST)
-
-db:
-	$(CXREF) -xref -create
-	../../utils/cxref_reader
-
-fresh:
-	-rm -rf CXrefs
-	$(CXREF) -xref -create
-	../../utils/cxref_reader
-
-fastupdate:
-	$(CXREF) -xref -fastupdate -preload source.c source.preload
-	../../utils/cxref_reader
