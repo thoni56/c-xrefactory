@@ -97,6 +97,13 @@ features. Relative effort only — no dates (#noestimates).
    - Everything project-scoped — `-p`, `-xrefrc`, `-I`, `-D`, `-optinclude` — belongs to
      the config and binds at `-getproject`, not here. `-refs` and `-refnum` are not on
      that list any more: they are removed outright, see the items below.
+   - **`-exactpositionresolve` has no strategy.** It is real: it changes link names
+     (`src/semact.c`) and goes into the snapshot's check number (`src/cxfile.c`). Since it
+     changes what a symbol is, it is probably project-scoped, although `options.h` marks it
+     REQUEST. Decide whether it belongs in the config or goes. `-create`, `-update` and
+     `-fastupdate` (`options.update`) are XrefMode's update types, so probably legacy.
+     `checkExactPositionUpdate()`, moved to `src/startup.c` with `xref.c`'s removal, only
+     reconciles the two. Item 13 waits on the same question.
    - **`-lsp` is a third mode and should be one.** `want_lsp_server()` (`src/lsp.c`) scans
      argv in `main()` and returns before `mainTaskEntryInitialisations()`, so it is a mode
      in behaviour but not in `options.mode`. If "state a mode" is the rule, it should say
@@ -147,7 +154,8 @@ features. Relative effort only — no dates (#noestimates).
     reparse leaves a header declaration it no longer emits — ADR-0025 variant B) ·
     `tests/test_browsing_push_by_name` (needs decided behaviour when a name has several
     bindings) · GlobalUnused false positive for statics in `.y` files ·
-    `tests/test_parsing_generics` (`_Generic` not parsed) · **a refactoring can see a
+    `tests/test_parsing_generics` (`_Generic` not parsed) · a compilation unit deleted
+    outside the editor is never let go (`18-known-bugs.adoc`) · **a refactoring can see a
     truncated reference set** (`18-known-bugs.adoc`) — severe where it bites, rewriting 13
     of 25 occurrences on ffmpeg, but it needs a header included by more than ~130 CUs, and
     c-xrefactory has 79 with a worst fan-in of 39, so it cannot happen here. That, and

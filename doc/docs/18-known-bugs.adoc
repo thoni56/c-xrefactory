@@ -106,3 +106,19 @@ order, because the other two tests assume the first is fixed:
 
 Whether numbers need the intermediate `a##b` entries that identifier pasting records is
 left for the fix to decide.
+
+=== A compilation unit deleted outside the editor is never let go
+
+*Symptom:* Delete a `.c` file from the terminal while the server runs. Every project-wide
+operation then asks "1 of 138 compilation units need reparsing", and answering yes gives
+"Can't open file ... : No such file or directory". It asks again the next time. Seen
+2026-09-23 on the WSL machine (session `a3efe465`), after deleting `src/xref_tests.c`.
+
+*Suspected root cause:* Only entry refresh Pass 1 notices a deleted compilation unit, and
+it looks only at files open in an editor buffer (`markFileAsDeleted` in `src/server.c`).
+The parse-all check in `callServer` counts every compilation unit in the file table whose
+`lastParsedMtime` is zero. For a missing file the reparse fails, and the mtime it then
+records is zero again, so the file is counted on every request. Not verified with a test.
+
+This is the deleted-file case of behind-the-back disk changes (see
+<<10-roadmap.adoc#,Roadmap>>, Behind-the-back disk-change detection).
