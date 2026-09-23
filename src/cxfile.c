@@ -109,7 +109,6 @@ typedef struct lastCxFileData {
     BrowsingMenu        *onLineRefMenuItem;
     ReferenceableItem      *referenceableItem;
     bool                symbolIsWritten;
-    bool                macroBaseFileGeneratedForSymbol;
     bool                keyUsed[MAX_CHARS];
     int                 data[MAX_CHARS];
     void                (*handlerFunction[MAX_CHARS])(int size, int key, CharacterBuffer *cb,
@@ -349,7 +348,6 @@ static void writeSymbolItem(void) {
     writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, r->type, "\n"); /* Why newline in the middle of all this? */
     writeOptionalCompactRecord(CXFI_INCLUDEFILENUMBER, r->includeFileNumber, ""); /* TODO - not used, but are actually include file refence */
     writeOptionalCompactRecord(CXFI_STORAGE, r->storage, "");
-    lastOutgoingData.macroBaseFileGeneratedForSymbol = false;
     lastOutgoingData.symbolIsWritten = true;
     writeStringRecord(CXFI_SYMBOL_NAME, r->linkName, "\t");
     fputc('\t', cxFile);
@@ -365,12 +363,6 @@ static void writeSymbolItemIfNotWritten(void) {
 
 static void writeCxReferenceBase(Usage usage, int file, int line, int col) {
     writeSymbolItemIfNotWritten();
-    if (usage == UsageMacroExpandingCU) {
-        /* optimize the number of those references to 1 */
-        if (lastOutgoingData.macroBaseFileGeneratedForSymbol)
-            return;
-        lastOutgoingData.macroBaseFileGeneratedForSymbol = true;
-    }
     writeOptionalCompactRecord(CXFI_USAGE, usage, "");
     writeOptionalCompactRecord(CXFI_SYMBOL_INDEX, 0, "");
     writeOptionalCompactRecord(CXFI_FILE_NUMBER, file, "");
