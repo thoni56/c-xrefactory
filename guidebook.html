@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-09-22">
+<meta name="author" content="v{VERSION} - Generated 2026-09-23">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-09-22</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-09-23</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -1408,14 +1408,12 @@ and not compiled independently.</p>
 </dd>
 <dt class="hdlist1">Expanding CU</dt>
 <dd>
-<p>A compilation unit that expands a given macro. When a macro is expanded while parsing,
-the server records an <em>expanding-CU marker</em> on it: a reference naming the CU being
-parsed, at line 0, column 0 — a marker, not a location, which is why it shows up oddly
-in database dumps. Browsing from inside a macro body uses it to find a CU to parse, so
-that the identifiers in the macro body become real symbols
-(<code>findMacroExpansionFile()</code>, <code>UsageMacroBaseFileUsage</code>).<br>
-Recorded only in XrefMode (what <code>-create</code> runs), so a server-only session has none —
-see the suspended <code>test_browsing_push_in_unexpanded_macro_without_create</code>.</p>
+<p>A compilation unit that expands a given macro. Browsing from inside a macro body
+needs one, because the identifiers there are not symbols until the macro is expanded.
+A CU can only expand a macro if it includes the file that defines it, so the
+candidates are the includers of that file, found in the include graph without parsing
+anything (<code>collectCompilationUnitsExpandingTheMacro()</code>). Each one is parsed, and every
+meaning the identifier gets becomes a referent of its own (ADR-0027).</p>
 </dd>
 <dt class="hdlist1">Include structure</dt>
 <dd>
@@ -3445,9 +3443,8 @@ periodically; no mandatory <code>-create</code>.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">XrefMode removal</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Deletes the <code>-create</code>/<code>-update</code> legacy engine. Needs the expanding-CU marker replaced
- (<a href="/workspace/1/decisions/C-xrefactory#27">ADR-0027</a>) and the error guards re-keyed,
- since XrefMode is the only mode that lets them speak. Three tests observe server
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deletes the <code>-create</code>/<code>-update</code> legacy engine. Needs the error guards re-keyed, since
+ XrefMode is the only mode that lets them speak. Three tests observe server
  behaviour only through it — standard defines, per-pass <code>-D</code>, <code>-optinclude</code> — and need a
  server-mode home first. It is also the default mode, so a bare <code>c-xref file.c</code> needs an
  answer.</p></td>
@@ -11671,7 +11668,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-22 19:53:20 UTC
+Last updated 2026-09-23 06:44:36 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
