@@ -2231,22 +2231,10 @@ void markPreloadedFilesAsAncient(void) {
 }
 
 void saveReferences(void) {
-    static bool everUpdated = false;
-
     if (options.cxFileLocation == NULL)
         return;
-    /* ServerMode always uses the pure-dump path (updating=false): memory is truth,
-     * the in-memory referenceableItemTable already holds everything the snapshot
-     * should contain, so there is nothing to merge from disk. The updating=true
-     * branch below runs the XrefMode-only stream-merge protocol in cxfile.c which
-     * asserts options.mode==XrefMode (see scanFunction_SymbolName/Reference) —
-     * letting ServerMode reach it would trigger that assert on the second save
-     * (e.g. periodic save during parse-all followed by save-on-exit). */
-    if (options.mode == ServerMode || options.update == UPDATE_CREATE || (!everUpdated && options.update == UPDATE_DEFAULT)) {
-        /* Generate from scratch - don't preserve old data */
-        saveReferencesToStore(false, options.cxFileLocation);
-        everUpdated = true;
-    } else {
-        saveReferencesToStore(true, options.cxFileLocation);
-    }
+    /* Memory is truth: the in-memory referenceableItemTable already holds everything
+     * the snapshot should contain, so it is written from scratch and nothing is merged
+     * from disk. */
+    saveReferencesToStore(false, options.cxFileLocation);
 }
