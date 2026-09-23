@@ -10,7 +10,6 @@
 #include "extract.h"
 #include "head.h"
 #include "memory.h"
-#include "optionsets.h"
 #include "proto.h"
 #include "refactorings.h"
 #include "server.h"

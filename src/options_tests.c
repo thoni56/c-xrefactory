@@ -20,6 +20,7 @@
 #include "filetable.mock"
 #include "globals.mock"
 #include "misc.mock"
+#include "optionsets.h"
 #include "parsers.mock"
 #include "ppc.mock"
 #include "proto.h"
