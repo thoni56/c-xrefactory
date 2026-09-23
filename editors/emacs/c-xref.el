@@ -3778,6 +3778,21 @@ section applies to the currently edited file.
 ;;;;;;;;;;;;;;;;;;;;;;;;;; TAGS maintenance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; "tags" here is the reference database, not Emacs TAGS, and the "tag" the
+;; code parses is the XML tag of a PPC record - two different words that met.
+;;
+;; c-xref-tags-dispatch and its two helpers render the indexing log of a -create
+;; or -update run: a stream of <information>, <warning> and <error> records, with
+;; <A HREF="file://..."> turned into a clickable link, inserted into
+;; c-xref-log-view-buffer. Nothing calls c-xref-tags-dispatch any more - it hung
+;; off XrefMode's "View log file?" prompt, which went with the -create flow.
+;;
+;; Kept deliberately rather than deleted. The Indexing Log Buffer in
+;; doc/backlog.md wants the server path to do the same job - PPC_LOG records
+;; appended quietly to *c-xref-log* - and this is what the client half of that
+;; looked like when it worked. The viewer commands and their keymap below are
+;; still bound and still reachable; it is the producer that is missing.
+
 
 (defun c-xref-tags-dispatch-error (ss i len tag)
   (let ((tlen) (cc) (_link) (j) (cclen) (_ccc) (bp) (tlink))
