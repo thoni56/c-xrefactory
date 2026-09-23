@@ -1,4 +1,12 @@
-[C-xref] active project: 'CURDIR'
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-exit
+end-of-options
+
 X0000
 X0001
 X0002
