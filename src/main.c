@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
     else if (options.serverOperation == OP_ABOUT)
         aboutMessage();          /* asking what this is needs no mode */
     else {
-        fprintf(stderr, "No mode given, use -server or -xref\n");
+        fprintf(stderr, "No mode given, use -server or -lsp\n");
         exitCode = EXIT_FAILURE;
     }
 
