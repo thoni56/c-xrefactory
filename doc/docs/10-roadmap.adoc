@@ -100,7 +100,7 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
 * link:/workspace/1/decisions/C-xrefactory#20[ADR-0020] — separate sync from dispatch
 * link:/workspace/1/decisions/C-xrefactory#21[ADR-0021] — single-project server policy
 * link:/workspace/1/decisions/C-xrefactory#22[ADR-0022] — lightweight file-structure scanning
-* link:/workspace/1/decisions/C-xrefactory#24[ADR-0024] — CreateMode
+* link:/workspace/1/decisions/C-xrefactory#24[ADR-0024] — batch prime as a request
 * link:/workspace/1/decisions/C-xrefactory#25[ADR-0025] — clean stale header emissions by reparse
 
 === Convergence: The Setup Ladder
