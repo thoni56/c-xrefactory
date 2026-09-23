@@ -24,15 +24,6 @@ features. Relative effort only — no dates (#noestimates).
    the cursor, as `-push` always does with the request file. The open question is whether an
    operation's cursor parse should reuse a CU's references instead of re-parsing it.
 
-   *Provenance, so it is not rediscovered as fresh:* this began as a 2026-09-18 note
-   claiming Pass 3 reparsed siblings on every request because it never set
-   `lastParsedMtime`. Both halves are false. Pass 3 has set it since `a6020c82`
-   (2026-02-27), and the "logged 0 skipped both times" claim was never observed — the
-   session transcript (`7b84da61…`, on the Mac, not the other machine) holds exactly one
-   Pass 3 summary line at the moment the note was written, and a later run in that same
-   session logs the correct `1 to parse, 0 skipped` → `0 to parse, 1 skipped` pair. The
-   note was an inference from a fifteen-line window of a 23k-line trace.
-
 2. **A cold start interrogates the compiler twice** — *no repo home.* `-getproject`
    runs `discoverBuiltinIncludePaths`, and the first `initializeFileProcessing` after it
    takes the full branch and runs gcc again. Later requests restore the checkpoint.
