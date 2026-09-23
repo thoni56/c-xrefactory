@@ -1,0 +1,45 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-getproject CURDIR/file2.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-push -olcursor=48 CURDIR/file2.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=13 len=<n>>CURDIR/file2.h</position-lc>
+</goto>
+-push -olcursor=49 CURDIR/file.y
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=13 len=<n>>CURDIR/file2.h</position-lc>
+</goto>
+-browse-next -olcursor=49 CURDIR/file.y
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=9 col=17 len=<n>>CURDIR/file.y</position-lc>
+</goto>
+-browse-next -olcursor=49 CURDIR/file.y
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=4 col=11 len=<n>>CURDIR/file2.c</position-lc>
+</goto>
+-browse-next -olcursor=49 CURDIR/file.y
+end-of-options
+
+<sync>
+<bottom-information len=<n>>Moving to the first reference</bottom-information>
+<goto>
+ <position-lc line=1 col=13 len=<n>>CURDIR/file2.h</position-lc>
+</goto>
+-exit
+end-of-options
+
