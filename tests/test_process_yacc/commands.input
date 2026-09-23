@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server
+-getproject CURDIR/file2.c
+<sync>
+-push -olcursor=4 CURDIR/file2.c
+<sync>
+-push -olcursor=50 CURDIR/file.y
+<sync>
+<exit>
