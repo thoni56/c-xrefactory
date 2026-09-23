@@ -768,7 +768,6 @@ $(eval $(call UNITTEST,symbol,memory stackmemory log))
 $(eval $(call UNITTEST,symboltable,hash memory stackmemory))
 $(eval $(call UNITTEST,timestamp,))
 $(eval $(call UNITTEST,undo,memory log))
-$(eval $(call UNITTEST,xref,memory log protocol timestamp))
 $(eval $(call UNITTEST,yylex,memory stackmemory protocol log position filedescriptor id filetable hash symboltable macroargumenttable symbol lexembuffer stringlist lexemstream timestamp))
 
 variables:
