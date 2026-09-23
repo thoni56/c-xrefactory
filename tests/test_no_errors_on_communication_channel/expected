@@ -1,0 +1,11 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-getproject CURDIR/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-search=counter -searchdef -olinelen=159 -olcxlccursor=1:0 -olcursor=0 CURDIR/main.c
+end-of-options
+
+<sync>
+<wait-confirmation len=<n>>2 of 2 compilation units need reparsing. Parse all before searching?</wait-confirmation>

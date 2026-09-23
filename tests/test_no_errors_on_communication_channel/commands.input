@@ -1,1 +1,5 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -create -errors
+CXREF -xrefactory-II -crlfconversion -crconversion -server
+-getproject CURDIR/main.c
+<sync>
+-search=counter -searchdef -olinelen=159 -olcxlccursor=1:0 -olcursor=0 CURDIR/main.c
+<sync>
