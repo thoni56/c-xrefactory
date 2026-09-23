@@ -5448,6 +5448,13 @@ bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);</code></pre>
 <div class="paragraph">
 <p>All information about a symbol is stored in exactly one file, determined by hashing its link name. This means a single file read suffices to look up any symbol.</p>
 </div>
+<div class="paragraph">
+<p>That single-file read is what the partitioning was for, and nothing reads the database
+that way any more: it is a startup snapshot, loaded whole and never consulted again. The
+partitioning and the <code>-refnum</code> that sizes it are therefore being removed, together with
+<code>-refs</code> — see <a href="/workspace/1/decisions/C-xrefactory#28">ADR-0028</a>. What is described
+above is the layout as it still exists.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_file_format">12.11.3. File Format</h4>
@@ -6844,6 +6851,11 @@ target.
 treats the in-memory reference table as authoritative. The legacy path
 (<code>initializeFileProcessing</code>) is retained for explicit <code>-xrefrc</code> configurations. The flow
 below describes the auto-detect path.</p>
+</div>
+<div class="paragraph">
+<p><code>-xrefrc</code> is on its way out — <a href="/workspace/1/decisions/C-xrefactory#5">ADR-0005</a> called
+for removing it once discovery existed, and discovery exists — so this legacy path is
+expected to go with it rather than to stay as a second way in.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -11710,7 +11722,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-23 13:48:03 UTC
+Last updated 2026-09-23 14:16:52 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
