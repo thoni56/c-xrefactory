@@ -40,6 +40,14 @@ features. Relative effort only — no dates (#noestimates).
    answering yes would mark *every* CU stale on *every* request, which is a bigger cost
    than the one originally suspected. Reproduce with `make trace` in that test directory
    and see which branch fires, before changing anything. Upstream of everything in §4.
+
+   **Reproduces cold, but not as suspected** (traced 2026-09-23 on `7ba5650f`, in
+   `tests/test_browsing_push_in_unexpanded_macro_without_create`). `-getproject` parses
+   `source.c` in Pass 3. At `-push` Pass 3 skips it as already parsed, so no state is lost.
+   The macro-body path then parses it again to resolve the cursor, as `-push` always does
+   with the request file. The open question is whether an operation's cursor parse should
+   reuse a CU's references instead. The primed test cannot show any of this.
+   The 2026-09-18 trace was on the other machine and is being checked against its session.
 2. **`optionSetsLoaded` guards less than it looks like it does** — *no repo home.* The
    file-static in `src/startup.c` is set once and never reset; its job was to stop
    `loadProjectSettings` re-reading the config, but `initializeProjectContext` now resets
