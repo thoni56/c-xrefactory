@@ -4,11 +4,6 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-CXREF -xref -xrefactory-II -crlfconversion -crconversion -fastupdate -errors
-<information len=<n>>C-xrefactory project: CURDIR</information>
-<information len=<n>>CURDIR/source.c</information>
-<information len=<n>>Generating 'CURDIR/.c-xref/db'</information>
-<sync>
 -push -olcursor=6 CURDIR/source.c
 end-of-options
 
@@ -36,11 +31,6 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-CXREF -xref -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -preload CURDIR/source.c CURDIR/source.preload
-<information len=<n>>C-xrefactory project: CURDIR</information>
-<information len=<n>>CURDIR/source.c</information>
-<information len=<n>>Generating 'CURDIR/.c-xref/db'</information>
-<sync>
 -push -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c
 end-of-options
 

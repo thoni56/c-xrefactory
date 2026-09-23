@@ -1,7 +1,6 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server
 -getproject CURDIR/source.c
 <sync>
-CXREF -xref -xrefactory-II -crlfconversion -crconversion -fastupdate -errors
 -olcxpushonly  -olcursor=25 CURDIR/source.c
 <sync>
 -olcxmenufilter=2
