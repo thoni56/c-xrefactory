@@ -4,11 +4,9 @@
 # no snapshot, nothing primed. Under "memory is truth" it should give the same
 # answer, finding a CU that expands GET_AREA by itself.
 #
-# It does not. findMacroExpansionFile looks for a UsageMacroBaseFileUsage
-# reference, and expandMacroCall only records one when options.mode == XrefMode
-# (src/yylex.c), which is what -create runs. Removing that condition does make
-# the reference appear, but the answer is still "No reference", so at least one
-# more thing is missing on the server-only path.
+# It finds one by walking the include graph from macro.h to source.c, which
+# -getproject has already parsed. The -push parses source.c again, with the
+# cursor in the macro body, to resolve calculate_area.
 
 include ../Makefile.server
 
