@@ -14,6 +14,6 @@ full paths in the output.
 In that magic CURDIR is exchanged with the full path of the current
 directory.
 
-NOTE these tests can't be run in parallel yet, like with 'make -j',
-probably because c-xref can't generate temporary files uniquely in
-parallel.  (I'm "kill-gissing", ...)
+The tests can be run in parallel, like with 'make -j', which is what
+'make ci' does. A few have been seen to fail now and then in a
+parallel run, see "Parallel runs" in doc/docs/15-development-environment.adoc.
