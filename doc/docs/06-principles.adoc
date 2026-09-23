@@ -260,14 +260,12 @@ Compilation unit (CU)::
   and not compiled independently.
 
 Expanding CU::
-  A compilation unit that expands a given macro. When a macro is expanded while parsing,
-  the server records an _expanding-CU marker_ on it: a reference naming the CU being
-  parsed, at line 0, column 0 — a marker, not a location, which is why it shows up oddly
-  in database dumps. Browsing from inside a macro body uses it to find a CU to parse, so
-  that the identifiers in the macro body become real symbols
-  (`findMacroExpansionFile()`, `UsageMacroBaseFileUsage`). +
-  Recorded only in XrefMode (what `-create` runs), so a server-only session has none —
-  see the suspended `test_browsing_push_in_unexpanded_macro_without_create`.
+  A compilation unit that expands a given macro. Browsing from inside a macro body
+  needs one, because the identifiers there are not symbols until the macro is expanded.
+  A CU can only expand a macro if it includes the file that defines it, so the
+  candidates are the includers of that file, found in the include graph without parsing
+  anything (`collectCompilationUnitsExpandingTheMacro()`). Each one is parsed, and every
+  meaning the identifier gets becomes a referent of its own (ADR-0027).
 
 Include structure::
   The graph of `#include` relationships between files, represented in the reference table

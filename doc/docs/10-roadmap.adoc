@@ -68,9 +68,8 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
  <<11-planned-features.adoc#,Planned Features>> (Indexing Log Buffer).
 
 |XrefMode removal
-|Deletes the `-create`/`-update` legacy engine. Needs the expanding-CU marker replaced
- (link:/workspace/1/decisions/C-xrefactory#27[ADR-0027]) and the error guards re-keyed,
- since XrefMode is the only mode that lets them speak. Three tests observe server
+|Deletes the `-create`/`-update` legacy engine. Needs the error guards re-keyed, since
+ XrefMode is the only mode that lets them speak. Three tests observe server
  behaviour only through it — standard defines, per-pass `-D`, `-optinclude` — and need a
  server-mode home first. It is also the default mode, so a bare `c-xref file.c` needs an
  answer.
