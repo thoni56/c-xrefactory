@@ -42,11 +42,11 @@ features. Relative effort only — no dates (#noestimates).
    and see which branch fires, before changing anything. Upstream of everything in §4.
 
    **Reproduces cold, but not as suspected** (traced 2026-09-23 on `7ba5650f`, in
-   `tests/test_browsing_push_in_unexpanded_macro_without_create`). `-getproject` parses
+   `tests/test_browsing_push_in_unexpanded_macro`, now cold). `-getproject` parses
    `source.c` in Pass 3. At `-push` Pass 3 skips it as already parsed, so no state is lost.
    The macro-body path then parses it again to resolve the cursor, as `-push` always does
    with the request file. The open question is whether an operation's cursor parse should
-   reuse a CU's references instead. The primed test cannot show any of this.
+   reuse a CU's references instead.
    The 2026-09-18 trace was on the other machine and is being checked against its session.
 2. **A cold start interrogates the compiler twice** — *no repo home.* `-getproject`
    runs `discoverBuiltinIncludePaths`, and the first `initializeFileProcessing` after it

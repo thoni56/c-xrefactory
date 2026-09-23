@@ -1,6 +1,0 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -server
--getproject CURDIR/macro.h
-<sync>
--push  -olcursor=69 CURDIR/macro.h
-<sync>
-<exit>

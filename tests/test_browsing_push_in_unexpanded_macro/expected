@@ -1,4 +1,3 @@
-[C-xref] active project: 'CURDIR'
 CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
 -getproject CURDIR/macro.h
 end-of-options

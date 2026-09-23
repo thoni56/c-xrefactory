@@ -1,33 +1,21 @@
 # Browsing from inside an unexpanded macro body
 #
 # The cursor is on calculate_area inside the body of GET_AREA in macro.h, which
-# is not a symbol until the macro is expanded. The server looks for a CU that
-# expands the macro (findMacroExpansionFile), parses it, and resolves the symbol
-# there.
-#
-# The requests use project discovery, which is what a modern client does. It
-# used to matter for a second reason: with the legacy -p/-xrefrc the project
-# config schedules every file in the directory, and prepareInputFileForRequest
-# prepared the lowest file number - a hash of the path - so source.c could win
-# over the request file macro.h, making this test fail on macOS and pass on
-# Linux. The server now prepares the file the request named
-# (Server -> prepares_the_file_the_request_named_when_others_are_also_scheduled).
+# is not a symbol until the macro is expanded. The server starts cold, with no
+# snapshot, and finds a CU that expands the macro by walking the include graph
+# from macro.h to source.c, which -getproject has already parsed. The -push
+# parses source.c again, with the cursor in the macro body, to resolve
+# calculate_area.
 #
 # The identifier has one referent, so the answer is a goto. Several would give
 # the browser menu instead - olcxShowSelectionMenu() decides on the number of
 # distinct referents, and a macro body is no exception to that.
-#
-# This is a legacy test: it needs the batch -create, because only XrefMode
-# records the macro's base-file reference that findMacroExpansionFile looks for.
-# The server alone answers "No reference" - see the suspended
-# test_browsing_push_in_unexpanded_macro_without_create. When -create becomes
-# priming rather than a requirement, this test goes with it.
 
 include ../Makefile.server
 
-$(TEST):
-	$(CXREF_PROGRAM) -xref -create > output.tmp
-	@$(SERVER_DRIVER) commands.input $(EXTRA) >> output.tmp
+$(TEST): .c-xrefrc
+	@rm -rf .c-xref output output.tmp server-buffer
+	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
