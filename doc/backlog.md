@@ -218,7 +218,7 @@ Pass 3 rounds 19s each, 42s total.
     steadier and both are known before parsing starts.
     Also **unused-detection exclude patterns**, **browsing includes**,
     **semantic read-only files**, **rename handles `expect`**, **project-local
-    config**. All in `11-planned-features.adoc`.
+    config**, **Inline Function and Inline Macro**. All in `11-planned-features.adoc`.
 25. **Local config fragments — the need, not a solution** — *no repo home yet.*
     `.c-xrefrc` travels with the project and is checked in, which is why
     `11-planned-features.adoc` argues for it: "it will not contain absolute file paths".

@@ -369,3 +369,27 @@ The grammar needs a `_Generic` keyword and a generic-selection rule with associa
 the form `type-name : assignment-expression` and `default : assignment-expression`.
 Branch selection would only matter for navigation or completion on the type of the
 result (`_Generic(...).field`), which is rare.
+
+=== Inline Function and Inline Macro
+
+**Status**: Not implemented.
+
+==== Background
+
+There is no way to inline a function or a macro. The case that asked for it was two
+wrappers in `startup.c`, `saveMemoryCheckPoint()` and `restoreMemoryCheckPoint()`, that
+only called `saveCheckpoint()` and `restoreCheckpoint()` with a fixed argument. Removing
+them meant rewriting each call by hand, and deleting the declaration in `startup.h` and
+the stub in `startup.mock`.
+
+==== Proposed Behaviour
+
+With the cursor on a function, or on a call to it, *Inline Function* replaces each call
+with the body, the arguments substituted for the parameters, and removes the definition.
+The declaration in a header and a stub in a `.mock` file go too. *Inline Macro* does the
+same for a macro.
+
+A body that is a single statement, or returns a single expression, is probably the case
+to do first. Anything more needs more than text substitution. An argument with side
+effects must not be evaluated twice, and a name in the body can collide with one at the
+call site. Refusing with a reason is fine there.
