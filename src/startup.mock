@@ -18,10 +18,6 @@ bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs) {
   return (bool)mock(args.argc, args.argv, nargs.argc, nargs.argv);
 }
 
-void restoreMemoryCheckPoint(void) {
-  mock();
-}
-
 bool isProjectConfigChanged(void) {
     return (bool)mock();
 }
