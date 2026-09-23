@@ -603,6 +603,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_header_static_prototype_and_definition_are_two_symbols">17.4. Header static: prototype and definition are two symbols</a></li>
 <li><a href="#_push_by_name_finds_nothing_on_a_cold_start">17.5. Push by name finds nothing on a cold start</a></li>
 <li><a href="#_token_pasting_that_forms_numbers">17.6. Token pasting that forms numbers</a></li>
+<li><a href="#_a_compilation_unit_deleted_outside_the_editor_is_never_let_go">17.7. A compilation unit deleted outside the editor is never let go</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">18. Refactoring Recipes</a>
@@ -9718,6 +9719,26 @@ preprocessing numbers and affects how every number is read. Test:
 left for the fix to decide.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_a_compilation_unit_deleted_outside_the_editor_is_never_let_go">17.7. A compilation unit deleted outside the editor is never let go</h3>
+<div class="paragraph">
+<p><strong>Symptom:</strong> Delete a <code>.c</code> file from the terminal while the server runs. Every project-wide
+operation then asks "1 of 138 compilation units need reparsing", and answering yes gives
+"Can&#8217;t open file &#8230;&#8203; : No such file or directory". It asks again the next time. Seen
+2026-09-23 on the WSL machine (session <code>a3efe465</code>), after deleting <code>src/xref_tests.c</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Suspected root cause:</strong> Only entry refresh Pass 1 notices a deleted compilation unit, and
+it looks only at files open in an editor buffer (<code>markFileAsDeleted</code> in <code>src/server.c</code>).
+The parse-all check in <code>callServer</code> counts every compilation unit in the file table whose
+<code>lastParsedMtime</code> is zero. For a missing file the reparse fails, and the mtime it then
+records is zero again, so the file is counted on every request. Not verified with a test.</p>
+</div>
+<div class="paragraph">
+<p>This is the deleted-file case of behind-the-back disk changes (see
+<a href="10-roadmap.html">Roadmap</a>, Behind-the-back disk-change detection).</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -11759,7 +11780,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-23 17:33:34 UTC
+Last updated 2026-09-23 21:58:30 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
