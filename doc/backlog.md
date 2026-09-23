@@ -25,14 +25,15 @@ features. Relative effort only — no dates (#noestimates).
    operation's cursor parse should reuse a CU's references instead of re-parsing it.
 
 2. **A cold start interrogates the compiler twice** —
-   `tests/test_cold_start_interrogates_compiler_once/.suspended`. Removing it first needs
-   the pass count bound without re-reading the config.
+   `tests/test_cold_start_interrogates_compiler_once/.suspended`. Waits for item 3,
+   steps 2a and 2b.
 
 ## 1. The foundational one
 
 3. **Partition `options` by lifetime** — Session / Project / Request, one owner each, and
    a pure `parseCommandLine()`. `doc/docs/17-major-codebase-improvements.adoc` §17.4. The
    roadmap's Setup Ladder says it gates the rows below it. Largest single item here.
+   Begin with step 2 of that section, extracting side effects, in the order it gives.
    When it moves `ProjectConfig` off being a file-static singleton (`src/startup.c:42`,
    `static ProjectConfig projectConfig = {0};`), give it a `makeProjectConfig()` that
    returns `{.sourceDirs = NULL, .optionSets = makeOptionSets()}`. Today both fields are
