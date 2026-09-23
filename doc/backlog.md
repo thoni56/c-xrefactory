@@ -100,10 +100,8 @@ features. Relative effort only — no dates (#noestimates).
    - **`-exactpositionresolve` has no strategy.** It is real: it changes link names
      (`src/semact.c`) and goes into the snapshot's check number (`src/cxfile.c`). Since it
      changes what a symbol is, it is probably project-scoped, although `options.h` marks it
-     REQUEST. Decide whether it belongs in the config or goes. `-create`, `-update` and
-     `-fastupdate` (`options.update`) are XrefMode's update types, so probably legacy.
-     `checkExactPositionUpdate()`, moved to `src/startup.c` with `xref.c`'s removal, only
-     reconciles the two. Item 13 waits on the same question.
+     REQUEST. Decide whether it belongs in the config or goes. Item 13 waits on the same
+     question.
    - **`-lsp` is a third mode and should be one.** `want_lsp_server()` (`src/lsp.c`) scans
      argv in `main()` and returns before `mainTaskEntryInitialisations()`, so it is a mode
      in behaviour but not in `options.mode`. If "state a mode" is the rule, it should say
