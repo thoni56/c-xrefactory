@@ -3450,10 +3450,17 @@ periodically; no mandatory <code>-create</code>.</p>
  answer.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CreateMode</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Optional <code>c-xref -create</code> batch prime on the server path
- (<a href="/workspace/1/decisions/C-xrefactory#24">ADR-0024</a>): priming a large project up
- front, and an entry point for CI. Not a dependency of XrefMode removal.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Batch prime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An explicit request — <code>-parse-all</code> — that parses every compilation unit the scan
+ found and has not parsed yet. Whatever wants a whole-project parse then asks for it:
+ a user before a long session, a test fixture, a CI check. <code>test_ffmpeg</code> and
+ <code>test_systemd</code> ask for it today by searching for a name nobody defines and answering
+ the parse-all question with <code>-continue</code>, which is the shape of a missing request.
+ CreateMode (<a href="/workspace/1/decisions/C-xrefactory#24">ADR-0024</a>) is then whatever
+ remains once the request exists — a command that starts, gets the project, sends it
+ and exits — a convenience for a shell rather than the primitive. That ADR&#8217;s own
+ update of 2026-09-19 already narrows it this far. Not a dependency of XrefMode
+ removal.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Clean stale header emissions</p></td>
@@ -3487,7 +3494,7 @@ periodically; no mandatory <code>-create</code>.</p>
 <p><a href="/workspace/1/decisions/C-xrefactory#22">ADR-0022</a> — lightweight file-structure scanning</p>
 </li>
 <li>
-<p><a href="/workspace/1/decisions/C-xrefactory#24">ADR-0024</a> — CreateMode</p>
+<p><a href="/workspace/1/decisions/C-xrefactory#24">ADR-0024</a> — batch prime as a request</p>
 </li>
 <li>
 <p><a href="/workspace/1/decisions/C-xrefactory#25">ADR-0025</a> — clean stale header emissions by reparse</p>
@@ -11668,7 +11675,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-23 12:12:13 UTC
+Last updated 2026-09-23 13:02:03 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
