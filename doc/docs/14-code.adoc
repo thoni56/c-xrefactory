@@ -366,6 +366,10 @@ treats the in-memory reference table as authoritative. The legacy path
 (`initializeFileProcessing`) is retained for explicit `-xrefrc` configurations. The flow
 below describes the auto-detect path.
 
+`-xrefrc` is on its way out — link:/workspace/1/decisions/C-xrefactory#5[ADR-0005] called
+for removing it once discovery existed, and discovery exists — so this legacy path is
+expected to go with it rather than to stay as a second way in.
+
 [source]
 ----
 server() loop:

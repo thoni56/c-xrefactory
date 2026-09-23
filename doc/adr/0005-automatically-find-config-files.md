@@ -4,7 +4,8 @@ Date: 2022-04-06
 
 ## Status:
 
-Proposed
+Accepted (discovery implemented 2026-01-23 in `d5a7182f`; the option removals it calls
+for — `-xrefrc`, `-stdop`, `-no-stdop` — are outstanding and tracked in the backlog)
 
 ## Deciders
 

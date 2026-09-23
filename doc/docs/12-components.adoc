@@ -601,6 +601,12 @@ cxrefs/
 
 All information about a symbol is stored in exactly one file, determined by hashing its link name. This means a single file read suffices to look up any symbol.
 
+That single-file read is what the partitioning was for, and nothing reads the database
+that way any more: it is a startup snapshot, loaded whole and never consulted again. The
+partitioning and the `-refnum` that sizes it are therefore being removed, together with
+`-refs` — see link:/workspace/1/decisions/C-xrefactory#28[ADR-0028]. What is described
+above is the layout as it still exists.
+
 ==== File Format
 
 Records use the general format `<number><key>[<value>]`. The encoding uses single-character markers listed at the top of `cxfile.c`.

@@ -33,7 +33,7 @@ features. Relative effort only — no dates (#noestimates).
 
 ## 1. The foundational one
 
-4. **Partition `options` by lifetime** — Session / Project / Request, one owner each, and
+3. **Partition `options` by lifetime** — Session / Project / Request, one owner each, and
    a pure `parseCommandLine()`. `doc/docs/17-major-codebase-improvements.adoc` §17.4. The
    roadmap's Setup Ladder says it gates the rows below it. Largest single item here.
    When it moves `ProjectConfig` off being a file-static singleton (`src/startup.c:42`,
@@ -44,7 +44,7 @@ features. Relative effort only — no dates (#noestimates).
    automatic `ProjectConfig` declared without `= {0}` would free garbage. A constructor
    makes "born empty" one expression instead of every declaration site remembering, and
    gives `makeOptionSets()` its first production caller.
-5. **The Setup Ladder, in this sequence**, each small once the partition lands
+4. **The Setup Ladder, in this sequence**, each small once the partition lands
    (`doc/docs/10-roadmap.adoc`, Convergence: The Setup Ladder → Remaining):
    a. the client stops sending `-p` on every request
       (`c-xref-send-data-to-process-and-dispatch`, `editors/emacs/c-xref.el:1922` — the
@@ -57,16 +57,36 @@ features. Relative effort only — no dates (#noestimates).
    d. the assert that nothing before `-getproject` reads a project-scoped option — the
       tripwire, as the disk-read assert was for Memory as Truth.
 
+5. **Remove `-refs` and `-refnum`** — ADR-0028. The snapshot is always
+   `<project root>/.c-xref/db` and always one file. Deletes the partition handling in
+   `src/cxfile.c` (the hash modulo, the per-file loops, the single-versus-many branches)
+   and makes `applyConventionBasedDatabasePath()` unconditional. Decide what happens to
+   the `CXFI_REFNUM` record in the snapshot — keeping it and always writing 1 costs
+   nothing, changing the format involves `test_snapshot_version_migration`. Fixtures
+   assume partitions: the common `tests/c-xrefrc.tpl` sets both options, ten per-test
+   templates set `-refnum`, and `tests/test_autodetect_creates_cxref_dir` asserts the
+   `X0000…X0009` layout because of it. A config that still says either option gets an
+   `errorMessage` and is otherwise honoured.
+6. **Remove `-xrefrc`** — ADR-0005 called for this in 2022, when discovery was still a
+    proposal: "when this functionality is implemented you'd just remove those options and
+    add a `.c-xrefrc` in the root of the test directory instead". Discovery landed in
+    `d5a7182f`, and every test does have a generated `.c-xrefrc` in its directory — while
+    `tests/Makefile.boilerplate:17` still passes `-xrefrc .c-xrefrc -p $(CURDIR)` as well,
+    and six `commands.input` files pass it too. Removing it also retires the "legacy path"
+    that `doc/docs/14-code.adoc` documents as retained for explicit configurations. The
+    case it leaves unanswered — a tree you cannot write a config into — is recorded in
+    ADR-0028 as unsupported for now. `-stdop` and `-no-stdop` are named in the same ADR
+    sentence; check whether they still exist before assuming they need removing too.
 ## 2. The XrefMode chain
 
-6. **Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c` onto a
+7. **Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c` onto a
    report-errors flag**, and stop `formatMessage()` (`src/commons.c`) dropping the position
    in server mode. Roadmap, "Report what did not parse". Doubles as the server half of
    the Indexing Log Buffer item. Scope reporting to the operation's own parse, not the
    session-wide `-errors`. Restore `tests/test_multipass`'s error-position assertion in
    the same change: it was dropped when that test moved to the server, because the
    position is what server mode throws away.
-7. **Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
+8. **Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
    parser serves both phases, so the question becomes which options are process-scoped at
@@ -76,8 +96,9 @@ features. Relative effort only — no dates (#noestimates).
      `-o <answerfile>` — `editors/emacs/c-xref.el:1615`); logging
      (`-log=`, `-debug`, `-trace`, `-info`, `-errors`, `-warnings`, `-infos`, scanned in
      `main()` before the mode is even known); and `-statistics`.
-   - Everything project-scoped — `-p`, `-xrefrc`, `-I`, `-D`, `-refs`, `-refnum`,
-     `-optinclude` — belongs to the config and binds at `-getproject`, not here.
+   - Everything project-scoped — `-p`, `-xrefrc`, `-I`, `-D`, `-optinclude` — belongs to
+     the config and binds at `-getproject`, not here. `-refs` and `-refnum` are not on
+     that list any more: they are removed outright, see the items below.
    - **`-lsp` is a third mode and should be one.** `want_lsp_server()` (`src/lsp.c`) scans
      argv in `main()` and returns before `mainTaskEntryInitialisations()`, so it is a mode
      in behaviour but not in `options.mode`. If "state a mode" is the rule, it should say
@@ -97,28 +118,28 @@ features. Relative effort only — no dates (#noestimates).
      look. Auto-discovery gives you the tree under the config; anything outside it still
      has to be named. Likely home: the config, or the machine-specific sibling, since an
      external source tree is usually a local path.
-8. **Remove XrefMode** — deletes the `-create`/`-update` legacy engine. Needs items 6 and
+9. **Remove XrefMode** — deletes the `-create`/`-update` legacy engine. Needs items 6 and
    7; nothing else holds it up. `-xrefactory-II` goes with it: it selects the protocol
    output over XrefMode's plain text, and with only the server left there is nothing to
    select. Make `options.xref2` the default, then drop the flag and the client's use of
    it (`editors/emacs/c-xref.el:1615`).
-9. **Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
+10. **Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this chain (it asserts
    `ServerMode`), but it is the last divergent parse path.
 
 ## 3. Correctness, by (quiet × cheap)
 
-10. **Extract passes statics by value** — *no test pins it.* Since the gate fix this
+11. **Extract passes statics by value** — *no test pins it.* Since the gate fix this
     compiles and silently does the wrong thing, where before it failed to compile.
     Liveness-after-the-region is the wrong question for static storage: treat
     static/thread-local as live after the region in `classifyVariableUsingDataFlow`
     (`src/extract.c`), which pushes it to `CLASSIFIED_AS_IN_OUT_ARGUMENT`. Failing system
     test first. Quietest bug on this list.
-11. **Token pasting trio**, in this order — the later two assume the first
+12. **Token pasting trio**, in this order — the later two assume the first
     (`doc/docs/18-known-bugs.adoc`): `tests/test_token_pasting_numbers` (changes the
     passing `test_collate_const_suffix_pasting`) → `tests/test_token_pasting_float` →
     `tests/test_collate_hex_prefix_pasting` (touches how every number is lexed).
-12. **Header static: prototype and definition get different link names** —
+13. **Header static: prototype and definition get different link names** —
     `setStaticFunctionLinkName` (`src/semact.c`); renames break the build today.
     `tests/test_static_declared_and_defined_in_header/.suspended` has the
     `exactPositionResolve` question to settle first, so it starts as a decision.
