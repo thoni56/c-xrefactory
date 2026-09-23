@@ -17,37 +17,22 @@ features. Relative effort only — no dates (#noestimates).
 
 ## 0. Verify first — cheap, and might change the cost of the rest
 
-1. **The same CUs are reparsed on every request — cause unknown** — *no repo home.*
-   Observed 2026-09-18 while tracing `tests/test_browsing_push_in_unexpanded_macro`:
-   `source.c` parsed during `-getproject` and again during the following `-push`, both
-   logging "0 skipped (already parsed)". If it still reproduces, every request pays to
-   reparse the same neighbourhood — the cold-start cost Pass 3 exists to bound — and the
-   parse-all check for project-wide operations counts never-parsed CUs the same way, so it
-   would keep asking too.
+1. **An operation's cursor parse re-parses a CU that Pass 3 already parsed** — *no repo
+   home.* Traced 2026-09-23 on `7ba5650f` in `tests/test_browsing_push_in_unexpanded_macro`,
+   cold: `-getproject` parses `source.c` in Pass 3, `-push` skips it as already parsed — so
+   entry refresh is doing its job — and then the macro-body path parses it again to resolve
+   the cursor, as `-push` always does with the request file. The open question is whether an
+   operation's cursor parse should reuse a CU's references instead of re-parsing it.
 
-   **Not the obvious cause.** Checked 2026-09-22: `parseUnparsedSiblingCUs`
-   (`src/server.c`) *does* set `fi->lastParsedMtime = editorFileModificationTime(...)`
-   after each `reparseStaleFile`, and `git log -S` dates that line to `a6020c82`
-   (2026-02-27, the commit that added Pass 3) — so it was already there when the double
-   parse was seen. Do not re-walk that path.
+   *Provenance, so it is not rediscovered as fresh:* this began as a 2026-09-18 note
+   claiming Pass 3 reparsed siblings on every request because it never set
+   `lastParsedMtime`. Both halves are false. Pass 3 has set it since `a6020c82`
+   (2026-02-27), and the "logged 0 skipped both times" claim was never observed — the
+   session transcript (`7b84da61…`, on the Mac, not the other machine) holds exactly one
+   Pass 3 summary line at the moment the note was written, and a later run in that same
+   session logs the correct `1 to parse, 0 skipped` → `0 to parse, 1 skipped` pair. The
+   note was an inference from a fifteen-line window of a 23k-line trace.
 
-   **Where to look instead**, both being the other end — who *clears* the field:
-   `markAllCompilationUnitsStale()` (`src/referencerefresh.c`), called at `src/server.c`
-   when `isProjectConfigChanged()` says the config changed, deliberately as a cold
-   restart; and `markPreloadedFilesAsAncient()` (`src/cxref.c`), which looked like the
-   culprit for a preloading driver but is reached only from the `-exit` handler in
-   `src/options.c`. The first is the live suspect: a config-change test that keeps
-   answering yes would mark *every* CU stale on *every* request, which is a bigger cost
-   than the one originally suspected. Reproduce with `make trace` in that test directory
-   and see which branch fires, before changing anything. Upstream of everything in §4.
-
-   **Reproduces cold, but not as suspected** (traced 2026-09-23 on `7ba5650f`, in
-   `tests/test_browsing_push_in_unexpanded_macro`, now cold). `-getproject` parses
-   `source.c` in Pass 3. At `-push` Pass 3 skips it as already parsed, so no state is lost.
-   The macro-body path then parses it again to resolve the cursor, as `-push` always does
-   with the request file. The open question is whether an operation's cursor parse should
-   reuse a CU's references instead.
-   The 2026-09-18 trace was on the other machine and is being checked against its session.
 2. **A cold start interrogates the compiler twice** — *no repo home.* `-getproject`
    runs `discoverBuiltinIncludePaths`, and the first `initializeFileProcessing` after it
    takes the full branch and runs gcc again. Later requests restore the checkpoint.
@@ -160,8 +145,8 @@ features. Relative effort only — no dates (#noestimates).
 
 ## 4. Performance, in strict dependency order
 
-Roadmap → Optimization. Do the Pass 3 item first; it may change the measured baseline (cold-start
-PUSH on ffmpeg `af_afir.c`: scan 2.7s, two Pass 3 rounds 19s each, 42s total).
+Roadmap → Optimization. Baseline: cold-start PUSH on ffmpeg `af_afir.c` — scan 2.7s, two
+Pass 3 rounds 19s each, 42s total.
 
 15. **Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
     design problem is that Pass 3 runs during sync and the symbol is only known during
@@ -226,8 +211,6 @@ PUSH on ffmpeg `af_afir.c`: scan 2.7s, two Pass 3 rounds 19s each, 42s total).
   nobody has made.
 * **ADR-0027 stays `Accepted`, not `Implemented`:** rename does not yet refuse from inside
   a macro body, and the menu is complete only up to the collection caps.
-* **The Pass 3 item is an observation, not a confirmed bug.** If it is false, §4's ordering stands
-  but its baseline does not.
 * **`18-known-bugs.adoc` cites `test_browsing_push_name_parses_whole_project`**, which
   does not exist; the suspended directory is `tests/test_browsing_push_by_name`. Fix the
   reference when touching the remaining-bugs item.
