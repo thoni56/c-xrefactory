@@ -15,7 +15,7 @@ Ordering principle: first the cheap things that change what everything else cost
 the one item that gates the most rows, then the chains that unblock, then bugs and
 features. Relative effort only — no dates (#noestimates).
 
-## 0. Verify first — cheap, and changes the cost of the rest
+## 0. Verify first — cheap, and might change the cost of the rest
 
 1. **The same CUs are reparsed on every request — cause unknown** — *no repo home.*
    Observed 2026-09-18 while tracing `tests/test_browsing_push_in_unexpanded_macro`:
