@@ -627,9 +627,6 @@ static int fileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
     bool updateFromCxFile = true;
 
     log_trace("re-read info from '%s' for '%s'?", options.cxFileLocation, fileItem->name);
-    if (options.mode == XrefMode) {
-        updateFromCxFile = false;
-    }
     if (options.mode == ServerMode) {
         log_trace("last inspected == %d, start at %d\n", fileItem->lastInspected, fileProcessingStartTime);
         if (fileTimestampIsLessThan(fileItem->lastInspected, fileProcessingStartTime)) {
@@ -676,11 +673,6 @@ static void scanFunction_ReadFileName(int fileNameLength,
         if (fileTimestampIsZero(fileItem->lastParsedMtime))
             fileItem->lastParsedMtime=umtime;
         assert(options.mode);
-        if (options.mode == XrefMode) {
-            if (scanOperation == CXSF_GENERATE_OUTPUT) {
-                writeFileNumberItem(fileItem, fileNumber);
-            }
-        }
     } else {
         fileNumber = getFileNumberFromFileName(fileName);
         fileItem = getFileItemWithFileNumber(fileNumber);

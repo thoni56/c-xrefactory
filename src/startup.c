@@ -63,14 +63,6 @@ static void writeConfigFileMessage(char *file, char *outFName, char *outSect) {
             sprintf(tmpBuff, "no project name covers '%s'",file);
             warningMessage(ERR_ST, tmpBuff);
         }
-    } else if (options.mode==XrefMode) {
-        if (options.xref2) {
-            sprintf(tmpBuff, "C-xrefactory project: %s", outSect);
-            ppcGenRecord(PPC_INFORMATION, tmpBuff);
-        } else {
-            fprintf(errOut, "[C-xref] active project: '%s'\n", outSect);
-            fflush(errOut);
-        }
     }
 }
 
@@ -739,13 +731,6 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
     applyOptionSet(getProjectConfig()->optionSets.set[currentPass]);
     assert(options.mode);
-    if (options.mode==XrefMode) {
-        if (options.xref2) {
-            ppcGenRecord(PPC_INFORMATION, getRealFileName_static(inputFileName));
-        } else {
-            log_info("Processing file '%s'", getRealFileName_static(inputFileName));
-        }
-    }
 
  fini:
     initializationsPerInvocation();

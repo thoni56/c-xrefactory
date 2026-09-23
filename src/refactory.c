@@ -29,7 +29,6 @@
 #include "referenceableitemtable.h"
 #include "server.h"
 #include "session.h"
-#include "timestamp.h"
 #include "undo.h"
 
 
@@ -39,8 +38,8 @@
 
 static EditorUndo *refactoringStartingPoint;
 
-static char *serverDefaultOptions[] = {
-    "xref",
+static char *serverDefaultArguments[] = {
+    "c-xref",
     "-xrefactory-II",
     //& "-debug",
     "-server",
@@ -136,7 +135,7 @@ void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *ma
     if (pushOption2 != NULL) {
         argumentVector[argumentCount++] = pushOption2;
     }
-    ArgumentsVector args = {.argc = argument_count(serverDefaultOptions), .argv = serverDefaultOptions};
+    ArgumentsVector args = {.argc = argument_count(serverDefaultArguments), .argv = serverDefaultArguments};
     ArgumentsVector nargs = {.argc = argumentCount, .argv = argumentVector};
     initServer(nargs);
 
@@ -170,7 +169,7 @@ static void beInteractive(void) {
         ppcSynchronize();
         deepCopyOptionsFromTo(&localSavedOptions, &options);
 
-        ArgumentsVector args = {.argc = argument_count(serverDefaultOptions), .argv = serverDefaultOptions};
+        ArgumentsVector args = {.argc = argument_count(serverDefaultArguments), .argv = serverDefaultArguments};
         processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
 
         ArgumentsVector pipedOptions = readOptionsFromPipe();

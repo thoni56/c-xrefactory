@@ -302,12 +302,6 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
             }
         }
         break;
-    case XrefMode:
-        if (visibility == VisibilityLocal) {
-            LEAVE();
-            return NULL; /* dont cxref local symbols */
-        }
-        break;
     default:
         assert(0);              /* Should not happen */
         break;

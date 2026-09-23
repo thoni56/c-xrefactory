@@ -1035,21 +1035,6 @@ static void putXrefrcFileNameInto(char *fileName) {
     assert(strlen(fileName) < MAX_FILE_NAME_SIZE-1);
 }
 
-#if defined(__WIN32__)
-static bool isAbsolutePath(char *p) {
-    if (p[0]!=0 && p[1]==':' && p[2]==FILE_PATH_SEPARATOR)
-        return true;
-    if (p[0]==FILE_PATH_SEPARATOR)
-        return true;
-    return false;
-}
-#else
-static bool isAbsolutePath(char *p) {
-    return p[0] == FILE_PATH_SEPARATOR;
-}
-#endif
-
-
 static int handleIncludeOption(int i, ArgumentsVector args) {
     ArgumentsVector includedArgs;
 
@@ -1506,20 +1491,11 @@ static bool processPOption(int *argi, ArgumentsVector args) {
 }
 
 static void setXrefsLocation(char *arg) {
-    static bool messageWritten=false;
-
     /* In auto-detection mode, -refs is ignored - we use convention-based path */
     if (options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
         log_warn("-refs is ignored in project auto-detection mode (using %s/.c-xref/db)",
                  options.detectedProjectRoot);
         return;
-    }
-
-    if (options.mode==XrefMode && !messageWritten && !isAbsolutePath(arg)) {
-        char tmpBuff[TMP_BUFF_SIZE];
-        messageWritten = true;
-        sprintf(tmpBuff, "'%s' is not an absolute path, correct -refs option", arg);
-        warningMessage(ERR_ST, tmpBuff);
     }
     options.cxFileLocation = allocateStringForOption(&options.cxFileLocation, normalizeFileName_static(arg, cwd));
 }
@@ -1822,10 +1798,7 @@ void processOptions(ArgumentsVector args, ProcessFileArguments doProcessFiles) {
         if (!matched) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "unknown option %s, (try c-xref -help)\n", args.argv[i]);
-            if (options.mode==XrefMode) {
-                FATAL_ERROR(ERR_ST, tmpBuff, EXIT_FAILURE);
-            } else
-                errorMessage(ERR_ST, tmpBuff);
+            errorMessage(ERR_ST, tmpBuff);
         }
     }
     LEAVE();
