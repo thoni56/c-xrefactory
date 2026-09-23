@@ -164,7 +164,12 @@ Pass 3 rounds 19s each, 42s total.
     work. Roadmap → Memory as Truth → Remaining. Depends only on entry refresh, which is
     done.
 21. **Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
-    `doc/docs/11-planned-features.adoc`. Follows the report-errors item.
+    `doc/docs/11-planned-features.adoc`. Follows the report-errors item. The client half
+    does not have to be invented: `c-xref-tags-dispatch` and its two helpers in
+    `editors/emacs/c-xref.el` rendered exactly this for the `-create` log — a stream of
+    PPC records into `*c-xref-log*`, severity faces, `file://` links made clickable — and
+    are kept, uncalled, for that reason. The viewer commands and keymap below them are
+    still bound; only the producer is gone.
 22. **Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
 23. **LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
