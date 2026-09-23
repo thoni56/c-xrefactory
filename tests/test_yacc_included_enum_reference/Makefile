@@ -4,8 +4,11 @@
 # that is the storage class which kept its plain link name when parsed at
 # nesting level > 0, where the enum constant did not until a8318945.
 #
-# Both compilation units are asked for, so the test does not depend on which
-# siblings entry refresh chooses to parse. The walk is the assertion: pushing
+# Both compilation units are asked for. Establishing the project parses neither
+# by itself: the scan finds the include structure, and pass 3 then parses file.y
+# because it shares file2.h with the request file - but the request file is
+# parsed only when an operation needs it. Asking for both is what makes the test
+# independent of that. The walk is the assertion: pushing
 # from the use in file.y and stepping through the session reaches the
 # definition in file2.h, the use in file.y and the use in file2.c. Three
 # references in one session is what "the yacc reference is under the same
