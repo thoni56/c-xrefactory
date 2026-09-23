@@ -48,11 +48,12 @@ features. Relative effort only — no dates (#noestimates).
    with the request file. The open question is whether an operation's cursor parse should
    reuse a CU's references instead. The primed test cannot show any of this.
    The 2026-09-18 trace was on the other machine and is being checked against its session.
-2. **`optionSetsLoaded` guards less than it looks like it does** — *no repo home.* The
-   file-static in `src/startup.c` is set once and never reset; its job was to stop
-   `loadProjectSettings` re-reading the config, but `initializeProjectContext` now resets
-   and reads for itself, so what the flag actually prevents is worth re-deciding. Small,
-   and it wants the lifetime partition's answer to "who owns this" more than a patch.
+2. **A cold start interrogates the compiler twice** — *no repo home.* `-getproject`
+   runs `discoverBuiltinIncludePaths`, and the first `initializeFileProcessing` after it
+   takes the full branch and runs gcc again. Later requests restore the checkpoint.
+   Seen 2026-09-23 in a trace of `tests/test_browsing_from_header_finds_includers`.
+   Probably `previousPass != currentPass`, since `initializeProjectContext` records
+   `previousPass` before any pass is set. Not verified, so a test that notices it comes first.
 3. **Expanding-CU rename** — one identifier left: `UsageMacroBaseFileUsage` →
    `UsageMacroExpandingCU`. The member is kept so an existing `.cx` still loads, and
    renaming it is free because the usage is stored numerically, not by name. Terminology

@@ -38,7 +38,6 @@ static char previousProjectConfigurationFile[MAX_FILE_NAME_SIZE];
 static char previousProjectConfigurationSection[MAX_FILE_NAME_SIZE];
 static FileTimestamp previousProjectConfigurationFileModificationTime;
 static int previousPass;
-static bool optionSetsLoaded = false;
 static ProjectConfig projectConfig = {0};
 
 ProjectConfig *getProjectConfig(void) {
@@ -567,12 +566,8 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
     }
     options.inputFiles = NULL;
 
-    if (!optionSetsLoaded) {
-        resetOptionSets(&projectConfig.optionSets);
-        readOptionSetsFromFile(projectConfigFileName, &projectConfig.optionSets);
-        optionSetsLoaded = true;
-    }
-
+    resetOptionSets(&projectConfig.optionSets);
+    readOptionSetsFromFile(projectConfigFileName, &projectConfig.optionSets);
 
     LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 
@@ -610,9 +605,6 @@ void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) 
                         previousProjectConfigurationFile, previousProjectConfigurationSection,
                         inputFileName != NULL ? inputFileName : ".");
 
-    resetOptionSets(&projectConfig.optionSets);
-    readOptionSetsFromFile(previousProjectConfigurationFile, &projectConfig.optionSets);
-
     previousProjectConfigurationFileModificationTime = fileModificationTime(previousProjectConfigurationFile);
 }
 
@@ -642,8 +634,6 @@ bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
 
     /* === PHASES 2-4: Options, compiler interrogation, checkpoint === */
     loadProjectSettings(baseArgs, requestArgs, projectConfigFileName, projectSectionName, fileName);
-    resetOptionSets(&projectConfig.optionSets);
-    readOptionSetsFromFile(projectConfigFileName, &projectConfig.optionSets);
 
     strcpy(previousProjectConfigurationFile, projectConfigFileName);
     strcpy(previousProjectConfigurationSection, projectSectionName);
