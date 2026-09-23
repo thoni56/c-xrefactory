@@ -3646,6 +3646,33 @@ an owner, and <code>ParsingConfig</code> is the same pattern one layer down.</p>
 <div class="paragraph">
 <p>Once the core architectural path (lightweight scan, entry refresh, memory-as-truth) is functional, targeted optimizations can reduce cold-start latency and improve responsiveness on large projects.</p>
 </div>
+<div class="sect3">
+<h4 id="_measured_2026_09_23">10.4.1. Measured, 2026-09-23</h4>
+<div class="paragraph">
+<p>Two different numbers, on the same tree — ffmpeg in <code>tests/test_ffmpeg</code>, 2615 compilation
+units, 1.38M lines of <code>.c</code> and <code>.h</code>, on the maintainer&#8217;s Mac:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Whole-tree parse</strong> — 8m07s wall clock (user 7m47s), writing a 17.96MB snapshot. That is
+about 186ms per compilation unit, or ~2800 lines a second counting each CU&#8217;s headers
+every time it sees them. The <code>test_ffmpeg</code> Makefile still says "~25 minutes" from an
+older measurement; the file count is unchanged and the snapshot is 3% <strong>larger</strong> than the
+13 August one, so the work is not smaller, it is faster.</p>
+</li>
+<li>
+<p><strong>Cold-start PUSH</strong> — 42s for <code>AudioFIRContext</code> from <code>af_afir.c</code>: scan 2.7s, Pass 3 round
+one 19s, round two 19s (the second round from <code>&lt;&#8230;&#8203;&gt;</code> includes the full parse
+discovers). This is the number the two rows below are about, and it has not been
+re-measured since.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The first is what a batch prime costs and what a progress estimate would divide; the
+second is what a user waits for before anything appears.</p>
+</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -3676,6 +3703,7 @@ an owner, and <code>ParsingConfig</code> is the same pattern one layer down.</p>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_known_limitations">10.5. Known Limitations</h3>
@@ -11675,7 +11703,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-23 13:18:48 UTC
+Last updated 2026-09-23 13:19:30 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
