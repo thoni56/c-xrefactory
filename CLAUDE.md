@@ -38,6 +38,23 @@ and the ahead/behind counts.
 Fetch again before starting each new piece of work in a long session, not only
 once at the beginning. The other machine keeps pushing while this one thinks.
 
+### Name the machine in anything that travels
+
+A note written on one machine is read on the other, so "this machine" and "the
+other machine" swap meaning in transit and a correct note reads as a wrong one.
+In commit messages, `.suspended` files, `doc/backlog.md` and the docs, name the
+machine — better, name the session id, since that is what makes an observation
+checkable afterwards. Memory notes do not travel at all: they live outside the
+repo and are per-machine, so anything the other machine needs belongs in a file
+under version control, not in memory.
+
+This is not hypothetical. A backlog item once recorded that Pass 3 reparsed
+siblings on every request. The claim turned out never to have been observed, and
+finding that out meant locating the session that wrote it — possible only because
+the transcript could be identified by id (`7b84da61`, 2026-09-18). The note's own
+phrase for where it happened, "the other machine", pointed in opposite directions
+depending on where it was read.
+
 ## Ensure a fresh build passes all tests before pushing
 
 The obligation is on the evidence, not on who produces it. A stale `c-xref` makes
