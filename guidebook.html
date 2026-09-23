@@ -3657,9 +3657,10 @@ units, 1.38M lines of <code>.c</code> and <code>.h</code>, on the maintainer&#82
 <li>
 <p><strong>Whole-tree parse</strong> — 8m07s wall clock (user 7m47s), writing a 17.96MB snapshot. That is
 about 186ms per compilation unit, or ~2800 lines a second counting each CU&#8217;s headers
-every time it sees them. The <code>test_ffmpeg</code> Makefile still says "~25 minutes" from an
-older measurement; the file count is unchanged and the snapshot is 3% <strong>larger</strong> than the
-13 August one, so the work is not smaller, it is faster.</p>
+every time it sees them. The file count is unchanged from the 13 August run and the
+snapshot is 3% <strong>larger</strong>, so the work is not smaller, it is faster. A "~25 minutes"
+figure had been carried in the fixture&#8217;s Makefile since <code>ad546ff2</code> with no measurement
+recorded anywhere, which is worth remembering before quoting it back.</p>
 </li>
 <li>
 <p><strong>Cold-start PUSH</strong> — 42s for <code>AudioFIRContext</code> from <code>af_afir.c</code>: scan 2.7s, Pass 3 round
@@ -3672,6 +3673,12 @@ re-measured since.</p>
 <div class="paragraph">
 <p>The first is what a batch prime costs and what a progress estimate would divide; the
 second is what a user waits for before anything appears.</p>
+</div>
+<div class="paragraph">
+<p>CI cannot supply either number. Travis times script lines, not tests, and <code>make ci</code> runs
+the suite as <code>make -j</code> with no limit, so its total is build plus the longest test with
+everything else overlapped — an upper bound, not a measurement. Getting a series out of
+CI would mean printing elapsed time per test in <code>tests/Makefile</code>.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -11703,7 +11710,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-23 13:19:30 UTC
+Last updated 2026-09-23 13:32:58 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
