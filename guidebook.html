@@ -526,6 +526,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_browsing_includes">11.8. Browsing includes</a></li>
 <li><a href="#_semantic_read_only_files_include_path_ownership">11.9. Semantic Read-only Files (Include Path Ownership)</a></li>
 <li><a href="#generic-selection">11.10. C11 <code>_Generic</code></a></li>
+<li><a href="#_inline_function_and_inline_macro">11.11. Inline Function and Inline Macro</a></li>
 </ul>
 </li>
 <li><a href="#components">12. Components</a>
@@ -4412,6 +4413,37 @@ result (<code>_Generic(&#8230;&#8203;).field</code>), which is rare.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_inline_function_and_inline_macro">11.11. Inline Function and Inline Macro</h3>
+<div class="paragraph">
+<p><strong>Status</strong>: Not implemented.</p>
+</div>
+<div class="sect3">
+<h4 id="_background_7">11.11.1. Background</h4>
+<div class="paragraph">
+<p>There is no way to inline a function or a macro. The case that asked for it was two
+wrappers in <code>startup.c</code>, <code>saveMemoryCheckPoint()</code> and <code>restoreMemoryCheckPoint()</code>, that
+only called <code>saveCheckpoint()</code> and <code>restoreCheckpoint()</code> with a fixed argument. Removing
+them meant rewriting each call by hand, and deleting the declaration in <code>startup.h</code> and
+the stub in <code>startup.mock</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_behaviour_3">11.11.2. Proposed Behaviour</h4>
+<div class="paragraph">
+<p>With the cursor on a function, or on a call to it, <strong>Inline Function</strong> replaces each call
+with the body, the arguments substituted for the parameters, and removes the definition.
+The declaration in a header and a stub in a <code>.mock</code> file go too. <strong>Inline Macro</strong> does the
+same for a macro.</p>
+</div>
+<div class="paragraph">
+<p>A body that is a single statement, or returns a single expression, is probably the case
+to do first. Anything more needs more than text substitution. An argument with side
+effects must not be evaluated twice, and a name in the body can collide with one at the
+call site. Refusing with a reason is fine there.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -8179,7 +8211,7 @@ setup.</p>
 <div class="sect2">
 <h3 id="_incremental_cxfile_c_cleanup">16.1. Incremental <code>cxfile.c</code> Cleanup</h3>
 <div class="sect3">
-<h4 id="_background_7">16.1.1. Background</h4>
+<h4 id="_background_8">16.1.1. Background</h4>
 <div class="paragraph">
 <p>The <code>cxfile</code> module was designed when the <code>.cx</code> files on disk were the reference database. Operations like "show all references to symbol X" or "find unused symbols" were table-driven scans over the disk format — hash the symbol name, stream the right partition, apply a per-operation filter. This was efficient for the batch cross-referencer that <code>c-xrefactory</code> evolved from, where the workflow was <code>c-xref -create</code> → <code>c-xref -update</code> → query the on-disk database.</p>
 </div>
@@ -11805,7 +11837,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-23 22:54:43 UTC
+Last updated 2026-09-23 23:19:58 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
