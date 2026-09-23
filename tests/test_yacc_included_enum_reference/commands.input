@@ -3,4 +3,6 @@ CXREF -xrefactory-II -crlfconversion -crconversion -server
 <sync>
 -push -olcursor=48 CURDIR/file2.c
 <sync>
+-push -olcursor=49 CURDIR/file.y
+<sync>
 <exit>
