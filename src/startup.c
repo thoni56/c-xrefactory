@@ -21,7 +21,6 @@
 #include "macroargumenttable.h"
 #include "memory.h"
 #include "misc.h"
-#include "options.h"
 #include "optionsets.h"
 #include "ppc.h"
 #include "proto.h"
@@ -30,7 +29,6 @@
 #include "stackmemory.h"
 #include "symboltable.h"
 #include "timestamp.h"
-#include "xref.h"
 #include "yylex.h"
 
 
@@ -642,6 +640,14 @@ bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
     return true;
 }
 
+static void checkExactPositionUpdate(UpdateType *updateType, bool printMessage) {
+    if (*updateType == UPDATE_FAST && options.exactPositionResolve) {
+        *updateType = UPDATE_FULL;
+        if (printMessage) {
+            warningMessage(ERR_ST, "-exactpositionresolve implies full update");
+        }
+    }
+}
 
 /* Heavy orchestration-level initialization for legacy Server/Xref modes.
  * Handles multi-project server architecture where project settings can change per file.

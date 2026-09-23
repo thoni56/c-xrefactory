@@ -6,6 +6,7 @@
 #include "argumentsvector.h"
 #include "optionsets.h"
 #include "stringlist.h"
+#include "options.h"
 
 
 /* Project-level configuration, separate from per-request options */
@@ -32,5 +33,7 @@ extern void restoreMemoryCheckPoint(void);
 /* Config-change detection: re-run scan when .c-xrefrc is edited mid-session */
 extern bool isProjectConfigChanged(void);
 extern void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs);
+
+extern UpdateType updateType;
 
 #endif

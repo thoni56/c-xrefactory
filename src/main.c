@@ -15,7 +15,6 @@
 #include "stackmemory.h"
 #include "startup.h"
 #include "options.h"
-#include "xref.h"
 #include "yylex.h"
 
 
@@ -91,9 +90,7 @@ int main(int argc, char *argv[]) {
     mainTaskEntryInitialisations(args);
 
     int exitCode = 0;
-    if (options.mode == XrefMode)
-        xref(args);
-    else if (options.mode == ServerMode)
+    if (options.mode == ServerMode)
         server(args);
     else if (options.serverOperation == OP_ABOUT)
         aboutMessage();          /* asking what this is needs no mode */
