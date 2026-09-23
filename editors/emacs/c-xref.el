@@ -3662,33 +3662,6 @@ will be deleted.
     pfiles
     ))
 
-(defun c-xref-char-replace (ss schars dchar)
-  (let ((res) (i) (j) (len) (slen) (cc) (sc) (loop))
-    (setq res "")
-    (setq len (length ss))
-    (setq slen (length schars))
-    (setq i 0)
-    (while (< i len)
-      (setq cc (elt ss i))
-      (setq j 0)
-      (setq loop t)
-      (while (and (< j slen) loop)
-            (setq sc (elt schars j))
-            (if (eq cc sc)
-                (setq loop nil)
-              )
-            (setq j (+ j 1))
-            )
-      (if loop
-              (setq res (format "%s%c" res cc))
-            (setq res (format "%s%c" res dchar))
-            )
-      (setq i (1+ i))
-      )
-    res
-    ))
-
-
 (defun c-xref-path-completionfun (cstr _filter type)
   (let ((res) (fname) (dir) (sep) (str) (prefix))
     (setq str cstr)
@@ -3723,26 +3696,6 @@ will be deleted.
     ))
 
 (defvar c-xref-foo-macros-counter 1)
-(defun c-xref-collect-macros-for-new-project (prefix mess1 mess2)
-  (let ((ifloop) (rrr) (rest) (aaa) (deflt))
-    (setq rest "")
-    (setq ifloop t)
-    (while ifloop
-      (if (eq c-xref-foo-macros-counter 1)
-              (setq deflt "FOO")
-            (setq deflt (format "FOO%d" c-xref-foo-macros-counter))
-            )
-      (setq c-xref-foo-macros-counter
-                (+ c-xref-foo-macros-counter 1))
-      (setq rrr (read-from-minibuffer mess1 deflt))
-      (setq rest (format "%s\n  %s-D%s" rest prefix rrr))
-      (setq aaa (read-from-minibuffer
-                         (format "%s [yn]? " mess2) "n"))
-      (if (not (or (equal aaa "y") (equal aaa "Y"))) (setq ifloop nil))
-      )
-    rest
-    ))
-
 (defun c-xref-remove-dangerous-fname-chars (ss)
   (let ((res) (i) (len))
     (setq res ss)
