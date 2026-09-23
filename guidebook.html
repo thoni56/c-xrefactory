@@ -8944,7 +8944,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 <p>The <code>refactoringOptions</code> parallel global is the clearest symptom. Refactoring sub-tasks (extract, rename, parameter manipulation) synthesize argv like <code>"-olcxextract"</code> and re-enter <code>processOptions</code>, which overwrites <code>options</code>. Reading the refactoring intent (<code>refactoringOptions.theRefactoring</code>, <code>refactoringOptions.renameTo</code>, etc.) from a shadow copy is how that survives.</p>
 </div>
 <div class="paragraph">
-<p>Compounding the problem, <code>processOptions</code> is not a pure parser — it also opens the output file, mutates <code>currentPass</code>, and triggers file-processing initialization. Those side effects are why the global-mutation pattern is load-bearing today: parsing and its consequences are entangled.</p>
+<p>Compounding the problem, <code>processOptions</code> is not a pure parser. It opens the output file, turns each <code>-D</code> into a macro definition, and triggers file-processing initialization. Reading the config is not pure either. It picks the pass sections by looking at the global <code>currentPass</code>, and it raises the global <code>maxPasses</code> when it sees a <code>-passN</code> marker. Those side effects are why the global-mutation pattern is load-bearing today: parsing and its consequences are entangled.</p>
 </div>
 </div>
 <div class="sect3">
@@ -9011,7 +9011,32 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 <p><strong>1. Continue growing <code>ProjectConfig</code>.</strong> Move project-scoped fields off <code>Options</code> one at a time (include paths, project name, compiler discovery results, detected project root). Field-by-field migration; each field is a self-contained change.</p>
 </div>
 <div class="paragraph">
-<p><strong>2. Extract side effects from option parsing.</strong> Move the output-file opening, pass flag mutation, and file-processing initialization out of <code>processOptions</code> into the dispatcher. Parsing becomes pure; side effects remain where they belong but with a clear trigger point. This is the load-bearing step — without it, typed requests still have to round-trip through global state.</p>
+<p><strong>2. Extract side effects from option parsing.</strong> Parsing becomes pure; side effects remain where they belong but with a clear trigger point. This is the load-bearing step — without it, typed requests still have to round-trip through global state.</p>
+</div>
+<div class="paragraph">
+<p>The comment in <code>loadProjectSettings</code> that ends in "!!! berk" describes the knot. Request options must be read before the config, the cached options after it, and the cache must not hold request options. With no side effects to replay, the order stops mattering.</p>
+</div>
+<div class="paragraph">
+<p>A likely order, cheapest first:</p>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><strong>Pass count as data.</strong> The pass sections are already read into <code>ProjectConfig.optionSets</code>. The parse loops can take the number of passes from there, instead of setting <code>maxPasses</code> to 1 and relying on a config read to raise it.</p>
+</li>
+<li>
+<p><strong>Read the config without a pass.</strong> Per-pass options already arrive through <code>applyOptionSet()</code>, so the config read can be base-only. The loaded settings are then the same in every pass, and a change of pass no longer forces a full reload. This should also stop a cold start from interrogating the compiler twice (<code>tests/test_cold_start_interrogates_compiler_once</code>).</p>
+</li>
+<li>
+<p><strong>Defines when a parse starts.</strong> <code>-D</code> is saved in <code>definitionStrings</code> and also turned into a macro immediately. Applying the saved strings when a parse starts takes the config&#8217;s defines out of the memory checkpoint.</p>
+</li>
+<li>
+<p><strong>The rest.</strong> Output-file opening and file-processing initialization move into the dispatcher.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The order comes from reading the code and has not been tried. The first attempt at the compiler test also changed three move function tests, for a reason not yet understood.</p>
 </div>
 <div class="paragraph">
 <p><strong>3. Introduce typed <code>Request</code> per operation.</strong> Pilot with one small, self-contained operation (candidates: <code>OP_SEARCH</code>, <code>OP_ABOUT</code>). Define the per-operation request struct, have the parser produce it, have the dispatcher consume it. Prove the shape end-to-end on one operation before spreading to the rest.</p>
@@ -11722,7 +11747,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-23 14:16:52 UTC
+Last updated 2026-09-23 16:43:40 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
