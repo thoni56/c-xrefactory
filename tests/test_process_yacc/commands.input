@@ -5,4 +5,10 @@ CXREF -xrefactory-II -crlfconversion -crconversion -server
 <sync>
 -push -olcursor=50 CURDIR/file.y
 <sync>
+-browse-next -olcursor=50 CURDIR/file.y
+<sync>
+-browse-next -olcursor=50 CURDIR/file.y
+<sync>
+-browse-next -olcursor=50 CURDIR/file.y
+<sync>
 <exit>
