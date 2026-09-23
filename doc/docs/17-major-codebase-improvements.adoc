@@ -398,7 +398,7 @@ These lifetimes are held together by a save/restore discipline scattered across 
 
 The `refactoringOptions` parallel global is the clearest symptom. Refactoring sub-tasks (extract, rename, parameter manipulation) synthesize argv like `"-olcxextract"` and re-enter `processOptions`, which overwrites `options`. Reading the refactoring intent (`refactoringOptions.theRefactoring`, `refactoringOptions.renameTo`, etc.) from a shadow copy is how that survives.
 
-Compounding the problem, `processOptions` is not a pure parser — it also opens the output file, mutates `currentPass`, and triggers file-processing initialization. Those side effects are why the global-mutation pattern is load-bearing today: parsing and its consequences are entangled.
+Compounding the problem, `processOptions` is not a pure parser. It opens the output file, turns each `-D` into a macro definition, and triggers file-processing initialization. Reading the config is not pure either. It picks the pass sections by looking at the global `currentPass`, and it raises the global `maxPasses` when it sees a `-passN` marker. Those side effects are why the global-mutation pattern is load-bearing today: parsing and its consequences are entangled.
 
 ==== Target Shape
 
@@ -435,7 +435,19 @@ Each step is independently shippable. No grand rewrite.
 
 **1. Continue growing `ProjectConfig`.** Move project-scoped fields off `Options` one at a time (include paths, project name, compiler discovery results, detected project root). Field-by-field migration; each field is a self-contained change.
 
-**2. Extract side effects from option parsing.** Move the output-file opening, pass flag mutation, and file-processing initialization out of `processOptions` into the dispatcher. Parsing becomes pure; side effects remain where they belong but with a clear trigger point. This is the load-bearing step — without it, typed requests still have to round-trip through global state.
+**2. Extract side effects from option parsing.** Parsing becomes pure; side effects remain where they belong but with a clear trigger point. This is the load-bearing step — without it, typed requests still have to round-trip through global state.
+
+The comment in `loadProjectSettings` that ends in "!!! berk" describes the knot. Request options must be read before the config, the cached options after it, and the cache must not hold request options. With no side effects to replay, the order stops mattering.
+
+A likely order, cheapest first:
+
+[loweralpha]
+. *Pass count as data.* The pass sections are already read into `ProjectConfig.optionSets`. The parse loops can take the number of passes from there, instead of setting `maxPasses` to 1 and relying on a config read to raise it.
+. *Read the config without a pass.* Per-pass options already arrive through `applyOptionSet()`, so the config read can be base-only. The loaded settings are then the same in every pass, and a change of pass no longer forces a full reload. This should also stop a cold start from interrogating the compiler twice (`tests/test_cold_start_interrogates_compiler_once`).
+. *Defines when a parse starts.* `-D` is saved in `definitionStrings` and also turned into a macro immediately. Applying the saved strings when a parse starts takes the config's defines out of the memory checkpoint.
+. *The rest.* Output-file opening and file-processing initialization move into the dispatcher.
+
+The order comes from reading the code and has not been tried. The first attempt at the compiler test also changed three move function tests, for a reason not yet understood.
 
 **3. Introduce typed `Request` per operation.** Pilot with one small, self-contained operation (candidates: `OP_SEARCH`, `OP_ABOUT`). Define the per-operation request struct, have the parser produce it, have the dispatcher consume it. Prove the shape end-to-end on one operation before spreading to the rest.
 
