@@ -8094,6 +8094,31 @@ a rename of.
 </table>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_parallel_runs">14.7.7. Parallel runs</h4>
+<div class="paragraph">
+<p>The system tests run in parallel. <code>make ci</code>, and so Travis, uses an unbounded <code>-j</code>, and the
+watchers use <code>-j$(JOBS)</code>. That works, but a few tests have failed in a parallel run and
+passed right after on their own.</p>
+</div>
+<div class="paragraph">
+<p>The clearest case is from Travis, 2026-09-24 (build 278868958).
+<code>test_static_outside_project_root</code> failed with "Server did not exit cleanly within 5
+seconds, killing&#8230;&#8203;", and the same build passed when restarted. The driver waits five
+seconds for the server to exit (<code>--timeout</code> in <code>utils/server_driver.py</code>), which is probably
+too short under an unbounded <code>-j</code>. Not verified.</p>
+</div>
+<div class="paragraph">
+<p>Running the suite yourself while the watchers run it gives failures that look the same.
+Both runs write <code>output.tmp</code> and <code>output</code> in the same directories, so different tests fail
+each time and none of them fails on its own. The two earlier sightings, both local, may
+have been that: <code>test_searching_cexercise</code> with the same warning on 2026-09-15, and two
+tests whose server answered nothing after startup in a <code>-j8</code> run on 2026-09-16.</p>
+</div>
+<div class="paragraph">
+<p>If you see one of these, add it here with the date, the test and where it ran.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_utilities">14.8. Utilities</h3>
@@ -11780,7 +11805,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-23 22:37:21 UTC
+Last updated 2026-09-23 22:54:43 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
