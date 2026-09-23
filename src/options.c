@@ -1681,9 +1681,6 @@ static bool processWOption(int *argi, ArgumentsVector args) {
 static bool processXOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
-    else if (strcmp(args.argv[i], "-xref") == 0) {
-        options.mode = XrefMode;
-    }
     else if (strcmp(args.argv[i], "-xrefactory-II") == 0){
         options.xref2 = true;
     }

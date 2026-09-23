@@ -5,8 +5,7 @@ include ../Makefile.cli
 #
 # The message names the two modes worth asking for. -lsp is one of them even
 # though it is not a value of options.mode: main() checks want_lsp_server
-# before anything else. -xref is deliberately not named - it still works, but
-# the program should stop recommending the engine that is being removed.
+# before anything else. -xref is not named because it is gone.
 
 $(TEST):
 	@-$(CXREF_PROGRAM) source.c > output.tmp 2>&1; echo "exit=$$?" >> output.tmp

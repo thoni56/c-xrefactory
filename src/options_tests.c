@@ -171,15 +171,6 @@ Ensure(Options, has_no_mode_by_default) {
     assert_that(presetOptions.mode, is_equal_to(UndefinedMode));
 }
 
-Ensure(Options, can_parse_xref_mode_option) {
-    char *argv[] = {"", "-xref"};
-    ArgumentsVector args = {2, argv};
-
-    options.mode = UndefinedMode;
-    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
-    assert_that(options.mode, is_equal_to(XrefMode));
-}
-
 Ensure(Options, can_parse_xrefrc_option_with_equals) {
     char *argv[] = {"", "-xrefrc=abc"};
     ArgumentsVector args = {2, argv};
