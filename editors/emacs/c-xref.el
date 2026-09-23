@@ -3695,56 +3695,6 @@ will be deleted.
     res
     ))
 
-(defvar c-xref-foo-macros-counter 1)
-(defun c-xref-remove-dangerous-fname-chars (ss)
-  (let ((res) (i) (len))
-    (setq res ss)
-    (if (eq c-xref-platform 'windows)
-            (progn
-              (setq i 0)
-              (setq len (length ss))
-              (setq res "")
-              (while (< i len)
-                (if (and (> i 2) (eq (elt ss i) ?\:))
-                        (setq res res)
-                  (setq res (concat res (char-to-string (elt ss i))))
-                  )
-                (setq i (1+ i))
-                )
-              )
-      )
-    res
-    ))
-
-(defun c-xref-get-dir-from-path-and-package (dir package)
-  (let ((res) (i) (len))
-    (setq res (format "%s/" dir))
-    (setq len (length package))
-    (setq i 0)
-    (while (< i len)
-      (if (eq (elt package i) ?.)
-              (setq res (format "%s/" res))
-            (setq res (format "%s%c" res (elt package i)))
-            )
-      (setq i (+ i 1))
-      )
-    res
-    ))
-
-
-(defun c-xref-infer-package-proposal ()
-  (let ((package) (ff))
-    (save-excursion
-      (goto-char (point-min))
-      (setq ff (search-forward-regexp "package[ \t]+\\([a-zA-Z0-9$.]*\\)" nil t))
-      (if ff
-              (setq package (buffer-substring (match-beginning 1) (match-end 1)))
-            (setq package "")
-            )
-      )
-    package
-    ))
-
 (defun c-xref-find-project-root ()
   "Find project root by looking for .git directory.
 Returns the directory containing .git, or the current file's directory
