@@ -2,7 +2,7 @@ include ../Makefile.server
 
 # Scenario: Session positions update when POPping to a session after buffer modification
 #
-# Given source.c has been indexed with -create
+# Given source.c has been parsed on demand by the -getproject request
 # And the user PUSHes on 'function1' (creating session 1)
 # And the user PUSHes again on 'function1' (creating session 2)
 # When a modified buffer is sent with NEXT (blank line inserted before the call)
@@ -21,7 +21,6 @@ include ../Makefile.server
 # session rebuild). Both are on the roadmap.
 
 $(TEST):
-	$(CXREF) -xref -create > /dev/null 2>&1
 	touch source.preload # ensure the preloaded buffer has a more recent timestamp
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output

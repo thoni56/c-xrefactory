@@ -4,3 +4,15 @@ Browsing sessions hold copies of references, not indexes into the live table.
 After a reparse only the session that consumes the per-file
 needsBrowsingStackRefresh flag is refreshed, so POP returns to a session with
 stale positions. Needs index-based sessions (roadmap). Details in the Makefile.
+
+What it looks like today, two hunks and nothing else: after the preloaded
+buffer shifts the call site down a line, session 2 navigates to line 7
+correctly, then POP to session 1 answers line 6 and a NEXT on that session
+repeats line 6. Expected is 7 in both places.
+
+Until 2026-09-23 the test did not get that far. Its commands.input started a
+second c-xref with -fastupdate and no mode, which became an error in
+6c0582e0, so the run died with "No mode given" before its first assertion.
+Every request now goes to the one server process, and the -xref -create prime
+is gone - verified from clean, the server parses on demand and the failure is
+unchanged.

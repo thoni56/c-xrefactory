@@ -1,7 +1,6 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server
 -getproject -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
 <sync>
-CXREF -xrefactory-II -crlfconversion -crconversion -fastupdate -errors -xrefrc CURDIR/.c-xrefrc -p CURDIR
 -push  -olcursor=68 CURDIR/source.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
 -push  -olcursor=68 CURDIR/source.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
