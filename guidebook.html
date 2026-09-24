@@ -9828,10 +9828,20 @@ values used in an action with no matching declared local — <code>addRuleLocalV
 one of those resolves as an undeclared C identifier at file scope.</p>
 </div>
 <div class="paragraph">
-<p><strong>Remedy:</strong> remove the snapshot and restart the server. That is also the only way out of
-the deleted-compilation-unit loop above, and it clears the shadow occurrences that
-behind-the-back disk changes leave behind — common enough between the three that the
-client should offer it as a menu entry rather than requiring an <code>rm</code> in a terminal.</p>
+<p><strong>A restart is not enough.</strong> The server saves the snapshot on the way out, so a stale entry
+is written back and survives every restart — the database is self-perpetuating once it
+has been poisoned. Measured on the Mac (session <code>7c731c79</code>, 2026-09-24): the snapshot
+over <code>src/</code> held 306 <code>$</code>-named symbols before the yacc fix and 112 after the fix and a
+restart, and all 112 were position-keyed, which the fixed parser cannot produce. They
+came from the old snapshot, were stamped global on load, and were saved again on exit.</p>
+</div>
+<div class="paragraph">
+<p><strong>Remedy:</strong> stop the server, then delete the snapshot — in that order, since the server
+writes it on the way out. The Emacs client does both from Project → Remove References and
+Restart Server (<code>c-xref-project-remove-references-and-restart</code>); the next request starts a
+fresh server, which rebuilds from the sources. The same remedy is the only way out of the
+deleted-compilation-unit loop above, and it clears the shadow occurrences that
+behind-the-back disk changes leave behind. It is a stopgap for all three.</p>
 </div>
 </div>
 </div>
@@ -11875,7 +11885,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-24 12:51:10 UTC
+Last updated 2026-09-24 12:56:08 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
