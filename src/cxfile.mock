@@ -22,8 +22,8 @@ int cxFileHashNumberForSymbol(char *sym) {
   return (int) mock(sym);
 }
 
-void saveReferencesToStore(bool updating, char *filename) {
-  mock(updating, filename);
+void saveReferencesToStore(char *filename) {
+  mock(filename);
 }
 
 bool loadFileNumbersFromStore(void) {

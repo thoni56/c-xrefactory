@@ -452,32 +452,13 @@ static void writeCxFileHead(void) {
 
 static char tmpFileName[MAX_FILE_NAME_SIZE];
 
-static void openInOutCxFile(bool updating, char *cxFileName) {
-    if (updating) {
-        if (fileExists(cxFileName)) {
-            char *tempname = create_temporary_filename();
-            strcpy(tmpFileName, tempname);
-            copyFileFromTo(cxFileName, tmpFileName);
-        } else
-            tmpFileName[0] = '\0';
-    }
-
+static void openInOutCxFile(char *cxFileName) {
     assert(cxFileName);
     cxFile = openFile(cxFileName,"w");
     if (cxFile == NULL)
         FATAL_ERROR(ERR_CANT_OPEN, cxFileName, EXIT_FAILURE);
 
-    if (updating) {
-        if (tmpFileName[0] != '\0') {
-            currentCxFile = openFile(tmpFileName, "r");
-            if (currentCxFile==NULL)
-                warningMessage(ERR_CANT_OPEN_FOR_READ, tmpFileName);
-        } else {
-            currentCxFile = NULL;
-        }
-    } else {
-        currentCxFile = NULL;
-    }
+    currentCxFile = NULL;
 }
 
 static void closeCurrentCxFile(void) {
@@ -493,13 +474,13 @@ static void closeCurrentCxFile(void) {
 
 // TODO: Remove the updateFlag
 /* suffix contains '/' at the beginning */
-static void writePartialCxFile(bool updateFlag, char *dirname, char *suffix,
+static void writePartialCxFile(char *dirname, char *suffix,
                                void mapfun(FileItem *, int)) {
     char cxFileName[MAX_FILE_NAME_SIZE];
 
     sprintf(cxFileName, "%s%s", dirname, suffix);
     assert(strlen(cxFileName) < MAX_FILE_NAME_SIZE-1);
-    openInOutCxFile(updateFlag, cxFileName);
+    openInOutCxFile(cxFileName);
     writeCxFileHead();
     mapOverFileTableWithIndex(mapfun);
     closeCurrentCxFile();
@@ -520,45 +501,43 @@ static void writeReferencesFromMemoryIntoCxFile(int partitionNumber) {
     }
 }
 
-static void writeSingleCxFile(bool updating, char *filename) {
-    openInOutCxFile(updating, filename);
+static void writeSingleCxFile(char *filename) {
+    openInOutCxFile(filename);
     writeCxFileHead();
     mapOverFileTableWithIndex(writeFileNumberItem);
     mapOverReferenceableItemTable(writeReferenceableItem);
     closeCurrentCxFile();
 }
 
-static void writeMultipleCxFiles(bool updating, char *dirName) {
+static void writeMultipleCxFiles(char *dirName) {
     char  cxFileName[MAX_FILE_NAME_SIZE];
 
     createDirectory(dirName);
-    writePartialCxFile(updating, dirName, CXFILENAME_FILES, writeFileNumberItem);
+    writePartialCxFile(dirName, CXFILENAME_FILES, writeFileNumberItem);
     for (int i = 0; i < options.cxFileCount; i++) {
         sprintf(cxFileName, "%s%s%04d", dirName, CXFILENAME_PREFIX, i);
         assert(strlen(cxFileName) < MAX_FILE_NAME_SIZE - 1);
-        openInOutCxFile(updating, cxFileName);
+        openInOutCxFile(cxFileName);
         writeCxFileHead();
         writeReferencesFromMemoryIntoCxFile(i);
         closeCurrentCxFile();
     }
 }
 
-static void writeCxFiles(int updating, char *fileName) {
-    if (!updating)
-        recursivelyDeleteDirectory(fileName);
-
+static void writeCxFiles(char *fileName) {
+    recursivelyDeleteDirectory(fileName);
     recursivelyCreateFileDirIfNotExists(fileName);
 
     if (options.cxFileCount <= 1) {
-        writeSingleCxFile(updating, fileName);
+        writeSingleCxFile(fileName);
     } else {
-        writeMultipleCxFiles(updating, fileName);
+        writeMultipleCxFiles(fileName);
     }
 }
 
-void saveReferencesToStore(bool updating, char *fileName) {
+void saveReferencesToStore(char *fileName) {
     ENTER();
-    writeCxFiles(updating, fileName);
+    writeCxFiles(fileName);
     LEAVE();
 }
 

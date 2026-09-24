@@ -10,6 +10,6 @@ extern void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Ref
 // Abstract API
 extern bool loadFileNumbersFromStore(void);
 extern bool loadSnapshotFromStore(void);
-extern void saveReferencesToStore(bool updating, char *name);
+extern void saveReferencesToStore(char *name);
 
 #endif

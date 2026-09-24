@@ -2236,5 +2236,5 @@ void saveReferences(void) {
     /* Memory is truth: the in-memory referenceableItemTable already holds everything
      * the snapshot should contain, so it is written from scratch and nothing is merged
      * from disk. */
-    saveReferencesToStore(false, options.cxFileLocation);
+    saveReferencesToStore(options.cxFileLocation);
 }
