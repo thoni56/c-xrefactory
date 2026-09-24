@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-09-23">
+<meta name="author" content="v{VERSION} - Generated 2026-09-24">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-09-23</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-09-24</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -605,6 +605,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_push_by_name_finds_nothing_on_a_cold_start">17.5. Push by name finds nothing on a cold start</a></li>
 <li><a href="#_token_pasting_that_forms_numbers">17.6. Token pasting that forms numbers</a></li>
 <li><a href="#_a_compilation_unit_deleted_outside_the_editor_is_never_let_go">17.7. A compilation unit deleted outside the editor is never let go</a></li>
+<li><a href="#_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">17.8. A stale snapshot keeps symbols the parser no longer makes global</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">18. Refactoring Recipes</a>
@@ -9796,6 +9797,43 @@ records is zero again, so the file is counted on every request. Not verified wit
 <a href="10-roadmap.html">Roadmap</a>, Behind-the-back disk-change detection).</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">17.8. A stale snapshot keeps symbols the parser no longer makes global</h3>
+<div class="paragraph">
+<p><strong>Symptom:</strong> a fix that narrows a symbol&#8217;s visibility has no effect in a running editor
+session, and reparsing the whole project does not help. Seen 2026-09-24 on the Mac
+(session <code>7c731c79</code>): after yacc semantic values stopped being globally visible, Unused
+Symbols in Project still listed 378 <code>$N</code> entries, from a server that was running the
+fixed binary. Its snapshot, <code>src/.c-xref/db</code>, had been written seventeen minutes before
+the fix and held 306 <code>$</code>-named symbols.</p>
+</div>
+<div class="paragraph">
+<p><strong>Root cause:</strong> the snapshot has no visibility field. <code>CxFieldTag</code> (<code>src/cxfile.c</code>) carries
+the symbol&#8217;s type and storage but not its visibility, so
+<code>scanFunction_SymbolNameForSnapshotLoad</code> stamps everything it loads <code>VisibilityGlobal</code>.
+That is lossless only while the write side&#8217;s filter holds — <code>skip VisibilityLocal</code> in
+<code>writeReferencesFromMemoryIntoCxFile</code> — which is the invariant
+<a href="06-principles.html">Principles</a> states. Whenever a symbol reaches the snapshot that
+should not have, it comes back global for the life of the server, and reparsing cannot
+repair it: <code>equalReferenceableItems</code> (<code>src/referenceableitemtable.c</code>) compares
+visibility, so the freshly parsed local symbol is a <strong>different</strong> table entry from the
+stale global one. The stale entry keeps its definition reference and goes on answering
+every project-wide question.</p>
+</div>
+<div class="paragraph">
+<p>The invariant is still not quite true. A snapshot written over <code>src/</code> on 2026-09-24 held
+35 position-keyed (block-local) link names and 17 <code>$</code>-named ones, the latter semantic
+values used in an action with no matching declared local — <code>addRuleLocalVariable</code>
+(<code>src/yacc_parser.y</code>) never declares the typed-reference form <code>$&lt;type&gt;N</code> at all, so every
+one of those resolves as an undeclared C identifier at file scope.</p>
+</div>
+<div class="paragraph">
+<p><strong>Remedy:</strong> remove the snapshot and restart the server. That is also the only way out of
+the deleted-compilation-unit loop above, and it clears the shadow occurrences that
+behind-the-back disk changes leave behind — common enough between the three that the
+client should offer it as a menu entry rather than requiring an <code>rm</code> in a terminal.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -11837,7 +11875,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-23 23:19:58 UTC
+Last updated 2026-09-24 12:51:10 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
