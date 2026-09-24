@@ -1,0 +1,16 @@
+--- default
+CXREF "-xrefactory-II" "-server"
+"-getproject" "CURDIR/source.c"
+<sync>
+"-push" "-olcursor=10" "-preload" "CURDIR/source.c" "CURDIR/source.c.preload" "CURDIR/source.c"
+<sync>
+<exit>
+--- source.c.preload
+int edited;
+--- --strip-preloads
+CXREF "-xrefactory-II" "-server"
+"-getproject" "CURDIR/source.c"
+<sync>
+"-push" "-olcursor=10" "CURDIR/source.c"
+<sync>
+<exit>

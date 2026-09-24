@@ -7,16 +7,16 @@
 # It will replace any occurrence of current directory with CURDIR, so it
 # is handy to be in the directory where the processed files are located.
 
-# Use --preserve-preloads to copy tmp preload files to local .preload files
-# and use them in the generated commands. This requires the tmp files to
-# still exist.
+# Preloads are kept: each tmp preload file is copied to a local .preload file
+# and the generated commands use that. This requires the tmp files to still
+# exist. Use --strip-preloads to drop them instead.
 
 import sys
 import re
 import os
 import shutil
 
-preserve_preloads = False
+strip_preloads = False
 copied_preloads = {}  # Maps tmp file path to local preload filename
 
 def get_preload_filename(source_file):
@@ -25,11 +25,11 @@ def get_preload_filename(source_file):
     return basename + ".preload"
 
 def process_preload(line):
-    """Process preload arguments - either remove or preserve them."""
+    """Process preload arguments - either keep or strip them."""
     if "-preload" not in line:
         return line
 
-    if not preserve_preloads:
+    if strip_preloads:
         return re.sub("\"-preload\"( \"[^\"]*\"){2} ", '', line)
 
     # Extract preload arguments: "-preload" "source_file" "tmp_file"
@@ -87,12 +87,12 @@ def fixup_sending(line):
 
 # Parse arguments
 args = sys.argv[1:]
-if "--preserve-preloads" in args:
-    preserve_preloads = True
-    args.remove("--preserve-preloads")
+if "--strip-preloads" in args:
+    strip_preloads = True
+    args.remove("--strip-preloads")
 
 if not args:
-    print("Usage: messages2commands.py [--preserve-preloads] <messages.txt>", file=sys.stderr)
+    print("Usage: messages2commands.py [--strip-preloads] <messages.txt>", file=sys.stderr)
     sys.exit(1)
 
 with open(args[0], "r") as messages:
