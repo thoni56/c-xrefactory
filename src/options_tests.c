@@ -133,6 +133,19 @@ Ensure(Options, can_expand_special_variable_file) {
     assert_that(expanded, is_equal_to_string("/some/path/to/options.c"));
 }
 
+/* Every expansion this does is derived from the input file, so a request that
+   carries no file has nothing to substitute. It must not reach for the file
+   name helpers - that is what made -get without a file crash the server. */
+Ensure(Options, leaves_a_file_variable_unexpanded_without_an_input_file) {
+    char *expanded = expandPredefinedSpecialVariables_static("${__file}", NULL);
+    assert_that(expanded, is_equal_to_string("${__file}"));
+}
+
+Ensure(Options, returns_a_plain_value_without_an_input_file) {
+    char *expanded = expandPredefinedSpecialVariables_static("/a/project/root", NULL);
+    assert_that(expanded, is_equal_to_string("/a/project/root"));
+}
+
 Ensure(Options, can_allocate_a_string) {
     char *allocatedString;
 

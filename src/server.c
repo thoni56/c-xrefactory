@@ -98,6 +98,13 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
         ;
 }
 
+/* -get answers from the locked project's variables. An input file only adds the
+   ${__file} family of expansions to the value, so a request without one is
+   answerable rather than an error. */
+static bool toleratesMissingInputFile(ServerOperation operation) {
+    return operation == OP_GET_ENV_VALUE;
+}
+
 
 #define MAX_CUS_TO_REPARSE 128
 
@@ -742,7 +749,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         if (hasInputFile) {
             processFile(baseArgs, requestArgs);
             projectContextInitialized = true;
-        } else {
+        } else if (!toleratesMissingInputFile(options.serverOperation)) {
             errorMessage(ERR_ST, "No input file");
         }
     } else {

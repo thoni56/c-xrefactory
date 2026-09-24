@@ -559,6 +559,16 @@ char *expandPredefinedSpecialVariables_static(char *variable, char *inputFilenam
     char        path[MAX_FILE_NAME_SIZE];
     char        name[MAX_FILE_NAME_SIZE];
 
+    /* Every expansion below is derived from the input file. A request that
+       carries none - "-get <name>" from the client, say - has nothing to
+       substitute, so the placeholders are left as they are rather than
+       resolved against a file that is not there. */
+    if (inputFilename == NULL || inputFilename[0] == '\0') {
+        assert(strlen(variable) < MAX_OPTION_LEN);
+        strcpy(expanded, variable);
+        return expanded;
+    }
+
     strcpy(filename, getRealFileName_static(inputFilename));
     assert(strlen(filename) < MAX_FILE_NAME_SIZE - 1);
     strcpy(path, directoryName_static(filename));
