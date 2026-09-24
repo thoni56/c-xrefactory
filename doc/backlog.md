@@ -251,6 +251,34 @@ Pass 3 rounds 19s each, 42s total.
 
 ## Open questions that would reorder this
 
+* **Who establishes the project — the client, every request, or the request's own file?**
+  *No repo home yet; ties to item 8, which puts `-p` in the config rather than on the
+  command line.* `callServer` (`src/server.c`) already derives everything from the
+  request's input file — `initializeProjectContext`, snapshot load, scan, sibling parse —
+  and only then does `answerEditorAction` (`src/cxref.c:1887`) refuse with
+  `FATAL_ERROR` unless one of `options.xrefrc`, `lockedProject` or `options.project` is
+  set. The gate sits downstream of all the work it might have saved: observed parsing 79
+  sibling CUs and then failing. It is also inconsistent — measured on an isolated copy of
+  `src/`, fresh server each time (Mac, session `7c731c79`, 2026-09-24):
+
+  | | with `-p` | without `-p` |
+  |---|---|---|
+  | `-push` | ok | FATAL |
+  | `-browse-next` | FATAL | FATAL |
+
+  The client sends `-p` on every request, so the third hatch should always hold; for
+  `-browse-next` `options.project` is gone by dispatch time, and where it is lost was not
+  traced. Three ways out: the client precedes every request with `-getproject` (ceremony,
+  ~91ms warm); the client sends it once per server (fragile — the client restarts servers
+  silently on crash and on Remove References, and cannot tell that it did); or the server
+  locks implicitly from the first request's file and `-getproject` becomes only the
+  "which project is this / switch project" query, with `PPC_PROJECT_MISMATCH`
+  (`src/cxref.c:1824`) still enforcing one project per server. Removing `-p` (item 8)
+  deletes one of the three hatches, so this has to be settled first or alongside.
+  Separately: `FATAL_ERROR` is the wrong severity — a missing `-getproject` is a client
+  protocol mistake, not a broken invariant, and killing the server turns it into a
+  restart loop. `errorMessage` is what the convention asks for.
+
 * **ADR-0027 stays `Accepted`, not `Implemented`:** rename does not yet refuse from inside
   a macro body, and the menu is complete only up to the collection caps.
 * **`18-known-bugs.adoc` cites `test_browsing_push_name_parses_whole_project`**, which
