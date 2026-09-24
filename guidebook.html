@@ -9828,18 +9828,28 @@ values used in an action with no matching declared local — <code>addRuleLocalV
 one of those resolves as an undeclared C identifier at file scope.</p>
 </div>
 <div class="paragraph">
-<p><strong>A restart is not enough.</strong> The server saves the snapshot on the way out, so a stale entry
-is written back and survives every restart — the database is self-perpetuating once it
-has been poisoned. Measured on the Mac (session <code>7c731c79</code>, 2026-09-24): the snapshot
-over <code>src/</code> held 306 <code>$</code>-named symbols before the yacc fix and 112 after the fix and a
-restart, and all 112 were position-keyed, which the fixed parser cannot produce. They
-came from the old snapshot, were stamped global on load, and were saved again on exit.</p>
+<p><strong>A restart is not enough.</strong> The server saves the snapshot on <code>-exit</code> (<code>src/options.c</code>) and
+again every hundred compilation units during a parse-all sweep (<code>src/server.c</code>, "so
+progress survives Ctrl-g/crash") — and a parse-all sweep is exactly what Unused Symbols
+in Project asks for. A stale entry is therefore written back repeatedly: the database is
+self-perpetuating once it has been poisoned. Measured on the Mac (session <code>7c731c79</code>,
+2026-09-24): the snapshot over <code>src/</code> held 306 <code>$</code>-named symbols before the yacc fix and
+112 after the fix and a restart, all 112 position-keyed, which the fixed parser cannot
+produce.</p>
 </div>
 <div class="paragraph">
-<p><strong>Remedy:</strong> stop the server, then delete the snapshot — in that order, since the server
-writes it on the way out. The Emacs client does both from Project → Remove References and
-Restart Server (<code>c-xref-project-remove-references-and-restart</code>); the next request starts a
-fresh server, which rebuilds from the sources. The same remedy is the only way out of the
+<p><strong>One database, several servers, no locking.</strong> The 112 outlived a delete because a second
+Emacs held a server on the same project — an older build, with the poisoned table still in
+memory — and its own periodic save rewrote the database underneath. Every server on a
+project has to be stopped, not just the one in front of you. Deleting the database with
+all of them stopped left a clean result: 418 symbols reported, no <code>$</code> among them.</p>
+</div>
+<div class="paragraph">
+<p><strong>Remedy:</strong> stop every server on the project, then delete the snapshot — in that order,
+since a server writes it on the way out. The Emacs client does both for its own server
+from Project → Remove References and Restart Server
+(<code>c-xref-project-remove-references-and-restart</code>); the next request starts a fresh one,
+which rebuilds from the sources. The same remedy is the only way out of the
 deleted-compilation-unit loop above, and it clears the shadow occurrences that
 behind-the-back disk changes leave behind. It is a stopgap for all three.</p>
 </div>
@@ -11885,7 +11895,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-24 12:56:08 UTC
+Last updated 2026-09-24 13:05:29 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
