@@ -122,3 +122,35 @@ records is zero again, so the file is counted on every request. Not verified wit
 
 This is the deleted-file case of behind-the-back disk changes (see
 <<10-roadmap.adoc#,Roadmap>>, Behind-the-back disk-change detection).
+
+=== A stale snapshot keeps symbols the parser no longer makes global
+
+*Symptom:* a fix that narrows a symbol's visibility has no effect in a running editor
+session, and reparsing the whole project does not help. Seen 2026-09-24 on the Mac
+(session `7c731c79`): after yacc semantic values stopped being globally visible, Unused
+Symbols in Project still listed 378 `$N` entries, from a server that was running the
+fixed binary. Its snapshot, `src/.c-xref/db`, had been written seventeen minutes before
+the fix and held 306 `$`-named symbols.
+
+*Root cause:* the snapshot has no visibility field. `CxFieldTag` (`src/cxfile.c`) carries
+the symbol's type and storage but not its visibility, so
+`scanFunction_SymbolNameForSnapshotLoad` stamps everything it loads `VisibilityGlobal`.
+That is lossless only while the write side's filter holds — `skip VisibilityLocal` in
+`writeReferencesFromMemoryIntoCxFile` — which is the invariant
+<<06-principles.adoc#,Principles>> states. Whenever a symbol reaches the snapshot that
+should not have, it comes back global for the life of the server, and reparsing cannot
+repair it: `equalReferenceableItems` (`src/referenceableitemtable.c`) compares
+visibility, so the freshly parsed local symbol is a *different* table entry from the
+stale global one. The stale entry keeps its definition reference and goes on answering
+every project-wide question.
+
+The invariant is still not quite true. A snapshot written over `src/` on 2026-09-24 held
+35 position-keyed (block-local) link names and 17 `$`-named ones, the latter semantic
+values used in an action with no matching declared local — `addRuleLocalVariable`
+(`src/yacc_parser.y`) never declares the typed-reference form `$<type>N` at all, so every
+one of those resolves as an undeclared C identifier at file scope.
+
+*Remedy:* remove the snapshot and restart the server. That is also the only way out of
+the deleted-compilation-unit loop above, and it clears the shadow occurrences that
+behind-the-back disk changes leave behind — common enough between the three that the
+client should offer it as a menu entry rather than requiring an `rm` in a terminal.

@@ -1,6 +1,6 @@
 # Backlog
 
-What to work on next, and in what order. As of 2026-09-22.
+What to work on next, and in what order. As of 2026-09-24.
 
 The *descriptions* live in the guidebook (`doc/docs/`), in the `.suspended` notes and in
 the ADRs. This file carries only the **order** and the **dependencies**, which are
@@ -178,30 +178,40 @@ Pass 3 rounds 19s each, 42s total.
 
 ## 5. Features, by readiness
 
-19. **Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
+19. **A "Remove db" entry in the client** — *stopgap, and the smallest item here.*
+    Deleting the snapshot and restarting the server is the standing remedy for three
+    unrelated symptoms: shadow occurrences after behind-the-back disk changes, the
+    deleted-compilation-unit reparse loop, and a stale snapshot outliving a visibility
+    fix (all three in `doc/docs/18-known-bugs.adoc`). Common enough that it should not
+    need an `rm` in a terminal. Deliberately a stopgap — the real work is making the
+    snapshot not need discarding, of which behind-the-back detection and entry refresh
+    are probably most, and item 21 dissolves another part. Take the entry out again when
+    they land.
+
+20. **Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
     customization; collapse `CommentMovingMode` to a bool and stop the backward walk at a
     blank line (`src/options.h`, `src/move_function.c`). The TDD scaffolding already
     landed: four `tests/test_move_function_*comment*` tests; sweep
     `-commentmovinglevel=6` → `=1` in the three "with…" `commands.input` files and add
     `test_move_function_stops_at_blank_line` in the same change. Most shovel-ready item
     here.
-20. **Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
+21. **Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
     work. Roadmap → Memory as Truth → Remaining. Depends only on entry refresh, which is
     done.
-21. **Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
+22. **Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
     `doc/docs/11-planned-features.adoc`. Follows the report-errors item. The client half
     does not have to be invented: `c-xref-tags-dispatch` and its two helpers in
     `editors/emacs/c-xref.el` rendered exactly this for the `-create` log — a stream of
     PPC records into `*c-xref-log*`, severity faces, `file://` links made clickable — and
     are kept, uncalled, for that reason. The viewer commands and keymap below them are
     still bound; only the producer is gone.
-22. **Retry the request that created the project** — small, and it becomes first contact
+23. **Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
-23. **LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
+24. **LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
     function and the parameter refactorings. Stubs exist: `handle_code_action`,
     `handle_execute_command`, with `codeActionProvider` commented out in
     `src/lsp_handler.c`. Keep tier 3 (custom methods + per-editor extension code) small.
-24. **Move Function next steps** — remove the source header's extern declaration, include
+25. **Move Function next steps** — remove the source header's extern declaration, include
     management, helper-function detection, smarter header placement, preview — then
     **Delete Function**. Also **`-parse-all`, a request that parses every compilation
     unit the scan found and has not parsed** — what ADR-0024's CreateMode reduces to
@@ -217,7 +227,7 @@ Pass 3 rounds 19s each, 42s total.
     Also **unused-detection exclude patterns**, **browsing includes**,
     **semantic read-only files**, **rename handles `expect`**, **project-local
     config**, **Inline Function and Inline Macro**. All in `11-planned-features.adoc`.
-25. **Local config fragments — the need, not a solution** — *no repo home yet.*
+26. **Local config fragments — the need, not a solution** — *no repo home yet.*
     `.c-xrefrc` travels with the project and is checked in, which is why
     `11-planned-features.adoc` argues for it: "it will not contain absolute file paths".
     Some things are machine-specific and still have to be said somewhere — where the
@@ -231,7 +241,7 @@ Pass 3 rounds 19s each, 42s total.
     for a machine-specific fragment. The other direction is a sibling file picked up
     automatically, where absent is normal by construction and nothing checked in refers
     to it. Either way, decide whether a fragment extends or replaces the project config.
-26. **Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
+27. **Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
     the macro expansion module, hashtab → hashlist, split the editor module, rename server
     operations, elisp recompiled and deleted on every build.
 
