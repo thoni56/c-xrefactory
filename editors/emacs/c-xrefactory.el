@@ -523,6 +523,9 @@ faces and highlighting in buffers created by C-xrefactory.
 
 (defvar c-xref-project-menu (make-sparse-keymap "Project"))
 (fset 'c-xref-project-menu (symbol-value 'c-xref-project-menu))
+(define-key c-xref-project-menu [c-xref-prj-remove-refs] '("Remove References and Restart Server" .
+                                                                                           c-xref-project-remove-references-and-restart))
+(define-key c-xref-project-menu [c-xref-prj-sep1] '("--"))
 (define-key c-xref-project-menu [c-xref-prj-edit] '("Edit Config" .
                                                                                             c-xref-project-edit-options))
 (define-key c-xref-project-menu [c-xref-prj-show-active] '("Show Active" .
@@ -638,6 +641,7 @@ your .c-xrefrc file.
 (autoload 'c-xref-project-set-active "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-project-active "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-project-edit-options "c-xref" c-xref-default-documentation-string t)
+(autoload 'c-xref-project-remove-references-and-restart "c-xref" c-xref-default-documentation-string t)
 
 
 

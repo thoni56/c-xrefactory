@@ -150,7 +150,16 @@ values used in an action with no matching declared local — `addRuleLocalVariab
 (`src/yacc_parser.y`) never declares the typed-reference form `$<type>N` at all, so every
 one of those resolves as an undeclared C identifier at file scope.
 
-*Remedy:* remove the snapshot and restart the server. That is also the only way out of
-the deleted-compilation-unit loop above, and it clears the shadow occurrences that
-behind-the-back disk changes leave behind — common enough between the three that the
-client should offer it as a menu entry rather than requiring an `rm` in a terminal.
+*A restart is not enough.* The server saves the snapshot on the way out, so a stale entry
+is written back and survives every restart — the database is self-perpetuating once it
+has been poisoned. Measured on the Mac (session `7c731c79`, 2026-09-24): the snapshot
+over `src/` held 306 `$`-named symbols before the yacc fix and 112 after the fix and a
+restart, and all 112 were position-keyed, which the fixed parser cannot produce. They
+came from the old snapshot, were stamped global on load, and were saved again on exit.
+
+*Remedy:* stop the server, then delete the snapshot — in that order, since the server
+writes it on the way out. The Emacs client does both from Project → Remove References and
+Restart Server (`c-xref-project-remove-references-and-restart`); the next request starts a
+fresh server, which rebuilds from the sources. The same remedy is the only way out of the
+deleted-compilation-unit loop above, and it clears the shadow occurrences that
+behind-the-back disk changes leave behind. It is a stopgap for all three.

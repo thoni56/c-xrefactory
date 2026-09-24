@@ -3774,6 +3774,46 @@ section applies to the currently edited file.
                         c-xref-options-file)))
     (find-file config-file)))
 
+(defun c-xref-project-remove-references-and-restart ()
+  "Delete the project's reference database and restart the server.
+
+The server holds its references in memory and writes them to
+`<project root>/.c-xref/db' when it exits, so an ordinary restart
+preserves whatever was in there.  This stops the server, deletes the
+database it just wrote, and lets the next request rebuild it from the
+sources.
+
+Reach for it when answers name symbols that are not in the code any
+more: occurrences left behind by a file changed outside the editor, a
+compilation unit deleted outside the editor that the server keeps
+asking to reparse, or symbols a newer c-xref no longer makes global.
+See Known Bugs in the guidebook.  It is a stopgap - each of those is a
+bug in its own right.
+"
+  (interactive "")
+  (c-xref-entry-point-make-initialisations)
+  (let* ((project-root (c-xref-get-env "__PROJECT_ROOT"))
+         (database (if (and project-root (not (equal project-root "")))
+                       (concat project-root "/.c-xref/db"))))
+    (cond
+     ((not database)
+      (message "** No project root, so no reference database to remove. **"))
+     ((not (y-or-n-p (format "Remove %s and restart the server? " database)))
+      (message "Nothing removed."))
+     (t
+      ;; The server saves the snapshot on the way out, so it has to be gone
+      ;; before the database is removed, not after.
+      (if c-xref-server-process
+          (progn
+            (process-send-string (car c-xref-server-process) "-exit\nend-of-options\n\n")
+            (accept-process-output (car c-xref-server-process) 1)
+            (setq c-xref-server-process nil)))
+      (if (file-exists-p database)
+          (progn
+            (delete-file database)
+            (message "Removed %s. The server restarts on the next request." database))
+        (message "No database at %s. The server restarts on the next request." database))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;; TAGS maintenance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -178,15 +178,15 @@ Pass 3 rounds 19s each, 42s total.
 
 ## 5. Features, by readiness
 
-19. **A "Remove db" entry in the client** — *stopgap, and the smallest item here.*
-    Deleting the snapshot and restarting the server is the standing remedy for three
-    unrelated symptoms: shadow occurrences after behind-the-back disk changes, the
-    deleted-compilation-unit reparse loop, and a stale snapshot outliving a visibility
-    fix (all three in `doc/docs/18-known-bugs.adoc`). Common enough that it should not
-    need an `rm` in a terminal. Deliberately a stopgap — the real work is making the
-    snapshot not need discarding, of which behind-the-back detection and entry refresh
-    are probably most, and item 21 dissolves another part. Take the entry out again when
-    they land.
+19. **Take the client's "Remove References and Restart Server" back out** — it landed
+    2026-09-24 as a deliberate stopgap (`c-xref-project-remove-references-and-restart`,
+    `editors/emacs/c-xref.el`), because discarding the database is the standing remedy for
+    three unrelated symptoms: shadow occurrences after behind-the-back disk changes, the
+    deleted-compilation-unit reparse loop, and a stale snapshot outliving a visibility fix
+    (all three in `doc/docs/18-known-bugs.adoc`). The real work is making the database not
+    need discarding — behind-the-back detection and entry refresh are probably most of it,
+    and item 21 dissolves another part. Remove the entry when they land, and check the
+    three symptoms are gone rather than assuming it.
 
 20. **Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
     customization; collapse `CommentMovingMode` to a bool and stop the backward walk at a
