@@ -3799,9 +3799,9 @@ preserves whatever was in there.  This stops the server, deletes the
 database it just wrote, and lets the next request rebuild it from the
 sources.
 
-One database per project, and no locking between servers: if another
-Emacs holds a server on the same project, that one will write its own
-references back and undo this.  Stop it too.
+If another Emacs holds a server on the same project, it will write its
+own references back afterwards.  Harmless when they agree - but if you
+are here to discard something stale, stop that one too.
 
 Reach for it when answers name symbols that are not in the code any
 more: occurrences left behind by a file changed outside the editor, a
