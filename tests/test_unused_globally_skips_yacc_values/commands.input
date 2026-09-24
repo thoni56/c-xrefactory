@@ -1,0 +1,10 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/grammar.y
+<sync>
+-olcxpushglobalunused CURDIR/grammar.y
+<sync>
+-continue
+<sync>
+-olcxmenufilter=2
+<sync>
+<exit>

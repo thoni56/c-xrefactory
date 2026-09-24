@@ -1917,6 +1917,18 @@ static void addYaccSymbolReference(Id *id, int usage) {
     handleFoundSymbolReference(&symbol, id->position, usage, NO_FILE_NUMBER);
 }
 
+/* The type of a semantic value comes from the %type declaration, which is
+   StorageAuto, or from a grammar symbol the file has not typed, which is
+   StorageDefault. A grammar symbol name can also resolve to a file-scope C
+   symbol from the prologue; its storage is not the semantic value's, and
+   completeDeclarator() would copy it over the StorageAuto set below, leaving
+   the $N VisibilityGlobal. Fall back to int in that case. */
+static Symbol *baseTypeForSemanticValue(Symbol *symbol) {
+    if (symbol->storage == StorageAuto || symbol->storage == StorageDefault)
+        return symbol;
+    return &defaultIntDefinition;
+}
+
 static void addRuleLocalVariable(Id *name, int order) {
     Symbol *p,*ss;
     char    *nn;
@@ -1933,7 +1945,7 @@ static void addRuleLocalVariable(Id *name, int order) {
             ss->storage = StorageAuto;
 
             ss->position.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
-            addNewDeclaration(symbolTable, p, ss, NULL, StorageAuto);
+            addNewDeclaration(symbolTable, baseTypeForSemanticValue(p), ss, NULL, StorageAuto);
         }
     }
 }

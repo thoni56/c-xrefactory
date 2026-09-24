@@ -2445,6 +2445,18 @@ static void addYaccSymbolReference(Id *id, int usage) {
     handleFoundSymbolReference(&symbol, id->position, usage, NO_FILE_NUMBER);
 }
 
+/* The type of a semantic value comes from the %type declaration, which is
+   StorageAuto, or from a grammar symbol the file has not typed, which is
+   StorageDefault. A grammar symbol name can also resolve to a file-scope C
+   symbol from the prologue; its storage is not the semantic value's, and
+   completeDeclarator() would copy it over the StorageAuto set below, leaving
+   the $N VisibilityGlobal. Fall back to int in that case. */
+static Symbol *baseTypeForSemanticValue(Symbol *symbol) {
+    if (symbol->storage == StorageAuto || symbol->storage == StorageDefault)
+        return symbol;
+    return &defaultIntDefinition;
+}
+
 static void addRuleLocalVariable(Id *name, int order) {
     Symbol *p,*ss;
     char    *nn;
@@ -2461,7 +2473,7 @@ static void addRuleLocalVariable(Id *name, int order) {
             ss->storage = StorageAuto;
 
             ss->position.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
-            addNewDeclaration(symbolTable, p, ss, NULL, StorageAuto);
+            addNewDeclaration(symbolTable, baseTypeForSemanticValue(p), ss, NULL, StorageAuto);
         }
     }
 }
@@ -2537,7 +2549,7 @@ void makeYaccCompletions(char *string, int len, Position position) {
         }
     }
 }
-#line 2541 "yacc_parser.tab.c"
+#line 2553 "yacc_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4783,7 +4795,7 @@ case 519:
 #line 1910 "yacc_parser.y"
 { yyval.ast_id.data = yyvsp[0].ast_id.data; }
 break;
-#line 4787 "yacc_parser.tab.c"
+#line 4799 "yacc_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
