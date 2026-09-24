@@ -624,7 +624,7 @@ void clearPreloadedThisRequestFlags(void) {
 void closeEditorBuffersNoLongerPreloaded(ArgumentsVector baseArgs) {
     EditorBufferList *allEditorBuffers = computeListOfAllEditorBuffers();
     for (EditorBufferList *l = allEditorBuffers; l != NULL; l = l->next) {
-        if (isPreloaded(l->buffer) && !l->buffer->preloadedThisRequest) {
+        if ((isPreloaded(l->buffer) || l->buffer->modified) && !l->buffer->preloadedThisRequest) {
             log_trace("Closing ghost preloaded buffer '%s' (fileNumber=%d)", l->buffer->fileName, l->buffer->fileNumber);
             int fileNumber = l->buffer->fileNumber;
             EditorBuffer *buffer = deregisterEditorBuffer(l->buffer->fileName);
@@ -632,8 +632,13 @@ void closeEditorBuffersNoLongerPreloaded(ArgumentsVector baseArgs) {
             /* Refresh the file's references from disk content, since
              * the editor's view is no longer authoritative. For a CU
              * this re-parses the file; for a header it strips refs and
-             * relies on a CU includer's reparse to re-emit them. */
-            reparseFile(fileNumber, baseArgs);
+             * relies on a CU includer's reparse to re-emit them. A file
+             * that is not on disk is gone, e.g. one a refactoring created
+             * and the client undid. */
+            if (fileExists(getFileItemWithFileNumber(fileNumber)->name))
+                reparseFile(fileNumber, baseArgs);
+            else
+                markFileAsDeleted(fileNumber);
         }
     }
     freeEditorBufferListButNotBuffers(allEditorBuffers);

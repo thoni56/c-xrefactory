@@ -1,0 +1,6 @@
+
+void other() {
+}
+void target() {
+    int x = 1;
+}

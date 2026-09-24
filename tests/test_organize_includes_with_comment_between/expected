@@ -19,7 +19,7 @@ end-of-options
 #include "memory.h"
 </str>
 </replacement>
--rfct-organize-includes -olcursor=78 CURDIR/source.c
+-rfct-organize-includes -olcursor=79 -preload CURDIR/source.c CURDIR/source.c.organized CURDIR/source.c
 end-of-options
 
 <sync>

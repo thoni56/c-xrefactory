@@ -1,0 +1,55 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-del-param -olcxparnum=1 -olmark=0 -olcursor=30 CURDIR/source.c
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=30 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<goto>
+ <position-off off=32 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>int u, </str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=120 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>u, </str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=30 len=<n>>CURDIR/source.c</position-off>
+</goto>
+shell: cp CURDIR/source.c.parameter_deleted CURDIR/source.c
+shell: cp CURDIR/source.c.line_removed CURDIR/source.c
+-rfct-del-param -olcxparnum=1 -olmark=0 -olcursor=68 CURDIR/source.c
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=68 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<goto>
+ <position-off off=70 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>int u, </str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=125 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>0, </str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=68 len=<n>>CURDIR/source.c</position-off>
+</goto>
+-exit
+end-of-options
+

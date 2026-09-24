@@ -163,6 +163,7 @@ void setSizeOfEditorBuffer(EditorBuffer *buffer, size_t size) {
 
 void setEditorBufferModified(EditorBuffer *buffer) {
     buffer->modified = true;
+    buffer->preloadedThisRequest = true;
     buffer->modifiedSinceLastQuasiSave = true;
     buffer->modificationTime = fileTimestampNow();
 }

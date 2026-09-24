@@ -20,7 +20,7 @@ end-of-options
  <position-off off=23 len=<n>>CURDIR/source_a.c</position-off>
 </goto>
 <indent-block val=3 len=<n>></indent-block>
--push -olcursor=39 CURDIR/source_b.c
+-push -olcursor=39 -preload CURDIR/source_a.c CURDIR/source_a.c.moved CURDIR/source_b.c
 end-of-options
 
 <sync>

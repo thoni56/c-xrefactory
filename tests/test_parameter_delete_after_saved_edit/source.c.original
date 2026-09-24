@@ -1,0 +1,15 @@
+void use(int x);
+
+static void f(int u, int n) {
+    use(n);
+}
+
+static void g(int u, int n) {
+    if (!u)
+        use(1);
+    f(u, n);
+}
+
+void h(void) {
+    g(0, 2);
+}

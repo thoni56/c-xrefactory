@@ -3,6 +3,6 @@ CXREF -xrefactory-II -server
 <sync>
 -rfct-move-function -commentmovinglevel=0 -movetargetfile=CURDIR/source_a.c -rfct-target-line=7 -olcursor=5 CURDIR/source_a.c
 <sync>
--push -olcursor=39 CURDIR/source_b.c
+-push -olcursor=39 -preload CURDIR/source_a.c CURDIR/source_a.c.moved CURDIR/source_b.c
 <sync>
 <exit>

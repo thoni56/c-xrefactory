@@ -1,0 +1,10 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/source.c
+<sync>
+-rfct-del-param -olcxparnum=1 -olmark=0 -olcursor=30 CURDIR/source.c
+<sync>
+!cp CURDIR/source.c.parameter_deleted CURDIR/source.c
+!cp CURDIR/source.c.line_removed CURDIR/source.c
+-rfct-del-param -olcxparnum=1 -olmark=0 -olcursor=68 CURDIR/source.c
+<sync>
+<exit>

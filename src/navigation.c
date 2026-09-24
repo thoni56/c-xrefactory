@@ -143,7 +143,9 @@ bool fileNumberIsStale(int fileNumber) {
 
     // No authoritative in-memory content = not stale.
     // Preload buffers carry client-supplied content; modified buffers carry
-    // server-side changes (refactoring). Auto-created buffers from a parse
+    // server-side changes (refactoring), but only for the request that made
+    // them - the next request drops them unless the client preloads the file
+    // (closeEditorBuffersNoLongerPreloaded). Auto-created buffers from a parse
     // (e.g. headers being read while parsing a CU) are neither, so changes
     // to those files don't make this file stale.
     if (buffer == NULL || (buffer->preLoadedFromFile == NULL && !buffer->modified))

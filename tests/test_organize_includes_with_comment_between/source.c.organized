@@ -1,0 +1,12 @@
+#include <string.h>
+
+#include "memory.h"
+
+/* Some comment between includes */
+
+#include "source.h"
+#include <stdio.h>
+#include "commons.h"
+
+void func() {
+}
