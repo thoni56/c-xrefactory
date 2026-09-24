@@ -97,6 +97,21 @@ Starts the server if not already running."
                                  'c-xref-server-process 'c-xref-server-filter))
   (message "C-xref server PID: %d" (process-id (car c-xref-server-process))))
 
+(defun c-xref-stop-server ()
+  "Ask the c-xref server to exit, and forget the process.
+
+Returns non-nil if there was one to stop.  The server writes its
+references to the database when it exits, and every hundred compilation
+units during a parse-all sweep, so anything that removes the database
+has to do it after this returns rather than before.
+"
+  (if c-xref-server-process
+      (progn
+        (process-send-string (car c-xref-server-process) "-exit\nend-of-options\n\n")
+        (accept-process-output (car c-xref-server-process) 1)
+        (setq c-xref-server-process nil)
+        t)))
+
 (defvar c-xref-ppc-synchro-record (format "<%s>" c-xref_PPC_SYNCHRO_RECORD))
 (defvar c-xref-ppc-synchro-record-len (length c-xref-ppc-synchro-record))
 (defvar c-xref-ppc-progress (format "<%s>" c-xref_PPC_PROGRESS))
@@ -3778,10 +3793,15 @@ section applies to the currently edited file.
   "Delete the project's reference database and restart the server.
 
 The server holds its references in memory and writes them to
-`<project root>/.c-xref/db' when it exits, so an ordinary restart
+`<project root>/.c-xref/db' - when it exits, and every hundred
+compilation units during a parse-all sweep - so an ordinary restart
 preserves whatever was in there.  This stops the server, deletes the
 database it just wrote, and lets the next request rebuild it from the
 sources.
+
+One database per project, and no locking between servers: if another
+Emacs holds a server on the same project, that one will write its own
+references back and undo this.  Stop it too.
 
 Reach for it when answers name symbols that are not in the code any
 more: occurrences left behind by a file changed outside the editor, a
@@ -3801,13 +3821,7 @@ bug in its own right.
      ((not (y-or-n-p (format "Remove %s and restart the server? " database)))
       (message "Nothing removed."))
      (t
-      ;; The server saves the snapshot on the way out, so it has to be gone
-      ;; before the database is removed, not after.
-      (if c-xref-server-process
-          (progn
-            (process-send-string (car c-xref-server-process) "-exit\nend-of-options\n\n")
-            (accept-process-output (car c-xref-server-process) 1)
-            (setq c-xref-server-process nil)))
+      (c-xref-stop-server)
       (if (file-exists-p database)
           (progn
             (delete-file database)
@@ -5414,13 +5428,10 @@ next invocation of any of its functions.
 "
   (interactive "P")
   (if (not (eq c-xref-server-process nil))
-      (progn
-        (if current-prefix-arg
-            (shell-command (format "kill -3 %d && echo Core dumped into this buffer directory." (process-id (car c-xref-server-process))))
-          (process-send-string (car c-xref-server-process) "-exit\nend-of-options\n\n")
-          (accept-process-output (car c-xref-server-process) 1)
-          (setq c-xref-server-process nil)
-          (message "Emacs c-xref server process killed.")))
+      (if current-prefix-arg
+          (shell-command (format "kill -3 %d && echo Core dumped into this buffer directory." (process-id (car c-xref-server-process))))
+        (c-xref-stop-server)
+        (message "Emacs c-xref server process killed."))
     (message "** No process to kill. **")))
 
 (defvar c-xref-tutorial-directory (format "%s/../../doc/cexercise" (file-name-directory load-file-name))
