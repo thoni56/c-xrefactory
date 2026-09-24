@@ -75,7 +75,7 @@ features. Relative effort only — no dates (#noestimates).
     case it leaves unanswered — a tree you cannot write a config into — is recorded in
     ADR-0028 as unsupported for now. `-stdop` and `-no-stdop` are named in the same ADR
     sentence; check whether they still exist before assuming they need removing too.
-## 2. The XrefMode chain
+## 2. After XrefMode
 
 7. **Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c` onto a
    report-errors flag**, and stop `formatMessage()` (`src/commons.c`) dropping the position
@@ -83,7 +83,8 @@ features. Relative effort only — no dates (#noestimates).
    the Indexing Log Buffer item. Scope reporting to the operation's own parse, not the
    session-wide `-errors`. Restore `tests/test_multipass`'s error-position assertion in
    the same change: it was dropped when that test moved to the server, because the
-   position is what server mode throws away.
+   position is what server mode throws away. With XrefMode gone the guards never
+   fire, so today the server reports nothing they guard.
 8. **Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
@@ -106,9 +107,9 @@ features. Relative effort only — no dates (#noestimates).
      argv in `main()` and returns before `mainTaskEntryInitialisations()`, so it is a mode
      in behaviour but not in `options.mode`. If "state a mode" is the rule, it should say
      so the same way `-server` does.
-   - The code: `startup.c:841` processes the command line with
+   - The code: `startup.c:807` processes the command line with
      `PROCESS_FILE_ARGUMENTS_YES`, which is why `c-xref -server file.c` silently schedules
-     that file. Flip it to `NO` when XrefMode goes. But `NO` only *ignores*: `matched =
+     that file. Flip it to `NO`, now that XrefMode is gone. But `NO` only *ignores*: `matched =
      true` sits outside the `if` in `options.c`, so a bare word vanishes without a word.
      Rejecting it means reporting there. `c-xref file.c` already answers "No mode given",
      pinned by `tests/test_options_mode_required`.
@@ -121,13 +122,16 @@ features. Relative effort only — no dates (#noestimates).
      look. Auto-discovery gives you the tree under the config; anything outside it still
      has to be named. Likely home: the config, or the machine-specific sibling, since an
      external source tree is usually a local path.
-9. **Remove XrefMode** — deletes the `-create`/`-update` legacy engine. Needs items 6 and
-   7; nothing else holds it up. `-xrefactory-II` goes with it: it selects the protocol
-   output over XrefMode's plain text, and with only the server left there is nothing to
-   select. Make `options.xref2` the default, then drop the flag and the client's use of
-   it (`editors/emacs/c-xref.el:1615`).
+9. **Finish after XrefMode** — the mode, `xref.c`, every `XrefMode` branch, the snapshot
+   merge path and the `-create`/`-update`/`-fastupdate` options went on 2026-09-24 (WSL,
+   session `a3efe465`). Left: the `options.mode ==/!= ServerMode` checks, which are
+   constant wherever the mode is known, since LSP sets `ServerMode` too
+   (`src/parsing.c`); `options.xref2` and `-xrefactory-II` — make it the default, then
+   drop the flag and the client's use of it (`editors/emacs/c-xref.el:1615`); the
+   client's tags-dispatch trio, which rendered a `-create` log (keep or delete with
+   item 22); and the chapters that still describe XrefMode as present.
 10. **Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
-   re-entering `callServer`. Independent of the rest of this chain (it asserts
+   re-entering `callServer`. Independent of the rest of this section (it asserts
    `ServerMode`), but it is the last divergent parse path.
 
 ## 3. Correctness, by (quiet × cheap)
@@ -247,10 +251,6 @@ Pass 3 rounds 19s each, 42s total.
 
 ## Open questions that would reorder this
 
-* **Should §2 move ahead of §1?** Its hardest precondition is gone — the include-graph
-  walk replaced ADR-0027's expanding-CU marker — so the XrefMode chain no longer waits on
-  anything but its own items. Whether it goes before the lifetime partition is a choice
-  nobody has made.
 * **ADR-0027 stays `Accepted`, not `Implemented`:** rename does not yet refuse from inside
   a macro body, and the menu is complete only up to the collection caps.
 * **`18-known-bugs.adoc` cites `test_browsing_push_name_parses_whole_project`**, which
