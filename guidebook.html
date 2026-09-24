@@ -9838,11 +9838,13 @@ self-perpetuating once it has been poisoned. Measured on the Mac (session <code>
 produce.</p>
 </div>
 <div class="paragraph">
-<p><strong>One database, several servers, no locking.</strong> The 112 outlived a delete because a second
-Emacs held a server on the same project — an older build, with the poisoned table still in
-memory — and its own periodic save rewrote the database underneath. Every server on a
-project has to be stopped, not just the one in front of you. Deleting the database with
-all of them stopped left a clean result: 418 symbols reported, no <code>$</code> among them.</p>
+<p>The 112 outlived a delete for a reason peculiar to developing c-xrefactory itself: a
+second Emacs held a server on the same project, running an older build with the poisoned
+table still in memory, and its own periodic save rewrote the database. Several servers
+writing one snapshot is not itself a problem — it is a cache of in-memory state, rebuilt
+from the sources — but discarding a <strong>poisoned</strong> database only takes once every server
+holding the poison has stopped. With all of them stopped the result was clean: 418 symbols
+reported over <code>src/</code>, no <code>$</code> among them.</p>
 </div>
 <div class="paragraph">
 <p><strong>Remedy:</strong> stop every server on the project, then delete the snapshot — in that order,
@@ -11895,7 +11897,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-24 13:05:29 UTC
+Last updated 2026-09-24 13:10:12 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
