@@ -384,6 +384,38 @@ tests whose server answered nothing after startup in a `-j8` run on 2026-09-16.
 
 If you see one of these, add it here with the date, the test and where it ran.
 
+==== Client tests
+
+The Emacs client has ERT tests in `editors/emacs/tests/*-tests.el`, run by
+`make -C editors/emacs test` and from `src`'s `test` target. `make -C editors/emacs check`
+is a separate thing: it byte-compiles everything as a lint and keeps no `.elc`.
+
+*Do not redefine a primitive in a test.* Our own functions are byte-compiled Lisp, always
+called through the symbol's function cell, so `cl-letf` on `symbol-function` is reliable
+for them. A C primitive is not: natively compiled Lisp calls it directly, and to keep it
+redefinable at all Emacs needs a _trampoline_ - a small natively compiled shim in front of
+the primitive that does go through the function cell. Emacs ships trampolines for common
+subrs and generates the rest on demand, by writing a temporary `.el`, compiling it, and
+caching an `.eln`.
+
+Both halves of that bite. Seen on the Mac (session `7c731c79`, 2026-09-25, Emacs 31.1)
+while writing `tests/c-xref-database-tests.el`:
+
+* `cl-letf` on `buffer-file-name` failed with
+  `native-lisp-load-failed "file does not exists" ... subr--trampoline-...buffer_file_name_0.eln`
+  - the batch run could neither find nor build the trampoline, and the test died before
+  reaching the code under test. The hex in such a file name is the symbol name, which is
+  how to tell which primitive is being complained about.
+* `cl-letf` on `file-exists-p` _succeeded_ and triggered trampoline generation, whose own
+  cleanup calls `delete-file` - which the same test had stubbed. The test recorded the
+  compiler deleting its temporary file and asserted against that.
+
+Reach for the state rather than the accessor (`setq buffer-file-name` inside a real
+buffer), or use the real thing (a temporary file, so `file-exists-p` is honestly true).
+Beyond the lost time there is a CI reason: a test that redefines a primitive passes or
+fails according to how Emacs was built and whether its `.eln` cache is writable, and
+Travis' Emacs is not the one on any of our machines.
+
 
 === Utilities
 
