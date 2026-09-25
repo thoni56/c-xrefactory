@@ -61,17 +61,10 @@ static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], char *project,
                          EditorMarker *point, EditorMarker *mark) {
     static char optPoint[TMP_STRING_SIZE];
     static char optMark[TMP_STRING_SIZE];
-    static char optXrefrc[MAX_FILE_NAME_SIZE];
     int         i = 0;
 
     argv[i] = "null";
     i++;
-    if (refactoringOptions.xrefrc != NULL) {
-        sprintf(optXrefrc, "-xrefrc=%s", refactoringOptions.xrefrc);
-        assert(strlen(optXrefrc) + 1 < MAX_FILE_NAME_SIZE);
-        argv[i] = optXrefrc;
-        i++;
-    }
     if (refactoringOptions.eolConversion & CR_LF_EOL_CONVERSION) {
         argv[i] = "-crlfconversion";
         i++;

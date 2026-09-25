@@ -366,31 +366,6 @@ Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_other_project_
 }
 
 
-Ensure(Options, can_return_project_options_filename_and_section_in_legacy_mode) {
-    char configFilename[1000];
-    char sectionName[1000];
-    FILE file;
-
-    // LEGACY mode: explicit -xrefrc, uses path-based section matching
-    options.xrefrc = "HOME/.c-xrefrc";
-
-    expect(normalizeFileName_static, will_return("HOME/.c-xrefrc"));
-    expect(openFile, when(fileName, is_equal_to_string("HOME/.c-xrefrc")),
-           will_return(&file));
-
-    expect_characters("[ffmpeg]\n", false);
-    expect_characters(" /home/thoni/Utveckling/c-xrefactory/tests/ffmpeg/ffmpeg\n", false);
-    expect_characters(" -I/home/thoni/Utveckling/c-xrefactory/tests/ffmpeg/ffmpeg\n", true);
-
-    expect(closeFile);
-
-    options.project = "ffmpeg";
-    searchForProjectConfigFileAndProjectForFile("/home/thoni/Utveckling/c-xrefactory/tests/ffmpeg",
-                                                 configFilename, sectionName);
-
-    assert_that(sectionName, is_equal_to_string("ffmpeg"));
-}
-
 Ensure(Options, can_return_project_name_from_autodetected_config) {
     char configFilename[1000];
     char sectionName[1000];

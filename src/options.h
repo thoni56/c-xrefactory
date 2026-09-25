@@ -70,7 +70,6 @@ typedef struct options {
     Mode mode;                                  /* SESSION */
     bool exit;                                  /* SESSION */
     bool xref2;                                 /* SESSION */
-    char *xrefrc;                               /* SESSION */
     char *commandlog;                           /* SESSION */
     char *outputFileName;                       /* SESSION */
     bool errors;                                /* SESSION */

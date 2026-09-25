@@ -39,7 +39,6 @@ Options presetOptions = {
     .mode = UndefinedMode,
     .exit = false,
     .xref2 = false,
-    .xrefrc = NULL,
     .commandlog = NULL,
     .outputFileName = NULL,
     .errors = false,
@@ -1020,14 +1019,10 @@ bool currentCxFileCountMatches(int foundCxFileCount) {
     return check;
 }
 
-static void putXrefrcFileNameInto(char *fileName) {
+static void putHomeConfigFileNameInto(char *fileName) {
     int hlen;
     char *home;
 
-    if (options.xrefrc!=NULL) {
-        sprintf(fileName, "%s", normalizeFileName_static(options.xrefrc, cwd));
-        return;
-    }
     home = getEnv("HOME");
 #ifdef __WIN32__
     if (home == NULL) home = "c:\\";
@@ -1926,11 +1921,6 @@ void applyConventionBasedDatabasePath(void) {
         return;
     }
 
-    /* Only apply if no explicit -xrefrc was specified (true auto-detect mode) */
-    if (options.xrefrc != NULL) {
-        return;
-    }
-
     char dbPath[MAX_FILE_NAME_SIZE + 16];
     sprintf(dbPath, "%s/.c-xref/db", autoDetectedProjectRoot);
     options.cxFileLocation = allocateStringForOption(&options.cxFileLocation, dbPath);
@@ -2020,15 +2010,12 @@ void searchForProjectConfigFileAndProjectForFile(char *sourceFilename, char *fou
     if (sourceFilename == NULL)
         return;
 
-    /* If no explicit -xrefrc was provided, try to find a project-local .c-xrefrc by searching upward */
-    if (options.xrefrc == NULL) {
-        if (searchUpwardForProjectLocalConfig(sourceFilename, foundConfigFilename, foundProjectName)) {
-            return;
-        }
+    if (searchUpwardForProjectLocalConfig(sourceFilename, foundConfigFilename, foundProjectName)) {
+        return;
     }
 
     /* Fall back: try to find section in explicit -xrefrc or HOME config. */
-    putXrefrcFileNameInto(foundConfigFilename);
+    putHomeConfigFileNameInto(foundConfigFilename);
     configFile = openFile(foundConfigFilename, "r");
     if (configFile != NULL) {
         ArgumentsVector nargs;
