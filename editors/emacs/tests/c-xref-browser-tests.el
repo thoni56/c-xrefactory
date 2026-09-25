@@ -51,3 +51,10 @@
     (set-window-buffer (c-xref-is-reflist-window-displayed) (get-buffer "other.c"))
     (should-not (c-xref-is-reflist-window-displayed))
     (c-xref-close-resolution-dialog-windows dispatch-data)))
+
+(ert-deftest c-xref-resolution-window-showing-another-buffer-is-not-the-browser ()
+  (let ((dispatch-data (c-xref-test-split-frame)))
+    (c-xref-create-browser-windows nil dispatch-data)
+    (set-window-buffer (c-xref-is-browser-window-displayed) (get-buffer "other.c"))
+    (should-not (c-xref-is-browser-window-displayed))
+    (c-xref-close-resolution-dialog-windows dispatch-data)))

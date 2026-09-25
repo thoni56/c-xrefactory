@@ -4293,16 +4293,7 @@ separate window.
     ))
 
 (defun c-xref-is-browser-window-displayed ()
-  (let ((res) (resolvewin))
-    (setq res nil)
-    (if (c-xref-get-this-frame-dispatch-data)
-            (progn
-              (setq resolvewin (cdr (assoc 'linked-resolution-window (c-xref-get-this-frame-dispatch-data))))
-              (if (and (windowp resolvewin) (window-live-p resolvewin))
-                  (setq res resolvewin)
-                )))
-    res
-    ))
+  (c-xref-is-refactory-window-displayed-in-the-frame 'linked-resolution-window))
 
 (defun c-xref-is-refactory-window-displayed-in-the-frame (winid)
   (let ((res) (listwin))
