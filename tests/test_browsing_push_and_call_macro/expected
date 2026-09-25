@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -errors -server -o server-buffer
--olcxpushandcallmacro  -olcursor=97 CURDIR/source.c -xrefrc .c-xrefrc -p CURDIR
+-olcxpushandcallmacro  -olcursor=97 CURDIR/source.c -p CURDIR
 end-of-options
 
 <sync>
