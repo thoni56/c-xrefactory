@@ -2005,22 +2005,26 @@ be cleaned up when the buffer is saved or killed)."
     res
     ))
 
+(defun c-xref-lock-project-for-file (file)
+  "Ask the server which project FILE belongs to, and return its name.
+
+The answer is a side effect worth knowing about: it also locks the server
+to that project, and every request except -getproject needs a locked one.
+Browsing continuations never send it - c-xref-previous-next-reference goes
+through the no-project-required entry point - so whatever replaces a server
+has to do this before the user's next request reaches it.
+"
+  (let ((proc 'c-xref-server-process))
+    (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data proc))
+    (c-xref-send-data-to-running-process (format "-getproject \"%s\"" file) proc)
+    (c-xref-wait-until-task-sync proc nil)
+    (c-xref-server-read-answer-file-and-dispatch c-xref-global-dispatch-data nil)
+    (cdr (assoc 'info c-xref-global-dispatch-data))))
+
 (defun c-xref-compute-active-project ()
-  (let ((res) (proc))
-    (if c-xref-current-project
-            (setq c-xref-active-project c-xref-current-project)
-      (setq proc 'c-xref-server-process)
-      (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data
-                                                         proc))
-      (c-xref-send-data-to-running-process
-       (format "-getproject \"%s\"" (buffer-file-name))
-       proc)
-      (c-xref-wait-until-task-sync proc nil)
-      (c-xref-server-read-answer-file-and-dispatch c-xref-global-dispatch-data nil)
-      (setq res (cdr (assoc 'info c-xref-global-dispatch-data)))
-      res
-      )
-    ))
+  (if c-xref-current-project
+      (setq c-xref-active-project c-xref-current-project)
+    (c-xref-lock-project-for-file (buffer-file-name))))
 
 (defun c-xref-softly-preset-project (pname)
   (let ((actp))
@@ -3828,21 +3832,29 @@ bug in its own right.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
-  (let* ((project-root (c-xref-get-env "__PROJECT_ROOT"))
+  ;; The file the project root was derived from. Asking for it succeeded, so
+  ;; there is one, and it is the file to establish the project with afterwards.
+  (let* ((source (buffer-file-name))
+         (project-root (c-xref-get-env "__PROJECT_ROOT"))
          (database (if (and project-root (not (equal project-root "")))
                        (concat project-root "/.c-xref/db"))))
     (cond
      ((not database)
       (message "** No project root, so no reference database to remove. **"))
-     ((not (y-or-n-p (format "Remove %s and restart the server? " database)))
+     ((not (y-or-n-p (format "Remove %s, restart the server and discard the browser stack? "
+                             database)))
       (message "Nothing removed."))
      (t
       (c-xref-stop-server)
       (if (file-exists-p database)
-          (progn
-            (delete-file database)
-            (message "Removed %s. The server restarts on the next request." database))
-        (message "No database at %s. The server restarts on the next request." database))))))
+          (delete-file database))
+      ;; Establish the project on the replacement server now rather than leaving
+      ;; it to the next request: that request may be a browsing continuation,
+      ;; which never sends -getproject and would reach a server that has never
+      ;; been told which project this is. It also puts the cold rebuild here,
+      ;; where the user is already waiting, instead of in their next browse.
+      (c-xref-lock-project-for-file source)
+      (message "Removed %s. Server restarted, browser stack discarded." database)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;; TAGS maintenance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
