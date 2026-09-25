@@ -177,18 +177,6 @@ features. Relative effort only — no dates (#noestimates).
     c-xrefactory has 79 with a worst fan-in of 39, so it cannot happen here. That, and
     not its severity, is why it sits in this bucket.
 
-    Also here, and *without a repo home yet*: **a nil dispatch-data reaches
-    `c-xref-send-data-to-process-and-dispatch`** (`editors/emacs/c-xref.el:1936`), which
-    takes `proc` from `(cdr (assoc 'process dispatch-data))`. Since
-    `c-xref-get-basic-server-dispatch-data` is the only constructor and always sets
-    `'process`, a nil `proc` means a nil dispatch-data — and
-    `c-xref-start-server-process` then does `(set nil ...)`, surfacing as "Attempt to set
-    a constant symbol: nil". Leading candidate is
-    `c-xref-update-browser-if-displayed`, which reads the *buffer-local*
-    `c-xref-this-buffer-dispatch-data` out of a window it found via the *frame*
-    dispatch data, with nothing keeping the two in step. Unconfirmed: needs a backtrace
-    with `debug-on-error`. Observed on the Mac, session `3af59d00`, 2026-09-25.
-
 ## 4. Performance, in strict dependency order
 
 Roadmap → Optimization. Baseline: cold-start PUSH on ffmpeg `af_afir.c` — scan 2.7s, two
