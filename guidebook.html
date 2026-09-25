@@ -8146,18 +8146,63 @@ a rename of.
 <div class="sect3">
 <h4 id="_parallel_runs">14.7.7. Parallel runs</h4>
 <div class="paragraph">
-<p>The system tests run in parallel. <code>make ci</code>, and so Travis, uses an unbounded <code>-j</code>, and the
-watchers use <code>-j$(JOBS)</code>. That works, but a few tests have failed in a parallel run and
-passed right after on their own.</p>
+<p>The system tests run in parallel. The watchers use <code>-j$(JOBS)</code>. Until 2026-09-25 <code>make ci</code>,
+and so Travis, used an unbounded <code>-j</code>. Since <code>137421da</code> it uses <code>-j$(JOBS)</code> too, as an
+experiment. Parallel runs work, but now and then a test fails with "Server did not exit
+cleanly within 5 seconds, killing&#8230;&#8203;" from the driver (<code>--timeout</code> in
+<code>utils/server_driver.py</code>). The tests vary, and each passes on its own in well under a
+second.</p>
 </div>
 <div class="paragraph">
-<p>The clearest case is from Travis, 2026-09-24 (build 278868958).
-<code>test_static_outside_project_root</code> failed with "Server did not exit cleanly within 5
-seconds, killing&#8230;&#8203;", and the same build passed when restarted. The driver waits five
-seconds for the server to exit (<code>--timeout</code> in <code>utils/server_driver.py</code>), which is probably
-too short under an unbounded <code>-j</code>. Not verified. It happened again on Travis on
-2026-09-25 (build 278878055), in <code>test_yacc_type_declarations_stay_per_file</code>, which passes
-on its own in 0.3 seconds.</p>
+<p>Sightings on Travis:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 50.0001%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Date</th>
+<th class="tableblock halign-left valign-top">Build</th>
+<th class="tableblock halign-left valign-top">Test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2026-09-18</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">278844691</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>test_searching_cexercise</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2026-09-24</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">278868958 (passed when restarted)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>test_static_outside_project_root</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2026-09-24</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">278872919</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>test_unused_globally</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2026-09-25</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">278878055</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>test_yacc_type_declarations_stay_per_file</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Before 2026-09-18 there were none in 194 builds, back to December 2025, although the
+unbounded <code>-j</code> had been there since 2022. From 2026-09-18 to 2026-09-25 there were 4 in 85
+builds, about one in twenty. So something changed around 2026-09-18, not only the load.
+Candidates are more tests (223 to 243 in those days) and requests that parse more
+(<code>594de6a3</code>, <code>3a67dc91</code>). Not verified.</p>
+</div>
+<div class="paragraph">
+<p>How to read the experiment: if the rate were still one in twenty, 63 builds in a row
+without a sighting would happen by chance only one time in twenty. So count the builds
+since <code>137421da</code>, and add every new sighting to the table.</p>
 </div>
 <div class="paragraph">
 <p>Running the suite yourself while the watchers run it gives failures that look the same.
@@ -11915,7 +11960,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-25 08:13:58 UTC
+Last updated 2026-09-25 08:28:42 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
