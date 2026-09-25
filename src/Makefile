@@ -307,9 +307,10 @@ refactorings.def: refactorings.h
 #########################################################################
 # Byte-compiling the elisp is a check, not a build step: it keeps no .elc
 # (see ../editors/emacs/check-elisp.el) and fails if anything stops compiling.
+# The elisp's ERT tests run with it.
 .PHONY: check-elisp
 check-elisp:
-	$(MAKE) -C ../editors/emacs check
+	$(MAKE) -C ../editors/emacs check test
 
 #########################################################################
 test: c-xref check-elisp
