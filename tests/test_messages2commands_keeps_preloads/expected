@@ -4,13 +4,19 @@ CXREF "-xrefactory-II" "-server"
 <sync>
 "-push" "-olcursor=10" "-preload" "CURDIR/source.c" "CURDIR/source.c.preload" "CURDIR/source.c"
 <sync>
+"-rfct-rename" "-renameto=y" "-olcursor=4" "-preload" "CURDIR/source.c" "CURDIR/source.c.preload" "-preload" "CURDIR/other.c" "CURDIR/other.c.preload" "CURDIR/source.c"
+<sync>
 <exit>
 --- source.c.preload
 int edited;
+--- other.c.preload
+int other;
 --- --strip-preloads
 CXREF "-xrefactory-II" "-server"
 "-getproject" "CURDIR/source.c"
 <sync>
 "-push" "-olcursor=10" "CURDIR/source.c"
+<sync>
+"-rfct-rename" "-renameto=y" "-olcursor=4" "CURDIR/source.c"
 <sync>
 <exit>

@@ -329,7 +329,9 @@ as the sources when you run the conversion.
 
 NOTE: the `messages2commands` script keeps each `-preload`. It copies the preloaded
 content to a `.preload` file next to the commands, so run it while Emacs' tmp files still
-exist. With `--strip-preloads` it removes them instead, and then you need to take care
+exist. Emacs keeps one tmp file per buffer and rewrites it for each request, so only the
+last content of a buffer is left to copy, and every request in the conversion gets that.
+With `--strip-preloads` it removes them instead, and then you need to take care
 that the positions inside the buffers are not changed between interactions lest the
 `-olcursor` and `-olmark` will be wrong. (You can just undo the change after a
 refactoring or rename). Of course this also applies if you want to mimic a sequence of

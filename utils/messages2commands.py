@@ -24,47 +24,27 @@ def get_preload_filename(source_file):
     basename = os.path.basename(source_file)
     return basename + ".preload"
 
-def process_preload(line):
-    """Process preload arguments - either keep or strip them."""
-    if "-preload" not in line:
-        return line
+PRELOAD = re.compile(r'"-preload" "([^"]*)" "([^"]*)" ')
 
-    if strip_preloads:
-        return re.sub("\"-preload\"( \"[^\"]*\"){2} ", '', line)
-
-    # Extract preload arguments: "-preload" "source_file" "tmp_file"
-    match = re.search(r'"-preload" "([^"]*)" "([^"]*)"', line)
-    if not match:
-        return re.sub("\"-preload\"( \"[^\"]*\"){2} ", '', line)
-
-    source_file = match.group(1)
-    tmp_file = match.group(2)
-
-    # Check if we've already copied this tmp file
+def keep_preload(match):
+    """Copy one preload's tmp file next to the commands and point the -preload at the copy."""
+    source_file, tmp_file = match.group(1), match.group(2)
     if tmp_file not in copied_preloads:
-        preload_filename = get_preload_filename(source_file)
-
-        # Copy tmp file to local preload file if it exists
-        if os.path.exists(tmp_file):
-            shutil.copy(tmp_file, preload_filename)
-            copied_preloads[tmp_file] = preload_filename
-            print(f"# Copied {tmp_file} to {preload_filename}", file=sys.stderr)
-        else:
+        if not os.path.exists(tmp_file):
             print(f"# Warning: tmp file {tmp_file} not found, removing preload", file=sys.stderr)
-            return re.sub("\"-preload\"( \"[^\"]*\"){2} ", '', line)
+            return ''
+        preload_filename = get_preload_filename(source_file)
+        shutil.copy(tmp_file, preload_filename)
+        copied_preloads[tmp_file] = preload_filename
+        print(f"# Copied {tmp_file} to {preload_filename}", file=sys.stderr)
+    local_source = source_file.replace(os.getcwd(), "CURDIR")
+    return f'"-preload" "{local_source}" "CURDIR/{copied_preloads[tmp_file]}" '
 
-    preload_filename = copied_preloads[tmp_file]
-
-    # Replace the preload arguments with local file references
-    # Format: -preload CURDIR/source CURDIR/source.preload
-    cwd = os.getcwd()
-    local_source = source_file.replace(cwd, "CURDIR")
-    local_preload = "CURDIR/" + preload_filename
-
-    new_preload = f'"-preload" "{local_source}" "{local_preload}"'
-    line = re.sub(r'"-preload" "[^"]*" "[^"]*"', new_preload, line)
-
-    return line
+def process_preload(line):
+    """Keep every -preload in the line, or strip them all."""
+    if strip_preloads:
+        return PRELOAD.sub('', line)
+    return PRELOAD.sub(keep_preload, line)
 
 def replace_curdir(line):
     cwd = os.getcwd()
