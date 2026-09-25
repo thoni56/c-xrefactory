@@ -356,7 +356,9 @@ The clearest case is from Travis, 2026-09-24 (build 278868958).
 `test_static_outside_project_root` failed with "Server did not exit cleanly within 5
 seconds, killing...", and the same build passed when restarted. The driver waits five
 seconds for the server to exit (`--timeout` in `utils/server_driver.py`), which is probably
-too short under an unbounded `-j`. Not verified.
+too short under an unbounded `-j`. Not verified. It happened again on Travis on
+2026-09-25 (build 278878055), in `test_yacc_type_declarations_stay_per_file`, which passes
+on its own in 0.3 seconds.
 
 Running the suite yourself while the watchers run it gives failures that look the same.
 Both runs write `output.tmp` and `output` in the same directories, so different tests fail
