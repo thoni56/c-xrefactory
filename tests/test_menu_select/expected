@@ -1,11 +1,11 @@
 CXREF -xrefactory-II -server -o server-buffer
--olcxcomplet -maxcompls=500 -olinelen=120 -olcursor=1362 completions.c -xrefrc .c-xrefrc -p CURDIR
+-olcxcomplet -maxcompls=500 -olinelen=120 -olcursor=1362 completions.c -p CURDIR
 end-of-options
 
 <sync>
 <all-completions nofocus=0 len=<n>>lll    :struct mylist  *lll
 lllll  :struct mylist  *lllll</all-completions>
--olcxcgoto1 -xrefrc .c-xrefrc -p CURDIR
+-olcxcgoto1 -p CURDIR
 end-of-options
 
 <sync>
