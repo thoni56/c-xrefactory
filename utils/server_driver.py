@@ -45,6 +45,7 @@ import time
 import select
 import shlex
 import shutil
+import re
 import argparse
 
 def eprint(*args, **kwargs):
@@ -109,6 +110,8 @@ def wait_for_sync(p):
 
 def read_output(filename):
     with open(filename, 'r') as file:
+        answer = file.read()
+    with open(filename, 'r') as file:
         in_update_report = False
         for line in file:
             line = line[:-1]			# Remove newline
@@ -123,6 +126,31 @@ def read_output(filename):
                 print(line)
                 in_update_report = False
     open(filename, 'w').close()                 # Erase content
+    return answer
+
+
+# A real client holds the edits the server answers with: the buffer is then
+# modified, so the next request preloads it, or it was saved, so the file on
+# disk changed. A command file that does neither describes a client that
+# cannot exist, and a test built on it pins behaviour nobody will see.
+EDIT = re.compile(r'<goto>\s*<position-(?:off|lc)[^>]*>([^<]*)</position-(?:off|lc)>\s*</goto>\s*'
+                  r'<(?:replacement|cut-block|paste-block|move-file-as)\b')
+
+def note_edited_files(answer, edited):
+    for name in EDIT.findall(answer):
+        edited[name] = os.path.getmtime(name) if os.path.exists(name) else None
+
+def check_client_holds_edits(command, edited, p):
+    if command.startswith('-continue'):
+        return                      # an answer within the same operation
+    for name, mtime in edited.items():
+        preloaded = f'-preload {name} ' in command
+        now = os.path.getmtime(name) if os.path.exists(name) else None
+        if not preloaded and now == mtime:
+            eprint(f"ERROR: the server edited {name}, so the client would preload it or change it on disk before the next request")
+            p.kill()
+            sys.exit(1)
+    edited.clear()
 
 def read_command(file):
     line = file.readline()
@@ -163,6 +191,8 @@ if __name__ == "__main__":
             wait_for_sync(p)
             read_output(args.server_buffer_filename)
 
+        edited = {}                     # files the last answer edited, with their mtimes
+        in_request = False
         command = read_command(file)
         while command != '':
             while command != '<sync>' and command != '<exit>' and command != '': #and not "-refactory" in command:
@@ -177,7 +207,11 @@ if __name__ == "__main__":
                     execute_command(command, cxref_program, args.CURDIR)
                     command = read_command(file)
                 else:
-                    send_command(p, command.replace("CURDIR", args.CURDIR))
+                    request_line = command.replace("CURDIR", args.CURDIR)
+                    if not in_request:
+                        check_client_holds_edits(request_line, edited, p)
+                        in_request = True
+                    send_command(p, request_line)
                     command = read_command(file)
 
             if command == '<exit>':
@@ -207,7 +241,8 @@ if __name__ == "__main__":
             if command == '<sync>':
                 end_of_options(p)
                 wait_for_sync(p)
-                read_output(args.server_buffer_filename)
+                note_edited_files(read_output(args.server_buffer_filename), edited)
+                in_request = False
                 command = read_command(file)
 
             if command == '<update-report>':

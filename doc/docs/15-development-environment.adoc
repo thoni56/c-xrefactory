@@ -301,8 +301,7 @@ Since many operations are performed from the editor, and the editor
 starts an "edit server" process, many tests need to emulate this
 behaviour.
 
-The edit server session is mostly used for navigation. Refactorings
-are actually performed as separate invocations of `c-xref`.
+The edit server session is used for navigation and refactorings alike.
 
 In `utils` there is a `server_driver.py` script, which will take as
 input a file containing a sequence of commands. You can use this to
@@ -312,6 +311,10 @@ also handles the communication through the buffer file (see [Editor
 Interface](./Design:-Editor-Interface)).
 
 NOTE: A server driver-based test should include `../Makefile.server`.
+
+NOTE: After an answer with edits, the next request must preload the edited files, or
+follow a `!` command that changes them on disk, as a real client would. Otherwise the
+driver stops with an error.
 
 ==== Creating More Edit Server Tests
 
