@@ -44,7 +44,11 @@ features. Relative effort only — no dates (#noestimates).
    gives `makeOptionSets()` its first production caller.
 4. **The Setup Ladder, in this sequence**, each small once the partition lands
    (`doc/docs/10-roadmap.adoc`, Convergence: The Setup Ladder → Remaining):
-   a. the client stops sending `-p` on every request
+   a. the client stops sending `-p` on every request — ADR-0029: this is not tidying,
+      it is what re-enables `PPC_PROJECT_MISMATCH`, since `handleProject()`
+      (`src/cxref.c:1805`) returns on its first line when `options.project` is set and
+      never looks at the request's file. Do item 6 first, so only the root comparison
+      survives to be re-enabled
       (`c-xref-send-data-to-process-and-dispatch`, `editors/emacs/c-xref.el:1922` — the
       roadmap says 1925), and the server tests that pass `-p`/`-xrefrc` convert to
       `-getproject`;
@@ -75,6 +79,16 @@ features. Relative effort only — no dates (#noestimates).
     case it leaves unanswered — a tree you cannot write a config into — is recorded in
     ADR-0028 as unsupported for now. `-stdop` and `-no-stdop` are named in the same ADR
     sentence; check whether they still exist before assuming they need removing too.
+
+    **Do this before item 4a** — ADR-0029. The "legacy path" it retires is the branch in
+    `handleProject()` that identifies a project by comparing `[section]` *names*, which
+    cannot tell two checkouts of one repository apart: both carry the same
+    `.c-xrefrc`. Removing `-xrefrc` deletes that branch instead of repairing it, leaving
+    only the root-prefix comparison. Coverage says that is nearly true already —
+    `applyConventionBasedDatabasePath()` is entered 679 times and reaches the convention
+    body 670 — and that the `options.xrefrc` guard inside it has **zero** coverage even
+    though every system test passes the option, because `xrefrc` is SESSION tier
+    (`src/options.h:73`) and is cleared before that function runs.
 ## 2. After XrefMode
 
 7. **Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c` onto a
@@ -163,6 +177,18 @@ features. Relative effort only — no dates (#noestimates).
     c-xrefactory has 79 with a worst fan-in of 39, so it cannot happen here. That, and
     not its severity, is why it sits in this bucket.
 
+    Also here, and *without a repo home yet*: **a nil dispatch-data reaches
+    `c-xref-send-data-to-process-and-dispatch`** (`editors/emacs/c-xref.el:1936`), which
+    takes `proc` from `(cdr (assoc 'process dispatch-data))`. Since
+    `c-xref-get-basic-server-dispatch-data` is the only constructor and always sets
+    `'process`, a nil `proc` means a nil dispatch-data — and
+    `c-xref-start-server-process` then does `(set nil ...)`, surfacing as "Attempt to set
+    a constant symbol: nil". Leading candidate is
+    `c-xref-update-browser-if-displayed`, which reads the *buffer-local*
+    `c-xref-this-buffer-dispatch-data` out of a window it found via the *frame*
+    dispatch data, with nothing keeping the two in step. Unconfirmed: needs a backtrace
+    with `debug-on-error`. Observed on the Mac, session `3af59d00`, 2026-09-25.
+
 ## 4. Performance, in strict dependency order
 
 Roadmap → Optimization. Baseline: cold-start PUSH on ffmpeg `af_afir.c` — scan 2.7s, two
@@ -221,7 +247,14 @@ Pass 3 rounds 19s each, 42s total.
     unit the scan found and has not parsed** — what ADR-0024's CreateMode reduces to
     once the priming is a request rather than a mode; `test_ffmpeg` and
     `test_systemd` ask for it today by searching a name nobody defines and answering
-    `-continue`. If it becomes something a user asks for, it needs to say how long
+    `-continue`. The concrete cost of not having it: a Delete Parameter on
+    `saveReferencesToStore` rewrote `cxfile.c`, `cxfile.h` and `cxref.c` but left
+    `src/cxfile.mock`, which declares the same function for the unit tests, so the
+    unit build would not compile. Whether that is ADR-0013's caveat — references are
+    only guaranteed found once every CU is parsed — was *not* established: the snapshot
+    did know `cxfile.mock` and the test CUs that include it, yet held only two
+    references to the symbol. Worth a test either way; no test pins mock-reaching
+    refactorings today. Observed on the Mac, session `3af59d00`, 2026-09-25. If it becomes something a user asks for, it needs to say how long
     it will take: `src/progress.c` already keeps `timeZero` and a monotonic clock,
     and the parse loops already count down, so the missing part is the division and
     a format that says "4 min left" rather than a remaining count. Decide the unit
@@ -252,7 +285,10 @@ Pass 3 rounds 19s each, 42s total.
 ## Open questions that would reorder this
 
 * **Who establishes the project — the client, every request, or the request's own file?**
-  *No repo home yet; ties to item 8, which puts `-p` in the config rather than on the
+  *ADR-0029 settles the identity half: the server binds to a root path, the `[section]`
+  name stops being an identity, and `-p` goes so `handleProject()` reaches the
+  comparison. What stays open is the gate below — which of the three hatches survives,
+  and at what severity. Ties to item 8, which puts `-p` in the config rather than on the
   command line.* `callServer` (`src/server.c`) already derives everything from the
   request's input file — `initializeProjectContext`, snapshot load, scan, sibling parse —
   and only then does `answerEditorAction` (`src/cxref.c:1887`) refuse with
@@ -278,6 +314,12 @@ Pass 3 rounds 19s each, 42s total.
   Separately: `FATAL_ERROR` is the wrong severity — a missing `-getproject` is a client
   protocol mistake, not a broken invariant, and killing the server turns it into a
   restart loop. `errorMessage` is what the convention asks for.
+
+  What ADR-0029 adds: the third hatch does not merely "always hold", it *suppresses* the
+  check. `handleProject()` returns on `options.project != NULL` before comparing
+  anything, so `PPC_PROJECT_MISMATCH` and the client's "Switch to this file's project?
+  (Server will restart)" prompt (`editors/emacs/c-xref.el:2366`) have been unreachable
+  for as long as the client has sent `-p`.
 
 * **ADR-0027 stays `Accepted`, not `Implemented`:** rename does not yet refuse from inside
   a macro body, and the menu is complete only up to the collection caps.
