@@ -47,10 +47,9 @@ features. Relative effort only — no dates (#noestimates).
    a. the client stops sending `-p` on every request — ADR-0029: this is not tidying,
       it is what re-enables `PPC_PROJECT_MISMATCH`, since `handleProject()`
       (`src/cxref.c:1805`) returns on its first line when `options.project` is set and
-      never looks at the request's file. Do item 6 first, so only the root comparison
-      survives to be re-enabled
+      never looks at the request's file
       (`c-xref-send-data-to-process-and-dispatch`, `editors/emacs/c-xref.el:1922` — the
-      roadmap says 1925), and the server tests that pass `-p`/`-xrefrc` convert to
+      roadmap says 1925), and the server tests that pass `-p` convert to
       `-getproject`;
    b. project setup moves into `-getproject` — discovery, config read, compiler
       interrogation, snapshot load;
@@ -69,26 +68,8 @@ features. Relative effort only — no dates (#noestimates).
    templates set `-refnum`, and `tests/test_autodetect_creates_cxref_dir` asserts the
    `X0000…X0009` layout because of it. A config that still says either option gets an
    `errorMessage` and is otherwise honoured.
-6. **Remove `-xrefrc`** — ADR-0005 called for this in 2022, when discovery was still a
-    proposal: "when this functionality is implemented you'd just remove those options and
-    add a `.c-xrefrc` in the root of the test directory instead". Discovery landed in
-    `d5a7182f`, and every test does have a generated `.c-xrefrc` in its directory — while
-    `tests/Makefile.boilerplate:17` still passes `-xrefrc .c-xrefrc -p $(CURDIR)` as well,
-    and six `commands.input` files pass it too. Removing it also retires the "legacy path"
-    that `doc/docs/14-code.adoc` documents as retained for explicit configurations. The
-    case it leaves unanswered — a tree you cannot write a config into — is recorded in
-    ADR-0028 as unsupported for now. `-stdop` and `-no-stdop` are named in the same ADR
-    sentence; check whether they still exist before assuming they need removing too.
+6. **Remove `-xrefrc`** — done, `0ec5f427`, and the home config went with it in `b3b283af`.
 
-    **Do this before item 4a** — ADR-0029. The "legacy path" it retires is the branch in
-    `handleProject()` that identifies a project by comparing `[section]` *names*, which
-    cannot tell two checkouts of one repository apart: both carry the same
-    `.c-xrefrc`. Removing `-xrefrc` deletes that branch instead of repairing it, leaving
-    only the root-prefix comparison. Coverage says that is nearly true already —
-    `applyConventionBasedDatabasePath()` is entered 679 times and reaches the convention
-    body 670 — and that the `options.xrefrc` guard inside it has **zero** coverage even
-    though every system test passes the option, because `xrefrc` is SESSION tier
-    (`src/options.h:73`) and is cleared before that function runs.
 ## 2. After XrefMode
 
 7. **Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c` onto a
@@ -109,7 +90,7 @@ features. Relative effort only — no dates (#noestimates).
      `-o <answerfile>` — `editors/emacs/c-xref.el:1615`); logging
      (`-log=`, `-debug`, `-trace`, `-info`, `-errors`, `-warnings`, `-infos`, scanned in
      `main()` before the mode is even known); and `-statistics`.
-   - Everything project-scoped — `-p`, `-xrefrc`, `-I`, `-D`, `-optinclude` — belongs to
+   - Everything project-scoped — `-p`, `-I`, `-D`, `-optinclude` — belongs to
      the config and binds at `-getproject`, not here. `-refs` and `-refnum` are not on
      that list any more: they are removed outright, see the items below.
    - **`-exactpositionresolve` has no strategy.** It is real: it changes link names

@@ -193,8 +193,7 @@ There are both "-opt=value" and "-opt value" format options
   If so, make xref2 the way c-xref talks if in server mode. But this should also
   apply for refactory mode, right?
 * TODO Cleanup and separate commons, misc and make them independent utility modules
-* TODO Why does -refactory read the users default .c-xrefrc? And why does -no-stdoptions
-  prevent reading explicit -xrefrc options?
+* TODO Why does -refactory read the users default .c-xrefrc?
 * DONE Bug: Extract function handles variables declared inside the region used after it
   The declaration is no longer moved into the extracted function; the variable
   is returned (or passed back via out-parameter) so post-region code keeps
@@ -213,7 +212,7 @@ There are both "-opt=value" and "-opt value" format options
 ** DONE LSP 'initialize', 'exit', 'not found'
 * DONE Project local .c-xrefrc with convention-based database location
    New projects use project-local .c-xrefrc with database at .c-xref/db (v1.9).
-   Legacy ~/.c-xrefrc projects continue to work via fallback.
+   Legacy ~/.c-xrefrc projects are no longer read.
 ** DONE Reference database stored in project tree at .c-xref/db
    Convention-based path applied automatically when using project-local config.
 ** DONE Make "get project" lookup the directory tree for closest .c-xrefrc
@@ -226,8 +225,7 @@ There are both "-opt=value" and "-opt value" format options
    Feature to move a section from ~/.c-xrefrc to project-local .c-xrefrc.
 ** DONE Function to lookup the closest .c-xrefrc and potentially use its directory path as project name
 * DONE Store Xrefs in .c-xref/db parallel to the .c-xrefrc used (v1.9)
-  Convention-based database path for project-local configs. Legacy -refs option still works for
-  backward compatibility with existing ~/.c-xrefrc configurations.
+  Convention-based database path for project-local configs. Legacy -refs option still works.
 * DONE FEATURE: LSP Find Definition
 ** DONE Initiate server so it can handle OP_PUSH
 ** DONE Create an answer from gathered information

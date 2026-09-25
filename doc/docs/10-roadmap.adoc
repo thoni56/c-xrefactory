@@ -153,7 +153,7 @@ Global `options` with Typed Requests).
 |The client stops sending `-p`
 |`c-xref-send-data-to-process-and-dispatch` (`editors/emacs/c-xref.el:1925`) appends `-p`
  to every request, so the project is re-named on each one and the tier can never freeze.
- The server tests that still pass `-p` or `-xrefrc` convert to `-getproject`.
+ The server tests that still pass `-p` convert to `-getproject`.
 
 |Project setup moves into `-getproject`
 |Discovery, the config read, compiler interrogation and the snapshot load all belong to

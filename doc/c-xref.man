@@ -62,10 +62,12 @@ C-xref accepts many options, however except the
 and
 .I -update
 options, it is not recommended to write them directly on the command line.
-The standard way of passing options to c-xref is configuration file named
+The standard way of passing options to c-xref is a configuration file named
 .I .c-xrefrc
-placed in user's home directory. Options stored in the ${HOME}/.c-xrefrc
-file are read at each c-xref invocation. Storing command line options into
+placed in the root directory of the project.
+C-xref finds it by searching upward from the file it works on,
+stopping at the user's home directory.
+Storing command line options into
 this file is the only way how you can pass project depending
 options to c-xref when invoked from Emacs.
 

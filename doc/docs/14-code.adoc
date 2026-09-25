@@ -46,8 +46,8 @@ hard to follow.
 
 NOTE: The auto-detect server path uses a unified flow where lightweight file structure
 scanning replaces the legacy `-create`/`callXref()` pattern (ADR 22). The legacy path
-runs when no project root was auto-detected — either because the `-xrefrc <file>`
-option was used, or because no `.c-xrefrc` was found near the request file. See
+runs when no project root was auto-detected, i.e. no `.c-xrefrc` was found above the
+request file. See
 <<unified-flow>> below.
 
 ==== File Scheduling - How Files Get Marked for Processing
@@ -363,12 +363,8 @@ If they represent the same concept (the file being processed), they should have 
 
 The auto-detect path uses a single initialization via `initializeProjectContext` and
 treats the in-memory reference table as authoritative. The legacy path
-(`initializeFileProcessing`) is retained for explicit `-xrefrc` configurations. The flow
-below describes the auto-detect path.
-
-`-xrefrc` is on its way out — link:/workspace/1/decisions/C-xrefactory#5[ADR-0005] called
-for removing it once discovery existed, and discovery exists — so this legacy path is
-expected to go with it rather than to stay as a second way in.
+(`initializeFileProcessing`) runs when no project root was detected. The flow below
+describes the auto-detect path.
 
 [source]
 ----
@@ -671,7 +667,7 @@ and then it keeps the communication over stdin/stdout open.
 The editor part sends command line options to the server, which looks
 something like (from the read_xrefs test case):
 
-    -encoding=european -olcxpush -urldirect  "-preload" "<file>" "-olmark=0" "-olcursor=6" "<file>" -xrefrc ".c-xrefrc" -p "<project>"
+    -encoding=european -olcxpush -urldirect  "-preload" "<file>" "-olmark=0" "-olcursor=6" "<file>" -p "<project>"
     end-of-options
 
 In this case the "-olcxpush" is the operative command which results in
@@ -758,13 +754,9 @@ NOTE: The linked list nodes themselves are allocated in the Options structure's 
 
 === Configuration
 
-The legacy `c-xref` normally, in "production", uses a common configuration file in the
-users home directory, `.c-xrefrc`. When a new project is defined its options will be
-stored in this file as a new section.
-
-It is possible to point to a specific configuration file using the command line option
-`-xrefrc` which is used extensively in the tests to isolate them from the users
-configuration.
+The configuration file is a `.c-xrefrc` in the root of the project, found by searching
+upward from the file being worked on. The search stops at the user's home directory, so a
+`~/.c-xrefrc` from the old user-central model is not read.
 
 Each "project" or "section" requires a name of the "project", which is the argument to
 the `-p` command line option. And it may contain most other command line options on one
@@ -776,7 +768,7 @@ allows for different "default" options for each project.
 There are three possible sources for options.
 
 - Command line options at invocation
-- Configuration files (the projects `.c-xrefrc` or `~/.c-xrefrc`)
+- The project's configuration file, `.c-xrefrc`
 - "Piped" options sent to the server in commands/requests
 
 Not all options are relevant in all cases.
@@ -786,10 +778,7 @@ All options sources uses exactly the same format so that the same code for decod
 When the client first operates on a file, the server determines which project it belongs
 to. On the auto-detect path the server walks upward from the file's path looking for a
 project-local `.c-xrefrc`, and the directory containing it becomes the project root
-(`detectedProjectRoot`). If no project-local `.c-xrefrc` is found, the legacy path takes
-over: the user's home `~/.c-xrefrc` is consulted (or a file given by `-xrefrc <file>`),
-and `-p <name>` selects which project section within it applies. `-p` is required in
-either form because both files can hold multiple project sections. The `-getproject`
+(`detectedProjectRoot`). If none is found, the file is not in any project. The `-getproject`
 operation drives discovery and reports the result back to the editor.
 
 The configuration is re-checked on each request: the `.c-xrefrc` modification time is

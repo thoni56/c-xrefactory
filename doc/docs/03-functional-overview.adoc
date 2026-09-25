@@ -74,8 +74,7 @@ continuously maintain and improve the quality of any code base.
 
 A project is configured by a `.c-xrefrc` file in the project root, found by upward search
 from the file being worked on; it records the source roots, include paths, and defines.
-(The older user-central `~/.c-xrefrc` with per-project sections still works.) See
-<<06-principles.adoc#,Principles>> (Project Scope) for how project boundaries are
+See <<06-principles.adoc#,Principles>> (Project Scope) for how project boundaries are
 determined.
 
 === Operational model at a glance

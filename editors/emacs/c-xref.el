@@ -5669,7 +5669,7 @@ database, you can invoke the `Kill c-xref task' function.
 CUSTOMIZATION:
 
 C-xrefactory can be customized via the `C-xref -> Options' menu
-item and via the ~/.c-xrefrc configuration file.  The `Options'
+item and via the project's .c-xrefrc file.  The `Options'
 menu item customizes project independent behaviour which is
 mainly the user interface.  In the `.c-xrefrc' file you can
 specify your projects' settings and preferences.  There are many

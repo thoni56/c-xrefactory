@@ -4,11 +4,12 @@
  .c-xrefrc \- file containing c-xref options.
 .SH DESCRIPTION
 
-The '.c-xrefrc' file ('_c-xrefrc' under MS-DOS) is configuration
+The '.c-xrefrc' file is the configuration
 file for the c-xref cross-referencing
-tool. It should be placed in user's home directory from where it is
-read at each c-xref invocation (under MS-DOS if the %HOME% environment
-variable is not set, this file should be placed in the C:\\ root folder).
+tool. It should be placed in the root directory of the project.
+C-xref finds it by searching upward from the file it works on,
+stopping at the user's home directory, so a '.c-xrefrc' in the home
+directory is not read.
 The file contains c-xref command
 line switches used for processing your projects,
 mainly information about source files,

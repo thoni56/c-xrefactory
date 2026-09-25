@@ -8,8 +8,8 @@ You see a message of form:
 :[warning] main.c:160, can't open file tin.h
 
 This  means that  the directory  containing  the 'tin.h'  file is  not
-specified  in  your include  paths.   You  should  edit your  personal
-'~/.c-xrefrc' file and add there the
+specified  in  your include  paths.   You  should  edit the project's
+'.c-xrefrc' file and add there the
 
     -I directory
 
@@ -25,7 +25,7 @@ meaning that the file 'stddef.h', included from the standard header
 'stdlib.h', was not found. This can occur when your compiler is using
 non standard include directories. In this case you have to determine
 which directory contains 'stdlib.h' and add this directory, using the
-'-I' option, into your '~/.c-xrefrc' file.  In order to determine the
+'-I' option, into the project's '.c-xrefrc' file.  In order to determine the
 include directory of your compiler, you can pre-process your input
 file with your compiler and look for the place where the searched file
 was included, i.e. (following our example) type:
