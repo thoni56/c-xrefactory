@@ -1019,25 +1019,6 @@ bool currentCxFileCountMatches(int foundCxFileCount) {
     return check;
 }
 
-static void putHomeConfigFileNameInto(char *fileName) {
-    int hlen;
-    char *home;
-
-    home = getEnv("HOME");
-#ifdef __WIN32__
-    if (home == NULL) home = "c:\\";
-#else
-    if (home == NULL) home = "";
-#endif
-    hlen = strlen(home);
-    if (hlen>0 && (home[hlen-1]=='/' || home[hlen-1]=='\\')) {
-        sprintf(fileName, "%s%cc-xrefrc", home, FILE_BEGIN_DOT);
-    } else {
-        sprintf(fileName, "%s%c%cc-xrefrc", home, FILE_PATH_SEPARATOR, FILE_BEGIN_DOT);
-    }
-    assert(strlen(fileName) < MAX_FILE_NAME_SIZE-1);
-}
-
 static int handleIncludeOption(int i, ArgumentsVector args) {
     ArgumentsVector includedArgs;
 
@@ -1933,7 +1914,8 @@ void applyConventionBasedDatabasePath(void) {
  * Returns true if found and the config covers the source file.
  * Sets foundConfigFilename to the path of the .c-xrefrc file.
  * Sets foundProjectName to the project name from the matching section.
- * Stops at HOME directory to avoid finding ~/.c-xrefrc (which is the global config).
+ * Stops at HOME, so that a ~/.c-xrefrc from the old user-central config does not make
+ * HOME a project root.
  */
 static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundConfigFilename,
                                                char *foundProjectName) {
@@ -1952,7 +1934,7 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundC
     log_debug("sourceFilename='%s', searchDir='%s'", sourceFilename, searchDir);
 
     while (searchDir[0] != 0 && strlen(searchDir) > 1) {
-        /* Stop at HOME to avoid finding ~/.c-xrefrc (global config, not project-local) */
+        /* Stop at HOME, a ~/.c-xrefrc there is an old user-central config */
         if (homeDir != NULL && strcmp(searchDir, homeDir) == 0) {
             log_debug("Reached HOME directory, stopping search");
             break;
@@ -1999,10 +1981,6 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundC
 
 void searchForProjectConfigFileAndProjectForFile(char *sourceFilename, char *foundConfigFilename,
                                                   char *foundProjectName) {
-    int    fileno;
-    bool   found = false;
-    FILE  *configFile;
-
     foundConfigFilename[0] = 0;
     foundProjectName[0] = 0;
     autoDetectedProjectRoot[0] = '\0';  /* Reset for each invocation */
@@ -2010,40 +1988,7 @@ void searchForProjectConfigFileAndProjectForFile(char *sourceFilename, char *fou
     if (sourceFilename == NULL)
         return;
 
-    if (searchUpwardForProjectLocalConfig(sourceFilename, foundConfigFilename, foundProjectName)) {
-        return;
-    }
-
-    /* Fall back: try to find section in explicit -xrefrc or HOME config. */
-    putHomeConfigFileNameInto(foundConfigFilename);
-    configFile = openFile(foundConfigFilename, "r");
-    if (configFile != NULL) {
-        ArgumentsVector nargs;
-        found = readOptionsIntoArgs(configFile, &nargs, NULL, sourceFilename,
-                                    options.project, foundProjectName);
-        if (found) {
-            log_debug("options file '%s', project '%s' found", foundConfigFilename, foundProjectName);
-        }
-        closeFile(configFile);
-    }
-    if (found)
-        return;
-
-    // If automatic selection did not find project, keep previous one
-    if (options.project == NULL) {
-        // but do this only if file is from cxfile, would be better to
-        // check if it is from active project, but nothing is perfect
-        // TODO: Where else could it come from (Xref.opt is not used anymore)?
-
-        // TODO: check whether the project still exists in the .c-xrefrc file
-        // it may happen that after deletion of the project, the request for active
-        // project will return non-existent project. And then return "not found"?
-        fileno = getFileNumberFromName(sourceFilename);
-        if (fileno != NO_FILE_NUMBER && getFileItemWithFileNumber(fileno)->isFromCxfile) {
-            return;
-        }
-    }
-    foundConfigFilename[0] = 0;
+    searchUpwardForProjectLocalConfig(sourceFilename, foundConfigFilename, foundProjectName);
 }
 
 void printOptionsMemoryStatistics(void) {

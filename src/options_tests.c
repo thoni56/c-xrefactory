@@ -392,6 +392,23 @@ Ensure(Options, can_return_project_name_from_autodetected_config) {
     assert_that(sectionName, is_equal_to_string("myproject"));
 }
 
+Ensure(Options, finds_no_config_for_a_file_without_a_project_local_config) {
+    char configFilename[1000];
+    char sectionName[1000];
+
+    always_expect(getEnv, will_return("/home/user"));
+    expect(isDirectory, will_return(false));
+    expect(directoryName_static, will_return("/home/user/src"));
+    expect(fileExists, will_return(false)); /* /home/user/src/.c-xrefrc */
+    never_expect(openFile);
+
+    searchForProjectConfigFileAndProjectForFile("/home/user/src/source.c",
+                                               configFilename, sectionName);
+
+    assert_that(configFilename, is_equal_to_string(""));
+    assert_that(sectionName, is_equal_to_string(""));
+}
+
 Ensure(Options, sets_convention_based_database_path_when_autodetecting) {
     char configFilename[1000];
     char sectionName[1000];
