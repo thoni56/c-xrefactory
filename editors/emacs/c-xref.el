@@ -2856,8 +2856,17 @@ Special hotkeys available:
       )
     ))
 
+;; The browser splits the caller's window twice, so it first makes that window
+;; the only one and returns the windows it replaced, for closing to give back.
+;; The resolution dialog lays out the frame itself before it asks for the
+;; browser windows, so it keeps its layout.
+(defun c-xref-take-frame-for-browser (refactoring-resolution-flag)
+  (if (not refactoring-resolution-flag)
+      (prog1 (current-window-configuration)
+        (delete-other-windows))))
+
 (defun c-xref-create-browser-windows (refactoring-resolution-flag dispatch-data)
-  (let ((resolvewin) (listwin) (frame-id) (_new-dispatch-data) (frw))
+  (let ((resolvewin) (listwin) (frame-id) (_new-dispatch-data) (frw) (replaced-windows))
     (if (c-xref-get-this-frame-dispatch-data)
             (progn
               (setq resolvewin (cdr (assoc 'linked-resolution-window (c-xref-get-this-frame-dispatch-data))))
@@ -2884,9 +2893,11 @@ Special hotkeys available:
                 (setq listwin (c-xref-cr-new-references-window refactoring-resolution-flag))
                 )
                (t
+                (setq replaced-windows (c-xref-take-frame-for-browser refactoring-resolution-flag))
                 (setq resolvewin (c-xref-cr-new-symbol-resolution-window refactoring-resolution-flag dispatch-data))
                 (setq listwin (c-xref-cr-new-references-window refactoring-resolution-flag))
                 )))
+      (setq replaced-windows (c-xref-take-frame-for-browser refactoring-resolution-flag))
       (setq resolvewin (c-xref-cr-new-symbol-resolution-window refactoring-resolution-flag dispatch-data))
       (setq listwin (c-xref-cr-new-references-window refactoring-resolution-flag))
       )
@@ -2916,6 +2927,11 @@ Special hotkeys available:
                (cons (cons 'linked-resolution-window resolvewin)
                          (cons (cons 'frame-id frame-id)
                                nil))))
+    ;; The browser took the frame, so closing it gives the windows back
+    (if replaced-windows
+        (c-xref-hard-prepend-to-dispatch-data
+         dispatch-data
+         (list (cons 'replaced-windows replaced-windows))))
     (if (not refactoring-resolution-flag)
             (progn
               (setq frw (c-xref-is-failed-refactoring-window-displayed))
@@ -4967,8 +4983,10 @@ given string(s).
                 )))
     (c-xref-soft-delete-window c-xref-browser-info-buffer)
 
+    (setq winassoc (assoc 'replaced-windows dispatch-data))
+    (if winassoc (set-window-configuration (cdr winassoc)))
     (setq winassoc (assoc 'caller-window dispatch-data))
-    (if winassoc (select-window (cdr winassoc)))
+    (if (and winassoc (window-live-p (cdr winassoc))) (select-window (cdr winassoc)))
     ))
 
 (defun c-xref-cancel-with-error (_event)
