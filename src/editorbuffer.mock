@@ -66,6 +66,10 @@ bool isPreloaded(EditorBuffer *buffer) {
     return (bool)mock(buffer);
 }
 
+bool holdsAuthoritativeContent(EditorBuffer *buffer) {
+    return (bool)mock(buffer);
+}
+
 // Hopefully temporary
 void setEditorBufferModified(EditorBuffer *buffer) {
     mock(buffer);

@@ -26,8 +26,8 @@ extern void quasiSaveModifiedEditorBuffers(void);
 extern void loadAllOpenedEditorBuffers(void);
 extern void closeEditorBufferIfCloseable(char *name);
 extern void closeAllEditorBuffersIfClosable(void);
-extern void clearPreloadedThisRequestFlags(void);
-extern void closeEditorBuffersNoLongerPreloaded(ArgumentsVector baseArgs);
+extern void clearHeldThisRequestFlags(void);
+extern void closeEditorBuffersNoLongerHeld(ArgumentsVector baseArgs);
 
 extern void freeTextSpace(char *space, int index);
 extern void loadFileIntoEditorBuffer(EditorBuffer *buffer, FileTimestamp modificationTime, size_t fileSize);

@@ -613,19 +613,19 @@ void closeAllEditorBuffersIfClosable(void) {
     freeEditorBufferListButNotBuffers(allEditorBuffers);
 }
 
-void clearPreloadedThisRequestFlags(void) {
+void clearHeldThisRequestFlags(void) {
     EditorBufferList *allEditorBuffers = computeListOfAllEditorBuffers();
     for (EditorBufferList *l = allEditorBuffers; l != NULL; l = l->next) {
-        l->buffer->preloadedThisRequest = false;
+        l->buffer->heldThisRequest = false;
     }
     freeEditorBufferListButNotBuffers(allEditorBuffers);
 }
 
-void closeEditorBuffersNoLongerPreloaded(ArgumentsVector baseArgs) {
+void closeEditorBuffersNoLongerHeld(ArgumentsVector baseArgs) {
     EditorBufferList *allEditorBuffers = computeListOfAllEditorBuffers();
     for (EditorBufferList *l = allEditorBuffers; l != NULL; l = l->next) {
-        if ((isPreloaded(l->buffer) || l->buffer->modified) && !l->buffer->preloadedThisRequest) {
-            log_trace("Closing ghost preloaded buffer '%s' (fileNumber=%d)", l->buffer->fileName, l->buffer->fileNumber);
+        if (holdsAuthoritativeContent(l->buffer) && !l->buffer->heldThisRequest) {
+            log_trace("Closing held ghost buffer '%s' (fileNumber=%d)", l->buffer->fileName, l->buffer->fileNumber);
             int fileNumber = l->buffer->fileNumber;
             EditorBuffer *buffer = deregisterEditorBuffer(l->buffer->fileName);
             freeEditorBuffer(buffer);

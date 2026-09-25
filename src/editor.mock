@@ -68,11 +68,11 @@ void closeAllEditorBuffersIfClosable(void) {
   mock();
 }
 
-void clearPreloadedThisRequestFlags(void) {
+void clearHeldThisRequestFlags(void) {
   mock();
 }
 
-void closeEditorBuffersNoLongerPreloaded(ArgumentsVector baseArgs) {
+void closeEditorBuffersNoLongerHeld(ArgumentsVector baseArgs) {
   (void)baseArgs;
   mock();
 }

@@ -77,6 +77,10 @@ bool isPreloaded(EditorBuffer *buffer) {
     return buffer != NULL && buffer->preLoadedFromFile != NULL;
 }
 
+bool holdsAuthoritativeContent(EditorBuffer *buffer) {
+    return isPreloaded(buffer) || buffer->modified;
+}
+
 void freeEditorBuffer(EditorBuffer *buffer) {
     if (buffer == NULL)
         return;
@@ -132,7 +136,7 @@ EditorBuffer *openEditorBufferFromPreload(char *fileName, char *preLoadedFromFil
         FileTimestamp incomingMtime = fileModificationTime(preLoadedFromFile);
         if (fileTimestampsEqual(incomingMtime, buffer->modificationTime)) {
             log_debug("Preload '%s': unchanged (mtime %ld), keeping existing buffer", fileName, fileTimestampSeconds(incomingMtime));
-            buffer->preloadedThisRequest = true;
+            buffer->heldThisRequest = true;
             return buffer;
         }
         log_debug("Preload '%s': content changed (mtime %ld -> %ld), reloading", fileName,
@@ -140,12 +144,12 @@ EditorBuffer *openEditorBufferFromPreload(char *fileName, char *preLoadedFromFil
         free(buffer->preLoadedFromFile);
         buffer->preLoadedFromFile = strdup(normalizeFileName_static(preLoadedFromFile, cwd));
         loadFileIntoEditorBuffer(buffer, incomingMtime, fileSize(preLoadedFromFile));
-        buffer->preloadedThisRequest = true;
+        buffer->heldThisRequest = true;
         return buffer;
     }
     buffer = createNewEditorBuffer(fileName, preLoadedFromFile, fileModificationTime(preLoadedFromFile),
                                    fileSize(preLoadedFromFile));
-    buffer->preloadedThisRequest = true;
+    buffer->heldThisRequest = true;
     return buffer;
 }
 
@@ -163,7 +167,7 @@ void setSizeOfEditorBuffer(EditorBuffer *buffer, size_t size) {
 
 void setEditorBufferModified(EditorBuffer *buffer) {
     buffer->modified = true;
-    buffer->preloadedThisRequest = true;
+    buffer->heldThisRequest = true;
     buffer->modifiedSinceLastQuasiSave = true;
     buffer->modificationTime = fileTimestampNow();
 }
