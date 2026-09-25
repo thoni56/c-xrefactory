@@ -8155,7 +8155,9 @@ passed right after on their own.</p>
 <code>test_static_outside_project_root</code> failed with "Server did not exit cleanly within 5
 seconds, killing&#8230;&#8203;", and the same build passed when restarted. The driver waits five
 seconds for the server to exit (<code>--timeout</code> in <code>utils/server_driver.py</code>), which is probably
-too short under an unbounded <code>-j</code>. Not verified.</p>
+too short under an unbounded <code>-j</code>. Not verified. It happened again on Travis on
+2026-09-25 (build 278878055), in <code>test_yacc_type_declarations_stay_per_file</code>, which passes
+on its own in 0.3 seconds.</p>
 </div>
 <div class="paragraph">
 <p>Running the suite yourself while the watchers run it gives failures that look the same.
@@ -11913,7 +11915,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-25 07:44:41 UTC
+Last updated 2026-09-25 08:13:58 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
