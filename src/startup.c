@@ -559,8 +559,8 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
     applyConventionBasedDatabasePath();
 
     /* Clear per-request options before saving - these shouldn't persist across requests.
-     * The -p option specifies project for the current request only (needed for legacy
-     * ~/.c-xrefrc with multiple projects), but shouldn't leak to future requests.
+     * The -p option specifies project for the current request only, but shouldn't leak
+     * to future requests.
      * We restore it after saving so it remains available for the current request. */
     char *currentRequestProject = options.project;
     options.project = NULL;

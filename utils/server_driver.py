@@ -22,7 +22,7 @@
 # be copied into the output so that the complete interaction can be
 # seen. Example commands file
 #
-#     ../../src/c-xref -xrefrc CURDIR/.c-xrefrc -xrefactory-II -server
+#     ../../src/c-xref -xrefactory-II -server
 #     -getproject CURDIR/source.c
 #     <sync>
 #     -olcxcomplet CURDIR/source.c -olcursor=85

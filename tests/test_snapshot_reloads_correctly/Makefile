@@ -2,7 +2,7 @@ include ../Makefile.server
 
 # Scenario: db correct after snapshot load and reparse of stale file
 #
-# Given a legacy project (explicit source dir and -xrefrc)
+# Given a legacy project (explicit source dir)
 # When session 1 navigates and exits (saves snapshot)
 # And a source file is touched (making it stale)
 # And session 2 starts, loads snapshot, reparses stale CU, and exits
