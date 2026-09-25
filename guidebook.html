@@ -8043,8 +8043,7 @@ starts an "edit server" process, many tests need to emulate this
 behaviour.</p>
 </div>
 <div class="paragraph">
-<p>The edit server session is mostly used for navigation. Refactorings
-are actually performed as separate invocations of <code>c-xref</code>.</p>
+<p>The edit server session is used for navigation and refactorings alike.</p>
 </div>
 <div class="paragraph">
 <p>In <code>utils</code> there is a <code>server_driver.py</code> script, which will take as
@@ -8062,6 +8061,20 @@ Interface](./Design:-Editor-Interface)).</p>
 </td>
 <td class="content">
 A server driver-based test should include <code>../Makefile.server</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+After an answer with edits, the next request must preload the edited files, or
+follow a <code>!</code> command that changes them on disk, as a real client would. Otherwise the
+driver stops with an error.
 </td>
 </tr>
 </table>
@@ -11900,7 +11913,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-25 07:25:54 UTC
+Last updated 2026-09-25 07:44:41 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
