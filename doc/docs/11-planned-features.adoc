@@ -393,3 +393,21 @@ A body that is a single statement, or returns a single expression, is probably t
 to do first. Anything more needs more than text substitution. An argument with side
 effects must not be evaluated twice, and a name in the body can collide with one at the
 call site. Refusing with a reason is fine there.
+
+=== Extract an Expression as a Function
+
+**Status**: Not implemented. Issue #28.
+
+==== Background
+
+Extract Function only works on statements.
+Marking part of an expression, e.g. one operand of `||` in an `if` condition, gives a `void` function, which is not what you wanted.
+The case that asked for it was `isPreloaded(buffer) || buffer->modified` in `closeEditorBuffersNoLongerHeld()`, which had to be extracted by hand.
+
+==== Proposed Behaviour
+
+When the marked text is an expression, extract a function that returns it, with the type of the expression, and replace the text with a call.
+
+If finding the type of the marked text proves hard, an explicit *Extract Predicate* could be an alternative.
+The user then says it is a condition, and the function is always a `bool` one.
+That probably covers most of the cases that come up.

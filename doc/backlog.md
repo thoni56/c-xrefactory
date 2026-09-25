@@ -263,7 +263,8 @@ Pass 3 rounds 19s each, 42s total.
     steadier and both are known before parsing starts.
     Also **unused-detection exclude patterns**, **browsing includes**,
     **semantic read-only files**, **rename handles `expect`**, **project-local
-    config**, **Inline Function and Inline Macro**. All in `11-planned-features.adoc`.
+    config**, **Inline Function and Inline Macro**, **Extract an Expression as a
+    Function**. All in `11-planned-features.adoc`.
 26. **Local config fragments — the need, not a solution** — *no repo home yet.*
     `.c-xrefrc` travels with the project and is checked in, which is why
     `11-planned-features.adoc` argues for it: "it will not contain absolute file paths".
@@ -281,6 +282,13 @@ Pass 3 rounds 19s each, 42s total.
 27. **Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
     the macro expansion module, hashtab → hashlist, split the editor module, rename server
     operations, elisp recompiled and deleted on every build.
+28. **Dump Reference Database** — *no repo home yet.* A request that writes the in-memory
+    table to the snapshot, and a client menu entry for it, so you can see what the server
+    thinks it knows without stopping it. Kill Server already writes the snapshot, so this is
+    the same thing as long as dying does nothing extra. What neither solves is realising you
+    need the dump before the state is gone. A rename missed `clearPreloadedThisRequestFlags`
+    in `src/editor.mock` (WSL, 2026-09-25), and the dump taken afterwards had the reference,
+    so it could not say whether the server knew it at the time of the rename.
 
 ## Open questions that would reorder this
 
