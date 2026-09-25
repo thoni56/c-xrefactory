@@ -1,4 +1,4 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server .
--get env -xrefrc .c-xrefrc -p CURDIR
+-get env -p CURDIR
 <sync>
 <exit>

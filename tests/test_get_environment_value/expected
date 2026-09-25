@@ -1,5 +1,5 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server . -o server-buffer
--get env -xrefrc .c-xrefrc -p CURDIR
+-get env -p CURDIR
 end-of-options
 
 <sync>
