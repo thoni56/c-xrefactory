@@ -527,6 +527,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_semantic_read_only_files_include_path_ownership">11.9. Semantic Read-only Files (Include Path Ownership)</a></li>
 <li><a href="#generic-selection">11.10. C11 <code>_Generic</code></a></li>
 <li><a href="#_inline_function_and_inline_macro">11.11. Inline Function and Inline Macro</a></li>
+<li><a href="#_extract_an_expression_as_a_function">11.12. Extract an Expression as a Function</a></li>
 </ul>
 </li>
 <li><a href="#components">12. Components</a>
@@ -4445,6 +4446,31 @@ call site. Refusing with a reason is fine there.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_extract_an_expression_as_a_function">11.12. Extract an Expression as a Function</h3>
+<div class="paragraph">
+<p><strong>Status</strong>: Not implemented. Issue #28.</p>
+</div>
+<div class="sect3">
+<h4 id="_background_8">11.12.1. Background</h4>
+<div class="paragraph">
+<p>Extract Function only works on statements.
+Marking part of an expression, e.g. one operand of <code>||</code> in an <code>if</code> condition, gives a <code>void</code> function, which is not what you wanted.
+The case that asked for it was <code>isPreloaded(buffer) || buffer&#8594;modified</code> in <code>closeEditorBuffersNoLongerHeld()</code>, which had to be extracted by hand.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_behaviour_4">11.12.2. Proposed Behaviour</h4>
+<div class="paragraph">
+<p>When the marked text is an expression, extract a function that returns it, with the type of the expression, and replace the text with a call.</p>
+</div>
+<div class="paragraph">
+<p>If finding the type of the marked text proves hard, an explicit <strong>Extract Predicate</strong> could be an alternative.
+The user then says it is a condition, and the function is always a <code>bool</code> one.
+That probably covers most of the cases that come up.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -8325,7 +8351,7 @@ setup.</p>
 <div class="sect2">
 <h3 id="_incremental_cxfile_c_cleanup">16.1. Incremental <code>cxfile.c</code> Cleanup</h3>
 <div class="sect3">
-<h4 id="_background_8">16.1.1. Background</h4>
+<h4 id="_background_9">16.1.1. Background</h4>
 <div class="paragraph">
 <p>The <code>cxfile</code> module was designed when the <code>.cx</code> files on disk were the reference database. Operations like "show all references to symbol X" or "find unused symbols" were table-driven scans over the disk format — hash the symbol name, stream the right partition, apply a per-operation filter. This was efficient for the batch cross-referencer that <code>c-xrefactory</code> evolved from, where the workflow was <code>c-xref -create</code> → <code>c-xref -update</code> → query the on-disk database.</p>
 </div>
@@ -12010,7 +12036,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-25 14:07:13 UTC
+Last updated 2026-09-25 16:14:21 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
