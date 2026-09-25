@@ -1,14 +1,14 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server
--getproject -xrefrc CURDIR/.c-xrefrc CURDIR/source.c
+-getproject CURDIR/source.c
 <sync>
--push  -olcursor=68 CURDIR/source.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push  -olcursor=68 CURDIR/source.c  -p CURDIR
 <sync>
--push  -olcursor=68 CURDIR/source.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-push  -olcursor=68 CURDIR/source.c  -p CURDIR
 <sync>
--browse-next  -olcursor=68 CURDIR/source.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR -preload CURDIR/source.c CURDIR/source.preload
+-browse-next  -olcursor=68 CURDIR/source.c  -p CURDIR -preload CURDIR/source.c CURDIR/source.preload
 <sync>
--olcxpop  -olcursor=68 CURDIR/source.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxpop  -olcursor=68 CURDIR/source.c  -p CURDIR
 <sync>
--browse-next  -olcursor=68 CURDIR/source.c  -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-browse-next  -olcursor=68 CURDIR/source.c  -p CURDIR
 <sync>
 <exit>
