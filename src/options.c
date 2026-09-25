@@ -172,7 +172,6 @@ static void usage() {
     fprintf(stdout, "\t-filescasesensitive       - file names are case sensitive\n");
     fprintf(stdout, "\t-filescaseunsensitive     - file names are case unsensitive\n");
     fprintf(stdout, "\t-csuffixes=<suffixes>     - list of C files suffixes separated by ':' (or ';')\n");
-    fprintf(stdout, "\t-xrefrc <file>            - read options from <file> instead of ~/.c-xrefrc\n");
 #if 0
     fprintf(stdout, "\t-olinelen=<n>             - length of lines for on-line output\n");
     fprintf(stdout, "\t-search                   - search info about identifier\n");
@@ -1656,11 +1655,11 @@ static bool processXOption(int *argi, ArgumentsVector args) {
         options.xref2 = true;
     }
     else if (strncmp(args.argv[i], "-xrefrc=",8) == 0) {
-        options.xrefrc = allocateStringForOption(&options.xrefrc, args.argv[i]+8);
+        errorMessage(ERR_ST, "-xrefrc is no longer supported, the .c-xrefrc is found from the file");
     }
     else if (strcmp(args.argv[i], "-xrefrc") == 0) {
         ensureNextArgumentIsAFileName(&i, args);
-        options.xrefrc = allocateStringForOption(&options.xrefrc, args.argv[i]);
+        errorMessage(ERR_ST, "-xrefrc is no longer supported, the .c-xrefrc is found from the file");
     }
     else return false;
     *argi = i;

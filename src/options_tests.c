@@ -185,20 +185,25 @@ Ensure(Options, has_no_mode_by_default) {
     assert_that(presetOptions.mode, is_equal_to(UndefinedMode));
 }
 
-Ensure(Options, can_parse_xrefrc_option_with_equals) {
+Ensure(Options, reports_xrefrc_option_with_equals_as_no_longer_supported) {
     char *argv[] = {"", "-xrefrc=abc"};
     ArgumentsVector args = {2, argv};
 
+    expect(errorMessage);
+
     processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
-    assert_that(options.xrefrc, is_equal_to_string("abc"));
 }
 
-Ensure(Options, can_parse_xrefrc_option_with_filename_separate) {
+/* The config is found from the file now, but an old command line still names
+ * one, and its file name must not be taken for a file to parse */
+Ensure(Options, reports_xrefrc_option_with_filename_separate_and_skips_the_filename) {
     char *argv[] = {"", "-xrefrc", "abc"};
     ArgumentsVector args = {3, argv};
 
-    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
-    assert_that(options.xrefrc, is_equal_to_string("abc"));
+    expect(errorMessage);
+
+    processOptions(args, PROCESS_FILE_ARGUMENTS_YES);
+    assert_that(options.inputFiles, is_null);
 }
 
 Ensure(Options, can_readOptionsFromFileIntoArgs) {

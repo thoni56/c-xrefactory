@@ -10,7 +10,6 @@ options:
 	-filescasesensitive       - file names are case sensitive
 	-filescaseunsensitive     - file names are case unsensitive
 	-csuffixes=<suffixes>     - list of C files suffixes separated by ':' (or ';')
-	-xrefrc <file>            - read options from <file> instead of ~/.c-xrefrc
 	-o <file>                 - write output to <file>
 	-refs <file>              - name of file with cxrefs, or directory if refnum > 1
 	-refnum=<n>               - number of cxref files
