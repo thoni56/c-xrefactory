@@ -8215,6 +8215,56 @@ tests whose server answered nothing after startup in a <code>-j8</code> run on 2
 <p>If you see one of these, add it here with the date, the test and where it ran.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_client_tests">14.7.8. Client tests</h4>
+<div class="paragraph">
+<p>The Emacs client has ERT tests in <code>editors/emacs/tests/*-tests.el</code>, run by
+<code>make -C editors/emacs test</code> and from <code>src&#8217;s `test</code> target. <code>make -C editors/emacs check</code>
+is a separate thing: it byte-compiles everything as a lint and keeps no <code>.elc</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Do not redefine a primitive in a test.</strong> Our own functions are byte-compiled Lisp, always
+called through the symbol&#8217;s function cell, so <code>cl-letf</code> on <code>symbol-function</code> is reliable
+for them. A C primitive is not: natively compiled Lisp calls it directly, and to keep it
+redefinable at all Emacs needs a <em>trampoline</em> - a small natively compiled shim in front of
+the primitive that does go through the function cell. Emacs ships trampolines for common
+subrs and generates the rest on demand, by writing a temporary <code>.el</code>, compiling it, and
+caching an <code>.eln</code>.</p>
+</div>
+<div class="paragraph">
+<p>Both halves of that bite. Seen on the Mac (session <code>7c731c79</code>, 2026-09-25, Emacs 31.1)
+while writing <code>tests/c-xref-database-tests.el</code>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cl-letf</code> on <code>buffer-file-name</code> failed with
+<code>native-lisp-load-failed "file does not exists" &#8230;&#8203; subr&#8212;&#8203;trampoline-&#8230;&#8203;buffer_file_name_0.eln</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>the batch run could neither find nor build the trampoline, and the test died before
+reaching the code under test. The hex in such a file name is the symbol name, which is
+how to tell which primitive is being complained about.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>cl-letf</code> on <code>file-exists-p</code> <em>succeeded</em> and triggered trampoline generation, whose own
+cleanup calls <code>delete-file</code> - which the same test had stubbed. The test recorded the
+compiler deleting its temporary file and asserted against that.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Reach for the state rather than the accessor (<code>setq buffer-file-name</code> inside a real
+buffer), or use the real thing (a temporary file, so <code>file-exists-p</code> is honestly true).
+Beyond the lost time there is a CI reason: a test that redefines a primitive passes or
+fails according to how Emacs was built and whether its <code>.eln</code> cache is writable, and
+Travis' Emacs is not the one on any of our machines.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_utilities">14.8. Utilities</h3>
@@ -11960,7 +12010,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-25 08:28:42 UTC
+Last updated 2026-09-25 09:50:53 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
