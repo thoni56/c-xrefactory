@@ -4293,9 +4293,9 @@ separate window.
     ))
 
 (defun c-xref-is-browser-window-displayed ()
-  (c-xref-is-refactory-window-displayed-in-the-frame 'linked-resolution-window))
+  (c-xref-is-linked-window-displayed 'linked-resolution-window))
 
-(defun c-xref-is-refactory-window-displayed-in-the-frame (winid)
+(defun c-xref-is-linked-window-displayed (winid)
   (let ((res) (listwin))
     (setq res nil)
     (if (c-xref-get-this-frame-dispatch-data)
@@ -4311,13 +4311,13 @@ separate window.
 
 (defun c-xref-is-reflist-window-displayed ()
   (let ((res))
-    (setq res (c-xref-is-refactory-window-displayed-in-the-frame 'linked-refs-window))
+    (setq res (c-xref-is-linked-window-displayed 'linked-refs-window))
     res
     ))
 
 (defun c-xref-is-failed-refactoring-window-displayed ()
   (let ((res))
-    (setq res (c-xref-is-refactory-window-displayed-in-the-frame 'linked-refactoring-window))
+    (setq res (c-xref-is-linked-window-displayed 'linked-refactoring-window))
     res
     ))
 
