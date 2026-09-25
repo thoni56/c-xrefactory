@@ -887,8 +887,7 @@ continuously maintain and improve the quality of any code base.</p>
 <div class="paragraph">
 <p>A project is configured by a <code>.c-xrefrc</code> file in the project root, found by upward search
 from the file being worked on; it records the source roots, include paths, and defines.
-(The older user-central <code>~/.c-xrefrc</code> with per-project sections still works.) See
-<a href="06-principles.html">Principles</a> (Project Scope) for how project boundaries are
+See <a href="06-principles.html">Principles</a> (Project Scope) for how project boundaries are
 determined.</p>
 </div>
 </div>
@@ -3592,7 +3591,7 @@ an owner, and <code>ParsingConfig</code> is the same pattern one layer down.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The client stops sending <code>-p</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>c-xref-send-data-to-process-and-dispatch</code> (<code>editors/emacs/c-xref.el:1925</code>) appends <code>-p</code>
  to every request, so the project is re-named on each one and the tier can never freeze.
- The server tests that still pass <code>-p</code> or <code>-xrefrc</code> convert to <code>-getproject</code>.</p></td>
+ The server tests that still pass <code>-p</code> convert to <code>-getproject</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project setup moves into <code>-getproject</code></p></td>
@@ -4114,14 +4113,13 @@ of the project tree. The main advantage is that it can be checked in to repo and
 not contain absolute file paths.</p>
 </div>
 <div class="paragraph">
-<p>Legacy project configs will continue to work, but a user might want to migrate a
-project. It&#8217;s fairly easy to do by hand, but as a polishing touch, providing a client
-operation to do that would be nice.</p>
+<p>The home config is no longer read, so a legacy project has to be migrated. It&#8217;s fairly
+easy to do by hand, but as a polishing touch, providing a client operation to do that
+would be nice.</p>
 </div>
 <div class="paragraph">
-<p>There is a natural trigger for this: since the Emacs client no longer sends <code>-xrefrc</code> and
-the server&#8217;s upward search for <code>.c-xrefrc</code> stops before the home directory, a legacy user
-with only <code>~/.c-xrefrc</code> will get a "No project found" prompt. Instead of only offering
+<p>There is a natural trigger for this: a legacy user with only <code>~/.c-xrefrc</code> will get a
+"No project found" prompt. Instead of only offering
 "Create new project?", the client could check <code>~/.c-xrefrc</code> for a section matching the
 current file, and if found, offer to migrate that section to a project-local <code>.c-xrefrc</code>.</p>
 </div>
@@ -6440,8 +6438,8 @@ hard to follow.</p>
 <td class="content">
 The auto-detect server path uses a unified flow where lightweight file structure
 scanning replaces the legacy <code>-create</code>/<code>callXref()</code> pattern (ADR 22). The legacy path
-runs when no project root was auto-detected — either because the <code>-xrefrc &lt;file&gt;</code>
-option was used, or because no <code>.c-xrefrc</code> was found near the request file. See
+runs when no project root was auto-detected, i.e. no <code>.c-xrefrc</code> was found above the
+request file. See
 <a href="#unified-flow">Unified Server Flow (ADR 22)</a> below.
 </td>
 </tr>
@@ -6921,13 +6919,8 @@ target.
 <div class="paragraph">
 <p>The auto-detect path uses a single initialization via <code>initializeProjectContext</code> and
 treats the in-memory reference table as authoritative. The legacy path
-(<code>initializeFileProcessing</code>) is retained for explicit <code>-xrefrc</code> configurations. The flow
-below describes the auto-detect path.</p>
-</div>
-<div class="paragraph">
-<p><code>-xrefrc</code> is on its way out — <a href="/workspace/1/decisions/C-xrefactory#5">ADR-0005</a> called
-for removing it once discovery existed, and discovery exists — so this legacy path is
-expected to go with it rather than to stay as a second way in.</p>
+(<code>initializeFileProcessing</code>) runs when no project root was detected. The flow below
+describes the auto-detect path.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -7417,7 +7410,7 @@ something like (from the read_xrefs test case):</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>-encoding=european -olcxpush -urldirect  "-preload" "&lt;file&gt;" "-olmark=0" "-olcursor=6" "&lt;file&gt;" -xrefrc ".c-xrefrc" -p "&lt;project&gt;"
+<pre>-encoding=european -olcxpush -urldirect  "-preload" "&lt;file&gt;" "-olmark=0" "-olcursor=6" "&lt;file&gt;" -p "&lt;project&gt;"
 end-of-options</pre>
 </div>
 </div>
@@ -7577,14 +7570,9 @@ The linked list nodes themselves are allocated in the Options structure&#8217;s 
 <div class="sect2">
 <h3 id="_configuration_2">13.12. Configuration</h3>
 <div class="paragraph">
-<p>The legacy <code>c-xref</code> normally, in "production", uses a common configuration file in the
-users home directory, <code>.c-xrefrc</code>. When a new project is defined its options will be
-stored in this file as a new section.</p>
-</div>
-<div class="paragraph">
-<p>It is possible to point to a specific configuration file using the command line option
-<code>-xrefrc</code> which is used extensively in the tests to isolate them from the users
-configuration.</p>
+<p>The configuration file is a <code>.c-xrefrc</code> in the root of the project, found by searching
+upward from the file being worked on. The search stops at the user&#8217;s home directory, so a
+<code>~/.c-xrefrc</code> from the old user-central model is not read.</p>
 </div>
 <div class="paragraph">
 <p>Each "project" or "section" requires a name of the "project", which is the argument to
@@ -7603,7 +7591,7 @@ allows for different "default" options for each project.</p>
 <p>Command line options at invocation</p>
 </li>
 <li>
-<p>Configuration files (the projects <code>.c-xrefrc</code> or <code>~/.c-xrefrc</code>)</p>
+<p>The project&#8217;s configuration file, <code>.c-xrefrc</code></p>
 </li>
 <li>
 <p>"Piped" options sent to the server in commands/requests</p>
@@ -7620,10 +7608,7 @@ allows for different "default" options for each project.</p>
 <p>When the client first operates on a file, the server determines which project it belongs
 to. On the auto-detect path the server walks upward from the file&#8217;s path looking for a
 project-local <code>.c-xrefrc</code>, and the directory containing it becomes the project root
-(<code>detectedProjectRoot</code>). If no project-local <code>.c-xrefrc</code> is found, the legacy path takes
-over: the user&#8217;s home <code>~/.c-xrefrc</code> is consulted (or a file given by <code>-xrefrc &lt;file&gt;</code>),
-and <code>-p &lt;name&gt;</code> selects which project section within it applies. <code>-p</code> is required in
-either form because both files can hold multiple project sections. The <code>-getproject</code>
+(<code>detectedProjectRoot</code>). If none is found, the file is not in any project. The <code>-getproject</code>
 operation drives discovery and reports the result back to the editor.</p>
 </div>
 <div class="paragraph">
@@ -12036,7 +12021,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-25 21:06:41 UTC
+Last updated 2026-09-25 21:47:58 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
