@@ -4310,7 +4310,9 @@ separate window.
     (if (c-xref-get-this-frame-dispatch-data)
             (progn
               (setq listwin (cdr (assoc winid (c-xref-get-this-frame-dispatch-data))))
-              (if (and (windowp listwin) (window-live-p listwin))
+              (if (and (windowp listwin) (window-live-p listwin)
+                       (buffer-local-value 'c-xref-this-buffer-dispatch-data
+                                           (window-buffer listwin)))
                   (setq res listwin)
                 )))
     res

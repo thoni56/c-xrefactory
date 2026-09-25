@@ -43,3 +43,11 @@
     (c-xref-create-browser-windows t dispatch-data)
     (should (member c-xref-browser-info-buffer (c-xref-test-window-buffers)))
     (c-xref-close-resolution-dialog-windows dispatch-data)))
+
+(ert-deftest c-xref-refs-window-showing-another-buffer-is-not-the-refs-window ()
+  ;; Another command can display its buffer in the refs window, e.g. magit
+  (let ((dispatch-data (c-xref-test-split-frame)))
+    (c-xref-create-browser-windows nil dispatch-data)
+    (set-window-buffer (c-xref-is-reflist-window-displayed) (get-buffer "other.c"))
+    (should-not (c-xref-is-reflist-window-displayed))
+    (c-xref-close-resolution-dialog-windows dispatch-data)))
