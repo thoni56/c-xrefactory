@@ -371,7 +371,7 @@ Ensure(Options, can_return_project_name_from_autodetected_config) {
     char sectionName[1000];
     FILE file;
 
-    // AUTO-DETECT mode: no explicit -xrefrc, searches upward, only reads section header
+    // Searches upward, only reads section header
     always_expect(getEnv, will_return("HOME"));
     expect(isDirectory, will_return(false));
     expect(directoryName_static, will_return("HOME/projectdir"));
