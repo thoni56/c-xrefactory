@@ -3,8 +3,7 @@ include ../Makefile.server
 # Run c-xref over the ffmpeg source tree and verify it discovered an
 # entry for every .c file under this test directory. Same shape as
 # the original XrefMode test: count .c entries in the snapshot.
-# Server-mode default (no -refnum) writes the whole snapshot as a
-# single text file at .c-xref/db. File records are one line each,
+# The snapshot is a single text file at .c-xref/db. File records are one line each,
 # starting with <number>f and ending with the path — paths only
 # appear in file records, so grep PWD then .c is unambiguous.
 #

@@ -34,7 +34,7 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     bool isScheduled : 1;
     bool scheduledToUpdate : 1;
     bool fullUpdateIncludesProcessed : 1;
-    bool isFromCxfile : 1;      // is this file indexed in XFiles
+    bool isFromCxfile : 1;      // is this file in the snapshot
     bool needsBrowsingStackRefresh : 1;  // entry-point reparsed this file, stack needs update
     bool isDeleted : 1;                 // file no longer exists on disk
     unsigned sourceFileNumber : 20; // file number containing the class definition

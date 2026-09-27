@@ -1,8 +1,7 @@
 # Auto-detection with nothing but a project section to go on
 #
 # There is no c-xrefrc.tpl here, so the common template is generated: a section
-# naming this directory, and the -refs and -refnum that the server ignores for a
-# detected project in favour of the convention path.
+# naming this directory, and nothing else.
 #
 # The PUSH is what parses. Establishing the project only scans: source.c includes
 # nothing, so no sibling shares a header with it and pass 3 has nothing to do,
