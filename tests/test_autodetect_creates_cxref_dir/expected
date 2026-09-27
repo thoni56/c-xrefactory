@@ -7,14 +7,4 @@ end-of-options
 -exit
 end-of-options
 
-X0000
-X0001
-X0002
-X0003
-X0004
-X0005
-X0006
-X0007
-X0008
-X0009
-XFiles
+.c-xref/db
