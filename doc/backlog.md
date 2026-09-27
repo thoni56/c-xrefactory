@@ -61,9 +61,11 @@ features. Relative effort only — no dates (#noestimates).
 5. **Remove `-refs` and `-refnum`** — ADR-0028. The snapshot is always
    `<project root>/.c-xref/db` and always one file. Deletes the partition handling in
    `src/cxfile.c` (the hash modulo, the per-file loops, the single-versus-many branches)
-   and makes `applyConventionBasedDatabasePath()` unconditional. Decide what happens to
-   the `CXFI_REFNUM` record in the snapshot — keeping it and always writing 1 costs
-   nothing, changing the format involves `test_snapshot_version_migration`. Fixtures
+   and makes `applyConventionBasedDatabasePath()` unconditional. The `CXFI_REFNUM` record
+   stays in the snapshot and is always written as 1. Dropping it is a later format change,
+   and a safe one: a snapshot of another format version is ignored like no snapshot and
+   rewritten on exit (`test_snapshot_version_mismatch_ignores_db`,
+   `test_snapshot_version_migration`), so it only costs one cold start. Fixtures
    assume partitions: the common `tests/c-xrefrc.tpl` sets both options, ten per-test
    templates set `-refnum`, and `tests/test_autodetect_creates_cxref_dir` asserts the
    `X0000…X0009` layout because of it. A config that still says either option gets an
