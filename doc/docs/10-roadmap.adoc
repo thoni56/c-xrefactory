@@ -174,6 +174,19 @@ Global `options` with Typed Requests).
  step three uniform.
 |===
 
+==== Found at the wrong step
+
+Concrete cases met along the way, each with the step it belongs to. A line goes when the
+row above that fixes it lands.
+
+* *The config's options are parsed at process start*, in `mainTaskEntryInitialisations()`,
+  before any request. They belong to `-getproject`. Output is `stdout` at that point, so
+  nothing said about the config can reach the client. A config that still sets `-refs`
+  or `-refnum` is therefore reported when the project is locked, not when it is parsed.
+* *The config is parsed again at least twice per request*, by the per-pass mechanism. It
+  belongs to `-getproject`, once. It is why a warning about the config cannot simply be
+  given where the option is parsed.
+
 ==== Decisions that shaped this direction
 
 * link:/workspace/1/decisions/C-xrefactory#5[ADR-0005] — automatic config-file discovery
