@@ -11,8 +11,6 @@ options:
 	-filescaseunsensitive     - file names are case unsensitive
 	-csuffixes=<suffixes>     - list of C files suffixes separated by ':' (or ';')
 	-o <file>                 - write output to <file>
-	-refs <file>              - name of file with cxrefs, or directory if refnum > 1
-	-refnum=<n>               - number of cxref files
 	-exactpositionresolve     - resolve symbols by def. position
 	-errors                   - report all error messages on the console
 	                            (by default only fatal errors are shown)

@@ -182,8 +182,6 @@ static void usage() {
     fprintf(stdout, "\t-file <file>              - name of the file given to stdin\n");
 #endif
     fprintf(stdout, "\t-o <file>                 - write output to <file>\n");
-    fprintf(stdout, "\t-refs <file>              - name of file with cxrefs, or directory if refnum > 1\n");
-    fprintf(stdout, "\t-refnum=<n>               - number of cxref files\n");
     fprintf(stdout, "\t-exactpositionresolve     - resolve symbols by def. position\n");
     fprintf(stdout, "\t-errors                   - report all error messages on the console\n");
     fprintf(stdout, "\t                            (by default only fatal errors are shown)\n");
