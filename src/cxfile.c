@@ -28,20 +28,6 @@
 #define COMPACT_TAGS_AFTER_SEARCH_COUNT 10000	/* compact tag search results after n items*/
 
 
-/* ***************************  cxref filenames ********************* */
-
-#if defined(__WIN32__)
-
-#define CXFILENAME_FILES "\\XFiles"
-#define CXFILENAME_PREFIX "\\X"
-
-#else
-
-#define CXFILENAME_FILES "/XFiles"
-#define CXFILENAME_PREFIX "/X"
-
-#endif
-
 /* *********************** INPUT/OUTPUT FIELD MARKERS ************************** */
 
 #define C_XREF_FILE_FORMAT_VERSION "1.10.0"
@@ -446,7 +432,7 @@ static void writeCxFileHead(void) {
     assert(i < MAX_CHARS);
     stringRecord[i]=0;
     writeStringRecord(CXFI_KEY_LIST, stringRecord, "");
-    writeCompactRecord(CXFI_REFNUM, options.cxFileCount, " ");
+    writeCompactRecord(CXFI_REFNUM, 1, " ");
     writeCompactRecord(CXFI_CHECK_NUMBER, composeCxfiCheckNum(MAX_FILES, options.exactPositionResolve), " ");
 }
 
@@ -472,35 +458,6 @@ static void closeCurrentCxFile(void) {
 }
 
 
-// TODO: Remove the updateFlag
-/* suffix contains '/' at the beginning */
-static void writePartialCxFile(char *dirname, char *suffix,
-                               void mapfun(FileItem *, int)) {
-    char cxFileName[MAX_FILE_NAME_SIZE];
-
-    sprintf(cxFileName, "%s%s", dirname, suffix);
-    assert(strlen(cxFileName) < MAX_FILE_NAME_SIZE-1);
-    openInOutCxFile(cxFileName);
-    writeCxFileHead();
-    mapOverFileTableWithIndex(mapfun);
-    closeCurrentCxFile();
-}
-
-static void writeReferencesFromMemoryIntoCxFile(int partitionNumber) {
-    for (int i=getNextExistingReferenceableItem(0); i != -1; i = getNextExistingReferenceableItem(i+1)) {
-        for (ReferenceableItem *r=getReferenceableItem(i); r!=NULL; r=r->next) {
-            if (r->visibility == VisibilityLocal)
-                continue;
-            if (r->references == NULL)
-                continue;
-            if (cxFileHashNumberForSymbol(r->linkName) == partitionNumber)
-                writeReferenceableItem(r);
-            else
-                log_trace("Skipping reference with linkname \"%s\"", r->linkName);
-        }
-    }
-}
-
 static void writeSingleCxFile(char *filename) {
     openInOutCxFile(filename);
     writeCxFileHead();
@@ -509,30 +466,11 @@ static void writeSingleCxFile(char *filename) {
     closeCurrentCxFile();
 }
 
-static void writeMultipleCxFiles(char *dirName) {
-    char  cxFileName[MAX_FILE_NAME_SIZE];
-
-    createDirectory(dirName);
-    writePartialCxFile(dirName, CXFILENAME_FILES, writeFileNumberItem);
-    for (int i = 0; i < options.cxFileCount; i++) {
-        sprintf(cxFileName, "%s%s%04d", dirName, CXFILENAME_PREFIX, i);
-        assert(strlen(cxFileName) < MAX_FILE_NAME_SIZE - 1);
-        openInOutCxFile(cxFileName);
-        writeCxFileHead();
-        writeReferencesFromMemoryIntoCxFile(i);
-        closeCurrentCxFile();
-    }
-}
-
 static void writeCxFiles(char *fileName) {
     recursivelyDeleteDirectory(fileName);
     recursivelyCreateFileDirIfNotExists(fileName);
 
-    if (options.cxFileCount <= 1) {
-        writeSingleCxFile(fileName);
-    } else {
-        writeMultipleCxFiles(fileName);
-    }
+    writeSingleCxFile(fileName);
 }
 
 void saveReferencesToStore(char *fileName) {
@@ -867,13 +805,10 @@ bool loadFileNumbersFromStore(void) {
     static FileTimestamp savedModificationTime; /* Cache previously read file data... */
     static off_t savedFileSize = 0;
     static char previouslyReadFileName[MAX_FILE_NAME_SIZE] = ""; /* ... and name */
-    char cxFileName[MAX_FILE_NAME_SIZE];
+    char *cxFileName = options.cxFileLocation;
 
-    if (options.cxFileCount <= 1) {
-        sprintf(cxFileName, "%s", options.cxFileLocation);
-    } else {
-        sprintf(cxFileName, "%s%s", options.cxFileLocation, CXFILENAME_FILES);
-    }
+    if (cxFileName == NULL)
+        return false;
     if (editorFileExists(cxFileName)) {
         size_t currentSize = editorFileSize(cxFileName);
         FileTimestamp currentModificationTime = editorFileModificationTime(cxFileName);
@@ -900,24 +835,10 @@ bool loadSnapshotFromStore(void) {
         snapshotLoadComplete = true;
         return false;
     }
-    char cxFileName[MAX_FILE_NAME_SIZE];
-    if (options.cxFileCount <= 1) {
-        sprintf(cxFileName, "%s", options.cxFileLocation);
-    } else {
-        sprintf(cxFileName, "%s%s", options.cxFileLocation, CXFILENAME_FILES);
-    }
+    char *cxFileName = options.cxFileLocation;
     if (editorFileExists(cxFileName)) {
         log_info("Loading full snapshot from '%s'", cxFileName);
-        if (options.cxFileCount <= 1) {
-            scanCxFile(cxFileName, "", "", snapshotLoadScanDispatchTable);
-        } else {
-            scanCxFile(options.cxFileLocation, CXFILENAME_FILES, "", snapshotLoadScanDispatchTable);
-            for (int i = 0; i < options.cxFileCount; i++) {
-                char partitionNumber[MAX_FILE_NAME_SIZE];
-                sprintf(partitionNumber, "%04d", i);
-                scanCxFile(options.cxFileLocation, CXFILENAME_PREFIX, partitionNumber, snapshotLoadScanDispatchTable);
-            }
-        }
+        scanCxFile(cxFileName, "", "", snapshotLoadScanDispatchTable);
         snapshotLoadComplete = true;
         return true;
     }
