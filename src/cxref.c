@@ -1459,7 +1459,7 @@ bool olcxShowSelectionMenu(void) {
     return false;
 }
 
-static bool olMenuHashFileNumLess(BrowsingMenu *menu1, BrowsingMenu *menu2) {
+static bool menuLocalFirst(BrowsingMenu *menu1, BrowsingMenu *menu2) {
     if (menu1->referenceable.visibility == VisibilityLocal) return true;
     if (menu1->referenceable.visibility == VisibilityLocal) return false;
     // both files and categories equals ?
@@ -1494,7 +1494,7 @@ void createSelectionMenuForOperation(ServerOperation operation) {
         return;
 
     renameCollationSymbols(menu);
-    LIST_SORT(BrowsingMenu, rstack->hkSelectedSym, olMenuHashFileNumLess);
+    LIST_SORT(BrowsingMenu, rstack->hkSelectedSym, menuLocalFirst);
 
     /* Build the selection menu in two passes: first add a menu entry for
      * each table item that matches a candidate symbol; then walk the table
