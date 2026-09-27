@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-09-25">
+<meta name="author" content="v{VERSION} - Generated 2026-09-27">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-09-25</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-09-27</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -528,6 +528,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#generic-selection">11.10. C11 <code>_Generic</code></a></li>
 <li><a href="#_inline_function_and_inline_macro">11.11. Inline Function and Inline Macro</a></li>
 <li><a href="#_extract_an_expression_as_a_function">11.12. Extract an Expression as a Function</a></li>
+<li><a href="#_modernize_function">11.13. Modernize Function</a></li>
 </ul>
 </li>
 <li><a href="#components">12. Components</a>
@@ -3619,7 +3620,29 @@ an owner, and <code>ParsingConfig</code> is the same pattern one layer down.</p>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_decisions_that_shaped_this_direction_2">10.3.3. Decisions that shaped this direction</h4>
+<h4 id="_found_at_the_wrong_step">10.3.3. Found at the wrong step</h4>
+<div class="paragraph">
+<p>Concrete cases met along the way, each with the step it belongs to. A line goes when the
+row above that fixes it lands.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>The config&#8217;s options are parsed at process start</strong>, in <code>mainTaskEntryInitialisations()</code>,
+before any request. They belong to <code>-getproject</code>. Output is <code>stdout</code> at that point, so
+nothing said about the config can reach the client. A config that still sets <code>-refs</code>
+or <code>-refnum</code> is therefore reported when the project is locked, not when it is parsed.</p>
+</li>
+<li>
+<p><strong>The config is parsed again at least twice per request</strong>, by the per-pass mechanism. It
+belongs to <code>-getproject</code>, once. It is why a warning about the config cannot simply be
+given where the option is parsed.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_decisions_that_shaped_this_direction_2">10.3.4. Decisions that shaped this direction</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4469,6 +4492,32 @@ That probably covers most of the cases that come up.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_modernize_function">11.13. Modernize Function</h3>
+<div class="paragraph">
+<p><strong>Status</strong>: Not implemented.</p>
+</div>
+<div class="sect3">
+<h4 id="_background_9">11.13.1. Background</h4>
+<div class="paragraph">
+<p>Old C code often has K&amp;R function definitions, where the parameter types are declared between the parameter list and the body.
+There is no way to turn such a definition into one with a prototype.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_behaviour_5">11.13.2. Proposed Behaviour</h4>
+<div class="paragraph">
+<p>With the cursor on a K&amp;R function definition, <strong>Modernize Function</strong> (or <strong>Prototype Function</strong>) moves the parameter declarations into the parameter list.
+A declaration without parameters elsewhere, e.g. <code>int f();</code> in a header, gets the same parameter list.
+An implicit <code>int</code>, for the return type or for a parameter that is not declared, should probably be made explicit at the same time.</p>
+</div>
+<div class="paragraph">
+<p>A parameter declared <code>char</code>, <code>short</code> or <code>float</code> is a catch.
+A caller without a prototype in scope passes it promoted, to <code>int</code> or <code>double</code>, so adding the prototype changes how it is called.
+Refusing, or at least warning, is probably right there.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -5029,7 +5078,7 @@ The component boundary is not yet clean. Parts of this functionality are spread 
 <div class="ulist">
 <ul>
 <li>
-<p><strong>On-disk</strong> (<code>.cx</code> files) — persistent, hash-partitioned symbol records managed by the Cxfile component</p>
+<p><strong>On-disk</strong> (<code>.c-xref/db</code>) — a persistent snapshot of the symbol records, managed by the Cxfile component</p>
 </li>
 <li>
 <p><strong>In-memory</strong> (reference tables) — runtime tables populated by parsing and by loading from <code>.cx</code> files</p>
@@ -5504,26 +5553,16 @@ bool memoryIsAtTop(Memory *memory, void *pointer, size_t size);</code></pre>
 <div class="sect3">
 <h4 id="_database_structure">12.11.2. Database Structure</h4>
 <div class="paragraph">
-<p>The database uses a hash-partitioned file structure:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">cxrefs/
-├── files        # File metadata and paths
-├── 0000         # Symbol data for hash bucket 0
-├── 0001         # Symbol data for hash bucket 1
-└── ...          # Additional hash buckets (count set by -refnum)</code></pre>
-</div>
+<p>The database is a single file, <code>.c-xref/db</code> in the project root. It holds the file
+metadata and paths first, then the symbol records. It is a startup snapshot, loaded whole
+and never consulted again, and written from memory on exit. Without a project root there
+is no snapshot.</p>
 </div>
 <div class="paragraph">
-<p>All information about a symbol is stored in exactly one file, determined by hashing its link name. This means a single file read suffices to look up any symbol.</p>
-</div>
-<div class="paragraph">
-<p>That single-file read is what the partitioning was for, and nothing reads the database
-that way any more: it is a startup snapshot, loaded whole and never consulted again. The
-partitioning and the <code>-refnum</code> that sizes it are therefore being removed, together with
-<code>-refs</code> — see <a href="/workspace/1/decisions/C-xrefactory#28">ADR-0028</a>. What is described
-above is the layout as it still exists.</p>
+<p>It used to be split into files by a hash of the link name, sized by <code>-refnum</code>, so that a
+single file read could look up a symbol. Nothing reads it that way any more, so the
+split and <code>-refs</code> were removed, see <a href="/workspace/1/decisions/C-xrefactory#28">ADR-0028</a>.
+The snapshot still records the partition count, always as 1.</p>
 </div>
 </div>
 <div class="sect3">
@@ -8336,7 +8375,7 @@ setup.</p>
 <div class="sect2">
 <h3 id="_incremental_cxfile_c_cleanup">16.1. Incremental <code>cxfile.c</code> Cleanup</h3>
 <div class="sect3">
-<h4 id="_background_9">16.1.1. Background</h4>
+<h4 id="_background_10">16.1.1. Background</h4>
 <div class="paragraph">
 <p>The <code>cxfile</code> module was designed when the <code>.cx</code> files on disk were the reference database. Operations like "show all references to symbol X" or "find unused symbols" were table-driven scans over the disk format — hash the symbol name, stream the right partition, apply a per-operation filter. This was efficient for the batch cross-referencer that <code>c-xrefactory</code> evolved from, where the workflow was <code>c-xref -create</code> → <code>c-xref -update</code> → query the on-disk database.</p>
 </div>
@@ -8390,9 +8429,6 @@ setup.</p>
 <p><code>saveReferencesToStore</code> — snapshot writer</p>
 </li>
 <li>
-<p><code>cxFileHashNumberForSymbol</code> — partition-hash helper</p>
-</li>
-<li>
 <p><code>searchSymbolCheckReference</code> — per-reference search matcher</p>
 </li>
 </ul>
@@ -8401,13 +8437,10 @@ setup.</p>
 <div class="sect3">
 <h4 id="_remaining_3">16.1.3. Remaining</h4>
 <div class="paragraph">
-<p>Two small interface tightenings — not major improvements, but worth listing as known loose ends:</p>
+<p>One small interface tightening — not a major improvement, but worth listing as a known loose end:</p>
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p><strong>Make <code>cxFileHashNumberForSymbol</code> static.</strong> It&#8217;s a partitioning implementation detail; the single external use (menu sorting in cxref.c) can be rerouted.</p>
-</li>
 <li>
 <p><strong>Make <code>searchSymbolCheckReference</code> static.</strong> The per-reference search matcher belongs in <code>search.c</code>. Moving it removes the last reason the storage module needs to know about search string matching.</p>
 </li>
@@ -12021,7 +12054,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-25 21:47:58 UTC
+Last updated 2026-09-27 20:37:33 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
