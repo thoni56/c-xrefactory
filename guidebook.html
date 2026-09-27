@@ -1431,10 +1431,8 @@ Separate from symbol references, which require full parsing.</p>
 snapshot and scanning project structure. Happens once per session. Not the same as cold
 start — initialization happens on every session, cold start describes the <em>absence</em> of a
 snapshot.<br>
-Today it is split in two. <code>mainTaskEntryInitialisations()</code> discovers a project at
-process start, from <code>cwd</code> when the command line names no file, and reads that project&#8217;s
-options. The first request that names a file does the rest. The direction is to move all
-of it into <code>-getproject</code>, so that process start knows nothing about any project.</p>
+Process start does none of it. The first request that names a file does all of it,
+whatever the request is. The direction is to move it into <code>-getproject</code>.</p>
 </dd>
 <dt class="hdlist1">Lightweight scan</dt>
 <dd>
@@ -3531,12 +3529,12 @@ snapshot load. No parsing.</p>
 </ol>
 </div>
 <div class="paragraph">
-<p>The ladder is climbed out of order today. <code>mainTaskEntryInitialisations()</code>
-(<code>startup.c:827</code>) discovers a project at process start, from <code>cwd</code> when the command line
-names no file, and reads that project&#8217;s options before any request has arrived — see
-<a href="06-principles.html">Principles</a> (Initialization). The lifetime partition that fixes it
-is in <a href="17-major-codebase-improvements.html">Major Codebase Improvements</a> (Replace
-Global <code>options</code> with Typed Requests).</p>
+<p>The ladder is still climbed out of order. Process start does no project work since
+<code>c9840fe7</code>, but project setup happens in the first request that names a file, whatever
+that request is, rather than in <code>-getproject</code>, and the config is read again for every
+pass — see <a href="06-principles.html">Principles</a> (Initialization). The lifetime partition
+that fixes it is in <a href="17-major-codebase-improvements.html">Major Codebase Improvements</a>
+(Replace Global <code>options</code> with Typed Requests).</p>
 </div>
 <div class="sect3">
 <h4 id="_done_2">10.3.1. Done</h4>
@@ -3564,6 +3562,10 @@ structure without a parse (<a href="/workspace/1/decisions/C-xrefactory#22">ADR-
 <li>
 <p><strong>First fields off the blob</strong> — <code>ProjectConfig.sourceDirs</code> is project-scoped state with
 an owner, and <code>ParsingConfig</code> is the same pattern one layer down.</p>
+</li>
+<li>
+<p><strong>Nothing project-scoped at process start</strong> — the project guessed from <code>cwd</code> is gone, and
+with it the defines it leaked into the project the server was opened on (<code>c9840fe7</code>).</p>
 </li>
 </ul>
 </div>
@@ -3597,12 +3599,8 @@ an owner, and <code>ParsingConfig</code> is the same pattern one layer down.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project setup moves into <code>-getproject</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Discovery, the config read, compiler interrogation and the snapshot load all belong to
- step two. Process start does the first two today, and the first request that names a
- file does the rest.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Process start strips to parsing setup</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">What is left knows nothing about any project. Depends on the two rows above.</p></td>
+ step two. The first request that names a file does all of it today, whatever the
+ request is.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Assert that nothing before <code>-getproject</code> reads a project-scoped option</p></td>
@@ -3627,12 +3625,6 @@ row above that fixes it lands.</p>
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p><strong>The config&#8217;s options are parsed at process start</strong>, in <code>mainTaskEntryInitialisations()</code>,
-before any request. They belong to <code>-getproject</code>. Output is <code>stdout</code> at that point, so
-nothing said about the config can reach the client. A config that still sets <code>-refs</code>
-or <code>-refnum</code> is therefore reported when the project is locked, not when it is parsed.</p>
-</li>
 <li>
 <p><strong>The config is parsed again at least twice per request</strong>, by the per-pass mechanism. It
 belongs to <code>-getproject</code>, once. It is why a warning about the config cannot simply be
@@ -9147,7 +9139,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </ul>
 </div>
 <div class="paragraph">
-<p>Session and Project are tangled in time as well as in the struct. <code>mainTaskEntryInitialisations()</code> (<code>startup.c:827</code>) runs project discovery at process start, using <code>cwd</code> when the command line names no file, and reads that project&#8217;s options before any request has arrived. So "set once at server startup" already includes project-scoped work.</p>
+<p>Session and Project are tangled in time as well as in the struct. Process start no longer does project work, but the first request that names a file sets up the project, whatever that request is, so project setup is not yet bound to one step.</p>
 </div>
 <div class="paragraph">
 <p>These lifetimes are held together by a save/restore discipline scattered across five call sites:</p>
@@ -12054,7 +12046,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-27 20:55:32 UTC
+Last updated 2026-09-27 21:49:22 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
