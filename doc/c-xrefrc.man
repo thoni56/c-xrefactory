@@ -16,9 +16,7 @@ mainly information about source files,
 include directories ( '-I'
 option )
 and  default  macro-definitions ( '-D' option).
-It should equally  contain  the  '-refs'
-option  specifying  where  the
-resulting file with cross references should be searched or created.
+The cross references are always stored in '.c-xref/db' in the project root.
 .I Informations about available options can be found in the 'c-xref'
 .I manual page ('c-xref.man' file).
 
@@ -74,14 +72,10 @@ Lets take for example the '.c-xrefrc' file defining two projects
 .br
 -DTARGET=linux
 .br
--refs /home/marian/XSrefs
-.br
 
 [player]          // second section
 .br
 -r /home/marian/player
-.br
--refs /home/marian/Xplay
 
 
 ---------------------------------------------------------
@@ -135,8 +129,6 @@ For example, let's consider the followin .c-xrefrc file:
 -I /mygroup/include
 .br
 -DTARGET=linux
-.br
--refs /home/marian/XSrefs
 
 
 [/home/marian/c-xref]          // second section
@@ -148,8 +140,6 @@ For example, let's consider the followin .c-xrefrc file:
 -I /mygroup/include
 .br
 -DNODEBUG
-.br
--refs /home/marian/C-xrefs
 
 ---------------------------------------------------------
 
@@ -215,8 +205,6 @@ example:
 .br
 -r /home/marian/solve
 .br
--refs /home/marian/XSrefs
-.br
 -pass1
 .br
 -DTARGET=linux
@@ -233,8 +221,6 @@ the '/home/marian/solve' directory twice, the first time with options:
 .br
 -r /home/marian/solve
 .br
--refs /home/marian/XSrefs
-.br
 -DTARGET=linux
 .br
 
@@ -242,8 +228,6 @@ and the second time with options:
 
 .br
 -r /home/marian/solve
-.br
--refs /home/marian/XSrefs
 .br
 -DTARGET=solaris
 

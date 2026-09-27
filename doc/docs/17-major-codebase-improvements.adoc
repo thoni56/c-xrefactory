@@ -31,14 +31,12 @@ The current public interface in `cxfile.h` is:
 
 * `loadSnapshotFromStore`, `loadFileNumbersFromStore` — startup loaders
 * `saveReferencesToStore` — snapshot writer
-* `cxFileHashNumberForSymbol` — partition-hash helper
 * `searchSymbolCheckReference` — per-reference search matcher
 
 ==== Remaining
 
-Two small interface tightenings — not major improvements, but worth listing as known loose ends:
+One small interface tightening — not a major improvement, but worth listing as a known loose end:
 
-* **Make `cxFileHashNumberForSymbol` static.** It's a partitioning implementation detail; the single external use (menu sorting in cxref.c) can be rerouted.
 * **Make `searchSymbolCheckReference` static.** The per-reference search matcher belongs in `search.c`. Moving it removes the last reason the storage module needs to know about search string matching.
 
 ==== References

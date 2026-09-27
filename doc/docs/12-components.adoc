@@ -316,7 +316,7 @@ NOTE: The component boundary is not yet clean. Parts of this functionality are s
 
 `c-xrefactory`'s core functionality relies on a symbol database that stores cross-references, definitions, and usage information for all symbols in a project. The database has two forms:
 
-* **On-disk** (`.cx` files) — persistent, hash-partitioned symbol records managed by the Cxfile component
+* **On-disk** (`.c-xref/db`) — a persistent snapshot of the symbol records, managed by the Cxfile component
 * **In-memory** (reference tables) — runtime tables populated by parsing and by loading from `.cx` files
 
 ==== Key Data Structures
@@ -588,24 +588,15 @@ Read and write the CXref database (`.cx` files) in a compact text format. Cxfile
 
 ==== Database Structure
 
-The database uses a hash-partitioned file structure:
+The database is a single file, `.c-xref/db` in the project root. It holds the file
+metadata and paths first, then the symbol records. It is a startup snapshot, loaded whole
+and never consulted again, and written from memory on exit. Without a project root there
+is no snapshot.
 
-[source]
-----
-cxrefs/
-├── files        # File metadata and paths
-├── 0000         # Symbol data for hash bucket 0
-├── 0001         # Symbol data for hash bucket 1
-└── ...          # Additional hash buckets (count set by -refnum)
-----
-
-All information about a symbol is stored in exactly one file, determined by hashing its link name. This means a single file read suffices to look up any symbol.
-
-That single-file read is what the partitioning was for, and nothing reads the database
-that way any more: it is a startup snapshot, loaded whole and never consulted again. The
-partitioning and the `-refnum` that sizes it are therefore being removed, together with
-`-refs` — see link:/workspace/1/decisions/C-xrefactory#28[ADR-0028]. What is described
-above is the layout as it still exists.
+It used to be split into files by a hash of the link name, sized by `-refnum`, so that a
+single file read could look up a symbol. Nothing reads it that way any more, so the
+split and `-refs` were removed, see link:/workspace/1/decisions/C-xrefactory#28[ADR-0028].
+The snapshot still records the partition count, always as 1.
 
 ==== File Format
 

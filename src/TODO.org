@@ -225,7 +225,7 @@ There are both "-opt=value" and "-opt value" format options
    Feature to move a section from ~/.c-xrefrc to project-local .c-xrefrc.
 ** DONE Function to lookup the closest .c-xrefrc and potentially use its directory path as project name
 * DONE Store Xrefs in .c-xref/db parallel to the .c-xrefrc used (v1.9)
-  Convention-based database path for project-local configs. Legacy -refs option still works.
+  Convention-based database path for project-local configs.
 * DONE FEATURE: LSP Find Definition
 ** DONE Initiate server so it can handle OP_PUSH
 ** DONE Create an answer from gathered information

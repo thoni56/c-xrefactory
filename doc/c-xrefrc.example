@@ -33,20 +33,6 @@ an example project configuration, but it needs to be adjusted.
 
 -r c:\myproject\src
 
-// The following option specifies where the file containing cross
-// references is placed. Please use an absolute path here.
-
--refs \Xrefs
-
-// The following option specifies the number of files into which the cross 
-// references are splitted.
-// You should specify the 'refnum' proportionally to the size
-// of your project, the recommended number is the number of lines of your 
-// sources divided by 3 000. This number specifies also the number of
-// cross-reference HTML files.
-
--refnum=50
-
 
 // -----------------------------------------------------------------
 //                        C specific options
@@ -114,15 +100,6 @@ an example project configuration, but it needs to be adjusted.
 
 // Usually you do not need to specify the cross reference file name,
 // and CLASSPATH, as they are taken from Kawa.
-
-// The following option specifies the number of files into which the cross 
-// references are splitted.
-// You should specify the 'refnum' proportionally to the size
-// of your project, the recommended number is the number of lines of your 
-// sources divided by 3 000. This number specifies also the number of
-// cross-reference HTML files.
-
--refnum=20
 
 // ----- following options control the form of generated HTML ------
 // ------------ (if you wish to generate HTML forms) ---------------

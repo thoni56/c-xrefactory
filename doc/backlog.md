@@ -58,18 +58,9 @@ features. Relative effort only — no dates (#noestimates).
    d. the assert that nothing before `-getproject` reads a project-scoped option — the
       tripwire, as the disk-read assert was for Memory as Truth.
 
-5. **Remove `-refs` and `-refnum`** — ADR-0028. The snapshot is always
-   `<project root>/.c-xref/db` and always one file. Deletes the partition handling in
-   `src/cxfile.c` (the hash modulo, the per-file loops, the single-versus-many branches)
-   and makes `applyConventionBasedDatabasePath()` unconditional. The `CXFI_REFNUM` record
-   stays in the snapshot and is always written as 1. Dropping it is a later format change,
-   and a safe one: a snapshot of another format version is ignored like no snapshot and
-   rewritten on exit (`test_snapshot_version_mismatch_ignores_db`,
-   `test_snapshot_version_migration`), so it only costs one cold start. Fixtures
-   assume partitions: the common `tests/c-xrefrc.tpl` sets both options, ten per-test
-   templates set `-refnum`, and `tests/test_autodetect_creates_cxref_dir` asserts the
-   `X0000…X0009` layout because of it. A config that still says either option gets an
-   `errorMessage` and is otherwise honoured.
+5. **Remove `-refs` and `-refnum`** — done, `811c9010` to `e4a5d76c`. The snapshot keeps its
+   `CXFI_REFNUM` record, always 1. Dropping it is a later format change, and a safe one: a
+   snapshot of another format version is ignored like no snapshot and rewritten on exit.
 6. **Remove `-xrefrc`** — done, `0ec5f427`, and the home config went with it in `b3b283af`.
 
 ## 2. After XrefMode
@@ -93,8 +84,7 @@ features. Relative effort only — no dates (#noestimates).
      (`-log=`, `-debug`, `-trace`, `-info`, `-errors`, `-warnings`, `-infos`, scanned in
      `main()` before the mode is even known); and `-statistics`.
    - Everything project-scoped — `-p`, `-I`, `-D`, `-optinclude` — belongs to
-     the config and binds at `-getproject`, not here. `-refs` and `-refnum` are not on
-     that list any more: they are removed outright, see the items below.
+     the config and binds at `-getproject`, not here.
    - **`-exactpositionresolve` has no strategy.** It is real: it changes link names
      (`src/semact.c`) and goes into the snapshot's check number (`src/cxfile.c`). Since it
      changes what a symbol is, it is probably project-scoped, although `options.h` marks it

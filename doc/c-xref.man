@@ -33,9 +33,8 @@ C-xref is a C/Yacc refactoring tool.
 It parses input files noting all symbol's
 definitions and usages. Its output is a list of symbols, together
 with positions of declarations, definition and all usages.
-Output is written to the file specified by the
-.I -refs
-option. C-xref's cross references are destinated to be read by
+Output is written to the file .c-xref/db in the project root.
+C-xref's cross references are destinated to be read by
 .I c-xref
 itself or by on-line editing functions. The programming language in which an
 input file is written is inferred
@@ -126,34 +125,6 @@ Predefine \c
 \& as a macro, with definition \c
 .I definition\c
 \&.
-
-.TP
-.B \-refs file
-This option specifies the file where the cross-references
-are stored. If the
-.I -refnum=n
-option is present then the
-.I file
-indicates the directory where cross-reference
-files are stored.
-
-.TP
-.B "\-refnum=<number>"
-This option specifies how many cross reference files will be generated.
-When
-.I <number>
-== 1, the name specified by the '-refs' option is directly
-the name of the cross reference file.
-When
-.I <number>
-> 1 then the name specified by the '-refs' option is
-interpreted as directory where cross reference files are stored.
-You should specify the
-.I <number>
-proportionally to the size
-of your project.
-Do not forget to delete the old cross-reference file if
-you change the -refnum from 1 to a different value.
 
 .TP
 .B "\-exactpositionresolve"
