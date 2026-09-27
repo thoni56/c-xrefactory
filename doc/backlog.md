@@ -53,8 +53,7 @@ features. Relative effort only — no dates (#noestimates).
       `-getproject`;
    b. project setup moves into `-getproject` — discovery, config read, compiler
       interrogation, snapshot load;
-   c. process start strips to parsing setup (`mainTaskEntryInitialisations()`,
-      `src/startup.c`);
+   c. process start strips to parsing setup — done, `c9840fe7`;
    d. the assert that nothing before `-getproject` reads a project-scoped option — the
       tripwire, as the disk-read assert was for Memory as Truth.
 

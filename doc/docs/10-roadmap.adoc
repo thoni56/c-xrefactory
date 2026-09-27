@@ -116,12 +116,12 @@ known, and no step guesses at what a later one settles.
   snapshot load. No parsing.
 . *Every request after* — uniform. Entry refresh, then parse what the request needs.
 
-The ladder is climbed out of order today. `mainTaskEntryInitialisations()`
-(`startup.c:827`) discovers a project at process start, from `cwd` when the command line
-names no file, and reads that project's options before any request has arrived — see
-<<06-principles.adoc#,Principles>> (Initialization). The lifetime partition that fixes it
-is in <<17-major-codebase-improvements.adoc#,Major Codebase Improvements>> (Replace
-Global `options` with Typed Requests).
+The ladder is still climbed out of order. Process start does no project work since
+`c9840fe7`, but project setup happens in the first request that names a file, whatever
+that request is, rather than in `-getproject`, and the config is read again for every
+pass — see <<06-principles.adoc#,Principles>> (Initialization). The lifetime partition
+that fixes it is in <<17-major-codebase-improvements.adoc#,Major Codebase Improvements>>
+(Replace Global `options` with Typed Requests).
 
 ==== Done
 
@@ -138,6 +138,8 @@ Global `options` with Typed Requests).
   structure without a parse (link:/workspace/1/decisions/C-xrefactory#22[ADR-0022]).
 * *First fields off the blob* — `ProjectConfig.sourceDirs` is project-scoped state with
   an owner, and `ParsingConfig` is the same pattern one layer down.
+* *Nothing project-scoped at process start* — the project guessed from `cwd` is gone, and
+  with it the defines it leaked into the project the server was opened on (`c9840fe7`).
 
 ==== Remaining
 
@@ -157,11 +159,8 @@ Global `options` with Typed Requests).
 
 |Project setup moves into `-getproject`
 |Discovery, the config read, compiler interrogation and the snapshot load all belong to
- step two. Process start does the first two today, and the first request that names a
- file does the rest.
-
-|Process start strips to parsing setup
-|What is left knows nothing about any project. Depends on the two rows above.
+ step two. The first request that names a file does all of it today, whatever the
+ request is.
 
 |Assert that nothing before `-getproject` reads a project-scoped option
 |The ladder's tripwire, the way the disk-read assert made Memory as Truth checkable
@@ -179,10 +178,6 @@ Global `options` with Typed Requests).
 Concrete cases met along the way, each with the step it belongs to. A line goes when the
 row above that fixes it lands.
 
-* *The config's options are parsed at process start*, in `mainTaskEntryInitialisations()`,
-  before any request. They belong to `-getproject`. Output is `stdout` at that point, so
-  nothing said about the config can reach the client. A config that still sets `-refs`
-  or `-refnum` is therefore reported when the project is locked, not when it is parsed.
 * *The config is parsed again at least twice per request*, by the per-pass mechanism. It
   belongs to `-getproject`, once. It is why a warning about the config cannot simply be
   given where the option is parsed.
