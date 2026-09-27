@@ -466,7 +466,7 @@ static void restoreCheckpoint(MemoryCheckpoint *checkpoint) {
 }
 
 static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector requestArgs,
-                                char projectConfigFileName[], char projectSectionName[], char *fileName) {
+                                char projectConfigFileName[], char projectSectionName[]) {
     StringList *tmpIncludeDirs;
     /* === PHASE 2: Options File Processing === */
     if (cleanCheckpoint.saved)
@@ -570,8 +570,7 @@ bool isProjectConfigChanged(void) {
 void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     log_info("Config file '%s' changed, reloading project settings", previousProjectConfigurationFile);
     loadProjectSettings(baseArgs, requestArgs,
-                        previousProjectConfigurationFile, previousProjectConfigurationSection,
-                        inputFileName != NULL ? inputFileName : ".");
+                        previousProjectConfigurationFile, previousProjectConfigurationSection);
 
     previousProjectConfigurationFileModificationTime = fileModificationTime(previousProjectConfigurationFile);
 }
@@ -601,7 +600,7 @@ bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
     modifiedTime = fileModificationTime(projectConfigFileName);
 
     /* === PHASES 2-4: Options, compiler interrogation, checkpoint === */
-    loadProjectSettings(baseArgs, requestArgs, projectConfigFileName, projectSectionName, fileName);
+    loadProjectSettings(baseArgs, requestArgs, projectConfigFileName, projectSectionName);
 
     strcpy(previousProjectConfigurationFile, projectConfigFileName);
     strcpy(previousProjectConfigurationSection, projectSectionName);
@@ -670,7 +669,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         || !fileTimestampsEqual(previousProjectConfigurationFileModificationTime, modifiedTime) /* or the options file has changed */
     ) {
         /* === PHASE 2-4: Options reading, compiler discovery, memory checkpointing === */
-        loadProjectSettings(baseArgs, requestArgs, projectConfigFileName, projectSectionName, fileName);
+        loadProjectSettings(baseArgs, requestArgs, projectConfigFileName, projectSectionName);
 
         if (options.mode != ServerMode && inputFileName == NULL) {
             /* TODO Create a test that covers this */
