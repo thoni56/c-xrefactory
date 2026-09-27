@@ -66,45 +66,6 @@ static void writeConfigFileMessage(char *file, char *outFName, char *outSect) {
     }
 }
 
-static void handlePathologicProjectCases(char *fileName, char *outFName, char *section,
-                                         bool showErrorMessage){
-    // all this stuff should be reworked, but be very careful when refactoring it
-    // WTF? Why??!?!
-    assert(options.mode);
-    if (options.mode == ServerMode) {
-        if (showErrorMessage) {
-            writeConfigFileMessage(fileName, outFName, section);
-        }
-    } else {
-        if (*previousProjectConfigurationFile == 0) {
-            static bool messageWritten = false;
-            if (showErrorMessage && messageWritten == 0) {
-                messageWritten = true;
-                writeConfigFileMessage(fileName, outFName, section);
-            }
-        } else {
-            if (outFName[0]==0 || section[0]==0) {
-                warningMessage(ERR_ST, "no project name covers this file");
-            }
-            if (outFName[0]==0 && section[0]==0) {
-                strcpy(section, previousProjectConfigurationSection);
-            }
-            if (outFName[0]==0) {
-                strcpy(outFName, previousProjectConfigurationFile);
-            }
-            if (strcmp(previousProjectConfigurationFile,outFName) != 0 || strcmp(previousProjectConfigurationSection,section) != 0) {
-                if (options.xref2) {
-                    char tmpBuff[TMP_BUFF_SIZE];                        \
-                    sprintf(tmpBuff, "[C-xref] new project: '%s'", section);
-                    ppcGenRecord(PPC_INFORMATION, tmpBuff);
-                } else {
-                    fprintf(errOut, "[C-xref] new project: '%s'\n", section);
-                }
-            }
-        }
-    }
-}
-
 static bool computeAndOpenInputFile(char *fileName) {
     FILE *inputFile = NULL;
 
@@ -590,7 +551,7 @@ bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
     /* === PHASE 1: Project Discovery === */
     /* TODO: Duplicated in `intializeProjectContext` */
     searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName, projectSectionName);
-    handlePathologicProjectCases(fileName, projectConfigFileName, projectSectionName, true);
+    writeConfigFileMessage(fileName, projectConfigFileName, projectSectionName);
 
     if (projectConfigFileName[0] == 0)
         return false;
@@ -646,7 +607,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         strcpy(projectSectionName, previousProjectConfigurationSection);
     } else {
         searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName, projectSectionName);
-        handlePathologicProjectCases(fileName, projectConfigFileName, projectSectionName, true);
+        writeConfigFileMessage(fileName, projectConfigFileName, projectSectionName);
     }
 
     initAllInputs();
