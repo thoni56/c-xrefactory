@@ -76,9 +76,6 @@
 #define TMP_BUFF_SIZE   50000
 
 
-#define DEFAULT_CXREF_FILENAME "CXrefs"
-
-
 /* just constants to be checked, that are data type limits              */
 /*  references are compacted (up to 22 bits) */
 #define MAX_REFERENCABLE_LINE       4194304

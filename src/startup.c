@@ -133,19 +133,6 @@ static void initOptions(void) {
     deepCopyOptionsFromTo(&presetOptions, &options);
 }
 
-static void initStandardCxrefFileName(char *inputfile) {
-    static char standardCxFileName[MAX_FILE_NAME_SIZE];
-
-    extractPathInto(normalizeFileName_static(inputfile, cwd), standardCxFileName);
-    strcat(standardCxFileName, DEFAULT_CXREF_FILENAME);
-    assert(strlen(standardCxFileName) < MAX_FILE_NAME_SIZE);
-
-    strcpy(standardCxFileName, getRealFileName_static(normalizeFileName_static(standardCxFileName, cwd)));
-    assert(strlen(standardCxFileName) < MAX_FILE_NAME_SIZE);
-
-    options.cxFileLocation = standardCxFileName;
-}
-
 static void initializationsPerInvocation(void) {
     parsedInfo = (ParsedInfo){0,};
     completionPositionFound = false;
@@ -494,7 +481,6 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
     initOptions();  /* TODO: should be initProjectOptions() — only PROJECT fields need
                      * resetting here. Resetting SESSION/REQUEST fields forces callers to
                      * save/restore them (see startup loop in server.c). */
-    initStandardCxrefFileName(fileName);
 
     /* Process options in specific order: command line, request args, .c-xrefrc */
     processOptions(baseArgs, PROCESS_FILE_ARGUMENTS_NO);   /* command line opts */

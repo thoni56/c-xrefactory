@@ -54,7 +54,7 @@ Options presetOptions = {
     .pruneNames = NULL,
     .inputFiles = NULL,
     .includeDirs = NULL,
-    .cxFileLocation = DEFAULT_CXREF_FILENAME,
+    .cxFileLocation = NULL,
 #if defined (__WIN32__)
     .cFilesSuffixes = "c;C",
 #else
