@@ -37,9 +37,9 @@ _facing the fact that_
 
 _we decided to_
 - split `-getproject` into two requests:
-  **open project**, a command that is valid once, binds to the project a given file
-  belongs to, and reports in its answer what went wrong: no project, a different project
-  already open, a config problem;
+  **open project** (`-openproject <file>` or similar), a command that is valid once,
+  binds to the project a given file belongs to, and reports in its answer what went
+  wrong: no project, a different project already open, a config problem;
   and **is this file in the project**, a query without side effects,
 - let the server answer the query, from the root, the declared source directories and
   the include paths, since it is the only party that knows all three and the client
@@ -48,6 +48,10 @@ _we decided to_
   source directory), *visible* (reached through an include path) and *outside*,
 - remove the guess at process start, which also leaked the defines of the project the
   server happened to be started in into the one it was opened on,
+- open the project with a request, not on the command line, so the Setup Ladder keeps
+  its three steps: process start, open project, every request after,
+- answer any other request before the project is open with an error in that request's
+  answer, not a fatal error,
 
 _disregarding the fact that_
 - a client that is not updated still sends `-getproject` before every operation, so the
@@ -59,19 +63,18 @@ _because_
   binding can happen as a side effect of any `-getproject`,
 - the binding is the one place where config errors have to be reported, and a command
   with an answer is where that works, as the `-refs`/`-refnum` warning showed
-  (`811c9010`, reported when the project is locked, not when the config is parsed).
+  (`811c9010`, reported when the project is locked, not when the config is parsed),
+- the protocol only has answers to requests. The answer file is opened per request, so
+  whatever the server finds out at process start has nowhere to go.
 
 ## Decision Outcome
 
-Opening a project is a request of its own, made once, with an answer. Asking whether a
-file belongs to the project is another request, answered by the server as own, visible
-or outside. The client opens the project when it starts a server, asks about each new
-file, and on *outside* asks the user whether to switch, which restarts the server.
-
-Still open: whether the file to open from is given on the `-server` command line or in
-the first request. Both fit the split. On the command line the server can start its
-work earlier, but the result still has to be reported in the answer to a request, since
-there is nowhere else to report it.
+Opening a project is a request of its own, `-openproject`, made once, with an answer.
+Asking whether a file belongs to the project is another request, answered by the server
+as own, visible or outside. The client starts a server with no project, opens the
+project with the first request, asks about each new file, and on *outside* asks the
+user whether to switch, which restarts the server. A request before the project is open
+gets an error in its answer.
 
 ## Consequences and Risks
 
@@ -101,6 +104,11 @@ there is nowhere else to report it.
   duplicate the meaning of the config.
 - **Bind on the command line only**, with no open request. Has no answer to report
   problems in, and the "no project, create one?" flow would need a server to ask.
+- **Give the file on the command line, and report in the first request.** Lets the
+  server start its work before the first request, but the client sends that request
+  right after starting the server, so little is gained, and the result still has to wait
+  for a request to be reported in. Opening in a request says the same thing with one
+  mechanism instead of two.
 
 ## Origin
 
