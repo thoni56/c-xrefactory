@@ -1,0 +1,22 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-getproject CURDIR/projectB/b.c
+end-of-options
+
+<sync>
+<set-info len=<n>>projectB</set-info>
+-get FROM_A
+end-of-options
+
+<sync>
+<error len=<n>>No "-set FROM_A <command>" option specified for active project
+</error>
+-push -olcursor=73 CURDIR/projectB/b.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=4 col=4 len=<n>>CURDIR/projectB/b.c</position-lc>
+</goto>
+-exit
+end-of-options
+

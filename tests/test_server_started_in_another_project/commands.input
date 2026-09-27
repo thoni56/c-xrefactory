@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server
+-getproject CURDIR/projectB/b.c
+<sync>
+-get FROM_A
+<sync>
+-push -olcursor=73 CURDIR/projectB/b.c
+<sync>
+<exit>

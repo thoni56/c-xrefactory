@@ -792,48 +792,5 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
     processOptions(args, PROCESS_FILE_ARGUMENTS_YES);
     processFileArguments();
 
-    /* Everything below assumes a mode. main() reports that none was given. */
-    if (options.mode == UndefinedMode) {
-        LEAVE();
-        return;
-    }
-
-    int argcount = 0;
-    inputFileName = getNextArgumentFile(&argcount);
-    char fileName[MAX_FILE_NAME_SIZE];
-    if (inputFileName==NULL) {
-        char *ss = strmcpy(fileName, cwd);
-        if (ss!=fileName && ss[-1] == FILE_PATH_SEPARATOR)
-            ss[-1]=0;
-        assert(strlen(fileName)+1<MAX_FILE_NAME_SIZE);
-        inputFileName=fileName;
-    } else {
-        strcpy(fileName, inputFileName);
-    }
-
-    char projectConfigurationFileName[MAX_FILE_NAME_SIZE];
-    char projectConfigurationSection[MAX_FILE_NAME_SIZE];
-    searchForProjectConfigFileAndProjectForFile(fileName, projectConfigurationFileName, projectConfigurationSection);
-    handlePathologicProjectCases(fileName, projectConfigurationFileName, projectConfigurationSection, false);
-
-    reInitCwd(projectConfigurationFileName, projectConfigurationSection);
-
-    if (projectConfigurationFileName[0]!=0) {
-        ArgumentsVector dfargs;
-
-        /* Don't read pass-specific options during initialization - those are handled
-         * per-pass in initializeFileProcessing. */
-        int savedPass = currentPass;
-        currentPass = NO_PASS;  /* Skip all -passN sections */
-        dfargs = readOptionsFromFile(projectConfigurationFileName, projectConfigurationSection, projectConfigurationSection);
-        currentPass = savedPass;
-
-        // disable error reporting on this pre-reading of .c-xrefrc
-        bool previousNoErrorsOption = options.noErrors;
-        options.noErrors = true;
-        processOptions(dfargs, PROCESS_FILE_ARGUMENTS_NO);
-        options.noErrors = previousNoErrorsOption;
-    }
-
     LEAVE();
 }
