@@ -166,6 +166,11 @@ features. Relative effort only — no dates (#noestimates).
     starts from the first run's `.c-xref` snapshot and dies on the assert, so the same
     requests crash a server in the editor. Seen on WSL, 2026-09-25.
 
+    Also *without a repo home yet*: **`-getproject` for a file outside any project
+    answers `<no-project-found>` twice.** `tests/test_no_project_writes_no_snapshot`
+    shows it, and its `expected` keeps both for now, so that test is only about the
+    snapshot. Seen on WSL, 2026-09-27.
+
 ## 4. Performance, in strict dependency order
 
 Roadmap → Optimization. Baseline: cold-start PUSH on ffmpeg `af_afir.c` — scan 2.7s, two
