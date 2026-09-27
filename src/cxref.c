@@ -1460,10 +1460,6 @@ bool olcxShowSelectionMenu(void) {
 }
 
 static bool olMenuHashFileNumLess(BrowsingMenu *menu1, BrowsingMenu *menu2) {
-    int hash1 = cxFileHashNumberForSymbol(menu1->referenceable.linkName);
-    int hash2 = cxFileHashNumberForSymbol(menu2->referenceable.linkName);
-    if (hash1 < hash2) return true;
-    if (hash1 > hash2) return false;
     if (menu1->referenceable.visibility == VisibilityLocal) return true;
     if (menu1->referenceable.visibility == VisibilityLocal) return false;
     // both files and categories equals ?

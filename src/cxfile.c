@@ -152,43 +152,6 @@ static void fPutDecimal(int num, FILE *file) {
 
 /* *********************** INPUT/OUTPUT ************************** */
 
-static unsigned increment_symbol_hash(unsigned old_hash, int charcode) {
-    unsigned new_hash = old_hash;
-    new_hash+=charcode;
-    new_hash+=(new_hash<<10);
-    new_hash^=(new_hash>>6);
-    return new_hash;
-}
-
-static unsigned finalize_symbol_hash(unsigned old_hash) {
-    unsigned new_hash = old_hash;
-    new_hash+=(new_hash<<3); new_hash^=(new_hash>>11); new_hash+=(new_hash<<15);
-    return new_hash;
-}
-
-int cxFileHashNumberForSymbol(char *symbolName) {
-    unsigned   hash;
-    char       *ch;
-    int        c;
-
-    if (options.cxFileCount <= 1)
-        return 0;
-
-    hash = 0;
-    ch = symbolName;
-    while ((c = *ch) != '\0') {
-        if (c == '(')
-            break;
-        hash = increment_symbol_hash(hash, c);
-        if (LINK_NAME_MAYBE_START(c))
-            hash = 0;
-        ch++;
-    }
-    hash = finalize_symbol_hash(hash);
-    hash %= options.cxFileCount;
-    return hash;
-}
-
 static bool searchSingleStringEqual(char *s, char *c) {
     while (*s!=0 && *s!=' ' && *s!='\t' && tolower(*s)==tolower(*c)) {
         c++; s++;
@@ -688,18 +651,9 @@ static void scanFunction_ReferenceForSnapshotLoad(int size,
     addToReferenceList(&lastIncomingData.referenceableItem->references, pos, usage);
 }
 
-static void scanFunction_CxFileCountCheck(int fileCountInCxFile,
-                                          int key,
-                                          CharacterBuffer *cb,
-                                          CxFileScanOperation scanOperation
-) {
-    if (!currentCxFileCountMatches(fileCountInCxFile)) {
-        assert(options.mode);
-        FATAL_ERROR(ERR_ST,"The reference database was generated with different '-refnum' options, recreate it!", EXIT_FAILURE);
-        /* TODO: Not a FATAL, this should automatically ignore reading the current
-         * snapshot. A new one will be written from memory */
-    }
-}
+/* The snapshot is one file, so the partition count it records is always 1 */
+static void scanFunction_IgnoreRefnum(int refnum, int key, CharacterBuffer *cb,
+                                      CxFileScanOperation scanOperation) {}
 
 static int scanInteger(CharacterBuffer *cb, int *_ch) {
     int scannedInt, ch = *_ch;
@@ -872,7 +826,7 @@ static CxFileScanDispatchEntry normalScanDispatchTable[]={
     {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
-    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
+    {CXFI_REFNUM, scanFunction_IgnoreRefnum, CXSF_NOP},
     {-1,NULL, 0},
 };
 
@@ -884,6 +838,6 @@ static CxFileScanDispatchEntry snapshotLoadScanDispatchTable[]={
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolNameForSnapshotLoad, CXSF_NOP},
     {CXFI_REFERENCE, scanFunction_ReferenceForSnapshotLoad, CXSF_NOP},
-    {CXFI_REFNUM, scanFunction_CxFileCountCheck, CXSF_NOP},
+    {CXFI_REFNUM, scanFunction_IgnoreRefnum, CXSF_NOP},
     {-1,NULL, 0},
 };

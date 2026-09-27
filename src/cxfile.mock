@@ -18,10 +18,6 @@ void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Reference 
   mock(referenceableItem, reference);
 }
 
-int cxFileHashNumberForSymbol(char *sym) {
-  return (int) mock(sym);
-}
-
 void saveReferencesToStore(char *filename) {
   mock(filename);
 }

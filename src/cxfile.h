@@ -4,7 +4,6 @@
 #include "referenceableitem.h"
 
 
-extern int cxFileHashNumberForSymbol(char *symbol);
 extern void searchSymbolCheckReference(ReferenceableItem *referenceableItem, Reference *reference);
 
 // Abstract API

@@ -90,7 +90,6 @@ typedef struct options {
     int eolConversion;                          /* PROJECT */
     bool fileNamesCaseSensitive;                /* PROJECT */
     bool updateOnlyModifiedFiles;               /* PROJECT */
-    int cxFileCount;                            /* PROJECT */
     int tabulator;                              /* PROJECT */
 
     /* --- REQUEST: Piped from editor client, per-request --- */
@@ -178,8 +177,6 @@ extern void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char
 extern int getOptionFromFile(FILE *file, char *foundText, int *chars_read);
 extern ArgumentsVector readOptionsFromFile(char *fileName, char *project, char *foundProjectName);
 extern ArgumentsVector readOptionsFromPipe(void);
-
-extern bool currentCxFileCountMatches(int newRefNum);
 
 extern void searchForProjectConfigFileAndProjectForFile(char *filename, char *optionsFilename,
                                                          char *foundProjectName);

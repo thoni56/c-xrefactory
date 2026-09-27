@@ -43,11 +43,6 @@ BeforeEach(CxFile) {
 }
 AfterEach(CxFile) {}
 
-Ensure(CxFile, will_return_no_hashnumber_for_single_cxfile) {
-    options.cxFileCount = 1;
-    assert_that(cxFileHashNumberForSymbol(NULL), is_equal_to(0));
-}
-
 static bool trueValue  = true;
 static bool falseValue = false;
 
@@ -84,9 +79,6 @@ Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
     // log_set_level(LOG_DEBUG);
 
     options.cxFileLocation     = "./CXrefs";
-    options.cxFileCount = 1;
-
-    expect(currentCxFileCountMatches, will_return(true));
 
     expect(openFile, when(fileName, is_equal_to_string("./CXrefs/XFiles")), will_return(xfilesFilePointer));
 

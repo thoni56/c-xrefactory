@@ -95,10 +95,6 @@ ArgumentsVector readOptionsFromPipe(void) {
     return *(ArgumentsVector*)mock();
 }
 
-bool currentCxFileCountMatches(int foundReferenceFileCount) {
-  return (bool)mock(foundReferenceFileCount);
-}
-
 void searchForProjectConfigFileAndProjectForFile(char *sourceFilename, char *foundConfigFilename,
                                                  char *foundProjectName) {
   mock(sourceFilename, foundConfigFilename, foundProjectName);

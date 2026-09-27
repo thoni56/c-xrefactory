@@ -63,7 +63,6 @@ Options presetOptions = {
     .eolConversion = NO_EOL_CONVERSION,
     .fileNamesCaseSensitive = true,
     .updateOnlyModifiedFiles = false,
-    .cxFileCount = 0,
     .tabulator = 4,
 
     /* --- REQUEST --- */
@@ -1004,19 +1003,6 @@ ArgumentsVector readOptionsFromPipe(void) {
         }
     }
     return args;
-}
-
-bool currentCxFileCountMatches(int foundCxFileCount) {
-    bool check;
-
-    if (options.cxFileCount == 0)
-        check = true;
-    else if (options.cxFileCount == 1)
-        check = (foundCxFileCount <= 1);
-    else
-        check = (foundCxFileCount == options.cxFileCount);
-    options.cxFileCount = foundCxFileCount;
-    return check;
 }
 
 static int handleIncludeOption(int i, ArgumentsVector args) {
