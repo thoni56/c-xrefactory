@@ -1459,13 +1459,6 @@ bool olcxShowSelectionMenu(void) {
     return false;
 }
 
-static bool menuLocalFirst(BrowsingMenu *menu1, BrowsingMenu *menu2) {
-    if (menu1->referenceable.visibility == VisibilityLocal) return true;
-    if (menu1->referenceable.visibility == VisibilityLocal) return false;
-    // both files and categories equals ?
-    return false;
-}
-
 void getLineAndColumnCursorPositionFromCommandLineOptions(int *l, int *c) {
     assert(options.cursorLineColumn!=NULL);
     sscanf(options.cursorLineColumn,"%d:%d", l, c);
@@ -1494,7 +1487,6 @@ void createSelectionMenuForOperation(ServerOperation operation) {
         return;
 
     renameCollationSymbols(menu);
-    LIST_SORT(BrowsingMenu, rstack->hkSelectedSym, menuLocalFirst);
 
     /* Build the selection menu in two passes: first add a menu entry for
      * each table item that matches a candidate symbol; then walk the table
