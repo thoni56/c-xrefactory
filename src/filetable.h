@@ -72,7 +72,6 @@ extern void mapOverFileTableWithBool(void (*fun)(FileItem *, bool), bool);
 extern void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *pointer);
 
 extern char *getNextScheduledFile(int *indexP);
-extern char *getNextArgumentFile(int *indexP);
 
 extern void markFileAsDeleted(int fileNumber);
 

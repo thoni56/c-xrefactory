@@ -202,10 +202,6 @@ char *getNextScheduledFile(int *indexP) {
     return getNextInputFileFromFileTable(indexP, FILE_IS_SCHEDULED);
 }
 
-char *getNextArgumentFile(int *indexP) {
-    return getNextInputFileFromFileTable(indexP, FILE_IS_ARGUMENT);
-}
-
 void fileTableMemoryStatistics(void) {
     printMemoryStatisticsFor(&fileTableMemory);
 }

@@ -46,10 +46,6 @@ char *getNextScheduledFile(int *beginNumber) {
   return (char *) mock(beginNumber);
 }
 
-char *getNextArgumentFile(int *fArgCount) {
-  return (char *) mock(fArgCount);
-}
-
 void mapOverFileTable(void (*fun)(FileItem *)) {
     mock(fun);
 }
