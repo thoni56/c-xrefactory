@@ -1,0 +1,21 @@
+CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<warning len=<n>>-refs is ignored, the snapshot is always .c-xref/db in the project root
+</warning>
+<warning len=<n>>-refnum is ignored, the snapshot is always a single file
+</warning>
+<set-info len=<n>>CURDIR</set-info>
+-push -olcursor=37 CURDIR/source.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=4 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+-exit
+end-of-options
+
+.c-xref/db

@@ -108,6 +108,10 @@ void applyConventionBasedDatabasePath(void) {
     mock();
 }
 
+void reportIgnoredOptions(void) {
+    mock();
+}
+
 void printOptionsMemoryStatistics(void) {
     mock();
 }

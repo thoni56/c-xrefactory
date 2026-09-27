@@ -1464,31 +1464,33 @@ static bool processPOption(int *argi, ArgumentsVector args) {
     return true;
 }
 
-static void setXrefsLocation(char *arg) {
-    /* In auto-detection mode, -refs is ignored - we use convention-based path */
-    if (options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
-        log_warn("-refs is ignored in project auto-detection mode (using %s/.c-xref/db)",
-                 options.detectedProjectRoot);
-        return;
-    }
-    options.cxFileLocation = allocateStringForOption(&options.cxFileLocation, normalizeFileName_static(arg, cwd));
+/* The config is read before any request and again several times per request, so the
+   parser only notes these, and they are reported once, when the project is locked */
+static bool refsWasGiven = false;
+static bool refnumWasGiven = false;
+
+void reportIgnoredOptions(void) {
+    if (refsWasGiven)
+        warningMessage(ERR_ST, "-refs is ignored, the snapshot is always .c-xref/db in the project root");
+    if (refnumWasGiven)
+        warningMessage(ERR_ST, "-refnum is ignored, the snapshot is always a single file");
 }
 
 static bool processROption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
     else if (strncmp(args.argv[i], "-refnum=",8)==0)  {
-        sscanf(args.argv[i]+8, "%d", &options.cxFileCount);
+        refnumWasGiven = true;
     }
     else if (strncmp(args.argv[i], "-renameto=", 10)==0) {
         options.renameTo = allocateStringForOption(&options.renameTo, args.argv[i]+10);
     }
     else if (strcmp(args.argv[i], "-refs")==0)    {
         ensureNextArgumentIsAFileName(&i, args);
-        setXrefsLocation(args.argv[i]);
+        refsWasGiven = true;
     }
     else if (strncmp(args.argv[i], "-refs=",6)==0)    {
-        setXrefsLocation(args.argv[i]+6);
+        refsWasGiven = true;
     }
     else if (strcmp(args.argv[i], "-refactory")==0)   {
         FATAL_ERROR(ERR_ST, "-refactory is no longer supported. Use -server and the server protocol", -1);

@@ -1861,6 +1861,7 @@ static void handleProject() {
                         /* Legacy project - lock by name only */
                         log_debug("Server locked to project: %s (legacy, no root)", lockedProject);
                     }
+                    reportIgnoredOptions();
                     ppcGenRecord(PPC_SET_INFO, projectOptionsSectionName);
                     /* Persist the lock across requests: sync into savedOptions so
                      * cxFileLocation survives the next request's options reset,
