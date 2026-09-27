@@ -410,3 +410,22 @@ When the marked text is an expression, extract a function that returns it, with 
 If finding the type of the marked text proves hard, an explicit *Extract Predicate* could be an alternative.
 The user then says it is a condition, and the function is always a `bool` one.
 That probably covers most of the cases that come up.
+
+=== Modernize Function
+
+**Status**: Not implemented.
+
+==== Background
+
+Old C code often has K&R function definitions, where the parameter types are declared between the parameter list and the body.
+There is no way to turn such a definition into one with a prototype.
+
+==== Proposed Behaviour
+
+With the cursor on a K&R function definition, *Modernize Function* (or *Prototype Function*) moves the parameter declarations into the parameter list.
+A declaration without parameters elsewhere, e.g. `int f();` in a header, gets the same parameter list.
+An implicit `int`, for the return type or for a parameter that is not declared, should probably be made explicit at the same time.
+
+A parameter declared `char`, `short` or `float` is a catch.
+A caller without a prototype in scope passes it promoted, to `int` or `double`, so adding the prototype changes how it is called.
+Refusing, or at least warning, is probably right there.
