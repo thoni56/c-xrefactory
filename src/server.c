@@ -92,7 +92,6 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
            || operation==OP_INTERNAL_PARSE_TO_EXTRACT
            || operation==OP_SEARCH
            || operation==OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET
-           || operation==OP_GET_ENV_VALUE
            || opensBrowsingSession(operation)
         ;
 }
@@ -101,7 +100,8 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
    the scan, so entry refresh has nothing to do for them (Setup Ladder: opening a project
    parses nothing). */
 static bool answeredWithoutReferences(ServerOperation operation) {
-    return operation == OP_GET_PROJECT;
+    return operation == OP_GET_PROJECT
+        || operation == OP_GET_ENV_VALUE;
 }
 
 /* -get answers from the locked project's variables. An input file only adds the
@@ -731,8 +731,10 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         }
     } else {
         if (hasInputFile) {
-            getFileItemWithFileNumber(requestFileNumber)->isScheduled = false;
-            inputFileName = NULL;
+            FileItem *requestFile = getFileItemWithFileNumber(requestFileNumber);
+            requestFile->isScheduled = false;
+            /* -get expands ${__file} and its family from the name, it needs no parse */
+            inputFileName = options.serverOperation == OP_GET_ENV_VALUE ? requestFile->name : NULL;
         }
     }
 done:

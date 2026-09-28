@@ -58,11 +58,9 @@ features. Relative effort only — no dates (#noestimates).
       preload (`c-xref-server-call-on-current-buffer-no-saves`, the "softsetup" hack in
       `editors/emacs/c-xref.el`), and Pass 1-2 reparse it;
    b. project setup moves into `-getproject` — discovery, config read, compiler
-      interrogation, snapshot load. And no parsing: `-getproject` no longer runs Pass 3
-      (`answeredWithoutReferences()` in `src/server.c`,
-      `tests/test_getproject_parses_nothing`). Still left, with a test first: `-get`
-      parses the request file (`requiresProcessingInputFile`), although it only needs
-      its name for `${__file}`;
+      interrogation, snapshot load. The "no parsing" part is done: neither `-getproject`
+      nor `-get` parses (`answeredWithoutReferences()` in `src/server.c`,
+      `tests/test_getproject_parses_nothing`, `tests/test_get_env_value_parses_nothing`);
    c. process start strips to parsing setup — done, `c9840fe7`;
    d. the assert that nothing before `-getproject` reads a project-scoped option — the
       tripwire, as the disk-read assert was for Memory as Truth.

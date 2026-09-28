@@ -1,0 +1,6 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/a.c
+<sync>
+-get out CURDIR/a.c
+<sync>
+<exit>
