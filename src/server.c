@@ -628,18 +628,15 @@ static void parseAllUnparsedCompilationUnits(ArgumentsVector baseArgs, int total
     }
 }
 
-static void countUnparsedCompilationUnits(int *_totalCUs, int *_staleCUs) {
-    int totalCUs = *_totalCUs, staleCUs = *_staleCUs;
+static void countUnparsedCompilationUnits(int *totalCUs, int *staleCUs) {
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fi = getFileItemWithFileNumber(i);
         if (isCompilationUnit(fi->name) && !fi->isDeleted) {
-            totalCUs++;
+            (*totalCUs)++;
             if (fileTimestampIsZero(fi->lastParsedMtime))
-                staleCUs++;
+                (*staleCUs)++;
         }
     }
-    *_totalCUs = totalCUs;
-    *_staleCUs = staleCUs;
 }
 
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
