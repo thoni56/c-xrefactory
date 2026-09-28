@@ -4,7 +4,7 @@ Date: 2026-02-13
 
 ## Status
 
-Draft
+Implemented, except the explicit rescan. See Implementation Notes.
 
 ## Deciders
 
@@ -138,3 +138,21 @@ Scan files for `#include` directives and populate `TypeCppInclude` references in
 - **ADR 20**: Separate buffer sync from operation dispatch — the entry-point reparse loop is the first consumer of this scanning
 - **ADR 13**: Limited extern detection — include closure is sufficient for rename scope, no need to scan all project files for extern declarations
 - **ADR 21**: Single-project server — simplifies file discovery to one project directory
+
+## Implementation Notes
+
+Checked against the code 2026-09-28 (WSL, session `76735541`).
+
+- **Layer 1** is `scanProjectStructure()`, over `scanProjectForFilesAndIncludes()` in
+  `src/projectstructure.c`. It also scans the config's extra source directories, honours
+  prune, and marks files that have gone missing as deleted.
+- **Layer 2** is entry refresh: Pass 1 (stale edited CUs) and Pass 2 (includers of stale
+  edited headers) as described, and Pass 3 (unparsed sibling CUs), added later.
+- **`callXref()` is gone.** Refactorings still go through the `parseBufferUsingServer()`
+  bridge, but that re-enters `callServer()` and gets the same entry refresh. Removing the
+  bridge is a separate piece of work.
+- **There is no rescan request.** The scan runs on the first request and after a config
+  change. Priming, parsing everything the scan found, is
+  link:0024-batch-prime-as-a-request.md[ADR-0024]'s `-parse-all`. Finding files that
+  appear during a session belongs with behind-the-back disk-change detection. A file
+  deleted during a session is forgotten when a reparse finds it missing (`086b5858`).
