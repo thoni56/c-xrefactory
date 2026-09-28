@@ -1,0 +1,8 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/a.c
+<sync>
+-push -olcursor=21 CURDIR/a.c
+<sync>
+-olcxpushname=f -olcxlccursor=1:0 -olcursor=0 CURDIR/a.c
+<sync>
+<exit>

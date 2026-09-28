@@ -1,0 +1,23 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/a.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-push -olcursor=21 CURDIR/a.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=5 len=<n>>CURDIR/a.c</position-lc>
+</goto>
+-olcxpushname=f -olcxlccursor=1:0 -olcursor=0 CURDIR/a.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=5 len=<n>>CURDIR/a.c</position-lc>
+</goto>
+-exit
+end-of-options
+

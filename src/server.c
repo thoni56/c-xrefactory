@@ -219,7 +219,8 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
         }
 
         parseInputFile();
-
+        getFileItemWithFileNumber(parsingConfig.fileNumber)->lastParsedMtime =
+            editorFileModificationTime(inputFileName);
     }
     if (options.cursorOffset == 0) {
         // special case, push the file as include reference
