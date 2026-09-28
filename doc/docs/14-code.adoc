@@ -142,8 +142,8 @@ server() - Infinite request loop
             │         SETS: scanDone = true
             │
             ├─> Entry refresh (if projectContextInitialized):
-            │    ├─ Pass 1: reparse stale CUs directly
-            │    ├─ Pass 2: find CUs that include stale headers
+            │    ├─ Pass 1: reparse stale edited CUs directly
+            │    ├─ Pass 2: find CUs that include stale edited headers
             │    │           (via TypeCppInclude refs), reparse those
             │    └─ Pass 3: find unparsed CUs that share headers with
             │               the request file, parse those
@@ -395,8 +395,8 @@ server() loop:
   │        → scanDone = true
   │
   ├─ 3. Update what changed (same two-pass as ADR 20)
-  │     ├─ Pass 1: reparse stale CUs
-  │     └─ Pass 2: reparse CUs that include stale headers
+  │     ├─ Pass 1: reparse stale edited CUs
+  │     └─ Pass 2: reparse CUs that include stale edited headers
   │
   ├─ 4. Execute operation
   │

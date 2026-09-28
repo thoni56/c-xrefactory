@@ -188,8 +188,9 @@ Pass 3 rounds 19s each, 42s total.
     2026-09-24 as a deliberate stopgap (`c-xref-project-remove-references-and-restart`,
     `editors/emacs/c-xref.el`), because discarding the database is the standing remedy for
     two unrelated symptoms: shadow occurrences after behind-the-back disk changes, and a
-    stale snapshot outliving a visibility fix (both in `doc/docs/18-known-bugs.adoc`). The real work is making the database not
-    need discarding — behind-the-back detection and entry refresh are probably most of it,
+    stale snapshot outliving a visibility fix (both in `doc/docs/18-known-bugs.adoc`). The
+    real work is making the database not need discarding — behind-the-back detection and
+    entry refresh are probably most of it,
     and item 21 dissolves another part. Remove the entry when they land, and check the
     symptoms are gone rather than assuming it.
 

@@ -108,6 +108,11 @@ necessary.
 
 ==== Overview
 
+The three passes, by what they reparse: Pass 1 (stale edited CUs), Pass 2 (includers of
+stale edited headers) and Pass 3 (unparsed sibling CUs). _Stale_ here means changed in the
+editor, i.e. sent by the client as a preload. A file changed behind the server's back is
+not seen by Pass 1 or 2.
+
 The refresh covers two distinct concerns:
 
 * **Buffer-driven refresh** (Passes 1 and 2) handles modifications the client has
@@ -129,16 +134,16 @@ see Pass 2 for the rationale.
 callServer():
   │
   ├─ loadAllOpenedEditorBuffers()
-  ├─ closeEditorBuffersNoLongerPreloaded()   ← ghost buffer pruning
+  ├─ closeEditorBuffersNoLongerHeld()        ← ghost buffer pruning
   │
   ├─ IF projectContextInitialized:
   │   reparseStalePreloadedFiles(baseArgs)            ← buffer-driven
   │   │
-  │   ├─ Pass 1: reparse stale CUs
+  │   ├─ Pass 1: reparse stale edited CUs
   │   │   FOR each editor buffer WHERE fileNumberIsStale():
   │   │     IF isCompilationUnit: reparseStaleFile()
   │   │
-  │   └─ Pass 2: reparse includers of stale headers
+  │   └─ Pass 2: reparse includers of stale edited headers
   │       FOR each editor buffer WHERE fileNumberIsStale():
   │         IF NOT isCompilationUnit (i.e. header):
   │           collectIncludersOfStaleHeader() → list of CU file numbers
@@ -188,7 +193,7 @@ Every row but the last fits the invalidate-then-rebuild model cleanly. The last 
 gap the next section addresses.
 
 [[entry-refresh-pass-1]]
-==== Pass 1: Reparse Stale CUs
+==== Pass 1: Reparse Stale Edited CUs
 
 The simplest case: the user edited and saved a `.c` file, or the client sent a
 `-preload` with newer content. The CU itself is stale.
@@ -206,7 +211,7 @@ The simplest case: the user edited and saved a `.c` file, or the client sent a
 include edges). This is essential for Pass 2.
 
 [[entry-refresh-pass-2]]
-==== Pass 2: Reparse Includers of Stale Headers
+==== Pass 2: Reparse Includers of Stale Edited Headers
 
 If the user edited a header file, all CUs that include it (transitively) have stale
 references — even though those CUs themselves haven't changed.
