@@ -1,0 +1,13 @@
+Bug: Extract function drops the declaration of locals returned through out parameters
+
+When the region declares two locals that the code after it uses, they come back
+through out parameters, but the call site no longer declares them:
+`newFunction_(text, textSize, &spaces, &tabs);` without `int spaces, tabs;`
+before it. With one such local it works, since it is returned and declared at the
+call site (tests/test_extract_local_declared_in_region_used_after).
+
+The fix is to emit the declarations at the call site before the call, without
+initialisers, since the function sets them. Workaround until then: leave the
+declarations out of the region.
+
+GitHub issue #79.
