@@ -63,8 +63,16 @@ Editor-open files stay current::
 
 Saved or closed files re-sync from disk::
   When the user saves or closes a file the editor stops preloading it; ghost-buffer
-  cleanup (`closeEditorBuffersNoLongerPreloaded`) frees the now-stale buffer and
+  cleanup (`closeEditorBuffersNoLongerHeld`) frees the now-stale buffer and
   re-reads the file from disk, so the saved content is picked up.
+
+A held buffer wins over a changed disk file::
+  While the editor sends a file as a preload, the server works on that buffer and
+  does not look at the disk. A change on disk behind an edited buffer is a conflict
+  between the editor and the user, and Emacs raises it itself. If the user keeps the
+  buffer, it stays the truth. If they revert, the editor stops sending it, the server
+  lets go of the buffer and reads the disk version, which is newer than the last parse
+  and so gets reparsed.
 
 Behind-the-back changes are not detected (known limitation)::
   A file the server has buffered but the editor does not have open — a header
