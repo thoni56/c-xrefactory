@@ -58,21 +58,17 @@ features. Relative effort only — no dates (#noestimates).
       preload (`c-xref-server-call-on-current-buffer-no-saves`, the "softsetup" hack in
       `editors/emacs/c-xref.el`), and Pass 1-2 reparse it;
    b. project setup moves into `-getproject` — discovery, config read, compiler
-      interrogation, snapshot load. The "no parsing" part is done: neither `-getproject`
-      nor `-get` parses (`answeredWithoutReferences()` in `src/server.c`,
-      `tests/test_getproject_parses_nothing`, `tests/test_get_env_value_parses_nothing`);
-   c. process start strips to parsing setup — done, `c9840fe7`;
-   d. the assert that nothing before `-getproject` reads a project-scoped option — the
+      interrogation, snapshot load;
+   c. the assert that nothing before `-getproject` reads a project-scoped option — the
       tripwire, as the disk-read assert was for Memory as Truth.
 
-5. **Remove `-refs` and `-refnum`** — done, `811c9010` to `e4a5d76c`. The snapshot keeps its
-   `CXFI_REFNUM` record, always 1. Dropping it is a later format change, and a safe one: a
-   snapshot of another format version is ignored like no snapshot and rewritten on exit.
-6. **Remove `-xrefrc`** — done, `0ec5f427`, and the home config went with it in `b3b283af`.
+5. **Drop the `CXFI_REFNUM` record from the snapshot** — it is always written as 1. A safe
+   format change: a snapshot of another format version is ignored like no snapshot and
+   rewritten on exit, so it costs one cold start. Do it with the next format change.
 
 ## 2. After XrefMode
 
-7. **Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c` onto a
+6. **Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c` onto a
    report-errors flag**, and stop `formatMessage()` (`src/commons.c`) dropping the position
    in server mode. Roadmap, "Report what did not parse". Doubles as the server half of
    the Indexing Log Buffer item. Scope reporting to the operation's own parse, not the
@@ -80,7 +76,7 @@ features. Relative effort only — no dates (#noestimates).
    the same change: it was dropped when that test moved to the server, because the
    position is what server mode throws away. With XrefMode gone the guards never
    fire, so today the server reports nothing they guard.
-8. **Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
+7. **Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
    parser serves both phases, so the question becomes which options are process-scoped at
@@ -95,7 +91,7 @@ features. Relative effort only — no dates (#noestimates).
    - **`-exactpositionresolve` has no strategy.** It is real: it changes link names
      (`src/semact.c`) and goes into the snapshot's check number (`src/cxfile.c`). Since it
      changes what a symbol is, it is probably project-scoped, although `options.h` marks it
-     REQUEST. Decide whether it belongs in the config or goes. Item 13 waits on the same
+     REQUEST. Decide whether it belongs in the config or goes. Item 12 waits on the same
      question.
    - **`-lsp` is a third mode and should be one.** `want_lsp_server()` (`src/lsp.c`) scans
      argv in `main()` and returns before `mainTaskEntryInitialisations()`, so it is a mode
@@ -116,35 +112,35 @@ features. Relative effort only — no dates (#noestimates).
      look. Auto-discovery gives you the tree under the config; anything outside it still
      has to be named. Likely home: the config, or the machine-specific sibling, since an
      external source tree is usually a local path.
-9. **Finish after XrefMode** — the mode, `xref.c`, every `XrefMode` branch, the snapshot
+8. **Finish after XrefMode** — the mode, `xref.c`, every `XrefMode` branch, the snapshot
    merge path and the `-create`/`-update`/`-fastupdate` options went on 2026-09-24 (WSL,
    session `a3efe465`). Left: the `options.mode ==/!= ServerMode` checks, which are
    constant wherever the mode is known, since LSP sets `ServerMode` too
    (`src/parsing.c`); `options.xref2` and `-xrefactory-II` — make it the default, then
    drop the flag and the client's use of it (`editors/emacs/c-xref.el:1615`); the
    client's tags-dispatch trio, which rendered a `-create` log (keep or delete with
-   item 22); and the chapters that still describe XrefMode as present.
-10. **Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
+   item 21); and the chapters that still describe XrefMode as present.
+9. **Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section (it asserts
    `ServerMode`), but it is the last divergent parse path.
 
 ## 3. Correctness, by (quiet × cheap)
 
-11. **Extract passes statics by value** — *no test pins it.* Since the gate fix this
+10. **Extract passes statics by value** — *no test pins it.* Since the gate fix this
     compiles and silently does the wrong thing, where before it failed to compile.
     Liveness-after-the-region is the wrong question for static storage: treat
     static/thread-local as live after the region in `classifyVariableUsingDataFlow`
     (`src/extract.c`), which pushes it to `CLASSIFIED_AS_IN_OUT_ARGUMENT`. Failing system
     test first. Quietest bug on this list.
-12. **Token pasting trio**, in this order — the later two assume the first
+11. **Token pasting trio**, in this order — the later two assume the first
     (`doc/docs/18-known-bugs.adoc`): `tests/test_token_pasting_numbers` (changes the
     passing `test_collate_const_suffix_pasting`) → `tests/test_token_pasting_float` →
     `tests/test_collate_hex_prefix_pasting` (touches how every number is lexed).
-13. **Header static: prototype and definition get different link names** —
+12. **Header static: prototype and definition get different link names** —
     `setStaticFunctionLinkName` (`src/semact.c`); renames break the build today.
     `tests/test_static_declared_and_defined_in_header/.suspended` has the
     `exactPositionResolve` question to settle first, so it starts as a decision.
-14. Then, roughly by cost — each has a `.suspended` note or a `18-known-bugs.adoc` entry:
+13. Then, roughly by cost — each has a `.suspended` note or a `18-known-bugs.adoc` entry:
     `tests/test_getproject_unknown_cu_under_include_path` (any file under an `-I`
     directory counts as project) · `tests/test_preprocess_edit_removes_ifdef_define` (CU
     reparse leaves a header declaration it no longer emits — ADR-0025 variant B) ·
@@ -172,54 +168,54 @@ features. Relative effort only — no dates (#noestimates).
 Roadmap → Optimization. Baseline: cold-start PUSH on ffmpeg `af_afir.c` — scan 2.7s, two
 Pass 3 rounds 19s each, 42s total.
 
-15. **Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
+14. **Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
     design problem is that Pass 3 runs during sync and the symbol is only known during
     dispatch.
-16. **Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
+15. **Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
     sibling parsing, or ubiquitous system headers drag in nearly every CU. Also removes
     the cold-start double progress bar.
-17. **Lexing cache re-introduction** — present in the original codebase, lost in
+16. **Lexing cache re-introduction** — present in the original codebase, lost in
     restructuring.
-18. **Parallel parsing** — last, and only if the three above leave `avcodec.h` (614 CUs) or
+17. **Parallel parsing** — last, and only if the three above leave `avcodec.h` (614 CUs) or
     `internal.h` (1171 CUs) unacceptable. Global mutable parser state, a single CX arena
     and a shared file table are the obstacles.
 
 ## 5. Features, by readiness
 
-19. **Take the client's "Remove References and Restart Server" back out** — it landed
+18. **Take the client's "Remove References and Restart Server" back out** — it landed
     2026-09-24 as a deliberate stopgap (`c-xref-project-remove-references-and-restart`,
     `editors/emacs/c-xref.el`), because discarding the database is the standing remedy for
     two unrelated symptoms: shadow occurrences after behind-the-back disk changes, and a
     stale snapshot outliving a visibility fix (both in `doc/docs/18-known-bugs.adoc`). The
     real work is making the database not need discarding — behind-the-back detection and
     entry refresh are probably most of it,
-    and item 21 dissolves another part. Remove the entry when they land, and check the
+    and item 20 dissolves another part. Remove the entry when they land, and check the
     symptoms are gone rather than assuming it.
 
-20. **Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
+19. **Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
     customization; collapse `CommentMovingMode` to a bool and stop the backward walk at a
     blank line (`src/options.h`, `src/move_function.c`). The TDD scaffolding already
     landed: four `tests/test_move_function_*comment*` tests; sweep
     `-commentmovinglevel=6` → `=1` in the three "with…" `commands.input` files and add
     `test_move_function_stops_at_blank_line` in the same change. Most shovel-ready item
     here.
-21. **Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
+20. **Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
     work. Roadmap → Memory as Truth → Remaining. Depends only on entry refresh, which is
     done.
-22. **Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
+21. **Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
     `doc/docs/11-planned-features.adoc`. Follows the report-errors item. The client half
     does not have to be invented: `c-xref-tags-dispatch` and its two helpers in
     `editors/emacs/c-xref.el` rendered exactly this for the `-create` log — a stream of
     PPC records into `*c-xref-log*`, severity faces, `file://` links made clickable — and
     are kept, uncalled, for that reason. The viewer commands and keymap below them are
     still bound; only the producer is gone.
-23. **Retry the request that created the project** — small, and it becomes first contact
+22. **Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
-24. **LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
+23. **LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
     function and the parameter refactorings. Stubs exist: `handle_code_action`,
     `handle_execute_command`, with `codeActionProvider` commented out in
     `src/lsp_handler.c`. Keep tier 3 (custom methods + per-editor extension code) small.
-25. **Move Function next steps** — remove the source header's extern declaration, include
+24. **Move Function next steps** — remove the source header's extern declaration, include
     management, helper-function detection, smarter header placement, preview — then
     **Delete Function**. Also **`-parse-all`, a request that parses every compilation
     unit the scan found and has not parsed** — what ADR-0024's CreateMode reduces to
@@ -243,7 +239,7 @@ Pass 3 rounds 19s each, 42s total.
     **semantic read-only files**, **rename handles `expect`**, **project-local
     config**, **Inline Function and Inline Macro**, **Extract an Expression as a
     Function**. All in `11-planned-features.adoc`.
-26. **Local config fragments — the need, not a solution** — *no repo home yet.*
+25. **Local config fragments — the need, not a solution** — *no repo home yet.*
     `.c-xrefrc` travels with the project and is checked in, which is why
     `11-planned-features.adoc` argues for it: "it will not contain absolute file paths".
     Some things are machine-specific and still have to be said somewhere — where the
@@ -257,10 +253,10 @@ Pass 3 rounds 19s each, 42s total.
     for a machine-specific fragment. The other direction is a sibling file picked up
     automatically, where absent is normal by construction and nothing checked in refers
     to it. Either way, decide whether a fragment extends or replaces the project config.
-27. **Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
+26. **Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
     the macro expansion module, hashtab → hashlist, split the editor module, rename server
     operations, elisp recompiled and deleted on every build.
-28. **Dump Reference Database** — *no repo home yet.* A request that answers with the
+27. **Dump Reference Database** — *no repo home yet.* A request that answers with the
     in-memory table, and a client command for it, so you can see what the server thinks it
     knows without stopping it. The answer is enough to read, e.g. in `*Messages*`. It dumps
     memory, not the snapshot, which leaves out most of what is not visible outside a file,
@@ -279,7 +275,7 @@ Pass 3 rounds 19s each, 42s total.
   *ADR-0029 settles the identity half: the server binds to a root path, the `[section]`
   name stops being an identity, and `-p` goes so `handleProject()` reaches the
   comparison. What stays open is the gate below — which of the three hatches survives,
-  and at what severity. Ties to item 8, which puts `-p` in the config rather than on the
+  and at what severity. Ties to item 7, which puts `-p` in the config rather than on the
   command line.* `callServer` (`src/server.c`) already derives everything from the
   request's input file — `initializeProjectContext`, snapshot load, scan, sibling parse —
   and only then does `answerEditorAction` (`src/cxref.c:1887`) refuse with
@@ -300,7 +296,7 @@ Pass 3 rounds 19s each, 42s total.
   silently on crash and on Remove References, and cannot tell that it did); or the server
   locks implicitly from the first request's file and `-getproject` becomes only the
   "which project is this / switch project" query, with `PPC_PROJECT_MISMATCH`
-  (`src/cxref.c:1824`) still enforcing one project per server. Removing `-p` (item 8)
+  (`src/cxref.c:1824`) still enforcing one project per server. Removing `-p` (item 7)
   deletes one of the three hatches, so this has to be settled first or alongside.
   Separately: `FATAL_ERROR` is the wrong severity — a missing `-getproject` is a client
   protocol mistake, not a broken invariant, and killing the server turns it into a
