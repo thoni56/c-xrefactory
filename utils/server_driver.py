@@ -149,6 +149,19 @@ def check_client_holds_edits(command, edited, p):
             sys.exit(1)
     edited.clear()
 
+# A real client writes a preload when it sends the request, so it is always newer
+# than the file it stands in for. A test preloading a checked-in file without
+# touching it depends on the mtimes a checkout happened to give, and a preload
+# no newer than the last parse does not look changed to the server.
+PRELOAD = re.compile(r'-preload\s+"?([^"\s]+)"?\s+"?([^"\s]+)"?')
+
+def check_preloads_are_newer(command, p):
+    for name, preload in PRELOAD.findall(command):
+        if os.path.exists(name) and os.path.getmtime(preload) <= os.path.getmtime(name):
+            eprint(f"ERROR: the preload {preload} is not newer than {name}, so a real client could not have sent it; touch it first")
+            p.kill()
+            sys.exit(1)
+
 def read_command(file):
     line = file.readline()
     #while len(line) == 0 or (len(line) > 0 and line[0] == '#'):
@@ -208,6 +221,7 @@ if __name__ == "__main__":
                     if not in_request:
                         check_client_holds_edits(request_line, edited, p)
                         in_request = True
+                    check_preloads_are_newer(request_line, p)
                     send_command(p, request_line)
                     command = read_command(file)
 

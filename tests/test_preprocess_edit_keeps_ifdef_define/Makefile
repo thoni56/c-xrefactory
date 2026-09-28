@@ -13,6 +13,7 @@ include ../Makefile.server
 $(TEST):
 	@rm -rf .c-xref output output.tmp server-buffer
 	@cp with_feature.preload source.c
+	@touch with_feature.preload   # a real client's preload is newer than the file
 	@$(SERVER_DRIVER) $(EXTRA1) commands_phase1.input > /dev/null
 	@{ echo "=== phase 1: source.c defines FEATURE ==="; ../../utils/cxref_reader .c-xref/db; } > output
 	@$(SERVER_DRIVER) $(EXTRA2) commands_phase2.input > /dev/null
