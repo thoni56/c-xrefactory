@@ -98,6 +98,13 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
         ;
 }
 
+/* Requests about the project rather than its code. They are answered from the config and
+   the scan, so entry refresh has nothing to do for them (Setup Ladder: opening a project
+   parses nothing). */
+static bool answeredWithoutReferences(ServerOperation operation) {
+    return operation == OP_GET_PROJECT;
+}
+
 /* -get answers from the locked project's variables. An input file only adds the
    ${__file} family of expansions to the value, so a request without one is
    answerable rather than an error. */
@@ -699,7 +706,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     /* Entry refresh pass 3: parse sibling CUs that share headers with
      * the request file but haven't been parsed yet (e.g. cold start). */
-    if (projectContextInitialized && hasInputFile
+    if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation)
         && options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
         parseUnparsedSiblingCUs(requestFileNumber, baseArgs);
     }

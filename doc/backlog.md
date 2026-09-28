@@ -54,11 +54,11 @@ features. Relative effort only — no dates (#noestimates).
       roadmap says 1925), and the server tests that pass `-p` convert to
       `-getproject`;
    b. project setup moves into `-getproject` — discovery, config read, compiler
-      interrogation, snapshot load. And no parsing: today entry refresh (Pass 1-3) runs
-      for every request that names a file, so `-getproject` parses the request file's
-      sibling CUs, and `-get` parses the request file itself (`requiresProcessingInputFile`,
-      `src/server.c`). A test: `-getproject`, `<exit>`, and the snapshot has nothing from a
-      sibling;
+      interrogation, snapshot load. And no parsing: `-getproject` no longer runs Pass 3
+      (`answeredWithoutReferences()` in `src/server.c`,
+      `tests/test_getproject_parses_nothing`). Still left, each with a test first: it
+      runs Pass 1-2 when a preload has changed, and `-get` parses the request file
+      (`requiresProcessingInputFile`), although it only needs its name for `${__file}`;
    c. process start strips to parsing setup — done, `c9840fe7`;
    d. the assert that nothing before `-getproject` reads a project-scoped option — the
       tripwire, as the disk-read assert was for Memory as Truth.

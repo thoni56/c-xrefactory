@@ -1,0 +1,12 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/a.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-exit
+end-of-options
+
+%%%i:f.h
+    @a.c:1:0
+    @b.c:1:0
