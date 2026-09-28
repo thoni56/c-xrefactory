@@ -253,13 +253,18 @@ Pass 3 rounds 19s each, 42s total.
 27. **Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
     the macro expansion module, hashtab → hashlist, split the editor module, rename server
     operations, elisp recompiled and deleted on every build.
-28. **Dump Reference Database** — *no repo home yet.* A request that writes the in-memory
-    table to the snapshot, and a client menu entry for it, so you can see what the server
-    thinks it knows without stopping it. Kill Server already writes the snapshot, so this is
-    the same thing as long as dying does nothing extra. What neither solves is realising you
-    need the dump before the state is gone. A rename missed `clearPreloadedThisRequestFlags`
-    in `src/editor.mock` (WSL, 2026-09-25), and the dump taken afterwards had the reference,
-    so it could not say whether the server knew it at the time of the rename.
+28. **Dump Reference Database** — *no repo home yet.* A request that answers with the
+    in-memory table, and a client command for it, so you can see what the server thinks it
+    knows without stopping it. The answer is enough to read, e.g. in `*Messages*`. It dumps
+    memory, not the snapshot, which leaves out most of what is not visible outside a file,
+    so it shows more. What it does not solve is realising you need the dump before the
+    state is gone. A rename missed `clearPreloadedThisRequestFlags` in `src/editor.mock`
+    (WSL, 2026-09-25), and the dump taken afterwards had the reference, so it could not say
+    whether the server knew it at the time of the rename.
+    It would also serve the tests. About 45 of them, mostly parsing and token pasting,
+    throw the protocol away and read the snapshot written at exit with `cxref_reader`, so
+    a parser test also tests writing the snapshot and a clean exit. With the dump in an
+    answer they compare output with expected like the others.
 
 ## Open questions that would reorder this
 
