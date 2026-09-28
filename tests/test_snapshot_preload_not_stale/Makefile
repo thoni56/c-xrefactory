@@ -11,6 +11,7 @@ include ../Makefile.server
 
 $(TEST):
 	@rm -rf .c-xref
+	@touch header.preload   # a real client's preload is newer than the file
 	@$(SERVER_DRIVER) $(EXTRA) session1.input > output.tmp
 	@$(SERVER_DRIVER) $(EXTRA) session2.input >> output.tmp
 	@$(NORMALIZE) output.tmp > output
