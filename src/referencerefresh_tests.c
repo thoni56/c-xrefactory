@@ -32,9 +32,22 @@ Ensure(ReferenceRefresh, reparseStaleFile_should_remove_old_refs_then_parses) {
     FileItem fileItem = {.name = "test.c"};
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)),
            will_return(&fileItem));
+    expect(editorFileExists, when(path, is_equal_to_string("test.c")), will_return(true));
     expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
     /* initializeFileProcessing returns false → no parse attempt */
     expect(initializeFileProcessing, will_return(false));
+
+    ArgumentsVector baseArgs = {.argc = 0, .argv = NULL};
+    reparseStaleFile(42, baseArgs);
+}
+
+Ensure(ReferenceRefresh, reparseStaleFile_marks_a_file_gone_from_disk_as_deleted) {
+    FileItem fileItem = {.name = "test.c"};
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)),
+           will_return(&fileItem));
+    expect(editorFileExists, when(path, is_equal_to_string("test.c")), will_return(false));
+    expect(markFileAsDeleted, when(fileNumber, is_equal_to(42)));
+    never_expect(initializeFileProcessing);
 
     ArgumentsVector baseArgs = {.argc = 0, .argv = NULL};
     reparseStaleFile(42, baseArgs);

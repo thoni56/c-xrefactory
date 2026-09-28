@@ -1,0 +1,48 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/a.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-push -olcursor=21 CURDIR/a.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=5 len=<n>>CURDIR/a.c</position-lc>
+</goto>
+-olcxfilter=0 -olcursor=0 nil
+end-of-options
+
+<sync>
+<reference-list val=0 symbol="f">
+<src-line refn=1 len=<n>>a.c:3:void f(void) {</src-line>
+<src-line refn=1 len=<n>>f.h:1:void f(void);</src-line>
+<src-line refn=1 len=<n>>b.c:4:    f();</src-line>
+</reference-list>
+shell: rm CURDIR/b.c
+-push -olcursor=21 CURDIR/a.c
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=3 col=5 len=<n>>CURDIR/a.c</position-lc>
+</goto>
+-olcxfilter=0 -olcursor=0 nil
+end-of-options
+
+<sync>
+<reference-list val=0 symbol="f">
+<src-line refn=1 len=<n>>a.c:3:void f(void) {</src-line>
+<src-line refn=1 len=<n>>f.h:1:void f(void);</src-line>
+</reference-list>
+-olcxpushname=f -olcxlccursor=1:0 -olcursor=0 CURDIR/a.c
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=3 col=5 len=<n>>CURDIR/a.c</position-lc>
+</goto>
+-exit
+end-of-options
+

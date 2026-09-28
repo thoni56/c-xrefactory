@@ -1,5 +1,6 @@
 #include "referencerefresh.h"
 
+#include "editor.h"
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
@@ -38,8 +39,13 @@ static void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
 }
 
 void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs) {
+    char *fileName = getFileItemWithFileNumber(fileNumber)->name;
+    if (!editorFileExists(fileName)) {
+        markFileAsDeleted(fileNumber);
+        return;
+    }
     removeReferenceableItemsForFile(fileNumber);
-    parseFileWithFullInit(getFileItemWithFileNumber(fileNumber)->name, baseArgs);
+    parseFileWithFullInit(fileName, baseArgs);
 }
 
 /* Mark every compilation unit unparsed so the next entry refresh reparses it.

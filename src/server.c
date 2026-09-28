@@ -709,7 +709,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         int totalCUs = 0, staleCUs = 0;
         for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
             FileItem *fi = getFileItemWithFileNumber(i);
-            if (isCompilationUnit(fi->name)) {
+            if (isCompilationUnit(fi->name) && !fi->isDeleted) {
                 totalCUs++;
                 if (fileTimestampIsZero(fi->lastParsedMtime))
                     staleCUs++;

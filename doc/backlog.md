@@ -148,8 +148,7 @@ features. Relative effort only — no dates (#noestimates).
     reparse leaves a header declaration it no longer emits — ADR-0025 variant B) ·
     `tests/test_browsing_push_by_name` (needs decided behaviour when a name has several
     bindings) · GlobalUnused false positive for statics in `.y` files ·
-    `tests/test_parsing_generics` (`_Generic` not parsed) · a compilation unit deleted
-    outside the editor is never let go (`18-known-bugs.adoc`) · **a refactoring can see a
+    `tests/test_parsing_generics` (`_Generic` not parsed) · **a refactoring can see a
     truncated reference set** (`18-known-bugs.adoc`) — severe where it bites, rewriting 13
     of 25 occurrences on ffmpeg, but it needs a header included by more than ~130 CUs, and
     c-xrefactory has 79 with a worst fan-in of 39, so it cannot happen here. That, and
@@ -188,12 +187,11 @@ Pass 3 rounds 19s each, 42s total.
 19. **Take the client's "Remove References and Restart Server" back out** — it landed
     2026-09-24 as a deliberate stopgap (`c-xref-project-remove-references-and-restart`,
     `editors/emacs/c-xref.el`), because discarding the database is the standing remedy for
-    three unrelated symptoms: shadow occurrences after behind-the-back disk changes, the
-    deleted-compilation-unit reparse loop, and a stale snapshot outliving a visibility fix
-    (all three in `doc/docs/18-known-bugs.adoc`). The real work is making the database not
+    two unrelated symptoms: shadow occurrences after behind-the-back disk changes, and a
+    stale snapshot outliving a visibility fix (both in `doc/docs/18-known-bugs.adoc`). The real work is making the database not
     need discarding — behind-the-back detection and entry refresh are probably most of it,
     and item 21 dissolves another part. Remove the entry when they land, and check the
-    three symptoms are gone rather than assuming it.
+    symptoms are gone rather than assuming it.
 
 20. **Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
     customization; collapse `CommentMovingMode` to a bool and stop the backward walk at a
