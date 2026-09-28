@@ -52,13 +52,17 @@ features. Relative effort only — no dates (#noestimates).
       never looks at the request's file
       (`c-xref-send-data-to-process-and-dispatch`, `editors/emacs/c-xref.el:1922` — the
       roadmap says 1925), and the server tests that pass `-p` convert to
-      `-getproject`;
+      `-getproject`. Goes with ADR-0030's split: `-openproject` parses nothing, and the
+      membership query may reparse a changed preload of a file in the project, but not
+      of one outside it. Today a `-getproject` from a modified buffer carries it as a
+      preload (`c-xref-server-call-on-current-buffer-no-saves`, the "softsetup" hack in
+      `editors/emacs/c-xref.el`), and Pass 1-2 reparse it;
    b. project setup moves into `-getproject` — discovery, config read, compiler
       interrogation, snapshot load. And no parsing: `-getproject` no longer runs Pass 3
       (`answeredWithoutReferences()` in `src/server.c`,
-      `tests/test_getproject_parses_nothing`). Still left, each with a test first: it
-      runs Pass 1-2 when a preload has changed, and `-get` parses the request file
-      (`requiresProcessingInputFile`), although it only needs its name for `${__file}`;
+      `tests/test_getproject_parses_nothing`). Still left, with a test first: `-get`
+      parses the request file (`requiresProcessingInputFile`), although it only needs
+      its name for `${__file}`;
    c. process start strips to parsing setup — done, `c9840fe7`;
    d. the assert that nothing before `-getproject` reads a project-scoped option — the
       tripwire, as the disk-read assert was for Memory as Truth.
