@@ -1128,8 +1128,17 @@ editor in real time. This is the case the design optimizes for.</p>
 <dt class="hdlist1">Saved or closed files re-sync from disk</dt>
 <dd>
 <p>When the user saves or closes a file the editor stops preloading it; ghost-buffer
-cleanup (<code>closeEditorBuffersNoLongerPreloaded</code>) frees the now-stale buffer and
+cleanup (<code>closeEditorBuffersNoLongerHeld</code>) frees the now-stale buffer and
 re-reads the file from disk, so the saved content is picked up.</p>
+</dd>
+<dt class="hdlist1">A held buffer wins over a changed disk file</dt>
+<dd>
+<p>While the editor sends a file as a preload, the server works on that buffer and
+does not look at the disk. A change on disk behind an edited buffer is a conflict
+between the editor and the user, and Emacs raises it itself. If the user keeps the
+buffer, it stays the truth. If they revert, the editor stops sending it, the server
+lets go of the buffer and reads the disk version, which is newer than the last parse
+and so gets reparsed.</p>
 </dd>
 <dt class="hdlist1">Behind-the-back changes are not detected (known limitation)</dt>
 <dd>
@@ -1837,7 +1846,8 @@ necessary.</p>
 <p>The three passes, by what they reparse: Pass 1 (stale edited CUs), Pass 2 (includers of
 stale edited headers) and Pass 3 (unparsed sibling CUs). <em>Stale</em> here means changed in the
 editor, i.e. sent by the client as a preload. A file changed behind the server&#8217;s back is
-not seen by Pass 1 or 2.</p>
+not seen by Pass 1 or 2. When a file held as an edited buffer also changes on disk, the
+buffer wins, see <a href="06-principles.html">Principles</a> (Editor Buffers Are the Content Source).</p>
 </div>
 <div class="paragraph">
 <p>The refresh covers two distinct concerns:</p>
@@ -4747,11 +4757,11 @@ using the server&#8217;s own entry refresh mechanism instead.
        │    ├─&gt; loadAllOpenedEditorBuffers()
        │    ├─&gt; Reparse stale preloaded files (Pass 1: CUs, Pass 2: header includers)
        │    ├─&gt; prepareInputFileForRequest()
-       │    ├─&gt; FIRST REQUEST (GetProject):
-       │    │    ├─ initializeProjectContext()
-       │    │    ├─ processFileArguments() — discover CUs by globbing project dir
-       │    │    ├─ loadFileNumbersFromStore() — load .cx snapshot into file table
-       │    │    └─ parseDiscoveredCompilationUnits() — parse stale CUs, skip fresh
+       │    ├─&gt; FIRST REQUEST THAT NAMES A FILE:
+       │    │    ├─ initializeProjectContext() — discovery, config, compiler interrogation
+       │    │    └─ loadSnapshotFromStore() — load the .c-xref/db snapshot
+       │    ├─&gt; scanProjectStructure() — CUs and includes, on the first request and after a config change
+       │    ├─&gt; Pass 3: parse unparsed sibling CUs, not for -getproject
        │    ├─&gt; Dispatch based on operation:
        │    │    ├─ Operations needing input file → processFile() → parse
        │    │    └─ Other operations (filter, pop, etc.)
@@ -4824,13 +4834,19 @@ using the server&#8217;s own entry refresh mechanism instead.
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Needs reference database</strong> (<code>needsReferenceDatabase</code>): navigation, refactoring support, unused symbol detection — these push a browsing session</p>
+<p><strong>Opens a browsing session</strong> (<code>opensBrowsingSession</code>): navigation, refactoring support, unused symbol detection — these push a browsing session</p>
 </li>
 <li>
-<p><strong>Requires input file processing</strong> (<code>requiresProcessingInputFile</code>): completion, search, extraction, and all reference-database operations — these parse the request&#8217;s input file</p>
+<p><strong>Requires input file processing</strong> (<code>requiresProcessingInputFile</code>): completion, search, extraction, and all operations that open a browsing session — these parse the request&#8217;s input file</p>
 </li>
 <li>
-<p><strong>Neither</strong>: project management, filter changes, browsing stack manipulation — these operate on existing session state</p>
+<p><strong>Needs the whole project parsed</strong> (<code>needsWholeProjectParsed</code>): search, unused globals, push by name — these ask to parse every unparsed compilation unit first</p>
+</li>
+<li>
+<p><strong>Answered without references</strong> (<code>answeredWithoutReferences</code>): <code>-getproject</code> — entry refresh skips Pass 3 for it</p>
+</li>
+<li>
+<p><strong>None of these</strong>: filter changes, browsing stack manipulation — these operate on existing session state</p>
 </li>
 </ul>
 </div>
@@ -6577,10 +6593,8 @@ See <a href="#unified-flow">Unified Server Flow (ADR 22)</a>.</p>
             │    └─ SETS: requestFileNumber
             │
             ├─&gt; IF NOT projectContextInitialized (one-time):
-            │    ├─ OP_ACTIVE_PROJECT: initializeProjectContext()
-            │    │   → loadFileNumbersFromStore()
-            │    │   → Legacy: processFileArguments()
-            │    │             + parseDiscoveredCompilationUnits()
+            │    ├─ initializeProjectContext(), on the first request that names a file
+            │    │   → loadSnapshotFromStore()
             │    └─ SETS: projectContextInitialized = true
             │
             ├─&gt; Config-change-aware scan (auto-detect only):
@@ -12030,7 +12044,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-28 11:33:00 UTC
+Last updated 2026-09-28 13:04:14 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
