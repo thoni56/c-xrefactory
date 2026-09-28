@@ -127,10 +127,8 @@ server() - Infinite request loop
             │    └─ SETS: requestFileNumber
             │
             ├─> IF NOT projectContextInitialized (one-time):
-            │    ├─ OP_ACTIVE_PROJECT: initializeProjectContext()
-            │    │   → loadFileNumbersFromStore()
-            │    │   → Legacy: processFileArguments()
-            │    │             + parseDiscoveredCompilationUnits()
+            │    ├─ initializeProjectContext(), on the first request that names a file
+            │    │   → loadSnapshotFromStore()
             │    └─ SETS: projectContextInitialized = true
             │
             ├─> Config-change-aware scan (auto-detect only):

@@ -133,11 +133,11 @@ server() — infinite request loop [server.c]
        │    ├─> loadAllOpenedEditorBuffers()
        │    ├─> Reparse stale preloaded files (Pass 1: CUs, Pass 2: header includers)
        │    ├─> prepareInputFileForRequest()
-       │    ├─> FIRST REQUEST (GetProject):
-       │    │    ├─ initializeProjectContext()
-       │    │    ├─ processFileArguments() — discover CUs by globbing project dir
-       │    │    ├─ loadFileNumbersFromStore() — load .cx snapshot into file table
-       │    │    └─ parseDiscoveredCompilationUnits() — parse stale CUs, skip fresh
+       │    ├─> FIRST REQUEST THAT NAMES A FILE:
+       │    │    ├─ initializeProjectContext() — discovery, config, compiler interrogation
+       │    │    └─ loadSnapshotFromStore() — load the .c-xref/db snapshot
+       │    ├─> scanProjectStructure() — CUs and includes, on the first request and after a config change
+       │    ├─> Pass 3: parse unparsed sibling CUs, not for -getproject
        │    ├─> Dispatch based on operation:
        │    │    ├─ Operations needing input file → processFile() → parse
        │    │    └─ Other operations (filter, pop, etc.)
@@ -181,9 +181,11 @@ The three mechanisms are complementary: the disk database provides historical kn
 
 Operations are classified by what they need:
 
-* **Needs reference database** (`needsReferenceDatabase`): navigation, refactoring support, unused symbol detection — these push a browsing session
-* **Requires input file processing** (`requiresProcessingInputFile`): completion, search, extraction, and all reference-database operations — these parse the request's input file
-* **Neither**: project management, filter changes, browsing stack manipulation — these operate on existing session state
+* **Opens a browsing session** (`opensBrowsingSession`): navigation, refactoring support, unused symbol detection — these push a browsing session
+* **Requires input file processing** (`requiresProcessingInputFile`): completion, search, extraction, and all operations that open a browsing session — these parse the request's input file
+* **Needs the whole project parsed** (`needsWholeProjectParsed`): search, unused globals, push by name — these ask to parse every unparsed compilation unit first
+* **Answered without references** (`answeredWithoutReferences`): `-getproject` — entry refresh skips Pass 3 for it
+* **None of these**: filter changes, browsing stack manipulation — these operate on existing session state
 
 ==== Interface
 
