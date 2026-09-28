@@ -165,6 +165,14 @@ features. Relative effort only — no dates (#noestimates).
     shows it, and its `expected` keeps both for now, so that test is only about the
     snapshot. Seen on WSL, 2026-09-27.
 
+    Also *without a repo home yet*: **a test that preloads a checked-in file without
+    touching it depends on checkout mtimes.** Since `bb5110e7` a parse records the file's
+    mtime, so a preload with the same mtime does not look changed. A fresh clone can give
+    both the same mtime, and `test_refresh_stale_references_after_refactoring` failed on
+    Travis that way. A real client's preload is always newer. The driver could refuse a
+    `-preload` file that is not newer than the file it replaces, so the tests that forget
+    the `touch` are found.
+
 ## 4. Performance, in strict dependency order
 
 Roadmap → Optimization. Baseline: cold-start PUSH on ffmpeg `af_afir.c` — scan 2.7s, two
