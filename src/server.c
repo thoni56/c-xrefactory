@@ -49,7 +49,7 @@ void markProjectContextInitialized(void) {
 }
 
 
-static bool needsReferenceDatabase(ServerOperation operation) {
+static bool opensBrowsingSession(ServerOperation operation) {
     return operation==OP_BROWSE_PUSH
         ||  operation==OP_BROWSE_PUSH_ONLY
         ||  operation==OP_BROWSE_PUSH_AND_CALL_MACRO
@@ -92,9 +92,8 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
            || operation==OP_INTERNAL_PARSE_TO_EXTRACT
            || operation==OP_SEARCH
            || operation==OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET
-           || operation==OP_INTERNAL_GET_FUNCTION_BOUNDS
            || operation==OP_GET_ENV_VALUE
-           || needsReferenceDatabase(operation)
+           || opensBrowsingSession(operation)
         ;
 }
 
@@ -231,7 +230,7 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
     }
     if (options.cursorOffset == 0) {
         // special case, push the file as include reference
-        if (needsReferenceDatabase(options.serverOperation)) {
+        if (opensBrowsingSession(options.serverOperation)) {
             Position position = makePosition(parsingConfig.fileNumber, 1, 0);
             parsingConfig.positionOfSelectedReference = position;
             addFileAsIncludeReference(parsingConfig.fileNumber);
@@ -265,7 +264,7 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         inputFileName = fileItem->name;
         assert(inputFileName!=NULL);
         singlePass(baseArgs, requestArgs);
-        if (options.serverOperation==OP_INTERNAL_PARSE_TO_EXTRACT || (completionStringServed && !needsReferenceDatabase(options.serverOperation)))
+        if (options.serverOperation==OP_INTERNAL_PARSE_TO_EXTRACT || (completionStringServed && !opensBrowsingSession(options.serverOperation)))
             break;
     }
     fileItem->isScheduled = false;
@@ -544,34 +543,6 @@ static bool fileNeedsParsing(FileItem *fileItem) {
         || !fileTimestampsEqual(editorFileModificationTime(fileItem->name), fileItem->lastParsedMtime);
 }
 
-static void parseDiscoveredCompilationUnits(ArgumentsVector baseArgs) {
-    /* Parse all discovered CUs to populate in-memory references.
-     * Skip the request file — it will be handled by the dispatch below
-     * (processFile for input-processing operations, or just unscheduled). */
-    int cuCount = 0;
-    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-        FileItem *fileItem = getFileItemWithFileNumber(i);
-        if (fileItem->isScheduled && isCompilationUnit(fileItem->name) && i != requestFileNumber
-            && fileNeedsParsing(fileItem))
-            cuCount++;
-    }
-
-    int parsed = 0;
-    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-        FileItem *fileItem = getFileItemWithFileNumber(i);
-        if (fileItem->isScheduled && isCompilationUnit(fileItem->name) && i != requestFileNumber) {
-            if (fileNeedsParsing(fileItem)) {
-                reparseStaleFile(i, baseArgs);
-                parsed++;
-                if (options.xref2)
-                    writeRelativeProgress((100 * parsed) / cuCount);
-            }
-            fileItem->isScheduled = false;
-        }
-    }
-    log_info("Startup: parsed %d compilation units", parsed);
-}
-
 static bool waitForUserConfirmation(char *message) {
     ppcWaitConfirmation(message);
     closeOutputFile();
@@ -630,6 +601,47 @@ static void scanProjectStructure() {
     freeStringList(discoveredCUs);
 }
 
+static void parseAllUnparsedCompilationUnits(ArgumentsVector baseArgs, int totalCUs, int staleCUs) {
+    char msg[TMP_STRING_SIZE];
+    const char *operationName = parseAllPromptFor(options.serverOperation);
+    sprintf(msg, "%d of %d compilation units need reparsing. Parse all before %s?", staleCUs, totalCUs,
+            operationName);
+    if (waitForUserConfirmation(msg)) {
+        int parsed = 0;
+        char progressFormat[128];
+        snprintf(progressFormat, sizeof(progressFormat), "Parsing %d compilation units... %%d remaining",
+                 staleCUs);
+        initProgress(progressFormat);
+        for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+            FileItem *fi = getFileItemWithFileNumber(i);
+            if (isCompilationUnit(fi->name) && fileTimestampIsZero(fi->lastParsedMtime)) {
+                reparseStaleFile(i, baseArgs);
+                fi->lastParsedMtime = editorFileModificationTime(fi->name);
+                parsed++;
+                writeProgressInformation(staleCUs - parsed);
+                /* Save snapshot periodically so progress survives Ctrl-g/crash */
+                if (parsed % 100 == 0)
+                    saveReferences();
+            }
+        }
+        log_info("Completeness parse: parsed %d CUs", parsed);
+    }
+}
+
+static void countUnparsedCompilationUnits(int *_totalCUs, int *_staleCUs) {
+    int totalCUs = *_totalCUs, staleCUs = *_staleCUs;
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+        FileItem *fi = getFileItemWithFileNumber(i);
+        if (isCompilationUnit(fi->name) && !fi->isDeleted) {
+            totalCUs++;
+            if (fileTimestampIsZero(fi->lastParsedMtime))
+                staleCUs++;
+        }
+    }
+    *_totalCUs = totalCUs;
+    *_staleCUs = staleCUs;
+}
+
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     static bool scanDone = false;
 
@@ -664,20 +676,10 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
         if (initialized) {
             loadSnapshotFromStore();
-
-            if (options.serverOperation == OP_GET_PROJECT
-                && (options.detectedProjectRoot == NULL || options.detectedProjectRoot[0] == '\0')) {
-                /* Legacy path: no detected project root, fall back to old flow */
-                if (options.inputFiles == NULL)
-                    addToStringListOption(&options.inputFiles, ".");
-                processFileArguments();
-                parseDiscoveredCompilationUnits(baseArgs);
-            }
-
             projectContextInitialized = true;
         } else {
             /* No project configuration found — c-xrefactory cannot operate.
-             * For OP_GET_PROJECT the discovery code (handlePathologicProjectCases)
+             * For OP_GET_PROJECT the discovery code (writeConfigFileMessage)
              * already reported the specifics to the client; other operations need
              * an explicit message. */
             if (options.serverOperation != OP_GET_PROJECT)
@@ -713,44 +715,14 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     /* Completeness for name-based operations: if stale CUs exist, ask user before proceeding */
     if (projectContextInitialized && needsWholeProjectParsed(options.serverOperation)) {
-        int totalCUs = 0, staleCUs = 0;
-        for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-            FileItem *fi = getFileItemWithFileNumber(i);
-            if (isCompilationUnit(fi->name) && !fi->isDeleted) {
-                totalCUs++;
-                if (fileTimestampIsZero(fi->lastParsedMtime))
-                    staleCUs++;
-            }
-        }
-        if (staleCUs > 0) {
-            char msg[TMP_STRING_SIZE];
-            const char *operationName = parseAllPromptFor(options.serverOperation);
-            sprintf(msg, "%d of %d compilation units need reparsing. Parse all before %s?",
-                    staleCUs, totalCUs, operationName);
-            if (waitForUserConfirmation(msg)) {
-                int parsed = 0;
-                char progressFormat[128];
-                snprintf(progressFormat, sizeof(progressFormat),
-                         "Parsing %d compilation units... %%d remaining", staleCUs);
-                initProgress(progressFormat);
-                for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-                    FileItem *fi = getFileItemWithFileNumber(i);
-                    if (isCompilationUnit(fi->name) && fileTimestampIsZero(fi->lastParsedMtime)) {
-                        reparseStaleFile(i, baseArgs);
-                        fi->lastParsedMtime = editorFileModificationTime(fi->name);
-                        parsed++;
-                        writeProgressInformation(staleCUs - parsed);
-                        /* Save snapshot periodically so progress survives Ctrl-g/crash */
-                        if (parsed % 100 == 0)
-                            saveReferences();
-                    }
-                }
-                log_info("Completeness parse: parsed %d CUs", parsed);
-            }
+        int totalCUs = 0, unparsedCUs = 0;
+        countUnparsedCompilationUnits(&totalCUs, &unparsedCUs);
+        if (unparsedCUs > 0) {
+            parseAllUnparsedCompilationUnits(baseArgs, totalCUs, unparsedCUs);
         }
     }
 
-    if (needsReferenceDatabase(options.serverOperation))
+    if (opensBrowsingSession(options.serverOperation))
         pushEmptySession(&browsingStack);
 
     if (requiresProcessingInputFile(options.serverOperation)) {
