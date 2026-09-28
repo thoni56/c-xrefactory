@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-09-27">
+<meta name="author" content="v{VERSION} - Generated 2026-09-28">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-09-27</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-09-28</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -606,8 +606,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_header_static_prototype_and_definition_are_two_symbols">17.4. Header static: prototype and definition are two symbols</a></li>
 <li><a href="#_push_by_name_finds_nothing_on_a_cold_start">17.5. Push by name finds nothing on a cold start</a></li>
 <li><a href="#_token_pasting_that_forms_numbers">17.6. Token pasting that forms numbers</a></li>
-<li><a href="#_a_compilation_unit_deleted_outside_the_editor_is_never_let_go">17.7. A compilation unit deleted outside the editor is never let go</a></li>
-<li><a href="#_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">17.8. A stale snapshot keeps symbols the parser no longer makes global</a></li>
+<li><a href="#_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">17.7. A stale snapshot keeps symbols the parser no longer makes global</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">18. Refactoring Recipes</a>
@@ -1835,6 +1834,12 @@ necessary.</p>
 <div class="sect3">
 <h4 id="_overview">8.2.1. Overview</h4>
 <div class="paragraph">
+<p>The three passes, by what they reparse: Pass 1 (stale edited CUs), Pass 2 (includers of
+stale edited headers) and Pass 3 (unparsed sibling CUs). <em>Stale</em> here means changed in the
+editor, i.e. sent by the client as a preload. A file changed behind the server&#8217;s back is
+not seen by Pass 1 or 2.</p>
+</div>
+<div class="paragraph">
 <p>The refresh covers two distinct concerns:</p>
 </div>
 <div class="ulist">
@@ -1863,16 +1868,16 @@ see Pass 2 for the rationale.</p>
 <pre class="highlightjs highlight"><code class="language-none hljs">callServer():
   │
   ├─ loadAllOpenedEditorBuffers()
-  ├─ closeEditorBuffersNoLongerPreloaded()   ← ghost buffer pruning
+  ├─ closeEditorBuffersNoLongerHeld()        ← ghost buffer pruning
   │
   ├─ IF projectContextInitialized:
   │   reparseStalePreloadedFiles(baseArgs)            ← buffer-driven
   │   │
-  │   ├─ Pass 1: reparse stale CUs
+  │   ├─ Pass 1: reparse stale edited CUs
   │   │   FOR each editor buffer WHERE fileNumberIsStale():
   │   │     IF isCompilationUnit: reparseStaleFile()
   │   │
-  │   └─ Pass 2: reparse includers of stale headers
+  │   └─ Pass 2: reparse includers of stale edited headers
   │       FOR each editor buffer WHERE fileNumberIsStale():
   │         IF NOT isCompilationUnit (i.e. header):
   │           collectIncludersOfStaleHeader() → list of CU file numbers
@@ -1942,7 +1947,7 @@ gap the next section addresses.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="entry-refresh-pass-1">8.2.3. Pass 1: Reparse Stale CUs</h4>
+<h4 id="entry-refresh-pass-1">8.2.3. Pass 1: Reparse Stale Edited CUs</h4>
 <div class="paragraph">
 <p>The simplest case: the user edited and saved a <code>.c</code> file, or the client sent a
 <code>-preload</code> with newer content. The CU itself is stale.</p>
@@ -1971,7 +1976,7 @@ include edges). This is essential for Pass 2.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="entry-refresh-pass-2">8.2.4. Pass 2: Reparse Includers of Stale Headers</h4>
+<h4 id="entry-refresh-pass-2">8.2.4. Pass 2: Reparse Includers of Stale Edited Headers</h4>
 <div class="paragraph">
 <p>If the user edited a header file, all CUs that include it (transitively) have stale
 references — even though those CUs themselves haven&#8217;t changed.</p>
@@ -6587,8 +6592,8 @@ See <a href="#unified-flow">Unified Server Flow (ADR 22)</a>.</p>
             │         SETS: scanDone = true
             │
             ├─&gt; Entry refresh (if projectContextInitialized):
-            │    ├─ Pass 1: reparse stale CUs directly
-            │    ├─ Pass 2: find CUs that include stale headers
+            │    ├─ Pass 1: reparse stale edited CUs directly
+            │    ├─ Pass 2: find CUs that include stale edited headers
             │    │           (via TypeCppInclude refs), reparse those
             │    └─ Pass 3: find unparsed CUs that share headers with
             │               the request file, parse those
@@ -6982,8 +6987,8 @@ describes the auto-detect path.</p>
   │        → scanDone = true
   │
   ├─ 3. Update what changed (same two-pass as ADR 20)
-  │     ├─ Pass 1: reparse stale CUs
-  │     └─ Pass 2: reparse CUs that include stale headers
+  │     ├─ Pass 1: reparse stale edited CUs
+  │     └─ Pass 2: reparse CUs that include stale edited headers
   │
   ├─ 4. Execute operation
   │
@@ -9927,27 +9932,7 @@ left for the fix to decide.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_a_compilation_unit_deleted_outside_the_editor_is_never_let_go">17.7. A compilation unit deleted outside the editor is never let go</h3>
-<div class="paragraph">
-<p><strong>Symptom:</strong> Delete a <code>.c</code> file from the terminal while the server runs. Every project-wide
-operation then asks "1 of 138 compilation units need reparsing", and answering yes gives
-"Can&#8217;t open file &#8230;&#8203; : No such file or directory". It asks again the next time. Seen
-2026-09-23 on the WSL machine (session <code>a3efe465</code>), after deleting <code>src/xref_tests.c</code>.</p>
-</div>
-<div class="paragraph">
-<p><strong>Suspected root cause:</strong> Only entry refresh Pass 1 notices a deleted compilation unit, and
-it looks only at files open in an editor buffer (<code>markFileAsDeleted</code> in <code>src/server.c</code>).
-The parse-all check in <code>callServer</code> counts every compilation unit in the file table whose
-<code>lastParsedMtime</code> is zero. For a missing file the reparse fails, and the mtime it then
-records is zero again, so the file is counted on every request. Not verified with a test.</p>
-</div>
-<div class="paragraph">
-<p>This is the deleted-file case of behind-the-back disk changes (see
-<a href="10-roadmap.html">Roadmap</a>, Behind-the-back disk-change detection).</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">17.8. A stale snapshot keeps symbols the parser no longer makes global</h3>
+<h3 id="_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">17.7. A stale snapshot keeps symbols the parser no longer makes global</h3>
 <div class="paragraph">
 <p><strong>Symptom:</strong> a fix that narrows a symbol&#8217;s visibility has no effect in a running editor
 session, and reparsing the whole project does not help. Seen 2026-09-24 on the Mac
@@ -10000,9 +9985,8 @@ reported over <code>src/</code>, no <code>$</code> among them.</p>
 since a server writes it on the way out. The Emacs client does both for its own server
 from Project → Remove References and Restart Server
 (<code>c-xref-project-remove-references-and-restart</code>); the next request starts a fresh one,
-which rebuilds from the sources. The same remedy is the only way out of the
-deleted-compilation-unit loop above, and it clears the shadow occurrences that
-behind-the-back disk changes leave behind. It is a stopgap for all three.</p>
+which rebuilds from the sources. It also clears the shadow occurrences that
+behind-the-back disk changes leave behind. It is a stopgap for both.</p>
 </div>
 </div>
 </div>
@@ -12046,7 +12030,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-27 21:49:22 UTC
+Last updated 2026-09-28 11:33:00 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
