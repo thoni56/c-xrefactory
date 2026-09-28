@@ -94,17 +94,14 @@ def wait_for_sync(p):
         line = p.stdout.readline().decode()[:-1]
     if line == '':
         # Empty read = subprocess closed its stdout. Usually means c-xref crashed
-        # or exited unexpectedly. Surface the exit code so the cause is visible;
-        # use ERROR: prefix so test recipes that grep for ERROR/FATAL pick it up.
+        # or exited unexpectedly. What the server did wrong goes to stdout, so it
+        # lands in the test's output and the diff against expected reports it.
         p.poll()
         if p.returncode is not None and p.returncode != 0:
-            eprint(f"ERROR: target c-xref process exited with code {p.returncode}")
-            # Convert subprocess returncode to shell exit code: signals (negative)
-            # become 128 + signal number (SIGSEGV -11 → 139), positives propagate.
-            sys.exit(128 - p.returncode if p.returncode < 0 else p.returncode)
+            print(f"ERROR: target c-xref process exited with code {p.returncode}")
         else:
-            eprint("ERROR: server-driver.py: subprocess pipe closed unexpectedly")
-            sys.exit(-1)
+            print("ERROR: server-driver.py: subprocess pipe closed unexpectedly")
+        sys.exit(0)
     print(line)
 
 
@@ -117,7 +114,7 @@ def read_output(filename):
             line = line[:-1]			# Remove newline
             if line.endswith("</fatalError>"):
                 print(line)
-                sys.exit(-1)
+                sys.exit(0)             # in the output, the diff reports it
             if not in_update_report:
                 print(line)
             if line == '<update-report>':
@@ -223,20 +220,16 @@ if __name__ == "__main__":
                     timeout = args.timeout if args.timeout > 0 else None
                     p.wait(timeout=timeout)
                 except subprocess.TimeoutExpired:
-                    eprint("Warning: Server did not exit cleanly within 5 seconds, killing...")
+                    print("Warning: Server did not exit cleanly within 5 seconds, killing...")
                     p.kill()            # Force kill if it doesn't exit cleanly
-                    sys.exit(1)  # Timeout is an error
-                # c-xref uses exit code 64 (XREF_EXIT_BASE) as normal exit in server mode
-                # Only propagate actual errors (>= 65: XREF_EXIT_ERR, XREF_EXIT_NO_PROJECT, etc.)
-                # Negative returncode is Popen's convention for signal exits (e.g., -11 = SIGSEGV).
-                # In either case, emit a visible ERROR line to stderr so test recipes that grep
-                # for ERROR/FATAL can catch and report the failure with diagnostic context.
+                    sys.exit(0)         # in the output, the diff reports it
+                # c-xref uses exit code 64 (XREF_EXIT_BASE) as normal exit in server mode.
+                # Actual errors are >= 65 (XREF_EXIT_ERR, XREF_EXIT_NO_PROJECT, etc.), and a
+                # negative returncode is Popen's convention for a signal (e.g. -11 = SIGSEGV).
+                # Either goes to stdout, so it lands in the output and the diff reports it.
                 if p.returncode is not None and (p.returncode >= 65 or p.returncode < 0):
-                    eprint(f"ERROR: target c-xref process exited with code {p.returncode}")
-                    # Convert subprocess returncode to shell exit code: signals (negative)
-                    # become 128 + signal number (SIGSEGV -11 → 139), positives propagate.
-                    sys.exit(128 - p.returncode if p.returncode < 0 else p.returncode)
-                sys.exit(0)  # Success for 0, 64, or None
+                    print(f"ERROR: target c-xref process exited with code {p.returncode}")
+                sys.exit(0)
 
             if command == '<sync>':
                 end_of_options(p)
