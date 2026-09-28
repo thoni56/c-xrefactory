@@ -23,6 +23,8 @@ features. Relative effort only — no dates (#noestimates).
    entry refresh is doing its job — and then the macro-body path parses it again to resolve
    the cursor, as `-push` always does with the request file. The open question is whether an
    operation's cursor parse should reuse a CU's references instead of re-parsing it.
+   Related: that parse was never recorded as a parse until `bb5110e7`, so the file counted
+   as unparsed afterwards.
 
 2. **A cold start interrogates the compiler twice** —
    `tests/test_cold_start_interrogates_compiler_once/.suspended`. Waits for item 3,
@@ -52,7 +54,11 @@ features. Relative effort only — no dates (#noestimates).
       roadmap says 1925), and the server tests that pass `-p` convert to
       `-getproject`;
    b. project setup moves into `-getproject` — discovery, config read, compiler
-      interrogation, snapshot load;
+      interrogation, snapshot load. And no parsing: today entry refresh (Pass 1-3) runs
+      for every request that names a file, so `-getproject` parses the request file's
+      sibling CUs, and `-get` parses the request file itself (`requiresProcessingInputFile`,
+      `src/server.c`). A test: `-getproject`, `<exit>`, and the snapshot has nothing from a
+      sibling;
    c. process start strips to parsing setup — done, `c9840fe7`;
    d. the assert that nothing before `-getproject` reads a project-scoped option — the
       tripwire, as the disk-read assert was for Memory as Truth.
