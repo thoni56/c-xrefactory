@@ -54,10 +54,8 @@ static unsigned menuFilterLevels[MAX_MENU_FILTER_LEVEL] = {
 
 #define RENAME_FILTER_LEVEL (FILE_MATCH_RELATED | NAME_MATCH_APPLICABLE)
 
-/* Single-project policy: server locks to first project discovered.
- * lockedProject / lockedProjectRoot now live in globals.c — also read
- * by startup.c initializeFileProcessing to skip re-discovery on
- * subsequent requests whose files live in different subtrees. */
+/* Single-project policy: the server locks to the first project discovered.
+ * lockedProject / lockedProjectRoot live in globals.c. */
 
 static bool fileIsUnderIncludePaths(char *fileName) {
     for (StringList *dir = options.includeDirs; dir != NULL; dir = dir->next) {
