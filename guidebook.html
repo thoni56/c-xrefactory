@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-09-28">
+<meta name="author" content="v{VERSION} - Generated 2026-09-29">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-09-28</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-09-29</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -3535,7 +3535,7 @@ known, and no step guesses at what a later one settles.</p>
 are read here. No project, no config, no project settings.</p>
 </li>
 <li>
-<p><strong><code>-getproject</code></strong> — discovery, the config, include paths, compiler interrogation, the
+<p><strong>The future <code>-openproject</code></strong> — discovery, the config, include paths, compiler interrogation, the
 snapshot load. No parsing.</p>
 </li>
 <li>
@@ -3546,7 +3546,7 @@ snapshot load. No parsing.</p>
 <div class="paragraph">
 <p>The ladder is still climbed out of order. Process start does no project work since
 <code>c9840fe7</code>, but project setup happens in the first request that names a file, whatever
-that request is, rather than in <code>-getproject</code>, and the config is read again for every
+that request is, rather than in the future <code>-openproject</code>, and the config is read again for every
 pass — see <a href="06-principles.html">Principles</a> (Initialization). The lifetime partition
 that fixes it is in <a href="17-major-codebase-improvements.html">Major Codebase Improvements</a>
 (Replace Global <code>options</code> with Typed Requests).</p>
@@ -3612,13 +3612,13 @@ with it the defines it leaked into the project the server was opened on (<code>c
  The server tests that still pass <code>-p</code> convert to <code>-getproject</code>.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Project setup moves into <code>-getproject</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project setup moves into the future <code>-openproject</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Discovery, the config read, compiler interrogation and the snapshot load all belong to
  step two. The first request that names a file does all of it today, whatever the
  request is.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Assert that nothing before <code>-getproject</code> reads a project-scoped option</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assert that nothing before the future <code>-openproject</code> reads a project-scoped option</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The ladder&#8217;s tripwire, the way the disk-read assert made Memory as Truth checkable
  instead of aspirational.</p></td>
 </tr>
@@ -3642,7 +3642,7 @@ row above that fixes it lands.</p>
 <ul>
 <li>
 <p><strong>The config is parsed again at least twice per request</strong>, by the per-pass mechanism. It
-belongs to <code>-getproject</code>, once. It is why a warning about the config cannot simply be
+belongs to the future <code>-openproject</code>, once. It is why a warning about the config cannot simply be
 given where the option is parsed.</p>
 </li>
 </ul>
@@ -12044,7 +12044,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-28 15:37:23 UTC
+Last updated 2026-09-29 21:16:25 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
