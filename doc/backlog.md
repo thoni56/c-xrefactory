@@ -57,9 +57,9 @@ features. Relative effort only — no dates (#noestimates).
       of one outside it. Today a `-getproject` from a modified buffer carries it as a
       preload (`c-xref-server-call-on-current-buffer-no-saves`, the "softsetup" hack in
       `editors/emacs/c-xref.el`), and Pass 1-2 reparse it;
-   b. project setup moves into `-getproject` — discovery, config read, compiler
+   b. project setup moves into the future `-openproject` — discovery, config read, compiler
       interrogation, snapshot load;
-   c. the assert that nothing before `-getproject` reads a project-scoped option — the
+   c. the assert that nothing before the future `-openproject` reads a project-scoped option — the
       tripwire, as the disk-read assert was for Memory as Truth.
 
 5. **Drop the `CXFI_REFNUM` record from the snapshot** — it is always written as 1. A safe
@@ -87,7 +87,7 @@ features. Relative effort only — no dates (#noestimates).
      (`-log=`, `-debug`, `-trace`, `-info`, `-errors`, `-warnings`, `-infos`, scanned in
      `main()` before the mode is even known); and `-statistics`.
    - Everything project-scoped — `-p`, `-I`, `-D`, `-optinclude` — belongs to
-     the config and binds at `-getproject`, not here.
+     the config and binds at the future `-openproject`, not here.
    - **`-exactpositionresolve` has no strategy.** It is real: it changes link names
      (`src/semact.c`) and goes into the snapshot's check number (`src/cxfile.c`). Since it
      changes what a symbol is, it is probably project-scoped, although `options.h` marks it
