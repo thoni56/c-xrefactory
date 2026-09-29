@@ -1801,28 +1801,13 @@ static void handleProject() {
             log_debug("inputFileName = %s", fileName);
 
             if (lockedProject != NULL) {
-                /* Server is locked - check if this file belongs to the locked project */
-                if (lockedProjectRoot != NULL) {
-                    /* Auto-detected project - file is in scope if under project root
-                     * or under a configured include path */
-                    if (strncmp(fileName, lockedProjectRoot, strlen(lockedProjectRoot)) == 0
-                        || fileIsUnderIncludePaths(fileName)) {
-                        ppcGenRecord(PPC_SET_INFO, lockedProject);
-                    } else {
-                        ppcGenRecord(PPC_PROJECT_MISMATCH, lockedProject);
-                    }
+                /* Server is locked - the file is in scope if it is under the project
+                 * root or under a configured include path */
+                if (strncmp(fileName, lockedProjectRoot, strlen(lockedProjectRoot)) == 0
+                    || fileIsUnderIncludePaths(fileName)) {
+                    ppcGenRecord(PPC_SET_INFO, lockedProject);
                 } else {
-                    /* Legacy project - search for project and compare names */
-                    char projectConfigFileName[MAX_FILE_NAME_SIZE];
-                    char projectConfigSectionName[MAX_FILE_NAME_SIZE];
-                    searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName,
-                                                                 projectConfigSectionName);
-                    if (projectConfigSectionName[0] != '\0'
-                        && strcmp(projectConfigSectionName, lockedProject) == 0) {
-                        ppcGenRecord(PPC_SET_INFO, lockedProject);
-                    } else {
-                        ppcGenRecord(PPC_PROJECT_MISMATCH, lockedProject);
-                    }
+                    ppcGenRecord(PPC_PROJECT_MISMATCH, lockedProject);
                 }
             } else {
                 /* Not locked yet - search for project and lock to it */
@@ -1838,17 +1823,12 @@ static void handleProject() {
                         ppcGenRecord(PPC_NO_PROJECT, fileName);
                     }
                 } else {
-                    /* Lock to this project */
+                    /* Lock to this project. Discovery cannot find a config without a
+                     * root, so the two are always locked together. */
                     lockedProject = strdup(projectOptionsSectionName);
-                    if (options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
-                        /* Auto-detected project - also lock to the root path */
-                        lockedProjectRoot = strdup(options.detectedProjectRoot);
-                        log_debug("Server locked to project: %s (root: %s)", lockedProject,
-                                  lockedProjectRoot);
-                    } else {
-                        /* Legacy project - lock by name only */
-                        log_debug("Server locked to project: %s (legacy, no root)", lockedProject);
-                    }
+                    lockedProjectRoot = strdup(options.detectedProjectRoot);
+                    log_debug("Server locked to project: %s (root: %s)", lockedProject,
+                              lockedProjectRoot);
                     reportIgnoredOptions();
                     ppcGenRecord(PPC_SET_INFO, projectOptionsSectionName);
                     /* Persist the lock across requests: sync into savedOptions so
