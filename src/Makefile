@@ -588,7 +588,9 @@ watch-for-unittests:
 .PHONY: unit-logged
 unit-logged: SHELL := /bin/bash
 unit-logged:
-	@set -o pipefail; $(MAKE) -j$(JOBS) unit 2>&1 | tee unittests.log
+	@date "+Started %F %T" > unittests.log; \
+	set -o pipefail; $(MAKE) -j$(JOBS) unit 2>&1 | tee -a unittests.log; \
+	status=$$?; date "+Finished %F %T" | tee -a unittests.log; exit $$status
 
 .PHONY: watch-for-unittests-silent
 watch-for-unittests-silent:
@@ -612,7 +614,8 @@ watch-for-systemtests:
 .PHONY: system-tests-logged
 system-tests-logged: SHELL := /bin/bash
 system-tests-logged:
-	@set -o pipefail; $(MAKE) -j$(JOBS) system-tests 2>&1 | tee systemtests.log; \
+	@date "+Started %F %T" > systemtests.log; \
+	set -o pipefail; $(MAKE) -j$(JOBS) system-tests 2>&1 | tee -a systemtests.log; \
 	status=$$?; date "+Finished %F %T" | tee -a systemtests.log; exit $$status
 
 .PHONY: watch-for-systemtests-silent
