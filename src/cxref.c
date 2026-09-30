@@ -1418,13 +1418,13 @@ bool showSelectionMenu(void) {
     // first if just zero or one symbol, no resolution
     BrowsingMenu *first = browsingStack.top->menu;
     if (first == NULL) {
-        //&fprintf(dumpOut,"no resolve, no symbol\n"); fflush(dumpOut);
+        log_trace("no resolve, no symbol");
         return false; // no symbol
     }
 
     BrowsingMenu *firstVisible = firstVisibleSymbol(first);
     if (firstVisible==NULL) {
-        //&fprintf(dumpOut,"no resolve, no visible\n"); fflush(dumpOut);
+        log_trace("no resolve, no visible");
         return false; // no visible
     }
     first = NULL;
