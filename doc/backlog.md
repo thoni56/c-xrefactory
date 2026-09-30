@@ -269,6 +269,37 @@ Pass 3 rounds 19s each, 42s total.
     a parser test also tests writing the snapshot and a clean exit. With the dump in an
     answer they compare output with expected like the others.
 
+## 6. Developer tooling
+
+28. **Two causes of watchers not firing on macOS, both found** — *no repo home yet.*
+    Kept because the symptoms are absence and noise, which is what gets
+    re-investigated from scratch. Diagnosed on the Mac, session `4e8903dc`,
+    2026-09-30.
+
+    a. **`fs watcher error`, once per scan, forever.** Emacs writes a `.#<name>`
+       lock symlink beside an unsaved buffer, and its target is
+       `user@host.pid:boot`, not a path. watchexec follows symlinks by default, so
+       the walk fails with `ENOENT` and reports the error every scan for as long as
+       the buffer is dirty. Deterministic: 8 errors in 8s, 0 with
+       `--no-follow-symlinks`, which is now passed (`src/Makefile`). `-i '.#*'` does
+       **not** help — ignore rules filter events, not the directory walk. This is
+       almost certainly also behind the cov-mode non-trigger reported years ago.
+
+    b. **Changes silently missed, no error.** `fseventsd` had been pinned at 96% CPU
+       and had leaked to 3.8 GB over 18 days, degrading notification machine-wide —
+       which is why it hit watchexec and Emacs alike, erratically, for years.
+       `sudo killall fseventsd` restores it (launchd respawns; no reboot). Before:
+       native fired 0 of 2. After: 5 of 5, and `--poll` 5 of 5, so the polling
+       workaround was dropped again. **If watchers go quiet, check `fseventsd`'s CPU
+       and RSS before anything else.** Spotlight is the likely driver — `mds_stores`
+       was at 202% while indexing a tree that rewrites hundreds of files per build.
+
+    Item (b) recurs unless the indexer stops seeing the build. `OBJDIR = .objects`
+    (`src/sources.mk:17`) and the 132 regenerated `*.gcov` sit in `src/`: 748 of its
+    1074 files are build output. A `.metadata_never_index` file excludes a directory
+    from Spotlight. Decide first where Emacs cov-mode expects `*.gcov` — it reads
+    them beside the sources, which is why they are there.
+
 ## Open questions that would reorder this
 
 * **Who establishes the project — the client, every request, or the request's own file?**
