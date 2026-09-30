@@ -43,7 +43,7 @@ extern int findMatchingBrowsingMenuItem(ReferenceableItem *p, SessionStackEntry 
 extern BrowsingMenu *createSelectionMenu(ReferenceableItem *dd);
 
 extern void createSelectionMenuForOperation(ServerOperation command);
-extern bool olcxShowSelectionMenu(void);
+extern bool showSelectionMenu(void);
 extern bool filterLevelAtLeast(unsigned level, unsigned atLeast);
 extern void getLineAndColumnCursorPositionFromCommandLineOptions( int *l, int *c );
 extern void olcxPushSpecialCheckMenuSym(char *name);

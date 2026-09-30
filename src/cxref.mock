@@ -87,7 +87,7 @@ bool filterLevelAtLeast(unsigned level, unsigned atLeast) {
     return (bool) mock(level, atLeast);
 }
 
-bool olcxShowSelectionMenu(void) {
+bool showSelectionMenu(void) {
     return (int) mock();
 }
 

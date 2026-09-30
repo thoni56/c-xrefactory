@@ -209,7 +209,7 @@ static void pushReferences(EditorMarker *point, char *pushOption, char *resolveM
         errorMessage(ERR_INTERNAL, "no symbol found for refactoring push");
     }
     createSelectionMenuForOperation(browsingStack.top->operation);
-    if (resolveMessage != NULL && olcxShowSelectionMenu()) {
+    if (resolveMessage != NULL && showSelectionMenu()) {
         displayResolutionDialog(resolveMessage, messageType);
     }
 }

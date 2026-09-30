@@ -1404,7 +1404,7 @@ static BrowsingMenu *firstVisibleSymbol(BrowsingMenu *menu) {
 }
 
 
-bool olcxShowSelectionMenu(void) {
+bool showSelectionMenu(void) {
     // decide whether to show manual resolution menu
     assert(browsingStack.top);
     if (options.serverOperation == OP_INTERNAL_PUSH_FOR_USAGE_CHECK) {
@@ -1615,7 +1615,7 @@ static void mainAnswerReferencePushingAction(ServerOperation operation) {
         dumpSelectionMenu(browsingStack.top->menu);
 
     if (options.manualResolve == RESOLVE_DIALOG_ALWAYS
-        || (olcxShowSelectionMenu()
+        || (showSelectionMenu()
             && options.manualResolve != RESOLVE_DIALOG_NEVER)) {
         ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
     } else {
