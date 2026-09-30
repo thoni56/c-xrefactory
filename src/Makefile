@@ -573,23 +573,13 @@ ifneq ($(shell command -v cloc 2> /dev/null),)
 endif
 
 #########################################################################
-# On Darwin the native backend misses changes in this tree. Measured with src/
-# quiescent, it fired 0 of 2 trigger touches where polling fired 2 of 2, neither
-# reporting an error. Why is not known - doc/backlog.md item 28 records what was
-# tried and disproved. This is a workaround, not a fix.
-ifeq ($(OS),Darwin)
-WATCH_POLL = --poll 1s
-else
-WATCH_POLL =
-endif
-
 .PHONY:watch
 watch:
-	watchexec $(WATCH_POLL) -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- execnotify -t Development make -j$(JOBS) devel
+	watchexec -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- execnotify -t Development make -j$(JOBS) devel
 
 .PHONY: watch-for-unittests
 watch-for-unittests:
-	watchexec $(WATCH_POLL) -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- execnotify -t Unittests make unit-logged
+	watchexec -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- execnotify -t Unittests make unit-logged
 
 
 # Same as unit, and keeps the output in unittests.log so the result of the last
@@ -604,19 +594,19 @@ unit-logged:
 
 .PHONY: watch-for-unittests-silent
 watch-for-unittests-silent:
-	watchexec $(WATCH_POLL) -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- make -j$(JOBS) unit
+	watchexec -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- make -j$(JOBS) unit
 
 .PHONY: watch-for-build-only
 watch-for-build-only:
-	watchexec $(WATCH_POLL) --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Build make -j$(JOBS) c-xref
+	watchexec --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Build make -j$(JOBS) c-xref
 
 .PHONY: watch-for-systemtests-only
 watch-for-systemtests-only:
-	watchexec $(WATCH_POLL) --no-vcs-ignore -f '*/.build.done' -- execnotify -t Systemtests make -j$(JOBS) system-tests-proper
+	watchexec --no-vcs-ignore -f '*/.build.done' -- execnotify -t Systemtests make -j$(JOBS) system-tests-proper
 
 .PHONY: watch-for-systemtests
 watch-for-systemtests:
-	watchexec $(WATCH_POLL) --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Systemtests make system-tests-logged
+	watchexec --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Systemtests make system-tests-logged
 
 # Same as system-tests, and keeps the output in systemtests.log so the result of
 # the last watcher run can be read by someone who was not watching the terminal.
@@ -630,7 +620,7 @@ system-tests-logged:
 
 .PHONY: watch-for-systemtests-silent
 watch-for-systemtests-silent:
-	watchexec $(WATCH_POLL) --no-vcs-ignore -f '*/.unittests.done' -- make -j$(JOBS) system-tests-proper
+	watchexec --no-vcs-ignore -f '*/.unittests.done' -- make -j$(JOBS) system-tests-proper
 
 .PHONY: system-tests-proper
 system-tests-proper:
