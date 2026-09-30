@@ -294,6 +294,12 @@ Pass 3 rounds 19s each, 42s total.
        and RSS before anything else.** Spotlight is the likely driver — `mds_stores`
        was at 202% while indexing a tree that rewrites hundreds of files per build.
 
+       **Sample it before killing it.** Why it wedged is unknown, because this session
+       restarted it first and the restart destroys the evidence. `sample fseventsd 10`
+       writes a stack profile that usually names the loop, and
+       `sudo fs_usage -w -f filesys $(pgrep -x fseventsd)` for a few seconds shows what
+       it is chewing on. Take both before `killall`, not after.
+
     Item (b) recurs unless the indexer stops seeing the build. `OBJDIR = .objects`
     (`src/sources.mk:17`) and the 132 regenerated `*.gcov` sit in `src/`: 748 of its
     1074 files are build output. A `.metadata_never_index` file excludes a directory
