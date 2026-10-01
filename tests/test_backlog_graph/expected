@@ -1,0 +1,12 @@
+flowchart BT
+  classDef ready fill:#9fd4a8,stroke:#4f9a5d,color:#13261a
+  classDef blocked fill:#f1c48b,stroke:#b9853f,color:#2b1d08
+  subgraph section_0["Verify first"]
+    first_item["1 · First item"]
+  end
+  subgraph section_1["The foundational one"]
+    second_item["2 · Second item"]
+  end
+  first_item --> second_item
+  class first_item ready
+  class second_item blocked

@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+#
+# Draw doc/backlog.md as an anatomy: a Mermaid flowchart read bottom-up, where an
+# item sits above what it waits for.
+#
+# An item is a numbered line with an anchor and a bold title,
+#     2. <a id="second-item"></a>**Second item** — ...
+# and what it waits for is a line of slugs below it,
+#        Waits for: first-item
+
+import re
+import sys
+
+SECTION = re.compile(r'^## (\d+)\. (.+)$')
+ITEM = re.compile(r'^(\d+)\. <a id="([^"]+)"></a>\*\*(.+?)\*\*')
+WAITS = re.compile(r'^\s*Waits for:\s*(.+)$')
+
+
+def node_id(slug):
+    return slug.replace('-', '_')
+
+
+def read_backlog(lines):
+    sections = []
+    items = {}
+    current = None
+    for line in lines:
+        m = SECTION.match(line)
+        if m:
+            sections.append({'id': f"section_{m.group(1)}", 'title': m.group(2), 'items': []})
+            continue
+        m = ITEM.match(line)
+        if m:
+            current = {'number': m.group(1), 'slug': m.group(2), 'title': m.group(3), 'waits': []}
+            items[current['slug']] = current
+            sections[-1]['items'].append(current)
+            continue
+        m = WAITS.match(line)
+        if m and current is not None:
+            current['waits'] += [s.strip() for s in m.group(1).split(',')]
+    return sections, items
+
+
+def draw(sections, items):
+    out = ["flowchart BT",
+           "  classDef ready fill:#9fd4a8,stroke:#4f9a5d,color:#13261a",
+           "  classDef blocked fill:#f1c48b,stroke:#b9853f,color:#2b1d08"]
+    for section in sections:
+        out.append(f'  subgraph {section["id"]}["{section["title"]}"]')
+        for item in section['items']:
+            out.append(f'    {node_id(item["slug"])}["{item["number"]} · {item["title"]}"]')
+        out.append("  end")
+    for item in items.values():
+        for waited in item['waits']:
+            out.append(f"  {node_id(waited)} --> {node_id(item['slug'])}")
+    for item in items.values():
+        state = 'blocked' if any(w in items for w in item['waits']) else 'ready'
+        out.append(f"  class {node_id(item['slug'])} {state}")
+    return out
+
+
+if __name__ == "__main__":
+    with open(sys.argv[1]) as f:
+        sections, items = read_backlog(f.read().split('\n'))
+    print('\n'.join(draw(sections, items)))
