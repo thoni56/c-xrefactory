@@ -319,6 +319,12 @@ Pass 3 rounds 19s each, 42s total.
     from Spotlight. Decide first where Emacs cov-mode expects `*.gcov` — it reads
     them beside the sources, which is why they are there.
 
+29. **Tests that copy a preload next to the file it replaces can be flaky** — the driver
+    refuses a preload that is not newer than its file, and two `cp`s in a row can get the
+    same mtime from the kernel's coarse clock. `test_preload_pruned_after_close` failed so
+    once. The fix is to make the replaced file older, `touch -t 200001010000 <file>`. About
+    ten test Makefiles create preloads with `cp`; check which do it next to the file.
+
 ## Open questions that would reorder this
 
 * **Who establishes the project — the client, every request, or the request's own file?**
