@@ -1817,9 +1817,7 @@ static void handleProject() {
                  */
                 applyConventionBasedDatabasePath();
                 if (projectConfigFileName[0] == 0 || projectOptionsSectionName[0] == 0) {
-                    if (!options.noErrors) {
-                        ppcGenRecord(PPC_NO_PROJECT, fileName);
-                    }
+                    ppcGenRecord(PPC_NO_PROJECT, fileName);
                 } else {
                     /* Lock to this project. Discovery cannot find a config without a
                      * root, so the two are always locked together. */
