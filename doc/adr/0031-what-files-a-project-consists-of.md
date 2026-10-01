@@ -87,6 +87,10 @@ _we propose to_
   drift again,
 - define **visible** as a file transitively included by an *own* file, according to the
   include graph the server already keeps, not every file under an `-I` directory,
+- let *own* and *visible* files both be **editable**. A file the project marks read-only
+  (Semantic Read-only Files in `doc/docs/11-planned-features.adoc`) is the explicit
+  exception, and a refactoring that would touch one is refused before any edit, rather
+  than failing when the file is saved,
 - let the **membership query look the file up by name and never register it** in the
   file table, as `-get` already does. A file the table does not know has no includer, so
   it is not visible, and nothing a query names ends up in the snapshot,
@@ -108,7 +112,8 @@ _we propose to_
   header is tolerated and ignored, so existing configs keep working. A second header
   ends what is read, as in practice it does today, and `-openproject` warns about it —
   ignoring it instead would merge the sections and silently change the project. The
-  path-prefix matching of later sections goes,
+  path-prefix matching of later sections goes, and so does `__BASE`, the variable that
+  held the section name. Nothing in the repository or in the configs in use refers to it,
 - let **`-openproject` accept a directory as well as a file**, with the same upward
   search from it (`searchUpwardForProjectLocalConfig()` already starts at a directory
   when given one). A directory holding the config opens that root; requiring the config
@@ -126,11 +131,14 @@ _disregarding the fact that_
   resolves only `#include "..."`. A header reached only through `<...>` and `-I` becomes
   visible once a CU including it has been parsed; opened before that, it is outside with
   no project found, which gives a message and no switch. Teaching the scan angle-bracket
-  includes would remove that,
+  includes would remove that, and is in the backlog already ("Extend the lightweight scan
+  to `<...>` includes"),
 - a `.c-xrefrc` that comes and goes changes the enclosing project's extent. The configs
   in this repository's test directories are generated when a test runs, so the
   repository's project would differ between clones that have run different tests. That
-  is uncommon, and an explicit `-prune` makes it stable,
+  is uncommon, and an explicit `-prune` makes it stable. A nested config is noticed when
+  the project is scanned, i.e. when it is opened and after a config change, so adding one
+  during a session prunes nothing until then,
 
 _because_
 - the root, the listed directories and `-prune` together describe almost any layout — a
