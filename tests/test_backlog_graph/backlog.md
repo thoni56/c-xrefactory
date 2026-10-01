@@ -3,6 +3,7 @@
 ## 0. Verify first
 
 1. <a id="first-item"></a>**First item** — something to check.
+   Waits for: groundwork
 
 ## 1. The foundational one
 
@@ -15,3 +16,9 @@
    a. <a id="rung-a"></a>**the first rung** — below.
    b. <a id="rung-b"></a>**the second rung** — above.
       Waits for: rung-a
+
+## Foundation
+
+What the open items rest on, so they can name it.
+
+- <a id="groundwork"></a>**The groundwork**

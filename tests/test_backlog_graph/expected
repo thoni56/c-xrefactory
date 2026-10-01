@@ -1,6 +1,7 @@
 flowchart BT
   classDef ready fill:#9fd4a8,stroke:#4f9a5d,color:#13261a
   classDef blocked fill:#f1c48b,stroke:#b9853f,color:#2b1d08
+  classDef done fill:#c9d3cb,stroke:#8a958c,color:#1f2421
   subgraph section_0["Verify first"]
     first_item["1 · First item"]
   end
@@ -13,9 +14,14 @@ flowchart BT
       rung_b["3b · the second rung"]
     end
   end
+  subgraph foundation["Foundation"]
+    groundwork["The groundwork"]
+  end
+  groundwork --> first_item
   first_item --> second_item
   rung_a --> rung_b
   class first_item ready
   class second_item blocked
   class rung_a ready
   class rung_b blocked
+  class groundwork done

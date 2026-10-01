@@ -15,6 +15,8 @@ SECTION = re.compile(r'^## (\d+)\. (.+)$')
 ITEM = re.compile(r'^(\d+)\. <a id="([^"]+)"></a>\*\*(.+?)\*\*')
 SUBITEM = re.compile(r'^\s+([a-z])\. <a id="([^"]+)"></a>\*\*(.+?)\*\*')
 WAITS = re.compile(r'^\s*Waits for:\s*(.+)$')
+FOUNDATION = re.compile(r'^## Foundation\s*$')
+DONE = re.compile(r'^- <a id="([^"]+)"></a>\*\*(.+?)\*\*')
 
 
 def node_id(slug):
@@ -24,11 +26,21 @@ def node_id(slug):
 def read_backlog(lines):
     sections = []
     items = {}
+    foundation = []
     current = None
+    in_foundation = False
     for line in lines:
         m = SECTION.match(line)
         if m:
             sections.append({'id': f"section_{m.group(1)}", 'title': m.group(2), 'items': []})
+            in_foundation = False
+            continue
+        if FOUNDATION.match(line):
+            in_foundation = True
+            continue
+        m = DONE.match(line)
+        if m and in_foundation:
+            foundation.append({'slug': m.group(1), 'title': m.group(2)})
             continue
         m = ITEM.match(line)
         if m:
@@ -48,13 +60,14 @@ def read_backlog(lines):
         m = WAITS.match(line)
         if m and current is not None:
             current['waits'] += [s.strip() for s in m.group(1).split(',')]
-    return sections, items
+    return sections, items, foundation
 
 
-def draw(sections, items):
+def draw(sections, items, foundation):
     out = ["flowchart BT",
            "  classDef ready fill:#9fd4a8,stroke:#4f9a5d,color:#13261a",
-           "  classDef blocked fill:#f1c48b,stroke:#b9853f,color:#2b1d08"]
+           "  classDef blocked fill:#f1c48b,stroke:#b9853f,color:#2b1d08",
+           "  classDef done fill:#c9d3cb,stroke:#8a958c,color:#1f2421"]
     for section in sections:
         out.append(f'  subgraph {section["id"]}["{section["title"]}"]')
         for item in section['items']:
@@ -68,6 +81,11 @@ def draw(sections, items):
             else:
                 out.append(f'    {label}')
         out.append("  end")
+    if foundation:
+        out.append('  subgraph foundation["Foundation"]')
+        for done in foundation:
+            out.append(f'    {node_id(done["slug"])}["{done["title"]}"]')
+        out.append("  end")
     work = [item for item in items.values() if not item['parts']]
     for item in work:
         for waited in item['waits']:
@@ -75,10 +93,12 @@ def draw(sections, items):
     for item in work:
         state = 'blocked' if any(w in items for w in item['waits']) else 'ready'
         out.append(f"  class {node_id(item['slug'])} {state}")
+    for done in foundation:
+        out.append(f"  class {node_id(done['slug'])} done")
     return out
 
 
 if __name__ == "__main__":
     with open(sys.argv[1]) as f:
-        sections, items = read_backlog(f.read().split('\n'))
-    print('\n'.join(draw(sections, items)))
+        sections, items, foundation = read_backlog(f.read().split('\n'))
+    print('\n'.join(draw(sections, items, foundation)))
