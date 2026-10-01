@@ -11,6 +11,7 @@ include ../Makefile.server
 $(TEST):
 	@-rm -rf .c-xref/db
 	@cp source.c.orig source.c
+	@touch -t 200001010000 source.c   # older than the preload whatever the clock says
 	@cp source.c.orig source.preload
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
