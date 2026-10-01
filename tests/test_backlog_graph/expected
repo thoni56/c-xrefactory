@@ -7,6 +7,15 @@ flowchart BT
   subgraph section_1["The foundational one"]
     second_item["2 · Second item"]
   end
+  subgraph section_2["A ladder"]
+    subgraph ladder["3 · The ladder"]
+      rung_a["3a · the first rung"]
+      rung_b["3b · the second rung"]
+    end
+  end
   first_item --> second_item
+  rung_a --> rung_b
   class first_item ready
   class second_item blocked
+  class rung_a ready
+  class rung_b blocked

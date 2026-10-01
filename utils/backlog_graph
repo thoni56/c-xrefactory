@@ -13,6 +13,7 @@ import sys
 
 SECTION = re.compile(r'^## (\d+)\. (.+)$')
 ITEM = re.compile(r'^(\d+)\. <a id="([^"]+)"></a>\*\*(.+?)\*\*')
+SUBITEM = re.compile(r'^\s+([a-z])\. <a id="([^"]+)"></a>\*\*(.+?)\*\*')
 WAITS = re.compile(r'^\s*Waits for:\s*(.+)$')
 
 
@@ -31,9 +32,18 @@ def read_backlog(lines):
             continue
         m = ITEM.match(line)
         if m:
-            current = {'number': m.group(1), 'slug': m.group(2), 'title': m.group(3), 'waits': []}
+            current = {'number': m.group(1), 'slug': m.group(2), 'title': m.group(3),
+                       'waits': [], 'parts': []}
+            parent = current
             items[current['slug']] = current
             sections[-1]['items'].append(current)
+            continue
+        m = SUBITEM.match(line)
+        if m:
+            current = {'number': parent['number'] + m.group(1), 'slug': m.group(2),
+                       'title': m.group(3), 'waits': [], 'parts': []}
+            items[current['slug']] = current
+            parent['parts'].append(current)
             continue
         m = WAITS.match(line)
         if m and current is not None:
@@ -48,12 +58,21 @@ def draw(sections, items):
     for section in sections:
         out.append(f'  subgraph {section["id"]}["{section["title"]}"]')
         for item in section['items']:
-            out.append(f'    {node_id(item["slug"])}["{item["number"]} · {item["title"]}"]')
+            label = f'{node_id(item["slug"])}["{item["number"]} · {item["title"]}"]'
+            if item['parts']:
+                # An item made of parts is a grouping, the parts are the work
+                out.append(f'    subgraph {label}')
+                for part in item['parts']:
+                    out.append(f'      {node_id(part["slug"])}["{part["number"]} · {part["title"]}"]')
+                out.append("    end")
+            else:
+                out.append(f'    {label}')
         out.append("  end")
-    for item in items.values():
+    work = [item for item in items.values() if not item['parts']]
+    for item in work:
         for waited in item['waits']:
             out.append(f"  {node_id(waited)} --> {node_id(item['slug'])}")
-    for item in items.values():
+    for item in work:
         state = 'blocked' if any(w in items for w in item['waits']) else 'ready'
         out.append(f"  class {node_id(item['slug'])} {state}")
     return out
