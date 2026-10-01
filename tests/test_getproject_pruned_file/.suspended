@@ -18,9 +18,8 @@ test_getproject_unknown_cu_under_include_path is suspended on.
 Likely fix: one definition of "own" - root plus listed directories, minus
 -prune - used by both the scan and the membership answer (ADR-0031, Proposed).
 
-Decide first: what "outside" should lead to for a pruned file. Expected here is
-project-mismatch, but the client answers that by offering to restart into the
-file's project, and -openproject from sub/pruned.c discovers the very same root
-and config. A pruned file with no .c-xrefrc of its own belongs to no project, so
-it may need an answer of its own ("not in any project") rather than the
-mismatch. Settle that in ADR-0031 before fixing, and adjust expected.
+Decided (ADR-0031): the file is outside, and the answer says no project was found
+for it. Discovery from sub/pruned.c finds the open project's own root, so a
+switch would restart into the same project; the client must not offer one.
+Expected here is today's project-mismatch, since the protocol has no form for
+"outside, no project found" yet. Change expected when that form exists.
