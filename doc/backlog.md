@@ -1,6 +1,6 @@
 # Backlog
 
-What to work on next, and in what order. As of 2026-09-24.
+What to work on next, and in what order. As of 2026-10-01.
 
 The *descriptions* live in the guidebook (`doc/docs/`), in the `.suspended` notes and in
 the ADRs. This file carries only the **order** and the **dependencies**, which are
@@ -51,8 +51,11 @@ features. Relative effort only — no dates (#noestimates).
       (`src/cxref.c:1805`) returns on its first line when `options.project` is set and
       never looks at the request's file
       (`c-xref-send-data-to-process-and-dispatch`, `editors/emacs/c-xref.el:1922` — the
-      roadmap says 1925), and the server tests that pass `-p` convert to
-      `-getproject`. Goes with ADR-0030's split: `-openproject` parses nothing, and the
+      roadmap says 1925). Since `4717f231` a tripwire in `answerEditorAction()` warns
+      (log and bottom-warning) whenever `-p` would change the answer; in the server tests
+      it fired only where `-p` stood in for `-getproject`, and those now send
+      `-getproject`. What it still has to show is the client in daily use, which needs
+      the tripwire on `stable` or Emacs pointed at the repo's build. Goes with ADR-0030's split: `-openproject` parses nothing, and the
       membership query may reparse a changed preload of a file in the project, but not
       of one outside it. Today a `-getproject` from a modified buffer carries it as a
       preload (`c-xref-server-call-on-current-buffer-no-saves`, the "softsetup" hack in
@@ -60,7 +63,17 @@ features. Relative effort only — no dates (#noestimates).
    b. project setup moves into the future `-openproject` — discovery, config read, compiler
       interrogation, snapshot load;
    c. the assert that nothing before the future `-openproject` reads a project-scoped option — the
-      tripwire, as the disk-read assert was for Memory as Truth.
+      tripwire, as the disk-read assert was for Memory as Truth;
+   d. what a project consists of — ADR-0031 (Proposed; accept first). One definition of
+      *own* for scan and membership, *visible* through the include graph, *outside* saying
+      whether a project was found, the root path as the id (`lockedProjectRoot` goes).
+      Pinned by three suspended tests: `test_server_refuse_project_switch`,
+      `test_getproject_listed_dir_outside_root`, `test_getproject_pruned_file`. The
+      membership query must stop registering its file first, which also unsuspends
+      `test_getproject_unknown_cu_under_include_path`. While there: a config listing `.`
+      walks the root twice, since `.` normalizes with a trailing slash and the skip in
+      `scanProjectStructure()` compares unnormalized strings; and the client's mismatch
+      switch kills the server without `-exit`, losing everything since the last snapshot.
 
 5. **Drop the `CXFI_REFNUM` record from the snapshot** — it is always written as 1. A safe
    format change: a snapshot of another format version is ignored like no snapshot and
