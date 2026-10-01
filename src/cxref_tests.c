@@ -76,3 +76,56 @@ Ensure(CxRef, will_return_no_active_project_if_no_optionfile_found) {
 
     answerEditorAction();
 }
+
+/* Tripwire: -p is suspected redundant, the client echoing back the lock. These
+ * pin the cases where ignoring -p would change the answer. */
+
+Ensure(CxRef, warns_when_request_names_a_project_but_none_is_locked) {
+    options.xref2 = true;
+    outputFile = stdout;
+    options.serverOperation = OP_GET_PROJECT;
+    options.project = "/some/project";
+    lockedProject = NULL;
+
+    expect(ppcGenRecord,
+           when(kind, is_equal_to(PPC_BOTTOM_WARNING)),
+           when(message, contains_string("/some/project")));
+    expect(ppcGenRecord, when(kind, is_equal_to(PPC_SET_INFO)));
+
+    answerEditorAction();
+
+    options.project = NULL;
+}
+
+Ensure(CxRef, warns_when_request_names_another_project_than_the_locked_one) {
+    options.xref2 = true;
+    outputFile = stdout;
+    options.serverOperation = OP_GET_PROJECT;
+    options.project = "/other/project";
+    lockedProject = "/some/project";
+
+    expect(ppcGenRecord,
+           when(kind, is_equal_to(PPC_BOTTOM_WARNING)),
+           when(message, contains_string("/other/project")));
+    expect(ppcGenRecord, when(kind, is_equal_to(PPC_SET_INFO)));
+
+    answerEditorAction();
+
+    options.project = NULL;
+    lockedProject = NULL;
+}
+
+Ensure(CxRef, does_not_warn_when_request_names_the_locked_project) {
+    options.xref2 = true;
+    outputFile = stdout;
+    options.serverOperation = OP_GET_PROJECT;
+    options.project = "/some/project";
+    lockedProject = "/some/project";
+
+    expect(ppcGenRecord, when(kind, is_equal_to(PPC_SET_INFO)));
+
+    answerEditorAction();
+
+    options.project = NULL;
+    lockedProject = NULL;
+}

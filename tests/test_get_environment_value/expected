@@ -1,5 +1,10 @@
 CXREF -xrefactory-II -crlfconversion -crconversion -server . -o server-buffer
--get env -p CURDIR
+-getproject CURDIR/test_source/single_int1.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-get env
 end-of-options
 
 <sync>

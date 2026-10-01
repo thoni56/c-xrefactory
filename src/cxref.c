@@ -1857,6 +1857,22 @@ void answerEditorAction(void) {
                     EXIT_FAILURE);
     }
 
+    /* Tripwire: -p is suspected to be only the client echoing back the lock.
+       Report every request where ignoring it would change the answer. */
+    if (options.project != NULL) {
+        char message[TMP_BUFF_SIZE];
+        message[0] = '\0';
+        if (lockedProject == NULL)
+            snprintf(message, sizeof(message), "-p %s used without a locked project", options.project);
+        else if (strcmp(options.project, lockedProject) != 0)
+            snprintf(message, sizeof(message), "-p %s differs from the locked project %s", options.project,
+                     lockedProject);
+        if (message[0] != '\0') {
+            log_warn("%s (operation %s)", message, operationNamesTable[options.serverOperation]);
+            ppcGenRecord(PPC_BOTTOM_WARNING, message);
+        }
+    }
+
     log_debug("Server operation = %s(%d)", operationNamesTable[options.serverOperation], options.serverOperation);
     switch (options.serverOperation) {
 

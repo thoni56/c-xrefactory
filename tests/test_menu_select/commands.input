@@ -1,6 +1,8 @@
 CXREF -xrefactory-II -server
--olcxcomplet -maxcompls=500 -olinelen=120 -olcursor=1362 completions.c -p CURDIR
+-getproject CURDIR/completions.c
 <sync>
--olcxcgoto1 -p CURDIR
+-olcxcomplet -maxcompls=500 -olinelen=120 -olcursor=1362 completions.c
+<sync>
+-olcxcgoto1
 <sync>
 <exit>
