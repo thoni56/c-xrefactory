@@ -133,6 +133,19 @@ Report and suggest — do not refactor as part of the change. The user often mak
 those changes themselves, with c-xrefactory. A smell pass that finds nothing is
 a fine outcome; say so in one line.
 
+## Trace the history before a decision
+
+When a question or a change touches existing behaviour, find out what that behaviour
+used to mean before discussing what it should mean: the ADRs, `doc/c-xrefrc.man` and the
+other user documentation, and the commit that introduced it (`git log -S`). State it
+alongside the analysis, and say where a later decision changed the meaning silently.
+
+This project removes and reshapes legacy behaviour constantly, so a new decision is
+often quietly overriding an old one. The root-path identity (ADR-0005, ADR-0029) once
+turned bare directory names in `.c-xrefrc` from "these are the project" into "also scan
+these", and no ADR recorded it. That surfaced only because the original meaning was
+traced back to the man page.
+
 ## On being redirected
 
 The user has standing authority to interrupt and abort, and exercising it is cheap for them only when you don't resist. If the user flags that you're heading the wrong way, stop immediately — do not defend the thread, do not "almost have it," do not finish the current edit. Treat early correction as the most valuable signal in the session, not as friction. Some sessions are a sunk cost; when the user calls that, accept it without negotiation.
