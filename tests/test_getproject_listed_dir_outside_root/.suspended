@@ -1,0 +1,24 @@
+Bug: a directory the config lists outside the root is scanned, but -getproject refuses its files
+
+project/.c-xrefrc lists ../lib. The scan finds lib/libfile.c - a trace from a
+clean state, with no snapshot in project/.c-xref, shows the walk of the root
+followed by the walk of lib/ during the first -getproject - yet -getproject for
+it answers project-mismatch, so the client offers to restart into a project the
+file does not have.
+
+When reading a trace for this, start from "make clean": a snapshot left by an
+earlier run is loaded at start, and its file list looks like a scan.
+
+Cause: scanning and membership use different definitions of the project.
+scanProjectStructure() (src/server.c) scans the root and then each directory in
+ProjectConfig.sourceDirs. handleProject() (src/cxref.c) accepts a file under the
+locked root or under an -I directory, and never looks at sourceDirs.
+
+Likely fix: one definition of "own" - root plus listed directories, minus
+-prune - used by both the scan and the membership answer. ADR-0031 (Proposed)
+writes that definition down; this defect exists regardless of it, since the
+scan already treats listed directories as part of the project.
+
+Decide first: nothing for this case. Note that -prune entries are resolved by
+plain concatenation onto the root (resolvePrunePaths(), src/options.c), so a
+prune inside a listed directory outside the root is not possible yet.

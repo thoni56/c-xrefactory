@@ -1,0 +1,24 @@
+Missing: a nested .c-xrefrc below the root is not a project of its own
+
+Locked on the test directory, -getproject for projectB/fileB1.c answers set-info
+for the locked project, although projectB/ has a .c-xrefrc of its own and
+discovery from that file would find projectB. Expected is project-mismatch, so
+the client offers to restart into projectB.
+
+Cause: membership in handleProject() (src/cxref.c) is a prefix test against the
+locked root, plus the -I directories. Nothing looks for configs below the root,
+and the scan (scanProjectStructure() in src/server.c) does not either, so
+projectB's files are also scanned into the enclosing project.
+
+Likely fix: ADR-0031 lets a nested .c-xrefrc below the root prune its subtree.
+Put that in the one definition of "own" that scanning and membership share,
+rather than in the membership test alone, or the two drift again. A directory
+listed explicitly in the config stays own even if it has a config of its own.
+
+Decide first: ADR-0031 is Proposed, and this test pins one of its rules. It is
+also the c-xrefactory case itself: locked on the repository, every
+tests/test_*/ has its own .c-xrefrc.
+
+The test used to be test_server_project_switch, which switched projects with -p
+between two sections of one config. That is the original, pre-ADR-0005 model;
+see ADR-0031 for the history.

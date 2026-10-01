@@ -1,0 +1,26 @@
+Bug: a file under a -prune'd directory is accepted as part of the project
+
+The config prunes sub/. The scan honours it - from a clean state sub/pruned.c is
+never scanned - but -getproject for sub/pruned.c answers set-info for the
+project. Expected is that the file is outside the project.
+
+Cause: scanning and membership use different definitions of the project.
+scanProjectStructure() (src/server.c) passes resolvePrunePaths() to the walk;
+handleProject() (src/cxref.c) only tests the root prefix and the -I directories
+and never looks at -prune.
+
+A consequence seen while writing this: -getproject registers its file in the
+file table, and the table is written to .c-xref/db. After one run the snapshot
+holds sub/pruned.c, and the next start loads it ("'.../sub/pruned.c' scanned:
+added" from cxfile.c) as if the project owned it. The same registration is what
+test_getproject_unknown_cu_under_include_path is suspended on.
+
+Likely fix: one definition of "own" - root plus listed directories, minus
+-prune - used by both the scan and the membership answer (ADR-0031, Proposed).
+
+Decide first: what "outside" should lead to for a pruned file. Expected here is
+project-mismatch, but the client answers that by offering to restart into the
+file's project, and -openproject from sub/pruned.c discovers the very same root
+and config. A pruned file with no .c-xrefrc of its own belongs to no project, so
+it may need an answer of its own ("not in any project") rather than the
+mismatch. Settle that in ADR-0031 before fixing, and adjust expected.

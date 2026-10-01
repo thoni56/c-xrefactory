@@ -1,7 +1,8 @@
 include ../Makefile.server
 
 $(TEST):
-	@# Test: server locks to first project and rejects files from other projects
+	@# Test: a directory the config lists outside the project root is scanned,
+	@# so its files belong to the project and -getproject accepts them
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
@@ -11,4 +12,4 @@ trace: $(TEST)
 
 clean: clean-project-snapshot
 clean-project-snapshot:
-	@-rm -rf project_a/.c-xref
+	@-rm -rf project/.c-xref

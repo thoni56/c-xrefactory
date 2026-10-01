@@ -1,8 +1,0 @@
-CXREF -xrefactory-II -server
--push -olcursor=5 CURDIR/projectA/fileA1.c -p projectA
-<sync>
--push -olcursor=5 CURDIR/projectB/fileB1.c -p projectB
-<sync>
--push -olcursor=5 CURDIR/projectB/fileB2.c -p projectB
-<sync>
-<exit>

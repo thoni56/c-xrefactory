@@ -1,0 +1,6 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/main.c
+<sync>
+-getproject CURDIR/sub/pruned.c
+<sync>
+<exit>
