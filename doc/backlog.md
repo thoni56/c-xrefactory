@@ -64,7 +64,7 @@ features. Relative effort only — no dates (#noestimates).
       interrogation, snapshot load;
    c. the assert that nothing before the future `-openproject` reads a project-scoped option — the
       tripwire, as the disk-read assert was for Memory as Truth;
-   d. what a project consists of — ADR-0031 (Proposed; accept first). One definition of
+   d. what a project consists of — ADR-0031 (accepted 2026-10-02). One definition of
       *own* for scan and membership, *visible* through the include graph, *outside* saying
       whether a project was found, the root path as the id (`lockedProjectRoot` goes).
       Pinned by three suspended tests: `test_server_refuse_project_switch`,
@@ -266,6 +266,16 @@ Pass 3 rounds 19s each, 42s total.
     for a machine-specific fragment. The other direction is a sibling file picked up
     automatically, where absent is normal by construction and nothing checked in refers
     to it. Either way, decide whether a fragment extends or replaces the project config.
+    A leading direction (Mac, session `36694da1`, 2026-10-02): **the config names, the
+    fragment binds.** The checked-in config says `-I ${FFMPEG}` or lists
+    `${FFMPEG}/libavcodec`; the fragment only does `-set FFMPEG /home/...`. Then it
+    neither extends nor replaces, and the `PROCESS_FILE_ARGUMENTS_NO` limit stops
+    mattering, since the fragment never contributes directories itself. Half of it works
+    today: `${NAME}` expands `-set` variables and then environment variables
+    (`expandEnvironmentVariables`, `src/options.c`), but a GUI Emacs often lacks the
+    shell's environment, and an unbound name is left as written and becomes a path that
+    does not exist, silently. ADR-0031 makes directories outside the root more common
+    and points here.
 26. **Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
     the macro expansion module, hashtab → hashlist, split the editor module, rename server
     operations, elisp recompiled and deleted on every build.
