@@ -18,6 +18,10 @@
    b. <a id="rung-b"></a>**the second rung** — above.
       Waits for: rung-a
 
+## 3. Odd titles
+
+4. <a id="odd-title"></a>**Take out "Remove" for `<...>` includes** — quotes and brackets.
+
 ## Foundation
 
 What the open items rest on, so they can name it.

@@ -24,6 +24,11 @@ def node_id(slug):
     return slug.replace('-', '_')
 
 
+def label(text):
+    # Quotes would end the label, and Mermaid reads <...> as HTML
+    return '"' + text.replace('"', '#quot;').replace('<', '#lt;').replace('>', '#gt;') + '"'
+
+
 def read_backlog(lines):
     sections = []
     items = {}
@@ -74,22 +79,22 @@ def draw(sections, items, foundation):
            "  classDef blocked fill:#f1c48b,stroke:#b9853f,color:#2b1d08",
            "  classDef done fill:#c9d3cb,stroke:#8a958c,color:#1f2421"]
     for section in sections:
-        out.append(f'  subgraph {section["id"]}["{section["title"]}"]')
+        out.append(f'  subgraph {section["id"]}[{label(section["title"])}]')
         for item in section['items']:
-            label = f'{node_id(item["slug"])}["{item["number"]} · {item["title"]}"]'
+            node = f'{node_id(item["slug"])}[{label(item["number"] + " · " + item["title"])}]'
             if item['parts']:
                 # An item made of parts is a grouping, the parts are the work
-                out.append(f'    subgraph {label}')
+                out.append(f'    subgraph {node}')
                 for part in item['parts']:
-                    out.append(f'      {node_id(part["slug"])}["{part["number"]} · {part["title"]}"]')
+                    out.append(f'      {node_id(part["slug"])}[{label(part["number"] + " · " + part["title"])}]')
                 out.append("    end")
             else:
-                out.append(f'    {label}')
+                out.append(f'    {node}')
         out.append("  end")
     if foundation:
         out.append('  subgraph foundation["Foundation"]')
         for done in foundation:
-            out.append(f'    {node_id(done["slug"])}["{done["title"]}"]')
+            out.append(f'    {node_id(done["slug"])}[{label(done["title"])}]')
         out.append("  end")
     work = [item for item in items.values() if not item['parts']]
     for item in work:

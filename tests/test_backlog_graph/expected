@@ -14,6 +14,9 @@ flowchart BT
       rung_b["3b · the second rung"]
     end
   end
+  subgraph section_3["Odd titles"]
+    odd_title["4 · Take out #quot;Remove#quot; for `#lt;...#gt;` includes"]
+  end
   subgraph foundation["Foundation"]
     groundwork["The groundwork"]
   end
@@ -25,4 +28,5 @@ flowchart BT
   class second_item blocked
   class rung_a ready
   class rung_b blocked
+  class odd_title ready
   class groundwork done
