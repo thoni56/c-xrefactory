@@ -10,9 +10,5 @@ flowchart BT
   classDef ready fill:#9fd4a8,stroke:#4f9a5d,color:#13261a
   classDef blocked fill:#f1c48b,stroke:#b9853f,color:#2b1d08
   classDef done fill:#c9d3cb,stroke:#8a958c,color:#1f2421
-  subgraph section_0["Only section"]
-    only_item["1 · Only item"]
-  end
-  class only_item ready
 ```
 <!-- graph end -->

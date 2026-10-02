@@ -387,8 +387,8 @@ Pass 3 rounds 19s each, 42s total.
     ten test Makefiles create preloads with `cp`; check which do it next to the file.
 30. <a id="backlog-graph-tidy"></a>**Tidy `utils/backlog_graph` after seeing the graph live** — the item is built
     in two almost identical places, which a `new_item()` would make one, and `draw()`
-    does four things in a row (header, clusters, edges, states) that read better as four
-    functions.
+    does four things in a row (which nodes, labels, edges, states) that read better as
+    four functions.
 
 ## Foundation
 
@@ -454,61 +454,29 @@ flowchart BT
   classDef ready fill:#9fd4a8,stroke:#4f9a5d,color:#13261a
   classDef blocked fill:#f1c48b,stroke:#b9853f,color:#2b1d08
   classDef done fill:#c9d3cb,stroke:#8a958c,color:#1f2421
-  subgraph section_0["Verify first — cheap, and might change the cost of the rest"]
-    cursor_parse_reuse["1 · An operation's cursor parse re-parses a CU that Pass 3 already parsed"]
-    compiler_asked_twice["2 · A cold start interrogates the compiler twice"]
-  end
-  subgraph section_1["The foundational one"]
-    partition_options["3 · Partition `options` by lifetime"]
-    subgraph setup_ladder["4 · The Setup Ladder, in this sequence"]
-      client_stops_p["4a · the client stops sending `-p` on every request"]
-      setup_into_openproject["4b · project setup moves into the future `-openproject`"]
-      openproject_tripwire["4c · the assert that nothing before the future `-openproject` reads a project-scoped option"]
-      project_extent["4d · what a project consists of"]
-    end
-    drop_cxfi_refnum["5 · Drop the `CXFI_REFNUM` record from the snapshot"]
-  end
-  subgraph section_2["After XrefMode"]
-    report_errors_flag["6 · Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`"]
-    startup_command_line["7 · Decide, and enforce, what the startup command line may carry"]
-    finish_after_xrefmode["8 · Finish after XrefMode"]
-    remove_bridge["9 · Remove the `parseBufferUsingServer` bridge"]
-  end
-  subgraph section_3["Correctness, by (quiet × cheap)"]
-    extract_statics_by_value["10 · Extract passes statics by value"]
-    token_pasting_trio["11 · Token pasting trio"]
-    header_static_link_names["12 · Header static: prototype and definition get different link names"]
-    correctness_by_cost["13 · Then, roughly by cost"]
-  end
-  subgraph section_4["Performance, in strict dependency order"]
-    header_filtered_siblings["14 · Header-filtered sibling parsing"]
-    scan_angle_includes["15 · Extend the lightweight scan to `#lt;...#gt;` includes"]
-    lexing_cache["16 · Lexing cache re-introduction"]
-    parallel_parsing["17 · Parallel parsing"]
-  end
-  subgraph section_5["Features, by readiness"]
-    remove_references_stopgap["18 · Take the client's #quot;Remove References and Restart Server#quot; back out"]
-    move_function_comment_prompt["19 · Move Function comment y/n prompt"]
-    index_based_sessions["20 · Index-based sessions"]
-    indexing_log_buffer["21 · Indexing Log Buffer"]
-    retry_creating_request["22 · Retry the request that created the project"]
-    lsp_tiers["23 · LSP tiers 1–2"]
-    move_function_next["24 · Move Function next steps"]
-    local_config_fragments["25 · Local config fragments — the need, not a solution"]
-    chapter_17_hygiene["26 · Chapter 17 hygiene, opportunistically"]
-    dump_reference_database["27 · Dump Reference Database"]
-  end
-  subgraph section_6["Developer tooling"]
-    macos_watchers["28 · Two causes of watchers not firing on macOS, both found"]
-    flaky_preload_tests["29 · Tests that copy a preload next to the file it replaces can be flaky"]
-    backlog_graph_tidy["30 · Tidy `utils/backlog_graph` after seeing the graph live"]
-  end
-  subgraph foundation["Foundation"]
-    entry_refresh["Entry refresh before every request (ADR-0020)"]
-    adr_0029["ADR-0029: the project's identity is its root path"]
-    adr_0030["ADR-0030: opening a project and asking about a file are separate"]
-    adr_0031["ADR-0031: what files a project consists of"]
-  end
+  partition_options["§1 · 3 · Partition `options` by lifetime"]
+  compiler_asked_twice["§0 · 2 · A cold start interrogates the compiler twice"]
+  adr_0029["ADR-0029: the project's identity is its root path"]
+  client_stops_p["§1 · 4a · the client stops sending `-p` on every request"]
+  adr_0030["ADR-0030: opening a project and asking about a file are separate"]
+  setup_into_openproject["§1 · 4b · project setup moves into the future `-openproject`"]
+  openproject_tripwire["§1 · 4c · the assert that nothing before the future `-openproject` reads a project-scoped option"]
+  adr_0031["ADR-0031: what files a project consists of"]
+  project_extent["§1 · 4d · what a project consists of"]
+  startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
+  header_static_link_names["§3 · 12 · Header static: prototype and definition get different link names"]
+  header_filtered_siblings["§4 · 14 · Header-filtered sibling parsing"]
+  scan_angle_includes["§4 · 15 · Extend the lightweight scan to `#lt;...#gt;` includes"]
+  lexing_cache["§4 · 16 · Lexing cache re-introduction"]
+  parallel_parsing["§4 · 17 · Parallel parsing"]
+  entry_refresh["Entry refresh before every request (ADR-0020)"]
+  index_based_sessions["§5 · 20 · Index-based sessions"]
+  report_errors_flag["§2 · 6 · Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`"]
+  indexing_log_buffer["§5 · 21 · Indexing Log Buffer"]
+  finish_after_xrefmode["§2 · 8 · Finish after XrefMode"]
+  correctness_by_cost["§3 · 13 · Then, roughly by cost"]
+  remove_references_stopgap["§5 · 18 · Take the client's #quot;Remove References and Restart Server#quot; back out"]
+  local_config_fragments["§5 · 25 · Local config fragments — the need, not a solution"]
   partition_options --> compiler_asked_twice
   adr_0029 --> client_stops_p
   adr_0030 --> client_stops_p
@@ -528,42 +496,28 @@ flowchart BT
   scan_angle_includes -.- project_extent
   remove_references_stopgap -.- index_based_sessions
   local_config_fragments -.- project_extent
-  class cursor_parse_reuse ready
-  class compiler_asked_twice blocked
   class partition_options ready
+  class compiler_asked_twice blocked
+  class adr_0029 done
   class client_stops_p ready
+  class adr_0030 done
   class setup_into_openproject blocked
   class openproject_tripwire blocked
+  class adr_0031 done
   class project_extent ready
-  class drop_cxfi_refnum ready
-  class report_errors_flag ready
   class startup_command_line ready
-  class finish_after_xrefmode ready
-  class remove_bridge ready
-  class extract_statics_by_value ready
-  class token_pasting_trio ready
   class header_static_link_names blocked
-  class correctness_by_cost ready
   class header_filtered_siblings ready
   class scan_angle_includes blocked
   class lexing_cache blocked
   class parallel_parsing blocked
-  class remove_references_stopgap ready
-  class move_function_comment_prompt ready
-  class index_based_sessions ready
-  class indexing_log_buffer blocked
-  class retry_creating_request ready
-  class lsp_tiers ready
-  class move_function_next ready
-  class local_config_fragments ready
-  class chapter_17_hygiene ready
-  class dump_reference_database ready
-  class macos_watchers ready
-  class flaky_preload_tests ready
-  class backlog_graph_tidy ready
   class entry_refresh done
-  class adr_0029 done
-  class adr_0030 done
-  class adr_0031 done
+  class index_based_sessions ready
+  class report_errors_flag ready
+  class indexing_log_buffer blocked
+  class finish_after_xrefmode ready
+  class correctness_by_cost ready
+  class remove_references_stopgap ready
+  class local_config_fragments ready
 ```
 <!-- graph end -->

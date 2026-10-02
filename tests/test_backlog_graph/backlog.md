@@ -21,6 +21,7 @@
 ## 3. Odd titles
 
 4. <a id="odd-title"></a>**Take out "Remove" for `<...>` includes** — quotes and brackets.
+   Goes with: first-item
 
 ## Foundation
 

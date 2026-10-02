@@ -38,7 +38,8 @@ def read_backlog(lines):
     for line in lines:
         m = SECTION.match(line)
         if m:
-            sections.append({'id': f"section_{m.group(1)}", 'title': m.group(2), 'items': []})
+            sections.append({'id': f"section_{m.group(1)}", 'number': m.group(1),
+                             'title': m.group(2), 'items': []})
             in_foundation = False
             continue
         if FOUNDATION.match(line):
@@ -51,7 +52,7 @@ def read_backlog(lines):
         m = ITEM.match(line)
         if m:
             current = {'number': m.group(1), 'slug': m.group(2), 'title': m.group(3),
-                       'waits': [], 'goes_with': [], 'parts': []}
+                       'section': sections[-1]['number'], 'waits': [], 'goes_with': [], 'parts': []}
             parent = current
             items[current['slug']] = current
             sections[-1]['items'].append(current)
@@ -59,7 +60,8 @@ def read_backlog(lines):
         m = SUBITEM.match(line)
         if m:
             current = {'number': parent['number'] + m.group(1), 'slug': m.group(2),
-                       'title': m.group(3), 'waits': [], 'goes_with': [], 'parts': []}
+                       'title': m.group(3), 'section': parent['section'],
+                       'waits': [], 'goes_with': [], 'parts': []}
             items[current['slug']] = current
             parent['parts'].append(current)
             continue
@@ -74,40 +76,43 @@ def read_backlog(lines):
 
 
 def draw(sections, items, foundation):
+    # A dependency graph and nothing else: only what takes part in an edge is drawn,
+    # and the section an item belongs to is a tag in its label, not a box
+    work = [item for item in items.values() if not item['parts']]
+    edges = []
+    involved = []
+    def involve(slug):
+        if slug not in involved:
+            involved.append(slug)
+    for item in work:
+        for waited in item['waits']:
+            edges.append(f"  {node_id(waited)} --> {node_id(item['slug'])}")
+            involve(waited)
+            involve(item['slug'])
+    for item in work:
+        for other in item['goes_with']:
+            edges.append(f"  {node_id(item['slug'])} -.- {node_id(other)}")
+            involve(item['slug'])
+            involve(other)
+    done_titles = {done['slug']: done['title'] for done in foundation}
     out = ["flowchart BT",
            "  classDef ready fill:#9fd4a8,stroke:#4f9a5d,color:#13261a",
            "  classDef blocked fill:#f1c48b,stroke:#b9853f,color:#2b1d08",
            "  classDef done fill:#c9d3cb,stroke:#8a958c,color:#1f2421"]
-    for section in sections:
-        out.append(f'  subgraph {section["id"]}[{label(section["title"])}]')
-        for item in section['items']:
-            node = f'{node_id(item["slug"])}[{label(item["number"] + " · " + item["title"])}]'
-            if item['parts']:
-                # An item made of parts is a grouping, the parts are the work
-                out.append(f'    subgraph {node}')
-                for part in item['parts']:
-                    out.append(f'      {node_id(part["slug"])}[{label(part["number"] + " · " + part["title"])}]')
-                out.append("    end")
-            else:
-                out.append(f'    {node}')
-        out.append("  end")
-    if foundation:
-        out.append('  subgraph foundation["Foundation"]')
-        for done in foundation:
-            out.append(f'    {node_id(done["slug"])}[{label(done["title"])}]')
-        out.append("  end")
-    work = [item for item in items.values() if not item['parts']]
-    for item in work:
-        for waited in item['waits']:
-            out.append(f"  {node_id(waited)} --> {node_id(item['slug'])}")
-    for item in work:
-        for other in item['goes_with']:
-            out.append(f"  {node_id(item['slug'])} -.- {node_id(other)}")
-    for item in work:
-        state = 'blocked' if any(w in items for w in item['waits']) else 'ready'
-        out.append(f"  class {node_id(item['slug'])} {state}")
-    for done in foundation:
-        out.append(f"  class {node_id(done['slug'])} done")
+    for slug in involved:
+        if slug in items:
+            item = items[slug]
+            text = f"§{item['section']} · {item['number']} · {item['title']}"
+        else:
+            text = done_titles.get(slug, slug)
+        out.append(f"  {node_id(slug)}[{label(text)}]")
+    out += edges
+    for slug in involved:
+        if slug in items:
+            state = 'blocked' if any(w in items for w in items[slug]['waits']) else 'ready'
+        else:
+            state = 'done'
+        out.append(f"  class {node_id(slug)} {state}")
     return out
 
 

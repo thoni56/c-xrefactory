@@ -2,31 +2,20 @@ flowchart BT
   classDef ready fill:#9fd4a8,stroke:#4f9a5d,color:#13261a
   classDef blocked fill:#f1c48b,stroke:#b9853f,color:#2b1d08
   classDef done fill:#c9d3cb,stroke:#8a958c,color:#1f2421
-  subgraph section_0["Verify first"]
-    first_item["1 · First item"]
-  end
-  subgraph section_1["The foundational one"]
-    second_item["2 · Second item"]
-  end
-  subgraph section_2["A ladder"]
-    subgraph ladder["3 · The ladder"]
-      rung_a["3a · the first rung"]
-      rung_b["3b · the second rung"]
-    end
-  end
-  subgraph section_3["Odd titles"]
-    odd_title["4 · Take out #quot;Remove#quot; for `#lt;...#gt;` includes"]
-  end
-  subgraph foundation["Foundation"]
-    groundwork["The groundwork"]
-  end
+  groundwork["The groundwork"]
+  first_item["§0 · 1 · First item"]
+  second_item["§1 · 2 · Second item"]
+  rung_a["§2 · 3a · the first rung"]
+  rung_b["§2 · 3b · the second rung"]
+  odd_title["§3 · 4 · Take out #quot;Remove#quot; for `#lt;...#gt;` includes"]
   groundwork --> first_item
   first_item --> second_item
   rung_a --> rung_b
   second_item -.- rung_b
+  odd_title -.- first_item
+  class groundwork done
   class first_item ready
   class second_item blocked
   class rung_a ready
   class rung_b blocked
   class odd_title ready
-  class groundwork done
