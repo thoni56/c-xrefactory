@@ -176,6 +176,20 @@ features. Relative effort only — no dates (#noestimates).
     shows it, and its `expected` keeps both for now, so that test is only about the
     snapshot. Seen on WSL, 2026-09-27.
 
+    **A Latin-1 character swallows the characters after it** —
+    `tests/test_latin1_character_does_not_swallow_what_follows/.suspended`. Quiet and
+    cheap, so first in this bucket: legacy C with Latin-1 comments loses a `*/` and the
+    rest of the file silently. Fixed by checking UTF-8 continuation bytes, not by
+    bringing `-encoding` back.
+
+    Also *without a repo home yet*: **the LSP server announces `positionEncoding:
+    "utf-8"` but counts code points** (`src/lsp_handler.c`). In LSP 3.17 "utf-8" means
+    columns in bytes, while the encoding collapse makes every server column a character
+    column, so on a line with non-ASCII the two disagree. The honest value is "utf-32";
+    the protocol also lets a server pick only an encoding the client offered, with
+    "utf-16" as the default, which agrees with code points outside the astral planes.
+    From reading the code (Mac, session `36694da1`, 2026-10-02), not tested.
+
 ## 4. Performance, in strict dependency order
 
 Roadmap → Optimization. Baseline: cold-start PUSH on ffmpeg `af_afir.c` — scan 2.7s, two
