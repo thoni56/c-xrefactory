@@ -1884,7 +1884,6 @@ protected bool projectCoveringFileInConfigFile(char *fileName, FILE *configFile,
  */
 void applyConventionBasedDatabasePath(void) {
     if (autoDetectedProjectRoot[0] == '\0') {
-        /* Not in auto-detect mode */
         return;
     }
 

@@ -409,13 +409,11 @@ Ensure(Options, finds_no_config_for_a_file_without_a_project_local_config) {
     assert_that(sectionName, is_equal_to_string(""));
 }
 
-Ensure(Options, sets_convention_based_database_path_when_autodetecting) {
+Ensure(Options, sets_convention_based_database_path) {
     char configFilename[1000];
     char sectionName[1000];
     FILE file;
 
-    // AUTO-DETECT mode should set cxFileLocation to <projectRoot>/.c-xref/db
-    // after applyConventionBasedDatabasePath() is called
     always_expect(getEnv, will_return("HOME"));
     expect(isDirectory, will_return(false));
     expect(directoryName_static, will_return("/home/user/myproject"));
@@ -432,10 +430,6 @@ Ensure(Options, sets_convention_based_database_path_when_autodetecting) {
     searchForProjectConfigFileAndProjectForFile("/home/user/myproject/source.c",
                                                configFilename, sectionName);
 
-    /* Simulate that initStandardCxrefFileName set the default path */
-    options.cxFileLocation = "CXrefs";
-
-    /* Now apply the convention-based path */
     applyConventionBasedDatabasePath();
 
     assert_that(options.detectedProjectRoot, is_equal_to_string("/home/user/myproject"));
