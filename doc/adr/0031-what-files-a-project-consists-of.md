@@ -4,7 +4,12 @@ Date: 2026-09-30
 
 ## Status
 
-Proposed
+Accepted (2026-10-02)
+
+Settles the open outcome of [ADR-0005](0005-automatically-find-config-files.md)
+Builds on [ADR-0028](0028-remove-snapshot-location-and-partition-options.md)
+Corrects and builds on [ADR-0029](0029-project-identity-is-the-root-path.md)
+Defines own, visible and outside for [ADR-0030](0030-opening-a-project-and-asking-about-a-file-are-separate.md)
 
 ## Deciders
 
@@ -24,12 +29,14 @@ _In the context of_
   directory is, or what it did before,
 
 _facing the fact that_
-- **the meaning of a bare directory name in `.c-xrefrc` changed, and nothing recorded
-  it.** In the original model (`doc/c-xrefrc.man`) one config held several sections, `-p`
-  chose one, and the section's directory names were the *complete* set of input files —
-  "`c-xref -p solver` will make c-xref read (recursively) all source files from
-  `/home/marian/solver` and `/home/marian/commons`". A listed directory did not have to
-  be under anything. The directory names *were* the project,
+- **the meaning of a bare directory name in `.c-xrefrc` changed, and
+  nothing recorded it.** In the original model (`doc/c-xrefrc.man`)
+  one config held several sections, `-p` chose one, and the section's
+  directory names were the *complete* set of input files — "`c-xref -p
+  solver` will make c-xref read (recursively) all source files from
+  `/home/marian/solver` and `/home/marian/commons`" given that those
+  two directories were listed. A listed directory did not have to be
+  under anything. The directory names *were* the project,
 - ADR-0005 (2022) replaced that with "the location of the `.c-xrefrc` implicitly
   indicates the directory tree that will be analyzed", with `-prune` for subtrees. It
   left its own outcome "Yet to be decided" and never mentioned directory names.
@@ -80,7 +87,8 @@ _we propose to_
 - let **`-prune` follow the config's general path rule**: each entry is normalized
   against the config's directory, as the listed directories already are. That keeps
   root-relative entries as they are, lets `../lib/tests` prune inside a listed
-  directory outside the root, brings absolute paths back, and makes the comparison with
+  directory outside the root, brings absolute paths back (for a machine-local fragment,
+  not the checked-in config, see below), and makes the comparison with
   the walker's paths reliable because both sides are normalized. Name matching stays
   dropped, as documented, and so do `:` lists — one `-prune` per entry,
 - make scanning and the *own* answer **one definition**, in one place, so the two cannot
@@ -139,6 +147,15 @@ _disregarding the fact that_
   is uncommon, and an explicit `-prune` makes it stable. A nested config is noticed when
   the project is scanned, i.e. when it is opened and after a config change, so adding one
   during a session prunes nothing until then,
+- a directory outside the root, or an `-I` into a local toolchain, often lives in a
+  different place on each machine, while the config travels with the project and must
+  not contain absolute paths (`doc/docs/11-planned-features.adoc`, ADR-0029). This
+  decision makes such directories more common without saying where their locations
+  go. That needs a machine-local fragment, `doc/backlog.md`'s "Local config fragments",
+  which this decision does not settle. `${NAME}` in the config already expands `-set`
+  variables and then environment variables, so a fragment that only binds names the
+  checked-in config uses is one direction. A name that is not bound is left as written
+  today and becomes a path that does not exist; `-openproject` should report it,
 
 _because_
 - the root, the listed directories and `-prune` together describe almost any layout — a
