@@ -152,9 +152,11 @@ def mermaid_live_link(graph):
 def with_graph(text):
     text = without_graph(text)
     graph = graph_of(text)
+    # Only the link: GitHub's own Mermaid lays the graph out in a way that can mislead
     return (text.rstrip('\n') + '\n\n' + GRAPH_START + '\n'
-            + f'[Open the graph in a window of its own]({mermaid_live_link(graph)})\n\n'
-            + '```mermaid\n' + graph + '\n```\n' + GRAPH_END + '\n')
+            + f'[Open the dependency graph]({mermaid_live_link(graph)}), drawn from the '
+            + '`Waits for:` and `Goes with:` lines above.\n'
+            + 'It opens in a window of its own, at mermaid.live.\n' + GRAPH_END + '\n')
 
 
 def problems_in(path, text):

@@ -2,9 +2,9 @@ include ../Makefile.cli
 
 # Scenario: the graph is kept inside the backlog
 #
-# Given a backlog without a graph
+# Given a backlog without a link to its graph
 # When --update runs, and then runs again
-# Then the graph is added once at the end, between its markers, as a mermaid block
+# Then a sentence with the link is added once at the end, between its markers
 # And the second run replaces it instead of adding another
 
 $(TEST):

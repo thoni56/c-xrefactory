@@ -17,8 +17,8 @@ features. Relative effort only — no dates (#noestimates).
 
 Each item has a name, the `<a id>` before its title. A `Waits for:` line names what it
 waits for, and `Goes with:` what it belongs with. `utils/backlog_graph --update
-doc/backlog.md` draws the graph at the end of this file, and `--check`, run with the
-tests, fails if a name is unknown or the graph is out of date.
+doc/backlog.md` puts a link to the dependency graph at the end of this file, and
+`--check`, run with the tests, fails if a name is unknown or the link is out of date.
 
 ## 0. Verify first — cheap, and might change the cost of the rest
 
@@ -449,78 +449,6 @@ was done.
   no `Makefile` reads as a failure.
 
 <!-- graph start -->
-[Open the graph in a window of its own](https://mermaid.live/view#pako:eNp9V21v2zYQ_is358M2wMos20lsFxvQIh1WIAOGtB8GLINMkaeXRRZVkmoiFP3vO9KSbFlUv9iU9NwL7-65I7_OuBQ428EsKeQLz5gy8O7TUwnAC6b1PSagkIkGkrwodlfbRKzZZq6Nks-4u1onW3Yj5lwWUu2uwtXyNmQD2biQ_BlFK52EfL2Je-l4u7lZJZ30Mg7FYjOQFrLEVpRvxYqfRDdse7PhveFkuV6GVrQi_3OTyzKSlf3T_zzNnurFgt2FYP_jO1h1i786LOxb8B7iBoo8QZMf8Gn2r3NGHqq8QBUxTRuJzEvOsVe66HQtu8VbEigEaGMDmZcGlZIpM6jBZNgrA6emtcCEihaL5Za0vr1_DOxy59CVkv8hNz9qyAWW5GsDOa2NBiWlob2arHOyyAkQaSMrHVXjPa9Zt3JeODQ4NGgsRV6msA-qPVAs8AuqhnL-uUZtBh6uFr2Hq8UOZIWlFWSdn8BKARQl9zKWNb2wyUNgCskMpYbi0GrUaOoqovjIyOppNXgcj7tVZ8RJwkF-oZBaebejpDY1GdkHZ8r2ramzV5FRefWSK_QY4ucRovpDyp_JmIFSmsxuKcZEko1Jc44n-hSOQHP6LOBYW8NIhqdIhjt4sWZspM6kqVRKnWvKtUxa2W4T-GoofZ4tiG7lFH5PlStPSgDV44GyFhV5eYpJX8t33eIeOVXg3CUYSwoDpwdnxEajVQatMrDK4MAa4EypprWYUXCIRIQ1Obf2nqOSHfDEz56WYW__DycDR5md3Y6RpqnQ-SEwycsjfVM0IPIkQWXL2uoGp3tomgJMbCQK6zwmTHoyve5Nr4emg04GWhnbXzT9d2HkrIxYmRZIpcyLWqBP6U23em8TJ1zMijzNzAvaX6cFqJD3V4V5c319fZWaN3voFLamCnwluxFnPEOPjdtu9eBw4HBUkQFRRElR87MatEQsCiyidjMedXdnPdJhLzZOcVZNpDBRqDOSf2-foX3umDLoJPBT29sWP7c68lLgaxQzbVOCWg-6dR-zZd9iP1h84PDQ4VtVCiupiBjUa5WOkoKl42LuI_SIwTM2Lgvhtm_91wcag_DDr_ARFfn9Jz3tIa2ZErbNwF4r_kvTUBau-f58AzYphUyjuLb15_E_HPhvc_MgU3jn4K0iW8g6i1hCtRa9UhStL-MdbLrF7w4PDg9_E956248rpYjzJQUoihsiuDYeivWrTxmWcxondZoVjZ1-VqCPqu2yNsuWWBy1my8pq8a7DHvfPrFnPBsyNLuuPtfSvHl0yij4nTJH4kc8Dspj0I9IiBl_BhofXeVLzgraSJnkaZQolh5Ir69S-tWDlYCjBPQS9HW5IIZb50pEMbednbqklkU9ZMfwBAFB8Jv3FHA-u4-gwRQ-H5wTn_22_LNxemo6Id-UOx84DjScIFODwEGn-vX3GurR-3FPnGiVDn7e1y773NHni241aj8O5Wsm_s5wgg-pOz5GQXAdeAM0AR1H10tsh51yYMzeCdXeeHqRkzQ-OeIJnJ91EyZseXw01B1peM_D1Txcz8ObeXg7D-_m1BpOh_bblVi2Z_jgJRcm2y2r1-6FYJquH4o1u1tY9_cAD0ncheQE8HGzu3icUD1T7aXiTHiYxwvVPX-HQhM8HNn0kXLKM6Lo0MgwzJeeeYl7gZni8NiFSUZfWvVU3UjZgMKjr5d8HiOG7B4GxVeul056OH-B8LBv7IafvKPaGxN25M4U_y6AE5RzqNkcZgdUB5YLe1f_-jSjMWbvqDt4mtFRmNUFzctvFsZqIz82JadPRtV0UJ_VlaCb133OUsUO7etv_wMaMpwF)
-
-```mermaid
-flowchart BT
-  classDef ready fill:#9fd4a8,stroke:#4f9a5d,color:#13261a
-  classDef blocked fill:#f1c48b,stroke:#b9853f,color:#2b1d08
-  classDef done fill:#c9d3cb,stroke:#8a958c,color:#1f2421
-  partition_options["§1 · 3 · Partition `options` by lifetime"]
-  compiler_asked_twice["§0 · 2 · A cold start interrogates the compiler twice"]
-  adr_0029["ADR-0029: the project's identity is its root path"]
-  client_stops_p["§1 · 4a · the client stops sending `-p` on every request"]
-  adr_0030["ADR-0030: opening a project and asking about a file are separate"]
-  setup_into_openproject["§1 · 4b · project setup moves into the future `-openproject`"]
-  openproject_tripwire["§1 · 4c · the assert that nothing before the future `-openproject` reads a project-scoped option"]
-  adr_0031["ADR-0031: what files a project consists of"]
-  project_extent["§1 · 4d · what a project consists of"]
-  startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
-  header_static_link_names["§3 · 12 · Header static: prototype and definition get different link names"]
-  header_filtered_siblings["§4 · 14 · Header-filtered sibling parsing"]
-  scan_angle_includes["§4 · 15 · Extend the lightweight scan to `#lt;...#gt;` includes"]
-  lexing_cache["§4 · 16 · Lexing cache re-introduction"]
-  parallel_parsing["§4 · 17 · Parallel parsing"]
-  entry_refresh["Entry refresh before every request (ADR-0020)"]
-  index_based_sessions["§5 · 20 · Index-based sessions"]
-  report_errors_flag["§2 · 6 · Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`"]
-  indexing_log_buffer["§5 · 21 · Indexing Log Buffer"]
-  finish_after_xrefmode["§2 · 8 · Finish after XrefMode"]
-  correctness_by_cost["§3 · 13 · Then, roughly by cost"]
-  remove_references_stopgap["§5 · 18 · Take the client's #quot;Remove References and Restart Server#quot; back out"]
-  local_config_fragments["§5 · 25 · Local config fragments — the need, not a solution"]
-  partition_options --> compiler_asked_twice
-  adr_0029 --> client_stops_p
-  adr_0030 --> client_stops_p
-  partition_options --> setup_into_openproject
-  setup_into_openproject --> openproject_tripwire
-  adr_0031 --> project_extent
-  startup_command_line --> header_static_link_names
-  header_filtered_siblings --> scan_angle_includes
-  scan_angle_includes --> lexing_cache
-  lexing_cache --> parallel_parsing
-  entry_refresh --> index_based_sessions
-  report_errors_flag --> indexing_log_buffer
-  client_stops_p -.- startup_command_line
-  client_stops_p -.- project_extent
-  finish_after_xrefmode -.- indexing_log_buffer
-  correctness_by_cost -.- project_extent
-  scan_angle_includes -.- project_extent
-  remove_references_stopgap -.- index_based_sessions
-  local_config_fragments -.- project_extent
-  linkStyle 12,13,14,15,16,17,18 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
-  class partition_options ready
-  class compiler_asked_twice blocked
-  class adr_0029 done
-  class client_stops_p ready
-  class adr_0030 done
-  class setup_into_openproject blocked
-  class openproject_tripwire blocked
-  class adr_0031 done
-  class project_extent ready
-  class startup_command_line ready
-  class header_static_link_names blocked
-  class header_filtered_siblings ready
-  class scan_angle_includes blocked
-  class lexing_cache blocked
-  class parallel_parsing blocked
-  class entry_refresh done
-  class index_based_sessions ready
-  class report_errors_flag ready
-  class indexing_log_buffer blocked
-  class finish_after_xrefmode ready
-  class correctness_by_cost ready
-  class remove_references_stopgap ready
-  class local_config_fragments ready
-```
+[Open the dependency graph](https://mermaid.live/view#pako:eNp9V21v2zYQ_is358M2wMos20lsFxvQIh1WIAOGtB8GLINMkaeXRRZVkmoiFP3vO9KSbFlUv9iU9NwL7-65I7_OuBQ428EsKeQLz5gy8O7TUwnAC6b1PSagkIkGkrwodlfbRKzZZq6Nks-4u1onW3Yj5lwWUu2uwtXyNmQD2biQ_BlFK52EfL2Je-l4u7lZJZ30Mg7FYjOQFrLEVpRvxYqfRDdse7PhveFkuV6GVrQi_3OTyzKSlf3T_zzNnurFgt2FYP_jO1h1i786LOxb8B7iBoo8QZMf8Gn2r3NGHqq8QBUxTRuJzEvOsVe66HQtu8VbEigEaGMDmZcGlZIpM6jBZNgrA6emtcCEihaL5Za0vr1_DOxy59CVkv8hNz9qyAWW5GsDOa2NBiWlob2arHOyyAkQaSMrHVXjPa9Zt3JeODQ4NGgsRV6msA-qPVAs8AuqhnL-uUZtBh6uFr2Hq8UOZIWlFWSdn8BKARQl9zKWNb2wyUNgCskMpYbi0GrUaOoqovjIyOppNXgcj7tVZ8RJwkF-oZBaebejpDY1GdkHZ8r2ramzV5FRefWSK_QY4ucRovpDyp_JmIFSmsxuKcZEko1Jc44n-hSOQHP6LOBYW8NIhqdIhjt4sWZspM6kqVRKnWvKtUxa2W4T-GoofZ4tiG7lFH5PlStPSgDV44GyFhV5eYpJX8t33eIeOVXg3CUYSwoDpwdnxEajVQatMrDK4MAa4EypprWYUXCIRIQ1Obf2nqOSHfDEz56WYW__DycDR5md3Y6RpqnQ-SEwycsjfVM0IPIkQWXL2uoGp3tomgJMbCQK6zwmTHoyve5Nr4emg04GWhnbXzT9d2HkrIxYmRZIpcyLWqBP6U23em8TJ1zMijzNzAvaX6cFqJD3V4V5c319fZWaN3voFLamCnwluxFnPEOPjdtu9eBw4HBUkQFRRElR87MatEQsCiyidjMedXdnPdJhLzZOcVZNpDBRqDOSf2-foX3umDLoJPBT29sWP7c68lLgaxQzbVOCWg-6dR-zZd9iP1h84PDQ4VtVCiupiBjUa5WOkoKl42LuI_SIwTM2Lgvhtm_91wcag_DDr_ARFfn9Jz3tIa2ZErbNwF4r_kvTUBau-f58AzYphUyjuLb15_E_HPhvc_MgU3jn4K0iW8g6i1hCtRa9UhStL-MdbLrF7w4PDg9_E956248rpYjzJQUoihsiuDYeivWrTxmWcxondZoVjZ1-VqCPqu2yNsuWWBy1my8pq8a7DHvfPrFnPBsyNLuuPtfSvHl0yij4nTJH4kc8Dspj0I9IiBl_BhofXeVLzgraSJnkaZQolh5Ir69S-tWDlYCjBPQS9HW5IIZb50pEMbednbqklkU9ZMfwBAFB8Jv3FHA-u4-gwRQ-H5wTn_22_LNxemo6Id-UOx84DjScIFODwEGn-vX3GurR-3FPnGiVDn7e1y773NHni241aj8O5Wsm_s5wgg-pOz5GQXAdeAM0AR1H10tsh51yYMzeCdXeeHqRkzQ-OeIJnJ91EyZseXw01B1peM_D1Txcz8ObeXg7D-_m1BpOh_bblVi2Z_jgJRcm2y2r1-6FYJquH4o1u1tY9_cAD0ncheQE8HGzu3icUD1T7aXiTHiYxwvVPX-HQhM8HNn0kXLKM6Lo0MgwzJeeeYl7gZni8NiFSUZfWvVU3UjZgMKjr5d8HiOG7B4GxVeul056OH-B8LBv7IafvKPaGxN25M4U_y6AE5RzqNkcZgdUB5YLe1f_-jSjMWbvqDt4mtFRmNUFzctvFsZqIz82JadPRtV0UJ_VlaCb133OUsUO7etv_wMaMpwF), drawn from the `Waits for:` and `Goes with:` lines above.
+It opens in a window of its own, at mermaid.live.
 <!-- graph end -->
