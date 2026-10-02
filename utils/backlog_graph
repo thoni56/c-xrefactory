@@ -106,7 +106,35 @@ def draw(sections, items, foundation):
     return out
 
 
+GRAPH_START = "<!-- graph start -->"
+GRAPH_END = "<!-- graph end -->"
+
+
+def without_graph(text):
+    if GRAPH_START not in text:
+        return text
+    before, rest = text.split(GRAPH_START, 1)
+    after = rest.split(GRAPH_END, 1)[1]
+    return before.rstrip('\n') + '\n' + after.lstrip('\n')
+
+
+def graph_of(text):
+    sections, items, foundation = read_backlog(text.split('\n'))
+    return '\n'.join(draw(sections, items, foundation))
+
+
+def with_graph(text):
+    text = without_graph(text)
+    return (text.rstrip('\n') + '\n\n' + GRAPH_START + '\n```mermaid\n'
+            + graph_of(text) + '\n```\n' + GRAPH_END + '\n')
+
+
 if __name__ == "__main__":
-    with open(sys.argv[1]) as f:
-        sections, items, foundation = read_backlog(f.read().split('\n'))
-    print('\n'.join(draw(sections, items, foundation)))
+    if sys.argv[1] == '--update':
+        with open(sys.argv[2]) as f:
+            text = f.read()
+        with open(sys.argv[2], 'w') as f:
+            f.write(with_graph(text))
+    else:
+        with open(sys.argv[1]) as f:
+            print(graph_of(without_graph(f.read())))
