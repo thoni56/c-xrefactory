@@ -136,15 +136,24 @@ doc/backlog.md` puts a link to the dependency graph at the end of this file, and
      look. Auto-discovery gives you the tree under the config; anything outside it still
      has to be named. Likely home: the config, or the machine-specific sibling, since an
      external source tree is usually a local path.
-8. <a id="finish-after-xrefmode"></a>**Finish after XrefMode** — the mode, `xref.c`, every `XrefMode` branch, the snapshot
-   merge path and the `-create`/`-update`/`-fastupdate` options went on 2026-09-24 (WSL,
-   session `a3efe465`). Left: the `options.mode ==/!= ServerMode` checks, which are
-   constant wherever the mode is known, since LSP sets `ServerMode` too
-   (`src/parsing.c`); `options.xref2` and `-xrefactory-II` — make it the default, then
-   drop the flag and the client's use of it (`editors/emacs/c-xref.el:1615`); the
-   client's tags-dispatch trio, which rendered a `-create` log (keep or delete with
-   item 21); and the chapters that still describe XrefMode as present.
-   Goes with: indexing-log-buffer
+8. <a id="finish-after-xrefmode"></a>**Finish after XrefMode**, in these pieces:
+   a. <a id="mode-checks"></a>**fold the `options.mode` checks outside `src/yylex.c`** — about 33,
+      in semact, options, cxfile, commons, startup, cxref, refactory, parsing and main.
+      They are constant wherever the mode is known, since LSP sets `ServerMode` too
+      (`src/parsing.c`). The ones that report a missing mode stay. The 30 in `yylex.c`
+      are item 6's;
+      Goes with: report-errors-flag
+   b. <a id="xref2-always"></a>**the server always talks xref2** — `options.xref2` is true and
+      `-xrefactory-II` is accepted and ignored, so its 42 uses fold;
+   c. <a id="client-drops-xref2"></a>**the client stops sending `-xrefactory-II`**
+      (`editors/emacs/c-xref.el:1630`);
+      Waits for: xref2-always
+   d. <a id="tests-drop-xref2"></a>**the tests stop sending it** — 235 files;
+      Waits for: xref2-always
+   e. <a id="xref2-option-gone"></a>**`-xrefactory-II` gives a warning**, as `-xrefrc` does;
+      Waits for: client-drops-xref2, tests-drop-xref2
+   f. <a id="xrefmode-in-docs"></a>**the docs stop describing XrefMode as present** —
+      `10-roadmap`, `11-planned-features`, `12-components`, `14-code`, `20-insights`.
 9. <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section (it asserts
    `ServerMode`), but it is the last divergent parse path.
@@ -255,7 +264,7 @@ Pass 3 rounds 19s each, 42s total.
     `editors/emacs/c-xref.el` rendered exactly this for the `-create` log — a stream of
     PPC records into `*c-xref-log*`, severity faces, `file://` links made clickable — and
     are kept, uncalled, for that reason. The viewer commands and keymap below them are
-    still bound; only the producer is gone.
+    still bound; only the producer is gone. Whether they stay is decided here.
     Waits for: report-errors-flag
 22. <a id="retry-creating-request"></a>**Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
@@ -449,6 +458,6 @@ was done.
   no `Makefile` reads as a failure.
 
 <!-- graph start -->
-[Open the dependency graph](https://mermaid.live/view#pako:eNp9WG1v2zgS_itzzoe9A-zUsp0Xu7gDuk2LXaC9K5IUKLBZyJQ0ernIopakmgiL_e87pCjakuh-sSlx5pnhvFN_zmKe4GwHs7TkL3HOhIKfH58qgLhkUt5hCgJZ0kJalOXuYpsmG3Y7l0rwZ9xdbNItu0rmMS-52F0E69V1wAa8UcnjZ0wsdxrEm9vIcUfb26t12nOvoiBZ3g64E16hZY23yTo-st6y7dVt7ASnq80qMKyNkFyENRMSQ4GNxN-eZk_NcslulqD_oxsI-sW7CniNgqmCVz9JywuGlw69MAsJDN5_BZUzBV9ILVgDKzuLmP3kafa7EcwPdVGiCJmk84bqpYg9oldONDGUCUil7V1UCoXgGVMkTuXowMDAWAkkThVa1ZDX-k86eHegdb_40tPC3hLvIWqhLFJUxaFHjMsCKxVKxWsZ1lO4DetXRilDDYYaJFZJUWWwX9R7IDH4HUVLRvujQaksvETV1CEdjpPGWNWC_x9j5RET9StL0nHCgX8ne2h-Iz9tVCOQJJ6A7a2ok1ehEkX9Ugj0CIpPz0PORDK-8WzFVa6PE2HKScZZcSYXdEjYFwsZ03YCnZF7R1lF8FWRwTxqJP3qRct2YOT2ShZSSeCphUoEr8P4NS0oltOqOUzBrvrFHZEaxffvv338Nbz_8PG_Xz9rhWMuKP8EP5hdWbFa5rz3kcCaC1KVwk_IMC1Z5kS4WL3uF_e4eMbWwARbF1mXByog8I9_wwMKioLP9LSHrGEi0c6DvRTxm7Yt8fUy7t1lwp5ig-L8wKokLIsKp3Jv3NEwLhKcA5ECVuShmB6M7cyJOjCwYKDB4MBaiJkQrZWYFlUh85CllGnhKxlTKz0VedsvPhp6MPTwjej1sZzNdGSGkSiSzIOxPZpL03U-MbXi5yZNUXyVFGmdrSgpDYgFpoARLNYJSSUplmHUht9Z2RxluPwOXEX50PFQdZC6WFlWneyG1SIrKpoVVUWpSLbOEO7BdDH1qKnBUoOmtjA5RT_ZrxOivfYcVuyA0gPmzPGL4bGK7XSsK67aGo03E9SOMYUqQwVJoQ2kq4zGBoPt6qugUFYVSmOXmEvlkepWjzlWcxC8yfKy1dbQDMNTUF8h51KtlkVE4rLjKTYObzM8xaLnActjegD993EdsypkVVYilb24bBL0gV6d-I7KqAmQsshy9YL616CQx2B_Uaq3l5eXF5l6u4ce0IqifNKujFmco0eGy9lPhg4MnW5qVE4FT5r4tF4xwcoSy9AexgN3c9JYDO3o4DYlKE-0-2KUpqlk7NhU3KEDl2OP7BlPOgt14Is_Gq7e2ry5d2AmVO6xa5Zd5nSUELH4GXjTe9YokTaVOZ2pLrq_UcgdauXRxGXqZy3vo-UDywftmwo6XgtfVAm-hhGTOmgoEAdN2MGuXG7-qukXhh56-lMo7cCSZ2Fk6oIHKRggaT9-4hl0ZcRZXglKB-pLJrVtB_ZgrY5liTiM3S1x1wINBHbRaBtSH2qyDlWBwndWl3CfHr6AIYLgqVktaRT0-qSiGueB2fg9oampcmDtop7HrCTHVmmRhalgmXaUTy-3-qQ5oOMAxwFGx405bIWYzPUEQJ1Y8rI5yQwah2vdMIKbMG8zClL0iHKp9r6j1tliqec0GOj-2lAzoepHmdP3o6Q51Md0CROmmI4TD_yxCxLLMSngzrL0ZmZU4cIXpijPTzzllFsd0-6FUzlodLfgKfQcxgBpIXSQkeUJ7n8Pc4hoLoKUN1U_5tKE8NxSRmHJGU25FD0-WS6xHjWBjS9et2bWMayda_vJjmZdKJQeRkqm810XwAg7YVawznSdK5lgdU7hmLRTuWuXeY-0D3tyZSnfDDj3tqVLRNPbSLp5TwX4u2vDlU4pco5AmZOUD_oZ7HM_Ig4GXvjnu7v7xXK5Wv7LYrBEhPS8JXa7td2dphYVOxppKhrSWyhoTVYSnOs2rvIBxHrpINbLnRl0teLHoVHXRrpzmJcRlULaMvZkpKREXdsVDhGDI2Kw6-YozSF_OIlObh-wWPzHe-s5PX5HNLhmnB7tzLZflv86cf6iYZh8F4NTUxii4cB-bkA1pOcmoB_NFZ3209HgzMRgyE_b-7jddzqPmvYkcA2Vr2P5x_4j-bArTe-JsLhceA10hnRqXe8wbmjPKTAd_s5Ae-3ppTw7shwV8RjO34DOiNDh8aDo6kPj8DxYz4PNPLiaB9fz4GZOY9DxW8b1OlnZTxuLlyJR-W5Vv_YvEiZzusmwdncNG_d5xPOlo_tQc0LhSc7-g8yRappsY5ihS0e7Z3JvIsaXiB5lBjYcyxrfhsf7nqgea-vL6xGNPzonok7ugOPNc_e4Md30VjamOFduppbzpYgfbFqfxkby5NBE3qAg-YJqUJ2mFOfTb6TNj2b6Ma0va700wxLj0843VY-h3GD8Y53NqDNm9deRcepN5s9JSvjnyIlCg-lwEvHToW5MMh2_JkE_aD76y-1xz40Dvtc0BnhfB-b1bA6zA4oDKxL9kfrPpxlNUfoL5g6eZgmmrCnpnvKXJmON4g9tFdOWEg0N37OmJoPgXcFI7YN9_dffoacMUQ), drawn from the `Waits for:` and `Goes with:` lines above.
+[Open the dependency graph](https://mermaid.live/view#pako:eNqNWVtv2zgW_itnnYfdBezUcpzGdrELzPSCLdDuFkkKDDBZyBRJydrIooak4giD-e97SFG0LnQxL40snhvP9Tvq7zMqGJ_tYJYW4kQPRGr4-fGpBKAFUeoDT0FywhpI86LYXW1TtiabudJSPPPd1Trdkls2p6IQcncV3azeRmTAmxSCPnPmuNOIrjeJ5062m9ubtONeJRFbbgbcTJTcsdItu6Fn1g3Z3m6oV5yu1qvIstZSCRlXRCoeS14r_uvT7KleLsndEszf5A6i7uGnEkTFJdG5KP-qHC9YXrz0wj4oIPD-O-gD0fANzYIbIEXrEXvOnmb_tYrFscoLLmOi8L6xPuU0oHrlVSNDwUBp4--81FxKkRGN6vSBe2FgxTgNqE7nxtRYVOaP8uL9hW66h28dLewd8R6SBoo85To_dhJpkfNSx0qLSsXVVNyadE_WKEsNlhoUL1leZrBfVHtANfyFywad9lvNlXbiFdd1FePlBFrMy0qK_3GqA2qS7smRtJxwFC_oD8Nv9ae1riVHjT1he6eq9yrWMq9OueQBRbR_HwwmR-fbyJZCH8x1Ep4K1HFRna0FkxLuxUJRPGbQOrkLlDOEv2p0WMAM1j2djG4vDMNeqlxpBSJ1opgUVUxf0xxzOS3r41TYbffwAUmt4fv3v3z6HN9__PTv71-NwVRIrD8pjvZUlaRSB9HFSPJKSDQV00-qOC1I5lX4XH3bPdzzxTNvrJho6zPr-ogNBP7yD3jgErPgK_7aQ1YTyUzwYK8kfdM0BX-9pl24bNpjbmCeH0nJ4iIv-VTvnb8apznjc0BS4CVGiOIP6zt7o1YYOGFghMGRNECJlI3TaGyM6YHTZzVVtPF5npqitE7sX24PLSeIWiu0JHinV4zQKibFiTQhFUk_9ZT1FLTEoEmBsi3_sDBN9FVsDwIS6Z8oTsNLqBayWXz-3FmKXUYrK_yibNaXbemtaC8514Nbt86KMxEK44Z3T2N7IMtfbIM9EVmi2J5MG6-8jJmgIW-mffsMTWse44rKPDEW_oJCTCpimWN9cTT8nPKmscSJzFkWMHd7znZD12aDbfU_12nK5XeF4ttUx55qhTjBWO8SL4f9FCcKVXHSxC-kqM86fHuO_ED42PJgc1dm1jhW06staxcxnHklDjWlUbdpcCIg07eER0MNjhoMtRNzwOaFE6pVYoruOS7JkauAMO-Of1keZ9jOtCotdFNxW4yMp3nZzpmMa2C5cZDJQyMbrGw_HiV2Il1yZf1ChdIBrf7p8cDLOUhRZ4eiMd4wDMNbICzAqYmjVuUJqsvOt1h7eevhLRYdDzgeO8LPiacoKWNSZoVJPVrUjIeE3vZih-VgE6TIs4M-cfOvlYIRg_1Vod9dX19fZfrdHjqBThW2DhNKSrCzBHT4lvvF0oGlM5gEp6EUrKb9cUMkKQpexO4yAXF3PVxgaUcXdyWBJWPCR7mymCAjZ0zgLx1tfIzIM-_1HgRQV7_VQr9zdXPvhdlUuect1mkrp6WEhNBn01R9k0Yj0rq0t7PDwXRBTLljpQOW-Er9avR9cnzg-KB5U0LL68TnJeOvcUKUSRpMxAGG8mJXvjY_G_qFpYeOvi_KBLAQWZzYvhCQFA0kmTh-ERm0bcR7XkssB4QVtrQdgArIWp3bEnJYvzviFsFYEbzNRocnulRTVaxzLkN39QX35eEbWCKInurVEpF8MCYl9riAmHU4EoYaOwevfNYLSgoMbJnmWZxKkplAhezyT18MB7Qc4DnA2ri2ly05Z3MD4HCOKFHUvcrAbabCeo-ju_jQZJikPKDKl9r7ltpUi6OeI64z8KguEZXlaEjRwQlWH6tzucSMaGLyJCD-DGKQ5VwU8MGxdG4m2OHiE9FY571IeeNW57I7CWwHtZkWIoWOwzogzaVJMvQ8ivvPwxwShLWIaeqy21IQ4D03WFG8EASXFDPYA7p8YT3ayd_ml6gaC1UtaxvaDpjjqoKIwGDJgph6Nw0w4a0yp9hUuqmVTJLqgOnImqneG195j3gOewxlod4MOPdAUhMjxbmdbajdvscG_OLHcGlKCoODU_-AWj6a3-B-dwh_sK_A3376cL9YLlfLvzsZhMkYf2-R3R1td_3SwmaHOLDEHauBHJ_RS1IIM8b1YSDiZulF3Cx3dk8xhp8xv-mNuDLalwm2Qjyy_iTSwETT2zUfSozOEqNdC4MNh_rhIjFZHmGx-Gdwae1fvyUabIn9q104DusKb4OX90TLFNrr-q6wRMN9a4zF-0b2AHWQbIyMw1jckk6AbwhZX6YMbUCW-hJG-xHyaf07BS8XMI0l7wOQMSBpvTqCFZPSslShmRreK8_kw7k5_RABi-tF0EEXSKfx7217lmJqzQVMekFe0IlByotIytJf8lZ4Ll5QYXLiQePyiTBxHt3No8082s5Xy_kqmiNMOH8he3vDVu6D2eKUM33YrarX7gUj6oD7MWl2b2HtP7oFvp-1n_96FIGe0X3mO1NNe8BYzDCOo9MLLWGiJtQfAsYMfDjWNf7GMj4PpPLY2lAxj2j6KTk6GrShsJv63WdyvUnXmVBMWlCYpL90T73Q25rHh5c23zHddI8dU1xqf1ODQ9UbFjbtl-P4Bcp7om_QIEP5PuiWU4rLnWGSKZe3oDFtqKEEaYY9N2RdaA8Zi_KrxI9ttuBwzBpuceN0nyD2SbWGkffEoAGeHp8GYPCYZApYJ0k_GIZMdPPJnHkAFXqNwCn4OrKvZ3OYHbk8kpyZ_5X5_WmGuNN8st_B04zxlNQFbnZ_GDJSa_HQlBSPtKxxXZnVFTqEf8gJmn10r__4P0a1E1Q), drawn from the `Waits for:` and `Goes with:` lines above.
 It opens in a window of its own, at mermaid.live.
 <!-- graph end -->
