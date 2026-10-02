@@ -1813,12 +1813,10 @@ static void handleProject() {
                 char projectOptionsSectionName[MAX_FILE_NAME_SIZE];
                 searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName,
                                                              projectOptionsSectionName);
-                /* Populate options.detectedProjectRoot from autoDetectedProjectRoot (if auto-detected)
-                 */
-                applyConventionBasedDatabasePath();
                 if (projectConfigFileName[0] == 0 || projectOptionsSectionName[0] == 0) {
                     ppcGenRecord(PPC_NO_PROJECT, fileName);
                 } else {
+                    applyConventionBasedDatabasePath();
                     /* Lock to this project. Discovery cannot find a config without a
                      * root, so the two are always locked together. */
                     lockedProject = strdup(projectOptionsSectionName);

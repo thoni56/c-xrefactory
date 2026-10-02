@@ -63,7 +63,6 @@ Ensure(CxRef, will_return_no_active_project_if_no_optionfile_found) {
     outputFile = stdout;
     options.serverOperation = OP_GET_PROJECT;
 
-    expect(applyConventionBasedDatabasePath);
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(0)),
            will_return(&fileItem));
     expect(searchForProjectConfigFileAndProjectForFile,

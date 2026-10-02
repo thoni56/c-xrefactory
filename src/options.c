@@ -1883,9 +1883,7 @@ protected bool projectCoveringFileInConfigFile(char *fileName, FILE *configFile,
  * not a configuration option.
  */
 void applyConventionBasedDatabasePath(void) {
-    if (autoDetectedProjectRoot[0] == '\0') {
-        return;
-    }
+    assert(autoDetectedProjectRoot[0] != '\0')
 
     char dbPath[MAX_FILE_NAME_SIZE + 16];
     sprintf(dbPath, "%s/.c-xref/db", autoDetectedProjectRoot);
