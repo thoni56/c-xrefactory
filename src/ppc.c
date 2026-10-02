@@ -180,7 +180,7 @@ void ppcBottomInformation(char *message) {
 }
 
 void ppcIndicateNoReference(void) {
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
     ppcBottomInformation("No reference");
 }
 

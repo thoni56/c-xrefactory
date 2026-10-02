@@ -59,7 +59,7 @@ Ensure(CxRef, can_parse_line_and_col_from_command_line_option) {
 Ensure(CxRef, will_return_no_active_project_if_no_optionfile_found) {
     FileItem fileItem = {.name = "file.c"};
 
-    options.xref2 = true;
+    options.cxrefProtocol = true;
     outputFile = stdout;
     options.serverOperation = OP_GET_PROJECT;
 
@@ -80,7 +80,7 @@ Ensure(CxRef, will_return_no_active_project_if_no_optionfile_found) {
  * pin the cases where ignoring -p would change the answer. */
 
 Ensure(CxRef, warns_when_request_names_a_project_but_none_is_locked) {
-    options.xref2 = true;
+    options.cxrefProtocol = true;
     outputFile = stdout;
     options.serverOperation = OP_GET_PROJECT;
     options.project = "/some/project";
@@ -97,7 +97,7 @@ Ensure(CxRef, warns_when_request_names_a_project_but_none_is_locked) {
 }
 
 Ensure(CxRef, warns_when_request_names_another_project_than_the_locked_one) {
-    options.xref2 = true;
+    options.cxrefProtocol = true;
     outputFile = stdout;
     options.serverOperation = OP_GET_PROJECT;
     options.project = "/other/project";
@@ -115,7 +115,7 @@ Ensure(CxRef, warns_when_request_names_another_project_than_the_locked_one) {
 }
 
 Ensure(CxRef, does_not_warn_when_request_names_the_locked_project) {
-    options.xref2 = true;
+    options.cxrefProtocol = true;
     outputFile = stdout;
     options.serverOperation = OP_GET_PROJECT;
     options.project = "/some/project";

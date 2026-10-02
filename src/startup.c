@@ -57,7 +57,7 @@ static void writeConfigFileMessage(char *file, char *outFName, char *outSect) {
             } else {
                 FATAL_ERROR(ERR_ST, tmpBuff, EXIT_FAILURE);
             }
-        } else if (options.xref2) {
+        } else if (options.cxrefProtocol) {
             ppcGenRecord(PPC_NO_PROJECT,file);
         } else {
             sprintf(tmpBuff, "no project name covers '%s'",file);

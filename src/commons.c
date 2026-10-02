@@ -286,7 +286,7 @@ static char *identifierReference_static(void) {
     char        fileName[MAX_FILE_NAME_SIZE];
     char        fileNameAndLineNumber[MAX_REF_LEN];
     if (currentFile.fileName != NULL) {
-        if (options.xref2 && options.mode != ServerMode) {
+        if (options.cxrefProtocol && options.mode != ServerMode) {
             strcpy(fileName, getRealFileName_static(normalizeFileName_static(currentFile.fileName, cwd)));
             assert(strlen(fileName) < MAX_FILE_NAME_SIZE);
             sprintf(fileNameAndLineNumber, "%s:%d", simpleFileName(fileName), currentFile.lineNumber);
@@ -343,7 +343,7 @@ void warningMessage(int errCode, char *message) {
 
     if (!options.noErrors) {
         formatMessage(buffer, errCode, message);
-        if (options.xref2) {
+        if (options.cxrefProtocol) {
             strcat(buffer, "\n");
             ppcGenRecord(PPC_WARNING, buffer);
         } else {
@@ -354,7 +354,7 @@ void warningMessage(int errCode, char *message) {
 }
 
 void infoMessage(char message[]) {
-    if (options.xref2) {
+    if (options.cxrefProtocol) {
         ppcGenRecord(PPC_INFORMATION, message);
     } else {
         log_info(message);
@@ -366,7 +366,7 @@ static void writeErrorMessage(int errorCode, char *message) {
     char buffer[MAX_PPC_RECORD_SIZE];
 
     formatMessage(buffer, errorCode, message);
-    if (options.xref2) {
+    if (options.cxrefProtocol) {
         strcat(buffer, "\n");
         ppcGenRecord(PPC_ERROR, buffer);
     } else {
@@ -383,7 +383,7 @@ void errorMessage(int errCode, char *mess) {
 
 static void emergencyExit(int exitStatus) {
     closeOutputFile();
-    if (options.xref2) {
+    if (options.cxrefProtocol) {
         ppcSynchronize();
     }
     exit(exitStatus);
@@ -394,7 +394,7 @@ void fatalError(int errorCode, char *message, int exitStatus, char *file, int li
     char buffer[MAX_PPC_RECORD_SIZE];
 
     formatMessage(buffer, errorCode, message);
-    if (options.xref2) {
+    if (options.cxrefProtocol) {
         ppcGenRecord(PPC_FATAL_ERROR, buffer);
     } else {
         log_with_explicit_file_and_line(LOG_FATAL, file, line, buffer);
@@ -412,7 +412,7 @@ void internalCheckFail(char *expr, char *file, int line) {
     writeErrorMessage(ERR_INTERNAL_CHECK,msg);
 
     if (options.mode == ServerMode) {
-        if (options.xref2) {
+        if (options.cxrefProtocol) {
             ppcGenRecord(PPC_FATAL_ERROR, msg);
             ppcGenRecord(PPC_INFORMATION, "Exiting");
             closeOutputFile();

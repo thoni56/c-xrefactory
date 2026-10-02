@@ -87,7 +87,7 @@ void extendBrowsingMenuWithReferences(BrowsingMenu *menuItem, Reference *referen
 static void printGlobalReferenceLists(BrowsingMenu *menu, FILE *file);
 
 void printSelectionMenu(BrowsingMenu *menu) {
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
 
     ppcBegin(PPC_SYMBOL_RESOLUTION);
     if (menu!=NULL) {

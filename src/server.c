@@ -433,7 +433,7 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
 
     if (cuCount > 0) {
         log_info("Entry refresh pass 3: parsing %d sibling CU(s)", cuCount);
-        if (options.xref2) {
+        if (options.cxrefProtocol) {
             setupProgress(cuCount, skippedCapped);
         }
         int savedCursorOffset = options.cursorOffset;
@@ -442,7 +442,7 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
             reparseStaleFile(cuFileNumbers[i], baseArgs);
             FileItem *fi = getFileItemWithFileNumber(cuFileNumbers[i]);
             fi->lastParsedMtime = editorFileModificationTime(fi->name);
-            if (options.xref2)
+            if (options.cxrefProtocol)
                 writeProgressInformation(cuCount - i - 1);
         }
         options.cursorOffset = savedCursorOffset;
@@ -523,7 +523,7 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
 
     if (cuCount > 0) {
         log_info("Reparsing %d CU(s) for stale header includers", cuCount);
-        if (options.xref2) {
+        if (options.cxrefProtocol) {
             static char progressFormat[128];
             snprintf(progressFormat, sizeof(progressFormat),
                      "Updating %d header includers... %%d remaining", cuCount);
@@ -532,7 +532,7 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
         for (int i = 0; i < cuCount; i++) {
             reparseStaleFile(cuFileNumbers[i], baseArgs);
             getFileItemWithFileNumber(cuFileNumbers[i])->needsBrowsingStackRefresh = true;
-            if (options.xref2)
+            if (options.cxrefProtocol)
                 writeProgressInformation(cuCount - i - 1);
         }
     }
@@ -775,7 +775,7 @@ void server(ArgumentsVector args) {
 
         closeAllEditorBuffersIfClosable();
         closeOutputFile();
-        if (options.xref2)
+        if (options.cxrefProtocol)
             ppcSynchronize();
         log_trace("Server: Request answered");
     }

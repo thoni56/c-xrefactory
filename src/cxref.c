@@ -207,7 +207,7 @@ static void setAvailableRefactorings(Symbol *symbol, Usage usage) {
 static void printAvailableRefactorings(void) {
     int count;
 
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
 
     count = availableRefactoringsCount();
 
@@ -436,7 +436,7 @@ bool sessionHasReferencesValidForOperation(SessionStackEntry **entryP,
         *entryP = browsingStack.top;
     }
     if (checkNull==CHECK_NULL_YES && *entryP == NULL) {
-        assert(options.xref2);
+        assert(options.cxrefProtocol);
         ppcBottomWarning("Empty stack");
         return false;
     }
@@ -508,7 +508,7 @@ static void orderRefsAndGotoDefinition(SessionStackEntry *sessionEntry) {
         sessionEntry->current = sessionEntry->references;
         ppcGotoPosition(sessionEntry->current->position);
     } else {
-        assert(options.xref2);
+        assert(options.cxrefProtocol);
         ppcWarning("Definition not found");
     }
 }
@@ -536,7 +536,7 @@ static char listLine[MAX_REF_LIST_LINE_LEN+5];
 static int listLineIndex = 0;
 
 static void passSourcePutChar(int c, FILE *file) {
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
     if (listLineIndex < MAX_REF_LIST_LINE_LEN) {
         listLine[listLineIndex++] = c;
         listLine[listLineIndex] = 0;
@@ -570,7 +570,7 @@ static void linePosProcess(FILE *outFile,
     listLineIndex = 0;
     listLine[listLineIndex] = 0;
 
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
     do {
         if (isUnfilteredUsage(r1, usageFilter)) {
             if (r2==NULL || isLessImportantUsageThan(r2->usage, r1->usage))
@@ -628,7 +628,7 @@ static void passRefsThroughSourceFile(Reference **inOutReferences,
         goto fin;
     ebuf = findOrCreateAndLoadEditorBufferForFile(cofileName);
     if (ebuf==NULL) {
-        if (options.xref2) {
+        if (options.cxrefProtocol) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "file '%s' not accessible", cofileName);
             errorMessage(ERR_ST, tmpBuff);
@@ -720,7 +720,7 @@ static void olcxPrintRefList(char *commandString, SessionStackEntry *sessionEntr
     Reference *rr;
     int         actn, len;
 
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
     actn = getCurrentRefPosition(sessionEntry);
     if (sessionEntry!=NULL && sessionEntry->menu != NULL) {
         char tmp[MAX_CX_SYMBOL_SIZE];
@@ -775,7 +775,7 @@ static void olcxPushAndCallMacro(void) {
         return;
     LIST_MERGE_SORT(Reference, sessionEntry->references, referenceIsLessThan);
     LIST_REVERSE(Reference, sessionEntry->references);
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
     symbolHighlightNameSprint(symbol, sessionEntry->hkSelectedSym);
     // precheck first
     for (Reference *rr=sessionEntry->references; rr!=NULL; rr=rr->next) {
@@ -889,7 +889,7 @@ static void gotoMatch(int referenceIndex) {
 #define MAX_SYMBOL_MESSAGE_LEN 50
 
 static void olcxPrintSymbolName(SessionStackEntry *sessionEntry) {
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
     if (sessionEntry==NULL) {
         ppcBottomInformation("stack is now empty");
     } else if (sessionEntry->hkSelectedSym==NULL) {
@@ -1065,7 +1065,7 @@ static void selectUnusedSymbols(BrowsingMenu *menu, void *mapParameter1) {
 static void olcxMenuSelectAll(bool selected) {
     SessionStackEntry *sessionEntry;
 
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
 
     if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_YES))
         return;
@@ -1129,7 +1129,7 @@ static void setSelectedVisibleItems(BrowsingMenu *menu, ServerOperation command,
 static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
     SessionStackEntry    *sessionEntry;
 
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
     if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_NO))
         return;
     if (sessionEntry!=NULL && flevel < MAX_MENU_FILTER_LEVEL && flevel >= 0) {
@@ -1150,7 +1150,7 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
 static void olcxReferenceFilterSet(int filterLevel) {
     SessionStackEntry *sessionEntry;
 
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
     if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_NO))
         return;
     if (sessionEntry!=NULL && filterLevel < MAX_REF_LIST_FILTER_LEVEL && filterLevel >= 0) {
@@ -1166,7 +1166,7 @@ static void olcxReferenceFilterSet(int filterLevel) {
 static void olcxReferenceRePush(void) {
     SessionStackEntry *sessionEntry, *next;
 
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
     if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_NO))
         return;
     next = getNextTopStackItem(&browsingStack);
@@ -1337,7 +1337,7 @@ static void selectCompletion(void) {
     SessionStackEntry *entry;
     Match *match;
 
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
     if (!sessionHasReferencesValidForOperation(&entry, CHECK_NULL_YES))
         return;
     match = getMatchOnNthLine(entry->matches, options.olcxGotoVal);
@@ -1532,7 +1532,7 @@ static void olcxPrintPushingAction(ServerOperation operation) {
             olcxOrderRefsAndGotoDefinition();
         } else {
             // to auto repush symbol by name, but I do not like it.
-            //& if (options.xref2) ppcGenRecord(PPC_NO_SYMBOL, "");
+            //& if (options.cxrefProtocol) ppcGenRecord(PPC_NO_SYMBOL, "");
             //& else
             olcxNoSymbolFoundErrorMessage();
             deleteEntryFromSessionStack(browsingStack.top);
@@ -1610,7 +1610,7 @@ static void dumpSelectionMenu(BrowsingMenu *menu) {
 static void mainAnswerReferencePushingAction(ServerOperation operation) {
     createSelectionMenuForOperation(operation);
 
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
     if (DUMP_SELECTION_MENU)
         dumpSelectionMenu(browsingStack.top->menu);
 
@@ -1665,7 +1665,7 @@ static void pushLocalUnusedSymbolsAction(void) {
 
 static void answerPushLocalUnusedSymbolsAction(void) {
     pushLocalUnusedSymbolsAction();
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
 }
 
@@ -1717,7 +1717,7 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
     assert(browsingStack.top->hkSelectedSym == NULL);
     mapOverReferenceableItemTable(mapAddGlobalUnusedSymbolsToHkSelection);
     createSelectionMenuForOperation(options.serverOperation);
-    assert(options.xref2);
+    assert(options.cxrefProtocol);
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
 }
 
@@ -1771,20 +1771,20 @@ static void printSearchResults(void) {
     len = len1;
 
     // the second is writing
-    if (options.xref2)
+    if (options.cxrefProtocol)
         ppcBegin(PPC_SYMBOL_LIST);
     assert(searchingStack.top);
     for (Match *m=searchingStack.top->matches; m!=NULL; m=m->next) {
         ls = createSearchLine_static(m->name, fileNumberOfReference(m->reference),
                                    &len1, &len2);
-        if (options.xref2) {
+        if (options.cxrefProtocol) {
             ppcGenRecord(PPC_STRING_VALUE, ls);
         } else {
             fprintf(outputFile,"%s\n", ls);
         }
         len1 = len;
     }
-    if (options.xref2)
+    if (options.cxrefProtocol)
         ppcEnd(PPC_SYMBOL_LIST);
 }
 
@@ -2009,7 +2009,7 @@ void answerEditorAction(void) {
         break;
 
     case OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET:
-        assert(options.xref2);
+        assert(options.cxrefProtocol);
         if (!parsedInfo.moveTargetAccepted) {
             ppcGenRecord(PPC_ERROR, "Invalid target place");
         }

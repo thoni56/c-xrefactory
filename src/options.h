@@ -69,7 +69,7 @@ typedef struct options {
     /* --- SESSION: Command line only, fixed for the server's lifetime --- */
     Mode mode;                                  /* SESSION */
     bool exit;                                  /* SESSION */
-    bool xref2;                                 /* SESSION */
+    bool cxrefProtocol;                                 /* SESSION */
     char *commandlog;                           /* SESSION */
     char *outputFileName;                       /* SESSION */
     bool errors;                                /* SESSION */

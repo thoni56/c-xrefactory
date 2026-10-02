@@ -38,7 +38,7 @@ Options presetOptions = {
     /* --- SESSION --- */
     .mode = UndefinedMode,
     .exit = false,
-    .xref2 = false,
+    .cxrefProtocol = false,
     .commandlog = NULL,
     .outputFileName = NULL,
     .errors = false,
@@ -139,7 +139,7 @@ void aboutMessage(void) {
     if (options.exit) {
         strcat(output, "Exiting!");
     }
-    if (options.xref2) {
+    if (options.cxrefProtocol) {
         ppcGenRecord(PPC_INFORMATION, output);
     } else {
         fprintf(stdout, "%s", output);
@@ -1559,7 +1559,7 @@ static bool processSOption(int *argi, ArgumentsVector args) {
     }
     else if (strcmp(args.argv[i], "-server")==0) {
         options.mode = ServerMode;
-        options.xref2 = true;
+        options.cxrefProtocol = true;
     } else if (strcmp(args.argv[i], "-statistics")==0) {
         options.statistics = true;
     }
@@ -1614,7 +1614,7 @@ static bool processXOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
     else if (strcmp(args.argv[i], "-xrefactory-II") == 0){
-        options.xref2 = true;
+        options.cxrefProtocol = true;
     }
     else if (strncmp(args.argv[i], "-xrefrc=",8) == 0) {
         errorMessage(ERR_ST, "-xrefrc is no longer supported, the .c-xrefrc is found from the file");
