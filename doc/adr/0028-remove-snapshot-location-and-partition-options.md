@@ -4,7 +4,7 @@ Date: 2026-09-23
 
 ## Status
 
-Accepted
+Implemented (2026-09-27 in `811c9010` and `3bb48926`)
 
 Builds on [ADR-0021](0021-single-project-server.md)
 

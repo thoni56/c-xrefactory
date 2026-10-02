@@ -6,7 +6,7 @@ Actually somewhen in c-xrefactory early history
 
 ## Status
 
-Accepted
+Implemented - the snapshot has been a text file since the original c-xref
 
 ## Deciders
 

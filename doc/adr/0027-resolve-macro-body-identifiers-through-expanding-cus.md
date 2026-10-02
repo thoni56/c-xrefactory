@@ -4,7 +4,7 @@ Date: 2026-09-18
 
 ## Status
 
-Accepted (2026-09-20)
+Implemented (2026-09-22 in `0b029fc2`) - except refusing a rename from inside a macro body
 
 Builds on [ADR-0022](0022-lightweight-file-structure-scanning.md)
 

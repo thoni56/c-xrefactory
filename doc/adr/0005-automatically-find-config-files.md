@@ -4,8 +4,8 @@ Date: 2022-04-06
 
 ## Status:
 
-Accepted (discovery implemented 2026-01-23 in `d5a7182f`; the option removals it calls
-for — `-xrefrc`, `-stdop`, `-no-stdop` — are outstanding and tracked in the backlog)
+Implemented - discovery in `d5a7182f` (2026-01-23); the last of the option removals it
+calls for, `-xrefrc`, in `6f83b04a` (2026-09-25)
 
 Outcome settled by [ADR-0031](0031-what-files-a-project-consists-of.md)
 
