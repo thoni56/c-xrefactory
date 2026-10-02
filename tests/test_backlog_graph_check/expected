@@ -1,0 +1,7 @@
+up to date: exit=0
+ok.md: the graph is out of date, run utils/backlog_graph --update ok.md
+no graph: exit=1
+unknown.md: second-item waits for gone-item, which is not in the backlog
+unknown.md: second-item goes with also-gone, which is not in the backlog
+unknown.md: the graph is out of date, run utils/backlog_graph --update unknown.md
+unknown slug: exit=1

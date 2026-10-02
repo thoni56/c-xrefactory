@@ -129,8 +129,30 @@ def with_graph(text):
             + graph_of(text) + '\n```\n' + GRAPH_END + '\n')
 
 
+def problems_in(path, text):
+    sections, items, foundation = read_backlog(without_graph(text).split('\n'))
+    known = set(items) | {done['slug'] for done in foundation}
+    found = []
+    for item in items.values():
+        for waited in item['waits']:
+            if waited not in known:
+                found.append(f"{path}: {item['slug']} waits for {waited}, which is not in the backlog")
+        for other in item['goes_with']:
+            if other not in known:
+                found.append(f"{path}: {item['slug']} goes with {other}, which is not in the backlog")
+    if with_graph(text) != text:
+        found.append(f"{path}: the graph is out of date, run utils/backlog_graph --update {path}")
+    return found
+
+
 if __name__ == "__main__":
-    if sys.argv[1] == '--update':
+    if sys.argv[1] == '--check':
+        with open(sys.argv[2]) as f:
+            found = problems_in(sys.argv[2], f.read())
+        for problem in found:
+            print(problem)
+        sys.exit(1 if found else 0)
+    elif sys.argv[1] == '--update':
         with open(sys.argv[2]) as f:
             text = f.read()
         with open(sys.argv[2], 'w') as f:
