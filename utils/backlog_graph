@@ -8,8 +8,11 @@
 # and what it waits for is a line of slugs below it,
 #        Waits for: first-item
 
+import base64
+import json
 import re
 import sys
+import zlib
 
 SECTION = re.compile(r'^## (\d+)\. (.+)$')
 ITEM = re.compile(r'^(\d+)\. <a id="([^"]+)"></a>\*\*(.+?)\*\*')
@@ -138,10 +141,20 @@ def graph_of(text):
     return '\n'.join(draw(sections, items, foundation))
 
 
+def mermaid_live_link(graph):
+    # The diagram travels in the part after '#', which the browser keeps to itself
+    state = json.dumps({"code": graph, "mermaid": '{"theme": "default"}',
+                        "autoSync": True, "updateDiagram": True})
+    packed = base64.urlsafe_b64encode(zlib.compress(state.encode(), 9)).decode().rstrip('=')
+    return "https://mermaid.live/view#pako:" + packed
+
+
 def with_graph(text):
     text = without_graph(text)
-    return (text.rstrip('\n') + '\n\n' + GRAPH_START + '\n```mermaid\n'
-            + graph_of(text) + '\n```\n' + GRAPH_END + '\n')
+    graph = graph_of(text)
+    return (text.rstrip('\n') + '\n\n' + GRAPH_START + '\n'
+            + f'[Open the graph in a window of its own]({mermaid_live_link(graph)})\n\n'
+            + '```mermaid\n' + graph + '\n```\n' + GRAPH_END + '\n')
 
 
 def problems_in(path, text):

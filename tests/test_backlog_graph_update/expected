@@ -5,6 +5,8 @@
 1. <a id="only-item"></a>**Only item** — alone.
 
 <!-- graph start -->
+[Open the graph in a window of its own](https://mermaid.live/view#pako:eNpVz8uqwjAQBuBXCem2C9PLIelSfINzltlM56LFtJE0RUR8dyv0KC7nn_9jmLvGSKw7pSXEK54gZbX_85NSGGCeDywqMdBNyRBCVzihBmw55xTP3BWNOGipxBhi6gpTVz8GvmwfIp6ZNi0GG9u_de9sW8u_rnpDO_ulKU68UXRU44dacK3F92GpmsroUumR0wgDvf65e51PPLJfB6-JBZaQvX68arDk-HubcF3ltPCaLBeCzIcBjgnGLX48AaoUXFk)
+
 ```mermaid
 flowchart BT
   classDef ready fill:#9fd4a8,stroke:#4f9a5d,color:#13261a
