@@ -64,6 +64,19 @@ Or for proposed/accepted:
 Proposed
 ```
 
+The first word of the first line after `## Status` **is** the status, and it must be
+exactly one of the statuses in the table above. That word is what Structurizr reads,
+and what it colours the decision by in the Decision Explorer. Anything more goes on the
+same line, separated so that nothing is attached to the word — a dash or parentheses,
+never a comma:
+
+```markdown
+Implemented - except the rename refusal, see the Decision Outcome
+```
+
+`Implemented, except ...` would make the status "Implemented," with the comma, which
+matches no status.
+
 The "Date:" field at the top of the ADR always reflects when the **decision** was made, not when implementation completed.
 
 ## Creating a New ADR
