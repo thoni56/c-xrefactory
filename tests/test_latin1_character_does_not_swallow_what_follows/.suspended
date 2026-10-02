@@ -1,0 +1,27 @@
+Bug: a Latin-1 character swallows the characters after it
+
+latin1.c has a comment "/* på*/" with the å in Latin-1 (0xE5). The server reads
+0xE5 as the lead byte of a three-byte UTF-8 sequence and skips the next two
+bytes, which are the "*/". The comment runs to the end of the file, the only
+trace is a "comment through eof" warning, and -push finds no symbol. The same
+file in UTF-8 passes with this expected.
+
+Cause: convertUtf8() (src/encoding.c) collapses each multibyte character to one
+space, so that byte offsets equal the character offsets the editor counts. It
+decides the length from the lead byte alone and never checks that the following
+bytes are continuation bytes (10xxxxxx). Latin-1 ä/å (0xE4/0xE5) eat two
+characters, Ä/Å/Ö (0xC4/0xC5/0xD6) one. A swallowed "*/", '"' or newline wrecks
+the rest of the file. The Emacs client writes preloads in the buffer's own
+coding system, so an open Latin-1 buffer breaks the same way.
+
+Likely fix: collapse a sequence only when its continuation bytes are there, and
+otherwise take the byte as one character. That is exactly right for Latin-1 and
+other single-byte encodings, which are one byte per character, leaves UTF-8 as
+it is, and needs no -encoding option (removed in 0ef4eace). Only Latin-1 text
+that happens to form valid UTF-8 is misread, which is rare. A unit test in
+encoding_tests.c can pin the byte level.
+
+Decide first: whether to also report invalid UTF-8, once per file, so a file in
+an unexpected encoding is no longer silent.
+
+Found on the Mac, session 36694da1.

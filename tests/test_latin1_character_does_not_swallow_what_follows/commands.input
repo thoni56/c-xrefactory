@@ -1,0 +1,6 @@
+CXREF -xrefactory-II -server
+-getproject CURDIR/latin1.c
+<sync>
+-push -olcursor=39 CURDIR/latin1.c
+<sync>
+<exit>

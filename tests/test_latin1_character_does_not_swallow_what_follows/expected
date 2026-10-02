@@ -1,0 +1,16 @@
+CXREF -xrefactory-II -server -o server-buffer
+-getproject CURDIR/latin1.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-push -olcursor=39 CURDIR/latin1.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=12 len=<n>>CURDIR/latin1.c</position-lc>
+</goto>
+-exit
+end-of-options
+
