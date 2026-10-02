@@ -736,15 +736,11 @@ static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable) {
 
 
 /* suffix contains '/' at the beginning !!! */
-static bool scanCxFile(char *cxFileLocation, char *element1, char *element2,
-                       CxFileScanDispatchEntry *scanDispatchTable) {
+static bool scanCxFile(char *cxFileLocation, CxFileScanDispatchEntry *scanDispatchTable) {
     assert(!snapshotLoadComplete && "post-startup disk read — see Principles: Memory As Truth");
-    char fn[MAX_FILE_NAME_SIZE];
 
-    sprintf(fn, "%s%s%s", cxFileLocation, element1, element2);
-    assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
-    log_trace(":scanning file %s", fn);
-    currentCxFile = openFile(fn, "r");
+    log_trace(":scanning file %s", cxFileLocation);
+    currentCxFile = openFile(cxFileLocation, "r");
     if (currentCxFile==NULL) {
         return false;
     } else {
@@ -771,7 +767,7 @@ bool loadFileNumbersFromStore(void) {
             || savedFileSize != currentSize)
         {
             log_trace(":(re)reading reference file '%s'", cxFileName);
-            if (scanCxFile(cxFileName, "", "", normalScanDispatchTable)) {
+            if (scanCxFile(cxFileName, normalScanDispatchTable)) {
                 strcpy(previouslyReadFileName, cxFileName);
                 savedModificationTime = currentModificationTime;
                 savedFileSize = currentSize;
@@ -792,16 +788,12 @@ bool loadSnapshotFromStore(void) {
     char *cxFileName = options.cxFileLocation;
     if (editorFileExists(cxFileName)) {
         log_info("Loading full snapshot from '%s'", cxFileName);
-        scanCxFile(cxFileName, "", "", snapshotLoadScanDispatchTable);
+        scanCxFile(cxFileName, snapshotLoadScanDispatchTable);
         snapshotLoadComplete = true;
         return true;
     }
     snapshotLoadComplete = true;
     return false;
-}
-
-protected void normalScanCxFile(char *name) {
-    scanCxFile(options.cxFileLocation, name, "", normalScanDispatchTable);
 }
 
 /* ***************************************************************************************

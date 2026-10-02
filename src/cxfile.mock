@@ -2,9 +2,6 @@
 #include "cxfile.h"
 #include <cgreen/mocks.h>
 
-void normalScanCxFile(char *name) {
-    mock(name);
-}
 
 void scanForBypass(char *symbolName) {
     mock(symbolName);
