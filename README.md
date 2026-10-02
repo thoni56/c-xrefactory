@@ -1,4 +1,4 @@
-![Build Status][travis badge]][travis link]&nbsp;
+[![Build Status][travis badge]][travis link]&nbsp;
 [![Coverage Status][coveralls badge]][coveralls link]&nbsp;
 [![codecov][codecov badge]][codecov link]
 
