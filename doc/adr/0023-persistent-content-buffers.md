@@ -6,6 +6,9 @@ Date: 2026-02-22
 
 Implemented (2026-02-23 in cdb9fa87)
 
+Optimizes [ADR-0020](0020-separate-buffer-sync-from-operation-dispatch.md)
+Builds on [ADR-0022](0022-lightweight-file-structure-scanning.md)
+
 ## Deciders
 
 Thomas Nilefalk, Claude (AI pair programmer)

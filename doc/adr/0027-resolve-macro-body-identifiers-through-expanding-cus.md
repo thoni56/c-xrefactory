@@ -6,6 +6,9 @@ Date: 2026-09-18
 
 Accepted (2026-09-20)
 
+Builds on [ADR-0014](0014-adopt-on-demand-parsing-architecture.md)
+Builds on [ADR-0022](0022-lightweight-file-structure-scanning.md)
+
 ## Deciders
 
 Thomas Nilefalk

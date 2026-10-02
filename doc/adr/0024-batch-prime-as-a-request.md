@@ -6,6 +6,10 @@ Date: 2026-09-23 (first proposed 2026-06-14, as CreateMode)
 
 Proposed
 
+Builds on [ADR-0014](0014-adopt-on-demand-parsing-architecture.md)
+Builds on [ADR-0021](0021-single-project-server.md)
+Builds on [ADR-0022](0022-lightweight-file-structure-scanning.md)
+
 ## Deciders
 
 Thomas Nilefalk (maintainer)

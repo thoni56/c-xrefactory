@@ -6,6 +6,9 @@ Date: 2025-12-04
 
 Accepted
 
+Enabled by [ADR-0012](0012-remove-lexem-stream-caching.md)
+Accepts the limitation in [ADR-0013](0013-limited-extern-detection-in-c-files.md)
+
 ## Deciders
 
 Thomas Nilefalk (maintainer)

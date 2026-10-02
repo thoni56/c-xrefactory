@@ -6,6 +6,8 @@ Date: 2026-01-01
 
 Accepted
 
+Builds on [ADR-0011](0011-remove-support-for-java.md)
+
 ## Deciders
 
 Thomas Nilefalk

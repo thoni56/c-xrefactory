@@ -6,6 +6,8 @@ Date: 2026-02-11
 
 Implemented
 
+Builds on [ADR-0014](0014-adopt-on-demand-parsing-architecture.md)
+
 ## Deciders
 
 Thomas Nilefalk, Claude (AI pair programmer)

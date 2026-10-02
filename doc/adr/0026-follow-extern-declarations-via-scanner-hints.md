@@ -6,7 +6,8 @@ Date: 2026-09-17
 
 Proposed
 
-If accepted, this supersedes ADR-0013.
+Builds on [ADR-0022](0022-lightweight-file-structure-scanning.md)
+If accepted, supersedes [ADR-0013](0013-limited-extern-detection-in-c-files.md)
 
 ## Deciders
 

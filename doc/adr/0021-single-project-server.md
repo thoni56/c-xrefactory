@@ -6,6 +6,9 @@ Date: 2026-01-23
 
 Implemented
 
+Builds on [ADR-0005](0005-automatically-find-config-files.md)
+Builds on [ADR-0014](0014-adopt-on-demand-parsing-architecture.md)
+
 ## Problem Statement and Context
 
 The original c-xrefactory architecture supported multiple projects in a single server session. A global `$HOME/.c-xrefrc` contained sections for all projects, and the server would search through them to find which project a given file belonged to. This multi-project design caused:
