@@ -6,7 +6,6 @@ Date: 2026-06-19
 
 Accepted
 
-Builds on [ADR-0014](0014-adopt-on-demand-parsing-architecture.md)
 Builds on [ADR-0020](0020-separate-buffer-sync-from-operation-dispatch.md)
 
 ## Deciders

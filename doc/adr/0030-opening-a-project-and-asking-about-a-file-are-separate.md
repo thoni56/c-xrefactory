@@ -6,7 +6,6 @@ Date: 2026-09-27
 
 Accepted
 
-Builds on [ADR-0021](0021-single-project-server.md)
 Builds on [ADR-0029](0029-project-identity-is-the-root-path.md)
 
 ## Deciders

@@ -7,7 +7,6 @@ Date: 2026-09-30
 Accepted (2026-10-02)
 
 Settles the open outcome of [ADR-0005](0005-automatically-find-config-files.md)
-Builds on [ADR-0028](0028-remove-snapshot-location-and-partition-options.md)
 Corrects and builds on [ADR-0029](0029-project-identity-is-the-root-path.md)
 Defines own, visible and outside for [ADR-0030](0030-opening-a-project-and-asking-about-a-file-are-separate.md)
 

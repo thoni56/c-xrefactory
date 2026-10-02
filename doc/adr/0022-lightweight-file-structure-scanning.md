@@ -6,7 +6,6 @@ Date: 2026-02-13
 
 Implemented - except for the explicit rescan. See Implementation Notes.
 
-Builds on [ADR-0014](0014-adopt-on-demand-parsing-architecture.md)
 Builds on [ADR-0020](0020-separate-buffer-sync-from-operation-dispatch.md)
 Builds on [ADR-0021](0021-single-project-server.md)
 

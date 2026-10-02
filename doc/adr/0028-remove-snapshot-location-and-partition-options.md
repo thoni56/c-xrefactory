@@ -6,8 +6,6 @@ Date: 2026-09-23
 
 Accepted
 
-Builds on [ADR-0005](0005-automatically-find-config-files.md)
-Builds on [ADR-0014](0014-adopt-on-demand-parsing-architecture.md)
 Builds on [ADR-0021](0021-single-project-server.md)
 
 ## Deciders

@@ -7,8 +7,6 @@ Date: 2026-09-25
 Accepted
 
 Corrected by [ADR-0031](0031-what-files-a-project-consists-of.md)
-Builds on [ADR-0005](0005-automatically-find-config-files.md)
-Builds on [ADR-0021](0021-single-project-server.md)
 Builds on [ADR-0028](0028-remove-snapshot-location-and-partition-options.md)
 
 ## Deciders
