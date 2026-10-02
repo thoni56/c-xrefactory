@@ -9,6 +9,7 @@
 
 2. <a id="second-item"></a>**Second item** — rests on the first.
    Waits for: first-item
+   Goes with: rung-b
 
 ## 2. A ladder
 
