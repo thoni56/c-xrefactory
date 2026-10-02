@@ -308,16 +308,31 @@ Pass 3 rounds 19s each, 42s total.
        was at 202% while indexing a tree that rewrites hundreds of files per build.
 
        **Sample it before killing it.** Why it wedged is unknown, because this session
-       restarted it first and the restart destroys the evidence. `sample fseventsd 10`
-       writes a stack profile that usually names the loop, and
-       `sudo fs_usage -w -f filesys $(pgrep -x fseventsd)` for a few seconds shows what
-       it is chewing on. Take both before `killall`, not after.
+       restarted it first and the restart destroys the evidence. Capture together, while
+       it is high, and before `killall`:
+       `top -l 2 -pid $(pgrep -x fseventsd) -stats pid,cpu,time` (is it sustained?),
+       `sample fseventsd 10` (user-space stacks), and
+       `sudo fs_usage -w -f pathname -t 5` system-wide (which paths generate the events,
+       i.e. the driver — the sample cannot show that).
+
+       **Seen again, not wedged** (Mac, session `36694da1`, 2026-10-02). The user saw
+       100% in Activity Monitor a few times over some minutes. A sample at 10:26 found
+       it nearly idle: about 3% of one CPU, ordinary dispatch work, 5.6 MB footprint (8.2
+       MB peak) against 3.8 GB last time — the process respawned on 2026-09-30 had not
+       leaked. Watchers fired normally the same morning. So: spikes, likely during builds
+       and test runs (7% with mds at 16% during one), not the sustained wedge. Two
+       limits of that sample: it only sees user space, so time spent in the kernel shows
+       as the `dev.fsevents` thread sitting in `read`; and the watchers did not appear
+       among fseventsd's client threads although they work, so client threads are no
+       measure of who is watching. `mdutil -s` cannot report a single directory, so
+       whether `.metadata_never_index` (repo root, `2d1fefad`) is honoured is unverified.
 
     Item (b) recurs unless the indexer stops seeing the build. `OBJDIR = .objects`
     (`src/sources.mk:17`) and the 132 regenerated `*.gcov` sit in `src/`: 748 of its
-    1074 files are build output. A `.metadata_never_index` file excludes a directory
-    from Spotlight. Decide first where Emacs cov-mode expects `*.gcov` — it reads
-    them beside the sources, which is why they are there.
+    1074 files are build output. Since `2d1fefad` a `.metadata_never_index` in the repo
+    root asks Spotlight to skip the whole tree, build output included, so the `*.gcov`
+    can stay beside the sources where Emacs cov-mode reads them. Whether it works is
+    the open question above; if it does not, moving the build output is what is left.
 
 29. **Tests that copy a preload next to the file it replaces can be flaky** — the driver
     refuses a preload that is not newer than its file, and two `cp`s in a row can get the
