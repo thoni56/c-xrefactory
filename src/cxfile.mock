@@ -19,10 +19,6 @@ void saveReferencesToStore(char *filename) {
   mock(filename);
 }
 
-bool loadFileNumbersFromStore(void) {
-  return (bool) mock();
-}
-
 bool loadSnapshotFromStore(void) {
   return (bool) mock();
 }

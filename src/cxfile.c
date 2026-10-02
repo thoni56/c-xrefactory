@@ -139,7 +139,6 @@ typedef struct cxFileScanStep {
 } CxFileScanDispatchEntry;
 
 
-static CxFileScanDispatchEntry normalScanDispatchTable[];
 static CxFileScanDispatchEntry snapshotLoadScanDispatchTable[];
 
 static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable);
@@ -751,35 +750,6 @@ static bool scanCxFile(char *cxFileLocation, CxFileScanDispatchEntry *scanDispat
     }
 }
 
-bool loadFileNumbersFromStore(void) {
-    static FileTimestamp savedModificationTime; /* Cache previously read file data... */
-    static off_t savedFileSize = 0;
-    static char previouslyReadFileName[MAX_FILE_NAME_SIZE] = ""; /* ... and name */
-    char *cxFileName = options.cxFileLocation;
-
-    if (cxFileName == NULL)
-        return false;
-    if (editorFileExists(cxFileName)) {
-        size_t currentSize = editorFileSize(cxFileName);
-        FileTimestamp currentModificationTime = editorFileModificationTime(cxFileName);
-        if (strcmp(previouslyReadFileName, cxFileName) != 0
-            || !fileTimestampsEqual(savedModificationTime, currentModificationTime)
-            || savedFileSize != currentSize)
-        {
-            log_trace(":(re)reading reference file '%s'", cxFileName);
-            if (scanCxFile(cxFileName, normalScanDispatchTable)) {
-                strcpy(previouslyReadFileName, cxFileName);
-                savedModificationTime = currentModificationTime;
-                savedFileSize = currentSize;
-            }
-        } else {
-            log_trace(":skipping (re)reading reference file '%s'", cxFileName);
-        }
-        return true;
-    }
-    return false;
-}
-
 bool loadSnapshotFromStore(void) {
     if (options.cxFileLocation == NULL) {
         snapshotLoadComplete = true;
@@ -813,14 +783,6 @@ bool loadSnapshotFromStore(void) {
 
  */
 
-
-static CxFileScanDispatchEntry normalScanDispatchTable[]={
-    {CXFI_KEY_LIST, scanFunction_ReadKeys, CXSF_NOP},
-    {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
-    {CXFI_REFNUM, scanFunction_IgnoreRefnum, CXSF_NOP},
-    {-1,NULL, 0},
-};
 
 /* Load all symbols and references into referenceableItemTable */
 static CxFileScanDispatchEntry snapshotLoadScanDispatchTable[]={
