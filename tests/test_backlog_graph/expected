@@ -13,6 +13,7 @@ flowchart BT
   rung_a --> rung_b
   second_item -.- rung_b
   odd_title -.- first_item
+  linkStyle 3,4 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
   class groundwork done
   class first_item ready
   class second_item blocked

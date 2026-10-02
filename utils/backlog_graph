@@ -80,6 +80,7 @@ def draw(sections, items, foundation):
     # and the section an item belongs to is a tag in its label, not a box
     work = [item for item in items.values() if not item['parts']]
     edges = []
+    goes_with = []
     involved = []
     def involve(slug):
         if slug not in involved:
@@ -91,7 +92,7 @@ def draw(sections, items, foundation):
             involve(item['slug'])
     for item in work:
         for other in item['goes_with']:
-            edges.append(f"  {node_id(item['slug'])} -.- {node_id(other)}")
+            goes_with.append(f"  {node_id(item['slug'])} -.- {node_id(other)}")
             involve(item['slug'])
             involve(other)
     done_titles = {done['slug']: done['title'] for done in foundation}
@@ -106,7 +107,11 @@ def draw(sections, items, foundation):
         else:
             text = done_titles.get(slug, slug)
         out.append(f"  {node_id(slug)}[{label(text)}]")
-    out += edges
+    out += edges + goes_with
+    # Goes with is not waits for, so it must not look like it even when drawn small
+    if goes_with:
+        indexes = ','.join(str(i) for i in range(len(edges), len(edges) + len(goes_with)))
+        out.append(f"  linkStyle {indexes} stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4")
     for slug in involved:
         if slug in items:
             state = 'blocked' if any(w in items for w in items[slug]['waits']) else 'ready'

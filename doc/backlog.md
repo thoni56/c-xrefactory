@@ -496,6 +496,7 @@ flowchart BT
   scan_angle_includes -.- project_extent
   remove_references_stopgap -.- index_based_sessions
   local_config_fragments -.- project_extent
+  linkStyle 12,13,14,15,16,17,18 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
   class partition_options ready
   class compiler_asked_twice blocked
   class adr_0029 done
